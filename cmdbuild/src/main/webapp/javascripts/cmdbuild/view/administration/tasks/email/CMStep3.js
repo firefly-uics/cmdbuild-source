@@ -109,12 +109,11 @@
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep3', {
-		extend: 'Ext.form.Panel',
+		extend: 'Ext.panel.Panel',
 
 		taskType: 'email',
 
 		border: false,
-		bodyCls: 'cmgraypanel',
 		height: '100%',
 
 		defaults: {
@@ -124,6 +123,9 @@
 
 		initComponent: function() {
 			var me = this;
+
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep3Delegate');
+			this.delegate.view = this;
 
 			this.workflowSetup = Ext.create('Ext.container.Container', {
 				layout: 'vbox',
@@ -179,9 +181,6 @@
 					]
 				}
 			];
-
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep3Delegate');
-			this.delegate.view = this;
 
 			this.callParent(arguments);
 		},

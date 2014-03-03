@@ -52,12 +52,11 @@
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep2', {
-		extend: 'Ext.form.Panel',
+		extend: 'Ext.panel.Panel',
 
 		taskType: 'email',
 
 		border: false,
-		bodyCls: 'cmgraypanel',
 		height: '100%',
 
 		defaults: {
@@ -67,6 +66,9 @@
 
 		initComponent: function() {
 			var me = this;
+
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep2Delegate');
+			this.delegate.view = this;
 
 			this.items = [
 				{
@@ -176,9 +178,6 @@
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				}
 			];
-
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep2Delegate');
-			this.delegate.view = this;
 
 			this.callParent(arguments);
 		}

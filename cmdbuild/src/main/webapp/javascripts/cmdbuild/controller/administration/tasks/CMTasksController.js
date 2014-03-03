@@ -72,6 +72,20 @@
 			return string;
 		},
 
+		loadForm: function(type) {
+			if (this.tasksDatas.indexOf(type) >= 0) {
+				this.form.wizard.removeAll();
+				var items = Ext.create('CMDBuild.view.administration.tasks.' + type + '.CMTaskTabs').getTabs();
+
+				for (var i = 0; i < items.length; i++) {
+					this.form.wizard.add(items[i]);
+				}
+
+				this.form.wizard.numberOfTabs = items.length;
+				this.form.wizard.setActiveTab(0);
+			}
+		},
+
 		onAddButtonClick: function(name, param, callBack) {
 			this.grid.getSelectionModel().deselectAll();
 			this.buildFormController(param.type);
