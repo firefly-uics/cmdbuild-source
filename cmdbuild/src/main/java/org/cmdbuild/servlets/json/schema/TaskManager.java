@@ -10,6 +10,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
 
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
@@ -56,6 +57,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 		public TaskType find() {
 			task.accept(this);
+			Validate.notNull(type, "type not found");
 			return type;
 		}
 

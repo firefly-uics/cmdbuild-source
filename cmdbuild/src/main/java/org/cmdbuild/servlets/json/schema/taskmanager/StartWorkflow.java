@@ -67,10 +67,10 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported
 	public JsonResponse create( //
-			@Parameter(CLASS_NAME) final String className, //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
+			@Parameter(CLASS_NAME) final String className, //
 			@Parameter(value = PARAMS, required = false) final JSONObject jsonParameters //
 	) throws JSONException {
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //

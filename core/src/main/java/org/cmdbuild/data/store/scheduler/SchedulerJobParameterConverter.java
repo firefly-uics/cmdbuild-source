@@ -10,14 +10,15 @@ import java.util.Map;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
+import org.cmdbuild.model.scheduler.SchedulerJob;
 import org.cmdbuild.model.scheduler.SchedulerJobParameter;
 
 import com.google.common.collect.Maps;
 
 public class SchedulerJobParameterConverter extends BaseStorableConverter<SchedulerJobParameter> {
 
-	public static SchedulerJobParameterConverter of(final Long schedulerId) {
-		return new SchedulerJobParameterConverter(schedulerId);
+	public static SchedulerJobParameterConverter of(final SchedulerJob schedulerJob) {
+		return new SchedulerJobParameterConverter(schedulerJob.getId());
 	}
 
 	private final Long schedulerId;
@@ -35,10 +36,11 @@ public class SchedulerJobParameterConverter extends BaseStorableConverter<Schedu
 
 	@Override
 	public SchedulerJobParameter convert(final CMCard card) {
-		final SchedulerJobParameter storable = new SchedulerJobParameter(card.getId());
-		storable.setKey(card.get(KEY, String.class));
-		storable.setValue(card.get(VALUE, String.class));
-		return storable;
+		return SchedulerJobParameter.newInstance() //
+				.withId(card.getId()) //
+				.withKey(card.get(KEY, String.class)) //
+				.withValue(card.get(VALUE, String.class)) //
+				.build();
 	}
 
 	@Override

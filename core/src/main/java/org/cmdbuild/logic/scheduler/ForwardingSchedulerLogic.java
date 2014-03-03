@@ -16,8 +16,8 @@ public class ForwardingSchedulerLogic implements SchedulerLogic {
 	}
 
 	@Override
-	public Iterable<SchedulerJob> findJobsByDetail(final String detail) {
-		return inner.findJobsByDetail(detail);
+	public Iterable<SchedulerJob> findWorkflowJobsByProcess(final String classname) {
+		return inner.findWorkflowJobsByProcess(classname);
 	}
 
 	@Override

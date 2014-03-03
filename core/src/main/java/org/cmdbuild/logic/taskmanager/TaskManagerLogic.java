@@ -20,7 +20,7 @@ public interface TaskManagerLogic extends Logic {
 	/**
 	 * Reads all {@link Task}s for specified type.
 	 */
-	Iterable<? extends Task> read(Class<? extends Task> type);
+	Iterable<Task> read(Class<? extends Task> type);
 
 	/**
 	 * Reads {@link Task}'s details.

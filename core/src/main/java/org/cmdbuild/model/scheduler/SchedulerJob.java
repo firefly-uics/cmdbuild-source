@@ -1,7 +1,5 @@
 package org.cmdbuild.model.scheduler;
 
-import java.util.Map;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
@@ -11,9 +9,7 @@ public abstract class SchedulerJob implements Storable {
 	private final Long id;
 
 	private String description;
-	private Map<String, String> parameters;
 	private String cronExpression;
-	private String detail;
 	private boolean running;
 
 	protected SchedulerJob() {
@@ -43,36 +39,12 @@ public abstract class SchedulerJob implements Storable {
 		this.description = description;
 	}
 
-	/**
-	 * @deprecated use new parameters
-	 */
-	@Deprecated
-	public Map<String, String> getLegacyParameters() {
-		return parameters;
-	}
-
-	/**
-	 * @deprecated use new parameters
-	 */
-	@Deprecated
-	public void setLegacyParameters(final Map<String, String> parameters) {
-		this.parameters = parameters;
-	}
-
 	public String getCronExpression() {
 		return cronExpression;
 	}
 
 	public void setCronExpression(final String cronExpression) {
 		this.cronExpression = cronExpression;
-	}
-
-	public String getDetail() {
-		return detail;
-	}
-
-	public void setDetail(final String detail) {
-		this.detail = detail;
 	}
 
 	public boolean isRunning() {

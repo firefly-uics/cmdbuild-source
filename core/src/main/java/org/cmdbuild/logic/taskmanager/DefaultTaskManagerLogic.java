@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.collect.FluentIterable.from;
 
 import java.lang.reflect.InvocationTargetException;
@@ -7,42 +8,23 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import org.apache.commons.lang.Validate;
-import org.cmdbuild.model.scheduler.SchedulerJob;
-import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	private static final Marker MARKER = MarkerFactory.getMarker(DefaultTaskManagerLogic.class.getName());
 
-	private static final Function<StartWorkflowTask, SchedulerJob> START_WORKFLOW_TASK_TO_SCHEDULER_JOB = new Function<StartWorkflowTask, SchedulerJob>() {
-
-		@Override
-		public SchedulerJob apply(final StartWorkflowTask input) {
-			final SchedulerJob schedulerJob = new WorkflowSchedulerJob(input.getId());
-			schedulerJob.setDescription(input.getDescription());
-			schedulerJob.setRunning(input.isActive());
-			schedulerJob.setCronExpression(input.getCronExpression());
-			schedulerJob.setDetail(input.getProcessClass());
-			schedulerJob.setLegacyParameters(input.getParameters());
-			return schedulerJob;
-		};
-
-	};
-
 	private static class Create implements TaskVistor {
 
-		private final SchedulerFacade schedulerFacade;
+		private final ScheduledTaskFacade schedulerFacade;
 
 		private Long createdId;
 
-		public Create(final SchedulerFacade schedulerFacade) {
+		public Create(final ScheduledTaskFacade schedulerFacade) {
 			this.schedulerFacade = schedulerFacade;
 		}
 
@@ -53,8 +35,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		@Override
 		public void visit(final StartWorkflowTask task) {
-			final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
-			createdId = schedulerFacade.create(schedulerJob);
+			createdId = schedulerFacade.create(task);
 		}
 
 	}
@@ -63,29 +44,15 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		private static final Object NO_ARGUMENTS_REQUIRED = null;
 
-		private static final Function<SchedulerJob, Task> SCHEDULER_JOB_TO_TASK = new Function<SchedulerJob, Task>() {
-
-			@Override
-			public Task apply(final SchedulerJob input) {
-				// TODO make it extensible
-				return StartWorkflowTask.newInstance() //
-						.withId(input.getId()) //
-						.withDescription(input.getDescription()) //
-						.withActiveStatus(input.isRunning()) //
-						.build();
-			}
-
-		};
-
-		private final SchedulerFacade schedulerFacade;
+		private final ScheduledTaskFacade schedulerFacade;
 
 		private final List<Task> tasks = Lists.newArrayList();
 
-		public ReadAll(final SchedulerFacade schedulerFacade) {
+		public ReadAll(final ScheduledTaskFacade schedulerFacade) {
 			this.schedulerFacade = schedulerFacade;
 		}
 
-		public Iterable<? extends Task> execute() {
+		public Iterable<Task> execute() {
 			assert this instanceof TaskVistor;
 			for (final Method method : TaskVistor.class.getMethods()) {
 				try {
@@ -101,41 +68,25 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			return tasks;
 		}
 
-		public Iterable<? extends Task> execute(final Class<? extends Task> type) {
+		public Iterable<Task> execute(final Class<? extends Task> type) {
 			return from(tasks) //
-					.filter(type);
+					.filter(instanceOf(type));
 		}
 
 		@Override
 		public void visit(final StartWorkflowTask task) {
-			final Iterable<? extends SchedulerJob> schedulerJobs = schedulerFacade.read();
-			Iterables.addAll(tasks, from(schedulerJobs) //
-					.transform(SCHEDULER_JOB_TO_TASK));
+			for (final Task element : schedulerFacade.read()) {
+				tasks.add(element);
+			}
 		}
 
 	}
 
 	private static class Read {
 
-		private static final Function<SchedulerJob, StartWorkflowTask> SCHEDULER_JOB_TO_START_WORKFLOW_TASK = new Function<SchedulerJob, StartWorkflowTask>() {
+		private final ScheduledTaskFacade schedulerFacade;
 
-			@Override
-			public StartWorkflowTask apply(final SchedulerJob input) {
-				return StartWorkflowTask.newInstance() //
-						.withId(input.getId()) //
-						.withDescription(input.getDescription()) //
-						.withActiveStatus(input.isRunning()) //
-						.withCronExpression(input.getCronExpression()) //
-						.withProcessClass(input.getDetail()) //
-						.withParameters(input.getLegacyParameters()) //
-						.build();
-			}
-
-		};
-
-		private final SchedulerFacade schedulerFacade;
-
-		public Read(final SchedulerFacade schedulerFacade) {
+		public Read(final ScheduledTaskFacade schedulerFacade) {
 			this.schedulerFacade = schedulerFacade;
 		}
 
@@ -151,9 +102,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 				@Override
 				public void visit(final StartWorkflowTask task) {
-					final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
-					final SchedulerJob readed = schedulerFacade.read(schedulerJob);
-					raw = SCHEDULER_JOB_TO_START_WORKFLOW_TASK.apply(readed);
+					raw = schedulerFacade.read(task);
 				}
 
 			}.read();
@@ -164,9 +113,9 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	private static class Update implements TaskVistor {
 
-		private final SchedulerFacade schedulerFacade;
+		private final ScheduledTaskFacade schedulerFacade;
 
-		public Update(final SchedulerFacade schedulerFacade) {
+		public Update(final ScheduledTaskFacade schedulerFacade) {
 			this.schedulerFacade = schedulerFacade;
 		}
 
@@ -176,17 +125,16 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		@Override
 		public void visit(final StartWorkflowTask task) {
-			final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
-			schedulerFacade.update(schedulerJob);
+			schedulerFacade.update(task);
 		}
 
 	}
 
 	private static class Delete implements TaskVistor {
 
-		private final SchedulerFacade schedulerFacade;
+		private final ScheduledTaskFacade schedulerFacade;
 
-		public Delete(final SchedulerFacade schedulerFacade) {
+		public Delete(final ScheduledTaskFacade schedulerFacade) {
 			this.schedulerFacade = schedulerFacade;
 		}
 
@@ -196,8 +144,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		@Override
 		public void visit(final StartWorkflowTask task) {
-			final SchedulerJob schedulerJob = START_WORKFLOW_TASK_TO_SCHEDULER_JOB.apply(task);
-			schedulerFacade.delete(schedulerJob);
+			schedulerFacade.delete(task);
 		}
 
 	}
@@ -208,7 +155,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	private final Update update;
 	private final Delete delete;
 
-	public DefaultTaskManagerLogic(final SchedulerFacade schedulerFacade) {
+	public DefaultTaskManagerLogic(final ScheduledTaskFacade schedulerFacade) {
 		create = new Create(schedulerFacade);
 		readAll = new ReadAll(schedulerFacade);
 		read = new Read(schedulerFacade);
@@ -230,7 +177,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	}
 
 	@Override
-	public Iterable<? extends Task> read(final Class<? extends Task> type) {
+	public Iterable<Task> read(final Class<? extends Task> type) {
 		logger.info(MARKER, "reading all existing tasks for type '{}'", type);
 		return readAll.execute(type);
 	}

@@ -7,7 +7,7 @@ public interface SchedulerLogic extends Logic {
 
 	Iterable<SchedulerJob> findAllScheduledJobs();
 
-	Iterable<SchedulerJob> findJobsByDetail(String detail);
+	Iterable<SchedulerJob> findWorkflowJobsByProcess(String classname);
 
 	void startScheduler();
 

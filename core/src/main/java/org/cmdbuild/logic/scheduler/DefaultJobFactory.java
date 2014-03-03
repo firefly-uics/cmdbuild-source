@@ -192,8 +192,8 @@ public class DefaultJobFactory implements JobFactory {
 			private SchedulerJobConfiguration parametersOf(final SchedulerJob schedulerJob) {
 				logger.debug("getting parameters for job {}", schedulerJob);
 				final Store<SchedulerJobParameter> schedulerJobParameterStore = DataViewStore.newInstance(dataView, //
-						SchedulerJobParameterGroupable.of(schedulerJob.getId()), //
-						SchedulerJobParameterConverter.of(schedulerJob.getId()));
+						SchedulerJobParameterGroupable.of(schedulerJob), //
+						SchedulerJobParameterConverter.of(schedulerJob));
 				final Iterable<SchedulerJobParameter> parameters = schedulerJobParameterStore.list();
 				return new SchedulerJobConfiguration(parameters);
 			}
@@ -258,8 +258,8 @@ public class DefaultJobFactory implements JobFactory {
 			@Override
 			public void visit(final WorkflowSchedulerJob schedulerJob) {
 				final StartProcessJob startProcessJob = new StartProcessJob(schedulerJob.getIdentifier(), workflowLogic);
-				startProcessJob.setDetail(schedulerJob.getDetail());
-				startProcessJob.setParams(schedulerJob.getLegacyParameters());
+				startProcessJob.setDetail(schedulerJob.getProcessClass());
+				startProcessJob.setParams(schedulerJob.getParameters());
 				job = startProcessJob;
 			}
 

@@ -2,11 +2,12 @@ package unit.logic.taskmanager;
 
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -15,85 +16,71 @@ import static org.mockito.Mockito.when;
 import java.util.Map;
 
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
-import org.cmdbuild.logic.taskmanager.SchedulerFacade;
+import org.cmdbuild.logic.taskmanager.ScheduledTask;
+import org.cmdbuild.logic.taskmanager.ScheduledTaskFacade;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.Task;
-import org.cmdbuild.model.scheduler.SchedulerJob;
-import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
-import com.google.common.collect.Maps;
+import com.google.common.base.Functions;
 
 public class DefaultTaskManagerLogicTest {
 
-	private SchedulerFacade schedulerFacade;
+	private static final long ID = 42L;
+	private static final long ANOTHER_ID = 123L;
+	private static final String DESCRIPTION = "the description";
+	private static final String NEW_DESCRIPTION = "new description";
+	private static final boolean ACTIVE_STATUS = true;
+	private static final String CRON_EXPRESSION = "cron expression";
+	private static final String NEW_CRON_EXPRESSION = "new cron expression";
+	private static final String PROCESS_CLASS = "Dummy";
+	private static final Iterable<String> VALUES = asList("foo", "bar");
+	private static Map<String, String> PARAMETERS = uniqueIndex(VALUES, Functions.<String> identity());
+
+	private ScheduledTaskFacade scheduledTaskFacade;
 	private DefaultTaskManagerLogic taskManagerLogic;
 
 	@Before
 	public void setUp() throws Exception {
-		schedulerFacade = mock(SchedulerFacade.class);
-		taskManagerLogic = new DefaultTaskManagerLogic(schedulerFacade);
+		scheduledTaskFacade = mock(ScheduledTaskFacade.class);
+		taskManagerLogic = new DefaultTaskManagerLogic(scheduledTaskFacade);
 	}
 
 	@Test
 	public void startWorkflowTaskCreated() throws Exception {
 		// given
-		final Map<String, String> values = Maps.newHashMap();
-		values.put("foo", "bar");
-		values.put("bar", "baz");
-		values.put("baz", "foo");
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
-				.withDescription("the description") //
-				.withActiveStatus(true) //
-				.withProcessClass("Dummy") //
-				.withCronExpression("cron expression") //
-				.withParameters(values) //
+				.withDescription(DESCRIPTION) //
+				.withActiveStatus(ACTIVE_STATUS) //
+				.withCronExpression(CRON_EXPRESSION) //
+				.withProcessClass(PROCESS_CLASS) //
+				.withParameters(PARAMETERS) //
 				.build();
 
 		// when
 		taskManagerLogic.create(task);
-
-		// then
-		final ArgumentCaptor<SchedulerJob> schedulerJobCaptor = ArgumentCaptor.forClass(SchedulerJob.class);
-		verify(schedulerFacade).create(schedulerJobCaptor.capture());
-		verifyNoMoreInteractions(schedulerFacade);
-
-		final SchedulerJob capturedForStore = schedulerJobCaptor.getAllValues().get(0);
-		assertThat(capturedForStore.getDescription(), equalTo("the description"));
-		assertThat(capturedForStore.getDetail(), equalTo("Dummy"));
-		assertThat(capturedForStore.getLegacyParameters(), equalTo(values));
 	}
 
 	@Test
 	public void startWorkflowTaskUpdated() throws Exception {
 		// given
-		final Map<String, String> values = Maps.newHashMap();
-		values.put("foo", "bar");
-		values.put("bar", "baz");
-		values.put("baz", "foo");
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
-				.withId(42L) //
-				.withDescription("new description") //
-				.withCronExpression("new cron expression") //
-				.withParameters(values) //
+				.withId(ID) //
+				.withDescription(NEW_DESCRIPTION) //
+				.withActiveStatus(ACTIVE_STATUS) //
+				.withCronExpression(NEW_CRON_EXPRESSION) //
+				.withProcessClass(PROCESS_CLASS) //
+				.withParameters(PARAMETERS) //
 				.build();
 
 		// when
 		taskManagerLogic.update(task);
 
 		// then
-		final ArgumentCaptor<SchedulerJob> schedulerJobCaptor = ArgumentCaptor.forClass(SchedulerJob.class);
-		verify(schedulerFacade).update(schedulerJobCaptor.capture());
-		verifyNoMoreInteractions(schedulerFacade);
-
-		final SchedulerJob capturedForStore = schedulerJobCaptor.getAllValues().get(0);
-		assertThat(capturedForStore.getId(), equalTo(42L));
-		assertThat(capturedForStore.getDescription(), equalTo("new description"));
-		assertThat(capturedForStore.getCronExpression(), equalTo("new cron expression"));
-		assertThat(capturedForStore.getLegacyParameters(), equalTo(values));
+		verify(scheduledTaskFacade).update(task);
+		verifyNoMoreInteractions(scheduledTaskFacade);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -111,19 +98,14 @@ public class DefaultTaskManagerLogicTest {
 	public void startWorkflowTaskDeleted() throws Exception {
 		// given
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
-				.withId(42L) //
+				.withId(ID) //
 				.build();
 
 		// when
 		taskManagerLogic.delete(task);
 
 		// then
-		final ArgumentCaptor<SchedulerJob> schedulerJobCaptor = ArgumentCaptor.forClass(SchedulerJob.class);
-		verify(schedulerFacade).delete(schedulerJobCaptor.capture());
-		verifyNoMoreInteractions(schedulerFacade);
-
-		final SchedulerJob capturedForStore = schedulerJobCaptor.getAllValues().get(0);
-		assertThat(capturedForStore.getId(), equalTo(42L));
+		verify(scheduledTaskFacade).delete(task);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -140,28 +122,36 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void allTasksRead() throws Exception {
 		// given
-		final SchedulerJob schedulerJob = new WorkflowSchedulerJob(42L) {
-			{
-				setDescription("the description");
-				setRunning(true);
-			}
-		};
-		when(schedulerFacade.read()) //
-				.thenReturn(asList(schedulerJob));
+		final ScheduledTask first = StartWorkflowTask.newInstance() //
+				.withId(ID) //
+				.withDescription(DESCRIPTION).withActiveStatus(ACTIVE_STATUS) //
+				.withCronExpression(CRON_EXPRESSION) //
+				.withProcessClass(PROCESS_CLASS) //
+				.build();
+		final ScheduledTask second = StartWorkflowTask.newInstance() //
+				.withId(ANOTHER_ID) //
+				.withDescription(DESCRIPTION).withActiveStatus(ACTIVE_STATUS) //
+				.withCronExpression(CRON_EXPRESSION) //
+				.withProcessClass(PROCESS_CLASS) //
+				.build();
+		when(scheduledTaskFacade.read()) //
+				.thenReturn(asList(first, second));
 
 		// when
-		final Iterable<? extends Task> tasks = taskManagerLogic.read();
+		final Iterable<? extends Task> readed = taskManagerLogic.read();
 
 		// then
-		verify(schedulerFacade).read();
-		verifyNoMoreInteractions(schedulerFacade);
+		verify(scheduledTaskFacade).read();
+		verifyNoMoreInteractions(scheduledTaskFacade);
 
-		assertThat(size(tasks), equalTo(1));
+		assertThat(size(readed), equalTo(2));
 
-		final Task onlyTask = get(tasks, 0);
-		assertThat(onlyTask.getId(), equalTo(42L));
-		assertThat(onlyTask.getDescription(), equalTo("the description"));
-		assertThat(onlyTask.isActive(), equalTo(true));
+		final Task firstReaded = get(readed, 0);
+		assertThat(firstReaded.getId(), equalTo(ID));
+
+		final Task secondReaded = get(readed, 1);
+		assertThat(secondReaded.getId(), equalTo(ANOTHER_ID));
+
 	}
 
 	@Ignore("TODO - more task types needs to be implemented first")
@@ -173,36 +163,31 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void startWorkflowTaskDetailsRead() throws Exception {
 		// given
-		final StartWorkflowTask existing = StartWorkflowTask.newInstance() //
-				.withId(42L) //
+		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
+				.withId(ID) //
 				.build();
-		final SchedulerJob readed = new WorkflowSchedulerJob(42L) {
-			{
-				setDescription("the description");
-				setRunning(true);
-				setCronExpression("the cron expression");
-				setDetail("the process class");
-			}
-		};
-		when(schedulerFacade.read(any(SchedulerJob.class))) //
+		final StartWorkflowTask readed = StartWorkflowTask.newInstance() //
+				.withId(ID) //
+				.withDescription(DESCRIPTION).withActiveStatus(ACTIVE_STATUS) //
+				.withCronExpression(CRON_EXPRESSION) //
+				.withProcessClass(PROCESS_CLASS) //
+				.build();
+		when(scheduledTaskFacade.read(task)) //
 				.thenReturn(readed);
 
 		// when
-		final StartWorkflowTask detailed = taskManagerLogic.read(existing, StartWorkflowTask.class);
+		final StartWorkflowTask detailed = taskManagerLogic.read(task, StartWorkflowTask.class);
 
 		// then
-		final ArgumentCaptor<SchedulerJob> schedulerJobCaptor = ArgumentCaptor.forClass(SchedulerJob.class);
-		verify(schedulerFacade).read(schedulerJobCaptor.capture());
-		verifyNoMoreInteractions(schedulerFacade);
+		verify(scheduledTaskFacade).read(task);
+		verifyNoMoreInteractions(scheduledTaskFacade);
 
-		final SchedulerJob captured = schedulerJobCaptor.getValue();
-		assertThat(captured.getId(), equalTo(42L));
-
-		assertThat(detailed.getId(), equalTo(42L));
-		assertThat(detailed.getDescription(), equalTo("the description"));
-		assertThat(detailed.isActive(), equalTo(true));
-		assertThat(detailed.getProcessClass(), equalTo("the process class"));
-		assertThat(detailed.getCronExpression(), equalTo("the cron expression"));
+		assertThat(detailed, instanceOf(StartWorkflowTask.class));
+		assertThat(detailed.getId(), equalTo(ID));
+		assertThat(detailed.getDescription(), equalTo(DESCRIPTION));
+		assertThat(detailed.isActive(), equalTo(ACTIVE_STATUS));
+		assertThat(detailed.getCronExpression(), equalTo(CRON_EXPRESSION));
+		assertThat(detailed.getProcessClass(), equalTo(PROCESS_CLASS));
 	}
 
 }

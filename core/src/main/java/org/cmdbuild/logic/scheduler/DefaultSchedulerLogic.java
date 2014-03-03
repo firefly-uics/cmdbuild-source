@@ -4,7 +4,10 @@ import java.util.List;
 
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.model.scheduler.EmailServiceSchedulerJob;
 import org.cmdbuild.model.scheduler.SchedulerJob;
+import org.cmdbuild.model.scheduler.SchedulerJobVisitor;
+import org.cmdbuild.model.scheduler.WorkflowSchedulerJob;
 import org.cmdbuild.scheduler.Job;
 import org.cmdbuild.scheduler.RecurringTrigger;
 import org.cmdbuild.scheduler.SchedulerService;
@@ -34,13 +37,25 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 	}
 
 	@Override
-	public Iterable<SchedulerJob> findJobsByDetail(final String detail) {
-		logger.info("finding all jobs with detail '{}'", detail);
+	public Iterable<SchedulerJob> findWorkflowJobsByProcess(final String classname) {
+		logger.info("finding all jobs with detail '{}'", classname);
 		final List<SchedulerJob> filtered = Lists.newArrayList();
 		for (final SchedulerJob element : store.list()) {
-			if (detail.equals(element.getDetail())) {
-				filtered.add(element);
-			}
+			element.accept(new SchedulerJobVisitor() {
+
+				@Override
+				public void visit(final EmailServiceSchedulerJob schedulerJob) {
+					throw new UnsupportedOperationException("TODO");
+				}
+
+				@Override
+				public void visit(final WorkflowSchedulerJob schedulerJob) {
+					if (classname.equals(schedulerJob.getProcessClass())) {
+						filtered.add(element);
+					}
+				}
+
+			});
 		}
 		return filtered;
 	}

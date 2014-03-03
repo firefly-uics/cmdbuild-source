@@ -15,7 +15,7 @@ public class StartWorkflowTask implements ScheduledTask {
 		private Boolean active;
 		private String cronExpression;
 		private String processClass;
-		private Map<String, String> legacyParameters;
+		private Map<String, String> parameters;
 
 		private Builder() {
 			// use factory method
@@ -29,7 +29,7 @@ public class StartWorkflowTask implements ScheduledTask {
 
 		private void validate() {
 			active = (active == null) ? false : active;
-			legacyParameters = (legacyParameters == null) ? Collections.<String, String> emptyMap() : legacyParameters;
+			parameters = (parameters == null) ? Collections.<String, String> emptyMap() : parameters;
 		}
 
 		public Builder withId(final Long id) {
@@ -57,8 +57,8 @@ public class StartWorkflowTask implements ScheduledTask {
 			return this;
 		}
 
-		public Builder withParameters(final Map<String, String> legacyParameters) {
-			this.legacyParameters = legacyParameters;
+		public Builder withParameters(final Map<String, String> parameters) {
+			this.parameters = parameters;
 			return this;
 		}
 
@@ -81,7 +81,7 @@ public class StartWorkflowTask implements ScheduledTask {
 		this.active = builder.active;
 		this.cronExpression = builder.cronExpression;
 		this.processClass = builder.processClass;
-		this.legacyParameters = Collections.unmodifiableMap(builder.legacyParameters);
+		this.legacyParameters = Collections.unmodifiableMap(builder.parameters);
 	}
 
 	@Override
