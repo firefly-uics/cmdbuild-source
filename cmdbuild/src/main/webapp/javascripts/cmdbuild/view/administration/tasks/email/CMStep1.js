@@ -110,13 +110,12 @@
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1', {
-		extend: 'Ext.form.Panel',
+		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
 		taskType: 'email',
 
 		border: false,
-		bodyCls: 'cmgraypanel',
 		height: '100%',
 
 		defaults: {
@@ -126,6 +125,9 @@
 
 		initComponent: function() {
 			var me = this;
+
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep1Delegate');
+			this.delegate.view = this;
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: CMDBuild.Translation.administration.tasks.type,
@@ -218,11 +220,15 @@
 							}
 						}
 					]
+				},
+				{
+					xtype: 'checkbox',
+					name: 'isActive',
+					fieldLabel: '@@ Run on save',
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				}
 			];
-
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep1Delegate');
-			this.delegate.view = this;
 
 			this.callParent(arguments);
 		}

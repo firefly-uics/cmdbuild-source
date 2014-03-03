@@ -5,7 +5,6 @@
 	Ext.define('CMDBuild.core.serviceProxy.CMProxyConfigurationEmailTemplates', {
 		statics: {
 			create: function(parameters) {
-				CMDBuild.LoadMask.get().show();
 				CMDBuild.Ajax.request({
 					method: 'POST',
 					url: CMDBuild.ServiceProxy.url.configuration.email.templates.post,
@@ -62,7 +61,6 @@
 			},
 
 			update: function(parameters) {
-				CMDBuild.LoadMask.get().show();
 				CMDBuild.Ajax.request({
 					method: 'POST',
 					url: CMDBuild.ServiceProxy.url.configuration.email.templates.put,

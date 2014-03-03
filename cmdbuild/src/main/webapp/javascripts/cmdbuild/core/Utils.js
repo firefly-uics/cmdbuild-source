@@ -113,12 +113,21 @@ CMDBuild.Utils = (function() {
 			return privileges;
 		},
 
-		isEmpty: function(o) {
-			if (o) {
-				for (var i in o) {
+		isEmpty: function(obj) {
+			if (obj == null)
+				return true;
+
+			if (obj.length > 0)
+				return false;
+
+			if (obj.length === 0)
+				return true;
+
+			for (var key in obj) {
+				if (hasOwnProperty.call(obj, key))
 					return false;
-				}
 			}
+
 			return true;
 		},
 
@@ -157,17 +166,17 @@ CMDBuild.Utils = (function() {
 					}
 				}
 			}
-			
+
 			if (fieldsWithoutGroup.length > 0) {
 				groups[CMDBuild.Translation.management.modcard.other_fields] = fieldsWithoutGroup;
 			}
-			 
+
 			return groups;
 		},
-		
+
 		/**
 		 * for each element call the passed fn,
-		 * with scope the element 
+		 * with scope the element
 		 **/
 		foreach: function(array, fn, params) {
 			if (array) {
@@ -179,12 +188,12 @@ CMDBuild.Utils = (function() {
 		},
 
 		/**
-		 * 
+		 *
 		 * @param {array} array an array in which search something
 		 * @param {function} fn a function that is called one time for each
 		 * element in the array. The function must return true if the
 		 * item is the searched
-		 * 
+		 *
 		 * @returns an object of the array if the passed function return true, or null
 		 */
 		arraySearchByFunction: function(array, fn) {
@@ -218,7 +227,7 @@ CMDBuild.Utils = (function() {
 
 			if (Ext.getClassName(entryTypeId) == "CMDBuild.cache.CMEntryTypeModel") {
 				et = entryTypeId;
-			} else {				
+			} else {
 				et = _CMCache.getEntryTypeById(entryTypeId);
 			}
 
@@ -266,14 +275,14 @@ CMDBuild.Utils = (function() {
 		getChildrenById: function(entryTypeId) {
 			var ett = _CMCache.getEntryTypes(),
 				out = [];
-	
+
 			for (var et in ett) {
 				et = ett[et];
 				if (et.get("parent") == entryTypeId) {
 					out.push(et);
 				}
 			}
-	
+
 			return out;
 		},
 

@@ -10,14 +10,13 @@
 		numberOfTabs: 0,
 		width: '100%',
 		height: '100%',
+		frame: false,
 		border: false,
 
 		defaults: {
 			bodyPadding: 10,
 			layout: 'anchor'
 		},
-
-		items: [],
 
 		initComponent: function() {
 			this.callParent(arguments);
