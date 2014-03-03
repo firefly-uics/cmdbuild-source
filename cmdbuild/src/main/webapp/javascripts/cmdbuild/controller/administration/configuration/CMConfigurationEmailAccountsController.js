@@ -122,6 +122,7 @@
 				return;
 			}
 
+			CMDBuild.LoadMask.get().show();
 			var formData = this.form.getData(true);
 
 			if (formData.id == null || formData.id == '') {
@@ -142,6 +143,7 @@
 		},
 
 		onSetDefaultButtonClick: function() {
+			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.serviceProxy.CMProxyConfigurationEmailAccounts.setDefault({
 				params: { name: this.selectedName },
 				scope: this,
@@ -159,6 +161,7 @@
 			var me = this,
 				store = this.grid.store;
 
+			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.serviceProxy.CMProxyConfigurationEmailAccounts.remove({
 				params: { name: this.selectedName },
 				scope: this,

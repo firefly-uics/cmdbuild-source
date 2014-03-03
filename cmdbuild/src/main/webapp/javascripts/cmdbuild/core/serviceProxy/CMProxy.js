@@ -150,8 +150,8 @@
 			workflow: {
 				delete: '',
 				get: '',
-				post: '',
-				put: '',
+				post: 'services/json/schema/taskmanager/startworkflow/create',
+				put: 'services/json/schema/taskmanager/startworkflow/update',
 
 				getStore: 'services/json/schema/taskmanager/startworkflow/readall'
 			}

@@ -120,6 +120,7 @@
 				return;
 			}
 
+			CMDBuild.LoadMask.get().show();
 			var formData = this.form.getData(true);
 
 			if (formData.id == null || formData.id == '') {
@@ -148,6 +149,7 @@
 			var me = this,
 				store = this.grid.store;
 
+			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.serviceProxy.CMProxyConfigurationEmailTemplates.remove({
 				params: { name: this.selectedName },
 				scope: this,

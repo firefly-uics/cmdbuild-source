@@ -59,7 +59,7 @@
 		onAddButtonClick: function(parameter) {
 			this.selectionModel.deselectAll();
 			this.selectedId = null;
-			this.loadForm(parameter.type);
+			this.parentDelegate.loadForm(parameter.type);
 			this.view.reset();
 			this.view.enableTabbedModify(true);
 			this.view.disableTypeField();
@@ -99,7 +99,7 @@
 		},
 
 		onRowSelected: function(param) {
-			this.loadForm(param.record.getData().type);
+			this.parentDelegate.loadForm(param.record.getData().type);
 			this.view.disableModify(true);
 
 			return this.view.wizard.changeTab(0);
@@ -132,7 +132,8 @@
 				return;
 			}
 
-			var formData = this.view.getData();
+			CMDBuild.LoadMask.get().show();
+			var formData = this.view.getData(true);
 
 			// Encode filters fields
 			formData.fromAddressFilter = Ext.encode(formData.fromAddressFilter.split(' OR '));
@@ -204,21 +205,6 @@
 
 		callback: function() {
 			CMDBuild.LoadMask.get().hide();
-		},
-
-		loadForm: function(type) {
-			if (this.parentDelegate.tasksDatas.indexOf(type) >= 0) {
-				this.view.wizard.removeAll();
-				var wizardPanel = Ext.create('CMDBuild.view.administration.tasks.' + type + '.CMTaskTabs');
-				var items = wizardPanel.getTabs();
-
-				for (var i = 0; i < items.length; i++) {
-					this.view.wizard.add(items[i]);
-				}
-
-				this.view.wizard.numberOfTabs = items.length;
-				this.view.wizard.setActiveTab(0);
-			}
 		}
 	});
 

@@ -14,11 +14,9 @@
 		autoScroll: false,
 		buttonAlign: 'center',
 		layout: 'fit',
-		split: true,
 		frame: false,
 		border: false,
 		cls: 'x-panel-body-default-framed cmbordertop',
-		bodyCls: 'cmgraypanel',
 
 		initComponent: function() {
 			var me = this;
@@ -98,13 +96,7 @@
 
 		resetIdField: function() {
 			this.wizard.items.get(0).idField.setValue();
-		},
-
-		submitForm:function(){
-		    var record = formPanel.getForm().getRecord();
-		    formPanel.getForm().updateRecord(record);
-		    record.save();
-		};
+		}
 	});
 
 })();
