@@ -2,6 +2,7 @@ package org.cmdbuild.bim.service.bimserver;
 
 import org.apache.commons.lang.StringUtils;
 import org.bimserver.interfaces.objects.SDataValue;
+import org.bimserver.interfaces.objects.SReferenceDataValue;
 import org.bimserver.interfaces.objects.SSimpleDataValue;
 import org.cmdbuild.bim.model.Attribute;
 
@@ -32,14 +33,16 @@ public abstract class BimserverAttribute implements Attribute {
 		String value = StringUtils.EMPTY;
 		if (datavalue instanceof SSimpleDataValue) {
 			value = ((SSimpleDataValue) datavalue).getStringValue();
-		}else{
+		} else if (datavalue instanceof SReferenceDataValue) {
+			value = SReferenceDataValue.class.cast(datavalue).getGuid();
+		} else {
 			throw new UnsupportedOperationException("Not supported");
 		}
 		return value;
 	}
-	
+
 	@Override
-	public void setValue(String value){
+	public void setValue(String value) {
 		throw new UnsupportedOperationException("Not supported");
 	}
 }

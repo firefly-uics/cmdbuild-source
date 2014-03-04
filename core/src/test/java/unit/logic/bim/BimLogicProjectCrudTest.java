@@ -42,7 +42,7 @@ public class BimLogicProjectCrudTest {
 	public void setUp() throws Exception {
 		serviceFacade = mock(BimFacade.class);
 		dataPersistence = mock(BimPersistence.class);
-		bimLogic = new DefaultBimLogic(serviceFacade, dataPersistence, dataModelManager, null, null, null, null);
+		bimLogic = new DefaultBimLogic(serviceFacade, dataPersistence, dataModelManager, null, null, null);
 	}
 
 	@Test

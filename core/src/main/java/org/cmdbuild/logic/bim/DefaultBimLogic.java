@@ -45,6 +45,7 @@ import org.cmdbuild.services.bim.BimPersistence.CmProject;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.Export;
+import org.cmdbuild.services.bim.connector.export.NewExport;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
@@ -68,7 +69,6 @@ public class DefaultBimLogic implements BimLogic {
 			final BimPersistence bimDataPersistence, //
 			final BimDataModelManager bimDataModelManager, //
 			final Mapper mapper, //
-			final Export exporter, //
 			final BimDataView bimDataView, //
 			final DataAccessLogic dataAccessLogic) {
 
@@ -76,7 +76,7 @@ public class DefaultBimLogic implements BimLogic {
 		this.bimServiceFacade = bimServiceFacade;
 		this.bimDataModelManager = bimDataModelManager;
 		this.mapper = mapper;
-		this.exporter = exporter;
+		this.exporter = new NewExport(bimDataView, bimServiceFacade, bimDataPersistence);
 		this.bimDataView = bimDataView;
 		this.dataAccessLogic = dataAccessLogic;
 	}
@@ -529,7 +529,6 @@ public class DefaultBimLogic implements BimLogic {
 		bimDataPersistence.saveProject(projectSynchronized);
 	}
 
-	// Export data from CMDB to a BimProject
 	@Override
 	public void exportIfc(final String sourceProjectId) {
 
@@ -570,7 +569,7 @@ public class DefaultBimLogic implements BimLogic {
 			final JsonNode properties = data.findValue("properties");
 
 			final Iterator<String> propertiesIterator = properties.getFieldNames();
-			
+
 			while (propertiesIterator.hasNext()) {
 				final String oid = propertiesIterator.next();
 				final ObjectNode property = (ObjectNode) properties.findValue(oid);

@@ -78,8 +78,10 @@ public interface BimService {
 	String createObject(String transactionId, String className);
 
 	void removeObject(String transactionId, String revisionId, String globalId);
+	void removeObject(String transactionId, String oid);
 
 	void removeReference(String transactionId, String objectId, String attributeName, int index);
+	void removeAllReferences(String transactionId, String objectId, String attributeName);
 
 	void unsetReference(String transactionId, String objectId, String referenceName);
 
@@ -98,8 +100,5 @@ public interface BimService {
 	Map<String, Long> getGlobalIdOidMap(String revisionId);
 
 	String getGlobalidFromOid(String revisionId, Long oid);
-
-
-
 
 }

@@ -52,11 +52,11 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 					final BimServerClientFactory factory = new SoapBimServerClientFactory(configuration.getUrl());
 					client = factory.create(new UsernamePasswordAuthenticationInfo(configuration.getUsername(),
 							configuration.getPassword()));
-					//TODO log
+					System.out.println("Bimserver connection established");
 				}
 			} catch (final Throwable t) {
 				// TODO log
-				System.out.println("Connection failed");
+				System.out.println("Bimserver connection failed");
 			}
 		}
 	}
@@ -507,7 +507,16 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 		}
 	}
 	
-	
+	@Override
+	public void removeObject(String transactionId, String objectOid) {
+		try{
+			final Long tid = Long.parseLong(transactionId);
+			final Long oid = Long.parseLong(objectOid);
+			client.getBimsie1LowLevelInterface().removeObject(tid, oid);
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+	}
 	
 	@Override
 	public void abortTransaction(String transactionId) {
@@ -561,6 +570,29 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			final Long tid = new Long(transactionId);
 			final Long oid = new Long(objectId);
 			client.getBimsie1LowLevelInterface().setStringAttribute(tid, oid, attributeName, value);
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+	}
+
+	@Override
+	public void removeReference(String transactionId, String objectId, String attributeName, int index) {
+		try {
+			final Long tid = new Long(transactionId);
+			final Long oid = new Long(objectId);
+			client.getBimsie1LowLevelInterface().removeReference(tid, oid, attributeName, index);
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+		
+	}
+
+	@Override
+	public void removeAllReferences(String transactionId, String objectId, String attributeName) {
+		try {
+			final Long tid = new Long(transactionId);
+			final Long oid = new Long(objectId);
+			client.getBimsie1LowLevelInterface().removeAllReferences(tid, oid, attributeName);
 		} catch (final Throwable e) {
 			throw new BimError(e);
 		}

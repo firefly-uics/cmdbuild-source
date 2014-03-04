@@ -39,8 +39,6 @@ import org.cmdbuild.services.bim.connector.CardDiffer;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView;
 import org.cmdbuild.services.bim.connector.DefaultBimMapper;
 import org.cmdbuild.services.bim.connector.Mapper;
-import org.cmdbuild.services.bim.connector.export.DefaultExport;
-import org.cmdbuild.services.bim.connector.export.Export;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -83,7 +81,7 @@ public class Bim {
 
 	@Bean
 	public BimLogic bimLogic() {
-		return new DefaultBimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(), exporter(),
+		return new DefaultBimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(),
 				bimDataView(), dataAccessLogic());
 	}
 
@@ -96,20 +94,15 @@ public class Bim {
 	protected BimFacade bimServiceFacade() {
 		return new DefaultBimFacade(bimService());
 	}
-	
+
 	@Bean
 	protected CardDiffer bimCardDiffer() {
 		return BimCardDiffer.buildBimCardDiffer(systemDataView, lookupLogic, bimDataView());
 	}
-	
-	@Bean
-	protected Mapper mapper() {
-		return new DefaultBimMapper(systemDataView, bimCardDiffer(), bimDataView());
-	}
 
 	@Bean
-	protected Export exporter() {
-		return new DefaultExport(bimDataView(), bimServiceFacade(), bimDataPersistence());
+	protected Mapper mapper() {
+		return new DefaultBimMapper(bimCardDiffer(), bimDataView());
 	}
 
 	@Bean
@@ -130,14 +123,14 @@ public class Bim {
 	protected BimPersistence bimDataPersistence() {
 		return new DefaultBimPersistence(storeManager(), relationPersistence());
 	}
-	
-	@Bean	
-	protected RelationPersistence relationPersistence(){
+
+	@Bean
+	protected RelationPersistence relationPersistence() {
 		return new DefaultRelationPersistence(systemDataView);
 	}
-	
-	@Bean	
-	protected BimStoreManager storeManager(){
+
+	@Bean
+	protected BimStoreManager storeManager() {
 		return new DefaultBimStoreManager(projectStore(), layerStore());
 	}
 

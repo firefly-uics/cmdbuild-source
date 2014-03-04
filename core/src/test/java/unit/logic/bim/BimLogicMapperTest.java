@@ -49,7 +49,6 @@ public class BimLogicMapperTest {
 
 	private static String XML_MAPPING = "";
 
-
 	@Before
 	public void setUp() throws Exception {
 		serviceFacade = mock(BimFacade.class);
@@ -59,7 +58,7 @@ public class BimLogicMapperTest {
 		mapper = mock(Mapper.class);
 		exporter = mock(Export.class);
 		dataAccessLogic = mock(DataAccessLogic.class);
-		bimLogic = new DefaultBimLogic(serviceFacade, dataPersistence, dataModelManager, mapper, exporter, bimDataView,
+		bimLogic = new DefaultBimLogic(serviceFacade, dataPersistence, dataModelManager, mapper, bimDataView,
 				dataAccessLogic);
 	}
 

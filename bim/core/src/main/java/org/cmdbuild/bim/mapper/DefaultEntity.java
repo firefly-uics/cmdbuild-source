@@ -16,11 +16,16 @@ public class DefaultEntity implements Entity {
 	private final String typeName;
 	private final String key;
 
-	public DefaultEntity(String typeName, String key) {
+	private DefaultEntity(String typeName, String key) {
 		this.key = key;
 		this.typeName = typeName;
 		this.attributes = Lists.newArrayList();
 		this.attributesMap = Maps.newHashMap();
+	}
+	
+	
+	public static DefaultEntity withTypeAndKey(final String typeName, final String key){
+		return new DefaultEntity(typeName,key);
 	}
 
 	@Override

@@ -10,18 +10,18 @@ import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
 
 public interface BimDataView {
 
-	Entity getCardDataForExport(CMCard card, String className, String containerId,
-			String containerClassName);
-	
+	Entity getCardDataForExport(CMCard card, String className, String containerId, String containerGlobalId,
+			String containerClassName, String shapeOid, String ifcType);
+
 	List<CMCard> getCardsWithAttributeAndValue(CMIdentifier classIdentifier, Object attributeValue, String attributeName);
 
 	BimCard getBimDataFromGlobalid(String globalId);
-	
+
 	@Deprecated
 	long fetchBuildingIdFromCardId(Long cardId);
 
 	CMCard getCmCardFromGlobalId(String globalId, String className);
-	
+
 	Long getIdFromGlobalId(String globalId, String className);
 
 	Map<String, BimCard> getAllGlobalIdMap();

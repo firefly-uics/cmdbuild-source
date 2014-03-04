@@ -86,7 +86,7 @@ public class MergingShapes {
 	public void findShapeWithName() throws Exception {
 		String shapeName = "_pc"; 
 		String revisionId = "262147";
-		List<Entity> shapeList = service.getEntitiesByType(revisionId, "IfcProductDefinitionShape");
+		Iterable<Entity> shapeList = service.getEntitiesByType(revisionId, "IfcProductDefinitionShape");
 		for(Entity shape : shapeList){
 			Attribute shapeNameAttribute = shape.getAttributeByName("Name");
 			if(shapeNameAttribute.getValue() != null && shapeNameAttribute.getValue().equals(shapeName)){
