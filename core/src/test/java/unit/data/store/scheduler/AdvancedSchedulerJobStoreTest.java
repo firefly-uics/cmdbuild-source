@@ -142,7 +142,7 @@ public class AdvancedSchedulerJobStoreTest {
 
 		final Groupable captured = groupableCaptor.getValue();
 		assertThat(captured.getGroupAttributeName(), equalTo(SCHEDULER_ID));
-		assertThat(captured.getGroupAttributeValue(), equalTo((Object) existingOne.getIdentifier()));
+		assertThat(captured.getGroupAttributeValue(), equalTo((Object) existingOne.getId()));
 
 		assertThat(readed, instanceOf(WorkflowSchedulerJob.class));
 		final WorkflowSchedulerJob workflowSchedulerJob = WorkflowSchedulerJob.class.cast(readed);
@@ -196,7 +196,7 @@ public class AdvancedSchedulerJobStoreTest {
 
 		final Groupable capturedGroupable = groupableCaptor.getValue();
 		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(SCHEDULER_ID));
-		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) updatedOne.getIdentifier()));
+		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) updatedOne.getId()));
 
 		final SchedulerJobParameter processClass = updatedParameterCaptor.getValue();
 		assertThat(processClass, not(nullValue(SchedulerJobParameter.class)));
@@ -238,7 +238,7 @@ public class AdvancedSchedulerJobStoreTest {
 
 		final Groupable capturedGroupable = groupableCaptor.getValue();
 		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(SCHEDULER_ID));
-		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getIdentifier()));
+		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getId()));
 
 		final SchedulerJobParameter capturedParameter = parameterCaptor.getValue();
 		assertThat(capturedParameter.getId(), equalTo(123L));
@@ -284,7 +284,7 @@ public class AdvancedSchedulerJobStoreTest {
 
 		final Groupable capturedGroupable = groupableCaptor.getValue();
 		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(SCHEDULER_ID));
-		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getIdentifier()));
+		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getId()));
 
 		assertThat(element, instanceOf(WorkflowSchedulerJob.class));
 		final WorkflowSchedulerJob workflowSchedulerJob = WorkflowSchedulerJob.class.cast(element);
@@ -324,7 +324,7 @@ public class AdvancedSchedulerJobStoreTest {
 
 		final Groupable capturedGroupable = groupableCaptor.getValue();
 		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(SCHEDULER_ID));
-		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getIdentifier()));
+		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getId()));
 	}
 
 	@Test
@@ -457,7 +457,7 @@ public class AdvancedSchedulerJobStoreTest {
 
 		final Groupable captured = groupableCaptor.getValue();
 		assertThat(captured.getGroupAttributeName(), equalTo(SCHEDULER_ID));
-		assertThat(captured.getGroupAttributeValue(), equalTo((Object) existingOne.getIdentifier()));
+		assertThat(captured.getGroupAttributeValue(), equalTo((Object) existingOne.getId()));
 
 		assertThat(readed, instanceOf(EmailServiceSchedulerJob.class));
 		final EmailServiceSchedulerJob emailServiceSchedulerJob = EmailServiceSchedulerJob.class.cast(readed);
@@ -573,7 +573,7 @@ public class AdvancedSchedulerJobStoreTest {
 
 		final Groupable capturedGroupable = groupableCaptor.getValue();
 		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(SCHEDULER_ID));
-		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) updatedOne.getIdentifier()));
+		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) updatedOne.getId()));
 
 		final Map<String, SchedulerJobParameter> parametersByKey = uniqueIndex(updatedParameterCaptor.getAllValues(),
 				BY_KEY);
@@ -620,7 +620,7 @@ public class AdvancedSchedulerJobStoreTest {
 
 		final Groupable capturedGroupable = groupableCaptor.getValue();
 		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(SCHEDULER_ID));
-		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getIdentifier()));
+		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getId()));
 
 		final SchedulerJobParameter capturedParameter = parameterCaptor.getValue();
 		assertThat(capturedParameter.getId(), equalTo(123L));
@@ -660,7 +660,7 @@ public class AdvancedSchedulerJobStoreTest {
 
 		final Groupable capturedGroupable = groupableCaptor.getValue();
 		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(SCHEDULER_ID));
-		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getIdentifier()));
+		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getId()));
 
 		assertThat(element, instanceOf(EmailServiceSchedulerJob.class));
 		final EmailServiceSchedulerJob emailServiceSchedulerJob = EmailServiceSchedulerJob.class.cast(element);

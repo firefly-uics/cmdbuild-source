@@ -59,7 +59,7 @@ public class Startup {
 	protected Startable startScheduler() {
 		return new Startable() {
 
-			private final SchedulerLogic schedulerLogic = taskManager.schedulerLogic();
+			private final SchedulerLogic schedulerLogic = taskManager.databaseConfigurationAwareSchedulerLogic();
 
 			@Override
 			public void start() {

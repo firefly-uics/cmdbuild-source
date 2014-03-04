@@ -4,6 +4,7 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.difference;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.SystemUtils.LINE_SEPARATOR;
 import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterGroupable.of;
 
@@ -217,9 +218,12 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 				schedulerJob.setProcessClass(parametersByName.get(StartWorkflow.CLASSNAME).getValue());
 			}
 			if (parametersByName.containsKey(StartWorkflow.ATTRIBUTES)) {
-				schedulerJob.setParameters(Splitter.on(LINE_SEPARATOR) //
-						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-						.split(parametersByName.get(StartWorkflow.ATTRIBUTES).getValue()));
+				final String value = parametersByName.get(StartWorkflow.ATTRIBUTES).getValue();
+				if (isNotBlank(value)) {
+					schedulerJob.setParameters(Splitter.on(LINE_SEPARATOR) //
+							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+							.split(value));
+				}
 			}
 		}
 

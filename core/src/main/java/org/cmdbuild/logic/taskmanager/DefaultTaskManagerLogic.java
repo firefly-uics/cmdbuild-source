@@ -11,7 +11,6 @@ import java.util.Map;
 import org.apache.commons.lang.Validate;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -198,7 +197,6 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	}
 
 	@Override
-	@Transactional
 	public Long create(final Task task) {
 		logger.info(MARKER, "creating a new task '{}'", task);
 		return create.execute(task);
@@ -223,7 +221,6 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	}
 
 	@Override
-	@Transactional
 	public void update(final Task task) {
 		logger.info(MARKER, "updating an existing task '{}'", task);
 		Validate.isTrue(task.getId() != null, "invalid id");
@@ -231,7 +228,6 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	}
 
 	@Override
-	@Transactional
 	public void delete(final Task task) {
 		logger.info(MARKER, "deleting an existing task '{}'", task);
 		Validate.isTrue(task.getId() != null, "invalid id");

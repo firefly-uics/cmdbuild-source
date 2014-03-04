@@ -22,6 +22,8 @@ import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.ScheduledTaskFacade;
 import org.cmdbuild.logic.taskmanager.ScheduledTaskFacadeConverterFactory;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
+import org.cmdbuild.logic.taskmanager.TransactionalScheduledTaskFacade;
+import org.cmdbuild.logic.taskmanager.TransactionalTaskManagerLogic;
 import org.cmdbuild.scheduler.SchedulerExeptionFactory;
 import org.cmdbuild.scheduler.SchedulerService;
 import org.cmdbuild.scheduler.quartz.QuartzSchedulerService;
@@ -59,14 +61,24 @@ public class TaskManager {
 	private Workflow workflow;
 
 	@Bean
-	public TaskManagerLogic taskManagerLogic() {
-		return new DefaultTaskManagerLogic(schedulerFacade());
+	public TaskManagerLogic transactionalTaskManagerLogic() {
+		return new TransactionalTaskManagerLogic(defaultTaskManagerLogic());
 	}
 
 	@Bean
-	protected ScheduledTaskFacade schedulerFacade() {
+	protected TaskManagerLogic defaultTaskManagerLogic() {
+		return new DefaultTaskManagerLogic(transactionalScheduledTaskFacade());
+	}
+
+	@Bean
+	protected ScheduledTaskFacade transactionalScheduledTaskFacade() {
+		return new TransactionalScheduledTaskFacade(defaultSchedulerTaskFacade());
+	}
+
+	@Bean
+	protected ScheduledTaskFacade defaultSchedulerTaskFacade() {
 		return new DefaultScheduledTaskFacade(scheduledTaskConverterFactory(), advancedSchedulerJobStore(),
-				schedulerService(), jobFactory());
+				quartzSchedulerService(), defaultJobFactory());
 	}
 
 	@Bean
@@ -80,12 +92,12 @@ public class TaskManager {
 	}
 
 	@Bean
-	protected SchedulerService schedulerService() {
+	protected SchedulerService quartzSchedulerService() {
 		return new QuartzSchedulerService(schedulerExeptionFactory());
 	}
 
 	@Bean
-	public SchedulerLogic schedulerLogic() {
+	public SchedulerLogic databaseConfigurationAwareSchedulerLogic() {
 		return new DatabaseConfigurationAwareSchedulerLogic( //
 				defaultSchedulerLogic(), //
 				databaseConfiguration //
@@ -95,17 +107,17 @@ public class TaskManager {
 	private SchedulerLogic defaultSchedulerLogic() {
 		return new DefaultSchedulerLogic( //
 				advancedSchedulerJobStore(), //
-				schedulerService(), //
-				jobFactory());
+				quartzSchedulerService(), //
+				defaultJobFactory());
 	}
 
 	@Bean
 	protected Store<SchedulerJob> advancedSchedulerJobStore() {
-		return new AdvancedSchedulerJobStore(schedulerJobStore(), schedulerJobParameterStore());
+		return new AdvancedSchedulerJobStore(dataViewSchedulerJobStore(), dataViewSchedulerJobParameterStore());
 	}
 
 	@Bean
-	protected Store<SchedulerJob> schedulerJobStore() {
+	protected Store<SchedulerJob> dataViewSchedulerJobStore() {
 		return DataViewStore.newInstance(systemDataView, schedulerJobConverter());
 	}
 
@@ -115,7 +127,7 @@ public class TaskManager {
 	}
 
 	@Bean
-	protected Store<SchedulerJobParameter> schedulerJobParameterStore() {
+	protected Store<SchedulerJobParameter> dataViewSchedulerJobParameterStore() {
 		return DataViewStore.newInstance(systemDataView, schedulerJobParameterStoreConverter());
 	}
 
@@ -125,7 +137,7 @@ public class TaskManager {
 	}
 
 	@Bean
-	protected JobFactory jobFactory() {
+	protected JobFactory defaultJobFactory() {
 		return new DefaultJobFactory( //
 				workflow.systemWorkflowLogicBuilder().build(), //
 				email.emailAccountStore(), //

@@ -17,7 +17,6 @@ import org.cmdbuild.scheduler.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 
@@ -40,7 +39,6 @@ public class DefaultScheduledTaskFacade implements ScheduledTaskFacade {
 	}
 
 	@Override
-	@Transactional
 	public Long create(final ScheduledTask task) {
 		logger.info(MARKER, "creating a new scheduled task '{}'", task);
 
@@ -89,7 +87,6 @@ public class DefaultScheduledTaskFacade implements ScheduledTaskFacade {
 	}
 
 	@Override
-	@Transactional
 	public void update(final ScheduledTask task) {
 		logger.info(MARKER, "updating an existing scheduled task '{}'", task);
 
@@ -133,7 +130,6 @@ public class DefaultScheduledTaskFacade implements ScheduledTaskFacade {
 	}
 
 	@Override
-	@Transactional
 	public void delete(final ScheduledTask task) {
 		logger.info(MARKER, "updating an existing scheduled task '{}'", task);
 
