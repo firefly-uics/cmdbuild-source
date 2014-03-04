@@ -5,6 +5,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TASK_READ_EMAIL;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TASK_START_WORKFLOW;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
 
@@ -13,6 +14,7 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.TaskVistor;
@@ -27,6 +29,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 	private static enum TaskType {
 
+		READ_EMAIL(TASK_READ_EMAIL), //
 		START_WORKFLOW(TASK_START_WORKFLOW), //
 		;
 
@@ -59,6 +62,11 @@ public class TaskManager extends JSONBaseWithSpringContext {
 			task.accept(this);
 			Validate.notNull(type, "type not found");
 			return type;
+		}
+
+		@Override
+		public void visit(final ReadEmailTask task) {
+			type = TaskType.READ_EMAIL;
 		}
 
 		@Override

@@ -4,8 +4,6 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
-import static org.cmdbuild.data.store.scheduler.AdvancedSchedulerJobStore.WORKFLOW_PARAM_CLASSNAME;
-import static org.cmdbuild.data.store.scheduler.AdvancedSchedulerJobStore.WORKFLOW_PARAM_ATTRIBUTES;
 import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterConstants.SCHEDULER_ID;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -14,6 +12,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -25,6 +24,9 @@ import java.util.Map;
 import org.cmdbuild.data.store.Groupable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.scheduler.AdvancedSchedulerJobStore;
+import org.cmdbuild.data.store.scheduler.AdvancedSchedulerJobStore.ReadEmail;
+import org.cmdbuild.data.store.scheduler.AdvancedSchedulerJobStore.StartWorkflow;
+import org.cmdbuild.data.store.scheduler.EmailServiceSchedulerJob;
 import org.cmdbuild.data.store.scheduler.SchedulerJob;
 import org.cmdbuild.data.store.scheduler.SchedulerJobParameter;
 import org.cmdbuild.data.store.scheduler.WorkflowSchedulerJob;
@@ -95,12 +97,12 @@ public class AdvancedSchedulerJobStoreTest {
 
 		final Map<String, SchedulerJobParameter> parametersByKey = uniqueIndex(parameterCaptor.getAllValues(), BY_KEY);
 
-		final SchedulerJobParameter processClass = parametersByKey.get(WORKFLOW_PARAM_CLASSNAME);
+		final SchedulerJobParameter processClass = parametersByKey.get(StartWorkflow.CLASSNAME);
 		assertThat(processClass, not(nullValue(SchedulerJobParameter.class)));
 		assertThat(processClass.getOwner(), equalTo(newOne.getId()));
 		assertThat(processClass.getValue(), equalTo("the process class"));
 
-		final SchedulerJobParameter processParameters = parametersByKey.get(WORKFLOW_PARAM_ATTRIBUTES);
+		final SchedulerJobParameter processParameters = parametersByKey.get(StartWorkflow.ATTRIBUTES);
 		assertThat(processParameters, not(nullValue(SchedulerJobParameter.class)));
 		assertThat(processClass.getOwner(), equalTo(newOne.getId()));
 		assertThat(processParameters.getValue(), equalTo("foo=bar\nbar=baz\nbaz=foo\nlol"));
@@ -112,20 +114,18 @@ public class AdvancedSchedulerJobStoreTest {
 		final SchedulerJob existingOne = new WorkflowSchedulerJob(42L);
 		when(schedulerJobStore.read(existingOne)) //
 				.thenReturn(existingOne);
-		when(schedulerJobStore.list()) //
-				.thenReturn(asList(existingOne));
 		when(schedulerJobParameterStore.list(any(Groupable.class))) //
 				.thenReturn(asList( //
 						SchedulerJobParameter.newInstance() //
 								.withId(123L) //
 								.withOwner(42L) //
-								.withKey(WORKFLOW_PARAM_CLASSNAME) //
+								.withKey(StartWorkflow.CLASSNAME) //
 								.withValue("the process class") //
 								.build(), //
 						SchedulerJobParameter.newInstance() //
 								.withId(123L) //
 								.withOwner(42L) //
-								.withKey(WORKFLOW_PARAM_ATTRIBUTES) //
+								.withKey(StartWorkflow.ATTRIBUTES) //
 								.withValue("foo=bar\nbar=baz") //
 								.build() //
 						));
@@ -143,7 +143,7 @@ public class AdvancedSchedulerJobStoreTest {
 		final Groupable captured = groupableCaptor.getValue();
 		assertThat(captured.getGroupAttributeName(), equalTo(SCHEDULER_ID));
 		assertThat(captured.getGroupAttributeValue(), equalTo((Object) existingOne.getIdentifier()));
-		
+
 		assertThat(readed, instanceOf(WorkflowSchedulerJob.class));
 		final WorkflowSchedulerJob workflowSchedulerJob = WorkflowSchedulerJob.class.cast(readed);
 		assertThat(workflowSchedulerJob.getId(), equalTo(42L));
@@ -174,7 +174,7 @@ public class AdvancedSchedulerJobStoreTest {
 		when(schedulerJobParameterStore.list(any(Groupable.class))) //
 				.thenReturn(asList(SchedulerJobParameter.newInstance() //
 						.withOwner(123L) //
-						.withKey(WORKFLOW_PARAM_CLASSNAME) //
+						.withKey(StartWorkflow.CLASSNAME) //
 						.withValue("the old process class") //
 						.build()));
 
@@ -258,13 +258,13 @@ public class AdvancedSchedulerJobStoreTest {
 						SchedulerJobParameter.newInstance() //
 								.withId(123L) //
 								.withOwner(42L) //
-								.withKey(WORKFLOW_PARAM_CLASSNAME) //
+								.withKey(StartWorkflow.CLASSNAME) //
 								.withValue("the process class") //
 								.build(), //
 						SchedulerJobParameter.newInstance() //
 								.withId(123L) //
 								.withOwner(42L) //
-								.withKey(WORKFLOW_PARAM_ATTRIBUTES) //
+								.withKey(StartWorkflow.ATTRIBUTES) //
 								.withValue("foo=bar\nbar=baz") //
 								.build() //
 						));
@@ -325,6 +325,359 @@ public class AdvancedSchedulerJobStoreTest {
 		final Groupable capturedGroupable = groupableCaptor.getValue();
 		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(SCHEDULER_ID));
 		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getIdentifier()));
+	}
+
+	@Test
+	public void emailServiceSchedulerCreated() throws Exception {
+		// given
+		final EmailServiceSchedulerJob newOne = new EmailServiceSchedulerJob(42L) {
+			{
+				setDescription("the description");
+				setRunning(true);
+				setCronExpression("the cron expression");
+				setEmailAccount("email account");
+				setNotificationActive(true);
+				setRegexFromFilter("regex from filter");
+				setRegexSubjectFilter("regex subject filter");
+				setAttachmentsActive(true);
+				setWorkflowActive(true);
+				setWorkflowClassName("the workflow class name");
+				setWorkflowFieldsMapping("the workflow fields mapping");
+				setWorkflowAdvanceable(true);
+				setAttachmentsStorableToWorkflow(true);
+			}
+		};
+		when(schedulerJobStore.read(any(EmailServiceSchedulerJob.class))) //
+				.thenReturn(newOne);
+
+		// when
+		store.create(newOne);
+
+		// then
+		final ArgumentCaptor<SchedulerJobParameter> parameterCaptor = ArgumentCaptor
+				.forClass(SchedulerJobParameter.class);
+		final InOrder inOrder = inOrder(schedulerJobStore, schedulerJobParameterStore);
+		inOrder.verify(schedulerJobStore).create(newOne);
+		inOrder.verify(schedulerJobParameterStore, times(10)).create(parameterCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+
+		final Map<String, SchedulerJobParameter> parametersByKey = uniqueIndex(parameterCaptor.getAllValues(), BY_KEY);
+
+		assertParameter(parametersByKey, newOne, ReadEmail.ACCOUNT_NAME, "email account");
+		assertParameter(parametersByKey, newOne, ReadEmail.RULE_NOTIFICATION_ACTIVE, "true");
+		assertParameter(parametersByKey, newOne, ReadEmail.FILTER_FROM_REGEX, "regex from filter");
+		assertParameter(parametersByKey, newOne, ReadEmail.FILTER_SUBJECT_REGEX, "regex subject filter");
+		assertParameter(parametersByKey, newOne, ReadEmail.RULE_ATTACHMENTS_ACTIVE, "true");
+		assertParameter(parametersByKey, newOne, ReadEmail.RULE_WORKFLOW_ACTIVE, "true");
+		assertParameter(parametersByKey, newOne, ReadEmail.RULE_WORKFLOW_CLASS_NAME, "the workflow class name");
+		assertParameter(parametersByKey, newOne, ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING, "the workflow fields mapping");
+		assertParameter(parametersByKey, newOne, ReadEmail.RULE_WORKFLOW_ADVANCE, "true");
+		assertParameter(parametersByKey, newOne, ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE, "true");
+	}
+
+	@Test
+	public void emailServiceSchedulerJobReaded() throws Exception {
+		// given
+		final SchedulerJob existingOne = new EmailServiceSchedulerJob(42L);
+		when(schedulerJobStore.read(existingOne)) //
+				.thenReturn(existingOne);
+		when(schedulerJobParameterStore.list(any(Groupable.class))) //
+				.thenReturn(asList( //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.ACCOUNT_NAME) //
+								.withValue("the account name") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_NOTIFICATION_ACTIVE) //
+								.withValue("true") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.FILTER_FROM_REGEX) //
+								.withValue("regex from filter") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.FILTER_SUBJECT_REGEX) //
+								.withValue("regex subject filter") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_ATTACHMENTS_ACTIVE) //
+								.withValue("true") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_WORKFLOW_ACTIVE) //
+								.withValue("true") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_WORKFLOW_CLASS_NAME) //
+								.withValue("workflow class name") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING) //
+								.withValue("workflow fields mapping") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_WORKFLOW_ADVANCE) //
+								.withValue("true") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE) //
+								.withValue("true") //
+								.build() //
+						));
+
+		// when
+		final SchedulerJob readed = store.read(existingOne);
+
+		// then
+		final ArgumentCaptor<Groupable> groupableCaptor = ArgumentCaptor.forClass(Groupable.class);
+		final InOrder inOrder = inOrder(schedulerJobStore, schedulerJobParameterStore);
+		inOrder.verify(schedulerJobStore).read(existingOne);
+		inOrder.verify(schedulerJobParameterStore).list(groupableCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+
+		final Groupable captured = groupableCaptor.getValue();
+		assertThat(captured.getGroupAttributeName(), equalTo(SCHEDULER_ID));
+		assertThat(captured.getGroupAttributeValue(), equalTo((Object) existingOne.getIdentifier()));
+
+		assertThat(readed, instanceOf(EmailServiceSchedulerJob.class));
+		final EmailServiceSchedulerJob emailServiceSchedulerJob = EmailServiceSchedulerJob.class.cast(readed);
+		assertThat(emailServiceSchedulerJob.getId(), equalTo(42L));
+		assertThat(emailServiceSchedulerJob.getEmailAccount(), equalTo("the account name"));
+		assertThat(emailServiceSchedulerJob.isNotificationActive(), equalTo(true));
+		assertThat(emailServiceSchedulerJob.getRegexFromFilter(), equalTo("regex from filter"));
+		assertThat(emailServiceSchedulerJob.getRegexSubjectFilter(), equalTo("regex subject filter"));
+		assertThat(emailServiceSchedulerJob.isAttachmentsActive(), equalTo(true));
+		assertThat(emailServiceSchedulerJob.isWorkflowActive(), equalTo(true));
+		assertThat(emailServiceSchedulerJob.getWorkflowClassName(), equalTo("workflow class name"));
+		assertThat(emailServiceSchedulerJob.getWorkflowFieldsMapping(), equalTo("workflow fields mapping"));
+		assertThat(emailServiceSchedulerJob.isWorkflowAdvanceable(), equalTo(true));
+		assertThat(emailServiceSchedulerJob.isAttachmentsStorableToWorkflow(), equalTo(true));
+	}
+
+	@Test
+	public void emailServiceSchedulerJobUpdated() throws Exception {
+		// given
+		final EmailServiceSchedulerJob updatedOne = new EmailServiceSchedulerJob(42L) {
+			{
+				setDescription("new description");
+				setRunning(true);
+				setCronExpression("new cron expression");
+				setEmailAccount("new email account");
+				setNotificationActive(false);
+				setRegexFromFilter("new regex from filter");
+				setRegexSubjectFilter("new regex subject filter");
+				setAttachmentsActive(false);
+				setWorkflowActive(false);
+				setWorkflowClassName("new workflow class name");
+				setWorkflowFieldsMapping("new workflow fields mapping");
+				setWorkflowAdvanceable(false);
+				setAttachmentsStorableToWorkflow(false);
+			}
+		};
+		when(schedulerJobParameterStore.list(any(Groupable.class))) //
+				.thenReturn(asList( //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.ACCOUNT_NAME) //
+								.withValue("account name") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_NOTIFICATION_ACTIVE) //
+								.withValue("true") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.FILTER_FROM_REGEX) //
+								.withValue("regex from filter") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.FILTER_SUBJECT_REGEX) //
+								.withValue("regex subject filter") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_ATTACHMENTS_ACTIVE) //
+								.withValue("true") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_WORKFLOW_ACTIVE) //
+								.withValue("true") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_WORKFLOW_CLASS_NAME) //
+								.withValue("workflow class name") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING) //
+								.withValue("workflow fields mapping") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_WORKFLOW_ADVANCE) //
+								.withValue("true") //
+								.build(), //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE) //
+								.withValue("true") //
+								.build() //
+						));
+
+		// when
+		store.update(updatedOne);
+
+		// then
+		final ArgumentCaptor<Groupable> groupableCaptor = ArgumentCaptor.forClass(Groupable.class);
+		final ArgumentCaptor<SchedulerJobParameter> updatedParameterCaptor = ArgumentCaptor
+				.forClass(SchedulerJobParameter.class);
+		final InOrder inOrder = inOrder(schedulerJobStore, schedulerJobParameterStore);
+		inOrder.verify(schedulerJobStore).update(updatedOne);
+		inOrder.verify(schedulerJobParameterStore).list(groupableCaptor.capture());
+		inOrder.verify(schedulerJobParameterStore, atLeastOnce()).update(updatedParameterCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+
+		final Groupable capturedGroupable = groupableCaptor.getValue();
+		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(SCHEDULER_ID));
+		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) updatedOne.getIdentifier()));
+
+		final Map<String, SchedulerJobParameter> parametersByKey = uniqueIndex(updatedParameterCaptor.getAllValues(),
+				BY_KEY);
+
+		assertParameter(parametersByKey, updatedOne, ReadEmail.ACCOUNT_NAME, "new email account");
+		assertParameter(parametersByKey, updatedOne, ReadEmail.RULE_NOTIFICATION_ACTIVE, "false");
+		assertParameter(parametersByKey, updatedOne, ReadEmail.FILTER_FROM_REGEX, "new regex from filter");
+		assertParameter(parametersByKey, updatedOne, ReadEmail.FILTER_SUBJECT_REGEX, "new regex subject filter");
+		assertParameter(parametersByKey, updatedOne, ReadEmail.RULE_ATTACHMENTS_ACTIVE, "false");
+		assertParameter(parametersByKey, updatedOne, ReadEmail.RULE_WORKFLOW_ACTIVE, "false");
+		assertParameter(parametersByKey, updatedOne, ReadEmail.RULE_WORKFLOW_CLASS_NAME, "new workflow class name");
+		assertParameter(parametersByKey, updatedOne, ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING,
+				"new workflow fields mapping");
+		assertParameter(parametersByKey, updatedOne, ReadEmail.RULE_WORKFLOW_ADVANCE, "false");
+		assertParameter(parametersByKey, updatedOne, ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE, "false");
+	}
+
+	@Test
+	public void emailServiceSchedulerJobDeleted() throws Exception {
+		// given
+		final EmailServiceSchedulerJob existingOne = new EmailServiceSchedulerJob(42L);
+		when(schedulerJobStore.read(existingOne)) //
+				.thenReturn(existingOne);
+		when(schedulerJobParameterStore.list(any(Groupable.class))) //
+				.thenReturn(asList(SchedulerJobParameter.newInstance() //
+						.withId(123L) //
+						.withOwner(42L) //
+						.withKey("foo") //
+						.withValue("bar") //
+						.build()));
+
+		// when
+		store.delete(existingOne);
+
+		// then
+		final ArgumentCaptor<Groupable> groupableCaptor = ArgumentCaptor.forClass(Groupable.class);
+		final ArgumentCaptor<SchedulerJobParameter> parameterCaptor = ArgumentCaptor
+				.forClass(SchedulerJobParameter.class);
+		final InOrder inOrder = inOrder(schedulerJobStore, schedulerJobParameterStore);
+		inOrder.verify(schedulerJobParameterStore).list(groupableCaptor.capture());
+		inOrder.verify(schedulerJobParameterStore).delete(parameterCaptor.capture());
+		inOrder.verify(schedulerJobStore).delete(existingOne);
+		inOrder.verifyNoMoreInteractions();
+
+		final Groupable capturedGroupable = groupableCaptor.getValue();
+		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(SCHEDULER_ID));
+		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getIdentifier()));
+
+		final SchedulerJobParameter capturedParameter = parameterCaptor.getValue();
+		assertThat(capturedParameter.getId(), equalTo(123L));
+		assertThat(capturedParameter.getOwner(), equalTo(existingOne.getId()));
+		assertThat(capturedParameter.getKey(), equalTo("foo"));
+		assertThat(capturedParameter.getValue(), equalTo("bar"));
+	}
+
+	@Test
+	public void emailServiceSchedulerJobListed() throws Exception {
+		// given
+		final SchedulerJob existingOne = new EmailServiceSchedulerJob(42L);
+		when(schedulerJobStore.list()) //
+				.thenReturn(asList(existingOne));
+		when(schedulerJobParameterStore.list(any(Groupable.class))) //
+				.thenReturn(asList( //
+						SchedulerJobParameter.newInstance() //
+								.withId(123L) //
+								.withOwner(42L) //
+								.withKey(ReadEmail.ACCOUNT_NAME) //
+								.withValue("account name") //
+								.build() //
+						));
+
+		// when
+		final List<SchedulerJob> elements = store.list();
+
+		assertThat(elements, hasSize(1));
+		final SchedulerJob element = elements.get(0);
+
+		// then
+		final ArgumentCaptor<Groupable> groupableCaptor = ArgumentCaptor.forClass(Groupable.class);
+		final InOrder inOrder = inOrder(schedulerJobStore, schedulerJobParameterStore);
+		inOrder.verify(schedulerJobStore).list();
+		inOrder.verify(schedulerJobParameterStore).list(groupableCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+
+		final Groupable capturedGroupable = groupableCaptor.getValue();
+		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(SCHEDULER_ID));
+		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) existingOne.getIdentifier()));
+
+		assertThat(element, instanceOf(EmailServiceSchedulerJob.class));
+		final EmailServiceSchedulerJob emailServiceSchedulerJob = EmailServiceSchedulerJob.class.cast(element);
+		assertThat(emailServiceSchedulerJob.getId(), equalTo(42L));
+		assertThat(emailServiceSchedulerJob.getEmailAccount(), equalTo("account name"));
+	}
+
+	/*
+	 * Utilities
+	 */
+
+	private void assertParameter(final Map<String, SchedulerJobParameter> parametersByKey,
+			final EmailServiceSchedulerJob owner, final String key, final String expected) {
+		final SchedulerJobParameter accountName = parametersByKey.get(key);
+		assertThat(accountName, not(nullValue(SchedulerJobParameter.class)));
+		assertThat(accountName.getOwner(), equalTo(owner.getId()));
+		assertThat(accountName.getValue(), equalTo(expected));
 	}
 
 }

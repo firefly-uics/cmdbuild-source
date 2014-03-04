@@ -2,17 +2,19 @@ package org.cmdbuild.logic.taskmanager;
 
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Maps.uniqueIndex;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.Validate;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.Lists;
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
@@ -34,6 +36,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		}
 
 		@Override
+		public void visit(final ReadEmailTask task) {
+			createdId = schedulerFacade.create(task);
+		}
+
+		@Override
 		public void visit(final StartWorkflowTask task) {
 			createdId = schedulerFacade.create(task);
 		}
@@ -44,9 +51,18 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		private static final Object NO_ARGUMENTS_REQUIRED = null;
 
+		private static final Function<ScheduledTask, Long> BY_ID = new Function<ScheduledTask, Long>() {
+
+			@Override
+			public Long apply(final ScheduledTask input) {
+				return input.getId();
+			}
+
+		};
+
 		private final ScheduledTaskFacade schedulerFacade;
 
-		private final List<Task> tasks = Lists.newArrayList();
+		private final Map<Long, Task> tasksById = Maps.newHashMap();
 
 		public ReadAll(final ScheduledTaskFacade schedulerFacade) {
 			this.schedulerFacade = schedulerFacade;
@@ -65,19 +81,22 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 					logger.warn(MARKER, "error invoking method", e);
 				}
 			}
-			return tasks;
+			return tasksById.values();
 		}
 
 		public Iterable<Task> execute(final Class<? extends Task> type) {
-			return from(tasks) //
+			return from(execute()) //
 					.filter(instanceOf(type));
 		}
 
 		@Override
+		public void visit(final ReadEmailTask task) {
+			tasksById.putAll(uniqueIndex(schedulerFacade.read(), BY_ID));
+		}
+
+		@Override
 		public void visit(final StartWorkflowTask task) {
-			for (final Task element : schedulerFacade.read()) {
-				tasks.add(element);
-			}
+			tasksById.putAll(uniqueIndex(schedulerFacade.read(), BY_ID));
 		}
 
 	}
@@ -98,6 +117,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 				public T read() {
 					task.accept(this);
 					return type.cast(raw);
+				}
+
+				@Override
+				public void visit(final ReadEmailTask task) {
+					raw = schedulerFacade.read(task);
 				}
 
 				@Override
@@ -124,6 +148,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		}
 
 		@Override
+		public void visit(final ReadEmailTask task) {
+			schedulerFacade.update(task);
+		}
+
+		@Override
 		public void visit(final StartWorkflowTask task) {
 			schedulerFacade.update(task);
 		}
@@ -140,6 +169,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		public void execute(final Task task) {
 			task.accept(this);
+		}
+
+		@Override
+		public void visit(final ReadEmailTask task) {
+			schedulerFacade.delete(task);
 		}
 
 		@Override

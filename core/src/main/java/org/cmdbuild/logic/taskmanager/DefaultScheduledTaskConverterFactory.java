@@ -33,6 +33,25 @@ public class DefaultScheduledTaskConverterFactory implements ScheduledTaskFacade
 		}
 
 		@Override
+		public void visit(final ReadEmailTask task) {
+			final EmailServiceSchedulerJob schedulerJob = new EmailServiceSchedulerJob(task.getId());
+			schedulerJob.setDescription(task.getDescription());
+			schedulerJob.setRunning(task.isActive());
+			schedulerJob.setCronExpression(task.getCronExpression());
+			schedulerJob.setEmailAccount(task.getEmailAccount());
+			schedulerJob.setNotificationActive(task.isNotificationRuleActive());
+			schedulerJob.setRegexFromFilter(task.getRegexFromFilter());
+			schedulerJob.setRegexSubjectFilter(task.getRegexSubjectFilter());
+			schedulerJob.setAttachmentsActive(task.isAttachmentsRuleActive());
+			schedulerJob.setWorkflowActive(task.isWorkflowRuleActive());
+			schedulerJob.setWorkflowClassName(task.getWorkflowClassName());
+			schedulerJob.setWorkflowFieldsMapping(task.getWorkflowFieldsMapping());
+			schedulerJob.setWorkflowAdvanceable(task.isWorkflowAdvanceable());
+			schedulerJob.setAttachmentsStorableToWorkflow(task.isWorkflowAttachments());
+			this.schedulerJob = schedulerJob;
+		}
+
+		@Override
 		public void visit(final StartWorkflowTask task) {
 			final WorkflowSchedulerJob schedulerJob = new WorkflowSchedulerJob(task.getId());
 			schedulerJob.setDescription(task.getDescription());
@@ -65,7 +84,22 @@ public class DefaultScheduledTaskConverterFactory implements ScheduledTaskFacade
 
 		@Override
 		public void visit(final EmailServiceSchedulerJob schedulerJob) {
-			throw new UnsupportedOperationException("TODO");
+			scheduledTask = ReadEmailTask.newInstance() //
+					.withId(schedulerJob.getId()) //
+					.withDescription(schedulerJob.getDescription()) //
+					.withActiveStatus(schedulerJob.isRunning()) //
+					.withCronExpression(schedulerJob.getCronExpression()) //
+					.withEmailAccount(schedulerJob.getEmailAccount()) //
+					.withRegexFromFilter(schedulerJob.getRegexFromFilter()) //
+					.withRegexSubjectFilter(schedulerJob.getRegexSubjectFilter()) //
+					.withNotificationStatus(schedulerJob.isNotificationActive()) //
+					.withAttachmentsRuleActive(schedulerJob.isAttachmentsActive()) //
+					.withWorkflowRuleActive(schedulerJob.isWorkflowActive()) //
+					.withWorkflowClassName(schedulerJob.getWorkflowClassName()) //
+					.withWorkflowFieldsMapping(schedulerJob.getWorkflowFieldsMapping()) //
+					.withWorkflowAdvanceableStatus(schedulerJob.isWorkflowAdvanceable()) //
+					.withWorkflowAttachmentsStatus(schedulerJob.isAttachmentsStorableToWorkflow()) //
+					.build();
 		}
 
 		@Override

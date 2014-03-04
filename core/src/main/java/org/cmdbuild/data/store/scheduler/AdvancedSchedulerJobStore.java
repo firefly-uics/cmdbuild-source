@@ -32,8 +32,48 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 
 	private static final Marker MARKER = MarkerFactory.getMarker(AdvancedSchedulerJobStore.class.getName());
 
-	public static final String WORKFLOW_PARAM_CLASSNAME = "classname";
-	public static final String WORKFLOW_PARAM_ATTRIBUTES = "attributes";
+	/**
+	 * Container for all {@link EmailServiceSchedulerJob} parameter names.
+	 */
+	public static class ReadEmail {
+
+		private ReadEmail() {
+			// prevents instantiation
+		}
+
+		public static final String ACCOUNT_NAME = "email.account.name";
+
+		private static final String FILTER = "email.filter";
+		public static final String FILTER_FROM_REGEX = FILTER + ".from.regex";
+		public static final String FILTER_SUBJECT_REGEX = FILTER + ".subject.regex";
+
+		private static final String RULE = "email.rule";
+
+		public static final String RULE_ATTACHMENTS_ACTIVE = RULE + ".attachments.active";
+		public static final String RULE_NOTIFICATION_ACTIVE = RULE + ".notification.active";
+
+		private static final String RULE_WORKFLOW = "email.rule.workflow";
+		public static final String RULE_WORKFLOW_ACTIVE = RULE_WORKFLOW + ".active";
+		public static final String RULE_WORKFLOW_ADVANCE = RULE_WORKFLOW + ".advance";
+		public static final String RULE_WORKFLOW_CLASS_NAME = RULE_WORKFLOW + ".class.name";
+		public static final String RULE_WORKFLOW_FIELDS_MAPPING = RULE_WORKFLOW + ".fields.mapping";
+		public static final String RULE_WORKFLOW_ATTACHMENTS_SAVE = RULE_WORKFLOW + ".attachments.save";
+
+	}
+
+	/**
+	 * Container for all {@link WorkflowSchedulerJob} parameter names.
+	 */
+	public static class StartWorkflow {
+
+		private StartWorkflow() {
+			// prevents instantiation
+		}
+
+		public static final String CLASSNAME = "classname";
+		public static final String ATTRIBUTES = "attributes";
+
+	}
 
 	private static final String KEY_VALUE_SEPARATOR = "=";
 
@@ -57,16 +97,129 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 			this.schedulerJobParameterStore = schedulerJobParameterStore;
 		}
 
+		protected void parametersToFields(final EmailServiceSchedulerJob schedulerJob) {
+			final Iterable<SchedulerJobParameter> parameters = schedulerJobParameterStore.list(of(schedulerJob));
+			final Map<String, SchedulerJobParameter> parametersByName = uniqueIndex(parameters, BY_NAME);
+			if (parametersByName.containsKey(ReadEmail.ACCOUNT_NAME)) {
+				schedulerJob.setEmailAccount(parametersByName.get(ReadEmail.ACCOUNT_NAME).getValue());
+			}
+			if (parametersByName.containsKey(ReadEmail.RULE_NOTIFICATION_ACTIVE)) {
+				schedulerJob.setNotificationActive(Boolean.valueOf(parametersByName.get(
+						ReadEmail.RULE_NOTIFICATION_ACTIVE).getValue()));
+			}
+			if (parametersByName.containsKey(ReadEmail.FILTER_FROM_REGEX)) {
+				schedulerJob.setRegexFromFilter(parametersByName.get(ReadEmail.FILTER_FROM_REGEX).getValue());
+			}
+			if (parametersByName.containsKey(ReadEmail.FILTER_SUBJECT_REGEX)) {
+				schedulerJob.setRegexSubjectFilter(parametersByName.get(ReadEmail.FILTER_SUBJECT_REGEX).getValue());
+			}
+			if (parametersByName.containsKey(ReadEmail.RULE_ATTACHMENTS_ACTIVE)) {
+				schedulerJob.setAttachmentsActive(Boolean.valueOf(parametersByName.get(
+						ReadEmail.RULE_ATTACHMENTS_ACTIVE).getValue()));
+			}
+			if (parametersByName.containsKey(ReadEmail.RULE_WORKFLOW_ACTIVE)) {
+				schedulerJob.setWorkflowActive(Boolean.valueOf(parametersByName.get(ReadEmail.RULE_WORKFLOW_ACTIVE)
+						.getValue()));
+			}
+			if (parametersByName.containsKey(ReadEmail.RULE_WORKFLOW_CLASS_NAME)) {
+				schedulerJob.setWorkflowClassName(parametersByName.get(ReadEmail.RULE_WORKFLOW_CLASS_NAME).getValue());
+			}
+			if (parametersByName.containsKey(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING)) {
+				schedulerJob.setWorkflowFieldsMapping(parametersByName.get(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING)
+						.getValue());
+			}
+			if (parametersByName.containsKey(ReadEmail.RULE_WORKFLOW_ADVANCE)) {
+				schedulerJob.setWorkflowAdvanceable(Boolean.valueOf(parametersByName.get(
+						ReadEmail.RULE_WORKFLOW_ADVANCE).getValue()));
+			}
+			if (parametersByName.containsKey(ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE)) {
+				schedulerJob.setAttachmentsStorableToWorkflow(Boolean.valueOf(parametersByName.get(
+						ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE).getValue()));
+			}
+		}
+
+		protected Iterable<SchedulerJobParameter> parametersFrom(final EmailServiceSchedulerJob schedulerJob) {
+			return asList( //
+					SchedulerJobParameter.newInstance() //
+							.withOwner(schedulerJob.getId()) //
+							.withKey(ReadEmail.ACCOUNT_NAME) //
+							.withValue(schedulerJob.getEmailAccount()) //
+							.build(), //
+					SchedulerJobParameter.newInstance() //
+							.withOwner(schedulerJob.getId()) //
+							.withKey(ReadEmail.RULE_NOTIFICATION_ACTIVE) //
+							.withValue(Boolean.toString(schedulerJob.isNotificationActive())) //
+							.build(), //
+					SchedulerJobParameter.newInstance() //
+							.withOwner(schedulerJob.getId()) //
+							.withKey(ReadEmail.FILTER_FROM_REGEX) //
+							.withValue(schedulerJob.getRegexFromFilter()) //
+							.build(), //
+					SchedulerJobParameter.newInstance() //
+							.withOwner(schedulerJob.getId()) //
+							.withKey(ReadEmail.FILTER_SUBJECT_REGEX) //
+							.withValue(schedulerJob.getRegexSubjectFilter()) //
+							.build(), //
+					SchedulerJobParameter.newInstance() //
+							.withOwner(schedulerJob.getId()) //
+							.withKey(ReadEmail.RULE_ATTACHMENTS_ACTIVE) //
+							.withValue(Boolean.toString(schedulerJob.isNotificationActive())) //
+							.build(), //
+					SchedulerJobParameter.newInstance() //
+							.withOwner(schedulerJob.getId()) //
+							.withKey(ReadEmail.RULE_WORKFLOW_ACTIVE) //
+							.withValue(Boolean.toString(schedulerJob.isWorkflowActive())) //
+							.build(), //
+					SchedulerJobParameter.newInstance() //
+							.withOwner(schedulerJob.getId()) //
+							.withKey(ReadEmail.RULE_WORKFLOW_CLASS_NAME) //
+							.withValue(schedulerJob.getWorkflowClassName()) //
+							.build(), //
+					SchedulerJobParameter.newInstance() //
+							.withOwner(schedulerJob.getId()) //
+							.withKey(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING) //
+							.withValue(schedulerJob.getWorkflowFieldsMapping()) //
+							.build(), //
+					SchedulerJobParameter.newInstance() //
+							.withOwner(schedulerJob.getId()) //
+							.withKey(ReadEmail.RULE_WORKFLOW_ADVANCE) //
+							.withValue(Boolean.toString(schedulerJob.isWorkflowAdvanceable())) //
+							.build(), //
+					SchedulerJobParameter.newInstance() //
+							.withOwner(schedulerJob.getId()) //
+							.withKey(ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE) //
+							.withValue(Boolean.toString(schedulerJob.isAttachmentsStorableToWorkflow())) //
+							.build() //
+			);
+		}
+
+		protected Iterable<SchedulerJobParameter> parametersFrom(final WorkflowSchedulerJob schedulerJob) {
+			return asList( //
+					SchedulerJobParameter.newInstance() //
+							.withOwner(schedulerJob.getId()) //
+							.withKey(StartWorkflow.CLASSNAME) //
+							.withValue(schedulerJob.getProcessClass()) //
+							.build(), //
+					SchedulerJobParameter.newInstance() //
+							.withOwner(schedulerJob.getId()) //
+							.withKey(StartWorkflow.ATTRIBUTES) //
+							.withValue(Joiner.on(LINE_SEPARATOR) //
+									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+									.join(schedulerJob.getParameters())) //
+							.build() //
+			);
+		}
+
 		protected void parametersToFields(final WorkflowSchedulerJob schedulerJob) {
 			final Iterable<SchedulerJobParameter> parameters = schedulerJobParameterStore.list(of(schedulerJob));
 			final Map<String, SchedulerJobParameter> parametersByName = uniqueIndex(parameters, BY_NAME);
-			if (parametersByName.containsKey(WORKFLOW_PARAM_CLASSNAME)) {
-				schedulerJob.setProcessClass(parametersByName.get(WORKFLOW_PARAM_CLASSNAME).getValue());
+			if (parametersByName.containsKey(StartWorkflow.CLASSNAME)) {
+				schedulerJob.setProcessClass(parametersByName.get(StartWorkflow.CLASSNAME).getValue());
 			}
-			if (parametersByName.containsKey(WORKFLOW_PARAM_ATTRIBUTES)) {
+			if (parametersByName.containsKey(StartWorkflow.ATTRIBUTES)) {
 				schedulerJob.setParameters(Splitter.on(LINE_SEPARATOR) //
 						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-						.split(parametersByName.get(WORKFLOW_PARAM_ATTRIBUTES).getValue()));
+						.split(parametersByName.get(StartWorkflow.ATTRIBUTES).getValue()));
 			}
 		}
 
@@ -88,23 +241,16 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 
 		@Override
 		public void visit(final EmailServiceSchedulerJob schedulerJob) {
-			throw new UnsupportedOperationException("TODO");
+			for (final SchedulerJobParameter element : parametersFrom(schedulerJob)) {
+				schedulerJobParameterStore.create(element);
+			}
 		}
 
 		@Override
 		public void visit(final WorkflowSchedulerJob schedulerJob) {
-			schedulerJobParameterStore.create(SchedulerJobParameter.newInstance() //
-					.withOwner(schedulerJob.getId()) //
-					.withKey(WORKFLOW_PARAM_CLASSNAME) //
-					.withValue(schedulerJob.getProcessClass()) //
-					.build());
-			schedulerJobParameterStore.create(SchedulerJobParameter.newInstance() //
-					.withOwner(schedulerJob.getId()) //
-					.withKey(WORKFLOW_PARAM_ATTRIBUTES) //
-					.withValue(Joiner.on(LINE_SEPARATOR) //
-							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-							.join(schedulerJob.getParameters())) //
-					.build());
+			for (final SchedulerJobParameter element : parametersFrom(schedulerJob)) {
+				schedulerJobParameterStore.create(element);
+			}
 		}
 
 	}
@@ -124,7 +270,7 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 
 		@Override
 		public void visit(final EmailServiceSchedulerJob schedulerJob) {
-			throw new UnsupportedOperationException("TODO");
+			parametersToFields(schedulerJob);
 		}
 
 		@Override
@@ -141,32 +287,22 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 			super(schedulerJobStore, schedulerJobParameterStore);
 		}
 
-		void execute(final SchedulerJob storable) {
+		public void execute(final SchedulerJob storable) {
 			schedulerJobStore.update(storable);
 			storable.accept(this);
 		}
 
 		@Override
 		public void visit(final EmailServiceSchedulerJob schedulerJob) {
-			throw new UnsupportedOperationException("TODO");
+			update(schedulerJob, parametersFrom(schedulerJob));
 		}
 
 		@Override
 		public void visit(final WorkflowSchedulerJob schedulerJob) {
-			final java.util.List<SchedulerJobParameter> updatedParameters = asList( //
-					SchedulerJobParameter.newInstance() //
-							.withOwner(schedulerJob.getId()) //
-							.withKey(WORKFLOW_PARAM_CLASSNAME) //
-							.withValue(schedulerJob.getProcessClass()) //
-							.build(), //
-					SchedulerJobParameter.newInstance() //
-							.withOwner(schedulerJob.getId()) //
-							.withKey(WORKFLOW_PARAM_ATTRIBUTES) //
-							.withValue(Joiner.on(LINE_SEPARATOR) //
-									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-									.join(schedulerJob.getParameters())) //
-							.build() //
-			);
+			update(schedulerJob, parametersFrom(schedulerJob));
+		}
+
+		private void update(final SchedulerJob schedulerJob, final Iterable<SchedulerJobParameter> updatedParameters) {
 			final Map<String, SchedulerJobParameter> updatedParametersByName = uniqueIndex(updatedParameters, BY_NAME);
 			final Iterable<SchedulerJobParameter> readedParameters = schedulerJobParameterStore.list(of(schedulerJob));
 			final Map<String, SchedulerJobParameter> readedParametersByName = uniqueIndex(readedParameters, BY_NAME);
@@ -238,7 +374,7 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 
 		@Override
 		public void visit(final EmailServiceSchedulerJob schedulerJob) {
-			throw new UnsupportedOperationException("TODO");
+			parametersToFields(schedulerJob);
 		}
 
 		@Override

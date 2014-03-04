@@ -129,7 +129,6 @@ public class TaskManager {
 		return new DefaultJobFactory( //
 				workflow.systemWorkflowLogicBuilder().build(), //
 				email.emailAccountStore(), //
-				schedulerJobParameterStore(), //
 				configurableEmailServiceFactory, //
 				emailReceiving.answerToExistingFactory(), //
 				emailReceiving.downloadAttachmentsFactory(), //
