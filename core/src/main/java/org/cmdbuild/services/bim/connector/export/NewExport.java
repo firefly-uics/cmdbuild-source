@@ -52,17 +52,6 @@ public class NewExport implements Export {
 			Map<String, Map<String, List<String>>> relationsMap = Maps.newHashMap();
 
 			@Override
-			public void createTarget(Entity cardData, String targetProjectId, String className, String containerKey,
-					String shapeOid, String sourceRevisionId) {
-				serviceFacade.createCard(cardData, targetProjectId, className, containerKey, shapeOid);
-			}
-
-			@Override
-			public void deleteTarget(Entity cardData, String targetProjectId, String containerKey) {
-				serviceFacade.removeCard(cardData, targetProjectId, containerKey);
-			}
-
-			@Override
 			public void createTarget(Entity entityToCreate, String targetProjectId) {
 				final String objectOid = serviceFacade.createCard(entityToCreate, targetProjectId);
 				final String spaceGuid = entityToCreate.getAttributeByName(CONTAINER_GUID).getValue();
