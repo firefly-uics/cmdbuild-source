@@ -54,10 +54,10 @@ public class XmlExportCatalogFactory implements CatalogFactory {
 		@Override
 		public List<Integer> getPositionsOf(String entityDefintionName) {
 			// TODO Auto-generated method stub
-			throw new BimError("NON IMPLEMENTATO!");    
+			throw new BimError("NON IMPLEMENTATO!");
 		}
 	}
-	
+
 	private static final Logger logger = LoggerSupport.logger;
 	private final Parser parser;
 	private final List<EntityDefinition> entities;
@@ -65,48 +65,43 @@ public class XmlExportCatalogFactory implements CatalogFactory {
 	public static XmlExportCatalogFactory withXmlString(final String xmlString) {
 		return new XmlExportCatalogFactory(xmlString);
 	}
-	
+
 	public XmlExportCatalogFactory(final File xmlFile) {
 		parser = new XmlParser(xmlFile);
 		entities = Lists.newArrayList();
 	}
 
-	
 	private XmlExportCatalogFactory(final String xmlString) {
 		parser = new XmlParser(xmlString);
 		entities = Lists.newArrayList();
 	}
-	
+
 	@Override
 	public Catalog create() {
 		parseEntities();
 		return new XmlCatalog(entities);
 	}
-	
+
 	/**
 	 * This method populates the catalog according to the XML file of the the
 	 * parser
 	 * */
 	private void parseEntities() {
 		String path = XmlParser.ROOT;
-		try {
-			int numberOfTypesToRead = parser.getNumberOfNestedEntities(path);
-			logger.info("" + numberOfTypesToRead);
-			for (int i = 1; i <= numberOfTypesToRead; i++) {
-				path = XmlParser.ROOT + "/entity[" + i + "]";
-				String name = parser.getEntityName(path);
-				EntityDefinition entityDefinition = new ExportEntityDefinition(name);
-				String label = parser.getEntityLabel(path);
-				String shape = parser.getEntityShape(path);
-				String containerAttribute = parser.getEntityContainerAttribute(path);
-				logger.info("Reading class  " + name + " corresponding to " + label + " with shape " + shape);
-				entityDefinition.setLabel(label);
-				entityDefinition.setShape(shape);
-				entityDefinition.setContainerAttribute(containerAttribute);
-				entities.add(entityDefinition);
-			}
-		} catch (BimError e) {
-			logger.error(e.getMessage());
+		int numberOfTypesToRead = parser.getNumberOfNestedEntities(path);
+		logger.info("" + numberOfTypesToRead);
+		for (int i = 1; i <= numberOfTypesToRead; i++) {
+			path = XmlParser.ROOT + "/entity[" + i + "]";
+			String name = parser.getEntityName(path);
+			EntityDefinition entityDefinition = new ExportEntityDefinition(name);
+			String label = parser.getEntityLabel(path);
+			String shape = parser.getEntityShape(path);
+			String containerAttribute = parser.getEntityContainerAttribute(path);
+			logger.info("Reading class  " + name + " corresponding to " + label + " with shape " + shape);
+			entityDefinition.setLabel(label);
+			entityDefinition.setShape(shape);
+			entityDefinition.setContainerAttribute(containerAttribute);
+			entities.add(entityDefinition);
 		}
 	}
 

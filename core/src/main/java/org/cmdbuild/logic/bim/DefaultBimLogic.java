@@ -50,6 +50,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
+import org.xml.sax.SAXParseException;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -531,12 +532,10 @@ public class DefaultBimLogic implements BimLogic {
 
 	@Override
 	public void exportIfc(final String sourceProjectId) {
-
 		final CmProject projectInfo = bimDataPersistence.read(sourceProjectId);
 		final String xmlMapping = projectInfo.getExportMapping();
 		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
 		exporter.export(catalog, sourceProjectId);
-
 	}
 
 	@Override

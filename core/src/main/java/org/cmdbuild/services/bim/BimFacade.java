@@ -12,63 +12,67 @@ import org.cmdbuild.bim.service.BimProject;
 import org.joda.time.DateTime;
 
 public interface BimFacade {
-	
-	public interface BimFacadeProject{
-		
+
+	public interface BimFacadeProject {
+
 		String getProjectId();
-		
+
 		String getName();
-	
+
 		boolean isActive();
-		
+
 		boolean isSynch();
-	
+
 		String getImportMapping();
-	
+
 		String getExportMapping();
 
 		DateTime getLastCheckin();
-		
+
 		void setLastCheckin(DateTime lastCheckin);
 
 		File getFile();
 
 	}
-	
-	//CRUD operations on projects
-	
+
+	// CRUD operations on projects
+
 	BimFacadeProject createProject(BimFacadeProject project);
-	
+
 	BimFacadeProject updateProject(BimFacadeProject project);
-	
+
 	void disableProject(BimFacadeProject project);
-	
+
 	void enableProject(BimFacadeProject project);
-	
+
 	BimProject getProjectById(String projectId);
-	
+
 	DataHandler download(String projectId);
-	
+
 	String getLastRevisionOfProject(String projectId);
-	
+
 	// import-connector
-	
+
 	List<Entity> readEntityFromProject(EntityDefinition entityDefinition, String projectId);
-	
-	//export-connector
+
+	// export-connector
 
 	Iterable<Entity> fetchEntitiesOfType(String ifcType, String revisionId);
 
 	String createCard(Entity entityToCreate, String targetProjectId);
-	
+
 	String removeCard(Entity entityToRemove, String targetProjectId);
-	
+
 	void updateRelations(Map<String, Map<String, List<String>>> relationsMap, String targetProjectId);
+
+	void openTransaction(String projectId);
 
 	String commitTransaction();
 
+	void abortTransaction();
+
 	String findShapeWithName(String shapeName, String revisionId);
-	
+
 	Iterable<String> fetchAllGlobalIdForIfcType(String ifcType, String revisionId);
 
 	Entity fetchEntityFromGlobalId(String revisionId, String globalId);
@@ -76,16 +80,12 @@ public interface BimFacade {
 	String getContainerOfEntity(String globalId, String sourceRevisionId);
 
 	// viewer
-	
+
 	String fetchGlobalIdFromObjectId(String objectId, String revisionId);
-	
+
 	String getGlobalidFromOid(String revisionId, Long oid);
 
 	DataHandler fetchProjectStructure(String revisionId);
-
-
-
-
 
 
 }

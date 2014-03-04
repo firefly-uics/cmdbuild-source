@@ -12,6 +12,7 @@ import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.model.bim.StorableProject;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.DefaultBimFacade;
+import org.cmdbuild.services.bim.DefaultTransactionManager;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class DefaultBimServiceFacadeImportTest {
 	@Before
 	public void setUp() throws Exception {
 		service = mock(BimService.class);
-		serviceFacade = new DefaultBimFacade(service);
+		serviceFacade = new DefaultBimFacade(service, new DefaultTransactionManager(service));
 	}
 
 	@Test
