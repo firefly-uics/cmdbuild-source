@@ -57,9 +57,11 @@ Ext.define("CMDBuild.controller.administration.filter.CMBIMPanelController", {
 					me.gridConfigurator.getStore().load();
 					me.view.disableModify(me.enableCMTBar = false);
 					form.reset();
+					me.view.grid.getSelectionModel().deselectAll();
 				}, function onFailure() {
 					me.view.disableModify(me.enableCMTBar = false);
 					form.reset();
+					me.view.grid.getSelectionModel().deselectAll();
 					CMDBuild.LoadMask.instance.hide();
 				}
 			);
