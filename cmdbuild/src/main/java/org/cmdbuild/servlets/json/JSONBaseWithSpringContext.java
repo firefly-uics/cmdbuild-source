@@ -116,10 +116,6 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(UserStore.class);
 	}
 
-	protected TaskManagerLogic taskManagerLogic() {
-		return applicationContext().getBean(TaskManagerLogic.class);
-	}
-
 	/*
 	 * Logics
 	 */
@@ -198,6 +194,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected WorkflowLogic systemWorkflowLogic() {
 		return applicationContext().getBean(SystemWorkflowLogicBuilder.class).build();
+	}
+
+	protected TaskManagerLogic taskManagerLogic() {
+		return applicationContext().getBean(TaskManagerLogic.class);
 	}
 
 	/*

@@ -23,7 +23,7 @@ public class SchedulerJobParameterConverter extends BaseStorableConverter<Schedu
 	public SchedulerJobParameter convert(final CMCard card) {
 		return SchedulerJobParameter.newInstance() //
 				.withId(card.getId()) //
-				.withOwner(card.get(SCHEDULER_ID, Long.class)) //
+				.withOwner(card.get(SCHEDULER_ID, Integer.class).longValue()) //
 				.withKey(card.get(KEY, String.class)) //
 				.withValue(card.get(VALUE, String.class)) //
 				.build();

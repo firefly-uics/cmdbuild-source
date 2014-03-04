@@ -25,7 +25,7 @@ public class SchedulerJobParameterGroupable implements Groupable {
 
 	@Override
 	public Object getGroupAttributeValue() {
-		return schedulerJob.getIdentifier();
+		return schedulerJob.getId();
 	}
 
 }
