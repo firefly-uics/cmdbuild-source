@@ -1,7 +1,5 @@
 package org.cmdbuild.logic.scheduler;
 
-import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterGroupable.of;
-
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,7 +12,6 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.scheduler.EmailServiceSchedulerJob;
 import org.cmdbuild.data.store.scheduler.SchedulerJob;
-import org.cmdbuild.data.store.scheduler.SchedulerJobParameter;
 import org.cmdbuild.data.store.scheduler.SchedulerJobVisitor;
 import org.cmdbuild.data.store.scheduler.WorkflowSchedulerJob;
 import org.cmdbuild.exception.CMDBException;
@@ -42,47 +39,7 @@ import com.google.common.collect.Lists;
 
 public class DefaultJobFactory implements JobFactory {
 
-	private static class SchedulerJobConfiguration {
-
-		private final Iterable<SchedulerJobParameter> parameters;
-
-		public SchedulerJobConfiguration(final Iterable<SchedulerJobParameter> parameters) {
-			this.parameters = parameters;
-		}
-
-		public String get(final String key) {
-			logger.debug("getting key '{}'", key);
-			for (final SchedulerJobParameter parameter : parameters) {
-				if (parameter.getKey().equals(key)) {
-					return parameter.getValue();
-				}
-			}
-			logger.warn("key '{}' not found", key);
-			return null;
-		}
-
-		public boolean getBoolean(final String key) {
-			logger.debug("getting key '{}' as boolean", key);
-			return Boolean.parseBoolean(get(key));
-		}
-
-	}
-
 	private static final Logger logger = SchedulerLogic.logger;
-
-	private static final String EMAIL_ACCOUNT_NAME = "email.account.name";
-	private static final String EMAIL_FILTER = "email.filter";
-	private static final String EMAIL_FILTER_FROM_REGEX = EMAIL_FILTER + ".from.regex";
-	private static final String EMAIL_FILTER_SUBJECT_REGEX = EMAIL_FILTER + ".subject.regex";
-	private static final String EMAIL_RULE = "email.rule";
-	private static final String EMAIL_RULE_ATTACHMENTS_ACTIVE = EMAIL_RULE + ".attachments.active";
-	private static final String EMAIL_RULE_NOTIFICATION_ACTIVE = EMAIL_RULE + ".notification.active";
-	private static final String EMAIL_RULE_WORKFLOW = "email.rule.workflow";
-	private static final String EMAIL_RULE_WORKFLOW_ACTIVE = EMAIL_RULE_WORKFLOW + ".active";
-	private static final String EMAIL_RULE_WORKFLOW_ADVANCE = EMAIL_RULE_WORKFLOW + ".advance";
-	private static final String EMAIL_RULE_WORKFLOW_CLASS_NAME = EMAIL_RULE_WORKFLOW + ".class.name";
-	private static final String EMAIL_RULE_WORKFLOW_FIELDS_MAPPING = EMAIL_RULE_WORKFLOW + ".fields.mapping";
-	private static final String EMAIL_RULE_WORKFLOW_ATTACHMENTS_SAVE = EMAIL_RULE_WORKFLOW + ".attachments.save";
 
 	private final Notifier LOGGER_NOTIFIER = new Notifier() {
 
@@ -96,7 +53,6 @@ public class DefaultJobFactory implements JobFactory {
 	private final WorkflowLogic workflowLogic;
 
 	private final Store<EmailAccount> emailAccountStore;
-	private final Store<SchedulerJobParameter> schedulerJobParameterStore;
 	private final ConfigurableEmailServiceFactory emailServiceFactory;
 	private final AnswerToExistingMailFactory answerToExistingMailFactory;
 	private final DownloadAttachmentsFactory downloadAttachmentsFactory;
@@ -105,7 +61,6 @@ public class DefaultJobFactory implements JobFactory {
 	public DefaultJobFactory( //
 			final WorkflowLogic workflowLogic, //
 			final Store<EmailAccount> emailAccountStore, //
-			final Store<SchedulerJobParameter> schedulerJobParameterStore, //
 			final ConfigurableEmailServiceFactory emailServiceFactory, //
 			final AnswerToExistingMailFactory answerToExistingMailFactory, //
 			final DownloadAttachmentsFactory downloadAttachmentsFactory, //
@@ -113,7 +68,6 @@ public class DefaultJobFactory implements JobFactory {
 	) {
 		this.workflowLogic = workflowLogic;
 		this.emailAccountStore = emailAccountStore;
-		this.schedulerJobParameterStore = schedulerJobParameterStore;
 		this.emailServiceFactory = emailServiceFactory;
 		this.answerToExistingMailFactory = answerToExistingMailFactory;
 		this.downloadAttachmentsFactory = downloadAttachmentsFactory;
@@ -135,28 +89,26 @@ public class DefaultJobFactory implements JobFactory {
 
 			@Override
 			public void visit(final EmailServiceSchedulerJob schedulerJob) {
-				final SchedulerJobConfiguration configuration = parametersOf(schedulerJob);
-
-				final String emailAccountName = configuration.get(EMAIL_ACCOUNT_NAME);
+				final String emailAccountName = schedulerJob.getEmailAccount();
 				final EmailAccount selectedEmailAccount = emailAccountFor(emailAccountName);
 				final EmailConfiguration emailConfiguration = emailConfigurationFrom(selectedEmailAccount);
 				final EmailService service = emailServiceFactory.create(emailConfiguration);
 
 				final List<Rule> rules = Lists.newArrayList();
-				if (configuration.getBoolean(EMAIL_RULE_NOTIFICATION_ACTIVE)) {
+				if (schedulerJob.isNotificationActive()) {
 					logger.info("adding notification rule");
-					rules.add(ruleWithGlobalCondition(answerToExistingMailFactory.create(service), configuration));
+					rules.add(ruleWithGlobalCondition(answerToExistingMailFactory.create(service), schedulerJob));
 				}
-				if (configuration.getBoolean(EMAIL_RULE_ATTACHMENTS_ACTIVE)) {
+				if (schedulerJob.isAttachmentsActive()) {
 					logger.info("adding attachments rule");
-					rules.add(ruleWithGlobalCondition(downloadAttachmentsFactory.create(), configuration));
+					rules.add(ruleWithGlobalCondition(downloadAttachmentsFactory.create(), schedulerJob));
 				}
-				if (configuration.getBoolean(EMAIL_RULE_WORKFLOW_ACTIVE)) {
+				if (schedulerJob.isWorkflowActive()) {
 					logger.info("adding start process rule");
-					final String className = configuration.get(EMAIL_RULE_WORKFLOW_CLASS_NAME);
-					final String mapping = configuration.get(EMAIL_RULE_WORKFLOW_FIELDS_MAPPING);
-					final boolean advance = configuration.getBoolean(EMAIL_RULE_WORKFLOW_ADVANCE);
-					final boolean saveAttachments = configuration.getBoolean(EMAIL_RULE_WORKFLOW_ATTACHMENTS_SAVE);
+					final String className = schedulerJob.getWorkflowClassName();
+					final String mapping = schedulerJob.getWorkflowFieldsMapping();
+					final boolean advance = schedulerJob.isWorkflowAdvanceable();
+					final boolean saveAttachments = schedulerJob.isAttachmentsStorableToWorkflow();
 					final Configuration _configuration = new Configuration() {
 
 						@Override
@@ -180,18 +132,12 @@ public class DefaultJobFactory implements JobFactory {
 						}
 
 					};
-					rules.add(ruleWithGlobalCondition(startWorkflowFactory.create(_configuration), configuration));
+					rules.add(ruleWithGlobalCondition(startWorkflowFactory.create(_configuration), schedulerJob));
 				}
 
 				final EmailReceivingLogic emailReceivingLogic = new EmailReceivingLogic(service, rules, LOGGER_NOTIFIER);
 
 				job = new EmailServiceJob(schedulerJob.getIdentifier(), emailReceivingLogic);
-			}
-
-			private SchedulerJobConfiguration parametersOf(final SchedulerJob schedulerJob) {
-				logger.debug("getting parameters for job {}", schedulerJob);
-				final Iterable<SchedulerJobParameter> parameters = schedulerJobParameterStore.list(of(schedulerJob));
-				return new SchedulerJobConfiguration(parameters);
 			}
 
 			private EmailAccount emailAccountFor(final String emailAccountName) {
@@ -209,10 +155,10 @@ public class DefaultJobFactory implements JobFactory {
 				return new EmailAccountConfiguration(emailAccount);
 			}
 
-			private Rule ruleWithGlobalCondition(final Rule rule, final SchedulerJobConfiguration configuration) {
+			private Rule ruleWithGlobalCondition(final Rule rule, final EmailServiceSchedulerJob schedulerJob) {
 				logger.debug("creating rule with global condition");
-				final String fromExpression = configuration.get(EMAIL_FILTER_FROM_REGEX);
-				final String subjectExpression = configuration.get(EMAIL_FILTER_SUBJECT_REGEX);
+				final String fromExpression = schedulerJob.getRegexFromFilter();
+				final String subjectExpression = schedulerJob.getRegexSubjectFilter();
 				final Applicable applicable = new Applicable() {
 
 					@Override
@@ -239,8 +185,8 @@ public class DefaultJobFactory implements JobFactory {
 					@Override
 					public String toString() {
 						return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
-								.append(EMAIL_FILTER_FROM_REGEX, fromExpression) //
-								.append(EMAIL_FILTER_SUBJECT_REGEX, subjectExpression) //
+								.append("from", schedulerJob.getRegexFromFilter()) //
+								.append("subject", schedulerJob.getRegexFromFilter()) //
 								.toString();
 					}
 
