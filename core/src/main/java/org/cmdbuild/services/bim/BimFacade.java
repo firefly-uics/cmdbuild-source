@@ -35,6 +35,8 @@ public interface BimFacade {
 
 	}
 	
+	//CRUD operations on projects
+	
 	BimFacadeProject createProject(BimFacadeProject project);
 	
 	BimFacadeProject updateProject(BimFacadeProject project);
@@ -43,52 +45,47 @@ public interface BimFacade {
 	
 	void enableProject(BimFacadeProject project);
 	
-	List<Entity> readEntityFromProject(EntityDefinition entityDefinition, String projectId);
-
-	String fetchShapeRevision(String shapeName);
-
-	void writeCardIntoProject();
-
-	Iterable<Entity> fetchContainers(String projectId);
+	BimProject getProjectById(String projectId);
 	
+	DataHandler download(String projectId);
+	
+	String getLastRevisionOfProject(String projectId);
+	
+	// import-connector
+	
+	List<Entity> readEntityFromProject(EntityDefinition entityDefinition, String projectId);
+	
+	//export-connector
+
 	Iterable<Entity> fetchEntitiesOfType(String ifcType, String revisionId);
 
-	DataHandler download(String projectId);
-
-	
 	String createCard(Entity entityToCreate, String targetProjectId);
-	void createCard(Entity cardData, String targetProjectId, String ifcType, String containerId, String shapeName);
-	//void createCard(Entity cardData, String targetProjectId, String ifcType, String containerId, String shapeName, String sourceRevisionId);
 	
 	String removeCard(Entity entityToRemove, String targetProjectId);
-	void removeCard(Entity entity, String projectId, String containerKey);
 	
 	void updateRelations(Map<String, Map<String, List<String>>> relationsMap, String targetProjectId);
 
 	String commitTransaction();
 
 	String findShapeWithName(String shapeName, String revisionId);
-
-	String roidFromPoid(String poid);
-
-	String fetchGlobalIdFromObjectId(String objectId, String revisionId);
-	String getGlobalidFromOid(String revisionId, Long oid);
-
-	Map<String, Long> getGlobalidOidMap(String revisionId);
-
-	DataHandler fetchProjectStructure(String revisionId);
-
-	BimProject getProjectByName(String name);
 	
-	BimProject getProjectById(String projectId);
-
-	void branchFromTo(String projectId, String targetProjectId);
-
 	Iterable<String> fetchAllGlobalIdForIfcType(String ifcType, String revisionId);
 
 	Entity fetchEntityFromGlobalId(String revisionId, String globalId);
 
 	String getContainerOfEntity(String globalId, String sourceRevisionId);
+
+	// viewer
+	
+	String fetchGlobalIdFromObjectId(String objectId, String revisionId);
+	
+	String getGlobalidFromOid(String revisionId, Long oid);
+
+	DataHandler fetchProjectStructure(String revisionId);
+
+
+
+
 
 
 }

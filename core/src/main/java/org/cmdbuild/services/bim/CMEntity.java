@@ -53,14 +53,4 @@ public class CMEntity implements Entity {
 		return card.getClass().getName() + " " + card.getId();
 	}
 
-	@Override
-	public String getGlobalId() {
-		throw new UnsupportedOperationException("Unsupported operation");
-	}
-	
-	@Override
-	public Map<String, Attribute> getAttributesMap() {
-		throw new UnsupportedOperationException("TO DO");
-	}
-
 }
