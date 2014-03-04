@@ -599,8 +599,6 @@ public class DefaultBimFacade implements BimFacade {
 
 		for (Entry<String, Map<String, List<String>>> entry : relationsMap.entrySet()) {
 			final String spaceGuid = entry.getKey();
-			final Map<String, List<String>> innerMap = entry.getValue();
-			final List<String> objectsToRemove = entry.getValue().get("D");
 			final Iterable<Entity> allRelations = fetchEntitiesOfType(IFC_REL_CONTAINED, sourceRevisionId);
 
 			Entity relation = Entity.NULL_ENTITY;
@@ -622,23 +620,28 @@ public class DefaultBimFacade implements BimFacade {
 			ArrayList<Long> indicesToRemove = Lists.newArrayList();
 			ArrayList<Long> indicesToReadd = Lists.newArrayList();
 			final int size = relatedElementsAttribute.getValues().size();
-			for (int i = 0; i < size; i++) {
-				final Attribute relatedElement = relatedElementsAttribute.getValues().get(i);
-				final String objectGuid = relatedElement.getValue();
-				final Entity element = fetchEntityFromGlobalId(sourceRevisionId, objectGuid);
-				if (!element.isValid()) {
-					continue;
+			
+			final Map<String, List<String>> innerMap = entry.getValue();
+			if(innerMap.containsKey("D")){
+				final List<String> objectsToRemove = innerMap.get("D");
+				for (int i = 0; i < size; i++) {
+					final Attribute relatedElement = relatedElementsAttribute.getValues().get(i);
+					final String objectGuid = relatedElement.getValue();
+					final Entity element = fetchEntityFromGlobalId(sourceRevisionId, objectGuid);
+					if (!element.isValid()) {
+						continue;
+					}
+					final String objectOid = ((BimserverEntity) element).getOid().toString();
+					if (objectsToRemove != null && objectsToRemove.contains(objectOid)) {
+						indicesToRemove.add(Long.parseLong(objectOid));
+					} else {
+						indicesToReadd.add(Long.parseLong(objectOid));
+					}
 				}
-				final String objectOid = ((BimserverEntity) element).getOid().toString();
-				if (objectsToRemove != null && objectsToRemove.contains(objectOid)) {
-					indicesToRemove.add(Long.parseLong(objectOid));
-				} else {
-					indicesToReadd.add(Long.parseLong(objectOid));
+				service.removeAllReferences(transactionId, relationOid, IFC_RELATED_ELEMENTS);
+				for (Long indexToAdd : indicesToReadd) {
+					service.addReference(transactionId, relationOid, IFC_RELATED_ELEMENTS, indexToAdd.toString());
 				}
-			}
-			service.removeAllReferences(transactionId, relationOid, IFC_RELATED_ELEMENTS);
-			for (Long indexToAdd : indicesToReadd) {
-				service.addReference(transactionId, relationOid, IFC_RELATED_ELEMENTS, indexToAdd.toString());
 			}
 			if (innerMap.containsKey("A")) {
 				final List<String> objectsToAdd = entry.getValue().get("A");
