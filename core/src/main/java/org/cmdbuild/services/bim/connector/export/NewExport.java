@@ -4,9 +4,11 @@ import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.OBJECT_OID;
 import static org.cmdbuild.services.bim.connector.DefaultBimDataView.CONTAINER_GUID;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_SPACE;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -116,53 +118,63 @@ public class NewExport implements Export {
 		System.out.println("--- Start export at " + new DateTime());
 
 		final String containerClassName = persistence.getContainerClassName();
+		if (containerClassName == null || containerClassName.isEmpty()) {
+			throw new BimError("Container layer not found");
+		}
 		final String targetProjectId = persistence.read(sourceProjectId).getExportProjectId();
 		final BimProject targetProject = serviceFacade.getProjectById(targetProjectId);
 		if (!targetProject.isValid()) {
-			throw new BimError("No project for export found");
+			throw new BimError("Project for export not found");
 		}
-		final String sourceRevisionId = serviceFacade.getProjectById(targetProjectId).getLastRevisionId();
+		final String sourceRevisionId = serviceFacade.getLastRevisionOfProject(targetProjectId);
+		if (sourceRevisionId == null || sourceRevisionId.isEmpty()) {
+			throw new BimError("Revision for export not found");
+		}
 		System.out.println("Revision for export is " + sourceRevisionId);
 
-		final Iterable<String> ifcSpacesGlobalIdList = serviceFacade.fetchAllGlobalIdForIfcType("IfcSpace",
+		final Iterable<String> ifcSpacesGlobalIdList = serviceFacade.fetchAllGlobalIdForIfcType(IFC_SPACE,
 				targetProjectId);
-		Map<String, Long> globalIdToCmdbIdMap = Maps.newHashMap();
+		Map<String, Long> globalIdToCmdbIdIfcSpaceMap = Maps.newHashMap();
 		for (String globalId : ifcSpacesGlobalIdList) {
 			final Long matchingId = getIdFromGlobalId(globalId, containerClassName);
-			globalIdToCmdbIdMap.put(globalId, matchingId);
+			if (matchingId.equals(-1)) {
+				System.out.println(IFC_SPACE + " " + globalId + " not found in CMDBuild. Skip.");
+				continue;
+			}
+			globalIdToCmdbIdIfcSpaceMap.put(globalId, matchingId);
 		}
-
-		final Map<String, Entity> dataSource = getSourceData(globalIdToCmdbIdMap, catalog, sourceRevisionId,
+		final Map<String, Entity> sourceData = getSourceData(globalIdToCmdbIdIfcSpaceMap, catalog, sourceRevisionId,
 				containerClassName);
-		final Map<String, Entity> dataTarget = getTargetData(sourceRevisionId, dataSource.keySet());
-		final MapDifference<String, Entity> difference = Maps.difference(dataSource, dataTarget);
-
+		final Map<String, Entity> targetData = getTargetData(sourceRevisionId, sourceData.keySet());
+		final MapDifference<String, Entity> difference = Maps.difference(sourceData, targetData);
 		final Map<String, Entity> entriesToCreate = difference.entriesOnlyOnLeft();
 		final Map<String, ValueDifference<Entity>> entriesToUpdate = difference.entriesDiffering();
 		final Map<String, Entity> entriesToRemove = difference.entriesOnlyOnRight();
 
-		for (final String guidToCreate : entriesToCreate.keySet()) {
-			final Entity entityToCreate = entriesToCreate.get(guidToCreate);
-			listener.createTarget(entityToCreate, targetProjectId);
-		}
-		for (final String guidToUpdate : entriesToUpdate.keySet()) {
-			final ValueDifference<Entity> entityToUpdate = entriesToUpdate.get(guidToUpdate);
-			final Entity entityToRemove = entityToUpdate.rightValue();
-			final Entity entityToCreate = entityToUpdate.leftValue();
-			listener.createTarget(entityToCreate, targetProjectId);
-			listener.deleteTarget(entityToRemove, targetProjectId);
-		}
-		for (final String guidToRemove : entriesToRemove.keySet()) {
-			final Entity entityToRemove = entriesToRemove.get(guidToRemove);
-			listener.deleteTarget(entityToRemove, targetProjectId);
-		}
-		listener.updateRelations(targetProjectId);
+		serviceFacade.openTransaction(targetProjectId);
+		try {
+			for (final String guidToCreate : entriesToCreate.keySet()) {
+				final Entity entityToCreate = entriesToCreate.get(guidToCreate);
+				listener.createTarget(entityToCreate, targetProjectId);
+			}
+			for (final String guidToUpdate : entriesToUpdate.keySet()) {
+				final ValueDifference<Entity> entityToUpdate = entriesToUpdate.get(guidToUpdate);
+				final Entity entityToRemove = entityToUpdate.rightValue();
+				final Entity entityToCreate = entityToUpdate.leftValue();
+				listener.createTarget(entityToCreate, targetProjectId);
+				listener.deleteTarget(entityToRemove, targetProjectId);
+			}
+			for (final String guidToRemove : entriesToRemove.keySet()) {
+				final Entity entityToRemove = entriesToRemove.get(guidToRemove);
+				listener.deleteTarget(entityToRemove, targetProjectId);
+			}
+			listener.updateRelations(targetProjectId);
 
-		final String revisionId = serviceFacade.commitTransaction();
-		if (revisionId.isEmpty()) {
-			System.out.println("Nothing to export.");
-		} else {
+			final String revisionId = serviceFacade.commitTransaction();
 			System.out.println("Revision " + revisionId + " created at " + new DateTime());
+		} catch (Throwable t) {
+			serviceFacade.abortTransaction();
+			throw new BimError("Error during export", t);
 		}
 		return targetProjectId;
 	}
@@ -190,9 +202,10 @@ public class NewExport implements Export {
 			final String revisionId, String containerClassName) {
 
 		Map<String, Entity> dataSource = Maps.newHashMap();
-		for (final String ifcSpaceGuid : globalIdToCmdbIdMap.keySet()) {
+		for (final Entry<String, Long> entry : globalIdToCmdbIdMap.entrySet()) {
 			for (EntityDefinition catalogEntry : catalog.getEntitiesDefinitions()) {
-				final Long ifcSpaceCmId = globalIdToCmdbIdMap.get(ifcSpaceGuid);
+				final String ifcSpaceGuid = entry.getKey();
+				final Long ifcSpaceCmId = entry.getValue();
 				final String className = catalogEntry.getLabel();
 				final String containerAttributeName = catalogEntry.getContainerAttribute();
 				final String shapeOid = getShapeOid(revisionId, catalogEntry.getShape());
@@ -223,7 +236,7 @@ public class NewExport implements Export {
 
 	private Long getIdFromGlobalId(String key, String className) {
 		CMCard theCard = getCardFromGlobalId(key, className);
-		Long matchingId = null;
+		long matchingId = -1;
 		if (theCard != null) {
 			if (theCard.get(FK_COLUMN_NAME) != null) {
 				IdAndDescription reference = (IdAndDescription) theCard.get(FK_COLUMN_NAME);

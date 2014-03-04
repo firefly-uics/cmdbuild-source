@@ -20,6 +20,7 @@ public class BimConstants {
 	public static final String IFC_RELATED_ELEMENTS = "RelatedElements";
 	public static final String IFC_LOCATION = "Location";
 	public static final String IFC_LOCAL_PLACEMENT = "IfcLocalPlacement";
+	public static final String IFC_SPACE = "IfcSpace";
 	public static final String IFC_NAME = "Name";
 	public static final String IFC_TAG = "Tag";
 	public static final String IFC_DESCRIPTION = "Description";

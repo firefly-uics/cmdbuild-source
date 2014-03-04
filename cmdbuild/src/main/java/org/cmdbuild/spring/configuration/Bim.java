@@ -28,12 +28,14 @@ import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimStoreManager;
+import org.cmdbuild.services.bim.DefaultTransactionManager;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
 import org.cmdbuild.services.bim.DefaultBimFacade;
 import org.cmdbuild.services.bim.DefaultBimPersistence;
 import org.cmdbuild.services.bim.DefaultBimStoreManager;
 import org.cmdbuild.services.bim.DefaultRelationPersistence;
 import org.cmdbuild.services.bim.RelationPersistence;
+import org.cmdbuild.services.bim.TransactionManager;
 import org.cmdbuild.services.bim.connector.BimCardDiffer;
 import org.cmdbuild.services.bim.connector.CardDiffer;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView;
@@ -92,7 +94,11 @@ public class Bim {
 
 	@Bean
 	protected BimFacade bimServiceFacade() {
-		return new DefaultBimFacade(bimService());
+		return new DefaultBimFacade(bimService(), transactionManager());
+	}
+
+	private TransactionManager transactionManager() {
+		return new DefaultTransactionManager(bimService());
 	}
 
 	@Bean

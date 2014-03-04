@@ -30,7 +30,6 @@ import static org.cmdbuild.services.bim.connector.DefaultBimDataView.SHAPE_OID;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -50,27 +49,36 @@ import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.ListAttribute;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.bimserver.BimserverEntity;
-import org.cmdbuild.bim.service.bimserver.BimserverListAttribute;
-import org.cmdbuild.bim.service.bimserver.BimserverReferenceAttribute;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class DefaultBimFacade implements BimFacade {
 
-	private final Map<String, String> container_relation_Map = Maps.newHashMap();
-
-	private static final String NULL_TRANSACTION_ID = "-1";
-
-	private static final String NULL_REVISION_ID = "-1";
 	private final BimService service;
+	private final TransactionManager transactionManager;
 	private final Reader reader;
-	private String transactionId = NULL_TRANSACTION_ID;
+	private String transactionId;
 
-	public DefaultBimFacade(BimService bimservice) {
+	public DefaultBimFacade(BimService bimservice, TransactionManager transactionManager) {
 		this.service = bimservice;
+		this.transactionManager = transactionManager;
 		reader = new BimReader(bimservice);
+	}
+
+	@Override
+	public void openTransaction(String projectId) {
+		transactionManager.open(projectId);
+	}
+
+	@Override
+	public String commitTransaction() {
+		return transactionManager.commit();
+	}
+
+	@Override
+	public void abortTransaction() {
+		transactionManager.abort();
 	}
 
 	@Override
@@ -209,12 +217,6 @@ public class DefaultBimFacade implements BimFacade {
 
 	@Override
 	public String createCard(Entity entityToCreate, String targetProjectId) {
-
-		if (transactionId.equals(NULL_TRANSACTION_ID)) {
-			transactionId = service.openTransaction(targetProjectId);
-			System.out.println("*************** Transaction " + transactionId + " opened at " + new DateTime());
-		}
-
 		final String ifcType = entityToCreate.getAttributeByName(IFC_TYPE).getValue();
 		final String cmId = entityToCreate.getAttributeByName(ID_ATTRIBUTE).getValue();
 		final String baseClass = entityToCreate.getAttributeByName(BASE_CLASS_NAME).getValue();
@@ -238,6 +240,8 @@ public class DefaultBimFacade implements BimFacade {
 		System.out.println("Y " + ycord);
 		System.out.println("Z " + zcord);
 
+		transactionId = transactionManager.getId();
+
 		String objectOid = service.createObject(transactionId, ifcType);
 		service.setStringAttribute(transactionId, objectOid, IFC_OBJECT_TYPE, baseClass);
 		service.setStringAttribute(transactionId, objectOid, IFC_GLOBALID, globalId);
@@ -250,18 +254,13 @@ public class DefaultBimFacade implements BimFacade {
 		service.setReference(transactionId, objectOid, IFC_OBJECT_PLACEMENT, placementOid);
 		setCoordinates(placementOid, xcord, ycord, zcord, transactionId);
 
-		// setRelationWithContainer(objectOid, spaceGlobalId,
-		// targetProject.getLastRevisionId(), transactionId);
-
 		return objectOid;
 	}
 
 	@Override
 	public String removeCard(Entity entityToRemove, String targetProjectId) {
-		if (transactionId.equals(NULL_TRANSACTION_ID)) {
-			transactionId = service.openTransaction(targetProjectId);
-			System.out.println("*************** Transaction " + transactionId + " opened at " + new DateTime());
-		}
+		transactionId = transactionManager.getId();
+
 		final String oid = entityToRemove.getAttributeByName(OBJECT_OID).getValue();
 		service.removeObject(transactionId, oid);
 		return oid;
@@ -278,24 +277,6 @@ public class DefaultBimFacade implements BimFacade {
 			}
 		}
 		return "-1";
-	}
-
-	@Override
-	public String commitTransaction() {
-		System.out.println("*************** Commit transaction " + transactionId + "...");
-		String revisionId = NULL_REVISION_ID;
-		if (transactionId.equals(NULL_TRANSACTION_ID)) {
-			return NULL_REVISION_ID;
-		}
-		try {
-			revisionId = service.commitTransaction(transactionId);
-			System.out.println("*************** Transaction " + transactionId + " committed at " + new DateTime());
-		} finally {
-			// FIXME transactionId is not reset if the commit fails!!!!
-			transactionId = NULL_TRANSACTION_ID;
-			System.out.println("*************** Transaction resetted to " + transactionId);
-		}
-		return revisionId;
 	}
 
 	private void setCoordinates(String placementId, String x1, String x2, String x3, String transactionId) {
@@ -384,6 +365,9 @@ public class DefaultBimFacade implements BimFacade {
 
 	@Override
 	public void updateRelations(Map<String, Map<String, List<String>>> relationsMap, String targetProjectId) {
+
+		transactionId = transactionManager.getId();
+
 		final String sourceRevisionId = service.getProjectByPoid(targetProjectId).getLastRevisionId();
 
 		for (Entry<String, Map<String, List<String>>> entry : relationsMap.entrySet()) {
@@ -440,4 +424,5 @@ public class DefaultBimFacade implements BimFacade {
 			}
 		}
 	}
+
 }
