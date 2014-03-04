@@ -2,7 +2,6 @@ package org.cmdbuild.services.bim.connector;
 
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.services.bim.BimDataView;
 
 public class DefaultBimMapper implements Mapper {
@@ -10,8 +9,7 @@ public class DefaultBimMapper implements Mapper {
 	private final BimDataView bimdataView;
 	private final ImportDifferListener listener;
 
-	public DefaultBimMapper(CMDataView dataView, final CardDiffer cardDiffer,
-			BimDataView bimDataView) {
+	public DefaultBimMapper(final CardDiffer cardDiffer, BimDataView bimDataView) {
 		this.bimdataView = bimDataView;
 		this.listener = new ImportDifferListener() {
 

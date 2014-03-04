@@ -47,6 +47,21 @@ public class DefaultExport implements Export {
 			public void deleteTarget(Entity cardData, String targetProjectId, String containerKey) {
 				serviceFacade.removeCard(cardData, targetProjectId, containerKey);
 			}
+
+			@Override
+			public void createTarget(Entity entityToCreate, String targetProjectId) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void deleteTarget(Entity entityToRemove, String targetProjectId) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void updateRelations(String targetProjectId) {
+				throw new UnsupportedOperationException();
+			}
 		};
 	}
 
@@ -54,21 +69,21 @@ public class DefaultExport implements Export {
 	@Override
 	public String export(Catalog catalog, String sourceProjectId) {
 
-		// I am assuming that the project for export has been already created
 		System.out.println("--- Start export at " + new DateTime());
 		Map<String, String> shapeNameToOidMap = Maps.newHashMap();
 		String sourceRevisionId = serviceFacade.getProjectById(sourceProjectId).getLastRevisionId();
-		
+
 		final String exportProjectId = persistence.read(sourceProjectId).getExportProjectId();
 		BimProject targetProject = serviceFacade.getProjectById(exportProjectId);
-		
+
 		if (!targetProject.isValid()) {
 			throw new BimError("No project for export found");
 		}
 		final String targetProjectId = targetProject.getIdentifier();
 
 		System.out.println("Revision for export is " + targetProject.getLastRevisionId());
-		Iterable<String> globalIdList = serviceFacade.fetchAllGlobalIdForIfcType("IfcSpace", targetProjectId);
+		Iterable<String> globalIdList = serviceFacade.fetchAllGlobalIdForIfcType("IfcSpace",
+				targetProject.getLastRevisionId());
 		Map<String, Long> globalIdToCmdbIdMap = Maps.newHashMap();
 		String containerClassName = persistence.getContainerClassName();
 		System.out.println("Match IfcSpaces with cards of class " + containerClassName);
@@ -112,7 +127,8 @@ public class DefaultExport implements Export {
 				for (CMCard cmcard : cardsInTheIfcSpace) {
 					System.out.println("Perform export for card " + cmcard.getId() + " of class " + className);
 					final Entity cardData = bimDataView.getCardDataForExport(cmcard, className,
-							String.valueOf(containerId), containerClassName);
+							String.valueOf(containerId), containerKey, containerClassName, shapeOid,
+							catalogEntry.getTypeName());
 					final Entity entity = serviceFacade.fetchEntityFromGlobalId(targetProject.getLastRevisionId(),
 							cardData.getAttributeByName(GLOBALID_ATTRIBUTE).getValue());
 					if (entity.isValid()) {
@@ -121,7 +137,8 @@ public class DefaultExport implements Export {
 								+ " already present in project for export. \n Remove");
 						listener.deleteTarget(cardData, targetProjectId, containerKey);
 					}
-					listener.createTarget(cardData, targetProjectId, catalogEntry.getTypeName(), containerKey, shapeOid, sourceRevisionId);
+					listener.createTarget(cardData, targetProjectId, catalogEntry.getTypeName(), containerKey,
+							shapeOid, sourceRevisionId);
 				}
 			}
 		}

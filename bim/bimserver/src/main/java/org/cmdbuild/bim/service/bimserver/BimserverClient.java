@@ -94,5 +94,11 @@ public interface BimserverClient {
 
 	void removeObject(String transactionId, String revisionId, String globalId);
 
+	void removeReference(String transactionId, String objectId, String attributeName, int index);
+
+	void removeObject(String transactionId, String oid);
+
+	void removeAllReferences(String transactionId, String objectId, String attributeName);
+
 
 }

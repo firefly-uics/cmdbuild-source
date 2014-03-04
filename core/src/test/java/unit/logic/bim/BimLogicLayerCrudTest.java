@@ -40,7 +40,7 @@ public class BimLogicLayerCrudTest {
 		dataPersistence = mock(BimPersistence.class);
 		dataModelManager = mock(BimDataModelManager.class);
 		dataAccessLogic = mock(DataAccessLogic.class);
-		bimLogic = new DefaultBimLogic(null, dataPersistence, dataModelManager, null, null, null, dataAccessLogic);
+		bimLogic = new DefaultBimLogic(null, dataPersistence, dataModelManager, null, null, dataAccessLogic);
 	}
 
 

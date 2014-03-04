@@ -34,6 +34,8 @@ public class BimConstants {
 
 	// Writer
 	public static final String DEFAULT_TAG_EXPORT = "Exported from CMDB";
+	public static final String OBJECT_OID = "oid";
+	public static final String CONTAINER_OID = "container_oid";
 
 	// Attributes and tables
 	public static final String GLOBALID_ATTRIBUTE = IFC_GLOBALID;

@@ -200,9 +200,14 @@ public class BimserverService implements BimService {
 	@Override
 	public void removeReference(final String transactionId, final String objectId, final String attributeName,
 			final int index) {
-		throw new BimError("Not implemented");
+		client.removeReference(transactionId, objectId, attributeName, index);
 	}
 
+	@Override
+	public void removeAllReferences(String transactionId, String objectId, String attributeName) {
+		client.removeAllReferences(transactionId, objectId, attributeName);
+	}
+	
 	@Override
 	public void setReference(final String transactionId, final String objectId, final String referenceName,
 			final String relatedObjectId) {
@@ -224,5 +229,13 @@ public class BimserverService implements BimService {
 	public String getGlobalidFromOid(String revisionId, Long oid) {
 		return client.getEntityByOid(revisionId, oid.toString()).getKey();
 	}
+
+	@Override
+	public void removeObject(String transactionId, String oid) {
+	client.removeObject(transactionId, oid);
+		
+	}
+
+
 
 }

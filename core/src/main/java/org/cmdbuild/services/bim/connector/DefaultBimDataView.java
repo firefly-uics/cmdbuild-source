@@ -33,6 +33,7 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.services.bim.BimDataView;
+import org.cmdbuild.utils.bim.BimIdentifier;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -40,6 +41,10 @@ import com.google.common.collect.Maps;
 public class DefaultBimDataView implements BimDataView {
 
 	private static final String CONTAINER_ID = "container_id";
+	public static final String CONTAINER_GUID = "container_globalId";
+	public static final String SHAPE_OID = "shape_oid";
+	public static final String IFC_TYPE = "IfcType";
+
 	public static final String X_COORD = "x";
 	public static final String Y_COORD = "y";
 	public static final String Z_COORD = "z";
@@ -95,7 +100,8 @@ public class DefaultBimDataView implements BimDataView {
 	}
 
 	@Override
-	public Entity getCardDataForExport(CMCard card, String className, String containerId, String containerClassName) {
+	public Entity getCardDataForExport(CMCard card, String className, String containerId, String containerGlobalId, String containerClassName,
+			String shapeOid, String ifcType) {
 
 		Entity cardToExport = Entity.NULL_ENTITY;
 
@@ -143,16 +149,19 @@ public class DefaultBimDataView implements BimDataView {
 					.from(call(function, card.getId(), className, globalId, xCoord, yCoord, zCoord), f).run();
 		}
 
-		DefaultEntity cardWithBimData = new DefaultEntity(StringUtils.EMPTY, globalId);
-		cardWithBimData.addAttribute(new DefaultAttribute(ID_ATTRIBUTE, card.getId().toString()));
-		cardWithBimData.addAttribute(new DefaultAttribute(BASE_CLASS_NAME, className));
-		cardWithBimData.addAttribute(new DefaultAttribute(CODE_ATTRIBUTE, code));
-		cardWithBimData.addAttribute(new DefaultAttribute(DESCRIPTION_ATTRIBUTE, description));
-		cardWithBimData.addAttribute(new DefaultAttribute(GLOBALID_ATTRIBUTE, globalId));
-		cardWithBimData.addAttribute(new DefaultAttribute(X_ATTRIBUTE, xCoord));
-		cardWithBimData.addAttribute(new DefaultAttribute(Y_ATTRIBUTE, yCoord));
-		cardWithBimData.addAttribute(new DefaultAttribute(Z_ATTRIBUTE, zCoord));
-		cardWithBimData.addAttribute(new DefaultAttribute(CONTAINER_ID, containerId));
+		DefaultEntity cardWithBimData = DefaultEntity.withTypeAndKey(StringUtils.EMPTY, globalId);
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(ID_ATTRIBUTE, card.getId().toString()));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(BASE_CLASS_NAME, className));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(CODE_ATTRIBUTE, code));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(DESCRIPTION_ATTRIBUTE, description));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(GLOBALID_ATTRIBUTE, globalId));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(X_ATTRIBUTE, xCoord));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(Y_ATTRIBUTE, yCoord));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(Z_ATTRIBUTE, zCoord));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(CONTAINER_ID, containerId));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(CONTAINER_GUID, containerGlobalId));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(SHAPE_OID, shapeOid));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(IFC_TYPE, ifcType));
 
 		cardToExport = cardWithBimData;
 
@@ -286,6 +295,17 @@ public class DefaultBimDataView implements BimDataView {
 			id = cardData.getId();
 		}
 		return id;
+	}
+
+	public String getGlobalIdFromCmId(Long cmId, String className) {
+		String globalId = StringUtils.EMPTY;
+		List<CMCard> cardList = getCardsWithAttributeAndValue(BimIdentifier.newIdentifier().withName(className), cmId,
+				"Id");
+		if (cardList.size() != 1) {
+			throw new RuntimeException();
+		}
+		final CMCard card = cardList.get(0);
+		return String.class.cast(card.get(globalId).toString());
 	}
 
 	@Override

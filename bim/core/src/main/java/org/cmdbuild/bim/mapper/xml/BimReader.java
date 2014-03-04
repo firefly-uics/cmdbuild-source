@@ -83,7 +83,7 @@ public class BimReader implements Reader {
 			}
 			System.out.println(Iterables.size(entities) + " entities found");
 			for (Entity entity : entities) {
-				final Entity entityToFill = new DefaultEntity(entityDefinition.getLabel(), entity.getAttributeByName(
+				final Entity entityToFill = DefaultEntity.withTypeAndKey(entityDefinition.getLabel(), entity.getAttributeByName(
 						IFC_GLOBALID).getValue());
 				if (!entityToFill.isValid()) {
 					continue;
@@ -130,8 +130,8 @@ public class BimReader implements Reader {
 								SimpleAttribute simpleAttribute = (SimpleAttribute) attribute;
 								System.out.println(attributeDefinition.getLabel() + ": "
 										+ simpleAttribute.getStringValue());
-								Attribute retrievedAttribute = new DefaultAttribute(attributeDefinition.getLabel(),
-										simpleAttribute.getStringValue());
+								Attribute retrievedAttribute = DefaultAttribute.withNameAndValue(
+										attributeDefinition.getLabel(), simpleAttribute.getStringValue());
 								((DefaultEntity) retrievedEntity).addAttribute(retrievedAttribute);
 							}
 						} else if (attributeDefinition instanceof ReferenceAttributeDefinition) {
@@ -166,13 +166,13 @@ public class BimReader implements Reader {
 									SimpleAttribute simpleAttribute = (SimpleAttribute) value;
 									if (list.getValues().size() > 1) {
 
-										Attribute retrievedAttribute = new DefaultAttribute(
+										Attribute retrievedAttribute = DefaultAttribute.withNameAndValue(
 												attributeDefinition.getLabel() + "" + count,
 												simpleAttribute.getStringValue());
 										((DefaultEntity) retrievedEntity).addAttribute(retrievedAttribute);
 									} else {
 
-										Attribute retrievedAttribute = new DefaultAttribute(
+										Attribute retrievedAttribute = DefaultAttribute.withNameAndValue(
 												attributeDefinition.getLabel(), simpleAttribute.getStringValue());
 										((DefaultEntity) retrievedEntity).addAttribute(retrievedAttribute);
 									}
@@ -200,7 +200,7 @@ public class BimReader implements Reader {
 		Position3d position = geometryHelper().getAbsoluteObjectPlacement(entity);
 		String pgPoint = postgisFormat(position);
 
-		DefaultAttribute coordinatesAttribute = new DefaultAttribute(COORDINATES, pgPoint);
+		DefaultAttribute coordinatesAttribute = DefaultAttribute.withNameAndValue(COORDINATES, pgPoint);
 		retrievedEntity.getAttributes().put(coordinatesAttribute.getName(), coordinatesAttribute);
 	}
 
@@ -240,7 +240,7 @@ public class BimReader implements Reader {
 			}
 		}
 		if (!containerKey.isEmpty()) {
-			DefaultAttribute container = new DefaultAttribute(attributeName, containerKey);
+			DefaultAttribute container = DefaultAttribute.withNameAndValue(attributeName, containerKey);
 			retrivedEntity.getAttributes().put(container.getName(), container);
 		}
 	}
@@ -260,10 +260,10 @@ public class BimReader implements Reader {
 		int indexOfLastComma = postgisLinestringBuilder.lastIndexOf(",");
 		postgisLinestringBuilder.replace(indexOfLastComma, indexOfLastComma + 1, "))");
 
-		DefaultAttribute room_geometry = new DefaultAttribute(SPACEGEOMETRY, postgisLinestringBuilder.toString());
+		DefaultAttribute room_geometry = DefaultAttribute.withNameAndValue(SPACEGEOMETRY, postgisLinestringBuilder.toString());
 		retrievedEntity.getAttributes().put(room_geometry.getName(), room_geometry);
 
-		DefaultAttribute room_height = new DefaultAttribute(SPACEHEIGHT, Double.toString(geometry.getZDim()));
+		DefaultAttribute room_height = DefaultAttribute.withNameAndValue(SPACEHEIGHT, Double.toString(geometry.getZDim()));
 		retrievedEntity.getAttributes().put(room_height.getName(), room_height);
 	}
 

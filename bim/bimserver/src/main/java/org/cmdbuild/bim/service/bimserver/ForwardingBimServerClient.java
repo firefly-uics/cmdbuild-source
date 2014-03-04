@@ -115,12 +115,17 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	public String createObject(String transactionId, String className) {
 		return delegate.createObject(transactionId, className);
 	}
-	
+
 	@Override
 	public void removeObject(String transactionId, String revisionId, String globalId) {
 		delegate.removeObject(transactionId, revisionId, globalId);
 	}
-
+	
+	@Override
+	public void removeObject(String transactionId, String objectOid) {
+		delegate.removeObject(transactionId, objectOid);
+	}
+	
 	@Override
 	public void enableProject(String projectId) {
 		delegate.enableProject(projectId);
@@ -184,6 +189,16 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	@Override
 	public void setStringAttribute(String transactionId, String objectId, String attributeName, String value) {
 		delegate.setStringAttribute(transactionId, objectId, attributeName, value);
+	}
+
+	@Override
+	public void removeReference(String transactionId, String objectId, String attributeName, int index) {
+		delegate.removeReference(transactionId, objectId, attributeName, index);
+	}
+	
+	@Override
+	public void removeAllReferences(String transactionId, String objectId, String attributeName) {
+		delegate.removeAllReferences(transactionId, objectId, attributeName);
 	}
 
 	@Override
