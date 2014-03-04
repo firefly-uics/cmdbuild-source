@@ -4,8 +4,6 @@ import java.util.Map;
 
 import org.cmdbuild.bim.utils.BimConstants;
 
-import com.google.common.collect.Maps;
-
 public interface Entity {
 
 	public static final String KEYATTRIBUTE = BimConstants.IFC_GLOBALID;
@@ -42,32 +40,16 @@ public interface Entity {
 			return "NULL_ENTITY";
 		}
 
-		@Override
-		public String getGlobalId() {
-			return "";
-		}
-
-		@Override
-		public Map<String, Attribute> getAttributesMap() {
-			return Maps.newHashMap();
-		}
-
 	};
 
 	boolean isValid();
 	
 	Map<String, Attribute> getAttributes();
 	
-	Map<String, Attribute> getAttributesMap();
-	
 	Attribute getAttributeByName(String attributeName);
 
 	String getKey();
 	
-	@Deprecated 
-	//FIXME use getKey
-	String getGlobalId();
-
 	String getTypeName();
 
 }

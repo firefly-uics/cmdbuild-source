@@ -488,7 +488,7 @@ public class DefaultBimLogic implements BimLogic {
 	public String getLastRevisionIdFromCmCardId(final Long cardId) {
 		final String poid = getPoidForCardId(cardId);
 		if (poid != null) {
-			return bimServiceFacade.roidFromPoid(poid);
+			return bimServiceFacade.getLastRevisionOfProject(poid);
 		}
 		return null;
 	}

@@ -58,7 +58,7 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 			}
 		}
 		logger.debug("Success.");
-		for (final String attributeName : sourceEntity.getAttributesMap().keySet()) {
+		for (final String attributeName : sourceEntity.getAttributes().keySet()) {
 			if(!cmAttributesMap.containsKey(attributeName)){
 				continue;
 			}
@@ -125,7 +125,7 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 		}
 		logger.debug("Success.");
 		boolean sendDelta = false;
-		for (final String attributeName : sourceEntity.getAttributesMap().keySet()) {
+		for (final String attributeName : sourceEntity.getAttributes().keySet()) {
 			final Attribute attribute = sourceEntity.getAttributeByName(attributeName);
 			if(!cmAttributesMap.containsKey(attributeName)){
 				continue;

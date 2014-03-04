@@ -65,13 +65,4 @@ public class BimserverEntity implements Entity {
 		return bimserverDataObject.getType() + " " + getKey();
 	}
 
-	@Override
-	public String getGlobalId() {
-		return bimserverDataObject.getGuid();
-	}
-
-	@Override
-	public Map<String, Attribute> getAttributesMap() {
-		throw new UnsupportedOperationException("TO DO");
-	}
 }
