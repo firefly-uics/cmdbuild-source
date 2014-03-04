@@ -84,7 +84,6 @@ COMMENT ON COLUMN "_SchedulerJob"."Description" IS 'MODE: read|DESCR: Job Descri
 COMMENT ON COLUMN "_SchedulerJob"."Notes" IS 'MODE: read|DESCR: Job Parameters|INDEX: 3';
 
 SELECT cm_create_class_attribute('_SchedulerJob', 'CronExpression', 'text', '', true, false, 'MODE: read|DESCR: Cron Expression|STATUS: active');
-SELECT cm_create_class_attribute('_SchedulerJob', 'Detail', 'text', '', true, false, 'MODE: read|DESCR: Job Detail|STATUS: active');
 SELECT cm_create_class_attribute('_SchedulerJob', 'JobType', 'text', null, false, false, 'MODE: write|DESCR: JobType|STATUS: active');
 SELECT cm_create_class_attribute('_SchedulerJob', 'Running', 'boolean', null, false, false, 'MODE: write|DESCR: Running|STATUS: active');
 
