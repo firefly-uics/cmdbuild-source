@@ -207,10 +207,11 @@ public class BIM extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject getRoidForCardId( //
-			final @Parameter("cardId") Long cardId //
+			final @Parameter("cardId") Long cardId, //
+			final @Parameter("withExport") boolean withExport//
 	) throws JSONException {
 
-		final String lastRevisionId = bimLogic().getLastRevisionIdFromCmCardId(cardId);
+		final String lastRevisionId = bimLogic().getRevisionForViewer(cardId, withExport);
 
 		final JSONObject out = new JSONObject();
 		out.put("ROID", lastRevisionId);
@@ -244,20 +245,6 @@ public class BIM extends JSONBaseWithSpringContext {
 		}
 
 		return output;
-	}
-
-	@JSONExported
-	@Deprecated
-	public void bindProjectToCards( //
-			final @Parameter("idProjectCard") String projectCardId, //
-			final @Parameter("cardsToBind") JSONArray jsonCardsId) throws Exception {
-
-		ArrayList<String> cardIdList = Lists.newArrayList();
-		for (int i = 0; i <= jsonCardsId.length(); i++) {
-			JSONObject cardId = jsonCardsId.getJSONObject(i);
-			cardIdList.add(cardId.toString());
-		}
-		bimLogic().bindProjectToCards(projectCardId, cardIdList);
 	}
 
 	@JSONExported

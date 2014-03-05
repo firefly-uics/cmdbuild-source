@@ -74,10 +74,12 @@
 
 				CMDBuild.bim.proxy.roidForCardId({
 					params: {
-						cardId: model.get("Id")
+						cardId: model.get("Id"),
+						withExport: false
 					},
 					success: function(operation, options, response) {
 						if (response.ROID) {
+							//FIXME: the description should be the one of the Project, not of the card
 							startBIMPlayer(me, response.ROID, model.get('Description'));
 						} else {
 							CMDBuild.Msg.warn(
