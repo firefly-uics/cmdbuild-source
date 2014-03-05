@@ -3,6 +3,7 @@ package org.cmdbuild.bim.utils;
 public class BimConstants {
 
 	// IFC constants
+	public static final String IFC_TYPE = "IfcType";
 	public static final String IFC_GLOBALID = "GlobalId";
 	public static final String IFC_DIRECTION = "IfcDirection";
 	public static final String IFC_PLACEMENT_REL_TO = "PlacementRelTo";

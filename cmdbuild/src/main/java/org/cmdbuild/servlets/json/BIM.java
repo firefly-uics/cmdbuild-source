@@ -204,7 +204,7 @@ public class BIM extends JSONBaseWithSpringContext {
 		project.setProjectId(projectId);
 		bimLogic().disableProject(project);
 	}
-
+	
 	@JSONExported
 	public JSONObject getPoidForCardId( //
 			final @Parameter("cardId") Long cardId //
@@ -286,6 +286,15 @@ public class BIM extends JSONBaseWithSpringContext {
 		bimLogic().exportIfc(projectId);
 	}
 
+	@JSONExported
+	public JSONObject isSynchForExport(final @Parameter("projectId") String projectId //
+	) throws JSONException {
+		boolean isUpToDate = bimLogic().isSynchForExport(projectId);
+		final JSONObject out = new JSONObject();
+		out.put("result", isUpToDate);
+		return out;
+	}
+
 	@Admin
 	@JSONExported
 	public DataHandler download( //
@@ -359,7 +368,6 @@ public class BIM extends JSONBaseWithSpringContext {
 		out.put(CLASS_NAME, className);
 		out.put(ACTIVE, isActive);
 		return out;
-
 	}
 
 }

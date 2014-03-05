@@ -67,6 +67,8 @@ public interface BimLogic extends Logic {
 	void importIfc(String projectId);
 
 	void exportIfc(String sourceProjectId);
+	
+	boolean isSynchForExport(String projectId);
 
 
 	BimLayer getRootLayer();

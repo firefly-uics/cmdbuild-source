@@ -44,13 +44,13 @@ import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimPersistence.CmProject;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
 import org.cmdbuild.services.bim.connector.Mapper;
+import org.cmdbuild.services.bim.connector.export.DefaultExportListener;
 import org.cmdbuild.services.bim.connector.export.Export;
 import org.cmdbuild.services.bim.connector.export.NewExport;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.joda.time.DateTime;
-import org.xml.sax.SAXParseException;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -531,11 +531,19 @@ public class DefaultBimLogic implements BimLogic {
 	}
 
 	@Override
-	public void exportIfc(final String sourceProjectId) {
-		final CmProject projectInfo = bimDataPersistence.read(sourceProjectId);
-		final String xmlMapping = projectInfo.getExportMapping();
+	public void exportIfc(final String projectId) {
+		final CmProject project = bimDataPersistence.read(projectId);
+		final String xmlMapping = project.getExportMapping();
 		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
-		exporter.export(catalog, sourceProjectId);
+		exporter.export(catalog, projectId, new DefaultExportListener(bimServiceFacade));
+	}
+	
+	@Override
+	public boolean isSynchForExport(String projectId) {
+		final CmProject project = bimDataPersistence.read(projectId);
+		final String xmlMapping = project.getExportMapping();
+		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
+		return exporter.isSynch(catalog, projectId);
 	}
 
 	@Override
