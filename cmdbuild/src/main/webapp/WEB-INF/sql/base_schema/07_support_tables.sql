@@ -245,5 +245,5 @@ SELECT cm_create_class_attribute('_BimLayer', 'Root', 'boolean', 'FALSE', true, 
 SELECT cm_create_class_attribute('_BimLayer', 'Active', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: Active|INDEX: 3|STATUS: active');
 SELECT cm_create_class_attribute('_BimLayer', 'Export', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: Export|INDEX: 4|STATUS: active');
 SELECT cm_create_class_attribute('_BimLayer', 'Container', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: Container|INDEX: 5|STATUS: active');
-
+SELECT cm_create_class_attribute('_BimLayer', 'RootReference', 'varchar', null, false, false, 'MODE: write|DESCR: RootReference|INDEX: 6|STATUS: active');
 
