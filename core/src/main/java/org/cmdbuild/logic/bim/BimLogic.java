@@ -1,7 +1,6 @@
 package org.cmdbuild.logic.bim;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.activation.DataHandler;
@@ -49,18 +48,13 @@ public interface BimLogic extends Logic {
 	
 	void disableProject(Project project);
 
-	String getProjectId(Long cardId);
-	
-	
 	List<BimLayer> readBimLayer();
 
 	void updateBimLayer(String className, String attributeName, String value);
 
-	void bindProjectToCards(String projectId, ArrayList<String> cardsId);
+	String getProjectIdForCard(Long cardId, boolean withExport);
 
-	String getPoidForCardId(Long cardId);
-
-	String getLastRevisionIdFromCmCardId(Long cardId);
+	String getRevisionForViewer(Long cardId, boolean withExport);
 
 	Iterable<String> readCardsBindedToProject(String projectId, String className);
 

@@ -10,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -357,11 +356,6 @@ public class DefaultBimLogic implements BimLogic {
 		bimDataPersistence.saveProject(persistenceProject);
 	}
 
-	@Override
-	public String getProjectId(Long cardId) {
-		return bimDataPersistence.getProjectIdFromCardId(cardId);
-	}
-
 	private Iterable<Project> listFrom(Iterable<CmProject> cmProjectList) {
 		List<Project> projectList = Lists.newArrayList();
 		for (Iterator<CmProject> it = cmProjectList.iterator(); it.hasNext();) {
@@ -445,18 +439,10 @@ public class DefaultBimLogic implements BimLogic {
 		dataModelCommand.execute(className, value);
 	}
 
-	// write binding between BimProjects and cards of "BimRoot" class
-
-	@Deprecated
-	@Override
-	public void bindProjectToCards(final String projectId, final ArrayList<String> cardsId) {
-		throw new UnsupportedOperationException();
-	}
-
 	// FIXME
 	@Override
-	public String getPoidForCardId(final Long cardId) {
-		String poid = null;
+	public String getProjectIdForCard(final Long cardId, boolean withExport) {
+		String projectId = null;
 		final String rootClass = bimDataPersistence.findRoot().getClassName();
 		final Card src = Card.newInstance() //
 				.withClassName(rootClass) //
@@ -473,23 +459,33 @@ public class DefaultBimLogic implements BimLogic {
 			if (first != null) {
 				final RelationInfo firstRelation = (RelationInfo) first;
 				final Long projectCardId = firstRelation.getRelation().getCard2Id();
-				poid = bimDataPersistence.getProjectIdFromCardId(projectCardId);
+				projectId = bimDataPersistence.getProjectIdFromCardId(projectCardId);
+				final CmProject project = bimDataPersistence.read(projectId);
+				if (withExport) {
+					projectId = project.getExportProjectId();
+				}
 			}
 		}
-		if (poid == null) {
+		if (projectId == null) {
 			final long buildingId = bimDataView.fetchBuildingIdFromCardId(cardId);
 			if (buildingId != -1) {
-				poid = getPoidForCardId(buildingId);
+				projectId = getProjectIdForCard(buildingId, withExport);
 			}
 		}
-		return poid;
+		return projectId;
 	}
+	
+	
+	public String getProjectIdForCardNew(final Long cardId, boolean withExport) {
+		return null;
+	}
+	
 
 	@Override
-	public String getLastRevisionIdFromCmCardId(final Long cardId) {
-		final String poid = getPoidForCardId(cardId);
-		if (poid != null) {
-			return bimServiceFacade.getLastRevisionOfProject(poid);
+	public String getRevisionForViewer(final Long cardId, boolean withExport) {
+		final String projectId = getProjectIdForCard(cardId, withExport);
+		if (projectId != null) {
+			return bimServiceFacade.getLastRevisionOfProject(projectId);
 		}
 		return null;
 	}
@@ -537,7 +533,7 @@ public class DefaultBimLogic implements BimLogic {
 		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
 		exporter.export(catalog, projectId, new DefaultExportListener(bimServiceFacade));
 	}
-	
+
 	@Override
 	public boolean isSynchForExport(String projectId) {
 		final CmProject project = bimDataPersistence.read(projectId);

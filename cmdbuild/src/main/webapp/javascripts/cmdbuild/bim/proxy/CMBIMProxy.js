@@ -12,7 +12,6 @@
 		saveLayer: "services/json/bim/savebimlayer",
 		rootLayer: "services/json/bim/rootclassname",
 
-		//poidForCardId: "services/json/bim/getpoidforcardid",
 		roidForCardId: "services/json/bim/getroidforcardid",
 
 		activeForClassName: "services/json/bim/getactiveforclassname",
@@ -103,13 +102,6 @@
 
 			CMDBuild.ServiceProxy.core.doRequest(config);
 		},
-
-//		poidForCardId: function(config) {
-//			config.method = "GET";
-//			config.url = url.poidForCardId;
-//
-//			CMDBuild.ServiceProxy.core.doRequest(config);
-//		},
 
 		roidForCardId: function(config) {
 			config.method = "GET";
