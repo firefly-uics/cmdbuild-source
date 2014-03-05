@@ -204,18 +204,6 @@ public class BIM extends JSONBaseWithSpringContext {
 		project.setProjectId(projectId);
 		bimLogic().disableProject(project);
 	}
-	
-	@JSONExported
-	public JSONObject getPoidForCardId( //
-			final @Parameter("cardId") Long cardId //
-	) throws JSONException {
-
-		final String projectId = bimLogic().getPoidForCardId(cardId);
-
-		final JSONObject out = new JSONObject();
-		out.put("POID", projectId);
-		return out;
-	}
 
 	@JSONExported
 	public JSONObject getRoidForCardId( //
