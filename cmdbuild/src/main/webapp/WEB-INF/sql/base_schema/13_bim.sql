@@ -164,3 +164,32 @@ $BODY$
 COMMENT ON FUNCTION _bim_set_room_geometry(character varying, character varying, character varying, character varying) IS 'TYPE: function|CATEGORIES: system';
 
 
+-- Function: _bim_store_data(integer, character varying, character varying, character varying, character varying, character varying)
+
+-- DROP FUNCTION _bim_store_data(integer, character varying, character varying, character varying, character varying, character varying);
+
+CREATE OR REPLACE FUNCTION _bim_store_data(IN cardid integer, IN classname character varying, IN globalid character varying, IN x character varying, IN y character varying, IN z character varying, OUT success boolean)
+  RETURNS boolean AS
+$BODY$
+DECLARE
+	query varchar;
+	query1 varchar;
+	myrecord record;
+BEGIN	
+	query1 = 'DELETE FROM bim."' || classname || '" where "GlobalId"=''' || globalid || ''';';
+	RAISE NOTICE '%',query1;
+	EXECUTE(query1);
+	
+	query = '
+		INSERT INTO bim."' || classname || '" ("GlobalId", "Position", "Master")
+		VALUES (''' || globalid || ''',' || 'ST_GeomFromText(''POINT(' || x || ' ' || y || ' ' || z || ')''),' || cardid || ');';	
+	RAISE NOTICE '%',query;
+	EXECUTE(query);
+	
+	success = true;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+COMMENT ON FUNCTION _bim_store_data(integer, character varying, character varying, character varying, character varying, character varying) IS 'TYPE: function|CATEGORIES: system';
+
