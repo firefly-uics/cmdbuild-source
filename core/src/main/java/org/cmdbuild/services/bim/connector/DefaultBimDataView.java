@@ -1,6 +1,7 @@
 package org.cmdbuild.services.bim.connector;
 
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_TYPE;
 import static org.cmdbuild.bim.utils.BimConstants.X_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.Y_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.Z_ATTRIBUTE;
@@ -43,7 +44,7 @@ public class DefaultBimDataView implements BimDataView {
 	private static final String CONTAINER_ID = "container_id";
 	public static final String CONTAINER_GUID = "container_globalId";
 	public static final String SHAPE_OID = "shape_oid";
-	public static final String IFC_TYPE = "IfcType";
+
 
 	public static final String X_COORD = "x";
 	public static final String Y_COORD = "y";

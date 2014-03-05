@@ -17,6 +17,7 @@ import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATING_STRUCTURE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATIVE_PLACEMENT;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_REL_CONTAINED;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_TAG;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_TYPE;
 import static org.cmdbuild.bim.utils.BimConstants.OBJECT_OID;
 import static org.cmdbuild.bim.utils.BimConstants.X_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.Y_ATTRIBUTE;
@@ -25,7 +26,6 @@ import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
-import static org.cmdbuild.services.bim.connector.DefaultBimDataView.IFC_TYPE;
 import static org.cmdbuild.services.bim.connector.DefaultBimDataView.SHAPE_OID;
 
 import java.io.File;
@@ -318,9 +318,8 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public Iterable<String> fetchAllGlobalIdForIfcType(String ifcType, String projectId) {
+	public Iterable<String> fetchAllGlobalIdForIfcType(String ifcType, String revisionId) {
 		List<String> globalIdList = Lists.newArrayList();
-		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
 		Iterable<Entity> entities = service.getEntitiesByType(revisionId, ifcType);
 		for (Entity entity : entities) {
 			globalIdList.add(entity.getKey());
@@ -346,6 +345,7 @@ public class DefaultBimFacade implements BimFacade {
 
 	@Override
 	public String getContainerOfEntity(String globalId, String sourceRevisionId) {
+		boolean exit = false;
 		String containerGlobalId = StringUtils.EMPTY;
 		final Iterable<Entity> allRelations = fetchEntitiesOfType(IFC_REL_CONTAINED, sourceRevisionId);
 		for (final Entity relation : allRelations) {
@@ -356,8 +356,12 @@ public class DefaultBimFacade implements BimFacade {
 			for (Attribute relatedElement : relatedElementsAttribute.getValues()) {
 				if (globalId.equals(relatedElement.getValue())) {
 					containerGlobalId = relatingStructure.getGlobalId();
+					exit = true;
 					break;
 				}
+			}
+			if(exit){
+				break;
 			}
 		}
 		return containerGlobalId;
