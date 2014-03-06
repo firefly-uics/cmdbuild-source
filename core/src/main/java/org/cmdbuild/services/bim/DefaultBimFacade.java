@@ -147,17 +147,7 @@ public class DefaultBimFacade implements BimFacade {
 			}
 
 			@Override
-			public String getImportMapping() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
 			public File getFile() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public String getExportMapping() {
 				throw new UnsupportedOperationException();
 			}
 
