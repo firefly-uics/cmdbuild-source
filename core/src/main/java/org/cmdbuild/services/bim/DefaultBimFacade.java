@@ -416,14 +416,17 @@ public class DefaultBimFacade implements BimFacade {
 					}
 				}
 				service.removeAllReferences(transactionId, relationOid, IFC_RELATED_ELEMENTS);
+				System.out.println("remove all reference from relation '" + relationOid);
 				for (Long indexToAdd : indicesToReadd) {
 					service.addReference(transactionId, relationOid, IFC_RELATED_ELEMENTS, indexToAdd.toString());
+					System.out.println("add reference '" + indexToAdd + "' to relation '" + relationOid);
 				}
 			}
 			if (innerMap.containsKey("A")) {
 				final List<String> objectsToAdd = entry.getValue().get("A");
 				for (String objectToAdd : objectsToAdd) {
 					service.addReference(transactionId, relationOid, IFC_RELATED_ELEMENTS, objectToAdd);
+					System.out.println("add reference '" + objectToAdd + "' to relation '" + relationOid);
 				}
 			}
 		}

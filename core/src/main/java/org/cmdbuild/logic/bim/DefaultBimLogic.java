@@ -4,6 +4,7 @@ import static org.cmdbuild.bim.utils.BimConstants.CARDID_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CARD_DESCRIPTION_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CLASSID_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CLASSNAME_FIELD_NAME;
+import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.services.bim.DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX;
 
 import java.io.BufferedReader;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
+import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.mapper.xml.XmlExportCatalogFactory;
 import org.cmdbuild.bim.mapper.xml.XmlImportCatalogFactory;
 import org.cmdbuild.bim.model.Catalog;
@@ -439,17 +441,64 @@ public class DefaultBimLogic implements BimLogic {
 		dataModelCommand.execute(className, value);
 	}
 
-	// FIXME
 	@Override
-	public String getProjectIdForCard(final Long cardId, boolean withExport) {
-		String projectId = null;
-		final String rootClass = bimDataPersistence.findRoot().getClassName();
-		final Card src = Card.newInstance() //
-				.withClassName(rootClass) //
-				.withId(cardId) //
-				.build();
-		final CMDomain domain = dataAccessLogic.findDomain(rootClass + DEFAULT_DOMAIN_SUFFIX);
+	public String getExportProjectId(String baseProjectId) {
+		final CmProject project = bimDataPersistence.read(baseProjectId);
+		return project.getExportProjectId();
+	}
 
+	@Override
+	public String getDescriptionOfRoot(Long cardId, String className) {
+		Long rootId = getRootId(cardId, className);
+		final BimLayer rootLayer = bimDataPersistence.findRoot();
+		if (rootLayer == null || rootLayer.getClassName() == null || rootLayer.getClassName().isEmpty()) {
+			throw new BimError("Root layer not configured");
+		}
+		Card rootCard = dataAccessLogic.fetchCard(rootLayer.getClassName(), rootId);
+		String description = String.class.cast(rootCard.getAttribute(DESCRIPTION_ATTRIBUTE));
+		return description;
+	}
+
+	private Long getRootId(Long cardId, String className) {
+		Long rootId = null;
+		final BimLayer rootLayer = bimDataPersistence.findRoot();
+		if (rootLayer == null || rootLayer.getClassName() == null || rootLayer.getClassName().isEmpty()) {
+			throw new BimError("Root layer not configured");
+		}
+		if (className.equals(rootLayer)) {
+			rootId = cardId;
+		} else {
+			final BimLayer layer = bimDataPersistence.readLayer(className);
+			if (layer == null || layer.getRootReference() == null || layer.getRootReference().isEmpty()) {
+				throw new BimError("'" + className + "' layer not configured");
+			}
+			final String referenceRoot = layer.getRootReference();
+			rootId = bimDataView.fetchRoot(cardId, className, referenceRoot);
+			if (rootId == null) {
+				throw new BimError(referenceRoot + " is null for card '" + cardId + "' of class '" + className + "'");
+			}
+		}
+		return rootId;
+	}
+
+	@Override
+	public String getBaseProjectIdForCardOfClass(final Long cardId, final String className) {
+		Long rootId = getRootId(cardId, className);
+		final BimLayer rootLayer = bimDataPersistence.findRoot();
+		final String baseProjectId = getProjectIdForRootClass(rootId, rootLayer.getClassName());
+		if (baseProjectId.isEmpty()) {
+			throw new BimError("Project not found for card '" + cardId + "' and class '" + className + "'");
+		}
+		return baseProjectId;
+	}
+
+	private String getProjectIdForRootClass(final Long rootId, final String rootClassName) {
+		String projectId = StringUtils.EMPTY;
+		final Card src = Card.newInstance() //
+				.withClassName(rootClassName) //
+				.withId(rootId) //
+				.build();
+		final CMDomain domain = dataAccessLogic.findDomain(rootClassName + DEFAULT_DOMAIN_SUFFIX);
 		final DomainWithSource dom = DomainWithSource.create(domain.getId(), "_1");
 		final GetRelationListResponse domains = dataAccessLogic.getRelationList(src, dom);
 		Object first = firstElement(domains);
@@ -460,34 +509,18 @@ public class DefaultBimLogic implements BimLogic {
 				final RelationInfo firstRelation = (RelationInfo) first;
 				final Long projectCardId = firstRelation.getRelation().getCard2Id();
 				projectId = bimDataPersistence.getProjectIdFromCardId(projectCardId);
-				final CmProject project = bimDataPersistence.read(projectId);
-				if (withExport) {
-					projectId = project.getExportProjectId();
-				}
-			}
-		}
-		if (projectId == null) {
-			final long buildingId = bimDataView.fetchBuildingIdFromCardId(cardId);
-			if (buildingId != -1) {
-				projectId = getProjectIdForCard(buildingId, withExport);
 			}
 		}
 		return projectId;
 	}
-	
-	
-	public String getProjectIdForCardNew(final Long cardId, boolean withExport) {
-		return null;
-	}
-	
 
 	@Override
-	public String getRevisionForViewer(final Long cardId, boolean withExport) {
-		final String projectId = getProjectIdForCard(cardId, withExport);
-		if (projectId != null) {
-			return bimServiceFacade.getLastRevisionOfProject(projectId);
+	public String getLastRevisionOfProject(String projectId) {
+		String revisionId = StringUtils.EMPTY;
+		if (!projectId.isEmpty()) {
+			revisionId = bimServiceFacade.getLastRevisionOfProject(projectId);
 		}
-		return null;
+		return revisionId;
 	}
 
 	private Object firstElement(final Iterable<?> iterable) {
@@ -497,13 +530,6 @@ public class DefaultBimLogic implements BimLogic {
 		}
 		return null;
 	}
-
-	@Override
-	public Iterable<String> readCardsBindedToProject(final String projectId, final String className) {
-		return bimDataModelManager.readCardsBindedToProject(projectId, className);
-	}
-
-	// Synchronization of data between IFC and CMDB
 
 	@Override
 	public void importIfc(final String projectId) {

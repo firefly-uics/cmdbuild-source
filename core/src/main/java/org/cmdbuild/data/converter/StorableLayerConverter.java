@@ -17,7 +17,8 @@ public class StorableLayerConverter extends BaseStorableConverter<BimLayer> {
 					ACTIVE = "Active",
 					BIM_ROOT = "Root",
 					EXPORT = "Export",	
-					CONTAINER = "Container";
+					CONTAINER = "Container",
+					ROOT_REFERENCE = "RootReference";
 
 	@Override
 	public String getClassName() {
@@ -36,6 +37,7 @@ public class StorableLayerConverter extends BaseStorableConverter<BimLayer> {
 		layer.setRoot(readBoolean(card, BIM_ROOT));
 		layer.setExport(readBoolean(card, EXPORT));
 		layer.setContainer(readBoolean(card, CONTAINER));
+		layer.setRootReference(readString(card,ROOT_REFERENCE));
 		return layer;
 	}
 

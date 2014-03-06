@@ -26,6 +26,7 @@ import org.cmdbuild.bim.mapper.DefaultAttribute;
 import org.cmdbuild.bim.mapper.DefaultEntity;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.function.CMFunction;
@@ -263,6 +264,22 @@ public class DefaultBimDataView implements BimDataView {
 			this.globalId = globalId;
 		}
 	}
+	
+
+	@Override
+	public Long fetchRoot(final Long cardId, final String className, final String referenceRoot) {
+		final CMClass theClass = dataView.findClass(className);
+		final CMQueryResult result = dataView.select( //
+				attribute(theClass,referenceRoot)) //
+				.from(theClass)
+				.where(condition(attribute(theClass, ID_ATTRIBUTE), eq(cardId))) //
+				.run();
+		final CMQueryRow row = result.getOnlyRow();
+		final CMCard card = row.getCard(theClass);
+		IdAndDescription reference = IdAndDescription.class.cast(card.get(referenceRoot));
+		return reference.getId();
+	}
+	
 
 	// FIXME custom method to remove
 	// this is a temporary workaround, waiting for the navigation of the
@@ -333,5 +350,6 @@ public class DefaultBimDataView implements BimDataView {
 		}
 		return globalidCmidMap;
 	}
+
 
 }

@@ -80,6 +80,8 @@ public interface BimPersistence {
 
 	String getContainerClassName();
 
+	BimLayer readLayer(String className);
+
 
 
 

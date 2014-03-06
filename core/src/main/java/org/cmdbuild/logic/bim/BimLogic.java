@@ -51,19 +51,12 @@ public interface BimLogic extends Logic {
 	List<BimLayer> readBimLayer();
 
 	void updateBimLayer(String className, String attributeName, String value);
-
-	String getProjectIdForCard(Long cardId, boolean withExport);
-
-	String getRevisionForViewer(Long cardId, boolean withExport);
-
-	Iterable<String> readCardsBindedToProject(String projectId, String className);
-
+	
 	void importIfc(String projectId);
 
 	void exportIfc(String sourceProjectId);
 	
 	boolean isSynchForExport(String projectId);
-
 
 	BimLayer getRootLayer();
 
@@ -73,6 +66,12 @@ public interface BimLogic extends Logic {
 
 	boolean getActiveForClassname(String classname);
 
+	String getBaseProjectIdForCardOfClass(Long cardId, String className);
 
+	String getExportProjectId(String baseProjectId);
+
+	String getLastRevisionOfProject(String exportProjectId);
+
+	String getDescriptionOfRoot(Long cardId, String className);
 
 }

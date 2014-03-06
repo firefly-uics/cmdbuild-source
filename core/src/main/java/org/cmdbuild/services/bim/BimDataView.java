@@ -26,4 +26,6 @@ public interface BimDataView {
 
 	Map<String, BimCard> getAllGlobalIdMap();
 
+	Long fetchRoot(Long cardId, String className, String referenceRoot);
+
 }

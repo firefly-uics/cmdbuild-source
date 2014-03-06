@@ -32,6 +32,16 @@ public class DefaultBimStoreManager implements BimStoreManager {
 			}
 		});
 	}
+	
+	@Override
+	public BimLayer readLayer(final String className) {
+		return layerStore.read(new Storable() {
+			@Override
+			public String getIdentifier() {
+				return className;
+			}
+		});
+	}
 
 	@Override
 	public void write(StorableProject project) {
@@ -175,5 +185,6 @@ public class DefaultBimStoreManager implements BimStoreManager {
 			return containerLayer.getClassName();
 		}
 	}
+
 
 }
