@@ -126,6 +126,7 @@ public class ComunicationConstants {
 			PRECISION = "precision", //
 			RELATION_ID = "relationId", //
 			RESULT = "result", //
+			ROOT_REFERENCE = "rootReference", //
 			SCALE = "scale", //
 			STARTING_CLASS = "startingClass", //
 			SYNCHRONIZED = "synchronized", //

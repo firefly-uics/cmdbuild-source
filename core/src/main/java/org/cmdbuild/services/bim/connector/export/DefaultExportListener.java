@@ -24,6 +24,7 @@ public class DefaultExportListener implements Output {
 		@Override
 		public void createTarget(Entity entityToCreate, String targetProjectId) {
 			final String objectOid = serviceFacade.createCard(entityToCreate, targetProjectId);
+			System.out.println("object '" + objectOid +"' created");
 			final String spaceGuid = entityToCreate.getAttributeByName(CONTAINER_GUID).getValue();
 			toAdd(objectOid, spaceGuid);
 		}
@@ -31,6 +32,7 @@ public class DefaultExportListener implements Output {
 		@Override
 		public void deleteTarget(Entity entityToRemove, String targetProjectId) {
 			final String removedObjectOid = serviceFacade.removeCard(entityToRemove, targetProjectId);
+			System.out.println("object '" + removedObjectOid +"' removed");
 			final String oldContainerOid = entityToRemove.getAttributeByName(CONTAINER_GUID).getValue();
 			if (!oldContainerOid.isEmpty()) {
 				toRemove(removedObjectOid, oldContainerOid);

@@ -257,4 +257,9 @@ public class DefaultBimPersistence implements BimPersistence {
 		return storeManager.getContainerClassName();
 	}
 
+	@Override
+	public BimLayer readLayer(String className) {
+		return storeManager.readLayer(className);
+	}
+
 }

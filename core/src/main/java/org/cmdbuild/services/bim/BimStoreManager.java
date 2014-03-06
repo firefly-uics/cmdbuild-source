@@ -32,5 +32,7 @@ public interface BimStoreManager {
 	BimLayer findRoot();
 
 	BimLayer findContainer();
+
+	BimLayer readLayer(String className);
 	
 }

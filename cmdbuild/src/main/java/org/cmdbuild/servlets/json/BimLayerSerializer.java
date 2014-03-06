@@ -1,11 +1,11 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_ROOT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EXPORT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CONTAINER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.EXPORT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ROOT_REFERENCE;
 
 import java.util.List;
 
@@ -15,6 +15,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class BimLayerSerializer {
+
+
 
 	public static JSONArray toClient(final List<BimLayer> layerList)
 			throws JSONException {
@@ -36,6 +38,7 @@ public class BimLayerSerializer {
 		out.put("root", layer.isRoot());
 		out.put(EXPORT, layer.isExport());
 		out.put(CONTAINER, layer.isContainer());
+		out.put(ROOT_REFERENCE, layer.getRootReference());
 		return out;
 	}
 
