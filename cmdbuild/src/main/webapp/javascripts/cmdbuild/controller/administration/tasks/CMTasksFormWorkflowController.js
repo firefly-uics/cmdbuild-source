@@ -6,6 +6,7 @@
 		view: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
+		taskType: 'workflow',
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -13,7 +14,7 @@
 					return this.onAbortButtonClick();
 
 				case 'onAddButtonClick':
-					return this.onAddButtonClick(param);
+					return this.onAddButtonClick();
 
 				case 'onCloneButtonClick':
 					return this.onCloneButtonClick();
@@ -34,7 +35,7 @@
 					return this.onRemoveButtonClick();
 
 				case 'onRowSelected':
-					return this.onRowSelected(param);
+					return this.onRowSelected();
 
 				case 'onSaveButtonClick':
 					return this.onSaveButtonClick();
@@ -56,12 +57,12 @@
 			}
 		},
 
-		onAddButtonClick: function(parameter) {
+		onAddButtonClick: function() {
 			this.selectionModel.deselectAll();
 			this.selectedId = null;
-			this.parentDelegate.loadForm(parameter.type);
+			this.parentDelegate.loadForm(this.taskType);
 			this.view.reset();
-			this.view.enableTabbedModify(true);
+			this.view.enableTabbedModify();
 			this.view.disableTypeField();
 			this.view.wizard.changeTab(0);
 		},
@@ -98,14 +99,8 @@
 			});
 		},
 
-		onRowSelected: function(param) {
-//			this.parentDelegate.loadForm(param.record.getData().type);
-//			this.view.disableModify(true);
-//
-//			return this.view.wizard.changeTab(0);
-
-// Just switch when serverside will be completed
-			if (this.selectionModel.hasSelection()) {
+		onRowSelected: function() {_debug('ci sono2');
+			if (this.selectionModel.hasSelection()) {_debug('ci sono1');
 				var me = this;
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
 
@@ -115,7 +110,8 @@
 					params: { id: this.selectedId }
 				});
 				this.selectedDataStore.on('load', function() {
-					me.loadForm(param.record.getData().type);
+					_debug('ci sono');
+					me.parentDelegate.loadForm(me.taskType);
 					me.loadRecord(this.getAt(0));
 				});
 
@@ -135,14 +131,33 @@
 			CMDBuild.LoadMask.get().show();
 			var formData = this.view.getData(true),
 				attributesGridValues = Ext.getCmp('workflowAttributesGrid').getData();
+
+			// Form submit values formatting
+				formData.className = _CMCache.getEntryTypeNameById(formData.className);
+				if (formData.cronInputType) {
+					formData.cronExpression = CMDBuild.Utils.buildCronExpression([
+						formData.minute,
+						formData.hour,
+						formData.dayOfMounth,
+						formData.mounth,
+						formData.dayOfWeek
+					]);
+				} else {
+					formData.cronExpression = formData.base;
+				}
+				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+					formData.attributes = Ext.encode(attributesGridValues);
+
+			delete formData.base;
+			delete formData.cronInputType;
+			delete formData.dayOfMounth;
+			delete formData.dayOfWeek;
+			delete formData.hour;
+			delete formData.minute;
+			delete formData.mounth;
 			delete formData.name;
 			delete formData.value;
 
-			formData.className = _CMCache.getEntryTypeNameById(formData.className);
-
-			if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-				formData.attributes = Ext.encode(attributesGridValues);
-_debug(formData);
 			if (formData.id == null || formData.id == '') {
 				CMDBuild.core.serviceProxy.CMProxyTasks.create({
 					type: 'workflow',

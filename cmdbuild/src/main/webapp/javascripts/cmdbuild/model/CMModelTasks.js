@@ -7,7 +7,7 @@
 			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
 			{ name: CMDBuild.ServiceProxy.parameter.TYPE, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.STATUS, type: 'string' }, //convert: function(newValue, model) { return (model.get('active')) ? '@@ Active' : '@@ Stopped'; }
+			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'string'}
 		]
 	});
 

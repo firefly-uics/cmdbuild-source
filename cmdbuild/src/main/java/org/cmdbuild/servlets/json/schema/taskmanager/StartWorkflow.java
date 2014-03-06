@@ -6,7 +6,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARAMS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 
 import java.util.HashMap;
@@ -56,7 +56,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 			return delegate.getProcessClass();
 		}
 
-		@JsonProperty(PARAMS)
+		@JsonProperty(ATTRIBUTES)
 		public Map<String, String> getParameters() {
 			return delegate.getParameters();
 		}
@@ -70,7 +70,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(CLASS_NAME) final String className, //
-			@Parameter(value = PARAMS, required = false) final JSONObject jsonParameters //
+			@Parameter(value = ATTRIBUTES, required = false) final JSONObject jsonParameters //
 	) {
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
 				.withDescription(description) //
@@ -108,7 +108,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
-			@Parameter(value = PARAMS, required = false) final JSONObject jsonParameters //
+			@Parameter(value = ATTRIBUTES, required = false) final JSONObject jsonParameters //
 	) {
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
 				.withId(id) //

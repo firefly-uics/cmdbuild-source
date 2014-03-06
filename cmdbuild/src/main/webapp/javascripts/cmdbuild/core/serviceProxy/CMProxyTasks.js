@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.model.CMModelTasks');
+
 	Ext.define('CMDBuild.core.serviceProxy.CMProxyTasks', {
 		statics: {
 			create: function(parameters) {

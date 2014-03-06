@@ -26,7 +26,7 @@ import com.google.common.collect.MapDifference.ValueDifference;
  * This {@link Store} handles the saving process of {@link SchedulerJob}
  * elements saving its parameters using a dedicated {@link Store} for
  * {@link SchedulerJobParameter} elements.
- * 
+ *
  * @since 2.2
  */
 public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
@@ -239,7 +239,8 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 		public Storable execute(final SchedulerJob storable) {
 			final Storable created = schedulerJobStore.create(storable);
 			final SchedulerJob readed = schedulerJobStore.read(created);
-			readed.accept(this);
+			storable.setId(readed.getId());
+			storable.accept(this);
 			return created;
 		}
 

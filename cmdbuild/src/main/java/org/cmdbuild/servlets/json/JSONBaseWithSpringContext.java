@@ -216,7 +216,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	/*
-	 * 
+	 *
 	 * Utilities
 	 */
 

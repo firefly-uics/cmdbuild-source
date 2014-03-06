@@ -32,15 +32,18 @@
 					},
 					{
 						text: tr.status,
-						dataIndex: CMDBuild.ServiceProxy.parameter.STATUS,
-						flex: 1
+						width: '60px',
+						align: 'center',
+						dataIndex: CMDBuild.ServiceProxy.parameter.ACTIVE,
+						renderer: me.activeGridColumnRenderer,
+						fixed: true
 					},
 					{
 						text: tr.start,
 						width: '60px',
 						align: 'center',
 						renderer: function() {
-							return '<img src="images/icons/arrow_right.png" title="' + tr.startLabel + '" alt="' + tr.start + '" />';
+							return '<img src="images/icons/control_play.png" title="' + tr.startLabel + '" alt="' + tr.start + '" />';
 						},
 						sortable: false,
 						hideable: false,
@@ -52,7 +55,7 @@
 						width: '60px',
 						align: 'center',
 						renderer: function() {
-							return '<img src="images/icons/cross.png" title="' + tr.stopLabel + '" alt="' + tr.stop + '" />';
+							return '<img src="images/icons/control_stop.png" title="' + tr.stopLabel + '" alt="' + tr.stop + '" />';
 						},
 						sortable: false,
 						hideable: false,
@@ -106,20 +109,23 @@
 					} break;
 				}
 			}
+		},
+
+		/**
+		 * @param {Object} value
+		 * Used to render active database value to add icon
+		 */
+		activeGridColumnRenderer: function(value) {
+			if(typeof value === 'boolean') {
+				if(value) {
+					value = '<img src="images/icons/tick.png" alt="Is Default" />';
+				} else {
+					value = null;
+				}
+			}
+
+			return value;
 		}
-//		,
-//
-//		load: function(type) {
-//			var me = this;
-//
-//			this.store.load({
-//				params: { 'type': type },
-//				scope: this,
-//				callback: function() {
-//					me.getSelectionModel().select(0, true);
-//				}
-//			});
-//		}
 	});
 
 })();

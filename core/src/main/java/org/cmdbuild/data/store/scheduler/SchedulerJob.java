@@ -6,8 +6,7 @@ import org.cmdbuild.data.store.Storable;
 
 public abstract class SchedulerJob implements Storable {
 
-	private final Long id;
-
+	private Long id;
 	private String description;
 	private String cronExpression;
 	private boolean running;
@@ -29,6 +28,13 @@ public abstract class SchedulerJob implements Storable {
 
 	public Long getId() {
 		return id;
+	}
+
+	/**
+	 * @deprecated should not be used
+	 */
+	public void setId(final Long id) {
+		this.id = id;
 	}
 
 	public String getDescription() {
