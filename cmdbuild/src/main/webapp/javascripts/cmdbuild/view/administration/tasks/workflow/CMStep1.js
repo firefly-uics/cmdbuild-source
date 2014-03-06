@@ -111,84 +111,6 @@
 				name: CMDBuild.ServiceProxy.parameter.ID
 			});
 
-			// Cron expression builder
-			this.base = new Ext.form.ComboBox( {
-				name: 'base',
-				hiddenName: 'base',
-				labelSeparator : '',
-				store : new Ext.data.SimpleStore( {
-					fields : [ 'value', 'description' ],
-					data : [ [ '0 * * * ?', translation.everyHour ],
-							[ '0 0 * * ?', translation.everyDay ],
-							[ '0 0 1 * ?', translation.everyMounth ],
-							[ '0 0 1 1 ?', translation.everyYear ] ]
-				}),
-				valueField : 'value',
-				displayField : 'description',
-				typeAhead : true,
-				queryMode : 'local',
-				selectOnFocus : true,
-				margins: '0 0 0 105'
-			});
-
-			this.base.on('select', function(combo, record, index) {
-				this.setValueOfAdvanced(record[0].data.value);
-			}, this);
-
-			this.buildAdvancedFields();
-
-			this.advanceRadio = new Ext.form.Radio({
-				name : 'input_type',
-				inputValue : 'advance',
-				boxLabel : translation.advanced,
-				width : 150,
-				labelSeparator : ''
-			});
-
-			this.advanceRadio.on('change', function(radio, value) {
-				if (this.editing) {
-					this.setDisabledAdvancedFields(!value);
-				}
-			},this);
-
-			this.baseRadio = new Ext.form.Radio({
-				name : 'input_type',
-				inputValue : 'advance',
-				boxLabel : translation.basic,
-				labelSeparator : '',
-				width : 150,
-				checked : true
-			});
-
-			this.baseRadio.on('change', function(radio, value) {
-				if (this.editing) {
-					this.base.setDisabled(!value);
-				}
-			},this);
-
-			this.basePanel = new Ext.panel.Panel({
-				frame: true,
-				layout: 'hbox',
-				margin: '0 0 5 0',
-				items : [this.baseRadio, this.base]
-			});
-
-			this.advance = new Ext.panel.Panel({
-				frame: true,
-				layout: 'hbox',
-				margin: '0 0 5 0',
-				items : [this.advanceRadio,
-					{
-						xtype: 'panel',
-						bodyCls: 'cmgraypanel',
-						frame: false,
-						border: false,
-						items: this.advancedFields
-					}
-				]
-			});
-			// END: Cron expression builder
-
 			this.attributesTable = Ext.create('CMDBuild.view.administration.common.CMDynamicKeyValueGrid', {
 				title: '@@ Workflow attributes',
 				id: 'workflowAttributesGrid',
@@ -217,7 +139,7 @@
 				this.typeField,
 				this.idField,
 				{
-					name: 'description',
+					name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 					fieldLabel: '@@ Description',
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					allowBlank: false
@@ -244,82 +166,14 @@
 				},
 				{
 					xtype: 'checkbox',
-					name: 'isActive',
+					name: CMDBuild.ServiceProxy.parameter.ACTIVE,
 					fieldLabel: '@@ Run on save',
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				},
-
-				this.basePanel, this.advance,
-
 				this.attributesTable
 			];
 
 			this.callParent(arguments);
-		},
-
-		// private
-		buildAdvancedFields: function() {
-			this.advancedFields = [
-				this.minutes = new CMDBuild.CronTriggerField({
-					fieldLabel: translation.minute
-				}),
-				this.hour = new CMDBuild.CronTriggerField({
-					fieldLabel: translation.hour
-				}),
-				this.dayOfMounth = new CMDBuild.CronTriggerField({
-					fieldLabel: translation.dayOfMounth
-				}),
-				this.mount = new CMDBuild.CronTriggerField({
-					fieldLabel: translation.mounth
-				}),
-				this.dayOfWeek = new CMDBuild.CronTriggerField({
-					fieldLabel: translation.dayOfWeek
-				})
-			];
-			this.addListenerToAdvancedFields();
-		},
-
-		setValueOfAdvanced: function(cronExpression) {
-			var values = cronExpression.split(' ');
-			var fields = this.advancedFields;
-			for (var i=0, len=fields.length; i<len; i++) {
-				var field = fields[i];
-				if (values[i]) {
-					field.setValue(values[i]);
-				}
-			}
-		},
-
-		addListenerToAdvancedFields: function() {
-			var fields = this.advancedFields;
-			for (var i=0, len=fields.length; i<len; i++) {
-				var field = fields[i];
-				field.on('change', function(field, newValue, oldValue){
-					this.setValueOfBaseIfPossible(this.getCronExpression());
-				}, this);
-			}
-		},
-
-		getCronExpression: function() {
-			var expression = "";
-			var fields = this.advancedFields;
-			for (var i=0, len=fields.length-1; i<len; i++) {
-				var field = fields[i];
-				expression += field.getValue()+" ";
-			}
-			expression += fields[fields.length -1].getValue();
-			return expression;
-		},
-
-		// private
-		setValueOfBaseIfPossible : function(value) {
-			var index = this.base.store.find('value', value);
-			if (index > -1) {
-				this.base.setValue(value);
-			} else {
-				this.base.setValue('');
-			}
-			this.baseExpression = index > -1;
 		},
 
 //		fillPresetWithData: function(data) {

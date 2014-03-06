@@ -174,8 +174,8 @@ public class ComunicationConstants {
 			USER_NAME = "username", //
 			USER_STOPPABLE = "userstoppable", //
 			USER_TYPE = "user_type", //
-			TASK_READ_EMAIL = "readEmail", //
-			TASK_START_WORKFLOW = "startWorkflow", //
+			TASK_READ_EMAIL = "email", //
+			TASK_START_WORKFLOW = "workflow", //
 			TEMPORARY_ID = "temporaryId", //
 			VIEWS = "views", //
 			WIDGET = "widget", //
