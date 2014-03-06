@@ -4,8 +4,8 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.logic.setup.DefaultModulesHandler;
 import org.cmdbuild.logic.setup.EmailModule;
-import org.cmdbuild.logic.setup.SetUpLogic;
-import org.cmdbuild.logic.setup.SetUpLogic.Module;
+import org.cmdbuild.logic.setup.SetupLogic;
+import org.cmdbuild.logic.setup.SetupLogic.Module;
 import org.cmdbuild.services.setup.PrivilegedModulesHandler;
 import org.cmdbuild.services.setup.PropertiesModulesHandler;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
@@ -14,8 +14,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 
 @ConfigurationComponent
-public class SetUp {
+public class Setup {
 
+	private static final String BIM_MODULE_NAME = "bim";
 	private static final String EMAIL_MODULE_NAME = "email";
 
 	@Autowired
@@ -26,14 +27,17 @@ public class SetUp {
 
 	@Bean
 	@Scope(PROTOTYPE)
-	public SetUpLogic setUpLogic() {
-		return new SetUpLogic(privilegedModulesHandler());
+	public SetupLogic setupLogic() {
+		return new SetupLogic(privilegedModulesHandler());
 	}
 
 	@Bean
 	@Scope(PROTOTYPE)
 	protected PrivilegedModulesHandler privilegedModulesHandler() {
-		return new PrivilegedModulesHandler(defaultModulesHandler(), privilegeManagement.userPrivilegeContext());
+		final PrivilegedModulesHandler privilegedModulesHandler = new PrivilegedModulesHandler(defaultModulesHandler(),
+				privilegeManagement.userPrivilegeContext());
+		privilegedModulesHandler.skipPrivileges(BIM_MODULE_NAME);
+		return privilegedModulesHandler;
 	}
 
 	@Bean

@@ -55,7 +55,6 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 					System.out.println("Bimserver connection established");
 				}
 			} catch (final Throwable t) {
-				// TODO log
 				System.out.println("Bimserver connection failed");
 			}
 		}

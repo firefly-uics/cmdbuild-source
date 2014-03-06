@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.cmdbuild.logic.Logic;
 
-public class SetUpLogic implements Logic {
+public class SetupLogic implements Logic {
 
 	public static interface Module {
 
@@ -22,7 +22,7 @@ public class SetUpLogic implements Logic {
 
 	private final ModulesHandler modulesHandler;
 
-	public SetUpLogic(final ModulesHandler modulesHandler) {
+	public SetupLogic(final ModulesHandler modulesHandler) {
 		this.modulesHandler = modulesHandler;
 	}
 
