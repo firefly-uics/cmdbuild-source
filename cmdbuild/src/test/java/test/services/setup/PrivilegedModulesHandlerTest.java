@@ -1,12 +1,13 @@
 package test.services.setup;
 
-import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
-import org.cmdbuild.logic.setup.SetUpLogic.Module;
-import org.cmdbuild.logic.setup.SetUpLogic.ModulesHandler;
+import org.cmdbuild.logic.setup.SetupLogic.Module;
+import org.cmdbuild.logic.setup.SetupLogic.ModulesHandler;
 import org.cmdbuild.services.setup.PrivilegedModule;
 import org.cmdbuild.services.setup.PrivilegedModulesHandler;
 import org.junit.Before;
@@ -28,11 +29,31 @@ public class PrivilegedModulesHandlerTest {
 
 	@Test
 	public void returnedModuleIsWrapped() throws Exception {
+		// given
+		final Module module = mock(Module.class);
+		when(moduleHandler.get("foo")) //
+				.thenReturn(module);
+
 		// when
-		final Module module = privilegedModuleHandler.get("foo");
+		final Module read = privilegedModuleHandler.get("foo");
 
 		// then
-		assertThat(module, instanceOf(PrivilegedModule.class));
+		assertThat(read, instanceOf(PrivilegedModule.class));
+	}
+
+	@Test
+	public void returnedModuleIsNotWrappedIfSkipped() throws Exception {
+		// given
+		final Module module = mock(Module.class);
+		when(moduleHandler.get("foo")) //
+				.thenReturn(module);
+		privilegedModuleHandler.skipPrivileges("foo");
+
+		// when
+		final Module read = privilegedModuleHandler.get("foo");
+
+		// then
+		assertThat(read, not(instanceOf(PrivilegedModule.class)));
 	}
 
 }

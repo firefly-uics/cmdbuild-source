@@ -465,7 +465,7 @@ public class DefaultBimLogic implements BimLogic {
 		if (rootLayer == null || rootLayer.getClassName() == null || rootLayer.getClassName().isEmpty()) {
 			throw new BimError("Root layer not configured");
 		}
-		if (className.equals(rootLayer)) {
+		if (className.equals(rootLayer.getClassName())) {
 			rootId = cardId;
 		} else {
 			final BimLayer layer = bimDataPersistence.readLayer(className);

@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
-import org.cmdbuild.logic.setup.SetUpLogic.Module;
+import org.cmdbuild.logic.setup.SetupLogic.Module;
 
 import com.google.common.collect.Maps;
 

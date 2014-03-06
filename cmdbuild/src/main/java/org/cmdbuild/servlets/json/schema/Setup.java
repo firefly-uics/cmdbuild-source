@@ -20,10 +20,10 @@ public class Setup extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Unauthorized
 	public JSONObject getConfiguration( //
-			@Parameter(NAME) final String nameOfConfigFile //
+			@Parameter(NAME) final String module //
 	) throws JSONException, AuthException, Exception {
 		final JSONObject out = new JSONObject();
-		out.put(DATA, readConfig(nameOfConfigFile));
+		out.put(DATA, readConfig(module));
 
 		return out;
 	}
@@ -31,13 +31,13 @@ public class Setup extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Unauthorized
 	public JSONObject getConfigurations( //
-			@Parameter(NAMES) final String namesOfConfigFileString //
-			) throws JSONException, AuthException, Exception {
+			@Parameter(NAMES) final String module //
+	) throws JSONException, AuthException, Exception {
 		final JSONObject out = new JSONObject();
-		final JSONArray namesOfConfigFile = new JSONArray(namesOfConfigFileString);
-		for (int i = 0, l = namesOfConfigFile.length(); i<l; i++) {
+		final JSONArray namesOfConfigFile = new JSONArray(module);
+		for (int i = 0, l = namesOfConfigFile.length(); i < l; i++) {
 			final Object nameAsObject = namesOfConfigFile.get(i);
-			final String name = (String)nameAsObject;
+			final String name = (String) nameAsObject;
 			out.put(name, readConfig(name));
 		}
 
@@ -47,18 +47,19 @@ public class Setup extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin(AdminAccess.DEMOSAFE)
 	public void saveConfiguration( //
-			@Parameter(NAME) final String nameOfConfigFile, //
+			@Parameter(NAME) final String module, //
 			final Map<String, String> requestParams //
 	) throws Exception {
-		setUpLogic().save(nameOfConfigFile, requestParams);
+		setUpLogic().save(module, requestParams);
 	}
 
-	private JSONObject readConfig(final String nameOfConfigFile)
-			throws Exception, JSONException {
+	private JSONObject readConfig(final String module) throws Exception {
+		final Map<String, String> config = setUpLogic().load(module);
 		final JSONObject data = new JSONObject();
-		for (final Entry<String, String> entry : setUpLogic().load(nameOfConfigFile).entrySet()) {
+		for (final Entry<String, String> entry : config.entrySet()) {
 			data.put(entry.getKey(), entry.getValue());
 		}
 		return data;
 	}
+
 }

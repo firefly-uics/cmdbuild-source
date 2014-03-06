@@ -7,9 +7,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.setup.SetUpLogic;
-import org.cmdbuild.logic.setup.SetUpLogic.Module;
-import org.cmdbuild.logic.setup.SetUpLogic.ModulesHandler;
+import org.cmdbuild.logic.setup.SetupLogic;
+import org.cmdbuild.logic.setup.SetupLogic.Module;
+import org.cmdbuild.logic.setup.SetupLogic.ModulesHandler;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -22,7 +22,7 @@ public class SetUpLogicTest {
 
 	private Module module;
 	private ModulesHandler modulesHandler;
-	private SetUpLogic setUpLogic;
+	private SetupLogic setUpLogic;
 
 	@Before
 	public void setUp() throws Exception {
@@ -32,7 +32,7 @@ public class SetUpLogicTest {
 		when(modulesHandler.get(MODULE_NAME)) //
 				.thenReturn(module);
 
-		setUpLogic = new SetUpLogic(modulesHandler);
+		setUpLogic = new SetupLogic(modulesHandler);
 	}
 
 	@Test
@@ -44,7 +44,7 @@ public class SetUpLogicTest {
 		final InOrder inOrder = inOrder(modulesHandler, module);
 		inOrder.verify(modulesHandler).get(MODULE_NAME);
 		inOrder.verify(module).retrieve();
-		verifyNoMoreInteractions(module, modulesHandler);
+		verifyNoMoreInteractions(modulesHandler, module);
 	}
 
 	@Test
@@ -59,7 +59,7 @@ public class SetUpLogicTest {
 		final InOrder inOrder = inOrder(modulesHandler, module);
 		inOrder.verify(modulesHandler).get(MODULE_NAME);
 		inOrder.verify(module).store(values);
-		verifyNoMoreInteractions(module, modulesHandler);
+		verifyNoMoreInteractions(modulesHandler, module);
 	}
 
 }

@@ -2,8 +2,8 @@ package org.cmdbuild.logic.setup;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.setup.SetUpLogic.Module;
-import org.cmdbuild.logic.setup.SetUpLogic.ModulesHandler;
+import org.cmdbuild.logic.setup.SetupLogic.Module;
+import org.cmdbuild.logic.setup.SetupLogic.ModulesHandler;
 
 import com.google.common.collect.Maps;
 

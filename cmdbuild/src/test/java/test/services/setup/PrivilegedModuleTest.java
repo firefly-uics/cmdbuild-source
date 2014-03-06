@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.Map;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
-import org.cmdbuild.logic.setup.SetUpLogic.Module;
+import org.cmdbuild.logic.setup.SetupLogic.Module;
 import org.cmdbuild.services.setup.PrivilegedModule;
 import org.junit.Before;
 import org.junit.Test;
