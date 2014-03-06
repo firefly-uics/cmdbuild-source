@@ -1,6 +1,6 @@
 package unit.logic.bim;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -15,11 +16,11 @@ import org.cmdbuild.logic.bim.BimLogic;
 import org.cmdbuild.logic.bim.BimLogic.Project;
 import org.cmdbuild.logic.bim.DefaultBimLogic;
 import org.cmdbuild.model.bim.BimLayer;
-import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimFacade.BimFacadeProject;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimPersistence.CmProject;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -30,50 +31,75 @@ import com.google.common.collect.Lists;
 
 public class BimLogicProjectCrudTest {
 
+	private static final String FILENAME = "ifc";
+	private static final String c2 = "22";
+	private static final String c1 = "11";
 	private BimFacade serviceFacade;
 	private BimPersistence dataPersistence;
-	private BimDataModelManager dataModelManager;
 	private BimLogic bimLogic;
-	private static final String PROJECTID = "123";
-	private static final String PROJECT_NAME = "projectName";
-	private static final String DESCRIPTION = "description";
+	private static final String ID = "id of pippo";
+	private static final String NAME = "pippo";
+	private static final String DESCRIPTION = "description of pippo";
+	private static final String IMPORT = "import";
+	private static final String EXPORT = "export";
+	boolean STATUS = true;
 
 	@Before
 	public void setUp() throws Exception {
 		serviceFacade = mock(BimFacade.class);
 		dataPersistence = mock(BimPersistence.class);
-		bimLogic = new DefaultBimLogic(serviceFacade, dataPersistence, dataModelManager, null, null, null);
+		bimLogic = new DefaultBimLogic(serviceFacade, dataPersistence, null, null, null, null);
 	}
 
-	@Test
-	public void simpleCreationOfAProjectWithoutFile() throws Exception {
+	@Test(expected = UnsupportedOperationException.class)
+	public void createProjectWithoutFile() throws Exception {
 		// given
-		final ArgumentCaptor<BimFacadeProject> facadeProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
+		final ArgumentCaptor<BimFacadeProject> convertedProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
 		final ArgumentCaptor<CmProject> cmProjectCaptor = ArgumentCaptor.forClass(CmProject.class);
-		
+
 		Project project = mock(Project.class);
-		when(project.getName()).thenReturn(PROJECT_NAME);
+		when(project.getName()).thenReturn(NAME);
 		when(project.getFile()).thenReturn(null);
 		when(project.getDescription()).thenReturn(DESCRIPTION);
-		
+
+		when(project.isActive()).thenReturn(STATUS);
+
 		BimFacadeProject createdProject = mock(BimFacadeProject.class);
-		when(createdProject.getProjectId()).thenReturn(PROJECTID);
+		when(createdProject.getProjectId()).thenReturn(ID);
+		when(createdProject.getName()).thenReturn(NAME);
 		when(createdProject.getLastCheckin()).thenReturn(null);
-		when(serviceFacade.createProject(facadeProjectCaptor.capture())).thenReturn(createdProject);
+		when(serviceFacade.createProject(convertedProjectCaptor.capture())).thenReturn(createdProject);
 
 		// when
-		bimLogic.createProject(project);
-		
+		Project result = bimLogic.createProject(project);
+
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
-		inOrder.verify(serviceFacade).createProject(facadeProjectCaptor.getValue());
+		BimFacadeProject convertedProject = convertedProjectCaptor.getValue();
+		inOrder.verify(serviceFacade).createProject(convertedProject);
 		inOrder.verify(dataPersistence).saveProject(cmProjectCaptor.capture());
-		
-		assertTrue(cmProjectCaptor.getValue().getProjectId().equals(PROJECTID));
-		assertTrue(cmProjectCaptor.getValue().getName().equals(PROJECT_NAME));
-		assertTrue(cmProjectCaptor.getValue().getDescription().equals(DESCRIPTION));
-		
 		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+
+		assertTrue(convertedProject.getName().equals(NAME));
+		assertTrue(convertedProject.getFile() == null);
+		assertTrue(convertedProject.isActive() == STATUS);
+		assertTrue(convertedProject.getProjectId() == null);
+
+		CmProject projectToStore = cmProjectCaptor.getValue();
+		assertTrue(projectToStore.getProjectId().equals(ID));
+		assertTrue(projectToStore.getName().equals(NAME));
+		assertTrue(projectToStore.getDescription().equals(DESCRIPTION));
+		assertTrue(projectToStore.isActive() == STATUS);
+		assertTrue(projectToStore.getCardBinding() == null);
+
+		assertTrue(result.getName().equals(NAME));
+		assertTrue(result.getDescription() == DESCRIPTION);
+		assertTrue(result.getLastCheckin() == null);
+		assertTrue(result.isActive() == STATUS);
+		assertTrue(result.getCardBinding() == null);
+		assertTrue(result.getProjectId() == ID);
+
+		result.getFile(); // unsupported
 	}
 
 	@Test
@@ -81,12 +107,15 @@ public class BimLogicProjectCrudTest {
 		// given
 		final ArgumentCaptor<BimFacadeProject> facadeProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
 		final ArgumentCaptor<CmProject> cmProjectCaptor = ArgumentCaptor.forClass(CmProject.class);
-		
+
+		STATUS = true;
+
 		Project project = mock(Project.class);
-		when(project.getName()).thenReturn(PROJECT_NAME);
-		when(project.getProjectId()).thenReturn(PROJECTID);
+		when(project.getName()).thenReturn(NAME);
+		when(project.getProjectId()).thenReturn(ID);
 		when(project.getFile()).thenReturn(null);
-		when(project.isActive()).thenReturn(true);
+		when(project.isActive()).thenReturn(STATUS);
+		when(project.getDescription()).thenReturn(DESCRIPTION);
 
 		// when
 		bimLogic.disableProject(project);
@@ -95,10 +124,21 @@ public class BimLogicProjectCrudTest {
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
 		inOrder.verify(serviceFacade).disableProject(facadeProjectCaptor.capture());
 		inOrder.verify(dataPersistence).disableProject(cmProjectCaptor.capture());
-		
-		assertTrue(facadeProjectCaptor.getValue().getProjectId().equals(PROJECTID));
-		assertTrue(cmProjectCaptor.getValue().getProjectId().equals(PROJECTID));
 		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+
+		BimFacadeProject facadeProject = facadeProjectCaptor.getValue();
+		assertTrue(facadeProject.getProjectId().equals(ID));
+		assertTrue(facadeProject.isActive() == STATUS);
+		assertTrue(facadeProject.getFile() == null);
+		assertTrue(facadeProject.getName().equals(NAME));
+
+		CmProject projectToStore = cmProjectCaptor.getValue();
+		assertTrue(projectToStore.getProjectId().equals(ID));
+		assertTrue(projectToStore.getName().equals(NAME));
+		assertTrue(projectToStore.getDescription().equals(DESCRIPTION));
+		assertTrue(projectToStore.isActive() == STATUS);
+		assertTrue(projectToStore.getCardBinding() == null);
+		assertTrue(projectToStore.getLastCheckin() == null);
 	}
 
 	@Test
@@ -106,24 +146,38 @@ public class BimLogicProjectCrudTest {
 		// given
 		final ArgumentCaptor<BimFacadeProject> facadeProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
 		final ArgumentCaptor<CmProject> cmProjectCaptor = ArgumentCaptor.forClass(CmProject.class);
-		
+
+		STATUS = false;
+
 		Project project = mock(Project.class);
-		when(project.getName()).thenReturn(PROJECT_NAME);
-		when(project.getProjectId()).thenReturn(PROJECTID);
+		when(project.getName()).thenReturn(NAME);
+		when(project.getProjectId()).thenReturn(ID);
 		when(project.getFile()).thenReturn(null);
-		when(project.isActive()).thenReturn(false);
+		when(project.isActive()).thenReturn(STATUS);
+		when(project.getDescription()).thenReturn(DESCRIPTION);
 
 		// when
-		bimLogic.disableProject(project);
+		bimLogic.enableProject(project);
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
-		inOrder.verify(serviceFacade).disableProject(facadeProjectCaptor.capture());
-		inOrder.verify(dataPersistence).disableProject(cmProjectCaptor.capture());
-		
-		assertTrue(facadeProjectCaptor.getValue().getProjectId().equals(PROJECTID));
-		assertTrue(cmProjectCaptor.getValue().getProjectId().equals(PROJECTID));
+		inOrder.verify(serviceFacade).enableProject(facadeProjectCaptor.capture());
+		inOrder.verify(dataPersistence).enableProject(cmProjectCaptor.capture());
 		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+
+		BimFacadeProject facadeProject = facadeProjectCaptor.getValue();
+		assertTrue(facadeProject.getProjectId().equals(ID));
+		assertTrue(facadeProject.isActive() == STATUS);
+		assertTrue(facadeProject.getFile() == null);
+		assertTrue(facadeProject.getName().equals(NAME));
+
+		CmProject projectToStore = cmProjectCaptor.getValue();
+		assertTrue(projectToStore.getProjectId().equals(ID));
+		assertTrue(projectToStore.getName().equals(NAME));
+		assertTrue(projectToStore.getDescription().equals(DESCRIPTION));
+		assertTrue(projectToStore.isActive() == STATUS);
+		assertTrue(projectToStore.getCardBinding() == null);
+		assertTrue(projectToStore.getLastCheckin() == null);
 	}
 
 	@Test
@@ -133,30 +187,59 @@ public class BimLogicProjectCrudTest {
 		when(dataPersistence.readAll()).thenReturn(projectList);
 
 		// when
-		bimLogic.readAllProjects();
+		Iterable<Project> projects = bimLogic.readAllProjects();
 
 		// then
-		assertTrue(Iterables.size(dataPersistence.readAll()) == 0);
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		inOrder.verify(dataPersistence).readAll();
+		verifyNoMoreInteractions(dataPersistence);
 		verifyZeroInteractions(serviceFacade);
+
+		assertTrue(Iterables.size(projects) == 0);
 	}
 
-	@Test
+	@Test(expected = UnsupportedOperationException.class)
 	public void readProjectListWithOneProject() throws Exception {
 		// given
 		List<CmProject> projectList = Lists.newArrayList();
 		CmProject project = mock(CmProject.class);
-		when(project.getProjectId()).thenReturn(PROJECTID);
+		when(project.getProjectId()).thenReturn(ID);
+		when(project.getName()).thenReturn(NAME);
+		when(project.getDescription()).thenReturn(DESCRIPTION);
+		when(project.isActive()).thenReturn(STATUS);
+		when(project.getImportMapping()).thenReturn(IMPORT);
+		when(project.getExportMapping()).thenReturn(EXPORT);
+
+		Iterable<String> cardsBinded = Lists.newArrayList(c1, c2);
+		when(project.getCardBinding()).thenReturn(cardsBinded);
 		projectList.add(project);
 		when(dataPersistence.readAll()).thenReturn(projectList);
 
 		// when
-		bimLogic.readAllProjects();
-		Iterable<CmProject> projects = dataPersistence.readAll();
+		Iterable<Project> projects = bimLogic.readAllProjects();
 
 		// then
-		assertTrue(Iterables.size(projects) == 1);
-		assertTrue(projects.iterator().next().getProjectId().equals(PROJECTID));
+		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		inOrder.verify(dataPersistence).readAll();
 		verifyNoMoreInteractions(serviceFacade);
+		verifyZeroInteractions(serviceFacade);
+
+		Project theOnlyProject = projects.iterator().next();
+		Iterable<String> cardBinding = theOnlyProject.getCardBinding();
+		Iterator<String> iterator = cardBinding.iterator();
+
+		assertTrue(Iterables.size(projects) == 1);
+		assertTrue(theOnlyProject.getProjectId().equals(ID));
+		assertTrue(theOnlyProject.getName().equals(NAME));
+		assertTrue(theOnlyProject.getDescription().equals(DESCRIPTION));
+		assertTrue(theOnlyProject.isActive() == STATUS);
+		assertTrue(theOnlyProject.getImportMapping().equals(IMPORT));
+		assertTrue(theOnlyProject.getExportMapping().equals(EXPORT));
+		assertTrue(Iterables.size(cardBinding) == 2);
+		assertTrue(iterator.next().equals(c1));
+		assertTrue(iterator.next().equals(c2));
+
+		theOnlyProject.getFile(); // unsupported
 	}
 
 	@Test
@@ -164,13 +247,20 @@ public class BimLogicProjectCrudTest {
 		// given
 		final ArgumentCaptor<BimFacadeProject> facadeProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
 		final ArgumentCaptor<CmProject> cmProjectCaptor = ArgumentCaptor.forClass(CmProject.class);
-		
+
 		Project project = mock(Project.class);
-		when(project.getName()).thenReturn(PROJECT_NAME);
+		when(project.getProjectId()).thenReturn(ID);
+		when(project.getName()).thenReturn(NAME);
+		when(project.getDescription()).thenReturn(DESCRIPTION);
+		when(project.isActive()).thenReturn(STATUS);
+		when(project.getImportMapping()).thenReturn(IMPORT);
+		when(project.getExportMapping()).thenReturn(EXPORT);
+		Iterable<String> cardsBinded = Lists.newArrayList(c1, c2);
+		when(project.getCardBinding()).thenReturn(cardsBinded);
 		when(project.getFile()).thenReturn(null);
-		
+
 		BimFacadeProject updatedProject = mock(BimFacadeProject.class);
-		when(updatedProject.getProjectId()).thenReturn(PROJECTID);
+		when(updatedProject.getProjectId()).thenReturn(ID);
 		when(updatedProject.getLastCheckin()).thenReturn(null);
 		when(serviceFacade.updateProject(facadeProjectCaptor.capture())).thenReturn(updatedProject);
 
@@ -179,10 +269,28 @@ public class BimLogicProjectCrudTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
-		inOrder.verify(serviceFacade).updateProject(facadeProjectCaptor.getValue());
+		BimFacadeProject facadeProject = facadeProjectCaptor.getValue();
+		inOrder.verify(serviceFacade).updateProject(facadeProject);
 		inOrder.verify(dataPersistence).saveProject(cmProjectCaptor.capture());
-		
 		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+
+		CmProject projectToStore = cmProjectCaptor.getValue();
+
+		assertTrue(facadeProject.getProjectId().equals(ID));
+		assertTrue(facadeProject.getName().equals(NAME));
+		assertTrue(facadeProject.getFile() == null);
+		assertTrue(facadeProject.isActive() == STATUS);
+
+		assertTrue(projectToStore.getProjectId().equals(ID));
+		assertTrue(projectToStore.getName().equals(NAME));
+		assertTrue(projectToStore.getDescription().equals(DESCRIPTION));
+		assertTrue(projectToStore.isActive() == STATUS);
+
+		Iterable<String> cardBinding = projectToStore.getCardBinding();
+		Iterator<String> iterator = cardBinding.iterator();
+		assertTrue(Iterables.size(cardBinding) == 2);
+		assertTrue(iterator.next().equals(c1));
+		assertTrue(iterator.next().equals(c2));
 	}
 
 	@Test
@@ -190,25 +298,37 @@ public class BimLogicProjectCrudTest {
 		// given
 		final ArgumentCaptor<BimFacadeProject> facadeProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
 		final ArgumentCaptor<CmProject> cmProjectCaptor = ArgumentCaptor.forClass(CmProject.class);
-		
-		final File ifcFile = File.createTempFile("ifc", null, FileUtils.getTempDirectory());
-		ifcFile.deleteOnExit();
+
+		final File ifcFile = new File(FILENAME);
 		Project project = mock(Project.class);
-		when(project.getName()).thenReturn(PROJECT_NAME);
+		when(project.getProjectId()).thenReturn(ID);
+		when(project.getName()).thenReturn(NAME);
 		when(project.getFile()).thenReturn(ifcFile);
+		
 		BimFacadeProject updatedProject = mock(BimFacadeProject.class);
-		when(updatedProject.getProjectId()).thenReturn(PROJECTID);
-		when(updatedProject.getLastCheckin()).thenReturn(null);
+		when(updatedProject.getProjectId()).thenReturn(ID);
+		final DateTime now = new DateTime();
+		when(updatedProject.getLastCheckin()).thenReturn(now);
 		when(serviceFacade.updateProject(facadeProjectCaptor.capture())).thenReturn(updatedProject);
 
 		// when
 		bimLogic.updateProject(project);
 
 		// then
+		BimFacadeProject projectToUpdate = facadeProjectCaptor.getValue();
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
-		inOrder.verify(serviceFacade).updateProject(facadeProjectCaptor.getValue());
+		inOrder.verify(serviceFacade).updateProject(projectToUpdate);
 		inOrder.verify(dataPersistence).saveProject(cmProjectCaptor.capture());
 		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		
+		assertTrue(projectToUpdate.getProjectId().equals(ID));
+		assertTrue(projectToUpdate.getName().equals(NAME));
+		assertTrue(projectToUpdate.getFile().getName().equals(FILENAME));
+		
+		CmProject projectToSave = cmProjectCaptor.getValue();
+		assertTrue(projectToSave.getProjectId().equals(ID));
+		assertTrue(projectToSave.getName().equals(NAME));
+		assertTrue(projectToSave.getLastCheckin().equals(now));
 	}
 
 	@Test
@@ -216,17 +336,17 @@ public class BimLogicProjectCrudTest {
 		// given
 		final ArgumentCaptor<BimFacadeProject> facadeProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
 		final ArgumentCaptor<CmProject> cmProjectCaptor = ArgumentCaptor.forClass(CmProject.class);
-		
+
 		Project project = mock(Project.class);
-		when(project.getName()).thenReturn(PROJECT_NAME);
+		when(project.getName()).thenReturn(NAME);
 		when(project.getFile()).thenReturn(null);
-		when(project.getProjectId()).thenReturn(PROJECTID);
+		when(project.getProjectId()).thenReturn(ID);
 		List<String> stringList = Lists.newArrayList();
-		stringList.add("11");
+		stringList.add(c1);
 		when(project.getCardBinding()).thenReturn(stringList);
-		
+
 		BimFacadeProject createdProject = mock(BimFacadeProject.class);
-		when(createdProject.getProjectId()).thenReturn(PROJECTID);
+		when(createdProject.getProjectId()).thenReturn(ID);
 		when(createdProject.getLastCheckin()).thenReturn(null);
 		when(serviceFacade.createProject(facadeProjectCaptor.capture())).thenReturn(createdProject);
 		when(dataPersistence.findRoot()).thenReturn(new BimLayer("root"));

@@ -23,10 +23,6 @@ public interface BimFacade {
 
 		boolean isSynch();
 
-		String getImportMapping();
-
-		String getExportMapping();
-
 		DateTime getLastCheckin();
 
 		void setLastCheckin(DateTime lastCheckin);

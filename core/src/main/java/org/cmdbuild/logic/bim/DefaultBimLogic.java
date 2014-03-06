@@ -106,16 +106,6 @@ public class DefaultBimLogic implements BimLogic {
 		}
 
 		@Override
-		public String getImportMapping() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public String getExportMapping() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
 		public DateTime getLastCheckin() {
 			throw new UnsupportedOperationException();
 		}
@@ -293,15 +283,14 @@ public class DefaultBimLogic implements BimLogic {
 			}
 
 			@Override
-			public File getFile() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
 			public String getExportMapping() {
 				return createdPersistenceProject.getExportMapping();
 			}
 
+			@Override
+			public File getFile() {
+				throw new UnsupportedOperationException();
+			}
 		};
 	}
 
