@@ -54,7 +54,7 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 			final DataSource dataSource, //
 			final CmdbuildConfiguration configuration, //
 			final CMDataView dataView //
-			) {
+	) {
 
 		super(dataSource, configuration);
 		this.dataView = dataView;
@@ -74,8 +74,10 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	}
 
 	protected String getQueryString(final QueryCreator queryCreator) {
-		// Add some space to the end of the query to avoid
-		// the situation in which the ? is the last character
+		/*
+		 * Add some space to the end of the query to avoid the situation in
+		 * which the ? is the last character
+		 */
 		final String query = String.format("%s     ", queryCreator.getQuery());
 		final Object[] params = queryCreator.getParams();
 
@@ -101,18 +103,16 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	}
 
 	/*
-	 * For lookup, reference and foreign key
-	 * add the suffix to have
-	 * the Description instead of the Id
+	 * For lookup, reference and foreign key add the suffix to have the
+	 * Description instead of the Id
 	 */
 	protected String getAttributeName( //
 			final String attributeName, //
 			final CMAttributeType<?> cmAttributeType) {
 
 		String out = attributeName;
-		if (cmAttributeType instanceof LookupAttributeType
-				|| cmAttributeType instanceof ReferenceAttributeType
-				|| cmAttributeType instanceof ForeignKeyAttributeType ) {
+		if (cmAttributeType instanceof LookupAttributeType || cmAttributeType instanceof ReferenceAttributeType
+				|| cmAttributeType instanceof ForeignKeyAttributeType) {
 
 			out += "#Description";
 		}
