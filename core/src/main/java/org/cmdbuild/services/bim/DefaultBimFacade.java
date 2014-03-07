@@ -1,5 +1,6 @@
 package org.cmdbuild.services.bim;
 
+import static org.cmdbuild.bim.service.BimProject.INVALID_BIM_ID;
 import static org.cmdbuild.bim.utils.BimConstants.DEFAULT_TAG_EXPORT;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_AXIS2_PLACEMENT3D;
@@ -27,7 +28,6 @@ import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.services.bim.connector.DefaultBimDataView.SHAPE_OID;
-import static org.cmdbuild.bim.service.BimProject.INVALID_BIM_ID;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -91,7 +91,7 @@ public class DefaultBimFacade implements BimFacade {
 			final BimProject updatedProject = service.getProjectByPoid(projectId);
 			createdProject.setLastCheckin(lastCheckin);
 			final BimRevision lastRevision = service.getRevision(updatedProject.getLastRevisionId());
-			if (lastRevision == null) {
+			if (!lastRevision.isValid()) {
 				throw new BimError("Upload failed");
 			}
 		}
@@ -155,6 +155,16 @@ public class DefaultBimFacade implements BimFacade {
 			@Override
 			public void setLastCheckin(DateTime lastCheckin) {
 				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public String getShapeProjectId() {
+				throw new UnsupportedOperationException("to do");
+			}
+
+			@Override
+			public String getExportProjectId() {
+				throw new UnsupportedOperationException("to do");
 			}
 		};
 		return project;
@@ -351,7 +361,7 @@ public class DefaultBimFacade implements BimFacade {
 					break;
 				}
 			}
-			if(exit){
+			if (exit) {
 				break;
 			}
 		}
@@ -421,6 +431,11 @@ public class DefaultBimFacade implements BimFacade {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void updateExportProject(String projectId, String exportProjectId, String shapeProjectId) {
+		service.updateExportProject(projectId, exportProjectId, shapeProjectId);
 	}
 
 }

@@ -136,6 +136,7 @@ public class DefaultBimFacadeTest {
 		when(projectCreated.getLastCheckin()).thenReturn(now);
 
 		BimRevision revision = mock(BimRevision.class);
+		when(revision.isValid()).thenReturn(true);
 		when(service.createProject(NAME)).thenReturn(projectCreated);
 		when(service.checkin(ID, file)).thenReturn(now);
 		when(service.getRevision(REVISIONID)).thenReturn(revision);

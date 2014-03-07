@@ -101,4 +101,6 @@ public interface BimService {
 
 	String getGlobalidFromOid(String revisionId, Long oid);
 
+	void updateExportProject(String projectId, String exportProjectId, String shapeProjectId);
+
 }

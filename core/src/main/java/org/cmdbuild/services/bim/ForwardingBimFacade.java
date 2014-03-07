@@ -136,5 +136,10 @@ public abstract class ForwardingBimFacade implements BimFacade {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public void updateExportProject(String projectId, String exportProjectId, String shapeProjectId) {
+		// TODO Auto-generated method stub
+	}
 
 }

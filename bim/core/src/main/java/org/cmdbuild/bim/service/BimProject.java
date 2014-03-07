@@ -5,11 +5,12 @@ import org.joda.time.DateTime;
 public interface BimProject {
 	
 	public static final String INVALID_BIM_ID = "-1";
-
+	
 	String getName();
 
 	String getIdentifier();
 	
+	@Deprecated
 	String getLastRevisionId();
 
 	boolean isActive();
@@ -23,7 +24,8 @@ public interface BimProject {
 	void setLastCheckin(DateTime lastCheckin);
 
 	final BimProject NULL_PROJECT = new BimProject() {
-
+		
+		@Deprecated
 		@Override
 		public String getLastRevisionId() {
 			return INVALID_BIM_ID;

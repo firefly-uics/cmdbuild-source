@@ -102,6 +102,7 @@ public class DefaultBimPersistence implements BimPersistence {
 			storableProject.setLastCheckin(input.getLastCheckin());
 			storableProject.setImportMapping(input.getImportMapping());
 			storableProject.setExportMapping(input.getExportMapping());
+			storableProject.setExportProjectId(input.getExportProjectId());
 			storableProject.setProjectId(input.getProjectId());
 			return storableProject;
 		}
@@ -158,6 +159,11 @@ public class DefaultBimPersistence implements BimPersistence {
 		public String getExportMapping() {
 			return delegate.getExportMapping();
 		}
+		
+		@Override
+		public String getShapeProjectId() {
+			return delegate.getShapeProjectId();
+		}
 
 		@Override
 		public DateTime getLastCheckin() {
@@ -209,6 +215,13 @@ public class DefaultBimPersistence implements BimPersistence {
 		public void setActive(boolean active) {
 			throw new UnsupportedOperationException();
 		}
+		
+
+		@Override
+		public void setExportProjectId(String projectId) {
+			throw new UnsupportedOperationException();
+		}
+
 
 	}
 
