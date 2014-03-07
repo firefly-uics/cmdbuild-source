@@ -149,7 +149,7 @@
 			},
 			workflow: {
 				delete: '',
-				get: '',
+				get: 'services/json/schema/taskmanager/startworkflow/read',
 				post: 'services/json/schema/taskmanager/startworkflow/create',
 				put: 'services/json/schema/taskmanager/startworkflow/update',
 

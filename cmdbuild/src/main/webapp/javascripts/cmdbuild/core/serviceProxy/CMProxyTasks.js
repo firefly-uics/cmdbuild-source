@@ -15,7 +15,24 @@
 				});
 			},
 
-			get: function() {},
+			get: function(type) {
+				return Ext.create('Ext.data.Store', {
+					autoLoad: false,
+					model: 'CMDBuild.model.CMModelTasks.singleTask.' + type,
+					proxy: {
+						type: 'ajax',
+						url: this.getUrl(type).get,
+						reader: {
+							type: 'json',
+							root: 'response.elements'
+						}
+					},
+					sorters: {
+						property: 'type',
+						direction: 'ASC'
+					}
+				});
+			},
 
 			getStore: function(type) {
 				return Ext.create('Ext.data.Store', {
@@ -40,7 +57,6 @@
 
 			update: function(parameters) {},
 
-			// Other proxy functions extra CRUD
 			getUrl: function(type) {
 				switch (type) {
 					case 'email':
