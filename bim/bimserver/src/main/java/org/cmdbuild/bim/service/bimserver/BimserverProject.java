@@ -20,7 +20,8 @@ public class BimserverProject implements BimProject {
 		final long poid = project.getOid();
 		return String.valueOf(poid);
 	}
-
+	
+	@Deprecated
 	@Override
 	public String getLastRevisionId() {
 		final long roid = project.getLastRevisionId();

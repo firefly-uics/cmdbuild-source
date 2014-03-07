@@ -78,12 +78,12 @@ public class BimserverService implements BimService {
 
 	@Override
 	public BimProject createProject(final String projectName) {
-		return client.createProject(projectName);
+		return client.createProjectWithName(projectName);
 	}
 
 	@Override
 	public BimProject createSubProject(final String projectName, final String parentIdentifier) {
-		return client.createSubProject(projectName, parentIdentifier);
+		return client.createProjectWithNameAndParent(projectName, parentIdentifier);
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class BimserverService implements BimService {
 	public Iterable<Entity> getEntitiesByType(final String className, final String revisionId) {
 		return client.getEntitiesByType(className, revisionId);
 	}
-	
+
 	@Override
 	public Map<String, Long> getGlobalIdOidMap(String revisionId) {
 		return client.getGlobalIdOidMap(revisionId);
@@ -207,7 +207,7 @@ public class BimserverService implements BimService {
 	public void removeAllReferences(String transactionId, String objectId, String attributeName) {
 		client.removeAllReferences(transactionId, objectId, attributeName);
 	}
-	
+
 	@Override
 	public void setReference(final String transactionId, final String objectId, final String referenceName,
 			final String relatedObjectId) {
@@ -232,10 +232,12 @@ public class BimserverService implements BimService {
 
 	@Override
 	public void removeObject(String transactionId, String oid) {
-	client.removeObject(transactionId, oid);
-		
+		client.removeObject(transactionId, oid);
 	}
 
-
+	@Override
+	public void updateExportProject(String projectId, String exportProjectId, String shapeProjectId) {
+		client.updateExportProject(projectId, exportProjectId, shapeProjectId);
+	}
 
 }

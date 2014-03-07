@@ -17,7 +17,8 @@ public class StorableProjectConverter extends BaseStorableConverter<StorableProj
 
 	final String NAME = "Code", DESCRIPTION = "Description", PROJECT_ID = "ProjectId", ACTIVE = "Active",
 			LAST_CHECKIN = "LastCheckin", SYNCHRONIZED = "Synchronized", IMPORT_MAPPING = "ImportMapping",
-			EXPORT_MAPPING = "ExportMapping", EXPORT_PROJECT_ID="ExportProjectId";
+			EXPORT_MAPPING = "ExportMapping", EXPORT_PROJECT_ID = "ExportProjectId",
+			SHAPE_PROJECT_ID = "ShapesProjectId";
 
 	@Override
 	public String getClassName() {
@@ -42,6 +43,7 @@ public class StorableProjectConverter extends BaseStorableConverter<StorableProj
 		project.setImportMapping(readString(card, IMPORT_MAPPING));
 		project.setExportMapping(readString(card, EXPORT_MAPPING));
 		project.setExportProjectId(readString(card, EXPORT_PROJECT_ID));
+		project.setShapeProjectId(readString(card, SHAPE_PROJECT_ID));
 		return project;
 	}
 
@@ -55,9 +57,10 @@ public class StorableProjectConverter extends BaseStorableConverter<StorableProj
 		values.put(ACTIVE, storableProject.isActive());
 		values.put(LAST_CHECKIN, storableProject.getLastCheckin());
 		values.put(SYNCHRONIZED, storableProject.isSynch());
-		values.put(IMPORT_MAPPING, storableProject.getImportMapping());
-		values.put(EXPORT_MAPPING, storableProject.getExportMapping());
 		values.put(EXPORT_PROJECT_ID, storableProject.getExportProjectId());
+		// values.put(IMPORT_MAPPING, storableProject.getImportMapping());
+		// values.put(EXPORT_MAPPING, storableProject.getExportMapping());
+		// values.put(SHAPE_PROJECT_ID, storableProject.getShapeProjectId());
 		return values;
 	}
 

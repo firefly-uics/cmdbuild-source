@@ -43,6 +43,10 @@ public interface BimPersistence {
 
 		void setActive(boolean active);
 
+		String getShapeProjectId();
+		
+		void setExportProjectId(String projectId);
+
 	}
 	
 	void saveProject(CmProject project);

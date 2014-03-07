@@ -37,4 +37,9 @@ public class BimserverRevision implements BimRevision {
 		return Long.toString(revision.getUserId());
 	}
 
+	@Override
+	public boolean isValid() {
+		return true;
+	}
+
 }

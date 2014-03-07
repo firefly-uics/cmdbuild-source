@@ -5,10 +5,14 @@ import org.joda.time.DateTime;
 
 public class StorableProject implements Storable {
 
-	private String projectId, name, description, importMapping, exportMapping, exportProjectId;
+	private String projectId, name, description, //
+		importMapping, exportMapping, //
+		exportProjectId, shapeProjectId;
 	private boolean active, synch;
 	private DateTime lastCheckin;
 	private Long cardId;
+	
+	
 	
 	@Override
 	public String getIdentifier() {
@@ -91,12 +95,15 @@ public class StorableProject implements Storable {
 		this.cardId = cardId;
 	}
 
-	public boolean getFile() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 	public String getExportProjectId() {
 		return exportProjectId;
+	}
+
+	public String getShapeProjectId() {
+		return shapeProjectId;
+	}
+
+	public void setShapeProjectId(String shapeProjectId) {
+		this.shapeProjectId = shapeProjectId;
 	}
 }

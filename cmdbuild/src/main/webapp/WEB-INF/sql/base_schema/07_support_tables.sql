@@ -234,6 +234,7 @@ SELECT cm_create_class_attribute('_BimProject', 'Synchronized', 'boolean', 'FALS
 SELECT cm_create_class_attribute('_BimProject', 'ImportMapping', 'text', null, false, false, 'MODE: write|DESCR: ImportMapping|INDEX: 7|STATUS: active');
 SELECT cm_create_class_attribute('_BimProject', 'ExportMapping', 'text', null, false, false, 'MODE: write|DESCR: ImportMapping|INDEX: 8|STATUS: active');
 SELECT cm_create_class_attribute('_BimProject', 'ExportProjectId', 'varchar', null, false, false, 'MODE: write|DESCR: ExportProjectId|INDEX: 9|STATUS: active');
+SELECT cm_create_class_attribute('_BimProject', 'ShapesProjectId', 'varchar', null, false, false, 'MODE: write|DESCR: ExportProjectId|INDEX: 10|STATUS: active');
 
 ---------------------------------------------
 -- Bim Layers Configuration

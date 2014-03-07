@@ -28,6 +28,10 @@ public interface BimFacade {
 		void setLastCheckin(DateTime lastCheckin);
 
 		File getFile();
+		
+		String getShapeProjectId();
+		
+		String getExportProjectId();
 
 	}
 
@@ -52,6 +56,8 @@ public interface BimFacade {
 	List<Entity> readEntityFromProject(EntityDefinition entityDefinition, String projectId);
 
 	// export-connector
+	
+	void updateExportProject(String projectId, String exportProjectId, String shapeProjectId);
 
 	Iterable<Entity> fetchEntitiesOfType(String ifcType, String revisionId);
 
@@ -82,6 +88,5 @@ public interface BimFacade {
 	String getGlobalidFromOid(String revisionId, Long oid);
 
 	DataHandler fetchProjectStructure(String revisionId);
-
 
 }

@@ -37,8 +37,8 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	}
 
 	@Override
-	public BimProject createProject(String projectName) {
-		return delegate.createProject(projectName);
+	public BimProject createProjectWithName(String projectName) {
+		return delegate.createProjectWithName(projectName);
 	}
 
 	@Override
@@ -47,8 +47,8 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	}
 
 	@Override
-	public BimProject createSubProject(String projectName, String parentIdentifier) {
-		return delegate.createSubProject(projectName, parentIdentifier);
+	public BimProject createProjectWithNameAndParent(String projectName, String parentIdentifier) {
+		return delegate.createProjectWithNameAndParent(projectName, parentIdentifier);
 	}
 
 	@Override
@@ -137,11 +137,6 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	}
 
 	@Override
-	public Map<Long, String> getAllGloabalId(String revisionId) {
-		return delegate.getAllGloabalId(revisionId);
-	}
-
-	@Override
 	public Entity getEntityByGuid(String revisionId, String guid) {
 		return delegate.getEntityByGuid(revisionId, guid);
 	}
@@ -205,5 +200,9 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	public Map<String, Long> getGlobalIdOidMap(String revisionId) {
 		return delegate.getGlobalIdOidMap(revisionId);
 	}
-
+	
+	@Override
+	public void updateExportProject(String projectId, String exportProjectId, String shapeProjectId) {
+		delegate.updateExportProject(projectId, exportProjectId, shapeProjectId);
+	}
 }

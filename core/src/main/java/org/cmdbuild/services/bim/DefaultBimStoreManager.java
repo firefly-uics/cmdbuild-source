@@ -10,22 +10,22 @@ import org.cmdbuild.model.bim.StorableProject;
 
 public class DefaultBimStoreManager implements BimStoreManager {
 
-	private final Store<StorableProject> projectInfoStore;
+	private final Store<StorableProject> projectStore;
 	private final Store<BimLayer> layerStore;
 
 	public DefaultBimStoreManager(Store<StorableProject> projectInfoStore, Store<BimLayer> layerStore) {
-		this.projectInfoStore = projectInfoStore;
+		this.projectStore = projectInfoStore;
 		this.layerStore = layerStore;
 	}
 
 	@Override
 	public Iterable<StorableProject> readAll() {
-		return projectInfoStore.list();
+		return projectStore.list();
 	}
 
 	@Override
 	public StorableProject read(final String identifier) {
-		return projectInfoStore.read(new Storable() {
+		return projectStore.read(new Storable() {
 			@Override
 			public String getIdentifier() {
 				return identifier;
@@ -45,15 +45,16 @@ public class DefaultBimStoreManager implements BimStoreManager {
 
 	@Override
 	public void write(StorableProject project) {
-		StorableProject projectAlreadyStored = projectInfoStore.read(storableWithId(project.getProjectId()));
+		StorableProject projectAlreadyStored = projectStore.read(storableWithId(project.getProjectId()));
 		if (projectAlreadyStored != null) {
 			project.setName(projectAlreadyStored.getName());
+			project.setExportProjectId(projectAlreadyStored.getExportProjectId());
 			if (project.getLastCheckin() == null) {
 				project.setLastCheckin(projectAlreadyStored.getLastCheckin());
 			}
-			projectInfoStore.update(project);
+			projectStore.update(project);
 		} else {
-			projectInfoStore.create(project).getIdentifier();
+			projectStore.create(project).getIdentifier();
 		}
 
 	}

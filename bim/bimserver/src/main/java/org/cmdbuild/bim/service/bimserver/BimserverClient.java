@@ -27,9 +27,9 @@ public interface BimserverClient {
 
 	List<BimProject> getAllProjects();
 
-	BimProject createProject(final String projectName);
+	BimProject createProjectWithName(final String projectName);
 	
-	BimProject createSubProject(String projectName, String parentIdentifier);
+	BimProject createProjectWithNameAndParent(String projectName, String parentIdentifier);
 
 	void disableProject(String projectId);
 
@@ -67,9 +67,6 @@ public interface BimserverClient {
 
 	Iterable<Entity> getEntitiesByType(String type, String revisionId);
 	
-	@Deprecated
-	Map<Long, String> getAllGloabalId(String revisionId);
-
 	Map<String, Long> getGlobalIdOidMap(String revisionId);
 
 	Entity getEntityByGuid(String revisionId, String guid);
@@ -99,6 +96,8 @@ public interface BimserverClient {
 	void removeObject(String transactionId, String oid);
 
 	void removeAllReferences(String transactionId, String objectId, String attributeName);
+
+	void updateExportProject(String projectId, String exportProjectId, String shapeProjectId);
 
 
 }

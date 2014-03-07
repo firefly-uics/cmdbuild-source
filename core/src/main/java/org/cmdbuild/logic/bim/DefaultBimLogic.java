@@ -141,6 +141,15 @@ public class DefaultBimLogic implements BimLogic {
 			this.projectId = projectId;
 		}
 
+		@Override
+		public String getShapeProjectId() {
+			throw new UnsupportedOperationException("to do");
+		}
+
+		@Override
+		public String getExportProjectId() {
+			throw new UnsupportedOperationException("to do");
+		}
 	}
 
 	private static class DefaultCmProject implements CmProject {
@@ -150,6 +159,7 @@ public class DefaultBimLogic implements BimLogic {
 		private boolean sync, active;
 		private DateTime lastCheckin;
 		private Iterable<String> cardBinding;
+		private String exportProjectId;
 
 		@Override
 		public String getName() {
@@ -235,7 +245,17 @@ public class DefaultBimLogic implements BimLogic {
 
 		@Override
 		public String getExportProjectId() {
-			throw new UnsupportedOperationException("TO DO if needed");
+			return exportProjectId;
+		}
+
+		@Override
+		public String getShapeProjectId() {
+			throw new UnsupportedOperationException("to do");
+		}
+
+		@Override
+		public void setExportProjectId(String projectId) {
+			this.exportProjectId = projectId;
 		}
 	}
 
@@ -306,15 +326,67 @@ public class DefaultBimLogic implements BimLogic {
 
 		final BimFacadeProject bimProject = bimProjectfrom(project);
 		final BimFacadeProject createdProject = bimServiceFacade.createProject(bimProject);
+		final BimFacadeProject projectForExport = bimServiceFacade.createProject(bimProjectwithName(bimProject));
 
 		final CmProject cmProject = cmProjectFrom(project);
 		cmProject.setProjectId(createdProject.getProjectId());
 		cmProject.setLastCheckin(createdProject.getLastCheckin());
 		cmProject.setSynch(project.isSynch());
+		cmProject.setExportProjectId(projectForExport.getProjectId());
 		bimDataPersistence.saveProject(cmProject);
 
 		final Project result = from(cmProject);
 		return result;
+	}
+
+	private static BimFacadeProject bimProjectwithName(final BimFacadeProject bimProject) {
+		return new BimFacadeProject() {
+
+			@Override
+			public void setLastCheckin(DateTime lastCheckin) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public boolean isSynch() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public boolean isActive() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public String getShapeProjectId() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public String getProjectId() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public String getName() {
+				return "export-" + bimProject.getName();
+			}
+
+			@Override
+			public DateTime getLastCheckin() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public File getFile() {
+				return null;
+			}
+
+			@Override
+			public String getExportProjectId() {
+				throw new UnsupportedOperationException();
+			}
+		};
 	}
 
 	@Override
@@ -337,6 +409,7 @@ public class DefaultBimLogic implements BimLogic {
 
 	@Override
 	public void updateProject(Project project) {
+		final String projectId = project.getProjectId();
 		final BimFacadeProject bimProject = bimProjectfrom(project);
 		final BimFacadeProject updatedProject = bimServiceFacade.updateProject(bimProject);
 
@@ -345,6 +418,15 @@ public class DefaultBimLogic implements BimLogic {
 			persistenceProject.setLastCheckin(updatedProject.getLastCheckin());
 		}
 		bimDataPersistence.saveProject(persistenceProject);
+
+		if (project.getFile() != null) {
+			final CmProject storedProject = bimDataPersistence.read(projectId);
+			final String exportProjectId = storedProject.getExportProjectId();
+			final String shapeProjectId = storedProject.getShapeProjectId();
+			if (!exportProjectId.isEmpty() && !shapeProjectId.isEmpty()) {
+				bimServiceFacade.updateExportProject(projectId, exportProjectId, shapeProjectId);
+			}
+		}
 	}
 
 	private Iterable<Project> listFrom(Iterable<CmProject> cmProjectList) {
