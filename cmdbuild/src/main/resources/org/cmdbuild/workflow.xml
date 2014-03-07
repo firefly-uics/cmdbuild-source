@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- FIXME do it better -->
+	<bean id="systemOperationUser" class="org.cmdbuild.auth.user.OperationUser"
+		scope="prototype">
+		<constructor-arg>
+			<bean factory-bean="operationUser" factory-method="getAuthenticatedUser"
+				scope="prototype" />
+		</constructor-arg>
+		<constructor-arg ref="systemPrivilegeContext" />
+		<constructor-arg>
+			<bean id="preferredGroup" factory-bean="operationUser"
+				factory-method="getPreferredGroup" scope="prototype" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="workflowService" class="org.cmdbuild.workflow.service.RemoteSharkService">
+		<constructor-arg ref="workflowProperties" />
+	</bean>
+
+	<bean id="workflowLogger" class="org.cmdbuild.logger.WorkflowLogger" />
+
+	<bean id="groupQueryAdapter" class="org.cmdbuild.workflow.DefaultGroupQueryAdapter">
+		<constructor-arg ref="authService" />
+	</bean>
+
+	<bean id="xpdlExtendedAttributeVariableFactory"
+		class="org.cmdbuild.workflow.xpdl.SharkStyleXpdlExtendedAttributeVariableFactory" />
+
+	<bean id="xpdlExtendedAttributeWidgetFactory"
+		class="org.cmdbuild.workflow.DefaultXpdlExtendedAttributeWidgetFactory">
+		<constructor-arg ref="templateRepository" />
+		<constructor-arg ref="requestListener" />
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="emailLogic" />
+		<constructor-arg ref="emailTemplateLogic" />
+	</bean>
+
+	<bean id="processDefinitionStore" class="org.cmdbuild.workflow.xpdl.XpdlProcessDefinitionStore">
+		<constructor-arg ref="workflowService" />
+		<constructor-arg ref="xpdlExtendedAttributeVariableFactory" />
+		<constructor-arg ref="xpdlExtendedAttributeWidgetFactory" />
+	</bean>
+
+	<bean id="activityPerformerTemplateResolverFactory"
+		class="org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory">
+		<constructor-arg ref="databaseTemplateEngine" />
+		<constructor-arg>
+			<util:constant
+				static-field="org.cmdbuild.services.template.TemplateResolverEngineNames.DB_TEMPLATE" />
+		</constructor-arg>
+	</bean>
+
+	<bean id="activityPerformerTemplateResolver" factory-bean="activityPerformerTemplateResolverFactory"
+		factory-method="create" />
+
+	<bean id="processDefinitionManager" class="org.cmdbuild.workflow.xpdl.XpdlManager">
+		<constructor-arg ref="groupQueryAdapter" />
+		<constructor-arg ref="processDefinitionStore" />
+		<constructor-arg ref="activityPerformerTemplateResolver" />
+	</bean>
+
+	<bean id="workflowTypesConverterBuilder"
+		class="org.cmdbuild.workflow.SharkTypesConverter.SharkTypesConverterBuilder">
+		<property name="dataView" ref="dbDataView" />
+		<property name="lookupStore" ref="lookupStore" />
+	</bean>
+
+	<bean id="workflowTypesConverter" factory-bean="workflowTypesConverterBuilder"
+		factory-method="build" />
+
+	<bean id="userWorkflowPersistenceBuilder"
+		class="org.cmdbuild.workflow.DataViewWorkflowPersistence.DataViewWorkflowPersistenceBuilder"
+		scope="prototype">
+		<property name="operationUser" ref="operationUser" />
+		<property name="dataView" ref="permissiveDataView" />
+		<property name="processDefinitionManager" ref="processDefinitionManager" />
+		<property name="lookupStore" ref="lookupStore" />
+		<property name="workflowService" ref="workflowService" />
+		<property name="activityPerformerTemplateResolverFactory"
+			ref="activityPerformerTemplateResolverFactory" />
+	</bean>
+
+	<bean id="userWorkflowPersistence" factory-bean="userWorkflowPersistenceBuilder"
+		factory-method="build" scope="prototype" />
+
+	<bean id="systemWorkflowPersistenceBuilder"
+		class="org.cmdbuild.workflow.DataViewWorkflowPersistence.DataViewWorkflowPersistenceBuilder"
+		scope="prototype">
+		<property name="operationUser" ref="systemOperationUser" />
+		<property name="dataView" ref="dbDataView" />
+		<property name="processDefinitionManager" ref="processDefinitionManager" />
+		<property name="lookupStore" ref="lookupStore" />
+		<property name="workflowService" ref="workflowService" />
+		<property name="activityPerformerTemplateResolverFactory"
+			ref="activityPerformerTemplateResolverFactory" />
+	</bean>
+
+	<bean id="systemWorkflowPersistence" factory-bean="systemWorkflowPersistenceBuilder"
+		factory-method="build" />
+
+	<bean id="workflowEventManager" class="org.cmdbuild.workflow.WorkflowEventManagerImpl">
+		<constructor-arg ref="systemWorkflowPersistence" />
+		<constructor-arg ref="workflowService" />
+		<constructor-arg ref="workflowTypesConverter" />
+	</bean>
+
+	<bean id="workflowEngineBuilder"
+		class="org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder"
+		scope="prototype">
+		<property name="operationUser" ref="systemOperationUser" />
+		<property name="persistence" ref="userWorkflowPersistence" />
+		<property name="service" ref="workflowService" />
+		<property name="typesConverter" ref="workflowTypesConverter" />
+		<property name="eventListener" ref="workflowLogger" />
+		<property name="authenticationService" ref="authService" />
+	</bean>
+
+	<bean id="workflowEngine" factory-bean="workflowEngineBuilder"
+		factory-method="build" scope="prototype" />
+
+	<bean id="systemWorkflowEngineBuilder"
+		class="org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder"
+		scope="prototype">
+		<property name="operationUser" ref="systemOperationUser" />
+		<property name="persistence" ref="systemWorkflowPersistence" />
+		<property name="service" ref="workflowService" />
+		<property name="typesConverter" ref="workflowTypesConverter" />
+		<property name="eventListener" ref="workflowLogger" />
+		<property name="authenticationService" ref="authService" />
+	</bean>
+
+	<bean id="systemWorkflowEngine" factory-bean="systemWorkflowEngineBuilder"
+		factory-method="build" scope="prototype" />
+
+	<bean id="updateOperationListener" class="org.cmdbuild.workflow.UpdateOperationListenerImpl">
+		<constructor-arg ref="workflowService" />
+		<constructor-arg ref="workflowEventManager" />
+	</bean>
+
+</beans>
