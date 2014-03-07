@@ -1412,6 +1412,8 @@
 	"subject": "Subject",
 	"targetClass": "Target Class",
 	"to": "To",
+	"translations" : "Translations",
+	"translations_enabled" : "Enabled languages",
 	"unlock_all_cards": "Unlock all cards",
 	"uploading_attachment": "Uploading attachment...",
 	"views": "Views",

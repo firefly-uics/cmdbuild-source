@@ -1373,6 +1373,8 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "Циљна класа",
 	"to": "<em>To</em>",
+	"translations" : "<em>Translations</em>",
+	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Откључај све картице",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Прикази",

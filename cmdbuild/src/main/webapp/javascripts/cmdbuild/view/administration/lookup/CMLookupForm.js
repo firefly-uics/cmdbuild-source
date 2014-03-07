@@ -17,7 +17,8 @@
 				iconCls: 'modify',
 				text: tr.update_lookup,
 				handler: function() {
-					this.enableModify()
+					this.enableModify();
+					_CMCache.initModifyingTranslations();
 				},
 				scope: this
 			});
@@ -74,6 +75,16 @@
 			});
 			
 			this.layout = "border",
+			this.description = new Ext.form.CMTranslatableText( {
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				fieldLabel : tr.description,
+				name : LOOKUP_FIELDS.Description,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				allowBlank : false,
+				disabled : true,
+				translationsKeyType: "Lookup", 
+				translationsKeyField: "Description"
+			});
 			
 			this.items = [{
 				xtype: "panel",
@@ -94,14 +105,9 @@
 					name : LOOKUP_FIELDS.Code,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					disabled : true
-				}, {
-					xtype : 'textfield',
-					fieldLabel : tr.description,
-					name : LOOKUP_FIELDS.Description,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					allowBlank : false,
-					disabled : true
-				}, {
+				}, 
+					this.description,
+				{
 					xtype : 'combo',
 					fieldLabel : tr.parentdescription,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,

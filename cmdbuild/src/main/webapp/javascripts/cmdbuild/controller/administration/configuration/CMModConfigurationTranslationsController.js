@@ -1,20 +1,26 @@
 (function() {
-	Ext.define("CMDBuild.controller.administration.configuration.CMModConfigurationController", {
+	Ext.define("CMDBuild.controller.administration.configuration.CMModConfigurationTranslationsController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
-
 		constructor: function(view) {
 			this.callParent([view]);
 
 			this.view.saveButton.on("click", function() {
 				CMDBuild.LoadMask.get().show();
-				CMDBuild.ServiceProxy.configuration.save({
+				var params = this.view.getValues();
+				for (var i = 0; i < this.view.languages.length; i++) {
+					if (! params[this.view.languages[i]]) {
+						params[this.view.languages[i]] = "off";
+					}
+				}
+				CMDBuild.ServiceProxy.translations.saveActiveTranslations({
 					scope: this,
-					params: this.view.getValues(),
+					params: params,
 					callback: function() {
 						CMDBuild.LoadMask.get().hide();
-						//needed to mantein the consistenece beetween the information displayed and the
+						//needed to mantein the consistenece beetween the information displayed and the 
 						//information in the config file
 						this.readConfiguration();
+						_CMCache.resetMultiLanguages();
 					}
 				}, name = this.view.configFileName);
 			}, this);
@@ -28,12 +34,11 @@
 			if (this.view.isVisible()) {
 				this.readConfiguration();
 			}
-			_CMCache.initModifyingTranslations();
 			this.view.doLayout();
 		},
 
 		readConfiguration: function(){
-			CMDBuild.ServiceProxy.configuration.read({
+			CMDBuild.ServiceProxy.translations.readActiveTranslations({
 				scope: this,
 				success: function(response){
 					this.view.populateForm(Ext.JSON.decode(response.responseText));

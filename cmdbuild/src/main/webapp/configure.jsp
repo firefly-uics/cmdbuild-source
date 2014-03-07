@@ -58,6 +58,7 @@
 
 	<script type="text/javascript" src="javascripts/cmdbuild/form/CustomVTypes.js"></script>
 
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMTranslationsWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConstants.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxy.js"></script>

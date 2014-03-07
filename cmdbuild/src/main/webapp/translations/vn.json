@@ -1373,6 +1373,8 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "Class mục tiêu",
 	"to": "<em>To</em>",
+	"translations" : "<em>Translations</em>",
+	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Mở tất cả các thẻ",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Lượt xem",
