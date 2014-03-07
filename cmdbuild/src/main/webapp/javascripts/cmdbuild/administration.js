@@ -95,6 +95,10 @@
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationServerController,
 											cmName: "modsetupserver"
 										}),
+										new CMDBuild.view.administration.configuration.CMModConfigurationTranslations({
+											cmControllerType: controllerNS.administration.configuration.CMModConfigurationTranslationsController,
+											cmName: "modsetuptranslations"
+										}),
 										new CMDBuild.view.administration.configuration.CMConfigurationEmailAccounts({
 											cmControllerType: controllerNS.administration.configuration.CMConfigurationEmailAccountsController,
 											cmName: "setupEmailAccounts"
@@ -106,11 +110,7 @@
 										new CMDBuild.view.administration.tasks.CMTasks({
 											cmControllerType: CMDBuild.controller.administration.tasks.CMTasksController,
 											cmName: "tasks"
-										}),
-     									new CMDBuild.view.administration.configuration.CMModConfigurationTranslations({
-     										cmControllerType : controllerNS.administration.configuration.CMModConfigurationTranslationsController,
-     										cmName : "modsetuptranslations"
-     									})
+										})
 									]);
 								}
 
