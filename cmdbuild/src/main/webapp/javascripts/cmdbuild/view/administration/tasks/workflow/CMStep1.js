@@ -146,7 +146,8 @@
 				},
 				{
 					xtype: 'combo',
-					name: 'className',
+					id: 'workflowCombo',
+					name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 					fieldLabel: '@@ Workflow',
 					valueField: CMDBuild.ServiceProxy.parameter.ID,
 					displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,

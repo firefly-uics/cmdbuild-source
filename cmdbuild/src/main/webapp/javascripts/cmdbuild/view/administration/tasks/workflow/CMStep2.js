@@ -29,7 +29,7 @@
 				listeners: {
 					change: function(field, newValue, oldValue) {
 						me.setValueOfBaseIfPossible(
-							CMDBuild.Utils.buildCronExpression([
+							me.parentDelegate.buildCronExpression([
 								me.view.advancedFields[0].getValue(),
 								me.view.advancedFields[1].getValue(),
 								me.view.advancedFields[2].getValue(),
@@ -94,9 +94,9 @@
 			this.delegate.view = this;
 
 			// Advanced panel setup
-			this.advanceRadio = new Ext.form.field.Radio({
+			this.advanceRadio = Ext.create('Ext.form.field.Radio', {
 				name: 'cronInputType',
-				inputValue: 'advance',
+				inputValue: 'advanced',
 				boxLabel: translation.advanced,
 				width: CMDBuild.LABEL_WIDTH,
 				listeners: {
@@ -114,7 +114,7 @@
 				this.delegate.createCronField('dayOfWeek', translation.dayOfWeek)
 			];
 
-			this.advancePanel = new Ext.panel.Panel({
+			this.advancePanel = Ext.create('Ext.panel.Panel', {
 				frame: true,
 				layout: 'hbox',
 				margin: '0px 0px 5px 0px',
@@ -131,7 +131,7 @@
 			// END: Advanced panel setup
 
 			// Base panel setup
-			this.baseRadio = new Ext.form.Radio({
+			this.baseRadio = Ext.create('Ext.form.Radio', {
 				name: 'cronInputType',
 				inputValue: 'base',
 				boxLabel: translation.basic,
@@ -146,7 +146,7 @@
 
 			this.base = Ext.create('Ext.form.ComboBox', {
 				name: 'base',
-				hiddenName: 'base',
+//				hiddenName: 'base',
 				store: Ext.create('Ext.data.SimpleStore', {
 					fields: [CMDBuild.ServiceProxy.parameter.VALUE, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
 					data: [
@@ -161,7 +161,7 @@
 				queryMode: 'local',
 				forceSelection: true,
 				editable: false,
-				margins: '0px 0px 0px 105px',
+				margins: '0px 0px 0px ' + (CMDBuild.LABEL_WIDTH - 45) + 'px',
 				listeners: {
 					'select': function(combo, record, index) {
 						me.delegate.setValueOfAdvanced(record[0].data.value);
@@ -169,7 +169,7 @@
 				}
 			});
 
-			this.basePanel = new Ext.panel.Panel({
+			this.basePanel = Ext.create('Ext.panel.Panel', {
 				frame: true,
 				layout: 'hbox',
 				margin: '0px 0px 5px 0px',

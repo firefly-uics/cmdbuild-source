@@ -4,13 +4,13 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
-		tasksDatas: undefined,
+		tasksDatas: ['all', 'email', 'event', 'workflow'], // Used to check task existence
+		taskType: undefined,
 
 		// Overwrite
 		constructor: function(view) {
-			this.tasksDatas = ['all', 'email', 'event', 'workflow']; // Used to check task existence
 
-			// Handlers exchange + controller setup
+			// Handlers exchange and controller setup
 			this.grid = view.grid;
 			this.form = view.form;
 			this.view = view;
@@ -20,8 +20,22 @@
 			this.callParent(arguments);
 		},
 
-		initComponent: function() {
-			this.callParent(arguments);
+		onViewOnFront: function(parameters) { _debug('task controller on front');
+			var me = this;
+
+			this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
+//			this.grid.store = CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType);
+			this.grid.taskType = this.taskType;
+			this.grid.store.load();
+
+//
+//			this.grid.store.on('load', function() {_debug('grid store loaded');
+////				me.grid.getView().refresh();
+//				me.view.doLayout();
+//			});
+
+//			this.view.doLayout();
+			_debug(this.taskType);
 		},
 
 		cmOn: function(name, param, callBack) {
@@ -46,7 +60,7 @@
 		},
 
 		buildFormController: function(type) {
-			if (this.tasksDatas.indexOf(type) >= 0) {
+			if (this.correctTaskTypeCheck(type)) {
 				this.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(type) + 'Controller');
 				this.form.delegate.view = this.form;
 				this.form.delegate.parentDelegate = this;
@@ -62,15 +76,20 @@
 			return string;
 		},
 
+		correctTaskTypeCheck: function(type) {
+			return (type != '' && (this.tasksDatas.indexOf(type) >= 0)) ? true : false;
+		},
+
 		loadForm: function(type) {
-			if (this.tasksDatas.indexOf(type) >= 0) {
+			if (this.correctTaskTypeCheck(type)) {
 				this.form.wizard.removeAll();
 				var items = Ext.create('CMDBuild.view.administration.tasks.' + type + '.CMTaskTabs').getTabs();
 
 				for (var i = 0; i < items.length; i++) {
+					items[i].delegate.parentDelegate = this.form.delegate; // Controllers relation propagation
 					this.form.wizard.add(items[i]);
 				}
-_debug(this.form.wizard);
+
 				this.form.wizard.numberOfTabs = items.length;
 				this.form.wizard.setActiveTab(0);
 			}

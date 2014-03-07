@@ -6,6 +6,7 @@
 		extend: 'Ext.grid.Panel',
 
 		delegate: undefined,
+		taskType: 'all', // default task type
 
 		border: false,
 		frame: false,
@@ -14,57 +15,56 @@
 		initComponent: function() {
 			var me = this;
 
-			Ext.apply(this, {
-				columns: [
-					{
-						dataIndex: CMDBuild.ServiceProxy.parameter.ID,
-						hidden: true
+			this.columns = [
+				{
+					dataIndex: CMDBuild.ServiceProxy.parameter.ID,
+					hidden: true
+				},
+				{
+					text: tr.type,
+					dataIndex: CMDBuild.ServiceProxy.parameter.TYPE,
+					flex: 1
+				},
+				{
+					text: CMDBuild.Translation.description_,
+					dataIndex: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+					flex: 4
+				},
+				{
+					text: tr.status,
+					width: '60px',
+					align: 'center',
+					dataIndex: CMDBuild.ServiceProxy.parameter.ACTIVE,
+					renderer: me.activeGridColumnRenderer,
+					fixed: true
+				},
+				{
+					text: tr.start,
+					width: '60px',
+					align: 'center',
+					renderer: function() {
+						return '<img src="images/icons/control_play.png" title="' + tr.startLabel + '" alt="' + tr.start + '" />';
 					},
-					{
-						text: tr.type,
-						dataIndex: CMDBuild.ServiceProxy.parameter.TYPE,
-						flex: 1
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true
+				},
+				{
+					text: tr.stop,
+					width: '60px',
+					align: 'center',
+					renderer: function() {
+						return '<img src="images/icons/control_stop.png" title="' + tr.stopLabel + '" alt="' + tr.stop + '" />';
 					},
-					{
-						text: CMDBuild.Translation.description_,
-						dataIndex: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-						flex: 4
-					},
-					{
-						text: tr.status,
-						width: '60px',
-						align: 'center',
-						dataIndex: CMDBuild.ServiceProxy.parameter.ACTIVE,
-						renderer: me.activeGridColumnRenderer,
-						fixed: true
-					},
-					{
-						text: tr.start,
-						width: '60px',
-						align: 'center',
-						renderer: function() {
-							return '<img src="images/icons/control_play.png" title="' + tr.startLabel + '" alt="' + tr.start + '" />';
-						},
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true
-					},
-					{
-						text: tr.stop,
-						width: '60px',
-						align: 'center',
-						renderer: function() {
-							return '<img src="images/icons/control_stop.png" title="' + tr.stopLabel + '" alt="' + tr.stop + '" />';
-						},
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true
-					}
-				],
-				store: CMDBuild.core.serviceProxy.CMProxyTasks.getStore()
-			});
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true
+				}
+			];
+
+			this.store = CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType);
 
 			this.callParent(arguments);
 		},
@@ -90,6 +90,14 @@
 						me.getSelectionModel().select(0, true);
 					}
 				});
+			},
+
+			show: function() {
+//				this.store.load({
+//					callback: function() {
+//						me.getSelectionModel().select(0, true);
+//					}
+//				});
 			},
 
 			beforecellclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {

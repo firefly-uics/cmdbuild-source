@@ -1,6 +1,7 @@
 (function() {
 
-	Ext.define("CMDBuild.controller.administration.tasks.CMTasksFormWorkflowController", {
+	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormWorkflowController', {
+		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
 		parentDelegate: undefined,
 		view: undefined,
@@ -47,74 +48,24 @@
 			}
 		},
 
-		onAbortButtonClick: function() {
-			if (this.selectedId != null) {
-				this.onRowSelected();
-			} else {
-				this.view.reset();
-				this.view.disableModify();
-				this.view.wizard.changeTab(0);
-			}
-		},
-
-		onAddButtonClick: function() {
-			this.selectionModel.deselectAll();
-			this.selectedId = null;
-			this.parentDelegate.loadForm(this.taskType);
-			this.view.reset();
-			this.view.enableTabbedModify();
-			this.view.disableTypeField();
-			this.view.wizard.changeTab(0);
-		},
-
-		onCloneButtonClick: function() {
-			this.selectionModel.deselectAll();
-			this.selectedId = null;
-			this.view.disableCMTbar();
-			this.view.enableCMButtons();
-			this.view.enableTabbedModify(true);
-			this.view.wizard.changeTab(0);
-			this.view.disableTypeField();
-		},
-
-		onModifyButtonClick: function() {
-			this.view.disableCMTbar();
-			this.view.enableCMButtons();
-			this.view.enableTabbedModify(true);
-			this.view.wizard.changeTab(0);
-			this.view.disableTypeField();
-		},
-
-		onRemoveButtonClick: function() {
-			Ext.Msg.show({
-				title: CMDBuild.Translation.administration.setup.remove,
-				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
-				scope: this,
-				buttons: Ext.Msg.YESNO,
-				fn: function(button) {
-					if (button == 'yes') {
-						this.removeItem();
-					}
-				}
-			});
-		},
-
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				var me = this;
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
 
-				// Selected user asynchronous store query
-				this.selectedDataStore = CMDBuild.core.serviceProxy.CMProxyTasks.get(taskType);
+				// Selected task asynchronous store query
+				this.selectedDataStore = CMDBuild.core.serviceProxy.CMProxyTasks.get(me.taskType);
 				this.selectedDataStore.load({
 					params: { id: this.selectedId }
 				});
-				this.selectedDataStore.on('load', function() {
+				this.selectedDataStore.on('load', function(store, records, successful, eOpts) {
 					me.parentDelegate.loadForm(me.taskType);
-					me.loadRecord(this.getAt(0));
+					// TODO: FIX loadRecord destroy the form panel cause of the combobox
+					me.view.loadRecord(records[0]);
+					me.view.disableModify(true);
+					me.view.disableTypeField();
 				});
 
-				this.view.disableModify(true);
 				this.view.wizard.changeTab(0);
 			}
 		},
@@ -134,7 +85,7 @@
 			// Form submit values formatting
 				formData.className = _CMCache.getEntryTypeNameById(formData.className);
 				if (formData.cronInputType) {
-					formData.cronExpression = CMDBuild.Utils.buildCronExpression([
+					formData.cronExpression = me.buildCronExpression([
 						formData.minute,
 						formData.hour,
 						formData.dayOfMounth,
@@ -156,7 +107,7 @@
 			delete formData.mounth;
 			delete formData.name;
 			delete formData.value;
-
+_debug(formData);
 			if (formData.id == null || formData.id == '') {
 				CMDBuild.core.serviceProxy.CMProxyTasks.create({
 					type: this.taskType,
@@ -225,8 +176,21 @@
 			this.view.wizard.changeTab(0);
 		},
 
-		callback: function() {
-			CMDBuild.LoadMask.get().hide();
+		/**
+		 * @param Array fields
+		 * @returns String cron expression
+		 */
+		buildCronExpression: function(fields) {
+			var cronExp = '';
+
+			for (var i = 0; i < (fields.length - 1); i++) {
+				var field = fields[i];
+				cronExp += field + ' ';
+			}
+
+			cronExp += fields[fields.length -1];
+
+			return cronExp;
 		}
 	});
 

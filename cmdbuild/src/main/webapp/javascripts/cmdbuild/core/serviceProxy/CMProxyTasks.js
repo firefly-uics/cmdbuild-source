@@ -24,7 +24,7 @@
 						url: this.getUrl(type).get,
 						reader: {
 							type: 'json',
-							root: 'response.elements'
+							root: 'response'
 						}
 					},
 					sorters: {
@@ -34,7 +34,7 @@
 				});
 			},
 
-			getStore: function(type) {
+			getStore: function(type) {_debug('geStore ' + type);
 				return Ext.create('Ext.data.Store', {
 					autoLoad: false,
 					model: 'CMDBuild.model.CMModelTasks.grid',
@@ -59,6 +59,9 @@
 
 			getUrl: function(type) {
 				switch (type) {
+					case 'all':
+						return CMDBuild.ServiceProxy.url.tasks;
+
 					case 'email':
 						return CMDBuild.ServiceProxy.url.tasks.email;
 
@@ -69,7 +72,7 @@
 						return CMDBuild.ServiceProxy.url.tasks.workflow;
 
 					default:
-						return CMDBuild.ServiceProxy.url.tasks;
+						throw 'CMProxyTasks error: url type not recognized';
 				}
 			},
 
