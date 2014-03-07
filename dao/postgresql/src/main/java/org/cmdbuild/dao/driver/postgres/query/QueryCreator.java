@@ -1,11 +1,16 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
+import static com.google.common.base.Predicates.containsPattern;
+import static com.google.common.base.Predicates.or;
+import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.apache.commons.lang.SystemUtils.LINE_SEPARATOR;
+import static org.cmdbuild.common.utils.guava.Functions.trim;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.RowNumber;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.RowsCount;
@@ -31,6 +36,11 @@ import org.cmdbuild.dao.query.clause.where.NullOperatorAndValueVisitor;
 import org.cmdbuild.dao.query.clause.where.NullWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
+
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
 
 public class QueryCreator {
 
@@ -66,6 +76,17 @@ public class QueryCreator {
 		}
 
 	}
+
+	private static Function<String, Predicate<CharSequence>> toContainsPatternPredicate = new Function<String, Predicate<CharSequence>>() {
+
+		@Override
+		public Predicate<CharSequence> apply(final String input) {
+			return containsPattern(input);
+		}
+
+	};
+
+	private static final String ATTRIBUTES_SEPARATOR = ",";
 
 	private static final String SPACE = " ";
 
@@ -139,7 +160,7 @@ public class QueryCreator {
 			if (specialFeaturesChecker.reduceSelectCountArguments(querySpecs.getFromClause().getType())) {
 				final Pattern pattern = Pattern.compile( //
 						"SELECT[\\s]+" + // mandatory/fix
-								"(DISTINCT[\\s]+ON[\\s]+\\(.+\\))?" + // optional/group
+								"(DISTINCT[\\s]+ON[\\s]+\\((.+)\\))?" + // optional/group
 								"([\\s\\w\".,#:-]+)" + // mandatory/group
 								"FROM[\\s]+" + // mandatory/fix
 								"(ONLY[\\s]+)?" + // optional/group
@@ -147,14 +168,27 @@ public class QueryCreator {
 								"([\\s]+AS[\\s]+([\\S]+))?"); // optional/groups
 				final Matcher matcher = pattern.matcher(actual);
 				if (matcher.find()) {
-					final String tableName = matcher.group(4);
-					final String alias = matcher.group(6);
+					final Iterable<String> distinctAttributes = from( //
+							Splitter.on(ATTRIBUTES_SEPARATOR) //
+									.split(defaultString(matcher.group(2)))) //
+							.transform(trim());
+					final String tableName = matcher.group(5);
+					final String alias = matcher.group(7);
 					final String tableOrAlias = defaultString(alias, tableName);
 					final MatchResult matchResult = matcher.toMatchResult();
-					final int start = matchResult.start(2);
-					final int end = matchResult.end(2);
-					actualForCount = actual.substring(0, start) + format(" %s.\"Id\" ", tableOrAlias)
-							+ actual.substring(end);
+					final int start = matchResult.start(3);
+					final int end = matchResult.end(3);
+					final Iterable<String> actualAttributes = from( //
+							Splitter.on(ATTRIBUTES_SEPARATOR) //
+									.split(actual.substring(start, end))) //
+							.transform(trim()) //
+							.filter(allIfEmpty(distinctAttributes)) //
+							.filter(or(from(distinctAttributes) //
+									.transform(toContainsPatternPredicate)));
+					final String newAttributes = isEmpty(actualAttributes) ? format(" %s.\"Id\" ", tableOrAlias)
+							: Joiner.on(ATTRIBUTES_SEPARATOR) //
+									.join(actualAttributes);
+					actualForCount = actual.substring(0, start) + newAttributes + actual.substring(end);
 				} else {
 					actualForCount = actual;
 				}
@@ -198,6 +232,17 @@ public class QueryCreator {
 		if (querySpecs.numbered()) {
 			appendConditionOnNumberedQuery();
 		}
+	}
+
+	private Predicate<String> allIfEmpty(final Iterable<String> elements) {
+		return new Predicate<String>() {
+
+			@Override
+			public boolean apply(final String input) {
+				return !isEmpty(elements);
+			}
+
+		};
 	}
 
 	/**
