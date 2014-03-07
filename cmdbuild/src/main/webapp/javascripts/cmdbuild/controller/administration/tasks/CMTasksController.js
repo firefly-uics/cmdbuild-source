@@ -45,7 +45,7 @@
 			}
 		},
 
-		buildFormController: function(type) {_debug(type);
+		buildFormController: function(type) {
 			if (this.tasksDatas.indexOf(type) >= 0) {
 				this.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(type) + 'Controller');
 				this.form.delegate.view = this.form;
@@ -70,7 +70,7 @@
 				for (var i = 0; i < items.length; i++) {
 					this.form.wizard.add(items[i]);
 				}
-
+_debug(this.form.wizard);
 				this.form.wizard.numberOfTabs = items.length;
 				this.form.wizard.setActiveTab(0);
 			}

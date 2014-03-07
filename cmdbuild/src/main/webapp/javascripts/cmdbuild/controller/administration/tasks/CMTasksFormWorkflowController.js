@@ -99,18 +99,17 @@
 			});
 		},
 
-		onRowSelected: function() {_debug('ci sono2');
-			if (this.selectionModel.hasSelection()) {_debug('ci sono1');
+		onRowSelected: function() {
+			if (this.selectionModel.hasSelection()) {
 				var me = this;
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
 
 				// Selected user asynchronous store query
-				this.selectedDataStore = CMDBuild.core.serviceProxy.CMProxyTasks.get();
+				this.selectedDataStore = CMDBuild.core.serviceProxy.CMProxyTasks.get(taskType);
 				this.selectedDataStore.load({
 					params: { id: this.selectedId }
 				});
 				this.selectedDataStore.on('load', function() {
-					_debug('ci sono');
 					me.parentDelegate.loadForm(me.taskType);
 					me.loadRecord(this.getAt(0));
 				});
@@ -160,7 +159,7 @@
 
 			if (formData.id == null || formData.id == '') {
 				CMDBuild.core.serviceProxy.CMProxyTasks.create({
-					type: 'workflow',
+					type: this.taskType,
 					params: formData,
 					scope: this,
 					success: this.success,
@@ -168,6 +167,7 @@
 				});
 			} else {
 				CMDBuild.core.serviceProxy.CMProxyTasks.update({
+					type: this.taskType,
 					params: formData,
 					scope: this,
 					success: this.success,
@@ -187,6 +187,7 @@
 
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.serviceProxy.CMProxyTasks.remove({
+				type: this.taskType,
 				params: { id: this.selectedId },
 				scope: this,
 				success: function() {
