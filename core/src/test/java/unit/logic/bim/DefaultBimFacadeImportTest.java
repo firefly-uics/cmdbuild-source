@@ -1,22 +1,15 @@
 package unit.logic.bim;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
-import org.cmdbuild.bim.model.EntityDefinition;
-import org.cmdbuild.bim.service.BimError;
-import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimService;
-import org.cmdbuild.model.bim.StorableProject;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.DefaultBimFacade;
 import org.cmdbuild.services.bim.DefaultTransactionManager;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DefaultBimServiceFacadeImportTest {
+public class DefaultBimFacadeImportTest {
 
 	private static final String PROJECTID = "111";
 

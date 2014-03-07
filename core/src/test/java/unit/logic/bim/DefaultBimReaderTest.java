@@ -43,7 +43,7 @@ public class DefaultBimReaderTest {
 		when(entityDefinition.isValid()).thenReturn(true);
 
 		List<Entity> bimEntityList = Lists.newArrayList();
-		when(service.getEntitiesByType(revisionId, entityDefinition.getTypeName())).thenReturn(bimEntityList);
+		when(service.getEntitiesByType(entityDefinition.getTypeName(), revisionId)).thenReturn(bimEntityList);
 
 		// when
 		try {
@@ -54,7 +54,7 @@ public class DefaultBimReaderTest {
 
 		// then
 		InOrder inOrder = inOrder(service, entityDefinition);
-		inOrder.verify(service).getEntitiesByType(revisionId, IFC_TYPE);
+		inOrder.verify(service).getEntitiesByType(IFC_TYPE, revisionId);
 
 		verifyNoMoreInteractions(service);
 	}
@@ -75,14 +75,14 @@ public class DefaultBimReaderTest {
 		when(guid.getStringValue()).thenReturn("GuidValue");
 		when(entity.getAttributeByName("GlobalId")).thenReturn(guid);
 		bimEntityList.add(entity);
-		when(service.getEntitiesByType(revisionId, entityDefinition.getTypeName())).thenReturn(bimEntityList);
+		when(service.getEntitiesByType(entityDefinition.getTypeName(), revisionId)).thenReturn(bimEntityList);
 
 		// when
 		reader.readEntities(revisionId, entityDefinition);
 
 		// then
 		InOrder inOrder = inOrder(service, entityDefinition);
-		inOrder.verify(service).getEntitiesByType(revisionId, IFC_TYPE);
+		inOrder.verify(service).getEntitiesByType(IFC_TYPE, revisionId);
 
 		verifyNoMoreInteractions(service);
 	}

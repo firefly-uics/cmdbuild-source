@@ -4,6 +4,8 @@ import org.joda.time.DateTime;
 
 public interface BimProject {
 	
+	public static final String INVALID_BIM_ID = "-1";
+
 	String getName();
 
 	String getIdentifier();
@@ -24,7 +26,7 @@ public interface BimProject {
 
 		@Override
 		public String getLastRevisionId() {
-			return "-1";
+			return INVALID_BIM_ID;
 		}
 
 		@Override

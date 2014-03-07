@@ -132,8 +132,8 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	}
 
 	@Override
-	public Iterable<Entity> getEntitiesByType(String revisionId, String className) {
-		return delegate.getEntitiesByType(revisionId, className);
+	public Iterable<Entity> getEntitiesByType(String type, String revisionId) {
+		return delegate.getEntitiesByType(type, revisionId);
 	}
 
 	@Override

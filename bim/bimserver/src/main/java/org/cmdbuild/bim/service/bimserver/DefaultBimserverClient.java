@@ -338,12 +338,12 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 	
 	@Override
-	public Iterable<Entity> getEntitiesByType(final String revisionId, final String className) {
+	public Iterable<Entity> getEntitiesByType(final String type, final String revisionId) {
 		try {
 			final Long roid = new Long(revisionId);
 			final List<Entity> entities = new ArrayList<Entity>();
 			final List<SDataObject> objects = client.getBimsie1LowLevelInterface()
-					.getDataObjectsByType(roid, className);
+					.getDataObjectsByType(roid, type);
 			if (objects != null) {
 				for (final SDataObject object : objects) {
 					final Entity entity = new BimserverEntity(object);

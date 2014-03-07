@@ -133,8 +133,8 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public Iterable<Entity> getEntitiesByType(final String revisionId, final String className) {
-		return client.getEntitiesByType(revisionId, className);
+	public Iterable<Entity> getEntitiesByType(final String className, final String revisionId) {
+		return client.getEntitiesByType(className, revisionId);
 	}
 	
 	@Override

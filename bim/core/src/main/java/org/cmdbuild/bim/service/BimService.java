@@ -53,7 +53,7 @@ public interface BimService {
 
 	// File contents
 
-	Iterable<Entity> getEntitiesByType(String revisionId, String className);
+	Iterable<Entity> getEntitiesByType(String className, String revisionId);
 	
 	Entity getEntityByGuid(String revisionId, String globalId);
 
