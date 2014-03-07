@@ -6,7 +6,7 @@ import org.cmdbuild.bim.service.BimProject;
 import org.joda.time.DateTime;
 
 public class BimserverProject implements BimProject { 
-
+	
 	private static final String ACTIVE = "ACTIVE";
 	private final SProject project;
 	private DateTime lastCheckin;

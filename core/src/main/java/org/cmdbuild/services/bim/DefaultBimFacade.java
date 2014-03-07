@@ -27,6 +27,7 @@ import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.services.bim.connector.DefaultBimDataView.SHAPE_OID;
+import static org.cmdbuild.bim.service.BimProject.INVALID_BIM_ID;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -178,7 +179,7 @@ public class DefaultBimFacade implements BimFacade {
 	@Override
 	public DataHandler download(String projectId) {
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
-		if (("-1").equals(revisionId)) {
+		if ((INVALID_BIM_ID).equals(revisionId)) {
 			return null;
 		}
 		return service.downloadIfc(revisionId);
@@ -186,7 +187,7 @@ public class DefaultBimFacade implements BimFacade {
 
 	@Override
 	public Iterable<Entity> fetchEntitiesOfType(String ifcType, String revisionId) {
-		return service.getEntitiesByType(revisionId, ifcType);
+		return service.getEntitiesByType(ifcType, revisionId);
 	}
 
 	@Override
@@ -258,7 +259,7 @@ public class DefaultBimFacade implements BimFacade {
 
 	@Override
 	public String findShapeWithName(String shapeName, String revisionId) {
-		Iterable<Entity> shapeList = service.getEntitiesByType(revisionId, "IfcProductDefinitionShape");
+		Iterable<Entity> shapeList = service.getEntitiesByType("IfcProductDefinitionShape", revisionId);
 		for (Entity shape : shapeList) {
 			Attribute shapeNameAttribute = shape.getAttributeByName("Name");
 			if (shapeNameAttribute.getValue() != null && shapeNameAttribute.getValue().equals(shapeName)) {
@@ -266,7 +267,7 @@ public class DefaultBimFacade implements BimFacade {
 				return shape.getKey();
 			}
 		}
-		return "-1";
+		return INVALID_BIM_ID;
 	}
 
 	private void setCoordinates(String placementId, String x1, String x2, String x3, String transactionId) {
@@ -310,7 +311,7 @@ public class DefaultBimFacade implements BimFacade {
 	@Override
 	public Iterable<String> fetchAllGlobalIdForIfcType(String ifcType, String revisionId) {
 		List<String> globalIdList = Lists.newArrayList();
-		Iterable<Entity> entities = service.getEntitiesByType(revisionId, ifcType);
+		Iterable<Entity> entities = service.getEntitiesByType(ifcType, revisionId);
 		for (Entity entity : entities) {
 			globalIdList.add(entity.getKey());
 		}

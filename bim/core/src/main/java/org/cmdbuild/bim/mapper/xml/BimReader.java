@@ -76,7 +76,7 @@ public class BimReader implements Reader {
 
 		geometryHelper = new DefaultIfcGeometryHelper(service, revisionId);
 		if (entityDefinition.isValid()) {
-			Iterable<Entity> entities = service.getEntitiesByType(revisionId, entityDefinition.getTypeName());
+			Iterable<Entity> entities = service.getEntitiesByType(entityDefinition.getTypeName(), revisionId);
 			if (Iterables.size(entities) == 0) {
 				throw new BimError("No entities of type " + entityDefinition.getTypeName() + " found in revision "
 						+ revisionId);
@@ -214,7 +214,7 @@ public class BimReader implements Reader {
 	}
 
 	private void fetchContainerKey(String key, Entity retrivedEntity, String attributeName) {
-		Iterable<Entity> ifcRelations = service.getEntitiesByType(revisionId, IFC_REL_CONTAINED);
+		Iterable<Entity> ifcRelations = service.getEntitiesByType(IFC_REL_CONTAINED, revisionId);
 		String containerKey = "";
 		boolean found = false;
 		if (containersMap.containsKey(key)) {

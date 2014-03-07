@@ -16,6 +16,7 @@ import org.cmdbuild.services.bim.BimPersistence.CmProject;
 import org.cmdbuild.services.bim.BimStoreManager;
 import org.cmdbuild.services.bim.DefaultBimPersistence;
 import org.cmdbuild.services.bim.RelationPersistence;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,6 +28,15 @@ public class DefaultBimDataPersistenceTest {
 
 	private static final String PROJECTID = "projectId";
 	private static final String THE_CLASS = "classname";
+	private static final String NAME = "name";
+	private static final String DESCRIPTION = "description";
+	private static final Boolean STATUS = true;
+	private static final String c2 = "22";
+	private static final String c1 = "11";
+	private static final long CMID = 666;
+	private static final String IMPORT = "import";
+	private static final String EXPORT = "export";
+	private static final String ROOT = "root";
 	private BimPersistence dataPersistence;
 	private BimStoreManager storeManager;
 	private RelationPersistence relationPersistence;
@@ -39,11 +49,15 @@ public class DefaultBimDataPersistenceTest {
 	}
 
 	@Test
-	public void newProjectInfoSaved() throws Exception {
+	public void newProjectSavedWithoutCardBinding() throws Exception {
 		// given
 		ArgumentCaptor<StorableProject> storableCaptor = ArgumentCaptor.forClass(StorableProject.class);
+		
 		CmProject project = mock(CmProject.class);
 		when(project.getProjectId()).thenReturn(PROJECTID);
+		when(project.getName()).thenReturn(NAME);
+		when(project.getDescription()).thenReturn(DESCRIPTION);
+		when(project.isActive()).thenReturn(STATUS);
 
 		// when
 		dataPersistence.saveProject(project);
@@ -52,18 +66,40 @@ public class DefaultBimDataPersistenceTest {
 		InOrder inOrder = inOrder(storeManager, relationPersistence);
 		inOrder.verify(storeManager).write(storableCaptor.capture());
 		inOrder.verify(storeManager).read(PROJECTID);
-		assertTrue(storableCaptor.getValue().getProjectId().equals(PROJECTID));
+		
+		StorableProject projectToStore = storableCaptor.getValue();
+		assertTrue(projectToStore.getProjectId().equals(PROJECTID));
+		assertTrue(projectToStore.getName().equals(NAME));
+		assertTrue(projectToStore.getDescription().equals(DESCRIPTION));
+		assertTrue(projectToStore.isActive() == STATUS);
+		
 		verifyNoMoreInteractions(storeManager);
 		verifyZeroInteractions(relationPersistence);
 	}
-
+	
+	
 	@Test
-	public void alreadyExistingProjectInfoSaved() throws Exception {
+	public void newProjectSavedWithCardBinding() throws Exception {
 		// given
 		ArgumentCaptor<StorableProject> storableCaptor = ArgumentCaptor.forClass(StorableProject.class);
+		
 		CmProject project = mock(CmProject.class);
 		when(project.getProjectId()).thenReturn(PROJECTID);
-
+		when(project.getName()).thenReturn(NAME);
+		when(project.getDescription()).thenReturn(DESCRIPTION);
+		when(project.isActive()).thenReturn(STATUS);
+		
+		Iterable<String> cardsToBind = Lists.newArrayList(c1, c2);
+		when(project.getCardBinding()).thenReturn(cardsToBind);
+		
+		StorableProject stored = new StorableProject();
+		stored.setCardId(CMID);
+		when(storeManager.read(PROJECTID)).thenReturn(stored);
+		
+		BimLayer rootLayer = mock(BimLayer.class);
+		when(rootLayer.getClassName()).thenReturn(ROOT);
+		when(storeManager.findRoot()).thenReturn(rootLayer);
+	
 		// when
 		dataPersistence.saveProject(project);
 
@@ -71,36 +107,21 @@ public class DefaultBimDataPersistenceTest {
 		InOrder inOrder = inOrder(storeManager, relationPersistence);
 		inOrder.verify(storeManager).write(storableCaptor.capture());
 		inOrder.verify(storeManager).read(PROJECTID);
-		assertTrue(storableCaptor.getValue().getProjectId().equals(PROJECTID));
+		inOrder.verify(storeManager).findRoot();
+		inOrder.verify(relationPersistence).writeRelations(CMID, cardsToBind, rootLayer.getClassName());
+		
+		StorableProject projectToStore = storableCaptor.getValue();
+		assertTrue(projectToStore.getProjectId().equals(PROJECTID));
+		assertTrue(projectToStore.getName().equals(NAME));
+		assertTrue(projectToStore.getDescription().equals(DESCRIPTION));
+		assertTrue(projectToStore.isActive() == STATUS);
+		
 		verifyNoMoreInteractions(storeManager);
 		verifyZeroInteractions(relationPersistence);
 	}
-
+	
 	@Test
-	public void updateAttributesOfAnExistingProject() throws Exception {
-		// given
-		ArgumentCaptor<StorableProject> storableCaptor = ArgumentCaptor.forClass(StorableProject.class);
-
-		CmProject oldProjectInfo = mock(CmProject.class);
-		when(oldProjectInfo.getProjectId()).thenReturn(PROJECTID);
-		when(oldProjectInfo.getName()).thenReturn("Name");
-		when(oldProjectInfo.getDescription()).thenReturn("oldDescription");
-		when(oldProjectInfo.isActive()).thenReturn(false);
-
-		// when
-		dataPersistence.saveProject(oldProjectInfo);
-
-		// then
-		InOrder inOrder = inOrder(storeManager, relationPersistence);
-		inOrder.verify(storeManager).write(storableCaptor.capture());
-		inOrder.verify(storeManager).read(storableCaptor.getValue().getProjectId());
-
-		verifyNoMoreInteractions(storeManager);
-		verifyZeroInteractions(relationPersistence);
-	}
-
-	@Test
-	public void projectInfoDisabled() throws Exception {
+	public void disableProjectForwardToStoreManager() throws Exception {
 		// given
 		CmProject projectToDisable = mock(CmProject.class);
 		when(projectToDisable.getProjectId()).thenReturn(PROJECTID);
@@ -115,9 +136,9 @@ public class DefaultBimDataPersistenceTest {
 		verifyNoMoreInteractions(storeManager);
 		verifyZeroInteractions(relationPersistence);
 	}
-
+	
 	@Test
-	public void projectInfoEnabled() throws Exception {
+	public void enableProjectForwardToStoreManager() throws Exception {
 		// given
 		CmProject projectToDisable = mock(CmProject.class);
 		when(projectToDisable.getProjectId()).thenReturn(PROJECTID);
@@ -132,9 +153,43 @@ public class DefaultBimDataPersistenceTest {
 		verifyNoMoreInteractions(storeManager);
 		verifyZeroInteractions(relationPersistence);
 	}
+	
+	@Test
+	public void convertFromCmToStorable() throws Exception {
+		// given
+		ArgumentCaptor<StorableProject> storableCaptor = ArgumentCaptor.forClass(StorableProject.class);
+		DateTime now = new DateTime();
+
+		CmProject project = mock(CmProject.class);
+		when(project.getProjectId()).thenReturn(PROJECTID);
+		when(project.getName()).thenReturn(NAME);
+		when(project.getDescription()).thenReturn(DESCRIPTION);
+		when(project.isActive()).thenReturn(STATUS);
+		when(project.getLastCheckin()).thenReturn(now);
+		when(project.getImportMapping()).thenReturn(IMPORT);
+		when(project.getExportMapping()).thenReturn(EXPORT);
+		
+		// when
+		dataPersistence.saveProject(project);
+
+		// then
+		InOrder inOrder = inOrder(storeManager, relationPersistence);
+		inOrder.verify(storeManager).write(storableCaptor.capture());
+		inOrder.verify(storeManager).read(PROJECTID);
+		StorableProject convertedProject = storableCaptor.getValue();
+		assertTrue(convertedProject.getProjectId().equals(PROJECTID));
+		assertTrue(convertedProject.getName().equals(NAME));
+		assertTrue(convertedProject.getDescription().equals(DESCRIPTION));
+		assertTrue(convertedProject.isActive() == STATUS);
+		assertTrue(convertedProject.getLastCheckin().equals(now));
+		assertTrue(convertedProject.getImportMapping().equals(IMPORT));
+		assertTrue(convertedProject.getExportMapping().equals(EXPORT));
+		verifyNoMoreInteractions(storeManager);
+		verifyZeroInteractions(relationPersistence);
+	}
 
 	@Test
-	public void readAllProjectInfo() throws Exception {
+	public void readAllProjects() throws Exception {
 		// given
 		ArgumentCaptor<Long> idCaptor = ArgumentCaptor.forClass(Long.class);
 		ArgumentCaptor<String> rootCaptor = ArgumentCaptor.forClass(String.class);
@@ -143,11 +198,13 @@ public class DefaultBimDataPersistenceTest {
 
 		StorableProject project = new StorableProject();
 		project.setProjectId(PROJECTID);
-		project.setCardId(new Long("111"));
+		project.setCardId(CMID);
 
 		projects.add(project);
 		when(storeManager.readAll()).thenReturn(projects);
-		when(storeManager.findRoot()).thenReturn(new BimLayer("Root"));
+		BimLayer root = mock(BimLayer.class);
+		when(root.getClassName()).thenReturn(ROOT);
+		when(storeManager.findRoot()).thenReturn(root);
 		when(relationPersistence.readRelations(idCaptor.capture(), rootCaptor.capture())).thenReturn(null);
 		when(storeManager.read(PROJECTID)).thenReturn(project);
 
@@ -159,9 +216,13 @@ public class DefaultBimDataPersistenceTest {
 		inOrder.verify(storeManager).readAll();
 		inOrder.verify(storeManager).read(PROJECTID);
 		inOrder.verify(storeManager).findRoot();
-		inOrder.verify(relationPersistence).readRelations(idCaptor.getValue(), rootCaptor.getValue());
-
+		Long cmId = idCaptor.getValue();
+		String rootClassName = rootCaptor.getValue();
+		inOrder.verify(relationPersistence).readRelations(cmId, rootClassName);
 		verifyNoMoreInteractions(storeManager, relationPersistence);
+		
+		assertTrue(cmId.equals(CMID));
+		assertTrue(rootClassName.equals(ROOT));
 	}
 
 	@Test

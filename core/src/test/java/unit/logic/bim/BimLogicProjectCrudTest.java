@@ -11,7 +11,6 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.cmdbuild.logic.bim.BimLogic;
 import org.cmdbuild.logic.bim.BimLogic.Project;
 import org.cmdbuild.logic.bim.DefaultBimLogic;
@@ -339,7 +338,6 @@ public class BimLogicProjectCrudTest {
 
 		Project project = mock(Project.class);
 		when(project.getName()).thenReturn(NAME);
-		when(project.getFile()).thenReturn(null);
 		when(project.getProjectId()).thenReturn(ID);
 		List<String> stringList = Lists.newArrayList();
 		stringList.add(c1);
@@ -356,9 +354,19 @@ public class BimLogicProjectCrudTest {
 
 		// then
 		InOrder inOrder = inOrder(serviceFacade, dataPersistence);
-		inOrder.verify(serviceFacade).createProject(facadeProjectCaptor.getValue());
+		BimFacadeProject bimProject = facadeProjectCaptor.getValue();
+		inOrder.verify(serviceFacade).createProject(bimProject);
 		inOrder.verify(dataPersistence).saveProject(cmProjectCaptor.capture());
 		verifyNoMoreInteractions(dataPersistence, serviceFacade);
+		
+		CmProject projectToSave = cmProjectCaptor.getValue();
+		assertTrue(projectToSave.getProjectId().equals(ID));
+		assertTrue(projectToSave.getName().equals(NAME));
+		
+		Iterable<String> cardBinding = projectToSave.getCardBinding();
+		Iterator<String> iterator = cardBinding.iterator();
+		assertTrue(Iterables.size(cardBinding) == 1);
+		assertTrue(iterator.next().equals(c1));
 	}
 
 }

@@ -65,7 +65,7 @@ public interface BimserverClient {
 
 	void enableProject(String projectId);
 
-	Iterable<Entity> getEntitiesByType(String revisionId, String className);
+	Iterable<Entity> getEntitiesByType(String type, String revisionId);
 	
 	@Deprecated
 	Map<Long, String> getAllGloabalId(String revisionId);
