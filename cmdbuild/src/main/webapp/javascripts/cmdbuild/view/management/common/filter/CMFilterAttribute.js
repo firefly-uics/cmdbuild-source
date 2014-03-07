@@ -17,7 +17,7 @@
 		},
 
 		title: tr.attributes,
-		autoScroll: false,
+		autoScroll: true,
 
 		// configuration
 		/**
