@@ -421,6 +421,10 @@ em {
 }
 
 /* ICONS */
+.translate {
+	background-image: url(../images/icons/translate.png) ! important;
+}
+
 .add {
 	background-image: url(../images/icons/add.png) !important;
 }
