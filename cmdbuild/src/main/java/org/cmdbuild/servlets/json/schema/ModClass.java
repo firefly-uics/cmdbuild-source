@@ -43,6 +43,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.TYPES;
 import static org.cmdbuild.servlets.json.ComunicationConstants.UNIQUE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.USER_STOPPABLE;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -665,5 +666,28 @@ public class ModClass extends JSONBaseWithSpringContext {
 		out.put(DOMAINS, jsonDomains);
 		return out;
 	}
+		
+	/*@@ Prototype*/
+
+	@JSONExported
+	public JSONObject getFunctions() throws JSONException {
+		final JSONObject out = new JSONObject();
+		final ArrayList<JSONObject> functions =  new ArrayList<JSONObject>();//dataDefinitionLogic().getAllFunctions();
+		JSONObject o1 = new JSONObject();
+		o1.put("name", "Functionuno");
+		JSONObject o2 = new JSONObject();
+		o2.put("name", "Functiondue");
+		JSONObject o3 = new JSONObject();
+		o3.put("name", "Functiontre");
+		JSONObject o4 = new JSONObject();
+		o4.put("name", "Functionquattro");
+		functions.add(o1);
+		functions.add(o2);
+		functions.add(o3);
+		functions.add(o4);
+		out.put("functions", functions);
+		return out;
+	}
+	/*@@ End Prototype*/
 
 }
