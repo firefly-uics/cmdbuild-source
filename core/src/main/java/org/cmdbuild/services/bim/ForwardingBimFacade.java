@@ -108,7 +108,7 @@ public abstract class ForwardingBimFacade implements BimFacade {
 	}
 
 	@Override
-	public Entity fetchEntityFromGlobalId(String revisionId, String globalId) {
+	public Entity fetchEntityFromGlobalId(String revisionId, String globalId, Iterable<String> candidateTypes) {
 		// TODO Auto-generated method stub
 		return null;
 	}

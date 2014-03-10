@@ -79,7 +79,7 @@ public interface BimFacade {
 
 	Iterable<String> fetchAllGlobalIdForIfcType(String ifcType, String revisionId);
 
-	Entity fetchEntityFromGlobalId(String revisionId, String globalId);
+	Entity fetchEntityFromGlobalId(String revisionId, String globalId, Iterable<String> candidateTypes);
 
 	String getContainerOfEntity(String globalId, String sourceRevisionId);
 

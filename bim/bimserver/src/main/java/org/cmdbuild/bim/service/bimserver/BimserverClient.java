@@ -16,27 +16,27 @@ import org.joda.time.DateTime;
 public interface BimserverClient {
 
 	// connection
-	
+
 	void connect();
 
 	void disconnect();
 
 	boolean isConnected();
-	
-	// projects	
+
+	// projects
 
 	List<BimProject> getAllProjects();
 
 	BimProject createProjectWithName(final String projectName);
-	
+
 	BimProject createProjectWithNameAndParent(String projectName, String parentIdentifier);
 
 	void disableProject(String projectId);
 
 	void branchToExistingProject(String revisionId, String destinationProjectId);
-	
+
 	void branchToNewProject(String revisionId, String projectName);
-	
+
 	DateTime checkin(String projectId, File file, boolean merge);
 
 	DataHandler downloadIfc(String roid);
@@ -44,21 +44,19 @@ public interface BimserverClient {
 	DataHandler fetchProjectStructure(String revisionId);
 
 	FileOutputStream downloadLastRevisionOfProject(String projectId);
-	
-	
-	// modify data 
-	
+
+	// modify data
+
 	void addDoubleAttribute(String transactionId, String objectId, String attributeName, double value);
 
 	void addReference(String transactionId, String objectId, String relationName, String referenceId);
 
 	void addStringAttribute(String transactionId, String objectId, String attributeName, String value);
-	
-	
+
 	// transactions
-	
+
 	void abortTransaction(String transactionId);
-	
+
 	String commitTransaction(String transactionId);
 
 	String createObject(String transactionId, String className);
@@ -66,10 +64,10 @@ public interface BimserverClient {
 	void enableProject(String projectId);
 
 	Iterable<Entity> getEntitiesByType(String type, String revisionId);
-	
+
 	Map<String, Long> getGlobalIdOidMap(String revisionId);
 
-	Entity getEntityByGuid(String revisionId, String guid);
+	Entity getEntityByGuid(String revisionId, String guid, Iterable<String> candidateTypes);
 
 	Entity getEntityByOid(String revisionId, String objectId);
 
@@ -89,8 +87,6 @@ public interface BimserverClient {
 
 	void setStringAttribute(String transactionId, String objectId, String attributeName, String value);
 
-	void removeObject(String transactionId, String revisionId, String globalId);
-
 	void removeReference(String transactionId, String objectId, String attributeName, int index);
 
 	void removeObject(String transactionId, String oid);
@@ -98,6 +94,5 @@ public interface BimserverClient {
 	void removeAllReferences(String transactionId, String objectId, String attributeName);
 
 	void updateExportProject(String projectId, String exportProjectId, String shapeProjectId);
-
 
 }

@@ -373,7 +373,7 @@ public class DefaultBimLogic implements BimLogic {
 		bimDataPersistence.saveProject(persistenceProject);
 
 		if (project.getFile() != null) {
-			Runnable uploadFileOnExportProject = new Runnable() {
+			final Runnable uploadFileOnExportProject = new Runnable() {
 
 				@Override
 				public void run() {
@@ -385,7 +385,7 @@ public class DefaultBimLogic implements BimLogic {
 					}
 				}
 			};
-			Thread threadForUpload = new Thread(uploadFileOnExportProject);
+			final Thread threadForUpload = new Thread(uploadFileOnExportProject);
 			threadForUpload.start();
 		}
 	}

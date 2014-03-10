@@ -4,9 +4,11 @@ import static org.cmdbuild.bim.service.BimProject.INVALID_BIM_ID;
 import static org.cmdbuild.bim.utils.BimConstants.DEFAULT_TAG_EXPORT;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_AXIS2_PLACEMENT3D;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_BUILDING_ELEMENT_PROXY;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_CARTESIAN_POINT;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_COORDINATES;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_DESCRIPTION;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_FURNISHING;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_GLOBALID;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_LOCAL_PLACEMENT;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_LOCATION;
@@ -60,6 +62,7 @@ public class DefaultBimFacade implements BimFacade {
 	private final TransactionManager transactionManager;
 	private final Reader reader;
 	private String transactionId;
+	private final Iterable<String> candidateTypes = Lists.newArrayList(IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING);
 
 	public DefaultBimFacade(final BimService bimservice, final TransactionManager transactionManager) {
 		this.service = bimservice;
@@ -351,12 +354,10 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public Entity fetchEntityFromGlobalId(final String revisionId, final String globalId) {
+	public Entity fetchEntityFromGlobalId(final String revisionId, final String globalId,
+			final Iterable<String> candidateTypes) {
 		Entity entity = Entity.NULL_ENTITY;
-		try {
-			entity = service.getEntityByGuid(revisionId, globalId);
-		} catch (final Throwable t) {
-		}
+		entity = service.getEntityByGuid(revisionId, globalId, null);
 		return entity;
 	}
 
@@ -428,7 +429,7 @@ public class DefaultBimFacade implements BimFacade {
 				for (int i = 0; i < size; i++) {
 					final Attribute relatedElement = relatedElementsAttribute.getValues().get(i);
 					final String objectGuid = relatedElement.getValue();
-					final Entity element = fetchEntityFromGlobalId(sourceRevisionId, objectGuid);
+					final Entity element = fetchEntityFromGlobalId(sourceRevisionId, objectGuid, candidateTypes);
 					if (!element.isValid()) {
 						continue;
 					}

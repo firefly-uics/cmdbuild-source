@@ -5,11 +5,10 @@ import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
-
 import javax.activation.DataHandler;
 
 import org.cmdbuild.bim.model.Entity;
+import org.joda.time.DateTime;
 
 public interface BimService {
 
@@ -32,7 +31,7 @@ public interface BimService {
 	// Project management
 
 	BimProject createProject(String name);
-	
+
 	BimProject createSubProject(String projectName, String parentIdentifier);
 
 	List<BimProject> getAllProjects();
@@ -54,8 +53,8 @@ public interface BimService {
 	// File contents
 
 	Iterable<Entity> getEntitiesByType(String className, String revisionId);
-	
-	Entity getEntityByGuid(String revisionId, String globalId);
+
+	Entity getEntityByGuid(String revisionId, String globalId, Iterable<String> candidateTypes);
 
 	Entity getEntityByOid(String revisionId, String objectId);
 
@@ -77,10 +76,8 @@ public interface BimService {
 
 	String createObject(String transactionId, String className);
 
-	void removeObject(String transactionId, String revisionId, String globalId);
 	void removeObject(String transactionId, String oid);
 
-	void removeReference(String transactionId, String objectId, String attributeName, int index);
 	void removeAllReferences(String transactionId, String objectId, String attributeName);
 
 	void unsetReference(String transactionId, String objectId, String referenceName);

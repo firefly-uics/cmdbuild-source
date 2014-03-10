@@ -2,7 +2,9 @@ package org.cmdbuild.services.bim.connector.export;
 
 import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_BUILDING_ELEMENT_PROXY;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_DESCRIPTION;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_FURNISHING;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_SPACE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_TYPE;
@@ -37,6 +39,7 @@ import org.cmdbuild.services.bim.connector.export.DataChangedListener.DataNotCha
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps;
@@ -45,10 +48,11 @@ public class NewExport implements Export {
 
 	private final BimFacade serviceFacade;
 	private final BimPersistence persistence;
-	private BimDataView bimDataView;
-	private Map<String, String> shapeNameToOidMap;
+	private final BimDataView bimDataView;
+	private final Map<String, String> shapeNameToOidMap;
+	private final Iterable<String> candidateTypes = Lists.newArrayList(IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING);
 
-	public NewExport(BimDataView dataView, BimFacade bimServiceFacade, BimPersistence bimPersistence) {
+	public NewExport(final BimDataView dataView, final BimFacade bimServiceFacade, final BimPersistence bimPersistence) {
 		this.serviceFacade = bimServiceFacade;
 		this.persistence = bimPersistence;
 		this.bimDataView = dataView;
@@ -58,10 +62,10 @@ public class NewExport implements Export {
 	@Override
 	public boolean isSynch(final Catalog catalog, final String projectId) {
 		boolean synch = true;
-		Output changeListener = new DataChangedListener();
+		final Output changeListener = new DataChangedListener();
 		try {
 			export(catalog, projectId, changeListener);
-		} catch (DataChangedException e) {
+		} catch (final DataChangedException e) {
 			synch = false;
 		}
 		return synch;
@@ -77,8 +81,8 @@ public class NewExport implements Export {
 
 		final Iterable<String> ifcSpacesGlobalIdList = serviceFacade.fetchAllGlobalIdForIfcType(IFC_SPACE,
 				sourceRevisionId);
-		Map<String, Long> globalIdToCmdbIdIfcSpaceMap = Maps.newHashMap();
-		for (String globalId : ifcSpacesGlobalIdList) {
+		final Map<String, Long> globalIdToCmdbIdIfcSpaceMap = Maps.newHashMap();
+		for (final String globalId : ifcSpacesGlobalIdList) {
 			final Long matchingId = getIdFromGlobalId(globalId, containerClassName);
 			if (matchingId.equals(-1)) {
 				System.out.println(IFC_SPACE + " " + globalId + " not found in CMDBuild. Skip.");
@@ -91,10 +95,8 @@ public class NewExport implements Export {
 		return sourceData;
 	}
 
-
-
 	@Override
-	public String export(final Catalog catalog, final String sourceProjectId, Output output) {
+	public String export(final Catalog catalog, final String sourceProjectId, final Output output) {
 
 		final Map<String, Entity> sourceData = getSource(catalog, sourceProjectId);
 		final Map<String, Entity> targetData = getTargetData(sourceProjectId, sourceData.keySet());
@@ -114,7 +116,7 @@ public class NewExport implements Export {
 				final ValueDifference<Entity> entityToUpdate = entriesToUpdate.get(guidToUpdate);
 				final Entity entityToRemove = entityToUpdate.rightValue();
 				final Entity entityToCreate = entityToUpdate.leftValue();
-				boolean toUpdate = areDifferent(entityToRemove, entityToCreate);
+				final boolean toUpdate = areDifferent(entityToRemove, entityToCreate);
 				if (toUpdate) {
 					output.createTarget(entityToCreate, targetId);
 					output.deleteTarget(entityToRemove, targetId);
@@ -127,19 +129,19 @@ public class NewExport implements Export {
 			output.updateRelations(targetId);
 			final String revisionId = serviceFacade.commitTransaction();
 			System.out.println("Revision " + revisionId + " created at " + new DateTime());
-		} catch (DataChangedException d) {
+		} catch (final DataChangedException d) {
 			serviceFacade.abortTransaction();
 			throw new DataChangedException();
-		} catch (DataNotChangedException d) {
+		} catch (final DataNotChangedException d) {
 			serviceFacade.abortTransaction();
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 			serviceFacade.abortTransaction();
 			throw new BimError("Error during export", t);
 		}
 		return targetId;
 	}
 
-	private boolean areDifferent(Entity entityToRemove, Entity entityToCreate) {
+	private boolean areDifferent(final Entity entityToRemove, final Entity entityToCreate) {
 		final String oldName = entityToRemove.getAttributeByName(IFC_NAME).getValue();
 		final String newName = entityToCreate.getAttributeByName(CODE_ATTRIBUTE).getValue();
 		if (!StringUtils.equals(oldName, newName)) {
@@ -163,15 +165,15 @@ public class NewExport implements Export {
 		return false;
 	}
 
-	private Map<String, Entity> getTargetData(String sourceProjectId, Set<String> keySet) {
+	private Map<String, Entity> getTargetData(final String sourceProjectId, final Set<String> keySet) {
 		final String sourceRevisionId = getExportRevisionId(sourceProjectId);
-		Map<String, Entity> targetData = Maps.newHashMap();
+		final Map<String, Entity> targetData = Maps.newHashMap();
 		for (final String globalId : keySet) {
-			final Entity entity = serviceFacade.fetchEntityFromGlobalId(sourceRevisionId, globalId);
+			final Entity entity = serviceFacade.fetchEntityFromGlobalId(sourceRevisionId, globalId, candidateTypes);
 			if (!entity.isValid()) {
 				continue;
 			}
-			Long oid = BimserverEntity.class.cast(entity).getOid();
+			final Long oid = BimserverEntity.class.cast(entity).getOid();
 			final String name = entity.getAttributeByName(IFC_NAME).getValue();
 			final String description = entity.getAttributeByName(IFC_DESCRIPTION).getValue();
 			final DefaultEntity targetEntity = DefaultEntity.withTypeAndKey(entity.getTypeName(), globalId);
@@ -189,11 +191,11 @@ public class NewExport implements Export {
 	}
 
 	private Map<String, Entity> getSourceData(final Map<String, Long> globalIdToCmdbIdMap, final Catalog catalog,
-			final String revisionId, String containerClassName) {
+			final String revisionId, final String containerClassName) {
 
-		Map<String, Entity> dataSource = Maps.newHashMap();
+		final Map<String, Entity> dataSource = Maps.newHashMap();
 		for (final Entry<String, Long> entry : globalIdToCmdbIdMap.entrySet()) {
-			for (EntityDefinition catalogEntry : catalog.getEntitiesDefinitions()) {
+			for (final EntityDefinition catalogEntry : catalog.getEntitiesDefinitions()) {
 				final String ifcSpaceGuid = entry.getKey();
 				final Long ifcSpaceCmId = entry.getValue();
 				final String className = catalogEntry.getLabel();
@@ -201,10 +203,10 @@ public class NewExport implements Export {
 				final String shapeOid = getShapeOid(revisionId, catalogEntry.getShape());
 				final String ifcType = catalogEntry.getTypeName();
 
-				List<CMCard> cardsInTheIfcSpace = bimDataView.getCardsWithAttributeAndValue(
+				final List<CMCard> cardsInTheIfcSpace = bimDataView.getCardsWithAttributeAndValue(
 						DBIdentifier.fromName(className), ifcSpaceCmId, containerAttributeName);
-				for (CMCard cmcard : cardsInTheIfcSpace) {
-					Entity sourceData = bimDataView.getCardDataForExport(cmcard, className,
+				for (final CMCard cmcard : cardsInTheIfcSpace) {
+					final Entity sourceData = bimDataView.getCardDataForExport(cmcard, className,
 							String.valueOf(ifcSpaceCmId), ifcSpaceGuid, containerClassName, shapeOid, ifcType);
 					dataSource.put(sourceData.getKey(), sourceData);
 				}
@@ -224,28 +226,28 @@ public class NewExport implements Export {
 		return shapeOid;
 	}
 
-	private Long getIdFromGlobalId(String key, String className) {
-		CMCard theCard = getCardFromGlobalId(key, className);
+	private Long getIdFromGlobalId(final String key, final String className) {
+		final CMCard theCard = getCardFromGlobalId(key, className);
 		long matchingId = -1;
 		if (theCard != null) {
 			if (theCard.get(FK_COLUMN_NAME) != null) {
-				IdAndDescription reference = (IdAndDescription) theCard.get(FK_COLUMN_NAME);
+				final IdAndDescription reference = (IdAndDescription) theCard.get(FK_COLUMN_NAME);
 				matchingId = reference.getId();
 			}
 		}
 		return matchingId;
 	}
 
-	private CMCard getCardFromGlobalId(String key, String className) {
+	private CMCard getCardFromGlobalId(final String key, final String className) {
 		CMCard theCard = null;
-		List<CMCard> cardList = bimDataView.getCardsWithAttributeAndValue(
+		final List<CMCard> cardList = bimDataView.getCardsWithAttributeAndValue(
 				BimIdentifier.newIdentifier().withName(className), key, GLOBALID_ATTRIBUTE);
 		if (!cardList.isEmpty() && cardList.size() == 1) {
 			theCard = cardList.get(0);
 		}
 		return theCard;
 	}
-	
+
 	private String getExportProjectId(final String masterProjectId) {
 		final String targetProjectId = persistence.read(masterProjectId).getExportProjectId();
 		final BimProject targetProject = serviceFacade.getProjectById(targetProjectId);
