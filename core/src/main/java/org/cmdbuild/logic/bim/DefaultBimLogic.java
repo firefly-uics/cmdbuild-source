@@ -373,12 +373,20 @@ public class DefaultBimLogic implements BimLogic {
 		bimDataPersistence.saveProject(persistenceProject);
 
 		if (project.getFile() != null) {
-			final CmProject storedProject = bimDataPersistence.read(projectId);
-			final String exportProjectId = storedProject.getExportProjectId();
-			final String shapeProjectId = storedProject.getShapeProjectId();
-			if (!exportProjectId.isEmpty() && !shapeProjectId.isEmpty()) {
-				bimServiceFacade.updateExportProject(projectId, exportProjectId, shapeProjectId);
-			}
+			Runnable uploadFileOnExportProject = new Runnable() {
+
+				@Override
+				public void run() {
+					final CmProject storedProject = bimDataPersistence.read(projectId);
+					final String exportProjectId = storedProject.getExportProjectId();
+					final String shapeProjectId = storedProject.getShapeProjectId();
+					if (!exportProjectId.isEmpty() && !shapeProjectId.isEmpty()) {
+						bimServiceFacade.updateExportProject(projectId, exportProjectId, shapeProjectId);
+					}
+				}
+			};
+			Thread threadForUpload = new Thread(uploadFileOnExportProject);
+			threadForUpload.start();
 		}
 	}
 

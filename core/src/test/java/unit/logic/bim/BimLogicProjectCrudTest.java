@@ -326,7 +326,6 @@ public class BimLogicProjectCrudTest {
 		final InOrder inOrder = inOrder(serviceFacade, dataPersistence);
 		inOrder.verify(serviceFacade).updateProject(projectToUpdate);
 		inOrder.verify(dataPersistence).saveProject(cmProjectCaptor.capture());
-		inOrder.verify(dataPersistence).read(ID);
 		verifyNoMoreInteractions(serviceFacade, dataPersistence);
 
 		assertTrue(projectToUpdate.getProjectId().equals(ID));
