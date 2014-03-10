@@ -13,6 +13,7 @@
 		considerAsFieldToDisable: true,
 		translationsKeyField: "",
 		allowBlank : false,
+		textArea : false,
 		vtype : '',
 		setValue: function(value) {
 			return this.text.setValue(value);
@@ -68,7 +69,8 @@
 						translationsKeyType: me.translationsKeyType, 
 						translationsKeyName: me.translationsKeyName,
 						translationsKeySubName: me.translationsKeySubName,
-						translationsKeyField: me.translationsKeyField
+						translationsKeyField: me.translationsKeyField,
+						textArea: me.textArea
 					});
 					translationsWindow.show();
 				}
@@ -82,6 +84,7 @@
 	});
 	Ext.define("Ext.form.CMTranslatableTextArea", {
 		extend: "Ext.form.CMTranslatableText",
+		textArea : true,
 		createTextItem: function() {
 			return new Ext.form.field.TextArea( {
 				fieldLabel : this.fieldLabel,

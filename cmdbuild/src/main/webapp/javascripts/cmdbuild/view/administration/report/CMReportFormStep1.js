@@ -42,7 +42,7 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				translationsKeyType: "Report", 
 				translationsKeyField: "Description",
-				maxLength : 100
+				maxLength : 100,
 			});
 
 			this.items = [
