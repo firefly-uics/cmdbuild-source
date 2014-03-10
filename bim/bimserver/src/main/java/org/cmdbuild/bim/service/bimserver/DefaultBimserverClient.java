@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.bimserver.client.BimServerClient;
 import org.bimserver.client.BimServerClientFactory;
@@ -20,7 +21,9 @@ import org.bimserver.interfaces.objects.SDownloadResult;
 import org.bimserver.interfaces.objects.SProject;
 import org.bimserver.interfaces.objects.SRevision;
 import org.bimserver.interfaces.objects.SSerializerPluginConfiguration;
+import org.bimserver.shared.PublicInterfaceNotFoundException;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
+import org.bimserver.shared.exceptions.ServerException;
 import org.bimserver.shared.exceptions.UserException;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
@@ -390,13 +393,25 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	@Override
 	public Entity getEntityByGuid(final String revisionId, final String guid) {
 		Entity entity = Entity.NULL_ENTITY;
+		final Long roid = new Long(revisionId);
 		try {
-			final Long roid = new Long(revisionId);
 			final SDataObject object = client.getBimsie1LowLevelInterface().getDataObjectByGuid(roid, guid);
 			entity = new BimserverEntity(object);
 		} catch (final UserException e) {
-		} catch (final Throwable e) {
-			throw new BimError(e);
+		} catch (final SOAPFaultException e) {
+				try {
+					List<SDataObject> objectList = client.getBimsie1LowLevelInterface().getDataObjectsByType(roid, "IfcBuildingElementProxy");
+					for(SDataObject object : objectList){
+						if(object.getGuid().equals(guid)){
+							entity = new BimserverEntity(object);
+							return entity;
+						}
+					}
+				} catch (Throwable t) {
+					throw new BimError(t);
+				}
+		} catch (Throwable t) {
+			throw new BimError(t);
 		}
 		return entity;
 	}
@@ -598,27 +613,19 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			String str = fmt.print(new DateTime());
 			final String tmpName = String.format("tmp-%s-%s", projectId, str);
 			BimProject tmpProject = createProjectWithName(tmpName);
-			System.out.println("project " + tmpProject.getIdentifier() + " created");
+			System.out.println("tmp project " + tmpProject.getIdentifier() + " for merge created");
 			BimProject shapeProject = createProjectWithNameAndParent("shapes", tmpProject.getIdentifier());
 			BimProject baseProject = createProjectWithNameAndParent("base", tmpProject.getIdentifier());
 			branchToExistingProject(baseRevision, baseProject.getIdentifier());
 			branchToExistingProject(shapeRevision, shapeProject.getIdentifier());
 			String mergedRevisionId = getLastRevisionOfProject(tmpProject.getIdentifier());
-			System.out.println("revision " + mergedRevisionId + " created");
+			System.out.println("merged revision " + mergedRevisionId + " for export created");
 			if (INVALID_BIM_ID.equals(mergedRevisionId)) {
 				throw new BimError("merged revision for export not created");
 			}
 			branchToExistingProject(mergedRevisionId, exportProjectId);
-
-			/*
-			 * I don't know which version is safer
-			 * 
-			 * DataHandler mergedData = downloadIfc(mergedRevisionId); // final
-			 * File file = File.createTempFile("ifc", null); // final
-			 * FileOutputStream outputStream = new FileOutputStream(file); //
-			 * mergedData.writeTo(outputStream); // checkin(exportProjectId,
-			 * file, NO_MERGE); // file.delete();
-			 */
+			final String exportRevisionId = getLastRevisionOfProject(exportProjectId);
+			System.out.println("Revision " + exportRevisionId + " for export created");
 		} catch (final Throwable e) {
 			throw new BimError(e);
 		}
