@@ -357,7 +357,7 @@ public class DefaultBimFacade implements BimFacade {
 	public Entity fetchEntityFromGlobalId(final String revisionId, final String globalId,
 			final Iterable<String> candidateTypes) {
 		Entity entity = Entity.NULL_ENTITY;
-		entity = service.getEntityByGuid(revisionId, globalId, null);
+		entity = service.getEntityByGuid(revisionId, globalId, candidateTypes);
 		return entity;
 	}
 
