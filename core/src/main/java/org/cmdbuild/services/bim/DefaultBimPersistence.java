@@ -18,7 +18,7 @@ public class DefaultBimPersistence implements BimPersistence {
 	private final RelationPersistence relationPersistenceManager;
 	private final BimStoreManager storeManager;
 
-	public DefaultBimPersistence(BimStoreManager storeManager, RelationPersistence relationPersistence) {
+	public DefaultBimPersistence(final BimStoreManager storeManager, final RelationPersistence relationPersistence) {
 		this.relationPersistenceManager = relationPersistence;
 		this.storeManager = storeManager;
 	}
@@ -27,7 +27,7 @@ public class DefaultBimPersistence implements BimPersistence {
 	public Iterable<CmProject> readAll() {
 		final Iterable<StorableProject> storableList = storeManager.readAll();
 		final List<CmProject> cmProjectList = Lists.newArrayList();
-		for (StorableProject storable : storableList) {
+		for (final StorableProject storable : storableList) {
 			final CmProject cmProject = read(storable.getIdentifier());
 			cmProjectList.add(cmProject);
 		}
@@ -36,15 +36,15 @@ public class DefaultBimPersistence implements BimPersistence {
 
 	@Override
 	public CmProject read(final String projectId) {
-		StorableProject storableProject = storeManager.read(projectId);
-		ProjectRelations relations = relationPersistenceManager.readRelations(storableProject.getCardId(), findRoot()
-				.getClassName());
-		CmProject cmProject = from(storableProject, relations);
+		final StorableProject storableProject = storeManager.read(projectId);
+		final ProjectRelations relations = relationPersistenceManager.readRelations(storableProject.getCardId(),
+				findRoot().getClassName());
+		final CmProject cmProject = from(storableProject, relations);
 		return cmProject;
 	}
 
 	@Override
-	public void saveProject(CmProject project) {
+	public void saveProject(final CmProject project) {
 		final StorableProject projectToStore = PROJECT_TO_STORABLE.apply(project);
 		storeManager.write(projectToStore);
 
@@ -56,19 +56,19 @@ public class DefaultBimPersistence implements BimPersistence {
 	}
 
 	@Override
-	public void disableProject(CmProject persistenceProject) {
+	public void disableProject(final CmProject persistenceProject) {
 		storeManager.disableProject(persistenceProject.getProjectId());
 	}
 
 	@Override
-	public void enableProject(CmProject persistenceProject) {
+	public void enableProject(final CmProject persistenceProject) {
 		storeManager.enableProject(persistenceProject.getProjectId());
 	}
 
 	@Override
 	public String getProjectIdFromCardId(final Long cardId) {
-		Iterable<CmProject> projectList = readAll();
-		for (CmProject project : projectList) {
+		final Iterable<CmProject> projectList = readAll();
+		for (final CmProject project : projectList) {
 			if (project.getCmId().equals(cardId)) {
 				return project.getProjectId();
 			}
@@ -77,25 +77,24 @@ public class DefaultBimPersistence implements BimPersistence {
 	}
 
 	@Override
-	public Long getCardIdFromProjectId(String projectId) {
+	public Long getCardIdFromProjectId(final String projectId) {
 		Long cardId = new Long("-1");
-		CmProject project = read(projectId);
+		final CmProject project = read(projectId);
 		if (project != null) {
 			cardId = project.getCmId();
 		}
 		return cardId;
 	}
 
-	private static CmProject from(final StorableProject storableProject, ProjectRelations relations) {
+	private static CmProject from(final StorableProject storableProject, final ProjectRelations relations) {
 		return new StorableAndRelations(storableProject, relations);
 	}
-
 
 	private static Function<CmProject, StorableProject> PROJECT_TO_STORABLE = new Function<CmProject, StorableProject>() {
 
 		@Override
-		public StorableProject apply(CmProject input) {
-			StorableProject storableProject = new StorableProject();
+		public StorableProject apply(final CmProject input) {
+			final StorableProject storableProject = new StorableProject();
 			storableProject.setActive(input.isActive());
 			storableProject.setDescription(input.getDescription());
 			storableProject.setName(input.getName());
@@ -159,7 +158,7 @@ public class DefaultBimPersistence implements BimPersistence {
 		public String getExportMapping() {
 			return delegate.getExportMapping();
 		}
-		
+
 		@Override
 		public String getShapeProjectId() {
 			return delegate.getShapeProjectId();
@@ -180,48 +179,45 @@ public class DefaultBimPersistence implements BimPersistence {
 			return delegate.getExportProjectId();
 		}
 
-
 		@Override
-		public void setSynch(boolean synch) {
+		public void setSynch(final boolean synch) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public void setProjectId(String projectId) {
+		public void setProjectId(final String projectId) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public void setLastCheckin(DateTime lastCheckin) {
+		public void setLastCheckin(final DateTime lastCheckin) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public void setName(String name) {
+		public void setName(final String name) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public void setDescription(String description) {
+		public void setDescription(final String description) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public void setCardBinding(Iterable<String> cardBinding) {
+		public void setCardBinding(final Iterable<String> cardBinding) {
 			throw new UnsupportedOperationException();
 		}
 
 		@Override
-		public void setActive(boolean active) {
+		public void setActive(final boolean active) {
 			throw new UnsupportedOperationException();
 		}
-		
 
 		@Override
-		public void setExportProjectId(String projectId) {
+		public void setExportProjectId(final String projectId) {
 			throw new UnsupportedOperationException();
 		}
-
 
 	}
 
@@ -231,22 +227,22 @@ public class DefaultBimPersistence implements BimPersistence {
 	}
 
 	@Override
-	public void saveActiveStatus(String className, String value) {
+	public void saveActiveStatus(final String className, final String value) {
 		storeManager.saveActiveStatus(className, value);
 	}
 
 	@Override
-	public void saveExportStatus(String className, String value) {
+	public void saveExportStatus(final String className, final String value) {
 		storeManager.saveExportStatus(className, value);
 	}
 
 	@Override
-	public void saveContainerStatus(String className, String value) {
+	public void saveContainerStatus(final String className, final String value) {
 		storeManager.saveContainerStatus(className, value);
 	}
 
 	@Override
-	public void saveRoot(String className, boolean value) {
+	public void saveRoot(final String className, final boolean value) {
 		storeManager.saveRoot(className, value);
 	}
 
@@ -271,7 +267,7 @@ public class DefaultBimPersistence implements BimPersistence {
 	}
 
 	@Override
-	public BimLayer readLayer(String className) {
+	public BimLayer readLayer(final String className) {
 		return storeManager.readLayer(className);
 	}
 

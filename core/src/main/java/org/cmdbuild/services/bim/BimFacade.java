@@ -39,6 +39,8 @@ public interface BimFacade {
 
 	BimFacadeProject createProject(BimFacadeProject project);
 
+	BimFacadeProject createBaseAndExportProject(BimFacadeProject bimProject);
+
 	BimFacadeProject updateProject(BimFacadeProject project);
 
 	void disableProject(BimFacadeProject project);
@@ -88,5 +90,6 @@ public interface BimFacade {
 	String getGlobalidFromOid(String revisionId, Long oid);
 
 	DataHandler fetchProjectStructure(String revisionId);
+
 
 }

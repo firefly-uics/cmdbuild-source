@@ -61,14 +61,14 @@ public class DefaultBimFacade implements BimFacade {
 	private final Reader reader;
 	private String transactionId;
 
-	public DefaultBimFacade(BimService bimservice, TransactionManager transactionManager) {
+	public DefaultBimFacade(final BimService bimservice, final TransactionManager transactionManager) {
 		this.service = bimservice;
 		this.transactionManager = transactionManager;
 		reader = new BimReader(bimservice);
 	}
 
 	@Override
-	public void openTransaction(String projectId) {
+	public void openTransaction(final String projectId) {
 		transactionManager.open(projectId);
 	}
 
@@ -82,12 +82,13 @@ public class DefaultBimFacade implements BimFacade {
 		transactionManager.abort();
 	}
 
+	@Deprecated
 	@Override
-	public BimFacadeProject createProject(BimFacadeProject project) {
+	public BimFacadeProject createProject(final BimFacadeProject project) {
 		final BimProject createdProject = service.createProject(project.getName());
 		final String projectId = createdProject.getIdentifier();
 		if (project.getFile() != null) {
-			DateTime lastCheckin = service.checkin(createdProject.getIdentifier(), project.getFile());
+			final DateTime lastCheckin = service.checkin(createdProject.getIdentifier(), project.getFile());
 			final BimProject updatedProject = service.getProjectByPoid(projectId);
 			createdProject.setLastCheckin(lastCheckin);
 			final BimRevision lastRevision = service.getRevision(updatedProject.getLastRevisionId());
@@ -95,16 +96,35 @@ public class DefaultBimFacade implements BimFacade {
 				throw new BimError("Upload failed");
 			}
 		}
-		final BimFacadeProject facadeProject = from(createdProject);
+		final BimFacadeProject facadeProject = from(createdProject, "");
 		return facadeProject;
 	}
 
 	@Override
-	public BimFacadeProject updateProject(BimFacadeProject project) {
+	public BimFacadeProject createBaseAndExportProject(final BimFacadeProject project) {
+		final BimProject baseProject = service.createProject(project.getName());
+		final String projectId = baseProject.getIdentifier();
+		if (project.getFile() != null) {
+			final DateTime lastCheckin = service.checkin(baseProject.getIdentifier(), project.getFile());
+			final BimProject updatedProject = service.getProjectByPoid(projectId);
+			baseProject.setLastCheckin(lastCheckin);
+			final BimRevision lastRevision = service.getRevision(updatedProject.getLastRevisionId());
+			if (!lastRevision.isValid()) {
+				throw new BimError("Upload failed");
+			}
+		}
+		final String exportProjectName = "_export_" + project.getName();
+		final BimProject exportProject = service.createProject(exportProjectName);
+		final BimFacadeProject facadeProject = from(baseProject, exportProject.getIdentifier());
+		return facadeProject;
+	}
+
+	@Override
+	public BimFacadeProject updateProject(final BimFacadeProject project) {
 		final String projectId = project.getProjectId();
 		BimProject bimProject = service.getProjectByPoid(projectId);
 		if (project.getFile() != null) {
-			DateTime checkin = service.checkin(projectId, project.getFile());
+			final DateTime checkin = service.checkin(projectId, project.getFile());
 			bimProject = service.getProjectByPoid(projectId);
 			bimProject.setLastCheckin(checkin);
 		}
@@ -115,12 +135,12 @@ public class DefaultBimFacade implements BimFacade {
 				service.disableProject(projectId);
 			}
 		}
-		final BimFacadeProject facadeProject = from(bimProject);
+		final BimFacadeProject facadeProject = from(bimProject, "");
 		return facadeProject;
 	}
 
-	private static BimFacadeProject from(final BimProject createdProject) {
-		BimFacadeProject project = new BimFacadeProject() {
+	private static BimFacadeProject from(final BimProject createdProject, final String exportProjectId) {
+		final BimFacadeProject project = new BimFacadeProject() {
 
 			@Override
 			public boolean isSynch() {
@@ -153,7 +173,7 @@ public class DefaultBimFacade implements BimFacade {
 			}
 
 			@Override
-			public void setLastCheckin(DateTime lastCheckin) {
+			public void setLastCheckin(final DateTime lastCheckin) {
 				throw new UnsupportedOperationException();
 			}
 
@@ -166,13 +186,14 @@ public class DefaultBimFacade implements BimFacade {
 			public String getExportProjectId() {
 				throw new UnsupportedOperationException("to do");
 			}
+
 		};
 		return project;
 
 	}
 
 	@Override
-	public void disableProject(BimFacadeProject project) {
+	public void disableProject(final BimFacadeProject project) {
 		login();
 		service.disableProject(project.getProjectId());
 		logout();
@@ -180,15 +201,15 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public void enableProject(BimFacadeProject project) {
+	public void enableProject(final BimFacadeProject project) {
 		login();
 		service.enableProject(project.getProjectId());
 		logout();
 	}
 
 	@Override
-	public DataHandler download(String projectId) {
-		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+	public DataHandler download(final String projectId) {
+		final String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
 		if ((INVALID_BIM_ID).equals(revisionId)) {
 			return null;
 		}
@@ -196,16 +217,16 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public Iterable<Entity> fetchEntitiesOfType(String ifcType, String revisionId) {
+	public Iterable<Entity> fetchEntitiesOfType(final String ifcType, final String revisionId) {
 		return service.getEntitiesByType(ifcType, revisionId);
 	}
 
 	@Override
-	public List<Entity> readEntityFromProject(EntityDefinition entityDefinition, String projectId) {
+	public List<Entity> readEntityFromProject(final EntityDefinition entityDefinition, final String projectId) {
 		login();
-		BimProject project = service.getProjectByPoid(projectId);
-		String revisionId = project.getLastRevisionId();
-		List<Entity> source = reader.readEntities(revisionId, entityDefinition);
+		final BimProject project = service.getProjectByPoid(projectId);
+		final String revisionId = project.getLastRevisionId();
+		final List<Entity> source = reader.readEntities(revisionId, entityDefinition);
 		logout();
 		return source;
 	}
@@ -217,7 +238,7 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public String createCard(Entity entityToCreate, String targetProjectId) {
+	public String createCard(final Entity entityToCreate, final String targetProjectId) {
 		final String ifcType = entityToCreate.getAttributeByName(IFC_TYPE).getValue();
 		final String cmId = entityToCreate.getAttributeByName(ID_ATTRIBUTE).getValue();
 		final String baseClass = entityToCreate.getAttributeByName(BASE_CLASS_NAME).getValue();
@@ -243,7 +264,7 @@ public class DefaultBimFacade implements BimFacade {
 
 		transactionId = transactionManager.getId();
 
-		String objectOid = service.createObject(transactionId, ifcType);
+		final String objectOid = service.createObject(transactionId, ifcType);
 		service.setStringAttribute(transactionId, objectOid, IFC_OBJECT_TYPE, baseClass);
 		service.setStringAttribute(transactionId, objectOid, IFC_GLOBALID, globalId);
 		service.setStringAttribute(transactionId, objectOid, IFC_NAME, code);
@@ -251,7 +272,7 @@ public class DefaultBimFacade implements BimFacade {
 		service.setStringAttribute(transactionId, objectOid, IFC_TAG, DEFAULT_TAG_EXPORT);
 		service.setReference(transactionId, objectOid, "Representation", shapeOid);
 
-		String placementOid = service.createObject(transactionId, IFC_LOCAL_PLACEMENT);
+		final String placementOid = service.createObject(transactionId, IFC_LOCAL_PLACEMENT);
 		service.setReference(transactionId, objectOid, IFC_OBJECT_PLACEMENT, placementOid);
 		setCoordinates(placementOid, xcord, ycord, zcord, transactionId);
 
@@ -259,7 +280,7 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public String removeCard(Entity entityToRemove, String targetProjectId) {
+	public String removeCard(final Entity entityToRemove, final String targetProjectId) {
 		transactionId = transactionManager.getId();
 
 		final String oid = entityToRemove.getAttributeByName(OBJECT_OID).getValue();
@@ -268,10 +289,10 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public String findShapeWithName(String shapeName, String revisionId) {
-		Iterable<Entity> shapeList = service.getEntitiesByType("IfcProductDefinitionShape", revisionId);
-		for (Entity shape : shapeList) {
-			Attribute shapeNameAttribute = shape.getAttributeByName("Name");
+	public String findShapeWithName(final String shapeName, final String revisionId) {
+		final Iterable<Entity> shapeList = service.getEntitiesByType("IfcProductDefinitionShape", revisionId);
+		for (final Entity shape : shapeList) {
+			final Attribute shapeNameAttribute = shape.getAttributeByName("Name");
 			if (shapeNameAttribute.getValue() != null && shapeNameAttribute.getValue().equals(shapeName)) {
 				System.out.println("Shape found with id " + shape.getKey());
 				return shape.getKey();
@@ -280,14 +301,15 @@ public class DefaultBimFacade implements BimFacade {
 		return INVALID_BIM_ID;
 	}
 
-	private void setCoordinates(String placementId, String x1, String x2, String x3, String transactionId) {
-		double x1d = Double.parseDouble(x1);
-		double x2d = Double.parseDouble(x2);
-		double x3d = Double.parseDouble(x3);
+	private void setCoordinates(final String placementId, final String x1, final String x2, final String x3,
+			final String transactionId) {
+		final double x1d = Double.parseDouble(x1);
+		final double x2d = Double.parseDouble(x2);
+		final double x3d = Double.parseDouble(x3);
 
-		String relativePlacementId = service.createObject(transactionId, IFC_AXIS2_PLACEMENT3D);
+		final String relativePlacementId = service.createObject(transactionId, IFC_AXIS2_PLACEMENT3D);
 		service.setReference(transactionId, placementId, IFC_RELATIVE_PLACEMENT, relativePlacementId);
-		String cartesianPointId = service.createObject(transactionId, IFC_CARTESIAN_POINT);
+		final String cartesianPointId = service.createObject(transactionId, IFC_CARTESIAN_POINT);
 		System.out.println("Set coordinates " + x1d + " " + x2d + " " + x3d);
 		service.addDoubleAttribute(transactionId, cartesianPointId, IFC_COORDINATES, x1d);
 		service.addDoubleAttribute(transactionId, cartesianPointId, IFC_COORDINATES, x2d);
@@ -296,56 +318,56 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public String getLastRevisionOfProject(String projectId) {
+	public String getLastRevisionOfProject(final String projectId) {
 		final BimProject project = service.getProjectByPoid(projectId);
 		return project.getLastRevisionId();
 	}
 
 	@Override
 	public String fetchGlobalIdFromObjectId(final String objectId, final String revisionId) {
-		Entity entity = service.getEntityByOid(revisionId, objectId);
+		final Entity entity = service.getEntityByOid(revisionId, objectId);
 		return entity.getKey();
 	}
 
 	@Override
-	public DataHandler fetchProjectStructure(String revisionId) {
+	public DataHandler fetchProjectStructure(final String revisionId) {
 		return service.fetchProjectStructure(revisionId);
 
 	}
 
 	@Override
-	public BimProject getProjectById(String projectId) {
+	public BimProject getProjectById(final String projectId) {
 		return service.getProjectByPoid(projectId);
 	}
 
 	@Override
-	public Iterable<String> fetchAllGlobalIdForIfcType(String ifcType, String revisionId) {
-		List<String> globalIdList = Lists.newArrayList();
-		Iterable<Entity> entities = service.getEntitiesByType(ifcType, revisionId);
-		for (Entity entity : entities) {
+	public Iterable<String> fetchAllGlobalIdForIfcType(final String ifcType, final String revisionId) {
+		final List<String> globalIdList = Lists.newArrayList();
+		final Iterable<Entity> entities = service.getEntitiesByType(ifcType, revisionId);
+		for (final Entity entity : entities) {
 			globalIdList.add(entity.getKey());
 		}
 		return globalIdList;
 	}
 
 	@Override
-	public Entity fetchEntityFromGlobalId(String revisionId, String globalId) {
+	public Entity fetchEntityFromGlobalId(final String revisionId, final String globalId) {
 		Entity entity = Entity.NULL_ENTITY;
 		try {
 			entity = service.getEntityByGuid(revisionId, globalId);
-		} catch (Throwable t) {
+		} catch (final Throwable t) {
 		}
 		return entity;
 	}
 
 	@Override
-	public String getGlobalidFromOid(String revisionId, Long oid) {
+	public String getGlobalidFromOid(final String revisionId, final Long oid) {
 		final String globalId = service.getGlobalidFromOid(revisionId, oid);
 		return globalId;
 	}
 
 	@Override
-	public String getContainerOfEntity(String globalId, String sourceRevisionId) {
+	public String getContainerOfEntity(final String globalId, final String sourceRevisionId) {
 		boolean exit = false;
 		String containerGlobalId = StringUtils.EMPTY;
 		final Iterable<Entity> allRelations = fetchEntitiesOfType(IFC_REL_CONTAINED, sourceRevisionId);
@@ -354,7 +376,7 @@ public class DefaultBimFacade implements BimFacade {
 					.getAttributeByName(IFC_RELATING_STRUCTURE));
 			final ListAttribute relatedElementsAttribute = ListAttribute.class.cast(relation
 					.getAttributeByName(IFC_RELATED_ELEMENTS));
-			for (Attribute relatedElement : relatedElementsAttribute.getValues()) {
+			for (final Attribute relatedElement : relatedElementsAttribute.getValues()) {
 				if (globalId.equals(relatedElement.getValue())) {
 					containerGlobalId = relatingStructure.getGlobalId();
 					exit = true;
@@ -369,13 +391,13 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public void updateRelations(Map<String, Map<String, List<String>>> relationsMap, String targetProjectId) {
+	public void updateRelations(final Map<String, Map<String, List<String>>> relationsMap, final String targetProjectId) {
 
 		transactionId = transactionManager.getId();
 
 		final String sourceRevisionId = service.getProjectByPoid(targetProjectId).getLastRevisionId();
 
-		for (Entry<String, Map<String, List<String>>> entry : relationsMap.entrySet()) {
+		for (final Entry<String, Map<String, List<String>>> entry : relationsMap.entrySet()) {
 			final String spaceGuid = entry.getKey();
 			final Iterable<Entity> allRelations = fetchEntitiesOfType(IFC_REL_CONTAINED, sourceRevisionId);
 
@@ -395,8 +417,8 @@ public class DefaultBimFacade implements BimFacade {
 			final String relationOid = relationEntity.getOid().toString();
 			final ListAttribute relatedElementsAttribute = ListAttribute.class.cast(relation
 					.getAttributeByName(IFC_RELATED_ELEMENTS));
-			ArrayList<Long> indicesToRemove = Lists.newArrayList();
-			ArrayList<Long> indicesToReadd = Lists.newArrayList();
+			final ArrayList<Long> indicesToRemove = Lists.newArrayList();
+			final ArrayList<Long> indicesToReadd = Lists.newArrayList();
 			final int size = relatedElementsAttribute.getValues().size();
 
 			final Map<String, List<String>> innerMap = entry.getValue();
@@ -418,14 +440,14 @@ public class DefaultBimFacade implements BimFacade {
 				}
 				service.removeAllReferences(transactionId, relationOid, IFC_RELATED_ELEMENTS);
 				System.out.println("remove all reference from relation '" + relationOid);
-				for (Long indexToAdd : indicesToReadd) {
+				for (final Long indexToAdd : indicesToReadd) {
 					service.addReference(transactionId, relationOid, IFC_RELATED_ELEMENTS, indexToAdd.toString());
 					System.out.println("add reference '" + indexToAdd + "' to relation '" + relationOid);
 				}
 			}
 			if (innerMap.containsKey("A")) {
 				final List<String> objectsToAdd = entry.getValue().get("A");
-				for (String objectToAdd : objectsToAdd) {
+				for (final String objectToAdd : objectsToAdd) {
 					service.addReference(transactionId, relationOid, IFC_RELATED_ELEMENTS, objectToAdd);
 					System.out.println("add reference '" + objectToAdd + "' to relation '" + relationOid);
 				}
@@ -434,7 +456,7 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public void updateExportProject(String projectId, String exportProjectId, String shapeProjectId) {
+	public void updateExportProject(final String projectId, final String exportProjectId, final String shapeProjectId) {
 		service.updateExportProject(projectId, exportProjectId, shapeProjectId);
 	}
 

@@ -61,4 +61,10 @@ public class TransactionalBimFacade extends ForwardingBimFacade implements Invoc
 		
 	}
 
+	@Override
+	public BimFacadeProject createBaseAndExportProject(BimFacadeProject bimProject) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

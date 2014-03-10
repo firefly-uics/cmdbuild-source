@@ -115,15 +115,15 @@ public class DefaultBimLogic implements BimLogic {
 			return this.file;
 		}
 
-		public void setName(String name) {
+		public void setName(final String name) {
 			this.name = name;
 		}
 
-		public void setFile(File file) {
+		public void setFile(final File file) {
 			this.file = file;
 		}
 
-		public void setActive(boolean active) {
+		public void setActive(final boolean active) {
 			this.active = active;
 		}
 
@@ -133,11 +133,11 @@ public class DefaultBimLogic implements BimLogic {
 		}
 
 		@Override
-		public void setLastCheckin(DateTime lastCheckin) {
+		public void setLastCheckin(final DateTime lastCheckin) {
 			throw new UnsupportedOperationException();
 		}
 
-		public void setProjectId(String projectId) {
+		public void setProjectId(final String projectId) {
 			this.projectId = projectId;
 		}
 
@@ -150,6 +150,7 @@ public class DefaultBimLogic implements BimLogic {
 		public String getExportProjectId() {
 			throw new UnsupportedOperationException("to do");
 		}
+
 	}
 
 	private static class DefaultCmProject implements CmProject {
@@ -201,15 +202,18 @@ public class DefaultBimLogic implements BimLogic {
 			return this.cardBinding;
 		}
 
-		public void setProjectId(String projectId) {
+		@Override
+		public void setProjectId(final String projectId) {
 			this.projectId = projectId;
 		}
 
-		public void setLastCheckin(DateTime lastCheckin) {
+		@Override
+		public void setLastCheckin(final DateTime lastCheckin) {
 			this.lastCheckin = lastCheckin;
 		}
 
-		public void setSynch(boolean sync) {
+		@Override
+		public void setSynch(final boolean sync) {
 			this.sync = sync;
 		}
 
@@ -224,22 +228,22 @@ public class DefaultBimLogic implements BimLogic {
 		}
 
 		@Override
-		public void setName(String name) {
+		public void setName(final String name) {
 			this.name = name;
 		}
 
 		@Override
-		public void setDescription(String description) {
+		public void setDescription(final String description) {
 			this.description = description;
 		}
 
 		@Override
-		public void setCardBinding(Iterable<String> cardBinding) {
+		public void setCardBinding(final Iterable<String> cardBinding) {
 			this.cardBinding = cardBinding;
 		}
 
 		@Override
-		public void setActive(boolean active) {
+		public void setActive(final boolean active) {
 			this.active = active;
 		}
 
@@ -254,7 +258,7 @@ public class DefaultBimLogic implements BimLogic {
 		}
 
 		@Override
-		public void setExportProjectId(String projectId) {
+		public void setExportProjectId(final String projectId) {
 			this.exportProjectId = projectId;
 		}
 	}
@@ -322,75 +326,24 @@ public class DefaultBimLogic implements BimLogic {
 	}
 
 	@Override
-	public Project createProject(Project project) {
+	public Project createProject(final Project project) {
 
 		final BimFacadeProject bimProject = bimProjectfrom(project);
-		final BimFacadeProject createdProject = bimServiceFacade.createProject(bimProject);
-		final BimFacadeProject projectForExport = bimServiceFacade.createProject(bimProjectwithName(bimProject));
+		final BimFacadeProject baseProject = bimServiceFacade.createBaseAndExportProject(bimProject);
 
 		final CmProject cmProject = cmProjectFrom(project);
-		cmProject.setProjectId(createdProject.getProjectId());
-		cmProject.setLastCheckin(createdProject.getLastCheckin());
+		cmProject.setProjectId(baseProject.getProjectId());
+		cmProject.setLastCheckin(baseProject.getLastCheckin());
 		cmProject.setSynch(project.isSynch());
-		cmProject.setExportProjectId(projectForExport.getProjectId());
+		cmProject.setExportProjectId(baseProject.getExportProjectId());
 		bimDataPersistence.saveProject(cmProject);
 
 		final Project result = from(cmProject);
 		return result;
 	}
 
-	private static BimFacadeProject bimProjectwithName(final BimFacadeProject bimProject) {
-		return new BimFacadeProject() {
-
-			@Override
-			public void setLastCheckin(DateTime lastCheckin) {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public boolean isSynch() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public boolean isActive() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public String getShapeProjectId() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public String getProjectId() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public String getName() {
-				return "export-" + bimProject.getName();
-			}
-
-			@Override
-			public DateTime getLastCheckin() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public File getFile() {
-				return null;
-			}
-
-			@Override
-			public String getExportProjectId() {
-				throw new UnsupportedOperationException();
-			}
-		};
-	}
-
 	@Override
-	public void disableProject(Project project) {
+	public void disableProject(final Project project) {
 		final BimFacadeProject bimProject = bimProjectfrom(project);
 		bimServiceFacade.disableProject(bimProject);
 
@@ -399,7 +352,7 @@ public class DefaultBimLogic implements BimLogic {
 	}
 
 	@Override
-	public void enableProject(Project project) {
+	public void enableProject(final Project project) {
 		final BimFacadeProject bimProject = bimProjectfrom(project);
 		bimServiceFacade.enableProject(bimProject);
 
@@ -408,7 +361,7 @@ public class DefaultBimLogic implements BimLogic {
 	}
 
 	@Override
-	public void updateProject(Project project) {
+	public void updateProject(final Project project) {
 		final String projectId = project.getProjectId();
 		final BimFacadeProject bimProject = bimProjectfrom(project);
 		final BimFacadeProject updatedProject = bimServiceFacade.updateProject(bimProject);
@@ -429,18 +382,18 @@ public class DefaultBimLogic implements BimLogic {
 		}
 	}
 
-	private Iterable<Project> listFrom(Iterable<CmProject> cmProjectList) {
-		List<Project> projectList = Lists.newArrayList();
-		for (Iterator<CmProject> it = cmProjectList.iterator(); it.hasNext();) {
-			CmProject cmProject = it.next();
-			Project project = from(cmProject);
+	private Iterable<Project> listFrom(final Iterable<CmProject> cmProjectList) {
+		final List<Project> projectList = Lists.newArrayList();
+		for (final Iterator<CmProject> it = cmProjectList.iterator(); it.hasNext();) {
+			final CmProject cmProject = it.next();
+			final Project project = from(cmProject);
 			projectList.add(project);
 		}
 		return projectList;
 	}
 
-	private static BimFacadeProject bimProjectfrom(Project project) {
-		DefaultBimFacadeProject bimProject = new DefaultBimFacadeProject();
+	private static BimFacadeProject bimProjectfrom(final Project project) {
+		final DefaultBimFacadeProject bimProject = new DefaultBimFacadeProject();
 		bimProject.setName(project.getName());
 		bimProject.setFile(project.getFile());
 		bimProject.setActive(project.isActive());
@@ -448,8 +401,8 @@ public class DefaultBimLogic implements BimLogic {
 		return bimProject;
 	}
 
-	private static CmProject cmProjectFrom(Project project) {
-		CmProject cmProject = new DefaultCmProject();
+	private static CmProject cmProjectFrom(final Project project) {
+		final CmProject cmProject = new DefaultCmProject();
 		cmProject.setName(project.getName());
 		cmProject.setDescription(project.getDescription());
 		cmProject.setCardBinding(project.getCardBinding());
@@ -513,24 +466,24 @@ public class DefaultBimLogic implements BimLogic {
 	}
 
 	@Override
-	public String getExportProjectId(String baseProjectId) {
+	public String getExportProjectId(final String baseProjectId) {
 		final CmProject project = bimDataPersistence.read(baseProjectId);
 		return project.getExportProjectId();
 	}
 
 	@Override
-	public String getDescriptionOfRoot(Long cardId, String className) {
-		Long rootId = getRootId(cardId, className);
+	public String getDescriptionOfRoot(final Long cardId, final String className) {
+		final Long rootId = getRootId(cardId, className);
 		final BimLayer rootLayer = bimDataPersistence.findRoot();
 		if (rootLayer == null || rootLayer.getClassName() == null || rootLayer.getClassName().isEmpty()) {
 			throw new BimError("Root layer not configured");
 		}
-		Card rootCard = dataAccessLogic.fetchCard(rootLayer.getClassName(), rootId);
-		String description = String.class.cast(rootCard.getAttribute(DESCRIPTION_ATTRIBUTE));
+		final Card rootCard = dataAccessLogic.fetchCard(rootLayer.getClassName(), rootId);
+		final String description = String.class.cast(rootCard.getAttribute(DESCRIPTION_ATTRIBUTE));
 		return description;
 	}
 
-	private Long getRootId(Long cardId, String className) {
+	private Long getRootId(final Long cardId, final String className) {
 		Long rootId = null;
 		final BimLayer rootLayer = bimDataPersistence.findRoot();
 		if (rootLayer == null || rootLayer.getClassName() == null || rootLayer.getClassName().isEmpty()) {
@@ -554,7 +507,7 @@ public class DefaultBimLogic implements BimLogic {
 
 	@Override
 	public String getBaseProjectIdForCardOfClass(final Long cardId, final String className) {
-		Long rootId = getRootId(cardId, className);
+		final Long rootId = getRootId(cardId, className);
 		final BimLayer rootLayer = bimDataPersistence.findRoot();
 		final String baseProjectId = getProjectIdForRootClass(rootId, rootLayer.getClassName());
 		if (baseProjectId.isEmpty()) {
@@ -586,7 +539,7 @@ public class DefaultBimLogic implements BimLogic {
 	}
 
 	@Override
-	public String getLastRevisionOfProject(String projectId) {
+	public String getLastRevisionOfProject(final String projectId) {
 		String revisionId = StringUtils.EMPTY;
 		if (!projectId.isEmpty()) {
 			revisionId = bimServiceFacade.getLastRevisionOfProject(projectId);
@@ -632,7 +585,7 @@ public class DefaultBimLogic implements BimLogic {
 	}
 
 	@Override
-	public boolean isSynchForExport(String projectId) {
+	public boolean isSynchForExport(final String projectId) {
 		final CmProject project = bimDataPersistence.read(projectId);
 		final String xmlMapping = project.getExportMapping();
 		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
@@ -695,7 +648,7 @@ public class DefaultBimLogic implements BimLogic {
 	private final Map<String, Map<Long, BimCard>> oidBimcardMap = new HashMap<String, Map<Long, BimCard>>();
 	private Map<String, BimCard> guidCmidMap = Maps.newHashMap();
 
-	private BimCard getBimCardFromOid(Long longOid, String revisionId) {
+	private BimCard getBimCardFromOid(final Long longOid, final String revisionId) {
 		if (oidBimcardMap.containsKey(revisionId)) {
 			if (!oidBimcardMap.get(revisionId).containsKey(longOid)) {
 				final String globalId = bimServiceFacade.getGlobalidFromOid(revisionId, longOid);
@@ -711,8 +664,8 @@ public class DefaultBimLogic implements BimLogic {
 		} else {
 			final String globalId = bimServiceFacade.getGlobalidFromOid(revisionId, longOid);
 			guidCmidMap = bimDataView.getAllGlobalIdMap();
-			BimCard bimCard = guidCmidMap.get(globalId);
-			Map<Long, BimCard> oidBimCardMap = Maps.newHashMap();
+			final BimCard bimCard = guidCmidMap.get(globalId);
+			final Map<Long, BimCard> oidBimCardMap = Maps.newHashMap();
 			oidBimCardMap.put(longOid, bimCard);
 			oidBimcardMap.put(revisionId, oidBimCardMap);
 		}
