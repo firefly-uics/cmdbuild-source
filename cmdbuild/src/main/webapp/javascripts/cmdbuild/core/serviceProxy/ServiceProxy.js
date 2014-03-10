@@ -36,6 +36,10 @@ CMDBuild.ServiceProxy.url = {
 		unlockAll: "services/json/management/modcard/unlockallcards"
 	},
 
+	functions: {
+		getFunctions: 'services/json/schema/modclass/getfunctions'
+	},
+		
 	classes: {
 		create: "services/json/schema/modclass/savetable",
 		read: "services/json/schema/modclass/getallclasses",
