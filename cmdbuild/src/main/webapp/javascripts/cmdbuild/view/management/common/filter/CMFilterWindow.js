@@ -78,6 +78,8 @@
 				if (!this.filterRelationNeverExpansed) { // the panel was expanded at least once
 					this.filter.setRelationConfiguration(this.filterRelationsPanel.getData());
 				}
+				this.filter.setFunctionConfiguration(this.filterFunctionsPanel.getData());
+
 			}
 
 			return this.filter;
@@ -140,7 +142,11 @@
 				attributes: this.attributes,
 				className: this.className
 			});
-			this.items = [this.filterAttributesPanel, this.filterRelationsPanel];
+			this.filterFunctionsPanel = new CMDBuild.view.management.common.filter.CMFunctions({
+				attributes: this.attributes,
+				className: this.className
+			});
+			this.items = [this.filterAttributesPanel, this.filterRelationsPanel, this.filterFunctionsPanel];
 		}
 	});
 
