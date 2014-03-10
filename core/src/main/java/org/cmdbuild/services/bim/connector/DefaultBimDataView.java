@@ -46,7 +46,6 @@ public class DefaultBimDataView implements BimDataView {
 	public static final String CONTAINER_GUID = "container_globalId";
 	public static final String SHAPE_OID = "shape_oid";
 
-
 	public static final String X_COORD = "x";
 	public static final String Y_COORD = "y";
 	public static final String Z_COORD = "z";
@@ -102,15 +101,20 @@ public class DefaultBimDataView implements BimDataView {
 	}
 
 	@Override
-	public Entity getCardDataForExport(CMCard card, String className, String containerId, String containerGlobalId, String containerClassName,
-			String shapeOid, String ifcType) {
+	public Entity getCardDataForExport(CMCard card, String className, String containerId, String containerGlobalId,
+			String containerClassName, String shapeOid, String ifcType) {
 
 		Entity cardToExport = Entity.NULL_ENTITY;
 
 		CMFunction function = dataView.findFunctionByName(CARDDATA_FOR_EXPORT_FUNCTION);
 		NameAlias f = NameAlias.as("f");
-		CMQueryResult queryResult = dataView.select(anyAttribute(function, f))
-				.from(call(function, card.getId(), className), f).run();
+		CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(//
+				function, //
+				card.getId(), //
+				className,
+				containerId, //
+				containerClassName), f) //
+				.run();
 
 		if (queryResult.isEmpty()) {
 			System.out.println("No bim data found for card " + card.getId());
@@ -264,45 +268,18 @@ public class DefaultBimDataView implements BimDataView {
 			this.globalId = globalId;
 		}
 	}
-	
 
 	@Override
 	public Long fetchRoot(final Long cardId, final String className, final String referenceRoot) {
 		final CMClass theClass = dataView.findClass(className);
 		final CMQueryResult result = dataView.select( //
-				attribute(theClass,referenceRoot)) //
-				.from(theClass)
-				.where(condition(attribute(theClass, ID_ATTRIBUTE), eq(cardId))) //
+				attribute(theClass, referenceRoot)) //
+				.from(theClass).where(condition(attribute(theClass, ID_ATTRIBUTE), eq(cardId))) //
 				.run();
 		final CMQueryRow row = result.getOnlyRow();
 		final CMCard card = row.getCard(theClass);
 		IdAndDescription reference = IdAndDescription.class.cast(card.get(referenceRoot));
 		return reference.getId();
-	}
-	
-
-	// FIXME custom method to remove
-	// this is a temporary workaround, waiting for the navigation of the
-	// bim-tree.
-	@Override
-	@Deprecated
-	public long fetchBuildingIdFromCardId(Long cardId) {
-		long buildingId = -1;
-		try {
-			final CMFunction function = dataView.findFunctionByName(FIND_BUILDING_FUNCTION);
-			final NameAlias f = NameAlias.as("f");
-			final CMQueryResult queryResult = dataView.select(anyAttribute(function, f))
-					.from(call(function, cardId), f).run();
-			if (!queryResult.isEmpty()) {
-				CMQueryRow row = queryResult.getOnlyRow();
-				if (row.getValueSet(f).get("buildingid") != null) {
-					buildingId = new Long((Integer) row.getValueSet(f).get("buildingid"));
-				}
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return buildingId;
 	}
 
 	@Override
@@ -350,6 +327,5 @@ public class DefaultBimDataView implements BimDataView {
 		}
 		return globalidCmidMap;
 	}
-
 
 }

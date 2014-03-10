@@ -84,31 +84,6 @@ $BODY$
   COST 100;
 COMMENT ON FUNCTION cm_attribute_exists(text, text, text) IS 'TYPE: function';
 
--- Function: _bim_data_for_export(integer, character varying)
-
--- DROP FUNCTION _bim_data_for_export(integer, character varying);
-
-CREATE OR REPLACE FUNCTION _bim_data_for_export(IN id integer, IN "ClassName" character varying, OUT "Code" character varying, OUT "Description" character varying, OUT "GlobalId" character varying, OUT x character varying, OUT y character varying, OUT z character varying)
-  RETURNS record AS
-$BODY$
-DECLARE
-	query varchar;
-	myrecord record;
-BEGIN	
-	query = '
-	SELECT master."Code", master."Description", bimclass."GlobalId", st_x(bimclass."Position"),st_y(bimclass."Position"),st_z(bimclass."Position")
-	FROM "' || "ClassName" || '" AS master LEFT JOIN bim."' || "ClassName" || '" AS bimclass ON ' || ' bimclass."Master"=master."Id" WHERE master."Id" = ' || id || ' AND master."Status"=''A''';
-
-	RAISE NOTICE '%',query;
-
-	EXECUTE(query) INTO "Code", "Description", "GlobalId", x, y, z;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
-COMMENT ON FUNCTION _bim_data_for_export(integer, character varying) IS 'TYPE: function';
-
-
 -- Function: _bim_set_coordinates(character varying, character varying, character varying)
 
 -- DROP FUNCTION _bim_set_coordinates(character varying, character varying, character varying);
@@ -192,4 +167,58 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 COMMENT ON FUNCTION _bim_store_data(integer, character varying, character varying, character varying, character varying, character varying) IS 'TYPE: function|CATEGORIES: system';
+
+CREATE OR REPLACE FUNCTION _bim_data_for_export(IN id integer, IN classname character varying, IN containerid varchar, IN containerclass varchar, OUT "Code" character varying, OUT "Description" character varying, OUT "GlobalId" character varying, OUT x character varying, OUT y character varying, OUT z character varying)
+  RETURNS record AS
+$BODY$
+DECLARE
+	query varchar;
+	myrecord record;
+	objectposition geometry;
+	roomperimeter geometry;
+	isinside boolean;
+BEGIN	
+	query = 
+		'SELECT bimclass."Position" ' || -- 
+		'FROM bim."' || classname || '" AS bimclass ' || --
+		'WHERE "Master"= ' || id || ';' ;
+		
+	RAISE NOTICE '%',query;
+	
+	EXECUTE(query) INTO objectposition;
+	
+	query = 'SELECT bimclass."Perimeter" ' || -- 
+		'FROM bim."' || containerclass || '" AS bimclass ' || --
+		'WHERE "Master"= ' || containerid || ';' ;
+
+	RAISE NOTICE '%',query;
+
+	EXECUTE(query) INTO roomperimeter;
+
+	isinside = ST_Within(objectposition,roomperimeter);
+	RAISE NOTICE 'ok? %',isinside;
+	IF(NOT isinside) THEN
+		query = 
+			'UPDATE bim."' || classname || '" '--
+			'SET "Position" = null ' || --
+			'WHERE "Master"= ' || id || ';' ;
+
+		RAISE NOTICE '%',query;
+
+		EXECUTE(query);
+	END IF;
+
+	query = 
+		'SELECT master."Code", master."Description", bimclass."GlobalId", st_x(bimclass."Position"),st_y(bimclass."Position"),st_z(bimclass."Position") ' || --
+		'FROM "' || classname || '" AS master LEFT JOIN bim."' || classname || '" AS bimclass ON ' || ' bimclass."Master"=master."Id" ' || --
+		'WHERE master."Id" = ' || id || ' AND master."Status"=''A''';
+
+	RAISE NOTICE '%',query;
+
+	EXECUTE(query) INTO "Code", "Description", "GlobalId", x, y, z;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+COMMENT ON FUNCTION _bim_data_for_export(integer, varchar, varchar, varchar) IS 'TYPE: function|CATEGORIES: system';
 
