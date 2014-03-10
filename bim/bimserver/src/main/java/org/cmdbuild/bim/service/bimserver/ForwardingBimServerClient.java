@@ -136,7 +136,7 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 
 	@Override
 	public Entity getEntityByGuid(final String revisionId, final String guid, final Iterable<String> candidateTypes) {
-		return delegate.getEntityByGuid(revisionId, guid, null);
+		return delegate.getEntityByGuid(revisionId, guid, candidateTypes);
 	}
 
 	@Override
