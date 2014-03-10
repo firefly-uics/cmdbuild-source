@@ -430,6 +430,18 @@
 			}
 		},
 
+		getFunctionConfiguration: function() {
+			var c = this.getConfiguration();
+			var attributeConf = c.functionName || {};
+
+			return attributeConf;
+		},
+
+		setFunctionConfiguration: function(functionName) {
+			var configuration = this.getConfiguration();
+			configuration.functionName = functionName;
+		},
+
 		getRuntimeParameters: function() {
 			var runtimeParameters = [];
 			var attributeConf = this.getAttributeConfiguration();

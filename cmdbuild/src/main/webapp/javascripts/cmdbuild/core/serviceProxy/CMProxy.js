@@ -33,6 +33,10 @@
 
 		cardList: 'services/json/management/modcard/getcardlist',
 
+		functions: {
+			getFunctions: 'services/json/schema/modclass/getfunctions',
+		},
+
 		classes: {
 			create: 'services/json/schema/modclass/savetable',
 			read: 'services/json/schema/modclass/getallclasses',
@@ -331,6 +335,19 @@
 		}
 	};
 
+	/* ===========================================
+	 * Functions
+	 =========================================== */
+	CMDBuild.ServiceProxy.getFunctions = function(p) {
+		CMDBuild.Ajax.request( {
+			url: CMDBuild.ServiceProxy.url.functions.getFunctions,
+			method: 'GET',
+			params: p.params,
+			success: p.success,
+			failure: p.failure,
+			callback: p.callback
+		});
+	};
 	/* ===========================================
 	 * Classes
 	 =========================================== */
