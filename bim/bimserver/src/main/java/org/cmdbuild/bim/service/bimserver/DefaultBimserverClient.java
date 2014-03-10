@@ -21,9 +21,7 @@ import org.bimserver.interfaces.objects.SDownloadResult;
 import org.bimserver.interfaces.objects.SProject;
 import org.bimserver.interfaces.objects.SRevision;
 import org.bimserver.interfaces.objects.SSerializerPluginConfiguration;
-import org.bimserver.shared.PublicInterfaceNotFoundException;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
-import org.bimserver.shared.exceptions.ServerException;
 import org.bimserver.shared.exceptions.UserException;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
@@ -42,7 +40,6 @@ import com.google.common.collect.Maps;
 
 public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 
-	private static final boolean NO_MERGE = false;
 	private final BimserverConfiguration configuration;
 	private BimServerClient client;
 
@@ -262,7 +259,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 		}
 	}
 
-	private String getLastRevisionOfProject(String identifier) {
+	private String getLastRevisionOfProject(final String identifier) {
 		try {
 			final Long poid = new Long(identifier);
 			final SProject project = client.getBimsie1ServiceInterface().getProjectByPoid(poid);
@@ -337,10 +334,10 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public DataHandler fetchProjectStructure(String revisionId) {
+	public DataHandler fetchProjectStructure(final String revisionId) {
 		try {
 			final Long roid = Long.parseLong(revisionId);
-			SSerializerPluginConfiguration pluginConfiguration = client.getPluginInterface()
+			final SSerializerPluginConfiguration pluginConfiguration = client.getPluginInterface()
 					.getSerializerByPluginClassName("org.bimserver.geometry.jsonshell.SceneJsShellSerializerPlugin");
 			final long downloadId = client.getBimsie1ServiceInterface().download(roid, pluginConfiguration.getOid(),
 					true, false);
@@ -371,7 +368,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public Map<String, Long> getGlobalIdOidMap(String revisionId) {
+	public Map<String, Long> getGlobalIdOidMap(final String revisionId) {
 		try {
 			final Long roid = new Long(revisionId);
 			final Map<String, Long> globalIdMap = Maps.newHashMap();
@@ -391,7 +388,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public Entity getEntityByGuid(final String revisionId, final String guid) {
+	public Entity getEntityByGuid(final String revisionId, final String guid, final Iterable<String> candidateTypes) {
 		Entity entity = Entity.NULL_ENTITY;
 		final Long roid = new Long(revisionId);
 		try {
@@ -399,18 +396,21 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			entity = new BimserverEntity(object);
 		} catch (final UserException e) {
 		} catch (final SOAPFaultException e) {
-				try {
-					List<SDataObject> objectList = client.getBimsie1LowLevelInterface().getDataObjectsByType(roid, "IfcBuildingElementProxy");
-					for(SDataObject object : objectList){
-						if(object.getGuid().equals(guid)){
+			try {
+				for (final String type : candidateTypes) {
+					final List<SDataObject> objectList = client.getBimsie1LowLevelInterface().getDataObjectsByType(
+							roid, type);
+					for (final SDataObject object : objectList) {
+						if (object.getGuid().equals(guid)) {
 							entity = new BimserverEntity(object);
 							return entity;
 						}
 					}
-				} catch (Throwable t) {
-					throw new BimError(t);
 				}
-		} catch (Throwable t) {
+			} catch (final Throwable t) {
+				throw new BimError(t);
+			}
+		} catch (final Throwable t) {
 			throw new BimError(t);
 		}
 		return entity;
@@ -499,19 +499,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public void removeObject(String transactionId, String revisionId, String globalId) {
-		try {
-			final Long tid = Long.parseLong(transactionId);
-			Entity entity = getEntityByGuid(revisionId, globalId);
-			final Long oid = BimserverEntity.class.cast(entity).getOid();
-			client.getBimsie1LowLevelInterface().removeObject(tid, oid);
-		} catch (final Throwable e) {
-			throw new BimError(e);
-		}
-	}
-
-	@Override
-	public void removeObject(String transactionId, String objectOid) {
+	public void removeObject(final String transactionId, final String objectOid) {
 		try {
 			final Long tid = Long.parseLong(transactionId);
 			final Long oid = Long.parseLong(objectOid);
@@ -522,7 +510,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public void abortTransaction(String transactionId) {
+	public void abortTransaction(final String transactionId) {
 		try {
 			final Long tid = Long.parseLong(transactionId);
 			client.getBimsie1LowLevelInterface().abortTransaction(tid);
@@ -579,7 +567,8 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public void removeReference(String transactionId, String objectId, String attributeName, int index) {
+	public void removeReference(final String transactionId, final String objectId, final String attributeName,
+			final int index) {
 		try {
 			final Long tid = new Long(transactionId);
 			final Long oid = new Long(objectId);
@@ -591,7 +580,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public void removeAllReferences(String transactionId, String objectId, String attributeName) {
+	public void removeAllReferences(final String transactionId, final String objectId, final String attributeName) {
 		try {
 			final Long tid = new Long(transactionId);
 			final Long oid = new Long(objectId);
@@ -602,23 +591,23 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public void updateExportProject(String projectId, String exportProjectId, String shapeProjectId) {
+	public void updateExportProject(final String projectId, final String exportProjectId, final String shapeProjectId) {
 		final String baseRevision = getLastRevisionOfProject(projectId);
 		final String shapeRevision = getLastRevisionOfProject(shapeProjectId);
 		if (INVALID_BIM_ID.equals(baseRevision) || INVALID_BIM_ID.equals(shapeRevision)) {
 			return;
 		}
 		try {
-			DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd-HHmmss");
-			String str = fmt.print(new DateTime());
+			final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd-HHmmss");
+			final String str = fmt.print(new DateTime());
 			final String tmpName = String.format("tmp-%s-%s", projectId, str);
-			BimProject tmpProject = createProjectWithName(tmpName);
+			final BimProject tmpProject = createProjectWithName(tmpName);
 			System.out.println("tmp project " + tmpProject.getIdentifier() + " for merge created");
-			BimProject shapeProject = createProjectWithNameAndParent("shapes", tmpProject.getIdentifier());
-			BimProject baseProject = createProjectWithNameAndParent("base", tmpProject.getIdentifier());
+			final BimProject shapeProject = createProjectWithNameAndParent("shapes", tmpProject.getIdentifier());
+			final BimProject baseProject = createProjectWithNameAndParent("base", tmpProject.getIdentifier());
 			branchToExistingProject(baseRevision, baseProject.getIdentifier());
 			branchToExistingProject(shapeRevision, shapeProject.getIdentifier());
-			String mergedRevisionId = getLastRevisionOfProject(tmpProject.getIdentifier());
+			final String mergedRevisionId = getLastRevisionOfProject(tmpProject.getIdentifier());
 			System.out.println("merged revision " + mergedRevisionId + " for export created");
 			if (INVALID_BIM_ID.equals(mergedRevisionId)) {
 				throw new BimError("merged revision for export not created");

@@ -87,7 +87,7 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public void enableProject(String projectId) {
+	public void enableProject(final String projectId) {
 		client.enableProject(projectId);
 	}
 
@@ -102,7 +102,7 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public DataHandler fetchProjectStructure(String revisionId) {
+	public DataHandler fetchProjectStructure(final String revisionId) {
 		return client.fetchProjectStructure(revisionId);
 	}
 
@@ -138,13 +138,13 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public Map<String, Long> getGlobalIdOidMap(String revisionId) {
+	public Map<String, Long> getGlobalIdOidMap(final String revisionId) {
 		return client.getGlobalIdOidMap(revisionId);
 	}
 
 	@Override
-	public Entity getEntityByGuid(final String revisionId, final String guid) {
-		return client.getEntityByGuid(revisionId, guid);
+	public Entity getEntityByGuid(final String revisionId, final String guid, final Iterable<String> candidateTypes) {
+		return client.getEntityByGuid(revisionId, guid, candidateTypes);
 	}
 
 	@Override
@@ -193,18 +193,7 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public void removeObject(final String transactionId, String revisionId, final String globalId) {
-		client.removeObject(transactionId, revisionId, globalId);
-	}
-
-	@Override
-	public void removeReference(final String transactionId, final String objectId, final String attributeName,
-			final int index) {
-		client.removeReference(transactionId, objectId, attributeName, index);
-	}
-
-	@Override
-	public void removeAllReferences(String transactionId, String objectId, String attributeName) {
+	public void removeAllReferences(final String transactionId, final String objectId, final String attributeName) {
 		client.removeAllReferences(transactionId, objectId, attributeName);
 	}
 
@@ -226,17 +215,17 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public String getGlobalidFromOid(String revisionId, Long oid) {
+	public String getGlobalidFromOid(final String revisionId, final Long oid) {
 		return client.getEntityByOid(revisionId, oid.toString()).getKey();
 	}
 
 	@Override
-	public void removeObject(String transactionId, String oid) {
+	public void removeObject(final String transactionId, final String oid) {
 		client.removeObject(transactionId, oid);
 	}
 
 	@Override
-	public void updateExportProject(String projectId, String exportProjectId, String shapeProjectId) {
+	public void updateExportProject(final String projectId, final String exportProjectId, final String shapeProjectId) {
 		client.updateExportProject(projectId, exportProjectId, shapeProjectId);
 	}
 

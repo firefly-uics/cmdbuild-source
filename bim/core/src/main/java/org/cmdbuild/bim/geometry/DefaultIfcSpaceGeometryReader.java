@@ -38,7 +38,7 @@ public class DefaultIfcSpaceGeometryReader implements IfcSpaceGeometryReader {
 	public SpaceGeometry fetchGeometry(String spaceIdentifier) {
 		SpaceGeometry geometry = new DefaultSpaceGeometry();
 		key = spaceIdentifier;
-		Entity space = service.getEntityByGuid(revisionId, key);
+		Entity space = service.getEntityByGuid(revisionId, key, null);
 		System.out.println("");
 		System.out.println("");
 		System.out.println("Space: " + key + " Name: " + space.getAttributeByName("Name").getValue());
