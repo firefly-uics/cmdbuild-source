@@ -17,9 +17,6 @@ public interface BimDataView {
 
 	BimCard getBimDataFromGlobalid(String globalId);
 
-	@Deprecated
-	long fetchBuildingIdFromCardId(Long cardId);
-
 	CMCard getCmCardFromGlobalId(String globalId, String className);
 
 	Long getIdFromGlobalId(String globalId, String className);

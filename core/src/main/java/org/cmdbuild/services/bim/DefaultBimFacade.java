@@ -184,7 +184,7 @@ public class DefaultBimFacade implements BimFacade {
 
 			@Override
 			public String getExportProjectId() {
-				throw new UnsupportedOperationException("to do");
+				return exportProjectId;
 			}
 
 		};
@@ -411,6 +411,7 @@ public class DefaultBimFacade implements BimFacade {
 				}
 			}
 			if (!relation.isValid()) {
+				System.out.println("Relation not found for space " + spaceGuid);
 				continue;
 			}
 			final BimserverEntity relationEntity = BimserverEntity.class.cast(relation);
