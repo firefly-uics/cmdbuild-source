@@ -461,6 +461,17 @@
 			}
 		},
 
+		getFunctionConfiguration: function() {
+			var c = this.getConfiguration();
+			var attributeConf = c.functionName || {};
+			return attributeConf;
+		},
+
+		setFunctionConfiguration: function(functionName) {
+			var configuration = this.getConfiguration();
+			configuration.functionName = functionName;
+		},
+
 		getEntryType: function() {
 			var entryType = this.get("entryType") || "";
 			return entryType;

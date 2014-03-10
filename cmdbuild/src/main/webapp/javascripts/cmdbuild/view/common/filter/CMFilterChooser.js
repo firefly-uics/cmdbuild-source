@@ -36,6 +36,8 @@
 			this.filterAttributesPanel.setData(this.filter.getAttributeConfiguration());
 
 			this.filterRelationsPanel.setData(this.filter.getRelationConfiguration());
+
+			this.filterFunctionsPanel.setData(this.filter.getFunctionConfiguration());
 		},
 
 		// protected
@@ -71,7 +73,8 @@
 				border: false,
 				items: [ 
 					this.filterAttributesPanel, // inherited
-					this.filterRelationsPanel // inherited
+					this.filterRelationsPanel, // inherited
+					this.filterFunctionsPanel // inherited
 				]
 			}];
 		},
