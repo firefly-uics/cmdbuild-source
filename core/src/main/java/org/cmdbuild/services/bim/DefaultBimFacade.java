@@ -411,18 +411,27 @@ public class DefaultBimFacade implements BimFacade {
 					break;
 				}
 			}
-			if (!relation.isValid()) {
-				System.out.println("Relation not found for space " + spaceGuid);
-				continue;
+			String relationOid = StringUtils.EMPTY;
+			if (relation.isValid()) {
+				final BimserverEntity relationEntity = BimserverEntity.class.cast(relation);
+				relationOid = relationEntity.getOid().toString();
+			} else {
+				if (!relation.isValid()) {
+					System.out.println("Relation not found for space " + spaceGuid);
+					final Entity space = service.getEntityByGuid(sourceRevisionId, spaceGuid,
+							Lists.newArrayList("IfcSpace"));
+					final Long spaceOid = BimserverEntity.class.cast(space).getOid();
+					relationOid = service.createObject(transactionId, IFC_REL_CONTAINED);
+					System.out.println("Relation with oid " + relationOid + " created");
+					service.setReference(transactionId, relationOid, IFC_RELATING_STRUCTURE, String.valueOf(spaceOid));
+					System.out.println("Relating structure " + spaceOid + " added to relation " + relationOid);
+				}
 			}
-			final BimserverEntity relationEntity = BimserverEntity.class.cast(relation);
-			final String relationOid = relationEntity.getOid().toString();
 			final ListAttribute relatedElementsAttribute = ListAttribute.class.cast(relation
 					.getAttributeByName(IFC_RELATED_ELEMENTS));
 			final ArrayList<Long> indicesToRemove = Lists.newArrayList();
 			final ArrayList<Long> indicesToReadd = Lists.newArrayList();
-			final int size = relatedElementsAttribute.getValues().size();
-
+			final int size = relatedElementsAttribute != null ? relatedElementsAttribute.getValues().size() : 0;
 			final Map<String, List<String>> innerMap = entry.getValue();
 			if (innerMap.containsKey("D")) {
 				final List<String> objectsToRemove = innerMap.get("D");

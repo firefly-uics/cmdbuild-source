@@ -400,10 +400,12 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 				for (final String type : candidateTypes) {
 					final List<SDataObject> objectList = client.getBimsie1LowLevelInterface().getDataObjectsByType(
 							roid, type);
-					for (final SDataObject object : objectList) {
-						if (object.getGuid().equals(guid)) {
-							entity = new BimserverEntity(object);
-							return entity;
+					if (objectList != null) {
+						for (final SDataObject object : objectList) {
+							if (object.getGuid().equals(guid)) {
+								entity = new BimserverEntity(object);
+								return entity;
+							}
 						}
 					}
 				}
