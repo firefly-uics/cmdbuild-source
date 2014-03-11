@@ -182,56 +182,48 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
-	private final Create create;
-	private final ReadAll readAll;
-	private final Read read;
-	private final Update update;
-	private final Delete delete;
+	private final ScheduledTaskFacade schedulerFacade;
 
 	public DefaultTaskManagerLogic(final ScheduledTaskFacade schedulerFacade) {
-		create = new Create(schedulerFacade);
-		readAll = new ReadAll(schedulerFacade);
-		read = new Read(schedulerFacade);
-		update = new Update(schedulerFacade);
-		delete = new Delete(schedulerFacade);
+		this.schedulerFacade = schedulerFacade;
 	}
 
 	@Override
 	public Long create(final Task task) {
 		logger.info(MARKER, "creating a new task '{}'", task);
-		return create.execute(task);
+		return new Create(schedulerFacade).execute(task);
 	}
 
 	@Override
 	public Iterable<? extends Task> read() {
 		logger.info(MARKER, "reading all existing tasks");
-		return readAll.execute();
+		return new ReadAll(schedulerFacade).execute();
 	}
 
 	@Override
 	public Iterable<Task> read(final Class<? extends Task> type) {
 		logger.info(MARKER, "reading all existing tasks for type '{}'", type);
-		return readAll.execute(type);
+		return new ReadAll(schedulerFacade).execute(type);
 	}
 
 	@Override
 	public <T extends Task> T read(final T task, final Class<T> type) {
 		logger.info(MARKER, "reading task's details of '{}'", task);
-		return read.execute(task, type);
+		return new Read(schedulerFacade).execute(task, type);
 	}
 
 	@Override
 	public void update(final Task task) {
 		logger.info(MARKER, "updating an existing task '{}'", task);
 		Validate.isTrue(task.getId() != null, "invalid id");
-		update.execute(task);
+		new Update(schedulerFacade).execute(task);
 	}
 
 	@Override
 	public void delete(final Task task) {
 		logger.info(MARKER, "deleting an existing task '{}'", task);
 		Validate.isTrue(task.getId() != null, "invalid id");
-		delete.execute(task);
+		new Delete(schedulerFacade).execute(task);
 	}
 
 }

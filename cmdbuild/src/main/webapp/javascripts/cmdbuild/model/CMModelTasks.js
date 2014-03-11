@@ -7,7 +7,7 @@
 			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
 			{ name: CMDBuild.ServiceProxy.parameter.TYPE, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'string'}
+			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'}
 		]
 	});
 
@@ -17,8 +17,8 @@
 		fields: [
 			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
 			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.ATTRIBUTES, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.ServiceProxy.parameter.ATTRIBUTES, type: 'auto'},
 			{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string'},
 			{ name: CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION, type: 'string'}
 		]

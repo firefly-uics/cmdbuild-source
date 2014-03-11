@@ -318,7 +318,12 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 			}
 			for (final ValueDifference<SchedulerJobParameter> valueDifference : difference.entriesDiffering().values()) {
 				final SchedulerJobParameter element = valueDifference.leftValue();
-				schedulerJobParameterStore.update(element);
+				schedulerJobParameterStore.update(SchedulerJobParameter.newInstance() //
+						.withId(valueDifference.rightValue().getId()) //
+						.withOwner(element.getOwner()) //
+						.withKey(element.getKey()) //
+						.withValue(element.getValue()) //
+						.build());
 			}
 			for (final SchedulerJobParameter element : difference.entriesOnlyOnRight().values()) {
 				schedulerJobParameterStore.delete(element);

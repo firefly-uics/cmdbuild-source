@@ -4,7 +4,7 @@
 
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep2Delegate', {
 
-		delegate: undefined,
+		parentDelegate: undefined,
 		filterWindow: undefined,
 		view: undefined,
 
@@ -28,7 +28,7 @@
 				disabled: true,
 				listeners: {
 					change: function(field, newValue, oldValue) {
-						me.setValueOfBaseIfPossible(
+						me.setBaseValue(
 							me.parentDelegate.buildCronExpression([
 								me.view.advancedFields[0].getValue(),
 								me.view.advancedFields[1].getValue(),
@@ -42,7 +42,7 @@
 			});
 		},
 
-		setValueOfAdvanced: function(cronExpression) {
+		setAdvancedValue: function(cronExpression) {
 			var values = cronExpression.split(' '),
 				fields = this.view.advancedFields;
 
@@ -54,16 +54,18 @@
 			}
 		},
 
-		setValueOfBaseIfPossible: function(value) {
-			var index = this.view.base.store.find('value', value);
-
-			if (index > -1) {
-				this.view.base.setValue(value);
-			} else {
-				this.view.base.setValue('');
-			}
-
-			this.view.baseExpression = index > -1;
+		setBaseValue: function(value) { // TODO: final test and fix
+//			var index = this.view.base.store.find(CMDBuild.ServiceProxy.parameter.VALUE, value);
+//			_debug(value);
+//_debug(index);
+//			if (index > -1) {
+//				this.view.base.setValue(value);
+//			}
+//			else {
+//				this.view.base.setValue('');
+//			}
+//
+//			this.view.baseExpression = index > -1;
 		},
 
 		setDisabledAdvancedFields: function(value) {
@@ -139,14 +141,13 @@
 				checked: true,
 				listeners: {
 					'change': function(radio, value) {
-						me.delegate.setDisabledAdvancedFields(value);
+						me.delegate.setAdvancedValue(value);
 					}
 				}
 			});
 
 			this.base = Ext.create('Ext.form.ComboBox', {
 				name: 'base',
-//				hiddenName: 'base',
 				store: Ext.create('Ext.data.SimpleStore', {
 					fields: [CMDBuild.ServiceProxy.parameter.VALUE, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
 					data: [
@@ -164,7 +165,7 @@
 				margins: '0px 0px 0px ' + (CMDBuild.LABEL_WIDTH - 45) + 'px',
 				listeners: {
 					'select': function(combo, record, index) {
-						me.delegate.setValueOfAdvanced(record[0].data.value);
+						me.delegate.setAdvancedValue(record[0].data.value);
 					}
 				}
 			});
@@ -177,7 +178,9 @@
 			});
 			// END: Base panel setup
 
-			this.items = [this.basePanel, this.advancePanel];
+			Ext.apply(this, {
+				items: [this.basePanel, this.advancePanel]
+			});
 
 			this.callParent(arguments);
 		},
@@ -187,10 +190,6 @@
 				this.delegate.setDisabledAdvancedFields(true);
 			}
 		}
-
-//		fillPresetWithData: function(data) {
-//			this.attributesTable.fillWithData(data);
-//		}
 	});
 
 })();

@@ -34,7 +34,7 @@
 				});
 			},
 
-			getStore: function(type) {_debug('geStore ' + type);
+			getStore: function(type) {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: false,
 					model: 'CMDBuild.model.CMModelTasks.grid',
@@ -53,9 +53,27 @@
 				});
 			},
 
-			remove: function(parameters) {},
+			remove: function(parameters) {
+				CMDBuild.ServiceProxy.core.doRequest({
+					method: 'POST',
+					url: this.getUrl(parameters.type).delete,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
+			},
 
-			update: function(parameters) {},
+			update: function(parameters) {
+				CMDBuild.Ajax.request({
+					method: 'POST',
+					url: this.getUrl(parameters.type).put,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
+			},
 
 			getUrl: function(type) {
 				switch (type) {
@@ -87,13 +105,13 @@
 						continue;
 
 					data.push({
-						id: obj.raw.id,
+						name: _CMCache.getEntryTypeNameById(obj.raw.id),
 						description: obj.raw.text
 					});
 				}
 
 				return Ext.create('Ext.data.Store', {
-					fields: [CMDBuild.ServiceProxy.parameter.ID, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
 					data: data,
 					autoLoad: true
 				});
