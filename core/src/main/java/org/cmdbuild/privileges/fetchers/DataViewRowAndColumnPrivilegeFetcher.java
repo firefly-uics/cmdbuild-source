@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.acl.PrivilegeContext.PrivilegedObjectMetadata;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -31,10 +32,13 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 
 	private final CMDataView view;
 	private final PrivilegeContext privilegeContext;
+	private final UserStore userStore;
 
-	public DataViewRowAndColumnPrivilegeFetcher(final CMDataView view, final PrivilegeContext privilegeContext) {
+	public DataViewRowAndColumnPrivilegeFetcher(final CMDataView view, final PrivilegeContext privilegeContext,
+			final UserStore userStore) {
 		this.view = view;
 		this.privilegeContext = privilegeContext;
+		this.userStore = userStore;
 	}
 
 	/**
@@ -78,6 +82,7 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 				.withDataView(view) //
 				.withEntryType(entryType) //
 				.withFilterObject(jsonPrivilegeFilter) //
+				.withOperationUser(userStore.getUser()) //
 				.build() //
 				.whereClauses();
 	}

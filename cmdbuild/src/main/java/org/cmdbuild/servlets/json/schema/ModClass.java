@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE;
@@ -43,7 +44,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.TYPES;
 import static org.cmdbuild.servlets.json.ComunicationConstants.UNIQUE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.USER_STOPPABLE;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,6 +62,7 @@ import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DataDefinitionLogic.FunctionItem;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions;
@@ -74,6 +75,7 @@ import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer.JsonModeMapper;
@@ -83,15 +85,42 @@ import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ModClass extends JSONBaseWithSpringContext {
+
+	private static class JsonFunctionItem implements FunctionItem {
+
+		private final FunctionItem delegate;
+
+		public JsonFunctionItem(final FunctionItem delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		@JsonProperty(NAME)
+		public String name() {
+			return delegate.name();
+		}
+
+	}
+
+	private static Function<FunctionItem, FunctionItem> toJsonFunction = new Function<FunctionItem, FunctionItem>() {
+
+		@Override
+		public FunctionItem apply(final FunctionItem input) {
+			return new JsonFunctionItem(input);
+		}
+
+	};
 
 	@JSONExported
 	public JSONObject getAllClasses( //
@@ -130,7 +159,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 			if (activeOnly) {
 				try {
 					alertAdminIfNoStartActivity(userProcessClass);
-				} catch (Exception ex) {
+				} catch (final Exception ex) {
 					logger.error(String.format("Error retrieving start activity for process",
 							userProcessClass.getName()));
 				}
@@ -151,7 +180,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	private void alertAdminIfNoStartActivity(final UserProcessClass element) throws CMWorkflowException {
 		try {
 			workflowLogic().getStartActivityOrDie(element.getName());
-		} catch (CMDBWorkflowException ex) {
+		} catch (final CMDBWorkflowException ex) {
 			// throw an exception to say to the user
 			// that the XPDL has no adminStart
 			if (WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.equals(ex.getExceptionType())
@@ -183,7 +212,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 					apply = input.getName().equals(Constants.BASE_PROCESS_CLASS_NAME) //
 							|| input.isSuperclass() //
 							|| input.getDefinitionVersions().length > 0;
-				} catch (CMWorkflowException e) {
+				} catch (final CMWorkflowException e) {
 				}
 				return apply;
 			}
@@ -630,8 +659,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 
 					final CMClass referencedClass = logic.findClass(referencedClassName);
 					if (referencedClass.isAncestorOf(targetClass)) {
-						boolean serializeAlsoClassId = true;
-						JSONObject jsonAttribute = AttributeSerializer //
+						final boolean serializeAlsoClassId = true;
+						final JSONObject jsonAttribute = AttributeSerializer //
 								.withView(logic.getView()) //
 								.toClient(attribute, serializeAlsoClassId);
 
@@ -666,28 +695,13 @@ public class ModClass extends JSONBaseWithSpringContext {
 		out.put(DOMAINS, jsonDomains);
 		return out;
 	}
-		
-	/*@@ Prototype*/
 
 	@JSONExported
-	public JSONObject getFunctions() throws JSONException {
-		final JSONObject out = new JSONObject();
-		final ArrayList<JSONObject> functions =  new ArrayList<JSONObject>();//dataDefinitionLogic().getAllFunctions();
-		JSONObject o1 = new JSONObject();
-		o1.put("name", "Functionuno");
-		JSONObject o2 = new JSONObject();
-		o2.put("name", "Functiondue");
-		JSONObject o3 = new JSONObject();
-		o3.put("name", "Functiontre");
-		JSONObject o4 = new JSONObject();
-		o4.put("name", "Functionquattro");
-		functions.add(o1);
-		functions.add(o2);
-		functions.add(o3);
-		functions.add(o4);
-		out.put("functions", functions);
-		return out;
+	public JsonResponse getFunctions() {
+		return JsonResponse.success( //
+				from(dataDefinitionLogic().functions()) //
+						.transform(toJsonFunction) //
+						.toImmutableList());
 	}
-	/*@@ End Prototype*/
 
 }

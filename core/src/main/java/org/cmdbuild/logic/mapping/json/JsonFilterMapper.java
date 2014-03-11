@@ -3,6 +3,7 @@ package org.cmdbuild.logic.mapping.json;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CQL_KEY;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.alias.Alias;
@@ -28,6 +29,7 @@ public class JsonFilterMapper implements FilterMapper {
 		private CMEntryType entryType;
 		private Alias entryTypeAlias;
 		private JSONObject filterObject;
+		private OperationUser operationUser;
 
 		private FilterMapper inner;
 
@@ -39,7 +41,7 @@ public class JsonFilterMapper implements FilterMapper {
 				throw new UnsupportedOperationException();
 			} else {
 				logger.info(marker, "filter is advanced filter");
-				inner = new JsonAdvancedFilterMapper(entryType, filterObject, dataView, entryTypeAlias);
+				inner = new JsonAdvancedFilterMapper(entryType, filterObject, dataView, entryTypeAlias, operationUser);
 			}
 			return new JsonFilterMapper(this);
 		}
@@ -61,6 +63,11 @@ public class JsonFilterMapper implements FilterMapper {
 
 		public JsonFilterMapperBuilder withFilterObject(final JSONObject filterObject) {
 			this.filterObject = filterObject;
+			return this;
+		}
+
+		public JsonFilterMapperBuilder withOperationUser(final OperationUser operationUser) {
+			this.operationUser = operationUser;
 			return this;
 		}
 

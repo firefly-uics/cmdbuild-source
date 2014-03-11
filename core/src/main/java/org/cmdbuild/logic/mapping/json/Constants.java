@@ -54,6 +54,7 @@ public final class Constants {
 		public static final String FULL_TEXT_QUERY_KEY = "query";
 		public static final String RELATION_KEY = "relation";
 		public static final String CQL_KEY = "CQL";
+		public static final String FUNCTION_KEY = "functions";
 		public static final String SIMPLE_KEY = "simple";
 		public static final String AND_KEY = "and";
 		public static final String OR_KEY = "or";
@@ -70,6 +71,7 @@ public final class Constants {
 		public static final String RELATION_TYPE_ONEOF = "oneof";
 		public static final String RELATION_CARD_ID_KEY = "id";
 		public static final String RELATION_CARD_CLASSNAME_KEY = "className";
+		public static final String FUNCTION_NAME_KEY = "name";
 
 	}
 

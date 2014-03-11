@@ -25,6 +25,7 @@
 		scope="prototype">
 		<constructor-arg ref="dbDataView" />
 		<constructor-arg ref="privilegeContext" />
+		<constructor-arg ref="userStore" />
 	</bean>
 
 	<bean id="userDataView" class="org.cmdbuild.dao.view.user.UserDataView"
