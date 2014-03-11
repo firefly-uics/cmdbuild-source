@@ -49,7 +49,8 @@
 			/*@@ TODO */
 		},
 		getData: function() {
-			return this.functionsCombo.getValue();
+			var functionName = this.functionsCombo.getValue();
+			return (! functionName) ? [] : [{"name" : functionName}];;
 		}
 	});
 })();

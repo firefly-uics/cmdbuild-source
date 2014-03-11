@@ -463,13 +463,14 @@
 
 		getFunctionConfiguration: function() {
 			var c = this.getConfiguration();
-			var attributeConf = c.functionName || {};
+			var attributeConf = c.functions || {};
 			return attributeConf;
 		},
 
-		setFunctionConfiguration: function(functionName) {
+		setFunctionConfiguration: function(functions) {
 			var configuration = this.getConfiguration();
-			configuration.functionName = functionName;
+			configuration.functions = functions;
+			this.set("configuration", configuration);
 		},
 
 		getEntryType: function() {
