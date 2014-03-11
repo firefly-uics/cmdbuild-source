@@ -43,6 +43,9 @@ public class Authentication {
 	private AuthProperties authProperties;
 
 	@Autowired
+	private Filter filter;
+
+	@Autowired
 	private SoapConfiguration soapConfiguration;
 
 	@Autowired
@@ -95,7 +98,7 @@ public class Authentication {
 		return new DBGroupFetcher(systemDataView, Arrays.asList( //
 				new CMClassPrivilegeFetcherFactory(systemDataView), //
 				new ViewPrivilegeFetcherFactory(systemDataView, viewConverter), //
-				new FilterPrivilegeFetcherFactory(systemDataView, userStore.getUser())));
+				new FilterPrivilegeFetcherFactory(systemDataView, filter.dataViewFilterStore())));
 	}
 
 	@Bean
