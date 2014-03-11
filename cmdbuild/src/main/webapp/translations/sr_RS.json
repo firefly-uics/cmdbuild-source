@@ -983,6 +983,7 @@
 			"equals": "Једнаке",
 			"filter": "Филтер",
 			"fromSelection": "Из селекције",
+			"functions" : "<em>Function</em>",
 			"go_filter": "Филтрирај",
 			"like": "Који садрже",
 			"list": "Листа",

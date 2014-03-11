@@ -20,7 +20,7 @@
 	 });	
 	 Ext.define("CMDBuild.view.management.common.filter.CMFunctions", {
 		extend: "Ext.panel.Panel",
-		title: "@@ Functions", //CMDBuild.Translation.management.findfilter.relations,
+		title: CMDBuild.Translation.management.findfilter.functions,
 		bodyCls: "x-panel-body-default-framed cmbordertop",
 		bodyStyle: {
 			padding: "5px 5px 0 5px"
@@ -35,18 +35,30 @@
 
 		initComponent: function() {
 			this.functionsCombo = Ext.create('Ext.form.ComboBox', {
-			    fieldLabel: '@@ Function',
+			    fieldLabel: CMDBuild.Translation.management.findfilter.functions,
 			    store: functionsStore,
 				name: "function",
 			    displayField: 'name',
-			    valueField: 'name'
+			    valueField: 'name',
+				trigger1Cls: Ext.baseCSSPrefix + 'form-arrow-trigger',
+		    	trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
+		    	hideTrigger1: false,
+		    	hideTrigger2: false,
+		    	onTrigger2Click: function() {
+		    		this.setValue("");
+		    	}
 			});
 			this.items = [this.functionsCombo];	
 			this.callParent(arguments);
 
 		},
 		setData: function(data) {
-			/*@@ TODO */
+			if (data && data.length > 0) {
+				this.functionsCombo.setValue(data[0].name);
+			}
+			else {
+				this.functionsCombo.setValue("");
+			}
 		},
 		getData: function() {
 			var functionName = this.functionsCombo.getValue();
