@@ -26,7 +26,6 @@ import org.cmdbuild.auth.acl.PrivilegePair;
 import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
@@ -46,7 +45,7 @@ import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.PrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
-import org.cmdbuild.services.store.FilterStore;
+import org.cmdbuild.services.store.DataViewFilterStore;
 import org.cmdbuild.services.store.FilterStore.Filter;
 
 import com.google.common.collect.Lists;
@@ -66,20 +65,17 @@ public class SecurityLogic implements Logic {
 	private final CMDataView view;
 	private final CMClass grantClass;
 	private final ViewConverter viewConverter;
-	private final FilterStore filterStore;
-	private final OperationUser operationUser;
+	private final DataViewFilterStore filterStore;
 
 	public SecurityLogic( //
 			final CMDataView view, //
 			final ViewConverter viewConverter, //
-			final FilterStore filterStore, //
-			final OperationUser operationUser //
+			final DataViewFilterStore filterStore //
 	) {
 		this.view = view;
 		this.grantClass = view.findClass(GRANT_CLASS_NAME);
 		this.viewConverter = viewConverter;
 		this.filterStore = filterStore;
-		this.operationUser = operationUser;
 	}
 
 	public List<PrivilegeInfo> fetchClassPrivilegesForGroup(final Long groupId) {
@@ -173,7 +169,7 @@ public class SecurityLogic implements Logic {
 		case CLASS:
 			return new CMClassPrivilegeFetcherFactory(view);
 		case FILTER:
-			return new FilterPrivilegeFetcherFactory(view, operationUser);
+			return new FilterPrivilegeFetcherFactory(view, filterStore);
 		default:
 			return null;
 		}
