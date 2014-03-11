@@ -1,5 +1,6 @@
 package org.cmdbuild.services.bim.connector.export;
 
+import static org.cmdbuild.bim.utils.BimConstants.DEFAULT_TAG_EXPORT;
 import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_BUILDING_ELEMENT_PROXY;
@@ -7,6 +8,7 @@ import static org.cmdbuild.bim.utils.BimConstants.IFC_DESCRIPTION;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_FURNISHING;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_SPACE;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_TAG;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_TYPE;
 import static org.cmdbuild.bim.utils.BimConstants.OBJECT_OID;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
@@ -16,11 +18,11 @@ import static org.cmdbuild.services.bim.connector.DefaultBimDataView.CONTAINER_G
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.mapper.DefaultAttribute;
 import org.cmdbuild.bim.mapper.DefaultEntity;
+import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
@@ -95,11 +97,41 @@ public class NewExport implements Export {
 		return sourceData;
 	}
 
+	private Map<String, Entity> getTargetDataNew(final String sourceProjectId) {
+		final String sourceRevisionId = getExportRevisionId(sourceProjectId);
+		final Map<String, Entity> targetData = Maps.newHashMap();
+		for (final String type : candidateTypes) {
+			final Iterable<Entity> entityList = serviceFacade.fetchEntitiesOfType(type, sourceRevisionId);
+			for (final Entity entity : entityList) {
+				final Attribute tag = entity.getAttributeByName(IFC_TAG);
+				if (!tag.isValid() || !DEFAULT_TAG_EXPORT.equals(tag.getValue())) {
+					continue;
+				} else {
+					final String globalId = entity.getKey();
+					final Long oid = BimserverEntity.class.cast(entity).getOid();
+					final String name = entity.getAttributeByName(IFC_NAME).getValue();
+					final String description = entity.getAttributeByName(IFC_DESCRIPTION).getValue();
+					final DefaultEntity targetEntity = DefaultEntity.withTypeAndKey(entity.getTypeName(), globalId);
+					final String containerGlobalId = serviceFacade.getContainerOfEntity(globalId, sourceRevisionId);
+
+					targetEntity.addAttribute(DefaultAttribute.withNameAndValue(IFC_NAME, name));
+					targetEntity.addAttribute(DefaultAttribute.withNameAndValue(IFC_DESCRIPTION, description));
+					targetEntity.addAttribute(DefaultAttribute.withNameAndValue(OBJECT_OID, oid.toString()));
+					targetEntity.addAttribute(DefaultAttribute.withNameAndValue(CONTAINER_GUID, containerGlobalId));
+					if (entity.isValid()) {
+						targetData.put(globalId, targetEntity);
+					}
+				}
+			}
+		}
+		return targetData;
+	}
+
 	@Override
 	public String export(final Catalog catalog, final String sourceProjectId, final Output output) {
 
 		final Map<String, Entity> sourceData = getSource(catalog, sourceProjectId);
-		final Map<String, Entity> targetData = getTargetData(sourceProjectId, sourceData.keySet());
+		final Map<String, Entity> targetData = getTargetDataNew(sourceProjectId);
 		final MapDifference<String, Entity> difference = Maps.difference(sourceData, targetData);
 		final Map<String, Entity> entriesToCreate = difference.entriesOnlyOnLeft();
 		final Map<String, ValueDifference<Entity>> entriesToUpdate = difference.entriesDiffering();
@@ -163,31 +195,6 @@ public class NewExport implements Export {
 			return true;
 		}
 		return false;
-	}
-
-	private Map<String, Entity> getTargetData(final String sourceProjectId, final Set<String> keySet) {
-		final String sourceRevisionId = getExportRevisionId(sourceProjectId);
-		final Map<String, Entity> targetData = Maps.newHashMap();
-		for (final String globalId : keySet) {
-			final Entity entity = serviceFacade.fetchEntityFromGlobalId(sourceRevisionId, globalId, candidateTypes);
-			if (!entity.isValid()) {
-				continue;
-			}
-			final Long oid = BimserverEntity.class.cast(entity).getOid();
-			final String name = entity.getAttributeByName(IFC_NAME).getValue();
-			final String description = entity.getAttributeByName(IFC_DESCRIPTION).getValue();
-			final DefaultEntity targetEntity = DefaultEntity.withTypeAndKey(entity.getTypeName(), globalId);
-			final String containerGlobalId = serviceFacade.getContainerOfEntity(globalId, sourceRevisionId);
-
-			targetEntity.addAttribute(DefaultAttribute.withNameAndValue(IFC_NAME, name));
-			targetEntity.addAttribute(DefaultAttribute.withNameAndValue(IFC_DESCRIPTION, description));
-			targetEntity.addAttribute(DefaultAttribute.withNameAndValue(OBJECT_OID, oid.toString()));
-			targetEntity.addAttribute(DefaultAttribute.withNameAndValue(CONTAINER_GUID, containerGlobalId));
-			if (entity.isValid()) {
-				targetData.put(globalId, targetEntity);
-			}
-		}
-		return targetData;
 	}
 
 	private Map<String, Entity> getSourceData(final Map<String, Long> globalIdToCmdbIdMap, final Catalog catalog,
@@ -260,7 +267,7 @@ public class NewExport implements Export {
 	private String getExportRevisionId(final String masterProjectId) {
 		final String exportProjectId = getExportProjectId(masterProjectId);
 		final String exportRevisionId = serviceFacade.getLastRevisionOfProject(exportProjectId);
-		if (exportRevisionId == null || exportRevisionId.isEmpty()) {
+		if (exportRevisionId == null || exportRevisionId.isEmpty() || exportRevisionId.equals("-1")) {
 			throw new BimError("Revision for export not found");
 		}
 		return exportRevisionId;
