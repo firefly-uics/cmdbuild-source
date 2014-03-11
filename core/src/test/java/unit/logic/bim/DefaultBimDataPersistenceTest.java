@@ -16,6 +16,7 @@ import org.cmdbuild.services.bim.BimPersistence.CmProject;
 import org.cmdbuild.services.bim.BimStoreManager;
 import org.cmdbuild.services.bim.DefaultBimPersistence;
 import org.cmdbuild.services.bim.RelationPersistence;
+import org.cmdbuild.services.bim.RelationPersistence.ProjectRelations;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,6 +95,21 @@ public class DefaultBimDataPersistenceTest {
 		
 		StorableProject stored = new StorableProject();
 		stored.setCardId(CMID);
+		
+		ProjectRelations relations = new ProjectRelations() {
+			
+			@Override
+			public Long getProjectCardId() {
+				return CMID;
+			}
+			
+			@Override
+			public Iterable<String> getBindedCards() {
+				return Lists.newArrayList();
+			}
+		};
+		when(relationPersistence.readRelations(CMID, ROOT)).thenReturn(relations );
+		
 		when(storeManager.read(PROJECTID)).thenReturn(stored);
 		
 		BimLayer rootLayer = mock(BimLayer.class);
@@ -108,6 +124,7 @@ public class DefaultBimDataPersistenceTest {
 		inOrder.verify(storeManager).write(storableCaptor.capture());
 		inOrder.verify(storeManager).read(PROJECTID);
 		inOrder.verify(storeManager).findRoot();
+		inOrder.verify(relationPersistence).readRelations(CMID, ROOT);
 		inOrder.verify(relationPersistence).writeRelations(CMID, cardsToBind, rootLayer.getClassName());
 		
 		StorableProject projectToStore = storableCaptor.getValue();

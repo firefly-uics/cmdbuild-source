@@ -1,6 +1,7 @@
 package org.cmdbuild.services.bim;
 
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.data.converter.StorableProjectConverter;
 import org.cmdbuild.model.bim.BimLayer;
@@ -11,6 +12,8 @@ import org.joda.time.DateTime;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.Maps;
 
 public class DefaultBimPersistence implements BimPersistence {
 
@@ -49,9 +52,25 @@ public class DefaultBimPersistence implements BimPersistence {
 		storeManager.write(projectToStore);
 
 		final StorableProject storedProject = storeManager.read(project.getProjectId());
-		if (storedProject != null && !Iterables.isEmpty(project.getCardBinding())) {
-			final String className = findRoot().getClassName();
-			relationPersistenceManager.writeRelations(storedProject.getCardId(), project.getCardBinding(), className);
+		if (storedProject != null) {
+			final String rootClassName = findRoot().getClassName();
+			final Long cardId = storedProject.getCardId();
+			final Iterable<String> oldRelations = relationPersistenceManager.readRelations(cardId,
+					rootClassName).getBindedCards();
+			final Iterable<String> newRelations = project.getCardBinding();
+			
+			final Function<String, String> keyForMap = new Function<String, String>() {
+				public String apply(String from) {
+					return from; // or something else
+				}
+			};
+			final Map<String, String> oldRelationsMap = Maps.uniqueIndex(oldRelations, keyForMap);
+			final Map<String, String> newRelationsMap = Maps.uniqueIndex(newRelations, keyForMap);
+			final MapDifference<String, String> difference = Maps.difference(oldRelationsMap, newRelationsMap);
+			if(!difference.areEqual()){
+				relationPersistenceManager.writeRelations(cardId, newRelations, rootClassName);
+			}
+			
 		}
 	}
 
