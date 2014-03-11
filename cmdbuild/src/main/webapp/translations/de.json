@@ -983,6 +983,7 @@
 			"equals": "Gleich",
 			"filter": "Filter",
 			"fromSelection": "Aus der Auswahl",
+			"functions" : "<em>Function</em>",
 			"go_filter": "Filtern",
 			"like": "Enthält",
 			"list": "Liste",

@@ -983,6 +983,7 @@
 			"equals": "同じ",
 			"filter": "フィルタ",
 			"fromSelection": "選択から",
+			"functions" : "<em>Function</em>",
 			"go_filter": "フィルタ",
 			"like": "含む",
 			"list": "リスト",
