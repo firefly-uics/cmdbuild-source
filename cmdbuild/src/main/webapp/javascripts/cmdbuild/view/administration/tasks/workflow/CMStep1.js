@@ -4,17 +4,17 @@
 
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', {
 
-		delegate: undefined,
+		parentDelegate: undefined,
 		filterWindow: undefined,
 		view: undefined,
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onComboSelect':
-					return this.onComboSelect(param);
+				case 'onAttributeComboSelect':
+					return this.onAttributeComboSelect(param);
 
 				case 'onWorkflowSelected':
-					return this.onWorkflowSelected(param.id);
+					return this.onWorkflowSelected(param.name);
 
 				default: {
 					if (this.parentDelegate)
@@ -51,27 +51,63 @@
 			return out;
 		},
 
-		onComboSelect: function(rowIndex) {
+		checkWorkflowComboSelected: function() {
+			if (this.getWorkflowComboValue())
+				return true;
+
+			return false;
+		},
+
+		getWorkflowComboValue: function() {
+			return this.view.workflowCombo.getValue();
+		},
+
+		fillActive: function(value) {
+			this.view.activeField.setValue(value);
+		},
+
+		fillAttributesGrid: function(data) {
+			this.view.attributesTable.fillWithData(data);
+		},
+
+		fillDescription: function(value) {
+			this.view.descriptionField.setValue(value);
+		},
+
+		fillId: function(value) {
+			this.view.idField.setValue(value);
+		},
+
+		onAttributeComboSelect: function(rowIndex) {
 			this.view.attributesTable.cellEditing.startEditByPosition({ row: rowIndex, column: 1});
 		},
 
-		onWorkflowSelected: function(id) {
+		onWorkflowSelected: function(name, modify) {
 			var me = this;
+
+			if (typeof modify === 'undefined')
+				modify = false;
 
 			CMDBuild.core.serviceProxy.CMProxyTasks.getWorkflowAttributes({
 				params: {
-					className: _CMCache.getEntryTypeNameById(id)
+					className: name
 				},
 				success: function(response) {
 					var ret = Ext.JSON.decode(response.responseText);
 
 					me.view.attributesTable.keyEditorConfig.store = me.buildWorkflowAttributesStore(me.cleanServerAttributes(ret.attributes));
-					me.view.attributesTable.store.removeAll();
-					me.view.attributesTable.store.insert(0, { key: '', value: '' });
-					me.view.attributesTable.cellEditing.startEditByPosition({ row: 0, column: 0 });
-					me.view.attributesTable.setDisabled(false);
+					if (!modify) {
+						me.view.attributesTable.store.removeAll();
+						me.view.attributesTable.store.insert(0, { key: '', value: '' });
+						me.view.attributesTable.cellEditing.startEditByPosition({ row: 0, column: 0 });
+						me.setDisabledAttributesTable(false);
+					}
 				}
 			});
+		},
+
+		setDisabledAttributesTable: function(state) {
+			this.view.attributesTable.setDisabled(state);
 		}
 	});
 
@@ -111,6 +147,21 @@
 				name: CMDBuild.ServiceProxy.parameter.ID
 			});
 
+			this.descriptionField = Ext.create('Ext.form.field.Text', {
+				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				fieldLabel: '@@ Description',
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				allowBlank: false
+			});
+
+			this.activeField = Ext.create('Ext.form.field.Checkbox', {
+				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
+				fieldLabel: '@@ Run on save',
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH
+			});
+
 			this.attributesTable = Ext.create('CMDBuild.view.administration.common.CMDynamicKeyValueGrid', {
 				title: '@@ Workflow attributes',
 				id: 'workflowAttributesGrid',
@@ -127,7 +178,7 @@
 					listeners: {
 						'select': function(combo, records, eOpts) {
 							me.delegate.cmOn(
-								'onComboSelect',
+								'onAttributeComboSelect',
 								me.attributesTable.store.indexOf(me.attributesTable.getSelectionModel().getSelection()[0])
 							);
 						}
@@ -135,51 +186,34 @@
 				}
 			});
 
-			this.items = [
-				this.typeField,
-				this.idField,
-				{
-					name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-					fieldLabel: '@@ Description',
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-					allowBlank: false
-				},
-				{
-					xtype: 'combo',
-					id: 'workflowCombo',
-					name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
-					fieldLabel: '@@ Workflow',
-					valueField: CMDBuild.ServiceProxy.parameter.ID,
-					displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-					store: CMDBuild.core.serviceProxy.CMProxyTasks.getWorkflowsStore(),
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-					forceSelection: true,
-					editable: false,
-					allowBlank: false,
-					listeners: {
-						'select': function() {
-							me.delegate.cmOn(
-								'onWorkflowSelected',
-								{ id: this.getValue() }
-							);
-						}
+			this.workflowCombo = Ext.create('Ext.form.field.ComboBox', {
+				id: 'workflowCombo',
+				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
+				fieldLabel: '@@ Workflow',
+				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				store: CMDBuild.core.serviceProxy.CMProxyTasks.getWorkflowsStore(),
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				forceSelection: true,
+				editable: false,
+				allowBlank: false,
+				listeners: {
+					'select': function() {
+						me.delegate.cmOn(
+							'onWorkflowSelected',
+							{ name: this.getValue() }
+						);
 					}
-				},
-				{
-					xtype: 'checkbox',
-					name: CMDBuild.ServiceProxy.parameter.ACTIVE,
-					fieldLabel: '@@ Run on save',
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
-				},
-				this.attributesTable
-			];
+				}
+			});
+
+			Ext.apply(this, {
+				items: [this.typeField, this.idField, this.descriptionField, this.workflowCombo, this.activeField, this.attributesTable]
+			});
 
 			this.callParent(arguments);
-		},
-
-//		fillPresetWithData: function(data) {
-//			this.attributesTable.fillWithData(data);
-//		}
+		}
 	});
 
 })();

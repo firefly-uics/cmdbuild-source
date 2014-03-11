@@ -20,22 +20,13 @@
 			this.callParent(arguments);
 		},
 
-		onViewOnFront: function(parameters) { _debug('task controller on front');
+		onViewOnFront: function(parameters) {
 			var me = this;
 
 			this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
-//			this.grid.store = CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType);
+			this.grid.store = CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType);
 			this.grid.taskType = this.taskType;
 			this.grid.store.load();
-
-//
-//			this.grid.store.on('load', function() {_debug('grid store loaded');
-////				me.grid.getView().refresh();
-//				me.view.doLayout();
-//			});
-
-//			this.view.doLayout();
-			_debug(this.taskType);
 		},
 
 		cmOn: function(name, param, callBack) {
@@ -83,10 +74,16 @@
 		loadForm: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
 				this.form.wizard.removeAll();
+				this.form.delegate.delegateStep = [];
+
 				var items = Ext.create('CMDBuild.view.administration.tasks.' + type + '.CMTaskTabs').getTabs();
 
 				for (var i = 0; i < items.length; i++) {
-					items[i].delegate.parentDelegate = this.form.delegate; // Controllers relation propagation
+
+					// Controllers relation propagation
+					items[i].delegate.parentDelegate = this.form.delegate;
+					this.form.delegate.delegateStep.push(items[i].delegate);
+
 					this.form.wizard.add(items[i]);
 				}
 

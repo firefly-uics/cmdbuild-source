@@ -4,6 +4,8 @@
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
 		parentDelegate: undefined,
+		delegateStep1: undefined,
+		delegateStep2: undefined,
 		view: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
@@ -48,6 +50,14 @@
 			}
 		},
 
+		onModifyButtonClick: function() {
+			this.callParent(arguments);
+			this.delegateStep[0].onWorkflowSelected(this.delegateStep[0].getWorkflowComboValue(), true);
+
+			if (this.delegateStep[0].checkWorkflowComboSelected())
+				this.delegateStep[0].setDisabledAttributesTable(false);
+		},
+
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				var me = this;
@@ -59,9 +69,21 @@
 					params: { id: this.selectedId }
 				});
 				this.selectedDataStore.on('load', function(store, records, successful, eOpts) {
+					var recordDatas = records[0].data;
+
 					me.parentDelegate.loadForm(me.taskType);
-					// TODO: FIX loadRecord destroy the form panel cause of the combobox
-					me.view.loadRecord(records[0]);
+					me.view.loadRecord(records[0]); // TODO: TO FIX Seems to be useless but i dunno why
+
+					// Set step1 [0] datas
+					me.delegateStep[0].fillId(recordDatas.id);
+					me.delegateStep[0].fillDescription(recordDatas.description);
+					me.delegateStep[0].fillAttributesGrid(recordDatas.attributes);
+					me.delegateStep[0].fillActive(recordDatas.active);
+
+					// Set step2 [1] datas
+					me.delegateStep[1].setBaseValue(recordDatas.cronExpression);
+					me.delegateStep[1].setAdvancedValue(recordDatas.cronExpression);
+
 					me.view.disableModify(true);
 					me.view.disableTypeField();
 				});
@@ -83,7 +105,6 @@
 				attributesGridValues = Ext.getCmp('workflowAttributesGrid').getData();
 
 			// Form submit values formatting
-				formData.className = _CMCache.getEntryTypeNameById(formData.className);
 				if (formData.cronInputType) {
 					formData.cronExpression = me.buildCronExpression([
 						formData.minute,

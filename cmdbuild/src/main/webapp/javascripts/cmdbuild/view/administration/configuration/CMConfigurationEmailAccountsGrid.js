@@ -20,7 +20,7 @@
 						text: tr.isDefault,
 						dataIndex: CMDBuild.ServiceProxy.parameter.IS_DEFAULT,
 						align: 'center',
-						width: '60px',
+						width: 60,
 						renderer: me.defaultGridColumnRenderer
 					},
 					{

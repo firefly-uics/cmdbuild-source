@@ -10,7 +10,6 @@
 		cls: 'cmborderbottom',
 
 		initComponent: function() {
-
 			Ext.apply(this, {
 				columns: [
 					{

@@ -148,7 +148,7 @@
 				getStore: 'services/json/schema/taskmanager/event/readall'
 			},
 			workflow: {
-				delete: '',
+				delete: 'services/json/schema/taskmanager/startworkflow/delete',
 				get: 'services/json/schema/taskmanager/startworkflow/read',
 				post: 'services/json/schema/taskmanager/startworkflow/create',
 				put: 'services/json/schema/taskmanager/startworkflow/update',
