@@ -165,7 +165,7 @@
 				margins: '0px 0px 0px ' + (CMDBuild.LABEL_WIDTH - 45) + 'px',
 				listeners: {
 					'select': function(combo, record, index) {
-						me.delegate.setAdvancedValue(record[0].data.value);
+						me.delegate.setAdvancedValue(record[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
 					}
 				}
 			});

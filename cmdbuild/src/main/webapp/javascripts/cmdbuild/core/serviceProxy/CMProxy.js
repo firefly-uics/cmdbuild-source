@@ -131,6 +131,8 @@
 
 		tasks: {
 			getStore: 'services/json/schema/taskmanager/readall',
+			start: 'services/json/schema/taskmanager/start',
+			stop: 'services/json/schema/taskmanager/stop',
 			email: {
 				delete: '',
 				get: '',

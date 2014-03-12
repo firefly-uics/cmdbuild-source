@@ -12,6 +12,18 @@
 			throw 'CMTasksFormBaseController: cmOn() unimplemented method';
 		},
 
+		callback: function() {
+			CMDBuild.LoadMask.get().hide();
+		},
+
+		removeItem: function() {
+			throw 'CMTasksFormBaseController: removeItem() unimplemented method';
+		},
+
+		success: function(result, options, decodedResult) {
+			throw 'CMTasksFormBaseController: success() unimplemented method';
+		},
+
 		onAbortButtonClick: function() {
 			if (this.selectedId != null) {
 				this.onRowSelected();
@@ -70,18 +82,6 @@
 
 		onSaveButtonClick: function() {
 			throw 'CMTasksFormBaseController: onSaveButtonClick() unimplemented method';
-		},
-
-		removeItem: function() {
-			throw 'CMTasksFormBaseController: removeItem() unimplemented method';
-		},
-
-		success: function(result, options, decodedResult) {
-			throw 'CMTasksFormBaseController: success() unimplemented method';
-		},
-
-		callback: function() {
-			CMDBuild.LoadMask.get().hide();
 		}
 	});
 

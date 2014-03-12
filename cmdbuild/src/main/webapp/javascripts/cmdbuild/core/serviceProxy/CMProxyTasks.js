@@ -64,6 +64,28 @@
 				});
 			},
 
+			start: function(parameters) {
+				CMDBuild.ServiceProxy.core.doRequest({
+					method: 'POST',
+					url: this.getUrl('all').start,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
+			},
+
+			stop: function(parameters) {
+				CMDBuild.ServiceProxy.core.doRequest({
+					method: 'POST',
+					url: this.getUrl('all').stop,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
+			},
+
 			update: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',

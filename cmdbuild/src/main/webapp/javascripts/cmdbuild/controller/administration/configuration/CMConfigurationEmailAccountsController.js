@@ -39,7 +39,7 @@
 					return this.onRemoveButtonClick();
 
 				case 'onRowSelected':
-					return this.onRowSelected(param.record);
+					return this.onRowSelected();
 
 				case 'onSaveButtonClick':
 					return this.onSaveButtonClick();
@@ -186,13 +186,12 @@
 
 			store.load();
 			store.on('load', function() {
-				me.form.reset();
 				var rowIndex = this.find(
 					CMDBuild.ServiceProxy.parameter.NAME,
 					me.form.getForm().findField(CMDBuild.ServiceProxy.parameter.NAME).getValue()
 				);
+
 				me.selectionModel.select(rowIndex, true);
-				me.onRowSelected();
 			});
 
 			this.form.disableModify(true);

@@ -180,7 +180,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public void createTemplate( //
+	public JsonResponse createTemplate( //
 			@Parameter(NAME) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(TO) final String to, //
@@ -197,7 +197,8 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		template.setBcc(bcc);
 		template.setSubject(subject);
 		template.setBody(body);
-		emailTemplateLogic().create(template);
+		final Long id = emailTemplateLogic().create(template);
+		return JsonResponse.success(id);
 	}
 
 	@JSONExported

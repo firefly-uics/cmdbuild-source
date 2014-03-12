@@ -47,35 +47,36 @@
 					hideable: false,
 					menuDisabled: true,
 					fixed: true,
-//					renderer: function(value, metaData, record) {
-//						this.items = [me.actionGridColumnRenderer(value, metaData, record)];
-//					},
 					items: [
 						{
 							icon: 'images/icons/control_play.png',
 							tooltip: tr.startLabel,
-							handler: function(grid, rowIndex, colIndex) {
-								var rec = grid.getStore().getAt(rowIndex);
-								alert("Edit " + rec.get('firstname'));
+							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								me.delegate.cmOn('onStartButtonClick', record);
+							},
+							isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								return record.get(CMDBuild.ServiceProxy.parameter.ACTIVE);
 							}
 						},
 						{
 							icon: 'images/icons/control_stop.png',
 							tooltip: tr.stopLabel,
-							handler: function(grid, rowIndex, colIndex) {
-								var rec = grid.getStore().getAt(rowIndex);
-								alert("Terminate " + rec.get('firstname'));
+							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								me.delegate.cmOn('onStopButtonClick', record);
+							},
+							isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								return !record.get(CMDBuild.ServiceProxy.parameter.ACTIVE);
 							}
 						}
 					]
 				}
 			];
 
-			this.gridStore = CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType);
+//			this.gridStore = CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType);
 
 			Ext.apply(this, {
 				columns: this.gridColumns,
-				store: this.gridStore
+//				store: this.gridStore
 			});
 
 			this.callParent(arguments);
@@ -119,38 +120,7 @@
 			}
 
 			return value;
-		},
-
-		/**
-		 * @param {Object} value
-		 * Used to render active database value to add icon
-		 */
-//		actionGridColumnRenderer: function(value, metaData, record) {
-//			var active = record.data.active;
-//
-//			if (typeof active === 'boolean') {
-//				var startColumnItem = {
-//						icon: 'images/icons/control_play.png',
-//						tooltip: tr.startLabel,
-//						handler: function(grid, rowIndex, colIndex) {
-//							var rec = grid.getStore().getAt(rowIndex);
-//							alert("Edit " + rec.get('firstname'));
-//						}
-//					},
-//					stopColumnItem = {
-//						icon: 'images/icons/control_stop.png',
-//						tooltip: tr.stopLabel,
-//						handler: function(grid, rowIndex, colIndex) {
-//							var rec = grid.getStore().getAt(rowIndex);
-//							alert("Terminate " + rec.get('firstname'));
-//						}
-//					};
-//
-//				return (active) ? stopColumnItem : startColumnItem;
-//			}
-//
-//			_debug('CMTaskGrid rendering error: cannot render action column');
-//		}
+		}
 	});
 
 })();

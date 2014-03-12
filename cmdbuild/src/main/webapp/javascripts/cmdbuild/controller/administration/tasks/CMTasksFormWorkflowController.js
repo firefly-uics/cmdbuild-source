@@ -69,20 +69,20 @@
 					params: { id: this.selectedId }
 				});
 				this.selectedDataStore.on('load', function(store, records, successful, eOpts) {
-					var recordDatas = records[0].data;
+					var record = records[0];
 
 					me.parentDelegate.loadForm(me.taskType);
-					me.view.loadRecord(records[0]); // TODO: TO FIX Seems to be useless but i dunno why
+					me.view.loadRecord(record); // TODO: TO FIX Seems to be useless but i dunno why
 
 					// Set step1 [0] datas
-					me.delegateStep[0].fillId(recordDatas.id);
-					me.delegateStep[0].fillDescription(recordDatas.description);
-					me.delegateStep[0].fillAttributesGrid(recordDatas.attributes);
-					me.delegateStep[0].fillActive(recordDatas.active);
+					me.delegateStep[0].fillId(record.get(CMDBuild.ServiceProxy.parameter.ID));
+					me.delegateStep[0].fillDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
+					me.delegateStep[0].fillAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
+					me.delegateStep[0].fillActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
 
 					// Set step2 [1] datas
-					me.delegateStep[1].setBaseValue(recordDatas.cronExpression);
-					me.delegateStep[1].setAdvancedValue(recordDatas.cronExpression);
+					me.delegateStep[1].setBaseValue(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+					me.delegateStep[1].setAdvancedValue(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
 
 					me.view.disableModify(true);
 					me.view.disableTypeField();
@@ -128,7 +128,7 @@
 			delete formData.mounth;
 			delete formData.name;
 			delete formData.value;
-_debug(formData);
+
 			if (formData.id == null || formData.id == '') {
 				CMDBuild.core.serviceProxy.CMProxyTasks.create({
 					type: this.taskType,
@@ -174,11 +174,11 @@ _debug(formData);
 					this.view.disableModify();
 					this.view.wizard.changeTab(0);
 				},
-				callback: this.callback()
+				callback: this.callback
 			});
 		},
 
-		success: function(result, options, decodedResult) {
+		success: function(response, options, decodedResult) {
 			var me = this,
 				store = this.parentDelegate.grid.store;
 
@@ -187,10 +187,10 @@ _debug(formData);
 				me.view.reset();
 				var rowIndex = this.find(
 					CMDBuild.ServiceProxy.parameter.ID,
-					me.view.getForm().findField(CMDBuild.ServiceProxy.parameter.ID).getValue()
+					(decodedResult.response) ? decodedResult.response : me.view.getForm().findField(CMDBuild.ServiceProxy.parameter.ID).getValue()
 				);
+
 				me.selectionModel.select(rowIndex, true);
-				me.onRowSelected();
 			});
 
 			this.view.disableModify();

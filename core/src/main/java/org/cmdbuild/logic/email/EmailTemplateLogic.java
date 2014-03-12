@@ -36,8 +36,10 @@ public interface EmailTemplateLogic extends Logic {
 
 	/**
 	 * Creates a new {@link Template}.
+	 *
+	 * @return the id of the created {@link Template}.
 	 */
-	void create(final Template template);
+	Long create(final Template template);
 
 	/**
 	 * Updates the given {@link Template}.
