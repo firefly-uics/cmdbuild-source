@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.taskmanager;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.scheduler.EmailServiceSchedulerJob;
 import org.cmdbuild.data.store.scheduler.SchedulerJob;
 import org.cmdbuild.data.store.scheduler.SchedulerJobVisitor;

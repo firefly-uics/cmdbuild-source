@@ -2,7 +2,7 @@ package org.cmdbuild.data.store.email;
 
 import static org.cmdbuild.data.store.email.EmailConstants.PROCESS_ID_ATTRIBUTE;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Groupable;
 
 public class EmailOwnerGroupable implements Groupable {

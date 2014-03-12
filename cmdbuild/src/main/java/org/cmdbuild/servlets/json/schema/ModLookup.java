@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.Iterables.size;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE_CAPITAL;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CODE_CAPITAL;

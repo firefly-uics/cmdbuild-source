@@ -11,7 +11,7 @@ import java.util.Map;
 import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;

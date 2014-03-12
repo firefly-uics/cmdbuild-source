@@ -22,7 +22,7 @@ public class PrivilegeFetcherFactoriesTest {
 		dataView = mock(CMDataView.class);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void shouldThrowExceptionIfGroupIsNotSetForCMClass() {
 		// given
 		final CMClassPrivilegeFetcherFactory classFactory = new CMClassPrivilegeFetcherFactory(dataView);
@@ -31,7 +31,7 @@ public class PrivilegeFetcherFactoriesTest {
 		classFactory.create();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void shouldThrowExceptionIfGroupIsNotSetForView() {
 		// given
 		final ViewPrivilegeFetcherFactory viewFactory = new ViewPrivilegeFetcherFactory(dataView, new ViewConverter(

@@ -2,8 +2,8 @@ package org.cmdbuild.dao.view.user;
 
 import static com.google.common.base.Joiner.on;
 import static com.google.common.collect.Iterables.isEmpty;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue.emptyArray;

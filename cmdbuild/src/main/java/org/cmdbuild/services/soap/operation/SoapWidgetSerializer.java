@@ -1,6 +1,6 @@
 package org.cmdbuild.services.soap.operation;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 import groovy.swing.factory.WidgetFactory;
 

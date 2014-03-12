@@ -2,7 +2,7 @@ package org.cmdbuild.services.email;
 
 import static com.google.common.collect.FluentIterable.from;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailOwnerGroupable;

@@ -2,7 +2,7 @@ package org.cmdbuild.logic.validation.json;
 
 import static com.google.common.collect.Iterators.contains;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CQL_KEY;
@@ -26,7 +26,7 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.validation.Validator;
 import org.json.JSONArray;
 import org.json.JSONException;

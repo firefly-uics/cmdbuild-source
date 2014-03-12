@@ -1,6 +1,6 @@
 package utils.controller;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.services.json.dto.JsonError;
 import org.cmdbuild.services.json.dto.JsonFailureResponse;
 import org.cmdbuild.services.json.dto.JsonResponse;

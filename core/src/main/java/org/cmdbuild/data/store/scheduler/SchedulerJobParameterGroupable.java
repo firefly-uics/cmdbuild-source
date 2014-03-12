@@ -2,7 +2,7 @@ package org.cmdbuild.data.store.scheduler;
 
 import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterConstants.SCHEDULER_ID;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Groupable;
 
 public class SchedulerJobParameterGroupable implements Groupable {

@@ -1,6 +1,6 @@
 package org.cmdbuild.auth;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Authenticates a user based on the presence of a header parameter. It can be

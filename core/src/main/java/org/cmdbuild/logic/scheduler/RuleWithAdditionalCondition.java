@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.scheduler;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.services.email.EmailCallbackHandler.Applicable;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;

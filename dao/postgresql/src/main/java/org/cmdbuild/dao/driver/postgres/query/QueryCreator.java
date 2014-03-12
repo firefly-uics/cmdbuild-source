@@ -2,10 +2,10 @@ package org.cmdbuild.dao.driver.postgres.query;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.defaultString;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static org.apache.commons.lang.StringUtils.join;
-import static org.apache.commons.lang.SystemUtils.LINE_SEPARATOR;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.join;
+import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.RowNumber;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.RowsCount;

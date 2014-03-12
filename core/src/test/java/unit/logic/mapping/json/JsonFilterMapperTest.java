@@ -47,7 +47,7 @@ public class JsonFilterMapperTest {
 		when(dataView.findClass(entryType.getName())).thenReturn(entryType);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void nullFilterShouldThrowException() throws Exception {
 		// given
 		final FilterMapper filterMapper = jsonFilterMapper(null);

@@ -1,9 +1,9 @@
 package org.cmdbuild.common.mail;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.StringUtils.defaultString;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.common.mail.JavaxMailConstants.CONTENT_TYPE_TEXT_PLAIN;
 import static org.cmdbuild.common.mail.JavaxMailConstants.FALSE;
 import static org.cmdbuild.common.mail.JavaxMailConstants.MAIL_DEBUG;

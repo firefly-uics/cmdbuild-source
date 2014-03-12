@@ -1,6 +1,6 @@
 package org.cmdbuild.data.store.email;
 
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.data.store.email.EmailConstants.CC_ADDRESSES_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.CONTENT_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;

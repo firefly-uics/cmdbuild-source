@@ -1,6 +1,6 @@
 package org.cmdbuild.report;
 
-import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.cmdbuild.services.store.report.JDBCReportStore.REPORT_CLASS_NAME;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;

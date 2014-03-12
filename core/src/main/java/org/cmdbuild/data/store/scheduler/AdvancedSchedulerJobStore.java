@@ -4,8 +4,8 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.difference;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.SystemUtils.LINE_SEPARATOR;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterGroupable.of;
 
 import java.util.Map;
@@ -355,13 +355,13 @@ public class AdvancedSchedulerJobStore implements Store<SchedulerJob> {
 		java.util.List<SchedulerJob> execute() {
 			return from(schedulerJobStore.list()) //
 					.transform(addParameters()) //
-					.toImmutableList();
+					.toList();
 		}
 
 		public java.util.List<SchedulerJob> execute(final Groupable groupable) {
 			return from(schedulerJobStore.list(groupable)) //
 					.transform(addParameters()) //
-					.toImmutableList();
+					.toList();
 		}
 
 		private Function<SchedulerJob, SchedulerJob> addParameters() {
