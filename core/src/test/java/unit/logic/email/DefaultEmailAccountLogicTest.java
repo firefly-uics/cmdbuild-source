@@ -2,7 +2,6 @@ package unit.logic.email;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.inOrder;
@@ -14,6 +13,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
@@ -48,19 +48,26 @@ public class DefaultEmailAccountLogicTest {
 		// given
 		when(store.list()) //
 				.thenReturn(NO_ELEMENTS);
+		when(store.read(any(Storable.class))) //
+				.thenReturn(EmailAccount.newInstance() //
+						.withId(42L) //
+						.withName("foo") //
+						.build());
 		final Account newOne = mock(Account.class);
 		when(newOne.getName()) //
 				.thenReturn("foo");
 
 		// when
-		logic.create(newOne);
+		final Long id = logic.create(newOne);
 
 		// then
 		final InOrder inOrder = inOrder(store);
 		inOrder.verify(store).list();
 		inOrder.verify(store).create(captor.capture());
+		inOrder.verify(store).read(any(Storable.class));
 		final EmailAccount captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
+		assertThat(id, equalTo(42L));
 	}
 
 	@Test
@@ -71,12 +78,17 @@ public class DefaultEmailAccountLogicTest {
 				.build();
 		when(store.list()) //
 				.thenReturn(asList(stored));
+		when(store.read(any(Storable.class))) //
+				.thenReturn(EmailAccount.newInstance() //
+						.withId(42L) //
+						.withName("foo") //
+						.build());
 		final Account newOne = mock(Account.class);
 		when(newOne.getName()) //
 				.thenReturn("foo");
 
 		// when
-		logic.create(newOne);
+		final Long id = logic.create(newOne);
 
 		// then
 		final InOrder inOrder = inOrder(store);
@@ -84,6 +96,7 @@ public class DefaultEmailAccountLogicTest {
 		inOrder.verify(store).create(captor.capture());
 		final EmailAccount captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
+		assertThat(id, equalTo(42L));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -154,7 +167,7 @@ public class DefaultEmailAccountLogicTest {
 				.build();
 		when(store.list()) //
 				.thenReturn(asList(stored));
-		when(store.read(any(EmailAccount.class))) //
+		when(store.read(any(Storable.class))) //
 				.thenReturn(stored);
 		final Account existing = mock(Account.class);
 		when(existing.getName()) //
@@ -166,7 +179,7 @@ public class DefaultEmailAccountLogicTest {
 		// then
 		final InOrder inOrder = inOrder(store);
 		inOrder.verify(store).list();
-		inOrder.verify(store).read(any(EmailAccount.class));
+		inOrder.verify(store).read(any(Storable.class));
 		inOrder.verify(store).update(captor.capture());
 		verifyNoMoreInteractions(store);
 		final EmailAccount captured = captor.getValue();
@@ -215,7 +228,7 @@ public class DefaultEmailAccountLogicTest {
 				.build();
 		when(store.list()) //
 				.thenReturn(asList(stored));
-		when(store.read(any(EmailAccount.class))) //
+		when(store.read(any(Storable.class))) //
 				.thenReturn(stored);
 
 		// when
@@ -237,7 +250,7 @@ public class DefaultEmailAccountLogicTest {
 				.build();
 		when(store.list()) //
 				.thenReturn(asList(stored));
-		when(store.read(any(EmailAccount.class))) //
+		when(store.read(any(Storable.class))) //
 				.thenReturn(stored);
 
 		// when
@@ -323,6 +336,11 @@ public class DefaultEmailAccountLogicTest {
 		// given
 		when(store.list()) //
 				.thenReturn(NO_ELEMENTS);
+		when(store.read(any(Storable.class))) //
+				.thenReturn(EmailAccount.newInstance() //
+						.withId(42L) //
+						.withName("foo") //
+						.build());
 		final Account newOne = mock(Account.class);
 		when(newOne.getName()) //
 				.thenReturn("foo");
@@ -330,16 +348,18 @@ public class DefaultEmailAccountLogicTest {
 				.thenReturn(false);
 
 		// when
-		logic.create(newOne);
+		final Long id = logic.create(newOne);
 
 		// then
 		final InOrder inOrder = inOrder(store);
 		inOrder.verify(store).list();
 		inOrder.verify(store).create(captor.capture());
+		inOrder.verify(store).read(any(Storable.class));
 		verifyNoMoreInteractions(store);
 		final EmailAccount captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
-		assertThat(captured.isDefault(), is(true));
+		assertThat(captured.isDefault(), equalTo(true));
+		assertThat(id, equalTo(42L));
 	}
 
 	@Test
@@ -351,7 +371,7 @@ public class DefaultEmailAccountLogicTest {
 				.build();
 		when(store.list()) //
 				.thenReturn(asList(stored));
-		when(store.read(any(EmailAccount.class))) //
+		when(store.read(any(Storable.class))) //
 				.thenReturn(stored);
 		final Account existing = mock(Account.class);
 		when(existing.getName()) //
@@ -368,7 +388,7 @@ public class DefaultEmailAccountLogicTest {
 		verifyNoMoreInteractions(store);
 		final EmailAccount captured = captor.getAllValues().get(1);
 		assertThat(captured.getName(), equalTo("foo"));
-		assertThat(captured.isDefault(), is(true));
+		assertThat(captured.isDefault(), equalTo(true));
 	}
 
 	@Test
@@ -379,7 +399,7 @@ public class DefaultEmailAccountLogicTest {
 				.build();
 		when(store.list()) //
 				.thenReturn(asList(stored));
-		when(store.read(any(EmailAccount.class))) //
+		when(store.read(any(Storable.class))) //
 				.thenReturn(stored);
 		final Account newOne = mock(Account.class);
 		when(newOne.getName()) //
@@ -403,11 +423,11 @@ public class DefaultEmailAccountLogicTest {
 
 		final EmailAccount capturedNewOne = captor.getAllValues().get(0);
 		assertThat(capturedNewOne.getName(), equalTo("foo"));
-		assertThat(capturedNewOne.isDefault(), is(false));
+		assertThat(capturedNewOne.isDefault(), equalTo(false));
 
 		final EmailAccount capturedExistingOne = captor.getAllValues().get(1);
 		assertThat(capturedExistingOne.getName(), equalTo("bar"));
-		assertThat(capturedExistingOne.isDefault(), is(false));
+		assertThat(capturedExistingOne.isDefault(), equalTo(false));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -476,7 +496,7 @@ public class DefaultEmailAccountLogicTest {
 				.build();
 		when(store.list()) //
 				.thenReturn(asList(storedDefault, storedNotDefault, anotherStoredNotDefault));
-		when(store.read(any(EmailAccount.class))) //
+		when(store.read(any(Storable.class))) //
 				.thenReturn(storedNotDefault);
 
 		// when
@@ -492,14 +512,14 @@ public class DefaultEmailAccountLogicTest {
 
 		final EmailAccount resetted = captor.getAllValues().get(0);
 		assertThat(resetted.getName(), equalTo("foo"));
-		assertThat(resetted.isDefault(), is(false));
+		assertThat(resetted.isDefault(), equalTo(false));
 
 		final EmailAccount readed = captor.getAllValues().get(1);
 		assertThat(readed.getName(), equalTo("bar"));
 
 		final EmailAccount setted = captor.getAllValues().get(2);
 		assertThat(setted.getName(), equalTo("bar"));
-		assertThat(setted.isDefault(), is(true));
+		assertThat(setted.isDefault(), equalTo(true));
 	}
 
 }
