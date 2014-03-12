@@ -4,6 +4,7 @@ import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.FluentIterable.from;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailTemplate;
 import org.slf4j.Marker;
@@ -126,10 +127,12 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	}
 
 	@Override
-	public void create(final Template template) {
+	public Long create(final Template template) {
 		logger.info(marker, "creating template '{}'", template);
 		assureNoOneWithName(template.getName());
-		store.create(TEMPLATE_TO_EMAIL_TEMPLATE.apply(template));
+		final Storable created = store.create(TEMPLATE_TO_EMAIL_TEMPLATE.apply(template));
+		final EmailTemplate readed = store.read(created);
+		return readed.getId();
 	}
 
 	@Override

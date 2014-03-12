@@ -2,8 +2,8 @@
 
 	var tr = CMDBuild.Translation.administration.setup.email; // Path to translation
 
-	Ext.define("CMDBuild.view.administration.accordion.CMEmailAccordion", {
-		extend: "CMDBuild.view.common.CMBaseAccordion",
+	Ext.define('CMDBuild.view.administration.accordion.CMEmailAccordion', {
+		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		title: tr.title,
 		cmName: 'email',
