@@ -1373,6 +1373,8 @@
 	"subject": "Oggetto",
 	"targetClass": "Classe Origine",
 	"to": "A",
+	"translations" : "Traduzioni",
+	"translations_enabled" : "Lingue abilitate",
 	"unlock_all_cards": "Sblocca tutte le schede",
 	"uploading_attachment": "Caricamento allegato...",
 	"views": "Viste",

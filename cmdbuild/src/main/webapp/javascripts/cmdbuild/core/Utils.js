@@ -113,6 +113,10 @@ CMDBuild.Utils = (function() {
 			return privileges;
 		},
 
+		/**
+		 * @param obj
+		 * @returns Boolean
+		 */
 		isEmpty: function(obj) {
 			if (obj == null)
 				return true;

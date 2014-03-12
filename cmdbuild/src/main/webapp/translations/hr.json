@@ -1373,6 +1373,8 @@
 	"subject": "Subject",
 	"targetClass": "Ciljna klasa",
 	"to": "To",
+	"translations" : "<em>Translations</em>",
+	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Otključaj sve kartice",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Prikazi",

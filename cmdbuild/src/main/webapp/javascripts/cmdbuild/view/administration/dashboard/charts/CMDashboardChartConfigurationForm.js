@@ -211,11 +211,13 @@
 				disabled: true
 			}),
 
-			me.descriptionArea = new Ext.form.field.TextArea({
+			me.descriptionArea = new Ext.form.CMTranslatableTextArea({
 				fieldLabel: tr.fields.description,
 				name: "description",
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				translationsKeyType: "Chart", 
+				translationsKeyField: "Description",
 				disabled: true
 			}),
 
@@ -473,7 +475,7 @@
 	}
 
 	function isAField(item) {
-		return ((item instanceof Ext.form.Field) || (item instanceof Ext.ux.form.MultiSelect));
+		return ((item instanceof Ext.form.Field) || (item instanceof Ext.ux.form.MultiSelect) || (item instanceof Ext.form.CMTranslatableText));
 	}
 
 	function addSequenceToTypeSetValue(me) {

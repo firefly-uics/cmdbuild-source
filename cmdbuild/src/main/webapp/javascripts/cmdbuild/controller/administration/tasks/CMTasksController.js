@@ -4,31 +4,36 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
-		tasksDatas: undefined,
+		tasksDatas: ['all', 'email', 'event', 'workflow'], // Used to check task existence
+		taskType: undefined,
 
 		// Overwrite
 		constructor: function(view) {
-			this.tasksDatas = ['all', 'email', 'event', 'workflow']; // Used to check task existence
 
-			// Handlers exchange + controller setup
+			// Handlers exchange and controller setup
+			this.view = view;
 			this.grid = view.grid;
 			this.form = view.form;
-			this.view = view;
 			this.view.delegate = this;
 			this.grid.delegate = this;
 
 			this.callParent(arguments);
 		},
 
-		initComponent: function() {
-			this.callParent(arguments);
-		},
+		onViewOnFront: function(parameters) {_debug('asd');
+			this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
 
-		// Overwrite
-		onViewOnFront: function(parameters) {
-			if (this.tasksDatas.indexOf(parameters.data.type) >= 0) {
-				this.cmOn('onGridLoad', { 'type': parameters.data.type });
-			}
+			_debug(parameters.internalId);
+			_debug(this.tasksDatas[0]);
+			_debug(this.taskType);
+
+			this.grid.store = CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType);
+			_debug('1');
+			this.grid.taskType = this.taskType;
+			_debug('2');
+			this.grid.store.load();
+
+			_debug('end');
 		},
 
 		cmOn: function(name, param, callBack) {
@@ -36,17 +41,14 @@
 				case 'onAddButtonClick':
 					return this.onAddButtonClick(name, param, callBack);
 
-				case 'onGridLoad':
-					return this.onGridLoad(param.type);
-
 				case 'onRowSelected':
 					return this.onRowSelected(name, param, callBack);
 
-				case 'onStartTask':
-					return alert(name + ' id = ' + param.record.id);
+				case 'onStartButtonClick':
+					return this.onStartButtonClick(param);
 
-				case 'onStopTask':
-					return alert(name + ' id = ' + param.record.id);
+				case 'onStopButtonClick':
+					return this.onStopButtonClick(param);
 
 				default: {
 					if (this.parentDelegate)
@@ -56,7 +58,7 @@
 		},
 
 		buildFormController: function(type) {
-			if (this.tasksDatas.indexOf(type) >= 0) {
+			if (this.correctTaskTypeCheck(type)) {
 				this.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(type) + 'Controller');
 				this.form.delegate.view = this.form;
 				this.form.delegate.parentDelegate = this;
@@ -64,20 +66,35 @@
 			}
 		},
 
+		callback: function() {
+			CMDBuild.LoadMask.get().hide();
+		},
+
 		capitaliseFirstLetter: function(string) {
-			if (typeof string == 'string') {
+			if (typeof string === 'string') {
 				return string.charAt(0).toUpperCase() + string.slice(1);
 			}
 
 			return string;
 		},
 
+		correctTaskTypeCheck: function(type) {
+			return (type != '' && (this.tasksDatas.indexOf(type) >= 0)) ? true : false;
+		},
+
 		loadForm: function(type) {
-			if (this.tasksDatas.indexOf(type) >= 0) {
+			if (this.correctTaskTypeCheck(type)) {
 				this.form.wizard.removeAll();
+				this.form.delegate.delegateStep = [];
+
 				var items = Ext.create('CMDBuild.view.administration.tasks.' + type + '.CMTaskTabs').getTabs();
 
 				for (var i = 0; i < items.length; i++) {
+
+					// Controllers relation propagation
+					items[i].delegate.parentDelegate = this.form.delegate;
+					this.form.delegate.delegateStep.push(items[i].delegate);
+
 					this.form.wizard.add(items[i]);
 				}
 
@@ -86,30 +103,42 @@
 			}
 		},
 
+		success: function() {
+			this.grid.store.load();
+		},
+
 		onAddButtonClick: function(name, param, callBack) {
 			this.grid.getSelectionModel().deselectAll();
 			this.buildFormController(param.type);
+
 			return this.form.delegate.cmOn(name, param, callBack);
 		},
 
-		onGridLoad: function(type) {
-			if (this.tasksDatas.indexOf(type) >= 0) {
-				var me = this;
-
-				this.grid.store = CMDBuild.core.serviceProxy.CMProxyTasks.getStore(type);
-				this.grid.store.load({
-					callback: function() {
-						me.grid.getSelectionModel().select(0, true);
-					}
-				});
-			}
-		},
-
 		onRowSelected: function(name, param, callBack) {
-			this.buildFormController(param.type);
+			this.buildFormController(param.record.get(CMDBuild.ServiceProxy.parameter.TYPE));
 
 			if (this.form.delegate)
 				this.form.delegate.cmOn(name, param, callBack);
+		},
+
+		onStartButtonClick: function(record) {
+			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.serviceProxy.CMProxyTasks.start({
+				scope: this,
+				params: { id: record.get(CMDBuild.ServiceProxy.parameter.ID) },
+				success: this.success,
+				callback: this.callback
+			});
+		},
+
+		onStopButtonClick: function(record) {
+			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.serviceProxy.CMProxyTasks.stop({
+				scope: this,
+				params: { id: record.get(CMDBuild.ServiceProxy.parameter.ID) },
+				success: this.success,
+				callback: this.callback
+			});
 		}
 	});
 

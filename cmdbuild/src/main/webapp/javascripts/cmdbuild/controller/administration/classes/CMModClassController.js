@@ -74,6 +74,7 @@
 
 			this.view.onAddClassButtonClick();
 			_CMMainViewportController.deselectAccordionByName("class");
+
 		}
 	});
 })();

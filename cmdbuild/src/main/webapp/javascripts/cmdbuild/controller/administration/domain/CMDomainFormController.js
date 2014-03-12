@@ -39,6 +39,7 @@
 				success: function(req, res, decoded) {
 					this.view.disableModify();
 					_CMCache.onDomainSaved(decoded.domain);
+					_CMCache.flushTranslationsToSave(decoded.domain.name);
 				},
 				callback: function() {
 					CMDBuild.LoadMask.get().hide();

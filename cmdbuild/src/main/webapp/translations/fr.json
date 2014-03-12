@@ -1373,6 +1373,8 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "Class Dsetination",
 	"to": "<em>To</em>",
+	"translations" : "<em>Translations</em>",
+	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Débloquer toutes les fiches",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Vues",

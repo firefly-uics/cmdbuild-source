@@ -6,6 +6,7 @@
 		extend: 'Ext.grid.Panel',
 
 		delegate: undefined,
+		taskType: 'all', // default task type
 
 		border: false,
 		frame: false,
@@ -14,53 +15,68 @@
 		initComponent: function() {
 			var me = this;
 
+			this.gridColumns = [
+				{
+					dataIndex: CMDBuild.ServiceProxy.parameter.ID,
+					hidden: true
+				},
+				{
+					text: tr.type,
+					dataIndex: CMDBuild.ServiceProxy.parameter.TYPE,
+					flex: 1
+				},
+				{
+					text: CMDBuild.Translation.description_,
+					dataIndex: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+					flex: 4
+				},
+				{
+					text: tr.status,
+					width: 60,
+					align: 'center',
+					dataIndex: CMDBuild.ServiceProxy.parameter.ACTIVE,
+					renderer: function(value, metaData, record) {
+						return me.activeGridColumnRenderer(value, metaData, record);
+					},
+					fixed: true
+				},
+				{
+					xtype: 'actioncolumn',
+					width: 40,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true,
+					items: [
+						{
+							icon: 'images/icons/control_play.png',
+							tooltip: tr.startLabel,
+							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								me.delegate.cmOn('onStartButtonClick', record);
+							},
+							isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								return record.get(CMDBuild.ServiceProxy.parameter.ACTIVE);
+							}
+						},
+						{
+							icon: 'images/icons/control_stop.png',
+							tooltip: tr.stopLabel,
+							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								me.delegate.cmOn('onStopButtonClick', record);
+							},
+							isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								return !record.get(CMDBuild.ServiceProxy.parameter.ACTIVE);
+							}
+						}
+					]
+				}
+			];
+
+//			this.gridStore = CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType);
+
 			Ext.apply(this, {
-				columns: [
-					{
-						dataIndex: CMDBuild.ServiceProxy.parameter.ID,
-						hidden: true
-					},
-					{
-						text: tr.type,
-						dataIndex: CMDBuild.ServiceProxy.parameter.TYPE,
-						flex: 1
-					},
-					{
-						text: CMDBuild.Translation.description_,
-						dataIndex: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-						flex: 4
-					},
-					{
-						text: tr.status,
-						dataIndex: CMDBuild.ServiceProxy.parameter.STATUS,
-						flex: 1
-					},
-					{
-						text: tr.start,
-						width: '60px',
-						align: 'center',
-						renderer: function() {
-							return '<img src="images/icons/arrow_right.png" title="' + tr.startLabel + '" alt="' + tr.start + '" />';
-						},
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true
-					},
-					{
-						text: tr.stop,
-						width: '60px',
-						align: 'center',
-						renderer: function() {
-							return '<img src="images/icons/cross.png" title="' + tr.stopLabel + '" alt="' + tr.stop + '" />';
-						},
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true
-					}
-				],
-				store: CMDBuild.core.serviceProxy.CMProxyTasks.getStore()
+				columns: this.gridColumns,
+//				store: this.gridStore
 			});
 
 			this.callParent(arguments);
@@ -87,39 +103,24 @@
 						me.getSelectionModel().select(0, true);
 					}
 				});
-			},
+			}
+		},
 
-			beforecellclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-				switch (cellIndex) {
-					case 4: {
-						this.delegate.cmOn('onStartTask', {
-							'record': record.raw,
-							'index': rowIndex
-						}, null);
-					} break;
-
-					case 5: {
-						this.delegate.cmOn('onStopTask', {
-							'record': record.raw,
-							'index': rowIndex
-						}, null);
-					} break;
+		/**
+		 * @param {Object} value
+		 * Used to render active database value to add icon
+		 */
+		activeGridColumnRenderer: function(value, metaData, record) {
+			if(typeof value === 'boolean') {
+				if(value) {
+					value = '<img src="images/icons/accept.png" alt="' + tr.running + '" />';
+				} else {
+					value = '<img src="images/icons/cancel.png" alt="' + tr.stopped + '" />';
 				}
 			}
+
+			return value;
 		}
-//		,
-//
-//		load: function(type) {
-//			var me = this;
-//
-//			this.store.load({
-//				params: { 'type': type },
-//				scope: this,
-//				callback: function() {
-//					me.getSelectionModel().select(0, true);
-//				}
-//			});
-//		}
 	});
 
 })();

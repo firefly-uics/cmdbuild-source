@@ -28,7 +28,7 @@
 			if (this.view.isVisible()) {
 				this.readConfiguration();
 			}
-
+			_CMCache.initModifyingTranslations();
 			this.view.doLayout();
 		},
 

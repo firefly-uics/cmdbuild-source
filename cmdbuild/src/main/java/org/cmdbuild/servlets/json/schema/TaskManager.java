@@ -20,6 +20,7 @@ import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.TaskVistor;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
+import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.google.common.base.Function;
@@ -144,6 +145,20 @@ public class TaskManager extends JSONBaseWithSpringContext {
 		final Iterable<? extends Task> tasks = taskManagerLogic().read();
 		return JsonResponse.success(JsonElements.of(from(tasks) //
 				.transform(TASK_TO_JSON_TASK)));
+	}
+
+	@JSONExported
+	public JsonResponse start( //
+			@Parameter(value = ID) final Long id //
+	) {
+		return JsonResponse.success();
+	}
+
+	@JSONExported
+	public JsonResponse stop( //
+			@Parameter(value = ID) final Long id //
+	) {
+		return JsonResponse.success();
 	}
 
 }

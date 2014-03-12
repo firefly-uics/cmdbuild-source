@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.slf4j.Marker;
@@ -341,13 +342,15 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	}
 
 	@Override
-	public void create(final Account account) {
+	public Long create(final Account account) {
 		logger.info(marker, "creating account '{}'", account);
 		final List<EmailAccount> elements = store.list();
 		assureNoOneWithName(account.getName(), elements);
 		final Account readyAccount = isEmpty(elements) ? AlwaysDefault.of(account) : NeverDefault.of(account);
 		final EmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(readyAccount);
-		store.create(emailAccount);
+		final Storable created = store.create(emailAccount);
+		final EmailAccount readed = store.read(created);
+		return readed.getId();
 	}
 
 	@Override

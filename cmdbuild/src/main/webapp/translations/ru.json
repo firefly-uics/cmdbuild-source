@@ -1373,6 +1373,8 @@
 	"subject": "Тема",
 	"targetClass": "Целевой класс",
 	"to": "Кому",
+	"translations" : "<em>Translations</em>",
+	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Разблокировать все карточки",
 	"uploading_attachment": "Загружается вложение...",
 	"views": "Представления",

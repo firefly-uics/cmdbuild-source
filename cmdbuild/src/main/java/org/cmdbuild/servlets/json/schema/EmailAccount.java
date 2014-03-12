@@ -343,9 +343,9 @@ public class EmailAccount extends JSONBaseWithSpringContext {
 			}
 		};
 
-		emailAccountLogic().create(accountDetails);
+		final Long id = emailAccountLogic().create(accountDetails);
 
-		return JsonResponse.success();
+		return JsonResponse.success(id);
 	}
 
 	@JSONExported

@@ -32,7 +32,7 @@ public class WorkflowSchedulerJob extends SchedulerJob {
 	}
 
 	public Map<String, String> getParameters() {
-		return parameters;
+		return parameters = (parameters == null) ? EMPTY : parameters;
 	}
 
 	public void setParameters(final Map<String, String> parameters) {

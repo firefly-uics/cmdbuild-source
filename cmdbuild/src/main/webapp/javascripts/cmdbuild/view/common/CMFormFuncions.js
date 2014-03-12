@@ -111,6 +111,7 @@
 				this.cascade(function(item) {
 					if (
 						item
+						&& item.submitValue
 						&& (
 							(item instanceof Ext.form.Field)
 							|| (item instanceof Ext.form.field.HtmlEditor)

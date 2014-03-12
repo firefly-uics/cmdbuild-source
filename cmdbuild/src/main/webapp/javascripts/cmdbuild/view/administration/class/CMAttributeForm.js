@@ -59,6 +59,7 @@
 				scope : this,
 				handler: function() {
 					this.enableModify();
+					_CMCache.initModifyingTranslations();
 				}
 			});
 
@@ -121,13 +122,15 @@
 				cmImmutable : true
 			});
 
-			this.attributeDescription = new Ext.form.TextField({
+			this.attributeDescription = new Ext.form.CMTranslatableText( {
 				fieldLabel : tr.description,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : _CMProxy.parameter.DESCRIPTION,
 				allowBlank : false,
-				vtype : "cmdbcomment"
+				translationsKeyType: "ClassAttribute", 
+				translationsKeyField: "Description",
+				vtype : 'cmdbcomment'
 			});
 
 			this.attributeNotNull = new Ext.ux.form.XCheckbox({
@@ -437,6 +440,10 @@
 	
 				this.referenceFilterMetadata = attribute.raw.meta || {};
 				this.referenceFilterMetadataDirty = false;
+				Ext.apply(this.attributeDescription, {
+					translationsKeyName: this.classObj.get("name"),
+					translationsKeySubName: attribute.get("name")
+				});
 			}
 		},
 

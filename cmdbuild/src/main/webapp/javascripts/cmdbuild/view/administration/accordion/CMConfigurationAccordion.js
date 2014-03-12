@@ -50,6 +50,11 @@
 						text: tr.server.menuTitle,
 						leaf: true,
 						cmName: 'modsetupserver'
+					},
+					{
+						text: CMDBuild.Translation.translations_enabled, 
+						leaf: true,
+						cmName: 'modsetuptranslations'
 					}
 				]);
 			}
