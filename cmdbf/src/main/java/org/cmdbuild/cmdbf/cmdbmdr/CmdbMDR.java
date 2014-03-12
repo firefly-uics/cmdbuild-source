@@ -482,29 +482,51 @@ public class CmdbMDR implements ManagementDataRepository {
 				final Object recordType = xmlRegistry.getType(recordQName);
 				if (recordType instanceof CMClass) {
 					final CMCard card = Iterables.getOnlyElement(
-							findCards(idList, (CMClass) recordType, null, new ArrayList<QName>()), null);
-					final Date recordDate = card != null ? card.getBeginDate().toDate() : null;
-					Date lastModified = null;
-					if (record.getRecordMetadata() != null && record.getRecordMetadata().getLastModified() != null) {
-						lastModified = record.getRecordMetadata().getLastModified().toGregorianCalendar().getTime();
-					}
-					if (recordDate == null || lastModified == null || !lastModified.before(recordDate)) {
-						Long id = null;
-						final Element xml = CMDBfUtils.getRecordContent(record);
-						final Card newCard = (Card) xmlRegistry.deserialize(xml);
-						if (card == null) {
-							id = dataAccessLogic.createCard(newCard);
-							item.instanceIds().add(aliasRegistry.getCMDBfId(id));
-							idList.add(id);
-						} else {
-							id = card.getId();
-							final Card.CardBuilder cardBuilder = Card.newInstance().clone(newCard);
-							cardBuilder.withId(id);
-							dataAccessLogic.updateCard(cardBuilder.build());
+							findCards(idList, (CMClass) recordType, null, null), null);
+					final Element xml = CMDBfUtils.getRecordContent(record);
+					final Card newCard = (Card) xmlRegistry.deserialize(xml);
+
+					Long id = null;
+					if (card == null) {
+						id = dataAccessLogic.createCard(newCard);
+						item.instanceIds().add(aliasRegistry.getCMDBfId(id));
+						idList.add(id);
+						registered = true;
+					} else {
+						boolean modified = false;
+						for (final String key : newCard.getAttributes().keySet()) {
+							Object newVal = newCard.getAttribute(key);
+							Object oldVal = card.get(key);
+							if(newVal instanceof String && ((String)newVal).isEmpty())
+								newVal = null;
+							if (newVal != null) {
+								modified |= !newVal.equals(oldVal);
+							} else {
+								modified |= oldVal != null;
+							}
 						}
+						id = card.getId();
+						if (modified) {
+							final Date recordDate = card != null ? card.getBeginDate().toDate() : null;
+							Date lastModified = null;
+							if (record.getRecordMetadata() != null
+									&& record.getRecordMetadata().getLastModified() != null) {
+								lastModified = record.getRecordMetadata().getLastModified().toGregorianCalendar()
+										.getTime();
+							}
+							if (recordDate == null || lastModified == null || !lastModified.before(recordDate)) {
+								final Card.CardBuilder cardBuilder = Card.newInstance().clone(newCard);
+								cardBuilder.withId(id);
+								dataAccessLogic.updateCard(cardBuilder.build());
+								registered = true;
+							}
+						} else {
+							registered = true;
+						}
+					}
+					if (registered) {
 						aliasRegistry.addAlias(id, item.instanceIds());
 						item.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(id)));
-						registered = true;
 					}
 				}
 			}
@@ -547,8 +569,6 @@ public class CmdbMDR implements ManagementDataRepository {
 										card.getId(), newDocument.getName(), newDocument.getDescription(),
 										newDocument.getMetadataGroups());
 							}
-							aliasRegistry.addAlias(card.getId(), item.instanceIds());
-							item.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(card)));
 							registered = true;
 						}
 					} else if (recordType instanceof GeoClass) {
@@ -564,6 +584,10 @@ public class CmdbMDR implements ManagementDataRepository {
 						gisLogic.updateFeatures(Card.newInstance(card.getType()).withId(card.getId()).build(),
 								Collections.<String, Object> singletonMap("geoAttributes", jsonObject.toString()));
 						registered = true;
+					}
+					if (registered) {
+						aliasRegistry.addAlias(card.getId(), item.instanceIds());
+						item.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(card)));
 					}
 				}
 			}
@@ -590,64 +614,78 @@ public class CmdbMDR implements ManagementDataRepository {
 				final Object recordType = xmlRegistry.getType(recordQName);
 				if (recordType instanceof CMDomain) {
 					CMRelation relation = Iterables.getOnlyElement(
-							findRelations(idList, null, null, (CMDomain) recordType, null, new ArrayList<QName>()),
+							findRelations(idList, null, null, (CMDomain) recordType, null, null),
 							null);
 					if (relation == null && sourceId != null && targetId != null) {
 						relation = Iterables.getOnlyElement(
 								findRelations(null, Arrays.asList(aliasRegistry.getInstanceId(sourceId)),
 										Arrays.asList(aliasRegistry.getInstanceId(targetId)), (CMDomain) recordType,
-										null, new ArrayList<QName>()), null);
+										null, null), null);
 					}
-					final Date recordDate = relation != null ? relation.getBeginDate().toDate() : null;
-					Date lastModified = null;
-					if (record.getRecordMetadata() != null && record.getRecordMetadata().getLastModified() != null) {
-						lastModified = record.getRecordMetadata().getLastModified().toGregorianCalendar().getTime();
-					}
-					if (recordDate == null || lastModified == null || !lastModified.before(recordDate)) {
-						Long id = null;
-						final Element xml = CMDBfUtils.getRecordContent(record);
-						final RelationDTO newRelation = (RelationDTO) xmlRegistry.deserialize(xml);
-						newRelation.master = Source._1.name();
-						if (relation == null) {
-							if (sourceId != null && targetId != null) {
-								final CMCard source = Iterables.getOnlyElement(
-										findCards(Arrays.asList(aliasRegistry.getInstanceId(sourceId)),
-												((CMDomain) recordType).getClass1(), null, new ArrayList<QName>()),
-										null);
-								final CMCard target = Iterables.getOnlyElement(
-										findCards(Arrays.asList(aliasRegistry.getInstanceId(targetId)),
-												((CMDomain) recordType).getClass2(), null, new ArrayList<QName>()),
-										null);
-								if (source != null && target != null) {
-									newRelation.addSourceCard(source.getId(), source.getType().getIdentifier()
-											.getLocalName());
-									newRelation.addDestinationCard(target.getId(), target.getType().getIdentifier()
-											.getLocalName());
-									id = Iterables.getOnlyElement(dataAccessLogic.createRelations(newRelation));
-									relationship.instanceIds().add(aliasRegistry.getCMDBfId(id));
-									aliasRegistry.addAlias(id, relationship.instanceIds());
-									relationship.instanceIds().addAll(
-											aliasRegistry.getAlias(aliasRegistry.getCMDBfId(id)));
-									registered = true;
-								}
+					final Element xml = CMDBfUtils.getRecordContent(record);
+					final RelationDTO newRelation = (RelationDTO) xmlRegistry.deserialize(xml);
+					newRelation.master = Source._1.name();
+					Long id = null;
+
+					if (relation == null) {
+						if (sourceId != null && targetId != null) {
+							final CMCard source = Iterables.getOnlyElement(
+									findCards(Arrays.asList(aliasRegistry.getInstanceId(sourceId)),
+											((CMDomain) recordType).getClass1(), null, new ArrayList<QName>()), null);
+							final CMCard target = Iterables.getOnlyElement(
+									findCards(Arrays.asList(aliasRegistry.getInstanceId(targetId)),
+											((CMDomain) recordType).getClass2(), null, new ArrayList<QName>()), null);
+							if (source != null && target != null) {
+								newRelation.addSourceCard(source.getId(), source.getType().getIdentifier()
+										.getLocalName());
+								newRelation.addDestinationCard(target.getId(), target.getType().getIdentifier()
+										.getLocalName());
+								id = Iterables.getOnlyElement(dataAccessLogic.createRelations(newRelation));
+								relationship.instanceIds().add(aliasRegistry.getCMDBfId(id));
+								registered = true;
+							}
+						}
+					} else {
+						boolean modified = false;
+						for (final String key : newRelation.relationAttributeToValue.keySet()) {
+							Object newVal = newRelation.relationAttributeToValue.get(key);
+							Object oldVal = relation.get(key);
+							if(newVal instanceof String && ((String)newVal).isEmpty())
+								newVal = null;
+							if (newVal != null) {
+								modified |= !newVal.equals(oldVal);
+							} else {
+								modified |= oldVal != null;
+							}
+						}
+						id = relation.getId();
+						if (modified) {
+							final Date recordDate = relation != null ? relation.getBeginDate().toDate() : null;
+							Date lastModified = null;
+							if (record.getRecordMetadata() != null
+									&& record.getRecordMetadata().getLastModified() != null) {
+								lastModified = record.getRecordMetadata().getLastModified().toGregorianCalendar()
+										.getTime();
+							}
+							if (recordDate == null || lastModified == null || !lastModified.before(recordDate)) {
+								newRelation.relationId = relation.getId();
+								newRelation.addSourceCard(relation.getCard1Id(), relation.getType().getClass1()
+										.getIdentifier().getLocalName());
+								newRelation.addDestinationCard(relation.getCard2Id(), relation.getType().getClass2()
+										.getIdentifier().getLocalName());
+								dataAccessLogic.updateRelation(newRelation);
+								registered = true;
 							}
 						} else {
-							id = relation.getId();
-							newRelation.relationId = relation.getId();
-							newRelation.addSourceCard(relation.getCard1Id(), relation.getType().getClass1()
-									.getIdentifier().getLocalName());
-							newRelation.addDestinationCard(relation.getCard2Id(), relation.getType().getClass2()
-									.getIdentifier().getLocalName());
-							dataAccessLogic.updateRelation(newRelation);
-							aliasRegistry.addAlias(id, relationship.instanceIds());
-							relationship.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(id)));
 							registered = true;
 						}
 					}
-				}
-			}
+					if (registered) {
+						aliasRegistry.addAlias(id, relationship.instanceIds());
+						relationship.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(id)));
+					}
 
-			if (!registered) {
+				}
 			}
 			return registered;
 		} catch (final ParserConfigurationException e) {
