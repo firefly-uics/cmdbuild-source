@@ -41,6 +41,7 @@ Ext.define("CMDBuild.controller.administration.dataview.CMSqlDataViewController"
 		var request = {
 			params: values,
 			success: function() {
+				_CMCache.flushTranslationsToSave(values["name"]);
 				me.gridConfigurator.getStore().load();
 			}
 		};

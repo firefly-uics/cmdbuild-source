@@ -22,6 +22,7 @@
 		onAddClassButtonClick: function() {
 			this.selection = null;
 			this.view.onAddClassButtonClick();
+			_CMCache.initAddingTranslations();
 		},
 		
 		onSaveClick: function() {
@@ -43,6 +44,7 @@
 			this.view.disableModify(enableCMTBar = true);
 			var result = Ext.JSON.decode(r.responseText);
 			this.selection = _CMCache.onClassSaved(result.table);
+			_CMCache.flushTranslationsToSave(result.table.name);
 		},
 
 		buildSaveParams: function() {

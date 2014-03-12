@@ -1373,6 +1373,8 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "Doel Klas",
 	"to": "<em>To</em>",
+	"translations" : "<em>Translations</em>",
+	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Deblokkeer alle kaarten",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Vensters",

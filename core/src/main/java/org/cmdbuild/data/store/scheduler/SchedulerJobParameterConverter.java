@@ -32,7 +32,7 @@ public class SchedulerJobParameterConverter extends BaseStorableConverter<Schedu
 	@Override
 	public Map<String, Object> getValues(final SchedulerJobParameter storable) {
 		final Map<String, Object> values = Maps.newHashMap();
-		values.put(SCHEDULER_ID, storable.getId());
+		values.put(SCHEDULER_ID, storable.getOwner());
 		values.put(KEY, storable.getKey());
 		values.put(VALUE, storable.getValue());
 		return values;

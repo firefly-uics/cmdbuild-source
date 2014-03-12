@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.model.CMModelTasks');
+
 	Ext.define('CMDBuild.core.serviceProxy.CMProxyTasks', {
 		statics: {
 			create: function(parameters) {
@@ -13,7 +15,24 @@
 				});
 			},
 
-			get: function() {},
+			get: function(type) {
+				return Ext.create('Ext.data.Store', {
+					autoLoad: false,
+					model: 'CMDBuild.model.CMModelTasks.singleTask.' + type,
+					proxy: {
+						type: 'ajax',
+						url: this.getUrl(type).get,
+						reader: {
+							type: 'json',
+							root: 'response'
+						}
+					},
+					sorters: {
+						property: 'type',
+						direction: 'ASC'
+					}
+				});
+			},
 
 			getStore: function(type) {
 				return Ext.create('Ext.data.Store', {
@@ -34,13 +53,55 @@
 				});
 			},
 
-			remove: function(parameters) {},
+			remove: function(parameters) {
+				CMDBuild.ServiceProxy.core.doRequest({
+					method: 'POST',
+					url: this.getUrl(parameters.type).delete,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
+			},
 
-			update: function(parameters) {},
+			start: function(parameters) {
+				CMDBuild.ServiceProxy.core.doRequest({
+					method: 'POST',
+					url: this.getUrl('all').start,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
+			},
 
-			// Other proxy functions extra CRUD
+			stop: function(parameters) {
+				CMDBuild.ServiceProxy.core.doRequest({
+					method: 'POST',
+					url: this.getUrl('all').stop,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
+			},
+
+			update: function(parameters) {
+				CMDBuild.Ajax.request({
+					method: 'POST',
+					url: this.getUrl(parameters.type).put,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
+			},
+
 			getUrl: function(type) {
 				switch (type) {
+					case 'all':
+						return CMDBuild.ServiceProxy.url.tasks;
+
 					case 'email':
 						return CMDBuild.ServiceProxy.url.tasks.email;
 
@@ -51,7 +112,7 @@
 						return CMDBuild.ServiceProxy.url.tasks.workflow;
 
 					default:
-						return CMDBuild.ServiceProxy.url.tasks;
+						throw 'CMProxyTasks error: url type not recognized';
 				}
 			},
 
@@ -66,13 +127,13 @@
 						continue;
 
 					data.push({
-						id: obj.raw.id,
+						name: _CMCache.getEntryTypeNameById(obj.raw.id),
 						description: obj.raw.text
 					});
 				}
 
 				return Ext.create('Ext.data.Store', {
-					fields: [CMDBuild.ServiceProxy.parameter.ID, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
 					data: data,
 					autoLoad: true
 				});

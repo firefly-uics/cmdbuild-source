@@ -61,13 +61,8 @@ public class TaskManager {
 	private Workflow workflow;
 
 	@Bean
-	public TaskManagerLogic transactionalTaskManagerLogic() {
-		return new TransactionalTaskManagerLogic(defaultTaskManagerLogic());
-	}
-
-	@Bean
-	protected TaskManagerLogic defaultTaskManagerLogic() {
-		return new DefaultTaskManagerLogic(transactionalScheduledTaskFacade());
+	public TaskManagerLogic taskManagerLogic() {
+		return new TransactionalTaskManagerLogic(new DefaultTaskManagerLogic(transactionalScheduledTaskFacade()));
 	}
 
 	@Bean

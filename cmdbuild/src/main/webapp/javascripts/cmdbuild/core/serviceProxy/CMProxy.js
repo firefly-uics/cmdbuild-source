@@ -131,6 +131,8 @@
 
 		tasks: {
 			getStore: 'services/json/schema/taskmanager/readall',
+			start: 'services/json/schema/taskmanager/start',
+			stop: 'services/json/schema/taskmanager/stop',
 			email: {
 				delete: '',
 				get: '',
@@ -148,8 +150,8 @@
 				getStore: 'services/json/schema/taskmanager/event/readall'
 			},
 			workflow: {
-				delete: '',
-				get: '',
+				delete: 'services/json/schema/taskmanager/startworkflow/delete',
+				get: 'services/json/schema/taskmanager/startworkflow/read',
 				post: 'services/json/schema/taskmanager/startworkflow/create',
 				put: 'services/json/schema/taskmanager/startworkflow/update',
 

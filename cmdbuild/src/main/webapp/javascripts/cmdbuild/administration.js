@@ -27,6 +27,7 @@
 				delete Ext.tip.Tip.prototype.minWidth;
 
 				CMDBuild.view.CMMainViewport.showSplash(forCredits, administration);
+				_CMCache.resetMultiLanguages();
 
 				// maybe a single request with all the configuration could be better
 				CMDBuild.ServiceProxy.group.getUIConfiguration({
@@ -93,6 +94,10 @@
 										new CMDBuild.view.administration.configuration.CMModConfigurationServer({
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationServerController,
 											cmName: "modsetupserver"
+										}),
+										new CMDBuild.view.administration.configuration.CMModConfigurationTranslations({
+											cmControllerType: controllerNS.administration.configuration.CMModConfigurationTranslationsController,
+											cmName: "modsetuptranslations"
 										}),
 										new CMDBuild.view.administration.configuration.CMConfigurationEmailAccounts({
 											cmControllerType: controllerNS.administration.configuration.CMConfigurationEmailAccountsController,

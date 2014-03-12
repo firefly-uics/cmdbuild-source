@@ -11,6 +11,7 @@
 		constructor: function(){
 			this.callParent(arguments);
 			this.updateStore();
+			this.selectFirstSelectableNode();
 		},
 
 		updateStore: function() {
@@ -18,32 +19,28 @@
 
 			root.appendChild([
 				{
-					id: '1',
+					id: 'all',
 					cmName: 'tasks',
 					leaf: true,
-					text: tr.all,
-					type: 'all'
+					text: tr.all
 				},
 				{
-					id: '2',
+					id: 'email',
 					cmName: 'tasks',
 					leaf: true,
-					text: tr.tasksTypes.email,
-					type:'email'
+					text: tr.tasksTypes.email
 				},
 				{
-					id: '3',
+					id: 'event',
 					cmName: 'tasks',
 					leaf: true,
-					text: tr.tasksTypes.event,
-					type:'event'
+					text: tr.tasksTypes.event
 				},
 				{
-					id: '4',
+					id: 'workflow',
 					cmName: 'tasks',
 					leaf: true,
-					text: tr.tasksTypes.workflow,
-					type:'workflow'
+					text: tr.tasksTypes.workflow
 				}
 			]);
 		}
