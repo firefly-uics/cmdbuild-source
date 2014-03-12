@@ -259,7 +259,9 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 		}
 	}
 
-	private String getLastRevisionOfProject(final String identifier) {
+	
+	@Override
+	public String getLastRevisionOfProject(final String identifier) {
 		try {
 			final Long poid = new Long(identifier);
 			final SProject project = client.getBimsie1ServiceInterface().getProjectByPoid(poid);

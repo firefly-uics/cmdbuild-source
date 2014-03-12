@@ -100,4 +100,6 @@ public interface BimService {
 
 	void updateExportProject(String projectId, String exportProjectId, String shapeProjectId);
 
+	String getLastRevisionOfProject(String projectId);
+
 }

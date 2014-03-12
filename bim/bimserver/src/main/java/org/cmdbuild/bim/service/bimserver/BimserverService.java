@@ -229,4 +229,9 @@ public class BimserverService implements BimService {
 		client.updateExportProject(projectId, exportProjectId, shapeProjectId);
 	}
 
+	@Override
+	public String getLastRevisionOfProject(final String projectId) {
+		return client.getLastRevisionOfProject(projectId);
+	}
+
 }

@@ -109,9 +109,8 @@ public class DefaultBimFacade implements BimFacade {
 		final String projectId = baseProject.getIdentifier();
 		if (project.getFile() != null) {
 			final DateTime lastCheckin = service.checkin(baseProject.getIdentifier(), project.getFile());
-			final BimProject updatedProject = service.getProjectByPoid(projectId);
 			baseProject.setLastCheckin(lastCheckin);
-			final BimRevision lastRevision = service.getRevision(updatedProject.getLastRevisionId());
+			final BimRevision lastRevision = service.getRevision(service.getLastRevisionOfProject(projectId));
 			if (!lastRevision.isValid()) {
 				throw new BimError("Upload failed");
 			}

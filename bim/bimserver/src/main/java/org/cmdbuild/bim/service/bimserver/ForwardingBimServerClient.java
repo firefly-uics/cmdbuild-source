@@ -206,4 +206,9 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	public void updateExportProject(final String projectId, final String exportProjectId, final String shapeProjectId) {
 		delegate.updateExportProject(projectId, exportProjectId, shapeProjectId);
 	}
+
+	@Override
+	public String getLastRevisionOfProject(final String projectId) {
+		return delegate.getLastRevisionOfProject(projectId);
+	}
 }
