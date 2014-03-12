@@ -3,6 +3,7 @@ package unit.logic.email;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
@@ -46,19 +48,26 @@ public class DefaultEmailTemplateLogicTest {
 		// given
 		when(store.list()) //
 				.thenReturn(NO_ELEMENTS);
+		when(store.read(any(Storable.class))) //
+				.thenReturn(EmailTemplate.newInstance() //
+						.withId(42L) //
+						.withName("foo") //
+						.build());
 		final Template newOne = mock(Template.class);
 		when(newOne.getName()) //
 				.thenReturn("foo");
 
 		// when
-		logic.create(newOne);
+		final Long id = logic.create(newOne);
 
 		// then
 		final InOrder inOrder = inOrder(store);
 		inOrder.verify(store).list();
 		inOrder.verify(store).create(captor.capture());
+		inOrder.verify(store).read(any(Storable.class));
 		final EmailTemplate captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
+		assertThat(id, equalTo(42L));
 	}
 
 	@Test
@@ -69,12 +78,17 @@ public class DefaultEmailTemplateLogicTest {
 				.build();
 		when(store.list()) //
 				.thenReturn(asList(stored));
+		when(store.read(any(Storable.class))) //
+				.thenReturn(EmailTemplate.newInstance() //
+						.withId(42L) //
+						.withName("foo") //
+						.build());
 		final Template newOne = mock(Template.class);
 		when(newOne.getName()) //
 				.thenReturn("foo");
 
 		// when
-		logic.create(newOne);
+		final Long id = logic.create(newOne);
 
 		// then
 		final InOrder inOrder = inOrder(store);
@@ -82,6 +96,7 @@ public class DefaultEmailTemplateLogicTest {
 		inOrder.verify(store).create(captor.capture());
 		final EmailTemplate captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
+		assertThat(id, equalTo(42L));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
