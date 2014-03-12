@@ -95,4 +95,6 @@ public interface BimserverClient {
 
 	void updateExportProject(String projectId, String exportProjectId, String shapeProjectId);
 
+	String getLastRevisionOfProject(String projectId);
+
 }

@@ -10,7 +10,6 @@ import org.cmdbuild.services.bim.RelationPersistence.ProjectRelations;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
