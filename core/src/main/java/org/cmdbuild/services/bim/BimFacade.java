@@ -90,6 +90,9 @@ public interface BimFacade {
 	String getGlobalidFromOid(String revisionId, Long oid);
 
 	DataHandler fetchProjectStructure(String revisionId);
+	
+	@Deprecated
+	void checkin(String targetId, File file);
 
 
 }

@@ -470,4 +470,9 @@ public class DefaultBimFacade implements BimFacade {
 		service.updateExportProject(projectId, exportProjectId, shapeProjectId);
 	}
 
+	@Override
+	public void checkin(String projectId, File file) {
+		service.checkin(projectId, file);
+	}
+
 }
