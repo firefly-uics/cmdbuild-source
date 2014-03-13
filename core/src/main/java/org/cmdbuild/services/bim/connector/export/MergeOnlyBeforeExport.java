@@ -7,12 +7,12 @@ import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.services.bim.BimFacade;
 
-public class MergeOnlyBeforeExportStrategy implements ExportProjectStrategy {
+public class MergeOnlyBeforeExport implements ExportProjectPolicy {
 
 	private static final String EXPORT_SUFFIX = "-export";
 	private final BimFacade bimFacade;
 
-	public MergeOnlyBeforeExportStrategy(final BimFacade bimFacade) {
+	public MergeOnlyBeforeExport(final BimFacade bimFacade) {
 		this.bimFacade = bimFacade;
 	}
 

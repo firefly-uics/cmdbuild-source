@@ -6,12 +6,12 @@ import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.services.bim.BimFacade;
 
-public class MergeAfterEveryUploadExportStrategy implements ExportProjectStrategy {
+public class MergeAfterEveryUpload implements ExportProjectPolicy {
 
 	private static final String EXPORT_SUFFIX = "-export";
 	private final BimFacade bimFacade;
 
-	public MergeAfterEveryUploadExportStrategy(final BimFacade bimFacade) {
+	public MergeAfterEveryUpload(final BimFacade bimFacade) {
 		this.bimFacade = bimFacade;
 	}
 

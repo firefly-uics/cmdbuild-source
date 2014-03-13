@@ -1,5 +1,7 @@
 package org.cmdbuild.bim.utils;
 
+import org.apache.commons.lang.StringUtils;
+
 public class BimConstants {
 
 	// IFC constants
@@ -79,6 +81,11 @@ public class BimConstants {
 
 	// BimServer constants
 	public static final String INVALID_ID = "-1";
+	
+	public static boolean isValidId(final String stringId){
+		return !StringUtils.isEmpty(stringId) && !stringId.equals(INVALID_ID);
+	}
+	
 
 	private BimConstants() {
 		throw new AssertionError();

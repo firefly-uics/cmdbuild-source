@@ -1,20 +1,14 @@
 package unit.logic.bim;
 
-import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
 
 import org.cmdbuild.logic.bim.BimLogic;
 import org.cmdbuild.logic.bim.DefaultBimLogic;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
-import org.cmdbuild.services.bim.BimPersistence.CmProject;
-import org.cmdbuild.services.bim.connector.export.ExportProjectStrategy;
+import org.cmdbuild.services.bim.connector.export.ExportProjectPolicy;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InOrder;
 
 public class BimLogicExportTest {
 
@@ -30,34 +24,20 @@ public class BimLogicExportTest {
 	boolean STATUS = true;
 	private BimFacade serviceFacade;
 	private BimPersistence dataPersistence;
-	private ExportProjectStrategy exportStrategy;
+	private ExportProjectPolicy exportStrategy;
 	private BimLogic bimLogic;
 
 	@Before
 	public void setUp() throws Exception {
 		serviceFacade = mock(BimFacade.class);
 		dataPersistence = mock(BimPersistence.class);
-		exportStrategy = mock(ExportProjectStrategy.class);
+		exportStrategy = mock(ExportProjectPolicy.class);
 		bimLogic = new DefaultBimLogic(serviceFacade, dataPersistence, null, null, null, null, exportStrategy);
 	}
 
 	@Test
 	public void getRevisionForExport() throws Exception {
-		// given
-		CmProject value = mock(CmProject.class);
-		when(value.getExportProjectId()).thenReturn(EXPORT_ID);
-		when(dataPersistence.read(ID)).thenReturn(value);
-		
-		// when
-		bimLogic.getExportProjectId(ID);
-
-		// then
-		final InOrder inOrder = inOrder(serviceFacade, dataPersistence, exportStrategy);
-		inOrder.verify(dataPersistence).read(ID);
-		
-		verifyNoMoreInteractions(dataPersistence);
-		verifyZeroInteractions(serviceFacade,exportStrategy);
-
+		//TODO
 	}
 
 }

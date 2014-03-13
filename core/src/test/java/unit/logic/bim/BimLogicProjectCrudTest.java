@@ -20,7 +20,7 @@ import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimFacade.BimFacadeProject;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimPersistence.CmProject;
-import org.cmdbuild.services.bim.connector.export.ExportProjectStrategy;
+import org.cmdbuild.services.bim.connector.export.ExportProjectPolicy;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class BimLogicProjectCrudTest {
 	private static final String c1 = "11";
 	private BimFacade serviceFacade;
 	private BimPersistence dataPersistence;
-	private ExportProjectStrategy exportStrategy;
+	private ExportProjectPolicy exportStrategy;
 	private BimLogic bimLogic;
 	private static final String ID = "id of pippo";
 	private static final String NAME = "pippo";
@@ -51,7 +51,7 @@ public class BimLogicProjectCrudTest {
 	public void setUp() throws Exception {
 		serviceFacade = mock(BimFacade.class);
 		dataPersistence = mock(BimPersistence.class);
-		exportStrategy = mock(ExportProjectStrategy.class);
+		exportStrategy = mock(ExportProjectPolicy.class);
 		bimLogic = new DefaultBimLogic(serviceFacade, dataPersistence, null, null, null, null, exportStrategy);
 	}
 

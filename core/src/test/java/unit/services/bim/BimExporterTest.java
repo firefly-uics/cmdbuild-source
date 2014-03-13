@@ -6,7 +6,7 @@ import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.DefaultBimFacade;
 import org.cmdbuild.services.bim.connector.export.Export;
-import org.cmdbuild.services.bim.connector.export.NewExport;
+import org.cmdbuild.services.bim.connector.export.NewExportConnector;
 import org.junit.Before;
 
 public class BimExporterTest {
@@ -25,7 +25,7 @@ public class BimExporterTest {
 
 	@Before
 	public void setUp() {
-		exporter = new NewExport(bimDataView, serviceFacade, persistence, null);
+		exporter = new NewExportConnector(bimDataView, serviceFacade, persistence, null);
 	}
 
 	
