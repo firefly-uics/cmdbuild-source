@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.setup.email.templates; // Path to translation
 
-	Ext.define('CMDBuild.view.administration.configuration.CMConfigurationEmailTemplatesForm', {
+	Ext.define('CMDBuild.view.administration.email.CMEmailTemplatesForm', {
 		extend: 'Ext.form.Panel',
 
 		mixins: {

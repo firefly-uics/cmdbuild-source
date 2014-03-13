@@ -20,12 +20,12 @@
 				{
 					text: tr.accounts.title,
 					leaf: true,
-					cmName: 'setupEmailAccounts'
+					cmName: 'emailAccounts'
 				},
 				{
 					text: tr.templates.title,
 					leaf: true,
-					cmName: 'setupEmailTemplates'
+					cmName: 'emailTemplates'
 				}
 			]);
 		}
