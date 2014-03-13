@@ -12,6 +12,7 @@ import static org.cmdbuild.bim.utils.BimConstants.IFC_TAG;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_TYPE;
 import static org.cmdbuild.bim.utils.BimConstants.INVALID_ID;
 import static org.cmdbuild.bim.utils.BimConstants.OBJECT_OID;
+import static org.cmdbuild.bim.utils.BimConstants.isValidId;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.services.bim.connector.DefaultBimDataView.CONTAINER_GUID;
@@ -27,6 +28,7 @@ import javax.activation.DataHandler;
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.mapper.DefaultAttribute;
 import org.cmdbuild.bim.mapper.DefaultEntity;
+import org.cmdbuild.bim.mapper.xml.XmlExportCatalogFactory;
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
@@ -39,6 +41,7 @@ import org.cmdbuild.dao.entrytype.DBIdentifier;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
+import org.cmdbuild.services.bim.BimPersistence.CmProject;
 import org.cmdbuild.services.bim.connector.Output;
 import org.cmdbuild.services.bim.connector.export.DataChangedListener.DataChangedException;
 import org.cmdbuild.services.bim.connector.export.DataChangedListener.DataNotChangedException;
@@ -51,33 +54,33 @@ import com.google.common.collect.MapDifference;
 import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps;
 
-public class NewExport implements Export {
+public class NewExportConnector implements Export {
 
 	private final BimFacade serviceFacade;
 	private final BimPersistence persistence;
 	private final BimDataView bimDataView;
 	private final Map<String, String> shapeNameToOidMap;
 	private final Iterable<String> candidateTypes = Lists.newArrayList(IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING);
-	private final ExportProjectStrategy exportStrategy;
+	private final ExportProjectPolicy exportProjectPolicy;
 
-	public NewExport(final BimDataView dataView, final BimFacade bimServiceFacade, final BimPersistence bimPersistence,
-			ExportProjectStrategy exportStrategy) {
+	public NewExportConnector(final BimDataView dataView, final BimFacade bimServiceFacade,
+			final BimPersistence bimPersistence, final ExportProjectPolicy exportProjectPolicy) {
 		this.serviceFacade = bimServiceFacade;
 		this.persistence = bimPersistence;
 		this.bimDataView = dataView;
-		this.exportStrategy = exportStrategy;
+		this.exportProjectPolicy = exportProjectPolicy;
 		shapeNameToOidMap = Maps.newHashMap();
 	}
 
 	@Override
-	public boolean isSynch(final Catalog catalog, final String projectId) {
+	public boolean isSynch(final String projectId) {
 		boolean synch = true;
 		final Output changeListener = new DataChangedListener();
 		try {
-			export(catalog, projectId, changeListener);
+			export(projectId, changeListener);
 		} catch (final DataChangedException de) {
 			synch = false;
-		}catch(final InvalidOutputException oe){
+		} catch (final InvalidOutputException oe) {
 			synch = false;
 		}
 		return synch;
@@ -138,7 +141,16 @@ public class NewExport implements Export {
 	}
 
 	@Override
-	public String export(final Catalog catalog, final String sourceProjectId, final Output output) {
+	public String export(final String sourceProjectId, final Output output) {
+
+		final CmProject project = persistence.read(sourceProjectId);
+		final String xmlMapping = project.getExportMapping();
+		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
+
+		final boolean isSynchronized = isSynch(sourceProjectId);
+		if (isSynchronized) {
+			return getLastGeneratedOutput(sourceProjectId);
+		}
 
 		final Map<String, Entity> sourceData = getSource(catalog, sourceProjectId);
 		final Map<String, Entity> targetData = getTargetDataNew(sourceProjectId);
@@ -149,10 +161,10 @@ public class NewExport implements Export {
 
 		final String exportProjectId = getExportProjectId(sourceProjectId);
 		final String exportRevisionId = serviceFacade.getLastRevisionOfProject(exportProjectId);
-		boolean shapesLoaded = areShapeOfCatalogAlreadyLoadedInRevision(catalog, exportRevisionId);
+		final boolean shapesLoaded = areShapesOfCatalogAlreadyLoadedInRevision(catalog, exportRevisionId);
 		if (!shapesLoaded) {
 			output.outputInvalid();
-			exportStrategy.beforeExport(exportProjectId);
+			exportProjectPolicy.beforeExport(exportProjectId);
 		}
 		serviceFacade.openTransaction(exportProjectId);
 		try {
@@ -178,7 +190,7 @@ public class NewExport implements Export {
 			final String revisionId = serviceFacade.commitTransaction();
 			System.out.println("Revision " + revisionId + " created at " + new DateTime());
 
-			DataHandler exportedData = serviceFacade.download(exportProjectId);
+			final DataHandler exportedData = serviceFacade.download(exportProjectId);
 			final File file = File.createTempFile("ifc", null);
 			final FileOutputStream outputStream = new FileOutputStream(file);
 			exportedData.writeTo(outputStream);
@@ -196,11 +208,11 @@ public class NewExport implements Export {
 		return exportProjectId;
 	}
 
-	private boolean areShapeOfCatalogAlreadyLoadedInRevision(Catalog catalog, String revisionId) {
+	private boolean areShapesOfCatalogAlreadyLoadedInRevision(final Catalog catalog, final String revisionId) {
 		boolean allShapesAreLoaded = true;
 		for (final EntityDefinition catalogEntry : catalog.getEntitiesDefinitions()) {
 			final String shapeOid = getShapeOid(revisionId, catalogEntry.getShape());
-			if (INVALID_ID.equals(shapeOid)) {
+			if (!isValidId(shapeOid)) {
 				allShapesAreLoaded = false;
 				break;
 			}
@@ -292,7 +304,7 @@ public class NewExport implements Export {
 
 	private String getExportProjectId(final String masterProjectId) {
 		final String targetProjectId = persistence.read(masterProjectId).getExportProjectId();
-		if(targetProjectId == null || targetProjectId.isEmpty() || targetProjectId.equals(INVALID_ID)){
+		if (targetProjectId == null || targetProjectId.isEmpty() || targetProjectId.equals(INVALID_ID)) {
 			throw new BimError("Project for export not found");
 		}
 		return targetProjectId;
@@ -305,6 +317,14 @@ public class NewExport implements Export {
 			throw new BimError("Revision for export not found");
 		}
 		return exportRevisionId;
+	}
+
+	@Override
+	public String getLastGeneratedOutput(final String baseProjectId) {
+		final String exportProjectId = getExportProjectId(baseProjectId);
+		System.out.println("export project is " + exportProjectId);
+		final String outputRevisionId = serviceFacade.getLastRevisionOfProject(exportProjectId);
+		return outputRevisionId;
 	}
 
 }

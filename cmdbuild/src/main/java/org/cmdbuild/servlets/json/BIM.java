@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.bim.utils.BimConstants.isValidId;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_LAYER;
@@ -27,8 +28,6 @@ import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.bim.BimLogic.Project;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -51,7 +50,7 @@ public class BIM extends JSONBaseWithSpringContext {
 		private String projectId, name, description, importMapping, exportMapping;
 		private boolean active, synch;
 		private DateTime lastCheckin;
-		private Iterable<String> cardBinding = Lists.newArrayList();
+		private final Iterable<String> cardBinding = Lists.newArrayList();
 		private File fileToLoad;
 
 		@Override
@@ -124,7 +123,7 @@ public class BIM extends JSONBaseWithSpringContext {
 			this.projectId = projectId;
 		}
 
-		public void setSynch(boolean b) {
+		public void setSynch(final boolean b) {
 			this.synch = b;
 		}
 	}
@@ -213,40 +212,38 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter("className") String className, //
 			final @Parameter("withExport") boolean withExport//
 	) throws JSONException {
-		final boolean forceExport = true;
-		String revisionId = StringUtils.EMPTY;
-		
-		final String rootDescription = bimLogic().getDescriptionOfRoot(cardId, className);
-		final String baseProjectId = bimLogic().getBaseProjectIdForCardOfClass(cardId, className);
-		
-		boolean isSynch = true;
 		if (withExport) {
-			final String exportProjectId = bimLogic().getExportProjectId(baseProjectId);
-			System.out.println("export project is " + exportProjectId);
-			if (exportProjectId == null || exportProjectId.isEmpty()) {
-				revisionId = bimLogic().getLastRevisionOfProject(baseProjectId);
-				if (revisionId.equals("-1")) {
-					throw new BimError("No file uploaded");
-				}
-				System.out.println("No project for export found. Use revision " + revisionId);
-			} else {
-				isSynch = bimLogic().isSynchForExport(baseProjectId);
-				if (!isSynch) {
-					exportIfc(baseProjectId);
-				}
-				revisionId = bimLogic().getLastRevisionOfProject(exportProjectId);
-				System.out.println("Export revision is " + revisionId);
-				isSynch = bimLogic().isSynchForExport(baseProjectId);
-				System.out.println("Is synch? " + isSynch);
-			}
+			return getExportedRevisionIdForViewer(cardId, className);
 		} else {
-			revisionId = bimLogic().getLastRevisionOfProject(baseProjectId);
+			return getBaseRevisionIdForViewer(cardId, className);
 		}
+	}
+
+	private JSONObject getExportedRevisionIdForViewer(final Long cardId, final String className) throws JSONException {
+
+		final String rootDescription = bimLogic().getDescriptionOfRoot(cardId, className);
+
+		final String outputRevisionId = bimLogic().getExportedRevisionIdForViewer(cardId, className);
+
 		final JSONObject out = new JSONObject();
+		if (isValidId(outputRevisionId)) {
+			out.put("ROID", outputRevisionId);
+		}
 		out.put("DESCRIPTION", rootDescription);
-		out.put("POID", baseProjectId);
-		out.put("ROID", revisionId);
-		out.put("SYNCH", isSynch);
+		return out;
+	}
+
+	private JSONObject getBaseRevisionIdForViewer( //
+			final @Parameter("cardId") Long cardId, //
+			final @Parameter("className") String className) throws JSONException {
+
+		final String rootDescription = bimLogic().getDescriptionOfRoot(cardId, className);
+
+		final String outputRevisionId = bimLogic().getBaseRevisionIdForViewer(cardId, className);
+
+		final JSONObject out = new JSONObject();
+		out.put("ROID", outputRevisionId);
+		out.put("DESCRIPTION", rootDescription);
 		return out;
 	}
 
@@ -344,7 +341,7 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter("objectId") String objectId, //
 			final @Parameter("revisionId") String revisionId //
 	) throws JSONException {
-		BimCard bimCard = bimLogic().fetchCardDataFromObjectId(objectId, revisionId);
+		final BimCard bimCard = bimLogic().fetchCardDataFromObjectId(objectId, revisionId);
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		if (bimCard.isValid()) {
 			final Card fetchedCard = dataLogic.fetchCard(bimCard.getClassId(), bimCard.getId());
@@ -362,7 +359,7 @@ public class BIM extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject getActiveForClassname(final @Parameter("className") String className) throws JSONException {
 		final JSONObject out = new JSONObject();
-		boolean isActive = bimLogic().getActiveForClassname(className);
+		final boolean isActive = bimLogic().getActiveForClassname(className);
 		out.put(CLASS_NAME, className);
 		out.put(ACTIVE, isActive);
 		return out;

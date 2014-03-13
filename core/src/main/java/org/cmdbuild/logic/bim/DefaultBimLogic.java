@@ -20,7 +20,6 @@ import java.util.Map;
 import javax.activation.DataHandler;
 
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.bim.mapper.xml.XmlExportCatalogFactory;
 import org.cmdbuild.bim.mapper.xml.XmlImportCatalogFactory;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
@@ -47,8 +46,8 @@ import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.DefaultExportListener;
 import org.cmdbuild.services.bim.connector.export.Export;
-import org.cmdbuild.services.bim.connector.export.ExportProjectStrategy;
-import org.cmdbuild.services.bim.connector.export.NewExport;
+import org.cmdbuild.services.bim.connector.export.ExportProjectPolicy;
+import org.cmdbuild.services.bim.connector.export.NewExportConnector;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
@@ -63,10 +62,10 @@ public class DefaultBimLogic implements BimLogic {
 	private final BimPersistence bimPersistence;
 	private final BimDataModelManager bimDataModelManager;
 	private final Mapper mapper;
-	private final Export exporter;
+	private final Export exportConnector;
 	private final BimDataView bimDataView;
 	private final DataAccessLogic dataAccessLogic;
-	private final ExportProjectStrategy exportStrategy;
+	private final ExportProjectPolicy exportStrategy;
 
 	public DefaultBimLogic( //
 			final BimFacade bimServiceFacade, //
@@ -74,13 +73,14 @@ public class DefaultBimLogic implements BimLogic {
 			final BimDataModelManager bimDataModelManager, //
 			final Mapper mapper, //
 			final BimDataView bimDataView, //
-			final DataAccessLogic dataAccessLogic, final ExportProjectStrategy exportStrategy) {
+			final DataAccessLogic dataAccessLogic, //
+			final ExportProjectPolicy exportStrategy) {
 
 		this.bimPersistence = bimPersistence;
 		this.bimServiceFacade = bimServiceFacade;
 		this.bimDataModelManager = bimDataModelManager;
 		this.mapper = mapper;
-		this.exporter = new NewExport(bimDataView, bimServiceFacade, bimPersistence, exportStrategy);
+		this.exportConnector = new NewExportConnector(bimDataView, bimServiceFacade, bimPersistence, exportStrategy);
 		this.bimDataView = bimDataView;
 		this.dataAccessLogic = dataAccessLogic;
 		this.exportStrategy = exportStrategy;
@@ -231,13 +231,6 @@ public class DefaultBimLogic implements BimLogic {
 	}
 
 	@Override
-	public String getExportProjectId(final String baseProjectId) {
-
-		final CmProject project = bimPersistence.read(baseProjectId);
-		return project.getExportProjectId();
-	}
-
-	@Override
 	public String getDescriptionOfRoot(final Long cardId, final String className) {
 		final Long rootId = getRootId(cardId, className);
 		final BimLayer rootLayer = bimPersistence.findRoot();
@@ -272,7 +265,20 @@ public class DefaultBimLogic implements BimLogic {
 	}
 
 	@Override
-	public String getBaseProjectIdForCardOfClass(final Long cardId, final String className) {
+	public String getBaseRevisionIdForViewer(final Long cardId, final String className) {
+		final String baseProjectId = getBaseProjectIdForCardOfClass(cardId, className);
+		final String revisionId = getLastRevisionOfProject(baseProjectId);
+		return revisionId;
+	}
+
+	@Override
+	public String getExportedRevisionIdForViewer(final Long cardId, final String className) {
+		final String baseProjectId = getBaseProjectIdForCardOfClass(cardId, className);
+		final String outputRevisionId = exportConnector.getLastGeneratedOutput(baseProjectId);
+		return outputRevisionId;
+	}
+
+	private String getBaseProjectIdForCardOfClass(final Long cardId, final String className) {
 		final Long rootId = getRootId(cardId, className);
 		final BimLayer rootLayer = bimPersistence.findRoot();
 		final String baseProjectId = getProjectIdForRootClass(rootId, rootLayer.getClassName());
@@ -344,18 +350,12 @@ public class DefaultBimLogic implements BimLogic {
 
 	@Override
 	public void exportIfc(final String projectId) {
-		final CmProject project = bimPersistence.read(projectId);
-		final String xmlMapping = project.getExportMapping();
-		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
-		exporter.export(catalog, projectId, new DefaultExportListener(bimServiceFacade));
+		exportConnector.export(projectId, new DefaultExportListener(bimServiceFacade));
 	}
 
 	@Override
 	public boolean isSynchForExport(final String projectId) {
-		final CmProject project = bimPersistence.read(projectId);
-		final String xmlMapping = project.getExportMapping();
-		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
-		return exporter.isSynch(catalog, projectId);
+		return exportConnector.isSynch(projectId);
 	}
 
 	@Override

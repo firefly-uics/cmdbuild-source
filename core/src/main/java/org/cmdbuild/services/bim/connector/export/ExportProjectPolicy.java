@@ -1,8 +1,7 @@
 package org.cmdbuild.services.bim.connector.export;
 
 
-public interface ExportProjectStrategy {
-	
+public interface ExportProjectPolicy {
 	
 	/**
 	 * returns the id of the project for export

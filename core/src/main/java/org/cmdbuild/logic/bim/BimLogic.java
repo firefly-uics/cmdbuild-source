@@ -13,49 +13,49 @@ import org.joda.time.DateTime;
 public interface BimLogic extends Logic {
 
 	public static interface Project {
-	
+
 		String getProjectId();
-	
+
 		String getName();
-	
+
 		String getDescription();
-	
+
 		boolean isActive();
-	
+
 		boolean isSynch();
-	
+
 		String getImportMapping();
-	
+
 		String getExportMapping();
-	
+
 		DateTime getLastCheckin();
-		
+
 		Iterable<String> getCardBinding();
 
 		File getFile();
-	
+
 	}
-	
+
 	Project createProject(Project project);
-	
+
 	Iterable<Project> readAllProjects();
-	
+
 	void updateProject(Project project);
-	
+
 	DataHandler download(String projectId);
-	
+
 	void enableProject(Project project);
-	
+
 	void disableProject(Project project);
 
 	List<BimLayer> readBimLayer();
 
 	void updateBimLayer(String className, String attributeName, String value);
-	
+
 	void importIfc(String projectId);
 
 	void exportIfc(String sourceProjectId);
-	
+
 	boolean isSynchForExport(String projectId);
 
 	BimLayer getRootLayer();
@@ -66,12 +66,14 @@ public interface BimLogic extends Logic {
 
 	boolean getActiveForClassname(String classname);
 
-	String getBaseProjectIdForCardOfClass(Long cardId, String className);
-
-	String getExportProjectId(String baseProjectId);
-
 	String getLastRevisionOfProject(String exportProjectId);
 
+	// methods for the viewer
+
 	String getDescriptionOfRoot(Long cardId, String className);
+
+	String getBaseRevisionIdForViewer(Long cardId, String className);
+
+	String getExportedRevisionIdForViewer(Long cardId, String className);
 
 }
