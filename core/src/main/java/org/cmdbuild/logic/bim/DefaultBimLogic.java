@@ -4,6 +4,7 @@ import static org.cmdbuild.bim.utils.BimConstants.CARDID_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CARD_DESCRIPTION_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CLASSID_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CLASSNAME_FIELD_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.isValidId;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.services.bim.DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX;
 
@@ -274,7 +275,10 @@ public class DefaultBimLogic implements BimLogic {
 	@Override
 	public String getExportedRevisionIdForViewer(final Long cardId, final String className) {
 		final String baseProjectId = getBaseProjectIdForCardOfClass(cardId, className);
-		final String outputRevisionId = exportConnector.getLastGeneratedOutput(baseProjectId);
+		String outputRevisionId = StringUtils.EMPTY;
+		if (isValidId(baseProjectId)) {
+			outputRevisionId = exportConnector.getLastGeneratedOutput(baseProjectId);
+		}
 		return outputRevisionId;
 	}
 
@@ -282,9 +286,6 @@ public class DefaultBimLogic implements BimLogic {
 		final Long rootId = getRootId(cardId, className);
 		final BimLayer rootLayer = bimPersistence.findRoot();
 		final String baseProjectId = getProjectIdForRootClass(rootId, rootLayer.getClassName());
-		if (baseProjectId.isEmpty()) {
-			throw new BimError("Project not found for card '" + cardId + "' and class '" + className + "'");
-		}
 		return baseProjectId;
 	}
 

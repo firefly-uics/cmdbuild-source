@@ -225,6 +225,10 @@ public class BIM extends JSONBaseWithSpringContext {
 
 		final String outputRevisionId = bimLogic().getExportedRevisionIdForViewer(cardId, className);
 
+		return createResponse(rootDescription, outputRevisionId);
+	}
+
+	private JSONObject createResponse(final String rootDescription, final String outputRevisionId) throws JSONException {
 		final JSONObject out = new JSONObject();
 		if (isValidId(outputRevisionId)) {
 			out.put("ROID", outputRevisionId);
@@ -241,10 +245,7 @@ public class BIM extends JSONBaseWithSpringContext {
 
 		final String outputRevisionId = bimLogic().getBaseRevisionIdForViewer(cardId, className);
 
-		final JSONObject out = new JSONObject();
-		out.put("ROID", outputRevisionId);
-		out.put("DESCRIPTION", rootDescription);
-		return out;
+		return createResponse(rootDescription, outputRevisionId);
 	}
 
 	@JSONExported
