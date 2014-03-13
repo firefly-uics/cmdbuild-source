@@ -77,7 +77,7 @@ public class NewExportConnector implements Export {
 		boolean synch = true;
 		final Output changeListener = new DataChangedListener();
 		try {
-			export(projectId, changeListener);
+			executeExport(projectId, changeListener);
 		} catch (final DataChangedException de) {
 			synch = false;
 		} catch (final InvalidOutputException oe) {
@@ -142,15 +142,20 @@ public class NewExportConnector implements Export {
 
 	@Override
 	public String export(final String sourceProjectId, final Output output) {
+		final boolean isSynchronized = isSynch(sourceProjectId);
+		if (isSynchronized) {
+			return getLastGeneratedOutput(sourceProjectId);
+		} else {
+			executeExport(sourceProjectId, output);
+			return getLastGeneratedOutput(sourceProjectId);
+		}
+	}
+
+	private void executeExport(final String sourceProjectId, final Output output) {
 
 		final CmProject project = persistence.read(sourceProjectId);
 		final String xmlMapping = project.getExportMapping();
 		final Catalog catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
-
-		final boolean isSynchronized = isSynch(sourceProjectId);
-		if (isSynchronized) {
-			return getLastGeneratedOutput(sourceProjectId);
-		}
 
 		final Map<String, Entity> sourceData = getSource(catalog, sourceProjectId);
 		final Map<String, Entity> targetData = getTargetDataNew(sourceProjectId);
@@ -205,7 +210,6 @@ public class NewExportConnector implements Export {
 			serviceFacade.abortTransaction();
 			throw new BimError("Error during export", t);
 		}
-		return exportProjectId;
 	}
 
 	private boolean areShapesOfCatalogAlreadyLoadedInRevision(final Catalog catalog, final String revisionId) {
