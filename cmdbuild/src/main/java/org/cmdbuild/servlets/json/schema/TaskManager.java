@@ -142,7 +142,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse readAll() {
-		final Iterable<? extends Task> tasks = taskManagerLogic().read();
+		final Iterable<Task> tasks = taskManagerLogic().read();
 		return JsonResponse.success(JsonElements.of(from(tasks) //
 				.transform(TASK_TO_JSON_TASK)));
 	}
@@ -151,6 +151,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 	public JsonResponse start( //
 			@Parameter(value = ID) final Long id //
 	) {
+		// TODO
 		return JsonResponse.success();
 	}
 
@@ -158,6 +159,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 	public JsonResponse stop( //
 			@Parameter(value = ID) final Long id //
 	) {
+		// TODO
 		return JsonResponse.success();
 	}
 

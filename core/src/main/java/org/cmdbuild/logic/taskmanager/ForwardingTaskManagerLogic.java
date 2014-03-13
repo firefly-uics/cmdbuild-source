@@ -14,7 +14,7 @@ public abstract class ForwardingTaskManagerLogic implements TaskManagerLogic {
 	}
 
 	@Override
-	public Iterable<? extends Task> read() {
+	public Iterable<Task> read() {
 		return delegate.read();
 	}
 

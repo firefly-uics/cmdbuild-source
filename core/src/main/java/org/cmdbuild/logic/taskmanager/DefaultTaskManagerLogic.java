@@ -19,17 +19,26 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	private static final Marker MARKER = MarkerFactory.getMarker(DefaultTaskManagerLogic.class.getName());
 
-	private static class Create implements TaskVistor {
+	private static interface Action<T> {
+
+		T execute();
+
+	}
+
+	private static class Create implements Action<Long>, TaskVistor {
 
 		private final ScheduledTaskFacade schedulerFacade;
+		private final Task task;
 
 		private Long createdId;
 
-		public Create(final ScheduledTaskFacade schedulerFacade) {
+		public Create(final ScheduledTaskFacade schedulerFacade, final Task task) {
 			this.schedulerFacade = schedulerFacade;
+			this.task = task;
 		}
 
-		public Long execute(final Task task) {
+		@Override
+		public Long execute() {
 			task.accept(this);
 			return createdId;
 		}
@@ -46,7 +55,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
-	private static class ReadAll implements TaskVistor {
+	private static class ReadAll implements Action<Iterable<Task>>, TaskVistor {
 
 		private static final Object NO_ARGUMENTS_REQUIRED = null;
 
@@ -59,14 +68,23 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		};
 
+		private static Class<Object> ALL_TYPES = Object.class;
+
 		private final ScheduledTaskFacade schedulerFacade;
+		private final Class<?> type;
 
 		private final Map<Long, Task> tasksById = Maps.newHashMap();
 
 		public ReadAll(final ScheduledTaskFacade schedulerFacade) {
-			this.schedulerFacade = schedulerFacade;
+			this(schedulerFacade, null);
 		}
 
+		public ReadAll(final ScheduledTaskFacade schedulerFacade, final Class<? extends Task> type) {
+			this.schedulerFacade = schedulerFacade;
+			this.type = (type == null) ? ALL_TYPES : type;
+		}
+
+		@Override
 		public Iterable<Task> execute() {
 			assert this instanceof TaskVistor;
 			for (final Method method : TaskVistor.class.getMethods()) {
@@ -80,11 +98,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 					logger.warn(MARKER, "error invoking method", e);
 				}
 			}
-			return tasksById.values();
-		}
-
-		public Iterable<Task> execute(final Class<? extends Task> type) {
-			return from(execute()) //
+			return from(tasksById.values()) //
 					.filter(instanceOf(type));
 		}
 
@@ -100,50 +114,52 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
-	private static class Read {
+	private static class Read<T extends Task> implements Action<T>, TaskVistor {
 
 		private final ScheduledTaskFacade schedulerFacade;
+		private final T task;
+		private final Class<T> type;
 
-		public Read(final ScheduledTaskFacade schedulerFacade) {
+		private Task raw;
+
+		public Read(final ScheduledTaskFacade schedulerFacade, final T task, final Class<T> type) {
 			this.schedulerFacade = schedulerFacade;
+			this.task = task;
+			this.type = type;
 		}
 
-		public <T extends Task> T execute(final T task, final Class<T> type) {
-			final T detailed = new TaskVistor() {
+		@Override
+		public T execute() {
+			task.accept(this);
+			return type.cast(raw);
+		}
 
-				private Task raw;
+		@Override
+		public void visit(final ReadEmailTask task) {
+			raw = schedulerFacade.read(task);
+		}
 
-				public T read() {
-					task.accept(this);
-					return type.cast(raw);
-				}
-
-				@Override
-				public void visit(final ReadEmailTask task) {
-					raw = schedulerFacade.read(task);
-				}
-
-				@Override
-				public void visit(final StartWorkflowTask task) {
-					raw = schedulerFacade.read(task);
-				}
-
-			}.read();
-			return detailed;
+		@Override
+		public void visit(final StartWorkflowTask task) {
+			raw = schedulerFacade.read(task);
 		}
 
 	}
 
-	private static class Update implements TaskVistor {
+	private static class Update implements Action<Void>, TaskVistor {
 
 		private final ScheduledTaskFacade schedulerFacade;
+		private final Task task;
 
-		public Update(final ScheduledTaskFacade schedulerFacade) {
+		public Update(final ScheduledTaskFacade schedulerFacade, final Task task) {
 			this.schedulerFacade = schedulerFacade;
+			this.task = task;
 		}
 
-		public void execute(final Task task) {
+		@Override
+		public Void execute() {
 			task.accept(this);
+			return null;
 		}
 
 		@Override
@@ -158,16 +174,20 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
-	private static class Delete implements TaskVistor {
+	private static class Delete implements Action<Void>, TaskVistor {
 
 		private final ScheduledTaskFacade schedulerFacade;
+		private final Task task;
 
-		public Delete(final ScheduledTaskFacade schedulerFacade) {
+		public Delete(final ScheduledTaskFacade schedulerFacade, final Task task) {
 			this.schedulerFacade = schedulerFacade;
+			this.task = task;
 		}
 
-		public void execute(final Task task) {
+		@Override
+		public Void execute() {
 			task.accept(this);
+			return null;
 		}
 
 		@Override
@@ -191,39 +211,43 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	@Override
 	public Long create(final Task task) {
 		logger.info(MARKER, "creating a new task '{}'", task);
-		return new Create(schedulerFacade).execute(task);
+		return execute(new Create(schedulerFacade, task));
 	}
 
 	@Override
-	public Iterable<? extends Task> read() {
+	public Iterable<Task> read() {
 		logger.info(MARKER, "reading all existing tasks");
-		return new ReadAll(schedulerFacade).execute();
+		return execute(new ReadAll(schedulerFacade));
 	}
 
 	@Override
 	public Iterable<Task> read(final Class<? extends Task> type) {
 		logger.info(MARKER, "reading all existing tasks for type '{}'", type);
-		return new ReadAll(schedulerFacade).execute(type);
+		return execute(new ReadAll(schedulerFacade, type));
 	}
 
 	@Override
 	public <T extends Task> T read(final T task, final Class<T> type) {
 		logger.info(MARKER, "reading task's details of '{}'", task);
-		return new Read(schedulerFacade).execute(task, type);
+		return execute(new Read<T>(schedulerFacade, task, type));
 	}
 
 	@Override
 	public void update(final Task task) {
 		logger.info(MARKER, "updating an existing task '{}'", task);
 		Validate.isTrue(task.getId() != null, "invalid id");
-		new Update(schedulerFacade).execute(task);
+		execute(new Update(schedulerFacade, task));
 	}
 
 	@Override
 	public void delete(final Task task) {
 		logger.info(MARKER, "deleting an existing task '{}'", task);
 		Validate.isTrue(task.getId() != null, "invalid id");
-		new Delete(schedulerFacade).execute(task);
+		execute(new Delete(schedulerFacade, task));
+	}
+
+	private <T> T execute(final Action<T> action) {
+		return action.execute();
 	}
 
 }
