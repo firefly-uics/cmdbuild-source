@@ -1,6 +1,5 @@
 package org.cmdbuild.services.bim;
 
-import static org.cmdbuild.bim.service.BimProject.INVALID_BIM_ID;
 import static org.cmdbuild.bim.utils.BimConstants.DEFAULT_TAG_EXPORT;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_AXIS2_PLACEMENT3D;
@@ -21,6 +20,7 @@ import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATIVE_PLACEMENT;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_REL_CONTAINED;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_TAG;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_TYPE;
+import static org.cmdbuild.bim.utils.BimConstants.INVALID_ID;
 import static org.cmdbuild.bim.utils.BimConstants.OBJECT_OID;
 import static org.cmdbuild.bim.utils.BimConstants.X_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.Y_ATTRIBUTE;
@@ -53,6 +53,8 @@ import org.cmdbuild.bim.service.ListAttribute;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.bimserver.BimserverEntity;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.google.common.collect.Lists;
 
@@ -85,9 +87,8 @@ public class DefaultBimFacade implements BimFacade {
 		transactionManager.abort();
 	}
 
-	@Deprecated
 	@Override
-	public BimFacadeProject createProject(final BimFacadeProject project) {
+	public BimFacadeProject createProjectAndUploadFile(final BimFacadeProject project) {
 		final BimProject createdProject = service.createProject(project.getName());
 		final String projectId = createdProject.getIdentifier();
 		if (project.getFile() != null) {
@@ -101,6 +102,12 @@ public class DefaultBimFacade implements BimFacade {
 		}
 		final BimFacadeProject facadeProject = from(createdProject, "");
 		return facadeProject;
+	}
+
+	@Override
+	public String createProject(String projectName) {
+		final BimProject project = service.createProject(projectName);
+		return project.getIdentifier();
 	}
 
 	@Override
@@ -212,7 +219,7 @@ public class DefaultBimFacade implements BimFacade {
 	@Override
 	public DataHandler download(final String projectId) {
 		final String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
-		if ((INVALID_BIM_ID).equals(revisionId)) {
+		if ((INVALID_ID).equals(revisionId)) {
 			return null;
 		}
 		return service.downloadIfc(revisionId);
@@ -300,7 +307,7 @@ public class DefaultBimFacade implements BimFacade {
 				return shape.getKey();
 			}
 		}
-		return INVALID_BIM_ID;
+		return INVALID_ID;
 	}
 
 	private void setCoordinates(final String placementId, final String x1, final String x2, final String x3,
@@ -350,6 +357,11 @@ public class DefaultBimFacade implements BimFacade {
 			globalIdList.add(entity.getKey());
 		}
 		return globalIdList;
+	}
+
+	@Override
+	public BimProject getProjectByName(String projectId) {
+		return service.getProjectByName(projectId);
 	}
 
 	@Override
@@ -473,6 +485,16 @@ public class DefaultBimFacade implements BimFacade {
 	@Override
 	public void checkin(String projectId, File file) {
 		service.checkin(projectId, file);
+	}
+
+	@Override
+	public void branchRevisionToExistingProject(String projectId, String exportProjectId) {
+		service.branchRevisionToExistingProject(projectId, exportProjectId);
+	}
+
+	@Override
+	public String mergeProjects(String project1, String project2) {
+		return service.mergeProjects(project1, project2);
 	}
 
 }

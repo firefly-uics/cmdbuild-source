@@ -57,13 +57,13 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	}
 
 	@Override
-	public void branchToExistingProject(final String revisionId, final String destinationProjectId) {
-		delegate.branchToExistingProject(revisionId, destinationProjectId);
+	public void branchRevisionToExistingProject(final String revisionId, final String destinationProjectId) {
+		delegate.branchRevisionToExistingProject(revisionId, destinationProjectId);
 	}
 
 	@Override
-	public void branchToNewProject(final String revisionId, final String projectName) {
-		delegate.branchToNewProject(revisionId, projectName);
+	public void branchRevisionToNewProject(final String revisionId, final String projectName) {
+		delegate.branchRevisionToNewProject(revisionId, projectName);
 	}
 
 	@Override
@@ -210,5 +210,10 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	@Override
 	public String getLastRevisionOfProject(final String projectId) {
 		return delegate.getLastRevisionOfProject(projectId);
+	}
+	
+	@Override
+	public String mergeProjectsAndReturnMergedRevision(String project1Id, String project2Id) {
+		return delegate.mergeProjectsAndReturnMergedRevision(project1Id,project2Id);
 	}
 }

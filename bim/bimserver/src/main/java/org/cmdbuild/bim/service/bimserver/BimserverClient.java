@@ -33,9 +33,9 @@ public interface BimserverClient {
 
 	void disableProject(String projectId);
 
-	void branchToExistingProject(String revisionId, String destinationProjectId);
+	void branchRevisionToExistingProject(String revisionId, String destinationProjectId);
 
-	void branchToNewProject(String revisionId, String projectName);
+	void branchRevisionToNewProject(String revisionId, String projectName);
 
 	DateTime checkin(String projectId, File file, boolean merge);
 
@@ -96,5 +96,7 @@ public interface BimserverClient {
 	void updateExportProject(String projectId, String exportProjectId, String shapeProjectId);
 
 	String getLastRevisionOfProject(String projectId);
+
+	String mergeProjectsAndReturnMergedRevision(String shapeProjectId, String shapeProjectId2);
 
 }

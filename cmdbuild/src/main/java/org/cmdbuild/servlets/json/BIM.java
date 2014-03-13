@@ -28,6 +28,7 @@ import javax.activation.DataSource;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logic.bim.BimLogic.Project;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -212,18 +213,35 @@ public class BIM extends JSONBaseWithSpringContext {
 			final @Parameter("className") String className, //
 			final @Parameter("withExport") boolean withExport//
 	) throws JSONException {
+		final boolean forceExport = true;
 		String revisionId = StringUtils.EMPTY;
+		
 		final String rootDescription = bimLogic().getDescriptionOfRoot(cardId, className);
 		final String baseProjectId = bimLogic().getBaseProjectIdForCardOfClass(cardId, className);
+		
 		boolean isSynch = true;
 		if (withExport) {
 			final String exportProjectId = bimLogic().getExportProjectId(baseProjectId);
-			isSynch = bimLogic().isSynchForExport(baseProjectId);
-			revisionId = bimLogic().getLastRevisionOfProject(exportProjectId);
+			System.out.println("export project is " + exportProjectId);
+			if (exportProjectId == null || exportProjectId.isEmpty()) {
+				revisionId = bimLogic().getLastRevisionOfProject(baseProjectId);
+				if (revisionId.equals("-1")) {
+					throw new BimError("No file uploaded");
+				}
+				System.out.println("No project for export found. Use revision " + revisionId);
+			} else {
+				isSynch = bimLogic().isSynchForExport(baseProjectId);
+				if (!isSynch) {
+					exportIfc(baseProjectId);
+				}
+				revisionId = bimLogic().getLastRevisionOfProject(exportProjectId);
+				System.out.println("Export revision is " + revisionId);
+				isSynch = bimLogic().isSynchForExport(baseProjectId);
+				System.out.println("Is synch? " + isSynch);
+			}
 		} else {
 			revisionId = bimLogic().getLastRevisionOfProject(baseProjectId);
 		}
-
 		final JSONObject out = new JSONObject();
 		out.put("DESCRIPTION", rootDescription);
 		out.put("POID", baseProjectId);

@@ -1,6 +1,7 @@
 package unit.logic.bim;
 
-import static org.junit.Assert.*;
+import static org.cmdbuild.bim.utils.BimConstants.INVALID_ID;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -10,8 +11,6 @@ import java.io.File;
 import java.util.Date;
 
 import javax.activation.DataHandler;
-
-import static org.cmdbuild.bim.service.BimProject.INVALID_BIM_ID;
 
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.BimRevision;
@@ -57,7 +56,7 @@ public class DefaultBimFacadeTest {
 	public void downloadProjectDoesNothingIfNoRevisions() throws Exception {
 		//given
 		BimProject project = mock(BimProject.class);
-		when(project.getLastRevisionId()).thenReturn(INVALID_BIM_ID);
+		when(project.getLastRevisionId()).thenReturn(INVALID_ID);
 		when(service.getProjectByPoid(ID)).thenReturn(project);
 		
 		//when
@@ -106,7 +105,7 @@ public class DefaultBimFacadeTest {
 		when(service.createProject(NAME)).thenReturn(projectCreated);
 
 		// when
-		BimFacadeProject result = serviceFacade.createProject(projectToCreate);
+		BimFacadeProject result = serviceFacade.createProjectAndUploadFile(projectToCreate);
 
 		// then
 		InOrder inOrder = inOrder(service);
@@ -143,7 +142,7 @@ public class DefaultBimFacadeTest {
 		when(service.getProjectByPoid(ID)).thenReturn(projectCreated);
 
 		// when
-		BimFacadeProject result = serviceFacade.createProject(projectToCreate);
+		BimFacadeProject result = serviceFacade.createProjectAndUploadFile(projectToCreate);
 
 		// then
 		InOrder inOrder = inOrder(service);

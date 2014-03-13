@@ -59,7 +59,7 @@ public class BimLogicMapperTest {
 		exporter = mock(Export.class);
 		dataAccessLogic = mock(DataAccessLogic.class);
 		bimLogic = new DefaultBimLogic(serviceFacade, dataPersistence, dataModelManager, mapper, bimDataView,
-				dataAccessLogic);
+				dataAccessLogic, null);
 	}
 
 	@Test

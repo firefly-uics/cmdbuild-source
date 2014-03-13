@@ -18,7 +18,7 @@ public abstract class ForwardingBimFacade implements BimFacade {
 	}
 
 	@Override
-	public BimFacadeProject createProject(BimFacadeProject project) {
+	public BimFacadeProject createProjectAndUploadFile(BimFacadeProject project) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -140,6 +140,11 @@ public abstract class ForwardingBimFacade implements BimFacade {
 	@Override
 	public void updateExportProject(String projectId, String exportProjectId, String shapeProjectId) {
 		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public BimProject getProjectByName(String projectId) {
+		return null;
 	}
 
 }

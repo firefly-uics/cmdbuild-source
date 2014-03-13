@@ -106,7 +106,7 @@ public class BimserverCli {
 		System.out.println("Branching last revision of project " + projectId + " into new project " + projectName
 				+ "...");
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
-		service.branchToNewProject(revisionId, projectName);
+		service.branchRevisionToNewProject(revisionId, projectName);
 	}
 
 	@Test
@@ -118,7 +118,7 @@ public class BimserverCli {
 		System.out.println("Start branching at " + new DateTime());
 		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
 		System.out.println("Branch created at " + new DateTime());
-		service.branchToExistingProject(revisionId, destinationProjectId);
+		service.branchRevisionToExistingProject(revisionId, destinationProjectId);
 	}
 
 	@Test
@@ -246,7 +246,7 @@ public class BimserverCli {
 		service.checkin(son1Pj.getIdentifier(), file);
 		
 		
-		service.branchToNewProject(service.getProjectByPoid(masterId).getLastRevisionId(), "Merged-"+suffix);
+		service.branchRevisionToNewProject(service.getProjectByPoid(masterId).getLastRevisionId(), "Merged-"+suffix);
 		String mergedProjectId = service.getProjectByName("Merged-"+suffix).getIdentifier();
 		
 		service.downloadIfc(service.getProjectByPoid(mergedProjectId).getLastRevisionId());

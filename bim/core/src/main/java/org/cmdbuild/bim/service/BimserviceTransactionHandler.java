@@ -1,25 +1,26 @@
 package org.cmdbuild.bim.service;
 
-import org.cmdbuild.bim.service.BimService;
+import static org.cmdbuild.bim.utils.BimConstants.INVALID_ID;
+
 import org.cmdbuild.bim.utils.LoggerSupport;
 import org.slf4j.Logger;
 
 public class BimserviceTransactionHandler {
-	
-	private final BimService service; 
+
+	private final BimService service;
 	private final String projectId;
 	private final String revisionId;
-	
+
 	private String transactionId = "";
-	
+
 	private static final Logger logger = LoggerSupport.logger;
-	
-	protected BimserviceTransactionHandler(BimService service, String projectId){
+
+	protected BimserviceTransactionHandler(BimService service, String projectId) {
 		this.service = service;
 		this.projectId = projectId;
-		revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+		revisionId = service.getLastRevisionOfProject(projectId);
 	}
-	
+
 	protected String openTransaction() {
 		if (transactionId.isEmpty()) {
 			transactionId = service.openTransaction(projectId);
@@ -28,7 +29,7 @@ public class BimserviceTransactionHandler {
 		}
 		return transactionId;
 	}
-	
+
 	protected String commitTransaction() {
 		if (!transactionId.isEmpty()) {
 			try {
@@ -38,7 +39,7 @@ public class BimserviceTransactionHandler {
 			} catch (Exception e) {
 				service.abortTransaction(transactionId);
 				logger.info("transaction aborted");
-				return "-1";
+				return INVALID_ID;
 			}
 		} else {
 			logger.info("Transaction has not started yet: cannot commit Transaction");

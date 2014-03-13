@@ -72,10 +72,10 @@ public class XmlParser implements Parser {
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			xmlDocument = db.parse(xmlSource);
+			xPath = XPathFactory.newInstance().newXPath();
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new BimError("Unable to parse export configuration '"+xmlString+"'");
 		} 
-		xPath = XPathFactory.newInstance().newXPath();
 	}
 
 	/**

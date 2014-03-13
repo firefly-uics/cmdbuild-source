@@ -52,7 +52,6 @@ public class DefaultBimDataView implements BimDataView {
 
 	private static final String CARDDATA_FROM_GUID_FUNCTION = "_bim_carddata_from_globalid";
 	private static final String CARDDATA_FOR_EXPORT_FUNCTION = "_bim_data_for_export";
-	private static final String FIND_BUILDING_FUNCTION = "_opm_find_the_building";
 	private static final String GENERATE_COORDINATES_FUNCTION = "_bim_generate_coordinates";
 	private static final String STORE_BIMDATA_FUNCTION = "_bim_store_data";
 

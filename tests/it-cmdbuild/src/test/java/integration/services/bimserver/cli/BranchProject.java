@@ -92,16 +92,16 @@ public class BranchProject {
 		BimProject branchedSub = service.createSubProject(name+"_branched", merged.getIdentifier());
 		System.out.println("project " + branchedSub.getIdentifier() + " " + branchedSub.getName() +" created");
 		
-		service.branchToExistingProject(service.getProjectByName("shapes-"+name).getLastRevisionId(), shapesSub.getIdentifier());
+		service.branchRevisionToExistingProject(service.getProjectByName("shapes-"+name).getLastRevisionId(), shapesSub.getIdentifier());
 		System.out.println("revision " + service.getProjectByName("shapes-"+name).getLastRevisionId() + " branched to " + shapesSub.getIdentifier());
 		
-		service.branchToExistingProject(service.getProjectByName(name).getLastRevisionId(), branchedSub.getIdentifier());
+		service.branchRevisionToExistingProject(service.getProjectByName(name).getLastRevisionId(), branchedSub.getIdentifier());
 		System.out.println("revision " + service.getProjectByName(name).getLastRevisionId() + " branched to " + branchedSub.getIdentifier());
 				
-		service.branchToExistingProject(service.getProjectByName("shapes-"+name).getLastRevisionId(), shapesSub.getIdentifier());
+		service.branchRevisionToExistingProject(service.getProjectByName("shapes-"+name).getLastRevisionId(), shapesSub.getIdentifier());
 		System.out.println("revision " + service.getProjectByName("shapes-"+name).getLastRevisionId() + " branched again to " + shapesSub.getIdentifier());
 		
-		service.branchToExistingProject(service.getProjectByName(name).getLastRevisionId(), branchedSub.getIdentifier());
+		service.branchRevisionToExistingProject(service.getProjectByName(name).getLastRevisionId(), branchedSub.getIdentifier());
 		System.out.println("revision " + service.getProjectByName(name).getLastRevisionId() + " branched again to " + branchedSub.getIdentifier());
 		
 	}

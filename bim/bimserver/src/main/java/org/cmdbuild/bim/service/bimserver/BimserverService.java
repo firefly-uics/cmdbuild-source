@@ -47,13 +47,13 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public void branchToExistingProject(final String revisionId, final String destinationProjectId) {
-		client.branchToExistingProject(revisionId, destinationProjectId);
+	public void branchRevisionToExistingProject(final String revisionId, final String destinationProjectId) {
+		client.branchRevisionToExistingProject(revisionId, destinationProjectId);
 	}
 
 	@Override
-	public void branchToNewProject(final String revisionId, final String projectName) {
-		client.branchToNewProject(revisionId, projectName);
+	public void branchRevisionToNewProject(final String revisionId, final String projectName) {
+		client.branchRevisionToNewProject(revisionId, projectName);
 	}
 
 	@Override
@@ -232,6 +232,11 @@ public class BimserverService implements BimService {
 	@Override
 	public String getLastRevisionOfProject(final String projectId) {
 		return client.getLastRevisionOfProject(projectId);
+	}
+
+	@Override
+	public String mergeProjects(String project1, String project2) {
+		return client.mergeProjectsAndReturnMergedRevision(project1, project2);
 	}
 
 }
