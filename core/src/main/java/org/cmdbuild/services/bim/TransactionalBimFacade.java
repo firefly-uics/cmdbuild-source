@@ -1,5 +1,6 @@
 package org.cmdbuild.services.bim;
 
+import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -65,6 +66,12 @@ public class TransactionalBimFacade extends ForwardingBimFacade implements Invoc
 	public BimFacadeProject createBaseAndExportProject(BimFacadeProject bimProject) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void checkin(String targetId, File file) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
