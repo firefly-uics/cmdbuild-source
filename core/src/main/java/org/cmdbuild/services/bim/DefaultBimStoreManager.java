@@ -48,7 +48,9 @@ public class DefaultBimStoreManager implements BimStoreManager {
 		StorableProject projectAlreadyStored = projectStore.read(storableWithId(project.getProjectId()));
 		if (projectAlreadyStored != null) {
 			project.setName(projectAlreadyStored.getName());
-			project.setExportProjectId(projectAlreadyStored.getExportProjectId());
+			if(project.getExportProjectId() == null){
+				project.setExportProjectId(projectAlreadyStored.getExportProjectId());
+			}
 			if (project.getLastCheckin() == null) {
 				project.setLastCheckin(projectAlreadyStored.getLastCheckin());
 			}

@@ -10,6 +10,7 @@ import static org.cmdbuild.bim.utils.BimConstants.IFC_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_SPACE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_TAG;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_TYPE;
+import static org.cmdbuild.bim.utils.BimConstants.INVALID_ID;
 import static org.cmdbuild.bim.utils.BimConstants.OBJECT_OID;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
@@ -31,7 +32,6 @@ import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.BimError;
-import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.bim.service.bimserver.BimserverEntity;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
@@ -42,6 +42,7 @@ import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.connector.Output;
 import org.cmdbuild.services.bim.connector.export.DataChangedListener.DataChangedException;
 import org.cmdbuild.services.bim.connector.export.DataChangedListener.DataNotChangedException;
+import org.cmdbuild.services.bim.connector.export.DataChangedListener.InvalidOutputException;
 import org.cmdbuild.utils.bim.BimIdentifier;
 import org.joda.time.DateTime;
 
@@ -57,11 +58,14 @@ public class NewExport implements Export {
 	private final BimDataView bimDataView;
 	private final Map<String, String> shapeNameToOidMap;
 	private final Iterable<String> candidateTypes = Lists.newArrayList(IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING);
+	private final ExportProjectStrategy exportStrategy;
 
-	public NewExport(final BimDataView dataView, final BimFacade bimServiceFacade, final BimPersistence bimPersistence) {
+	public NewExport(final BimDataView dataView, final BimFacade bimServiceFacade, final BimPersistence bimPersistence,
+			ExportProjectStrategy exportStrategy) {
 		this.serviceFacade = bimServiceFacade;
 		this.persistence = bimPersistence;
 		this.bimDataView = dataView;
+		this.exportStrategy = exportStrategy;
 		shapeNameToOidMap = Maps.newHashMap();
 	}
 
@@ -71,7 +75,9 @@ public class NewExport implements Export {
 		final Output changeListener = new DataChangedListener();
 		try {
 			export(catalog, projectId, changeListener);
-		} catch (final DataChangedException e) {
+		} catch (final DataChangedException de) {
+			synch = false;
+		}catch(final InvalidOutputException oe){
 			synch = false;
 		}
 		return synch;
@@ -141,12 +147,18 @@ public class NewExport implements Export {
 		final Map<String, ValueDifference<Entity>> entriesToUpdate = difference.entriesDiffering();
 		final Map<String, Entity> entriesToRemove = difference.entriesOnlyOnRight();
 
-		final String targetId = getExportProjectId(sourceProjectId);
-		serviceFacade.openTransaction(targetId);
+		final String exportProjectId = getExportProjectId(sourceProjectId);
+		final String exportRevisionId = serviceFacade.getLastRevisionOfProject(exportProjectId);
+		boolean shapesLoaded = areShapeOfCatalogAlreadyLoadedInRevision(catalog, exportRevisionId);
+		if (!shapesLoaded) {
+			output.outputInvalid();
+			exportStrategy.beforeExport(exportProjectId);
+		}
+		serviceFacade.openTransaction(exportProjectId);
 		try {
 			for (final String guidToCreate : entriesToCreate.keySet()) {
 				final Entity entityToCreate = entriesToCreate.get(guidToCreate);
-				output.createTarget(entityToCreate, targetId);
+				output.createTarget(entityToCreate, exportProjectId);
 			}
 			for (final String guidToUpdate : entriesToUpdate.keySet()) {
 				final ValueDifference<Entity> entityToUpdate = entriesToUpdate.get(guidToUpdate);
@@ -154,23 +166,23 @@ public class NewExport implements Export {
 				final Entity entityToCreate = entityToUpdate.leftValue();
 				final boolean toUpdate = areDifferent(entityToRemove, entityToCreate);
 				if (toUpdate) {
-					output.createTarget(entityToCreate, targetId);
-					output.deleteTarget(entityToRemove, targetId);
+					output.createTarget(entityToCreate, exportProjectId);
+					output.deleteTarget(entityToRemove, exportProjectId);
 				}
 			}
 			for (final String guidToRemove : entriesToRemove.keySet()) {
 				final Entity entityToRemove = entriesToRemove.get(guidToRemove);
-				output.deleteTarget(entityToRemove, targetId);
+				output.deleteTarget(entityToRemove, exportProjectId);
 			}
-			output.updateRelations(targetId);
+			output.updateRelations(exportProjectId);
 			final String revisionId = serviceFacade.commitTransaction();
 			System.out.println("Revision " + revisionId + " created at " + new DateTime());
-			
-			DataHandler exportedData = serviceFacade.download(targetId); 
-			final File file = File.createTempFile("ifc", null); 
-			final FileOutputStream outputStream = new FileOutputStream(file); 
-			exportedData.writeTo(outputStream); 
-			serviceFacade.checkin(targetId, file); 
+
+			DataHandler exportedData = serviceFacade.download(exportProjectId);
+			final File file = File.createTempFile("ifc", null);
+			final FileOutputStream outputStream = new FileOutputStream(file);
+			exportedData.writeTo(outputStream);
+			serviceFacade.checkin(exportProjectId, file);
 			System.out.println("export file is ready");
 		} catch (final DataChangedException d) {
 			serviceFacade.abortTransaction();
@@ -181,7 +193,19 @@ public class NewExport implements Export {
 			serviceFacade.abortTransaction();
 			throw new BimError("Error during export", t);
 		}
-		return targetId;
+		return exportProjectId;
+	}
+
+	private boolean areShapeOfCatalogAlreadyLoadedInRevision(Catalog catalog, String revisionId) {
+		boolean allShapesAreLoaded = true;
+		for (final EntityDefinition catalogEntry : catalog.getEntitiesDefinitions()) {
+			final String shapeOid = getShapeOid(revisionId, catalogEntry.getShape());
+			if (INVALID_ID.equals(shapeOid)) {
+				allShapesAreLoaded = false;
+				break;
+			}
+		}
+		return allShapesAreLoaded;
 	}
 
 	private boolean areDifferent(final Entity entityToRemove, final Entity entityToCreate) {
@@ -268,8 +292,7 @@ public class NewExport implements Export {
 
 	private String getExportProjectId(final String masterProjectId) {
 		final String targetProjectId = persistence.read(masterProjectId).getExportProjectId();
-		final BimProject targetProject = serviceFacade.getProjectById(targetProjectId);
-		if (!targetProject.isValid()) {
+		if(targetProjectId == null || targetProjectId.isEmpty() || targetProjectId.equals(INVALID_ID)){
 			throw new BimError("Project for export not found");
 		}
 		return targetProjectId;

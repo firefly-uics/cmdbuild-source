@@ -1,6 +1,6 @@
 package org.cmdbuild.bim.service.bimserver;
 
-import static org.cmdbuild.bim.service.BimProject.INVALID_BIM_ID;
+import static org.cmdbuild.bim.utils.BimConstants.INVALID_ID;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -140,7 +140,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public void branchToExistingProject(final String revisionId, final String destinationProjectId) {
+	public void branchRevisionToExistingProject(final String revisionId, final String destinationProjectId) {
 		try {
 			final Long roid = Long.parseLong(revisionId);
 			final Long poid = Long.parseLong(destinationProjectId);
@@ -151,7 +151,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public void branchToNewProject(final String revisionId, final String projectName) {
+	public void branchRevisionToNewProject(final String revisionId, final String projectName) {
 		try {
 			final Long roid = Long.parseLong(revisionId);
 			client.getBimsie1ServiceInterface().branchToNewProject(roid, projectName, "", true);
@@ -259,7 +259,6 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 		}
 	}
 
-	
 	@Override
 	public String getLastRevisionOfProject(final String identifier) {
 		try {
@@ -593,12 +592,13 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			throw new BimError(e);
 		}
 	}
-
+	
+	@Deprecated
 	@Override
 	public void updateExportProject(final String projectId, final String exportProjectId, final String shapeProjectId) {
 		final String baseRevision = getLastRevisionOfProject(projectId);
 		final String shapeRevision = getLastRevisionOfProject(shapeProjectId);
-		if (INVALID_BIM_ID.equals(baseRevision) || INVALID_BIM_ID.equals(shapeRevision)) {
+		if (INVALID_ID.equals(baseRevision) || INVALID_ID.equals(shapeRevision)) {
 			return;
 		}
 		try {
@@ -609,14 +609,23 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			System.out.println("tmp project " + tmpProject.getIdentifier() + " for merge created");
 			final BimProject shapeProject = createProjectWithNameAndParent("shapes", tmpProject.getIdentifier());
 			final BimProject baseProject = createProjectWithNameAndParent("base", tmpProject.getIdentifier());
-			branchToExistingProject(baseRevision, baseProject.getIdentifier());
-			branchToExistingProject(shapeRevision, shapeProject.getIdentifier());
+			branchRevisionToExistingProject(baseRevision, baseProject.getIdentifier());
+			branchRevisionToExistingProject(shapeRevision, shapeProject.getIdentifier());
 			final String mergedRevisionId = getLastRevisionOfProject(tmpProject.getIdentifier());
 			System.out.println("merged revision " + mergedRevisionId + " for export created");
-			if (INVALID_BIM_ID.equals(mergedRevisionId)) {
+			if (INVALID_ID.equals(mergedRevisionId)) {
 				throw new BimError("merged revision for export not created");
 			}
-			branchToExistingProject(mergedRevisionId, exportProjectId);
+
+			DataHandler mergedData = downloadIfc(mergedRevisionId);
+			final File file = File.createTempFile("ifc", null);
+			final FileOutputStream outputStream = new FileOutputStream(file); //
+			mergedData.writeTo(outputStream);
+			checkin(exportProjectId, file, false);
+			file.delete();
+
+			// branchToExistingProject(mergedRevisionId, exportProjectId);
+
 			final String exportRevisionId = getLastRevisionOfProject(exportProjectId);
 			System.out.println("Revision " + exportRevisionId + " for export created");
 		} catch (final Throwable e) {
@@ -625,4 +634,24 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 
 	}
 
+	@Override
+	public String mergeProjectsAndReturnMergedRevision(String project1Id, String project2Id) {
+		final String revision1 = getLastRevisionOfProject(project1Id);
+		final String revision2 = getLastRevisionOfProject(project2Id);
+		final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd-HHmmss");
+		final String str = fmt.print(new DateTime());
+		final String tmpName = String.format("tmp-%s", str);
+		final BimProject tmpProject = createProjectWithName(tmpName);
+		System.out.println("tmp project " + tmpProject.getIdentifier() + " for merge created");
+		final BimProject project1 = createProjectWithNameAndParent("project1", tmpProject.getIdentifier());
+		final BimProject project2 = createProjectWithNameAndParent("project2", tmpProject.getIdentifier());
+		branchRevisionToExistingProject(revision1, project1.getIdentifier());
+		branchRevisionToExistingProject(revision2, project2.getIdentifier());
+		final String mergedRevisionId = getLastRevisionOfProject(tmpProject.getIdentifier());
+		System.out.println("merged revision " + mergedRevisionId + " for export created");
+		if (INVALID_ID.equals(mergedRevisionId)) {
+			throw new BimError("merged revision for export not created");
+		}
+		return mergedRevisionId;
+	}
 }

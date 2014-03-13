@@ -28,12 +28,12 @@ import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimStoreManager;
-import org.cmdbuild.services.bim.DefaultTransactionManager;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
 import org.cmdbuild.services.bim.DefaultBimFacade;
 import org.cmdbuild.services.bim.DefaultBimPersistence;
 import org.cmdbuild.services.bim.DefaultBimStoreManager;
 import org.cmdbuild.services.bim.DefaultRelationPersistence;
+import org.cmdbuild.services.bim.DefaultTransactionManager;
 import org.cmdbuild.services.bim.RelationPersistence;
 import org.cmdbuild.services.bim.TransactionManager;
 import org.cmdbuild.services.bim.connector.BimCardDiffer;
@@ -41,11 +41,13 @@ import org.cmdbuild.services.bim.connector.CardDiffer;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView;
 import org.cmdbuild.services.bim.connector.DefaultBimMapper;
 import org.cmdbuild.services.bim.connector.Mapper;
+import org.cmdbuild.services.bim.connector.export.ExportProjectStrategy;
+import org.cmdbuild.services.bim.connector.export.MergeAfterEveryUploadExportStrategy;
+import org.cmdbuild.services.bim.connector.export.MergeOnlyBeforeExportStrategy;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 @ConfigurationComponent
 public class Bim {
@@ -84,7 +86,12 @@ public class Bim {
 	@Bean
 	public BimLogic bimLogic() {
 		return new DefaultBimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(),
-				bimDataView(), dataAccessLogic());
+				bimDataView(), dataAccessLogic(), exportProjectStrategy());
+	}
+
+	@Bean
+	public ExportProjectStrategy exportProjectStrategy() {
+		return new MergeOnlyBeforeExportStrategy(bimServiceFacade());
 	}
 
 	@Bean
@@ -114,10 +121,6 @@ public class Bim {
 	@Bean
 	protected BimDataView bimDataView() {
 		return new DefaultBimDataView(systemDataView);
-	}
-
-	protected JdbcTemplate jdbcTemplate() {
-		return new JdbcTemplate(dataSource);
 	}
 
 	@Bean

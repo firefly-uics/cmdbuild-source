@@ -18,9 +18,9 @@ public interface BimService {
 
 	DateTime checkin(String projectId, File file, boolean merge);
 
-	void branchToNewProject(String revisionId, String projectName);
+	void branchRevisionToNewProject(String revisionId, String projectName);
 
-	void branchToExistingProject(String revisionId, String destinationProjectId);
+	void branchRevisionToExistingProject(String revisionId, String destinationProjectId);
 
 	FileOutputStream downloadLastRevisionOfProject(String projectId);
 
@@ -101,5 +101,7 @@ public interface BimService {
 	void updateExportProject(String projectId, String exportProjectId, String shapeProjectId);
 
 	String getLastRevisionOfProject(String projectId);
+
+	String mergeProjects(String shapeProjectId, String exportProjectId);
 
 }

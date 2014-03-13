@@ -37,11 +37,13 @@ public interface BimFacade {
 
 	// CRUD operations on projects
 
-	BimFacadeProject createProject(BimFacadeProject project);
+	BimFacadeProject createProjectAndUploadFile(BimFacadeProject project);
 
 	BimFacadeProject createBaseAndExportProject(BimFacadeProject bimProject);
 
 	BimFacadeProject updateProject(BimFacadeProject project);
+	
+	String createProject(String projectName);
 
 	void disableProject(BimFacadeProject project);
 
@@ -49,6 +51,8 @@ public interface BimFacade {
 
 	BimProject getProjectById(String projectId);
 
+	BimProject getProjectByName(String projectId);
+	
 	DataHandler download(String projectId);
 
 	String getLastRevisionOfProject(String projectId);
@@ -93,6 +97,10 @@ public interface BimFacade {
 	
 	@Deprecated
 	void checkin(String targetId, File file);
+
+	void branchRevisionToExistingProject(String projectId, String exportProjectId);
+
+	String mergeProjects(String shapeProjectId, String exportProjectId);
 
 
 }

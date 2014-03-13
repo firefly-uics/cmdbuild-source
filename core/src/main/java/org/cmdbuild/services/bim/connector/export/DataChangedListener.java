@@ -12,6 +12,15 @@ public class DataChangedListener implements Output {
 	@SuppressWarnings("serial")
 	public static class DataNotChangedException extends RuntimeException {
 	}
+	
+	@SuppressWarnings("serial")
+	public static class InvalidOutputException extends RuntimeException {
+	}
+
+	@Override
+	public boolean outputInvalid() {
+		throw new InvalidOutputException();
+	}
 
 	@Override
 	public void createTarget(Entity entityToCreate, String targetProjectId) {
@@ -27,4 +36,5 @@ public class DataChangedListener implements Output {
 	public void updateRelations(String targetProjectId) {
 		throw new DataNotChangedException();
 	}
+
 }

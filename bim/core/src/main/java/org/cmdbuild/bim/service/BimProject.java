@@ -2,9 +2,9 @@ package org.cmdbuild.bim.service;
 
 import org.joda.time.DateTime;
 
+import static org.cmdbuild.bim.utils.BimConstants.*;
+
 public interface BimProject {
-	
-	public static final String INVALID_BIM_ID = "-1";
 	
 	String getName();
 
@@ -28,12 +28,12 @@ public interface BimProject {
 		@Deprecated
 		@Override
 		public String getLastRevisionId() {
-			return INVALID_BIM_ID;
+			return INVALID_ID;
 		}
 
 		@Override
 		public String getIdentifier() {
-			return " -1";
+			return INVALID_ID;
 
 		}
 

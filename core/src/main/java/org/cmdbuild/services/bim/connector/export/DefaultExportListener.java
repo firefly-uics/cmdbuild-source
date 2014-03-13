@@ -78,4 +78,9 @@ public class DefaultExportListener implements Output {
 			serviceFacade.updateRelations(relationsMap, targetProjectId);
 			relationsMap = Maps.newHashMap();
 		}
+
+		@Override
+		public boolean outputInvalid() {
+			return false;
+		}
 }

@@ -51,7 +51,6 @@ public class BimConstants {
 	public static final String PERIMETER = "Perimeter";
 	public static final String HEIGHT = "Height";
 	public static final String POSITION = "Position";
-	
 
 	public static final String X_ATTRIBUTE = "x";
 	public static final String Y_ATTRIBUTE = "y";
@@ -62,22 +61,25 @@ public class BimConstants {
 			+ " (\"GlobalId\", \"Geometry\",\"Master\") " + "VALUES ('%s', ST_GeomFromText('%s'), %s)";
 	public static final String UPDATE_COORDINATES_QUERY_TEMPLATE = "UPDATE %s.\"%s\"" + " SET \"%s\" "
 			+ "= ST_GeomFromText('%s') " + "WHERE \"%s\" = %s";
-	
+
 	public static final String POINT_TEMPLATE = "POINT(%s %s %s)";
-	
+
 	public static final String STORE_GEOMETRY_QUERY_TEMPLATE = "UPDATE %s.\"%s\"" + " SET \"%s\" "
 			+ "= ST_GeomFromText('%s'), \"%s\" = %s " + "WHERE \"%s\" = %s";
 
 	public static final String SELECT_CENTROID_QUERY_TEMPLATE = "SELECT st_x(st_centroid(\"%s\")) AS x, st_y(st_centroid(\"%s\")) AS y, "
 			+ "\"%s\" AS z\n" + "FROM bim.\"%s\" \n" + "WHERE \"%s\" = %s";
-	
-	// Constants for the BimViewer
+
+	// Constants for the viewer
 	public static final String ID_FIELD_NAME = "id";
 	public static final String CARDID_FIELD_NAME = "id";
 	public static final String CLASSID_FIELD_NAME = "classid";
 	public static final String CLASSNAME_FIELD_NAME = "classname";
 	public static final String CARD_DESCRIPTION_FIELD_NAME = "card_description";
-	
+
+	// BimServer constants
+	public static final String INVALID_ID = "-1";
+
 	private BimConstants() {
 		throw new AssertionError();
 	}

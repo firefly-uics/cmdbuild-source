@@ -76,11 +76,10 @@
 					params: {
 						cardId: model.get("Id"),
 						className: entryType.getName(),
-						withExport: false
+						withExport: true
 					},
 					success: function(operation, options, response) {
 						if (response.ROID) {
-							//FIXME: the description should be the one of the Project, not of the card
 							startBIMPlayer(me, response.ROID, response.DESCRIPTION);
 						} else {
 							CMDBuild.Msg.warn(

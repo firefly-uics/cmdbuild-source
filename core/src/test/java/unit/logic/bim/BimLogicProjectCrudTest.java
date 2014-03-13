@@ -20,6 +20,7 @@ import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimFacade.BimFacadeProject;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimPersistence.CmProject;
+import org.cmdbuild.services.bim.connector.export.ExportProjectStrategy;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +38,7 @@ public class BimLogicProjectCrudTest {
 	private static final String c1 = "11";
 	private BimFacade serviceFacade;
 	private BimPersistence dataPersistence;
+	private ExportProjectStrategy exportStrategy;
 	private BimLogic bimLogic;
 	private static final String ID = "id of pippo";
 	private static final String NAME = "pippo";
@@ -49,7 +51,8 @@ public class BimLogicProjectCrudTest {
 	public void setUp() throws Exception {
 		serviceFacade = mock(BimFacade.class);
 		dataPersistence = mock(BimPersistence.class);
-		bimLogic = new DefaultBimLogic(serviceFacade, dataPersistence, null, null, null, null);
+		exportStrategy = mock(ExportProjectStrategy.class);
+		bimLogic = new DefaultBimLogic(serviceFacade, dataPersistence, null, null, null, null, exportStrategy);
 	}
 
 	@Test(expected = UnsupportedOperationException.class)
@@ -70,17 +73,19 @@ public class BimLogicProjectCrudTest {
 		when(createdProject.getName()).thenReturn(NAME);
 		when(createdProject.getLastCheckin()).thenReturn(null);
 		when(createdProject.getExportProjectId()).thenReturn(EXPORT_ID);
-		when(serviceFacade.createBaseAndExportProject(convertedProjectCaptor.capture())).thenReturn(createdProject);
+		when(serviceFacade.createProjectAndUploadFile(convertedProjectCaptor.capture())).thenReturn(createdProject);
+		when(exportStrategy.createProjectForExport(ID)).thenReturn(null);
 
 		// when
 		final Project result = bimLogic.createProject(project);
 
 		// then
-		final InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		final InOrder inOrder = inOrder(serviceFacade, dataPersistence, exportStrategy);
 		final BimFacadeProject convertedProject = convertedProjectCaptor.getValue();
-		inOrder.verify(serviceFacade).createBaseAndExportProject(convertedProject);
+		inOrder.verify(serviceFacade).createProjectAndUploadFile(convertedProject);
+		inOrder.verify(exportStrategy).createProjectForExport(ID);
 		inOrder.verify(dataPersistence).saveProject(cmProjectCaptor.capture());
-		verifyNoMoreInteractions(dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, exportStrategy);
 
 		assertTrue(convertedProject.getName().equals(NAME));
 		assertTrue(convertedProject.getFile() == null);
@@ -93,7 +98,7 @@ public class BimLogicProjectCrudTest {
 		assertTrue(projectToStore.getDescription().equals(DESCRIPTION));
 		assertTrue(projectToStore.isActive() == STATUS);
 		assertTrue(projectToStore.getCardBinding() == null);
-		assertTrue(projectToStore.getExportProjectId().equals(EXPORT_ID));
+		assertTrue(projectToStore.getExportProjectId() == null);
 
 		assertTrue(result.getName().equals(NAME));
 		assertTrue(result.getDescription() == DESCRIPTION);
@@ -124,11 +129,11 @@ public class BimLogicProjectCrudTest {
 		bimLogic.disableProject(project);
 
 		// then
-		final InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		final InOrder inOrder = inOrder(serviceFacade, dataPersistence, exportStrategy);
 		inOrder.verify(serviceFacade).disableProject(facadeProjectCaptor.capture());
 		inOrder.verify(dataPersistence).disableProject(cmProjectCaptor.capture());
 		verifyNoMoreInteractions(serviceFacade, dataPersistence);
-
+		verifyZeroInteractions(exportStrategy);
 		final BimFacadeProject facadeProject = facadeProjectCaptor.getValue();
 		assertTrue(facadeProject.getProjectId().equals(ID));
 		assertTrue(facadeProject.isActive() == STATUS);
@@ -163,10 +168,11 @@ public class BimLogicProjectCrudTest {
 		bimLogic.enableProject(project);
 
 		// then
-		final InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		final InOrder inOrder = inOrder(serviceFacade, dataPersistence, exportStrategy);
 		inOrder.verify(serviceFacade).enableProject(facadeProjectCaptor.capture());
 		inOrder.verify(dataPersistence).enableProject(cmProjectCaptor.capture());
 		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyZeroInteractions(exportStrategy);
 
 		final BimFacadeProject facadeProject = facadeProjectCaptor.getValue();
 		assertTrue(facadeProject.getProjectId().equals(ID));
@@ -193,10 +199,10 @@ public class BimLogicProjectCrudTest {
 		final Iterable<Project> projects = bimLogic.readAllProjects();
 
 		// then
-		final InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		final InOrder inOrder = inOrder(serviceFacade, dataPersistence, exportStrategy);
 		inOrder.verify(dataPersistence).readAll();
 		verifyNoMoreInteractions(dataPersistence);
-		verifyZeroInteractions(serviceFacade);
+		verifyZeroInteractions(serviceFacade, exportStrategy);
 
 		assertTrue(Iterables.size(projects) == 0);
 	}
@@ -222,10 +228,10 @@ public class BimLogicProjectCrudTest {
 		final Iterable<Project> projects = bimLogic.readAllProjects();
 
 		// then
-		final InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		final InOrder inOrder = inOrder(serviceFacade, dataPersistence, exportStrategy);
 		inOrder.verify(dataPersistence).readAll();
 		verifyNoMoreInteractions(serviceFacade);
-		verifyZeroInteractions(serviceFacade);
+		verifyZeroInteractions(serviceFacade, exportStrategy);
 
 		final Project theOnlyProject = projects.iterator().next();
 		final Iterable<String> cardBinding = theOnlyProject.getCardBinding();
@@ -271,12 +277,12 @@ public class BimLogicProjectCrudTest {
 		bimLogic.updateProject(project);
 
 		// then
-		final InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		final InOrder inOrder = inOrder(serviceFacade, dataPersistence, exportStrategy);
 		final BimFacadeProject facadeProject = facadeProjectCaptor.getValue();
 		inOrder.verify(serviceFacade).updateProject(facadeProject);
 		inOrder.verify(dataPersistence).saveProject(cmProjectCaptor.capture());
 		verifyNoMoreInteractions(serviceFacade, dataPersistence);
-
+		verifyZeroInteractions(exportStrategy);
 		final CmProject projectToStore = cmProjectCaptor.getValue();
 
 		assertTrue(facadeProject.getProjectId().equals(ID));
@@ -323,10 +329,11 @@ public class BimLogicProjectCrudTest {
 
 		// then
 		final BimFacadeProject projectToUpdate = facadeProjectCaptor.getValue();
-		final InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		final InOrder inOrder = inOrder(serviceFacade, dataPersistence, exportStrategy);
 		inOrder.verify(serviceFacade).updateProject(projectToUpdate);
+		inOrder.verify(exportStrategy).updateProjectForExport(ID);
 		inOrder.verify(dataPersistence).saveProject(cmProjectCaptor.capture());
-		verifyNoMoreInteractions(serviceFacade, dataPersistence);
+		verifyNoMoreInteractions(serviceFacade, dataPersistence, exportStrategy);
 
 		assertTrue(projectToUpdate.getProjectId().equals(ID));
 		assertTrue(projectToUpdate.getName().equals(NAME));
@@ -355,23 +362,24 @@ public class BimLogicProjectCrudTest {
 		when(createdProject.getProjectId()).thenReturn(ID);
 		when(createdProject.getLastCheckin()).thenReturn(null);
 		when(createdProject.getExportProjectId()).thenReturn(EXPORT_ID);
-		when(serviceFacade.createBaseAndExportProject(facadeProjectCaptor.capture())).thenReturn(createdProject);
+		when(serviceFacade.createProjectAndUploadFile(facadeProjectCaptor.capture())).thenReturn(createdProject);
 		when(dataPersistence.findRoot()).thenReturn(new BimLayer("root"));
-
+		when(exportStrategy.createProjectForExport(ID)).thenReturn(null);
 		// when
 		bimLogic.createProject(project);
 
 		// then
-		final InOrder inOrder = inOrder(serviceFacade, dataPersistence);
+		final InOrder inOrder = inOrder(serviceFacade, dataPersistence, exportStrategy);
 		final BimFacadeProject bimProject = facadeProjectCaptor.getValue();
-		inOrder.verify(serviceFacade).createBaseAndExportProject(bimProject);
+		inOrder.verify(serviceFacade).createProjectAndUploadFile(bimProject);
+		inOrder.verify(exportStrategy).createProjectForExport(ID);
 		inOrder.verify(dataPersistence).saveProject(cmProjectCaptor.capture());
-		verifyNoMoreInteractions(dataPersistence, serviceFacade);
+		verifyNoMoreInteractions(dataPersistence, serviceFacade, exportStrategy);
 
 		final CmProject projectToSave = cmProjectCaptor.getValue();
 		assertTrue(projectToSave.getProjectId().equals(ID));
 		assertTrue(projectToSave.getName().equals(NAME));
-		assertTrue(projectToSave.getExportProjectId().equals(EXPORT_ID));
+		assertTrue(projectToSave.getExportProjectId() == null);
 
 		final Iterable<String> cardBinding = projectToSave.getCardBinding();
 		final Iterator<String> iterator = cardBinding.iterator();
