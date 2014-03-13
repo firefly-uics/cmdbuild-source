@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.configuration.CMConfigurationEmailTemplatesController', {
+	Ext.define('CMDBuild.controller.administration.email.CMEmailTemplatesController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		// Overwrite

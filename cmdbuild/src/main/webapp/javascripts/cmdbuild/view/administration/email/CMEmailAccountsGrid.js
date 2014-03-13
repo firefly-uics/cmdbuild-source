@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.setup.email.accounts; // Path to translation
 
-	Ext.define('CMDBuild.view.administration.configuration.CMConfigurationEmailAccountsGrid', {
+	Ext.define('CMDBuild.view.administration.email.CMEmailAccountsGrid', {
 		extend: 'Ext.grid.Panel',
 
 		delegate: undefined,

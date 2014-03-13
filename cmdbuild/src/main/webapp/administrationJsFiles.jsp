@@ -111,8 +111,8 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationServer.js"></script>
 
 	<!-- EMAIL -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailAccounts.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMConfigurationEmailTemplates.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/email/CMEmailAccounts.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/email/CMEmailTemplates.js"></script>
 
 	<!-- MENU  -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMMenuAccordion.js"></script>
@@ -220,8 +220,8 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMModDashboardController.js"></script>
 
 	<!-- EMAIL -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMConfigurationEmailAccountsController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMConfigurationEmailTemplatesController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/email/CMEmailAccountsController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/email/CMEmailTemplatesController.js"></script>
 
 	<!-- MENU -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMMenuAccordionController.js"></script>

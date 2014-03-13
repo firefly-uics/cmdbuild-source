@@ -4,7 +4,7 @@
 
 	Ext.require('CMDBuild.core.serviceProxy.CMProxyConfigurationEmailAccounts');
 
-	Ext.define('CMDBuild.view.administration.configuration.CMConfigurationEmailAccounts', {
+	Ext.define('CMDBuild.view.administration.email.CMEmailAccounts', {
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
@@ -25,11 +25,11 @@
 				}
 			});
 
-			this.grid = Ext.create('CMDBuild.view.administration.configuration.CMConfigurationEmailAccountsGrid', {
+			this.grid = Ext.create('CMDBuild.view.administration.email.CMEmailAccountsGrid', {
 				region: 'center'
 			});
 
-			this.form = Ext.create('CMDBuild.view.administration.configuration.CMConfigurationEmailAccountsForm', {
+			this.form = Ext.create('CMDBuild.view.administration.email.CMEmailAccountsForm', {
 				region: 'south',
 				height: '70%'
 			});

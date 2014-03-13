@@ -99,13 +99,13 @@
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationTranslationsController,
 											cmName: "modsetuptranslations"
 										}),
-										new CMDBuild.view.administration.configuration.CMConfigurationEmailAccounts({
-											cmControllerType: controllerNS.administration.configuration.CMConfigurationEmailAccountsController,
-											cmName: "setupEmailAccounts"
+										new CMDBuild.view.administration.email.CMEmailAccounts({
+											cmControllerType: controllerNS.administration.email.CMEmailAccountsController,
+											cmName: "emailAccounts"
 										}),
-										new CMDBuild.view.administration.configuration.CMConfigurationEmailTemplates({
-											cmControllerType: controllerNS.administration.configuration.CMConfigurationEmailTemplatesController,
-											cmName: "setupEmailTemplates"
+										new CMDBuild.view.administration.email.CMEmailTemplates({
+											cmControllerType: controllerNS.administration.email.CMEmailTemplatesController,
+											cmName: "emailTemplates"
 										}),
 										new CMDBuild.view.administration.tasks.CMTasks({
 											cmControllerType: CMDBuild.controller.administration.tasks.CMTasksController,
