@@ -1373,10 +1373,12 @@
 	"subject": "Subject",
 	"targetClass": "Ciljna klasa",
 	"to": "To",
+	"from": "<em>From<em>",
 	"translations" : "<em>Translations</em>",
 	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Otključaj sve kartice",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Prikazi",
-	"you_have_not_set_a_filter": "Niste postavili filter"
+	"you_have_not_set_a_filter": "Niste postavili filter",
+	"value": "<em>Value</em>"
 }

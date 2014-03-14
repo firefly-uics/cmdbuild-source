@@ -1373,10 +1373,12 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "Doel Klas",
 	"to": "<em>To</em>",
+	"from": "<em>From<em>",
 	"translations" : "<em>Translations</em>",
 	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Deblokkeer alle kaarten",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Vensters",
-	"you_have_not_set_a_filter": "U heeft geen filter ingesteld"
+	"you_have_not_set_a_filter": "U heeft geen filter ingesteld",
+	"value": "<em>Value</em>"
 }

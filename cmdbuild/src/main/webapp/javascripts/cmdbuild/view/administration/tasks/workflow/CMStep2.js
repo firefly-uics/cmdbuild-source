@@ -1,6 +1,6 @@
 (function() {
 
-	var translation = CMDBuild.Translation.administration.modWorkflow.scheduler;
+	var translation = CMDBuild.Translation.administration.tasks.taskWorkflow;
 
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep2Delegate', {
 
@@ -103,7 +103,7 @@
 				width: CMDBuild.LABEL_WIDTH,
 				listeners: {
 					'change': function(radio, value) {
-						me.base.setDisabled(value);
+						me.delegate.setDisabledAdvancedFields(!value);
 					}
 				}
 			});
@@ -141,7 +141,7 @@
 				checked: true,
 				listeners: {
 					'change': function(radio, value) {
-						me.delegate.setAdvancedValue(value);
+						me.base.setDisabled(!value);
 					}
 				}
 			});

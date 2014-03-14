@@ -1,6 +1,6 @@
 (function() {
 
-	var translation = CMDBuild.Translation.administration.modWorkflow.scheduler;
+	var translation = CMDBuild.Translation.administration.tasks.taskWorkflow;
 
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', {
 
@@ -149,7 +149,7 @@
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				fieldLabel: '@@ Description',
+				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				allowBlank: false
@@ -157,16 +157,16 @@
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
 				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
-				fieldLabel: '@@ Run on save',
+				fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH
 			});
 
 			this.attributesTable = Ext.create('CMDBuild.view.administration.common.CMDynamicKeyValueGrid', {
-				title: '@@ Workflow attributes',
+				title: translation.workflowAttributes,
 				id: 'workflowAttributesGrid',
-				keyLabel: '@@ Name',
-				valueLabel: '@@ Value',
+				keyLabel: CMDBuild.Translation.name,
+				valueLabel: CMDBuild.Translation.value,
 				disabled: true,
 				keyEditorConfig: {
 					xtype: 'combo',
@@ -189,7 +189,7 @@
 			this.workflowCombo = Ext.create('Ext.form.field.ComboBox', {
 				id: 'workflowCombo',
 				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
-				fieldLabel: '@@ Workflow',
+				fieldLabel: CMDBuild.Translation.administration.tasks.workflow,
 				valueField: CMDBuild.ServiceProxy.parameter.NAME,
 				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 				store: CMDBuild.core.serviceProxy.CMProxyTasks.getWorkflowsStore(),

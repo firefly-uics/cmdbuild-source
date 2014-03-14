@@ -1373,10 +1373,12 @@
 	"subject": "Тема",
 	"targetClass": "Целевой класс",
 	"to": "Кому",
+	"from": "<em>From<em>",
 	"translations" : "<em>Translations</em>",
 	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Разблокировать все карточки",
 	"uploading_attachment": "Загружается вложение...",
 	"views": "Представления",
-	"you_have_not_set_a_filter": "Фильтр не установлен"
+	"you_have_not_set_a_filter": "Фильтр не установлен",
+	"value": "<em>Value</em>"
 }
