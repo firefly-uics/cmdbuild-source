@@ -1,127 +1,99 @@
 (function() {
 
-	Ext.define("CMDBuild.controller.administration.workflow.CMCronPanelController", {
+	Ext.define('CMDBuild.controller.administration.workflow.CMCronPanelController', {
+		extend: 'CMDBuild.controller.CMBasePanelController',
+
+		currentProcessId: undefined,
+
+		// Overwrite
 		constructor: function(view) {
-			this.currentProcessId = null;
-			this.currentJob = null;
 
+			// Handlers exchange
 			this.view = view;
-			this.jobGrid = view.jobGrid;
-			this.jobGridSM = view.jobGrid.getSelectionModel();
-			this.jobPanel = view.jobPanel;
-			this.jobParemetersGrid = view.jobParemetersGrid;
-
-			this.jobGridSM.on('selectionchange', onJobGridSelected, this);
-			this.jobPanel.saveButton.on("click", onSaveButtonClick, this);
-			this.jobPanel.abortButton.on("click", onAbortButtonClick, this);
-			this.jobPanel.modifyJobButton.on("click", onModifyJobClick, this);
-			this.jobPanel.deleteJobButton.on("click", onDeleteJobClick, this);
-			this.jobGrid.addJobButton.on("click", onAddJobButtonClick, this);
+			this.grid = view.grid;
+			this.view.delegate = this;
+			this.grid.delegate = this;
 		},
 
-		onProcessSelected: function(processId, process) {
-			this.currentProcessId = processId;
-			if (!process || process.get("superclass")) {
-				this.view.disable();
-			} else {
-				this.view.enable();
-				this.jobGrid.load(processId);
-				this.jobPanel.disableModify();
-				this.jobParemetersGrid.addParameterButton.disable();
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				case 'onAddButtonClick':
+					return this.onAddButtonClick(name, param, callBack);
+
+				case 'onItemDoubleClick':
+					return this.onItemDoubleClick(param);
+
+				case 'onModifyButtonClick':
+					return this.onModifyButtonClick(name, param, callBack);
+
+				case 'onRemoveButtonClick':
+					return this.onRemoveButtonClick(name, param, callBack);
+
+				case 'onRowSelected':
+					return this.onRowSelected(name, param, callBack);
+
+				default: {
+					if (this.parentDelegate)
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
 			}
 		},
 
-		onAddClassButtonClick: function() {
-			this.currentProcessId = null;
-			this.currentJob = null;
+		onAddButtonClick: function() {
+			_debug('onAddButtonClick');
+		},
 
-			this.view.disable();
+		onItemDoubleClick: function(itemId) {
+			var domainAccordion = _CMMainViewportController.findAccordionByCMName('tasks');
+
+			domainAccordion.expand();
+
+			Ext.Function.createDelayed(function() {
+				domainAccordion.selectNodeById(record.get('workflow'));
+			}, 100)();
+
+		},
+
+		onModifyButtonClick: function() {_debug('onModifyButtonClick');
+			if (this.currentProcessId) {
+				this.onItemDoubleClick(this.currentProcessId);
+
+				Ext.Function.createDelayed(function() {
+					_CMMainViewportController.panelControllers['tasks'].view.form.delegate.onModifyButtonClick();
+				}, 500)();
+			}
+		},
+
+		onProcessSelected: function(processId, process) {
+			var me = this;
+			this.currentProcessId = processId;
+
+			if (!process || process.get('superclass')) {
+				this.view.disable();
+			} else {
+				this.view.enable();
+
+				// TODO: reconfigura on server side implementation
+				this.grid.reconfigure(CMDBuild.core.serviceProxy.CMProxyTasks.getStoreByWorkflow());
+//				this.grid.store.load({
+//					params: { id: processId },
+//					callback: function() {
+//						_debug('store loaded');
+//						me.grid.getSelectionModel().select(0, true);
+//					}
+//				});
+			}
+		},
+
+		onRemoveButtonClick: function() {
+			_debug('onRemoveButtonClick');
+		},
+
+		onRowSelected: function() {_debug('onRowSelected');
+//			this.currentProcessId = null; // TODO: to complete
+			this.view.enableCMTbar();
 		}
 
 	});
 
-	function onJobGridSelected(sm, selection) {
-		if (selection.length > 0) {
-			this.currentJob = selection[0];
-
-			this.jobPanel.onJobSelected(this.currentJob);
-			this.jobParemetersGrid.onJobSelected(this.currentJob.get("params"));
-		}
-	}
-
-	function onAddJobButtonClick() {
-		this.currentJob = null;
-
-		this.jobGridSM.deselectAll();
-		this.jobPanel.onAddJobButtonClick();
-		this.jobParemetersGrid.onAddJobButtonClick();
-	}
-
-	function onModifyJobClick() {
-		this.jobPanel.enableModify();
-		this.jobParemetersGrid.addParameterButton.enable();
-	}
-	
-	function onDeleteJobClick() {
-		CMDBuild.Ajax.request({
-			url : 'services/json/schema/scheduler/deletejob',
-			params: {
-				jobId: this.currentJob.get("id")
-			},
-			scope : this,
-			success : successCB,
-			important: true
-		});
-	}
-	
-	function onSaveButtonClick() {
-		if (this.currentJob == null) {
-			var params = {
-					jobParameters: Ext.JSON.encode(this.jobParemetersGrid.getParametersAsMap()),
-					cronExpression: this.jobPanel.getCronExpression(),
-					jobDescription: this.jobPanel.jobDescriptionField.getValue()
-			};
-			params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentProcessId);
-
-			CMDBuild.Ajax.request({
-				url : 'services/json/schema/scheduler/addprocessjob',
-				params: params,
-				scope : this,
-				success : successCB,
-				important: true
-			});
-		} else {
-			CMDBuild.Ajax.request({
-				url : 'services/json/schema/scheduler/modifyjob',
-				params: {
-					jobParameters: Ext.JSON.encode(this.jobParemetersGrid.getParametersAsMap()),
-					jobId: this.currentJob.get("id"),
-					cronExpression: this.jobPanel.getCronExpression(),
-					jobDescription: this.jobPanel.jobDescriptionField.getValue()
-				},
-				scope : this,
-				success : successCB,
-				important: true
-			});
-		}
-	}
-
-	function onAbortButtonClick() {
-		this.jobPanel.disableModify();
-		this.jobPanel.reset();
-		if (this.currentJob != null) {
-			this.jobPanel.onJobSelected(this.currentJob)
-		}
-		this.jobParemetersGrid.addParameterButton.disable();
-		this.jobParemetersGrid.removeAll();
-	}
-
-	function successCB() {
-		this.jobGrid.load(this.currentProcessId);
-		this.jobPanel.disableModify();
-		this.jobPanel.reset();
-		this.jobParemetersGrid.addParameterButton.disable();
-		this.jobParemetersGrid.removeAll();
-	}
 })();
-	

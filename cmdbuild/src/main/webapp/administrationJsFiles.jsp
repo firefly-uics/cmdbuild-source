@@ -135,13 +135,13 @@
 
 	<!-- PROCESS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessAttributeForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessAttributesPanel.js"></script>
+<!-- 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessAttributesPanel.js"></script> -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CMJobGrid.js"></script>
+<!-- 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CMJobGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CMJobPanel.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CMJobParameterGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CronEditWindow.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMCronPanel.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CronEditWindow.js"></script> -->
+	<!-- <script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMCronPanel.js"></script> -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMModProcess.js"></script>
 
 	<!-- WIDGET -->

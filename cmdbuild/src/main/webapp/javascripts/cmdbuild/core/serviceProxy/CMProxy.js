@@ -153,7 +153,8 @@
 				post: 'services/json/schema/taskmanager/startworkflow/create',
 				put: 'services/json/schema/taskmanager/startworkflow/update',
 
-				getStore: 'services/json/schema/taskmanager/startworkflow/readall'
+				getStore: 'services/json/schema/taskmanager/startworkflow/readall',
+				getStorebyWorkflow: 'services/json/schema/taskmanager/startworkflow/readallbyworkflow'
 			}
 		},
 
