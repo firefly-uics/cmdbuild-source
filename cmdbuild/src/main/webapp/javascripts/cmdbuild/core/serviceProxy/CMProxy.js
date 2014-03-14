@@ -40,29 +40,6 @@
 			remove: 'services/json/schema/modclass/deletetable'
 		},
 
-		configuration: {
-			email: {
-				accounts:{
-					delete: 'services/json/schema/emailaccount/delete',
-					get: 'services/json/schema/emailaccount/get',
-					post: 'services/json/schema/emailaccount/post',
-					put: 'services/json/schema/emailaccount/put',
-
-					getStore: 'services/json/schema/emailaccount/getall',
-					getStoreColumns: '',
-					setDefault: 'services/json/schema/emailaccount/setdefault'
-				},
-				templates:{
-					delete: 'services/json/emailtemplate/deletetemplate',
-					get: 'services/json/emailtemplate/readtemplate',
-					post: 'services/json/emailtemplate/createtemplate',
-					put: 'services/json/emailtemplate/updatetemplate',
-
-					getStore: 'services/json/emailtemplate/readtemplates'
-				}
-			}
-		},
-
 		domain: {
 			create: 'services/json/schema/modclass/savedomain',
 			read: 'services/json/schema/modclass/getalldomains',
@@ -83,6 +60,27 @@
 				read: 'services/json/viewmanagement/readsqlview',
 				update: 'services/json/viewmanagement/updatesqlview',
 				remove: 'services/json/viewmanagement/deletesqlview'
+			}
+		},
+
+		email: {
+			accounts:{
+				delete: 'services/json/schema/emailaccount/delete',
+				get: 'services/json/schema/emailaccount/get',
+				post: 'services/json/schema/emailaccount/post',
+				put: 'services/json/schema/emailaccount/put',
+
+				getStore: 'services/json/schema/emailaccount/getall',
+				getStoreColumns: '',
+				setDefault: 'services/json/schema/emailaccount/setdefault'
+			},
+			templates:{
+				delete: 'services/json/emailtemplate/deletetemplate',
+				get: 'services/json/emailtemplate/readtemplate',
+				post: 'services/json/emailtemplate/createtemplate',
+				put: 'services/json/emailtemplate/updatetemplate',
+
+				getStore: 'services/json/emailtemplate/readtemplates'
 			}
 		},
 

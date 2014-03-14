@@ -3,6 +3,42 @@
 	"release": "2.2-dev",
 	"administration": {
 		"description": "Administration module",
+		"email": {
+			"title": "Email",
+			"accounts": {
+				"active": "Active",
+				"add": "Add account",
+				"credentials": "Credentials",
+				"account": "Account",
+				"address": "Address",
+				"enableMoveRejectedNotMatching": "Enable move rejected not matching",
+				"enableSsl": "Enable SSL",
+				"imapPort": "IMAP port",
+				"imapServer": "IMAP server",
+				"incoming": "Incoming",
+				"incomingFolder": "Incoming folder",
+				"isDefault": "Default",
+				"modify": "Modify account",
+				"outgoing": "Outgoing",
+				"password": "Password",
+				"processedFolder": "Processed folder",
+				"rejectedFolder": "Rejected folder",
+				"remove": "Remove account",
+				"setDefault": "Set as default",
+				"smtpPort": "SMTP Port",
+				"smtpServer": "SMTP server",
+				"title": "Accounts",
+				"username": "Username"
+			},
+			"templates": {
+				"add": "Add template",
+				"body": "Body",
+				"modify": "Modify template",
+				"remove": "Remove template",
+				"template": "Template",
+				"title": "Templates"
+			}
+		},
 		"modClass": {
 			"add_class": "Add Class",
 			"attributeProperties": {
@@ -603,42 +639,6 @@
 				"repositoryWSPath": "Web service path",
 				"serverUrl": "Server URL",
 				"title": "Alfresco Setup"
-			},
-			"email": {
-				"title": "Email",
-				"accounts": {
-					"active": "Active",
-					"add": "Add account",
-					"credentials": "Credentials",
-					"account": "Account",
-					"address": "Address",
-					"enableMoveRejectedNotMatching": "Enable move rejected not matching",
-					"enableSsl": "Enable SSL",
-					"imapPort": "IMAP port",
-					"imapServer": "IMAP server",
-					"incoming": "Incoming",
-					"incomingFolder": "Incoming folder",
-					"isDefault": "Default",
-					"modify": "Modify account",
-					"outgoing": "Outgoing",
-					"password": "Password",
-					"processedFolder": "Processed folder",
-					"rejectedFolder": "Rejected folder",
-					"remove": "Remove account",
-					"setDefault": "Set as default",
-					"smtpPort": "SMTP Port",
-					"smtpServer": "SMTP server",
-					"title": "Accounts",
-					"username": "Username"
-				},
-				"templates": {
-					"add": "Add template",
-					"body": "Body",
-					"modify": "Modify template",
-					"remove": "Remove template",
-					"template": "Template",
-					"title": "Templates"
-				}
 			},
 			"gis": {
 				"center_lat": "Initial latitude",

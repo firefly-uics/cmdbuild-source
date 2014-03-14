@@ -42,7 +42,7 @@
 			});
 		},
 
-		setAdvancedValue: function(cronExpression) {_debug(cronExpression);
+		setAdvancedValue: function(cronExpression) {
 			var values = cronExpression.split(' '),
 				fields = this.view.advancedFields;
 

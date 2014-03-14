@@ -1,13 +1,13 @@
 (function() {
 
-	Ext.require('CMDBuild.model.CMModelConfigurationEmailAccounts');
+	Ext.require('CMDBuild.model.CMModelEmailTemplates');
 
-	Ext.define('CMDBuild.core.serviceProxy.CMProxyConfigurationEmailAccounts', {
+	Ext.define('CMDBuild.core.serviceProxy.CMProxyEmailTemplates', {
 		statics: {
 			create: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
-					url: CMDBuild.ServiceProxy.url.configuration.email.accounts.post,
+					url: CMDBuild.ServiceProxy.url.email.templates.post,
 					params: parameters.params,
 					scope: parameters.scope,
 					success: parameters.success,
@@ -18,10 +18,10 @@
 			get: function() {
 				return Ext.create('Ext.data.JsonStore', {
 					autoLoad: false,
-					model: 'CMDBuild.model.CMModelConfigurationEmailAccounts.singleAccount',
+					model: 'CMDBuild.model.CMModelEmailTemplates.singleTemplate',
 					proxy: {
 						type: 'ajax',
-						url: CMDBuild.ServiceProxy.url.configuration.email.accounts.get,
+						url: CMDBuild.ServiceProxy.url.email.templates.get,
 						reader: {
 							type: 'json',
 							root: 'response'
@@ -33,10 +33,10 @@
 			getStore: function() {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: false,
-					model: 'CMDBuild.model.CMModelConfigurationEmailAccounts.grid',
+					model: 'CMDBuild.model.CMModelEmailTemplates.grid',
 					proxy: {
 						type: 'ajax',
-						url: CMDBuild.ServiceProxy.url.configuration.email.accounts.getStore,
+						url: CMDBuild.ServiceProxy.url.email.templates.getStore,
 						reader: {
 							type: 'json',
 							root: 'response.elements'
@@ -52,18 +52,7 @@
 			remove: function(parameters) {
 				CMDBuild.ServiceProxy.core.doRequest({
 					method: 'POST',
-					url: CMDBuild.ServiceProxy.url.configuration.email.accounts.delete,
-					params: parameters.params,
-					scope: parameters.scope,
-					success: parameters.success,
-					callback: parameters.callback
-				});
-			},
-
-			setDefault: function(parameters) {
-				CMDBuild.ServiceProxy.core.doRequest({
-					method: 'POST',
-					url: CMDBuild.ServiceProxy.url.configuration.email.accounts.setDefault,
+					url: CMDBuild.ServiceProxy.url.email.templates.delete,
 					params: parameters.params,
 					scope: parameters.scope,
 					success: parameters.success,
@@ -74,7 +63,7 @@
 			update: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
-					url: CMDBuild.ServiceProxy.url.configuration.email.accounts.put,
+					url: CMDBuild.ServiceProxy.url.email.templates.put,
 					params: parameters.params,
 					scope: parameters.scope,
 					success: parameters.success,
