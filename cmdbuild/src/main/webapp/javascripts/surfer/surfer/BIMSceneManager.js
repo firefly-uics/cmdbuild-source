@@ -106,20 +106,20 @@
 		};
 
 		this.classNames = config.classNames || [ 
-			"IfcColumn", 
-			"IfcStair", 
+//			"IfcColumn", 
+//			"IfcStair", 
 			"IfcSlab", 
-			"IfcWindow", 
-			"IfcDoor", 
-			"IfcBuildingElementProxy",
-			"IfcWallStandardCase", 
-			"IfcWall", 
-			"IfcBeam", 
-			"IfcRailing",
-			"IfcProxy",
-			"IfcRoof",
+//			"IfcWindow", 
+//			"IfcDoor", 
+//			"IfcBuildingElementProxy",
+//			"IfcWallStandardCase", 
+//			"IfcWall", 
+//			"IfcBeam", 
+//			"IfcRailing",
+//			"IfcProxy",
+//			"IfcRoof",
 			"IfcFurnishingElement",
-			"IfcFlowSegment"
+//			"IfcFlowSegment"
 		];
 
 		/**
@@ -918,6 +918,16 @@
 		me.currentSelectedObjectId = objectId;
 		var node = me.scene.findNode(objectId);
 		if (node != null) {
+			if (node._targetNode) {
+				var lookAtNode = me.scene.findNode('main-lookAt');
+				var nodeCube = getNodeCube(node);
+				var nodeCenter = getCubeCenter(nodeCube);
+				var nodeView = getCubeView(nodeCube);
+				lookAtNode.set('look', nodeCenter);
+				lookAtNode.set('eye', nodeView);
+				lookAtNode.set('up', {x: 0, y: 0, z: 1});
+			}
+			changeHighlightMaterial(node);
 			node.insert('node', HIGHLIGHT_MATERIAL);
 		}
 	}
@@ -935,5 +945,85 @@
 			this.callDelegates("selectionCleaned", [this]);
 		}
 	};
+	function getCubeView(cube) {
+		var maxDistance = Math.max(cube.max.x - cube.min.x, cube.max.z - cube.min.z) * 4;
+		var view = {
+				x : cube.min.x + (cube.max.x - cube.min.x) / 2,	
+				y : cube.max.y + maxDistance,	
+				z : cube.max.z// + (cube.max.z - cube.min.z) / 2,	
+		};
+		return view;
+	}
+	function getCubeCenter(cube) {
+		var center = {
+				x : cube.min.x + (cube.max.x - cube.min.x) / 2,	
+				y : cube.min.y + (cube.max.y - cube.min.y) / 2,	
+				z : cube.min.z + (cube.max.z - cube.min.z) / 2,	
+		};
+		return center;
+	}
+	function getNodeCube(node) {
+		var minx = Number.MAX_VALUE;
+		var maxx = -Number.MAX_VALUE;
+		var miny = Number.MAX_VALUE;
+		var maxy = -Number.MAX_VALUE;
+		var minz = Number.MAX_VALUE;
+		var maxz = -Number.MAX_VALUE;
+		var geometries = [];
+		getGeometriesByType(node._targetNode, geometries, "geometry");
+		for (var i = 0; i < geometries.length; i++) {
+			var positions = geometries[i].core.arrays.positions;
+			for (var j = 0; j < positions.length; j += 3) {
+				minx = Math.min(minx, positions[j]);
+				maxx = Math.max(maxx, positions[j]);
+				miny = Math.min(miny, positions[j + 1]);
+				maxy = Math.max(maxy, positions[j + 1]);
+				minz = Math.min(minz, positions[j + 2]);
+				maxz = Math.max(maxz, positions[j + 2]);
+			}
+		}
+		var cube = {
+			"min": {"x" : minx, "y" : miny, "z" : minz}, 
+			"max": {"x" : maxx, "y" : maxy, "z" : maxz}
+		};
+		return cube;
+	}
+	function getGeometriesByType(node, geometries, name) {
+		if (node.attr && node.attr.type == name) {
+			geometries.push(node);
+		}
+		if (! node.children) {
+			return;
+		}
+		for (var i = 0; i < node.children.length; i++) {
+			getGeometriesByType(node.children[i], geometries, name);
+		}
+	}
+	function getParentByName(node, name) {
+		if (! (node && node._targetNode)) {
+			return null;
+		}
+		node = node._targetNode.parent;
+		if (node.attr && node.attr.type == name) {
+			return node;
+		}
+		return getParentByName(node, name);
+	}
+	function changeHighlightMaterial(node) {
+		var colorNode = getParentByName(node, "material");
+		if (colorNode) {
+			var c = colorNode.core.baseColor;
+			if (c[0] >= c[1] && c[0] >= c[2] && ! (c[0] == c[1] && c[0] == c[2])) {
+				HIGHLIGHT_MATERIAL.baseColor.r = 0;
+				HIGHLIGHT_MATERIAL.baseColor.g = 0;
+				HIGHLIGHT_MATERIAL.baseColor.b = 1;
+			}
+			else {
+				HIGHLIGHT_MATERIAL.baseColor.r = 1;
+				HIGHLIGHT_MATERIAL.baseColor.g = 0;
+				HIGHLIGHT_MATERIAL.baseColor.b = 0;
+			}
+		}
+	}
 
 })();
