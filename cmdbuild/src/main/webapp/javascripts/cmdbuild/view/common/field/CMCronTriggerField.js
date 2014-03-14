@@ -10,7 +10,7 @@
 
 		onTriggerClick: function() {
 			if (!this.disabled) {
-				Ext.create('CMDBuild.view.common.field.CMCronTriggerEditWindow', {
+				Ext.create('CMDBuild.view.common.field.CMCronTriggerFieldEditWindow', {
 					title: this.fieldLabel,
 					parentField: this
 				}).show();

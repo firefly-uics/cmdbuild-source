@@ -30,13 +30,15 @@
 					flex: 4
 				},
 				{
-					text: tr.status,
+					text: tr.active,
 					width: 60,
 					align: 'center',
 					dataIndex: CMDBuild.ServiceProxy.parameter.ACTIVE,
 					renderer: function(value, metaData, record) {
 						return me.activeGridColumnRenderer(value, metaData, record);
 					},
+					hideable: false,
+					menuDisabled: true,
 					fixed: true
 				},
 				{

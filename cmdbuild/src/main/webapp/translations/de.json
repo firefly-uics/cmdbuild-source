@@ -1373,10 +1373,12 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "Ursprungsklasse",
 	"to": "<em>To</em>",
+	"from": "<em>From<em>",
 	"translations" : "<em>Translations</em>",
 	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Alle Karten entsperren",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Sicht",
-	"you_have_not_set_a_filter": "Sie haben keine Filters eingestellt"
+	"you_have_not_set_a_filter": "Sie haben keine Filters eingestellt",
+	"value": "<em>Value</em>"
 }

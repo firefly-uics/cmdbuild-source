@@ -1373,10 +1373,12 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "ターゲットクラス",
 	"to": "<em>To</em>",
+	"from": "<em>From<em>",
 	"translations" : "<em>Translations</em>",
 	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "すべてのカードをアンロック",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "ビュー",
-	"you_have_not_set_a_filter": "フィルタを設定していません"
+	"you_have_not_set_a_filter": "フィルタを設定していません",
+	"value": "<em>Value</em>"
 }

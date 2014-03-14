@@ -1373,10 +1373,12 @@
 	"subject": "Oggetto",
 	"targetClass": "Classe Origine",
 	"to": "A",
+	"from": "Da",
 	"translations" : "Traduzioni",
 	"translations_enabled" : "Lingue abilitate",
 	"unlock_all_cards": "Sblocca tutte le schede",
 	"uploading_attachment": "Caricamento allegato...",
 	"views": "Viste",
-	"you_have_not_set_a_filter": "Non hai impostato un filtro"
+	"you_have_not_set_a_filter": "Non hai impostato un filtro",
+	"value": "Valore"
 }

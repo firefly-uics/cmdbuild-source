@@ -1373,10 +1373,12 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "Class mục tiêu",
 	"to": "<em>To</em>",
+	"from": "<em>From<em>",
 	"translations" : "<em>Translations</em>",
 	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Mở tất cả các thẻ",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Lượt xem",
-	"you_have_not_set_a_filter": "Bạn không cần cài đặt thẻ"
+	"you_have_not_set_a_filter": "Bạn không cần cài đặt thẻ",
+	"value": "<em>Value</em>"
 }
