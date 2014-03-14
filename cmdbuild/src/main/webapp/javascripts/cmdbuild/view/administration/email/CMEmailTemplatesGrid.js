@@ -28,7 +28,7 @@
 						flex: 2
 					}
 				],
-				store: CMDBuild.core.serviceProxy.CMProxyConfigurationEmailTemplates.getStore()
+				store: CMDBuild.core.serviceProxy.CMProxyEmailTemplates.getStore()
 			});
 
 			this.callParent(arguments);

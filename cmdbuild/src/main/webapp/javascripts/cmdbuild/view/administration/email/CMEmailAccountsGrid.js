@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup.email.accounts; // Path to translation
+	var tr = CMDBuild.Translation.administration.email.accounts; // Path to translation
 
 	Ext.define('CMDBuild.view.administration.email.CMEmailAccountsGrid', {
 		extend: 'Ext.grid.Panel',
@@ -34,7 +34,7 @@
 						flex: 1
 					}
 				],
-				store: CMDBuild.core.serviceProxy.CMProxyConfigurationEmailAccounts.getStore()
+				store: CMDBuild.core.serviceProxy.CMProxyEmailAccounts.getStore()
 			});
 
 			this.callParent(arguments);

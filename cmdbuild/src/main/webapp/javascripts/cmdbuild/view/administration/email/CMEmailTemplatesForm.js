@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup.email.templates; // Path to translation
+	var tr = CMDBuild.Translation.administration.email.templates; // Path to translation
 
 	Ext.define('CMDBuild.view.administration.email.CMEmailTemplatesForm', {
 		extend: 'Ext.form.Panel',
@@ -108,7 +108,7 @@
 					},
 					{
 						xtype: 'fieldset',
-						title: CMDBuild.Translation.administration.setup.email.templates.template,
+						title: CMDBuild.Translation.administration.email.templates.template,
 						margins: '0px 0px 0px 3px',
 						autoScroll: true,
 
@@ -138,7 +138,7 @@
 							},
 							Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
 								name: CMDBuild.ServiceProxy.parameter.BODY,
-								fieldLabel: CMDBuild.Translation.administration.setup.email.templates.body,
+								fieldLabel: CMDBuild.Translation.administration.email.templates.body,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								considerAsFieldToDisable: true,
 								enableFont: false

@@ -3,6 +3,42 @@
 	"release": "2.2-dev",
 	"administration": {
 		"description": "Modulo di Amministrazione",
+		"email": {
+			"title": "Email",
+			"accounts": {
+				"active": "Attivo",
+				"add": "Aggiungi account",
+				"credentials": "Credenziali",
+				"account": "Account",
+				"address": "Indirizzo",
+				"enableMoveRejectedNotMatching": "Abilita spostamento respinte",
+				"enableSsl": "Abilita SSL",
+				"imapPort": "Porta IMAP",
+				"imapServer": "Server IMAP",
+				"incoming": "In arrivo",
+				"incomingFolder": "Cartella in arrivo",
+				"isDefault": "Default",
+				"modify": "Modifica account",
+				"outgoing": "In uscita",
+				"password": "Password",
+				"processedFolder": "Cartella per processate",
+				"rejectedFolder": "Cartella per respinte",
+				"remove": "Rimuovi account",
+				"setDefault": "Imposta come default",
+				"smtpPort": "Porta SMTP",
+				"smtpServer": "Server SMTP",
+				"title": "Account",
+				"username": "Nome utente"
+			},
+			"templates": {
+				"add": "Aggiungi template",
+				"body": "Corpo",
+				"modify": "Modifica template",
+				"remove": "Rimuovi template",
+				"template": "Template",
+				"title": "Templates"
+			}
+		},
 		"modClass": {
 			"add_class": "Aggiungi Classe",
 			"attributeProperties": {
@@ -603,42 +639,6 @@
 				"repositoryWSPath": "Percorso per il web service",
 				"serverUrl": "Url del servizio",
 				"title": "Configurazione Alfresco"
-			},
-			"email": {
-				"title": "Email",
-				"accounts": {
-					"active": "Attivo",
-					"add": "Aggiungi account",
-					"credentials": "Credenziali",
-					"account": "Account",
-					"address": "Indirizzo",
-					"enableMoveRejectedNotMatching": "Abilita spostamento respinte",
-					"enableSsl": "Abilita SSL",
-					"imapPort": "Porta IMAP",
-					"imapServer": "Server IMAP",
-					"incoming": "In arrivo",
-					"incomingFolder": "Cartella in arrivo",
-					"isDefault": "Default",
-					"modify": "Modifica account",
-					"outgoing": "In uscita",
-					"password": "Password",
-					"processedFolder": "Cartella per processate",
-					"rejectedFolder": "Cartella per respinte",
-					"remove": "Rimuovi account",
-					"setDefault": "Imposta come default",
-					"smtpPort": "Porta SMTP",
-					"smtpServer": "Server SMTP",
-					"title": "Account",
-					"username": "Nome utente"
-				},
-				"templates": {
-					"add": "Aggiungi template",
-					"body": "Corpo",
-					"modify": "Modifica template",
-					"remove": "Rimuovi template",
-					"template": "Template",
-					"title": "Templates"
-				}
 			},
 			"gis": {
 				"center_lat": "Latitudine iniziale",
