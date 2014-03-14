@@ -89,6 +89,9 @@
 			// before to initialize the application
 		},
 		setValue: function(value) {
+			if (value <= 0) {
+				value = "";
+			}
 			if(this.cardCombo) {
 				this.cardCombo.setValue(value);
 			}
