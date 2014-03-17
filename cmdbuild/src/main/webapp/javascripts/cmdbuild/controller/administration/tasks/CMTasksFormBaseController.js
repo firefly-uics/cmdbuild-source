@@ -8,7 +8,7 @@
 		selectionModel: undefined,
 		taskType: undefined,
 
-		cmOn: function(name, param, callBack) {
+		cmOn: function() {
 			throw 'CMTasksFormBaseController: cmOn() unimplemented method';
 		},
 
@@ -20,11 +20,11 @@
 			throw 'CMTasksFormBaseController: removeItem() unimplemented method';
 		},
 
-		success: function(result, options, decodedResult) {
+		success: function() {
 			throw 'CMTasksFormBaseController: success() unimplemented method';
 		},
 
-		onAbortButtonClick: function() {
+		onAbortButtonClick: function(name, param, callBack) {
 			if (this.selectedId != null) {
 				this.onRowSelected();
 			} else {
@@ -34,7 +34,7 @@
 			}
 		},
 
-		onAddButtonClick: function() {
+		onAddButtonClick: function(name, param, callBack) {
 			this.selectionModel.deselectAll();
 			this.selectedId = null;
 			this.parentDelegate.loadForm(this.taskType);
@@ -44,7 +44,7 @@
 			this.view.wizard.changeTab(0);
 		},
 
-		onCloneButtonClick: function() {
+		onCloneButtonClick: function(name, param, callBack) {
 			this.selectionModel.deselectAll();
 			this.selectedId = null;
 			this.view.disableCMTbar();
@@ -54,7 +54,7 @@
 			this.view.wizard.changeTab(0);
 		},
 
-		onModifyButtonClick: function() {
+		onModifyButtonClick: function(name, param, callBack) {
 			this.view.disableCMTbar();
 			this.view.enableCMButtons();
 			this.view.enableTabbedModify(true);
@@ -62,7 +62,7 @@
 			this.view.disableTypeField();
 		},
 
-		onRemoveButtonClick: function() {
+		onRemoveButtonClick: function(name, param, callBack) {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.administration.setup.remove,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,

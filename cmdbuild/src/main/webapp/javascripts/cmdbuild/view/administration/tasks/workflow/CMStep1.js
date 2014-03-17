@@ -79,7 +79,7 @@
 		},
 
 		onAttributeComboSelect: function(rowIndex) {
-			this.view.attributesTable.cellEditing.startEditByPosition({ row: rowIndex, column: 1});
+			this.view.attributesTable.cellEditing.startEditByPosition({ row: rowIndex, column: 1 });
 		},
 
 		onWorkflowSelected: function(name, modify) {

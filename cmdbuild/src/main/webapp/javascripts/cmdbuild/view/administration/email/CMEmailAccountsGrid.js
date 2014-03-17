@@ -46,7 +46,7 @@
 					'row': row,
 					'record': record,
 					'index': index
-				}, null);
+				});
 			},
 
 			/**
@@ -57,7 +57,8 @@
 
 				this.store.load({
 					callback: function() {
-						me.getSelectionModel().select(0, true);
+						if (!me.getSelectionModel().hasSelection())
+							me.getSelectionModel().select(0, true);
 					}
 				});
 			}

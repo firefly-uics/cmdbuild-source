@@ -47,7 +47,10 @@
 
 		listeners: {
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
-				this.delegate.cmOn('onItemDoubleClick', record.get(CMDBuild.ServiceProxy.parameter.ID));
+				this.delegate.cmOn('onItemDoubleClick', {
+					id: record.get(CMDBuild.ServiceProxy.parameter.ID),
+					type: 'workflow'
+				});
 			},
 
 			select: function(row, record, index) {
@@ -55,7 +58,21 @@
 					'row': row,
 					'record': record,
 					'index': index
-				}, null);
+				});
+			},
+
+			/**
+			 * Event to load store on view display and first row selection as CMDbuild standard
+			 */
+			viewready: function() {
+				var me = this;
+
+				this.store.load({
+					callback: function() {
+						if (!me.getSelectionModel().hasSelection())
+							me.getSelectionModel().select(0, true);
+					}
+				});
 			}
 		},
 
