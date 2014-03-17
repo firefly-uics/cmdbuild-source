@@ -1359,6 +1359,7 @@
 	"workflow_attributes": "Attributi del processo",
 	"workflow_by_name": "tramite nome",
 	"workflow_by_cql": "tramite Cql",
+	"workflow_cql_filter": "Filtro Cql",
 	"workflow_query_tipology": "Selezione",
 	"you_have_not_set_a_filter": "Non hai impostato un filtro"
 }
