@@ -1,6 +1,6 @@
 {
 	"description": "Français",
-	"release": "2.1.8 (17/03/2014)",
+	"release": "2.1-dev",
 	"administration": {
 		"description": "Module d'administration",
 		"modClass": {
