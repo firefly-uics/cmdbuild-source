@@ -493,8 +493,8 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public String mergeProjects(String project1, String project2) {
-		return service.mergeProjects(project1, project2);
+	public String mergeProjectsIntoNewProject(String project1, String project2) {
+		return service.mergeProjectsIntoNewProject(project1, project2);
 	}
 
 }

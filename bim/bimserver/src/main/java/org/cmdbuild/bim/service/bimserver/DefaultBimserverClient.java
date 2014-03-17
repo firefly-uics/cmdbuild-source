@@ -635,23 +635,28 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public String mergeProjectsAndReturnMergedRevision(String project1Id, String project2Id) {
+	public String mergeProjectsIntoNewProject(String project1Id, String project2Id) {
 		final String revision1 = getLastRevisionOfProject(project1Id);
 		final String revision2 = getLastRevisionOfProject(project2Id);
 		final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd-HHmmss");
 		final String str = fmt.print(new DateTime());
 		final String tmpName = String.format("tmp-%s", str);
 		final BimProject tmpProject = createProjectWithName(tmpName);
-		System.out.println("tmp project " + tmpProject.getIdentifier() + " for merge created");
-		final BimProject project1 = createProjectWithNameAndParent("project1", tmpProject.getIdentifier());
-		final BimProject project2 = createProjectWithNameAndParent("project2", tmpProject.getIdentifier());
+		final String mergedProjectId = tmpProject.getIdentifier();
+		System.out.println("tmp project " + mergedProjectId + " for merge created");
+		final BimProject project1 = createProjectWithNameAndParent("project1", mergedProjectId);
+		final BimProject project2 = createProjectWithNameAndParent("project2", mergedProjectId);
+		System.out.println("Branching revision " + revision1 + "...");
 		branchRevisionToExistingProject(revision1, project1.getIdentifier());
+		System.out.println("Done");
+		System.out.println("Branching revision " + revision2 + "...");
 		branchRevisionToExistingProject(revision2, project2.getIdentifier());
-		final String mergedRevisionId = getLastRevisionOfProject(tmpProject.getIdentifier());
+		System.out.println("Done");
+		final String mergedRevisionId = getLastRevisionOfProject(mergedProjectId);
 		System.out.println("merged revision " + mergedRevisionId + " for export created");
 		if (INVALID_ID.equals(mergedRevisionId)) {
 			throw new BimError("merged revision for export not created");
 		}
-		return mergedRevisionId;
+		return mergedProjectId;
 	}
 }

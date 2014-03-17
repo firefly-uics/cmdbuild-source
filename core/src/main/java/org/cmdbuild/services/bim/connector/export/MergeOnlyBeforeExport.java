@@ -2,6 +2,12 @@ package org.cmdbuild.services.bim.connector.export;
 
 import static org.cmdbuild.bim.utils.BimConstants.INVALID_ID;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import javax.activation.DataHandler;
+
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimProject;
@@ -69,11 +75,22 @@ public class MergeOnlyBeforeExport implements ExportProjectPolicy {
 	@Override
 	public void beforeExport(String exportProjectId) {
 		final String shapeProjectId = getShapeProjectId(exportProjectId);
-		if(INVALID_ID.equals(shapeProjectId)){
+		if (INVALID_ID.equals(shapeProjectId)) {
 			throw new BimError("No shapes loaded");
 		}
-		final String mergedRevision = bimFacade.mergeProjects(shapeProjectId, exportProjectId);
-		bimFacade.branchRevisionToExistingProject(mergedRevision, exportProjectId);
+		final String mergedProject = bimFacade.mergeProjectsIntoNewProject(shapeProjectId, exportProjectId);
+
+		final DataHandler exportedData = bimFacade.download(mergedProject);
+		try {
+			final File file = File.createTempFile("ifc", null);
+			final FileOutputStream outputStream = new FileOutputStream(file);
+			exportedData.writeTo(outputStream);
+			bimFacade.checkin(exportProjectId, file);
+			System.out.println("export file is ready");
+		} catch (IOException e) {
+			throw new BimError("Unable to prepare project for export connector");
+		}
+		System.out.println("Project for export is ready");
 	}
 
 }

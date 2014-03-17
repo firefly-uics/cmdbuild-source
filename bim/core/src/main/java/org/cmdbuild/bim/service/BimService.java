@@ -102,6 +102,6 @@ public interface BimService {
 
 	String getLastRevisionOfProject(String projectId);
 
-	String mergeProjects(String shapeProjectId, String exportProjectId);
+	String mergeProjectsIntoNewProject(String shapeProjectId, String exportProjectId);
 
 }

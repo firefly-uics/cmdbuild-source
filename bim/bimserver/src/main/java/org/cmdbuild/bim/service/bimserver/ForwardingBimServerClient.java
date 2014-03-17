@@ -213,7 +213,7 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	}
 	
 	@Override
-	public String mergeProjectsAndReturnMergedRevision(String project1Id, String project2Id) {
-		return delegate.mergeProjectsAndReturnMergedRevision(project1Id,project2Id);
+	public String mergeProjectsIntoNewProject(String project1Id, String project2Id) {
+		return delegate.mergeProjectsIntoNewProject(project1Id,project2Id);
 	}
 }
