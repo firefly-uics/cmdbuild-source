@@ -2,18 +2,14 @@ package org.cmdbuild.logic.taskmanager;
 
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.collect.Maps.uniqueIndex;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.data.store.Store;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 
 public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
@@ -27,166 +23,191 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	private static class Create implements Action<Long>, TaskVistor {
 
-		private final ScheduledTaskFacade schedulerFacade;
+		private final LogicAndStoreConverter converter;
+		private final Store<org.cmdbuild.data.store.task.Task> store;
+		private final SchedulerFacade schedulerFacade;
 		private final Task task;
 
 		private Long createdId;
 
-		public Create(final ScheduledTaskFacade schedulerFacade, final Task task) {
+		public Create(final LogicAndStoreConverter converter, final Store<org.cmdbuild.data.store.task.Task> store,
+				final SchedulerFacade schedulerFacade, final Task task) {
+			this.converter = converter;
+			this.store = store;
 			this.schedulerFacade = schedulerFacade;
 			this.task = task;
 		}
 
 		@Override
 		public Long execute() {
-			task.accept(this);
+			final org.cmdbuild.data.store.task.Task storable = converter.from(task).toStore();
+			final Storable created = store.create(storable);
+			final org.cmdbuild.data.store.task.Task read = store.read(created);
+			final Task taskWithId = converter.from(read).toLogic();
+			taskWithId.accept(this);
 			return createdId;
 		}
 
 		@Override
 		public void visit(final ReadEmailTask task) {
-			createdId = schedulerFacade.create(task);
+			schedulerFacade.create(task);
 		}
 
 		@Override
 		public void visit(final StartWorkflowTask task) {
-			createdId = schedulerFacade.create(task);
+			schedulerFacade.create(task);
 		}
 
 	}
 
-	private static class ReadAll implements Action<Iterable<Task>>, TaskVistor {
-
-		private static final Object NO_ARGUMENTS_REQUIRED = null;
-
-		private static final Function<ScheduledTask, Long> BY_ID = new Function<ScheduledTask, Long>() {
-
-			@Override
-			public Long apply(final ScheduledTask input) {
-				return input.getId();
-			}
-
-		};
+	private static class ReadAll implements Action<Iterable<Task>> {
 
 		private static Class<Object> ALL_TYPES = Object.class;
 
-		private final ScheduledTaskFacade schedulerFacade;
+		private final LogicAndStoreConverter converter;
+		private final Store<org.cmdbuild.data.store.task.Task> store;
 		private final Class<?> type;
 
-		private final Map<Long, Task> tasksById = Maps.newHashMap();
-
-		public ReadAll(final ScheduledTaskFacade schedulerFacade) {
-			this(schedulerFacade, null);
+		public ReadAll(final LogicAndStoreConverter converter, final Store<org.cmdbuild.data.store.task.Task> store) {
+			this(converter, store, null);
 		}
 
-		public ReadAll(final ScheduledTaskFacade schedulerFacade, final Class<? extends Task> type) {
-			this.schedulerFacade = schedulerFacade;
+		public ReadAll(final LogicAndStoreConverter converter, final Store<org.cmdbuild.data.store.task.Task> store,
+				final Class<? extends Task> type) {
+			this.converter = converter;
+			this.store = store;
 			this.type = (type == null) ? ALL_TYPES : type;
 		}
 
 		@Override
 		public Iterable<Task> execute() {
-			assert this instanceof TaskVistor;
-			for (final Method method : TaskVistor.class.getMethods()) {
-				try {
-					method.invoke(this, NO_ARGUMENTS_REQUIRED);
-				} catch (final IllegalArgumentException e) {
-					logger.warn(MARKER, "error invoking method", e);
-				} catch (final IllegalAccessException e) {
-					logger.warn(MARKER, "error invoking method", e);
-				} catch (final InvocationTargetException e) {
-					logger.warn(MARKER, "error invoking method", e);
+			return from(store.list()) //
+					.transform(toLogic()) //
+					.filter(instanceOf(type)) //
+					.toList();
+		}
+
+		private Function<org.cmdbuild.data.store.task.Task, Task> toLogic() {
+			return new Function<org.cmdbuild.data.store.task.Task, Task>() {
+
+				@Override
+				public Task apply(final org.cmdbuild.data.store.task.Task input) {
+					return converter.from(input).toLogic();
 				}
-			}
-			return from(tasksById.values()) //
-					.filter(instanceOf(type));
-		}
 
-		@Override
-		public void visit(final ReadEmailTask task) {
-			tasksById.putAll(uniqueIndex(schedulerFacade.read(), BY_ID));
-		}
-
-		@Override
-		public void visit(final StartWorkflowTask task) {
-			tasksById.putAll(uniqueIndex(schedulerFacade.read(), BY_ID));
+			};
 		}
 
 	}
 
-	private static class Read<T extends Task> implements Action<T>, TaskVistor {
+	private static class Read<T extends Task> implements Action<T> {
 
-		private final ScheduledTaskFacade schedulerFacade;
+		private final LogicAndStoreConverter converter;
+		private final Store<org.cmdbuild.data.store.task.Task> store;
 		private final T task;
 		private final Class<T> type;
 
-		private Task raw;
-
-		public Read(final ScheduledTaskFacade schedulerFacade, final T task, final Class<T> type) {
-			this.schedulerFacade = schedulerFacade;
+		public Read(final LogicAndStoreConverter converter, final Store<org.cmdbuild.data.store.task.Task> store,
+				final T task, final Class<T> type) {
+			this.converter = converter;
+			this.store = store;
 			this.task = task;
 			this.type = type;
 		}
 
 		@Override
 		public T execute() {
-			task.accept(this);
+			Validate.isTrue(task.getId() != null, "invalid id");
+			final org.cmdbuild.data.store.task.Task stored = converter.from(task).toStore();
+			final org.cmdbuild.data.store.task.Task read = store.read(stored);
+			final Task raw = converter.from(read).toLogic();
 			return type.cast(raw);
-		}
-
-		@Override
-		public void visit(final ReadEmailTask task) {
-			raw = schedulerFacade.read(task);
-		}
-
-		@Override
-		public void visit(final StartWorkflowTask task) {
-			raw = schedulerFacade.read(task);
 		}
 
 	}
 
-	private static class Update implements Action<Void>, TaskVistor {
+	private static class Update implements Action<Void> {
 
-		private final ScheduledTaskFacade schedulerFacade;
+		private final LogicAndStoreConverter converter;
+		private final Store<org.cmdbuild.data.store.task.Task> store;
+		private final SchedulerFacade schedulerFacade;
 		private final Task task;
 
-		public Update(final ScheduledTaskFacade schedulerFacade, final Task task) {
+		public Update(final LogicAndStoreConverter converter, final Store<org.cmdbuild.data.store.task.Task> store,
+				final SchedulerFacade schedulerFacade, final Task task) {
+			this.converter = converter;
+			this.store = store;
 			this.schedulerFacade = schedulerFacade;
 			this.task = task;
 		}
 
 		@Override
 		public Void execute() {
-			task.accept(this);
+			Validate.isTrue(task.getId() != null, "invalid id");
+			final org.cmdbuild.data.store.task.Task storable = converter.from(task).toStore();
+			final org.cmdbuild.data.store.task.Task read = store.read(storable);
+			final Task previous = converter.from(read).toLogic();
+			previous.accept(before());
+			store.update(storable);
+			task.accept(after());
 			return null;
 		}
 
-		@Override
-		public void visit(final ReadEmailTask task) {
-			schedulerFacade.update(task);
+		private TaskVistor before() {
+			return new TaskVistor() {
+
+				@Override
+				public void visit(final ReadEmailTask task) {
+					schedulerFacade.delete(task);
+				}
+
+				@Override
+				public void visit(final StartWorkflowTask task) {
+					schedulerFacade.delete(task);
+				}
+
+			};
 		}
 
-		@Override
-		public void visit(final StartWorkflowTask task) {
-			schedulerFacade.update(task);
+		private TaskVistor after() {
+			return new TaskVistor() {
+
+				@Override
+				public void visit(final ReadEmailTask task) {
+					schedulerFacade.create(task);
+				}
+
+				@Override
+				public void visit(final StartWorkflowTask task) {
+					schedulerFacade.create(task);
+				}
+
+			};
 		}
 
 	}
 
 	private static class Delete implements Action<Void>, TaskVistor {
 
-		private final ScheduledTaskFacade schedulerFacade;
+		private final LogicAndStoreConverter converter;
+		private final Store<org.cmdbuild.data.store.task.Task> store;
+		private final SchedulerFacade schedulerFacade;
 		private final Task task;
 
-		public Delete(final ScheduledTaskFacade schedulerFacade, final Task task) {
+		public Delete(final LogicAndStoreConverter converter, final Store<org.cmdbuild.data.store.task.Task> store,
+				final SchedulerFacade schedulerFacade, final Task task) {
+			this.converter = converter;
+			this.store = store;
 			this.schedulerFacade = schedulerFacade;
 			this.task = task;
 		}
 
 		@Override
 		public Void execute() {
+			Validate.isTrue(task.getId() != null, "invalid id");
 			task.accept(this);
+			final org.cmdbuild.data.store.task.Task storable = converter.from(task).toStore();
+			store.delete(storable);
 			return null;
 		}
 
@@ -202,48 +223,75 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
-	private final ScheduledTaskFacade schedulerFacade;
+	private final LogicAndStoreConverter converter;
+	private final Store<org.cmdbuild.data.store.task.Task> store;
+	private final SchedulerFacade schedulerFacade;
 
-	public DefaultTaskManagerLogic(final ScheduledTaskFacade schedulerFacade) {
+	public DefaultTaskManagerLogic(final LogicAndStoreConverter converter,
+			final Store<org.cmdbuild.data.store.task.Task> store, final SchedulerFacade schedulerFacade) {
+		this.converter = converter;
+		this.store = store;
 		this.schedulerFacade = schedulerFacade;
 	}
 
 	@Override
 	public Long create(final Task task) {
 		logger.info(MARKER, "creating a new task '{}'", task);
-		return execute(new Create(schedulerFacade, task));
+		return execute(doCreate(task));
 	}
 
 	@Override
 	public Iterable<Task> read() {
 		logger.info(MARKER, "reading all existing tasks");
-		return execute(new ReadAll(schedulerFacade));
+		return execute(doReadAll());
 	}
 
 	@Override
 	public Iterable<Task> read(final Class<? extends Task> type) {
 		logger.info(MARKER, "reading all existing tasks for type '{}'", type);
-		return execute(new ReadAll(schedulerFacade, type));
+		return execute(doReadAll(type));
 	}
 
 	@Override
 	public <T extends Task> T read(final T task, final Class<T> type) {
 		logger.info(MARKER, "reading task's details of '{}'", task);
-		return execute(new Read<T>(schedulerFacade, task, type));
+		return execute(doRead(task, type));
 	}
 
 	@Override
 	public void update(final Task task) {
 		logger.info(MARKER, "updating an existing task '{}'", task);
-		Validate.isTrue(task.getId() != null, "invalid id");
-		execute(new Update(schedulerFacade, task));
+		execute(doUpdate(task));
 	}
 
 	@Override
 	public void delete(final Task task) {
 		logger.info(MARKER, "deleting an existing task '{}'", task);
-		Validate.isTrue(task.getId() != null, "invalid id");
-		execute(new Delete(schedulerFacade, task));
+		execute(doDelete(task));
+	}
+
+	private Create doCreate(final Task task) {
+		return new Create(converter, store, schedulerFacade, task);
+	}
+
+	private ReadAll doReadAll() {
+		return new ReadAll(converter, store);
+	}
+
+	private ReadAll doReadAll(final Class<? extends Task> type) {
+		return new ReadAll(converter, store, type);
+	}
+
+	private <T extends Task> Read<T> doRead(final T task, final Class<T> type) {
+		return new Read<T>(converter, store, task, type);
+	}
+
+	private Update doUpdate(final Task task) {
+		return new Update(converter, store, schedulerFacade, task);
+	}
+
+	private Delete doDelete(final Task task) {
+		return new Delete(converter, store, schedulerFacade, task);
 	}
 
 	private <T> T execute(final Action<T> action) {

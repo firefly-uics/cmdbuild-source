@@ -1,32 +1,59 @@
 package unit.logic.taskmanager;
 
-import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
-import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
-
+import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.task.TaskVisitor;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
+import org.cmdbuild.logic.taskmanager.LogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
-import org.cmdbuild.logic.taskmanager.ScheduledTaskFacade;
-import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
+import org.cmdbuild.logic.taskmanager.SchedulerFacade;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.google.common.base.Functions;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 
 public class DefaultTaskManagerLogicTest {
+
+	private static final class DummyStorableTask extends org.cmdbuild.data.store.task.Task {
+
+		public static Builder<DummyStorableTask> newInstance() {
+			return new Builder<DummyStorableTask>() {
+
+				@Override
+				public DummyStorableTask doBuild() {
+					return new DummyStorableTask(this);
+				}
+
+			};
+		}
+
+		private DummyStorableTask(final Builder<? extends org.cmdbuild.data.store.task.Task> builder) {
+			super(builder);
+		}
+
+		@Override
+		public void accept(final TaskVisitor visitor) {
+			// nothing to do
+		}
+
+	}
+
+	private static final org.cmdbuild.data.store.task.Task DUMMY_STORABLE_TASK = DummyStorableTask.newInstance() //
+			.build();
+
+	private static final Task DUMMY_TASK = mock(Task.class);
 
 	private static final long ID = 42L;
 	private static final long ANOTHER_ID = 123L;
@@ -35,57 +62,77 @@ public class DefaultTaskManagerLogicTest {
 	private static final boolean ACTIVE_STATUS = true;
 	private static final String CRON_EXPRESSION = "cron expression";
 	private static final String NEW_CRON_EXPRESSION = "new cron expression";
-	private static final String PROCESS_CLASS = "Dummy";
-	private static final Iterable<String> VALUES = asList("foo", "bar");
-	private static Map<String, String> PARAMETERS = uniqueIndex(VALUES, Functions.<String> identity());
 
-	private ScheduledTaskFacade scheduledTaskFacade;
+	private LogicAndStoreConverter converter;
+	private LogicAndStoreConverter.LogicAsSourceConverter logicAsSourceConverter;
+	private LogicAndStoreConverter.StoreAsSourceConverter storeAsSourceConverter;
+	private Store<org.cmdbuild.data.store.task.Task> store;
+	private SchedulerFacade scheduledTaskFacade;
 	private DefaultTaskManagerLogic taskManagerLogic;
 
 	@Before
 	public void setUp() throws Exception {
-		scheduledTaskFacade = mock(ScheduledTaskFacade.class);
-		taskManagerLogic = new DefaultTaskManagerLogic(scheduledTaskFacade);
+		logicAsSourceConverter = mock(LogicAndStoreConverter.LogicAsSourceConverter.class);
+		when(logicAsSourceConverter.toStore()) //
+				.thenReturn(DUMMY_STORABLE_TASK);
+
+		storeAsSourceConverter = mock(LogicAndStoreConverter.StoreAsSourceConverter.class);
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(DUMMY_TASK);
+
+		converter = mock(LogicAndStoreConverter.class);
+		when(converter.from(any(Task.class))) //
+				.thenReturn(logicAsSourceConverter);
+		when(converter.from(any(org.cmdbuild.data.store.task.Task.class))) //
+				.thenReturn(storeAsSourceConverter);
+
+		store = mock(Store.class);
+
+		scheduledTaskFacade = mock(SchedulerFacade.class);
+
+		taskManagerLogic = new DefaultTaskManagerLogic(converter, store, scheduledTaskFacade);
 	}
 
 	@Test
-	public void readEmailTaskCreated() throws Exception {
+	public void scheduledTaskCreated() throws Exception {
 		// given
-		final ReadEmailTask task = ReadEmailTask.newInstance() //
-				.withDescription(DESCRIPTION) //
-				.withActiveStatus(ACTIVE_STATUS) //
-				.withCronExpression(CRON_EXPRESSION) //
-				.build();
+		final ReadEmailTask newOne = ReadEmailTask.newInstance().build();
+		final org.cmdbuild.data.store.task.ReadEmailTask createdOne = org.cmdbuild.data.store.task.ReadEmailTask
+				.newInstance().build();
+		final ReadEmailTask convertedAfterRead = ReadEmailTask.newInstance().build();
+		final Storable storable = mock(Storable.class);
+		when(store.create(DUMMY_STORABLE_TASK)) //
+				.thenReturn(storable);
+		when(store.read(storable)) //
+				.thenReturn(createdOne);
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(convertedAfterRead);
 
 		// when
-		taskManagerLogic.create(task);
+		taskManagerLogic.create(newOne);
 
-		verify(scheduledTaskFacade).create(task);
-		verifyNoMoreInteractions(scheduledTaskFacade);
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade);
+		inOrder.verify(converter).from(newOne);
+		inOrder.verify(logicAsSourceConverter).toStore();
+		inOrder.verify(store).create(DUMMY_STORABLE_TASK);
+		inOrder.verify(store).read(storable);
+		inOrder.verify(converter).from(createdOne);
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).create(convertedAfterRead);
+		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
-	public void startWorkflowTaskCreated() throws Exception {
+	public void scheduledTaskUpdated() throws Exception {
 		// given
-		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
-				.withDescription(DESCRIPTION) //
-				.withActiveStatus(ACTIVE_STATUS) //
-				.withCronExpression(CRON_EXPRESSION) //
-				.withProcessClass(PROCESS_CLASS) //
-				.withParameters(PARAMETERS) //
-				.build();
-
-		// when
-		taskManagerLogic.create(task);
-
-		verify(scheduledTaskFacade).create(task);
-		verifyNoMoreInteractions(scheduledTaskFacade);
-	}
-
-	@Test
-	public void readEmailTaskUpdated() throws Exception {
-		// given
-		final ReadEmailTask task = ReadEmailTask.newInstance() //
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(ReadEmailTask.newInstance() //
+						.withId(ID) //
+						.withDescription("should be deleted from scheduler facade") //
+						.build() //
+				);
+		final ScheduledTask task = ReadEmailTask.newInstance() //
 				.withId(ID) //
 				.withDescription(NEW_DESCRIPTION) //
 				.withActiveStatus(ACTIVE_STATUS) //
@@ -96,28 +143,21 @@ public class DefaultTaskManagerLogicTest {
 		taskManagerLogic.update(task);
 
 		// then
-		verify(scheduledTaskFacade).update(task);
-		verifyNoMoreInteractions(scheduledTaskFacade);
-	}
+		final ArgumentCaptor<ScheduledTask> scheduledTaskCaptor = ArgumentCaptor.forClass(ScheduledTask.class);
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade);
+		inOrder.verify(converter).from(task);
+		inOrder.verify(logicAsSourceConverter).toStore();
+		inOrder.verify(store).read(DUMMY_STORABLE_TASK);
+		inOrder.verify(converter).from(any(org.cmdbuild.data.store.task.Task.class));
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).delete(scheduledTaskCaptor.capture());
+		inOrder.verify(store).update(DUMMY_STORABLE_TASK);
+		inOrder.verify(scheduledTaskFacade).create(task);
+		inOrder.verifyNoMoreInteractions();
 
-	@Test
-	public void startWorkflowTaskUpdated() throws Exception {
-		// given
-		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
-				.withId(ID) //
-				.withDescription(NEW_DESCRIPTION) //
-				.withActiveStatus(ACTIVE_STATUS) //
-				.withCronExpression(NEW_CRON_EXPRESSION) //
-				.withProcessClass(PROCESS_CLASS) //
-				.withParameters(PARAMETERS) //
-				.build();
-
-		// when
-		taskManagerLogic.update(task);
-
-		// then
-		verify(scheduledTaskFacade).update(task);
-		verifyNoMoreInteractions(scheduledTaskFacade);
+		final ScheduledTask captured = scheduledTaskCaptor.getValue();
+		assertThat(captured.getDescription(), equalTo("should be deleted from scheduler facade"));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -132,9 +172,9 @@ public class DefaultTaskManagerLogicTest {
 	}
 
 	@Test
-	public void readEmailTaskDeleted() throws Exception {
+	public void scheduledTaskDeleted() throws Exception {
 		// given
-		final ReadEmailTask task = ReadEmailTask.newInstance() //
+		final ScheduledTask task = ReadEmailTask.newInstance() //
 				.withId(ID) //
 				.build();
 
@@ -142,21 +182,13 @@ public class DefaultTaskManagerLogicTest {
 		taskManagerLogic.delete(task);
 
 		// then
-		verify(scheduledTaskFacade).delete(task);
-	}
-
-	@Test
-	public void startWorkflowTaskDeleted() throws Exception {
-		// given
-		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
-				.withId(ID) //
-				.build();
-
-		// when
-		taskManagerLogic.delete(task);
-
-		// then
-		verify(scheduledTaskFacade).delete(task);
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade);
+		inOrder.verify(scheduledTaskFacade).delete(task);
+		inOrder.verify(converter).from(task);
+		inOrder.verify(logicAsSourceConverter).toStore();
+		inOrder.verify(store).delete(DUMMY_STORABLE_TASK);
+		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -173,132 +205,99 @@ public class DefaultTaskManagerLogicTest {
 	@Test
 	public void allTasksRead() throws Exception {
 		// given
-		final ReadEmailTask first = ReadEmailTask.newInstance() //
-				.withId(ID) //
+		final org.cmdbuild.data.store.task.ReadEmailTask first = org.cmdbuild.data.store.task.ReadEmailTask
+				.newInstance().withId(ID) //
 				.withDescription(DESCRIPTION) //
-				.withActiveStatus(ACTIVE_STATUS) //
+				.withRunningStatus(ACTIVE_STATUS) //
 				.withCronExpression(CRON_EXPRESSION) //
 				.build();
-		final ScheduledTask second = StartWorkflowTask.newInstance() //
-				.withId(ANOTHER_ID) //
+		final org.cmdbuild.data.store.task.StartWorkflowTask second = org.cmdbuild.data.store.task.StartWorkflowTask
+				.newInstance().withId(ANOTHER_ID) //
 				.withDescription(DESCRIPTION) //
-				.withActiveStatus(ACTIVE_STATUS) //
+				.withRunningStatus(ACTIVE_STATUS) //
 				.withCronExpression(CRON_EXPRESSION) //
 				.build();
-		when(scheduledTaskFacade.read()) //
+		when(store.list()) //
 				.thenReturn(asList(first, second));
 
 		// when
 		final Iterable<? extends Task> readed = taskManagerLogic.read();
 
 		// then
-		verify(scheduledTaskFacade, times(2)).read();
-		verifyNoMoreInteractions(scheduledTaskFacade);
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade);
+		inOrder.verify(store).list();
+		inOrder.verify(converter, times(2)).from(any(org.cmdbuild.data.store.task.Task.class));
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verifyNoMoreInteractions();
 
 		assertThat(size(readed), equalTo(2));
-
-		final Task firstReaded = get(readed, 0);
-		assertThat(firstReaded, instanceOf(ReadEmailTask.class));
-		assertThat(firstReaded.getId(), equalTo(ID));
-
-		final Task secondReaded = get(readed, 1);
-		assertThat(secondReaded, instanceOf(ScheduledTask.class));
-		assertThat(secondReaded.getId(), equalTo(ANOTHER_ID));
-
 	}
 
 	@Test
 	public void specificTaskTypeReaded() throws Exception {
 		// given
-		final ReadEmailTask first = ReadEmailTask.newInstance() //
+		final org.cmdbuild.data.store.task.ReadEmailTask first = org.cmdbuild.data.store.task.ReadEmailTask
+				.newInstance() //
 				.withId(1L) //
 				.build();
-		final ScheduledTask second = StartWorkflowTask.newInstance() //
+		final org.cmdbuild.data.store.task.StartWorkflowTask second = org.cmdbuild.data.store.task.StartWorkflowTask
+				.newInstance() //
 				.withId(2L) //
 				.build();
-		final ScheduledTask third = StartWorkflowTask.newInstance() //
-				.withId(3L) //
-				.build();
-		when(scheduledTaskFacade.read()) //
-				.thenReturn(asList(first, second, third));
+		when(store.list()) //
+				.thenReturn(asList(first, second));
 
 		// when
-		final Iterable<Task> readed = taskManagerLogic.read(StartWorkflowTask.class);
+		final Iterable<Task> readed = taskManagerLogic.read(Task.class);
 
 		// then
-		verify(scheduledTaskFacade, times(2)).read();
-		verifyNoMoreInteractions(scheduledTaskFacade);
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade);
+		inOrder.verify(store).list();
+		inOrder.verify(converter, times(2)).from(any(org.cmdbuild.data.store.task.Task.class));
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verifyNoMoreInteractions();
 
 		assertThat(size(readed), equalTo(2));
-
-		final Task firstReaded = get(readed, 0);
-		assertThat(firstReaded, instanceOf(StartWorkflowTask.class));
-		assertThat(firstReaded.getId(), equalTo(2L));
-
-		final Task secondReaded = get(readed, 1);
-		assertThat(secondReaded, instanceOf(StartWorkflowTask.class));
-		assertThat(secondReaded.getId(), equalTo(3L));
 	}
 
 	@Test
-	public void readEmailTaskDetailsRead() throws Exception {
+	public void taskDetailsRead() throws Exception {
 		// given
 		final ReadEmailTask task = ReadEmailTask.newInstance() //
 				.withId(ID) //
 				.build();
-		final ReadEmailTask readed = ReadEmailTask.newInstance() //
+		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
+				.newInstance() //
 				.withId(ID) //
-				.withDescription(DESCRIPTION) //
-				.withActiveStatus(ACTIVE_STATUS) //
-				.withCronExpression(CRON_EXPRESSION) //
-				// add more details
 				.build();
-		when(scheduledTaskFacade.read(task)) //
-				.thenReturn(readed);
+		when(store.read(any(Storable.class))) //
+				.thenReturn(stored);
 
 		// when
-		final ReadEmailTask detailed = taskManagerLogic.read(task, ReadEmailTask.class);
+		taskManagerLogic.read(task, Task.class);
 
 		// then
-		verify(scheduledTaskFacade).read(task);
-		verifyNoMoreInteractions(scheduledTaskFacade);
-
-		assertThat(detailed, instanceOf(ReadEmailTask.class));
-		assertThat(detailed.getId(), equalTo(ID));
-		assertThat(detailed.getDescription(), equalTo(DESCRIPTION));
-		assertThat(detailed.isActive(), equalTo(ACTIVE_STATUS));
-		assertThat(detailed.getCronExpression(), equalTo(CRON_EXPRESSION));
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade);
+		inOrder.verify(converter).from(task);
+		inOrder.verify(logicAsSourceConverter).toStore();
+		inOrder.verify(store).read(any(org.cmdbuild.data.store.task.Task.class));
+		inOrder.verify(converter).from(any(org.cmdbuild.data.store.task.Task.class));
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verifyNoMoreInteractions();
 	}
 
-	@Test
-	public void startWorkflowTaskDetailsRead() throws Exception {
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotReadTaskDetailsWithoutAnId() throws Exception {
 		// given
-		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
-				.withId(ID) //
-				.build();
-		final StartWorkflowTask readed = StartWorkflowTask.newInstance() //
-				.withId(ID) //
-				.withDescription(DESCRIPTION) //
-				.withActiveStatus(ACTIVE_STATUS) //
-				.withCronExpression(CRON_EXPRESSION) //
-				.withProcessClass(PROCESS_CLASS) //
-				.build();
-		when(scheduledTaskFacade.read(task)) //
-				.thenReturn(readed);
+		final Task task = mock(Task.class);
+		when(task.getId()) //
+				.thenReturn(null);
 
 		// when
-		final StartWorkflowTask detailed = taskManagerLogic.read(task, StartWorkflowTask.class);
-
-		// then
-		verify(scheduledTaskFacade).read(task);
-		verifyNoMoreInteractions(scheduledTaskFacade);
-
-		assertThat(detailed, instanceOf(StartWorkflowTask.class));
-		assertThat(detailed.getId(), equalTo(ID));
-		assertThat(detailed.getDescription(), equalTo(DESCRIPTION));
-		assertThat(detailed.isActive(), equalTo(ACTIVE_STATUS));
-		assertThat(detailed.getCronExpression(), equalTo(CRON_EXPRESSION));
-		assertThat(detailed.getProcessClass(), equalTo(PROCESS_CLASS));
+		taskManagerLogic.read(task, Task.class);
 	}
 
 }

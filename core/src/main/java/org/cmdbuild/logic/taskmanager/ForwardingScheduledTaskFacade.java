@@ -1,31 +1,16 @@
 package org.cmdbuild.logic.taskmanager;
 
-public abstract class ForwardingScheduledTaskFacade implements ScheduledTaskFacade {
+public abstract class ForwardingScheduledTaskFacade implements SchedulerFacade {
 
-	private final ScheduledTaskFacade delegate;
+	private final SchedulerFacade delegate;
 
-	public ForwardingScheduledTaskFacade(final ScheduledTaskFacade delegate) {
+	public ForwardingScheduledTaskFacade(final SchedulerFacade delegate) {
 		this.delegate = delegate;
 	}
 
 	@Override
-	public Long create(final ScheduledTask task) {
-		return delegate.create(task);
-	}
-
-	@Override
-	public Iterable<ScheduledTask> read() {
-		return delegate.read();
-	}
-
-	@Override
-	public ScheduledTask read(final ScheduledTask task) {
-		return delegate.read(task);
-	}
-
-	@Override
-	public void update(final ScheduledTask task) {
-		delegate.update(task);
+	public void create(final ScheduledTask task) {
+		delegate.create(task);
 	}
 
 	@Override

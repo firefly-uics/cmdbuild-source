@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.scheduler;
 
-import org.cmdbuild.data.store.scheduler.SchedulerJob;
+import org.cmdbuild.data.store.task.Task;
 
 public class ForwardingSchedulerLogic implements SchedulerLogic {
 
@@ -11,12 +11,12 @@ public class ForwardingSchedulerLogic implements SchedulerLogic {
 	}
 
 	@Override
-	public Iterable<SchedulerJob> findAllScheduledJobs() {
+	public Iterable<Task> findAllScheduledJobs() {
 		return inner.findAllScheduledJobs();
 	}
 
 	@Override
-	public Iterable<SchedulerJob> findWorkflowJobsByProcess(final String classname) {
+	public Iterable<Task> findWorkflowJobsByProcess(final String classname) {
 		return inner.findWorkflowJobsByProcess(classname);
 	}
 
