@@ -104,4 +104,6 @@ public interface BimService {
 
 	String mergeProjectsIntoNewProject(String shapeProjectId, String exportProjectId);
 
+	Long getOidFromGlobalId(String globalId, String revisionId);
+
 }

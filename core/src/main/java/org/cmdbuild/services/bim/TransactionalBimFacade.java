@@ -92,4 +92,10 @@ public class TransactionalBimFacade extends ForwardingBimFacade implements Invoc
 		return null;
 	}
 
+	@Override
+	public Long getOidFromGlobalId(String guid, String revisionId, Iterable<String> candidateTypes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

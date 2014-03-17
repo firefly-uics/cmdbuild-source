@@ -102,5 +102,7 @@ public interface BimFacade {
 
 	String mergeProjectsIntoNewProject(String shapeProjectId, String exportProjectId);
 
+	Long getOidFromGlobalId(String guid, String revisionId, Iterable<String> candidateTypes);
+
 
 }

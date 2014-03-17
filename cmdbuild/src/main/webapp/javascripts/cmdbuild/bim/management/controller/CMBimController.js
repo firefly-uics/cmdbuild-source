@@ -25,6 +25,7 @@
 			this.viewportEventListener = null;
 			this.currentObjectId = null;
 			this.roid = null;
+			this.basePoid = null;
 		},
 
 		/* ******************************************************
@@ -80,7 +81,7 @@
 					},
 					success: function(operation, options, response) {
 						if (response.ROID) {
-							startBIMPlayer(me, response.ROID, response.DESCRIPTION);
+							startBIMPlayer(me, response.ROID, response.DESCRIPTION, response.BASE_POID);
 						} else {
 							CMDBuild.Msg.warn(
 									CMDBuild.Translation.warnings.warning_message, //
@@ -345,7 +346,7 @@
 
 	}
 
-	function startBIMPlayer(me, roid, description) {
+	function startBIMPlayer(me, roid, description, basePoid) {
 		// FIXME remove it
 		window._BIM_LOGGER = console;
 
@@ -360,6 +361,7 @@
 		}
 
 		me.roid = roid;
+		me.basePoid = basePoid;
 
 		doLogin(me, function() {
 			if (me.bimWindow == null) {
@@ -376,7 +378,6 @@
 				me.bimSceneManager = new BIMSceneManager({
 					canvasId: me.bimWindow.CANVAS_ID,
 					viewportId: me.bimWindow.getId()//,
-					//progressBar: new CMDBuild.common.CMLoadingBar()
 				});
 				me.bimSceneManager.addDelegate(me);
 
@@ -391,7 +392,7 @@
 				me.loginProxy.logout();
 			});
 
-			me.bimSceneManager.loadProjectWithRoid(me.roid);
+			me.bimSceneManager.loadProjectWithRoid(me.roid,me.basePoid);
 		});
 	}
 

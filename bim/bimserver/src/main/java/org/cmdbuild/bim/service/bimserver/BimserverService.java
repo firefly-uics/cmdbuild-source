@@ -239,4 +239,9 @@ public class BimserverService implements BimService {
 		return client.mergeProjectsIntoNewProject(project1, project2);
 	}
 
+	@Override
+	public Long getOidFromGlobalId(String globalId, String revisionId) {
+		return client.getOidFromGlobalId(globalId,revisionId);
+	}
+
 }

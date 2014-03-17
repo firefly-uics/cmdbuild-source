@@ -497,4 +497,9 @@ public class DefaultBimFacade implements BimFacade {
 		return service.mergeProjectsIntoNewProject(project1, project2);
 	}
 
+	@Override
+	public Long getOidFromGlobalId(String globalId, String revisionId, Iterable<String> candidateTypes) {
+		return service.getOidFromGlobalId(globalId, revisionId);
+	}
+
 }
