@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -73,10 +72,10 @@ import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.StoredDocument;
-import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.GISLogic;
+import org.cmdbuild.logic.data.access.CardStorableConverter;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.model.data.Card;
@@ -127,8 +126,10 @@ import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordTypes;
 import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RegistrationServiceMetadata;
 import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.ServiceDescription;
 import org.dmtf.schemas.cmdbf._1.tns.servicemetadata.XPathType;
+import org.joda.time.DateTime;
 import org.json.JSONObject;
 import org.postgis.Geometry;
+import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
@@ -263,120 +264,114 @@ public class CmdbMDR implements ManagementDataRepository {
 	}
 
 	@Override
+	@Transactional
 	public RegisterResponseType register(final RegisterRequestType body) throws UnsupportedRecordTypeFault,
 			InvalidRecordFault, InvalidMDRFault, RegistrationErrorFault {
 		if (getMdrId().equals(body.getMdrId())) {
-			try {
-				final RegisterResponseType registerResponse = new RegisterResponseType();
-				if (body.getItemList() != null) {
-					for (final ItemType item : body.getItemList().getItem()) {
-						final CMDBfItem cmdbfItem = new CMDBfItem(item);
+			final RegisterResponseType registerResponse = new RegisterResponseType();
+			if (body.getItemList() != null) {
+				for (final ItemType item : body.getItemList().getItem()) {
+					final CMDBfItem cmdbfItem = new CMDBfItem(item);
 
-						final RegisterInstanceResponseType registerInstanceResponse = new RegisterInstanceResponseType();
-						final MdrScopedIdType instanceId = item.getInstanceId().get(0);
-						registerInstanceResponse.setInstanceId(instanceId);
-						try {
-							if (registerItem(cmdbfItem)) {
-								final AcceptedType accepted = new AcceptedType();
-								for (final CMDBfId id : cmdbfItem.instanceIds()) {
-									accepted.getAlternateInstanceId().add(id);
-								}
-								registerInstanceResponse.setAccepted(accepted);
-							} else {
-								final DeclinedType declined = new DeclinedType();
-								registerInstanceResponse.setDeclined(declined);
-							}
-						} catch (final Exception e) {
-							final DeclinedType declined = new DeclinedType();
-							declined.getReason().add(e.getMessage());
-							registerInstanceResponse.setDeclined(declined);
+					final RegisterInstanceResponseType registerInstanceResponse = new RegisterInstanceResponseType();
+					final MdrScopedIdType instanceId = item.getInstanceId().get(0);
+					registerInstanceResponse.setInstanceId(instanceId);
+					try {
+						registerItem(cmdbfItem);
+						final AcceptedType accepted = new AcceptedType();
+						for (final CMDBfId id : cmdbfItem.instanceIds()) {
+							accepted.getAlternateInstanceId().add(id);
 						}
-						registerResponse.getRegisterInstanceResponse().add(registerInstanceResponse);
-					}
-				}
-				if (body.getRelationshipList() != null) {
-					for (final RelationshipType relationship : body.getRelationshipList().getRelationship()) {
-						final CMDBfRelationship cmdbfRelationship = new CMDBfRelationship(relationship);
-
-						final RegisterInstanceResponseType registerInstanceResponse = new RegisterInstanceResponseType();
-						final MdrScopedIdType instanceId = relationship.getInstanceId().get(0);
-						registerInstanceResponse.setInstanceId(instanceId);
-						try {
-							if (registerRelationship(cmdbfRelationship)) {
-								final AcceptedType accepted = new AcceptedType();
-								for (final CMDBfId id : cmdbfRelationship.instanceIds()) {
-									accepted.getAlternateInstanceId().add(id);
-								}
-								registerInstanceResponse.setAccepted(accepted);
-							} else {
-								final DeclinedType declined = new DeclinedType();
-								registerInstanceResponse.setDeclined(declined);
-							}
-						} catch (final Exception e) {
-							Log.CMDBUILD.error("CMDBf register", e);
-							final DeclinedType declined = new DeclinedType();
-							declined.getReason().add(e.getMessage());
-							registerInstanceResponse.setDeclined(declined);
+						registerInstanceResponse.setAccepted(accepted);
+					} catch (final Throwable e) {
+						final DeclinedType declined = new DeclinedType();
+						Throwable cause = e;
+						while (cause != null) {
+							declined.getReason().add(cause.getMessage());
+							cause = cause.getCause();
 						}
-						registerResponse.getRegisterInstanceResponse().add(registerInstanceResponse);
+						registerInstanceResponse.setDeclined(declined);
 					}
+					registerResponse.getRegisterInstanceResponse().add(registerInstanceResponse);
 				}
-				return registerResponse;
-			} catch (final Throwable e) {
-				Log.CMDBUILD.error("CMDBf register rollback", e);
-				throw new RegistrationErrorFault(e.getMessage());
 			}
+			if (body.getRelationshipList() != null) {
+				for (final RelationshipType relationship : body.getRelationshipList().getRelationship()) {
+					final CMDBfRelationship cmdbfRelationship = new CMDBfRelationship(relationship);
+
+					final RegisterInstanceResponseType registerInstanceResponse = new RegisterInstanceResponseType();
+					final MdrScopedIdType instanceId = relationship.getInstanceId().get(0);
+					registerInstanceResponse.setInstanceId(instanceId);
+					try {
+						registerRelationship(cmdbfRelationship);
+						final AcceptedType accepted = new AcceptedType();
+						for (final CMDBfId id : cmdbfRelationship.instanceIds()) {
+							accepted.getAlternateInstanceId().add(id);
+						}
+						registerInstanceResponse.setAccepted(accepted);
+					} catch (final Throwable e) {
+						Log.CMDBUILD.error("CMDBf register", e);
+						final DeclinedType declined = new DeclinedType();
+						Throwable cause = e;
+						while (cause != null) {
+							declined.getReason().add(cause.getMessage());
+							cause = cause.getCause();
+						}
+						registerInstanceResponse.setDeclined(declined);
+					}
+					registerResponse.getRegisterInstanceResponse().add(registerInstanceResponse);
+				}
+			}
+			return registerResponse;
 		} else {
 			throw new InvalidMDRFault(body.getMdrId());
 		}
 	}
 
 	@Override
+	@Transactional(rollbackFor = Throwable.class)
 	public DeregisterResponseType deregister(final DeregisterRequestType body) throws DeregistrationErrorFault,
 			InvalidMDRFault {
 		if (getMdrId().equals(body.getMdrId())) {
-			try {
-				final DeregisterResponseType deregisterResponse = new DeregisterResponseType();
-				if (body.getRelationshipIdList() != null) {
-					for (final MdrScopedIdType instanceId : body.getRelationshipIdList().getInstanceId()) {
-						final DeregisterInstanceResponseType deregisterInstanceResponse = new DeregisterInstanceResponseType();
-						deregisterInstanceResponse.setInstanceId(instanceId);
-						try {
-							if (!deregisterRelationship(instanceId)) {
-								final DeclinedType declined = new DeclinedType();
-								deregisterInstanceResponse.setDeclined(declined);
-							}
-						} catch (final Exception e) {
-							final DeclinedType declined = new DeclinedType();
-							declined.getReason().add(e.getMessage());
-							deregisterInstanceResponse.setDeclined(declined);
+			final DeregisterResponseType deregisterResponse = new DeregisterResponseType();
+			if (body.getRelationshipIdList() != null) {
+				for (final MdrScopedIdType instanceId : body.getRelationshipIdList().getInstanceId()) {
+					final DeregisterInstanceResponseType deregisterInstanceResponse = new DeregisterInstanceResponseType();
+					deregisterInstanceResponse.setInstanceId(instanceId);
+					try {
+						deregisterRelationship(instanceId);
+					} catch (final Exception e) {
+						final DeclinedType declined = new DeclinedType();
+						Throwable cause = e;
+						while (cause != null) {
+							declined.getReason().add(cause.getMessage());
+							cause = cause.getCause();
 						}
-						deregisterResponse.getDeregisterInstanceResponse().add(deregisterInstanceResponse);
+						deregisterInstanceResponse.setDeclined(declined);
 					}
+					deregisterResponse.getDeregisterInstanceResponse().add(deregisterInstanceResponse);
 				}
-				if (body.getItemIdList() != null) {
-					for (final MdrScopedIdType instanceId : body.getItemIdList().getInstanceId()) {
-						final DeregisterInstanceResponseType deregisterInstanceResponse = new DeregisterInstanceResponseType();
-						deregisterInstanceResponse.setInstanceId(instanceId);
-						try {
-							if (!deregisterItem(instanceId)) {
-								final DeclinedType declined = new DeclinedType();
-								deregisterInstanceResponse.setDeclined(declined);
-							}
-						} catch (final Exception e) {
-							Log.CMDBUILD.error("CMDBf deregister", e);
-							final DeclinedType declined = new DeclinedType();
-							declined.getReason().add(e.getMessage());
-							deregisterInstanceResponse.setDeclined(declined);
-						}
-						deregisterResponse.getDeregisterInstanceResponse().add(deregisterInstanceResponse);
-					}
-				}
-				return deregisterResponse;
-			} catch (final Throwable e) {
-				Log.CMDBUILD.error("CMDBf register rollback", e);
-				throw new DeregistrationErrorFault(e.getMessage());
 			}
+			if (body.getItemIdList() != null) {
+				for (final MdrScopedIdType instanceId : body.getItemIdList().getInstanceId()) {
+					final DeregisterInstanceResponseType deregisterInstanceResponse = new DeregisterInstanceResponseType();
+					deregisterInstanceResponse.setInstanceId(instanceId);
+					try {
+						deregisterItem(instanceId);
+					} catch (final Exception e) {
+						Log.CMDBUILD.error("CMDBf deregister", e);
+						final DeclinedType declined = new DeclinedType();
+						Throwable cause = e;
+						while (cause != null) {
+							declined.getReason().add(cause.getMessage());
+							cause = cause.getCause();
+						}
+						deregisterInstanceResponse.setDeclined(declined);
+					}
+					deregisterResponse.getDeregisterInstanceResponse().add(deregisterInstanceResponse);
+				}
+			}
+			return deregisterResponse;
 		} else {
 			throw new InvalidMDRFault(body.getMdrId());
 		}
@@ -467,293 +462,326 @@ public class CmdbMDR implements ManagementDataRepository {
 		return recordTypeList;
 	}
 
-	private boolean registerItem(final CMDBfItem item) throws RegistrationErrorFault {
-		try {
-			final Collection<Long> idList = new ArrayList<Long>();
-			for (final CMDBfId alias : item.instanceIds()) {
-				final CMDBfId id = aliasRegistry.resolveAlias(alias);
-				if (id != null) {
-					idList.add(aliasRegistry.getInstanceId(id));
-				}
+	private void registerItem(final CMDBfItem item) throws Exception {
+		final Collection<Long> idList = new ArrayList<Long>();
+		for (final CMDBfId alias : item.instanceIds()) {
+			final CMDBfId id = aliasRegistry.resolveAlias(alias);
+			if (id != null) {
+				idList.add(aliasRegistry.getInstanceId(id));
 			}
-			boolean registered = false;
-			for (final RecordType record : item.records()) {
-				final QName recordQName = CMDBfUtils.getRecordType(record);
-				final Object recordType = xmlRegistry.getType(recordQName);
-				if (recordType instanceof CMClass) {
-					final CMCard card = Iterables.getOnlyElement(
-							findCards(idList, (CMClass) recordType, null, null), null);
-					final Element xml = CMDBfUtils.getRecordContent(record);
-					final Card newCard = (Card) xmlRegistry.deserialize(xml);
+		}
 
-					Long id = null;
-					if (card == null) {
-						id = dataAccessLogic.createCard(newCard);
-						item.instanceIds().add(aliasRegistry.getCMDBfId(id));
-						idList.add(id);
-						registered = true;
-					} else {
-						boolean modified = false;
-						for (final String key : newCard.getAttributes().keySet()) {
-							Object newVal = newCard.getAttribute(key);
-							Object oldVal = card.get(key);
-							if(newVal instanceof String && ((String)newVal).isEmpty())
-								newVal = null;
-							if (newVal != null) {
-								modified |= !newVal.equals(oldVal);
-							} else {
-								modified |= oldVal != null;
-							}
-						}
-						id = card.getId();
-						if (modified) {
-							final Date recordDate = card != null ? card.getBeginDate().toDate() : null;
-							Date lastModified = null;
-							if (record.getRecordMetadata() != null
-									&& record.getRecordMetadata().getLastModified() != null) {
-								lastModified = record.getRecordMetadata().getLastModified().toGregorianCalendar()
-										.getTime();
-							}
-							if (recordDate == null || lastModified == null || !lastModified.before(recordDate)) {
-								final Card.CardBuilder cardBuilder = Card.newInstance().clone(newCard);
-								cardBuilder.withId(id);
-								dataAccessLogic.updateCard(cardBuilder.build());
-								registered = true;
-							}
-						} else {
-							registered = true;
-						}
-					}
-					if (registered) {
-						aliasRegistry.addAlias(id, item.instanceIds());
-						item.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(id)));
-					}
+		CMClass cmType = null;
+		Card.CardBuilder cardBuilder = null;
+		DateTime recordLastModified = null;
+		for (final RecordType record : item.records()) {
+			final QName recordQName = CMDBfUtils.getRecordType(record);
+			final Object recordType = xmlRegistry.getType(recordQName);
+			if (recordType instanceof CMClass) {
+				if (cmType == null || cmType.isAncestorOf((CMClass) recordType)) {
+					cmType = (CMClass) recordType;
+				} else if (!(cmType.equals(recordType) || ((CMClass) recordType).isAncestorOf(cmType))) {
+					throw new UnsupportedRecordTypeFault("Incompatible record type " + recordQName);
 				}
-			}
 
-			for (final RecordType record : item.records()) {
-				final QName recordQName = CMDBfUtils.getRecordType(record);
-				final Object recordType = xmlRegistry.getType(recordQName);
-				Date recordDate = null;
-				Date lastModified = null;
+				final Element xml = CMDBfUtils.getRecordContent(record);
+				final Card newCard = (Card) xmlRegistry.deserialize(xml);
+				if (cardBuilder == null) {
+					cardBuilder = Card.newInstance();
+				}
+				cardBuilder.withAllAttributes(newCard.getAttributes());
+
 				if (record.getRecordMetadata() != null && record.getRecordMetadata().getLastModified() != null) {
-					lastModified = record.getRecordMetadata().getLastModified().toGregorianCalendar().getTime();
-				}
-				final CMCard card = Iterables.getOnlyElement(
-						findCards(idList, dataAccessLogic.findClass(Constants.BASE_CLASS_NAME), null,
-								new ArrayList<QName>()), null);
-				if (card != null) {
-					if (recordType instanceof DocumentTypeDefinition) {
-						final Element xml = CMDBfUtils.getRecordContent(record);
-						final DmsDocument newDocument = (DmsDocument) xmlRegistry.deserialize(xml);
-
-						if (lastModified != null) {
-							final List<StoredDocument> documents = dmsLogic.search(card.getType().getIdentifier()
-									.getLocalName(), card.getId());
-							final Iterator<StoredDocument> documentIterator = documents.iterator();
-							while (recordDate == null && documentIterator.hasNext()) {
-								final StoredDocument document = documentIterator.next();
-								if (document.getName().equals(newDocument.getName())) {
-									recordDate = document.getModified();
-								}
-							}
-						}
-						if (recordDate == null || lastModified == null || !lastModified.before(recordDate)) {
-							if (newDocument.getInputStream() != null) {
-								dmsLogic.upload(operationUser.getAuthenticatedUser().getUsername(), card.getType()
-										.getIdentifier().getLocalName(), card.getId(), newDocument.getInputStream(),
-										newDocument.getName(), newDocument.getCategory(), newDocument.getDescription(),
-										newDocument.getMetadataGroups());
-							} else {
-								dmsLogic.updateDescriptionAndMetadata(card.getType().getIdentifier().getLocalName(),
-										card.getId(), newDocument.getName(), newDocument.getDescription(),
-										newDocument.getMetadataGroups());
-							}
-							registered = true;
-						}
-					} else if (recordType instanceof GeoClass) {
-						final Element xml = CMDBfUtils.getRecordContent(record);
-						final GeoCard geoCard = (GeoCard) xmlRegistry.deserialize(xml);
-						final JSONObject jsonObject = new JSONObject();
-						for (final LayerMetadata layer : geoCard.getType().getLayers()) {
-							final Geometry value = geoCard.get(layer.getName());
-							if (value != null) {
-								jsonObject.put(layer.getName(), value.toString());
-							}
-						}
-						gisLogic.updateFeatures(Card.newInstance(card.getType()).withId(card.getId()).build(),
-								Collections.<String, Object> singletonMap("geoAttributes", jsonObject.toString()));
-						registered = true;
-					}
-					if (registered) {
-						aliasRegistry.addAlias(card.getId(), item.instanceIds());
-						item.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(card)));
+					final DateTime lastModified = new DateTime(record.getRecordMetadata().getLastModified()
+							.toGregorianCalendar().getTimeInMillis());
+					if (recordLastModified == null || lastModified.isBefore(recordLastModified)) {
+						cardBuilder.withBeginDate(lastModified);
+						recordLastModified = lastModified;
 					}
 				}
+			} else if (!(recordType instanceof DocumentTypeDefinition || recordType instanceof GeoClass)) {
+				throw new UnsupportedRecordTypeFault("Unsupported record type " + recordQName);
 			}
-			return registered;
-		} catch (final Throwable e) {
-			throw new RegistrationErrorFault(e.getMessage(), e);
 		}
-	}
 
-	private boolean registerRelationship(final CMDBfRelationship relationship) throws RegistrationErrorFault {
-		try {
-			final Collection<Long> idList = new ArrayList<Long>();
-			for (final CMDBfId alias : relationship.instanceIds()) {
-				final CMDBfId id = aliasRegistry.resolveAlias(alias);
-				if (id != null) {
-					idList.add(aliasRegistry.getInstanceId(id));
+		if (cmType == null) {
+			cmType = dataAccessLogic.findClass(Constants.BASE_CLASS_NAME);
+		}
+
+		Card card = null;
+		final CMCard cmCard = Iterables.getOnlyElement(findCards(idList, cmType, null, null), null);
+		if (cmCard != null) {
+			card = CardStorableConverter.of(cmCard).convert(cmCard);
+		}
+
+		if (cardBuilder != null) {
+			cardBuilder.withClassName(cmType.getName());
+
+			if (card == null) {
+				final Long id = dataAccessLogic.createCard(cardBuilder.build());
+				item.instanceIds().add(aliasRegistry.getCMDBfId(id));
+				cardBuilder.withId(id);
+				card = cardBuilder.build();
+			} else {
+				cardBuilder.withId(card.getId());
+				final Card newCard = cardBuilder.build();
+
+				boolean modified = false;
+				for (final String key : newCard.getAttributes().keySet()) {
+					Object newVal = newCard.getAttribute(key);
+					final Object oldVal = card.getAttribute(key);
+					if (newVal instanceof String && ((String) newVal).isEmpty()) {
+						newVal = null;
+					}
+					if (newVal != null) {
+						modified |= !newVal.equals(oldVal);
+					} else {
+						modified |= oldVal != null;
+					}
+				}
+				if (modified) {
+					final DateTime cardDate = card.getBeginDate();
+					final DateTime newCardDate = newCard.getBeginDate();
+					if (cardDate == null || newCardDate == null || !newCardDate.isBefore(cardDate)) {
+						dataAccessLogic.updateCard(newCard);
+					} else {
+						throw new RegistrationErrorFault("Out of date");
+					}
 				}
 			}
-			final CMDBfId sourceId = aliasRegistry.resolveAlias(relationship.getSource());
-			final CMDBfId targetId = aliasRegistry.resolveAlias(relationship.getTarget());
-			boolean registered = false;
-			for (final RecordType record : relationship.records()) {
-				final QName recordQName = CMDBfUtils.getRecordType(record);
-				final Object recordType = xmlRegistry.getType(recordQName);
-				if (recordType instanceof CMDomain) {
-					CMRelation relation = Iterables.getOnlyElement(
-							findRelations(idList, null, null, (CMDomain) recordType, null, null),
-							null);
-					if (relation == null && sourceId != null && targetId != null) {
-						relation = Iterables.getOnlyElement(
-								findRelations(null, Arrays.asList(aliasRegistry.getInstanceId(sourceId)),
-										Arrays.asList(aliasRegistry.getInstanceId(targetId)), (CMDomain) recordType,
-										null, null), null);
-					}
-					final Element xml = CMDBfUtils.getRecordContent(record);
-					final RelationDTO newRelation = (RelationDTO) xmlRegistry.deserialize(xml);
-					newRelation.master = Source._1.name();
-					Long id = null;
+		}
 
-					if (relation == null) {
-						if (sourceId != null && targetId != null) {
-							final CMCard source = Iterables.getOnlyElement(
-									findCards(Arrays.asList(aliasRegistry.getInstanceId(sourceId)),
-											((CMDomain) recordType).getClass1(), null, new ArrayList<QName>()), null);
-							final CMCard target = Iterables.getOnlyElement(
-									findCards(Arrays.asList(aliasRegistry.getInstanceId(targetId)),
-											((CMDomain) recordType).getClass2(), null, new ArrayList<QName>()), null);
-							if (source != null && target != null) {
-								newRelation.addSourceCard(source.getId(), source.getType().getIdentifier()
-										.getLocalName());
-								newRelation.addDestinationCard(target.getId(), target.getType().getIdentifier()
-										.getLocalName());
-								id = Iterables.getOnlyElement(dataAccessLogic.createRelations(newRelation));
-								relationship.instanceIds().add(aliasRegistry.getCMDBfId(id));
-								registered = true;
+		if (card != null) {
+			aliasRegistry.addAlias(card.getId(), item.instanceIds());
+			item.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(card.getId())));
+		}
+
+		for (final RecordType record : item.records()) {
+			final QName recordQName = CMDBfUtils.getRecordType(record);
+			final Object recordType = xmlRegistry.getType(recordQName);
+			DateTime recordDate = null;
+			if (record.getRecordMetadata() != null && record.getRecordMetadata().getLastModified() != null) {
+				recordDate = new DateTime(record.getRecordMetadata().getLastModified().toGregorianCalendar()
+						.getTimeInMillis());
+			}
+			if (card != null) {
+				if (recordType instanceof DocumentTypeDefinition) {
+					final Element xml = CMDBfUtils.getRecordContent(record);
+					final DmsDocument newDocument = (DmsDocument) xmlRegistry.deserialize(xml);
+
+					DateTime documentDate = null;
+					if (recordDate != null) {
+						final List<StoredDocument> documents = dmsLogic.search(card.getClassName(), card.getId());
+						final Iterator<StoredDocument> documentIterator = documents.iterator();
+						while (recordDate == null && documentIterator.hasNext()) {
+							final StoredDocument document = documentIterator.next();
+							if (document.getName().equals(newDocument.getName())) {
+								documentDate = new DateTime(document.getModified().getTime());
 							}
+						}
+					}
+					if (recordDate == null || documentDate == null || !recordDate.isBefore(documentDate)) {
+						if (newDocument.getInputStream() != null) {
+							dmsLogic.upload(operationUser.getAuthenticatedUser().getUsername(), card.getClassName(),
+									card.getId(), newDocument.getInputStream(), newDocument.getName(),
+									newDocument.getCategory(), newDocument.getDescription(),
+									newDocument.getMetadataGroups());
+						} else {
+							dmsLogic.updateDescriptionAndMetadata(card.getClassName(), card.getId(),
+									newDocument.getName(), newDocument.getDescription(),
+									newDocument.getMetadataGroups());
 						}
 					} else {
-						boolean modified = false;
-						for (final String key : newRelation.relationAttributeToValue.keySet()) {
-							Object newVal = newRelation.relationAttributeToValue.get(key);
-							Object oldVal = relation.get(key);
-							if(newVal instanceof String && ((String)newVal).isEmpty())
-								newVal = null;
-							if (newVal != null) {
-								modified |= !newVal.equals(oldVal);
-							} else {
-								modified |= oldVal != null;
-							}
-						}
-						id = relation.getId();
-						if (modified) {
-							final Date recordDate = relation != null ? relation.getBeginDate().toDate() : null;
-							Date lastModified = null;
-							if (record.getRecordMetadata() != null
-									&& record.getRecordMetadata().getLastModified() != null) {
-								lastModified = record.getRecordMetadata().getLastModified().toGregorianCalendar()
-										.getTime();
-							}
-							if (recordDate == null || lastModified == null || !lastModified.before(recordDate)) {
-								newRelation.relationId = relation.getId();
-								newRelation.addSourceCard(relation.getCard1Id(), relation.getType().getClass1()
-										.getIdentifier().getLocalName());
-								newRelation.addDestinationCard(relation.getCard2Id(), relation.getType().getClass2()
-										.getIdentifier().getLocalName());
-								dataAccessLogic.updateRelation(newRelation);
-								registered = true;
-							}
-						} else {
-							registered = true;
+						throw new RegistrationErrorFault("Record " + recordQName + " Out of date");
+					}
+				} else if (recordType instanceof GeoClass) {
+					final Element xml = CMDBfUtils.getRecordContent(record);
+					final GeoCard geoCard = (GeoCard) xmlRegistry.deserialize(xml);
+					final JSONObject jsonObject = new JSONObject();
+					for (final LayerMetadata layer : geoCard.getType().getLayers()) {
+						final Geometry value = geoCard.get(layer.getName());
+						if (value != null) {
+							jsonObject.put(layer.getName(), value.toString());
 						}
 					}
-					if (registered) {
-						aliasRegistry.addAlias(id, relationship.instanceIds());
-						relationship.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(id)));
-					}
-
+					gisLogic.updateFeatures(card,
+							Collections.<String, Object> singletonMap("geoAttributes", jsonObject.toString()));
 				}
+			} else {
+				throw new RegistrationErrorFault("Card for record " + recordQName + " not found");
 			}
-			return registered;
-		} catch (final ParserConfigurationException e) {
-			throw new RegistrationErrorFault(e.getMessage(), e);
-		} catch (final CMDBException e) {
-			throw new RegistrationErrorFault(e.getMessage(), e);
 		}
 	}
 
-	private boolean deregisterItem(final MdrScopedIdType instanceId) throws DeregistrationErrorFault {
-		try {
-			final CMDBfId id = aliasRegistry.resolveAlias(instanceId);
-			CMCard card = null;
+	private void registerRelationship(final CMDBfRelationship relationship) throws Exception {
+		final Collection<Long> idList = new ArrayList<Long>();
+		for (final CMDBfId alias : relationship.instanceIds()) {
+			final CMDBfId id = aliasRegistry.resolveAlias(alias);
 			if (id != null) {
-				for (final CMClass cmClass : dataAccessLogic.findActiveClasses()) {
-					if (card == null && !cmClass.isSuperclass()) {
-						card = Iterables.getOnlyElement(
-								findCards(Arrays.asList(aliasRegistry.getInstanceId(id)), cmClass, null,
-										new ArrayList<QName>()), null);
-					}
+				idList.add(aliasRegistry.getInstanceId(id));
+			}
+		}
+		final CMDBfId sourceId = aliasRegistry.resolveAlias(relationship.getSource());
+		final CMDBfId targetId = aliasRegistry.resolveAlias(relationship.getTarget());
+
+		CMDomain cmType = null;
+		RelationDTO newRelation = null;
+		DateTime recordLastModified = null;
+		for (final RecordType record : relationship.records()) {
+			final QName recordQName = CMDBfUtils.getRecordType(record);
+			final Object recordType = xmlRegistry.getType(recordQName);
+			if (recordType instanceof CMDomain) {
+				if (cmType == null) {
+					cmType = (CMDomain) recordType;
+				} else if (!(cmType.equals(recordType))) {
+					throw new UnsupportedRecordTypeFault("Incompatible record type " + recordQName);
 				}
-				if (card != null) {
-					final String recordId = aliasRegistry.getRecordId(instanceId);
-					if (recordId == null || recordId.startsWith(ENTRY_RECORDID_PREFIX)) {
-						aliasRegistry.removeAlias(card);
-						dataAccessLogic.deleteCard(card.getType().getIdentifier().getLocalName(), card.getId());
-					} else if (recordId.startsWith(DOCUMENT_RECORDID_PREFIX)) {
-						final String name = recordId.substring(DOCUMENT_RECORDID_PREFIX.length());
-						dmsLogic.delete(card.getType().getIdentifier().getLocalName(), card.getId(), name);
-					} else if (recordId.startsWith(GEO_RECORDID_PREFIX)) {
-						final QName qname = xmlRegistry.getTypeQName(new GeoClass(card.getType().getIdentifier()
-								.getLocalName()));
-						final GeoClass geoClass = (GeoClass) xmlRegistry.getType(qname);
-						final JSONObject jsonObject = new JSONObject();
-						for (final LayerMetadata layer : geoClass.getLayers()) {
-							jsonObject.put(layer.getName(), "");
-						}
-						gisLogic.updateFeatures(Card.newInstance(card.getType()).withId(card.getId()).build(),
-								Collections.<String, Object> singletonMap("geoAttributes", jsonObject.toString()));
+
+				final Element xml = CMDBfUtils.getRecordContent(record);
+				final RelationDTO recordRelation = (RelationDTO) xmlRegistry.deserialize(xml);
+				if (newRelation == null) {
+					newRelation = recordRelation;
+				} else {
+					newRelation.relationAttributeToValue.putAll(recordRelation.relationAttributeToValue);
+				}
+
+				if (record.getRecordMetadata() != null && record.getRecordMetadata().getLastModified() != null) {
+					final DateTime lastModified = new DateTime(record.getRecordMetadata().getLastModified()
+							.toGregorianCalendar().getTimeInMillis());
+					if (recordLastModified == null || lastModified.isBefore(recordLastModified)) {
+						recordLastModified = lastModified;
 					}
 				}
 			}
-			return card != null;
-		} catch (final Exception e) {
-			throw new DeregistrationErrorFault(e.getMessage(), e);
+		}
+
+		CMRelation relation = null;
+		Long relationId = null;
+		if (cmType != null) {
+			relation = Iterables.getOnlyElement(findRelations(idList, null, null, cmType, null, null), null);
+			if (relation == null && sourceId != null && targetId != null) {
+				relation = Iterables.getOnlyElement(
+						findRelations(null, Arrays.asList(aliasRegistry.getInstanceId(sourceId)),
+								Arrays.asList(aliasRegistry.getInstanceId(targetId)), cmType, null, null), null);
+			}
+		}
+
+		if (newRelation != null) {
+			newRelation.domainName = cmType.getName();
+
+			if (relation == null) {
+				if (sourceId != null && targetId != null) {
+					final CMCard source = Iterables.getOnlyElement(
+							findCards(Arrays.asList(aliasRegistry.getInstanceId(sourceId)), cmType.getClass1(), null,
+									new ArrayList<QName>()), null);
+					final CMCard target = Iterables.getOnlyElement(
+							findCards(Arrays.asList(aliasRegistry.getInstanceId(targetId)), cmType.getClass2(), null,
+									new ArrayList<QName>()), null);
+
+					if (source == null) {
+						throw new RegistrationErrorFault("Source not found");
+					}
+					if (target == null) {
+						throw new RegistrationErrorFault("Target not found");
+					}
+
+					newRelation.addSourceCard(source.getId(), source.getType().getIdentifier().getLocalName());
+					newRelation.addDestinationCard(target.getId(), target.getType().getIdentifier().getLocalName());
+					relationId = Iterables.getOnlyElement(dataAccessLogic.createRelations(newRelation));
+					relationship.instanceIds().add(aliasRegistry.getCMDBfId(relationId));
+				}
+			} else {
+				boolean modified = false;
+				for (final String key : newRelation.relationAttributeToValue.keySet()) {
+					Object newVal = newRelation.relationAttributeToValue.get(key);
+					final Object oldVal = relation.get(key);
+					if (newVal instanceof String && ((String) newVal).isEmpty()) {
+						newVal = null;
+					}
+					if (newVal != null) {
+						modified |= !newVal.equals(oldVal);
+					} else {
+						modified |= oldVal != null;
+					}
+				}
+				relationId = relation.getId();
+				if (modified) {
+					final DateTime relationDate = relation.getBeginDate();
+					if (relationDate == null || recordLastModified == null
+							|| !recordLastModified.isBefore(relationDate)) {
+						newRelation.relationId = relation.getId();
+						newRelation.addSourceCard(relation.getCard1Id(), relation.getType().getClass1().getIdentifier()
+								.getLocalName());
+						newRelation.addDestinationCard(relation.getCard2Id(), relation.getType().getClass2()
+								.getIdentifier().getLocalName());
+						dataAccessLogic.updateRelation(newRelation);
+					} else {
+						throw new RegistrationErrorFault("Out of date");
+					}
+				}
+			}
+		}
+		if (relationId != null) {
+			aliasRegistry.addAlias(relationId, relationship.instanceIds());
+			relationship.instanceIds().addAll(aliasRegistry.getAlias(aliasRegistry.getCMDBfId(relationId)));
 		}
 	}
 
-	private boolean deregisterRelationship(final MdrScopedIdType instanceId) throws DeregistrationErrorFault {
-		try {
-			final CMDBfId id = aliasRegistry.resolveAlias(instanceId);
-			CMRelation relation = null;
-			if (id != null) {
-				for (final CMDomain domain : dataAccessLogic.findActiveDomains()) {
-					if (relation == null) {
-						relation = Iterables.getOnlyElement(
-								findRelations(Arrays.asList(aliasRegistry.getInstanceId(id)), null, null, domain, null,
-										new ArrayList<QName>()), null);
-					}
-				}
-				if (relation != null) {
-					aliasRegistry.removeAlias(relation);
-					dataAccessLogic.deleteRelation(relation.getType().getIdentifier().getLocalName(), relation.getId());
+	private void deregisterItem(final MdrScopedIdType instanceId) throws Exception {
+		final CMDBfId id = aliasRegistry.resolveAlias(instanceId);
+		CMCard card = null;
+		if (id != null) {
+			for (final CMClass cmClass : dataAccessLogic.findActiveClasses()) {
+				if (card == null && !cmClass.isSuperclass()) {
+					card = Iterables.getOnlyElement(
+							findCards(Arrays.asList(aliasRegistry.getInstanceId(id)), cmClass, null,
+									new ArrayList<QName>()), null);
 				}
 			}
-			return relation != null;
-		} catch (final CMDBException e) {
-			throw new DeregistrationErrorFault(e.getMessage(), e);
+			if (card != null) {
+				final String recordId = aliasRegistry.getRecordId(instanceId);
+				if (recordId == null || recordId.startsWith(ENTRY_RECORDID_PREFIX)) {
+					aliasRegistry.removeAlias(card);
+					dataAccessLogic.deleteCard(card.getType().getIdentifier().getLocalName(), card.getId());
+				} else if (recordId.startsWith(DOCUMENT_RECORDID_PREFIX)) {
+					final String name = recordId.substring(DOCUMENT_RECORDID_PREFIX.length());
+					dmsLogic.delete(card.getType().getIdentifier().getLocalName(), card.getId(), name);
+				} else if (recordId.startsWith(GEO_RECORDID_PREFIX)) {
+					final QName qname = xmlRegistry.getTypeQName(new GeoClass(card.getType().getIdentifier()
+							.getLocalName()));
+					final GeoClass geoClass = (GeoClass) xmlRegistry.getType(qname);
+					final JSONObject jsonObject = new JSONObject();
+					for (final LayerMetadata layer : geoClass.getLayers()) {
+						jsonObject.put(layer.getName(), "");
+					}
+					gisLogic.updateFeatures(Card.newInstance(card.getType()).withId(card.getId()).build(),
+							Collections.<String, Object> singletonMap("geoAttributes", jsonObject.toString()));
+				}
+			}
+		}
+		if (card == null) {
+			throw new DeregistrationErrorFault("Not found");
+		}
+	}
+
+	private void deregisterRelationship(final MdrScopedIdType instanceId) throws Exception {
+		final CMDBfId id = aliasRegistry.resolveAlias(instanceId);
+		CMRelation relation = null;
+		if (id != null) {
+			for (final CMDomain domain : dataAccessLogic.findActiveDomains()) {
+				if (relation == null) {
+					relation = Iterables.getOnlyElement(
+							findRelations(Arrays.asList(aliasRegistry.getInstanceId(id)), null, null, domain, null,
+									new ArrayList<QName>()), null);
+				}
+			}
+			if (relation != null) {
+				aliasRegistry.removeAlias(relation);
+				dataAccessLogic.deleteRelation(relation.getType().getIdentifier().getLocalName(), relation.getId());
+			}
+		}
+		if (relation == null) {
+			throw new DeregistrationErrorFault("Not found");
 		}
 	}
 

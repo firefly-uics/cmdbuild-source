@@ -27,6 +27,7 @@ import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
@@ -155,6 +156,7 @@ public class DomainNamespace extends EntryNamespace {
 			value = new RelationDTO();
 			value.domainName = type.getIdentifier().getLocalName();
 			value.relationAttributeToValue = deserialize(xml, type);
+			value.master = Source._1.name();			
 		}
 		return value;
 	}
