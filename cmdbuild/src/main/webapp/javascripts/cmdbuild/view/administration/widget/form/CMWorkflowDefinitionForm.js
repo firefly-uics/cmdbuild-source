@@ -5,8 +5,8 @@
 	var queryTypology = Ext.create('Ext.data.Store', {
 	    fields: ['name', 'description'],
 	    data : [
-	        {"name":"name", "description": CMDBuild.Translation.workflow_by_name}, //"@@ Select by name"
-	        {"name":"cql", "description": CMDBuild.Translation.workflow_by_cql} //"@@ Select by Cql"
+	        {"name":"name", "description": CMDBuild.Translation.workflow_by_name},
+	        {"name":"cql", "description": CMDBuild.Translation.workflow_by_cql}
 	    ]
 	});
 	
@@ -39,7 +39,7 @@
 			this.callParent(arguments);
 			
 			this.queryTypology = Ext.create('Ext.form.ComboBox', {
-			    fieldLabel: CMDBuild.Translation.workflow_query_tipology, //'@@ Query Tipology',
+			    fieldLabel: CMDBuild.Translation.workflow_query_tipology,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 			    store: queryTypology,
@@ -65,7 +65,7 @@
 			this.queryTypology.select("name");
 			this.workflowFilter = new Ext.form.field.TextArea({
 				name: "filter",
-				fieldLabel: "@@ Cql filter",
+				fieldLabel: CMDBuild.Translation.workflow_cql_filter,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				hidden: true

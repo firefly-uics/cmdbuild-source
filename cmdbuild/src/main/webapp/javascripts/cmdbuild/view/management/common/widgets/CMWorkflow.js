@@ -12,7 +12,7 @@
 		border: true,
 		initComponent: function() {
 			this.queryWorkflow = Ext.create('Ext.form.ComboBox', {
-			    fieldLabel: '@@ Workflow',
+			    fieldLabel: CMDBuild.Translation.workflow,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				labelAlign: "right",

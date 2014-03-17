@@ -1358,5 +1358,6 @@
 	"workflow_by_cql": "<em>by Cql</em>",
 	"workflow_by_name": "<em>by name</em>",
 	"workflow_query_tipology": "<em>Selection</em>",
+	"workflow_cql_filter": "<em>Cql filter</em>",
 	"you_have_not_set_a_filter": "No ha fijado ningún filtro"
 }
