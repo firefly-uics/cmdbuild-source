@@ -59,7 +59,7 @@ public class NewExportConnector implements Export {
 	private final BimFacade serviceFacade;
 	private final BimPersistence persistence;
 	private final BimDataView bimDataView;
-	private final Map<String, String> shapeNameToOidMap;
+	private final Map<String, Map<String, String>> shapeNameToOidMap;
 	private final Iterable<String> candidateTypes = Lists.newArrayList(IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING);
 	private final ExportProjectPolicy exportProjectPolicy;
 
@@ -96,6 +96,7 @@ public class NewExportConnector implements Export {
 
 		final Iterable<String> ifcSpacesGlobalIdList = serviceFacade.fetchAllGlobalIdForIfcType(IFC_SPACE,
 				sourceRevisionId);
+		System.out.println(IFC_SPACE + " list fetched from the service");
 		final Map<String, Long> globalIdToCmdbIdIfcSpaceMap = Maps.newHashMap();
 		for (final String globalId : ifcSpacesGlobalIdList) {
 			final Long matchingId = getIdFromGlobalId(globalId, containerClassName);
@@ -275,11 +276,23 @@ public class NewExportConnector implements Export {
 
 	private String getShapeOid(final String revisionId, final String shapeName) {
 		String shapeOid = StringUtils.EMPTY;
-		if (shapeNameToOidMap.containsKey(shapeName)) {
-			shapeOid = shapeNameToOidMap.get(shapeName);
-		} else {
+		if(shapeNameToOidMap.containsKey(revisionId)){
+			Map<String, String> mapForCurrentRevision = shapeNameToOidMap.get(revisionId);
+			if(mapForCurrentRevision.containsKey(shapeName)){
+				shapeOid = mapForCurrentRevision.get(shapeName);
+			}else{
+				shapeOid = serviceFacade.findShapeWithName(shapeName, revisionId);
+				if(isValidId(shapeOid)){
+					mapForCurrentRevision.put(shapeName, shapeOid);
+				}
+			}
+		}else{
 			shapeOid = serviceFacade.findShapeWithName(shapeName, revisionId);
-			shapeNameToOidMap.put(shapeName, shapeOid);
+			if(isValidId(shapeOid)){
+				Map<String, String> mapForCurrentRevision = Maps.newHashMap();
+				shapeNameToOidMap.put(revisionId, mapForCurrentRevision);
+				mapForCurrentRevision.put(shapeName, shapeOid);
+			}
 		}
 		return shapeOid;
 	}

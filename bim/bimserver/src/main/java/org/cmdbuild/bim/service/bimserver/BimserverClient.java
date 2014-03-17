@@ -97,6 +97,6 @@ public interface BimserverClient {
 
 	String getLastRevisionOfProject(String projectId);
 
-	String mergeProjectsAndReturnMergedRevision(String shapeProjectId, String shapeProjectId2);
+	String mergeProjectsIntoNewProject(String shapeProjectId, String shapeProjectId2);
 
 }

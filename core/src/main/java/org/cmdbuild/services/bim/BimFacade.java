@@ -100,7 +100,7 @@ public interface BimFacade {
 
 	void branchRevisionToExistingProject(String projectId, String exportProjectId);
 
-	String mergeProjects(String shapeProjectId, String exportProjectId);
+	String mergeProjectsIntoNewProject(String shapeProjectId, String exportProjectId);
 
 
 }

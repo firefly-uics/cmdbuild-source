@@ -235,8 +235,8 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public String mergeProjects(String project1, String project2) {
-		return client.mergeProjectsAndReturnMergedRevision(project1, project2);
+	public String mergeProjectsIntoNewProject(String project1, String project2) {
+		return client.mergeProjectsIntoNewProject(project1, project2);
 	}
 
 }

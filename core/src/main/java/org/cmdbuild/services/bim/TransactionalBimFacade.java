@@ -87,7 +87,7 @@ public class TransactionalBimFacade extends ForwardingBimFacade implements Invoc
 	}
 
 	@Override
-	public String mergeProjects(String shapeProjectId, String exportProjectId) {
+	public String mergeProjectsIntoNewProject(String shapeProjectId, String exportProjectId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
