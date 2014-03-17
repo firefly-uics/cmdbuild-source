@@ -1,10 +1,12 @@
 (function() {
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
+	var FILTER_FIELD = "_SystemFieldFilter";
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMWorkflowControllerWidgetReader",{
 		getType: function(w) {return "Activity";},
 		getCode: function(w) {return w.workflowName;},
-		getPreset: function(w) {return w.preset;}
+		getPreset: function(w) {return w.preset;},
+		getFilter: function(w) {return w.filter;}
 	});
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMWorkflowController", {
@@ -23,7 +25,6 @@
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
 			this.widgetReader = new CMDBuild.controller.management.common.widgets.CMWorkflowControllerWidgetReader();
-			this.presets = this.widgetReader.getPreset(this.widgetConf);
 			var widgetManager = new CMDBuild.view.management.common.widgets.CMWidgetManagerPopup(this.view);
 			this.widgetControllerManager = new CMDBuild.controller.management.common.CMWidgetManagerControllerPopup(widgetManager);
 			view.setDelegate(this);
@@ -33,60 +34,123 @@
 			this.mon(this.view, this.view.CMEVENTS.advanceButtonClick, onAdvanceCardClick, this);
 			var me = this;
 			var name = this.widgetReader.getCode(this.widgetConf);
-			var card = _CMCache.getEntryTypeByName(name);
-			if (card && card.data) {
-				_CMCache.getAttributeList(card.data.id, function(attributes) {
-					me.cardAttributes = attributes;
-				});		
+			if (name) {
+				this.typedWidgetConf = this.widgetConf;
+				this.view.hideComboPanel();
+				this.widgetType = "name";
+				var card = _CMCache.getEntryTypeByName(name);
+				if (card && card.data) {
+					_CMCache.getAttributeList(card.data.id, function(attributes) {
+						me.cardAttributes = attributes;
+					});		
+				}
+				this.presets = this.widgetReader.getPreset(this.typedWidgetConf);
+			}
+			else {
+				this.view.showComboPanel();
+				this.widgetType = "cql";
 			}
 		},
 
+		chargeComboFiels: function() {
+			var me = this;
+			this.filter = this.widgetReader.getFilter(this.widgetConf);
+			var filterTemplateResolver = new CMDBuild.Management.TemplateResolver({
+				xaVars: {},
+				clientForm: this.clientForm,
+				serverVars: this.getTemplateResolverServerVars()
+			});
+			filterTemplateResolver.xaVars[FILTER_FIELD] = this.filter;
+			filterTemplateResolver.resolveTemplates({
+				attributes: [FILTER_FIELD],
+				callback: function(o) {
+					var callParams = filterTemplateResolver.buildCQLQueryParameters(o[FILTER_FIELD]);
+					var filter = Ext.encode({
+						CQL: callParams.CQL
+					});
+					Ext.Ajax.request({
+						url: 'services/json/management/modcard/getcardlistshort',
+					    params: {
+					    	className: "Activity",
+					        limit: 100,
+					        start: 0,
+					        filter: filter
+					    },
+					    success: function(response){
+					        var data = Ext.JSON.decode(response.responseText).rows;
+					        me.view.clearComboValues(data);
+					        me.view.loadComboValues(data);
+					        // process server response here
+					    }
+					});
+				}
+			});
+		},
 		ensureEditPanel: function() {
 		},
 		onWidgetButtonClick: function(widget) {
 			this.widgetControllerManager.onWidgetButtonClick(widget);
 		},
 		beforeActiveView: function() {
-			var me = this,
-				wr = this.widgetReader;
-
-			if (!me.widgetReader) {
-				return;
+			if (this.widgetType == "cql") {
+				this.chargeComboFiels();
+				this.view.comboPanel.clearCombo();
 			}
-
-			if (me.configured && me.templateResolver) {
-				resolveTemplate(me);
-			} else {
-				me.view.setLoading(true);
-				var name = this.widgetReader.getCode(this.widgetConf);
-				var card = _CMCache.getEntryTypeByName(name);
-
-				Ext.Ajax.request({
-					url : 'services/json/workflow/getstartactivity',
-					params : {
-						classId: card.data.id
-					},
-					success : function(response) {
-						var ret = Ext.JSON.decode(response.responseText);
-						me.attributes = CMDBuild.controller.common.WorkflowStaticsController.filterAttributesInStep(me.cardAttributes, ret.response.variables);
-						me.view.configureForm(me.attributes);
-						me.templateResolver = new CMDBuild.Management.TemplateResolver({
-							clientForm: me.clientForm,
-							xaVars: me.presets,
-							serverVars: this.getTemplateResolverServerVars()
-						});
-	
-						resolveTemplate(me);
-						this.widgetControllerManager.buildControllers(ret.response.widgets);
-						me.view.getWidgetButtonsPanel().editMode();
-						me.view.setLoading(false);
-						me.configured = true;
-					},
-					scope: me
-				});
+			this.view.clearWindow();
+			if (this.widgetType == "name") {
+				configureActivityForm(this);
 			}
 		},
+		changeWorkflow: function(name) {
+			var me = this;
+			this.view.clearWindow();
+			this.typedWidgetConf = {
+					workflowName : name,
+					presets: {}
+			};
+			var card = _CMCache.getEntryTypeByName(name);
+			if (card && card.data) {
+				_CMCache.getAttributeList(card.data.id, function(attributes) {
+					me.cardAttributes = attributes;
+				});		
+			}
+			this.presets = this.widgetReader.getPreset(this.typedWidgetConf);
+			configureActivityForm(this);
+		}
 	});
+	function configureActivityForm(me) {
+		if (!me.widgetReader) {
+			return;
+		}
+
+		me.view.setLoading(true);
+		var name = me.widgetReader.getCode(me.typedWidgetConf);
+		var card = _CMCache.getEntryTypeByName(name);
+
+		Ext.Ajax.request({
+			url : 'services/json/workflow/getstartactivity',
+			params : {
+				classId: card.data.id
+			},
+			success : function(response) {
+				var ret = Ext.JSON.decode(response.responseText);
+				me.attributes = CMDBuild.controller.common.WorkflowStaticsController.filterAttributesInStep(me.cardAttributes, ret.response.variables);
+				me.view.configureForm(me.attributes);
+				me.templateResolver = new CMDBuild.Management.TemplateResolver({
+					clientForm: me.clientForm,
+					xaVars: me.presets,
+					serverVars: me.getTemplateResolverServerVars()
+				});
+
+				resolveTemplate(me);
+				me.widgetControllerManager.buildControllers(ret.response.widgets);
+				me.view.getWidgetButtonsPanel().editMode();
+				me.view.setLoading(false);
+				me.configured = true;
+			},
+			scope: me
+		});
+	}
 	function resolveTemplate(me) {
 		me.templateResolver.resolveTemplates({
 			attributes: Ext.Object.getKeys(me.presets),
@@ -108,7 +172,7 @@
 		if (valid) {
 			CMDBuild.LoadMask.get().show();
 			var requestParams = {};
-			var name = me.widgetReader.getCode(me.widgetConf);
+			var name = me.widgetReader.getCode(me.typedWidgetConf);
 			var card = _CMCache.getEntryTypeByName(name);
 			requestParams.classId = card.data.id;
 			requestParams.attributes = Ext.JSON.encode(form.getValues());
