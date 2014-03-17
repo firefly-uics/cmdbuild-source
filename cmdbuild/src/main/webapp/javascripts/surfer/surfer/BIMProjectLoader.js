@@ -30,16 +30,18 @@
 
 	};
 
-	BIMProjectLoader.prototype.loadFromCmdbuild = function(roid) {
+	BIMProjectLoader.prototype.loadFromCmdbuild = function(roid, basePoid) {
 		var me = this;
 		this.loadedTypes = [];
 		this.currentAction = {
-			roid: roid
+			roid: roid,
+			poid: basePoid
 		};
 
 		CMDBuild.LoadMask.get().show();
 		CMDBuild.bim.proxy.fetchJsonForBimViewer({
 			params: {
+				baseProjectId: basePoid, //
 				revisionId: roid
 			},
 			success: function(fp, request, response) {

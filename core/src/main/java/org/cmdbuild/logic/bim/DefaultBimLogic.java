@@ -4,6 +4,8 @@ import static org.cmdbuild.bim.utils.BimConstants.CARDID_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CARD_DESCRIPTION_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CLASSID_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CLASSNAME_FIELD_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_BUILDING_ELEMENT_PROXY;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_FURNISHING;
 import static org.cmdbuild.bim.utils.BimConstants.isValidId;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.services.bim.DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX;
@@ -26,8 +28,10 @@ import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.BimError;
+import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.DBIdentifier;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
@@ -67,6 +71,7 @@ public class DefaultBimLogic implements BimLogic {
 	private final BimDataView bimDataView;
 	private final DataAccessLogic dataAccessLogic;
 	private final ExportProjectPolicy exportStrategy;
+	private final Map<String, Map<String, Long>> guidToOidMap = Maps.newHashMap();
 
 	public DefaultBimLogic( //
 			final BimFacade bimServiceFacade, //
@@ -186,7 +191,7 @@ public class DefaultBimLogic implements BimLogic {
 	 * 
 	 */
 	@Override
-	public List<BimLayer> readBimLayer() {
+	public List<BimLayer> readLayers() {
 		final List<BimLayer> out = new LinkedList<BimLayer>();
 		final Map<String, BimLayer> storedLayers = bimLayerMap();
 		final Iterable<? extends CMClass> allClasses = dataAccessLogic.findAllClasses();
@@ -282,6 +287,11 @@ public class DefaultBimLogic implements BimLogic {
 		return outputRevisionId;
 	}
 
+	@Override
+	public String getBaseProjectId(final Long cardId, final String className) {
+		return getBaseProjectIdForCardOfClass(cardId, className);
+	}
+
 	private String getBaseProjectIdForCardOfClass(final Long cardId, final String className) {
 		final Long rootId = getRootId(cardId, className);
 		final BimLayer rootLayer = bimPersistence.findRoot();
@@ -309,6 +319,33 @@ public class DefaultBimLogic implements BimLogic {
 			}
 		}
 		return projectId;
+	}
+
+	private Long getRootCardIdForProjectId(final String projectId, final String rootClassName) {
+		Long cardId = (long) -1;
+
+		final List<CMCard> cards = bimDataView.getCardsWithAttributeAndValue(DBIdentifier.fromName("_BimProject"),
+				projectId, "ProjectId");
+		if (cards.isEmpty() || cards.size() != 1) {
+			throw new BimError("Something is wrong for projectId " + projectId);
+		}
+		final CMCard projectCard = cards.get(0);
+		final CMDomain domain = dataAccessLogic.findDomain(rootClassName + DEFAULT_DOMAIN_SUFFIX);
+
+		final Card src = dataAccessLogic.fetchCard("_BimProject", projectCard.getId());
+
+		final DomainWithSource dom = DomainWithSource.create(domain.getId(), "_2");
+		final GetRelationListResponse domains = dataAccessLogic.getRelationList(src, dom);
+		Object first = firstElement(domains);
+		if (first != null) {
+			final DomainInfo firstDomain = (DomainInfo) first;
+			first = firstElement(firstDomain);
+			if (first != null) {
+				final RelationInfo firstRelation = (RelationInfo) first;
+				cardId = firstRelation.getRelation().getCard2Id();
+			}
+		}
+		return cardId;
 	}
 
 	@Override
@@ -377,66 +414,66 @@ public class DefaultBimLogic implements BimLogic {
 	}
 
 	@Override
-	public String fetchJsonForBimViewer(final String revisionId) {
+	public String getJsonForBimViewer(final String revisionId, final String baseProjectId) {
+
 		final DataHandler jsonFile = bimServiceFacade.fetchProjectStructure(revisionId);
 		try {
+			final Long rootCardId = getRootCardIdForProjectId(baseProjectId, getRootLayer().getClassName());
 			final Reader reader = new InputStreamReader(jsonFile.getInputStream(), "UTF-8");
 			final BufferedReader fileReader = new BufferedReader(reader);
 			final ObjectMapper mapper = new ObjectMapper();
 			final JsonNode rootNode = mapper.readTree(fileReader);
-
 			final JsonNode data = rootNode.findValue("data");
 			final JsonNode properties = data.findValue("properties");
-
-			final Iterator<String> propertiesIterator = properties.getFieldNames();
-
-			while (propertiesIterator.hasNext()) {
-				final String oid = propertiesIterator.next();
-				final ObjectNode property = (ObjectNode) properties.findValue(oid);
-				final Long longOid = Long.parseLong(oid);
-
-				final BimCard cardData = getBimCardFromOid(longOid, revisionId);
-
-				if (cardData != null) {
-					final ObjectNode cmdbuildData = mapper.createObjectNode();
-					cmdbuildData.put(CARDID_FIELD_NAME, cardData.getId());
-					cmdbuildData.put(CLASSID_FIELD_NAME, cardData.getClassId());
-					cmdbuildData.put(CLASSNAME_FIELD_NAME, cardData.getClassName());
-					cmdbuildData.put(CARD_DESCRIPTION_FIELD_NAME, cardData.getCardDescription());
-					property.put("cmdbuild_data", cmdbuildData);
+			final List<BimLayer> layers = readLayers();
+			for (final BimLayer layer : layers) {
+				final String className = layer.getClassName();
+				final String rootClassName = getRootLayer().getClassName();
+				List<BimCard> bimCards = Lists.newArrayList();
+				if (className.equals(rootClassName)) {
+					bimCards = bimDataView.getBimCardsWithAttributeAndValue(className, null, null);
+				} else {
+					final String rootReferenceName = layer.getRootReference();
+					if (StringUtils.isNotBlank(rootReferenceName)) {
+						bimCards = bimDataView.getBimCardsWithAttributeAndValue(className, rootCardId,
+								rootReferenceName);
+					}
+				}
+				for (final BimCard bimCard : bimCards) {
+					final String guid = bimCard.getGlobalId();
+					Long oid = (long) -1;
+					if (guidToOidMap.containsKey(revisionId)) {
+						final Map<String, Long> revisionMap = guidToOidMap.get(revisionId);
+						if (revisionMap.containsKey(guid)) {
+							oid = revisionMap.get(guid);
+						}
+					} else {
+						oid = bimServiceFacade.getOidFromGlobalId(guid, revisionId,
+								Lists.newArrayList(IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING));
+						if (guidToOidMap.containsKey(revisionId)) {
+							final Map<String, Long> revisionMap = guidToOidMap.get(revisionId);
+							revisionMap.put(guid, oid);
+						} else {
+							final Map<String, Long> revisionMap = Maps.newHashMap();
+							revisionMap.put(guid, oid);
+						}
+					}
+					final String oidAsString = String.valueOf(oid);
+					if (isValidId(oidAsString)) {
+						final ObjectNode property = (ObjectNode) properties.findValue(oidAsString);
+						final ObjectNode cmdbuildData = mapper.createObjectNode();
+						cmdbuildData.put(CARDID_FIELD_NAME, bimCard.getId());
+						cmdbuildData.put(CLASSID_FIELD_NAME, bimCard.getClassId());
+						cmdbuildData.put(CLASSNAME_FIELD_NAME, bimCard.getClassName());
+						cmdbuildData.put(CARD_DESCRIPTION_FIELD_NAME, bimCard.getCardDescription());
+						property.put("cmdbuild_data", cmdbuildData);
+					}
 				}
 			}
 			return rootNode.toString();
 		} catch (final Throwable t) {
 			throw new BimError("Cannot read the Json", t);
 		}
-	}
-
-	private final Map<String, Map<Long, BimCard>> oidBimcardMap = new HashMap<String, Map<Long, BimCard>>();
-	private Map<String, BimCard> guidCmidMap = Maps.newHashMap();
-
-	private BimCard getBimCardFromOid(final Long longOid, final String revisionId) {
-		if (oidBimcardMap.containsKey(revisionId)) {
-			if (!oidBimcardMap.get(revisionId).containsKey(longOid)) {
-				final String globalId = bimServiceFacade.getGlobalidFromOid(revisionId, longOid);
-				BimCard bimCard = new BimCard();
-				if (guidCmidMap.containsKey(globalId)) {
-					bimCard = guidCmidMap.get(globalId);
-				} else {
-					guidCmidMap = bimDataView.getAllGlobalIdMap();
-					bimCard = guidCmidMap.get(globalId);
-				}
-				oidBimcardMap.get(revisionId).put(longOid, bimCard);
-			}
-		} else {
-			final String globalId = bimServiceFacade.getGlobalidFromOid(revisionId, longOid);
-			guidCmidMap = bimDataView.getAllGlobalIdMap();
-			final BimCard bimCard = guidCmidMap.get(globalId);
-			final Map<Long, BimCard> oidBimCardMap = Maps.newHashMap();
-			oidBimCardMap.put(longOid, bimCard);
-			oidBimcardMap.put(revisionId, oidBimCardMap);
-		}
-		return oidBimcardMap.get(revisionId).get(longOid);
 	}
 
 	@Override

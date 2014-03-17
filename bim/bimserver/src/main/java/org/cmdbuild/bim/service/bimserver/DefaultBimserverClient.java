@@ -398,14 +398,16 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 		} catch (final UserException e) {
 		} catch (final SOAPFaultException e) {
 			try {
-				for (final String type : candidateTypes) {
-					final List<SDataObject> objectList = client.getBimsie1LowLevelInterface().getDataObjectsByType(
-							roid, type);
-					if (objectList != null) {
-						for (final SDataObject object : objectList) {
-							if (object.getGuid().equals(guid)) {
-								entity = new BimserverEntity(object);
-								return entity;
+				if (candidateTypes != null) {
+					for (final String type : candidateTypes) {
+						final List<SDataObject> objectList = client.getBimsie1LowLevelInterface().getDataObjectsByType(
+								roid, type);
+						if (objectList != null) {
+							for (final SDataObject object : objectList) {
+								if (object.getGuid().equals(guid)) {
+									entity = new BimserverEntity(object);
+									return entity;
+								}
 							}
 						}
 					}
@@ -592,7 +594,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			throw new BimError(e);
 		}
 	}
-	
+
 	@Deprecated
 	@Override
 	public void updateExportProject(final String projectId, final String exportProjectId, final String shapeProjectId) {
@@ -658,5 +660,15 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			throw new BimError("merged revision for export not created");
 		}
 		return mergedProjectId;
+	}
+
+	@Override
+	public Long getOidFromGlobalId(String globalId, String revisionId) {
+		Long oid = Long.valueOf(INVALID_ID);
+		final Entity entityByGuid = getEntityByGuid(revisionId, globalId, null);
+		if (entityByGuid.isValid()) {
+			oid = BimserverEntity.class.cast(entityByGuid).getOid();
+		}
+		return oid;
 	}
 }

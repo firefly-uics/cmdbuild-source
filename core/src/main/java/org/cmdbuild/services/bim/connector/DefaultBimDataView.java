@@ -29,6 +29,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
+import org.cmdbuild.dao.entrytype.DBIdentifier;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
@@ -60,48 +61,56 @@ public class DefaultBimDataView implements BimDataView {
 
 	private final CMDataView dataView;
 
-	public DefaultBimDataView(CMDataView dataView) {
+	public DefaultBimDataView(final CMDataView dataView) {
 		this.dataView = dataView;
 	}
 
 	@Override
-	public CMCard getCmCardFromGlobalId(String globalId, String className) {
+	public CMCard getCmCardFromGlobalId(final String globalId, final String className) {
 		CMCard matchingCard = null;
-		BimCard bimCard = getBimDataFromGlobalid(globalId);
+		final BimCard bimCard = getBimDataFromGlobalid(globalId);
 		if (bimCard != null) {
 			bimCard.getId();
-			Long masterId = bimCard.getId();
-			CMClass theClass = dataView.findClass(className);
-			CMQueryResult result = dataView.select( //
+			final Long masterId = bimCard.getId();
+			final CMClass theClass = dataView.findClass(className);
+			final CMQueryResult result = dataView.select( //
 					anyAttribute(theClass)) //
 					.from(theClass).where(condition(attribute(theClass, ID_ATTRIBUTE), eq(masterId))) //
 					.run();
 			if (!result.isEmpty()) {
-				CMQueryRow row = result.getOnlyRow();
+				final CMQueryRow row = result.getOnlyRow();
 				matchingCard = row.getCard(theClass);
 			}
 		}
 		return matchingCard;
 	}
 
-	public List<CMCard> getCardsWithAttributeAndValue(CMIdentifier classIdentifier, Object attributeValue,
-			String attributeName) {
-		CMClass theClass = dataView.findClass(classIdentifier);
-		CMQueryResult result = dataView.select(anyAttribute(theClass)) //
-				.from(theClass) //
-				.where(condition(attribute(theClass, attributeName), eq(attributeValue))) //
-				.run();
-		List<CMCard> cards = Lists.newArrayList();
-		for (Iterator<CMQueryRow> it = result.iterator(); it.hasNext();) {
-			CMQueryRow row = it.next();
+	@Override
+	public List<CMCard> getCardsWithAttributeAndValue(final CMIdentifier classIdentifier, final Object attributeValue,
+			final String attributeName) {
+		final CMClass theClass = dataView.findClass(classIdentifier);
+		CMQueryResult result = null;
+		if (StringUtils.isBlank(attributeName)) {
+			result = dataView.select(anyAttribute(theClass)) //
+					.from(theClass) //
+					.run();
+		} else {
+			result = dataView.select(anyAttribute(theClass)) //
+					.from(theClass) //
+					.where(condition(attribute(theClass, attributeName), eq(attributeValue))) //
+					.run();
+		}
+		final List<CMCard> cards = Lists.newArrayList();
+		for (final Iterator<CMQueryRow> it = result.iterator(); it.hasNext();) {
+			final CMQueryRow row = it.next();
 			cards.add(row.getCard(theClass));
 		}
 		return cards;
 	}
 
 	@Override
-	public Entity getCardDataForExport(CMCard card, String className, String containerId, String containerGlobalId,
-			String containerClassName, String shapeOid, String ifcType) {
+	public Entity getCardDataForExport(final CMCard card, final String className, final String containerId,
+			final String containerGlobalId, final String containerClassName, final String shapeOid, final String ifcType) {
 
 		Entity cardToExport = Entity.NULL_ENTITY;
 
@@ -110,8 +119,7 @@ public class DefaultBimDataView implements BimDataView {
 		CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(//
 				function, //
 				card.getId(), //
-				className,
-				containerId, //
+				className, containerId, //
 				containerClassName), f) //
 				.run();
 
@@ -119,17 +127,17 @@ public class DefaultBimDataView implements BimDataView {
 			System.out.println("No bim data found for card " + card.getId());
 		}
 
-		CMQueryRow row = queryResult.getOnlyRow();
-		String code = String.class.cast(row.getValueSet(f).get(CODE_ATTRIBUTE));
-		String description = String.class.cast(row.getValueSet(f).get(DESCRIPTION_ATTRIBUTE));
+		final CMQueryRow row = queryResult.getOnlyRow();
+		final String code = String.class.cast(row.getValueSet(f).get(CODE_ATTRIBUTE));
+		final String description = String.class.cast(row.getValueSet(f).get(DESCRIPTION_ATTRIBUTE));
 		String globalId = String.class.cast(row.getValueSet(f).get(GLOBALID_ATTRIBUTE));
 		String xCoord = String.class.cast(row.getValueSet(f).get(X_ATTRIBUTE));
 		String yCoord = String.class.cast(row.getValueSet(f).get(Y_ATTRIBUTE));
 		String zCoord = String.class.cast(row.getValueSet(f).get(Z_ATTRIBUTE));
 
-		double x = xCoord != null && !xCoord.isEmpty() ? Double.parseDouble(xCoord) : 0;
-		double y = yCoord != null && !yCoord.isEmpty() ? Double.parseDouble(yCoord) : 0;
-		double z = zCoord != null && !zCoord.isEmpty() ? Double.parseDouble(zCoord) : 0;
+		final double x = xCoord != null && !xCoord.isEmpty() ? Double.parseDouble(xCoord) : 0;
+		final double y = yCoord != null && !yCoord.isEmpty() ? Double.parseDouble(yCoord) : 0;
+		final double z = zCoord != null && !zCoord.isEmpty() ? Double.parseDouble(zCoord) : 0;
 
 		if (globalId == null || globalId.isEmpty()) {
 			globalId = RandomStringUtils.randomAlphanumeric(22);
@@ -142,7 +150,7 @@ public class DefaultBimDataView implements BimDataView {
 			if (queryResult.isEmpty()) {
 				System.out.println("No coordinates generated for card " + card.getId());
 			}
-			CMQueryRow rowCoordinates = queryResult.getOnlyRow();
+			final CMQueryRow rowCoordinates = queryResult.getOnlyRow();
 
 			xCoord = String.class.cast(rowCoordinates.getValueSet(f).get(X_ATTRIBUTE));
 			yCoord = String.class.cast(rowCoordinates.getValueSet(f).get(Y_ATTRIBUTE));
@@ -154,7 +162,7 @@ public class DefaultBimDataView implements BimDataView {
 					.from(call(function, card.getId(), className, globalId, xCoord, yCoord, zCoord), f).run();
 		}
 
-		DefaultEntity cardWithBimData = DefaultEntity.withTypeAndKey(StringUtils.EMPTY, globalId);
+		final DefaultEntity cardWithBimData = DefaultEntity.withTypeAndKey(StringUtils.EMPTY, globalId);
 		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(ID_ATTRIBUTE, card.getId().toString()));
 		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(BASE_CLASS_NAME, className));
 		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(CODE_ATTRIBUTE, code));
@@ -174,7 +182,7 @@ public class DefaultBimDataView implements BimDataView {
 	}
 
 	@Override
-	public BimCard getBimDataFromGlobalid(String globalId) {
+	public BimCard getBimDataFromGlobalid(final String globalId) {
 		final CMFunction function = dataView.findFunctionByName(CARDDATA_FROM_GUID_FUNCTION);
 		final NameAlias f = NameAlias.as("f");
 		final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function, globalId), f)
@@ -183,15 +191,15 @@ public class DefaultBimDataView implements BimDataView {
 			System.out.println("No matching card found for globalid " + globalId);
 		}
 
-		BimCard bimCard = new BimCard();
-		CMQueryRow row = queryResult.getOnlyRow();
-		Integer rowIdInt = (Integer) row.getValueSet(f).get(ID_ATTRIBUTE);
-		Integer rowIdClassInt = (Integer) row.getValueSet(f).get(CLASS_ID_ATTRIBUTE);
-		String className = (String) row.getValueSet(f).get(CLASSNAME);
-		String description = String.class.cast(row.getValueSet(f).get(DESCRIPTION_ATTRIBUTE));
+		final BimCard bimCard = new BimCard();
+		final CMQueryRow row = queryResult.getOnlyRow();
+		final Integer rowIdInt = (Integer) row.getValueSet(f).get(ID_ATTRIBUTE);
+		final Integer rowIdClassInt = (Integer) row.getValueSet(f).get(CLASS_ID_ATTRIBUTE);
+		final String className = (String) row.getValueSet(f).get(CLASSNAME);
+		final String description = String.class.cast(row.getValueSet(f).get(DESCRIPTION_ATTRIBUTE));
 		if (rowIdInt != null && rowIdClassInt != null) {
-			Long rowId = new Long(rowIdInt.longValue());
-			Long rowIdClass = new Long(rowIdClassInt.longValue());
+			final Long rowId = new Long(rowIdInt.longValue());
+			final Long rowIdClass = new Long(rowIdClassInt.longValue());
 			bimCard.setGlobalId(globalId);
 			bimCard.setId(rowId);
 			bimCard.setClassId(rowIdClass);
@@ -231,7 +239,7 @@ public class DefaultBimDataView implements BimDataView {
 			return id;
 		}
 
-		public void setId(Long id) {
+		public void setId(final Long id) {
 			this.id = id;
 		}
 
@@ -239,7 +247,7 @@ public class DefaultBimDataView implements BimDataView {
 			return classId;
 		}
 
-		public void setClassId(Long classId) {
+		public void setClassId(final Long classId) {
 			this.classId = classId;
 		}
 
@@ -247,7 +255,7 @@ public class DefaultBimDataView implements BimDataView {
 			return className;
 		}
 
-		public void setClassName(String className) {
+		public void setClassName(final String className) {
 			this.className = className;
 		}
 
@@ -255,7 +263,7 @@ public class DefaultBimDataView implements BimDataView {
 			return cardDescription;
 		}
 
-		public void setCardDescription(String cardDescription) {
+		public void setCardDescription(final String cardDescription) {
 			this.cardDescription = cardDescription;
 		}
 
@@ -263,7 +271,7 @@ public class DefaultBimDataView implements BimDataView {
 			return globalId;
 		}
 
-		public void setGlobalId(String globalId) {
+		public void setGlobalId(final String globalId) {
 			this.globalId = globalId;
 		}
 	}
@@ -277,24 +285,24 @@ public class DefaultBimDataView implements BimDataView {
 				.run();
 		final CMQueryRow row = result.getOnlyRow();
 		final CMCard card = row.getCard(theClass);
-		IdAndDescription reference = IdAndDescription.class.cast(card.get(referenceRoot));
+		final IdAndDescription reference = IdAndDescription.class.cast(card.get(referenceRoot));
 		return reference.getId();
 	}
 
 	@Override
-	public Long getIdFromGlobalId(String globalId, String className) {
+	public Long getIdFromGlobalId(final String globalId, final String className) {
 		Long id = null;
-		BimCard cardData = getBimDataFromGlobalid(globalId);
+		final BimCard cardData = getBimDataFromGlobalid(globalId);
 		if (cardData != null) {
 			id = cardData.getId();
 		}
 		return id;
 	}
 
-	public String getGlobalIdFromCmId(Long cmId, String className) {
-		String globalId = StringUtils.EMPTY;
-		List<CMCard> cardList = getCardsWithAttributeAndValue(BimIdentifier.newIdentifier().withName(className), cmId,
-				"Id");
+	public String getGlobalIdFromCmId(final Long cmId, final String className) {
+		final String globalId = StringUtils.EMPTY;
+		final List<CMCard> cardList = getCardsWithAttributeAndValue(BimIdentifier.newIdentifier().withName(className),
+				cmId, "Id");
 		if (cardList.size() != 1) {
 			throw new RuntimeException();
 		}
@@ -304,14 +312,14 @@ public class DefaultBimDataView implements BimDataView {
 
 	@Override
 	public Map<String, BimCard> getAllGlobalIdMap() {
-		Map<String, BimCard> globalidCmidMap = Maps.newHashMap();
+		final Map<String, BimCard> globalidCmidMap = Maps.newHashMap();
 		try {
 			final CMFunction function = dataView.findFunctionByName(ALL_GLOBALID);
 			final NameAlias f = NameAlias.as("f");
 			final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function), f).run();
 			if (!queryResult.isEmpty()) {
-				for (Iterator<CMQueryRow> it = queryResult.iterator(); it.hasNext();) {
-					CMQueryRow row = it.next();
+				for (final Iterator<CMQueryRow> it = queryResult.iterator(); it.hasNext();) {
+					final CMQueryRow row = it.next();
 					final String globalid = String.class.cast(row.getValueSet(f).get("globalid"));
 					final Long cmid = new Long((Integer) row.getValueSet(f).get("id"));
 					final Long idclass = new Long((Integer) row.getValueSet(f).get("idclass"));
@@ -321,10 +329,34 @@ public class DefaultBimDataView implements BimDataView {
 					globalidCmidMap.put(globalid, card);
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO: handle exception
 		}
 		return globalidCmidMap;
+	}
+
+	@Override
+	public List<BimCard> getBimCardsWithAttributeAndValue(final String className, final Long rootCardId,
+			final String rootReferenceName) {
+		final List<BimCard> result = Lists.newArrayList();
+		final CMClass theClass = dataView.findClass(className);
+		final Long idClass = theClass.getId();
+		final List<CMCard> baseCards = getCardsWithAttributeAndValue(DBIdentifier.fromName(className), rootCardId,
+				rootReferenceName);
+		for (final CMCard card : baseCards) {
+			final List<CMCard> bimCards = getCardsWithAttributeAndValue(
+					BimIdentifier.newIdentifier().withName(className), card.getId(), "Master");
+			final Long cmid = card.getId();
+			final String description = card.get(DESCRIPTION_ATTRIBUTE).toString();
+			if (!bimCards.isEmpty()) {
+				final CMCard bimCard = bimCards.get(0);
+				final String globalid = bimCard.get(GLOBALID_ATTRIBUTE).toString();
+				final BimCard resultCard = new BimCard(cmid, idClass, description, className);
+				resultCard.setGlobalId(globalid);
+				result.add(resultCard);
+			}
+		}
+		return result;
 	}
 
 }

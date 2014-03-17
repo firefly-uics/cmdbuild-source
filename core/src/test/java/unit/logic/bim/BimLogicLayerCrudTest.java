@@ -62,7 +62,7 @@ public class BimLogicLayerCrudTest {
 		when(dataPersistence.listLayers()).thenReturn(layerList );
 
 		// when
-		bimLogic.readBimLayer();
+		bimLogic.readLayers();
 		//
 		// // then
 		InOrder inOrder = inOrder(dataPersistence, dataModelManager, dataAccessLogic);

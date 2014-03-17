@@ -25,4 +25,6 @@ public interface BimDataView {
 
 	Long fetchRoot(Long cardId, String className, String referenceRoot);
 
+	List<BimCard> getBimCardsWithAttributeAndValue(String className, Long rootCardId, String rootReferenceName);
+
 }

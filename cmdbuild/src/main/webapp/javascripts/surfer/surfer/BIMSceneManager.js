@@ -153,8 +153,8 @@
 	// Init scene and project loading
 	// ##################################################
 
-	BIMSceneManager.prototype.loadProjectWithRoid = function(roid) {
-		this.bimProjectLoader.loadFromCmdbuild(roid);
+	BIMSceneManager.prototype.loadProjectWithRoid = function(roid, poid) {
+		this.bimProjectLoader.loadFromCmdbuild(roid,poid);
 //		this.bimProjectLoader.load(roid);
 	};
 

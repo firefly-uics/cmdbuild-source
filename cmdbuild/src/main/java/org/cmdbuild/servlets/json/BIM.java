@@ -223,16 +223,20 @@ public class BIM extends JSONBaseWithSpringContext {
 
 		final String rootDescription = bimLogic().getDescriptionOfRoot(cardId, className);
 
+		final String baseProjectId = bimLogic().getBaseProjectId(cardId, className);
+
 		final String outputRevisionId = bimLogic().getExportedRevisionIdForViewer(cardId, className);
 
-		return createResponse(rootDescription, outputRevisionId);
+		return createResponse(rootDescription, outputRevisionId, baseProjectId);
 	}
 
-	private JSONObject createResponse(final String rootDescription, final String outputRevisionId) throws JSONException {
+	private JSONObject createResponse(final String rootDescription, final String outputRevisionId,
+			final String baseProjectId) throws JSONException {
 		final JSONObject out = new JSONObject();
 		if (isValidId(outputRevisionId)) {
 			out.put("ROID", outputRevisionId);
 		}
+		out.put("BASE_POID", baseProjectId);
 		out.put("DESCRIPTION", rootDescription);
 		return out;
 	}
@@ -243,14 +247,16 @@ public class BIM extends JSONBaseWithSpringContext {
 
 		final String rootDescription = bimLogic().getDescriptionOfRoot(cardId, className);
 
+		final String baseProjectId = bimLogic().getBaseProjectId(cardId, className);
+
 		final String outputRevisionId = bimLogic().getBaseRevisionIdForViewer(cardId, className);
 
-		return createResponse(rootDescription, outputRevisionId);
+		return createResponse(rootDescription, outputRevisionId, baseProjectId);
 	}
 
 	@JSONExported
 	public JSONObject readBimLayer() throws JSONException {
-		final List<BimLayer> layerList = bimLogic().readBimLayer();
+		final List<BimLayer> layerList = bimLogic().readLayers();
 		final JSONArray jsonLayerList = BimLayerSerializer.toClient(layerList);
 		final JSONObject response = new JSONObject();
 
@@ -353,8 +359,11 @@ public class BIM extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JSONObject fetchJsonForBimViewer(final @Parameter("revisionId") String revisionId) throws JSONException {
-		return new JSONObject(bimLogic().fetchJsonForBimViewer(revisionId));
+	public JSONObject fetchJsonForBimViewer( //
+			final @Parameter("revisionId") String revisionId, //
+			final @Parameter("baseProjectId") String baseProjectId //
+	) throws JSONException {
+		return new JSONObject(bimLogic().getJsonForBimViewer(revisionId, baseProjectId));
 	}
 
 	@JSONExported

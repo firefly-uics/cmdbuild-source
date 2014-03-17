@@ -48,7 +48,7 @@ public interface BimLogic extends Logic {
 
 	void disableProject(Project project);
 
-	List<BimLayer> readBimLayer();
+	List<BimLayer> readLayers();
 
 	void updateBimLayer(String className, String attributeName, String value);
 
@@ -62,7 +62,7 @@ public interface BimLogic extends Logic {
 
 	BimCard fetchCardDataFromObjectId(String objectId, String revisionId);
 
-	String fetchJsonForBimViewer(String revisionId);
+	String getJsonForBimViewer(String revisionId, String baseProjectId);
 
 	boolean getActiveForClassname(String classname);
 
@@ -75,5 +75,7 @@ public interface BimLogic extends Logic {
 	String getBaseRevisionIdForViewer(Long cardId, String className);
 
 	String getExportedRevisionIdForViewer(Long cardId, String className);
+
+	String getBaseProjectId(Long cardId, String className);
 
 }

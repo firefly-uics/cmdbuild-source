@@ -196,6 +196,11 @@ public class NewExportConnector implements Export {
 			final String revisionId = serviceFacade.commitTransaction();
 			System.out.println("Revision " + revisionId + " created at " + new DateTime());
 
+			/*
+			 * In order to see the generated objects I have to download and
+			 * upload again the file. This is due to some problems with BimServer
+			 * cache, I will investigate about a more efficient solution.
+			 */
 			final DataHandler exportedData = serviceFacade.download(exportProjectId);
 			final File file = File.createTempFile("ifc", null);
 			final FileOutputStream outputStream = new FileOutputStream(file);
@@ -276,19 +281,19 @@ public class NewExportConnector implements Export {
 
 	private String getShapeOid(final String revisionId, final String shapeName) {
 		String shapeOid = StringUtils.EMPTY;
-		if(shapeNameToOidMap.containsKey(revisionId)){
+		if (shapeNameToOidMap.containsKey(revisionId)) {
 			Map<String, String> mapForCurrentRevision = shapeNameToOidMap.get(revisionId);
-			if(mapForCurrentRevision.containsKey(shapeName)){
+			if (mapForCurrentRevision.containsKey(shapeName)) {
 				shapeOid = mapForCurrentRevision.get(shapeName);
-			}else{
+			} else {
 				shapeOid = serviceFacade.findShapeWithName(shapeName, revisionId);
-				if(isValidId(shapeOid)){
+				if (isValidId(shapeOid)) {
 					mapForCurrentRevision.put(shapeName, shapeOid);
 				}
 			}
-		}else{
+		} else {
 			shapeOid = serviceFacade.findShapeWithName(shapeName, revisionId);
-			if(isValidId(shapeOid)){
+			if (isValidId(shapeOid)) {
 				Map<String, String> mapForCurrentRevision = Maps.newHashMap();
 				shapeNameToOidMap.put(revisionId, mapForCurrentRevision);
 				mapForCurrentRevision.put(shapeName, shapeOid);
@@ -339,7 +344,6 @@ public class NewExportConnector implements Export {
 	@Override
 	public String getLastGeneratedOutput(final String baseProjectId) {
 		final String exportProjectId = getExportProjectId(baseProjectId);
-		System.out.println("export project is " + exportProjectId);
 		final String outputRevisionId = serviceFacade.getLastRevisionOfProject(exportProjectId);
 		return outputRevisionId;
 	}
