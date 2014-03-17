@@ -11,7 +11,7 @@ BEGIN
 	LOOP
 		RAISE DEBUG 'disabling triggers for classname %s', tables.classid::regclass;
 		IF (tables.classid IS NOT NULL) THEN
-			EXECUTE 'ALTER TABLE '|| tables.classid::regclass || ' DISABLE TRIGGER ALL';
+			EXECUTE 'ALTER TABLE '|| tables.classid::regclass || ' DISABLE TRIGGER USER';
 		END IF;
 	END LOOP;
 
@@ -20,7 +20,7 @@ BEGIN
 	LOOP
 		RAISE DEBUG 'disabling triggers for domain %s', domains.domainid::regclass;
 		IF (domains.domainid IS NOT NULL) THEN
-			EXECUTE 'ALTER TABLE ' || domains.domainid::regclass || ' DISABLE TRIGGER ALL';
+			EXECUTE 'ALTER TABLE ' || domains.domainid::regclass || ' DISABLE TRIGGER USER';
 		END IF;
 	END LOOP;
 
@@ -39,7 +39,7 @@ BEGIN
 	LOOP
 		RAISE DEBUG 'disabling triggers for classname %s', tables.classid::regclass;
 		IF (tables.classid IS NOT NULL) THEN
-			EXECUTE 'ALTER TABLE '|| tables.classid::regclass || ' ENABLE TRIGGER ALL';
+			EXECUTE 'ALTER TABLE '|| tables.classid::regclass || ' ENABLE TRIGGER USER';
 		END IF;
 	END LOOP;
 
@@ -48,7 +48,7 @@ BEGIN
 	LOOP
 		RAISE DEBUG 'disabling triggers for domain %s', domains.domainid::regclass;
       	IF (domains.domainid IS NOT NULL) THEN
-			EXECUTE 'ALTER TABLE ' || domains.domainid::regclass || ' ENABLE TRIGGER ALL';
+			EXECUTE 'ALTER TABLE ' || domains.domainid::regclass || ' ENABLE TRIGGER USER';
 		END IF;
 	END LOOP;
 
