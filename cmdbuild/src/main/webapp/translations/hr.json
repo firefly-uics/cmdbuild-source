@@ -1,6 +1,6 @@
 {
 	"description": "Hrvatski",
-	"release": "2.1-dev",
+	"release": "2.1.8 (17/03/2014)",
 	"administration": {
 		"description": "Upravljački modul",
 		"modClass": {
