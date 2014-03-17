@@ -3,7 +3,9 @@
 	Ext.define('CMDBuild.controller.administration.workflow.CMCronPanelController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		currentProcessId: undefined,
+		currentProcess: undefined,
+		currentProcessTaskId: undefined,
+		selectionModel: undefined,
 
 		// Overwrite
 		constructor: function(view) {
@@ -13,6 +15,8 @@
 			this.grid = view.grid;
 			this.view.delegate = this;
 			this.grid.delegate = this;
+
+			this.selectionModel = this.grid.getSelectionModel();
 		},
 
 		cmOn: function(name, param, callBack) {
@@ -21,16 +25,16 @@
 					return this.onAddButtonClick(name, param, callBack);
 
 				case 'onItemDoubleClick':
-					return this.onItemDoubleClick(param);
+					return this.onItemDoubleClick(name, param);
 
 				case 'onModifyButtonClick':
-					return this.onModifyButtonClick(name, param, callBack);
+					return this.onModifyButtonClick(name, param);
 
 				case 'onRemoveButtonClick':
-					return this.onRemoveButtonClick(name, param, callBack);
+					return this.onRemoveButtonClick(name, param);
 
 				case 'onRowSelected':
-					return this.onRowSelected(name, param, callBack);
+					return this.onRowSelected();
 
 				default: {
 					if (this.parentDelegate)
@@ -39,61 +43,105 @@
 			}
 		},
 
-		onAddButtonClick: function() {
-			_debug('onAddButtonClick');
-		},
+		onAddButtonClick: function(name, param, callBack) {
+			var me = this;
 
-		onItemDoubleClick: function(itemId) {
-			var domainAccordion = _CMMainViewportController.findAccordionByCMName('tasks');
+			this.targetAccordion.expand();
 
-			domainAccordion.expand();
+//			param.id = this.currentProcessId;
 
 			Ext.Function.createDelayed(function() {
-				domainAccordion.selectNodeById(record.get('workflow'));
-			}, 100)();
-
-		},
-
-		onModifyButtonClick: function() {_debug('onModifyButtonClick');
-			if (this.currentProcessId) {
-				this.onItemDoubleClick(this.currentProcessId);
+				me.targetAccordion.selectNodeById(param.type);
 
 				Ext.Function.createDelayed(function() {
-					_CMMainViewportController.panelControllers['tasks'].view.form.delegate.onModifyButtonClick();
-				}, 500)();
+					me.targetController.cmOn(name, param, callBack);
+//					me
+				}, 100)();
+			}, 500)();
+		},
+
+		onItemDoubleClick: function(name, param) {
+			var me = this;
+
+			this.targetAccordion.expand();
+
+			Ext.Function.createDelayed(function() {
+				me.targetAccordion.selectNodeById(param.type);
+
+				me.targetController.grid.getStore().load({
+					callback: function() {
+						var selectionIndex = me.targetController.grid.getStore().find(CMDBuild.ServiceProxy.parameter.ID, param.id);
+
+						if (selectionIndex > 0) {
+							me.targetController.grid.getSelectionModel().select(
+								selectionIndex,
+								true
+							);
+						} else {
+							CMDBuild.Msg.error(
+								CMDBuild.Translation.common.failure,
+								Ext.String.format('Cannot find taks with id ' + param.id + ' in store')
+							);
+
+							me.targetController.form.delegate.selectedId = null;
+							me.targetController.form.disableModify();
+						}
+					}
+				});
+			}, 500)();
+		},
+
+		onModifyButtonClick: function(name, param) {
+			var me = this;
+
+			if (this.currentProcessTaskId) {
+				param.id = this.currentProcessTaskId;
+
+				this.onItemDoubleClick(null, param);
+
+				Ext.Function.createDelayed(function() {
+					if (me.targetController.form.delegate.selectedId != null)
+						me.targetController.form.delegate.onModifyButtonClick();
+				}, 1000)();
 			}
 		},
 
 		onProcessSelected: function(processId, process) {
-			var me = this;
-			this.currentProcessId = processId;
+			this.currentProcess = process;
 
 			if (!process || process.get('superclass')) {
 				this.view.disable();
 			} else {
 				this.view.enable();
-
-				// TODO: reconfigura on server side implementation
 				this.grid.reconfigure(CMDBuild.core.serviceProxy.CMProxyTasks.getStoreByWorkflow());
-//				this.grid.store.load({
-//					params: { id: processId },
-//					callback: function() {
-//						_debug('store loaded');
-//						me.grid.getSelectionModel().select(0, true);
-//					}
-//				});
 			}
 		},
 
-		onRemoveButtonClick: function() {
-			_debug('onRemoveButtonClick');
+		onRemoveButtonClick: function(name, param) {
+			var me = this;
+
+			if (this.currentProcessTaskId) {
+				param.id = this.currentProcessTaskId;
+
+				_debug(this.onItemDoubleClick(null, param));
+
+				Ext.Function.createDelayed(function() {
+					if (me.targetController.form.delegate.selectedId != null)
+						me.targetController.form.delegate.onRemoveButtonClick();
+				}, 1000)();
+			}
 		},
 
-		onRowSelected: function() {_debug('onRowSelected');
-//			this.currentProcessId = null; // TODO: to complete
-			this.view.enableCMTbar();
-		}
+		onRowSelected: function() {
+			if (this.selectionModel.hasSelection()) {
+				this.currentProcessTaskId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
+				this.view.enableCMTbar();
 
+				// This declaration positioned in constructor doesn't works for targetAccordion
+				this.targetAccordion = _CMMainViewportController.findAccordionByCMName('tasks');
+				this.targetController = _CMMainViewportController.panelControllers['tasks'];
+			}
+		}
 	});
 
 })();

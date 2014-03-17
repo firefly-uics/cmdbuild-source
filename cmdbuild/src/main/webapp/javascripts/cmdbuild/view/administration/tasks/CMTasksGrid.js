@@ -87,7 +87,7 @@
 					'row': row,
 					'record': record,
 					'index': index
-				}, null);
+				});
 			}
 		},
 

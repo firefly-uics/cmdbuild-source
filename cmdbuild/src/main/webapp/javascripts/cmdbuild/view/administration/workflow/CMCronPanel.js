@@ -22,7 +22,7 @@
 				iconCls: 'add',
 				text: tr.add,
 				handler: function() {
-					me.delegate.cmOn('onAddButtonClick');
+					me.delegate.cmOn('onAddButtonClick', { type: 'workflow' });
 				}
 			});
 
@@ -30,7 +30,7 @@
 				iconCls: 'modify',
 				text: tr.modify,
 				handler: function() {
-					me.delegate.cmOn('onModifyButtonClick');
+					me.delegate.cmOn('onModifyButtonClick', { type: 'workflow' });
 				}
 			});
 
@@ -38,7 +38,7 @@
 				iconCls: 'delete',
 				text: tr.remove,
 				handler: function() {
-					me.delegate.cmOn('onRemoveButtonClick');
+					me.delegate.cmOn('onRemoveButtonClick', { type: 'workflow' });
 				}
 			});
 
@@ -53,6 +53,7 @@
 
 			this.callParent();
 			this.disableCMTbar();
+			this.addButton.enable();
 		}
 	});
 

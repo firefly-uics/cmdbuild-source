@@ -28,7 +28,8 @@
 				this.grid.reconfigure(CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType));
 				this.grid.store.load({
 					callback: function() {
-						me.grid.getSelectionModel().select(0, true);
+						if (!me.grid.getSelectionModel().hasSelection())
+							me.grid.getSelectionModel().select(0, true);
 					}
 				});
 			}
@@ -113,7 +114,8 @@
 		},
 
 		onRowSelected: function(name, param, callBack) {
-			this.buildFormController(param.record.get(CMDBuild.ServiceProxy.parameter.TYPE));
+			if (!this.form.delegate)
+				this.buildFormController(param.record.get(CMDBuild.ServiceProxy.parameter.TYPE));
 
 			if (this.form.delegate)
 				this.form.delegate.cmOn(name, param, callBack);

@@ -77,7 +77,7 @@
 						{ 'id': 234, 'description': 'Workflow task 1', 'active': true },
 						{ 'id': 123, 'description': 'Workflow task 2', 'active': true },
 						{ 'id': 120, 'description': 'Workflow task 3', 'active': false },
-						{ 'id': 100, 'description': 'Workflow task 4', 'active': false },
+						{ 'id': 1570, 'description': 'Workflow task 4', 'active': false },
 						{ 'id': 456, 'description': 'Workflow task 5', 'active': false },
 						{ 'id': 654, 'description': 'Workflow task 6', 'active': true }
 					]
