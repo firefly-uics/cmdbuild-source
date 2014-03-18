@@ -78,6 +78,10 @@
 			this.view.idField.setValue(value);
 		},
 
+		fillWorkflowCombo: function(workflowName) {
+			this.view.workflowCombo.setValue(workflowName);
+		},
+
 		onAttributeComboSelect: function(rowIndex) {
 			this.view.attributesTable.cellEditing.startEditByPosition({ row: rowIndex, column: 1 });
 		},

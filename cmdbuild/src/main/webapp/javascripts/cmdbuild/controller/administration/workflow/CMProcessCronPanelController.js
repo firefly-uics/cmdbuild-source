@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.workflow.CMCronPanelController', {
+	Ext.define('CMDBuild.controller.administration.workflow.CMProcessCronPanelController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		currentProcess: undefined,
@@ -48,14 +48,13 @@
 
 			this.targetAccordion.expand();
 
-//			param.id = this.currentProcessId;
-
 			Ext.Function.createDelayed(function() {
 				me.targetAccordion.selectNodeById(param.type);
 
 				Ext.Function.createDelayed(function() {
 					me.targetController.cmOn(name, param, callBack);
-//					me
+					me.targetController.form.delegate.delegateStep[0].fillWorkflowCombo(me.currentProcess.get(CMDBuild.ServiceProxy.parameter.NAME));
+					me.targetController.form.delegate.onModifyButtonClick();
 				}, 100)();
 			}, 500)();
 		},
@@ -122,8 +121,6 @@
 
 			if (this.currentProcessTaskId) {
 				param.id = this.currentProcessTaskId;
-
-				_debug(this.onItemDoubleClick(null, param));
 
 				Ext.Function.createDelayed(function() {
 					if (me.targetController.form.delegate.selectedId != null)

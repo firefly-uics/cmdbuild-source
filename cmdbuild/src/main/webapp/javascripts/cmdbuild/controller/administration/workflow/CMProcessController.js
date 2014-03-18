@@ -1,18 +1,19 @@
 (function() {
 
-	Ext.define("CMDBuild.controller.administration.workflow.CMModProcessController", {
-		extend: "CMDBuild.controller.administration.classes.CMModClassController",
+	Ext.define('CMDBuild.controller.administration.workflow.CMProcessController', {
+		extend: 'CMDBuild.controller.administration.classes.CMModClassController',
+
 		// override
 		buildSubcontrollers: function() {
 			this.processFormController = new CMDBuild.controller.administration.workflow.CMProcessFormController(this.view.processForm);
 			this.attributePanelController = new CMDBuild.controller.administration.classes.CMClassAttributeController(this.view.attributesPanel);
 			this.domainTabController = new CMDBuild.controller.administration.classes.CMDomainTabController(this.view.domainGrid);
-			this.cronPanelController = new CMDBuild.controller.administration.workflow.CMCronPanelController(this.view.cronPanel);
+			this.cronPanelController = new CMDBuild.controller.administration.workflow.CMProcessCronPanelController(this.view.cronPanel);
 		},
 
 		// override
 		registerToCacheEvents: function() {
-			_CMCache.on("cm_process_deleted", this.view.onClassDeleted, this.view);
+			_CMCache.on('cm_process_deleted', this.view.onClassDeleted, this.view);
 		},
 
 		// override
@@ -27,9 +28,9 @@
 				this.view.onProcessSelected(selection.data);
 
 				this.processFormController.onProcessSelected(processId);
-				this.cronPanelController.onProcessSelected(processId, process);
 				this.attributePanelController.onClassSelected(processId);
 				this.domainTabController.onClassSelected(processId);
+				this.cronPanelController.onProcessSelected(processId, process);
 			}
 		},
 
@@ -41,7 +42,7 @@
 			this.cronPanelController.onAddClassButtonClick();
 
 			this.view.onAddClassButtonClick();
-			_CMMainViewportController.deselectAccordionByName("process");
+			_CMMainViewportController.deselectAccordionByName('process');
 		}
 	});
 
