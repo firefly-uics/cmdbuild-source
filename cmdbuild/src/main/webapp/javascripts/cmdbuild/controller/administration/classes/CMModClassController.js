@@ -1,5 +1,5 @@
 (function() {
-	
+
 	Ext.define("CMDBuild.controller.administration.classes.CMModClassController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 		constructor: function() {
@@ -11,7 +11,7 @@
 
 			this.registerToCacheEvents();
 		},
-		
+
 		//private and overridden in subclasses
 		buildSubcontrollers: function() {
 			this.subControllers = [
@@ -27,7 +27,7 @@
 			}
 		},
 
-		//private and overridden in subclasses		
+		//private and overridden in subclasses
 		registerToCacheEvents: function() {
 			_CMCache.on("cm_class_deleted", this.view.onClassDeleted, this.view);
 		},
@@ -56,7 +56,7 @@
 						"Report",
 						"height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable"
 					);
-					
+
 					if (!popup) {
 						CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
 					}
