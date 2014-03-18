@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
@@ -29,6 +30,7 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 	public static class ProcessInstanceBuilder implements Builder<ProcessInstanceImpl> {
 
 		private OperationUser operationUser;
+		private PrivilegeContext privilegeContext;
 		private ProcessDefinitionManager processDefinitionManager;
 		private CMCard card;
 		private LookupHelper lookupHelper;
@@ -41,6 +43,7 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 
 		private void validate() {
 			Validate.notNull(operationUser, "invalid operation user");
+			Validate.notNull(privilegeContext, "invalid privilege context");
 			Validate.notNull(processDefinitionManager, "invalid process definition manager");
 			Validate.notNull(lookupHelper, "invalid lookup helper");
 			Validate.notNull(card, "invalid card");
@@ -48,6 +51,11 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 
 		public ProcessInstanceBuilder withOperationUser(final OperationUser value) {
 			operationUser = value;
+			return this;
+		}
+
+		public ProcessInstanceBuilder withPrivilegeContext(final PrivilegeContext value) {
+			privilegeContext = value;
 			return this;
 		}
 
@@ -73,12 +81,14 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 	}
 
 	private final OperationUser operationUser;
+	private final PrivilegeContext privilegeContext;
 	private final ProcessDefinitionManager processDefinitionManager;
 	private final CMCard card;
 	private final LookupHelper lookupHelper;
 
 	private ProcessInstanceImpl(final ProcessInstanceBuilder builder) {
 		this.operationUser = builder.operationUser;
+		this.privilegeContext = builder.privilegeContext;
 		this.processDefinitionManager = builder.processDefinitionManager;
 		this.card = builder.card;
 		this.lookupHelper = builder.lookupHelper;
@@ -86,7 +96,7 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 
 	@Override
 	public CMProcessClass getType() {
-		return new ProcessClassImpl(operationUser, card.getType(), processDefinitionManager);
+		return new ProcessClassImpl(operationUser, privilegeContext, card.getType(), processDefinitionManager);
 	}
 
 	@Override

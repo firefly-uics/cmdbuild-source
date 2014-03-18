@@ -2,13 +2,11 @@ package org.cmdbuild.logic.email;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
-import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.cmdbuild.data.converter.EmailConverter.EMAIL_CLASS_NAME;
+import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,7 +22,6 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.TempDataSource;
@@ -46,13 +43,12 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
-import org.cmdbuild.model.email.EmailConstants;
-import org.cmdbuild.model.email.EmailTemplate;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.services.email.EmailConfigurationFactory;
 import org.cmdbuild.services.email.EmailService;
+import org.cmdbuild.services.email.SubjectHandler;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -356,11 +352,10 @@ public class EmailLogic implements Logic {
 
 	private static final Collection<EmailStatus> SAVEABLE_STATUSES = Arrays.asList(EmailStatus.DRAFT, MISSING_STATUS);
 
-	private static final String USER_FOR_ATTACHMENTS_UPLOAD = "system";
-
 	private final CMDataView view;
-	private final EmailConfiguration configuration;
+	private final EmailConfigurationFactory configurationFactory;
 	private final EmailService service;
+	private final SubjectHandler subjectHandler;
 	private final DmsConfiguration dmsConfiguration;
 	private final DmsService dmsService;
 	private final DocumentCreatorFactory documentCreatorFactory;
@@ -368,18 +363,20 @@ public class EmailLogic implements Logic {
 	private final OperationUser operationUser;
 
 	public EmailLogic( //
-			final CMDataView view, //
-			final EmailConfiguration configuration, //
-			final EmailService service,//
+			final CMDataView dataView, //
+			final EmailConfigurationFactory configurationFactory, //
+			final EmailService service, //
+			final SubjectHandler subjectHandler, //
 			final DmsConfiguration dmsConfiguration, //
 			final DmsService dmsService, //
 			final DocumentCreatorFactory documentCreatorFactory, //
 			final Notifier notifier, //
 			final OperationUser operationUser //
 	) {
-		this.view = view;
-		this.configuration = configuration;
+		this.view = dataView;
+		this.configurationFactory = configurationFactory;
 		this.service = service;
+		this.subjectHandler = subjectHandler;
 		this.dmsConfiguration = dmsConfiguration;
 		this.dmsService = new ConfigurationAwareDmsService(dmsService, dmsConfiguration);
 		this.documentCreatorFactory = documentCreatorFactory;
@@ -411,106 +408,15 @@ public class EmailLogic implements Logic {
 				.transform(TO_EMAIL_WITH_ATTACHMENT_NAMES);
 	}
 
-	// TODO move in another component
-	public void retrieveEmailsFromServer() {
-		try {
-			final Iterable<Email> emails = service.receive();
-			storeAttachmentsOf(emails);
-			sendNotifications(emails);
-		} catch (final CMDBException e) {
-			notifier.warn(e);
-		}
-	}
-
-	private void storeAttachmentsOf(final Iterable<Email> emails) {
-		logger.info("storing attachments for emails");
-		if (dmsConfiguration.isEnabled()) {
-			for (final Email email : emails) {
-				try {
-					storeAttachmentsOf(email);
-				} catch (final Exception e) {
-					logger.warn(format("error storing attachments of email with id '{}'", email.getId()), e);
-				}
-			}
-		} else {
-			logger.warn("dms service not enabled");
-		}
-	}
-
-	private void storeAttachmentsOf(final Email email) {
-		final DocumentCreator documentFactory = createDocumentFactory(EMAIL_CLASS_NAME);
-		for (final Attachment attachment : email.getAttachments()) {
-			InputStream inputStream = null;
-			try {
-				logger.debug("uploading attachment '{}'", attachment.getName());
-				inputStream = new FileInputStream(new File(attachment.getUrl().toURI()));
-				final StorableDocument document = documentFactory.createStorableDocument( //
-						USER_FOR_ATTACHMENTS_UPLOAD, //
-						EMAIL_CLASS_NAME, //
-						email.getId().toString(), //
-						inputStream, //
-						attachment.getName(), //
-						dmsConfiguration.getLookupNameForAttachments(), //
-						attachment.getName());
-				dmsService.upload(document);
-			} catch (final Exception e) {
-				logger.warn("error uploading attachment to dms", e);
-			} finally {
-				if (inputStream != null) {
-					IOUtils.closeQuietly(inputStream);
-				}
-			}
-		}
-	}
-
-	private DocumentCreator createDocumentFactory(final String className) {
-		final CMClass fetchedClass = view.findClass(className);
-		return documentCreatorFactory.create(fetchedClass);
-	}
-
-	private void sendNotifications(final Iterable<Email> emails) {
-		logger.info("sending notifications for emails");
-		for (final Email email : emails) {
-			try {
-				sendNotificationFor(email);
-			} catch (final Exception e) {
-				logger.warn(format("error storing attachments of email with id '{}'", email.getId()), e);
-			}
-		}
-	}
-
-	private void sendNotificationFor(final Email email) {
-		logger.debug("sending notification for email with id '{}'", email.getId());
-		try {
-			for (final EmailTemplate emailTemplate : service.getEmailTemplates(email)) {
-				final Email notification = resolve(emailTemplate);
-				service.send(notification);
-			}
-		} catch (final Exception e) {
-			logger.warn("error sending notification", e);
-		}
-	}
-
-	private Email resolve(final EmailTemplate emailTemplate) {
-		final Email email = new Email();
-		email.setToAddresses(resolveRecipients(emailTemplate.getToAddresses()));
-		email.setCcAddresses(resolveRecipients(emailTemplate.getCCAddresses()));
-		email.setBccAddresses(resolveRecipients(emailTemplate.getBCCAddresses()));
-		email.setSubject(emailTemplate.getSubject());
-		email.setContent(emailTemplate.getBody());
-		return email;
-	}
-
-	private String resolveRecipients(final Iterable<String> recipients) {
-		return StringUtils.join(service.resolveRecipients(recipients).iterator(), EmailConstants.ADDRESSES_SEPARATOR);
-	}
-
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
+		final EmailConfiguration configuration = configurationFactory.create();
 		for (final Email email : service.getOutgoingEmails(processCardId)) {
 			if (isEmpty(email.getFromAddress())) {
 				email.setFromAddress(configuration.getEmailAddress());
 			}
 			try {
+				// FIXME really needed here?
+				email.setSubject(defaultIfBlank(subjectHandler.compile(email).getSubject(), EMPTY));
 				service.send(email, attachmentsOf(email));
 				email.setStatus(EmailStatus.SENT);
 			} catch (final CMDBException e) {
@@ -582,8 +488,8 @@ public class EmailLogic implements Logic {
 	}
 
 	/**
-	 * Saves all specified {@link Email}s for the specified process' id. Only
-	 * draft mails can be saved, others are skipped.
+	 * Saves all specified {@link EmailSubmission}s for the specified process'
+	 * id. Only draft mails can be saved, others are skipped.
 	 */
 	public void saveEmails(final Long processCardId, final Iterable<EmailSubmission> emails) {
 		if (isEmpty(emails)) {
@@ -595,7 +501,7 @@ public class EmailLogic implements Logic {
 			final boolean alreadyStored = (alreadyStoredEmailSubmission != null);
 			final Email maybeUpdateable = alreadyStored ? alreadyStoredEmailSubmission : emailSubmission;
 			if (SAVEABLE_STATUSES.contains(maybeUpdateable.getStatus())) {
-				maybeUpdateable.setActivityId(processCardId.intValue());
+				maybeUpdateable.setActivityId(processCardId);
 				final Long savedId = service.save(maybeUpdateable);
 				if (!alreadyStored) {
 					moveAttachmentsFromTemporaryToFinalPosition(emailSubmission.getTemporaryId(), savedId.toString());
