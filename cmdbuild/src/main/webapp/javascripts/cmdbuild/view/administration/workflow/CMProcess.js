@@ -1,7 +1,7 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modWorkflow;
 
-	Ext.define('CMDBuild.view.administration.workflow.CMModProcess', {
+	Ext.define('CMDBuild.view.administration.workflow.CMProcess', {
 		extend: 'Ext.panel.Panel',
 
 		cmName:'process',
@@ -9,12 +9,12 @@
 		constructor: function() {
 
 			this.addClassButton = Ext.create('Ext.button.Button', {
-				iconCls : 'add',
-				text : tr.add_process
+				iconCls: 'add',
+				text: tr.add_process
 			});
 
 			this.printSchema = Ext.create('CMDBuild.PrintMenuButton', {
-				text : CMDBuild.Translation.administration.modClass.print_schema,
+				text: CMDBuild.Translation.administration.modClass.print_schema,
 				formatList: ['pdf', 'odt']
 			});
 
@@ -22,20 +22,20 @@
 				title: tr.tabs.properties
 			});
 
-			this.attributesPanel = Ext.create('CMDBuild.view.administration.workflow.CMProcessAttributesPanel', {
+			this.attributesPanel = Ext.create('CMDBuild.view.administration.workflow.CMProcessAttributes', {
 				title: tr.tabs.attributes,
 				border: false,
 				disabled: true
 			});
 
 			this.domainGrid = Ext.create('CMDBuild.Administration.DomainGrid', {
-				title : tr.tabs.domains,
+				title: tr.tabs.domains,
 				border: false,
 				disabled: true
 			});
 
-			this.cronPanel = Ext.create('CMDBuild.view.administration.workflow.CMCronPanel', {
-				title : tr.tabs.scheduling,
+			this.cronPanel = Ext.create('CMDBuild.view.administration.workflow.CMProcessTasks', {
+				title: tr.tabs.scheduling,
 				border: false,
 				disabled: true
 			});
@@ -46,18 +46,18 @@
 				activeTab: 0,
 
 				items: [
-					this.processForm
-					,this.attributesPanel
-					,this.domainGrid
-					,this.emailTemplatePanel
-					,this.cronPanel
+					this.processForm,
+					this.attributesPanel,
+					this.domainGrid,
+					this.emailTemplatePanel,
+					this.cronPanel
 				]
 			});
 
 			Ext.apply(this, {
-				tbar:[this.addClassButton, this.printSchema],
-				title : tr.title,
-				basetitle : tr.title+ ' - ',
+				tbar: [this.addClassButton, this.printSchema],
+				title: tr.title,
+				basetitle: tr.title + ' - ',
 				layout: 'fit',
 				items: [this.tabPanel],
 				frame: false,

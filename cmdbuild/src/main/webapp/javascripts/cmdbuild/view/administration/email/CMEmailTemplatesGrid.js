@@ -35,6 +35,10 @@
 		},
 
 		listeners: {
+			itemdblclick: function(grid, record, item, index, e, eOpts) {
+				this.delegate.cmOn('onItemDoubleClick');
+			},
+
 			select: function(row, record, index) {
 				this.delegate.cmOn('onRowSelected', {
 					'row': row,
