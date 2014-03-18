@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.configuration.CMConfigurationEmailTemplatesController', {
+	Ext.define('CMDBuild.controller.administration.email.CMEmailAccountsController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		// Overwrite
@@ -43,6 +43,9 @@
 
 				case 'onSaveButtonClick':
 					return this.onSaveButtonClick();
+
+				case 'onSetDefaultButtonClick':
+					return this.onSetDefaultButtonClick();
 
 				default: {
 					if (
@@ -98,12 +101,13 @@
 				this.selectedName = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.NAME);
 
 				// Selected user asynchronous store query
-				this.selectedDataStore = CMDBuild.core.serviceProxy.CMProxyConfigurationEmailTemplates.get();
+				this.selectedDataStore = CMDBuild.core.serviceProxy.CMProxyEmailAccounts.get();
 				this.selectedDataStore.load({
 					params: { name: this.selectedName }
 				});
 				this.selectedDataStore.on('load', function() {
 					me.form.loadRecord(this.getAt(0));
+					me.form.disableSetDefaultAndRemoveButton();
 				});
 
 				this.form.disableModify(true);
@@ -122,20 +126,30 @@
 			var formData = this.form.getData(true);
 
 			if (formData.id == null || formData.id == '') {
-				CMDBuild.core.serviceProxy.CMProxyConfigurationEmailTemplates.create({
+				CMDBuild.core.serviceProxy.CMProxyEmailAccounts.create({
 					params: formData,
 					scope: this,
 					success: this.success,
 					callback: this.callback
 				});
 			} else {
-				CMDBuild.core.serviceProxy.CMProxyConfigurationEmailTemplates.update({
+				CMDBuild.core.serviceProxy.CMProxyEmailAccounts.update({
 					params: formData,
 					scope: this,
 					success: this.success,
 					callback: this.callback
 				});
 			}
+		},
+
+		onSetDefaultButtonClick: function() {
+			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.serviceProxy.CMProxyEmailAccounts.setDefault({
+				params: { name: this.selectedName },
+				scope: this,
+				success: this.success,
+				callback: this.callback
+			});
 		},
 
 		removeItem: function() {
@@ -148,7 +162,7 @@
 				store = this.grid.store;
 
 			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.serviceProxy.CMProxyConfigurationEmailTemplates.remove({
+			CMDBuild.core.serviceProxy.CMProxyEmailAccounts.remove({
 				params: { name: this.selectedName },
 				scope: this,
 				success: function() {

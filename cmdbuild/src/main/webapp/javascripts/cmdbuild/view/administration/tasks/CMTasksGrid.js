@@ -6,7 +6,6 @@
 		extend: 'Ext.grid.Panel',
 
 		delegate: undefined,
-		taskType: 'all', // default task type
 
 		border: false,
 		frame: false,
@@ -31,13 +30,15 @@
 					flex: 4
 				},
 				{
-					text: tr.status,
+					text: tr.active,
 					width: 60,
 					align: 'center',
 					dataIndex: CMDBuild.ServiceProxy.parameter.ACTIVE,
 					renderer: function(value, metaData, record) {
 						return me.activeGridColumnRenderer(value, metaData, record);
 					},
+					hideable: false,
+					menuDisabled: true,
 					fixed: true
 				},
 				{
@@ -72,11 +73,8 @@
 				}
 			];
 
-//			this.gridStore = CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType);
-
 			Ext.apply(this, {
-				columns: this.gridColumns,
-//				store: this.gridStore
+				columns: this.gridColumns
 			});
 
 			this.callParent(arguments);
@@ -89,19 +87,6 @@
 					'row': row,
 					'record': record,
 					'index': index
-				}, null);
-			},
-
-			/**
-			 * Event to load store on view display and first row selection as CMDbuild standard
-			 */
-			viewready: function() {
-				var me = this;
-
-				this.store.load({
-					callback: function() {
-						me.getSelectionModel().select(0, true);
-					}
 				});
 			}
 		},

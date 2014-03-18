@@ -3,6 +3,42 @@
 	"release": "2.2-dev",
 	"administration": {
 		"description": "Administration module",
+		"email": {
+			"title": "Email",
+			"accounts": {
+				"active": "Active",
+				"add": "Add account",
+				"credentials": "Credentials",
+				"account": "Account",
+				"address": "Address",
+				"enableMoveRejectedNotMatching": "Enable move rejected not matching",
+				"enableSsl": "Enable SSL",
+				"imapPort": "IMAP port",
+				"imapServer": "IMAP server",
+				"incoming": "Incoming",
+				"incomingFolder": "Incoming folder",
+				"isDefault": "Default",
+				"modify": "Modify account",
+				"outgoing": "Outgoing",
+				"password": "Password",
+				"processedFolder": "Processed folder",
+				"rejectedFolder": "Rejected folder",
+				"remove": "Remove account",
+				"setDefault": "Set as default",
+				"smtpPort": "SMTP Port",
+				"smtpServer": "SMTP server",
+				"title": "Accounts",
+				"username": "Username"
+			},
+			"templates": {
+				"add": "Add template",
+				"body": "Body",
+				"modify": "Modify template",
+				"remove": "Remove template",
+				"template": "Template",
+				"title": "Templates"
+			}
+		},
 		"modClass": {
 			"add_class": "Add Class",
 			"attributeProperties": {
@@ -604,42 +640,6 @@
 				"serverUrl": "Server URL",
 				"title": "Alfresco Setup"
 			},
-			"email": {
-				"title": "Email",
-				"accounts": {
-					"active": "Active",
-					"add": "Add account",
-					"credentials": "Credentials",
-					"account": "Account",
-					"address": "Address",
-					"enableMoveRejectedNotMatching": "Enable move rejected not matching",
-					"enableSsl": "Enable SSL",
-					"imapPort": "IMAP port",
-					"imapServer": "IMAP server",
-					"incoming": "Incoming",
-					"incomingFolder": "Incoming folder",
-					"isDefault": "Default",
-					"modify": "Modify account",
-					"outgoing": "Outgoing",
-					"password": "Password",
-					"processedFolder": "Processed folder",
-					"rejectedFolder": "Rejected folder",
-					"remove": "Remove account",
-					"setDefault": "Set as default",
-					"smtpPort": "SMTP Port",
-					"smtpServer": "SMTP server",
-					"title": "Accounts",
-					"username": "Username"
-				},
-				"templates": {
-					"add": "Add template",
-					"body": "Body",
-					"modify": "Modify template",
-					"remove": "Remove template",
-					"template": "Template",
-					"title": "Templates"
-				}
-			},
 			"gis": {
 				"center_lat": "Initial latitude",
 				"center_lon": "Initial longitude",
@@ -682,6 +682,7 @@
 			}
 		},
 		"tasks": {
+			"active": "Active",
 			"add": "Add task",
 			"all": "All",
 			"clone": "Clone task",
@@ -689,7 +690,7 @@
 			"remove": "Remove task",
 			"running": "Running",
 			"startLabel": "Start task",
-			"status": "Status",
+			"startOnSave": "Start on save",
 			"stopLabel": "Stop task",
 			"stopped": "Stopped",
 			"title": "Task manager",
@@ -709,13 +710,29 @@
 				"template": "Template",
 				"valueEnd": "Value end",
 				"valueInit": "Value init",
-				"workflow": "Workflow"
+				"workflow": "Workflow",
+				"description": "Description",
+				"workflowAttributes": "Workflow attributes",
+			},
+			"taskWorkflow": {
+				"advanced": "Advanced",
+				"basic": "Basic",
+				"dayOfMounth": "Day of month",
+				"dayOfWeek": "Day of week",
+				"everyDay": "Every day",
+				"everyHour": "Every hour",
+				"everyMounth": "Every month",
+				"everyYear": "Every year",
+				"hour": "Hour",
+				"minute": "Minute",
+				"mounth": "Month"
 			},
 			"tasksTypes": {
 				"email": "Email",
 				"event": "Event",
 				"workflow": "Workflow"
-			}
+			},
+			"workflow": "Workflow"
 		},
 		"welcome": {
 			"body": "Administration module.",
@@ -851,6 +868,14 @@
 			"title": "Setup Done"
 		},
 		"title": "Configure"
+	},
+	"cron": {
+		"triggerFieldWindow": {
+			"every": "Every ",
+			"exactly": "At an exact",
+			"inastepwith": "In a step width",
+			"range": "In a range"
+		}
 	},
 	"errors": {
 		"busy_wf_widgets": "The visual controls are busy, check the status of the server before trying again.",
@@ -1046,6 +1071,7 @@
 			"equals": "Equals",
 			"filter": "Filter",
 			"fromSelection": "FromSelection",
+			"functions" : "Function",
 			"go_filter": "Filter",
 			"like": "Contains",
 			"list": "List",
@@ -1412,10 +1438,18 @@
 	"subject": "Subject",
 	"targetClass": "Target Class",
 	"to": "To",
+	"from": "From",
 	"translations" : "Translations",
 	"translations_enabled" : "Enabled languages",
 	"unlock_all_cards": "Unlock all cards",
 	"uploading_attachment": "Uploading attachment...",
 	"views": "Views",
-	"you_have_not_set_a_filter": "You have not set a filter"
+	"workflow" : "Workflow",
+	"workflow_attributes" : "Workflow attributes",
+	"workflow_by_name": "by name",
+	"workflow_by_cql": "by Cql",
+	"workflow_cql_filter": "Cql filter",
+	"workflow_query_tipology": "Selection",
+	"you_have_not_set_a_filter": "You have not set a filter",
+	"value": "Value"
 }

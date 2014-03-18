@@ -1,8 +1,8 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup.email.accounts; // Path to translation
+	var tr = CMDBuild.Translation.administration.email.accounts; // Path to translation
 
-	Ext.define('CMDBuild.view.administration.configuration.CMConfigurationEmailAccountsGrid', {
+	Ext.define('CMDBuild.view.administration.email.CMEmailAccountsGrid', {
 		extend: 'Ext.grid.Panel',
 
 		delegate: undefined,
@@ -34,7 +34,7 @@
 						flex: 1
 					}
 				],
-				store: CMDBuild.core.serviceProxy.CMProxyConfigurationEmailAccounts.getStore()
+				store: CMDBuild.core.serviceProxy.CMProxyEmailAccounts.getStore()
 			});
 
 			this.callParent(arguments);
@@ -46,7 +46,7 @@
 					'row': row,
 					'record': record,
 					'index': index
-				}, null);
+				});
 			},
 
 			/**
@@ -57,7 +57,8 @@
 
 				this.store.load({
 					callback: function() {
-						me.getSelectionModel().select(0, true);
+						if (!me.getSelectionModel().hasSelection())
+							me.getSelectionModel().select(0, true);
 					}
 				});
 			}

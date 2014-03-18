@@ -5,7 +5,25 @@ import java.util.Map;
 public class Workflow extends Widget {
 
 	private String workflowName;
+	private String filter;
+	private String filterType;
 
+
+	public String getFilterType() {
+		return filterType;
+	}
+
+	public void setFilterType(String filterType) {
+		this.filterType = filterType;
+	}
+
+	public String getFilter() {
+		return filter;
+	}
+
+	public void setFilter(String filter) {
+		this.filter = filter;
+	}
 
 	public String getWorkflowName() {
 		return workflowName;

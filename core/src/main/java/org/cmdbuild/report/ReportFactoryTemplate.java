@@ -74,8 +74,10 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 	}
 
 	protected String getQueryString(final QueryCreator queryCreator) {
-		// Add some space to the end of the query to avoid
-		// the situation in which the ? is the last character
+		/*
+		 * Add some space to the end of the query to avoid the situation in
+		 * which the ? is the last character
+		 */
 		final String query = String.format("%s     ", queryCreator.getQuery());
 		final Object[] params = queryCreator.getParams();
 

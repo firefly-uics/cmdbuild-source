@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.tasks; // Path to translation
 
-	Ext.define('CMDBuild.view.administration.accordion.CMTasksAccordion', {
+	Ext.define('CMDBuild.view.administration.accordion.CMAccordionTasks', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		title: tr.title,

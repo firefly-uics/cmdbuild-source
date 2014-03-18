@@ -16,6 +16,7 @@ import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
+import org.cmdbuild.servlets.json.JSONBase.JSONExported;
 import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -99,6 +100,14 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 		final Iterable<? extends Task> tasks = taskManagerLogic().read(StartWorkflowTask.class);
 		return JsonResponse.success(JsonElements.of(from(tasks) //
 				.transform(TASK_TO_JSON_TASK)));
+	}
+
+	@JSONExported
+	public JsonResponse readAllByWorkflow( //
+			@Parameter(value = ID) final Long id //
+	) {
+		// TODO
+		return JsonResponse.success();
 	}
 
 	@Admin

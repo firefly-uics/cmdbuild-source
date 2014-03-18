@@ -1,3 +1,45 @@
+CMDBuild 2.1.8 (released 2014/03/17)
+
+
+NEW FEATURES
+
+ * Dynamic row filtering using functions
+
+ * Email templates in ManageEmail widget
+
+
+FIXES
+
+ * Card's details report shows all relations regardless of privileges
+
+ * The details table do not show all elements
+
+ * Cmdbf registration web service updates cards and relationships when nothing has changed
+
+ * SOAP method "getCardHistory" returns no more values when all elements are requested
+
+ * Error when apply 2.1.7-* patches due to some backup schemas
+
+ * Modify create card Widget does not save correctly the value of the target class
+
+ * The width of a cql filtered reference increase at every change of conditions
+
+ * Slow showing of buildings in GIS module
+
+ * Errors on save menu in administration when Shark is disabled
+
+ * Slow loading in Administration Layers Tab
+
+ * Missing scrollbars in SQL views
+
+ * No scrollbar in the filter popup
+
+ * Black border on report page
+
+
+
+
+
 CMDBuild 2.1.7 (released 2014/02/14)
 
 

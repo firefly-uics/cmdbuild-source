@@ -18,7 +18,6 @@ import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.services.cache.wrappers.CachingStore;
-import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +31,7 @@ public class Data {
 	private DBDriver dbDriver;
 
 	@Autowired
-	private FilterStore filterStore;
+	private Filter filter;
 
 	@Autowired
 	@Qualifier(SYSTEM)
@@ -79,7 +78,7 @@ public class Data {
 	@Bean
 	@Scope(PROTOTYPE)
 	public SecurityLogic securityLogic() {
-		return new SecurityLogic(systemDataView(), viewConverter, filterStore, userStore.getUser());
+		return new SecurityLogic(systemDataView(), viewConverter, filter.dataViewFilterStore());
 	}
 
 	@Bean

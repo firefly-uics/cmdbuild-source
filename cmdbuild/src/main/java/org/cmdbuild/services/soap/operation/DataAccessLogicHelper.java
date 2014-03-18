@@ -1,6 +1,7 @@
 package org.cmdbuild.services.soap.operation;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.size;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
@@ -13,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +102,7 @@ import org.slf4j.MarkerFactory;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 
 public class DataAccessLogicHelper implements SoapLogicHelper {
 
@@ -109,6 +112,26 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private static final String INVALID_ACTIVITY_DESCRIPTION = EMPTY;
 
 	private static final List<Attribute> EMPTY_ATTRIBUTES = Collections.emptyList();
+
+	private static final Comparator<Card> BEGIN_DATE_DESC = new Comparator<Card>() {
+
+		@Override
+		public int compare(final Card o1, final Card o2) {
+			final DateTime beginDate1 = o1.getBeginDate();
+			final DateTime beginDate2 = o2.getBeginDate();
+			return beginDate2.compareTo(beginDate1);
+		}
+
+	};
+
+	private static final Function<Card, org.cmdbuild.services.soap.types.Card> TO_SOAP_CARD = new Function<Card, org.cmdbuild.services.soap.types.Card>() {
+
+		@Override
+		public org.cmdbuild.services.soap.types.Card apply(final Card input) {
+			return new org.cmdbuild.services.soap.types.Card(input);
+		}
+
+	};
 
 	private final CMDataView dataView;
 	private final DataAccessLogic dataAccessLogic;
@@ -659,16 +682,16 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 				.withId(Long.valueOf(cardId)) //
 				.build();
 		final GetCardHistoryResponse response = dataAccessLogic.getCardHistory(card);
-		int size = 0;
-		final int start = (offset != null) ? offset : 0;
-		final int end = (limit != null) ? start + limit : Integer.MAX_VALUE;
-		for (final Card historyCard : response) {
-			if (start <= size && size < end) {
-				cardList.addCard(new org.cmdbuild.services.soap.types.Card(historyCard));
-			}
-			size++;
+
+		final List<Card> ordered = Ordering.from(BEGIN_DATE_DESC).sortedCopy(response);
+		for (final org.cmdbuild.services.soap.types.Card element : from(ordered) //
+				.skip((offset != null) ? offset : 0) //
+				.limit(((limit != null) && (limit != 0)) ? limit : Integer.MAX_VALUE) //
+				.transform(TO_SOAP_CARD) //
+		) {
+			cardList.addCard(element);
 		}
-		cardList.setTotalRows(size);
+		cardList.setTotalRows(size(response));
 		return cardList;
 	}
 

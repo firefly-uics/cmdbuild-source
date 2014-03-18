@@ -12,7 +12,7 @@
 	">
 
 	<bean id="webservicesProxyBuilder" class="org.cmdbuild.common.utils.NotifierProxy.Builder">
-		<property name="type" value="org.cmdbuild.services.soap.Private" />
+		<property name="type" value="org.cmdbuild.services.soap.Webservices" />
 		<property name="delegate">
 			<bean class="org.cmdbuild.services.soap.WebservicesImpl" />
 		</property>
