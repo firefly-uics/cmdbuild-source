@@ -61,6 +61,7 @@
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				var me = this;
+
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
 
 				// Selected task asynchronous store query
@@ -168,7 +169,6 @@
 					store.load();
 					store.on('load', function() {
 						me.selectionModel.select(0, true);
-						me.onRowSelected();
 					});
 
 					this.view.disableModify();

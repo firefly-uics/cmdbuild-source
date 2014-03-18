@@ -7,6 +7,7 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CQL_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.FULL_TEXT_QUERY_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.FUNCTION_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARDS_KEY;
@@ -60,7 +61,7 @@ public class JsonFilterValidator implements Validator {
 
 	private void validateInnerFilterObjects() throws Exception {
 		Validate.isTrue(hasOneOfKeys(filterObject, //
-				ATTRIBUTE_KEY, FULL_TEXT_QUERY_KEY, RELATION_KEY, CQL_KEY), MALFORMED_MSG);
+				ATTRIBUTE_KEY, FULL_TEXT_QUERY_KEY, RELATION_KEY, CQL_KEY, FUNCTION_KEY), MALFORMED_MSG);
 		validateAttributeFilter(filterObject);
 		validateQueryFilter(filterObject);
 		validateRelationFilter(filterObject);

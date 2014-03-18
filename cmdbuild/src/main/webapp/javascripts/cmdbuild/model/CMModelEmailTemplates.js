@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.model.CMModelConfigurationEmailTemplates.grid', {
+	Ext.define('CMDBuild.model.CMModelEmailTemplates.grid', {
 		extend: 'Ext.data.Model',
 
 		fields: [
@@ -12,7 +12,7 @@
 
 	});
 
-	Ext.define('CMDBuild.model.CMModelConfigurationEmailTemplates.singleTemplate', {
+	Ext.define('CMDBuild.model.CMModelEmailTemplates.singleTemplate', {
 		extend: 'Ext.data.Model',
 
 		fields: [

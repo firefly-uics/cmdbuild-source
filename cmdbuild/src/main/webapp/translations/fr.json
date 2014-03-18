@@ -3,6 +3,42 @@
 	"release": "2.2-dev",
 	"administration": {
 		"description": "Module d'administration",
+		"email": {
+			"title": "<em>Email</em>",
+			"accounts": {
+				"active": "<em>Active</em>",
+				"add": "<em>Add account</em>",
+				"credentials": "<em>Credentials</em>",
+				"account": "<em>Account</em>",
+				"address": "<em>Address</em>",
+				"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
+				"enableSsl": "<em>Enable SSL</em>",
+				"imapPort": "<em>IMAP port</em>",
+				"imapServer": "<em>IMAP server</em>",
+				"incoming": "<em>Incoming</em>",
+				"incomingFolder": "<em>Incoming folder</em>",
+				"isDefault": "<em>Default</em>",
+				"modify": "<em>Modify account</em>",
+				"outgoing": "<em>Outgoing</em>",
+				"password": "<em>Password</em>",
+				"processedFolder": "<em>Processed folder</em>",
+				"rejectedFolder": "<em>Rejected folder</em>",
+				"remove": "<em>Remove account</em>",
+				"setDefault": "<em>Set as default</em>",
+				"smtpPort": "<em>SMTP Port</em>",
+				"smtpServer": "<em>SMTP server</em>",
+				"title": "<em>Accounts</em>",
+				"username": "<em>Username</em>"
+			},
+			"templates": {
+				"add": "<em>Add template</em>",
+				"body": "<em>Body</em>",
+				"modify": "<em>Modify template</em>",
+				"remove": "<em>Remove template</em>",
+				"template": "<em>Template</em>",
+				"title": "<em>Templates</em>"
+			}
+		},
 		"modClass": {
 			"add_class": "Ajouter Class",
 			"attributeProperties": {
@@ -604,42 +640,6 @@
 				"serverUrl": "Server URL",
 				"title": "Alfresco Setup"
 			},
-			"email": {
-				"title": "<em>Email</em>",
-				"accounts": {
-					"active": "<em>Active</em>",
-					"add": "<em>Add account</em>",
-					"credentials": "<em>Credentials</em>",
-					"account": "<em>Account</em>",
-					"address": "<em>Address</em>",
-					"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
-					"enableSsl": "<em>Enable SSL</em>",
-					"imapPort": "<em>IMAP port</em>",
-					"imapServer": "<em>IMAP server</em>",
-					"incoming": "<em>Incoming</em>",
-					"incomingFolder": "<em>Incoming folder</em>",
-					"isDefault": "<em>Default</em>",
-					"modify": "<em>Modify account</em>",
-					"outgoing": "<em>Outgoing</em>",
-					"password": "<em>Password</em>",
-					"processedFolder": "<em>Processed folder</em>",
-					"rejectedFolder": "<em>Rejected folder</em>",
-					"remove": "<em>Remove account</em>",
-					"setDefault": "<em>Set as default</em>",
-					"smtpPort": "<em>SMTP Port</em>",
-					"smtpServer": "<em>SMTP server</em>",
-					"title": "<em>Accounts</em>",
-					"username": "<em>Username</em>"
-				},
-				"templates": {
-					"add": "<em>Add template</em>",
-					"body": "<em>Body</em>",
-					"modify": "<em>Modify template</em>",
-					"remove": "<em>Remove template</em>",
-					"template": "<em>Template</em>",
-					"title": "<em>Templates</em>"
-				}
-			},
 			"gis": {
 				"center_lat": "Latitude Initiale",
 				"center_lon": "Longitude Initiale",
@@ -1007,6 +1007,7 @@
 			"equals": "Egale",
 			"filter": "Filtre",
 			"fromSelection": "De la selection",
+			"functions" : "<em>Function</em>",
 			"go_filter": "Filtre",
 			"like": "Contient",
 			"list": "Liste",
@@ -1373,10 +1374,18 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "Class Dsetination",
 	"to": "<em>To</em>",
+	"from": "<em>From<em>",
 	"translations" : "<em>Translations</em>",
 	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Débloquer toutes les fiches",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Vues",
-	"you_have_not_set_a_filter": "Vous n'avez pas de filtre"
+	"workflow": "<em>Workflow</em>",
+	"workflow_attributes": "<em>Workflow attributes</em>",
+	"workflow_by_cql": "<em>by Cql</em>",
+	"workflow_by_name": "<em>by name</em>",
+	"workflow_cql_filter": "<em>Cql filter</em>",
+	"workflow_query_tipology": "<em>Selection</em>",
+	"you_have_not_set_a_filter": "Vous n'avez pas de filtre",
+	"value": "<em>Value</em>"
 }

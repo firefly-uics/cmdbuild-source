@@ -7,6 +7,7 @@ import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.mockito.Mockito.mock;
 import static utils.IntegrationTestUtils.NO_PARENT;
 import static utils.IntegrationTestUtils.newClass;
 import static utils.IntegrationTestUtils.newSuperClass;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.context.SystemPrivilegeContext;
 import org.cmdbuild.dao.driver.DBDriver;
@@ -194,7 +196,8 @@ public class AnotherQueryStressTest extends IntegrationTestBase {
 		final PrivilegeContext privilegeContext = new SystemPrivilegeContext();
 		final RowAndColumnPrivilegeFetcher rowPrivilegeFetcher = new DataViewRowAndColumnPrivilegeFetcher( //
 				dbDataView(), //
-				privilegeContext //
+				privilegeContext, //
+				mock(UserStore.class) //
 		);
 		final CMDataView userDataView = new UserDataView( //
 				dbDataView(), //

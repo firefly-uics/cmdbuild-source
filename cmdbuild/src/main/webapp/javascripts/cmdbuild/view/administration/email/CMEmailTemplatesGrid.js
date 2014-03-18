@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.configuration.CMConfigurationEmailTemplatesGrid', {
+	Ext.define('CMDBuild.view.administration.email.CMEmailTemplatesGrid', {
 		extend: 'Ext.grid.Panel',
 
 		delegate: undefined,
@@ -28,7 +28,7 @@
 						flex: 2
 					}
 				],
-				store: CMDBuild.core.serviceProxy.CMProxyConfigurationEmailTemplates.getStore()
+				store: CMDBuild.core.serviceProxy.CMProxyEmailTemplates.getStore()
 			});
 
 			this.callParent(arguments);
@@ -40,7 +40,7 @@
 					'row': row,
 					'record': record,
 					'index': index
-				}, null);
+				});
 			},
 
 			/**
@@ -51,7 +51,8 @@
 
 				this.store.load({
 					callback: function() {
-						me.getSelectionModel().select(0, true);
+						if (!me.getSelectionModel().hasSelection())
+							me.getSelectionModel().select(0, true);
 					}
 				});
 			}

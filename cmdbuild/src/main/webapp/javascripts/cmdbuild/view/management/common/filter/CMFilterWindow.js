@@ -78,6 +78,7 @@
 				if (!this.filterRelationNeverExpansed) { // the panel was expanded at least once
 					this.filter.setRelationConfiguration(this.filterRelationsPanel.getData());
 				}
+				this.filter.setFunctionConfiguration(this.filterFunctionsPanel.getData());
 			}
 
 			return this.filter;
@@ -94,6 +95,7 @@
 				this.filterRelationsPanel.setData(this.filter.getRelationConfiguration());
 				this.filterRelationNeverExpansed = false;
 			}, this, {single: true});
+			this.filterFunctionsPanel.setData(this.filter.getFunctionConfiguration());
 		},
 
 		// protected
@@ -140,7 +142,11 @@
 				attributes: this.attributes,
 				className: this.className
 			});
-			this.items = [this.filterAttributesPanel, this.filterRelationsPanel];
+			this.filterFunctionsPanel = new CMDBuild.view.management.common.filter.CMFunctions({
+				attributes: this.attributes,
+				className: this.className
+			});
+			this.items = [this.filterAttributesPanel, this.filterRelationsPanel, this.filterFunctionsPanel];
 		}
 	});
 
@@ -153,6 +159,7 @@
 		} else {
 			currentFilter.setRelationConfiguration(me.filterRelationsPanel.getData());
 		}
+		currentFilter.setFunctionConfiguration(me.filterFunctionsPanel.getData());
 
 		// The string are not equals because serialize the fields of the object not in the same
 		// order TODO: impement a comparator of the configuration something like

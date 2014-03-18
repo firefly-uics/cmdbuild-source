@@ -1,10 +1,10 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup.email.templates; // Path to translation
+	var tr = CMDBuild.Translation.administration.email.accounts; // Path to translation
 
-	Ext.require('CMDBuild.core.serviceProxy.CMProxyConfigurationEmailTemplates');
+	Ext.require('CMDBuild.core.serviceProxy.CMProxyEmailAccounts');
 
-	Ext.define('CMDBuild.view.administration.configuration.CMConfigurationEmailTemplates', {
+	Ext.define('CMDBuild.view.administration.email.CMEmailAccounts', {
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
@@ -25,11 +25,11 @@
 				}
 			});
 
-			this.grid = Ext.create('CMDBuild.view.administration.configuration.CMConfigurationEmailTemplatesGrid', {
+			this.grid = Ext.create('CMDBuild.view.administration.email.CMEmailAccountsGrid', {
 				region: 'center'
 			});
 
-			this.form = Ext.create('CMDBuild.view.administration.configuration.CMConfigurationEmailTemplatesForm', {
+			this.form = Ext.create('CMDBuild.view.administration.email.CMEmailAccountsForm', {
 				region: 'south',
 				height: '70%'
 			});

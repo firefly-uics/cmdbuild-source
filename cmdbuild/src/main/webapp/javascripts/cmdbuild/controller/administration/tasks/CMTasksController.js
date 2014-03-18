@@ -20,20 +20,19 @@
 			this.callParent(arguments);
 		},
 
-		onViewOnFront: function(parameters) {_debug('asd');
-			this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
+		onViewOnFront: function(parameters) {
+			if (typeof parameters !== 'undefined') {
+				var me = this;
+				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
 
-			_debug(parameters.internalId);
-			_debug(this.tasksDatas[0]);
-			_debug(this.taskType);
-
-			this.grid.store = CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType);
-			_debug('1');
-			this.grid.taskType = this.taskType;
-			_debug('2');
-			this.grid.store.load();
-
-			_debug('end');
+				this.grid.reconfigure(CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType));
+				this.grid.store.load({
+					callback: function() {
+						if (!me.grid.getSelectionModel().hasSelection())
+							me.grid.getSelectionModel().select(0, true);
+					}
+				});
+			}
 		},
 
 		cmOn: function(name, param, callBack) {
@@ -115,7 +114,8 @@
 		},
 
 		onRowSelected: function(name, param, callBack) {
-			this.buildFormController(param.record.get(CMDBuild.ServiceProxy.parameter.TYPE));
+			if (!this.form.delegate)
+				this.buildFormController(param.record.get(CMDBuild.ServiceProxy.parameter.TYPE));
 
 			if (this.form.delegate)
 				this.form.delegate.cmOn(name, param, callBack);

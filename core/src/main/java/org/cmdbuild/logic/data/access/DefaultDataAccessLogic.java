@@ -128,23 +128,23 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	public Map<Object, List<RelationInfo>> relationsBySource(final String sourceTypeName, final DomainWithSource dom) {
-		return new GetRelationList(dataView, systemDataView).list(sourceTypeName, dom);
+		return new GetRelationList(dataView).list(sourceTypeName, dom);
 	}
 
 	@Override
 	public GetRelationListResponse getRelationList(final Card srcCard, final DomainWithSource dom,
 			final QueryOptions options) {
-		return new GetRelationList(dataView, systemDataView).exec(srcCard, dom, options);
+		return new GetRelationList(dataView).exec(srcCard, dom, options);
 	}
 
 	@Override
 	public GetRelationListResponse getRelationList(final Card srcCard, final DomainWithSource dom) {
-		return new GetRelationList(dataView, systemDataView).exec(srcCard, dom, QueryOptions.newQueryOption().build());
+		return new GetRelationList(dataView).exec(srcCard, dom, QueryOptions.newQueryOption().build());
 	}
 
 	@Override
 	public GetRelationListResponse getRelationListEmptyForWrongId(final Card srcCard, final DomainWithSource dom) {
-		return new GetRelationList(strictDataView, systemDataView).emptyForWrongId().exec(srcCard, dom,
+		return new GetRelationList(strictDataView).emptyForWrongId().exec(srcCard, dom,
 				QueryOptions.newQueryOption().build());
 	}
 

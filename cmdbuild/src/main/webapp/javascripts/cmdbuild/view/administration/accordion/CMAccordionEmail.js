@@ -1,8 +1,8 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.setup.email; // Path to translation
+	var tr = CMDBuild.Translation.administration.email; // Path to translation
 
-	Ext.define('CMDBuild.view.administration.accordion.CMEmailAccordion', {
+	Ext.define('CMDBuild.view.administration.accordion.CMAccordionEmail', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
 		title: tr.title,
@@ -20,12 +20,12 @@
 				{
 					text: tr.accounts.title,
 					leaf: true,
-					cmName: 'setupEmailAccounts'
+					cmName: 'emailAccounts'
 				},
 				{
 					text: tr.templates.title,
 					leaf: true,
-					cmName: 'setupEmailTemplates'
+					cmName: 'emailTemplates'
 				}
 			]);
 		}
