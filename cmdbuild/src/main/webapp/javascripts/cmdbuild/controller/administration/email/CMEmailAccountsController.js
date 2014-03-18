@@ -32,6 +32,7 @@
 				case 'onAddButtonClick':
 					return this.onAddButtonClick();
 
+				case 'onItemDoubleClick':
 				case 'onModifyButtonClick':
 					return this.onModifyButtonClick();
 

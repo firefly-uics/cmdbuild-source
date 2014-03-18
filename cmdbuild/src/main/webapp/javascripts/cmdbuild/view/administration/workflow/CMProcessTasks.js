@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.tasks; // Path to translation
 
-	Ext.define('CMDBuild.view.administration.workflow.CMCronPanel', {
+	Ext.define('CMDBuild.view.administration.workflow.CMProcessTasks', {
 		extend: 'Ext.panel.Panel',
 
 		mixins: {
@@ -16,8 +16,6 @@
 		border: true,
 
 		initComponent: function() {
-			var me = this;
-
 			this.addButton = Ext.create('Ext.button.Button', {
 				iconCls: 'add',
 				text: tr.add,
