@@ -628,7 +628,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		final int totalNumberOfCards = response.getTotalNumberOfCards();
 		cardListExt.setTotalRows(totalNumberOfCards);
 		for (final Card card : response.getPaginatedCards()) {
-			cardListExt.addCard(new org.cmdbuild.services.soap.types.CardExt(card));
+			final CardExt cardExt = new CardExt(card);
+			addExtras(card, cardExt);
+			cardListExt.addCard(cardExt);
 		}
 		return cardListExt;
 	}
