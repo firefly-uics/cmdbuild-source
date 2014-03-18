@@ -3,6 +3,7 @@ package org.cmdbuild.services.meta;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.MetadataConverter;
+import org.cmdbuild.data.converter.MetadataGroupable;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.model.data.Metadata;
@@ -16,10 +17,10 @@ public class MetadataStoreFactory {
 	}
 
 	public Store<Metadata> storeForAttribute(final CMAttribute attribute) {
-		return new DataViewStore<Metadata>( //
+		return DataViewStore.newInstance( //
 				dataView, //
-				new MetadataConverter(attribute) //
-		);
+				MetadataGroupable.of(attribute), //
+				MetadataConverter.of(attribute));
 	}
 
 }
