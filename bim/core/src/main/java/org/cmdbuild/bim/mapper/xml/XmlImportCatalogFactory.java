@@ -26,7 +26,7 @@ public class XmlImportCatalogFactory implements CatalogFactory {
 		private final List<EntityDefinition> entities;
 		private final List<String> names;
 
-		public XmlCatalog(List<EntityDefinition> entities, List<String> names) {
+		public XmlCatalog(final List<EntityDefinition> entities, final List<String> names) {
 			this.entities = entities;
 			this.names = names;
 		}
@@ -39,12 +39,10 @@ public class XmlImportCatalogFactory implements CatalogFactory {
 		@Override
 		public String toString() {
 			String summary = "";
-			for (EntityDefinition entity : entities) {
-				summary = summary + "ENTITY "
-						+ entity.getTypeName().toUpperCase() + "\n";
-				Iterable<AttributeDefinition> attributes = entity
-						.getAttributes();
-				for (AttributeDefinition attribute : attributes) {
+			for (final EntityDefinition entity : entities) {
+				summary = summary + "ENTITY " + entity.getTypeName().toUpperCase() + "\n";
+				final Iterable<AttributeDefinition> attributes = entity.getAttributes();
+				for (final AttributeDefinition attribute : attributes) {
 					summary = summary + attribute.toString() + "\n";
 				}
 			}
@@ -52,7 +50,7 @@ public class XmlImportCatalogFactory implements CatalogFactory {
 		}
 
 		@Override
-		public EntityDefinition getEntityDefinition(int i) {
+		public EntityDefinition getEntityDefinition(final int i) {
 			return entities.get(i);
 		}
 
@@ -62,16 +60,16 @@ public class XmlImportCatalogFactory implements CatalogFactory {
 		}
 
 		@Override
-		public boolean contains(String entityDefintionName) {
+		public boolean contains(final String entityDefintionName) {
 			return names.contains(entityDefintionName);
 		}
 
 		@Override
-		public List<Integer> getPositionsOf(String entityDefintionName) {
-			int maxsize = getSize();
-			List<Integer> indices = Lists.newArrayList();
+		public List<Integer> getPositionsOf(final String entityDefintionName) {
+			final int maxsize = getSize();
+			final List<Integer> indices = Lists.newArrayList();
 			for (int i = 0; i < maxsize; i++) {
-				String name = names.get(i);
+				final String name = names.get(i);
 				if (name.equals(entityDefintionName)) {
 					indices.add(i);
 				}
@@ -94,7 +92,7 @@ public class XmlImportCatalogFactory implements CatalogFactory {
 		parser = new XmlParser(xmlString);
 		entities = Lists.newArrayList();
 	}
-	
+
 	public static XmlImportCatalogFactory withXmlStringMapper(final String xmlString) {
 		return new XmlImportCatalogFactory(xmlString);
 	}
@@ -112,22 +110,20 @@ public class XmlImportCatalogFactory implements CatalogFactory {
 	private void parseEntities() {
 		String path = XmlParser.ROOT;
 		try {
-			int numberOfTypesToRead = parser.getNumberOfNestedEntities(path);
+			final int numberOfTypesToRead = parser.getNumberOfNestedEntities(path);
 			logger.info(numberOfTypesToRead + " entries");
 			for (int i = 1; i <= numberOfTypesToRead; i++) {
 				path = XmlParser.ROOT + "/entity[" + i + "]";
-				String name = parser.getEntityName(XmlParser.ROOT + "/entity["
-						+ i + "]");
-				EntityDefinition entityDefinition = new ImportEntityDefinition(
-						name);
-				String label = parser.getEntityLabel(path);
+				final String name = parser.getEntityName(XmlParser.ROOT + "/entity[" + i + "]");
+				final EntityDefinition entityDefinition = new ImportEntityDefinition(name);
+				final String label = parser.getEntityLabel(path);
 				logger.info("{} - {}", name, label);
 				entityDefinition.setLabel(label);
 				readEntity(entityDefinition, path);
 				entities.add(entityDefinition);
 				names.add(name);
 			}
-		} catch (BimError e) {
+		} catch (final BimError e) {
 			logger.error(e.getMessage());
 		}
 	}
@@ -143,63 +139,49 @@ public class XmlImportCatalogFactory implements CatalogFactory {
 	 *            : a string which the parser uses in order to read the right
 	 *            piece of the XML file
 	 * */
-	private void readEntity(EntityDefinition entityDefinition, String path) {
+	private void readEntity(final EntityDefinition entityDefinition, String path) {
 		for (int i = 1; i <= parser.getNumberOfAttributes(path); i++) {
-			String type = parser.getAttributeType(path, i);
-			String label = parser.getAttributeLabel(path, i);
-			String value = parser.getAttributeValue(path, i);
-			String attributeName = parser.getAttributeName(path, i);
-			AttributeDefinitionFactory factory = new AttributeDefinitionFactory(
-					type);
-			AttributeDefinition attributeDefinition = factory
-					.createAttribute(attributeName);
+			final String type = parser.getAttributeType(path, i);
+			final String label = parser.getAttributeLabel(path, i);
+			final String value = parser.getAttributeValue(path, i);
+			final String attributeName = parser.getAttributeName(path, i);
+			final AttributeDefinitionFactory factory = new AttributeDefinitionFactory(type);
+			final AttributeDefinition attributeDefinition = factory.createAttribute(attributeName);
 			attributeDefinition.setLabel(label);
 			if (!value.equals("")) {
-				((SimpleAttributeDefinition) attributeDefinition)
-						.setValue(value);
+				((SimpleAttributeDefinition) attributeDefinition).setValue(value);
 			}
 			entityDefinition.getAttributes().add(attributeDefinition);
 			if (attributeDefinition instanceof ReferenceAttributeDefinition) {
-				String path_tmp = path;
-				path = path + "/attributes/attribute[@name = '" + attributeName
-						+ "']";
-				int numberOfNestedEntities = parser
-						.getNumberOfNestedEntities(path);
+				final String path_tmp = path;
+				path = path + "/attributes/attribute[" + i + "]";
+				final int numberOfNestedEntities = parser.getNumberOfNestedEntities(path);
 				if (numberOfNestedEntities != 1) {
-					throw new BimError("Expected 1 nested entity, found "
-							+ numberOfNestedEntities);
+					throw new BimError("Expected 1 nested entity, found " + numberOfNestedEntities);
 				}
-				EntityDefinition referencedEntityDefinition = new ImportEntityDefinition(
-						"");
-				((ReferenceAttributeDefinition) attributeDefinition)
-						.setReference(referencedEntityDefinition);
+				final EntityDefinition referencedEntityDefinition = new ImportEntityDefinition("");
+				((ReferenceAttributeDefinition) attributeDefinition).setReference(referencedEntityDefinition);
 				path = path + "/entity";
 				readEntity(referencedEntityDefinition, path);
 				path = path_tmp;
 			} else if (attributeDefinition instanceof ListAttributeDefinition) {
-				String path_tmp = path;
-				path = path + "/attributes/attribute[@name = '" + attributeName
-						+ "']";
-				int numberOfNestedEntities = parser
-						.getNumberOfNestedEntities(path);
+				final String path_tmp = path;
+				path = path + "/attributes/attribute[" + i + "]";
+				final int numberOfNestedEntities = parser.getNumberOfNestedEntities(path);
 				if (numberOfNestedEntities == 0) {
 				} else if (numberOfNestedEntities > 0) {
 					for (int j = 1; j <= numberOfNestedEntities; j++) {
-						String path0 = path;
+						final String path0 = path;
 						path = path + "/entity[" + j + "]";
-						EntityDefinition referencedEntityDefinition = new ImportEntityDefinition(
-								"");
-						((ListAttributeDefinition) attributeDefinition)
-								.setReference(referencedEntityDefinition);
-						((ListAttributeDefinition) attributeDefinition)
-								.getAllReferences().add(
-										referencedEntityDefinition);
+						final EntityDefinition referencedEntityDefinition = new ImportEntityDefinition("");
+						((ListAttributeDefinition) attributeDefinition).setReference(referencedEntityDefinition);
+						((ListAttributeDefinition) attributeDefinition).getAllReferences().add(
+								referencedEntityDefinition);
 						readEntity(referencedEntityDefinition, path);
 						path = path0;
 					}
 				} else {
-					throw new BimError("error reading reference list "
-							+ attributeName);
+					throw new BimError("error reading reference list " + attributeName);
 				}
 				path = path_tmp;
 			}

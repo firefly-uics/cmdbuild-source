@@ -53,8 +53,6 @@ import org.cmdbuild.bim.service.ListAttribute;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.bimserver.BimserverEntity;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import com.google.common.collect.Lists;
 
@@ -105,7 +103,7 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public String createProject(String projectName) {
+	public String createProject(final String projectName) {
 		final BimProject project = service.createProject(projectName);
 		return project.getIdentifier();
 	}
@@ -233,8 +231,7 @@ public class DefaultBimFacade implements BimFacade {
 	@Override
 	public List<Entity> readEntityFromProject(final EntityDefinition entityDefinition, final String projectId) {
 		login();
-		final BimProject project = service.getProjectByPoid(projectId);
-		final String revisionId = project.getLastRevisionId();
+		final String revisionId = service.getLastRevisionOfProject(projectId);
 		final List<Entity> source = reader.readEntities(revisionId, entityDefinition);
 		logout();
 		return source;
@@ -360,7 +357,7 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public BimProject getProjectByName(String projectId) {
+	public BimProject getProjectByName(final String projectId) {
 		return service.getProjectByName(projectId);
 	}
 
@@ -483,23 +480,23 @@ public class DefaultBimFacade implements BimFacade {
 	}
 
 	@Override
-	public void checkin(String projectId, File file) {
+	public void checkin(final String projectId, final File file) {
 		service.checkin(projectId, file);
 	}
 
 	@Override
-	public void branchRevisionToExistingProject(String projectId, String exportProjectId) {
+	public void branchRevisionToExistingProject(final String projectId, final String exportProjectId) {
 		service.branchRevisionToExistingProject(projectId, exportProjectId);
 	}
 
 	@Override
-	public String mergeProjectsIntoNewProject(String project1, String project2) {
+	public String mergeProjectsIntoNewProject(final String project1, final String project2) {
 		return service.mergeProjectsIntoNewProject(project1, project2);
 	}
 
 	@Override
-	public Long getOidFromGlobalId(String globalId, String revisionId, Iterable<String> candidateTypes) {
-		return service.getOidFromGlobalId(globalId, revisionId);
+	public Long getOidFromGlobalId(final String globalId, final String revisionId, final Iterable<String> candidateTypes) {
+		return service.getOidFromGlobalId(globalId, revisionId, candidateTypes);
 	}
 
 }

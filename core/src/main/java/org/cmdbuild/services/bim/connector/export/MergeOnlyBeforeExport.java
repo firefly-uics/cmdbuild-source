@@ -13,7 +13,7 @@ import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.services.bim.BimFacade;
 
-public class MergeOnlyBeforeExport implements ExportProjectPolicy {
+public class MergeOnlyBeforeExport extends ForceUpdate implements ExportPolicy {
 
 	private static final String EXPORT_SUFFIX = "-export";
 	private final BimFacade bimFacade;
@@ -73,7 +73,7 @@ public class MergeOnlyBeforeExport implements ExportProjectPolicy {
 	}
 
 	@Override
-	public void beforeExport(String exportProjectId) {
+	public void beforeExport(final String exportProjectId) {
 		final String shapeProjectId = getShapeProjectId(exportProjectId);
 		if (INVALID_ID.equals(shapeProjectId)) {
 			throw new BimError("No shapes loaded");
@@ -87,7 +87,7 @@ public class MergeOnlyBeforeExport implements ExportProjectPolicy {
 			exportedData.writeTo(outputStream);
 			bimFacade.checkin(exportProjectId, file);
 			System.out.println("export file is ready");
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new BimError("Unable to prepare project for export connector");
 		}
 		System.out.println("Project for export is ready");

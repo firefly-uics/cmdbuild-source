@@ -400,10 +400,12 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			try {
 				if (candidateTypes != null) {
 					for (final String type : candidateTypes) {
+						System.out.println("Search among type " + type);
 						final List<SDataObject> objectList = client.getBimsie1LowLevelInterface().getDataObjectsByType(
 								roid, type);
 						if (objectList != null) {
 							for (final SDataObject object : objectList) {
+								System.out.println("--guid " + object.getGuid());
 								if (object.getGuid().equals(guid)) {
 									entity = new BimserverEntity(object);
 									return entity;
@@ -619,7 +621,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 				throw new BimError("merged revision for export not created");
 			}
 
-			DataHandler mergedData = downloadIfc(mergedRevisionId);
+			final DataHandler mergedData = downloadIfc(mergedRevisionId);
 			final File file = File.createTempFile("ifc", null);
 			final FileOutputStream outputStream = new FileOutputStream(file); //
 			mergedData.writeTo(outputStream);
@@ -637,7 +639,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public String mergeProjectsIntoNewProject(String project1Id, String project2Id) {
+	public String mergeProjectsIntoNewProject(final String project1Id, final String project2Id) {
 		final String revision1 = getLastRevisionOfProject(project1Id);
 		final String revision2 = getLastRevisionOfProject(project2Id);
 		final DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd-HHmmss");
@@ -663,9 +665,9 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 	}
 
 	@Override
-	public Long getOidFromGlobalId(String globalId, String revisionId) {
+	public Long getOidFromGlobalId(final String globalId, final String revisionId, final Iterable<String> candidateTypes) {
 		Long oid = Long.valueOf(INVALID_ID);
-		final Entity entityByGuid = getEntityByGuid(revisionId, globalId, null);
+		final Entity entityByGuid = getEntityByGuid(revisionId, globalId, candidateTypes);
 		if (entityByGuid.isValid()) {
 			oid = BimserverEntity.class.cast(entityByGuid).getOid();
 		}

@@ -41,8 +41,7 @@ import org.cmdbuild.services.bim.connector.CardDiffer;
 import org.cmdbuild.services.bim.connector.DefaultBimDataView;
 import org.cmdbuild.services.bim.connector.DefaultBimMapper;
 import org.cmdbuild.services.bim.connector.Mapper;
-import org.cmdbuild.services.bim.connector.export.ExportProjectPolicy;
-import org.cmdbuild.services.bim.connector.export.MergeAfterEveryUpload;
+import org.cmdbuild.services.bim.connector.export.ExportPolicy;
 import org.cmdbuild.services.bim.connector.export.MergeOnlyBeforeExport;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +89,7 @@ public class Bim {
 	}
 
 	@Bean
-	public ExportProjectPolicy exportProjectStrategy() {
+	public ExportPolicy exportProjectStrategy() {
 		return new MergeOnlyBeforeExport(bimServiceFacade());
 	}
 

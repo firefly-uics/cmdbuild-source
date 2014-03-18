@@ -6,7 +6,7 @@ import org.cmdbuild.logic.bim.BimLogic;
 import org.cmdbuild.logic.bim.DefaultBimLogic;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
-import org.cmdbuild.services.bim.connector.export.ExportProjectPolicy;
+import org.cmdbuild.services.bim.connector.export.ExportPolicy;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,20 +24,20 @@ public class BimLogicExportTest {
 	boolean STATUS = true;
 	private BimFacade serviceFacade;
 	private BimPersistence dataPersistence;
-	private ExportProjectPolicy exportStrategy;
+	private ExportPolicy exportStrategy;
 	private BimLogic bimLogic;
 
 	@Before
 	public void setUp() throws Exception {
 		serviceFacade = mock(BimFacade.class);
 		dataPersistence = mock(BimPersistence.class);
-		exportStrategy = mock(ExportProjectPolicy.class);
+		exportStrategy = mock(ExportPolicy.class);
 		bimLogic = new DefaultBimLogic(serviceFacade, dataPersistence, null, null, null, null, exportStrategy);
 	}
 
 	@Test
 	public void getRevisionForExport() throws Exception {
-		//TODO
+		// TODO
 	}
 
 }

@@ -5,51 +5,52 @@ public class BimDataModelCommandFactory {
 	private final BimPersistence dataPersistence;
 	private final BimDataModelManager dataModelManager;
 
-	public BimDataModelCommandFactory(BimPersistence dataPersistence, BimDataModelManager dataModelManager) {
+	public BimDataModelCommandFactory(final BimPersistence dataPersistence, final BimDataModelManager dataModelManager) {
 		this.dataPersistence = dataPersistence;
 		this.dataModelManager = dataModelManager;
 	}
 
-	public BimDataModelCommand create(String attributeName) {
-		return MapperInfoUpdater.of(attributeName).create(dataPersistence, dataModelManager);
+	public BimDataModelCommand create(final String attributeName) {
+		return LayerUpdater.of(attributeName).create(dataPersistence, dataModelManager);
 	}
 
-	private static enum MapperInfoUpdater {
+	private static enum LayerUpdater {
 		active {
 			@Override
-			public BimDataModelCommand create(BimPersistence dataPersistence, BimDataModelManager dataModelManager) {
+			public BimDataModelCommand create(final BimPersistence dataPersistence,
+					final BimDataModelManager dataModelManager) {
 				return new BimActiveCommand(dataPersistence, dataModelManager);
 			}
 		}, //
 		root {
 			@Override
-			public BimDataModelCommand create(BimPersistence bimDataPersistence,
-					BimDataModelManager dataModelManager) {
+			public BimDataModelCommand create(final BimPersistence bimDataPersistence,
+					final BimDataModelManager dataModelManager) {
 				return new BimRootCommand(bimDataPersistence, dataModelManager);
 			}
 		}, //
-		export{
+		export {
 			@Override
-			public BimDataModelCommand create(BimPersistence bimDataPersistence,
-					BimDataModelManager dataModelManager) {
+			public BimDataModelCommand create(final BimPersistence bimDataPersistence,
+					final BimDataModelManager dataModelManager) {
 				return new BimExportCommand(bimDataPersistence, dataModelManager);
 			}
-		},//
-		container{
+		}, //
+		container {
 			@Override
-			public BimDataModelCommand create(BimPersistence bimDataPersistence,
-					BimDataModelManager dataModelManager) {
+			public BimDataModelCommand create(final BimPersistence bimDataPersistence,
+					final BimDataModelManager dataModelManager) {
 				return new BimContainerCommand(bimDataPersistence, dataModelManager);
 			}
-		},//
+		}, //
 		unknown {
 			@Override
-			public BimDataModelCommand create(BimPersistence bimDataPersistence,
-					BimDataModelManager dataModelManager) {
+			public BimDataModelCommand create(final BimPersistence bimDataPersistence,
+					final BimDataModelManager dataModelManager) {
 				return new BimDataModelCommand(bimDataPersistence, dataModelManager) {
 
 					@Override
-					public void execute(String className, String value) {
+					public void execute(final String className, final String value) {
 						// TODO Auto-generated method stub
 					}
 				};
@@ -57,8 +58,8 @@ public class BimDataModelCommandFactory {
 		}, //
 		;
 
-		public static MapperInfoUpdater of(final String attributeName) {
-			for (final MapperInfoUpdater attribute : values()) {
+		public static LayerUpdater of(final String attributeName) {
+			for (final LayerUpdater attribute : values()) {
 				if (attribute.name().equals(attributeName)) {
 					return attribute;
 				}
@@ -66,8 +67,7 @@ public class BimDataModelCommandFactory {
 			return unknown;
 		}
 
-		public abstract BimDataModelCommand create(BimPersistence dataPersistence,
-				BimDataModelManager dataModelManager);
+		public abstract BimDataModelCommand create(BimPersistence dataPersistence, BimDataModelManager dataModelManager);
 	}
 
 }

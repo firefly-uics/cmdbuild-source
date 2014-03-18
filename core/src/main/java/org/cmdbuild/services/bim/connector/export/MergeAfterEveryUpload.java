@@ -6,7 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.services.bim.BimFacade;
 
-public class MergeAfterEveryUpload implements ExportProjectPolicy {
+public class MergeAfterEveryUpload implements ExportPolicy {
 
 	private static final String EXPORT_SUFFIX = "-export";
 	private final BimFacade bimFacade;
@@ -68,9 +68,15 @@ public class MergeAfterEveryUpload implements ExportProjectPolicy {
 	}
 
 	@Override
-	public void beforeExport(String exportProjectId) {
+	public void beforeExport(final String exportProjectId) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public boolean forceUpdate() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
