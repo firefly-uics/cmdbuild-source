@@ -129,6 +129,7 @@
 			flex: 1,
 			framed: true,
 			border: true,
+			autoScroll: true,
 			bodyCls: "x-panel-body-default-framed cmborder",
 			bodyStyle: {
 				padding: "5px 5px 0 5px"

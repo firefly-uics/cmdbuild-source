@@ -1007,6 +1007,7 @@
 			"equals": "Egale",
 			"filter": "Filtre",
 			"fromSelection": "De la selection",
+			"functions" : "<em>Function</em>",
 			"go_filter": "Filtre",
 			"like": "Contient",
 			"list": "Liste",
@@ -1379,6 +1380,12 @@
 	"unlock_all_cards": "Débloquer toutes les fiches",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Vues",
+	"workflow": "<em>Workflow</em>",
+	"workflow_attributes": "<em>Workflow attributes</em>",
+	"workflow_by_cql": "<em>by Cql</em>",
+	"workflow_by_name": "<em>by name</em>",
+	"workflow_cql_filter": "<em>Cql filter</em>",
+	"workflow_query_tipology": "<em>Selection</em>",
 	"you_have_not_set_a_filter": "Vous n'avez pas de filtre",
 	"value": "<em>Value</em>"
 }

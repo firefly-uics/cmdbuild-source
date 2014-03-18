@@ -1,6 +1,15 @@
 (function() {
 
-	GET_PROCESS_INSTANCE_URL = "services/json/workflow/getprocessinstancelist",
+	GET_PROCESS_INSTANCE_URL = "services/json/workflow/getprocessinstancelist";
+
+	var queryTypology = Ext.create('Ext.data.Store', {
+	    fields: ['name', 'description'],
+	    data : [
+	        {"name":"name", "description": CMDBuild.Translation.workflow_by_name},
+	        {"name":"cql", "description": CMDBuild.Translation.workflow_by_cql}
+	    ]
+	});
+	
 	Ext.define("CMDBuild.view.administration.widget.form.CMWorkflowDefinitionForm", {
 		extend: "CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm",
 
@@ -28,11 +37,45 @@
 			var me = this;
 			var workflowsStore = buildWorkflowsStore();
 			this.callParent(arguments);
+			
+			this.queryTypology = Ext.create('Ext.form.ComboBox', {
+			    fieldLabel: CMDBuild.Translation.workflow_query_tipology,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			    store: queryTypology,
+			    queryMode: 'local',
+			    displayField: 'description',
+			    valueField: 'name',
+			    autoSelect: true,
+			    name: 'filterType',
+			    listeners:{
+			         scope: me,
+			         'select': function(item, param) {
+			        	 switch (param[0].get("name")) {
+			        	 case "cql" :
+			        		 setFilterFields(this);
+			        		 break;
+			        	 case "name" :
+			        		 setNameFields(this);
+			        		 break;
+			        	 }
+			         }
+			    }
+			});
+			this.queryTypology.select("name");
+			this.workflowFilter = new Ext.form.field.TextArea({
+				name: "filter",
+				fieldLabel: CMDBuild.Translation.workflow_cql_filter,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				hidden: true
+			});
 
 			this.workflowId = new Ext.form.field.ComboBox({
 				name: "code",
 				fieldLabel: CMDBuild.Translation.workflow,
 				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				valueField: 'id',
 				displayField: 'description',
 				store: workflowsStore
@@ -47,7 +90,7 @@
 			});
 
 			// defaultFields is inherited
-			this.defaultFields.add(this.workflowId, this.forceFormat);
+			this.defaultFields.add(this.queryTypology, this.workflowFilter, this.workflowId);
 
 			Ext.apply(this, {
 				layout: {
@@ -65,12 +108,22 @@
 		fillWithModel: function(model) {
 			this.callParent(arguments);
 			var name = model.get("workflowName");
-			var card = _CMCache.getEntryTypeByName(name);
-			if ( card && card.data) {
-				this.workflowId.setValue(parseInt(card.data.id));
+			var filter = model.get("filter");
+			if (name) {
+				this.queryTypology.select("name");
+				setNameFields(this)
+				var card = _CMCache.getEntryTypeByName(name);
+				if ( card && card.data) {
+					this.workflowId.setValue(parseInt(card.data.id));
+				}
+	
+				this.fillPresetWithData(model.get("preset"));
 			}
-
-			this.fillPresetWithData(model.get("preset"));
+			else if (filter) {
+				setFilterFields(this)
+				this.queryTypology.select("cql");
+				this.workflowFilter.setValue(filter);
+			}
 		},
 
 		// override
@@ -86,11 +139,19 @@
 		// override
 		getWidgetDefinition: function() {
 			var me = this;
-
-			return Ext.apply(me.callParent(arguments), {
-				workflowName: _CMCache.getEntryTypeNameById(me.workflowId.getValue()),
-				preset: me.presetGrid.getData()
-			});
+			var queryType = this.queryTypology.getValue();	
+			switch (queryType) {
+				case "cql":
+					return Ext.apply(me.callParent(arguments), {
+						filter: me.workflowFilter.getValue(),
+						filterType: queryType
+					});
+				default:
+					return Ext.apply(me.callParent(arguments), {
+						workflowName: _CMCache.getEntryTypeNameById(me.workflowId.getValue()),
+						preset: me.presetGrid.getData()
+					});
+			}
 		}
 	});
 	function buildWorkflowsStore() {
@@ -111,5 +172,18 @@
 		    autoLoad: true
 		});
 		return workflows;
+	}
+	function setFilterFields(me) {
+		me.workflowFilter.show();
+		me.workflowId.hide();
+		me.presetGrid.hide();
+		me.workflowFilter.enable();
+	}
+	function setNameFields(me) {
+		me.workflowFilter.hide();
+		me.workflowId.show();
+		me.presetGrid.show();
+		me.workflowId.enable();
+		me.presetGrid.enable();
 	}
 })();

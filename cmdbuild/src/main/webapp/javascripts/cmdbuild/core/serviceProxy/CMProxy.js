@@ -97,6 +97,10 @@
 			groupStore: 'services/json/filter/readallgroupfilters'
 		},
 
+		functions: {
+			getFunctions: 'services/json/schema/modclass/getfunctions'
+		},
+
 		login: 'services/json/login/login',
 
 		menu: {

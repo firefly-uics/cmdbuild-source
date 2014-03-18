@@ -29,7 +29,7 @@ public class PrivilegeManagement {
 
 	/**
 	 * Not used for DI but just to have two {@link PrivilegeContext} beans
-	 * managed. In this wat the {@link Qualifier} annotation must be used.
+	 * managed. In this way the {@link Qualifier} annotation must be used.
 	 */
 	@Bean
 	@Scope(PROTOTYPE)
@@ -52,7 +52,7 @@ public class PrivilegeManagement {
 	@Bean
 	@Scope(PROTOTYPE)
 	public RowAndColumnPrivilegeFetcher rowAndColumnPrivilegeFetcher() {
-		return new DataViewRowAndColumnPrivilegeFetcher(systemDataView, userPrivilegeContext());
+		return new DataViewRowAndColumnPrivilegeFetcher(systemDataView, userPrivilegeContext(), userStore);
 	}
 
 }

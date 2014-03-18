@@ -1007,6 +1007,7 @@
 			"equals": "равно",
 			"filter": "Фильтр",
 			"fromSelection": "Из отбора",
+			"functions" : "<em>Function</em>",
 			"go_filter": "Применить фильтр",
 			"like": "содержит",
 			"list": "Список",
@@ -1379,6 +1380,12 @@
 	"unlock_all_cards": "Разблокировать все карточки",
 	"uploading_attachment": "Загружается вложение...",
 	"views": "Представления",
+	"workflow": "<em>Workflow</em>",
+	"workflow_attributes": "<em>Workflow attributes</em>",
+	"workflow_by_cql": "<em>by Cql</em>",
+	"workflow_by_name": "<em>by name</em>",
+	"workflow_cql_filter": "<em>Cql filter</em>",
+	"workflow_query_tipology": "<em>Selection</em>",
 	"you_have_not_set_a_filter": "Фильтр не установлен",
 	"value": "<em>Value</em>"
 }

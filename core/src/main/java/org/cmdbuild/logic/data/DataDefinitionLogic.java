@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.data;
 
+import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
@@ -61,13 +63,18 @@ import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
  * Business Logic Layer for data definition.
  */
 public class DataDefinitionLogic implements Logic {
+
+	public static interface FunctionItem {
+
+		String name();
+
+	}
 
 	public static interface MetadataAction {
 
@@ -124,6 +131,30 @@ public class DataDefinitionLogic implements Logic {
 		@Override
 		public String apply(final ClassOrder input) {
 			return input.attributeName;
+		}
+
+	};
+
+	private static class FunctionItemWrapper implements FunctionItem {
+
+		private final CMFunction delegate;
+
+		public FunctionItemWrapper(final CMFunction delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public String name() {
+			return delegate.getName();
+		}
+
+	}
+
+	private static Function<CMFunction, FunctionItem> toFunctionItem = new Function<CMFunction, FunctionItem>() {
+
+		@Override
+		public FunctionItem apply(final CMFunction input) {
+			return new FunctionItemWrapper(input);
 		}
 
 	};
@@ -186,7 +217,7 @@ public class DataDefinitionLogic implements Logic {
 			logger.warn("class '{}' not found", className);
 			return;
 		}
-		final boolean hasChildren = Iterables.size(existingClass.getChildren()) > 0;
+		final boolean hasChildren = size(existingClass.getChildren()) > 0;
 		if (existingClass.isSuperclass() && hasChildren) {
 			throw ORMException.ORMExceptionType.ORM_TABLE_HAS_CHILDREN.createException();
 		}
@@ -212,7 +243,7 @@ public class DataDefinitionLogic implements Logic {
 			logger.info("attribute not already created, creating a new one");
 
 			// force for the new attribute to have the last (1 based) index
-			final int numberOfAttribute = Iterables.size(owner.getAttributes());
+			final int numberOfAttribute = size(owner.getAttributes());
 			attribute.setIndex(numberOfAttribute + 1);
 
 			validate(attribute);
@@ -530,6 +561,11 @@ public class DataDefinitionLogic implements Logic {
 			}
 		}
 		return false;
+	}
+
+	public Iterable<FunctionItem> functions() {
+		return from(view.findAllFunctions()) //
+				.transform(toFunctionItem);
 	}
 
 }

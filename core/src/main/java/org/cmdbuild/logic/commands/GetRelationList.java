@@ -33,13 +33,10 @@ import org.cmdbuild.model.data.Card;
 
 public class GetRelationList extends AbstractGetRelation {
 
-	private final CMDataView systemDataView;
-
 	private boolean emptyCardForWrongId;
 
-	public GetRelationList(final CMDataView view, final CMDataView systemDataView) {
+	public GetRelationList(final CMDataView view) {
 		super(view);
-		this.systemDataView = systemDataView;
 	}
 
 	/**
@@ -98,7 +95,6 @@ public class GetRelationList extends AbstractGetRelation {
 		final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
 		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
 				.withDataView(view) //
-				.withSystemDataView(systemDataView) //
 				.withEntryType(view.findClass(src.getClassName())) //
 				.withFilterObject(queryOptions.getFilter()) //
 				.build();

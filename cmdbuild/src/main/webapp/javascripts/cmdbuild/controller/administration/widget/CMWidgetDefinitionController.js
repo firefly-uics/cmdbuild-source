@@ -79,8 +79,8 @@
 			return;
 		}
 
-		var me = this,
-			widgetDef = me.view.getWidgetDefinition();
+		var me = this;
+		var widgetDef = me.view.getWidgetDefinition();
 
 		if (this.model) {
 			widgetDef.id = this.model.get(_fields.id);

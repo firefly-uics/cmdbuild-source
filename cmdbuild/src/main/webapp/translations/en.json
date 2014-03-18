@@ -1071,6 +1071,7 @@
 			"equals": "Equals",
 			"filter": "Filter",
 			"fromSelection": "FromSelection",
+			"functions" : "Function",
 			"go_filter": "Filter",
 			"like": "Contains",
 			"list": "List",
@@ -1443,6 +1444,12 @@
 	"unlock_all_cards": "Unlock all cards",
 	"uploading_attachment": "Uploading attachment...",
 	"views": "Views",
+	"workflow" : "Workflow",
+	"workflow_attributes" : "Workflow attributes",
+	"workflow_by_name": "by name",
+	"workflow_by_cql": "by Cql",
+	"workflow_cql_filter": "Cql filter",
+	"workflow_query_tipology": "Selection",
 	"you_have_not_set_a_filter": "You have not set a filter",
 	"value": "Value"
 }

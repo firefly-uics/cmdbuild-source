@@ -30,6 +30,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		private Long id;
 		private String name;
 		private String description;
+		private String from;
 		private String to;
 		private String cc;
 		private String bcc;
@@ -64,6 +65,15 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 
 		public void setDescription(final String description) {
 			this.description = description;
+		}
+
+		@Override
+		public String getFrom() {
+			return from;
+		}
+
+		public void setFrom(final String from) {
+			this.from = from;
 		}
 
 		@Override
@@ -151,6 +161,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			template.setId(input.getId());
 			template.setName(input.getName());
 			template.setDescription(input.getDescription());
+			template.setFrom(input.getFrom());
 			template.setTo(input.getTo());
 			template.setCc(input.getCc());
 			template.setBcc(input.getBcc());

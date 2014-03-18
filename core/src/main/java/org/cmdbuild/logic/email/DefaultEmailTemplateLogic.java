@@ -40,6 +40,11 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 		}
 
 		@Override
+		public String getFrom() {
+			return delegate.getFrom();
+		}
+
+		@Override
 		public String getTo() {
 			return delegate.getTo();
 		}

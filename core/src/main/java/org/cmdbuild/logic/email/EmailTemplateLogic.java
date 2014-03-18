@@ -12,6 +12,8 @@ public interface EmailTemplateLogic extends Logic {
 
 		String getDescription();
 
+		String getFrom();
+
 		String getTo();
 
 		String getCc();
@@ -36,7 +38,7 @@ public interface EmailTemplateLogic extends Logic {
 
 	/**
 	 * Creates a new {@link Template}.
-	 *
+	 * 
 	 * @return the id of the created {@link Template}.
 	 */
 	Long create(final Template template);

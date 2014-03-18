@@ -1007,6 +1007,7 @@
 			"equals": "Uguale",
 			"filter": "Filtro",
 			"fromSelection": "Dalla selezione",
+			"functions": "Funzione",
 			"go_filter": "Filtra",
 			"like": "Contiene",
 			"list": "Lista",
@@ -1379,6 +1380,12 @@
 	"unlock_all_cards": "Sblocca tutte le schede",
 	"uploading_attachment": "Caricamento allegato...",
 	"views": "Viste",
+	"workflow": "Processo",
+	"workflow_attributes": "Attributi del processo",
+	"workflow_by_name": "tramite nome",
+	"workflow_by_cql": "tramite Cql",
+	"workflow_cql_filter": "Filtro Cql",
+	"workflow_query_tipology": "Selezione",
 	"you_have_not_set_a_filter": "Non hai impostato un filtro",
 	"value": "Valore"
 }

@@ -1007,6 +1007,7 @@
 			"equals": "Cân bằng",
 			"filter": "Bộ lọc",
 			"fromSelection": "Lựa chọn từ",
+			"functions" : "<em>Function</em>",
 			"go_filter": "Bộ lọc",
 			"like": "Bao gồm",
 			"list": "Danh sách",
@@ -1379,6 +1380,12 @@
 	"unlock_all_cards": "Mở tất cả các thẻ",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Lượt xem",
+	"workflow": "<em>Workflow</em>",
+	"workflow_attributes": "<em>Workflow attributes</em>",
+	"workflow_by_cql": "<em>by Cql</em>",
+	"workflow_by_name": "<em>by name</em>",
+	"workflow_cql_filter": "<em>Cql filter</em>",
+	"workflow_query_tipology": "<em>Selection</em>",
 	"you_have_not_set_a_filter": "Bạn không cần cài đặt thẻ",
 	"value": "<em>Value</em>"
 }
