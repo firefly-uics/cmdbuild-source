@@ -235,13 +235,13 @@ public class BimserverService implements BimService {
 	}
 
 	@Override
-	public String mergeProjectsIntoNewProject(String project1, String project2) {
+	public String mergeProjectsIntoNewProject(final String project1, final String project2) {
 		return client.mergeProjectsIntoNewProject(project1, project2);
 	}
 
 	@Override
-	public Long getOidFromGlobalId(String globalId, String revisionId) {
-		return client.getOidFromGlobalId(globalId,revisionId);
+	public Long getOidFromGlobalId(final String globalId, final String revisionId, final Iterable<String> candidateTypes) {
+		return client.getOidFromGlobalId(globalId, revisionId, candidateTypes);
 	}
 
 }

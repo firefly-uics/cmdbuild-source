@@ -9,7 +9,7 @@ public interface Output {
 	void deleteTarget(Entity entityToRemove, String targetProjectId);
 
 	void updateRelations(String targetProjectId);
-	
-	boolean outputInvalid();
+
+	void outputInvalid(String outputId);
 
 }

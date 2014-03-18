@@ -61,14 +61,12 @@ public class NewExportConnector implements Export {
 	private final BimDataView bimDataView;
 	private final Map<String, Map<String, String>> shapeNameToOidMap;
 	private final Iterable<String> candidateTypes = Lists.newArrayList(IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING);
-	private final ExportProjectPolicy exportProjectPolicy;
 
 	public NewExportConnector(final BimDataView dataView, final BimFacade bimServiceFacade,
-			final BimPersistence bimPersistence, final ExportProjectPolicy exportProjectPolicy) {
+			final BimPersistence bimPersistence, final ExportPolicy exportProjectPolicy) {
 		this.serviceFacade = bimServiceFacade;
 		this.persistence = bimPersistence;
 		this.bimDataView = dataView;
-		this.exportProjectPolicy = exportProjectPolicy;
 		shapeNameToOidMap = Maps.newHashMap();
 	}
 
@@ -144,6 +142,7 @@ public class NewExportConnector implements Export {
 	@Override
 	public String export(final String sourceProjectId, final Output output) {
 		final boolean isSynchronized = isSynch(sourceProjectId);
+		System.out.println("Is synchronized? " + isSynchronized);
 		if (isSynchronized) {
 			return getLastGeneratedOutput(sourceProjectId);
 		} else {
@@ -165,12 +164,16 @@ public class NewExportConnector implements Export {
 		final Map<String, ValueDifference<Entity>> entriesToUpdate = difference.entriesDiffering();
 		final Map<String, Entity> entriesToRemove = difference.entriesOnlyOnRight();
 
+		if (entriesToCreate.isEmpty() && entriesToUpdate.isEmpty() && entriesToRemove.isEmpty()) {
+			return;
+		}
+
 		final String exportProjectId = getExportProjectId(sourceProjectId);
 		final String exportRevisionId = serviceFacade.getLastRevisionOfProject(exportProjectId);
 		final boolean shapesLoaded = areShapesOfCatalogAlreadyLoadedInRevision(catalog, exportRevisionId);
 		if (!shapesLoaded) {
-			output.outputInvalid();
-			exportProjectPolicy.beforeExport(exportProjectId);
+			output.outputInvalid(exportProjectId);
+
 		}
 		serviceFacade.openTransaction(exportProjectId);
 		try {
@@ -198,8 +201,9 @@ public class NewExportConnector implements Export {
 
 			/*
 			 * In order to see the generated objects I have to download and
-			 * upload again the file. This is due to some problems with BimServer
-			 * cache, I will investigate about a more efficient solution.
+			 * upload again the file. This is due to some problems with
+			 * BimServer cache, I will investigate about a more efficient
+			 * solution.
 			 */
 			final DataHandler exportedData = serviceFacade.download(exportProjectId);
 			final File file = File.createTempFile("ifc", null);
@@ -282,7 +286,7 @@ public class NewExportConnector implements Export {
 	private String getShapeOid(final String revisionId, final String shapeName) {
 		String shapeOid = StringUtils.EMPTY;
 		if (shapeNameToOidMap.containsKey(revisionId)) {
-			Map<String, String> mapForCurrentRevision = shapeNameToOidMap.get(revisionId);
+			final Map<String, String> mapForCurrentRevision = shapeNameToOidMap.get(revisionId);
 			if (mapForCurrentRevision.containsKey(shapeName)) {
 				shapeOid = mapForCurrentRevision.get(shapeName);
 			} else {
@@ -294,7 +298,7 @@ public class NewExportConnector implements Export {
 		} else {
 			shapeOid = serviceFacade.findShapeWithName(shapeName, revisionId);
 			if (isValidId(shapeOid)) {
-				Map<String, String> mapForCurrentRevision = Maps.newHashMap();
+				final Map<String, String> mapForCurrentRevision = Maps.newHashMap();
 				shapeNameToOidMap.put(revisionId, mapForCurrentRevision);
 				mapForCurrentRevision.put(shapeName, shapeOid);
 			}

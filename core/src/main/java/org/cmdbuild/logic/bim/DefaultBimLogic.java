@@ -51,7 +51,7 @@ import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.DefaultExportListener;
 import org.cmdbuild.services.bim.connector.export.Export;
-import org.cmdbuild.services.bim.connector.export.ExportProjectPolicy;
+import org.cmdbuild.services.bim.connector.export.ExportPolicy;
 import org.cmdbuild.services.bim.connector.export.NewExportConnector;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -70,7 +70,7 @@ public class DefaultBimLogic implements BimLogic {
 	private final Export exportConnector;
 	private final BimDataView bimDataView;
 	private final DataAccessLogic dataAccessLogic;
-	private final ExportProjectPolicy exportStrategy;
+	private final ExportPolicy exportPolicy;
 	private final Map<String, Map<String, Long>> guidToOidMap = Maps.newHashMap();
 
 	public DefaultBimLogic( //
@@ -80,7 +80,7 @@ public class DefaultBimLogic implements BimLogic {
 			final Mapper mapper, //
 			final BimDataView bimDataView, //
 			final DataAccessLogic dataAccessLogic, //
-			final ExportProjectPolicy exportStrategy) {
+			final ExportPolicy exportStrategy) {
 
 		this.bimPersistence = bimPersistence;
 		this.bimServiceFacade = bimServiceFacade;
@@ -89,7 +89,7 @@ public class DefaultBimLogic implements BimLogic {
 		this.exportConnector = new NewExportConnector(bimDataView, bimServiceFacade, bimPersistence, exportStrategy);
 		this.bimDataView = bimDataView;
 		this.dataAccessLogic = dataAccessLogic;
-		this.exportStrategy = exportStrategy;
+		this.exportPolicy = exportStrategy;
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class DefaultBimLogic implements BimLogic {
 		final BimFacadeProject bimProject = bimProjectfrom(project);
 		final BimFacadeProject baseProject = bimServiceFacade.createProjectAndUploadFile(bimProject);
 		final String projectId = baseProject.getProjectId();
-		final String exportProjectId = exportStrategy.createProjectForExport(projectId);
+		final String exportProjectId = exportPolicy.createProjectForExport(projectId);
 
 		final CmProject cmProject = cmProjectFrom(project);
 		cmProject.setProjectId(projectId);
@@ -147,7 +147,7 @@ public class DefaultBimLogic implements BimLogic {
 			persistenceProject.setLastCheckin(updatedProject.getLastCheckin());
 		}
 		if (project.getFile() != null) {
-			final String exportProjectId = exportStrategy.updateProjectForExport(projectId);
+			final String exportProjectId = exportPolicy.updateProjectForExport(projectId);
 			persistenceProject.setExportProjectId(exportProjectId);
 		}
 		bimPersistence.saveProject(persistenceProject);
@@ -282,6 +282,9 @@ public class DefaultBimLogic implements BimLogic {
 		final String baseProjectId = getBaseProjectIdForCardOfClass(cardId, className);
 		String outputRevisionId = StringUtils.EMPTY;
 		if (isValidId(baseProjectId)) {
+			if (exportPolicy.forceUpdate()) {
+				exportIfc(baseProjectId);
+			}
 			outputRevisionId = exportConnector.getLastGeneratedOutput(baseProjectId);
 		}
 		return outputRevisionId;
@@ -388,7 +391,7 @@ public class DefaultBimLogic implements BimLogic {
 
 	@Override
 	public void exportIfc(final String projectId) {
-		exportConnector.export(projectId, new DefaultExportListener(bimServiceFacade));
+		exportConnector.export(projectId, new DefaultExportListener(bimServiceFacade, exportPolicy));
 	}
 
 	@Override
@@ -415,7 +418,7 @@ public class DefaultBimLogic implements BimLogic {
 
 	@Override
 	public String getJsonForBimViewer(final String revisionId, final String baseProjectId) {
-
+		System.out.println("Open revision " + revisionId);
 		final DataHandler jsonFile = bimServiceFacade.fetchProjectStructure(revisionId);
 		try {
 			final Long rootCardId = getRootCardIdForProjectId(baseProjectId, getRootLayer().getClassName());
@@ -428,6 +431,7 @@ public class DefaultBimLogic implements BimLogic {
 			final List<BimLayer> layers = readLayers();
 			for (final BimLayer layer : layers) {
 				final String className = layer.getClassName();
+				System.out.println("Layer " + className);
 				final String rootClassName = getRootLayer().getClassName();
 				List<BimCard> bimCards = Lists.newArrayList();
 				if (className.equals(rootClassName)) {
@@ -441,6 +445,7 @@ public class DefaultBimLogic implements BimLogic {
 				}
 				for (final BimCard bimCard : bimCards) {
 					final String guid = bimCard.getGlobalId();
+					System.out.println("guid " + guid);
 					Long oid = (long) -1;
 					if (guidToOidMap.containsKey(revisionId)) {
 						final Map<String, Long> revisionMap = guidToOidMap.get(revisionId);
@@ -448,8 +453,8 @@ public class DefaultBimLogic implements BimLogic {
 							oid = revisionMap.get(guid);
 						}
 					} else {
-						oid = bimServiceFacade.getOidFromGlobalId(guid, revisionId,
-								Lists.newArrayList(IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING));
+						oid = bimServiceFacade.getOidFromGlobalId(guid, revisionId, Lists.newArrayList("IfcBuilding",
+								"IfcBuildingStorey", "IfcSpace", IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING));
 						if (guidToOidMap.containsKey(revisionId)) {
 							final Map<String, Long> revisionMap = guidToOidMap.get(revisionId);
 							revisionMap.put(guid, oid);
@@ -458,6 +463,7 @@ public class DefaultBimLogic implements BimLogic {
 							revisionMap.put(guid, oid);
 						}
 					}
+					System.out.println("oid " + oid);
 					final String oidAsString = String.valueOf(oid);
 					if (isValidId(oidAsString)) {
 						final ObjectNode property = (ObjectNode) properties.findValue(oidAsString);
