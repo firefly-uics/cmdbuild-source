@@ -1,19 +1,19 @@
 package org.cmdbuild.model.data;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.trim;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -359,7 +359,7 @@ public class Attribute {
 		this.name = builder.name;
 		this.description = builder.description;
 		this.owner = builder.owner;
-		this.group = builder.group == null ? StringUtils.EMPTY : builder.group;
+		this.group = builder.group == null ? EMPTY : builder.group;
 		this.fkDestinationName = builder.fkDestinationName;
 		this.type = builder.type;
 		this.defaultValue = builder.defaultValue;

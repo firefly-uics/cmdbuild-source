@@ -3,7 +3,7 @@ package org.cmdbuild.api.fluent.ws;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.api.fluent.ws.ClassAttribute.classAttribute;
 import static org.cmdbuild.api.fluent.ws.FunctionInput.functionInput;
 import static org.cmdbuild.api.fluent.ws.FunctionOutput.functionOutput;
@@ -22,7 +22,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.URLDataSource;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;

@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.cmdbuild.workflow.service.RemoteSharkService;
 import org.cmdbuild.workflow.service.RemoteSharkServiceConfiguration;
 import org.junit.BeforeClass;

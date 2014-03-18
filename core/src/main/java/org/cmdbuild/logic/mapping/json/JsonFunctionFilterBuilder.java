@@ -2,7 +2,7 @@ package org.cmdbuild.logic.mapping.json;
 
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.FUNCTION_NAME_KEY;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;

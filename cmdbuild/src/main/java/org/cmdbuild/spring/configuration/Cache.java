@@ -71,7 +71,7 @@ public class Cache {
 	}
 
 	@Bean
-	@Scope(PROTOTYPE)
+	@Scope(PROTOTYPE) // FIXME why prototype?
 	public CachingLogic defaultCachingLogic() {
 		return new DefaultCachingLogic(cachingService());
 	}

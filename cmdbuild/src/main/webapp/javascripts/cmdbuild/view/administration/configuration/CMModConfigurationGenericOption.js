@@ -11,10 +11,17 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 	
 	constructor: function() {
 		this.title = tr.title;
-		this.instanceNameField = new Ext.form.field.Text({
+		this.instanceNameField = new Ext.form.CMTranslatableText({
 			fieldLabel: tr.instancename,
 			name: 'instance_name',
-			allowBlank: true
+			allowBlank: true,
+			// this configuration is on the parent but for this special field
+			// is repeated here
+			labelAlign: 'left',
+			labelWidth: CMDBuild.CFG_LABEL_WIDTH,
+			width: CMDBuild.CFG_MEDIUM_FIELD_WIDTH,
+			// end of duplicate configuration
+			translationsKeyType: "InstanceName"
 		});
 		
 		var startingClass = new CMDBuild.field.ErasableCombo({

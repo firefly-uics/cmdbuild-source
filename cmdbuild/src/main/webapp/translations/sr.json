@@ -1,8 +1,44 @@
 {
 	"description": "Srpski",
-	"release": "2.1-dev",
+	"release": "2.2-dev",
 	"administration": {
 		"description": "Administracioni modul",
+		"email": {
+			"title": "<em>Email</em>",
+			"accounts": {
+				"active": "<em>Active</em>",
+				"add": "<em>Add account</em>",
+				"credentials": "<em>Credentials</em>",
+				"account": "<em>Account</em>",
+				"address": "<em>Address</em>",
+				"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
+				"enableSsl": "<em>Enable SSL</em>",
+				"imapPort": "<em>IMAP port</em>",
+				"imapServer": "<em>IMAP server</em>",
+				"incoming": "<em>Incoming</em>",
+				"incomingFolder": "<em>Incoming folder</em>",
+				"isDefault": "<em>Default</em>",
+				"modify": "<em>Modify account</em>",
+				"outgoing": "<em>Outgoing</em>",
+				"password": "<em>Password</em>",
+				"processedFolder": "<em>Processed folder</em>",
+				"rejectedFolder": "<em>Rejected folder</em>",
+				"remove": "<em>Remove account</em>",
+				"setDefault": "<em>Set as default</em>",
+				"smtpPort": "<em>SMTP Port</em>",
+				"smtpServer": "<em>SMTP server</em>",
+				"title": "<em>Accounts</em>",
+				"username": "<em>Username</em>"
+			},
+			"templates": {
+				"add": "<em>Add template</em>",
+				"body": "<em>Body</em>",
+				"modify": "<em>Modify template</em>",
+				"remove": "<em>Remove template</em>",
+				"template": "<em>Template</em>",
+				"title": "<em>Templates</em>"
+			}
+		},
 		"modClass": {
 			"add_class": "Dodaj klasu",
 			"attributeProperties": {
@@ -634,18 +670,6 @@
 			"setupTitle": "Podešavanja",
 			"workflow": {
 				"credential": "Podaci za pristup",
-				"email": {
-					"address": "Email adresa",
-					"imapserver": "IMAP server",
-					"incoming_mail_server": "Server za dolaznu poštu",
-					"outgoing_mail_srver": "Server za slanje pošte",
-					"password": "Lozinka",
-					"port": "Port",
-					"smtpserver": "SMTP server",
-					"ssl": "Uključi SSL",
-					"title": "Email",
-					"username": "Korisničko ime"
-				},
 				"enabled": "Uključen",
 				"endpoint": "Adresa (URL) servisa",
 				"engine": "Naziv sistema za upravljanje procesima",
@@ -1310,8 +1334,6 @@
 	"clear_row_and_colun_privilege": "Obriši prava pristupa na redove i kolone",
 	"clearFilter": "<em>Clear Filter</em>",
 	"description_": "Opis",
-	"emailBody": "<em>Body</em>",
-	"emailTemplate": "<em>Email Template</em>",
 	"enabled": "Uključen",
 	"error": "Greška",
 	"file_name": "<em>File name</em>",
@@ -1352,7 +1374,11 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "Ciljna klasa",
 	"to": "<em>To</em>",
+	"from": "<em>From<em>",
+	"translations" : "<em>Translations</em>",
+	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Otključaj sve kartice",
+	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Prikazi",
 	"workflow": "<em>Workflow</em>",
 	"workflow_attributes": "<em>Workflow attributes</em>",
@@ -1360,5 +1386,6 @@
 	"workflow_by_name": "<em>by name</em>",
 	"workflow_cql_filter": "<em>Cql filter</em>",
 	"workflow_query_tipology": "<em>Selection</em>",
-	"you_have_not_set_a_filter": "Niste postavili filter"
+	"you_have_not_set_a_filter": "Niste postavili filter",
+	"value": "<em>Value</em>"
 }

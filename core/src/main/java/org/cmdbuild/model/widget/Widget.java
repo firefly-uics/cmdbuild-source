@@ -4,7 +4,7 @@ import java.util.Map;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.model.widget.WidgetVisitor.WidgetVisitable;
 import org.cmdbuild.workflow.CMActivityInstance;

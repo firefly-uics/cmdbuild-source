@@ -79,14 +79,13 @@ COMMENT ON COLUMN "Metadata"."Notes" IS 'MODE: read|DESCR: Value|INDEX: 3';
 
 SELECT cm_create_class('_SchedulerJob', 'Class', 'MODE: reserved|TYPE: class|DESCR: Scheduler|SUPERCLASS: false|STATUS: active');
 
-COMMENT ON COLUMN "Scheduler"."Code" IS 'MODE: read|DESCR: Job Type|INDEX: 1';
-COMMENT ON COLUMN "Scheduler"."Description" IS 'MODE: read|DESCR: Job Description|INDEX: 2';
-COMMENT ON COLUMN "Scheduler"."Notes" IS 'MODE: read|DESCR: Job Parameters|INDEX: 3';
+COMMENT ON COLUMN "_SchedulerJob"."Code" IS 'MODE: read|DESCR: Job Type|INDEX: 1';
+COMMENT ON COLUMN "_SchedulerJob"."Description" IS 'MODE: read|DESCR: Job Description|INDEX: 2';
+COMMENT ON COLUMN "_SchedulerJob"."Notes" IS 'MODE: read|DESCR: Job Parameters|INDEX: 3';
 
-SELECT cm_create_class_attribute('Scheduler', 'CronExpression', 'text', '', true, false, 'MODE: read|DESCR: Cron Expression|STATUS: active');
-SELECT cm_create_class_attribute('Scheduler', 'Detail', 'text', '', true, false, 'MODE: read|DESCR: Job Detail|STATUS: active');
-SELECT cm_create_class_attribute('Scheduler', 'JobType', 'text', null, false, false, 'MODE: write|DESCR: JobType|STATUS: active');
-SELECT cm_create_class_attribute('Scheduler', 'Running', 'boolean', null, false, false, 'MODE: write|DESCR: Running|STATUS: active');
+SELECT cm_create_class_attribute('_SchedulerJob', 'CronExpression', 'text', '', true, false, 'MODE: read|DESCR: Cron Expression|STATUS: active');
+SELECT cm_create_class_attribute('_SchedulerJob', 'JobType', 'text', null, false, false, 'MODE: write|DESCR: JobType|STATUS: active');
+SELECT cm_create_class_attribute('_SchedulerJob', 'Running', 'boolean', null, false, false, 'MODE: write|DESCR: Running|STATUS: active');
 
 ---------------------------------------------
 -- Create Scheduler Job Parameters class
@@ -188,7 +187,6 @@ SELECT cm_create_class_attribute('_MdrScopedId', 'IdItem', 'int4', NULL, TRUE, F
 ---------------------------------------------
 
 SELECT cm_create_class('_EmailTemplate', NULL, 'MODE: reserved|TYPE: class|DESCR: Email Templates|SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('_EmailTemplate', 'Owner', 'regclass', null, false, false, 'MODE: write|DESCR: Class owner|INDEX: 1|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'From', 'text', null, false, false, 'MODE: write|DESCR: From|INDEX: 2|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'To', 'text', null, false, false, 'MODE: write|DESCR: To|INDEX: 3|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'CC', 'text', null, false, false, 'MODE: write|DESCR: CC|INDEX: 4|STATUS: active');

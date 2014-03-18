@@ -1,127 +1,147 @@
 (function() {
 
-	Ext.define("CMDBuild.controller.administration.workflow.CMCronPanelController", {
+	Ext.define('CMDBuild.controller.administration.workflow.CMCronPanelController', {
+		extend: 'CMDBuild.controller.CMBasePanelController',
+
+		currentProcess: undefined,
+		currentProcessTaskId: undefined,
+		selectionModel: undefined,
+
+		// Overwrite
 		constructor: function(view) {
-			this.currentProcessId = null;
-			this.currentJob = null;
 
+			// Handlers exchange
 			this.view = view;
-			this.jobGrid = view.jobGrid;
-			this.jobGridSM = view.jobGrid.getSelectionModel();
-			this.jobPanel = view.jobPanel;
-			this.jobParemetersGrid = view.jobParemetersGrid;
+			this.grid = view.grid;
+			this.view.delegate = this;
+			this.grid.delegate = this;
 
-			this.jobGridSM.on('selectionchange', onJobGridSelected, this);
-			this.jobPanel.saveButton.on("click", onSaveButtonClick, this);
-			this.jobPanel.abortButton.on("click", onAbortButtonClick, this);
-			this.jobPanel.modifyJobButton.on("click", onModifyJobClick, this);
-			this.jobPanel.deleteJobButton.on("click", onDeleteJobClick, this);
-			this.jobGrid.addJobButton.on("click", onAddJobButtonClick, this);
+			this.selectionModel = this.grid.getSelectionModel();
 		},
 
-		onProcessSelected: function(processId, process) {
-			this.currentProcessId = processId;
-			if (!process || process.get("superclass")) {
-				this.view.disable();
-			} else {
-				this.view.enable();
-				this.jobGrid.load(processId);
-				this.jobPanel.disableModify();
-				this.jobParemetersGrid.addParameterButton.disable();
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				case 'onAddButtonClick':
+					return this.onAddButtonClick(name, param, callBack);
+
+				case 'onItemDoubleClick':
+					return this.onItemDoubleClick(name, param);
+
+				case 'onModifyButtonClick':
+					return this.onModifyButtonClick(name, param);
+
+				case 'onRemoveButtonClick':
+					return this.onRemoveButtonClick(name, param);
+
+				case 'onRowSelected':
+					return this.onRowSelected();
+
+				default: {
+					if (this.parentDelegate)
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
 			}
 		},
 
-		onAddClassButtonClick: function() {
-			this.currentProcessId = null;
-			this.currentJob = null;
+		onAddButtonClick: function(name, param, callBack) {
+			var me = this;
 
-			this.view.disable();
+			this.targetAccordion.expand();
+
+//			param.id = this.currentProcessId;
+
+			Ext.Function.createDelayed(function() {
+				me.targetAccordion.selectNodeById(param.type);
+
+				Ext.Function.createDelayed(function() {
+					me.targetController.cmOn(name, param, callBack);
+//					me
+				}, 100)();
+			}, 500)();
+		},
+
+		onItemDoubleClick: function(name, param) {
+			var me = this;
+
+			this.targetAccordion.expand();
+
+			Ext.Function.createDelayed(function() {
+				me.targetAccordion.selectNodeById(param.type);
+
+				me.targetController.grid.getStore().load({
+					callback: function() {
+						var selectionIndex = me.targetController.grid.getStore().find(CMDBuild.ServiceProxy.parameter.ID, param.id);
+
+						if (selectionIndex > 0) {
+							me.targetController.grid.getSelectionModel().select(
+								selectionIndex,
+								true
+							);
+						} else {
+							CMDBuild.Msg.error(
+								CMDBuild.Translation.common.failure,
+								Ext.String.format('Cannot find taks with id ' + param.id + ' in store')
+							);
+
+							me.targetController.form.delegate.selectedId = null;
+							me.targetController.form.disableModify();
+						}
+					}
+				});
+			}, 500)();
+		},
+
+		onModifyButtonClick: function(name, param) {
+			var me = this;
+
+			if (this.currentProcessTaskId) {
+				param.id = this.currentProcessTaskId;
+
+				this.onItemDoubleClick(null, param);
+
+				Ext.Function.createDelayed(function() {
+					if (me.targetController.form.delegate.selectedId != null)
+						me.targetController.form.delegate.onModifyButtonClick();
+				}, 1000)();
+			}
+		},
+
+		onProcessSelected: function(processId, process) {
+			this.currentProcess = process;
+
+			if (!process || process.get('superclass')) {
+				this.view.disable();
+			} else {
+				this.view.enable();
+				this.grid.reconfigure(CMDBuild.core.serviceProxy.CMProxyTasks.getStoreByWorkflow());
+			}
+		},
+
+		onRemoveButtonClick: function(name, param) {
+			var me = this;
+
+			if (this.currentProcessTaskId) {
+				param.id = this.currentProcessTaskId;
+
+				_debug(this.onItemDoubleClick(null, param));
+
+				Ext.Function.createDelayed(function() {
+					if (me.targetController.form.delegate.selectedId != null)
+						me.targetController.form.delegate.onRemoveButtonClick();
+				}, 1000)();
+			}
+		},
+
+		onRowSelected: function() {
+			if (this.selectionModel.hasSelection()) {
+				this.currentProcessTaskId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
+				this.view.enableCMTbar();
+
+				// This declaration positioned in constructor doesn't works for targetAccordion
+				this.targetAccordion = _CMMainViewportController.findAccordionByCMName('tasks');
+				this.targetController = _CMMainViewportController.panelControllers['tasks'];
+			}
 		}
-
 	});
 
-	function onJobGridSelected(sm, selection) {
-		if (selection.length > 0) {
-			this.currentJob = selection[0];
-
-			this.jobPanel.onJobSelected(this.currentJob);
-			this.jobParemetersGrid.onJobSelected(this.currentJob.get("params"));
-		}
-	}
-
-	function onAddJobButtonClick() {
-		this.currentJob = null;
-
-		this.jobGridSM.deselectAll();
-		this.jobPanel.onAddJobButtonClick();
-		this.jobParemetersGrid.onAddJobButtonClick();
-	}
-
-	function onModifyJobClick() {
-		this.jobPanel.enableModify();
-		this.jobParemetersGrid.addParameterButton.enable();
-	}
-	
-	function onDeleteJobClick() {
-		CMDBuild.Ajax.request({
-			url : 'services/json/schema/scheduler/deletejob',
-			params: {
-				jobId: this.currentJob.get("id")
-			},
-			scope : this,
-			success : successCB,
-			important: true
-		});
-	}
-	
-	function onSaveButtonClick() {
-		if (this.currentJob == null) {
-			var params = {
-					jobParameters: Ext.JSON.encode(this.jobParemetersGrid.getParametersAsMap()),
-					cronExpression: this.jobPanel.getCronExpression(),
-					jobDescription: this.jobPanel.jobDescriptionField.getValue()
-			};
-			params[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentProcessId);
-
-			CMDBuild.Ajax.request({
-				url : 'services/json/schema/scheduler/addprocessjob',
-				params: params,
-				scope : this,
-				success : successCB,
-				important: true
-			});
-		} else {
-			CMDBuild.Ajax.request({
-				url : 'services/json/schema/scheduler/modifyjob',
-				params: {
-					jobParameters: Ext.JSON.encode(this.jobParemetersGrid.getParametersAsMap()),
-					jobId: this.currentJob.get("id"),
-					cronExpression: this.jobPanel.getCronExpression(),
-					jobDescription: this.jobPanel.jobDescriptionField.getValue()
-				},
-				scope : this,
-				success : successCB,
-				important: true
-			});
-		}
-	}
-
-	function onAbortButtonClick() {
-		this.jobPanel.disableModify();
-		this.jobPanel.reset();
-		if (this.currentJob != null) {
-			this.jobPanel.onJobSelected(this.currentJob)
-		}
-		this.jobParemetersGrid.addParameterButton.disable();
-		this.jobParemetersGrid.removeAll();
-	}
-
-	function successCB() {
-		this.jobGrid.load(this.currentProcessId);
-		this.jobPanel.disableModify();
-		this.jobPanel.reset();
-		this.jobParemetersGrid.addParameterButton.disable();
-		this.jobParemetersGrid.removeAll();
-	}
 })();
-	

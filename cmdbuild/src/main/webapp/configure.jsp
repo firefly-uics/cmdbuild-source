@@ -58,17 +58,18 @@
 
 	<script type="text/javascript" src="javascripts/cmdbuild/form/CustomVTypes.js"></script>
 
+	<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMTranslationsWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxyConstants.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/ServiceProxy.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMSetupProxy.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConstants.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxy.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxySetup.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/setup/Step1.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/setup/Step2.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/setup/Step3.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/setup.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/setup/CMSetupController.js"></script>
-	
+
 </head>
 <body>
 <div id="header">

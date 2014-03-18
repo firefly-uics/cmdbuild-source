@@ -83,7 +83,6 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 		final JSONObject jsonPrivilegeFilter = new JSONObject(privilegeFilter);
 		return JsonFilterMapper.newInstance() //
 				.withDataView(dataView) //
-				.withSystemDataView(dataView) //
 				.withEntryType(entryType) //
 				.withFilterObject(jsonPrivilegeFilter) //
 				.withOperationUser(userStore.getUser()) //

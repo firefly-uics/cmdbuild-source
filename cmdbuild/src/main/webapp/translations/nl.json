@@ -1,8 +1,44 @@
 {
 	"description": "Nederlands",
-	"release": "2.1-dev",
+	"release": "2.2-dev",
 	"administration": {
 		"description": "Administratie module",
+		"email": {
+			"title": "<em>Email</em>",
+			"accounts": {
+				"active": "<em>Active</em>",
+				"add": "<em>Add account</em>",
+				"credentials": "<em>Credentials</em>",
+				"account": "<em>Account</em>",
+				"address": "<em>Address</em>",
+				"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
+				"enableSsl": "<em>Enable SSL</em>",
+				"imapPort": "<em>IMAP port</em>",
+				"imapServer": "<em>IMAP server</em>",
+				"incoming": "<em>Incoming</em>",
+				"incomingFolder": "<em>Incoming folder</em>",
+				"isDefault": "<em>Default</em>",
+				"modify": "<em>Modify account</em>",
+				"outgoing": "<em>Outgoing</em>",
+				"password": "<em>Password</em>",
+				"processedFolder": "<em>Processed folder</em>",
+				"rejectedFolder": "<em>Rejected folder</em>",
+				"remove": "<em>Remove account</em>",
+				"setDefault": "<em>Set as default</em>",
+				"smtpPort": "<em>SMTP Port</em>",
+				"smtpServer": "<em>SMTP server</em>",
+				"title": "<em>Accounts</em>",
+				"username": "<em>Username</em>"
+			},
+			"templates": {
+				"add": "<em>Add template</em>",
+				"body": "<em>Body</em>",
+				"modify": "<em>Modify template</em>",
+				"remove": "<em>Remove template</em>",
+				"template": "<em>Template</em>",
+				"title": "<em>Templates</em>"
+			}
+		},
 		"modClass": {
 			"add_class": "Klas toevoegen",
 			"attributeProperties": {
@@ -634,18 +670,6 @@
 			"setupTitle": "Configuratie",
 			"workflow": {
 				"credential": "Rechten",
-				"email": {
-					"address": "Email adres",
-					"imapserver": "IMAP server",
-					"incoming_mail_server": "Inkomende mail server",
-					"outgoing_mail_srver": "Uitgaande mail server",
-					"password": "Wachtwoord",
-					"port": "Poort",
-					"smtpserver": "SMTP server",
-					"ssl": "Deblokkeer SSL",
-					"title": "Email",
-					"username": "Gebruikersnaam"
-				},
 				"enabled": "Geaktiveerd",
 				"endpoint": "Server URL",
 				"engine": "Machine naam",
@@ -1310,8 +1334,6 @@
 	"clear_row_and_colun_privilege": "Verwijder rij en kolom rechten",
 	"clearFilter": "<em>Clear Filter</em>",
 	"description_": "Omschrijving",
-	"emailBody": "<em>Body</em>",
-	"emailTemplate": "<em>Email Template</em>",
 	"enabled": "Geaktiveerd",
 	"error": "Fout",
 	"file_name": "<em>File name</em>",
@@ -1352,6 +1374,9 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "Doel Klas",
 	"to": "<em>To</em>",
+	"from": "<em>From<em>",
+	"translations" : "<em>Translations</em>",
+	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Deblokkeer alle kaarten",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Vensters",
@@ -1361,5 +1386,6 @@
 	"workflow_by_name": "<em>by name</em>",
 	"workflow_cql_filter": "<em>Cql filter</em>",
 	"workflow_query_tipology": "<em>Selection</em>",
-	"you_have_not_set_a_filter": "U heeft geen filter ingesteld"
+	"you_have_not_set_a_filter": "U heeft geen filter ingesteld",
+	"value": "<em>Value</em>"
 }

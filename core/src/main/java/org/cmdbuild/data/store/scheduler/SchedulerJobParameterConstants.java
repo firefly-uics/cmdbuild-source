@@ -1,6 +1,6 @@
 package org.cmdbuild.data.store.scheduler;
 
-class SchedulerJobParameterConstants {
+public class SchedulerJobParameterConstants {
 
 	public static final String CLASSNAME = "_SchedulerJobParameter";
 

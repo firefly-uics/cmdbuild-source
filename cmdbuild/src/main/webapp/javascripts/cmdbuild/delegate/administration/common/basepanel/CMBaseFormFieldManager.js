@@ -20,7 +20,7 @@
 				cmImmutable: true
 			});
 
-			this.description= new Ext.form.TextField({
+			this.description= new Ext.form.CMTranslatableText({
 				fieldLabel : CMDBuild.Translation.administration.modClass.attributeProperties.description,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,

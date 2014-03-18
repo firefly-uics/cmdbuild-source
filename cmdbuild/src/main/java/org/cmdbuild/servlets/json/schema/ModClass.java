@@ -698,7 +698,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 		return JsonResponse.success( //
 				from(dataDefinitionLogic().functions()) //
 						.transform(toJsonFunction) //
-						.toImmutableList());
+						.toList());
 	}
 
 }

@@ -1,8 +1,44 @@
 {
 	"description": "Português Brasil",
-	"release": "2.1-dev",
+	"release": "2.2-dev",
 	"administration": {
 		"description": "Módulo de Administração",
+		"email": {
+			"title": "<em>Email</em>",
+			"accounts": {
+				"active": "<em>Active</em>",
+				"add": "<em>Add account</em>",
+				"credentials": "<em>Credentials</em>",
+				"account": "<em>Account</em>",
+				"address": "<em>Address</em>",
+				"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
+				"enableSsl": "<em>Enable SSL</em>",
+				"imapPort": "<em>IMAP port</em>",
+				"imapServer": "<em>IMAP server</em>",
+				"incoming": "<em>Incoming</em>",
+				"incomingFolder": "<em>Incoming folder</em>",
+				"isDefault": "<em>Default</em>",
+				"modify": "<em>Modify account</em>",
+				"outgoing": "<em>Outgoing</em>",
+				"password": "<em>Password</em>",
+				"processedFolder": "<em>Processed folder</em>",
+				"rejectedFolder": "<em>Rejected folder</em>",
+				"remove": "<em>Remove account</em>",
+				"setDefault": "<em>Set as default</em>",
+				"smtpPort": "<em>SMTP Port</em>",
+				"smtpServer": "<em>SMTP server</em>",
+				"title": "<em>Accounts</em>",
+				"username": "<em>Username</em>"
+			},
+			"templates": {
+				"add": "<em>Add template</em>",
+				"body": "<em>Body</em>",
+				"modify": "<em>Modify template</em>",
+				"remove": "<em>Remove template</em>",
+				"template": "<em>Template</em>",
+				"title": "<em>Templates</em>"
+			}
+		},
 		"modClass": {
 			"add_class": "Adicione Classe",
 			"attributeProperties": {
@@ -96,7 +132,7 @@
 			},
 			"domains_title": "Gerenciar domínio",
 			"errors": {
-				"tabela": {
+				"table": {
 					"cast": "Erro na alteração da propriedade \"superclass\", classe contêm dados ou possui classes filho",
 					"duplicate": "Nome de classe duplicado",
 					"parent_not_found": "Classe pai não existe"
@@ -329,7 +365,7 @@
 			"attributes_title": "Gerenciar atributos",
 			"domains_title": "Gerenciar domínios",
 			"errors": {
-				"tabela": {
+				"table": {
 					"cast": "Não é possivel alterar a propriedade \"superclass\", a classe contêm dados ou subclasses",
 					"duplicate": "Uma classe com o mesmo nome já existe",
 					"parent_not_found": "A superclasse especificada não existe"
@@ -634,18 +670,6 @@
 			"setupTitle": "Configuração",
 			"workflow": {
 				"credential": "Credenciais",
-				"email": {
-					"address": "Endereço de Email",
-					"imapserver": "Servidor IMAP",
-					"incoming_mail_server": "Servidor de Correio de Entrada",
-					"outgoing_mail_srver": "Servidor de Correio de Saída",
-					"password": "Senha",
-					"port": "Porta",
-					"smtpserver": "Servidor SMTP",
-					"ssl": "Habilitar SSL",
-					"title": "Email",
-					"username": "Usuário"
-				},
 				"enabled": "Habilitado",
 				"endpoint": "URL do Servidor",
 				"engine": "Nome da Engine",
@@ -1310,8 +1334,6 @@
 	"clear_row_and_colun_privilege": "Remover privilégios de linhas e colunas",
 	"clearFilter": "<em>Clear Filter</em>",
 	"description_": "Descrição",
-	"emailBody": "<em>Body</em>",
-	"emailTemplate": "<em>Email Template</em>",
 	"enabled": "Habilitado",
 	"error": "Erro",
 	"file_name": "<em>File name</em>",
@@ -1352,6 +1374,9 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "Classe Alvo",
 	"to": "<em>To</em>",
+	"from": "<em>From<em>",
+	"translations" : "<em>Translations</em>",
+	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "Destravar todos os cartões",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "Visualizações",
@@ -1361,5 +1386,6 @@
 	"workflow_by_name": "<em>by name</em>",
 	"workflow_cql_filter": "<em>Cql filter</em>",
 	"workflow_query_tipology": "<em>Selection</em>",
-	"you_have_not_set_a_filter": "Você não configurou um filtro"
+	"you_have_not_set_a_filter": "Você não configurou um filtro",
+	"value": "<em>Value</em>"
 }

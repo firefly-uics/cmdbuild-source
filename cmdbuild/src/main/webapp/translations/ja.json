@@ -1,8 +1,44 @@
 {
 	"description": "日本語",
-	"release": "2.1-dev",
+	"release": "2.2-dev",
 	"administration": {
 		"description": "アドミニストレーションモジュール",
+		"email": {
+			"title": "<em>Email</em>",
+			"accounts": {
+				"active": "<em>Active</em>",
+				"add": "<em>Add account</em>",
+				"credentials": "<em>Credentials</em>",
+				"account": "<em>Account</em>",
+				"address": "<em>Address</em>",
+				"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
+				"enableSsl": "<em>Enable SSL</em>",
+				"imapPort": "<em>IMAP port</em>",
+				"imapServer": "<em>IMAP server</em>",
+				"incoming": "<em>Incoming</em>",
+				"incomingFolder": "<em>Incoming folder</em>",
+				"isDefault": "<em>Default</em>",
+				"modify": "<em>Modify account</em>",
+				"outgoing": "<em>Outgoing</em>",
+				"password": "<em>Password</em>",
+				"processedFolder": "<em>Processed folder</em>",
+				"rejectedFolder": "<em>Rejected folder</em>",
+				"remove": "<em>Remove account</em>",
+				"setDefault": "<em>Set as default</em>",
+				"smtpPort": "<em>SMTP Port</em>",
+				"smtpServer": "<em>SMTP server</em>",
+				"title": "<em>Accounts</em>",
+				"username": "<em>Username</em>"
+			},
+			"templates": {
+				"add": "<em>Add template</em>",
+				"body": "<em>Body</em>",
+				"modify": "<em>Modify template</em>",
+				"remove": "<em>Remove template</em>",
+				"template": "<em>Template</em>",
+				"title": "<em>Templates</em>"
+			}
+		},
 		"modClass": {
 			"add_class": "クラス追加",
 			"attributeProperties": {
@@ -634,18 +670,6 @@
 			"setupTitle": "セットアップ",
 			"workflow": {
 				"credential": "資格",
-				"email": {
-					"address": "電子メールアドレス",
-					"imapserver": "IMAP サーバ",
-					"incoming_mail_server": "受信メールサーバ",
-					"outgoing_mail_srver": "送信メールサーバ",
-					"password": "パスワード",
-					"port": "ポート",
-					"smtpserver": "SMTP サーバ",
-					"ssl": "SSLを有効化",
-					"title": "電子メール",
-					"username": "ユーザ名"
-				},
 				"enabled": "有効化",
 				"endpoint": "サーバ URL",
 				"engine": "エンジン名",
@@ -1309,8 +1333,6 @@
 	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
 	"clearFilter": "<em>Clear Filter</em>",
 	"description_": "説明",
-	"emailBody": "<em>Body</em>",
-	"emailTemplate": "<em>Email Template</em>",
 	"enabled": "有効",
 	"error": "エラー",
 	"file_name": "<em>File name</em>",
@@ -1340,6 +1362,7 @@
 	"removeFilter": "ビューを削除",
 	"removeTemplate": "<em>Remove Template</em>",
 	"removeView": "ビューを削除",
+	"remove_formatting": "<em>Remove formatting</em>",
 	"row_and_column_privileges": "行と列の権限",
 	"search_filters": "検索フィルタ",
 	"select_a_class": "<em>Select a Class</em>",
@@ -1351,6 +1374,9 @@
 	"subject": "<em>Subject</em>",
 	"targetClass": "ターゲットクラス",
 	"to": "<em>To</em>",
+	"from": "<em>From<em>",
+	"translations" : "<em>Translations</em>",
+	"translations_enabled" : "<em>Enabled languages</em>",
 	"unlock_all_cards": "すべてのカードをアンロック",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
 	"views": "ビュー",
@@ -1360,5 +1386,6 @@
 	"workflow_by_name": "<em>by name</em>",
 	"workflow_cql_filter": "<em>Cql filter</em>",
 	"workflow_query_tipology": "<em>Selection</em>",
-	"you_have_not_set_a_filter": "フィルタを設定していません"
+	"you_have_not_set_a_filter": "フィルタを設定していません",
+	"value": "<em>Value</em>"
 }

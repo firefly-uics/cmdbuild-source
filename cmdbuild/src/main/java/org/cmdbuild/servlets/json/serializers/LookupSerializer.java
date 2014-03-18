@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;

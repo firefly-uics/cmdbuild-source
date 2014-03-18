@@ -1,6 +1,6 @@
 package org.cmdbuild.servlets.json.util;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.EQUAL;
 import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.IN;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;

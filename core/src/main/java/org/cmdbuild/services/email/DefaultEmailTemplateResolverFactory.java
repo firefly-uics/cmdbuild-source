@@ -1,6 +1,6 @@
 package org.cmdbuild.services.email;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.services.email.EmailTemplateResolver.Configuration;
 import org.cmdbuild.services.email.EmailTemplateResolver.DataFacade;
 

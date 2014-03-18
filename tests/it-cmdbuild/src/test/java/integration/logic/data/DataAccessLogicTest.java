@@ -68,7 +68,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 				.build();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void shouldThrowExceptionIfNullClassName() throws Exception {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());

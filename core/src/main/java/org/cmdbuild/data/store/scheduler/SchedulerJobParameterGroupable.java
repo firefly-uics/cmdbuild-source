@@ -2,21 +2,20 @@ package org.cmdbuild.data.store.scheduler;
 
 import static org.cmdbuild.data.store.scheduler.SchedulerJobParameterConstants.SCHEDULER_ID;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Groupable;
 
 public class SchedulerJobParameterGroupable implements Groupable {
 
-	public static SchedulerJobParameterGroupable of(final Long schedulerId) {
-		return new SchedulerJobParameterGroupable(schedulerId);
+	public static SchedulerJobParameterGroupable of(final SchedulerJob schedulerJob) {
+		return new SchedulerJobParameterGroupable(schedulerJob);
 	}
 
-	private final Long schedulerId;
+	private final SchedulerJob schedulerJob;
 
-	private SchedulerJobParameterGroupable(final Long schedulerId) {
-		Validate.notNull(schedulerId, "scheduler's id cannot be null");
-		Validate.isTrue(schedulerId > 0, "scheduler's id must be greater than zero");
-		this.schedulerId = schedulerId;
+	private SchedulerJobParameterGroupable(final SchedulerJob schedulerJob) {
+		Validate.notNull(schedulerJob, "scheduler job cannot be null");
+		this.schedulerJob = schedulerJob;
 	}
 
 	@Override
@@ -26,7 +25,7 @@ public class SchedulerJobParameterGroupable implements Groupable {
 
 	@Override
 	public Object getGroupAttributeValue() {
-		return schedulerId;
+		return schedulerJob.getId();
 	}
 
 }

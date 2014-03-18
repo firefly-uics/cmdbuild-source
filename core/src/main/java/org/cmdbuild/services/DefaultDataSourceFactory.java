@@ -11,7 +11,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import org.cmdbuild.config.DatabaseConfiguration;
 

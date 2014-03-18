@@ -1,7 +1,7 @@
 package org.cmdbuild.data.store.lookup;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.lookup.LookupType.LookupTypeBuilder;

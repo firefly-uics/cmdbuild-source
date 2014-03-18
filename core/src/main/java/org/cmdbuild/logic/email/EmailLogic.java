@@ -2,9 +2,9 @@ package org.cmdbuild.logic.email;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.config.EmailConfiguration;
@@ -329,7 +329,7 @@ public class EmailLogic implements Logic {
 		}
 
 		@Override
-		public List<StoredDocument> search(DocumentSearch document) throws DmsError {
+		public List<StoredDocument> search(final DocumentSearch document) throws DmsError {
 			return dmsConfiguration.isEnabled() ? super.search(document) : EMPTY;
 		}
 

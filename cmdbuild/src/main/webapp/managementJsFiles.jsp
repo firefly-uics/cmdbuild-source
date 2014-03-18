@@ -3,7 +3,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>
 
 <!-- PROXIES -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMRelationsProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyRelations.js"></script>
 
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMLookupModels.js"></script>
@@ -100,7 +100,7 @@
 	<!-- UTILITIES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMUtilitiesAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModChangePassword.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMBulkCardForm.js"></script>	
+	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMBulkCardForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModBulkCardUpdate.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModExportCSV.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/management/utilities/CMModImportCSV.js"></script>
@@ -158,13 +158,12 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMPresetFromCardController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWidgetManagerController.js"></script>
 
-
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/dashboard/CMModDashboardController.js"></script>
 
 	<!-- UTILITIES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/utilities/CMModBulkCardUpdateController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/utilities/CMModImportCSVController.js"></script>	
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/utilities/CMModImportCSVController.js"></script>
 
 	<!-- CARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/management/classes/CMModCardController.js"></script>

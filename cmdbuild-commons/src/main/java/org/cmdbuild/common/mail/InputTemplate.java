@@ -1,6 +1,6 @@
 package org.cmdbuild.common.mail;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.common.mail.JavaxMailConstants.IMAPS;
 import static org.cmdbuild.common.mail.JavaxMailConstants.MAIL_DEBUG;
 import static org.cmdbuild.common.mail.JavaxMailConstants.MAIL_IMAPS_HOST;

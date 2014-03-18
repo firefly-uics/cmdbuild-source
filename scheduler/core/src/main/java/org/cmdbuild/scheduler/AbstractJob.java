@@ -1,8 +1,8 @@
 package org.cmdbuild.scheduler;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public abstract class AbstractJob implements Job {
 

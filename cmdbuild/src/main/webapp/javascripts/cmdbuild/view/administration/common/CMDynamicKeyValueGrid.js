@@ -1,4 +1,5 @@
 (function() {
+
 	Ext.define("CMDBuild.view.administration.common.CMDynamicKeyValueGrid", {
 		extend: "CMDBuild.view.administration.common.CMKeyValueGrid",
 
@@ -28,15 +29,15 @@
 			var c = this.callParent(arguments);
 
 			c.push({
-				header: '&nbsp', 
-				width: 30, 
-				fixed: true, 
-				sortable: false, 
+				header: '&nbsp',
+				width: 30,
+				fixed: true,
+				sortable: false,
 				renderer: function renderDeleteActions() {
 					return '<img style="cursor:pointer" title="' +
-					CMDBuild.Translation.administration.modClass.attributeProperties.meta.remove + 
+					CMDBuild.Translation.administration.modClass.attributeProperties.meta.remove +
 					'" class="action-meta-delete" src="images/icons/cross.png"/>&nbsp;';
-				}, 
+				},
 				align: 'center',
 				dataIndex: 'delete',
 				menuDisabled: true,
@@ -44,24 +45,15 @@
 			});
 
 			return c;
-		},
-
-		// override
-		getKeyColumnConf: function() {
-			var c = this.callParent(arguments);
-			c.editor = {
-				xtype: "textfield"
-			};
-
-			return c;
 		}
 	});
 
 	function onCellClick(grid, model, htmlelement, rowIndex, event, opt) {
-		var className = event.target.className; 
+		var className = event.target.className;
 
 		if (className == "action-meta-delete") {
 			this.store.remove(model);
 		}
 	}
+
 })();

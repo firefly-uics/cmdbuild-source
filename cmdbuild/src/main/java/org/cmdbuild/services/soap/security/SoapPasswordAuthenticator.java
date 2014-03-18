@@ -1,6 +1,6 @@
 package org.cmdbuild.services.soap.security;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.PasswordAuthenticator;

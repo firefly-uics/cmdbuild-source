@@ -67,7 +67,7 @@ public class NotifierProxyTest {
 		proxy = wellFormedBuilder.build().get();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void typeMustBeSpecified() throws Exception {
 		// given
 		wellFormedBuilder.withType(null);
@@ -76,7 +76,7 @@ public class NotifierProxyTest {
 		wellFormedBuilder.build();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void delegateMustBeSpecified() throws Exception {
 		// given
 		wellFormedBuilder.withDelegate(null);
@@ -85,7 +85,7 @@ public class NotifierProxyTest {
 		wellFormedBuilder.build();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void notifierMustBeSpecified() throws Exception {
 		// given
 		wellFormedBuilder.withNotifier(null);

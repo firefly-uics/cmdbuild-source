@@ -1,7 +1,7 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.join;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;

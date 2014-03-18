@@ -120,6 +120,7 @@
 			params : data,
 			success : function(form, action, decoded) {
 				me.view.gridPanel.refreshStore(me.currentClassId, decoded.attribute.index);
+				_CMCache.flushTranslationsToSave(_CMCache.getEntryTypeNameById(me.currentClassId), decoded.attribute.name);
 			},
 			callback: function() {
 				CMDBuild.LoadMask.get().hide();
@@ -184,6 +185,7 @@
 		this.currentAttribute = null;
 		this.view.formPanel.onAddAttributeClick();
 		this.view.gridPanel.onAddAttributeClick();
+		_CMCache.initAddingTranslations();
 	}
 	
 	function buildOrderingWindow() {

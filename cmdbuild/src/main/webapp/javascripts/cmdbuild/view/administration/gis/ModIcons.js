@@ -37,6 +37,16 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		});
 		this.iconsGrid.getSelectionModel().on("select", this.onRowSelect , this);
 
+		this.description = new Ext.form.CMTranslatableText( {
+			fieldLabel : this.translation.description,
+			labelWidth: CMDBuild.LABEL_WIDTH,
+			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			name : 'description',
+			allowBlank : false,
+			vtype : 'cmdbcomment',
+			translationsKeyType: "GisIcon", 
+			translationsKeyField: "Description"
+		});
 		this.uploadForm = new Ext.form.FormPanel({
 			monitorValid: true,
 			fileUpload: true,
@@ -67,13 +77,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					fieldLabel: this.translation.file,
 					name: 'file'
-				}, {
-					xtype: 'textfield',
-					fieldLabel: this.translation.description,
-					name: 'description',
-					allowBlank: false,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
-				}]
+				}, this.description
+				]
 			}],
 			buttonAlign: 'center',
 			buttons: [this.saveButton,this.abortButton]
@@ -163,6 +168,9 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   		this.removeButton.enable();
   		this.uploadForm.getForm().reset();
   		this.uploadForm.getForm().loadRecord(record);
+		Ext.apply(this.description, {
+			translationsKeyName: record.get("name")
+		});
   	},
   	
   	//private
@@ -171,6 +179,7 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 		this.uploadForm.getForm().reset();
 		this.enableModify();
 		this.uploadForm.saveStatus = "add";
+		_CMCache.initAddingTranslations();
 	},
   	
   	//private	
@@ -188,7 +197,8 @@ Ext.define("CMDBuild.Administration.ModIcons", {
   			descriptionField[0].disable();
   		}
   		this.uploadForm.saveStatus = "modify";
-  	},
+		_CMCache.initModifyingTranslations();
+ 	},
   	
   	//private  	
   	disableModify: function() {
@@ -222,7 +232,17 @@ Ext.define("CMDBuild.Administration.ModIcons", {
 			var config = {
 				scope: this,
 				success: function(form, action) {
-					this.iconsGrid.store.load();
+					var description = form.getValues().description;
+					this.iconsGrid.store.load({
+					    scope: this,
+					    callback: function(records, operation, success) {
+					        // the operation object
+					        // contains all of the details of the load operation
+					        console.log(records);
+					        var r = this.iconsGrid.store.findRecord("description", description);
+					        _CMCache.flushTranslationsToSave(r.get("name"));
+					    }
+					});
 				},
 				failure: this.requestFailure,
 				callback: this.requestCallback
