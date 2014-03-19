@@ -5,7 +5,7 @@ import static com.google.common.collect.FluentIterable.from;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Storable;
-import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.task.TaskStore;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -24,13 +24,13 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	private static class Create implements Action<Long>, TaskVistor {
 
 		private final LogicAndStoreConverter converter;
-		private final Store<org.cmdbuild.data.store.task.Task> store;
+		private final TaskStore store;
 		private final SchedulerFacade schedulerFacade;
 		private final Task task;
 
 		private Long createdId;
 
-		public Create(final LogicAndStoreConverter converter, final Store<org.cmdbuild.data.store.task.Task> store,
+		public Create(final LogicAndStoreConverter converter, final TaskStore store,
 				final SchedulerFacade schedulerFacade, final Task task) {
 			this.converter = converter;
 			this.store = store;
@@ -65,15 +65,14 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		private static Class<Object> ALL_TYPES = Object.class;
 
 		private final LogicAndStoreConverter converter;
-		private final Store<org.cmdbuild.data.store.task.Task> store;
+		private final TaskStore store;
 		private final Class<?> type;
 
-		public ReadAll(final LogicAndStoreConverter converter, final Store<org.cmdbuild.data.store.task.Task> store) {
+		public ReadAll(final LogicAndStoreConverter converter, final TaskStore store) {
 			this(converter, store, null);
 		}
 
-		public ReadAll(final LogicAndStoreConverter converter, final Store<org.cmdbuild.data.store.task.Task> store,
-				final Class<? extends Task> type) {
+		public ReadAll(final LogicAndStoreConverter converter, final TaskStore store, final Class<? extends Task> type) {
 			this.converter = converter;
 			this.store = store;
 			this.type = (type == null) ? ALL_TYPES : type;
@@ -103,12 +102,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	private static class Read<T extends Task> implements Action<T> {
 
 		private final LogicAndStoreConverter converter;
-		private final Store<org.cmdbuild.data.store.task.Task> store;
+		private final TaskStore store;
 		private final T task;
 		private final Class<T> type;
 
-		public Read(final LogicAndStoreConverter converter, final Store<org.cmdbuild.data.store.task.Task> store,
-				final T task, final Class<T> type) {
+		public Read(final LogicAndStoreConverter converter, final TaskStore store, final T task, final Class<T> type) {
 			this.converter = converter;
 			this.store = store;
 			this.task = task;
@@ -129,11 +127,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	private static class Update implements Action<Void> {
 
 		private final LogicAndStoreConverter converter;
-		private final Store<org.cmdbuild.data.store.task.Task> store;
+		private final TaskStore store;
 		private final SchedulerFacade schedulerFacade;
 		private final Task task;
 
-		public Update(final LogicAndStoreConverter converter, final Store<org.cmdbuild.data.store.task.Task> store,
+		public Update(final LogicAndStoreConverter converter, final TaskStore store,
 				final SchedulerFacade schedulerFacade, final Task task) {
 			this.converter = converter;
 			this.store = store;
@@ -190,11 +188,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	private static class Delete implements Action<Void>, TaskVistor {
 
 		private final LogicAndStoreConverter converter;
-		private final Store<org.cmdbuild.data.store.task.Task> store;
+		private final TaskStore store;
 		private final SchedulerFacade schedulerFacade;
 		private final Task task;
 
-		public Delete(final LogicAndStoreConverter converter, final Store<org.cmdbuild.data.store.task.Task> store,
+		public Delete(final LogicAndStoreConverter converter, final TaskStore store,
 				final SchedulerFacade schedulerFacade, final Task task) {
 			this.converter = converter;
 			this.store = store;
@@ -223,12 +221,96 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
+	private static class Start implements Action<Void>, TaskVistor {
+
+		private final LogicAndStoreConverter converter;
+		private final TaskStore store;
+		private final SchedulerFacade schedulerFacade;
+		private final Long id;
+
+		public Start(final LogicAndStoreConverter converter, final TaskStore store,
+				final SchedulerFacade schedulerFacade, final Long id) {
+			this.converter = converter;
+			this.store = store;
+			this.schedulerFacade = schedulerFacade;
+			this.id = id;
+		}
+
+		@Override
+		public Void execute() {
+			Validate.isTrue(id != null, "invalid id");
+			final org.cmdbuild.data.store.task.Task stored = store.read(id);
+			if (!stored.isRunning()) {
+				final org.cmdbuild.data.store.task.Task updated = stored.modify() //
+						.withRunningStatus(true) //
+						.build();
+				store.update(updated);
+				final Task task = converter.from(updated).toLogic();
+				task.accept(this);
+			}
+			return null;
+		}
+
+		@Override
+		public void visit(final ReadEmailTask task) {
+			schedulerFacade.create(task);
+		}
+
+		@Override
+		public void visit(final StartWorkflowTask task) {
+			schedulerFacade.create(task);
+		}
+
+	}
+
+	private static class Stop implements Action<Void>, TaskVistor {
+
+		private final LogicAndStoreConverter converter;
+		private final TaskStore store;
+		private final SchedulerFacade schedulerFacade;
+		private final Long id;
+
+		public Stop(final LogicAndStoreConverter converter, final TaskStore store,
+				final SchedulerFacade schedulerFacade, final Long id) {
+			this.converter = converter;
+			this.store = store;
+			this.schedulerFacade = schedulerFacade;
+			this.id = id;
+		}
+
+		@Override
+		public Void execute() {
+			Validate.isTrue(id != null, "invalid id");
+			final org.cmdbuild.data.store.task.Task stored = store.read(id);
+			if (stored.isRunning()) {
+				final org.cmdbuild.data.store.task.Task updated = stored.modify() //
+						.withRunningStatus(false) //
+						.build();
+				store.update(updated);
+				final Task task = converter.from(updated).toLogic();
+				task.accept(this);
+			}
+			return null;
+		}
+
+		@Override
+		public void visit(final ReadEmailTask task) {
+			schedulerFacade.delete(task);
+		}
+
+		@Override
+		public void visit(final StartWorkflowTask task) {
+			schedulerFacade.delete(task);
+		}
+
+	}
+
 	private final LogicAndStoreConverter converter;
-	private final Store<org.cmdbuild.data.store.task.Task> store;
+	private final TaskStore store;
 	private final SchedulerFacade schedulerFacade;
 
-	public DefaultTaskManagerLogic(final LogicAndStoreConverter converter,
-			final Store<org.cmdbuild.data.store.task.Task> store, final SchedulerFacade schedulerFacade) {
+	public DefaultTaskManagerLogic(final LogicAndStoreConverter converter, final TaskStore store,
+			final SchedulerFacade schedulerFacade) {
 		this.converter = converter;
 		this.store = store;
 		this.schedulerFacade = schedulerFacade;
@@ -270,6 +352,18 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		execute(doDelete(task));
 	}
 
+	@Override
+	public void start(final Long id) {
+		logger.info(MARKER, "starting the existing task '{}'", id);
+		execute(doStart(id));
+	}
+
+	@Override
+	public void stop(final Long id) {
+		logger.info(MARKER, "stopping the existing task '{}'", id);
+		execute(doStop(id));
+	}
+
 	private Create doCreate(final Task task) {
 		return new Create(converter, store, schedulerFacade, task);
 	}
@@ -292,6 +386,14 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	private Delete doDelete(final Task task) {
 		return new Delete(converter, store, schedulerFacade, task);
+	}
+
+	private Start doStart(final Long id) {
+		return new Start(converter, store, schedulerFacade, id);
+	}
+
+	private Stop doStop(final Long id) {
+		return new Stop(converter, store, schedulerFacade, id);
 	}
 
 	private <T> T execute(final Action<T> action) {

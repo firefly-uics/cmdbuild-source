@@ -141,7 +141,7 @@
 				post: '',
 				put: '',
 
-				getStore: 'services/json/schema/taskmanager/email/readall'
+				getStore: 'services/json/schema/taskmanager/reademail/readall'
 			},
 			event: {
 				delete: '',

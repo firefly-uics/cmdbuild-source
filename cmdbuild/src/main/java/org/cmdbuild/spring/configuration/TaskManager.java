@@ -5,7 +5,7 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.task.Task;
+import org.cmdbuild.data.store.task.DefaultTaskStore;
 import org.cmdbuild.data.store.task.TaskDefinition;
 import org.cmdbuild.data.store.task.TaskDefinitionConverter;
 import org.cmdbuild.data.store.task.TaskParameter;
@@ -66,7 +66,7 @@ public class TaskManager {
 
 	@Bean
 	public TaskManagerLogic taskManagerLogic() {
-		return new TransactionalTaskManagerLogic(new DefaultTaskManagerLogic(taskConverter(), taskStore(),
+		return new TransactionalTaskManagerLogic(new DefaultTaskManagerLogic(taskConverter(), defaultTaskStore(),
 				defaultSchedulerTaskFacade()));
 	}
 
@@ -99,15 +99,12 @@ public class TaskManager {
 	}
 
 	private SchedulerLogic defaultSchedulerLogic() {
-		return new DefaultSchedulerLogic( //
-				taskStore(), //
-				quartzSchedulerService(), //
-				defaultJobFactory());
+		return new DefaultSchedulerLogic(defaultTaskStore(), quartzSchedulerService());
 	}
 
 	@Bean
-	protected Store<Task> taskStore() {
-		return new TaskStore(dataViewSchedulerJobStore(), dataViewSchedulerJobParameterStore());
+	protected TaskStore defaultTaskStore() {
+		return new DefaultTaskStore(dataViewSchedulerJobStore(), dataViewSchedulerJobParameterStore());
 	}
 
 	@Bean

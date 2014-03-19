@@ -91,6 +91,17 @@ public abstract class Task implements Storable {
 
 	public abstract void accept(final TaskVisitor visitor);
 
+	public Builder<? extends Task> modify() {
+		return builder() //
+				.withId(id) //
+				.withDescription(description) //
+				.withRunningStatus(running) //
+				.withCronExpression(cronExpression) //
+				.withParameters(Maps.newHashMap(parameters));
+	}
+
+	protected abstract Builder<? extends Task> builder();
+
 	@Override
 	public String getIdentifier() {
 		return id.toString();

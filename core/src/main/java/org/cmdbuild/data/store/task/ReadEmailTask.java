@@ -22,4 +22,9 @@ public class ReadEmailTask extends Task {
 		visitor.visit(this);
 	}
 
+	@Override
+	protected Builder<? extends Task> builder() {
+		return newInstance();
+	}
+
 }

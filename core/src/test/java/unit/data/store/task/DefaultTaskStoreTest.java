@@ -18,12 +18,13 @@ import java.util.Map;
 import org.cmdbuild.data.store.Groupable;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.task.DefaultTaskStore;
+import org.cmdbuild.data.store.task.ReadEmailTaskDefinition;
 import org.cmdbuild.data.store.task.StartWorkflowTask;
 import org.cmdbuild.data.store.task.StartWorkflowTaskDefinition;
 import org.cmdbuild.data.store.task.Task;
 import org.cmdbuild.data.store.task.TaskDefinition;
 import org.cmdbuild.data.store.task.TaskParameter;
-import org.cmdbuild.data.store.task.TaskStore;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +34,7 @@ import org.mockito.InOrder;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
-public class TaskStoreTest {
+public class DefaultTaskStoreTest {
 
 	private static class TaskAssert {
 
@@ -139,13 +140,13 @@ public class TaskStoreTest {
 
 	private Store<TaskDefinition> definitionsStore;
 	private Store<TaskParameter> parametersStore;
-	private TaskStore store;
+	private DefaultTaskStore store;
 
 	@Before
 	public void setUp() throws Exception {
 		definitionsStore = mock(Store.class);
 		parametersStore = mock(Store.class);
-		store = new TaskStore(definitionsStore, parametersStore);
+		store = new DefaultTaskStore(definitionsStore, parametersStore);
 	}
 
 	@Test
@@ -446,6 +447,49 @@ public class TaskStoreTest {
 
 		TaskDefinitionAssert.of(definitionCaptor.getValue()) //
 				.id(equalTo(42L));
+	}
+
+	@Test
+	public void elementReadById() throws Exception {
+		// given
+		when(definitionsStore.list()) //
+				.thenReturn(asList( //
+						StartWorkflowTaskDefinition.newInstance() //
+								.withId(123L) //
+								.withDescription("description") //
+								.build(), //
+						ReadEmailTaskDefinition.newInstance()//
+								.withId(456L) //
+								.withDescription("another description") //
+								.build()));
+		when(parametersStore.list(any(Groupable.class))) //
+				.thenReturn(asList( //
+						TaskParameter.newInstance() //
+								.withOwner(123L).withKey("foo").withValue("FOO") //
+								.build(), //
+						TaskParameter.newInstance() //
+								.withOwner(123L).withKey("bar").withValue("BAR") //
+								.build()));
+
+		// when
+		final Task element = store.read(123L);
+
+		// then
+		final ArgumentCaptor<Groupable> groupableCaptor = ArgumentCaptor.forClass(Groupable.class);
+		final InOrder inOrder = inOrder(definitionsStore, parametersStore);
+		inOrder.verify(definitionsStore).list();
+		inOrder.verify(parametersStore).list(groupableCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+
+		final Groupable capturedGroupable = groupableCaptor.getValue();
+		assertThat(capturedGroupable.getGroupAttributeName(), equalTo(OWNER));
+		assertThat(capturedGroupable.getGroupAttributeValue(), equalTo((Object) 123L));
+
+		TaskAssert.of(element) //
+				.id(equalTo(123L)) //
+				.description(equalTo("description")) //
+				.valueOfParameter("foo", equalTo("FOO")) //
+				.valueOfParameter("bar", equalTo("BAR"));
 	}
 
 }

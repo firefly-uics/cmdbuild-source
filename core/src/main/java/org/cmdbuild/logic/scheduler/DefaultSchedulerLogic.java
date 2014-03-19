@@ -1,22 +1,18 @@
 package org.cmdbuild.logic.scheduler;
 
+import java.util.Collections;
+
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.task.Task;
-import org.cmdbuild.logic.taskmanager.LogicAndSchedulerConverter;
 import org.cmdbuild.scheduler.SchedulerService;
 
 public class DefaultSchedulerLogic implements SchedulerLogic {
 
 	private final SchedulerService schedulerService;
 	private final Store<Task> store;
-	private final LogicAndSchedulerConverter jobFactory;
 
-	public DefaultSchedulerLogic( //
-			final Store<Task> store, //
-			final SchedulerService schedulerService, //
-			final LogicAndSchedulerConverter jobFactory) {
+	public DefaultSchedulerLogic(final Store<Task> store, final SchedulerService schedulerService) {
 		this.store = store;
-		this.jobFactory = jobFactory;
 		this.schedulerService = schedulerService;
 	}
 
@@ -28,7 +24,8 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 
 	@Override
 	public Iterable<Task> findWorkflowJobsByProcess(final String classname) {
-		throw new UnsupportedOperationException("TODO in the new way");
+		// TODO TODO in the new way
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -45,8 +42,7 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 
 	@Override
 	public void addAllScheduledJobs() {
-		throw new UnsupportedOperationException("TODO in the new way");
-
+		// TODO TODO in the new way
 	}
 
 }

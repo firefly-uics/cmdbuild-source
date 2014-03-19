@@ -38,4 +38,14 @@ public abstract class ForwardingTaskManagerLogic implements TaskManagerLogic {
 		delegate.delete(task);
 	}
 
+	@Override
+	public void start(final Long id) {
+		delegate.start(id);
+	}
+
+	@Override
+	public void stop(final Long id) {
+		delegate.stop(id);
+	}
+
 }
