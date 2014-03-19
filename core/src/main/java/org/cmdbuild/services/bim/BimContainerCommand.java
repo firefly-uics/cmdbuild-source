@@ -16,7 +16,7 @@ public class BimContainerCommand extends BimDataModelCommand {
 			exportCommand.execute(className, "false");
 			dataModelManager.addPerimeterAndHeightFieldsIfNeeded(className);
 		}
-		dataPersistence.saveContainerStatus(className, value);
+		dataPersistence.saveContainerFlag(className, value);
 	}
 
 }

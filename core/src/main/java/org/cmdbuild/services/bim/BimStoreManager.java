@@ -25,6 +25,8 @@ public interface BimStoreManager {
 	
 	void saveContainerStatus(String className, String value);
 	
+	void saveRootReference(String className, String value);
+
 	boolean isActive(String className);
 	
 	String getContainerClassName();
@@ -34,5 +36,6 @@ public interface BimStoreManager {
 	BimLayer findContainer();
 
 	BimLayer readLayer(String className);
+
 	
 }

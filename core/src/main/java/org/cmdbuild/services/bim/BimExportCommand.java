@@ -18,7 +18,7 @@ public class BimExportCommand extends BimDataModelCommand {
 			
 			dataModelManager.addPositionFieldIfNeeded(className);
 		}
-		dataPersistence.saveExportStatus(className, value);
+		dataPersistence.saveExportFlag(className, value);
 	}
 
 }

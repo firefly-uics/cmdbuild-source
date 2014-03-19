@@ -9,7 +9,7 @@ public class ComunicationConstants {
 			ATTRIBUTES = "attributes", //
 			BIM_LAYER = "bimLayer", //
 			BIM_PROJECTS = "bimProjects", //
-			BIM_ROOT = "bimRoot", //
+			BIM_ROOT = "root", //
 			ATTRIBUTES_PRIVILEGES = "attributesPrivileges", //
 			BCC = "bcc", //
 			BODY = "body", //
@@ -126,7 +126,7 @@ public class ComunicationConstants {
 			PRECISION = "precision", //
 			RELATION_ID = "relationId", //
 			RESULT = "result", //
-			ROOT_REFERENCE = "rootReference", //
+			ROOT_REFERENCE = "rootreference", //
 			SCALE = "scale", //
 			STARTING_CLASS = "startingClass", //
 			SYNCHRONIZED = "synchronized", //
