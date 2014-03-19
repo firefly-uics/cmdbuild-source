@@ -121,7 +121,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(StartWorkflow.CLASSNAME, task.getProcessClass()) //
 					.withParameter(StartWorkflow.ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-							.join(task.getParameters())) //
+							.join(task.getAttributes())) //
 					.build();
 		}
 
@@ -181,7 +181,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withActiveStatus(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
 					.withProcessClass(task.getParameter(StartWorkflow.CLASSNAME)) //
-					.withParameters(isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
+					.withAttributes(isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 							.split(attributesAsString)) //
 					.build();

@@ -119,17 +119,17 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void startWorkflowTaskSuccessfullyConvertedToStore() throws Exception {
 		// given
-		final Map<String, String> _parameters = Maps.newHashMap();
-		_parameters.put("foo", "bar");
-		_parameters.put("bar", "baz");
-		_parameters.put("baz", "foo");
+		final Map<String, String> attributes = Maps.newHashMap();
+		attributes.put("foo", "bar");
+		attributes.put("bar", "baz");
+		attributes.put("baz", "foo");
 		final StartWorkflowTask source = StartWorkflowTask.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
 				.withActiveStatus(true) //
 				.withCronExpression("cron expression") //
 				.withProcessClass("class name") //
-				.withParameters(_parameters) //
+				.withAttributes(attributes) //
 				.build();
 
 		// when
@@ -146,7 +146,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(StartWorkflow.CLASSNAME, "class name"));
 		assertThat(parameters, hasEntry(StartWorkflow.ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
 				.withKeyValueSeparator("=") //
-				.join(_parameters)));
+				.join(attributes)));
 	}
 
 	@Test
@@ -173,11 +173,11 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.isActive(), equalTo(true));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
 		assertThat(converted.getProcessClass(), equalTo("class name"));
-		final Map<String, String> parameters = Maps.newHashMap();
-		parameters.put("foo", "bar");
-		parameters.put("bar", "baz");
-		parameters.put("baz", "foo");
-		assertThat(converted.getParameters(), equalTo(parameters));
+		final Map<String, String> attributes = Maps.newHashMap();
+		attributes.put("foo", "bar");
+		attributes.put("bar", "baz");
+		attributes.put("baz", "foo");
+		assertThat(converted.getAttributes(), equalTo(attributes));
 	}
 
 	@Test
@@ -204,7 +204,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.isActive(), equalTo(true));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
 		assertThat(converted.getProcessClass(), equalTo("class name"));
-		assertThat(converted.getParameters().isEmpty(), is(true));
+		assertThat(converted.getAttributes().isEmpty(), is(true));
 	}
 
 }
