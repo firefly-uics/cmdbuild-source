@@ -117,6 +117,20 @@ public class DefaultBimStoreManager implements BimStoreManager {
 			layerStore.update(layer);
 		}
 	}
+	
+
+	@Override
+	public void saveRootReference(String className, String value) {
+		BimLayer layer = layerStore.read(storableWithId(className));
+		if (layer == null) {
+			layer = new BimLayer(className);
+			layer.setRootReference(value);
+			layerStore.create(layer);
+		} else {
+			layer.setRootReference(value);
+			layerStore.update(layer);
+		}
+	}
 
 	@Override
 	public void saveExportStatus(String className, String value) {
@@ -188,6 +202,7 @@ public class DefaultBimStoreManager implements BimStoreManager {
 			return containerLayer.getClassName();
 		}
 	}
+
 
 
 }

@@ -43,6 +43,13 @@ public class BimDataModelCommandFactory {
 				return new BimContainerCommand(bimDataPersistence, dataModelManager);
 			}
 		}, //
+		rootreference {
+			@Override
+			public BimDataModelCommand create(final BimPersistence bimDataPersistence,
+					final BimDataModelManager dataModelManager) {
+				return new BimRootReferenceCommand(bimDataPersistence, dataModelManager);
+			}
+		},
 		unknown {
 			@Override
 			public BimDataModelCommand create(final BimPersistence bimDataPersistence,

@@ -85,7 +85,7 @@ public class BimLogicLayerCrudTest {
 		// then
 		InOrder inOrder = inOrder(dataPersistence, dataModelManager);
 		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, ATTRIBUTE_VALUE);
+		inOrder.verify(dataPersistence).saveActiveFlag(CLASSNAME, ATTRIBUTE_VALUE);
 		verifyNoMoreInteractions( dataPersistence, dataModelManager);
 	}
 
@@ -104,16 +104,16 @@ public class BimLogicLayerCrudTest {
 		// then
 		InOrder inOrder = inOrder(dataPersistence, dataModelManager);
 		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, "true");
-		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, "false");
+		inOrder.verify(dataPersistence).saveActiveFlag(CLASSNAME, "true");
+		inOrder.verify(dataPersistence).saveExportFlag(CLASSNAME, "false");
 		inOrder.verify(dataModelManager).addPerimeterAndHeightFieldsIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveContainerStatus(CLASSNAME, "true");
+		inOrder.verify(dataPersistence).saveContainerFlag(CLASSNAME, "true");
 
 		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, "true");
-		inOrder.verify(dataPersistence).saveContainerStatus(CLASSNAME, "false");
+		inOrder.verify(dataPersistence).saveActiveFlag(CLASSNAME, "true");
+		inOrder.verify(dataPersistence).saveContainerFlag(CLASSNAME, "false");
 		inOrder.verify(dataModelManager).addPositionFieldIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, "true");
+		inOrder.verify(dataPersistence).saveExportFlag(CLASSNAME, "true");
 
 		verifyNoMoreInteractions(dataPersistence, dataModelManager);
 	}
@@ -131,10 +131,10 @@ public class BimLogicLayerCrudTest {
 		// then
 		InOrder inOrder = inOrder(dataPersistence, dataModelManager);
 		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, "true");
+		inOrder.verify(dataPersistence).saveActiveFlag(CLASSNAME, "true");
 		inOrder.verify(dataPersistence).findRoot();
 		inOrder.verify(dataModelManager).createBimDomainOnClass(CLASSNAME);
-		inOrder.verify(dataPersistence).saveRoot(CLASSNAME, true);
+		inOrder.verify(dataPersistence).saveRootFlag(CLASSNAME, true);
 
 		verifyNoMoreInteractions(dataPersistence, dataModelManager);
 	}
@@ -153,12 +153,12 @@ public class BimLogicLayerCrudTest {
 		// then
 		InOrder inOrder = inOrder( dataPersistence, dataModelManager);
 		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, "true");
+		inOrder.verify(dataPersistence).saveActiveFlag(CLASSNAME, "true");
 		inOrder.verify(dataPersistence).findRoot();
 		inOrder.verify(dataModelManager).deleteBimDomainOnClass(OTHER_CLASS);
-		inOrder.verify(dataPersistence).saveRoot(OTHER_CLASS, false);
+		inOrder.verify(dataPersistence).saveRootFlag(OTHER_CLASS, false);
 		inOrder.verify(dataModelManager).createBimDomainOnClass(CLASSNAME);
-		inOrder.verify(dataPersistence).saveRoot(CLASSNAME, true);
+		inOrder.verify(dataPersistence).saveRootFlag(CLASSNAME, true);
 
 		verifyNoMoreInteractions( dataPersistence, dataModelManager);
 	}
@@ -175,7 +175,7 @@ public class BimLogicLayerCrudTest {
 		// then
 		InOrder inOrder = inOrder( dataPersistence, dataModelManager);
 		inOrder.verify(dataModelManager).deleteBimDomainOnClass(CLASSNAME);
-		inOrder.verify(dataPersistence).saveRoot(CLASSNAME, false);
+		inOrder.verify(dataPersistence).saveRootFlag(CLASSNAME, false);
 
 		verifyNoMoreInteractions( dataPersistence, dataModelManager);
 	}
@@ -192,10 +192,10 @@ public class BimLogicLayerCrudTest {
 		// then
 		InOrder inOrder = inOrder( dataPersistence, dataModelManager);
 		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, ATTRIBUTE_VALUE);
-		inOrder.verify(dataPersistence).saveContainerStatus(CLASSNAME, "false");
+		inOrder.verify(dataPersistence).saveActiveFlag(CLASSNAME, ATTRIBUTE_VALUE);
+		inOrder.verify(dataPersistence).saveContainerFlag(CLASSNAME, "false");
 		inOrder.verify(dataModelManager).addPositionFieldIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, ATTRIBUTE_VALUE);
+		inOrder.verify(dataPersistence).saveExportFlag(CLASSNAME, ATTRIBUTE_VALUE);
 		verifyNoMoreInteractions( dataPersistence, dataModelManager);
 	}
 
@@ -210,7 +210,7 @@ public class BimLogicLayerCrudTest {
 
 		// then
 		InOrder inOrder = inOrder( dataPersistence, dataModelManager);
-		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, ATTRIBUTE_VALUE);
+		inOrder.verify(dataPersistence).saveExportFlag(CLASSNAME, ATTRIBUTE_VALUE);
 		verifyNoMoreInteractions( dataPersistence, dataModelManager);
 	}
 
@@ -226,10 +226,10 @@ public class BimLogicLayerCrudTest {
 		// then
 		InOrder inOrder = inOrder( dataPersistence, dataModelManager);
 		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveActiveStatus(CLASSNAME, ATTRIBUTE_VALUE);
-		inOrder.verify(dataPersistence).saveExportStatus(CLASSNAME, "false");
+		inOrder.verify(dataPersistence).saveActiveFlag(CLASSNAME, ATTRIBUTE_VALUE);
+		inOrder.verify(dataPersistence).saveExportFlag(CLASSNAME, "false");
 		inOrder.verify(dataModelManager).addPerimeterAndHeightFieldsIfNeeded(CLASSNAME);
-		inOrder.verify(dataPersistence).saveContainerStatus(CLASSNAME, ATTRIBUTE_VALUE);
+		inOrder.verify(dataPersistence).saveContainerFlag(CLASSNAME, ATTRIBUTE_VALUE);
 		verifyNoMoreInteractions( dataPersistence, dataModelManager);
 	}
 
@@ -244,7 +244,7 @@ public class BimLogicLayerCrudTest {
 
 		// then
 		InOrder inOrder = inOrder( dataPersistence, dataModelManager);
-		inOrder.verify(dataPersistence).saveContainerStatus(CLASSNAME, ATTRIBUTE_VALUE);
+		inOrder.verify(dataPersistence).saveContainerFlag(CLASSNAME, ATTRIBUTE_VALUE);
 		verifyNoMoreInteractions(dataPersistence, dataModelManager);
 	}
 

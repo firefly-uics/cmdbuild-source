@@ -245,25 +245,31 @@ public class DefaultBimPersistence implements BimPersistence {
 	}
 
 	@Override
-	public void saveActiveStatus(final String className, final String value) {
+	public void saveActiveFlag(final String className, final String value) {
 		storeManager.saveActiveStatus(className, value);
 	}
 
 	@Override
-	public void saveExportStatus(final String className, final String value) {
+	public void saveExportFlag(final String className, final String value) {
 		storeManager.saveExportStatus(className, value);
 	}
 
 	@Override
-	public void saveContainerStatus(final String className, final String value) {
+	public void saveContainerFlag(final String className, final String value) {
 		storeManager.saveContainerStatus(className, value);
 	}
 
 	@Override
-	public void saveRoot(final String className, final boolean value) {
+	public void saveRootFlag(final String className, final boolean value) {
 		storeManager.saveRoot(className, value);
 	}
+	
 
+	@Override
+	public void saveRootReferenceName(String className, String value) {
+		storeManager.saveRootReference(className, value);
+	}
+	
 	@Override
 	public BimLayer findRoot() {
 		return storeManager.findRoot();
@@ -288,5 +294,6 @@ public class DefaultBimPersistence implements BimPersistence {
 	public BimLayer readLayer(final String className) {
 		return storeManager.readLayer(className);
 	}
+
 
 }

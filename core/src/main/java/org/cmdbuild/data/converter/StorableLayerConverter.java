@@ -50,6 +50,7 @@ public class StorableLayerConverter extends BaseStorableConverter<BimLayer> {
 		values.put(BIM_ROOT, layer.isRoot());
 		values.put(EXPORT, layer.isExport());
 		values.put(CONTAINER, layer.isContainer());
+		values.put(ROOT_REFERENCE, layer.getRootReference());
 		return values;
 	}
 

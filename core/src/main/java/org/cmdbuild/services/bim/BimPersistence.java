@@ -63,13 +63,15 @@ public interface BimPersistence {
 
 	Iterable<BimLayer> listLayers();
 
-	void saveActiveStatus(String className, String value);
+	void saveActiveFlag(String className, String value);
 
-	void saveRoot(String className, boolean value);
+	void saveRootFlag(String className, boolean value);
 	
-	void saveExportStatus(String className, String value);
+	void saveExportFlag(String className, String value);
 	
-	void saveContainerStatus(String className, String value);
+	void saveContainerFlag(String className, String value);
+
+	void saveRootReferenceName(String className, String value);
 
 	BimLayer findRoot();
 
@@ -85,10 +87,5 @@ public interface BimPersistence {
 	String getContainerClassName();
 
 	BimLayer readLayer(String className);
-
-
-
-
-
 
 }
