@@ -76,7 +76,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 				.withDescription(description) //
 				.withActiveStatus(active) //
 				.withProcessClass(className) //
-				.withCronExpression(addSecondsField(cronExpression)) //
+				.withCronExpression(cronExpression) //
 				.withParameters(convertJsonParams(jsonParameters)) //
 				.build();
 		final Long id = taskManagerLogic().create(task);
@@ -123,7 +123,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.withDescription(description) //
 				.withActiveStatus(active) //
-				.withCronExpression(addSecondsField(cronExpression)) //
+				.withCronExpression(cronExpression) //
 				.withProcessClass(className) //
 				.withParameters(convertJsonParams(jsonParameters)) //
 				.build();
@@ -145,10 +145,6 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 	/*
 	 * Utilities
 	 */
-
-	private String addSecondsField(final String cronExpression) {
-		return "0 " + cronExpression;
-	}
 
 	private Map<String, String> convertJsonParams(final JSONObject jsonParameters) {
 		try {

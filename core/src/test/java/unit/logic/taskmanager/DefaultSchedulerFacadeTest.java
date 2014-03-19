@@ -1,6 +1,6 @@
 package unit.logic.taskmanager;
 
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
@@ -76,7 +76,36 @@ public class DefaultSchedulerFacadeTest {
 
 		final Trigger capturedTrigger = triggerCaptor.getValue();
 		assertThat(capturedTrigger, instanceOf(RecurringTrigger.class));
-		assertThat(RecurringTrigger.class.cast(capturedTrigger).getCronExpression(), equalTo("cron expression"));
+		assertThat(RecurringTrigger.class.cast(capturedTrigger).getCronExpression(), endsWith("cron expression"));
+	}
+	
+	@Test
+	public void secondsAddedToSpecifiedCronExpression() throws Exception {
+		// given
+		final ScheduledTask task = ReadEmailTask.newInstance() //
+				.withActiveStatus(true) //
+				.withCronExpression("<actual cron expression>") //
+				.build();
+		final Job job = mock(Job.class);
+		final LogicAsSourceConverter logicAsSourceConverter = mock(LogicAsSourceConverter.class);
+		when(logicAsSourceConverter.toJob()) //
+				.thenReturn(job);
+		when(converter.from(task)) //
+				.thenReturn(logicAsSourceConverter);
+
+		// when
+		schedulerFacade.create(task);
+
+		// then
+		final ArgumentCaptor<Trigger> triggerCaptor = ArgumentCaptor.forClass(Trigger.class);
+		final InOrder inOrder = inOrder(schedulerService, converter);
+		inOrder.verify(converter).from(task);
+		inOrder.verify(schedulerService).add(eq(job), triggerCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+
+		final Trigger capturedTrigger = triggerCaptor.getValue();
+		assertThat(capturedTrigger, instanceOf(RecurringTrigger.class));
+		assertThat(RecurringTrigger.class.cast(capturedTrigger).getCronExpression(), equalTo("0 <actual cron expression>"));
 	}
 
 	@Test
