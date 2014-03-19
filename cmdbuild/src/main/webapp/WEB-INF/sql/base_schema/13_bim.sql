@@ -222,3 +222,87 @@ $BODY$
   COST 100;
 COMMENT ON FUNCTION _bim_data_for_export(integer, varchar, varchar, varchar) IS 'TYPE: function|CATEGORIES: system';
 
+
+
+CREATE OR REPLACE FUNCTION _bim_data_for_export_new(
+	IN id integer, 
+	IN "className" varchar, 
+	IN "containerAttributeName" varchar, 
+	IN "containerClassName" varchar,
+	OUT "Code" character varying, 
+	OUT "Description" character varying, 
+	OUT "GlobalId" character varying, 
+	OUT container_id integer,
+	OUT container_globalid varchar,
+	OUT x character varying, OUT y character varying, OUT z character varying)
+  RETURNS record AS
+$BODY$
+DECLARE
+	query varchar;
+	myrecord record;
+	objectposition geometry;
+	roomperimeter geometry;
+	isinside boolean;
+BEGIN	
+	query = 
+		'SELECT bimclass."Position" ' || -- 
+		'FROM bim."' || "className" || '" AS bimclass ' || --
+		'WHERE "Master"= ' || id || ';' ;
+		
+	RAISE NOTICE '%',query;
+	EXECUTE(query) INTO objectposition;
+
+
+	query = 
+		'SELECT "' || "containerAttributeName" || '" ' || --
+		'FROM "' || "className" || '" '--
+		'WHERE "Id"=' || id || ';';
+
+	RAISE NOTICE '%',query;
+	EXECUTE(query) INTO container_id;
+
+	query = 
+		'SELECT "GlobalId"' || ' ' || --
+		'FROM bim."' || "containerClassName" || '" '--
+		'WHERE "Master"=' || container_id || ';';
+
+	RAISE NOTICE '%',query;
+	EXECUTE(query) INTO container_globalid;
+	
+	
+	query = 'SELECT bimclass."Perimeter" ' || -- 
+		'FROM bim."' || "containerClassName" || '" AS bimclass ' || --
+		'WHERE "Master"= ' || container_id || ';' ;
+
+	RAISE NOTICE '%',query;
+	EXECUTE(query) INTO roomperimeter;
+
+	isinside = ST_Within(objectposition,roomperimeter);
+	RAISE NOTICE 'ok? %',isinside;
+	IF(NOT isinside) THEN
+		query = 
+			'UPDATE bim."' || "className" || '" '--
+			'SET "Position" = null ' || --
+			'WHERE "Master"= ' || id || ';' ;
+
+		RAISE NOTICE '%',query;
+
+		EXECUTE(query);
+	END IF;
+
+	query = 
+		'SELECT master."Code", master."Description", bimclass."GlobalId", st_x(bimclass."Position"),st_y(bimclass."Position"),st_z(bimclass."Position") ' || --
+		'FROM "' || "className" || '" AS master LEFT JOIN bim."' || "className" || '" AS bimclass ON ' || ' bimclass."Master"=master."Id" ' || --
+		'WHERE master."Id" = ' || id || ' AND master."Status"=''A''';
+
+	RAISE NOTICE '%',query;
+
+	EXECUTE(query) INTO "Code", "Description", "GlobalId", x, y, z;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+COMMENT ON FUNCTION _bim_data_for_export_new(integer, character varying, character varying, character varying) IS 'TYPE: function|CATEGORIES: system';
+
+
+

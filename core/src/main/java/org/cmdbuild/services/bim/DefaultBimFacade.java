@@ -29,7 +29,7 @@ import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
-import static org.cmdbuild.services.bim.connector.DefaultBimDataView.SHAPE_OID;
+import static org.cmdbuild.services.bim.DefaultBimDataView.SHAPE_OID;
 
 import java.io.File;
 import java.util.ArrayList;
