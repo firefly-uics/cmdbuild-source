@@ -7,7 +7,7 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.bim.BimLayer;
-import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
+import org.cmdbuild.services.bim.DefaultBimDataView.BimCard;
 import org.joda.time.DateTime;
 
 public interface BimLogic extends Logic {
@@ -55,8 +55,6 @@ public interface BimLogic extends Logic {
 	void importIfc(String projectId);
 
 	void exportIfc(String sourceProjectId);
-
-	boolean isSynchForExport(String projectId);
 
 	BimLayer getRootLayer();
 

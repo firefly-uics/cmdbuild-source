@@ -23,7 +23,7 @@ import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimPersistence.CmProject;
-import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
+import org.cmdbuild.services.bim.DefaultBimDataView.BimCard;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.Export;
 import org.junit.Before;
