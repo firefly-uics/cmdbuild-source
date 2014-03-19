@@ -62,7 +62,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		final ReadEmailTask task = ReadEmailTask.newInstance() //
 				.withDescription(description) //
 				.withActiveStatus(active) //
-				.withCronExpression(addSecondsField(cronExpression)) //
+				.withCronExpression(cronExpression) //
 				.build();
 		final Long id = taskManagerLogic().create(task);
 		return JsonResponse.success(id);
@@ -99,7 +99,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.withDescription(description) //
 				.withActiveStatus(active) //
-				.withCronExpression(addSecondsField(cronExpression)) //
+				.withCronExpression(cronExpression) //
 				.build();
 		taskManagerLogic().update(task);
 		return JsonResponse.success();
@@ -114,14 +114,6 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.build();
 		taskManagerLogic().delete(task);
-	}
-
-	/*
-	 * Utilities
-	 */
-
-	private String addSecondsField(final String cronExpression) {
-		return "0 " + cronExpression;
 	}
 
 }

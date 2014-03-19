@@ -1,4 +1,4 @@
-package org.cmdbuild.data.store.scheduler;
+package org.cmdbuild.data.store.task;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
@@ -7,11 +7,12 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 
-public class SchedulerJobParameter implements Storable {
+public class TaskParameter implements Storable {
 
-	public static class Builder implements org.cmdbuild.common.Builder<SchedulerJobParameter> {
+	public static class Builder implements org.cmdbuild.common.Builder<TaskParameter> {
 
 		private Long id;
 		private Long owner;
@@ -23,9 +24,9 @@ public class SchedulerJobParameter implements Storable {
 		}
 
 		@Override
-		public SchedulerJobParameter build() {
+		public TaskParameter build() {
 			validate();
-			return new SchedulerJobParameter(this);
+			return new TaskParameter(this);
 		}
 
 		private void validate() {
@@ -53,6 +54,11 @@ public class SchedulerJobParameter implements Storable {
 			return this;
 		}
 
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -64,11 +70,11 @@ public class SchedulerJobParameter implements Storable {
 	private final String key;
 	private final String value;
 
-	public SchedulerJobParameter() {
+	public TaskParameter() {
 		this(null);
 	}
 
-	public SchedulerJobParameter(final Builder builder) {
+	public TaskParameter(final Builder builder) {
 		this.id = builder.id;
 		this.owner = builder.owner;
 		this.key = builder.key;
@@ -106,10 +112,10 @@ public class SchedulerJobParameter implements Storable {
 		if (obj == this) {
 			return true;
 		}
-		if (!(obj instanceof SchedulerJobParameter)) {
+		if (!(obj instanceof TaskParameter)) {
 			return false;
 		}
-		final SchedulerJobParameter other = SchedulerJobParameter.class.cast(obj);
+		final TaskParameter other = TaskParameter.class.cast(obj);
 		return EqualsBuilder.reflectionEquals(this, other);
 	}
 

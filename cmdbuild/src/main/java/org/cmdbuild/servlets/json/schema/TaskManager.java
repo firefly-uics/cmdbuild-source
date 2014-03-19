@@ -151,7 +151,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 	public JsonResponse start( //
 			@Parameter(value = ID) final Long id //
 	) {
-		// TODO
+		taskManagerLogic().start(id);
 		return JsonResponse.success();
 	}
 
@@ -159,7 +159,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 	public JsonResponse stop( //
 			@Parameter(value = ID) final Long id //
 	) {
-		// TODO
+		taskManagerLogic().stop(id);
 		return JsonResponse.success();
 	}
 

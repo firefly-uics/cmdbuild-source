@@ -2,11 +2,11 @@ package org.cmdbuild.servlets.json.schema.taskmanager;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 
 import java.util.HashMap;
@@ -16,7 +16,6 @@ import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
-import org.cmdbuild.servlets.json.JSONBase.JSONExported;
 import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -77,7 +76,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 				.withDescription(description) //
 				.withActiveStatus(active) //
 				.withProcessClass(className) //
-				.withCronExpression(addSecondsField(cronExpression)) //
+				.withCronExpression(cronExpression) //
 				.withParameters(convertJsonParams(jsonParameters)) //
 				.build();
 		final Long id = taskManagerLogic().create(task);
@@ -117,13 +116,15 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
+			@Parameter(CLASS_NAME) final String className, //
 			@Parameter(value = ATTRIBUTES, required = false) final JSONObject jsonParameters //
 	) {
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
 				.withId(id) //
 				.withDescription(description) //
 				.withActiveStatus(active) //
-				.withCronExpression(addSecondsField(cronExpression)) //
+				.withCronExpression(cronExpression) //
+				.withProcessClass(className) //
 				.withParameters(convertJsonParams(jsonParameters)) //
 				.build();
 		taskManagerLogic().update(task);
@@ -144,10 +145,6 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 	/*
 	 * Utilities
 	 */
-
-	private String addSecondsField(final String cronExpression) {
-		return "0 " + cronExpression;
-	}
 
 	private Map<String, String> convertJsonParams(final JSONObject jsonParameters) {
 		try {

@@ -5,24 +5,28 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.scheduler.AdvancedSchedulerJobStore;
-import org.cmdbuild.data.store.scheduler.SchedulerJob;
-import org.cmdbuild.data.store.scheduler.SchedulerJobConverter;
-import org.cmdbuild.data.store.scheduler.SchedulerJobParameter;
-import org.cmdbuild.data.store.scheduler.SchedulerJobParameterConverter;
+import org.cmdbuild.data.store.task.DefaultTaskStore;
+import org.cmdbuild.data.store.task.TaskDefinition;
+import org.cmdbuild.data.store.task.TaskDefinitionConverter;
+import org.cmdbuild.data.store.task.TaskParameter;
+import org.cmdbuild.data.store.task.TaskParameterConverter;
+import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.scheduler.DatabaseConfigurationAwareSchedulerLogic;
-import org.cmdbuild.logic.scheduler.DefaultJobFactory;
 import org.cmdbuild.logic.scheduler.DefaultSchedulerLogic;
-import org.cmdbuild.logic.scheduler.JobFactory;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
-import org.cmdbuild.logic.taskmanager.DefaultScheduledTaskConverterFactory;
-import org.cmdbuild.logic.taskmanager.DefaultScheduledTaskFacade;
+import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter;
+import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter;
+import org.cmdbuild.logic.taskmanager.DefaultSchedulerFacade;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
-import org.cmdbuild.logic.taskmanager.ScheduledTaskFacade;
-import org.cmdbuild.logic.taskmanager.ScheduledTaskFacadeConverterFactory;
+import org.cmdbuild.logic.taskmanager.LogicAndSchedulerConverter;
+import org.cmdbuild.logic.taskmanager.LogicAndStoreConverter;
+import org.cmdbuild.logic.taskmanager.ReadEmailTask;
+import org.cmdbuild.logic.taskmanager.ReadEmailTaskJobFactory;
+import org.cmdbuild.logic.taskmanager.SchedulerFacade;
+import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
+import org.cmdbuild.logic.taskmanager.StartWorkflowTaskJobFactory;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
-import org.cmdbuild.logic.taskmanager.TransactionalScheduledTaskFacade;
 import org.cmdbuild.logic.taskmanager.TransactionalTaskManagerLogic;
 import org.cmdbuild.scheduler.SchedulerExeptionFactory;
 import org.cmdbuild.scheduler.SchedulerService;
@@ -62,23 +66,18 @@ public class TaskManager {
 
 	@Bean
 	public TaskManagerLogic taskManagerLogic() {
-		return new TransactionalTaskManagerLogic(new DefaultTaskManagerLogic(transactionalScheduledTaskFacade()));
+		return new TransactionalTaskManagerLogic(new DefaultTaskManagerLogic(taskConverter(), defaultTaskStore(),
+				defaultSchedulerTaskFacade()));
 	}
 
 	@Bean
-	protected ScheduledTaskFacade transactionalScheduledTaskFacade() {
-		return new TransactionalScheduledTaskFacade(defaultSchedulerTaskFacade());
+	protected SchedulerFacade defaultSchedulerTaskFacade() {
+		return new DefaultSchedulerFacade(quartzSchedulerService(), defaultJobFactory());
 	}
 
 	@Bean
-	protected ScheduledTaskFacade defaultSchedulerTaskFacade() {
-		return new DefaultScheduledTaskFacade(scheduledTaskConverterFactory(), advancedSchedulerJobStore(),
-				quartzSchedulerService(), defaultJobFactory());
-	}
-
-	@Bean
-	protected ScheduledTaskFacadeConverterFactory scheduledTaskConverterFactory() {
-		return new DefaultScheduledTaskConverterFactory();
+	protected LogicAndStoreConverter taskConverter() {
+		return new DefaultLogicAndStoreConverter();
 	}
 
 	@Bean
@@ -100,46 +99,55 @@ public class TaskManager {
 	}
 
 	private SchedulerLogic defaultSchedulerLogic() {
-		return new DefaultSchedulerLogic( //
-				advancedSchedulerJobStore(), //
-				quartzSchedulerService(), //
-				defaultJobFactory());
+		return new DefaultSchedulerLogic(defaultTaskStore(), quartzSchedulerService());
 	}
 
 	@Bean
-	protected Store<SchedulerJob> advancedSchedulerJobStore() {
-		return new AdvancedSchedulerJobStore(dataViewSchedulerJobStore(), dataViewSchedulerJobParameterStore());
+	protected TaskStore defaultTaskStore() {
+		return new DefaultTaskStore(dataViewSchedulerJobStore(), dataViewSchedulerJobParameterStore());
 	}
 
 	@Bean
-	protected Store<SchedulerJob> dataViewSchedulerJobStore() {
+	protected Store<TaskDefinition> dataViewSchedulerJobStore() {
 		return DataViewStore.newInstance(systemDataView, schedulerJobConverter());
 	}
 
 	@Bean
-	protected StorableConverter<SchedulerJob> schedulerJobConverter() {
-		return new SchedulerJobConverter();
+	protected StorableConverter<TaskDefinition> schedulerJobConverter() {
+		return new TaskDefinitionConverter();
 	}
 
 	@Bean
-	protected Store<SchedulerJobParameter> dataViewSchedulerJobParameterStore() {
+	protected Store<TaskParameter> dataViewSchedulerJobParameterStore() {
 		return DataViewStore.newInstance(systemDataView, schedulerJobParameterStoreConverter());
 	}
 
 	@Bean
-	protected StorableConverter<SchedulerJobParameter> schedulerJobParameterStoreConverter() {
-		return new SchedulerJobParameterConverter();
+	protected StorableConverter<TaskParameter> schedulerJobParameterStoreConverter() {
+		return new TaskParameterConverter();
 	}
 
 	@Bean
-	protected JobFactory defaultJobFactory() {
-		return new DefaultJobFactory( //
-				workflow.systemWorkflowLogicBuilder().build(), //
+	protected LogicAndSchedulerConverter defaultJobFactory() {
+		final DefaultLogicAndSchedulerConverter converter = new DefaultLogicAndSchedulerConverter();
+		converter.register(ReadEmailTask.class, readEmailTaskJobFactory());
+		converter.register(StartWorkflowTask.class, startWorkflowTaskJobFactory());
+		return converter;
+	}
+
+	@Bean
+	protected ReadEmailTaskJobFactory readEmailTaskJobFactory() {
+		return new ReadEmailTaskJobFactory( //
 				email.emailAccountStore(), //
 				configurableEmailServiceFactory, //
 				emailReceiving.answerToExistingFactory(), //
 				emailReceiving.downloadAttachmentsFactory(), //
 				emailReceiving.startWorkflowFactory());
+	}
+
+	@Bean
+	protected StartWorkflowTaskJobFactory startWorkflowTaskJobFactory() {
+		return new StartWorkflowTaskJobFactory(workflow.systemWorkflowLogicBuilder().build());
 	}
 
 }
