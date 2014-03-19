@@ -1,7 +1,6 @@
 package org.cmdbuild.services.bim.connector.export;
 
 import org.cmdbuild.bim.model.Entity;
-import org.cmdbuild.services.bim.connector.Output;
 
 public class DataChangedListener implements Output {
 

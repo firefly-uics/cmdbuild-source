@@ -1,4 +1,4 @@
-package org.cmdbuild.services.bim.connector;
+package org.cmdbuild.services.bim;
 
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_TYPE;
@@ -35,7 +35,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.utils.bim.BimIdentifier;
 
 import com.google.common.collect.Lists;
@@ -44,7 +43,7 @@ import com.google.common.collect.Maps;
 public class DefaultBimDataView implements BimDataView {
 
 	private static final String CONTAINER_ID = "container_id";
-	public static final String CONTAINER_GUID = "container_globalId";
+	public static final String CONTAINER_GUID = "container_globalid";
 	public static final String SHAPE_OID = "shape_oid";
 
 	public static final String X_COORD = "x";
@@ -84,6 +83,8 @@ public class DefaultBimDataView implements BimDataView {
 		}
 		return matchingCard;
 	}
+	
+	
 
 	@Override
 	public List<CMCard> getCardsWithAttributeAndValue(final CMIdentifier classIdentifier, final Object attributeValue,
@@ -107,7 +108,85 @@ public class DefaultBimDataView implements BimDataView {
 		}
 		return cards;
 	}
+	
 
+	@Override
+	public Entity getCardDataForExportNew(Long id, String className, String containerAttributeName,
+			String containerClassName, String shapeOid, String ifcType) {
+		Entity cardToExport = Entity.NULL_ENTITY;
+
+		CMFunction function = dataView.findFunctionByName("_bim_data_for_export_new");
+		NameAlias f = NameAlias.as("f");
+		CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(//
+				function, //
+				id, //
+				className, //
+				containerAttributeName, //
+				containerClassName), f) //
+				.run();
+		
+
+		if (queryResult.isEmpty()) {
+			System.out.println("No bim data found for card " +id);
+		}
+		final CMQueryRow row = queryResult.getOnlyRow();
+		final String code = String.class.cast(row.getValueSet(f).get(CODE_ATTRIBUTE));
+		final Integer containerIdAsInt = Integer.class.cast(row.getValueSet(f).get(CONTAINER_ID));
+		final Long containerId = new Long(containerIdAsInt.longValue());
+		final String description = String.class.cast(row.getValueSet(f).get(DESCRIPTION_ATTRIBUTE));
+		String globalId = String.class.cast(row.getValueSet(f).get(GLOBALID_ATTRIBUTE));
+		final String containerGlobalId = String.class.cast(row.getValueSet(f).get(CONTAINER_GUID));
+		String xCoord = String.class.cast(row.getValueSet(f).get(X_ATTRIBUTE));
+		String yCoord = String.class.cast(row.getValueSet(f).get(Y_ATTRIBUTE));
+		String zCoord = String.class.cast(row.getValueSet(f).get(Z_ATTRIBUTE));
+		
+		final double x = xCoord != null && !xCoord.isEmpty() ? Double.parseDouble(xCoord) : 0;
+		final double y = yCoord != null && !yCoord.isEmpty() ? Double.parseDouble(yCoord) : 0;
+		final double z = zCoord != null && !zCoord.isEmpty() ? Double.parseDouble(zCoord) : 0;
+
+		if (globalId == null || globalId.isEmpty()) {
+			globalId = RandomStringUtils.randomAlphanumeric(22);
+		}
+		if (x == 0 && y == 0 && z == 0) {
+			function = dataView.findFunctionByName(GENERATE_COORDINATES_FUNCTION);
+			f = NameAlias.as("f");
+			queryResult = dataView.select(anyAttribute(function, f))
+					.from(call(function, containerId, containerClassName), f).run();
+			if (queryResult.isEmpty()) {
+				System.out.println("No coordinates generated for card " + id);
+			}
+			final CMQueryRow rowCoordinates = queryResult.getOnlyRow();
+
+			xCoord = String.class.cast(rowCoordinates.getValueSet(f).get(X_ATTRIBUTE));
+			yCoord = String.class.cast(rowCoordinates.getValueSet(f).get(Y_ATTRIBUTE));
+			zCoord = String.class.cast(rowCoordinates.getValueSet(f).get(Z_ATTRIBUTE));
+
+			function = dataView.findFunctionByName(STORE_BIMDATA_FUNCTION);
+			f = NameAlias.as("f");
+			queryResult = dataView.select(anyAttribute(function, f))
+					.from(call(function,id, className, globalId, xCoord, yCoord, zCoord), f).run();
+		}
+
+		final DefaultEntity cardWithBimData = DefaultEntity.withTypeAndKey(StringUtils.EMPTY, globalId);
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(ID_ATTRIBUTE, id.toString()));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(BASE_CLASS_NAME, className));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(CODE_ATTRIBUTE, code));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(DESCRIPTION_ATTRIBUTE, description));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(GLOBALID_ATTRIBUTE, globalId));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(X_ATTRIBUTE, xCoord));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(Y_ATTRIBUTE, yCoord));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(Z_ATTRIBUTE, zCoord));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(CONTAINER_ID, String.valueOf(containerId)));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(CONTAINER_GUID, containerGlobalId));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(SHAPE_OID, shapeOid));
+		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(IFC_TYPE, ifcType));
+		cardToExport = cardWithBimData;
+
+		return cardToExport;
+		
+	}
+	
+	
 	@Override
 	public Entity getCardDataForExport(final CMCard card, final String className, final String containerId,
 			final String containerGlobalId, final String containerClassName, final String shapeOid, final String ifcType) {
@@ -119,7 +198,8 @@ public class DefaultBimDataView implements BimDataView {
 		CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(//
 				function, //
 				card.getId(), //
-				className, containerId, //
+				className, //
+				containerId, //
 				containerClassName), f) //
 				.run();
 
@@ -336,12 +416,12 @@ public class DefaultBimDataView implements BimDataView {
 	}
 
 	@Override
-	public List<BimCard> getBimCardsWithAttributeAndValue(final String className, final Long rootCardId,
+	public List<BimCard> getBimCardsWithGivenValueOfRootReferenceAttribute(final String className, final Long rootId,
 			final String rootReferenceName) {
 		final List<BimCard> result = Lists.newArrayList();
 		final CMClass theClass = dataView.findClass(className);
 		final Long idClass = theClass.getId();
-		final List<CMCard> baseCards = getCardsWithAttributeAndValue(DBIdentifier.fromName(className), rootCardId,
+		final List<CMCard> baseCards = getCardsWithAttributeAndValue(DBIdentifier.fromName(className), rootId,
 				rootReferenceName);
 		for (final CMCard card : baseCards) {
 			final List<CMCard> bimCards = getCardsWithAttributeAndValue(

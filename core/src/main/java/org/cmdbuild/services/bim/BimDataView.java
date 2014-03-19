@@ -6,7 +6,7 @@ import java.util.Map;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
+import org.cmdbuild.services.bim.DefaultBimDataView.BimCard;
 
 public interface BimDataView {
 
@@ -25,6 +25,10 @@ public interface BimDataView {
 
 	Long fetchRoot(Long cardId, String className, String referenceRoot);
 
-	List<BimCard> getBimCardsWithAttributeAndValue(String className, Long rootCardId, String rootReferenceName);
+	List<BimCard> getBimCardsWithGivenValueOfRootReferenceAttribute(String className, Long rootCardId,
+			String rootReferenceName);
+
+	Entity getCardDataForExportNew(Long id, String className, String containerAttributeName, String containerClassName,
+			String shapeOid, String ifcType);
 
 }

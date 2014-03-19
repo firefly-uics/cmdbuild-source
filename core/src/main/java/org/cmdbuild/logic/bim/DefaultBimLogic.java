@@ -47,7 +47,7 @@ import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimFacade.BimFacadeProject;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimPersistence.CmProject;
-import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
+import org.cmdbuild.services.bim.DefaultBimDataView.BimCard;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.cmdbuild.services.bim.connector.export.DefaultExportListener;
 import org.cmdbuild.services.bim.connector.export.Export;
@@ -86,7 +86,7 @@ public class DefaultBimLogic implements BimLogic {
 		this.bimServiceFacade = bimServiceFacade;
 		this.bimDataModelManager = bimDataModelManager;
 		this.mapper = mapper;
-		this.exportConnector = new NewExportConnector(bimDataView, bimServiceFacade, bimPersistence, exportStrategy);
+		this.exportConnector = new NewExportConnector(bimDataView, bimServiceFacade, bimPersistence, exportStrategy, dataAccessLogic);
 		this.bimDataView = bimDataView;
 		this.dataAccessLogic = dataAccessLogic;
 		this.exportPolicy = exportStrategy;
@@ -324,7 +324,10 @@ public class DefaultBimLogic implements BimLogic {
 		return projectId;
 	}
 
-	private Long getRootCardIdForProjectId(final String projectId, final String rootClassName) {
+	private Long getRootCardIdForProjectId(final String projectId) {
+		
+		final String rootClassName = bimPersistence.findRoot().getClassName();
+		
 		Long cardId = (long) -1;
 
 		final List<CMCard> cards = bimDataView.getCardsWithAttributeAndValue(DBIdentifier.fromName("_BimProject"),
@@ -395,11 +398,6 @@ public class DefaultBimLogic implements BimLogic {
 	}
 
 	@Override
-	public boolean isSynchForExport(final String projectId) {
-		return exportConnector.isSynch(projectId);
-	}
-
-	@Override
 	public DataHandler download(final String projectId) {
 		return bimServiceFacade.download(projectId);
 	}
@@ -421,7 +419,7 @@ public class DefaultBimLogic implements BimLogic {
 		System.out.println("Open revision " + revisionId);
 		final DataHandler jsonFile = bimServiceFacade.fetchProjectStructure(revisionId);
 		try {
-			final Long rootCardId = getRootCardIdForProjectId(baseProjectId, getRootLayer().getClassName());
+			final Long rootCardId = getRootCardIdForProjectId(baseProjectId);
 			final Reader reader = new InputStreamReader(jsonFile.getInputStream(), "UTF-8");
 			final BufferedReader fileReader = new BufferedReader(reader);
 			final ObjectMapper mapper = new ObjectMapper();
@@ -435,11 +433,11 @@ public class DefaultBimLogic implements BimLogic {
 				final String rootClassName = getRootLayer().getClassName();
 				List<BimCard> bimCards = Lists.newArrayList();
 				if (className.equals(rootClassName)) {
-					bimCards = bimDataView.getBimCardsWithAttributeAndValue(className, null, null);
+					bimCards = bimDataView.getBimCardsWithGivenValueOfRootReferenceAttribute(className, null, null);
 				} else {
 					final String rootReferenceName = layer.getRootReference();
 					if (StringUtils.isNotBlank(rootReferenceName)) {
-						bimCards = bimDataView.getBimCardsWithAttributeAndValue(className, rootCardId,
+						bimCards = bimDataView.getBimCardsWithGivenValueOfRootReferenceAttribute(className, rootCardId,
 								rootReferenceName);
 					}
 				}
