@@ -1,6 +1,10 @@
 (function() {
 
+	/**
+	 * Abstract class to extends for form controller implementation
+	 */
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormBaseController', {
+		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
 		view: undefined,

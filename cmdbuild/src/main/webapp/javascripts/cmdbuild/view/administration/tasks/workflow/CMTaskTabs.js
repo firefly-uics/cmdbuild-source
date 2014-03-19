@@ -1,5 +1,8 @@
 (function() {
 
+	/**
+	 * Task's wizard tabs index
+	 */
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMTaskTabs', {
 
 		constructor: function() {

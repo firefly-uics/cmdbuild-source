@@ -24,6 +24,11 @@
 			this.getTabBar().setVisible(false);
 		},
 
+		/**
+		 * To change wizard displayed tab
+		 *
+		 * @param (Int) step
+		 */
 		changeTab: function(step) {
 			if (typeof step === 'number' && step == 0) {
 				var activeTab = 0;
