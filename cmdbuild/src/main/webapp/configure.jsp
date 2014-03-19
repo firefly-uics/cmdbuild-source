@@ -60,9 +60,9 @@
 
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMTranslationsWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConstants.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxy.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxySetup.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxySetup.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/setup/Step1.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/setup/Step2.js"></script>

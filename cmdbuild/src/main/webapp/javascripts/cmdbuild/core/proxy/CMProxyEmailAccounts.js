@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.model.CMModelEmailAccounts');
 
-	Ext.define('CMDBuild.core.serviceProxy.CMProxyEmailAccounts', {
+	Ext.define('CMDBuild.core.proxy.CMProxyEmailAccounts', {
 		statics: {
 			create: function(parameters) {
 				CMDBuild.Ajax.request({

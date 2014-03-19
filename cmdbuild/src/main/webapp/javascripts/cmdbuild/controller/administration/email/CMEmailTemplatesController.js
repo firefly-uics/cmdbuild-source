@@ -100,7 +100,7 @@
 				this.selectedName = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.NAME);
 
 				// Selected user asynchronous store query
-				this.selectedDataStore = CMDBuild.core.serviceProxy.CMProxyEmailTemplates.get();
+				this.selectedDataStore = CMDBuild.core.proxy.CMProxyEmailTemplates.get();
 				this.selectedDataStore.load({
 					params: { name: this.selectedName }
 				});
@@ -124,14 +124,14 @@
 			var formData = this.form.getData(true);
 
 			if (formData.id == null || formData.id == '') {
-				CMDBuild.core.serviceProxy.CMProxyEmailTemplates.create({
+				CMDBuild.core.proxy.CMProxyEmailTemplates.create({
 					params: formData,
 					scope: this,
 					success: this.success,
 					callback: this.callback
 				});
 			} else {
-				CMDBuild.core.serviceProxy.CMProxyEmailTemplates.update({
+				CMDBuild.core.proxy.CMProxyEmailTemplates.update({
 					params: formData,
 					scope: this,
 					success: this.success,
@@ -150,7 +150,7 @@
 				store = this.grid.store;
 
 			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.serviceProxy.CMProxyEmailTemplates.remove({
+			CMDBuild.core.proxy.CMProxyEmailTemplates.remove({
 				params: { name: this.selectedName },
 				scope: this,
 				success: function() {

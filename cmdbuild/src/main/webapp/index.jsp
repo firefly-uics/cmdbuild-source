@@ -34,10 +34,10 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Msg.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
 
-		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConstants.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxy.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxySetup.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConfiguration.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxySetup.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConfiguration.js"></script>
 
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMIconCombo.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LanguageCombo.js"></script>

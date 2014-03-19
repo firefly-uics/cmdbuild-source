@@ -72,7 +72,7 @@
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
 
 				// Selected task asynchronous store query
-				this.selectedDataStore = CMDBuild.core.serviceProxy.CMProxyTasks.get(me.taskType);
+				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(me.taskType);
 				this.selectedDataStore.load({
 					params: { id: this.selectedId }
 				});
@@ -138,7 +138,7 @@
 			delete formData.value;
 
 			if (formData.id == null || formData.id == '') {
-				CMDBuild.core.serviceProxy.CMProxyTasks.create({
+				CMDBuild.core.proxy.CMProxyTasks.create({
 					type: this.taskType,
 					params: formData,
 					scope: this,
@@ -146,7 +146,7 @@
 					callback: this.callback
 				});
 			} else {
-				CMDBuild.core.serviceProxy.CMProxyTasks.update({
+				CMDBuild.core.proxy.CMProxyTasks.update({
 					type: this.taskType,
 					params: formData,
 					scope: this,
@@ -166,7 +166,7 @@
 				store = this.parentDelegate.grid.store;
 
 			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.serviceProxy.CMProxyTasks.remove({
+			CMDBuild.core.proxy.CMProxyTasks.remove({
 				type: this.taskType,
 				params: { id: this.selectedId },
 				scope: this,
