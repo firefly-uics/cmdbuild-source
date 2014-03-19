@@ -5,10 +5,10 @@
 
 		// override
 		buildSubcontrollers: function() {
-			this.processFormController = new CMDBuild.controller.administration.workflow.CMProcessFormController(this.view.processForm);
-			this.attributePanelController = new CMDBuild.controller.administration.classes.CMClassAttributeController(this.view.attributesPanel);
-			this.domainTabController = new CMDBuild.controller.administration.classes.CMDomainTabController(this.view.domainGrid);
-			this.cronPanelController = new CMDBuild.controller.administration.workflow.CMProcessCronPanelController(this.view.cronPanel);
+			this.attributePanelController = Ext.create('CMDBuild.controller.administration.classes.CMClassAttributeController', this.view.attributesPanel);
+			this.cronPanelController = Ext.create('CMDBuild.controller.administration.workflow.CMProcessTasksController', this.view.cronPanel);
+			this.domainTabController = Ext.create('CMDBuild.controller.administration.classes.CMDomainTabController', this.view.domainGrid);
+			this.processFormController = Ext.create('CMDBuild.controller.administration.workflow.CMProcessFormController', this.view.processForm);
 		},
 
 		// override

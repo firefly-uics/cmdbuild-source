@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.workflow.CMProcessCronPanelController', {
+	Ext.define('CMDBuild.controller.administration.workflow.CMProcessTasksController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		currentProcess: undefined,
@@ -19,6 +19,13 @@
 			this.selectionModel = this.grid.getSelectionModel();
 		},
 
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onAddButtonClick':
