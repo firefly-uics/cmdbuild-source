@@ -25,7 +25,7 @@ public class BimExporterTest {
 
 	@Before
 	public void setUp() {
-		exporter = new NewExportConnector(bimDataView, serviceFacade, persistence, null);
+		exporter = new NewExportConnector(bimDataView, serviceFacade, persistence, null, null);
 	}
 
 	

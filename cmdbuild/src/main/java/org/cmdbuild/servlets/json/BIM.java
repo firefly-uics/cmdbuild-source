@@ -33,7 +33,7 @@ import org.cmdbuild.logic.bim.BimLogic.Project;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
+import org.cmdbuild.services.bim.DefaultBimDataView.BimCard;
 import org.cmdbuild.servlets.json.serializers.ProjectSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.joda.time.DateTime;

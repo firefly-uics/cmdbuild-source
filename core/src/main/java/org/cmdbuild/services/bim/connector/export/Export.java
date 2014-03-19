@@ -1,13 +1,27 @@
 package org.cmdbuild.services.bim.connector.export;
 
-import org.cmdbuild.services.bim.connector.Output;
+import java.util.Map;
+
+import org.cmdbuild.bim.model.Entity;
+
 
 public interface Export {
 
-	String export(String sourceProjectId, Output output);
+	void setConfiguration(Object input);
 	
+	void setTarget(Object input, Output output);
+
+	
+	Map<String, Entity> getSourceData();
+	
+	Map<String, Entity> getTargetData();
+	
+	
+	void export(String sourceProjectId, Output output);
+	
+		
 	boolean isSynch(String sourceProjectId);
 
-	String getLastGeneratedOutput(String baseProjectId);
-
+	String getLastGeneratedOutput(Object input);
+	
 }
