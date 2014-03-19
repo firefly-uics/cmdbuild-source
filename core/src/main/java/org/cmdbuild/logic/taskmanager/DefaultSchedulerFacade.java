@@ -27,9 +27,13 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 		logger.info(MARKER, "creating a new scheduled task '{}'", task);
 		if (task.isActive()) {
 			final Job serviceJob = converter.from(task).toJob();
-			final Trigger trigger = RecurringTrigger.at(task.getCronExpression());
+			final Trigger trigger = RecurringTrigger.at(addSecondsField(task.getCronExpression()));
 			schedulerService.add(serviceJob, trigger);
 		}
+	}
+
+	private String addSecondsField(final String cronExpression) {
+		return "0 " + cronExpression;
 	}
 
 	@Override

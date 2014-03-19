@@ -13,6 +13,11 @@ BEGIN
 	RAISE INFO 'updating _Task.CronExpression attribute definition';
 	PERFORM cm_modify_class_attribute('_Task', 'CronExpression', 'text', null, false, false, 'MODE: write|DESCR: Cron Expression|STATUS: active');
 
+	RAISE INFO 'updating _Task.CronExpression removing seconds';
+	ALTER TABLE "_Task" DISABLE TRIGGER USER;
+	UPDATE "_Task" SET "CronExpression" = substr("CronExpression", 3);	
+	ALTER TABLE "_Task" ENABLE TRIGGER USER;
+
 	RAISE INFO 'renaming _SchedulerJobParameter table to _TaskParameter';
 	ALTER TABLE "_SchedulerJobParameter" RENAME TO "_TaskParameter";
 	ALTER TABLE "_SchedulerJobParameter_history" RENAME TO "_TaskParameter_history";
