@@ -1,5 +1,6 @@
 package org.cmdbuild.data.store.task;
 
+
 public class StartWorkflowTask extends Task {
 
 	public static Builder<StartWorkflowTask> newInstance() {
@@ -20,6 +21,11 @@ public class StartWorkflowTask extends Task {
 	@Override
 	public void accept(final TaskVisitor visitor) {
 		visitor.visit(this);
+	}
+
+	@Override
+	protected Builder<? extends Task> builder() {
+		return newInstance();
 	}
 
 }

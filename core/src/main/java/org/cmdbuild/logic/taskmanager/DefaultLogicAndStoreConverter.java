@@ -1,7 +1,11 @@
 package org.cmdbuild.logic.taskmanager;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
+
+import java.util.Collections;
+import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.task.ReadEmailTaskDefinition;
@@ -125,6 +129,8 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 	private static class DefaultStoreAsSourceConverter implements StoreAsSourceConverter, TaskVisitor {
 
+		private static final Map<String, String> EMPTY_PARAMETERS = Collections.emptyMap();
+
 		private final org.cmdbuild.data.store.task.Task source;
 
 		private ScheduledTask target;
@@ -168,15 +174,16 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		@Override
 		public void visit(final org.cmdbuild.data.store.task.StartWorkflowTask task) {
+			final String attributesAsString = defaultString(task.getParameter(StartWorkflow.ATTRIBUTES));
 			target = StartWorkflowTask.newInstance() //
 					.withId(task.getId()) //
 					.withDescription(task.getDescription()) //
 					.withActiveStatus(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
 					.withProcessClass(task.getParameter(StartWorkflow.CLASSNAME)) //
-					.withParameters(Splitter.on(LINE_SEPARATOR) //
+					.withParameters(isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-							.split(defaultString(task.getParameter(StartWorkflow.ATTRIBUTES)))) //
+							.split(attributesAsString)) //
 					.build();
 		}
 

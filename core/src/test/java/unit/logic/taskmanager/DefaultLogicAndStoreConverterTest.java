@@ -1,9 +1,11 @@
 package unit.logic.taskmanager;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 import java.util.Map;
@@ -73,7 +75,7 @@ public class DefaultLogicAndStoreConverterTest {
 	}
 
 	@Test
-	public void emailServiceJobSuccessfullyConverted() throws Exception {
+	public void readEmailTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.ReadEmailTask source = org.cmdbuild.data.store.task.ReadEmailTask
 				.newInstance().withId(42L) //
@@ -148,7 +150,7 @@ public class DefaultLogicAndStoreConverterTest {
 	}
 
 	@Test
-	public void workflowSchedulerJobSuccessfullyConverted() throws Exception {
+	public void startWorkflowTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.StartWorkflowTask schedulerJob = org.cmdbuild.data.store.task.StartWorkflowTask
 				.newInstance() //
@@ -176,6 +178,33 @@ public class DefaultLogicAndStoreConverterTest {
 		parameters.put("bar", "baz");
 		parameters.put("baz", "foo");
 		assertThat(converted.getParameters(), equalTo(parameters));
+	}
+
+	@Test
+	public void startWorkflowTaskWithEmptyAttributesSuccessfullyConvertedToLogic() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.StartWorkflowTask schedulerJob = org.cmdbuild.data.store.task.StartWorkflowTask
+				.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withRunningStatus(true) //
+				.withCronExpression("cron expression") //
+				.withParameter(StartWorkflow.CLASSNAME, "class name") //
+				.withParameter(StartWorkflow.ATTRIBUTES, EMPTY) //
+				.build();
+
+		// when
+		final Task _converted = converter.from(schedulerJob).toLogic();
+
+		// then
+		assertThat(_converted, instanceOf(StartWorkflowTask.class));
+		final StartWorkflowTask converted = StartWorkflowTask.class.cast(_converted);
+		assertThat(converted.getId(), equalTo(42L));
+		assertThat(converted.getDescription(), equalTo("description"));
+		assertThat(converted.isActive(), equalTo(true));
+		assertThat(converted.getCronExpression(), equalTo("cron expression"));
+		assertThat(converted.getProcessClass(), equalTo("class name"));
+		assertThat(converted.getParameters().isEmpty(), is(true));
 	}
 
 }

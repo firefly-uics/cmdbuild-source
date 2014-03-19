@@ -3,15 +3,17 @@ package unit.logic.taskmanager;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.data.store.Storable;
-import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.data.store.task.TaskVisitor;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.LogicAndStoreConverter;
@@ -48,6 +50,11 @@ public class DefaultTaskManagerLogicTest {
 			// nothing to do
 		}
 
+		@Override
+		protected Builder<? extends org.cmdbuild.data.store.task.Task> builder() {
+			throw new UnsupportedOperationException();
+		}
+
 	}
 
 	private static final org.cmdbuild.data.store.task.Task DUMMY_STORABLE_TASK = DummyStorableTask.newInstance() //
@@ -66,7 +73,7 @@ public class DefaultTaskManagerLogicTest {
 	private LogicAndStoreConverter converter;
 	private LogicAndStoreConverter.LogicAsSourceConverter logicAsSourceConverter;
 	private LogicAndStoreConverter.StoreAsSourceConverter storeAsSourceConverter;
-	private Store<org.cmdbuild.data.store.task.Task> store;
+	private TaskStore store;
 	private SchedulerFacade scheduledTaskFacade;
 	private DefaultTaskManagerLogic taskManagerLogic;
 
@@ -86,7 +93,7 @@ public class DefaultTaskManagerLogicTest {
 		when(converter.from(any(org.cmdbuild.data.store.task.Task.class))) //
 				.thenReturn(storeAsSourceConverter);
 
-		store = mock(Store.class);
+		store = mock(TaskStore.class);
 
 		scheduledTaskFacade = mock(SchedulerFacade.class);
 
@@ -298,6 +305,150 @@ public class DefaultTaskManagerLogicTest {
 
 		// when
 		taskManagerLogic.read(task, Task.class);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotStartTaskWithoutAnId() throws Exception {
+		// when
+		taskManagerLogic.start(null);
+	}
+
+	@Test
+	public void taskNotStartedIfAlreadyStarted() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
+				.newInstance() //
+				.withId(ID) //
+				.withRunningStatus(true) //
+				.build();
+		when(store.read(ID)) //
+				.thenReturn(stored);
+
+		// when
+		taskManagerLogic.start(ID);
+
+		// then
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade);
+		inOrder.verify(store).read(eq(42L));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void scheduledTaskStarted() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
+				.newInstance() //
+				.withId(ID) //
+				.withRunningStatus(false) //
+				.build();
+		when(store.read(ID)) //
+				.thenReturn(stored);
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(ReadEmailTask.newInstance() //
+						.withId(ID) //
+						.withActiveStatus(true) //
+						.build());
+
+		// when
+		taskManagerLogic.start(ID);
+
+		// then
+		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor = ArgumentCaptor
+				.forClass(org.cmdbuild.data.store.task.Task.class);
+		final ArgumentCaptor<ScheduledTask> scheduledTaskCaptor = ArgumentCaptor.forClass(ScheduledTask.class);
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade);
+		inOrder.verify(store).read(eq(ID));
+		inOrder.verify(store).update(storedTaskCaptor.capture());
+		inOrder.verify(converter).from(storedTaskCaptor.capture());
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).create(scheduledTaskCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+
+		final org.cmdbuild.data.store.task.Task updatedTask = storedTaskCaptor.getAllValues().get(0);
+		assertThat(updatedTask.getId(), equalTo(ID));
+		assertThat(updatedTask.isRunning(), is(true));
+
+		final org.cmdbuild.data.store.task.Task convertedTask = storedTaskCaptor.getAllValues().get(1);
+		assertThat(convertedTask.getId(), equalTo(ID));
+		assertThat(convertedTask.isRunning(), is(true));
+
+		final ScheduledTask scheduledTask = scheduledTaskCaptor.getValue();
+		assertThat(scheduledTask.getId(), equalTo(ID));
+		assertThat(scheduledTask.isActive(), is(true));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotStopTaskWithoutAnId() throws Exception {
+		// when
+		taskManagerLogic.stop(null);
+	}
+
+	@Test
+	public void taskNotStoppedIfAlreadyStopped() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
+				.newInstance() //
+				.withId(ID) //
+				.withRunningStatus(false) //
+				.build();
+		when(store.read(ID)) //
+				.thenReturn(stored);
+
+		// when
+		taskManagerLogic.stop(ID);
+
+		// then
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade);
+		inOrder.verify(store).read(eq(42L));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void scheduledTaskStopped() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
+				.newInstance() //
+				.withId(ID) //
+				.withRunningStatus(true) //
+				.build();
+		when(store.read(ID)) //
+				.thenReturn(stored);
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(ReadEmailTask.newInstance() //
+						.withId(ID) //
+						.withActiveStatus(false) //
+						.build());
+
+		// when
+		taskManagerLogic.stop(ID);
+
+		// then
+		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor = ArgumentCaptor
+				.forClass(org.cmdbuild.data.store.task.Task.class);
+		final ArgumentCaptor<ScheduledTask> scheduledTaskCaptor = ArgumentCaptor.forClass(ScheduledTask.class);
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade);
+		inOrder.verify(store).read(eq(ID));
+		inOrder.verify(store).update(storedTaskCaptor.capture());
+		inOrder.verify(converter).from(storedTaskCaptor.capture());
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).delete(scheduledTaskCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+
+		final org.cmdbuild.data.store.task.Task updatedTask = storedTaskCaptor.getAllValues().get(0);
+		assertThat(updatedTask.getId(), equalTo(ID));
+		assertThat(updatedTask.isRunning(), is(false));
+
+		final org.cmdbuild.data.store.task.Task convertedTask = storedTaskCaptor.getAllValues().get(1);
+		assertThat(convertedTask.getId(), equalTo(ID));
+		assertThat(convertedTask.isRunning(), is(false));
+
+		final ScheduledTask scheduledTask = scheduledTaskCaptor.getValue();
+		assertThat(scheduledTask.getId(), equalTo(ID));
+		assertThat(scheduledTask.isActive(), is(false));
 	}
 
 }
