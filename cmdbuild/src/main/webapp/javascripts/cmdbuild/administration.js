@@ -98,17 +98,17 @@
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationTranslationsController,
 											cmName: "modsetuptranslations"
 										}),
-										new CMDBuild.view.administration.email.CMEmailAccounts({
-											cmControllerType: controllerNS.administration.email.CMEmailAccountsController,
-											cmName: "emailAccounts"
+										Ext.create('CMDBuild.view.administration.email.CMEmailAccounts', {
+											cmControllerType: CMDBuild.controller.administration.email.CMEmailAccountsController,
+											cmName: 'emailAccounts'
 										}),
-										new CMDBuild.view.administration.email.CMEmailTemplates({
-											cmControllerType: controllerNS.administration.email.CMEmailTemplatesController,
-											cmName: "emailTemplates"
+										Ext.create('CMDBuild.view.administration.email.CMEmailTemplates', {
+											cmControllerType: CMDBuild.controller.administration.email.CMEmailTemplatesController,
+											cmName: 'emailTemplates'
 										}),
-										new CMDBuild.view.administration.tasks.CMTasks({
+										Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
 											cmControllerType: CMDBuild.controller.administration.tasks.CMTasksController,
-											cmName: "tasks"
+											cmName: 'tasks'
 										})
 									]);
 								}
@@ -126,7 +126,6 @@
 			},
 
 			loadResources: function() {
-
 				var reqBarrier = new CMDBuild.Utils.CMRequestBarrier(
 					function callback() {
 
