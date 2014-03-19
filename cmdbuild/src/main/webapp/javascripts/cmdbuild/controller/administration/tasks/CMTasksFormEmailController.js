@@ -110,7 +110,7 @@
 //				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
 //
 //				// Selected user asynchronous store query
-//				this.selectedDataStore = CMDBuild.core.serviceProxy.CMProxyTasks.get();
+//				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get();
 //				this.selectedDataStore.load({
 //					params: { id: this.selectedId }
 //				});
@@ -140,14 +140,14 @@
 			formData.subjectFilter = Ext.encode(formData.subjectFilter.split(' OR '));
 
 			if (formData.id == null || formData.id == '') {
-				CMDBuild.core.serviceProxy.CMProxyTasks.create({
+				CMDBuild.core.proxy.CMProxyTasks.create({
 					params: formData,
 					scope: this,
 					success: this.success,
 					callback: this.callback
 				});
 			} else {
-				CMDBuild.core.serviceProxy.CMProxyTasks.update({
+				CMDBuild.core.proxy.CMProxyTasks.update({
 					params: formData,
 					scope: this,
 					success: this.success,
@@ -165,7 +165,7 @@
 			var me = this,
 				store = this.parentDelegate.grid.store;
 
-			CMDBuild.ServiceProxy.tasks.remove({
+			CMDBuild.proxy.tasks.remove({
 				params: { id: this.selectedId },
 				scope: this,
 				success: function() {

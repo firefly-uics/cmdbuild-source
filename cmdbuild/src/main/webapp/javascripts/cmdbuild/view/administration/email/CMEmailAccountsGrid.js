@@ -34,7 +34,7 @@
 						flex: 1
 					}
 				],
-				store: CMDBuild.core.serviceProxy.CMProxyEmailAccounts.getStore()
+				store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore()
 			});
 
 			this.callParent(arguments);

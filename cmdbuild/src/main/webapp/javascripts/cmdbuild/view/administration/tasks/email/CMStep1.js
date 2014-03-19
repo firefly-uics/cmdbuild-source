@@ -151,7 +151,7 @@
 					xtype: 'combo',
 					fieldLabel: tr.emailAccount,
 					name: CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT,
-					store: CMDBuild.core.serviceProxy.CMProxyEmailAccounts.getStore(),
+					store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
 					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH

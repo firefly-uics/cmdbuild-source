@@ -206,7 +206,7 @@
 				fieldLabel: CMDBuild.Translation.administration.tasks.workflow,
 				valueField: CMDBuild.ServiceProxy.parameter.NAME,
 				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				store: CMDBuild.core.serviceProxy.CMProxyTasks.getWorkflowsStore(),
+				store: CMDBuild.core.proxy.CMProxyTasks.getWorkflowsStore(),
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				forceSelection: true,

@@ -119,7 +119,7 @@
 				this.view.disable();
 			} else {
 				this.view.enable();
-				this.grid.reconfigure(CMDBuild.core.serviceProxy.CMProxyTasks.getStoreByWorkflow());
+				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStoreByWorkflow());
 			}
 		},
 

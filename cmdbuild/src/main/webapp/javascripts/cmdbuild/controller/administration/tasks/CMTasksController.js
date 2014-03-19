@@ -25,7 +25,7 @@
 				var me = this;
 				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
 
-				this.grid.reconfigure(CMDBuild.core.serviceProxy.CMProxyTasks.getStore(this.taskType));
+				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
 				this.grid.store.load({
 					callback: function() {
 						if (!me.grid.getSelectionModel().hasSelection())
@@ -141,7 +141,7 @@
 
 		onStartButtonClick: function(record) {
 			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.serviceProxy.CMProxyTasks.start({
+			CMDBuild.core.proxy.CMProxyTasks.start({
 				scope: this,
 				params: { id: record.get(CMDBuild.ServiceProxy.parameter.ID) },
 				success: this.success,
@@ -151,7 +151,7 @@
 
 		onStopButtonClick: function(record) {
 			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.serviceProxy.CMProxyTasks.stop({
+			CMDBuild.core.proxy.CMProxyTasks.stop({
 				scope: this,
 				params: { id: record.get(CMDBuild.ServiceProxy.parameter.ID) },
 				success: this.success,

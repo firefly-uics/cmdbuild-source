@@ -15,19 +15,19 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 
 <!--  PROXYES -->
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConstants.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxy.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyAdministration.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyAttachment.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyConfiguration.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMTranslationsProxy.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyDashboard.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyDataView.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyFilter.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyGIS.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyIcon.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyWidgetConfiguration.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/serviceProxy/CMProxyWorkflow.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAdministration.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyAttachment.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConfiguration.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyTranslations.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDashboard.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyDataView.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyFilter.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyGIS.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyIcon.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWidgetConfiguration.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWorkflow.js"></script>
 
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>

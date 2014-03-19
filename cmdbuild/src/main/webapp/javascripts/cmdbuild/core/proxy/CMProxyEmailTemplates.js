@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.model.CMModelEmailTemplates');
 
-	Ext.define('CMDBuild.core.serviceProxy.CMProxyEmailTemplates', {
+	Ext.define('CMDBuild.core.proxy.CMProxyEmailTemplates', {
 		statics: {
 			create: function(parameters) {
 				CMDBuild.Ajax.request({
