@@ -159,9 +159,6 @@
 			this.disableCMButtons();
 		},
 
-		/**
-		 * Disable name field
-		 */
 		disableNameField: function() {
 			this.nameField.setDisabled(true);
 		}

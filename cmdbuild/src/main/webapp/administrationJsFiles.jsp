@@ -110,10 +110,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationWorkflow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationServer.js"></script>
 
-	<!-- EMAIL -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/email/CMEmailAccounts.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/email/CMEmailTemplates.js"></script>
-
 	<!-- MENU  -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMMenuAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/menu/CMMenuPanel.js"></script>
@@ -156,9 +152,6 @@
 	<!-- FILTRS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMFilterAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/filter/CMGroupFilterPanel.js"></script>
-
-	<!-- TASKS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasks.js"></script>
 
 <!-- CONTROLLERS -->
 	<!-- GIS -->

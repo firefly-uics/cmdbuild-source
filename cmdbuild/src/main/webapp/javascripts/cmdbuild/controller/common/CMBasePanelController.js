@@ -21,6 +21,10 @@
 					}
 				}
 			}
+		},
+
+		callback: function() {
+			CMDBuild.LoadMask.get().hide();
 		}
 	});
 

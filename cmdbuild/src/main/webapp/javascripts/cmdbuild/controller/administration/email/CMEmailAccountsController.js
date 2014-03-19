@@ -19,10 +19,11 @@
 		},
 
 		/**
-		 * @param {String} name
-		 * @param {Object} param
-		 * @param {Function} callback
 		 * Gatherer function to catch events
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -196,10 +197,6 @@
 			});
 
 			this.form.disableModify(true);
-		},
-
-		callback: function() {
-			CMDBuild.LoadMask.get().hide();
 		}
 	});
 

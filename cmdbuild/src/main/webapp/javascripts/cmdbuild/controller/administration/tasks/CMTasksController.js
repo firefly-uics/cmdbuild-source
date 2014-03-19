@@ -35,10 +35,20 @@
 			}
 		},
 
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onAddButtonClick':
 					return this.onAddButtonClick(name, param, callBack);
+
+				case 'onItemDoubleClick':
+					return this.onItemDoubleClick();
 
 				case 'onRowSelected':
 					return this.onRowSelected(name, param, callBack);
@@ -56,17 +66,18 @@
 			}
 		},
 
+		/**
+		 * Automated form controller constructor
+		 *
+		 * @param (String) type
+		 */
 		buildFormController: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
-				this.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(type) + 'Controller');
-				this.form.delegate.view = this.form;
+				this.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(type) + 'Controller', this.form);
+//				this.form.delegate.view = this.form;
 				this.form.delegate.parentDelegate = this;
 				this.form.delegate.selectionModel = this.grid.getSelectionModel();
 			}
-		},
-
-		callback: function() {
-			CMDBuild.LoadMask.get().hide();
 		},
 
 		capitaliseFirstLetter: function(string) {
@@ -81,6 +92,9 @@
 			return (type != '' && (this.tasksDatas.indexOf(type) >= 0)) ? true : false;
 		},
 
+		/**
+		 * Form wizard creator
+		 */
 		loadForm: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
 				this.form.wizard.removeAll();
@@ -111,6 +125,10 @@
 			this.buildFormController(param.type);
 
 			return this.form.delegate.cmOn(name, param, callBack);
+		},
+
+		onItemDoubleClick: function() {
+			return this.form.delegate.onModifyButtonClick();
 		},
 
 		onRowSelected: function(name, param, callBack) {

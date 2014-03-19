@@ -3,11 +3,19 @@
 	var translation = CMDBuild.Translation.administration.tasks.taskWorkflow;
 
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', {
+		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
 		filterWindow: undefined,
 		view: undefined,
 
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onAttributeComboSelect':
@@ -23,6 +31,9 @@
 			}
 		},
 
+		/**
+		 * Workflow attribute store builder for onWorkflowSelected event
+		 */
 		buildWorkflowAttributesStore: function(attributes) {
 			if (attributes) {
 				var data = [];
@@ -133,8 +144,7 @@
 		initComponent: function() {
 			var me = this;
 
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate');
-			this.delegate.view = this;
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: CMDBuild.Translation.administration.tasks.type,
