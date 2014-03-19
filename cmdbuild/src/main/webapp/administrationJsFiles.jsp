@@ -224,8 +224,6 @@
 	<!-- PROCESS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMAccordionProcessController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMProcessController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMProcessCronPanelController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMProcessFormController.js"></script>
 
 	<!-- WIDGET -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMBaseWidgetDefinitionFormController.js"></script>
