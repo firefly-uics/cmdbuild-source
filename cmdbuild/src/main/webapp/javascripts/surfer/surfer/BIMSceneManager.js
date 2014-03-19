@@ -894,12 +894,12 @@
 	// Object selection 
 	// ##################################################
 
-	BIMSceneManager.prototype.selectObject = function(objectId) {
+	BIMSceneManager.prototype.selectObject = function(objectId, fromViewer) {
 		this.clearSelection();
 		if (objectId) {
 
-			selectSceneObject(this, objectId);
-			this.callDelegates("objectSelected", [this, objectId]);
+			selectSceneObject(this, objectId, fromViewer);
+			this.callDelegates("objectSelected", [this, objectId], fromViewer);
 		}
 	};
 
@@ -908,17 +908,17 @@
 		if (objectId) {
 
 			selectSceneObject(this, objectId);
-			this.callDelegates("objectSelectedForLongPressure", [this, objectId]);
+			this.callDelegates("objectSelectedForLongPressure", [this, objectId], true);
 		}
 	};
 
-	function selectSceneObject(me, objectId) {
+	function selectSceneObject(me, objectId, fromViewer) {
 		_BIM_LOGGER.log("Selecting object", objectId);
 
 		me.currentSelectedObjectId = objectId;
 		var node = me.scene.findNode(objectId);
 		if (node != null) {
-			if (node._targetNode) {
+			if (node._targetNode && ! fromViewer) {
 				var lookAtNode = me.scene.findNode('main-lookAt');
 				var nodeCube = getNodeCube(node);
 				var nodeCenter = getCubeCenter(nodeCube);

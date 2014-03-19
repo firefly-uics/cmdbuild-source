@@ -142,7 +142,7 @@
 			if (forLongPressure) {
 				me.sceneManager.selectObjectForLongPressure(me.viewport.mouse.pickRecord.name);
 			} else {
-				me.sceneManager.selectObject(me.viewport.mouse.pickRecord.name);
+				me.sceneManager.selectObject(me.viewport.mouse.pickRecord.name, true);
 			}
 		} else {
 			me.sceneManager.clearSelection();

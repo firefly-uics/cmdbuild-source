@@ -25,7 +25,7 @@ Ext.define('CMDBuild.bim.management.view.CMBimTree', {
 					this.delegate.onNodeCheckChange(node, checked);
 				},
 				select: function(treePanel, node, index, eOpts) {
-					this.delegate.onNodeSelect(node);
+					this.delegate.onNodeSelect(node, this.fromViewer);
 				},
 				beforecellclick: function(treePanel, td, cellIndex, record, tr, rowIndex, e, eOpts) {
 					if (cellIndex == 1) {
@@ -73,7 +73,9 @@ Ext.define('CMDBuild.bim.management.view.CMBimTree', {
 			this.expandPreviousNodes(node.parentNode,
 				Ext.Function.createDelayed(function() {
 					var sm = me.getSelectionModel();
+					me.fromViewer = true;
 					sm.select([node]);
+					me.fromViewer = false;
 					me.inSelection = false;
 				}, 500)
 			);

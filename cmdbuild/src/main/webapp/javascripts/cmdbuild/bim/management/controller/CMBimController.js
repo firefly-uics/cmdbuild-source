@@ -266,8 +266,8 @@
 			}
 		},
 
-		onNodeSelect: function(node) {
-			this.bimSceneManager.selectObject(node.raw.oid);
+		onNodeSelect: function(node, fromViewer) {
+			this.bimSceneManager.selectObject(node.raw.oid, fromViewer);
 		},
 
 		onOpenCardIconClick: function(classId, cardId) {
