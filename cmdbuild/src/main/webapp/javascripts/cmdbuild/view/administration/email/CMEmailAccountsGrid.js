@@ -41,6 +41,10 @@
 		},
 
 		listeners: {
+			itemdblclick: function(grid, record, item, index, e, eOpts) {
+				this.delegate.cmOn('onItemDoubleClick');
+			},
+
 			select: function(row, record, index) {
 				this.delegate.cmOn('onRowSelected', {
 					'row': row,
@@ -65,8 +69,9 @@
 		},
 
 		/**
-		 * @param {Object} value
-		 * Used to render isDefault database value to add icon
+		 * isDefault renderer to add icon in grid
+		 *
+		 * @param (Object) value
 		 */
 		defaultGridColumnRenderer: function(value) {
 			if(typeof value == 'boolean') {

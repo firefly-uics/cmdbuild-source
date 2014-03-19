@@ -11,6 +11,13 @@
 		selectionModel: undefined,
 		taskType: 'workflow',
 
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onAbortButtonClick':
@@ -198,8 +205,8 @@
 		},
 
 		/**
-		 * @param Array fields
-		 * @returns String cron expression
+		 * @param (Array) fields
+		 * @returns (String) cron expression
 		 */
 		buildCronExpression: function(fields) {
 			var cronExp = '';

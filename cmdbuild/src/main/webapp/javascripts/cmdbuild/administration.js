@@ -10,8 +10,7 @@
 		lookupAccordion = null,
 		menuAccordion = null,
 		processAccordion = null,
-		reportAccordion = null,
-		tasksAccordion = null;
+		reportAccordion = null;
 
 	Ext.define("CMDBuild.app.Administration", {
 		statics: {
@@ -99,17 +98,17 @@
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationTranslationsController,
 											cmName: "modsetuptranslations"
 										}),
-										new CMDBuild.view.administration.email.CMEmailAccounts({
-											cmControllerType: controllerNS.administration.email.CMEmailAccountsController,
-											cmName: "emailAccounts"
+										Ext.create('CMDBuild.view.administration.email.CMEmailAccounts', {
+											cmControllerType: CMDBuild.controller.administration.email.CMEmailAccountsController,
+											cmName: 'emailAccounts'
 										}),
-										new CMDBuild.view.administration.email.CMEmailTemplates({
-											cmControllerType: controllerNS.administration.email.CMEmailTemplatesController,
-											cmName: "emailTemplates"
+										Ext.create('CMDBuild.view.administration.email.CMEmailTemplates', {
+											cmControllerType: CMDBuild.controller.administration.email.CMEmailTemplatesController,
+											cmName: 'emailTemplates'
 										}),
-										new CMDBuild.view.administration.tasks.CMTasks({
+										Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
 											cmControllerType: CMDBuild.controller.administration.tasks.CMTasksController,
-											cmName: "tasks"
+											cmName: 'tasks'
 										})
 									]);
 								}
@@ -127,7 +126,6 @@
 			},
 
 			loadResources: function() {
-
 				var reqBarrier = new CMDBuild.Utils.CMRequestBarrier(
 					function callback() {
 
@@ -148,12 +146,9 @@
 							Ext.create('CMDBuild.view.administration.accordion.CMConfigurationAccordion')
 						]);
 
-
-						/* *********************************
-						 * Resume here the layouts operations
-						 */
+						// Resume here the layouts operations
 						Ext.resumeLayouts(true);
-						/* *********************************/
+
 						_CMMainViewportController.viewport.doLayout();
 
 						CMDBuild.view.CMMainViewport.hideSplash(function() {
@@ -163,6 +158,51 @@
 
 					}
 				);
+
+				/*
+				 * Classes and process
+				 */
+				CMDBuild.ServiceProxy.classes.read({
+					params: {
+						active: false
+					},
+					success: function(response, options, decoded) {
+						_CMCache.addClasses(decoded.classes);
+
+						if (!_CMUIConfiguration.isCloudAdmin()) {
+							classesAccordion = new CMDBuild.view.administration.accordion.CMClassAccordion({
+								cmControllerType: CMDBuild.controller.accordion.CMClassAccordionController
+							});
+							classesAccordion.updateStore();
+
+							processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
+								cmControllerType: CMDBuild.controller.accordion.CMAccordionProcessController,
+								disabled: !CMDBuild.Config.workflow.enabled
+							});
+							processAccordion.updateStore();
+
+							_CMMainViewportController.addPanel([
+								new CMDBuild.view.administration.classes.CMModClass({
+									cmControllerType: controllerNS.administration.classes.CMModClassController
+								}),
+								new CMDBuild.view.administration.workflow.CMProcess({
+									cmControllerType: controllerNS.administration.workflow.CMProcessController
+								})
+							]);
+						}
+
+						// Do a separate request for the widgets because, at this time
+						// it is not possible serialize them with the classes
+						CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
+							scope: this,
+							callback: reqBarrier.getCallback(),
+							success: function(response, options, decoded) {
+								_CMCache.addWidgetToEntryTypes(decoded.response);
+							}
+						});
+					},
+					callback: reqBarrier.getCallback()
+				});
 
 				/*
 				 * Workflow configuration
@@ -204,51 +244,6 @@
 						}
 					},
 
-					callback: reqBarrier.getCallback()
-				});
-
-				/*
-				 * Classes and process
-				 */
-				CMDBuild.ServiceProxy.classes.read({
-					params: {
-						active : false
-					},
-					success: function(response, options, decoded) {
-						_CMCache.addClasses(decoded.classes);
-
-						if (!_CMUIConfiguration.isCloudAdmin()) {
-							classesAccordion = new CMDBuild.view.administration.accordion.CMClassAccordion({
-								cmControllerType: CMDBuild.controller.accordion.CMClassAccordionController
-							});
-							classesAccordion.updateStore();
-
-							processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
-								cmControllerType: CMDBuild.controller.accordion.CMProcessAccordionController,
-								disabled: !CMDBuild.Config.workflow.enabled
-							});
-							processAccordion.updateStore();
-
-							_CMMainViewportController.addPanel([
-								new CMDBuild.view.administration.classes.CMModClass({
-									cmControllerType: controllerNS.administration.classes.CMModClassController
-								}),
-								new CMDBuild.view.administration.workflow.CMModProcess({
-									cmControllerType: controllerNS.administration.workflow.CMModProcessController
-								})
-							]);
-						}
-
-						// Do a separate request for the widgets because, at this time
-						// it is not possible serialize them with the classes
-						CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
-							scope: this,
-							callback: reqBarrier.getCallback(),
-							success: function(response, options, decoded) {
-								_CMCache.addWidgetToEntryTypes(decoded.response);
-							}
-						});
-					},
 					callback: reqBarrier.getCallback()
 				});
 

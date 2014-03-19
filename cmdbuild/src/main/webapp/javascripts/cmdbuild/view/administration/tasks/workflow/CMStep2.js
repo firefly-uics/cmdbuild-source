@@ -3,14 +3,21 @@
 	var translation = CMDBuild.Translation.administration.tasks.taskWorkflow;
 
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep2Delegate', {
+		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
 		filterWindow: undefined,
 		view: undefined,
 
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
@@ -92,8 +99,7 @@
 		initComponent: function() {
 			var me = this;
 
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep2Delegate');
-			this.delegate.view = this;
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep2Delegate', this);
 
 			// Advanced panel setup
 			this.advanceRadio = Ext.create('Ext.form.field.Radio', {

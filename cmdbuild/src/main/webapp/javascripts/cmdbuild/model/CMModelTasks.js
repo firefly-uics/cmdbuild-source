@@ -11,7 +11,7 @@
 		]
 	});
 
-	Ext.define('CMDBuild.model.CMModelTasks.gridWorkflow', {
+	Ext.define('CMDBuild.model.CMModelTasks.gridWorkflow', { // TODO: change to ...grid.workflow
 		extend: 'Ext.data.Model',
 
 		fields: [

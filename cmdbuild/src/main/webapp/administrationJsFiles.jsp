@@ -110,10 +110,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationWorkflow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationServer.js"></script>
 
-	<!-- EMAIL -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/email/CMEmailAccounts.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/email/CMEmailTemplates.js"></script>
-
 	<!-- MENU  -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMMenuAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/menu/CMMenuPanel.js"></script>
@@ -134,15 +130,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/report/CMReportFormStep2.js"></script>
 
 	<!-- PROCESS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessAttributeForm.js"></script>
-<!-- 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessAttributesPanel.js"></script> -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcessForm.js"></script>
-<!-- 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CMJobGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CMJobPanel.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CMJobParameterGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/cron/CronEditWindow.js"></script> -->
-	<!-- <script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMCronPanel.js"></script> -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMModProcess.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/workflow/CMProcess.js"></script>
 
 	<!-- WIDGET -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/CMWidgetDefinitionGrid.js"></script>
@@ -164,9 +152,6 @@
 	<!-- FILTRS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMFilterAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/filter/CMGroupFilterPanel.js"></script>
-
-	<!-- TASKS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/tasks/CMTasks.js"></script>
 
 <!-- CONTROLLERS -->
 	<!-- GIS -->
@@ -237,10 +222,8 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/report/CMModReportController.js"></script>
 
 	<!-- PROCESS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMProcessAccordionController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMProcessFormController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMCronPanelController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMModProcessController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMAccordionProcessController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/workflow/CMProcessController.js"></script>
 
 	<!-- WIDGET -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMBaseWidgetDefinitionFormController.js"></script>
