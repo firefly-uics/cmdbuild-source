@@ -81,15 +81,15 @@
 	</servlet-mapping>
 
 	<servlet>
-		<servlet-name>soapws</servlet-name>
+		<servlet-name>ws</servlet-name>
 		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet
 		</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>soapws</servlet-name>
-		<url-pattern>/services/soap/*</url-pattern>
+		<servlet-name>ws</servlet-name>
+		<url-pattern>/services/*</url-pattern>
 	</servlet-mapping>
 	
 	<servlet>

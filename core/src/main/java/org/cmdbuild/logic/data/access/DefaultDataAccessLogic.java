@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.filter;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
@@ -25,6 +26,7 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -77,6 +79,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -238,13 +241,50 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return false;
 	}
 
-	/**
-	 * 
-	 * @return active and non active classes
-	 */
 	@Override
 	public Iterable<? extends CMClass> findAllClasses() {
 		return dataView.findClasses();
+	}
+
+	@Override
+	public Iterable<? extends CMClass> findClasses(final boolean activeOnly) {
+		final Iterable<? extends CMClass> fetchedClasses = activeOnly ? findActiveClasses() : findAllClasses();
+		final Iterable<? extends CMClass> nonProcessClasses = filter(fetchedClasses, nonProcessClasses());
+		final Iterable<? extends CMClass> classesToBeReturned = activeOnly ? filter(nonProcessClasses,
+				nonSystemButUsable()) : nonProcessClasses;
+		return classesToBeReturned;
+	}
+
+	private Predicate<CMClass> nonProcessClasses() {
+		final CMClass processBaseClass = findClass(Constants.BASE_PROCESS_CLASS_NAME);
+		final Predicate<CMClass> nonProcessClasses = new Predicate<CMClass>() {
+			@Override
+			public boolean apply(final CMClass input) {
+				return !processBaseClass.isAncestorOf(input);
+			}
+		};
+		return nonProcessClasses;
+	}
+
+	/**
+	 * 
+	 * @return a predicate that will filter classes whose mode does not start
+	 *         with sys... (e.g. sysread or syswrite)
+	 */
+	private Predicate<CMClass> nonSystemButUsable() {
+		final Predicate<CMClass> predicate = new Predicate<CMClass>() {
+			@Override
+			public boolean apply(final CMClass input) {
+				return !input.isSystemButUsable();
+			}
+		};
+		return predicate;
+	}
+
+	@Override
+	public Iterable<? extends CMAttribute> getAttributes(final String className, final boolean onlyActive) {
+		final CMClass target = findClass(className);
+		return onlyActive ? target.getActiveAttributes() : target.getAttributes();
 	}
 
 	/**
