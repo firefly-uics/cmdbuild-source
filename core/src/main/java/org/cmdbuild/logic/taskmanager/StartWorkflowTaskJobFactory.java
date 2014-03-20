@@ -23,7 +23,7 @@ public class StartWorkflowTaskJobFactory extends AbstractJobFactory<StartWorkflo
 		final String name = task.getId().toString();
 		final StartProcessJob startProcessJob = new StartProcessJob(name, workflowLogic);
 		startProcessJob.setDetail(task.getProcessClass());
-		startProcessJob.setParams(task.getParameters());
+		startProcessJob.setParams(task.getAttributes());
 		return startProcessJob;
 	}
 

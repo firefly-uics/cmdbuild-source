@@ -103,7 +103,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 		private final StorableConverter<T> inner;
 
-		public ForwardingStorableConverter(final StorableConverter<T> storableConverter) {
+		protected ForwardingStorableConverter(final StorableConverter<T> storableConverter) {
 			this.inner = storableConverter;
 		}
 

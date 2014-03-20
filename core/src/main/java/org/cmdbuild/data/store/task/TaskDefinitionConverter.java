@@ -31,6 +31,14 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 			}
 
 		}, //
+		SYNCHRONOUS_EVENT(TYPE_SYNCHRONOUS_EVENT) {
+
+			@Override
+			protected Builder<? extends TaskDefinition> create(final CMCard card) {
+				return SynchronousEventTaskDefinition.newInstance();
+			}
+
+		}, //
 		;
 
 		private final String attributeValue;
@@ -71,6 +79,11 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 				public void visit(final StartWorkflowTaskDefinition taskDefinition) {
 					element = START_WORKFLOW;
 				}
+				
+				@Override
+				public void visit(final SynchronousEventTaskDefinition taskDefinition) {
+					element = SYNCHRONOUS_EVENT;
+				}
 
 			}.type();
 		}
@@ -85,6 +98,7 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 
 	private static final String TYPE_EMAIL = "emailService";
 	private static final String TYPE_WORKFLOW = "workflow";
+	private static final String TYPE_SYNCHRONOUS_EVENT = "synchronous_event";
 
 	@Override
 	public String getClassName() {

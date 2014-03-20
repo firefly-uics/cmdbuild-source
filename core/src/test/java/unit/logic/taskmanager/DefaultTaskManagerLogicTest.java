@@ -20,6 +20,8 @@ import org.cmdbuild.logic.taskmanager.LogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
 import org.cmdbuild.logic.taskmanager.SchedulerFacade;
+import org.cmdbuild.logic.taskmanager.SynchronousEventFacade;
+import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,6 +77,7 @@ public class DefaultTaskManagerLogicTest {
 	private LogicAndStoreConverter.StoreAsSourceConverter storeAsSourceConverter;
 	private TaskStore store;
 	private SchedulerFacade scheduledTaskFacade;
+	private SynchronousEventFacade synchronousEventFacade;
 	private DefaultTaskManagerLogic taskManagerLogic;
 
 	@Before
@@ -97,74 +100,9 @@ public class DefaultTaskManagerLogicTest {
 
 		scheduledTaskFacade = mock(SchedulerFacade.class);
 
-		taskManagerLogic = new DefaultTaskManagerLogic(converter, store, scheduledTaskFacade);
-	}
+		synchronousEventFacade = mock(SynchronousEventFacade.class);
 
-	@Test
-	public void scheduledTaskCreated() throws Exception {
-		// given
-		final ReadEmailTask newOne = ReadEmailTask.newInstance().build();
-		final org.cmdbuild.data.store.task.ReadEmailTask createdOne = org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance().build();
-		final ReadEmailTask convertedAfterRead = ReadEmailTask.newInstance().build();
-		final Storable storable = mock(Storable.class);
-		when(store.create(DUMMY_STORABLE_TASK)) //
-				.thenReturn(storable);
-		when(store.read(storable)) //
-				.thenReturn(createdOne);
-		when(storeAsSourceConverter.toLogic()) //
-				.thenReturn(convertedAfterRead);
-
-		// when
-		taskManagerLogic.create(newOne);
-
-		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade);
-		inOrder.verify(converter).from(newOne);
-		inOrder.verify(logicAsSourceConverter).toStore();
-		inOrder.verify(store).create(DUMMY_STORABLE_TASK);
-		inOrder.verify(store).read(storable);
-		inOrder.verify(converter).from(createdOne);
-		inOrder.verify(storeAsSourceConverter).toLogic();
-		inOrder.verify(scheduledTaskFacade).create(convertedAfterRead);
-		inOrder.verifyNoMoreInteractions();
-	}
-
-	@Test
-	public void scheduledTaskUpdated() throws Exception {
-		// given
-		when(storeAsSourceConverter.toLogic()) //
-				.thenReturn(ReadEmailTask.newInstance() //
-						.withId(ID) //
-						.withDescription("should be deleted from scheduler facade") //
-						.build() //
-				);
-		final ScheduledTask task = ReadEmailTask.newInstance() //
-				.withId(ID) //
-				.withDescription(NEW_DESCRIPTION) //
-				.withActiveStatus(ACTIVE_STATUS) //
-				.withCronExpression(NEW_CRON_EXPRESSION) //
-				.build();
-
-		// when
-		taskManagerLogic.update(task);
-
-		// then
-		final ArgumentCaptor<ScheduledTask> scheduledTaskCaptor = ArgumentCaptor.forClass(ScheduledTask.class);
-		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade);
-		inOrder.verify(converter).from(task);
-		inOrder.verify(logicAsSourceConverter).toStore();
-		inOrder.verify(store).read(DUMMY_STORABLE_TASK);
-		inOrder.verify(converter).from(any(org.cmdbuild.data.store.task.Task.class));
-		inOrder.verify(storeAsSourceConverter).toLogic();
-		inOrder.verify(scheduledTaskFacade).delete(scheduledTaskCaptor.capture());
-		inOrder.verify(store).update(DUMMY_STORABLE_TASK);
-		inOrder.verify(scheduledTaskFacade).create(task);
-		inOrder.verifyNoMoreInteractions();
-
-		final ScheduledTask captured = scheduledTaskCaptor.getValue();
-		assertThat(captured.getDescription(), equalTo("should be deleted from scheduler facade"));
+		taskManagerLogic = new DefaultTaskManagerLogic(converter, store, scheduledTaskFacade, synchronousEventFacade);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -176,26 +114,6 @@ public class DefaultTaskManagerLogicTest {
 
 		// when
 		taskManagerLogic.update(task);
-	}
-
-	@Test
-	public void scheduledTaskDeleted() throws Exception {
-		// given
-		final ScheduledTask task = ReadEmailTask.newInstance() //
-				.withId(ID) //
-				.build();
-
-		// when
-		taskManagerLogic.delete(task);
-
-		// then
-		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade);
-		inOrder.verify(scheduledTaskFacade).delete(task);
-		inOrder.verify(converter).from(task);
-		inOrder.verify(logicAsSourceConverter).toStore();
-		inOrder.verify(store).delete(DUMMY_STORABLE_TASK);
-		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -232,7 +150,7 @@ public class DefaultTaskManagerLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade);
+				scheduledTaskFacade, synchronousEventFacade);
 		inOrder.verify(store).list();
 		inOrder.verify(converter, times(2)).from(any(org.cmdbuild.data.store.task.Task.class));
 		inOrder.verify(storeAsSourceConverter).toLogic();
@@ -260,7 +178,7 @@ public class DefaultTaskManagerLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade);
+				scheduledTaskFacade, synchronousEventFacade);
 		inOrder.verify(store).list();
 		inOrder.verify(converter, times(2)).from(any(org.cmdbuild.data.store.task.Task.class));
 		inOrder.verify(storeAsSourceConverter).toLogic();
@@ -287,7 +205,7 @@ public class DefaultTaskManagerLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade);
+				scheduledTaskFacade, synchronousEventFacade);
 		inOrder.verify(converter).from(task);
 		inOrder.verify(logicAsSourceConverter).toStore();
 		inOrder.verify(store).read(any(org.cmdbuild.data.store.task.Task.class));
@@ -313,8 +231,101 @@ public class DefaultTaskManagerLogicTest {
 		taskManagerLogic.start(null);
 	}
 
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotStopTaskWithoutAnId() throws Exception {
+		// when
+		taskManagerLogic.stop(null);
+	}
+
 	@Test
-	public void taskNotStartedIfAlreadyStarted() throws Exception {
+	public void scheduledTaskCreated() throws Exception {
+		// given
+		final ReadEmailTask newOne = ReadEmailTask.newInstance().build();
+		final org.cmdbuild.data.store.task.ReadEmailTask createdOne = org.cmdbuild.data.store.task.ReadEmailTask
+				.newInstance().build();
+		final ReadEmailTask convertedAfterRead = ReadEmailTask.newInstance().build();
+		final Storable storable = mock(Storable.class);
+		when(store.create(DUMMY_STORABLE_TASK)) //
+				.thenReturn(storable);
+		when(store.read(storable)) //
+				.thenReturn(createdOne);
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(convertedAfterRead);
+
+		// when
+		taskManagerLogic.create(newOne);
+
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade);
+		inOrder.verify(converter).from(newOne);
+		inOrder.verify(logicAsSourceConverter).toStore();
+		inOrder.verify(store).create(DUMMY_STORABLE_TASK);
+		inOrder.verify(store).read(storable);
+		inOrder.verify(converter).from(createdOne);
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).create(convertedAfterRead);
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void scheduledTaskUpdated() throws Exception {
+		// given
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(ReadEmailTask.newInstance() //
+						.withId(ID) //
+						.withDescription("should be deleted from scheduler facade") //
+						.build() //
+				);
+		final ScheduledTask task = ReadEmailTask.newInstance() //
+				.withId(ID) //
+				.withDescription(NEW_DESCRIPTION) //
+				.withActiveStatus(ACTIVE_STATUS) //
+				.withCronExpression(NEW_CRON_EXPRESSION) //
+				.build();
+
+		// when
+		taskManagerLogic.update(task);
+
+		// then
+		final ArgumentCaptor<ScheduledTask> scheduledTaskCaptor = ArgumentCaptor.forClass(ScheduledTask.class);
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade);
+		inOrder.verify(converter).from(task);
+		inOrder.verify(logicAsSourceConverter).toStore();
+		inOrder.verify(store).read(DUMMY_STORABLE_TASK);
+		inOrder.verify(converter).from(any(org.cmdbuild.data.store.task.Task.class));
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).delete(scheduledTaskCaptor.capture());
+		inOrder.verify(store).update(DUMMY_STORABLE_TASK);
+		inOrder.verify(scheduledTaskFacade).create(task);
+		inOrder.verifyNoMoreInteractions();
+
+		final ScheduledTask captured = scheduledTaskCaptor.getValue();
+		assertThat(captured.getDescription(), equalTo("should be deleted from scheduler facade"));
+	}
+
+	@Test
+	public void scheduledTaskDeleted() throws Exception {
+		// given
+		final ScheduledTask task = ReadEmailTask.newInstance() //
+				.withId(ID) //
+				.build();
+
+		// when
+		taskManagerLogic.delete(task);
+
+		// then
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade);
+		inOrder.verify(scheduledTaskFacade).delete(task);
+		inOrder.verify(converter).from(task);
+		inOrder.verify(logicAsSourceConverter).toStore();
+		inOrder.verify(store).delete(DUMMY_STORABLE_TASK);
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void scheduledTaskNotStartedIfAlreadyStarted() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
 				.newInstance() //
@@ -329,7 +340,7 @@ public class DefaultTaskManagerLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade);
+				scheduledTaskFacade, synchronousEventFacade);
 		inOrder.verify(store).read(eq(42L));
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -358,7 +369,7 @@ public class DefaultTaskManagerLogicTest {
 				.forClass(org.cmdbuild.data.store.task.Task.class);
 		final ArgumentCaptor<ScheduledTask> scheduledTaskCaptor = ArgumentCaptor.forClass(ScheduledTask.class);
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade);
+				scheduledTaskFacade, synchronousEventFacade);
 		inOrder.verify(store).read(eq(ID));
 		inOrder.verify(store).update(storedTaskCaptor.capture());
 		inOrder.verify(converter).from(storedTaskCaptor.capture());
@@ -379,14 +390,8 @@ public class DefaultTaskManagerLogicTest {
 		assertThat(scheduledTask.isActive(), is(true));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void cannotStopTaskWithoutAnId() throws Exception {
-		// when
-		taskManagerLogic.stop(null);
-	}
-
 	@Test
-	public void taskNotStoppedIfAlreadyStopped() throws Exception {
+	public void scheduledTaskNotStoppedIfAlreadyStopped() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
 				.newInstance() //
@@ -401,7 +406,7 @@ public class DefaultTaskManagerLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade);
+				scheduledTaskFacade, synchronousEventFacade);
 		inOrder.verify(store).read(eq(42L));
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -430,7 +435,7 @@ public class DefaultTaskManagerLogicTest {
 				.forClass(org.cmdbuild.data.store.task.Task.class);
 		final ArgumentCaptor<ScheduledTask> scheduledTaskCaptor = ArgumentCaptor.forClass(ScheduledTask.class);
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
-				scheduledTaskFacade);
+				scheduledTaskFacade, synchronousEventFacade);
 		inOrder.verify(store).read(eq(ID));
 		inOrder.verify(store).update(storedTaskCaptor.capture());
 		inOrder.verify(converter).from(storedTaskCaptor.capture());
@@ -447,6 +452,224 @@ public class DefaultTaskManagerLogicTest {
 		assertThat(convertedTask.isRunning(), is(false));
 
 		final ScheduledTask scheduledTask = scheduledTaskCaptor.getValue();
+		assertThat(scheduledTask.getId(), equalTo(ID));
+		assertThat(scheduledTask.isActive(), is(false));
+	}
+
+	@Test
+	public void synchronousEventTaskCreated() throws Exception {
+		// given
+		final SynchronousEventTask newOne = SynchronousEventTask.newInstance().build();
+		final org.cmdbuild.data.store.task.SynchronousEventTask createdOne = org.cmdbuild.data.store.task.SynchronousEventTask
+				.newInstance().build();
+		final SynchronousEventTask convertedAfterRead = SynchronousEventTask.newInstance().build();
+		final Storable storable = mock(Storable.class);
+		when(store.create(DUMMY_STORABLE_TASK)) //
+				.thenReturn(storable);
+		when(store.read(storable)) //
+				.thenReturn(createdOne);
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(convertedAfterRead);
+
+		// when
+		taskManagerLogic.create(newOne);
+
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade);
+		inOrder.verify(converter).from(newOne);
+		inOrder.verify(logicAsSourceConverter).toStore();
+		inOrder.verify(store).create(DUMMY_STORABLE_TASK);
+		inOrder.verify(store).read(storable);
+		inOrder.verify(converter).from(createdOne);
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(synchronousEventFacade).create(convertedAfterRead);
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void synchronousEventTaskUpdated() throws Exception {
+		// given
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(SynchronousEventTask.newInstance() //
+						.withId(ID) //
+						.withDescription("should be deleted from facade") //
+						.build() //
+				);
+		final SynchronousEventTask task = SynchronousEventTask.newInstance() //
+				.withId(ID) //
+				.withDescription(NEW_DESCRIPTION) //
+				.withActiveStatus(ACTIVE_STATUS) //
+				.build();
+
+		// when
+		taskManagerLogic.update(task);
+
+		// then
+		final ArgumentCaptor<SynchronousEventTask> taskCaptor = ArgumentCaptor.forClass(SynchronousEventTask.class);
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade);
+		inOrder.verify(converter).from(task);
+		inOrder.verify(logicAsSourceConverter).toStore();
+		inOrder.verify(store).read(DUMMY_STORABLE_TASK);
+		inOrder.verify(converter).from(any(org.cmdbuild.data.store.task.Task.class));
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(synchronousEventFacade).delete(taskCaptor.capture());
+		inOrder.verify(store).update(DUMMY_STORABLE_TASK);
+		inOrder.verify(synchronousEventFacade).create(task);
+		inOrder.verifyNoMoreInteractions();
+
+		final Task captured = taskCaptor.getValue();
+		assertThat(captured.getDescription(), equalTo("should be deleted from facade"));
+	}
+
+	@Test
+	public void synchronousEventTaskDeleted() throws Exception {
+		// given
+		final SynchronousEventTask task = SynchronousEventTask.newInstance() //
+				.withId(ID) //
+				.build();
+
+		// when
+		taskManagerLogic.delete(task);
+
+		// then
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade);
+		inOrder.verify(synchronousEventFacade).delete(task);
+		inOrder.verify(converter).from(task);
+		inOrder.verify(logicAsSourceConverter).toStore();
+		inOrder.verify(store).delete(DUMMY_STORABLE_TASK);
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void synchronousEventTaskNotStartedIfAlreadyStarted() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
+				.newInstance() //
+				.withId(ID) //
+				.withRunningStatus(true) //
+				.build();
+		when(store.read(ID)) //
+				.thenReturn(stored);
+
+		// when
+		taskManagerLogic.start(ID);
+
+		// then
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade);
+		inOrder.verify(store).read(eq(42L));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void synchronousEventTaskStarted() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
+				.newInstance() //
+				.withId(ID) //
+				.withRunningStatus(false) //
+				.build();
+		when(store.read(ID)) //
+				.thenReturn(stored);
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(SynchronousEventTask.newInstance() //
+						.withId(ID) //
+						.withActiveStatus(true) //
+						.build());
+
+		// when
+		taskManagerLogic.start(ID);
+
+		// then
+		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor = ArgumentCaptor
+				.forClass(org.cmdbuild.data.store.task.Task.class);
+		final ArgumentCaptor<SynchronousEventTask> taskCaptor = ArgumentCaptor.forClass(SynchronousEventTask.class);
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade);
+		inOrder.verify(store).read(eq(ID));
+		inOrder.verify(store).update(storedTaskCaptor.capture());
+		inOrder.verify(converter).from(storedTaskCaptor.capture());
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(synchronousEventFacade).create(taskCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+
+		final org.cmdbuild.data.store.task.Task updatedTask = storedTaskCaptor.getAllValues().get(0);
+		assertThat(updatedTask.getId(), equalTo(ID));
+		assertThat(updatedTask.isRunning(), is(true));
+
+		final org.cmdbuild.data.store.task.Task convertedTask = storedTaskCaptor.getAllValues().get(1);
+		assertThat(convertedTask.getId(), equalTo(ID));
+		assertThat(convertedTask.isRunning(), is(true));
+
+		final Task task = taskCaptor.getValue();
+		assertThat(task.getId(), equalTo(ID));
+		assertThat(task.isActive(), is(true));
+	}
+
+	@Test
+	public void synchronousEventTaskNotStoppedIfAlreadyStopped() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
+				.newInstance() //
+				.withId(ID) //
+				.withRunningStatus(false) //
+				.build();
+		when(store.read(ID)) //
+				.thenReturn(stored);
+
+		// when
+		taskManagerLogic.stop(ID);
+
+		// then
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade);
+		inOrder.verify(store).read(eq(42L));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void synchronousEventTaskStopped() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
+				.newInstance() //
+				.withId(ID) //
+				.withRunningStatus(true) //
+				.build();
+		when(store.read(ID)) //
+				.thenReturn(stored);
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(SynchronousEventTask.newInstance() //
+						.withId(ID) //
+						.withActiveStatus(false) //
+						.build());
+
+		// when
+		taskManagerLogic.stop(ID);
+
+		// then
+		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor = ArgumentCaptor
+				.forClass(org.cmdbuild.data.store.task.Task.class);
+		final ArgumentCaptor<SynchronousEventTask> taskCaptor = ArgumentCaptor.forClass(SynchronousEventTask.class);
+		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
+				scheduledTaskFacade, synchronousEventFacade);
+		inOrder.verify(store).read(eq(ID));
+		inOrder.verify(store).update(storedTaskCaptor.capture());
+		inOrder.verify(converter).from(storedTaskCaptor.capture());
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(synchronousEventFacade).delete(taskCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+
+		final org.cmdbuild.data.store.task.Task updatedTask = storedTaskCaptor.getAllValues().get(0);
+		assertThat(updatedTask.getId(), equalTo(ID));
+		assertThat(updatedTask.isRunning(), is(false));
+
+		final org.cmdbuild.data.store.task.Task convertedTask = storedTaskCaptor.getAllValues().get(1);
+		assertThat(convertedTask.getId(), equalTo(ID));
+		assertThat(convertedTask.isRunning(), is(false));
+
+		final Task scheduledTask = taskCaptor.getValue();
 		assertThat(scheduledTask.getId(), equalTo(ID));
 		assertThat(scheduledTask.isActive(), is(false));
 	}
