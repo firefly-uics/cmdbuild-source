@@ -70,8 +70,8 @@
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 */
 		onCMCardGridIconRowClick: function(grid, action, model) {
-			CMDBuild.LoadMask.get().show();
 			if (action == ICON_ACTION) {
+				CMDBuild.LoadMask.get().show();
 				var me = this;
 				var entryType = _CMCardModuleState.entryType;
 				CMDBuild.bim.proxy.roidForCardId({
