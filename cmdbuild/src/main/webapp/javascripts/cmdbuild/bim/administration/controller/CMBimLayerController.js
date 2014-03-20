@@ -29,6 +29,10 @@ Ext.define("CMDBuild.controller.administration.filter.CMBimLayerController", {
 				me.view.load();
 			},
 
+			failure: function() {
+				me.view.load();
+			},
+
 			callback: function() {
 				CMDBuild.LoadMask.instance.hide();
 			}
