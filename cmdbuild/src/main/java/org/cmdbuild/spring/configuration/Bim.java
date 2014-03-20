@@ -15,10 +15,15 @@ import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.NullOnNotFoundReadStore;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.logic.bim.BimLogic;
-import org.cmdbuild.logic.bim.DefaultBimLogic;
+import org.cmdbuild.logic.bim.DefaultLayerLogic;
+import org.cmdbuild.logic.bim.DefaultProjectLogic;
+import org.cmdbuild.logic.bim.DefaultSynchronizationLogic;
+import org.cmdbuild.logic.bim.DefaultViewerLogic;
+import org.cmdbuild.logic.bim.LayerLogic;
+import org.cmdbuild.logic.bim.ProjectLogic;
+import org.cmdbuild.logic.bim.SynchronizationLogic;
+import org.cmdbuild.logic.bim.ViewerLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.bim.BimLayer;
@@ -29,6 +34,7 @@ import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimStoreManager;
 import org.cmdbuild.services.bim.DefaultBimDataModelManager;
+import org.cmdbuild.services.bim.DefaultBimDataView;
 import org.cmdbuild.services.bim.DefaultBimFacade;
 import org.cmdbuild.services.bim.DefaultBimPersistence;
 import org.cmdbuild.services.bim.DefaultBimStoreManager;
@@ -38,9 +44,11 @@ import org.cmdbuild.services.bim.RelationPersistence;
 import org.cmdbuild.services.bim.TransactionManager;
 import org.cmdbuild.services.bim.connector.BimCardDiffer;
 import org.cmdbuild.services.bim.connector.CardDiffer;
-import org.cmdbuild.services.bim.connector.DefaultBimDataView;
 import org.cmdbuild.services.bim.connector.DefaultBimMapper;
 import org.cmdbuild.services.bim.connector.Mapper;
+import org.cmdbuild.services.bim.connector.export.ConnectorFramework;
+import org.cmdbuild.services.bim.connector.export.DoNotForceUpdate;
+import org.cmdbuild.services.bim.connector.export.ExportConnectorFramework;
 import org.cmdbuild.services.bim.connector.export.ExportPolicy;
 import org.cmdbuild.services.bim.connector.export.MergeOnlyBeforeExport;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
@@ -73,34 +81,49 @@ public class Bim {
 	}
 
 	@Bean
-	public BimserverClient bimserverClient() {
+	protected BimserverClient bimserverClient() {
 		return new SmartBimserverClient(new DefaultBimserverClient(bimConfiguration()));
 	}
 
 	@Bean
-	BimService bimService() {
+	protected BimService bimService() {
 		return new BimserverService(bimserverClient());
 	}
 
 	@Bean
-	public BimLogic bimLogic() {
-		return new DefaultBimLogic(bimServiceFacade(), bimDataPersistence(), bimDataModelManager(), mapper(),
-				bimDataView(), dataAccessLogic(), exportProjectStrategy());
+	public ProjectLogic projectLogic() {
+		return new DefaultProjectLogic(bimServiceFacade(), bimDataPersistence(), exportPolicy());
 	}
 
 	@Bean
-	public ExportPolicy exportProjectStrategy() {
-		return new MergeOnlyBeforeExport(bimServiceFacade());
+	public LayerLogic layerLogic() {
+		return new DefaultLayerLogic(bimDataPersistence(), bimDataView(), bimDataModelManager());
 	}
 
 	@Bean
-	protected DataAccessLogic dataAccessLogic() {
-		return dataAccessLogicBuilder.build();
+	public SynchronizationLogic synchronizationLogic() {
+		return new DefaultSynchronizationLogic(bimServiceFacade(), bimDataPersistence(), mapper(), exportPolicy(),
+				connectorFramework());
+	}
+
+	@Bean
+	public ViewerLogic viewerLogic() {
+		return new DefaultViewerLogic(bimServiceFacade(), bimDataPersistence(), bimDataView(), exportPolicy(),
+				layerLogic(), synchronizationLogic(), connectorFramework());
+	}
+
+	@Bean
+	public ExportPolicy exportPolicy() {
+		return new MergeOnlyBeforeExport(bimServiceFacade(), new DoNotForceUpdate());
 	}
 
 	@Bean
 	protected BimFacade bimServiceFacade() {
 		return new DefaultBimFacade(bimService(), transactionManager());
+	}
+
+	private ConnectorFramework connectorFramework() {
+		return new ExportConnectorFramework(bimDataView(), bimServiceFacade(), bimDataPersistence(), exportPolicy());
 	}
 
 	private TransactionManager transactionManager() {

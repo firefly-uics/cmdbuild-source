@@ -1,17 +1,18 @@
 package org.cmdbuild.services.bim;
 
 import java.util.List;
-import java.util.Map;
 
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.services.bim.connector.DefaultBimDataView.BimCard;
+import org.cmdbuild.services.bim.DefaultBimDataView.BimCard;
 
 public interface BimDataView {
-
-	Entity getCardDataForExport(CMCard card, String className, String containerId, String containerGlobalId,
-			String containerClassName, String shapeOid, String ifcType);
+	
+	Iterable<? extends CMClass> findClasses();
+	
+	CMCard fetchCard(String className, Long id);
 
 	List<CMCard> getCardsWithAttributeAndValue(CMIdentifier classIdentifier, Object attributeValue, String attributeName);
 
@@ -21,10 +22,16 @@ public interface BimDataView {
 
 	Long getIdFromGlobalId(String globalId, String className);
 
-	Map<String, BimCard> getAllGlobalIdMap();
+	Long getRootId(Long cardId, String className, String referenceRootName);
 
-	Long fetchRoot(Long cardId, String className, String referenceRoot);
+	List<BimCard> getBimCardsWithGivenValueOfRootReferenceAttribute(String className, Long rootCardId,
+			String rootReferenceName);
 
-	List<BimCard> getBimCardsWithAttributeAndValue(String className, Long rootCardId, String rootReferenceName);
+	Entity getCardDataForExport(Long id, String className, String containerAttributeName, String containerClassName,
+			String shapeOid, String ifcType);
+
+	Long getProjectCardIdFromRootCard(Long rootId, String rootClassName);
+
+	Long getRootCardIdFromProjectId(String projectId, String rootClassName);
 
 }

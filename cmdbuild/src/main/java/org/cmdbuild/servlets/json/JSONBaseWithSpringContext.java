@@ -20,8 +20,14 @@ import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
-import org.cmdbuild.logic.bim.BimLogic;
-import org.cmdbuild.logic.bim.DefaultBimLogic;
+import org.cmdbuild.logic.bim.DefaultLayerLogic;
+import org.cmdbuild.logic.bim.DefaultProjectLogic;
+import org.cmdbuild.logic.bim.DefaultSynchronizationLogic;
+import org.cmdbuild.logic.bim.DefaultViewerLogic;
+import org.cmdbuild.logic.bim.LayerLogic;
+import org.cmdbuild.logic.bim.ProjectLogic;
+import org.cmdbuild.logic.bim.SynchronizationLogic;
+import org.cmdbuild.logic.bim.ViewerLogic;
 import org.cmdbuild.logic.cache.CachingLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -127,9 +133,21 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	protected AuthenticationLogic authLogic() {
 		return applicationContext().getBean(DefaultAuthenticationLogicBuilder.class).build();
 	}
+	
+	protected ProjectLogic bimProjectLogic() {
+		return applicationContext().getBean(DefaultProjectLogic.class);
+	}
+	
+	protected LayerLogic bimLayerLogic() {
+		return applicationContext().getBean(DefaultLayerLogic.class);
+	}
+	
+	protected SynchronizationLogic bimConnectorLogic() {
+		return applicationContext().getBean(DefaultSynchronizationLogic.class);
+	}
 
-	protected BimLogic bimLogic() {
-		return applicationContext().getBean(DefaultBimLogic.class);
+	protected ViewerLogic viewerLogic() {
+		return applicationContext().getBean(DefaultViewerLogic.class);
 	}
 
 	protected CachingLogic cachingLogic() {

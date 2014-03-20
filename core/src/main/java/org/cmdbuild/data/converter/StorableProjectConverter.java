@@ -14,8 +14,9 @@ import org.cmdbuild.model.bim.StorableProject;
 public class StorableProjectConverter extends BaseStorableConverter<StorableProject> {
 
 	public static final String TABLE_NAME = "_BimProject";
+	public static final String PROJECT_ID = "ProjectId";
 
-	final String NAME = "Code", DESCRIPTION = "Description", PROJECT_ID = "ProjectId", ACTIVE = "Active",
+	final String NAME = "Code", DESCRIPTION = "Description", ACTIVE = "Active",
 			LAST_CHECKIN = "LastCheckin", SYNCHRONIZED = "Synchronized", IMPORT_MAPPING = "ImportMapping",
 			EXPORT_MAPPING = "ExportMapping", EXPORT_PROJECT_ID = "ExportProjectId",
 			SHAPE_PROJECT_ID = "ShapesProjectId";
