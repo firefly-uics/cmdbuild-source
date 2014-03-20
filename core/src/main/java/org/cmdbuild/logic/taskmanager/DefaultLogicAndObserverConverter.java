@@ -1,55 +1,40 @@
 package org.cmdbuild.logic.taskmanager;
 
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.view.ObservableDataView.Observer;
-import org.slf4j.Logger;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 public class DefaultLogicAndObserverConverter implements LogicAndObserverConverter {
 
-	private static final Logger logger = TaskManagerLogic.logger;
-	private static final Marker marker = MarkerFactory.getMarker(DefaultLogicAndObserverConverter.class.getName());
+	public static interface ObserverFactory {
+
+		public Observer create(SynchronousEventTask task);
+
+	}
 
 	private static class DefaultLogicAsSourceConverter implements LogicAsSourceConverter {
 
 		private final SynchronousEventTask source;
+		private final ObserverFactory observerFactory;
 
-		public DefaultLogicAsSourceConverter(final SynchronousEventTask source) {
+		public DefaultLogicAsSourceConverter(final ObserverFactory observerFactory, final SynchronousEventTask source) {
 			this.source = source;
+			this.observerFactory = observerFactory;
 		}
 
 		@Override
 		public Observer toObserver() {
-			return new Observer() {
-
-				@Override
-				public void afterCreate(final CMCard card) {
-					logger.info(marker, "card created - '{}', '{}'", source, card);
-				}
-
-				@Override
-				public void beforeUpdate(CMCard actual, CMCard next) {
-					logger.info(marker, "card will be updated - '{}', actual '{}', next '{}'", source, actual, next);
-				}
-
-				@Override
-				public void afterUpdate(CMCard previous, CMCard actual) {
-					logger.info(marker, "card updated - '{}', actual '{}', previous '{}'", source, actual, previous);
-				}
-
-				@Override
-				public void beforeDelete(CMCard card) {
-					logger.info(marker, "card will be deleted - '{}', '{}'", source, card);
-				}
-
-			};
+			return observerFactory.create(source);
 		}
+	}
+
+	private final ObserverFactory observerFactory;
+
+	public DefaultLogicAndObserverConverter(final ObserverFactory observerFactory) {
+		this.observerFactory = observerFactory;
 	}
 
 	@Override
 	public LogicAsSourceConverter from(final SynchronousEventTask source) {
-		return new DefaultLogicAsSourceConverter(source);
+		return new DefaultLogicAsSourceConverter(observerFactory, source);
 	}
 
 }

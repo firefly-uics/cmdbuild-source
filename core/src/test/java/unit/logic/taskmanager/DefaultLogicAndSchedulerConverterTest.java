@@ -15,11 +15,11 @@ import org.mockito.InOrder;
 
 public class DefaultLogicAndSchedulerConverterTest {
 
-	private DefaultLogicAndSchedulerConverter converterFactory;
+	private DefaultLogicAndSchedulerConverter converter;
 
 	@Before
 	public void setUp() throws Exception {
-		converterFactory = new DefaultLogicAndSchedulerConverter();
+		converter = new DefaultLogicAndSchedulerConverter();
 	}
 
 	@Test
@@ -31,10 +31,10 @@ public class DefaultLogicAndSchedulerConverterTest {
 		final JobFactory<ReadEmailTask> factory = mock(JobFactory.class);
 		when(factory.create(task)) //
 				.thenReturn(job);
-		converterFactory.register(ReadEmailTask.class, factory);
+		converter.register(ReadEmailTask.class, factory);
 
 		// when
-		converterFactory.from(task).toJob();
+		converter.from(task).toJob();
 
 		// then
 		final InOrder inOrder = inOrder(factory);
@@ -51,10 +51,10 @@ public class DefaultLogicAndSchedulerConverterTest {
 		final JobFactory<StartWorkflowTask> factory = mock(JobFactory.class);
 		when(factory.create(task)) //
 				.thenReturn(job);
-		converterFactory.register(StartWorkflowTask.class, factory);
+		converter.register(StartWorkflowTask.class, factory);
 
 		// when
-		converterFactory.from(task).toJob();
+		converter.from(task).toJob();
 
 		// then
 		final InOrder inOrder = inOrder(factory);
