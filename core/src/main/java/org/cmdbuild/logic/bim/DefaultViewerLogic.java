@@ -122,14 +122,15 @@ public class DefaultViewerLogic implements ViewerLogic {
 			final JsonNode rootNode = mapper.readTree(fileReader);
 			final JsonNode data = rootNode.findValue("data");
 			final JsonNode properties = data.findValue("properties");
-			final List<BimLayer> layers = layerLogic.readLayers();
+			final Iterable<BimLayer> layers = layerLogic.getActiveLayers();
 			for (final BimLayer layer : layers) {
 				final String className = layer.getClassName();
-				System.out.println("Layer " + className);
+				System.out.println("\n----- Layer " + className);
 				final String rootClassName = layerLogic.getRootLayer().getClassName();
 				List<BimCard> bimCards = Lists.newArrayList();
 				if (className.equals(rootClassName)) {
-					bimCards = bimDataView.getBimCardsWithGivenValueOfRootReferenceAttribute(className, null, null);
+					final BimCard rootBimCard = bimDataView.getBimCardFromRootId(className, rootCardId);
+					bimCards.add(rootBimCard);
 				} else {
 					final String rootReferenceName = layer.getRootReference();
 					if (isNotBlank(rootReferenceName)) {

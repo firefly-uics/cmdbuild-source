@@ -29,7 +29,7 @@ import javax.activation.DataSource;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
 import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.logic.bim.ProjectLogic.Project;
+import org.cmdbuild.logic.bim.project.ProjectLogic.Project;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.data.Card;
