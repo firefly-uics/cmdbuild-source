@@ -77,10 +77,12 @@ public class ExportConnectorFramework implements ConnectorFramework {
 		final boolean isSynchronized = isSynch(input);
 		System.out.println("Is synchronized? " + isSynchronized);
 		if (!isSynchronized) {
-			synchronized (this) {
-				performSynchronization(input, output);
-			}
+			performSynchronizationOnlyOne(input, output);
 		}
+	}
+
+	private synchronized void performSynchronizationOnlyOne(final Object input, final Output output) {
+		performSynchronization(input, output);
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package org.cmdbuild.services.bim;
 import java.util.List;
 
 import org.cmdbuild.bim.model.Entity;
-import org.cmdbuild.services.bim.BimPersistence.CmProject;
+import org.cmdbuild.services.bim.BimPersistence.PersistenceProject;
 
 public interface BimDataModelManager {
 
@@ -25,6 +25,6 @@ public interface BimDataModelManager {
 
 	void addPerimeterAndHeightFieldsIfNeeded(String className);
 
-	void saveCardBinding(CmProject persistenceProject);
+	void saveCardBinding(PersistenceProject persistenceProject);
 
 }

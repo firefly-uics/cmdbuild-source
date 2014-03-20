@@ -27,11 +27,14 @@ public interface BimDataView {
 	List<BimCard> getBimCardsWithGivenValueOfRootReferenceAttribute(String className, Long rootCardId,
 			String rootReferenceName);
 
+	BimCard getBimCardFromRootId(String className, Long rootCardId);
+
 	Entity getCardDataForExport(Long id, String className, String containerAttributeName, String containerClassName,
 			String shapeOid, String ifcType);
 
 	Long getProjectCardIdFromRootCard(Long rootId, String rootClassName);
 
 	Long getRootCardIdFromProjectId(String projectId, String rootClassName);
+
 
 }
