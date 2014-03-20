@@ -5,8 +5,8 @@ import static org.mockito.Mockito.mock;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.DefaultBimFacade;
-import org.cmdbuild.services.bim.connector.export.Export;
-import org.cmdbuild.services.bim.connector.export.NewExportConnector;
+import org.cmdbuild.services.bim.connector.export.GenericMapper;
+import org.cmdbuild.services.bim.connector.export.DefaultExportConnector;
 import org.junit.Before;
 
 public class BimExporterTest {
@@ -21,11 +21,11 @@ public class BimExporterTest {
 	private final DefaultBimFacade serviceFacade = mock(DefaultBimFacade.class);
 	private BimPersistence persistence = mock(BimPersistence.class);
 
-	private Export exporter;
+	private GenericMapper exporter;
 
 	@Before
 	public void setUp() {
-		exporter = new NewExportConnector(bimDataView, serviceFacade, persistence, null, null);
+		exporter = new DefaultExportConnector(bimDataView, serviceFacade, persistence, null);
 	}
 
 	

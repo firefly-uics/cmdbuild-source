@@ -13,13 +13,15 @@ import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.services.bim.BimFacade;
 
-public class MergeOnlyBeforeExport extends DoNotForceUpdate implements ExportPolicy {
+public class MergeOnlyBeforeExport implements ExportPolicy {
 
 	private static final String EXPORT_SUFFIX = "-export";
 	private final BimFacade bimFacade;
+	private final ExportPolicy delegate;
 
-	public MergeOnlyBeforeExport(final BimFacade bimFacade) {
+	public MergeOnlyBeforeExport(final BimFacade bimFacade, final ExportPolicy delegate) {
 		this.bimFacade = bimFacade;
+		this.delegate = delegate;
 	}
 
 	@Override
@@ -91,6 +93,11 @@ public class MergeOnlyBeforeExport extends DoNotForceUpdate implements ExportPol
 			throw new BimError("Unable to prepare project for export connector");
 		}
 		System.out.println("Project for export is ready");
+	}
+
+	@Override
+	public boolean forceUpdate() {
+		return delegate.forceUpdate();
 	}
 
 }
