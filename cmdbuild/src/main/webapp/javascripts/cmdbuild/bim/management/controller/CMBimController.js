@@ -70,6 +70,7 @@
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 */
 		onCMCardGridIconRowClick: function(grid, action, model) {
+			CMDBuild.LoadMask.get().show();
 			if (action == ICON_ACTION) {
 				var me = this;
 				var entryType = _CMCardModuleState.entryType;
@@ -88,6 +89,10 @@
 									CMDBuild.Translation.no_bim_project_for_card
 							);
 						}
+						CMDBuild.LoadMask.get().hide();
+					},
+					failure: function() {
+						CMDBuild.LoadMask.get().hide();
 					}
 				});
 			}
