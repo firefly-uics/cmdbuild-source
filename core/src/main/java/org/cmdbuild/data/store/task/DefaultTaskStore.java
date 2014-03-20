@@ -91,6 +91,11 @@ public class DefaultTaskStore implements TaskStore {
 					builder = StartWorkflowTaskDefinition.newInstance();
 				}
 
+				@Override
+				public void visit(final SynchronousEventTask task) {
+					builder = SynchronousEventTaskDefinition.newInstance();
+				}
+
 			}.builder() //
 					.withId(task.getId()) //
 					.withDescription(task.getDescription()) //
@@ -119,6 +124,11 @@ public class DefaultTaskStore implements TaskStore {
 				@Override
 				public void visit(final StartWorkflowTaskDefinition taskDefinition) {
 					builder = StartWorkflowTask.newInstance();
+				}
+
+				@Override
+				public void visit(final SynchronousEventTaskDefinition taskDefinition) {
+					builder = SynchronousEventTask.newInstance();
 				}
 
 			}.builder() //

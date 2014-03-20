@@ -6,11 +6,11 @@ import org.cmdbuild.model.email.Email;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
 
-public class ForwardingRule implements Rule {
+public abstract class ForwardingRule implements Rule {
 
 	private final Rule inner;
 
-	public ForwardingRule(final Rule rule) {
+	protected ForwardingRule(final Rule rule) {
 		this.inner = rule;
 	}
 

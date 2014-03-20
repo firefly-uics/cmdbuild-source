@@ -75,8 +75,8 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
 				.withDescription(description) //
 				.withActiveStatus(active) //
-				.withProcessClass(className) //
 				.withCronExpression(cronExpression) //
+				.withProcessClass(className) //
 				.withAttributes(convertJsonParams(jsonParameters)) //
 				.build();
 		final Long id = taskManagerLogic().create(task);

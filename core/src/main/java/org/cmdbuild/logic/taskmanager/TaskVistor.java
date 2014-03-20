@@ -6,4 +6,6 @@ public interface TaskVistor {
 
 	void visit(StartWorkflowTask task);
 
+	void visit(SynchronousEventTask task);
+
 }

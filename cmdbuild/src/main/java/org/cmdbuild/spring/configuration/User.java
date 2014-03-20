@@ -7,7 +7,9 @@ import static org.cmdbuild.spring.util.Constants.USER;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.UserDataView;
+import org.cmdbuild.data.view.ObservableDataView;
 import org.cmdbuild.data.view.PermissiveDataView;
 import org.cmdbuild.logic.data.access.SoapDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
@@ -48,6 +50,9 @@ public class User {
 	private SystemUser systemUser;
 
 	@Autowired
+	private TaskManager taskManager;
+
+	@Autowired
 	private UserStore userStore;
 
 	@Autowired
@@ -79,20 +84,23 @@ public class User {
 				lockCard.userLockCardManager());
 	}
 
-	@Bean
+	public static final String BEAN_USER_DATA_VIEW = "UserDataView";
+
+	@Bean(name = BEAN_USER_DATA_VIEW)
 	@Scope(PROTOTYPE)
 	@Qualifier(USER)
-	public UserDataView userDataView() {
-		return new UserDataView( //
+	public CMDataView userDataView() {
+		final CMDataView dataView = new UserDataView( //
 				data.systemDataView(), //
 				userStore.getUser().getPrivilegeContext(), //
 				privilegeManagement.rowAndColumnPrivilegeFetcher(), //
 				userStore.getUser());
+		return new ObservableDataView(dataView, taskManager.observerCollector().allInOneObserver());
 	}
 
 	@Bean
 	@Scope(PROTOTYPE)
-	public PermissiveDataView permissiveDataView() {
+	protected PermissiveDataView permissiveDataView() {
 		return new PermissiveDataView(userDataView(), data.systemDataView());
 	}
 

@@ -1,6 +1,7 @@
 package unit.logic.taskmanager;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
@@ -78,7 +79,7 @@ public class DefaultSchedulerFacadeTest {
 		assertThat(capturedTrigger, instanceOf(RecurringTrigger.class));
 		assertThat(RecurringTrigger.class.cast(capturedTrigger).getCronExpression(), endsWith("cron expression"));
 	}
-	
+
 	@Test
 	public void secondsAddedToSpecifiedCronExpression() throws Exception {
 		// given
@@ -105,7 +106,8 @@ public class DefaultSchedulerFacadeTest {
 
 		final Trigger capturedTrigger = triggerCaptor.getValue();
 		assertThat(capturedTrigger, instanceOf(RecurringTrigger.class));
-		assertThat(RecurringTrigger.class.cast(capturedTrigger).getCronExpression(), equalTo("0 <actual cron expression>"));
+		assertThat(RecurringTrigger.class.cast(capturedTrigger).getCronExpression(),
+				equalTo("0 <actual cron expression>"));
 	}
 
 	@Test

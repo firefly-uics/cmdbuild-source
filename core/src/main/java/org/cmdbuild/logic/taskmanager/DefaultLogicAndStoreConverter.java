@@ -125,6 +125,15 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.build();
 		}
 
+		@Override
+		public void visit(final SynchronousEventTask task) {
+			this.target = org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withRunningStatus(task.isActive()) //
+					.build();
+		}
+
 	}
 
 	private static class DefaultStoreAsSourceConverter implements StoreAsSourceConverter, TaskVisitor {
@@ -133,7 +142,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		private final org.cmdbuild.data.store.task.Task source;
 
-		private ScheduledTask target;
+		private Task target;
 
 		public DefaultStoreAsSourceConverter(final org.cmdbuild.data.store.task.Task source) {
 			this.source = source;
@@ -184,6 +193,15 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withAttributes(isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 							.split(attributesAsString)) //
+					.build();
+		}
+
+		@Override
+		public void visit(final org.cmdbuild.data.store.task.SynchronousEventTask task) {
+			target = SynchronousEventTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withActiveStatus(task.isRunning()) //
 					.build();
 		}
 
