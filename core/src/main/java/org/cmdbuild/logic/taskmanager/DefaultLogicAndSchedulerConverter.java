@@ -67,6 +67,11 @@ public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConve
 			job = factories.get(task.getClass()).create(task);
 		}
 
+		@Override
+		public void visit(final SynchronousEventTask task) {
+			throw new UnsupportedOperationException("invalid task " + task);
+		}
+
 	}
 
 	private final Map<Class<? extends ScheduledTask>, JobFactory<? extends ScheduledTask>> factories;

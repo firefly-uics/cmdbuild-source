@@ -26,13 +26,16 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
 		private final SchedulerFacade schedulerFacade;
+		private final SynchronousEventFacade synchronousEventFacade;
 		private final Task task;
 
 		public Create(final LogicAndStoreConverter converter, final TaskStore store,
-				final SchedulerFacade schedulerFacade, final Task task) {
+				final SchedulerFacade schedulerFacade, final SynchronousEventFacade synchronousEventFacade,
+				final Task task) {
 			this.converter = converter;
 			this.store = store;
 			this.schedulerFacade = schedulerFacade;
+			this.synchronousEventFacade = synchronousEventFacade;
 			this.task = task;
 		}
 
@@ -54,6 +57,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		@Override
 		public void visit(final StartWorkflowTask task) {
 			schedulerFacade.create(task);
+		}
+
+		@Override
+		public void visit(final SynchronousEventTask task) {
+			synchronousEventFacade.create(task);
 		}
 
 	}
@@ -127,13 +135,16 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
 		private final SchedulerFacade schedulerFacade;
+		private final SynchronousEventFacade synchronousEventFacade;
 		private final Task task;
 
 		public Update(final LogicAndStoreConverter converter, final TaskStore store,
-				final SchedulerFacade schedulerFacade, final Task task) {
+				final SchedulerFacade schedulerFacade, final SynchronousEventFacade synchronousEventFacade,
+				final Task task) {
 			this.converter = converter;
 			this.store = store;
 			this.schedulerFacade = schedulerFacade;
+			this.synchronousEventFacade = synchronousEventFacade;
 			this.task = task;
 		}
 
@@ -162,6 +173,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 					schedulerFacade.delete(task);
 				}
 
+				@Override
+				public void visit(final SynchronousEventTask task) {
+					synchronousEventFacade.delete(task);
+				}
+
 			};
 		}
 
@@ -178,6 +194,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 					schedulerFacade.create(task);
 				}
 
+				@Override
+				public void visit(final SynchronousEventTask task) {
+					synchronousEventFacade.create(task);
+				}
+
 			};
 		}
 
@@ -188,13 +209,16 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
 		private final SchedulerFacade schedulerFacade;
+		private final SynchronousEventFacade synchronousEventFacade;
 		private final Task task;
 
 		public Delete(final LogicAndStoreConverter converter, final TaskStore store,
-				final SchedulerFacade schedulerFacade, final Task task) {
+				final SchedulerFacade schedulerFacade, final SynchronousEventFacade synchronousEventFacade,
+				final Task task) {
 			this.converter = converter;
 			this.store = store;
 			this.schedulerFacade = schedulerFacade;
+			this.synchronousEventFacade = synchronousEventFacade;
 			this.task = task;
 		}
 
@@ -217,6 +241,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			schedulerFacade.delete(task);
 		}
 
+		@Override
+		public void visit(final SynchronousEventTask task) {
+			synchronousEventFacade.delete(task);
+		}
+
 	}
 
 	private static class Start implements Action<Void>, TaskVistor {
@@ -224,13 +253,16 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
 		private final SchedulerFacade schedulerFacade;
+		private final SynchronousEventFacade synchronousEventFacade;
 		private final Long id;
 
 		public Start(final LogicAndStoreConverter converter, final TaskStore store,
-				final SchedulerFacade schedulerFacade, final Long id) {
+				final SchedulerFacade schedulerFacade, final SynchronousEventFacade synchronousEventFacade,
+				final Long id) {
 			this.converter = converter;
 			this.store = store;
 			this.schedulerFacade = schedulerFacade;
+			this.synchronousEventFacade = synchronousEventFacade;
 			this.id = id;
 		}
 
@@ -259,6 +291,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			schedulerFacade.create(task);
 		}
 
+		@Override
+		public void visit(final SynchronousEventTask task) {
+			synchronousEventFacade.create(task);
+		}
+
 	}
 
 	private static class Stop implements Action<Void>, TaskVistor {
@@ -266,13 +303,16 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
 		private final SchedulerFacade schedulerFacade;
+		private final SynchronousEventFacade synchronousEventFacade;
 		private final Long id;
 
 		public Stop(final LogicAndStoreConverter converter, final TaskStore store,
-				final SchedulerFacade schedulerFacade, final Long id) {
+				final SchedulerFacade schedulerFacade, final SynchronousEventFacade synchronousEventFacade,
+				final Long id) {
 			this.converter = converter;
 			this.store = store;
 			this.schedulerFacade = schedulerFacade;
+			this.synchronousEventFacade = synchronousEventFacade;
 			this.id = id;
 		}
 
@@ -301,17 +341,24 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			schedulerFacade.delete(task);
 		}
 
+		@Override
+		public void visit(final SynchronousEventTask task) {
+			synchronousEventFacade.delete(task);
+		}
+
 	}
 
 	private final LogicAndStoreConverter converter;
 	private final TaskStore store;
 	private final SchedulerFacade schedulerFacade;
+	private final SynchronousEventFacade synchronousEventFacade;
 
 	public DefaultTaskManagerLogic(final LogicAndStoreConverter converter, final TaskStore store,
-			final SchedulerFacade schedulerFacade) {
+			final SchedulerFacade schedulerFacade, final SynchronousEventFacade synchronousEventFacade) {
 		this.converter = converter;
 		this.store = store;
 		this.schedulerFacade = schedulerFacade;
+		this.synchronousEventFacade = synchronousEventFacade;
 	}
 
 	@Override
@@ -363,7 +410,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	}
 
 	private Create doCreate(final Task task) {
-		return new Create(converter, store, schedulerFacade, task);
+		return new Create(converter, store, schedulerFacade, synchronousEventFacade, task);
 	}
 
 	private ReadAll doReadAll() {
@@ -379,19 +426,19 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	}
 
 	private Update doUpdate(final Task task) {
-		return new Update(converter, store, schedulerFacade, task);
+		return new Update(converter, store, schedulerFacade, synchronousEventFacade, task);
 	}
 
 	private Delete doDelete(final Task task) {
-		return new Delete(converter, store, schedulerFacade, task);
+		return new Delete(converter, store, schedulerFacade, synchronousEventFacade, task);
 	}
 
 	private Start doStart(final Long id) {
-		return new Start(converter, store, schedulerFacade, id);
+		return new Start(converter, store, schedulerFacade, synchronousEventFacade, id);
 	}
 
 	private Stop doStop(final Long id) {
-		return new Stop(converter, store, schedulerFacade, id);
+		return new Stop(converter, store, schedulerFacade, synchronousEventFacade, id);
 	}
 
 	private <T> T execute(final Action<T> action) {
