@@ -15,6 +15,7 @@ import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.ReadEmail;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.StartWorkflow;
 import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
+import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.junit.Before;
 import org.junit.Test;
@@ -152,7 +153,7 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void startWorkflowTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.StartWorkflowTask schedulerJob = org.cmdbuild.data.store.task.StartWorkflowTask
+		final org.cmdbuild.data.store.task.StartWorkflowTask source = org.cmdbuild.data.store.task.StartWorkflowTask
 				.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
@@ -163,7 +164,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.build();
 
 		// when
-		final Task _converted = converter.from(schedulerJob).toLogic();
+		final Task _converted = converter.from(source).toLogic();
 
 		// then
 		assertThat(_converted, instanceOf(StartWorkflowTask.class));
@@ -183,7 +184,7 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void startWorkflowTaskWithEmptyAttributesSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.StartWorkflowTask schedulerJob = org.cmdbuild.data.store.task.StartWorkflowTask
+		final org.cmdbuild.data.store.task.StartWorkflowTask source = org.cmdbuild.data.store.task.StartWorkflowTask
 				.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
@@ -194,7 +195,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.build();
 
 		// when
-		final Task _converted = converter.from(schedulerJob).toLogic();
+		final Task _converted = converter.from(source).toLogic();
 
 		// then
 		assertThat(_converted, instanceOf(StartWorkflowTask.class));
@@ -205,6 +206,46 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
 		assertThat(converted.getProcessClass(), equalTo("class name"));
 		assertThat(converted.getAttributes().isEmpty(), is(true));
+	}
+
+	@Test
+	public void synchronousEventTaskSuccessfullyConvertedToStore() throws Exception {
+		// given
+		final SynchronousEventTask source = SynchronousEventTask.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withActiveStatus(true) //
+				.build();
+
+		// when
+		final org.cmdbuild.data.store.task.Task converted = converter.from(source).toStore();
+
+		// then
+		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.SynchronousEventTask.class));
+		assertThat(converted.getId(), equalTo(42L));
+		assertThat(converted.getDescription(), equalTo("description"));
+		assertThat(converted.isRunning(), equalTo(true));
+	}
+
+	@Test
+	public void synchronousEventTaskSuccessfullyConvertedToLogic() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.SynchronousEventTask source = org.cmdbuild.data.store.task.SynchronousEventTask
+				.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withRunningStatus(true) //
+				.build();
+
+		// when
+		final Task _converted = converter.from(source).toLogic();
+
+		// then
+		assertThat(_converted, instanceOf(SynchronousEventTask.class));
+		final SynchronousEventTask converted = SynchronousEventTask.class.cast(_converted);
+		assertThat(converted.getId(), equalTo(42L));
+		assertThat(converted.getDescription(), equalTo("description"));
+		assertThat(converted.isActive(), equalTo(true));
 	}
 
 }

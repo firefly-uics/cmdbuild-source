@@ -2,11 +2,11 @@ package org.cmdbuild.logic.scheduler;
 
 import org.cmdbuild.data.store.task.Task;
 
-public class ForwardingSchedulerLogic implements SchedulerLogic {
+public abstract class ForwardingSchedulerLogic implements SchedulerLogic {
 
 	private final SchedulerLogic inner;
 
-	public ForwardingSchedulerLogic(final SchedulerLogic inner) {
+	protected ForwardingSchedulerLogic(final SchedulerLogic inner) {
 		this.inner = inner;
 	}
 

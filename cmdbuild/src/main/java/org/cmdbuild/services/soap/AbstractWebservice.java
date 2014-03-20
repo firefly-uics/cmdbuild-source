@@ -1,6 +1,7 @@
 package org.cmdbuild.services.soap;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +17,6 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logger.Log;
@@ -41,6 +41,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+
+;
 
 abstract class AbstractWebservice implements ApplicationContextAware {
 
@@ -75,7 +77,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected CMDataView userDataView() {
-		return applicationContext.getBean(UserDataView.class);
+		return applicationContext.getBean(BEAN_USER_DATA_VIEW, CMDataView.class);
 	}
 
 	protected DmsLogicHelper dmsLogicHelper() {
@@ -91,13 +93,13 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected WorkflowLogicHelper workflowLogicHelper() {
 		return new WorkflowLogicHelper( //
 				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
-				applicationContext.getBean(UserDataView.class), //
+				applicationContext.getBean(BEAN_USER_DATA_VIEW, CMDataView.class), //
 				metadataStoreFactory);
 	}
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
 		final DataAccessLogicHelper helper = new DataAccessLogicHelper( //
-				applicationContext.getBean(UserDataView.class),//
+				applicationContext.getBean(BEAN_USER_DATA_VIEW, CMDataView.class),//
 				applicationContext.getBean(SoapDataAccessLogicBuilder.class).build(), //
 				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
 				applicationContext.getBean("operationUser", OperationUser.class), //

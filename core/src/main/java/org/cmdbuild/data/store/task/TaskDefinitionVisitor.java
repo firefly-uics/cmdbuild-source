@@ -6,4 +6,6 @@ public interface TaskDefinitionVisitor {
 
 	void visit(final StartWorkflowTaskDefinition taskDefinition);
 
+	void visit(final SynchronousEventTaskDefinition taskDefinition);
+
 }

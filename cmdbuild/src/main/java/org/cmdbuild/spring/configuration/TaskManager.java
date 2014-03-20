@@ -15,17 +15,23 @@ import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.scheduler.DatabaseConfigurationAwareSchedulerLogic;
 import org.cmdbuild.logic.scheduler.DefaultSchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
+import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.DefaultSchedulerFacade;
+import org.cmdbuild.logic.taskmanager.DefaultSynchronousEventFacade;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
+import org.cmdbuild.logic.taskmanager.LogicAndObserverConverter;
 import org.cmdbuild.logic.taskmanager.LogicAndSchedulerConverter;
 import org.cmdbuild.logic.taskmanager.LogicAndStoreConverter;
+import org.cmdbuild.logic.taskmanager.DefaultObserverCollector;
+import org.cmdbuild.logic.taskmanager.ObserverCollector;
 import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.ReadEmailTaskJobFactory;
 import org.cmdbuild.logic.taskmanager.SchedulerFacade;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTaskJobFactory;
+import org.cmdbuild.logic.taskmanager.SynchronousEventFacade;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TransactionalTaskManagerLogic;
 import org.cmdbuild.scheduler.SchedulerExeptionFactory;
@@ -67,12 +73,17 @@ public class TaskManager {
 	@Bean
 	public TaskManagerLogic taskManagerLogic() {
 		return new TransactionalTaskManagerLogic(new DefaultTaskManagerLogic(taskConverter(), defaultTaskStore(),
-				defaultSchedulerTaskFacade()));
+				defaultSchedulerTaskFacade(), defaultSynchronousEventFacade()));
 	}
 
 	@Bean
 	protected SchedulerFacade defaultSchedulerTaskFacade() {
 		return new DefaultSchedulerFacade(quartzSchedulerService(), defaultJobFactory());
+	}
+
+	@Bean
+	public ObserverCollector observerCollector() {
+		return new DefaultObserverCollector();
 	}
 
 	@Bean
@@ -148,6 +159,16 @@ public class TaskManager {
 	@Bean
 	protected StartWorkflowTaskJobFactory startWorkflowTaskJobFactory() {
 		return new StartWorkflowTaskJobFactory(workflow.systemWorkflowLogicBuilder().build());
+	}
+
+	@Bean
+	protected SynchronousEventFacade defaultSynchronousEventFacade() {
+		return new DefaultSynchronousEventFacade(observerCollector(), logicAndObserverConverter());
+	}
+
+	@Bean
+	protected LogicAndObserverConverter logicAndObserverConverter() {
+		return new DefaultLogicAndObserverConverter();
 	}
 
 }
