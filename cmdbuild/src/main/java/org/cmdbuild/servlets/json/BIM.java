@@ -5,13 +5,17 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_LAYER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_PROJECTS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.BIM_ROOT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CARD;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CONTAINER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.EXPORT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILE_IFC;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ROOT_REFERENCE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.START;
 import static org.cmdbuild.servlets.json.ComunicationConstants.VALUE;
 
@@ -20,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
@@ -28,10 +31,11 @@ import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FileUtils;
+import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.logic.bim.LayerLogic.Layer;
 import org.cmdbuild.logic.bim.project.ProjectLogic.Project;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.bim.DefaultBimDataView.BimCard;
 import org.cmdbuild.servlets.json.serializers.ProjectSerializer;
@@ -41,6 +45,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class BIM extends JSONBaseWithSpringContext {
@@ -256,14 +261,40 @@ public class BIM extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject readBimLayer() throws JSONException {
-		final List<BimLayer> layerList = bimLayerLogic().readLayers();
-		final JSONArray jsonLayerList = BimLayerSerializer.toClient(layerList);
+		final Iterable<Layer> layerList = bimLayerLogic().readLayers();
+
+		final JSONArray jsonLayerList = new JSONArray();
 		final JSONObject response = new JSONObject();
-
+		
+		for (final Layer layer : layerList) {
+			final JSONObject jsonLayer = LAYER_TO_JSON.apply(layer);
+			jsonLayerList.put(jsonLayer);
+		}
+		
 		response.put(BIM_LAYER, jsonLayerList);
-
 		return response;
 	}
+
+	private static final Function<Layer, JSONObject> LAYER_TO_JSON = new Function<Layer, JSONObject>() {
+
+		@Override
+		public JSONObject apply(Layer input) {
+			final JSONObject out = new JSONObject();
+
+			try {
+				out.put(CLASS_NAME, input.getClassName());
+				out.put(ACTIVE, input.isActive());
+				out.put(BIM_ROOT, input.isRoot());
+				out.put(EXPORT, input.isExport());
+				out.put(CONTAINER, input.isContainer());
+				out.put(ROOT_REFERENCE, input.getRootReference());
+				out.put(DESCRIPTION, input.getDescription());
+			} catch (JSONException e) {
+				throw new BimError(e);
+			}
+			return out;
+		}
+	};
 
 	@JSONExported
 	public void saveBimLayer( //
@@ -333,7 +364,7 @@ public class BIM extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject rootClassName() throws JSONException {
 		final JSONObject out = new JSONObject();
-		final BimLayer rootLayer = bimLayerLogic().getRootLayer();
+		final Layer rootLayer = bimLayerLogic().getRootLayer();
 
 		if (rootLayer == null) {
 			out.put("root", "");
