@@ -907,7 +907,7 @@
 		this.clearSelection();
 		if (objectId) {
 
-			selectSceneObject(this, objectId);
+			selectSceneObject(this, objectId, true);
 			this.callDelegates("objectSelectedForLongPressure", [this, objectId], true);
 		}
 	};
