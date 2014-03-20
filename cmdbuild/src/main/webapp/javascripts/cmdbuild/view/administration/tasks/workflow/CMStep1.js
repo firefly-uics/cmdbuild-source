@@ -103,7 +103,7 @@
 			if (typeof modify === 'undefined')
 				modify = false;
 
-			CMDBuild.core.serviceProxy.CMProxyTasks.getWorkflowAttributes({
+			CMDBuild.core.proxy.CMProxyTasks.getWorkflowAttributes({
 				params: {
 					className: name
 				},
@@ -119,6 +119,10 @@
 					}
 				}
 			});
+		},
+
+		setDisabledTypeField: function(state) {
+			this.view.typeField.setDisabled(state);
 		},
 
 		setDisabledAttributesTable: function(state) {

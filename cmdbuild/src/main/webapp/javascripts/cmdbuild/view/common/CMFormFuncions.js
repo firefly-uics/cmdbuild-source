@@ -38,6 +38,7 @@
 			this._cmEditMode = false;
 			this.disableFields();
 			this.disableCMButtons();
+
 			if (enableCMTBar) {
 				this.enableCMTbar();
 			} else {
@@ -154,9 +155,9 @@
 
 		iterateOverArray: function(array, fn) {
 			array = array || [];
-			for (var i=0, l=array.length; i<l; ++i) {
-				var x = array[i];
-				fn(x);
+
+			for (var i = 0, l = array.length; i < l; ++i) {
+				fn(array[i]);
 			}
 		},
 

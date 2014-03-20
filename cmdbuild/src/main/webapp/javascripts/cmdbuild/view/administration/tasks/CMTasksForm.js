@@ -87,15 +87,6 @@
 
 			this.callParent(arguments);
 			this.disableModify();
-			this.disableCMButtons();
-		},
-
-		disableTypeField: function() {
-			this.wizard.items.get(0).typeField.setDisabled(true);
-		},
-
-		resetIdField: function() {
-			this.wizard.items.get(0).idField.setValue();
 		}
 	});
 

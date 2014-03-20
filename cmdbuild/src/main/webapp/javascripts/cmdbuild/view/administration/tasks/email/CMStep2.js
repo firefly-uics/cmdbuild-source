@@ -151,7 +151,7 @@
 					fieldLabel: tr.template,
 					itemId: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
 					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
-					store: CMDBuild.core.serviceProxy.CMProxyEmailTemplates.getStore(),
+					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
 					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
 					hidden: true,

@@ -33,6 +33,7 @@
 				fieldLabel: label,
 				cmImmutable: true,
 				disabled: true,
+				allowBlank: false,
 				listeners: {
 					change: function(field, newValue, oldValue) {
 						me.setBaseValue(
@@ -49,6 +50,19 @@
 			});
 		},
 
+		isAdvancedEmpty: function() {
+			if (
+				Ext.isEmpty(this.view.advancedFields[0].getValue())
+				&& Ext.isEmpty(this.view.advancedFields[1].getValue())
+				&& Ext.isEmpty(this.view.advancedFields[2].getValue())
+				&& Ext.isEmpty(this.view.advancedFields[3].getValue())
+				&& Ext.isEmpty(this.view.advancedFields[4].getValue())
+			)
+				return true;
+
+			return false;
+		},
+
 		setAdvancedValue: function(cronExpression) {
 			var values = cronExpression.split(' '),
 				fields = this.view.advancedFields;
@@ -61,18 +75,14 @@
 			}
 		},
 
-		setBaseValue: function(value) { // TODO: final test and fix
-//			var index = this.view.base.store.find(CMDBuild.ServiceProxy.parameter.VALUE, value);
-//			_debug(value);
-//_debug(index);
-//			if (index > -1) {
-//				this.view.base.setValue(value);
-//			}
-//			else {
-//				this.view.base.setValue('');
-//			}
-//
-//			this.view.baseExpression = index > -1;
+		setBaseValue: function(value) {
+			var index = this.view.baseCombo.store.find(CMDBuild.ServiceProxy.parameter.VALUE, value);
+
+			if (index > -1) {
+				this.view.baseCombo.setValue(value);
+			} else {
+				this.view.baseCombo.setValue();
+			}
 		},
 
 		setDisabledAdvancedFields: function(value) {
@@ -109,6 +119,7 @@
 				width: CMDBuild.LABEL_WIDTH,
 				listeners: {
 					'change': function(radio, value) {
+						me.baseCombo.setDisabled(value);
 						me.delegate.setDisabledAdvancedFields(!value);
 					}
 				}
@@ -144,16 +155,16 @@
 				inputValue: 'base',
 				boxLabel: translation.basic,
 				width: CMDBuild.LABEL_WIDTH,
-				checked: true,
 				listeners: {
 					'change': function(radio, value) {
-						me.base.setDisabled(!value);
+						me.baseCombo.setDisabled(!value);
+						me.delegate.setDisabledAdvancedFields(value);
 					}
 				}
 			});
 
-			this.base = Ext.create('Ext.form.ComboBox', {
-				name: 'base',
+			this.baseCombo = Ext.create('Ext.form.ComboBox', {
+				name: 'baseCombo',
 				store: Ext.create('Ext.data.SimpleStore', {
 					fields: [CMDBuild.ServiceProxy.parameter.VALUE, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
 					data: [
@@ -180,7 +191,7 @@
 				frame: true,
 				layout: 'hbox',
 				margin: '0px 0px 5px 0px',
-				items: [this.baseRadio, this.base]
+				items: [this.baseRadio, this.baseCombo]
 			});
 			// END: Base panel setup
 
@@ -192,8 +203,15 @@
 		},
 
 		listeners: {
+			/**
+			 * To correctly enable radio fields on tab show
+			 */
 			show: function(view, eOpts) {
-				this.delegate.setDisabledAdvancedFields(true);
+				if (Ext.isEmpty(this.baseCombo.getValue()) && !this.delegate.isAdvancedEmpty()) {
+					this.advanceRadio.setValue(true);
+				} else {
+					this.baseRadio.setValue(true);
+				}
 			}
 		}
 	});

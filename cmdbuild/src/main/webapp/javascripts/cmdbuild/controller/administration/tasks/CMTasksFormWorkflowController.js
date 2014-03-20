@@ -4,8 +4,7 @@
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
 		parentDelegate: undefined,
-		delegateStep1: undefined,
-		delegateStep2: undefined,
+		delegateStep: undefined,
 		view: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
@@ -93,7 +92,6 @@
 					me.delegateStep[1].setAdvancedValue(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
 
 					me.view.disableModify(true);
-					me.view.disableTypeField();
 				});
 
 				this.view.wizard.changeTab(0);
@@ -109,25 +107,40 @@
 			}
 
 			CMDBuild.LoadMask.get().show();
-			var formData = this.view.getData(true),
-				attributesGridValues = Ext.getCmp('workflowAttributesGrid').getData();
+			var formData = this.view.getData(true);
+			var attributesGridValues = Ext.getCmp('workflowAttributesGrid').getData();
 
 			// Form submit values formatting
-				if (formData.cronInputType) {
-					formData.cronExpression = me.buildCronExpression([
-						formData.minute,
-						formData.hour,
-						formData.dayOfMounth,
-						formData.mounth,
-						formData.dayOfWeek
-					]);
-				} else {
-					formData.cronExpression = formData.base;
-				}
-				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-					formData.attributes = Ext.encode(attributesGridValues);
+			if (formData.cronInputType) {
+				formData.cronExpression = this.buildCronExpression([
+					formData.minute,
+					formData.hour,
+					formData.dayOfMounth,
+					formData.mounth,
+					formData.dayOfWeek
+				]);
+			} else {
+				formData.cronExpression = formData.baseCombo;
+			}
 
-			delete formData.base;
+			if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+				formData.attributes = Ext.encode(attributesGridValues);
+
+			// Manual validation of cron field because disabled fields are not validated
+			if (this.delegateStep[1].isAdvancedEmpty()) {
+				this.delegateStep[1].view.advanceRadio.setValue(true);
+
+				for(item in this.delegateStep[1].view.advancedFields)
+					this.delegateStep[1].view.advancedFields[item].markInvalid('Field required.');
+
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+
+				CMDBuild.LoadMask.get().hide();
+
+				return;
+			}
+
+			delete formData.baseCombo;
 			delete formData.cronInputType;
 			delete formData.dayOfMounth;
 			delete formData.dayOfWeek;
@@ -137,7 +150,7 @@
 			delete formData.name;
 			delete formData.value;
 
-			if (formData.id == null || formData.id == '') {
+			if (Ext.isEmpty(formData.id)) {
 				CMDBuild.core.proxy.CMProxyTasks.create({
 					type: this.taskType,
 					params: formData,
@@ -156,35 +169,6 @@
 			}
 		},
 
-		removeItem: function() {
-			if (this.selectedId == null) {
-				// Nothing to remove
-				return;
-			}
-
-			var me = this,
-				store = this.parentDelegate.grid.store;
-
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.CMProxyTasks.remove({
-				type: this.taskType,
-				params: { id: this.selectedId },
-				scope: this,
-				success: function() {
-					me.view.reset();
-
-					store.load();
-					store.on('load', function() {
-						me.selectionModel.select(0, true);
-					});
-
-					this.view.disableModify();
-					this.view.wizard.changeTab(0);
-				},
-				callback: this.callback
-			});
-		},
-
 		success: function(response, options, decodedResult) {
 			var me = this,
 				store = this.parentDelegate.grid.store;
@@ -192,6 +176,7 @@
 			store.load();
 			store.on('load', function() {
 				me.view.reset();
+_debug(decodedResult.response);
 				var rowIndex = this.find(
 					CMDBuild.ServiceProxy.parameter.ID,
 					(decodedResult.response) ? decodedResult.response : me.view.getForm().findField(CMDBuild.ServiceProxy.parameter.ID).getValue()
@@ -200,8 +185,7 @@
 				me.selectionModel.select(rowIndex, true);
 			});
 
-			this.view.disableModify();
-			this.view.wizard.changeTab(0);
+			this.onRowSelected();
 		},
 
 		/**

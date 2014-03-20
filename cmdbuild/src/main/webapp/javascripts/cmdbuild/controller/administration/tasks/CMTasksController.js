@@ -74,7 +74,6 @@
 		buildFormController: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
 				this.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(type) + 'Controller', this.form);
-//				this.form.delegate.view = this.form;
 				this.form.delegate.parentDelegate = this;
 				this.form.delegate.selectionModel = this.grid.getSelectionModel();
 			}
@@ -140,6 +139,8 @@
 		},
 
 		onStartButtonClick: function(record) {
+			this.form.delegate.onAbortButtonClick();
+
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyTasks.start({
 				scope: this,
@@ -150,6 +151,8 @@
 		},
 
 		onStopButtonClick: function(record) {
+			this.form.delegate.onAbortButtonClick();
+
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyTasks.stop({
 				scope: this,

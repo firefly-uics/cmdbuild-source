@@ -16,16 +16,8 @@
 			throw 'CMTasksFormBaseController: cmOn() unimplemented method';
 		},
 
-		callback: function() {
-			CMDBuild.LoadMask.get().hide();
-		},
-
-		removeItem: function() {
-			throw 'CMTasksFormBaseController: removeItem() unimplemented method';
-		},
-
-		success: function() {
-			throw 'CMTasksFormBaseController: success() unimplemented method';
+		disableTypeField: function() {
+			this.delegateStep[0].setDisabledTypeField(true);
 		},
 
 		onAbortButtonClick: function(name, param, callBack) {
@@ -44,17 +36,18 @@
 			this.parentDelegate.loadForm(this.taskType);
 			this.view.reset();
 			this.view.enableTabbedModify();
-			this.view.disableTypeField();
+			this.disableTypeField();
 			this.view.wizard.changeTab(0);
 		},
 
 		onCloneButtonClick: function(name, param, callBack) {
 			this.selectionModel.deselectAll();
 			this.selectedId = null;
+			this.resetIdField();
 			this.view.disableCMTbar();
 			this.view.enableCMButtons();
 			this.view.enableTabbedModify(true);
-			this.view.disableTypeField();
+			this.disableTypeField();
 			this.view.wizard.changeTab(0);
 		},
 
@@ -62,8 +55,8 @@
 			this.view.disableCMTbar();
 			this.view.enableCMButtons();
 			this.view.enableTabbedModify(true);
+			this.disableTypeField();
 			this.view.wizard.changeTab(0);
-			this.view.disableTypeField();
 		},
 
 		onRemoveButtonClick: function(name, param, callBack) {
@@ -86,6 +79,32 @@
 
 		onSaveButtonClick: function() {
 			throw 'CMTasksFormBaseController: onSaveButtonClick() unimplemented method';
+		},
+
+		removeItem: function() {
+			if (this.selectedId == null) {
+				// Nothing to remove
+				return;
+			}
+
+			var me = this;
+
+			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.proxy.CMProxyTasks.remove({
+				type: this.taskType,
+				params: { id: this.selectedId },
+				scope: this,
+				success: this.selectionModel.select(0, true),
+				callback: this.callback
+			});
+		},
+
+		resetIdField: function() {
+			this.delegateStep[0].fillId();
+		},
+
+		success: function() {
+			throw 'CMTasksFormBaseController: success() unimplemented method';
 		}
 	});
 
