@@ -16,8 +16,10 @@ import org.cmdbuild.logic.scheduler.DatabaseConfigurationAwareSchedulerLogic;
 import org.cmdbuild.logic.scheduler.DefaultSchedulerLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter;
+import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter;
+import org.cmdbuild.logic.taskmanager.DefaultObserverFactory;
 import org.cmdbuild.logic.taskmanager.DefaultSchedulerFacade;
 import org.cmdbuild.logic.taskmanager.DefaultSynchronousEventFacade;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
@@ -168,7 +170,12 @@ public class TaskManager {
 
 	@Bean
 	protected LogicAndObserverConverter logicAndObserverConverter() {
-		return new DefaultLogicAndObserverConverter();
+		return new DefaultLogicAndObserverConverter(observerFactory());
+	}
+
+	@Bean
+	protected ObserverFactory observerFactory() {
+		return new DefaultObserverFactory();
 	}
 
 }

@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 
 public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConverter {
 
-	public interface JobFactory<T extends ScheduledTask> {
+	public static interface JobFactory<T extends ScheduledTask> {
 
 		public Job create(ScheduledTask task);
 
