@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.workflow;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.filter;
 import static java.lang.String.format;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
 
@@ -15,6 +16,7 @@ import java.util.Map.Entry;
 import javax.activation.DataSource;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -118,6 +120,34 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			allClasses = Collections.emptyList();
 		}
 		return allClasses;
+	}
+
+	@Override
+	public Iterable<? extends UserProcessClass> findProcessClasses(final boolean activeOnly) {
+		final Iterable<? extends UserProcessClass> processClasses;
+		if (activeOnly) {
+			processClasses = filter(findActiveProcessClasses(), processesWithXpdlAssociated());
+		} else {
+			processClasses = findAllProcessClasses();
+		}
+		return processClasses;
+	}
+
+	private Predicate<UserProcessClass> processesWithXpdlAssociated() {
+		final Predicate<UserProcessClass> processesWithXpdlAssociated = new Predicate<UserProcessClass>() {
+			@Override
+			public boolean apply(final UserProcessClass input) {
+				boolean apply = false;
+				try {
+					apply = input.getName().equals(Constants.BASE_PROCESS_CLASS_NAME) //
+							|| input.isSuperclass() //
+							|| input.getDefinitionVersions().length > 0;
+				} catch (final CMWorkflowException e) {
+				}
+				return apply;
+			}
+		};
+		return processesWithXpdlAssociated;
 	}
 
 	@Override

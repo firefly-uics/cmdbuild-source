@@ -35,5 +35,4 @@ public class WebserviceUtils {
 		final WSUsernameTokenPrincipal principal = WSUsernameTokenPrincipal.class.cast(rawPrincipal);
 		return principal.getName();
 	}
-
 }
