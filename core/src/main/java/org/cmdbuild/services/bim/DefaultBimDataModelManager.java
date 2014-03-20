@@ -71,7 +71,7 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 		this.dataView = dataView;
 		this.dataDefinitionLogic = dataDefinitionLogic;
 
-		// TODO check this
+		// TODO remove this and use a store-procedure
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}
 

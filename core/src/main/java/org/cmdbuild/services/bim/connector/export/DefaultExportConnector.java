@@ -12,12 +12,10 @@ import static org.cmdbuild.bim.utils.BimConstants.OBJECT_OID;
 import static org.cmdbuild.bim.utils.BimConstants.isValidId;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
-import static org.cmdbuild.services.bim.DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX;
 import static org.cmdbuild.services.bim.DefaultBimDataView.CONTAINER_GUID;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -34,79 +32,42 @@ import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.bimserver.BimserverEntity;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.DBIdentifier;
-import org.cmdbuild.logic.LogicDTO.DomainWithSource;
-import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
-import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
-import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.bim.BimLayer;
-import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimPersistence.CmProject;
 import org.cmdbuild.services.bim.connector.export.DataChangedListener.DataChangedException;
 import org.cmdbuild.services.bim.connector.export.DataChangedListener.DataNotChangedException;
-import org.cmdbuild.services.bim.connector.export.DataChangedListener.InvalidOutputException;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.MapDifference;
 import com.google.common.collect.MapDifference.ValueDifference;
 import com.google.common.collect.Maps;
 
-public class NewExportConnector implements Export {
+public class DefaultExportConnector implements GenericMapper {
 
 	private final BimFacade serviceFacade;
 	private final BimPersistence persistence;
 	private final BimDataView bimDataView;
-	private final DataAccessLogic dataLogic;
 	private final Map<String, Map<String, String>> shapeNameToOidMap;
 	private final Iterable<String> candidateTypes = Lists.newArrayList(IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING);
 	private Catalog catalog;
 	private String exportProjectId;
-
 	private String sourceProjectId;
 	private Long rootCardId;
 
-	public NewExportConnector(final BimDataView dataView, final BimFacade bimServiceFacade,
-			final BimPersistence bimPersistence, final ExportPolicy exportProjectPolicy, DataAccessLogic dataLogic) {
+	public DefaultExportConnector(final BimDataView dataView, final BimFacade bimServiceFacade,
+			final BimPersistence bimPersistence, final ExportPolicy exportProjectPolicy) {
 		this.serviceFacade = bimServiceFacade;
 		this.persistence = bimPersistence;
 		this.bimDataView = dataView;
-		this.dataLogic = dataLogic;
 		shapeNameToOidMap = Maps.newHashMap();
 	}
 
 	@Override
-	public boolean isSynch(final String projectId) {
-		boolean synch = true;
-		final Output changeListener = new DataChangedListener();
-		try {
-			executeExport(projectId, changeListener);
-		} catch (final DataChangedException de) {
-			synch = false;
-		} catch (final InvalidOutputException oe) {
-			synch = false;
-		}
-		return synch;
-	}
-
-	@Override
-	public void export(final String sourceProjectId, final Output output) {
-
-
-		final boolean isSynchronized = isSynch(sourceProjectId);
-		System.out.println("Is synchronized? " + isSynchronized);
-		if (!isSynchronized) {
-			executeExport(sourceProjectId, output);
-		}
-	}
-
-	@Override
-	public void setTarget(Object input, Output output) {
+	public void setTarget(final Object input, final Output output) {
 		final String baseProjectId = String.class.cast(input);
 		exportProjectId = getExportProjectId(baseProjectId);
 		final boolean shapesLoaded = areShapesOfCatalogAlreadyLoadedInRevision();
@@ -115,32 +76,10 @@ public class NewExportConnector implements Export {
 		}
 	}
 
-	private void executeExport(final String sourceProjectId, final Output output) {
-
-		// get configuration
-		setConfiguration(sourceProjectId);
-
-		// prepare target
-		setTarget(sourceProjectId, output);
-
-		// source
-		final Map<String, Entity> sourceData = getSourceData();
-
-		// target
-		final Map<String, Entity> targetData = getTargetData();
-
-		final MapDifference<String, Entity> difference = Maps.difference(sourceData, targetData);
-		final Map<String, Entity> entriesToCreate = difference.entriesOnlyOnLeft();
-		final Map<String, ValueDifference<Entity>> entriesToUpdate = difference.entriesDiffering();
-		final Map<String, Entity> entriesToRemove = difference.entriesOnlyOnRight();
-
-		if (entriesToCreate.isEmpty() && entriesToUpdate.isEmpty() && entriesToRemove.isEmpty()) {
-			return;
-		}
-
-		// before execution
-		serviceFacade.openTransaction(exportProjectId);
-
+	@Override
+	public void executeSynchronization(final Map<String, Entity> entriesToCreate,
+			final Map<String, ValueDifference<Entity>> entriesToUpdate, final Map<String, Entity> entriesToRemove,
+			final Output output) {
 		try {
 			for (final String keyToCreate : entriesToCreate.keySet()) {
 				final Entity entityToCreate = entriesToCreate.get(keyToCreate);
@@ -161,32 +100,40 @@ public class NewExportConnector implements Export {
 				output.deleteTarget(entityToRemove, exportProjectId);
 			}
 
-			// after execution
-			output.updateRelations(exportProjectId);
-			final String revisionId = serviceFacade.commitTransaction();
-			System.out.println("Revision " + revisionId + " created at " + new DateTime());
+		} catch (final DataChangedException d) {
+			serviceFacade.abortTransaction();
+			throw new DataChangedException();
+		} catch (final DataNotChangedException d) {
+			serviceFacade.abortTransaction();
+		}
+	}
 
-			/*
-			 * In order to see the generated objects I have to download and
-			 * upload again the file. This is due to some problems with
-			 * BimServer cache, I will investigate about a more efficient
-			 * solution.
-			 */
+	@Override
+	public void afterExecution(final Output output) {
+		output.finalActions(exportProjectId);
+		System.out.println("Commit transaction...");
+		final String revisionId = serviceFacade.commitTransaction();
+		System.out.println("Revision " + revisionId + " created at " + new DateTime());
+
+		/*
+		 * In order to see the generated objects I have to download and upload
+		 * again the file. This is due to some problems with BimServer cache.
+		 */
+		try {
 			final DataHandler exportedData = serviceFacade.download(exportProjectId);
 			final File file = File.createTempFile("ifc", null);
 			final FileOutputStream outputStream = new FileOutputStream(file);
 			exportedData.writeTo(outputStream);
 			serviceFacade.checkin(exportProjectId, file);
 			System.out.println("export file is ready");
-		} catch (final DataChangedException d) {
-			serviceFacade.abortTransaction();
-			throw new DataChangedException();
-		} catch (final DataNotChangedException d) {
-			serviceFacade.abortTransaction();
 		} catch (final Throwable t) {
-			serviceFacade.abortTransaction();
-			throw new BimError("Error during export", t);
+			throw new BimError("Problem while downloading and uploading the generated file", t);
 		}
+	}
+
+	@Override
+	public void beforeExecution() {
+		serviceFacade.openTransaction(exportProjectId);
 	}
 
 	private boolean areShapesOfCatalogAlreadyLoadedInRevision() {
@@ -275,7 +222,7 @@ public class NewExportConnector implements Export {
 	}
 
 	@Override
-	public void setConfiguration(Object input) {
+	public void setConfiguration(final Object input) {
 		sourceProjectId = String.class.cast(input);
 		rootCardId = getRootCardIdForProjectId(sourceProjectId);
 		final CmProject project = persistence.read(sourceProjectId);
@@ -329,7 +276,7 @@ public class NewExportConnector implements Export {
 			final List<CMCard> cardsOfSource = bimDataView.getCardsWithAttributeAndValue(
 					DBIdentifier.fromName(className), rootCardId, rootReference);
 			for (final CMCard card : cardsOfSource) {
-				final Entity cardToExport = bimDataView.getCardDataForExportNew(card.getId(), className,
+				final Entity cardToExport = bimDataView.getCardDataForExport(card.getId(), className,
 						containerAttributeName, containerClassName, shapeOid, ifcType);
 				dataSource.put(cardToExport.getKey(), cardToExport);
 			}
@@ -341,37 +288,9 @@ public class NewExportConnector implements Export {
 
 		final String rootClassName = persistence.findRoot().getClassName();
 
-		Long cardId = (long) -1;
+		final Long cardId = bimDataView.getRootCardIdFromProjectId(projectId, rootClassName);
 
-		final List<CMCard> cards = bimDataView.getCardsWithAttributeAndValue(DBIdentifier.fromName("_BimProject"),
-				projectId, "ProjectId");
-		if (cards.isEmpty() || cards.size() != 1) {
-			throw new BimError("Something is wrong for projectId " + projectId);
-		}
-		final CMCard projectCard = cards.get(0);
-		final CMDomain domain = dataLogic.findDomain(rootClassName + DEFAULT_DOMAIN_SUFFIX);
-
-		final Card src = dataLogic.fetchCard("_BimProject", projectCard.getId());
-
-		final DomainWithSource dom = DomainWithSource.create(domain.getId(), "_2");
-		final GetRelationListResponse domains = dataLogic.getRelationList(src, dom);
-		Object first = firstElement(domains);
-		if (first != null) {
-			final DomainInfo firstDomain = (DomainInfo) first;
-			first = firstElement(firstDomain);
-			if (first != null) {
-				final RelationInfo firstRelation = (RelationInfo) first;
-				cardId = firstRelation.getRelation().getCard2Id();
-			}
-		}
 		return cardId;
 	}
 
-	private Object firstElement(final Iterable<?> iterable) {
-		final Iterator<?> iterator = iterable.iterator();
-		if (iterator.hasNext()) {
-			return iterator.next();
-		}
-		return null;
-	}
 }

@@ -10,5 +10,7 @@ public interface Output {
 
 	public void deleteTarget(final Entity entityToRemove, final String targetProjectId);
 
-	public void updateRelations(final String targetProjectId);
+	public void finalActions(final String targetProjectId);
+
+	public void notifyError(Throwable t);
 }

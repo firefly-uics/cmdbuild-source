@@ -12,15 +12,6 @@ public class DataChangedListener implements Output {
 	public static class DataNotChangedException extends RuntimeException {
 	}
 
-	@SuppressWarnings("serial")
-	public static class InvalidOutputException extends RuntimeException {
-	}
-
-	@Override
-	public void outputInvalid(final String outputId) {
-		System.out.println("I don't know if I have to do something...");
-	}
-
 	@Override
 	public void createTarget(final Entity entityToCreate, final String targetProjectId) {
 		throw new DataChangedException();
@@ -32,8 +23,20 @@ public class DataChangedListener implements Output {
 	}
 
 	@Override
-	public void updateRelations(final String targetProjectId) {
+	public void finalActions(final String targetProjectId) {
 		throw new DataNotChangedException();
+	}
+
+	@Override
+	public void outputInvalid(final String outputId) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void notifyError(final Throwable t) {
+		if (t instanceof DataChangedException) {
+			throw new DataChangedException();
+		}
 	}
 
 }
