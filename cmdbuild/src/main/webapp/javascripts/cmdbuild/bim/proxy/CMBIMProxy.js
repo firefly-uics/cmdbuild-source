@@ -96,6 +96,12 @@
 			CMDBuild.ServiceProxy.core.doRequest(config);
 		},
 
+		getAllLayers: function(config) {
+			config.method = "GET";
+			config.url = url.readLayer;
+			CMDBuild.ServiceProxy.core.doRequest(config);
+		},
+
 		rootClassName: function(config) {
 			config.method = "GET";
 			config.url = url.rootLayer;

@@ -1321,6 +1321,7 @@
    "privileges_on_columns": "Columns privileges",
    "privileges_on_rows": "Rows privileges",
    "projects": "Projects",
+   "reference_to_root": "Reference to Root",
    "removeFilter": "Remove Filter",
    "removeProject": "Remove Project",
    "removeTemplate": "Remove Template",

@@ -13,7 +13,7 @@ Ext.define("CMDBuild.controller.administration.filter.CMBimLayerController", {
 
 	/* CMBimLayersDelegate */
 
-	onCheckColumnChange: function(grid, record, dataIndex, checked) {
+	onDataColumnChange: function(grid, record, dataIndex, value) {
 		var me = this;
 		var className = record.get("className");
 
@@ -22,7 +22,7 @@ Ext.define("CMDBuild.controller.administration.filter.CMBimLayerController", {
 			params: {
 				className: className,
 				attribute: dataIndex,
-				value: checked
+				value: value
 			},
 
 			success: function() {

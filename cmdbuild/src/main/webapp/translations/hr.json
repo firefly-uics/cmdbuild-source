@@ -1321,6 +1321,7 @@
    "privileges_on_columns": "Prava nad kolumnama",
    "privileges_on_rows": "Prava nad redovima",
    "projects": "Projects",
+   "reference_to_root": "<em>Reference to Root</em>",
    "removeFilter": "Ukloni filter",
    "removeProject": "<em>Remove Project</em>",
    "removeTemplate": "Ukloni Predložak",

@@ -1321,6 +1321,7 @@
    "privileges_on_columns": "Privilégios de Colunas",
    "privileges_on_rows": "Privilégios de Linhas",
    "projects": "Projects",
+   "reference_to_root": "<em>Reference to Root</em>",
    "removeFilter": "Remover Filtro",
    "removeProject": "<em>Remove Project</em>",
    "removeTemplate": "<em>Remove Template</em>",

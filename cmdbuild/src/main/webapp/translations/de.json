@@ -1315,6 +1315,7 @@
    "password": "<em>Password</em>",
    "privileges_on_columns": "Spalten-Privilegien",
    "privileges_on_rows": "Zeilen-Privilegien",
+   "reference_to_root": "<em>Reference to Root</em>",
    "removeFilter": "Filter löschen",
    "removeProject": "<em>Remove Project</em>",
    "removeTemplate": "<em>Remove Template</em>",

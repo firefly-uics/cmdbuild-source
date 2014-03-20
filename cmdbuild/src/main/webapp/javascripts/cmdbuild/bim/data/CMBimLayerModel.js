@@ -18,5 +18,8 @@ Ext.define('CMDBuild.bim.data.CMBimLayerModel', {
 	}, {
 		name: 'container',
 		type: 'boolean'
+	}, {
+		name: 'rootreference',
+		type: 'string'
 	}]
 });

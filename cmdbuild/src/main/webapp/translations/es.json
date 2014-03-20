@@ -1320,6 +1320,7 @@
    "privileges_on_columns": "Privilegios en columnas",
    "privileges_on_rows": "Privilegios en filas",
    "projects": "Projects",
+   "reference_to_root": "<em>Reference to Root</em>",
    "removeFilter": "Eliminar filtro",
    "removeProject": "<em>Remove Project</em>",
    "removeTemplate": "<em>Remove Template</em>",

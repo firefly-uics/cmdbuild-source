@@ -1321,6 +1321,7 @@
    "privileges_on_columns": "列の権限",
    "privileges_on_rows": "行の権限",
    "projects": "Projects",
+   "reference_to_root": "<em>Reference to Root</em>",
    "removeFilter": "ビューを削除",
    "removeTemplate": "<em>Remove Template</em>",
    "removeView": "ビューを削除",

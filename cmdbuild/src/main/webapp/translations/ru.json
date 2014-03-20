@@ -1321,6 +1321,7 @@
    "privileges_on_columns": "Права доступа к колонкам",
    "privileges_on_rows": "Права доступа к строкам",
    "projects": "Projects",
+   "reference_to_root": "<em>Reference to Root</em>",
    "removeFilter": "Удалить представление",
    "removeProject": "<em>Remove Project</em>",
    "removeTemplate": "Удалить шаблон",
