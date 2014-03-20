@@ -45,8 +45,8 @@ public class BimConstants {
 
 	// Attributes and tables
 	public static final String GLOBALID_ATTRIBUTE = IFC_GLOBALID;
-	public static final String FK_COLUMN_NAME = "Master";
 	public static final String BIM_SCHEMA_NAME = "bim";
+	public static final String FK_COLUMN_NAME = "Master";
 	public static final String GEOMETRY_ATTRIBUTE = "Geometry";
 	public static final String PERIMETER_ATTRIBUTE = "Perimeter";
 	public static final String HEIGHT_ATTRIBUTE = "Height";

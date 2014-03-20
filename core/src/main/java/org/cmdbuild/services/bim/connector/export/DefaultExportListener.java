@@ -1,13 +1,13 @@
 package org.cmdbuild.services.bim.connector.export;
 
-import static org.cmdbuild.services.bim.connector.DefaultBimDataView.CONTAINER_GUID;
+import static org.cmdbuild.services.bim.DefaultBimDataView.CONTAINER_GUID;
 
 import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.bim.model.Entity;
+import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.services.bim.BimFacade;
-import org.cmdbuild.services.bim.connector.Output;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -76,7 +76,7 @@ public class DefaultExportListener implements Output {
 	}
 
 	@Override
-	public void updateRelations(final String targetProjectId) {
+	public void finalActions(final String targetProjectId) {
 		serviceFacade.updateRelations(relationsMap, targetProjectId);
 		relationsMap = Maps.newHashMap();
 	}
@@ -84,5 +84,11 @@ public class DefaultExportListener implements Output {
 	@Override
 	public void outputInvalid(final String outputId) {
 		exportPolicy.beforeExport(outputId);
+	}
+
+	@Override
+	public void notifyError(final Throwable t) {
+		serviceFacade.abortTransaction();
+		throw new BimError("Export failed", t);
 	}
 }
