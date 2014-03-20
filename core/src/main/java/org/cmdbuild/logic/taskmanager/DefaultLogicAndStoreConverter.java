@@ -121,7 +121,16 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(StartWorkflow.CLASSNAME, task.getProcessClass()) //
 					.withParameter(StartWorkflow.ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-							.join(task.getParameters())) //
+							.join(task.getAttributes())) //
+					.build();
+		}
+
+		@Override
+		public void visit(final SynchronousEventTask task) {
+			this.target = org.cmdbuild.data.store.task.SynchronousEventTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withRunningStatus(task.isActive()) //
 					.build();
 		}
 
@@ -133,7 +142,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		private final org.cmdbuild.data.store.task.Task source;
 
-		private ScheduledTask target;
+		private Task target;
 
 		public DefaultStoreAsSourceConverter(final org.cmdbuild.data.store.task.Task source) {
 			this.source = source;
@@ -181,9 +190,18 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withActiveStatus(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
 					.withProcessClass(task.getParameter(StartWorkflow.CLASSNAME)) //
-					.withParameters(isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
+					.withAttributes(isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 							.split(attributesAsString)) //
+					.build();
+		}
+
+		@Override
+		public void visit(final org.cmdbuild.data.store.task.SynchronousEventTask task) {
+			target = SynchronousEventTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withActiveStatus(task.isRunning()) //
 					.build();
 		}
 

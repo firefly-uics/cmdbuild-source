@@ -22,11 +22,11 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	private static final Marker marker = MarkerFactory.getMarker(DefaultEmailAccountLogic.class.getName());
 
-	private static class ForwardingAccount implements Account {
+	private static abstract class ForwardingAccount implements Account {
 
 		private final Account delegate;
 
-		public ForwardingAccount(final Account delegate) {
+		protected ForwardingAccount(final Account delegate) {
 			this.delegate = delegate;
 		}
 

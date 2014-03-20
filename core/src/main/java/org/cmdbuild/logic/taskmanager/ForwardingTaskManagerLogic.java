@@ -4,7 +4,7 @@ public abstract class ForwardingTaskManagerLogic implements TaskManagerLogic {
 
 	private final TaskManagerLogic delegate;
 
-	public ForwardingTaskManagerLogic(final TaskManagerLogic delegate) {
+	protected ForwardingTaskManagerLogic(final TaskManagerLogic delegate) {
 		this.delegate = delegate;
 	}
 
