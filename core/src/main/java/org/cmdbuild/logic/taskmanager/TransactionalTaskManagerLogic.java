@@ -26,4 +26,16 @@ public class TransactionalTaskManagerLogic extends ForwardingTaskManagerLogic {
 		super.delete(task);
 	}
 
+	@Override
+	@Transactional
+	public void start(final Long id) {
+		super.start(id);
+	}
+
+	@Override
+	@Transactional
+	public void stop(final Long id) {
+		super.stop(id);
+	}
+
 }

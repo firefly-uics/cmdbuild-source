@@ -28,8 +28,6 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		private final SchedulerFacade schedulerFacade;
 		private final Task task;
 
-		private Long createdId;
-
 		public Create(final LogicAndStoreConverter converter, final TaskStore store,
 				final SchedulerFacade schedulerFacade, final Task task) {
 			this.converter = converter;
@@ -45,7 +43,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			final org.cmdbuild.data.store.task.Task read = store.read(created);
 			final Task taskWithId = converter.from(read).toLogic();
 			taskWithId.accept(this);
-			return createdId;
+			return read.getId();
 		}
 
 		@Override
