@@ -13,6 +13,9 @@ import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimPersistence;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+
 public class DefaultLayerLogic implements LayerLogic {
 
 	private final BimPersistence bimPersistence;
@@ -82,5 +85,20 @@ public class DefaultLayerLogic implements LayerLogic {
 		}
 		return out;
 	}
+
+	@Override
+	public Iterable<BimLayer> getActiveLayers() {
+		Iterable<BimLayer> storedLayers = bimPersistence.listLayers();
+		Iterable<BimLayer> filtered =  
+				  Iterables.filter(storedLayers, ACTIVE_FILTER);
+		return filtered;
+	}
+	
+	public static final Predicate<BimLayer> ACTIVE_FILTER =  new Predicate<BimLayer>() {
+	    @Override
+	    public boolean apply(BimLayer input) {
+	            return input.isActive();
+	    }
+	};
 
 }

@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 
 public interface BimPersistence {
 
-	public interface CmProject {
+	public interface PersistenceProject {
 
 		String getProjectId();
 
@@ -49,15 +49,15 @@ public interface BimPersistence {
 
 	}
 	
-	void saveProject(CmProject project);
+	void saveProject(PersistenceProject project);
 
-	Iterable<CmProject> readAll();
+	Iterable<PersistenceProject> readAll();
 
-	CmProject read(String projectId);
+	PersistenceProject read(String projectId);
 	
-	void disableProject(CmProject project);
+	void disableProject(PersistenceProject project);
 
-	void enableProject(CmProject project);
+	void enableProject(PersistenceProject project);
 
 	
 

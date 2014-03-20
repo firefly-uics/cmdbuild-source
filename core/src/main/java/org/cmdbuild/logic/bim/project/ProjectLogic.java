@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.bim;
+package org.cmdbuild.logic.bim.project;
 
 import java.io.File;
 
