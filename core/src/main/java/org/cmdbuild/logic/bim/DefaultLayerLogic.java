@@ -13,6 +13,7 @@ import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimPersistence;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -32,7 +33,7 @@ public class DefaultLayerLogic implements LayerLogic {
 	}
 
 	@Override
-	public List<BimLayer> readLayers() {
+	public Iterable<Layer> readLayers() {
 		final List<BimLayer> out = new LinkedList<BimLayer>();
 		final Map<String, BimLayer> storedLayers = bimLayerMap();
 		final Iterable<? extends CMClass> allClasses = bimDataView.findClasses();
@@ -54,8 +55,7 @@ public class DefaultLayerLogic implements LayerLogic {
 			layerToPut.setDescription(layerDescription);
 			out.add(layerToPut);
 		}
-
-		return out;
+		return Iterables.transform(out, STORABLE_TO_LOGIC_LAYER);
 	}
 
 	@Override
@@ -68,9 +68,17 @@ public class DefaultLayerLogic implements LayerLogic {
 	}
 
 	@Override
-	public BimLayer getRootLayer() {
-		return bimPersistence.findRoot();
+	public Layer getRootLayer() {
+		final BimLayer rootLayer = bimPersistence.findRoot();
+		return STORABLE_TO_LOGIC_LAYER.apply(rootLayer);
 	}
+
+	private static final Function<BimLayer, Layer> STORABLE_TO_LOGIC_LAYER = new Function<BimLayer, Layer>() {
+		@Override
+		public Layer apply(final BimLayer input) {
+			return new LayerWrapper(input);
+		}
+	};
 
 	@Override
 	public boolean isActive(final String classname) {
@@ -87,18 +95,62 @@ public class DefaultLayerLogic implements LayerLogic {
 	}
 
 	@Override
-	public Iterable<BimLayer> getActiveLayers() {
+	public Iterable<Layer> getActiveLayers() {
 		Iterable<BimLayer> storedLayers = bimPersistence.listLayers();
-		Iterable<BimLayer> filtered =  
-				  Iterables.filter(storedLayers, ACTIVE_FILTER);
-		return filtered;
+		Iterable<BimLayer> filtered = Iterables.filter(storedLayers, ACTIVE_FILTER);
+		return Iterables.transform(filtered, STORABLE_TO_LOGIC_LAYER);
 	}
-	
-	public static final Predicate<BimLayer> ACTIVE_FILTER =  new Predicate<BimLayer>() {
-	    @Override
-	    public boolean apply(BimLayer input) {
-	            return input.isActive();
-	    }
+
+	private static final Predicate<BimLayer> ACTIVE_FILTER = new Predicate<BimLayer>() {
+		@Override
+		public boolean apply(BimLayer input) {
+			return input.isActive();
+		}
 	};
+
+	private static class LayerWrapper implements Layer {
+
+		private final BimLayer delegate;
+
+		public LayerWrapper(final BimLayer delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public String getClassName() {
+			return delegate.getClassName();
+		}
+
+		@Override
+		public boolean isRoot() {
+			return delegate.isRoot();
+		}
+
+		@Override
+		public boolean isContainer() {
+			return delegate.isContainer();
+		}
+
+		@Override
+		public String getRootReference() {
+			return delegate.getRootReference();
+		}
+
+		@Override
+		public boolean isExport() {
+			return delegate.isExport();
+		}
+
+		@Override
+		public boolean isActive() {
+			return delegate.isActive();
+		}
+
+		@Override
+		public String getDescription() {
+			return delegate.getDescription();
+		}
+
+	}
 
 }

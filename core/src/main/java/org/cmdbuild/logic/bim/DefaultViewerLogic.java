@@ -20,6 +20,7 @@ import javax.activation.DataHandler;
 
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.logic.bim.LayerLogic.Layer;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
@@ -122,8 +123,8 @@ public class DefaultViewerLogic implements ViewerLogic {
 			final JsonNode rootNode = mapper.readTree(fileReader);
 			final JsonNode data = rootNode.findValue("data");
 			final JsonNode properties = data.findValue("properties");
-			final Iterable<BimLayer> layers = layerLogic.getActiveLayers();
-			for (final BimLayer layer : layers) {
+			final Iterable<Layer> layers = layerLogic.getActiveLayers();
+			for (final Layer layer : layers) {
 				final String className = layer.getClassName();
 				System.out.println("\n----- Layer " + className);
 				final String rootClassName = layerLogic.getRootLayer().getClassName();
