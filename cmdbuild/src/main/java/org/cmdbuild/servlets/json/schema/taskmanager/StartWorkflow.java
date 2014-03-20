@@ -57,8 +57,8 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 		}
 
 		@JsonProperty(ATTRIBUTES)
-		public Map<String, String> getParameters() {
-			return delegate.getParameters();
+		public Map<String, String> getAttributes() {
+			return delegate.getAttributes();
 		}
 
 	}
@@ -75,9 +75,9 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
 				.withDescription(description) //
 				.withActiveStatus(active) //
-				.withProcessClass(className) //
 				.withCronExpression(cronExpression) //
-				.withParameters(convertJsonParams(jsonParameters)) //
+				.withProcessClass(className) //
+				.withAttributes(convertJsonParams(jsonParameters)) //
 				.build();
 		final Long id = taskManagerLogic().create(task);
 		return JsonResponse.success(id);
@@ -125,7 +125,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
 				.withProcessClass(className) //
-				.withParameters(convertJsonParams(jsonParameters)) //
+				.withAttributes(convertJsonParams(jsonParameters)) //
 				.build();
 		taskManagerLogic().update(task);
 		return JsonResponse.success();

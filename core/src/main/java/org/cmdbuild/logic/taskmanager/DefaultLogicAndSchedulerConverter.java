@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 
 public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConverter {
 
-	public interface JobFactory<T extends ScheduledTask> {
+	public static interface JobFactory<T extends ScheduledTask> {
 
 		public Job create(ScheduledTask task);
 
@@ -65,6 +65,11 @@ public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConve
 		@Override
 		public void visit(final StartWorkflowTask task) {
 			job = factories.get(task.getClass()).create(task);
+		}
+
+		@Override
+		public void visit(final SynchronousEventTask task) {
+			throw new UnsupportedOperationException("invalid task " + task);
 		}
 
 	}

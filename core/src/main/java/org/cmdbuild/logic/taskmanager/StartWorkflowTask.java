@@ -10,12 +10,14 @@ public class StartWorkflowTask implements ScheduledTask {
 
 	public static class Builder implements org.cmdbuild.common.Builder<StartWorkflowTask> {
 
+		private static final Map<String, String> NO_ATTRIBUTES = Collections.emptyMap();
+
 		private Long id;
 		private String description;
 		private Boolean active;
 		private String cronExpression;
 		private String processClass;
-		private Map<String, String> parameters;
+		private Map<String, String> attributes;
 
 		private Builder() {
 			// use factory method
@@ -29,7 +31,7 @@ public class StartWorkflowTask implements ScheduledTask {
 
 		private void validate() {
 			active = (active == null) ? false : active;
-			parameters = (parameters == null) ? Collections.<String, String> emptyMap() : parameters;
+			attributes = (attributes == null) ? NO_ATTRIBUTES : attributes;
 		}
 
 		public Builder withId(final Long id) {
@@ -57,8 +59,8 @@ public class StartWorkflowTask implements ScheduledTask {
 			return this;
 		}
 
-		public Builder withParameters(final Map<String, String> parameters) {
-			this.parameters = parameters;
+		public Builder withAttributes(final Map<String, String> parameters) {
+			this.attributes = parameters;
 			return this;
 		}
 
@@ -73,7 +75,7 @@ public class StartWorkflowTask implements ScheduledTask {
 	private final boolean active;
 	private final String cronExpression;
 	private final String processClass;
-	private final Map<String, String> legacyParameters;
+	private final Map<String, String> attributes;
 
 	private StartWorkflowTask(final Builder builder) {
 		this.id = builder.id;
@@ -81,7 +83,7 @@ public class StartWorkflowTask implements ScheduledTask {
 		this.active = builder.active;
 		this.cronExpression = builder.cronExpression;
 		this.processClass = builder.processClass;
-		this.legacyParameters = Collections.unmodifiableMap(builder.parameters);
+		this.attributes = Collections.unmodifiableMap(builder.attributes);
 	}
 
 	@Override
@@ -113,8 +115,8 @@ public class StartWorkflowTask implements ScheduledTask {
 		return processClass;
 	}
 
-	public Map<String, String> getParameters() {
-		return legacyParameters;
+	public Map<String, String> getAttributes() {
+		return attributes;
 	}
 
 	@Override

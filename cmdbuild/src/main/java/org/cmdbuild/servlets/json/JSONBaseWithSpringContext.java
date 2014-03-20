@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
 
 import javax.sql.DataSource;
 
@@ -11,7 +12,6 @@ import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.DashboardLogic;
@@ -85,7 +85,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected CMDataView userDataView() {
-		return applicationContext().getBean(UserDataView.class);
+		return applicationContext().getBean(BEAN_USER_DATA_VIEW, CMDataView.class);
 	}
 
 	/*
@@ -216,7 +216,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	/*
-	 *
+	 * 
 	 * Utilities
 	 */
 
