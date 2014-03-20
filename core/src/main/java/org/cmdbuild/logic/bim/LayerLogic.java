@@ -8,6 +8,8 @@ import org.cmdbuild.model.bim.BimLayer;
 public interface LayerLogic extends Logic {
 
 	List<BimLayer> readLayers();
+	
+	Iterable<BimLayer> getActiveLayers();
 
 	void updateBimLayer(String className, String attributeName, String value);
 

@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.mapper.DefaultAttribute;
 import org.cmdbuild.bim.mapper.DefaultEntity;
 import org.cmdbuild.bim.model.Entity;
+import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entry.IdAndDescription;
@@ -337,6 +338,33 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 	}
 
 	@Override
+	public BimCard getBimCardFromRootId(final String className, final Long rootCardId) {
+		BimCard result = null;
+		final CMClass theClass = dataView.findClass(className);
+		final Long idClass = theClass.getId();
+
+		final List<CMCard> baseCards = getCardsWithAttributeAndValue(DBIdentifier.fromName(className), rootCardId,
+				ID_ATTRIBUTE);
+		if (baseCards.size() > 1) {
+			throw new BimError("More than one row with id " + rootCardId);
+		}
+		for (final CMCard card : baseCards) {
+			final List<CMCard> bimCards = getCardsWithAttributeAndValue(
+					BimIdentifier.newIdentifier().withName(className), card.getId(), FK_COLUMN_NAME);
+			final Long cmid = card.getId();
+			final String description = card.get(DESCRIPTION_ATTRIBUTE).toString();
+			if (!bimCards.isEmpty()) {
+				final CMCard bimCard = bimCards.get(0);
+				final String globalid = bimCard.get(GLOBALID_ATTRIBUTE).toString();
+				final BimCard resultCard = new BimCard(cmid, idClass, description, className);
+				resultCard.setGlobalId(globalid);
+				result = resultCard;
+			}
+		}
+		return result;
+	}
+
+	@Override
 	public CMCard fetchCard(final String className, final Long id) {
 		final CMClass theClass = dataView.findClass(className);
 		final CMQueryResult result = dataView.select(anyAttribute(theClass)).from(theClass)
@@ -401,7 +429,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 			final QueryRelation relation = row.getRelation(DOM_ALIAS);
 			if (relation != null) {
 				final DBRelation relation2 = relation.getRelation();
-				rootId = Long.class.cast(relation2.getCard1Id());
+				rootId = Long.class.cast(relation2.getCard2Id());
 			}
 		}
 		return rootId;

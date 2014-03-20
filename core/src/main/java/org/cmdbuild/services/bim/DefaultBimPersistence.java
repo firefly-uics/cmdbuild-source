@@ -26,27 +26,27 @@ public class DefaultBimPersistence implements BimPersistence {
 	}
 
 	@Override
-	public Iterable<CmProject> readAll() {
+	public Iterable<PersistenceProject> readAll() {
 		final Iterable<StorableProject> storableList = storeManager.readAll();
-		final List<CmProject> cmProjectList = Lists.newArrayList();
+		final List<PersistenceProject> cmProjectList = Lists.newArrayList();
 		for (final StorableProject storable : storableList) {
-			final CmProject cmProject = read(storable.getIdentifier());
+			final PersistenceProject cmProject = read(storable.getIdentifier());
 			cmProjectList.add(cmProject);
 		}
 		return cmProjectList;
 	}
 
 	@Override
-	public CmProject read(final String projectId) {
+	public PersistenceProject read(final String projectId) {
 		final StorableProject storableProject = storeManager.read(projectId);
 		final ProjectRelations relations = relationPersistenceManager.readRelations(storableProject.getCardId(),
 				findRoot().getClassName());
-		final CmProject cmProject = from(storableProject, relations);
+		final PersistenceProject cmProject = from(storableProject, relations);
 		return cmProject;
 	}
 
 	@Override
-	public void saveProject(final CmProject project) {
+	public void saveProject(final PersistenceProject project) {
 		final StorableProject projectToStore = PROJECT_TO_STORABLE.apply(project);
 		storeManager.write(projectToStore);
 
@@ -54,39 +54,40 @@ public class DefaultBimPersistence implements BimPersistence {
 		if (storedProject != null) {
 			final String rootClassName = findRoot().getClassName();
 			final Long cardId = storedProject.getCardId();
-			final Iterable<String> oldRelations = relationPersistenceManager.readRelations(cardId,
-					rootClassName).getBindedCards();
-			final Iterable<String> newRelations = project.getCardBinding();
-			
+			final Iterable<String> oldRelatedId = relationPersistenceManager.readRelations(cardId, rootClassName)
+					.getBindedCards();
+			final Iterable<String> newRelatedId = project.getCardBinding();
+
 			final Function<String, String> keyForMap = new Function<String, String>() {
-				public String apply(String from) {
-					return from; // or something else
+				@Override
+				public String apply(final String element) {
+					return element;
 				}
 			};
-			final Map<String, String> oldRelationsMap = Maps.uniqueIndex(oldRelations, keyForMap);
-			final Map<String, String> newRelationsMap = Maps.uniqueIndex(newRelations, keyForMap);
+			final Map<String, String> oldRelationsMap = Maps.uniqueIndex(oldRelatedId, keyForMap);
+			final Map<String, String> newRelationsMap = Maps.uniqueIndex(newRelatedId, keyForMap);
 			final MapDifference<String, String> difference = Maps.difference(oldRelationsMap, newRelationsMap);
-			if(!difference.areEqual()){
-				relationPersistenceManager.writeRelations(cardId, newRelations, rootClassName);
+			if (!difference.areEqual()) {
+				relationPersistenceManager.writeRelations(cardId, newRelatedId, rootClassName);
 			}
-			
+
 		}
 	}
 
 	@Override
-	public void disableProject(final CmProject persistenceProject) {
+	public void disableProject(final PersistenceProject persistenceProject) {
 		storeManager.disableProject(persistenceProject.getProjectId());
 	}
 
 	@Override
-	public void enableProject(final CmProject persistenceProject) {
+	public void enableProject(final PersistenceProject persistenceProject) {
 		storeManager.enableProject(persistenceProject.getProjectId());
 	}
 
 	@Override
 	public String getProjectIdFromCardId(final Long cardId) {
-		final Iterable<CmProject> projectList = readAll();
-		for (final CmProject project : projectList) {
+		final Iterable<PersistenceProject> projectList = readAll();
+		for (final PersistenceProject project : projectList) {
 			if (project.getCmId().equals(cardId)) {
 				return project.getProjectId();
 			}
@@ -97,21 +98,21 @@ public class DefaultBimPersistence implements BimPersistence {
 	@Override
 	public Long getCardIdFromProjectId(final String projectId) {
 		Long cardId = new Long("-1");
-		final CmProject project = read(projectId);
+		final PersistenceProject project = read(projectId);
 		if (project != null) {
 			cardId = project.getCmId();
 		}
 		return cardId;
 	}
 
-	private static CmProject from(final StorableProject storableProject, final ProjectRelations relations) {
+	private static PersistenceProject from(final StorableProject storableProject, final ProjectRelations relations) {
 		return new StorableAndRelations(storableProject, relations);
 	}
 
-	private static Function<CmProject, StorableProject> PROJECT_TO_STORABLE = new Function<CmProject, StorableProject>() {
+	private static Function<PersistenceProject, StorableProject> PROJECT_TO_STORABLE = new Function<PersistenceProject, StorableProject>() {
 
 		@Override
-		public StorableProject apply(final CmProject input) {
+		public StorableProject apply(final PersistenceProject input) {
 			final StorableProject storableProject = new StorableProject();
 			storableProject.setActive(input.isActive());
 			storableProject.setDescription(input.getDescription());
@@ -125,7 +126,7 @@ public class DefaultBimPersistence implements BimPersistence {
 		}
 	};
 
-	private static class StorableAndRelations implements CmProject {
+	private static class StorableAndRelations implements PersistenceProject {
 
 		private final StorableProject delegate;
 		private Iterable<String> cardBinding = Lists.newArrayList();
@@ -263,13 +264,12 @@ public class DefaultBimPersistence implements BimPersistence {
 	public void saveRootFlag(final String className, final boolean value) {
 		storeManager.saveRoot(className, value);
 	}
-	
 
 	@Override
-	public void saveRootReferenceName(String className, String value) {
+	public void saveRootReferenceName(final String className, final String value) {
 		storeManager.saveRootReference(className, value);
 	}
-	
+
 	@Override
 	public BimLayer findRoot() {
 		return storeManager.findRoot();
@@ -294,6 +294,5 @@ public class DefaultBimPersistence implements BimPersistence {
 	public BimLayer readLayer(final String className) {
 		return storeManager.readLayer(className);
 	}
-
 
 }

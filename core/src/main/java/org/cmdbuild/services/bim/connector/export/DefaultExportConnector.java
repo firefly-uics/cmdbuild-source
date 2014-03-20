@@ -37,7 +37,7 @@ import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
-import org.cmdbuild.services.bim.BimPersistence.CmProject;
+import org.cmdbuild.services.bim.BimPersistence.PersistenceProject;
 import org.cmdbuild.services.bim.connector.export.DataChangedListener.DataChangedException;
 import org.cmdbuild.services.bim.connector.export.DataChangedListener.DataNotChangedException;
 import org.joda.time.DateTime;
@@ -225,7 +225,7 @@ public class DefaultExportConnector implements GenericMapper {
 	public void setConfiguration(final Object input) {
 		sourceProjectId = String.class.cast(input);
 		rootCardId = getRootCardIdForProjectId(sourceProjectId);
-		final CmProject project = persistence.read(sourceProjectId);
+		final PersistenceProject project = persistence.read(sourceProjectId);
 		final String xmlMapping = project.getExportMapping();
 		catalog = XmlExportCatalogFactory.withXmlString(xmlMapping).create();
 	}

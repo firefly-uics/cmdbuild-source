@@ -12,7 +12,7 @@ import java.util.List;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.StorableProject;
 import org.cmdbuild.services.bim.BimPersistence;
-import org.cmdbuild.services.bim.BimPersistence.CmProject;
+import org.cmdbuild.services.bim.BimPersistence.PersistenceProject;
 import org.cmdbuild.services.bim.BimStoreManager;
 import org.cmdbuild.services.bim.DefaultBimPersistence;
 import org.cmdbuild.services.bim.RelationPersistence;
@@ -54,7 +54,7 @@ public class DefaultBimDataPersistenceTest {
 		// given
 		ArgumentCaptor<StorableProject> storableCaptor = ArgumentCaptor.forClass(StorableProject.class);
 		
-		CmProject project = mock(CmProject.class);
+		PersistenceProject project = mock(PersistenceProject.class);
 		when(project.getProjectId()).thenReturn(PROJECTID);
 		when(project.getName()).thenReturn(NAME);
 		when(project.getDescription()).thenReturn(DESCRIPTION);
@@ -84,7 +84,7 @@ public class DefaultBimDataPersistenceTest {
 		// given
 		ArgumentCaptor<StorableProject> storableCaptor = ArgumentCaptor.forClass(StorableProject.class);
 		
-		CmProject project = mock(CmProject.class);
+		PersistenceProject project = mock(PersistenceProject.class);
 		when(project.getProjectId()).thenReturn(PROJECTID);
 		when(project.getName()).thenReturn(NAME);
 		when(project.getDescription()).thenReturn(DESCRIPTION);
@@ -140,7 +140,7 @@ public class DefaultBimDataPersistenceTest {
 	@Test
 	public void disableProjectForwardToStoreManager() throws Exception {
 		// given
-		CmProject projectToDisable = mock(CmProject.class);
+		PersistenceProject projectToDisable = mock(PersistenceProject.class);
 		when(projectToDisable.getProjectId()).thenReturn(PROJECTID);
 
 		// when
@@ -157,7 +157,7 @@ public class DefaultBimDataPersistenceTest {
 	@Test
 	public void enableProjectForwardToStoreManager() throws Exception {
 		// given
-		CmProject projectToDisable = mock(CmProject.class);
+		PersistenceProject projectToDisable = mock(PersistenceProject.class);
 		when(projectToDisable.getProjectId()).thenReturn(PROJECTID);
 
 		// when
@@ -177,7 +177,7 @@ public class DefaultBimDataPersistenceTest {
 		ArgumentCaptor<StorableProject> storableCaptor = ArgumentCaptor.forClass(StorableProject.class);
 		DateTime now = new DateTime();
 
-		CmProject project = mock(CmProject.class);
+		PersistenceProject project = mock(PersistenceProject.class);
 		when(project.getProjectId()).thenReturn(PROJECTID);
 		when(project.getName()).thenReturn(NAME);
 		when(project.getDescription()).thenReturn(DESCRIPTION);

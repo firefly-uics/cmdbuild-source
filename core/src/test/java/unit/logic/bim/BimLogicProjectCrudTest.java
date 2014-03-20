@@ -12,14 +12,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.cmdbuild.logic.bim.DefaultProjectLogic;
-import org.cmdbuild.logic.bim.ProjectLogic;
-import org.cmdbuild.logic.bim.ProjectLogic.Project;
+import org.cmdbuild.logic.bim.project.DefaultProjectLogic;
+import org.cmdbuild.logic.bim.project.ProjectLogic;
+import org.cmdbuild.logic.bim.project.ProjectLogic.Project;
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimFacade.BimFacadeProject;
 import org.cmdbuild.services.bim.BimPersistence;
-import org.cmdbuild.services.bim.BimPersistence.CmProject;
+import org.cmdbuild.services.bim.BimPersistence.PersistenceProject;
 import org.cmdbuild.services.bim.connector.export.ExportPolicy;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -59,7 +59,7 @@ public class BimLogicProjectCrudTest {
 	public void createProjectWithoutFile() throws Exception {
 		// given
 		final ArgumentCaptor<BimFacadeProject> convertedProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
-		final ArgumentCaptor<CmProject> cmProjectCaptor = ArgumentCaptor.forClass(CmProject.class);
+		final ArgumentCaptor<PersistenceProject> cmProjectCaptor = ArgumentCaptor.forClass(PersistenceProject.class);
 
 		final Project project = mock(Project.class);
 		when(project.getName()).thenReturn(NAME);
@@ -92,7 +92,7 @@ public class BimLogicProjectCrudTest {
 		assertTrue(convertedProject.isActive() == STATUS);
 		assertTrue(convertedProject.getProjectId() == null);
 
-		final CmProject projectToStore = cmProjectCaptor.getValue();
+		final PersistenceProject projectToStore = cmProjectCaptor.getValue();
 		assertTrue(projectToStore.getProjectId().equals(ID));
 		assertTrue(projectToStore.getName().equals(NAME));
 		assertTrue(projectToStore.getDescription().equals(DESCRIPTION));
@@ -114,7 +114,7 @@ public class BimLogicProjectCrudTest {
 	public void projectDisabled() throws Exception {
 		// given
 		final ArgumentCaptor<BimFacadeProject> facadeProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
-		final ArgumentCaptor<CmProject> cmProjectCaptor = ArgumentCaptor.forClass(CmProject.class);
+		final ArgumentCaptor<PersistenceProject> cmProjectCaptor = ArgumentCaptor.forClass(PersistenceProject.class);
 
 		STATUS = true;
 
@@ -140,7 +140,7 @@ public class BimLogicProjectCrudTest {
 		assertTrue(facadeProject.getFile() == null);
 		assertTrue(facadeProject.getName().equals(NAME));
 
-		final CmProject projectToStore = cmProjectCaptor.getValue();
+		final PersistenceProject projectToStore = cmProjectCaptor.getValue();
 		assertTrue(projectToStore.getProjectId().equals(ID));
 		assertTrue(projectToStore.getName().equals(NAME));
 		assertTrue(projectToStore.getDescription().equals(DESCRIPTION));
@@ -153,7 +153,7 @@ public class BimLogicProjectCrudTest {
 	public void projectEnabled() throws Exception {
 		// given
 		final ArgumentCaptor<BimFacadeProject> facadeProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
-		final ArgumentCaptor<CmProject> cmProjectCaptor = ArgumentCaptor.forClass(CmProject.class);
+		final ArgumentCaptor<PersistenceProject> cmProjectCaptor = ArgumentCaptor.forClass(PersistenceProject.class);
 
 		STATUS = false;
 
@@ -180,7 +180,7 @@ public class BimLogicProjectCrudTest {
 		assertTrue(facadeProject.getFile() == null);
 		assertTrue(facadeProject.getName().equals(NAME));
 
-		final CmProject projectToStore = cmProjectCaptor.getValue();
+		final PersistenceProject projectToStore = cmProjectCaptor.getValue();
 		assertTrue(projectToStore.getProjectId().equals(ID));
 		assertTrue(projectToStore.getName().equals(NAME));
 		assertTrue(projectToStore.getDescription().equals(DESCRIPTION));
@@ -192,7 +192,7 @@ public class BimLogicProjectCrudTest {
 	@Test
 	public void readEmptyProjectList() throws Exception {
 		// given
-		final Iterable<CmProject> projectList = Lists.newArrayList();
+		final Iterable<PersistenceProject> projectList = Lists.newArrayList();
 		when(dataPersistence.readAll()).thenReturn(projectList);
 
 		// when
@@ -210,8 +210,8 @@ public class BimLogicProjectCrudTest {
 	@Test(expected = UnsupportedOperationException.class)
 	public void readProjectListWithOneProject() throws Exception {
 		// given
-		final List<CmProject> projectList = Lists.newArrayList();
-		final CmProject project = mock(CmProject.class);
+		final List<PersistenceProject> projectList = Lists.newArrayList();
+		final PersistenceProject project = mock(PersistenceProject.class);
 		when(project.getProjectId()).thenReturn(ID);
 		when(project.getName()).thenReturn(NAME);
 		when(project.getDescription()).thenReturn(DESCRIPTION);
@@ -255,7 +255,7 @@ public class BimLogicProjectCrudTest {
 	public void updateProjectWithoutFile() throws Exception {
 		// given
 		final ArgumentCaptor<BimFacadeProject> facadeProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
-		final ArgumentCaptor<CmProject> cmProjectCaptor = ArgumentCaptor.forClass(CmProject.class);
+		final ArgumentCaptor<PersistenceProject> cmProjectCaptor = ArgumentCaptor.forClass(PersistenceProject.class);
 
 		final Project project = mock(Project.class);
 		when(project.getProjectId()).thenReturn(ID);
@@ -283,7 +283,7 @@ public class BimLogicProjectCrudTest {
 		inOrder.verify(dataPersistence).saveProject(cmProjectCaptor.capture());
 		verifyNoMoreInteractions(serviceFacade, dataPersistence);
 		verifyZeroInteractions(exportPolicy);
-		final CmProject projectToStore = cmProjectCaptor.getValue();
+		final PersistenceProject projectToStore = cmProjectCaptor.getValue();
 
 		assertTrue(facadeProject.getProjectId().equals(ID));
 		assertTrue(facadeProject.getName().equals(NAME));
@@ -306,7 +306,7 @@ public class BimLogicProjectCrudTest {
 	public void updateProjectWithFile() throws Exception {
 		// given
 		final ArgumentCaptor<BimFacadeProject> facadeProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
-		final ArgumentCaptor<CmProject> cmProjectCaptor = ArgumentCaptor.forClass(CmProject.class);
+		final ArgumentCaptor<PersistenceProject> cmProjectCaptor = ArgumentCaptor.forClass(PersistenceProject.class);
 
 		final File ifcFile = new File(FILENAME);
 		final Project project = mock(Project.class);
@@ -319,7 +319,7 @@ public class BimLogicProjectCrudTest {
 		final DateTime now = new DateTime();
 		when(updatedProject.getLastCheckin()).thenReturn(now);
 		when(serviceFacade.updateProject(facadeProjectCaptor.capture())).thenReturn(updatedProject);
-		final CmProject storedProject = mock(CmProject.class);
+		final PersistenceProject storedProject = mock(PersistenceProject.class);
 		when(storedProject.getExportProjectId()).thenReturn(StringUtils.EMPTY);
 		when(storedProject.getShapeProjectId()).thenReturn(StringUtils.EMPTY);
 		when(dataPersistence.read(ID)).thenReturn(storedProject);
@@ -339,7 +339,7 @@ public class BimLogicProjectCrudTest {
 		assertTrue(projectToUpdate.getName().equals(NAME));
 		assertTrue(projectToUpdate.getFile().getName().equals(FILENAME));
 
-		final CmProject projectToSave = cmProjectCaptor.getValue();
+		final PersistenceProject projectToSave = cmProjectCaptor.getValue();
 		assertTrue(projectToSave.getProjectId().equals(ID));
 		assertTrue(projectToSave.getName().equals(NAME));
 		assertTrue(projectToSave.getLastCheckin().equals(now));
@@ -349,7 +349,7 @@ public class BimLogicProjectCrudTest {
 	public void projectCardIsBindedToOneCards() throws Exception {
 		// given
 		final ArgumentCaptor<BimFacadeProject> facadeProjectCaptor = ArgumentCaptor.forClass(BimFacadeProject.class);
-		final ArgumentCaptor<CmProject> cmProjectCaptor = ArgumentCaptor.forClass(CmProject.class);
+		final ArgumentCaptor<PersistenceProject> cmProjectCaptor = ArgumentCaptor.forClass(PersistenceProject.class);
 
 		final Project project = mock(Project.class);
 		when(project.getName()).thenReturn(NAME);
@@ -376,7 +376,7 @@ public class BimLogicProjectCrudTest {
 		inOrder.verify(dataPersistence).saveProject(cmProjectCaptor.capture());
 		verifyNoMoreInteractions(dataPersistence, serviceFacade, exportPolicy);
 
-		final CmProject projectToSave = cmProjectCaptor.getValue();
+		final PersistenceProject projectToSave = cmProjectCaptor.getValue();
 		assertTrue(projectToSave.getProjectId().equals(ID));
 		assertTrue(projectToSave.getName().equals(NAME));
 		assertTrue(projectToSave.getExportProjectId() == null);

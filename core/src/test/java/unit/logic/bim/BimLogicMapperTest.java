@@ -14,12 +14,12 @@ import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.SimpleAttribute;
 import org.cmdbuild.logic.bim.DefaultSynchronizationLogic;
-import org.cmdbuild.logic.bim.ProjectLogic.Project;
+import org.cmdbuild.logic.bim.project.ProjectLogic.Project;
 import org.cmdbuild.logic.bim.SynchronizationLogic;
 import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
-import org.cmdbuild.services.bim.BimPersistence.CmProject;
+import org.cmdbuild.services.bim.BimPersistence.PersistenceProject;
 import org.cmdbuild.services.bim.connector.Mapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +58,7 @@ public class BimLogicMapperTest {
 		final Project project = mock(Project.class);
 		when(project.getProjectId()).thenReturn(PROJECTID);
 		when(project.getImportMapping()).thenReturn(XML_MAPPING);
-		final CmProject cmProject = mock(CmProject.class);
+		final PersistenceProject cmProject = mock(PersistenceProject.class);
 		when(cmProject.getImportMapping()).thenReturn(XML_MAPPING);
 		when(dataPersistence.read(PROJECTID)).thenReturn(cmProject);
 
@@ -68,7 +68,7 @@ public class BimLogicMapperTest {
 		// then
 		final InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager, mapper);
 		inOrder.verify(dataPersistence).read(PROJECTID);
-		inOrder.verify(dataPersistence).saveProject(any(CmProject.class));
+		inOrder.verify(dataPersistence).saveProject(any(PersistenceProject.class));
 		verifyNoMoreInteractions(dataPersistence);
 		verifyZeroInteractions(serviceFacade, dataModelManager, mapper);
 	}
@@ -80,7 +80,7 @@ public class BimLogicMapperTest {
 		final Project project = mock(Project.class);
 		when(project.getProjectId()).thenReturn(PROJECTID);
 		when(project.getImportMapping()).thenReturn(XML_MAPPING);
-		final CmProject cmProject = mock(CmProject.class);
+		final PersistenceProject cmProject = mock(PersistenceProject.class);
 		when(cmProject.getImportMapping()).thenReturn(XML_MAPPING);
 		when(dataPersistence.read(PROJECTID)).thenReturn(cmProject);
 
@@ -102,7 +102,7 @@ public class BimLogicMapperTest {
 		inOrder.verify(dataPersistence).read(PROJECTID);
 		inOrder.verify(serviceFacade).readEntityFromProject(any(EntityDefinition.class), any(String.class));
 		inOrder.verify(mapper).update(bimEntityList);
-		inOrder.verify(dataPersistence).saveProject(any(CmProject.class));
+		inOrder.verify(dataPersistence).saveProject(any(PersistenceProject.class));
 		verifyNoMoreInteractions(dataPersistence, serviceFacade, dataModelManager, mapper);
 	}
 
@@ -113,7 +113,7 @@ public class BimLogicMapperTest {
 		final Project project = mock(Project.class);
 		when(project.getProjectId()).thenReturn(PROJECTID);
 		when(project.getImportMapping()).thenReturn(XML_MAPPING);
-		final CmProject cmProject = mock(CmProject.class);
+		final PersistenceProject cmProject = mock(PersistenceProject.class);
 		when(cmProject.getImportMapping()).thenReturn(XML_MAPPING);
 		when(dataPersistence.read(PROJECTID)).thenReturn(cmProject);
 
@@ -128,7 +128,7 @@ public class BimLogicMapperTest {
 		final InOrder inOrder = inOrder(serviceFacade, dataPersistence, dataModelManager, mapper);
 		inOrder.verify(dataPersistence).read(PROJECTID);
 		inOrder.verify(serviceFacade).readEntityFromProject(any(EntityDefinition.class), any(String.class));
-		inOrder.verify(dataPersistence).saveProject(any(CmProject.class));
+		inOrder.verify(dataPersistence).saveProject(any(PersistenceProject.class));
 		verifyNoMoreInteractions(dataPersistence, serviceFacade, dataModelManager, mapper);
 	}
 
