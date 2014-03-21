@@ -33,14 +33,14 @@ public class ExportConnectorFramework implements ConnectorFramework {
 		boolean synch = true;
 		final Output changeListener = new DataChangedListener();
 		try {
-			performSynchronization(input, changeListener);
+			performExport(input, changeListener);
 		} catch (final DataChangedException de) {
 			synch = false;
 		}
 		return synch;
 	}
 
-	private void performSynchronization(final Object input, final Output output) {
+	private void performExport(final Object input, final Output output) {
 		final String sourceProjectId = String.class.cast(input);
 
 		connector.setConfiguration(sourceProjectId);
@@ -73,16 +73,16 @@ public class ExportConnectorFramework implements ConnectorFramework {
 	}
 
 	@Override
-	public void executeSynchronization(final Object input, final Output output) {
+	public void executeConnector(final Object input, final Output output) {
 		final boolean isSynchronized = isSynch(input);
 		System.out.println("Is synchronized? " + isSynchronized);
 		if (!isSynchronized) {
-			performSynchronizationOnlyOne(input, output);
+			performExportSynchronized(input, output);
 		}
 	}
 
-	private synchronized void performSynchronizationOnlyOne(final Object input, final Output output) {
-		performSynchronization(input, output);
+	private synchronized void performExportSynchronized(final Object input, final Output output) {
+		performExport(input, output);
 	}
 
 	@Override

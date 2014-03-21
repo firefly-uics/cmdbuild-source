@@ -400,14 +400,14 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			try {
 				if (candidateTypes != null) {
 					for (final String type : candidateTypes) {
-						System.out.println("Search among type " + type);
+						System.out.println("Search among type '" + type + "'...");
 						final List<SDataObject> objectList = client.getBimsie1LowLevelInterface().getDataObjectsByType(
 								roid, type);
 						if (objectList != null) {
 							for (final SDataObject object : objectList) {
-								System.out.println("--guid " + object.getGuid());
 								if (object.getGuid().equals(guid)) {
 									entity = new BimserverEntity(object);
+									System.out.println("found!");
 									return entity;
 								}
 							}
@@ -673,4 +673,5 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 		}
 		return oid;
 	}
+
 }

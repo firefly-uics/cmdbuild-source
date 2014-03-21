@@ -4,7 +4,7 @@ public interface ConnectorFramework {
 	
 	boolean isSynch(Object input);
 	
-	void executeSynchronization(Object input, Output output);
+	void executeConnector(Object input, Output output);
 
 	Object getLastGeneratedOutput(Object input);
 	

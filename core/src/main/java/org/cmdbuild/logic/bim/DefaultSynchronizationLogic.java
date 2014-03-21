@@ -64,7 +64,7 @@ public class DefaultSynchronizationLogic implements SynchronizationLogic {
 	@Override
 	public void exportIfc(final String projectId) {
 		final Output output = new DefaultExportListener(bimServiceFacade, exportPolicy);
-		connectorFramework.executeSynchronization(projectId, output);
+		connectorFramework.executeConnector(projectId, output);
 	}
 
 }
