@@ -94,7 +94,8 @@
 				type: this.taskType,
 				params: { id: this.selectedId },
 				scope: this,
-				success: this.selectionModel.select(0, true),
+//				success: this.selectionModel.select(0, true),
+				success: this.success,
 				callback: this.callback
 			});
 		},

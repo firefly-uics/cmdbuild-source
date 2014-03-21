@@ -115,10 +115,6 @@
 			}
 		},
 
-		success: function() {
-			this.grid.store.load();
-		},
-
 		onAddButtonClick: function(name, param, callBack) {
 			this.grid.getSelectionModel().deselectAll();
 			this.buildFormController(param.type);
@@ -160,6 +156,10 @@
 				success: this.success,
 				callback: this.callback
 			});
+		},
+
+		success: function() {
+			this.grid.store.load();
 		}
 	});
 
