@@ -69,6 +69,14 @@
 			return false;
 		},
 
+		getAttributeTableValues: function() {
+			return this.view.attributesTable.getData();
+		},
+
+		getId: function() {
+			return this.view.idField.getValue();
+		},
+
 		getWorkflowComboValue: function() {
 			return this.view.workflowCombo.getValue();
 		},

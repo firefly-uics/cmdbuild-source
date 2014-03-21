@@ -25,6 +25,13 @@
 			}
 		},
 
+		/**
+		 * Create CMCronTriggerField
+		 *
+		 * @param (String) name
+		 * @param (String) label
+		 * @return (Object) CMDBuild.view.common.field.CMCronTriggerField
+		 */
 		createCronField: function(name, label) {
 			var me = this;
 
@@ -75,6 +82,11 @@
 			}
 		},
 
+		/**
+		 * Try to find the correspondence of advanced cronExpression in baseCombo's store
+		 *
+		 * @param (String) value
+		 */
 		setBaseValue: function(value) {
 			var index = this.view.baseCombo.store.find(CMDBuild.ServiceProxy.parameter.VALUE, value);
 

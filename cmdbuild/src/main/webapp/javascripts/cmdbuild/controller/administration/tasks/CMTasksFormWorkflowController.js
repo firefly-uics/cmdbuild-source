@@ -108,7 +108,7 @@
 
 			CMDBuild.LoadMask.get().show();
 			var formData = this.view.getData(true);
-			var attributesGridValues = Ext.getCmp('workflowAttributesGrid').getData();
+			var attributesGridValues = this.delegateStep[0].getAttributeTableValues();
 
 			// Form submit values formatting
 			if (formData.cronInputType) {
@@ -131,7 +131,7 @@
 				this.delegateStep[1].view.advanceRadio.setValue(true);
 
 				for(item in this.delegateStep[1].view.advancedFields)
-					this.delegateStep[1].view.advancedFields[item].markInvalid('Field required.');
+					this.delegateStep[1].view.advancedFields[item].markInvalid('This field is required');
 
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 
@@ -170,22 +170,23 @@
 		},
 
 		success: function(response, options, decodedResult) {
-			var me = this,
-				store = this.parentDelegate.grid.store;
+			var me = this;
+			var store = this.parentDelegate.grid.store;
 
 			store.load();
 			store.on('load', function() {
 				me.view.reset();
-_debug(decodedResult.response);
+
 				var rowIndex = this.find(
 					CMDBuild.ServiceProxy.parameter.ID,
-					(decodedResult.response) ? decodedResult.response : me.view.getForm().findField(CMDBuild.ServiceProxy.parameter.ID).getValue()
+					(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getId()
 				);
+
+				if (rowIndex < 0)
+					rowIndex = 0;
 
 				me.selectionModel.select(rowIndex, true);
 			});
-
-			this.onRowSelected();
 		},
 
 		/**
