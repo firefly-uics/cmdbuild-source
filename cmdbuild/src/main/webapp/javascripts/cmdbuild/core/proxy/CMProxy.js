@@ -136,10 +136,10 @@
 				start: 'services/json/schema/taskmanager/start',
 				stop: 'services/json/schema/taskmanager/stop',
 				email: {
-					delete: '',
-					get: '',
-					post: '',
-					put: '',
+					delete: 'services/json/schema/taskmanager/reademail/delete',
+					get: 'services/json/schema/taskmanager/reademail/read',
+					post: 'services/json/schema/taskmanager/reademail/create',
+					put: 'services/json/schema/taskmanager/reademail/update',
 
 					getStore: 'services/json/schema/taskmanager/reademail/readall'
 				},

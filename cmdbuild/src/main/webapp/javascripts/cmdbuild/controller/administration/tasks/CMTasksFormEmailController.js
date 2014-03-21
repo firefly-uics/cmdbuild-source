@@ -1,19 +1,29 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormEmailController', {
+		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
 		parentDelegate: undefined,
+		delegateStep: undefined,
 		view: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
+		taskType: 'email',
 
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onAbortButtonClick':
 					return this.onAbortButtonClick();
 
 				case 'onAddButtonClick':
-					return this.onAddButtonClick(param);
+					return this.onAddButtonClick();
 
 				case 'onCloneButtonClick':
 					return this.onCloneButtonClick();
@@ -34,7 +44,7 @@
 					return this.onRemoveButtonClick();
 
 				case 'onRowSelected':
-					return this.onRowSelected(param);
+					return this.onRowSelected();
 
 				case 'onSaveButtonClick':
 					return this.onSaveButtonClick();
@@ -46,56 +56,12 @@
 			}
 		},
 
-		onAbortButtonClick: function() {
-			if (this.selectedId != null) {
-				this.onRowSelected();
-			} else {
-				this.view.reset();
-				this.view.disableModify();
-				this.view.wizard.changeTab(0);
-			}
-		},
-
-		onAddButtonClick: function(parameter) {
-			this.selectionModel.deselectAll();
-			this.selectedId = null;
-			this.parentDelegate.loadForm(parameter.type);
-			this.view.reset();
-			this.view.enableTabbedModify(true);
-			this.view.disableTypeField();
-			this.view.wizard.changeTab(0);
-		},
-
-		onCloneButtonClick: function() {
-			this.selectionModel.deselectAll();
-			this.selectedId = null;
-			this.view.disableCMTbar();
-			this.view.enableCMButtons();
-			this.view.enableTabbedModify(true);
-			this.view.wizard.changeTab(0);
-			this.view.disableTypeField();
-		},
-
 		onModifyButtonClick: function() {
 			this.view.disableCMTbar();
 			this.view.enableCMButtons();
 			this.view.enableTabbedModify(true);
 			this.view.wizard.changeTab(0);
 			this.view.disableTypeField();
-		},
-
-		onRemoveButtonClick: function() {
-			Ext.Msg.show({
-				title: CMDBuild.Translation.administration.setup.remove,
-				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
-				scope: this,
-				buttons: Ext.Msg.YESNO,
-				fn: function(button) {
-					if (button == 'yes') {
-						this.removeItem();
-					}
-				}
-			});
 		},
 
 		onRowSelected: function(param) {
@@ -141,6 +107,7 @@
 
 			if (formData.id == null || formData.id == '') {
 				CMDBuild.core.proxy.CMProxyTasks.create({
+					type: this.taskType,
 					params: formData,
 					scope: this,
 					success: this.success,
@@ -148,40 +115,13 @@
 				});
 			} else {
 				CMDBuild.core.proxy.CMProxyTasks.update({
+					type: this.taskType,
 					params: formData,
 					scope: this,
 					success: this.success,
 					callback: this.callback
 				});
 			}
-		},
-
-		removeItem: function() {
-			if (this.selectedId == null) {
-				// Nothing to remove
-				return;
-			}
-
-			var me = this,
-				store = this.parentDelegate.grid.store;
-
-			CMDBuild.proxy.tasks.remove({
-				params: { id: this.selectedId },
-				scope: this,
-				success: function() {
-					me.view.reset();
-
-					store.load();
-					store.on('load', function() {
-						me.selectionModel.select(0, true);
-						me.onRowSelected();
-					});
-
-					this.view.disableModify();
-					this.view.wizard.changeTab(0);
-				},
-				callback: this.callback()
-			});
 		},
 
 		success: function(result, options, decodedResult) {
@@ -201,10 +141,6 @@
 
 			this.view.disableModify();
 			this.view.wizard.changeTab(0);
-		},
-
-		callback: function() {
-			CMDBuild.LoadMask.get().hide();
 		}
 	});
 

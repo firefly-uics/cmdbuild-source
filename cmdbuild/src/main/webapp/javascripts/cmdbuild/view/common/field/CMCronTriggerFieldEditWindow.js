@@ -17,7 +17,7 @@
 				name: 'criteria',
 				boxLabel: translation.every + this.title.toLowerCase(),
 				listeners: {
-					'change': function(radio, value) {
+					change: function(radio, value) {
 						me.selectedRadio = 'each';
 					}
 				}
@@ -27,7 +27,7 @@
 				name: 'criteria',
 				boxLabel: translation.inastepwith,
 				listeners: {
-					'change': function(radio, value) {
+					change: function(radio, value) {
 						me.selectedRadio = 'step';
 						me.stepField.setDisabled(!value);
 					}
@@ -44,7 +44,7 @@
 				name: 'criteria',
 				boxLabel: translation.range,
 				listeners: {
-					'change': function(radio, value) {
+					change: function(radio, value) {
 						me.selectedRadio = 'range';
 						me.rangeFrom.setDisabled(!value);
 						me.rangeTo.setDisabled(!value);
@@ -68,7 +68,7 @@
 				name: 'criteria',
 				boxLabel: translation.exactly,
 				listeners: {
-					'change': function(radio, value) {
+					change: function(radio, value) {
 						me.selectedRadio = 'exactly';
 						me.exactField.setDisabled(!value);
 					}

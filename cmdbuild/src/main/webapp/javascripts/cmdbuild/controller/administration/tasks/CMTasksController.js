@@ -36,6 +36,23 @@
 		},
 
 		/**
+		 * @param (Array) fields
+		 * @returns (String) cron expression
+		 */
+		buildCronExpression: function(fields) {
+			var cronExp = '';
+
+			for (var i = 0; i < (fields.length - 1); i++) {
+				var field = fields[i];
+				cronExp += field + ' ';
+			}
+
+			cronExp += fields[fields.length -1];
+
+			return cronExp;
+		},
+
+		/**
 		 * Gatherer function to catch events
 		 *
 		 * @param (String) name

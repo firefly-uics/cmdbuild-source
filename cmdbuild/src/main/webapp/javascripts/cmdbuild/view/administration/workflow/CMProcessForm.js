@@ -38,12 +38,12 @@
 
 			this.downloadXPDLSubitButton = Ext.create('Ext.button.Button', {
 				text: tr.xpdlDownload.download_tamplete,
-				margins: '0px 0px 0px 5px'
+				margins: '0 0 0 5'
 			});
 
 			this.uploadXPDLSubitButton = Ext.create('Ext.button.Button', {
 				text: tr.xpdlUpload.upload_template,
-				margins: '0px 0px 0px 5px'
+				margins: '0 0 0 5'
 			});
 		},
 
@@ -104,7 +104,7 @@
 						items: [this.fileField, this.uploadXPDLSubitButton],
 						layout: {
 							type: 'hbox',
-							padding:'0px 0px 8px 0px',
+							padding:'0 0 8 0',
 							align: 'top'
 						}
 					},
@@ -113,7 +113,7 @@
 						items: [this.versionCombo, this.downloadXPDLSubitButton],
 						layout: {
 							type: 'hbox',
-							padding: '0px 0px 8px 0px',
+							padding: '0 0 8 0',
 							align: 'top'
 						}
 					}
@@ -151,7 +151,7 @@
 			items.push({
 				xtype: 'panel',
 				buttonAlign: 'center',
-				padding: '0px 0px 5px 0px',
+				padding: '0 0 5 0',
 				buttons: [this.saveButton, this.abortButton]
 			});
 
