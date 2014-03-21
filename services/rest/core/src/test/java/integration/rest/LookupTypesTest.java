@@ -3,14 +3,16 @@ package integration.rest;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.LookupTypes;
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
+import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.LookupDetailResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
@@ -66,7 +68,7 @@ public class LookupTypesTest {
 						.withTotal(2) //
 						.build()) //
 				.build();
-		when(service.getLookupTypes()) //
+		when(service.getLookupTypes(anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
@@ -95,7 +97,7 @@ public class LookupTypesTest {
 						.withTotal(2) //
 						.build()) //
 				.build();
-		when(service.getLookups("foo", false)) //
+		when(service.getLookups(eq("foo"), eq(false), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when

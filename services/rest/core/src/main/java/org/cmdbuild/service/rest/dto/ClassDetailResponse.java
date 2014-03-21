@@ -32,6 +32,7 @@ public class ClassDetailResponse extends ListResponse<ClassDetail> {
 		super(builder);
 	}
 
+	@Override
 	@XmlElement(name = DATA, type = ClassDetail.class)
 	@JsonProperty(DATA)
 	public Collection<ClassDetail> getElements() {

@@ -68,6 +68,7 @@ import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Create;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Delete;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
@@ -92,6 +93,20 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ModClass extends JSONBaseWithSpringContext {
+
+	private static final AttributesQuery UNUSED_ATTRIBUTE_QUERY = new AttributesQuery() {
+
+		@Override
+		public Integer limit() {
+			return null;
+		}
+
+		@Override
+		public Integer offset() {
+			return null;
+		}
+
+	};
 
 	private static class JsonFunctionItem implements FunctionItem {
 
@@ -223,7 +238,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className //
 	) throws JSONException, AuthException {
 		final DataAccessLogic dataLogic = userDataAccessLogic();
-		final Iterable<? extends CMAttribute> attributes = dataLogic.getAttributes(className, activeOnly);
+		final Iterable<? extends CMAttribute> attributes = dataLogic.getAttributes(className, activeOnly,
+				UNUSED_ATTRIBUTE_QUERY);
 
 		final JSONObject out = new JSONObject();
 		out.put(ATTRIBUTES, AttributeSerializer.withView(dataLogic.getView()).toClient(attributes, activeOnly));

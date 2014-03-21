@@ -2,6 +2,7 @@ package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
@@ -19,6 +20,7 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -79,9 +81,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 
 public class DefaultDataAccessLogic implements DataAccessLogic {
 
@@ -95,6 +100,17 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		public Card apply(final CMCard input) {
 			return CardStorableConverter.of(input).convert(input);
 		}
+	};
+
+	private static final Comparator<CMAttribute> NAME_ASC = new Comparator<CMAttribute>() {
+
+		@Override
+		public int compare(final CMAttribute o1, final CMAttribute o2) {
+			final int v1 = o1.getClassOrder();
+			final int v2 = o2.getClassOrder();
+			return (v1 < v2 ? -1 : (v1 == v2 ? 0 : 1));
+		}
+
 	};
 
 	private final CMDataView systemDataView;
@@ -282,9 +298,19 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
-	public Iterable<? extends CMAttribute> getAttributes(final String className, final boolean onlyActive) {
+	public PagedElements<CMAttribute> getAttributes(final String className, final boolean onlyActive,
+			final AttributesQuery attributesQuery) {
 		final CMClass target = findClass(className);
-		return onlyActive ? target.getActiveAttributes() : target.getAttributes();
+		final Iterable<? extends CMAttribute> elements = onlyActive ? target.getActiveAttributes() : target
+				.getAttributes();
+		final Iterable<? extends CMAttribute> ordered = Ordering.from(NAME_ASC).sortedCopy(elements);
+		final Integer offset = attributesQuery.offset();
+		final Integer limit = attributesQuery.limit();
+		final FluentIterable<CMAttribute> limited = from(ordered) //
+				.skip((offset == null) ? 0 : offset) //
+				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
+				.transform(Functions.<CMAttribute> identity());
+		return new PagedElements<CMAttribute>(limited, size(elements));
 	}
 
 	/**
