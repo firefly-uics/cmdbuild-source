@@ -597,6 +597,18 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 		}
 	}
 
+	@Override
+	public void unsetReference(final String transactionId, final String objectId, final String referenceName) {
+		try {
+			final Long tid = new Long(transactionId);
+			final Long oid = new Long(objectId);
+			client.getBimsie1LowLevelInterface().unsetReference(tid, oid, referenceName);
+		} catch (final Throwable e) {
+			throw new BimError(e);
+		}
+
+	}
+
 	@Deprecated
 	@Override
 	public void updateExportProject(final String projectId, final String exportProjectId, final String shapeProjectId) {
@@ -672,6 +684,18 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			oid = BimserverEntity.class.cast(entityByGuid).getOid();
 		}
 		return oid;
+	}
+
+	@Override
+	public void setDoubleAttributes(final String transactionId, final String objectId, final String attributeName,
+			final List<Double> values) {
+		try {
+			final Long tid = Long.valueOf(transactionId);
+			final Long oid = Long.valueOf(objectId);
+			client.getBimsie1LowLevelInterface().setDoubleAttributes(tid, oid, attributeName, values);
+		} catch (final Throwable t) {
+			throw new BimError(t);
+		}
 	}
 
 }

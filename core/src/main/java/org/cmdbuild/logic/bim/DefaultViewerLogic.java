@@ -40,7 +40,6 @@ import com.google.common.collect.Maps;
 
 public class DefaultViewerLogic implements ViewerLogic {
 
-
 	private final BimFacade bimServiceFacade;
 	private final BimPersistence bimPersistence;
 	private final BimDataView bimDataView;
@@ -135,7 +134,9 @@ public class DefaultViewerLogic implements ViewerLogic {
 				List<BimCard> bimCards = Lists.newArrayList();
 				if (className.equals(rootClassName)) {
 					final BimCard rootBimCard = bimDataView.getBimCardFromRootId(className, rootCardId);
-					bimCards.add(rootBimCard);
+					if (rootBimCard != null) {
+						bimCards.add(rootBimCard);
+					}
 				} else {
 					final String rootReferenceName = layer.getRootReference();
 					if (isNotBlank(rootReferenceName)) {
@@ -233,6 +234,12 @@ public class DefaultViewerLogic implements ViewerLogic {
 			revisionId = bimServiceFacade.getLastRevisionOfProject(projectId);
 		}
 		return revisionId;
+	}
+
+	@Override
+	public void moveObjectToPosition(String projectId, String className, String globalId, List<Double> coordinates) {
+		bimServiceFacade.moveObject(projectId, globalId, coordinates);
+		bimDataView.moveObject(className, globalId, coordinates);
 	}
 
 }

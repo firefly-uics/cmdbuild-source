@@ -1,5 +1,7 @@
 package org.cmdbuild.services.bim;
 
+import java.util.List;
+
 import org.cmdbuild.model.bim.BimLayer;
 import org.cmdbuild.model.bim.StorableProject;
 
@@ -37,5 +39,4 @@ public interface BimStoreManager {
 
 	BimLayer readLayer(String className);
 
-	
 }

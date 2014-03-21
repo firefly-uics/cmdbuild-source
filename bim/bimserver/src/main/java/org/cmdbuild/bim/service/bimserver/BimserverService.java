@@ -211,7 +211,7 @@ public class BimserverService implements BimService {
 
 	@Override
 	public void unsetReference(final String transactionId, final String objectId, final String referenceName) {
-		throw new BimError("Not implemented");
+		client.unsetReference(transactionId, objectId, referenceName);
 	}
 
 	@Override
@@ -242,6 +242,12 @@ public class BimserverService implements BimService {
 	@Override
 	public Long getOidFromGlobalId(final String globalId, final String revisionId, final Iterable<String> candidateTypes) {
 		return client.getOidFromGlobalId(globalId, revisionId, candidateTypes);
+	}
+
+	@Override
+	public void setDoubleAttributes(final String transactionId, final String locationId, final String attributeName,
+			final List<Double> values) {
+		client.setDoubleAttributes(transactionId, locationId, attributeName, values);
 	}
 
 }

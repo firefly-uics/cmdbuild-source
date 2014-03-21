@@ -119,16 +119,9 @@ public class DefaultExportConnector implements GenericMapper {
 		 * In order to see the generated objects I have to download and upload
 		 * again the file. This is due to some problems with BimServer cache.
 		 */
-		try {
-			final DataHandler exportedData = serviceFacade.download(exportProjectId);
-			final File file = File.createTempFile("ifc", null);
-			final FileOutputStream outputStream = new FileOutputStream(file);
-			exportedData.writeTo(outputStream);
-			serviceFacade.checkin(exportProjectId, file);
-			System.out.println("export file is ready");
-		} catch (final Throwable t) {
-			throw new BimError("Problem while downloading and uploading the generated file", t);
-		}
+		serviceFacade.refresh(exportProjectId);
+		
+		
 	}
 
 	@Override

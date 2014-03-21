@@ -119,6 +119,19 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		}
 		return cards;
 	}
+	
+
+	@Override
+	public void moveObject(String className, String globalId, List<Double> coordinates) {
+		String xcord = String.valueOf(coordinates.get(0));
+		String ycord = String.valueOf(coordinates.get(1));
+		String zcord = String.valueOf(coordinates.get(2));
+	
+		CMFunction function = dataView.findFunctionByName("_bim_update_coordinates");
+		NameAlias f = NameAlias.as("f");
+		dataView.select(anyAttribute(function, f))
+				.from(call(function, className, globalId, xcord, ycord, zcord), f).run();
+	}
 
 	@Override
 	public Entity getCardDataForExport(final Long id, final String className, final String containerAttributeName,
@@ -434,5 +447,6 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		}
 		return rootId;
 	}
+
 
 }
