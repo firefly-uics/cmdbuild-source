@@ -2,87 +2,40 @@ package org.cmdbuild.service.rest.dto;
 
 import static org.cmdbuild.service.rest.dto.Constants.DATA;
 import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_DETAIL_RESPONSE;
-import static org.cmdbuild.service.rest.dto.Constants.TOTAL;
 
-import java.util.Set;
+import java.util.Collection;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import com.google.common.collect.Sets;
-
 @XmlRootElement(name = LOOKUP_TYPE_DETAIL_RESPONSE)
-public class LookupTypeDetailResponse {
+public class LookupTypeDetailResponse extends ListResponse<LookupTypeDetail> {
 
-	public static class Builder implements org.cmdbuild.common.Builder<LookupTypeDetailResponse> {
+	public static Builder<LookupTypeDetail, LookupTypeDetailResponse> newInstance() {
+		return new Builder<LookupTypeDetail, LookupTypeDetailResponse>() {
 
-		private Iterable<LookupTypeDetail> details;
-		private int total;
+			@Override
+			protected LookupTypeDetailResponse doBuild() {
+				return new LookupTypeDetailResponse(this);
+			}
 
-		private Builder() {
-			// use static method
-		}
-
-		@Override
-		public LookupTypeDetailResponse build() {
-			return new LookupTypeDetailResponse(this);
-		}
-
-		public Builder withDetails(final Iterable<LookupTypeDetail> details) {
-			this.details = details;
-			return this;
-		}
-
-		public Builder withTotal(final int total) {
-			this.total = total;
-			return this;
-		}
-
+		};
 	}
-
-	public static Builder newInstance() {
-		return new Builder();
-	}
-
-	private Set<LookupTypeDetail> details;
-	private int total;
 
 	LookupTypeDetailResponse() {
 		// package visibility
 	}
 
-	private LookupTypeDetailResponse(final Builder builder) {
-		this.details = Sets.newHashSet(builder.details);
-		this.total = builder.total;
+	private LookupTypeDetailResponse(final Builder<LookupTypeDetail, LookupTypeDetailResponse> builder) {
+		super(builder);
 	}
 
 	@XmlElement(name = DATA, type = LookupTypeDetail.class)
 	@JsonProperty(DATA)
-	public Set<LookupTypeDetail> getDetails() {
-		return details;
-	}
-
-	void setDetails(final Iterable<LookupTypeDetail> details) {
-		this.details = Sets.newHashSet(details);
-	}
-
-	@XmlAttribute(name = TOTAL)
-	public int getTotal() {
-		return total;
-	}
-
-	void setTotal(final int total) {
-		this.total = total;
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
+	public Collection<LookupTypeDetail> getElements() {
+		return super.getElements();
 	}
 
 }
