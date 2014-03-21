@@ -86,7 +86,7 @@
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.administration.modClass.attributeProperties.baseProperties,
-						margins: '0px 3px 0px 0px',
+						margins: '0 3 0 0',
 
 						defaults: {
 							labelWidth: CMDBuild.LABEL_WIDTH,
@@ -109,7 +109,7 @@
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.administration.email.templates.template,
-						margins: '0px 0px 0px 3px',
+						margins: '0 0 0 3',
 						autoScroll: true,
 
 						defaults: {

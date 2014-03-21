@@ -1,6 +1,6 @@
 (function() {
 
-	var translation = CMDBuild.Translation.administration.tasks.taskWorkflow;
+	var tr = CMDBuild.Translation.administration.tasks.taskWorkflow;
 
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep2Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
@@ -44,7 +44,7 @@
 				listeners: {
 					change: function(field, newValue, oldValue) {
 						me.setBaseValue(
-							me.parentDelegate.buildCronExpression([
+							me.parentDelegate.parentDelegate.buildCronExpression([
 								me.view.advancedFields[0].getValue(),
 								me.view.advancedFields[1].getValue(),
 								me.view.advancedFields[2].getValue(),
@@ -127,10 +127,10 @@
 			this.advanceRadio = Ext.create('Ext.form.field.Radio', {
 				name: 'cronInputType',
 				inputValue: 'advanced',
-				boxLabel: translation.advanced,
+				boxLabel: tr.advanced,
 				width: CMDBuild.LABEL_WIDTH,
 				listeners: {
-					'change': function(radio, value) {
+					change: function(radio, value) {
 						me.baseCombo.setDisabled(value);
 						me.delegate.setDisabledAdvancedFields(!value);
 					}
@@ -138,17 +138,17 @@
 			});
 
 			this.advancedFields = [
-				this.delegate.createCronField('minute', translation.minute),
-				this.delegate.createCronField('hour', translation.hour),
-				this.delegate.createCronField('dayOfMounth', translation.dayOfMounth),
-				this.delegate.createCronField('mounth', translation.mounth),
-				this.delegate.createCronField('dayOfWeek', translation.dayOfWeek)
+				this.delegate.createCronField('minute', tr.minute),
+				this.delegate.createCronField('hour', tr.hour),
+				this.delegate.createCronField('dayOfMounth', tr.dayOfMounth),
+				this.delegate.createCronField('mounth', tr.mounth),
+				this.delegate.createCronField('dayOfWeek', tr.dayOfWeek)
 			];
 
 			this.advancePanel = Ext.create('Ext.panel.Panel', {
 				frame: true,
 				layout: 'hbox',
-				margin: '0px 0px 5px 0px',
+				margin: '0 0 5 0',
 				items: [
 					this.advanceRadio,
 					{
@@ -165,10 +165,10 @@
 			this.baseRadio = Ext.create('Ext.form.Radio', {
 				name: 'cronInputType',
 				inputValue: 'base',
-				boxLabel: translation.basic,
+				boxLabel: tr.basic,
 				width: CMDBuild.LABEL_WIDTH,
 				listeners: {
-					'change': function(radio, value) {
+					change: function(radio, value) {
 						me.baseCombo.setDisabled(!value);
 						me.delegate.setDisabledAdvancedFields(value);
 					}
@@ -180,10 +180,10 @@
 				store: Ext.create('Ext.data.SimpleStore', {
 					fields: [CMDBuild.ServiceProxy.parameter.VALUE, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
 					data: [
-						['0 * * * ?', translation.everyHour],
-						['0 0 * * ?', translation.everyDay],
-						['0 0 1 * ?', translation.everyMounth],
-						['0 0 1 1 ?', translation.everyYear]
+						['0 * * * ?', tr.everyHour],
+						['0 0 * * ?', tr.everyDay],
+						['0 0 1 * ?', tr.everyMounth],
+						['0 0 1 1 ?', tr.everyYear]
 					]
 				}),
 				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
@@ -191,9 +191,9 @@
 				queryMode: 'local',
 				forceSelection: true,
 				editable: false,
-				margins: '0px 0px 0px ' + (CMDBuild.LABEL_WIDTH - 45) + 'px',
+				margins: '0 0 0 ' + (CMDBuild.LABEL_WIDTH - 45),
 				listeners: {
-					'select': function(combo, record, index) {
+					select: function(combo, record, index) {
 						me.delegate.setAdvancedValue(record[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
 					}
 				}
@@ -202,7 +202,7 @@
 			this.basePanel = Ext.create('Ext.panel.Panel', {
 				frame: true,
 				layout: 'hbox',
-				margin: '0px 0px 5px 0px',
+				margin: '0 0 5 0',
 				items: [this.baseRadio, this.baseCombo]
 			});
 			// END: Base panel setup

@@ -1,8 +1,8 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks.taskWorkflow;
+	var tr = CMDBuild.Translation.administration.tasks.taskEmail;
 
-	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', {
+	Ext.define('CMDBuild.view.administration.tasks.email.CMStep4Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
@@ -61,44 +61,28 @@
 			return out;
 		},
 
-		checkWorkflowComboSelected: function() {
-			if (this.getWorkflowComboValue())
-				return true;
+//		checkWorkflowComboSelected: function() {
+//			if (this.getWorkflowComboValue())
+//				return true;
+//
+//			return false;
+//		},
 
-			return false;
-		},
+//		getAttributeTableValues: function() {
+//			return this.view.attributesTable.getData();
+//		},
 
-		getAttributeTableValues: function() {
-			return this.view.attributesTable.getData();
-		},
+//		getWorkflowComboValue: function() {
+//			return this.view.workflowCombo.getValue();
+//		},
 
-		getId: function() {
-			return this.view.idField.getValue();
-		},
-
-		getWorkflowComboValue: function() {
-			return this.view.workflowCombo.getValue();
-		},
-
-		fillActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
-
-		fillAttributesGrid: function(data) {
-			this.view.attributesTable.fillWithData(data);
-		},
-
-		fillDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
-
-		fillId: function(value) {
-			this.view.idField.setValue(value);
-		},
-
-		fillWorkflowCombo: function(workflowName) {
-			this.view.workflowCombo.setValue(workflowName);
-		},
+//		fillAttributesGrid: function(data) {
+//			this.view.attributesTable.fillWithData(data);
+//		},
+//
+//		fillWorkflowCombo: function(workflowName) {
+//			this.view.workflowCombo.setValue(workflowName);
+//		},
 
 		onAttributeComboSelect: function(rowIndex) {
 			this.view.attributesTable.cellEditing.startEditByPosition({ row: rowIndex, column: 1 });
@@ -132,67 +116,27 @@
 			});
 		},
 
-		setDisabledTypeField: function(state) {
-			this.view.typeField.setDisabled(state);
-		},
-
 		setDisabledAttributesTable: function(state) {
 			this.view.attributesTable.setDisabled(state);
 		}
 	});
 
-	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1', {
+	Ext.define('CMDBuild.view.administration.tasks.email.CMStep4', {
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'workflow',
+		taskType: 'email',
 
 		border: false,
 		height: '100%',
 		overflowY: 'auto',
 
-		defaults: {
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			xtype: 'textfield'
-		},
-
 		initComponent: function() {
 			var me = this;
 
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', this);
-
-			this.typeField = Ext.create('Ext.form.field.Text', {
-				fieldLabel: CMDBuild.Translation.administration.tasks.type,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.ServiceProxy.parameter.TYPE,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				value: me.taskType,
-				disabled: true,
-				cmImmutable: true,
-				readOnly: true
-			});
-
-			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.ServiceProxy.parameter.ID
-			});
-
-			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				fieldLabel: CMDBuild.Translation.description_,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				allowBlank: false
-			});
-
-			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
-				fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH
-			});
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep4Delegate', this);
 
 			this.workflowCombo = Ext.create('Ext.form.field.ComboBox', {
-				id: 'workflowCombo',
 				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.administration.tasks.workflow,
 				valueField: CMDBuild.ServiceProxy.parameter.NAME,
@@ -215,6 +159,7 @@
 				keyLabel: CMDBuild.Translation.name,
 				valueLabel: CMDBuild.Translation.value,
 				disabled: true,
+				margin: '0 0 5 0', // To fix Fieldset bottom padding problem
 				keyEditorConfig: {
 					xtype: 'combo',
 					valueField: CMDBuild.ServiceProxy.parameter.VALUE,
@@ -233,15 +178,28 @@
 				}
 			});
 
-			Ext.apply(this, {
+			this.workflowFieldset = Ext.create('Ext.form.FieldSet', {
+				title: tr.startWorkflow,
+				checkboxToggle: true,
+				collapsed: true,
+				layout: {
+					type: 'vbox',
+					align: 'stretch'
+				},
 				items: [
-					this.typeField,
-					this.idField,
-					this.descriptionField,
-					this.workflowCombo,
-					this.activeField,
+					{
+						xtype: 'container',
+						layout: {
+							type: 'vbox'
+						},
+						items: [this.workflowCombo]
+					},
 					this.attributesTable
 				]
+			});
+
+			Ext.apply(this, {
+				items: [this.workflowFieldset]
 			});
 
 			this.callParent(arguments);
