@@ -9,6 +9,8 @@ import static org.mockito.Mockito.when;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.LookupTypes;
+import org.cmdbuild.service.rest.dto.ListResponse;
+import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.LookupDetailResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
@@ -52,15 +54,17 @@ public class LookupTypesTest {
 	@Test
 	public void getLookupTypes() throws Exception {
 		// given
-		final LookupTypeDetailResponse expectedResponse = LookupTypeDetailResponse.newInstance() //
-				.withDetails(asList( //
+		final ListResponse<LookupTypeDetail> expectedResponse = LookupTypeDetailResponse.newInstance() //
+				.withElements(asList( //
 						LookupTypeDetail.newInstance() //
 								.withName("foo") //
 								.build(), //
 						LookupTypeDetail.newInstance() //
 								.withName("bar") //
 								.build())) //
-				.withTotal(2) //
+				.withMetadata(DetailResponseMetadata.newInstance() //
+						.withTotal(2) //
+						.build()) //
 				.build();
 		when(service.getLookupTypes()) //
 				.thenReturn(expectedResponse);
@@ -77,8 +81,8 @@ public class LookupTypesTest {
 	@Test
 	public void getLookups() throws Exception {
 		// given
-		final LookupDetailResponse expectedResponse = LookupDetailResponse.newInstance() //
-				.withDetails(asList( //
+		final ListResponse<LookupDetail> expectedResponse = LookupDetailResponse.newInstance() //
+				.withElements(asList( //
 						LookupDetail.newInstance() //
 								.withId(123L) //
 								.withCode("foo") //
@@ -87,7 +91,9 @@ public class LookupTypesTest {
 								.withId(456L) //
 								.withCode("bar") //
 								.build())) //
-				.withTotal(2) //
+				.withMetadata(DetailResponseMetadata.newInstance() //
+						.withTotal(2) //
+						.build()) //
 				.build();
 		when(service.getLookups("foo", false)) //
 				.thenReturn(expectedResponse);

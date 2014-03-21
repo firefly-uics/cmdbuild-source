@@ -2,7 +2,7 @@ package org.cmdbuild.service.rest.serialization;
 
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMEntryType;

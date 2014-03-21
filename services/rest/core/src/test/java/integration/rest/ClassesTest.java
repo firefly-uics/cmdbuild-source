@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -19,6 +20,7 @@ import org.cmdbuild.service.rest.dto.CardDetail;
 import org.cmdbuild.service.rest.dto.CardDetailResponse;
 import org.cmdbuild.service.rest.dto.ClassDetail;
 import org.cmdbuild.service.rest.dto.ClassDetailResponse;
+import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -59,16 +61,18 @@ public class ClassesTest {
 	public void getClasses() throws Exception {
 		// given
 		final ClassDetailResponse expectedResponse = ClassDetailResponse.newInstance() //
-				.withDetails(asList( //
+				.withElements(asList( //
 						ClassDetail.newInstance() //
 								.withName("foo") //
 								.build(), //
 						ClassDetail.newInstance() //
 								.withName("bar") //
 								.build())) //
-				.withTotal(2) //
+				.withMetadata(DetailResponseMetadata.newInstance() //
+						.withTotal(2) //
+						.build()) //
 				.build();
-		when(service.getClasses(anyBoolean())) //
+		when(service.getClasses(anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
@@ -84,14 +88,16 @@ public class ClassesTest {
 	public void getClassAttributes() throws Exception {
 		// given
 		final AttributeDetailResponse expectedResponse = AttributeDetailResponse.newInstance() //
-				.withDetails(asList( //
+				.withElements(asList( //
 						AttributeDetail.newInstance() //
 								.withName("bar") //
 								.build(), //
 						AttributeDetail.newInstance() //
 								.withName("baz") //
 								.build())) //
-				.withTotal(2) //
+				.withMetadata(DetailResponseMetadata.newInstance() //
+						.withTotal(2) //
+						.build()) //
 				.build();
 		when(service.getAttributes(eq("foo"), anyBoolean())) //
 				.thenReturn(expectedResponse);
@@ -109,16 +115,18 @@ public class ClassesTest {
 	public void getCards() throws Exception {
 		// given
 		final CardDetailResponse expectedResponse = CardDetailResponse.newInstance() //
-				.withDetails(asList( //
+				.withElements(asList( //
 						CardDetail.newInstance() //
 								.withId(123L) //
 								.build(), //
 						CardDetail.newInstance() //
 								.withId(456L) //
 								.build())) //
-				.withTotal(2) //
+				.withMetadata(DetailResponseMetadata.newInstance() //
+						.withTotal(2) //
+						.build()) //
 				.build();
-		when(service.getCards("foo")) //
+		when(service.getCards("foo", 0, 0)) //
 				.thenReturn(expectedResponse);
 
 		// when
@@ -134,14 +142,16 @@ public class ClassesTest {
 	public void getCardAttributes() throws Exception {
 		// given
 		final AttributeValueDetailResponse expectedResponse = AttributeValueDetailResponse.newInstance() //
-				.withDetails(asList( //
+				.withElements(asList( //
 						AttributeValueDetail.newInstance() //
 								.withName("foo") //
 								.build(), //
 						AttributeValueDetail.newInstance() //
 								.withName("bar") //
 								.build())) //
-				.withTotal(2) //
+				.withMetadata(DetailResponseMetadata.newInstance() //
+						.withTotal(2) //
+						.build()) //
 				.build();
 		when(service.getAttributes("foo", 123L)) //
 				.thenReturn(expectedResponse);

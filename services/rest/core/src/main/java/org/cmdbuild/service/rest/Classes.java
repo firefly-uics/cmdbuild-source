@@ -3,7 +3,9 @@ package org.cmdbuild.service.rest;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.cmdbuild.service.rest.Constants.ACTIVE;
 import static org.cmdbuild.service.rest.Constants.ID;
+import static org.cmdbuild.service.rest.Constants.LIMIT;
 import static org.cmdbuild.service.rest.Constants.NAME;
+import static org.cmdbuild.service.rest.Constants.OFFSET;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -23,7 +25,9 @@ public interface Classes {
 	@GET
 	@Path("")
 	ClassDetailResponse getClasses( //
-			@QueryParam(ACTIVE) boolean activeOnly //
+			@QueryParam(ACTIVE) boolean activeOnly, //
+			@QueryParam(LIMIT) Integer limit, //
+			@QueryParam(OFFSET) Integer offset //
 	);
 
 	@GET
@@ -36,7 +40,9 @@ public interface Classes {
 	@GET
 	@Path("{name}/cards/")
 	CardDetailResponse getCards( //
-			@PathParam(NAME) String name //
+			@PathParam(NAME) String name, //
+			@QueryParam(LIMIT) Integer limit, //
+			@QueryParam(OFFSET) Integer offset //
 	);
 
 	@GET

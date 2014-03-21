@@ -6,6 +6,8 @@ import static com.google.common.collect.Iterables.size;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.service.rest.LookupTypes;
+import org.cmdbuild.service.rest.dto.ListResponse;
+import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.LookupDetailResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
@@ -21,27 +23,31 @@ public class CxfLookupTypes extends CxfService implements LookupTypes {
 	private static final ToLookupDetail TO_LOOKUP_DETAIL = ToLookupDetail.newInstance().build();
 
 	@Override
-	public LookupTypeDetailResponse getLookupTypes() {
+	public ListResponse<LookupTypeDetail> getLookupTypes() {
 		final Iterable<? extends LookupType> lookupTypes = Lists.newArrayList(lookupLogic().getAllTypes());
 
-		final Iterable<LookupTypeDetail> details = from(lookupTypes) //
+		final Iterable<LookupTypeDetail> elements = from(lookupTypes) //
 				.transform(TO_LOOKUP_TYPE_DETAIL);
 		return LookupTypeDetailResponse.newInstance() //
-				.withDetails(details) //
-				.withTotal(size(details)) //
+				.withElements(elements) //
+				.withMetadata(DetailResponseMetadata.newInstance() //
+						.withTotal(size(elements)) //
+						.build()) //
 				.build();
 	}
 
 	@Override
-	public LookupDetailResponse getLookups(final String type, final boolean activeOnly) {
+	public ListResponse<LookupDetail> getLookups(final String type, final boolean activeOnly) {
 		final LookupType lookupType = LookupType.newInstance().withName(type).build();
 		final Iterable<? extends Lookup> lookups = lookupLogic().getAllLookup(lookupType, activeOnly);
 
-		final Iterable<LookupDetail> details = from(lookups) //
+		final Iterable<LookupDetail> elements = from(lookups) //
 				.transform(TO_LOOKUP_DETAIL);
 		return LookupDetailResponse.newInstance() //
-				.withDetails(details) //
-				.withTotal(size(details)) //
+				.withElements(elements) //
+				.withMetadata(DetailResponseMetadata.newInstance() //
+						.withTotal(size(elements)) //
+						.build()) //
 				.build();
 	}
 

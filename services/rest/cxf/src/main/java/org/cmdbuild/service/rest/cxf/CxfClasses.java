@@ -4,6 +4,8 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.size;
 
+import java.util.Comparator;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -23,6 +25,7 @@ import org.cmdbuild.service.rest.dto.CardDetail;
 import org.cmdbuild.service.rest.dto.CardDetailResponse;
 import org.cmdbuild.service.rest.dto.ClassDetail;
 import org.cmdbuild.service.rest.dto.ClassDetailResponse;
+import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.serialization.AttributeTypeResolver;
 import org.cmdbuild.service.rest.serialization.ToAttributeDetail;
 import org.cmdbuild.service.rest.serialization.ToAttributeValueDetail;
@@ -30,6 +33,7 @@ import org.cmdbuild.service.rest.serialization.ToCardDetail;
 import org.cmdbuild.service.rest.serialization.ToClassDetail;
 import org.cmdbuild.workflow.user.UserProcessClass;
 
+import com.google.common.collect.Ordering;
 import com.mchange.util.AssertException;
 
 public class CxfClasses extends CxfService implements Classes {
@@ -37,17 +41,36 @@ public class CxfClasses extends CxfService implements Classes {
 	private static final ToClassDetail TO_CLASS_DETAIL = ToClassDetail.newInstance().build();
 	private static final AttributeTypeResolver ATTRIBUTE_TYPE_RESOLVER = new AttributeTypeResolver();
 
+	private static final Comparator<CMClass> NAME_ASC = new Comparator<CMClass>() {
+
+		@Override
+		public int compare(CMClass o1, CMClass o2) {
+			return o1.getName().compareTo(o2.getName());
+		}
+
+	};
+
 	@Override
-	public ClassDetailResponse getClasses(final boolean activeOnly) {
+	public ClassDetailResponse getClasses(final boolean activeOnly, final Integer limit, final Integer offset) {
+		// FIXME do all the following it within the same logic
+		// <<<<<
 		final Iterable<? extends CMClass> allClasses = userDataAccessLogic().findClasses(activeOnly);
 		final Iterable<? extends UserProcessClass> allProcessClasses = userWorkflowLogic().findProcessClasses(
 				activeOnly);
-
-		final Iterable<ClassDetail> details = from(concat(allClasses, allProcessClasses)) //
+		final Iterable<? extends CMClass> ordered = Ordering.from(NAME_ASC) //
+				.sortedCopy(concat( //
+						allClasses, //
+						allProcessClasses));
+		final Iterable<ClassDetail> elements = from(ordered) //
+				.skip((offset == null) ? 0 : offset) //
+				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
 				.transform(TO_CLASS_DETAIL);
+		// <<<<<
 		return ClassDetailResponse.newInstance() //
-				.withDetails(details) //
-				.withTotal(size(details)) //
+				.withElements(elements) //
+				.withMetadata(DetailResponseMetadata.newInstance() //
+						.withTotal(size(elements)) //
+						.build()) //
 				.build();
 	}
 
@@ -66,19 +89,21 @@ public class CxfClasses extends CxfService implements Classes {
 				.withDataView(systemDataView()) //
 				.withErrorHandler(errorHandler()) //
 				.build();
-		final Iterable<AttributeDetail> details = from(attributes) //
+		final Iterable<AttributeDetail> elements = from(attributes) //
 				.transform(toAttributeDetails);
 		return AttributeDetailResponse.newInstance() //
-				.withDetails(details) //
-				.withTotal(size(details)) //
+				.withElements(elements) //
+				.withMetadata(DetailResponseMetadata.newInstance() //
+						.withTotal(size(elements)) //
+						.build()) //
 				.build();
 	}
 
 	@Override
-	public CardDetailResponse getCards(final String name) {
+	public CardDetailResponse getCards(final String name, final Integer limit, final Integer offset) {
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
-				.limit(Integer.MAX_VALUE) //
-				.offset(0) //
+				.limit(limit) //
+				.offset(offset) //
 				.build();
 		final FetchCardListResponse response = userDataAccessLogic().fetchCards(name, queryOptions);
 
@@ -86,11 +111,13 @@ public class CxfClasses extends CxfService implements Classes {
 				.withDataView(systemDataView()) //
 				.withErrorHandler(errorHandler()) //
 				.build();
-		final Iterable<CardDetail> details = from(response.elements()) //
+		final Iterable<CardDetail> elements = from(response.elements()) //
 				.transform(toCardDetail);
 		return CardDetailResponse.newInstance() //
-				.withDetails(details) //
-				.withTotal(response.getTotalNumberOfCards()) //
+				.withElements(elements) //
+				.withMetadata(DetailResponseMetadata.newInstance() //
+						.withTotal(response.getTotalNumberOfCards()) //
+						.build()) //
 				.build();
 	}
 
@@ -106,11 +133,13 @@ public class CxfClasses extends CxfService implements Classes {
 			final ToAttributeValueDetail toAttributeValueDetail = ToAttributeValueDetail.newInstance() //
 					.with(fetched.getType()) //
 					.build();
-			final Iterable<AttributeValueDetail> details = from(fetched.getAllValues()) //
+			final Iterable<AttributeValueDetail> elements = from(fetched.getAllValues()) //
 					.transform(toAttributeValueDetail);
 			return AttributeValueDetailResponse.newInstance() //
-					.withDetails(details) //
-					.withTotal(size(details)) //
+					.withElements(elements) //
+					.withMetadata(DetailResponseMetadata.newInstance() //
+							.withTotal(size(elements)) //
+							.build()) //
 					.build();
 		} catch (final NotFoundException e) {
 			errorHandler().cardNotFound(id);

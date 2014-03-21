@@ -22,8 +22,8 @@ import static org.cmdbuild.service.rest.dto.Constants.UNIQUE;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 @XmlRootElement(name = ATTRIBUTE_DETAIL)
 public class AttributeDetail {
