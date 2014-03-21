@@ -33,6 +33,7 @@ import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.services.bim.DefaultBimDataView.SHAPE_OID;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,6 @@ public class DefaultBimFacade implements BimFacade {
 	private final BimService service;
 	private final TransactionManager transactionManager;
 	private final Reader reader;
-	private String transactionId;
 	private final Iterable<String> candidateTypes = Lists.newArrayList(IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING);
 
 	public DefaultBimFacade(final BimService bimservice, final TransactionManager transactionManager) {
@@ -269,29 +269,48 @@ public class DefaultBimFacade implements BimFacade {
 		System.out.println("Y " + ycord);
 		System.out.println("Z " + zcord);
 
-		transactionId = transactionManager.getId();
+		final String objectOid = service.createObject(transactionManager.getId(), ifcType);
+		service.setStringAttribute(transactionManager.getId(), objectOid, IFC_OBJECT_TYPE, baseClass);
+		service.setStringAttribute(transactionManager.getId(), objectOid, IFC_GLOBALID, globalId);
+		service.setStringAttribute(transactionManager.getId(), objectOid, IFC_NAME, code);
+		service.setStringAttribute(transactionManager.getId(), objectOid, IFC_DESCRIPTION, description);
+		service.setStringAttribute(transactionManager.getId(), objectOid, IFC_TAG, DEFAULT_TAG_EXPORT);
+		service.setReference(transactionManager.getId(), objectOid, "Representation", shapeOid);
 
-		final String objectOid = service.createObject(transactionId, ifcType);
-		service.setStringAttribute(transactionId, objectOid, IFC_OBJECT_TYPE, baseClass);
-		service.setStringAttribute(transactionId, objectOid, IFC_GLOBALID, globalId);
-		service.setStringAttribute(transactionId, objectOid, IFC_NAME, code);
-		service.setStringAttribute(transactionId, objectOid, IFC_DESCRIPTION, description);
-		service.setStringAttribute(transactionId, objectOid, IFC_TAG, DEFAULT_TAG_EXPORT);
-		service.setReference(transactionId, objectOid, "Representation", shapeOid);
-
-		final String placementOid = service.createObject(transactionId, IFC_LOCAL_PLACEMENT);
-		service.setReference(transactionId, objectOid, IFC_OBJECT_PLACEMENT, placementOid);
-		setCoordinates(placementOid, xcord, ycord, zcord, transactionId);
+		setPlacementForObject(objectOid, xcord, ycord, zcord);
 
 		return objectOid;
 	}
 
+	private void setPlacementForObject(final String objectOid, final String xcord, final String ycord,
+			final String zcord) {
+		final String placementOid = service.createObject(transactionManager.getId(), IFC_LOCAL_PLACEMENT);
+		service.setReference(transactionManager.getId(), objectOid, IFC_OBJECT_PLACEMENT, placementOid);
+		setCoordinates(placementOid, xcord, ycord, zcord, transactionManager.getId());
+	}
+
+	@Override
+	public void moveObject(final String projectId, final String globalId, final List<Double> coordinates) {
+		openTransaction(projectId);
+		final String revisionId = getLastRevisionOfProject(projectId);
+		final BimserverEntity object = (BimserverEntity) fetchEntityFromGlobalId(revisionId, globalId, candidateTypes);
+		final String objectId = object.getOid().toString();
+		final BimserverEntity objectPlacement = (BimserverEntity) getReferencedEntity(revisionId, object,
+				IFC_OBJECT_PLACEMENT);
+		service.unsetReference(transactionManager.getId(), objectId, IFC_OBJECT_PLACEMENT);
+		final String oldPlacementOid = objectPlacement.getOid().toString();
+		service.removeObject(transactionManager.getId(), oldPlacementOid);
+		setPlacementForObject(objectId, coordinates.get(0).toString(), coordinates.get(1).toString(), coordinates
+				.get(2).toString());
+		commitTransaction();
+		refresh(projectId);
+	}
+
 	@Override
 	public String removeCard(final Entity entityToRemove, final String targetProjectId) {
-		transactionId = transactionManager.getId();
 
 		final String oid = entityToRemove.getAttributeByName(OBJECT_OID).getValue();
-		service.removeObject(transactionId, oid);
+		service.removeObject(transactionManager.getId(), oid);
 		return oid;
 	}
 
@@ -402,8 +421,6 @@ public class DefaultBimFacade implements BimFacade {
 	@Override
 	public void updateRelations(final Map<String, Map<String, List<String>>> relationsMap, final String targetProjectId) {
 
-		transactionId = transactionManager.getId();
-
 		final String sourceRevisionId = service.getLastRevisionOfProject(targetProjectId);
 
 		for (final Entry<String, Map<String, List<String>>> entry : relationsMap.entrySet()) {
@@ -429,10 +446,11 @@ public class DefaultBimFacade implements BimFacade {
 					final Entity space = service.getEntityByGuid(sourceRevisionId, spaceGuid,
 							Lists.newArrayList("IfcSpace"));
 					final Long spaceOid = BimserverEntity.class.cast(space).getOid();
-					relationOid = service.createObject(transactionId, IFC_REL_CONTAINED);
+					relationOid = service.createObject(transactionManager.getId(), IFC_REL_CONTAINED);
 					System.out.println("Relation with oid " + relationOid + " created");
-					service.setReference(transactionId, relationOid, IFC_RELATING_STRUCTURE, String.valueOf(spaceOid));
-					System.out.println("Relating structure " + spaceOid + " added to relation " + relationOid);
+					service.setReference(transactionManager.getId(), relationOid, IFC_RELATING_STRUCTURE,
+							String.valueOf(spaceOid));
+					System.out.println("Relating structure " + spaceOid + " added to relation " + relationOid + "'");
 				}
 			}
 			final ListAttribute relatedElementsAttribute = ListAttribute.class.cast(relation
@@ -457,21 +475,43 @@ public class DefaultBimFacade implements BimFacade {
 						indicesToReadd.add(Long.parseLong(objectOid));
 					}
 				}
-				service.removeAllReferences(transactionId, relationOid, IFC_RELATED_ELEMENTS);
-				System.out.println("remove all reference from relation '" + relationOid);
+				service.removeAllReferences(transactionManager.getId(), relationOid, IFC_RELATED_ELEMENTS);
+				System.out.println("remove all reference from relation '" + relationOid + "'");
 				for (final Long indexToAdd : indicesToReadd) {
-					service.addReference(transactionId, relationOid, IFC_RELATED_ELEMENTS, indexToAdd.toString());
-					System.out.println("add reference '" + indexToAdd + "' to relation '" + relationOid);
+					service.addReference(transactionManager.getId(), relationOid, IFC_RELATED_ELEMENTS,
+							indexToAdd.toString());
+					System.out.println("add reference '" + indexToAdd + "' to relation '" + relationOid + "'");
 				}
 			}
 			if (innerMap.containsKey("A")) {
 				final List<String> objectsToAdd = entry.getValue().get("A");
 				for (final String objectToAdd : objectsToAdd) {
-					service.addReference(transactionId, relationOid, IFC_RELATED_ELEMENTS, objectToAdd);
-					System.out.println("add reference '" + objectToAdd + "' to relation '" + relationOid);
+					service.addReference(transactionManager.getId(), relationOid, IFC_RELATED_ELEMENTS, objectToAdd);
+					System.out.println("add reference '" + objectToAdd + "' to relation '" + relationOid + "'");
 				}
 			}
 		}
+	}
+
+	@Override
+	public void refresh(final String projectId) {
+		try {
+			final DataHandler exportedData = download(projectId);
+			final File file = File.createTempFile("ifc", null);
+			final FileOutputStream outputStream = new FileOutputStream(file);
+			exportedData.writeTo(outputStream);
+			checkin(projectId, file);
+			System.out.println("Project refreshed");
+		} catch (final Throwable t) {
+			throw new BimError("Problems while refreshing project", t);
+		}
+	}
+
+	private Entity getReferencedEntity(final String revisionId, final Entity object, final String attributeName) {
+		final long objectPlacementOid = ReferenceAttribute.class.cast(object.getAttributeByName(attributeName))
+				.getOid();
+		final Entity objectPlacement = service.getEntityByOid(revisionId, Long.toString(objectPlacementOid));
+		return objectPlacement;
 	}
 
 	@Override

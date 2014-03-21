@@ -80,17 +80,19 @@ public interface BimService {
 
 	void removeAllReferences(String transactionId, String objectId, String attributeName);
 
-	void unsetReference(String transactionId, String objectId, String referenceName);
+	void unsetReference(String transactionId, String objectId, String attributeName);
 
 	void setStringAttribute(String transactionId, String objectId, String attributeName, String value);
 
 	void addStringAttribute(String transactionId, String objectId, String attributeName, String value);
 
-	void setReference(String transactionId, String objectId, String referenceName, String globalIdOid);
+	void setReference(String transactionId, String objectId, String attributeName, String globalIdOid);
 
-	void addReference(String transactionId, String relationId, String string, String objectId);
+	void addReference(String transactionId, String relationId, String attributeName, String objectId);
 
-	void addDoubleAttribute(String transactionId, String locationId, String string, double d);
+	void addDoubleAttribute(String transactionId, String locationId, String attributeName, double d);
+
+	void setDoubleAttributes(String transactionId, String locationId, String attributeName, List<Double> values);
 
 	DataHandler fetchProjectStructure(String revisionId);
 

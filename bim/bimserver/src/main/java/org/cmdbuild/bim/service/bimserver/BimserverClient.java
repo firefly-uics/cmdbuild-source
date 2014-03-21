@@ -87,6 +87,10 @@ public interface BimserverClient {
 
 	void setStringAttribute(String transactionId, String objectId, String attributeName, String value);
 
+	void setDoubleAttributes(String transactionId, String locationId, String attributeName, List<Double> values);
+
+	void unsetReference(String transactionId, String objectId, String referenceName);
+
 	void removeReference(String transactionId, String objectId, String attributeName, int index);
 
 	void removeObject(String transactionId, String oid);

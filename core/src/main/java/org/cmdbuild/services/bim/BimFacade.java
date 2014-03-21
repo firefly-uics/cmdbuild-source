@@ -87,6 +87,8 @@ public interface BimFacade {
 
 	String getContainerOfEntity(String globalId, String sourceRevisionId);
 
+	void moveObject(String projectId, String globalId, List<Double> coordinates);
+
 	// viewer
 
 	String fetchGlobalIdFromObjectId(String objectId, String revisionId);
@@ -103,6 +105,8 @@ public interface BimFacade {
 	String mergeProjectsIntoNewProject(String shapeProjectId, String exportProjectId);
 
 	Long getOidFromGlobalId(String guid, String revisionId, Iterable<String> candidateTypes);
+
+	void refresh(String exportProjectId);
 
 
 }

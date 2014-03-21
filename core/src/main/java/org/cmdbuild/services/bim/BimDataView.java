@@ -10,6 +10,8 @@ import org.cmdbuild.services.bim.DefaultBimDataView.BimCard;
 
 public interface BimDataView {
 	
+	//read
+	
 	Iterable<? extends CMClass> findClasses();
 	
 	CMCard fetchCard(String className, Long id);
@@ -29,12 +31,19 @@ public interface BimDataView {
 
 	BimCard getBimCardFromRootId(String className, Long rootCardId);
 
-	Entity getCardDataForExport(Long id, String className, String containerAttributeName, String containerClassName,
-			String shapeOid, String ifcType);
-
 	Long getProjectCardIdFromRootCard(Long rootId, String rootClassName);
 
 	Long getRootCardIdFromProjectId(String projectId, String rootClassName);
+
+	
+	// read and write
+	
+	Entity getCardDataForExport(Long id, String className, String containerAttributeName, String containerClassName,
+			String shapeOid, String ifcType);
+	
+	// write
+	
+	void moveObject(String className, String globalId, List<Double> coordinates);
 
 
 }

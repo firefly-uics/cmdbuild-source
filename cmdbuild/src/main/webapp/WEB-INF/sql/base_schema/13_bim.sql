@@ -304,5 +304,25 @@ $BODY$
   COST 100;
 COMMENT ON FUNCTION _bim_data_for_export_new(integer, character varying, character varying, character varying) IS 'TYPE: function|CATEGORIES: system';
 
-
+CREATE OR REPLACE FUNCTION _bim_update_coordinates(IN classname character varying, IN globalid character varying, IN x character varying, IN y character varying, IN z character varying, OUT success boolean)
+  RETURNS boolean AS
+$BODY$
+DECLARE
+	query varchar;
+	query1 varchar;
+	myrecord record;
+BEGIN	
+	query = 
+		'UPDATE bim."' || classname || '" ' || --
+		'SET "Position" = ST_GeomFromText(''POINT(' || x || ' ' || y || ' ' || z || ')'') ' || --
+		'WHERE "GlobalId"=''' || globalid || ''';';	
+	RAISE NOTICE '%',query;
+	EXECUTE(query);
+	
+	success = true;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+COMMENT ON FUNCTION _bim_update_coordinates(character varying, character varying, character varying, character varying, character varying) IS 'TYPE: function|CATEGORIES: system';
 

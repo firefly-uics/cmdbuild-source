@@ -187,6 +187,12 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	}
 
 	@Override
+	public void setDoubleAttributes(final String transactionId, final String objectId, final String attributeName,
+			final List<Double> values) {
+		delegate.setDoubleAttributes(transactionId, objectId, attributeName, values);
+	}
+
+	@Override
 	public void removeReference(final String transactionId, final String objectId, final String attributeName,
 			final int index) {
 		delegate.removeReference(transactionId, objectId, attributeName, index);
@@ -220,5 +226,10 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	@Override
 	public Long getOidFromGlobalId(final String globalId, final String revisionId, final Iterable<String> candidateTypes) {
 		return delegate.getOidFromGlobalId(globalId, revisionId, candidateTypes);
+	}
+
+	@Override
+	public void unsetReference(final String transactionId, final String objectId, final String referenceName) {
+		delegate.unsetReference(transactionId, objectId, referenceName);
 	}
 }

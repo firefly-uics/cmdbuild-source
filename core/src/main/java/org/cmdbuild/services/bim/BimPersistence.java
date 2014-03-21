@@ -12,7 +12,7 @@ public interface BimPersistence {
 		String getName();
 
 		String getDescription();
-		
+
 		Long getCmId();
 
 		boolean isActive();
@@ -44,31 +44,29 @@ public interface BimPersistence {
 		void setActive(boolean active);
 
 		String getShapeProjectId();
-		
+
 		void setExportProjectId(String projectId);
 
 	}
-	
+
 	void saveProject(PersistenceProject project);
 
 	Iterable<PersistenceProject> readAll();
 
 	PersistenceProject read(String projectId);
-	
+
 	void disableProject(PersistenceProject project);
 
 	void enableProject(PersistenceProject project);
-
-	
 
 	Iterable<BimLayer> listLayers();
 
 	void saveActiveFlag(String className, String value);
 
 	void saveRootFlag(String className, boolean value);
-	
+
 	void saveExportFlag(String className, String value);
-	
+
 	void saveContainerFlag(String className, String value);
 
 	void saveRootReferenceName(String className, String value);
@@ -76,7 +74,6 @@ public interface BimPersistence {
 	BimLayer findRoot();
 
 	BimLayer findContainer();
-
 
 	String getProjectIdFromCardId(Long cardId);
 

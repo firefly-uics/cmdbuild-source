@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
@@ -265,12 +266,12 @@ public class BIM extends JSONBaseWithSpringContext {
 
 		final JSONArray jsonLayerList = new JSONArray();
 		final JSONObject response = new JSONObject();
-		
+
 		for (final Layer layer : layerList) {
 			final JSONObject jsonLayer = LAYER_TO_JSON.apply(layer);
 			jsonLayerList.put(jsonLayer);
 		}
-		
+
 		response.put(BIM_LAYER, jsonLayerList);
 		return response;
 	}
@@ -404,6 +405,21 @@ public class BIM extends JSONBaseWithSpringContext {
 		out.put(CLASS_NAME, className);
 		out.put(ACTIVE, isActive);
 		return out;
+	}
+
+	@JSONExported
+	public JSONObject moveObjectToPosition(//
+			final @Parameter("projectId") String projectId, //
+			final @Parameter("className") String className, //
+			final @Parameter("objectId") String objectId, //
+			final @Parameter("x") double x, //
+			final @Parameter("y") double y, //
+			final @Parameter("z") double z //
+	) throws JSONException {
+		List<Double> coordinates = Lists.newArrayList(x, y, z);
+		viewerLogic().moveObjectToPosition(projectId, className, objectId, coordinates);
+		JSONObject response = new JSONObject();
+		return response;
 	}
 
 }
