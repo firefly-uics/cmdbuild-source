@@ -1,22 +1,20 @@
 package org.cmdbuild.bim.service;
 
+import static org.cmdbuild.bim.utils.BimConstants.INVALID_ID;
+
 import org.joda.time.DateTime;
 
-import static org.cmdbuild.bim.utils.BimConstants.*;
-
 public interface BimProject {
-	
+
 	String getName();
 
 	String getIdentifier();
-	
-	@Deprecated
-	String getLastRevisionId();
 
 	boolean isActive();
 
-	boolean isValid(); 
-	
+	boolean isValid();
+
+	@Override
 	String toString();
 
 	DateTime getLastCheckin();
@@ -24,12 +22,6 @@ public interface BimProject {
 	void setLastCheckin(DateTime lastCheckin);
 
 	final BimProject NULL_PROJECT = new BimProject() {
-		
-		@Deprecated
-		@Override
-		public String getLastRevisionId() {
-			return INVALID_ID;
-		}
 
 		@Override
 		public String getIdentifier() {
@@ -46,7 +38,7 @@ public interface BimProject {
 		public boolean isActive() {
 			return false;
 		}
-		
+
 		@Override
 		public String toString() {
 			return "NULL_PROJECT";
@@ -63,14 +55,10 @@ public interface BimProject {
 		}
 
 		@Override
-		public void setLastCheckin(DateTime lastCheckin) {
+		public void setLastCheckin(final DateTime lastCheckin) {
 			throw new UnsupportedOperationException();
 		}
 
 	};
-
-
-
-
 
 }

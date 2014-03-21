@@ -5,8 +5,8 @@ import org.bimserver.interfaces.objects.SProject;
 import org.cmdbuild.bim.service.BimProject;
 import org.joda.time.DateTime;
 
-public class BimserverProject implements BimProject { 
-	
+public class BimserverProject implements BimProject {
+
 	private static final String ACTIVE = "ACTIVE";
 	private final SProject project;
 	private DateTime lastCheckin;
@@ -20,13 +20,6 @@ public class BimserverProject implements BimProject {
 		final long poid = project.getOid();
 		return String.valueOf(poid);
 	}
-	
-	@Deprecated
-	@Override
-	public String getLastRevisionId() {
-		final long roid = project.getLastRevisionId();
-		return String.valueOf(roid);
-	}
 
 	@Override
 	public boolean isValid() {
@@ -38,9 +31,9 @@ public class BimserverProject implements BimProject {
 		final SObjectState state = project.getState();
 		return state.name().equals(ACTIVE);
 	}
-	
+
 	@Override
-	public String toString(){
+	public String toString() {
 		return project.getOid() + " " + project.getName();
 	}
 
@@ -55,7 +48,7 @@ public class BimserverProject implements BimProject {
 	}
 
 	@Override
-	public void setLastCheckin(DateTime lastCheckin) {
+	public void setLastCheckin(final DateTime lastCheckin) {
 		this.lastCheckin = lastCheckin;
 	}
 

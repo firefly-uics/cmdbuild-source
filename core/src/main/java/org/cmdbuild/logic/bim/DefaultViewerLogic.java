@@ -6,8 +6,11 @@ import static org.cmdbuild.bim.utils.BimConstants.CARDID_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CARD_DESCRIPTION_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CLASSID_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CLASSNAME_FIELD_NAME;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_BUILDING;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_BUILDING_ELEMENT_PROXY;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_BUILDING_STOREY;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_FURNISHING;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_SPACE;
 import static org.cmdbuild.bim.utils.BimConstants.isValidId;
 
 import java.io.BufferedReader;
@@ -36,6 +39,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DefaultViewerLogic implements ViewerLogic {
+
 
 	private final BimFacade bimServiceFacade;
 	private final BimPersistence bimPersistence;
@@ -113,7 +117,7 @@ public class DefaultViewerLogic implements ViewerLogic {
 
 	@Override
 	public String getOutputForBimViewer(final String revisionId, final String baseProjectId) {
-		System.out.println("Open revision " + revisionId);
+		System.out.println("----------\nGet output for viewer: open revision " + revisionId);
 		final DataHandler jsonFile = bimServiceFacade.fetchProjectStructure(revisionId);
 		try {
 			final Long rootCardId = getRootCardIdForProjectId(baseProjectId);
@@ -123,10 +127,10 @@ public class DefaultViewerLogic implements ViewerLogic {
 			final JsonNode rootNode = mapper.readTree(fileReader);
 			final JsonNode data = rootNode.findValue("data");
 			final JsonNode properties = data.findValue("properties");
-			final Iterable<Layer> layers = layerLogic.getActiveLayers();
-			for (final Layer layer : layers) {
+			final Iterable<Layer> activeLayers = layerLogic.getActiveLayers();
+			for (final Layer layer : activeLayers) {
 				final String className = layer.getClassName();
-				System.out.println("\n----- Layer " + className);
+				System.out.println("Layer " + className);
 				final String rootClassName = layerLogic.getRootLayer().getClassName();
 				List<BimCard> bimCards = Lists.newArrayList();
 				if (className.equals(rootClassName)) {
@@ -141,7 +145,7 @@ public class DefaultViewerLogic implements ViewerLogic {
 				}
 				for (final BimCard bimCard : bimCards) {
 					final String guid = bimCard.getGlobalId();
-					System.out.println("guid " + guid);
+					System.out.println("look for guid " + guid);
 					Long oid = (long) -1;
 					if (guidToOidMap.containsKey(revisionId)) {
 						final Map<String, Long> revisionMap = guidToOidMap.get(revisionId);
@@ -149,8 +153,8 @@ public class DefaultViewerLogic implements ViewerLogic {
 							oid = revisionMap.get(guid);
 						}
 					} else {
-						oid = bimServiceFacade.getOidFromGlobalId(guid, revisionId, Lists.newArrayList("IfcBuilding",
-								"IfcBuildingStorey", "IfcSpace", IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING));
+						oid = bimServiceFacade.getOidFromGlobalId(guid, revisionId, Lists.newArrayList(IFC_BUILDING,
+								IFC_BUILDING_STOREY, IFC_SPACE, IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING));
 						if (guidToOidMap.containsKey(revisionId)) {
 							final Map<String, Long> revisionMap = guidToOidMap.get(revisionId);
 							revisionMap.put(guid, oid);
@@ -159,7 +163,7 @@ public class DefaultViewerLogic implements ViewerLogic {
 							revisionMap.put(guid, oid);
 						}
 					}
-					System.out.println("oid " + oid);
+					System.out.println("found oid " + oid);
 					final String oidAsString = String.valueOf(oid);
 					if (isValidId(oidAsString)) {
 						final ObjectNode property = (ObjectNode) properties.findValue(oidAsString);

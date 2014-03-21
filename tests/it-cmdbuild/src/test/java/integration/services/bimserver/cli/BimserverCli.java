@@ -105,7 +105,7 @@ public class BimserverCli {
 		String projectId = "131073";
 		System.out.println("Branching last revision of project " + projectId + " into new project " + projectName
 				+ "...");
-		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+		String revisionId = service.getLastRevisionOfProject(projectId);
 		service.branchRevisionToNewProject(revisionId, projectName);
 	}
 
@@ -116,7 +116,7 @@ public class BimserverCli {
 		System.out.println("Branching last revision of project " + projectId + " into project " + destinationProjectId
 				+ "...");
 		System.out.println("Start branching at " + new DateTime());
-		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+		String revisionId = service.getLastRevisionOfProject(projectId);
 		System.out.println("Branch created at " + new DateTime());
 		service.branchRevisionToExistingProject(revisionId, destinationProjectId);
 	}
@@ -156,7 +156,7 @@ public class BimserverCli {
 		String projectId = "327681";
 		String ifcType = "IfcProductDefinitionShape";
 
-		String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+		String revisionId = service.getLastRevisionOfProject(projectId);
 		Iterable<Entity> entityList = service.getEntitiesByType(revisionId, ifcType);
 		if (Iterables.size(entityList) == 0) {
 			System.out.println("No objects of type " + ifcType + " found");
@@ -220,7 +220,7 @@ public class BimserverCli {
 		service.checkin(son1Pj.getIdentifier(), file);
 		//service.downloadIfc(service.getProjectByPoid(son1Pj.getIdentifier()).getLastRevisionId());
 		
-		service.downloadIfc(service.getProjectByPoid(masterId).getLastRevisionId());
+		service.downloadIfc(service.getLastRevisionOfProject(masterId));
 	}
 	
 	
@@ -246,17 +246,17 @@ public class BimserverCli {
 		service.checkin(son1Pj.getIdentifier(), file);
 		
 		
-		service.branchRevisionToNewProject(service.getProjectByPoid(masterId).getLastRevisionId(), "Merged-"+suffix);
+		service.branchRevisionToNewProject(service.getLastRevisionOfProject(masterId), "Merged-"+suffix);
 		String mergedProjectId = service.getProjectByName("Merged-"+suffix).getIdentifier();
 		
-		service.downloadIfc(service.getProjectByPoid(mergedProjectId).getLastRevisionId());
+		service.downloadIfc(service.getLastRevisionOfProject(mergedProjectId));
 		
 		String transactionId = service.openTransaction(mergedProjectId);
 		String objectId = service.createObject(transactionId, "IfcBuildingElementProxy");
 		service.setStringAttribute(transactionId, objectId, "Name", "Anna");
 		service.commitTransaction(transactionId);
 		
-		service.downloadIfc(service.getProjectByPoid(mergedProjectId).getLastRevisionId());
+		service.downloadIfc(service.getLastRevisionOfProject(mergedProjectId));
 	}
 	
 	@Test

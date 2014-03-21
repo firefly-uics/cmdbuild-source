@@ -25,6 +25,7 @@ import static org.cmdbuild.bim.utils.BimConstants.OBJECT_OID;
 import static org.cmdbuild.bim.utils.BimConstants.X_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.Y_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.Z_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.isValidId;
 import static org.cmdbuild.common.Constants.BASE_CLASS_NAME;
 import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
@@ -93,8 +94,8 @@ public class DefaultBimFacade implements BimFacade {
 			final DateTime lastCheckin = service.checkin(createdProject.getIdentifier(), project.getFile());
 			final BimProject updatedProject = service.getProjectByPoid(projectId);
 			createdProject.setLastCheckin(lastCheckin);
-			final BimRevision lastRevision = service.getRevision(updatedProject.getLastRevisionId());
-			if (!lastRevision.isValid()) {
+			final String lastRevisionOfProject = service.getLastRevisionOfProject(updatedProject.getIdentifier());
+			if (!isValidId(lastRevisionOfProject)) {
 				throw new BimError("Upload failed");
 			}
 		}
@@ -216,7 +217,7 @@ public class DefaultBimFacade implements BimFacade {
 
 	@Override
 	public DataHandler download(final String projectId) {
-		final String revisionId = service.getProjectByPoid(projectId).getLastRevisionId();
+		final String revisionId = service.getLastRevisionOfProject(projectId);
 		if ((INVALID_ID).equals(revisionId)) {
 			return null;
 		}
@@ -325,8 +326,7 @@ public class DefaultBimFacade implements BimFacade {
 
 	@Override
 	public String getLastRevisionOfProject(final String projectId) {
-		final BimProject project = service.getProjectByPoid(projectId);
-		return project.getLastRevisionId();
+		return service.getLastRevisionOfProject(projectId);
 	}
 
 	@Override
@@ -404,7 +404,7 @@ public class DefaultBimFacade implements BimFacade {
 
 		transactionId = transactionManager.getId();
 
-		final String sourceRevisionId = service.getProjectByPoid(targetProjectId).getLastRevisionId();
+		final String sourceRevisionId = service.getLastRevisionOfProject(targetProjectId);
 
 		for (final Entry<String, Map<String, List<String>>> entry : relationsMap.entrySet()) {
 			final String spaceGuid = entry.getKey();
