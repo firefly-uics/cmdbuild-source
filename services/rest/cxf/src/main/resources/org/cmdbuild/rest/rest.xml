@@ -27,6 +27,7 @@
 			<ref bean="wadlProvider" />
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
+			<bean id="attributes" class="org.cmdbuild.service.rest.cxf.CxfAttributes" />
 			<bean id="classes" class="org.cmdbuild.service.rest.cxf.CxfClasses" />
 			<bean id="lookuptypes" class="org.cmdbuild.service.rest.cxf.CxfLookupTypes" />
 		</jaxrs:serviceBeans>
