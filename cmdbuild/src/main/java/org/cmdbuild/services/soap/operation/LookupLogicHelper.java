@@ -1,5 +1,7 @@
 package org.cmdbuild.services.soap.operation;
 
+import static org.cmdbuild.logic.data.lookup.LookupLogic.*;
+
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
@@ -75,7 +77,7 @@ public class LookupLogicHelper implements SoapLogicHelper {
 		final LookupType lookupType = LookupType.newInstance() //
 				.withName(type) //
 				.build();
-		final Iterable<Lookup> lookupList = logic.getAllLookup(lookupType, true);
+		final Iterable<Lookup> lookupList = logic.getAllLookup(lookupType, true, UNUSED_LOOKUP_QUERY);
 		return from(lookupList) //
 				.filter(new Predicate<Lookup>() {
 					@Override

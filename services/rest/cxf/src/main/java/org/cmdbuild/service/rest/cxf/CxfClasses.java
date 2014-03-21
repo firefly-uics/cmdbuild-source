@@ -10,11 +10,13 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.service.rest.Classes;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
@@ -44,7 +46,7 @@ public class CxfClasses extends CxfService implements Classes {
 	private static final Comparator<CMClass> NAME_ASC = new Comparator<CMClass>() {
 
 		@Override
-		public int compare(CMClass o1, CMClass o2) {
+		public int compare(final CMClass o1, final CMClass o2) {
 			return o1.getName().compareTo(o2.getName());
 		}
 
@@ -75,26 +77,42 @@ public class CxfClasses extends CxfService implements Classes {
 	}
 
 	@Override
-	public AttributeDetailResponse getAttributes(final String name, final boolean activeOnly) {
+	public AttributeDetailResponse getAttributes(final String name, final boolean activeOnly, final Integer limit,
+			final Integer offset) {
 		final CMClass target = userDataAccessLogic().findClass(name);
 		if (target == null) {
 			throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
 					.entity(name) //
 					.build());
 		}
-		final Iterable<? extends CMAttribute> attributes = userDataAccessLogic().getAttributes(name, activeOnly);
+		final PagedElements<CMAttribute> filteredAttributes = userDataAccessLogic().getAttributes( //
+				name, //
+				activeOnly, //
+				new AttributesQuery() {
+
+					@Override
+					public Integer limit() {
+						return limit;
+					}
+
+					@Override
+					public Integer offset() {
+						return offset;
+					}
+
+				});
 
 		final ToAttributeDetail toAttributeDetails = ToAttributeDetail.newInstance() //
 				.withAttributeTypeResolver(ATTRIBUTE_TYPE_RESOLVER) //
 				.withDataView(systemDataView()) //
 				.withErrorHandler(errorHandler()) //
 				.build();
-		final Iterable<AttributeDetail> elements = from(attributes) //
+		final Iterable<AttributeDetail> elements = from(filteredAttributes) //
 				.transform(toAttributeDetails);
 		return AttributeDetailResponse.newInstance() //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
-						.withTotal(size(elements)) //
+						.withTotal(filteredAttributes.totalSize()) //
 						.build()) //
 				.build();
 	}

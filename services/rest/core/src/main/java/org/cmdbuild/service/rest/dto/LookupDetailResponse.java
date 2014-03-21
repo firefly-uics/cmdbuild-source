@@ -32,6 +32,7 @@ public class LookupDetailResponse extends ListResponse<LookupDetail> {
 		super(builder);
 	}
 
+	@Override
 	@XmlElement(name = DATA, type = LookupDetail.class)
 	@JsonProperty(DATA)
 	public Collection<LookupDetail> getElements() {

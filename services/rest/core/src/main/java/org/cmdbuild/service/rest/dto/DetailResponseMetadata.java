@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.dto.Constants.*;
+import static org.cmdbuild.service.rest.dto.Constants.RESPONSE_METADATA;
 import static org.cmdbuild.service.rest.dto.Constants.TOTAL;
 
 import javax.xml.bind.annotation.XmlAttribute;

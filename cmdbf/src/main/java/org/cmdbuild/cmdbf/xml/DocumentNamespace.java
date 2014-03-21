@@ -95,25 +95,24 @@ public class DocumentNamespace extends AbstractNamespace {
 	@Override
 	public Iterable<DocumentTypeDefinition> getTypes(final Class<?> cls) {
 		if (DocumentTypeDefinition.class.isAssignableFrom(cls)) {
-			return Iterables.transform(lookupLogic.getAllLookup(getLookupType(dmsLogic.getCategoryLookupType()), true),
-					new Function<Lookup, DocumentTypeDefinition>() {
+			return Iterables.transform(lookupLogic.getAllLookup(getLookupType(dmsLogic.getCategoryLookupType()), true,
+					LookupLogic.UNUSED_LOOKUP_QUERY), new Function<Lookup, DocumentTypeDefinition>() {
+				@Override
+				public DocumentTypeDefinition apply(final Lookup input) {
+					return new DocumentTypeDefinition() {
+
 						@Override
-						public DocumentTypeDefinition apply(final Lookup input) {
-							return new DocumentTypeDefinition() {
-
-								@Override
-								public String getName() {
-									return input.description;
-								}
-
-								@Override
-								public Iterable<MetadataGroupDefinition> getMetadataGroupDefinitions() {
-									return dmsLogic.getCategoryDefinition(input.description)
-											.getMetadataGroupDefinitions();
-								}
-							};
+						public String getName() {
+							return input.description;
 						}
-					});
+
+						@Override
+						public Iterable<MetadataGroupDefinition> getMetadataGroupDefinitions() {
+							return dmsLogic.getCategoryDefinition(input.description).getMetadataGroupDefinitions();
+						}
+					};
+				}
+			});
 		} else {
 			return Collections.emptyList();
 		}
@@ -320,7 +319,7 @@ public class DocumentNamespace extends AbstractNamespace {
 	}
 
 	private LookupType getLookupType(final String type) {
-		return Iterables.find(lookupLogic.getAllTypes(), new Predicate<LookupType>() {
+		return Iterables.find(lookupLogic.getAllTypes(LookupLogic.UNUSED_LOOKUP_TYPE_QUERY), new Predicate<LookupType>() {
 			@Override
 			public boolean apply(final LookupType input) {
 				return input.name.equals(type);

@@ -32,6 +32,7 @@ public class AttributeValueDetailResponse extends ListResponse<AttributeValueDet
 		super(builder);
 	}
 
+	@Override
 	@XmlElement(name = DATA, type = AttributeValueDetail.class)
 	@JsonProperty(DATA)
 	public Collection<AttributeValueDetail> getElements() {

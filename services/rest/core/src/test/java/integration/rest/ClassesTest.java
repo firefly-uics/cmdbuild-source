@@ -99,7 +99,7 @@ public class ClassesTest {
 						.withTotal(2) //
 						.build()) //
 				.build();
-		when(service.getAttributes(eq("foo"), anyBoolean())) //
+		when(service.getAttributes(eq("foo"), anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
@@ -126,7 +126,7 @@ public class ClassesTest {
 						.withTotal(2) //
 						.build()) //
 				.build();
-		when(service.getCards("foo", 0, 0)) //
+		when(service.getCards("foo", null, null)) //
 				.thenReturn(expectedResponse);
 
 		// when

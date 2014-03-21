@@ -34,7 +34,9 @@ public interface Classes {
 	@Path("{name}/attributes/")
 	AttributeDetailResponse getAttributes( //
 			@PathParam(NAME) String name, //
-			@QueryParam(ACTIVE) boolean activeOnly //
+			@QueryParam(ACTIVE) boolean activeOnly, //
+			@QueryParam(LIMIT) Integer limit, //
+			@QueryParam(OFFSET) Integer offset //
 	);
 
 	@GET
