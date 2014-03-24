@@ -90,17 +90,13 @@
 					align: 'stretch'
 				},
 
-				defaults: {
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					xtype: 'textfield'
-				},
-
 				items: [
 					this.nameField,
 					this.isDefaultField,
 					{
 						xtype: 'hiddenfield',
-						name: CMDBuild.ServiceProxy.parameter.ID
+						name: CMDBuild.ServiceProxy.parameter.ID,
+						labelWidth: CMDBuild.LABEL_WIDTH
 					}
 				]
 			});

@@ -54,11 +54,6 @@
 		height: '100%',
 		overflowY: 'auto',
 
-		defaults: {
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			xtype: 'textfield'
-		},
-
 		initComponent: function() {
 			var me = this;
 

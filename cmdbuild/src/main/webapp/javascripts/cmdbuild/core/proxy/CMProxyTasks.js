@@ -56,7 +56,7 @@
 			getStoreByWorkflow: function() {
 //				return Ext.create('Ext.data.Store', {
 //					autoLoad: false,
-//					model: 'CMDBuild.model.CMModelTasks.gridWorkflow',
+//					model: 'CMDBuild.model.CMModelTasks.grid.workflow',
 //					proxy: {
 //						type: 'ajax',
 //						url: this.getUrl('workflow').getStorebyWorkflow,

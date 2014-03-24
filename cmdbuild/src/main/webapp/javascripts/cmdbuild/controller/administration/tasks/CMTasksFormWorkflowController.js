@@ -79,13 +79,15 @@
 					var record = records[0];
 
 					me.parentDelegate.loadForm(me.taskType);
-					me.view.loadRecord(record); // TODO: TO FIX Seems to be useless but i dunno why
+
+					// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find a working fix, so i must set all fields manually
 
 					// Set step1 [0] datas
 					me.delegateStep[0].fillId(record.get(CMDBuild.ServiceProxy.parameter.ID));
 					me.delegateStep[0].fillDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
 					me.delegateStep[0].fillAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
 					me.delegateStep[0].fillActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
+					me.delegateStep[0].fillWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME));
 
 					// Set step2 [1] datas
 					me.delegateStep[1].setBaseValue(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
@@ -128,7 +130,6 @@
 
 			// Manual validation of cron field because disabled fields are not validated
 			if (this.delegateStep[1].isAdvancedEmpty()) {
-				this.delegateStep[1].view.advanceRadio.setValue(true);
 
 				for(item in this.delegateStep[1].view.advancedFields)
 					this.delegateStep[1].view.advancedFields[item].markInvalid('This field is required');
@@ -136,6 +137,9 @@
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 
 				CMDBuild.LoadMask.get().hide();
+
+				this.parentDelegate.form.wizard.changeTab(1);
+				this.delegateStep[1].view.advanceRadio.setValue(true);
 
 				return;
 			}
