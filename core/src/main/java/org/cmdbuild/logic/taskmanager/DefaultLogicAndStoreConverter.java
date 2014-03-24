@@ -10,7 +10,9 @@ import java.util.Map;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.task.ReadEmailTaskDefinition;
 import org.cmdbuild.data.store.task.StartWorkflowTaskDefinition;
+import org.cmdbuild.data.store.task.SynchronousEventTaskDefinition;
 import org.cmdbuild.data.store.task.TaskVisitor;
+import org.cmdbuild.logic.taskmanager.SynchronousEventTask.Phase;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -63,10 +65,97 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 	}
 
+	/**
+	 * Container for all {@link SynchronousEventTaskDefinition} parameter names.
+	 */
+	public static class SynchronousEvent {
+
+		private SynchronousEvent() {
+			// prevents instantiation
+		}
+
+		public static final String PHASE = "phase";
+
+		public static final String PHASE_AFTER_CREATE = "afterCreate";
+		public static final String PHASE_BEFORE_UPDATE = "beforeUpdate";
+		public static final String PHASE_AFTER_UPDATE = "afterUpdate";
+		public static final String PHASE_BEFORE_DELETE = "beforeDelete";
+
+		private static final String ACTION_SCRIPT = "action.scripting";
+		public static final String ACTION_SCRIPT_ACTIVE = ACTION_SCRIPT + ".active";
+		public static final String ACTION_SCRIPT_ENGINE = ACTION_SCRIPT + ".engine";
+		public static final String ACTION_SCRIPT_SCRIPT = ACTION_SCRIPT + ".script";
+
+	}
+
 	private static final String KEY_VALUE_SEPARATOR = "=";
 
 	private static final Logger logger = TaskManagerLogic.logger;
 	private static final Marker marker = MarkerFactory.getMarker(DefaultLogicAndStoreConverter.class.getName());
+
+	private static class PhaseToStoreConverter implements SynchronousEventTask.PhaseIdentifier {
+
+		private final SynchronousEventTask task;
+		private String converted;
+
+		public PhaseToStoreConverter(final SynchronousEventTask task) {
+			this.task = task;
+		}
+
+		public String toStore() {
+			task.getPhase().identify(this);
+			Validate.notNull(converted, "conversion error");
+			return converted;
+		}
+
+		@Override
+		public void afterCreate() {
+			converted = SynchronousEvent.PHASE_AFTER_CREATE;
+		}
+
+		@Override
+		public void beforeUpdate() {
+			converted = SynchronousEvent.PHASE_BEFORE_UPDATE;
+		}
+
+		@Override
+		public void afterUpdate() {
+			converted = SynchronousEvent.PHASE_AFTER_UPDATE;
+		}
+
+		@Override
+		public void beforeDelete() {
+			converted = SynchronousEvent.PHASE_BEFORE_DELETE;
+		}
+
+	}
+
+	private static class PhaseToLogicConverter {
+
+		private final String stored;
+
+		public PhaseToLogicConverter(final String stored) {
+			this.stored = stored;
+		}
+
+		public Phase toLogic() {
+			final Phase converted;
+			if (SynchronousEvent.PHASE_AFTER_CREATE.equals(stored)) {
+				converted = Phase.AFTER_CREATE;
+			} else if (SynchronousEvent.PHASE_BEFORE_UPDATE.equals(stored)) {
+				converted = Phase.BEFORE_UPDATE;
+			} else if (SynchronousEvent.PHASE_AFTER_UPDATE.equals(stored)) {
+				converted = Phase.AFTER_UPDATE;
+			} else if (SynchronousEvent.PHASE_BEFORE_DELETE.equals(stored)) {
+				converted = Phase.BEFORE_DELETE;
+			} else {
+				converted = null;
+			}
+			Validate.notNull(converted, "conversion error");
+			return converted;
+		}
+
+	}
 
 	private static class DefaultLogicAsSourceConverter implements LogicAsSourceConverter, TaskVistor {
 
@@ -131,9 +220,12 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withId(task.getId()) //
 					.withDescription(task.getDescription()) //
 					.withRunningStatus(task.isActive()) //
+					.withParameter(SynchronousEvent.PHASE, new PhaseToStoreConverter(task).toStore()) //
+					.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, Boolean.toString(task.isScriptingEnabled())) //
+					.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, task.getScriptingEngine()) //
+					.withParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT, task.getScriptingScript()) //
 					.build();
 		}
-
 	}
 
 	private static class DefaultStoreAsSourceConverter implements StoreAsSourceConverter, TaskVisitor {
@@ -202,9 +294,15 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withId(task.getId()) //
 					.withDescription(task.getDescription()) //
 					.withActiveStatus(task.isRunning()) //
+					.withPhase( //
+							new PhaseToLogicConverter(task.getParameter(SynchronousEvent.PHASE)) //
+									.toLogic()) //
+					.withScriptingEnableStatus( //
+							Boolean.valueOf(task.getParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE))) //
+					.withScriptingEngine(task.getParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE)) //
+					.withScript(task.getParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT)) //
 					.build();
 		}
-
 	}
 
 	@Override

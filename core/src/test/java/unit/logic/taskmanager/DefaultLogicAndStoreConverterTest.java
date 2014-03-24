@@ -13,9 +13,11 @@ import java.util.Map;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.ReadEmail;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.StartWorkflow;
+import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.SynchronousEvent;
 import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.SynchronousEventTask.Phase;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.junit.Before;
 import org.junit.Test;
@@ -215,6 +217,10 @@ public class DefaultLogicAndStoreConverterTest {
 				.withId(42L) //
 				.withDescription("description") //
 				.withActiveStatus(true) //
+				.withPhase(Phase.AFTER_CREATE) //
+				.withScriptingEnableStatus(true) //
+				.withScriptingEngine("groovy") //
+				.withScript("blah blah blah") //
 				.build();
 
 		// when
@@ -225,6 +231,41 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getId(), equalTo(42L));
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.isRunning(), equalTo(true));
+
+		final Map<String, String> parameters = converted.getParameters();
+		assertThat(parameters, hasEntry(SynchronousEvent.PHASE, "afterCreate"));
+		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true"));
+		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy"));
+		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_SCRIPT, "blah blah blah"));
+	}
+
+	@Test
+	public void phaseOfSynchronousEventTaskSuccessfullyConvertedToStore() throws Exception {
+		// given
+		final SynchronousEventTask afterCreate = SynchronousEventTask.newInstance() //
+				.withPhase(Phase.AFTER_CREATE) //
+				.build();
+		final SynchronousEventTask beforeUpdate = SynchronousEventTask.newInstance() //
+				.withPhase(Phase.BEFORE_UPDATE) //
+				.build();
+		final SynchronousEventTask afterUpdate = SynchronousEventTask.newInstance() //
+				.withPhase(Phase.AFTER_UPDATE) //
+				.build();
+		final SynchronousEventTask beforeDelete = SynchronousEventTask.newInstance() //
+				.withPhase(Phase.BEFORE_DELETE) //
+				.build();
+
+		// when
+		final org.cmdbuild.data.store.task.Task convertedAfterCreate = converter.from(afterCreate).toStore();
+		final org.cmdbuild.data.store.task.Task convertedBeforeUpdate = converter.from(beforeUpdate).toStore();
+		final org.cmdbuild.data.store.task.Task convertedAfterUpdate = converter.from(afterUpdate).toStore();
+		final org.cmdbuild.data.store.task.Task convertedBeforeDelete = converter.from(beforeDelete).toStore();
+
+		// then
+		assertThat(convertedAfterCreate.getParameters(), hasEntry(SynchronousEvent.PHASE, "afterCreate"));
+		assertThat(convertedBeforeUpdate.getParameters(), hasEntry(SynchronousEvent.PHASE, "beforeUpdate"));
+		assertThat(convertedAfterUpdate.getParameters(), hasEntry(SynchronousEvent.PHASE, "afterUpdate"));
+		assertThat(convertedBeforeDelete.getParameters(), hasEntry(SynchronousEvent.PHASE, "beforeDelete"));
 	}
 
 	@Test
@@ -235,6 +276,10 @@ public class DefaultLogicAndStoreConverterTest {
 				.withId(42L) //
 				.withDescription("description") //
 				.withRunningStatus(true) //
+				.withParameter(SynchronousEvent.PHASE, "afterCreate") //
+				.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true") //
+				.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy") //
+				.withParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT, "blah blah blah") //
 				.build();
 
 		// when
@@ -246,6 +291,47 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getId(), equalTo(42L));
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.isActive(), equalTo(true));
+		assertThat(converted.getPhase(), equalTo(Phase.AFTER_CREATE));
+		assertThat(converted.isScriptingEnabled(), equalTo(true));
+		assertThat(converted.getScriptingEngine(), equalTo("groovy"));
+		assertThat(converted.getScriptingScript(), equalTo("blah blah blah"));
+	}
+
+	@Test
+	public void phaseOfSynchronousEventTaskSuccessfullyConvertedToLogic() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.SynchronousEventTask afterCreate = org.cmdbuild.data.store.task.SynchronousEventTask
+				.newInstance() //
+				.withParameter(SynchronousEvent.PHASE, "afterCreate") //
+				.build();
+		final org.cmdbuild.data.store.task.SynchronousEventTask beforeUpdate = org.cmdbuild.data.store.task.SynchronousEventTask
+				.newInstance() //
+				.withParameter(SynchronousEvent.PHASE, "beforeUpdate") //
+				.build();
+		final org.cmdbuild.data.store.task.SynchronousEventTask afterUpdate = org.cmdbuild.data.store.task.SynchronousEventTask
+				.newInstance() //
+				.withParameter(SynchronousEvent.PHASE, "afterUpdate") //
+				.build();
+		final org.cmdbuild.data.store.task.SynchronousEventTask beforeDelete = org.cmdbuild.data.store.task.SynchronousEventTask
+				.newInstance() //
+				.withParameter(SynchronousEvent.PHASE, "beforeDelete") //
+				.build();
+
+		// when
+		final SynchronousEventTask convertedAfterCreate = SynchronousEventTask.class.cast(converter.from(afterCreate)
+				.toLogic());
+		final SynchronousEventTask convertedBeforeUpdate = SynchronousEventTask.class.cast(converter.from(beforeUpdate)
+				.toLogic());
+		final SynchronousEventTask convertedAfterUpdate = SynchronousEventTask.class.cast(converter.from(afterUpdate)
+				.toLogic());
+		final SynchronousEventTask convertedBeforeDelete = SynchronousEventTask.class.cast(converter.from(beforeDelete)
+				.toLogic());
+
+		// then
+		assertThat(convertedAfterCreate.getPhase(), equalTo(Phase.AFTER_CREATE));
+		assertThat(convertedBeforeUpdate.getPhase(), equalTo(Phase.BEFORE_UPDATE));
+		assertThat(convertedAfterUpdate.getPhase(), equalTo(Phase.AFTER_UPDATE));
+		assertThat(convertedBeforeDelete.getPhase(), equalTo(Phase.BEFORE_DELETE));
 	}
 
 }

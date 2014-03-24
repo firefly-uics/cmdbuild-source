@@ -6,13 +6,13 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.cmdbuild.data.view.ObservableDataView.Observer;
 import org.cmdbuild.logic.taskmanager.DefaultSynchronousEventFacade;
 import org.cmdbuild.logic.taskmanager.LogicAndObserverConverter;
 import org.cmdbuild.logic.taskmanager.LogicAndObserverConverter.LogicAsSourceConverter;
 import org.cmdbuild.logic.taskmanager.ObserverCollector;
 import org.cmdbuild.logic.taskmanager.ObserverCollector.IdentifiableObserver;
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
+import org.cmdbuild.services.event.Observer;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -41,9 +41,25 @@ public class DefaultSynchronousEventFacadeTest {
 	}
 
 	@Test
-	public void taskAdded() throws Exception {
+	public void taskAddedOnlyIfTaskIsActive() throws Exception {
 		// given
 		final SynchronousEventTask task = SynchronousEventTask.newInstance().withId(42L).build();
+
+		// when
+		synchronousEventFacade.create(task);
+
+		// then
+		final InOrder inOrder = inOrder(observerCollector, converter);
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void taskAdded() throws Exception {
+		// given
+		final SynchronousEventTask task = SynchronousEventTask.newInstance() //
+				.withId(42L) //
+				.withActiveStatus(true) //
+				.build();
 		final Observer observer = mock(Observer.class);
 		final LogicAsSourceConverter logicAsSourceConverter = mock(LogicAsSourceConverter.class);
 		when(logicAsSourceConverter.toObserver()) //
@@ -76,9 +92,25 @@ public class DefaultSynchronousEventFacadeTest {
 	}
 
 	@Test
-	public void taskDeleted() throws Exception {
+	public void taskDeletedOnlyIfTaskIsActive() throws Exception {
 		// given
 		final SynchronousEventTask task = SynchronousEventTask.newInstance().withId(42L).build();
+
+		// when
+		synchronousEventFacade.delete(task);
+
+		// then
+		final InOrder inOrder = inOrder(observerCollector, converter);
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void taskDeleted() throws Exception {
+		// given
+		final SynchronousEventTask task = SynchronousEventTask.newInstance() //
+				.withId(42L) //
+				.withActiveStatus(true) //
+				.build();
 
 		// when
 		synchronousEventFacade.delete(task);

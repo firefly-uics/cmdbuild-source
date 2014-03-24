@@ -3,9 +3,9 @@ package org.cmdbuild.logic.taskmanager;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
-import org.cmdbuild.data.view.ObservableDataView.ForwardingObserver;
-import org.cmdbuild.data.view.ObservableDataView.Observer;
 import org.cmdbuild.logic.taskmanager.ObserverCollector.IdentifiableObserver;
+import org.cmdbuild.services.event.ForwardingObserver;
+import org.cmdbuild.services.event.Observer;
 
 public class DefaultSynchronousEventFacade implements SynchronousEventFacade {
 
@@ -46,14 +46,18 @@ public class DefaultSynchronousEventFacade implements SynchronousEventFacade {
 	@Override
 	public void create(final SynchronousEventTask task) {
 		Validate.notNull(task.getId(), "missing id");
-		final Observer observer = converter.from(task).toObserver();
-		observerCollector.add(new DefaultIdentifiableObserver(task, observer));
+		if (task.isActive()) {
+			final Observer observer = converter.from(task).toObserver();
+			observerCollector.add(new DefaultIdentifiableObserver(task, observer));
+		}
 	}
 
 	@Override
 	public void delete(final SynchronousEventTask task) {
 		Validate.notNull(task.getId(), "missing id");
-		observerCollector.remove(new DefaultIdentifiableObserver(task, ALL_UNSUPPORTED));
+		if (task.isActive()) {
+			observerCollector.remove(new DefaultIdentifiableObserver(task, ALL_UNSUPPORTED));
+		}
 	}
 
 }

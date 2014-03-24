@@ -6,7 +6,7 @@ import java.lang.reflect.Proxy;
 import java.util.Collections;
 import java.util.Map;
 
-import org.cmdbuild.data.view.ObservableDataView.Observer;
+import org.cmdbuild.services.event.Observer;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;

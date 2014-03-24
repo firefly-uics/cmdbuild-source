@@ -1,42 +1,58 @@
 package org.cmdbuild.logic.taskmanager;
 
-import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.data.view.ObservableDataView.Observer;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
-import org.slf4j.Logger;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.cmdbuild.services.event.DefaultObserver;
+import org.cmdbuild.services.event.DefaultObserver.Builder;
+import org.cmdbuild.services.event.Observer;
+import org.cmdbuild.services.event.ScriptCommand;
 
 public class DefaultObserverFactory implements ObserverFactory {
 
-	private static final Logger logger = TaskManagerLogic.logger;
-	private static final Marker marker = MarkerFactory.getMarker(DefaultLogicAndObserverConverter.class.getName());
-
 	@Override
 	public Observer create(final SynchronousEventTask task) {
-		return new Observer() {
-
-			@Override
-			public void afterCreate(final CMCard card) {
-				logger.info(marker, "card created - '{}', '{}'", task, card);
-			}
-
-			@Override
-			public void beforeUpdate(CMCard actual, CMCard next) {
-				logger.info(marker, "card will be updated - '{}', actual '{}', next '{}'", task, actual, next);
-			}
-
-			@Override
-			public void afterUpdate(CMCard previous, CMCard actual) {
-				logger.info(marker, "card updated - '{}', actual '{}', previous '{}'", task, actual, previous);
-			}
-
-			@Override
-			public void beforeDelete(CMCard card) {
-				logger.info(marker, "card will be deleted - '{}', '{}'", task, card);
-			}
-
-		};
+		final Builder builder = DefaultObserver.newInstance();
+		final DefaultObserver.Phase phase = toObserverPhase(task.getPhase());
+		if (task.isScriptingEnabled()) {
+			builder.add(ScriptCommand.newInstance() //
+					.withEngine(task.getScriptingEngine()) //
+					.withScript(task.getScriptingScript()) //
+					.build(), phase);
+		}
+		return builder.build();
 	}
 
+	private DefaultObserver.Phase toObserverPhase(final SynchronousEventTask.Phase phase) {
+		return new SynchronousEventTask.PhaseIdentifier() {
+
+			private DefaultObserver.Phase converted;
+
+			public org.cmdbuild.services.event.DefaultObserver.Phase toObserverPhase() {
+				phase.identify(this);
+				Validate.notNull(converted, "conversion error");
+				return converted;
+			}
+
+			@Override
+			public void afterCreate() {
+				converted = DefaultObserver.Phase.AFTER_CREATE;
+			}
+
+			@Override
+			public void beforeUpdate() {
+				converted = DefaultObserver.Phase.BEFORE_UPDATE;
+			}
+
+			@Override
+			public void afterUpdate() {
+				converted = DefaultObserver.Phase.AFTER_UPDATE;
+			}
+
+			@Override
+			public void beforeDelete() {
+				converted = DefaultObserver.Phase.BEFORE_DELETE;
+			}
+
+		}.toObserverPhase();
+	}
 }

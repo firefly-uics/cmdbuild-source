@@ -2,7 +2,6 @@ package org.cmdbuild.services.soap.operation;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-import groovy.swing.factory.WidgetFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	/**
 	 * These constants are intended to be for legacy purpose only!
 	 * 
-	 * Only the constants defined in the {@link WidgetFactory} implementations
+	 * Only the constants defined in the {@link OpenReportWidgetFactory} implementations
 	 * should be used.
 	 */
 	@Legacy("no comment")

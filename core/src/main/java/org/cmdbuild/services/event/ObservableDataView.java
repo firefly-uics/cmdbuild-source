@@ -1,4 +1,4 @@
-package org.cmdbuild.data.view;
+package org.cmdbuild.services.event;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
@@ -6,50 +6,15 @@ import org.cmdbuild.dao.entry.ForwardingCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.ForwardingDataView;
+import org.cmdbuild.logger.Log;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public class ObservableDataView extends ForwardingDataView {
 
-	public static interface Observer {
-
-		void afterCreate(CMCard card);
-
-		void beforeUpdate(CMCard actual, CMCard next);
-
-		void afterUpdate(CMCard previous, CMCard actual);
-
-		void beforeDelete(CMCard card);
-
-	}
-
-	public static abstract class ForwardingObserver implements Observer {
-
-		private final Observer delegate;
-
-		protected ForwardingObserver(final Observer delegate) {
-			this.delegate = delegate;
-		}
-
-		@Override
-		public void afterCreate(final CMCard card) {
-			delegate.afterCreate(card);
-		}
-
-		@Override
-		public void beforeUpdate(final CMCard actual, final CMCard next) {
-			delegate.beforeUpdate(actual, next);
-		}
-
-		@Override
-		public void afterUpdate(final CMCard previous, final CMCard actual) {
-			delegate.afterUpdate(previous, actual);
-		}
-
-		@Override
-		public void beforeDelete(final CMCard card) {
-			delegate.beforeDelete(card);
-		}
-
-	}
+	private static final Logger logger = Log.PERSISTENCE;
+	private static final Marker marker = MarkerFactory.getMarker(ObservableDataView.class.getName());
 
 	private abstract static class ObservableCardDefinition extends ForwardingCardDefinition {
 
@@ -70,6 +35,7 @@ public class ObservableDataView extends ForwardingDataView {
 
 		@Override
 		public CMCard save() {
+			logger.info(marker, "saving new card");
 			final CMCard card = super.save();
 			observer.afterCreate(card);
 			return card;
@@ -89,6 +55,7 @@ public class ObservableDataView extends ForwardingDataView {
 
 		@Override
 		public CMCard save() {
+			logger.info(marker, "saving existing card");
 			final CMCard card = super.save();
 			observer.beforeUpdate(actual, card);
 			observer.afterUpdate(actual, card);
@@ -115,6 +82,7 @@ public class ObservableDataView extends ForwardingDataView {
 
 	@Override
 	public void delete(final CMCard card) {
+		logger.info(marker, "deleting existing card");
 		observer.beforeDelete(card);
 		super.delete(card);
 	}

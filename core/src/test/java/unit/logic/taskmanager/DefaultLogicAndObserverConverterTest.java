@@ -4,10 +4,10 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.cmdbuild.data.view.ObservableDataView.Observer;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
+import org.cmdbuild.services.event.Observer;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;

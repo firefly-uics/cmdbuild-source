@@ -19,6 +19,7 @@ import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter;
+import org.cmdbuild.logic.taskmanager.DefaultObserverCollector;
 import org.cmdbuild.logic.taskmanager.DefaultObserverFactory;
 import org.cmdbuild.logic.taskmanager.DefaultSchedulerFacade;
 import org.cmdbuild.logic.taskmanager.DefaultSynchronousEventFacade;
@@ -26,7 +27,6 @@ import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.LogicAndObserverConverter;
 import org.cmdbuild.logic.taskmanager.LogicAndSchedulerConverter;
 import org.cmdbuild.logic.taskmanager.LogicAndStoreConverter;
-import org.cmdbuild.logic.taskmanager.DefaultObserverCollector;
 import org.cmdbuild.logic.taskmanager.ObserverCollector;
 import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.ReadEmailTaskJobFactory;
@@ -74,8 +74,12 @@ public class TaskManager {
 
 	@Bean
 	public TaskManagerLogic taskManagerLogic() {
-		return new TransactionalTaskManagerLogic(new DefaultTaskManagerLogic(taskConverter(), defaultTaskStore(),
-				defaultSchedulerTaskFacade(), defaultSynchronousEventFacade()));
+		return new TransactionalTaskManagerLogic(defaultTaskManagerLogic());
+	}
+
+	private DefaultTaskManagerLogic defaultTaskManagerLogic() {
+		return new DefaultTaskManagerLogic(taskConverter(), defaultTaskStore(), defaultSchedulerTaskFacade(),
+				defaultSynchronousEventFacade());
 	}
 
 	@Bean
@@ -112,7 +116,7 @@ public class TaskManager {
 	}
 
 	private SchedulerLogic defaultSchedulerLogic() {
-		return new DefaultSchedulerLogic(defaultTaskStore(), quartzSchedulerService());
+		return new DefaultSchedulerLogic(quartzSchedulerService());
 	}
 
 	@Bean
