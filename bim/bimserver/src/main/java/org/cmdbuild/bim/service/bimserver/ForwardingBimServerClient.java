@@ -232,4 +232,5 @@ public abstract class ForwardingBimServerClient implements BimserverClient {
 	public void unsetReference(final String transactionId, final String objectId, final String referenceName) {
 		delegate.unsetReference(transactionId, objectId, referenceName);
 	}
+
 }

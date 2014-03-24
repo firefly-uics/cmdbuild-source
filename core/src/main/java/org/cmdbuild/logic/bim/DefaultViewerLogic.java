@@ -237,7 +237,8 @@ public class DefaultViewerLogic implements ViewerLogic {
 	}
 
 	@Override
-	public void moveObjectToPosition(String projectId, String className, String globalId, List<Double> coordinates) {
+	public void moveObjectToPosition(final String projectId, final String className, final String globalId,
+			final List<Double> coordinates) {
 		bimServiceFacade.moveObject(projectId, globalId, coordinates);
 		bimDataView.moveObject(className, globalId, coordinates);
 	}
