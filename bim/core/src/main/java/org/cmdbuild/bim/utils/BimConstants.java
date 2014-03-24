@@ -32,6 +32,7 @@ public class BimConstants {
 	public static final String IFC_OBJECT_TYPE = "ObjectType";
 	public static final String IFC_BUILDING_STOREY = "IfcBuildingStorey";
 	public static final String IFC_BUILDING = "IfcBuilding";
+	public static final String IFC_PRODUCT_DEFINITION_SHAPE = "IfcProductDefinitionShape";
 
 	// Reader
 	public static final String COORDINATES = "_Coordinates";

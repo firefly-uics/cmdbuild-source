@@ -14,6 +14,7 @@ import static org.cmdbuild.bim.utils.BimConstants.IFC_LOCATION;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_OBJECT_PLACEMENT;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_OBJECT_TYPE;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_PRODUCT_DEFINITION_SHAPE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATED_ELEMENTS;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATING_STRUCTURE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATIVE_PLACEMENT;
@@ -33,7 +34,6 @@ import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.services.bim.DefaultBimDataView.SHAPE_OID;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -291,19 +291,28 @@ public class DefaultBimFacade implements BimFacade {
 
 	@Override
 	public void moveObject(final String projectId, final String globalId, final List<Double> coordinates) {
+		System.out.println("move on transaction " + transactionManager.getId());
 		openTransaction(projectId);
+		System.out.println("open transaction " + transactionManager.getId());
 		final String revisionId = getLastRevisionOfProject(projectId);
+		System.out.println("revision is " + revisionId);
 		final BimserverEntity object = (BimserverEntity) fetchEntityFromGlobalId(revisionId, globalId, candidateTypes);
-		final String objectId = object.getOid().toString();
+		System.out.println("object is " + object.getOid());
 		final BimserverEntity objectPlacement = (BimserverEntity) getReferencedEntity(revisionId, object,
 				IFC_OBJECT_PLACEMENT);
-		service.unsetReference(transactionManager.getId(), objectId, IFC_OBJECT_PLACEMENT);
-		final String oldPlacementOid = objectPlacement.getOid().toString();
-		service.removeObject(transactionManager.getId(), oldPlacementOid);
-		setPlacementForObject(objectId, coordinates.get(0).toString(), coordinates.get(1).toString(), coordinates
-				.get(2).toString());
+		System.out.println("placement is " + objectPlacement.getOid());
+		final BimserverEntity relativePlacement = (BimserverEntity) getReferencedEntity(revisionId, objectPlacement,
+				IFC_RELATIVE_PLACEMENT);
+		System.out.println("relativePlacement is " + relativePlacement.getOid());
+		final BimserverEntity cartesianPoint = (BimserverEntity) getReferencedEntity(revisionId, relativePlacement,
+				IFC_LOCATION);
+		System.out.println("cartesianPoint is " + cartesianPoint.getOid());
+		final String cartesianPointId = String.valueOf(cartesianPoint.getOid());
+
+		service.setDoubleAttributes(transactionManager.getId(), cartesianPointId, IFC_COORDINATES, coordinates);
+
 		commitTransaction();
-		refresh(projectId);
+		// refreshWithMerge(projectId);
 	}
 
 	@Override
@@ -316,7 +325,7 @@ public class DefaultBimFacade implements BimFacade {
 
 	@Override
 	public String findShapeWithName(final String shapeName, final String revisionId) {
-		final Iterable<Entity> shapeList = service.getEntitiesByType("IfcProductDefinitionShape", revisionId);
+		final Iterable<Entity> shapeList = service.getEntitiesByType(IFC_PRODUCT_DEFINITION_SHAPE, revisionId);
 		for (final Entity shape : shapeList) {
 			final Attribute shapeNameAttribute = shape.getAttributeByName("Name");
 			if (shapeNameAttribute.getValue() != null && shapeNameAttribute.getValue().equals(shapeName)) {
@@ -490,20 +499,6 @@ public class DefaultBimFacade implements BimFacade {
 					System.out.println("add reference '" + objectToAdd + "' to relation '" + relationOid + "'");
 				}
 			}
-		}
-	}
-
-	@Override
-	public void refresh(final String projectId) {
-		try {
-			final DataHandler exportedData = download(projectId);
-			final File file = File.createTempFile("ifc", null);
-			final FileOutputStream outputStream = new FileOutputStream(file);
-			exportedData.writeTo(outputStream);
-			checkin(projectId, file);
-			System.out.println("Project refreshed");
-		} catch (final Throwable t) {
-			throw new BimError("Problems while refreshing project", t);
 		}
 	}
 

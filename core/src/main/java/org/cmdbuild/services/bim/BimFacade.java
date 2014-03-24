@@ -106,7 +106,4 @@ public interface BimFacade {
 
 	Long getOidFromGlobalId(String guid, String revisionId, Iterable<String> candidateTypes);
 
-	void refresh(String exportProjectId);
-
-
 }

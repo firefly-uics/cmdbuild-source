@@ -14,12 +14,8 @@ import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.services.bim.DefaultBimDataView.CONTAINER_GUID;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
-
-import javax.activation.DataHandler;
 
 import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.mapper.DefaultAttribute;
@@ -114,14 +110,6 @@ public class DefaultExportConnector implements GenericMapper {
 		System.out.println("Commit transaction...");
 		final String revisionId = serviceFacade.commitTransaction();
 		System.out.println("Revision " + revisionId + " created at " + new DateTime());
-
-		/*
-		 * In order to see the generated objects I have to download and upload
-		 * again the file. This is due to some problems with BimServer cache.
-		 */
-		serviceFacade.refresh(exportProjectId);
-		
-		
 	}
 
 	@Override
