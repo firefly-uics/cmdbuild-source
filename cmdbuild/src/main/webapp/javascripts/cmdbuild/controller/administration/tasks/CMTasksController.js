@@ -128,7 +128,7 @@
 				}
 
 				this.form.wizard.numberOfTabs = items.length;
-				this.form.wizard.setActiveTab(0);
+				this.form.wizard.changeTab(0);
 			}
 		},
 
@@ -143,8 +143,18 @@
 			return this.form.delegate.onModifyButtonClick();
 		},
 
+		/**
+		 * Check for a right form controller and/or creates it and then calls delegate's onRowSelected function
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		onRowSelected: function(name, param, callBack) {
-			if (!this.form.delegate)
+			if (
+				!this.form.delegate
+				|| (this.form.delegate.taskType != param.record.get(CMDBuild.ServiceProxy.parameter.TYPE))
+			)
 				this.buildFormController(param.record.get(CMDBuild.ServiceProxy.parameter.TYPE));
 
 			if (this.form.delegate)

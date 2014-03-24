@@ -43,7 +43,7 @@
 
 		getKeyColumnConf: function() {
 			return {
-				header: this.keyLabel || CMDBuild.Translation.administration.modClass.attributeProperties.name,
+				header: this.keyLabel || CMDBuild.Translation.name,
 				dataIndex: CMDBuild.ServiceProxy.parameter.NAME,
 				editor: this.keyEditorConfig,
 				flex: 1
@@ -52,7 +52,7 @@
 
 		getValueColumnConf: function() {
 			return {
-				header: this.valueLabel || CMDBuild.Translation.administration.modClass.attributeProperties.meta.value,
+				header: this.valueLabel || CMDBuild.Translation.value,
 				dataIndex: CMDBuild.ServiceProxy.parameter.VALUE,
 				editor: this.valueEditorConfig,
 				flex: 1

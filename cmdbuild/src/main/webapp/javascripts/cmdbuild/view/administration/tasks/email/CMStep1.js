@@ -47,6 +47,30 @@
 			}
 		},
 
+		fillActive: function(value) {
+			this.view.activeField.setValue(value);
+		},
+
+		fillDescription: function(value) {
+			this.view.descriptionField.setValue(value);
+		},
+
+		fillId: function(value) {
+			this.view.idField.setValue(value);
+		},
+
+		fillEmailAccount: function(emailAccountName) {
+			this.view.emailAccountCombo.setValue(emailAccountName);
+		},
+
+		fillFilterFromAddress: function(filterString) {
+			this.view.fromAddresFilterField.setValue(filterString);
+		},
+
+		fillFilterSunbject: function(filterString) {
+			this.view.subjectFilterField.setValue(filterString);
+		},
+
 		onFromAddressFilterButtonClick: function() {
 			var me = this;
 
@@ -129,11 +153,6 @@
 		border: false,
 		height: '100%',
 
-		defaults: {
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			xtype: 'textfield'
-		},
-
 		initComponent: function() {
 			var me = this;
 
@@ -194,10 +213,6 @@
 				this.fromAddresFilterWrapper = Ext.create('Ext.container.Container', {
 					layout: 'hbox',
 
-					defaults: {
-						labelWidth: CMDBuild.LABEL_WIDTH
-					},
-
 					items: [
 						this.fromAddresFilterField,
 						{
@@ -226,10 +241,6 @@
 
 				this.subjectFilterWrapper = Ext.create('Ext.container.Container', {
 					layout: 'hbox',
-
-					defaults: {
-						labelWidth: CMDBuild.LABEL_WIDTH
-					},
 
 					items: [
 						this.subjectFilterField,

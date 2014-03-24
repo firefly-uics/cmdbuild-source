@@ -68,17 +68,17 @@
 //			return false;
 //		},
 
-//		getAttributeTableValues: function() {
-//			return this.view.attributesTable.getData();
-//		},
+		getAttributeTableValues: function() {
+			return this.view.attributesTable.getData();
+		},
 
 //		getWorkflowComboValue: function() {
 //			return this.view.workflowCombo.getValue();
 //		},
 
-//		fillAttributesGrid: function(data) {
-//			this.view.attributesTable.fillWithData(data);
-//		},
+		fillAttributesGrid: function(data) {
+			this.view.attributesTable.fillWithData(data);
+		},
 //
 //		fillWorkflowCombo: function(workflowName) {
 //			this.view.workflowCombo.setValue(workflowName);
@@ -146,7 +146,6 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				forceSelection: true,
 				editable: false,
-				allowBlank: false,
 				listeners: {
 					select: function() {
 						me.delegate.cmOn('onWorkflowSelected', this.getValue());

@@ -151,11 +151,6 @@
 		height: '100%',
 		overflowY: 'auto',
 
-		defaults: {
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			xtype: 'textfield'
-		},
-
 		initComponent: function() {
 			var me = this;
 
@@ -209,6 +204,8 @@
 					}
 				}
 			});
+//			this.workflowCombo = Ext.create('CMDBuild.view.administration.tasks.common.cron.CMCronCombo');
+//			this.workflowCombo.name = CMDBuild.ServiceProxy.parameter.CLASS_NAME;
 
 			this.attributesTable = Ext.create('CMDBuild.view.administration.common.CMDynamicKeyValueGrid', {
 				title: tr.workflowAttributes,
@@ -232,6 +229,7 @@
 					}
 				}
 			});
+//			this.attributesTable = Ext.create('CMDBuild.view.administration.tasks.common.cron.CMCronGrid');
 
 			Ext.apply(this, {
 				items: [

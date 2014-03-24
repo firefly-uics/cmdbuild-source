@@ -12,11 +12,6 @@
 				margins: '0 0 0 3',
 				autoScroll: true,
 
-				defaults: {
-					flex: 1,
-					xtype: 'textfield'
-				},
-
 				items: [
 					this.attributeName,
 					this.attributeDescription,
