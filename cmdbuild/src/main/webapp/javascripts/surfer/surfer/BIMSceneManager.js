@@ -106,20 +106,20 @@
 		};
 
 		this.classNames = config.classNames || [ 
-//			"IfcColumn", 
-//			"IfcStair", 
+			"IfcColumn", 
+			"IfcStair", 
 			"IfcSlab", 
-//			"IfcWindow", 
-//			"IfcDoor", 
-//			"IfcBuildingElementProxy",
-//			"IfcWallStandardCase", 
-//			"IfcWall", 
-//			"IfcBeam", 
-//			"IfcRailing",
-//			"IfcProxy",
-//			"IfcRoof",
+			"IfcWindow", 
+			"IfcDoor", 
+			//"IfcBuildingElementProxy",
+			"IfcWallStandardCase", 
+			"IfcWall", 
+			"IfcBeam", 
+			"IfcRailing",
+			"IfcProxy",
+			"IfcRoof",
 			"IfcFurnishingElement",
-//			"IfcFlowSegment"
+			"IfcFlowSegment"
 		];
 
 		/**

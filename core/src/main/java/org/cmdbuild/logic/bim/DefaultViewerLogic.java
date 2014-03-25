@@ -129,7 +129,6 @@ public class DefaultViewerLogic implements ViewerLogic {
 			final Iterable<Layer> activeLayers = layerLogic.getActiveLayers();
 			for (final Layer layer : activeLayers) {
 				final String className = layer.getClassName();
-				System.out.println("Layer " + className);
 				final String rootClassName = layerLogic.getRootLayer().getClassName();
 				List<BimCard> bimCards = Lists.newArrayList();
 				if (className.equals(rootClassName)) {
@@ -146,7 +145,6 @@ public class DefaultViewerLogic implements ViewerLogic {
 				}
 				for (final BimCard bimCard : bimCards) {
 					final String guid = bimCard.getGlobalId();
-					System.out.println("look for guid " + guid);
 					Long oid = (long) -1;
 					if (guidToOidMap.containsKey(revisionId)) {
 						final Map<String, Long> revisionMap = guidToOidMap.get(revisionId);
@@ -164,7 +162,6 @@ public class DefaultViewerLogic implements ViewerLogic {
 							revisionMap.put(guid, oid);
 						}
 					}
-					System.out.println("found oid " + oid);
 					final String oidAsString = String.valueOf(oid);
 					if (isValidId(oidAsString)) {
 						final ObjectNode property = (ObjectNode) properties.findValue(oidAsString);
