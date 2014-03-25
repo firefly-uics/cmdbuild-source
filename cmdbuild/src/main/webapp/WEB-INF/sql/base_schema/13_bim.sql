@@ -33,35 +33,6 @@ $BODY$
 COMMENT ON FUNCTION _bim_carddata_from_globalid(character varying) IS 'TYPE: function';
 
 
-
-CREATE OR REPLACE FUNCTION _opm_find_the_building(IN cardid integer, OUT buildingid integer)
-  RETURNS integer AS
-$BODY$
-BEGIN
-	RAISE NOTICE 'Function _opm_find_the_building with cardid % ', cardid;
-
-	SELECT "IsInBuilding" INTO buildingid
-	FROM "InventoryItem"
-	WHERE "Id"=cardid;
-
-	IF(buildingid IS NULL) THEN
-		SELECT "Building" INTO buildingid
-		FROM "Room"
-		WHERE "Id"=cardid;
-	END IF;
-
-	IF(buildingid IS NULL) THEN
-		SELECT "Building" INTO buildingid
-		FROM "Floor"
-		WHERE "Id"=cardid;
-	END IF;
-END;
-$BODY$
-  LANGUAGE plpgsql VOLATILE
-  COST 100;
-COMMENT ON FUNCTION _opm_find_the_building(integer) IS 'TYPE: function';
-
-
 CREATE OR REPLACE FUNCTION cm_attribute_exists(IN schemaname text, IN tablename text, IN attributename text, OUT attribute_exists boolean)
   RETURNS boolean AS
 $BODY$
@@ -221,7 +192,6 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 COMMENT ON FUNCTION _bim_data_for_export(integer, varchar, varchar, varchar) IS 'TYPE: function|CATEGORIES: system';
-
 
 
 CREATE OR REPLACE FUNCTION _bim_data_for_export_new(
