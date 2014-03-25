@@ -234,7 +234,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.isRunning(), equalTo(true));
 
 		final Map<String, String> parameters = converted.getParameters();
-		assertThat(parameters, hasEntry(SynchronousEvent.PHASE, "afterCreate"));
+		assertThat(parameters, hasEntry(SynchronousEvent.PHASE, "after_create"));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy"));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_SCRIPT, "blah blah blah"));
@@ -264,10 +264,10 @@ public class DefaultLogicAndStoreConverterTest {
 		final org.cmdbuild.data.store.task.Task convertedBeforeDelete = converter.from(beforeDelete).toStore();
 
 		// then
-		assertThat(convertedAfterCreate.getParameters(), hasEntry(SynchronousEvent.PHASE, "afterCreate"));
-		assertThat(convertedBeforeUpdate.getParameters(), hasEntry(SynchronousEvent.PHASE, "beforeUpdate"));
-		assertThat(convertedAfterUpdate.getParameters(), hasEntry(SynchronousEvent.PHASE, "afterUpdate"));
-		assertThat(convertedBeforeDelete.getParameters(), hasEntry(SynchronousEvent.PHASE, "beforeDelete"));
+		assertThat(convertedAfterCreate.getParameters(), hasEntry(SynchronousEvent.PHASE, "after_create"));
+		assertThat(convertedBeforeUpdate.getParameters(), hasEntry(SynchronousEvent.PHASE, "before_update"));
+		assertThat(convertedAfterUpdate.getParameters(), hasEntry(SynchronousEvent.PHASE, "after_update"));
+		assertThat(convertedBeforeDelete.getParameters(), hasEntry(SynchronousEvent.PHASE, "before_delete"));
 	}
 
 	@Test
@@ -278,7 +278,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withId(42L) //
 				.withDescription("description") //
 				.withRunningStatus(true) //
-				.withParameter(SynchronousEvent.PHASE, "afterCreate") //
+				.withParameter(SynchronousEvent.PHASE, "after_create") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT, "blah blah blah") //
@@ -306,19 +306,19 @@ public class DefaultLogicAndStoreConverterTest {
 		// given
 		final org.cmdbuild.data.store.task.SynchronousEventTask afterCreate = org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
-				.withParameter(SynchronousEvent.PHASE, "afterCreate") //
+				.withParameter(SynchronousEvent.PHASE, "after_create") //
 				.build();
 		final org.cmdbuild.data.store.task.SynchronousEventTask beforeUpdate = org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
-				.withParameter(SynchronousEvent.PHASE, "beforeUpdate") //
+				.withParameter(SynchronousEvent.PHASE, "before_update") //
 				.build();
 		final org.cmdbuild.data.store.task.SynchronousEventTask afterUpdate = org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
-				.withParameter(SynchronousEvent.PHASE, "afterUpdate") //
+				.withParameter(SynchronousEvent.PHASE, "after_update") //
 				.build();
 		final org.cmdbuild.data.store.task.SynchronousEventTask beforeDelete = org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
-				.withParameter(SynchronousEvent.PHASE, "beforeDelete") //
+				.withParameter(SynchronousEvent.PHASE, "before_delete") //
 				.build();
 
 		// when

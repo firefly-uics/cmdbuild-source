@@ -76,10 +76,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		public static final String PHASE = "phase";
 
-		public static final String PHASE_AFTER_CREATE = "afterCreate";
-		public static final String PHASE_BEFORE_UPDATE = "beforeUpdate";
-		public static final String PHASE_AFTER_UPDATE = "afterUpdate";
-		public static final String PHASE_BEFORE_DELETE = "beforeDelete";
+		public static final String PHASE_AFTER_CREATE = "after_create";
+		public static final String PHASE_BEFORE_UPDATE = "before_update";
+		public static final String PHASE_AFTER_UPDATE = "after_update";
+		public static final String PHASE_BEFORE_DELETE = "before_delete";
 
 		private static final String ACTION_SCRIPT = "action.scripting";
 		public static final String ACTION_SCRIPT_ACTIVE = ACTION_SCRIPT + ".active";
