@@ -9,6 +9,8 @@ import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
+import org.cmdbuild.logic.taskmanager.Task;
+import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.services.startup.DefaultStartupLogic;
 import org.cmdbuild.services.startup.DefaultStartupManager;
 import org.cmdbuild.services.startup.StartupLogic;
@@ -50,7 +52,7 @@ public class Startup {
 	@Bean
 	protected StartupManager startupManager() {
 		final StartupManager startupManager = new DefaultStartupManager();
-		startupManager.add(startScheduler(), patchManagerIsUpdated());
+		startupManager.add(startScheduler(), databaseIsOk());
 		startupManager.add(clearDmsTemporaryFolder(), always());
 		return startupManager;
 	}
@@ -59,12 +61,18 @@ public class Startup {
 	protected Startable startScheduler() {
 		return new Startable() {
 
-			private final SchedulerLogic schedulerLogic = taskManager.databaseConfigurationAwareSchedulerLogic();
+			private final SchedulerLogic schedulerLogic = taskManager.defaultSchedulerLogic();
+			private final TaskManagerLogic taskManagerLogic = taskManager.taskManagerLogic();
 
 			@Override
 			public void start() {
 				schedulerLogic.startScheduler();
-				schedulerLogic.addAllScheduledJobs();
+
+				for (final Task task : taskManagerLogic.read()) {
+					if (task.isActive()) {
+						taskManagerLogic.activate(task.getId());
+					}
+				}
 			}
 
 		};
@@ -106,12 +114,12 @@ public class Startup {
 	}
 
 	@Bean
-	protected Condition patchManagerIsUpdated() {
+	protected Condition databaseIsOk() {
 		return new Condition() {
 
 			@Override
 			public boolean satisfied() {
-				return other.patchManager().isUpdated();
+				return properties.databaseProperties().isConfigured() && other.patchManager().isUpdated();
 			}
 
 		};

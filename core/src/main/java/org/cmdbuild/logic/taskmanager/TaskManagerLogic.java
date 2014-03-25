@@ -38,13 +38,13 @@ public interface TaskManagerLogic extends Logic {
 	void delete(Task task);
 
 	/**
-	 * Starts the {@link Task} with the specified id.
+	 * Activates the {@link Task} with the specified id.
 	 */
-	void start(Long id);
+	void activate(Long id);
 
 	/**
-	 * Stops the {@link Task} with the specified id.
+	 * Deactivates the {@link Task} with the specified id.
 	 */
-	void stop(Long id);
+	void deactivate(Long id);
 
 }

@@ -8,6 +8,4 @@ public interface SchedulerLogic extends Logic {
 
 	void stopScheduler();
 
-	void addAllScheduledJobs();
-
 }

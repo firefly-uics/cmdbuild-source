@@ -5,6 +5,7 @@ import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverF
 import org.cmdbuild.services.event.DefaultObserver;
 import org.cmdbuild.services.event.DefaultObserver.Builder;
 import org.cmdbuild.services.event.Observer;
+import org.cmdbuild.services.event.SafeCommand;
 import org.cmdbuild.services.event.ScriptCommand;
 
 public class DefaultObserverFactory implements ObserverFactory {
@@ -14,10 +15,10 @@ public class DefaultObserverFactory implements ObserverFactory {
 		final Builder builder = DefaultObserver.newInstance();
 		final DefaultObserver.Phase phase = toObserverPhase(task.getPhase());
 		if (task.isScriptingEnabled()) {
-			builder.add(ScriptCommand.newInstance() //
+			builder.add(SafeCommand.of(ScriptCommand.newInstance() //
 					.withEngine(task.getScriptingEngine()) //
 					.withScript(task.getScriptingScript()) //
-					.build(), phase);
+					.build()), phase);
 		}
 		return builder.build();
 	}

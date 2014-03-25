@@ -39,13 +39,13 @@ public abstract class ForwardingTaskManagerLogic implements TaskManagerLogic {
 	}
 
 	@Override
-	public void start(final Long id) {
-		delegate.start(id);
+	public void activate(final Long id) {
+		delegate.activate(id);
 	}
 
 	@Override
-	public void stop(final Long id) {
-		delegate.stop(id);
+	public void deactivate(final Long id) {
+		delegate.deactivate(id);
 	}
 
 }

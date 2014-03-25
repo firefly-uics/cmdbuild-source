@@ -3,9 +3,10 @@ package org.cmdbuild.logic.taskmanager;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
-import org.cmdbuild.logic.taskmanager.ObserverCollector.IdentifiableObserver;
 import org.cmdbuild.services.event.ForwardingObserver;
 import org.cmdbuild.services.event.Observer;
+import org.cmdbuild.services.event.ObserverCollector;
+import org.cmdbuild.services.event.ObserverCollector.IdentifiableObserver;
 
 public class DefaultSynchronousEventFacade implements SynchronousEventFacade {
 

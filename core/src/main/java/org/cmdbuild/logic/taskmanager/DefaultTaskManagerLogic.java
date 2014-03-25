@@ -248,7 +248,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
-	private static class Start implements Action<Void>, TaskVistor {
+	private static class Activate implements Action<Void>, TaskVistor {
 
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
@@ -256,7 +256,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		private final SynchronousEventFacade synchronousEventFacade;
 		private final Long id;
 
-		public Start(final LogicAndStoreConverter converter, final TaskStore store,
+		public Activate(final LogicAndStoreConverter converter, final TaskStore store,
 				final SchedulerFacade schedulerFacade, final SynchronousEventFacade synchronousEventFacade,
 				final Long id) {
 			this.converter = converter;
@@ -269,15 +269,18 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		@Override
 		public Void execute() {
 			Validate.isTrue(id != null, "invalid id");
+			final org.cmdbuild.data.store.task.Task updated;
 			final org.cmdbuild.data.store.task.Task stored = store.read(id);
 			if (!stored.isRunning()) {
-				final org.cmdbuild.data.store.task.Task updated = stored.modify() //
+				updated = stored.modify() //
 						.withRunningStatus(true) //
 						.build();
-				store.update(updated);
-				final Task task = converter.from(updated).toLogic();
-				task.accept(this);
+			} else {
+				updated = stored;
 			}
+			store.update(updated);
+			final Task task = converter.from(updated).toLogic();
+			task.accept(this);
 			return null;
 		}
 
@@ -298,7 +301,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	}
 
-	private static class Stop implements Action<Void>, TaskVistor {
+	private static class Deactivate implements Action<Void>, TaskVistor {
 
 		private final LogicAndStoreConverter converter;
 		private final TaskStore store;
@@ -306,7 +309,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		private final SynchronousEventFacade synchronousEventFacade;
 		private final Long id;
 
-		public Stop(final LogicAndStoreConverter converter, final TaskStore store,
+		public Deactivate(final LogicAndStoreConverter converter, final TaskStore store,
 				final SchedulerFacade schedulerFacade, final SynchronousEventFacade synchronousEventFacade,
 				final Long id) {
 			this.converter = converter;
@@ -319,15 +322,18 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		@Override
 		public Void execute() {
 			Validate.isTrue(id != null, "invalid id");
+			final org.cmdbuild.data.store.task.Task updated;
 			final org.cmdbuild.data.store.task.Task stored = store.read(id);
 			if (stored.isRunning()) {
-				final org.cmdbuild.data.store.task.Task updated = stored.modify() //
+				updated = stored.modify() //
 						.withRunningStatus(false) //
 						.build();
 				store.update(updated);
-				final Task task = converter.from(updated).toLogic();
-				task.accept(this);
+			} else {
+				updated = stored;
 			}
+			final Task task = converter.from(updated).toLogic();
+			task.accept(this);
 			return null;
 		}
 
@@ -398,15 +404,15 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 	}
 
 	@Override
-	public void start(final Long id) {
-		logger.info(MARKER, "starting the existing task '{}'", id);
-		execute(doStart(id));
+	public void activate(final Long id) {
+		logger.info(MARKER, "activating the existing task '{}'", id);
+		execute(doActivate(id));
 	}
 
 	@Override
-	public void stop(final Long id) {
-		logger.info(MARKER, "stopping the existing task '{}'", id);
-		execute(doStop(id));
+	public void deactivate(final Long id) {
+		logger.info(MARKER, "deactivating the existing task '{}'", id);
+		execute(doDeactivate(id));
 	}
 
 	private Create doCreate(final Task task) {
@@ -433,12 +439,12 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		return new Delete(converter, store, schedulerFacade, synchronousEventFacade, task);
 	}
 
-	private Start doStart(final Long id) {
-		return new Start(converter, store, schedulerFacade, synchronousEventFacade, id);
+	private Activate doActivate(final Long id) {
+		return new Activate(converter, store, schedulerFacade, synchronousEventFacade, id);
 	}
 
-	private Stop doStop(final Long id) {
-		return new Stop(converter, store, schedulerFacade, synchronousEventFacade, id);
+	private Deactivate doDeactivate(final Long id) {
+		return new Deactivate(converter, store, schedulerFacade, synchronousEventFacade, id);
 	}
 
 	private <T> T execute(final Action<T> action) {

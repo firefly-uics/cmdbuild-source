@@ -28,14 +28,14 @@ public class TransactionalTaskManagerLogic extends ForwardingTaskManagerLogic {
 
 	@Override
 	@Transactional
-	public void start(final Long id) {
-		super.start(id);
+	public void activate(final Long id) {
+		super.activate(id);
 	}
 
 	@Override
 	@Transactional
-	public void stop(final Long id) {
-		super.stop(id);
+	public void deactivate(final Long id) {
+		super.deactivate(id);
 	}
 
 }
