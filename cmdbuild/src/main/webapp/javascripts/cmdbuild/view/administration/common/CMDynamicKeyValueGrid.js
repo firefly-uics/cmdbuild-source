@@ -12,6 +12,7 @@
 					iconCls: 'add',
 					handler: function() {
 						var m = new me.store.model();
+
 						if (m) {
 							me.store.insert(0, m);
 							me.cellEditing.startEditByPosition({row: 0, column: 0});
@@ -25,7 +26,7 @@
 		},
 
 		// override
-		getCoulumnsConf: function() {
+		getColumnsConf: function() {
 			var c = this.callParent(arguments);
 
 			c.push({
@@ -51,9 +52,8 @@
 	function onCellClick(grid, model, htmlelement, rowIndex, event, opt) {
 		var className = event.target.className;
 
-		if (className == "action-meta-delete") {
+		if (className == "action-meta-delete")
 			this.store.remove(model);
-		}
 	}
 
 })();

@@ -56,7 +56,7 @@
 			// END: Buttons configuration
 
 			// Splitted-view wrapper
-			this.nameField =Ext.create('Ext.form.field.Text', {
+			this.nameField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.ServiceProxy.parameter.NAME,
 				itemId: CMDBuild.ServiceProxy.parameter.NAME,
 				fieldLabel: CMDBuild.Translation.name,
@@ -86,11 +86,10 @@
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.administration.modClass.attributeProperties.baseProperties,
-						margins: '0px 3px 0px 0px',
+						margins: '0 3 0 0',
 
 						defaults: {
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							xtype: 'textfield'
+							labelWidth: CMDBuild.LABEL_WIDTH
 						},
 
 						items: [
@@ -109,7 +108,7 @@
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.administration.email.templates.template,
-						margins: '0px 0px 0px 3px',
+						margins: '0 0 0 3',
 						autoScroll: true,
 
 						defaults: {

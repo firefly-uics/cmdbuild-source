@@ -146,7 +146,7 @@
 
 		onSetDefaultButtonClick: function() {
 			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.serviceProxy.CMProxyEmailAccounts.setDefault({
+			CMDBuild.core.proxy.CMProxyEmailAccounts.setDefault({
 				params: { name: this.selectedName },
 				scope: this,
 				success: this.success,

@@ -1,9 +1,10 @@
 (function() {
 
-	var tr = CMDBuild.Translation.filterWindow; // Path to translation
+	var tr = CMDBuild.Translation.filterWindow;
 
 	// Local controller
 	Ext.define('CMDBuild.view.administration.tasks.email.CMFilterWindowDelegate', {
+		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
 		type: undefined,
@@ -21,14 +22,9 @@
 			}
 		},
 
-		onAddFilter: function() {
-			this.view.contentComponent.add(this.buildWindowItem());
-			this.view.contentComponent.doLayout();
-		},
-
 		buildWindowItem: function(values) {
-			var me = this,
-				items = [];
+			var me = this;
+			var items = [];
 
 			if (typeof values === 'undefined') {
 				values = [''];
@@ -50,7 +46,7 @@
 							flex: 1,
 							value: values[key],
 							listeners: {
-								'change': function() {
+								change: function() {
 									me.parentDelegate.cmOn(
 										'on' + me.type + 'FilterChange',
 										me.view.contentComponent.getForm().getValues(),
@@ -62,7 +58,7 @@
 						{
 							xtype: 'button',
 							iconCls: 'delete',
-							width: '22px',
+							width: 22,
 							handler: function() {
 								// HACK: to reset deleted textarea's value, probably for a bug the item is just hided
 								this.up('panel').down('#filter').setValue('');
@@ -82,6 +78,11 @@
 			}
 
 			return items;
+		},
+
+		onAddFilter: function() {
+			this.view.contentComponent.add(this.buildWindowItem());
+			this.view.contentComponent.doLayout();
 		}
 	});
 
@@ -99,11 +100,10 @@
 		width: 400,
 
 		initComponent: function() {
-			var me = this,
-				contentItems = null;
+			var me = this;
+			var contentItems = null;
 
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindowDelegate');
-			this.delegate.view = this;
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindowDelegate', this);
 			this.delegate.type = this.type;
 
 			this.tbar = [{
@@ -151,7 +151,9 @@
 				}
 			];
 
-			this.items = [this.contentComponent];
+			Ext.apply(this, {
+				items: [this.contentComponent]
+			});
 
 			this.callParent(arguments);
 		}

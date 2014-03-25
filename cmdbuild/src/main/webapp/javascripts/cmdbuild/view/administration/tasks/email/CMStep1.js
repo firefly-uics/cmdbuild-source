@@ -1,16 +1,23 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks.taskEmail; // Path to translation
+	var tr = CMDBuild.Translation.administration.tasks.taskEmail;
 
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1Delegate', {
+		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		delegate: undefined,
+		parentDelegate: undefined,
 		filterWindow: undefined,
 		view: undefined,
 
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		cmOn: function(name, param, callBack) {
-			switch (name) {
-				// FilterWindow events
+			switch (name) { // FilterWindow events
 				case 'onFromAddressFilterButtonClick':
 					return this.onFromAddressFilterButtonClick();
 
@@ -40,13 +47,37 @@
 			}
 		},
 
+		fillActive: function(value) {
+			this.view.activeField.setValue(value);
+		},
+
+		fillDescription: function(value) {
+			this.view.descriptionField.setValue(value);
+		},
+
+		fillId: function(value) {
+			this.view.idField.setValue(value);
+		},
+
+		fillEmailAccount: function(emailAccountName) {
+			this.view.emailAccountCombo.setValue(emailAccountName);
+		},
+
+		fillFilterFromAddress: function(filterString) {
+			this.view.fromAddresFilterField.setValue(filterString);
+		},
+
+		fillFilterSunbject: function(filterString) {
+			this.view.subjectFilterField.setValue(filterString);
+		},
+
 		onFromAddressFilterButtonClick: function() {
 			var me = this;
 
 			this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
 				title: tr.fromAddressFilter,
 				type: 'FromAddress',
-				content: me.view.getForm().findField('FromAddresFilterField').getValue(),
+				content: me.view.fromAddresFilterField.getValue(),
 			});
 
 			this.filterWindow.delegate.parentDelegate = this;
@@ -65,12 +96,12 @@
 				}
 			}
 
-			this.view.getForm().findField('FromAddresFilterField').setValue(filterString);
+			this.view.fromAddresFilterField.setValue(filterString);
 		},
 
 		onFromAddressFilterWindowAbort: function() {
 			// TODO: Fix reverting edits to store data
-			this.view.getForm().findField('FromAddresFilterField').reset();
+			this.view.fromAddresFilterField.reset();
 			this.filterWindow.hide();
 		},
 
@@ -80,7 +111,7 @@
 			this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
 				title: tr.onSubjectFilter,
 				type: 'Subject',
-				content: me.view.getForm().findField('SubjectFilterField').getValue(),
+				content: me.view.subjectFilterField.getValue(),
 			});
 
 			this.filterWindow.delegate.parentDelegate = this;
@@ -99,13 +130,17 @@
 				}
 			}
 
-			this.view.getForm().findField('SubjectFilterField').setValue(filterString);
+			this.view.subjectFilterField.setValue(filterString);
 		},
 
 		onSubjectFilterWindowAbort: function() {
 			// TODO: Fix reverting edits to store data
-			this.view.getForm().findField('SubjectFilterField').reset();
+			this.view.subjectFilterField.reset();
 			this.filterWindow.hide();
+		},
+
+		setDisabledTypeField: function(state) {
+			this.view.typeField.setDisabled(state);
 		}
 	});
 
@@ -118,16 +153,10 @@
 		border: false,
 		height: '100%',
 
-		defaults: {
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			xtype: 'textfield'
-		},
-
 		initComponent: function() {
 			var me = this;
 
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep1Delegate');
-			this.delegate.view = this;
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: CMDBuild.Translation.administration.tasks.type,
@@ -144,42 +173,48 @@
 				name: CMDBuild.ServiceProxy.parameter.ID
 			});
 
-			this.items = [
-				this.typeField,
-				this.idField,
-				{
-					xtype: 'combo',
-					fieldLabel: tr.emailAccount,
-					name: CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT,
-					store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
+			this.descriptionField = Ext.create('Ext.form.field.Text', {
+				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				fieldLabel: CMDBuild.Translation.description_,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				allowBlank: false
+			});
+
+			this.activeField = Ext.create('Ext.form.field.Checkbox', {
+				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
+				fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH
+			});
+
+			this.emailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
+				name: CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT,
+				fieldLabel: tr.emailAccount,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
+				displayField: CMDBuild.ServiceProxy.parameter.NAME,
+				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				forceSelection: true,
+				editable: false
+			});
+
+			// FromAddress filter configuration
+				this.fromAddresFilterField = Ext.create('Ext.form.field.TextArea', {
+					name: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS,
+					id: 'FromAddresFilterField',
+					fieldLabel: tr.fromAddressFilter,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					readOnly: true,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
-				},
-				{
-					xtype: 'numberfield',
-					fieldLabel: tr.pollingFrequency,
-					minValue: 1,
-					name: CMDBuild.ServiceProxy.parameter.POLLING_FREQUENCY,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
-				},
-				{
-					xtype: 'container',
+				});
+
+				this.fromAddresFilterWrapper = Ext.create('Ext.container.Container', {
 					layout: 'hbox',
 
-					defaults: {
-						labelWidth: CMDBuild.LABEL_WIDTH
-					},
-
 					items: [
-						{
-							xtype: 'textareafield',
-							id: 'FromAddresFilterField',
-							fieldLabel: tr.fromAddressFilter,
-							name: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS,
-							readOnly: true,
-							width: CMDBuild.CFG_BIG_FIELD_WIDTH
-						},
+						this.fromAddresFilterField,
 						{
 							xtype: 'button',
 							icon: 'images/icons/table.png',
@@ -191,24 +226,24 @@
 							}
 						}
 					]
-				},
-				{
-					xtype: 'container',
+				});
+			// END: FromAddress filter configuration
+
+			// SubjectAddress filter configuration
+				this.subjectFilterField = Ext.create('Ext.form.field.TextArea', {
+					name: CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT,
+					id: 'SubjectFilterField',
+					fieldLabel: tr.onSubjectFilter,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					readOnly: true,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				});
+
+				this.subjectFilterWrapper = Ext.create('Ext.container.Container', {
 					layout: 'hbox',
 
-					defaults: {
-						labelWidth: CMDBuild.LABEL_WIDTH
-					},
-
 					items: [
-						{
-							xtype: 'textareafield',
-							id: 'SubjectFilterField',
-							fieldLabel: tr.onSubjectFilter,
-							name: CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT,
-							readOnly: true,
-							width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-						},
+						this.subjectFilterField,
 						{
 							xtype: 'button',
 							icon: 'images/icons/table.png',
@@ -220,15 +255,21 @@
 							}
 						}
 					]
-				},
-				{
-					xtype: 'checkbox',
-					name: 'isActive',
-					fieldLabel: '@@ Run on save',
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
-				}
-			];
+				});
+			// END: SubjectAddress filter configuration
+
+			Ext.apply(this, {
+				items: [
+					this.typeField,
+					this.idField,
+					this.descriptionField,
+					this.activeField,
+					this.emailAccountCombo,
+					this.pollingFrequencyField,
+					this.fromAddresFilterWrapper,
+					this.subjectFilterWrapper
+				]
+			});
 
 			this.callParent(arguments);
 		}

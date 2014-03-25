@@ -11,13 +11,38 @@
 		]
 	});
 
-	Ext.define('CMDBuild.model.CMModelTasks.gridWorkflow', { // TODO: change to ...grid.workflow
+	/**
+	 * Model used in process tasks tab
+	 */
+	Ext.define('CMDBuild.model.CMModelTasks.grid.workflow', {
 		extend: 'Ext.data.Model',
 
 		fields: [
 			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
 			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'}
+		]
+	});
+
+	Ext.define('CMDBuild.model.CMModelTasks.singleTask.email', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
+			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.ATTRIBUTES, type: 'auto'},
+			{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS, type: 'auto'},
+			{ name: CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT, type: 'auto'},
+			{ name: CMDBuild.ServiceProxy.parameter.KEY_END, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.KEY_INIT, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.VALUE_END, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.VALUE_INIT, type: 'string'}
 		]
 	});
 
