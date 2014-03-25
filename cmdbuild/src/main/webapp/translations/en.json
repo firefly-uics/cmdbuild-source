@@ -686,6 +686,19 @@
 			"add": "Add task",
 			"all": "All",
 			"clone": "Clone task",
+			"cronForm" : {
+				"dayOfMounth": "Day of month",
+				"advanced": "Advanced",
+				"basic": "Basic",
+				"dayOfWeek": "Day of week",
+				"everyDay": "Every day",
+				"everyHour": "Every hour",
+				"everyMounth": "Every month",
+				"everyYear": "Every year",
+				"hour": "Hour",
+				"minute": "Minute",
+				"mounth": "Month"
+			},
 			"modify": "Modify task",
 			"remove": "Remove task",
 			"running": "Running",
@@ -709,30 +722,17 @@
 				"startWorkflow": "Start workflow",
 				"template": "Template",
 				"valueEnd": "Value end",
-				"valueInit": "Value init",
-				"workflow": "Workflow",
-				"description": "Description",
-				"workflowAttributes": "Workflow attributes",
-			},
-			"taskWorkflow": {
-				"advanced": "Advanced",
-				"basic": "Basic",
-				"dayOfMounth": "Day of month",
-				"dayOfWeek": "Day of week",
-				"everyDay": "Every day",
-				"everyHour": "Every hour",
-				"everyMounth": "Every month",
-				"everyYear": "Every year",
-				"hour": "Hour",
-				"minute": "Minute",
-				"mounth": "Month"
+				"valueInit": "Value init"
 			},
 			"tasksTypes": {
 				"email": "Email",
 				"event": "Event",
 				"workflow": "Workflow"
 			},
-			"workflow": "Workflow"
+			"workflow": "Workflow",
+			"workflowForm": {
+				"attributes": "Workflow attributes",
+			}
 		},
 		"welcome": {
 			"body": "Administration module.",
