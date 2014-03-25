@@ -85,6 +85,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public static final String ACTION_SCRIPT_ACTIVE = ACTION_SCRIPT + ".active";
 		public static final String ACTION_SCRIPT_ENGINE = ACTION_SCRIPT + ".engine";
 		public static final String ACTION_SCRIPT_SCRIPT = ACTION_SCRIPT + ".script";
+		public static final String ACTION_SCRIPT_SAFE = ACTION_SCRIPT + ".safe";
 
 	}
 
@@ -224,6 +225,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, Boolean.toString(task.isScriptingEnabled())) //
 					.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, task.getScriptingEngine()) //
 					.withParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT, task.getScriptingScript()) //
+					.withParameter(SynchronousEvent.ACTION_SCRIPT_SAFE, Boolean.toString(task.isScriptingSafe())) //
 					.build();
 		}
 	}
@@ -301,6 +303,8 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							Boolean.valueOf(task.getParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE))) //
 					.withScriptingEngine(task.getParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE)) //
 					.withScript(task.getParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT)) //
+					.withScriptingSafeStatus( //
+							Boolean.valueOf(task.getParameter(SynchronousEvent.ACTION_SCRIPT_SAFE))) //
 					.build();
 		}
 	}

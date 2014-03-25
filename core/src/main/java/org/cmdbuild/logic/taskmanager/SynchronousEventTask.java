@@ -61,6 +61,7 @@ public class SynchronousEventTask implements Task {
 		private Boolean scriptingEnabled;
 		private String scriptingEngine;
 		private String scriptingScript;
+		private Boolean scriptingSafe;
 
 		private Builder() {
 			// use factory method
@@ -79,6 +80,7 @@ public class SynchronousEventTask implements Task {
 			if (scriptingEnabled) {
 				Validate.notBlank(scriptingEngine, "missing scripting engine");
 			}
+			scriptingSafe = (scriptingSafe == null) ? false : scriptingSafe;
 		}
 
 		public Builder withId(final Long id) {
@@ -116,6 +118,11 @@ public class SynchronousEventTask implements Task {
 			return this;
 		}
 
+		public Builder withScriptingSafeStatus(final boolean scriptingSafe) {
+			this.scriptingSafe = scriptingSafe;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -129,6 +136,7 @@ public class SynchronousEventTask implements Task {
 	private final boolean scriptingEnabled;
 	private final String scriptingEngine;
 	private final String scriptingScript;
+	private final boolean scriptingSafe;
 
 	private SynchronousEventTask(final Builder builder) {
 		this.id = builder.id;
@@ -138,6 +146,7 @@ public class SynchronousEventTask implements Task {
 		this.scriptingEnabled = builder.scriptingEnabled;
 		this.scriptingEngine = builder.scriptingEngine;
 		this.scriptingScript = builder.scriptingScript;
+		this.scriptingSafe = builder.scriptingSafe;
 	}
 
 	@Override
@@ -174,6 +183,10 @@ public class SynchronousEventTask implements Task {
 
 	public String getScriptingScript() {
 		return scriptingScript;
+	}
+
+	public boolean isScriptingSafe() {
+		return scriptingSafe;
 	}
 
 	@Override

@@ -61,8 +61,9 @@ public class DefaultObserverCollector implements ObserverCollector {
 								logger.debug(marker, "invoking method '{}' on object '{}'", method, element);
 								method.invoke(element, args);
 							} catch (final Throwable e) {
-								logger.warn(marker, "error invoking method '{}' for '{}', skipping", method, element);
-								logger.warn(marker, "... cause", e);
+								logger.error(marker, "error invoking method '{}' for '{}', skipping", method, element);
+								logger.error(marker, "\tcaused by", e);
+								throw e;
 							}
 						}
 						return null;
