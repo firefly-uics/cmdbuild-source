@@ -1,6 +1,4 @@
-package org.cmdbuild.logic.taskmanager;
-
-import org.cmdbuild.services.event.Observer;
+package org.cmdbuild.services.event;
 
 public interface ObserverCollector {
 

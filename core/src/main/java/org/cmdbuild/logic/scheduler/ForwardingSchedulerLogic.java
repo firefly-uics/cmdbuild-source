@@ -18,9 +18,4 @@ public abstract class ForwardingSchedulerLogic implements SchedulerLogic {
 		inner.stopScheduler();
 	}
 
-	@Override
-	public void addAllScheduledJobs() {
-		inner.addAllScheduledJobs();
-	}
-
 }

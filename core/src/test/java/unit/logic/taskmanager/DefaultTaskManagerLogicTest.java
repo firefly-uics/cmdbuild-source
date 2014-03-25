@@ -226,15 +226,15 @@ public class DefaultTaskManagerLogicTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void cannotStartTaskWithoutAnId() throws Exception {
+	public void cannotActivateTaskWithoutAnId() throws Exception {
 		// when
-		taskManagerLogic.start(null);
+		taskManagerLogic.activate(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void cannotStopTaskWithoutAnId() throws Exception {
+	public void cannotDeactivateTaskWithoutAnId() throws Exception {
 		// when
-		taskManagerLogic.stop(null);
+		taskManagerLogic.deactivate(null);
 	}
 
 	@Test
@@ -325,7 +325,7 @@ public class DefaultTaskManagerLogicTest {
 	}
 
 	@Test
-	public void scheduledTaskNotStartedIfAlreadyStarted() throws Exception {
+	public void scheduledTaskNotStoredWhenActivatedIfAlreadyInThatState() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
 				.newInstance() //
@@ -334,19 +334,26 @@ public class DefaultTaskManagerLogicTest {
 				.build();
 		when(store.read(ID)) //
 				.thenReturn(stored);
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(ReadEmailTask.newInstance() //
+						.withId(ID) //
+						.build());
 
 		// when
-		taskManagerLogic.start(ID);
+		taskManagerLogic.activate(ID);
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade);
 		inOrder.verify(store).read(eq(42L));
+		inOrder.verify(converter).from(stored);
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).create(any(ReadEmailTask.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
-	public void scheduledTaskStarted() throws Exception {
+	public void scheduledTaskStoredWhenActivated() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
 				.newInstance() //
@@ -362,7 +369,7 @@ public class DefaultTaskManagerLogicTest {
 						.build());
 
 		// when
-		taskManagerLogic.start(ID);
+		taskManagerLogic.activate(ID);
 
 		// then
 		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor = ArgumentCaptor
@@ -391,7 +398,7 @@ public class DefaultTaskManagerLogicTest {
 	}
 
 	@Test
-	public void scheduledTaskNotStoppedIfAlreadyStopped() throws Exception {
+	public void scheduledTaskNotStoredWhenDeactivastedIfAlreadyInThatState() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
 				.newInstance() //
@@ -400,19 +407,26 @@ public class DefaultTaskManagerLogicTest {
 				.build();
 		when(store.read(ID)) //
 				.thenReturn(stored);
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(ReadEmailTask.newInstance() //
+						.withId(ID) //
+						.build());
 
 		// when
-		taskManagerLogic.stop(ID);
+		taskManagerLogic.deactivate(ID);
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade);
 		inOrder.verify(store).read(eq(42L));
+		inOrder.verify(converter).from(stored);
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(scheduledTaskFacade).delete(any(ReadEmailTask.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
-	public void scheduledTaskStopped() throws Exception {
+	public void scheduledTaskStoredWhenDeactivasted() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.ReadEmailTask stored = org.cmdbuild.data.store.task.ReadEmailTask
 				.newInstance() //
@@ -428,7 +442,7 @@ public class DefaultTaskManagerLogicTest {
 						.build());
 
 		// when
-		taskManagerLogic.stop(ID);
+		taskManagerLogic.deactivate(ID);
 
 		// then
 		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor = ArgumentCaptor
@@ -543,7 +557,7 @@ public class DefaultTaskManagerLogicTest {
 	}
 
 	@Test
-	public void synchronousEventTaskNotStartedIfAlreadyStarted() throws Exception {
+	public void synchronousEventTaskNotStoredWhenActivatedIfAlreadyInThatState() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
@@ -552,19 +566,26 @@ public class DefaultTaskManagerLogicTest {
 				.build();
 		when(store.read(ID)) //
 				.thenReturn(stored);
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(SynchronousEventTask.newInstance() //
+						.withId(ID) //
+						.build());
 
 		// when
-		taskManagerLogic.start(ID);
+		taskManagerLogic.activate(ID);
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade);
 		inOrder.verify(store).read(eq(42L));
+		inOrder.verify(converter).from(stored);
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(synchronousEventFacade).create(any(SynchronousEventTask.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
-	public void synchronousEventTaskStarted() throws Exception {
+	public void synchronousEventTaskStoredWhenActivated() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
@@ -580,7 +601,7 @@ public class DefaultTaskManagerLogicTest {
 						.build());
 
 		// when
-		taskManagerLogic.start(ID);
+		taskManagerLogic.activate(ID);
 
 		// then
 		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor = ArgumentCaptor
@@ -609,7 +630,7 @@ public class DefaultTaskManagerLogicTest {
 	}
 
 	@Test
-	public void synchronousEventTaskNotStoppedIfAlreadyStopped() throws Exception {
+	public void synchronousEventTaskNotStoredWhenDeactivatedIfAlreadyInThatState() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
@@ -618,19 +639,26 @@ public class DefaultTaskManagerLogicTest {
 				.build();
 		when(store.read(ID)) //
 				.thenReturn(stored);
+		when(storeAsSourceConverter.toLogic()) //
+				.thenReturn(SynchronousEventTask.newInstance() //
+						.withId(ID) //
+						.build());
 
 		// when
-		taskManagerLogic.stop(ID);
+		taskManagerLogic.deactivate(ID);
 
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade);
 		inOrder.verify(store).read(eq(42L));
+		inOrder.verify(converter).from(stored);
+		inOrder.verify(storeAsSourceConverter).toLogic();
+		inOrder.verify(synchronousEventFacade).delete(any(SynchronousEventTask.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
-	public void synchronousEventTaskStopped() throws Exception {
+	public void synchronousEventTaskStoredWhenDeactivated() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.SynchronousEventTask stored = org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
@@ -646,7 +674,7 @@ public class DefaultTaskManagerLogicTest {
 						.build());
 
 		// when
-		taskManagerLogic.stop(ID);
+		taskManagerLogic.deactivate(ID);
 
 		// then
 		final ArgumentCaptor<org.cmdbuild.data.store.task.Task> storedTaskCaptor = ArgumentCaptor

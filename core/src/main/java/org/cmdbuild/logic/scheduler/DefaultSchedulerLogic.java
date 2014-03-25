@@ -22,9 +22,4 @@ public class DefaultSchedulerLogic implements SchedulerLogic {
 		schedulerService.stop();
 	}
 
-	@Override
-	public void addAllScheduledJobs() {
-		// TODO TODO in the new way
-	}
-
 }

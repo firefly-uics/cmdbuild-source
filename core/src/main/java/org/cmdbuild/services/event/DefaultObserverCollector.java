@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.taskmanager;
+package org.cmdbuild.services.event;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -6,7 +6,7 @@ import java.lang.reflect.Proxy;
 import java.util.Collections;
 import java.util.Map;
 
-import org.cmdbuild.services.event.Observer;
+import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;

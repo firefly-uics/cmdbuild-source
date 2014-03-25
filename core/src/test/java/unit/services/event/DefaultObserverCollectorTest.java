@@ -1,4 +1,4 @@
-package unit.logic.taskmanager;
+package unit.services.event;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -7,8 +7,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.logic.taskmanager.DefaultObserverCollector;
-import org.cmdbuild.logic.taskmanager.ObserverCollector.IdentifiableObserver;
+import org.cmdbuild.services.event.DefaultObserverCollector;
+import org.cmdbuild.services.event.ObserverCollector.IdentifiableObserver;
 import org.junit.Before;
 import org.junit.Test;
 
