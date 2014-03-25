@@ -221,6 +221,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withScriptingEnableStatus(true) //
 				.withScriptingEngine("groovy") //
 				.withScript("blah blah blah") //
+				.withScriptingSafeStatus(true) //
 				.build();
 
 		// when
@@ -237,6 +238,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy"));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_SCRIPT, "blah blah blah"));
+		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_SAFE, "true"));
 	}
 
 	@Test
@@ -280,6 +282,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT, "blah blah blah") //
+				.withParameter(SynchronousEvent.ACTION_SCRIPT_SAFE, "true") //
 				.build();
 
 		// when
@@ -295,6 +298,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.isScriptingEnabled(), equalTo(true));
 		assertThat(converted.getScriptingEngine(), equalTo("groovy"));
 		assertThat(converted.getScriptingScript(), equalTo("blah blah blah"));
+		assertThat(converted.isScriptingSafe(), equalTo(true));
 	}
 
 	@Test

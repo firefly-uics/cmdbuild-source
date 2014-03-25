@@ -2,6 +2,7 @@ package org.cmdbuild.logic.taskmanager;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
+import org.cmdbuild.services.event.Command;
 import org.cmdbuild.services.event.DefaultObserver;
 import org.cmdbuild.services.event.DefaultObserver.Builder;
 import org.cmdbuild.services.event.Observer;
@@ -15,10 +16,12 @@ public class DefaultObserverFactory implements ObserverFactory {
 		final Builder builder = DefaultObserver.newInstance();
 		final DefaultObserver.Phase phase = toObserverPhase(task.getPhase());
 		if (task.isScriptingEnabled()) {
-			builder.add(SafeCommand.of(ScriptCommand.newInstance() //
+			final Command base = ScriptCommand.newInstance() //
 					.withEngine(task.getScriptingEngine()) //
 					.withScript(task.getScriptingScript()) //
-					.build()), phase);
+					.build();
+			final Command command = task.isScriptingSafe() ? SafeCommand.of(base) : base;
+			builder.add(command, phase);
 		}
 		return builder.build();
 	}

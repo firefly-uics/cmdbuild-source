@@ -26,7 +26,7 @@ public class SafeCommand extends ForwardingCommand {
 							return method.invoke(delegate, args);
 						} catch (final Throwable e) {
 							logger.warn(marker, "error calling method '{}'", method);
-							logger.warn(marker, "caused by", e);
+							logger.warn(marker, "\tcaused by", e);
 							return null;
 						}
 					}
