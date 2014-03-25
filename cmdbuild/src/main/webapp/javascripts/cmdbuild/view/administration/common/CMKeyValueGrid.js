@@ -16,14 +16,14 @@
 		flex: 1,
 		keyLabel: '',
 		valueLabel: '',
-		keyEditorConfig: undefined,
-		cellEditing: Ext.create('Ext.grid.plugin.CellEditing', {
-			clicksToEdit: 1
-		}),
+		keyEditorConfig: { xtype: 'textfield' },
+		valueEditorConfig: { xtype: 'textfield' },
+
+		cellEditing: Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 }),
 
 		initComponent: function() {
 			Ext.apply(this, {
-				columns: this.getCoulumnsConf(),
+				columns: this.getColumnsConf(),
 				store: Ext.create('Ext.data.Store', {
 					model: 'CMDBuild.model.CMKeyValueModel',
 					data: []
@@ -34,7 +34,7 @@
 			this.callParent(arguments);
 		},
 
-		getCoulumnsConf: function() {
+		getColumnsConf: function() {
 			return [
 				this.getKeyColumnConf(),
 				this.getValueColumnConf()
@@ -43,7 +43,7 @@
 
 		getKeyColumnConf: function() {
 			return {
-				header: this.keyLabel || CMDBuild.Translation.administration.modClass.attributeProperties.name,
+				header: this.keyLabel || CMDBuild.Translation.name,
 				dataIndex: CMDBuild.ServiceProxy.parameter.NAME,
 				editor: this.keyEditorConfig,
 				flex: 1
@@ -52,11 +52,9 @@
 
 		getValueColumnConf: function() {
 			return {
-				header: this.valueLabel || CMDBuild.Translation.administration.modClass.attributeProperties.meta.value,
+				header: this.valueLabel || CMDBuild.Translation.value,
 				dataIndex: CMDBuild.ServiceProxy.parameter.VALUE,
-				editor: {
-					xtype: 'textfield'
-				},
+				editor: this.valueEditorConfig,
 				flex: 1
 			};
 		},
@@ -86,8 +84,8 @@
 		},
 
 		getData: function() {
-			var records = this.store.getRange(),
-				data = {};
+			var records = this.store.getRange();
+			var data = {};
 
 			for (var i = 0, l = records.length; i < l; ++i) {
 				var recData = records[i].data;

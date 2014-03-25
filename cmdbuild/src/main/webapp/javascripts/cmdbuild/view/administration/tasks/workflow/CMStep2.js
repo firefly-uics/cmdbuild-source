@@ -1,7 +1,5 @@
 (function() {
 
-	var translation = CMDBuild.Translation.administration.tasks.taskWorkflow;
-
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep2Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
@@ -25,70 +23,27 @@
 			}
 		},
 
-		createCronField: function(name, label) {
-			var me = this;
-
-			return Ext.create('CMDBuild.view.common.field.CMCronTriggerField', {
-				name: name,
-				fieldLabel: label,
-				cmImmutable: true,
-				disabled: true,
-				allowBlank: false,
-				listeners: {
-					change: function(field, newValue, oldValue) {
-						me.setBaseValue(
-							me.parentDelegate.buildCronExpression([
-								me.view.advancedFields[0].getValue(),
-								me.view.advancedFields[1].getValue(),
-								me.view.advancedFields[2].getValue(),
-								me.view.advancedFields[3].getValue(),
-								me.view.advancedFields[4].getValue()
-							])
-						);
-					}
-				}
-			});
-		},
-
 		isAdvancedEmpty: function() {
-			if (
-				Ext.isEmpty(this.view.advancedFields[0].getValue())
-				&& Ext.isEmpty(this.view.advancedFields[1].getValue())
-				&& Ext.isEmpty(this.view.advancedFields[2].getValue())
-				&& Ext.isEmpty(this.view.advancedFields[3].getValue())
-				&& Ext.isEmpty(this.view.advancedFields[4].getValue())
-			)
-				return true;
-
-			return false;
+			return this.view.cronForm.delegate.isAdvancedEmpty();
 		},
 
 		setAdvancedValue: function(cronExpression) {
-			var values = cronExpression.split(' '),
-				fields = this.view.advancedFields;
-
-			for (var i = 0; i < fields.length; i++) {
-				var field = fields[i];
-
-				if (values[i])
-					field.setValue(values[i]);
-			}
+			this.view.cronForm.delegate.setAdvancedValue(cronExpression);
 		},
 
+		/**
+		 * Try to find the correspondence of advanced cronExpression in baseCombo's store
+		 *
+		 * @param (String) value
+		 */
 		setBaseValue: function(value) {
-			var index = this.view.baseCombo.store.find(CMDBuild.ServiceProxy.parameter.VALUE, value);
-
-			if (index > -1) {
-				this.view.baseCombo.setValue(value);
-			} else {
-				this.view.baseCombo.setValue();
-			}
+			this.view.cronForm.delegate.setBaseValue(value);
 		},
 
-		setDisabledAdvancedFields: function(value) {
-			for (var key in this.view.advancedFields)
-				this.view.advancedFields[key].setDisabled(value);
-		}
+//		setDisabledAdvancedFields: function(value) {
+//			for (var key in this.view.advancedFields)
+//				this.view.advancedFields[key].setDisabled(value);
+//		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep2', {
@@ -101,102 +56,13 @@
 		height: '100%',
 		overflowY: 'auto',
 
-		defaults: {
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			xtype: 'textfield'
-		},
-
 		initComponent: function() {
-			var me = this;
 
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep2Delegate', this);
-
-			// Advanced panel setup
-			this.advanceRadio = Ext.create('Ext.form.field.Radio', {
-				name: 'cronInputType',
-				inputValue: 'advanced',
-				boxLabel: translation.advanced,
-				width: CMDBuild.LABEL_WIDTH,
-				listeners: {
-					'change': function(radio, value) {
-						me.baseCombo.setDisabled(value);
-						me.delegate.setDisabledAdvancedFields(!value);
-					}
-				}
-			});
-
-			this.advancedFields = [
-				this.delegate.createCronField('minute', translation.minute),
-				this.delegate.createCronField('hour', translation.hour),
-				this.delegate.createCronField('dayOfMounth', translation.dayOfMounth),
-				this.delegate.createCronField('mounth', translation.mounth),
-				this.delegate.createCronField('dayOfWeek', translation.dayOfWeek)
-			];
-
-			this.advancePanel = Ext.create('Ext.panel.Panel', {
-				frame: true,
-				layout: 'hbox',
-				margin: '0px 0px 5px 0px',
-				items: [
-					this.advanceRadio,
-					{
-						xtype: 'container',
-						frame: false,
-						border: false,
-						items: this.advancedFields
-					}
-				]
-			});
-			// END: Advanced panel setup
-
-			// Base panel setup
-			this.baseRadio = Ext.create('Ext.form.Radio', {
-				name: 'cronInputType',
-				inputValue: 'base',
-				boxLabel: translation.basic,
-				width: CMDBuild.LABEL_WIDTH,
-				listeners: {
-					'change': function(radio, value) {
-						me.baseCombo.setDisabled(!value);
-						me.delegate.setDisabledAdvancedFields(value);
-					}
-				}
-			});
-
-			this.baseCombo = Ext.create('Ext.form.ComboBox', {
-				name: 'baseCombo',
-				store: Ext.create('Ext.data.SimpleStore', {
-					fields: [CMDBuild.ServiceProxy.parameter.VALUE, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-					data: [
-						['0 * * * ?', translation.everyHour],
-						['0 0 * * ?', translation.everyDay],
-						['0 0 1 * ?', translation.everyMounth],
-						['0 0 1 1 ?', translation.everyYear]
-					]
-				}),
-				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				queryMode: 'local',
-				forceSelection: true,
-				editable: false,
-				margins: '0px 0px 0px ' + (CMDBuild.LABEL_WIDTH - 45) + 'px',
-				listeners: {
-					'select': function(combo, record, index) {
-						me.delegate.setAdvancedValue(record[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
-					}
-				}
-			});
-
-			this.basePanel = Ext.create('Ext.panel.Panel', {
-				frame: true,
-				layout: 'hbox',
-				margin: '0px 0px 5px 0px',
-				items: [this.baseRadio, this.baseCombo]
-			});
-			// END: Base panel setup
+			this.cronForm = Ext.create('CMDBuild.view.administration.tasks.common.cronForm.CMCronForm');
 
 			Ext.apply(this, {
-				items: [this.basePanel, this.advancePanel]
+				items: [this.cronForm]
 			});
 
 			this.callParent(arguments);
@@ -207,11 +73,7 @@
 			 * To correctly enable radio fields on tab show
 			 */
 			show: function(view, eOpts) {
-				if (Ext.isEmpty(this.baseCombo.getValue()) && !this.delegate.isAdvancedEmpty()) {
-					this.advanceRadio.setValue(true);
-				} else {
-					this.baseRadio.setValue(true);
-				}
+				this.cronForm.fireEvent('show', view, eOpts);
 			}
 		}
 	});

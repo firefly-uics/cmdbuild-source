@@ -14,6 +14,9 @@
 <!-- LOADER CONFIG -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 
+<!-- FIXES -->
+<script type="text/javascript" src="javascripts/cmdbuild/core/fixes/CMFixFieldset.js"></script>
+
 <!--  PROXYES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>

@@ -90,17 +90,13 @@
 					align: 'stretch'
 				},
 
-				defaults: {
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					xtype: 'textfield'
-				},
-
 				items: [
 					this.nameField,
 					this.isDefaultField,
 					{
 						xtype: 'hiddenfield',
-						name: CMDBuild.ServiceProxy.parameter.ID
+						name: CMDBuild.ServiceProxy.parameter.ID,
+						labelWidth: CMDBuild.LABEL_WIDTH
 					}
 				]
 			});
@@ -176,7 +172,7 @@
 				items: [
 					{
 						xtype: 'container',
-						padding: '0px 0px 5px 0px',
+						padding: '0 0 5 0',
 						cls: "x-panel-body-default-framed cmborderbottom",
 
 						layout: {
@@ -211,7 +207,7 @@
 					},
 					{
 						xtype: 'container',
-						padding: '5px 0px',
+						padding: '5 0',
 
 						layout: {
 							type: 'vbox',
@@ -269,12 +265,12 @@
 				items: [
 					{
 						xtype: 'container',
-						margins: '0px 3px 0px 0px',
+						margins: '0 3 0 0',
 						items: [this.emailAccount, this.credentials]
 					},
 					{
 						xtype: 'container',
-						margins: '0px 0px 0px 3px',
+						margins: '0 0 0 3',
 						items: [this.outgoing, this.incoming]
 					}
 				]

@@ -79,13 +79,15 @@
 					var record = records[0];
 
 					me.parentDelegate.loadForm(me.taskType);
-					me.view.loadRecord(record); // TODO: TO FIX Seems to be useless but i dunno why
+
+					// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
 
 					// Set step1 [0] datas
 					me.delegateStep[0].fillId(record.get(CMDBuild.ServiceProxy.parameter.ID));
 					me.delegateStep[0].fillDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
 					me.delegateStep[0].fillAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
 					me.delegateStep[0].fillActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
+					me.delegateStep[0].fillWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME));
 
 					// Set step2 [1] datas
 					me.delegateStep[1].setBaseValue(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
@@ -108,11 +110,11 @@
 
 			CMDBuild.LoadMask.get().show();
 			var formData = this.view.getData(true);
-			var attributesGridValues = Ext.getCmp('workflowAttributesGrid').getData();
+			var attributesGridValues = this.delegateStep[0].getAttributeTableValues();
 
 			// Form submit values formatting
 			if (formData.cronInputType) {
-				formData.cronExpression = this.buildCronExpression([
+				formData.cronExpression = this.delegateStep[1].view.cronForm.delegate.buildCronExpression([
 					formData.minute,
 					formData.hour,
 					formData.dayOfMounth,
@@ -128,14 +130,14 @@
 
 			// Manual validation of cron field because disabled fields are not validated
 			if (this.delegateStep[1].isAdvancedEmpty()) {
-				this.delegateStep[1].view.advanceRadio.setValue(true);
-
-				for(item in this.delegateStep[1].view.advancedFields)
-					this.delegateStep[1].view.advancedFields[item].markInvalid('Field required.');
+				this.delegateStep[1].view.cronForm.delegate.markInvalidAdvancedFields('This field is required');
 
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 
 				CMDBuild.LoadMask.get().hide();
+
+				this.parentDelegate.form.wizard.changeTab(1);
+				this.delegateStep[1].view.cronForm.delegate.setAdvancedRadioValue(true);
 
 				return;
 			}
@@ -170,39 +172,23 @@
 		},
 
 		success: function(response, options, decodedResult) {
-			var me = this,
-				store = this.parentDelegate.grid.store;
+			var me = this;
+			var store = this.parentDelegate.grid.store;
 
 			store.load();
 			store.on('load', function() {
 				me.view.reset();
-_debug(decodedResult.response);
+
 				var rowIndex = this.find(
 					CMDBuild.ServiceProxy.parameter.ID,
-					(decodedResult.response) ? decodedResult.response : me.view.getForm().findField(CMDBuild.ServiceProxy.parameter.ID).getValue()
+					(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getId()
 				);
+
+				if (rowIndex < 0)
+					rowIndex = 0;
 
 				me.selectionModel.select(rowIndex, true);
 			});
-
-			this.onRowSelected();
-		},
-
-		/**
-		 * @param (Array) fields
-		 * @returns (String) cron expression
-		 */
-		buildCronExpression: function(fields) {
-			var cronExp = '';
-
-			for (var i = 0; i < (fields.length - 1); i++) {
-				var field = fields[i];
-				cronExp += field + ' ';
-			}
-
-			cronExp += fields[fields.length -1];
-
-			return cronExp;
 		}
 	});
 

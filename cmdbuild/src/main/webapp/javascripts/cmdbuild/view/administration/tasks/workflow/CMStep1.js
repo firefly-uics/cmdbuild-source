@@ -1,12 +1,11 @@
 (function() {
 
-	var translation = CMDBuild.Translation.administration.tasks.taskWorkflow;
+	var tr = CMDBuild.Translation.administration.tasks;
 
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
-		filterWindow: undefined,
 		view: undefined,
 
 		/**
@@ -18,12 +17,6 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onAttributeComboSelect':
-					return this.onAttributeComboSelect(param);
-
-				case 'onWorkflowSelected':
-					return this.onWorkflowSelected(param.name);
-
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
@@ -31,42 +24,19 @@
 			}
 		},
 
-		/**
-		 * Workflow attribute store builder for onWorkflowSelected event
-		 */
-		buildWorkflowAttributesStore: function(attributes) {
-			if (attributes) {
-				var data = [];
-
-				for (var key in attributes) {
-					data.push({ value: key });
-				}
-
-				return Ext.create('Ext.data.Store', {
-					fields: [CMDBuild.ServiceProxy.parameter.VALUE],
-					data: data,
-					autoLoad: true
-				});
-			}
-		},
-
-		cleanServerAttributes: function(attributes) {
-			var out = {};
-
-			for (var i = 0, l = attributes.length; i < l; ++i) {
-				var attr = attributes[i];
-
-				out[attr.name] = '';
-			}
-
-			return out;
-		},
-
 		checkWorkflowComboSelected: function() {
 			if (this.getWorkflowComboValue())
 				return true;
 
 			return false;
+		},
+
+		getAttributeTableValues: function() {
+			return this.view.attributesTable.getData();
+		},
+
+		getId: function() {
+			return this.view.idField.getValue();
 		},
 
 		getWorkflowComboValue: function() {
@@ -93,40 +63,16 @@
 			this.view.workflowCombo.setValue(workflowName);
 		},
 
-		onAttributeComboSelect: function(rowIndex) {
-			this.view.attributesTable.cellEditing.startEditByPosition({ row: rowIndex, column: 1 });
+		onWorkflowSelected: function(name, modify) {
+			this.view.workflowFormDelegate.onWorkflowSelected(name, modify);
 		},
 
-		onWorkflowSelected: function(name, modify) {
-			var me = this;
-
-			if (typeof modify === 'undefined')
-				modify = false;
-
-			CMDBuild.core.proxy.CMProxyTasks.getWorkflowAttributes({
-				params: {
-					className: name
-				},
-				success: function(response) {
-					var ret = Ext.JSON.decode(response.responseText);
-
-					me.view.attributesTable.keyEditorConfig.store = me.buildWorkflowAttributesStore(me.cleanServerAttributes(ret.attributes));
-					if (!modify) {
-						me.view.attributesTable.store.removeAll();
-						me.view.attributesTable.store.insert(0, { key: '', value: '' });
-						me.view.attributesTable.cellEditing.startEditByPosition({ row: 0, column: 0 });
-						me.setDisabledAttributesTable(false);
-					}
-				}
-			});
+		setDisabledAttributesTable: function(state) {
+			this.view.workflowFormDelegate.setDisabledAttributesTable(state);
 		},
 
 		setDisabledTypeField: function(state) {
 			this.view.typeField.setDisabled(state);
-		},
-
-		setDisabledAttributesTable: function(state) {
-			this.view.attributesTable.setDisabled(state);
 		}
 	});
 
@@ -140,18 +86,13 @@
 		height: '100%',
 		overflowY: 'auto',
 
-		defaults: {
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			xtype: 'textfield'
-		},
-
 		initComponent: function() {
 			var me = this;
 
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
-				fieldLabel: CMDBuild.Translation.administration.tasks.type,
+				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.ServiceProxy.parameter.TYPE,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
@@ -175,59 +116,32 @@
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
 				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
-				fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
+				fieldLabel: tr.startOnSave,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH
 			});
 
-			this.attributesTable = Ext.create('CMDBuild.view.administration.common.CMDynamicKeyValueGrid', {
-				title: translation.workflowAttributes,
-				id: 'workflowAttributesGrid',
-				keyLabel: CMDBuild.Translation.name,
-				valueLabel: CMDBuild.Translation.value,
-				disabled: true,
-				keyEditorConfig: {
-					xtype: 'combo',
-					valueField: CMDBuild.ServiceProxy.parameter.VALUE,
-					displayField: CMDBuild.ServiceProxy.parameter.VALUE,
-					forceSelection: true,
-					editable: false,
-					allowBlank: false,
-					listeners: {
-						'select': function(combo, records, eOpts) {
-							me.delegate.cmOn(
-								'onAttributeComboSelect',
-								me.attributesTable.store.indexOf(me.attributesTable.getSelectionModel().getSelection()[0])
-							);
-						}
-					}
-				}
-			});
+			// Workflow form configuration
+				this.workflowCombo = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormCombo', {
+					name: CMDBuild.ServiceProxy.parameter.CLASS_NAME
+				});
+				this.attributesTable = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid');
 
-			this.workflowCombo = Ext.create('Ext.form.field.ComboBox', {
-				id: 'workflowCombo',
-				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
-				fieldLabel: CMDBuild.Translation.administration.tasks.workflow,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				store: CMDBuild.core.proxy.CMProxyTasks.getWorkflowsStore(),
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				forceSelection: true,
-				editable: false,
-				allowBlank: false,
-				listeners: {
-					'select': function() {
-						me.delegate.cmOn(
-							'onWorkflowSelected',
-							{ name: this.getValue() }
-						);
-					}
-				}
-			});
+				this.workflowFormDelegate = Ext.create('CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController');
+				this.workflowFormDelegate.comboField = this.workflowCombo;
+				this.workflowFormDelegate.gridField = this.attributesTable;
+				this.workflowCombo.delegate = this.workflowFormDelegate;
+				this.attributesTable.delegate = this.workflowFormDelegate;
 
 			Ext.apply(this, {
-				items: [this.typeField, this.idField, this.descriptionField, this.workflowCombo, this.activeField, this.attributesTable]
+				items: [
+					this.typeField,
+					this.idField,
+					this.descriptionField,
+					this.workflowCombo,
+					this.activeField,
+					this.attributesTable
+				]
 			});
 
 			this.callParent(arguments);
