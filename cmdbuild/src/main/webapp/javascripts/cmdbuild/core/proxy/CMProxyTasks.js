@@ -147,6 +147,9 @@
 				}
 			},
 
+			/**
+			 * WorkflowForm proxies
+			 */
 			getWorkflowsStore: function() {
 				var processes = _CMCache.getProcesses(),
 					data = [];

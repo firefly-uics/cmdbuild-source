@@ -80,7 +80,7 @@
 
 					me.parentDelegate.loadForm(me.taskType);
 
-					// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find a working fix, so i must set all fields manually
+					// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
 
 					// Set step1 [0] datas
 					me.delegateStep[0].fillId(record.get(CMDBuild.ServiceProxy.parameter.ID));
@@ -114,7 +114,7 @@
 
 			// Form submit values formatting
 			if (formData.cronInputType) {
-				formData.cronExpression = this.buildCronExpression([
+				formData.cronExpression = this.delegateStep[1].view.cronForm.delegate.buildCronExpression([
 					formData.minute,
 					formData.hour,
 					formData.dayOfMounth,
@@ -130,16 +130,14 @@
 
 			// Manual validation of cron field because disabled fields are not validated
 			if (this.delegateStep[1].isAdvancedEmpty()) {
-
-				for(item in this.delegateStep[1].view.advancedFields)
-					this.delegateStep[1].view.advancedFields[item].markInvalid('This field is required');
+				this.delegateStep[1].view.cronForm.delegate.markInvalidAdvancedFields('This field is required');
 
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 
 				CMDBuild.LoadMask.get().hide();
 
 				this.parentDelegate.form.wizard.changeTab(1);
-				this.delegateStep[1].view.advanceRadio.setValue(true);
+				this.delegateStep[1].view.cronForm.delegate.setAdvancedRadioValue(true);
 
 				return;
 			}
