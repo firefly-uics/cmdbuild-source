@@ -32,6 +32,8 @@ public class Constants {
 	public static final String TYPE_TIME = "time";
 
 	public static final String ACTIVE = "active";
+	public static final String CLASSNAME = "classname";
+	public static final String CLASSNAME_WITH_UNSERSCORE = "_" + CLASSNAME;
 	public static final String CODE = "code";
 	public static final String DATA = "data";
 	public static final String DEFAULT = "default";
@@ -41,6 +43,7 @@ public class Constants {
 	public static final String EDITOR_TYPE = "editorType";
 	public static final String GROUP = "group";
 	public static final String ID = "id";
+	public static final String ID_WITH_UNSERSCORE = "_" + ID;
 	public static final String INDEX = "index";
 	public static final String INHERITED = "inherited";
 	public static final String LENGTH = "length";

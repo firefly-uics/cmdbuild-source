@@ -596,6 +596,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		if (entryType == null) {
 			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 		}
+		// TODO check if entry type is a superclass or not
 
 		final Store<Card> store = storeOf(userGivenCard);
 		final Storable created = store.create(userGivenCard);

@@ -63,8 +63,8 @@ public abstract class ListResponse<T> {
 		return elements;
 	}
 
-	void setDetails(final Iterable<T> details) {
-		this.elements = Sets.newHashSet(details);
+	void setElements(final Iterable<T> elements) {
+		this.elements = Sets.newHashSet(elements);
 	}
 
 	@XmlElement(name = RESPONSE_METADATA, type = DetailResponseMetadata.class)

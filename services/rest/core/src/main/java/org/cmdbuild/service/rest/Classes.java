@@ -14,8 +14,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
-import org.cmdbuild.service.rest.dto.AttributeValueDetailResponse;
-import org.cmdbuild.service.rest.dto.CardDetailResponse;
+import org.cmdbuild.service.rest.dto.CardListResponse;
+import org.cmdbuild.service.rest.dto.CardResponse;
 import org.cmdbuild.service.rest.dto.ClassDetailResponse;
 
 @Path("classes/")
@@ -32,6 +32,7 @@ public interface Classes {
 
 	@GET
 	@Path("{name}/attributes/")
+	@Deprecated
 	AttributeDetailResponse getAttributes( //
 			@PathParam(NAME) String name, //
 			@QueryParam(ACTIVE) boolean activeOnly, //
@@ -41,15 +42,15 @@ public interface Classes {
 
 	@GET
 	@Path("{name}/cards/")
-	CardDetailResponse getCards( //
+	CardListResponse getCards( //
 			@PathParam(NAME) String name, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(OFFSET) Integer offset //
 	);
 
 	@GET
-	@Path("{name}/cards/{id}/attributes/")
-	AttributeValueDetailResponse getAttributes( //
+	@Path("{name}/cards/{id}/")
+	CardResponse getCard( //
 			@PathParam(NAME) String name, //
 			@PathParam(ID) Long id //
 	);
