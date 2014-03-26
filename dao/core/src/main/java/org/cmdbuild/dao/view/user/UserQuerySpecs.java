@@ -31,6 +31,7 @@ import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
+import org.cmdbuild.dao.query.clause.where.FunctionWhereClause;
 import org.cmdbuild.dao.query.clause.where.NullWhereClauseVisitor;
 import org.cmdbuild.dao.query.clause.where.OrWhereClause;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
@@ -259,6 +260,17 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 			@Override
 			public void visit(final SimpleWhereClause whereClause) {
 				final QueryAliasAttribute attribute = whereClause.getAttribute();
+				add(directJoins, descendantsByAlias, attribute);
+			}
+
+			@Override
+			public void visit(final FunctionWhereClause whereClause) {
+				final QueryAliasAttribute attribute = whereClause.attribute;
+				add(directJoins, descendantsByAlias, attribute);
+			}
+
+			private void add(final Set<DirectJoinClause> directJoins, final Map<Alias, CMClass> descendantsByAlias,
+					final QueryAliasAttribute attribute) {
 				final Alias alias = attribute.getEntryTypeAlias();
 				if (descendantsByAlias.containsKey(alias)) {
 					final CMClass type = descendantsByAlias.get(alias);
