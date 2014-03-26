@@ -58,7 +58,7 @@
 
 		onModifyButtonClick: function() {
 			this.callParent(arguments);
-			this.delegateStep[0].onWorkflowSelected(this.delegateStep[0].getWorkflowComboValue(), true);
+			this.delegateStep[0].onWorkflowSelected(this.delegateStep[0].getValueWorkflowCombo(), true);
 
 			if (this.delegateStep[0].checkWorkflowComboSelected())
 				this.delegateStep[0].setDisabledAttributesTable(false);
@@ -83,15 +83,15 @@
 					// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
 
 					// Set step1 [0] datas
-					me.delegateStep[0].fillId(record.get(CMDBuild.ServiceProxy.parameter.ID));
-					me.delegateStep[0].fillDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
-					me.delegateStep[0].fillAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
-					me.delegateStep[0].fillActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-					me.delegateStep[0].fillWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME));
+					me.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
+					me.delegateStep[0].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
+					me.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
+					me.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
+					me.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME));
 
 					// Set step2 [1] datas
-					me.delegateStep[1].setBaseValue(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
-					me.delegateStep[1].setAdvancedValue(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+					me.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+					me.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
 
 					me.view.disableModify(true);
 				});
@@ -110,11 +110,11 @@
 
 			CMDBuild.LoadMask.get().show();
 			var formData = this.view.getData(true);
-			var attributesGridValues = this.delegateStep[0].getAttributeTableValues();
+			var attributesGridValues = this.delegateStep[0].getValueAttributeGrid();
 
 			// Form submit values formatting
 			if (formData.cronInputType) {
-				formData.cronExpression = this.delegateStep[1].view.cronForm.delegate.buildCronExpression([
+				formData.cronExpression = this.delegateStep[1].getCronDelegate().buildCronExpression([
 					formData.minute,
 					formData.hour,
 					formData.dayOfMounth,
@@ -128,16 +128,16 @@
 			if (!CMDBuild.Utils.isEmpty(attributesGridValues))
 				formData.attributes = Ext.encode(attributesGridValues);
 
-			// Manual validation of cron field because disabled fields are not validated
-			if (this.delegateStep[1].isAdvancedEmpty()) {
-				this.delegateStep[1].view.cronForm.delegate.markInvalidAdvancedFields('This field is required');
+			// Manual validation of cron fields because disabled fields are not validated
+			if (this.delegateStep[1].isEmptyAdvanced()) {
+				this.delegateStep[1].getCronDelegate().markInvalidAdvancedFields('This field is required');
 
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 
 				CMDBuild.LoadMask.get().hide();
 
 				this.parentDelegate.form.wizard.changeTab(1);
-				this.delegateStep[1].view.cronForm.delegate.setAdvancedRadioValue(true);
+				this.delegateStep[1].getCronDelegate().setValueAdvancedRadio(true);
 
 				return;
 			}
@@ -181,7 +181,7 @@
 
 				var rowIndex = this.find(
 					CMDBuild.ServiceProxy.parameter.ID,
-					(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getId()
+					(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getValueId()
 				);
 
 				if (rowIndex < 0)
@@ -189,6 +189,8 @@
 
 				me.selectionModel.select(rowIndex, true);
 			});
+
+			me.view.disableModify(true);
 		}
 	});
 

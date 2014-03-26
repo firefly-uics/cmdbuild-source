@@ -23,27 +23,24 @@
 			}
 		},
 
-		isAdvancedEmpty: function() {
-			return this.view.cronForm.delegate.isAdvancedEmpty();
+		getCronDelegate: function() {
+			return this.view.cronForm.delegate;
 		},
 
-		setAdvancedValue: function(cronExpression) {
-			this.view.cronForm.delegate.setAdvancedValue(cronExpression);
+		isEmptyAdvanced: function() {
+			return this.getCronDelegate().isEmptyAdvanced();
+		},
+
+		setValueAdvancedFields: function(cronExpression) {
+			this.getCronDelegate().setValueAdvancedFields(cronExpression);
 		},
 
 		/**
 		 * Try to find the correspondence of advanced cronExpression in baseCombo's store
-		 *
-		 * @param (String) value
 		 */
-		setBaseValue: function(value) {
-			this.view.cronForm.delegate.setBaseValue(value);
-		},
-
-//		setDisabledAdvancedFields: function(value) {
-//			for (var key in this.view.advancedFields)
-//				this.view.advancedFields[key].setDisabled(value);
-//		}
+		setValueBase: function(value) {
+			this.getCronDelegate().setValueBase(value);
+		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep2', {
@@ -57,7 +54,6 @@
 		overflowY: 'auto',
 
 		initComponent: function() {
-
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep2Delegate', this);
 			this.cronForm = Ext.create('CMDBuild.view.administration.tasks.common.cronForm.CMCronForm');
 

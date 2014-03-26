@@ -47,28 +47,8 @@
 			}
 		},
 
-		fillActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
-
-		fillDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
-
-		fillId: function(value) {
-			this.view.idField.setValue(value);
-		},
-
-		fillEmailAccount: function(emailAccountName) {
-			this.view.emailAccountCombo.setValue(emailAccountName);
-		},
-
-		fillFilterFromAddress: function(filterString) {
-			this.view.fromAddresFilterField.setValue(filterString);
-		},
-
-		fillFilterSunbject: function(filterString) {
-			this.view.subjectFilterField.setValue(filterString);
+		getValueId: function() {
+			return this.view.idField.getValue();
 		},
 
 		onFromAddressFilterButtonClick: function() {
@@ -141,6 +121,30 @@
 
 		setDisabledTypeField: function(state) {
 			this.view.typeField.setDisabled(state);
+		},
+
+		setValueActive: function(value) {
+			this.view.activeField.setValue(value);
+		},
+
+		setValueDescription: function(value) {
+			this.view.descriptionField.setValue(value);
+		},
+
+		setValueEmailAccount: function(emailAccountName) {
+			this.view.emailAccountCombo.setValue(emailAccountName);
+		},
+
+		setValueFilterFromAddress: function(filterString) {
+			this.view.fromAddresFilterField.setValue(filterString);
+		},
+
+		setValueFilterSubject: function(filterString) {
+			this.view.subjectFilterField.setValue(filterString);
+		},
+
+		setValueId: function(value) {
+			this.view.idField.setValue(value);
 		}
 	});
 

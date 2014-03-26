@@ -11,6 +11,7 @@
 		keyLabel: CMDBuild.Translation.name,
 		valueLabel: CMDBuild.Translation.value,
 		disabled: true,
+		margin: '0 0 5 0',
 
 		initComponent: function() {
 			var me = this;

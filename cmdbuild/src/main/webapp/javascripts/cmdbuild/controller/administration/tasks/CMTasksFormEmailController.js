@@ -58,7 +58,7 @@
 
 		onModifyButtonClick: function() {
 			this.callParent(arguments);
-//			this.delegateStep[0].onWorkflowSelected(this.delegateStep[0].getWorkflowComboValue(), true);
+//			this.delegateStep[0].onWorkflowSelected(this.delegateStep[0].getValueWorkflowCombo(), true);
 
 //			if (this.delegateStep[0].checkWorkflowComboSelected())
 //				this.delegateStep[0].setDisabledAttributesTable(false);
@@ -83,19 +83,19 @@
 					// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find a working fix, so i must set all fields manually
 
 					// Set step1 [0] datas
-					me.delegateStep[0].fillId(record.get(CMDBuild.ServiceProxy.parameter.ID));
-					me.delegateStep[0].fillDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
-					me.delegateStep[0].fillActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-					me.delegateStep[0].fillEmailAccount(record.get(CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT));
-					me.delegateStep[0].fillFilterFromAddress(record.get(CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS));
-					me.delegateStep[0].fillFilterSunbject(record.get(CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT));
+					me.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
+					me.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
+					me.delegateStep[0].setValueEmailAccount(record.get(CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT));
+					me.delegateStep[0].setValueFilterFromAddress(record.get(CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS));
+					me.delegateStep[0].setValueFilterSubject(record.get(CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT));
+					me.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
 
 					// Set step2 [1] datas
-					me.delegateStep[1].setBaseValue(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
-					me.delegateStep[1].setAdvancedValue(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+					me.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+					me.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
 
 					// Set step4 [3] datas
-					me.delegateStep[3].fillAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
+					me.delegateStep[3].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
 
 					me.view.disableModify(true);
 				});
@@ -114,36 +114,42 @@
 
 			CMDBuild.LoadMask.get().show();
 			var formData = this.view.getData(true);
-			var attributesGridValues = this.delegateStep[3].getAttributeTableValues();
-_debug(formData);
-			// Form submit values formatting
-			if (formData.cronInputType) {
-				formData.cronExpression = this.buildCronExpression([
-					formData.minute,
-					formData.hour,
-					formData.dayOfMounth,
-					formData.mounth,
-					formData.dayOfWeek
-				]);
-			} else {
-				formData.cronExpression = formData.baseCombo;
-			}
+			var attributesGridValues = this.delegateStep[3].getValueAttributeGrid();
 
-			if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-				formData.attributes = Ext.encode(attributesGridValues);
+			// Form submit values formatting
+				if ( !Ext.isEmpty(formData.filterFromAddress)) {
+					formData.filterFromAddress = Ext.encode(formData.filterFromAddress.split(' OR '));
+				}
+
+				if ( !Ext.isEmpty(formData.filterSubject)) {
+					formData.filterSubject = Ext.encode(formData.filterSubject.split(' OR '));
+				}
+
+				if (formData.cronInputType) {
+					formData.cronExpression = this.buildCronExpression([
+						formData.minute,
+						formData.hour,
+						formData.dayOfMounth,
+						formData.mounth,
+						formData.dayOfWeek
+					]);
+				} else {
+					formData.cronExpression = formData.baseCombo;
+				}
+
+				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+					formData.attributes = Ext.encode(attributesGridValues);
 
 			// Manual validation of cron fields because disabled fields are not validated
-			if (this.delegateStep[1].isAdvancedEmpty()) {
-
-				for(item in this.delegateStep[1].view.advancedFields)
-					this.delegateStep[1].view.advancedFields[item].markInvalid('This field is required');
+			if (this.delegateStep[1].isEmptyAdvanced()) {
+				this.delegateStep[1].getCronDelegate().markInvalidAdvancedFields('This field is required');
 
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 
 				CMDBuild.LoadMask.get().hide();
 
 				this.parentDelegate.form.wizard.changeTab(1);
-				this.delegateStep[1].view.advanceRadio.setValue(true);
+				this.delegateStep[1].getCronDelegate().setValueAdvancedRadio(true);
 
 				return;
 			}
@@ -155,7 +161,7 @@ _debug(formData);
 			delete formData.hour;
 			delete formData.minute;
 			delete formData.mounth;
-
+_debug(formData);
 			if (Ext.isEmpty(formData.id)) {
 				CMDBuild.core.proxy.CMProxyTasks.create({
 					type: this.taskType,
@@ -184,7 +190,7 @@ _debug(formData);
 				me.view.reset();
 				var rowIndex = this.find(
 					CMDBuild.ServiceProxy.parameter.ID,
-					(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getId()
+					(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getValueId()
 				);
 				me.selectionModel.select(rowIndex, true);
 				me.onRowSelected();

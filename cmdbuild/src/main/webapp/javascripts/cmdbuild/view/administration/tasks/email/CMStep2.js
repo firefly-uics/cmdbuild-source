@@ -1,7 +1,5 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks.taskWorkflow;
-
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep2Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
@@ -25,27 +23,21 @@
 			}
 		},
 
-		isAdvancedEmpty: function() {
-			return this.view.cronForm.delegate.isAdvancedEmpty();
+		getCronDelegate: function() {
+			return this.view.cronForm.delegate;
 		},
 
-		setAdvancedValue: function(cronExpression) {
-			this.view.cronForm.delegate.setAdvancedValue(cronExpression);
+		isEmptyAdvanced: function() {
+			return this.getCronDelegate().isEmptyAdvanced();
 		},
 
-		/**
-		 * Try to find the correspondence of advanced cronExpression in baseCombo's store
-		 *
-		 * @param (String) value
-		 */
-		setBaseValue: function(value) {
-			this.view.cronForm.delegate.setBaseValue(value);
+		setValueAdvancedFields: function(cronExpression) {
+			this.getCronDelegate().setValueAdvancedFields(cronExpression);
 		},
-//
-//		setDisabledAdvancedFields: function(value) {
-//			for (var key in this.view.advancedFields)
-//				this.view.advancedFields[key].setDisabled(value);
-//		}
+
+		setValueBase: function(value) {
+			this.getCronDelegate().setValueBase(value);
+		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep2', {
