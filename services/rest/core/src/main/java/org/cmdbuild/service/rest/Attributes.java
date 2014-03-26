@@ -4,7 +4,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.cmdbuild.service.rest.Constants.ACTIVE;
 import static org.cmdbuild.service.rest.Constants.LIMIT;
 import static org.cmdbuild.service.rest.Constants.NAME;
-import static org.cmdbuild.service.rest.Constants.OFFSET;
+import static org.cmdbuild.service.rest.Constants.START;
 import static org.cmdbuild.service.rest.Constants.TYPE;
 
 import javax.ws.rs.GET;
@@ -26,7 +26,7 @@ public interface Attributes {
 			@PathParam(NAME) String name, //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //
-			@QueryParam(OFFSET) Integer offset //
+			@QueryParam(START) Integer offset //
 	);
 
 }
