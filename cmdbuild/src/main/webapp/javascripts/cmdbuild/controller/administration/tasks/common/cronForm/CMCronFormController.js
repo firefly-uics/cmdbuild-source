@@ -1,10 +1,9 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController', {
-		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		advancedPanel: undefined,
-		basePanel: undefined,
+		advancedField: undefined,
+		baseField: undefined,
 
 		/**
 		 * @param (Array) fields
@@ -14,9 +13,9 @@
 			var cronExpression = '';
 
 			for (var i = 0; i < fields.length; i++) {
-				cronExpression += fields[i] + ' ';
+				cronExpression += fields[i];
 
-				if (i < fields.length)
+				if (i < (fields.length - 1))
 					cronExpression += ' ';
 			}
 
@@ -42,13 +41,13 @@
 
 				listeners: {
 					change: function(field, newValue, oldValue) {
-						me.setBaseValue(
+						me.setValueBase(
 							me.buildCronExpression([
-								me.advancedPanel.advancedFields[0].getValue(),
-								me.advancedPanel.advancedFields[1].getValue(),
-								me.advancedPanel.advancedFields[2].getValue(),
-								me.advancedPanel.advancedFields[3].getValue(),
-								me.advancedPanel.advancedFields[4].getValue()
+								me.advancedField.advancedFields[0].getValue(),
+								me.advancedField.advancedFields[1].getValue(),
+								me.advancedField.advancedFields[2].getValue(),
+								me.advancedField.advancedFields[3].getValue(),
+								me.advancedField.advancedFields[4].getValue()
 							])
 						);
 					}
@@ -57,34 +56,34 @@
 		},
 
 		getBaseCombo: function() {
-			return this.basePanel.baseCombo;
+			return this.baseField.baseCombo;
 		},
 
-		isAdvancedEmpty: function() {
+		isEmptyAdvanced: function() {
 			if (
-				Ext.isEmpty(this.advancedPanel.advancedFields[0].getValue())
-				&& Ext.isEmpty(this.advancedPanel.advancedFields[1].getValue())
-				&& Ext.isEmpty(this.advancedPanel.advancedFields[2].getValue())
-				&& Ext.isEmpty(this.advancedPanel.advancedFields[3].getValue())
-				&& Ext.isEmpty(this.advancedPanel.advancedFields[4].getValue())
+				Ext.isEmpty(this.advancedField.advancedFields[0].getValue())
+				&& Ext.isEmpty(this.advancedField.advancedFields[1].getValue())
+				&& Ext.isEmpty(this.advancedField.advancedFields[2].getValue())
+				&& Ext.isEmpty(this.advancedField.advancedFields[3].getValue())
+				&& Ext.isEmpty(this.advancedField.advancedFields[4].getValue())
 			)
 				return true;
 
 			return false;
 		},
 
-		isBaseEmpty: function() {
-			return Ext.isEmpty(this.basePanel.baseCombo.getValue());
+		isEmptyBase: function() {
+			return Ext.isEmpty(this.baseField.baseCombo.getValue());
 		},
 
 		markInvalidAdvancedFields: function(message) {
-			for(item in this.advancedPanel.advancedFields)
-				this.advancedPanel.advancedFields[item].markInvalid(message);
+			for(item in this.advancedField.advancedFields)
+				this.advancedField.advancedFields[item].markInvalid(message);
 		},
 
-		setAdvancedValue: function(cronExpression) {
+		setValueAdvancedFields: function(cronExpression) {
 			var values = cronExpression.split(' ');
-			var fields = this.advancedPanel.advancedFields;
+			var fields = this.advancedField.advancedFields;
 
 			for (var i = 0; i < fields.length; i++) {
 				if (values[i])
@@ -92,8 +91,17 @@
 			}
 		},
 
-		setAdvancedRadioValue: function(value) {
-			this.advancedPanel.advanceRadio.setValue(value);
+		setValueAdvancedRadio: function(value) {
+			this.advancedField.advanceRadio.setValue(value);
+		},
+
+		setDisabledAdvancedFields: function(value) {
+			for (var key in this.advancedField.advancedFields)
+				this.advancedField.advancedFields[key].setDisabled(value);
+		},
+
+		setDisabledBaseCombo: function(value) {
+			this.baseField.baseCombo.setDisabled(value);
 		},
 
 		/**
@@ -101,23 +109,14 @@
 		 *
 		 * @param (String) value
 		 */
-		setBaseValue: function(value) {
-			var index = this.basePanel.baseCombo.store.find(CMDBuild.ServiceProxy.parameter.VALUE, value);
+		setValueBase: function(value) {
+			var index = this.baseField.baseCombo.store.find(CMDBuild.ServiceProxy.parameter.VALUE, value);
 
 			if (index > -1) {
-				this.basePanel.baseCombo.setValue(value);
+				this.baseField.baseCombo.setValue(value);
 			} else {
-				this.basePanel.baseCombo.setValue();
+				this.baseField.baseCombo.setValue();
 			}
-		},
-
-		setDisabledAdvancedFields: function(value) {
-			for (var key in this.advancedPanel.advancedFields)
-				this.advancedPanel.advancedFields[key].setDisabled(value);
-		},
-
-		setDisabledBaseCombo: function(value) {
-			this.basePanel.baseCombo.setDisabled(value);
 		}
 	});
 

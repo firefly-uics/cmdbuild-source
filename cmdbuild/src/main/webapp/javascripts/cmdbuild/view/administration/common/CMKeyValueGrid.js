@@ -12,6 +12,7 @@
 	Ext.define('CMDBuild.view.administration.common.CMKeyValueGrid', {
 		extend: 'Ext.grid.Panel',
 
+		considerAsFieldToDisable: true,
 		frame: false,
 		flex: 1,
 		keyLabel: '',

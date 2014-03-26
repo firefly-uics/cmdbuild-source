@@ -36,6 +36,14 @@
 			return out;
 		},
 
+		getValueCombo: function() {
+			return this.comboField.getValue();
+		},
+
+		getValueGrid: function() {
+			return this.gridField.getData();
+		},
+
 		onAttributeComboSelect: function(rowIndex) {
 			this.gridField.cellEditing.startEditByPosition({ row: rowIndex, column: 1 });
 		},
@@ -70,6 +78,16 @@
 
 		setDisabledAttributesTable: function(state) {
 			this.gridField.setDisabled(state);
+		},
+
+		setValueCombo: function(workflowName) {
+			if (!Ext.isEmpty(workflowName))
+				this.comboField.setValue(workflowName);
+		},
+
+		setValueGrid: function(data) {
+			if (!Ext.isEmpty(data))
+				this.gridField.fillWithData(data);
 		}
 	});
 

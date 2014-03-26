@@ -48,7 +48,7 @@
 
 				listeners: {
 					select: function(combo, record, index) {
-						me.delegate.setAdvancedValue(record[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
+						me.delegate.setValueAdvancedFields(record[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
 					}
 				}
 			});

@@ -25,54 +25,58 @@
 		},
 
 		checkWorkflowComboSelected: function() {
-			if (this.getWorkflowComboValue())
+			if (this.getValueWorkflowCombo())
 				return true;
 
 			return false;
 		},
 
-		getAttributeTableValues: function() {
-			return this.view.attributesTable.getData();
+		getWorkflowDelegate: function() {
+			return this.view.workflowForm.delegate;
 		},
 
-		getId: function() {
+		getValueAttributeGrid: function() {
+			return this.getWorkflowDelegate().getValueGrid();
+		},
+
+		getValueId: function() {
 			return this.view.idField.getValue();
 		},
 
-		getWorkflowComboValue: function() {
-			return this.view.workflowCombo.getValue();
-		},
-
-		fillActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
-
-		fillAttributesGrid: function(data) {
-			this.view.attributesTable.fillWithData(data);
-		},
-
-		fillDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
-
-		fillId: function(value) {
-			this.view.idField.setValue(value);
-		},
-
-		fillWorkflowCombo: function(workflowName) {
-			this.view.workflowCombo.setValue(workflowName);
+		getValueWorkflowCombo: function() {
+			return this.getWorkflowDelegate().getValueCombo();
 		},
 
 		onWorkflowSelected: function(name, modify) {
-			this.view.workflowFormDelegate.onWorkflowSelected(name, modify);
+			this.getWorkflowDelegate().onWorkflowSelected(name, modify);
 		},
 
 		setDisabledAttributesTable: function(state) {
-			this.view.workflowFormDelegate.setDisabledAttributesTable(state);
+			this.getWorkflowDelegate().setDisabledAttributesTable(state);
 		},
 
 		setDisabledTypeField: function(state) {
 			this.view.typeField.setDisabled(state);
+		},
+
+		setValueActive: function(value) {
+			this.view.activeField.setValue(value);
+		},
+
+		setValueAttributesGrid: function(data) {
+			this.getWorkflowDelegate().setValueGrid(data);
+		},
+
+		setValueDescription: function(value) {
+			this.view.descriptionField.setValue(value);
+		},
+
+		setValueId: function(value) {
+			this.view.idField.setValue(value);
+		},
+
+		setValueWorkflowCombo: function(workflowName) {
+			this.getWorkflowDelegate().setValueCombo(workflowName);
 		}
 	});
 
@@ -121,26 +125,18 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH
 			});
 
-			// Workflow form configuration
-				this.workflowCombo = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormCombo', {
-					name: CMDBuild.ServiceProxy.parameter.CLASS_NAME
-				});
-				this.attributesTable = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid');
-
-				this.workflowFormDelegate = Ext.create('CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController');
-				this.workflowFormDelegate.comboField = this.workflowCombo;
-				this.workflowFormDelegate.gridField = this.attributesTable;
-				this.workflowCombo.delegate = this.workflowFormDelegate;
-				this.attributesTable.delegate = this.workflowFormDelegate;
+			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
+				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
+				allowBlank: false
+			});
 
 			Ext.apply(this, {
 				items: [
 					this.typeField,
 					this.idField,
 					this.descriptionField,
-					this.workflowCombo,
 					this.activeField,
-					this.attributesTable
+					this.workflowForm
 				]
 			});
 

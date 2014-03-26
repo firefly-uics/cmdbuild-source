@@ -15,7 +15,6 @@
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		forceSelection: true,
 		editable: false,
-		allowBlank: false,
 
 		listeners: {
 			select: function() {

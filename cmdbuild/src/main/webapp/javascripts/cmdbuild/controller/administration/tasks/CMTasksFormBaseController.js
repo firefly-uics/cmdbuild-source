@@ -87,8 +87,6 @@
 				return;
 			}
 
-			var me = this;
-
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyTasks.remove({
 				type: this.taskType,
@@ -100,7 +98,7 @@
 		},
 
 		resetIdField: function() {
-			this.delegateStep[0].fillId();
+			this.delegateStep[0].setValueId();
 		},
 
 		success: function() {
