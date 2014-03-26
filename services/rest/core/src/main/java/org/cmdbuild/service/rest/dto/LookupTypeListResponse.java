@@ -11,31 +11,31 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement(name = LOOKUP_TYPE_LIST_RESPONSE)
-public class LookupDetailResponse extends ListResponse<LookupDetail> {
+public class LookupTypeListResponse extends ListResponse<LookupTypeDetail> {
 
-	public static Builder<LookupDetail, LookupDetailResponse> newInstance() {
-		return new Builder<LookupDetail, LookupDetailResponse>() {
+	public static Builder<LookupTypeDetail, LookupTypeListResponse> newInstance() {
+		return new Builder<LookupTypeDetail, LookupTypeListResponse>() {
 
 			@Override
-			protected LookupDetailResponse doBuild() {
-				return new LookupDetailResponse(this);
+			protected LookupTypeListResponse doBuild() {
+				return new LookupTypeListResponse(this);
 			}
 
 		};
 	}
 
-	LookupDetailResponse() {
+	LookupTypeListResponse() {
 		// package visibility
 	}
 
-	private LookupDetailResponse(final Builder<LookupDetail, LookupDetailResponse> builder) {
+	private LookupTypeListResponse(final Builder<LookupTypeDetail, LookupTypeListResponse> builder) {
 		super(builder);
 	}
 
 	@Override
-	@XmlElement(name = DATA, type = LookupDetail.class)
+	@XmlElement(name = DATA, type = LookupTypeDetail.class)
 	@JsonProperty(DATA)
-	public Collection<LookupDetail> getElements() {
+	public Collection<LookupTypeDetail> getElements() {
 		return super.getElements();
 	}
 

@@ -15,6 +15,7 @@ import javax.ws.rs.QueryParam;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
+import org.cmdbuild.service.rest.dto.SimpleResponse;
 
 @Path("lookuptypes/")
 @Produces(APPLICATION_JSON)
@@ -29,6 +30,12 @@ public interface LookupTypes {
 
 	@GET
 	@Path("{type}/")
+	SimpleResponse<LookupTypeDetail> getLookupType( //
+			@PathParam(TYPE) String type //
+	);
+
+	@GET
+	@Path("{type}/values/")
 	ListResponse<LookupDetail> getLookups( //
 			@PathParam(TYPE) String type, //
 			@QueryParam(ACTIVE) boolean activeOnly, //

@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -12,11 +13,11 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.LookupTypes;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.LookupDetailResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
-import org.cmdbuild.service.rest.dto.LookupTypeDetailResponse;
+import org.cmdbuild.service.rest.dto.LookupTypeListResponse;
+import org.cmdbuild.service.rest.dto.LookupTypeResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -56,7 +57,7 @@ public class LookupTypesTest {
 	@Test
 	public void getLookupTypes() throws Exception {
 		// given
-		final ListResponse<LookupTypeDetail> expectedResponse = LookupTypeDetailResponse.newInstance() //
+		final LookupTypeListResponse expectedResponse = LookupTypeListResponse.newInstance() //
 				.withElements(asList( //
 						LookupTypeDetail.newInstance() //
 								.withName("foo") //
@@ -81,9 +82,29 @@ public class LookupTypesTest {
 	}
 
 	@Test
+	public void getLookupType() throws Exception {
+		// given
+		final LookupTypeResponse expectedResponse = LookupTypeResponse.newInstance() //
+				.withElement(LookupTypeDetail.newInstance() //
+						.withName("foo") //
+						.build()) //
+				.build();
+		when(service.getLookupType(anyString())) //
+				.thenReturn(expectedResponse);
+
+		// when
+		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/foo/");
+		final int result = httpclient.executeMethod(get);
+
+		// then
+		assertThat(result, equalTo(200));
+		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+	}
+
+	@Test
 	public void getLookups() throws Exception {
 		// given
-		final ListResponse<LookupDetail> expectedResponse = LookupDetailResponse.newInstance() //
+		final LookupDetailResponse expectedResponse = LookupDetailResponse.newInstance() //
 				.withElements(asList( //
 						LookupDetail.newInstance() //
 								.withId(123L) //
@@ -101,7 +122,7 @@ public class LookupTypesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/foo/");
+		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/foo/values/");
 		final int result = httpclient.executeMethod(get);
 
 		// then
