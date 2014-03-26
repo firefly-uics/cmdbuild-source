@@ -11,7 +11,8 @@ public class Constants {
 	public static final String CLASS_DETAIL = "classDetail";
 	public static final String CLASS_DETAIL_RESPONSE = "classDetailResponse";
 	public static final String LOOKUP_TYPE_DETAIL = "lookupTypeDetail";
-	public static final String LOOKUP_TYPE_DETAIL_RESPONSE = "lookupTypeDetailResponse";
+	public static final String LOOKUP_TYPE_LIST_RESPONSE = "lookupTypeListResponse";
+	public static final String LOOKUP_TYPE_RESPONSE = "lookupTypeResponse";
 	public static final String RESPONSE_METADATA = "meta";
 
 	public static final String TYPE_BOOLEAN = "boolean";

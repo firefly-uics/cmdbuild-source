@@ -13,9 +13,13 @@ import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.LookupDetailResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
-import org.cmdbuild.service.rest.dto.LookupTypeDetailResponse;
+import org.cmdbuild.service.rest.dto.LookupTypeListResponse;
+import org.cmdbuild.service.rest.dto.LookupTypeResponse;
+import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.service.rest.serialization.ToLookupDetail;
 import org.cmdbuild.service.rest.serialization.ToLookupTypeDetail;
+
+import com.google.common.base.Predicate;
 
 public class CxfLookupTypes extends CxfService implements LookupTypes {
 
@@ -40,11 +44,44 @@ public class CxfLookupTypes extends CxfService implements LookupTypes {
 
 		final Iterable<LookupTypeDetail> elements = from(lookupTypes) //
 				.transform(TO_LOOKUP_TYPE_DETAIL);
-		return LookupTypeDetailResponse.newInstance() //
+		return LookupTypeListResponse.newInstance() //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(lookupTypes.totalSize()) //
 						.build()) //
+				.build();
+	}
+
+	@Override
+	public SimpleResponse<LookupTypeDetail> getLookupType(final String type) {
+		final PagedElements<LookupType> lookupTypes = lookupLogic().getAllTypes(new LookupTypeQuery() {
+
+			@Override
+			public Integer limit() {
+				return null;
+			}
+
+			@Override
+			public Integer offset() {
+				return null;
+			}
+
+		});
+
+		final LookupTypeDetail elements = from(lookupTypes) //
+				.filter(new Predicate<LookupType>() {
+
+					@Override
+					public boolean apply(final LookupType input) {
+						return input.name.equals(type);
+					}
+
+				}) //
+				.transform(TO_LOOKUP_TYPE_DETAIL) //
+				.first() //
+				.get();
+		return LookupTypeResponse.newInstance() //
+				.withElement(elements) //
 				.build();
 	}
 
