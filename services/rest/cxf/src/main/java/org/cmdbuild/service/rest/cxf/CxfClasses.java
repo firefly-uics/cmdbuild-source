@@ -5,6 +5,7 @@ import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.size;
 
 import java.util.Comparator;
+import java.util.Map;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -18,20 +19,20 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
+import org.cmdbuild.model.data.Card;
 import org.cmdbuild.service.rest.Classes;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
-import org.cmdbuild.service.rest.dto.AttributeValueDetail;
-import org.cmdbuild.service.rest.dto.AttributeValueDetailResponse;
-import org.cmdbuild.service.rest.dto.CardDetail;
-import org.cmdbuild.service.rest.dto.CardDetailResponse;
+import org.cmdbuild.service.rest.dto.CardListResponse;
+import org.cmdbuild.service.rest.dto.CardResponse;
 import org.cmdbuild.service.rest.dto.ClassDetail;
 import org.cmdbuild.service.rest.dto.ClassDetailResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.serialization.AttributeTypeResolver;
+import org.cmdbuild.service.rest.serialization.FromCMCardToCardDetail;
+import org.cmdbuild.service.rest.serialization.FromCardToCardDetail;
+import org.cmdbuild.service.rest.serialization.FromSomeKindOfCardToMap;
 import org.cmdbuild.service.rest.serialization.ToAttributeDetail;
-import org.cmdbuild.service.rest.serialization.ToAttributeValueDetail;
-import org.cmdbuild.service.rest.serialization.ToCardDetail;
 import org.cmdbuild.service.rest.serialization.ToClassDetail;
 import org.cmdbuild.workflow.user.UserProcessClass;
 
@@ -118,20 +119,20 @@ public class CxfClasses extends CxfService implements Classes {
 	}
 
 	@Override
-	public CardDetailResponse getCards(final String name, final Integer limit, final Integer offset) {
+	public CardListResponse getCards(final String name, final Integer limit, final Integer offset) {
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
 				.offset(offset) //
 				.build();
 		final FetchCardListResponse response = userDataAccessLogic().fetchCards(name, queryOptions);
 
-		final ToCardDetail toCardDetail = ToCardDetail.newInstance() //
+		final FromSomeKindOfCardToMap<Card> toCardDetail = FromCardToCardDetail.newInstance() //
 				.withDataView(systemDataView()) //
 				.withErrorHandler(errorHandler()) //
 				.build();
-		final Iterable<CardDetail> elements = from(response.elements()) //
+		final Iterable<Map<String, Object>> elements = from(response.elements()) //
 				.transform(toCardDetail);
-		return CardDetailResponse.newInstance() //
+		return CardListResponse.newInstance() //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(response.getTotalNumberOfCards()) //
@@ -140,24 +141,20 @@ public class CxfClasses extends CxfService implements Classes {
 	}
 
 	@Override
-	public AttributeValueDetailResponse getAttributes(final String name, final Long id) {
+	public CardResponse getCard(final String name, final Long id) {
 		// TODO inject error management within logic
 		if (userDataView().findClass(name) == null) {
 			errorHandler().classNotFound(name);
 		}
 		try {
 			final CMCard fetched = userDataAccessLogic().fetchCMCard(name, id);
-
-			final ToAttributeValueDetail toAttributeValueDetail = ToAttributeValueDetail.newInstance() //
-					.with(fetched.getType()) //
-					.build();
-			final Iterable<AttributeValueDetail> elements = from(fetched.getAllValues()) //
-					.transform(toAttributeValueDetail);
-			return AttributeValueDetailResponse.newInstance() //
-					.withElements(elements) //
-					.withMetadata(DetailResponseMetadata.newInstance() //
-							.withTotal(size(elements)) //
-							.build()) //
+			final Map<String, Object> elements = FromCMCardToCardDetail.newInstance() //
+					.withDataView(userDataView()) //
+					.withErrorHandler(errorHandler()) //
+					.build() //
+					.apply(fetched);
+			return CardResponse.newInstance() //
+					.withElement(elements) //
 					.build();
 		} catch (final NotFoundException e) {
 			errorHandler().cardNotFound(id);

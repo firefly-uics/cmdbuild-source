@@ -9,15 +9,16 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.Classes;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
-import org.cmdbuild.service.rest.dto.AttributeValueDetail;
-import org.cmdbuild.service.rest.dto.AttributeValueDetailResponse;
-import org.cmdbuild.service.rest.dto.CardDetail;
-import org.cmdbuild.service.rest.dto.CardDetailResponse;
+import org.cmdbuild.service.rest.dto.CardListResponse;
+import org.cmdbuild.service.rest.dto.CardResponse;
 import org.cmdbuild.service.rest.dto.ClassDetail;
 import org.cmdbuild.service.rest.dto.ClassDetailResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
@@ -114,14 +115,19 @@ public class ClassesTest {
 	@Test
 	public void getCards() throws Exception {
 		// given
-		final CardDetailResponse expectedResponse = CardDetailResponse.newInstance() //
-				.withElements(asList( //
-						CardDetail.newInstance() //
-								.withId(123L) //
-								.build(), //
-						CardDetail.newInstance() //
-								.withId(456L) //
-								.build())) //
+		final Map<String, Object> first = new HashMap<String, Object>() {
+			{
+				put("foo", "foo");
+				put("bar", "bar");
+			}
+		};
+		final Map<String, Object> second = new HashMap<String, Object>() {
+			{
+				put("bar", "baz");
+			}
+		};
+		final CardListResponse expectedResponse = CardListResponse.newInstance() //
+				.withElements(asList(first, second)) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(2) //
 						.build()) //
@@ -139,30 +145,27 @@ public class ClassesTest {
 	}
 
 	@Test
-	public void getCardAttributes() throws Exception {
+	public void getCard() throws Exception {
 		// given
-		final AttributeValueDetailResponse expectedResponse = AttributeValueDetailResponse.newInstance() //
-				.withElements(asList( //
-						AttributeValueDetail.newInstance() //
-								.withName("foo") //
-								.build(), //
-						AttributeValueDetail.newInstance() //
-								.withName("bar") //
-								.build())) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
-						.withTotal(2) //
-						.build()) //
+		final Map<String, Object> values = new HashMap<String, Object>() {
+			{
+				put("foo", "foo");
+				put("bar", "bar");
+				put("bar", "baz");
+			}
+		};
+		final CardResponse expectedResponse = CardResponse.newInstance() //
+				.withElement(values) //
 				.build();
-		when(service.getAttributes("foo", 123L)) //
+		when(service.getCard("foo", 123L)) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/classes/foo/cards/123/attributes/");
+		final GetMethod get = new GetMethod("http://localhost:8080/classes/foo/cards/123/");
 		final int result = httpclient.executeMethod(get);
 
 		// then
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
-
 }
