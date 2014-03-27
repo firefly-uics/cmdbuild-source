@@ -1,7 +1,9 @@
 package unit.logic.taskmanager;
 
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.instanceOf;
@@ -218,6 +220,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withActiveStatus(true) //
 				.withPhase(Phase.AFTER_CREATE) //
+				.withGroups(asList("foo", "bar", "baz")) //
 				.withTargetClass("classname") //
 				.withScriptingEnableStatus(true) //
 				.withScriptingEngine("groovy") //
@@ -236,6 +239,7 @@ public class DefaultLogicAndStoreConverterTest {
 
 		final Map<String, String> parameters = converted.getParameters();
 		assertThat(parameters, hasEntry(SynchronousEvent.PHASE, "after_create"));
+		assertThat(parameters, hasEntry(SynchronousEvent.FILTER_GROUPS, "foo,bar,baz"));
 		assertThat(parameters, hasEntry(SynchronousEvent.FILTER_CLASSNAME, "classname"));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy"));
@@ -281,6 +285,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withRunningStatus(true) //
 				.withParameter(SynchronousEvent.PHASE, "after_create") //
+				.withParameter(SynchronousEvent.FILTER_GROUPS, "foo,bar,baz") //
 				.withParameter(SynchronousEvent.FILTER_CLASSNAME, "classname") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy") //
@@ -298,6 +303,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.isActive(), equalTo(true));
 		assertThat(converted.getPhase(), equalTo(Phase.AFTER_CREATE));
+		assertThat(converted.getGroups(), containsInAnyOrder("foo", "bar", "baz"));
 		assertThat(converted.getTargetClassname(), equalTo("classname"));
 		assertThat(converted.isScriptingEnabled(), equalTo(true));
 		assertThat(converted.getScriptingEngine(), equalTo("groovy"));

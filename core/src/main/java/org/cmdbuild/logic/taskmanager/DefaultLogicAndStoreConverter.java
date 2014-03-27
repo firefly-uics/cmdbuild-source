@@ -82,6 +82,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public static final String PHASE_BEFORE_DELETE = "before_delete";
 
 		private static final String FILTER = "filter";
+		public static final String FILTER_GROUPS = FILTER + ".groups";
 		public static final String FILTER_CLASSNAME = FILTER + ".classname";
 
 		private static final String ACTION_SCRIPT = "action.scripting";
@@ -93,6 +94,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 	}
 
 	private static final String KEY_VALUE_SEPARATOR = "=";
+	private static final String GROUPS_SEPARATOR = ",";
 
 	private static final Logger logger = TaskManagerLogic.logger;
 	private static final Marker marker = MarkerFactory.getMarker(DefaultLogicAndStoreConverter.class.getName());
@@ -225,6 +227,8 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withDescription(task.getDescription()) //
 					.withRunningStatus(task.isActive()) //
 					.withParameter(SynchronousEvent.PHASE, new PhaseToStoreConverter(task).toStore()) //
+					.withParameter(SynchronousEvent.FILTER_GROUPS, Joiner.on(GROUPS_SEPARATOR) //
+							.join(task.getGroups())) //
 					.withParameter(SynchronousEvent.FILTER_CLASSNAME, task.getTargetClassname()) //
 					.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, Boolean.toString(task.isScriptingEnabled())) //
 					.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, task.getScriptingEngine()) //
@@ -236,6 +240,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 	private static class DefaultStoreAsSourceConverter implements StoreAsSourceConverter, TaskVisitor {
 
+		private static final Iterable<String> EMPTY_GROUPS = Collections.emptyList();
 		private static final Map<String, String> EMPTY_PARAMETERS = Collections.emptyMap();
 
 		private final org.cmdbuild.data.store.task.Task source;
@@ -296,6 +301,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		@Override
 		public void visit(final org.cmdbuild.data.store.task.SynchronousEventTask task) {
+			final String groupsAsString = defaultString(task.getParameter(SynchronousEvent.FILTER_GROUPS));
 			target = SynchronousEventTask.newInstance() //
 					.withId(task.getId()) //
 					.withDescription(task.getDescription()) //
@@ -303,6 +309,8 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withPhase( //
 							new PhaseToLogicConverter(task.getParameter(SynchronousEvent.PHASE)) //
 									.toLogic()) //
+					.withGroups(isEmpty(groupsAsString) ? EMPTY_GROUPS : Splitter.on(GROUPS_SEPARATOR) //
+							.split(groupsAsString)) //
 					.withTargetClass(task.getParameter(SynchronousEvent.FILTER_CLASSNAME)) //
 					.withScriptingEnableStatus( //
 							Boolean.valueOf(task.getParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE))) //

@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.taskmanager;
 
+import java.util.Collections;
+
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -54,10 +56,13 @@ public class SynchronousEventTask implements Task {
 
 	public static class Builder implements org.cmdbuild.common.Builder<SynchronousEventTask> {
 
+		private static final Iterable<String> EMPTY_GROUPS = Collections.emptyList();
+
 		private Long id;
 		private String description;
 		private Boolean active;
 		private Phase phase;
+		private Iterable<String> groups;
 		private String classname;
 		private Boolean scriptingEnabled;
 		private String scriptingEngine;
@@ -76,6 +81,8 @@ public class SynchronousEventTask implements Task {
 
 		private void validate() {
 			active = (active == null) ? false : active;
+
+			groups = (groups == null) ? EMPTY_GROUPS : groups;
 
 			scriptingEnabled = (scriptingEnabled == null) ? false : scriptingEnabled;
 			if (scriptingEnabled) {
@@ -101,6 +108,11 @@ public class SynchronousEventTask implements Task {
 
 		public Builder withPhase(final Phase phase) {
 			this.phase = phase;
+			return this;
+		}
+
+		public Builder withGroups(final Iterable<String> groups) {
+			this.groups = groups;
 			return this;
 		}
 
@@ -139,6 +151,7 @@ public class SynchronousEventTask implements Task {
 	private final String description;
 	private final boolean active;
 	private final Phase phase;
+	private final Iterable<? extends String> groups;
 	private final String classname;
 	private final boolean scriptingEnabled;
 	private final String scriptingEngine;
@@ -150,6 +163,7 @@ public class SynchronousEventTask implements Task {
 		this.description = builder.description;
 		this.active = builder.active;
 		this.phase = builder.phase;
+		this.groups = builder.groups;
 		this.classname = builder.classname;
 		this.scriptingEnabled = builder.scriptingEnabled;
 		this.scriptingEngine = builder.scriptingEngine;
@@ -179,6 +193,10 @@ public class SynchronousEventTask implements Task {
 
 	public Phase getPhase() {
 		return phase;
+	}
+
+	public Iterable<? extends String> getGroups() {
+		return groups;
 	}
 
 	public String getTargetClassname() {
