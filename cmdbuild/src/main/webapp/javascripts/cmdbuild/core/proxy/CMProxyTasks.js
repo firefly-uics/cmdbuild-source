@@ -131,16 +131,16 @@
 			getUrl: function(type) {
 				switch (type) {
 					case 'all':
-						return CMDBuild.ServiceProxy.url.tasks;
+						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks;
 
 					case 'email':
-						return CMDBuild.ServiceProxy.url.tasks.email;
+						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.email;
 
 					case 'event':
-						return CMDBuild.ServiceProxy.url.tasks.event;
+						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event;
 
 					case 'workflow':
-						return CMDBuild.ServiceProxy.url.tasks.workflow;
+						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.workflow;
 
 					default:
 						throw 'CMProxyTasks error: url type not recognized';
