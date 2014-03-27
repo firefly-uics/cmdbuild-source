@@ -1,5 +1,6 @@
 package org.cmdbuild.spring.configuration;
 
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.DataViewStore;
@@ -67,6 +68,9 @@ public class TaskManager {
 
 	@Autowired
 	private DBDataView systemDataView;
+
+	@Autowired
+	private UserStore userStore;
 
 	@Autowired
 	private Workflow workflow;
@@ -171,7 +175,7 @@ public class TaskManager {
 
 	@Bean
 	protected ObserverFactory observerFactory() {
-		return new DefaultObserverFactory();
+		return new DefaultObserverFactory(userStore);
 	}
 
 }
