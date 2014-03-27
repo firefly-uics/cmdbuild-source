@@ -61,7 +61,7 @@
 			switch (name) {
 				case 'onFilterWindowConfirm':
 					var values = this.view.form.getValues();
-					var translationsKeyType = this.view.translationsKeyType; 
+					var translationsKeyType = this.view.translationsKeyType;
 					var translationsKeyName = this.view.translationsKeyName;
 					var translationsKeySubName = this.view.translationsKeySubName;
 					var translationsKeyField = this.view.translationsKeyField;
@@ -119,7 +119,7 @@
 		type: undefined,
 		width: 480,
 		configFileName: "",
-		translationsKeyType: "", 
+		translationsKeyType: "",
 		translationsKeyName: "",
 		translationsKeySubName: "",
 		translationsKeyField: "",
@@ -148,14 +148,14 @@
 				},
 				{
 					type: 'button',
-					text: CMDBuild.Translation.common.btns.save,
+					text: CMDBuild.Translation.common.buttons.save,
 					handler: function() {
 						me.delegate.cmOn('onFilterWindowConfirm');
 					}
 				},
 				{
 					type: 'button',
-					text: CMDBuild.Translation.common.btns.abort,
+					text: CMDBuild.Translation.common.buttons.abort,
 					handler: function() {
 						me.delegate.cmOn('onFilterWindowAbort');
 					}

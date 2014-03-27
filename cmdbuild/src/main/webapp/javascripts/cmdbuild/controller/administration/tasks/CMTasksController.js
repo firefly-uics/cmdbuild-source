@@ -6,6 +6,7 @@
 		parentDelegate: undefined,
 		tasksDatas: ['all', 'email', 'event', 'workflow'], // Used to check task existence
 		taskType: undefined,
+		selectionModel: undefined,
 
 		// Overwrite
 		constructor: function(view) {
@@ -17,19 +18,22 @@
 			this.view.delegate = this;
 			this.grid.delegate = this;
 
+			this.selectionModel = this.grid.getSelectionModel();
+
 			this.callParent(arguments);
 		},
 
 		onViewOnFront: function(parameters) {
 			if (typeof parameters !== 'undefined') {
 				var me = this;
+
 				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
 
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
 				this.grid.store.load({
 					callback: function() {
-						if (!me.grid.getSelectionModel().hasSelection())
-							me.grid.getSelectionModel().select(0, true);
+						if (!me.selectionModel.hasSelection())
+							me.selectionModel.select(0, true);
 					}
 				});
 			}
@@ -75,7 +79,7 @@
 			if (this.correctTaskTypeCheck(type)) {
 				this.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(type) + 'Controller', this.form);
 				this.form.delegate.parentDelegate = this;
-				this.form.delegate.selectionModel = this.grid.getSelectionModel();
+				this.form.delegate.selectionModel = this.selectionModel;
 			}
 		},
 
@@ -116,7 +120,7 @@
 		},
 
 		onAddButtonClick: function(name, param, callBack) {
-			this.grid.getSelectionModel().deselectAll();
+			this.selectionModel.deselectAll();
 			this.buildFormController(param.type);
 
 			return this.form.delegate.cmOn(name, param, callBack);
@@ -134,11 +138,14 @@
 		 * @param (Function) callback
 		 */
 		onRowSelected: function(name, param, callBack) {
+			var selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.TYPE);
+
 			if (
 				!this.form.delegate
-				|| (this.form.delegate.taskType != param.record.get(CMDBuild.ServiceProxy.parameter.TYPE))
+//				|| (this.form.delegate.taskType != param.get(CMDBuild.ServiceProxy.parameter.TYPE))
+				|| (this.form.delegate.taskType != selectedType)
 			)
-				this.buildFormController(param.record.get(CMDBuild.ServiceProxy.parameter.TYPE));
+				this.buildFormController(selectedType);
 
 			if (this.form.delegate)
 				this.form.delegate.cmOn(name, param, callBack);

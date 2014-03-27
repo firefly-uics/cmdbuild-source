@@ -35,7 +35,7 @@
 			});
 
 			this.cronPanel = Ext.create('CMDBuild.view.administration.workflow.CMProcessTasks', {
-				title: tr.tabs.scheduling,
+				title: CMDBuild.Translation.administration.tasks.title,
 				border: false,
 				disabled: true
 			});

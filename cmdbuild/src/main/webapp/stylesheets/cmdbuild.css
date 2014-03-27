@@ -1,4 +1,4 @@
- 
+
 html {
 	height: 100%;
 	width: 100%;
@@ -29,9 +29,9 @@ em {
 .cmdb-tab p {
 	color:#15428B;
 	background-image: url(../images/tabs/pressedbg.png);
-	background-color: #d9eafe;	
+	background-color: #d9eafe;
 	background-repeat: repeat-x;
-	font: 11px tahoma,arial,helvetica;	
+	font: 11px tahoma,arial,helvetica;
 	padding: 4px 20px 4px 18px;
 	border: 1px #99BBE8 solid;
 	border-left: none;
@@ -43,7 +43,7 @@ em {
 
 .cmdb-pressed-tab p {
 	background-image: url(../images/tabs/currentbg.png);
-	background-color: #d9eafe;	
+	background-color: #d9eafe;
 	font-weight: bold;
 }
 
@@ -69,7 +69,7 @@ em {
 /* INFO AND SUPPORTS */
 
 .cm-credits-container {
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	font-weight: 300;
 	color: #333;
 	width: 600px;
@@ -258,7 +258,7 @@ em {
 	padding-top: 8px;
 }
 
-.msg-inner-hidden-tooltip p { 
+.msg-inner-hidden-tooltip p {
 	padding: 0;
 	margin: 0;
 }
@@ -471,7 +471,7 @@ em {
 }
 
 .search {
-	background-image: url(../images/icons/search.gif) !important;	
+	background-image: url(../images/icons/search.gif) !important;
 }
 
 .add_filter {
@@ -568,7 +568,7 @@ em {
 	background-image: url(../images/icons/privilege_filter_remove.png) !important;
 }
 
-.expand, 
+.expand,
 .cmdisplayfield-expandbutton {
 	background-image: url(../images/icons/expand.png) !important;
 }
@@ -670,56 +670,64 @@ em {
 }
 
 /**
- MENU TREE
-**/
+ * MENU TREE
+ */
+	.cmdbuild-tree-superclass-icon {
+		background-image: url(../images/icons/tree/superclass_collapsed.png) !important;
+	}
 
-.cmdbuild-tree-superclass-icon {
-	background-image: url(../images/icons/tree/superclass_collapsed.png) !important;
-}
+	.cmdbuild-tree-class-icon {
+		background-image: url(../images/icons/tree/class.png) !important;
+	}
 
-.cmdbuild-tree-class-icon {
-	background-image: url(../images/icons/tree/class.png) !important;
-}
+	.cmdbuild-tree-superprocessclass-icon {
+		background-image: url(../images/icons/tree/superclassprocess_collapsed.png) !important;
+	}
 
-.cmdbuild-tree-superprocessclass-icon {
-	background-image: url(../images/icons/tree/superclassprocess_collapsed.png) !important;
-}
+	.cmdbuild-tree-processclass-icon {
+		background-image: url(../images/icons/tree/process.png) !important;
+	}
 
-.cmdbuild-tree-processclass-icon {
-	background-image: url(../images/icons/tree/process.png) !important;
-}
+	.cmdbuild-tree-reportpdf-icon {
+		background-image: url(../images/icons/ico_pdf.png) !important;
+	}
 
-.cmdbuild-tree-reportpdf-icon {
-	background-image: url(../images/icons/ico_pdf.png) !important;
-}
+	.cmdbuild-tree-reportcsv-icon {
+		background-image: url(../images/icons/ico_csv.png) !important;
+	}
 
-.cmdbuild-tree-reportcsv-icon {
-	background-image: url(../images/icons/ico_csv.png) !important;
-}
+	.cmdbuild-tree-reportodt-icon {
+		background-image: url(../images/icons/ico_odt_enabled.png) !important;
+	}
 
-.cmdbuild-tree-reportodt-icon {
-	background-image: url(../images/icons/ico_odt_enabled.png) !important;
-}
+	.cmdbuild-tree-reportxml-icon {
+		background-image: url(../images/icons/ico_xml.png) !important;
+	}
 
-.cmdbuild-tree-reportxml-icon {
-	background-image: url(../images/icons/ico_xml.png) !important;
-}
+	.cmdbuild-tree-user-icon {
+		background-image: url(../images/icons/tree/user.png) !important;
+	}
 
-.cmdbuild-tree-user-icon {
-	background-image: url(../images/icons/tree/user.png) !important;
-}
+	.cmdbuild-tree-user-group-icon {
+		background-image: url(../images/icons/tree/folder_user.png) !important;
+	}
 
-.cmdbuild-tree-group-icon {
-	background-image: url(../images/icons/tree/group.png) !important;
-}
+	.cmdbuild-tree-group-icon {
+		background-image: url(../images/icons/tree/group.png) !important;
+	}
 
-.cmdbuild-tree-dashboard-icon {
-	background-image: url(../images/icons/tree/dashboard.png) !important;
-}
+	.cmdbuild-tree-dashboard-icon {
+		background-image: url(../images/icons/tree/dashboard.png) !important;
+	}
 
-.cmdbuild-tree-no-icon {
-	background-image: url(../images/transparentPixel.png) !important;
-}
+	.cmdbuild-tree-no-icon {
+		background-image: url(../images/transparentPixel.png) !important;
+	}
+
+	/* Tasks */
+		.cmdbuild-tree-tasks-icon { background-image: url(../images/icons/tree/wrench.png) !important; }
+
+		.cmdbuild-tree-tasks-group-icon { background-image: url(../images/icons/tree/superclassprocess_collapsed.png) !important; }
 
 /* Ext.ux.CheckColumn*/
 .x-grid-checkheader {
@@ -741,7 +749,7 @@ em {
 /*
  * Login flags
  */
- 
+
 .ux-flag-de {
 	background-image: url(../images/icons/flags/de.png) ! important;
 }

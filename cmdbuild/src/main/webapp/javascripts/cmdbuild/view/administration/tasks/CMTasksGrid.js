@@ -86,12 +86,8 @@
 				this.delegate.cmOn('onItemDoubleClick');
 			},
 
-			select: function(row, record, index) {
-				this.delegate.cmOn('onRowSelected', {
-					'row': row,
-					'record': record,
-					'index': index
-				});
+			select: function(model, record, index, eOpts) {
+				this.delegate.cmOn('onRowSelected');
 			}
 		},
 

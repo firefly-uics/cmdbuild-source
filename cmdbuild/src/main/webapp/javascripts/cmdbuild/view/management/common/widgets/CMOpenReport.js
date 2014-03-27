@@ -69,7 +69,7 @@
 		getExtraButtons: function() {
 			var me = this;
 			return [new Ext.Button( {
-				text : CMDBuild.Translation.common.btns.confirm,
+				text : CMDBuild.Translation.common.buttons.confirm,
 				name : 'saveButton',
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.saveButtonClick);

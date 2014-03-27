@@ -85,7 +85,7 @@
 			this.disableCMTbar();
 			this.enableCMButtons();
 
-			//http://www.sencha.com/forum/showthread.php?261407-4.2.0-HTML-editor-SetValue-does-not-work-when-component-is-not-rendered	
+			//http://www.sencha.com/forum/showthread.php?261407-4.2.0-HTML-editor-SetValue-does-not-work-when-component-is-not-rendered
 			//This function for fixing the above bug
 			//To delete when upgrade at extjs 4.2.1
 			this.tabPanel.showAll();
@@ -167,7 +167,7 @@
 		},
 
 		ensureEditPanel: function() {
-			if (this.tabPanel 
+			if (this.tabPanel
 					&& !this._isInEditMode) {
 
 				this.tabPanel.ensureEditPanel();
@@ -295,7 +295,7 @@
 					a = 1;
 				try {
 					f.setValue(data[f.name]);
-					if (typeof f.isFiltered == "function" 
+					if (typeof f.isFiltered == "function"
 						&& f.isFiltered()) {
 
 						f.setServerVarsForTemplate(data);
@@ -314,7 +314,7 @@
 	function addReferenceAttrsToData(data, referenceAttributes) {
 		for (var referenceName in referenceAttributes || {}) {
 			var attributes = referenceAttributes[referenceName];
-			
+
 			for (var attributeName in attributes) {
 				var fullName = "_" + referenceName + "_" + attributeName,
 					value = attributes[attributeName];
@@ -484,7 +484,7 @@
 			});
 
 			this.cancelButton = new Ext.button.Button( {
-				text: this.readOnlyForm ? CMDBuild.Translation.common.btns.close : CMDBuild.Translation.common.btns.abort,
+				text: this.readOnlyForm ? CMDBuild.Translation.common.buttons.close : CMDBuild.Translation.common.buttons.abort,
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.abortButtonClick);
 				}

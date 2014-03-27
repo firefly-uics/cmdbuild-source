@@ -21,26 +21,48 @@
 				{
 					id: 'all',
 					cmName: 'tasks',
-					leaf: true,
-					text: tr.all
-				},
-				{
-					id: 'email',
-					cmName: 'tasks',
-					leaf: true,
-					text: tr.tasksTypes.email
-				},
-				{
-					id: 'event',
-					cmName: 'tasks',
-					leaf: true,
-					text: tr.tasksTypes.event
-				},
-				{
-					id: 'workflow',
-					cmName: 'tasks',
-					leaf: true,
-					text: tr.tasksTypes.workflow
+					leaf: false,
+					text: tr.all,
+					iconCls: 'cmdbuild-tree-tasks-group-icon',
+					children: [
+						{
+							id: 'email',
+							cmName: 'tasks',
+							leaf: true,
+							text: tr.tasksTypes.email,
+							iconCls: 'cmdbuild-tree-tasks-icon'
+						},
+						{
+							id: 'event',
+							cmName: 'tasks',
+							leaf: false,
+							text: tr.tasksTypes.event,
+							iconCls: 'cmdbuild-tree-tasks-group-icon',
+							children: [
+								{
+									id: 'eventAsynchronous',
+									cmName: 'tasks',
+									leaf: true,
+									text: tr.tasksTypes.eventAsynchronous,
+									iconCls: 'cmdbuild-tree-tasks-icon'
+								},
+								{
+									id: 'eventSynchronous',
+									cmName: 'tasks',
+									leaf: true,
+									text: tr.tasksTypes.eventSynchronous,
+									iconCls: 'cmdbuild-tree-tasks-icon'
+								}
+							]
+						},
+						{
+							id: 'workflow',
+							cmName: 'tasks',
+							leaf: true,
+							text: tr.tasksTypes.workflow,
+							iconCls: 'cmdbuild-tree-tasks-icon'
+						}
+					]
 				}
 			]);
 		}

@@ -15,8 +15,8 @@
 			var me = this;
 
 			this.advanceRadio = Ext.create('Ext.form.field.Radio', {
-				name: 'cronInputType',
-				inputValue: 'advanced',
+				name: CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE,
+				inputValue: CMDBuild.ServiceProxy.parameter.ADVANCED,
 				boxLabel: tr.advanced,
 				width: CMDBuild.LABEL_WIDTH,
 
@@ -29,11 +29,11 @@
 			});
 
 			this.advancedFields = [
-				this.delegate.createCronField('minute', tr.minute),
-				this.delegate.createCronField('hour', tr.hour),
-				this.delegate.createCronField('dayOfMounth', tr.dayOfMounth),
-				this.delegate.createCronField('mounth', tr.mounth),
-				this.delegate.createCronField('dayOfWeek', tr.dayOfWeek)
+				this.delegate.createCronField(CMDBuild.ServiceProxy.parameter.MINUTE, tr.minute),
+				this.delegate.createCronField(CMDBuild.ServiceProxy.parameter.HOUR, tr.hour),
+				this.delegate.createCronField(CMDBuild.ServiceProxy.parameter.DAY_OF_MOUNTH, tr.dayOfMounth),
+				this.delegate.createCronField(CMDBuild.ServiceProxy.parameter.MOUNTH, tr.mounth),
+				this.delegate.createCronField(CMDBuild.ServiceProxy.parameter.DAY_OF_WEEK, tr.dayOfWeek)
 			];
 
 			Ext.apply(this, {

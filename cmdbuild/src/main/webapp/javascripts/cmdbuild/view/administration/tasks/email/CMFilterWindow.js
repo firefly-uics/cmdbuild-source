@@ -133,14 +133,14 @@
 				},
 				{
 					type: 'button',
-					text: CMDBuild.Translation.common.btns.confirm,
+					text: CMDBuild.Translation.common.buttons.confirm,
 					handler: function() {
 						me.delegate.cmOn('on' + me.type + 'FilterWindowConfirm');
 					}
 				},
 				{
 					type: 'button',
-					text: CMDBuild.Translation.common.btns.abort,
+					text: CMDBuild.Translation.common.buttons.abort,
 					handler: function() {
 						me.delegate.cmOn('on' + me.type + 'FilterWindowAbort');
 					}

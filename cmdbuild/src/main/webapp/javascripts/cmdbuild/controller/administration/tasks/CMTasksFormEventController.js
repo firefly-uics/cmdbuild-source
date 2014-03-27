@@ -154,13 +154,12 @@ _debug(formData);
 		},
 
 		removeItem: function() {
-			if (this.selectedId == null) {
-				// Nothing to remove
+			// Nothing to remove
+			if (this.selectedId == null)
 				return;
-			}
 
-			var me = this,
-				store = this.parentDelegate.grid.store;
+			var me = this;
+			var store = this.parentDelegate.grid.store;
 
 			CMDBuild.ServiceProxy.tasks.remove({
 				params: { id: this.selectedId },

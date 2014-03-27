@@ -125,20 +125,20 @@
 					formData.filterSubject = Ext.encode(formData.filterSubject.split(' OR '));
 				}
 
-				if (formData.cronInputType) {
-					formData.cronExpression = this.buildCronExpression([
-						formData.minute,
-						formData.hour,
-						formData.dayOfMounth,
-						formData.mounth,
-						formData.dayOfWeek
+				if (formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]) {
+					formData[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().buildCronExpression([
+						formData[CMDBuild.ServiceProxy.parameter.MINUTE],
+						formData[CMDBuild.ServiceProxy.parameter.HOUR],
+						formData[CMDBuild.ServiceProxy.parameter.DAY_OF_MOUNTH],
+						formData[CMDBuild.ServiceProxy.parameter.MOUNTH],
+						formData[CMDBuild.ServiceProxy.parameter.DAY_OF_WEEK]
 					]);
 				} else {
-					formData.cronExpression = formData.baseCombo;
+					formData[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = formData['baseCombo'];
 				}
 
 				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-					formData.attributes = Ext.encode(attributesGridValues);
+					formData[CMDBuild.ServiceProxy.parameter.ATTRIBUTES] = Ext.encode(attributesGridValues);
 
 			// Manual validation of cron fields because disabled fields are not validated
 			if (this.delegateStep[1].isEmptyAdvanced()) {
@@ -154,15 +154,15 @@
 				return;
 			}
 
-			delete formData.baseCombo;
-			delete formData.cronInputType;
-			delete formData.dayOfMounth;
-			delete formData.dayOfWeek;
-			delete formData.hour;
-			delete formData.minute;
-			delete formData.mounth;
+			delete formData['baseCombo'];
+			delete formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE];
+			delete formData[CMDBuild.ServiceProxy.parameter.DAY_OF_MOUNTH];
+			delete formData[CMDBuild.ServiceProxy.parameter.DAY_OF_WEEK];
+			delete formData[CMDBuild.ServiceProxy.parameter.HOUR];
+			delete formData[CMDBuild.ServiceProxy.parameter.MINUTE];
+			delete formData[CMDBuild.ServiceProxy.parameter.MOUNTH];
 _debug(formData);
-			if (Ext.isEmpty(formData.id)) {
+			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
 				CMDBuild.core.proxy.CMProxyTasks.create({
 					type: this.taskType,
 					params: formData,

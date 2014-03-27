@@ -15,8 +15,8 @@
 			var me = this;
 
 			this.baseRadio = Ext.create('Ext.form.field.Radio', {
-				name: 'cronInputType',
-				inputValue: 'base',
+				name: CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE,
+				inputValue: CMDBuild.ServiceProxy.parameter.BASE,
 				boxLabel: tr.basic,
 				width: CMDBuild.LABEL_WIDTH,
 
