@@ -7,7 +7,7 @@
 			create: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
-					url: CMDBuild.ServiceProxy.url.email.templates.post,
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.post,
 					params: parameters.params,
 					scope: parameters.scope,
 					success: parameters.success,
@@ -21,7 +21,7 @@
 					model: 'CMDBuild.model.CMModelEmailTemplates.singleTemplate',
 					proxy: {
 						type: 'ajax',
-						url: CMDBuild.ServiceProxy.url.email.templates.get,
+						url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.get,
 						reader: {
 							type: 'json',
 							root: 'response'
@@ -36,7 +36,7 @@
 					model: 'CMDBuild.model.CMModelEmailTemplates.grid',
 					proxy: {
 						type: 'ajax',
-						url: CMDBuild.ServiceProxy.url.email.templates.getStore,
+						url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.getStore,
 						reader: {
 							type: 'json',
 							root: 'response.elements'
@@ -52,7 +52,7 @@
 			remove: function(parameters) {
 				CMDBuild.ServiceProxy.core.doRequest({
 					method: 'POST',
-					url: CMDBuild.ServiceProxy.url.email.templates.delete,
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.delete,
 					params: parameters.params,
 					scope: parameters.scope,
 					success: parameters.success,
@@ -63,7 +63,7 @@
 			update: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
-					url: CMDBuild.ServiceProxy.url.email.templates.put,
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.put,
 					params: parameters.params,
 					scope: parameters.scope,
 					success: parameters.success,

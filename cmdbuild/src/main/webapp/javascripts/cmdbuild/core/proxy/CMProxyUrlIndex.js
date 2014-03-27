@@ -1,9 +1,11 @@
 (function() {
 
 	/**
-	 * Constants with the mapped urls, any module add his own
+	 * A class that works as index of all proxies urls
 	 */
-	Ext.define('CMDBuild.ServiceProxy.url', {
+	Ext.define('CMDBuild.core.proxy.CMProxyUrlIndex', {
+		alternateClassName: 'CMDBuild.ServiceProxy.url', // Legacy class name
+
 		statics: {
 			attribute: {
 				create: '',
@@ -171,10 +173,5 @@
 			}
 		}
 	});
-
-	// TODO: try to create a class alias
-	//	Ext.define('CMDBuild.ServiceProxy.url', {
-	//		extend: 'CMDBuild.core.proxy.urlIndex'
-	//	});
 
 })();
