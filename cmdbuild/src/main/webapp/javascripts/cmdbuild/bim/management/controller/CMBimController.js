@@ -78,7 +78,7 @@
 					params: {
 						cardId: model.get("Id"),
 						className: entryType.getName(),
-						withExport: false
+						withExport: true
 					},
 					success: function(operation, options, response) {
 						if (response.ROID) {

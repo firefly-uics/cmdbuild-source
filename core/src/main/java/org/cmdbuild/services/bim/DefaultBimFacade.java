@@ -311,7 +311,8 @@ public class DefaultBimFacade implements BimFacade {
 
 		service.setDoubleAttributes(transactionManager.getId(), cartesianPointId, IFC_COORDINATES, coordinates);
 
-		commitTransaction();
+		String newRevisionId = commitTransaction();
+		System.out.println("Revision " + newRevisionId + " created");
 		// refreshWithMerge(projectId);
 	}
 
