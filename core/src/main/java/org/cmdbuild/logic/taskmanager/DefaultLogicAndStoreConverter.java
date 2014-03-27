@@ -81,6 +81,9 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public static final String PHASE_AFTER_UPDATE = "after_update";
 		public static final String PHASE_BEFORE_DELETE = "before_delete";
 
+		private static final String FILTER = "filter";
+		public static final String FILTER_CLASSNAME = FILTER + ".classname";
+
 		private static final String ACTION_SCRIPT = "action.scripting";
 		public static final String ACTION_SCRIPT_ACTIVE = ACTION_SCRIPT + ".active";
 		public static final String ACTION_SCRIPT_ENGINE = ACTION_SCRIPT + ".engine";
@@ -222,6 +225,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withDescription(task.getDescription()) //
 					.withRunningStatus(task.isActive()) //
 					.withParameter(SynchronousEvent.PHASE, new PhaseToStoreConverter(task).toStore()) //
+					.withParameter(SynchronousEvent.FILTER_CLASSNAME, task.getTargetClassname()) //
 					.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, Boolean.toString(task.isScriptingEnabled())) //
 					.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, task.getScriptingEngine()) //
 					.withParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT, task.getScriptingScript()) //
@@ -299,6 +303,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withPhase( //
 							new PhaseToLogicConverter(task.getParameter(SynchronousEvent.PHASE)) //
 									.toLogic()) //
+					.withTargetClass(task.getParameter(SynchronousEvent.FILTER_CLASSNAME)) //
 					.withScriptingEnableStatus( //
 							Boolean.valueOf(task.getParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE))) //
 					.withScriptingEngine(task.getParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE)) //

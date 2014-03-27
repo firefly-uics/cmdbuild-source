@@ -11,8 +11,8 @@ public abstract class ForwardingObserver implements Observer {
 	}
 
 	@Override
-	public void afterCreate(final CMCard card) {
-		delegate.afterCreate(card);
+	public void afterCreate(final CMCard actual) {
+		delegate.afterCreate(actual);
 	}
 
 	@Override
@@ -26,8 +26,8 @@ public abstract class ForwardingObserver implements Observer {
 	}
 
 	@Override
-	public void beforeDelete(final CMCard card) {
-		delegate.beforeDelete(card);
+	public void beforeDelete(final CMCard actual) {
+		delegate.beforeDelete(actual);
 	}
 
 }

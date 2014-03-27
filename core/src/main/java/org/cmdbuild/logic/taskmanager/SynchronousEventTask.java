@@ -58,6 +58,7 @@ public class SynchronousEventTask implements Task {
 		private String description;
 		private Boolean active;
 		private Phase phase;
+		private String classname;
 		private Boolean scriptingEnabled;
 		private String scriptingEngine;
 		private String scriptingScript;
@@ -103,6 +104,11 @@ public class SynchronousEventTask implements Task {
 			return this;
 		}
 
+		public Builder withTargetClass(final String classname) {
+			this.classname = classname;
+			return this;
+		}
+
 		public Builder withScriptingEnableStatus(final boolean scriptingEnabled) {
 			this.scriptingEnabled = scriptingEnabled;
 			return this;
@@ -133,6 +139,7 @@ public class SynchronousEventTask implements Task {
 	private final String description;
 	private final boolean active;
 	private final Phase phase;
+	private final String classname;
 	private final boolean scriptingEnabled;
 	private final String scriptingEngine;
 	private final String scriptingScript;
@@ -143,6 +150,7 @@ public class SynchronousEventTask implements Task {
 		this.description = builder.description;
 		this.active = builder.active;
 		this.phase = builder.phase;
+		this.classname = builder.classname;
 		this.scriptingEnabled = builder.scriptingEnabled;
 		this.scriptingEngine = builder.scriptingEngine;
 		this.scriptingScript = builder.scriptingScript;
@@ -171,6 +179,10 @@ public class SynchronousEventTask implements Task {
 
 	public Phase getPhase() {
 		return phase;
+	}
+
+	public String getTargetClassname() {
+		return classname;
 	}
 
 	public boolean isScriptingEnabled() {
