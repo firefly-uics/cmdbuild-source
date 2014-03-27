@@ -1,6 +1,10 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static com.google.common.collect.Iterables.contains;
+import static com.google.common.collect.Iterables.isEmpty;
+
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
 import org.cmdbuild.services.event.Command;
@@ -17,25 +21,70 @@ public class DefaultObserverFactory implements ObserverFactory {
 
 	private static class SynchronousEventTaskPredicate implements Predicate<CMCard> {
 
-		public static SynchronousEventTaskPredicate of(final SynchronousEventTask task) {
-			return new SynchronousEventTaskPredicate(task);
+		public static class Builder implements org.cmdbuild.common.Builder<SynchronousEventTaskPredicate> {
+
+			private SynchronousEventTask task;
+			private UserStore userStore;
+
+			private Builder() {
+				// use factory method
+			}
+
+			@Override
+			public SynchronousEventTaskPredicate build() {
+				validate();
+				return new SynchronousEventTaskPredicate(this);
+			}
+
+			private void validate() {
+				Validate.notNull(task, "invalid task");
+				Validate.notNull(userStore, "invalid user store");
+			}
+
+			public Builder withTask(final SynchronousEventTask task) {
+				this.task = task;
+				return this;
+			}
+
+			public Builder withUserStore(final UserStore userStore) {
+				this.userStore = userStore;
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
 		}
 
 		private final SynchronousEventTask task;
+		private final UserStore userStore;
 
-		private SynchronousEventTaskPredicate(final SynchronousEventTask task) {
-			this.task = task;
+		private SynchronousEventTaskPredicate(final Builder builder) {
+			this.task = builder.task;
+			this.userStore = builder.userStore;
 		}
 
 		@Override
 		public boolean apply(final CMCard input) {
-			return matchesClass(input);
+			return matchesGroup() && matchesClass(input);
+		}
+
+		private boolean matchesGroup() {
+			final String current = userStore.getUser().getPreferredGroup().getName();
+			return isEmpty(task.getGroups()) || contains(task.getGroups(), current);
 		}
 
 		private boolean matchesClass(final CMCard input) {
 			return input.getType().getName().equals(task.getTargetClassname());
 		}
 
+	}
+
+	private final UserStore userStore;
+
+	public DefaultObserverFactory(final UserStore userStore) {
+		this.userStore = userStore;
 	}
 
 	@Override
@@ -95,7 +144,10 @@ public class DefaultObserverFactory implements ObserverFactory {
 	}
 
 	private Predicate<CMCard> filterOf(final SynchronousEventTask task) {
-		return SynchronousEventTaskPredicate.of(task);
+		return SynchronousEventTaskPredicate.newInstance() //
+				.withTask(task) //
+				.withUserStore(userStore) //
+				.build();
 	}
 
 }
