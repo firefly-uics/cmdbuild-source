@@ -1,5 +1,8 @@
 package org.cmdbuild.services.bim;
 
+import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_TYPE;
@@ -26,8 +29,6 @@ import static org.cmdbuild.services.bim.DefaultBimDataModelManager.DEFAULT_DOMAI
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.bim.mapper.DefaultAttribute;
 import org.cmdbuild.bim.mapper.DefaultEntity;
 import org.cmdbuild.bim.model.Entity;
@@ -102,7 +103,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 			final String attributeName) {
 		final CMClass theClass = dataView.findClass(classIdentifier);
 		CMQueryResult result = null;
-		if (StringUtils.isBlank(attributeName)) {
+		if (isBlank(attributeName)) {
 			result = dataView.select(anyAttribute(theClass)) //
 					.from(theClass) //
 					.run();
@@ -119,18 +120,17 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		}
 		return cards;
 	}
-	
 
 	@Override
-	public void moveObject(String className, String globalId, List<Double> coordinates) {
-		String xcord = String.valueOf(coordinates.get(0));
-		String ycord = String.valueOf(coordinates.get(1));
-		String zcord = String.valueOf(coordinates.get(2));
-	
-		CMFunction function = dataView.findFunctionByName("_bim_update_coordinates");
-		NameAlias f = NameAlias.as("f");
-		dataView.select(anyAttribute(function, f))
-				.from(call(function, className, globalId, xcord, ycord, zcord), f).run();
+	public void moveObject(final String className, final String globalId, final List<Double> coordinates) {
+		final String xcord = String.valueOf(coordinates.get(0));
+		final String ycord = String.valueOf(coordinates.get(1));
+		final String zcord = String.valueOf(coordinates.get(2));
+
+		final CMFunction function = dataView.findFunctionByName("_bim_update_coordinates");
+		final NameAlias f = NameAlias.as("f");
+		dataView.select(anyAttribute(function, f)).from(call(function, className, globalId, xcord, ycord, zcord), f)
+				.run();
 	}
 
 	@Override
@@ -152,11 +152,14 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 			System.out.println("No bim data found for card " + id);
 		}
 		final CMQueryRow row = queryResult.getOnlyRow();
+		if (!isValid(row, f)) {
+			return cardToExport;
+		}
 		final String code = String.class.cast(row.getValueSet(f).get(CODE_ATTRIBUTE));
-		final Integer containerIdAsInt = Integer.class.cast(row.getValueSet(f).get(CONTAINER_ID));
-		final Long containerId = new Long(containerIdAsInt.longValue());
 		final String description = String.class.cast(row.getValueSet(f).get(DESCRIPTION_ATTRIBUTE));
 		String globalId = String.class.cast(row.getValueSet(f).get(GLOBALID_ATTRIBUTE));
+		final Integer containerIdAsInt = Integer.class.cast(row.getValueSet(f).get(CONTAINER_ID));
+		final Long containerId = new Long(containerIdAsInt.longValue());
 		final String containerGlobalId = String.class.cast(row.getValueSet(f).get(CONTAINER_GUID));
 		String xCoord = String.class.cast(row.getValueSet(f).get(X_ATTRIBUTE));
 		String yCoord = String.class.cast(row.getValueSet(f).get(Y_ATTRIBUTE));
@@ -167,7 +170,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		final double z = zCoord != null && !zCoord.isEmpty() ? Double.parseDouble(zCoord) : 0;
 
 		if (globalId == null || globalId.isEmpty()) {
-			globalId = RandomStringUtils.randomAlphanumeric(22);
+			globalId = randomAlphanumeric(22);
 		}
 		if (x == 0 && y == 0 && z == 0) {
 			function = dataView.findFunctionByName(GENERATE_COORDINATES_FUNCTION);
@@ -189,7 +192,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 					.from(call(function, id, className, globalId, xCoord, yCoord, zCoord), f).run();
 		}
 
-		final DefaultEntity cardWithBimData = DefaultEntity.withTypeAndKey(StringUtils.EMPTY, globalId);
+		final DefaultEntity cardWithBimData = DefaultEntity.withTypeAndKey(EMPTY, globalId);
 		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(ID_ATTRIBUTE, id.toString()));
 		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(BASE_CLASS_NAME, className));
 		cardWithBimData.addAttribute(DefaultAttribute.withNameAndValue(CODE_ATTRIBUTE, code));
@@ -206,6 +209,18 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 
 		return cardToExport;
 
+	}
+
+	private boolean isValid(final CMQueryRow row, final NameAlias f) {
+		final Object containerReference = row.getValueSet(f).get(CONTAINER_ID);
+		if (containerReference == null) {
+			return false;
+		}
+		final String containerGlobalId = String.class.cast(row.getValueSet(f).get(CONTAINER_GUID));
+		if(isBlank(containerGlobalId)){
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -447,6 +462,5 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		}
 		return rootId;
 	}
-
 
 }

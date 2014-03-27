@@ -284,7 +284,9 @@ public class DefaultExportConnector implements GenericMapper {
 			for (final CMCard card : cardsOfSource) {
 				final Entity cardToExport = bimDataView.getCardDataForExport(card.getId(), className,
 						containerAttributeName, containerClassName, shapeOid, ifcType);
-				dataSource.put(cardToExport.getKey(), cardToExport);
+				if (cardToExport.isValid()) {
+					dataSource.put(cardToExport.getKey(), cardToExport);
+				}
 			}
 		}
 		return dataSource;

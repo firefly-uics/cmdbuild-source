@@ -194,17 +194,11 @@ $BODY$
 COMMENT ON FUNCTION _bim_data_for_export(integer, varchar, varchar, varchar) IS 'TYPE: function|CATEGORIES: system';
 
 
-CREATE OR REPLACE FUNCTION _bim_data_for_export_new(
-	IN id integer, 
-	IN "className" varchar, 
-	IN "containerAttributeName" varchar, 
-	IN "containerClassName" varchar,
-	OUT "Code" character varying, 
-	OUT "Description" character varying, 
-	OUT "GlobalId" character varying, 
-	OUT container_id integer,
-	OUT container_globalid varchar,
-	OUT x character varying, OUT y character varying, OUT z character varying)
+-- Function: _bim_data_for_export_new(integer, character varying, character varying, character varying)
+
+-- DROP FUNCTION _bim_data_for_export_new(integer, character varying, character varying, character varying);
+
+CREATE OR REPLACE FUNCTION _bim_data_for_export_new(IN id integer, IN "className" character varying, IN "containerAttributeName" character varying, IN "containerClassName" character varying, OUT "Code" character varying, OUT "Description" character varying, OUT "GlobalId" character varying, OUT container_id integer, OUT container_globalid character varying, OUT x character varying, OUT y character varying, OUT z character varying)
   RETURNS record AS
 $BODY$
 DECLARE
@@ -234,7 +228,7 @@ BEGIN
 	query = 
 		'SELECT "GlobalId"' || ' ' || --
 		'FROM bim."' || "containerClassName" || '" '--
-		'WHERE "Master"=' || container_id || ';';
+		'WHERE "Master"=' || coalesce(container_id,-1) || ';';
 
 	RAISE NOTICE '%',query;
 	EXECUTE(query) INTO container_globalid;
@@ -242,7 +236,7 @@ BEGIN
 	
 	query = 'SELECT bimclass."Perimeter" ' || -- 
 		'FROM bim."' || "containerClassName" || '" AS bimclass ' || --
-		'WHERE "Master"= ' || container_id || ';' ;
+		'WHERE "Master"= ' || coalesce(container_id,-1) || ';' ;
 
 	RAISE NOTICE '%',query;
 	EXECUTE(query) INTO roomperimeter;
@@ -273,6 +267,7 @@ $BODY$
   LANGUAGE plpgsql VOLATILE
   COST 100;
 COMMENT ON FUNCTION _bim_data_for_export_new(integer, character varying, character varying, character varying) IS 'TYPE: function|CATEGORIES: system';
+
 
 CREATE OR REPLACE FUNCTION _bim_update_coordinates(IN classname character varying, IN globalid character varying, IN x character varying, IN y character varying, IN z character varying, OUT success boolean)
   RETURNS boolean AS
