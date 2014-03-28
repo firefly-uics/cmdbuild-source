@@ -20,7 +20,11 @@
 						text: tr.isDefault,
 						dataIndex: CMDBuild.ServiceProxy.parameter.IS_DEFAULT,
 						align: 'center',
-						width: 60,
+						width: 50,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true,
 						renderer: me.defaultGridColumnRenderer
 					},
 					{

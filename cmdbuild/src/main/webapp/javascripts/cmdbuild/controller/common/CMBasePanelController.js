@@ -1,6 +1,7 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.CMBasePanelController', {
+	Ext.define('CMDBuild.controller.common.CMBasePanelController', {
+		alternateClassName: 'CMDBuild.controller.CMBasePanelController', // Legacy class name
 
 		constructor: function(view) {
 			this.view = view;

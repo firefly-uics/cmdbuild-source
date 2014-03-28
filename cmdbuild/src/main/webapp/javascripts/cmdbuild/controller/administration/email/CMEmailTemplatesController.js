@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.email.CMEmailTemplatesController', {
-		extend: 'CMDBuild.controller.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		// Overwrite
 		constructor: function(view) {

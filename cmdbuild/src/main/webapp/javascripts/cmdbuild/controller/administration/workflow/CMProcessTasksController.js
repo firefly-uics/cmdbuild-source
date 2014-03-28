@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.workflow.CMProcessTasksController', {
-		extend: 'CMDBuild.controller.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		currentProcess: undefined,
 		currentProcessTaskId: undefined,
