@@ -1,6 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.accordion.CMBaseAccordionController', {
+
 		constructor: function(accordion) {
 			this.accordion = accordion;
 
@@ -10,9 +11,8 @@
 				}
 			}, this);
 
-			if (this.accordion.getSelectionModel) {
+			if (this.accordion.getSelectionModel)
 				manageTreeEvents.call(this);
-			}
 		},
 
 		onAccordionExpanded: function() {

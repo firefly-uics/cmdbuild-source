@@ -17,9 +17,8 @@
 				for (var i = 0; i < this.subcontrollers.length; ++i) {
 					var c = this.subcontrollers[i];
 
-					if (c && typeof c[method] == 'function') {
+					if (c && typeof c[method] == 'function')
 						c[method].apply(c, args);
-					}
 				}
 			}
 		},

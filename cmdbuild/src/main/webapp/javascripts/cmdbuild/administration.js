@@ -15,7 +15,6 @@
 	Ext.define("CMDBuild.app.Administration", {
 		statics: {
 			init: function() {
-
 				var me = this;
 				var administration = true;
 				var forCredits = false;
@@ -369,4 +368,5 @@
 			}
 		}
 	});
+
 })();

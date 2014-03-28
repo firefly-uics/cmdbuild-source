@@ -2,6 +2,7 @@
 
 	Ext.define("CMDBuild.LoginPanel", {
 		extend: "Ext.panel.Panel",
+
 		tr: CMDBuild.Translation.login,
 
 		statics: {
@@ -180,9 +181,9 @@
 		//private
 		doLogin: function(field, event) {
 			var form = this.form.getForm();
-			if (!form.isValid()) {
+
+			if (!form.isValid())
 				return;
-			}
 
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.ServiceProxy.doLogin({

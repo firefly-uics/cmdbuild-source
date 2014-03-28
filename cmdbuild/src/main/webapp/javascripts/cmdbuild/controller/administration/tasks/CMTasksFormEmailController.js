@@ -161,7 +161,7 @@
 			delete formData[CMDBuild.ServiceProxy.parameter.HOUR];
 			delete formData[CMDBuild.ServiceProxy.parameter.MINUTE];
 			delete formData[CMDBuild.ServiceProxy.parameter.MOUNTH];
-_debug(formData);
+
 			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
 				CMDBuild.core.proxy.CMProxyTasks.create({
 					type: this.taskType,

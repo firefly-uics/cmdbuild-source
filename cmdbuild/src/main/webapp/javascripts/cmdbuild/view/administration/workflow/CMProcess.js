@@ -1,6 +1,8 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modWorkflow;
 
+	Ext.require('CMDBuild.core.proxy.CMProxyWorkflow');
+
 	Ext.define('CMDBuild.view.administration.workflow.CMProcess', {
 		extend: 'Ext.panel.Panel',
 

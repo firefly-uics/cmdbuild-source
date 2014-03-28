@@ -38,7 +38,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyReport.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyTranslations.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWidgetConfiguration.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWorkflow.js"></script>
 
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>

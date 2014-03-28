@@ -58,6 +58,7 @@
 				CMDBuild.LoginPanel.buildAfterRequest();
 			});
 		</script>
+
 		<!-- 3. Login script -->
 		<script type="text/javascript" src="javascripts/cmdbuild/login.js"></script>
 		<title>CMDBuild</title>

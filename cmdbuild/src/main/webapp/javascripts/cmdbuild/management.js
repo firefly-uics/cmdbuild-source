@@ -14,7 +14,7 @@
 	var processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
 		rootVisible: true
 	});
-	 // TODO move in common
+	// TODO move in common
 	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion();
 	var dataViewAccordion = new CMDBuild.view.management.dataView.CMDataViewAccordion({
 		cmControllerType: CMDBuild.controller.management.common.CMFakeIdAccordionController
@@ -124,14 +124,11 @@
 					this.cmAccordions.push(this.classesAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled(processAccordion.cmName)
-					&& CMDBuild.Config.workflow.enabled == "true") {
-
+				if (!_CMUIConfiguration.isModuleDisabled(processAccordion.cmName) && CMDBuild.Config.workflow.enabled == "true") {
 					this.processAccordion = processAccordion;
 					this.cmAccordions.push(this.processAccordion);
 				}
 				if (!_CMUIConfiguration.isModuleDisabled(dataViewAccordion.cmName)) {
-
 					this.dataViewAccordion = dataViewAccordion;
 					this.cmAccordions.push(this.dataViewAccordion);
 				}
@@ -150,26 +147,23 @@
 					title: CMDBuild.Translation.management.modutilities.title
 				});
 
-				if (this.utilitiesTree.getRootNode().childNodes.length > 0) {
+				if (this.utilitiesTree.getRootNode().childNodes.length > 0)
 					this.cmAccordions.push(this.utilitiesTree);
-				}
 
 				for (var moduleName in this.utilitiesTree.submodules) {
 					var cmName = this.utilitiesTree.getSubmoduleCMName(moduleName);
-					if (!_CMUIConfiguration.isModuleDisabled(cmName)) {
+
+					if (!_CMUIConfiguration.isModuleDisabled(cmName))
 						addUtilitySubpanel(cmName, this.cmPanels);
-					}
 				}
 
 				this.loadResources();
 
-				if (_CMUIConfiguration.isFullScreenMode()) {
+				if (_CMUIConfiguration.isFullScreenMode())
 					_CMUIState.onlyGrid();
-				}
 			},
 
 			loadResources: function() {
-
 				_CMCache.syncAttachmentCategories();
 
 				var me = this,
@@ -188,10 +182,11 @@
 						);
 
 						/* *********************************
-						 * Resume here the layouts operations 
+						 * Resume here the layouts operations
 						 */
 						Ext.resumeLayouts(true);
 						/* *********************************/
+
 						_CMMainViewportController.viewport.doLayout();
 
 						CMDBuild.view.CMMainViewport.hideSplash(function() {
@@ -226,6 +221,7 @@
 						// loaded
 						var readMenuParams = {};
 						readMenuParams[_CMProxy.parameter.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
+
 						CMDBuild.ServiceProxy.menu.read({
 							params: readMenuParams,
 							success: function(response, options, decoded) {
@@ -323,8 +319,8 @@
 			}
 		};
 
-		if (typeof builders[cmName] == "function") {
+		if (typeof builders[cmName] == "function")
 			panels.push(builders[cmName]());
-		}
 	}
+
 })();

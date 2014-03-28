@@ -48,9 +48,9 @@
 			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
 			CMDBuild.Runtime.DefaultGroupName = '<%= group.getName() %>';
 			CMDBuild.Runtime.DefaultGroupDescription = '<%= group.getDescription() %>';
-<%	if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { %>
-			CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
-<%	} %>
+			<% if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { %>
+				CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
+			<% } %>
 			CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
 
 		</script>
@@ -63,12 +63,13 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-core.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-administration.js"></script>
 -->
-	
-	<script type="text/javascript">
-	Ext.onReady(function() {
-		CMDBuild.app.Administration.init();
-	});
-	</script>
+
+		<script type="text/javascript">
+			Ext.onReady(function() {
+				CMDBuild.app.Administration.init();
+			});
+		</script>
+
 		<title>CMDBuild</title>
 	</head>
 	<body id="cmbodyAdministration">
@@ -80,23 +81,21 @@
 				<div id="msg">
 					<div id="msg-inner">
 						<p><tr:translation key="common.user"/>: <strong><%= operationUser.getAuthenticatedUser().getDescription() %></strong> | <a href="logout.jsp"><tr:translation key="common.logout"/></a></p>
-						<% 
-							if (defaultGroupName == null ||
-									"".equals(defaultGroupName) ) { %>
-								<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><%= group.getDescription() %></strong>
-						<%	} else { %>
-								<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
-								<script type="text/javascript">
+						<% if (defaultGroupName == null || "".equals(defaultGroupName) ) { %>
+							<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><%= group.getDescription() %></strong>
+						<% } else { %>
+							<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
+							<script type="text/javascript">
 								CMDBuild.Runtime.GroupDescriptions = '<%= groupDecriptions %>';
-								</script>
-						<%	} %>
+							</script>
+						<% } %>
 							| <a href="management.jsp"><tr:translation key="management.description"/></a>
 						</p>
 					</div>
 				</div>
 			</div>
 		</div>
-		
+
 		<div id="footer" class="cm_no_display">
 			<div class="fl"><a href="http://www.cmdbuild.org" target="_blank">www.cmdbuild.org</a></div>
 			<div id="cmdbuild_credits_link" class="fc"><tr:translation key="common.credits"/></div>
