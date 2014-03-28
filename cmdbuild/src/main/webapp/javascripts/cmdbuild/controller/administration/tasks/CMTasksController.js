@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksController', {
-		extend: 'CMDBuild.controller.CMBasePanelController',
+		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		parentDelegate: undefined,
 		tasksDatas: ['all', 'email', 'event', 'workflow'], // Used to check task existence
