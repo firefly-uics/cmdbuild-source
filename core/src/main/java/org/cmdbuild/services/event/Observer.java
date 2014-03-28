@@ -8,12 +8,12 @@ public interface Observer {
 
 	Logger logger = Log.PERSISTENCE;
 
-	void afterCreate(CMCard actual);
+	void afterCreate(CMCard current);
 
-	void beforeUpdate(CMCard actual, CMCard next);
+	void beforeUpdate(CMCard current, CMCard next);
 
-	void afterUpdate(CMCard previous, CMCard actual);
+	void afterUpdate(CMCard previous, CMCard current);
 
-	void beforeDelete(CMCard actual);
+	void beforeDelete(CMCard current);
 
 }

@@ -10,20 +10,24 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.services.event.Contexts.AfterCreate;
 import org.cmdbuild.services.event.Contexts.AfterUpdate;
 import org.cmdbuild.services.event.Contexts.BeforeDelete;
 import org.cmdbuild.services.event.Contexts.BeforeUpdate;
+import org.cmdbuild.spring.SpringIntegrationUtils;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 public class ScriptCommand implements Command {
 
+
 	private static final Marker marker = MarkerFactory.getMarker(ScriptCommand.class.getName());
 
-	private static final String PREVIOUS = "previous";
-	private static final String NEXT = "next";
-	private static final String ACTUAL = "actual";
+	private static final String CURRENT = "__current__";
+	private static final String LOGGER = "__logger__";
+	private static final String NEXT = "__next__";
+	private static final String PREVIOUS = "__previous__";
 
 	public static class Builder implements org.cmdbuild.common.Builder<ScriptCommand> {
 
@@ -85,28 +89,29 @@ public class ScriptCommand implements Command {
 	}
 
 	private void fillBindings(final Bindings bindings, final Context context) {
+		bindings.put(LOGGER, Command.logger);
 		context.accept(new ContextVisitor() {
 
 			@Override
 			public void visit(final AfterCreate context) {
-				bindings.put(ACTUAL, context.card);
+				bindings.put(CURRENT, context.card);
 			}
 
 			@Override
 			public void visit(final BeforeUpdate context) {
-				bindings.put(ACTUAL, context.actual);
+				bindings.put(CURRENT, context.actual);
 				bindings.put(NEXT, context.next);
 			}
 
 			@Override
 			public void visit(final AfterUpdate context) {
 				bindings.put(PREVIOUS, context.previous);
-				bindings.put(ACTUAL, context.actual);
+				bindings.put(CURRENT, context.actual);
 			}
 
 			@Override
 			public void visit(final BeforeDelete context) {
-				bindings.put(ACTUAL, context.card);
+				bindings.put(CURRENT, context.card);
 			}
 
 		});
