@@ -2,6 +2,7 @@ package org.cmdbuild.logic.taskmanager;
 
 import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.UserStore;
@@ -76,7 +77,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 		}
 
 		private boolean matchesClass(final CMCard input) {
-			return input.getType().getName().equals(task.getTargetClassname());
+			return isBlank(task.getTargetClassname()) || input.getType().getName().equals(task.getTargetClassname());
 		}
 
 	}

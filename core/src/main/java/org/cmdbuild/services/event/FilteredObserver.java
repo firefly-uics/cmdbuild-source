@@ -20,23 +20,23 @@ public class FilteredObserver extends ForwardingObserver {
 		}
 
 		@Override
-		public void afterCreate(final CMCard actual) {
-			this.card = actual;
+		public void afterCreate(final CMCard current) {
+			this.card = current;
 		}
 
 		@Override
-		public void beforeUpdate(final CMCard actual, final CMCard next) {
-			this.card = actual;
+		public void beforeUpdate(final CMCard current, final CMCard next) {
+			this.card = current;
 		}
 
 		@Override
-		public void afterUpdate(final CMCard previous, final CMCard actual) {
-			this.card = actual;
+		public void afterUpdate(final CMCard previous, final CMCard current) {
+			this.card = current;
 		}
 
 		@Override
-		public void beforeDelete(final CMCard actual) {
-			this.card = actual;
+		public void beforeDelete(final CMCard current) {
+			this.card = current;
 		}
 
 	}
