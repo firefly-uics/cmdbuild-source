@@ -87,7 +87,16 @@ public class DefaultEmailPersistence implements EmailPersistence {
 		final Long id;
 		if (email.getId() == null) {
 			logger.debug("creating new email");
-			email.setStatus(EmailStatus.DRAFT);
+			/*
+			 * FIXME
+			 * 
+			 * Awful hack needed for fix a bug related to legacy e-mail
+			 * management. Persistence should not be responsible for setting a
+			 * status, the code that uses it should!
+			 */
+			if (email.getStatus() != EmailStatus.RECEIVED) {
+				email.setStatus(EmailStatus.DRAFT);
+			}
 			final Storable storable = emailStore.create(email);
 			id = Long.valueOf(storable.getIdentifier());
 		} else {
