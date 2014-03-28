@@ -62,29 +62,29 @@ public class DefaultObserver implements Observer {
 	}
 
 	@Override
-	public void afterCreate(final CMCard actual) {
+	public void afterCreate(final CMCard current) {
 		executeAllForPhase(Phase.AFTER_CREATE, Contexts.afterCreate() //
-				.withCard(actual));
+				.withCard(current));
 	}
 
 	@Override
-	public void beforeUpdate(final CMCard actual, final CMCard next) {
+	public void beforeUpdate(final CMCard current, final CMCard next) {
 		executeAllForPhase(Phase.BEFORE_UPDATE, Contexts.beforeUpdate() //
-				.withActual(actual) //
+				.withActual(current) //
 				.withNext(next));
 	}
 
 	@Override
-	public void afterUpdate(final CMCard previous, final CMCard actual) {
+	public void afterUpdate(final CMCard previous, final CMCard current) {
 		executeAllForPhase(Phase.AFTER_UPDATE, Contexts.afterUpdate() //
 				.withPrevious(previous) //
-				.withActual(actual));
+				.withActual(current));
 	}
 
 	@Override
-	public void beforeDelete(final CMCard actual) {
+	public void beforeDelete(final CMCard current) {
 		executeAllForPhase(Phase.BEFORE_DELETE, Contexts.beforeDelete() //
-				.withCard(actual));
+				.withCard(current));
 	}
 
 	private void executeAllForPhase(final Phase phase, final org.cmdbuild.common.Builder<? extends Context> context) {
