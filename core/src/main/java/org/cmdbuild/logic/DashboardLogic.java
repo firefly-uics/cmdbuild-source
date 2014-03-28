@@ -44,7 +44,10 @@ public class DashboardLogic implements Logic {
 	private final DashboardStore store;
 	private final OperationUser operationUser;
 
-	public DashboardLogic(final CMDataView view, final DashboardStore store, final OperationUser operationUser) {
+	public DashboardLogic( //
+			final CMDataView view, //
+			final DashboardStore store, //
+			final OperationUser operationUser) {
 		this.view = view;
 		this.store = store;
 		this.operationUser = operationUser;

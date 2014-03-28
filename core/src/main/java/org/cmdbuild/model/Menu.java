@@ -1,6 +1,6 @@
 package org.cmdbuild.model;
 
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 
 public class Menu implements Storable {
 

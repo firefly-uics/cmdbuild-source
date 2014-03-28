@@ -1,6 +1,6 @@
 package org.cmdbuild.common.mail;
 
-import java.net.URL;
+import javax.activation.DataHandler;
 
 /**
  * Get mail interface.
@@ -20,11 +20,11 @@ public interface GetMail extends FetchedMail {
 		String getName();
 
 		/**
-		 * Gets the attachment's URL.
+		 * Gets the attachment's {@link DataHandler}.
 		 * 
-		 * @return the attachment's URL.
+		 * @return the attachment's {@link DataHandler}.
 		 */
-		URL getUrl();
+		DataHandler getDataHandler();
 
 	}
 

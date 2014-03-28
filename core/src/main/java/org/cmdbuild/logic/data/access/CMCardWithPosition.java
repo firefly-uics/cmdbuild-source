@@ -8,9 +8,8 @@ public class CMCardWithPosition {
 
 	public CMCardWithPosition( //
 			final Long position, //
-			final CMCard card
-			) {
-
+			final CMCard card //
+	) {
 		this.position = position;
 		this.card = card;
 	}
