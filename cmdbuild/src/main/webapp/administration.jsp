@@ -64,10 +64,11 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-administration.js"></script>
 -->
 
-	Ext.onReady(function() {
-		var app = new CMDBuild.app.Administration();
-		app.loadAllYouNeed();
-	});
+		<script type="text/javascript">
+			Ext.onReady(function() {
+				CMDBuild.app.Administration.init();
+			});
+		</script>
 
 		<title>CMDBuild</title>
 	</head>

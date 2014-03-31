@@ -136,7 +136,13 @@
 					case 'email':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.email;
 
-					case 'event':
+					case 'event': // TODO
+						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event;
+
+					case 'event_asynchronous': // TODO
+						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event;
+
+					case 'event_synchronous': // TODO
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event;
 
 					case 'workflow':
