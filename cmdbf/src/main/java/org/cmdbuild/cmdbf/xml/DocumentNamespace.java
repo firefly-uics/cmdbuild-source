@@ -47,254 +47,282 @@ public class DocumentNamespace extends AbstractNamespace {
 	public static final String DOCUMENT_NAME = "name";
 	public static final String DOCUMENT_DESCRIPTION = "description";
 	public static final String DOCUMENT_CONTENT = "content";
-	
-	private DmsLogic dmsLogic;
-	private LookupLogic lookupLogic;
-	private DmsConfiguration dmsConfiguration;
-							
-	
-	public DocumentNamespace(String name, DmsLogic dmsLogic, LookupLogic lookupLogic, CmdbfConfiguration cmdbfConfiguration, DmsConfiguration dmsConfiguration) {
+
+	private final DmsLogic dmsLogic;
+	private final LookupLogic lookupLogic;
+	private final DmsConfiguration dmsConfiguration;
+
+	public DocumentNamespace(final String name, final DmsLogic dmsLogic, final LookupLogic lookupLogic,
+			final CmdbfConfiguration cmdbfConfiguration, final DmsConfiguration dmsConfiguration) {
 		super(name, cmdbfConfiguration);
 		this.dmsLogic = dmsLogic;
 		this.lookupLogic = lookupLogic;
 		this.dmsConfiguration = dmsConfiguration;
 	}
-	
-	@Override	
+
+	@Override
 	public boolean isEnabled() {
 		return dmsConfiguration.isEnabled();
 	}
-	
+
 	@Override
 	public XmlSchema getSchema() {
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		documentBuilderFactory.setNamespaceAware(true);	
-		XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
+		final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		documentBuilderFactory.setNamespaceAware(true);
+		final XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
 		XmlSchema schema = null;
-		
+
 		schema = new XmlSchema(getNamespaceURI(), schemaCollection);
 		schema.setId(getSystemId());
-		schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));		
-		
-		if(dmsConfiguration.isEnabled()) {
-			for(DocumentTypeDefinition documentTypeDefinition : getTypes(DocumentTypeDefinition.class)){
-				XmlSchemaType type = getXsd(documentTypeDefinition, schema);
-				schema.addType(type);
-				XmlSchemaElement element = new XmlSchemaElement();
-				element.setType(type);
+		schema.setElementFormDefault(XmlSchemaForm.QUALIFIED);
+
+		if (dmsConfiguration.isEnabled()) {
+			for (final DocumentTypeDefinition documentTypeDefinition : getTypes(DocumentTypeDefinition.class)) {
+				final XmlSchemaType type = getXsd(documentTypeDefinition, schema);
+				final XmlSchemaElement element = new XmlSchemaElement(schema, true);
+				element.setSchemaTypeName(type.getQName());
 				element.setName(type.getName());
-				schema.getItems().add(element);
 			}
-		}		
+		}
 		return schema;
 	}
 
 	@Override
-	public boolean updateSchema(XmlSchema schema) {
+	public boolean updateSchema(final XmlSchema schema) {
 		return false;
 	}
-	
+
 	@Override
-	public Iterable<DocumentTypeDefinition> getTypes(Class<?> cls) {
-		if(DocumentTypeDefinition.class.isAssignableFrom(cls))
-			return Iterables.transform(lookupLogic.getAllLookup(getLookupType(dmsLogic.getCategoryLookupType()), true), new Function<Lookup, DocumentTypeDefinition>(){
-				public DocumentTypeDefinition apply(Lookup input) {
-					return dmsLogic.getCategoryDefinition(input.description);
-				}
-			});
-		else
+	public Iterable<DocumentTypeDefinition> getTypes(final Class<?> cls) {
+		if (DocumentTypeDefinition.class.isAssignableFrom(cls)) {
+			return Iterables.transform(lookupLogic.getAllLookup(getLookupType(dmsLogic.getCategoryLookupType()), true),
+					new Function<Lookup, DocumentTypeDefinition>() {
+						@Override
+						public DocumentTypeDefinition apply(final Lookup input) {
+							return new DocumentTypeDefinition() {
+
+								@Override
+								public String getName() {
+									return input.description;
+								}
+
+								@Override
+								public Iterable<MetadataGroupDefinition> getMetadataGroupDefinitions() {
+									return dmsLogic.getCategoryDefinition(input.description)
+											.getMetadataGroupDefinitions();
+								}
+							};
+						}
+					});
+		} else {
 			return Collections.emptyList();
+		}
 	}
-	
+
 	@Override
-	public QName getTypeQName(Object type) {
-		if (type instanceof DocumentTypeDefinition)
+	public QName getTypeQName(final Object type) {
+		if (type instanceof DocumentTypeDefinition) {
 			return new QName(getNamespaceURI(), ((DocumentTypeDefinition) type).getName(), getNamespacePrefix());
-		else
+		} else {
 			return null;
+		}
 	}
-	
+
 	@Override
-	public DocumentTypeDefinition getType(QName qname) {
-		if(getNamespaceURI().equals(qname.getNamespaceURI()))
+	public DocumentTypeDefinition getType(final QName qname) {
+		if (getNamespaceURI().equals(qname.getNamespaceURI())) {
 			return dmsLogic.getCategoryDefinition(qname.getLocalPart());
-		else
+		} else {
 			return null;
+		}
 	}
-	
+
 	@Override
-	public boolean serialize(Node xml, Object entry) {
+	public boolean serialize(final Node xml, final Object entry) {
 		boolean serialized = false;
-		if(entry instanceof DmsDocument) {
-			DmsDocument document = (DmsDocument)entry;
-			DocumentTypeDefinition documentTypeDefinition = dmsLogic.getCategoryDefinition(document.getCategory());
-			QName qName = getTypeQName(documentTypeDefinition);
-			Element xmlElement = xml.getOwnerDocument().createElementNS(qName.getNamespaceURI(), getNamespacePrefix() + ":" + qName.getLocalPart());
-			
-			Element nameProperty = xml.getOwnerDocument().createElementNS(getNamespaceURI(), getNamespacePrefix() + ":" + DOCUMENT_NAME);				
+		if (entry instanceof DmsDocument) {
+			final DmsDocument document = (DmsDocument) entry;
+			final DocumentTypeDefinition documentTypeDefinition = dmsLogic
+					.getCategoryDefinition(document.getCategory());
+			final QName qName = getTypeQName(documentTypeDefinition);
+			final Element xmlElement = xml.getOwnerDocument().createElementNS(qName.getNamespaceURI(),
+					getNamespacePrefix() + ":" + qName.getLocalPart());
+
+			final Element nameProperty = xml.getOwnerDocument().createElementNS(getNamespaceURI(),
+					getNamespacePrefix() + ":" + DOCUMENT_NAME);
 			nameProperty.setTextContent(document.getName());
 			xmlElement.appendChild(nameProperty);
-			
-			Element descriptionProperty = xml.getOwnerDocument().createElementNS(getNamespaceURI(), getNamespacePrefix() + ":" + DOCUMENT_DESCRIPTION);				
+
+			final Element descriptionProperty = xml.getOwnerDocument().createElementNS(getNamespaceURI(),
+					getNamespacePrefix() + ":" + DOCUMENT_DESCRIPTION);
 			descriptionProperty.setTextContent(document.getDescription());
 			xmlElement.appendChild(descriptionProperty);
-	
+
 			try {
-				String content = new String(Base64.encodeBase64(IOUtils.toByteArray(document.getInputStream())), "ASCII");
-				Element contentProperty = xml.getOwnerDocument().createElementNS(getNamespaceURI(), getNamespacePrefix() + ":" + DOCUMENT_CONTENT);				
+				final String content = new String(Base64.encodeBase64(IOUtils.toByteArray(document.getInputStream())),
+						"ASCII");
+				final Element contentProperty = xml.getOwnerDocument().createElementNS(getNamespaceURI(),
+						getNamespacePrefix() + ":" + DOCUMENT_CONTENT);
 				contentProperty.setTextContent(content);
 				xmlElement.appendChild(contentProperty);
-			} catch (UnsupportedEncodingException e) {
+			} catch (final UnsupportedEncodingException e) {
 				Log.CMDBUILD.error("DocumentNamespace getXml", e);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				Log.CMDBUILD.error("DocumentNamespace getXml", e);
-			}			
-			
-			for(MetadataGroup group : document.getMetadataGroups()) {
-				for(Metadata metadata : group.getMetadata()) {
-					String value = metadata.getValue();
-					if(value != null) {
-						Element property = xml.getOwnerDocument().createElementNS(getNamespaceURI(), getNamespacePrefix() + ":" + metadata.getName());	
+			}
+
+			for (final MetadataGroup group : document.getMetadataGroups()) {
+				for (final Metadata metadata : group.getMetadata()) {
+					final String value = metadata.getValue();
+					if (value != null) {
+						final Element property = xml.getOwnerDocument().createElementNS(getNamespaceURI(),
+								getNamespacePrefix() + ":" + metadata.getName());
 						property.setTextContent(metadata.getValue());
 						xmlElement.appendChild(property);
 					}
 				}
 			}
-			
+
 			xml.appendChild(xmlElement);
 			serialized = true;
-		}	
+		}
 		return serialized;
 	}
-	
-	@Override	
-	public DmsDocument deserialize(Node xml) {
+
+	@Override
+	public DmsDocument deserialize(final Node xml) {
 		DmsDocument value = null;
-		DocumentTypeDefinition type = getType(new QName(xml.getNamespaceURI(), xml.getLocalName()));
-		if(type != null) {
-			Map<String, String> properties = new HashMap<String, String>();
+		final DocumentTypeDefinition type = getType(new QName(xml.getNamespaceURI(), xml.getLocalName()));
+		if (type != null) {
+			final Map<String, String> properties = new HashMap<String, String>();
 			for (int i = 0; i < xml.getChildNodes().getLength(); i++) {
-				Node item = xml.getChildNodes().item(i);
+				final Node item = xml.getChildNodes().item(i);
 				if (item instanceof Element) {
-					Element child = (Element) item;
+					final Element child = (Element) item;
 					String name = child.getLocalName();
-					if (name == null)
+					if (name == null) {
 						name = child.getTagName();
+					}
 					properties.put(name, child.getTextContent());
 				}
 			}
-			Map<String, Map<String, String>> autoCompletionRules = dmsLogic.getAutoCompletionRulesByClass(type.getName());
-			for(String group : autoCompletionRules.keySet())
+			final Map<String, Map<String, String>> autoCompletionRules = dmsLogic.getAutoCompletionRulesByClass(type
+					.getName());
+			for (final String group : autoCompletionRules.keySet()) {
 				properties.putAll(autoCompletionRules.get(group));
-			
-			Map<String, MetadataGroup> metadataGroups = new HashMap<String, MetadataGroup>();
-			for(String key : properties.keySet()) {
+			}
+
+			final Map<String, MetadataGroup> metadataGroups = new HashMap<String, MetadataGroup>();
+			for (final String key : properties.keySet()) {
 				DmsMetadataGroup group = null;
-				for(MetadataGroupDefinition groupDefinition : type.getMetadataGroupDefinitions()) {
-					for(MetadataDefinition metadataDefinition : groupDefinition.getMetadataDefinitions()) {
-						if(metadataDefinition.getName().equals(key)) {
-							group = (DmsMetadataGroup)metadataGroups.get(groupDefinition.getName());
-							if(group == null) {
+				for (final MetadataGroupDefinition groupDefinition : type.getMetadataGroupDefinitions()) {
+					for (final MetadataDefinition metadataDefinition : groupDefinition.getMetadataDefinitions()) {
+						if (metadataDefinition.getName().equals(key)) {
+							group = (DmsMetadataGroup) metadataGroups.get(groupDefinition.getName());
+							if (group == null) {
 								group = new DmsMetadataGroup(groupDefinition.getName());
 								metadataGroups.put(group.getName(), group);
 							}
-						}					
+						}
 					}
-					if(group != null && !group.containsKey(key)) {
-						DmsMetadata metadata = new DmsMetadata(key, properties.get(key));
+					if (group != null && !group.containsKey(key)) {
+						final DmsMetadata metadata = new DmsMetadata(key, properties.get(key));
 						group.put(key, metadata);
 					}
 				}
 			}
-			
+
 			value = new DmsDocument();
 			value.setCategory(type.getName());
 			value.setName(properties.get(DOCUMENT_NAME));
-	    	value.setDescription(properties.get(DOCUMENT_DESCRIPTION));
-	    	value.setMetadataGroups(metadataGroups.values());
-			if(properties.containsKey(DOCUMENT_CONTENT)) {
-				String content = properties.get(DOCUMENT_CONTENT);
+			value.setDescription(properties.get(DOCUMENT_DESCRIPTION));
+			value.setMetadataGroups(metadataGroups.values());
+			if (properties.containsKey(DOCUMENT_CONTENT)) {
+				final String content = properties.get(DOCUMENT_CONTENT);
 				try {
 					value.setInputStream(new ByteArrayInputStream(Base64.decodeBase64(content.getBytes("ASCII"))));
-				} catch (UnsupportedEncodingException e) {
+				} catch (final UnsupportedEncodingException e) {
 					throw new Error(e);
-				}		    					
-			}					
+				}
+			}
 		}
 		return value;
 	}
-	
-	private XmlSchemaType getXsd(DocumentTypeDefinition documentType, XmlSchema schema) {
-		XmlSchemaComplexType type = new XmlSchemaComplexType(schema);
-		type.setName(documentType.getName());		
-		XmlSchemaSequence sequence = new XmlSchemaSequence();
-		
-		XmlSchemaElement nameElement = new XmlSchemaElement();
+
+	private XmlSchemaType getXsd(final DocumentTypeDefinition documentType, final XmlSchema schema) {
+		final XmlSchemaComplexType type = new XmlSchemaComplexType(schema, true);
+		type.setName(documentType.getName());
+		final XmlSchemaSequence sequence = new XmlSchemaSequence();
+
+		final XmlSchemaElement nameElement = new XmlSchemaElement(schema, false);
 		nameElement.setName(DOCUMENT_NAME);
-		nameElement.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);		
+		nameElement.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 		sequence.getItems().add(nameElement);
-		
-		XmlSchemaElement descriptionElement = new XmlSchemaElement();
+
+		final XmlSchemaElement descriptionElement = new XmlSchemaElement(schema, false);
 		descriptionElement.setName(DOCUMENT_DESCRIPTION);
 		descriptionElement.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 		sequence.getItems().add(descriptionElement);
-				
-		XmlSchemaElement contentElement = new XmlSchemaElement();
+
+		final XmlSchemaElement contentElement = new XmlSchemaElement(schema, false);
 		contentElement.setName(DOCUMENT_CONTENT);
 		contentElement.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_BASE64);
 		sequence.getItems().add(contentElement);
-		
-		for(MetadataGroupDefinition metadataGroup : documentType.getMetadataGroupDefinitions()){
-			for(MetadataDefinition metadata : metadataGroup.getMetadataDefinitions())
+
+		for (final MetadataGroupDefinition metadataGroup : documentType.getMetadataGroupDefinitions()) {
+			for (final MetadataDefinition metadata : metadataGroup.getMetadataDefinitions()) {
 				sequence.getItems().add(getXsd(metadata, schema));
+			}
 		}
-		
+
 		type.setParticle(sequence);
 		return type;
 	}
-	
-	private XmlSchemaElement getXsd(MetadataDefinition metadata, XmlSchema schema) {
-		XmlSchemaElement element = new XmlSchemaElement();
+
+	private XmlSchemaElement getXsd(final MetadataDefinition metadata, final XmlSchema schema) {
+		final XmlSchemaElement element = new XmlSchemaElement(schema, false);
 		element.setName(metadata.getName());
-		
-		if(metadata.isMandatory())
+
+		if (metadata.isMandatory()) {
 			element.setMinOccurs(1);
-		else
+		} else {
 			element.setMinOccurs(0);
+		}
 		element.setMaxOccurs(1);
-		
-		if(metadata.getType() == MetadataType.BOOLEAN)
+
+		if (metadata.getType() == MetadataType.BOOLEAN) {
 			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_BOOLEAN);
-		else if(metadata.getType() == MetadataType.INTEGER)
+		} else if (metadata.getType() == MetadataType.INTEGER) {
 			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_INTEGER);
-		else if(metadata.getType() == MetadataType.FLOAT)
+		} else if (metadata.getType() == MetadataType.FLOAT) {
 			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_FLOAT);
-		else if(metadata.getType() == MetadataType.DATE)
+		} else if (metadata.getType() == MetadataType.DATE) {
 			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_DATE);
-		else if(metadata.getType() == MetadataType.DATETIME)
+		} else if (metadata.getType() == MetadataType.DATETIME) {
 			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_DATETIME);
-		else if(metadata.getType() == MetadataType.TEXT)
+		} else if (metadata.getType() == MetadataType.TEXT) {
 			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-		else if(metadata.getType() == MetadataType.LIST) {
-			XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema);
-			XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
+		} else if (metadata.getType() == MetadataType.LIST) {
+			final XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema, false);
+			final XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
 			restriction.setBaseTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-			for(String value : metadata.getListValues()) {
-				XmlSchemaEnumerationFacet facet = new XmlSchemaEnumerationFacet();
+			for (final String value : metadata.getListValues()) {
+				final XmlSchemaEnumerationFacet facet = new XmlSchemaEnumerationFacet();
 				facet.setValue(value);
 				restriction.getFacets().add(facet);
-			}			
+			}
 			type.setContent(restriction);
 			element.setSchemaType(type);
-		}
-		else
+		} else {
 			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
+		}
 		return element;
-	}	
-	
-	private LookupType getLookupType(final String type){
-		return Iterables.find(lookupLogic.getAllTypes(), new Predicate<LookupType>(){
-			public boolean apply(LookupType input) {
+	}
+
+	private LookupType getLookupType(final String type) {
+		return Iterables.find(lookupLogic.getAllTypes(), new Predicate<LookupType>() {
+			@Override
+			public boolean apply(final LookupType input) {
 				return input.name.equals(type);
 			}
 		});

@@ -2,28 +2,28 @@ package org.cmdbuild.dao.entry;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 
-public class ForwardingCard extends ForwardingEntry implements CMCard {
+public abstract class ForwardingCard extends ForwardingEntry implements CMCard {
 
-	private final CMCard inner;
+	private final CMCard delegate;
 
-	public ForwardingCard(final CMCard inner) {
-		super(inner);
-		this.inner = inner;
+	protected ForwardingCard(final CMCard delegate) {
+		super(delegate);
+		this.delegate = delegate;
 	}
 
 	@Override
 	public CMClass getType() {
-		return inner.getType();
+		return delegate.getType();
 	}
 
 	@Override
 	public Object getCode() {
-		return inner.getCode();
+		return delegate.getCode();
 	}
 
 	@Override
 	public Object getDescription() {
-		return inner.getDescription();
+		return delegate.getDescription();
 	}
 
 }

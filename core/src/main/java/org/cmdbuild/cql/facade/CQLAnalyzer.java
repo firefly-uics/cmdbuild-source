@@ -2,7 +2,7 @@ package org.cmdbuild.cql.facade;
 
 import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
-import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
@@ -16,6 +16,7 @@ import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
 import static org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue.lt;
 import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
 import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
+import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
@@ -300,10 +301,10 @@ public class CQLAnalyzer {
 			final Object value = values.get(0);
 			switch (field.getOperator()) {
 			case LTEQ:
-				whereClause = and(condition(attributeForQuery, eq(value)), condition(attributeForQuery, lt(value)));
+				whereClause = or(condition(attributeForQuery, eq(value)), condition(attributeForQuery, lt(value)));
 				break;
 			case GTEQ:
-				whereClause = and(condition(attributeForQuery, eq(value)), condition(attributeForQuery, gt(value)));
+				whereClause = or(condition(attributeForQuery, eq(value)), condition(attributeForQuery, gt(value)));
 				break;
 			case LT:
 				whereClause = condition(attributeForQuery, lt(value));
@@ -324,7 +325,7 @@ public class CQLAnalyzer {
 				whereClause = condition(attributeForQuery, endsWith(value));
 				break;
 			case BTW:
-				whereClause = and(condition(attributeForQuery, gt(value)), condition(attributeForQuery, lt(value)));
+				whereClause = and(condition(attributeForQuery, gt(value)), condition(attributeForQuery, lt(values.get(1))));
 				break;
 			case IN:
 				whereClause = condition(attributeForQuery, in(values.toArray()));

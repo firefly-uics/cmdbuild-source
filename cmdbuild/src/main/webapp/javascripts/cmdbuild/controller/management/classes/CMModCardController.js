@@ -103,6 +103,7 @@
 		buildSubControllers: function() {
 			var me = this;
 			me.subControllers = [];
+			Ext.suspendLayouts();
 			buildCardPanelController(me, me.view.getCardPanel());
 			buildGridController(me, me.view.getGrid());
 			buildRelationsController(me, me.view.getRelationsPanel());
@@ -112,6 +113,7 @@
 			buildAttachmentsController(me, me.view.getAttachmentsPanel());
 			buildHistoryController(me, me.view.getHistoryPanel());
 			buildBimController(me, me.view.getGrid());
+			Ext.resumeLayouts();
 		},
 
 		// override: bind the CMCardModuleState

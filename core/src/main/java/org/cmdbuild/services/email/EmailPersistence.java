@@ -2,8 +2,8 @@ package org.cmdbuild.services.email;
 
 import java.util.NoSuchElementException;
 
+import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.model.email.Email;
-import org.cmdbuild.model.email.EmailTemplate;
 
 public interface EmailPersistence {
 

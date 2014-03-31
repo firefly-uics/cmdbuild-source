@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.data;
 
+import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
@@ -15,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -49,7 +51,7 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataAction.Visitor;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Create;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Delete;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Update;
@@ -60,28 +62,12 @@ import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
  * Business Logic Layer for data definition.
  */
 public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
-
-	public static interface MetadataAction {
-
-		public interface Visitor {
-
-			void visit(Create action);
-
-			void visit(Update action);
-
-			void visit(Delete action);
-		}
-
-		void accept(Visitor visitor);
-
-	}
 
 	public static class MetadataActions {
 
@@ -127,6 +113,30 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 
 	};
 
+	private static class FunctionItemWrapper implements FunctionItem {
+
+		private final CMFunction delegate;
+
+		public FunctionItemWrapper(final CMFunction delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public String name() {
+			return delegate.getName();
+		}
+
+	}
+
+	private static Function<CMFunction, FunctionItem> toFunctionItem = new Function<CMFunction, FunctionItem>() {
+
+		@Override
+		public FunctionItem apply(final CMFunction input) {
+			return new FunctionItemWrapper(input);
+		}
+
+	};
+
 	private static final String UPDATE_CLASS_INDEXES_FUNCTION_NAME = "_cm_create_class_default_order_indexes";
 
 	private static final NameAlias FUNCTION_ALIAS = NameAlias.as("f");
@@ -139,22 +149,14 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		this.view = dataView;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.cmdbuild.logic.data.DataDefinitionLogic#getView()
-	 */
 	@Override
 	public CMDataView getView() {
 		return view;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild
-	 * .model.data.EntryType, boolean)
+	/**
+	 * if forceCreation is true, check if already exists a table with the same
+	 * name of the given entryType
 	 */
 	@Override
 	public CMClass createOrUpdate(final EntryType entryType, final boolean forceCreation) {
@@ -166,13 +168,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return createOrUpdate(entryType);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild
-	 * .model.data.EntryType)
-	 */
 	@Override
 	public CMClass createOrUpdate(final EntryType entryType) {
 		logger.info("creating or updating class '{}'", entryType);
@@ -213,12 +208,8 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.logic.data.DataDefinitionLogic#deleteOrDeactivate(java.lang
-	 * .String)
+	/**
+	 * TODO: delete also privileges that refers to the deleted class
 	 */
 	@Override
 	public void deleteOrDeactivate(final String className) {
@@ -228,7 +219,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			logger.warn("class '{}' not found", className);
 			return;
 		}
-		boolean hasChildren = Iterables.size(existingClass.getChildren()) > 0;
+		final boolean hasChildren = size(existingClass.getChildren()) > 0;
 		if (existingClass.isSuperclass() && hasChildren) {
 			throw ORMException.ORMExceptionType.ORM_TABLE_HAS_CHILDREN.createException();
 		}
@@ -243,13 +234,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild
-	 * .model.data.Attribute)
-	 */
 	@Override
 	public CMAttribute createOrUpdate(final Attribute attribute) {
 		logger.info("creating or updating attribute '{}'", attribute.toString());
@@ -262,7 +246,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			logger.info("attribute not already created, creating a new one");
 
 			// force for the new attribute to have the last (1 based) index
-			int numberOfAttribute = Iterables.size(owner.getAttributes());
+			final int numberOfAttribute = size(owner.getAttributes());
 			attribute.setIndex(numberOfAttribute + 1);
 
 			validate(attribute);
@@ -410,13 +394,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		.validate(attribute);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.logic.data.DataDefinitionLogic#deleteOrDeactivate(org.cmdbuild
-	 * .model.data.Attribute)
-	 */
 	@Override
 	public void deleteOrDeactivate(final Attribute attribute) {
 		logger.info("deleting attribute '{}'", attribute.toString());
@@ -451,13 +428,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.logic.data.DataDefinitionLogic#reorder(org.cmdbuild.model
-	 * .data.Attribute)
-	 */
 	@Override
 	public void reorder(final Attribute attribute) {
 		logger.info("reordering attribute '{}'", attribute.toString());
@@ -470,13 +440,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		view.updateAttribute(definitionForReordering(attribute, existingAttribute));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.logic.data.DataDefinitionLogic#changeClassOrders(java.lang
-	 * .String, java.util.List)
-	 */
 	@Override
 	public void changeClassOrders(final String className, final List<ClassOrder> classOrders) {
 		logger.info("changing classorders '{}' for class '{}'", classOrders, className);
@@ -506,12 +469,8 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return (classOrder == null) ? 0 : classOrder.value;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.logic.data.DataDefinitionLogic#createOrUpdate(org.cmdbuild
-	 * .model.data.Domain)
+	/**
+	 * TODO: remove it and use the create method and update method
 	 */
 	@Override
 	@Deprecated
@@ -550,13 +509,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return createdDomain;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.logic.data.DataDefinitionLogic#update(org.cmdbuild.model
-	 * .data.Domain)
-	 */
 	@Override
 	public CMDomain update(final Domain domain) {
 		final CMDomain existing = view.findDomain(domain.getName());
@@ -571,13 +523,6 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		return updatedDomain;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.cmdbuild.logic.data.DataDefinitionLogic#deleteDomainByName(java.lang
-	 * .String)
-	 */
 	@Override
 	public void deleteDomainByName(final String name) {
 		logger.info("deleting domain '{}'", name);
@@ -610,7 +555,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		if (classContainsReferenceAttributeToDomain(table, domain)) {
 			return true;
 		}
-		for (CMClass descendant : table.getDescendants()) {
+		for (final CMClass descendant : table.getDescendants()) {
 			if (classContainsReferenceAttributeToDomain(descendant, domain)) {
 				return true;
 			}
@@ -630,6 +575,12 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public Iterable<FunctionItem> functions() {
+		return from(view.findAllFunctions()) //
+				.transform(toFunctionItem);
 	}
 
 }

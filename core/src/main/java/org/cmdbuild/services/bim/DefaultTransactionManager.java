@@ -1,6 +1,6 @@
 package org.cmdbuild.services.bim;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.bim.service.BimService;
 
 public class DefaultTransactionManager implements TransactionManager {

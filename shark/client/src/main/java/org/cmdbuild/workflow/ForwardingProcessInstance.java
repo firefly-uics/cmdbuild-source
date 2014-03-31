@@ -6,48 +6,48 @@ import org.cmdbuild.dao.entry.ForwardingCard;
 import org.cmdbuild.workflow.service.WSProcessDefInfo;
 import org.cmdbuild.workflow.service.WSProcessInstanceState;
 
-public class ForwardingProcessInstance extends ForwardingCard implements CMProcessInstance {
+public abstract class ForwardingProcessInstance extends ForwardingCard implements CMProcessInstance {
 
-	private final CMProcessInstance inner;
+	private final CMProcessInstance delegate;
 
-	public ForwardingProcessInstance(final CMProcessInstance inner) {
-		super(inner);
-		this.inner = inner;
+	protected ForwardingProcessInstance(final CMProcessInstance delegate) {
+		super(delegate);
+		this.delegate = delegate;
 	}
 
 	@Override
 	public CMProcessClass getType() {
-		return inner.getType();
+		return delegate.getType();
 	}
 
 	@Override
 	public Long getCardId() {
-		return inner.getCardId();
+		return delegate.getCardId();
 	}
 
 	@Override
 	public String getProcessInstanceId() {
-		return inner.getProcessInstanceId();
+		return delegate.getProcessInstanceId();
 	}
 
 	@Override
 	public WSProcessInstanceState getState() {
-		return inner.getState();
+		return delegate.getState();
 	}
 
 	@Override
 	public List<? extends CMActivityInstance> getActivities() {
-		return inner.getActivities();
+		return delegate.getActivities();
 	}
 
 	@Override
 	public CMActivityInstance getActivityInstance(final String activityInstanceId) {
-		return inner.getActivityInstance(activityInstanceId);
+		return delegate.getActivityInstance(activityInstanceId);
 	}
 
 	@Override
 	public WSProcessDefInfo getUniqueProcessDefinition() {
-		return inner.getUniqueProcessDefinition();
+		return delegate.getUniqueProcessDefinition();
 	}
 
 }

@@ -41,7 +41,7 @@ import java.util.Map.Entry;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.bim.mapper.Reader;
 import org.cmdbuild.bim.mapper.xml.BimReader;
 import org.cmdbuild.bim.model.Attribute;

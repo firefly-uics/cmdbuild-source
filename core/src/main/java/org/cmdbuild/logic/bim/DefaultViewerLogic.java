@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.bim;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.bim.utils.BimConstants.CARDID_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CARD_DESCRIPTION_FIELD_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.CLASSID_FIELD_NAME;

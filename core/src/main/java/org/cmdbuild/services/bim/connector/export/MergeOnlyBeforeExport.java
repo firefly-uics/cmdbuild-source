@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.services.bim.BimFacade;

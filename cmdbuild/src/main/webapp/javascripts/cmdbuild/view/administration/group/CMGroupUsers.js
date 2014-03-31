@@ -38,7 +38,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 			title: tr.group.availableusers,
 			flex: 1
 		});
-		
+
 		var assignedUsersGrid =  new Ext.grid.Panel({
 			margins: "0 0 0 5",
 			store: this.assignedUsersStore,
@@ -102,7 +102,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 				}
 			});
 		};
-		
+
 		Ext.apply(this, {
 			frame: false,
 			border: false,
@@ -117,7 +117,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 			items: [availableUsersGrid,assignedUsersGrid],
 			buttonAlign: "center",
 			buttons: [{
-				text: CMDBuild.Translation.common.btns.confirm,
+				text: CMDBuild.Translation.common.buttons.confirm,
 				scope: this,
 				handler: saveGroupUsers
 			}]
@@ -128,7 +128,7 @@ Ext.define("CMDBuild.view.administration.group.CMGroupUsers", {
 	onGroupSelected: function(group) {
 		if (group) {
 			this.groupId = group.get("id");
-		} else { 
+		} else {
 			this.groupId=-1;
 		}
 

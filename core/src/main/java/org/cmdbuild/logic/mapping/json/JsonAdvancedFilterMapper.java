@@ -6,6 +6,7 @@ import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.NULL;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CLASSNAME_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.FULL_TEXT_QUERY_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.FUNCTION_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARDS_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_CARD_ID_KEY;
@@ -21,7 +22,8 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.alias.Alias;
@@ -49,14 +51,14 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 	private final Validator filterValidator;
 	private final CMDataView dataView;
 	private final Alias entryTypeAlias;
-	private final CMDataView systemDataView;
+	private final OperationUser operationUser;
 
 	public JsonAdvancedFilterMapper(//
 			final CMEntryType entryType, //
 			final JSONObject filterObject, //
 			final CMDataView dataView, //
 			final Alias entryTypeAlias, //
-			final CMDataView systemDataView //
+			final OperationUser operationUser //
 	) {
 		Validate.notNull(entryType);
 		Validate.notNull(filterObject);
@@ -65,7 +67,16 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 		this.filterValidator = new JsonFilterValidator(filterObject);
 		this.dataView = dataView;
 		this.entryTypeAlias = entryTypeAlias;
-		this.systemDataView = systemDataView;
+		this.operationUser = operationUser;
+	}
+
+	public JsonAdvancedFilterMapper( //
+			final CMEntryType entryType, //
+			final JSONObject filterObject, //
+			final CMDataView dataView, //
+			final OperationUser operationUser //
+	) {
+		this(entryType, filterObject, dataView, null, operationUser);
 	}
 
 	@Override
@@ -139,6 +150,13 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 					whereClauseBuilders.add(new JsonAttributeFilterBuilder(filter, entryType, dataView));
 
 				}
+			}
+		}
+		if (filterObject.has(FUNCTION_KEY)) {
+			final JSONArray array = filterObject.getJSONArray(FUNCTION_KEY);
+			for (int i = 0; i < array.length(); i++) {
+				final JSONObject definition = array.getJSONObject(i);
+				whereClauseBuilders.add(new JsonFunctionFilterBuilder(definition, entryType, dataView, operationUser));
 			}
 		}
 		return whereClauseBuilders;

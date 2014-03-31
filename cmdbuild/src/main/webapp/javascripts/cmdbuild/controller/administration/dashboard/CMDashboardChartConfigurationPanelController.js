@@ -65,6 +65,8 @@
 			this.view.disableTBarButtons();
 			this.view.enableButtons();
 			this.formController.prepareForModify();
+			_CMCache.initModifyingTranslations();
+			this.view.getFormPanel().descriptionArea.translationsKeyName = this.chart.get("name");
 		},
 
 		onAddButtonClick: function() {
@@ -73,6 +75,8 @@
 			this.gridController.clearSelection();
 			this.view.disableTBarButtons();
 			this.view.enableButtons();
+			_CMCache.initAddingTranslations();
+			this.view.getFormPanel().descriptionArea.translationsKeyName = "";
 		},
 
 		onPreviewButtonClick: function() {
@@ -112,6 +116,11 @@
 			var formData = this.formController.getFormData(),
 				me = this,
 				cb =  function(charts, idToSelect) {
+					for (var i = 0; i < charts.length; i++){
+						if (charts[i].get("id") == idToSelect) {
+							_CMCache.flushTranslationsToSave(charts[i].get("name"));
+						}
+					}
 					me.gridController.loadCharts(charts, idToSelect);
 					me.delegate.dashboardChartAreChanged();
 				};

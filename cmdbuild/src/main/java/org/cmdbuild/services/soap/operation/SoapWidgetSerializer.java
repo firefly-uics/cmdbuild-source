@@ -1,8 +1,7 @@
 package org.cmdbuild.services.soap.operation;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-import groovy.swing.factory.WidgetFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +23,7 @@ import org.cmdbuild.model.widget.PresetFromCard;
 import org.cmdbuild.model.widget.WebService;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.WidgetVisitor;
+import org.cmdbuild.model.widget.Workflow;
 import org.cmdbuild.report.ReportFactory.ReportType;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetDefinition;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetDefinitionParameter;
@@ -40,7 +40,7 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	/**
 	 * These constants are intended to be for legacy purpose only!
 	 * 
-	 * Only the constants defined in the {@link WidgetFactory} implementations
+	 * Only the constants defined in the {@link OpenReportWidgetFactory} implementations
 	 * should be used.
 	 */
 	@Legacy("no comment")
@@ -80,7 +80,7 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	public void visit(final Calendar calendar) {
 		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
 		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, calendar.getLabel()));
-		parameters.add(parameterFor(CalendarWidgetFactory.TARGET_CLASS, calendar.getTargetClass()));
+		parameters.add(parameterFor(CalendarWidgetFactory.TARGET_CLASS, calendar.getSourceClass()));
 		parameters.add(parameterFor(CalendarWidgetFactory.CQL_FILTER, calendar.getFilter()));
 		parameters.add(parameterFor(CalendarWidgetFactory.TITLE, calendar.getEventTitle()));
 		parameters.add(parameterFor(CalendarWidgetFactory.START_DATE, calendar.getStartDate()));
@@ -150,6 +150,16 @@ class SoapWidgetSerializer implements WidgetVisitor {
 		parameters.add(parameterFor(OpenReportWidgetFactory.STORE_IN_PROCESS, false));
 		parameters.add(parameterFor(LegacyConstants.FORCE_EXTENSION, openReport.getForceFormat()));
 		for (final Entry<String, Object> entry : openReport.getPreset().entrySet()) {
+			parameters.add(parameterFor(entry.getKey(), entry.getValue()));
+		}
+		definition.setParameters(parameters);
+	}
+
+	@Override
+	public void visit(final Workflow workflow) {
+		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
+		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, workflow.getLabel()));
+		for (final Entry<String, Object> entry : workflow.getPreset().entrySet()) {
 			parameters.add(parameterFor(entry.getKey(), entry.getValue()));
 		}
 		definition.setParameters(parameters);

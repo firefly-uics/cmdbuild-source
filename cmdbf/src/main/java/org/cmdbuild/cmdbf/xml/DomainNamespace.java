@@ -3,7 +3,6 @@ package org.cmdbuild.cmdbf.xml;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,12 +19,15 @@ import org.apache.ws.commons.schema.XmlSchemaImport;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaParticle;
 import org.apache.ws.commons.schema.XmlSchemaSequence;
+import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
+//import org.apache.ws.commons.schema.XmlSchemaSequenceMember;
 import org.apache.ws.commons.schema.XmlSchemaType;
 import org.cmdbuild.config.CmdbfConfiguration;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
@@ -49,120 +51,122 @@ public class DomainNamespace extends EntryNamespace {
 	private static final String DOMAIN_CARDINALITY = "cardinality";
 	private static final String DOMAIN_MASTER_DETAIL = "masterDetail";
 	private static final String DOMAIN_MASTER_DETAIL_DESCRIPTION = "masterDetailDescription";
-	
-	public DomainNamespace(String name, DataAccessLogic systemdataAccessLogic, DataAccessLogic userDataAccessLogic, DataDefinitionLogic dataDefinitionLogic, LookupLogic lookupLogic, CmdbfConfiguration cmdbfConfiguration) {	
+
+	public DomainNamespace(final String name, final DataAccessLogic systemdataAccessLogic,
+			final DataAccessLogic userDataAccessLogic, final DataDefinitionLogic dataDefinitionLogic,
+			final LookupLogic lookupLogic, final CmdbfConfiguration cmdbfConfiguration) {
 		super(name, systemdataAccessLogic, userDataAccessLogic, dataDefinitionLogic, lookupLogic, cmdbfConfiguration);
 	}
 
 	@Override
-	public XmlSchema getSchema(){
-		try {			
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			documentBuilderFactory.setNamespaceAware(true);	
-			Document document = documentBuilderFactory.newDocumentBuilder().newDocument();
-			XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
+	public XmlSchema getSchema() {
+		try {
+			final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			documentBuilderFactory.setNamespaceAware(true);
+			final Document document = documentBuilderFactory.newDocumentBuilder().newDocument();
+			final XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
 			XmlSchema schema = null;
-					
-			Set<String> imports = new HashSet<String>();
+
+			final Set<String> imports = new HashSet<String>();
 			schema = new XmlSchema(getNamespaceURI(), schemaCollection);
 			schema.setId(getSystemId());
-			schema.setElementFormDefault(new XmlSchemaForm(XmlSchemaForm.QUALIFIED));						
-			for(CMDomain domain : getTypes(CMDomain.class)) {
-				XmlSchemaType type = getXsd(domain, document, schema, imports);
-				schema.addType(type);
-				XmlSchemaElement element = new XmlSchemaElement();
-				element.setType(type);
+			schema.setElementFormDefault(XmlSchemaForm.QUALIFIED);
+			for (final CMDomain domain : getTypes(CMDomain.class)) {
+				final XmlSchemaType type = getXsd(domain, document, schema, imports);
+				final XmlSchemaElement element = new XmlSchemaElement(schema, true);
+				element.setSchemaTypeName(type.getQName());
 				element.setName(type.getName());
-				schema.getItems().add(element);
 			}
-			for(String namespace : imports) {
-				XmlSchemaImport schemaImport = new XmlSchemaImport();
+			for (final String namespace : imports) {
+				final XmlSchemaImport schemaImport = new XmlSchemaImport(schema);
 				schemaImport.setNamespace(namespace);
 				schemaImport.setSchemaLocation(getRegistry().getByNamespaceURI(namespace).getSchemaLocation());
-				schema.getItems().add(schemaImport);
 			}
 			return schema;
-		} catch (ParserConfigurationException e) {
+		} catch (final ParserConfigurationException e) {
 			throw new Error(e);
-		}	
+		}
 	}
-	
+
 	@Override
-	public boolean updateSchema(XmlSchema schema){
+	public boolean updateSchema(final XmlSchema schema) {
 		boolean updated = false;
-		if(getNamespaceURI().equals(schema.getTargetNamespace())) {
-			@SuppressWarnings("unchecked")
-			Iterator<XmlSchemaElement> elementIterator = schema.getElements().getValues();
-			while(elementIterator.hasNext()) {
-				XmlSchemaElement element = elementIterator.next();
-				domainFromXsd(element, schema);							    				
+		if (getNamespaceURI().equals(schema.getTargetNamespace())) {
+			for (final XmlSchemaType type : schema.getSchemaTypes().values()) {
+				domainFromXsd(type, schema);
 			}
 			updated = true;
 		}
 		return updated;
 	}
-	
+
 	@Override
-	public Iterable<? extends CMDomain> getTypes(Class<?> cls) {
-		if(CMDomain.class.isAssignableFrom(cls))
-			return Iterables.filter(systemDataAccessLogic.findActiveDomains(), new Predicate<CMDomain>(){
-				public boolean apply(CMDomain input) {
+	public Iterable<? extends CMDomain> getTypes(final Class<?> cls) {
+		if (CMDomain.class.isAssignableFrom(cls)) {
+			return Iterables.filter(systemDataAccessLogic.findActiveDomains(), new Predicate<CMDomain>() {
+				@Override
+				public boolean apply(final CMDomain input) {
 					return !input.isSystem();
 				}
 			});
-		else
+		} else {
 			return Collections.emptyList();
+		}
 	}
-	
+
 	@Override
-	public QName getTypeQName(Object type) {
+	public QName getTypeQName(final Object type) {
 		QName qname = null;
 		if (type instanceof CMDomain) {
-			CMEntryType entryType = (CMEntryType)type;
+			final CMEntryType entryType = (CMEntryType) type;
 			qname = new QName(getNamespaceURI(), entryType.getIdentifier().getLocalName(), getNamespacePrefix());
 		}
 		return qname;
 	}
-	
+
 	@Override
 	public CMDomain getType(final QName qname) {
-		if(getNamespaceURI().equals(qname.getNamespaceURI()))
-			return Iterables.tryFind(userDataAccessLogic.findActiveDomains(), new Predicate<CMDomain>(){
-				public boolean apply(CMDomain input) {
+		if (getNamespaceURI().equals(qname.getNamespaceURI())) {
+			return Iterables.tryFind(userDataAccessLogic.findActiveDomains(), new Predicate<CMDomain>() {
+				@Override
+				public boolean apply(final CMDomain input) {
 					return input.getIdentifier().getLocalName().equals(qname.getLocalPart());
 				}
 			}).orNull();
-		else
+		} else {
 			return null;
+		}
 	}
-	
+
 	@Override
-	public boolean serialize(Node xml, Object entry) {
+	public boolean serialize(final Node xml, final Object entry) {
 		boolean serialized = false;
-		if(entry instanceof CMRelation) {
-			CMRelation relation = (CMRelation)entry;
+		if (entry instanceof CMRelation) {
+			final CMRelation relation = (CMRelation) entry;
 			serialized = serialize(xml, relation.getType(), relation.getValues());
-		}	
+		}
 		return serialized;
 	}
-	
-	@Override	
-	public RelationDTO deserialize(Node xml) {
+
+	@Override
+	public RelationDTO deserialize(final Node xml) {
 		RelationDTO value = null;
-		CMDomain type = getType(new QName(xml.getNamespaceURI(), xml.getLocalName()));
-		if(type != null) {
+		final CMDomain type = getType(new QName(xml.getNamespaceURI(), xml.getLocalName()));
+		if (type != null) {
 			value = new RelationDTO();
 			value.domainName = type.getIdentifier().getLocalName();
 			value.relationAttributeToValue = deserialize(xml, type);
+			value.master = Source._1.name();			
 		}
 		return value;
 	}
-	
-	private XmlSchemaType getXsd(CMDomain domain, Document document, XmlSchema schema, Set<String> imports) {
-		XmlSchemaComplexType type = new XmlSchemaComplexType(schema);
+
+	private XmlSchemaType getXsd(final CMDomain domain, final Document document, final XmlSchema schema,
+			final Set<String> imports) {
+		final XmlSchemaComplexType type = new XmlSchemaComplexType(schema, true);
 		type.setName(domain.getIdentifier().getLocalName());
-		
-		Map<String, String> properties = new HashMap<String, String>();
+
+		final Map<String, String> properties = new HashMap<String, String>();
 		properties.put(DOMAIN_DESCRIPTION, domain.getDescription());
 		properties.put(DOMAIN_ACTIVE, Boolean.toString(domain.isActive()));
 		properties.put(DOMAIN_CLASS1, domain.getClass1().getIdentifier().getLocalName());
@@ -173,65 +177,78 @@ public class DomainNamespace extends EntryNamespace {
 		properties.put(DOMAIN_MASTER_DETAIL, Boolean.toString(domain.isMasterDetail()));
 		properties.put(DOMAIN_MASTER_DETAIL_DESCRIPTION, domain.getMasterDetailDescription());
 		setAnnotations(type, properties, document);
-		
-		XmlSchemaSequence sequence = new XmlSchemaSequence();
-		for(CMAttribute attribute : domain.getAttributes()){
-			if(attribute.isActive() && !attribute.isInherited())
+
+		final XmlSchemaSequence sequence = new XmlSchemaSequence();
+		for (final CMAttribute attribute : domain.getAttributes()) {
+			if (attribute.isActive() && !attribute.isInherited()) {
 				sequence.getItems().add(getXsd(attribute, document, schema, imports));
+			}
 		}
 		type.setParticle(sequence);
 		return type;
 	}
-	
-	private CMDomain domainFromXsd(XmlSchemaObject schemaObject, XmlSchema schema){
+
+	private CMDomain domainFromXsd(final XmlSchemaObject schemaObject, final XmlSchema schema) {
 		XmlSchemaType type = null;
-		if(schemaObject instanceof XmlSchemaType)
-			type = (XmlSchemaType)schemaObject;
-		else if(schemaObject instanceof XmlSchemaElement) {
-			XmlSchemaElement element = (XmlSchemaElement)schemaObject;
+		if (schemaObject instanceof XmlSchemaType) {
+			type = (XmlSchemaType) schemaObject;
+		} else if (schemaObject instanceof XmlSchemaElement) {
+			final XmlSchemaElement element = (XmlSchemaElement) schemaObject;
 			type = element.getSchemaType();
+			if (type == null) {
+				final QName typeName = element.getSchemaTypeName();
+				type = schema.getTypeByName(typeName);
+			}
 		}
-		CMDomain domain = null;		
-		if(type != null) {
-			Map<String, String> properties = getAnnotations(type);
-			if(type instanceof XmlSchemaComplexType) {
-				XmlSchemaParticle particle = ((XmlSchemaComplexType)type).getParticle();
-				
-				DomainBuilder domainBuilder = Domain.newDomain().withName(type.getName());
-				if(properties.containsKey(DOMAIN_CLASS1))
+		CMDomain domain = null;
+		if (type != null) {
+			final Map<String, String> properties = getAnnotations(type);
+			if (type instanceof XmlSchemaComplexType) {
+				final XmlSchemaParticle particle = ((XmlSchemaComplexType) type).getParticle();
+
+				final DomainBuilder domainBuilder = Domain.newDomain().withName(type.getName());
+				if (properties.containsKey(DOMAIN_CLASS1)) {
 					domainBuilder.withIdClass1(userDataAccessLogic.findClass(properties.get(DOMAIN_CLASS1)).getId());
-				if(properties.containsKey(DOMAIN_CLASS2))
+				}
+				if (properties.containsKey(DOMAIN_CLASS2)) {
 					domainBuilder.withIdClass2(userDataAccessLogic.findClass(properties.get(DOMAIN_CLASS2)).getId());
-				if(properties.containsKey(DOMAIN_DESCRIPTION))
+				}
+				if (properties.containsKey(DOMAIN_DESCRIPTION)) {
 					domainBuilder.withDescription(properties.get(DOMAIN_DESCRIPTION));
-				if(properties.containsKey(DOMAIN_DESCRIPTION1))
+				}
+				if (properties.containsKey(DOMAIN_DESCRIPTION1)) {
 					domainBuilder.withDirectDescription(properties.get(DOMAIN_DESCRIPTION1));
-				if(properties.containsKey(DOMAIN_DESCRIPTION2))
+				}
+				if (properties.containsKey(DOMAIN_DESCRIPTION2)) {
 					domainBuilder.withInverseDescription(properties.get(DOMAIN_DESCRIPTION2));
-				if(properties.containsKey(DOMAIN_CARDINALITY))
+				}
+				if (properties.containsKey(DOMAIN_CARDINALITY)) {
 					domainBuilder.withCardinality(properties.get(DOMAIN_CARDINALITY));
-				if(properties.containsKey(DOMAIN_MASTER_DETAIL_DESCRIPTION))
+				}
+				if (properties.containsKey(DOMAIN_MASTER_DETAIL_DESCRIPTION)) {
 					domainBuilder.withMasterDetailDescription(properties.get(DOMAIN_MASTER_DETAIL_DESCRIPTION));
-				if(properties.containsKey(DOMAIN_ACTIVE))
+				}
+				if (properties.containsKey(DOMAIN_ACTIVE)) {
 					domainBuilder.thatIsActive(Boolean.parseBoolean(properties.get(DOMAIN_ACTIVE)));
-				else
+				} else {
 					domainBuilder.thatIsActive(true);
-				if(properties.containsKey(DOMAIN_MASTER_DETAIL))
+				}
+				if (properties.containsKey(DOMAIN_MASTER_DETAIL)) {
 					domainBuilder.thatIsMasterDetail(Boolean.parseBoolean(properties.get(DOMAIN_MASTER_DETAIL)));
+				}
 				domain = dataDefinitionLogic.createOrUpdate(domainBuilder.build());
-				
-				if(particle!=null && particle instanceof XmlSchemaSequence) {
-					XmlSchemaSequence sequence = (XmlSchemaSequence)particle;
-					for(int i=0; i<sequence.getItems().getCount(); i++) {
-						XmlSchemaObject schemaItem = sequence.getItems().getItem(i);
-						if(schemaItem instanceof XmlSchemaElement) {
-							XmlSchemaElement element = (XmlSchemaElement)schemaItem;
+
+				if (particle != null && particle instanceof XmlSchemaSequence) {
+					final XmlSchemaSequence sequence = (XmlSchemaSequence) particle;
+					for (final XmlSchemaSequenceMember schemaItem : sequence.getItems()) {
+						if (schemaItem instanceof XmlSchemaElement) {
+							final XmlSchemaElement element = (XmlSchemaElement) schemaItem;
 							addAttributeFromXsd(element, schema, domain);
 						}
 					}
 				}
 			}
 		}
-		return domain;		
-	}	
+		return domain;
+	}
 }

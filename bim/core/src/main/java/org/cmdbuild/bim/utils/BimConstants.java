@@ -1,6 +1,6 @@
 package org.cmdbuild.bim.utils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class BimConstants {
 

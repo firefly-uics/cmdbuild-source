@@ -1,6 +1,6 @@
 package org.cmdbuild.workflow.api;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.workflow.Constants.CURRENT_GROUP_NAME_VARIABLE;
 import static org.cmdbuild.workflow.Constants.CURRENT_USER_USERNAME_VARIABLE;
 

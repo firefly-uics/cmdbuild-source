@@ -2,11 +2,11 @@ package org.cmdbuild.services.email;
 
 import org.cmdbuild.services.email.EmailTemplateResolver.DataFacade;
 
-public class ForwardingDataFacade implements DataFacade {
+public abstract class ForwardingDataFacade implements DataFacade {
 
 	private final DataFacade dataFacade;
 
-	public ForwardingDataFacade(final DataFacade dataFacade) {
+	protected ForwardingDataFacade(final DataFacade dataFacade) {
 		this.dataFacade = dataFacade;
 	}
 

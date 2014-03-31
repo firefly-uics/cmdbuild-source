@@ -113,7 +113,11 @@ Ext.define("CMDBuild.Management.LookupCombo", {
 	statics: {
 		build: function(attribute) {
 			var field;
-			if (attribute.lookupchain.length == 1) {
+			if (attribute.lookupchain.length == 0) {
+				field = buildSingleLookupField(attribute);
+				field.isMultiLevel = false;
+			}
+			else if (attribute.lookupchain.length == 1) {
 				field = buildSingleLookupField(attribute);
 				field.isMultiLevel = false;
 			} else {

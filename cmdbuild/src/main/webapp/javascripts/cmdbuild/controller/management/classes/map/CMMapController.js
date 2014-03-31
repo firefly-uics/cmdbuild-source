@@ -94,14 +94,14 @@
 				/*@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
 				var layers = me.map.layers;
 				var layersPanel = me.mapPanel.getLayerSwitcherPanel();
-				for (var i=0, l=layers.length; i<l; ++i) {
-					if (/*layers[i].visibility === undefined && */layers[i].CM_geoserverLayer && layers[i].geoAttribute !== undefined) {
-						var checked = getLayerVisibility(me.currentCardId, layers[i].geoAttribute.cardBinding, layers[i].geoAttribute.visibility);
-						layersPanel.setItemCheckByLayerId(layers[i].id, checked);
-						layers[i].visibility = undefined;
-						layers[i].setVisibility(checked);
-					}
-				}
+//				for (var i=0, l=layers.length; i<l; ++i) {
+//					if (/*layers[i].visibility === undefined && */layers[i].CM_geoserverLayer && layers[i].geoAttribute !== undefined) {
+//						var checked = getLayerVisibility(me.currentCardId, layers[i].geoAttribute.cardBinding, layers[i].geoAttribute.visibility);
+//						layersPanel.setItemCheckByLayerId(layers[i].id, checked);
+//						layers[i].visibility = undefined;
+//						layers[i].setVisibility(checked);
+//					}
+//				}
 				
 			});
 		},
@@ -136,6 +136,7 @@
 				id = card.get("Id");
 			}
 
+
 			if (id != this.currentCardId) {
 				this.currentCardId = id;
 				var layers = this.mapPanel.getMap().getCmdbLayers();
@@ -162,14 +163,6 @@
 			var map = this.mapPanel.getMap();
 			var layers = map.layers;
 			var layersPanel = this.mapPanel.getLayerSwitcherPanel();
-			for (var i=0, l=layers.length; i<l; ++i) {
-				if (/*layers[i].visibility === undefined && */layers[i].CM_geoserverLayer && layers[i].geoAttribute !== undefined) {
-					var checked = getLayerVisibility(this.currentCardId, layers[i].geoAttribute.cardBinding, layers[i].geoAttribute.visibility);
-					layersPanel.setItemCheckByLayerId(layers[i].id, checked);
-					layers[i].visibility = undefined;
-					layers[i].setVisibility(checked);
-				}
-			}
 		},
 
 		onAddCardButtonClick: function() {
@@ -678,7 +671,6 @@
 				return layer;
 			}
 		}
-
 		return null;
 	}
 

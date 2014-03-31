@@ -11,7 +11,6 @@ import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.WorkflowLogger;
-import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.FilesStore;
@@ -55,7 +54,7 @@ public class Workflow {
 	private Data data;
 
 	@Autowired
-	private EmailLogic emailLogic;
+	private Email email;
 
 	@Autowired
 	private FilesStore filesStore;
@@ -105,7 +104,8 @@ public class Workflow {
 				template.storeTemplateRepository(), //
 				notifier, //
 				data.systemDataView(), //
-				emailLogic);
+				email.emailLogic(), //
+				email.emailTemplateLogic());
 	}
 
 	@Bean

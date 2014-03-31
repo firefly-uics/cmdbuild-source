@@ -54,6 +54,9 @@
 
 		onClassSelected : function(selection) {
 			this.getForm().loadRecord(selection);
+			Ext.apply(this.classDescription, {
+				translationsKeyName: selection.get("name")
+			});
 			this.disableModify(enableCMTbar = true);
 		},
 
@@ -80,7 +83,8 @@
 				iconCls : 'modify',
 				text : tr.modify_class,
 				handler: function() {
-					this.enableModify()
+					this.enableModify();
+					_CMCache.initModifyingTranslations();
 				},
 				scope: this
 			}),
@@ -131,13 +135,15 @@
 				cmImmutable : true
 			});
 
-			this.classDescription = new Ext.form.field.Text( {
+			this.classDescription = new Ext.form.CMTranslatableText( {
 				fieldLabel : tr.description,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : 'text',
 				allowBlank : false,
-				vtype : 'cmdbcomment'
+				vtype : 'cmdbcomment',
+				translationsKeyType: "Class", 
+				translationsKeyField: "Description"
 			});
 
 			this.isSuperClass = new Ext.ux.form.XCheckbox( {

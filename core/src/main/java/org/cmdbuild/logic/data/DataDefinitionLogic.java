@@ -7,45 +7,71 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.Logic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Create;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Delete;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 
 public interface DataDefinitionLogic extends Logic {
+	
+	interface MetadataAction {
 
-	public abstract CMDataView getView();
+		interface Visitor {
+
+			void visit(Create action);
+
+			void visit(Update action);
+
+			void visit(Delete action);
+		}
+
+		void accept(Visitor visitor);
+
+	}
+	
+	interface FunctionItem {
+
+		String name();
+
+	}
+
+	CMDataView getView();
 
 	/**
 	 * if forceCreation is true, check if already exists a table with the same
 	 * name of the given entryType
 	 */
-	public abstract CMClass createOrUpdate(EntryType entryType, boolean forceCreation);
+	CMClass createOrUpdate(EntryType entryType, boolean forceCreation);
 
-	public abstract CMClass createOrUpdate(EntryType entryType);
+	CMClass createOrUpdate(EntryType entryType);
 
 	/**
 	 * TODO: delete also privileges that refers to the deleted class
 	 */
-	public abstract void deleteOrDeactivate(String className);
+	void deleteOrDeactivate(String className);
 
-	public abstract CMAttribute createOrUpdate(Attribute attribute);
+	CMAttribute createOrUpdate(Attribute attribute);
 
-	public abstract void deleteOrDeactivate(Attribute attribute);
+	void deleteOrDeactivate(Attribute attribute);
 
-	public abstract void reorder(Attribute attribute);
+	void reorder(Attribute attribute);
 
-	public abstract void changeClassOrders(String className, List<ClassOrder> classOrders);
+	void changeClassOrders(String className, List<ClassOrder> classOrders);
 
 	/**
 	 * @deprecated use the create method and update methods only
 	 */
-	public abstract CMDomain createOrUpdate(Domain domain);
+	CMDomain createOrUpdate(Domain domain);
 
-	public abstract CMDomain create(Domain domain);
+	CMDomain create(Domain domain);
 
-	public abstract CMDomain update(Domain domain);
+	CMDomain update(Domain domain);
 
-	public abstract void deleteDomainByName(String name);
+	void deleteDomainByName(String name);
+
+	Iterable<FunctionItem> functions();
 
 }

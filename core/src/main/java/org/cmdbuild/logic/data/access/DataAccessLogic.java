@@ -177,9 +177,10 @@ public interface DataAccessLogic extends Logic {
 
 	/**
 	 * Relations.... move the following code to another class
+	 * 
+	 * @return all created relation'ids.
 	 */
-
-	void createRelations(RelationDTO relationDTO);
+	Iterable<Long> createRelations(RelationDTO relationDTO);
 
 	void updateRelation(RelationDTO relationDTO);
 

@@ -24,7 +24,7 @@ Ext.define("CMDBuild.view.common.filter.CMFilterConfigurationWindow", {
 			this.buttons = buttons;
 		} else {
 			this.buttons = [{
-				text: CMDBuild.Translation.common.btns.save,
+				text: CMDBuild.Translation.common.buttons.save,
 				handler: function() {
 					me.callDelegates("onCMFilterWindowSaveButtonClick", [me, me.getFilter()]);
 				}

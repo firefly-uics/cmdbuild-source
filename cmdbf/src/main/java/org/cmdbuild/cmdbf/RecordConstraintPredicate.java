@@ -14,34 +14,36 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 public class RecordConstraintPredicate implements Predicate<RecordType> {
-	
-	private RecordConstraintType recordConstraint;
-	
-	public RecordConstraintPredicate(RecordConstraintType recordConstraint) {
+
+	private final RecordConstraintType recordConstraint;
+
+	public RecordConstraintPredicate(final RecordConstraintType recordConstraint) {
 		this.recordConstraint = recordConstraint;
 	}
 
 	@Override
-	public boolean apply(RecordType record) {
+	public boolean apply(final RecordType record) {
 		boolean match = true;
-		if(!recordConstraint.getRecordType().isEmpty()) {
+		if (!recordConstraint.getRecordType().isEmpty()) {
 			final QName recordType = CMDBfUtils.getRecordType(record);
-			match = Iterables.any(recordConstraint.getRecordType(), new Predicate<QNameType>(){
-				public boolean apply(QNameType input) {
-					return input.getNamespace().equals(recordType.getNamespaceURI()) &&
-							input.getLocalName().equals(recordType.getLocalPart());
+			match = Iterables.any(recordConstraint.getRecordType(), new Predicate<QNameType>() {
+				@Override
+				public boolean apply(final QNameType input) {
+					return input.getNamespace().equals(recordType.getNamespaceURI())
+							&& input.getLocalName().equals(recordType.getLocalPart());
 				}
 			});
 		}
-		if(!recordConstraint.getPropertyValue().isEmpty()) {
+		if (!recordConstraint.getPropertyValue().isEmpty()) {
 			try {
 				final Map<QName, String> properties = CMDBfUtils.parseRecord(record);
-				match = Iterables.all(recordConstraint.getPropertyValue(), new Predicate<PropertyValueType>(){
-					public boolean apply(PropertyValueType input) {
+				match = Iterables.all(recordConstraint.getPropertyValue(), new Predicate<PropertyValueType>() {
+					@Override
+					public boolean apply(final PropertyValueType input) {
 						return CMDBfUtils.filter(properties, input);
 					}
 				});
-			} catch (ParserConfigurationException e) {
+			} catch (final ParserConfigurationException e) {
 				throw new Error(e);
 			}
 		}

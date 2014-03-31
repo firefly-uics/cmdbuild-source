@@ -34,7 +34,7 @@ public abstract class UserEntryType extends ForwardingEntryType {
 
 	@Override
 	public UserAttribute getAttribute(final String name) {
-		return UserAttribute.newInstance(view, super.getAttribute(name));
+		return view.proxy(super.getAttribute(name));
 	}
 
 	@Override

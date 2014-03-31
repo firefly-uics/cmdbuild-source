@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
-import org.cmdbuild.cmdbf.CMDBfQueryResult;
 import org.cmdbuild.cmdbf.CMDBfId;
 import org.cmdbuild.cmdbf.CMDBfItem;
+import org.cmdbuild.cmdbf.CMDBfQueryResult;
 import org.cmdbuild.cmdbf.CMDBfRelationship;
 import org.cmdbuild.cmdbf.ContentSelectorFunction;
 import org.cmdbuild.cmdbf.ItemSet;
@@ -33,86 +33,100 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 public class FederationQueryResult extends CMDBfQueryResult {
-	
-	private Collection<QueryResultType> mdrQueryResults;
 
-	public FederationQueryResult(QueryType body, Collection<ManagementDataRepository> mdrCollection) throws QueryErrorFault, InvalidPropertyTypeFault, UnknownTemplateIDFault, ExpensiveQueryErrorFault, XPathErrorFault, UnsupportedSelectorFault, UnsupportedConstraintFault {
+	private final Collection<QueryResultType> mdrQueryResults;
+
+	public FederationQueryResult(final QueryType body, final Collection<ManagementDataRepository> mdrCollection)
+			throws QueryErrorFault, InvalidPropertyTypeFault, UnknownTemplateIDFault, ExpensiveQueryErrorFault,
+			XPathErrorFault, UnsupportedSelectorFault, UnsupportedConstraintFault {
 		super(body);
 		mdrQueryResults = new ArrayList<QueryResultType>();
-		for(ManagementDataRepository mdr : mdrCollection) {
-			//TODO preprocess query for reconciliation
+		for (final ManagementDataRepository mdr : mdrCollection) {
+			// TODO preprocess query for reconciliation
 			mdrQueryResults.add(mdr.graphQuery(body));
 		}
 		execute();
 	}
 
 	@Override
-	protected Collection<CMDBfItem> getItems(final String templateId, Set<CMDBfId> instanceId, RecordConstraintType recordConstraint) {
-		Collection<CMDBfItem> items = new ArrayList<CMDBfItem>();
-		for(QueryResultType result : mdrQueryResults) {	
-			if(result.getNodes() != null) {
-				NodesType templateResult = Iterables.find(result.getNodes(), new Predicate<NodesType>(){
-					public boolean apply(NodesType input){
+	protected Collection<CMDBfItem> getItems(final String templateId, final Set<CMDBfId> instanceId,
+			final RecordConstraintType recordConstraint) {
+		final Collection<CMDBfItem> items = new ArrayList<CMDBfItem>();
+		for (final QueryResultType result : mdrQueryResults) {
+			if (result.getNodes() != null) {
+				final NodesType templateResult = Iterables.find(result.getNodes(), new Predicate<NodesType>() {
+					@Override
+					public boolean apply(final NodesType input) {
 						return templateId.equals(input.getTemplateId());
 					}
 				});
-				if(templateResult!=null) {
-					for(ItemType item : templateResult.getItem()) {
-						//TODO items reconciliation
-						CMDBfItem cmdbfItem = new CMDBfItem(item);
-						if(filter(cmdbfItem, instanceId, recordConstraint))
+				if (templateResult != null) {
+					for (final ItemType item : templateResult.getItem()) {
+						// TODO items reconciliation
+						final CMDBfItem cmdbfItem = new CMDBfItem(item);
+						if (filter(cmdbfItem, instanceId, recordConstraint)) {
 							items.add(cmdbfItem);
-					}
-				}
-			}
-		}		
-		return items;
-	}
-
-	@Override
-	protected Collection<CMDBfRelationship> getRelationships(final String templateId, Set<CMDBfId> instanceId, Set<CMDBfId> source, Set<CMDBfId> target, RecordConstraintType recordConstraint) {
-		Collection<CMDBfRelationship> relationships = new ArrayList<CMDBfRelationship>();
-		for(QueryResultType result : mdrQueryResults) {
-			if(result.getEdges() != null) {
-				EdgesType templateResult = Iterables.find(result.getEdges(), new Predicate<EdgesType>(){
-					public boolean apply(EdgesType input){
-						return templateId.equals(input.getTemplateId());
-					}
-				});
-				if(templateResult!=null) {
-					//TODO items reconciliation				
-					for(RelationshipType relationship : templateResult.getRelationship()) {
-						CMDBfRelationship cmdbfRelationship = new CMDBfRelationship(relationship);
-						if(source.contains(cmdbfRelationship.getSource()) && target.contains(cmdbfRelationship.getTarget())){
-							if(filter(cmdbfRelationship, instanceId, recordConstraint))
-								relationships.add(cmdbfRelationship);
 						}
 					}
 				}
 			}
-		}		
+		}
+		return items;
+	}
+
+	@Override
+	protected Collection<CMDBfRelationship> getRelationships(final String templateId, final Set<CMDBfId> instanceId,
+			final Set<CMDBfId> source, final Set<CMDBfId> target, final RecordConstraintType recordConstraint) {
+		final Collection<CMDBfRelationship> relationships = new ArrayList<CMDBfRelationship>();
+		for (final QueryResultType result : mdrQueryResults) {
+			if (result.getEdges() != null) {
+				final EdgesType templateResult = Iterables.find(result.getEdges(), new Predicate<EdgesType>() {
+					@Override
+					public boolean apply(final EdgesType input) {
+						return templateId.equals(input.getTemplateId());
+					}
+				});
+				if (templateResult != null) {
+					// TODO items reconciliation
+					for (final RelationshipType relationship : templateResult.getRelationship()) {
+						final CMDBfRelationship cmdbfRelationship = new CMDBfRelationship(relationship);
+						if (source.contains(cmdbfRelationship.getSource())
+								&& target.contains(cmdbfRelationship.getTarget())) {
+							if (filter(cmdbfRelationship, instanceId, recordConstraint)) {
+								relationships.add(cmdbfRelationship);
+							}
+						}
+					}
+				}
+			}
+		}
 		return relationships;
 	}
 
 	@Override
-	protected void fetchItemRecords(String templateId, ItemSet<CMDBfItem> items, ContentSelectorType contentSelector) {
-		for(CMDBfItem item : items)
+	protected void fetchItemRecords(final String templateId, final ItemSet<CMDBfItem> items,
+			final ContentSelectorType contentSelector) {
+		for (final CMDBfItem item : items) {
 			Iterables.transform(item.records(), new ContentSelectorFunction(contentSelector));
-		
+		}
+
 	}
 
 	@Override
-	protected void fetchRelationshipRecords(String templateId, PathSet relationships, ContentSelectorType contentSelector) {
-		for(CMDBfRelationship relationship : relationships)
-			Iterables.transform(relationship.records(), new ContentSelectorFunction(contentSelector));		
-		
+	protected void fetchRelationshipRecords(final String templateId, final PathSet relationships,
+			final ContentSelectorType contentSelector) {
+		for (final CMDBfRelationship relationship : relationships) {
+			Iterables.transform(relationship.records(), new ContentSelectorFunction(contentSelector));
+		}
+
 	}
-	
+
 	@Override
-	protected CMDBfId resolveAlias(MdrScopedIdType alias) {
-		return alias instanceof CMDBfId ? (CMDBfId)alias : new CMDBfId(alias);
+	protected CMDBfId resolveAlias(final MdrScopedIdType alias) {
+		return alias instanceof CMDBfId ? (CMDBfId) alias : new CMDBfId(alias);
 	}
-	
+
 	@Override
-	protected void fetchAlias(CMDBfItem item) {	}
+	protected void fetchAlias(final CMDBfItem item) {
+	}
 }

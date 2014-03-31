@@ -15,7 +15,7 @@ BEGIN
         (SELECT MAX("Notes") FROM "Metadata" meta WHERE meta."Code" = "Metadata"."Code" AND meta."Description" = 'system.gis.visibility' AND meta."Status" = 'A') AS "Visibility",
     	null AS "CardsBinding"
 	FROM "Metadata"
-	WHERE "Code" LIKE '%gis%' AND "Status" = 'A'
+	WHERE "Code" LIKE 'gis.%' AND "Status" = 'A'
 	GROUP BY "Code";
 END 
 $$ LANGUAGE PLPGSQL;

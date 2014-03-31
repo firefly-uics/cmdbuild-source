@@ -85,7 +85,7 @@
 			this.disableCMTbar();
 			this.enableCMButtons();
 
-			//http://www.sencha.com/forum/showthread.php?261407-4.2.0-HTML-editor-SetValue-does-not-work-when-component-is-not-rendered	
+			//http://www.sencha.com/forum/showthread.php?261407-4.2.0-HTML-editor-SetValue-does-not-work-when-component-is-not-rendered
 			//This function for fixing the above bug
 			//To delete when upgrade at extjs 4.2.1
 			this.tabPanel.showAll();
@@ -167,7 +167,7 @@
 		},
 
 		ensureEditPanel: function() {
-			if (this.tabPanel 
+			if (this.tabPanel
 					&& !this._isInEditMode) {
 
 				this.tabPanel.ensureEditPanel();
@@ -188,19 +188,19 @@
 		// private, allow simply configuration is subclassing
 		buildButtons: buildButtons,
 
-		getInvalidField: function() {
-			var fields = this.getForm().getFields(),
-				invalid = [];
-
-			fields.each(function(field) {
-				if (!field.isValid()) {
-					invalid.push(field);
-				}
-			});
-
-			return invalid;
-		},
-
+//		getInvalidField: function() {
+//			var fields = this.getForm().getFields(),
+//				invalid = [];
+//
+//			fields.each(function(field) {
+//				if (!field.isValid()) {
+//					invalid.push(field);
+//				}
+//			});
+//
+//			return invalid;
+//		},
+//
 		hasDomainAttributes: function() {
 			var fields = this.getForm().getFields().items;
 
@@ -213,33 +213,33 @@
 			return false;
 		},
 
-		getInvalidAttributeAsHTML: function() {
-			var fields = this.getInvalidField();
-			var alreadyAdded = {};
-
-			if (fields.length == 0) {
-				return null;
-			} else {
-				var out = "<ul>";
-				for (var i=0, l=fields.length; i<l; ++i) {
-					var attribute = fields[i].CMAttribute;
-					var item="";
-					if (attribute) {
-						if (alreadyAdded[attribute.description]) {
-							continue;
-						} else {
-							alreadyAdded[attribute.description] = true;
-							if (attribute.group) {
-								item = attribute.group + " - ";
-							}
-							out += "<li>" + item + attribute.description + "</li>";
-						}
-					}
-				}
-
-				return out+"</ul>";
-			}
-		},
+//		getInvalidAttributeAsHTML: function() {
+//			var fields = this.getInvalidField();
+//			var alreadyAdded = {};
+//
+//			if (fields.length == 0) {
+//				return null;
+//			} else {
+//				var out = "<ul>";
+//				for (var i=0, l=fields.length; i<l; ++i) {
+//					var attribute = fields[i].CMAttribute;
+//					var item="";
+//					if (attribute) {
+//						if (alreadyAdded[attribute.description]) {
+//							continue;
+//						} else {
+//							alreadyAdded[attribute.description] = true;
+//							if (attribute.group) {
+//								item = attribute.group + " - ";
+//							}
+//							out += "<li>" + item + attribute.description + "</li>";
+//						}
+//					}
+//				}
+//
+//				return out+"</ul>";
+//			}
+//		},
 
 		callFieldTemplateResolverIfNeeded: function() {
 			var fields = this.getForm().getFields().items;
@@ -295,7 +295,7 @@
 					a = 1;
 				try {
 					f.setValue(data[f.name]);
-					if (typeof f.isFiltered == "function" 
+					if (typeof f.isFiltered == "function"
 						&& f.isFiltered()) {
 
 						f.setServerVarsForTemplate(data);
@@ -314,7 +314,7 @@
 	function addReferenceAttrsToData(data, referenceAttributes) {
 		for (var referenceName in referenceAttributes || {}) {
 			var attributes = referenceAttributes[referenceName];
-			
+
 			for (var attributeName in attributes) {
 				var fullName = "_" + referenceName + "_" + attributeName,
 					value = attributes[attributeName];
@@ -484,7 +484,7 @@
 			});
 
 			this.cancelButton = new Ext.button.Button( {
-				text: this.readOnlyForm ? CMDBuild.Translation.common.btns.close : CMDBuild.Translation.common.btns.abort,
+				text: this.readOnlyForm ? CMDBuild.Translation.common.buttons.close : CMDBuild.Translation.common.buttons.abort,
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.abortButtonClick);
 				}

@@ -74,28 +74,22 @@ COMMENT ON COLUMN "Metadata"."Description" IS 'MODE: read|DESCR: Key|INDEX: 2';
 COMMENT ON COLUMN "Metadata"."Notes" IS 'MODE: read|DESCR: Value|INDEX: 3';
 
 ---------------------------------------------
--- Create Scheduler Jobs class
+-- Create Task class
 ---------------------------------------------
 
-SELECT cm_create_class('_SchedulerJob', 'Class', 'MODE: reserved|TYPE: class|DESCR: Scheduler|SUPERCLASS: false|STATUS: active');
-
-COMMENT ON COLUMN "_SchedulerJob"."Code" IS 'MODE: read|DESCR: Job Type|INDEX: 1';
-COMMENT ON COLUMN "_SchedulerJob"."Description" IS 'MODE: read|DESCR: Job Description|INDEX: 2';
-COMMENT ON COLUMN "_SchedulerJob"."Notes" IS 'MODE: read|DESCR: Job Parameters|INDEX: 3';
-
-SELECT cm_create_class_attribute('_SchedulerJob', 'CronExpression', 'text', '', true, false, 'MODE: read|DESCR: Cron Expression|STATUS: active');
-SELECT cm_create_class_attribute('_SchedulerJob', 'Detail', 'text', '', true, false, 'MODE: read|DESCR: Job Detail|STATUS: active');
-SELECT cm_create_class_attribute('_SchedulerJob', 'JobType', 'text', null, false, false, 'MODE: write|DESCR: JobType|STATUS: active');
-SELECT cm_create_class_attribute('_SchedulerJob', 'Running', 'boolean', null, false, false, 'MODE: write|DESCR: Running|STATUS: active');
+SELECT cm_create_class('_Task', 'Class', 'MODE: reserved|TYPE: class|DESCR: Scheduler|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('_Task', 'CronExpression', 'text', null, false, false, 'MODE: write|DESCR: Cron Expression|STATUS: active');
+SELECT cm_create_class_attribute('_Task', 'Type', 'text', null, false, false, 'MODE: write|DESCR: Type|STATUS: active');
+SELECT cm_create_class_attribute('_Task', 'Running', 'boolean', null, false, false, 'MODE: write|DESCR: Running|STATUS: active');
 
 ---------------------------------------------
--- Create Scheduler Job Parameters class
+-- Create Task Parameters class
 ---------------------------------------------
 
-SELECT cm_create_class('_SchedulerJobParameter', NULL, 'MODE: reserved|TYPE: class|DESCR: Email Accounts|SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('_SchedulerJobParameter', 'SchedulerId', 'int4', null, false, false, 'MODE: write|DESCR: Scheduler Id|INDEX: 1|STATUS: active');
-SELECT cm_create_class_attribute('_SchedulerJobParameter', 'Key', 'text', null, false, false, 'MODE: write|DESCR: Key|INDEX: 2|STATUS: active');
-SELECT cm_create_class_attribute('_SchedulerJobParameter', 'Value', 'text', null, false, false, 'MODE: write|DESCR: Value|INDEX: 3|STATUS: active');
+SELECT cm_create_class('_TaskParameter', NULL, 'MODE: reserved|TYPE: class|DESCR: Email Accounts|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('_TaskParameter', 'Owner', 'int4', null, false, false, 'MODE: write|DESCR: Owner|INDEX: 1|STATUS: active');
+SELECT cm_create_class_attribute('_TaskParameter', 'Key', 'text', null, true, false, 'MODE: write|DESCR: Key|INDEX: 2|STATUS: active');
+SELECT cm_create_class_attribute('_TaskParameter', 'Value', 'text', null, false, false, 'MODE: write|DESCR: Value|INDEX: 3|STATUS: active');
 
 ---------------------------------------------
 -- Create Data Store Templates class
@@ -189,7 +183,6 @@ SELECT cm_create_class_attribute('_MdrScopedId', 'IdItem', 'int4', NULL, TRUE, F
 ---------------------------------------------
 
 SELECT cm_create_class('_EmailTemplate', NULL, 'MODE: reserved|TYPE: class|DESCR: Email Templates|SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('_EmailTemplate', 'Owner', 'regclass', null, false, false, 'MODE: write|DESCR: Class owner|INDEX: 1|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'From', 'text', null, false, false, 'MODE: write|DESCR: From|INDEX: 2|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'To', 'text', null, false, false, 'MODE: write|DESCR: To|INDEX: 3|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'CC', 'text', null, false, false, 'MODE: write|DESCR: CC|INDEX: 4|STATUS: active');

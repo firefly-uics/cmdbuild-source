@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.logic.bim.project.DefaultProjectLogic;
 import org.cmdbuild.logic.bim.project.ProjectLogic;
 import org.cmdbuild.logic.bim.project.ProjectLogic.Project;

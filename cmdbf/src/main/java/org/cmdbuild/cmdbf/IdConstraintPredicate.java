@@ -5,14 +5,14 @@ import java.util.Set;
 import com.google.common.base.Predicate;
 
 public class IdConstraintPredicate implements Predicate<CMDBfId> {
-	private Set<CMDBfId> idSet;
-	
-	public IdConstraintPredicate(Set<CMDBfId> idSet) {
+	private final Set<CMDBfId> idSet;
+
+	public IdConstraintPredicate(final Set<CMDBfId> idSet) {
 		this.idSet = idSet;
 	}
 
 	@Override
-	public boolean apply(CMDBfId input) {
+	public boolean apply(final CMDBfId input) {
 		return idSet.contains(input);
 	}
 

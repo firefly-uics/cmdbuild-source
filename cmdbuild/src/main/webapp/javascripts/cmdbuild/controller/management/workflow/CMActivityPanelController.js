@@ -184,7 +184,7 @@
 				if (activityInstance.isNew()
 						|| processInstance.isStateOpen()) {
 
-					attributes = filterAttributesInStep(attributes, variables);
+					attributes = CMDBuild.controller.common.WorkflowStaticsController.filterAttributesInStep(attributes, variables);
 				} else {
 					// if here, we have a closed process, so show
 					// all the attributes
@@ -264,31 +264,6 @@
 		}
 	}
 
-	// iterate over all the attributes of the Process and
-	// take only the ones defined as variables for this step
-	function filterAttributesInStep(attributes, variables) {
-		var modeConvertionMatrix = {
-			READ_ONLY: "read",
-			READ_WRITE: "write",
-			READ_WRITE_REQUIRED: "required"
-		},
-		out = [];
-
-		for (var j=0, variable=null; j<variables.length; ++j) {
-			variable = variables[j];
-
-			for (var i=0, attr=null; i<attributes.length; ++i) {
-				attr = attributes[i];
-				if (attr.name == variable.name) {
-					attr.fieldmode = modeConvertionMatrix[variable.type];
-					out.push(attr);
-					break;
-				}
-			}
-		}
-
-		return out;
-	}
 
 	function onCheckEditability(cb) {
 		var me = this;
@@ -395,7 +370,8 @@
 	}
 
 	function validateForm(me) {
-		var invalidAttributes = me.view.getInvalidAttributeAsHTML();
+		var form = me.view.getForm();
+		var invalidAttributes = CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form);
 
 		if (invalidAttributes != null) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);

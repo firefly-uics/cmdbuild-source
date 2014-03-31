@@ -7,20 +7,20 @@ import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
 public abstract class ForwardingScriptingManager implements ScriptingManager {
 
-	private final ScriptingManager inner;
+	private final ScriptingManager delegate;
 
-	public ForwardingScriptingManager(final ScriptingManager scriptingManager) {
-		this.inner = scriptingManager;
+	protected ForwardingScriptingManager(final ScriptingManager delegate) {
+		this.delegate = delegate;
 	}
 
 	@Override
 	public void configure(final CallbackUtilities cus) throws Exception {
-		inner.configure(cus);
+		delegate.configure(cus);
 	}
 
 	@Override
 	public Evaluator getEvaluator(final WMSessionHandle sessionHandle, final String name) throws Exception {
-		return inner.getEvaluator(sessionHandle, name);
+		return delegate.getEvaluator(sessionHandle, name);
 	}
 
 }

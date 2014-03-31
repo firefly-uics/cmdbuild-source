@@ -28,7 +28,7 @@ public class HeaderAuthenticatorTest {
 
 	private final ClientRequest request = mock(ClientRequest.class);
 
-	@Test(expected = java.lang.IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void configurationCannotBeNull() {
 		@SuppressWarnings("unused")
 		final HeaderAuthenticator authenticator = new HeaderAuthenticator(null);

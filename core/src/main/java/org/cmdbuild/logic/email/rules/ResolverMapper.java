@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.email.rules;
 
-import static org.apache.commons.lang.StringUtils.contains;
+import static org.apache.commons.lang3.StringUtils.contains;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;

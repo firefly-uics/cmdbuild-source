@@ -13,7 +13,7 @@ import static org.cmdbuild.workflow.ProcessAttributes.ProcessInstanceId;
 import static org.cmdbuild.workflow.service.WSProcessInstanceState.OPEN;
 import static org.cmdbuild.workflow.service.WSProcessInstanceState.SUSPENDED;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;

@@ -12,7 +12,6 @@ import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.HeaderAuthenticator;
 import org.cmdbuild.auth.LdapAuthenticator;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
-import org.cmdbuild.auth.SoapDatabaseAuthenticator;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.config.AuthProperties;
@@ -43,6 +42,9 @@ public class Authentication {
 	private AuthProperties authProperties;
 
 	@Autowired
+	private Filter filter;
+
+	@Autowired
 	private SoapConfiguration soapConfiguration;
 
 	@Autowired
@@ -61,12 +63,6 @@ public class Authentication {
 	@Qualifier(DEFAULT)
 	protected LegacyDBAuthenticator dbAuthenticator() {
 		return new LegacyDBAuthenticator(systemDataView);
-	}
-
-	@Bean
-	@Qualifier(SOAP)
-	protected SoapDatabaseAuthenticator soapDatabaseAuthenticator() {
-		return new SoapDatabaseAuthenticator(systemDataView);
 	}
 
 	@Bean
@@ -101,7 +97,7 @@ public class Authentication {
 		return new DBGroupFetcher(systemDataView, Arrays.asList( //
 				new CMClassPrivilegeFetcherFactory(systemDataView), //
 				new ViewPrivilegeFetcherFactory(systemDataView, viewConverter), //
-				new FilterPrivilegeFetcherFactory(systemDataView, userStore.getUser())));
+				new FilterPrivilegeFetcherFactory(systemDataView, filter.dataViewFilterStore())));
 	}
 
 	@Bean
@@ -123,7 +119,7 @@ public class Authentication {
 		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(soapConfiguration,
 				systemDataView);
 		authenticationService.setPasswordAuthenticators(soapPasswordAuthenticator());
-		authenticationService.setUserFetchers(soapDatabaseAuthenticator(), soapUserFetcher());
+		authenticationService.setUserFetchers(dbAuthenticator(), soapUserFetcher());
 		authenticationService.setGroupFetcher(dbGroupFetcher());
 		authenticationService.setUserStore(userStore);
 		return authenticationService;

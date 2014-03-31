@@ -68,6 +68,7 @@ Ext.define("CMDBuild.controller.administration.filter.CMGroupFilterPanelControll
 
 		_CMProxy.Filter[action](filterToSend, {
 			callback: function() {
+				_CMCache.flushTranslationsToSave(values["name"]);
 				me.gridConfigurator.getStore().load();
 				me.fieldManager.reset();
 			}

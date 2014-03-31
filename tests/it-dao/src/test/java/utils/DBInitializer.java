@@ -12,7 +12,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache;

@@ -138,7 +138,7 @@
 		// override
 		afterSubmit: function() {
 			var me = this;
-			if (me.valuesFromServer) {
+			if (me.valuesFromServer && me.attachmentLookup) {
 				me.attachmentLookup.setValue(me.valuesFromServer[me.attachmentLookup.name]);
 			}
 		}
@@ -163,7 +163,11 @@
 				} else {
 					ltype = value.get("type");
 				}
-
+				var lookupchain = _CMCache.getLookupchainForType(ltype);
+				if (lookupchain.length == 0) {
+					value = "";
+					return;
+				}
 				var conf = {
 					description: CMDBuild.Translation.attachmentsLookup,
 					name: "category.lookup.attachments",
@@ -171,7 +175,7 @@
 					fieldmode: "write",
 					type: "LOOKUP",
 					lookup: ltype,
-					lookupchain: _CMCache.getLookupchainForType(ltype)
+					lookupchain: lookupchain
 				};
 
 				me.attachmentLookup = CMDBuild.Management.FieldManager.getFieldForAttr(conf, readonly=false, skipSubField=true);

@@ -3,8 +3,8 @@ package org.cmdbuild.logic.email.rules;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.workflow.WorkflowLogic;

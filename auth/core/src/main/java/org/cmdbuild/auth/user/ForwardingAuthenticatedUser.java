@@ -2,33 +2,33 @@ package org.cmdbuild.auth.user;
 
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
 
-public class ForwardingAuthenticatedUser extends ForwardingUser implements AuthenticatedUser {
+public abstract class ForwardingAuthenticatedUser extends ForwardingUser implements AuthenticatedUser {
 
-	private final AuthenticatedUser inner;
+	private final AuthenticatedUser delegate;
 
-	public ForwardingAuthenticatedUser(final AuthenticatedUser authenticatedUser) {
-		super(authenticatedUser);
-		this.inner = authenticatedUser;
+	protected ForwardingAuthenticatedUser(final AuthenticatedUser delegate) {
+		super(delegate);
+		this.delegate = delegate;
 	}
 
 	@Override
 	public boolean isAnonymous() {
-		return inner.isAnonymous();
+		return delegate.isAnonymous();
 	}
 
 	@Override
 	public void setPasswordChanger(final PasswordChanger passwordChanger) {
-		inner.setPasswordChanger(passwordChanger);
+		delegate.setPasswordChanger(passwordChanger);
 	}
 
 	@Override
 	public boolean changePassword(final String oldPassword, final String newPassword) {
-		return inner.changePassword(oldPassword, newPassword);
+		return delegate.changePassword(oldPassword, newPassword);
 	}
 
 	@Override
 	public boolean canChangePassword() {
-		return inner.canChangePassword();
+		return delegate.canChangePassword();
 	}
 
 }

@@ -9,7 +9,7 @@
 	    border: true,
 	    frame: true,
 	    showReport: function() {
-	    	this.update('<iframe style="width:100%; height:100%;" src="services/json/management/modreport/printreportfactory"></iframe>');
+	    	this.update('<iframe frameborder="0" style="width:100%; height:100%;" src="services/json/management/modreport/printreportfactory"></iframe>');
 	    },
 		initComponent : function() {
 			var me = this;

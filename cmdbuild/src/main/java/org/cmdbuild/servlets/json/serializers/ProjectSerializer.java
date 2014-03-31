@@ -12,7 +12,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 
 import java.util.Iterator;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.logic.bim.project.ProjectLogic.Project;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;

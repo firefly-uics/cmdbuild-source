@@ -2,14 +2,14 @@ package org.cmdbuild.services.email;
 
 import static com.google.common.collect.FluentIterable.from;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailOwnerGroupable;
+import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
-import org.cmdbuild.model.email.EmailTemplate;
 import org.slf4j.Logger;
 
 import com.google.common.base.Optional;
@@ -87,7 +87,16 @@ public class DefaultEmailPersistence implements EmailPersistence {
 		final Long id;
 		if (email.getId() == null) {
 			logger.debug("creating new email");
-			email.setStatus(EmailStatus.DRAFT);
+			/*
+			 * FIXME
+			 * 
+			 * Awful hack needed for fix a bug related to legacy e-mail
+			 * management. Persistence should not be responsible for setting a
+			 * status, the code that uses it should!
+			 */
+			if (email.getStatus() != EmailStatus.RECEIVED) {
+				email.setStatus(EmailStatus.DRAFT);
+			}
 			final Storable storable = emailStore.create(email);
 			id = Long.valueOf(storable.getIdentifier());
 		} else {

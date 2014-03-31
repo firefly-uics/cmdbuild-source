@@ -1,6 +1,6 @@
 package org.cmdbuild.services;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 
@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;

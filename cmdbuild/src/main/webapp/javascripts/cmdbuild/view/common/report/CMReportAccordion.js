@@ -3,7 +3,7 @@
 	Ext.define("CMDBuild.view.common.report.CMReportAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
 		title: CMDBuild.Translation.administration.modreport.title,
-		cmName: "reports",
+		cmName: "report",
 		buildTreeStructure: function() {
 			var reports = _CMCache.getReports();
 			var nodes = [];
@@ -22,8 +22,7 @@
 			id: r.get("id"),
 			text: r.get("text"),
 			leaf: true,
-			/*@@@@@@@@@@*/
-			cmName: "reports",
+			cmName: "report",
 			group: r.get("group"),
 			type: r.get("type")
 		};

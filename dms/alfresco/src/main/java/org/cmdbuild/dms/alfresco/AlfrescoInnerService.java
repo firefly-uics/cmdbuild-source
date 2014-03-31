@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService.LoggingSupport;
 import org.cmdbuild.dms.DocumentDelete;

@@ -26,127 +26,129 @@ public class MdrScopedIdRegistry {
 	static private final String ITEM_ID = "IdItem";
 	static private final String ALIAS = "MdrScopedId";
 
-	private CMDataView view;
-	private CmdbfConfiguration cmdbfConfiguration;
-	
-	public MdrScopedIdRegistry(DataAccessLogic dataAccessLogic, CmdbfConfiguration cmdbfConfiguration) {
+	private final CMDataView view;
+	private final CmdbfConfiguration cmdbfConfiguration;
+
+	public MdrScopedIdRegistry(final DataAccessLogic dataAccessLogic, final CmdbfConfiguration cmdbfConfiguration) {
 		this.view = dataAccessLogic.getView();
 		this.cmdbfConfiguration = cmdbfConfiguration;
 	}
-	
-	public boolean isLocal(MdrScopedIdType id){
+
+	public boolean isLocal(final MdrScopedIdType id) {
 		return cmdbfConfiguration.getMdrId().equals(id.getMdrId());
 	}
-	
-	public CMDBfId resolveAlias(MdrScopedIdType alias) {
+
+	public CMDBfId resolveAlias(final MdrScopedIdType alias) {
 		CMDBfId id = null;
-		if(isLocal(alias)){
-			if(alias instanceof CMDBfId)
-				id = (CMDBfId)alias;
-			else
+		if (isLocal(alias)) {
+			if (alias instanceof CMDBfId) {
+				id = (CMDBfId) alias;
+			} else {
 				id = new CMDBfId(alias);
-		}
-		else {
-			CMClass registry = view.findClass(REGISTRY);			
-			QuerySpecsBuilder queryBuilder = view.select(anyAttribute(registry)).
-				from(registry).where(condition(attribute(registry, ALIAS), eq(CMDBfId.toString(alias))));
-			for(CMQueryRow row : queryBuilder.run()) {
-				CMCard card = row.getCard(registry);
-				Long idItem = ((Number)card.get(ITEM_ID)).longValue();
+			}
+		} else {
+			final CMClass registry = view.findClass(REGISTRY);
+			final QuerySpecsBuilder queryBuilder = view.select(anyAttribute(registry)).from(registry)
+					.where(condition(attribute(registry, ALIAS), eq(CMDBfId.toString(alias))));
+			for (final CMQueryRow row : queryBuilder.run()) {
+				final CMCard card = row.getCard(registry);
+				final Long idItem = ((Number) card.get(ITEM_ID)).longValue();
 				id = getCMDBfId(idItem, null);
 			}
 		}
 		return id;
 	}
-	
-	public Set<CMDBfId> getAlias(MdrScopedIdType id) {
-		Set<CMDBfId> aliasList = new HashSet<CMDBfId>();
-		aliasList.add(id instanceof CMDBfId ? (CMDBfId)id : new CMDBfId(id));
-		if(isLocal(id)) {
-			CMClass registry = view.findClass(REGISTRY);			
-			QuerySpecsBuilder queryBuilder = view.select(anyAttribute(registry)).from(registry).
-				where(condition(attribute(registry, ITEM_ID), eq(getInstanceId(id))));
-			for(CMQueryRow row : queryBuilder.run()) {
-				CMCard card = row.getCard(registry);
-				String mdrScopedId = (String)card.get("MdrScopedId");
+
+	public Set<CMDBfId> getAlias(final MdrScopedIdType id) {
+		final Set<CMDBfId> aliasList = new HashSet<CMDBfId>();
+		aliasList.add(id instanceof CMDBfId ? (CMDBfId) id : new CMDBfId(id));
+		if (isLocal(id)) {
+			final CMClass registry = view.findClass(REGISTRY);
+			final QuerySpecsBuilder queryBuilder = view.select(anyAttribute(registry)).from(registry)
+					.where(condition(attribute(registry, ITEM_ID), eq(getInstanceId(id))));
+			for (final CMQueryRow row : queryBuilder.run()) {
+				final CMCard card = row.getCard(registry);
+				final String mdrScopedId = (String) card.get("MdrScopedId");
 				aliasList.add(CMDBfId.valueOf(mdrScopedId));
 			}
 		}
 		return aliasList;
 	}
-	
-	public synchronized void addAlias(Long instanceId, Collection<CMDBfId> alias) {
-		CMClass registry = view.findClass(REGISTRY);			
-		for(MdrScopedIdType id : alias) {
-			if(!isLocal(id)){
-				QuerySpecsBuilder queryBuilder = view.select(anyAttribute(registry)).
-					from(registry).where(condition(attribute(registry, ALIAS), eq(CMDBfId.toString(id))));
-				for(CMQueryRow row : queryBuilder.run()) {
-					CMCard card = row.getCard(registry);
+
+	public synchronized void addAlias(final Long instanceId, final Collection<CMDBfId> alias) {
+		final CMClass registry = view.findClass(REGISTRY);
+		for (final MdrScopedIdType id : alias) {
+			if (!isLocal(id)) {
+				final QuerySpecsBuilder queryBuilder = view.select(anyAttribute(registry)).from(registry)
+						.where(condition(attribute(registry, ALIAS), eq(CMDBfId.toString(id))));
+				for (final CMQueryRow row : queryBuilder.run()) {
+					final CMCard card = row.getCard(registry);
 					view.delete(card);
 				}
-				CMCardDefinition card = view.createCardFor(registry);
+				final CMCardDefinition card = view.createCardFor(registry);
 				card.set(ALIAS, CMDBfId.toString(id));
 				card.set(ITEM_ID, instanceId);
 				card.save();
 			}
 		}
 	}
-	
-	public synchronized void addAlias(CMEntry element, Collection<CMDBfId> alias) {
+
+	public synchronized void addAlias(final CMEntry element, final Collection<CMDBfId> alias) {
 		addAlias(element.getId(), alias);
 	}
-	
-	public synchronized void removeAlias(CMEntry element) {
-		CMClass registry = view.findClass(REGISTRY);			
-		QuerySpecsBuilder queryBuilder = view.select(anyAttribute(registry)).from(registry).
-			where(condition(attribute(registry, ITEM_ID), eq(element.getId())));
-		for(CMQueryRow row : queryBuilder.run()) {
-			CMCard card = row.getCard(registry);
+
+	public synchronized void removeAlias(final CMEntry element) {
+		final CMClass registry = view.findClass(REGISTRY);
+		final QuerySpecsBuilder queryBuilder = view.select(anyAttribute(registry)).from(registry)
+				.where(condition(attribute(registry, ITEM_ID), eq(element.getId())));
+		for (final CMQueryRow row : queryBuilder.run()) {
+			final CMCard card = row.getCard(registry);
 			view.delete(card);
 		}
 	}
 
-    public CMDBfId getCMDBfId(Long instanceId, String recordId) {
-		StringBuffer localId = new StringBuffer();
+	public CMDBfId getCMDBfId(final Long instanceId, final String recordId) {
+		final StringBuffer localId = new StringBuffer();
 		localId.append(Long.toString(instanceId));
-		if(recordId != null) {
+		if (recordId != null) {
 			localId.append('#');
 			localId.append(recordId);
 		}
 		return new CMDBfId(cmdbfConfiguration.getMdrId(), localId.toString());
 	}
-    
-	public CMDBfId getCMDBfId(Long id) {
+
+	public CMDBfId getCMDBfId(final Long id) {
 		return getCMDBfId(id, null);
 	}
-		
-	public CMDBfId getCMDBfId(CMEntry element) {
+
+	public CMDBfId getCMDBfId(final CMEntry element) {
 		return getCMDBfId(element, null);
 	}
-	
-	public CMDBfId getCMDBfId(CMEntry element, String recordId) {
+
+	public CMDBfId getCMDBfId(final CMEntry element, final String recordId) {
 		return getCMDBfId(element.getId(), recordId);
 	}
-	
-	public CMDBfId getCMDBfId(MdrScopedIdType id, String recordId) {
+
+	public CMDBfId getCMDBfId(final MdrScopedIdType id, final String recordId) {
 		return getCMDBfId(getInstanceId(id), recordId);
 	}
-    
-    public Long getInstanceId(MdrScopedIdType id) { 
-    	Long instanceId = null;
-    	int pos = id.getLocalId().indexOf('#');
-    	if(pos < 0)
-    		pos = id.getLocalId().length();
+
+	public Long getInstanceId(final MdrScopedIdType id) {
+		Long instanceId = null;
+		int pos = id.getLocalId().indexOf('#');
+		if (pos < 0) {
+			pos = id.getLocalId().length();
+		}
 		instanceId = Long.parseLong(id.getLocalId().substring(0, pos));
-    	return instanceId;
-    }
-    
-    public String getRecordId(MdrScopedIdType id) { 
-    	String recordId = null;
-    	int pos = id.getLocalId().indexOf('#');
-    	if(pos > 0 && pos < id.getLocalId().length()-1)
-        	recordId = id.getLocalId().substring(pos + 1);
-    	return recordId;
-    }
+		return instanceId;
+	}
+
+	public String getRecordId(final MdrScopedIdType id) {
+		String recordId = null;
+		final int pos = id.getLocalId().indexOf('#');
+		if (pos > 0 && pos < id.getLocalId().length() - 1) {
+			recordId = id.getLocalId().substring(pos + 1);
+		}
+		return recordId;
+	}
 }

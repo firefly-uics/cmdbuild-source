@@ -3,9 +3,7 @@ package org.cmdbuild.spring.configuration;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.logic.setup.DefaultModulesHandler;
-import org.cmdbuild.logic.setup.EmailModule;
 import org.cmdbuild.logic.setup.SetupLogic;
-import org.cmdbuild.logic.setup.SetupLogic.Module;
 import org.cmdbuild.services.setup.PrivilegedModulesHandler;
 import org.cmdbuild.services.setup.PropertiesModulesHandler;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
@@ -17,7 +15,6 @@ import org.springframework.context.annotation.Scope;
 public class Setup {
 
 	private static final String BIM_MODULE_NAME = "bim";
-	private static final String EMAIL_MODULE_NAME = "email";
 
 	@Autowired
 	private Email email;
@@ -43,14 +40,7 @@ public class Setup {
 	@Bean
 	@Scope(PROTOTYPE)
 	protected DefaultModulesHandler defaultModulesHandler() {
-		final DefaultModulesHandler modulesHandler = new DefaultModulesHandler(propertiesModulesHandler());
-		modulesHandler.override(EMAIL_MODULE_NAME, emailModule());
-		return modulesHandler;
-	}
-
-	@Bean
-	protected Module emailModule() {
-		return new EmailModule(email.emailAccountStore());
+		return new DefaultModulesHandler(propertiesModulesHandler());
 	}
 
 	@Bean

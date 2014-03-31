@@ -181,12 +181,14 @@
 			disabled: true
 		});
 
-		me.descriptionField = new Ext.form.field.Text({
+		me.descriptionField = new Ext.form.CMTranslatableText({
 			fieldLabel:CMDBuild.Translation.administration.modDashboard.properties.fields.description,
 			name: "description",
 			allowBlank: false,
 			labelWidth: CMDBuild.LABEL_WIDTH,
 			width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+			translationsKeyType: "Dashboard", 
+			translationsKeyField: "Description",
 			disabled: true
 		});
 

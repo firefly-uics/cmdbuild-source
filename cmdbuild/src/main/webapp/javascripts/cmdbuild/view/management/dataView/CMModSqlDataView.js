@@ -129,6 +129,7 @@
 			flex: 1,
 			framed: true,
 			border: true,
+			autoScroll: true,
 			bodyCls: "x-panel-body-default-framed cmborder",
 			bodyStyle: {
 				padding: "5px 5px 0 5px"
@@ -217,7 +218,7 @@
 			text: CMDBuild.Translation.common.buttons.save,
 			disabled: true
 		}, {
-			text: CMDBuild.Translation.common.btns.abort,
+			text: CMDBuild.Translation.common.buttons.abort,
 			disabled: true
 		}];
 	}

@@ -9,7 +9,7 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;

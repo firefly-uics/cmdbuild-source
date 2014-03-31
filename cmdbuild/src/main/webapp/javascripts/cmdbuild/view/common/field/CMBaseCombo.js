@@ -88,20 +88,20 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 
 	setSizeLookingTheGreatestItem: function() {
 		if (this.cmGreatestItem && this.bodyEl) {
-			var tm = new Ext.util.TextMetrics(),
-				length = tm.getWidth(this.cmGreatestItem) + "px";
+			var tm = new Ext.util.TextMetrics();
+			var length = tm.getWidth(this.cmGreatestItem) + "px";
 
 			this.bodyEl.dom.firstChild.style.width = length;
 			this.bodyEl.dom.style.width = length;
 
-			var fieldLength = this.bodyEl.dom.clientWidth;
+			var fieldLength = tm.getWidth(this.cmGreatestItem);//this.bodyEl.dom.clientWidth;
 
 			if (this.labelEl) {
 				fieldLength += this.labelEl.dom.clientWidth;
 			}
 
-			var triggersLength = this.getTriggersLength(),
-				widthToSet = fieldLength + triggersLength + PADDING;
+			var triggersLength = this.getTriggersLength();
+			var widthToSet = fieldLength + triggersLength + PADDING;
 
 			this.setWidth(widthToSet);
 			tm.destroy();

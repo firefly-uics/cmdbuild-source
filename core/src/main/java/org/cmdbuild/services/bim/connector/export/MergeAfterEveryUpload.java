@@ -2,7 +2,7 @@ package org.cmdbuild.services.bim.connector.export;
 
 import static org.cmdbuild.bim.utils.BimConstants.INVALID_ID;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.services.bim.BimFacade;
 

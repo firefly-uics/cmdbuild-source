@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.bim.mapper.DefaultAttribute;
 import org.cmdbuild.bim.mapper.DefaultEntity;
 import org.cmdbuild.bim.mapper.xml.XmlExportCatalogFactory;

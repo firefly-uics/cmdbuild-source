@@ -35,23 +35,33 @@ public class EmailAccountStorableConverter extends BaseStorableConverter<EmailAc
 
 	@Override
 	public EmailAccount convert(final CMCard card) {
-		final EmailAccount emailAccount = new EmailAccount(card.getId());
-		emailAccount.setDefault(card.get(IS_DEFAULT, Boolean.class));
-		emailAccount.setName(card.get(CODE, String.class));
-		emailAccount.setAddress(card.get(ADDRESS, String.class));
-		emailAccount.setUsername(card.get(USERNAME, String.class));
-		emailAccount.setPassword(card.get(PASSWORD, String.class));
-		emailAccount.setSmtpServer(card.get(SMTP_SERVER, String.class));
-		emailAccount.setSmtpPort(card.get(SMTP_PORT, Integer.class));
-		emailAccount.setSmtpSsl(card.get(SMTP_SSL, Boolean.class));
-		emailAccount.setImapServer(card.get(IMAP_SERVER, String.class));
-		emailAccount.setImapPort(card.get(IMAP_PORT, Integer.class));
-		emailAccount.setImapSsl(card.get(IMAP_SSL, Boolean.class));
-		emailAccount.setInputFolder(card.get(INPUT_FOLDER, String.class));
-		emailAccount.setProcessedFolder(card.get(PROCESSED_FOLDER, String.class));
-		emailAccount.setRejectedFolder(card.get(REJECTED_FOLDER, String.class));
-		emailAccount.setRejectNotMatching(card.get(REJECT_NOT_MATCHING, Boolean.class));
-		return emailAccount;
+		return EmailAccount.newInstance() //
+				.withId(card.getId()) //
+				.withDefaultStatus(defaultBoolean(card.get(IS_DEFAULT, Boolean.class), false)) //
+				.withName(card.get(CODE, String.class)) //
+				.withAddress(card.get(ADDRESS, String.class)) //
+				.withUsername(card.get(USERNAME, String.class)) //
+				.withPassword(card.get(PASSWORD, String.class)) //
+				.withSmtpServer(card.get(SMTP_SERVER, String.class)) //
+				.withSmtpPort(card.get(SMTP_PORT, Integer.class)) //
+				.withSmtpSsl(defaultBoolean(card.get(SMTP_SSL, Boolean.class), false)) //
+				.withImapServer(card.get(IMAP_SERVER, String.class)) //
+				.withImapPort(card.get(IMAP_PORT, Integer.class)) //
+				.withImapSsl(defaultBoolean(card.get(IMAP_SSL, Boolean.class), false)) //
+				.withInputFolder(card.get(INPUT_FOLDER, String.class)) //
+				.withProcessedFolder(card.get(PROCESSED_FOLDER, String.class)) //
+				.withRejectedFolder(card.get(REJECTED_FOLDER, String.class)) //
+				.withRejectNotMatchingStatus(defaultBoolean(card.get(REJECT_NOT_MATCHING, Boolean.class), false)) //
+				.build();
+	}
+
+	@Override
+	public String getIdentifierAttributeName() {
+		return CODE;
+	}
+
+	private boolean defaultBoolean(final Boolean value, final boolean defaultValue) {
+		return (value == null) ? defaultValue : value;
 	}
 
 	@Override

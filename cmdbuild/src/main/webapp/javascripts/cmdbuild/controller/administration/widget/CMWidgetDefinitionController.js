@@ -59,6 +59,9 @@
 			this.view.enableModify();
 			this.subController.setDefaultValues();
 		}
+		_CMCache.initAddingTranslations();
+		var buttonLabel = this.view.query("#ButtonLabel")[0];
+		buttonLabel.translationsKeyName = "";
 	}
 
 	function onWidgetDefinitionSelect(sm, record, index) {
@@ -76,8 +79,8 @@
 			return;
 		}
 
-		var me = this,
-			widgetDef = me.view.getWidgetDefinition();
+		var me = this;
+		var widgetDef = me.view.getWidgetDefinition();
 
 		if (this.model) {
 			widgetDef.id = this.model.get(_fields.id);
@@ -97,6 +100,7 @@
 				_CMCache.onWidgetSaved(me.classId, widgetDef);
 				me.view.addRecordToGrid(widgetModel, selectAfter = true);
 				me.view.disableModify(enableToolBar = true);
+				_CMCache.flushTranslationsToSave(widgetModel.get("id"));
 			}
 		});
 	}
@@ -179,6 +183,9 @@
 
 	function onModifyClick() {
 		this.view.enableModify();
+		_CMCache.initModifyingTranslations();
+		var buttonLabel = this.view.query("#ButtonLabel")[0];
+		buttonLabel.translationsKeyName = this.model.get("id");
 	}
 
 	function onEnableModify() {

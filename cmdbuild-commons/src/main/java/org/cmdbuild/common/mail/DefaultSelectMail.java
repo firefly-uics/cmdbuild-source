@@ -30,7 +30,7 @@ import javax.mail.Store;
 import javax.mail.internet.MimeUtility;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.common.mail.GetMail.Attachment;
 import org.cmdbuild.common.mail.InputTemplate.Hooks;
 import org.cmdbuild.common.mail.MailApi.InputConfiguration;

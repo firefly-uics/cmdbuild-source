@@ -98,7 +98,6 @@
 					if (!feature) {
 						return;
 					}
-
 					map.featureWasAdded(feature);
 				}
 			}

@@ -25,11 +25,14 @@
 		onSelectLookupGrid: function(selection) {
 			this.currentLookup = selection;
 			this.view.onSelectLookupGrid(selection);
+			this.view.description.translationsKeyName = selection.get("Id");
 		},
 		
 		onAddLookupClick: function() {
 			this.currentLookup = null;
 			this.view.onAddLookupClick();
+			_CMCache.initAddingTranslations();
+			this.view.description.translationsKeyName = "";
 		},
 		
 		onSelectLookupType: function(lookupType) {
@@ -64,6 +67,7 @@
 			scope : this,
 			success : function(a, b, decoded) {
 				notifySubController.call(this, "onLookupSaved", decoded.lookup.Id);
+				_CMCache.flushTranslationsToSave(decoded.lookup.Id);
 			},
 			failure : function() {
 				reloadLookup.call(this);

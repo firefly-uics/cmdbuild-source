@@ -201,6 +201,9 @@
 		// calendar
 		addControllerClass(commonControllers.CMCalendarController);
 
+		// workflow
+		addControllerClass(commonControllers.CMWorkflowController);
+
 		// openReport
 		addControllerClass(commonControllers.CMOpenReportController);
 
@@ -222,4 +225,22 @@
 		// presetFromCard
 		addControllerClass(commonControllers.CMPresetFromCardController);
 	}
+	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerControllerPopup", {
+		extend: "CMDBuild.controller.management.common.CMWidgetManagerController",
+		buildControllers: function(widgets) {
+			var me = this;
+			me.removeAll();
+	
+			for (var w in widgets) {
+				ui = me.view.buildWidget(widgets[w], undefined);
+
+				if (ui) {
+					var wc = me.buildWidgetController(ui, widgets[w], undefined);
+					if (wc) {
+						me.controllers[me.getWidgetId(widgets[w])] = wc;
+					}
+				}
+			}
+		}
+	});
 })();
