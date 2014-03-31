@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE;
@@ -60,8 +61,9 @@ import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataAction;
-import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataAction.Visitor;
+import org.cmdbuild.logic.data.DataDefinitionLogic.FunctionItem;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
+import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Create;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Delete;
@@ -72,6 +74,7 @@ import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer.JsonModeMapper;
@@ -79,15 +82,42 @@ import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ModClass extends JSONBaseWithSpringContext {
+
+	private static class JsonFunctionItem implements FunctionItem {
+
+		private final FunctionItem delegate;
+
+		public JsonFunctionItem(final FunctionItem delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		@JsonProperty(NAME)
+		public String name() {
+			return delegate.name();
+		}
+
+	}
+
+	private static Function<FunctionItem, FunctionItem> toJsonFunction = new Function<FunctionItem, FunctionItem>() {
+
+		@Override
+		public FunctionItem apply(final FunctionItem input) {
+			return new JsonFunctionItem(input);
+		}
+
+	};
 
 	@JSONExported
 	public JSONObject getAllClasses( //
@@ -237,12 +267,6 @@ public class ModClass extends JSONBaseWithSpringContext {
 	public void deleteTable(@Parameter(value = CLASS_NAME) final String className) throws JSONException, CMDBException {
 		dataDefinitionLogic().deleteOrDeactivate(className);
 	}
-
-	/*
-	 * ===========================================================
-	 * ATTRIBUTES
-	 * ===========================================================
-	 */
 
 	@JSONExported
 	public JSONObject getAttributeList(@Parameter(value = ACTIVE, required = false) final boolean onlyActive, //
@@ -483,12 +507,6 @@ public class ModClass extends JSONBaseWithSpringContext {
 		}
 	}
 
-	/*
-	 * =========================================================
-	 * DOMAIN
-	 * ===========================================================
-	 */
-
 	@JSONExported
 	public JSONObject getAllDomains(@Parameter(value = ACTIVE, required = false) final boolean activeOnly)
 			throws JSONException, AuthException {
@@ -661,6 +679,14 @@ public class ModClass extends JSONBaseWithSpringContext {
 		}
 		out.put(DOMAINS, jsonDomains);
 		return out;
+	}
+
+	@JSONExported
+	public JsonResponse getFunctions() {
+		return JsonResponse.success( //
+				from(dataDefinitionLogic().functions()) //
+						.transform(toJsonFunction) //
+						.toList());
 	}
 
 }

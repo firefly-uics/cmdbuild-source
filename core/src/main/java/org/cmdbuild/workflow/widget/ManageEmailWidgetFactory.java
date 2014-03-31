@@ -1,20 +1,34 @@
 package org.cmdbuild.workflow.widget;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.email.EmailLogic;
+import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageEmail.EmailTemplate;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.template.store.TemplateRepository;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 
+	// TODO change logger
+	private static final Logger logger = Log.WORKFLOW;
+	private static final Marker marker = MarkerFactory.getMarker(ManageEmailWidgetFactory.class.getName());
+
+	private static final String IMPLICIT_TEMPLATE_NAME = "implicitTemplateName";
 	private final static String FROM_ADDRESS = "FromAddress";
 	private final static String TO_ADDRESSES = "ToAddresses";
 	private final static String CC_ADDRESSES = "CCAddresses";
@@ -23,15 +37,18 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	private final static String CONDITION = "Condition";
 	private final static String READ_ONLY = "ReadOnly";
 	private final static String NOTIFY_TEMPLATE_NAME = "NotifyWith";
+	private final static String TEMPLATE = "Template";
 
 	private final static String WIDGET_NAME = "manageEmail";
 
 	private final EmailLogic emailLogic;
+	private final EmailTemplateLogic emailTemplateLogic;
 
 	public ManageEmailWidgetFactory(final TemplateRepository templateRespository, final Notifier notifier,
-			final EmailLogic emailLogic) {
+			final EmailLogic emailLogic, final EmailTemplateLogic emailTemplateLogic) {
 		super(templateRespository, notifier);
 		this.emailLogic = emailLogic;
+		this.emailTemplateLogic = emailTemplateLogic;
 	}
 
 	@Override
@@ -50,6 +67,25 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		final Set<String> managedParameters = new HashSet<String>();
 		managedParameters.add(READ_ONLY);
 		managedParameters.add(BUTTON_LABEL);
+
+		final Map<String, String> templates = getAttributesStartingWith(valueMap, TEMPLATE);
+		for (final String key : templates.keySet()) {
+			final EmailTemplate template = getTemplateForKey(key, emailTemplate, TEMPLATE);
+			final String templateName = readString(valueMap.get(key));
+			if (isNotBlank(templateName)) {
+				try {
+					final EmailTemplateLogic.Template _template = emailTemplateLogic.read(templateName);
+					template.setFromAddress(_template.getFrom());
+					template.setToAddresses(_template.getTo());
+					template.setCcAddresses(_template.getCc());
+					template.setSubject(_template.getSubject());
+					template.setContent(_template.getBody());
+				} catch (final Exception e) {
+					logger.warn(marker, "error getting template, skipping", e);
+				}
+			}
+		}
+		managedParameters.addAll(templates.keySet());
 
 		final Map<String, String> fromAddresses = getAttributesStartingWith(valueMap, FROM_ADDRESS);
 		for (final String key : fromAddresses.keySet()) {
@@ -121,11 +157,10 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 
 	private EmailTemplate getTemplateForKey(final String key, final Map<String, EmailTemplate> templates,
 			final String attributeName) {
-		String postFix = key.replaceFirst(attributeName, "");
-		if ("".equals(postFix)) {
-			postFix = "implicitTemplateName";
+		String postFix = key.replaceFirst(attributeName, EMPTY);
+		if (isEmpty(postFix)) {
+			postFix = IMPLICIT_TEMPLATE_NAME;
 		}
-
 		if (templates.containsKey(postFix)) {
 			return templates.get(postFix);
 		} else {

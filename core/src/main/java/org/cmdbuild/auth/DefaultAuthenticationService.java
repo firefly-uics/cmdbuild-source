@@ -1,6 +1,6 @@
 package org.cmdbuild.auth;
 
-import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.Login.LoginType;
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
@@ -30,7 +30,8 @@ import org.cmdbuild.dao.Const.User;
 import org.cmdbuild.dao.Const.UserRole;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
-import org.cmdbuild.dao.entry.DBRelation;
+import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -116,7 +117,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			public Set<String> getServiceUsers() {
 				return null;
 			}
-			
+
 			@Override
 			public Set<String> getPrivilegedServiceUsers() {
 				return null;
@@ -360,22 +361,51 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		cardToBeUpdated.save();
 
 		final Long defaultGroupId = userDTO.getDefaultGroupId();
-		final List<DBRelation> relationsInUpdateOrder = Lists.newArrayList();
-		for (final DBRelation relation : fetchRelationsForUserWithId(userDTO.getUserId())) {
+		final List<CMRelationDefinition> relationsInUpdateOrder = Lists.newArrayList();
+		for (final CMRelation relation : fetchRelationsForUserWithId(userDTO.getUserId())) {
 			final boolean isActualDefaultGroup = isTrue(relation.get(UserRole.DEFAULT_GROUP, Boolean.class));
-			if (isActualDefaultGroup) {
-				relationsInUpdateOrder.add(0, relation);
-			} else {
-				relationsInUpdateOrder.add(relation);
-			}
 			final boolean isNewDefaultGroup = relation.getCard2Id().equals(defaultGroupId);
-			relation.set(UserRole.DEFAULT_GROUP, isNewDefaultGroup);
+			final CMRelationDefinition definition = view.update(relation) //
+					/*
+					 * TODO implement within dao layer
+					 * 
+					 * at the moment queried relations doesn't have card1 and
+					 * card2, so we must set them until it will be fixed
+					 */
+					.setCard1(cardId1Of(relation)) //
+					.setCard2(cardId2Of(relation)) //
+					.set(UserRole.DEFAULT_GROUP, isNewDefaultGroup);
+			if (isActualDefaultGroup) {
+				relationsInUpdateOrder.add(0, definition);
+			} else {
+				relationsInUpdateOrder.add(definition);
+			}
 		}
-		for (final DBRelation relation : relationsInUpdateOrder) {
+		for (final CMRelationDefinition relation : relationsInUpdateOrder) {
 			relation.update();
 		}
 
 		return fetchUserById(userDTO.getUserId());
+	}
+
+	private CMCard cardId1Of(final CMRelation relation) {
+		final CMClass target = view.findClass("Class");
+		return view.select(anyAttribute(target)) //
+				.from(target) //
+				.where(condition(attribute(target, ID), eq(relation.getCard1Id()))) //
+				.run() //
+				.getOnlyRow() //
+				.getCard(target);
+	}
+
+	private CMCard cardId2Of(final CMRelation relation) {
+		final CMClass target = view.findClass("Class");
+		return view.select(anyAttribute(target)) //
+				.from(target) //
+				.where(condition(attribute(target, ID), eq(relation.getCard2Id()))) //
+				.run() //
+				.getOnlyRow() //
+				.getCard(target);
 	}
 
 	private CMCard fetchUserCardWithId(final Long userId) throws NoSuchElementException {
@@ -390,16 +420,16 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		return userCard;
 	}
 
-	private List<DBRelation> fetchRelationsForUserWithId(final Long userId) {
+	private List<CMRelation> fetchRelationsForUserWithId(final Long userId) {
 		final CMQueryResult result = view
 				.select(anyAttribute(userGroupDomain()), attribute(roleClass(), roleClass().getCodeAttributeName())) //
 				.from(userClass()) //
 				.join(roleClass(), over(userGroupDomain())) //
 				.where(condition(attribute(userClass(), ID), eq(userId))) //
 				.run();
-		final List<DBRelation> relations = Lists.newArrayList();
+		final List<CMRelation> relations = Lists.newArrayList();
 		for (final CMQueryRow row : result) {
-			final DBRelation relation = row.getRelation(userGroupDomain()).getRelation();
+			final CMRelation relation = row.getRelation(userGroupDomain()).getRelation();
 			relations.add(relation);
 		}
 		return relations;

@@ -125,7 +125,7 @@
 		var type = node.type;
 		var text = node.description;
 		if (type == "class" 
-			|| type == "processclass") {
+			|| (type == "processclass" && _CMCache.isEntryTypeByName(node.referencedClassName)) ) {
 
 			entryType = _CMCache.getEntryTypeByName(node.referencedClassName);
 			if (entryType) {

@@ -361,7 +361,8 @@
 	}
 
 	function thereAraNotWrongAttributes(me) {
-		var invalidAttributes = me.view.getInvalidAttributeAsHTML();
+		var form = me.view.getForm();
+		var invalidAttributes = CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form);
 		if (invalidAttributes != null) {
 			var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes);
 			CMDBuild.Msg.error(null, msg + invalidAttributes, false);

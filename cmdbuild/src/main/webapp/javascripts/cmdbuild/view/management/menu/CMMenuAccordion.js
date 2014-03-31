@@ -29,6 +29,9 @@
 
 		// used only to retrieve classes or processes
 		getNodeById: function(id) {
+			if (! _CMCache.isEntryTypeById(id)) {
+				return null;
+			}
 			var entryType = _CMCache.getEntryTypeById(id);
 			if (!entryType) {
 				return null;
@@ -163,7 +166,7 @@
 	}
 
 	function addReportStuff(n, node) {
-		n.cmName = "report";
+		n.cmName = "singlereport";
 		n.id = node.referencedElementId;
 		n.subtype = "custom";
 	}

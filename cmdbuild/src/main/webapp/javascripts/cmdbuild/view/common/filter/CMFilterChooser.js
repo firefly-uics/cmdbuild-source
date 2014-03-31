@@ -15,7 +15,7 @@
 		// configuration
 		className: "",
 		firstShowDetectEvent: "activate",
-		saveButtonText: CMDBuild.Translation.common.btns.confirm,
+		saveButtonText: CMDBuild.Translation.common.buttons.confirm,
 		abortButtonText: CMDBuild.Translation.common.buttons.abort,
 		// configuration
 
@@ -36,6 +36,8 @@
 			this.filterAttributesPanel.setData(this.filter.getAttributeConfiguration());
 
 			this.filterRelationsPanel.setData(this.filter.getRelationConfiguration());
+
+			this.filterFunctionsPanel.setData(this.filter.getFunctionConfiguration());
 		},
 
 		// protected
@@ -64,14 +66,15 @@
 			this.layout = "border";
 			this.buildGrid();
 			this.items = [
-				this.grid, 
+				this.grid,
 			{
 				xtype: "tabpanel",
 				region: "center",
 				border: false,
-				items: [ 
+				items: [
 					this.filterAttributesPanel, // inherited
-					this.filterRelationsPanel // inherited
+					this.filterRelationsPanel, // inherited
+					this.filterFunctionsPanel // inherited
 				]
 			}];
 		},

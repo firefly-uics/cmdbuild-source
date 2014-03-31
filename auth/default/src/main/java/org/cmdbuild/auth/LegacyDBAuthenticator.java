@@ -17,7 +17,7 @@ public class LegacyDBAuthenticator extends DatabaseAuthenticator {
 	}
 
 	@Override
-	protected String loginAttributeName(Login login) {
+	protected String loginAttributeName(final Login login) {
 		return userNameAttribute();
 	}
 

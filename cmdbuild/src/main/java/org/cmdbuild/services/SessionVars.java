@@ -1,6 +1,6 @@
 package org.cmdbuild.services;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 
 import org.cmdbuild.auth.AuthenticationStore;

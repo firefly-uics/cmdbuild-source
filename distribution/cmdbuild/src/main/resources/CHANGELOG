@@ -1,3 +1,99 @@
+CMDBuild 2.1.8 (released 2014/03/17)
+
+
+NEW FEATURES
+
+ * Dynamic row filtering using functions
+
+ * Email templates in ManageEmail widget
+
+
+FIXES
+
+ * Card's details report shows all relations regardless of privileges
+
+ * The details table do not show all elements
+
+ * Cmdbf registration web service updates cards and relationships when nothing has changed
+
+ * SOAP method "getCardHistory" returns no more values when all elements are requested
+
+ * Error when apply 2.1.7-* patches due to some backup schemas
+
+ * Modify create card Widget does not save correctly the value of the target class
+
+ * The width of a cql filtered reference increase at every change of conditions
+
+ * Slow showing of buildings in GIS module
+
+ * Errors on save menu in administration when Shark is disabled
+
+ * Slow loading in Administration Layers Tab
+
+ * Missing scrollbars in SQL views
+
+ * No scrollbar in the filter popup
+
+ * Black border on report page
+
+
+
+
+
+CMDBuild 2.1.7 (released 2014/02/14)
+
+
+NEW FEATURES
+
+ * Views accordion can be disabled
+
+ * Start a workflow using card's widget
+
+ * Optimizations for queries - Patch for create indexes for default ordering conditions
+
+ * CMDBf improvements (XSD fix, gis attributes, better support for Reference and Lookup attributes)
+
+ * Updated Russian translations
+
+
+FIXES
+
+ * CQL ignore date attributes
+
+ * Refresh of the entire privileges page in administration when you check a privilege
+
+ * Relations on superclasses contain wrong IdClass
+
+ * Error on the layers view in GIS module
+
+ * Error showing SQL view
+
+ * Wrong user within scripts when starting a process from an external service
+
+ * UI freezes when selecting Alfresco setup within administration module
+
+ * Card details showed in a wrong order
+
+ * Corrupted columns after navigating between card'details
+
+ * Missing username when logged-in as admin and English translation
+
+ * Relation attributes not showed when relations starts collapsed
+
+ * When printing cards within grid, specific user-filters are not applied
+
+ * Slow GIS navigation tree
+
+ * Cannot disable reports accordion from Administration
+
+ * No geometric attributes defined after migration
+
+ * Wrong privileges/group using web services and impersonating another user
+
+
+
+
+
 CMDBuild 2.1.6 (released 2013/12/23)
 
 

@@ -1,5 +1,24 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.ADMIN_PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ADMIN_USER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DB_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DB_TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.HOST;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LANGUAGE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LANGUAGE_PROMPT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LIM_PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LIM_USER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.MANAGEMENT_DATABASE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PATCHES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PORT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SHARK_SCHEMA;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.USER_TYPE;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -24,13 +43,18 @@ import org.postgresql.ds.PGSimpleDataSource;
 
 public class Configure extends JSONBaseWithSpringContext {
 
-	private static final String MANAGEMENT_DATABASE = "postgres";
+	private static final String SUPERUSER_LOWER = "superuser";
+	private static final String SUPER_USER = "SuperUser";
 
 	@JSONExported
 	@Configuration
 	@Unauthorized
-	public void testConnection(@Parameter("host") final String host, @Parameter("port") final int port,
-			@Parameter("user") final String user, @Parameter("password") final String password) {
+	public void testConnection( //
+			@Parameter(HOST) final String host, //
+			@Parameter(PORT) final int port, //
+			@Parameter(USER) final String user, //
+			@Parameter(PASSWORD) final String password //
+	) {
 		testDatabaseConnection(host, port, user, password);
 	}
 
@@ -55,20 +79,20 @@ public class Configure extends JSONBaseWithSpringContext {
 	@Configuration
 	@Unauthorized
 	public void apply( //
-			@Parameter("language") final String language, //
-			@Parameter("language_prompt") final boolean languagePrompt, //
-			@Parameter("db_type") final String dbType, //
-			@Parameter("db_name") final String dbName, //
-			@Parameter("host") final String host, //
-			@Parameter("port") final int port, //
-			@Parameter("shark_schema") final boolean createSharkSchema, //
-			@Parameter("user") final String user, //
-			@Parameter("password") final String password, //
-			@Parameter(value = "user_type", required = false) final String systemUserType, //
-			@Parameter(value = "lim_user", required = false) final String limitedUser, //
-			@Parameter(value = "lim_password", required = false) final String limitedPassword, //
-			@Parameter(value = "admin_user", required = false) final String adminUser, //
-			@Parameter(value = "admin_password", required = false) final String adminPassword //
+			@Parameter(LANGUAGE) final String language, //
+			@Parameter(LANGUAGE_PROMPT) final boolean languagePrompt, //
+			@Parameter(DB_TYPE) final String dbType, //
+			@Parameter(DB_NAME) final String dbName, //
+			@Parameter(HOST) final String host, //
+			@Parameter(PORT) final int port, //
+			@Parameter(SHARK_SCHEMA) final boolean createSharkSchema, //
+			@Parameter(USER) final String user, //
+			@Parameter(PASSWORD) final String password, //
+			@Parameter(value = USER_TYPE, required = false) final String systemUserType, //
+			@Parameter(value = LIM_USER, required = false) final String limitedUser, //
+			@Parameter(value = LIM_PASSWORD, required = false) final String limitedPassword, //
+			@Parameter(value = ADMIN_USER, required = false) final String adminUser, //
+			@Parameter(value = ADMIN_PASSWORD, required = false) final String adminPassword //
 	) throws IOException, SQLException {
 		testDatabaseConnection(host, port, user, password);
 		final CmdbuildProperties cmdbuildProps = cmdbuildConfiguration();
@@ -110,7 +134,7 @@ public class Configure extends JSONBaseWithSpringContext {
 
 			@Override
 			public boolean useLimitedUser() {
-				return !(systemUserType == null || "superuser".equals(systemUserType));
+				return !(systemUserType == null || SUPERUSER_LOWER.equals(systemUserType));
 			}
 
 			@Override
@@ -140,15 +164,16 @@ public class Configure extends JSONBaseWithSpringContext {
 		configurator.configureAndSaveSettings();
 
 		if (DatabaseConfigurator.EMPTY_DBTYPE.equals(dbType)) {
-			AuthenticationLogic authLogic = authLogic();
+			final AuthenticationLogic authLogic = authLogic();
 			final GroupDTO groupDto = GroupDTO.newInstance() //
-					.withName("SuperUser") //
+					.withName(SUPER_USER) //
 					.withAdminFlag(true) //
-					.withDescription("SuperUser") //
+					.withDescription(SUPER_USER) //
 					.build();
 			final CMGroup superUserGroup = authLogic.createGroup(groupDto);
 			final UserDTO userDto = UserDTO.newInstance() //
 					.withUsername(adminUser) //
+					.withDescription(adminUser) //
 					.withPassword(adminPassword) //
 					.build();
 			final CMUser administrator = authLogic.createUser(userDto);
@@ -159,23 +184,25 @@ public class Configure extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Unauthorized
-	public JSONObject getPatches(final JSONObject serializer) throws JSONException {
+	public JSONObject getPatches( //
+			final JSONObject serializer //
+	) throws JSONException {
 		final Iterable<Patch> avaiablePatches = patchManager().getAvaiblePatch();
 		for (final Patch patch : avaiablePatches) {
 			final JSONObject jsonPatch = new JSONObject();
-			jsonPatch.put("name", patch.getVersion());
-			jsonPatch.put("description", patch.getDescription());
-			serializer.append("patches", jsonPatch);
+			jsonPatch.put(NAME, patch.getVersion());
+			jsonPatch.put(DESCRIPTION, patch.getDescription());
+			serializer.append(PATCHES, jsonPatch);
 		}
 		return serializer;
 	}
 
 	@JSONExported
 	@Unauthorized
-	public JSONObject applyPatches(final JSONObject serializer) throws SQLException, Exception {
-		patchManager().applyPatchList();
-		// TODO should be database only
-		cachingLogic().clearCache();
+	public JSONObject applyPatches( //
+			final JSONObject serializer //
+	) throws SQLException, Exception {
+		startupLogic().migrate();
 		return serializer;
 	}
 

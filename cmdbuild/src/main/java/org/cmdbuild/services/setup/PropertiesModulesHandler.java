@@ -1,6 +1,6 @@
 package org.cmdbuild.services.setup;
 
-import static org.apache.commons.lang.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 import java.util.Map;
 import java.util.Map.Entry;

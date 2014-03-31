@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
 
 import javax.sql.DataSource;
 
@@ -11,8 +12,6 @@ import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.dao.view.user.UserDataView;
-import org.cmdbuild.data.store.email.EmailTemplateStore;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.DashboardLogic;
@@ -34,11 +33,13 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.setup.SetupLogic;
+import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
@@ -47,6 +48,7 @@ import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.localization.Localization;
+import org.cmdbuild.services.startup.StartupLogic;
 import org.cmdbuild.services.store.FilterStore;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.report.ReportStore;
@@ -91,16 +93,12 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected CMDataView userDataView() {
-		return applicationContext().getBean(UserDataView.class);
+		return applicationContext().getBean(BEAN_USER_DATA_VIEW, CMDataView.class);
 	}
 
 	/*
 	 * Stores
 	 */
-
-	protected EmailTemplateStore emailTemplateStore() {
-		return applicationContext().getBean(EmailTemplateStore.class);
-	}
 
 	protected FilterStore filterStore() {
 		return applicationContext().getBean(FilterStore.class);
@@ -133,15 +131,15 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	protected AuthenticationLogic authLogic() {
 		return applicationContext().getBean(DefaultAuthenticationLogicBuilder.class).build();
 	}
-	
+
 	protected ProjectLogic bimProjectLogic() {
 		return applicationContext().getBean(DefaultProjectLogic.class);
 	}
-	
+
 	protected LayerLogic bimLayerLogic() {
 		return applicationContext().getBean(DefaultLayerLogic.class);
 	}
-	
+
 	protected SynchronizationLogic bimConnectorLogic() {
 		return applicationContext().getBean(DefaultSynchronizationLogic.class);
 	}
@@ -174,12 +172,16 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(DmsLogic.class);
 	}
 
-	protected EmailTemplateLogic emailTemplateLogic() {
-		return applicationContext().getBean(EmailTemplateLogic.class);
+	protected EmailAccountLogic emailAccountLogic() {
+		return applicationContext().getBean(EmailAccountLogic.class);
 	}
 
 	protected EmailLogic emailLogic() {
 		return applicationContext().getBean(EmailLogic.class);
+	}
+
+	protected EmailTemplateLogic emailTemplateLogic() {
+		return applicationContext().getBean(EmailTemplateLogic.class);
 	}
 
 	protected GISLogic gisLogic() {
@@ -202,6 +204,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(SetupLogic.class);
 	}
 
+	protected StartupLogic startupLogic() {
+		return applicationContext().getBean(StartupLogic.class);
+	}
+
 	protected ViewLogic viewLogic() {
 		return applicationContext().getBean(ViewLogic.class);
 	}
@@ -212,6 +218,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected WorkflowLogic systemWorkflowLogic() {
 		return applicationContext().getBean(SystemWorkflowLogicBuilder.class).build();
+	}
+
+	protected TaskManagerLogic taskManagerLogic() {
+		return applicationContext().getBean(TaskManagerLogic.class);
 	}
 
 	/*

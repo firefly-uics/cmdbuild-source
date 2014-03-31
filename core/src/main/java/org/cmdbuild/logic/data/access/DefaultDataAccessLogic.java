@@ -2,7 +2,7 @@ package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.RandomStringUtils.randomAscii;
+import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
@@ -128,23 +128,23 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	public Map<Object, List<RelationInfo>> relationsBySource(final String sourceTypeName, final DomainWithSource dom) {
-		return new GetRelationList(dataView, systemDataView).list(sourceTypeName, dom);
+		return new GetRelationList(dataView).list(sourceTypeName, dom);
 	}
 
 	@Override
 	public GetRelationListResponse getRelationList(final Card srcCard, final DomainWithSource dom,
 			final QueryOptions options) {
-		return new GetRelationList(dataView, systemDataView).exec(srcCard, dom, options);
+		return new GetRelationList(dataView).exec(srcCard, dom, options);
 	}
 
 	@Override
 	public GetRelationListResponse getRelationList(final Card srcCard, final DomainWithSource dom) {
-		return new GetRelationList(dataView, systemDataView).exec(srcCard, dom, QueryOptions.newQueryOption().build());
+		return new GetRelationList(dataView).exec(srcCard, dom, QueryOptions.newQueryOption().build());
 	}
 
 	@Override
 	public GetRelationListResponse getRelationListEmptyForWrongId(final Card srcCard, final DomainWithSource dom) {
-		return new GetRelationList(strictDataView, systemDataView).emptyForWrongId().exec(srcCard, dom,
+		return new GetRelationList(strictDataView).emptyForWrongId().exec(srcCard, dom,
 				QueryOptions.newQueryOption().build());
 	}
 
@@ -819,7 +819,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	@Transactional
-	public void createRelations(final RelationDTO relationDTO) {
+	public Iterable<Long> createRelations(final RelationDTO relationDTO) {
 		final CMDomain domain = dataView.findDomain(relationDTO.domainName);
 		if (domain == null) {
 			throw NotFoundException.NotFoundExceptionType.DOMAIN_NOTFOUND.createException();
@@ -827,15 +827,19 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final CMCard parentCard = retrieveParentCard(relationDTO);
 		final List<CMCard> childCards = retrieveChildCards(relationDTO);
 
+		final List<Long> ids = Lists.newArrayList();
 		if (relationDTO.master.equals("_1")) {
 			for (final CMCard dstCard : childCards) {
-				saveRelation(domain, parentCard, dstCard, relationDTO.relationAttributeToValue);
+				final Long id = saveRelation(domain, parentCard, dstCard, relationDTO.relationAttributeToValue);
+				ids.add(id);
 			}
 		} else {
 			for (final CMCard srcCard : childCards) {
-				saveRelation(domain, srcCard, parentCard, relationDTO.relationAttributeToValue);
+				final Long id = saveRelation(domain, srcCard, parentCard, relationDTO.relationAttributeToValue);
+				ids.add(id);
 			}
 		}
+		return ids;
 	}
 
 	private CMCard retrieveParentCard(final RelationDTO relationDTO) {
@@ -867,7 +871,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return childCards;
 	}
 
-	private void saveRelation(final CMDomain domain, final CMCard srcCard, final CMCard dstCard,
+	private Long saveRelation(final CMDomain domain, final CMCard srcCard, final CMCard dstCard,
 			final Map<String, Object> attributeToValue) {
 		final CMRelationDefinition mutableRelation = dataView.createRelationFor(domain);
 		mutableRelation.setCard1(srcCard);
@@ -878,7 +882,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		}
 		try {
 			mutableRelation.setUser(operationUser.getAuthenticatedUser().getUsername());
-			mutableRelation.create();
+			final CMRelation relation = mutableRelation.create();
+			return relation.getId();
 		} catch (final RuntimeException ex) {
 			throw ORMExceptionType.ORM_ERROR_RELATION_CREATE.createException();
 		}

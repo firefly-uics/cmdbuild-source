@@ -20,6 +20,8 @@ import org.apache.ws.commons.schema.XmlSchemaLengthFacet;
 import org.apache.ws.commons.schema.XmlSchemaSimpleType;
 import org.apache.ws.commons.schema.XmlSchemaSimpleTypeRestriction;
 import org.cmdbuild.config.CmdbfConfiguration;
+import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -39,7 +41,6 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -50,9 +51,6 @@ import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 abstract public class EntryNamespace extends AbstractNamespace {
 
@@ -74,24 +72,27 @@ abstract public class EntryNamespace extends AbstractNamespace {
 	private static final String ATTRIBUTE_LOOKUP = "lookup";
 	private static final String ATTRIBUTE_DOMAIN = "domain";
 	private static final String VALUE = "value";
-	
+
 	protected final DataAccessLogic systemDataAccessLogic;
 	protected final DataAccessLogic userDataAccessLogic;
 	protected final DataDefinitionLogic dataDefinitionLogic;
 	protected final LookupLogic lookupLogic;
-	
-	public EntryNamespace(String name, DataAccessLogic systemDataAccessLogic, DataAccessLogic userDataAccessLogic, DataDefinitionLogic dataDefinitionLogic, LookupLogic lookupLogic, CmdbfConfiguration cmdbfConfiguration) {
+
+	public EntryNamespace(final String name, final DataAccessLogic systemDataAccessLogic,
+			final DataAccessLogic userDataAccessLogic, final DataDefinitionLogic dataDefinitionLogic,
+			final LookupLogic lookupLogic, final CmdbfConfiguration cmdbfConfiguration) {
 		super(name, cmdbfConfiguration);
 		this.systemDataAccessLogic = systemDataAccessLogic;
 		this.userDataAccessLogic = userDataAccessLogic;
 		this.dataDefinitionLogic = dataDefinitionLogic;
 		this.lookupLogic = lookupLogic;
-	}	
-	
-	protected XmlSchemaElement getXsd(CMAttribute attribute, Document document, final XmlSchema schema, final Set<String> imports) {
-		final XmlSchemaElement element = new XmlSchemaElement();
+	}
+
+	protected XmlSchemaElement getXsd(final CMAttribute attribute, final Document document, final XmlSchema schema,
+			final Set<String> imports) {
+		final XmlSchemaElement element = new XmlSchemaElement(schema, false);
 		element.setName(attribute.getName());
-		
+
 		final Map<String, String> properties = new HashMap<String, String>();
 		properties.put(ATTRIBUTE_DESCRIPTION, attribute.getDescription());
 		properties.put(ATTRIBUTE_DEFAULT, attribute.getDefaultValue());
@@ -104,123 +105,128 @@ abstract public class EntryNamespace extends AbstractNamespace {
 		properties.put(ATTRIBUTE_GROUP, attribute.getGroup());
 		properties.put(ATTRIBUTE_ORDER, Integer.toString(attribute.getClassOrder()));
 		properties.put(ATTRIBUTE_EDITOR, attribute.getEditorType());
-		
-		if(attribute.isMandatory())
+
+		if (attribute.isMandatory()) {
 			element.setMinOccurs(1);
-		else
+		} else {
 			element.setMinOccurs(0);
+		}
 		element.setMaxOccurs(1);
-		if(attribute.getDefaultValue() != null)
+		if (attribute.getDefaultValue() != null) {
 			element.setDefaultValue(attribute.getDefaultValue());
-		
+		}
+
 		attribute.getType().accept(new CMAttributeTypeVisitor() {
-			
+
 			@Override
-			public void visit(TimeAttributeType attributeType) {				
+			public void visit(final TimeAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_TIME);
 				properties.put(ATTRIBUTE_TYPE, "TIME");
 			}
-			
+
 			@Override
-			public void visit(TextAttributeType attributeType) {
+			public void visit(final TextAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-				properties.put(ATTRIBUTE_TYPE, "TEXT");				
+				properties.put(ATTRIBUTE_TYPE, "TEXT");
 			}
-			
+
 			@Override
-			public void visit(StringAttributeType attributeType) {
+			public void visit(final StringAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 				properties.put(ATTRIBUTE_TYPE, "STRING");
 				properties.put(ATTRIBUTE_LENGTH, Integer.toString(attributeType.length));
-				XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema);
-				XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
+				final XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema, false);
+				final XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
 				restriction.setBaseTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-				XmlSchemaLengthFacet facet = new XmlSchemaLengthFacet();
+				final XmlSchemaLengthFacet facet = new XmlSchemaLengthFacet();
 				facet.setValue(attributeType.length);
 				restriction.getFacets().add(facet);
 				type.setContent(restriction);
 				element.setSchemaType(type);
 			}
-			
+
 			@Override
-			public void visit(ReferenceAttributeType attributeType) {
-				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
+			public void visit(final ReferenceAttributeType attributeType) {
+				final QName qname = getRegistry().getTypeQName(IdAndDescription.class);
+				imports.add(qname.getNamespaceURI());
+				element.setSchemaTypeName(qname);
 				properties.put(ATTRIBUTE_TYPE, "REFERENCE");
 				properties.put(ATTRIBUTE_DOMAIN, attributeType.getIdentifier().getLocalName());
 			}
-			
+
 			@Override
-			public void visit(LookupAttributeType attributeType) {
-				final LookupType lookupType = LookupType.newInstance().withName(attributeType.getLookupTypeName()).build();
-				QName lookupQName = getRegistry().getTypeQName(lookupType);
+			public void visit(final LookupAttributeType attributeType) {
+				final LookupType lookupType = LookupType.newInstance().withName(attributeType.getLookupTypeName())
+						.build();
+				final QName lookupQName = getRegistry().getTypeQName(lookupType);
 				imports.add(lookupQName.getNamespaceURI());
 				element.setSchemaTypeName(lookupQName);
 				properties.put(ATTRIBUTE_TYPE, "LOOKUP");
 				properties.put(ATTRIBUTE_LOOKUP, attributeType.getLookupTypeName());
 			}
-			
+
 			@Override
-			public void visit(IpAddressAttributeType attributeType) {
+			public void visit(final IpAddressAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-				properties.put(ATTRIBUTE_TYPE, "INET");		
+				properties.put(ATTRIBUTE_TYPE, "INET");
 			}
-			
+
 			@Override
-			public void visit(IntegerAttributeType attributeType) {
+			public void visit(final IntegerAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_INTEGER);
-				properties.put(ATTRIBUTE_TYPE, "INTEGER");			
+				properties.put(ATTRIBUTE_TYPE, "INTEGER");
 			}
-			
+
 			@Override
-			public void visit(ForeignKeyAttributeType attributeType) {
+			public void visit(final ForeignKeyAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-				properties.put(ATTRIBUTE_TYPE, "FOREIGNKEY");	
+				properties.put(ATTRIBUTE_TYPE, "FOREIGNKEY");
 				properties.put(ATTRIBUTE_DOMAIN, attributeType.getIdentifier().getLocalName());
 			}
-			
+
 			@Override
-			public void visit(DoubleAttributeType attributeType) {
+			public void visit(final DoubleAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_DOUBLE);
 				properties.put(ATTRIBUTE_TYPE, "DOUBLE");
 			}
-			
+
 			@Override
-			public void visit(DecimalAttributeType attributeType) {
+			public void visit(final DecimalAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_DECIMAL);
 				properties.put(ATTRIBUTE_TYPE, "DECIMAL");
 				properties.put(ATTRIBUTE_PRECISION, Integer.toString(attributeType.precision));
 				properties.put(ATTRIBUTE_SCALE, Integer.toString(attributeType.scale));
 			}
-			
+
 			@Override
-			public void visit(DateAttributeType attributeType) {
+			public void visit(final DateAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_DATE);
-				properties.put(ATTRIBUTE_TYPE, "DATE");		
+				properties.put(ATTRIBUTE_TYPE, "DATE");
 			}
-			
+
 			@Override
-			public void visit(DateTimeAttributeType attributeType) {
+			public void visit(final DateTimeAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_DATETIME);
 				properties.put(ATTRIBUTE_TYPE, "TIMESTAMP");
 			}
-			
+
 			@Override
-			public void visit(EntryTypeAttributeType attributeType) {
+			public void visit(final EntryTypeAttributeType attributeType) {
 				// TODO set type
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 				properties.put(ATTRIBUTE_TYPE, "UNDEFINED");
 			}
-			
+
 			@Override
-			public void visit(BooleanAttributeType attributeType) {
+			public void visit(final BooleanAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_BOOLEAN);
 				properties.put(ATTRIBUTE_TYPE, "BOOLEAN");
 			}
 
 			@Override
-			public void visit(StringArrayAttributeType stringArrayAttributeType) {
-				XmlSchemaComplexType type = new XmlSchemaComplexType(schema);
-				XmlSchemaElement valueElement = new XmlSchemaElement();
+			public void visit(final StringArrayAttributeType stringArrayAttributeType) {
+				final XmlSchemaComplexType type = new XmlSchemaComplexType(schema, false);
+				final XmlSchemaElement valueElement = new XmlSchemaElement(schema, false);
 				valueElement.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 				valueElement.setName(VALUE);
 				valueElement.setMaxOccurs(-1);
@@ -231,12 +237,12 @@ abstract public class EntryNamespace extends AbstractNamespace {
 			}
 
 			@Override
-			public void visit(CharAttributeType attributeType) {
+			public void visit(final CharAttributeType attributeType) {
 				properties.put(ATTRIBUTE_TYPE, "CHAR");
-				XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema);
-				XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
+				final XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema, false);
+				final XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
 				restriction.setBaseTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-				XmlSchemaLengthFacet facet = new XmlSchemaLengthFacet();
+				final XmlSchemaLengthFacet facet = new XmlSchemaLengthFacet();
 				facet.setValue(1);
 				restriction.getFacets().add(facet);
 				type.setContent(restriction);
@@ -246,60 +252,79 @@ abstract public class EntryNamespace extends AbstractNamespace {
 		setAnnotations(element, properties, document);
 		return element;
 	}
-	
-	protected void addAttributeFromXsd(XmlSchemaElement element, XmlSchema schema, CMEntryType type) {
-		Map<String, String> properties = getAnnotations(element);
-		AttributeBuilder attributeBuilder = Attribute.newAttribute().withName(element.getName());
+
+	protected void addAttributeFromXsd(final XmlSchemaElement element, final XmlSchema schema, final CMEntryType type) {
+		final Map<String, String> properties = getAnnotations(element);
+		final AttributeBuilder attributeBuilder = Attribute.newAttribute().withName(element.getName());
 		attributeBuilder.withOwnerName(type.getIdentifier().getLocalName());
-		if(properties.containsKey(ATTRIBUTE_TYPE))
+		if (properties.containsKey(ATTRIBUTE_TYPE)) {
 			attributeBuilder.withType(properties.get(ATTRIBUTE_TYPE));
-		if(properties.containsKey(ATTRIBUTE_DESCRIPTION))
+		}
+		if (properties.containsKey(ATTRIBUTE_DESCRIPTION)) {
 			attributeBuilder.withDescription(properties.get(ATTRIBUTE_DESCRIPTION));
-		if(properties.containsKey(ATTRIBUTE_MODE))						
+		}
+		if (properties.containsKey(ATTRIBUTE_MODE)) {
 			attributeBuilder.withMode(Enum.valueOf(CMAttribute.Mode.class, properties.get(ATTRIBUTE_MODE)));
-		if(properties.containsKey(ATTRIBUTE_ORDER))			
-		attributeBuilder.withClassOrder(Integer.parseInt(properties.get(ATTRIBUTE_ORDER)));
-		if(properties.containsKey(ATTRIBUTE_DEFAULT))
+		}
+		if (properties.containsKey(ATTRIBUTE_ORDER)) {
+			attributeBuilder.withClassOrder(Integer.parseInt(properties.get(ATTRIBUTE_ORDER)));
+		}
+		if (properties.containsKey(ATTRIBUTE_DEFAULT)) {
 			attributeBuilder.withDefaultValue(properties.get(ATTRIBUTE_DEFAULT));
-		if(properties.containsKey(ATTRIBUTE_EDITOR))
+		}
+		if (properties.containsKey(ATTRIBUTE_EDITOR)) {
 			attributeBuilder.withEditorType(properties.get(ATTRIBUTE_EDITOR));
-		if(properties.containsKey(ATTRIBUTE_GROUP))
+		}
+		if (properties.containsKey(ATTRIBUTE_GROUP)) {
 			attributeBuilder.withGroup(properties.get(ATTRIBUTE_GROUP));
-		if(properties.containsKey(ATTRIBUTE_INDEX))
+		}
+		if (properties.containsKey(ATTRIBUTE_INDEX)) {
 			attributeBuilder.withIndex(Integer.parseInt(properties.get(ATTRIBUTE_INDEX)));
-		if(properties.containsKey(ATTRIBUTE_DOMAIN))
+		}
+		if (properties.containsKey(ATTRIBUTE_DOMAIN)) {
 			attributeBuilder.withDomain(properties.get(ATTRIBUTE_DOMAIN));
-		if(properties.containsKey(ATTRIBUTE_LOOKUP))
+		}
+		if (properties.containsKey(ATTRIBUTE_LOOKUP)) {
 			attributeBuilder.withLookupType(properties.get(ATTRIBUTE_LOOKUP));
-		if(properties.containsKey(ATTRIBUTE_LENGTH))
+		}
+		if (properties.containsKey(ATTRIBUTE_LENGTH)) {
 			attributeBuilder.withLength(Integer.parseInt(properties.get(ATTRIBUTE_LENGTH)));
-		if(properties.containsKey(ATTRIBUTE_PRECISION))
+		}
+		if (properties.containsKey(ATTRIBUTE_PRECISION)) {
 			attributeBuilder.withPrecision(Integer.parseInt(properties.get(ATTRIBUTE_PRECISION)));
-		if(properties.containsKey(ATTRIBUTE_SCALE))
+		}
+		if (properties.containsKey(ATTRIBUTE_SCALE)) {
 			attributeBuilder.withScale(Integer.parseInt(properties.get(ATTRIBUTE_SCALE)));
-		if(properties.containsKey(ATTRIBUTE_ACTIVE))
+		}
+		if (properties.containsKey(ATTRIBUTE_ACTIVE)) {
 			attributeBuilder.thatIsActive(Boolean.parseBoolean(properties.get(ATTRIBUTE_ACTIVE)));
-		if(properties.containsKey(ATTRIBUTE_DISPLAYABLE))
+		}
+		if (properties.containsKey(ATTRIBUTE_DISPLAYABLE)) {
 			attributeBuilder.thatIsDisplayableInList(Boolean.parseBoolean(properties.get(ATTRIBUTE_DISPLAYABLE)));
-		if(properties.containsKey(ATTRIBUTE_UNIQUE))
+		}
+		if (properties.containsKey(ATTRIBUTE_UNIQUE)) {
 			attributeBuilder.thatIsUnique(Boolean.parseBoolean(properties.get(ATTRIBUTE_UNIQUE)));
-		if(properties.containsKey(ATTRIBUTE_MANDATORY))
+		}
+		if (properties.containsKey(ATTRIBUTE_MANDATORY)) {
 			attributeBuilder.thatIsMandatory(Boolean.parseBoolean(properties.get(ATTRIBUTE_MANDATORY)));
+		}
 		dataDefinitionLogic.createOrUpdate(attributeBuilder.build());
-	}	
-	
-	protected boolean serialize(Node xml, CMEntryType type, Iterable<Entry<String, Object>> attributes) {
+	}
+
+	protected boolean serialize(final Node xml, final CMEntryType type, final Iterable<Entry<String, Object>> attributes) {
 		boolean serialized = false;
-		QName qName = getTypeQName(type);
-		if(qName != null) {
-			Element xmlElement = xml.getOwnerDocument().createElementNS(qName.getNamespaceURI(), qName.getPrefix() + ":" + qName.getLocalPart());
-			for(Entry<String, Object> attribute : attributes){
-				Object value = attribute.getValue();
-				if(value != null) {
-					CMAttribute cmAttribute = type.getAttribute(attribute.getKey());
-					if(cmAttribute != null && cmAttribute.isActive()) {				
-						Element property = xml.getOwnerDocument().createElementNS(qName.getNamespaceURI(), qName.getPrefix() + ":" + attribute.getKey());				
-						AttributeSerializer serializer = new AttributeSerializer(property, value);
+		final QName qName = getTypeQName(type);
+		if (qName != null) {
+			final Element xmlElement = xml.getOwnerDocument().createElementNS(qName.getNamespaceURI(),
+					qName.getPrefix() + ":" + qName.getLocalPart());
+			for (final Entry<String, Object> attribute : attributes) {
+				final Object value = attribute.getValue();
+				if (value != null) {
+					final CMAttribute cmAttribute = type.getAttribute(attribute.getKey());
+					if (cmAttribute != null && cmAttribute.isActive()) {
+						final Element property = xml.getOwnerDocument().createElementNS(qName.getNamespaceURI(),
+								qName.getPrefix() + ":" + attribute.getKey());
+						final AttributeSerializer serializer = new AttributeSerializer(property, value);
 						cmAttribute.getType().accept(serializer);
 						xmlElement.appendChild(property);
 					}
@@ -310,19 +335,20 @@ abstract public class EntryNamespace extends AbstractNamespace {
 		}
 		return serialized;
 	}
-	
-	protected Map<String, Object> deserialize(Node xml, CMEntryType type) {
-		Map<String, Object> attributes = new HashMap<String, Object>();
+
+	protected Map<String, Object> deserialize(final Node xml, final CMEntryType type) {
+		final Map<String, Object> attributes = new HashMap<String, Object>();
 		for (int i = 0; i < xml.getChildNodes().getLength(); i++) {
-			Node item = xml.getChildNodes().item(i);
+			final Node item = xml.getChildNodes().item(i);
 			if (item instanceof Element) {
-				Element child = (Element) item;
+				final Element child = (Element) item;
 				String name = child.getLocalName();
-				if (name == null)
+				if (name == null) {
 					name = child.getTagName();
-				CMAttribute attribute = type.getAttribute(name);
-				if(attribute != null && attribute.isActive()) {
-					AttributeDeserializer deserializer = new AttributeDeserializer(child);
+				}
+				final CMAttribute attribute = type.getAttribute(name);
+				if (attribute != null && attribute.isActive()) {
+					final AttributeDeserializer deserializer = new AttributeDeserializer(child);
 					attribute.getType().accept(deserializer);
 					attributes.put(name, deserializer.getValue());
 				}
@@ -335,270 +361,284 @@ abstract public class EntryNamespace extends AbstractNamespace {
 		private DatatypeFactory datatypeFactory;
 		private Object value = null;
 		private Element xml = null;
-		
-		public AttributeSerializer(Element xml, Object value) {
+
+		public AttributeSerializer(final Element xml, final Object value) {
 			try {
 				this.xml = xml;
 				this.value = value;
 				this.datatypeFactory = DatatypeFactory.newInstance();
-			} catch (DatatypeConfigurationException e) {
+			} catch (final DatatypeConfigurationException e) {
 				throw new Error(e);
 			}
 		}
-		
-		@Override	
-		public void visit(TimeAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent(toXml((DateTime)value));
-		}
-		
+
 		@Override
-		public void visit(TextAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent((String)value);					
-		}
-		
-		@Override
-		public void visit(StringAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent((String)value);
-		}
-		
-		@Override
-		public void visit(ReferenceAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent(((Long)value).toString());
-		}
-		
-		@Override
-		public void visit(LookupAttributeType attributeType) {
-			if(value != null) {
-				Lookup lookup = lookupLogic.getLookup((Long)value);
-				getRegistry().serializeValue(xml, lookup);
+		public void visit(final TimeAttributeType attributeType) {
+			if (value != null) {
+				xml.setTextContent(toXml((DateTime) value));
 			}
 		}
-		
+
 		@Override
-		public void visit(IpAddressAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent((String)value);
+		public void visit(final TextAttributeType attributeType) {
+			if (value != null) {
+				xml.setTextContent((String) value);
+			}
 		}
-		
+
 		@Override
-		public void visit(IntegerAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent(((Integer)value).toString());									
+		public void visit(final StringAttributeType attributeType) {
+			if (value != null) {
+				xml.setTextContent((String) value);
+			}
 		}
-		
+
 		@Override
-		public void visit(ForeignKeyAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent(((Long)value).toString());
+		public void visit(final ReferenceAttributeType attributeType) {
+			if (value != null) {
+				getRegistry().serializeValue(xml, value);
+			}
 		}
-		
+
 		@Override
-		public void visit(DoubleAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent(((Double)value).toString());					
+		public void visit(final LookupAttributeType attributeType) {
+			if (value != null) {
+				getRegistry().serializeValue(xml, value);
+			}
 		}
-		
+
 		@Override
-		public void visit(DecimalAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent(((BigDecimal)value).toString());									
+		public void visit(final IpAddressAttributeType attributeType) {
+			if (value != null) {
+				xml.setTextContent((String) value);
+			}
 		}
-		
+
 		@Override
-		public void visit(DateAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent(toXml((DateTime)value));
+		public void visit(final IntegerAttributeType attributeType) {
+			if (value != null) {
+				xml.setTextContent(((Integer) value).toString());
+			}
 		}
-		
+
 		@Override
-		public void visit(DateTimeAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent(toXml((DateTime)value));
+		public void visit(final ForeignKeyAttributeType attributeType) {
+			if (value != null) {
+				xml.setTextContent(((Long) value).toString());
+			}
 		}
-		
+
 		@Override
-		public void visit(EntryTypeAttributeType attributeType) {
-			if(value != null) {
-				CMEntryType type = userDataAccessLogic.findClass((Long)value);
+		public void visit(final DoubleAttributeType attributeType) {
+			if (value != null) {
+				xml.setTextContent(((Double) value).toString());
+			}
+		}
+
+		@Override
+		public void visit(final DecimalAttributeType attributeType) {
+			if (value != null) {
+				xml.setTextContent(((BigDecimal) value).toString());
+			}
+		}
+
+		@Override
+		public void visit(final DateAttributeType attributeType) {
+			if (value != null) {
+				xml.setTextContent(toXml((DateTime) value));
+			}
+		}
+
+		@Override
+		public void visit(final DateTimeAttributeType attributeType) {
+			if (value != null) {
+				xml.setTextContent(toXml((DateTime) value));
+			}
+		}
+
+		@Override
+		public void visit(final EntryTypeAttributeType attributeType) {
+			if (value != null) {
+				final CMEntryType type = userDataAccessLogic.findClass((Long) value);
 				xml.setTextContent(type.getIdentifier().getLocalName());
 			}
 		}
-		
+
 		@Override
-		public void visit(BooleanAttributeType attributeType) {
-			if(value != null)
-				xml.setTextContent(((Boolean)value).toString());					
+		public void visit(final BooleanAttributeType attributeType) {
+			if (value != null) {
+				xml.setTextContent(((Boolean) value).toString());
+			}
 		}
-	
+
 		@Override
-		public void visit(StringArrayAttributeType stringArrayAttributeType) {
-			if(value != null) {
-				for(String item : (String[])value){
-					Element element = xml.getOwnerDocument().createElementNS(getNamespaceURI(), getNamespacePrefix() + ":" + VALUE);
+		public void visit(final StringArrayAttributeType stringArrayAttributeType) {
+			if (value != null) {
+				for (final String item : (String[]) value) {
+					final Element element = xml.getOwnerDocument().createElementNS(getNamespaceURI(),
+							getNamespacePrefix() + ":" + VALUE);
 					element.setTextContent(item);
 					xml.appendChild(element);
 				}
 			}
 		}
-	
+
 		@Override
-		public void visit(CharAttributeType charAttributeType) {
-			if(value != null)
-				xml.setTextContent((String)value); 
+		public void visit(final CharAttributeType charAttributeType) {
+			if (value != null) {
+				xml.setTextContent((String) value);
+			}
 		}
-		
-		private String toXml(DateTime value) {
-			XMLGregorianCalendar calendar = datatypeFactory.newXMLGregorianCalendar(value.toGregorianCalendar());
+
+		private String toXml(final DateTime value) {
+			final XMLGregorianCalendar calendar = datatypeFactory.newXMLGregorianCalendar(value.toGregorianCalendar());
 			return calendar.toXMLFormat();
 		}
 	}
-	
+
 	private class AttributeDeserializer implements CMAttributeTypeVisitor {
 
 		private DatatypeFactory datatypeFactory;
 		private Object value = null;
 		private Element xml = null;
-		
-		public AttributeDeserializer(Element xml) {
+
+		public AttributeDeserializer(final Element xml) {
 			try {
 				this.xml = xml;
 				this.datatypeFactory = DatatypeFactory.newInstance();
-			} catch (DatatypeConfigurationException e) {
+			} catch (final DatatypeConfigurationException e) {
 				throw new Error(e);
 			}
 		}
-		
+
 		public Object getValue() {
 			return value;
 		}
-		
+
 		@Override
-		public void visit(TimeAttributeType attributeType) {
-			String text = xml.getTextContent();
-			if(text != null && !text.isEmpty())
+		public void visit(final TimeAttributeType attributeType) {
+			final String text = xml.getTextContent();
+			if (text != null && !text.isEmpty()) {
 				value = parseDateTime(text);
-		}
-		
-		@Override
-		public void visit(TextAttributeType attributeType) {
-			value = xml.getTextContent();
-		}
-		
-		@Override
-		public void visit(StringAttributeType attributeType) {
-			value = xml.getTextContent();
-		}
-		
-		@Override
-		public void visit(ReferenceAttributeType attributeType) {
-			String text = xml.getTextContent();
-			if(text != null && !text.isEmpty())
-				value = new Long(text);
-		}
-		
-		@Override
-		public void visit(final LookupAttributeType attributeType) {
-			LookupType type = Iterables.find(lookupLogic.getAllTypes(), new Predicate<LookupType>(){
-				public boolean apply(LookupType input) {
-					return input.name.equals(attributeType.getLookupTypeName());
-				}
-			});
-			Lookup lookup = (Lookup)getRegistry().deserializeValue(xml, type);
-			if(lookup != null)
-				value = lookup.getId();
-		}
-		
-		@Override
-		public void visit(IpAddressAttributeType attributeType) {
-			value = xml.getTextContent();
-		}
-		
-		@Override
-		public void visit(IntegerAttributeType attributeType) {
-			String text = xml.getTextContent();
-			if(text != null && !text.isEmpty())
-				value = new Integer(text);
-		}
-		
-		@Override
-		public void visit(ForeignKeyAttributeType attributeType) {
-			String text = xml.getTextContent();
-			if(text != null && !text.isEmpty())
-				value = new Long(text);
-		}
-		
-		@Override
-		public void visit(DoubleAttributeType attributeType) {
-			String text = xml.getTextContent();
-			if(text != null && !text.isEmpty())
-				value = new Double(text);
-		}
-		
-		@Override
-		public void visit(DecimalAttributeType attributeType) {
-			String text = xml.getTextContent();
-			if(text != null && !text.isEmpty())
-				value = new BigDecimal(text);
-		}
-		
-		@Override
-		public void visit(DateAttributeType attributeType) {
-			String text = xml.getTextContent();
-			if(text != null && !text.isEmpty())
-				value = parseDateTime(text);
-			
-		}
-		
-		@Override
-		public void visit(DateTimeAttributeType attributeType) {
-			String text = xml.getTextContent();
-			if(text != null && !text.isEmpty())
-				value = parseDateTime(text);					
-		}
-		
-		@Override
-		public void visit(EntryTypeAttributeType attributeType) {
-			String text = xml.getTextContent();
-			if(text != null && !text.isEmpty()) {
-				CMEntryType type = userDataAccessLogic.findClass(text);
-				if(type != null)
-					value = type.getId();
 			}
-		}
-		
-		@Override
-		public void visit(BooleanAttributeType attributeType) {
-			String text = xml.getTextContent();
-			if(text != null && !text.isEmpty())
-				value = Boolean.parseBoolean(text);
 		}
 
 		@Override
-		public void visit(StringArrayAttributeType stringArrayAttributeType) {
-			List<String> values = new ArrayList<String>();
+		public void visit(final TextAttributeType attributeType) {
+			value = xml.getTextContent();
+		}
+
+		@Override
+		public void visit(final StringAttributeType attributeType) {
+			value = xml.getTextContent();
+		}
+
+		@Override
+		public void visit(final ReferenceAttributeType attributeType) {
+			value = getRegistry().deserializeValue(xml, IdAndDescription.class);
+		}
+
+		@Override
+		public void visit(final LookupAttributeType attributeType) {
+			value = getRegistry().deserializeValue(xml, LookupValue.class);
+		}
+
+		@Override
+		public void visit(final IpAddressAttributeType attributeType) {
+			value = xml.getTextContent();
+		}
+
+		@Override
+		public void visit(final IntegerAttributeType attributeType) {
+			final String text = xml.getTextContent();
+			if (text != null && !text.isEmpty()) {
+				value = new Integer(text);
+			}
+		}
+
+		@Override
+		public void visit(final ForeignKeyAttributeType attributeType) {
+			final String text = xml.getTextContent();
+			if (text != null && !text.isEmpty()) {
+				value = new Long(text);
+			}
+		}
+
+		@Override
+		public void visit(final DoubleAttributeType attributeType) {
+			final String text = xml.getTextContent();
+			if (text != null && !text.isEmpty()) {
+				value = new Double(text);
+			}
+		}
+
+		@Override
+		public void visit(final DecimalAttributeType attributeType) {
+			final String text = xml.getTextContent();
+			if (text != null && !text.isEmpty()) {
+				value = new BigDecimal(text);
+			}
+		}
+
+		@Override
+		public void visit(final DateAttributeType attributeType) {
+			final String text = xml.getTextContent();
+			if (text != null && !text.isEmpty()) {
+				value = parseDateTime(text);
+			}
+
+		}
+
+		@Override
+		public void visit(final DateTimeAttributeType attributeType) {
+			final String text = xml.getTextContent();
+			if (text != null && !text.isEmpty()) {
+				value = parseDateTime(text);
+			}
+		}
+
+		@Override
+		public void visit(final EntryTypeAttributeType attributeType) {
+			final String text = xml.getTextContent();
+			if (text != null && !text.isEmpty()) {
+				final CMEntryType type = userDataAccessLogic.findClass(text);
+				if (type != null) {
+					value = type.getId();
+				}
+			}
+		}
+
+		@Override
+		public void visit(final BooleanAttributeType attributeType) {
+			final String text = xml.getTextContent();
+			if (text != null && !text.isEmpty()) {
+				value = Boolean.parseBoolean(text);
+			}
+		}
+
+		@Override
+		public void visit(final StringArrayAttributeType stringArrayAttributeType) {
+			final List<String> values = new ArrayList<String>();
 			for (int i = 0; i < xml.getChildNodes().getLength(); i++) {
-				Node child = xml.getChildNodes().item(i);
+				final Node child = xml.getChildNodes().item(i);
 				if (child instanceof Element) {
-					Element item = (Element) child;
-					if(item.getNamespaceURI().equals(getNamespaceURI()) && item.getLocalName().equals(VALUE))
+					final Element item = (Element) child;
+					if (item.getNamespaceURI().equals(getNamespaceURI()) && item.getLocalName().equals(VALUE)) {
 						values.add(item.getTextContent());
+					}
 				}
 			}
 			value = values.toArray(new String[0]);
 		}
 
 		@Override
-		public void visit(CharAttributeType charAttributeType) {
-			value = xml; 
-			
+		public void visit(final CharAttributeType charAttributeType) {
+			value = xml;
+
 		}
-		
-		private DateTime parseDateTime(String xmlValue) {
-			XMLGregorianCalendar calendar = datatypeFactory.newXMLGregorianCalendar(xmlValue);
+
+		private DateTime parseDateTime(final String xmlValue) {
+			final XMLGregorianCalendar calendar = datatypeFactory.newXMLGregorianCalendar(xmlValue);
 			return new DateTime(calendar.toGregorianCalendar());
 		}
 	}

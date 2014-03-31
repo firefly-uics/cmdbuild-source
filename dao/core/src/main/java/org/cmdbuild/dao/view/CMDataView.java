@@ -1,7 +1,5 @@
 package org.cmdbuild.dao.view;
 
-import java.util.Map;
-
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -121,7 +119,7 @@ public interface CMDataView {
 	 * 
 	 * @param card
 	 */
-	void delete(final CMCard card);
+	void delete(CMCard card);
 
 	/**
 	 * Method that returns a mutable relation object. This object is a new
@@ -148,7 +146,7 @@ public interface CMDataView {
 	 * 
 	 * @param relation
 	 */
-	void delete(final CMRelation relation);
+	void delete(CMRelation relation);
 
 	/**
 	 * Starts a query. Invoke {@link QuerySpecsBuilder.run()} to execute it.
@@ -166,7 +164,7 @@ public interface CMDataView {
 	 * 
 	 * @return the query result
 	 */
-	CMQueryResult executeQuery(final QuerySpecs querySpecs);
+	CMQueryResult executeQuery(QuerySpecs querySpecs);
 
 	/**
 	 * Clears all the contents for the specified type.
@@ -180,8 +178,6 @@ public interface CMDataView {
 
 	CMClass getReportClass();
 
-	Iterable<? extends WhereClause> getAdditionalFiltersFor(final CMEntryType classToFilter);
-
-	Map<String, String> getAttributesPrivilegesFor(final CMEntryType entryType);
+	Iterable<? extends WhereClause> getAdditionalFiltersFor(CMEntryType classToFilter);
 
 }

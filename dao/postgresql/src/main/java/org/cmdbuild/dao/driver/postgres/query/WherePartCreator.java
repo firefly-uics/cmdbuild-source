@@ -1,7 +1,7 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_GT;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_IN;
@@ -37,6 +37,7 @@ import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
+import org.cmdbuild.dao.query.clause.where.FunctionWhereClause;
 import org.cmdbuild.dao.query.clause.where.GreaterThanOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.InOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue;
@@ -57,6 +58,9 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		boolean needsActiveStatus();
 
 	}
+
+	private static final String CAST_OPERATOR = "::";
+	private static final String NO_CAST = null;
 
 	private static final Holder<Object> VALUE_NOT_REQUIRED = null;
 
@@ -142,6 +146,20 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			append("AND NOT");
 		}
 		append(string);
+	}
+
+	@Override
+	public void visit(final AndWhereClause whereClause) {
+		append("(");
+		// TODO do it better
+		final List<? extends WhereClause> clauses = whereClause.getClauses();
+		for (int i = 0; i < clauses.size(); i++) {
+			if (i > 0) {
+				and(" ");
+			}
+			clauses.get(i).accept(this);
+		}
+		append(")");
 	}
 
 	@Override
@@ -233,20 +251,6 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	}
 
 	@Override
-	public void visit(final AndWhereClause whereClause) {
-		append("(");
-		// TODO do it better
-		final List<? extends WhereClause> clauses = whereClause.getClauses();
-		for (int i = 0; i < clauses.size(); i++) {
-			if (i > 0) {
-				and(" ");
-			}
-			clauses.get(i).accept(this);
-		}
-		append(")");
-	}
-
-	@Override
 	public void visit(final OrWhereClause whereClause) {
 		append("(");
 		// TODO do it better
@@ -284,14 +288,37 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		append(" FALSE ");
 	}
 
+	@Override
+	public void visit(final FunctionWhereClause whereClause) {
+		append(format("%s %s (SELECT %s(?, ?, ?)) ", nameOf(whereClause.attribute), OPERATOR_IN, whereClause.name));
+		param(whereClause.userId.intValue());
+		param(whereClause.roleId.intValue());
+		param(whereClause.entryType.getName());
+	}
+
 	private String attributeFilter(final QueryAliasAttribute attribute, final String attributeNameCast,
 			final String operator, final Holder<Object> holder) {
-		final boolean isAttributeNameCastSpecified = (attributeNameCast != null);
-		final String attributeCast = isAttributeNameCastSpecified ? null : sqlTypeOf(attribute).sqlCast();
-		String attributeName = Utils.quoteAttribute(attribute.getEntryTypeAlias(), attribute.getName());
-		attributeName = isAttributeNameCastSpecified ? (attributeName + "::" + attributeNameCast) : attributeName;
+		final String attributeName = nameOf(attribute, attributeNameCast);
+		final String attributeCast = attributeCastOf(attribute, attributeNameCast);
 		return format("%s %s %s", attributeName, operator,
 				(holder != VALUE_NOT_REQUIRED) ? param(sqlValueOf(attribute, holder.get()), attributeCast) : EMPTY);
+	}
+
+	private String nameOf(final QueryAliasAttribute attribute) {
+		return nameOf(attribute, NO_CAST);
+	}
+
+	private String nameOf(final QueryAliasAttribute attribute, final String attributeNameCast) {
+		final boolean isAttributeNameCastSpecified = (attributeNameCast != NO_CAST);
+		final String attributeName = Utils.quoteAttribute(attribute.getEntryTypeAlias(), attribute.getName());
+		return new StringBuilder(attributeName) //
+				.append(isAttributeNameCastSpecified ? (CAST_OPERATOR + attributeNameCast) : EMPTY) //
+				.toString();
+	}
+
+	private String attributeCastOf(final QueryAliasAttribute attribute, final String attributeNameCast) {
+		final boolean isAttributeNameCastSpecified = (attributeNameCast != null);
+		return isAttributeNameCastSpecified ? null : sqlTypeOf(attribute).sqlCast();
 	}
 
 	private Object sqlValueOf(final QueryAliasAttribute attribute, final Object value) {

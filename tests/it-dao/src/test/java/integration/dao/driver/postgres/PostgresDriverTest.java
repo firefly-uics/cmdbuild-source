@@ -2,9 +2,9 @@ package integration.dao.driver.postgres;
 
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.internal.matchers.IsCollectionContaining.hasItem;
 import static utils.IntegrationTestUtils.namesOf;
 
 import org.cmdbuild.common.Constants;
@@ -12,7 +12,6 @@ import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.junit.Test;
 
 import utils.IntegrationTestBase;
@@ -51,7 +50,7 @@ public class PostgresDriverTest extends IntegrationTestBase {
 				.set(REGCLASS_ATTRIBUTE, classWithRegClassAttribute.getId()) //
 				.save();
 
-		final CMQueryRow row = new QuerySpecsBuilder(dbDataView()) //
+		final CMQueryRow row = dbDataView() //
 				.select(REGCLASS_ATTRIBUTE) //
 				.from(classWithRegClassAttribute) //
 				.run().getOnlyRow();

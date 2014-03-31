@@ -1,8 +1,8 @@
 package org.cmdbuild.services.bim;
 
-import static org.apache.commons.lang.RandomStringUtils.randomAlphanumeric;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.bim.utils.BimConstants.FK_COLUMN_NAME;
 import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
 import static org.cmdbuild.bim.utils.BimConstants.IFC_TYPE;
@@ -34,6 +34,7 @@ import org.cmdbuild.bim.mapper.DefaultEntity;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -426,7 +427,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		for (final CMQueryRow row : result) {
 			final QueryRelation relation = row.getRelation(DOM_ALIAS);
 			if (relation != null) {
-				final DBRelation relation2 = relation.getRelation();
+				final CMRelation relation2 = relation.getRelation();
 				projectId = Long.class.cast(relation2.getCard2Id());
 			}
 		}
@@ -456,7 +457,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		for (final CMQueryRow row : result) {
 			final QueryRelation relation = row.getRelation(DOM_ALIAS);
 			if (relation != null) {
-				final DBRelation relation2 = relation.getRelation();
+				final CMRelation relation2 = relation.getRelation();
 				rootId = Long.class.cast(relation2.getCard2Id());
 			}
 		}

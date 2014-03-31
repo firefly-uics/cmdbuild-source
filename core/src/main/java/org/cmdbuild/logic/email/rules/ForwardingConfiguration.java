@@ -3,11 +3,11 @@ package org.cmdbuild.logic.email.rules;
 import org.cmdbuild.logic.email.rules.StartWorkflow.Configuration;
 import org.cmdbuild.logic.email.rules.StartWorkflow.Mapper;
 
-public class ForwardingConfiguration implements Configuration {
+public abstract class ForwardingConfiguration implements Configuration {
 
 	private final Configuration configuration;
 
-	public ForwardingConfiguration(final Configuration configuration) {
+	protected ForwardingConfiguration(final Configuration configuration) {
 		this.configuration = configuration;
 	}
 

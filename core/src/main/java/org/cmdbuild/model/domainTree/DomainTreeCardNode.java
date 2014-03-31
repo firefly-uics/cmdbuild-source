@@ -1,5 +1,6 @@
 package org.cmdbuild.model.domainTree;
 
+import static org.apache.commons.lang3.StringUtils.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DomainTreeCardNode {
+
 	private String className, text;
 	private boolean leaf, checked, expanded, baseNode;
 	private Long classId, cardId;
@@ -18,7 +20,7 @@ public class DomainTreeCardNode {
 
 		@Override
 		public int compare(final DomainTreeCardNode o1, final DomainTreeCardNode o2) {
-			return o1.getText().compareTo(o2.getText());
+			return defaultString(o1.getText()).compareTo(defaultString(o2.getText()));
 		}
 
 	}

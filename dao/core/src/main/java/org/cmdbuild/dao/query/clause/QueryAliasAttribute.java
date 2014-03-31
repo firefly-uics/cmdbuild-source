@@ -1,8 +1,9 @@
 package org.cmdbuild.dao.query.clause;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.EntryTypeAlias;
@@ -71,6 +72,10 @@ public class QueryAliasAttribute implements QueryAttribute {
 	@Override
 	public String toString() {
 		return toString;
+	}
+	
+	public static QueryAliasAttribute attribute(final CMEntryType type, final CMAttribute attribute) {
+		return attribute(type, attribute.getName());
 	}
 
 	public static QueryAliasAttribute attribute(final CMEntryType type, final String name) {

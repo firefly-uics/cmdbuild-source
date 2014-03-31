@@ -19,7 +19,7 @@ import java.util.List;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;

@@ -56,6 +56,7 @@
 	});
 
 	function selectVisibleLayers(tableId) {
+		Ext.suspendLayouts();
 		var et = _CMCache.getEntryTypeById(tableId);
 		var s = this.store;
 		var columnDataIndex = this.getVisibilityColDataIndex();
@@ -64,5 +65,6 @@
 			record.set(columnDataIndex, record.isVisibleForEntryType(et));
 			record.commit();
 		});
+		Ext.resumeLayouts();
 	};
 })();

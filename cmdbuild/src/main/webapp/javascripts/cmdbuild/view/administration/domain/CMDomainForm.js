@@ -17,6 +17,7 @@
 				scope: this,
 				handler: function() {
 					this.enableModify();
+					_CMCache.initModifyingTranslations();
 				}
 			});
 
@@ -44,10 +45,12 @@
 				name: "isMasterDetail"
 			});
 
-			this.masterDetailLabel = new Ext.form.field.Text({
+			this.masterDetailLabel = new Ext.form.CMTranslatableText({
 				fieldLabel: this.translation.md_label,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				translationsKeyType: "Domain", 
+				translationsKeyField: "masterDetailLabel",
 				name: "md_label"
 			});
 
@@ -94,13 +97,35 @@
 				cmImmutable: true
 			});
 
-			this.domainDescription = new Ext.form.TextField({
+			this.domainDescription = new Ext.form.CMTranslatableText({
 				fieldLabel : this.translation.description,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : "description",
 				allowBlank : false,
+				translationsKeyType: "Domain", 
+				translationsKeyField: "Description",
 				vtype : 'cmdbcomment'
+			});
+			this.directDescription = new Ext.form.CMTranslatableText({
+				fieldLabel: this.translation.description_direct,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				allowBlank: false,
+				name: "descr_1", //TODO, change the server side
+				translationsKeyType: "Domain", 
+				translationsKeyField: "directDescription",
+				vtype: 'cmdbcomment'
+			});
+			this.inverseDescription = new Ext.form.CMTranslatableText({
+				fieldLabel: this.translation.description_inverse,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				allowBlank: false,
+				name: "descr_2", //TODO, change the server side
+				translationsKeyType: "Domain", 
+				translationsKeyField: "inverseDescription",
+				vtype: 'cmdbcomment'
 			});
 
 			this.form = new Ext.form.FormPanel( {
@@ -143,22 +168,8 @@
 						queryMode: "local",
 						cmImmutable: true
 					}),
-
-				{
-					xtype: 'textfield',
-					fieldLabel: this.translation.description_direct,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					allowBlank: false,
-					name: "descr_1", //TODO, change the server side
-					vtype: 'cmdbcomment'
-				}, {
-					xtype: 'textfield',
-					fieldLabel: this.translation.description_inverse,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					allowBlank: false,
-					name: "descr_2", //TODO, change the server side
-					vtype: 'cmdbcomment'
-				},
+					this.directDescription,
+					this.inverseDescription,
 					this.cardinality_combo,
 					this.masterdetail,
 					this.masterDetailLabel,
@@ -203,6 +214,10 @@
 
 		onDomainSelected: function(cmDomain) {
 			this.disableModify(enableCMTBar = true);
+			this.domainDescription.translationsKeyName = cmDomain.get("name");
+			this.directDescription.translationsKeyName = cmDomain.get("name");
+			this.inverseDescription.translationsKeyName = cmDomain.get("name");
+			this.masterDetailLabel.translationsKeyName = cmDomain.get("name");
 			if (cmDomain) {
                 this.reset();
 				this.getForm().loadRecord(cmDomain);
@@ -217,6 +232,7 @@
 			this.reset();
 			this.enableModify(all = true);
 			this.setDefaultValues();
+			_CMCache.initAddingTranslations();
 		},
 
 		enableModify: function(all) {

@@ -32,7 +32,7 @@
 	});
 
 	function addGeoserverLayersToTree(root, me) {
-		var children = root.children || [];
+		var children = (root) ? root.children || [] : [];
 		for (var i=0, l=children.length; i<l; ++i) {
 			addGeoserverLayersToTree(children[i], me);
 		}

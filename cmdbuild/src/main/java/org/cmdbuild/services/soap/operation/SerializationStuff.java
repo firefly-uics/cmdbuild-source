@@ -1,7 +1,9 @@
 package org.cmdbuild.services.soap.operation;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.concat;
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.common.Constants.Webservices.BOOLEAN_TYPE_NAME;
 import static org.cmdbuild.common.Constants.Webservices.CHAR_TYPE_NAME;
 import static org.cmdbuild.common.Constants.Webservices.DATE_TYPE_NAME;
@@ -17,6 +19,9 @@ import static org.cmdbuild.common.Constants.Webservices.TEXT_TYPE_NAME;
 import static org.cmdbuild.common.Constants.Webservices.TIMESTAMP_TYPE_NAME;
 import static org.cmdbuild.common.Constants.Webservices.TIME_TYPE_NAME;
 import static org.cmdbuild.common.Constants.Webservices.UNKNOWN_TYPE_NAME;
+import static org.cmdbuild.services.meta.MetadataService.SYSTEM_TEMPLATE_PREFIX;
+
+import java.util.List;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
@@ -40,6 +45,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.structure.AttributeSchema;
 import org.cmdbuild.services.soap.types.Metadata;
@@ -48,6 +54,8 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Lists;
 
 class SerializationStuff {
 
@@ -148,6 +156,9 @@ class SerializationStuff {
 			public void visit(final ReferenceAttributeType attributeType) {
 				schema.setType(REFERENCE_TYPE_NAME);
 				final CMDomain domain = dataView.findDomain(attributeType.getDomainName());
+				if (domain == null) {
+					logger.error("cannot find domain '{}'", attributeType.getDomainName());
+				}
 				if (domain.getClass1().getName().equals(attribute.getOwner().getName())) {
 					schema.setReferencedClassName(domain.getClass2().getName());
 					schema.setReferencedIdClass(domain.getClass2().getId().intValue());
@@ -190,11 +201,28 @@ class SerializationStuff {
 		schema.setFieldmode(serialize(attribute.getMode()));
 		schema.setDefaultValue(attribute.getDefaultValue());
 		schema.setClassorder(attribute.getClassOrder());
-		schema.setMetadata(from(metadataStoreFactory.storeForAttribute(attribute).list()) //
-				.transform(TO_SOAP_METADATA) //
-				.toArray(Metadata.class) //
+		schema.setMetadata(from(concat(storedMetadata(attribute), filterMetadata(attribute))).toArray(Metadata.class) //
 		);
 		return schema;
+	}
+
+	private FluentIterable<Metadata> storedMetadata(final CMAttribute attribute) {
+		final Store<org.cmdbuild.model.data.Metadata> store = metadataStoreFactory.storeForAttribute(attribute);
+		final Iterable<org.cmdbuild.model.data.Metadata> elements = store.list();
+		return from(elements) //
+				.transform(TO_SOAP_METADATA);
+	}
+
+	private Iterable<Metadata> filterMetadata(final CMAttribute attribute) {
+		final List<Metadata> elements = Lists.newArrayList();
+		final String filter = attribute.getFilter();
+		if (isNotBlank(filter)) {
+			final Metadata m = new Metadata();
+			m.setKey(SYSTEM_TEMPLATE_PREFIX);
+			m.setValue(filter);
+			elements.add(m);
+		}
+		return elements;
 	}
 
 	public static String serialize(final Mode mode) {

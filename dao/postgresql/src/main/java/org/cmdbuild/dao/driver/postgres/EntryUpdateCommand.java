@@ -1,7 +1,7 @@
 package org.cmdbuild.dao.driver.postgres;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.join;
 import static org.cmdbuild.common.Constants.LOOKUP_CLASS_NAME;
 
 import java.util.List;

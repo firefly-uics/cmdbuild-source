@@ -20,6 +20,9 @@
 		// For this reason, act like an expand, loading the
 		// branch at all, and then show/hide the features.
 		onCardBrowserTreeCheckChange: function(tree, node, checked, deeply) {
+			if(! (checked || node.raw.checked))
+				return;
+			node.raw.checked = true;
 			if (deeply) {
 				setFeatureVisibilityForAllBranch(tree, this.master, node, checked);
 			} else {

@@ -92,6 +92,7 @@
 	function onAddAttributeClick() {
 		this.currentAttribute = null;
 		this.view.onAddAttributeClick();
+		_CMCache.initAddingTranslations();
 	}
 	
 	function onAbortButtonClick() {
@@ -122,6 +123,7 @@
 				this.view.form.disableModify();
 				_CMCache.onDomainAttributeSaved(this.currentDomain.get("id"), decoded.attribute);
 				this.view.grid.selectAttributeByName(decoded.attribute.name);
+				_CMCache.flushTranslationsToSave(this.currentDomain.get("name"), decoded.attribute.name);
 			},
 			callback: function() {
 				CMDBuild.LoadMask.get().hide();

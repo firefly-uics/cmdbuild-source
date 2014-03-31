@@ -1,8 +1,8 @@
 package org.cmdbuild.report;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.services.store.report.JDBCReportStore.REPORT_CLASS_NAME;
 
 import java.math.BigDecimal;

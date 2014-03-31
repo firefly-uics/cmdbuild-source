@@ -233,7 +233,7 @@
 			r.src = src;
 
 			attributesToString = "";
-			node.rel_attr_keys = node.rel_attr_keys || [];
+			node.rel_attr_keys = node.rel_attr_keys || nodeUI.raw.rel_attr_keys || [];
 			for (var j=0; j<node.rel_attr_keys.length; ++j) {
 				key = node.rel_attr_keys[j];
 				val = r.rel_attr[key];

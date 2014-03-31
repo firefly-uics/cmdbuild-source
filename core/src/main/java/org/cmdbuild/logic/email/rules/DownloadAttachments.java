@@ -2,8 +2,8 @@ package org.cmdbuild.logic.email.rules;
 
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;

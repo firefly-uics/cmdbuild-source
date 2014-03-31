@@ -77,7 +77,7 @@ function buildDetaiWindow(id) {
 		}],
 		buttonAlign: 'center',
 		buttons: [{
-			text: CMDBuild.Translation.common.btns.close,
+			text: CMDBuild.Translation.common.buttons.close,
 			handler: function() {
 				win.destroy();
 			}

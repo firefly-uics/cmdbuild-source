@@ -1,6 +1,6 @@
 package org.cmdbuild.bim.service.bimserver;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bimserver.interfaces.objects.SDataValue;
 import org.bimserver.interfaces.objects.SReferenceDataValue;
 import org.bimserver.interfaces.objects.SSimpleDataValue;

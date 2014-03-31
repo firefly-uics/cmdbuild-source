@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.json.JSONArray;
 import org.json.JSONException;

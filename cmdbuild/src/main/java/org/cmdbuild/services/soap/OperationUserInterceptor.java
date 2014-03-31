@@ -1,8 +1,10 @@
 package org.cmdbuild.services.soap;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
@@ -63,6 +65,33 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 
 	}
 
+	private static final class AuthenticatedUserWithOtherGroups extends ForwardingAuthenticatedUser {
+
+		public static AuthenticatedUserWithOtherGroups from(final AuthenticatedUser authenticatedUser,
+				final AuthenticatedUser userForGroups) {
+			return new AuthenticatedUserWithOtherGroups(authenticatedUser, userForGroups);
+		}
+
+		private final AuthenticatedUser userForGroups;
+
+		private AuthenticatedUserWithOtherGroups(final AuthenticatedUser authenticatedUser,
+				final AuthenticatedUser userForGroups) {
+			super(authenticatedUser);
+			this.userForGroups = userForGroups;
+		}
+
+		@Override
+		public Set<String> getGroupNames() {
+			return userForGroups.getGroupNames();
+		}
+
+		@Override
+		public List<String> getGroupDescriptions() {
+			return userForGroups.getGroupDescriptions();
+		}
+
+	}
+
 	private static Iterable<String> EMPTY_PRIVILEGED_SERVICE_USERS = Collections.emptyList();
 
 	@Autowired
@@ -99,16 +128,10 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 
 	private void storeOperationUser(final AuthenticationString authenticationString) {
 		logger.info(marker, "storing operation user for authentication string '{}'", authenticationString);
-		final AuthenticationLogic authenticationLogic = authenticationLogic();
 		final LoginAndGroup loginAndGroup = loginAndGroupFor(authenticationString);
 		try {
-			logger.debug(marker, "trying login in with '{}'", loginAndGroup);
 			authenticationStore.setType(UserType.APPLICATION);
-			final Response response = authenticationLogic.login(loginFor(loginAndGroup));
-			if (!response.isSuccess()) {
-				// backward compatibility
-				throw AuthExceptionType.AUTH_MULTIPLE_GROUPS.createException();
-			}
+			tryLogin(loginAndGroup);
 			authenticationStore.setLogin(loginAndGroup.getLogin());
 		} catch (final RuntimeException e) {
 			logger.warn(marker, "error logging in", e);
@@ -117,13 +140,8 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 				 * fallback to the authentication login, should always work
 				 */
 				final LoginAndGroup fallbackLogin = authenticationString.getAuthenticationLogin();
-				logger.debug(marker, "trying login as guest with '{}'", fallbackLogin);
 				userStore.setUser(null);
-				final Response response = authenticationLogic.login(loginFor(fallbackLogin));
-				if (!response.isSuccess()) {
-					// backward compatibility
-					throw AuthExceptionType.AUTH_MULTIPLE_GROUPS.createException();
-				}
+				tryLogin(fallbackLogin);
 				authenticationStore.setLogin(loginAndGroup.getLogin());
 				authenticationStore.setType(UserType.GUEST);
 			} else {
@@ -161,34 +179,40 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 		return loginAndGroup;
 	}
 
-	private LoginDTO loginFor(final LoginAndGroup loginAndGroup) {
-		return LoginDTO.newInstance() //
-				.withLoginString(loginAndGroup.getLogin().getValue()) //
-				.withGroupName(loginAndGroup.getGroup()) //
-				.withNoPasswordRequired() //
-				.withUserStore(userStore) //
-				.build();
-	}
-
-	private Iterable<String> privilegedServiceUsers() {
-		return (configuration.getPrivilegedServiceUsers() == null) ? EMPTY_PRIVILEGED_SERVICE_USERS : configuration
-				.getPrivilegedServiceUsers();
-	};
-
 	private void wrapExistingOperationUser(final AuthenticationString authenticationString) {
 		final OperationUser operationUser = userStore.getUser();
+		final OperationUser wrapperOperationUser;
 		if (authenticationString.shouldImpersonate()) {
 			final AuthenticatedUser authenticatedUser = operationUser.getAuthenticatedUser();
 			if (isPrivilegedServiceUser(authenticationString.getAuthenticationLogin())) {
 				logger.debug(marker, "wrapping operation user with extended username");
 				final String username = authenticationString.getImpersonationLogin().getLogin().getValue();
-				userStore.setUser(new OperationUser( //
+				wrapperOperationUser = new OperationUser( //
 						AuthenticatedUserWithExtendedUsername.from(authenticatedUser, username), //
 						operationUser.getPrivilegeContext(), //
-						operationUser.getPreferredGroup()));
+						operationUser.getPreferredGroup());
+			} else if (authenticationStore.getType() == UserType.DOMAIN) {
+				/*
+				 * we don't want that a User is represented by a Card of a user
+				 * class, so we login again with the authentication user
+				 * 
+				 * at the end we keep the authenticated user with the privileges
+				 * of the impersonated... it's a total mess
+				 */
+				tryLogin(authenticationString.getAuthenticationLogin());
+				final OperationUser _operationUser = userStore.getUser();
+				wrapperOperationUser = new OperationUser( //
+						AuthenticatedUserWithOtherGroups.from(_operationUser.getAuthenticatedUser(), authenticatedUser), //
+						operationUser.getPrivilegeContext(), //
+						operationUser.getPreferredGroup());
+				authenticationStore.setType(UserType.DOMAIN);
+			} else {
+				wrapperOperationUser = operationUser;
 			}
+		} else {
+			wrapperOperationUser = operationUser;
 		}
-		// else nothing to do
+		userStore.setUser(wrapperOperationUser);
 	}
 
 	private boolean isPrivilegedServiceUser(final LoginAndGroup loginAndGroup) {
@@ -196,6 +220,29 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 		final boolean privileged = Iterables.contains(privilegedServiceUsers(), username);
 		logger.debug(marker, "'{}' is {}a privileged service user", username, privileged ? EMPTY : "not");
 		return privileged;
+	}
+
+	private Iterable<String> privilegedServiceUsers() {
+		return (configuration.getPrivilegedServiceUsers() == null) ? EMPTY_PRIVILEGED_SERVICE_USERS : configuration
+				.getPrivilegedServiceUsers();
+	};
+
+	private void tryLogin(final LoginAndGroup loginAndGroup) {
+		logger.debug(marker, "trying login with '{}'", loginAndGroup);
+		final Response response = authenticationLogic().login(loginFor(loginAndGroup));
+		if (!response.isSuccess()) {
+			// backward compatibility
+			throw AuthExceptionType.AUTH_MULTIPLE_GROUPS.createException();
+		}
+	}
+
+	private LoginDTO loginFor(final LoginAndGroup loginAndGroup) {
+		return LoginDTO.newInstance() //
+				.withLoginString(loginAndGroup.getLogin().getValue()) //
+				.withGroupName(loginAndGroup.getGroup()) //
+				.withNoPasswordRequired() //
+				.withUserStore(userStore) //
+				.build();
 	}
 
 }

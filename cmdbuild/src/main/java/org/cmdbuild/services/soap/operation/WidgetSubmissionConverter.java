@@ -17,6 +17,7 @@ import org.cmdbuild.model.widget.PresetFromCard;
 import org.cmdbuild.model.widget.WebService;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.WidgetVisitor;
+import org.cmdbuild.model.widget.Workflow;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetSubmission;
 import org.cmdbuild.services.soap.structure.WorkflowWidgetSubmissionParameter;
 
@@ -92,6 +93,11 @@ class WidgetSubmissionConverter implements WidgetVisitor {
 
 	@Override
 	public void visit(final OpenReport openReport) {
+		// nothing to do
+	}
+
+	@Override
+	public void visit(final Workflow workflow) {
 		// nothing to do
 	}
 

@@ -2,7 +2,7 @@ package org.cmdbuild.workflow.service;
 
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.enhydra.shark.api.client.wfmc.wapi.WMConnectInfo;
 
 /**

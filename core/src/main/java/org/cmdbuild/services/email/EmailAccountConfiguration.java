@@ -1,6 +1,6 @@
 package org.cmdbuild.services.email;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.data.store.email.EmailAccount;

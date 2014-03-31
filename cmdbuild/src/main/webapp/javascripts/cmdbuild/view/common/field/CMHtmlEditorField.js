@@ -34,7 +34,7 @@
 
 		getToolbarCfg: function() {
 			var toolbarConfig = this.callParent(arguments);
-	
+
 			if (this.enableExpand) {
 				toolbarConfig.items.push("->");
 				toolbarConfig.items.push({
@@ -43,11 +43,11 @@
 					handler: expandButtonHandler
 				});
 			}
-	
+
 			return toolbarConfig;
 		},
 
-		/* 
+		/*
 		 * Do not disable also the label
 		 */
 		// override
@@ -110,7 +110,7 @@
 					region: "center"
 				}) //
 			);
-	
+
 		var popup = new CMDBuild.PopupWindow({
 			title: conf.fieldLabel,
 			items: [{
@@ -122,13 +122,13 @@
 			}],
 			buttonAlign: "center",
 			buttons: [{
-				text: CMDBuild.Translation.common.btns.confirm,
+				text: CMDBuild.Translation.common.buttons.confirm,
 				handler: function() {
 					me.setValue(htmlField.getValue());
 					popup.destroy();
 				}
 			}, {
-				text: CMDBuild.Translation.common.btns.abort,
+				text: CMDBuild.Translation.common.buttons.abort,
 				handler: function() {
 					popup.destroy();
 				}

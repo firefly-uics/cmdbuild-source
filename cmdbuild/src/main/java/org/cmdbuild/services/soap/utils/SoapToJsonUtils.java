@@ -1,7 +1,7 @@
 package org.cmdbuild.services.soap.utils;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.isNumeric;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 import static org.cmdbuild.logic.mapping.json.Constants.DIRECTION_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.PROPERTY_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
@@ -15,7 +15,7 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;

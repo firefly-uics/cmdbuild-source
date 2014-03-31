@@ -64,6 +64,7 @@
 			_CMCache.getAttributeList(classId, 
 				Ext.bind(function(attributes) {
 					this.setColumnsForClass(attributes);
+					this.setGridSorting(attributes);
 					if (cb) {
 						cb(scope);
 					}

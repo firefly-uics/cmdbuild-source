@@ -11,12 +11,25 @@
 		http://cxf.apache.org/schemas/configuration/soap.xsd
 	">
 
+	<bean id="webservicesProxyBuilder" class="org.cmdbuild.common.utils.NotifierProxy.Builder">
+		<property name="type" value="org.cmdbuild.services.soap.Webservices" />
+		<property name="delegate">
+			<bean class="org.cmdbuild.services.soap.WebservicesImpl" />
+		</property>
+		<property name="notifier">
+			<bean class="org.cmdbuild.services.soap.utils.LoggingNotifier" />
+		</property>
+	</bean>
+
+	<bean id="webservicesProxy" factory-bean="webservicesProxyBuilder"
+		factory-method="build" />
+
 	<bean id="addDefaultNamespaceInterceptor"
 		class="org.cmdbuild.services.soap.AddDefaultNamespaceInterceptor" />
 
 	<jaxws:endpoint address="/Webservices">
 		<jaxws:implementor>
-			<bean class="org.cmdbuild.services.soap.WebservicesImpl" />
+			<bean factory-bean="webservicesProxy" factory-method="get" />
 		</jaxws:implementor>
 		<jaxws:binding>
 			<soap:soapBinding mtomEnabled="true" version="1.2" />

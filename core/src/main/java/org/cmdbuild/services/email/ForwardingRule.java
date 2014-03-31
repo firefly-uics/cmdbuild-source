@@ -1,16 +1,16 @@
 package org.cmdbuild.services.email;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
 
-public class ForwardingRule implements Rule {
+public abstract class ForwardingRule implements Rule {
 
 	private final Rule inner;
 
-	public ForwardingRule(final Rule rule) {
+	protected ForwardingRule(final Rule rule) {
 		this.inner = rule;
 	}
 

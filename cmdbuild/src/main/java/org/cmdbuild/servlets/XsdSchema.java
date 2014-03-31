@@ -36,105 +36,106 @@ public class XsdSchema extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	ApplicationContext applicationContext;
-	
+
+	@Override
 	public void init() throws ServletException {
-		super.init();	
+		super.init();
 		applicationContext = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
-    }
-	
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	}
+
+	@Override
+	public void doPost(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
+			ServletException {
 		try {
 			AuthenticationLogicUtils.assureAdmin(request, AdminAccess.FULL);
-			XmlRegistry xmlRegistry = applicationContext.getBean(XmlRegistry.class); 
-			
-			URI baseUri = URI.create(request.getRequestURL().toString());
-			FileItemFactory factory = new DiskFileItemFactory();
-			ServletFileUpload upload = new ServletFileUpload(factory);
-			if(ServletFileUpload.isMultipartContent(request)) {
+			final XmlRegistry xmlRegistry = applicationContext.getBean(XmlRegistry.class);
+
+			final URI baseUri = URI.create(request.getRequestURL().toString());
+			final FileItemFactory factory = new DiskFileItemFactory();
+			final ServletFileUpload upload = new ServletFileUpload(factory);
+			if (ServletFileUpload.isMultipartContent(request)) {
 				@SuppressWarnings("unchecked")
-				List<FileItem> items = upload.parseRequest(request);
-				for (FileItem item : items) {
-					if(!item.isFormField()) {
-						XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
-		    			URI uri = baseUri.resolve(item.getName());
-						InputSource source = new InputSource(uri.toString());
-						InputStream filecontent = item.getInputStream();
+				final List<FileItem> items = upload.parseRequest(request);
+				for (final FileItem item : items) {
+					if (!item.isFormField()) {
+						final XmlSchemaCollection schemaCollection = new XmlSchemaCollection();
+						final URI uri = baseUri.resolve(item.getName());
+						final InputSource source = new InputSource(uri.toString());
+						final InputStream filecontent = item.getInputStream();
 						source.setByteStream(filecontent);
-						XmlSchema schema = schemaCollection.read(source, null);
+						final XmlSchema schema = schemaCollection.read(source);
 						xmlRegistry.updateSchema(schema);
 					}
 				}
 				cachingLogic().clearCache();
-		 	}
-			
+			}
+
 			response.setContentType("text/html");
-			Writer writer = response.getWriter();
+			final Writer writer = response.getWriter();
 			writer.write("<html><head><title>Xml Schema Upload</title></head><body>");
 			writer.write("OK");
 			writer.write("</body></html>");
 			writer.flush();
-			
-	    } catch (Exception e) {
-	    	response.setContentType("text/html");
-			Writer writer = response.getWriter();
+
+		} catch (final Exception e) {
+			response.setContentType("text/html");
+			final Writer writer = response.getWriter();
 			writer.write("<html><head><title>Xml Schema Upload</title></head><body>");
 			writer.write(e.getMessage());
 			writer.write("</body></html>");
 			writer.flush();
-	        throw new ServletException(e.getMessage(), e);
-	    }
-	}
-
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		try {
-			XmlRegistry xmlRegistry = applicationContext.getBean("xmlRegistry", XmlRegistry.class); 
-			String pathInfo = request.getPathInfo();
-			if(pathInfo != null && pathInfo.startsWith("/"))
-				pathInfo = pathInfo.substring(1);
-			if(pathInfo == null || pathInfo.isEmpty()) {
-				response.setContentType("text/html");
-				Writer writer = response.getWriter();
-				
-				writer.write("<html>\n" +
-	 				         "  <head>\n" +
-	 				         "<title>CMDB Xml Schema</title>\n" +
-					         "  </head>\n" +
-						     "  <body>\n" +
-						     "    <p>\n" +
-						     "      <form method='POST' accept-charset='UTF-8' enctype='multipart/form-data'>\n" +
-							 "        Xml schema: <input type='file' name='xsd'><br>\n" +
-				  			 "        <input type='submit' value='Upload'>\n" +
-							 "      </form>\n" +
-				  			 "    </p>\n" +
-						     "    <p>\n" +
-		    				 "    <ul>\n");
-				for(String systemId : xmlRegistry.getSystemIds())
-					writer.write("<li><a href=\"" + systemId + "\">" + systemId + "</a></li>\n");
-				writer.write("    </ul>\n" +
-						     "    </p>\n" +
-							 "  </body>\n" +
-							 "</html>");
-				writer.flush();
-			}
-			else {
-				XmlSchema schema = xmlRegistry.getSchema(pathInfo);
-				if(schema != null) {										
-					Document schemaDocument = schema.getSchemaDocument();
-					DOMImplementationLS domImplementation = (DOMImplementationLS) schemaDocument.getImplementation();
-					LSSerializer lsSerializer = domImplementation.createLSSerializer();
-					LSOutput destination = domImplementation.createLSOutput();
-					destination.setByteStream(response.getOutputStream());
-					destination.setEncoding("UTF-8");
-					response.setCharacterEncoding(destination.getEncoding());
-					response.setContentType("text/xml");
-					lsSerializer.write(schemaDocument, destination);
-				}
-			}
-		} catch (Exception e) {
 			throw new ServletException(e.getMessage(), e);
 		}
 	}
-	
+
+	@Override
+	public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
+			ServletException {
+		String pathInfo = request.getPathInfo();
+		if (pathInfo != null && pathInfo.startsWith("/")) {
+			try {
+				final XmlRegistry xmlRegistry = applicationContext.getBean("xmlRegistry", XmlRegistry.class);
+				pathInfo = pathInfo.substring(1);
+				if (pathInfo == null || pathInfo.isEmpty()) {
+					response.setContentType("text/html");
+					final Writer writer = response.getWriter();
+
+					writer.write("<html>\n" + "  <head>\n" + "<title>CMDB Xml Schema</title>\n" + "  </head>\n"
+							+ "  <body>\n" + "    <p>\n"
+							+ "      <form method='POST' accept-charset='UTF-8' enctype='multipart/form-data'>\n"
+							+ "        Xml schema: <input type='file' name='xsd'><br>\n"
+							+ "        <input type='submit' value='Upload'>\n" + "      </form>\n" + "    </p>\n"
+							+ "    <p>\n" + "    <ul>\n");
+					for (final String systemId : xmlRegistry.getSystemIds()) {
+						writer.write("<li><a href=\"" + systemId + "\">" + systemId + "</a></li>\n");
+					}
+					writer.write("    </ul>\n" + "    </p>\n" + "  </body>\n" + "</html>");
+					writer.flush();
+				} else {
+					final XmlSchema schema = xmlRegistry.getSchema(pathInfo);
+					if (schema != null) {
+						final Document schemaDocument = schema.getSchemaDocument();
+						final DOMImplementationLS domImplementation = (DOMImplementationLS) schemaDocument
+								.getImplementation();
+						final LSSerializer lsSerializer = domImplementation.createLSSerializer();
+						final LSOutput destination = domImplementation.createLSOutput();
+						destination.setByteStream(response.getOutputStream());
+						destination.setEncoding("UTF-8");
+						response.setCharacterEncoding(destination.getEncoding());
+						response.setContentType("text/xml");
+						lsSerializer.write(schemaDocument, destination);
+					}
+				}
+			} catch (final Exception e) {
+				throw new ServletException(e.getMessage(), e);
+			}
+		} else {
+			final StringBuffer url = request.getRequestURL();
+			url.append('/');
+			response.sendRedirect(url.toString());
+		}
+	}
+
 	private CachingLogic cachingLogic() {
 		return applicationContext().getBean(CachingLogic.class);
 	}

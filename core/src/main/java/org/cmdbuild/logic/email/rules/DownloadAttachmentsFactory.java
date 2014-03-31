@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.email.rules;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public class DownloadAttachmentsFactory implements RuleFactory<DownloadAttachments> {
 

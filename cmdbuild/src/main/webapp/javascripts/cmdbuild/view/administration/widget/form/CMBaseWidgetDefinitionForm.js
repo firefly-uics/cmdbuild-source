@@ -24,11 +24,14 @@
 		buildForm: function() {
 			var tr = CMDBuild.Translation.administration.modClass.widgets;
 
-			this.buttonLabel = new Ext.form.Field({
+			this.buttonLabel = new Ext.form.CMTranslatableText({
 				name: "label",
 				fieldLabel: tr.commonFields.buttonLabel,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				labelWidth: CMDBuild.LABEL_WIDTH
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				translationsKeyType: "Widget", 
+				translationsKeyField: "ButtonLabel",
+				itemId: "ButtonLabel"
 			});
 
 			this.active = new Ext.form.field.Checkbox({

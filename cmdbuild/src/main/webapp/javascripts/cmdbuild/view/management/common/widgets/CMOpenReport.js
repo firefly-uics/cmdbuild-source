@@ -39,7 +39,7 @@
 				displayField: 'text',
 				value: 'pdf'
 			});
-	
+
 			this.formPanel = new Ext.FormPanel({
 				timeout : CMDBuild.Config.defaultTimeout * 1000,
 				monitorValid : true,
@@ -69,7 +69,7 @@
 		getExtraButtons: function() {
 			var me = this;
 			return [new Ext.Button( {
-				text : CMDBuild.Translation.common.btns.confirm,
+				text : CMDBuild.Translation.common.buttons.confirm,
 				name : 'saveButton',
 				handler: function() {
 					me.fireEvent(me.CMEVENTS.saveButtonClick);
@@ -85,7 +85,7 @@
 				this.formatCombo.enable();
 			}
 		},
-	
+
 		// add the required attributes
 		configureForm: function(attributes, parameters) {
 			if (!this.formPanelCreated) {
@@ -94,7 +94,7 @@
 				for (var i=0; i<attributes.length; i++) {
 					var attribute = attributes[i],
 						field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false);
-	
+
 					if (field) {
 						this.formFields[i] = field;
 						this.formPanel.add(field);
@@ -103,12 +103,12 @@
 				this.formPanel.doLayout();
 			}
 		},
-	
+
 
 		fillFormValues : function(parameters) {
 				for ( var i = 0; i < this.formFields.length; i++) {
 					var field = this.formFields[i], value = parameters[field.name]
-	
+
 					if (value) {
 						if (Ext.getClassName(field) == "Ext.form.field.Date") {
 							try {
