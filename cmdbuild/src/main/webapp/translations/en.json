@@ -696,8 +696,10 @@
 			"tasksTypes": {
 				"email": "Email",
 				"event": "Event",
-				"eventAsynchronous": "Asynchronous event",
-				"eventSynchronous": "Synchronous event",
+				"eventTypes": {
+					"asynchronous": "Asynchronous",
+					"synchronous": "Synchronous"
+				},
 				"workflow": "Workflow"
 			},
 			"workflow": "Workflow",

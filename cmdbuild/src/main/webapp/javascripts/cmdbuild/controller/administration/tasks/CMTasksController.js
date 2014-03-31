@@ -4,7 +4,14 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		parentDelegate: undefined,
-		tasksDatas: ['all', 'email', 'event', 'workflow'], // Used to check task existence
+		tasksDatas: [ // Used to check task validity
+			'all',
+			'email',
+			'event',
+			'event_synchronous',
+			'event_asynchronous',
+			'workflow'
+		],
 		taskType: undefined,
 		selectionModel: undefined,
 
@@ -77,14 +84,14 @@
 		 */
 		buildFormController: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
-				this.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(type) + 'Controller', this.form);
+				this.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(this.typeSerialize(type, 1)) + 'Controller', this.form);
 				this.form.delegate.parentDelegate = this;
 				this.form.delegate.selectionModel = this.selectionModel;
 			}
 		},
 
 		capitaliseFirstLetter: function(string) {
-			if (typeof string === 'string') {
+			if (typeof string == 'string') {
 				return string.charAt(0).toUpperCase() + string.slice(1);
 			}
 
@@ -102,8 +109,8 @@
 			if (this.correctTaskTypeCheck(type)) {
 				this.form.wizard.removeAll();
 				this.form.delegate.delegateStep = [];
-
-				var items = Ext.create('CMDBuild.view.administration.tasks.' + type + '.CMTaskTabs').getTabs();
+//_debug(this.typeSerialize(type));
+				var items = Ext.create('CMDBuild.view.administration.tasks.' + this.typeSerialize(type) + '.CMTaskTabs').getTabs();
 
 				for (var i = 0; i < items.length; i++) {
 
@@ -177,6 +184,40 @@
 
 		success: function() {
 			this.grid.store.load();
+		},
+
+		/**
+		 * Function to serialize tyme and return as class path string
+		 *
+		 * @param (String) type
+		 * @param (Numeric) partToReturn
+		 *
+		 * @return (String) class path string for type
+		 */
+		typeSerialize: function(type, itemsToReturn) {
+			var splittedType = type.split('_');
+			var returnString = '';
+
+			if (typeof itemsToReturn == 'undefined')
+				itemsToReturn = splittedType.lenght;
+_debug(type);
+_debug(itemsToReturn);
+_debug(splittedType);
+_debug(splittedType.length);
+
+			if (splittedType.length > 1) {
+	_debug(itemsToReturn);
+				for (var i = 0; i < itemsToReturn; i++) {
+					if (i > 0)
+						returnString += '.';
+
+					returnString += splittedType[i];
+				}
+
+				return returnString;
+			}
+_debug(returnString);
+			return type;
 		}
 	});
 

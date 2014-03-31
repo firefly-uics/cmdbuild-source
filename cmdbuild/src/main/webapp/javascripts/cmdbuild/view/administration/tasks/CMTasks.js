@@ -33,9 +33,20 @@
 						},
 						{
 							text: tr.tasksTypes.event,
-							handler: function() {
-								me.delegate.cmOn('onAddButtonClick', { type: 'event' });
-							}
+							menu: [
+								{
+									text: tr.tasksTypes.eventTypes.asynchronous,
+									handler: function() {
+										me.delegate.cmOn('onAddButtonClick', { type: 'event_asynchronous' });
+									}
+								},
+								{
+									text: tr.tasksTypes.eventTypes.synchronous,
+									handler: function() {
+										me.delegate.cmOn('onAddButtonClick', { type: 'event_asynchronous' });
+									}
+								},
+							]
 						},
 						{
 							text: tr.tasksTypes.workflow,

@@ -145,7 +145,7 @@
 
 					getStore: 'services/json/schema/taskmanager/reademail/readall'
 				},
-				event: {
+				event: { // TODO: to decide how to organize this section
 					delete: '',
 					get: '',
 					post: '',
