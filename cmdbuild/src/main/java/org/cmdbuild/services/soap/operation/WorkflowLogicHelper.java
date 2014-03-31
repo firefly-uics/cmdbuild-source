@@ -40,11 +40,13 @@ public class WorkflowLogicHelper implements SoapLogicHelper {
 
 	private final WorkflowLogic workflowLogic;
 	private final SerializationStuff serializationUtils;
+	private final CardAdapter cardAdapter;
 
 	public WorkflowLogicHelper(final WorkflowLogic workflowLogic, final CMDataView view,
-			final MetadataStoreFactory metedataStoreFactory) {
+			final MetadataStoreFactory metedataStoreFactory, final CardAdapter cardAdapter) {
 		this.workflowLogic = workflowLogic;
 		this.serializationUtils = new SerializationStuff(view, metedataStoreFactory);
+		this.cardAdapter = cardAdapter;
 	}
 
 	public String getInstructions(final String className, final Integer cardId) {
@@ -172,6 +174,7 @@ public class WorkflowLogicHelper implements SoapLogicHelper {
 
 	public Workflow updateProcess(final Card card, final WorkflowWidgetSubmission[] widgets, final boolean advance) {
 		try {
+			cardAdapter.resolveAttributes(card);
 			final UserProcessInstance processInstance;
 			if (isNewProcess(card)) {
 				final CMActivity activity = startActivityFor(card.getClassName());
