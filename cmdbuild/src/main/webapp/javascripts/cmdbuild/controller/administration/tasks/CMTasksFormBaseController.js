@@ -20,7 +20,7 @@
 			this.delegateStep[0].setDisabledTypeField(true);
 		},
 
-		onAbortButtonClick: function(name, param, callBack) {
+		onAbortButtonClick: function() {
 			if (this.selectedId != null) {
 				this.onRowSelected();
 			} else {
@@ -33,14 +33,14 @@
 		onAddButtonClick: function(name, param, callBack) {
 			this.selectionModel.deselectAll();
 			this.selectedId = null;
-			this.parentDelegate.loadForm(this.taskType);
+			this.parentDelegate.loadForm(param.type);
 			this.view.reset();
 			this.view.enableTabbedModify();
 			this.disableTypeField();
 			this.view.wizard.changeTab(0);
 		},
 
-		onCloneButtonClick: function(name, param, callBack) {
+		onCloneButtonClick: function() {
 			this.selectionModel.deselectAll();
 			this.selectedId = null;
 			this.resetIdField();
@@ -51,7 +51,7 @@
 			this.view.wizard.changeTab(0);
 		},
 
-		onModifyButtonClick: function(name, param, callBack) {
+		onModifyButtonClick: function() {
 			this.view.disableCMTbar();
 			this.view.enableCMButtons();
 			this.view.enableTabbedModify(true);
@@ -59,7 +59,7 @@
 			this.view.wizard.changeTab(0);
 		},
 
-		onRemoveButtonClick: function(name, param, callBack) {
+		onRemoveButtonClick: function() {
 			Ext.Msg.show({
 				title: CMDBuild.Translation.administration.setup.remove,
 				msg: CMDBuild.Translation.common.confirmpopup.areyousure,

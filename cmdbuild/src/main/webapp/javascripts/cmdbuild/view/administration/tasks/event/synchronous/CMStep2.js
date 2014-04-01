@@ -7,6 +7,7 @@
 
 		parentDelegate: undefined,
 		view: undefined,
+		className: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -24,60 +25,64 @@
 			}
 		},
 
-		checkWorkflowComboSelected: function() {
-			if (this.getValueWorkflowCombo())
-				return true;
-
-			return false;
+		setClassName: function(className) {
+			this.className = className;
 		},
 
-		getWorkflowDelegate: function() {
-			return this.view.workflowForm.delegate;
-		},
+		drawFilterTabs: function() {
+			var me = this;
+			var entryType = _CMCache.getEntryTypeByName(this.className);
+			var filter = this.filter || Ext.create('CMDBuild.model.CMFilterModel', {
+				entryType: me.className,
+				local: true,
+				name: CMDBuild.Translation.management.findfilter.newfilter + " " + _CMUtils.nextId()
+			});
 
-		getValueAttributeGrid: function() {
-			return this.getWorkflowDelegate().getValueGrid();
-		},
+			_CMCache.getAttributeList(entryType.getId(), function(attributes) {
 
-		getValueId: function() {
-			return this.view.idField.getValue();
-		},
+				// Filter tabs
+//				me.view.filterTabAttributes = Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributes', {
+//					attributes: attributes,
+//					className: me.className
+//				});
+//				me.view.filterTabRelations = Ext.create('CMDBuild.view.management.common.filter.CMRelations', {
+//					attributes: attributes,
+//					className: me.className
+//				});
+//				me.view.filterTabFunctions = Ext.create('CMDBuild.view.management.common.filter.CMFunctions', {
+//					attributes: attributes,
+//					className: me.className
+//				});
+//
+//				me.view.filterTabs = Ext.create('Ext.tab.Panel', {
+//					border: false,
+//					items: [
+//						me.filterTabAttributes,
+//						me.filterTabRelations,
+//						me.filterTabFunctions
+//					]
+//				});
+//
+//				me.view.items = [
+//					me.view.filterTabs
+//				];
+				me.view.filterTabAttributes.attributes = attributes;
+				me.view.filterTabAttributes.className = me.className;
+				me.view.filterTabAttributes.doLayout();
 
-		getValueWorkflowCombo: function() {
-			return this.getWorkflowDelegate().getValueCombo();
-		},
+				me.view.filterTabRelations.attributes = attributes;
+				me.view.filterTabRelations.className = me.className;
+				me.view.filterTabRelations.doLayout();
 
-		onWorkflowSelected: function(name, modify) {
-			this.getWorkflowDelegate().onWorkflowSelected(name, modify);
-		},
+				me.view.filterTabFunctions.attributes = attributes;
+				me.view.filterTabFunctions.className = me.className;
+				me.view.filterTabFunctions.doLayout();
 
-		setDisabledAttributesTable: function(state) {
-			this.getWorkflowDelegate().setDisabledAttributesTable(state);
+_debug('drawFilterTabs');
+_debug(me.view);
+				me.view.doLayout();
+			});
 		},
-
-		setDisabledTypeField: function(state) {
-			this.view.typeField.setDisabled(state);
-		},
-
-		setValueActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
-
-		setValueAttributesGrid: function(data) {
-			this.getWorkflowDelegate().setValueGrid(data);
-		},
-
-		setValueDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
-
-		setValueId: function(value) {
-			this.view.idField.setValue(value);
-		},
-
-		setValueWorkflowCombo: function(workflowName) {
-			this.getWorkflowDelegate().setValueCombo(workflowName);
-		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep2', {
@@ -91,56 +96,37 @@
 		overflowY: 'auto',
 
 		initComponent: function() {
-			var me = this;
+//			var me = this;
 
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', this);
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep2Delegate', this);
 
-			this.typeField = Ext.create('Ext.form.field.Text', {
-				fieldLabel: tr.type,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.ServiceProxy.parameter.TYPE,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				value: me.taskType,
-				disabled: true,
-				cmImmutable: true,
-				readOnly: true
-			});
+			// Filter tabs
+				this.filterTabAttributes = Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributes');
+				this.filterTabRelations = Ext.create('CMDBuild.view.management.common.filter.CMRelations');
+				this.filterTabFunctions = Ext.create('CMDBuild.view.management.common.filter.CMFunctions');
 
-			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.ServiceProxy.parameter.ID
-			});
-
-			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				fieldLabel: CMDBuild.Translation.description_,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				allowBlank: false
-			});
-
-			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
-				fieldLabel: tr.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH
-			});
-
-			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
-				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
-				allowBlank: false
+			this.filterTabs = Ext.create('Ext.tab.Panel', {
+				border: false,
+				items: [
+					this.filterTabAttributes,
+					this.filterTabRelations,
+					this.filterTabFunctions
+				]
 			});
 
 			Ext.apply(this, {
 				items: [
-					this.typeField,
-					this.idField,
-					this.descriptionField,
-					this.activeField,
-					this.workflowForm
+					this.filterTabs
 				]
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			show: function(panel, eOpts) {
+				this.delegate.drawFilterTabs();
+			}
 		}
 	});
 

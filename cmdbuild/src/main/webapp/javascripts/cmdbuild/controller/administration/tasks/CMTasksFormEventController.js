@@ -20,35 +20,35 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-//				case 'onAbortButtonClick':
-//					return this.onAbortButtonClick();
+				case 'onAbortButtonClick':
+					return this.onAbortButtonClick();
 
 				case 'onAddButtonClick':
-					return this.onAddButtonClick(param.type);
+					return this.onAddButtonClick(name, param, callBack);
 
-//				case 'onCloneButtonClick':
-//					return this.onCloneButtonClick();
-//
-//				case 'onInizializeWizardButtons':
-//					return this.view.wizard.changeTab(0);
-//
-//				case 'onModifyButtonClick':
-//					return this.onModifyButtonClick();
-//
-//				case 'onNextButtonClick':
-//					return this.view.wizard.changeTab(+1);
-//
-//				case 'onPreviousButtonClick':
-//					return this.view.wizard.changeTab(-1);
-//
-//				case 'onRemoveButtonClick':
-//					return this.onRemoveButtonClick();
-//
-//				case 'onRowSelected':
-//					return this.onRowSelected();
-//
-//				case 'onSaveButtonClick':
-//					return this.onSaveButtonClick();
+				case 'onClassSelected':
+					this.onClassSelected(param.className);
+
+				case 'onCloneButtonClick':
+					return this.onCloneButtonClick();
+
+				case 'onModifyButtonClick':
+					return this.onModifyButtonClick();
+
+				case 'onNextButtonClick':
+					return this.view.wizard.changeTab(+1);
+
+				case 'onPreviousButtonClick':
+					return this.view.wizard.changeTab(-1);
+
+				case 'onRemoveButtonClick':
+					return this.onRemoveButtonClick();
+
+				case 'onRowSelected':
+					return this.onRowSelected();
+
+				case 'onSaveButtonClick':
+					return this.onSaveButtonClick();
 
 				default: {
 					if (this.parentDelegate)
@@ -57,14 +57,8 @@
 			}
 		},
 
-		onAddButtonClick: function(type) {
-			this.selectionModel.deselectAll();
-			this.selectedId = null;
-			this.parentDelegate.loadForm(this.taskType);
-			this.view.reset();
-			this.view.enableTabbedModify();
-			this.disableTypeField();
-			this.view.wizard.changeTab(0);
+		onClassSelected: function(className) {
+			this.delegateStep[1].setClassName(className);
 		}
 	});
 

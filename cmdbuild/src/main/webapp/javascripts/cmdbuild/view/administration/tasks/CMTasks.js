@@ -43,7 +43,7 @@
 								{
 									text: tr.tasksTypes.eventTypes.synchronous,
 									handler: function() {
-										me.delegate.cmOn('onAddButtonClick', { type: 'event_asynchronous' });
+										me.delegate.cmOn('onAddButtonClick', { type: 'event_synchronous' });
 									}
 								},
 							]

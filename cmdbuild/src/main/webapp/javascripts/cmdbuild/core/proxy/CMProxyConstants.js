@@ -43,6 +43,7 @@
 			FORMAT: 'format',
 			FROM: 'from',
 			GROUP: 'group',
+			GROUPS: 'groups',
 			GROUP_ID: 'groupId',
 			GROUP_NAME: 'groupName',
 			HOUR: 'hour',
