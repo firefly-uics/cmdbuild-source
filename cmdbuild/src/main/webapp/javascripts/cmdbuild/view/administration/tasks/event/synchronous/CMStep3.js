@@ -93,7 +93,7 @@
 		initComponent: function() {
 			var me = this;
 
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', this);
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,

@@ -24,35 +24,12 @@
 			}
 		},
 
-		checkWorkflowComboSelected: function() {
-			if (this.getValueWorkflowCombo())
-				return true;
-
-			return false;
-		},
-
-		getWorkflowDelegate: function() {
-			return this.view.workflowForm.delegate;
-		},
-
-		getValueAttributeGrid: function() {
-			return this.getWorkflowDelegate().getValueGrid();
-		},
+//		getClassName: function() {
+//			return this.view.classes.getValue();
+//		},
 
 		getValueId: function() {
 			return this.view.idField.getValue();
-		},
-
-		getValueWorkflowCombo: function() {
-			return this.getWorkflowDelegate().getValueCombo();
-		},
-
-		onWorkflowSelected: function(name, modify) {
-			this.getWorkflowDelegate().onWorkflowSelected(name, modify);
-		},
-
-		setDisabledAttributesTable: function(state) {
-			this.getWorkflowDelegate().setDisabledAttributesTable(state);
 		},
 
 		setDisabledTypeField: function(state) {
@@ -63,10 +40,6 @@
 			this.view.activeField.setValue(value);
 		},
 
-		setValueAttributesGrid: function(data) {
-			this.getWorkflowDelegate().setValueGrid(data);
-		},
-
 		setValueDescription: function(value) {
 			this.view.descriptionField.setValue(value);
 		},
@@ -75,9 +48,30 @@
 			this.view.idField.setValue(value);
 		},
 
-		setValueWorkflowCombo: function(workflowName) {
-			this.getWorkflowDelegate().setValueCombo(workflowName);
-		}
+
+
+		showFilterChooserPicker: function(className) {
+			var me = this;
+//			var className = this.className;
+			var filter = this.filter || new CMDBuild.model.CMFilterModel({
+				entryType: className,
+				local: true,
+				name: CMDBuild.Translation.management.findfilter.newfilter + " " + _CMUtils.nextId()
+			});
+
+			var entryType = _CMCache.getEntryTypeByName(className);
+
+			_CMCache.getAttributeList(entryType.getId(), function(attributes) {
+
+				var filterWindow = new CMDBuild.view.common.field.CMFilterChooserWindow({
+					filter: filter,
+					attributes: attributes,
+					className: className
+				});
+
+				filterWindow.show();
+			});
+		},
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep1', {
@@ -93,7 +87,7 @@
 		initComponent: function() {
 			var me = this;
 
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', this);
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,
@@ -125,10 +119,68 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH
 			});
 
-			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
-				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
-				allowBlank: false
+			this.phase = Ext.create('Ext.form.field.ComboBox', {
+				name: 'phase',
+				fieldLabel: 'tr.phase',
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				store: Ext.create('Ext.data.SimpleStore', {
+					fields: [CMDBuild.ServiceProxy.parameter.VALUE, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+					data: [
+						['afterCreate', 'tr.afterCreate'],
+						['beforeCreate', 'tr.beforeCreate'],
+						['afterUpdate', 'tr.afterUpdate'],
+						['beforeUpdate', 'tr.beforeUpdate'],
+						['beforeDelete', 'tr.beforeDelete']
+					]
+				}),
+				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
+				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				queryMode: 'local',
+				forceSelection: true,
+				editable: false,
+
+//				listeners: {
+//					select: function(combo, record, index) {
+//						me.delegate.setValueAdvancedFields(record[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
+//					}
+//				}
 			});
+
+			this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
+				fieldLabel: 'tr.groupsToApply',
+				height: 300,
+				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				considerAsFieldToDisable: true
+			});
+
+			this.classes = Ext.create('Ext.form.field.ComboBox', {
+				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
+				fieldLabel: CMDBuild.Translation.targetClass,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
+				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				queryMode: 'local',
+				forceSelection: true,
+				editable: false,
+
+				listeners: {
+					select: function(combo, records, options) {
+//						me.delegate.cmOn("onClassSelected", { className: records[0].get(this.valueField) });
+						me.delegate.showFilterChooserPicker(records[0].get(this.valueField));
+					}
+				}
+			});
+
+//			this.filterChooser = new CMDBuild.view.common.field.CMFilterChooser({
+//				fieldLabel: CMDBuild.Translation.filter,
+//				labelWidth: CMDBuild.LABEL_WIDTH,
+//				name: 'FILTER'
+//			});
 
 			Ext.apply(this, {
 				items: [
@@ -136,7 +188,10 @@
 					this.idField,
 					this.descriptionField,
 					this.activeField,
-					this.workflowForm
+					this.phase,
+					this.groups,
+					this.classes,
+//					this.filterChooser
 				]
 			});
 

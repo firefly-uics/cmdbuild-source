@@ -1,10 +1,10 @@
 (function() {
+
 	var tr = CMDBuild.Translation.management.findfilter;
 
 	Ext.define("CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldsetDelegate", {
 		/**
-		 * @param {CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset} fieldset
-		 * the fieldset that is empty
+		 * @param {CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset} fieldset the fieldset that is empty
 		 */
 		onAttributeFieldsetIsEmpty: Ext.emptyFn
 	});
@@ -20,18 +20,8 @@
 		autoScroll: true,
 
 		// configuration
-		/**
-		 * the attributes to use in the menu
-		 * to set filtering over attribute values
-		 */
-		attributes: {},
-
-		/**
-		 * set true to have no menu with attributes
-		 * and use the panel to only display the current
-		 * filter
-		 */
-		readOnly: false,
+			attributes: {}, // the attributes to use in the menu to set filtering over attribute values
+			readOnly: false, // set true to have no menu with attributes and use the panel to only display the current filter
 		// configuration
 
 		initComponent:function() {
@@ -113,7 +103,7 @@
 			this.items.each(function(i) {
 				if (typeof i.getData == "function") {
 					data.push(i.getData());
-				} 
+				}
 			});
 
 			if (data.length == 1) {
@@ -132,38 +122,37 @@
 		 * simple is the object that actually contains the configuration of
 		 * a filter chunk, and and or are array of other object with the
 		 * same configuration
-		 * 
+		 *
 		 * example
 		 * 	{
-				and: [{
-					or: [{
-						simple: {
-							attribute: "Code",
-							operator: "contain",
-							value: ["01"]
-						}
-					},{
-						simple: {
-							attribute: "Code",
-							operator: "contain",
-							value: ["02"]
-						}
-					}]
-				}, {
-					simple: {
-						attribute: "Description",
-						operator: "contain",
-						value: ["The"]
-					}
-				}] 
-			}
+		 *		and: [{
+		 *			or: [{
+		 *				simple: {
+		 *					attribute: "Code",
+		 *					operator: "contain",
+		 *					value: ["01"]
+		 *				}
+		 *			},{
+		 *				simple: {
+		 *					attribute: "Code",
+		 *					operator: "contain",
+		 *					value: ["02"]
+		 *				}
+		 *			}]
+		 *		}, {
+		 *			simple: {
+		 *				attribute: "Description",
+		 *				operator: "contain",
+		 *				value: ["The"]
+		 *			}
+		 *		}]
+		 *	}
 		 */
 		setData: function(data) {
 			addData(this, data);
 		},
 
 		// as attributeFieldsetDelegate
-
 		onAttributeFieldsetIsEmpty: function(fieldset) {
 			this.remove(fieldset);
 			delete this.fieldsetCategory[fieldset.attributeName];
@@ -221,7 +210,7 @@
 			var attrs = groupedAttr[group];
 
 			for (var i=0, l=attrs.length; i<l; ++i) {
-				items.push({ 
+				items.push({
 					text: attrs[i].description,
 					attribute: attrs[i],
 					handler: function() {
@@ -307,7 +296,7 @@
 			this.items.each(function(i) {
 				if (typeof i.getData == "function") {
 					data.push(i.getData());
-				} 
+				}
 			});
 
 			if (data.length == 1) {
@@ -322,7 +311,6 @@
 		},
 
 		// as conditionDelegate
-
 		onFilterAttributeConditionPanelRemoveButtonClick: function(condition) {
 			Ext.suspendLayouts();
 			this.remove(condition);
@@ -337,4 +325,5 @@
 			}
 		}
 	});
-})(); 
+
+})();

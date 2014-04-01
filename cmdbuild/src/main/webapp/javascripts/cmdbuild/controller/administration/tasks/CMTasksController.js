@@ -109,12 +109,12 @@
 			if (this.correctTaskTypeCheck(type)) {
 				this.form.wizard.removeAll();
 				this.form.delegate.delegateStep = [];
-//_debug(this.typeSerialize(type));
-				var items = Ext.create('CMDBuild.view.administration.tasks.' + this.typeSerialize(type) + '.CMTaskTabs').getTabs();
+
+				var items = Ext.create('CMDBuild.view.administration.tasks.' + this.typeSerialize(type, 0) + '.CMTaskTabs').getTabs();
 
 				for (var i = 0; i < items.length; i++) {
 
-					// Controllers relation propagation
+					// Controller relations propagation
 					items[i].delegate.parentDelegate = this.form.delegate;
 					this.form.delegate.delegateStep.push(items[i].delegate);
 
@@ -149,7 +149,6 @@
 
 			if (
 				!this.form.delegate
-//				|| (this.form.delegate.taskType != param.get(CMDBuild.ServiceProxy.parameter.TYPE))
 				|| (this.form.delegate.taskType != selectedType)
 			)
 				this.buildFormController(selectedType);
@@ -187,10 +186,10 @@
 		},
 
 		/**
-		 * Function to serialize tyme and return as class path string
+		 * Function to serialize type and return as class path string (without header and footer dots)
 		 *
 		 * @param (String) type
-		 * @param (Numeric) partToReturn
+		 * @param (Imt) itemsToReturn
 		 *
 		 * @return (String) class path string for type
 		 */
@@ -198,26 +197,20 @@
 			var splittedType = type.split('_');
 			var returnString = '';
 
-			if (typeof itemsToReturn == 'undefined')
-				itemsToReturn = splittedType.lenght;
-_debug(type);
-_debug(itemsToReturn);
-_debug(splittedType);
-_debug(splittedType.length);
-
-			if (splittedType.length > 1) {
-	_debug(itemsToReturn);
-				for (var i = 0; i < itemsToReturn; i++) {
-					if (i > 0)
-						returnString += '.';
-
-					returnString += splittedType[i];
-				}
-
-				return returnString;
+			if (
+				splittedType.length > 1
+				&& typeof itemsToReturn === 'number'
+				&& itemsToReturn > 0
+				&& itemsToReturn <= splittedType.length
+			) {
+				splittedType = splittedType.slice(0, itemsToReturn);
+				returnString = splittedType.join('.');
+			} else {
+				splittedType = splittedType.slice(0, splittedType.length);
+				returnString = splittedType.join('.');
 			}
-_debug(returnString);
-			return type;
+
+			return returnString;
 		}
 	});
 

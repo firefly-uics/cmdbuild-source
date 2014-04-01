@@ -23,13 +23,10 @@
 					return this.onAbortButtonClick();
 
 				case 'onAddButtonClick':
-					return this.onAddButtonClick();
+					return this.onAddButtonClick(name, param, callBack);
 
 				case 'onCloneButtonClick':
 					return this.onCloneButtonClick();
-
-				case 'onInizializeWizardButtons':
-					return this.view.wizard.changeTab(0);
 
 				case 'onModifyButtonClick':
 					return this.onModifyButtonClick();
@@ -58,6 +55,7 @@
 
 		onModifyButtonClick: function() {
 			this.callParent(arguments);
+			// TODO: finish the setup of this function when server will answer correctly with all checkboxes values
 //			this.delegateStep[0].onWorkflowSelected(this.delegateStep[0].getValueWorkflowCombo(), true);
 
 //			if (this.delegateStep[0].checkWorkflowComboSelected())
