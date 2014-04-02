@@ -26,27 +26,28 @@
 		title: CMDBuild.Translation.management.findfilter.functions,
 		bodyCls: 'x-panel-body-default-framed cmbordertop',
 		bodyStyle: {
-			padding: '5px 5px 0 5px'
+			padding: '5px 5px 0px 5px'
 		},
 		cls: 'x-panel-body-default-framed',
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 
 		// configuration
-		className: undefined,
+			className: undefined,
 		// configuration
 
 		initComponent: function() {
 			this.functionsCombo = Ext.create('Ext.form.ComboBox', {
 				fieldLabel: CMDBuild.Translation.management.findfilter.functions,
 				store: functionsStore,
-				name: 'function',
-				displayField: 'name',
-				valueField: 'name',
+				name: CMDBuild.ServiceProxy.parameter.FUNCTION,
+				displayField: CMDBuild.ServiceProxy.parameter.NAME,
+				valueField: CMDBuild.ServiceProxy.parameter.NAME,
 				trigger1Cls: Ext.baseCSSPrefix + 'form-arrow-trigger',
 				trigger2Cls: Ext.baseCSSPrefix + 'form-clear-trigger',
 				hideTrigger1: false,
 				hideTrigger2: false,
+
 				onTrigger2Click: function() {
 					this.setValue('');
 				}

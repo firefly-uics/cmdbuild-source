@@ -25,64 +25,30 @@
 			}
 		},
 
-		setClassName: function(className) {
-			this.className = className;
-		},
-
 		drawFilterTabs: function() {
 			var me = this;
-			var entryType = _CMCache.getEntryTypeByName(this.className);
-			var filter = this.filter || Ext.create('CMDBuild.model.CMFilterModel', {
-				entryType: me.className,
-				local: true,
-				name: CMDBuild.Translation.management.findfilter.newfilter + " " + _CMUtils.nextId()
-			});
 
-			_CMCache.getAttributeList(entryType.getId(), function(attributes) {
+			if (this.className) {
+				_CMCache.getAttributeList(_CMCache.getEntryTypeByName(this.className).getId(), function(attributes) {
+					me.view.filterTabPanel.removeAll();
 
-				// Filter tabs
-//				me.view.filterTabAttributes = Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributes', {
-//					attributes: attributes,
-//					className: me.className
-//				});
-//				me.view.filterTabRelations = Ext.create('CMDBuild.view.management.common.filter.CMRelations', {
-//					attributes: attributes,
-//					className: me.className
-//				});
-//				me.view.filterTabFunctions = Ext.create('CMDBuild.view.management.common.filter.CMFunctions', {
-//					attributes: attributes,
-//					className: me.className
-//				});
-//
-//				me.view.filterTabs = Ext.create('Ext.tab.Panel', {
-//					border: false,
-//					items: [
-//						me.filterTabAttributes,
-//						me.filterTabRelations,
-//						me.filterTabFunctions
-//					]
-//				});
-//
-//				me.view.items = [
-//					me.view.filterTabs
-//				];
-				me.view.filterTabAttributes.attributes = attributes;
-				me.view.filterTabAttributes.className = me.className;
-				me.view.filterTabAttributes.doLayout();
+					// Filter tabs
+					me.view.filterAttributesTab = Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributes', {
+						attributes: attributes
+					});
+					me.view.relationsTab = Ext.create('CMDBuild.view.management.common.filter.CMRelations', {
+						className: me.className,
+						height: '100%'
+					});
+					me.view.functionsTab = Ext.create('CMDBuild.view.management.common.filter.CMFunctions', {
+						className: me.className
+					});
 
-				me.view.filterTabRelations.attributes = attributes;
-				me.view.filterTabRelations.className = me.className;
-				me.view.filterTabRelations.doLayout();
-
-				me.view.filterTabFunctions.attributes = attributes;
-				me.view.filterTabFunctions.className = me.className;
-				me.view.filterTabFunctions.doLayout();
-
-_debug('drawFilterTabs');
-_debug(me.view);
-				me.view.doLayout();
-			});
-		},
+					me.view.filterTabPanel.add([me.view.filterAttributesTab, me.view.relationsTab, me.view.functionsTab]);
+					me.view.filterTabPanel.doLayout();
+				});
+			}
+		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep2', {
@@ -92,40 +58,39 @@ _debug(me.view);
 		taskType: 'workflow',
 
 		border: false,
-		height: '100%',
 		overflowY: 'auto',
+		layout: 'fit',
 
 		initComponent: function() {
-//			var me = this;
-
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep2Delegate', this);
 
-			// Filter tabs
-				this.filterTabAttributes = Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributes');
-				this.filterTabRelations = Ext.create('CMDBuild.view.management.common.filter.CMRelations');
-				this.filterTabFunctions = Ext.create('CMDBuild.view.management.common.filter.CMFunctions');
-
-			this.filterTabs = Ext.create('Ext.tab.Panel', {
-				border: false,
-				items: [
-					this.filterTabAttributes,
-					this.filterTabRelations,
-					this.filterTabFunctions
-				]
+			this.filterTabPanel = Ext.create('Ext.tab.Panel', {
+				border: false
 			});
 
+//			this.wrapper = Ext.create('Ext.form.FieldSet', {
+//				title: 'tr.filter',
+//
+//				padding: '0px',
+//
+//				layout: 'fit',
+//				items: [this.filterTabPanel]
+//			});
+
 			Ext.apply(this, {
-				items: [
-					this.filterTabs
-				]
+				items: [this.filterTabPanel]
 			});
 
 			this.callParent(arguments);
 		},
 
 		listeners: {
+			/**
+			 * Draw tabs on show
+			 */
 			show: function(panel, eOpts) {
-				this.delegate.drawFilterTabs();
+				if (this.filterTabPanel.items.length < 1)
+					this.delegate.drawFilterTabs();
 			}
 		}
 	});

@@ -38,14 +38,14 @@
 
 			terminateActivity: function(p) {
 				p.url = CMDBuild.ServiceProxy.url.workflow.abortProcess,
-				p.method = POST;
+				p.method = 'POST';
 
 				CMDBuild.ServiceProxy.core.doRequest(p);
 			},
 
 			saveActivity: function(p) {
 				p.url = CMDBuild.ServiceProxy.url.workflow.saveActivity,
-				p.method = POST;
+				p.method = 'POST';
 
 				CMDBuild.ServiceProxy.core.doRequest(p);
 			}

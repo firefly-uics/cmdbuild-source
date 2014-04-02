@@ -32,6 +32,7 @@
 		changeTab: function(step) {
 			if (typeof step === 'number' && step == 0) {
 				var activeTab = 0;
+
 				this.setActiveTab(0);
 			} else {
 				var activeTab = this.items.indexOf(this.activeTab);
@@ -56,6 +57,12 @@
 			} else {
 				this.nextButton.enable();
 			}
+
+			// Fire show event on tabs activate
+			var activeTab = this.getActiveTab();
+
+			if (activeTab)
+				activeTab.fireEvent('show');
 		}
 	});
 
