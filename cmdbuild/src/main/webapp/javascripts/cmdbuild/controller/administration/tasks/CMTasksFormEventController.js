@@ -58,7 +58,23 @@
 		},
 
 		onClassSelected: function(className) {
-			this.delegateStep[1].setClassName(className);
+			this.setDisabledButtonNext(false);
+			this.delegateStep[1].className = className;
+		},
+
+		onSaveButtonClick: function() {
+			var nonvalid = this.view.getNonValidFields();
+
+			if (nonvalid.length > 0) {
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+				return;
+			}
+
+			_debug('onSaveButtonClick to implement');
+		},
+
+		setDisabledButtonNext: function(state) {
+			this.view.nextButton.setDisabled(state);
 		}
 	});
 

@@ -113,11 +113,9 @@
 				var items = Ext.create('CMDBuild.view.administration.tasks.' + this.typeSerialize(type, 0) + '.CMTaskTabs').getTabs();
 
 				for (var i = 0; i < items.length; i++) {
+					items[i].delegate.parentDelegate = this.form.delegate; // Controller relations propagation
 
-					// Controller relations propagation
-					items[i].delegate.parentDelegate = this.form.delegate;
 					this.form.delegate.delegateStep.push(items[i].delegate);
-
 					this.form.wizard.add(items[i]);
 				}
 

@@ -42,6 +42,7 @@
 			FK_DESTINATION: 'fkDestination',
 			FORMAT: 'format',
 			FROM: 'from',
+			FUNCTION: 'function',
 			GROUP: 'group',
 			GROUPS: 'groups',
 			GROUP_ID: 'groupId',

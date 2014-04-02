@@ -24,12 +24,19 @@
 			}
 		},
 
-//		getClassName: function() {
-//			return this.view.classes.getValue();
-//		},
-
 		getValueId: function() {
 			return this.view.idField.getValue();
+		},
+
+		isEmptyClass: function() {
+			if (this.view.classe.getValue())
+				return false;
+
+			return true;
+		},
+
+		setDisabledButtonNext: function(state) {
+			this.parentDelegate.setDisabledButtonNext(state);
 		},
 
 		setDisabledTypeField: function(state) {
@@ -46,32 +53,7 @@
 
 		setValueId: function(value) {
 			this.view.idField.setValue(value);
-		},
-
-
-
-		showFilterChooserPicker: function(className) {
-			var me = this;
-//			var className = this.className;
-			var filter = this.filter || new CMDBuild.model.CMFilterModel({
-				entryType: className,
-				local: true,
-				name: CMDBuild.Translation.management.findfilter.newfilter + " " + _CMUtils.nextId()
-			});
-
-			var entryType = _CMCache.getEntryTypeByName(className);
-
-			_CMCache.getAttributeList(entryType.getId(), function(attributes) {
-
-				var filterWindow = new CMDBuild.view.common.field.CMFilterChooserWindow({
-					filter: filter,
-					attributes: attributes,
-					className: className
-				});
-
-				filterWindow.show();
-			});
-		},
+		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep1', {
@@ -156,7 +138,7 @@
 				considerAsFieldToDisable: true
 			});
 
-			this.classes = Ext.create('Ext.form.field.ComboBox', {
+			this.classe = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -165,22 +147,16 @@
 				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
+				allowBlank: false,
 				forceSelection: true,
 				editable: false,
 
 				listeners: {
 					select: function(combo, records, options) {
-//						me.delegate.cmOn("onClassSelected", { className: records[0].get(this.valueField) });
-						me.delegate.showFilterChooserPicker(records[0].get(this.valueField));
+						me.delegate.cmOn('onClassSelected', { className: records[0].get(CMDBuild.ServiceProxy.parameter.NAME) });
 					}
 				}
 			});
-
-//			this.filterChooser = new CMDBuild.view.common.field.CMFilterChooser({
-//				fieldLabel: CMDBuild.Translation.filter,
-//				labelWidth: CMDBuild.LABEL_WIDTH,
-//				name: 'FILTER'
-//			});
 
 			Ext.apply(this, {
 				items: [
@@ -190,12 +166,21 @@
 					this.activeField,
 					this.phase,
 					this.groups,
-					this.classes,
-//					this.filterChooser
+					this.classe
 				]
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			/**
+			 * Disable next button only if class is not selected
+			 */
+			show: function(view, eOpts) {
+				if (this.delegate.isEmptyClass())
+					this.delegate.setDisabledButtonNext(true);
+			}
 		}
 	});
 
