@@ -44,7 +44,7 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'event',
+		taskType: 'workflow',
 
 		border: false,
 		height: '100%',

@@ -1,5 +1,7 @@
 (function() {
 
+	var tr = CMDBuild.Translation.administration.tasks;
+
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep2Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
@@ -65,7 +67,7 @@
 			this.filterTabPanel = Ext.create('Ext.tab.Panel', {
 				border: false
 			});
-// TODO: ??????
+
 //			this.wrapper = Ext.create('Ext.form.FieldSet', {
 //				title: 'tr.filter',
 //

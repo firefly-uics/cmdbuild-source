@@ -59,13 +59,12 @@
 			});
 
 			this.grid = Ext.create('CMDBuild.view.administration.tasks.CMTasksGrid', {
-				region: 'north',
-				split: true,
-				height: '30%'
+				region: 'center'
 			});
 
 			this.form = Ext.create('CMDBuild.view.administration.tasks.CMTasksForm', {
-				region: 'center'
+				region: 'south',
+				height: '70%'
 			});
 
 			Ext.apply(this, {
