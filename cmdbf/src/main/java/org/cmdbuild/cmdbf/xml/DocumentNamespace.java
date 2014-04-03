@@ -40,6 +40,7 @@ import org.w3c.dom.Node;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterables;
 
 public class DocumentNamespace extends AbstractNamespace {
@@ -47,6 +48,35 @@ public class DocumentNamespace extends AbstractNamespace {
 	public static final String DOCUMENT_NAME = "name";
 	public static final String DOCUMENT_DESCRIPTION = "description";
 	public static final String DOCUMENT_CONTENT = "content";
+
+	private static final Predicate<Lookup> LOOKUP_WITH_DESCRIPTION = new Predicate<Lookup>() {
+
+		@Override
+		public boolean apply(final Lookup input) {
+			return input.description != null && !input.description.isEmpty();
+		}
+
+	};
+
+	private final Function<Lookup, DocumentTypeDefinition> LOOKUP_TO_DOCUMENT_TYPE_DEFINITION = new Function<Lookup, DocumentTypeDefinition>() {
+
+		@Override
+		public DocumentTypeDefinition apply(final Lookup input) {
+			return new DocumentTypeDefinition() {
+
+				@Override
+				public String getName() {
+					return input.description;
+				}
+
+				@Override
+				public Iterable<MetadataGroupDefinition> getMetadataGroupDefinitions() {
+					return dmsLogic.getCategoryDefinition(input.description).getMetadataGroupDefinitions();
+				}
+			};
+		}
+
+	};
 
 	private final DmsLogic dmsLogic;
 	private final LookupLogic lookupLogic;
@@ -95,25 +125,11 @@ public class DocumentNamespace extends AbstractNamespace {
 	@Override
 	public Iterable<DocumentTypeDefinition> getTypes(final Class<?> cls) {
 		if (DocumentTypeDefinition.class.isAssignableFrom(cls)) {
-			return Iterables.transform(lookupLogic.getAllLookup(getLookupType(dmsLogic.getCategoryLookupType()), true),
-					new Function<Lookup, DocumentTypeDefinition>() {
-						@Override
-						public DocumentTypeDefinition apply(final Lookup input) {
-							return new DocumentTypeDefinition() {
-
-								@Override
-								public String getName() {
-									return input.description;
-								}
-
-								@Override
-								public Iterable<MetadataGroupDefinition> getMetadataGroupDefinitions() {
-									return dmsLogic.getCategoryDefinition(input.description)
-											.getMetadataGroupDefinitions();
-								}
-							};
-						}
-					});
+			final LookupType lookupType = getLookupType(dmsLogic.getCategoryLookupType());
+			final Iterable<Lookup> allLookups = lookupLogic.getAllLookup(lookupType, true);
+			return FluentIterable.from(allLookups) //
+					.filter(LOOKUP_WITH_DESCRIPTION) //
+					.transform(LOOKUP_TO_DOCUMENT_TYPE_DEFINITION);
 		} else {
 			return Collections.emptyList();
 		}
