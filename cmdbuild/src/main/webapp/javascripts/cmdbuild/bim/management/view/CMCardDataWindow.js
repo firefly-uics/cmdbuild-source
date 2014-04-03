@@ -55,7 +55,7 @@
 			},
 			{
 				type: 'button', 
-				text: CMDBuild.Translation.common.btns.confirm,
+				text: CMDBuild.Translation.common.buttons.confirm,
 				handler : function() {
 					me.delegate.cardDataWindowOkButtonWasClicked(me);
 				}

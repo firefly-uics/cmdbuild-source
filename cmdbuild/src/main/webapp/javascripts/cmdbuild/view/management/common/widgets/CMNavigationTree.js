@@ -28,7 +28,7 @@
 		getExtraButtons: function() {
 			var me = this;
 			this.saveButton = new Ext.Button( {
-				text : CMDBuild.Translation.common.btns.save,
+				text : CMDBuild.Translation.common.buttons.save,
 				name : 'saveButton',
 				hidden: true,
 				handler: function() {
