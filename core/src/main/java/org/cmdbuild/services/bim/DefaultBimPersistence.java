@@ -10,6 +10,7 @@ import org.cmdbuild.services.bim.RelationPersistence.ProjectRelations;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.Maps;
@@ -58,12 +59,7 @@ public class DefaultBimPersistence implements BimPersistence {
 					.getBindedCards();
 			final Iterable<String> newRelatedId = project.getCardBinding();
 
-			final Function<String, String> keyForMap = new Function<String, String>() {
-				@Override
-				public String apply(final String element) {
-					return element;
-				}
-			};
+			final Function<String, String> keyForMap = Functions.identity();
 			final Map<String, String> oldRelationsMap = Maps.uniqueIndex(oldRelatedId, keyForMap);
 			final Map<String, String> newRelationsMap = Maps.uniqueIndex(newRelatedId, keyForMap);
 			final MapDifference<String, String> difference = Maps.difference(oldRelationsMap, newRelationsMap);

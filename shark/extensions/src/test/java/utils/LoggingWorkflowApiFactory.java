@@ -33,11 +33,14 @@ import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.FunctionCall;
+import org.cmdbuild.api.fluent.Lookup;
 import org.cmdbuild.api.fluent.NewCard;
 import org.cmdbuild.api.fluent.NewProcessInstance;
 import org.cmdbuild.api.fluent.NewRelation;
 import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
+import org.cmdbuild.api.fluent.QueryAllLookup;
 import org.cmdbuild.api.fluent.QueryClass;
+import org.cmdbuild.api.fluent.QuerySingleLookup;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
@@ -250,6 +253,16 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 								processCard.getClassName(), //
 								processCard.getId(), //
 								processCard.getAttributes()));
+			}
+
+			@Override
+			public Iterable<Lookup> fetch(final QueryAllLookup queryLookup) {
+				throw new UnsupportedOperationException("TODO");
+			}
+
+			@Override
+			public Lookup fetch(final QuerySingleLookup querySingleLookup) {
+				throw new UnsupportedOperationException("TODO");
 			}
 
 		}, new SchemaApi() {

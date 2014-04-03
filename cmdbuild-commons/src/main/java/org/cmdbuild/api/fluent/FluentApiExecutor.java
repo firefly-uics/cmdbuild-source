@@ -33,4 +33,8 @@ public interface FluentApiExecutor {
 
 	void updateProcessInstance(ExistingProcessInstance processCard, AdvanceProcess advance);
 
+	Iterable<Lookup> fetch(QueryAllLookup queryLookup);
+
+	Lookup fetch(QuerySingleLookup querySingleLookup);
+
 }

@@ -1,4 +1,4 @@
-package unit.logic.bim;
+package unit.services.bim;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;

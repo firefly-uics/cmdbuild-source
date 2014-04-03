@@ -10,17 +10,15 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
+import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.services.event.Contexts.AfterCreate;
 import org.cmdbuild.services.event.Contexts.AfterUpdate;
 import org.cmdbuild.services.event.Contexts.BeforeDelete;
 import org.cmdbuild.services.event.Contexts.BeforeUpdate;
-import org.cmdbuild.spring.SpringIntegrationUtils;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 public class ScriptCommand implements Command {
-
 
 	private static final Marker marker = MarkerFactory.getMarker(ScriptCommand.class.getName());
 
@@ -29,10 +27,14 @@ public class ScriptCommand implements Command {
 	private static final String NEXT = "__next__";
 	private static final String PREVIOUS = "__previous__";
 
+	private static final String CMDB = "__cmdb__";
+	private static final String CMDB_V1 = "__cmdb_v1__";
+
 	public static class Builder implements org.cmdbuild.common.Builder<ScriptCommand> {
 
 		private String engine;
 		private String script;
+		private FluentApi fluentApi;
 
 		private Builder() {
 			// use factory method
@@ -47,6 +49,7 @@ public class ScriptCommand implements Command {
 		private void validate() {
 			Validate.notBlank(engine, "invalid engine");
 			script = defaultString(script);
+			Validate.notNull(fluentApi, "invalid api");
 		}
 
 		public Builder withEngine(final String engine) {
@@ -59,6 +62,11 @@ public class ScriptCommand implements Command {
 			return this;
 		}
 
+		public Builder withFluentApi(final FluentApi fluentApi) {
+			this.fluentApi = fluentApi;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -67,10 +75,12 @@ public class ScriptCommand implements Command {
 
 	private final String engine;
 	private final String script;
+	private final FluentApi fluentApi;
 
 	private ScriptCommand(final Builder builder) {
 		this.engine = builder.engine;
 		this.script = builder.script;
+		this.fluentApi = builder.fluentApi;
 	}
 
 	@Override
@@ -89,9 +99,11 @@ public class ScriptCommand implements Command {
 	}
 
 	private void fillBindings(final Bindings bindings, final Context context) {
+		bindings.put(CMDB, fluentApi);
+		bindings.put(CMDB_V1, fluentApi);
 		bindings.put(LOGGER, Command.logger);
-		context.accept(new ContextVisitor() {
 
+		context.accept(new ContextVisitor() {
 			@Override
 			public void visit(final AfterCreate context) {
 				bindings.put(CURRENT, context.card);

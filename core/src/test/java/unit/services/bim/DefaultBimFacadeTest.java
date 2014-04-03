@@ -1,4 +1,4 @@
-package unit.logic.bim;
+package unit.services.bim;
 
 import static org.cmdbuild.bim.utils.BimConstants.INVALID_ID;
 import static org.junit.Assert.assertTrue;

@@ -49,6 +49,9 @@ import org.springframework.context.annotation.Bean;
 public class TaskManager {
 
 	@Autowired
+	private Api api;
+
+	@Autowired
 	private ConfigurableEmailServiceFactory configurableEmailServiceFactory;
 
 	@Autowired
@@ -175,7 +178,7 @@ public class TaskManager {
 
 	@Bean
 	protected ObserverFactory observerFactory() {
-		return new DefaultObserverFactory(userStore);
+		return new DefaultObserverFactory(userStore, api.systemFluentApi());
 	}
 
 }
