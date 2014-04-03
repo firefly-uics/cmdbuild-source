@@ -35,11 +35,14 @@ import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.Function;
 import org.cmdbuild.api.fluent.FunctionCall;
+import org.cmdbuild.api.fluent.Lookup;
 import org.cmdbuild.api.fluent.NewCard;
 import org.cmdbuild.api.fluent.NewProcessInstance;
 import org.cmdbuild.api.fluent.NewRelation;
 import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
+import org.cmdbuild.api.fluent.QueryAllLookup;
 import org.cmdbuild.api.fluent.QueryClass;
+import org.cmdbuild.api.fluent.QuerySingleLookup;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.common.Constants;
@@ -487,6 +490,14 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 				setValue(attributeValue);
 			}
 		};
+	}
+
+	public Iterable<Lookup> fetch(final QueryAllLookup queryLookup) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public Lookup fetch(final QuerySingleLookup querySingleLookup) {
+		throw new UnsupportedOperationException("TODO");
 	}
 
 }

@@ -1,4 +1,4 @@
-package unit.logic.bim;
+package unit.services.bim;
 
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;

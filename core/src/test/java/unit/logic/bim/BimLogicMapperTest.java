@@ -14,8 +14,8 @@ import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.service.SimpleAttribute;
 import org.cmdbuild.logic.bim.DefaultSynchronizationLogic;
-import org.cmdbuild.logic.bim.project.ProjectLogic.Project;
 import org.cmdbuild.logic.bim.SynchronizationLogic;
+import org.cmdbuild.logic.bim.project.ProjectLogic.Project;
 import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
@@ -35,9 +35,6 @@ public class BimLogicMapperTest {
 	private Mapper mapper;
 	private SynchronizationLogic bimLogic;
 	private static final String PROJECTID = "123";
-	private static final String GLOBALID_VALUE = "234";
-	private static final String OID = null;
-	private static final String REVISIONID = null;
 
 	private static String XML_MAPPING = "";
 

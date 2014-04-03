@@ -45,20 +45,20 @@ public class ObservableDataView extends ForwardingDataView {
 
 	private static class ObservableExistingCardDefinition extends ObservableCardDefinition {
 
-		private final CMCard actual;
+		private final CMCard current;
 
-		protected ObservableExistingCardDefinition(final CMCard actual, final CMCardDefinition delegate,
+		protected ObservableExistingCardDefinition(final CMCard current, final CMCardDefinition delegate,
 				final Observer observer) {
 			super(delegate, observer);
-			this.actual = actual;
+			this.current = current;
 		}
 
 		@Override
 		public CMCard save() {
 			logger.info(marker, "saving existing card");
 			final CMCard card = super.save();
-			observer.beforeUpdate(actual, card);
-			observer.afterUpdate(actual, card);
+			observer.beforeUpdate(current, card);
+			observer.afterUpdate(current, card);
 			return card;
 		}
 	}

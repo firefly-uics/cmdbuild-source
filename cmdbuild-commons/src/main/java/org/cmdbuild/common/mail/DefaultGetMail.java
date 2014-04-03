@@ -6,23 +6,12 @@ import static com.google.common.collect.Lists.newArrayList;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.common.Builder;
-
-import com.google.common.base.Function;
+import org.cmdbuild.common.utils.guava.Functions;
 
 class DefaultGetMail implements GetMail {
 
 	public static class DefaultGetMailBuilder implements Builder<DefaultGetMail> {
-
-		private static final Function<String, String> TRIM_STRING = new Function<String, String>() {
-
-			@Override
-			public String apply(final String input) {
-				return StringUtils.trim(input);
-			}
-
-		};
 
 		private String id;
 		private String folder;
@@ -73,7 +62,7 @@ class DefaultGetMail implements GetMail {
 		}
 
 		private Iterable<? extends String> trim(final Iterable<String> elements) {
-			return from(elements).transform(TRIM_STRING);
+			return from(elements).transform(Functions.trim());
 		}
 
 		public DefaultGetMailBuilder withContent(final String content) {

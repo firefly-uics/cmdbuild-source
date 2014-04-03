@@ -5,6 +5,7 @@ import static com.google.common.collect.Iterables.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
@@ -83,9 +84,11 @@ public class DefaultObserverFactory implements ObserverFactory {
 	}
 
 	private final UserStore userStore;
+	private final FluentApi fluentApi;
 
-	public DefaultObserverFactory(final UserStore userStore) {
+	public DefaultObserverFactory(final UserStore userStore, final FluentApi fluentApi) {
 		this.userStore = userStore;
+		this.fluentApi = fluentApi;
 	}
 
 	@Override
@@ -140,6 +143,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 		final Command command = ScriptCommand.newInstance() //
 				.withEngine(task.getScriptingEngine()) //
 				.withScript(task.getScriptingScript()) //
+				.withFluentApi(fluentApi) //
 				.build();
 		return task.isScriptingSafe() ? SafeCommand.of(command) : command;
 	}
