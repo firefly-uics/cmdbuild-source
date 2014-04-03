@@ -26,12 +26,13 @@
 			});
 
 			this.grid = Ext.create('CMDBuild.view.administration.email.CMEmailTemplatesGrid', {
-				region: 'center'
+				region: 'north',
+				split: true,
+				height: '30%'
 			});
 
 			this.form = Ext.create('CMDBuild.view.administration.email.CMEmailTemplatesForm', {
-				region: 'south',
-				height: '70%'
+				region: 'center'
 			});
 
 			Ext.apply(this, {

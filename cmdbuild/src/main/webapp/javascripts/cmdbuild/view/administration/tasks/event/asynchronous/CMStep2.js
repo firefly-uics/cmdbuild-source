@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep2Delegate', {
+	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep2Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
@@ -49,7 +49,7 @@
 		}
 	});
 
-	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep2', {
+	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep2', {
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
@@ -60,7 +60,7 @@
 		layout: 'fit',
 
 		initComponent: function() {
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep2Delegate', this);
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.asynchronous.CMStep2Delegate', this);
 
 			this.filterTabPanel = Ext.create('Ext.tab.Panel', {
 				border: false

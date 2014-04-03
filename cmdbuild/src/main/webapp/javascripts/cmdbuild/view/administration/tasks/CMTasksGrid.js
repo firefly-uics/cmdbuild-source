@@ -73,7 +73,16 @@
 				}
 			];
 
+// TODO: maybe for a future implementation
+//			this.pagingBar = Ext.create('Ext.toolbar.Paging', {
+//				store: this.store,
+//				displayInfo: true,
+//				displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
+//				emptyMsg: CMDBuild.Translation.common.display_topic_none
+//			});
+
 			Ext.apply(this, {
+//				bbar: this.pagingBar,
 				columns: this.gridColumns
 			});
 
