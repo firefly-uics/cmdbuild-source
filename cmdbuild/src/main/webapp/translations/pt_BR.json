@@ -224,6 +224,9 @@
 				".Workflow": {
 					"title": "<em>Start workflow</em>"
 				},
+				".NavigationTree": {
+					"title": "<em>Navigation tree</em>"
+				},
 				"commonFields": {
 					"active": "Ativo",
 					"alwaysenabled": "Sempre habilitado",

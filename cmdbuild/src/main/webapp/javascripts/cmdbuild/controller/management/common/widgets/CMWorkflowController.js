@@ -72,7 +72,7 @@
 						url: 'services/json/management/modcard/getcardlistshort',
 					    params: {
 					    	className: "Activity",
-					        limit: 100,
+					        limit: 1000,
 					        start: 0,
 					        filter: filter
 					    },

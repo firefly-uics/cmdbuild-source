@@ -75,7 +75,7 @@
 				label: me.buttonLabel.getValue(),
 				active: me.active.getValue(),
 				alwaysenabled: me.alwaysenabled.getValue()
-			}
+			};
 		},
 
 		disableNonFieldElements: Ext.emptyFn,

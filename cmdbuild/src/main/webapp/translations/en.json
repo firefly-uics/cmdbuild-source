@@ -216,6 +216,9 @@
 				".Workflow": {
 					"title": "Start workflow"
 				},
+				".NavigationTree": {
+					"title": "Navigation tree"
+				},
 				".CreateModifyCard": {
 					"fields": {
 						"target": "Target Class",

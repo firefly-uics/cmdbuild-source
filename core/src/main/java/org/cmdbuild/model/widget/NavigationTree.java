@@ -2,37 +2,23 @@ package org.cmdbuild.model.widget;
 
 import java.util.Map;
 
-public class Workflow extends Widget {
+public class NavigationTree extends Widget {
 
-	private String workflowName;
+	private String navigationTreeName;
 	private String filter;
-	private String filterType;
-
 	private Map<String, Object> preset;
-	
 
-	public String getFilterType() {
-		return filterType;
+	public String getNavigationTreeName() {
+		return navigationTreeName;
 	}
-
-	public void setFilterType(String filterType) {
-		this.filterType = filterType;
+	public void setNavigationTreeName(String navigationTreeName) {
+		this.navigationTreeName = navigationTreeName;
 	}
-
 	public String getFilter() {
 		return filter;
 	}
-
 	public void setFilter(String filter) {
 		this.filter = filter;
-	}
-
-	public String getWorkflowName() {
-		return workflowName;
-	}
-
-	public void setWorkflowName(String workflowName) {
-		this.workflowName = workflowName;
 	}
 
 	@Override

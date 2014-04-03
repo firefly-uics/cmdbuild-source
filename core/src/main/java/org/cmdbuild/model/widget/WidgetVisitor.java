@@ -41,4 +41,7 @@ public interface WidgetVisitor {
 	void visit(PresetFromCard presetFromCard);
 
 	void visit(Workflow workflow);
+
+	void visit(NavigationTree navigationTree);
+	
 }
