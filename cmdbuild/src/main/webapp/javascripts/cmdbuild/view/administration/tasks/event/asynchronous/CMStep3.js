@@ -1,11 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.tasks.email.CMStep2Delegate', {
+	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep3Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
-		filterWindow: undefined,
 		view: undefined,
+		className: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -40,18 +40,18 @@
 		}
 	});
 
-	Ext.define('CMDBuild.view.administration.tasks.email.CMStep2', {
+	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep3', {
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
 		taskType: 'event',
 
 		border: false,
-		height: '100%',
 		overflowY: 'auto',
+		layout: 'fit',
 
 		initComponent: function() {
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep2Delegate', this);
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.asynchronous.CMStep3Delegate', this);
 			this.cronForm = Ext.create('CMDBuild.view.administration.tasks.common.cronForm.CMCronForm');
 
 			Ext.apply(this, {

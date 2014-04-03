@@ -54,8 +54,8 @@
 				flex : 1
 			},
 			{
-				type: 'button', 
-				text: CMDBuild.Translation.common.btns.confirm,
+				type: 'button',
+				text: CMDBuild.Translation.common.buttons.confirm,
 				handler : function() {
 					me.delegate.cardDataWindowOkButtonWasClicked(me);
 				}
