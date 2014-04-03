@@ -49,6 +49,14 @@
 				remove: 'services/json/schema/modclass/deletedomain'
 			},
 
+			navigationTrees: {
+				get: 'services/json/navigationtree/get',
+				read: 'services/json/navigationtree/read',
+				create: 'services/json/navigationtree/create',
+				save: 'services/json/navigationtree/save',
+				remove: 'services/json/navigationtree/remove'
+			},
+			
 			dataView: {
 				read: 'services/json/viewmanagement/read',
 				filter: {

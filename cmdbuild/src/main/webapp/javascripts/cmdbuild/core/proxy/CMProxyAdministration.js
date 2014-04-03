@@ -5,6 +5,7 @@ var GET = "GET", POST = "POST";
 
 CMDBuild.ServiceProxy.administration = {
 	printSchema: 'services/json/schema/modreport/printclassschema',
+	
 	domain: {
 
 		list: function(p) {

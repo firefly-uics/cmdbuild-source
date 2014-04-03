@@ -11,7 +11,8 @@
 		lookupAccordion = null,
 		menuAccordion = null,
 		processAccordion = null,
-		reportAccordion = null;
+		reportAccordion = null,
+		navigationTreesAccordion = null;
 
 	Ext.define("CMDBuild.app.Administration", {
 		statics: {
@@ -151,6 +152,7 @@
 							domainAccordion,
 							dataViewAccordion,
 							Ext.create('CMDBuild.view.administration.accordion.CMFilterAccordion'),
+							navigationTreesAccordion,
 							lookupAccordion,
 							dashboardsAccordion,
 							reportAccordion,
@@ -363,6 +365,28 @@
 							_CMMainViewportController.addPanel(
 								new CMDBuild.view.administration.domain.CMModDomain({
 									cmControllerType: controllerNS.administration.domain.CMModDomainController
+								})
+							);
+						}
+					},
+					callback: reqBarrier.getCallback()
+				});
+
+				/*
+				 * Navigation trees
+				 */
+				_CMCache.listNavigationTrees({
+					success: function(response, options, decoded) {
+
+						if (!_CMUIConfiguration.isCloudAdmin()) {
+							navigationTreesAccordion = new CMDBuild.view.administration.accordion.CMNavigationTreesAccordion({
+								cmControllerType: CMDBuild.controller.accordion.CMNavigationTreesAccordionController
+							});
+							navigationTreesAccordion.updateStore();
+
+							_CMMainViewportController.addPanel(
+								new CMDBuild.view.administration.navigationTrees.CMModNavigationTrees({
+									cmControllerType: controllerNS.administration.navigationTrees.CMModNavigationTreesController
 								})
 							);
 						}
