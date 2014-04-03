@@ -216,6 +216,9 @@
 				".Workflow": {
 					"title": "Avvia processo"
 				},
+				".NavigationTree": {
+					"title": "Albero di navigazione"
+				},
 				".CreateModifyCard": {
 					"fields": {
 						"target": "Classe di riferimento",

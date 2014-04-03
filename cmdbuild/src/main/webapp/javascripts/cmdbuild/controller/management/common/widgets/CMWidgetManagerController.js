@@ -204,6 +204,9 @@
 		// workflow
 		addControllerClass(commonControllers.CMWorkflowController);
 
+		// navigationTree
+		addControllerClass(commonControllers.CMNavigationTreeController);
+
 		// openReport
 		addControllerClass(commonControllers.CMOpenReportController);
 
