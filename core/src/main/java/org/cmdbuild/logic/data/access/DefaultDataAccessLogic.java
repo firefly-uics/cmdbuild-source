@@ -490,7 +490,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public CMCardWithPosition getCardPosition(final String className, final Long cardId, final QueryOptions queryOptions) {
-		final CMClass fetchedClass = view.findClass(className);
+		final CMClass fetchedClass = strictDataView.findClass(className);
 		Long position = -1L;
 		CMCard card = null;
 
@@ -498,7 +498,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 			final PagedElements<CMQueryRow> cards = DataViewCardFetcher.newInstance() //
 					.withClassName(className) //
 					.withQueryOptions(queryOptions) //
-					.withDataView(view) //
+					.withDataView(strictDataView) //
 					.build() //
 					.fetchNumbered(condition(attribute(fetchedClass, ID_ATTRIBUTE), eq(cardId)));
 			final CMQueryRow fetchedRowWithPosition = cards.iterator().next();
