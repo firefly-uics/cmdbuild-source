@@ -17,6 +17,7 @@ import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.GISLogic;
+import org.cmdbuild.logic.NavigationTreeLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
 import org.cmdbuild.logic.bim.DefaultLayerLogic;
@@ -190,6 +191,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected LookupLogic lookupLogic() {
 		return applicationContext().getBean(LookupLogic.class);
+	}
+
+	protected NavigationTreeLogic navigationTreeLogic() {
+		return applicationContext().getBean(NavigationTreeLogic.class);
 	}
 
 	protected SchedulerLogic schedulerLogic() {

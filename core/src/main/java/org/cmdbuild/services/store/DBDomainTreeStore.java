@@ -5,7 +5,10 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
@@ -14,6 +17,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
+import org.cmdbuild.model.gis.LayerMetadata;
 
 public class DBDomainTreeStore {
 	private enum Attributes {
@@ -59,6 +63,22 @@ public class DBDomainTreeStore {
 			dataView.delete(domainTreeNode.getCard(table));
 		}
 
+	}
+
+	public List<String> getTreeNames() {
+		final CMClass table = getTable();
+		final CMQueryResult domainTreeNames = dataView //
+				.select(attribute(table, Attributes.TYPE.getName())) //
+				.from(table) //
+				.run() ;
+		final List<String> names = new ArrayList<String>();
+		for (final CMQueryRow layerAsQueryRow : domainTreeNames) {
+			String name = (String)layerAsQueryRow.getCard(table).get(Attributes.TYPE.getName());
+			if (names.indexOf(name) == -1) {
+				names.add(name);
+			}
+		}
+		return names;
 	}
 
 	public DomainTreeNode getDomainTree(final String treeType) {
