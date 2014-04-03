@@ -17,8 +17,8 @@
 		initComponent: function() {
 			if (!this.store) {
 				if (
-					_CMCache &&
-					typeof _CMCache.getActiveGroupsStore == 'function'
+					_CMCache
+					&& typeof _CMCache.getActiveGroupsStore == 'function'
 				) {
 					this.store = _CMCache.getActiveGroupsStore();
 				} else {
@@ -38,6 +38,16 @@
 
 		reset: function() {
 			this.setValue([]);
+		},
+
+		selectAll: function() {
+			var arrayGroups = [];
+
+			this.store.data.each(function(item, index, totalItems) {
+				arrayGroups.push(item.data.name);
+			});
+
+			this.setValue(arrayGroups);
 		}
 	});
 

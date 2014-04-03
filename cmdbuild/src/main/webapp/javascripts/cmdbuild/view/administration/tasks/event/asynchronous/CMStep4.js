@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.tasks.taskEmail;
 
-	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', {
+	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep4Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
@@ -37,7 +37,7 @@
 		}
 	});
 
-	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep3', {
+	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep4', {
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
@@ -50,7 +50,7 @@
 		initComponent: function() {
 			var me = this;
 
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', this);
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.asynchronous.CMStep4Delegate', this);
 
 			// SendMail configuration
 				this.emailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {

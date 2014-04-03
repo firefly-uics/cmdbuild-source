@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.tasks;
 
-	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate', {
+	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep1Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
@@ -56,7 +56,7 @@
 		}
 	});
 
-	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep1', {
+	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
@@ -69,7 +69,7 @@
 		initComponent: function() {
 			var me = this;
 
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate', this);
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.asynchronous.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,
@@ -101,43 +101,6 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH
 			});
 
-			this.phase = Ext.create('Ext.form.field.ComboBox', {
-				name: 'phase',
-				fieldLabel: tr.taskEvent.phase,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				store: Ext.create('Ext.data.SimpleStore', {
-					fields: [CMDBuild.ServiceProxy.parameter.VALUE, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-					data: [
-						['afterCreate', tr.taskEvent.afterCreate],
-						['beforeCreate', tr.taskEvent.beforeCreate],
-						['afterUpdate', tr.taskEvent.afterUpdate],
-						['beforeUpdate', tr.taskEvent.beforeUpdate],
-						['beforeDelete', tr.taskEvent.beforeDelete]
-					]
-				}),
-				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				queryMode: 'local',
-				forceSelection: true,
-				editable: false,
-
-//				listeners: {
-//					select: function(combo, record, index) {
-//						me.delegate.setValueAdvancedFields(record[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
-//					}
-//				}
-			});
-
-			this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
-				fieldLabel: tr.taskEvent.groupsToApply,
-				height: 300,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				considerAsFieldToDisable: true
-			});
-
 			this.classe = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.targetClass,
@@ -164,8 +127,6 @@
 					this.idField,
 					this.descriptionField,
 					this.activeField,
-					this.phase,
-					this.groups,
 					this.classe
 				]
 			});
@@ -174,14 +135,12 @@
 		},
 
 		listeners: {
+			/**
+			 * Disable next button only if class is not selected
+			 */
 			show: function(view, eOpts) {
-
-				// Disable next button only if class is not selected
 				if (this.delegate.isEmptyClass())
 					this.delegate.setDisabledButtonNext(true);
-
-				// Select all groups by default
-				this.groups.selectAll();
 			}
 		}
 	});
