@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks.taskEmail;
+	var tr = CMDBuild.Translation.administration.tasks;
 
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
@@ -24,6 +24,13 @@
 			}
 		},
 
+		checkWorkflowComboSelected: function() {
+			if (this.getValueWorkflowCombo())
+				return true;
+
+			return false;
+		},
+
 		getWorkflowDelegate: function() {
 			return this.view.workflowForm.delegate;
 		},
@@ -32,8 +39,44 @@
 			return this.getWorkflowDelegate().getValueGrid();
 		},
 
+		getValueId: function() {
+			return this.view.idField.getValue();
+		},
+
+		getValueWorkflowCombo: function() {
+			return this.getWorkflowDelegate().getValueCombo();
+		},
+
+		onWorkflowSelected: function(name, modify) {
+			this.getWorkflowDelegate().onWorkflowSelected(name, modify);
+		},
+
+		setDisabledAttributesTable: function(state) {
+			this.getWorkflowDelegate().setDisabledAttributesTable(state);
+		},
+
+		setDisabledTypeField: function(state) {
+			this.view.typeField.setDisabled(state);
+		},
+
+		setValueActive: function(value) {
+			this.view.activeField.setValue(value);
+		},
+
 		setValueAttributesGrid: function(data) {
 			this.getWorkflowDelegate().setValueGrid(data);
+		},
+
+		setValueDescription: function(value) {
+			this.view.descriptionField.setValue(value);
+		},
+
+		setValueId: function(value) {
+			this.view.idField.setValue(value);
+		},
+
+		setValueWorkflowCombo: function(workflowName) {
+			this.getWorkflowDelegate().setValueCombo(workflowName);
 		}
 	});
 
@@ -41,7 +84,7 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'event',
+		taskType: 'workflow',
 
 		border: false,
 		height: '100%',
@@ -52,54 +95,48 @@
 
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', this);
 
-			// SendMail configuration
-				this.emailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
-					fieldLabel: tr.template,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					itemId: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
-					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					forceSelection: true,
-					editable: false,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
-				});
+			this.typeField = Ext.create('Ext.form.field.Text', {
+				fieldLabel: tr.type,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				name: CMDBuild.ServiceProxy.parameter.TYPE,
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				value: me.taskType,
+				disabled: true,
+				cmImmutable: true,
+				readOnly: true
+			});
 
-				this.sendMailFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.sendMail,
-					checkboxToggle: true,
-					collapsed: true,
-					layout: {
-						type: 'vbox'
-					},
-					items: [this.emailTemplateCombo]
-				});
-			// END: SendMail configuration
+			this.idField = Ext.create('Ext.form.field.Hidden', {
+				name: CMDBuild.ServiceProxy.parameter.ID
+			});
 
-			// Workflow configuration
-				this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
-					name: CMDBuild.ServiceProxy.parameter.CLASS_NAME
-				});
+			this.descriptionField = Ext.create('Ext.form.field.Text', {
+				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				fieldLabel: CMDBuild.Translation.description_,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				allowBlank: false
+			});
 
-				this.workflowFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.startWorkflow,
-					checkboxToggle: true,
-					collapsed: true,
+			this.activeField = Ext.create('Ext.form.field.Checkbox', {
+				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
+				fieldLabel: tr.startOnSave,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH
+			});
 
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					},
-
-					items: [this.workflowForm]
-				});
-			// END: Workflow configuration
+			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
+				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
+				allowBlank: false
+			});
 
 			Ext.apply(this, {
 				items: [
-					this.sendMailFieldset,
-					this.workflowFieldset
+					this.typeField,
+					this.idField,
+					this.descriptionField,
+					this.activeField,
+					this.workflowForm
 				]
 			});
 

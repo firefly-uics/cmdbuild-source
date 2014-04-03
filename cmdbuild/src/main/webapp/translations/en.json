@@ -696,15 +696,6 @@
 				"valueEnd": "Value end",
 				"valueInit": "Value init"
 			},
-			"taskEvent": {
-				"afterCreate": "@@ After creation",
-				"afterUpdate": "@@ After update",
-				"beforeCreate": "@@ Before creation",
-				"beforeDelete": "@@ Before delete",
-				"beforeUpdate": "@@ Before update",
-				"groupsToApply": "@@ Group to apply",
-				"phase": "@@ Phase"
-			},
 			"tasksTypes": {
 				"email": "Email",
 				"event": "Event",

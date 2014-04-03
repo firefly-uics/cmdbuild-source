@@ -60,7 +60,7 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'event',
+		taskType: 'workflow',
 
 		border: false,
 		height: '100%',
@@ -103,16 +103,16 @@
 
 			this.phase = Ext.create('Ext.form.field.ComboBox', {
 				name: 'phase',
-				fieldLabel: tr.taskEvent.phase,
+				fieldLabel: 'tr.phase',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				store: Ext.create('Ext.data.SimpleStore', {
 					fields: [CMDBuild.ServiceProxy.parameter.VALUE, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
 					data: [
-						['afterCreate', tr.taskEvent.afterCreate],
-						['beforeCreate', tr.taskEvent.beforeCreate],
-						['afterUpdate', tr.taskEvent.afterUpdate],
-						['beforeUpdate', tr.taskEvent.beforeUpdate],
-						['beforeDelete', tr.taskEvent.beforeDelete]
+						['afterCreate', 'tr.afterCreate'],
+						['beforeCreate', 'tr.beforeCreate'],
+						['afterUpdate', 'tr.afterUpdate'],
+						['beforeUpdate', 'tr.beforeUpdate'],
+						['beforeDelete', 'tr.beforeDelete']
 					]
 				}),
 				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
@@ -130,7 +130,7 @@
 			});
 
 			this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
-				fieldLabel: tr.taskEvent.groupsToApply,
+				fieldLabel: 'tr.groupsToApply',
 				height: 300,
 				valueField: CMDBuild.ServiceProxy.parameter.NAME,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -174,14 +174,12 @@
 		},
 
 		listeners: {
+			/**
+			 * Disable next button only if class is not selected
+			 */
 			show: function(view, eOpts) {
-
-				// Disable next button only if class is not selected
 				if (this.delegate.isEmptyClass())
 					this.delegate.setDisabledButtonNext(true);
-
-				// Select all groups by default
-				this.groups.selectAll();
 			}
 		}
 	});

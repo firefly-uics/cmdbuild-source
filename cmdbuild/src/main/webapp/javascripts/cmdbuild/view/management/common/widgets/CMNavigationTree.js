@@ -3,7 +3,7 @@
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMNavigationTree", {
 		extend: "Ext.panel.Panel",
-		autoScroll: true,
+		autoScroll: true,	
 		statics: {
 			WIDGET_NAME: ".NavigationTree"
 		},
@@ -28,7 +28,7 @@
 		getExtraButtons: function() {
 			var me = this;
 			this.saveButton = new Ext.Button( {
-				text : CMDBuild.Translation.common.buttons.save,
+				text : CMDBuild.Translation.common.btns.save,
 				name : 'saveButton',
 				hidden: true,
 				handler: function() {
@@ -37,12 +37,12 @@
 			});
 			return [this.saveButton];
 		},
-
+		
 		configureForm: function(treeName, tree) {
 			this.tree.loadTree(treeName, tree);
 			this.saveButton.show();
 		},
-
+		
 	});
 
 	Ext.define('CMDBuild.model.widget.NavigationTreeNodeModel', {
@@ -86,7 +86,7 @@
 			});
 		return root;
 	}
-
+	
 	Ext.define("CMDBuild.view.management.widgets.navigationTree.CMTreePanel", {
 		extend: "Ext.tree.Panel",
 		treeName: undefined,
@@ -185,7 +185,7 @@
 		});
 	}
 	function expandNodes(tree, children) {
-
+		
 		if (children.length > 0) {
 			var child = children[0];
 			loadForDomainChildren(child, child.get("nodesIn"), function() {
@@ -197,5 +197,5 @@
 			Ext.resumeLayouts();
 		}
 	}
-
+        
 })();
