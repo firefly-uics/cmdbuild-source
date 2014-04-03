@@ -180,8 +180,8 @@
 		},
 
 		success: function(result, options, decodedResult) {
-			var me = this,
-				store = this.parentDelegate.grid.store;
+			var me = this;
+			var store = this.parentDelegate.grid.store;
 
 			store.load();
 			store.on('load', function() {

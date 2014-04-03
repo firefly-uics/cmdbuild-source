@@ -14,31 +14,35 @@
 		initComponent: function() {
 			var me = this;
 
+			this.gridColumns = [
+				{
+					text: tr.isDefault,
+					dataIndex: CMDBuild.ServiceProxy.parameter.IS_DEFAULT,
+					align: 'center',
+					width: 50,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true,
+					renderer: me.defaultGridColumnRenderer
+				},
+				{
+					text: CMDBuild.Translation.name,
+					dataIndex: CMDBuild.ServiceProxy.parameter.NAME,
+					flex: 1
+				},
+				{
+					text: tr.address,
+					dataIndex: CMDBuild.ServiceProxy.parameter.ADDRESS,
+					flex: 1
+				}
+			];
+
+			this.gridStore = CMDBuild.core.proxy.CMProxyEmailAccounts.getStore();
+
 			Ext.apply(this, {
-				columns: [
-					{
-						text: tr.isDefault,
-						dataIndex: CMDBuild.ServiceProxy.parameter.IS_DEFAULT,
-						align: 'center',
-						width: 50,
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-						renderer: me.defaultGridColumnRenderer
-					},
-					{
-						text: CMDBuild.Translation.name,
-						dataIndex: CMDBuild.ServiceProxy.parameter.NAME,
-						flex: 1
-					},
-					{
-						text: tr.address,
-						dataIndex: CMDBuild.ServiceProxy.parameter.ADDRESS,
-						flex: 1
-					}
-				],
-				store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore()
+				columns: this.gridColumns,
+				store: this.gridStore
 			});
 
 			this.callParent(arguments);

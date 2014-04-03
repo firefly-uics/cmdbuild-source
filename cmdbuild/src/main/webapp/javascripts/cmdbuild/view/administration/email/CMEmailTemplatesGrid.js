@@ -10,25 +10,30 @@
 		cls: 'cmborderbottom',
 
 		initComponent: function() {
+
+			this.gridColumns = [
+				{
+					dataIndex: CMDBuild.ServiceProxy.parameter.NAME,
+					text: CMDBuild.Translation.name,
+					flex: 1
+				},
+				{
+					dataIndex: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+					header: CMDBuild.Translation.description_,
+					flex: 3
+				},
+				{
+					dataIndex: CMDBuild.ServiceProxy.parameter.SUBJECT,
+					header: CMDBuild.Translation.subject,
+					flex: 2
+				}
+			];
+
+			this.gridStore = CMDBuild.core.proxy.CMProxyEmailTemplates.getStore();
+
 			Ext.apply(this, {
-				columns: [
-					{
-						dataIndex: CMDBuild.ServiceProxy.parameter.NAME,
-						text: CMDBuild.Translation.name,
-						flex: 1
-					},
-					{
-						dataIndex: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-						header: CMDBuild.Translation.description_,
-						flex: 3
-					},
-					{
-						dataIndex: CMDBuild.ServiceProxy.parameter.SUBJECT,
-						header: CMDBuild.Translation.subject,
-						flex: 2
-					}
-				],
-				store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore()
+				columns: this.gridColumns,
+				store: this.gridStore
 			});
 
 			this.callParent(arguments);

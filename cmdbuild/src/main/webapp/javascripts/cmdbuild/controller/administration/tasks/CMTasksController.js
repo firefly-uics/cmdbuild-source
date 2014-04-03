@@ -38,6 +38,10 @@
 
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
 				this.grid.store.load({
+					params: {
+						start: 0,
+						limit: 5
+					},
 					callback: function() {
 						if (!me.selectionModel.hasSelection())
 							me.selectionModel.select(0, true);
