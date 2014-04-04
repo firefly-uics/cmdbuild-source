@@ -71,7 +71,7 @@
 					checkColumn(me, CMDBuild.Translation.export, "export"),
 					checkColumn(me, CMDBuild.Translation.container, "container"),
 					{ 
-						text: CMDBuild.Translation.reference_to_root, //:'@@ Attributes', 
+						text: CMDBuild.Translation.reference_to_root, 
 						dataIndex: 'rootreference', 
 						flex: 1,
 						editor: this.attributesCombo, 

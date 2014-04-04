@@ -21,6 +21,7 @@
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onSave':
+					var data = this.view.getData();
 					this.ownerController.hideWidgetsContainer();
 					break;
 				case 'onTreeSelected':
