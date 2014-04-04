@@ -1,5 +1,6 @@
 (function() {
-	var DEFAULT_MENU_TEXT = "@@ Navigation Tree";
+	var DEFAULT_MENU_TEXT = CMDBuild.Translation.tree_navigation; 
+	var NODE_TEXT_TMP = "{0} [{1}] {2}";
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMNavigationTree", {
 		extend: "Ext.panel.Panel",
@@ -13,8 +14,6 @@
 			this.tree = new CMDBuild.view.management.widgets.navigationTree.CMTreePanel();
 			this.items = [this.tree];
 			this.callParent(arguments);
-//			this.tree = new CMDBuild.view.management.widgets.navigationTree.CMTreePanel();
-//			this.add(this.tree);
 			this.mon(this.tree, "afteritemexpand", function(node) {
 				if (node.loaded)
 					return;
@@ -43,6 +42,10 @@
 			this.saveButton.show();
 		},
 		
+		getData: function() {
+			return this.tree.getData();
+		}
+		
 	});
 
 	Ext.define('CMDBuild.model.widget.NavigationTreeNodeModel', {
@@ -70,7 +73,7 @@
 
 		setNodesIn: function(nodesIn) {
 			this.set("nodesIn", nodesIn);
-		},
+		}
 
 	});
 
@@ -99,32 +102,34 @@
 
 			this.columns = [{
 				xtype: 'treecolumn',
-				text: "@@ Navigation tree ",
+				text: DEFAULT_MENU_TEXT,
 				dataIndex: 'text',
 				flex: 3,
 				sortable: false
 			}];
 
 			this.callParent(arguments);
-			this.mon(this, "checkchange", function(node, checked) {
-//				this.onNavigationTreesItemChecked(node, checked);
-			}, this);
-
 		},
 		loadTree: function(treeName, tree) {
 			this.getSelectionModel().deselectAll();
 			this.store.setRootNode({
 				expanded: false,
 				checked: undefined,
-				text: "@@ Navigation tree " + treeName,
+				text: DEFAULT_MENU_TEXT + ": " + treeName,
 				children: [],
 				nodesIn: [tree]
 			});
 			var r = this.store.getRootNode();
-//			r.setText("@@ Navigation tree " + treeName);
 			r.removeAll(true);
 			r.commit(); // to remove the F____ing red triangle to the node
 			loadChildren(r, tree, tree.childNodes);
+		},
+		
+		getData: function() {
+			var node = this.store.getRootNode();
+			var data = [];
+			getNode(data, node);
+			return data;
 		}
 	});
 	function loadChildren(node, tree, nodesIn) {
@@ -135,7 +140,8 @@
 			success: function(operation, request, decoded) {
 				for (var j = 0; j < decoded.rows.length; j++) {
 					var row = decoded.rows[j];
-					appendNode(node, row.Code + " - " + row.Description, row.Id, row.IdClass_value, nodesIn);
+					var text = Ext.String.format(NODE_TEXT_TMP, "", row.Code, row.Description);
+					appendNode(node, text, row.Id, row.IdClass_value, nodesIn);
 				}
 			}
 		});
@@ -153,10 +159,23 @@
 		});
 		n.commit();
 	}
-	function loadRelations(node, className, domainName, relations, nodesIn) {
-		for (var i = 0; i < relations.length; i ++) {
+	function loadRelations(node, className, domain, relations, nodesIn) {
+		for (var i = 0; i < relations.length; i++) {
 			var row = relations[i];
-			var text = domainName + " - " + row.dst_code + " - " + row.dst_desc;
+			var domainName = "";
+			var entryType = _CMCache.getEntryTypeById(row.dst_cid);
+			var ids =  _CMUtils.getAncestorsId(entryType);
+
+			if (Ext.Array.contains(ids, domain.get("idClass2"))) {
+				domainName = domain.get("descr_1");
+			}
+			else if (Ext.Array.contains(ids, domain.get("idClass1"))) {
+				domainName = domain.get("descr_2");
+			}
+			else {
+				continue;
+			}
+			var text = Ext.String.format(NODE_TEXT_TMP, domainName, row.dst_code, row.dst_desc);
 			appendNode(node, text, row.dst_id, className, nodesIn);
 		}
 	}
@@ -171,13 +190,12 @@
 		parameters[parameterNames.CLASS_NAME] = node.get("className");//nodesIn[i].targetClassName;
 		var domain = _CMCache.getDomainByName(nodesIn[0].domainName);
 		parameters[parameterNames.DOMAIN_ID] = domain.get("id");
-		console.log("domain = " + nodesIn[0].domainName + " target class = " + nodesIn[0].targetClassName + " class = " + node.get("className") + " card = " + node.get("cardId") + " cioe' " + node.get("text"));
 		CMDBuild.ServiceProxy.relations.getList({
 			params: parameters,
 			scope: this,
 			success: function(operation, request, decoded) {
-				if (decoded.domains.length > 0) {
-					loadRelations(node, nodesIn[0].targetClassName, nodesIn[0].domainName, decoded.domains[0].relations, nodesIn[0].childNodes);
+				for ( var i = 0; i < decoded.domains.length; i++) {
+					loadRelations(node, nodesIn[0].targetClassName, domain, decoded.domains[i].relations, nodesIn[0].childNodes);
 				}
 				var appNodesIn = nodesIn.slice(1);
 				loadForDomainChildren(node, appNodesIn, callBack);
@@ -196,6 +214,20 @@
 		else {
 			Ext.resumeLayouts();
 		}
+	}
+	function getNode(data, node) {
+		if (node.get("checked")) {
+			data.push(NodeToObject(node));
+		}
+		for (var i = 0; i < node.childNodes.length; i++) {
+			getNode(data, node.childNodes[i]);
+		}
+	}
+	function NodeToObject(node) {
+		return {
+			cardId: node.get("cardId"),
+			className: node.get("className"),
+		};
 	}
         
 })();
