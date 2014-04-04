@@ -17,6 +17,7 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logger.Log;

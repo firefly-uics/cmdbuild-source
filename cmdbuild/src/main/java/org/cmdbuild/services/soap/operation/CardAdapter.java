@@ -1,7 +1,7 @@
 package org.cmdbuild.services.soap.operation;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.isNumeric;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
 import net.sf.jasperreports.engine.util.ObjectUtils;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
