@@ -142,6 +142,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private final AuthenticationStore authenticationStore;
 	private final CmdbuildConfiguration configuration;
 	private final MetadataStoreFactory metadataStoreFactory;
+	private final CardAdapter cardAdapter;
 
 	private MenuStore menuStore;
 	private ReportStore reportStore;
@@ -155,7 +156,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final javax.sql.DataSource dataSource, //
 			final AuthenticationStore authenticationStore, //
 			final CmdbuildConfiguration configuration, //
-			final MetadataStoreFactory metadataStoreFactory //
+			final MetadataStoreFactory metadataStoreFactory, //
+			final CardAdapter cardAdapter //
 	) {
 		this.dataView = dataView;
 		this.dataAccessLogic = datAccessLogic;
@@ -166,6 +168,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		this.authenticationStore = authenticationStore;
 		this.configuration = configuration;
 		this.metadataStoreFactory = metadataStoreFactory;
+		this.cardAdapter = cardAdapter;
 	}
 
 	public void setMenuStore(final MenuStore menuStore) {
@@ -481,7 +484,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			final UserProcessInstance processInstance = workflowLogic.getProcessInstance(card.getClassName(),
 					card.getId());
 			final WorkflowLogicHelper workflowLogicHelper = new WorkflowLogicHelper(workflowLogic, dataView,
-					metadataStoreFactory);
+					metadataStoreFactory, cardAdapter);
 			UserActivityInstance activityInstance = null;
 			try {
 				activityInstance = workflowLogicHelper.selectActivityInstanceFor(processInstance);

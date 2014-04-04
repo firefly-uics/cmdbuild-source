@@ -1,5 +1,6 @@
 package org.cmdbuild.report;
 
+import static com.google.common.collect.FluentIterable.from;
 import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
@@ -45,6 +46,9 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.localization.Localization;
+import org.cmdbuild.utils.guava.Functions;
+
+import com.google.common.base.Joiner;
 
 public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate {
 
@@ -154,6 +158,8 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 					.where(clause) //
 					.orderBy(attribute(DST_ALIAS, DESCRIPTION), Direction.ASC).build();
 			final QueryCreator queryCreator = new QueryCreator(querySpecs);
+			final Iterable<Long> availableClassIds = from(dataView.findClasses()) //
+					.transform(Functions.id());
 			query = format("" //
 					+ "SELECT"
 					+ " _cm_read_comment(_cm_comment_for_table_id(\"_DST_IdClass\"), 'DESCR') AS \"%s\","
@@ -164,13 +170,16 @@ public class ReportFactoryTemplateDetailSubreport extends ReportFactoryTemplate 
 					+ " \"DST#Code\" AS \"%s\"," //
 					+ " \"DST#Description\" AS \"%s\"" //
 					+ " FROM (%s) AS main" //
-					+ " ORDER BY \"%s\", \"%s\"", //
+					+ " WHERE \"_DST_IdClass\" IN (%s)" //
+					+ " ORDER BY \"%s\", \"%s\"" //
+					+ "", //
 					CLASS_DESCRIPTION, //
 					DOMAIN_DESCRIPTION, //
 					BEGIN_DATE, //
 					CODE, //
 					DESCRIPTION, //
 					getQueryString(queryCreator), //
+					Joiner.on(",").join(availableClassIds), //
 					DOMAIN_DESCRIPTION, //
 					DESCRIPTION);
 			break;
