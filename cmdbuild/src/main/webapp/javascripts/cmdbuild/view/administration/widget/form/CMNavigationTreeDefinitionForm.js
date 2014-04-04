@@ -14,14 +14,14 @@
 			
 			this.filter = new Ext.form.field.TextArea({
 				name: "filter",
-				fieldLabel: "@@ Root Cql filter",
+				fieldLabel: CMDBuild.Translation.tree_root_cql, 
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 			});
 
 			this.navigationTreeName = new Ext.form.field.ComboBox({
 				name: "navigationTreeName",
-				fieldLabel: "@@ Navigation tree",
+				fieldLabel: CMDBuild.Translation.tree_navigation, 
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				valueField: 'name',

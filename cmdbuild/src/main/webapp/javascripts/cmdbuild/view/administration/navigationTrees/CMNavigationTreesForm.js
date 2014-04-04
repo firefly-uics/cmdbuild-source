@@ -12,7 +12,7 @@
 
 			this.modifyButton = new Ext.button.Button({
 				iconCls : 'modify',
-				text: "@@ Modify tree", //this.translation.modify_domain,
+				text: CMDBuild.Translation.tree_modify, 
 				scope: this,
 				handler: function() {
 					this.delegate.cmOn("onModifyButtonClick");
@@ -21,7 +21,7 @@
 
 			this.deleteButton = new Ext.button.Button({
 				iconCls : 'delete',
-				text: "@@ Remove tree", //this.translation.delete_domain
+				text: CMDBuild.Translation.tree_remove, 
 				scope: this,
 				handler: function() {
 					this.delegate.cmOn("onDeleteButtonClick");

@@ -2,7 +2,7 @@
 
 	Ext.define("CMDBuild.view.administration.accordion.CMNavigationTreesAccordion", {
 		extend: "CMDBuild.view.common.CMBaseAccordion",
-		title: "@@ NavigationTrees",
+		title: CMDBuild.Translation.trees_navigation, 
 		cmName: "navigationTrees",
 
 		initComponent: function() {

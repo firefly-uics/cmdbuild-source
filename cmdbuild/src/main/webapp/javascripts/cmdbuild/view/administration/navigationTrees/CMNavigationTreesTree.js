@@ -1,8 +1,7 @@
 (function() {
-	var DEFAULT_MENU_TEXT = "@@ Navigation Trees";
+	var DEFAULT_MENU_TEXT = CMDBuild.Translation.trees_navigation; 
 	
 	Ext.define("CMDBuild.view.administration.navigationTrees.CMNavigationTreesTree",{
-//		extend: "CMDBuild.view.administration.classes.CMAttributeForm",
 		extend: "Ext.panel.Panel",
 		treeName : undefined,
 		constructor: function() {
@@ -13,7 +12,7 @@
 
 			this.modifyButton = new Ext.button.Button({
 				iconCls : 'modify',
-				text: "@@ Modify tree", //this.translation.modify_domain,
+				text: CMDBuild.Translation.tree_modify, 
 				scope: this,
 				handler: function() {
 					this.delegate.cmOn("onModifyButtonClick");
@@ -22,7 +21,7 @@
 
 			this.deleteButton = new Ext.button.Button({
 				iconCls : 'delete',
-				text: "@@ Remove tree", //this.translation.delete_domain
+				text: CMDBuild.Translation.tree_remove, 
 				scope: this,
 				handler: function() {
 					this.delegate.cmOn("onDeleteButtonClick");
@@ -171,7 +170,7 @@
 
 	});
 
-	var NODE_TEXT_TMP = "{0} ({1})";
+	var NODE_TEXT_TMP = "{0} ({1} {2})";
 
 	var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
 		clicksToEdit: 1
@@ -201,13 +200,13 @@
 
 			this.columns = [{
 				xtype: 'treecolumn',
-				text: "@@ Navigation tree",
+				text: CMDBuild.Translation.tree_navigation, 
 				dataIndex: 'text',
 				flex: 3,
 				sortable: false
 			}, {
 				dataIndex: 'cqlNode',
-				text: "@@ Cql filter",
+				text: CMDBuild.Translation.cql_filter, 
 				flex: 2,
 				sortable: false,
 				field: {
@@ -257,10 +256,11 @@
 			node.collapse();
 			for (var i=0, l=domains.length; i<l; ++i) {
 				var d = domains[i];
-				var etId = d.getNSideIdInManyRelation();
+				var etId = d.destinationClassId;
+				var domainDescription = getDomainDescription(d);
 				var et = _CMCache.getEntryTypeById(etId);
 				node.appendChild({
-					text: Ext.String.format(NODE_TEXT_TMP, d.get("description"), et.get("text")),
+					text: Ext.String.format(NODE_TEXT_TMP, d.get("description"), domainDescription, et.get("text")),
 					checked: false,
 					expanded: true,
 					domain: d,
@@ -285,7 +285,6 @@
 					nodeFound.expand();
 				}
 				nodeFound.set("checked", true);
-				console.log("check: " + nodeFound.getEntryType() + "  " + Ext.getClassName(nodeFound));
 				return true;
 			}
 			return false;
@@ -304,24 +303,37 @@
 			r.setEntryType(entryType);
 			r.removeAll(true);
 			r.commit(); // to remove the F____ing red triangle to the node
-			var domains = retrieveDomainsForEntryType(entryType, undefined);
+			var domains = retrieveDomainsWithDestinationForEntryType(entryType, undefined);
 			this.addDomainsAsFirstLevelChildren(domains);
 		},
 
 		getData: function() {
 			var node = this.store.getRootNode();
-			return getChildren(node);
+			return {
+				rootFilter: node.get("cqlNode"),
+				children: getChildren(node)
+			};
 		}
 		
 	});
 
-	function retrieveDomainsForEntryType(entryType, domainName, onlyN_1) {
+	function retrieveDomainsWithDestinationForEntryType(entryType, domainName, onlyN_1) {
 		var ids =  _CMUtils.getAncestorsId(entryType);
 		return _CMCache.getDomainsBy(function(domain) {
 			if (! onlyN_1) {
 				if (domainName && domain.get("name") == domainName)
 					return false;
-				return (Ext.Array.contains(ids, domain.getSourceClassId()) || Ext.Array.contains(ids, domain.getDestinationClassId()));
+				else if (Ext.Array.contains(ids, domain.getSourceClassId())) {
+					domain.destinationClassId = domain.getDestinationClassId();
+					return true;
+				}
+				else if (Ext.Array.contains(ids, domain.getDestinationClassId())) {
+					domain.destinationClassId = domain.getSourceClassId();
+					return true;
+				}
+				else {
+					return false;
+				}
 			}
 			else {
 				var cardinality = domain.get("cardinality");
@@ -346,12 +358,16 @@
 			return;
 		}
 		node._alreadyExpanded = true;
-		var id = node.getNSideIdInManyRelation();
-		if (!id) {
-			return;
+		var id = node.getDomain().getDestinationClassId();
+		if (id) {
+			var domains = retrieveDomainsWithDestinationForEntryType(id, node.getDomain().get("name"), false);
+			me.addDomainsAsNodeChildren(domains, node);
 		}
-		var domains = retrieveDomainsForEntryType(id, node.data.domain.get("name"), false);
-		me.addDomainsAsNodeChildren(domains, node);
+		id = node.getDomain().getSourceClassId();
+		if (id) {
+			var domains = retrieveDomainsWithDestinationForEntryType(id, node.getDomain().get("name"), false);
+			me.addDomainsAsNodeChildren(domains, node);
+		}
 	}
 	function expandAllChildrenNodes(me, node) {
 		for (var i = 0; i < node.childNodes.length; i++) {
@@ -367,8 +383,10 @@
 		return undefined;
 	}
 	function isEqual(nodeSaved, node) {
-		console.log(nodeSaved.domainName + " == " + node.getDomain().get("name") + " && " + nodeSaved.targetClassName + " == " + node.getEntryType());
-		return (nodeSaved.domainName == node.getDomain().get("name") && nodeSaved.targetClassName == node.getEntryType());
+		return (nodeSaved.domainName == node.getDomain().get("name") && 
+						(nodeSaved.targetClassName == node.getDomain().get("nameClass1") ||
+						nodeSaved.targetClassName == node.getDomain().get("nameClass2"))
+		);
 	}
 	function checkAllParents(node) {
 		while (node = node.parentNode) {
@@ -392,16 +410,21 @@
 		return children;
 	}
 	function NodeToObject(node) {
-		var name = node.data.domain.data.nameClass2;
+		var name = node.getDomain().data.nameClass2;
 		var et = _CMCache.getEntryTypeByName(name);
 		return {
-			domainName: node.data.domain.data.name,
+			domainName: node.getDomain().get("name"),
 			targetClassName: name,
 			targetClassDescription: et.get("text"),
+			filter: node.get("cqlNode"),
 			direct: true,
 			BaseNode: false,
 			childNodes: getChildren(node)
 		};
 	}
-
+	function getDomainDescription(domain) {
+		return (domain.destinationClassId == domain.get("idClass1")) ?
+				domain.get("descr_2") :
+				domain.get("descr_1");
+	}
 })();
