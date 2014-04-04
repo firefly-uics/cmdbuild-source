@@ -8,7 +8,8 @@ public class Constants {
 	public static final String ATTRIBUTE_DETAIL_RESPONSE = "attributeDetailResponse";
 	public static final String CARD_DETAIL = "cardDetail";
 	public static final String CARD_DETAIL_RESPONSE = "cardDetailResponse";
-	public static final String CLASS_DETAIL = "classDetail";
+	public static final String SIMPLE_CLASS_DETAIL = "simpleClassDetail";
+	public static final String FULL_CLASS_DETAIL = "fullClassDetail";
 	public static final String CLASS_DETAIL_RESPONSE = "classDetailResponse";
 	public static final String LOOKUP_TYPE_DETAIL = "lookupTypeDetail";
 	public static final String LOOKUP_TYPE_LIST_RESPONSE = "lookupTypeListResponse";
@@ -40,6 +41,7 @@ public class Constants {
 	public static final String DEFAULT = "default";
 	public static final String DEFAULT_VALUE = "defaultValue";
 	public static final String DESCRIPTION = "description";
+	public static final String DESCRIPTION_ATTRIBUTE_NAME = "description_attribute_name";
 	public static final String DISPLAYABLE_IN_LIST = "displayableInList";
 	public static final String EDITOR_TYPE = "editorType";
 	public static final String GROUP = "group";
@@ -56,6 +58,7 @@ public class Constants {
 	public static final String PARENT_ID = "parentId";
 	public static final String PRECISION = "precision";
 	public static final String SCALE = "scale";
+	public static final String SUPERCLASS = "superclass";
 	public static final String TARGET_CLASS = "targetClass";
 	public static final String TOTAL = "total";
 	public static final String TYPE = "type";

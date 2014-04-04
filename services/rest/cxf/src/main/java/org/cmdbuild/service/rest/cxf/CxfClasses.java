@@ -25,15 +25,18 @@ import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
 import org.cmdbuild.service.rest.dto.CardListResponse;
 import org.cmdbuild.service.rest.dto.CardResponse;
-import org.cmdbuild.service.rest.dto.ClassDetail;
-import org.cmdbuild.service.rest.dto.ClassDetailResponse;
+import org.cmdbuild.service.rest.dto.ClassResponse;
+import org.cmdbuild.service.rest.dto.FullClassDetail;
+import org.cmdbuild.service.rest.dto.SimpleClassDetail;
+import org.cmdbuild.service.rest.dto.ClassListResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.serialization.AttributeTypeResolver;
 import org.cmdbuild.service.rest.serialization.FromCMCardToCardDetail;
 import org.cmdbuild.service.rest.serialization.FromCardToCardDetail;
 import org.cmdbuild.service.rest.serialization.FromSomeKindOfCardToMap;
 import org.cmdbuild.service.rest.serialization.ToAttributeDetail;
-import org.cmdbuild.service.rest.serialization.ToClassDetail;
+import org.cmdbuild.service.rest.serialization.ToFullClassDetail;
+import org.cmdbuild.service.rest.serialization.ToSimpleClassDetail;
 import org.cmdbuild.workflow.user.UserProcessClass;
 
 import com.google.common.collect.Ordering;
@@ -41,7 +44,8 @@ import com.mchange.util.AssertException;
 
 public class CxfClasses extends CxfService implements Classes {
 
-	private static final ToClassDetail TO_CLASS_DETAIL = ToClassDetail.newInstance().build();
+	private static final ToFullClassDetail TO_FULL_CLASS_DETAIL = ToFullClassDetail.newInstance().build();
+	private static final ToSimpleClassDetail TO_SIMPLE_CLASS_DETAIL = ToSimpleClassDetail.newInstance().build();
 	private static final AttributeTypeResolver ATTRIBUTE_TYPE_RESOLVER = new AttributeTypeResolver();
 
 	private static final Comparator<CMClass> NAME_ASC = new Comparator<CMClass>() {
@@ -54,7 +58,7 @@ public class CxfClasses extends CxfService implements Classes {
 	};
 
 	@Override
-	public ClassDetailResponse getClasses(final boolean activeOnly, final Integer limit, final Integer offset) {
+	public ClassListResponse getClasses(final boolean activeOnly, final Integer limit, final Integer offset) {
 		// FIXME do all the following it within the same logic
 		// <<<<<
 		final Iterable<? extends CMClass> allClasses = userDataAccessLogic().findClasses(activeOnly);
@@ -64,16 +68,25 @@ public class CxfClasses extends CxfService implements Classes {
 				.sortedCopy(concat( //
 						allClasses, //
 						allProcessClasses));
-		final Iterable<ClassDetail> elements = from(ordered) //
+		final Iterable<SimpleClassDetail> elements = from(ordered) //
 				.skip((offset == null) ? 0 : offset) //
 				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
-				.transform(TO_CLASS_DETAIL);
+				.transform(TO_SIMPLE_CLASS_DETAIL);
 		// <<<<<
-		return ClassDetailResponse.newInstance() //
+		return ClassListResponse.newInstance() //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(size(elements)) //
 						.build()) //
+				.build();
+	}
+
+	@Override
+	public ClassResponse getClassDetail(String name) {
+		final CMClass found = userDataAccessLogic().findClass(name);
+		final FullClassDetail element = TO_FULL_CLASS_DETAIL.apply(found);
+		return ClassResponse.newInstance() //
+				.withElement(element) //
 				.build();
 	}
 

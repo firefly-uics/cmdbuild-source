@@ -11,31 +11,31 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement(name = CLASS_DETAIL_RESPONSE)
-public class ClassDetailResponse extends ListResponse<ClassDetail> {
+public class ClassListResponse extends ListResponse<SimpleClassDetail> {
 
-	public static Builder<ClassDetail, ClassDetailResponse> newInstance() {
-		return new Builder<ClassDetail, ClassDetailResponse>() {
+	public static Builder<SimpleClassDetail, ClassListResponse> newInstance() {
+		return new Builder<SimpleClassDetail, ClassListResponse>() {
 
 			@Override
-			protected ClassDetailResponse doBuild() {
-				return new ClassDetailResponse(this);
+			protected ClassListResponse doBuild() {
+				return new ClassListResponse(this);
 			}
 
 		};
 	}
 
-	ClassDetailResponse() {
+	ClassListResponse() {
 		// package visibility
 	}
 
-	private ClassDetailResponse(final Builder<ClassDetail, ClassDetailResponse> builder) {
+	private ClassListResponse(final Builder<SimpleClassDetail, ClassListResponse> builder) {
 		super(builder);
 	}
 
 	@Override
-	@XmlElement(name = DATA, type = ClassDetail.class)
+	@XmlElement(name = DATA, type = SimpleClassDetail.class)
 	@JsonProperty(DATA)
-	public Collection<ClassDetail> getElements() {
+	public Collection<SimpleClassDetail> getElements() {
 		return super.getElements();
 	}
 

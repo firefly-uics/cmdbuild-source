@@ -16,7 +16,8 @@ import javax.ws.rs.QueryParam;
 import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
 import org.cmdbuild.service.rest.dto.CardListResponse;
 import org.cmdbuild.service.rest.dto.CardResponse;
-import org.cmdbuild.service.rest.dto.ClassDetailResponse;
+import org.cmdbuild.service.rest.dto.ClassListResponse;
+import org.cmdbuild.service.rest.dto.ClassResponse;
 
 @Path("classes/")
 @Produces(APPLICATION_JSON)
@@ -24,10 +25,16 @@ public interface Classes {
 
 	@GET
 	@Path("")
-	ClassDetailResponse getClasses( //
+	ClassListResponse getClasses( //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
+	);
+
+	@GET
+	@Path("{name}/")
+	ClassResponse getClassDetail( //
+			@PathParam(NAME) String name //
 	);
 
 	@GET
