@@ -88,7 +88,8 @@
 			var structure = {
 					targetClassName:formData.rootName,
 					targetClassDescription: formData.rootDescription,
-					childNodes: treeData
+					targetCqlFilter: treeData.rootFilter,
+					childNodes: treeData.children
 			};
 			formData.structure = Ext.encode(structure);
 			_CMCache.saveNavigationTrees(formData, function() {
