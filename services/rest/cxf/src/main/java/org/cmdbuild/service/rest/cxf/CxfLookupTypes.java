@@ -12,6 +12,7 @@ import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.LookupDetailResponse;
+import org.cmdbuild.service.rest.dto.LookupResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
 import org.cmdbuild.service.rest.dto.LookupTypeListResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeResponse;
@@ -110,6 +111,15 @@ public class CxfLookupTypes extends CxfService implements LookupTypes {
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(lookups.totalSize()) //
 						.build()) //
+				.build();
+	}
+
+	@Override
+	public SimpleResponse<LookupDetail> getLookup(final String type, final Long id) {
+		final Lookup lookup = lookupLogic().getLookup(id);
+		final LookupDetail element = TO_LOOKUP_DETAIL.apply(lookup);
+		return LookupResponse.newInstance() //
+				.withElement(element) //
 				.build();
 	}
 
