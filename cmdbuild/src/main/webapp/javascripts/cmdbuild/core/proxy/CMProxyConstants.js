@@ -66,6 +66,7 @@
 			NOT_NULL: 'isnotnull',
 			PARENT: 'parent',
 			PASSWORD: 'password',
+			PHASE: 'phase',
 			POLLING_FREQUENCY: 'pollingFrequency',
 			PRECISION: 'precision',
 			PRIVILEGED_OBJ_DESCRIPTION: 'privilegedObjectDescription',

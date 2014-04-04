@@ -14,6 +14,7 @@
 		 * @param (Object) param
 		 * @param (Function) callback
 		 */
+		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
@@ -25,10 +26,6 @@
 
 		getCronDelegate: function() {
 			return this.view.cronForm.delegate;
-		},
-
-		isEmptyAdvanced: function() {
-			return this.getCronDelegate().isEmptyAdvanced();
 		},
 
 		setValueAdvancedFields: function(cronExpression) {

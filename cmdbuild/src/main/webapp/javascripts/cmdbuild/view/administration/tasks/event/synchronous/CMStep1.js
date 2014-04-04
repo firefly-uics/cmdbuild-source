@@ -15,6 +15,7 @@
 		 * @param (Object) param
 		 * @param (Function) callback
 		 */
+		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
@@ -22,6 +23,10 @@
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
+		},
+
+		getValueGroups: function() {
+			return this.view.groups.getValue();
 		},
 
 		getValueId: function() {
@@ -60,7 +65,7 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'event',
+		taskType: 'event_synchronous',
 
 		border: false,
 		height: '100%',
@@ -70,13 +75,12 @@
 			var me = this;
 
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate', this);
-
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.ServiceProxy.parameter.TYPE,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				value: me.taskType,
+				value: tr.tasksTypes.event + ' ' + tr.tasksTypes.eventTypes.synchronous.toLowerCase(),
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true
@@ -102,7 +106,7 @@
 			});
 
 			this.phase = Ext.create('Ext.form.field.ComboBox', {
-				name: 'phase',
+				name: CMDBuild.ServiceProxy.parameter.PHASE,
 				fieldLabel: tr.taskEvent.phase,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				store: Ext.create('Ext.data.SimpleStore', {
@@ -120,13 +124,7 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
 				forceSelection: true,
-				editable: false,
-
-//				listeners: {
-//					select: function(combo, record, index) {
-//						me.delegate.setValueAdvancedFields(record[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
-//					}
-//				}
+				editable: false
 			});
 
 			this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {

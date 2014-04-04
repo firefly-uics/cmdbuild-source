@@ -17,6 +17,7 @@
 		 * @param (Object) param
 		 * @param (Function) callback
 		 */
+		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onAbortButtonClick':
@@ -53,14 +54,24 @@
 			}
 		},
 
+		// overwrite
+		onAddButtonClick: function(name, param, callBack) {
+			this.callParent(arguments);
+
+			this.delegateStep[0].setDisabledAttributesTable(true);
+		},
+
+		// overwrite
 		onModifyButtonClick: function() {
 			this.callParent(arguments);
+
 			this.delegateStep[0].onWorkflowSelected(this.delegateStep[0].getValueWorkflowCombo(), true);
 
 			if (this.delegateStep[0].checkWorkflowComboSelected())
 				this.delegateStep[0].setDisabledAttributesTable(false);
 		},
 
+		// overwrite
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				var me = this;
@@ -97,6 +108,7 @@
 			}
 		},
 
+		// overwrite
 		onSaveButtonClick: function() {
 			var nonvalid = this.view.getNonValidFields();
 
@@ -108,49 +120,31 @@
 			CMDBuild.LoadMask.get().show();
 			var formData = this.view.getData(true);
 			var attributesGridValues = this.delegateStep[0].getValueAttributeGrid();
+			var submitDatas = {};
+
+			submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
+				formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
+			);
 
 			// Form submit values formatting
-			if (formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]) {
-				formData[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().buildCronExpression([
-					formData[CMDBuild.ServiceProxy.parameter.MINUTE],
-					formData[CMDBuild.ServiceProxy.parameter.HOUR],
-					formData[CMDBuild.ServiceProxy.parameter.DAY_OF_MOUNTH],
-					formData[CMDBuild.ServiceProxy.parameter.MOUNTH],
-					formData[CMDBuild.ServiceProxy.parameter.DAY_OF_WEEK]
-				]);
-			} else {
-				formData[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = formData['baseCombo'];
-			}
-
 			if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-				formData[CMDBuild.ServiceProxy.parameter.ATTRIBUTES] = Ext.encode(attributesGridValues);
+				submitDatas[CMDBuild.ServiceProxy.parameter.ATTRIBUTES] = Ext.encode(attributesGridValues);
 
-			// Manual validation of cron fields because disabled fields are not validated
-			if (this.delegateStep[1].isEmptyAdvanced()) {
-				this.delegateStep[1].getCronDelegate().markInvalidAdvancedFields('This field is required');
-
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-
-				CMDBuild.LoadMask.get().hide();
-
-				this.parentDelegate.form.wizard.changeTab(1);
-				this.delegateStep[1].getCronDelegate().setValueAdvancedRadio(true);
-
+			// Cron field validation
+			if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
 				return;
-			}
 
-			delete formData['baseCombo'];
-			delete formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE];
-			delete formData[CMDBuild.ServiceProxy.parameter.DAY_OF_MOUNTH];
-			delete formData[CMDBuild.ServiceProxy.parameter.DAY_OF_WEEK];
-			delete formData[CMDBuild.ServiceProxy.parameter.HOUR];
-			delete formData[CMDBuild.ServiceProxy.parameter.MINUTE];
-			delete formData[CMDBuild.ServiceProxy.parameter.MOUNTH];
+			// Data filtering to submit only right values
+			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
+			submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
+			submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
+			submitDatas[CMDBuild.ServiceProxy.parameter.TYPE] = formData[CMDBuild.ServiceProxy.parameter.TYPE];
+			submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW];
 
 			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
 				CMDBuild.core.proxy.CMProxyTasks.create({
 					type: this.taskType,
-					params: formData,
+					params: submitDatas,
 					scope: this,
 					success: this.success,
 					callback: this.callback
@@ -158,7 +152,7 @@
 			} else {
 				CMDBuild.core.proxy.CMProxyTasks.update({
 					type: this.taskType,
-					params: formData,
+					params: submitDatas,
 					scope: this,
 					success: this.success,
 					callback: this.callback
@@ -166,6 +160,7 @@
 			}
 		},
 
+		// overwrite
 		success: function(response, options, decodedResult) {
 			var me = this;
 			var store = this.parentDelegate.grid.store;

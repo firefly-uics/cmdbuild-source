@@ -124,8 +124,8 @@
 			},
 
 			/**
-			 * @param obj
-			 * @returns Boolean
+			 * @param (Object) obj
+			 * @return (Boolean)
 			 */
 			isEmpty: function(obj) {
 				if (obj == null)

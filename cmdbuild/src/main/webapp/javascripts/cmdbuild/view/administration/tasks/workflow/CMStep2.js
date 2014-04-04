@@ -14,6 +14,7 @@
 		 * @param (Object) param
 		 * @param (Function) callback
 		 */
+		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
@@ -27,17 +28,10 @@
 			return this.view.cronForm.delegate;
 		},
 
-		isEmptyAdvanced: function() {
-			return this.getCronDelegate().isEmptyAdvanced();
-		},
-
 		setValueAdvancedFields: function(cronExpression) {
 			this.getCronDelegate().setValueAdvancedFields(cronExpression);
 		},
 
-		/**
-		 * Try to find the correspondence of advanced cronExpression in baseCombo's store
-		 */
 		setValueBase: function(value) {
 			this.getCronDelegate().setValueBase(value);
 		}

@@ -15,6 +15,7 @@
 		 * @param (Object) param
 		 * @param (Function) callback
 		 */
+		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
@@ -30,6 +31,10 @@
 
 		getValueAttributeGrid: function() {
 			return this.getWorkflowDelegate().getValueGrid();
+		},
+
+		setDisabledAttributesTable: function(state) {
+			this.getWorkflowDelegate().setDisabledAttributesTable(state);
 		},
 
 		setValueAttributesGrid: function(data) {
@@ -51,7 +56,7 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep4Delegate', this);
 
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
-				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME
+				name: CMDBuild.ServiceProxy.parameter.WORKFLOW
 			});
 
 			this.workflowFieldset = Ext.create('Ext.form.FieldSet', {

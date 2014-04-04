@@ -15,7 +15,7 @@
 
 						if (m) {
 							me.store.insert(0, m);
-							me.cellEditing.startEditByPosition({row: 0, column: 0});
+							me.cellEditing.startEditByPosition({ row: 0, column: 0 });
 						}
 					}
 				}]

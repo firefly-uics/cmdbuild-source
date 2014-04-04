@@ -59,10 +59,10 @@
 			}
 
 			// Fire show event on tabs activate
-			var activeTab = this.getActiveTab();
+			var currentActiveTab = this.getActiveTab();
 
-			if (activeTab)
-				activeTab.fireEvent('show');
+			if (currentActiveTab)
+				currentActiveTab.fireEvent('show');
 		}
 	});
 

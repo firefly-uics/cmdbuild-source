@@ -7,6 +7,9 @@
 
 		delegate: undefined,
 
+		// To setup
+		name: undefined,
+
 		fieldLabel: tr.workflow,
 		valueField: CMDBuild.ServiceProxy.parameter.NAME,
 		displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,

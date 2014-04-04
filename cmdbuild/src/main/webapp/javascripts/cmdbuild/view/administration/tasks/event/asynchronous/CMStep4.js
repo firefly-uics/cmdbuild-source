@@ -15,6 +15,7 @@
 		 * @param (Object) param
 		 * @param (Function) callback
 		 */
+		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
@@ -24,12 +25,27 @@
 			}
 		},
 
+		checkWorkflowComboSelected: function() {
+			if (this.getValueWorkflowCombo())
+				return true;
+
+			return false;
+		},
+
 		getWorkflowDelegate: function() {
 			return this.view.workflowForm.delegate;
 		},
 
 		getValueAttributeGrid: function() {
 			return this.getWorkflowDelegate().getValueGrid();
+		},
+
+		getValueWorkflowCombo: function() {
+			return this.getWorkflowDelegate().getValueCombo();
+		},
+
+		setDisabledAttributesTable: function(state) {
+			this.getWorkflowDelegate().setDisabledAttributesTable(state);
 		},
 
 		setValueAttributesGrid: function(data) {
@@ -79,7 +95,7 @@
 
 			// Workflow configuration
 				this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
-					name: CMDBuild.ServiceProxy.parameter.CLASS_NAME
+					name: CMDBuild.ServiceProxy.parameter.WORKFLOW
 				});
 
 				this.workflowFieldset = Ext.create('Ext.form.FieldSet', {
@@ -104,6 +120,16 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			/**
+			 * Disable attribute table to correct malfunction that enables on class select
+			 */
+			show: function(view, eOpts) {
+				if (!this.delegate.checkWorkflowComboSelected())
+					this.delegate.setDisabledAttributesTable(true);
+			}
 		}
 	});
 

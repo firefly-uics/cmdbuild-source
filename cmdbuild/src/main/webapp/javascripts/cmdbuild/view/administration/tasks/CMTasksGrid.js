@@ -22,7 +22,10 @@
 				{
 					text: tr.type,
 					dataIndex: CMDBuild.ServiceProxy.parameter.TYPE,
-					flex: 1
+					flex: 1,
+					renderer: function(value, metaData, record) {
+						return me.typeGridColumnRenderer(value, metaData, record);
+					},
 				},
 				{
 					text: CMDBuild.Translation.description_,
@@ -104,13 +107,39 @@
 		 * Used to render active value to add icon in grid
 		 *
 		 * @param (Boolean) value
+		 * @return (String) value - HTML image code
 		 */
 		activeGridColumnRenderer: function(value, metaData, record) {
-			if(typeof value === 'boolean') {
-				if(value) {
+			if (typeof value === 'boolean') {
+				if (value) {
 					value = '<img src="images/icons/accept.png" alt="' + tr.running + '" />';
 				} else {
 					value = '<img src="images/icons/cancel.png" alt="' + tr.stopped + '" />';
+				}
+			}
+
+			return value;
+		},
+
+		/**
+		 * Rendering task type translating with local language data
+		 *
+		 * @param (String) value
+		 * @return (String) value - translated value
+		 */
+		typeGridColumnRenderer: function(value, metaData, record) {
+			if (typeof value === 'string') {
+				if (this.delegate.correctTaskTypeCheck(value)) {
+					var splittedType = value.split('_');
+					value = '';
+
+					for (var i = 0; i < splittedType.length; i++) {
+						if (i == 0) {
+							value += eval('CMDBuild.Translation.administration.tasks.tasksTypes.' + splittedType[i]);
+						} else {
+							value += ' ' + eval('CMDBuild.Translation.administration.tasks.tasksTypes.' + splittedType[0] + 'Types.' + splittedType[i]);
+						}
+					}
 				}
 			}
 

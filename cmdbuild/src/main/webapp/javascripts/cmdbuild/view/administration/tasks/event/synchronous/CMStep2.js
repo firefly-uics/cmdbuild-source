@@ -14,6 +14,7 @@
 		 * @param (Object) param
 		 * @param (Function) callback
 		 */
+		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
@@ -34,18 +35,31 @@
 					me.view.filterAttributesTab = Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributes', {
 						attributes: attributes
 					});
-					me.view.relationsTab = Ext.create('CMDBuild.view.management.common.filter.CMRelations', {
+					me.view.filterRelationsTab = Ext.create('CMDBuild.view.management.common.filter.CMRelations', {
 						className: me.className,
 						height: '100%'
 					});
-					me.view.functionsTab = Ext.create('CMDBuild.view.management.common.filter.CMFunctions', {
+					me.view.filterFunctionsTab = Ext.create('CMDBuild.view.management.common.filter.CMFunctions', {
 						className: me.className
 					});
 
-					me.view.filterTabPanel.add([me.view.filterAttributesTab, me.view.relationsTab, me.view.functionsTab]);
+					me.view.filterTabPanel.add([me.view.filterAttributesTab, me.view.filterRelationsTab, me.view.filterFunctionsTab]);
 					me.view.filterTabPanel.doLayout();
 				});
 			}
+		},
+
+		/**
+		 * Function to get filter's datas
+		 *
+		 * @return (Object) filter's tab datas
+		 */
+		getDataFilters: function() {
+			return {
+				attributes: this.view.filterAttributesTab.getData(),
+				relations: this.view.filterRelationsTab.getData(),
+				functions: this.view.filterFunctionsTab.getData()
+			};
 		}
 	});
 
@@ -53,7 +67,7 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'workflow',
+		taskType: 'event_synchronous',
 
 		border: false,
 		overflowY: 'auto',
@@ -65,15 +79,6 @@
 			this.filterTabPanel = Ext.create('Ext.tab.Panel', {
 				border: false
 			});
-// TODO: ??????
-//			this.wrapper = Ext.create('Ext.form.FieldSet', {
-//				title: 'tr.filter',
-//
-//				padding: '0px',
-//
-//				layout: 'fit',
-//				items: [this.filterTabPanel]
-//			});
 
 			Ext.apply(this, {
 				items: [this.filterTabPanel]

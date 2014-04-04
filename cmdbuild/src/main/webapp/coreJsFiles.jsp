@@ -14,6 +14,9 @@
 <!-- LOADER CONFIG -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 
+<!-- FIXES -->
+<script type="text/javascript" src="javascripts/cmdbuild/core/fixes/CMFixFieldset.js"></script>
+
 <!--  PROXYES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyUrlIndex.js"></script>
@@ -36,7 +39,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyReport.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyTranslations.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWidgetConfiguration.js"></script>
-
 
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>
@@ -178,10 +180,9 @@
 	<!-- DASHBOARD -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/common/CMDashboardColumnController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/common/chart/CMChartPortletController.js"></script>
-	
+
 <!-- BIM -->
 <script type="text/javascript" src="javascripts/cmdbuild/bim/package.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/data/CMBIMProjectModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/data/CMBimLayerModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/bim/proxy/CMBIMProxy.js"></script>
-	

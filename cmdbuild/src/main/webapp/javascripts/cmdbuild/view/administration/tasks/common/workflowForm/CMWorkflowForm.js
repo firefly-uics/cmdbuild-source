@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
+
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 		extend: 'Ext.panel.Panel',
 
