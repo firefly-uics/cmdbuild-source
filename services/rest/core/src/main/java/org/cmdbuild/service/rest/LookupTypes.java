@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.cmdbuild.service.rest.Constants.ACTIVE;
+import static org.cmdbuild.service.rest.Constants.ID;
 import static org.cmdbuild.service.rest.Constants.LIMIT;
 import static org.cmdbuild.service.rest.Constants.START;
 import static org.cmdbuild.service.rest.Constants.TYPE;
@@ -41,6 +42,13 @@ public interface LookupTypes {
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
+	);
+
+	@GET
+	@Path("{type}/values/{id}/")
+	SimpleResponse<LookupDetail> getLookup( //
+			@PathParam(TYPE) String type, //
+			@PathParam(ID) Long id //
 	);
 
 }

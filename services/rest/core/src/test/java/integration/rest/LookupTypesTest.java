@@ -15,6 +15,7 @@ import org.cmdbuild.service.rest.LookupTypes;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.LookupDetailResponse;
+import org.cmdbuild.service.rest.dto.LookupResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
 import org.cmdbuild.service.rest.dto.LookupTypeListResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeResponse;
@@ -123,6 +124,27 @@ public class LookupTypesTest {
 
 		// when
 		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/foo/values/");
+		final int result = httpclient.executeMethod(get);
+
+		// then
+		assertThat(result, equalTo(200));
+		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+	}
+
+	@Test
+	public void getLookup() throws Exception {
+		// given
+		final LookupResponse expectedResponse = LookupResponse.newInstance() //
+				.withElement(LookupDetail.newInstance() //
+						.withId(123L) //
+						.withCode("foo") //
+						.build()) //
+				.build();
+		when(service.getLookup(eq("foo"), eq(123L))) //
+				.thenReturn(expectedResponse);
+
+		// when
+		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/foo/values/123/");
 		final int result = httpclient.executeMethod(get);
 
 		// then
