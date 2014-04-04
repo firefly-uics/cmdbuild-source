@@ -56,7 +56,7 @@
 				save: 'services/json/navigationtree/save',
 				remove: 'services/json/navigationtree/remove'
 			},
-			
+
 			dataView: {
 				read: 'services/json/viewmanagement/read',
 				filter: {
@@ -145,6 +145,7 @@
 				getStore: 'services/json/schema/taskmanager/readall',
 				start: 'services/json/schema/taskmanager/start',
 				stop: 'services/json/schema/taskmanager/stop',
+
 				email: {
 					delete: 'services/json/schema/taskmanager/reademail/delete',
 					get: 'services/json/schema/taskmanager/reademail/read',
@@ -153,13 +154,25 @@
 
 					getStore: 'services/json/schema/taskmanager/reademail/readall'
 				},
-				event: { // TODO: to decide how to organize this section
-					delete: '',
-					get: '',
-					post: '',
-					put: '',
+				event: {// TODO: to decide how to organize this section
+					getStore: 'services/json/schema/taskmanager/event/readall',
 
-					getStore: 'services/json/schema/taskmanager/event/readall'
+					asynchronous: {
+						delete: '',
+						get: '',
+						post: '',
+						put: '',
+
+						getStore: 'services/json/schema/taskmanager/event/readall',
+					},
+					synchronous: {
+						delete: '',
+						get: '',
+						post: '',
+						put: '',
+
+						getStore: 'services/json/schema/taskmanager/event/readall',
+					}
 				},
 				workflow: {
 					delete: 'services/json/schema/taskmanager/startworkflow/delete',

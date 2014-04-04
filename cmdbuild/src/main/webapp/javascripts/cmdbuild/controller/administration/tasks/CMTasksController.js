@@ -17,7 +17,6 @@
 
 		// Overwrite
 		constructor: function(view) {
-
 			// Handlers exchange and controller setup
 			this.view = view;
 			this.grid = view.grid;
@@ -30,6 +29,7 @@
 			this.callParent(arguments);
 		},
 
+		// Overwrite
 		onViewOnFront: function(parameters) {
 			if (typeof parameters !== 'undefined') {
 				var me = this;
@@ -38,10 +38,6 @@
 
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
 				this.grid.store.load({
-					params: {
-						start: 0,
-						limit: 5
-					},
 					callback: function() {
 						if (!me.selectionModel.hasSelection())
 							me.selectionModel.select(0, true);
@@ -94,6 +90,10 @@
 			}
 		},
 
+		/**
+		 * @param (String) string
+		 * @return (String) string - capitalized string
+		 */
 		capitaliseFirstLetter: function(string) {
 			if (typeof string == 'string') {
 				return string.charAt(0).toUpperCase() + string.slice(1);
@@ -102,12 +102,18 @@
 			return string;
 		},
 
+		/**
+		 * @param (String) type - form type identifier
+		 * @return (Boolean) type recognition state
+		 */
 		correctTaskTypeCheck: function(type) {
 			return (type != '' && (this.tasksDatas.indexOf(type) >= 0)) ? true : false;
 		},
 
 		/**
 		 * Form wizard creator
+		 *
+		 * @param (String) type - form type identifier
 		 */
 		loadForm: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
@@ -159,6 +165,9 @@
 				this.form.delegate.cmOn(name, param, callBack);
 		},
 
+		/**
+		 * @param (Object) record
+		 */
 		onStartButtonClick: function(record) {
 			this.form.delegate.onAbortButtonClick();
 
@@ -171,6 +180,9 @@
 			});
 		},
 
+		/**
+		 * @param (Object) record
+		 */
 		onStopButtonClick: function(record) {
 			this.form.delegate.onAbortButtonClick();
 
@@ -192,12 +204,11 @@
 		 *
 		 * @param (String) type
 		 * @param (Imt) itemsToReturn
-		 *
 		 * @return (String) class path string for type
 		 */
 		typeSerialize: function(type, itemsToReturn) {
 			var splittedType = type.split('_');
-			var returnString = '';
+			var returnString;
 
 			if (
 				splittedType.length > 1
@@ -206,13 +217,11 @@
 				&& itemsToReturn <= splittedType.length
 			) {
 				splittedType = splittedType.slice(0, itemsToReturn);
-				returnString = splittedType.join('.');
 			} else {
 				splittedType = splittedType.slice(0, splittedType.length);
-				returnString = splittedType.join('.');
 			}
 
-			return returnString;
+			return splittedType.join('.');
 		}
 	});
 

@@ -66,6 +66,7 @@
 					var decodedResponse = Ext.JSON.decode(response.responseText);
 
 					me.gridField.keyEditorConfig.store = me.buildWorkflowAttributesStore(me.cleanServerAttributes(decodedResponse.attributes));
+
 					if (!modify) {
 						me.gridField.store.removeAll();
 						me.gridField.store.insert(0, { key: '', value: '' });

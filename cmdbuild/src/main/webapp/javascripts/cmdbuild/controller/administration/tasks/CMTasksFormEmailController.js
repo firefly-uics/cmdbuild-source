@@ -17,6 +17,7 @@
 		 * @param (Object) param
 		 * @param (Function) callback
 		 */
+		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onAbortButtonClick':
@@ -53,15 +54,25 @@
 			}
 		},
 
+		// overwrite
+		onAddButtonClick: function(name, param, callBack) {
+			this.callParent(arguments);
+
+			this.delegateStep[3].setDisabledAttributesTable(true);
+		},
+
+		// overwrite
 		onModifyButtonClick: function() {
 			this.callParent(arguments);
 			// TODO: finish the setup of this function when server will answer correctly with all checkboxes values
+
 //			this.delegateStep[0].onWorkflowSelected(this.delegateStep[0].getValueWorkflowCombo(), true);
 
 //			if (this.delegateStep[0].checkWorkflowComboSelected())
 //				this.delegateStep[0].setDisabledAttributesTable(false);
 		},
 
+		// overwrite
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				var me = this;
@@ -102,6 +113,7 @@
 			}
 		},
 
+		// overwrite
 		onSaveButtonClick: function() {
 			var nonvalid = this.view.getNonValidFields();
 
@@ -113,57 +125,48 @@
 			CMDBuild.LoadMask.get().show();
 			var formData = this.view.getData(true);
 			var attributesGridValues = this.delegateStep[3].getValueAttributeGrid();
+			var submitDatas = {};
+
+			submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
+				formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
+			);
 
 			// Form submit values formatting
-				if ( !Ext.isEmpty(formData.filterFromAddress)) {
-					formData.filterFromAddress = Ext.encode(formData.filterFromAddress.split(' OR '));
-				}
+				if (!Ext.isEmpty(formData.filterFromAddress))
+					submitDatas[CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS] = Ext.encode(
+						formData[CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS].split(' OR ')
+					);
 
-				if ( !Ext.isEmpty(formData.filterSubject)) {
-					formData.filterSubject = Ext.encode(formData.filterSubject.split(' OR '));
-				}
-
-				if (formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]) {
-					formData[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().buildCronExpression([
-						formData[CMDBuild.ServiceProxy.parameter.MINUTE],
-						formData[CMDBuild.ServiceProxy.parameter.HOUR],
-						formData[CMDBuild.ServiceProxy.parameter.DAY_OF_MOUNTH],
-						formData[CMDBuild.ServiceProxy.parameter.MOUNTH],
-						formData[CMDBuild.ServiceProxy.parameter.DAY_OF_WEEK]
-					]);
-				} else {
-					formData[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = formData['baseCombo'];
-				}
+				if (!Ext.isEmpty(formData.filterSubject))
+					submitDatas[CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT] = Ext.encode(
+						formData[CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT].split(' OR ')
+					);
 
 				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-					formData[CMDBuild.ServiceProxy.parameter.ATTRIBUTES] = Ext.encode(attributesGridValues);
+					submitDatas[CMDBuild.ServiceProxy.parameter.ATTRIBUTES] = Ext.encode(attributesGridValues);
 
-			// Manual validation of cron fields because disabled fields are not validated
-			if (this.delegateStep[1].isEmptyAdvanced()) {
-				this.delegateStep[1].getCronDelegate().markInvalidAdvancedFields('This field is required');
-
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-
-				CMDBuild.LoadMask.get().hide();
-
-				this.parentDelegate.form.wizard.changeTab(1);
-				this.delegateStep[1].getCronDelegate().setValueAdvancedRadio(true);
-
+			// Cron field validation
+			if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
 				return;
-			}
 
-			delete formData['baseCombo'];
-			delete formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE];
-			delete formData[CMDBuild.ServiceProxy.parameter.DAY_OF_MOUNTH];
-			delete formData[CMDBuild.ServiceProxy.parameter.DAY_OF_WEEK];
-			delete formData[CMDBuild.ServiceProxy.parameter.HOUR];
-			delete formData[CMDBuild.ServiceProxy.parameter.MINUTE];
-			delete formData[CMDBuild.ServiceProxy.parameter.MOUNTH];
+			// Data filtering to submit only right values
+			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
+			submitDatas[CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE] = formData[CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE];
+			submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
+			submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT];
+			submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE];
+			submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
+			submitDatas[CMDBuild.ServiceProxy.parameter.KEY_END] = formData[CMDBuild.ServiceProxy.parameter.KEY_END];
+			submitDatas[CMDBuild.ServiceProxy.parameter.KEY_INIT] = formData[CMDBuild.ServiceProxy.parameter.KEY_INIT];
+			submitDatas[CMDBuild.ServiceProxy.parameter.TYPE] = formData[CMDBuild.ServiceProxy.parameter.TYPE];
+			submitDatas[CMDBuild.ServiceProxy.parameter.VALUE_END] = formData[CMDBuild.ServiceProxy.parameter.VALUE_END];
+			submitDatas[CMDBuild.ServiceProxy.parameter.VALUE_INIT] = formData[CMDBuild.ServiceProxy.parameter.VALUE_INIT];
+			submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW];
 
 			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
 				CMDBuild.core.proxy.CMProxyTasks.create({
 					type: this.taskType,
-					params: formData,
+					params: submitDatas,
 					scope: this,
 					success: this.success,
 					callback: this.callback
@@ -171,7 +174,7 @@
 			} else {
 				CMDBuild.core.proxy.CMProxyTasks.update({
 					type: this.taskType,
-					params: formData,
+					params: submitDatas,
 					scope: this,
 					success: this.success,
 					callback: this.callback
@@ -179,6 +182,7 @@
 			}
 		},
 
+		// overwrite
 		success: function(result, options, decodedResult) {
 			var me = this;
 			var store = this.parentDelegate.grid.store;
@@ -186,10 +190,12 @@
 			store.load();
 			store.on('load', function() {
 				me.view.reset();
+
 				var rowIndex = this.find(
 					CMDBuild.ServiceProxy.parameter.ID,
 					(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getValueId()
 				);
+
 				me.selectionModel.select(rowIndex, true);
 				me.onRowSelected();
 			});

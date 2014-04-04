@@ -15,6 +15,7 @@
 		 * @param (Object) param
 		 * @param (Function) callback
 		 */
+		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
@@ -100,7 +101,7 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.ServiceProxy.parameter.TYPE,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				value: me.taskType,
+				value: tr.tasksTypes.workflow,
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true
@@ -126,7 +127,7 @@
 			});
 
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
-				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
+				name: CMDBuild.ServiceProxy.parameter.WORKFLOW,
 				allowBlank: false
 			});
 

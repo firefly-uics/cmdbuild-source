@@ -14,6 +14,7 @@
 		 * @param (Object) param
 		 * @param (Function) callback
 		 */
+		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
@@ -65,15 +66,6 @@
 			this.filterTabPanel = Ext.create('Ext.tab.Panel', {
 				border: false
 			});
-// TODO: ??????
-//			this.wrapper = Ext.create('Ext.form.FieldSet', {
-//				title: 'tr.filter',
-//
-//				padding: '0px',
-//
-//				layout: 'fit',
-//				items: [this.filterTabPanel]
-//			});
 
 			Ext.apply(this, {
 				items: [this.filterTabPanel]

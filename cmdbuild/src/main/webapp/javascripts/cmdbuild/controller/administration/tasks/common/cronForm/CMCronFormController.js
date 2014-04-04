@@ -7,7 +7,7 @@
 
 		/**
 		 * @param (Array) fields
-		 * @returns (String) cron expression
+		 * @return (String) cron expression
 		 */
 		buildCronExpression: function(fields) {
 			var cronExpression = '';
@@ -57,6 +57,30 @@
 
 		getBaseCombo: function() {
 			return this.baseField.baseCombo;
+		},
+
+		/**
+		 * Get cron form formatted values
+		 *
+		 * @param (Boolean) cronInputType
+		 * @return (String) cronExpression
+		 */
+		getValue: function(cronInputType) {
+			var cronExpression;
+
+			if (cronInputType) {
+				cronExpression = this.buildCronExpression([
+					this.advancedField.advancedFields[0].getValue(),
+					this.advancedField.advancedFields[1].getValue(),
+					this.advancedField.advancedFields[2].getValue(),
+					this.advancedField.advancedFields[3].getValue(),
+					this.advancedField.advancedFields[4].getValue()
+				]);
+			} else {
+				cronExpression = this.baseField.baseCombo.getValue();
+			}
+
+			return cronExpression;
 		},
 
 		isEmptyAdvanced: function() {
@@ -117,6 +141,29 @@
 			} else {
 				this.baseField.baseCombo.setValue();
 			}
+		},
+
+		/**
+		 * Cron validation
+		 *
+		 * @param (Object) wizard - reference to wizard object
+		 * @return (Boolean)
+		 */
+		validate: function(wizard) {
+			if (this.isEmptyAdvanced()) {
+				this.markInvalidAdvancedFields('This field is required');
+
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+
+				CMDBuild.LoadMask.get().hide();
+
+				wizard.changeTab(1);
+				this.setValueAdvancedRadio(true);
+
+				return false;
+			}
+
+			return true;
 		}
 	});
 
