@@ -28,6 +28,7 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.operation.AuthenticationLogicHelper;
+import org.cmdbuild.services.soap.operation.CardAdapter;
 import org.cmdbuild.services.soap.operation.DataAccessLogicHelper;
 import org.cmdbuild.services.soap.operation.DmsLogicHelper;
 import org.cmdbuild.services.soap.operation.LookupLogicHelper;
@@ -94,7 +95,8 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 		return new WorkflowLogicHelper( //
 				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
 				applicationContext.getBean(BEAN_USER_DATA_VIEW, CMDataView.class), //
-				metadataStoreFactory);
+				metadataStoreFactory, //
+				cardAdapter());
 	}
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
@@ -106,11 +108,16 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 				applicationContext.getBean(DataSource.class), //
 				authenticationStore, //
 				configuration, //
-				metadataStoreFactory);
+				metadataStoreFactory, //
+				cardAdapter());
 		helper.setMenuStore(menuStore());
 		helper.setLookupStore(lookupStore());
 		helper.setReportStore(reportStore());
 		return helper;
+	}
+
+	private CardAdapter cardAdapter() {
+		return new CardAdapter(applicationContext.getBean(UserDataView.class), lookupStore());
 	}
 
 	protected WorkflowEventManager workflowEventManager() {

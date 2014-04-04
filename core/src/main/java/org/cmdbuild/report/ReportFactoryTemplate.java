@@ -1,13 +1,16 @@
 package org.cmdbuild.report;
 
+import static java.lang.String.format;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.awt.Color;
 import java.io.File;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
@@ -41,12 +44,16 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.FilesStore;
 
+import com.google.common.collect.Maps;
+
 public abstract class ReportFactoryTemplate extends ReportFactory {
 
 	private static final String REPORT_DIR_NAME = "reports";
-	private final Map<String, Object> jasperFillManagerParameters = new LinkedHashMap<String, Object>();
 
-	protected CMDataView dataView;
+	private static Pattern PARAM_PATTERN = Pattern.compile("([^\\?]+)?(\\?)?");
+
+	protected final CMDataView dataView;
+	private final Map<String, Object> jasperFillManagerParameters;
 
 	public abstract JasperDesign getJasperDesign();
 
@@ -55,9 +62,9 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 			final CmdbuildConfiguration configuration, //
 			final CMDataView dataView //
 	) {
-
 		super(dataSource, configuration);
 		this.dataView = dataView;
+		this.jasperFillManagerParameters = Maps.newLinkedHashMap();
 	}
 
 	@Override
@@ -78,22 +85,32 @@ public abstract class ReportFactoryTemplate extends ReportFactory {
 		 * Add some space to the end of the query to avoid the situation in
 		 * which the ? is the last character
 		 */
-		final String query = String.format("%s     ", queryCreator.getQuery());
-		final Object[] params = queryCreator.getParams();
+		final String query = format("%s     ", queryCreator.getQuery());
+		final Iterator<Object> paramsIterator = Arrays.asList(queryCreator.getParams()).iterator();
 
-		final String[] queryParts = query.split("\\?");
 		final StringBuilder queryStringBuilder = new StringBuilder();
+		final Matcher matcher = PARAM_PATTERN.matcher(query);
+		while (matcher.find()) {
+			final String nonParamPart = matcher.group(1);
+			final String paramPart = matcher.group(2);
 
-		for (int i = 0, l = queryParts.length - 1; i < l; ++i) {
-			queryStringBuilder.append(queryParts[i]);
-			queryStringBuilder.append(String.format("'%s'", params[i]));
+			if (nonParamPart != null) {
+				queryStringBuilder.append(nonParamPart);
+			}
+			if (paramPart != null) {
+				final Object param = paramsIterator.next();
+				queryStringBuilder.append(escapeAndQuote(param));
+			}
 		}
 
-		queryStringBuilder.append(queryParts[queryParts.length - 1]);
-
 		final String compiledQuery = queryStringBuilder.toString();
-		Log.REPORT.debug(String.format("Report Query: %s", compiledQuery));
+		Log.REPORT.debug("report query: {}", compiledQuery);
 		return compiledQuery;
+	}
+
+	private String escapeAndQuote(final Object param) {
+		final String value = param.toString().replace("'", "''");
+		return format("'%s'", value);
 	}
 
 	protected void setQuery(final String reportQuery) {
