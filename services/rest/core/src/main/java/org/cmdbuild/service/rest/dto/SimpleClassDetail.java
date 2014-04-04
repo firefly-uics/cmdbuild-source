@@ -1,8 +1,8 @@
 package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.dto.Constants.CLASS_DETAIL;
 import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;
 import static org.cmdbuild.service.rest.dto.Constants.NAME;
+import static org.cmdbuild.service.rest.dto.Constants.SIMPLE_CLASS_DETAIL;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,10 +10,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-@XmlRootElement(name = CLASS_DETAIL)
-public class ClassDetail {
+@XmlRootElement(name = SIMPLE_CLASS_DETAIL)
+public class SimpleClassDetail {
 
-	public static class Builder implements org.cmdbuild.common.Builder<ClassDetail> {
+	public static class Builder implements org.cmdbuild.common.Builder<SimpleClassDetail> {
 
 		private String name;
 		private String description;
@@ -23,8 +23,8 @@ public class ClassDetail {
 		}
 
 		@Override
-		public ClassDetail build() {
-			return new ClassDetail(this);
+		public SimpleClassDetail build() {
+			return new SimpleClassDetail(this);
 		}
 
 		public Builder withName(final String name) {
@@ -46,11 +46,11 @@ public class ClassDetail {
 	private String name;
 	private String description;
 
-	ClassDetail() {
+	SimpleClassDetail() {
 		// package visibility
 	}
 
-	private ClassDetail(final Builder builder) {
+	private SimpleClassDetail(final Builder builder) {
 		this.name = builder.name;
 		this.description = builder.description;
 	}
@@ -79,11 +79,11 @@ public class ClassDetail {
 			return true;
 		}
 
-		if (!(obj instanceof ClassDetail)) {
+		if (!(obj instanceof SimpleClassDetail)) {
 			return false;
 		}
 
-		final ClassDetail other = ClassDetail.class.cast(obj);
+		final SimpleClassDetail other = SimpleClassDetail.class.cast(obj);
 		return name.equals(other.name);
 	}
 

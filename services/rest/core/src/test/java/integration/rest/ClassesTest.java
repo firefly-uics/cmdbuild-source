@@ -19,9 +19,11 @@ import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
 import org.cmdbuild.service.rest.dto.CardListResponse;
 import org.cmdbuild.service.rest.dto.CardResponse;
-import org.cmdbuild.service.rest.dto.ClassDetail;
-import org.cmdbuild.service.rest.dto.ClassDetailResponse;
+import org.cmdbuild.service.rest.dto.ClassListResponse;
+import org.cmdbuild.service.rest.dto.ClassResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
+import org.cmdbuild.service.rest.dto.FullClassDetail;
+import org.cmdbuild.service.rest.dto.SimpleClassDetail;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -61,12 +63,12 @@ public class ClassesTest {
 	@Test
 	public void getClasses() throws Exception {
 		// given
-		final ClassDetailResponse expectedResponse = ClassDetailResponse.newInstance() //
+		final ClassListResponse expectedResponse = ClassListResponse.newInstance() //
 				.withElements(asList( //
-						ClassDetail.newInstance() //
+						SimpleClassDetail.newInstance() //
 								.withName("foo") //
 								.build(), //
-						ClassDetail.newInstance() //
+						SimpleClassDetail.newInstance() //
 								.withName("bar") //
 								.build())) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
@@ -78,6 +80,26 @@ public class ClassesTest {
 
 		// when
 		final GetMethod get = new GetMethod("http://localhost:8080/classes/");
+		final int result = httpclient.executeMethod(get);
+
+		// then
+		assertThat(result, equalTo(200));
+		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+	}
+
+	@Test
+	public void getClassDetail() throws Exception {
+		// given
+		final ClassResponse expectedResponse = ClassResponse.newInstance() //
+				.withElement(FullClassDetail.newInstance() //
+						.withName("foo") //
+						.build()) //
+				.build();
+		when(service.getClassDetail(eq("foo"))) //
+				.thenReturn(expectedResponse);
+
+		// when
+		final GetMethod get = new GetMethod("http://localhost:8080/classes/foo/");
 		final int result = httpclient.executeMethod(get);
 
 		// then
