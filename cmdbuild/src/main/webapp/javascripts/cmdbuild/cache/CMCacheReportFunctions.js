@@ -70,7 +70,7 @@
 						},
 						extraParams: {
 							type: "custom", 
-							limit:1000
+							limit: 1000
 						}
 					},
 					autoLoad: true

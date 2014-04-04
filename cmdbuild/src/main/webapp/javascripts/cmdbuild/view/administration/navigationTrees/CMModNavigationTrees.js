@@ -1,7 +1,7 @@
 (function() {
 	var translationModClass = CMDBuild.Translation.administration.modClass;
 	
-	var baseTitle = "@@ Navigation tree"; //translationModClass.tabs.domains;
+	var baseTitle = CMDBuild.Translation.tree_navigation; 
 	
 	Ext.define("CMDBuild.view.administration.navigationTrees.CMModNavigationTrees", {
 		extend: "Ext.panel.Panel",
@@ -14,7 +14,7 @@
 		constructor: function() {
 			this.addButton = new Ext.Button({
 				iconCls: 'add',
-				text: "@@ Add navigation tree",
+				text: CMDBuild.Translation.tree_navigation_add,
 				scope: this,
 				handler: function() {
 					this.delegate.cmOn("onAddButtonClick");
@@ -26,7 +26,7 @@
 			});
 
 			this.navigationTreesTree = new CMDBuild.view.administration.navigationTrees.CMNavigationTreesTree({
-				title: "@@ Tree"
+				title: CMDBuild.Translation.tree
 			});
 
 			this.tabPanel = new Ext.TabPanel({
