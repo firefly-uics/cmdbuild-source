@@ -70,7 +70,7 @@
 			});
 
 			this.treeDescription = new Ext.form.CMTranslatableText({
-				fieldLabel : this.translation.description,
+				fieldLabel : CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : "description",
