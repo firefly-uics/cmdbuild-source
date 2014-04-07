@@ -110,7 +110,7 @@
 		 * @return (String) value - HTML image code
 		 */
 		activeGridColumnRenderer: function(value, metaData, record) {
-			if (typeof value === 'boolean') {
+			if (typeof value == 'boolean') {
 				if (value) {
 					value = '<img src="images/icons/accept.png" alt="' + tr.running + '" />';
 				} else {
@@ -128,7 +128,7 @@
 		 * @return (String) value - translated value
 		 */
 		typeGridColumnRenderer: function(value, metaData, record) {
-			if (typeof value === 'string') {
+			if (typeof value == 'string') {
 				if (this.delegate.correctTaskTypeCheck(value)) {
 					var splittedType = value.split('_');
 					value = '';

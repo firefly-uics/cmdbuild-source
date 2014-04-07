@@ -30,7 +30,7 @@
 		 * @param (Int) step
 		 */
 		changeTab: function(step) {
-			if (typeof step === 'number' && step == 0) {
+			if (typeof step == 'number' && step == 0) {
 				var activeTab = 0;
 
 				this.setActiveTab(0);

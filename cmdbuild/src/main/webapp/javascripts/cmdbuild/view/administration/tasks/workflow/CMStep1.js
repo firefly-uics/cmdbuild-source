@@ -49,7 +49,7 @@
 		},
 
 		onWorkflowSelected: function(name, modify) {
-			this.getWorkflowDelegate().onWorkflowSelected(name, modify);
+			this.getWorkflowDelegate().onSelectWorkflow(name, modify);
 		},
 
 		setDisabledAttributesTable: function(state) {
@@ -127,8 +127,10 @@
 			});
 
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
-				name: CMDBuild.ServiceProxy.parameter.WORKFLOW,
-				allowBlank: false
+				combo: {
+					name: CMDBuild.ServiceProxy.parameter.WORKFLOW,
+					allowBlank: false
+				}
 			});
 
 			Ext.apply(this, {

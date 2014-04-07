@@ -5,9 +5,8 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormCombo', {
 		extend: 'Ext.form.field.ComboBox',
 
+		// Required
 		delegate: undefined,
-
-		// To setup
 		name: undefined,
 
 		fieldLabel: tr.workflow,
@@ -21,7 +20,7 @@
 
 		listeners: {
 			select: function() {
-				this.delegate.onWorkflowSelected(this.getValue());
+				this.delegate.cmOn('onSelectWorkflow', this.getValue());
 			}
 		},
 

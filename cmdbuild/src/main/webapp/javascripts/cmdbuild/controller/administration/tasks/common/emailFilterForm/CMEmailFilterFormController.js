@@ -3,7 +3,9 @@
 	Ext.define('CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController', {
 
 		buttonField: undefined,
+		filterWindow: undefined,
 		textareaField: undefined,
+		textareaConcatParameter: ' OR ',
 
 		/**
 		 * Gatherer function to catch events
@@ -17,8 +19,14 @@
 				case 'onFilterButtonClick':
 					return this.onFilterButtonClick(param.titleWindow, param.type);
 
-				case 'onFilterChange':
+				case 'onFilterWindowChange':
 					return this.onFilterChange(param);
+
+				case 'onFilterWindowAbort':
+					return this.onFilterWindowAbort();
+
+				case 'onFilterWindowConfirm':
+					return this.filterWindow.hide();
 
 				default: {
 					if (this.parentDelegate)
@@ -27,13 +35,18 @@
 			}
 		},
 
+		getTextareaConcatParameter: function() {
+			return this.textareaConcatParameter;
+		},
+
 		onFilterButtonClick: function(titleWindow, type, content) {
 			var me = this;
 
-			this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
+			this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterFormWindow', {
 				title: titleWindow,
 				type: type,
-				content: me.textareaField.getValue()
+				content: me.textareaField.getValue(),
+				textareaConcatParameter: this.getTextareaConcatParameter()
 			});
 
 			this.filterWindow.delegate.parentDelegate = this;
@@ -46,13 +59,19 @@
 			for (key in parameters) {
 				if (parameters[key] !== '') {
 					if (filterString != '')
-						filterString = filterString + ' OR ';
+						filterString = filterString + this.getTextareaConcatParameter();
 
 					filterString = filterString.concat(parameters[key]);
 				}
 			}
 
 			this.textareaField.setValue(filterString);
+		},
+
+		onFilterWindowAbort: function() {
+			// TODO: Fix reverting edits to store data
+			this.textareaField.reset();
+			this.filterWindow.hide();
 		},
 
 		setValue: function(filterString) {

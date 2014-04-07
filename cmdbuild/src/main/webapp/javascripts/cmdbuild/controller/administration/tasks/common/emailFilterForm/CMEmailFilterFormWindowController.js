@@ -17,8 +17,8 @@
 		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onAddFilter':
-					return this.onAddFilter();
+				case 'onFilterWindowAdd':
+					return this.onFilterWindowAdd();
 
 				default: {
 					if (this.parentDelegate)
@@ -37,7 +37,7 @@
 			var me = this;
 			var items = [];
 
-			if (typeof values === 'undefined') {
+			if (typeof values == 'undefined') {
 				values = [''];
 			}
 
@@ -58,10 +58,9 @@
 							value: values[key],
 							listeners: {
 								change: function() {
-									me.parentDelegate.cmOn(
-										'on' + me.type + 'FilterChange',
-										me.view.contentComponent.getForm().getValues(),
-										Ext.emptyFn()
+									me.cmOn(
+										'onFilterWindowChange',
+										me.view.contentComponent.getForm().getValues()
 									);
 								}
 							}
@@ -77,10 +76,9 @@
 								// Remove input's panel container from form
 								this.up('form').remove(this.up('panel').id);
 
-								me.parentDelegate.cmOn(
-									'onFilterChange',
-									me.view.contentComponent.getForm().getValues(),
-									Ext.emptyFn()
+								me.cmOn(
+									'onFilterWindowChange',
+									me.view.contentComponent.getForm().getValues()
 								);
 							}
 						}
@@ -91,7 +89,7 @@
 			return items;
 		},
 
-		onAddFilter: function() {
+		onFilterWindowAdd: function() {
 			this.view.contentComponent.add(this.buildWindowItem());
 			this.view.contentComponent.doLayout();
 		}

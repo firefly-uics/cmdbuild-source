@@ -4,12 +4,12 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		parentDelegate: undefined,
-		tasksDatas: [ // Used to check task validity
+		tasksDatas: [ // Used to validate tasks
 			'all',
 			'email',
 			'event',
-			'event_synchronous',
 			'event_asynchronous',
+			'event_synchronous',
 			'workflow'
 		],
 		taskType: undefined,
@@ -212,7 +212,7 @@
 
 			if (
 				splittedType.length > 1
-				&& typeof itemsToReturn === 'number'
+				&& typeof itemsToReturn == 'number'
 				&& itemsToReturn > 0
 				&& itemsToReturn <= splittedType.length
 			) {

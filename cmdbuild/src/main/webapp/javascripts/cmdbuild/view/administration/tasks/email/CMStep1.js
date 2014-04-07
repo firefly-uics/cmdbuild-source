@@ -18,29 +18,7 @@
 		 */
 		// overwrite
 		cmOn: function(name, param, callBack) {
-			switch (name) { // FilterWindow events
-				case 'onFromAddressFilterButtonClick':
-					return this.onFromAddressFilterButtonClick();
-
-				case 'onFromAddressFilterChange':
-					return this.onFromAddressFilterChange(param);
-
-				case 'onFromAddressFilterWindowAbort':
-					return this.onFromAddressFilterWindowAbort();
-
-				case 'onSubjectFilterChange':
-					return this.onSubjectFilterChange(param);
-
-				case 'onSubjectFilterButtonClick':
-					return this.onSubjectFilterButtonClick();
-
-				case 'onSubjectFilterWindowAbort':
-					return this.onSubjectFilterWindowAbort();
-
-				case 'onFromAddressFilterWindowConfirm':
-				case 'onSubjectFilterWindowConfirm':
-					return this.filterWindow.hide();
-
+			switch (name) {
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
@@ -52,80 +30,12 @@
 			return this.view.fromAddresFilter.delegate;
 		},
 
-		getSunbjectFilterDelegate: function() {
+		getSubjectFilterDelegate: function() {
 			return this.view.subjectFilter.delegate;
 		},
 
 		getValueId: function() {
 			return this.view.idField.getValue();
-		},
-
-		onFromAddressFilterButtonClick: function() {
-			var me = this;
-
-			this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
-				title: tr.taskEmail.fromAddressFilter,
-				type: 'FromAddress',
-				content: me.view.fromAddresFilterField.getValue(),
-			});
-
-			this.filterWindow.delegate.parentDelegate = this;
-			this.filterWindow.show();
-		},
-
-		onFromAddressFilterChange: function(parameters) {
-			var filterString = '';
-
-			for (key in parameters) {
-				if (parameters[key] !== '') {
-					if (filterString != '')
-						filterString = filterString + ' OR ';
-
-					filterString = filterString.concat(parameters[key]);
-				}
-			}
-
-			this.view.fromAddresFilterField.setValue(filterString);
-		},
-
-		onFromAddressFilterWindowAbort: function() {
-			// TODO: Fix reverting edits to store data
-			this.view.fromAddresFilterField.reset();
-			this.filterWindow.hide();
-		},
-
-		onSubjectFilterButtonClick: function() {
-			var me = this;
-
-			this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.email.CMFilterWindow', {
-				title: tr.taskEmail.onSubjectFilter,
-				type: 'Subject',
-				content: me.view.subjectFilterField.getValue(),
-			});
-
-			this.filterWindow.delegate.parentDelegate = this;
-			this.filterWindow.show();
-		},
-
-		onSubjectFilterChange: function(parameters) {
-			var filterString = '';
-
-			for (key in parameters) {
-				if (parameters[key] !== '') {
-					if (filterString != '')
-						filterString = filterString + ' OR ';
-
-					filterString = filterString.concat(parameters[key]);
-				}
-			}
-
-			this.view.subjectFilterField.setValue(filterString);
-		},
-
-		onSubjectFilterWindowAbort: function() {
-			// TODO: Fix reverting edits to store data
-			this.view.subjectFilterField.reset();
-			this.filterWindow.hide();
 		},
 
 		setDisabledTypeField: function(state) {
@@ -145,12 +55,11 @@
 		},
 
 		setValueFilterFromAddress: function(filterString) {
-			this.view.fromAddresFilterField.setValue(filterString);
-//			this.getFromAddressFilterDelegate.setValue(filterString);
+			this.getFromAddressFilterDelegate().setValue(filterString);
 		},
 
 		setValueFilterSubject: function(filterString) {
-			this.view.subjectFilterField.setValue(filterString);
+			this.getSubjectFilterDelegate().setValue(filterString);
 		},
 
 		setValueId: function(value) {
@@ -214,74 +123,27 @@
 				editable: false
 			});
 
-			// FromAddress filter configuration
-//				this.fromAddresFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
-//					textarea: {
-//						name: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS,
-//						id: 'FromAddresFilterField',
-//						fieldLabel: tr.taskEmail.fromAddressFilter,
-//					},
-//					button: {
-//						titleWindow: tr.taskEmail.fromAddressFilter
-//					}
-//				});
-
-				this.fromAddresFilterField = Ext.create('Ext.form.field.TextArea', {
+			this.fromAddresFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
+				textarea: {
 					name: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS,
 					id: 'FromAddresFilterField',
 					fieldLabel: tr.taskEmail.fromAddressFilter,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					readOnly: true,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
-				});
+				},
+				button: {
+					titleWindow: tr.taskEmail.fromAddressFilter
+				}
+			});
 
-				this.fromAddresFilterWrapper = Ext.create('Ext.container.Container', {
-					layout: 'hbox',
-
-					items: [
-						this.fromAddresFilterField,
-						{
-							xtype: 'button',
-							icon: 'images/icons/table.png',
-							considerAsFieldToDisable: true,
-							border: true,
-							margin: 2,
-							handler: function() {
-								me.delegate.cmOn('onFromAddressFilterButtonClick');
-							}
-						}
-					]
-				});
-			// END: FromAddress filter configuration
-
-			// SubjectAddress filter configuration
-				this.subjectFilterField = Ext.create('Ext.form.field.TextArea', {
+			this.subjectFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
+				textarea: {
 					name: CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT,
 					id: 'SubjectFilterField',
 					fieldLabel: tr.taskEmail.onSubjectFilter,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					readOnly: true,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				});
-
-				this.subjectFilterWrapper = Ext.create('Ext.container.Container', {
-					layout: 'hbox',
-
-					items: [
-						this.subjectFilterField,
-						{
-							xtype: 'button',
-							icon: 'images/icons/table.png',
-							considerAsFieldToDisable: true,
-							border: true,
-							margin: 2,
-							handler: function() {
-								me.delegate.cmOn('onSubjectFilterButtonClick');
-							}
-						}
-					]
-				});
-			// END: SubjectAddress filter configuration
+				},
+				button: {
+					titleWindow: tr.taskEmail.onSubjectFilter
+				}
+			});
 
 			Ext.apply(this, {
 				items: [
@@ -291,9 +153,8 @@
 					this.activeField,
 					this.emailAccountCombo,
 					this.pollingFrequencyField,
-					this.fromAddresFilterWrapper,
-//					this.fromAddresFilter,
-					this.subjectFilterWrapper
+					this.fromAddresFilter,
+					this.subjectFilter
 				]
 			});
 
