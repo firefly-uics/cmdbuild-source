@@ -1,5 +1,7 @@
 package org.cmdbuild.cmdbf.xml;
 
+import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_QUERY;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -126,7 +128,7 @@ public class DocumentNamespace extends AbstractNamespace {
 	public Iterable<DocumentTypeDefinition> getTypes(final Class<?> cls) {
 		if (DocumentTypeDefinition.class.isAssignableFrom(cls)) {
 			final LookupType lookupType = getLookupType(dmsLogic.getCategoryLookupType());
-			final Iterable<Lookup> allLookups = lookupLogic.getAllLookup(lookupType, true);
+			final Iterable<Lookup> allLookups = lookupLogic.getAllLookup(lookupType, true, UNUSED_LOOKUP_QUERY);
 			return FluentIterable.from(allLookups) //
 					.filter(LOOKUP_WITH_DESCRIPTION) //
 					.transform(LOOKUP_TO_DOCUMENT_TYPE_DEFINITION);
@@ -336,11 +338,12 @@ public class DocumentNamespace extends AbstractNamespace {
 	}
 
 	private LookupType getLookupType(final String type) {
-		return Iterables.find(lookupLogic.getAllTypes(), new Predicate<LookupType>() {
-			@Override
-			public boolean apply(final LookupType input) {
-				return input.name.equals(type);
-			}
-		});
+		return Iterables.find(lookupLogic.getAllTypes(LookupLogic.UNUSED_LOOKUP_TYPE_QUERY),
+				new Predicate<LookupType>() {
+					@Override
+					public boolean apply(final LookupType input) {
+						return input.name.equals(type);
+					}
+				});
 	}
 }
