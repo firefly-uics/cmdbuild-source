@@ -94,7 +94,12 @@
 		var navigationTrees = Ext.create('Ext.data.Store', {
 		    fields: ['name', 'description'],
 		    data : data,
-		    autoLoad: true
+		    autoLoad: true,
+		    sorters: [{
+		        sorterFn: function(o1, o2){
+		            return o1.get('description') <  o2.get('description') ? -1 : 1;
+		        }
+		    }],
 		});
 		return navigationTrees;
 	}
