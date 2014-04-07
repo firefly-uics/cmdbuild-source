@@ -3,6 +3,7 @@ package org.cmdbuild.core.api.fluent;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import static org.cmdbuild.logic.data.lookup.LookupLogic.*;
 
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
@@ -123,7 +124,8 @@ public class LogicFluentApiExecutor implements FluentApiExecutor {
 	public Iterable<Lookup> fetch(final QueryAllLookup queryLookup) {
 		final LookupType type = LookupType.newInstance().withName(queryLookup.getType()).build();
 		final boolean activeOnly = true;
-		final Iterable<org.cmdbuild.data.store.lookup.Lookup> allLookup = lookupLogic.getAllLookup(type, activeOnly);
+		final Iterable<org.cmdbuild.data.store.lookup.Lookup> allLookup = lookupLogic.getAllLookup(type, activeOnly,
+				UNUSED_LOOKUP_QUERY);
 		final Iterable<Lookup> result = Iterables.transform(allLookup, STORE_TO_API_LOOKUP);
 		return result;
 	}
