@@ -16,14 +16,16 @@
 			this.navigationTree = widgetDef.navigationTreeName;
 			this.view = view;
 			this.view.delegate = this;
+
 		},
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onSave':
-					var data = this.view.getData();
-					this.ownerController.hideWidgetsContainer();
-					break;
+//				case 'onSave':
+//					var data = this.view.getData();
+//					this.ownerController.hideWidgetsContainer();
+//					this.savedData = data;
+//					break;
 				case 'onTreeSelected':
 					this.view.configureForm(this.navigationTree, param.tree);
 					break;
@@ -43,6 +45,17 @@
 		beforeActiveView: function() {
 			var me = this;
 			_CMCache.readNavigationTrees(this, this.navigationTree, selectTree);
+		},
+
+		// override
+		getData: function() {
+			var out = null;
+			if (!this.readOnly) {
+				out = {};
+				out["output"] = this.view.getData();
+			}
+
+			return out;
 		},
 
 		destroy: function() {

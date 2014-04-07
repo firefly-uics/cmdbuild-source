@@ -25,16 +25,17 @@
 		},
 
 		getExtraButtons: function() {
-			var me = this;
-			this.saveButton = new Ext.Button( {
-				text : CMDBuild.Translation.common.buttons.save,
-				name : 'saveButton',
-				hidden: true,
-				handler: function() {
-					me.delegate.cmOn("onSave");
-				}
-			});
-			return [this.saveButton];
+//			var me = this;
+//			this.saveButton = new Ext.Button( {
+//				text : CMDBuild.Translation.common.buttons.save,
+//				name : 'saveButton',
+//				hidden: true,
+//				handler: function() {
+//					me.delegate.cmOn("onSave");
+//				}
+//			});
+//			return [this.saveButton];
+			return [];
 		},
 		
 		configureForm: function(treeName, tree) {
@@ -147,6 +148,7 @@
 		});
 	}
 	function appendNode(node, text, cardId, className, nodesIn) {
+		var iconCls = (nodesIn.length > 0) ? '' : 'cmdbuild-tree-class-icon';
 		var n = node.appendChild({
 			nodeType: 'node',
 			text: text,
@@ -154,6 +156,7 @@
 			className: className,
 			checked: false,
 			expanded: false,
+			iconCls: iconCls,
 			nodesIn: nodesIn,
 			children: []
 		});
