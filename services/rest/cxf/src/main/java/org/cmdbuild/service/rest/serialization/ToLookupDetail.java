@@ -29,7 +29,7 @@ public class ToLookupDetail implements Function<Lookup, LookupDetail> {
 	}
 
 	@Override
-	public LookupDetail apply(final Lookup lookup) {
+	public LookupDetail apply(final Lookup lookup) {		
 		return LookupDetail.newInstance() //
 				.withId(lookup.getId()) //
 				.withCode(lookup.code) //
@@ -39,6 +39,7 @@ public class ToLookupDetail implements Function<Lookup, LookupDetail> {
 				.thatIsActive(lookup.active) //
 				.thatIsDefault(lookup.isDefault) //
 				.withParentId(lookup.parentId) //
+				.withParentType(lookup.type.parent) //
 				.build();
 	}
 

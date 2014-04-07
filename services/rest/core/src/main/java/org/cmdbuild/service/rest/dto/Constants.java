@@ -55,7 +55,8 @@ public class Constants {
 	public static final String NAME = "name";
 	public static final String NUMBER = "number";
 	public static final String PARENT = "parent";
-	public static final String PARENT_ID = "parentId";
+	public static final String PARENT_ID = "parent_id";
+	public static final String PARENT_TYPE = "parent_type";
 	public static final String PRECISION = "precision";
 	public static final String SCALE = "scale";
 	public static final String SUPERCLASS = "superclass";
