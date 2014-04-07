@@ -195,7 +195,7 @@
 			scope: this,
 			success: function(operation, request, decoded) {
 				for ( var i = 0; i < decoded.domains.length; i++) {
-					if (decoded.domains[i].id != domain.get("id")) {
+					if (decoded.domains[i].id == domain.get("id")) {
 						loadRelations(node, nodesIn[0].targetClassName, domain, decoded.domains[i].relations, nodesIn[0].childNodes);
 					}
 				}
