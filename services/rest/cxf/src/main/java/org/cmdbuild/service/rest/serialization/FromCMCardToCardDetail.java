@@ -33,7 +33,7 @@ public class FromCMCardToCardDetail extends FromSomeKindOfCardToMap<CMCard> {
 
 	@Override
 	protected boolean idAndClassnameRequired() {
-		return false;
+		return true;
 	}
 
 	@Override
