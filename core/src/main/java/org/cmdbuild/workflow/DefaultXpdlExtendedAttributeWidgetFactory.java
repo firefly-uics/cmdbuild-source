@@ -10,6 +10,7 @@ import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;
 import org.cmdbuild.workflow.widget.LinkCardsWidgetFactory;
 import org.cmdbuild.workflow.widget.ManageEmailWidgetFactory;
 import org.cmdbuild.workflow.widget.ManageRelationWidgetFactory;
+import org.cmdbuild.workflow.widget.NavigationTreeWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenAttachmentWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenNoteWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenReportWidgetFactory;
@@ -34,6 +35,7 @@ public class DefaultXpdlExtendedAttributeWidgetFactory extends ValuePairXpdlExte
 		addWidgetFactory(new WebServiceWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new PresetFromCardWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new StartWorkflowWidgetFactory(templateRepository, notifier));
+		addWidgetFactory(new NavigationTreeWidgetFactory(templateRepository, notifier));
 	}
 
 }
