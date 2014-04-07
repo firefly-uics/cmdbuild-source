@@ -8,6 +8,7 @@ import static org.cmdbuild.service.rest.dto.Constants.ID;
 import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_DETAIL;
 import static org.cmdbuild.service.rest.dto.Constants.NUMBER;
 import static org.cmdbuild.service.rest.dto.Constants.PARENT_ID;
+import static org.cmdbuild.service.rest.dto.Constants.PARENT_TYPE;
 import static org.cmdbuild.service.rest.dto.Constants.TYPE;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,6 +30,7 @@ public class LookupDetail {
 		private boolean active;
 		private boolean isDefault;
 		private Long parentId;
+		private String parentType;
 
 		private Builder() {
 			// use static method
@@ -78,6 +80,11 @@ public class LookupDetail {
 			this.parentId = parentId;
 			return this;
 		}
+		
+		public Builder withParentType(final String parentType) {
+			this.parentType = parentType;
+			return this;
+		}
 
 	}
 
@@ -93,6 +100,7 @@ public class LookupDetail {
 	private boolean active;
 	private boolean isDefault;
 	private Long parentId;
+	private String parentType;
 
 	LookupDetail() {
 		// package visibility
@@ -107,6 +115,7 @@ public class LookupDetail {
 		this.active = builder.active;
 		this.isDefault = builder.isDefault;
 		this.parentId = builder.parentId;
+		this.parentType = builder.parentType;
 	}
 
 	@XmlAttribute(name = ID)
@@ -179,6 +188,15 @@ public class LookupDetail {
 
 	void setParentId(final Long parentId) {
 		this.parentId = parentId;
+	}
+	
+	public String getParentType() {
+		return parentType;
+	}
+	
+	@XmlAttribute(name = PARENT_TYPE)
+	void setParentType(String parentType) {
+		this.parentType = parentType;
 	}
 
 	@Override
