@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	">
+
+	<bean id="userStore" class="org.cmdbuild.services.SessionVars">
+		<constructor-arg ref="requestListener" />
+		<constructor-arg ref="cmdbuildProperties" />
+	</bean>
+
+	<bean id="operationUser" factory-bean="userStore" factory-method="getUser"
+		scope="prototype" />
+
+	<bean id="privilegeContext" factory-bean="operationUser"
+		factory-method="getPrivilegeContext" scope="prototype" />
+
+	<bean id="systemPrivilegeContext" class="org.cmdbuild.auth.context.SystemPrivilegeContext" />
+
+	<bean id="rowAndColumnPrivilegeFetcher"
+		class="org.cmdbuild.privileges.fetchers.DataViewRowAndColumnPrivilegeFetcher"
+		scope="prototype">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="privilegeContext" />
+		<constructor-arg ref="userStore" />
+	</bean>
+
+	<bean id="userDataView" class="org.cmdbuild.dao.view.user.UserDataView"
+		scope="prototype">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="privilegeContext" />
+		<constructor-arg ref="rowAndColumnPrivilegeFetcher" />
+		<constructor-arg ref="operationUser" />
+		<qualifier value="user" />
+	</bean>
+
+	<bean id="permissiveDataView" class="org.cmdbuild.data.view.PermissiveDataView"
+		scope="prototype">
+		<constructor-arg ref="userDataView" />
+		<constructor-arg ref="dbDataView" />
+	</bean>
+
+</beans>

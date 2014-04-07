@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+	">
+
+	<bean id="lockCardConfiguration"
+		class="org.cmdbuild.logic.data.access.lock.DefaultLockCardConfiguration">
+		<constructor-arg ref="cmdbuildProperties" />
+	</bean>
+
+	<bean id="emptyLockCardManager" class="org.cmdbuild.logic.data.access.lock.EmptyLockCard" />
+
+	<bean id="lockedCardStore" class="org.cmdbuild.services.store.LockedCardStore"
+		scope="singleton">
+		<constructor-arg ref="lockCardConfiguration" />
+	</bean>
+
+	<bean id="memoryLockCardManager" class="org.cmdbuild.logic.data.access.lock.InMemoryLockCard"
+		scope="prototype">
+		<constructor-arg ref="lockCardConfiguration" />
+		<constructor-arg ref="operationUser" />
+		<constructor-arg ref="lockedCardStore" />
+	</bean>
+
+	<bean id="lockCardManagerFactory"
+		class="org.cmdbuild.logic.data.access.lock.LockCardManagerFactory"
+		scope="prototype">
+		<property name="cmdbuildProperties" ref="cmdbuildProperties" />
+		<property name="emptyLockCard" ref="emptyLockCardManager" />
+		<property name="inMemoryLockCard" ref="memoryLockCardManager" />
+	</bean>
+
+	<bean id="requestListener" class="org.cmdbuild.listeners.RequestListener" />
+
+	<bean id="filesStore" class="org.cmdbuild.services.CustomFilesStore" />
+
+	<bean id="rootFilesStore" class="org.cmdbuild.services.WebInfFilesStore" />
+
+	<bean id="templateStorableConverter"
+		class="org.cmdbuild.services.template.store.TemplateStorableConverter" />
+
+	<bean id="templateStore" class="org.cmdbuild.data.store.DataViewStore">
+		<constructor-arg ref="dbDataView" />
+		<constructor-arg ref="templateStorableConverter" />
+	</bean>
+
+	<bean id="templateRepository"
+		class="org.cmdbuild.services.template.store.StoreTemplateRepository">
+		<constructor-arg ref="templateStore" />
+	</bean>
+
+	<bean id="databaseTemplateEngine" class="org.cmdbuild.services.template.DatabaseTemplateEngine">
+		<constructor-arg ref="templateRepository" />
+	</bean>
+
+</beans>
