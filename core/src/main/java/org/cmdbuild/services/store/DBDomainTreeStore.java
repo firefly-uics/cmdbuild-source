@@ -7,7 +7,6 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -17,12 +16,18 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
-import org.cmdbuild.model.gis.LayerMetadata;
 
 public class DBDomainTreeStore {
 	private enum Attributes {
-		BASE_NODE("BaseNode"), DIRECT("Direct"), DOMAIN_NAME("DomainName"), ID_GROUP("IdGroup"), ID_PARENT("IdParent"), TARGET_CLASS_DESCRIPTION(
-				"TargetClassDescription"), TARGET_CLASS_NAME("TargetClassName"), TYPE("Type");
+		BASE_NODE("BaseNode"), //
+		DIRECT("Direct"), //
+		DOMAIN_NAME("DomainName"), //
+		FILTER("TargetFilter"), //
+		ID_GROUP("IdGroup"), //
+		ID_PARENT("IdParent"), //
+		TARGET_CLASS_DESCRIPTION("TargetClassDescription"), //
+		TARGET_CLASS_NAME("TargetClassName"), //
+		TYPE("Type");
 
 		private String name;
 
@@ -70,10 +75,10 @@ public class DBDomainTreeStore {
 		final CMQueryResult domainTreeNames = dataView //
 				.select(attribute(table, Attributes.TYPE.getName())) //
 				.from(table) //
-				.run() ;
+				.run();
 		final List<String> names = new ArrayList<String>();
 		for (final CMQueryRow layerAsQueryRow : domainTreeNames) {
-			String name = (String)layerAsQueryRow.getCard(table).get(Attributes.TYPE.getName());
+			final String name = (String) layerAsQueryRow.getCard(table).get(Attributes.TYPE.getName());
 			if (names.indexOf(name) == -1) {
 				names.add(name);
 			}
@@ -131,6 +136,7 @@ public class DBDomainTreeStore {
 				.set(Attributes.ID_PARENT.getName(), root.getIdParent())
 				.set(Attributes.TARGET_CLASS_NAME.getName(), root.getTargetClassName())
 				.set(Attributes.TARGET_CLASS_DESCRIPTION.getName(), root.getTargetClassDescription())
+				.set(Attributes.FILTER.getName(), root.getTargetFilter())
 				.set(Attributes.BASE_NODE.getName(), root.isBaseNode()).save();
 
 		final Long id = newNode.getId();
@@ -151,6 +157,7 @@ public class DBDomainTreeStore {
 		domainTreeNode.setTargetClassDescription((String) card.get(Attributes.TARGET_CLASS_DESCRIPTION.getName()));
 		domainTreeNode.setTargetClassName(((String) card.get(Attributes.TARGET_CLASS_NAME.getName())));
 		domainTreeNode.setBaseNode((booleanCast(card.get(Attributes.BASE_NODE.getName()))));
+		domainTreeNode.setTargetFilter((String) card.get(Attributes.FILTER.getName()));
 
 		return domainTreeNode;
 	}
@@ -159,9 +166,9 @@ public class DBDomainTreeStore {
 		return dataView.findClass(TABLE_NAME);
 	}
 
-	// the getValue method of a ICard return
-	// an Object. For the Ids return a Integer
-	// but we want long. Cast them ignoring the null values
+	// getValue method of a Card returns
+	// an Object. For the Ids it returns an Integer
+	// but we want a Long. Cast them ignoring null values
 	private Long safeLongCast(final Object o) {
 		if (o == null) {
 			return null;

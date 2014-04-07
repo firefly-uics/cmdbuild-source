@@ -50,6 +50,7 @@ public class NavigationTreeWidgetFactory extends ValuePairWidgetFactory {
 			final NavigationTree widget = new NavigationTree();
 			widget.setNavigationTreeName(navigationTreeName);
 			widget.setPreset(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
+			widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 			return widget;
 		}
 	}

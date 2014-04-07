@@ -119,7 +119,7 @@ SELECT cm_create_class_attribute('_DomainTreeNavigation', 'Direct', 'boolean', N
 SELECT cm_create_class_attribute('_DomainTreeNavigation', 'BaseNode', 'boolean', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_DomainTreeNavigation', 'TargetClassName', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 SELECT cm_create_class_attribute('_DomainTreeNavigation', 'TargetClassDescription', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
-
+SELECT cm_create_class_attribute('_DomainTreeNavigation', 'TargetFilter', 'character varying', NULL, FALSE, FALSE, 'MODE: write|STATUS: active');
 ---------------------------------------------
 -- Create Layer class
 ---------------------------------------------
