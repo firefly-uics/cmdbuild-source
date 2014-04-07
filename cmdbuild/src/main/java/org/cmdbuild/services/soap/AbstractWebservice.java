@@ -17,7 +17,6 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logger.Log;
@@ -43,8 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-;
 
 abstract class AbstractWebservice implements ApplicationContextAware {
 
@@ -118,7 +115,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	private CardAdapter cardAdapter() {
-		return new CardAdapter(applicationContext.getBean(UserDataView.class), lookupStore());
+		return new CardAdapter(userDataView(), lookupStore());
 	}
 
 	protected WorkflowEventManager workflowEventManager() {
