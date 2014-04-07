@@ -24,15 +24,19 @@ public class ToSimpleClassDetail implements Function<CMClass, SimpleClassDetail>
 		return new Builder();
 	}
 
+	private static final String MISSING_PARENT = null;
+
 	private ToSimpleClassDetail(final Builder builder) {
 		// nothing to do
 	}
 
 	@Override
 	public SimpleClassDetail apply(final CMClass input) {
+		final CMClass parent = input.getParent();
 		return SimpleClassDetail.newInstance() //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
+				.withParent((parent == null) ? MISSING_PARENT : parent.getName()) //
 				.build();
 	}
 
