@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest.dto;
 
 import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;
 import static org.cmdbuild.service.rest.dto.Constants.NAME;
+import static org.cmdbuild.service.rest.dto.Constants.PARENT;
 import static org.cmdbuild.service.rest.dto.Constants.SIMPLE_CLASS_DETAIL;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -17,6 +18,7 @@ public class SimpleClassDetail {
 
 		private String name;
 		private String description;
+		private String parent;
 
 		private Builder() {
 			// use static method
@@ -37,6 +39,11 @@ public class SimpleClassDetail {
 			return this;
 		}
 
+		public Builder withParent(final String parent) {
+			this.parent = parent;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -45,6 +52,7 @@ public class SimpleClassDetail {
 
 	private String name;
 	private String description;
+	private String parent;
 
 	SimpleClassDetail() {
 		// package visibility
@@ -53,6 +61,7 @@ public class SimpleClassDetail {
 	private SimpleClassDetail(final Builder builder) {
 		this.name = builder.name;
 		this.description = builder.description;
+		this.parent = builder.parent;
 	}
 
 	@XmlAttribute(name = NAME)
@@ -71,6 +80,15 @@ public class SimpleClassDetail {
 
 	void setDescription(final String description) {
 		this.description = description;
+	}
+
+	@XmlAttribute(name = PARENT)
+	public String getParent() {
+		return parent;
+	}
+
+	void setParent(String parent) {
+		this.parent = parent;
 	}
 
 	@Override
