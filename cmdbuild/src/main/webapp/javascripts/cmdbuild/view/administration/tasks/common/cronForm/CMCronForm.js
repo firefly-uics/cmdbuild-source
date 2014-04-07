@@ -8,32 +8,33 @@
 		/**
 		 * To acquire informations to setup fields before creation
 		 *
-		 * @param (Object) advancedSetup
-		 * @param (Object) baseSetup
+		 * @param (Object) configuration
+		 * @param (Object) configuration.advanced
+		 * @param (Object) configuration.base
 		 */
-		constructor: function(advancedSetup, baseSetup) {
+		constructor: function(configuration) {
 			this.delegate = Ext.create('CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController', this);
 
-			if (typeof advancedSetup == 'undefined') {
-				this.advancedSetup = { delegate: this.delegate };
+			if (typeof configuration == 'undefined' || typeof configuration.advanced == 'undefined') {
+				this.advancedConfig = { delegate: this.delegate };
 			} else {
-				this.advancedSetup = advancedSetup;
-				this.advancedSetup.delegate = this.delegate;
+				this.advancedConfig = configuration.advanced;
+				this.advancedConfig.delegate = this.delegate;
 			}
 
-			if (typeof baseSetup == 'undefined') {
-				this.baseSetup = { delegate: this.delegate };
+			if (typeof configuration == 'undefined' || typeof configuration.base == 'undefined') {
+				this.baseConfig = { delegate: this.delegate };
 			} else {
-				this.baseSetup = baseSetup;
-				this.baseSetup.delegate = this.delegate;
+				this.baseConfig = configuration.base;
+				this.baseConfig.delegate = this.delegate;
 			}
 
 			this.callParent(arguments);
 		},
 
 		initComponent: function() {
-			this.advanced = Ext.create('CMDBuild.view.administration.tasks.common.cronForm.CMCronFormAdvanced', this.advancedSetup);
-			this.base = Ext.create('CMDBuild.view.administration.tasks.common.cronForm.CMCronFormBase', this.baseSetup);
+			this.advanced = Ext.create('CMDBuild.view.administration.tasks.common.cronForm.CMCronFormAdvanced', this.advancedConfig);
+			this.base = Ext.create('CMDBuild.view.administration.tasks.common.cronForm.CMCronFormBase', this.baseConfig);
 
 			this.delegate.advancedField = this.advanced;
 			this.delegate.baseField = this.base;

@@ -95,7 +95,9 @@
 
 			// Workflow configuration
 				this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
-					name: CMDBuild.ServiceProxy.parameter.WORKFLOW
+					combo: {
+						name: CMDBuild.ServiceProxy.parameter.WORKFLOW
+					}
 				});
 
 				this.workflowFieldset = Ext.create('Ext.form.FieldSet', {

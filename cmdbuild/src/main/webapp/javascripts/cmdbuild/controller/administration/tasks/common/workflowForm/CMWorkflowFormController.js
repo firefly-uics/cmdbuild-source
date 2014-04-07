@@ -6,6 +6,28 @@
 		gridField: undefined,
 
 		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				case 'onSelectAttributeCombo':
+					return this.onSelectAttributeCombo(param);
+
+				case 'onSelectWorkflow':
+					return this.onSelectWorkflow(param);
+
+				default: {
+					if (this.parentDelegate)
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
+			}
+		},
+
+		/**
 		 * Workflow attribute store builder for onWorkflowSelected event
 		 */
 		buildWorkflowAttributesStore: function(attributes) {
@@ -44,7 +66,7 @@
 			return this.gridField.getData();
 		},
 
-		onAttributeComboSelect: function(rowIndex) {
+		onSelectAttributeCombo: function(rowIndex) {
 			this.gridField.cellEditing.startEditByPosition({ row: rowIndex, column: 1 });
 		},
 
@@ -52,10 +74,10 @@
 		 * @param (String) name
 		 * @param (Boolean) modify
 		 */
-		onWorkflowSelected: function(name, modify) {
+		onSelectWorkflow: function(name, modify) {
 			var me = this;
 
-			if (typeof modify === 'undefined')
+			if (typeof modify == 'undefined')
 				modify = false;
 
 			CMDBuild.core.proxy.CMProxyTasks.getWorkflowAttributes({

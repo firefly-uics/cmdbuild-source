@@ -22,8 +22,7 @@
 
 				listeners: {
 					change: function(radio, value) {
-						me.delegate.setDisabledAdvancedFields(!value);
-						me.delegate.setDisabledBaseCombo(value);
+						me.delegate.cmOn('onChangeAdvancedRadio', value);
 					}
 				}
 			});

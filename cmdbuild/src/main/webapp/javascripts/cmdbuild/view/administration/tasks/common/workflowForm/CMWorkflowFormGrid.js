@@ -5,6 +5,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid', {
 		extend: 'CMDBuild.view.administration.common.CMDynamicKeyValueGrid',
 
+		// Required
 		delegate: undefined,
 
 		title: tr.attributes,
@@ -26,7 +27,7 @@
 
 				listeners: {
 					select: function(combo, records, eOpts) {
-						me.delegate.onAttributeComboSelect(me.store.indexOf(me.delegate.gridField.getSelectionModel().getSelection()[0]));
+						me.delegate.cmOn('onSelectAttributeCombo', me.store.indexOf(me.delegate.gridField.getSelectionModel().getSelection()[0]));
 					}
 				}
 			},

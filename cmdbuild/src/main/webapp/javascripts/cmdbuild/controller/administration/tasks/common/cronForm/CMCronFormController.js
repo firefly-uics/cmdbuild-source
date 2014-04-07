@@ -6,6 +6,31 @@
 		baseField: undefined,
 
 		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				case 'onChangeAdvancedRadio':
+					return this.onChangeAdvancedRadio(param);
+
+				case 'onChangeBaseRadio':
+					return this.onChangeBaseRadio(param);
+
+				case 'onSelectBaseCombo':
+					return this.setValueAdvancedFields(param);
+
+				default: {
+					if (this.parentDelegate)
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
+			}
+		},
+
+		/**
 		 * @param (Array) fields
 		 * @return (String) cron expression
 		 */
@@ -103,6 +128,16 @@
 		markInvalidAdvancedFields: function(message) {
 			for(item in this.advancedField.advancedFields)
 				this.advancedField.advancedFields[item].markInvalid(message);
+		},
+
+		onChangeAdvancedRadio: function(value) {
+			this.setDisabledAdvancedFields(!value);
+			this.setDisabledBaseCombo(value);
+		},
+
+		onChangeBaseRadio: function(value) {
+			this.setDisabledAdvancedFields(value);
+			this.setDisabledBaseCombo(!value);
 		},
 
 		setValueAdvancedFields: function(cronExpression) {

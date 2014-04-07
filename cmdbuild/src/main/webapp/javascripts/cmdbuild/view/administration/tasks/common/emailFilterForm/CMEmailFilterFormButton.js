@@ -5,7 +5,7 @@
 
 		delegate: undefined,
 
-		// To setup
+		// Required
 		name: undefined,
 		id: undefined,
 		fieldLabel: undefined,

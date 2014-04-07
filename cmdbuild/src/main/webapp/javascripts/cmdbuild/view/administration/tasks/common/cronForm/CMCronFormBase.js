@@ -22,8 +22,7 @@
 
 				listeners: {
 					change: function(radio, value) {
-						me.delegate.setDisabledAdvancedFields(value);
-						me.delegate.setDisabledBaseCombo(!value);
+						me.delegate.cmOn('onChangeBaseRadio', value);
 					}
 				}
 			});
@@ -48,7 +47,7 @@
 
 				listeners: {
 					select: function(combo, record, index) {
-						me.delegate.setValueAdvancedFields(record[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
+						me.delegate.cmOn('onSelectBaseCombo', record[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
 					}
 				}
 			});

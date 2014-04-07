@@ -52,7 +52,7 @@
 				default: {
 					if (
 						this.parentDelegate
-						&& typeof this.parentDelegate === 'object'
+						&& typeof this.parentDelegate == 'object'
 					) {
 						return this.parentDelegate.cmOn(name, param, callBack);
 					}
