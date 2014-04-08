@@ -11,12 +11,12 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 
-import org.cmdbuild.logic.email.rules.AttachmentStore;
-import org.cmdbuild.logic.email.rules.AttachmentStoreFactory;
-import org.cmdbuild.logic.email.rules.DownloadAttachments;
 import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
-import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
+import org.cmdbuild.services.scheduler.reademail.AttachmentStore;
+import org.cmdbuild.services.scheduler.reademail.AttachmentStoreFactory;
+import org.cmdbuild.services.scheduler.reademail.DownloadAttachments;
+import org.cmdbuild.services.scheduler.reademail.RuleAction;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,8 +50,8 @@ public class DownloadAttachmentsTest {
 
 	@Test
 	public void alwaysApplies() throws Exception {
-		assertThat(downloadAttachments.applies(null), is(true));
-		assertThat(downloadAttachments.applies(new Email()), is(true));
+		assertThat(downloadAttachments.apply(null), is(true));
+		assertThat(downloadAttachments.apply(new Email()), is(true));
 	}
 
 	@Test

@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.email.rules;
+package org.cmdbuild.services.scheduler.reademail;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -6,7 +6,7 @@ import java.io.StringReader;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.cmdbuild.logic.email.rules.StartWorkflow.Mapper;
+import org.cmdbuild.services.scheduler.reademail.StartWorkflow.Mapper;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 

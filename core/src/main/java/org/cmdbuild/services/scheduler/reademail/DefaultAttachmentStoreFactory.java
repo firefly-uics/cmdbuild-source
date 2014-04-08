@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.email.rules;
+package org.cmdbuild.services.scheduler.reademail;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.view.CMDataView;

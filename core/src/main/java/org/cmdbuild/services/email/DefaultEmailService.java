@@ -1,19 +1,17 @@
 package org.cmdbuild.services.email;
 
+import static com.google.common.collect.Iterables.unmodifiableIterable;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.net.URL;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.Holder;
 import org.cmdbuild.common.SingletonHolder;
 import org.cmdbuild.common.mail.FetchedMail;
@@ -30,10 +28,9 @@ import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
 import org.cmdbuild.model.email.EmailConstants;
-import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
-import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
 import org.slf4j.Logger;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
 public class DefaultEmailService implements EmailService {
@@ -158,51 +155,6 @@ public class DefaultEmailService implements EmailService {
 
 	}
 
-	private static RuleAction NULL_ACTION = new RuleAction() {
-
-		@Override
-		public void execute() {
-			// nothing to do
-		}
-
-	};
-
-	private static class CollectingRule implements Rule {
-
-		public static CollectingRule of(final Collection<Email> emails) {
-			return new CollectingRule(emails);
-		}
-
-		private final Collection<Email> emails;
-
-		public CollectingRule(final Collection<Email> emails) {
-			this.emails = emails;
-		}
-
-		@Override
-		public boolean applies(final Email email) {
-			return true;
-		}
-
-		@Override
-		public Email adapt(final Email email) {
-			return email;
-		}
-
-		@Override
-		public RuleAction action(final Email email) {
-			emails.add(email);
-			return NULL_ACTION;
-		}
-
-		@Override
-		public String toString() {
-			return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
-					.toString();
-		}
-
-	}
-
 	private static final String CONTENT_TYPE = "text/html; charset=UTF-8";
 
 	private static final Map<URL, String> NO_ATTACHMENTS = Collections.emptyMap();
@@ -272,10 +224,11 @@ public class DefaultEmailService implements EmailService {
 	@Override
 	public synchronized Iterable<Email> receive() throws EmailServiceException {
 		logger.info("receiving emails");
-		final List<Email> emails = Lists.newArrayList();
-		final EmailCallbackHandler callbackHandler = DefaultEmailCallbackHandler.of(CollectingRule.of(emails));
+		final CollectingEmailCallbackHandler callbackHandler = CollectingEmailCallbackHandler.newInstance() //
+				.withPredicate(Predicates.<Email> alwaysTrue()) //
+				.build();
 		receive(callbackHandler);
-		return Collections.unmodifiableList(emails);
+		return unmodifiableIterable(callbackHandler.getEmails());
 	}
 
 	@Override
@@ -307,20 +260,12 @@ public class DefaultEmailService implements EmailService {
 			boolean keepMail = false;
 			try {
 				final GetMail getMail = mailApiHolder.get().selectMail(fetchedMail).get();
-				/*
-				 * we must avoid that e-mail that needs to be checked could be
-				 * changed by come rule
-				 */
-				final Email emailForCheckOnly = transform(getMail);
-				Email email = transform(getMail);
+				final Email email = transform(getMail);
 				mailMover.selectTargetFolder(emailConfigurationHolder.get().getProcessedFolder());
-				for (final Rule rule : callback.getRules()) {
-					if (rule.applies(emailForCheckOnly)) {
-						email = rule.adapt(email);
-						final Long id = persistence.save(email);
-						email = persistence.getEmail(id);
-						callback.notify(rule.action(email));
-					}
+				if (callback.apply(email)) {
+					final Long id = persistence.save(email);
+					final Email stored = persistence.getEmail(id);
+					callback.accept(stored);
 				}
 			} catch (final Exception e) {
 				logger.error("error getting mail", e);

@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.email.rules;
+package org.cmdbuild.services.scheduler.reademail;
 
 import java.util.Collections;
 import java.util.Map;
@@ -9,8 +9,6 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.email.Email;
-import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
-import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
 import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -69,7 +67,7 @@ public class StartWorkflow implements Rule {
 	}
 
 	@Override
-	public boolean applies(final Email email) {
+	public boolean apply(final Email email) {
 		return true;
 	}
 
