@@ -123,7 +123,7 @@
 				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
 				fieldLabel: tr.startOnSave,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
 
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {

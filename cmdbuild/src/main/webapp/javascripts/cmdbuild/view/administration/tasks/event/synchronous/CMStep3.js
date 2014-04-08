@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks.taskEmail;
+	var tr = CMDBuild.Translation.administration.tasks;
 
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',

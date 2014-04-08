@@ -11,7 +11,7 @@
 		title: tr.attributes,
 		keyLabel: CMDBuild.Translation.name,
 		valueLabel: CMDBuild.Translation.value,
-		disabled: true,
+		considerAsFieldToDisable: true,
 		margin: '0 0 5 0',
 
 		initComponent: function() {

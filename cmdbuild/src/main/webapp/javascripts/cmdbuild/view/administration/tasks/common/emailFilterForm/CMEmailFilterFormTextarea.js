@@ -8,11 +8,9 @@
 		// Required
 		name: undefined,
 		id: undefined,
-		fieldLabel: undefined,
 
-		labelWidth: CMDBuild.LABEL_WIDTH,
 		readOnly: true,
-		width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+		flex: 1,
 
 		initComponent: function() {
 			this.callParent(arguments);

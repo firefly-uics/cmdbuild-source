@@ -9,7 +9,6 @@
 				"account": "Account",
 				"active": "Active",
 				"add": "Add account",
-				"address": "Address",
 				"credentials": "Credentials",
 				"enableMoveRejectedNotMatching": "Enable move rejected not matching",
 				"enableSsl": "Enable SSL",
@@ -674,12 +673,18 @@
 			"modify": "Modify task",
 			"remove": "Remove task",
 			"running": "Running",
+			"sendMail": "Send mail",
 			"startLabel": "Start task",
 			"startOnSave": "Start on save",
+			"startWorkflow": "Start workflow",
 			"stopLabel": "Stop task",
 			"stopped": "Stopped",
+			"template": "Template",
 			"title": "Task manager",
 			"type": "Type",
+			"taskConnector": {
+
+			},
 			"taskEmail": {
 				"alfrescoLookupType": "Alfresco lookup type",
 				"bodyParsing": "Body parsing",
@@ -687,12 +692,8 @@
 				"fromAddressFilter": "Filter on FromAddress",
 				"keyEnd": "Key end",
 				"keyInit": "Key init",
-				"onSubjectFilter": "Filter on Subject",
-				"pollingFrequency": "Polling frequency (minutes)",
 				"saveToAlfresco": "Save attachments to Alfresco",
-				"sendMail": "Send mail",
-				"startWorkflow": "Start workflow",
-				"template": "Template",
+				"subjectFilter": "Filter on Subject",
 				"valueEnd": "Value end",
 				"valueInit": "Value init"
 			},
@@ -706,6 +707,7 @@
 				"phase": "@@ Phase"
 			},
 			"tasksTypes": {
+				"connector": "Connector",
 				"email": "Email",
 				"event": "Event",
 				"eventTypes": {
@@ -1367,6 +1369,7 @@
 	"addTemplate": "Add Template",
 	"addView": "Add View",
 	"add_attachment_from_db": "Add attachments from database",
+	"address": "Address",
 	"attachfile": "Attach File",
 	"attachmentsLookup": "Email attachments Lookup",
 	"attention": "Attention",

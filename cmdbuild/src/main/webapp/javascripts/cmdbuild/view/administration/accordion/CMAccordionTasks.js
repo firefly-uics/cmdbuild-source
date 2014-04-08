@@ -26,6 +26,13 @@
 					iconCls: 'cmdbuild-tree-tasks-group-icon',
 					children: [
 						{
+							id: 'connector',
+							cmName: 'tasks',
+							leaf: true,
+							text: tr.tasksTypes.connector,
+							iconCls: 'cmdbuild-tree-tasks-icon'
+						},
+						{
 							id: 'email',
 							cmName: 'tasks',
 							leaf: true,

@@ -26,6 +26,12 @@
 				menu: Ext.create('Ext.menu.Menu', { // Rendered as dropdown menu on button click
 					items: [
 						{
+							text: tr.tasksTypes.connector,
+							handler: function() {
+								me.delegate.cmOn('onAddButtonClick', { type: 'connector' });
+							}
+						},
+						{
 							text: tr.tasksTypes.email,
 							handler: function() {
 								me.delegate.cmOn('onAddButtonClick', { type: 'email' });

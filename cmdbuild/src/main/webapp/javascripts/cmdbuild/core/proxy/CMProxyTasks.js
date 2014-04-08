@@ -53,37 +53,6 @@
 				});
 			},
 
-			getStoreByWorkflow: function() {
-//				return Ext.create('Ext.data.Store', {
-//					autoLoad: false,
-//					model: 'CMDBuild.model.CMModelTasks.grid.workflow',
-//					proxy: {
-//						type: 'ajax',
-//						url: this.getUrl('workflow').getStorebyWorkflow,
-//						reader: {
-//							type: 'json',
-//							root: 'response.elements'
-//						}
-//					},
-//					sorters: {
-//						property: 'type',
-//						direction: 'ASC'
-//					}
-//				});
-				return Ext.create('Ext.data.Store', {
-					autoLoad: true,
-					fields: ['id', 'description', 'active'],
-					data: [
-						{ 'id': 234, 'description': 'Workflow task 1', 'active': true },
-						{ 'id': 123, 'description': 'Workflow task 2', 'active': true },
-						{ 'id': 120, 'description': 'Workflow task 3', 'active': false },
-						{ 'id': 1570, 'description': 'Workflow task 4', 'active': false },
-						{ 'id': 456, 'description': 'Workflow task 5', 'active': false },
-						{ 'id': 654, 'description': 'Workflow task 6', 'active': true }
-					]
-				});
-			},
-
 			remove: function(parameters) {
 				CMDBuild.ServiceProxy.core.doRequest({
 					method: 'POST',
@@ -133,6 +102,9 @@
 					case 'all':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks;
 
+					case 'connector':
+						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.connector;
+
 					case 'email':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.email;
 
@@ -154,8 +126,70 @@
 			},
 
 			/**
-			 * WorkflowForm proxies
+			 * Connector specific proxies
 			 */
+			getConnectorOperations: function() {
+//				return Ext.create('Ext.data.Store', {
+//					autoLoad: false,
+//					model: 'CMDBuild.model.CMModelTasks.grid.workflow',
+//					proxy: {
+//						type: 'ajax',
+//						url: this.getUrl('workflow').getStorebyWorkflow,
+//						reader: {
+//							type: 'json',
+//							root: 'response.elements'
+//						}
+//					},
+//					sorters: {
+//						property: 'type',
+//						direction: 'ASC'
+//					}
+//				});
+				return Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					fields: ['name', 'value'],
+					data: [
+						{ 'value': 'NewCards', 'name': 'New cards' },
+						{ 'value': 'EditedCards', 'name': 'Edited cards' },
+						{ 'value': 'DeletedNotMatchingCards', 'name': 'Deleted not matching cards' }
+					]
+				});
+			},
+
+			/**
+			 * Workflow specific proxies
+			 */
+			getStoreByWorkflow: function() {
+//				return Ext.create('Ext.data.Store', {
+//					autoLoad: false,
+//					model: 'CMDBuild.model.CMModelTasks.grid.workflow',
+//					proxy: {
+//						type: 'ajax',
+//						url: this.getUrl('workflow').getStorebyWorkflow,
+//						reader: {
+//							type: 'json',
+//							root: 'response.elements'
+//						}
+//					},
+//					sorters: {
+//						property: 'type',
+//						direction: 'ASC'
+//					}
+//				});
+				return Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					fields: ['id', 'description', 'active'],
+					data: [
+						{ 'id': 234, 'description': 'Workflow task 1', 'active': true },
+						{ 'id': 123, 'description': 'Workflow task 2', 'active': true },
+						{ 'id': 120, 'description': 'Workflow task 3', 'active': false },
+						{ 'id': 1570, 'description': 'Workflow task 4', 'active': false },
+						{ 'id': 456, 'description': 'Workflow task 5', 'active': false },
+						{ 'id': 654, 'description': 'Workflow task 6', 'active': true }
+					]
+				});
+			},
+
 			getWorkflowsStore: function() {
 				var processes = _CMCache.getProcesses(),
 					data = [];

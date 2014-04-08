@@ -44,4 +44,34 @@
 		}
 	});
 
+	/**
+	 * An ExtJs fix to have a correct fields label and field width in FieldSet - 08 april 2014
+	 */
+	Ext.define('CMDBuild.core.fixes.CMFieldsetFieldWidthsFix', {
+		override: 'Ext.form.FieldSet',
+
+		fieldWidthsFix: function() {
+			this.cascade(function(item) {
+				if (typeof item.checkboxToggle == 'undefined') {
+					item.labelWidth = item.labelWidth - 10;
+					item.width = item.width - 10;
+				}
+			});
+		}
+	});
+
+	/**
+	 * An ExtJs feature implementation to reset function for FieldSet - 08 april 2014
+	 */
+	Ext.define('CMDBuild.core.fixes.CMFieldsetReset', {
+		override: 'Ext.form.FieldSet',
+
+		reset: function() { // Resets all items exept fieldset toglecheckbox
+			this.cascade(function(item) {
+				if (typeof item.checkboxToggle == 'undefined')
+					item.reset();
+			});
+		}
+	});
+
 })();
