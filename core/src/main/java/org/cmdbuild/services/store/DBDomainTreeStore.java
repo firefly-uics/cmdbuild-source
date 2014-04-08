@@ -20,6 +20,7 @@ import org.cmdbuild.model.domainTree.DomainTreeNode;
 public class DBDomainTreeStore {
 	private enum Attributes {
 		BASE_NODE("BaseNode"), //
+		DESCRIPTION("Description"), //
 		DIRECT("Direct"), //
 		DOMAIN_NAME("DomainName"), //
 		FILTER("TargetFilter"), //
@@ -47,9 +48,9 @@ public class DBDomainTreeStore {
 		this.dataView = dataView;
 	}
 
-	public void createOrReplaceTree(final String treeType, final DomainTreeNode root) {
+	public void createOrReplaceTree(final String treeType, String description, final DomainTreeNode root) {
 		removeTree(treeType);
-		saveNode(treeType, root);
+		saveNode(treeType, description, root);
 	}
 
 	public void removeTree(final String treeType) {
@@ -129,7 +130,7 @@ public class DBDomainTreeStore {
 		return root;
 	}
 
-	private void saveNode(final String treeType, final DomainTreeNode root) {
+	private void saveNode(final String treeType, String description, final DomainTreeNode root) {
 		final CMCard newNode = dataView.createCardFor(getTable()).set(Attributes.DIRECT.getName(), root.isDirect())
 				.set(Attributes.DOMAIN_NAME.getName(), root.getDomainName()).set(Attributes.TYPE.getName(), treeType)
 				.set(Attributes.ID_GROUP.getName(), root.getIdGroup())
@@ -137,18 +138,20 @@ public class DBDomainTreeStore {
 				.set(Attributes.TARGET_CLASS_NAME.getName(), root.getTargetClassName())
 				.set(Attributes.TARGET_CLASS_DESCRIPTION.getName(), root.getTargetClassDescription())
 				.set(Attributes.FILTER.getName(), root.getTargetFilter())
+				.set(Attributes.DESCRIPTION.getName(), description)
 				.set(Attributes.BASE_NODE.getName(), root.isBaseNode()).save();
 
 		final Long id = newNode.getId();
 		for (final DomainTreeNode child : root.getChildNodes()) {
 			child.setIdParent(id);
-			saveNode(treeType, child);
+			saveNode(treeType, description, child);
 		}
 	}
 
 	private DomainTreeNode cardToDomainTreeNode(final CMCard card) {
 		final DomainTreeNode domainTreeNode = new DomainTreeNode();
 		domainTreeNode.setId(card.getId());
+		domainTreeNode.setDescription((String) card.get(Attributes.DESCRIPTION.getName()));
 		domainTreeNode.setDirect(booleanCast(card.get(Attributes.DIRECT.getName())));
 		domainTreeNode.setDomainName((String) card.get(Attributes.DOMAIN_NAME.getName()));
 		domainTreeNode.setType((String) card.get(Attributes.TYPE.getName()));

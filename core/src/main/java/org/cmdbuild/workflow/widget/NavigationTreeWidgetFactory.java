@@ -15,12 +15,14 @@ public class NavigationTreeWidgetFactory extends ValuePairWidgetFactory {
 	public static final String NAVIGATION_TREE_NAME = "NavigationTreeName";
 	public static final String NAVIGATION_TREE_FILTER_TYPE = "FilterType";
 	public static final String NAVIGATION_TREE_FILTER = "Filter";
+	private static final Object DESCRIPTION = "Description";
 
 	//FILTER TYPES
 	public static final String NAMEFILTERTYPE = "name";
 	public static final String CQLFILTERTYPE = "cql";
 
 	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, NAVIGATION_TREE_NAME };
+
 
 	public NavigationTreeWidgetFactory(final TemplateRepository templateRespository, final Notifier notifier) {
 		super(templateRespository, notifier);
@@ -51,6 +53,7 @@ public class NavigationTreeWidgetFactory extends ValuePairWidgetFactory {
 			widget.setNavigationTreeName(navigationTreeName);
 			widget.setPreset(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
 			widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
+			widget.setDescription(readString(valueMap.get(DESCRIPTION)));
 			return widget;
 		}
 	}

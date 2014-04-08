@@ -15,12 +15,12 @@ public class DefaultNavigationTreeLogic implements NavigationTreeLogic {
 
 	@Override
 	public void create(final String name, final String description, final boolean active, final DomainTreeNode root) {
-		domainTreeStore.createOrReplaceTree(name, root);
+		domainTreeStore.createOrReplaceTree(name, description, root);
 	}
 
 	@Override
 	public void save(final String name, final String description, final boolean active, final DomainTreeNode root) {
-		domainTreeStore.createOrReplaceTree(name, root);
+		domainTreeStore.createOrReplaceTree(name, description, root);
 	}
 
 	@Override
