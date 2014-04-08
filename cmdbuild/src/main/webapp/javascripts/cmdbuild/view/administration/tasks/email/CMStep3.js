@@ -124,7 +124,7 @@
 			// SendMail configuration
 				this.emailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
-					fieldLabel: tr.template,
+					fieldLabel: CMDBuild.Translation.administration.tasks.template,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					itemId: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
 					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
@@ -136,7 +136,7 @@
 				});
 
 				this.sendMailFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.sendMail,
+					title: CMDBuild.Translation.administration.tasks.sendMail,
 					checkboxToggle: true,
 					collapsed: true,
 					layout: {

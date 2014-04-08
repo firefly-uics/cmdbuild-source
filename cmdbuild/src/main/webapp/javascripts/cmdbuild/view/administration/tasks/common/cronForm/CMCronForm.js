@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.tasks.common.cronForm.CMCronForm', {
-		extend: 'Ext.panel.Panel',
+		extend: 'Ext.form.FieldContainer',
 
 		border: false,
 

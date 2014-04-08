@@ -6,6 +6,7 @@
 		parentDelegate: undefined,
 		tasksDatas: [ // Used to validate tasks
 			'all',
+			'connector',
 			'email',
 			'event',
 			'event_asynchronous',

@@ -120,7 +120,7 @@
 						name: CMDBuild.ServiceProxy.parameter.USERNAME
 					},
 					{
-						inputType : 'password',
+						inputType: 'password',
 						fieldLabel: tr.password,
 						allowBlank: false,
 						name: CMDBuild.ServiceProxy.parameter.PASSWORD
@@ -142,7 +142,7 @@
 
 				items: [
 					{
-						fieldLabel: tr.address,
+						fieldLabel: CMDBuild.Translation.address,
 						allowBlank: false,
 						name: CMDBuild.ServiceProxy.parameter.ADDRESS
 					},

@@ -99,7 +99,7 @@
 				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
 				fieldLabel: tr.startOnSave,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
 
 			this.classe = Ext.create('Ext.form.field.ComboBox', {

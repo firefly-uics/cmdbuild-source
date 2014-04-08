@@ -6,15 +6,12 @@
 		delegate: undefined,
 
 		// Required
-		name: undefined,
-		id: undefined,
-		fieldLabel: undefined,
 		titleWindow: undefined,
 
 		icon: 'images/icons/table.png',
 		considerAsFieldToDisable: true,
 		border: true,
-		margin: 2,
+		margin: '2 0 0 2',
 
 		initComponent: function() {
 			this.callParent(arguments);

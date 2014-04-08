@@ -146,6 +146,14 @@
 				start: 'services/json/schema/taskmanager/start',
 				stop: 'services/json/schema/taskmanager/stop',
 
+				connector: {
+					delete: '',
+					get: '',
+					post: '',
+					put: '',
+
+					getStore: 'services/json/schema/taskmanager/connector/readall',
+				},
 				email: {
 					delete: 'services/json/schema/taskmanager/reademail/delete',
 					get: 'services/json/schema/taskmanager/reademail/read',
@@ -154,7 +162,7 @@
 
 					getStore: 'services/json/schema/taskmanager/reademail/readall'
 				},
-				event: {// TODO: to decide how to organize this section
+				event: {
 					getStore: 'services/json/schema/taskmanager/event/readall',
 
 					asynchronous: {

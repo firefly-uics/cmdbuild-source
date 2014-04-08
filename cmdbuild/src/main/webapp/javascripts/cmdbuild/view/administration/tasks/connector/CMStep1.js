@@ -2,11 +2,10 @@
 
 	var tr = CMDBuild.Translation.administration.tasks;
 
-	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1Delegate', {
+	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep1Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
-		filterWindow: undefined,
 		view: undefined,
 
 		/**
@@ -26,14 +25,6 @@
 			}
 		},
 
-		getFromAddressFilterDelegate: function() {
-			return this.view.fromAddresFilter.delegate;
-		},
-
-		getSubjectFilterDelegate: function() {
-			return this.view.subjectFilter.delegate;
-		},
-
 		getValueId: function() {
 			return this.view.idField.getValue();
 		},
@@ -50,28 +41,16 @@
 			this.view.descriptionField.setValue(value);
 		},
 
-		setValueEmailAccount: function(emailAccountName) {
-			this.view.emailAccountCombo.setValue(emailAccountName);
-		},
-
-		setValueFilterFromAddress: function(filterString) {
-			this.getFromAddressFilterDelegate().setValue(filterString);
-		},
-
-		setValueFilterSubject: function(filterString) {
-			this.getSubjectFilterDelegate().setValue(filterString);
-		},
-
 		setValueId: function(value) {
 			this.view.idField.setValue(value);
 		}
 	});
 
-	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1', {
+	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'email',
+		taskType: 'connector',
 
 		border: false,
 		height: '100%',
@@ -79,13 +58,13 @@
 		initComponent: function() {
 			var me = this;
 
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep1Delegate', this);
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: CMDBuild.Translation.administration.tasks.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.ServiceProxy.parameter.TYPE,
-				value: tr.tasksTypes.email,
+				value: tr.tasksTypes.connector,
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true,
@@ -111,43 +90,46 @@
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
 
-			this.emailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT,
-				fieldLabel: tr.taskEmail.emailAccount,
+			this.operationsCombo = Ext.create('Ext.form.field.ComboBox', {
+				name: 'CMDBuild.ServiceProxy.parameter.TO_SYNCHRONIZE',
+				fieldLabel: 'tr.taskConnector.toSynchronize',
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
+				store: CMDBuild.core.proxy.CMProxyTasks.getConnectorOperations(),
 				displayField: CMDBuild.ServiceProxy.parameter.NAME,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				forceSelection: true,
 				editable: false
 			});
 
-			this.fromAddresFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
-				fieldContainer: {
-					fieldLabel: tr.taskEmail.fromAddressFilter
-				},
-				textarea: {
-					name: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS,
-					id: 'FromAddresFilterField'
-				},
-				button: {
-					titleWindow: tr.taskEmail.fromAddressFilter
-				}
-			});
+			// SendMail configuration
+				this.emailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
+					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
+					fieldLabel: tr.template,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					itemId: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
+					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
+					displayField: CMDBuild.ServiceProxy.parameter.NAME,
+					valueField: CMDBuild.ServiceProxy.parameter.NAME,
+					forceSelection: true,
+					editable: false,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				});
 
-			this.subjectFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
-				fieldContainer: {
-					fieldLabel: tr.taskEmail.subjectFilter
-				},
-				textarea: {
-					name: CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT,
-					id: 'SubjectFilterField'
-				},
-				button: {
-					titleWindow: tr.taskEmail.subjectFilter
-				}
-			});
+				this.sendMailFieldset = Ext.create('Ext.form.FieldSet', {
+					title: tr.sendMail + ' --> DA CONFERMARE',
+					checkboxToggle: true,
+					collapsed: true,
+
+					layout: {
+						type: 'vbox'
+					},
+
+					items: [this.emailTemplateCombo]
+				});
+
+				this.sendMailFieldset.fieldWidthsFix();
+			// END: SendMail configuration
 
 			Ext.apply(this, {
 				items: [
@@ -155,9 +137,8 @@
 					this.idField,
 					this.descriptionField,
 					this.activeField,
-					this.emailAccountCombo,
-					this.fromAddresFilter,
-					this.subjectFilter
+					this.operationsCombo,
+					this.sendMailFieldset
 				]
 			});
 

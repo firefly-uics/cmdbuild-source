@@ -1,11 +1,17 @@
 (function() {
 
+	var tr = CMDBuild.Translation.administration.tasks;
+
 	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
 
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
-		extend: 'Ext.panel.Panel',
+		extend: 'Ext.form.FieldContainer',
 
 		border: false,
+		fieldLabel: tr.workflow,
+		labelWidth: CMDBuild.LABEL_WIDTH,
+		width: '100%',
+		considerAsFieldToDisable: true,
 
 		/**
 		 * To acquire informations to setup fields before creation
@@ -36,9 +42,9 @@
 
 		initComponent: function() {
 			this.combo = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormCombo', this.comboConfig);
-			this.grid = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid', this.gridConfig);
-
 			this.delegate.comboField = this.combo;
+
+			this.grid = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid', this.gridConfig);
 			this.delegate.gridField = this.grid;
 
 			Ext.apply(this, {
