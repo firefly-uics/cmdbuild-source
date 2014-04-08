@@ -88,7 +88,7 @@
 			var structure = {
 					targetClassName:formData.rootName,
 					targetClassDescription: formData.rootDescription,
-					targetCqlFilter: treeData.rootFilter,
+					filter: treeData.rootFilter,
 					childNodes: treeData.children
 			};
 			formData.structure = Ext.encode(structure);

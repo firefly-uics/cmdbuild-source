@@ -24,23 +24,8 @@
 			}, this);
 		},
 
-		getExtraButtons: function() {
-//			var me = this;
-//			this.saveButton = new Ext.Button( {
-//				text : CMDBuild.Translation.common.buttons.save,
-//				name : 'saveButton',
-//				hidden: true,
-//				handler: function() {
-//					me.delegate.cmOn("onSave");
-//				}
-//			});
-//			return [this.saveButton];
-			return [];
-		},
-		
 		configureForm: function(treeName, tree) {
 			this.tree.loadTree(treeName, tree);
-			this.saveButton.show();
 		},
 		
 		getData: function() {

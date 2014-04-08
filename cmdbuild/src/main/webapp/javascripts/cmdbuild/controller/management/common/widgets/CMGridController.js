@@ -1,28 +1,42 @@
 (function() {
-	Ext.define("CMDBuild.controller.management.common.widgets.CMNavigationTreeController", {
+	Ext.define("CMDBuild.controller.management.common.widgets.CMGridController", {
 		mixins: {
 			observable: "Ext.util.Observable",
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
 		},
 
 		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMNavigationTree.WIDGET_NAME
+			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMGrid.WIDGET_NAME
 		},
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
 			this.mixins.observable.constructor.call(this);
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 			this.ownerController = ownerController;
-			this.navigationTree = widgetDef.navigationTreeName;
+			this.classType = _CMCache.getEntryTypeByName(widgetDef.className);
 			this.view = view;
 			this.view.delegate = this;
+
+			var me = this;
+			this.view.loadAttributes( //
+				this.classType.get("id"), //
+				function(attributes) { //
+					me.view.setColumnsForClass(attributes);
+				} //
+			);
 
 		},
 
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onTreeSelected':
-					this.view.configureForm(this.navigationTree, param.tree);
+				case "onAdd" :
+					alert("onAdd");
+					break;
+				case "onDelete" :
+					alert("onDelete");
+					break;
+				case "onEdit" :
+					alert("onEdit");
 					break;
 				default: {
 					if (
@@ -36,10 +50,12 @@
 			return undefined;
 		},
 		
+		getCurrentClass: function() {
+			return this.classType;
+		},
+
 		// override
 		beforeActiveView: function() {
-			var me = this;
-			_CMCache.readNavigationTrees(this, this.navigationTree, selectTree);
 		},
 
 		// override
@@ -57,7 +73,4 @@
 			this.callParent(arguments);
 		}
 	});
-	function selectTree(me, name) {
-		me.cmOn("onTreeSelected", { tree: name });
-	}
 })();

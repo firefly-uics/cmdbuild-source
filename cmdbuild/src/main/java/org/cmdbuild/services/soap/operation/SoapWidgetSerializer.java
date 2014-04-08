@@ -12,6 +12,7 @@ import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.model.widget.Calendar;
 import org.cmdbuild.model.widget.CreateModifyCard;
+import org.cmdbuild.model.widget.Grid;
 import org.cmdbuild.model.widget.LinkCards;
 import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageRelation;
@@ -161,6 +162,16 @@ class SoapWidgetSerializer implements WidgetVisitor {
 		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
 		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, navigationTree.getLabel()));
 		for (final Entry<String, Object> entry : navigationTree.getPreset().entrySet()) {
+			parameters.add(parameterFor(entry.getKey(), entry.getValue()));
+		}
+		definition.setParameters(parameters);
+	}
+
+	@Override
+	public void visit(final Grid grid) {
+		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
+		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, grid.getLabel()));
+		for (final Entry<String, Object> entry : grid.getPreset().entrySet()) {
 			parameters.add(parameterFor(entry.getKey(), entry.getValue()));
 		}
 		definition.setParameters(parameters);

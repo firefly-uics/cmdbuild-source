@@ -184,6 +184,13 @@
 			return w;
 		};
 
+		// grid
+		me.builders[pkg.CMGrid.WIDGET_NAME] = function(widget, card) {
+			var w = new pkg.CMGrid();
+			me.widgetsContainer.addWidgt(w);
+			return w;
+		};
+
 		// ping
 		me.builders[pkg.CMPing.WIDGET_NAME] = function(widget, card) {
 			var w = new pkg.CMPing();
