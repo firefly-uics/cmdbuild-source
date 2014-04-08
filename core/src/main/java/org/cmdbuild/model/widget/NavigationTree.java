@@ -12,7 +12,7 @@ import org.cmdbuild.workflow.WorkflowTypesConverter.Reference;
 
 public class NavigationTree extends Widget {
 
-	private String navigationTreeName;
+	private String name, description;
 	private String filter;
 	private Map<String, Object> preset;
 	private String outputName;
@@ -34,11 +34,11 @@ public class NavigationTree extends Widget {
 	}
 
 	public String getNavigationTreeName() {
-		return navigationTreeName;
+		return name;
 	}
 
 	public void setNavigationTreeName(final String navigationTreeName) {
-		this.navigationTreeName = navigationTreeName;
+		this.name = navigationTreeName;
 	}
 
 	public String getFilter() {
@@ -55,6 +55,14 @@ public class NavigationTree extends Widget {
 
 	public void setOutputName(final String outputName) {
 		this.outputName = outputName;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Override

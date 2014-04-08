@@ -11,6 +11,7 @@ public class DomainTreeNodeJSONMapper {
 
 	public static final String BASE_NODE = "baseNode", //
 			CHILD_NODES = "childNodes", //
+			DESCRIPTION = "description", //
 			DIRECT = "direct", //
 			DOMAIN_NAME = "domainName", //
 			TARGET_FILTER = "filter", //
@@ -34,6 +35,7 @@ public class DomainTreeNodeJSONMapper {
 		treeNode.setIdParent(readLongOrNull(jsonTreeNode, ID_PARENT));
 		treeNode.setIdGroup(readLongOrNull(jsonTreeNode, ID_GROUP));
 		treeNode.setTargetFilter(readStringOrNull(jsonTreeNode, TARGET_FILTER));
+		treeNode.setDescription(readStringOrNull(jsonTreeNode, DESCRIPTION));
 
 		JSONArray jsonChildNodes = new JSONArray();
 		if (jsonTreeNode.has(CHILD_NODES)) {
@@ -64,6 +66,7 @@ public class DomainTreeNodeJSONMapper {
 		jsonTreeNode.put(ID_PARENT, treeNode.getIdParent());
 		jsonTreeNode.put(ID_GROUP, treeNode.getIdGroup());
 		jsonTreeNode.put(TARGET_FILTER, treeNode.getTargetFilter());
+		jsonTreeNode.put(DESCRIPTION, treeNode.getDescription());
 
 		if (deeply) {
 			jsonTreeNode.put(CHILD_NODES, serialize(treeNode.getChildNodes(), deeply));
