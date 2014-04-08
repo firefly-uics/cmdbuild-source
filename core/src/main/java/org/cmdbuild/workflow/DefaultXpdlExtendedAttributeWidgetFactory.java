@@ -7,6 +7,7 @@ import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.template.store.TemplateRepository;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
 import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;
+import org.cmdbuild.workflow.widget.GridWidgetFactory;
 import org.cmdbuild.workflow.widget.LinkCardsWidgetFactory;
 import org.cmdbuild.workflow.widget.ManageEmailWidgetFactory;
 import org.cmdbuild.workflow.widget.ManageRelationWidgetFactory;
@@ -36,6 +37,7 @@ public class DefaultXpdlExtendedAttributeWidgetFactory extends ValuePairXpdlExte
 		addWidgetFactory(new PresetFromCardWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new StartWorkflowWidgetFactory(templateRepository, notifier));
 		addWidgetFactory(new NavigationTreeWidgetFactory(templateRepository, notifier));
+		addWidgetFactory(new GridWidgetFactory(templateRepository, notifier));
 	}
 
 }

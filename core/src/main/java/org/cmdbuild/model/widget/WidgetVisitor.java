@@ -43,5 +43,7 @@ public interface WidgetVisitor {
 	void visit(Workflow workflow);
 
 	void visit(NavigationTree navigationTree);
+
+	void visit(Grid grid);
 	
 }
