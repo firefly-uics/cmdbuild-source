@@ -4,43 +4,30 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
-import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.logic.email.EmailReceivingLogic;
-import org.cmdbuild.logic.email.rules.AnswerToExistingMailFactory;
-import org.cmdbuild.logic.email.rules.DownloadAttachmentsFactory;
-import org.cmdbuild.logic.email.rules.PropertiesMapper;
-import org.cmdbuild.logic.email.rules.StartWorkflow.Configuration;
-import org.cmdbuild.logic.email.rules.StartWorkflow.Mapper;
-import org.cmdbuild.logic.email.rules.StartWorkflowFactory;
-import org.cmdbuild.logic.scheduler.RuleWithAdditionalCondition;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter.AbstractJobFactory;
 import org.cmdbuild.model.email.Email;
-import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.scheduler.Job;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
 import org.cmdbuild.services.email.EmailAccountConfiguration;
-import org.cmdbuild.services.email.EmailCallbackHandler.Applicable;
-import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
 import org.cmdbuild.services.email.EmailService;
-import org.cmdbuild.services.scheduler.EmailServiceJob;
+import org.cmdbuild.services.scheduler.DefaultJob;
+import org.cmdbuild.services.scheduler.SafeCommand;
+import org.cmdbuild.services.scheduler.reademail.AnswerToExistingMailFactory;
+import org.cmdbuild.services.scheduler.reademail.DownloadAttachmentsFactory;
+import org.cmdbuild.services.scheduler.reademail.PropertiesMapper;
+import org.cmdbuild.services.scheduler.reademail.ReadEmail;
+import org.cmdbuild.services.scheduler.reademail.Rule;
+import org.cmdbuild.services.scheduler.reademail.StartWorkflow.Configuration;
+import org.cmdbuild.services.scheduler.reademail.StartWorkflow.Mapper;
+import org.cmdbuild.services.scheduler.reademail.StartWorkflowFactory;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
-
-	private static final Notifier LOGGER_NOTIFIER = new Notifier() {
-
-		@Override
-		public void warn(final CMDBException e) {
-			logger.warn(marker, "error while receiving email", e);
-		}
-
-	};
 
 	private final Store<EmailAccount> emailAccountStore;
 	private final ConfigurableEmailServiceFactory emailServiceFactory;
@@ -77,11 +64,11 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		final List<Rule> rules = Lists.newArrayList();
 		if (task.isNotificationRuleActive()) {
 			logger.info(marker, "adding notification rule");
-			rules.add(ruleWithGlobalCondition(answerToExistingMailFactory.create(service), task));
+			rules.add(answerToExistingMailFactory.create(service));
 		}
 		if (task.isAttachmentsRuleActive()) {
 			logger.info(marker, "adding attachments rule");
-			rules.add(ruleWithGlobalCondition(downloadAttachmentsFactory.create(), task));
+			rules.add(downloadAttachmentsFactory.create());
 		}
 		if (task.isWorkflowRuleActive()) {
 			logger.info(marker, "adding start process rule");
@@ -112,13 +99,21 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 				}
 
 			};
-			rules.add(ruleWithGlobalCondition(startWorkflowFactory.create(_configuration), task));
+			rules.add(startWorkflowFactory.create(_configuration));
 		}
 
-		final EmailReceivingLogic emailReceivingLogic = new EmailReceivingLogic(service, rules, LOGGER_NOTIFIER);
-
 		final String name = task.getId().toString();
-		return new EmailServiceJob(name, emailReceivingLogic);
+		return DefaultJob.newInstance() //
+				.withName(name) //
+				.withAction( //
+						SafeCommand.of( //
+								ReadEmail.newInstance() //
+										.withEmailService(service) //
+										.withPredicate(predicate(task)) //
+										.withRules(rules) //
+										.build()) //
+				) //
+				.build();
 	}
 
 	private EmailAccount emailAccountFor(final String emailAccountName) {
@@ -136,16 +131,14 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		return new EmailAccountConfiguration(emailAccount);
 	}
 
-	private Rule ruleWithGlobalCondition(final Rule rule, final ReadEmailTask schedulerJob) {
-		logger.debug(marker, "creating rule with global condition");
-		final String fromExpression = schedulerJob.getRegexFromFilter();
-		final String subjectExpression = schedulerJob.getRegexSubjectFilter();
-		final Applicable applicable = new Applicable() {
+	private Predicate<Email> predicate(final ReadEmailTask task) {
+		logger.debug(marker, "creating main filter for email");
+		return new Predicate<Email>() {
 
 			@Override
-			public boolean applies(final Email email) {
+			public boolean apply(final Email email) {
 				logger.debug(marker, "checking from address");
-				final Pattern fromPattern = Pattern.compile(fromExpression);
+				final Pattern fromPattern = Pattern.compile(task.getRegexFromFilter());
 				final Matcher fromMatcher = fromPattern.matcher(email.getFromAddress());
 				if (!fromMatcher.matches()) {
 					logger.debug(marker, "from address not matching");
@@ -153,26 +146,17 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 				}
 
 				logger.debug(marker, "checking subject");
-				final Pattern subjectPattern = Pattern.compile(subjectExpression);
+				final Pattern subjectPattern = Pattern.compile(task.getRegexSubjectFilter());
 				final Matcher subjectMatcher = subjectPattern.matcher(email.getSubject());
 				if (!subjectMatcher.matches()) {
 					logger.debug(marker, "subject not matching");
 					return false;
 				}
 
-				return rule.applies(email);
-			}
-
-			@Override
-			public String toString() {
-				return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
-						.append("from", schedulerJob.getRegexFromFilter()) //
-						.append("subject", schedulerJob.getRegexFromFilter()) //
-						.toString();
+				return true;
 			}
 
 		};
-		return new RuleWithAdditionalCondition(rule, applicable);
 	}
 
 }

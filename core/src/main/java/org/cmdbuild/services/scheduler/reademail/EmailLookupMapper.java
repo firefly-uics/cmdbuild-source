@@ -1,7 +1,7 @@
-package org.cmdbuild.logic.email.rules;
+package org.cmdbuild.services.scheduler.reademail;
 
-import org.cmdbuild.logic.email.rules.StartWorkflow.Mapper;
 import org.cmdbuild.model.email.Email;
+import org.cmdbuild.services.scheduler.reademail.StartWorkflow.Mapper;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 

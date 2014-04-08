@@ -1,6 +1,6 @@
-package org.cmdbuild.logic.email.rules;
+package org.cmdbuild.services.scheduler.reademail;
 
-import org.cmdbuild.logic.email.rules.StartWorkflow.Mapper;
+import org.cmdbuild.services.scheduler.reademail.StartWorkflow.Mapper;
 
 public abstract class ForwardingMapper implements Mapper {
 

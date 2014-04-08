@@ -38,6 +38,9 @@ public class Startup {
 	private Properties properties;
 
 	@Autowired
+	private Scheduler scheduler;
+
+	@Autowired
 	private TaskManager taskManager;
 
 	@Bean
@@ -61,7 +64,7 @@ public class Startup {
 	protected Startable startScheduler() {
 		return new Startable() {
 
-			private final SchedulerLogic schedulerLogic = taskManager.defaultSchedulerLogic();
+			private final SchedulerLogic schedulerLogic = scheduler.defaultSchedulerLogic();
 			private final TaskManagerLogic taskManagerLogic = taskManager.taskManagerLogic();
 
 			@Override

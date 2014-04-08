@@ -3,7 +3,9 @@ package org.cmdbuild.logic.taskmanager;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter.AbstractJobFactory;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.scheduler.Job;
-import org.cmdbuild.services.scheduler.StartProcessJob;
+import org.cmdbuild.services.scheduler.DefaultJob;
+import org.cmdbuild.services.scheduler.SafeCommand;
+import org.cmdbuild.services.scheduler.startprocess.StartProcess;
 
 public class StartWorkflowTaskJobFactory extends AbstractJobFactory<StartWorkflowTask> {
 
@@ -21,10 +23,18 @@ public class StartWorkflowTaskJobFactory extends AbstractJobFactory<StartWorkflo
 	@Override
 	protected Job doCreate(final StartWorkflowTask task) {
 		final String name = task.getId().toString();
-		final StartProcessJob startProcessJob = new StartProcessJob(name, workflowLogic);
-		startProcessJob.setDetail(task.getProcessClass());
-		startProcessJob.setParams(task.getAttributes());
-		return startProcessJob;
+		return DefaultJob.newInstance() //
+				.withName(name) //
+				.withAction( //
+						SafeCommand.of( //
+								StartProcess.newInstance() //
+										.withWorkflowLogic(workflowLogic) //
+										.withClassName(task.getProcessClass()) //
+										.withAttributes(task.getAttributes()) //
+										.build() //
+								) //
+				) //
+				.build();
 	}
 
 }

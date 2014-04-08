@@ -1,13 +1,12 @@
-package org.cmdbuild.logic.email.rules;
+package org.cmdbuild.services.scheduler.reademail;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.email.Email;
-import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
-import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
 import org.slf4j.Logger;
 
 public class DownloadAttachments implements Rule {
@@ -23,8 +22,8 @@ public class DownloadAttachments implements Rule {
 	}
 
 	@Override
-	public boolean applies(final Email email) {
-		return true;
+	public boolean apply(final Email email) {
+		return !isEmpty(email.getAttachments());
 	}
 
 	@Override

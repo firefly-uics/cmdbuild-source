@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.email.rules;
+package org.cmdbuild.services.scheduler.reademail;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.join;
@@ -33,8 +33,6 @@ import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.EmailConstants;
 import org.cmdbuild.services.email.DefaultEmailTemplateResolver;
-import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
-import org.cmdbuild.services.email.EmailCallbackHandler.RuleAction;
 import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailTemplateResolver;
@@ -171,7 +169,7 @@ public class AnswerToExistingMail implements Rule {
 	}
 
 	@Override
-	public boolean applies(final Email email) {
+	public boolean apply(final Email email) {
 		parsedSubject = subjectHandler.parse(email.getSubject());
 		if (!parsedSubject.hasExpectedFormat()) {
 			return false;

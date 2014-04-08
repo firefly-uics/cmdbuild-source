@@ -1,10 +1,10 @@
-package org.cmdbuild.logic.email.rules;
+package org.cmdbuild.services.scheduler.reademail;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.email.rules.StartWorkflow.Configuration;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.services.email.EmailPersistence;
+import org.cmdbuild.services.scheduler.reademail.StartWorkflow.Configuration;
 
 public class StartWorkflowFactory implements RuleFactory<StartWorkflow> {
 

@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.email.rules;
+package org.cmdbuild.services.scheduler.reademail;
 
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -7,7 +7,7 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.email.rules.StartWorkflow.Mapper;
+import org.cmdbuild.services.scheduler.reademail.StartWorkflow.Mapper;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 

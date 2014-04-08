@@ -1,4 +1,4 @@
-package org.cmdbuild.logic.email.rules;
+package org.cmdbuild.services.scheduler.reademail;
 
 public interface AttachmentStoreFactory {
 
