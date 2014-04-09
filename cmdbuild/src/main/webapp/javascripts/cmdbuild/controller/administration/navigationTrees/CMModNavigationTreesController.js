@@ -87,8 +87,8 @@
 			var treeData = this.treeController.getData();
 			var structure = {
 					targetClassName:formData.rootName,
-					targetClassDescription: formData.rootDescription,
-					filter: treeData.rootFilter,
+					targetClassDescription: formData.description,
+					filter: treeData.filter,
 					childNodes: treeData.children
 			};
 			formData.structure = Ext.encode(structure);
@@ -99,7 +99,7 @@
 		create: function(formData) {
 			var structure = {
 					targetClassName:formData.rootName,
-					targetClassDescription: formData.rootDescription,
+					targetClassDescription: formData.description,
 					childNodes: []
 			};
 			formData.structure = Ext.encode(structure);

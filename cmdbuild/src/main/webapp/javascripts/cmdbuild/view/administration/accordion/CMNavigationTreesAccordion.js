@@ -14,8 +14,9 @@
 			var navigationTrees = _CMCache.getNavigationTrees();
 			var out = [];
 
-			for (var key in navigationTrees.data) {
-				out.push(buildNodeConf(navigationTrees.data[key]));
+			for (var i = 0; i < navigationTrees.data.length; i++) {
+				var d = navigationTrees.data[i];
+				out.push(buildNodeConf(d.name, d.description));
 			}
 
 			return out;
@@ -33,10 +34,10 @@
 		}
 	});
 
-	function buildNodeConf(d) {
+	function buildNodeConf(name, description) {
 		return {
-			id: d,
-			text: d,
+			id: name,
+			text: description,
 			leaf: true,
 			cmName: "navigationTrees",
 			iconCls: "navigationTrees"
