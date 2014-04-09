@@ -141,10 +141,17 @@
 		},{
 			name: "cqlNode",
 			type: "text"
+		},{
+			name: "destination",
+			type: "text"
 		}],
 
 		getDomain: function() {
 			return this.get("domain");
+		},
+
+		getDestination: function() {
+			return this.get("destination");
 		},
 
 		getEntryType: function() {
@@ -266,6 +273,7 @@
 					expanded: true,
 					domain: d,
 					entryType: et,
+					destination: et.get("name"),
 					children: []
 				});
 			}
@@ -412,7 +420,8 @@
 		return children;
 	}
 	function NodeToObject(node) {
-		var et = _CMCache.getEntryTypeById(node.getDomain().destinationClassId);
+		var et = _CMCache.getEntryTypeByName(node.getDestination());
+		console.log(node.getDomain().get("name")+"---------"+et.get("name"));
 		return {
 			domainName: node.getDomain().get("name"),
 			targetClassName: et.get("name"),
