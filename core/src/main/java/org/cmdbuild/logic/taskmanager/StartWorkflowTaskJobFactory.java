@@ -1,13 +1,38 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static com.google.common.collect.Maps.transformValues;
+
+import org.cmdbuild.logic.Action;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter.AbstractJobFactory;
+import org.cmdbuild.logic.workflow.StartProcess;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.scheduler.Job;
+import org.cmdbuild.services.scheduler.Command;
 import org.cmdbuild.services.scheduler.DefaultJob;
 import org.cmdbuild.services.scheduler.SafeCommand;
-import org.cmdbuild.services.scheduler.startprocess.StartProcess;
+
+import com.google.common.base.Functions;
 
 public class StartWorkflowTaskJobFactory extends AbstractJobFactory<StartWorkflowTask> {
+
+	private static class SchedulerCommandWrapper implements Command {
+
+		public static SchedulerCommandWrapper of(final Action delegate) {
+			return new SchedulerCommandWrapper(delegate);
+		}
+
+		private final Action delegate;
+
+		private SchedulerCommandWrapper(final Action delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public void execute() {
+			delegate.execute();
+		}
+
+	}
 
 	private final WorkflowLogic workflowLogic;
 
@@ -27,11 +52,17 @@ public class StartWorkflowTaskJobFactory extends AbstractJobFactory<StartWorkflo
 				.withName(name) //
 				.withAction( //
 						SafeCommand.of( //
-								StartProcess.newInstance() //
-										.withWorkflowLogic(workflowLogic) //
-										.withClassName(task.getProcessClass()) //
-										.withAttributes(task.getAttributes()) //
-										.build() //
+								SchedulerCommandWrapper.of( //
+										StartProcess.newInstance() //
+												.withWorkflowLogic(workflowLogic) //
+												.withClassName(task.getProcessClass()) //
+												.withAttributes( //
+														transformValues( //
+																task.getAttributes(), //
+																Functions.identity()) //
+												) //
+												.build() //
+										) //
 								) //
 				) //
 				.build();
