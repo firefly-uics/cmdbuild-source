@@ -18,6 +18,8 @@
 		statics: {
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMWorkflow.WIDGET_NAME
 		},
+		processId: null,
+		processClassId: null,
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
 			this.ownerController = ownerController;
@@ -63,8 +65,8 @@
 			filterTemplateResolver.xaVars[FILTER_FIELD] = this.filter;
 			filterTemplateResolver.resolveTemplates({
 				attributes: [FILTER_FIELD],
-				callback: function(o) {
-					var callParams = filterTemplateResolver.buildCQLQueryParameters(o[FILTER_FIELD]);
+				callback: function(response) {
+					var callParams = filterTemplateResolver.buildCQLQueryParameters(response[FILTER_FIELD]);
 					var filter = Ext.encode({
 						CQL: callParams.CQL
 					});
@@ -86,6 +88,20 @@
 				}
 			});
 		},
+
+		getData: function() {
+			var out = null;
+			if (!this.readOnly) {
+				out = {};
+				out["output"] = {
+					id : this.processId,
+					classId: this.processClassId
+				};
+			}
+
+			return out;
+		},
+
 		ensureEditPanel: function() {
 		},
 		onWidgetButtonClick: function(widget) {
@@ -187,6 +203,8 @@
 					CMDBuild.LoadMask.get().hide();
 				},
 				success: function(operation, requestConfiguration, decodedResponse) {
+					me.processId = decodedResponse.response.Id;
+					me.processClassId = decodedResponse.response.IdClass;
 				}
 			});
 			me.ownerController.hideWidgetsContainer();
