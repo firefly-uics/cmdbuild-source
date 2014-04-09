@@ -1,6 +1,6 @@
 package org.cmdbuild.logic;
 
-import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 
@@ -10,7 +10,7 @@ public interface NavigationTreeLogic extends Logic {
 
 	void save(final String name, final String description, final boolean active, DomainTreeNode deserialize);
 
-	List<String> get();
+	Map<String, String> get();
 
 	DomainTreeNode getTree(final String name);
 

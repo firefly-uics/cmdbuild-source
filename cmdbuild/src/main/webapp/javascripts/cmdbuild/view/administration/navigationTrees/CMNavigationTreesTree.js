@@ -242,6 +242,7 @@
 			this.suspendEvents(false);
 			var thereAreChildren = false;
 			var r = this.getStore().getRootNode();
+			r.set("cqlNode", tree.filter);
 			for (var i = 0; i < tree.childNodes.length; i++) {
 				if (this.openNodes(tree.childNodes[i], r))
 					thereAreChildren = true;
@@ -284,6 +285,7 @@
 				if (thereAreChildren) {
 					nodeFound.expand();
 				}
+				nodeFound.set("cqlNode", nodeSaved.filter);
 				nodeFound.set("checked", true);
 				return true;
 			}
@@ -310,7 +312,7 @@
 		getData: function() {
 			var node = this.store.getRootNode();
 			return {
-				rootFilter: node.get("cqlNode"),
+				filter: node.get("cqlNode"),
 				children: getChildren(node)
 			};
 		}
@@ -410,11 +412,10 @@
 		return children;
 	}
 	function NodeToObject(node) {
-		var name = node.getDomain().data.nameClass2;
-		var et = _CMCache.getEntryTypeByName(name);
+		var et = _CMCache.getEntryTypeById(node.getDomain().destinationClassId);
 		return {
 			domainName: node.getDomain().get("name"),
-			targetClassName: name,
+			targetClassName: et.get("name"),
 			targetClassDescription: et.get("text"),
 			filter: node.get("cqlNode"),
 			direct: true,
