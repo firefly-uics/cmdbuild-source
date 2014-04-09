@@ -70,19 +70,17 @@ public class DBDomainTreeStore {
 		}
 
 	}
-
-	public List<String> getTreeNames() {
+	public Map<String, String> getTreeNames() {
 		final CMClass table = getTable();
 		final CMQueryResult domainTreeNames = dataView //
-				.select(attribute(table, Attributes.TYPE.getName())) //
+				.select(anyAttribute(table)) //
 				.from(table) //
 				.run();
-		final List<String> names = new ArrayList<String>();
+		final Map<String, String> names = new HashMap<String, String>();
 		for (final CMQueryRow layerAsQueryRow : domainTreeNames) {
 			final String name = (String) layerAsQueryRow.getCard(table).get(Attributes.TYPE.getName());
-			if (names.indexOf(name) == -1) {
-				names.add(name);
-			}
+			final String description = (String) layerAsQueryRow.getCard(table).get(Attributes.DESCRIPTION.getName());
+			names.put(name, description);
 		}
 		return names;
 	}
