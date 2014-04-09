@@ -30,7 +30,7 @@
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case "onAdd" :
-					alert("onAdd");
+					this.view.newRow();
 					break;
 				case "onDelete" :
 					alert("onDelete");
