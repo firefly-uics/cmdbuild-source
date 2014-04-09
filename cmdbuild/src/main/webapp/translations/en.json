@@ -683,7 +683,13 @@
 			"title": "Task manager",
 			"type": "Type",
 			"taskConnector": {
-
+				"datasourceDbFieldset": "Datasource: Relational database",
+				"datasourceLdapFieldset": "Datasource: LDAP directory",
+				"dbName": "Database name",
+				"recipientAccount": "Recipient account",
+				"senderAccount": "Sender account",
+				"toSynchronize": "To synchronize",
+				"viewPrefix": "View prefix"
 			},
 			"taskEmail": {
 				"alfrescoLookupType": "Alfresco lookup type",
@@ -1433,6 +1439,7 @@
 	"open_3d_viewer": "Open 3D viewer",
 	"pan": "Pan",
 	"password": "Password",
+	"port": "Port",
 	"privileges_on_columns": "Columns privileges",
 	"privileges_on_rows": "Rows privileges",
 	"projects": "Projects",

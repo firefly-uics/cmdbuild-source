@@ -60,9 +60,9 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep3Delegate', this);
 
 			this.prefixField = Ext.create('Ext.form.field.Text', {
-				fieldLabel: 'tr.viewPrefix',
+				fieldLabel: tr.viewPrefix,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: 'CMDBuild.ServiceProxy.parameter.VIEW_PREFIX',
+				name: CMDBuild.ServiceProxy.parameter.VIEW_PREFIX,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
 
@@ -71,9 +71,8 @@
 			});
 
 			// DataSource: relationa databases configuration
-
 				this.dbType = Ext.create('Ext.form.field.ComboBox', {
-					name: 'CMDBuild.ServiceProxy.parameter.RELATIONAL_DB_TYPE',
+					name: CMDBuild.ServiceProxy.parameter.DB_TYPE,
 					fieldLabel: CMDBuild.Translation.administration.tasks.type,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					store: Ext.create('Ext.data.Store', {
@@ -102,8 +101,8 @@
 				});
 
 				this.dbPortField = Ext.create('Ext.form.field.Number', {
-					name: 'CMDBuild.ServiceProxy.parameter.PORT',
-					fieldLabel: 'tr.port',
+					name: CMDBuild.ServiceProxy.parameter.PORT,
+					fieldLabel: CMDBuild.Translation.port,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					minValue: 1,
@@ -112,8 +111,8 @@
 				});
 
 				this.dbNameField = Ext.create('Ext.form.field.Text', {
-					name: 'CMDBuild.ServiceProxy.parameter.DB_NAME',
-					fieldLabel: 'tr.dbName',
+					name: CMDBuild.ServiceProxy.parameter.DB_NAME,
+					fieldLabel: tr.dbName,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					allowBlank: false
@@ -121,7 +120,7 @@
 
 				this.dbUsernameField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.ServiceProxy.parameter.USERNAME,
-					fieldLabel: 'tr.username',
+					fieldLabel: CMDBuild.Translation.username,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					allowBlank: false
@@ -130,26 +129,23 @@
 				this.dbPasswordField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.ServiceProxy.parameter.PASSWORD,
 					inputType: 'password',
-					fieldLabel: 'tr.password',
+					fieldLabel: CMDBuild.Translation.password,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					allowBlank: false
 				});
 
 				this.dbFieldset = Ext.create('Ext.form.FieldSet', {
-					title: 'tr.datasourceRelationalFieldset',
+					title: tr.datasourceDbFieldset,
 					checkboxToggle: true,
 					collapsed: true,
-
-					layout: {
-						type: 'vbox'
-					},
+					layout: 'vbox',
 
 					items: [
 						this.dbType,
 						this.dbAddressField,
 						this.dbPortField,
-						this.databaseNameField,
+						this.dbNameField,
 						this.dbUsernameField,
 						this.dbPasswordField
 					],
@@ -175,7 +171,7 @@
 
 				this.ldapUsernameField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.ServiceProxy.parameter.USERNAME,
-					fieldLabel: 'tr.username',
+					fieldLabel: CMDBuild.Translation.username,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					allowBlank: false
@@ -184,20 +180,17 @@
 				this.ldapPasswordField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.ServiceProxy.parameter.PASSWORD,
 					inputType: 'password',
-					fieldLabel: 'tr.password',
+					fieldLabel: CMDBuild.Translation.password,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					allowBlank: false
 				});
 
 				this.ldapFieldset = Ext.create('Ext.form.FieldSet', {
-					title: 'tr.datasourceLdapFieldset',
+					title: tr.datasourceLdapFieldset,
 					checkboxToggle: true,
 					collapsed: true,
-
-					layout: {
-						type: 'vbox'
-					},
+					layout: 'vbox',
 
 					items: [
 						this.ldapAddressField,
@@ -219,8 +212,10 @@
 				items: [
 					this.prefixField,
 					this.dataSourceField,
-					this.dbFieldset,
-					this.ldapFieldset
+					this.dbFieldset
+// TODO: future implementation
+//					,
+//					this.ldapFieldset
 				]
 			});
 
