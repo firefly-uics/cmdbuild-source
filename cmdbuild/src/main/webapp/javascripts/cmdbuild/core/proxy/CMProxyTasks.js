@@ -156,6 +156,74 @@
 				});
 			},
 
+			getFunctionStore: function() { // TODO: future implementation
+				return Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					fields: ['name', 'value'],
+					data: [
+						{ 'value': 'Function1', 'name': 'Function 1' },
+						{ 'value': 'Function2', 'name': 'Function 2' },
+						{ 'value': 'Function3', 'name': 'Function 3' }
+					]
+				});
+			},
+
+			getViewNames: function() {
+	//			return Ext.create('Ext.data.Store', {
+	//				autoLoad: false,
+	//				model: 'CMDBuild.model.CMModelTasks.grid.workflow',
+	//				proxy: {
+	//					type: 'ajax',
+	//					url: this.getUrl('workflow').getStorebyWorkflow,
+	//					reader: {
+	//						type: 'json',
+	//						root: 'response.elements'
+	//					}
+	//				},
+	//				sorters: {
+	//					property: 'type',
+	//					direction: 'ASC'
+	//				}
+	//			});
+				return Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					fields: ['name', 'value'],
+					data: [
+						{ 'value': 'ViewName1', 'name': 'View name 1' },
+						{ 'value': 'ViewName2', 'name': 'View name 2' },
+						{ 'value': 'ViewName3', 'name': 'View name 3' }
+					]
+				});
+			},
+
+			getViewAttributeNames: function(viewName) {
+	//			return Ext.create('Ext.data.Store', {
+	//				autoLoad: false,
+	//				model: 'CMDBuild.model.CMModelTasks.grid.workflow',
+	//				proxy: {
+	//					type: 'ajax',
+	//					url: this.getUrl('workflow').getStorebyWorkflow,
+	//					reader: {
+	//						type: 'json',
+	//						root: 'response.elements'
+	//					}
+	//				},
+	//				sorters: {
+	//					property: 'type',
+	//					direction: 'ASC'
+	//				}
+	//			});
+				return Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					fields: ['name', 'value'],
+					data: [
+						{ 'value': 'ViewAttributeName1', 'name': 'View attribute name 1' },
+						{ 'value': 'ViewAttributeName2', 'name': 'View attribute name 2' },
+						{ 'value': 'ViewAttributeName3', 'name': 'View attribute name 3' }
+					]
+				});
+			},
+
 			/**
 			 * Workflow specific proxies
 			 */

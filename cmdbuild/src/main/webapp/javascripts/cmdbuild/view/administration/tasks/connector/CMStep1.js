@@ -56,12 +56,10 @@
 		height: '100%',
 
 		initComponent: function() {
-			var me = this;
-
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
-				fieldLabel: CMDBuild.Translation.administration.tasks.type,
+				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.ServiceProxy.parameter.TYPE,
 				value: tr.tasksTypes.connector,
@@ -85,14 +83,14 @@
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
 				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
-				fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
+				fieldLabel: tr.startOnSave,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
 
 			this.operationsCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: 'CMDBuild.ServiceProxy.parameter.TO_SYNCHRONIZE',
-				fieldLabel: 'tr.taskConnector.toSynchronize',
+				name: CMDBuild.ServiceProxy.parameter.TO_SYNCHRONIZE,
+				fieldLabel: tr.taskConnector.toSynchronize,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				store: CMDBuild.core.proxy.CMProxyTasks.getConnectorOperations(),
 				displayField: CMDBuild.ServiceProxy.parameter.NAME,
@@ -103,29 +101,27 @@
 			});
 
 			// SendMail configuration
-				this.emailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
-					fieldLabel: tr.template,
+				this.senderEmailAccountField = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.ServiceProxy.parameter.SENDER_ACCOUNT,
+					fieldLabel: tr.taskConnector.senderAccount,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					itemId: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
-					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					forceSelection: true,
-					editable: false,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				});
+
+				this.recipientEmailAccountField = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.ServiceProxy.parameter.RECIPIENT_ACCOUNT,
+					fieldLabel: tr.taskConnector.recipientAccount,
+					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				});
 
 				this.sendMailFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.sendMail + ' --> DA CONFERMARE',
+					title: tr.sendMail,
 					checkboxToggle: true,
 					collapsed: true,
+					layout: 'vbox',
 
-					layout: {
-						type: 'vbox'
-					},
-
-					items: [this.emailTemplateCombo]
+					items: [this.senderEmailAccountField, this.recipientEmailAccountField]
 				});
 
 				this.sendMailFieldset.fieldWidthsFix();
