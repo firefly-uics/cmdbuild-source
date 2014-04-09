@@ -1,39 +1,35 @@
-package org.cmdbuild.services.scheduler.startprocess;
+package org.cmdbuild.logic.workflow;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.services.scheduler.Command;
+import org.cmdbuild.logic.Action;
 import org.cmdbuild.workflow.CMWorkflowException;
-import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.collect.Maps;
 
-public class StartProcess implements Command {
+public class StartProcess implements Action {
 
-	private static Logger logger = Log.WORKFLOW;
-	private static Marker marker = MarkerFactory.getMarker(StartProcess.class.getName());
-
-	private static final Map<String, String> EMPTY_ATTRIBUTES = Collections.emptyMap();
-	private static final Map<String, Object> NO_WIDGETS = Collections.emptyMap();
-	private static final boolean ALWAYS_ADVANCE = true;
+	private static final Marker marker = MarkerFactory.getMarker(StartProcess.class.getName());
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<StartProcess> {
 
+		private static final Map<String, Object> EMPTY_ATTRIBUTES = Collections.emptyMap();
+
 		private WorkflowLogic workflowLogic;
 		private String className;
-		private final Map<String, String> attributes = Maps.newHashMap();
+		private final Map<String, Object> attributes;
 
 		private Builder() {
 			// use factory method
+			attributes = Maps.newHashMap();
 		}
 
 		@Override
@@ -43,8 +39,8 @@ public class StartProcess implements Command {
 		}
 
 		private void validate() {
-			Validate.notNull(workflowLogic, "invalid workflow logic");
-			Validate.notNull(className, "invalid class name");
+			Validate.notNull(workflowLogic, "missing workflow logic");
+			Validate.notBlank(className, "missing class name");
 		}
 
 		public Builder withWorkflowLogic(final WorkflowLogic workflowLogic) {
@@ -52,17 +48,29 @@ public class StartProcess implements Command {
 			return this;
 		}
 
-		public Builder withClassName(final String className) {
-			this.className = className;
+		public Builder withClassName(final String classname) {
+			this.className = classname;
 			return this;
 		}
 
-		public Builder withAttributes(final Map<String, String> attributes) {
-			this.attributes.putAll(defaultIfNull(attributes, EMPTY_ATTRIBUTES));
+		public Builder withAttribute(final String name, final Object value) {
+			if (isNotBlank(name)) {
+				attributes.put(name, value);
+			}
+			return this;
+		}
+
+		public Builder withAttributes(final Map<String, Object> attributes) {
+			for (final Entry<String, Object> entry : defaultIfNull(attributes, EMPTY_ATTRIBUTES).entrySet()) {
+				withAttribute(entry.getKey(), entry.getValue());
+			}
 			return this;
 		}
 
 	}
+
+	private static final Map<String, Object> NO_WIDGETS = Collections.emptyMap();	
+	private static final boolean ALWAYS_ADVANCE = true;
 
 	public static Builder newInstance() {
 		return new Builder();
@@ -70,7 +78,7 @@ public class StartProcess implements Command {
 
 	private final WorkflowLogic workflowLogic;
 	private final String className;
-	private final Map<String, String> attributes;
+	private final Map<String, Object> attributes;
 
 	private StartProcess(final Builder builder) {
 		this.workflowLogic = builder.workflowLogic;
@@ -80,14 +88,11 @@ public class StartProcess implements Command {
 
 	@Override
 	public void execute() {
-		logger.info(marker, "starting scheduled process '{}'", className);
-		for (final Entry<String, String> entry : attributes.entrySet()) {
-			logger.debug(marker, "\t'{}' -> '{}'", entry.getKey(), entry.getValue());
-		}
 		try {
 			workflowLogic.startProcess(className, attributes, NO_WIDGETS, ALWAYS_ADVANCE);
 		} catch (final CMWorkflowException e) {
-			logger.warn(marker, "error starting scheduled process", e);
+			logger.error(marker, "error starting process", e);
+			throw new RuntimeException(e);
 		}
 	}
 
