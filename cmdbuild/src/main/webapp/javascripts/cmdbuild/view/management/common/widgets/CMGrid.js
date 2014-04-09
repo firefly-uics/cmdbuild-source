@@ -21,6 +21,11 @@
 			return this.grid.getData();
 		},
 
+		newRow: function() {
+			var store = this.grid.getStore();
+			this.grid.add();
+		},
+
 		addRendererToHeader: function(h) {
 			h.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
 				value = value || record.get(h.dataIndex);
