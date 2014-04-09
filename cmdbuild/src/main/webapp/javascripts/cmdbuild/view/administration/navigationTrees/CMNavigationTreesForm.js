@@ -182,6 +182,7 @@
 		loadForm: function(tree) {
 			this.treeName.setValue(tree.type);
 			this.rootName.setValue(tree.targetClassName);
+			this.treeDescription.setValue(tree.targetClassDescription);
 		}
 	});
 })();

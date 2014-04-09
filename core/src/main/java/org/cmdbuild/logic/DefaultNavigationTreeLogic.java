@@ -1,6 +1,7 @@
 package org.cmdbuild.logic;
 
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.services.store.DBDomainTreeStore;
@@ -24,7 +25,7 @@ public class DefaultNavigationTreeLogic implements NavigationTreeLogic {
 	}
 
 	@Override
-	public List<String> get() {
+	public Map<String, String> get() {
 		return domainTreeStore.getTreeNames();
 	}
 

@@ -84,11 +84,11 @@
 		var navigationTrees = _CMCache.getNavigationTrees();
 		var data = [];
 
-		for (var key in navigationTrees.data) {
-			var obj = navigationTrees.data[key];
+		for (var i = 0; i < navigationTrees.data.length; i++) {
+			var obj = navigationTrees.data[i];
 			data.push({
-				name: obj,
-				description: obj
+				name: obj.name,
+				description: obj.description
 			});
 		}
 		var navigationTrees = Ext.create('Ext.data.Store', {
