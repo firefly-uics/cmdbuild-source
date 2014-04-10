@@ -36,7 +36,7 @@
 		 *
 		 * @return (Array) mapOfAttributes
 		 */
-		getAttributesList: function() {
+		getAllAttributesList: function() {
 			for (key in _CMCache.getClasses()) {
 				_CMCache.getAttributeList(key, function(attributes) {
 					return;
