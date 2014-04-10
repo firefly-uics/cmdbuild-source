@@ -21,6 +21,9 @@
 				case 'onSelectClassCombo':
 					return this.onSelectClassCombo(param);
 
+				case 'onSelectViewCombo':
+					return this.onSelectViewCombo(param);
+
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
@@ -31,12 +34,58 @@
 		/**
 		 * To setup attribute combo store
 		 *
-		 * @param (Object) parameter
-		 * @param (Int) parameter.classId
-		 * @param (Int) parameter.rowIndex
+		 * @param (Int) classId
 		 */
-		onSelectClassCombo: function(parameter) {
+		onSelectClassCombo: function(classId) {
+			var columnModel = this.view.attributeLevelMappingGrid.getView().getHeaderCt().gridDataColumns[3];
+			var attributesListStore = [];
 
+			for (var key in _CMCache.getClasses()) {
+				if (key == classId)
+					attributesListStore.push(this.view.classesAttributesMap[key]);
+			}
+
+			columnModel.setEditor({
+				xtype: 'combo',
+				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				displayField: CMDBuild.ServiceProxy.parameter.NAME,
+				forceSelection: true,
+				editable: false,
+				allowBlank: false,
+				store: Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					fields: ['name'],
+					data: attributesListStore[0]
+				})
+			});
+		},
+
+		onSelectViewCombo: function(viewValue) {
+			var columnModel = this.view.attributeLevelMappingGrid.getView().getHeaderCt().gridDataColumns[1];
+			var attributesListStore = [
+				{ 'value': 'Function1', 'name': 'Function 1' },
+				{ 'value': 'Function2', 'name': 'Function 2' },
+				{ 'value': 'Function3', 'name': 'Function 3' }
+			];
+
+//			for (var key in _CMCache.getClasses()) {
+//				if (key == classId)
+//					attributesListStore.push(this.view.classesAttributesMap[key]);
+//			}
+
+			columnModel.setEditor({
+				xtype: 'combo',
+				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				displayField: CMDBuild.ServiceProxy.parameter.NAME,
+				forceSelection: true,
+				editable: false,
+				allowBlank: false,
+				store: Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					fields: ['name'],
+					data: attributesListStore
+				})
+			});
 		}
 	});
 
@@ -52,21 +101,11 @@
 		initComponent: function() {
 			var me = this;
 
+			this.classesAttributesMap = _CMCache.getAllAttributesList();
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep5Delegate', this);
 
-//			this.attributesListStore = [];
-//			this.classesAttributesMap = _CMCache.getAttributesList();
-//_debug(this.classesAttributesMap);
-//			for (key in this.classesAttributesMap) {
-//				this.attributesListStore.push({
-//					name: _CMCache.getEntryTypeNameById(key),
-//					attributes: this.classesAttributesMap[key]
-//				});
-//			}
-//
-//			_debug(this.attributesListStore);
-
 			this.attributeLevelMappingGrid = Ext.create('Ext.grid.Panel', {
+				layuout: 'fit',
 				title: 'tr.attributeLevelMapping',
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
@@ -86,7 +125,7 @@
 
 							listeners: {
 								select: function(combo, records, eOpts) {
-									// TODO: update VIEW_ATTRIBUTE_NAME combo store
+									me.delegate.cmOn('onSelectViewCombo', records[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
 								}
 							}
 						},
@@ -120,10 +159,7 @@
 
 							listeners: {
 								select: function(combo, records, eOpts) {
-									me.delegate.cmOn('onSelectClassCombo', {
-										classId: records[0].get(CMDBuild.ServiceProxy.parameter.ID),
-										rowIndex: me.attributeLevelMappingGrid.store.indexOf(me.attributeLevelMappingGrid.getSelectionModel().getSelection()[0])
-									});
+									me.delegate.cmOn('onSelectClassCombo', records[0].get(CMDBuild.ServiceProxy.parameter.ID));
 								}
 							}
 						},
@@ -194,18 +230,7 @@
 				}),
 
 				plugins: Ext.create('Ext.grid.plugin.CellEditing', {
-					clicksToEdit: 1,
-
-					listeners: {
-						beforeedit: function(editor, e, eOpts) {
-
-							// Beforeedit action to perform onSelectClassCombo, filtering store
-							if (e.colIdx == 2) {
-								classRowStore.clearFilter();
-								classRowStore.filter('country', e.record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME));
-							}
-						}
-					}
+					clicksToEdit: 1
 				}),
 
 				tbar: [
