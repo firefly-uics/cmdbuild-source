@@ -19,7 +19,7 @@
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMWorkflow.WIDGET_NAME
 		},
 		processId: null,
-		processClassId: null,
+		processClassName: null,
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
 			this.ownerController = ownerController;
@@ -95,7 +95,7 @@
 				out = {};
 				out["output"] = {
 					id : this.processId,
-					classId: this.processClassId
+					className: this.processClassName
 				};
 			}
 
@@ -204,7 +204,9 @@
 				},
 				success: function(operation, requestConfiguration, decodedResponse) {
 					me.processId = decodedResponse.response.Id;
-					me.processClassId = decodedResponse.response.IdClass;
+					var processClassId = decodedResponse.response.IdClass;
+					var entity =_CMCache.getEntryTypeById(processClassId);
+					me.processClassName = entity.get("name");
 				}
 			});
 			me.ownerController.hideWidgetsContainer();
