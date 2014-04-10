@@ -187,17 +187,20 @@
 			callBack(undefined);
 		}
 		else {
-			getRowsForFilter(widget, filter, className, function(operation, request, decoded) {
-				if (! cacheFields[filter + className]){
+			if (! cacheFields[filter + className]) {
+				getRowsForFilter(widget, filter, className, function(operation, request, decoded) {
 					var arIds = [];
 					for (var j = 0; j < decoded.rows.length; j++) {
 						var row = decoded.rows[j];
 						arIds.push(row.Id);
 					}
 					cacheFields[filter + className] = arIds;
-				}
+					callBack(cacheFields[filter + className]);
+				});
+			}
+			else {
 				callBack(cacheFields[filter + className]);
-			});
+			}
 		}
 	}
 	function loadRelations(widget, node, nodeIn, domain, relations, callBack) {

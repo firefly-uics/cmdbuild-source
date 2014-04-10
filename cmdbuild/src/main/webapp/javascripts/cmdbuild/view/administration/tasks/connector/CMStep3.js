@@ -77,7 +77,7 @@
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					store: Ext.create('Ext.data.Store', {
 						autoLoad: true,
-						fields: ['name', 'value'],
+						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.VALUE],
 						data: [
 							{ 'name': 'MySQL', 'value': 'mysql' },
 							{ 'name': 'Oracle', 'value': 'oracle' },
