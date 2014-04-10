@@ -421,7 +421,6 @@
 	}
 	function NodeToObject(node) {
 		var et = _CMCache.getEntryTypeByName(node.getDestination());
-		console.log(node.getDomain().get("name")+"---------"+et.get("name"));
 		return {
 			domainName: node.getDomain().get("name"),
 			targetClassName: et.get("name"),
