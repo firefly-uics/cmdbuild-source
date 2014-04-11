@@ -4,6 +4,9 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +60,52 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	private static interface Action {
 
 		void execute(Email email);
+
+	}
+
+	private static abstract class ForwardingAction implements Action {
+
+		private final Action delegate;
+
+		protected ForwardingAction(final Action delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		public void execute(final Email email) {
+			delegate.execute(email);
+		}
+
+	}
+
+	private static class SafeAction extends ForwardingAction {
+
+		public static SafeAction of(final Action delegate) {
+			final Object proxy = Proxy.newProxyInstance( //
+					SafeAction.class.getClassLoader(), //
+					new Class<?>[] { Action.class }, //
+					new InvocationHandler() {
+
+						@Override
+						public Object invoke(final Object proxy, final Method method, final Object[] args)
+								throws Throwable {
+							try {
+								return method.invoke(delegate, args);
+							} catch (final Throwable e) {
+								logger.warn(marker, "error calling method '{}'", method);
+								logger.warn(marker, "\tcaused by", e);
+								return null;
+							}
+						}
+
+					});
+			final Action proxiedAction = Action.class.cast(proxy);
+			return new SafeAction(proxiedAction);
+		}
+
+		private SafeAction(final Action delegate) {
+			super(delegate);
+		}
 
 	}
 
@@ -142,6 +191,56 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	}
 
+	private static enum TaskPredicate implements Predicate<ReadEmailTask> {
+
+		SEND_NOTIFICATION() {
+
+			@Override
+			public boolean apply(final ReadEmailTask input) {
+				return input.isNotificationActive();
+			}
+
+		}, //
+		STORE_ATTACHMENTS() {
+
+			@Override
+			public boolean apply(final ReadEmailTask input) {
+				return input.isAttachmentsActive();
+			}
+
+		}, //
+		START_PROCESS() {
+
+			@Override
+			public boolean apply(final ReadEmailTask input) {
+				return input.isWorkflowActive();
+			}
+
+		}, //
+		;
+
+	}
+
+	private static final Predicate<Email> ALWAYS = Predicates.alwaysTrue();
+
+	private static final Predicate<Email> HAS_ATTACHMENTS = new Predicate<Email>() {
+
+		@Override
+		public boolean apply(final Email email) {
+			return !isEmpty(email.getAttachments());
+		}
+
+	};
+
+	private static final Function<Email, Email> NO_ADAPTATIONS = new Function<Email, Email>() {
+
+		@Override
+		public Email apply(final Email email) {
+			return email;
+		}
+
+	};
+
 	private final Store<EmailAccount> emailAccountStore;
 	private final ConfigurableEmailServiceFactory emailServiceFactory;
 	private final SubjectHandler subjectHandler;
@@ -164,49 +263,6 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		this.dmsLogic = dmsLogic;
 	}
 
-	@Override
-	protected Class<ReadEmailTask> getType() {
-		return ReadEmailTask.class;
-	}
-
-	private static final Predicate<Email> ALWAYS = Predicates.alwaysTrue();
-
-	private static final Predicate<ReadEmailTask> SEND_NOTIFICATION = new Predicate<ReadEmailTask>() {
-
-		@Override
-		public boolean apply(final ReadEmailTask input) {
-			return input.isNotificationRuleActive();
-		}
-
-	};
-
-	private static final Predicate<ReadEmailTask> STORE_ATTACHMENTS = new Predicate<ReadEmailTask>() {
-
-		@Override
-		public boolean apply(final ReadEmailTask input) {
-			return input.isAttachmentsRuleActive();
-		}
-
-	};
-
-	private static final Predicate<ReadEmailTask> START_PROCESS = new Predicate<ReadEmailTask>() {
-
-		@Override
-		public boolean apply(final ReadEmailTask input) {
-			return input.isWorkflowRuleActive();
-		}
-
-	};
-
-	private static final Predicate<Email> HAS_ATTACHMENTS = new Predicate<Email>() {
-
-		@Override
-		public boolean apply(final Email email) {
-			return !isEmpty(email.getAttachments());
-		}
-
-	};
-
 	private final Predicate<Email> SUBJECT_MATCHES = new Predicate<Email>() {
 
 		@Override
@@ -226,16 +282,6 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		}
 
 	};
-
-	private static final Function<Email, Email> NO_ADAPTATIONS = new Function<Email, Email>() {
-
-		@Override
-		public Email apply(final Email email) {
-			return email;
-		}
-
-	};
-
 	private final Function<Email, Email> STRIP_SUBJECT_AND_SET_PARENT_DATA = new Function<Email, Email>() {
 
 		@Override
@@ -252,6 +298,11 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	};
 
 	@Override
+	protected Class<ReadEmailTask> getType() {
+		return ReadEmailTask.class;
+	}
+
+	@Override
 	protected Job doCreate(final ReadEmailTask task) {
 		final String emailAccountName = task.getEmailAccount();
 		final EmailAccount selectedEmailAccount = emailAccountFor(emailAccountName);
@@ -262,9 +313,9 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 				.withEmailService(service) //
 				.withPredicate(predicate(task));
 
-		if (SEND_NOTIFICATION.apply(task)) {
+		if (TaskPredicate.SEND_NOTIFICATION.apply(task)) {
 			logger.info(marker, "adding notification action");
-			readEmail.withAction(SUBJECT_MATCHES, STRIP_SUBJECT_AND_SET_PARENT_DATA, new Action() {
+			readEmail.withAction(SUBJECT_MATCHES, STRIP_SUBJECT_AND_SET_PARENT_DATA, SafeAction.of(new Action() {
 
 				@Override
 				public void execute(final Email email) {
@@ -295,12 +346,12 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 					return text;
 				}
 
-			});
+			}));
 
 		}
-		if (STORE_ATTACHMENTS.apply(task)) {
+		if (TaskPredicate.STORE_ATTACHMENTS.apply(task)) {
 			logger.info(marker, "adding attachments action");
-			readEmail.withAction(HAS_ATTACHMENTS, NO_ADAPTATIONS, new Action() {
+			readEmail.withAction(HAS_ATTACHMENTS, NO_ADAPTATIONS, SafeAction.of(new Action() {
 
 				@Override
 				public void execute(final Email email) {
@@ -308,18 +359,18 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 							.withDmsLogic(dmsLogic) //
 							.withClassName(EMAIL_CLASS_NAME) //
 							.withCardId(email.getId()) //
-							// TODO category
+							.withCategory(task.getAttachmentsCategory()) //
 							.withDocuments(documentsFrom(email.getAttachments())) //
 							.build() //
 							.execute();
 
 				}
 
-			});
+			}));
 		}
-		if (START_PROCESS.apply(task)) {
+		if (TaskPredicate.START_PROCESS.apply(task)) {
 			logger.info(marker, "adding start process action");
-			readEmail.withAction(ALWAYS, NO_ADAPTATIONS, new Action() {
+			readEmail.withAction(ALWAYS, NO_ADAPTATIONS, SafeAction.of(new Action() {
 
 				@Override
 				public void execute(final Email email) {
@@ -340,7 +391,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 												.withDmsLogic(dmsLogic) //
 												.withClassName(task.getWorkflowClassName()) //
 												.withCardId(userProcessInstance.getCardId()) //
-												// TODO category
+												.withCategory(task.getWorkflowAttachmentsCategory()) //
 												.withDocuments(documentsFrom(email.getAttachments())) //
 												.build() //
 												.execute();
@@ -356,7 +407,8 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 							.execute();
 				}
 
-			});
+			}));
+
 		}
 
 		final String name = task.getId().toString();

@@ -31,23 +31,30 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 			// prevents instantiation
 		}
 
-		public static final String ACCOUNT_NAME = "email.account.name";
+		private static final String ALL_PREFIX = "email.";
 
-		private static final String FILTER = "email.filter";
-		public static final String FILTER_FROM_REGEX = FILTER + ".from.regex";
-		public static final String FILTER_SUBJECT_REGEX = FILTER + ".subject.regex";
+		public static final String ACCOUNT_NAME = ALL_PREFIX + "account.name";
 
-		private static final String RULE = "email.rule";
+		private static final String FILTER_PREFIX = ALL_PREFIX + "filter.";
+		public static final String FILTER_FROM_REGEX = FILTER_PREFIX + "from.regex";
+		public static final String FILTER_SUBJECT_REGEX = FILTER_PREFIX + "subject.regex";
 
-		public static final String RULE_ATTACHMENTS_ACTIVE = RULE + ".attachments.active";
-		public static final String RULE_NOTIFICATION_ACTIVE = RULE + ".notification.active";
+		private static final String RULE_PREFIX = ALL_PREFIX + "rule.";
 
-		private static final String RULE_WORKFLOW = "email.rule.workflow";
-		public static final String RULE_WORKFLOW_ACTIVE = RULE_WORKFLOW + ".active";
-		public static final String RULE_WORKFLOW_ADVANCE = RULE_WORKFLOW + ".advance";
-		public static final String RULE_WORKFLOW_CLASS_NAME = RULE_WORKFLOW + ".class.name";
-		public static final String RULE_WORKFLOW_FIELDS_MAPPING = RULE_WORKFLOW + ".fields.mapping";
-		public static final String RULE_WORKFLOW_ATTACHMENTS_SAVE = RULE_WORKFLOW + ".attachments.save";
+		private static final String ATTACHMENTS_PREFIX = RULE_PREFIX + "attachments.";
+		public static final String ATTACHMENTS_ACTIVE = ATTACHMENTS_PREFIX + "active";
+		public static final String ATTACHMENTS_CATEGORY = ATTACHMENTS_PREFIX + "category";
+
+		public static final String NOTIFICATION_ACTIVE = RULE_PREFIX + "notification.active";
+
+		private static final String WORKFLOW_PREFIX = RULE_PREFIX + "workflow.";
+		public static final String WORKFLOW_ACTIVE = WORKFLOW_PREFIX + "active";
+		public static final String WORKFLOW_ADVANCE = WORKFLOW_PREFIX + "advance";
+		public static final String WORKFLOW_CLASS_NAME = WORKFLOW_PREFIX + "class.name";
+		public static final String WORKFLOW_FIELDS_MAPPING = WORKFLOW_PREFIX + "fields.mapping";
+		private static final String WORKFLOW_ATTACHMENTS_PREFIX = WORKFLOW_PREFIX + "attachments";
+		public static final String WORKFLOW_ATTACHMENTS_SAVE = WORKFLOW_ATTACHMENTS_PREFIX + "save";
+		public static final String WORKFLOW_ATTACHMENTS_CATEGORY = WORKFLOW_ATTACHMENTS_PREFIX + "category";
 
 	}
 
@@ -81,15 +88,15 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public static final String PHASE_AFTER_UPDATE = "after_update";
 		public static final String PHASE_BEFORE_DELETE = "before_delete";
 
-		private static final String FILTER = "filter";
-		public static final String FILTER_GROUPS = FILTER + ".groups";
-		public static final String FILTER_CLASSNAME = FILTER + ".classname";
+		private static final String FILTER = "filter.";
+		public static final String FILTER_GROUPS = FILTER + "groups";
+		public static final String FILTER_CLASSNAME = FILTER + "classname";
 
-		private static final String ACTION_SCRIPT = "action.scripting";
-		public static final String ACTION_SCRIPT_ACTIVE = ACTION_SCRIPT + ".active";
-		public static final String ACTION_SCRIPT_ENGINE = ACTION_SCRIPT + ".engine";
-		public static final String ACTION_SCRIPT_SCRIPT = ACTION_SCRIPT + ".script";
-		public static final String ACTION_SCRIPT_SAFE = ACTION_SCRIPT + ".safe";
+		private static final String ACTION_SCRIPT_PREFIX = "action.scripting.";
+		public static final String ACTION_SCRIPT_ACTIVE = ACTION_SCRIPT_PREFIX + "active";
+		public static final String ACTION_SCRIPT_ENGINE = ACTION_SCRIPT_PREFIX + "engine";
+		public static final String ACTION_SCRIPT_SCRIPT = ACTION_SCRIPT_PREFIX + "script";
+		public static final String ACTION_SCRIPT_SAFE = ACTION_SCRIPT_PREFIX + "safe";
 
 	}
 
@@ -191,20 +198,24 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(ReadEmail.ACCOUNT_NAME, task.getEmailAccount()) //
 					.withParameter(ReadEmail.FILTER_FROM_REGEX, task.getRegexFromFilter()) //
 					.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, task.getRegexSubjectFilter()) //
-					.withParameter(ReadEmail.RULE_NOTIFICATION_ACTIVE, //
-							Boolean.toString(task.isNotificationRuleActive())) //
-					.withParameter(ReadEmail.RULE_ATTACHMENTS_ACTIVE, //
-							Boolean.toString(task.isAttachmentsRuleActive())) //
-					.withParameter(ReadEmail.RULE_WORKFLOW_ACTIVE, //
-							Boolean.toString(task.isWorkflowRuleActive())) //
-					.withParameter(ReadEmail.RULE_WORKFLOW_CLASS_NAME, task.getWorkflowClassName()) //
-					.withParameter(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING, Joiner.on(LINE_SEPARATOR) //
+					.withParameter(ReadEmail.NOTIFICATION_ACTIVE, //
+							Boolean.toString(task.isNotificationActive())) //
+					.withParameter(ReadEmail.ATTACHMENTS_ACTIVE, //
+							Boolean.toString(task.isAttachmentsActive())) //
+					.withParameter(ReadEmail.ATTACHMENTS_CATEGORY, //
+							task.getAttachmentsCategory()) //
+					.withParameter(ReadEmail.WORKFLOW_ACTIVE, //
+							Boolean.toString(task.isWorkflowActive())) //
+					.withParameter(ReadEmail.WORKFLOW_CLASS_NAME, task.getWorkflowClassName()) //
+					.withParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING, Joiner.on(LINE_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 							.join(task.getWorkflowAttributes())) //
-					.withParameter(ReadEmail.RULE_WORKFLOW_ADVANCE, //
+					.withParameter(ReadEmail.WORKFLOW_ADVANCE, //
 							Boolean.toString(task.isWorkflowAdvanceable())) //
-					.withParameter(ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE, //
+					.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE, //
 							Boolean.toString(task.isWorkflowAttachments())) //
+					.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY, //
+							task.getWorkflowAttachmentsCategory()) //
 					.build();
 		}
 
@@ -263,7 +274,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		@Override
 		public void visit(final org.cmdbuild.data.store.task.ReadEmailTask task) {
-			final String attributesAsString = defaultString(task.getParameter(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING));
+			final String attributesAsString = defaultString(task.getParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING));
 			target = ReadEmailTask.newInstance() //
 					.withId(task.getId()) //
 					.withDescription(task.getDescription()) //
@@ -273,20 +284,22 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withRegexFromFilter(task.getParameter(ReadEmail.FILTER_FROM_REGEX)) //
 					.withRegexSubjectFilter(task.getParameter(ReadEmail.FILTER_SUBJECT_REGEX)) //
 					.withNotificationStatus( //
-							Boolean.valueOf(task.getParameter(ReadEmail.RULE_NOTIFICATION_ACTIVE))) //
-					.withAttachmentsRuleActive( //
-							Boolean.valueOf(task.getParameter(ReadEmail.RULE_ATTACHMENTS_ACTIVE))) //
-					.withWorkflowRuleActive( //
-							Boolean.valueOf(task.getParameter(ReadEmail.RULE_WORKFLOW_ACTIVE))) //
-					.withWorkflowClassName(task.getParameter(ReadEmail.RULE_WORKFLOW_CLASS_NAME)) //
+							Boolean.valueOf(task.getParameter(ReadEmail.NOTIFICATION_ACTIVE))) //
+					.withAttachmentsActive( //
+							Boolean.valueOf(task.getParameter(ReadEmail.ATTACHMENTS_ACTIVE))) //
+					.withAttachmentsCategory(task.getParameter(ReadEmail.ATTACHMENTS_CATEGORY)) //
+					.withWorkflowActive( //
+							Boolean.valueOf(task.getParameter(ReadEmail.WORKFLOW_ACTIVE))) //
+					.withWorkflowClassName(task.getParameter(ReadEmail.WORKFLOW_CLASS_NAME)) //
 					.withWorkflowAttributes( //
 							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
 									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 									.split(attributesAsString)) //
 					.withWorkflowAdvanceableStatus( //
-							Boolean.valueOf(task.getParameter(ReadEmail.RULE_WORKFLOW_ADVANCE))) //
+							Boolean.valueOf(task.getParameter(ReadEmail.WORKFLOW_ADVANCE))) //
 					.withWorkflowAttachmentsStatus( //
-							Boolean.valueOf(task.getParameter(ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE))) //
+							Boolean.valueOf(task.getParameter(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE))) //
+					.withWorkflowAttachmentsCategory(task.getParameter(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY)) //
 					.build();
 		}
 
