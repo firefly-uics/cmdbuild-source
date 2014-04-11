@@ -7,7 +7,7 @@ import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreatorFactory;
 import org.cmdbuild.dms.DocumentSearch;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.DmsLogic;
+import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;

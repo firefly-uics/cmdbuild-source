@@ -198,7 +198,9 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(ReadEmail.RULE_WORKFLOW_ACTIVE, //
 							Boolean.toString(task.isWorkflowRuleActive())) //
 					.withParameter(ReadEmail.RULE_WORKFLOW_CLASS_NAME, task.getWorkflowClassName()) //
-					.withParameter(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING, task.getWorkflowFieldsMapping()) //
+					.withParameter(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING, Joiner.on(LINE_SEPARATOR) //
+							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+							.join(task.getWorkflowAttributes())) //
 					.withParameter(ReadEmail.RULE_WORKFLOW_ADVANCE, //
 							Boolean.toString(task.isWorkflowAdvanceable())) //
 					.withParameter(ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE, //
@@ -261,6 +263,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		@Override
 		public void visit(final org.cmdbuild.data.store.task.ReadEmailTask task) {
+			final String attributesAsString = defaultString(task.getParameter(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING));
 			target = ReadEmailTask.newInstance() //
 					.withId(task.getId()) //
 					.withDescription(task.getDescription()) //
@@ -276,7 +279,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withWorkflowRuleActive( //
 							Boolean.valueOf(task.getParameter(ReadEmail.RULE_WORKFLOW_ACTIVE))) //
 					.withWorkflowClassName(task.getParameter(ReadEmail.RULE_WORKFLOW_CLASS_NAME)) //
-					.withWorkflowFieldsMapping(task.getParameter(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING)) //
+					.withWorkflowAttributes( //
+							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
+									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+									.split(attributesAsString)) //
 					.withWorkflowAdvanceableStatus( //
 							Boolean.valueOf(task.getParameter(ReadEmail.RULE_WORKFLOW_ADVANCE))) //
 					.withWorkflowAttachmentsStatus( //
@@ -293,9 +299,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withActiveStatus(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
 					.withProcessClass(task.getParameter(StartWorkflow.CLASSNAME)) //
-					.withAttributes(isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
-							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-							.split(attributesAsString)) //
+					.withAttributes( //
+							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
+									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+									.split(attributesAsString)) //
 					.build();
 		}
 

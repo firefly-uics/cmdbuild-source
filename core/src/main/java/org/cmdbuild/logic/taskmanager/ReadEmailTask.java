@@ -1,11 +1,20 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.google.common.collect.Maps;
 
 public class ReadEmailTask implements ScheduledTask {
 
 	public static class Builder implements org.cmdbuild.common.Builder<ReadEmailTask> {
+
+		private static final Map<String, String> EMPTY_ATTRIBUTES = Collections.emptyMap();
 
 		private Long id;
 		private String description;
@@ -18,7 +27,7 @@ public class ReadEmailTask implements ScheduledTask {
 		private Boolean attachmentsRuleActive;
 		private Boolean workflowRuleActive;
 		private String workflowClassName;
-		private String workflowFieldsMapping;
+		private final Map<String, String> workflowAttributes = Maps.newHashMap();
 		private Boolean workflowAdvanceable;
 		private Boolean workflowAttachments;
 
@@ -96,8 +105,8 @@ public class ReadEmailTask implements ScheduledTask {
 			return this;
 		}
 
-		public Builder withWorkflowFieldsMapping(final String workflowFieldsMapping) {
-			this.workflowFieldsMapping = workflowFieldsMapping;
+		public Builder withWorkflowAttributes(final Map<String, String> workflowAttributes) {
+			this.workflowAttributes.putAll(defaultIfNull(workflowAttributes, EMPTY_ATTRIBUTES));
 			return this;
 		}
 
@@ -128,7 +137,7 @@ public class ReadEmailTask implements ScheduledTask {
 	private final boolean attachmentsRuleActive;
 	private final boolean workflowRuleActive;
 	private final String workflowClassName;
-	private final String workflowFieldsMapping;
+	private final Map<String, String> workflowAttributes;
 	private final boolean workflowAdvanceable;
 	private final boolean workflowAttachments;
 
@@ -144,7 +153,7 @@ public class ReadEmailTask implements ScheduledTask {
 		this.attachmentsRuleActive = builder.attachmentsRuleActive;
 		this.workflowRuleActive = builder.workflowRuleActive;
 		this.workflowClassName = builder.workflowClassName;
-		this.workflowFieldsMapping = builder.workflowFieldsMapping;
+		this.workflowAttributes = builder.workflowAttributes;
 		this.workflowAdvanceable = builder.workflowAdvanceable;
 		this.workflowAttachments = builder.workflowAttachments;
 	}
@@ -202,8 +211,8 @@ public class ReadEmailTask implements ScheduledTask {
 		return workflowClassName;
 	}
 
-	public String getWorkflowFieldsMapping() {
-		return workflowFieldsMapping;
+	public Map<String, String> getWorkflowAttributes() {
+		return workflowAttributes;
 	}
 
 	public boolean isWorkflowAdvanceable() {
