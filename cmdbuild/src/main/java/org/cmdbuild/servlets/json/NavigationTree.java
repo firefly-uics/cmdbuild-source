@@ -1,9 +1,7 @@
 package org.cmdbuild.servlets.json;
 
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 
 import java.util.ArrayList;
@@ -12,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.logic.NavigationTreeLogic;
-import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.model.domainTree.DomainTreeNode;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.DomainTreeNodeJSONMapper;
@@ -57,7 +54,6 @@ public class NavigationTree extends JSONBaseWithSpringContext {
 		return JsonResponse.success(jsonTrees);
 	}
 
-	@Admin
 	@JSONExported
 	public JsonResponse read(
 			@Parameter(NAME) final String name

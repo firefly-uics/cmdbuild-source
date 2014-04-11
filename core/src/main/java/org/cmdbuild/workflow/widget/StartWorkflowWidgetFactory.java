@@ -43,6 +43,7 @@ public class StartWorkflowWidgetFactory extends ValuePairWidgetFactory {
 			final Workflow widget = new Workflow();
 			widget.setFilterType(filterType);
 			widget.setFilter(filter);
+			widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 			return widget;
 		}
 		else {
@@ -51,6 +52,7 @@ public class StartWorkflowWidgetFactory extends ValuePairWidgetFactory {
 			final Workflow widget = new Workflow();
 			widget.setWorkflowName(workflowCode);
 			widget.setPreset(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
+			widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 			return widget;
 		}
 	}
