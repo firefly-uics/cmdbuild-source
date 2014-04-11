@@ -1,4 +1,4 @@
-package org.cmdbuild.logic;
+package org.cmdbuild.logic.dms;
 
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
 
@@ -35,7 +35,7 @@ import org.cmdbuild.exception.DmsException;
 
 import com.google.common.collect.Maps;
 
-public class DmsLogic implements Logic {
+public class DefaultDmsLogic implements org.cmdbuild.logic.dms.DmsLogic {
 
 	private final DmsService service;
 	private final DefinitionsFactory definitionsFactory;
@@ -44,7 +44,7 @@ public class DmsLogic implements Logic {
 	private final DmsConfiguration configuration;
 	private final DocumentCreatorFactory documentCreatorFactory;
 
-	public DmsLogic( //
+	public DefaultDmsLogic( //
 			final DmsService service, //
 			final PrivilegeContext privilegeContext, //
 			final CMDataView view, //
@@ -67,6 +67,7 @@ public class DmsLogic implements Logic {
 	 * @return the name of the lookup type that represents attachment
 	 *         categories.
 	 */
+	@Override
 	public String getCategoryLookupType() {
 		return service.getConfiguration().getCmdbuildCategory();
 	}
@@ -82,6 +83,7 @@ public class DmsLogic implements Logic {
 	 * 
 	 * @throws {@link DmsException} if cannot read definitions.
 	 */
+	@Override
 	public DocumentTypeDefinition getCategoryDefinition(final String category) {
 		try {
 			if (configuration.isEnabled()) {
@@ -104,6 +106,7 @@ public class DmsLogic implements Logic {
 	 * 
 	 * @throws DmsError
 	 */
+	@Override
 	public Iterable<DocumentTypeDefinition> getCategoryDefinitions() throws DmsError {
 		return service.getTypeDefinitions();
 	}
@@ -118,6 +121,7 @@ public class DmsLogic implements Logic {
 	 * 
 	 * @throws DmsError
 	 */
+	@Override
 	public Map<String, Map<String, String>> getAutoCompletionRulesByClass(final String classname) throws DmsException {
 		try {
 			final Map<String, Map<String, String>> rulesByClassname = Maps.newHashMap();
@@ -142,6 +146,7 @@ public class DmsLogic implements Logic {
 		}
 	}
 
+	@Override
 	public List<StoredDocument> search(final String className, final Long cardId) {
 		try {
 			final DocumentSearch document = createDocumentFactory(className) //
@@ -154,12 +159,13 @@ public class DmsLogic implements Logic {
 		}
 	}
 
+	@Override
 	public void upload(final String author, final String className, final Long cardId, final InputStream inputStream,
 			final String fileName, final String category, final String description,
 			final Iterable<MetadataGroup> metadataGroups) throws IOException, CMDBException {
 		final StorableDocument document = createDocumentFactory(className) //
-				.createStorableDocument(author, className, cardId.toString(), inputStream, fileName, category, description,
-						metadataGroups);
+				.createStorableDocument(author, className, cardId.toString(), inputStream, fileName, category,
+						description, metadataGroups);
 		assureWritePrivilege(className);
 		try {
 			service.upload(document);
@@ -171,6 +177,7 @@ public class DmsLogic implements Logic {
 		}
 	}
 
+	@Override
 	public DataHandler download(final String className, final Long cardId, final String fileName) {
 		final DocumentDownload document = createDocumentFactory(className) //
 				.createDocumentDownload(className, cardId.toString(), fileName);
@@ -186,6 +193,7 @@ public class DmsLogic implements Logic {
 		}
 	}
 
+	@Override
 	public void delete(final String className, final Long cardId, final String fileName) throws DmsException {
 		final DocumentDelete document = createDocumentFactory(className) //
 				.createDocumentDelete(className, cardId.toString(), fileName);
@@ -200,6 +208,7 @@ public class DmsLogic implements Logic {
 		}
 	}
 
+	@Override
 	public void updateDescriptionAndMetadata(final String className, final Long cardId, final String filename,
 			final String description, final Iterable<MetadataGroup> metadataGroups) {
 		final DocumentUpdate document = createDocumentFactory(className) //

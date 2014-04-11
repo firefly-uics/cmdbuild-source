@@ -135,9 +135,11 @@ public class TaskManager {
 		return new ReadEmailTaskJobFactory( //
 				email.emailAccountStore(), //
 				configurableEmailServiceFactory, //
-				scheduler.answerToExistingFactory(), //
-				scheduler.downloadAttachmentsFactory(), //
-				scheduler.startWorkflowFactory());
+				email.subjectHandler(), //
+				email.emailPersistence(), //
+				workflow.systemWorkflowLogicBuilder() //
+						.build(), //
+				dms.dmsLogic());
 	}
 
 	@Bean

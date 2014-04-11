@@ -39,6 +39,10 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void readEmailTaskSuccessfullyConvertedToStore() throws Exception {
 		// given
+		final Map<String, String> attributes = Maps.newHashMap();
+		attributes.put("foo", "bar");
+		attributes.put("bar", "baz");
+		attributes.put("baz", "foo");
 		final ReadEmailTask source = ReadEmailTask.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
@@ -51,7 +55,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withAttachmentsRuleActive(true) //
 				.withWorkflowRuleActive(true) //
 				.withWorkflowClassName("workflow class name") //
-				.withWorkflowFieldsMapping("workflow fields mapping") //
+				.withWorkflowAttributes(attributes) //
 				.withWorkflowAdvanceableStatus(true) //
 				.withWorkflowAttachmentsStatus(true) //
 				.build();
@@ -74,7 +78,9 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(ReadEmail.RULE_ATTACHMENTS_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.RULE_WORKFLOW_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.RULE_WORKFLOW_CLASS_NAME, "workflow class name"));
-		assertThat(parameters, hasEntry(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING, "workflow fields mapping"));
+		assertThat(parameters, hasEntry(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING, Joiner.on(LINE_SEPARATOR) //
+				.withKeyValueSeparator("=") //
+				.join(attributes)));
 		assertThat(parameters, hasEntry(ReadEmail.RULE_WORKFLOW_ADVANCE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE, "true"));
 	}
@@ -94,7 +100,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(ReadEmail.RULE_ATTACHMENTS_ACTIVE, "true") //
 				.withParameter(ReadEmail.RULE_WORKFLOW_ACTIVE, "true") //
 				.withParameter(ReadEmail.RULE_WORKFLOW_CLASS_NAME, "workflow class name") //
-				.withParameter(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING, "workflow fields mapping") //
+				.withParameter(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING, "foo=bar\nbar=baz\nbaz=foo") //
 				.withParameter(ReadEmail.RULE_WORKFLOW_ADVANCE, "true") //
 				.withParameter(ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE, "true") //
 				.build();
@@ -116,7 +122,11 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.isAttachmentsRuleActive(), equalTo(true));
 		assertThat(converted.isWorkflowRuleActive(), equalTo(true));
 		assertThat(converted.getWorkflowClassName(), equalTo("workflow class name"));
-		assertThat(converted.getWorkflowFieldsMapping(), equalTo("workflow fields mapping"));
+		final Map<String, String> attributes = Maps.newHashMap();
+		attributes.put("foo", "bar");
+		attributes.put("bar", "baz");
+		attributes.put("baz", "foo");
+		assertThat(converted.getWorkflowAttributes(), equalTo(attributes));
 		assertThat(converted.isWorkflowAdvanceable(), equalTo(true));
 		assertThat(converted.isWorkflowAttachments(), equalTo(true));
 	}

@@ -10,7 +10,7 @@ import javax.activation.DataHandler;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
-import org.cmdbuild.logic.DmsLogic;
+import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.services.soap.types.Attachment;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
