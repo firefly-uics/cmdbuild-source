@@ -46,6 +46,7 @@ public class ComunicationConstants {
 			DISABLED_ATTRIBUTES = "disabledAttributes", //
 			DETAIL_CARD_ID = "detailCardId", //
 			DETAIL_CLASS_NAME = "detailClassName", //
+			DMS_ATTACHMENTS_LOOKUP = "alfrescoLookupType", //
 			DOMAIN = "domain", //
 			DOMAINS = "domains", //
 			DOMAIN_CARDINALITY = "cardinality", //
@@ -65,9 +66,11 @@ public class ComunicationConstants {
 			ENABLED = "enabled", //
 			ENTRY_TYPE = "entryType", //
 			EDITOR_TYPE = "editorType", //
+			EMAIL_ACCOUNT = "emailAccount", //
+			EMAIL_TEMPLATE = "emailTemplate", //
 			ENABLE_MOVE_REJECTED_NOT_MATCHING = "enableMoveRejectedNotMatching", //
 			EXPORT = "export", //
-			EXPORT_MAPPING = "ExportMapping", //			
+			EXPORT_MAPPING = "ExportMapping", //
 			EXTENSION = "extension", //
 			FIELD_MODE = "fieldmode", //
 			FILE = "file", //
@@ -189,6 +192,7 @@ public class ComunicationConstants {
 			USER_STOPPABLE = "userstoppable", //
 			USER_TYPE = "user_type", //
 			TASK_READ_EMAIL = "email", //
+			TASK_READ_EMAIL_WORKFLOW_ATTACHMENTS_CATEGORY = "workflow_attachments_category", //
 			TASK_START_WORKFLOW = "workflow", //
 			TASK_SYNCHRONOUS_EVENT = "synchronousEvent", //
 			TEMPORARY_ID = "temporaryId", //
