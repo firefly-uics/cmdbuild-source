@@ -30,7 +30,6 @@
 			var c = this.callParent(arguments);
 
 			c.push({
-				header: '&nbsp',
 				width: 30,
 				fixed: true,
 				sortable: false,

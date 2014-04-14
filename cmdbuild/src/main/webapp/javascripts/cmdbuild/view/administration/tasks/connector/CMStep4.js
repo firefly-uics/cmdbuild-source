@@ -106,7 +106,7 @@
 					},
 					{
 						xtype: 'actioncolumn',
-						width: 50,
+						width: 30,
 						align: 'center',
 						sortable: false,
 						hideable: false,

@@ -18,6 +18,9 @@
 		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onBeforeEdit':
+					return this.onBeforeEdit(param.fieldName, param.rowData);
+
 				case 'onSelectClassCombo':
 					return this.onSelectClassCombo(param);
 
@@ -32,7 +35,63 @@
 		},
 
 		/**
-		 * To setup attribute combo store
+		 * Function to update rows stores on beforeEdit event
+		 *
+		 * @param (String) fieldName
+		 * @param (Object) rowData
+		 */
+		onBeforeEdit: function(fieldName, rowData) {
+			switch (fieldName) {
+				case CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE: {
+					if (typeof rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME] != 'undefined') {
+						this.onSelectClassCombo(
+							_CMCache.getEntryTypeByName(
+								rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME]
+							).get(CMDBuild.ServiceProxy.parameter.ID)
+						);
+					} else {
+						var columnModel = this.view.attributeLevelMappingGrid.getView().getHeaderCt().gridDataColumns[3];
+						var columnEditor = columnModel.getEditor();
+
+						if (!columnEditor.disabled) {
+							columnModel.setEditor({
+								xtype: 'combo',
+								displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+								valueField: CMDBuild.ServiceProxy.parameter.NAME,
+								forceSelection: true,
+								editable: false,
+								allowBlank: false,
+								disabled: true
+							});
+						}
+					}
+				} break;
+
+				case CMDBuild.ServiceProxy.parameter.VIEW_NAME: {
+					if (typeof rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME] != 'undefined') {
+						this.onSelectViewCombo(rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME]);
+					} else {
+						var columnModel = this.view.attributeLevelMappingGrid.getView().getHeaderCt().gridDataColumns[1];
+						var columnEditor = columnModel.getEditor();
+
+						if (!columnEditor.disabled) {
+							columnModel.setEditor({
+								xtype: 'combo',
+								displayField: CMDBuild.ServiceProxy.parameter.NAME,
+								valueField: CMDBuild.ServiceProxy.parameter.VALUE,
+								forceSelection: true,
+								editable: false,
+								allowBlank: false,
+								disabled: true
+							});
+						}
+					}
+				} break;
+			}
+		},
+
+		/**
+		 * To setup class attribute combo store
 		 *
 		 * @param (Int) classId
 		 */
@@ -60,7 +119,12 @@
 			});
 		},
 
-		onSelectViewCombo: function(viewValue) {
+		/**
+		 * To setup view attribute combo store
+		 *
+		 * @param (String) viewName
+		 */
+		onSelectViewCombo: function(viewName) {
 			var columnModel = this.view.attributeLevelMappingGrid.getView().getHeaderCt().gridDataColumns[1];
 			var attributesListStore = [
 				{ 'value': 'Function1', 'name': 'Function 1' },
@@ -140,7 +204,8 @@
 							valueField: CMDBuild.ServiceProxy.parameter.VALUE,
 							forceSelection: true,
 							editable: false,
-							allowBlank: false
+							allowBlank: false,
+							disabled: true
 						},
 						flex: 1
 					},
@@ -154,7 +219,7 @@
 							forceSelection: true,
 							editable: false,
 							allowBlank: false,
-							store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
+							store: _CMCache.getClassesStore(),
 							queryMode: 'local',
 
 							listeners: {
@@ -166,15 +231,16 @@
 						flex: 1
 					},
 					{
-						header: 'tr.classAttributeName',
-						dataIndex: CMDBuild.ServiceProxy.parameter.ATTRIBUTES,
+						header: 'tr.classAttribute',
+						dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE,
 						editor: {
 							xtype: 'combo',
-							valueField: CMDBuild.ServiceProxy.parameter.NAME,
 							displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+							valueField: CMDBuild.ServiceProxy.parameter.NAME,
 							forceSelection: true,
 							editable: false,
-							allowBlank: false
+							allowBlank: false,
+							disabled: true
 						},
 						flex: 1
 					},
@@ -205,7 +271,7 @@
 					},
 					{
 						xtype: 'actioncolumn',
-						width: 50,
+						width: 30,
 						align: 'center',
 						sortable: false,
 						hideable: false,
@@ -230,7 +296,16 @@
 				}),
 
 				plugins: Ext.create('Ext.grid.plugin.CellEditing', {
-					clicksToEdit: 1
+					clicksToEdit: 1,
+
+					listeners: {
+						beforeedit: function(editor, e, eOpts) {
+							me.delegate.cmOn('onBeforeEdit', {
+								fieldName: e.field,
+								rowData: e.record.data
+							});
+						}
+					}
 				}),
 
 				tbar: [
