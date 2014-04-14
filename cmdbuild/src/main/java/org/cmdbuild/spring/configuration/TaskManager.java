@@ -13,8 +13,6 @@ import org.cmdbuild.data.store.task.TaskParameter;
 import org.cmdbuild.data.store.task.TaskParameterConverter;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.dms.DmsConfiguration;
-import org.cmdbuild.logic.scheduler.DefaultSchedulerLogic;
-import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter;
@@ -34,13 +32,9 @@ import org.cmdbuild.logic.taskmanager.StartWorkflowTaskJobFactory;
 import org.cmdbuild.logic.taskmanager.SynchronousEventFacade;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TransactionalTaskManagerLogic;
-import org.cmdbuild.scheduler.SchedulerExeptionFactory;
-import org.cmdbuild.scheduler.SchedulerService;
-import org.cmdbuild.scheduler.quartz.QuartzSchedulerService;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
 import org.cmdbuild.services.event.DefaultObserverCollector;
 import org.cmdbuild.services.event.ObserverCollector;
-import org.cmdbuild.services.scheduler.DefaultSchedulerExeptionFactory;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -67,7 +61,7 @@ public class TaskManager {
 	private Email email;
 
 	@Autowired
-	private EmailReceiving emailReceiving;
+	private Scheduler scheduler;
 
 	@Autowired
 	private DBDataView systemDataView;
@@ -90,7 +84,7 @@ public class TaskManager {
 
 	@Bean
 	protected SchedulerFacade defaultSchedulerTaskFacade() {
-		return new DefaultSchedulerFacade(quartzSchedulerService(), defaultJobFactory());
+		return new DefaultSchedulerFacade(scheduler.defaultSchedulerService(), defaultLogicAndSchedulerConverter());
 	}
 
 	@Bean
@@ -101,21 +95,6 @@ public class TaskManager {
 	@Bean
 	protected LogicAndStoreConverter taskConverter() {
 		return new DefaultLogicAndStoreConverter();
-	}
-
-	@Bean
-	protected SchedulerExeptionFactory schedulerExeptionFactory() {
-		return new DefaultSchedulerExeptionFactory();
-	}
-
-	@Bean
-	protected SchedulerService quartzSchedulerService() {
-		return new QuartzSchedulerService(schedulerExeptionFactory());
-	}
-
-	@Bean
-	public SchedulerLogic defaultSchedulerLogic() {
-		return new DefaultSchedulerLogic(quartzSchedulerService());
 	}
 
 	@Bean
@@ -144,7 +123,7 @@ public class TaskManager {
 	}
 
 	@Bean
-	protected LogicAndSchedulerConverter defaultJobFactory() {
+	protected LogicAndSchedulerConverter defaultLogicAndSchedulerConverter() {
 		final DefaultLogicAndSchedulerConverter converter = new DefaultLogicAndSchedulerConverter();
 		converter.register(ReadEmailTask.class, readEmailTaskJobFactory());
 		converter.register(StartWorkflowTask.class, startWorkflowTaskJobFactory());
@@ -156,9 +135,11 @@ public class TaskManager {
 		return new ReadEmailTaskJobFactory( //
 				email.emailAccountStore(), //
 				configurableEmailServiceFactory, //
-				emailReceiving.answerToExistingFactory(), //
-				emailReceiving.downloadAttachmentsFactory(), //
-				emailReceiving.startWorkflowFactory());
+				email.subjectHandler(), //
+				email.emailPersistence(), //
+				workflow.systemWorkflowLogicBuilder() //
+						.build(), //
+				dms.dmsLogic());
 	}
 
 	@Bean

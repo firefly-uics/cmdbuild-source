@@ -1,4 +1,4 @@
-package org.cmdbuild.services.event;
+package org.cmdbuild.services.scheduler;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -32,8 +32,8 @@ public class SafeCommand extends ForwardingCommand {
 					}
 
 				});
-		final Command proxiedCommand = Command.class.cast(proxy);
-		return new SafeCommand(proxiedCommand);
+		final Command proxiedAction = Command.class.cast(proxy);
+		return new SafeCommand(proxiedAction);
 	}
 
 	private SafeCommand(final Command delegate) {

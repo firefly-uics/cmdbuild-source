@@ -39,6 +39,10 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void readEmailTaskSuccessfullyConvertedToStore() throws Exception {
 		// given
+		final Map<String, String> attributes = Maps.newHashMap();
+		attributes.put("foo", "bar");
+		attributes.put("bar", "baz");
+		attributes.put("baz", "foo");
 		final ReadEmailTask source = ReadEmailTask.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
@@ -48,12 +52,14 @@ public class DefaultLogicAndStoreConverterTest {
 				.withRegexFromFilter("regex from filter") //
 				.withRegexSubjectFilter("regex subject filter") //
 				.withNotificationStatus(true) //
-				.withAttachmentsRuleActive(true) //
-				.withWorkflowRuleActive(true) //
+				.withAttachmentsActive(true) //
+				.withAttachmentsCategory("category") //
+				.withWorkflowActive(true) //
 				.withWorkflowClassName("workflow class name") //
-				.withWorkflowFieldsMapping("workflow fields mapping") //
+				.withWorkflowAttributes(attributes) //
 				.withWorkflowAdvanceableStatus(true) //
 				.withWorkflowAttachmentsStatus(true) //
+				.withWorkflowAttachmentsCategory("workflow's attachments category") //
 				.build();
 
 		// when
@@ -70,13 +76,18 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(ReadEmail.ACCOUNT_NAME, "email account"));
 		assertThat(parameters, hasEntry(ReadEmail.FILTER_FROM_REGEX, "regex from filter"));
 		assertThat(parameters, hasEntry(ReadEmail.FILTER_SUBJECT_REGEX, "regex subject filter"));
-		assertThat(parameters, hasEntry(ReadEmail.RULE_NOTIFICATION_ACTIVE, "true"));
-		assertThat(parameters, hasEntry(ReadEmail.RULE_ATTACHMENTS_ACTIVE, "true"));
-		assertThat(parameters, hasEntry(ReadEmail.RULE_WORKFLOW_ACTIVE, "true"));
-		assertThat(parameters, hasEntry(ReadEmail.RULE_WORKFLOW_CLASS_NAME, "workflow class name"));
-		assertThat(parameters, hasEntry(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING, "workflow fields mapping"));
-		assertThat(parameters, hasEntry(ReadEmail.RULE_WORKFLOW_ADVANCE, "true"));
-		assertThat(parameters, hasEntry(ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE, "true"));
+		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_ACTIVE, "true"));
+		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_ACTIVE, "true"));
+		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_CATEGORY, "category"));
+		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ACTIVE, "true"));
+		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_CLASS_NAME, "workflow class name"));
+		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_FIELDS_MAPPING, Joiner.on(LINE_SEPARATOR) //
+				.withKeyValueSeparator("=") //
+				.join(attributes)));
+		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ADVANCE, "true"));
+		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE, "true"));
+		assertThat(parameters,
+				hasEntry(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY, "workflow's attachments category"));
 	}
 
 	@Test
@@ -90,13 +101,15 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(ReadEmail.ACCOUNT_NAME, "email account") //
 				.withParameter(ReadEmail.FILTER_FROM_REGEX, "regex from filter") //
 				.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, "regex subject filter") //
-				.withParameter(ReadEmail.RULE_NOTIFICATION_ACTIVE, "true") //
-				.withParameter(ReadEmail.RULE_ATTACHMENTS_ACTIVE, "true") //
-				.withParameter(ReadEmail.RULE_WORKFLOW_ACTIVE, "true") //
-				.withParameter(ReadEmail.RULE_WORKFLOW_CLASS_NAME, "workflow class name") //
-				.withParameter(ReadEmail.RULE_WORKFLOW_FIELDS_MAPPING, "workflow fields mapping") //
-				.withParameter(ReadEmail.RULE_WORKFLOW_ADVANCE, "true") //
-				.withParameter(ReadEmail.RULE_WORKFLOW_ATTACHMENTS_SAVE, "true") //
+				.withParameter(ReadEmail.NOTIFICATION_ACTIVE, "true") //
+				.withParameter(ReadEmail.ATTACHMENTS_ACTIVE, "true") //
+				.withParameter(ReadEmail.ATTACHMENTS_CATEGORY, "category") //
+				.withParameter(ReadEmail.WORKFLOW_ACTIVE, "true") //
+				.withParameter(ReadEmail.WORKFLOW_CLASS_NAME, "workflow class name") //
+				.withParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING, "foo=bar\nbar=baz\nbaz=foo") //
+				.withParameter(ReadEmail.WORKFLOW_ADVANCE, "true") //
+				.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE, "true") //
+				.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY, "workflow's attachments category") //
 				.build();
 
 		// when
@@ -110,15 +123,21 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.isActive(), equalTo(true));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
 		assertThat(converted.getEmailAccount(), equalTo("email account"));
-		assertThat(converted.isNotificationRuleActive(), equalTo(true));
+		assertThat(converted.isNotificationActive(), equalTo(true));
 		assertThat(converted.getRegexFromFilter(), equalTo("regex from filter"));
 		assertThat(converted.getRegexSubjectFilter(), equalTo("regex subject filter"));
-		assertThat(converted.isAttachmentsRuleActive(), equalTo(true));
-		assertThat(converted.isWorkflowRuleActive(), equalTo(true));
+		assertThat(converted.isAttachmentsActive(), equalTo(true));
+		assertThat(converted.getAttachmentsCategory(), equalTo("category"));
+		assertThat(converted.isWorkflowActive(), equalTo(true));
 		assertThat(converted.getWorkflowClassName(), equalTo("workflow class name"));
-		assertThat(converted.getWorkflowFieldsMapping(), equalTo("workflow fields mapping"));
+		final Map<String, String> attributes = Maps.newHashMap();
+		attributes.put("foo", "bar");
+		attributes.put("bar", "baz");
+		attributes.put("baz", "foo");
+		assertThat(converted.getWorkflowAttributes(), equalTo(attributes));
 		assertThat(converted.isWorkflowAdvanceable(), equalTo(true));
 		assertThat(converted.isWorkflowAttachments(), equalTo(true));
+		assertThat(converted.getWorkflowAttachmentsCategory(), equalTo("workflow's attachments category"));
 	}
 
 	@Test

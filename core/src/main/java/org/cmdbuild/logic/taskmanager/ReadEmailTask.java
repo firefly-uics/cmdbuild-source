@@ -1,11 +1,21 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
+import java.util.Collections;
+import java.util.Map;
+
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.google.common.collect.Maps;
 
 public class ReadEmailTask implements ScheduledTask {
 
 	public static class Builder implements org.cmdbuild.common.Builder<ReadEmailTask> {
+
+		private static final Map<String, String> EMPTY_ATTRIBUTES = Collections.emptyMap();
 
 		private Long id;
 		private String description;
@@ -16,11 +26,13 @@ public class ReadEmailTask implements ScheduledTask {
 		private String regexSubjectFilter;
 		private Boolean notificationRuleActive;
 		private Boolean attachmentsRuleActive;
+		private String attachmentsRuleCategory;
 		private Boolean workflowRuleActive;
 		private String workflowClassName;
-		private String workflowFieldsMapping;
+		private final Map<String, String> workflowAttributes = Maps.newHashMap();
 		private Boolean workflowAdvanceable;
 		private Boolean workflowAttachments;
+		private String workflowAttachmentsCategory;
 
 		private Builder() {
 			// use factory method
@@ -34,11 +46,22 @@ public class ReadEmailTask implements ScheduledTask {
 
 		private void validate() {
 			active = (active == null) ? false : active;
+
 			notificationRuleActive = (notificationRuleActive == null) ? false : notificationRuleActive;
+
 			attachmentsRuleActive = (attachmentsRuleActive == null) ? false : attachmentsRuleActive;
+			if (attachmentsRuleActive) {
+				Validate.notNull(attachmentsRuleCategory, "missing attachments category");
+			}
 			workflowRuleActive = (workflowRuleActive == null) ? false : workflowRuleActive;
 			workflowAdvanceable = (workflowAdvanceable == null) ? false : workflowAdvanceable;
 			workflowAttachments = (workflowAttachments == null) ? false : workflowAttachments;
+			if (workflowRuleActive) {
+				Validate.notNull(workflowClassName, "missing workflow's class name");
+				if (workflowAttachments) {
+					Validate.notNull(workflowAttachmentsCategory, "missing workflow's attachments category");
+				}
+			}
 		}
 
 		public Builder withId(final Long id) {
@@ -81,12 +104,17 @@ public class ReadEmailTask implements ScheduledTask {
 			return this;
 		}
 
-		public Builder withAttachmentsRuleActive(final Boolean attachmentsRuleActive) {
+		public Builder withAttachmentsActive(final Boolean attachmentsRuleActive) {
 			this.attachmentsRuleActive = attachmentsRuleActive;
 			return this;
 		}
 
-		public Builder withWorkflowRuleActive(final Boolean workflowRuleActive) {
+		public Builder withAttachmentsCategory(final String category) {
+			this.attachmentsRuleCategory = category;
+			return this;
+		}
+
+		public Builder withWorkflowActive(final Boolean workflowRuleActive) {
 			this.workflowRuleActive = workflowRuleActive;
 			return this;
 		}
@@ -96,8 +124,8 @@ public class ReadEmailTask implements ScheduledTask {
 			return this;
 		}
 
-		public Builder withWorkflowFieldsMapping(final String workflowFieldsMapping) {
-			this.workflowFieldsMapping = workflowFieldsMapping;
+		public Builder withWorkflowAttributes(final Map<String, String> workflowAttributes) {
+			this.workflowAttributes.putAll(defaultIfNull(workflowAttributes, EMPTY_ATTRIBUTES));
 			return this;
 		}
 
@@ -108,6 +136,11 @@ public class ReadEmailTask implements ScheduledTask {
 
 		public Builder withWorkflowAttachmentsStatus(final Boolean workflowAttachments) {
 			this.workflowAttachments = workflowAttachments;
+			return this;
+		}
+
+		public Builder withWorkflowAttachmentsCategory(final String workflowAttachmentsCategory) {
+			this.workflowAttachmentsCategory = workflowAttachmentsCategory;
 			return this;
 		}
 
@@ -124,13 +157,15 @@ public class ReadEmailTask implements ScheduledTask {
 	private final String emailAccount;
 	private final String regexFromFilter;
 	private final String regexSubjectFilter;
-	private final boolean notificationRuleActive;
-	private final boolean attachmentsRuleActive;
-	private final boolean workflowRuleActive;
+	private final boolean notificationActive;
+	private final boolean attachmentsActive;
+	private final String attachmentsCategory;
+	private final boolean workflowActive;
 	private final String workflowClassName;
-	private final String workflowFieldsMapping;
+	private final Map<String, String> workflowAttributes;
 	private final boolean workflowAdvanceable;
 	private final boolean workflowAttachments;
+	private final String workflowAttachmentsCategory;
 
 	private ReadEmailTask(final Builder builder) {
 		this.id = builder.id;
@@ -140,13 +175,15 @@ public class ReadEmailTask implements ScheduledTask {
 		this.emailAccount = builder.emailAccount;
 		this.regexFromFilter = builder.regexFromFilter;
 		this.regexSubjectFilter = builder.regexSubjectFilter;
-		this.notificationRuleActive = builder.notificationRuleActive;
-		this.attachmentsRuleActive = builder.attachmentsRuleActive;
-		this.workflowRuleActive = builder.workflowRuleActive;
+		this.notificationActive = builder.notificationRuleActive;
+		this.attachmentsActive = builder.attachmentsRuleActive;
+		this.attachmentsCategory = builder.attachmentsRuleCategory;
+		this.workflowActive = builder.workflowRuleActive;
 		this.workflowClassName = builder.workflowClassName;
-		this.workflowFieldsMapping = builder.workflowFieldsMapping;
+		this.workflowAttributes = builder.workflowAttributes;
 		this.workflowAdvanceable = builder.workflowAdvanceable;
 		this.workflowAttachments = builder.workflowAttachments;
+		this.workflowAttachmentsCategory = builder.workflowAttachmentsCategory;
 	}
 
 	@Override
@@ -178,8 +215,8 @@ public class ReadEmailTask implements ScheduledTask {
 		return emailAccount;
 	}
 
-	public boolean isNotificationRuleActive() {
-		return notificationRuleActive;
+	public boolean isNotificationActive() {
+		return notificationActive;
 	}
 
 	public String getRegexFromFilter() {
@@ -190,20 +227,24 @@ public class ReadEmailTask implements ScheduledTask {
 		return regexSubjectFilter;
 	}
 
-	public boolean isAttachmentsRuleActive() {
-		return attachmentsRuleActive;
+	public boolean isAttachmentsActive() {
+		return attachmentsActive;
 	}
 
-	public boolean isWorkflowRuleActive() {
-		return workflowRuleActive;
+	public String getAttachmentsCategory() {
+		return attachmentsCategory;
+	}
+
+	public boolean isWorkflowActive() {
+		return workflowActive;
 	}
 
 	public String getWorkflowClassName() {
 		return workflowClassName;
 	}
 
-	public String getWorkflowFieldsMapping() {
-		return workflowFieldsMapping;
+	public Map<String, String> getWorkflowAttributes() {
+		return workflowAttributes;
 	}
 
 	public boolean isWorkflowAdvanceable() {
@@ -212,6 +253,10 @@ public class ReadEmailTask implements ScheduledTask {
 
 	public boolean isWorkflowAttachments() {
 		return workflowAttachments;
+	}
+
+	public String getWorkflowAttachmentsCategory() {
+		return workflowAttachmentsCategory;
 	}
 
 	@Override
