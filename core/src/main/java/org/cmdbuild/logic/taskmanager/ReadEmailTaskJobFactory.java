@@ -1,66 +1,301 @@
 package org.cmdbuild.logic.taskmanager;
 
-import java.util.List;
+import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.isEmpty;
+import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import javax.activation.DataHandler;
+
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
+import org.cmdbuild.common.template.TemplateResolver;
+import org.cmdbuild.common.template.TemplateResolverImpl;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
-import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.logic.email.EmailReceivingLogic;
-import org.cmdbuild.logic.email.rules.AnswerToExistingMailFactory;
-import org.cmdbuild.logic.email.rules.DownloadAttachmentsFactory;
-import org.cmdbuild.logic.email.rules.PropertiesMapper;
-import org.cmdbuild.logic.email.rules.StartWorkflow.Configuration;
-import org.cmdbuild.logic.email.rules.StartWorkflow.Mapper;
-import org.cmdbuild.logic.email.rules.StartWorkflowFactory;
-import org.cmdbuild.logic.scheduler.RuleWithAdditionalCondition;
+import org.cmdbuild.data.store.email.EmailTemplate;
+import org.cmdbuild.logger.Log;
+import org.cmdbuild.logic.dms.DmsLogic;
+import org.cmdbuild.logic.dms.StoreDocument;
+import org.cmdbuild.logic.dms.StoreDocument.Document;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter.AbstractJobFactory;
+import org.cmdbuild.logic.workflow.StartProcess;
+import org.cmdbuild.logic.workflow.StartProcess.Hook;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
-import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.model.email.EmailConstants;
 import org.cmdbuild.scheduler.Job;
+import org.cmdbuild.services.email.CollectingEmailCallbackHandler;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
 import org.cmdbuild.services.email.EmailAccountConfiguration;
-import org.cmdbuild.services.email.EmailCallbackHandler.Applicable;
-import org.cmdbuild.services.email.EmailCallbackHandler.Rule;
+import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.services.email.EmailService;
-import org.cmdbuild.services.scheduler.EmailServiceJob;
+import org.cmdbuild.services.email.SubjectHandler;
+import org.cmdbuild.services.email.SubjectHandler.ParsedSubject;
+import org.cmdbuild.services.scheduler.Command;
+import org.cmdbuild.services.scheduler.DefaultJob;
+import org.cmdbuild.services.scheduler.SafeCommand;
+import org.cmdbuild.workflow.user.UserProcessInstance;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
 public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
-	private static final Notifier LOGGER_NOTIFIER = new Notifier() {
+	private static interface Action {
+
+		void execute(Email email);
+
+	}
+
+	private static abstract class ForwardingAction implements Action {
+
+		private final Action delegate;
+
+		protected ForwardingAction(final Action delegate) {
+			this.delegate = delegate;
+		}
 
 		@Override
-		public void warn(final CMDBException e) {
-			logger.warn(marker, "error while receiving email", e);
+		public void execute(final Email email) {
+			delegate.execute(email);
+		}
+
+	}
+
+	private static class SafeAction extends ForwardingAction {
+
+		public static SafeAction of(final Action delegate) {
+			final Object proxy = Proxy.newProxyInstance( //
+					SafeAction.class.getClassLoader(), //
+					new Class<?>[] { Action.class }, //
+					new InvocationHandler() {
+
+						@Override
+						public Object invoke(final Object proxy, final Method method, final Object[] args)
+								throws Throwable {
+							try {
+								return method.invoke(delegate, args);
+							} catch (final Throwable e) {
+								logger.warn(marker, "error calling method '{}'", method);
+								logger.warn(marker, "\tcaused by", e);
+								return null;
+							}
+						}
+
+					});
+			final Action proxiedAction = Action.class.cast(proxy);
+			return new SafeAction(proxiedAction);
+		}
+
+		private SafeAction(final Action delegate) {
+			super(delegate);
+		}
+
+	}
+
+	private static class ReadEmail implements Command {
+
+		private static final Logger logger = Log.EMAIL;
+		private static Marker marker = MarkerFactory.getMarker(ReadEmail.class.getName());
+
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<ReadEmail> {
+
+			private EmailService emailService;
+			private Predicate<Email> predicate;
+			private final Collection<Triple<Predicate<Email>, Function<Email, Email>, Action>> triples = Lists
+					.newArrayList();
+
+			private Builder() {
+				// use factory method
+			}
+
+			@Override
+			public ReadEmail build() {
+				validate();
+				return new ReadEmail(this);
+			}
+
+			private void validate() {
+				Validate.notNull(emailService, "invalid email service");
+				Validate.notNull(predicate, "invalid predicate");
+			}
+
+			public Builder withEmailService(final EmailService emailService) {
+				this.emailService = emailService;
+				return this;
+			}
+
+			public Builder withPredicate(final Predicate<Email> predicate) {
+				this.predicate = predicate;
+				return this;
+			}
+
+			public Builder withAction(final Predicate<Email> predicate, final Function<Email, Email> function,
+					final Action action) {
+				this.triples.add(ImmutableTriple.of(predicate, function, action));
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private final EmailService service;
+		private final Predicate<Email> predicate;
+		private final Iterable<Triple<Predicate<Email>, Function<Email, Email>, Action>> triples;
+
+		private ReadEmail(final Builder builder) {
+			this.service = builder.emailService;
+			this.predicate = builder.predicate;
+			this.triples = builder.triples;
+		}
+
+		@Override
+		public void execute() {
+			logger.info(marker, "starting synchronization job");
+			final CollectingEmailCallbackHandler callbackHandler = CollectingEmailCallbackHandler.newInstance() //
+					.withPredicate(predicate) //
+					.build();
+			service.receive(callbackHandler);
+
+			logger.info(marker, "executing actions");
+			for (final Email email : callbackHandler.getEmails()) {
+				for (final Triple<Predicate<Email>, Function<Email, Email>, Action> triple : triples) {
+					if (triple.getLeft().apply(email)) {
+						final Email adapted = triple.getMiddle().apply(email);
+						service.save(adapted);
+						triple.getRight().execute(adapted);
+					}
+				}
+			}
+			logger.info(marker, "finishing synchronization job");
+		}
+
+	}
+
+	private static enum TaskPredicate implements Predicate<ReadEmailTask> {
+
+		SEND_NOTIFICATION() {
+
+			@Override
+			public boolean apply(final ReadEmailTask input) {
+				return input.isNotificationActive();
+			}
+
+		}, //
+		STORE_ATTACHMENTS() {
+
+			@Override
+			public boolean apply(final ReadEmailTask input) {
+				return input.isAttachmentsActive();
+			}
+
+		}, //
+		START_PROCESS() {
+
+			@Override
+			public boolean apply(final ReadEmailTask input) {
+				return input.isWorkflowActive();
+			}
+
+		}, //
+		;
+
+	}
+
+	private static final Predicate<Email> ALWAYS = Predicates.alwaysTrue();
+
+	private static final Predicate<Email> HAS_ATTACHMENTS = new Predicate<Email>() {
+
+		@Override
+		public boolean apply(final Email email) {
+			return !isEmpty(email.getAttachments());
+		}
+
+	};
+
+	private static final Function<Email, Email> NO_ADAPTATIONS = new Function<Email, Email>() {
+
+		@Override
+		public Email apply(final Email email) {
+			return email;
 		}
 
 	};
 
 	private final Store<EmailAccount> emailAccountStore;
 	private final ConfigurableEmailServiceFactory emailServiceFactory;
-	private final AnswerToExistingMailFactory answerToExistingMailFactory;
-	private final DownloadAttachmentsFactory downloadAttachmentsFactory;
-	private final StartWorkflowFactory startWorkflowFactory;
+	private final SubjectHandler subjectHandler;
+	private final EmailPersistence emailPersistence;
+	private final WorkflowLogic workflowLogic;
+	private final DmsLogic dmsLogic;
 
 	public ReadEmailTaskJobFactory( //
 			final Store<EmailAccount> emailAccountStore, //
 			final ConfigurableEmailServiceFactory emailServiceFactory, //
-			final AnswerToExistingMailFactory answerToExistingMailFactory, //
-			final DownloadAttachmentsFactory downloadAttachmentsFactory, //
-			final StartWorkflowFactory startWorkflowFactory //
-	) {
+			final SubjectHandler subjectHandler, //
+			final EmailPersistence emailPersistence, //
+			final WorkflowLogic workflowLogic, //
+			final DmsLogic dmsLogic) {
 		this.emailAccountStore = emailAccountStore;
 		this.emailServiceFactory = emailServiceFactory;
-		this.answerToExistingMailFactory = answerToExistingMailFactory;
-		this.downloadAttachmentsFactory = downloadAttachmentsFactory;
-		this.startWorkflowFactory = startWorkflowFactory;
+		this.subjectHandler = subjectHandler;
+		this.emailPersistence = emailPersistence;
+		this.workflowLogic = workflowLogic;
+		this.dmsLogic = dmsLogic;
 	}
+
+	private final Predicate<Email> SUBJECT_MATCHES = new Predicate<Email>() {
+
+		@Override
+		public boolean apply(final Email email) {
+			final ParsedSubject parsedSubject = subjectHandler.parse(email.getSubject());
+			if (!parsedSubject.hasExpectedFormat()) {
+				return false;
+			}
+
+			try {
+				emailPersistence.getEmail(parsedSubject.getEmailId());
+			} catch (final Exception e) {
+				return false;
+			}
+
+			return true;
+		}
+
+	};
+	private final Function<Email, Email> STRIP_SUBJECT_AND_SET_PARENT_DATA = new Function<Email, Email>() {
+
+		@Override
+		public Email apply(final Email email) {
+			final ParsedSubject parsedSubject = subjectHandler.parse(email.getSubject());
+			Validate.isTrue(parsedSubject.hasExpectedFormat(), "invalid subject format");
+			final Email parentEmail = emailPersistence.getEmail(parsedSubject.getEmailId());
+			email.setSubject(parsedSubject.getRealSubject());
+			email.setActivityId(parentEmail.getActivityId());
+			email.setNotifyWith(parentEmail.getNotifyWith());
+			return email;
+		}
+
+	};
 
 	@Override
 	protected Class<ReadEmailTask> getType() {
@@ -74,51 +309,139 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		final EmailConfiguration emailConfiguration = emailConfigurationFrom(selectedEmailAccount);
 		final EmailService service = emailServiceFactory.create(emailConfiguration);
 
-		final List<Rule> rules = Lists.newArrayList();
-		if (task.isNotificationRuleActive()) {
-			logger.info(marker, "adding notification rule");
-			rules.add(ruleWithGlobalCondition(answerToExistingMailFactory.create(service), task));
+		final ReadEmail.Builder readEmail = ReadEmail.newInstance() //
+				.withEmailService(service) //
+				.withPredicate(predicate(task));
+
+		if (TaskPredicate.SEND_NOTIFICATION.apply(task)) {
+			logger.info(marker, "adding notification action");
+			readEmail.withAction(SUBJECT_MATCHES, STRIP_SUBJECT_AND_SET_PARENT_DATA, SafeAction.of(new Action() {
+
+				@Override
+				public void execute(final Email email) {
+					logger.debug("sending notification for email with id '{}'", email.getId());
+					try {
+						for (final EmailTemplate emailTemplate : service.getEmailTemplates(email)) {
+							final Email notification = new Email();
+							notification.setToAddresses(resolveRecipients(emailTemplate.getToAddresses(), email));
+							notification.setCcAddresses(resolveRecipients(emailTemplate.getCCAddresses(), email));
+							notification.setBccAddresses(resolveRecipients(emailTemplate.getBCCAddresses(), email));
+							notification.setSubject(resolveText(emailTemplate.getSubject(), email));
+							notification.setContent(resolveText(emailTemplate.getBody(), email));
+							service.send(notification);
+						}
+					} catch (final Exception e) {
+						logger.warn("error sending notification", e);
+					}
+				}
+
+				private String resolveRecipients(final Iterable<String> recipients, final Email email) {
+					// TODO use TemplateResolver with specific engine(s)
+					return Joiner.on(EmailConstants.ADDRESSES_SEPARATOR) //
+							.join(recipients);
+				}
+
+				private String resolveText(final String text, final Email email) {
+					// TODO use TemplateResolver with specific engine(s)
+					return text;
+				}
+
+			}));
+
 		}
-		if (task.isAttachmentsRuleActive()) {
-			logger.info(marker, "adding attachments rule");
-			rules.add(ruleWithGlobalCondition(downloadAttachmentsFactory.create(), task));
+		if (TaskPredicate.STORE_ATTACHMENTS.apply(task)) {
+			logger.info(marker, "adding attachments action");
+			readEmail.withAction(HAS_ATTACHMENTS, NO_ADAPTATIONS, SafeAction.of(new Action() {
+
+				@Override
+				public void execute(final Email email) {
+					StoreDocument.newInstance() //
+							.withDmsLogic(dmsLogic) //
+							.withClassName(EMAIL_CLASS_NAME) //
+							.withCardId(email.getId()) //
+							.withCategory(task.getAttachmentsCategory()) //
+							.withDocuments(documentsFrom(email.getAttachments())) //
+							.build() //
+							.execute();
+
+				}
+
+			}));
 		}
-		if (task.isWorkflowRuleActive()) {
-			logger.info(marker, "adding start process rule");
-			final String className = task.getWorkflowClassName();
-			final String mapping = task.getWorkflowFieldsMapping();
-			final boolean advance = task.isWorkflowAdvanceable();
-			final boolean saveAttachments = task.isWorkflowAttachments();
-			final Configuration _configuration = new Configuration() {
+		if (TaskPredicate.START_PROCESS.apply(task)) {
+			logger.info(marker, "adding start process action");
+			readEmail.withAction(ALWAYS, NO_ADAPTATIONS, SafeAction.of(new Action() {
 
 				@Override
-				public String getClassName() {
-					return className;
+				public void execute(final Email email) {
+					final TemplateResolver templateResolver = TemplateResolverImpl.newInstance() //
+							// TODO add engine for email
+							.build();
+					StartProcess.newInstance() //
+							.withWorkflowLogic(workflowLogic) //
+							.withHook(new Hook() {
+
+								@Override
+								public void started(final UserProcessInstance userProcessInstance) {
+									email.setActivityId(userProcessInstance.getCardId());
+									emailPersistence.save(email);
+
+									if (task.isWorkflowAttachments()) {
+										StoreDocument.newInstance() //
+												.withDmsLogic(dmsLogic) //
+												.withClassName(task.getWorkflowClassName()) //
+												.withCardId(userProcessInstance.getCardId()) //
+												.withCategory(task.getWorkflowAttachmentsCategory()) //
+												.withDocuments(documentsFrom(email.getAttachments())) //
+												.build() //
+												.execute();
+									}
+								}
+
+							}) //
+							.withTemplateResolver(templateResolver) //
+							.withClassName(task.getWorkflowClassName()) //
+							.withAttributes(task.getWorkflowAttributes()) //
+							.withAdvanceStatus(task.isWorkflowAdvanceable()) //
+							.build() //
+							.execute();
 				}
 
-				@Override
-				public Mapper getMapper() {
-					return new PropertiesMapper(mapping);
-				}
+			}));
 
-				@Override
-				public boolean advance() {
-					return advance;
-				}
-
-				@Override
-				public boolean saveAttachments() {
-					return saveAttachments;
-				}
-
-			};
-			rules.add(ruleWithGlobalCondition(startWorkflowFactory.create(_configuration), task));
 		}
-
-		final EmailReceivingLogic emailReceivingLogic = new EmailReceivingLogic(service, rules, LOGGER_NOTIFIER);
 
 		final String name = task.getId().toString();
-		return new EmailServiceJob(name, emailReceivingLogic);
+		return DefaultJob.newInstance() //
+				.withName(name) //
+				.withAction( //
+						SafeCommand.of( //
+								readEmail.build()) //
+				) //
+				.build();
+	}
+
+	private Iterable<Document> documentsFrom(final Iterable<Attachment> attachments) {
+		return from(attachments) //
+				.transform(new Function<Attachment, Document>() {
+
+					@Override
+					public Document apply(final Attachment input) {
+						return new Document() {
+
+							@Override
+							public String getName() {
+								return input.getName();
+							}
+
+							@Override
+							public DataHandler getDataHandler() {
+								return input.getDataHandler();
+							}
+						};
+					}
+
+				});
 	}
 
 	private EmailAccount emailAccountFor(final String emailAccountName) {
@@ -136,16 +459,14 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		return new EmailAccountConfiguration(emailAccount);
 	}
 
-	private Rule ruleWithGlobalCondition(final Rule rule, final ReadEmailTask schedulerJob) {
-		logger.debug(marker, "creating rule with global condition");
-		final String fromExpression = schedulerJob.getRegexFromFilter();
-		final String subjectExpression = schedulerJob.getRegexSubjectFilter();
-		final Applicable applicable = new Applicable() {
+	private Predicate<Email> predicate(final ReadEmailTask task) {
+		logger.debug(marker, "creating main filter for email");
+		return new Predicate<Email>() {
 
 			@Override
-			public boolean applies(final Email email) {
+			public boolean apply(final Email email) {
 				logger.debug(marker, "checking from address");
-				final Pattern fromPattern = Pattern.compile(fromExpression);
+				final Pattern fromPattern = Pattern.compile(task.getRegexFromFilter());
 				final Matcher fromMatcher = fromPattern.matcher(email.getFromAddress());
 				if (!fromMatcher.matches()) {
 					logger.debug(marker, "from address not matching");
@@ -153,26 +474,17 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 				}
 
 				logger.debug(marker, "checking subject");
-				final Pattern subjectPattern = Pattern.compile(subjectExpression);
+				final Pattern subjectPattern = Pattern.compile(task.getRegexSubjectFilter());
 				final Matcher subjectMatcher = subjectPattern.matcher(email.getSubject());
 				if (!subjectMatcher.matches()) {
 					logger.debug(marker, "subject not matching");
 					return false;
 				}
 
-				return rule.applies(email);
-			}
-
-			@Override
-			public String toString() {
-				return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
-						.append("from", schedulerJob.getRegexFromFilter()) //
-						.append("subject", schedulerJob.getRegexFromFilter()) //
-						.toString();
+				return true;
 			}
 
 		};
-		return new RuleWithAdditionalCondition(rule, applicable);
 	}
 
 }

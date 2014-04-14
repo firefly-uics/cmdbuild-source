@@ -10,6 +10,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
@@ -20,6 +21,8 @@ import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONObject;
+
+import com.google.common.base.Predicate;
 
 public class StartWorkflow extends JSONBaseWithSpringContext {
 
@@ -103,10 +106,24 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse readAllByWorkflow( //
-			@Parameter(value = ID) final Long id //
+			@Parameter(CLASS_NAME) final String className //
 	) {
-		// TODO
-		return JsonResponse.success();
+		final List<? extends Task> tasks = from(taskManagerLogic().read(StartWorkflowTask.class)) //
+				.filter(StartWorkflowTask.class) //
+				.filter(className(className)) //
+				.toList();
+		return JsonResponse.success(tasks);
+	}
+
+	private Predicate<StartWorkflowTask> className(final String className) {
+		return new Predicate<StartWorkflowTask>() {
+
+			@Override
+			public boolean apply(final StartWorkflowTask input) {
+				return input.getProcessClass().equals(className);
+			}
+
+		};
 	}
 
 	@Admin
