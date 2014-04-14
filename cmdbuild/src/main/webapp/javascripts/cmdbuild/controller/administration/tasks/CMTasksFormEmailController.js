@@ -163,6 +163,9 @@
 			submitDatas[CMDBuild.ServiceProxy.parameter.VALUE_INIT] = formData[CMDBuild.ServiceProxy.parameter.VALUE_INIT];
 			submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW];
 
+_debug(formData);
+_debug(submitDatas);
+
 			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
 				CMDBuild.core.proxy.CMProxyTasks.create({
 					type: this.taskType,

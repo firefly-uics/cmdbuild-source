@@ -686,7 +686,7 @@
 				"datasourceDbFieldset": "Datasource: Relational database",
 				"datasourceLdapFieldset": "Datasource: LDAP directory",
 				"dbName": "Database name",
-				"recipientAccount": "Recipient account",
+				"recipientAddress": "Recipient address",
 				"senderAccount": "Sender account",
 				"toSynchronize": "To synchronize",
 				"viewPrefix": "View prefix"

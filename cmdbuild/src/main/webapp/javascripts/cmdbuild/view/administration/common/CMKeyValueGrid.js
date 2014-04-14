@@ -20,7 +20,9 @@
 		keyEditorConfig: { xtype: 'textfield' },
 		valueEditorConfig: { xtype: 'textfield' },
 
-		cellEditing: Ext.create('Ext.grid.plugin.CellEditing', { clicksToEdit: 1 }),
+		cellEditing: Ext.create('Ext.grid.plugin.CellEditing', {
+			clicksToEdit: 1
+		}),
 
 		initComponent: function() {
 			Ext.apply(this, {

@@ -101,16 +101,21 @@
 			});
 
 			// SendMail configuration
-				this.senderEmailAccountField = Ext.create('Ext.form.field.Text', {
+				this.senderEmailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.ServiceProxy.parameter.SENDER_ACCOUNT,
 					fieldLabel: tr.taskConnector.senderAccount,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+					store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
+					displayField: CMDBuild.ServiceProxy.parameter.NAME,
+					valueField: CMDBuild.ServiceProxy.parameter.NAME,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					forceSelection: true,
+					editable: false
 				});
 
 				this.recipientEmailAccountField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.ServiceProxy.parameter.RECIPIENT_ACCOUNT,
-					fieldLabel: tr.taskConnector.recipientAccount,
+					name: CMDBuild.ServiceProxy.parameter.RECIPIENT_ADDRESS,
+					fieldLabel: tr.taskConnector.recipientAddress,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				});
@@ -121,7 +126,7 @@
 					collapsed: true,
 					layout: 'vbox',
 
-					items: [this.senderEmailAccountField, this.recipientEmailAccountField]
+					items: [this.senderEmailAccountCombo, this.recipientEmailAccountField]
 				});
 
 				this.sendMailFieldset.fieldWidthsFix();
