@@ -18,8 +18,8 @@
 		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onAlfrescoChecked':
-					return this.onAlfrescoChecked();
+				case 'onCheckedAttachmentsFieldset':
+					return this.onCheckedAttachmentsFieldset();
 
 				default: {
 					if (this.parentDelegate)
@@ -28,20 +28,49 @@
 			}
 		},
 
+		getValueAttachmentsFieldsetCheckbox: function() {
+			return this.view.attachmentsFieldset.checkboxCmp.getValue();
+		},
+
+		getValueBodyParsingFieldsetCheckbox: function() {
+			return this.view.bodyParsingFieldset.checkboxCmp.getValue();
+		},
+
 		/**
 		 * Read CMDBuild's alfresco configuration from server and set Combobox store
 		 */
-		onAlfrescoChecked: function() {
-			CMDBuild.ServiceProxy.configuration.read({
-				scope: this,
-				success: function(response) {
-					var decodedJson = Ext.JSON.decode(response.responseText);
+		onCheckedAttachmentsFieldset: function() {
+			if (this.view.attachmentsCombo.store.getCount() == 0) {
+				CMDBuild.ServiceProxy.configuration.read({
+					scope: this,
+					success: function(response) {
+						var decodedJson = Ext.JSON.decode(response.responseText);
 
-					this.view.alfrescoCombo.bindStore(
-						CMDBuild.ServiceProxy.lookup.getLookupFieldStore(decodedJson.data['category.lookup'])
-					);
-				}
-			}, name = 'dms');
+						this.view.attachmentsCombo.bindStore(
+							CMDBuild.ServiceProxy.lookup.getLookupFieldStore(decodedJson.data['category.lookup'])
+						);
+					}
+				}, name = 'dms');
+			}
+		},
+
+		setValueAttachmentsCombo: function(value) {_debug('setValueAttachmentsCombo');_debug(value);
+			var me = this;
+
+			this.view.attachmentsCombo.store.load();
+			this.view.attachmentsCombo.store.on('load', function() {_debug('combo store load');
+				me.view.attachmentsCombo.setValue(value);
+			});
+
+		},
+
+		setValueAttachmentsFieldsetCheckbox: function(value) {_debug('setValueAttachmentsFieldsetCheckbox');
+			if (value) {
+				this.view.attachmentsFieldset.expand();
+				this.onCheckedAttachmentsFieldset();
+			} else {
+				this.view.attachmentsFieldset.collapse();
+			}
 		}
 	});
 
@@ -64,6 +93,7 @@
 				this.bodyParsingFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.bodyParsing,
 					checkboxToggle: true,
+					checkboxName: 'CMDBuild.ServiceProxy.parameter.BODY_PARSING_ACTIVE',
 					collapsed: true,
 					layout: {
 						type: 'vbox',
@@ -138,6 +168,7 @@
 				this.sendMailFieldset = Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.administration.tasks.sendMail,
 					checkboxToggle: true,
+					checkboxName: 'CMDBuild.ServiceProxy.parameter.SEND_MAIL_ACTIVE',
 					collapsed: true,
 					layout: {
 						type: 'vbox'
@@ -147,29 +178,31 @@
 			// END: SendMail configuration
 
 			// Alfresco configuration
-				this.alfrescoCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE,
-					fieldLabel: tr.alfrescoLookupType,
+				this.attachmentsCombo = Ext.create('Ext.form.field.ComboBox', {
+					name: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY,
+					fieldLabel: tr.attachmentsCategory,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					itemId: CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE,
 					displayField: 'Description',
 					valueField: 'Id',
+//					itemId: CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE,
 					forceSelection: true,
 					editable: false,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				});
 
-				this.alfrescoFieldset = Ext.create('Ext.form.FieldSet', {
+				this.attachmentsFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.saveToAlfresco,
 					checkboxToggle: true,
+					checkboxName: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE,
 					collapsed: true,
 					layout: {
 						type: 'vbox'
 					},
-					items: [this.alfrescoCombo],
+					items: [this.attachmentsCombo],
+
 					listeners: {
 						expand: function(fieldset, eOpts) {
-							me.delegate.cmOn('onAlfrescoChecked');
+							me.delegate.cmOn('onCheckedAttachmentsFieldset');
 						}
 					}
 				});
@@ -179,7 +212,7 @@
 				items: [
 					this.bodyParsingFieldset,
 					this.sendMailFieldset,
-					this.alfrescoFieldset
+					this.attachmentsFieldset
 				]
 			});
 

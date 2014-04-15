@@ -208,7 +208,7 @@ public class ComunicationConstants {
 			WORKFLOW_ADVANCEABLE = "workflowAdvanceable", //
 			WORKFLOW_ATTACHMENTS_CATEGORY = "workflowAttachmentsCategory", //
 			WORKFLOW_ATTRIBUTES = ATTRIBUTES, // TODO change me
-			WORKFLOW_CLASS_NAME = CLASS_NAME, // TODO change me
+			WORKFLOW_CLASS_NAME = "workflowClassName", //
 			WORKFLOW_SAVE_ATTACHMENTS = "workflowSaveAttachments" //
 			;
 

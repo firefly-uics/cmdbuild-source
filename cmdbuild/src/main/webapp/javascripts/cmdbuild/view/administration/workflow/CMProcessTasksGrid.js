@@ -59,20 +59,6 @@
 					'record': record,
 					'index': index
 				});
-			},
-
-			/**
-			 * Event to load store on view display and first row selection as CMDbuild standard
-			 */
-			viewready: function() {
-				var me = this;
-
-				this.store.load({
-					callback: function() {
-						if (!me.getSelectionModel().hasSelection())
-							me.getSelectionModel().select(0, true);
-					}
-				});
 			}
 		},
 

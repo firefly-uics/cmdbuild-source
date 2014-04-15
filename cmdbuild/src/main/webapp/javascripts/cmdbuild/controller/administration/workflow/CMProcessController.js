@@ -22,9 +22,10 @@
 
 			if (selection) {
 				processId = selection.data.id;
-				if (processId) {
+
+				if (processId)
 					process = _CMCache.getProcessById(processId);
-				}
+
 				this.view.onProcessSelected(selection.data);
 
 				this.processFormController.onProcessSelected(processId);
