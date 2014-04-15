@@ -408,7 +408,9 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 				@Override
 				public void execute(final Email email) {
 					final TemplateResolver templateResolver = TemplateResolverImpl.newInstance() //
-							// TODO add engine for email
+							.withEngine(emptyStringOnNull(nullOnError(EmailTemplateEngine.newInstance() //
+									.withEmail(email) //
+									.build())), EMAIL_PREFIX) //
 							.build();
 					StartProcess.newInstance() //
 							.withWorkflowLogic(workflowLogic) //
