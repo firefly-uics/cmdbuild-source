@@ -189,7 +189,7 @@
 					put: 'services/json/schema/taskmanager/startworkflow/update',
 
 					getStore: 'services/json/schema/taskmanager/startworkflow/readall',
-					getStorebyWorkflow: 'services/json/schema/taskmanager/startworkflow/readallbyworkflow'
+					getStoreByWorkflow: 'services/json/schema/taskmanager/startworkflow/readallbyworkflow'
 				}
 			},
 

@@ -95,13 +95,25 @@
 					me.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
 					me.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
 					me.delegateStep[0].setValueEmailAccount(record.get(CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT));
-					me.delegateStep[0].setValueFilterFromAddress(record.get(CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS));
-					me.delegateStep[0].setValueFilterSubject(record.get(CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT));
+					me.delegateStep[0].setValueFilterFromAddress(
+						me.delegateStep[0].getFromAddressFilterDelegate().filterStringBuild(
+							record.get(CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS)
+						)
+					);
+					me.delegateStep[0].setValueFilterSubject(
+						me.delegateStep[0].getSubjectFilterDelegate().filterStringBuild(
+							record.get(CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT)
+						)
+					);
 					me.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
 
 					// Set step2 [1] datas
 					me.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
 					me.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+
+					// Set step3 [2] datas
+					me.delegateStep[2].setValueAttachmentsFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE));
+					me.delegateStep[2].setValueAttachmentsCombo(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY));
 
 					// Set step4 [3] datas
 					me.delegateStep[3].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
@@ -152,6 +164,9 @@
 			// Data filtering to submit only right values
 			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
 			submitDatas[CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE] = formData[CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE];
+			submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE] = this.delegateStep[2].getValueAttachmentsFieldsetCheckbox();
+			submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY] = formData[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY];
+//			submitDatas[CMDBuild.ServiceProxy.parameter.BODY_PARSING_ACTIVE] = this.delegateStep[2].getValueBodyParsingFieldsetCheckbox();
 			submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
 			submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT];
 			submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE];

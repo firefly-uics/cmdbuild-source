@@ -5,7 +5,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DMS_ATTACHMENTS_LOOKUP;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTACHMENTS_CATEGORY;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_ACCOUNT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_TEMPLATE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
@@ -61,11 +61,13 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		}
 
 		@JsonProperty(FILTER_FROM_ADDRESS)
+		// TODO send array as string?
 		public Iterable<String> getRegexFromFilter() {
 			return delegate.getRegexFromFilter();
 		}
 
 		@JsonProperty(FILTER_SUBJECT)
+		// TODO send array as string?
 		public Iterable<String> getRegexSubjectFilter() {
 			return delegate.getRegexSubjectFilter();
 		}
@@ -96,6 +98,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		}
 
 		@JsonProperty(WORKFLOW_ATTRIBUTES)
+		// TODO send object as string?
 		public Map<String, String> getWorkflowAttributes() {
 			return delegate.getWorkflowAttributes();
 		}
@@ -127,7 +130,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(value = FILTER_FROM_ADDRESS, required = false) final JSONArray filterFromAddress, //
 			@Parameter(value = FILTER_SUBJECT, required = false) final JSONArray filterSubject, //
 			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
-			@Parameter(value = DMS_ATTACHMENTS_LOOKUP, required = false) final String attachmentsCategory, //
+			@Parameter(value = ATTACHMENTS_CATEGORY, required = false) final String attachmentsCategory, //
 			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
 			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes, //
 			@Parameter(value = WORKFLOW_ATTACHMENTS_CATEGORY, required = false) final String workflowAttachmentsCategory //
@@ -193,7 +196,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(value = FILTER_FROM_ADDRESS, required = false) final JSONArray filterFromAddress, //
 			@Parameter(value = FILTER_SUBJECT, required = false) final JSONArray filterSubject, //
 			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
-			@Parameter(value = DMS_ATTACHMENTS_LOOKUP, required = false) final String attachmentsCategory, //
+			@Parameter(value = ATTACHMENTS_CATEGORY, required = false) final String attachmentsCategory, //
 			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
 			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes, //
 			@Parameter(value = WORKFLOW_ATTACHMENTS_CATEGORY, required = false) final String workflowAttachmentsCategory //

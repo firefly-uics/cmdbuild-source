@@ -16,6 +16,8 @@
 		border: true,
 
 		initComponent: function() {
+			var me = this;
+
 			this.addButton = Ext.create('Ext.button.Button', {
 				iconCls: 'add',
 				text: tr.add,

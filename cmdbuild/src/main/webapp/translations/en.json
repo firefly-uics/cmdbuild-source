@@ -692,7 +692,7 @@
 				"viewPrefix": "View prefix"
 			},
 			"taskEmail": {
-				"alfrescoLookupType": "Alfresco lookup type",
+				"attachmentsCategory": "Category",
 				"bodyParsing": "Body parsing",
 				"emailAccount": "Email account",
 				"fromAddressFilter": "Filter on FromAddress",

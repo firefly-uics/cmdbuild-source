@@ -5,6 +5,7 @@
 		buttonField: undefined,
 		filterWindow: undefined,
 		textareaField: undefined,
+		textAreaFieldValueBuffer: undefined,
 		textareaConcatParameter: ' OR ',
 
 		/**
@@ -35,10 +36,42 @@
 			}
 		},
 
+		/**
+		 * Concats array's items with textareaConcatParameter
+		 *
+		 * @param (Array) parameters
+		 * @return (String) filterString
+		 */
+		filterStringBuild: function(parameters) {
+			if (typeof parameters == 'object') {
+				var filterString = '';
+
+				for (key in parameters) {
+					if (parameters[key] != '') {
+						if (filterString != '')
+							filterString = filterString + this.getTextareaConcatParameter();
+
+						filterString = filterString.concat(parameters[key]);
+					}
+				}
+			} else  {
+				var filterString = parameters;
+			}
+
+			return filterString;
+		},
+
 		getTextareaConcatParameter: function() {
 			return this.textareaConcatParameter;
 		},
 
+		/**
+		 * Creates filter window structure
+		 *
+		 * @param (String) titleWindow
+		 * @param (String) type
+		 * @param (String) content
+		 */
 		onFilterButtonClick: function(titleWindow, type, content) {
 			var me = this;
 
@@ -53,24 +86,23 @@
 			this.filterWindow.show();
 		},
 
+		/**
+		 * @param (Array) parameters
+		 */
 		onFilterChange: function(parameters) {
-			var filterString = '';
+			if (typeof this.textAreaFieldValueBuffer == 'undefined')
+				this.textAreaFieldValueBuffer = this.textareaField.getValue();
 
-			for (key in parameters) {
-				if (parameters[key] !== '') {
-					if (filterString != '')
-						filterString = filterString + this.getTextareaConcatParameter();
-
-					filterString = filterString.concat(parameters[key]);
-				}
-			}
-
-			this.textareaField.setValue(filterString);
+			this.textareaField.setValue(this.filterStringBuild(parameters));
 		},
 
 		onFilterWindowAbort: function() {
-			// TODO: Fix reverting edits to store data
-			this.textareaField.reset();
+			if (typeof this.textAreaFieldValueBuffer != 'undefined') {
+				this.textareaField.setValue(this.textAreaFieldValueBuffer);
+			} else {
+				this.textareaField.reset();
+			}
+
 			this.filterWindow.hide();
 		},
 
