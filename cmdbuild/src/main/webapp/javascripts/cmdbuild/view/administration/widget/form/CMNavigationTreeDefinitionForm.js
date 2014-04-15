@@ -11,13 +11,6 @@
 		buildForm: function() {
 			var navigationTreesStore = buildNavigationTreesStore();
 			this.callParent(arguments);
-			
-			this.filter = new Ext.form.field.TextArea({
-				name: "filter",
-				fieldLabel: CMDBuild.Translation.tree_root_cql, 
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-			});
 
 			this.navigationTreeName = new Ext.form.field.ComboBox({
 				name: "navigationTreeName",
@@ -38,7 +31,7 @@
 			});
 */
 			// defaultFields is inherited
-			this.defaultFields.add(this.navigationTreeName, this.filter);
+			this.defaultFields.add(this.navigationTreeName);
 
 			Ext.apply(this, {
 				layout: {
@@ -56,9 +49,7 @@
 		fillWithModel: function(model) {
 			this.callParent(arguments);
 			var name = model.get("navigationTreeName");
-			var filter = model.get("filter");
 			this.navigationTreeName.setValue(name);
-			this.filter.setValue(filter);
 		},
 
 /*		// override
@@ -75,7 +66,6 @@
 		getWidgetDefinition: function() {
 			var me = this;
 			return Ext.apply(me.callParent(arguments), {
-				filter: me.filter.getValue(),
 				navigationTreeName: this.navigationTreeName.getValue()
 			});
 		}
