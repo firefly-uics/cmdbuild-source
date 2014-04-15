@@ -12,7 +12,7 @@ public class TemplateResolverImpl implements TemplateResolver {
 
 	private static final Pattern VAR_PATTERN = Pattern.compile("([^\\{]+)?(\\{(\\w+):(\\w+)\\})?");
 
-	public static class Builder implements org.cmdbuild.common.Builder<TemplateResolverImpl> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<TemplateResolverImpl> {
 
 		private final Map<String, TemplateResolverEngine> engines = Maps.newHashMap();
 
