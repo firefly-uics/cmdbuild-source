@@ -188,19 +188,6 @@
 		// private, allow simply configuration is subclassing
 		buildButtons: buildButtons,
 
-//		getInvalidField: function() {
-//			var fields = this.getForm().getFields(),
-//				invalid = [];
-//
-//			fields.each(function(field) {
-//				if (!field.isValid()) {
-//					invalid.push(field);
-//				}
-//			});
-//
-//			return invalid;
-//		},
-//
 		hasDomainAttributes: function() {
 			var fields = this.getForm().getFields().items;
 
@@ -212,34 +199,6 @@
 
 			return false;
 		},
-
-//		getInvalidAttributeAsHTML: function() {
-//			var fields = this.getInvalidField();
-//			var alreadyAdded = {};
-//
-//			if (fields.length == 0) {
-//				return null;
-//			} else {
-//				var out = "<ul>";
-//				for (var i=0, l=fields.length; i<l; ++i) {
-//					var attribute = fields[i].CMAttribute;
-//					var item="";
-//					if (attribute) {
-//						if (alreadyAdded[attribute.description]) {
-//							continue;
-//						} else {
-//							alreadyAdded[attribute.description] = true;
-//							if (attribute.group) {
-//								item = attribute.group + " - ";
-//							}
-//							out += "<li>" + item + attribute.description + "</li>";
-//						}
-//					}
-//				}
-//
-//				return out+"</ul>";
-//			}
-//		},
 
 		callFieldTemplateResolverIfNeeded: function() {
 			var fields = this.getForm().getFields().items;

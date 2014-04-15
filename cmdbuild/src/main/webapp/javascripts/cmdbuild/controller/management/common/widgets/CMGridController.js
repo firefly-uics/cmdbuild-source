@@ -18,10 +18,11 @@
 			this.view.delegate = this;
 
 			var me = this;
-			this.view.loadAttributes( //
+			CMDBuild.Management.FieldManager.loadAttributes( //
 				this.classType.get("id"), //
 				function(attributes) { //
-					me.view.setColumnsForClass(attributes);
+					me.view.cardAttributes = attributes;
+					me.view.setColumnsForClass();
 				} //
 			);
 
@@ -33,10 +34,14 @@
 					this.view.newRow();
 					break;
 				case "onDelete" :
-					alert("onDelete");
+					this.view.deleteRow(param.rowIndex);
 					break;
 				case "onEdit" :
-					alert("onEdit");
+					this.openEditWindow(param.record, this.view.cardAttributes);
+					break;
+				case "onEditClosed" :
+					this.saveEditWindow();
+					this.editWindow.destroy();
 					break;
 				default: {
 					if (
@@ -50,12 +55,22 @@
 			return undefined;
 		},
 		
-		getCurrentClass: function() {
-			return this.classType;
+		openEditWindow: function(record, cardAttributes) {
+			this.editWindow = Ext.create("CMDBuild.view.management.common.widgets.CMGridEdit", {
+				title: CMDBuild.Translation.row_edit,
+				record: record,
+				cardAttributes: cardAttributes,
+				delegate: this
+			});
+			this.editWindow.show();
 		},
 
-		// override
-		beforeActiveView: function() {
+		saveEditWindow: function() {
+			this.editWindow.saveData();
+		},
+
+		getCurrentClass: function() {
+			return this.classType;
 		},
 
 		// override
