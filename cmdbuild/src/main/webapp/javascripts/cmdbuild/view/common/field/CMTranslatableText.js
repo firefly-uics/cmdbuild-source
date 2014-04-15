@@ -10,9 +10,9 @@
 		translationsKeyType: "", 
 		translationsKeyName: "",
 		translationsKeySubName: "",
+		allowBlank: true,
 		considerAsFieldToDisable: true,
 		translationsKeyField: "",
-		allowBlank : false,
 		textArea : false,
 		vtype : '',
 		setValue: function(value) {
