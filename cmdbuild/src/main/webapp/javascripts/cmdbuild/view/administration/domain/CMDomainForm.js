@@ -51,6 +51,7 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				translationsKeyType: "Domain", 
 				translationsKeyField: "masterDetailLabel",
+				allowBlank: true,
 				name: "md_label"
 			});
 
