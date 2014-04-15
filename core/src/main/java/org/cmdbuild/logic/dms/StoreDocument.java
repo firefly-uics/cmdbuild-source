@@ -38,6 +38,10 @@ public class StoreDocument implements Action {
 		private String category;
 		private final Collection<Document> documents = newArrayList();
 
+		private Builder() {
+			// use factory method
+		}
+
 		@Override
 		public StoreDocument build() {
 			validate();

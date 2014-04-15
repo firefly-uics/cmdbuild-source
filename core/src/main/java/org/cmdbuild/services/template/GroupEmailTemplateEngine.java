@@ -21,6 +21,10 @@ public class GroupEmailTemplateEngine implements TemplateResolverEngine {
 
 		private CMDataView dataView;
 
+		private Builder() {
+			// use factory method
+		}
+
 		@Override
 		public GroupEmailTemplateEngine build() {
 			validate();

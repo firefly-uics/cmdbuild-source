@@ -37,6 +37,10 @@ public class GroupUsersEmailTemplateEngine implements TemplateResolverEngine {
 		private CMDataView dataView;
 		private String separator;
 
+		private Builder() {
+			// use factory method
+		}
+
 		@Override
 		public GroupUsersEmailTemplateEngine build() {
 			validate();

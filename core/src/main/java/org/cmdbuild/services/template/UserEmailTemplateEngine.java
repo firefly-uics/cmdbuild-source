@@ -21,6 +21,10 @@ public class UserEmailTemplateEngine implements TemplateResolverEngine {
 
 		private CMDataView dataView;
 
+		private Builder() {
+			// use factory method
+		}
+
 		@Override
 		public UserEmailTemplateEngine build() {
 			validate();

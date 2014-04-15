@@ -12,6 +12,10 @@ public class EmailTemplateEngine implements TemplateResolverEngine {
 
 		private Email email;
 
+		private Builder() {
+			// use factory method
+		}
+
 		@Override
 		public EmailTemplateEngine build() {
 			validate();

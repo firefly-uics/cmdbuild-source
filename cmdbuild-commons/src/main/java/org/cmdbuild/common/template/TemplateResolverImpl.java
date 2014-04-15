@@ -16,6 +16,10 @@ public class TemplateResolverImpl implements TemplateResolver {
 
 		private final Map<String, TemplateResolverEngine> engines = Maps.newHashMap();
 
+		private Builder() {
+			// use factory method
+		}
+
 		public Builder withEngine(final TemplateResolverEngine engine, final String... prefixes) {
 			return withEngine(engine, asList(prefixes));
 		}

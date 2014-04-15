@@ -14,6 +14,10 @@ public class CollectingEmailCallbackHandler implements EmailCallbackHandler {
 
 		private Predicate<Email> predicate;
 
+		private Builder() {
+			// use factory method
+		}
+
 		@Override
 		public CollectingEmailCallbackHandler build() {
 			validate();
