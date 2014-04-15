@@ -10,6 +10,8 @@ public class ComunicationConstants {
 			ADMIN_USER = "admin_user", //
 			ALREADY_ASSOCIATED = "alreadyAssociated", //
 			ATTACHMENTS = "attachments", //
+			ATTACHMENTS_ACTIVE = "attachmentsActive", //
+			ATTACHMENTS_CATEGORY = "attachmentsCategory", //
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTES = "attributes", //
 			BIM_LAYER = "bimLayer", //
@@ -78,7 +80,9 @@ public class ComunicationConstants {
 			FILE_IFC = "fileIFC", //
 			FILE_NAME = "fileName", //
 			FILTER = "filter", //
+			FILTER_FROM_ADDRESS = "filterFromAddress", //
 			FILTERS = "filters", //
+			FILTER_SUBJECT = "filterSubject", //
 			FORCE_CREATION = "forceCreation", //
 			FORMAT = "format", //
 			FROM = "from", //
@@ -124,6 +128,7 @@ public class ComunicationConstants {
 			NEW_PASSWORD = "newpassword", //
 			NOT_NULL = "isnotnull", //
 			NOTES = "Notes", //
+			NOTIFICATION_ACTIVE = "notificationActive", //
 			NUMBER = "Number", //
 			OLD_PASSWORD = "oldpassword", //
 			ORIG_TYPE = "orig_type", //
@@ -192,13 +197,19 @@ public class ComunicationConstants {
 			USER_STOPPABLE = "userstoppable", //
 			USER_TYPE = "user_type", //
 			TASK_READ_EMAIL = "email", //
-			TASK_READ_EMAIL_WORKFLOW_ATTACHMENTS_CATEGORY = "workflow_attachments_category", //
 			TASK_START_WORKFLOW = "workflow", //
 			TASK_SYNCHRONOUS_EVENT = "synchronousEvent", //
 			TEMPORARY_ID = "temporaryId", //
 			VALUE = "value",//
 			VIEWS = "views", //
 			WIDGET = "widget", //
-			WIDGET_ID = "widgetId";
+			WIDGET_ID = "widgetId", //
+			WORKFLOW_ACTIVE = "workflowActive", //
+			WORKFLOW_ADVANCEABLE = "workflowAdvanceable", //
+			WORKFLOW_ATTACHMENTS_CATEGORY = "workflowAttachmentsCategory", //
+			WORKFLOW_ATTRIBUTES = ATTRIBUTES, // TODO change me
+			WORKFLOW_CLASS_NAME = CLASS_NAME, // TODO change me
+			WORKFLOW_SAVE_ATTACHMENTS = "workflowSaveAttachments" //
+			;
 
 }

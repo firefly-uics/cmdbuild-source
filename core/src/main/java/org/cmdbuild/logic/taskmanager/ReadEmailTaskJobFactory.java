@@ -466,19 +466,23 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 			@Override
 			public boolean apply(final Email email) {
 				logger.debug(marker, "checking from address");
-				final Pattern fromPattern = Pattern.compile(task.getRegexFromFilter());
-				final Matcher fromMatcher = fromPattern.matcher(email.getFromAddress());
-				if (!fromMatcher.matches()) {
-					logger.debug(marker, "from address not matching");
-					return false;
+				for (final String regex : task.getRegexFromFilter()) {
+					final Pattern fromPattern = Pattern.compile(regex);
+					final Matcher fromMatcher = fromPattern.matcher(email.getFromAddress());
+					if (!fromMatcher.matches()) {
+						logger.debug(marker, "from address not matching");
+						return false;
+					}
 				}
 
 				logger.debug(marker, "checking subject");
-				final Pattern subjectPattern = Pattern.compile(task.getRegexSubjectFilter());
-				final Matcher subjectMatcher = subjectPattern.matcher(email.getSubject());
-				if (!subjectMatcher.matches()) {
-					logger.debug(marker, "subject not matching");
-					return false;
+				for (final String regex : task.getRegexSubjectFilter()) {
+					final Pattern subjectPattern = Pattern.compile(regex);
+					final Matcher subjectMatcher = subjectPattern.matcher(email.getSubject());
+					if (!subjectMatcher.matches()) {
+						logger.debug(marker, "subject not matching");
+						return false;
+					}
 				}
 
 				return true;

@@ -196,8 +196,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withRunningStatus(task.isActive()) //
 					.withCronExpression(task.getCronExpression()) //
 					.withParameter(ReadEmail.ACCOUNT_NAME, task.getEmailAccount()) //
-					.withParameter(ReadEmail.FILTER_FROM_REGEX, task.getRegexFromFilter()) //
-					.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, task.getRegexSubjectFilter()) //
+					.withParameter(ReadEmail.FILTER_FROM_REGEX, Joiner.on(LINE_SEPARATOR) //
+							.join(task.getRegexFromFilter())) //
+					.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, Joiner.on(LINE_SEPARATOR) //
+							.join(task.getRegexSubjectFilter())) //
 					.withParameter(ReadEmail.NOTIFICATION_ACTIVE, //
 							Boolean.toString(task.isNotificationActive())) //
 					.withParameter(ReadEmail.ATTACHMENTS_ACTIVE, //
@@ -254,6 +256,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 	private static class DefaultStoreAsSourceConverter implements StoreAsSourceConverter, TaskVisitor {
 
 		private static final Iterable<String> EMPTY_GROUPS = Collections.emptyList();
+		private static final Iterable<String> EMPTY_FILTERS = Collections.emptyList();
 		private static final Map<String, String> EMPTY_PARAMETERS = Collections.emptyMap();
 
 		private final org.cmdbuild.data.store.task.Task source;
@@ -274,6 +277,8 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		@Override
 		public void visit(final org.cmdbuild.data.store.task.ReadEmailTask task) {
+			final String fromRegexFilters = task.getParameter(ReadEmail.FILTER_FROM_REGEX);
+			final String subjectRegexFilters = task.getParameter(ReadEmail.FILTER_SUBJECT_REGEX);
 			final String attributesAsString = defaultString(task.getParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING));
 			target = ReadEmailTask.newInstance() //
 					.withId(task.getId()) //
@@ -281,8 +286,12 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withActiveStatus(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
 					.withEmailAccount(task.getParameter(ReadEmail.ACCOUNT_NAME)) //
-					.withRegexFromFilter(task.getParameter(ReadEmail.FILTER_FROM_REGEX)) //
-					.withRegexSubjectFilter(task.getParameter(ReadEmail.FILTER_SUBJECT_REGEX)) //
+					.withRegexFromFilter( //
+							isEmpty(fromRegexFilters) ? EMPTY_FILTERS : Splitter.on(LINE_SEPARATOR) //
+									.split(fromRegexFilters)) //
+					.withRegexSubjectFilter( //
+							isEmpty(subjectRegexFilters) ? EMPTY_FILTERS : Splitter.on(LINE_SEPARATOR) //
+									.split(subjectRegexFilters)) //
 					.withNotificationStatus( //
 							Boolean.valueOf(task.getParameter(ReadEmail.NOTIFICATION_ACTIVE))) //
 					.withAttachmentsActive( //
