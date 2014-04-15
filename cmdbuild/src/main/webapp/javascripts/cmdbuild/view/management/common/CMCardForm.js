@@ -75,7 +75,7 @@
 				return;
 			}
 
-			this.suspendLayouts();
+//			this.suspendLayouts();
 			this.ensureEditPanel();
 
 			if (this.tabPanel) {
@@ -90,7 +90,7 @@
 			//To delete when upgrade at extjs 4.2.1
 			this.tabPanel.showAll();
 			//-------------------------------------------------
-			this.resumeLayouts(true);
+//			this.resumeLayouts(true);
 			this.fireEvent(this.CMEVENTS.editModeDidAcitvate);
 			this._isInEditMode = true;
 		},
