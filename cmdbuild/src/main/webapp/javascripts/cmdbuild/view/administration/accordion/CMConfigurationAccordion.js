@@ -47,6 +47,11 @@
 						cmName: 'modsetupgis'
 					},
 					{
+						text: CMDBuild.Translation.bim,
+						leaf: true,
+						cmName: 'modsetupbim'
+					},
+					{
 						text: tr.server.menuTitle,
 						leaf: true,
 						cmName: 'modsetupserver'
