@@ -2,14 +2,14 @@ package org.cmdbuild.servlets.json.schema.taskmanager;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ATTRIBUTES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
+import static org.cmdbuild.servlets.json.schema.taskmanager.Utils.toMap;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,12 +54,12 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 			return delegate.getCronExpression();
 		}
 
-		@JsonProperty(CLASS_NAME)
+		@JsonProperty(WORKFLOW_CLASS_NAME)
 		public String getProcessClass() {
 			return delegate.getProcessClass();
 		}
 
-		@JsonProperty(ATTRIBUTES)
+		@JsonProperty(WORKFLOW_ATTRIBUTES)
 		public Map<String, String> getAttributes() {
 			return delegate.getAttributes();
 		}
@@ -72,15 +72,15 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
-			@Parameter(CLASS_NAME) final String className, //
-			@Parameter(value = ATTRIBUTES, required = false) final JSONObject jsonParameters //
+			@Parameter(WORKFLOW_CLASS_NAME) final String className, //
+			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject jsonParameters //
 	) {
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
 				.withDescription(description) //
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
 				.withProcessClass(className) //
-				.withAttributes(convertJsonParams(jsonParameters)) //
+				.withAttributes(toMap(jsonParameters)) //
 				.build();
 		final Long id = taskManagerLogic().create(task);
 		return JsonResponse.success(id);
@@ -106,7 +106,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse readAllByWorkflow( //
-			@Parameter(CLASS_NAME) final String className //
+			@Parameter(WORKFLOW_CLASS_NAME) final String className //
 	) {
 		final List<? extends Task> tasks = from(taskManagerLogic().read(StartWorkflowTask.class)) //
 				.filter(StartWorkflowTask.class) //
@@ -133,8 +133,8 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
-			@Parameter(CLASS_NAME) final String className, //
-			@Parameter(value = ATTRIBUTES, required = false) final JSONObject jsonParameters //
+			@Parameter(WORKFLOW_CLASS_NAME) final String className, //
+			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject jsonParameters //
 	) {
 		final StartWorkflowTask task = StartWorkflowTask.newInstance() //
 				.withId(id) //
@@ -142,7 +142,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
 				.withProcessClass(className) //
-				.withAttributes(convertJsonParams(jsonParameters)) //
+				.withAttributes(toMap(jsonParameters)) //
 				.build();
 		taskManagerLogic().update(task);
 		return JsonResponse.success();
@@ -162,20 +162,5 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 	/*
 	 * Utilities
 	 */
-
-	private Map<String, String> convertJsonParams(final JSONObject jsonParameters) {
-		try {
-			final Map<String, String> params = new HashMap<String, String>();
-			if (jsonParameters != null && jsonParameters.length() > 0) {
-				for (final String key : JSONObject.getNames(jsonParameters)) {
-					params.put(key, jsonParameters.getString(key));
-				}
-			}
-			return params;
-		} catch (final Exception e) {
-			logger.warn("error parsing json parameters");
-			throw new RuntimeException(e);
-		}
-	}
 
 }

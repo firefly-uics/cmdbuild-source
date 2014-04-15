@@ -8,7 +8,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class StartWorkflowTask implements ScheduledTask {
 
-	public static class Builder implements org.cmdbuild.common.Builder<StartWorkflowTask> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<StartWorkflowTask> {
 
 		private static final Map<String, String> NO_ATTRIBUTES = Collections.emptyMap();
 

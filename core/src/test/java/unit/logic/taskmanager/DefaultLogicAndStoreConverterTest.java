@@ -49,8 +49,8 @@ public class DefaultLogicAndStoreConverterTest {
 				.withActiveStatus(true) //
 				.withCronExpression("cron expression") //
 				.withEmailAccount("email account") //
-				.withRegexFromFilter("regex from filter") //
-				.withRegexSubjectFilter("regex subject filter") //
+				.withRegexFromFilter(asList("regex", "from", "filter")) //
+				.withRegexSubjectFilter(asList("regex", "subject", "filter")) //
 				.withNotificationStatus(true) //
 				.withAttachmentsActive(true) //
 				.withAttachmentsCategory("category") //
@@ -74,8 +74,8 @@ public class DefaultLogicAndStoreConverterTest {
 
 		final Map<String, String> parameters = converted.getParameters();
 		assertThat(parameters, hasEntry(ReadEmail.ACCOUNT_NAME, "email account"));
-		assertThat(parameters, hasEntry(ReadEmail.FILTER_FROM_REGEX, "regex from filter"));
-		assertThat(parameters, hasEntry(ReadEmail.FILTER_SUBJECT_REGEX, "regex subject filter"));
+		assertThat(parameters, hasEntry(ReadEmail.FILTER_FROM_REGEX, "regex\nfrom\nfilter"));
+		assertThat(parameters, hasEntry(ReadEmail.FILTER_SUBJECT_REGEX, "regex\nsubject\nfilter"));
 		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_CATEGORY, "category"));
@@ -86,8 +86,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.join(attributes)));
 		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ADVANCE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE, "true"));
-		assertThat(parameters,
-				hasEntry(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY, "workflow's attachments category"));
+		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY, "workflow's attachments category"));
 	}
 
 	@Test
@@ -99,8 +98,8 @@ public class DefaultLogicAndStoreConverterTest {
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
 				.withParameter(ReadEmail.ACCOUNT_NAME, "email account") //
-				.withParameter(ReadEmail.FILTER_FROM_REGEX, "regex from filter") //
-				.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, "regex subject filter") //
+				.withParameter(ReadEmail.FILTER_FROM_REGEX, "regex\nfrom\nfilter") //
+				.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, "regex\nsubject\nfilter") //
 				.withParameter(ReadEmail.NOTIFICATION_ACTIVE, "true") //
 				.withParameter(ReadEmail.ATTACHMENTS_ACTIVE, "true") //
 				.withParameter(ReadEmail.ATTACHMENTS_CATEGORY, "category") //
@@ -124,8 +123,8 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
 		assertThat(converted.getEmailAccount(), equalTo("email account"));
 		assertThat(converted.isNotificationActive(), equalTo(true));
-		assertThat(converted.getRegexFromFilter(), equalTo("regex from filter"));
-		assertThat(converted.getRegexSubjectFilter(), equalTo("regex subject filter"));
+		assertThat(converted.getRegexFromFilter(), containsInAnyOrder("regex", "from", "filter"));
+		assertThat(converted.getRegexSubjectFilter(), containsInAnyOrder("regex", "subject", "filter"));
 		assertThat(converted.isAttachmentsActive(), equalTo(true));
 		assertThat(converted.getAttachmentsCategory(), equalTo("category"));
 		assertThat(converted.isWorkflowActive(), equalTo(true));
