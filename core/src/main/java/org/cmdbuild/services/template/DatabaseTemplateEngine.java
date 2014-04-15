@@ -12,7 +12,7 @@ public class DatabaseTemplateEngine implements TemplateResolverEngine {
 	}
 
 	@Override
-	public Object eval(String expression) {
+	public Object eval(final String expression) {
 		return templateRepository.getTemplate(expression);
 	}
 

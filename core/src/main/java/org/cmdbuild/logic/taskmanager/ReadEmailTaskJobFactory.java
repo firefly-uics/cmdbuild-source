@@ -2,6 +2,9 @@ package org.cmdbuild.logic.taskmanager;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
+import static org.cmdbuild.common.template.Functions.simpleEval;
+import static org.cmdbuild.common.template.TemplateResolverEngines.emptyStringOnNull;
+import static org.cmdbuild.common.template.TemplateResolverEngines.nullOnError;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 
 import java.lang.reflect.InvocationHandler;
@@ -19,6 +22,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.template.TemplateResolverImpl;
 import org.cmdbuild.config.EmailConfiguration;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailTemplate;
@@ -44,6 +48,10 @@ import org.cmdbuild.services.email.SubjectHandler.ParsedSubject;
 import org.cmdbuild.services.scheduler.Command;
 import org.cmdbuild.services.scheduler.DefaultJob;
 import org.cmdbuild.services.scheduler.SafeCommand;
+import org.cmdbuild.services.template.EmailTemplateEngine;
+import org.cmdbuild.services.template.GroupEmailTemplateEngine;
+import org.cmdbuild.services.template.GroupUsersEmailTemplateEngine;
+import org.cmdbuild.services.template.UserEmailTemplateEngine;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -56,6 +64,11 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 
 public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
+
+	private static final String EMAIL_PREFIX = "email";
+	private static final String GROUP_PREFIX = "group";
+	private static final String GROUP_USERS_PREFIX = "groupUsers";
+	private static final String USER_PREFIX = "user";
 
 	private static interface Action {
 
@@ -247,6 +260,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	private final EmailPersistence emailPersistence;
 	private final WorkflowLogic workflowLogic;
 	private final DmsLogic dmsLogic;
+	private final CMDataView dataView;
 
 	public ReadEmailTaskJobFactory( //
 			final Store<EmailAccount> emailAccountStore, //
@@ -254,13 +268,14 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 			final SubjectHandler subjectHandler, //
 			final EmailPersistence emailPersistence, //
 			final WorkflowLogic workflowLogic, //
-			final DmsLogic dmsLogic) {
+			final DmsLogic dmsLogic, final CMDataView dataView) {
 		this.emailAccountStore = emailAccountStore;
 		this.emailServiceFactory = emailServiceFactory;
 		this.subjectHandler = subjectHandler;
 		this.emailPersistence = emailPersistence;
 		this.workflowLogic = workflowLogic;
 		this.dmsLogic = dmsLogic;
+		this.dataView = dataView;
 	}
 
 	private final Predicate<Email> SUBJECT_MATCHES = new Predicate<Email>() {
@@ -323,9 +338,9 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 					try {
 						for (final EmailTemplate emailTemplate : service.getEmailTemplates(email)) {
 							final Email notification = new Email();
-							notification.setToAddresses(resolveRecipients(emailTemplate.getToAddresses(), email));
-							notification.setCcAddresses(resolveRecipients(emailTemplate.getCCAddresses(), email));
-							notification.setBccAddresses(resolveRecipients(emailTemplate.getBCCAddresses(), email));
+							notification.setToAddresses(resolveRecipients(emailTemplate.getToAddresses()));
+							notification.setCcAddresses(resolveRecipients(emailTemplate.getCCAddresses()));
+							notification.setBccAddresses(resolveRecipients(emailTemplate.getBCCAddresses()));
 							notification.setSubject(resolveText(emailTemplate.getSubject(), email));
 							notification.setContent(resolveText(emailTemplate.getBody(), email));
 							service.send(notification);
@@ -335,15 +350,33 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 					}
 				}
 
-				private String resolveRecipients(final Iterable<String> recipients, final Email email) {
-					// TODO use TemplateResolver with specific engine(s)
+				private String resolveRecipients(final Iterable<String> recipients) {
+					final TemplateResolver templateResolver = TemplateResolverImpl.newInstance() //
+							.withEngine(emptyStringOnNull(nullOnError(UserEmailTemplateEngine.newInstance() //
+									.withDataView(dataView) //
+									.build())), USER_PREFIX) //
+							.withEngine(emptyStringOnNull(nullOnError(GroupEmailTemplateEngine.newInstance() //
+									.withDataView(dataView) //
+									.build())), GROUP_PREFIX) //
+							.withEngine(emptyStringOnNull(nullOnError(GroupUsersEmailTemplateEngine.newInstance() //
+									.withDataView(dataView) //
+									.withSeparator(EmailConstants.ADDRESSES_SEPARATOR) //
+									.build())), GROUP_USERS_PREFIX) //
+							.build();
 					return Joiner.on(EmailConstants.ADDRESSES_SEPARATOR) //
-							.join(recipients);
+							.join(from(recipients) //
+									.transform(simpleEval(templateResolver)) //
+							);
 				}
 
 				private String resolveText(final String text, final Email email) {
-					// TODO use TemplateResolver with specific engine(s)
-					return text;
+					final TemplateResolver templateResolver = TemplateResolverImpl.newInstance() //
+							// TODO attributes?
+							.withEngine(emptyStringOnNull(nullOnError(EmailTemplateEngine.newInstance() //
+									.withEmail(email) //
+									.build())), EMAIL_PREFIX) //
+							.build();
+					return templateResolver.simpleEval(text);
 				}
 
 			}));

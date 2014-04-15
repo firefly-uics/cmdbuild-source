@@ -49,6 +49,9 @@ public class TaskManager {
 	private ConfigurableEmailServiceFactory configurableEmailServiceFactory;
 
 	@Autowired
+	private Data data;
+
+	@Autowired
 	private DatabaseConfiguration databaseConfiguration;
 
 	@Autowired
@@ -139,7 +142,8 @@ public class TaskManager {
 				email.emailPersistence(), //
 				workflow.systemWorkflowLogicBuilder() //
 						.build(), //
-				dms.dmsLogic());
+				dms.dmsLogic(), //
+				data.systemDataView());
 	}
 
 	@Bean
