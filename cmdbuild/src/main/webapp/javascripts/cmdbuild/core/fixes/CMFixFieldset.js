@@ -66,7 +66,7 @@
 	Ext.define('CMDBuild.core.fixes.CMFieldsetReset', {
 		override: 'Ext.form.FieldSet',
 
-		reset: function() { // Resets all items exept fieldset toglecheckbox
+		reset: function() { // Resets all items except fieldset toglecheckbox
 			this.cascade(function(item) {
 				if (typeof item.checkboxToggle == 'undefined')
 					item.reset();

@@ -14,9 +14,11 @@
 		autoScroll: false,
 		buttonAlign: 'center',
 		layout: 'fit',
+		split: true,
 		frame: false,
 		border: false,
 		cls: 'x-panel-body-default-framed cmbordertop',
+		bodyCls: 'cmgraypanel',
 
 		initComponent: function() {
 			var me = this;

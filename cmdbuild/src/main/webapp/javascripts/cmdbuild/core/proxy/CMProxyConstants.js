@@ -105,7 +105,9 @@
 			VIEW_PREFIX: 'viewPrefix',
 			WIDGET: 'widget',
 			WIDGET_ID: 'widgetId',
-			WORKFLOW: 'workflow'
+			WORKFLOW: 'workflow',
+			WORKFLOW_ACTIVE: 'workflowActive',
+			WORKFLOW_CLASS_NAME: 'workflowClassName'
 		}
 	});
 

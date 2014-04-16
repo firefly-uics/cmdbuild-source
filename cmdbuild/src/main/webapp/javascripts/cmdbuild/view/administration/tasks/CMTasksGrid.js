@@ -46,7 +46,8 @@
 				},
 				{
 					xtype: 'actioncolumn',
-					width: 40,
+					align: 'center',
+					width: 25,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
@@ -61,7 +62,18 @@
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
 								return record.get(CMDBuild.ServiceProxy.parameter.ACTIVE);
 							}
-						},
+						}
+					]
+				},
+				{
+					xtype: 'actioncolumn',
+					align: 'center',
+					width: 25,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true,
+					items: [
 						{
 							icon: 'images/icons/control_stop.png',
 							tooltip: tr.stopLabel,
@@ -76,7 +88,7 @@
 				}
 			];
 
-// TODO: maybe for a future implementation
+//			// TODO: maybe for a future implementation
 //			this.pagingBar = Ext.create('Ext.toolbar.Paging', {
 //				store: this.store,
 //				displayInfo: true,
@@ -105,9 +117,6 @@
 
 		/**
 		 * Used to render active value to add icon in grid
-		 *
-		 * @param (Boolean) value
-		 * @return (String) value - HTML image code
 		 */
 		activeGridColumnRenderer: function(value, metaData, record) {
 			if (typeof value == 'boolean') {
@@ -123,9 +132,6 @@
 
 		/**
 		 * Rendering task type translating with local language data
-		 *
-		 * @param (String) value
-		 * @return (String) value - translated value
 		 */
 		typeGridColumnRenderer: function(value, metaData, record) {
 			if (typeof value == 'string') {

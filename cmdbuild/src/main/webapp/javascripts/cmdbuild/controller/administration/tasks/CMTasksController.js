@@ -32,7 +32,7 @@
 
 		// Overwrite
 		onViewOnFront: function(parameters) {
-			if (typeof parameters !== 'undefined') {
+			if (typeof parameters != 'undefined') {
 				var me = this;
 
 				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
@@ -129,7 +129,7 @@
 					this.form.delegate.delegateStep.push(items[i].delegate);
 					this.form.wizard.add(items[i]);
 				}
-
+_debug(this.form.delegate.delegateStep);
 				this.form.wizard.numberOfTabs = items.length;
 				this.form.wizard.changeTab(0);
 			}

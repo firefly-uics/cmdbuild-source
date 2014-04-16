@@ -26,7 +26,7 @@
 		},
 
 		checkWorkflowComboSelected: function() {
-			if (this.getValueWorkflowCombo())
+			if (this.getWorkflowDelegate().getValueCombo())
 				return true;
 
 			return false;
@@ -44,16 +44,8 @@
 			return this.view.idField.getValue();
 		},
 
-		getValueWorkflowCombo: function() {
-			return this.getWorkflowDelegate().getValueCombo();
-		},
-
-		onWorkflowSelected: function(name, modify) {
-			this.getWorkflowDelegate().onSelectWorkflow(name, modify);
-		},
-
-		setDisabledAttributesTable: function(state) {
-			this.getWorkflowDelegate().setDisabledAttributesTable(state);
+		setDisabledAttributesGrid: function(state) {
+			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 		},
 
 		setDisabledTypeField: function(state) {
@@ -92,8 +84,6 @@
 		overflowY: 'auto',
 
 		initComponent: function() {
-			var me = this;
-
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
@@ -128,7 +118,7 @@
 
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 				combo: {
-					name: CMDBuild.ServiceProxy.parameter.WORKFLOW,
+					name: CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME,
 					allowBlank: false
 				}
 			});
