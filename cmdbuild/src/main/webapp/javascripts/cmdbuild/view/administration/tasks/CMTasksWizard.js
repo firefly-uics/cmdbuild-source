@@ -12,6 +12,7 @@
 		height: '100%',
 		frame: false,
 		border: false,
+		bodyCls: 'cmgraypanel',
 
 		defaults: {
 			bodyPadding: 10,

@@ -32,21 +32,18 @@
 			return this.view.attachmentsFieldset.checkboxCmp.getValue();
 		},
 
-		getValueBodyParsingFieldsetCheckbox: function() {
-			return this.view.bodyParsingFieldset.checkboxCmp.getValue();
-		},
-
 		/**
 		 * Read CMDBuild's alfresco configuration from server and set Combobox store
 		 */
 		onCheckedAttachmentsFieldset: function() {
+			var me = this;
+
 			if (this.view.attachmentsCombo.store.getCount() == 0) {
 				CMDBuild.ServiceProxy.configuration.read({
-					scope: this,
 					success: function(response) {
 						var decodedJson = Ext.JSON.decode(response.responseText);
 
-						this.view.attachmentsCombo.bindStore(
+						me.view.attachmentsCombo.bindStore(
 							CMDBuild.ServiceProxy.lookup.getLookupFieldStore(decodedJson.data['category.lookup'])
 						);
 					}
@@ -54,17 +51,16 @@
 			}
 		},
 
-		setValueAttachmentsCombo: function(value) {_debug('setValueAttachmentsCombo');_debug(value);
-			var me = this;
-
-			this.view.attachmentsCombo.store.load();
-			this.view.attachmentsCombo.store.on('load', function() {_debug('combo store load');
-				me.view.attachmentsCombo.setValue(value);
-			});
-
+		setValueAttachmentsCombo: function(value) {
+			if (!Ext.isEmpty(value)) {
+				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+				this.view.attachmentsCombo.forceSelection = false;
+				this.view.attachmentsCombo.setValue(value);
+				this.view.attachmentsCombo.forceSelection = true;
+			}
 		},
 
-		setValueAttachmentsFieldsetCheckbox: function(value) {_debug('setValueAttachmentsFieldsetCheckbox');
+		setValueAttachmentsFieldsetCheckbox: function(value) {
 			if (value) {
 				this.view.attachmentsFieldset.expand();
 				this.onCheckedAttachmentsFieldset();
@@ -184,7 +180,6 @@
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					displayField: 'Description',
 					valueField: 'Id',
-//					itemId: CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE,
 					forceSelection: true,
 					editable: false,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH

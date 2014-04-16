@@ -58,18 +58,15 @@
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
 
-			this.delegateStep[3].setDisabledAttributesTable(true);
+			this.delegateStep[3].setDisabledAttributesGrid(true);
 		},
 
 		// overwrite
 		onModifyButtonClick: function() {
 			this.callParent(arguments);
-			// TODO: finish the setup of this function when server will answer correctly with all checkboxes values
 
-//			this.delegateStep[0].onWorkflowSelected(this.delegateStep[0].getValueWorkflowCombo(), true);
-
-//			if (this.delegateStep[0].checkWorkflowComboSelected())
-//				this.delegateStep[0].setDisabledAttributesTable(false);
+			if (!this.delegateStep[3].checkWorkflowComboSelected())
+				this.delegateStep[3].setDisabledAttributesGrid(true);
 		},
 
 		// overwrite
@@ -85,40 +82,44 @@
 					params: { id: this.selectedId }
 				});
 				this.selectedDataStore.on('load', function(store, records, successful, eOpts) {
-					var record = records[0];
+					if (!Ext.isEmpty(records)) {
+						var record = records[0];
 
-					me.parentDelegate.loadForm(me.taskType);
+						me.parentDelegate.loadForm(me.taskType);
 
-					// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find a working fix, so i must set all fields manually
+						// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find a working fix, so i must set all fields manually
 
-					// Set step1 [0] datas
-					me.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-					me.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
-					me.delegateStep[0].setValueEmailAccount(record.get(CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT));
-					me.delegateStep[0].setValueFilterFromAddress(
-						me.delegateStep[0].getFromAddressFilterDelegate().filterStringBuild(
-							record.get(CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS)
-						)
-					);
-					me.delegateStep[0].setValueFilterSubject(
-						me.delegateStep[0].getSubjectFilterDelegate().filterStringBuild(
-							record.get(CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT)
-						)
-					);
-					me.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
+						// Set step1 [0] datas
+						me.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
+						me.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
+						me.delegateStep[0].setValueEmailAccount(record.get(CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT));
+						me.delegateStep[0].setValueFilterFromAddress(
+							me.delegateStep[0].getFromAddressFilterDelegate().filterStringBuild(
+								record.get(CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS)
+							)
+						);
+						me.delegateStep[0].setValueFilterSubject(
+							me.delegateStep[0].getSubjectFilterDelegate().filterStringBuild(
+								record.get(CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT)
+							)
+						);
+						me.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
 
-					// Set step2 [1] datas
-					me.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
-					me.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+						// Set step2 [1] datas
+						me.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+						me.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
 
-					// Set step3 [2] datas
-					me.delegateStep[2].setValueAttachmentsFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE));
-					me.delegateStep[2].setValueAttachmentsCombo(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY));
+						// Set step3 [2] datas
+						me.delegateStep[2].setValueAttachmentsFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE));
+						me.delegateStep[2].setValueAttachmentsCombo(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY));
 
-					// Set step4 [3] datas
-					me.delegateStep[3].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
+						// Set step4 [3] datas
+						me.delegateStep[3].setValueWorkflowAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
+						me.delegateStep[3].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME));
+						me.delegateStep[3].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE));
 
-					me.view.disableModify(true);
+						me.view.disableModify(true);
+					}
 				});
 
 				this.view.wizard.changeTab(0);
@@ -146,27 +147,40 @@
 			// Form submit values formatting
 				if (!Ext.isEmpty(formData.filterFromAddress))
 					submitDatas[CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS] = Ext.encode(
-						formData[CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS].split(' OR ')
+						formData[CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS].split(
+							this.delegateStep[0].getFromAddressFilterDelegate().getTextareaConcatParameter()
+						)
 					);
 
 				if (!Ext.isEmpty(formData.filterSubject))
 					submitDatas[CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT] = Ext.encode(
-						formData[CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT].split(' OR ')
+						formData[CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT].split(
+							this.delegateStep[0].getSubjectFilterDelegate().getTextareaConcatParameter()
+						)
 					);
 
-				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-					submitDatas[CMDBuild.ServiceProxy.parameter.ATTRIBUTES] = Ext.encode(attributesGridValues);
+			// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
+				var attachmentsFieldsetCheckboxValue = this.delegateStep[2].getValueAttachmentsFieldsetCheckbox();
+				if (attachmentsFieldsetCheckboxValue) {
+					submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE] = attachmentsFieldsetCheckboxValue;
+					submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY] = formData[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY];
+				}
+
+				var workflowFieldsetCheckboxValue = this.delegateStep[3].getValueWorkflowFieldsetCheckbox();
+				if (workflowFieldsetCheckboxValue) {
+					if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+						submitDatas[CMDBuild.ServiceProxy.parameter.ATTRIBUTES] = Ext.encode(attributesGridValues);
+
+					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
+					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
+				}
 
 			// Cron field validation
-			if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
-				return;
+				if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
+					return;
 
 			// Data filtering to submit only right values
 			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
-			submitDatas[CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE] = formData[CMDBuild.ServiceProxy.parameter.ALFRESCO_LOOKUP_TYPE];
-			submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE] = this.delegateStep[2].getValueAttachmentsFieldsetCheckbox();
-			submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY] = formData[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY];
-//			submitDatas[CMDBuild.ServiceProxy.parameter.BODY_PARSING_ACTIVE] = this.delegateStep[2].getValueBodyParsingFieldsetCheckbox();
 			submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
 			submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT];
 			submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE];
@@ -176,7 +190,6 @@
 			submitDatas[CMDBuild.ServiceProxy.parameter.TYPE] = formData[CMDBuild.ServiceProxy.parameter.TYPE];
 			submitDatas[CMDBuild.ServiceProxy.parameter.VALUE_END] = formData[CMDBuild.ServiceProxy.parameter.VALUE_END];
 			submitDatas[CMDBuild.ServiceProxy.parameter.VALUE_INIT] = formData[CMDBuild.ServiceProxy.parameter.VALUE_INIT];
-			submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW];
 
 _debug(formData);
 _debug(submitDatas);
@@ -214,11 +227,13 @@ _debug(submitDatas);
 					(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getValueId()
 				);
 
+				if (rowIndex < 0)
+					rowIndex = 0;
+
 				me.selectionModel.select(rowIndex, true);
-				me.onRowSelected();
 			});
 
-			this.view.disableModify();
+			this.view.disableModify(true);
 			this.view.wizard.changeTab(0);
 		}
 	});

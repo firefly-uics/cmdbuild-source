@@ -68,6 +68,7 @@
 			if (data) {
 				for (var key in data) {
 					var recordConf = {};
+
 					recordConf[CMDBuild.ServiceProxy.parameter.NAME] = key;
 					recordConf[CMDBuild.ServiceProxy.parameter.VALUE] = data[key] || '';
 
@@ -75,6 +76,7 @@
 				}
 			} else {
 				var recordConf = {};
+
 				recordConf[CMDBuild.ServiceProxy.parameter.NAME] = '';
 				recordConf[CMDBuild.ServiceProxy.parameter.VALUE] = '';
 

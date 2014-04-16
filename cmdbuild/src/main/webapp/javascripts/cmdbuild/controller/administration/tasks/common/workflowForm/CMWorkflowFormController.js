@@ -93,19 +93,21 @@
 						me.gridField.store.removeAll();
 						me.gridField.store.insert(0, { key: '', value: '' });
 						me.gridField.cellEditing.startEditByPosition({ row: 0, column: 0 });
-						me.setDisabledAttributesTable(false);
+						me.setDisabledAttributesGrid(false);
 					}
 				}
 			});
 		},
 
-		setDisabledAttributesTable: function(state) {
+		setDisabledAttributesGrid: function(state) {
 			this.gridField.setDisabled(state);
 		},
 
 		setValueCombo: function(workflowName) {
-			if (!Ext.isEmpty(workflowName))
+			if (!Ext.isEmpty(workflowName)) {
 				this.comboField.setValue(workflowName);
+				this.onSelectWorkflow(workflowName, true);
+			}
 		},
 
 		setValueGrid: function(data) {

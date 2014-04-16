@@ -64,10 +64,10 @@
 
 			switch (param.type) {
 				case 'event_asynchronous':
-					return this.delegateStep[3].setDisabledAttributesTable(true);
+					return this.delegateStep[3].setDisabledAttributesGrid(true);
 
 				case 'event_synchronous':
-					return this.delegateStep[2].setDisabledAttributesTable(true);
+					return this.delegateStep[2].setDisabledAttributesGrid(true);
 
 				default:
 					throw 'CMTasksFormEventController error: task type not recognized';
