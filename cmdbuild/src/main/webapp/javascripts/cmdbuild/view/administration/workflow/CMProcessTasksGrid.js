@@ -54,11 +54,15 @@
 			},
 
 			select: function(row, record, index) {
-				this.delegate.cmOn('onRowSelected', {
-					'row': row,
-					'record': record,
-					'index': index
-				});
+				this.delegate.cmOn('onRowSelected');
+			},
+
+			/**
+			 * Event to select first row
+			 */
+			viewready: function() {
+				if (!this.getSelectionModel().hasSelection())
+					this.getSelectionModel().select(0, true);
 			}
 		},
 
@@ -67,7 +71,7 @@
 		 * Used to render active database value to add icon
 		 */
 		activeGridColumnRenderer: function(value, metaData, record) {
-			if(typeof value === 'boolean') {
+			if(typeof value == 'boolean') {
 				if(value) {
 					value = '<img src="images/icons/accept.png" alt="' + tr.running + '" />';
 				} else {

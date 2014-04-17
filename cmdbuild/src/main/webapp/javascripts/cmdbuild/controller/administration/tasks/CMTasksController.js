@@ -1,9 +1,15 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
+
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		parentDelegate: undefined,
+
+		form: undefined,
+		grid: undefined,
+		selectionModel: undefined,
 		tasksDatas: [ // Used to validate tasks
 			'all',
 			'connector',
@@ -14,7 +20,7 @@
 			'workflow'
 		],
 		taskType: undefined,
-		selectionModel: undefined,
+		view: undefined,
 
 		// Overwrite
 		constructor: function(view) {
@@ -61,6 +67,12 @@
 
 				case 'onItemDoubleClick':
 					return this.onItemDoubleClick();
+
+				case 'onNextButtonClick':
+					return this.form.wizard.changeTab(+1);
+
+				case 'onPreviousButtonClick':
+					return this.form.wizard.changeTab(-1);
 
 				case 'onRowSelected':
 					return this.onRowSelected(name, param, callBack);
@@ -129,7 +141,7 @@
 					this.form.delegate.delegateStep.push(items[i].delegate);
 					this.form.wizard.add(items[i]);
 				}
-_debug(this.form.delegate.delegateStep);
+
 				this.form.wizard.numberOfTabs = items.length;
 				this.form.wizard.changeTab(0);
 			}
@@ -159,8 +171,9 @@ _debug(this.form.delegate.delegateStep);
 			if (
 				!this.form.delegate
 				|| (this.form.delegate.taskType != selectedType)
-			)
+			) {
 				this.buildFormController(selectedType);
+			}
 
 			if (this.form.delegate)
 				this.form.delegate.cmOn(name, param, callBack);
@@ -175,7 +188,9 @@ _debug(this.form.delegate.delegateStep);
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyTasks.start({
 				scope: this,
-				params: { id: record.get(CMDBuild.ServiceProxy.parameter.ID) },
+				params: {
+					id: record.get(CMDBuild.ServiceProxy.parameter.ID)
+				},
 				success: this.success,
 				callback: this.callback
 			});
@@ -190,7 +205,9 @@ _debug(this.form.delegate.delegateStep);
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyTasks.stop({
 				scope: this,
-				params: { id: record.get(CMDBuild.ServiceProxy.parameter.ID) },
+				params: {
+					id: record.get(CMDBuild.ServiceProxy.parameter.ID)
+				},
 				success: this.success,
 				callback: this.callback
 			});

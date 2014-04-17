@@ -32,12 +32,6 @@
 				case 'onModifyButtonClick':
 					return this.onModifyButtonClick();
 
-				case 'onNextButtonClick':
-					return this.view.wizard.changeTab(+1);
-
-				case 'onPreviousButtonClick':
-					return this.view.wizard.changeTab(-1);
-
 				case 'onRemoveButtonClick':
 					return this.onRemoveButtonClick();
 
@@ -79,28 +73,30 @@
 				// Selected task asynchronous store query
 				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(me.taskType);
 				this.selectedDataStore.load({
-					params: { id: this.selectedId }
-				});
-				this.selectedDataStore.on('load', function(store, records, successful, eOpts) {
-					if (!Ext.isEmpty(records)) {
-						var record = records[0];
+					params: {
+						id: this.selectedId
+					},
+					callback: function(records, operation, success) {
+						if (!Ext.isEmpty(records)) {
+							var record = records[0];
 
-						me.parentDelegate.loadForm(me.taskType);
+							me.parentDelegate.loadForm(me.taskType);
 
-						// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
+							// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
 
-						// Set step1 [0] datas
-						me.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-						me.delegateStep[0].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
-						me.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
-						me.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
-						me.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME));
+							// Set step1 [0] datas
+							me.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
+							me.delegateStep[0].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
+							me.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
+							me.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
+							me.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME));
 
-						// Set step2 [1] datas
-						me.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
-						me.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+							// Set step2 [1] datas
+							me.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+							me.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
 
-						me.view.disableModify(true);
+							me.view.disableModify(true);
+						}
 					}
 				});
 
@@ -141,9 +137,6 @@
 			submitDatas[CMDBuild.ServiceProxy.parameter.TYPE] = formData[CMDBuild.ServiceProxy.parameter.TYPE];
 			submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
 
-_debug(formData);
-_debug(submitDatas);
-
 			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
 				CMDBuild.core.proxy.CMProxyTasks.create({
 					type: this.taskType,
@@ -161,30 +154,6 @@ _debug(submitDatas);
 					callback: this.callback
 				});
 			}
-		},
-
-		// overwrite
-		success: function(result, options, decodedResult) {
-			var me = this;
-			var store = this.parentDelegate.grid.store;
-
-			store.load();
-			store.on('load', function() {
-				me.view.reset();
-
-				var rowIndex = this.find(
-					CMDBuild.ServiceProxy.parameter.ID,
-					(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getValueId()
-				);
-
-				if (rowIndex < 0)
-					rowIndex = 0;
-
-				me.selectionModel.select(rowIndex, true);
-			});
-
-			this.view.disableModify(true);
-			this.view.wizard.changeTab(0);
 		}
 	});
 

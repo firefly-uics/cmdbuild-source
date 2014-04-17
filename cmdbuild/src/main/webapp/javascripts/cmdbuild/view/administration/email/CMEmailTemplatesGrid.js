@@ -45,11 +45,7 @@
 			},
 
 			select: function(row, record, index) {
-				this.delegate.cmOn('onRowSelected', {
-					'row': row,
-					'record': record,
-					'index': index
-				});
+				this.delegate.cmOn('onRowSelected');
 			},
 
 			/**
