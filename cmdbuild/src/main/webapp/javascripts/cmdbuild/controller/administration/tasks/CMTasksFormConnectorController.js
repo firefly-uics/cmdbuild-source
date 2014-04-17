@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.CMProxyEmailAccounts');
+
 	Ext.define("CMDBuild.controller.administration.tasks.CMTasksFormConnectorController", {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
@@ -36,12 +38,6 @@
 				case 'onModifyButtonClick':
 					return this.onModifyButtonClick();
 
-				case 'onNextButtonClick':
-					return this.view.wizard.changeTab(+1);
-
-				case 'onPreviousButtonClick':
-					return this.view.wizard.changeTab(-1);
-
 				case 'onRemoveButtonClick':
 					return this.onRemoveButtonClick();
 
@@ -62,16 +58,11 @@
 		onSaveButtonClick: function() {
 			var formData = this.view.getData(true);
 _debug(formData);
-			_debug('onSaveButtonClick to implement');
+_debug('onSaveButtonClick to implement');
 		},
 
 		setDisabledButtonNext: function(state) {
 			this.view.nextButton.setDisabled(state);
-		},
-
-		// overwrite
-		success: function(response, options, decodedResult) {
-			_debug('success to implement');
 		}
 	});
 

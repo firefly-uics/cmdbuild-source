@@ -34,6 +34,10 @@
 			}
 		},
 
+		getSelectedClasses: function() {
+			_debug(this.view.attributeLevelMappingGrid);
+		},
+
 		/**
 		 * Function to update rows stores on beforeEdit event
 		 *
@@ -244,7 +248,7 @@
 						},
 						flex: 1
 					},
-// TODO: Future implementation
+//					// TODO: Future implementation
 //					{
 //						header: 'tr.function',
 //						dataIndex: 'CMDBuild.ServiceProxy.parameter.FUNCTION',

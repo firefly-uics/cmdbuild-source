@@ -5,7 +5,9 @@
 
 		currentProcess: undefined,
 		currentProcessTaskId: undefined,
+		grid: undefined,
 		selectionModel: undefined,
+		view: undefined,
 
 		// Overwrite
 		constructor: function(view) {
@@ -113,21 +115,17 @@
 		},
 
 		onProcessSelected: function(processId, process) {
-			var me = this;
 			this.currentProcess = process;
 
 			if (!process || process.get('superclass')) {
 				this.view.disable();
 			} else {
 				this.view.enable();
+
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStoreByWorkflow());
 				this.grid.store.load({
 					params: {
 						workflowClassName: process.get(CMDBuild.ServiceProxy.parameter.NAME)
-					},
-					callback: function() {
-						if (!me.selectionModel.hasSelection())
-							me.selectionModel.select(0, true);
 					}
 				});
 			}

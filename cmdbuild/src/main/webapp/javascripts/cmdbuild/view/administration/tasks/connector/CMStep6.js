@@ -1,8 +1,8 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks.taskConnector;
+	var tr = CMDBuild.Translation.administration.tasks;
 
-	Ext.define('CMDBuild.model.CMModelClassLevel', {
+	Ext.define('CMDBuild.model.CMModelReference', {
 		extend: 'Ext.data.Model',
 
 		fields: [
@@ -11,7 +11,7 @@
 		]
 	});
 
-	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep4Delegate', {
+	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep6Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
@@ -27,15 +27,22 @@
 		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onShow':
+					return this.onShow();
+
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
+		},
+
+		onShow: function() {
+//			this.patentDelegate.delegateStep[4].getSelectedClasses();
 		}
 	});
 
-	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep4', {
+	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep6', {
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
@@ -47,27 +54,14 @@
 		initComponent: function() {
 			var me = this;
 
-			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep4Delegate', this);
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep6Delegate', this);
 
-			this.classLevelMappingGrid = Ext.create('Ext.grid.Panel', {
-				title: 'tr.classLevelMapping',
+			this.referenceMappingGrid = Ext.create('Ext.grid.Panel', {
+				title: 'tr.referenceMapping',
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 
 				columns: [
-					{
-						header: 'tr.main',
-						width: 50,
-						align: 'center',
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-						dataIndex: 'CMDBuild.ServiceProxy.parameter.MAIN',
-						renderer: function(value, metaData, record) {
-							return '<input type="radio" name="main" value="' + record.get(CMDBuild.ServiceProxy.parameter.NAME) + '" />';
-						}
-					},
 					{
 						header: 'tr.viewName',
 						dataIndex: CMDBuild.ServiceProxy.parameter.VIEW_NAME,
@@ -93,14 +87,7 @@
 							editable: false,
 							allowBlank: false,
 							store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
-							queryMode: 'local',
-
-							listeners: {
-								select: function(combo, records, eOpts) {
-									// TODO: set radio button value
-//									me.delegate.cmOn('onSelectAttributeCombo', me.store.indexOf(me.delegate.gridField.getSelectionModel().getSelection()[0]));
-								}
-							}
+							queryMode: 'local'
 						},
 						flex: 1
 					},
@@ -126,31 +113,41 @@
 				],
 
 				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.CMModelClassLevel',
+					model: 'CMDBuild.model.CMModelReference',
 					data: []
 				}),
 
 				plugins: Ext.create('Ext.grid.plugin.CellEditing', {
 					clicksToEdit: 1
-				}),
-
-				tbar: [
-					{
-						text: CMDBuild.Translation.common.buttons.add,
-						iconCls: 'add',
-						handler: function() {
-							me.classLevelMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelClassLevel'));
-						}
-					}
-				]
+				})
+//				,
+//
+//				tbar: [
+//					{
+//						text: CMDBuild.Translation.common.buttons.add,
+//						iconCls: 'add',
+//						handler: function() {
+//							me.referenceMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelReference'));
+//						}
+//					}
+//				]
 			});
 
 			Ext.apply(this, {
-				items: [this.classLevelMappingGrid]
+				items: [this.referenceMappingGrid]
 			});
 
 			this.callParent(arguments);
-		}
+		},
+
+		listeners: {
+			/**
+			 * To populate grid with selected classes if empty
+			 */
+			show: function(view, eOpts) {_debug('on show');
+				this.delegate.cmOn('onShow');
+			}
+		},
 	});
 
 })();

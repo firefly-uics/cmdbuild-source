@@ -59,10 +59,10 @@
 				this.nextButton.enable();
 			}
 
-			// Fire show event on tabs activate
+			// Fire show event on first tabs
 			var currentActiveTab = this.getActiveTab();
 
-			if (currentActiveTab)
+			if (currentActiveTab && activeTab == 0)
 				currentActiveTab.fireEvent('show');
 		}
 	});

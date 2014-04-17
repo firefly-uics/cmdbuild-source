@@ -153,7 +153,7 @@
 					{
 						xtype: 'numberfield',
 						fieldLabel: tr.smtpPort,
-						allowBlank: false,
+						allowBlank: true,
 						minValue: 1,
 						maxValue: 65535,
 						name: CMDBuild.ServiceProxy.parameter.SMTP_PORT
@@ -193,7 +193,7 @@
 							{
 								xtype: 'numberfield',
 								fieldLabel: tr.imapPort,
-								allowBlank: false,
+								allowBlank: true,
 								minValue: 1,
 								maxValue: 65535,
 								name: CMDBuild.ServiceProxy.parameter.IMAP_PORT
