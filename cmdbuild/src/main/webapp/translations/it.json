@@ -630,7 +630,7 @@
 				"title": "Configurazione Grafo delle Relazioni"
 			},
 			"modify": "Modifica",
-			"save": "Conferma",
+			"save": "Salva",
 			"server": {
 				"cache_management": "Gestione cache",
 				"clear_cache": "Cancella la cache",
