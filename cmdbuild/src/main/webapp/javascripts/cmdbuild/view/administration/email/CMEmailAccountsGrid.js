@@ -12,8 +12,6 @@
 		cls: 'cmborderbottom',
 
 		initComponent: function() {
-			var me = this;
-
 			this.gridColumns = [
 				{
 					text: tr.isDefault,
@@ -24,7 +22,8 @@
 					hideable: false,
 					menuDisabled: true,
 					fixed: true,
-					renderer: me.defaultGridColumnRenderer
+					scope: this,
+					renderer: this.defaultGridColumnRenderer
 				},
 				{
 					text: CMDBuild.Translation.name,
@@ -61,12 +60,11 @@
 			 * Event to load store on view display and first row selection as CMDbuild standard
 			 */
 			viewready: function() {
-				var me = this;
-
 				this.store.load({
+					scope: this,
 					callback: function() {
-						if (!me.getSelectionModel().hasSelection())
-							me.getSelectionModel().select(0, true);
+						if (!this.getSelectionModel().hasSelection())
+							this.getSelectionModel().select(0, true);
 					}
 				});
 			}

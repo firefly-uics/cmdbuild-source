@@ -21,15 +21,14 @@
 		bodyCls: 'cmgraypanel',
 
 		initComponent: function() {
-			var me = this;
-
 			// Buttons configuration
 			this.removeButton = Ext.create('Ext.button.Button', {
 				id: 'removeButton',
 				iconCls: 'delete',
 				text: tr.remove,
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onRemoveButtonClick', me);
+					this.delegate.cmOn('onRemoveButtonClick');
 				}
 			});
 
@@ -37,8 +36,9 @@
 				id: 'setDefaultButton',
 				iconCls: 'ok',
 				text: tr.setDefault,
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onSetDefaultButtonClick', me);
+					this.delegate.cmOn('onSetDefaultButtonClick');
 				}
 			});
 
@@ -46,8 +46,9 @@
 				Ext.create('Ext.button.Button', {
 					iconCls: 'modify',
 					text: tr.modify,
+					scope: this,
 					handler: function() {
-						me.delegate.cmOn('onModifyButtonClick');
+						this.delegate.cmOn('onModifyButtonClick');
 					}
 				}),
 				this.removeButton,
@@ -56,13 +57,15 @@
 
 			this.cmButtons = [
 				Ext.create('CMDBuild.buttons.SaveButton', {
+					scope: this,
 					handler: function() {
-						me.delegate.cmOn('onSaveButtonClick');
+						this.delegate.cmOn('onSaveButtonClick');
 					}
 				}),
 				Ext.create('CMDBuild.buttons.AbortButton', {
+					scope: this,
 					handler: function() {
-						me.delegate.cmOn('onAbortButtonClick');
+						this.delegate.cmOn('onAbortButtonClick');
 					}
 				})
 			];

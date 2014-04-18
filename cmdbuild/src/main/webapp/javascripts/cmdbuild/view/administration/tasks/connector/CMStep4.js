@@ -27,12 +27,30 @@
 		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+//				case 'onRadioClick':
+//					return this.onRadioClick(param);
+
+//				case 'onSelectClassCombo':
+//					return this.onSelectClassCombo(param);
+
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
 		}
+//	,
+//
+//		onRadioClick: function(className) {
+//			if (typeof className != 'undefined')
+//				this.view.mainClassName.setValue(className);
+//		},
+//
+//		onSelectClassCombo: function() {
+//			var columnModel = this.view.classLevelMappingGrid.getSelectionModel().select(0, true);
+//
+//			_debug(columnModel);
+//		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep4', {
@@ -49,25 +67,36 @@
 
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep4Delegate', this);
 
+			this.gridSelectionModel = Ext.create('Ext.selection.CheckboxModel', {
+				mode: 'single',
+				showHeaderCheckbox: false,
+				headerText: 'tr.main',
+				headerWidth: 50,
+				dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_MAIN_NAME
+			});
+
 			this.classLevelMappingGrid = Ext.create('Ext.grid.Panel', {
 				title: 'tr.classLevelMapping',
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 
+				selModel: this.gridSelectionModel,
+
 				columns: [
-					{
-						header: 'tr.main',
-						width: 50,
-						align: 'center',
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
-						dataIndex: 'CMDBuild.ServiceProxy.parameter.MAIN',
-						renderer: function(value, metaData, record) {
-							return '<input type="radio" name="main" value="' + record.get(CMDBuild.ServiceProxy.parameter.NAME) + '" />';
-						}
-					},
+//					{
+//						header: 'tr.main',
+//						width: 50,
+//						align: 'center',
+//						sortable: false,
+//						hideable: false,
+//						menuDisabled: true,
+//						fixed: true,
+//						dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_MAIN_NAME,
+//						scope: this,
+//						renderer: function(value, metaData, record) {
+//							return '<input type="radio" disabled="disabled" name="' + CMDBuild.ServiceProxy.parameter.CLASS_MAIN_NAME + '" onClick="' + this.delegate.cmOn('onRadioClick', record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME)) + '" />';
+//						}
+//					},
 					{
 						header: 'tr.viewName',
 						dataIndex: CMDBuild.ServiceProxy.parameter.VIEW_NAME,
@@ -93,14 +122,14 @@
 							editable: false,
 							allowBlank: false,
 							store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
-							queryMode: 'local',
-
-							listeners: {
-								select: function(combo, records, eOpts) {
-									// TODO: set radio button value
-//									me.delegate.cmOn('onSelectAttributeCombo', me.store.indexOf(me.delegate.gridField.getSelectionModel().getSelection()[0]));
-								}
-							}
+							queryMode: 'local'
+//								,
+//
+//							listeners: {
+//								select: function(combo, records, eOpts) {
+//									me.delegate.cmOn('onSelectClassCombo');
+//								}
+//							}
 						},
 						flex: 1
 					},
@@ -145,8 +174,12 @@
 				]
 			});
 
+			this.mainClassName = Ext.create('Ext.form.field.Hidden', {
+				name: CMDBuild.ServiceProxy.parameter.CLASS_MAIN_NAME
+			});
+
 			Ext.apply(this, {
-				items: [this.classLevelMappingGrid]
+				items: [this.classLevelMappingGrid, this.mainClassName]
 			});
 
 			this.callParent(arguments);

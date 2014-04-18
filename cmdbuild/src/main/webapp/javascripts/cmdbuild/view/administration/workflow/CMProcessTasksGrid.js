@@ -11,8 +11,6 @@
 		frame: false,
 
 		initComponent: function() {
-			var me = this;
-
 			this.gridColumns = [
 				{
 					dataIndex: CMDBuild.ServiceProxy.parameter.ID,
@@ -28,12 +26,13 @@
 					width: 60,
 					align: 'center',
 					dataIndex: CMDBuild.ServiceProxy.parameter.ACTIVE,
-					renderer: function(value, metaData, record) {
-						return me.activeGridColumnRenderer(value, metaData, record);
-					},
 					hideable: false,
 					menuDisabled: true,
-					fixed: true
+					fixed: true,
+					scope: this,
+					renderer: function(value, metaData, record) {
+						return this.activeGridColumnRenderer(value, metaData, record);
+					}
 				}
 			];
 
@@ -55,14 +54,6 @@
 
 			select: function(row, record, index) {
 				this.delegate.cmOn('onRowSelected');
-			},
-
-			/**
-			 * Event to select first row
-			 */
-			viewready: function() {
-				if (!this.getSelectionModel().hasSelection())
-					this.getSelectionModel().select(0, true);
 			}
 		},
 

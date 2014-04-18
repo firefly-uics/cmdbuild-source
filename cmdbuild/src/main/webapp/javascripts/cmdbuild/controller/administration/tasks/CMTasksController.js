@@ -39,18 +39,22 @@
 		// Overwrite
 		onViewOnFront: function(parameters) {
 			if (typeof parameters != 'undefined') {
-				var me = this;
-
 				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
 
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
 				this.grid.store.load({
+					scope: this,
 					callback: function() {
-						if (!me.selectionModel.hasSelection())
-							me.selectionModel.select(0, true);
+						if (!this.selectionModel.hasSelection())
+							this.selectionModel.select(0, true);
 					}
 				});
+
+				// Fire show event on accordion click
+				this.view.fireEvent('show');
 			}
+
+			this.callParent(arguments);
 		},
 
 		/**
@@ -97,7 +101,10 @@
 		 */
 		buildFormController: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
-				this.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(this.typeSerialize(type, 1)) + 'Controller', this.form);
+				this.form.delegate = Ext.create(
+					'CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(this.typeSerialize(type, 1)) + 'Controller',
+					this.form
+				);
 				this.form.delegate.parentDelegate = this;
 				this.form.delegate.selectionModel = this.selectionModel;
 			}
