@@ -15,6 +15,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 
 <!-- FIXES -->
+<script type="text/javascript" src="javascripts/cmdbuild/core/fixes/CMFixCheckboxModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/fixes/CMFixFieldset.js"></script>
 
 <!--  PROXYES -->

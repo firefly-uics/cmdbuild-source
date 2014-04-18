@@ -13,13 +13,12 @@
 		layout: 'border',
 
 		initComponent: function() {
-			var me = this;
-
 			this.addButton = Ext.create('Ext.Button', {
 				iconCls: 'add',
 				text: tr.add,
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onAddButtonClick');
+					this.delegate.cmOn('onAddButtonClick');
 				}
 			});
 
@@ -34,7 +33,14 @@
 			});
 
 			Ext.apply(this, {
-				tbar: [this.addButton],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP,
+						items: [this.addButton]
+					}
+				],
 				items: [this.grid, this.form]
 			});
 

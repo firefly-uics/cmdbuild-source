@@ -21,35 +21,37 @@
 		bodyCls: 'cmgraypanel',
 
 		initComponent: function() {
-			var me = this;
-
 			// Buttons configuration
 			this.cmTBar = [
 				Ext.create('Ext.button.Button', {
 					iconCls: 'modify',
 					text: tr.modify,
+					scope: this,
 					handler: function() {
-						me.delegate.cmOn('onModifyButtonClick');
+						this.delegate.cmOn('onModifyButtonClick');
 					}
 				}),
 				Ext.create('Ext.button.Button', {
 					iconCls: 'delete',
 					text: tr.remove,
+					scope: this,
 					handler: function() {
-						me.delegate.cmOn('onRemoveButtonClick');
+						this.delegate.cmOn('onRemoveButtonClick');
 					}
 				})
 			];
 
 			this.cmButtons = [
 				Ext.create('CMDBuild.buttons.SaveButton', {
+					scope: this,
 					handler: function() {
-						me.delegate.cmOn('onSaveButtonClick');
+						this.delegate.cmOn('onSaveButtonClick');
 					}
 				}),
 				Ext.create('CMDBuild.buttons.AbortButton', {
+					scope: this,
 					handler: function() {
-						me.delegate.cmOn('onAbortButtonClick');
+						this.delegate.cmOn('onAbortButtonClick');
 					}
 				})
 			];

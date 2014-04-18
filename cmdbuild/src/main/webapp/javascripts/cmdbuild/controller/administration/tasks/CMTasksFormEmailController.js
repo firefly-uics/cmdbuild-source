@@ -69,13 +69,12 @@
 		// overwrite
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
-				var me = this;
-
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
 
 				// Selected task asynchronous store query
-				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(me.taskType);
+				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(this.taskType);
 				this.selectedDataStore.load({
+					scope: this,
 					params: {
 						id: this.selectedId
 					},
@@ -83,40 +82,40 @@
 						if (!Ext.isEmpty(records)) {
 							var record = records[0];
 
-							me.parentDelegate.loadForm(me.taskType);
+							this.parentDelegate.loadForm(this.taskType);
 
 							// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find a working fix, so i must set all fields manually
 
 							// Set step1 [0] datas
-							me.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-							me.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
-							me.delegateStep[0].setValueEmailAccount(record.get(CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT));
-							me.delegateStep[0].setValueFilterFromAddress(
-								me.delegateStep[0].getFromAddressFilterDelegate().filterStringBuild(
+							this.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
+							this.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
+							this.delegateStep[0].setValueEmailAccount(record.get(CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT));
+							this.delegateStep[0].setValueFilterFromAddress(
+								this.delegateStep[0].getFromAddressFilterDelegate().filterStringBuild(
 									record.get(CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS)
 								)
 							);
-							me.delegateStep[0].setValueFilterSubject(
-								me.delegateStep[0].getSubjectFilterDelegate().filterStringBuild(
+							this.delegateStep[0].setValueFilterSubject(
+								this.delegateStep[0].getSubjectFilterDelegate().filterStringBuild(
 									record.get(CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT)
 								)
 							);
-							me.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
+							this.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
 
 							// Set step2 [1] datas
-							me.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
-							me.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+							this.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
 
 							// Set step3 [2] datas
-							me.delegateStep[2].setValueAttachmentsFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE));
-							me.delegateStep[2].setValueAttachmentsCombo(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY));
+							this.delegateStep[2].setValueAttachmentsFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE));
+							this.delegateStep[2].setValueAttachmentsCombo(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY));
 
 							// Set step4 [3] datas
-							me.delegateStep[3].setValueWorkflowAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
-							me.delegateStep[3].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME));
-							me.delegateStep[3].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE));
+							this.delegateStep[3].setValueWorkflowAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
+							this.delegateStep[3].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME));
+							this.delegateStep[3].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE));
 
-							me.view.disableModify(true);
+							this.view.disableModify(true);
 						}
 					}
 				});

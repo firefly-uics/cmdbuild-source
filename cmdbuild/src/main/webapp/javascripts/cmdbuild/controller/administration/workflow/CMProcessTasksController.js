@@ -62,7 +62,7 @@
 
 				Ext.Function.createDelayed(function() {
 					me.targetController.cmOn(name, param, callBack);
-					me.targetController.form.delegate.delegateStep[0].fillWorkflowCombo(me.currentProcess.get(CMDBuild.ServiceProxy.parameter.NAME));
+					me.targetController.form.delegate.delegateStep[0].setValueWorkflowCombo(me.currentProcess.get(CMDBuild.ServiceProxy.parameter.NAME));
 					me.targetController.form.delegate.onModifyButtonClick();
 				}, 100)();
 			}, 500)();
@@ -137,10 +137,16 @@
 			if (this.currentProcessTaskId) {
 				param.id = this.currentProcessTaskId;
 
+				this.targetAccordion.expand();
+
 				Ext.Function.createDelayed(function() {
-					if (me.targetController.form.delegate.selectedId != null)
-						me.targetController.form.delegate.onRemoveButtonClick();
-				}, 1000)();
+					me.targetAccordion.selectNodeById(param.type);
+
+					Ext.Function.createDelayed(function() {
+						if (me.targetController.form.delegate.selectedId != null)
+							me.targetController.form.delegate.onRemoveButtonClick();
+					}, 1000)();
+				}, 500)();
 			}
 		},
 
