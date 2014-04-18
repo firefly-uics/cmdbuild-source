@@ -48,7 +48,7 @@
 
 		enableCMTbar: function() {
 			this.iterateOverCMTBar(function(i) {
-				if (i && i.enable) {
+				if (i && i.enable && ! i.disabledForGroup) {
 					i.enable();
 				}
 			});
