@@ -102,7 +102,7 @@
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
 
-			this.classe = Ext.create('Ext.form.field.ComboBox', {
+			this.className = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -128,7 +128,7 @@
 					this.idField,
 					this.descriptionField,
 					this.activeField,
-					this.classe
+					this.className
 				]
 			});
 

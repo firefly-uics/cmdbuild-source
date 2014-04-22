@@ -26,7 +26,7 @@
 					return this.onAbortButtonClick();
 
 				case 'onAddButtonClick':
-					return this.onAddButtonClick(param.type);
+					return this.onAddButtonClick(name, param, callBack);
 
 				case 'onClassSelected':
 					this.onClassSelected(param.className);
@@ -57,10 +57,10 @@
 		 * @param (String) type
 		 */
 		// overwrite
-		onAddButtonClick: function(type) {
+		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
 
-			switch (type) {
+			switch (param.type) {
 				case 'event_asynchronous':
 					return this.delegateStep[3].setDisabledAttributesGrid(true);
 
@@ -202,13 +202,6 @@ _debug(submitDatas);
 //			}
 
 			_debug('onSaveButtonClick to implement');
-		},
-
-		/**
-		 * @param (Boolean) state
-		 */
-		setDisabledButtonNext: function(state) {
-			this.view.nextButton.setDisabled(state);
 		}
 	});
 

@@ -34,8 +34,35 @@
 			}
 		},
 
+		getData: function() {
+			var data = [];
+
+			this.view.attributeLevelMappingGrid.getStore().each(function(record) {
+				if (
+					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
+					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME))
+				) {
+					var buffer = [];
+
+					buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
+					buffer[CMDBuild.ServiceProxy.parameter.VIEW_NAME] = record.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME);
+
+					data.push(buffer);
+				}
+			});
+
+			return data;
+		},
+
 		getSelectedClasses: function() {
 			_debug(this.view.attributeLevelMappingGrid);
+		},
+
+		isEmptyMappingGrid: function() {
+			if (CMDBuild.Utils.isEmpty(this.getData()))
+				return true;
+
+			return false;
 		},
 
 		/**
@@ -121,6 +148,8 @@
 					data: attributesListStore[0]
 				})
 			});
+
+			this.setDisabledButtonNext(false);
 		},
 
 		/**
@@ -154,6 +183,12 @@
 					data: attributesListStore
 				})
 			});
+
+			this.setDisabledButtonNext(false);
+		},
+
+		setDisabledButtonNext: function(state) {
+			this.parentDelegate.setDisabledButtonNext(state);
 		}
 	});
 
@@ -328,6 +363,20 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			/**
+			 * Disable next button only if grid haven't selected class
+			 */
+			show: function(view, eOpts) {
+				var me = this;
+
+				Ext.Function.createDelayed(function() { // HACK: to fix problem witch fires show event before changeTab() function
+					if (me.delegate.isEmptyMappingGrid())
+						me.delegate.setDisabledButtonNext(true);
+				}, 100)();
+			}
 		}
 	});
 

@@ -57,12 +57,12 @@
 		// overwrite
 		onSaveButtonClick: function() {
 			var formData = this.view.getData(true);
-_debug(formData);
-_debug('onSaveButtonClick to implement');
-		},
 
-		setDisabledButtonNext: function(state) {
-			this.view.nextButton.setDisabled(state);
+_debug(this.delegateStep[3].getData());
+_debug(formData);
+_debug(this.delegateStep[3].getMainClass());
+
+_debug('onSaveButtonClick to implement');
 		}
 	});
 
