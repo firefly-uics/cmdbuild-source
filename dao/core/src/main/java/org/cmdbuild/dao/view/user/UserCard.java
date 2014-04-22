@@ -64,6 +64,11 @@ public class UserCard implements CMCard {
 	public DateTime getEndDate() {
 		return inner.getEndDate();
 	}
+	
+	@Override
+	public Long getCurrentId() {
+		return inner.getCurrentId();
+	}
 
 	@Override
 	public Iterable<Entry<String, Object>> getAllValues() {

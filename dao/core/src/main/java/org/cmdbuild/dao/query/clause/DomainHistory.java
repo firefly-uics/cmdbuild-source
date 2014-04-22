@@ -30,6 +30,11 @@ public class DomainHistory extends ForwardingDomain {
 	}
 
 	@Override
+	public Long getId() {
+		return current.getId();
+	}
+
+	@Override
 	public String getName() {
 		return current.getName() + " HISTORY";
 	}
