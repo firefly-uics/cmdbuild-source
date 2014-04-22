@@ -23,6 +23,8 @@ import org.cmdbuild.config.CmdbfConfiguration;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -47,13 +49,14 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Attribute.AttributeBuilder;
+import org.cmdbuild.model.data.Attribute.AttributeTypeBuilder;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 abstract public class EntryNamespace extends AbstractNamespace {
-
+	
 	private static final String ATTRIBUTE_DESCRIPTION = "description";
 	private static final String ATTRIBUTE_ACTIVE = "active";
 	private static final String ATTRIBUTE_TYPE = "type";
@@ -71,6 +74,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 	private static final String ATTRIBUTE_SCALE = "scale";
 	private static final String ATTRIBUTE_LOOKUP = "lookup";
 	private static final String ATTRIBUTE_DOMAIN = "domain";
+	private static final String ATTRIBUTE_FK_DESTINATION = "fkDestination";
 	private static final String VALUE = "value";
 
 	protected final DataAccessLogic systemDataAccessLogic;
@@ -121,19 +125,19 @@ abstract public class EntryNamespace extends AbstractNamespace {
 			@Override
 			public void visit(final TimeAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_TIME);
-				properties.put(ATTRIBUTE_TYPE, "TIME");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.TIME.name());
 			}
 
 			@Override
 			public void visit(final TextAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-				properties.put(ATTRIBUTE_TYPE, "TEXT");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.TEXT.name());
 			}
 
 			@Override
 			public void visit(final StringAttributeType attributeType) {
-				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-				properties.put(ATTRIBUTE_TYPE, "STRING");
+				//element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.STRING.name());
 				properties.put(ATTRIBUTE_LENGTH, Integer.toString(attributeType.length));
 				final XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema, false);
 				final XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
@@ -150,7 +154,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 				final QName qname = getRegistry().getTypeQName(IdAndDescription.class);
 				imports.add(qname.getNamespaceURI());
 				element.setSchemaTypeName(qname);
-				properties.put(ATTRIBUTE_TYPE, "REFERENCE");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.REFERENCE.name());
 				properties.put(ATTRIBUTE_DOMAIN, attributeType.getIdentifier().getLocalName());
 			}
 
@@ -161,39 +165,41 @@ abstract public class EntryNamespace extends AbstractNamespace {
 				final QName lookupQName = getRegistry().getTypeQName(lookupType);
 				imports.add(lookupQName.getNamespaceURI());
 				element.setSchemaTypeName(lookupQName);
-				properties.put(ATTRIBUTE_TYPE, "LOOKUP");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.LOOKUP.name());
 				properties.put(ATTRIBUTE_LOOKUP, attributeType.getLookupTypeName());
 			}
 
 			@Override
 			public void visit(final IpAddressAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-				properties.put(ATTRIBUTE_TYPE, "INET");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.INET.name());
 			}
 
 			@Override
 			public void visit(final IntegerAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_INTEGER);
-				properties.put(ATTRIBUTE_TYPE, "INTEGER");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.INTEGER.name());
 			}
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
-				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-				properties.put(ATTRIBUTE_TYPE, "FOREIGNKEY");
-				properties.put(ATTRIBUTE_DOMAIN, attributeType.getIdentifier().getLocalName());
+				final QName qname = getRegistry().getTypeQName(IdAndDescription.class);
+				imports.add(qname.getNamespaceURI());
+				element.setSchemaTypeName(qname);				
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.FOREIGNKEY.name());
+				properties.put(ATTRIBUTE_FK_DESTINATION, attributeType.getForeignKeyDestinationClassName());
 			}
 
 			@Override
 			public void visit(final DoubleAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_DOUBLE);
-				properties.put(ATTRIBUTE_TYPE, "DOUBLE");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.DOUBLE.name());
 			}
 
 			@Override
 			public void visit(final DecimalAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_DECIMAL);
-				properties.put(ATTRIBUTE_TYPE, "DECIMAL");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.DECIMAL.name());
 				properties.put(ATTRIBUTE_PRECISION, Integer.toString(attributeType.precision));
 				properties.put(ATTRIBUTE_SCALE, Integer.toString(attributeType.scale));
 			}
@@ -201,26 +207,25 @@ abstract public class EntryNamespace extends AbstractNamespace {
 			@Override
 			public void visit(final DateAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_DATE);
-				properties.put(ATTRIBUTE_TYPE, "DATE");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.DATE.name());
 			}
 
 			@Override
 			public void visit(final DateTimeAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_DATETIME);
-				properties.put(ATTRIBUTE_TYPE, "TIMESTAMP");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.TIMESTAMP.name());
 			}
 
 			@Override
 			public void visit(final EntryTypeAttributeType attributeType) {
-				// TODO set type
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-				properties.put(ATTRIBUTE_TYPE, "UNDEFINED");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.UNDEFINED.name());
 			}
 
 			@Override
 			public void visit(final BooleanAttributeType attributeType) {
 				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_BOOLEAN);
-				properties.put(ATTRIBUTE_TYPE, "BOOLEAN");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.BOOLEAN.name());
 			}
 
 			@Override
@@ -232,13 +237,12 @@ abstract public class EntryNamespace extends AbstractNamespace {
 				valueElement.setMaxOccurs(-1);
 				type.setParticle(valueElement);
 				element.setSchemaType(type);
-				// TODO set type
-				properties.put(ATTRIBUTE_TYPE, "UNDEFINED");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.UNDEFINED.name());
 			}
 
 			@Override
 			public void visit(final CharAttributeType attributeType) {
-				properties.put(ATTRIBUTE_TYPE, "CHAR");
+				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.CHAR.name());
 				final XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema, false);
 				final XmlSchemaSimpleTypeRestriction restriction = new XmlSchemaSimpleTypeRestriction();
 				restriction.setBaseTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
@@ -254,6 +258,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 	}
 
 	protected void addAttributeFromXsd(final XmlSchemaElement element, final XmlSchema schema, final CMEntryType type) {
+		boolean skip = false;
 		final Map<String, String> properties = getAnnotations(element);
 		final AttributeBuilder attributeBuilder = Attribute.newAttribute().withName(element.getName());
 		attributeBuilder.withOwner(type.getIdentifier().getLocalName());
@@ -282,7 +287,20 @@ abstract public class EntryNamespace extends AbstractNamespace {
 			attributeBuilder.withIndex(Integer.parseInt(properties.get(ATTRIBUTE_INDEX)));
 		}
 		if (properties.containsKey(ATTRIBUTE_DOMAIN)) {
-			attributeBuilder.withDomain(properties.get(ATTRIBUTE_DOMAIN));
+			final CMDomain domain = systemDataAccessLogic.findDomain(properties.get(ATTRIBUTE_DOMAIN));
+			if (domain != null && domain.isActive()) {
+				attributeBuilder.withDomain(properties.get(ATTRIBUTE_DOMAIN));
+			} else {
+				skip = true;
+			}
+		}
+		if (properties.containsKey(ATTRIBUTE_FK_DESTINATION)) {
+			final CMClass cmClass = systemDataAccessLogic.findClass(properties.get(ATTRIBUTE_FK_DESTINATION));
+			if (cmClass != null && cmClass.isActive()) {
+				attributeBuilder.withForeignKeyDestinationClassName(properties.get(ATTRIBUTE_FK_DESTINATION));
+			} else {
+				skip = true;
+			}
 		}
 		if (properties.containsKey(ATTRIBUTE_LOOKUP)) {
 			attributeBuilder.withLookupType(properties.get(ATTRIBUTE_LOOKUP));
@@ -308,7 +326,9 @@ abstract public class EntryNamespace extends AbstractNamespace {
 		if (properties.containsKey(ATTRIBUTE_MANDATORY)) {
 			attributeBuilder.thatIsMandatory(Boolean.parseBoolean(properties.get(ATTRIBUTE_MANDATORY)));
 		}
-		dataDefinitionLogic.createOrUpdate(attributeBuilder.build());
+		if (!skip) {
+			dataDefinitionLogic.createOrUpdate(attributeBuilder.build());
+		}
 	}
 
 	protected boolean serialize(final Node xml, final CMEntryType type, final Iterable<Entry<String, Object>> attributes) {
@@ -424,7 +444,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 		@Override
 		public void visit(final ForeignKeyAttributeType attributeType) {
 			if (value != null) {
-				xml.setTextContent(((Long) value).toString());
+				getRegistry().serializeValue(xml, value);
 			}
 		}
 
@@ -558,10 +578,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 
 		@Override
 		public void visit(final ForeignKeyAttributeType attributeType) {
-			final String text = xml.getTextContent();
-			if (text != null && !text.isEmpty()) {
-				value = new Long(text);
-			}
+			value = getRegistry().deserializeValue(xml, IdAndDescription.class);
 		}
 
 		@Override

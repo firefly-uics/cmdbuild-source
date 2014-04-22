@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.CurrentId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
@@ -61,6 +62,11 @@ public class JoinCreator extends PartCreator {
 				return quote(EndDate);
 			}
 
+			@Override
+			String quotedCurrentIdAttribute() {
+				return quote(CurrentId);
+			}
+
 		},
 		CURRENT {
 
@@ -74,11 +80,18 @@ public class JoinCreator extends PartCreator {
 				return "NULL";
 			}
 
+			@Override
+			String quotedCurrentIdAttribute() {
+				return "NULL";
+			}
+
 		};
 
 		abstract Quoter quoterFor(CMEntryType entryType);
 
 		abstract String quotedEndDateAttribute();
+
+		abstract String quotedCurrentIdAttribute();
 
 	}
 
@@ -332,7 +345,8 @@ public class JoinCreator extends PartCreator {
 						quote(IdClass), //
 						quote(User), //
 						quote(BeginDate), //
-						"NULL AS " + quote(EndDate)), //
+						"NULL AS " + quote(EndDate), //
+						"NULL AS " + quote(CurrentId)), //
 						ATTRIBUTES_SEPARATOR));
 			}
 
