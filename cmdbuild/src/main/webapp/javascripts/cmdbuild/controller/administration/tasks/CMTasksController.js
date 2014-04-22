@@ -137,6 +137,12 @@
 		 */
 		loadForm: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
+
+				// Clear all old tabs listeners
+				this.form.wizard.items.each(function(item) {
+					item.clearListeners();
+				});
+
 				this.form.wizard.removeAll();
 				this.form.delegate.delegateStep = [];
 

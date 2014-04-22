@@ -27,18 +27,11 @@
 		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onShow':
-					return this.onShow();
-
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
-		},
-
-		onShow: function() {
-//			this.patentDelegate.delegateStep[4].getSelectedClasses();
 		}
 	});
 
@@ -144,8 +137,8 @@
 			/**
 			 * To populate grid with selected classes if empty
 			 */
-			show: function(view, eOpts) {_debug('on show');
-				this.delegate.cmOn('onShow');
+			show: function(view, eOpts) {
+_debug('on show step 6');
 			}
 		},
 	});

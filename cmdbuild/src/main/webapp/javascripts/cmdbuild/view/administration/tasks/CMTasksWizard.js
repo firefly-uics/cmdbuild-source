@@ -48,22 +48,16 @@
 			}
 
 			if (activeTab == 0) {
-				this.previousButton.disable();
+				this.previousButton.setDisabled(true);
 			} else {
-				this.previousButton.enable();
+				this.previousButton.setDisabled(false);
 			}
 
 			if (activeTab == this.numberOfTabs - 1) {
-				this.nextButton.disable();
+				this.nextButton.setDisabled(true);
 			} else {
-				this.nextButton.enable();
+				this.nextButton.setDisabled(false);
 			}
-
-			// Fire show event on first tabs
-			var currentActiveTab = this.getActiveTab();
-
-			if (currentActiveTab && activeTab == 0)
-				currentActiveTab.fireEvent('show');
 		}
 	});
 

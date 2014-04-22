@@ -106,6 +106,13 @@
 			this.delegateStep[0].setValueId();
 		},
 
+		/**
+		 * @param (Boolean) state
+		 */
+		setDisabledButtonNext: function(state) {
+			this.view.nextButton.setDisabled(state);
+		},
+
 		success: function(result, options, decodedResult) {
 			var me = this;
 			var store = this.parentDelegate.grid.store;
