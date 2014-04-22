@@ -8,23 +8,33 @@
 		modal: true,
 		title: NO_PERMISSION_TO,
 		width: CMDBuild.LABEL_WIDTH + 100,
+		
+/*	 Create parameters
+ * 		delegate: me,
+ * 		model: model,
+ * 		values: values
+ * 
+*/
 
 		initComponent: function() {
 			var me = this;
+			var classId = me.model.get("privilegedObjectId");
+			var processes = _CMCache.getProcesses();
+			var isProcess = (processes[classId]) ? true : false;
 			this.create = Ext.create("Ext.form.field.Checkbox", {
-				fieldLabel : CMDBuild.Translation.common.buttons.add,
+				fieldLabel : (isProcess) ? CMDBuild.Translation.management.modworkflow.add_card : CMDBuild.Translation.common.buttons.add,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				checked: this.values.create
 				
 			});
 			this.remove = Ext.create("Ext.form.field.Checkbox", {
-				fieldLabel : CMDBuild.Translation.common.buttons.remove,
+				fieldLabel : (isProcess) ? CMDBuild.Translation.management.modworkflow.abort_card : CMDBuild.Translation.common.buttons.remove,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				checked: this.values.remove
 				
 			});
 			this.modify = Ext.create("Ext.form.field.Checkbox", {
-				fieldLabel : CMDBuild.Translation.common.buttons.modify,
+				fieldLabel : (isProcess) ? CMDBuild.Translation.management.modworkflow.modify_card : CMDBuild.Translation.common.buttons.modify,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				checked: this.values.modify
 				
@@ -32,8 +42,8 @@
 			this.clone = Ext.create("Ext.form.field.Checkbox", {
 				fieldLabel : CMDBuild.Translation.common.buttons.clone,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				checked: this.values.clone
-				
+				checked: this.values.clone, 
+				hidden: isProcess // if process does not have clone
 			});
 			this.form = Ext.create('Ext.form.Panel', {
 				bodyCls: 'cmgraypanel',

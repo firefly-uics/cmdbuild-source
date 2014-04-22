@@ -76,7 +76,28 @@
 			this.view.updateTitleForEntry(entryType);
 
 			_CMUIState.onlyGridIfFullScreen();
-		}
+			this.changeClassUIConfigurationForGroup(entryTypeId);
+		},
+
+		changeClassUIConfigurationForGroup: function(classId) {
+			var me = this;
+			CMDBuild.ServiceProxy.group.loadClassUiConfiguration({
+				params: {
+					groupId: "",
+					classId: classId
+				},
+				success: function(operation, config, response) {
+					var disabledForGroupButtons = Ext.JSON.decode(response.response);
+					me.view.cardGrid.addCardButton.disabledForGroup = disabledForGroupButtons.create;
+					if (me.view.cardGrid.addCardButton.disabledForGroup)
+						me.view.cardGrid.addCardButton.disable();
+					else
+						me.view.cardGrid.addCardButton.enable();
+					me.activityPanelController.changeClassUIConfigurationForGroup(disabledForGroupButtons);
+				}
+			});
+		},
+		
 	});
 
 	function isStateOpen(card) {
