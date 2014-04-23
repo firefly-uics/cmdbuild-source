@@ -54,6 +54,7 @@
 
 		border: false,
 		height: '100%',
+		overflowY: 'auto',
 
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep1Delegate', this);
