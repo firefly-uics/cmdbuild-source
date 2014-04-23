@@ -98,7 +98,7 @@
 					case 'all':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks;
 
-					case 'connector':
+					case 'connector': // TODO
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.connector;
 
 					case 'email':
@@ -125,22 +125,6 @@
 			 * Connector specific proxies
 			 */
 			getConnectorOperations: function() {
-//				return Ext.create('Ext.data.Store', {
-//					autoLoad: false,
-//					model: 'CMDBuild.model.CMModelTasks.grid.workflow',
-//					proxy: {
-//						type: 'ajax',
-//						url: this.getUrl('workflow').getStorebyWorkflow,
-//						reader: {
-//							type: 'json',
-//							root: 'response.elements'
-//						}
-//					},
-//					sorters: {
-//						property: 'type',
-//						direction: 'ASC'
-//					}
-//				});
 				return Ext.create('Ext.data.Store', {
 					autoLoad: true,
 					fields: ['name', 'value'],
@@ -155,67 +139,35 @@
 			getFunctionStore: function() { // TODO: future implementation
 				return Ext.create('Ext.data.Store', {
 					autoLoad: true,
-					fields: ['name', 'value'],
+					fields: ['name', 'description'],
 					data: [
-						{ 'value': 'Function1', 'name': 'Function 1' },
-						{ 'value': 'Function2', 'name': 'Function 2' },
-						{ 'value': 'Function3', 'name': 'Function 3' }
+						{ 'name': 'Function1', 'description': 'Function 1' },
+						{ 'name': 'Function2', 'description': 'Function 2' },
+						{ 'name': 'Function3', 'description': 'Function 3' }
 					]
 				});
 			},
 
-			getViewNames: function() {
-	//			return Ext.create('Ext.data.Store', {
-	//				autoLoad: false,
-	//				model: 'CMDBuild.model.CMModelTasks.grid.workflow',
-	//				proxy: {
-	//					type: 'ajax',
-	//					url: this.getUrl('workflow').getStorebyWorkflow,
-	//					reader: {
-	//						type: 'json',
-	//						root: 'response.elements'
-	//					}
-	//				},
-	//				sorters: {
-	//					property: CMDBuild.ServiceProxy.parameter.TYPE,
-	//					direction: 'ASC'
-	//				}
-	//			});
+			getViewStore: function() {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: true,
-					fields: ['name', 'value'],
+					fields: ['name', 'description'],
 					data: [
-						{ 'value': 'ViewName1', 'name': 'View name 1' },
-						{ 'value': 'ViewName2', 'name': 'View name 2' },
-						{ 'value': 'ViewName3', 'name': 'View name 3' }
+						{ 'name': 'ViewName1', 'description': 'View name 1' },
+						{ 'name': 'ViewName2', 'description': 'View name 2' },
+						{ 'name': 'ViewName3', 'description': 'View name 3' }
 					]
 				});
 			},
 
 			getViewAttributeNames: function(viewName) {
-	//			return Ext.create('Ext.data.Store', {
-	//				autoLoad: false,
-	//				model: 'CMDBuild.model.CMModelTasks.grid.workflow',
-	//				proxy: {
-	//					type: 'ajax',
-	//					url: this.getUrl('workflow').getStorebyWorkflow,
-	//					reader: {
-	//						type: 'json',
-	//						root: 'response.elements'
-	//					}
-	//				},
-	//				sorters: {
-	//					property: CMDBuild.ServiceProxy.parameter.TYPE,
-	//					direction: 'ASC'
-	//				}
-	//			});
 				return Ext.create('Ext.data.Store', {
 					autoLoad: true,
-					fields: ['name', 'value'],
+					fields: ['name', 'description'],
 					data: [
-						{ 'value': 'ViewAttributeName1', 'name': 'View attribute name 1' },
-						{ 'value': 'ViewAttributeName2', 'name': 'View attribute name 2' },
-						{ 'value': 'ViewAttributeName3', 'name': 'View attribute name 3' }
+						{ 'name': 'ViewAttributeName1', 'description': 'View attribute name 1' },
+						{ 'name': 'ViewAttributeName2', 'description': 'View attribute name 2' },
+						{ 'name': 'ViewAttributeName3', 'description': 'View attribute name 3' }
 					]
 				});
 			},
