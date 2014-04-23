@@ -9,7 +9,7 @@ public interface BimDataModelManager {
 
 	void createBimTableIfNeeded(String className);
 
-	void deleteBimDomainOnClass(String oldClass);
+	void deleteBimDomainIfExists(String oldClass);
 
 	void createBimDomainOnClass(String className);
 	

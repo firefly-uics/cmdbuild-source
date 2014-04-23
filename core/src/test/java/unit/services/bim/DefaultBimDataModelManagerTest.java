@@ -128,11 +128,11 @@ public class DefaultBimDataModelManagerTest {
 		// given
 
 		// when
-		dataModelManager.deleteBimDomainOnClass(THE_CLASS);
+		dataModelManager.deleteBimDomainIfExists(THE_CLASS);
 
 		// then
 		InOrder inOrder = inOrder(dataDefinitionLogic, dataView);
-		inOrder.verify(dataDefinitionLogic).deleteDomainByName(
+		inOrder.verify(dataDefinitionLogic).deleteDomainIfExists(
 				THE_CLASS + DefaultBimDataModelManager.DEFAULT_DOMAIN_SUFFIX);
 
 		verifyNoMoreInteractions(dataDefinitionLogic, dataView);

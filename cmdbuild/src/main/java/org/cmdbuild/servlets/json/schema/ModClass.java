@@ -592,7 +592,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	public void deleteDomain(@Parameter(value = DOMAIN_NAME, required = false) final String domainName //
 	) throws JSONException {
 
-		dataDefinitionLogic().deleteDomainByName(domainName);
+		dataDefinitionLogic().deleteDomainIfExists(domainName);
 	}
 
 	@Admin

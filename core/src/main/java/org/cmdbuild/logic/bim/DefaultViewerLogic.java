@@ -24,7 +24,7 @@ import javax.activation.DataHandler;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.logic.bim.LayerLogic.Layer;
-import org.cmdbuild.model.bim.BimLayer;
+import org.cmdbuild.model.bim.StorableLayer;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
@@ -79,7 +79,7 @@ public class DefaultViewerLogic implements ViewerLogic {
 	@Override
 	public String getDescriptionOfRoot(final Long cardId, final String className) {
 		final Long rootId = getRootId(cardId, className);
-		final BimLayer rootLayer = bimPersistence.findRoot();
+		final StorableLayer rootLayer = bimPersistence.findRoot();
 		if (rootLayer == null || rootLayer.getClassName() == null || rootLayer.getClassName().isEmpty()) {
 			throw new BimError("Root layer not configured");
 		}
@@ -182,14 +182,14 @@ public class DefaultViewerLogic implements ViewerLogic {
 
 	private Long getRootId(final Long cardId, final String className) {
 		Long rootId = null;
-		final BimLayer rootLayer = bimPersistence.findRoot();
+		final StorableLayer rootLayer = bimPersistence.findRoot();
 		if (rootLayer == null || rootLayer.getClassName() == null || rootLayer.getClassName().isEmpty()) {
 			throw new BimError("Root layer not configured");
 		}
 		if (className.equals(rootLayer.getClassName())) {
 			rootId = cardId;
 		} else {
-			final BimLayer layer = bimPersistence.readLayer(className);
+			final StorableLayer layer = bimPersistence.readLayer(className);
 			if (layer == null || layer.getRootReference() == null || layer.getRootReference().isEmpty()) {
 				throw new BimError("'" + className + "' layer not configured");
 			}
@@ -204,7 +204,7 @@ public class DefaultViewerLogic implements ViewerLogic {
 
 	private String getBaseProjectIdForCardOfClass(final Long cardId, final String className) {
 		final Long rootId = getRootId(cardId, className);
-		final BimLayer rootLayer = bimPersistence.findRoot();
+		final StorableLayer rootLayer = bimPersistence.findRoot();
 		final String baseProjectId = getProjectIdForRootClass(rootId, rootLayer.getClassName());
 		return baseProjectId;
 	}

@@ -5,15 +5,15 @@ import java.util.List;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.model.bim.BimLayer;
+import org.cmdbuild.model.bim.StorableLayer;
 import org.cmdbuild.model.bim.StorableProject;
 
 public class DefaultBimStoreManager implements BimStoreManager {
 
 	private final Store<StorableProject> projectStore;
-	private final Store<BimLayer> layerStore;
+	private final Store<StorableLayer> layerStore;
 
-	public DefaultBimStoreManager(Store<StorableProject> projectInfoStore, Store<BimLayer> layerStore) {
+	public DefaultBimStoreManager(Store<StorableProject> projectInfoStore, Store<StorableLayer> layerStore) {
 		this.projectStore = projectInfoStore;
 		this.layerStore = layerStore;
 	}
@@ -34,7 +34,7 @@ public class DefaultBimStoreManager implements BimStoreManager {
 	}
 	
 	@Override
-	public BimLayer readLayer(final String className) {
+	public StorableLayer readLayer(final String className) {
 		return layerStore.read(new Storable() {
 			@Override
 			public String getIdentifier() {
@@ -87,15 +87,15 @@ public class DefaultBimStoreManager implements BimStoreManager {
 	}
 
 	@Override
-	public Iterable<BimLayer> readAllLayers() {
+	public Iterable<StorableLayer> readAllLayers() {
 		return layerStore.list();
 	}
 
 	@Override
 	public void saveActiveStatus(String className, String value) {
-		BimLayer layerForClass = layerStore.read(storableWithId(className));
+		StorableLayer layerForClass = layerStore.read(storableWithId(className));
 		if (layerForClass == null) {
-			layerForClass = new BimLayer(className);
+			layerForClass = new StorableLayer(className);
 			layerForClass.setActive(Boolean.parseBoolean(value));
 			layerStore.create(layerForClass);
 		} else {
@@ -107,9 +107,9 @@ public class DefaultBimStoreManager implements BimStoreManager {
 
 	@Override
 	public void saveRoot(String className, boolean value) {
-		BimLayer layer = layerStore.read(storableWithId(className));
+		StorableLayer layer = layerStore.read(storableWithId(className));
 		if (layer == null) {
-			layer = new BimLayer(className);
+			layer = new StorableLayer(className);
 			layer.setRoot(value);
 			layerStore.create(layer);
 		} else {
@@ -121,9 +121,9 @@ public class DefaultBimStoreManager implements BimStoreManager {
 
 	@Override
 	public void saveRootReference(String className, String value) {
-		BimLayer layer = layerStore.read(storableWithId(className));
+		StorableLayer layer = layerStore.read(storableWithId(className));
 		if (layer == null) {
-			layer = new BimLayer(className);
+			layer = new StorableLayer(className);
 			layer.setRootReference(value);
 			layerStore.create(layer);
 		} else {
@@ -134,10 +134,10 @@ public class DefaultBimStoreManager implements BimStoreManager {
 
 	@Override
 	public void saveExportStatus(String className, String value) {
-		BimLayer layerForClass = layerStore.read(storableWithId(className));
+		StorableLayer layerForClass = layerStore.read(storableWithId(className));
 		boolean exportValue = Boolean.parseBoolean(value);
 		if (layerForClass == null) {
-			layerForClass = new BimLayer(className);
+			layerForClass = new StorableLayer(className);
 			layerForClass.setExport(exportValue);
 			layerStore.create(layerForClass);
 		} else {
@@ -148,10 +148,10 @@ public class DefaultBimStoreManager implements BimStoreManager {
 
 	@Override
 	public void saveContainerStatus(String className, String value) {
-		BimLayer layerForClass = layerStore.read(storableWithId(className));
+		StorableLayer layerForClass = layerStore.read(storableWithId(className));
 		boolean containerValue = Boolean.parseBoolean(value);
 		if (layerForClass == null) {
-			layerForClass = new BimLayer(className);
+			layerForClass = new StorableLayer(className);
 			layerForClass.setContainer(containerValue);
 			layerStore.create(layerForClass);
 		} else {
@@ -162,31 +162,31 @@ public class DefaultBimStoreManager implements BimStoreManager {
 	}
 
 	@Override
-	public BimLayer findRoot() {
-		List<BimLayer> layerList = layerStore.list();
-		for (BimLayer layer : layerList) {
+	public StorableLayer findRoot() {
+		List<StorableLayer> layerList = layerStore.list();
+		for (StorableLayer layer : layerList) {
 			if (layer.isRoot()) {
 				return layer;
 			}
 		}
-		return null;
+		return StorableLayer.NULL_LAYER;
 	}
 
 	@Override
-	public BimLayer findContainer() {
-		List<BimLayer> layerList = layerStore.list();
-		for (BimLayer layer : layerList) {
+	public StorableLayer findContainer() {
+		List<StorableLayer> layerList = layerStore.list();
+		for (StorableLayer layer : layerList) {
 			if (layer.isContainer()) {
 				return layer;
 			}
 		}
-		return null;
+		return StorableLayer.NULL_LAYER;
 	}
 
 	@Override
 	public boolean isActive(final String className) {
 		boolean response = false;
-		BimLayer layer = layerStore.read(storableWithId(className));
+		StorableLayer layer = layerStore.read(storableWithId(className));
 		if (layer != null) {
 			response = layer.isActive();
 		}
@@ -195,7 +195,7 @@ public class DefaultBimStoreManager implements BimStoreManager {
 
 	@Override
 	public String getContainerClassName() {
-		BimLayer containerLayer = findContainer();
+		StorableLayer containerLayer = findContainer();
 		if (containerLayer == null) {
 			throw new BimError("Container layer not configured");
 		} else {
