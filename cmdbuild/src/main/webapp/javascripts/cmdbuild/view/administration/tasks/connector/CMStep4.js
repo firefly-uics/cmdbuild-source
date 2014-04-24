@@ -44,7 +44,10 @@
 
 		getData: function() {
 			var data = [];
-			var mainClassName = this.getNameMainClass();
+			var mainClassName = null;
+
+			if (this.view.gridSelectionModel.hasSelection())
+				mainClassName = this.view.gridSelectionModel.getSelection()[0];
 
 			this.view.gridSelectionModel.getStore().each(function(record) {
 				if (
@@ -55,7 +58,16 @@
 
 					buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
 					buffer[CMDBuild.ServiceProxy.parameter.VIEW_NAME] = record.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME);
-					buffer[CMDBuild.ServiceProxy.parameter.IS_MAIN] = (mainClassName == buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME]) ? true : false;
+					buffer[CMDBuild.ServiceProxy.parameter.IS_MAIN] = false;
+
+					// Check to setup isMain parameter
+					if (
+						mainClassName != null
+						&& buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] == mainClassName.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME)
+						&& buffer[CMDBuild.ServiceProxy.parameter.VIEW_NAME] == mainClassName.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME)
+					) {
+						buffer[CMDBuild.ServiceProxy.parameter.IS_MAIN] = true;
+					}
 
 					data.push(buffer);
 				}
@@ -64,11 +76,38 @@
 			return data;
 		},
 
-		getNameMainClass: function() {
-			if (this.view.gridSelectionModel.hasSelection())
-				return this.view.gridSelectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
+		/**
+		 * Function used from next step to get all selected class names
+		 *
+		 * @return (Array) selectedClassArray
+		 */
+		getSelectedClassArray: function() {
+			var selectedClassArray = [];
+			var gridData = this.getData();
 
-			return null;
+			for (key in gridData) {
+				if (selectedClassArray.indexOf(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]) == -1)
+					selectedClassArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
+			}
+
+			return selectedClassArray;
+		},
+
+		/**
+		 * Function used from next step to get all selected view names
+		 *
+		 * @return (Array) selectedViewArray
+		 */
+		getSelectedViewArray: function() {
+			var selectedViewArray = [];
+			var gridData = this.getData();
+
+			for (key in gridData) {
+				if (selectedViewArray.indexOf(gridData[key][CMDBuild.ServiceProxy.parameter.VIEW_NAME]) == -1)
+					selectedViewArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.VIEW_NAME]);
+			}
+
+			return selectedViewArray;
 		},
 
 		isEmptyMappingGrid: function() {
@@ -92,15 +131,14 @@
 					if (typeof rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME] != 'undefined') {
 						this.buildClassCombo(false);
 					} else {
-						var columnModel = this.view.classLevelMappingGrid.getView().getHeaderCt().gridDataColumns[2];
+						var columnModel = this.view.classLevelMappingGrid.columns[1];
 						var columnEditor = columnModel.getEditor();
 
-						if (!columnEditor.disabled) {
+						if (!columnEditor.disabled)
 							columnModel.setEditor({
 								xtype: 'combo',
 								disabled: true
 							});
-						}
 					}
 				} break;
 			}
@@ -113,7 +151,7 @@
 		 */
 		buildClassCombo: function(onStepEditExecute) {
 			var me = this;
-			var columnModel = this.view.classLevelMappingGrid.getView().getHeaderCt().gridDataColumns[2];
+			var columnModel = this.view.classLevelMappingGrid.columns[1];
 
 			if (typeof onStepEditExecute == 'undefined')
 				var onStepEditExecute = true;
@@ -215,7 +253,7 @@
 				columns: [
 					{
 						header: 'tr.viewName',
-//						dataIndex: CMDBuild.ServiceProxy.parameter.VIEW_NAME,
+						dataIndex: CMDBuild.ServiceProxy.parameter.VIEW_NAME,
 						editor: {
 							xtype: 'combo',
 							displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
@@ -290,14 +328,14 @@
 			/**
 			 * Disable next button only if grid haven't selected class
 			 */
-//			show: function(view, eOpts) {
-//				var me = this;
-//
-//				Ext.Function.createDelayed(function() { // HACK: to fix problem which fires show event before changeTab() function
-//					if (me.delegate.isEmptyMappingGrid())
-//						me.delegate.setDisabledButtonNext(true);
-//				}, 1)();
-//			}
+			show: function(view, eOpts) {
+				var me = this;
+
+				Ext.Function.createDelayed(function() { // HACK: to fix problem which fires show event before changeTab() function
+					if (me.delegate.isEmptyMappingGrid())
+						me.delegate.setDisabledButtonNext(true);
+				}, 1)();
+			}
 		}
 	});
 

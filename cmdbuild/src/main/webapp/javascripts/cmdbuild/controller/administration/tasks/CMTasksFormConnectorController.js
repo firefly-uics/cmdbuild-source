@@ -60,7 +60,8 @@
 
 _debug('Step 4 datas [3]');
 _debug(this.delegateStep[3].getData());
-_debug(this.delegateStep[3].getNameMainClass());
+_debug(this.delegateStep[3].getSelectedClassArray());
+_debug(this.delegateStep[3].getSelectedViewArray());
 
 _debug('Step 5 datas [4]');
 _debug(this.delegateStep[4].getData());

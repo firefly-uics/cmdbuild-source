@@ -46,9 +46,11 @@
 
 		getData: function() {
 			var data = [];
-			var isKeySelection = this.view.gridSelectionModel.getSelection();
-//_debug('selection model');
-//_debug(isKeySelection);
+			var isKeySelection = null;
+
+			if (this.view.gridSelectionModel.hasSelection())
+				isKeySelection = this.view.gridSelectionModel.getSelection();
+
 			this.view.attributeLevelMappingGrid.getStore().each(function(record) {
 				if (
 					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
@@ -62,20 +64,18 @@
 					buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE);
 					buffer[CMDBuild.ServiceProxy.parameter.VIEW_NAME] = record.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME);
 					buffer[CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE);
+					buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = false;
 
-//					for (key in isKeySelection) {
-					for (var i = 0; i < isKeySelection.length; i++) {
+					// Check to setup isKey parameter
+					for (key in isKeySelection) {
 						if (
-							buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] == isKeySelection[i].get(CMDBuild.ServiceProxy.parameter.CLASS_NAME)
-							&& buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] == isKeySelection[i].get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE)
-							&& buffer[CMDBuild.ServiceProxy.parameter.VIEW_NAME] == isKeySelection[i].get(CMDBuild.ServiceProxy.parameter.VIEW_NAME)
-							&& buffer[CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE] == isKeySelection[i].get(CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE)
+							buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.CLASS_NAME)
+							&& buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE)
+							&& buffer[CMDBuild.ServiceProxy.parameter.VIEW_NAME] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.VIEW_NAME)
+							&& buffer[CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE)
 						) {
 							buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = true;
-//							break;
-							i = isKeySelection.length;
-						} else {
-							buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = false;
+							break;
 						}
 					}
 
@@ -94,93 +94,49 @@
 		},
 
 		/**
-		 * Function to update rows stores/editors on beforeEdit event
-		 *
-		 * @param (String) fieldName
-		 * @param (Object) rowData
-		 */
-		onBeforeEdit: function(fieldName, rowData) {
-			switch (fieldName) {
-				case CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE: {
-					if (typeof rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME] != 'undefined') {
-						this.buildClassAttributesCombo(
-							_CMCache.getEntryTypeByName(
-								rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME]
-							).get(CMDBuild.ServiceProxy.parameter.ID),
-							false
-						);
-					} else {
-						var columnModel = this.view.attributeLevelMappingGrid.getView().getHeaderCt().gridDataColumns[3];
-						var columnEditor = columnModel.getEditor();
-
-						if (!columnEditor.disabled) {
-							columnModel.setEditor({
-								xtype: 'combo',
-								disabled: true
-							});
-						}
-					}
-				} break;
-
-				case CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE: {
-					if (typeof rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME] != 'undefined') {
-						this.buildViewAttributesCombo(rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME], false);
-					} else {
-						var columnModel = this.view.attributeLevelMappingGrid.getView().getHeaderCt().gridDataColumns[1];
-						var columnEditor = columnModel.getEditor();
-
-						if (!columnEditor.disabled) {
-							columnModel.setEditor({
-								xtype: 'combo',
-								disabled: true
-							});
-						}
-					}
-				} break;
-			}
-		},
-
-		/**
 		 * To setup class attribute combo store
 		 *
-		 * @param (Int) classId
+		 * @param (String) className
 		 */
-		buildClassAttributesCombo: function(classId, onStepEditExecute) {
-			var me = this;
-			var columnModel = this.view.attributeLevelMappingGrid.getView().getHeaderCt().gridDataColumns[3];
-			var attributesListStore = [];
+		buildClassAttributesCombo: function(className, onStepEditExecute) {
+			if (!Ext.isEmpty(className)) {
+				var me = this;
+				var columnModel = this.view.attributeLevelMappingGrid.columns[3];
+				var classId = _CMCache.getEntryTypeByName(className).get(CMDBuild.ServiceProxy.parameter.ID);
+				var attributesListStore = [];
 
-			if (typeof onStepEditExecute == 'undefined')
-				var onStepEditExecute = true;
+				if (typeof onStepEditExecute == 'undefined')
+					var onStepEditExecute = true;
 
-			for (var key in _CMCache.getClasses()) {
-				if (key == classId)
-					attributesListStore.push(this.view.classesAttributesMap[key]);
-			}
-
-			columnModel.setEditor({
-				xtype: 'combo',
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
-				forceSelection: true,
-				editable: false,
-				allowBlank: false,
-
-				store: Ext.create('Ext.data.Store', {
-					autoLoad: true,
-					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-					data: attributesListStore[0]
-				}),
-
-				listeners: {
-					select: function(combo, records, eOpts) {
-						me.cmOn('onStepEdit');
-					}
+				for (var key in _CMCache.getClasses()) {
+					if (key == classId)
+						attributesListStore.push(this.view.classesAttributesMap[key]);
 				}
-			});
 
-			if (onStepEditExecute)
-				this.onStepEdit();
+				columnModel.setEditor({
+					xtype: 'combo',
+					displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+					valueField: CMDBuild.ServiceProxy.parameter.NAME,
+					forceSelection: true,
+					editable: false,
+					allowBlank: false,
+
+					store: Ext.create('Ext.data.Store', {
+						autoLoad: true,
+						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+						data: attributesListStore[0]
+					}),
+
+					listeners: {
+						select: function(combo, records, eOpts) {
+							me.cmOn('onStepEdit');
+						}
+					}
+				});
+
+				if (onStepEditExecute)
+					this.onStepEdit();
+			}
 		},
 
 		/**
@@ -189,48 +145,103 @@
 		 * @param (String) viewName
 		 */
 		buildViewAttributesCombo: function(viewName, onStepEditExecute) {
-			var me = this;
-			var columnModel = this.view.attributeLevelMappingGrid.getView().getHeaderCt().gridDataColumns[1];
-			var attributesListStore = [
-				{ 'name': 'Function1', 'description': 'Function 1' },
-				{ 'name': 'Function2', 'description': 'Function 2' },
-				{ 'name': 'Function3', 'description': 'Function 3' }
-			];
+			if (!Ext.isEmpty(viewName)) {
+				var me = this;
+				var columnModel = this.view.attributeLevelMappingGrid.columns[1];
+				var attributesListStore = [
+					{ 'name': 'Function1', 'description': 'Function 1' },
+					{ 'name': 'Function2', 'description': 'Function 2' },
+					{ 'name': 'Function3', 'description': 'Function 3' }
+				];
 
-			if (typeof onStepEditExecute == 'undefined')
-				var onStepEditExecute = true;
+				if (typeof onStepEditExecute == 'undefined')
+					var onStepEditExecute = true;
 
 // TODO: to finish implementation when stores will be ready
-//			for (var key in _CMCache.getClasses()) {
-//				if (key == classId)
-//					attributesListStore.push(this.view.classesAttributesMap[key]);
-//			}
+//				for (var key in _CMCache.getClasses()) {
+//					if (key == classId)
+//						attributesListStore.push(this.view.classesAttributesMap[key]);
+//				}
 
-			columnModel.setEditor({
-				xtype: 'combo',
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
-				forceSelection: true,
-				editable: false,
-				allowBlank: false,
+				columnModel.setEditor({
+					xtype: 'combo',
+					displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+					valueField: CMDBuild.ServiceProxy.parameter.NAME,
+					forceSelection: true,
+					editable: false,
+					allowBlank: false,
 
-				store: Ext.create('Ext.data.Store', {
-					autoLoad: true,
-					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-					data: attributesListStore
-				}),
+					store: Ext.create('Ext.data.Store', {
+						autoLoad: true,
+						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+						data: attributesListStore
+					}),
 
-				listeners: {
-					select: function(combo, records, eOpts) {
-						me.cmOn('onStepEdit');
+					listeners: {
+						select: function(combo, records, eOpts) {
+							me.cmOn('onStepEdit');
+						}
 					}
-				}
-			});
+				});
 
-			if (onStepEditExecute)
-				this.onStepEdit();
+				if (onStepEditExecute)
+					this.onStepEdit();
+			}
 		},
 
+		getClassStore: function() {
+			return _CMCache.getClassesStore();
+		},
+
+		getViewStore: function() {
+			return CMDBuild.core.proxy.CMProxyTasks.getViewStore();
+		},
+
+		/**
+		 * Function to update rows stores/editors on beforeEdit event
+		 *
+		 * @param (String) fieldName
+		 * @param (Object) rowData
+		 */
+		onBeforeEdit: function(fieldName, rowData) {
+			switch (fieldName) {
+				case CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE: {
+					if (
+						(typeof rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME] != 'undefined')
+						&& !Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME])
+					) {
+						this.buildClassAttributesCombo(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME], false);
+					} else {
+						var columnModel = this.view.attributeLevelMappingGrid.columns[3];
+						var columnEditor = columnModel.getEditor();
+
+						if (!columnEditor.disabled)
+							columnModel.setEditor({
+								xtype: 'combo',
+								disabled: true
+							});
+					}
+				} break;
+
+				case CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE: {
+					if (
+						(typeof rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME] != 'undefined')
+						&& !Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME])
+					) {
+						this.buildViewAttributesCombo(rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME], false);
+					} else {
+						var columnModel = this.view.attributeLevelMappingGrid.columns[1];
+						var columnEditor = columnModel.getEditor();
+
+						if (!columnEditor.disabled)
+							columnModel.setEditor({
+								xtype: 'combo',
+								disabled: true
+							});
+					}
+				} break;
+			}
+		},
 
 		/**
 		 * Step validation (at least one class/view association and main view check)
@@ -316,7 +327,7 @@
 							forceSelection: true,
 							editable: false,
 							allowBlank: false,
-							store: CMDBuild.core.proxy.CMProxyTasks.getViewStore(),
+							store: me.delegate.getViewStore(),
 
 							listeners: {
 								select: function(combo, records, eOpts) {
@@ -345,12 +356,12 @@
 							forceSelection: true,
 							editable: false,
 							allowBlank: false,
-							store: _CMCache.getClassesStore(),
+							store: me.delegate.getClassStore(),
 							queryMode: 'local',
 
 							listeners: {
 								select: function(combo, records, eOpts) {
-									me.delegate.buildClassAttributesCombo(records[0].get(CMDBuild.ServiceProxy.parameter.ID));
+									me.delegate.buildClassAttributesCombo(records[0].get(CMDBuild.ServiceProxy.parameter.NAME));
 								}
 							}
 						},
