@@ -169,7 +169,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	public void domainCreatedAndDeleted() {
 		// given
 		dataDefinitionLogic().createOrUpdate(a(newDomain()));
-		dataDefinitionLogic().deleteDomainByName(DOMAIN_NAME);
+		dataDefinitionLogic().deleteDomainIfExists(DOMAIN_NAME);
 
 		// when
 		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);
