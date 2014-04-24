@@ -126,7 +126,15 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public static final String FILTER_GROUPS = FILTER + "groups";
 		public static final String FILTER_CLASSNAME = FILTER + "classname";
 
-		private static final String ACTION_SCRIPT_PREFIX = "action.scripting.";
+		private static final String ACTION_PREFIX = "action.";
+
+		private static final String WORKFLOW_PREFIX = ACTION_PREFIX + "workflow.";
+		public static final String WORKFLOW_ACTIVE = WORKFLOW_PREFIX + "active";
+		public static final String WORKFLOW_CLASS_NAME = WORKFLOW_PREFIX + "classname";
+		public static final String WORKFLOW_ATTRIBUTES = WORKFLOW_PREFIX + "attributes";
+		public static final String WORKFLOW_ADVANCE = WORKFLOW_PREFIX + "advance";
+
+		private static final String ACTION_SCRIPT_PREFIX = ACTION_PREFIX + "scripting.";
 		public static final String ACTION_SCRIPT_ACTIVE = ACTION_SCRIPT_PREFIX + "active";
 		public static final String ACTION_SCRIPT_ENGINE = ACTION_SCRIPT_PREFIX + "engine";
 		public static final String ACTION_SCRIPT_SCRIPT = ACTION_SCRIPT_PREFIX + "script";
@@ -365,6 +373,14 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(SynchronousEvent.FILTER_GROUPS, Joiner.on(GROUPS_SEPARATOR) //
 							.join(task.getGroups())) //
 					.withParameter(SynchronousEvent.FILTER_CLASSNAME, task.getTargetClassname()) //
+					.withParameter(SynchronousEvent.WORKFLOW_ACTIVE, //
+							Boolean.toString(task.isWorkflowEnabled())) //
+					.withParameter(SynchronousEvent.WORKFLOW_CLASS_NAME, task.getWorkflowClassName()) //
+					.withParameter(SynchronousEvent.WORKFLOW_ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
+							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+							.join(task.getWorkflowAttributes())) //
+					.withParameter(SynchronousEvent.WORKFLOW_ADVANCE, //
+							Boolean.toString(task.isWorkflowAdvanceable())) //
 					.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, Boolean.toString(task.isScriptingEnabled())) //
 					.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, task.getScriptingEngine()) //
 					.withParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT, task.getScriptingScript()) //
@@ -457,6 +473,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		@Override
 		public void visit(final org.cmdbuild.data.store.task.SynchronousEventTask task) {
 			final String groupsAsString = defaultString(task.getParameter(SynchronousEvent.FILTER_GROUPS));
+			final String attributesAsString = defaultString(task.getParameter(SynchronousEvent.WORKFLOW_ATTRIBUTES));
 			target = SynchronousEventTask.newInstance() //
 					.withId(task.getId()) //
 					.withDescription(task.getDescription()) //
@@ -467,6 +484,15 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withGroups(isEmpty(groupsAsString) ? EMPTY_GROUPS : Splitter.on(GROUPS_SEPARATOR) //
 							.split(groupsAsString)) //
 					.withTargetClass(task.getParameter(SynchronousEvent.FILTER_CLASSNAME)) //
+					.withWorkflowEnabled( //
+							Boolean.valueOf(task.getParameter(SynchronousEvent.WORKFLOW_ACTIVE))) //
+					.withWorkflowClassName(task.getParameter(SynchronousEvent.WORKFLOW_CLASS_NAME)) //
+					.withWorkflowAttributes( //
+							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
+									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+									.split(attributesAsString)) //
+					.withWorkflowAdvanceable( //
+							Boolean.valueOf(task.getParameter(SynchronousEvent.WORKFLOW_ADVANCE))) //
 					.withScriptingEnableStatus( //
 							Boolean.valueOf(task.getParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE))) //
 					.withScriptingEngine(task.getParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE)) //

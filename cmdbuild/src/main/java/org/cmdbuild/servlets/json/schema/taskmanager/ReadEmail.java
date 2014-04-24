@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.schema.taskmanager;
 
-import static org.apache.commons.lang3.StringUtils.*;
 import static com.google.common.collect.FluentIterable.from;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTACHMENTS_ACTIVE;
@@ -204,6 +204,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withWorkflowActive(isNotBlank(workflowClassName)) //
 				.withWorkflowClassName(workflowClassName) //
 				.withWorkflowAttributes(toMap(workflowAttributes)) //
+				.withWorkflowAdvanceableStatus(true) //
 				.withWorkflowAttachmentsStatus(isNotBlank(workflowAttachmentsCategory)) //
 				.withWorkflowAttachmentsCategory(workflowAttachmentsCategory) //
 				//
@@ -279,6 +280,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withWorkflowActive(isNotBlank(workflowClassName)) //
 				.withWorkflowClassName(workflowClassName) //
 				.withWorkflowAttributes(toMap(workflowAttributes)) //
+				.withWorkflowAdvanceableStatus(true) //
 				.withWorkflowAttachmentsStatus(isNotBlank(workflowAttachmentsCategory)) //
 				.withWorkflowAttachmentsCategory(workflowAttachmentsCategory) //
 				//

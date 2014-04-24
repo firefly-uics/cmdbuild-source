@@ -4,7 +4,11 @@ import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ATTRIBUTES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_CLASS_NAME;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
+import static org.cmdbuild.servlets.json.schema.taskmanager.Utils.toMap;
 
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.Task;
@@ -13,6 +17,7 @@ import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.json.JSONObject;
 
 public class SynchronousEvent extends JSONBaseWithSpringContext {
 
@@ -45,11 +50,21 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse create( //
 			@Parameter(DESCRIPTION) final String description, //
-			@Parameter(ACTIVE) final Boolean active //
+			@Parameter(ACTIVE) final Boolean active, //
+			@Parameter(value = WORKFLOW_ACTIVE, required = false) final Boolean workflowActive, //
+			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
+			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes //
 	) {
 		final SynchronousEventTask task = SynchronousEventTask.newInstance() //
 				.withDescription(description) //
 				.withActiveStatus(active) //
+				//
+				// start process
+				.withWorkflowEnabled(workflowActive) //
+				.withWorkflowClassName(workflowClassName) //
+				.withWorkflowAttributes(toMap(workflowAttributes)) //
+				.withWorkflowAdvanceable(true) //
+				//
 				.build();
 		final Long id = taskManagerLogic().create(task);
 		return JsonResponse.success(id);
@@ -86,12 +101,22 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 	public JsonResponse update( //
 			@Parameter(ID) final Long id, //
 			@Parameter(DESCRIPTION) final String description, //
-			@Parameter(ACTIVE) final Boolean active //
+			@Parameter(ACTIVE) final Boolean active, //
+			@Parameter(value = WORKFLOW_ACTIVE, required = false) final Boolean workflowActive, //
+			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
+			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes //
 	) {
 		final SynchronousEventTask task = SynchronousEventTask.newInstance() //
 				.withId(id) //
 				.withDescription(description) //
 				.withActiveStatus(active) //
+				//
+				// start process
+				.withWorkflowEnabled(workflowActive) //
+				.withWorkflowClassName(workflowClassName) //
+				.withWorkflowAttributes(toMap(workflowAttributes)) //
+				.withWorkflowAdvanceable(true) //
+				//
 				.build();
 		taskManagerLogic().update(task);
 		return JsonResponse.success();
