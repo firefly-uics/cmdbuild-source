@@ -6,7 +6,8 @@ import org.cmdbuild.data.store.Storable;
 
 public abstract class TaskDefinition implements Storable {
 
-	public static abstract class Builder<T extends TaskDefinition> implements org.cmdbuild.common.Builder<T> {
+	public static abstract class Builder<T extends TaskDefinition> implements
+			org.apache.commons.lang3.builder.Builder<T> {
 
 		private Long id;
 		private String description;

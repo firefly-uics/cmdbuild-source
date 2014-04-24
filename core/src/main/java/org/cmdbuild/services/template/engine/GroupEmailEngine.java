@@ -1,4 +1,4 @@
-package org.cmdbuild.services.template;
+package org.cmdbuild.services.template.engine;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -6,25 +6,29 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.common.template.TemplateResolverEngine;
+import org.cmdbuild.common.template.engine.Engine;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 
-public class UserEmailTemplateEngine implements TemplateResolverEngine {
+public class GroupEmailEngine implements Engine {
 
-	private static final String USER_CLASSNAME = "User";
-	private static final String USERNAME_ATTRIBUTE = "Username";
+	private static final String ROLE_CLASSNAME = "Role";
+	private static final String CODE_ATTRIBUTE = "Code";
 	private static final String EMAIL_ATTRIBUTE = "Email";
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<UserEmailTemplateEngine> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<GroupEmailEngine> {
 
 		private CMDataView dataView;
 
+		private Builder() {
+			// use factory method
+		}
+
 		@Override
-		public UserEmailTemplateEngine build() {
+		public GroupEmailEngine build() {
 			validate();
-			return new UserEmailTemplateEngine(this);
+			return new GroupEmailEngine(this);
 		}
 
 		private void validate() {
@@ -44,20 +48,20 @@ public class UserEmailTemplateEngine implements TemplateResolverEngine {
 
 	private final CMDataView dataView;
 
-	private UserEmailTemplateEngine(final Builder builder) {
+	private GroupEmailEngine(final Builder builder) {
 		this.dataView = builder.dataView;
 	}
 
 	@Override
 	public Object eval(final String expression) {
-		final CMClass userClass = dataView.findClass(USER_CLASSNAME);
-		Validate.notNull(userClass, "user class not visible");
-		final CMCard card = dataView.select(anyAttribute(userClass)) //
-				.from(userClass) //
-				.where(condition(attribute(userClass, USERNAME_ATTRIBUTE), eq(expression))) //
+		final CMClass roleClass = dataView.findClass(ROLE_CLASSNAME);
+		Validate.notNull(roleClass, "role class not visible");
+		final CMCard card = dataView.select(anyAttribute(roleClass)) //
+				.from(roleClass) //
+				.where(condition(attribute(roleClass, CODE_ATTRIBUTE), eq(expression))) //
 				.run() //
 				.getOnlyRow() //
-				.getCard(userClass);
+				.getCard(roleClass);
 		return card.get(EMAIL_ATTRIBUTE, String.class);
 	}
 

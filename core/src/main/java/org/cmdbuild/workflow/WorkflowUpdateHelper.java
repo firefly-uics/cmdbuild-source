@@ -320,7 +320,7 @@ class WorkflowUpdateHelper {
 
 	private ActivityPerformerExpressionEvaluator evaluatorFor(final String expression) throws CMWorkflowException {
 		final TemplateResolver templateResolver = activityPerformerTemplateResolverFactory.create();
-		final String resolvedExpression = templateResolver.simpleEval(expression);
+		final String resolvedExpression = templateResolver.resolve(expression);
 
 		final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
 				resolvedExpression);

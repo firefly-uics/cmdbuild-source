@@ -3,8 +3,9 @@ package org.cmdbuild.logic.taskmanager;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.common.template.Functions.simpleEval;
-import static org.cmdbuild.common.template.TemplateResolverEngines.emptyStringOnNull;
-import static org.cmdbuild.common.template.TemplateResolverEngines.nullOnError;
+import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
+import static org.cmdbuild.common.template.engine.Engines.map;
+import static org.cmdbuild.common.template.engine.Engines.nullOnError;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 
 import java.lang.reflect.InvocationHandler;
@@ -20,7 +21,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cmdbuild.common.template.TemplateResolver;
-import org.cmdbuild.common.template.TemplateResolverImpl;
+import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store;
@@ -48,10 +49,10 @@ import org.cmdbuild.services.email.SubjectHandler.ParsedSubject;
 import org.cmdbuild.services.scheduler.Command;
 import org.cmdbuild.services.scheduler.DefaultJob;
 import org.cmdbuild.services.scheduler.SafeCommand;
-import org.cmdbuild.services.template.EmailTemplateEngine;
-import org.cmdbuild.services.template.GroupEmailTemplateEngine;
-import org.cmdbuild.services.template.GroupUsersEmailTemplateEngine;
-import org.cmdbuild.services.template.UserEmailTemplateEngine;
+import org.cmdbuild.services.template.engine.EmailEngine;
+import org.cmdbuild.services.template.engine.GroupEmailEngine;
+import org.cmdbuild.services.template.engine.GroupUsersEmailEngine;
+import org.cmdbuild.services.template.engine.UserEmailEngine;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -68,6 +69,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	private static final String EMAIL_PREFIX = "email";
 	private static final String GROUP_PREFIX = "group";
 	private static final String GROUP_USERS_PREFIX = "groupUsers";
+	private static final String MAPPER_PREFIX = "mapper";
 	private static final String USER_PREFIX = "user";
 
 	private static interface Action {
@@ -351,17 +353,21 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 				}
 
 				private String resolveRecipients(final Iterable<String> recipients) {
-					final TemplateResolver templateResolver = TemplateResolverImpl.newInstance() //
-							.withEngine(emptyStringOnNull(nullOnError(UserEmailTemplateEngine.newInstance() //
-									.withDataView(dataView) //
-									.build())), USER_PREFIX) //
-							.withEngine(emptyStringOnNull(nullOnError(GroupEmailTemplateEngine.newInstance() //
-									.withDataView(dataView) //
-									.build())), GROUP_PREFIX) //
-							.withEngine(emptyStringOnNull(nullOnError(GroupUsersEmailTemplateEngine.newInstance() //
-									.withDataView(dataView) //
-									.withSeparator(EmailConstants.ADDRESSES_SEPARATOR) //
-									.build())), GROUP_USERS_PREFIX) //
+					final TemplateResolver templateResolver = EngineBasedTemplateResolver.newInstance() //
+							.withEngine(emptyStringOnNull(nullOnError( //
+									UserEmailEngine.newInstance() //
+											.withDataView(dataView) //
+											.build())), USER_PREFIX) //
+							.withEngine(emptyStringOnNull(nullOnError( //
+									GroupEmailEngine.newInstance() //
+											.withDataView(dataView) //
+											.build())), GROUP_PREFIX) //
+							.withEngine(emptyStringOnNull(nullOnError( //
+									GroupUsersEmailEngine.newInstance() //
+											.withDataView(dataView) //
+											.withSeparator(EmailConstants.ADDRESSES_SEPARATOR) //
+											.build() //
+									)), GROUP_USERS_PREFIX) //
 							.build();
 					return Joiner.on(EmailConstants.ADDRESSES_SEPARATOR) //
 							.join(from(recipients) //
@@ -370,13 +376,20 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 				}
 
 				private String resolveText(final String text, final Email email) {
-					final TemplateResolver templateResolver = TemplateResolverImpl.newInstance() //
-							// TODO attributes?
-							.withEngine(emptyStringOnNull(nullOnError(EmailTemplateEngine.newInstance() //
-									.withEmail(email) //
-									.build())), EMAIL_PREFIX) //
+					final TemplateResolver templateResolver = EngineBasedTemplateResolver.newInstance() //
+							.withEngine(emptyStringOnNull(nullOnError( //
+									EmailEngine.newInstance() //
+											.withEmail(email) //
+											.build())), EMAIL_PREFIX) //
+							.withEngine(emptyStringOnNull(nullOnError(map( //
+									EngineBasedMapper.newInstance() //
+											.withText(email.getContent()) //
+											.withEngine(task.getMapperEngine()) //
+											.build() //
+											.map() //
+									))), MAPPER_PREFIX) //
 							.build();
-					return templateResolver.simpleEval(text);
+					return templateResolver.resolve(text);
 				}
 
 			}));
@@ -396,7 +409,6 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 							.withDocuments(documentsFrom(email.getAttachments())) //
 							.build() //
 							.execute();
-
 				}
 
 			}));
@@ -407,10 +419,18 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 				@Override
 				public void execute(final Email email) {
-					final TemplateResolver templateResolver = TemplateResolverImpl.newInstance() //
-							.withEngine(emptyStringOnNull(nullOnError(EmailTemplateEngine.newInstance() //
-									.withEmail(email) //
-									.build())), EMAIL_PREFIX) //
+					final TemplateResolver templateResolver = EngineBasedTemplateResolver.newInstance() //
+							.withEngine(emptyStringOnNull(nullOnError( //
+									EmailEngine.newInstance() //
+											.withEmail(email) //
+											.build())), EMAIL_PREFIX) //
+							.withEngine(emptyStringOnNull(nullOnError(map( //
+									EngineBasedMapper.newInstance() //
+											.withText(email.getContent()) //
+											.withEngine(task.getMapperEngine()) //
+											.build() //
+											.map() //
+									))), MAPPER_PREFIX) //
 							.build();
 					StartProcess.newInstance() //
 							.withWorkflowLogic(workflowLogic) //

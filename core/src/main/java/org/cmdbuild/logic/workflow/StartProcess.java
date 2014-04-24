@@ -4,13 +4,13 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.cmdbuild.common.template.TemplateResolvers.identity;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.common.template.IdentityTemplateResolver;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.logic.Action;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -65,7 +65,7 @@ public class StartProcess implements Action {
 			Validate.notNull(workflowLogic, "missing workflow logic");
 			Validate.notBlank(className, "missing class name");
 			hook = defaultIfNull(hook, NULL_HOOK);
-			templateResolver = defaultIfNull(templateResolver, IdentityTemplateResolver.getInstance());
+			templateResolver = defaultIfNull(templateResolver, identity());
 			advance = defaultIfNull(advance, Boolean.TRUE);
 		}
 
@@ -154,7 +154,7 @@ public class StartProcess implements Action {
 			final Object resolved;
 			if (input instanceof String) {
 				final String template = String.class.cast(input);
-				resolved = templateResolver.simpleEval(template);
+				resolved = templateResolver.resolve(template);
 			} else {
 				resolved = input;
 			}

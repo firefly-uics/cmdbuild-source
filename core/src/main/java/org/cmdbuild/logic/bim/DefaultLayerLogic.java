@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.model.bim.BimLayer;
+import org.cmdbuild.model.bim.StorableLayer;
 import org.cmdbuild.services.bim.BimDataModelCommand;
 import org.cmdbuild.services.bim.BimDataModelCommandFactory;
 import org.cmdbuild.services.bim.BimDataModelManager;
@@ -34,8 +34,8 @@ public class DefaultLayerLogic implements LayerLogic {
 
 	@Override
 	public Iterable<Layer> readLayers() {
-		final List<BimLayer> out = new LinkedList<BimLayer>();
-		final Map<String, BimLayer> storedLayers = bimLayerMap();
+		final List<StorableLayer> out = new LinkedList<StorableLayer>();
+		final Map<String, StorableLayer> storedLayers = bimLayerMap();
 		final Iterable<? extends CMClass> allClasses = bimDataView.findClasses();
 		for (final CMClass cmdbuildClass : allClasses) {
 			if (cmdbuildClass.isSystem() || cmdbuildClass.isBaseClass()) {
@@ -45,11 +45,11 @@ public class DefaultLayerLogic implements LayerLogic {
 			final String layerName = cmdbuildClass.getName();
 			final String layerDescription = cmdbuildClass.getDescription();
 
-			BimLayer layerToPut = null;
+			StorableLayer layerToPut = null;
 			if (storedLayers.containsKey(layerName)) {
 				layerToPut = storedLayers.get(layerName);
 			} else {
-				layerToPut = new BimLayer(layerName);
+				layerToPut = new StorableLayer(layerName);
 			}
 
 			layerToPut.setDescription(layerDescription);
@@ -69,13 +69,13 @@ public class DefaultLayerLogic implements LayerLogic {
 
 	@Override
 	public Layer getRootLayer() {
-		final BimLayer rootLayer = bimPersistence.findRoot();
+		final StorableLayer rootLayer = bimPersistence.findRoot();
 		return STORABLE_TO_LOGIC_LAYER.apply(rootLayer);
 	}
 
-	private static final Function<BimLayer, Layer> STORABLE_TO_LOGIC_LAYER = new Function<BimLayer, Layer>() {
+	private static final Function<StorableLayer, Layer> STORABLE_TO_LOGIC_LAYER = new Function<StorableLayer, Layer>() {
 		@Override
-		public Layer apply(final BimLayer input) {
+		public Layer apply(final StorableLayer input) {
 			return new LayerWrapper(input);
 		}
 	};
@@ -85,10 +85,10 @@ public class DefaultLayerLogic implements LayerLogic {
 		return bimPersistence.isActiveLayer(classname);
 	}
 
-	private Map<String, BimLayer> bimLayerMap() {
-		final Map<String, BimLayer> out = new HashMap<String, BimLayer>();
-		final List<BimLayer> storedLayers = (List<BimLayer>) bimPersistence.listLayers();
-		for (final BimLayer layer : storedLayers) {
+	private Map<String, StorableLayer> bimLayerMap() {
+		final Map<String, StorableLayer> out = new HashMap<String, StorableLayer>();
+		final List<StorableLayer> storedLayers = (List<StorableLayer>) bimPersistence.listLayers();
+		for (final StorableLayer layer : storedLayers) {
 			out.put(layer.getClassName(), layer);
 		}
 		return out;
@@ -96,23 +96,23 @@ public class DefaultLayerLogic implements LayerLogic {
 
 	@Override
 	public Iterable<Layer> getActiveLayers() {
-		Iterable<BimLayer> storedLayers = bimPersistence.listLayers();
-		Iterable<BimLayer> filtered = Iterables.filter(storedLayers, ACTIVE_FILTER);
+		Iterable<StorableLayer> storedLayers = bimPersistence.listLayers();
+		Iterable<StorableLayer> filtered = Iterables.filter(storedLayers, ACTIVE_FILTER);
 		return Iterables.transform(filtered, STORABLE_TO_LOGIC_LAYER);
 	}
 
-	private static final Predicate<BimLayer> ACTIVE_FILTER = new Predicate<BimLayer>() {
+	private static final Predicate<StorableLayer> ACTIVE_FILTER = new Predicate<StorableLayer>() {
 		@Override
-		public boolean apply(BimLayer input) {
+		public boolean apply(StorableLayer input) {
 			return input.isActive();
 		}
 	};
 
 	private static class LayerWrapper implements Layer {
 
-		private final BimLayer delegate;
+		private final StorableLayer delegate;
 
-		public LayerWrapper(final BimLayer delegate) {
+		public LayerWrapper(final StorableLayer delegate) {
 			this.delegate = delegate;
 		}
 

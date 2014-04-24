@@ -1,6 +1,6 @@
-package org.cmdbuild.services.template;
+package org.cmdbuild.services.template.engine;
 
-public class TemplateResolverEngineNames {
+public class EngineNames {
 
 	public static final String CLIENT = "client";
 	public static final String DB = "db";
@@ -12,7 +12,7 @@ public class TemplateResolverEngineNames {
 	public static final String[] ALL_DATA_SOURCES = new String[] { DB, DS };
 	public static final String[] ALL_PARAMETERS = new String[] { FORM, PARM };
 
-	private TemplateResolverEngineNames() {
+	private EngineNames() {
 		// prevents instantiation
 	}
 

@@ -41,25 +41,29 @@ public class DefaultRelationPersistence implements RelationPersistence {
 	public ProjectRelations readRelations(final Long projectCardId, final String rootName) {
 		ArrayList<CMRelation> relations = Lists.newArrayList();
 		CMDomain domain = dataView.findDomain(rootName + DEFAULT_DOMAIN_SUFFIX);
-		relations = getAllRelationsForDomain(domain, projectCardId);
+		if (domain != null) {
+			relations = getAllRelationsForDomain(domain, projectCardId);
 
-		List<String> bindedCardsList = Lists.newArrayList();
-		for (CMRelation relation : relations) {
-			bindedCardsList.add(relation.getCard1Id().toString());
+			List<String> bindedCardsList = Lists.newArrayList();
+			for (CMRelation relation : relations) {
+				bindedCardsList.add(relation.getCard1Id().toString());
+			}
+			final Iterable<String> bindedCards = bindedCardsList;
+			return new ProjectRelations() {
+
+				@Override
+				public Long getProjectCardId() {
+					return projectCardId;
+				}
+
+				@Override
+				public Iterable<String> getBindedCards() {
+					return bindedCards;
+				}
+			};
+		}else{
+			return RelationPersistence.NULL_RELATIONS;
 		}
-		final Iterable<String> bindedCards = bindedCardsList;
-		return new ProjectRelations() {
-
-			@Override
-			public Long getProjectCardId() {
-				return projectCardId;
-			}
-
-			@Override
-			public Iterable<String> getBindedCards() {
-				return bindedCards;
-			}
-		};
 	}
 
 	@Override

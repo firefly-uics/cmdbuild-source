@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
@@ -19,6 +20,7 @@ import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
 
 public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
@@ -55,6 +57,38 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		private static final String WORKFLOW_ATTACHMENTS_PREFIX = WORKFLOW_PREFIX + "attachments";
 		public static final String WORKFLOW_ATTACHMENTS_SAVE = WORKFLOW_ATTACHMENTS_PREFIX + "save";
 		public static final String WORKFLOW_ATTACHMENTS_CATEGORY = WORKFLOW_ATTACHMENTS_PREFIX + "category";
+
+		/**
+		 * Container for all mapper parameter names.
+		 */
+		private abstract static class MapperEngine {
+
+			protected static final String ALL_PREFIX = "mapper.";
+
+			public static final String TYPE = ALL_PREFIX + "type";
+
+		}
+
+		/**
+		 * Container for all {@link _KeyValueMapperEngine} parameter names.
+		 */
+		public static class KeyValueMapperEngine extends MapperEngine {
+
+			private KeyValueMapperEngine() {
+				// prevents instantiation
+			}
+
+			private static final String TYPE_VALUE = "keyvalue";
+
+			private static final String KEY_PREFIX = ALL_PREFIX + "key.";
+			public static final String KEY_INIT = KEY_PREFIX + "init";
+			public static final String KEY_END = KEY_PREFIX + "end";
+
+			private static final String VALUE_PREFIX = ALL_PREFIX + "value.";
+			public static final String VALUE_INIT = VALUE_PREFIX + "init";
+			public static final String VALUE_END = VALUE_PREFIX + "end";
+
+		}
 
 	}
 
@@ -105,6 +139,91 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 	private static final Logger logger = TaskManagerLogic.logger;
 	private static final Marker marker = MarkerFactory.getMarker(DefaultLogicAndStoreConverter.class.getName());
+
+	private static class MapperToParametersConverter implements MapperEngineVisitor {
+
+		public static MapperToParametersConverter of(final MapperEngine mapper) {
+			return new MapperToParametersConverter(mapper);
+		}
+
+		private final MapperEngine mapper;
+
+		private MapperToParametersConverter(final MapperEngine mapper) {
+			this.mapper = mapper;
+		}
+
+		private Map<String, String> parameters;
+
+		public Map<String, String> convert() {
+			parameters = Maps.newLinkedHashMap();
+			mapper.accept(this);
+			return parameters;
+		}
+
+		@Override
+		public void visit(final KeyValueMapperEngine mapper) {
+			parameters.put(ReadEmail.MapperEngine.TYPE, ReadEmail.KeyValueMapperEngine.TYPE_VALUE);
+			parameters.put(ReadEmail.KeyValueMapperEngine.KEY_INIT, mapper.getKeyInit());
+			parameters.put(ReadEmail.KeyValueMapperEngine.KEY_END, mapper.getKeyEnd());
+			parameters.put(ReadEmail.KeyValueMapperEngine.VALUE_INIT, mapper.getValueInit());
+			parameters.put(ReadEmail.KeyValueMapperEngine.VALUE_END, mapper.getValueEnd());
+		}
+
+		@Override
+		public void visit(final NullMapperEngine mapper) {
+			// nothing to do
+		}
+
+	}
+
+	// TODO do in some way with visitor
+	private static enum ParametersToMapperConverter {
+
+		KEY_VALUE(ReadEmail.KeyValueMapperEngine.TYPE_VALUE) {
+
+			@Override
+			public MapperEngine convert(final Map<String, String> parameters) {
+				return KeyValueMapperEngine.newInstance() //
+						.withKey( //
+								parameters.get(ReadEmail.KeyValueMapperEngine.KEY_INIT), //
+								parameters.get(ReadEmail.KeyValueMapperEngine.KEY_END) //
+						) //
+						.withValue( //
+								parameters.get(ReadEmail.KeyValueMapperEngine.VALUE_INIT), //
+								parameters.get(ReadEmail.KeyValueMapperEngine.VALUE_END) //
+						) //
+						.build();
+			}
+
+		}, //
+		UNDEFINED(EMPTY) {
+
+			@Override
+			public MapperEngine convert(final Map<String, String> parameters) {
+				return NullMapperEngine.getInstance();
+			}
+
+		}, //
+		;
+
+		public static ParametersToMapperConverter of(final String type) {
+			for (final ParametersToMapperConverter element : values()) {
+				if (element.type.equals(type)) {
+					return element;
+				}
+			}
+			return UNDEFINED;
+		}
+
+		private final String type;
+
+		private ParametersToMapperConverter(final String type) {
+			this.type = type;
+		}
+
+		public abstract MapperEngine convert(Map<String, String> parameters);
+
+	}
 
 	private static class PhaseToStoreConverter implements SynchronousEventTask.PhaseIdentifier {
 
@@ -218,6 +337,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							Boolean.toString(task.isWorkflowAttachments())) //
 					.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY, //
 							task.getWorkflowAttachmentsCategory()) //
+					.withParameters(MapperToParametersConverter.of(task.getMapperEngine()).convert()) //
 					.build();
 		}
 
@@ -309,7 +429,13 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withWorkflowAttachmentsStatus( //
 							Boolean.valueOf(task.getParameter(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE))) //
 					.withWorkflowAttachmentsCategory(task.getParameter(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY)) //
+					.withMapperEngine(mapperOf(task.getParameters())) //
 					.build();
+		}
+
+		private MapperEngine mapperOf(final Map<String, String> parameters) {
+			final String type = parameters.get(ReadEmail.MapperEngine.TYPE);
+			return ParametersToMapperConverter.of(type).convert(parameters);
 		}
 
 		@Override

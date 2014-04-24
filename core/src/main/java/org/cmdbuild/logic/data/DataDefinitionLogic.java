@@ -70,7 +70,7 @@ public interface DataDefinitionLogic extends Logic {
 
 	CMDomain update(Domain domain);
 
-	void deleteDomainByName(String name);
+	void deleteDomainIfExists(String name);
 
 	Iterable<FunctionItem> functions();
 

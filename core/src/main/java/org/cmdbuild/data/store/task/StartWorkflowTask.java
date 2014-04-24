@@ -1,6 +1,5 @@
 package org.cmdbuild.data.store.task;
 
-
 public class StartWorkflowTask extends Task {
 
 	public static Builder<StartWorkflowTask> newInstance() {

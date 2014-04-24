@@ -54,7 +54,7 @@ public class SynchronousEventTask implements Task {
 
 	}
 
-	public static class Builder implements org.cmdbuild.common.Builder<SynchronousEventTask> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<SynchronousEventTask> {
 
 		private static final Iterable<String> EMPTY_GROUPS = Collections.emptyList();
 
