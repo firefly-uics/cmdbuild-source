@@ -58,9 +58,14 @@
 		onSaveButtonClick: function() {
 			var formData = this.view.getData(true);
 
+_debug('Step 4 datas [3]');
 _debug(this.delegateStep[3].getData());
+_debug(this.delegateStep[3].getNameMainClass());
+
+_debug('Step 5 datas [4]');
+_debug(this.delegateStep[4].getData());
+
 _debug(formData);
-_debug(this.delegateStep[3].getMainClass());
 
 _debug('onSaveButtonClick to implement');
 		}

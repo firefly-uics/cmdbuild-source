@@ -43,6 +43,7 @@
 
 		border: false,
 		height: '100%',
+		overflowY: 'auto',
 
 		initComponent: function() {
 			var me = this;
@@ -65,7 +66,7 @@
 							forceSelection: true,
 							editable: false,
 							allowBlank: false,
-							store: CMDBuild.core.proxy.CMProxyTasks.getViewNames()
+							store: CMDBuild.core.proxy.CMProxyTasks.getViewStore()
 						},
 						flex: 1
 					},
