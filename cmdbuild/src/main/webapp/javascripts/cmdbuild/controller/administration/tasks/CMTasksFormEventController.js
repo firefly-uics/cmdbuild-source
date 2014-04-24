@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.CMProxyEmailTemplates');
+
 	Ext.define("CMDBuild.controller.administration.tasks.CMTasksFormEventController", {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
@@ -9,7 +11,6 @@
 		selectedId: undefined,
 		selectionModel: undefined,
 		taskType: 'event',
-
 
 		/**
 		 * Gatherer function to catch events
@@ -36,12 +37,6 @@
 				case 'onModifyButtonClick':
 					return this.onModifyButtonClick();
 
-				case 'onNextButtonClick':
-					return this.view.wizard.changeTab(+1);
-
-				case 'onPreviousButtonClick':
-					return this.view.wizard.changeTab(-1);
-
 				case 'onRemoveButtonClick':
 					return this.onRemoveButtonClick();
 
@@ -58,22 +53,28 @@
 			}
 		},
 
+		/**
+		 * @param (String) type
+		 */
 		// overwrite
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
 
 			switch (param.type) {
 				case 'event_asynchronous':
-					return this.delegateStep[3].setDisabledAttributesTable(true);
+					return this.delegateStep[3].setDisabledAttributesGrid(true);
 
 				case 'event_synchronous':
-					return this.delegateStep[2].setDisabledAttributesTable(true);
+					return this.delegateStep[2].setDisabledAttributesGrid(true);
 
 				default:
 					throw 'CMTasksFormEventController error: task type not recognized';
 			}
 		},
 
+		/**
+		 * @param (String) className
+		 */
 		onClassSelected: function(className) {
 			this.setDisabledButtonNext(false);
 			this.delegateStep[1].className = className;
@@ -89,36 +90,39 @@
 		// overwrite
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
-				var me = this;
-
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
 
 				// Selected task asynchronous store query
-				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(me.taskType);
+				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(this.taskType);
 				this.selectedDataStore.load({
-					params: { id: this.selectedId }
-				});
-				this.selectedDataStore.on('load', function(store, records, successful, eOpts) {
-					var record = records[0];
+					scope: this,
+					params: {
+						id: this.selectedId
+					},
+					callback: function(records, operation, success) {
+						if (!Ext.isEmpty(records)) {
+							var record = records[0];
 
-					// TODO: to check if response has phase data or not to extends taskType value
+							// TODO: to check if response has phase data or not to extends taskType value
 
-					me.parentDelegate.loadForm(me.taskType);
+							this.parentDelegate.loadForm(this.taskType);
 
-					// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
+							// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
 
-//					// Set step1 [0] datas
-//					me.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-//					me.delegateStep[0].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
-//					me.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
-//					me.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
-//					me.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME));
+//							// Set step1 [0] datas
+//							me.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
+//							me.delegateStep[0].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
+//							me.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
+//							me.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
+//							me.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME));
 //
-//					// Set step2 [1] datas
-//					me.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
-//					me.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+//							// Set step2 [1] datas
+//							me.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+//							me.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
 
-					me.view.disableModify(true);
+							this.view.disableModify(true);
+						}
+					}
 				});
 
 				this.view.wizard.changeTab(0);
@@ -141,26 +145,26 @@
 			var submitDatas = {};
 
 			// Form validating by type
-			switch (formData[CMDBuild.ServiceProxy.parameter.TYPE]) {
-				case 'event_asynchronous': {
+				switch (formData[CMDBuild.ServiceProxy.parameter.TYPE]) {
+					case 'event_asynchronous': {
 
-					// Cron field validation
-					if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
-						return;
+						// Cron field validation
+						if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
+							return;
 
-					submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
-						formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
-					);
-				} break;
+						submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
+							formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
+						);
+					} break;
 
-				case 'event_synchronous': {
-					submitDatas[CMDBuild.ServiceProxy.parameter.PHASE] = formData[CMDBuild.ServiceProxy.parameter.PHASE];
-					submitDatas[CMDBuild.ServiceProxy.parameter.GROUPS] = Ext.encode(this.delegateStep[0].getValueGroups());
-				} break;
+					case 'event_synchronous': {
+						submitDatas[CMDBuild.ServiceProxy.parameter.PHASE] = formData[CMDBuild.ServiceProxy.parameter.PHASE];
+						submitDatas[CMDBuild.ServiceProxy.parameter.GROUPS] = Ext.encode(this.delegateStep[0].getValueGroups());
+					} break;
 
-				default:
-					throw 'CMTasksFormEventController error: task type not recognized';
-			}
+					default:
+						throw 'CMTasksFormEventController error: task type not recognized';
+				}
 
 			// Form submit values formatting
 				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
@@ -173,7 +177,7 @@
 			submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE];
 			submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
 			submitDatas[CMDBuild.ServiceProxy.parameter.TYPE] = formData[CMDBuild.ServiceProxy.parameter.TYPE];
-			submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW];
+			submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
 
 _debug(filterData);
 _debug(formData);
@@ -198,35 +202,6 @@ _debug(submitDatas);
 //			}
 
 			_debug('onSaveButtonClick to implement');
-		},
-
-		setDisabledButtonNext: function(state) {
-			this.view.nextButton.setDisabled(state);
-		},
-
-		// overwrite
-		success: function(response, options, decodedResult) {
-//			var me = this;
-//			var store = this.parentDelegate.grid.store;
-//
-//			store.load();
-//			store.on('load', function() {
-//				me.view.reset();
-//
-//				var rowIndex = this.find(
-//					CMDBuild.ServiceProxy.parameter.ID,
-//					(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getValueId()
-//				);
-//
-//				if (rowIndex < 0)
-//					rowIndex = 0;
-//
-//				me.selectionModel.select(rowIndex, true);
-//			});
-//
-//			me.view.disableModify(true);
-
-			_debug('success to implement');
 		}
 	});
 

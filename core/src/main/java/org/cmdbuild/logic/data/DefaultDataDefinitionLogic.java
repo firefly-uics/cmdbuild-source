@@ -524,7 +524,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 	}
 
 	@Override
-	public void deleteDomainByName(final String name) {
+	public void deleteDomainIfExists(final String name) {
 		logger.info("deleting domain '{}'", name);
 
 		final CMDomain domain = view.findDomain(name);

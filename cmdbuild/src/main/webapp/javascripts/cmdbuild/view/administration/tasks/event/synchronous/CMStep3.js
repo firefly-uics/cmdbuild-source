@@ -44,8 +44,8 @@
 			return this.getWorkflowDelegate().getValueCombo();
 		},
 
-		setDisabledAttributesTable: function(state) {
-			this.getWorkflowDelegate().setDisabledAttributesTable(state);
+		setDisabledAttributesGrid: function(state) {
+			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 		},
 
 		setValueAttributesGrid: function(data) {
@@ -96,7 +96,7 @@
 			// Workflow configuration
 				this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 					combo: {
-						name: CMDBuild.ServiceProxy.parameter.WORKFLOW
+						name: CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME
 					}
 				});
 
@@ -130,7 +130,7 @@
 			 */
 			show: function(view, eOpts) {
 				if (!this.delegate.checkWorkflowComboSelected())
-					this.delegate.setDisabledAttributesTable(true);
+					this.delegate.setDisabledAttributesGrid(true);
 			}
 		}
 	});

@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.CMProxyEmailTemplates');
+
 	Ext.define('CMDBuild.controller.administration.email.CMEmailTemplatesController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
@@ -102,13 +104,14 @@
 				// Selected user asynchronous store query
 				this.selectedDataStore = CMDBuild.core.proxy.CMProxyEmailTemplates.get();
 				this.selectedDataStore.load({
-					params: { name: this.selectedName }
+					params: {
+						name: this.selectedName
+					},
+					callback: function() {
+						me.form.loadRecord(this.getAt(0));
+						me.form.disableModify(true);
+					}
 				});
-				this.selectedDataStore.on('load', function() {
-					me.form.loadRecord(this.getAt(0));
-				});
-
-				this.form.disableModify(true);
 			}
 		},
 
@@ -146,43 +149,43 @@
 				return;
 			}
 
-			var me = this,
-				store = this.grid.store;
+			var me = this;
+			var store = this.grid.store;
 
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyEmailTemplates.remove({
-				params: { name: this.selectedName },
+				params: {
+					name: this.selectedName
+				},
 				scope: this,
 				success: function() {
-					me.form.reset();
+					this.form.reset();
 
-					store.load();
-					store.on('load', function() {
-						me.selectionModel.select(0, true);
-						me.onRowSelected();
+					store.load({
+						callback: function() {
+							me.selectionModel.select(0, true);
+						}
 					});
-
-					me.form.disableModify();
 				},
 				callback: this.callback()
 			});
 		},
 
 		success: function(result, options, decodedResult) {
-			var me = this,
-				store = this.grid.store;
+			var me = this;
+			var store = this.grid.store;
 
-			store.load();
-			store.on('load', function() {
-				var rowIndex = this.find(
-					CMDBuild.ServiceProxy.parameter.NAME,
-					me.form.getForm().findField(CMDBuild.ServiceProxy.parameter.NAME).getValue()
-				);
+			store.load({
+				callback: function() {
+					var rowIndex = this.find(
+						CMDBuild.ServiceProxy.parameter.NAME,
+						me.form.getForm().findField(CMDBuild.ServiceProxy.parameter.NAME).getValue()
+					);
 
-				me.selectionModel.select(rowIndex, true);
+					me.selectionModel.select(rowIndex, true);
+					me.form.disableModify(true);
+				}
 			});
-
-			this.form.disableModify(true);
 		}
 	});
 

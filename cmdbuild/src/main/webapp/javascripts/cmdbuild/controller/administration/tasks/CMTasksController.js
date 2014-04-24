@@ -1,9 +1,15 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
+
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		parentDelegate: undefined,
+
+		form: undefined,
+		grid: undefined,
+		selectionModel: undefined,
 		tasksDatas: [ // Used to validate tasks
 			'all',
 			'connector',
@@ -14,7 +20,7 @@
 			'workflow'
 		],
 		taskType: undefined,
-		selectionModel: undefined,
+		view: undefined,
 
 		// Overwrite
 		constructor: function(view) {
@@ -32,19 +38,23 @@
 
 		// Overwrite
 		onViewOnFront: function(parameters) {
-			if (typeof parameters !== 'undefined') {
-				var me = this;
-
+			if (typeof parameters != 'undefined') {
 				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
 
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
 				this.grid.store.load({
+					scope: this,
 					callback: function() {
-						if (!me.selectionModel.hasSelection())
-							me.selectionModel.select(0, true);
+						if (!this.selectionModel.hasSelection())
+							this.selectionModel.select(0, true);
 					}
 				});
+
+				// Fire show event on accordion click
+				this.view.fireEvent('show');
 			}
+
+			this.callParent(arguments);
 		},
 
 		/**
@@ -61,6 +71,12 @@
 
 				case 'onItemDoubleClick':
 					return this.onItemDoubleClick();
+
+				case 'onNextButtonClick':
+					return this.form.wizard.changeTab(+1);
+
+				case 'onPreviousButtonClick':
+					return this.form.wizard.changeTab(-1);
 
 				case 'onRowSelected':
 					return this.onRowSelected(name, param, callBack);
@@ -85,7 +101,10 @@
 		 */
 		buildFormController: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
-				this.form.delegate = Ext.create('CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(this.typeSerialize(type, 1)) + 'Controller', this.form);
+				this.form.delegate = Ext.create(
+					'CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(this.typeSerialize(type, 1)) + 'Controller',
+					this.form
+				);
 				this.form.delegate.parentDelegate = this;
 				this.form.delegate.selectionModel = this.selectionModel;
 			}
@@ -118,6 +137,12 @@
 		 */
 		loadForm: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
+
+				// Clear all old tabs listeners
+				this.form.wizard.items.each(function(item) {
+					item.clearListeners();
+				});
+
 				this.form.wizard.removeAll();
 				this.form.delegate.delegateStep = [];
 
@@ -159,8 +184,9 @@
 			if (
 				!this.form.delegate
 				|| (this.form.delegate.taskType != selectedType)
-			)
+			) {
 				this.buildFormController(selectedType);
+			}
 
 			if (this.form.delegate)
 				this.form.delegate.cmOn(name, param, callBack);
@@ -175,7 +201,9 @@
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyTasks.start({
 				scope: this,
-				params: { id: record.get(CMDBuild.ServiceProxy.parameter.ID) },
+				params: {
+					id: record.get(CMDBuild.ServiceProxy.parameter.ID)
+				},
 				success: this.success,
 				callback: this.callback
 			});
@@ -190,7 +218,9 @@
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyTasks.stop({
 				scope: this,
-				params: { id: record.get(CMDBuild.ServiceProxy.parameter.ID) },
+				params: {
+					id: record.get(CMDBuild.ServiceProxy.parameter.ID)
+				},
 				success: this.success,
 				callback: this.callback
 			});

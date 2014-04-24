@@ -12,8 +12,6 @@
 		cls: 'cmborderbottom',
 
 		initComponent: function() {
-			var me = this;
-
 			this.gridColumns = [
 				{
 					dataIndex: CMDBuild.ServiceProxy.parameter.ID,
@@ -23,8 +21,9 @@
 					text: tr.type,
 					dataIndex: CMDBuild.ServiceProxy.parameter.TYPE,
 					flex: 1,
+					scope: this,
 					renderer: function(value, metaData, record) {
-						return me.typeGridColumnRenderer(value, metaData, record);
+						return this.typeGridColumnRenderer(value, metaData, record);
 					},
 				},
 				{
@@ -37,16 +36,18 @@
 					width: 60,
 					align: 'center',
 					dataIndex: CMDBuild.ServiceProxy.parameter.ACTIVE,
-					renderer: function(value, metaData, record) {
-						return me.activeGridColumnRenderer(value, metaData, record);
-					},
 					hideable: false,
 					menuDisabled: true,
-					fixed: true
+					fixed: true,
+					scope: this,
+					renderer: function(value, metaData, record) {
+						return this.activeGridColumnRenderer(value, metaData, record);
+					}
 				},
 				{
 					xtype: 'actioncolumn',
-					width: 40,
+					align: 'center',
+					width: 25,
 					sortable: false,
 					hideable: false,
 					menuDisabled: true,
@@ -55,18 +56,31 @@
 						{
 							icon: 'images/icons/control_play.png',
 							tooltip: tr.startLabel,
+							scope: this,
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-								me.delegate.cmOn('onStartButtonClick', record);
+								this.delegate.cmOn('onStartButtonClick', record);
 							},
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
 								return record.get(CMDBuild.ServiceProxy.parameter.ACTIVE);
 							}
-						},
+						}
+					]
+				},
+				{
+					xtype: 'actioncolumn',
+					align: 'center',
+					width: 25,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true,
+					items: [
 						{
 							icon: 'images/icons/control_stop.png',
 							tooltip: tr.stopLabel,
+							scope: this,
 							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-								me.delegate.cmOn('onStopButtonClick', record);
+								this.delegate.cmOn('onStopButtonClick', record);
 							},
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
 								return !record.get(CMDBuild.ServiceProxy.parameter.ACTIVE);
@@ -76,7 +90,7 @@
 				}
 			];
 
-// TODO: maybe for a future implementation
+//			// TODO: maybe for a future implementation
 //			this.pagingBar = Ext.create('Ext.toolbar.Paging', {
 //				store: this.store,
 //				displayInfo: true,
@@ -105,9 +119,6 @@
 
 		/**
 		 * Used to render active value to add icon in grid
-		 *
-		 * @param (Boolean) value
-		 * @return (String) value - HTML image code
 		 */
 		activeGridColumnRenderer: function(value, metaData, record) {
 			if (typeof value == 'boolean') {
@@ -123,9 +134,6 @@
 
 		/**
 		 * Rendering task type translating with local language data
-		 *
-		 * @param (String) value
-		 * @return (String) value - translated value
 		 */
 		typeGridColumnRenderer: function(value, metaData, record) {
 			if (typeof value == 'string') {

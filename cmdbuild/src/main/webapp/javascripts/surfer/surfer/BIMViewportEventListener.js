@@ -6,6 +6,8 @@
 	var ZOOMSPEEDFACTOR = 0.05;
 	var LONG_PRESS_TRESHOLD = 600;
 
+	var startingPoint = {x:0, y:0};
+
 	BIMViewportEventListener = function(viewportId, bimSceneManager) {
 
 		this.sceneManager = bimSceneManager;
@@ -24,23 +26,6 @@
 
 		var viewportDOMElement = document.getElementById(viewportId);
 		var me = this;
-//		$(viewportDOMElement).mousedown( //
-//			function(event) {
-//				mouseDown(event, me);
-//			} //
-//		);
-//
-//		$(viewportDOMElement).mouseup( //
-//			function(event) {
-//				mouseUp(event, me);
-//			}
-//		);
-//
-//		$(viewportDOMElement).mousemove( //
-//			function(event) {
-//				mouseMove(event, me);
-//			}
-//		);
 		viewportDOMElement.onmousedown = //
 				function(event) {
 					mouseDown(event, me);
@@ -68,15 +53,17 @@
 	};
 
 	function mouseDown(event, me) {
-
-		manageLongPress(me, event);
+		coords = mouseCoordsWithinElement(event);
+		if (! event.ctrlKey) {
+			manageLongPress(me, event);
+		}
 
 		var coords, picknode;
-		if (me.sceneManager.scene == null) {
+		if (! me.sceneManager.scene) {
 			return;
 		}
 
-		me.viewport.mouse.last = [event.clientX, event.clientY];
+		me.viewport.mouse.lastEvent = event;
 
 		switch (event.which) {
 		case 1:
@@ -91,25 +78,6 @@
 			// check if selected Object is a special object
 			me.viewport.mouse.pickRecord = me.sceneManager.scene.pick(coords[0], coords[1]);
 
-/*			if (me.viewport.mouse.pickRecord != null) {
-				picknode = me.sceneManager.scene.findNode(me.viewport.mouse.pickRecord.name);
-				// if selected element begins with dp_ (marks special object)
-				if ($('#' + RegExp.escape(picknode.get("id"))).text().match(/^ dp_/)) {
-					if (me.sceneManager.propertyValues.selectedObj == ($('#' + RegExp.escape(picknode.get("id"))).text())) {
-						window._BIM_LOGGER.log("No special object selected");
-					} else {
-						me.sceneManager.propertyValues.selectedObj = ($('#' + RegExp.escape(picknode.get("id"))).text());
-						//call GWT Application
-						//GWT: window.callbackAddDpWidget(othis.propertyValues.selectedObj,coords[0], coords[1]);
-					}
-					me.viewport.mouse.leftDown = false;
-					//GWT: window.callbackClickEventDatapointMove(othis.propertyValues.selectedObj);
-					event.preventDefault();
-				} else {
-					me.sceneManager.propertyValues.selectedObj = 'emtpy Selection';
-				}
-			}
-*/
 			return 0;
 		}
 	};
@@ -138,7 +106,7 @@
 	}
 
 	function selectSceneObject(me, event, forLongPressure) {
-		if (me.viewport.mouse.pickRecord != null) {
+		if (me.viewport.mouse.pickRecord) {
 			if (forLongPressure) {
 				me.sceneManager.selectObjectForLongPressure(me.viewport.mouse.pickRecord.name);
 			} else {
@@ -174,12 +142,17 @@
 	}
 
 	function mouseUp(event, me) {
+		if (event.ctrlKey) {
+			clearSelectionMovement(me, event);
+			return;
+		}
+			
 		if (me._longPressure) {
 			return;
 		}
 
 		me._mouseDown = false;
-		if (me.sceneManager.scene == null) {
+		if (! me.sceneManager.scene) {
 			return;
 		}
 
@@ -191,17 +164,60 @@
 
 		clearSelectionMovement(me, event);
 	};
+	function mouseMoveObject(event, me) {
+		oidOggettoDaSpostare = me.viewport.mouse.pickRecord.name.toString();
+		objectHasMoved = true;
+		if (! me.sceneManager.scene.findNode("obj-translate" + me.viewport.mouse.pickRecord.name.toString())) {
+			var moveNode = me.sceneManager.scene.findNode(me.viewport.mouse.pickRecord.name);
+			moveNode.insert("node", {
+				type : "translate",
+				id : "obj-translate" + me.viewport.mouse.pickRecord.name.toString(),
+				x : 0.0,
+				y : 0.0,
+				z : 0.0
+			});
+		}
+		var objTranslate = me.sceneManager.scene.findNode("obj-translate" + me.viewport.mouse.pickRecord.name.toString());
+		var coords = mouseCoordsWithinElement(me.viewport.mouse.lastEvent);
+		var hitLast = me.sceneManager.scene.pick(coords[0], coords[1], { rayPick: true });
+		var coords = mouseCoordsWithinElement(event);
+		var hitFirst = me.sceneManager.scene.pick(coords[0], coords[1], { rayPick: true });
 
+		if (hitFirst && hitLast) {
+			// Check if object still inside a room (TODO a real check funtion and error handling)
+			var worldPosFirst = hitFirst.worldPos;
+			var worldPosLast = hitLast.worldPos;
+			var dx = ( startingPoint.x + worldPosFirst[0] - worldPosLast[0]);
+            var dy = ( startingPoint.y + worldPosFirst[1] - worldPosLast[1]);
+            dx += objTranslate.get("x");
+            dy += objTranslate.get("y");
+			objTranslate.set({
+				x : dx,
+				y : dy
+			});
+			
+		}
+	
+	}
 	function mouseMove(event, me) {
 		var delta, deltaLength, orbitAngles, panVector;
-
+		if (! me.viewport.mouse.lastEvent) {
+			me.viewport.mouse.lastEvent = event;
+			return;
+		}
 		delta = [ //
-			event.clientX - me.viewport.mouse.last[0], //
-			event.clientY - me.viewport.mouse.last[1] //
+			event.clientX - me.viewport.mouse.lastEvent.clientX, //
+			event.clientY - me.viewport.mouse.lastEvent.clientY //
 		];
 
 		if (delta[0] == 0 && delta[1] == 0) {
-			return; // avoids disappearing
+			me.viewport.mouse.lastEvent = event;
+			return;  // avoids disappearing
+		}
+		if (me.viewport.mouse.pickRecord && event.ctrlKey && me.viewport.mouse.leftDown) {
+			mouseMoveObject(event, me);
+			me.viewport.mouse.lastEvent = event;
+			return;
 		}
 
 		// object
@@ -219,8 +235,7 @@
 			me.viewport.mouse.middleDragDistance += deltaLength;
 		}
 
-		if (me.viewport.mouse.leftDown 
-			&& event.which === 1) {
+		if (me.viewport.mouse.leftDown && event.which === 1) {
 
 			if (me.sceneManager.getNavigationMode() == 0) {
 				orbitAngles = [ 0.0, 0.0 ];
@@ -271,7 +286,7 @@
 			);
 		}
 
-		return me.viewport.mouse.last = [event.clientX, event.clientY];
+		return me.viewport.mouse.lastEvent = event;
 	};
 
 	function mouseWheel(event, me) {
