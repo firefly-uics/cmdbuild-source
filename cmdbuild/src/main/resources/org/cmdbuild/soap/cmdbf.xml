@@ -21,13 +21,8 @@
 					<constructor-arg ref="xmlRegistry" />
 					<constructor-arg ref="userDataAccessLogic" />
 					<constructor-arg ref="dmsLogic" />
-					<constructor-arg ref="operationUser" />
-					<constructor-arg>
-   						<bean id="idRegistry" class="org.cmdbuild.cmdbf.cmdbmdr.MdrScopedIdRegistry" >
-	            			<constructor-arg name="dataAccessLogic" ref="systemDataAccessLogic" />
-					<constructor-arg ref="cmdbfProperties" />
-						</bean>
-					</constructor-arg>
+					<constructor-arg ref="operationUser" />					
+					<constructor-arg ref="idRegistry" />
 					<constructor-arg ref="cmdbfProperties" />
 					<constructor-arg ref="dmsProperties" />
 				</bean>	
@@ -43,12 +38,7 @@
 		<constructor-arg ref="gisLogic" />
 		<constructor-arg ref="geoFeatureStore" />
 		<constructor-arg ref="operationUser" />
-		<constructor-arg>
-   			<bean id="idRegistry" class="org.cmdbuild.cmdbf.cmdbmdr.MdrScopedIdRegistry" >
-				<constructor-arg name="dataAccessLogic" ref="systemDataAccessLogic" />
-				<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
-			</bean>
-		</constructor-arg>
+		<constructor-arg ref="idRegistry" />
 		<constructor-arg ref="cmdbfProperties" />
 		<constructor-arg ref="dmsProperties" />
 		<constructor-arg ref="databaseProperties" />

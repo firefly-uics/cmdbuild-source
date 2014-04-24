@@ -19,6 +19,8 @@ public interface CMCard extends CMEntry {
 
 		CMCardDefinition setDescription(Object value);
 
+		CMCardDefinition setCurrentId(Long currentId);
+
 		@Override
 		CMCard save();
 
@@ -46,5 +48,7 @@ public interface CMCard extends CMEntry {
 	 *             if attribute is not present.
 	 */
 	Object getDescription();
+
+	Long getCurrentId();
 
 }

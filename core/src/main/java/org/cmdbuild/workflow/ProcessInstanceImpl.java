@@ -156,6 +156,11 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 	public DateTime getEndDate() {
 		return card.getEndDate();
 	}
+	
+	@Override
+	public Long getCurrentId() {
+		return card.getCurrentId();
+	}
 
 	@Override
 	public Long getCardId() {

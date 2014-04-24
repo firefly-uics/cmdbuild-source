@@ -4,6 +4,7 @@ import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.join;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.CurrentId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
@@ -59,6 +60,7 @@ public class SelectPartCreator extends PartCreator {
 					 */
 					if (alias.toString().equals(fromClause.getType().getName())) {
 						addToSelect(alias, EndDate);
+						addToSelect(alias, CurrentId);
 					}
 				}
 			}
@@ -89,6 +91,7 @@ public class SelectPartCreator extends PartCreator {
 				 */
 				if (targetAlias.toString().equals(fromClause.getType().getName())) {
 					addToSelect(targetAlias, EndDate);
+					addToSelect(targetAlias, CurrentId);
 				}
 			}
 
