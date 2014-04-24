@@ -35,7 +35,6 @@ import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
-import org.cmdbuild.dao.entry.DBRelation;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -66,7 +65,9 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 	public static final String Z_COORD = "z";
 
 	private static final String CARDDATA_FROM_GUID_FUNCTION = "_bim_carddata_from_globalid";
-	private static final String CARDDATA_FOR_EXPORT_FUNCTION = "_bim_data_for_export_new";
+	private static final String CREATE_FUNCTION_CARDDATA_FOR_EXPORT_FUNCTION = "_bim_create_function_for_export";	
+	private static final String CARDDATA_FOR_EXPORT_FUNCTION = "_bim_data_for_export";
+	private static final String _BIM_UPDATE_COORDINATES = "_bim_update_coordinates";
 	private static final String GENERATE_COORDINATES_FUNCTION = "_bim_generate_coordinates";
 	private static final String STORE_BIMDATA_FUNCTION = "_bim_store_data";
 
@@ -128,7 +129,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		final String ycord = String.valueOf(coordinates.get(1));
 		final String zcord = String.valueOf(coordinates.get(2));
 
-		final CMFunction function = dataView.findFunctionByName("_bim_update_coordinates");
+		final CMFunction function = dataView.findFunctionByName(_BIM_UPDATE_COORDINATES);
 		final NameAlias f = NameAlias.as("f");
 		dataView.select(anyAttribute(function, f)).from(call(function, className, globalId, xcord, ycord, zcord), f)
 				.run();
@@ -138,6 +139,11 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 	public Entity getCardDataForExport(final Long id, final String className, final String containerAttributeName,
 			final String containerClassName, final String shapeOid, final String ifcType) {
 		Entity cardToExport = Entity.NULL_ENTITY;
+		final CMFunction createFunction = dataView.findFunctionByName(CREATE_FUNCTION_CARDDATA_FOR_EXPORT_FUNCTION);
+		final NameAlias cf = NameAlias.as("cf");
+		dataView.select(anyAttribute(createFunction, cf)).from(call(//
+				createFunction), cf) //
+				.run();
 
 		CMFunction function = dataView.findFunctionByName(CARDDATA_FOR_EXPORT_FUNCTION);
 		NameAlias f = NameAlias.as("f");
@@ -218,7 +224,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 			return false;
 		}
 		final String containerGlobalId = String.class.cast(row.getValueSet(f).get(CONTAINER_GUID));
-		if(isBlank(containerGlobalId)){
+		if (isBlank(containerGlobalId)) {
 			return false;
 		}
 		return true;
