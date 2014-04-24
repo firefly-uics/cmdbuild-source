@@ -18,7 +18,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
-import org.cmdbuild.common.template.engine.Engines;
+import static org.cmdbuild.common.template.engine.Engines.*;
 
 public abstract class AbstractCommandExecutionWidget extends Widget {
 
@@ -77,8 +77,8 @@ public abstract class AbstractCommandExecutionWidget extends Widget {
 	protected WidgetAction getActionCommand(final String action, final Map<String, Object> params,
 			final Map<String, Object> dsVars) {
 		final TemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
-				.withEngine(Engines.map(params), ALL_PARAMETERS) //
-				.withEngine(Engines.map(dsVars), ALL_DATA_SOURCES) //
+				.withEngine(map(params), ALL_PARAMETERS) //
+				.withEngine(map(dsVars), ALL_DATA_SOURCES) //
 				.build();
 		final String command = getCommandLine(tr);
 		return new ExecuteCommandAction(command);

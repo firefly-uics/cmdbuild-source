@@ -357,17 +357,20 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 							.withEngine(emptyStringOnNull(nullOnError( //
 									UserEmailEngine.newInstance() //
 											.withDataView(dataView) //
-											.build())), USER_PREFIX) //
+											.build())), //
+									USER_PREFIX) //
 							.withEngine(emptyStringOnNull(nullOnError( //
 									GroupEmailEngine.newInstance() //
 											.withDataView(dataView) //
-											.build())), GROUP_PREFIX) //
+											.build())), //
+									GROUP_PREFIX) //
 							.withEngine(emptyStringOnNull(nullOnError( //
 									GroupUsersEmailEngine.newInstance() //
 											.withDataView(dataView) //
 											.withSeparator(EmailConstants.ADDRESSES_SEPARATOR) //
 											.build() //
-									)), GROUP_USERS_PREFIX) //
+									)), //
+									GROUP_USERS_PREFIX) //
 							.build();
 					return Joiner.on(EmailConstants.ADDRESSES_SEPARATOR) //
 							.join(from(recipients) //
@@ -380,14 +383,16 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 							.withEngine(emptyStringOnNull(nullOnError( //
 									EmailEngine.newInstance() //
 											.withEmail(email) //
-											.build())), EMAIL_PREFIX) //
+											.build())), //
+									EMAIL_PREFIX) //
 							.withEngine(emptyStringOnNull(nullOnError(map( //
 									EngineBasedMapper.newInstance() //
 											.withText(email.getContent()) //
 											.withEngine(task.getMapperEngine()) //
 											.build() //
 											.map() //
-									))), MAPPER_PREFIX) //
+									))), //
+									MAPPER_PREFIX) //
 							.build();
 					return templateResolver.resolve(text);
 				}
@@ -423,14 +428,16 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 							.withEngine(emptyStringOnNull(nullOnError( //
 									EmailEngine.newInstance() //
 											.withEmail(email) //
-											.build())), EMAIL_PREFIX) //
+											.build())), //
+									EMAIL_PREFIX) //
 							.withEngine(emptyStringOnNull(nullOnError(map( //
 									EngineBasedMapper.newInstance() //
 											.withText(email.getContent()) //
 											.withEngine(task.getMapperEngine()) //
 											.build() //
 											.map() //
-									))), MAPPER_PREFIX) //
+									))), //
+									MAPPER_PREFIX) //
 							.build();
 					StartProcess.newInstance() //
 							.withWorkflowLogic(workflowLogic) //

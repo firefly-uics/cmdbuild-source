@@ -285,6 +285,10 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void synchronousEventTaskSuccessfullyConvertedToStore() throws Exception {
 		// given
+		final Map<String, String> attributes = Maps.newHashMap();
+		attributes.put("foo", "bar");
+		attributes.put("bar", "baz");
+		attributes.put("baz", "foo");
 		final SynchronousEventTask source = SynchronousEventTask.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
@@ -292,6 +296,9 @@ public class DefaultLogicAndStoreConverterTest {
 				.withPhase(Phase.AFTER_CREATE) //
 				.withGroups(asList("foo", "bar", "baz")) //
 				.withTargetClass("classname") //
+				.withWorkflowEnabled(true) //
+				.withWorkflowClassName("workflow class name") //
+				.withWorkflowAttributes(attributes) //
 				.withScriptingEnableStatus(true) //
 				.withScriptingEngine("groovy") //
 				.withScript("blah blah blah") //
@@ -311,6 +318,11 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(SynchronousEvent.PHASE, "after_create"));
 		assertThat(parameters, hasEntry(SynchronousEvent.FILTER_GROUPS, "foo,bar,baz"));
 		assertThat(parameters, hasEntry(SynchronousEvent.FILTER_CLASSNAME, "classname"));
+		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_ACTIVE, "true"));
+		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_CLASS_NAME, "workflow class name"));
+		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
+				.withKeyValueSeparator("=") //
+				.join(attributes)));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy"));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_SCRIPT, "blah blah blah"));
@@ -357,6 +369,10 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(SynchronousEvent.PHASE, "after_create") //
 				.withParameter(SynchronousEvent.FILTER_GROUPS, "foo,bar,baz") //
 				.withParameter(SynchronousEvent.FILTER_CLASSNAME, "classname") //
+				.withParameter(SynchronousEvent.WORKFLOW_ACTIVE, "true") //
+				.withParameter(SynchronousEvent.WORKFLOW_CLASS_NAME, "workflow class name") //
+				.withParameter(SynchronousEvent.WORKFLOW_ATTRIBUTES, "foo=bar\nbar=baz\nbaz=foo") //
+				.withParameter(SynchronousEvent.WORKFLOW_ADVANCE, "true") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT, "blah blah blah") //
@@ -375,6 +391,12 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getPhase(), equalTo(Phase.AFTER_CREATE));
 		assertThat(converted.getGroups(), containsInAnyOrder("foo", "bar", "baz"));
 		assertThat(converted.getTargetClassname(), equalTo("classname"));
+		assertThat(converted.isWorkflowEnabled(), equalTo(true));
+		assertThat(converted.getWorkflowClassName(), equalTo("workflow class name"));
+		assertThat(converted.getWorkflowAttributes(), hasEntry("foo", "bar"));
+		assertThat(converted.getWorkflowAttributes(), hasEntry("bar", "baz"));
+		assertThat(converted.getWorkflowAttributes(), hasEntry("baz", "foo"));
+		assertThat(converted.isWorkflowAdvanceable(), equalTo(true));
 		assertThat(converted.isScriptingEnabled(), equalTo(true));
 		assertThat(converted.getScriptingEngine(), equalTo("groovy"));
 		assertThat(converted.getScriptingScript(), equalTo("blah blah blah"));

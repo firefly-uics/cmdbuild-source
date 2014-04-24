@@ -163,7 +163,8 @@ public class TaskManager {
 
 	@Bean
 	protected ObserverFactory observerFactory() {
-		return new DefaultObserverFactory(userStore, api.systemFluentApi());
+		return new DefaultObserverFactory(userStore, api.systemFluentApi(), workflow.systemWorkflowLogicBuilder()
+				.build());
 	}
 
 }
