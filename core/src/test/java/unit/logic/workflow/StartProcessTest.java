@@ -282,7 +282,7 @@ public class StartProcessTest {
 		// given
 		final WorkflowLogic workflowLogic = mock(WorkflowLogic.class);
 		final TemplateResolver templateResolver = mock(TemplateResolver.class);
-		when(templateResolver.simpleEval(anyString())) //
+		when(templateResolver.resolve(anyString())) //
 				.thenAnswer(new Answer<String>() {
 
 					@Override
@@ -306,9 +306,9 @@ public class StartProcessTest {
 				.execute();
 
 		// verify
-		verify(templateResolver).simpleEval("FOO");
-		verify(templateResolver).simpleEval("BAR");
-		verify(templateResolver).simpleEval("BAZ");
+		verify(templateResolver).resolve("FOO");
+		verify(templateResolver).resolve("BAR");
+		verify(templateResolver).resolve("BAZ");
 		verify(workflowLogic).startProcess(eq("foo"), attributesCaptor.capture(), widgetSubmissionCaptor.capture(),
 				eq(true));
 

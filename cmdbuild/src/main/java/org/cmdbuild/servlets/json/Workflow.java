@@ -122,7 +122,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 			final String expression = performer.getValue();
 
 			final TemplateResolver templateResolver = activityPerformerTemplateResolverFactory().create();
-			final String resolvedExpression = templateResolver.simpleEval(expression);
+			final String resolvedExpression = templateResolver.resolve(expression);
 
 			final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
 					resolvedExpression);

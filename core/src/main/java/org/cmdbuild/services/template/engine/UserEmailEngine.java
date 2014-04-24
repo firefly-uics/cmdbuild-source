@@ -1,4 +1,4 @@
-package org.cmdbuild.services.template;
+package org.cmdbuild.services.template.engine;
 
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -6,18 +6,18 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.common.template.TemplateResolverEngine;
+import org.cmdbuild.common.template.engine.Engine;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 
-public class UserEmailTemplateEngine implements TemplateResolverEngine {
+public class UserEmailEngine implements Engine {
 
 	private static final String USER_CLASSNAME = "User";
 	private static final String USERNAME_ATTRIBUTE = "Username";
 	private static final String EMAIL_ATTRIBUTE = "Email";
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<UserEmailTemplateEngine> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<UserEmailEngine> {
 
 		private CMDataView dataView;
 
@@ -26,9 +26,9 @@ public class UserEmailTemplateEngine implements TemplateResolverEngine {
 		}
 
 		@Override
-		public UserEmailTemplateEngine build() {
+		public UserEmailEngine build() {
 			validate();
-			return new UserEmailTemplateEngine(this);
+			return new UserEmailEngine(this);
 		}
 
 		private void validate() {
@@ -48,7 +48,7 @@ public class UserEmailTemplateEngine implements TemplateResolverEngine {
 
 	private final CMDataView dataView;
 
-	private UserEmailTemplateEngine(final Builder builder) {
+	private UserEmailEngine(final Builder builder) {
 		this.dataView = builder.dataView;
 	}
 

@@ -1,14 +1,14 @@
-package org.cmdbuild.services.template;
+package org.cmdbuild.services.template.engine;
 
-import static org.apache.commons.lang3.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.common.template.TemplateResolverEngine;
+import org.cmdbuild.common.template.engine.Engine;
 import org.cmdbuild.model.email.Email;
 
-public class EmailTemplateEngine implements TemplateResolverEngine {
+public class EmailEngine implements Engine {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<EmailTemplateEngine> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<EmailEngine> {
 
 		private Email email;
 
@@ -17,9 +17,9 @@ public class EmailTemplateEngine implements TemplateResolverEngine {
 		}
 
 		@Override
-		public EmailTemplateEngine build() {
+		public EmailEngine build() {
 			validate();
-			return new EmailTemplateEngine(this);
+			return new EmailEngine(this);
 		}
 
 		private void validate() {
@@ -32,8 +32,8 @@ public class EmailTemplateEngine implements TemplateResolverEngine {
 		}
 
 	}
-	
-	public static Builder newInstance(){
+
+	public static Builder newInstance() {
 		return new Builder();
 	}
 
@@ -119,7 +119,7 @@ public class EmailTemplateEngine implements TemplateResolverEngine {
 
 	private final Email email;
 
-	private EmailTemplateEngine(final Builder builder) {
+	private EmailEngine(final Builder builder) {
 		this.email = builder.email;
 	}
 

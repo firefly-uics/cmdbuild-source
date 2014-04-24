@@ -37,6 +37,7 @@ public class ReadEmailTask implements ScheduledTask {
 		private Boolean workflowAdvanceable;
 		private Boolean workflowAttachments;
 		private String workflowAttachmentsCategory;
+		private MapperEngine mapper;
 
 		private Builder() {
 			// use factory method
@@ -66,6 +67,8 @@ public class ReadEmailTask implements ScheduledTask {
 					Validate.notNull(workflowAttachmentsCategory, "missing workflow's attachments category");
 				}
 			}
+
+			mapper = defaultIfNull(mapper, NullMapperEngine.getInstance());
 		}
 
 		public Builder withId(final Long id) {
@@ -148,6 +151,11 @@ public class ReadEmailTask implements ScheduledTask {
 			return this;
 		}
 
+		public Builder withMapperEngine(final MapperEngine mapper) {
+			this.mapper = mapper;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -170,6 +178,7 @@ public class ReadEmailTask implements ScheduledTask {
 	private final boolean workflowAdvanceable;
 	private final boolean workflowAttachments;
 	private final String workflowAttachmentsCategory;
+	private final MapperEngine mapper;
 
 	private ReadEmailTask(final Builder builder) {
 		this.id = builder.id;
@@ -188,6 +197,7 @@ public class ReadEmailTask implements ScheduledTask {
 		this.workflowAdvanceable = builder.workflowAdvanceable;
 		this.workflowAttachments = builder.workflowAttachments;
 		this.workflowAttachmentsCategory = builder.workflowAttachmentsCategory;
+		this.mapper = builder.mapper;
 	}
 
 	@Override
@@ -261,6 +271,10 @@ public class ReadEmailTask implements ScheduledTask {
 
 	public String getWorkflowAttachmentsCategory() {
 		return workflowAttachmentsCategory;
+	}
+
+	public MapperEngine getMapperEngine() {
+		return mapper;
 	}
 
 	@Override

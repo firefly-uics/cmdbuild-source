@@ -75,7 +75,7 @@ public abstract class AbstractProcessDefinitionManager implements ProcessDefinit
 					return a;
 				} else if (p.isExpression()) {
 					final String expression = p.getValue();
-					final String resolvedExpression = templateResolver.simpleEval(expression);
+					final String resolvedExpression = templateResolver.resolve(expression);
 					final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
 							resolvedExpression);
 					final Set<String> names = evaluator.getNames();

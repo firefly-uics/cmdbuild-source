@@ -1,4 +1,4 @@
-package org.cmdbuild.common.template;
+package org.cmdbuild.common.template.engine;
 
 import static java.util.Arrays.asList;
 
@@ -6,25 +6,28 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.cmdbuild.common.template.TemplateResolver;
+
 import com.google.common.collect.Maps;
 
-public class TemplateResolverImpl implements TemplateResolver {
+/**
+ * {@link TemplateResolver} based on {@link Engine}s.
+ */
+public class EngineBasedTemplateResolver implements TemplateResolver {
 
-	private static final Pattern VAR_PATTERN = Pattern.compile("([^\\{]+)?(\\{(\\w+):(\\w+)\\})?");
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<EngineBasedTemplateResolver> {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<TemplateResolverImpl> {
-
-		private final Map<String, TemplateResolverEngine> engines = Maps.newHashMap();
+		private final Map<String, Engine> engines = Maps.newHashMap();
 
 		private Builder() {
 			// use factory method
 		}
 
-		public Builder withEngine(final TemplateResolverEngine engine, final String... prefixes) {
+		public Builder withEngine(final Engine engine, final String... prefixes) {
 			return withEngine(engine, asList(prefixes));
 		}
 
-		public Builder withEngine(final TemplateResolverEngine engine, final Iterable<String> prefixes) {
+		public Builder withEngine(final Engine engine, final Iterable<String> prefixes) {
 			for (final String p : prefixes) {
 				engines.put(p, engine);
 			}
@@ -32,8 +35,8 @@ public class TemplateResolverImpl implements TemplateResolver {
 		}
 
 		@Override
-		public TemplateResolverImpl build() {
-			return new TemplateResolverImpl(this);
+		public EngineBasedTemplateResolver build() {
+			return new EngineBasedTemplateResolver(this);
 		}
 
 	}
@@ -42,14 +45,16 @@ public class TemplateResolverImpl implements TemplateResolver {
 		return new Builder();
 	}
 
-	private final Map<String, TemplateResolverEngine> engines;
+	private static final Pattern VAR_PATTERN = Pattern.compile("([^\\{]+)?(\\{(\\w+):(\\w+)\\})?");
 
-	private TemplateResolverImpl(final Builder builder) {
+	private final Map<String, Engine> engines;
+
+	private EngineBasedTemplateResolver(final Builder builder) {
 		this.engines = builder.engines;
 	}
 
 	@Override
-	public String simpleEval(final String template) {
+	public String resolve(final String template) {
 		final StringBuilder sb = new StringBuilder();
 		final Matcher matcher = VAR_PATTERN.matcher(template);
 		while (matcher.find()) {
@@ -69,7 +74,7 @@ public class TemplateResolverImpl implements TemplateResolver {
 	}
 
 	private Object expandVariable(final String enginePrefix, final String variable) {
-		final TemplateResolverEngine e = engines.get(enginePrefix);
+		final Engine e = engines.get(enginePrefix);
 		if (e != null) {
 			return e.eval(variable);
 		} else {

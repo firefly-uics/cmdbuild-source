@@ -1,4 +1,4 @@
-package org.cmdbuild.services.template;
+package org.cmdbuild.services.template.engine;
 
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.FluentIterable.from;
@@ -14,7 +14,7 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.util.List;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.common.template.TemplateResolverEngine;
+import org.cmdbuild.common.template.engine.Engine;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -24,7 +24,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
-public class GroupUsersEmailTemplateEngine implements TemplateResolverEngine {
+public class GroupUsersEmailEngine implements Engine {
 
 	private static final String USER_CLASSNAME = "User";
 	private static final String ROLE_CLASSNAME = "Role";
@@ -32,7 +32,7 @@ public class GroupUsersEmailTemplateEngine implements TemplateResolverEngine {
 	private static final String CODE_ATTRIBUTE = "Code";
 	private static final String EMAIL_ATTRIBUTE = "Email";
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<GroupUsersEmailTemplateEngine> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<GroupUsersEmailEngine> {
 
 		private CMDataView dataView;
 		private String separator;
@@ -42,9 +42,9 @@ public class GroupUsersEmailTemplateEngine implements TemplateResolverEngine {
 		}
 
 		@Override
-		public GroupUsersEmailTemplateEngine build() {
+		public GroupUsersEmailEngine build() {
 			validate();
-			return new GroupUsersEmailTemplateEngine(this);
+			return new GroupUsersEmailEngine(this);
 		}
 
 		private void validate() {
@@ -71,7 +71,7 @@ public class GroupUsersEmailTemplateEngine implements TemplateResolverEngine {
 	private final CMDataView dataView;
 	private final String separator;
 
-	private GroupUsersEmailTemplateEngine(final Builder builder) {
+	private GroupUsersEmailEngine(final Builder builder) {
 		this.dataView = builder.dataView;
 		this.separator = builder.separator;
 	}

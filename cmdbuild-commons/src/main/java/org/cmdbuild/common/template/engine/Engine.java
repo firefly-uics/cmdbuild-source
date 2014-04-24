@@ -1,6 +1,6 @@
-package org.cmdbuild.common.template;
+package org.cmdbuild.common.template.engine;
 
-public interface TemplateResolverEngine {
+public interface Engine {
 
 	/**
 	 * Evaluates the specified expression.

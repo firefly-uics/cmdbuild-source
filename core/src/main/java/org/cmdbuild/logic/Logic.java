@@ -1,7 +1,5 @@
 package org.cmdbuild.logic;
 
-import java.util.List;
-
 import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
 
