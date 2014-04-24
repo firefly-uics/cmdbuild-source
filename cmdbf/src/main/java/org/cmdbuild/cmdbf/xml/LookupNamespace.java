@@ -227,23 +227,26 @@ public class LookupNamespace extends AbstractNamespace {
 					final XmlSchemaContent content = contentModel.getContent();
 					if (content != null && content instanceof XmlSchemaSimpleContentRestriction) {
 						final XmlSchemaSimpleContentRestriction restriction = (XmlSchemaSimpleContentRestriction) content;
-						if (restriction.getBaseTypeName().equals(
-								org.apache.ws.commons.schema.constants.Constants.XSD_STRING)) {
+						if (restriction.getBaseTypeName().equals(getRegistry().getTypeQName(LookupValue.class))) {
 							final Map<String, String> properties = getAnnotations(type);
 							final String parent = properties.get(LOOKUP_PARENT);
 							String name = properties.get(LOOKUP_NAME);
 							if (name == null) {
 								name = type.getName();
 							}
-							final LookupTypeBuilder lookupTypeBuilder = LookupType.newInstance().withName(name);
 							LookupType parentLookupType = null;
-							if (parent != null && !parent.isEmpty()) {
-								lookupTypeBuilder.withParent(parent);
-								parentLookupType = getLookupType(parent);
+							lookupType = getLookupType(name);
+							if (lookupType == null) {
+								final LookupTypeBuilder lookupTypeBuilder = LookupType.newInstance().withName(name);
+								if (parent != null && !parent.isEmpty()) {
+									parentLookupType = getLookupType(parent);
+									if (parentLookupType != null) {
+										lookupTypeBuilder.withParent(parent);
+									}
+								}
+								lookupType = lookupTypeBuilder.build();
+								lookupLogic.saveLookupType(lookupType, lookupType);
 							}
-							lookupType = lookupTypeBuilder.build();
-							final LookupType oldLookupType = getLookupType(lookupType.name);
-							lookupLogic.saveLookupType(lookupType, oldLookupType);
 							for (final XmlSchemaFacet facet : restriction.getFacets()) {
 								if (facet instanceof XmlSchemaEnumerationFacet) {
 									final XmlSchemaEnumerationFacet enumeration = (XmlSchemaEnumerationFacet) facet;
@@ -288,7 +291,7 @@ public class LookupNamespace extends AbstractNamespace {
 			public boolean apply(final LookupType input) {
 				return input.name.equals(name);
 			}
-		});
+		}, null);
 	}
 
 	private Lookup getLookup(final LookupType type, final String id, final String name, final Lookup parent,
@@ -308,9 +311,10 @@ public class LookupNamespace extends AbstractNamespace {
 			lookup = Iterables.find(lookupLogic.getAllLookup(type, false), new Predicate<Lookup>() {
 				@Override
 				public boolean apply(final Lookup input) {
-					return input.description.equals(name) && (parent == null || input.parent.equals(parent));
+					return input.description != null && input.description.equals(name)
+							&& (parent == null || input.parent.equals(parent));
 				}
-			});
+			}, null);
 		}
 		return lookup;
 	}

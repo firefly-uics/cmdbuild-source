@@ -11,6 +11,8 @@ import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaForm;
 import org.apache.ws.commons.schema.XmlSchemaSimpleContent;
 import org.apache.ws.commons.schema.XmlSchemaSimpleContentExtension;
+import org.cmdbuild.cmdbf.CMDBfId;
+import org.cmdbuild.cmdbf.cmdbmdr.MdrScopedIdRegistry;
 import org.cmdbuild.config.CmdbfConfiguration;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
@@ -24,10 +26,14 @@ public class SystemNamespace extends AbstractNamespace {
 	static final String LOOKUP_ID = "lookupId";
 	static final String LOOKUP_TYPE_NAME = "lookupType";
 	static final String REFERENCE_TYPE = "Reference";
-	static final String REFERENCE_ID = "referenceId";
+	static final String REFERENCE_MDR_ID = "mdrId";
+	static final String REFERENCE_LOCAL_ID = "localId";
+	
+	private final MdrScopedIdRegistry aliasRegistry;	
 
-	public SystemNamespace(final String name, final CmdbfConfiguration cmdbfConfiguration) {
+	public SystemNamespace(final String name, final MdrScopedIdRegistry aliasRegistry, final CmdbfConfiguration cmdbfConfiguration) {
 		super(name, cmdbfConfiguration);
+		this.aliasRegistry = aliasRegistry;
 	}
 
 	@Override
@@ -59,10 +65,14 @@ public class SystemNamespace extends AbstractNamespace {
 		final XmlSchemaSimpleContent referenceContent = new XmlSchemaSimpleContent();
 		final XmlSchemaSimpleContentExtension referenceExtension = new XmlSchemaSimpleContentExtension();
 		referenceExtension.setBaseTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
-		final XmlSchemaAttribute referenceId = new XmlSchemaAttribute(schema, false);
-		referenceId.setName(REFERENCE_ID);
-		referenceId.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_LONG);
-		referenceExtension.getAttributes().add(referenceId);
+		final XmlSchemaAttribute referenceMdrId = new XmlSchemaAttribute(schema, false);
+		referenceMdrId.setName(REFERENCE_MDR_ID);
+		referenceMdrId.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
+		referenceExtension.getAttributes().add(referenceMdrId);
+		final XmlSchemaAttribute referenceLocalId = new XmlSchemaAttribute(schema, false);
+		referenceLocalId.setName(REFERENCE_LOCAL_ID);
+		referenceLocalId.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
+		referenceExtension.getAttributes().add(referenceLocalId);
 		referenceContent.setContent(referenceExtension);
 		referenceType.setContentModel(referenceContent);
 		return schema;
@@ -106,7 +116,9 @@ public class SystemNamespace extends AbstractNamespace {
 		if (entry instanceof IdAndDescription && !(entry instanceof LookupValue)) {
 			final IdAndDescription value = (IdAndDescription) entry;
 			if (xml instanceof Element && value.getId() != null) {
-				((Element) xml).setAttribute(REFERENCE_ID, value.getId().toString());
+				CMDBfId cmdbfId = aliasRegistry.getCMDBfId(value.getId());
+				((Element) xml).setAttribute(REFERENCE_MDR_ID, cmdbfId.getMdrId());
+				((Element) xml).setAttribute(REFERENCE_LOCAL_ID, cmdbfId.getLocalId());
 			}
 			xml.setTextContent(value.getDescription());
 			serialized = true;
@@ -121,9 +133,12 @@ public class SystemNamespace extends AbstractNamespace {
 			Long id = null;
 			if (xml instanceof Element) {
 				final Element element = (Element) xml;
-				final String idValue = element.getAttribute(REFERENCE_ID);
-				if (idValue != null) {
-					id = Long.parseLong(idValue);
+				final String mdrId = element.getAttribute(REFERENCE_MDR_ID);
+				final String localId = element.getAttribute(REFERENCE_LOCAL_ID);
+				if (mdrId != null && localId !=null) {
+					CMDBfId cmdbfId = aliasRegistry.resolveAlias(new CMDBfId(mdrId, localId));
+					if(cmdbfId != null)
+						id = aliasRegistry.getInstanceId(cmdbfId);
 				}
 			}
 			value = new IdAndDescription(id, xml.getTextContent());

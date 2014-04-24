@@ -7,6 +7,7 @@ import org.cmdbuild.dao.entrytype.DBClass;
 public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 
 	private static final Long NOT_EXISTING_CARD_ID = null;
+	private Long currentId;
 
 	private DBCard(final DBDriver driver, final DBClass type, final Long id) {
 		super(driver, type, id);
@@ -41,6 +42,15 @@ public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 	@Override
 	public CMCardDefinition setDescription(final Object value) {
 		return set(getType().getDescriptionAttributeName(), value);
+	}
+
+	public CMCardDefinition setCurrentId(final Long currentId) {
+		this.currentId = currentId;
+		return this;
+	}
+
+	public Long getCurrentId() {
+		return currentId;
 	}
 
 	@Override
