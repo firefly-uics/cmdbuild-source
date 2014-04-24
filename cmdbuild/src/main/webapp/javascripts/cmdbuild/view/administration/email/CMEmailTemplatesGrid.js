@@ -45,23 +45,18 @@
 			},
 
 			select: function(row, record, index) {
-				this.delegate.cmOn('onRowSelected', {
-					'row': row,
-					'record': record,
-					'index': index
-				});
+				this.delegate.cmOn('onRowSelected');
 			},
 
 			/**
 			 * Event to load store on view display and first row selection as CMDbuild standard
 			 */
 			viewready: function() {
-				var me = this;
-
 				this.store.load({
+					scope: this,
 					callback: function() {
-						if (!me.getSelectionModel().hasSelection())
-							me.getSelectionModel().select(0, true);
+						if (!this.getSelectionModel().hasSelection())
+							this.getSelectionModel().select(0, true);
 					}
 				});
 			}

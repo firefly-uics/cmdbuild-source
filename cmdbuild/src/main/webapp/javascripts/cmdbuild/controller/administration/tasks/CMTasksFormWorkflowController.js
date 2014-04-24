@@ -32,12 +32,6 @@
 				case 'onModifyButtonClick':
 					return this.onModifyButtonClick();
 
-				case 'onNextButtonClick':
-					return this.view.wizard.changeTab(+1);
-
-				case 'onPreviousButtonClick':
-					return this.view.wizard.changeTab(-1);
-
 				case 'onRemoveButtonClick':
 					return this.onRemoveButtonClick();
 
@@ -58,50 +52,51 @@
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
 
-			this.delegateStep[0].setDisabledAttributesTable(true);
+			this.delegateStep[0].setDisabledAttributesGrid(true);
 		},
 
 		// overwrite
 		onModifyButtonClick: function() {
 			this.callParent(arguments);
 
-			this.delegateStep[0].onWorkflowSelected(this.delegateStep[0].getValueWorkflowCombo(), true);
-
-			if (this.delegateStep[0].checkWorkflowComboSelected())
-				this.delegateStep[0].setDisabledAttributesTable(false);
+			if (!this.delegateStep[0].checkWorkflowComboSelected())
+				this.delegateStep[0].setDisabledAttributesGrid(true);
 		},
 
 		// overwrite
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
-				var me = this;
-
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
 
 				// Selected task asynchronous store query
-				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(me.taskType);
+				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(this.taskType);
 				this.selectedDataStore.load({
-					params: { id: this.selectedId }
-				});
-				this.selectedDataStore.on('load', function(store, records, successful, eOpts) {
-					var record = records[0];
+					scope: this,
+					params: {
+						id: this.selectedId
+					},
+					callback: function(records, operation, success) {
+						if (!Ext.isEmpty(records)) {
+							var record = records[0];
 
-					me.parentDelegate.loadForm(me.taskType);
+							this.parentDelegate.loadForm(this.taskType);
 
-					// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
+							// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
 
-					// Set step1 [0] datas
-					me.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-					me.delegateStep[0].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
-					me.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
-					me.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
-					me.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME));
+							// Set step1 [0] datas
+							this.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
+							this.delegateStep[0].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
+							this.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
+							this.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
+							this.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME));
 
-					// Set step2 [1] datas
-					me.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
-					me.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+							// Set step2 [1] datas
+							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+							this.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
 
-					me.view.disableModify(true);
+							this.view.disableModify(true);
+						}
+					}
 				});
 
 				this.view.wizard.changeTab(0);
@@ -127,23 +122,19 @@
 			);
 
 			// Form submit values formatting
-			if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-				submitDatas[CMDBuild.ServiceProxy.parameter.ATTRIBUTES] = Ext.encode(attributesGridValues);
+				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+					submitDatas[CMDBuild.ServiceProxy.parameter.ATTRIBUTES] = Ext.encode(attributesGridValues);
 
 			// Cron field validation
-			if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
-				return;
+				if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
+					return;
 
 			// Data filtering to submit only right values
 			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
 			submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
 			submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
 			submitDatas[CMDBuild.ServiceProxy.parameter.TYPE] = formData[CMDBuild.ServiceProxy.parameter.TYPE];
-			submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW];
-
-_debug(filterData);
-_debug(formData);
-_debug(submitDatas);
+			submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
 
 			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
 				CMDBuild.core.proxy.CMProxyTasks.create({
@@ -162,29 +153,6 @@ _debug(submitDatas);
 					callback: this.callback
 				});
 			}
-		},
-
-		// overwrite
-		success: function(response, options, decodedResult) {
-			var me = this;
-			var store = this.parentDelegate.grid.store;
-
-			store.load();
-			store.on('load', function() {
-				me.view.reset();
-
-				var rowIndex = this.find(
-					CMDBuild.ServiceProxy.parameter.ID,
-					(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getValueId()
-				);
-
-				if (rowIndex < 0)
-					rowIndex = 0;
-
-				me.selectionModel.select(rowIndex, true);
-			});
-
-			me.view.disableModify(true);
 		}
 	});
 

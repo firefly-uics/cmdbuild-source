@@ -92,8 +92,7 @@
 			 * Draw tabs on show
 			 */
 			show: function(panel, eOpts) {
-				if (this.filterTabPanel.items.length < 1)
-					this.delegate.drawFilterTabs();
+				this.delegate.drawFilterTabs();
 			}
 		}
 	});

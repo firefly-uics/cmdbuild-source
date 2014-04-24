@@ -124,8 +124,8 @@
 											cmName: 'tasks'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
-											cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-											cmName : "modsetupbim"
+											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
+											cmName: 'modsetupbim'
 										})
 									]);
 								}

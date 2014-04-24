@@ -14,59 +14,68 @@
 		autoScroll: false,
 		buttonAlign: 'center',
 		layout: 'fit',
+		split: true,
 		frame: false,
 		border: false,
 		cls: 'x-panel-body-default-framed cmbordertop',
+		bodyCls: 'cmgraypanel',
 
 		initComponent: function() {
-			var me = this;
+//			var me = this;
 
 			// Buttons configuration
 			this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onAbortButtonClick');
+					this.delegate.cmOn('onAbortButtonClick');
 				}
 			});
 
 			this.cloneButton = Ext.create('Ext.button.Button', {
 				iconCls: 'clone',
 				text: tr.clone,
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onCloneButtonClick');
+					this.delegate.cmOn('onCloneButtonClick');
 				}
 			});
 
 			this.modifyButton = Ext.create('Ext.button.Button', {
 				iconCls: 'modify',
 				text: tr.modify,
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onModifyButtonClick');
+					this.delegate.cmOn('onModifyButtonClick');
 				}
 			});
 
 			this.nextButton = Ext.create('CMDBuild.buttons.NextButton', {
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onNextButtonClick');
+					this.delegate.cmOn('onNextButtonClick');
 				}
 			});
 
 			this.previousButton = Ext.create('CMDBuild.buttons.PreviousButton', {
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onPreviousButtonClick');
+					this.delegate.cmOn('onPreviousButtonClick');
 				}
 			});
 
 			this.removeButton = Ext.create('Ext.button.Button', {
 				iconCls: 'delete',
 				text: tr.remove,
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onRemoveButtonClick');
+					this.delegate.cmOn('onRemoveButtonClick');
 				}
 			});
 
 			this.saveButton = Ext.create('CMDBuild.buttons.SaveButton', {
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onSaveButtonClick');
+					this.delegate.cmOn('onSaveButtonClick');
 				}
 			});
 			// END: Buttons configuration
@@ -80,7 +89,14 @@
 			this.cmButtons = [this.previousButton, this.saveButton, this.abortButton, this.nextButton];
 
 			Ext.apply(this, {
-				tbar: this.cmTBar,
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP,
+						items: this.cmTBar
+					}
+				],
 				items: [this.wizard],
 				buttons: this.cmButtons
 			});

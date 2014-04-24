@@ -75,6 +75,7 @@
 
 		border: false,
 		height: '100%',
+		overflowY: 'auto',
 
 		initComponent: function() {
 			var me = this;

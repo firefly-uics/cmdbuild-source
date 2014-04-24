@@ -8,9 +8,9 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
-import org.cmdbuild.model.bim.BimLayer;
+import org.cmdbuild.model.bim.StorableLayer;
 
-public class StorableLayerConverter extends BaseStorableConverter<BimLayer> {
+public class StorableLayerConverter extends BaseStorableConverter<StorableLayer> {
 
 	final String	TABLE_NAME = "_BimLayer",
 					CLASS_NAME = "ClassName",
@@ -31,8 +31,8 @@ public class StorableLayerConverter extends BaseStorableConverter<BimLayer> {
 	}
 
 	@Override
-	public BimLayer convert(CMCard card) {
-		final BimLayer layer = new BimLayer(readString(card, CLASS_NAME));
+	public StorableLayer convert(CMCard card) {
+		final StorableLayer layer = new StorableLayer(readString(card, CLASS_NAME));
 		layer.setActive(readBoolean(card,ACTIVE));
 		layer.setRoot(readBoolean(card, BIM_ROOT));
 		layer.setExport(readBoolean(card, EXPORT));
@@ -42,7 +42,7 @@ public class StorableLayerConverter extends BaseStorableConverter<BimLayer> {
 	}
 
 	@Override
-	public Map<String, Object> getValues(BimLayer layer) {
+	public Map<String, Object> getValues(StorableLayer layer) {
 		final Map<String, Object> values = new HashMap<String, Object>();
 
 		values.put(CLASS_NAME, layer.getClassName());
@@ -55,7 +55,7 @@ public class StorableLayerConverter extends BaseStorableConverter<BimLayer> {
 	}
 
 	@Override
-	public String getUser(BimLayer storable) {
+	public String getUser(StorableLayer storable) {
 		// TODO Auto-generated method stub
 		return null;
 	}

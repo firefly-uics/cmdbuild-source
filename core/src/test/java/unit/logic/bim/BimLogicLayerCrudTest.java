@@ -12,7 +12,7 @@ import java.util.List;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.bim.DefaultLayerLogic;
 import org.cmdbuild.logic.bim.LayerLogic;
-import org.cmdbuild.model.bim.BimLayer;
+import org.cmdbuild.model.bim.StorableLayer;
 import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimPersistence;
@@ -55,8 +55,8 @@ public class BimLogicLayerCrudTest {
 						return classes;
 					}
 				});
-		List<BimLayer> layerList = Lists.newArrayList();
-		BimLayer layer = new BimLayer(CLASSNAME);
+		List<StorableLayer> layerList = Lists.newArrayList();
+		StorableLayer layer = new StorableLayer(CLASSNAME);
 		layerList.add(layer);
 		when(dataPersistence.listLayers()).thenReturn(layerList);
 
@@ -144,7 +144,7 @@ public class BimLogicLayerCrudTest {
 		ATTRIBUTE_NAME = "root";
 		ATTRIBUTE_VALUE = "true";
 		String OTHER_CLASS = "anotherClass";
-		when(dataPersistence.findRoot()).thenReturn(new BimLayer(OTHER_CLASS));
+		when(dataPersistence.findRoot()).thenReturn(new StorableLayer(OTHER_CLASS));
 
 		// when
 		bimLogic.updateBimLayer(CLASSNAME, ATTRIBUTE_NAME, ATTRIBUTE_VALUE);
@@ -154,7 +154,7 @@ public class BimLogicLayerCrudTest {
 		inOrder.verify(dataModelManager).createBimTableIfNeeded(CLASSNAME);
 		inOrder.verify(dataPersistence).saveActiveFlag(CLASSNAME, "true");
 		inOrder.verify(dataPersistence).findRoot();
-		inOrder.verify(dataModelManager).deleteBimDomainOnClass(OTHER_CLASS);
+		inOrder.verify(dataModelManager).deleteBimDomainIfExists(OTHER_CLASS);
 		inOrder.verify(dataPersistence).saveRootFlag(OTHER_CLASS, false);
 		inOrder.verify(dataModelManager).createBimDomainOnClass(CLASSNAME);
 		inOrder.verify(dataPersistence).saveRootFlag(CLASSNAME, true);
@@ -173,7 +173,7 @@ public class BimLogicLayerCrudTest {
 
 		// then
 		InOrder inOrder = inOrder(dataPersistence, dataModelManager);
-		inOrder.verify(dataModelManager).deleteBimDomainOnClass(CLASSNAME);
+		inOrder.verify(dataModelManager).deleteBimDomainIfExists(CLASSNAME);
 		inOrder.verify(dataPersistence).saveRootFlag(CLASSNAME, false);
 
 		verifyNoMoreInteractions(dataPersistence, dataModelManager);

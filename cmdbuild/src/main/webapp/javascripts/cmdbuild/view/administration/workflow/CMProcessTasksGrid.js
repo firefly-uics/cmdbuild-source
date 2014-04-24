@@ -11,8 +11,6 @@
 		frame: false,
 
 		initComponent: function() {
-			var me = this;
-
 			this.gridColumns = [
 				{
 					dataIndex: CMDBuild.ServiceProxy.parameter.ID,
@@ -28,12 +26,13 @@
 					width: 60,
 					align: 'center',
 					dataIndex: CMDBuild.ServiceProxy.parameter.ACTIVE,
-					renderer: function(value, metaData, record) {
-						return me.activeGridColumnRenderer(value, metaData, record);
-					},
 					hideable: false,
 					menuDisabled: true,
-					fixed: true
+					fixed: true,
+					scope: this,
+					renderer: function(value, metaData, record) {
+						return this.activeGridColumnRenderer(value, metaData, record);
+					}
 				}
 			];
 
@@ -54,11 +53,7 @@
 			},
 
 			select: function(row, record, index) {
-				this.delegate.cmOn('onRowSelected', {
-					'row': row,
-					'record': record,
-					'index': index
-				});
+				this.delegate.cmOn('onRowSelected');
 			}
 		},
 
@@ -67,7 +62,7 @@
 		 * Used to render active database value to add icon
 		 */
 		activeGridColumnRenderer: function(value, metaData, record) {
-			if(typeof value === 'boolean') {
+			if(typeof value == 'boolean') {
 				if(value) {
 					value = '<img src="images/icons/accept.png" alt="' + tr.running + '" />';
 				} else {

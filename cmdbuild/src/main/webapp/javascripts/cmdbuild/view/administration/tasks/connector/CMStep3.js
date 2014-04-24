@@ -53,6 +53,7 @@
 
 		border: false,
 		height: '100%',
+		overflowY: 'auto',
 
 		initComponent: function() {
 			var me = this;
@@ -107,7 +108,7 @@
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					minValue: 1,
 					maxValue: 65535,
-					allowBlank: false
+					allowBlank: true
 				});
 
 				this.dbNameField = Ext.create('Ext.form.field.Text', {

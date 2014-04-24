@@ -19,6 +19,7 @@
 			CC: 'cc',
 			CLASS_ATTRIBUTE: 'classAttribute',
 			CLASS_ID: 'classId',
+			CLASS_MAIN_NAME: 'classMainName',
 			CLASS_NAME: 'className',
 			CONFIRMED: 'confirmed',
 			CRON_EXPRESSION: 'cronExpression',
@@ -59,6 +60,8 @@
 			INCOMING_FOLDER: 'incomingFolder',
 			INDEX: 'index',
 			IS_DEFAULT: 'isDefault',
+			IS_KEY: 'isKey',
+			IS_MAIN: 'isMain',
 			KEY_END: 'keyEnd',
 			KEY_INIT: 'keyInit',
 			LENGTH: 'len',
@@ -94,6 +97,7 @@
 			TABLE_TYPE: 'tableType',
 			TEXT: 'text',
 			TO: 'to',
+			TOOLBAR_TOP: 'topToolbar',
 			TO_SYNCHRONIZE: 'toSynchronize',
 			TYPE: 'type',
 			UNIQUE: 'isunique',
@@ -101,11 +105,14 @@
 			VALUE: 'value',
 			VALUE_END: 'valueEnd',
 			VALUE_INIT: 'valueInit',
+			VIEW_ATTRIBUTE: 'viewAttribute',
 			VIEW_NAME: 'viewName',
 			VIEW_PREFIX: 'viewPrefix',
 			WIDGET: 'widget',
 			WIDGET_ID: 'widgetId',
-			WORKFLOW: 'workflow'
+			WORKFLOW: 'workflow',
+			WORKFLOW_ACTIVE: 'workflowActive',
+			WORKFLOW_CLASS_NAME: 'workflowClassName'
 		}
 	});
 

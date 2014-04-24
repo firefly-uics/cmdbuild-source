@@ -630,7 +630,7 @@
 				"title": "Configurazione Grafo delle Relazioni"
 			},
 			"modify": "Modifica",
-			"save": "Conferma",
+			"save": "Salva",
 			"server": {
 				"cache_management": "Gestione cache",
 				"clear_cache": "Cancella la cache",
@@ -1297,6 +1297,7 @@
 	"availableFilters": "Filtri disponibili",
 	"bcc": "Ccn",
 	"bim": "BIM",
+	"buttons_to_disable": "Bottoni da disabilitare",
 	"camera": "Camera",
 	"cc": "Cc",
 	"checkFrequency": "Frequenza controllo (minuti)",
@@ -1393,6 +1394,7 @@
 	"tree_remove": "<em>Rimuovi albero</em>",
 	"tree_root_cql": "<em>Filtro CQL sulla radice</em>",
 	"trees_navigation": "<em>Alberi di navigazione</em>",
+	"ui_configuration_for_groups": "Configurazione UI per il gruppo",
 	"unlock_all_cards": "Sblocca tutte le schede",
 	"uploading_attachment": "Caricamento allegato...",
 	"url": "URL",

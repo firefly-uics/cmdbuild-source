@@ -26,7 +26,7 @@ import org.cmdbuild.logic.bim.project.ProjectLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
-import org.cmdbuild.model.bim.BimLayer;
+import org.cmdbuild.model.bim.StorableLayer;
 import org.cmdbuild.model.bim.StorableProject;
 import org.cmdbuild.services.bim.BimDataModelManager;
 import org.cmdbuild.services.bim.BimDataView;
@@ -176,12 +176,12 @@ public class Bim {
 	}
 
 	@Bean
-	protected Store<BimLayer> layerStore() {
+	protected Store<StorableLayer> layerStore() {
 		return NullOnNotFoundReadStore.of(DataViewStore.newInstance(systemDataView, storableLayerConverter()));
 	}
 
 	@Bean
-	protected StorableConverter<BimLayer> storableLayerConverter() {
+	protected StorableConverter<StorableLayer> storableLayerConverter() {
 		return new org.cmdbuild.data.converter.StorableLayerConverter();
 	}
 

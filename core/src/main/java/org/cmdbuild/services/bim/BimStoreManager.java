@@ -2,7 +2,7 @@ package org.cmdbuild.services.bim;
 
 import java.util.List;
 
-import org.cmdbuild.model.bim.BimLayer;
+import org.cmdbuild.model.bim.StorableLayer;
 import org.cmdbuild.model.bim.StorableProject;
 
 public interface BimStoreManager {
@@ -17,7 +17,7 @@ public interface BimStoreManager {
 	
 	void enableProject(final String identifier);
 
-	Iterable<BimLayer> readAllLayers();
+	Iterable<StorableLayer> readAllLayers();
 	
 	void saveActiveStatus(String className, String value);
 
@@ -33,10 +33,10 @@ public interface BimStoreManager {
 	
 	String getContainerClassName();
 
-	BimLayer findRoot();
+	StorableLayer findRoot();
 
-	BimLayer findContainer();
+	StorableLayer findContainer();
 
-	BimLayer readLayer(String className);
+	StorableLayer readLayer(String className);
 
 }

@@ -1,10 +1,11 @@
 package org.cmdbuild.services.bim;
 
+import static org.cmdbuild.model.bim.StorableLayer.isValidLayer;
 import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.data.converter.StorableProjectConverter;
-import org.cmdbuild.model.bim.BimLayer;
+import org.cmdbuild.model.bim.StorableLayer;
 import org.cmdbuild.model.bim.StorableProject;
 import org.cmdbuild.services.bim.RelationPersistence.ProjectRelations;
 import org.joda.time.DateTime;
@@ -40,10 +41,14 @@ public class DefaultBimPersistence implements BimPersistence {
 	@Override
 	public PersistenceProject read(final String projectId) {
 		final StorableProject storableProject = storeManager.read(projectId);
-		final ProjectRelations relations = relationPersistenceManager.readRelations(storableProject.getCardId(),
-				findRoot().getClassName());
-		final PersistenceProject cmProject = from(storableProject, relations);
-		return cmProject;
+		final StorableLayer rootLayer = findRoot();
+		if (isValidLayer(rootLayer)) {
+			final ProjectRelations relations = relationPersistenceManager.readRelations(storableProject.getCardId(),
+					rootLayer.getClassName());
+			return from(storableProject, relations);
+		}else{
+			return from(storableProject, null);
+		}
 	}
 
 	@Override
@@ -237,7 +242,7 @@ public class DefaultBimPersistence implements BimPersistence {
 	}
 
 	@Override
-	public Iterable<BimLayer> listLayers() {
+	public Iterable<StorableLayer> listLayers() {
 		return storeManager.readAllLayers();
 	}
 
@@ -267,12 +272,12 @@ public class DefaultBimPersistence implements BimPersistence {
 	}
 
 	@Override
-	public BimLayer findRoot() {
+	public StorableLayer findRoot() {
 		return storeManager.findRoot();
 	}
 
 	@Override
-	public BimLayer findContainer() {
+	public StorableLayer findContainer() {
 		return storeManager.findContainer();
 	}
 
@@ -287,7 +292,7 @@ public class DefaultBimPersistence implements BimPersistence {
 	}
 
 	@Override
-	public BimLayer readLayer(final String className) {
+	public StorableLayer readLayer(final String className) {
 		return storeManager.readLayer(className);
 	}
 

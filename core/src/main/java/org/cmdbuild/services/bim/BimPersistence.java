@@ -1,6 +1,6 @@
 package org.cmdbuild.services.bim;
 
-import org.cmdbuild.model.bim.BimLayer;
+import org.cmdbuild.model.bim.StorableLayer;
 import org.joda.time.DateTime;
 
 public interface BimPersistence {
@@ -59,7 +59,7 @@ public interface BimPersistence {
 
 	void enableProject(PersistenceProject project);
 
-	Iterable<BimLayer> listLayers();
+	Iterable<StorableLayer> listLayers();
 
 	void saveActiveFlag(String className, String value);
 
@@ -71,9 +71,9 @@ public interface BimPersistence {
 
 	void saveRootReferenceName(String className, String value);
 
-	BimLayer findRoot();
+	StorableLayer findRoot();
 
-	BimLayer findContainer();
+	StorableLayer findContainer();
 
 	String getProjectIdFromCardId(Long cardId);
 
@@ -83,6 +83,6 @@ public interface BimPersistence {
 
 	String getContainerClassName();
 
-	BimLayer readLayer(String className);
+	StorableLayer readLayer(String className);
 
 }

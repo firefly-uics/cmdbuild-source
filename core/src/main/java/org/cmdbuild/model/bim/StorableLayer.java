@@ -1,13 +1,20 @@
 package org.cmdbuild.model.bim;
 
 import org.cmdbuild.data.store.Storable;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-public class BimLayer implements Storable {
+public class StorableLayer implements Storable {
 
 	private String className, description, rootReference;
 	private boolean active, root, export, container;
 	
-	public BimLayer(String className) {
+	public static StorableLayer NULL_LAYER = new StorableLayer("");
+	
+	public static boolean isValidLayer(StorableLayer layer){
+		return layer != null && !isEmpty(layer.getClassName());
+	}
+	
+	public StorableLayer(String className) {
 		this.className = className;
 	}
 

@@ -16,29 +16,30 @@
 		border: true,
 
 		initComponent: function() {
-			var me = this;
-
 			this.addButton = Ext.create('Ext.button.Button', {
 				iconCls: 'add',
 				text: tr.add,
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onAddButtonClick', { type: 'workflow' });
+					this.delegate.cmOn('onAddButtonClick', { type: 'workflow' });
 				}
 			});
 
 			this.modifyButton = Ext.create('Ext.button.Button', {
 				iconCls: 'modify',
 				text: tr.modify,
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onModifyButtonClick', { type: 'workflow' });
+					this.delegate.cmOn('onModifyButtonClick', { type: 'workflow' });
 				}
 			});
 
 			this.removeButton = Ext.create('Ext.button.Button', {
 				iconCls: 'delete',
 				text: tr.remove,
+				scope: this,
 				handler: function() {
-					me.delegate.cmOn('onRemoveButtonClick', { type: 'workflow' });
+					this.delegate.cmOn('onRemoveButtonClick', { type: 'workflow' });
 				}
 			});
 
@@ -47,8 +48,15 @@
 			this.cmTBar = [this.addButton, this.modifyButton, this.removeButton];
 
 			Ext.apply(this, {
-				items: [this.grid],
-				tbar: this.cmTBar
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP,
+						items: this.cmTBar
+					}
+				],
+				items: [this.grid]
 			});
 
 			this.callParent();

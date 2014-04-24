@@ -8,7 +8,7 @@
 		constructor: function() {
 			this.step1 = Ext.create('CMDBuild.view.administration.tasks.event.asynchronous.CMStep1');
 			this.step2 = Ext.create('CMDBuild.view.administration.tasks.event.asynchronous.CMStep2');
-			this.step3 = Ext.create('CMDBuild.view.administration.tasks.event.asynchronous.CMStep3');
+			this.step3 = Ext.create('CMDBuild.view.administration.tasks.common.CMStepCronConfiguration');
 			this.step4 = Ext.create('CMDBuild.view.administration.tasks.event.asynchronous.CMStep4');
 		},
 

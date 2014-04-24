@@ -93,7 +93,9 @@
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyTasks.remove({
 				type: this.taskType,
-				params: { id: this.selectedId },
+				params: {
+					id: this.selectedId
+				},
 				scope: this,
 				success: this.success,
 				callback: this.callback
@@ -104,9 +106,35 @@
 			this.delegateStep[0].setValueId();
 		},
 
-		// Abstract
-		success: function() {
-			throw 'CMTasksFormBaseController: success() unimplemented method';
+		/**
+		 * @param (Boolean) state
+		 */
+		setDisabledButtonNext: function(state) {
+			this.view.nextButton.setDisabled(state);
+		},
+
+		success: function(result, options, decodedResult) {
+			var me = this;
+			var store = this.parentDelegate.grid.store;
+
+			store.load({
+				callback: function() {
+					me.view.reset();
+
+					var rowIndex = this.find(
+						CMDBuild.ServiceProxy.parameter.ID,
+						(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getValueId()
+					);
+
+					if (rowIndex < 0)
+						rowIndex = 0;
+
+					me.selectionModel.select(rowIndex, true);
+				}
+			});
+
+			this.view.disableModify(true);
+			this.view.wizard.changeTab(0);
 		}
 	});
 
