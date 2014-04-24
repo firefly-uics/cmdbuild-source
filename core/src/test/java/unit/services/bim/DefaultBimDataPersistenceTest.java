@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import org.cmdbuild.model.bim.BimLayer;
+import org.cmdbuild.model.bim.StorableLayer;
 import org.cmdbuild.model.bim.StorableProject;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.BimPersistence.PersistenceProject;
@@ -112,7 +112,7 @@ public class DefaultBimDataPersistenceTest {
 		
 		when(storeManager.read(PROJECTID)).thenReturn(stored);
 		
-		BimLayer rootLayer = mock(BimLayer.class);
+		StorableLayer rootLayer = mock(StorableLayer.class);
 		when(rootLayer.getClassName()).thenReturn(ROOT);
 		when(storeManager.findRoot()).thenReturn(rootLayer);
 	
@@ -219,7 +219,7 @@ public class DefaultBimDataPersistenceTest {
 
 		projects.add(project);
 		when(storeManager.readAll()).thenReturn(projects);
-		BimLayer root = mock(BimLayer.class);
+		StorableLayer root = mock(StorableLayer.class);
 		when(root.getClassName()).thenReturn(ROOT);
 		when(storeManager.findRoot()).thenReturn(root);
 		when(relationPersistence.readRelations(idCaptor.capture(), rootCaptor.capture())).thenReturn(null);
@@ -245,12 +245,12 @@ public class DefaultBimDataPersistenceTest {
 	@Test
 	public void readAllLayer() throws Exception {
 		// given
-		List<BimLayer> mappers = Lists.newArrayList();
-		mappers.add(new BimLayer(THE_CLASS));
+		List<StorableLayer> mappers = Lists.newArrayList();
+		mappers.add(new StorableLayer(THE_CLASS));
 		when(storeManager.readAllLayers()).thenReturn(mappers);
 
 		// when
-		List<BimLayer> list = (List<BimLayer>) dataPersistence.listLayers();
+		List<StorableLayer> list = (List<StorableLayer>) dataPersistence.listLayers();
 
 		// then
 		InOrder inOrder = inOrder(relationPersistence, storeManager);

@@ -1,4 +1,4 @@
-package unit.template;
+package unit.template.engine;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.equalTo;
@@ -7,12 +7,11 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.cmdbuild.common.template.TemplateResolver;
-import org.cmdbuild.common.template.TemplateResolverEngine;
-import org.cmdbuild.common.template.TemplateResolverImpl;
+import org.cmdbuild.common.template.engine.Engine;
+import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
 import org.junit.Test;
 
-public class TemplateResolverTest {
+public class EngineBasedTemplateResolverTest {
 
 	private static final Object NULL_OBJECT = null;
 
@@ -20,10 +19,10 @@ public class TemplateResolverTest {
 	public void aSimpleStringIsKeptAsItIs() {
 		// given
 		final String template = "A simple string";
-		final TemplateResolver tr = TemplateResolverImpl.newInstance().build();
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance().build();
 
 		// when
-		final String value = tr.simpleEval(template);
+		final String value = tr.resolve(template);
 
 		assertThat(value, equalTo(template));
 	}
@@ -31,13 +30,13 @@ public class TemplateResolverTest {
 	@Test
 	public void inexistentEngineIsExpandedWithNull() {
 		// given
-		final TemplateResolverEngine engine = mock(TemplateResolverEngine.class);
+		final Engine engine = mock(Engine.class);
 		when(engine.eval(anyString())).thenReturn(null);
 
-		final TemplateResolver tr = TemplateResolverImpl.newInstance().build();
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance().build();
 
 		// when
-		final String value = tr.simpleEval("{e1:param}");
+		final String value = tr.resolve("{e1:param}");
 
 		// then
 		assertThat(value, equalTo(String.valueOf(NULL_OBJECT)));
@@ -46,12 +45,12 @@ public class TemplateResolverTest {
 	@Test
 	public void inexistentVariablesAreExpandedWithNull() {
 		// given
-		final TemplateResolver tr = TemplateResolverImpl.newInstance() //
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
 				.withEngine(engineWithParam("param", "value"), "e1") //
 				.build();
 
 		// when
-		final String value = tr.simpleEval("{e1:inexsistent}");
+		final String value = tr.resolve("{e1:inexsistent}");
 
 		// then
 		assertThat(value, equalTo(String.valueOf(NULL_OBJECT)));
@@ -60,14 +59,14 @@ public class TemplateResolverTest {
 	@Test
 	public void simpleVariablesAreExpandedWithEnginesEvaluation() {
 		// given
-		final TemplateResolver tr = TemplateResolverImpl.newInstance() //
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
 				.withEngine(engineWithParam("stringParam", "string param"), "e1") //
 				.withEngine(engineWithParam("integerParam", Integer.valueOf(42)), "e2") //
 				.build();
 
 		// when
-		final String stringValue = tr.simpleEval("{e1:stringParam}");
-		final String integerValue = tr.simpleEval("{e2:integerParam}");
+		final String stringValue = tr.resolve("{e1:stringParam}");
+		final String integerValue = tr.resolve("{e2:integerParam}");
 
 		// then
 		assertThat(stringValue, equalTo("string param"));
@@ -77,12 +76,12 @@ public class TemplateResolverTest {
 	@Test
 	public void leadingPartsAreKeptIntact() {
 		// given
-		final TemplateResolver tr = TemplateResolverImpl.newInstance() //
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
 				.withEngine(engineWithParam("param", 42), "e1") //
 				.build();
 
 		// when
-		final String value = tr.simpleEval("XXX{e1:param}");
+		final String value = tr.resolve("XXX{e1:param}");
 
 		// then
 		assertThat(value, equalTo(format("XXX%s", 42)));
@@ -93,16 +92,16 @@ public class TemplateResolverTest {
 		// given
 		final Object value1 = 42, value2 = "st";
 
-		final TemplateResolverEngine engine = mock(TemplateResolverEngine.class);
+		final Engine engine = mock(Engine.class);
 		when(engine.eval("param1")).thenReturn(value1);
 		when(engine.eval("param2")).thenReturn(value2);
 
-		final TemplateResolver tr = TemplateResolverImpl.newInstance() //
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
 				.withEngine(engine, "e1") //
 				.build();
 
 		// when
-		final String value = tr.simpleEval("XXX{e1:param1}YYY{e1:param2}ZZZ");
+		final String value = tr.resolve("XXX{e1:param1}YYY{e1:param2}ZZZ");
 
 		// then
 		assertThat(value, equalTo(format("XXX%sYYY%sZZZ", value1, value2)));
@@ -112,8 +111,8 @@ public class TemplateResolverTest {
 	 * Utilities
 	 */
 
-	private TemplateResolverEngine engineWithParam(final String name, final Object value) {
-		final TemplateResolverEngine engine = mock(TemplateResolverEngine.class);
+	private Engine engineWithParam(final String name, final Object value) {
+		final Engine engine = mock(Engine.class);
 		when(engine.eval(name)).thenReturn(value);
 		return engine;
 	}

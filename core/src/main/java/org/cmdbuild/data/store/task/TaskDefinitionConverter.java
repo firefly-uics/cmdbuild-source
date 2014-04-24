@@ -79,7 +79,7 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 				public void visit(final StartWorkflowTaskDefinition taskDefinition) {
 					element = START_WORKFLOW;
 				}
-				
+
 				@Override
 				public void visit(final SynchronousEventTaskDefinition taskDefinition) {
 					element = SYNCHRONOUS_EVENT;

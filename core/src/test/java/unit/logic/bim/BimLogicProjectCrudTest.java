@@ -15,7 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.logic.bim.project.DefaultProjectLogic;
 import org.cmdbuild.logic.bim.project.ProjectLogic;
 import org.cmdbuild.logic.bim.project.ProjectLogic.Project;
-import org.cmdbuild.model.bim.BimLayer;
+import org.cmdbuild.model.bim.StorableLayer;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimFacade.BimFacadeProject;
 import org.cmdbuild.services.bim.BimPersistence;
@@ -363,7 +363,7 @@ public class BimLogicProjectCrudTest {
 		when(createdProject.getLastCheckin()).thenReturn(null);
 		when(createdProject.getExportProjectId()).thenReturn(EXPORT_ID);
 		when(serviceFacade.createProjectAndUploadFile(facadeProjectCaptor.capture())).thenReturn(createdProject);
-		when(dataPersistence.findRoot()).thenReturn(new BimLayer("root"));
+		when(dataPersistence.findRoot()).thenReturn(new StorableLayer("root"));
 		when(exportPolicy.createProjectForExport(ID)).thenReturn(null);
 		// when
 		bimLogic.createProject(project);

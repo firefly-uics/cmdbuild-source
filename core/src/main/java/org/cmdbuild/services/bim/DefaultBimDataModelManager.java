@@ -175,8 +175,8 @@ public class DefaultBimDataModelManager implements BimDataModelManager {
 	}
 
 	@Override
-	public void deleteBimDomainOnClass(String className) {
-		dataDefinitionLogic.deleteDomainByName(className + DEFAULT_DOMAIN_SUFFIX);
+	public void deleteBimDomainIfExists(String className) {
+		dataDefinitionLogic.deleteDomainIfExists(className + DEFAULT_DOMAIN_SUFFIX);
 	}
 
 	private void createBimTable(String className) {

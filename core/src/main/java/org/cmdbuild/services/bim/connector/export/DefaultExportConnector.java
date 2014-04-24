@@ -34,7 +34,7 @@ import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.bimserver.BimserverEntity;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.DBIdentifier;
-import org.cmdbuild.model.bim.BimLayer;
+import org.cmdbuild.model.bim.StorableLayer;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
@@ -275,7 +275,7 @@ public class DefaultExportConnector implements GenericMapper {
 			final String containerAttributeName = catalogEntry.getContainerAttribute();
 			final String shapeOid = getShapeOid(getExportRevisionId(sourceProjectId), catalogEntry.getShape());
 			final String ifcType = catalogEntry.getTypeName();
-			final BimLayer layer = persistence.readLayer(className);
+			final StorableLayer layer = persistence.readLayer(className);
 			final String rootReference = layer.getRootReference();
 			final String containerClassName = persistence.findContainer().getClassName();
 

@@ -14,7 +14,7 @@ import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.template.TemplateResolverEngineNames;
+import org.cmdbuild.services.template.engine.EngineNames;
 import org.cmdbuild.services.template.store.TemplateRepository;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
@@ -38,8 +38,8 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 	private static final String FILTER_KEY = "Filter";
 	private static final String SINGLE_QUOTES = "'";
 	private static final String DOUBLE_QUOTES = "\"";
-	private static final String CLIENT_PREFIX = TemplateResolverEngineNames.CLIENT + ":";
-	private static final String DB_TEMPLATE_PREFIX = TemplateResolverEngineNames.DB_TEMPLATE + ":";
+	private static final String CLIENT_PREFIX = EngineNames.CLIENT + ":";
+	private static final String DB_TEMPLATE_PREFIX = EngineNames.DB_TEMPLATE + ":";
 
 	private final TemplateRepository templateRespository;
 	private final Notifier notifier;

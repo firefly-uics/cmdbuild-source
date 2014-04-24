@@ -17,7 +17,7 @@ public class Functions {
 
 		@Override
 		public String apply(final String input) {
-			return templateResolver.simpleEval(input);
+			return templateResolver.resolve(input);
 		}
 
 	}

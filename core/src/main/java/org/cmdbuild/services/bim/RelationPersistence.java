@@ -1,5 +1,7 @@
 package org.cmdbuild.services.bim;
 
+import com.google.common.collect.Lists;
+
 public interface RelationPersistence {
 
 	public interface ProjectRelations {
@@ -7,8 +9,23 @@ public interface RelationPersistence {
 		Long getProjectCardId();
 
 		Iterable<String> getBindedCards();
-
+		
 	}
+	
+	public static ProjectRelations NULL_RELATIONS = new ProjectRelations() {
+		
+		@Override
+		public Long getProjectCardId() {
+			return (long) -1;
+		}
+		
+		@Override
+		public Iterable<String> getBindedCards() {
+			return Lists.newArrayList();
+		}
+	};
+	
+	
 	
 	ProjectRelations readRelations(final Long projectCardId, final String rootClassName);
 	
