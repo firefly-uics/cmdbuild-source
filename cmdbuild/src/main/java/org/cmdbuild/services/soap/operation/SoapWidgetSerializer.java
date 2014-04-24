@@ -33,6 +33,7 @@ import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
 import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;
+import org.cmdbuild.workflow.widget.GridWidgetFactory;
 import org.cmdbuild.workflow.widget.LinkCardsWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenReportWidgetFactory;
 import org.cmdbuild.workflow.widget.ValuePairWidgetFactory;
@@ -171,6 +172,9 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	public void visit(final Grid grid) {
 		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
 		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, grid.getLabel()));
+		parameters.add(parameterFor(GridWidgetFactory.MAP_SEPARATOR, grid.getMapSeparator()));
+		parameters.add(parameterFor(GridWidgetFactory.ENTRY_SEPARATOR, grid.getEntrySeparator()));
+		parameters.add(parameterFor(GridWidgetFactory.KEY_VALUE_SEPARATOR, grid.getKeyValueSeparator()));
 		for (final Entry<String, Object> entry : grid.getPreset().entrySet()) {
 			parameters.add(parameterFor(entry.getKey(), entry.getValue()));
 		}
