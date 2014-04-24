@@ -11,7 +11,7 @@ import com.google.common.collect.Maps;
 
 public abstract class Task implements Storable {
 
-	public static abstract class Builder<T extends Task> implements org.cmdbuild.common.Builder<T> {
+	public static abstract class Builder<T extends Task> implements org.apache.commons.lang3.builder.Builder<T> {
 
 		private static final Map<String, String> EMPTY = Collections.emptyMap();
 
@@ -64,7 +64,7 @@ public abstract class Task implements Storable {
 		}
 
 		public Builder<T> withParameters(final Map<String, String> parameters) {
-			this.parameters = parameters;
+			this.parameters.putAll(parameters);
 			return this;
 		}
 

@@ -12,7 +12,7 @@ import org.cmdbuild.data.store.Storable;
 
 public class TaskParameter implements Storable {
 
-	public static class Builder implements org.cmdbuild.common.Builder<TaskParameter> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<TaskParameter> {
 
 		private Long id;
 		private Long owner;

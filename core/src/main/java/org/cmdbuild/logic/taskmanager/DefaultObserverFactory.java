@@ -23,7 +23,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 
 	private static class SynchronousEventTaskPredicate implements Predicate<CMCard> {
 
-		public static class Builder implements org.cmdbuild.common.Builder<SynchronousEventTaskPredicate> {
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<SynchronousEventTaskPredicate> {
 
 			private SynchronousEventTask task;
 			private UserStore userStore;

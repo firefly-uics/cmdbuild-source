@@ -16,6 +16,8 @@ import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.ReadEmail;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.StartWorkflow;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.SynchronousEvent;
+import org.cmdbuild.logic.taskmanager.KeyValueMapperEngine;
+import org.cmdbuild.logic.taskmanager.MapperEngine;
 import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
@@ -90,10 +92,33 @@ public class DefaultLogicAndStoreConverterTest {
 	}
 
 	@Test
+	public void keyValueMapperSuccessfullyConvertedToStore() throws Exception {
+		// given
+		final ReadEmailTask source = ReadEmailTask.newInstance() //
+				.withMapperEngine(KeyValueMapperEngine.newInstance() //
+						.withKey("key_init", "key_end") //
+						.withValue("value_init", "value_end") //
+						.build() //
+				).build();
+
+		// when
+		final org.cmdbuild.data.store.task.Task converted = converter.from(source).toStore();
+
+		// then
+		final Map<String, String> parameters = converted.getParameters();
+		assertThat(parameters, hasEntry(ReadEmail.KeyValueMapperEngine.TYPE, "keyvalue"));
+		assertThat(parameters, hasEntry(ReadEmail.KeyValueMapperEngine.KEY_INIT, "key_init"));
+		assertThat(parameters, hasEntry(ReadEmail.KeyValueMapperEngine.KEY_END, "key_end"));
+		assertThat(parameters, hasEntry(ReadEmail.KeyValueMapperEngine.VALUE_INIT, "value_init"));
+		assertThat(parameters, hasEntry(ReadEmail.KeyValueMapperEngine.VALUE_END, "value_end"));
+	}
+
+	@Test
 	public void readEmailTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.ReadEmailTask source = org.cmdbuild.data.store.task.ReadEmailTask
-				.newInstance().withId(42L) //
+				.newInstance() //
+				.withId(42L) //
 				.withDescription("description") //
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
@@ -137,6 +162,33 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.isWorkflowAdvanceable(), equalTo(true));
 		assertThat(converted.isWorkflowAttachments(), equalTo(true));
 		assertThat(converted.getWorkflowAttachmentsCategory(), equalTo("workflow's attachments category"));
+	}
+
+	@Test
+	public void keyValueMapperSuccessfullyConvertedToLogic() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.ReadEmailTask source = org.cmdbuild.data.store.task.ReadEmailTask
+				.newInstance() //
+				.withParameter(ReadEmail.KeyValueMapperEngine.TYPE, "keyvalue") //
+				.withParameter(ReadEmail.KeyValueMapperEngine.KEY_INIT, "key_init") //
+				.withParameter(ReadEmail.KeyValueMapperEngine.KEY_END, "key_end") //
+				.withParameter(ReadEmail.KeyValueMapperEngine.VALUE_INIT, "value_init") //
+				.withParameter(ReadEmail.KeyValueMapperEngine.VALUE_END, "value_end") //
+				.build();
+
+		// when
+		final Task _converted = converter.from(source).toLogic();
+
+		// then
+		assertThat(_converted, instanceOf(ReadEmailTask.class));
+		final ReadEmailTask converted = ReadEmailTask.class.cast(_converted);
+		final MapperEngine mapper = converted.getMapperEngine();
+		assertThat(mapper, instanceOf(KeyValueMapperEngine.class));
+		final KeyValueMapperEngine keyValueMapper = KeyValueMapperEngine.class.cast(mapper);
+		assertThat(keyValueMapper.getKeyInit(), equalTo("key_init"));
+		assertThat(keyValueMapper.getKeyEnd(), equalTo("key_end"));
+		assertThat(keyValueMapper.getValueInit(), equalTo("value_init"));
+		assertThat(keyValueMapper.getValueEnd(), equalTo("value_end"));
 	}
 
 	@Test

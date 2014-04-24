@@ -1,4 +1,4 @@
-package unit.template;
+package unit.template.engine;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -7,21 +7,22 @@ import static org.junit.Assert.assertThat;
 
 import java.util.HashMap;
 
-import org.cmdbuild.common.template.ParameterMapEngine;
+import org.cmdbuild.common.template.engine.Engine;
+import org.cmdbuild.common.template.engine.Engines;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Maps;
 
-public class ParameterMapEngineTest {
+public class MapEngineTest {
 
 	private HashMap<String, Object> parameterMap;
-	private ParameterMapEngine engine;
+	private Engine engine;
 
 	@Before
 	public void setUp() throws Exception {
 		parameterMap = Maps.newHashMap();
-		engine = ParameterMapEngine.of(parameterMap);
+		engine = Engines.map(parameterMap);
 	}
 
 	@Test
