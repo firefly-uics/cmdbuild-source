@@ -11,6 +11,7 @@
 		initComponent: function() {
 			this.WIDGET_NAME = this.self.WIDGET_NAME;
 			this.grid = new CMDBuild.view.management.widgets.grid.CMGridPanel();
+
 			this.items = [this.grid];
 			this.addButton = addButton(this);
 			this.tbar = [this.addButton];
@@ -38,7 +39,7 @@
 			store.add(this.getStoreForFields(this.columns.fields));
 		},
 
-		addRendererToHeader: function(h) {
+		addRendererToHeader: function(h, required) {
 			h.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
 				value = value || record.get(h.dataIndex);
 				if (typeof value == "undefined" 
@@ -49,6 +50,9 @@
 				if (h.field.store) {
 					var comboRecord = h.field.store.findRecord("Id", value); 
 					value = (comboRecord) ?	comboRecord.get("Description") : "";
+				}
+				if (Ext.String.trim(value) == "" && required) {
+					value = "<div style='width:100%; height:100%; border:1px; border-style:dotted; border-color:red'>";
 				}
 				return value;
 			};
@@ -93,8 +97,15 @@
 				editor.hideLabel = true;
 
 				if (header) {
+					if (attribute.fieldmode == "read") {
+						editor.disabled = true;
+					}
+					if (attribute.isnotnull) {
+						header.header = "*  " + header.header;
+						editor.required = true;
+					}
 					header.field = editor;
-					this.addRendererToHeader(header);
+					this.addRendererToHeader(header, attribute.isnotnull);
 					headers.push(header);
 
 					fields.push(header.dataIndex);
@@ -231,6 +242,9 @@
 			var attribute = attributes[i];
 			var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
 			var item = attributesMap[attribute.type].buildField(attribute, false, false);
+			if (attribute.fieldmode == "read") {
+				item.disabled = true;
+			}
 			items.push(item);
 			var value = record.get(attribute.name);
 			item.setValue(value);
