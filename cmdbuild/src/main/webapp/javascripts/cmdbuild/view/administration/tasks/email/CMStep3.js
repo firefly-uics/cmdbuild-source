@@ -32,6 +32,14 @@
 			return this.view.attachmentsFieldset.checkboxCmp.getValue();
 		},
 
+//		getValueNotificationFieldsetCheckbox: function() {
+//			return this.view.notificationFieldset.checkboxCmp.getValue();
+//		},
+
+		getValueParsingFieldsetCheckbox: function() {
+			return this.view.parsingFieldset.checkboxCmp.getValue();
+		},
+
 		/**
 		 * Read CMDBuild's alfresco configuration from server and set Combobox store
 		 */
@@ -85,11 +93,11 @@
 
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep3Delegate', this);
 
-			// BodyParsing configuration
-				this.bodyParsingFieldset = Ext.create('Ext.form.FieldSet', {
+			// Parsing configuration
+				this.parsingFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.bodyParsing,
 					checkboxToggle: true,
-					checkboxName: 'CMDBuild.ServiceProxy.parameter.BODY_PARSING_ACTIVE',
+					checkboxName: 'CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE',
 					collapsed: true,
 					layout: {
 						type: 'vbox',
@@ -107,13 +115,13 @@
 
 							items: [
 								{
-									fieldLabel: tr.keyInit,
-									name: CMDBuild.ServiceProxy.parameter.KEY_INIT,
+									fieldLabel: tr.parsingKeyInit,
+									name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT,
 									width: CMDBuild.ADM_BIG_FIELD_WIDTH
 								},
 								{
-									fieldLabel: tr.keyEnd,
-									name: CMDBuild.ServiceProxy.parameter.KEY_END,
+									fieldLabel: tr.parsingKeyEnd,
+									name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_END,
 									margin: '0 0 0 20',
 									width: CMDBuild.ADM_BIG_FIELD_WIDTH
 								}
@@ -131,13 +139,13 @@
 
 							items: [
 								{
-									fieldLabel: tr.valueInit,
-									name: CMDBuild.ServiceProxy.parameter.VALUE_INIT,
+									fieldLabel: tr.parsingValueInit,
+									name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT,
 									width: CMDBuild.ADM_BIG_FIELD_WIDTH
 								},
 								{
-									fieldLabel: tr.valueEnd,
-									name: CMDBuild.ServiceProxy.parameter.VALUE_END,
+									fieldLabel: tr.parsingValueEnd,
+									name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END,
 									margin: '0 0 0 20',
 									width: CMDBuild.ADM_BIG_FIELD_WIDTH
 								}
@@ -148,7 +156,7 @@
 			// END: BodyParsing configuration
 
 			// SendMail configuration
-				this.emailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
+				this.notificationEmailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
 					fieldLabel: CMDBuild.Translation.administration.tasks.template,
 					labelWidth: CMDBuild.LABEL_WIDTH,
@@ -161,7 +169,7 @@
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				});
 
-				this.sendMailFieldset = Ext.create('Ext.form.FieldSet', {
+				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.administration.tasks.sendMail,
 					checkboxToggle: true,
 					checkboxName: 'CMDBuild.ServiceProxy.parameter.SEND_MAIL_ACTIVE',
@@ -169,7 +177,7 @@
 					layout: {
 						type: 'vbox'
 					},
-					items: [this.emailTemplateCombo]
+					items: [this.notificationEmailTemplateCombo]
 				});
 			// END: SendMail configuration
 
@@ -205,8 +213,8 @@
 
 			Ext.apply(this, {
 				items: [
-					this.bodyParsingFieldset,
-					this.sendMailFieldset,
+					this.parsingFieldset,
+					this.notificationFieldset,
 					this.attachmentsFieldset
 				]
 			});

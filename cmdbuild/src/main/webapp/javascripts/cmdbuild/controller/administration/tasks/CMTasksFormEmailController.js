@@ -163,6 +163,19 @@
 					submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE] = attachmentsFieldsetCheckboxValue;
 					submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY] = formData[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY];
 				}
+// TODO
+//				var notificationFieldsetCheckboxValue = this.delegateStep[2].getValueNotificationFieldsetCheckbox();
+//				if (notificationFieldsetCheckboxValue) {
+//					submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE];
+//				}
+
+				var parsingFieldsetCheckboxValue = this.delegateStep[2].getValueParsingFieldsetCheckbox();
+				if (parsingFieldsetCheckboxValue) {
+					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_KEY_END] = formData[CMDBuild.ServiceProxy.parameter.PARSING_KEY_END];
+					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT] = formData[CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT];
+					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END] = formData[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END];
+					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT] = formData[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT];
+				}
 
 				var workflowFieldsetCheckboxValue = this.delegateStep[3].getValueWorkflowFieldsetCheckbox();
 				if (workflowFieldsetCheckboxValue) {
@@ -181,14 +194,10 @@
 			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
 			submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
 			submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT];
-			submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE];
 			submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
-			submitDatas[CMDBuild.ServiceProxy.parameter.KEY_END] = formData[CMDBuild.ServiceProxy.parameter.KEY_END];
-			submitDatas[CMDBuild.ServiceProxy.parameter.KEY_INIT] = formData[CMDBuild.ServiceProxy.parameter.KEY_INIT];
 			submitDatas[CMDBuild.ServiceProxy.parameter.TYPE] = formData[CMDBuild.ServiceProxy.parameter.TYPE];
-			submitDatas[CMDBuild.ServiceProxy.parameter.VALUE_END] = formData[CMDBuild.ServiceProxy.parameter.VALUE_END];
-			submitDatas[CMDBuild.ServiceProxy.parameter.VALUE_INIT] = formData[CMDBuild.ServiceProxy.parameter.VALUE_INIT];
-
+_debug(formData);
+_debug(submitDatas);
 			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
 				CMDBuild.core.proxy.CMProxyTasks.create({
 					type: this.taskType,

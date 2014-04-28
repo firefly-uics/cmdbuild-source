@@ -696,12 +696,12 @@
 				"bodyParsing": "Body parsing",
 				"emailAccount": "Email account",
 				"fromAddressFilter": "Filter on FromAddress",
-				"keyEnd": "Key end",
-				"keyInit": "Key init",
+				"parsingKeyEnd": "Key end",
+				"parsingKeyInit": "Key init",
+				"parsingValueEnd": "Value end",
+				"parsingValueInit": "Value init",
 				"saveToAlfresco": "Save attachments to Alfresco",
-				"subjectFilter": "Filter on Subject",
-				"valueEnd": "Value end",
-				"valueInit": "Value init"
+				"subjectFilter": "Filter on Subject"
 			},
 			"taskEvent": {
 				"afterCreate": "@@ After creation",

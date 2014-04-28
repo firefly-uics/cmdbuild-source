@@ -51,7 +51,10 @@
 		},
 
 		setValueEmailAccount: function(emailAccountName) {
+			// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+			this.view.emailAccountCombo.forceSelection = false;
 			this.view.emailAccountCombo.setValue(emailAccountName);
+			this.view.emailAccountCombo.forceSelection = true;
 		},
 
 		setValueFilterFromAddress: function(filterString) {
@@ -122,6 +125,13 @@
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				forceSelection: true,
 				editable: false
+
+				,
+				listeners: {
+					select: function() {
+						_debug('changed');
+					}
+				}
 			});
 
 			this.fromAddresFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {

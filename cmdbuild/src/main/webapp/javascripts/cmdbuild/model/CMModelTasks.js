@@ -38,10 +38,11 @@
 			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE, type: 'string'},
 			{ name: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS, type: 'auto'},
 			{ name: CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT, type: 'auto'},
-			{ name: CMDBuild.ServiceProxy.parameter.KEY_END, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.KEY_INIT, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.VALUE_END, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.VALUE_INIT, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_END, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT, type: 'string'},
 			{ name: CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE, type: 'boolean'},
 			{ name: CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME, type: 'string'}
 		]

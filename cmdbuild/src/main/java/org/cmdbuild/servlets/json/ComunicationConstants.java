@@ -118,10 +118,10 @@ public class ComunicationConstants {
 			LOOKUP = "lookup", //
 			LOOKUP_LIST = "lookuplist", //
 			MANAGEMENT_DATABASE = "postgres", //
-			MAPPER_KEY_INIT = "keyInit", //
-			MAPPER_KEY_END = "keyEnd", //
-			MAPPER_VALUE_INIT = "valueInit", //
-			MAPPER_VALUE_END = "valueEnd", //
+			MAPPER_KEY_INIT = "parsingKeyInit", //
+			MAPPER_KEY_END = "parsingKeyEnd", //
+			MAPPER_VALUE_INIT = "parsingValueInit", //
+			MAPPER_VALUE_END = "parsingValueEnd", //
 			MASTER = "master", //
 			MASTER_CARD_ID = "masterCardId", //
 			MASTER_CLASS_NAME = "masterClassName", //

@@ -15,7 +15,7 @@
 		editable: false,
 
 		listeners: {
-			select: function() {
+			select: function(combo, records, eOpts) {
 				this.delegate.cmOn('onSelectWorkflow', this.getValue());
 			}
 		},
