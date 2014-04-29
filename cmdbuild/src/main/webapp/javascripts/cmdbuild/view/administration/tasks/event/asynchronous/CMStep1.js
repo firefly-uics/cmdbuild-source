@@ -7,6 +7,7 @@
 
 		parentDelegate: undefined,
 		view: undefined,
+		taskType: 'event_asynchronous',
 
 		/**
 		 * Gatherer function to catch events
@@ -30,7 +31,7 @@
 		},
 
 		isEmptyClass: function() {
-			if (this.view.classe.getValue())
+			if (this.view.className.getValue())
 				return false;
 
 			return true;
@@ -61,7 +62,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'event',
 
 		border: false,
 		height: '100%',
@@ -76,11 +76,12 @@
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.ServiceProxy.parameter.TYPE,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				value: tr.tasksTypes.event + ' ' + tr.tasksTypes.eventTypes.asynchronous.toLowerCase(),
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				disabled: true,
 				cmImmutable: true,
-				readOnly: true
+				readOnly: true,
+				submitValue: false
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
@@ -106,7 +107,7 @@
 				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
+				store: _CMCache.getClassesStore(),
 				valueField: CMDBuild.ServiceProxy.parameter.NAME,
 				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,

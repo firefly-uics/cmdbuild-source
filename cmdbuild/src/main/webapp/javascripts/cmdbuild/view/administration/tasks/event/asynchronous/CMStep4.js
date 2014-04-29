@@ -57,7 +57,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'event',
 
 		border: false,
 		height: '100%',

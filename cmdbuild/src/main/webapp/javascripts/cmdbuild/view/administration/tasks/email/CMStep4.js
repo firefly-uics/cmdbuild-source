@@ -69,7 +69,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'email',
 
 		border: false,
 		height: '100%',

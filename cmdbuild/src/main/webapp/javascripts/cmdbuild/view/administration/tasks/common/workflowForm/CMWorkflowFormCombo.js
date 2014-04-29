@@ -9,7 +9,7 @@
 
 		valueField: CMDBuild.ServiceProxy.parameter.NAME,
 		displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-		store: CMDBuild.core.proxy.CMProxyTasks.getWorkflowsStore(),
+		store: CMDBuild.core.proxy.CMProxyTasks.getStoreAllWorkflow(),
 		width: (CMDBuild.CFG_BIG_FIELD_WIDTH - CMDBuild.LABEL_WIDTH - 5), // FIX: To solve a problem of width
 		forceSelection: true,
 		editable: false,

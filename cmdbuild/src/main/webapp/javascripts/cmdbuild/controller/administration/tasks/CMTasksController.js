@@ -19,7 +19,6 @@
 			'event_synchronous',
 			'workflow'
 		],
-		taskType: undefined,
 		view: undefined,
 
 		// Overwrite
@@ -148,11 +147,11 @@
 
 				var items = Ext.create('CMDBuild.view.administration.tasks.' + this.typeSerialize(type, 0) + '.CMTaskTabs').getTabs();
 
-				for (var i = 0; i < items.length; i++) {
-					items[i].delegate.parentDelegate = this.form.delegate; // Controller relations propagation
+				for (key in items) {
+					items[key].delegate.parentDelegate = this.form.delegate; // Controller relations propagation
 
-					this.form.delegate.delegateStep.push(items[i].delegate);
-					this.form.wizard.add(items[i]);
+					this.form.delegate.delegateStep.push(items[key].delegate);
+					this.form.wizard.add(items[key]);
 				}
 
 				this.form.wizard.numberOfTabs = items.length;

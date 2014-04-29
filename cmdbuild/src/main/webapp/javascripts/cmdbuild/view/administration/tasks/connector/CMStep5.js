@@ -265,7 +265,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'connector',
 
 		border: false,
 		height: '100%',

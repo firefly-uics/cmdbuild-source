@@ -7,6 +7,7 @@
 
 		parentDelegate: undefined,
 		view: undefined,
+		taskType: 'connector',
 
 		/**
 		 * Gatherer function to catch events
@@ -50,7 +51,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'connector',
 
 		border: false,
 		height: '100%',
@@ -64,10 +64,11 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.ServiceProxy.parameter.TYPE,
 				value: tr.tasksTypes.connector,
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				submitValue: false
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {

@@ -116,6 +116,7 @@
 		success: function(result, options, decodedResult) {
 			var me = this;
 			var store = this.parentDelegate.grid.store;
+			var taskId = this.delegateStep[0].getValueId();
 
 			store.load({
 				callback: function() {
@@ -123,13 +124,14 @@
 
 					var rowIndex = this.find(
 						CMDBuild.ServiceProxy.parameter.ID,
-						(decodedResult.response) ? decodedResult.response : me.delegateStep[0].getValueId()
+						(decodedResult.response) ? decodedResult.response : taskId
 					);
 
-					if (rowIndex < 0)
-						rowIndex = 0;
-
-					me.selectionModel.select(rowIndex, true);
+					me.selectionModel.deselectAll();
+					me.selectionModel.select(
+						(rowIndex < 0) ? 0 : rowIndex,
+						true
+					);
 				}
 			});
 

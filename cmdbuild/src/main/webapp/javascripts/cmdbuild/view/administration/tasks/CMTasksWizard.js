@@ -58,6 +58,12 @@
 			} else {
 				this.nextButton.setDisabled(false);
 			}
+
+			// Fire show event on first tabs
+			var currentActiveTab = this.getActiveTab();
+
+			if (currentActiveTab && activeTab == 0)
+				currentActiveTab.fireEvent('show');
 		}
 	});
 

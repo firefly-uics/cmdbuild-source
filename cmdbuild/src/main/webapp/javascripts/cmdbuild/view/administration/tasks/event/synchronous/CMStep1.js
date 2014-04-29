@@ -7,6 +7,7 @@
 
 		parentDelegate: undefined,
 		view: undefined,
+		taskType: 'event_synchronous',
 
 		/**
 		 * Gatherer function to catch events
@@ -34,7 +35,7 @@
 		},
 
 		isEmptyClass: function() {
-			if (this.view.classe.getValue())
+			if (this.view.className.getValue())
 				return false;
 
 			return true;
@@ -65,7 +66,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'event_synchronous',
 
 		border: false,
 		height: '100%',
@@ -83,7 +83,8 @@
 				value: tr.tasksTypes.event + ' ' + tr.tasksTypes.eventTypes.synchronous.toLowerCase(),
 				disabled: true,
 				cmImmutable: true,
-				readOnly: true
+				readOnly: true,
+				submitValue: false
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
@@ -109,16 +110,7 @@
 				name: CMDBuild.ServiceProxy.parameter.PHASE,
 				fieldLabel: tr.taskEvent.phase,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				store: Ext.create('Ext.data.SimpleStore', {
-					fields: [CMDBuild.ServiceProxy.parameter.VALUE, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-					data: [
-						['afterCreate', tr.taskEvent.afterCreate],
-						['beforeCreate', tr.taskEvent.beforeCreate],
-						['afterUpdate', tr.taskEvent.afterUpdate],
-						['beforeUpdate', tr.taskEvent.beforeUpdate],
-						['beforeDelete', tr.taskEvent.beforeDelete]
-					]
-				}),
+				store: CMDBuild.core.proxy.CMProxyTasks.getPhases(),
 				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
 				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -136,11 +128,11 @@
 				considerAsFieldToDisable: true
 			});
 
-			this.classe = Ext.create('Ext.form.field.ComboBox', {
+			this.className = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
+				store: _CMCache.getClassesStore(),
 				valueField: CMDBuild.ServiceProxy.parameter.NAME,
 				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -164,7 +156,7 @@
 					this.activeField,
 					this.phase,
 					this.groups,
-					this.classe
+					this.className
 				]
 			});
 
@@ -178,7 +170,7 @@
 				if (this.delegate.isEmptyClass())
 					this.delegate.setDisabledButtonNext(true);
 
-				// Select all groups by default
+				// TODO: fix check only if no already selected - Select all groups by default
 				this.groups.selectAll();
 			}
 		}
