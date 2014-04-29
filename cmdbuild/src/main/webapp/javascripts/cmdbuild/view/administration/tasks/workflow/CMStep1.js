@@ -7,6 +7,7 @@
 
 		parentDelegate: undefined,
 		view: undefined,
+		taskType: 'workflow',
 
 		/**
 		 * Gatherer function to catch events
@@ -77,7 +78,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'workflow',
 
 		border: false,
 		height: '100%',
@@ -94,7 +94,8 @@
 				value: tr.tasksTypes.workflow,
 				disabled: true,
 				cmImmutable: true,
-				readOnly: true
+				readOnly: true,
+				submitValue: false
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {

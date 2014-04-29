@@ -49,7 +49,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'connector',
 
 		border: false,
 		height: '100%',
@@ -68,7 +67,7 @@
 			});
 
 			this.dataSourceField = Ext.create('Ext.form.field.Hidden', {
-				name: 'CMDBuild.ServiceProxy.parameter.DATA_SOURCE'
+				name: CMDBuild.ServiceProxy.parameter.DATA_SOURCE_TYPE
 			});
 
 			// DataSource: relationa databases configuration
@@ -76,16 +75,7 @@
 					name: CMDBuild.ServiceProxy.parameter.DB_TYPE,
 					fieldLabel: CMDBuild.Translation.administration.tasks.type,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					store: Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.VALUE],
-						data: [
-							{ 'name': 'MySQL', 'value': 'mysql' },
-							{ 'name': 'Oracle', 'value': 'oracle' },
-							{ 'name': 'PostgreSQL', 'value': 'postgresql' },
-							{ 'name': 'SQLServer', 'value': 'sqlserver' }
-						]
-					}),
+					store: CMDBuild.core.proxy.CMProxyTasks.getDbTypes(),
 					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.VALUE,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH,

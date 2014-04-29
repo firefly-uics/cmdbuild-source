@@ -109,6 +109,13 @@
 							// Set step3 [2] datas
 							this.delegateStep[2].setValueAttachmentsFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE));
 							this.delegateStep[2].setValueAttachmentsCombo(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY));
+							this.delegateStep[2].setValueParsingFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE));
+							this.delegateStep[2].setValueParsingFields(
+								record.get(CMDBuild.ServiceProxy.parameter.PARSING_KEY_END),
+								record.get(CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT),
+								record.get(CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END),
+								record.get(CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT)
+							);
 
 							// Set step4 [3] datas
 							this.delegateStep[3].setValueWorkflowAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
@@ -171,6 +178,7 @@
 
 				var parsingFieldsetCheckboxValue = this.delegateStep[2].getValueParsingFieldsetCheckbox();
 				if (parsingFieldsetCheckboxValue) {
+					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE] = parsingFieldsetCheckboxValue;
 					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_KEY_END] = formData[CMDBuild.ServiceProxy.parameter.PARSING_KEY_END];
 					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT] = formData[CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT];
 					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END] = formData[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END];
@@ -195,7 +203,6 @@
 			submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
 			submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT];
 			submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
-			submitDatas[CMDBuild.ServiceProxy.parameter.TYPE] = formData[CMDBuild.ServiceProxy.parameter.TYPE];
 _debug(formData);
 _debug(submitDatas);
 			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {

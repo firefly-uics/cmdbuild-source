@@ -39,7 +39,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'connector',
 
 		border: false,
 		height: '100%',
@@ -80,7 +79,7 @@
 							forceSelection: true,
 							editable: false,
 							allowBlank: false,
-							store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
+							store: _CMCache.getClassesStore(),
 							queryMode: 'local'
 						},
 						flex: 1

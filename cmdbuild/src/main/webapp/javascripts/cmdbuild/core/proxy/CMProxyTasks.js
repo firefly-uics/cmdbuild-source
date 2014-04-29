@@ -127,35 +127,48 @@
 			getConnectorOperations: function() {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: true,
-					fields: ['name', 'value'],
+					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.VALUE],
 					data: [
-						{ 'value': 'NewCards', 'name': 'New cards' },
-						{ 'value': 'EditedCards', 'name': 'Edited cards' },
-						{ 'value': 'DeletedNotMatchingCards', 'name': 'Deleted not matching cards' }
+						{ name: 'New cards', value: 'NewCards' },
+						{ name: 'Edited cards', value: 'EditedCards' },
+						{ name: 'Deleted not matching cards', value: 'DeletedNotMatchingCards' }
 					]
 				});
 			},
 
-			getFunctionStore: function() { // TODO: future implementation
+			getDbTypes: function() {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: true,
-					fields: ['name', 'description'],
+					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.VALUE],
 					data: [
-						{ 'name': 'Function1', 'description': 'Function 1' },
-						{ 'name': 'Function2', 'description': 'Function 2' },
-						{ 'name': 'Function3', 'description': 'Function 3' }
+						{ name: 'MySQL', value: 'mysql' },
+						{ name: 'Oracle', value: 'oracle' },
+						{ name: 'PostgreSQL', value: 'postgresql' },
+						{ name: 'SQLServer', value: 'sqlserver' }
 					]
 				});
 			},
+// TODO: future implementation
+//			getFunctionStore: function() {
+//				return Ext.create('Ext.data.Store', {
+//					autoLoad: true,
+//					fields: [CMDBuild.ServiceProxy.parameter.VALUE, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+//					data: [
+//						{ name: 'Function1', description: 'Function 1' },
+//						{ name: 'Function2', description: 'Function 2' },
+//						{ name: 'Function3', description: 'Function 3' }
+//					]
+//				});
+//			},
 
 			getViewStore: function() {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: true,
-					fields: ['name', 'description'],
+					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
 					data: [
-						{ 'name': 'ViewName1', 'description': 'View name 1' },
-						{ 'name': 'ViewName2', 'description': 'View name 2' },
-						{ 'name': 'ViewName3', 'description': 'View name 3' }
+						{ name: 'ViewName1', description: 'View name 1' },
+						{ name: 'ViewName2', description: 'View name 2' },
+						{ name: 'ViewName3', description: 'View name 3' }
 					]
 				});
 			},
@@ -163,11 +176,29 @@
 			getViewAttributeNames: function(viewName) {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: true,
-					fields: ['name', 'description'],
+					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
 					data: [
-						{ 'name': 'ViewAttributeName1', 'description': 'View attribute name 1' },
-						{ 'name': 'ViewAttributeName2', 'description': 'View attribute name 2' },
-						{ 'name': 'ViewAttributeName3', 'description': 'View attribute name 3' }
+						{ name: 'ViewAttributeName1', description: 'View attribute name 1' },
+						{ name: 'ViewAttributeName2', description: 'View attribute name 2' },
+						{ name: 'ViewAttributeName3', description: 'View attribute name 3' }
+					]
+				});
+			},
+
+			/**
+			 * Event specific proxies
+			 */
+			getPhases: function(viewName) {
+				var tr = CMDBuild.Translation.administration.tasks;
+
+				return Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					fields: [CMDBuild.ServiceProxy.parameter.DESCRIPTION, CMDBuild.ServiceProxy.parameter.VALUE],
+					data: [
+						{ description: tr.taskEvent.afterCreate, value: 'afterCreate' },
+						{ description: tr.taskEvent.afterUpdate, value: 'afterUpdate' },
+						{ description: tr.taskEvent.beforeUpdate, value: 'beforeUpdate' },
+						{ description: tr.taskEvent.beforeDelete, value: 'beforeDelete' }
 					]
 				});
 			},
@@ -175,7 +206,6 @@
 			/**
 			 * Workflow specific proxies
 			 */
-
 			// Used from Processes -> Task Manager tab to get all processes by workflow name
 			getStoreByWorkflow: function() {
 				return Ext.create('Ext.data.Store', {
@@ -196,9 +226,9 @@
 				});
 			},
 
-			getWorkflowsStore: function() {
-				var processes = _CMCache.getProcesses(),
-					data = [];
+			getStoreAllWorkflow: function() {
+				var processes = _CMCache.getProcesses();
+				var data = [];
 
 				for (var key in processes) {
 					var obj = processes[key];

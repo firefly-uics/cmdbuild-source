@@ -55,11 +55,12 @@
 		 * @return (Object) filter's tab datas
 		 */
 		getDataFilters: function() {
-			return {
-				attributes: this.view.filterAttributesTab.getData(),
-				relations: this.view.filterRelationsTab.getData(),
-				functions: this.view.filterFunctionsTab.getData()
-			};
+// TODO
+//			return {
+//				attributes: this.view.filterAttributesTab.getData(),
+//				relations: this.view.filterRelationsTab.getData(),
+//				functions: this.view.filterFunctionsTab.getData()
+//			};
 		}
 	});
 
@@ -67,7 +68,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'event_synchronous',
 
 		border: false,
 		overflowY: 'auto',

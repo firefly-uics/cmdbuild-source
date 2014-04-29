@@ -25,6 +25,7 @@
 			CRON_EXPRESSION: 'cronExpression',
 			CRON_INPUT_TYPE: 'cronInputType',
 			DATASOURCE: 'dataSourceName',
+			DATA_SOURCE_TYPE: 'dataSourceType',
 			DAY_OF_MOUNTH: 'dayOfMounth',
 			DAY_OF_WEEK: 'dayOfWeek',
 			DB_NAME: 'dbName',

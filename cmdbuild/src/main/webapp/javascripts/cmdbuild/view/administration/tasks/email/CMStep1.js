@@ -8,6 +8,7 @@
 		parentDelegate: undefined,
 		filterWindow: undefined,
 		view: undefined,
+		taskType: 'email',
 
 		/**
 		 * Gatherer function to catch events
@@ -74,7 +75,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'email',
 
 		border: false,
 		height: '100%',
@@ -90,10 +90,11 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.ServiceProxy.parameter.TYPE,
 				value: tr.tasksTypes.email,
+				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				submitValue: false
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
@@ -125,13 +126,6 @@
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				forceSelection: true,
 				editable: false
-
-				,
-				listeners: {
-					select: function() {
-						_debug('changed');
-					}
-				}
 			});
 
 			this.fromAddresFilter = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {

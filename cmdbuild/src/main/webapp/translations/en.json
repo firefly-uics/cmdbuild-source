@@ -706,7 +706,6 @@
 			"taskEvent": {
 				"afterCreate": "@@ After creation",
 				"afterUpdate": "@@ After update",
-				"beforeCreate": "@@ Before creation",
 				"beforeDelete": "@@ Before delete",
 				"beforeUpdate": "@@ Before update",
 				"groupsToApply": "@@ Group to apply",

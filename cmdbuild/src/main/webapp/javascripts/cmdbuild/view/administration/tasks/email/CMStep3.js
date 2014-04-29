@@ -32,6 +32,7 @@
 			return this.view.attachmentsFieldset.checkboxCmp.getValue();
 		},
 
+// TODO
 //		getValueNotificationFieldsetCheckbox: function() {
 //			return this.view.notificationFieldset.checkboxCmp.getValue();
 //		},
@@ -68,12 +69,41 @@
 			}
 		},
 
+		/**
+		 * @param (Boolean) value
+		 */
 		setValueAttachmentsFieldsetCheckbox: function(value) {
 			if (value) {
 				this.view.attachmentsFieldset.expand();
 				this.onCheckedAttachmentsFieldset();
 			} else {
 				this.view.attachmentsFieldset.collapse();
+			}
+		},
+
+		/**
+		 * Setup all parsing fieldset input values
+		 *
+		 * @param (String) keyInit
+		 * @param (String) keyEnd
+		 * @param (String) valueInit
+		 * @param (String) valueEnd
+		 */
+		setValueParsingFields: function(keyInit, keyEnd, valueInit, valueEnd) {
+			this.view.parsingKeyInit.setValue(keyInit);
+			this.view.parsingKeyEnd.setValue(keyEnd);
+			this.view.parsingValueInit.setValue(valueInit);
+			this.view.parsingValueEnd.setValue(valueEnd);
+		},
+
+		/**
+		 * @param (Boolean) value
+		 */
+		setValueParsingFieldsetCheckbox: function(value) {
+			if (value) {
+				this.view.parsingFieldset.expand();
+			} else {
+				this.view.parsingFieldset.collapse();
 			}
 		}
 	});
@@ -82,7 +112,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'email',
 
 		border: false,
 		height: '100%',
@@ -94,10 +123,40 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep3Delegate', this);
 
 			// Parsing configuration
+				this.parsingKeyInit = Ext.create('Ext.form.field.Text', {
+					fieldLabel: tr.parsingKeyInit,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+				});
+
+				this.parsingKeyEnd = Ext.create('Ext.form.field.Text', {
+					fieldLabel: tr.parsingKeyEnd,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_END,
+					margin: '0 0 0 20',
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+				});
+
+				this.parsingValueInit = Ext.create('Ext.form.field.Text', {
+					fieldLabel: tr.parsingValueInit,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+				});
+
+				this.parsingValueEnd = Ext.create('Ext.form.field.Text', {
+					fieldLabel: tr.parsingValueEnd,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END,
+					margin: '0 0 0 20',
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+				});
+
 				this.parsingFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.bodyParsing,
 					checkboxToggle: true,
-					checkboxName: 'CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE',
+					checkboxName: CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE,
 					collapsed: true,
 					layout: {
 						type: 'vbox',
@@ -107,49 +166,13 @@
 						{
 							xtype: 'container',
 							layout: 'hbox',
-
-							defaults: {
-								labelWidth: CMDBuild.LABEL_WIDTH,
-								xtype: 'textfield'
-							},
-
-							items: [
-								{
-									fieldLabel: tr.parsingKeyInit,
-									name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT,
-									width: CMDBuild.ADM_BIG_FIELD_WIDTH
-								},
-								{
-									fieldLabel: tr.parsingKeyEnd,
-									name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_END,
-									margin: '0 0 0 20',
-									width: CMDBuild.ADM_BIG_FIELD_WIDTH
-								}
-							]
+							items: [this.parsingKeyInit, this.parsingKeyEnd]
 						},
 						{
 							xtype: 'container',
 							layout: 'hbox',
 							margin: '10 0',
-
-							defaults: {
-								labelWidth: CMDBuild.LABEL_WIDTH,
-								xtype: 'textfield'
-							},
-
-							items: [
-								{
-									fieldLabel: tr.parsingValueInit,
-									name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT,
-									width: CMDBuild.ADM_BIG_FIELD_WIDTH
-								},
-								{
-									fieldLabel: tr.parsingValueEnd,
-									name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END,
-									margin: '0 0 0 20',
-									width: CMDBuild.ADM_BIG_FIELD_WIDTH
-								}
-							]
+							items: [this.parsingValueInit, this.parsingValueEnd]
 						}
 					]
 				});

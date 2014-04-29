@@ -44,12 +44,24 @@
 			return this.getWorkflowDelegate().getValueCombo();
 		},
 
+		getValueWorkflowFieldsetCheckbox: function() {
+			return this.view.workflowFieldset.checkboxCmp.getValue();
+		},
+
 		setDisabledAttributesGrid: function(state) {
 			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 		},
 
 		setValueAttributesGrid: function(data) {
 			this.getWorkflowDelegate().setValueGrid(data);
+		},
+
+		setValueWorkflowFieldsetCheckbox: function(value) {
+			if (value) {
+				this.view.workflowFieldset.expand();
+			} else {
+				this.view.workflowFieldset.collapse();
+			}
 		}
 	});
 
@@ -57,7 +69,6 @@
 		extend: 'Ext.panel.Panel',
 
 		delegate: undefined,
-		taskType: 'event_synchronous',
 
 		border: false,
 		height: '100%',
@@ -69,6 +80,18 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', this);
 
 			// SendMail configuration
+				this.emailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
+					name: CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT,
+					fieldLabel: tr.taskEmail.emailAccount,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
+					displayField: CMDBuild.ServiceProxy.parameter.NAME,
+					valueField: CMDBuild.ServiceProxy.parameter.NAME,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					forceSelection: true,
+					editable: false
+				});
+
 				this.emailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
 					fieldLabel: tr.template,
@@ -89,7 +112,7 @@
 					layout: {
 						type: 'vbox'
 					},
-					items: [this.emailTemplateCombo]
+					items: [this.emailAccountCombo, this.emailTemplateCombo]
 				});
 			// END: SendMail configuration
 
