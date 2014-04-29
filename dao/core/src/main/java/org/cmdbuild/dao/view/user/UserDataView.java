@@ -20,8 +20,11 @@ import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.function.CMFunction;
+import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.ClassHistory;
+import org.cmdbuild.dao.query.clause.DomainHistory;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.AbstractDataView;
@@ -58,18 +61,18 @@ public class UserDataView extends AbstractDataView {
 	}
 
 	@Override
-	public UserClass findClass(final Long id) {
-		return UserClass.newInstance(this, view.findClass(id));
+	public CMClass findClass(final Long id) {
+		return proxy(view.findClass(id));
 	}
 
 	@Override
-	public UserClass findClass(final String name) {
-		return UserClass.newInstance(this, view.findClass(name));
+	public CMClass findClass(final String name) {
+		return proxy(view.findClass(name));
 	}
 
 	@Override
-	public UserClass findClass(final CMIdentifier identifier) {
-		return UserClass.newInstance(this, view.findClass(identifier));
+	public CMClass findClass(final CMIdentifier identifier) {
+		return proxy(view.findClass(identifier));
 	}
 
 	/**
@@ -77,27 +80,27 @@ public class UserDataView extends AbstractDataView {
 	 * access. It does not return reserved classes
 	 */
 	@Override
-	public Iterable<UserClass> findClasses() {
+	public Iterable<CMClass> findClasses() {
 		return proxyClasses(view.findClasses());
 	}
 
 	@Override
-	public UserClass create(final CMClassDefinition definition) {
-		return UserClass.newInstance(this, view.create(definition));
+	public CMClass create(final CMClassDefinition definition) {
+		return proxy(view.create(definition));
 	}
 
 	@Override
-	public UserClass update(final CMClassDefinition definition) {
-		return UserClass.newInstance(this, view.update(definition));
+	public CMClass update(final CMClassDefinition definition) {
+		return proxy(view.update(definition));
 	}
 
 	@Override
-	public UserAttribute createAttribute(final CMAttributeDefinition definition) {
+	public CMAttribute createAttribute(final CMAttributeDefinition definition) {
 		return proxy(view.createAttribute(definition));
 	}
 
 	@Override
-	public UserAttribute updateAttribute(final CMAttributeDefinition definition) {
+	public CMAttribute updateAttribute(final CMAttributeDefinition definition) {
 		return proxy(view.updateAttribute(definition));
 	}
 
@@ -107,13 +110,13 @@ public class UserDataView extends AbstractDataView {
 	}
 
 	@Override
-	public UserDomain findDomain(final Long id) {
-		return UserDomain.newInstance(this, view.findDomain(id));
+	public CMDomain findDomain(final Long id) {
+		return proxy(view.findDomain(id));
 	}
 
 	@Override
-	public UserDomain findDomain(final String name) {
-		return UserDomain.newInstance(this, view.findDomain(name));
+	public CMDomain findDomain(final String name) {
+		return proxy(view.findDomain(name));
 	}
 
 	/**
@@ -123,7 +126,7 @@ public class UserDataView extends AbstractDataView {
 	 * @return all domains (active and non active)
 	 */
 	@Override
-	public Iterable<UserDomain> findDomains() {
+	public Iterable<CMDomain> findDomains() {
 		return proxyDomains(view.findDomains());
 	}
 
@@ -137,18 +140,18 @@ public class UserDataView extends AbstractDataView {
 	 * @return active domains for that class
 	 */
 	@Override
-	public Iterable<UserDomain> findDomainsFor(final CMClass type) {
+	public Iterable<CMDomain> findDomainsFor(final CMClass type) {
 		return proxyDomains(view.findDomainsFor(type));
 	}
 
 	@Override
-	public UserDomain create(final CMDomainDefinition definition) {
-		return UserDomain.newInstance(this, view.create(definition));
+	public CMDomain create(final CMDomainDefinition definition) {
+		return proxy(view.create(definition));
 	}
 
 	@Override
-	public UserDomain update(final CMDomainDefinition definition) {
-		return UserDomain.newInstance(this, view.update(definition));
+	public CMDomain update(final CMDomainDefinition definition) {
+		return proxy(view.update(definition));
 	}
 
 	@Override
@@ -181,7 +184,7 @@ public class UserDataView extends AbstractDataView {
 	}
 
 	@Override
-	public UserQueryResult executeQuery(final QuerySpecs querySpecs) {
+	public CMQueryResult executeQuery(final QuerySpecs querySpecs) {
 		return UserQueryResult.newInstance(this, view.executeQuery(querySpecs));
 	}
 
@@ -201,39 +204,39 @@ public class UserDataView extends AbstractDataView {
 	 * @param source
 	 * @return
 	 */
-	Iterable<UserClass> proxyClasses(final Iterable<? extends CMClass> source) {
-		return filterNotNull(map(source, new Mapper<CMClass, UserClass>() {
+	Iterable<CMClass> proxyClasses(final Iterable<? extends CMClass> source) {
+		return filterNotNull(map(source, new Mapper<CMClass, CMClass>() {
 			@Override
-			public UserClass map(final CMClass o) {
+			public CMClass map(final CMClass o) {
 				return proxy(o);
 			}
 		}));
 	}
 
-	Iterable<UserDomain> proxyDomains(final Iterable<? extends CMDomain> source) {
-		return filterNotNull(map(source, new Mapper<CMDomain, UserDomain>() {
+	Iterable<CMDomain> proxyDomains(final Iterable<? extends CMDomain> source) {
+		return filterNotNull(map(source, new Mapper<CMDomain, CMDomain>() {
 			@Override
-			public UserDomain map(final CMDomain o) {
+			public CMDomain map(final CMDomain o) {
 				return proxy(o);
 			}
 		}));
 	}
 
-	Iterable<UserAttribute> proxyAttributes(final Iterable<? extends CMAttribute> source) {
-		return filterNotNull(map(source, new Mapper<CMAttribute, UserAttribute>() {
+	Iterable<CMAttribute> proxyAttributes(final Iterable<? extends CMAttribute> source) {
+		return filterNotNull(map(source, new Mapper<CMAttribute, CMAttribute>() {
 			@Override
-			public UserAttribute map(final CMAttribute inner) {
+			public CMAttribute map(final CMAttribute inner) {
 				return proxy(inner);
 			}
 		}));
 	}
 
-	UserEntryType proxy(final CMEntryType entryType) {
+	CMEntryType proxy(final CMEntryType entryType) {
 		return new CMEntryTypeVisitor() {
 
-			private UserEntryType proxy;
+			private CMEntryType proxy;
 
-			public UserEntryType proxy() {
+			public CMEntryType proxy() {
 				entryType.accept(this);
 				return proxy;
 			}
@@ -256,27 +259,33 @@ public class UserDataView extends AbstractDataView {
 		}.proxy();
 	}
 
-	UserClass proxy(final CMClass type) {
-		return UserClass.newInstance(this, type);
+	CMClass proxy(final CMClass type) {
+		final boolean historical = type instanceof ClassHistory;
+		final CMClass nonHistoricType = historical ? ClassHistory.class.cast(type).getType() : type;
+		final UserClass userType = UserClass.newInstance(this, nonHistoricType);
+		return historical ? ClassHistory.of(userType) : userType;
 	}
 
-	UserDomain proxy(final CMDomain type) {
-		return UserDomain.newInstance(this, type);
+	CMDomain proxy(final CMDomain type) {
+		final boolean historical = type instanceof DomainHistory;
+		final CMDomain nonHistoricType = historical ? DomainHistory.class.cast(type).getType() : type;
+		final UserDomain userType = UserDomain.newInstance(this, nonHistoricType);
+		return historical ? DomainHistory.of(userType) : userType;
 	}
 
-	UserFunctionCall proxy(final CMFunctionCall type) {
+	CMFunctionCall proxy(final CMFunctionCall type) {
 		return UserFunctionCall.newInstance(this, type);
 	}
 
-	UserAttribute proxy(final CMAttribute attribute) {
+	CMAttribute proxy(final CMAttribute attribute) {
 		return UserAttribute.newInstance(this, attribute, rowColumnPrivilegeFetcher);
 	}
 
-	UserQuerySpecsBuilder proxy(final QuerySpecsBuilder querySpecsBuilder) {
+	QuerySpecsBuilder proxy(final QuerySpecsBuilder querySpecsBuilder) {
 		return UserQuerySpecsBuilder.newInstance(querySpecsBuilder, this);
 	}
 
-	UserQuerySpecs proxy(final QuerySpecs querySpecs) {
+	QuerySpecs proxy(final QuerySpecs querySpecs) {
 		return UserQuerySpecs.newInstance(this, querySpecs, operationUser, rowColumnPrivilegeFetcher);
 	}
 
