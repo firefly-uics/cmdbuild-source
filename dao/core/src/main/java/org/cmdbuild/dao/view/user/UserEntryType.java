@@ -18,12 +18,12 @@ public abstract class UserEntryType extends ForwardingEntryType {
 	}
 
 	@Override
-	public Iterable<UserAttribute> getActiveAttributes() {
+	public Iterable<CMAttribute> getActiveAttributes() {
 		return view.proxyAttributes(super.getActiveAttributes());
 	}
 
 	@Override
-	public Iterable<UserAttribute> getAttributes() {
+	public Iterable<CMAttribute> getAttributes() {
 		return view.proxyAttributes(super.getAttributes());
 	}
 
@@ -33,7 +33,7 @@ public abstract class UserEntryType extends ForwardingEntryType {
 	}
 
 	@Override
-	public UserAttribute getAttribute(final String name) {
+	public CMAttribute getAttribute(final String name) {
 		return view.proxy(super.getAttribute(name));
 	}
 

@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Predicate;
@@ -64,7 +65,7 @@ public class UserCard implements CMCard {
 	public DateTime getEndDate() {
 		return inner.getEndDate();
 	}
-	
+
 	@Override
 	public Long getCurrentId() {
 		return inner.getCurrentId();
@@ -92,14 +93,14 @@ public class UserCard implements CMCard {
 					@Override
 					public boolean apply(final Entry<String, Object> input) {
 						final String name = input.getKey();
-						final UserAttribute attribute = userClass.getAttribute(name);
+						final CMAttribute attribute = userClass.getAttribute(name);
 						return !attribute.isSystem();
 					}
 				});
 	}
 
 	@Override
-	public UserClass getType() {
+	public CMClass getType() {
 		return userClass;
 	}
 

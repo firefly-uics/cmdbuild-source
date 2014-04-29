@@ -9,6 +9,10 @@ import org.cmdbuild.dao.entrytype.ForwardingDomain;
 public class DomainHistory extends ForwardingDomain {
 
 	public static CMDomain history(final CMDomain current) {
+		return of(current);
+	}
+
+	public static CMDomain of(final CMDomain current) {
 		return new DomainHistory(current);
 	}
 
@@ -22,6 +26,10 @@ public class DomainHistory extends ForwardingDomain {
 	@Override
 	public void accept(final CMEntryTypeVisitor visitor) {
 		visitor.visit(this);
+	}
+
+	public CMDomain getType() {
+		return current;
 	}
 
 	@Override
