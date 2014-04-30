@@ -52,7 +52,7 @@
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
 
-			this.delegateStep[0].setDisabledAttributesGrid(true);
+			this.delegateStep[0].setDisabledWorkflowAttributesGrid(true);
 		},
 
 		// overwrite
@@ -60,7 +60,7 @@
 			this.callParent(arguments);
 
 			if (!this.delegateStep[0].checkWorkflowComboSelected())
-				this.delegateStep[0].setDisabledAttributesGrid(true);
+				this.delegateStep[0].setDisabledWorkflowAttributesGrid(true);
 		},
 
 		// overwrite
@@ -85,7 +85,7 @@
 
 							// Set step1 [0] datas
 							this.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-							this.delegateStep[0].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
+							this.delegateStep[0].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES));
 							this.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
 							this.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
 							this.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME));
@@ -123,7 +123,7 @@
 
 			// Form submit values formatting
 				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-					submitDatas[CMDBuild.ServiceProxy.parameter.ATTRIBUTES] = Ext.encode(attributesGridValues);
+					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
 
 			// Cron field validation
 				if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))

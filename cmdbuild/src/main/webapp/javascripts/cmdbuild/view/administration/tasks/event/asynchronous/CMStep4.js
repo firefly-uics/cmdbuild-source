@@ -44,7 +44,7 @@
 			return this.getWorkflowDelegate().getValueCombo();
 		},
 
-		setDisabledAttributesGrid: function(state) {
+		setDisabledWorkflowAttributesGrid: function(state) {
 			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 		},
 
@@ -129,7 +129,7 @@
 			 */
 			show: function(view, eOpts) {
 				if (!this.delegate.checkWorkflowComboSelected())
-					this.delegate.setDisabledAttributesGrid(true);
+					this.delegate.setDisabledWorkflowAttributesGrid(true);
 			}
 		}
 	});
