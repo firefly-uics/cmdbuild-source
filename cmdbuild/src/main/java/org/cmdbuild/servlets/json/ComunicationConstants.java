@@ -118,6 +118,7 @@ public class ComunicationConstants {
 			LOOKUP = "lookup", //
 			LOOKUP_LIST = "lookuplist", //
 			MANAGEMENT_DATABASE = "postgres", //
+			MAPPER_ACTIVE = "parsingActive", //
 			MAPPER_KEY_INIT = "parsingKeyInit", //
 			MAPPER_KEY_END = "parsingKeyEnd", //
 			MAPPER_VALUE_INIT = "parsingValueInit", //
@@ -211,7 +212,7 @@ public class ComunicationConstants {
 			WORKFLOW_ACTIVE = "workflowActive", //
 			WORKFLOW_ADVANCEABLE = "workflowAdvanceable", //
 			WORKFLOW_ATTACHMENTS_CATEGORY = "workflowAttachmentsCategory", //
-			WORKFLOW_ATTRIBUTES = ATTRIBUTES, // TODO change me
+			WORKFLOW_ATTRIBUTES = "workflowAttributes", //
 			WORKFLOW_CLASS_NAME = "workflowClassName", //
 			WORKFLOW_SAVE_ATTACHMENTS = "workflowSaveAttachments" //
 			;

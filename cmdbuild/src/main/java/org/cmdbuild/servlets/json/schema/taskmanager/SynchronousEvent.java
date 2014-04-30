@@ -73,14 +73,6 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 				.transform(TASK_TO_JSON_TASK)));
 	}
 
-	@JSONExported
-	public JsonResponse readAllByWorkflow( //
-			@Parameter(value = ID) final Long id //
-	) {
-		// TODO
-		return JsonResponse.success();
-	}
-
 	@Admin
 	@JSONExported
 	public JsonResponse update( //

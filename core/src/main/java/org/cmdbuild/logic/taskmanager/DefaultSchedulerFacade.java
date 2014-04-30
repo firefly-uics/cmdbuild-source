@@ -39,7 +39,7 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 	@Override
 	public void delete(final ScheduledTask task) {
 		logger.info(MARKER, "deleting an existing scheduled task '{}'", task);
-		if (task.isActive()) {
+		if (!task.isActive()) {
 			final Job job = converter.from(task).toJob();
 			schedulerService.remove(job);
 		}

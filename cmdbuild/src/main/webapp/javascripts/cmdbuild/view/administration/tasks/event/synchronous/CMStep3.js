@@ -44,11 +44,15 @@
 			return this.getWorkflowDelegate().getValueCombo();
 		},
 
+		getValueNotificationFieldsetCheckbox: function() {
+			return this.view.notificationFieldset.checkboxCmp.getValue();
+		},
+
 		getValueWorkflowFieldsetCheckbox: function() {
 			return this.view.workflowFieldset.checkboxCmp.getValue();
 		},
 
-		setDisabledAttributesGrid: function(state) {
+		setDisabledWorkflowAttributesGrid: function(state) {
 			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 		},
 
@@ -80,8 +84,8 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', this);
 
 			// SendMail configuration
-				this.emailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT,
+				this.notificationEmailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
+					name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT,
 					fieldLabel: tr.taskEmail.emailAccount,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
@@ -92,11 +96,10 @@
 					editable: false
 				});
 
-				this.emailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
+				this.notificationEmailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
+					name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE,
 					fieldLabel: tr.template,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					itemId: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
 					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
 					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
@@ -105,14 +108,15 @@
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				});
 
-				this.sendMailFieldset = Ext.create('Ext.form.FieldSet', {
+				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.sendMail,
 					checkboxToggle: true,
+					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
 					collapsed: true,
 					layout: {
 						type: 'vbox'
 					},
-					items: [this.emailAccountCombo, this.emailTemplateCombo]
+					items: [this.notificationEmailAccountCombo, this.notificationEmailTemplateCombo]
 				});
 			// END: SendMail configuration
 
@@ -139,7 +143,7 @@
 
 			Ext.apply(this, {
 				items: [
-					this.sendMailFieldset,
+					this.notificationFieldset,
 					this.workflowFieldset
 				]
 			});
@@ -153,7 +157,7 @@
 			 */
 			show: function(view, eOpts) {
 				if (!this.delegate.checkWorkflowComboSelected())
-					this.delegate.setDisabledAttributesGrid(true);
+					this.delegate.setDisabledWorkflowAttributesGrid(true);
 			}
 		}
 	});
