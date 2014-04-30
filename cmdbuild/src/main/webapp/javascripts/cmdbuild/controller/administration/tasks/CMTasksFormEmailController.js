@@ -55,7 +55,7 @@
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
 
-			this.delegateStep[3].setDisabledAttributesGrid(true);
+			this.delegateStep[3].setDisabledWorkflowAttributesGrid(true);
 		},
 
 		// overwrite
@@ -63,7 +63,7 @@
 			this.callParent(arguments);
 
 			if (!this.delegateStep[3].checkWorkflowComboSelected())
-				this.delegateStep[3].setDisabledAttributesGrid(true);
+				this.delegateStep[3].setDisabledWorkflowAttributesGrid(true);
 		},
 
 		// overwrite
@@ -118,7 +118,7 @@
 							);
 
 							// Set step4 [3] datas
-							this.delegateStep[3].setValueWorkflowAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
+							this.delegateStep[3].setValueWorkflowAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES));
 							this.delegateStep[3].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME));
 							this.delegateStep[3].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE));
 
@@ -142,7 +142,6 @@
 
 			CMDBuild.LoadMask.get().show();
 			var formData = this.view.getData(true);
-			var attributesGridValues = this.delegateStep[3].getValueAttributeGrid();
 			var submitDatas = {};
 
 			submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
@@ -187,8 +186,10 @@
 
 				var workflowFieldsetCheckboxValue = this.delegateStep[3].getValueWorkflowFieldsetCheckbox();
 				if (workflowFieldsetCheckboxValue) {
+					var attributesGridValues = this.delegateStep[3].getValueAttributeGrid();
+
 					if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-						submitDatas[CMDBuild.ServiceProxy.parameter.ATTRIBUTES] = Ext.encode(attributesGridValues);
+						submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
 
 					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
 					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];

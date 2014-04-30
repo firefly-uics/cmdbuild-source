@@ -121,6 +121,12 @@
 			return string;
 		},
 
+		callback: function() {
+			this.grid.store.load();
+
+			this.callParent(arguments);
+		},
+
 		/**
 		 * @param (String) type - form type identifier
 		 * @return (Boolean) type recognition state
@@ -195,15 +201,13 @@
 		 * @param (Object) record
 		 */
 		onStartButtonClick: function(record) {
-			this.form.delegate.onAbortButtonClick();
-
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyTasks.start({
 				scope: this,
 				params: {
 					id: record.get(CMDBuild.ServiceProxy.parameter.ID)
 				},
-				success: this.success,
+				success: this.success(record.get(CMDBuild.ServiceProxy.parameter.ID)),
 				callback: this.callback
 			});
 		},
@@ -212,21 +216,36 @@
 		 * @param (Object) record
 		 */
 		onStopButtonClick: function(record) {
-			this.form.delegate.onAbortButtonClick();
-
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyTasks.stop({
 				scope: this,
 				params: {
 					id: record.get(CMDBuild.ServiceProxy.parameter.ID)
 				},
-				success: this.success,
+				success: this.success(record.get(CMDBuild.ServiceProxy.parameter.ID)),
 				callback: this.callback
 			});
 		},
 
-		success: function() {
-			this.grid.store.load();
+		/**
+		 * @param (Int) id
+		 */
+		success: function(id) {
+			var me = this;
+
+			this.grid.store.load({
+				callback: function() {
+					me.form.reset();
+
+					var rowIndex = this.find(CMDBuild.ServiceProxy.parameter.ID, id);
+
+					me.selectionModel.deselectAll();
+					me.selectionModel.select(
+						(rowIndex < 0) ? 0 : rowIndex,
+						true
+					);
+				}
+			});
 		},
 
 		/**

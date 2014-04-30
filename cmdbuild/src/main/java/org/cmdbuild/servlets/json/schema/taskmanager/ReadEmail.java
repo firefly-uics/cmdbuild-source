@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.schema.taskmanager;
 
-import static org.apache.commons.lang3.StringUtils.*;
 import static com.google.common.collect.FluentIterable.from;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTACHMENTS_ACTIVE;
@@ -13,6 +13,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_TEMPLATE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER_FROM_ADDRESS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER_SUBJECT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.MAPPER_ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.MAPPER_KEY_END;
 import static org.cmdbuild.servlets.json.ComunicationConstants.MAPPER_KEY_INIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.MAPPER_VALUE_END;
@@ -139,6 +140,11 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			return delegate.getWorkflowAttachmentsCategory();
 		}
 
+		@JsonProperty(MAPPER_ACTIVE)
+		public boolean isMapperActive() {
+			return (engine != null);
+		}
+
 		@JsonProperty(MAPPER_KEY_INIT)
 		public String getKeyInit() {
 			return (engine == null) ? null : engine.getKeyInit();
@@ -176,6 +182,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
 			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes, //
 			@Parameter(value = WORKFLOW_ATTACHMENTS_CATEGORY, required = false) final String workflowAttachmentsCategory, //
+			@Parameter(value = MAPPER_ACTIVE, required = false) final Boolean mapperActive, //
 			@Parameter(value = MAPPER_KEY_INIT, required = false) final String keyInit, //
 			@Parameter(value = MAPPER_KEY_END, required = false) final String keyEnd, //
 			@Parameter(value = MAPPER_VALUE_INIT, required = false) final String valueInit, //
@@ -193,7 +200,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withRegexSubjectFilter(toIterable(filterSubject)) //
 				//
 				// send notification
-				// TODO not necessary
+				// TODO necessary?
 				.withNotificationStatus(isNotBlank(emailTemplate)) //
 				//
 				// store attachments
@@ -208,7 +215,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withWorkflowAttachmentsCategory(workflowAttachmentsCategory) //
 				//
 				// mapping
-				.withMapperEngine(mapperEngine(keyInit, keyEnd, valueInit, valueEnd) //
+				.withMapperEngine(mapperEngine(mapperActive, keyInit, keyEnd, valueInit, valueEnd) //
 				)
 				//
 				.build();
@@ -250,6 +257,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
 			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes, //
 			@Parameter(value = WORKFLOW_ATTACHMENTS_CATEGORY, required = false) final String workflowAttachmentsCategory, //
+			@Parameter(value = MAPPER_ACTIVE, required = false) final Boolean mapperActive, //
 			@Parameter(value = MAPPER_KEY_INIT, required = false) final String keyInit, //
 			@Parameter(value = MAPPER_KEY_END, required = false) final String keyEnd, //
 			@Parameter(value = MAPPER_VALUE_INIT, required = false) final String valueInit, //
@@ -268,7 +276,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withRegexSubjectFilter(toIterable(filterSubject)) //
 				//
 				// send notification
-				// TODO not necessary
+				// TODO necessary?
 				.withNotificationStatus(isNotBlank(emailTemplate)) //
 				//
 				// store attachments
@@ -283,7 +291,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withWorkflowAttachmentsCategory(workflowAttachmentsCategory) //
 				//
 				// mapping
-				.withMapperEngine(mapperEngine(keyInit, keyEnd, valueInit, valueEnd))
+				.withMapperEngine(mapperEngine(mapperActive, keyInit, keyEnd, valueInit, valueEnd))
 				//
 				.build();
 		taskManagerLogic().update(task);
@@ -301,11 +309,10 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		taskManagerLogic().delete(task);
 	}
 
-	private MapperEngine mapperEngine(final String keyInit, final String keyEnd, final String valueInit,
-			final String valueEnd) {
+	private MapperEngine mapperEngine(final Boolean active, final String keyInit, final String keyEnd,
+			final String valueInit, final String valueEnd) {
 		final MapperEngine engine;
-		// TODO use dedicated flag
-		if (isBlank(keyInit) && isBlank(keyEnd) && isBlank(valueInit) && isBlank(valueEnd)) {
+		if (!defaultIfNull(active, false)) {
 			engine = NullMapperEngine.getInstance();
 		} else {
 			engine = KeyValueMapperEngine.newInstance() //

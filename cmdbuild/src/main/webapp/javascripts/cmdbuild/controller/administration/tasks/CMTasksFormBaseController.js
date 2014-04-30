@@ -115,10 +115,9 @@
 
 		success: function(result, options, decodedResult) {
 			var me = this;
-			var store = this.parentDelegate.grid.store;
 			var taskId = this.delegateStep[0].getValueId();
 
-			store.load({
+			this.parentDelegate.grid.store.load({
 				callback: function() {
 					me.view.reset();
 

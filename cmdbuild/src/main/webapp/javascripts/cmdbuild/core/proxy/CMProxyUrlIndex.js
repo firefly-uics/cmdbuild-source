@@ -168,20 +168,20 @@
 					getStore: 'services/json/schema/taskmanager/event/readall',
 
 					asynchronous: {
-						delete: '',
-						get: '',
-						post: '',
-						put: '',
+						delete: 'services/json/schema/taskmanager/asynchronousevent/delete',
+						get: 'services/json/schema/taskmanager/asynchronousevent/read',
+						post: 'services/json/schema/taskmanager/asynchronousevent/create',
+						put: 'services/json/schema/taskmanager/asynchronousevent/update',
 
-						getStore: 'services/json/schema/taskmanager/event/readall',
+						getStore: 'services/json/schema/taskmanager/asynchronousevent/readall',
 					},
 					synchronous: {
-						delete: '',
-						get: '',
-						post: '',
-						put: '',
+						delete: 'services/json/schema/taskmanager/synchronousevent/delete',
+						get: 'services/json/schema/taskmanager/synchronousevent/read',
+						post: 'services/json/schema/taskmanager/synchronousevent/create',
+						put: 'services/json/schema/taskmanager/synchronousevent/update',
 
-						getStore: 'services/json/schema/taskmanager/event/readall',
+						getStore: 'services/json/schema/taskmanager/synchronousevent/readall',
 					}
 				},
 				workflow: {
