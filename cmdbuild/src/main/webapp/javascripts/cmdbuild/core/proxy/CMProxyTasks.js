@@ -108,10 +108,10 @@
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event;
 
 					case 'event_asynchronous': // TODO
-						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event;
+						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event.asynchronous;
 
-					case 'event_synchronous': // TODO
-						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event;
+					case 'event_synchronous':
+						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event.synchronous;
 
 					case 'workflow':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.workflow;

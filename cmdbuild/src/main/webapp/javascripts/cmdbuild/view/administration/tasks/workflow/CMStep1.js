@@ -45,7 +45,7 @@
 			return this.view.idField.getValue();
 		},
 
-		setDisabledAttributesGrid: function(state) {
+		setDisabledWorkflowAttributesGrid: function(state) {
 			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 		},
 

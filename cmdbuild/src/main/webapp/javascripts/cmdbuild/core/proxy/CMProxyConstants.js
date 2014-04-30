@@ -69,6 +69,9 @@
 			MINUTE: 'minute',
 			MOUNTH: 'mounth',
 			NAME: 'name',
+			NOTIFICATION_ACTIVE: 'notificationActive',
+			NOTIFICATION_EMAIL_ACCOUNT: 'notificationEmailAccount',
+			NOTIFICATION_EMAIL_TEMPLATE: 'notificationEmailTemplate',
 			NOT_NULL: 'isnotnull',
 			PARENT: 'parent',
 			PARSING_ACTIVE: 'parsingActive',
@@ -114,6 +117,7 @@
 			WIDGET_ID: 'widgetId',
 			WORKFLOW: 'workflow',
 			WORKFLOW_ACTIVE: 'workflowActive',
+			WORKFLOW_ATTRIBUTES: 'workflowAttributes',
 			WORKFLOW_CLASS_NAME: 'workflowClassName'
 		}
 	});

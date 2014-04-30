@@ -183,7 +183,6 @@
 					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
 					fieldLabel: CMDBuild.Translation.administration.tasks.template,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					itemId: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
 					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
 					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
@@ -195,7 +194,7 @@
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.administration.tasks.sendMail,
 					checkboxToggle: true,
-					checkboxName: 'CMDBuild.ServiceProxy.parameter.SEND_MAIL_ACTIVE',
+					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
 					collapsed: true,
 					layout: {
 						type: 'vbox'

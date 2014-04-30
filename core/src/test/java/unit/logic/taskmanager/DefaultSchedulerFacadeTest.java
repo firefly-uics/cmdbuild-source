@@ -111,9 +111,10 @@ public class DefaultSchedulerFacadeTest {
 	}
 
 	@Test
-	public void scheduleDeletedOnlyIfTaskIsActive() throws Exception {
+	public void scheduleDeletedOnlyIfTaskIsNotActive() throws Exception {
 		// given
 		final ScheduledTask task = ReadEmailTask.newInstance() //
+				.withActiveStatus(true) //
 				.build();
 
 		// when
@@ -128,7 +129,7 @@ public class DefaultSchedulerFacadeTest {
 	public void scheduleDeleted() throws Exception {
 		// given
 		final ScheduledTask task = ReadEmailTask.newInstance() //
-				.withActiveStatus(true) //
+				.withActiveStatus(false) //
 				.build();
 		final Job job = mock(Job.class);
 		final LogicAsSourceConverter logicAsSourceConverter = mock(LogicAsSourceConverter.class);

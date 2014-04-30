@@ -46,13 +46,14 @@
 							text: tr.tasksTypes.event,
 							iconCls: 'cmdbuild-tree-tasks-group-icon',
 							children: [
-								{
-									id: 'event_asynchronous',
-									cmName: 'tasks',
-									leaf: true,
-									text: tr.tasksTypes.eventTypes.asynchronous,
-									iconCls: 'cmdbuild-tree-tasks-icon'
-								},
+// TODO: future implementation
+//								{
+//									id: 'event_asynchronous',
+//									cmName: 'tasks',
+//									leaf: true,
+//									text: tr.tasksTypes.eventTypes.asynchronous,
+//									iconCls: 'cmdbuild-tree-tasks-icon'
+//								},
 								{
 									id: 'event_synchronous',
 									cmName: 'tasks',

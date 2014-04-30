@@ -44,7 +44,7 @@
 			return this.view.workflowFieldset.checkboxCmp.getValue();
 		},
 
-		setDisabledAttributesGrid: function(state) {
+		setDisabledWorkflowAttributesGrid: function(state) {
 			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 		},
 
