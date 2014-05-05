@@ -1,7 +1,7 @@
 package org.cmdbuild.data.store.translation;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 
 public class Translation implements Storable {
@@ -52,7 +52,7 @@ public class Translation implements Storable {
 	public void setValue(final String value) {
 		this.value = value;
 	}
-	
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
