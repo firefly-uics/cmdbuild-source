@@ -1,10 +1,9 @@
 package org.cmdbuild.utils;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-
-import java.util.Arrays;
 
 public class StringUtils {
 	

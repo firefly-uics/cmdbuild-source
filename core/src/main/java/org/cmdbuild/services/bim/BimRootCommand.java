@@ -1,7 +1,8 @@
 package org.cmdbuild.services.bim;
 
-import org.cmdbuild.model.bim.StorableLayer;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+
+import org.cmdbuild.model.bim.StorableLayer;
 
 public class BimRootCommand extends BimDataModelCommand {
 

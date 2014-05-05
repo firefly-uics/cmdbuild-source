@@ -30,7 +30,7 @@ public class ScriptCommand implements Command {
 	private static final String CMDB = "__cmdb__";
 	private static final String CMDB_V1 = "__cmdb_v1__";
 
-	public static class Builder implements org.cmdbuild.common.Builder<ScriptCommand> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<ScriptCommand> {
 
 		private String engine;
 		private String script;

@@ -211,6 +211,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withWorkflowActive(isNotBlank(workflowClassName)) //
 				.withWorkflowClassName(workflowClassName) //
 				.withWorkflowAttributes(toMap(workflowAttributes)) //
+				.withWorkflowAdvanceableStatus(true) //
 				.withWorkflowAttachmentsStatus(isNotBlank(workflowAttachmentsCategory)) //
 				.withWorkflowAttachmentsCategory(workflowAttachmentsCategory) //
 				//
@@ -287,6 +288,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withWorkflowActive(isNotBlank(workflowClassName)) //
 				.withWorkflowClassName(workflowClassName) //
 				.withWorkflowAttributes(toMap(workflowAttributes)) //
+				.withWorkflowAdvanceableStatus(true) //
 				.withWorkflowAttachmentsStatus(isNotBlank(workflowAttachmentsCategory)) //
 				.withWorkflowAttachmentsCategory(workflowAttachmentsCategory) //
 				//

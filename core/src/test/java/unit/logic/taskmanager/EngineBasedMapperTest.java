@@ -6,11 +6,11 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.taskmanager.KeyValueMapperEngine;
-import org.cmdbuild.logic.taskmanager.MapperEngine;
 import org.cmdbuild.logic.taskmanager.EngineBasedMapper;
 import org.cmdbuild.logic.taskmanager.EngineBasedMapper.Builder;
+import org.cmdbuild.logic.taskmanager.KeyValueMapperEngine;
 import org.cmdbuild.logic.taskmanager.Mapper;
+import org.cmdbuild.logic.taskmanager.MapperEngine;
 import org.junit.Test;
 
 public class EngineBasedMapperTest {

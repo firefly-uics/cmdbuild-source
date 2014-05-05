@@ -1,10 +1,15 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import java.util.Collections;
+import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.google.common.collect.Maps;
 
 public class SynchronousEventTask implements Task {
 
@@ -57,6 +62,7 @@ public class SynchronousEventTask implements Task {
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<SynchronousEventTask> {
 
 		private static final Iterable<String> EMPTY_GROUPS = Collections.emptyList();
+		private static final Map<String, String> EMPTY_ATTRIBUTES = Collections.emptyMap();
 
 		private Long id;
 		private String description;
@@ -64,6 +70,13 @@ public class SynchronousEventTask implements Task {
 		private Phase phase;
 		private Iterable<String> groups;
 		private String classname;
+		private Boolean emailEnabled;
+		private String emailAccount;
+		private String emailTemplate;
+		private Boolean workflowEnabled;
+		private String workflowClassName;
+		private final Map<String, String> workflowAttributes = Maps.newHashMap();
+		private Boolean workflowAdvanceable;
 		private Boolean scriptingEnabled;
 		private String scriptingEngine;
 		private String scriptingScript;
@@ -83,6 +96,18 @@ public class SynchronousEventTask implements Task {
 			active = (active == null) ? false : active;
 
 			groups = (groups == null) ? EMPTY_GROUPS : groups;
+
+			emailEnabled = (emailEnabled == null) ? false : emailEnabled;
+			if (emailEnabled) {
+				Validate.notBlank(emailAccount, "missing email's account");
+				Validate.notBlank(emailTemplate, "missing email's template");
+			}
+
+			workflowEnabled = (workflowEnabled == null) ? false : workflowEnabled;
+			workflowAdvanceable = (workflowAdvanceable == null) ? false : workflowAdvanceable;
+			if (workflowEnabled) {
+				Validate.notBlank(workflowClassName, "missing workflow's class name");
+			}
 
 			scriptingEnabled = (scriptingEnabled == null) ? false : scriptingEnabled;
 			if (scriptingEnabled) {
@@ -121,6 +146,41 @@ public class SynchronousEventTask implements Task {
 			return this;
 		}
 
+		public Builder withEmailEnabled(final boolean enabled) {
+			this.emailEnabled = enabled;
+			return this;
+		}
+
+		public Builder withEmailAccount(final String account) {
+			this.emailAccount = account;
+			return this;
+		}
+
+		public Builder withEmailTemplate(final String template) {
+			this.emailTemplate = template;
+			return this;
+		}
+
+		public Builder withWorkflowEnabled(final boolean enabled) {
+			this.workflowEnabled = enabled;
+			return this;
+		}
+
+		public Builder withWorkflowClassName(final String className) {
+			this.workflowClassName = className;
+			return this;
+		}
+
+		public Builder withWorkflowAttributes(final Map<String, String> attributes) {
+			this.workflowAttributes.putAll(defaultIfNull(attributes, EMPTY_ATTRIBUTES));
+			return this;
+		}
+
+		public Builder withWorkflowAdvanceable(final boolean advanceable) {
+			this.workflowAdvanceable = advanceable;
+			return this;
+		}
+
 		public Builder withScriptingEnableStatus(final boolean scriptingEnabled) {
 			this.scriptingEnabled = scriptingEnabled;
 			return this;
@@ -153,6 +213,13 @@ public class SynchronousEventTask implements Task {
 	private final Phase phase;
 	private final Iterable<? extends String> groups;
 	private final String classname;
+	private final boolean emailEnabled;
+	private final String emailAccount;
+	private final String emailTemplate;
+	private final boolean workflowEnabled;
+	private final String workflowClassName;
+	private final Map<String, String> workflowAttributes;
+	private final boolean workflowAdvanceable;
 	private final boolean scriptingEnabled;
 	private final String scriptingEngine;
 	private final String scriptingScript;
@@ -165,6 +232,13 @@ public class SynchronousEventTask implements Task {
 		this.phase = builder.phase;
 		this.groups = builder.groups;
 		this.classname = builder.classname;
+		this.emailEnabled = builder.emailEnabled;
+		this.emailAccount = builder.emailAccount;
+		this.emailTemplate = builder.emailTemplate;
+		this.workflowEnabled = builder.workflowEnabled;
+		this.workflowClassName = builder.workflowClassName;
+		this.workflowAttributes = builder.workflowAttributes;
+		this.workflowAdvanceable = builder.workflowAdvanceable;
 		this.scriptingEnabled = builder.scriptingEnabled;
 		this.scriptingEngine = builder.scriptingEngine;
 		this.scriptingScript = builder.scriptingScript;
@@ -201,6 +275,34 @@ public class SynchronousEventTask implements Task {
 
 	public String getTargetClassname() {
 		return classname;
+	}
+
+	public boolean isEmailEnabled() {
+		return emailEnabled;
+	}
+
+	public String getEmailAccount() {
+		return emailAccount;
+	}
+
+	public String getEmailTemplate() {
+		return emailTemplate;
+	}
+
+	public boolean isWorkflowEnabled() {
+		return workflowEnabled;
+	}
+
+	public String getWorkflowClassName() {
+		return workflowClassName;
+	}
+
+	public Map<String, String> getWorkflowAttributes() {
+		return workflowAttributes;
+	}
+
+	public boolean isWorkflowAdvanceable() {
+		return workflowAdvanceable;
 	}
 
 	public boolean isScriptingEnabled() {

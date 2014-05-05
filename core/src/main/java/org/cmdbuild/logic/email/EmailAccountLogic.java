@@ -42,12 +42,12 @@ public interface EmailAccountLogic extends Logic {
 
 	/**
 	 * Creates the specified account.
-	 *
+	 * 
 	 * @param account
 	 *            is the {@link Account} that needs to be created.
-	 *
+	 * 
 	 * @return the id of the created {@link Account}.
-	 *
+	 * 
 	 * @throws RuntimeException
 	 *             if there is any problem.
 	 */
@@ -56,10 +56,10 @@ public interface EmailAccountLogic extends Logic {
 
 	/**
 	 * Updates the specified account.
-	 *
+	 * 
 	 * @param account
 	 *            is the {@link Account} that needs to be updated.
-	 *
+	 * 
 	 * @throws RuntimeException
 	 *             if there is any problem.
 	 */
@@ -67,18 +67,18 @@ public interface EmailAccountLogic extends Logic {
 
 	/**
 	 * Gets all available accounts.
-	 *
+	 * 
 	 * @return all {@link Account}s.
 	 */
 	Iterable<Account> getAll();
 
 	/**
 	 * Gets the {@link Account} for the specified name.
-	 *
+	 * 
 	 * @param name
-	 *
+	 * 
 	 * @return the {@link Account} for the specified id.
-	 *
+	 * 
 	 * @throws RuntimeException
 	 *             if there is any problem.
 	 */
@@ -86,9 +86,9 @@ public interface EmailAccountLogic extends Logic {
 
 	/**
 	 * Deletes the {@link Account} for the specified name.
-	 *
+	 * 
 	 * @param name
-	 *
+	 * 
 	 * @throws RuntimeException
 	 *             if there is any problem.
 	 */
@@ -96,9 +96,9 @@ public interface EmailAccountLogic extends Logic {
 
 	/**
 	 * Sets to default the {@link Account} with the specified name.
-	 *
+	 * 
 	 * @param name
-	 *
+	 * 
 	 * @throws RuntimeException
 	 *             if there is any problem.
 	 */

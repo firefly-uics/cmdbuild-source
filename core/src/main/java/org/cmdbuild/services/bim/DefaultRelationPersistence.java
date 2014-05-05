@@ -2,7 +2,6 @@ package org.cmdbuild.services.bim;
 
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
-import static org.cmdbuild.data.converter.StorableProjectConverter.TABLE_NAME;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -10,6 +9,7 @@ import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.data.converter.StorableProjectConverter.TABLE_NAME;
 
 import java.util.ArrayList;
 import java.util.List;

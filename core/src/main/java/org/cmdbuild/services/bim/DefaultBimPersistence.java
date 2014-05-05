@@ -1,6 +1,7 @@
 package org.cmdbuild.services.bim;
 
 import static org.cmdbuild.model.bim.StorableLayer.isValidLayer;
+
 import java.util.List;
 import java.util.Map;
 

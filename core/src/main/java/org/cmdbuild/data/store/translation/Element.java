@@ -1,8 +1,8 @@
 package org.cmdbuild.data.store.translation;
 
-import org.cmdbuild.data.store.Groupable;
-
 import static org.cmdbuild.data.store.translation.Constants.ELEMENT;
+
+import org.cmdbuild.data.store.Groupable;
 
 public class Element implements Groupable {
 

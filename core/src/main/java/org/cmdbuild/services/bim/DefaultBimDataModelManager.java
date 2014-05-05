@@ -1,8 +1,11 @@
 package org.cmdbuild.services.bim;
 
+import static org.cmdbuild.bim.utils.BimConstants.GLOBALID_ATTRIBUTE;
+import static org.cmdbuild.bim.utils.BimConstants.HEIGHT;
+import static org.cmdbuild.bim.utils.BimConstants.PERIMETER;
+import static org.cmdbuild.bim.utils.BimConstants.POSITION;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
-import static org.cmdbuild.bim.utils.BimConstants.*;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;

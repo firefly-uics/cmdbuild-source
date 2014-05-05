@@ -1,6 +1,5 @@
 package org.cmdbuild.logic;
 
-import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.model.domainTree.DomainTreeNode;
