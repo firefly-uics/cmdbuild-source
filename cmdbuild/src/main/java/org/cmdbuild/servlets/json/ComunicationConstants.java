@@ -69,6 +69,7 @@ public class ComunicationConstants {
 			ENTRY_TYPE = "entryType", //
 			EDITOR_TYPE = "editorType", //
 			EMAIL_ACCOUNT = "emailAccount", //
+			EMAIL_ACTIVE = "emailActive", //
 			EMAIL_TEMPLATE = "emailTemplate", //
 			ENABLE_MOVE_REJECTED_NOT_MATCHING = "enableMoveRejectedNotMatching", //
 			EXPORT = "export", //

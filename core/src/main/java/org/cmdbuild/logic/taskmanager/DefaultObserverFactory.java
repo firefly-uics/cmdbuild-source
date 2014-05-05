@@ -3,7 +3,13 @@ package org.cmdbuild.logic.taskmanager;
 import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
+import static org.cmdbuild.common.template.engine.Engines.nullOnError;
+import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.event.Commands.safe;
+import static org.cmdbuild.services.template.engine.EngineNames.GROUP_PREFIX;
+import static org.cmdbuild.services.template.engine.EngineNames.GROUP_USERS_PREFIX;
+import static org.cmdbuild.services.template.engine.EngineNames.USER_PREFIX;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.api.fluent.FluentApi;
@@ -11,9 +17,19 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.email.StorableEmailAccount;
+import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
+import org.cmdbuild.logic.email.SendTemplateEmail;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
 import org.cmdbuild.logic.workflow.StartProcess;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.model.email.EmailConstants;
+import org.cmdbuild.services.email.EmailAccount;
+import org.cmdbuild.services.email.EmailServiceFactory;
+import org.cmdbuild.services.email.PredicateEmailAccountSupplier;
 import org.cmdbuild.services.event.Command;
 import org.cmdbuild.services.event.Context;
 import org.cmdbuild.services.event.ContextVisitor;
@@ -27,8 +43,12 @@ import org.cmdbuild.services.event.FilteredObserver;
 import org.cmdbuild.services.event.Observer;
 import org.cmdbuild.services.event.ScriptCommand;
 import org.cmdbuild.services.template.engine.CardEngine;
+import org.cmdbuild.services.template.engine.GroupEmailEngine;
+import org.cmdbuild.services.template.engine.GroupUsersEmailEngine;
+import org.cmdbuild.services.template.engine.UserEmailEngine;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 
 public class DefaultObserverFactory implements ObserverFactory {
 
@@ -101,12 +121,27 @@ public class DefaultObserverFactory implements ObserverFactory {
 	private final UserStore userStore;
 	private final FluentApi fluentApi;
 	private final WorkflowLogic workflowLogic;
+	private final Store<StorableEmailAccount> emailAccountStore;
+	private final EmailServiceFactory emailServiceFactory;
+	private final EmailTemplateLogic emailTemplateLogic;
+	private final CMDataView dataView;
 
-	public DefaultObserverFactory(final UserStore userStore, final FluentApi fluentApi,
-			final WorkflowLogic workflowLogic) {
+	public DefaultObserverFactory( //
+			final UserStore userStore, //
+			final FluentApi fluentApi, //
+			final WorkflowLogic workflowLogic, //
+			final Store<StorableEmailAccount> emailAccountStore, //
+			final EmailServiceFactory emailServiceFactory, //
+			final EmailTemplateLogic emailTemplateLogic, //
+			final CMDataView dataView //
+	) {
 		this.userStore = userStore;
 		this.fluentApi = fluentApi;
 		this.workflowLogic = workflowLogic;
+		this.emailAccountStore = emailAccountStore;
+		this.emailServiceFactory = emailServiceFactory;
+		this.emailTemplateLogic = emailTemplateLogic;
+		this.dataView = dataView;
 	}
 
 	@Override
@@ -115,6 +150,9 @@ public class DefaultObserverFactory implements ObserverFactory {
 		final DefaultObserver.Phase phase = phaseOf(task);
 		if (task.isWorkflowEnabled()) {
 			builder.add(workflowOf(task), phase);
+		}
+		if (task.isEmailEnabled()) {
+			builder.add(emailOf(task), phase);
 		}
 		if (task.isScriptingEnabled()) {
 			builder.add(scriptingOf(task), phase);
@@ -226,6 +264,51 @@ public class DefaultObserverFactory implements ObserverFactory {
 
 				});
 				return builder.build();
+			}
+
+		});
+	}
+
+	private Command emailOf(final SynchronousEventTask task) {
+		return safe(new Command() {
+
+			@Override
+			public void execute(final Context context) {
+				final Supplier<EmailAccount> emailAccountSupplier = PredicateEmailAccountSupplier.of(emailAccountStore,
+						named(task.getEmailAccount()));
+				SendTemplateEmail.newInstance() //
+						.withEmailAccountSupplier(emailAccountSupplier) //
+						.withEmailServiceFactory(emailServiceFactory) //
+						.withEmailTemplateSupplier(new Supplier<Template>() {
+
+							@Override
+							public Template get() {
+								final String name = task.getEmailTemplate();
+								return emailTemplateLogic.read(name);
+							}
+
+						}) //
+						.withTemplateResolver(EngineBasedTemplateResolver.newInstance() //
+								.withEngine(emptyStringOnNull(nullOnError( //
+										UserEmailEngine.newInstance() //
+												.withDataView(dataView) //
+												.build())), //
+										USER_PREFIX) //
+								.withEngine(emptyStringOnNull(nullOnError( //
+										GroupEmailEngine.newInstance() //
+												.withDataView(dataView) //
+												.build())), //
+										GROUP_PREFIX) //
+								.withEngine(emptyStringOnNull(nullOnError( //
+										GroupUsersEmailEngine.newInstance() //
+												.withDataView(dataView) //
+												.withSeparator(EmailConstants.ADDRESSES_SEPARATOR) //
+												.build() //
+										)), //
+										GROUP_USERS_PREFIX) //
+								.build()) //
+						.build() //
+						.execute();
 			}
 
 		});

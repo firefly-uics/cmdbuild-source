@@ -70,6 +70,9 @@ public class SynchronousEventTask implements Task {
 		private Phase phase;
 		private Iterable<String> groups;
 		private String classname;
+		private Boolean emailEnabled;
+		private String emailAccount;
+		private String emailTemplate;
 		private Boolean workflowEnabled;
 		private String workflowClassName;
 		private final Map<String, String> workflowAttributes = Maps.newHashMap();
@@ -93,6 +96,12 @@ public class SynchronousEventTask implements Task {
 			active = (active == null) ? false : active;
 
 			groups = (groups == null) ? EMPTY_GROUPS : groups;
+
+			emailEnabled = (emailEnabled == null) ? false : emailEnabled;
+			if (emailEnabled) {
+				Validate.notBlank(emailAccount, "missing email's account");
+				Validate.notBlank(emailTemplate, "missing email's template");
+			}
 
 			workflowEnabled = (workflowEnabled == null) ? false : workflowEnabled;
 			workflowAdvanceable = (workflowAdvanceable == null) ? false : workflowAdvanceable;
@@ -134,6 +143,21 @@ public class SynchronousEventTask implements Task {
 
 		public Builder withTargetClass(final String classname) {
 			this.classname = classname;
+			return this;
+		}
+
+		public Builder withEmailEnabled(final boolean enabled) {
+			this.emailEnabled = enabled;
+			return this;
+		}
+
+		public Builder withEmailAccount(final String account) {
+			this.emailAccount = account;
+			return this;
+		}
+
+		public Builder withEmailTemplate(final String template) {
+			this.emailTemplate = template;
 			return this;
 		}
 
@@ -189,6 +213,9 @@ public class SynchronousEventTask implements Task {
 	private final Phase phase;
 	private final Iterable<? extends String> groups;
 	private final String classname;
+	private final boolean emailEnabled;
+	private final String emailAccount;
+	private final String emailTemplate;
 	private final boolean workflowEnabled;
 	private final String workflowClassName;
 	private final Map<String, String> workflowAttributes;
@@ -205,6 +232,9 @@ public class SynchronousEventTask implements Task {
 		this.phase = builder.phase;
 		this.groups = builder.groups;
 		this.classname = builder.classname;
+		this.emailEnabled = builder.emailEnabled;
+		this.emailAccount = builder.emailAccount;
+		this.emailTemplate = builder.emailTemplate;
 		this.workflowEnabled = builder.workflowEnabled;
 		this.workflowClassName = builder.workflowClassName;
 		this.workflowAttributes = builder.workflowAttributes;
@@ -245,6 +275,18 @@ public class SynchronousEventTask implements Task {
 
 	public String getTargetClassname() {
 		return classname;
+	}
+
+	public boolean isEmailEnabled() {
+		return emailEnabled;
+	}
+
+	public String getEmailAccount() {
+		return emailAccount;
+	}
+
+	public String getEmailTemplate() {
+		return emailTemplate;
 	}
 
 	public boolean isWorkflowEnabled() {

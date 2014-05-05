@@ -296,6 +296,9 @@ public class DefaultLogicAndStoreConverterTest {
 				.withPhase(Phase.AFTER_CREATE) //
 				.withGroups(asList("foo", "bar", "baz")) //
 				.withTargetClass("classname") //
+				.withEmailEnabled(true) //
+				.withEmailAccount("email account") //
+				.withEmailTemplate("email template") //
 				.withWorkflowEnabled(true) //
 				.withWorkflowClassName("workflow class name") //
 				.withWorkflowAttributes(attributes) //
@@ -318,6 +321,9 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(SynchronousEvent.PHASE, "after_create"));
 		assertThat(parameters, hasEntry(SynchronousEvent.FILTER_GROUPS, "foo,bar,baz"));
 		assertThat(parameters, hasEntry(SynchronousEvent.FILTER_CLASSNAME, "classname"));
+		assertThat(parameters, hasEntry(SynchronousEvent.EMAIL_ACTIVE, "true"));
+		assertThat(parameters, hasEntry(SynchronousEvent.EMAIL_ACCOUNT, "email account"));
+		assertThat(parameters, hasEntry(SynchronousEvent.EMAIL_TEMPLATE, "email template"));
 		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_CLASS_NAME, "workflow class name"));
 		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
@@ -369,6 +375,9 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(SynchronousEvent.PHASE, "after_create") //
 				.withParameter(SynchronousEvent.FILTER_GROUPS, "foo,bar,baz") //
 				.withParameter(SynchronousEvent.FILTER_CLASSNAME, "classname") //
+				.withParameter(SynchronousEvent.EMAIL_ACTIVE, "true") //
+				.withParameter(SynchronousEvent.EMAIL_ACCOUNT, "email account") //
+				.withParameter(SynchronousEvent.EMAIL_TEMPLATE, "email template") //
 				.withParameter(SynchronousEvent.WORKFLOW_ACTIVE, "true") //
 				.withParameter(SynchronousEvent.WORKFLOW_CLASS_NAME, "workflow class name") //
 				.withParameter(SynchronousEvent.WORKFLOW_ATTRIBUTES, "foo=bar\nbar=baz\nbaz=foo") //
@@ -391,6 +400,9 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getPhase(), equalTo(Phase.AFTER_CREATE));
 		assertThat(converted.getGroups(), containsInAnyOrder("foo", "bar", "baz"));
 		assertThat(converted.getTargetClassname(), equalTo("classname"));
+		assertThat(converted.isEmailEnabled(), equalTo(true));
+		assertThat(converted.getEmailAccount(), equalTo("email account"));
+		assertThat(converted.getEmailTemplate(), equalTo("email template"));
 		assertThat(converted.isWorkflowEnabled(), equalTo(true));
 		assertThat(converted.getWorkflowClassName(), equalTo("workflow class name"));
 		assertThat(converted.getWorkflowAttributes(), hasEntry("foo", "bar"));
