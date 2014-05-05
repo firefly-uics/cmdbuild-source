@@ -4,7 +4,7 @@ import static com.google.common.base.Suppliers.ofInstance;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.api.mail.MailApiFactory;
-import org.cmdbuild.config.EmailConfiguration;
+import org.cmdbuild.data.store.email.EmailAccount;
 
 import com.google.common.base.Supplier;
 
@@ -14,7 +14,7 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 
 		private MailApiFactory apiFactory;
 		private EmailPersistence persistence;
-		private Supplier<EmailConfiguration> configurationSupplier;
+		private Supplier<EmailAccount> accountSupplier;
 
 		private Builder() {
 			// use factory method
@@ -29,7 +29,7 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 		private void validate() {
 			Validate.notNull(apiFactory, "missing '%s'", MailApiFactory.class);
 			Validate.notNull(persistence, "missing '%s'", EmailPersistence.class);
-			Validate.notNull(configurationSupplier, "missing '%s' supplier", EmailConfiguration.class);
+			Validate.notNull(accountSupplier, "missing '%s' supplier", EmailAccount.class);
 		};
 
 		public Builder withApiFactory(final MailApiFactory apiFactory) {
@@ -42,8 +42,8 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 			return this;
 		}
 
-		public Builder withConfiguration(final Supplier<EmailConfiguration> configurationSupplier) {
-			this.configurationSupplier = configurationSupplier;
+		public Builder withConfiguration(final Supplier<EmailAccount> accountSupplier) {
+			this.accountSupplier = accountSupplier;
 			return this;
 		}
 
@@ -55,25 +55,23 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 
 	private final MailApiFactory apiFactory;
 	private final EmailPersistence persistence;
-	private final Supplier<EmailConfiguration> configurationSupplier;
+	private final Supplier<EmailAccount> accountSupplier;
 
 	public ConfigurableEmailServiceFactory(final Builder builder) {
 		this.apiFactory = builder.apiFactory;
 		this.persistence = builder.persistence;
-		this.configurationSupplier = builder.configurationSupplier;
+		this.accountSupplier = builder.accountSupplier;
 	}
 
 	@Override
 	public EmailService create() {
-		return create(configurationSupplier.get());
+		return create(accountSupplier.get());
 	}
 
 	@Override
-	public EmailService create(final EmailConfiguration configuration) {
-		Validate.notNull(apiFactory, "null api factory");
-		Validate.notNull(persistence, "null persistence");
-		Validate.notNull(configuration, "null configuration");
-		return new DefaultEmailService(ofInstance(configuration), apiFactory, persistence);
+	public EmailService create(final EmailAccount account) {
+		Validate.notNull(account, "missing '%s'", EmailAccount.class);
+		return new DefaultEmailService(ofInstance(account), apiFactory, persistence);
 	}
 
 }

@@ -27,9 +27,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.TempDataSource;
-import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreator;
@@ -355,7 +355,7 @@ public class EmailLogic implements Logic {
 	private static final Collection<EmailStatus> SAVEABLE_STATUSES = Arrays.asList(EmailStatus.DRAFT, MISSING_STATUS);
 
 	private final CMDataView view;
-	private final Supplier<EmailConfiguration> emailConfigurationSupplier;
+	private final Supplier<EmailAccount> emailAccountSupplier;
 	private final EmailService emailService;
 	private final SubjectHandler subjectHandler;
 	private final DmsConfiguration dmsConfiguration;
@@ -367,7 +367,7 @@ public class EmailLogic implements Logic {
 	public EmailLogic( //
 			final CMDataView dataView, //
 			// FIXME why?
-			final Supplier<EmailConfiguration> emailConfigurationSupplier, //
+			final Supplier<EmailAccount> emailConfigurationSupplier, //
 			final EmailService emailService, //
 			final SubjectHandler subjectHandler, //
 			final DmsConfiguration dmsConfiguration, //
@@ -377,7 +377,7 @@ public class EmailLogic implements Logic {
 			final OperationUser operationUser //
 	) {
 		this.view = dataView;
-		this.emailConfigurationSupplier = synchronizedSupplier(memoize(emailConfigurationSupplier));
+		this.emailAccountSupplier = synchronizedSupplier(memoize(emailConfigurationSupplier));
 		this.emailService = emailService;
 		this.subjectHandler = subjectHandler;
 		this.dmsConfiguration = dmsConfiguration;
@@ -412,10 +412,10 @@ public class EmailLogic implements Logic {
 	}
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
-		final EmailConfiguration configuration = emailConfigurationSupplier.get();
+		final EmailAccount configuration = emailAccountSupplier.get();
 		for (final Email email : emailService.getOutgoingEmails(processCardId)) {
 			if (isEmpty(email.getFromAddress())) {
-				email.setFromAddress(configuration.getEmailAddress());
+				email.setFromAddress(configuration.getAddress());
 			}
 			try {
 				// FIXME really needed here?

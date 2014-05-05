@@ -1,6 +1,5 @@
 package org.cmdbuild.services.email;
 
-import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.logger.Log;
@@ -8,7 +7,7 @@ import org.slf4j.Logger;
 
 import com.google.common.base.Supplier;
 
-public class DefaultEmailConfigurationSupplier implements Supplier<EmailConfiguration> {
+public class DefaultEmailConfigurationSupplier implements Supplier<EmailAccount> {
 
 	private static final Logger logger = Log.EMAIL;
 
@@ -19,11 +18,11 @@ public class DefaultEmailConfigurationSupplier implements Supplier<EmailConfigur
 	}
 
 	@Override
-	public EmailConfiguration get() {
+	public EmailAccount get() {
 		logger.debug("getting default email account");
 		for (final EmailAccount emailAccount : store.list()) {
 			if (emailAccount.isDefault()) {
-				return EmailAccountWrapper.of(emailAccount);
+				return emailAccount;
 			}
 		}
 		throw new IllegalArgumentException("default account not found");

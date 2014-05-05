@@ -22,7 +22,6 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
-import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailAccount;
@@ -41,7 +40,6 @@ import org.cmdbuild.model.email.EmailConstants;
 import org.cmdbuild.scheduler.Job;
 import org.cmdbuild.services.email.CollectingEmailCallbackHandler;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
-import org.cmdbuild.services.email.EmailAccountWrapper;
 import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.SubjectHandler;
@@ -323,8 +321,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	protected Job doCreate(final ReadEmailTask task) {
 		final String emailAccountName = task.getEmailAccount();
 		final EmailAccount selectedEmailAccount = emailAccountFor(emailAccountName);
-		final EmailConfiguration emailConfiguration = emailConfigurationFrom(selectedEmailAccount);
-		final EmailService service = emailServiceFactory.create(emailConfiguration);
+		final EmailService service = emailServiceFactory.create(selectedEmailAccount);
 
 		final ReadEmail.Builder readEmail = ReadEmail.newInstance() //
 				.withEmailService(service) //
@@ -514,11 +511,6 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 			}
 		}
 		throw new IllegalArgumentException("email account not found");
-	}
-
-	private EmailConfiguration emailConfigurationFrom(final EmailAccount emailAccount) {
-		logger.debug(marker, "getting email configuration from email account {}", emailAccount);
-		return EmailAccountWrapper.of(emailAccount);
 	}
 
 	private Predicate<Email> predicate(final ReadEmailTask task) {

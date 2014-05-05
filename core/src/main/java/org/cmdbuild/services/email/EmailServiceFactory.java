@@ -1,6 +1,6 @@
 package org.cmdbuild.services.email;
 
-import org.cmdbuild.config.EmailConfiguration;
+import org.cmdbuild.data.store.email.EmailAccount;
 
 /**
  * {@link EmailService} factory class.
@@ -15,13 +15,13 @@ public interface EmailServiceFactory {
 	EmailService create();
 
 	/**
-	 * Creates a new {@link EmailService} with the specific
-	 * {@link EmailConfiguration}.
+	 * Creates a new {@link EmailService} with the specific {@link EmailAccount}
+	 * .
 	 * 
-	 * @param configuration
+	 * @param account
 	 * 
 	 * @return the created {@link EmailService}.
 	 */
-	EmailService create(EmailConfiguration configuration);
+	EmailService create(EmailAccount account);
 
 }
