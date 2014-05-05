@@ -211,7 +211,7 @@ public class SynchronousEventTask implements Task {
 	private final String description;
 	private final boolean active;
 	private final Phase phase;
-	private final Iterable<? extends String> groups;
+	private final Iterable<String> groups;
 	private final String classname;
 	private final boolean emailEnabled;
 	private final String emailAccount;
@@ -269,7 +269,7 @@ public class SynchronousEventTask implements Task {
 		return phase;
 	}
 
-	public Iterable<? extends String> getGroups() {
+	public Iterable<String> getGroups() {
 		return groups;
 	}
 
