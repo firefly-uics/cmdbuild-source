@@ -24,7 +24,7 @@ import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.dms.DmsLogic;
@@ -254,7 +254,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	};
 
-	private final Store<EmailAccount> emailAccountStore;
+	private final Store<StorableEmailAccount> emailAccountStore;
 	private final ConfigurableEmailServiceFactory emailServiceFactory;
 	private final SubjectHandler subjectHandler;
 	private final EmailPersistence emailPersistence;
@@ -263,7 +263,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	private final CMDataView dataView;
 
 	public ReadEmailTaskJobFactory( //
-			final Store<EmailAccount> emailAccountStore, //
+			final Store<StorableEmailAccount> emailAccountStore, //
 			final ConfigurableEmailServiceFactory emailServiceFactory, //
 			final SubjectHandler subjectHandler, //
 			final EmailPersistence emailPersistence, //
@@ -320,7 +320,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	@Override
 	protected Job doCreate(final ReadEmailTask task) {
 		final String emailAccountName = task.getEmailAccount();
-		final EmailAccount selectedEmailAccount = emailAccountFor(emailAccountName);
+		final StorableEmailAccount selectedEmailAccount = emailAccountFor(emailAccountName);
 		final EmailService service = emailServiceFactory.create(selectedEmailAccount);
 
 		final ReadEmail.Builder readEmail = ReadEmail.newInstance() //
@@ -503,9 +503,9 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 				});
 	}
 
-	private EmailAccount emailAccountFor(final String emailAccountName) {
+	private StorableEmailAccount emailAccountFor(final String emailAccountName) {
 		logger.debug(marker, "getting email account for name '{}'", emailAccountName);
-		for (final EmailAccount emailAccount : emailAccountStore.list()) {
+		for (final StorableEmailAccount emailAccount : emailAccountStore.list()) {
 			if (emailAccount.getName().equals(emailAccountName)) {
 				return emailAccount;
 			}

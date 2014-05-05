@@ -4,7 +4,7 @@ import static com.google.common.base.Suppliers.ofInstance;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.api.mail.MailApiFactory;
-import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.StorableEmailAccount;
 
 import com.google.common.base.Supplier;
 
@@ -14,7 +14,7 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 
 		private MailApiFactory apiFactory;
 		private EmailPersistence persistence;
-		private Supplier<EmailAccount> accountSupplier;
+		private Supplier<StorableEmailAccount> accountSupplier;
 
 		private Builder() {
 			// use factory method
@@ -29,7 +29,7 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 		private void validate() {
 			Validate.notNull(apiFactory, "missing '%s'", MailApiFactory.class);
 			Validate.notNull(persistence, "missing '%s'", EmailPersistence.class);
-			Validate.notNull(accountSupplier, "missing '%s' supplier", EmailAccount.class);
+			Validate.notNull(accountSupplier, "missing '%s' supplier", StorableEmailAccount.class);
 		};
 
 		public Builder withApiFactory(final MailApiFactory apiFactory) {
@@ -42,7 +42,7 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 			return this;
 		}
 
-		public Builder withConfiguration(final Supplier<EmailAccount> accountSupplier) {
+		public Builder withConfiguration(final Supplier<StorableEmailAccount> accountSupplier) {
 			this.accountSupplier = accountSupplier;
 			return this;
 		}
@@ -55,7 +55,7 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 
 	private final MailApiFactory apiFactory;
 	private final EmailPersistence persistence;
-	private final Supplier<EmailAccount> accountSupplier;
+	private final Supplier<StorableEmailAccount> accountSupplier;
 
 	public ConfigurableEmailServiceFactory(final Builder builder) {
 		this.apiFactory = builder.apiFactory;
@@ -70,7 +70,7 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 
 	@Override
 	public EmailService create(final EmailAccount account) {
-		Validate.notNull(account, "missing '%s'", EmailAccount.class);
+		Validate.notNull(account, "missing '%s'", StorableEmailAccount.class);
 		return new DefaultEmailService(ofInstance(account), apiFactory, persistence);
 	}
 

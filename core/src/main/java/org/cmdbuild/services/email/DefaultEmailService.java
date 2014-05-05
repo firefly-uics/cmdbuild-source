@@ -21,7 +21,6 @@ import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.MailException;
 import org.cmdbuild.common.api.mail.NewMail;
 import org.cmdbuild.common.api.mail.SelectMail;
-import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
@@ -145,7 +144,7 @@ public class DefaultEmailService implements EmailService {
 
 	private static final Map<URL, String> NO_ATTACHMENTS = Collections.emptyMap();
 
-	private final Supplier<EmailAccount> emailConfigurationSupplier;
+	private final Supplier<EmailAccount> emailAccountSupplier;
 	private final Supplier<MailApi> mailApiSupplier;
 	private final EmailPersistence persistence;
 
@@ -154,7 +153,7 @@ public class DefaultEmailService implements EmailService {
 			final MailApiFactory mailApiFactory, //
 			final EmailPersistence persistence //
 	) {
-		this.emailConfigurationSupplier = memoize(emailConfigurationSupplier);
+		this.emailAccountSupplier = memoize(emailConfigurationSupplier);
 		this.mailApiSupplier = memoize(new MailApiSupplier(emailConfigurationSupplier, mailApiFactory));
 		this.persistence = persistence;
 	}
@@ -187,7 +186,7 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	private String from(final String fromAddress) {
-		return defaultIfBlank(fromAddress, emailConfigurationSupplier.get().getAddress());
+		return defaultIfBlank(fromAddress, emailAccountSupplier.get().getAddress());
 	}
 
 	private String[] addressesFrom(final String addresses) {
@@ -215,7 +214,7 @@ public class DefaultEmailService implements EmailService {
 		 * to sync the e-mails. So don't try to reach always the server but only
 		 * if configured
 		 */
-		if (emailConfigurationSupplier.get().isImapConfigured()) {
+		if (emailAccountSupplier.get().isImapConfigured()) {
 			try {
 				receive0(callback);
 			} catch (final MailException e) {
@@ -229,7 +228,7 @@ public class DefaultEmailService implements EmailService {
 
 	private void receive0(final EmailCallbackHandler callback) {
 		final Iterable<FetchedMail> fetchMails = mailApiSupplier.get() //
-				.selectFolder(emailConfigurationSupplier.get().getInputFolder()) //
+				.selectFolder(emailAccountSupplier.get().getInputFolder()) //
 				.fetch();
 		for (final FetchedMail fetchedMail : fetchMails) {
 			final SelectMail mailMover = mailApiSupplier.get().selectMail(fetchedMail);
@@ -237,7 +236,7 @@ public class DefaultEmailService implements EmailService {
 			try {
 				final GetMail getMail = mailApiSupplier.get().selectMail(fetchedMail).get();
 				final Email email = transform(getMail);
-				mailMover.selectTargetFolder(emailConfigurationSupplier.get().getProcessedFolder());
+				mailMover.selectTargetFolder(emailAccountSupplier.get().getProcessedFolder());
 				if (callback.apply(email)) {
 					final Long id = persistence.save(email);
 					final Email stored = persistence.getEmail(id);
@@ -245,8 +244,8 @@ public class DefaultEmailService implements EmailService {
 				}
 			} catch (final Exception e) {
 				logger.error("error getting mail", e);
-				keepMail = !emailConfigurationSupplier.get().isRejectNotMatching();
-				mailMover.selectTargetFolder(emailConfigurationSupplier.get().getRejectedFolder());
+				keepMail = !emailAccountSupplier.get().isRejectNotMatching();
+				mailMover.selectTargetFolder(emailAccountSupplier.get().getRejectedFolder());
 			}
 
 			try {
@@ -280,7 +279,7 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	private EmailStatus getMessageStatusFromSender(final String from) {
-		if (emailConfigurationSupplier.get().getAddress().equalsIgnoreCase(from)) {
+		if (emailAccountSupplier.get().getAddress().equalsIgnoreCase(from)) {
 			// Probably sent from Shark with BCC here
 			return EmailStatus.SENT;
 		} else {

@@ -6,10 +6,11 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.services.email.EmailAccount;
 
-public class EmailAccount implements Storable {
+public class StorableEmailAccount implements EmailAccount, Storable {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<EmailAccount> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<StorableEmailAccount> {
 
 		private Long id;
 		private String name;
@@ -33,9 +34,9 @@ public class EmailAccount implements Storable {
 		}
 
 		@Override
-		public EmailAccount build() {
+		public StorableEmailAccount build() {
 			validate();
-			return new EmailAccount(this);
+			return new StorableEmailAccount(this);
 		}
 
 		private void validate() {
@@ -150,7 +151,7 @@ public class EmailAccount implements Storable {
 	private final String rejectedFolder;
 	private final boolean rejectNotMatching;
 
-	private EmailAccount(final Builder builder) {
+	private StorableEmailAccount(final Builder builder) {
 		this.id = builder.id;
 		this.name = builder.name;
 		this.isDefault = builder.isDefault;
@@ -169,7 +170,6 @@ public class EmailAccount implements Storable {
 		this.rejectNotMatching = builder.rejectNotMatching;
 	}
 
-	@Override
 	public String getIdentifier() {
 		return name;
 	}
@@ -178,75 +178,91 @@ public class EmailAccount implements Storable {
 		return id;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public boolean isDefault() {
 		return isDefault;
 	}
 
+	@Override
 	public String getUsername() {
 		return username;
 	}
 
+	@Override
 	public String getPassword() {
 		return password;
 	}
 
+	@Override
 	public String getAddress() {
 		return address;
 	}
 
+	@Override
 	public String getSmtpServer() {
 		return smtpServer;
 	}
 
+	@Override
 	public Integer getSmtpPort() {
 		return smtpPort;
 	}
 
+	@Override
 	public boolean isSmtpSsl() {
 		return smtpSsl;
 	}
 
+	@Override
 	public boolean isSmtpConfigured() {
 		return isNotBlank(smtpServer) && isNotBlank(address);
 	}
 
+	@Override
 	public String getImapServer() {
 		return imapServer;
 	}
 
+	@Override
 	public Integer getImapPort() {
 		return imapPort;
 	}
 
+	@Override
 	public boolean isImapSsl() {
 		return imapSsl;
 	}
 
+	@Override
 	public boolean isImapConfigured() {
 		return isNotBlank(imapServer) && isNotBlank(username) && isNotBlank(password);
 	}
 
+	@Override
 	public String getInputFolder() {
 		return inputFolder;
 	}
 
+	@Override
 	public String getProcessedFolder() {
 		return processedFolder;
 	}
 
+	@Override
 	public String getRejectedFolder() {
 		return rejectedFolder;
 	}
 
+	@Override
 	public boolean isRejectNotMatching() {
 		return rejectNotMatching;
 	}
 
-	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
