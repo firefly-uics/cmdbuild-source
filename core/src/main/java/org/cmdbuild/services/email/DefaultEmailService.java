@@ -1,5 +1,6 @@
 package org.cmdbuild.services.email;
 
+import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.Iterables.unmodifiableIterable;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -12,16 +13,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
-import org.cmdbuild.common.Holder;
-import org.cmdbuild.common.SingletonHolder;
-import org.cmdbuild.common.mail.FetchedMail;
-import org.cmdbuild.common.mail.GetMail;
-import org.cmdbuild.common.mail.MailApi;
-import org.cmdbuild.common.mail.MailApi.Configuration;
-import org.cmdbuild.common.mail.MailApiFactory;
-import org.cmdbuild.common.mail.MailException;
-import org.cmdbuild.common.mail.NewMail;
-import org.cmdbuild.common.mail.SelectMail;
+import org.cmdbuild.common.api.mail.Configuration;
+import org.cmdbuild.common.api.mail.FetchedMail;
+import org.cmdbuild.common.api.mail.GetMail;
+import org.cmdbuild.common.api.mail.MailApi;
+import org.cmdbuild.common.api.mail.MailApiFactory;
+import org.cmdbuild.common.api.mail.MailException;
+import org.cmdbuild.common.api.mail.NewMail;
+import org.cmdbuild.common.api.mail.SelectMail;
 import org.cmdbuild.config.EmailConfiguration;
 import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.model.email.Attachment;
@@ -31,51 +30,31 @@ import org.cmdbuild.model.email.EmailConstants;
 import org.slf4j.Logger;
 
 import com.google.common.base.Predicates;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 
 public class DefaultEmailService implements EmailService {
 
-	private static class EmailConfigurationHolder extends SingletonHolder<EmailConfiguration> {
+	private static class MailApiSupplier implements Supplier<MailApi> {
 
-		private final EmailConfigurationFactory emailConfigurationFactory;
-		private final EmailConfiguration emailConfiguration;
-
-		public EmailConfigurationHolder(final EmailConfigurationFactory emailConfigurationFactory) {
-			this.emailConfigurationFactory = emailConfigurationFactory;
-			this.emailConfiguration = null;
-		}
-
-		public EmailConfigurationHolder(final EmailConfiguration emailConfiguration) {
-			this.emailConfigurationFactory = null;
-			this.emailConfiguration = emailConfiguration;
-		}
-
-		@Override
-		protected EmailConfiguration doGet() {
-			return (emailConfigurationFactory == null) ? emailConfiguration : emailConfigurationFactory.create();
-		}
-	}
-
-	private static class MailApiHolder extends SingletonHolder<MailApi> {
-		private final Holder<EmailConfiguration> emailConfigurationHolder;
+		private final Supplier<EmailConfiguration> emailConfigurationSupplier;
 		private final MailApiFactory mailApiFactory;
 
-		public MailApiHolder(final Holder<EmailConfiguration> emailConfigurationHolder,
+		public MailApiSupplier(final Supplier<EmailConfiguration> emailConfigurationSupplier,
 				final MailApiFactory mailApiFactory) {
-			this.emailConfigurationHolder = emailConfigurationHolder;
+			this.emailConfigurationSupplier = emailConfigurationSupplier;
 			this.mailApiFactory = mailApiFactory;
 		}
 
 		@Override
-		protected MailApi doGet() {
-			final EmailConfiguration configuration = emailConfigurationHolder.get();
-			mailApiFactory.setConfiguration(transform(configuration));
-			return mailApiFactory.createMailApi();
+		public MailApi get() {
+			final EmailConfiguration configuration = emailConfigurationSupplier.get();
+			return mailApiFactory.create(transform(configuration));
 		}
 
-		private Configuration transform(final EmailConfiguration configuration) {
+		private Configuration.All transform(final EmailConfiguration configuration) {
 			logger.trace("configuring mail API with configuration:", configuration);
-			return new MailApi.Configuration() {
+			return new Configuration.All() {
 
 				@Override
 				public boolean isDebug() {
@@ -159,27 +138,17 @@ public class DefaultEmailService implements EmailService {
 
 	private static final Map<URL, String> NO_ATTACHMENTS = Collections.emptyMap();
 
-	private final EmailConfigurationHolder emailConfigurationHolder;
-	private final MailApiHolder mailApiHolder;
+	private final Supplier<EmailConfiguration> emailConfigurationSupplier;
+	private final Supplier<MailApi> mailApiSupplier;
 	private final EmailPersistence persistence;
 
-	public DefaultEmailService( //
-			final EmailConfigurationFactory emailConfigurationFactory, //
+	DefaultEmailService( //
+			final Supplier<EmailConfiguration> emailConfigurationSupplier, //
 			final MailApiFactory mailApiFactory, //
 			final EmailPersistence persistence //
 	) {
-		this.emailConfigurationHolder = new EmailConfigurationHolder(emailConfigurationFactory);
-		this.mailApiHolder = new MailApiHolder(emailConfigurationHolder, mailApiFactory);
-		this.persistence = persistence;
-	}
-
-	public DefaultEmailService( //
-			final EmailConfiguration emailConfiguration, //
-			final MailApiFactory mailApiFactory, //
-			final EmailPersistence persistence //
-	) {
-		this.emailConfigurationHolder = new EmailConfigurationHolder(emailConfiguration);
-		this.mailApiHolder = new MailApiHolder(emailConfigurationHolder, mailApiFactory);
+		this.emailConfigurationSupplier = memoize(emailConfigurationSupplier);
+		this.mailApiSupplier = memoize(new MailApiSupplier(emailConfigurationSupplier, mailApiFactory));
 		this.persistence = persistence;
 	}
 
@@ -193,7 +162,7 @@ public class DefaultEmailService implements EmailService {
 	public void send(final Email email, final Map<URL, String> attachments) throws EmailServiceException {
 		logger.info("sending email {} with attachments {}", email.getId(), attachments);
 		try {
-			final NewMail newMail = mailApiHolder.get().newMail() //
+			final NewMail newMail = mailApiSupplier.get().newMail() //
 					.withFrom(from(email.getFromAddress())) //
 					.withTo(addressesFrom(email.getToAddresses())) //
 					.withCc(addressesFrom(email.getCcAddresses())) //
@@ -211,7 +180,7 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	private String from(final String fromAddress) {
-		return defaultIfBlank(fromAddress, emailConfigurationHolder.get().getEmailAddress());
+		return defaultIfBlank(fromAddress, emailConfigurationSupplier.get().getEmailAddress());
 	}
 
 	private String[] addressesFrom(final String addresses) {
@@ -239,7 +208,7 @@ public class DefaultEmailService implements EmailService {
 		 * to sync the e-mails. So don't try to reach always the server but only
 		 * if configured
 		 */
-		if (emailConfigurationHolder.get().isImapConfigured()) {
+		if (emailConfigurationSupplier.get().isImapConfigured()) {
 			try {
 				receive0(callback);
 			} catch (final MailException e) {
@@ -252,16 +221,16 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	private void receive0(final EmailCallbackHandler callback) {
-		final Iterable<FetchedMail> fetchMails = mailApiHolder.get() //
-				.selectFolder(emailConfigurationHolder.get().getInputFolder()) //
+		final Iterable<FetchedMail> fetchMails = mailApiSupplier.get() //
+				.selectFolder(emailConfigurationSupplier.get().getInputFolder()) //
 				.fetch();
 		for (final FetchedMail fetchedMail : fetchMails) {
-			final SelectMail mailMover = mailApiHolder.get().selectMail(fetchedMail);
+			final SelectMail mailMover = mailApiSupplier.get().selectMail(fetchedMail);
 			boolean keepMail = false;
 			try {
-				final GetMail getMail = mailApiHolder.get().selectMail(fetchedMail).get();
+				final GetMail getMail = mailApiSupplier.get().selectMail(fetchedMail).get();
 				final Email email = transform(getMail);
-				mailMover.selectTargetFolder(emailConfigurationHolder.get().getProcessedFolder());
+				mailMover.selectTargetFolder(emailConfigurationSupplier.get().getProcessedFolder());
 				if (callback.apply(email)) {
 					final Long id = persistence.save(email);
 					final Email stored = persistence.getEmail(id);
@@ -269,8 +238,8 @@ public class DefaultEmailService implements EmailService {
 				}
 			} catch (final Exception e) {
 				logger.error("error getting mail", e);
-				keepMail = emailConfigurationHolder.get().keepUnknownMessages();
-				mailMover.selectTargetFolder(emailConfigurationHolder.get().getRejectedFolder());
+				keepMail = emailConfigurationSupplier.get().keepUnknownMessages();
+				mailMover.selectTargetFolder(emailConfigurationSupplier.get().getRejectedFolder());
 			}
 
 			try {
@@ -304,7 +273,7 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	private EmailStatus getMessageStatusFromSender(final String from) {
-		if (emailConfigurationHolder.get().getEmailAddress().equalsIgnoreCase(from)) {
+		if (emailConfigurationSupplier.get().getEmailAddress().equalsIgnoreCase(from)) {
 			// Probably sent from Shark with BCC here
 			return EmailStatus.SENT;
 		} else {

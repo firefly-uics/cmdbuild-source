@@ -41,7 +41,7 @@ import org.cmdbuild.model.email.EmailConstants;
 import org.cmdbuild.scheduler.Job;
 import org.cmdbuild.services.email.CollectingEmailCallbackHandler;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
-import org.cmdbuild.services.email.EmailAccountConfiguration;
+import org.cmdbuild.services.email.EmailAccountWrapper;
 import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.SubjectHandler;
@@ -518,7 +518,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private EmailConfiguration emailConfigurationFrom(final EmailAccount emailAccount) {
 		logger.debug(marker, "getting email configuration from email account {}", emailAccount);
-		return new EmailAccountConfiguration(emailAccount);
+		return EmailAccountWrapper.of(emailAccount);
 	}
 
 	private Predicate<Email> predicate(final ReadEmailTask task) {

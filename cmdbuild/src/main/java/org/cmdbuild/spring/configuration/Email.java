@@ -3,8 +3,8 @@ package org.cmdbuild.spring.configuration;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.common.mail.DefaultMailApiFactory;
-import org.cmdbuild.common.mail.MailApiFactory;
+import org.cmdbuild.common.api.mail.MailApiFactory;
+import org.cmdbuild.common.api.mail.javax.mail.JavaxMailBasedMailApiFactory;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
@@ -20,11 +20,9 @@ import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
-import org.cmdbuild.services.email.DefaultEmailConfigurationFactory;
+import org.cmdbuild.services.email.DefaultEmailConfigurationSupplier;
 import org.cmdbuild.services.email.DefaultEmailPersistence;
-import org.cmdbuild.services.email.DefaultEmailService;
 import org.cmdbuild.services.email.DefaultSubjectHandler;
-import org.cmdbuild.services.email.EmailConfigurationFactory;
 import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.SubjectHandler;
@@ -64,14 +62,13 @@ public class Email {
 	}
 
 	@Bean
-	@Scope(PROTOTYPE)
-	public EmailConfigurationFactory defaultEmailConfigurationFactory() {
-		return new DefaultEmailConfigurationFactory(emailAccountStore());
+	public DefaultEmailConfigurationSupplier defaultEmailConfigurationSupplier() {
+		return new DefaultEmailConfigurationSupplier(emailAccountStore());
 	}
 
 	@Bean
 	public MailApiFactory mailApiFactory() {
-		return new DefaultMailApiFactory();
+		return new JavaxMailBasedMailApiFactory();
 	}
 
 	@Bean
@@ -94,17 +91,14 @@ public class Email {
 	}
 
 	@Bean
-	@Scope(PROTOTYPE)
 	public EmailService defaultEmailService() {
-		return new DefaultEmailService( //
-				defaultEmailConfigurationFactory(), //
-				mailApiFactory(), //
-				emailPersistence());
-	}
+		return ConfigurableEmailServiceFactory.newInstance() //
+				.withApiFactory(mailApiFactory()) //
+				.withPersistence(emailPersistence()) //
+				.withConfiguration(defaultEmailConfigurationSupplier()) //
+				.build() //
+				.create();
 
-	@Bean
-	public ConfigurableEmailServiceFactory configurableEmailServiceFactory() {
-		return new ConfigurableEmailServiceFactory(mailApiFactory(), emailPersistence());
 	}
 
 	@Bean
@@ -127,7 +121,7 @@ public class Email {
 	public EmailLogic emailLogic() {
 		return new EmailLogic( //
 				data.systemDataView(), //
-				defaultEmailConfigurationFactory(), //
+				defaultEmailConfigurationSupplier(), //
 				defaultEmailService(), //
 				subjectHandler(), //
 				properties.dmsProperties(), //
