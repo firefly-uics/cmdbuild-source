@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.translation;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.Collections;
 import java.util.Map;

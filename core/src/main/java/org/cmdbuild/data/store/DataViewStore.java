@@ -1,5 +1,6 @@
 package org.cmdbuild.data.store;
 
+import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.transform;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
@@ -14,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.cmdbuild.common.Holder;
-import org.cmdbuild.common.SingletonHolder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -31,6 +30,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 public class DataViewStore<T extends Storable> implements Store<T> {
 
@@ -197,16 +197,16 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	private final CMDataView view;
 	private final Groupable groupable;
 	private final StorableConverter<T> converter;
-	private final Holder<CMClass> storeClassHolder;
+	private final Supplier<CMClass> storeClassHolder;
 
 	private DataViewStore(final CMDataView view, final Groupable groupable, final StorableConverter<T> converter) {
 		this.view = view;
 		this.groupable = groupable;
 		this.converter = wrap(converter);
-		this.storeClassHolder = new SingletonHolder<CMClass>() {
+		this.storeClassHolder = memoize(new Supplier<CMClass>() {
 
 			@Override
-			protected CMClass doGet() {
+			public CMClass get() {
 				final String className = converter.getClassName();
 				final CMClass target = view.findClass(className);
 				if (target == null) {
@@ -216,7 +216,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 				return target;
 			}
 
-		};
+		});
 	}
 
 	private StorableConverter<T> wrap(final StorableConverter<T> converter) {

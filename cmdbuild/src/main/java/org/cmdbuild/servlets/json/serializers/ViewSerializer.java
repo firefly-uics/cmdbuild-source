@@ -1,13 +1,20 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_FUNCTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.VIEWS;
+
 import java.util.List;
 
 import org.cmdbuild.model.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
 
 public class ViewSerializer {
 

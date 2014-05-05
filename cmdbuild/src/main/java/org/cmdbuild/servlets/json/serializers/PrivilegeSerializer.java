@@ -1,5 +1,16 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES_PRIVILEGES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_NONE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_OBJ_DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_OBJ_ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_OBJ_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_READ;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_WRITE;
+
 import java.util.List;
 
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
@@ -9,8 +20,6 @@ import org.cmdbuild.logic.privileges.PrivilegeInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
 
 public class PrivilegeSerializer {
 

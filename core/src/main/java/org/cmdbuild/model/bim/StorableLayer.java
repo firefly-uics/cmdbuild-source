@@ -1,7 +1,8 @@
 package org.cmdbuild.model.bim;
 
-import org.cmdbuild.data.store.Storable;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+
+import org.cmdbuild.data.store.Storable;
 
 public class StorableLayer implements Storable {
 

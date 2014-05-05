@@ -1,5 +1,17 @@
 package org.cmdbuild.bim.geometry;
 
+import static org.cmdbuild.bim.utils.BimConstants.IFC_AXIS;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_AXIS2_PLACEMENT2D;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_AXIS2_PLACEMENT3D;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_CARTESIAN_POINT;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_COORDINATES;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_DIRECTION;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_DIRECTION_RATIOS;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_OBJECT_PLACEMENT;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_PLACEMENT_REL_TO;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_REF_DIRECTION;
+import static org.cmdbuild.bim.utils.BimConstants.IFC_RELATIVE_PLACEMENT;
+
 import java.util.List;
 
 import javax.vecmath.Vector3d;
@@ -8,15 +20,13 @@ import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.model.Position3d;
 import org.cmdbuild.bim.model.SpaceGeometry;
-import org.cmdbuild.bim.model.implementation.IfcPosition3d;
 import org.cmdbuild.bim.model.implementation.DefaultSpaceGeometry;
+import org.cmdbuild.bim.model.implementation.IfcPosition3d;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.ListAttribute;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.SimpleAttribute;
-
-import static org.cmdbuild.bim.utils.BimConstants.*;
 
 import com.google.common.collect.Lists;
 

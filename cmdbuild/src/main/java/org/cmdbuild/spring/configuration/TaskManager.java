@@ -32,7 +32,6 @@ import org.cmdbuild.logic.taskmanager.StartWorkflowTaskJobFactory;
 import org.cmdbuild.logic.taskmanager.SynchronousEventFacade;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TransactionalTaskManagerLogic;
-import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
 import org.cmdbuild.services.event.DefaultObserverCollector;
 import org.cmdbuild.services.event.ObserverCollector;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
@@ -44,9 +43,6 @@ public class TaskManager {
 
 	@Autowired
 	private Api api;
-
-	@Autowired
-	private ConfigurableEmailServiceFactory configurableEmailServiceFactory;
 
 	@Autowired
 	private Data data;
@@ -137,13 +133,15 @@ public class TaskManager {
 	protected ReadEmailTaskJobFactory readEmailTaskJobFactory() {
 		return new ReadEmailTaskJobFactory( //
 				email.emailAccountStore(), //
-				configurableEmailServiceFactory, //
+				email.emailServiceFactory(), //
 				email.subjectHandler(), //
 				email.emailPersistence(), //
 				workflow.systemWorkflowLogicBuilder() //
 						.build(), //
 				dms.dmsLogic(), //
-				data.systemDataView());
+				data.systemDataView(), //
+				email.emailTemplateLogic() //
+		);
 	}
 
 	@Bean
@@ -163,7 +161,15 @@ public class TaskManager {
 
 	@Bean
 	protected ObserverFactory observerFactory() {
-		return new DefaultObserverFactory(userStore, api.systemFluentApi());
+		return new DefaultObserverFactory( //
+				userStore, //
+				api.systemFluentApi(), //
+				workflow.systemWorkflowLogicBuilder().build(), //
+				email.emailAccountStore(), //
+				email.emailServiceFactory(), //
+				email.emailTemplateLogic(), //
+				data.systemDataView() //
+		);
 	}
 
 }

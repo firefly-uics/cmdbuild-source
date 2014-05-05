@@ -24,7 +24,7 @@ public interface EmailService {
 	 *             if there is any problem.
 	 */
 	void send(Email email) throws EmailServiceException;
-	
+
 	/**
 	 * Sends the specified {@link Email} with some attachments.
 	 * 
@@ -34,7 +34,7 @@ public interface EmailService {
 	 * @throws EmailServiceException
 	 *             if there is any problem.
 	 */
-	void send(final Email email, final Map<URL, String> attachments) throws EmailServiceException ;
+	void send(final Email email, final Map<URL, String> attachments) throws EmailServiceException;
 
 	void receive(EmailCallbackHandler callback) throws EmailServiceException;
 

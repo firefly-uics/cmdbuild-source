@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -188,9 +188,9 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	private static class AccountWrapper implements Account {
 
-		private final EmailAccount delegate;
+		private final StorableEmailAccount delegate;
 
-		public AccountWrapper(final EmailAccount delegate) {
+		public AccountWrapper(final StorableEmailAccount delegate) {
 			this.delegate = delegate;
 		}
 
@@ -281,20 +281,20 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	}
 
-	private static final Function<EmailAccount, Account> EMAIL_ACCOUNT_TO_ACCOUNT = new Function<EmailAccount, EmailAccountLogic.Account>() {
+	private static final Function<StorableEmailAccount, Account> EMAIL_ACCOUNT_TO_ACCOUNT = new Function<StorableEmailAccount, EmailAccountLogic.Account>() {
 
 		@Override
-		public Account apply(final EmailAccount input) {
+		public Account apply(final StorableEmailAccount input) {
 			return new AccountWrapper(input);
 		};
 
 	};
 
-	private static final Function<Account, EmailAccount> ACCOUNT_TO_EMAIL_ACCOUNT = new Function<Account, EmailAccount>() {
+	private static final Function<Account, StorableEmailAccount> ACCOUNT_TO_EMAIL_ACCOUNT = new Function<Account, StorableEmailAccount>() {
 
 		@Override
-		public EmailAccount apply(final Account input) {
-			return EmailAccount.newInstance() //
+		public StorableEmailAccount apply(final Account input) {
+			return StorableEmailAccount.newInstance() //
 					.withDefaultStatus(input.isDefault()) //
 					.withName(input.getName()) //
 					.withAddress(input.getAddress()) //
@@ -315,28 +315,28 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	};
 
-	private static Function<EmailAccount, String> TO_NAME = new Function<EmailAccount, String>() {
+	private static Function<StorableEmailAccount, String> TO_NAME = new Function<StorableEmailAccount, String>() {
 
 		@Override
-		public String apply(final EmailAccount input) {
+		public String apply(final StorableEmailAccount input) {
 			return input.getName();
 		}
 
 	};
 
-	private static Predicate<EmailAccount> IS_DEFAULT = new Predicate<EmailAccount>() {
+	private static Predicate<StorableEmailAccount> IS_DEFAULT = new Predicate<StorableEmailAccount>() {
 
 		@Override
-		public boolean apply(final EmailAccount input) {
+		public boolean apply(final StorableEmailAccount input) {
 			return input.isDefault();
 		}
 
 	};
 
-	private final Store<org.cmdbuild.data.store.email.EmailAccount> store;
+	private final Store<org.cmdbuild.data.store.email.StorableEmailAccount> store;
 
 	public DefaultEmailAccountLogic( //
-			final Store<org.cmdbuild.data.store.email.EmailAccount> store //
+			final Store<StorableEmailAccount> store //
 	) {
 		this.store = store;
 	}
@@ -344,12 +344,12 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	@Override
 	public Long create(final Account account) {
 		logger.info(marker, "creating account '{}'", account);
-		final List<EmailAccount> elements = store.list();
+		final List<StorableEmailAccount> elements = store.list();
 		assureNoOneWithName(account.getName(), elements);
 		final Account readyAccount = isEmpty(elements) ? AlwaysDefault.of(account) : NeverDefault.of(account);
-		final EmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(readyAccount);
+		final StorableEmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(readyAccount);
 		final Storable created = store.create(emailAccount);
-		final EmailAccount readed = store.read(created);
+		final StorableEmailAccount readed = store.read(created);
 		return readed.getId();
 	}
 
@@ -357,9 +357,10 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	public void update(final Account account) {
 		logger.info(marker, "updating account '{}'", account);
 		assureOnlyOneWithName(account.getName());
-		final EmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(account);
-		final EmailAccount readed = store.read(emailAccount);
-		final EmailAccount updateable = ACCOUNT_TO_EMAIL_ACCOUNT.apply(MaybeDefault.of(account, readed.isDefault()));
+		final StorableEmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(account);
+		final StorableEmailAccount readed = store.read(emailAccount);
+		final StorableEmailAccount updateable = ACCOUNT_TO_EMAIL_ACCOUNT.apply(MaybeDefault.of(account,
+				readed.isDefault()));
 		store.update(updateable);
 	}
 
@@ -374,10 +375,10 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	public Account getAccount(final String name) {
 		logger.info(marker, "getting account '{}'", name);
 		assureOnlyOneWithName(name);
-		final EmailAccount account = EmailAccount.newInstance() //
+		final StorableEmailAccount account = StorableEmailAccount.newInstance() //
 				.withName(name) //
 				.build();
-		final EmailAccount readed = store.read(account);
+		final StorableEmailAccount readed = store.read(account);
 		return EMAIL_ACCOUNT_TO_ACCOUNT.apply(readed);
 	}
 
@@ -386,7 +387,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		logger.info(marker, "deleting account '{}'", name);
 		assureOnlyOneWithName(name);
 		assureNotDefault(name);
-		final EmailAccount account = EmailAccount.newInstance() //
+		final StorableEmailAccount account = StorableEmailAccount.newInstance() //
 				.withName(name) //
 				.build();
 		store.delete(account);
@@ -395,30 +396,30 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	@Override
 	public void setDefault(final String name) {
 		logger.info(marker, "setting to default '{}'", name);
-		final List<EmailAccount> elements = store.list();
+		final List<StorableEmailAccount> elements = store.list();
 		assureOnlyOneWithName(name, elements);
 		boolean alreadyDefault = false;
-		for (final EmailAccount element : from(elements).filter(IS_DEFAULT)) {
+		for (final StorableEmailAccount element : from(elements).filter(IS_DEFAULT)) {
 			if (element.getName().equals(name)) {
 				alreadyDefault = true;
 				continue;
 			}
 			final Account account = EMAIL_ACCOUNT_TO_ACCOUNT.apply(element);
-			final EmailAccount updated = ACCOUNT_TO_EMAIL_ACCOUNT.apply(NeverDefault.of(account));
+			final StorableEmailAccount updated = ACCOUNT_TO_EMAIL_ACCOUNT.apply(NeverDefault.of(account));
 			store.update(updated);
 		}
 		if (!alreadyDefault) {
-			final EmailAccount toBeSet = EmailAccount.newInstance() //
+			final StorableEmailAccount toBeSet = StorableEmailAccount.newInstance() //
 					.withName(name) //
 					.build();
-			final EmailAccount element = store.read(toBeSet);
+			final StorableEmailAccount element = store.read(toBeSet);
 			final Account account = EMAIL_ACCOUNT_TO_ACCOUNT.apply(element);
-			final EmailAccount updated = ACCOUNT_TO_EMAIL_ACCOUNT.apply(AlwaysDefault.of(account));
+			final StorableEmailAccount updated = ACCOUNT_TO_EMAIL_ACCOUNT.apply(AlwaysDefault.of(account));
 			store.update(updated);
 		}
 	}
 
-	private void assureNoOneWithName(final String name, final Iterable<EmailAccount> elements) {
+	private void assureNoOneWithName(final String name, final Iterable<StorableEmailAccount> elements) {
 		final boolean existing = from(elements) //
 				.transform(TO_NAME) //
 				.contains(name);
@@ -429,7 +430,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 		assureOnlyOneWithName(name, store.list());
 	}
 
-	private void assureOnlyOneWithName(final String name, final Iterable<EmailAccount> elements) {
+	private void assureOnlyOneWithName(final String name, final Iterable<StorableEmailAccount> elements) {
 		final int count = from(elements) //
 				.transform(TO_NAME) //
 				.filter(equalTo(name)) //
@@ -439,10 +440,10 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	}
 
 	private void assureNotDefault(final String name) {
-		final EmailAccount account = EmailAccount.newInstance() //
+		final StorableEmailAccount account = StorableEmailAccount.newInstance() //
 				.withName(name) //
 				.build();
-		final EmailAccount readed = store.read(account);
+		final StorableEmailAccount readed = store.read(account);
 		Validate.isTrue(!readed.isDefault(), "element is default");
 	}
 

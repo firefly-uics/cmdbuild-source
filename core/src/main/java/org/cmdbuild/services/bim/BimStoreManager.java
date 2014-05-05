@@ -1,7 +1,5 @@
 package org.cmdbuild.services.bim;
 
-import java.util.List;
-
 import org.cmdbuild.model.bim.StorableLayer;
 import org.cmdbuild.model.bim.StorableProject;
 

@@ -28,7 +28,6 @@ import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.DBDataView;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;

@@ -18,7 +18,6 @@ import org.cmdbuild.dao.query.QuerySpecs;
 import org.cmdbuild.dao.view.DBDataView.DBAttributeDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBClassDefinition;
 import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
-import org.joda.time.DateTime;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;

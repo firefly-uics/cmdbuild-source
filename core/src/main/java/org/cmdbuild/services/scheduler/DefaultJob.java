@@ -1,6 +1,7 @@
 package org.cmdbuild.services.scheduler;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.scheduler.Job;
 
