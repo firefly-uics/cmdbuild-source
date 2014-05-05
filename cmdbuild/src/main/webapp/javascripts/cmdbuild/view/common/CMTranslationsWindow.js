@@ -6,11 +6,11 @@
 		width: "100%",
 		name : 'no name',
 		allowBlank : false,
-		setValue: function() {
-			this.text.setValue();
+		setValue: function(value) {
+			this.text.setValue(value);
 		},
-		getValue: function(value) {
-			return this.text.getValue(value);
+		getValue: function() {
+			return this.text.getValue();
 		},
 		initComponent : function() {
 			var me = this;
@@ -61,11 +61,12 @@
 			switch (name) {
 				case 'onFilterWindowConfirm':
 					var values = this.view.form.getValues();
+					var oldValues = this.view.form.getOldValues();//control for create, delete or update values
 					var translationsKeyType = this.view.translationsKeyType;
 					var translationsKeyName = this.view.translationsKeyName;
 					var translationsKeySubName = this.view.translationsKeySubName;
 					var translationsKeyField = this.view.translationsKeyField;
-					_CMCache.saveTranslations(translationsKeyType, translationsKeyName, translationsKeySubName, translationsKeyField, values);
+					_CMCache.createTranslations(translationsKeyType, translationsKeyName, translationsKeySubName, translationsKeyField, values, oldValues);
 					this.view.destroy();
 					break;
 				case 'onFilterWindowAbort':
@@ -86,7 +87,8 @@
 		bodyCls: 'cmgraypanel',
 		height: "100%",
 		textArea: false,
-		buildWindowItem: function() {
+		oldValues: {},
+		buildWindowItem: function(translations) {
 			var activeTranslations = _CMCache.getActiveTranslations();
 			var componentType = (! this.textArea) ?
 					"CMDBuild.view.common.CMTranslationsWindow.CMTranslatableText" :
@@ -99,11 +101,20 @@
 					language: at.language
 				});
 				this.add(item);
+				item.setValue(translations[at.name]);
 			}
+		},
+		getOldValues: function() {
+			return this.oldValues;
 		},
 		initComponent : function() {
 			this.callParent(arguments);
-			this.buildWindowItem();
+			var me = this;
+			_CMCache.readTranslations(this.translationsKeyType, this.translationsKeyName, this.translationsKeySubName, 
+					this.translationsKeyField, function(a, b, response) {
+				me.oldValues = response.response;
+				me.buildWindowItem(response.response);
+			});
 		}
 	});
 	Ext.define('CMDBuild.view.common.CMTranslationsWindow', {
@@ -133,7 +144,11 @@
 			this.form = Ext.create('CMDBuild.view.common.CMTranslationsWindow.CMTranslatableForm', {
 				delegate: me.delegate,
 				configFileName: me.configFileName,
-				textArea: this.textArea
+				textArea: this.textArea,
+				translationsKeyType: this.translationsKeyType,
+				translationsKeyName: this.translationsKeyName,
+				translationsKeySubName: this.translationsKeySubName,
+				translationsKeyField: this.translationsKeyField
 			});
 			this.contentComponent = Ext.create('Ext.panel.Panel', {
 				layout: {

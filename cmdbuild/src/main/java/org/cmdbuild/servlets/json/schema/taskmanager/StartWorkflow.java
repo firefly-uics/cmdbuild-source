@@ -8,7 +8,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
-import static org.cmdbuild.servlets.json.schema.taskmanager.Utils.toMap;
+import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.util.List;
 import java.util.Map;
