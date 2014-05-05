@@ -29,7 +29,7 @@ public class EmailAccount implements Storable {
 		private boolean rejectNotMatching;
 
 		private Builder() {
-			// use static method
+			// use factory method
 		}
 
 		@Override
@@ -210,6 +210,10 @@ public class EmailAccount implements Storable {
 		return smtpSsl;
 	}
 
+	public boolean isSmtpConfigured() {
+		return isNotBlank(smtpServer) && isNotBlank(address);
+	}
+
 	public String getImapServer() {
 		return imapServer;
 	}
@@ -220,6 +224,10 @@ public class EmailAccount implements Storable {
 
 	public boolean isImapSsl() {
 		return imapSsl;
+	}
+
+	public boolean isImapConfigured() {
+		return isNotBlank(imapServer) && isNotBlank(username) && isNotBlank(password);
 	}
 
 	public String getInputFolder() {

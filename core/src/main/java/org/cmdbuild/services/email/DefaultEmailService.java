@@ -21,7 +21,7 @@ import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.MailException;
 import org.cmdbuild.common.api.mail.NewMail;
 import org.cmdbuild.common.api.mail.SelectMail;
-import org.cmdbuild.config.EmailConfiguration;
+import org.cmdbuild.data.store.email.EmailAccount;
 import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
@@ -35,101 +35,108 @@ import com.google.common.collect.Lists;
 
 public class DefaultEmailService implements EmailService {
 
+	private static class AllConfigurationWrapper implements Configuration.All {
+
+		public static AllConfigurationWrapper of(final EmailAccount account) {
+			return new AllConfigurationWrapper(account);
+		}
+
+		private final EmailAccount account;
+
+		private AllConfigurationWrapper(final EmailAccount account) {
+			this.account = account;
+		}
+
+		@Override
+		public boolean isDebug() {
+			// TODO use a system property
+			return false;
+		}
+
+		@Override
+		public Logger getLogger() {
+			return logger;
+		}
+
+		@Override
+		public String getOutputProtocol() {
+			final boolean useSsl = Boolean.valueOf(account.isSmtpSsl());
+			return useSsl ? PROTOCOL_SMTPS : PROTOCOL_SMTP;
+		}
+
+		@Override
+		public String getOutputHost() {
+			return account.getSmtpServer();
+		}
+
+		@Override
+		public Integer getOutputPort() {
+			return account.getSmtpPort();
+		}
+
+		@Override
+		public boolean isStartTlsEnabled() {
+			return false;
+		}
+
+		@Override
+		public String getOutputUsername() {
+			return account.getUsername();
+		}
+
+		@Override
+		public String getOutputPassword() {
+			return account.getPassword();
+		}
+
+		@Override
+		public List<String> getOutputFromRecipients() {
+			return Arrays.asList(account.getAddress());
+		}
+
+		@Override
+		public String getInputProtocol() {
+			final boolean useSsl = Boolean.valueOf(account.isImapSsl());
+			return useSsl ? PROTOCOL_IMAPS : PROTOCOL_IMAP;
+		}
+
+		@Override
+		public String getInputHost() {
+			return account.getImapServer();
+		}
+
+		@Override
+		public Integer getInputPort() {
+			return account.getImapPort();
+		}
+
+		@Override
+		public String getInputUsername() {
+			return account.getUsername();
+		}
+
+		@Override
+		public String getInputPassword() {
+			return account.getPassword();
+		}
+
+	}
+
 	private static class MailApiSupplier implements Supplier<MailApi> {
 
-		private final Supplier<EmailConfiguration> emailConfigurationSupplier;
+		private final Supplier<EmailAccount> emailAccountSupplier;
 		private final MailApiFactory mailApiFactory;
 
-		public MailApiSupplier(final Supplier<EmailConfiguration> emailConfigurationSupplier,
-				final MailApiFactory mailApiFactory) {
-			this.emailConfigurationSupplier = emailConfigurationSupplier;
+		public MailApiSupplier(final Supplier<EmailAccount> emailAccountSupplier, final MailApiFactory mailApiFactory) {
+			this.emailAccountSupplier = emailAccountSupplier;
 			this.mailApiFactory = mailApiFactory;
 		}
 
 		@Override
 		public MailApi get() {
-			final EmailConfiguration configuration = emailConfigurationSupplier.get();
-			return mailApiFactory.create(transform(configuration));
-		}
-
-		private Configuration.All transform(final EmailConfiguration configuration) {
-			logger.trace("configuring mail API with configuration:", configuration);
-			return new Configuration.All() {
-
-				@Override
-				public boolean isDebug() {
-					// TODO use a system property
-					return false;
-				}
-
-				@Override
-				public Logger getLogger() {
-					return logger;
-				}
-
-				@Override
-				public String getOutputProtocol() {
-					final boolean useSsl = Boolean.valueOf(configuration.smtpNeedsSsl());
-					return useSsl ? PROTOCOL_SMTPS : PROTOCOL_SMTP;
-				}
-
-				@Override
-				public String getOutputHost() {
-					return configuration.getSmtpServer();
-				}
-
-				@Override
-				public Integer getOutputPort() {
-					return configuration.getSmtpPort();
-				}
-
-				@Override
-				public boolean isStartTlsEnabled() {
-					return false;
-				}
-
-				@Override
-				public String getOutputUsername() {
-					return configuration.getEmailUsername();
-				}
-
-				@Override
-				public String getOutputPassword() {
-					return configuration.getEmailPassword();
-				}
-
-				@Override
-				public List<String> getOutputFromRecipients() {
-					return Arrays.asList(configuration.getEmailAddress());
-				}
-
-				@Override
-				public String getInputProtocol() {
-					final boolean useSsl = Boolean.valueOf(configuration.imapNeedsSsl());
-					return useSsl ? PROTOCOL_IMAPS : PROTOCOL_IMAP;
-				}
-
-				@Override
-				public String getInputHost() {
-					return configuration.getImapServer();
-				}
-
-				@Override
-				public Integer getInputPort() {
-					return configuration.getImapPort();
-				}
-
-				@Override
-				public String getInputUsername() {
-					return configuration.getEmailUsername();
-				}
-
-				@Override
-				public String getInputPassword() {
-					return configuration.getEmailPassword();
-				}
-
-			};
+			final EmailAccount account = emailAccountSupplier.get();
+			logger.trace("configuring mail API with configuration:", account);
+			return mailApiFactory.create(AllConfigurationWrapper.of(account));
 		}
 
 	}
@@ -138,12 +145,12 @@ public class DefaultEmailService implements EmailService {
 
 	private static final Map<URL, String> NO_ATTACHMENTS = Collections.emptyMap();
 
-	private final Supplier<EmailConfiguration> emailConfigurationSupplier;
+	private final Supplier<EmailAccount> emailConfigurationSupplier;
 	private final Supplier<MailApi> mailApiSupplier;
 	private final EmailPersistence persistence;
 
 	DefaultEmailService( //
-			final Supplier<EmailConfiguration> emailConfigurationSupplier, //
+			final Supplier<EmailAccount> emailConfigurationSupplier, //
 			final MailApiFactory mailApiFactory, //
 			final EmailPersistence persistence //
 	) {
@@ -180,7 +187,7 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	private String from(final String fromAddress) {
-		return defaultIfBlank(fromAddress, emailConfigurationSupplier.get().getEmailAddress());
+		return defaultIfBlank(fromAddress, emailConfigurationSupplier.get().getAddress());
 	}
 
 	private String[] addressesFrom(final String addresses) {
@@ -238,7 +245,7 @@ public class DefaultEmailService implements EmailService {
 				}
 			} catch (final Exception e) {
 				logger.error("error getting mail", e);
-				keepMail = emailConfigurationSupplier.get().keepUnknownMessages();
+				keepMail = !emailConfigurationSupplier.get().isRejectNotMatching();
 				mailMover.selectTargetFolder(emailConfigurationSupplier.get().getRejectedFolder());
 			}
 
@@ -273,7 +280,7 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	private EmailStatus getMessageStatusFromSender(final String from) {
-		if (emailConfigurationSupplier.get().getEmailAddress().equalsIgnoreCase(from)) {
+		if (emailConfigurationSupplier.get().getAddress().equalsIgnoreCase(from)) {
 			// Probably sent from Shark with BCC here
 			return EmailStatus.SENT;
 		} else {
