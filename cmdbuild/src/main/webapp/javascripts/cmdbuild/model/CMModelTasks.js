@@ -22,6 +22,9 @@
 		]
 	});
 
+	/*
+	 * Models for single tasks get proxy calls
+	 */
 	Ext.define('CMDBuild.model.CMModelTasks.singleTask.email', {
 		extend: 'Ext.data.Model',
 
@@ -61,4 +64,38 @@
 		]
 	});
 
+	/*
+	 * Inner tasks models
+	 */
+	// Connector
+		Ext.define('CMDBuild.model.CMModelTasks.connector.classLevel', { // Step 4 grid store
+			extend: 'Ext.data.Model',
+
+			fields: [
+				{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string' },
+				{ name: CMDBuild.ServiceProxy.parameter.VIEW_NAME, type: 'string' },
+				{ name: CMDBuild.ServiceProxy.parameter.IS_MAIN, type: 'boolean' }
+			]
+		});
+
+		Ext.define('CMDBuild.model.CMModelTasks.connector.attributeLevel', { // Step 5 grid store
+			extend: 'Ext.data.Model',
+
+			fields: [
+				{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string' },
+				{ name: CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE, type: 'string' },
+				{ name: CMDBuild.ServiceProxy.parameter.VIEW_NAME, type: 'string' },
+				{ name: CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE, type: 'string' },
+				{ name: CMDBuild.ServiceProxy.parameter.IS_KEY, type: 'boolean' }
+			]
+		});
+
+		Ext.define('CMDBuild.model.CMModelTasks.connector.referenceLevel', { // Step 6 grid store
+			extend: 'Ext.data.Model',
+
+			fields: [
+				{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string' },
+				{ name: CMDBuild.ServiceProxy.parameter.DOMAIN_NAME, type: 'string' }
+			]
+		});
 })();
