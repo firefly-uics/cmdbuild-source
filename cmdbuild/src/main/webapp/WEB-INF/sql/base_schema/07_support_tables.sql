@@ -242,3 +242,11 @@ SELECT cm_create_class_attribute('_BimLayer', 'Export', 'boolean', 'FALSE', true
 SELECT cm_create_class_attribute('_BimLayer', 'Container', 'boolean', 'FALSE', true, false, 'MODE: write|DESCR: Container|INDEX: 5|STATUS: active');
 SELECT cm_create_class_attribute('_BimLayer', 'RootReference', 'varchar', null, false, false, 'MODE: write|DESCR: RootReference|INDEX: 6|STATUS: active');
 
+---------------------------------------------
+-- Translations
+---------------------------------------------
+
+SELECT cm_create_class('_Translation', NULL, 'MODE: reserved|TYPE: simpleclass|DESCR: Translations|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class_attribute('_Translation', 'Element', 'text', null, true, false, 'MODE: write|DESCR: Element|INDEX: 1|STATUS: active');
+SELECT cm_create_class_attribute('_Translation', 'Lang', 'text', null, true, false, 'MODE: write|DESCR: Lang|INDEX: 2|STATUS: active');
+SELECT cm_create_class_attribute('_Translation', 'Value', 'text', null, true, false, 'MODE: write|DESCR: Value|INDEX: 3|STATUS: active');

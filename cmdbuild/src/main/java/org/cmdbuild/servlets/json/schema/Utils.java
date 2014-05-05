@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.schema.taskmanager;
+package org.cmdbuild.servlets.json.schema;
 
 import java.util.List;
 import java.util.Map;
