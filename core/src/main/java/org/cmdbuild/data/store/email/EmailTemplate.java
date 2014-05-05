@@ -13,7 +13,7 @@ import org.cmdbuild.model.email.EmailConstants;
 
 public class EmailTemplate implements Storable {
 
-	public static class Builder implements org.cmdbuild.common.Builder<EmailTemplate> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<EmailTemplate> {
 
 		private Long id;
 		private String name;
@@ -26,7 +26,7 @@ public class EmailTemplate implements Storable {
 		private String body;
 
 		private Builder() {
-			// use static method
+			// use factory method
 		}
 
 		@Override

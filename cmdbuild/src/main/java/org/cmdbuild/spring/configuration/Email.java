@@ -8,7 +8,7 @@ import org.cmdbuild.common.api.mail.javax.mail.JavaxMailBasedMailApiFactory;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
 import org.cmdbuild.data.store.email.EmailConverter;
 import org.cmdbuild.data.store.email.EmailTemplate;
@@ -50,12 +50,12 @@ public class Email {
 	private UserStore userStore;
 
 	@Bean
-	protected StorableConverter<EmailAccount> emailAccountConverter() {
+	protected StorableConverter<StorableEmailAccount> emailAccountConverter() {
 		return new EmailAccountStorableConverter();
 	}
 
 	@Bean
-	public Store<EmailAccount> emailAccountStore() {
+	public Store<StorableEmailAccount> emailAccountStore() {
 		return DataViewStore.newInstance( //
 				data.systemDataView(), //
 				emailAccountConverter());

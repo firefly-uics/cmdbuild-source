@@ -1,6 +1,5 @@
 package org.cmdbuild.services.email;
 
-import org.cmdbuild.data.store.email.EmailAccount;
 
 /**
  * {@link EmailService} factory class.

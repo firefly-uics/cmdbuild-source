@@ -29,7 +29,7 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.TempDataSource;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.email.EmailAccount;
+import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreator;
@@ -48,6 +48,7 @@ import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.SubjectHandler;
 
@@ -355,7 +356,7 @@ public class EmailLogic implements Logic {
 	private static final Collection<EmailStatus> SAVEABLE_STATUSES = Arrays.asList(EmailStatus.DRAFT, MISSING_STATUS);
 
 	private final CMDataView view;
-	private final Supplier<EmailAccount> emailAccountSupplier;
+	private final Supplier<StorableEmailAccount> emailAccountSupplier;
 	private final EmailService emailService;
 	private final SubjectHandler subjectHandler;
 	private final DmsConfiguration dmsConfiguration;
@@ -367,7 +368,7 @@ public class EmailLogic implements Logic {
 	public EmailLogic( //
 			final CMDataView dataView, //
 			// FIXME why?
-			final Supplier<EmailAccount> emailConfigurationSupplier, //
+			final Supplier<StorableEmailAccount> emailConfigurationSupplier, //
 			final EmailService emailService, //
 			final SubjectHandler subjectHandler, //
 			final DmsConfiguration dmsConfiguration, //
