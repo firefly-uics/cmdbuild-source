@@ -1,22 +1,20 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTENAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CHARTNAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DASHBOARDNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DATA;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTERNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ICONNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUPID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.REPORTNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TRANSLATIONS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.VIEWNAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.WIDGET_ID;
-import static org.cmdbuild.servlets.json.schema.Utils.toMap;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TRANSLATIONS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTENAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.VIEWNAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTERNAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DASHBOARDNAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CHARTNAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.REPORTNAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUPID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ICONNAME;
+import static org.cmdbuild.servlets.json.schema.Utils.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.exception.AuthException;
@@ -25,7 +23,9 @@ import org.cmdbuild.logic.translation.AttributeDomainTranslation;
 import org.cmdbuild.logic.translation.ChartTranslation;
 import org.cmdbuild.logic.translation.ClassTranslation;
 import org.cmdbuild.logic.translation.DashboardTranslation;
+import org.cmdbuild.logic.translation.DefaultEnabledLanguagesLogic;
 import org.cmdbuild.logic.translation.DomainTranslation;
+import org.cmdbuild.logic.translation.EnabledLanguagesLogic;
 import org.cmdbuild.logic.translation.FilterTranslation;
 import org.cmdbuild.logic.translation.FilterViewTranslation;
 import org.cmdbuild.logic.translation.GisIconTranslation;
@@ -42,21 +42,13 @@ import org.json.JSONObject;
 
 public class SetupTranslations extends JSONBaseWithSpringContext {
 
-	static Map<String, String> translations = new HashMap<String, String>();
-
 	@JSONExported
-	@Unauthorized
-	public JSONObject getConfiguration( //
+	@Admin
+	public JsonResponse getConfiguration( //
 	) throws JSONException, AuthException {
-		final JSONObject out = new JSONObject();
-		final JSONObject data = new JSONObject();
-
-		for (final Object keyObject : translations.keySet()) {
-			final String key = keyObject.toString();
-			data.put(key, translations.get(key));
-		}
-		out.put(DATA, data);
-		return out;
+		final EnabledLanguagesLogic enableLanguages = enabledLanguagesLogic();
+		final Map<String, String> languages = enableLanguages.read();
+		return JsonResponse.success(languages);
 	}
 
 	@JSONExported
@@ -64,13 +56,11 @@ public class SetupTranslations extends JSONBaseWithSpringContext {
 	public void saveConfiguration( //
 			final Map<String, String> requestParams //
 	) {
+		final EnabledLanguagesLogic enableLanguages = enabledLanguagesLogic();
+		enableLanguages.write(requestParams);
 
-		for (final Object keyObject : requestParams.keySet()) {
-			final String key = keyObject.toString();
-			String value = requestParams.get(key);
-			translations.put(key, value);
-		}
 	}
+	
 	/* Translations: 
 	 * CREATE
 	 */

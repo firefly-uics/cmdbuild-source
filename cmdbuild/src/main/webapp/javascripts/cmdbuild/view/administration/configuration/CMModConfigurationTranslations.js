@@ -55,6 +55,12 @@
 					}
 				}
 			});
-		}
+		},
+
+		//override
+		populateForm: function(languages) {
+			this.getForm().setValues(languages);
+		},
+
 	});
 })();

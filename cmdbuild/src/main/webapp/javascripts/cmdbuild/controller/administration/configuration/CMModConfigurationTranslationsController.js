@@ -41,8 +41,10 @@
 			CMDBuild.ServiceProxy.translations.readActiveTranslations({
 				scope: this,
 				success: function(response){
-					this.view.populateForm(Ext.JSON.decode(response.responseText));
-					this.view.afterSubmit(Ext.JSON.decode(response.responseText).data);
+					var responseText = Ext.JSON.decode(response.responseText);
+					var languages = responseText.response;
+					this.view.populateForm(languages);
+					this.view.afterSubmit(languages);
 				}
 			}, name = this.view.configFileName);
 		}

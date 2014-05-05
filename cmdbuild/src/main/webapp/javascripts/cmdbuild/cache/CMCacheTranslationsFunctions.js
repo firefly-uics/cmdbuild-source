@@ -104,7 +104,9 @@
 		CMDBuild.ServiceProxy.translations.readActiveTranslations({
 			scope: this,
 			success: function(response){
-				var activeLanguages = Ext.JSON.decode(response.responseText).data;
+//				var activeLanguages = Ext.JSON.decode(response.responseText).data;
+				var responseText = Ext.JSON.decode(response.responseText);
+				var activeLanguages = responseText.response;
 				CMDBuild.ServiceProxy.translations.readAvailableTranslations({
 					success : function(response, options, decoded) {
 						withTranslations = false;
