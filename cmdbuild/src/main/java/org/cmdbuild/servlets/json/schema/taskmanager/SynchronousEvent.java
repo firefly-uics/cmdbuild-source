@@ -3,6 +3,9 @@ package org.cmdbuild.servlets.json.schema.taskmanager;
 import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_ACCOUNT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_TEMPLATE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ATTRIBUTES;
@@ -51,6 +54,9 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 	public JsonResponse create( //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
+			@Parameter(value = EMAIL_ACTIVE, required = false) final Boolean emailActive, //
+			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
+			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
 			@Parameter(value = WORKFLOW_ACTIVE, required = false) final Boolean workflowActive, //
 			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
 			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes //
@@ -58,6 +64,11 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 		final SynchronousEventTask task = SynchronousEventTask.newInstance() //
 				.withDescription(description) //
 				.withActiveStatus(active) //
+				//
+				// send notification
+				.withEmailEnabled(emailActive) //
+				.withEmailAccount(emailAccount) //
+				.withEmailTemplate(emailTemplate) //
 				//
 				// start process
 				.withWorkflowEnabled(workflowActive) //
@@ -102,6 +113,9 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 			@Parameter(ID) final Long id, //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
+			@Parameter(value = EMAIL_ACTIVE, required = false) final Boolean emailActive, //
+			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
+			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
 			@Parameter(value = WORKFLOW_ACTIVE, required = false) final Boolean workflowActive, //
 			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
 			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes //
@@ -110,6 +124,11 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.withDescription(description) //
 				.withActiveStatus(active) //
+				//
+				// send notification
+				.withEmailEnabled(emailActive) //
+				.withEmailAccount(emailAccount) //
+				.withEmailTemplate(emailTemplate) //
 				//
 				// start process
 				.withWorkflowEnabled(workflowActive) //

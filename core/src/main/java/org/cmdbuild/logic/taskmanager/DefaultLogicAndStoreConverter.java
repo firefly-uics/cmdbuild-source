@@ -128,6 +128,11 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		private static final String ACTION_PREFIX = "action.";
 
+		private static final String EMAIL_PREFIX = ACTION_PREFIX + "email.";
+		public static final String EMAIL_ACTIVE = EMAIL_PREFIX + "active";
+		public static final String EMAIL_ACCOUNT = EMAIL_PREFIX + "account";
+		public static final String EMAIL_TEMPLATE = EMAIL_PREFIX + "template";
+
 		private static final String WORKFLOW_PREFIX = ACTION_PREFIX + "workflow.";
 		public static final String WORKFLOW_ACTIVE = WORKFLOW_PREFIX + "active";
 		public static final String WORKFLOW_CLASS_NAME = WORKFLOW_PREFIX + "classname";
@@ -373,6 +378,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(SynchronousEvent.FILTER_GROUPS, Joiner.on(GROUPS_SEPARATOR) //
 							.join(task.getGroups())) //
 					.withParameter(SynchronousEvent.FILTER_CLASSNAME, task.getTargetClassname()) //
+					.withParameter(SynchronousEvent.EMAIL_ACTIVE, //
+							Boolean.toString(task.isEmailEnabled())) //
+					.withParameter(SynchronousEvent.EMAIL_ACCOUNT, task.getEmailAccount()) //
+					.withParameter(SynchronousEvent.EMAIL_TEMPLATE, task.getEmailTemplate()) //
 					.withParameter(SynchronousEvent.WORKFLOW_ACTIVE, //
 							Boolean.toString(task.isWorkflowEnabled())) //
 					.withParameter(SynchronousEvent.WORKFLOW_CLASS_NAME, task.getWorkflowClassName()) //
@@ -484,6 +493,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withGroups(isEmpty(groupsAsString) ? EMPTY_GROUPS : Splitter.on(GROUPS_SEPARATOR) //
 							.split(groupsAsString)) //
 					.withTargetClass(task.getParameter(SynchronousEvent.FILTER_CLASSNAME)) //
+					.withEmailEnabled( //
+							Boolean.valueOf(task.getParameter(SynchronousEvent.EMAIL_ACTIVE))) //
+					.withEmailAccount(task.getParameter(SynchronousEvent.EMAIL_ACCOUNT)) //
+					.withEmailTemplate(task.getParameter(SynchronousEvent.EMAIL_TEMPLATE)) //
 					.withWorkflowEnabled( //
 							Boolean.valueOf(task.getParameter(SynchronousEvent.WORKFLOW_ACTIVE))) //
 					.withWorkflowClassName(task.getParameter(SynchronousEvent.WORKFLOW_CLASS_NAME)) //

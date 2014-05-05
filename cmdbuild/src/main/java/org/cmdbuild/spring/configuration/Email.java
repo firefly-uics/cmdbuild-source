@@ -1,5 +1,6 @@
 package org.cmdbuild.spring.configuration;
 
+import static org.cmdbuild.services.email.Predicates.isDefault;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.auth.UserStore;
@@ -8,11 +9,11 @@ import org.cmdbuild.common.api.mail.javax.mail.JavaxMailBasedMailApiFactory;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
 import org.cmdbuild.data.store.email.EmailConverter;
 import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
+import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic;
@@ -20,16 +21,20 @@ import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
-import org.cmdbuild.services.email.DefaultEmailConfigurationSupplier;
 import org.cmdbuild.services.email.DefaultEmailPersistence;
 import org.cmdbuild.services.email.DefaultSubjectHandler;
+import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.services.email.EmailService;
+import org.cmdbuild.services.email.EmailServiceFactory;
+import org.cmdbuild.services.email.PredicateEmailAccountSupplier;
 import org.cmdbuild.services.email.SubjectHandler;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
+
+import com.google.common.base.Supplier;
 
 @ConfigurationComponent
 public class Email {
@@ -62,8 +67,8 @@ public class Email {
 	}
 
 	@Bean
-	public DefaultEmailConfigurationSupplier defaultEmailConfigurationSupplier() {
-		return new DefaultEmailConfigurationSupplier(emailAccountStore());
+	public Supplier<EmailAccount> defaultEmailAccountSupplier() {
+		return PredicateEmailAccountSupplier.of(emailAccountStore(), isDefault());
 	}
 
 	@Bean
@@ -92,13 +97,18 @@ public class Email {
 
 	@Bean
 	public EmailService defaultEmailService() {
+		return emailServiceFactory() //
+				.create();
+
+	}
+
+	@Bean
+	public EmailServiceFactory emailServiceFactory() {
 		return ConfigurableEmailServiceFactory.newInstance() //
 				.withApiFactory(mailApiFactory()) //
 				.withPersistence(emailPersistence()) //
-				.withConfiguration(defaultEmailConfigurationSupplier()) //
-				.build() //
-				.create();
-
+				.withConfiguration(defaultEmailAccountSupplier()) //
+				.build();
 	}
 
 	@Bean
@@ -121,7 +131,7 @@ public class Email {
 	public EmailLogic emailLogic() {
 		return new EmailLogic( //
 				data.systemDataView(), //
-				defaultEmailConfigurationSupplier(), //
+				defaultEmailAccountSupplier(), //
 				defaultEmailService(), //
 				subjectHandler(), //
 				properties.dmsProperties(), //

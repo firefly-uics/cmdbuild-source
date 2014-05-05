@@ -336,7 +336,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	private final Store<org.cmdbuild.data.store.email.StorableEmailAccount> store;
 
 	public DefaultEmailAccountLogic( //
-			final Store<org.cmdbuild.data.store.email.StorableEmailAccount> store //
+			final Store<StorableEmailAccount> store //
 	) {
 		this.store = store;
 	}

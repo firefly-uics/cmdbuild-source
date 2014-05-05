@@ -46,9 +46,6 @@ public class TaskManager {
 	private Api api;
 
 	@Autowired
-	private ConfigurableEmailServiceFactory configurableEmailServiceFactory;
-
-	@Autowired
 	private Data data;
 
 	@Autowired
@@ -137,13 +134,15 @@ public class TaskManager {
 	protected ReadEmailTaskJobFactory readEmailTaskJobFactory() {
 		return new ReadEmailTaskJobFactory( //
 				email.emailAccountStore(), //
-				configurableEmailServiceFactory, //
+				email.emailServiceFactory(), //
 				email.subjectHandler(), //
 				email.emailPersistence(), //
 				workflow.systemWorkflowLogicBuilder() //
 						.build(), //
 				dms.dmsLogic(), //
-				data.systemDataView());
+				data.systemDataView(), //
+				email.emailTemplateLogic() //
+		);
 	}
 
 	@Bean
@@ -163,8 +162,15 @@ public class TaskManager {
 
 	@Bean
 	protected ObserverFactory observerFactory() {
-		return new DefaultObserverFactory(userStore, api.systemFluentApi(), workflow.systemWorkflowLogicBuilder()
-				.build());
+		return new DefaultObserverFactory( //
+				userStore, //
+				api.systemFluentApi(), //
+				workflow.systemWorkflowLogicBuilder().build(), //
+				email.emailAccountStore(), //
+				email.emailServiceFactory(), //
+				email.emailTemplateLogic(), //
+				data.systemDataView() //
+		);
 	}
 
 }
