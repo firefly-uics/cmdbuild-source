@@ -151,6 +151,11 @@ public class ComunicationConstants {
 			PARENT_ID = "ParentId", //
 			PASSWORD = "password", //
 			PATCHES = "patches", //
+			PHASE = "phase", //
+			PHASE_AFTER_CREATE = "afterCreate", //
+			PHASE_BEFORE_UPDATE = "beforeUpdate", //
+			PHASE_AFTER_UPDATE = "afterUpdate", //
+			PHASE_BEFORE_DELETE = "beforeDelete", //
 			PRIVILEGES = "privileges", //
 			PRIVILEGE_FILTER = "privilegeFilter", //
 			PRIVILEGE_MODE = "privilege_mode", //

@@ -1,19 +1,29 @@
 package org.cmdbuild.servlets.json.schema.taskmanager;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_ACCOUNT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_TEMPLATE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PHASE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PHASE_AFTER_CREATE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PHASE_AFTER_UPDATE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PHASE_BEFORE_DELETE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.PHASE_BEFORE_UPDATE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ADVANCEABLE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ATTRIBUTES;
 import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_CLASS_NAME;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
+import java.util.Map;
+
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.SynchronousEventTask.Phase;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
@@ -23,6 +33,51 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONObject;
 
 public class SynchronousEvent extends JSONBaseWithSpringContext {
+
+	private static enum JsonPhase {
+		AFTER_CREATE(PHASE_AFTER_CREATE, Phase.AFTER_CREATE), //
+		BEFORE_UPDATE(PHASE_BEFORE_UPDATE, Phase.BEFORE_UPDATE), //
+		AFTER_UPDATE(PHASE_AFTER_UPDATE, Phase.AFTER_UPDATE), //
+		BEFORE_DELETE(PHASE_BEFORE_DELETE, Phase.BEFORE_DELETE), //
+
+		UNKNOWN(EMPTY, null);
+		;
+
+		public static JsonPhase of(final String jsonString) {
+			for (final JsonPhase element : values()) {
+				if (element.jsonString.equals(jsonString)) {
+					return element;
+				}
+			}
+			return UNKNOWN;
+		}
+
+		public static JsonPhase of(final Phase phase) {
+			for (final JsonPhase element : values()) {
+				if (element.phase.equals(phase)) {
+					return element;
+				}
+			}
+			return UNKNOWN;
+		}
+
+		private final String jsonString;
+		private final Phase phase;
+
+		private JsonPhase(final String jsonString, final Phase phase) {
+			this.jsonString = jsonString;
+			this.phase = phase;
+		}
+
+		public String toJsonString() {
+			return jsonString;
+		}
+
+		public Phase toPhase() {
+			return phase;
+		}
+
+	}
 
 	private static class JsonSynchronousEventTask {
 
@@ -47,6 +102,46 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 			return delegate.isActive();
 		}
 
+		@JsonProperty(PHASE)
+		public String getPhase() {
+			return JsonPhase.of(delegate.getPhase()).toJsonString();
+		}
+
+		@JsonProperty(EMAIL_ACTIVE)
+		public boolean isEmailEnabled() {
+			return delegate.isEmailEnabled();
+		}
+
+		@JsonProperty(EMAIL_ACCOUNT)
+		public String getEmailAccount() {
+			return delegate.getEmailAccount();
+		}
+
+		@JsonProperty(EMAIL_TEMPLATE)
+		public String getEmailTemplate() {
+			return delegate.getEmailTemplate();
+		}
+
+		@JsonProperty(WORKFLOW_ACTIVE)
+		public boolean isWorkflowEnabled() {
+			return delegate.isWorkflowEnabled();
+		}
+
+		@JsonProperty(WORKFLOW_CLASS_NAME)
+		public String getWorkflowClassName() {
+			return delegate.getWorkflowClassName();
+		}
+
+		@JsonProperty(WORKFLOW_ATTRIBUTES)
+		public Map<String, String> getWorkflowAttributes() {
+			return delegate.getWorkflowAttributes();
+		}
+
+		@JsonProperty(WORKFLOW_ADVANCEABLE)
+		public boolean isWorkflowAdvanceable() {
+			return delegate.isWorkflowAdvanceable();
+		}
+
 	}
 
 	@Admin
@@ -54,6 +149,7 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 	public JsonResponse create( //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
+			@Parameter(value = PHASE, required = false) final String phase, //
 			@Parameter(value = EMAIL_ACTIVE, required = false) final Boolean emailActive, //
 			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
 			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
@@ -64,6 +160,9 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 		final SynchronousEventTask task = SynchronousEventTask.newInstance() //
 				.withDescription(description) //
 				.withActiveStatus(active) //
+				//
+				// phase
+				.withPhase(JsonPhase.of(phase).toPhase()) //
 				//
 				// send notification
 				.withEmailEnabled(emailActive) //
@@ -105,6 +204,7 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 			@Parameter(ID) final Long id, //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
+			@Parameter(value = PHASE, required = false) final String phase, //
 			@Parameter(value = EMAIL_ACTIVE, required = false) final Boolean emailActive, //
 			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
 			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
@@ -116,6 +216,9 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.withDescription(description) //
 				.withActiveStatus(active) //
+				//
+				// phase
+				.withPhase(JsonPhase.of(phase).toPhase()) //
 				//
 				// send notification
 				.withEmailEnabled(emailActive) //
