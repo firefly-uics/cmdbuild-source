@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.email;
 
+import static com.google.common.base.Suppliers.memoize;
+import static com.google.common.base.Suppliers.synchronizedSupplier;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -46,11 +48,11 @@ import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.email.EmailConfigurationFactory;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.SubjectHandler;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -58,7 +60,7 @@ public class EmailLogic implements Logic {
 
 	public static class Upload {
 
-		public static class Builder implements org.cmdbuild.common.Builder<Upload> {
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<Upload> {
 
 			private String identifier;
 			private DataHandler dataHandler;
@@ -113,7 +115,7 @@ public class EmailLogic implements Logic {
 
 	public static class Delete {
 
-		public static class Builder implements org.cmdbuild.common.Builder<Delete> {
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<Delete> {
 
 			private String identifier;
 			private String fileName;
@@ -169,7 +171,7 @@ public class EmailLogic implements Logic {
 
 	public static class CopiableAttachment {
 
-		public static class Builder implements org.cmdbuild.common.Builder<CopiableAttachment> {
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<CopiableAttachment> {
 
 			private String className;
 			private Long cardId;
@@ -219,7 +221,7 @@ public class EmailLogic implements Logic {
 
 	public static class Copy {
 
-		public static class Builder implements org.cmdbuild.common.Builder<Copy> {
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<Copy> {
 
 			private String identifier;
 			private boolean temporary;
@@ -353,8 +355,8 @@ public class EmailLogic implements Logic {
 	private static final Collection<EmailStatus> SAVEABLE_STATUSES = Arrays.asList(EmailStatus.DRAFT, MISSING_STATUS);
 
 	private final CMDataView view;
-	private final EmailConfigurationFactory configurationFactory;
-	private final EmailService service;
+	private final Supplier<EmailConfiguration> emailConfigurationSupplier;
+	private final EmailService emailService;
 	private final SubjectHandler subjectHandler;
 	private final DmsConfiguration dmsConfiguration;
 	private final DmsService dmsService;
@@ -364,8 +366,9 @@ public class EmailLogic implements Logic {
 
 	public EmailLogic( //
 			final CMDataView dataView, //
-			final EmailConfigurationFactory configurationFactory, //
-			final EmailService service, //
+			// FIXME why?
+			final Supplier<EmailConfiguration> emailConfigurationSupplier, //
+			final EmailService emailService, //
 			final SubjectHandler subjectHandler, //
 			final DmsConfiguration dmsConfiguration, //
 			final DmsService dmsService, //
@@ -374,8 +377,8 @@ public class EmailLogic implements Logic {
 			final OperationUser operationUser //
 	) {
 		this.view = dataView;
-		this.configurationFactory = configurationFactory;
-		this.service = service;
+		this.emailConfigurationSupplier = synchronizedSupplier(memoize(emailConfigurationSupplier));
+		this.emailService = emailService;
 		this.subjectHandler = subjectHandler;
 		this.dmsConfiguration = dmsConfiguration;
 		this.dmsService = new ConfigurationAwareDmsService(dmsService, dmsConfiguration);
@@ -404,20 +407,20 @@ public class EmailLogic implements Logic {
 			}
 
 		};
-		return from(service.getEmails(processCardId)) //
+		return from(emailService.getEmails(processCardId)) //
 				.transform(TO_EMAIL_WITH_ATTACHMENT_NAMES);
 	}
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
-		final EmailConfiguration configuration = configurationFactory.create();
-		for (final Email email : service.getOutgoingEmails(processCardId)) {
+		final EmailConfiguration configuration = emailConfigurationSupplier.get();
+		for (final Email email : emailService.getOutgoingEmails(processCardId)) {
 			if (isEmpty(email.getFromAddress())) {
 				email.setFromAddress(configuration.getEmailAddress());
 			}
 			try {
 				// FIXME really needed here?
 				email.setSubject(defaultIfBlank(subjectHandler.compile(email).getSubject(), EMPTY));
-				service.send(email, attachmentsOf(email));
+				emailService.send(email, attachmentsOf(email));
 				email.setStatus(EmailStatus.SENT);
 			} catch (final CMDBException e) {
 				notifier.warn(e);
@@ -426,7 +429,7 @@ public class EmailLogic implements Logic {
 				notifier.warn(CMDBWorkflowException.WorkflowExceptionType.WF_EMAIL_NOT_SENT.createException());
 				email.setStatus(EmailStatus.OUTGOING);
 			}
-			service.save(email);
+			emailService.save(email);
 		}
 	}
 
@@ -483,7 +486,7 @@ public class EmailLogic implements Logic {
 			final Email found = storedEmails.get(emailId);
 			Validate.notNull(found, "email not found");
 			Validate.isTrue(SAVEABLE_STATUSES.contains(found.getStatus()), "specified email have no compatible status");
-			service.delete(found);
+			emailService.delete(found);
 		}
 	}
 
@@ -502,7 +505,7 @@ public class EmailLogic implements Logic {
 			final Email maybeUpdateable = alreadyStored ? alreadyStoredEmailSubmission : emailSubmission;
 			if (SAVEABLE_STATUSES.contains(maybeUpdateable.getStatus())) {
 				maybeUpdateable.setActivityId(processCardId);
-				final Long savedId = service.save(maybeUpdateable);
+				final Long savedId = emailService.save(maybeUpdateable);
 				if (!alreadyStored) {
 					moveAttachmentsFromTemporaryToFinalPosition(emailSubmission.getTemporaryId(), savedId.toString());
 				}
@@ -531,7 +534,7 @@ public class EmailLogic implements Logic {
 	}
 
 	private Map<Long, Email> storedEmailsById(final Long processCardId) {
-		return Maps.uniqueIndex(service.getEmails(processCardId), EMAIL_ID_FUNCTION);
+		return Maps.uniqueIndex(emailService.getEmails(processCardId), EMAIL_ID_FUNCTION);
 	}
 
 	public String uploadAttachment( //

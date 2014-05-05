@@ -5,8 +5,8 @@ import static java.util.Arrays.asList;
 
 import java.util.List;
 
-import org.cmdbuild.common.mail.MailApi;
-import org.cmdbuild.common.mail.MailApiFactory;
+import org.cmdbuild.common.api.mail.Configuration;
+import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.shark.Logging;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
@@ -64,10 +64,10 @@ public class ConfigurationHelper {
 		return instance;
 	}
 
-	public MailApi.Configuration getMailApiConfiguration() {
-		final MailApi.InputConfiguration INPUT_NOT_SUPPORTED = UnsupportedProxyFactory.of(
-				MailApi.InputConfiguration.class).create();
-		return new MailApi.Configuration() {
+	public Configuration.All getMailApiConfiguration() {
+		final Configuration.Input INPUT_NOT_SUPPORTED = UnsupportedProxyFactory.of(
+				Configuration.Input.class).create();
+		return new Configuration.All() {
 
 			@Override
 			public boolean isDebug() {

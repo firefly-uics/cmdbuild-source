@@ -9,7 +9,7 @@ import org.cmdbuild.data.store.Storable;
 
 public class EmailAccount implements Storable {
 
-	public static class Builder implements org.cmdbuild.common.Builder<EmailAccount> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<EmailAccount> {
 
 		private Long id;
 		private String name;

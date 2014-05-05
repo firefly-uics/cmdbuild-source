@@ -13,7 +13,7 @@ import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.ExistingCard;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
-import org.cmdbuild.common.mail.MailApi;
+import org.cmdbuild.common.api.mail.MailApi;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SchemaApi.ClassInfo;
 import org.cmdbuild.workflow.api.WorkflowApi;

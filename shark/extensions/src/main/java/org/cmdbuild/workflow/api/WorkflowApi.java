@@ -8,11 +8,11 @@ import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
 import org.cmdbuild.common.Constants;
-import org.cmdbuild.common.mail.FetchedMail;
-import org.cmdbuild.common.mail.MailApi;
-import org.cmdbuild.common.mail.NewMail;
-import org.cmdbuild.common.mail.SelectFolder;
-import org.cmdbuild.common.mail.SelectMail;
+import org.cmdbuild.common.api.mail.FetchedMail;
+import org.cmdbuild.common.api.mail.MailApi;
+import org.cmdbuild.common.api.mail.NewMail;
+import org.cmdbuild.common.api.mail.SelectFolder;
+import org.cmdbuild.common.api.mail.SelectMail;
 import org.cmdbuild.workflow.type.LookupType;
 import org.cmdbuild.workflow.type.ReferenceType;
 
