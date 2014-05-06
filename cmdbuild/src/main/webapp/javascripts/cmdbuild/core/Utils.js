@@ -124,6 +124,34 @@
 			},
 
 			/**
+			 * Function to check if needle is in array.
+			 *
+			 * @param (Var) needle
+			 * @param (Array) haystack
+			 * @param (Boolean) argStrict
+			 *
+			 * @returns (Boolean)
+			 */
+			inArray: function(needle, haystack, argStrict) {
+					var key = '';
+					var strict = !!argStrict;
+
+					if (strict) {
+						for (key in haystack) {
+							if (haystack[key] === needle)
+								return true;
+						}
+					} else {
+						for (key in haystack) {
+							if (haystack[key] == needle)
+								return true;
+						}
+					}
+
+					return false;
+			},
+
+			/**
 			 * @param (Object) obj
 			 * @return (Boolean)
 			 */
