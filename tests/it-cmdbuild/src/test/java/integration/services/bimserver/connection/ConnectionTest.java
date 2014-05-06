@@ -1,6 +1,6 @@
 package integration.services.bimserver.connection;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import org.cmdbuild.bim.service.bimserver.BimserverClient;
 import org.cmdbuild.bim.service.bimserver.BimserverConfiguration;
@@ -14,7 +14,7 @@ public class ConnectionTest {
 	public void ifTheConfigurationIsEmptyClientIsNotConnected() throws Exception {
 
 		// given
-		BimserverConfiguration conf = new BimserverConfiguration() {
+		final BimserverConfiguration conf = new BimserverConfiguration() {
 
 			@Override
 			public boolean isEnabled() {
@@ -47,24 +47,24 @@ public class ConnectionTest {
 			}
 
 			@Override
-			public void addListener(ChangeListener listener) {
+			public void addListener(final ChangeListener listener) {
 				// TODO Auto-generated method stub
 
 			}
 		};
-		
-		//when
-		BimserverClient client = new SmartBimserverClient(new DefaultBimserverClient(conf));
-		
-		//then
+
+		// when
+		final BimserverClient client = new SmartBimserverClient(new DefaultBimserverClient(conf));
+
+		// then
 		assertTrue(!client.isConnected());
 	}
-	
+
 	@Test
 	public void ifBimserverIsDownClientIsNotConnected() throws Exception {
 
 		// given
-		BimserverConfiguration conf = new BimserverConfiguration() {
+		final BimserverConfiguration conf = new BimserverConfiguration() {
 
 			@Override
 			public boolean isEnabled() {
@@ -91,23 +91,22 @@ public class ConnectionTest {
 			}
 
 			@Override
-			public void addListener(ChangeListener listener) {
+			public void addListener(final ChangeListener listener) {
 			}
 		};
-		
-		//when
-		BimserverClient client = new SmartBimserverClient(new DefaultBimserverClient(conf));
-		
-		//then
+
+		// when
+		final BimserverClient client = new SmartBimserverClient(new DefaultBimserverClient(conf));
+
+		// then
 		assertTrue(!client.isConnected());
 	}
-	
-	
+
 	@Test
 	public void ifBimserverIsRunningConnectionIsSuccessful() throws Exception {
 
 		// given
-		BimserverConfiguration conf = new BimserverConfiguration() {
+		final BimserverConfiguration conf = new BimserverConfiguration() {
 
 			@Override
 			public boolean isEnabled() {
@@ -136,26 +135,24 @@ public class ConnectionTest {
 			}
 
 			@Override
-			public void addListener(ChangeListener listener) {
+			public void addListener(final ChangeListener listener) {
 				// TODO Auto-generated method stub
 
 			}
 		};
-		
-		//when
-		BimserverClient client = new SmartBimserverClient(new DefaultBimserverClient(conf));
-		
-		//then
+
+		// when
+		final BimserverClient client = new SmartBimserverClient(new DefaultBimserverClient(conf));
+
+		// then
 		assertTrue(client.isConnected());
 	}
-	
-	
-	
+
 	@Test
 	public void connectAndDisconnectChangingConfiguration() throws Exception {
 
 		// given
-		BimserverConfiguration conf = new BimserverConfiguration() {
+		final BimserverConfiguration conf = new BimserverConfiguration() {
 
 			private ChangeListener listener;
 
@@ -189,18 +186,18 @@ public class ConnectionTest {
 			}
 
 			@Override
-			public void addListener(ChangeListener listener) {
+			public void addListener(final ChangeListener listener) {
 				this.listener = listener;
 
 			}
 		};
-		BimserverClient client = new SmartBimserverClient(new DefaultBimserverClient(conf));
+		final BimserverClient client = new SmartBimserverClient(new DefaultBimserverClient(conf));
 		assertTrue(client.isConnected());
-		
-		//when
+
+		// when
 		conf.disable();
-		
-		//then
+
+		// then
 		assertTrue(!client.isConnected());
 	}
 

@@ -28,16 +28,16 @@ public class MergingShapes {
 
 	@Before
 	public void setUp() {
-		BimserverConfiguration configuration = new BimserverConfiguration() {
+		final BimserverConfiguration configuration = new BimserverConfiguration() {
 
 			@Override
 			public boolean isEnabled() {
 				return true;
 			}
-			
+
 			@Override
 			public void disable() {
-				throw new UnsupportedOperationException("TODO");			
+				throw new UnsupportedOperationException("TODO");
 			}
 
 			@Override
@@ -56,7 +56,7 @@ public class MergingShapes {
 			}
 
 			@Override
-			public void addListener(ChangeListener listener) {
+			public void addListener(final ChangeListener listener) {
 			}
 		};
 		client = new SmartBimserverClient(new DefaultBimserverClient(configuration));
@@ -66,58 +66,52 @@ public class MergingShapes {
 
 	@Test
 	public void mergeRevisions() throws Exception {
-		String projectId = service.createProject("ParentNew-" + new DateTime()).getIdentifier();
-		String childId1 = service.createSubProject("child1", projectId).getIdentifier();
-		String childId2 = service.createSubProject("child2", projectId).getIdentifier();
+		final String projectId = service.createProject("ParentNew-" + new DateTime()).getIdentifier();
+		final String childId1 = service.createSubProject("child1", projectId).getIdentifier();
+		final String childId2 = service.createSubProject("child2", projectId).getIdentifier();
 
-		String fileName1 = "10.ifc";
+		final String fileName1 = "10.ifc";
 		checkinOnProject(childId1, fileName1);
 		service.downloadLastRevisionOfProject(childId1);
 
-		String fileName2 = "_pc.ifc";
+		final String fileName2 = "_pc.ifc";
 		checkinOnProject(childId2, fileName2);
 		service.downloadLastRevisionOfProject(childId2);
 
 		service.downloadLastRevisionOfProject(projectId);
 
 	}
-	
-	@Test	
+
+	@Test
 	public void findShapeWithName() throws Exception {
-		String shapeName = "_pc"; 
-		String revisionId = "262147";
-		Iterable<Entity> shapeList = service.getEntitiesByType(revisionId, "IfcProductDefinitionShape");
-		for(Entity shape : shapeList){
-			Attribute shapeNameAttribute = shape.getAttributeByName("Name");
-			if(shapeNameAttribute.getValue() != null && shapeNameAttribute.getValue().equals(shapeName)){
+		final String shapeName = "_pc";
+		final String revisionId = "262147";
+		final Iterable<Entity> shapeList = service.getEntitiesByType(revisionId, "IfcProductDefinitionShape");
+		for (final Entity shape : shapeList) {
+			final Attribute shapeNameAttribute = shape.getAttributeByName("Name");
+			if (shapeNameAttribute.getValue() != null && shapeNameAttribute.getValue().equals(shapeName)) {
 				System.out.println("Shape found with id " + shape.getKey());
 				break;
 			}
 		}
 	}
-	
 
-	private void checkinOnProject(String project, String filename) throws Exception {
+	private void checkinOnProject(final String project, final String filename) throws Exception {
 		final URL url = ClassLoader.getSystemResource(filename);
-		File file = new File(url.toURI());
+		final File file = new File(url.toURI());
 		System.out.println("Checkin file " + file.getName() + " on project " + project + "...");
 		service.checkin(project, file, false);
 	}
-	
-	
-	
-	
-	
 
 	public void list() throws Exception {
 		System.out.println("\n\n\n");
-		for (BimProject project : service.getAllProjects()) {
+		for (final BimProject project : service.getAllProjects()) {
 			System.out.println("\n" + project);
-			List<BimRevision> revisions = service.getRevisionsOfProject(project);
+			final List<BimRevision> revisions = service.getRevisionsOfProject(project);
 			if (revisions == null || revisions.size() == 0) {
 				System.out.println("- no revisions");
 			}
-			for (BimRevision revision : revisions) {
+			for (final BimRevision revision : revisions) {
 				System.out.println("* revisionId " + revision.getIdentifier() + "   date " + revision.getDate());
 			}
 		}
