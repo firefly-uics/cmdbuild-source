@@ -66,6 +66,9 @@ public class TaskManager {
 	private DBDataView systemDataView;
 
 	@Autowired
+	private User user;
+
+	@Autowired
 	private UserStore userStore;
 
 	@Autowired
@@ -168,7 +171,8 @@ public class TaskManager {
 				email.emailAccountStore(), //
 				email.emailServiceFactory(), //
 				email.emailTemplateLogic(), //
-				data.systemDataView() //
+				data.systemDataView(), //
+				user.userDataAccessLogicBuilder().build() //
 		);
 	}
 

@@ -296,6 +296,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withPhase(Phase.AFTER_CREATE) //
 				.withGroups(asList("foo", "bar", "baz")) //
 				.withTargetClass("classname") //
+				.withFilter("card's filter") //
 				.withEmailEnabled(true) //
 				.withEmailAccount("email account") //
 				.withEmailTemplate("email template") //
@@ -321,6 +322,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(SynchronousEvent.PHASE, "after_create"));
 		assertThat(parameters, hasEntry(SynchronousEvent.FILTER_GROUPS, "foo,bar,baz"));
 		assertThat(parameters, hasEntry(SynchronousEvent.FILTER_CLASSNAME, "classname"));
+		assertThat(parameters, hasEntry(SynchronousEvent.FILTER_CARDS, "card's filter"));
 		assertThat(parameters, hasEntry(SynchronousEvent.EMAIL_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(SynchronousEvent.EMAIL_ACCOUNT, "email account"));
 		assertThat(parameters, hasEntry(SynchronousEvent.EMAIL_TEMPLATE, "email template"));
@@ -375,6 +377,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(SynchronousEvent.PHASE, "after_create") //
 				.withParameter(SynchronousEvent.FILTER_GROUPS, "foo,bar,baz") //
 				.withParameter(SynchronousEvent.FILTER_CLASSNAME, "classname") //
+				.withParameter(SynchronousEvent.FILTER_CARDS, "card's filter") //
 				.withParameter(SynchronousEvent.EMAIL_ACTIVE, "true") //
 				.withParameter(SynchronousEvent.EMAIL_ACCOUNT, "email account") //
 				.withParameter(SynchronousEvent.EMAIL_TEMPLATE, "email template") //
@@ -400,6 +403,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getPhase(), equalTo(Phase.AFTER_CREATE));
 		assertThat(converted.getGroups(), containsInAnyOrder("foo", "bar", "baz"));
 		assertThat(converted.getTargetClassname(), equalTo("classname"));
+		assertThat(converted.getFilter(), equalTo("card's filter"));
 		assertThat(converted.isEmailEnabled(), equalTo(true));
 		assertThat(converted.getEmailAccount(), equalTo("email account"));
 		assertThat(converted.getEmailTemplate(), equalTo("email template"));

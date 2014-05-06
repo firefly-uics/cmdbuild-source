@@ -70,6 +70,7 @@ public class SynchronousEventTask implements Task {
 		private Phase phase;
 		private Iterable<String> groups;
 		private String classname;
+		private String filter;
 		private Boolean emailEnabled;
 		private String emailAccount;
 		private String emailTemplate;
@@ -146,6 +147,11 @@ public class SynchronousEventTask implements Task {
 			return this;
 		}
 
+		public Builder withFilter(final String filter) {
+			this.filter = filter;
+			return this;
+		}
+
 		public Builder withEmailEnabled(final boolean enabled) {
 			this.emailEnabled = enabled;
 			return this;
@@ -211,8 +217,9 @@ public class SynchronousEventTask implements Task {
 	private final String description;
 	private final boolean active;
 	private final Phase phase;
-	private final Iterable<? extends String> groups;
+	private final Iterable<String> groups;
 	private final String classname;
+	private final String filter;
 	private final boolean emailEnabled;
 	private final String emailAccount;
 	private final String emailTemplate;
@@ -232,6 +239,7 @@ public class SynchronousEventTask implements Task {
 		this.phase = builder.phase;
 		this.groups = builder.groups;
 		this.classname = builder.classname;
+		this.filter = builder.filter;
 		this.emailEnabled = builder.emailEnabled;
 		this.emailAccount = builder.emailAccount;
 		this.emailTemplate = builder.emailTemplate;
@@ -269,12 +277,16 @@ public class SynchronousEventTask implements Task {
 		return phase;
 	}
 
-	public Iterable<? extends String> getGroups() {
+	public Iterable<String> getGroups() {
 		return groups;
 	}
 
 	public String getTargetClassname() {
 		return classname;
+	}
+
+	public String getFilter() {
+		return filter;
 	}
 
 	public boolean isEmailEnabled() {
