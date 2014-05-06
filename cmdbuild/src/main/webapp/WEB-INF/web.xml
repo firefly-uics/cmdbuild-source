@@ -21,7 +21,8 @@
 	</context-param>
 
 	<listener>
-		<listener-class>org.cmdbuild.plugins.ConfigurationListener</listener-class>
+		<listener-class>org.cmdbuild.plugins.ConfigurationListener
+		</listener-class>
 	</listener>
 
 	<listener>
@@ -92,7 +93,7 @@
 		<servlet-name>soapws</servlet-name>
 		<url-pattern>/services/soap/*</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>XsdSchema</servlet-name>
 		<servlet-class>org.cmdbuild.servlets.XsdSchema</servlet-class>
