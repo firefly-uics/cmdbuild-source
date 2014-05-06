@@ -2,19 +2,6 @@
 
 	var tr = CMDBuild.Translation.administration.tasks.taskConnector;
 
-	// Local model
-	Ext.define('CMDBuild.model.CMModelAttributeLevel', {
-		extend: 'Ext.data.Model',
-
-		fields: [
-			{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.VIEW_NAME, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.IS_KEY, type: 'boolean' }
-		]
-	});
-
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep5Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
@@ -51,6 +38,7 @@
 			if (this.view.gridSelectionModel.hasSelection())
 				isKeySelection = this.view.gridSelectionModel.getSelection();
 
+			// To validate and filter grid rows and creating isKey attributes
 			this.view.attributeLevelMappingGrid.getStore().each(function(record) {
 				if (
 					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
@@ -93,27 +81,51 @@
 			return false;
 		},
 
+		buildClassCombo: function() {
+			var me = this;
+
+			this.view.attributeLevelMappingGrid.columns[2].setEditor({
+				xtype: 'combo',
+				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				forceSelection: true,
+				editable: false,
+				allowBlank: false,
+				store: this.parentDelegate.getFilteredClassStore(),
+				queryMode: 'local',
+
+				// To make sure the filter in the store is not cleared
+				triggerAction: 'all',
+				lastQuery: '',
+
+				listeners: {
+					select: function(combo, records, eOpts) {
+						me.buildClassAttributesCombo(records[0].get(CMDBuild.ServiceProxy.parameter.NAME));
+					}
+				}
+			});
+		},
+
 		/**
-		 * To setup class attribute combo store
+		 * To setup class attribute combo editor
 		 *
 		 * @param (String) className
+		 * @param (Boolean) onStepEditExecute
 		 */
 		buildClassAttributesCombo: function(className, onStepEditExecute) {
 			if (!Ext.isEmpty(className)) {
 				var me = this;
-				var columnModel = this.view.attributeLevelMappingGrid.columns[3];
-				var classId = _CMCache.getEntryTypeByName(className).get(CMDBuild.ServiceProxy.parameter.ID);
 				var attributesListStore = [];
 
 				if (typeof onStepEditExecute == 'undefined')
 					var onStepEditExecute = true;
 
 				for (var key in _CMCache.getClasses()) {
-					if (key == classId)
+					if (key == _CMCache.getEntryTypeByName(className).get(CMDBuild.ServiceProxy.parameter.ID))
 						attributesListStore.push(this.view.classesAttributesMap[key]);
 				}
 
-				columnModel.setEditor({
+				this.view.attributeLevelMappingGrid.columns[3].setEditor({
 					xtype: 'combo',
 					displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
@@ -139,15 +151,40 @@
 			}
 		},
 
+		buildViewCombo: function() {
+			var me = this;
+
+			this.view.attributeLevelMappingGrid.columns[0].setEditor({
+				xtype: 'combo',
+				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				forceSelection: true,
+				editable: false,
+				allowBlank: false,
+				store: this.parentDelegate.getFilteredViewStore(),
+
+				// To make sure the filter in the store is not cleared
+				triggerAction: 'all',
+				lastQuery: '',
+
+				listeners: {
+					select: function(combo, records, eOpts) {
+						me.buildViewAttributesCombo(records[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
+					}
+				}
+			});
+		},
+
 		/**
 		 * To setup view attribute combo editor
 		 *
 		 * @param (String) viewName
+		 * @param (Boolean) onStepEditExecute
 		 */
 		buildViewAttributesCombo: function(viewName, onStepEditExecute) {
 			if (!Ext.isEmpty(viewName)) {
 				var me = this;
-				var columnModel = this.view.attributeLevelMappingGrid.columns[1];
+
 				var attributesListStore = [
 					{ 'name': 'Function1', 'description': 'Function 1' },
 					{ 'name': 'Function2', 'description': 'Function 2' },
@@ -163,7 +200,7 @@
 //						attributesListStore.push(this.view.classesAttributesMap[key]);
 //				}
 
-				columnModel.setEditor({
+				this.view.attributeLevelMappingGrid.columns[1].setEditor({
 					xtype: 'combo',
 					displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
@@ -187,14 +224,6 @@
 				if (onStepEditExecute)
 					this.onStepEdit();
 			}
-		},
-
-		getClassStore: function() {
-			return _CMCache.getClassesStore();
-		},
-
-		getViewStore: function() {
-			return CMDBuild.core.proxy.CMProxyTasks.getViewStore();
 		},
 
 		/**
@@ -307,7 +336,6 @@
 			});
 
 			this.attributeLevelMappingGrid = Ext.create('Ext.grid.Panel', {
-				layuout: 'fit',
 				title: 'tr.attributeLevelMapping',
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
@@ -321,18 +349,7 @@
 						dataIndex: CMDBuild.ServiceProxy.parameter.VIEW_NAME,
 						editor: {
 							xtype: 'combo',
-							displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-							valueField: CMDBuild.ServiceProxy.parameter.NAME,
-							forceSelection: true,
-							editable: false,
-							allowBlank: false,
-							store: me.delegate.getViewStore(),
-
-							listeners: {
-								select: function(combo, records, eOpts) {
-									me.delegate.buildViewAttributesCombo(records[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
-								}
-							}
+							disabled: true
 						},
 						flex: 1
 					},
@@ -350,19 +367,7 @@
 						dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
-							displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-							valueField: CMDBuild.ServiceProxy.parameter.NAME,
-							forceSelection: true,
-							editable: false,
-							allowBlank: false,
-							store: me.delegate.getClassStore(),
-							queryMode: 'local',
-
-							listeners: {
-								select: function(combo, records, eOpts) {
-									me.delegate.buildClassAttributesCombo(records[0].get(CMDBuild.ServiceProxy.parameter.NAME));
-								}
-							}
+							disabled: true
 						},
 						flex: 1
 					},
@@ -412,7 +417,7 @@
 				],
 
 				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.CMModelAttributeLevel',
+					model: 'CMDBuild.model.CMModelTasks.connector.attributeLevel',
 					data: []
 				}),
 
@@ -421,7 +426,7 @@
 						text: CMDBuild.Translation.common.buttons.add,
 						iconCls: 'add',
 						handler: function() {
-							me.attributeLevelMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelAttributeLevel'));
+							me.attributeLevelMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.connector.attributeLevel'));
 						}
 					}
 				]
@@ -436,10 +441,13 @@
 
 		listeners: {
 			/**
-			 * Disable next button only if grid haven't selected class
+			 * Disable next button only if grid haven't selected class and setup class and view combo editors
 			 */
 			show: function(view, eOpts) {
 				var me = this;
+
+				this.delegate.buildViewCombo();
+				this.delegate.buildClassCombo();
 
 				Ext.Function.createDelayed(function() { // HACK: to fix problem witch fires show event before changeTab() function
 					if (me.delegate.isEmptyMappingGrid())

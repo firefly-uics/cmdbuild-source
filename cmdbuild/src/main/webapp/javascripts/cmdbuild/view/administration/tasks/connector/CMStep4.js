@@ -2,17 +2,6 @@
 
 	var tr = CMDBuild.Translation.administration.tasks.taskConnector;
 
-	// Local model
-	Ext.define('CMDBuild.model.CMModelClassLevel', {
-		extend: 'Ext.data.Model',
-
-		fields: [
-			{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.VIEW_NAME, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.IS_MAIN, type: 'boolean' }
-		]
-	});
-
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep4Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
@@ -49,6 +38,7 @@
 			if (this.view.gridSelectionModel.hasSelection())
 				mainClassName = this.view.gridSelectionModel.getSelection()[0];
 
+			// To validate and filter grid rows and creating isMain attributes
 			this.view.gridSelectionModel.getStore().each(function(record) {
 				if (
 					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
@@ -147,7 +137,7 @@
 		/**
 		 * To setup class combo editor
 		 *
-		 * @param (String) viewName
+		 * @param (Boolean) onStepEditExecute
 		 */
 		buildClassCombo: function(onStepEditExecute) {
 			var me = this;
@@ -301,7 +291,7 @@
 				],
 
 				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.CMModelClassLevel',
+					model: 'CMDBuild.model.CMModelTasks.connector.classLevel',
 					data: []
 				}),
 
@@ -310,7 +300,7 @@
 						text: CMDBuild.Translation.common.buttons.add,
 						iconCls: 'add',
 						handler: function() {
-							me.classLevelMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelClassLevel'));
+							me.classLevelMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.connector.classLevel'));
 						}
 					}
 				]

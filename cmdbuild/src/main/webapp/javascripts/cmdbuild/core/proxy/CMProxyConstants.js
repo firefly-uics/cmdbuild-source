@@ -69,6 +69,8 @@
 			MINUTE: 'minute',
 			MOUNTH: 'mounth',
 			NAME: 'name',
+			NAME_CLASS_1: 'nameClass1',
+			NAME_CLASS_2: 'nameClass2',
 			NOTIFICATION_ACTIVE: 'notificationActive',
 			NOTIFICATION_EMAIL_ACCOUNT: 'notificationEmailAccount',
 			NOTIFICATION_EMAIL_TEMPLATE: 'notificationEmailTemplate',
