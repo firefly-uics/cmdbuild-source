@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.util;
+package org.cmdbuild.logic.mapping.json;
 
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
@@ -19,6 +19,9 @@ public class JsonFilterHelper {
 	protected static final Marker marker = MarkerFactory.getMarker(JsonFilterHelper.class.getName());
 
 	public static interface FilterElementGetter {
+
+		final Logger logger = JsonFilterHelper.logger;
+		final Marker marker = MarkerFactory.getMarker(FilterElementGetter.class.getName());
 
 		boolean hasElement();
 

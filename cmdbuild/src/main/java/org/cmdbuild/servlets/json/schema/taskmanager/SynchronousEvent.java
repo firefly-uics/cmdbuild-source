@@ -8,6 +8,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_ACCOUNT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_TEMPLATE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.GROUPS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.PHASE;
@@ -120,6 +121,11 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 			return delegate.getTargetClassname();
 		}
 
+		@JsonProperty(FILTER)
+		public String getFilter() {
+			return delegate.getFilter();
+		}
+
 		@JsonProperty(EMAIL_ACTIVE)
 		public boolean isEmailEnabled() {
 			return delegate.isEmailEnabled();
@@ -165,6 +171,7 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 			@Parameter(value = PHASE, required = false) final String phase, //
 			@Parameter(value = GROUPS, required = false) final JSONArray groups, //
 			@Parameter(value = CLASS_NAME, required = false) final String classname, //
+			@Parameter(value = FILTER, required = false) final String filter, //
 			@Parameter(value = EMAIL_ACTIVE, required = false) final Boolean emailActive, //
 			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
 			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
@@ -182,6 +189,7 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 				// filtering
 				.withGroups(toIterable(groups)) //
 				.withTargetClass(classname) //
+				.withFilter(filter) //
 				//
 				// send notification
 				.withEmailEnabled(emailActive) //
@@ -226,6 +234,7 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 			@Parameter(value = PHASE, required = false) final String phase, //
 			@Parameter(value = GROUPS, required = false) final JSONArray groups, //
 			@Parameter(value = CLASS_NAME, required = false) final String classname, //
+			@Parameter(value = FILTER, required = false) final String filter, //
 			@Parameter(value = EMAIL_ACTIVE, required = false) final Boolean emailActive, //
 			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
 			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
@@ -244,6 +253,7 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 				// filtering
 				.withGroups(toIterable(groups)) //
 				.withTargetClass(classname) //
+				.withFilter(filter) //
 				//
 				// send notification
 				.withEmailEnabled(emailActive) //

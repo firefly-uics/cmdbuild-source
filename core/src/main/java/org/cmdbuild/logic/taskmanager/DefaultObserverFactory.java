@@ -2,9 +2,15 @@ package org.cmdbuild.logic.taskmanager;
 
 import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.isEmpty;
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
+import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.EQUAL;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
+import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.event.Commands.safe;
 import static org.cmdbuild.services.template.engine.EngineNames.GROUP_PREFIX;
@@ -17,12 +23,18 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.logging.LoggingSupport;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.StorableEmailAccount;
+import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
 import org.cmdbuild.logic.email.SendTemplateEmail;
+import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
+import org.cmdbuild.logic.mapping.json.JsonFilterHelper.FilterElementGetter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
 import org.cmdbuild.logic.workflow.StartProcess;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
@@ -46,11 +58,52 @@ import org.cmdbuild.services.template.engine.CardEngine;
 import org.cmdbuild.services.template.engine.GroupEmailEngine;
 import org.cmdbuild.services.template.engine.GroupUsersEmailEngine;
 import org.cmdbuild.services.template.engine.UserEmailEngine;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
 public class DefaultObserverFactory implements ObserverFactory {
+
+	private static final Logger logger = LoggingSupport.logger;
+	private static final Marker marker = MarkerFactory.getMarker(DefaultObserverFactory.class.getName());
+
+	private static final JSONObject NULL_JSON_FILTER = new JSONObject();
+
+	private static class CardIdFilterElementGetter implements FilterElementGetter {
+
+		public static CardIdFilterElementGetter of(final CMCard card) {
+			return new CardIdFilterElementGetter(card);
+		}
+
+		private final CMCard card;
+
+		private CardIdFilterElementGetter(final CMCard card) {
+			this.card = card;
+		}
+
+		@Override
+		public boolean hasElement() {
+			return true;
+		}
+
+		@Override
+		public JSONObject getElement() throws JSONException {
+			logger.debug(marker, "creating JSON element for '{}'", card.getId());
+			final JSONObject element = new JSONObject();
+			element.put(ATTRIBUTE_KEY, "Id");
+			element.put(OPERATOR_KEY, EQUAL);
+			element.put(VALUE_KEY, new JSONArray(asList(card.getId())));
+			logger.debug(marker, "resulting element is '{}'", element);
+			return element;
+		}
+
+	}
 
 	private static class SynchronousEventTaskPredicate implements Predicate<CMCard> {
 
@@ -58,6 +111,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 
 			private SynchronousEventTask task;
 			private UserStore userStore;
+			private DataAccessLogic dataAccessLogic;
 
 			private Builder() {
 				// use factory method
@@ -70,8 +124,9 @@ public class DefaultObserverFactory implements ObserverFactory {
 			}
 
 			private void validate() {
-				Validate.notNull(task, "invalid task");
-				Validate.notNull(userStore, "invalid user store");
+				Validate.notNull(task, "invalid '%s'", SynchronousEventTask.class);
+				Validate.notNull(userStore, "invalid '%s'", UserStore.class);
+				Validate.notNull(dataAccessLogic, "invalid '%s'", DataAccessLogic.class);
 			}
 
 			public Builder withTask(final SynchronousEventTask task) {
@@ -84,6 +139,11 @@ public class DefaultObserverFactory implements ObserverFactory {
 				return this;
 			}
 
+			public Builder withDataAccessLogic(final DataAccessLogic dataAccessLogic) {
+				this.dataAccessLogic = dataAccessLogic;
+				return this;
+			}
+
 		}
 
 		public static Builder newInstance() {
@@ -92,15 +152,17 @@ public class DefaultObserverFactory implements ObserverFactory {
 
 		private final SynchronousEventTask task;
 		private final UserStore userStore;
+		private final DataAccessLogic dataAccessLogic;
 
 		private SynchronousEventTaskPredicate(final Builder builder) {
 			this.task = builder.task;
 			this.userStore = builder.userStore;
+			this.dataAccessLogic = builder.dataAccessLogic;
 		}
 
 		@Override
 		public boolean apply(final CMCard input) {
-			return matchesGroup() && matchesClass(input);
+			return matchesGroup() && matchesClass(input) && matchesCards(input);
 		}
 
 		private boolean matchesGroup() {
@@ -110,6 +172,28 @@ public class DefaultObserverFactory implements ObserverFactory {
 
 		private boolean matchesClass(final CMCard input) {
 			return isBlank(task.getTargetClassname()) || input.getType().getName().equals(task.getTargetClassname());
+		}
+
+		private boolean matchesCards(final CMCard input) {
+			return (isBlank(task.getTargetClassname()) && isBlank(task.getFilter())) || matchesFilter(input);
+		}
+
+		private boolean matchesFilter(final CMCard input) {
+			final String classname = task.getTargetClassname();
+			final String filter = task.getFilter();
+			try {
+				final JSONObject jsonFilter = (filter == null) ? NULL_JSON_FILTER : new JSONObject(filter);
+				final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+						.filter(new JsonFilterHelper(jsonFilter) //
+								.merge(CardIdFilterElementGetter.of(input))) //
+						.build();
+				final FetchCardListResponse response = dataAccessLogic.fetchCards(classname, queryOptions);
+				return response.totalSize() > 0;
+			} catch (final JSONException e) {
+				final String message = format("malformed filter: '%s'", filter);
+				logger.error(marker, message, e);
+				return false;
+			}
 		}
 
 	}
@@ -125,6 +209,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
 	private final CMDataView dataView;
+	private final DataAccessLogic dataAccessLogic;
 
 	public DefaultObserverFactory( //
 			final UserStore userStore, //
@@ -133,7 +218,8 @@ public class DefaultObserverFactory implements ObserverFactory {
 			final Store<StorableEmailAccount> emailAccountStore, //
 			final EmailServiceFactory emailServiceFactory, //
 			final EmailTemplateLogic emailTemplateLogic, //
-			final CMDataView dataView //
+			final CMDataView dataView, //
+			final DataAccessLogic dataAccessLogic //
 	) {
 		this.userStore = userStore;
 		this.fluentApi = fluentApi;
@@ -142,6 +228,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 		this.emailServiceFactory = emailServiceFactory;
 		this.emailTemplateLogic = emailTemplateLogic;
 		this.dataView = dataView;
+		this.dataAccessLogic = dataAccessLogic;
 	}
 
 	@Override
@@ -327,6 +414,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 		return SynchronousEventTaskPredicate.newInstance() //
 				.withTask(task) //
 				.withUserStore(userStore) //
+				.withDataAccessLogic(dataAccessLogic) //
 				.build();
 	}
 

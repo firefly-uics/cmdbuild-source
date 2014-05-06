@@ -1,20 +1,11 @@
 package integration.services.bimserver.cli;
 
-import java.io.File;
-import java.net.URL;
-import java.util.List;
-
-import org.cmdbuild.bim.model.Attribute;
-import org.cmdbuild.bim.model.Entity;
-import org.cmdbuild.bim.service.BimProject;
-import org.cmdbuild.bim.service.BimRevision;
 import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.bimserver.BimserverClient;
 import org.cmdbuild.bim.service.bimserver.BimserverConfiguration;
 import org.cmdbuild.bim.service.bimserver.BimserverService;
 import org.cmdbuild.bim.service.bimserver.DefaultBimserverClient;
 import org.cmdbuild.bim.service.bimserver.SmartBimserverClient;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,16 +19,16 @@ public class AddAndModifyObjects {
 
 	@Before
 	public void setUp() {
-		BimserverConfiguration configuration = new BimserverConfiguration() {
+		final BimserverConfiguration configuration = new BimserverConfiguration() {
 
 			@Override
 			public boolean isEnabled() {
 				return true;
 			}
-			
+
 			@Override
 			public void disable() {
-				throw new UnsupportedOperationException("TODO");			
+				throw new UnsupportedOperationException("TODO");
 			}
 
 			@Override
@@ -56,7 +47,7 @@ public class AddAndModifyObjects {
 			}
 
 			@Override
-			public void addListener(ChangeListener listener) {
+			public void addListener(final ChangeListener listener) {
 			}
 		};
 		client = new SmartBimserverClient(new DefaultBimserverClient(configuration));
@@ -66,9 +57,7 @@ public class AddAndModifyObjects {
 
 	@Test
 	public void createAndModifyObject() throws Exception {
-		
+
 	}
-	
-	
 
 }
