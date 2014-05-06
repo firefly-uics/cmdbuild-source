@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks;
+	var tr = CMDBuild.Translation.administration.tasks.taskConnector;
 
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep6Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
@@ -164,7 +164,7 @@
 			});
 
 			this.referenceMappingGrid = Ext.create('Ext.grid.Panel', {
-				title: 'tr.referenceMapping',
+				title: tr.referenceMapping,
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 
@@ -172,7 +172,7 @@
 
 				columns: [
 					{
-						header: 'tr.className',
+						header: CMDBuild.Translation.className,
 						dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
@@ -181,7 +181,7 @@
 						flex: 1
 					},
 					{
-						header: 'tr.domainName',
+						header: tr.domainName,
 						dataIndex: CMDBuild.ServiceProxy.parameter.DOMAIN_NAME,
 						editor: {
 							xtype: 'combo',

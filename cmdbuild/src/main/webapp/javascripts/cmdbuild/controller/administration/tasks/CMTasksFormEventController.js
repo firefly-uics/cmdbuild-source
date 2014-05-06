@@ -10,7 +10,7 @@
 		view: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
-		taskType: 'event',
+//		taskType: 'event',
 
 		/**
 		 * Gatherer function to catch events
@@ -91,9 +91,10 @@
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
+				this.selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.TYPE);
 
 				// Selected task asynchronous store query
-				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(this.taskType);
+				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(this.selectedType);
 				this.selectedDataStore.load({
 					scope: this,
 					params: {
@@ -104,21 +105,19 @@
 							var record = records[0];
 
 // TODO: to check if response has phase data or not to extends taskType value
-
-							this.parentDelegate.loadForm(this.taskType);
+							_debug(this.selectedType);
+							this.parentDelegate.loadForm(this.selectedType);
 
 							// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
 // TODO
-//							// Set step1 [0] datas
-//							me.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-//							me.delegateStep[0].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTES));
-//							me.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
-//							me.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
-//							me.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME));
+							// Set step1 [0] datas
+							this.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
+							this.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
+							this.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
 //
 //							// Set step2 [1] datas
-//							me.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
-//							me.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+//							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+//							this.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
 
 							this.view.disableModify(true);
 						}
@@ -138,7 +137,7 @@
 				return;
 			}
 
-			CMDBuild.LoadMask.get().show();
+//			CMDBuild.LoadMask.get().show();
 			var filterData = this.delegateStep[1].getDataFilters();
 			var formData = this.view.getData(true);
 			var submitDatas = {};
@@ -148,8 +147,8 @@
 					case 'event_asynchronous': {
 
 						// Cron field validation
-						if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
-							return;
+							if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
+								return;
 
 						submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
 							formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
@@ -184,6 +183,10 @@
 					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
 				}
 
+			// Filters validation
+				if (!Ext.isEmpty(filterData))
+					submitDatas[CMDBuild.ServiceProxy.parameter.FILTER] = Ext.encode(filterData);
+
 			// Data filtering to submit only right values
 			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
 			submitDatas[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.CLASS_NAME];
@@ -192,23 +195,23 @@
 _debug(filterData);
 _debug(formData);
 _debug(submitDatas);
-			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
-				CMDBuild.core.proxy.CMProxyTasks.create({
-					type: this.delegateStep[0].taskType,
-					params: submitDatas,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
-			} else {
-				CMDBuild.core.proxy.CMProxyTasks.update({
-					type: this.delegateStep[0].taskType,
-					params: submitDatas,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
-			}
+//			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
+//				CMDBuild.core.proxy.CMProxyTasks.create({
+//					type: this.delegateStep[0].taskType,
+//					params: submitDatas,
+//					scope: this,
+//					success: this.success,
+//					callback: this.callback
+//				});
+//			} else {
+//				CMDBuild.core.proxy.CMProxyTasks.update({
+//					type: this.delegateStep[0].taskType,
+//					params: submitDatas,
+//					scope: this,
+//					success: this.success,
+//					callback: this.callback
+//				});
+//			}
 		}
 	});
 

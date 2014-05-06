@@ -205,7 +205,7 @@
 			this.gridSelectionModel = Ext.create('Ext.selection.CheckboxModel', {
 				mode: 'single',
 				showHeaderCheckbox: false,
-				headerText: 'tr.main',
+				headerText: CMDBuild.Translation.main,
 				headerWidth: 50,
 				dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_MAIN_NAME,
 				checkOnly: true,
@@ -232,7 +232,7 @@
 			});
 
 			this.classLevelMappingGrid = Ext.create('Ext.grid.Panel', {
-				title: 'tr.classLevelMapping',
+				title: tr.classLevelMapping,
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 
@@ -241,7 +241,7 @@
 
 				columns: [
 					{
-						header: 'tr.viewName',
+						header: tr.viewName,
 						dataIndex: CMDBuild.ServiceProxy.parameter.VIEW_NAME,
 						editor: {
 							xtype: 'combo',
@@ -261,7 +261,7 @@
 						flex: 1
 					},
 					{
-						header: 'tr.className',
+						header: CMDBuild.Translation.className,
 						dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
@@ -320,10 +320,10 @@
 			show: function(view, eOpts) {
 				var me = this;
 
-				Ext.Function.createDelayed(function() { // HACK: to fix problem which fires show event before changeTab() function
-					if (me.delegate.isEmptyMappingGrid())
-						me.delegate.setDisabledButtonNext(true);
-				}, 1)();
+//				Ext.Function.createDelayed(function() { // HACK: to fix problem which fires show event before changeTab() function
+//					if (me.delegate.isEmptyMappingGrid())
+//						me.delegate.setDisabledButtonNext(true);
+//				}, 1)();
 			}
 		}
 	});

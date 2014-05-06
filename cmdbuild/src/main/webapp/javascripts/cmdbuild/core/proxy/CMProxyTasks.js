@@ -93,6 +93,13 @@
 				});
 			},
 
+			/**
+			 * To transform type in server call url
+			 *
+			 * @param (String) type
+			 *
+			 * @return (Var) url address
+			 */
 			getUrl: function(type) {
 				switch (type) {
 					case 'all':
@@ -104,7 +111,7 @@
 					case 'email':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.email;
 
-					case 'event': // TODO
+					case 'event':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event;
 
 					case 'event_asynchronous': // TODO
@@ -124,138 +131,197 @@
 			/**
 			 * Connector specific proxies
 			 */
-			getConnectorOperations: function() {
-				return Ext.create('Ext.data.Store', {
-					autoLoad: true,
-					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.VALUE],
-					data: [
-						{ name: 'New cards', value: 'NewCards' },
-						{ name: 'Edited cards', value: 'EditedCards' },
-						{ name: 'Deleted not matching cards', value: 'DeletedNotMatchingCards' }
-					]
-				});
-			},
+				/**
+				 * @return (Object) store
+				 */
+				getConnectorOperations: function() {
+					return Ext.create('Ext.data.Store', {
+						autoLoad: true,
+						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.VALUE],
+						data: [
+							{ name: 'New cards', value: 'NewCards' },
+							{ name: 'Edited cards', value: 'EditedCards' },
+							{ name: 'Deleted not matching cards', value: 'DeletedNotMatchingCards' }
+						]
+					});
+				},
 
-			getDbTypes: function() {
-				return Ext.create('Ext.data.Store', {
-					autoLoad: true,
-					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.VALUE],
-					data: [
-						{ name: 'MySQL', value: 'mysql' },
-						{ name: 'Oracle', value: 'oracle' },
-						{ name: 'PostgreSQL', value: 'postgresql' },
-						{ name: 'SQLServer', value: 'sqlserver' }
-					]
-				});
-			},
+				/**
+				 * @return (Object) store
+				 */
+				getDbTypes: function() {
+					return Ext.create('Ext.data.Store', {
+						autoLoad: true,
+						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.VALUE],
+						data: [
+							{ name: 'MySQL', value: 'mysql' },
+							{ name: 'Oracle', value: 'oracle' },
+							{ name: 'PostgreSQL', value: 'postgresql' },
+							{ name: 'SQLServer', value: 'sqlserver' }
+						]
+					});
+				},
+
+				/**
+				 * @return (Object) store
+				 */
+				getDeletionTypes: function() {
+					var tr = CMDBuild.Translation.administration.tasks.taskConnector.deletionTypes;
+
+					return Ext.create('Ext.data.Store', {
+						autoLoad: true,
+						fields: [CMDBuild.ServiceProxy.parameter.DESCRIPTION, CMDBuild.ServiceProxy.parameter.VALUE],
+						data: [
+							{ description: tr.logic, value: 'logic' },
+							{ description: tr.notLogic, value: 'notLogic' }
+						]
+					});
+				},
 // TODO: future implementation
-//			getFunctionStore: function() {
-//				return Ext.create('Ext.data.Store', {
-//					autoLoad: true,
-//					fields: [CMDBuild.ServiceProxy.parameter.VALUE, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-//					data: [
-//						{ name: 'Function1', description: 'Function 1' },
-//						{ name: 'Function2', description: 'Function 2' },
-//						{ name: 'Function3', description: 'Function 3' }
-//					]
-//				});
-//			},
+//				/**
+//				 * @return (Object) store
+//				 */
+//				getFunctionStore: function() {
+//					return Ext.create('Ext.data.Store', {
+//						autoLoad: true,
+//						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+//						data: [
+//							{ name: 'Function1', description: 'Function 1' },
+//							{ name: 'Function2', description: 'Function 2' },
+//							{ name: 'Function3', description: 'Function 3' }
+//						]
+//					});
+//				},
 
-			getViewStore: function() {
-				return Ext.create('Ext.data.Store', {
-					autoLoad: true,
-					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-					data: [
-						{ name: 'ViewName1', description: 'View name 1' },
-						{ name: 'ViewName2', description: 'View name 2' },
-						{ name: 'ViewName3', description: 'View name 3' }
-					]
-				});
-			},
+				/**
+				 * @return (Object) store
+				 */
+				getOperations: function() {
+					var tr = CMDBuild.Translation.administration.tasks.taskConnector.operationsTypes;
 
-			getViewAttributeNames: function(viewName) {
-				return Ext.create('Ext.data.Store', {
-					autoLoad: true,
-					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-					data: [
-						{ name: 'ViewAttributeName1', description: 'View attribute name 1' },
-						{ name: 'ViewAttributeName2', description: 'View attribute name 2' },
-						{ name: 'ViewAttributeName3', description: 'View attribute name 3' }
-					]
-				});
-			},
+					return Ext.create('Ext.data.Store', {
+						autoLoad: true,
+						fields: [CMDBuild.ServiceProxy.parameter.DESCRIPTION, CMDBuild.ServiceProxy.parameter.VALUE],
+						data: [
+							{ description: tr.none, value: 'none' },
+							{ description: tr.filter, value: 'filter' }
+						]
+					});
+				},
+
+				/**
+				 * @return (Object) store
+				 */
+				getViewStore: function() {
+					return Ext.create('Ext.data.Store', {
+						autoLoad: true,
+						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+						data: [
+							{ name: 'ViewName1', description: 'View name 1' },
+							{ name: 'ViewName2', description: 'View name 2' },
+							{ name: 'ViewName3', description: 'View name 3' }
+						]
+					});
+				},
+
+				/**
+				 * @return (Object) store
+				 */
+				getViewAttributeNames: function(viewName) {
+					return Ext.create('Ext.data.Store', {
+						autoLoad: true,
+						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+						data: [
+							{ name: 'ViewAttributeName1', description: 'View attribute name 1' },
+							{ name: 'ViewAttributeName2', description: 'View attribute name 2' },
+							{ name: 'ViewAttributeName3', description: 'View attribute name 3' }
+						]
+					});
+				},
 
 			/**
 			 * Event specific proxies
 			 */
-			getPhases: function(viewName) {
-				var tr = CMDBuild.Translation.administration.tasks;
+				/**
+				 * Returns synchronous event phases
+				 *
+				 * @return (Object) store
+				 */
+				getPhases: function() {
+					var tr = CMDBuild.Translation.administration.tasks.taskEvent.eventPhases;
 
-				return Ext.create('Ext.data.Store', {
-					autoLoad: true,
-					fields: [CMDBuild.ServiceProxy.parameter.DESCRIPTION, CMDBuild.ServiceProxy.parameter.VALUE],
-					data: [
-						{ description: tr.taskEvent.afterCreate, value: 'afterCreate' },
-						{ description: tr.taskEvent.afterUpdate, value: 'afterUpdate' },
-						{ description: tr.taskEvent.beforeUpdate, value: 'beforeUpdate' },
-						{ description: tr.taskEvent.beforeDelete, value: 'beforeDelete' }
-					]
-				});
-			},
+					return Ext.create('Ext.data.Store', {
+						autoLoad: true,
+						fields: [CMDBuild.ServiceProxy.parameter.DESCRIPTION, CMDBuild.ServiceProxy.parameter.VALUE],
+						data: [
+							{ description: tr.afterCreate, value: 'afterCreate' },
+							{ description: tr.afterUpdate, value: 'afterUpdate' },
+							{ description: tr.beforeUpdate, value: 'beforeUpdate' },
+							{ description: tr.beforeDelete, value: 'beforeDelete' }
+						]
+					});
+				},
 
 			/**
 			 * Workflow specific proxies
 			 */
-			// Used from Processes -> Task Manager tab to get all processes by workflow name
-			getStoreByWorkflow: function() {
-				return Ext.create('Ext.data.Store', {
-					autoLoad: false,
-					model: 'CMDBuild.model.CMModelTasks.grid.workflow',
-					proxy: {
-						type: 'ajax',
-						url: this.getUrl('workflow').getStoreByWorkflow,
-						reader: {
-							type: 'json',
-							root: 'response'
+				/**
+				 * Used from Processes -> Task Manager tab to get all processes by workflow name
+				 *
+				 * @return (Object) store
+				 */
+				getStoreByWorkflow: function() {
+					return Ext.create('Ext.data.Store', {
+						autoLoad: false,
+						model: 'CMDBuild.model.CMModelTasks.grid.workflow',
+						proxy: {
+							type: 'ajax',
+							url: this.getUrl('workflow').getStoreByWorkflow,
+							reader: {
+								type: 'json',
+								root: 'response'
+							}
+						},
+						sorters: {
+							property: CMDBuild.ServiceProxy.parameter.TYPE,
+							direction: 'ASC'
 						}
-					},
-					sorters: {
-						property: CMDBuild.ServiceProxy.parameter.TYPE,
-						direction: 'ASC'
+					});
+				},
+
+				/**
+				 * @return (Object) store
+				 */
+				getStoreAllWorkflow: function() {
+					var processes = _CMCache.getProcesses();
+					var data = [];
+
+					for (var key in processes) {
+						var obj = processes[key];
+
+						if (obj.raw.superclass)
+							continue;
+
+						data.push({
+							name: _CMCache.getEntryTypeNameById(obj.raw.id),
+							description: obj.raw.text
+						});
 					}
-				});
-			},
 
-			getStoreAllWorkflow: function() {
-				var processes = _CMCache.getProcesses();
-				var data = [];
+					return Ext.create('Ext.data.Store', {
+						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+						data: data,
+						autoLoad: true
+					});
+				},
 
-				for (var key in processes) {
-					var obj = processes[key];
-
-					if (obj.raw.superclass)
-						continue;
-
-					data.push({
-						name: _CMCache.getEntryTypeNameById(obj.raw.id),
-						description: obj.raw.text
+				getWorkflowAttributes: function(parameters) {
+					Ext.Ajax.request({
+						url: CMDBuild.ServiceProxy.url.attribute.read,
+						params: parameters.params,
+						success: parameters.success
 					});
 				}
-
-				return Ext.create('Ext.data.Store', {
-					fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-					data: data,
-					autoLoad: true
-				});
-			},
-
-			getWorkflowAttributes: function(parameters) {
-				Ext.Ajax.request({
-					url: CMDBuild.ServiceProxy.url.attribute.read,
-					params: parameters.params,
-					success: parameters.success
-				});
-			}
 		}
 	});
 
