@@ -57,6 +57,8 @@
 		<module>dms/core</module>
 		<module>scheduler/core</module>
 		<module>scheduler/quartz</module>
+		<module>services/rest/core</module>
+		<module>services/rest/cxf</module>
 		<module>shark/client</module>
 		<module>shark/commons</module>
 		<module>shark/extensions</module>
@@ -382,7 +384,7 @@
 												</goals>
 											</pluginExecutionFilter>
 											<action>
-												<ignore />
+												<ignore></ignore>
 											</action>
 										</pluginExecution>
 									</pluginExecutions>

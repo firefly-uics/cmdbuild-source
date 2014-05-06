@@ -22,8 +22,8 @@ public class QueryOptions {
 
 	public static class QueryOptionsBuilder implements Builder<QueryOptions> {
 
-		private int limit;
-		private int offset;
+		private Integer limit;
+		private Integer offset;
 		private JSONObject filter;
 		private JSONArray sorters;
 		private JSONArray attributeSubset;
@@ -38,12 +38,50 @@ public class QueryOptions {
 			parameters = Maps.newHashMap();
 		}
 
-		public QueryOptionsBuilder limit(final int limit) {
+		@Override
+		public QueryOptions build() {
+			validate();
+			return new QueryOptions(this);
+		}
+
+		private void validate() {
+			preReleaseHackToFixCqlFilters();
+			offset = (offset == null) ? 0 : offset;
+			limit = (limit == null) ? Integer.MAX_VALUE : limit;
+		}
+
+		/*
+		 * FIXME remove this and fix JavaScript ASAP
+		 */
+		private void preReleaseHackToFixCqlFilters() {
+			try {
+				final Map<String, Object> cqlParameters = Maps.newHashMap();
+				boolean addParameters = false;
+				for (final Entry<String, Object> entry : parameters.entrySet()) {
+					final String key = entry.getKey();
+					if (key.equals(CQL_KEY)) {
+						filter.put(CQL_KEY, entry.getValue());
+						addParameters = true;
+					} else if (key.startsWith("p")) {
+						cqlParameters.put(key, entry.getValue());
+					}
+				}
+				if (addParameters) {
+					for (final Entry<String, Object> entry : cqlParameters.entrySet()) {
+						filter.put(entry.getKey(), entry.getValue());
+					}
+				}
+			} catch (final Throwable e) {
+				logger.error("error while hacking filter", e);
+			}
+		}
+
+		public QueryOptionsBuilder limit(final Integer limit) {
 			this.limit = limit;
 			return this;
 		}
 
-		public QueryOptionsBuilder offset(final int offset) {
+		public QueryOptionsBuilder offset(final Integer offset) {
 			this.offset = offset;
 			return this;
 		}
@@ -90,40 +128,6 @@ public class QueryOptions {
 			return this;
 		}
 
-		@Override
-		public QueryOptions build() {
-			preReleaseHackToFixCqlFilters();
-			if (offset == 0 && limit == 0) {
-				limit = Integer.MAX_VALUE;
-			}
-			return new QueryOptions(this);
-		}
-
-		/*
-		 * FIXME remove this and fix JavaScript ASAP
-		 */
-		private void preReleaseHackToFixCqlFilters() {
-			try {
-				final Map<String, Object> cqlParameters = Maps.newHashMap();
-				boolean addParameters = false;
-				for (final Entry<String, Object> entry : parameters.entrySet()) {
-					final String key = entry.getKey();
-					if (key.equals(CQL_KEY)) {
-						filter.put(CQL_KEY, entry.getValue());
-						addParameters = true;
-					} else if (key.startsWith("p")) {
-						cqlParameters.put(key, entry.getValue());
-					}
-				}
-				if (addParameters) {
-					for (final Entry<String, Object> entry : cqlParameters.entrySet()) {
-						filter.put(entry.getKey(), entry.getValue());
-					}
-				}
-			} catch (final Throwable e) {
-				logger.error("error while hacking filter", e);
-			}
-		}
 	}
 
 	public static QueryOptionsBuilder newQueryOption() {

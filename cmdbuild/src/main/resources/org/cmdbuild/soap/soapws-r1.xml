@@ -27,7 +27,7 @@
 	<bean id="addDefaultNamespaceInterceptor"
 		class="org.cmdbuild.services.soap.AddDefaultNamespaceInterceptor" />
 
-	<jaxws:endpoint address="/Webservices">
+	<jaxws:endpoint address="/soap/Webservices">
 		<jaxws:implementor>
 			<bean factory-bean="webservicesProxy" factory-method="get" />
 		</jaxws:implementor>
