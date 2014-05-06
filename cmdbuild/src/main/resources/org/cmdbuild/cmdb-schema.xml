@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
-	xmlns:soap="http://cxf.apache.org/bindings/soap"	
+	xmlns:soap="http://cxf.apache.org/bindings/soap"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -10,73 +10,75 @@
 		http://cxf.apache.org/bindings/soap
 		http://cxf.apache.org/schemas/configuration/soap.xsd	
 	">
-	
-	<bean id="cmdbfProperties" class="org.cmdbuild.config.CmdbfProperties" factory-method="getInstance" />
-	
-	<bean id="idRegistry" class="org.cmdbuild.cmdbf.cmdbmdr.MdrScopedIdRegistry" >
+
+	<bean id="cmdbfProperties" class="org.cmdbuild.config.CmdbfProperties"
+		factory-method="getInstance" />
+
+	<bean id="idRegistry" class="org.cmdbuild.cmdbf.cmdbmdr.MdrScopedIdRegistry">
 		<constructor-arg name="dataAccessLogic" ref="systemDataAccessLogic" />
 		<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 	</bean>
-	
-	<bean id="xmlRegistry" class="org.cmdbuild.cmdbf.xml.XmlRegistry" scope="prototype">
+
+	<bean id="xmlRegistry" class="org.cmdbuild.cmdbf.xml.XmlRegistry"
+		scope="prototype">
 		<constructor-arg>
-        	<list>
-    			<bean id="systemNS" class="org.cmdbuild.cmdbf.xml.SystemNamespace" >
-		            <constructor-arg name="name" value="system" />
-		            <constructor-arg name="aliasRegistry" ref="idRegistry" />
-					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />	
+			<list>
+				<bean id="systemNS" class="org.cmdbuild.cmdbf.xml.SystemNamespace">
+					<constructor-arg name="name" value="system" />
+					<constructor-arg name="aliasRegistry" ref="idRegistry" />
+					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 				</bean>
-    			<bean id="classNS" class="org.cmdbuild.cmdbf.xml.ClassNamespace" >
-		            <constructor-arg name="name" value="class" />
-    				<constructor-arg name="systemDataAccessLogic" ref="systemDataAccessLogic" />
+				<bean id="classNS" class="org.cmdbuild.cmdbf.xml.ClassNamespace">
+					<constructor-arg name="name" value="class" />
+					<constructor-arg name="systemDataAccessLogic" ref="systemDataAccessLogic" />
 					<constructor-arg name="userDataAccessLogic" ref="userDataAccessLogic" />
 					<constructor-arg name="dataDefinitionLogic" ref="dataDefinitionLogic" />
 					<constructor-arg name="lookupLogic" ref="lookupLogic" />
-					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />	
+					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 				</bean>
-    			<bean id="classHistoryNS" class="org.cmdbuild.cmdbf.xml.ClassHistoryNamespace" >
-		            <constructor-arg name="name" value="class-history" />
-    				<constructor-arg name="systemDataAccessLogic" ref="systemDataAccessLogic" />
+				<bean id="classHistoryNS" class="org.cmdbuild.cmdbf.xml.ClassHistoryNamespace">
+					<constructor-arg name="name" value="class-history" />
+					<constructor-arg name="systemDataAccessLogic" ref="systemDataAccessLogic" />
 					<constructor-arg name="userDataAccessLogic" ref="userDataAccessLogic" />
 					<constructor-arg name="dataDefinitionLogic" ref="dataDefinitionLogic" />
 					<constructor-arg name="lookupLogic" ref="lookupLogic" />
-					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />	
+					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 				</bean>
-    			<bean id="domainNS" class="org.cmdbuild.cmdbf.xml.DomainNamespace" >
-		            <constructor-arg name="name" value="domain" />
-    				<constructor-arg name="systemDataAccessLogic" ref="systemDataAccessLogic" />
+				<bean id="domainNS" class="org.cmdbuild.cmdbf.xml.DomainNamespace">
+					<constructor-arg name="name" value="domain" />
+					<constructor-arg name="systemDataAccessLogic" ref="systemDataAccessLogic" />
 					<constructor-arg name="userDataAccessLogic" ref="userDataAccessLogic" />
 					<constructor-arg name="dataDefinitionLogic" ref="dataDefinitionLogic" />
-					<constructor-arg name="lookupLogic" ref="lookupLogic" />	
+					<constructor-arg name="lookupLogic" ref="lookupLogic" />
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 				</bean>
-    			<bean id="domainHistoryNS" class="org.cmdbuild.cmdbf.xml.DomainHistoryNamespace" >
-		            <constructor-arg name="name" value="domain-history" />
-    				<constructor-arg name="systemDataAccessLogic" ref="systemDataAccessLogic" />
+				<bean id="domainHistoryNS" class="org.cmdbuild.cmdbf.xml.DomainHistoryNamespace">
+					<constructor-arg name="name" value="domain-history" />
+					<constructor-arg name="systemDataAccessLogic" ref="systemDataAccessLogic" />
 					<constructor-arg name="userDataAccessLogic" ref="userDataAccessLogic" />
 					<constructor-arg name="dataDefinitionLogic" ref="dataDefinitionLogic" />
-					<constructor-arg name="lookupLogic" ref="lookupLogic" />	
+					<constructor-arg name="lookupLogic" ref="lookupLogic" />
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 				</bean>
-    			<bean id="lookupNS" class="org.cmdbuild.cmdbf.xml.LookupNamespace" >
-		            <constructor-arg name="name" value="lookup" />
-					<constructor-arg name="lookupLogic" ref="lookupLogic" />	
+				<bean id="lookupNS" class="org.cmdbuild.cmdbf.xml.LookupNamespace">
+					<constructor-arg name="name" value="lookup" />
+					<constructor-arg name="lookupLogic" ref="lookupLogic" />
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 				</bean>
-    			<bean id="documentNS" class="org.cmdbuild.cmdbf.xml.DocumentNamespace" >
-		            <constructor-arg name="name" value="document" />
+				<bean id="documentNS" class="org.cmdbuild.cmdbf.xml.DocumentNamespace">
+					<constructor-arg name="name" value="document" />
 					<constructor-arg name="dmsLogic" ref="dmsLogic" />
 					<constructor-arg name="lookupLogic" ref="lookupLogic" />
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
-					<constructor-arg name="dmsConfiguration" ref="dmsProperties" />	
-				</bean>	
-    			<bean id="geoNS" class="org.cmdbuild.cmdbf.xml.GeoNamespace" >
-		            <constructor-arg name="name" value="geo" />
+					<constructor-arg name="dmsConfiguration" ref="dmsProperties" />
+				</bean>
+				<bean id="geoNS" class="org.cmdbuild.cmdbf.xml.GeoNamespace">
+					<constructor-arg name="name" value="geo" />
 					<constructor-arg name="dataView" ref="dbDataView" />
-					<constructor-arg name="gisLogic" ref="gisLogic" />		
+					<constructor-arg name="gisLogic" ref="gisLogic" />
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
-				</bean>	
-        	</list>
-    	</constructor-arg>
+				</bean>
+			</list>
+		</constructor-arg>
 	</bean>
 </beans>
