@@ -48,7 +48,7 @@ public class AddObjects {
 
 	@Before
 	public void setUp() {
-		BimserverConfiguration configuration = new BimserverConfiguration() {
+		final BimserverConfiguration configuration = new BimserverConfiguration() {
 
 			@Override
 			public boolean isEnabled() {
@@ -76,32 +76,32 @@ public class AddObjects {
 			}
 
 			@Override
-			public void addListener(ChangeListener listener) {
+			public void addListener(final ChangeListener listener) {
 			}
 		};
 		client = new SmartBimserverClient(new DefaultBimserverClient(configuration));
 		service = new BimserverService(client);
 		System.out.println("Connection established\n");
 	}
-	
+
 	@Test
 	public void createAndChangeOneAttribute() throws Exception {
 
-		String name = "PG-" + RandomStringUtils.randomAlphanumeric(5);
-		BimProject createProject = service.createProject(name);
-		String projectId = createProject.getIdentifier();
+		final String name = "PG-" + RandomStringUtils.randomAlphanumeric(5);
+		final BimProject createProject = service.createProject(name);
+		final String projectId = createProject.getIdentifier();
 		System.out.println(projectId + " " + name);
 
 		String transactionId = client.openTransaction(projectId);
 
-		String objectId = client.createObject(transactionId, "IfcFurnishingElement");
+		final String objectId = client.createObject(transactionId, "IfcFurnishingElement");
 		final String guid = RandomStringUtils.randomAlphanumeric(22);
 		client.setStringAttribute(transactionId, objectId, "GlobalId", guid);
 		client.setStringAttribute(transactionId, objectId, "Description", "C1");
 
 		String revisionId = client.commitTransaction(transactionId);
 		refreshWithMerge(projectId);
-		
+
 		Iterable<Entity> entities = client.getEntitiesByType("IfcFurnishingElement", revisionId);
 		assertTrue(Iterables.size(entities) == 1);
 
@@ -115,17 +115,15 @@ public class AddObjects {
 		assertTrue(Iterables.size(entities) == 1);
 
 	}
-	
-	
 
 	@Test
 	public void createAndMoveObjectOnEmptyFile() throws Exception {
 
-		String name = "PG-" + RandomStringUtils.randomAlphanumeric(5);
-		BimProject createProject = service.createProject(name);
-		String projectId = createProject.getIdentifier();
+		final String name = "PG-" + RandomStringUtils.randomAlphanumeric(5);
+		final BimProject createProject = service.createProject(name);
+		final String projectId = createProject.getIdentifier();
 		final URL url = ClassLoader.getSystemResource("cuboShape.ifc");
-		File file = new File(url.toURI());
+		final File file = new File(url.toURI());
 		client.checkin(projectId, file, false);
 		System.out.println(projectId + " " + name);
 
@@ -134,7 +132,7 @@ public class AddObjects {
 
 		String transactionId = client.openTransaction(projectId);
 
-		String objectId = client.createObject(transactionId, "IfcFurnishingElement");
+		final String objectId = client.createObject(transactionId, "IfcFurnishingElement");
 		final String guid = RandomStringUtils.randomAlphanumeric(22);
 		client.setStringAttribute(transactionId, objectId, "GlobalId", guid);
 		client.setStringAttribute(transactionId, objectId, "Description", "C1");
@@ -157,7 +155,7 @@ public class AddObjects {
 		service.setReference(transactionId, objectId, "Representation", shapeOid);
 		revisionId = client.commitTransaction(transactionId);
 		refreshWithMerge(projectId);
-		
+
 		Iterable<Entity> entities = client.getEntitiesByType("IfcFurnishingElement", revisionId);
 		assertTrue(Iterables.size(entities) == 1);
 		final double x1d1 = 2;
@@ -181,7 +179,7 @@ public class AddObjects {
 				Lists.newArrayList(x1d2, x2d2, x3d2));
 		revisionId = client.commitTransaction(transactionId);
 		refreshWithMerge(projectId);
-		
+
 		entities = client.getEntitiesByType("IfcFurnishingElement", revisionId);
 		assertTrue(Iterables.size(entities) == 1);
 	}
@@ -189,11 +187,11 @@ public class AddObjects {
 	@Test
 	public void createAndMoveObject() throws Exception {
 
-		String name = "PG-" + RandomStringUtils.randomAlphanumeric(5);
-		BimProject createProject = service.createProject(name);
-		String projectId = createProject.getIdentifier();
+		final String name = "PG-" + RandomStringUtils.randomAlphanumeric(5);
+		final BimProject createProject = service.createProject(name);
+		final String projectId = createProject.getIdentifier();
 		final URL url = ClassLoader.getSystemResource("conUnOggetto.ifc");
-		File file = new File(url.toURI());
+		final File file = new File(url.toURI());
 		client.checkin(projectId, file, false);
 		System.out.println(projectId + " " + name);
 
@@ -236,10 +234,10 @@ public class AddObjects {
 
 		client.commitTransaction(transaction);
 		refreshWithMerge(projectId);
-		
+
 		entities = client.getEntitiesByType("IfcBuildingElementProxy", client.getLastRevisionOfProject(projectId));
 		System.out.println("There are " + Iterables.size(entities) + " elements");
-		
+
 	}
 
 	private void refreshWithMerge(final String projectId) {

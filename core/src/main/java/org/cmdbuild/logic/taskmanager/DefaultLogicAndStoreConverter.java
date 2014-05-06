@@ -125,6 +125,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		private static final String FILTER = "filter.";
 		public static final String FILTER_GROUPS = FILTER + "groups";
 		public static final String FILTER_CLASSNAME = FILTER + "classname";
+		public static final String FILTER_CARDS = FILTER + "cards";
 
 		private static final String ACTION_PREFIX = "action.";
 
@@ -378,6 +379,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(SynchronousEvent.FILTER_GROUPS, Joiner.on(GROUPS_SEPARATOR) //
 							.join(task.getGroups())) //
 					.withParameter(SynchronousEvent.FILTER_CLASSNAME, task.getTargetClassname()) //
+					.withParameter(SynchronousEvent.FILTER_CARDS, task.getFilter()) //
 					.withParameter(SynchronousEvent.EMAIL_ACTIVE, //
 							Boolean.toString(task.isEmailEnabled())) //
 					.withParameter(SynchronousEvent.EMAIL_ACCOUNT, task.getEmailAccount()) //
@@ -493,6 +495,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withGroups(isEmpty(groupsAsString) ? EMPTY_GROUPS : Splitter.on(GROUPS_SEPARATOR) //
 							.split(groupsAsString)) //
 					.withTargetClass(task.getParameter(SynchronousEvent.FILTER_CLASSNAME)) //
+					.withFilter(task.getParameter(SynchronousEvent.FILTER_CARDS)) //
 					.withEmailEnabled( //
 							Boolean.valueOf(task.getParameter(SynchronousEvent.EMAIL_ACTIVE))) //
 					.withEmailAccount(task.getParameter(SynchronousEvent.EMAIL_ACCOUNT)) //
