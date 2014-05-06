@@ -87,7 +87,7 @@ public class SimpleClassDetail {
 		return parent;
 	}
 
-	void setParent(String parent) {
+	void setParent(final String parent) {
 		this.parent = parent;
 	}
 
