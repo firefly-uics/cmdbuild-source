@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.email;
 
+import static com.google.common.base.Suppliers.ofInstance;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.template.TemplateResolvers.identity;
 
@@ -82,7 +83,7 @@ public class SendTemplateEmail implements Action {
 	@Override
 	public void execute() {
 		final EmailAccount emailAccount = emailAccoutSupplier.get();
-		final EmailService emailService = emailServiceFactory.create(emailAccount);
+		final EmailService emailService = emailServiceFactory.create(ofInstance(emailAccount));
 		final Template template = emailTemplateSupplier.get();
 		final Email email = new Email();
 		email.setToAddresses(templateResolver.resolve(template.getTo()));

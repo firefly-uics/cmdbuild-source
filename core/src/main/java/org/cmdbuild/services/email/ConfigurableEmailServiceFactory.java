@@ -1,7 +1,5 @@
 package org.cmdbuild.services.email;
 
-import static com.google.common.base.Suppliers.ofInstance;
-
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.api.mail.MailApiFactory;
 
@@ -64,13 +62,13 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 
 	@Override
 	public EmailService create() {
-		return create(accountSupplier.get());
+		return create(accountSupplier);
 	}
 
 	@Override
-	public EmailService create(final EmailAccount account) {
-		Validate.notNull(account, "missing '%s'", EmailAccount.class);
-		return new DefaultEmailService(ofInstance(account), apiFactory, persistence);
+	public EmailService create(final Supplier<EmailAccount> emailAccountSupplier) {
+		Validate.notNull(emailAccountSupplier, "missing '%s'", EmailAccount.class);
+		return new DefaultEmailService(emailAccountSupplier, apiFactory, persistence);
 	}
 
 }

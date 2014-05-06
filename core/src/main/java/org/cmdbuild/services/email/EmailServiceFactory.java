@@ -1,5 +1,6 @@
 package org.cmdbuild.services.email;
 
+import com.google.common.base.Supplier;
 
 /**
  * {@link EmailService} factory class.
@@ -17,10 +18,10 @@ public interface EmailServiceFactory {
 	 * Creates a new {@link EmailService} with the specific {@link EmailAccount}
 	 * .
 	 * 
-	 * @param account
+	 * @param emailAccountSupplier
 	 * 
 	 * @return the created {@link EmailService}.
 	 */
-	EmailService create(EmailAccount account);
+	EmailService create(Supplier<EmailAccount> emailAccountSupplier);
 
 }
