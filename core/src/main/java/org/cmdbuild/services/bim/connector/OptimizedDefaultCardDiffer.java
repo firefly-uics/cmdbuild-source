@@ -1,5 +1,8 @@
 package org.cmdbuild.services.bim.connector;
 
+import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_QUERY;
+import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_TYPE_QUERY;
+
 import java.util.Iterator;
 import java.util.Map;
 
@@ -31,8 +34,7 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 	private final LookupLogic lookupLogic;
 	private static final Logger logger = LoggerSupport.logger;
 
-	public OptimizedDefaultCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic,
-			BimDataView bimDataView) {
+	public OptimizedDefaultCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic, BimDataView bimDataView) {
 		this.dataView = dataView;
 		this.bimDataView = bimDataView;
 		this.lookupLogic = lookupLogic;
@@ -59,7 +61,7 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 		}
 		logger.debug("Success.");
 		for (final String attributeName : sourceEntity.getAttributes().keySet()) {
-			if(!cmAttributesMap.containsKey(attributeName)){
+			if (!cmAttributesMap.containsKey(attributeName)) {
 				continue;
 			}
 			final Attribute attribute = sourceEntity.getAttributeByName(attributeName);
@@ -127,7 +129,7 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 		boolean sendDelta = false;
 		for (final String attributeName : sourceEntity.getAttributes().keySet()) {
 			final Attribute attribute = sourceEntity.getAttributeByName(attributeName);
-			if(!cmAttributesMap.containsKey(attributeName)){
+			if (!cmAttributesMap.containsKey(attributeName)) {
 				continue;
 			}
 			if (attribute.isValid()) {
@@ -181,7 +183,7 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 
 	private Long findLookupIdFromDescription(final String lookupValue, final String lookupType) {
 		Long lookupId = null;
-		final Iterable<LookupType> allLookupTypes = lookupLogic.getAllTypes();
+		final Iterable<LookupType> allLookupTypes = lookupLogic.getAllTypes(UNUSED_LOOKUP_TYPE_QUERY);
 		LookupType theType = null;
 		for (final Iterator<LookupType> it = allLookupTypes.iterator(); it.hasNext();) {
 			final LookupType lt = it.next();
@@ -190,7 +192,7 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 				break;
 			}
 		}
-		final Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType, true);
+		final Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType, true, UNUSED_LOOKUP_QUERY);
 
 		for (final Iterator<Lookup> it = allLookusOfType.iterator(); it.hasNext();) {
 			final Lookup l = it.next();

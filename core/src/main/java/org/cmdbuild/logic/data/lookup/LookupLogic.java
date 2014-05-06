@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -43,10 +44,56 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Ordering;
 
 public class LookupLogic implements Logic {
 
 	private static final Marker marker = MarkerFactory.getMarker(LookupLogic.class.getName());
+
+	public static interface LookupTypeQuery {
+
+		Integer limit();
+
+		Integer offset();
+
+	}
+
+	public static final LookupTypeQuery UNUSED_LOOKUP_TYPE_QUERY = new LookupTypeQuery() {
+
+		@Override
+		public Integer limit() {
+			return null;
+		}
+
+		@Override
+		public Integer offset() {
+			return null;
+		}
+
+	};
+
+	public static interface LookupQuery {
+
+		Integer limit();
+
+		Integer offset();
+
+	}
+
+	public static final LookupQuery UNUSED_LOOKUP_QUERY = new LookupQuery() {
+
+		@Override
+		public Integer limit() {
+			return null;
+		}
+
+		@Override
+		public Integer offset() {
+			return null;
+		}
+
+	};
 
 	private static class Exceptions {
 
@@ -67,6 +114,17 @@ public class LookupLogic implements Logic {
 		}
 
 	}
+
+	private static final Comparator<LookupType> NAME_ASC = new Comparator<LookupType>() {
+
+		@Override
+		public int compare(final LookupType o1, final LookupType o2) {
+			final String v1 = o1.name;
+			final String v2 = o2.name;
+			return v1.compareTo(v2);
+		}
+
+	};
 
 	private static final Comparator<Lookup> NUMBER_COMPARATOR = new Comparator<Lookup>() {
 		@Override
@@ -93,11 +151,18 @@ public class LookupLogic implements Logic {
 		this.dataView = dataView;
 	}
 
-	public Iterable<LookupType> getAllTypes() {
+	public PagedElements<LookupType> getAllTypes(final LookupTypeQuery query) {
 		logger.trace(marker, "getting all lookup types");
-		return from(store.list()) //
+		final Iterable<LookupType> allElements = from(store.list()) //
 				.transform(toLookupType()) //
 				.filter(uniques());
+		final Iterable<LookupType> ordered = Ordering.from(NAME_ASC).sortedCopy(allElements);
+		final Integer offset = query.offset();
+		final Integer limit = query.limit();
+		final Iterable<LookupType> filtered = from(ordered) //
+				.skip((offset == null) ? 0 : offset) //
+				.limit((limit == null) ? Integer.MAX_VALUE : limit);
+		return new PagedElements<LookupType>(filtered, size(ordered));
 	}
 
 	public void saveLookupType(final LookupType newType, final LookupType oldType) {
@@ -240,9 +305,10 @@ public class LookupLogic implements Logic {
 		}
 	}
 
-	public Iterable<Lookup> getAllLookup( //
+	public PagedElements<Lookup> getAllLookup( //
 			final LookupType type, //
-			final boolean activeOnly //
+			final boolean activeOnly, //
+			final LookupQuery query //
 	) {
 
 		logger.debug(marker, "getting all lookups for type '{}'", type);
@@ -263,8 +329,13 @@ public class LookupLogic implements Logic {
 		logger.trace(marker, "ordering elements");
 		sort(list, NUMBER_COMPARATOR);
 
-		return from(list) //
-				.filter(actives(activeOnly));
+		final Integer offset = query.offset();
+		final Integer limit = query.limit();
+		final FluentIterable<Lookup> all = from(list) //
+				.filter(actives(activeOnly)) //
+				.skip((offset == null) ? 0 : offset) //
+				.limit((limit == null) ? Integer.MAX_VALUE : limit);
+		return new PagedElements<Lookup>(all, size(list));
 	}
 
 	public Iterable<Lookup> getAllLookupOfParent(final LookupType type) {
@@ -347,7 +418,7 @@ public class LookupLogic implements Logic {
 
 	private LookupType typeFor(final Predicate<LookupType> predicate) {
 		logger.trace(marker, "getting lookup type for predicate");
-		final Iterator<LookupType> shouldBeOneOnly = from(getAllTypes()) //
+		final Iterator<LookupType> shouldBeOneOnly = from(getAllTypes(UNUSED_LOOKUP_TYPE_QUERY)) //
 				.filter(predicate) //
 				.iterator();
 		final LookupType found;
