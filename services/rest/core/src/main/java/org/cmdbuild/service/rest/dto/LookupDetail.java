@@ -80,7 +80,7 @@ public class LookupDetail {
 			this.parentId = parentId;
 			return this;
 		}
-		
+
 		public Builder withParentType(final String parentType) {
 			this.parentType = parentType;
 			return this;
@@ -189,13 +189,13 @@ public class LookupDetail {
 	void setParentId(final Long parentId) {
 		this.parentId = parentId;
 	}
-	
+
 	public String getParentType() {
 		return parentType;
 	}
-	
+
 	@XmlAttribute(name = PARENT_TYPE)
-	void setParentType(String parentType) {
+	void setParentType(final String parentType) {
 		this.parentType = parentType;
 	}
 
