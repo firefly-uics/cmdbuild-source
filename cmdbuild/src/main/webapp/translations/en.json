@@ -683,12 +683,29 @@
 			"title": "Task manager",
 			"type": "Type",
 			"taskConnector": {
+				"attributeLevelMapping": "@@ Attribute mapping",
+				"classLevelMapping": "@@ Class mapping",
 				"datasourceDbFieldset": "Datasource: Relational database",
 				"datasourceLdapFieldset": "Datasource: LDAP directory",
 				"dbName": "Database name",
+				"deletionType": "@@ Deletion type",
+				"deletionTypes": {
+					"logic": "@@ Logic",
+					"notLogic": "@@ Not logic"
+				},
+				"domainName": "@@ Domain name",
+				"isKey": "@@ Is key",
+				"operations": "@@ Operations",
+				"operationsTypes": {
+					"filter": "@@ Filter",
+					"none": "@@ None"
+				},
 				"recipientAddress": "Recipient address",
+				"referenceMapping": "@@ References mapping",
 				"senderAccount": "Sender account",
 				"toSynchronize": "To synchronize",
+				"viewAttribute": "@@ View attribute",
+				"viewName": "@@ View name",
 				"viewPrefix": "View prefix"
 			},
 			"taskEmail": {
@@ -704,10 +721,12 @@
 				"subjectFilter": "Filter on Subject"
 			},
 			"taskEvent": {
-				"afterCreate": "@@ After creation",
-				"afterUpdate": "@@ After update",
-				"beforeDelete": "@@ Before delete",
-				"beforeUpdate": "@@ Before update",
+				"eventPhases" : {
+					"afterCreate": "@@ After creation",
+					"afterUpdate": "@@ After update",
+					"beforeDelete": "@@ Before delete",
+					"beforeUpdate": "@@ Before update"
+				},
 				"groupsToApply": "@@ Group to apply",
 				"phase": "@@ Phase"
 			},
@@ -1388,6 +1407,8 @@
 	"checkFrequency": "Check frequency (minutes)",
 	"choose_attachment_from_db": "Choose attachments from Database",
 	"class": "Class",
+	"classAttribute": "Class attribute",
+	"className": "Class name",
 	"clean_word_pasted_text": "Clean the text pasted from Word or other Rich Text applications",
 	"clearFilter": "Clear Filter",
 	"clear_row_and_colun_privilege": "Clear rows and columns privileges",
@@ -1427,6 +1448,7 @@
 	"lock_timeout": "Lock timeout (seconds)",
 	"loggedGroup": "Logged Group",
 	"loggedUser": "Logged User",
+	"main": "Main",
 	"mode": "Mode",
 	"modifyFilter": "Modify Filter",
 	"modifyProject": "Modify Project",

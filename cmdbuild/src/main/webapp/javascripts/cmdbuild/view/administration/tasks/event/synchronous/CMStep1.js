@@ -35,7 +35,7 @@
 		},
 
 		isEmptyClass: function() {
-			if (this.view.className.getValue())
+			if (this.view.classNameCombo.getValue())
 				return false;
 
 			return true;
@@ -59,6 +59,13 @@
 
 		setValueId: function(value) {
 			this.view.idField.setValue(value);
+		},
+
+		setValuePhase: function(value) {
+			// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+			this.view.phaseCombo.forceSelection = false;
+			this.view.phaseCombo.setValue(value);
+			this.view.phaseCombo.forceSelection = true;
 		}
 	});
 
@@ -75,6 +82,7 @@
 			var me = this;
 
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate', this);
+
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -106,7 +114,7 @@
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
 
-			this.phase = Ext.create('Ext.form.field.ComboBox', {
+			this.phaseCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.ServiceProxy.parameter.PHASE,
 				fieldLabel: tr.taskEvent.phase,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -128,7 +136,7 @@
 				considerAsFieldToDisable: true
 			});
 
-			this.className = Ext.create('Ext.form.field.ComboBox', {
+			this.classNameCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -154,9 +162,9 @@
 					this.idField,
 					this.descriptionField,
 					this.activeField,
-					this.phase,
+					this.phaseCombo,
 					this.groups,
-					this.className
+					this.classNameCombo
 				]
 			});
 
@@ -170,7 +178,7 @@
 				if (this.delegate.isEmptyClass())
 					this.delegate.setDisabledButtonNext(true);
 
-				// TODO: fix check only if no already selected - Select all groups by default
+				// TODO: fix check only if no already selected - Select all groups by default or forceSelection
 				this.groups.selectAll();
 			}
 		}

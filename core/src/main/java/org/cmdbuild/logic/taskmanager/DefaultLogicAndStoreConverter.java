@@ -248,8 +248,12 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		}
 
 		public String toStore() {
-			task.getPhase().identify(this);
-			Validate.notNull(converted, "conversion error");
+			if (task.getPhase() != null) {
+				task.getPhase().identify(this);
+				Validate.notNull(converted, "conversion error");
+			} else {
+				converted = null;
+			}
 			return converted;
 		}
 

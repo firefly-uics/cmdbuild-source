@@ -55,12 +55,19 @@
 		 * @return (Object) filter's tab datas
 		 */
 		getDataFilters: function() {
-// TODO
-//			return {
-//				attributes: this.view.filterAttributesTab.getData(),
-//				relations: this.view.filterRelationsTab.getData(),
-//				functions: this.view.filterFunctionsTab.getData()
-//			};
+			if (
+				typeof this.view.filterAttributesTab != 'undefined'
+				&& typeof this.view.filterRelationsTab != 'undefined'
+				&& typeof this.view.filterFunctionsTab != 'undefined'
+			) {
+				return {
+					attributes: this.view.filterAttributesTab.getData(),
+					relations: this.view.filterRelationsTab.getData(),
+					functions: this.view.filterFunctionsTab.getData()
+				};
+			}
+
+			return null;
 		}
 	});
 

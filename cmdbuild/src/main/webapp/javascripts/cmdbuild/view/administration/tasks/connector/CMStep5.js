@@ -308,7 +308,7 @@
 			this.gridSelectionModel = Ext.create('Ext.selection.CheckboxModel', {
 				mode: 'multi',
 				showHeaderCheckbox: false,
-				headerText: 'tr.isKey',
+				headerText: tr.isKey,
 				headerWidth: 50,
 				dataIndex: CMDBuild.ServiceProxy.parameter.IS_KEY,
 				checkOnly: true,
@@ -336,7 +336,7 @@
 			});
 
 			this.attributeLevelMappingGrid = Ext.create('Ext.grid.Panel', {
-				title: 'tr.attributeLevelMapping',
+				title: tr.attributeLevelMapping,
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 
@@ -345,7 +345,7 @@
 
 				columns: [
 					{
-						header: 'tr.view',
+						header: tr.viewName,
 						dataIndex: CMDBuild.ServiceProxy.parameter.VIEW_NAME,
 						editor: {
 							xtype: 'combo',
@@ -354,7 +354,7 @@
 						flex: 1
 					},
 					{
-						header: 'tr.viewAttribute',
+						header: tr.viewAttribute,
 						dataIndex: CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE,
 						editor: {
 							xtype: 'combo',
@@ -363,7 +363,7 @@
 						flex: 1
 					},
 					{
-						header: 'tr.className',
+						header: CMDBuild.Translation.className,
 						dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
@@ -372,7 +372,7 @@
 						flex: 1
 					},
 					{
-						header: 'tr.classAttribute',
+						header: CMDBuild.Translation.classAttribute,
 						dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE,
 						editor: {
 							xtype: 'combo',
@@ -449,10 +449,10 @@
 				this.delegate.buildViewCombo();
 				this.delegate.buildClassCombo();
 
-				Ext.Function.createDelayed(function() { // HACK: to fix problem witch fires show event before changeTab() function
-					if (me.delegate.isEmptyMappingGrid())
-						me.delegate.setDisabledButtonNext(true);
-				}, 1)();
+//				Ext.Function.createDelayed(function() { // HACK: to fix problem witch fires show event before changeTab() function
+//					if (me.delegate.isEmptyMappingGrid())
+//						me.delegate.setDisabledButtonNext(true);
+//				}, 1)();
 			}
 		}
 	});
