@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static com.google.common.base.Suppliers.ofInstance;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
@@ -329,7 +330,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	protected Job doCreate(final ReadEmailTask task) {
 		final String emailAccountName = task.getEmailAccount();
 		final EmailAccount selectedEmailAccount = emailAccountFor(emailAccountName);
-		final EmailService service = emailServiceFactory.create(selectedEmailAccount);
+		final EmailService service = emailServiceFactory.create(ofInstance(selectedEmailAccount));
 
 		final ReadEmail.Builder readEmail = ReadEmail.newInstance() //
 				.withEmailService(service) //
