@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement(name = FULL_CLASS_DETAIL)
 public class FullClassDetail {
@@ -116,6 +117,7 @@ public class FullClassDetail {
 	}
 
 	@XmlAttribute(name = DESCRIPTION_ATTRIBUTE_NAME)
+	@JsonProperty(DESCRIPTION_ATTRIBUTE_NAME)
 	public String getDescriptionAttributeName() {
 		return descriptionAttributeName;
 	}

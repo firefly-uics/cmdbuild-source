@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.cmdbuild.service.rest.Constants.ACTIVE;
+import static org.cmdbuild.service.rest.Constants.FILTER;
 import static org.cmdbuild.service.rest.Constants.ID;
 import static org.cmdbuild.service.rest.Constants.LIMIT;
 import static org.cmdbuild.service.rest.Constants.NAME;
@@ -51,6 +52,7 @@ public interface Classes {
 	@Path("{name}/cards/")
 	CardListResponse getCards( //
 			@PathParam(NAME) String name, //
+			@QueryParam(FILTER) String filter, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);

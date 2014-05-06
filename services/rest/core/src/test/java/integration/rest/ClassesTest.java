@@ -154,7 +154,7 @@ public class ClassesTest {
 						.withTotal(2) //
 						.build()) //
 				.build();
-		when(service.getCards("foo", null, null)) //
+		when(service.getCards("foo", null, null, null)) //
 				.thenReturn(expectedResponse);
 
 		// when
