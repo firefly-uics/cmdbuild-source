@@ -10,10 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.WorkflowLogic;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.widget.WidgetLogic;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.servlets.json.management.JsonResponse;
@@ -46,10 +44,9 @@ public class ModWidget extends JSONBaseWithSpringContext {
 
 	private JsonResponse callCardWidget(final Long cardId, final String className, final Long widgetId,
 			final String action, final String jsonParams) throws Exception {
-		final DataAccessLogic systemDataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		final WidgetLogic widgetLogic = new WidgetLogic();
+		final WidgetLogic widgetLogic = new WidgetLogic(systemDataView());
 		final Widget widgetToExecute = widgetLogic.getWidget(widgetId);
-		final Card card = systemDataAccessLogic.fetchCard(className, cardId);
+		final Card card = systemDataAccessLogic().fetchCard(className, cardId);
 		final Map<String, Object> params = readParams(jsonParams);
 		final Map<String, Object> attributesNameToValue = Maps.newHashMap();
 		for (final Entry<String, Object> entry : card.getAttributes().entrySet()) {
@@ -95,7 +92,7 @@ public class ModWidget extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse getAllWidgets() {
-		final WidgetLogic widgetLogic = new WidgetLogic();
+		final WidgetLogic widgetLogic = new WidgetLogic(systemDataView());
 		final List<Widget> fetchedWidgets = widgetLogic.getAllWidgets();
 		final Map<String, List<Widget>> classNameToWidgetList = Maps.newHashMap();
 		for (final Widget widget : fetchedWidgets) {
@@ -115,7 +112,7 @@ public class ModWidget extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse saveWidgetDefinition(@Parameter(CLASS_NAME) final String className, //
 			@Parameter(value = WIDGET, required = true) final String jsonWidget) throws Exception {
-		final WidgetLogic widgetLogic = new WidgetLogic();
+		final WidgetLogic widgetLogic = new WidgetLogic(systemDataView());
 		final ObjectMapper mapper = new ObjectMapper();
 		final Widget widgetToSave = mapper.readValue(jsonWidget, Widget.class);
 		widgetToSave.setSourceClass(className);
@@ -132,7 +129,7 @@ public class ModWidget extends JSONBaseWithSpringContext {
 	@JSONExported
 	public void removeWidgetDefinition(@Parameter(CLASS_NAME) final String className, //
 			@Parameter(WIDGET_ID) final Long widgetId) throws Exception {
-		final WidgetLogic widgetLogic = new WidgetLogic();
+		final WidgetLogic widgetLogic = new WidgetLogic(systemDataView());
 		widgetLogic.deleteWidget(widgetId);
 	}
 

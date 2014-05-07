@@ -37,13 +37,19 @@ public class GeoFeatureStore {
 	private final JdbcTemplate jdbcTemplate;
 	private final GisDatabaseService databaseService;
 
-	public GeoFeatureStore(final DataSource dataSource, final GisDatabaseService databaseService) {
+	public GeoFeatureStore( //
+			final DataSource dataSource, //
+			final GisDatabaseService databaseService //
+	) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 		this.databaseService = databaseService;
 	}
 
 	/* *******************************************
-	 * Manage the Geometric table *******************************************
+	 * 
+	 * Manage the Geometric table
+	 * 
+	 * *******************************************
 	 */
 
 	private static final String GEO_TABLESPACE = "gis";
@@ -135,7 +141,10 @@ public class GeoFeatureStore {
 	}
 
 	/* *******************************************
-	 * Manage the features *******************************************
+	 * 
+	 * Manage the features
+	 * 
+	 * *******************************************
 	 */
 
 	public void createGeoFeature( //
@@ -321,10 +330,8 @@ public class GeoFeatureStore {
 	}
 
 	private String readGeoFeatureQuerySelectPart() {
-		final String selectTemplate = "SELECT \"%s\".\"%s\", " 
-				+ "asText(\"%s\".\"%s\") AS \"%s\", "
-				+ "\"%s\".\"%s\"::oid AS \"%s\", "
-				+ "_cm_cmtable(\"%s\".\"%s\"::oid) AS \"%s\"";
+		final String selectTemplate = "SELECT \"%s\".\"%s\", " + "asText(\"%s\".\"%s\") AS \"%s\", "
+				+ "\"%s\".\"%s\"::oid AS \"%s\", " + "_cm_cmtable(\"%s\".\"%s\"::oid) AS \"%s\"";
 
 		return String.format(selectTemplate, //
 				FEATURE_TABLE_ALIAS, //
@@ -386,8 +393,10 @@ public class GeoFeatureStore {
 				);
 	}
 
-	// convert the BBox from the open-layer format to the PostGis format:
-	// from (aa.aa,bb.bb,cc.cc,dd.dd) to (aa.aa bb.bb, cc.cc dd.dd)
+	/*
+	 * convert the BBox from the open-layer format to the PostGis format: from
+	 * (aa.aa,bb.bb,cc.cc,dd.dd) to (aa.aa bb.bb, cc.cc dd.dd)
+	 */
 	private String clearBBoxString(final String bbox) {
 		final String[] coordinates = bbox.split(",");
 		final String cleanedBBox = String.format("%s %s, %s %s", (Object[]) coordinates);

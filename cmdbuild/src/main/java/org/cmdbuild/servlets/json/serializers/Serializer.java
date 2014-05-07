@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.CMUser;
-import org.cmdbuild.config.DmsProperties;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dms.DmsConfiguration;
@@ -319,7 +318,8 @@ public class Serializer {
 			return dmsLogic.getAutoCompletionRulesByClass(cmClass.getIdentifier().getLocalName());
 		} catch (final DmsException e) {
 			applicationContext().getBean(RequestListener.class) //
-					.getCurrentRequest().pushWarning(e);
+			;
+			RequestListener.getCurrentRequest().pushWarning(e);
 			return Collections.emptyMap();
 		}
 	}

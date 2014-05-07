@@ -13,6 +13,7 @@ import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
 import org.cmdbuild.privileges.predicates.IsReadableDashboard;
@@ -37,7 +38,7 @@ public class MenuCardPredicateFactoryTest {
 	}
 
 	private MenuCardPredicateFactory menuCardPredicateFactory(final CMGroup mockGroup) {
-		return new MenuCardPredicateFactory(view, mockGroup, privilegeContextFactory);
+		return new MenuCardPredicateFactory(view, mockGroup, privilegeContextFactory, new ViewConverter(view));
 	}
 
 	@Test
