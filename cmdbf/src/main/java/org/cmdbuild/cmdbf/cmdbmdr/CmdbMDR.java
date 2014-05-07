@@ -716,8 +716,10 @@ public class CmdbMDR implements ManagementDataRepository {
 			throw new RegistrationErrorFault("InstanceIds identifies more than one relationship");
 		}
 
-		final CMDBfId sourceId = aliasRegistry.resolveAlias(relationship.getSource());
-		final CMDBfId targetId = aliasRegistry.resolveAlias(relationship.getTarget());
+		final CMDBfId sourceId = relationship.getSource() != null ? aliasRegistry
+				.resolveAlias(relationship.getSource()) : null;
+		final CMDBfId targetId = relationship.getTarget() != null ? aliasRegistry
+				.resolveAlias(relationship.getTarget()) : null;
 
 		CMDomain cmType = null;
 		RelationDTO newRelation = null;

@@ -10,6 +10,8 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.sf.jasperreports.engine.util.ObjectUtils;
+
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
@@ -156,17 +158,27 @@ public class LookupNamespace extends AbstractNamespace {
 	public LookupValue deserializeValue(final Node xml, final Object type) {
 		LookupValue value = null;
 		if (LookupValue.class.equals(type)) {
-			Long id = null;
-			String lookupType = null;
 			if (xml instanceof Element) {
 				final Element element = (Element) xml;
+				Long lookupId = null;
+				final String lookupTypeName = element.getAttribute(SystemNamespace.LOOKUP_TYPE_NAME);
+				final String lookupValue = xml.getTextContent();
 				final String idValue = element.getAttribute(SystemNamespace.LOOKUP_ID);
-				if (idValue != null) {
-					id = Long.parseLong(idValue);
+				if (idValue != null && !idValue.isEmpty()) {
+					lookupId = Long.parseLong(idValue);
 				}
-				lookupType = element.getAttribute(SystemNamespace.LOOKUP_TYPE_NAME);
+				if (lookupId <= 0 && lookupTypeName != null && !lookupTypeName.isEmpty()) {
+					final LookupType lookupType = getType(new QName(getNamespaceURI(), lookupTypeName));
+					if (lookupType != null) {
+						for (final Lookup lookup : lookupLogic.getAllLookup(lookupType, true)) {
+							if (lookup.description != null && ObjectUtils.equals(lookup.description, lookupValue)) {
+								lookupId = lookup.getId();
+							}
+						}
+					}
+				}
+				value = new LookupValue(lookupId, lookupValue, lookupTypeName);
 			}
-			value = new LookupValue(id, xml.getTextContent(), lookupType);
 		}
 		return value;
 	}
