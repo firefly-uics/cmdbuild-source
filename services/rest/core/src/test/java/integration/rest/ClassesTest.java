@@ -12,8 +12,13 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.MultivaluedMap;
+
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 import org.cmdbuild.service.rest.Classes;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
@@ -23,10 +28,12 @@ import org.cmdbuild.service.rest.dto.ClassListResponse;
 import org.cmdbuild.service.rest.dto.ClassResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.FullClassDetail;
+import org.cmdbuild.service.rest.dto.NewCardResponse;
 import org.cmdbuild.service.rest.dto.SimpleClassDetail;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import support.ForwardingProxy;
 import support.JsonSupport;
@@ -167,7 +174,33 @@ public class ClassesTest {
 	}
 
 	@Test
-	public void getCard() throws Exception {
+	public void createCard() throws Exception {
+		// given
+		final ArgumentCaptor<MultivaluedMap> multivaluedMapCaptor = ArgumentCaptor.forClass(MultivaluedMap.class);
+		final NewCardResponse expectedResponse = NewCardResponse.newInstance() //
+				.withElement(123L) //
+				.build();
+		when(service.createCard(eq("foo"), multivaluedMapCaptor.capture())) //
+				.thenReturn(expectedResponse);
+
+		// when
+		final PostMethod post = new PostMethod("http://localhost:8080/classes/foo/cards/");
+		post.addParameter("foo", "bar");
+		post.addParameter("bar", "baz");
+		post.addParameter("baz", "foo");
+		final int result = httpclient.executeMethod(post);
+
+		// then
+		assertThat(result, equalTo(200));
+		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+		final MultivaluedMap captured = multivaluedMapCaptor.getValue();
+		assertThat(captured.getFirst("foo"), equalTo((Object) "bar"));
+		assertThat(captured.getFirst("bar"), equalTo((Object) "baz"));
+		assertThat(captured.getFirst("baz"), equalTo((Object) "foo"));
+	}
+
+	@Test
+	public void readCard() throws Exception {
 		// given
 		final Map<String, Object> values = new HashMap<String, Object>() {
 			{
@@ -179,7 +212,7 @@ public class ClassesTest {
 		final CardResponse expectedResponse = CardResponse.newInstance() //
 				.withElement(values) //
 				.build();
-		when(service.getCard("foo", 123L)) //
+		when(service.readCard("foo", 123L)) //
 				.thenReturn(expectedResponse);
 
 		// when
@@ -190,4 +223,25 @@ public class ClassesTest {
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
+
+	@Test
+	public void updateCard() throws Exception {
+		// when
+		final PutMethod put = new PutMethod("http://localhost:8080/classes/foo/cards/123/");
+		final int result = httpclient.executeMethod(put);
+
+		// then
+		assertThat(result, equalTo(204));
+	}
+
+	@Test
+	public void deleteCard() throws Exception {
+		// when
+		final DeleteMethod delete = new DeleteMethod("http://localhost:8080/classes/foo/cards/123/");
+		final int result = httpclient.executeMethod(delete);
+
+		// then
+		assertThat(result, equalTo(204));
+	}
+
 }

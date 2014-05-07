@@ -29,7 +29,7 @@ public class ToLookupDetail implements Function<Lookup, LookupDetail> {
 	}
 
 	@Override
-	public LookupDetail apply(final Lookup lookup) {		
+	public LookupDetail apply(final Lookup lookup) {
 		return LookupDetail.newInstance() //
 				.withId(lookup.getId()) //
 				.withCode(lookup.code) //

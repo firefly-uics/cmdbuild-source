@@ -17,7 +17,7 @@ import com.google.common.collect.Sets;
 public abstract class ListResponse<T> {
 
 	public static abstract class Builder<T, R extends ListResponse<T>> implements
-			org.cmdbuild.common.Builder<ListResponse<T>> {
+			org.apache.commons.lang3.builder.Builder<ListResponse<T>> {
 
 		protected Iterable<T> elements;
 		protected DetailResponseMetadata metadata;

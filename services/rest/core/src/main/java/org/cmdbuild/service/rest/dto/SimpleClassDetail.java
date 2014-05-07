@@ -14,7 +14,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @XmlRootElement(name = SIMPLE_CLASS_DETAIL)
 public class SimpleClassDetail {
 
-	public static class Builder implements org.cmdbuild.common.Builder<SimpleClassDetail> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<SimpleClassDetail> {
 
 		private String name;
 		private String description;
