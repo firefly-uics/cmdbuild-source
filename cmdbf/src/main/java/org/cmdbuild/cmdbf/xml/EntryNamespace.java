@@ -177,7 +177,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 
 			@Override
 			public void visit(final IntegerAttributeType attributeType) {
-				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_INTEGER);
+				element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_INT);
 				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.INTEGER.name());
 			}
 
