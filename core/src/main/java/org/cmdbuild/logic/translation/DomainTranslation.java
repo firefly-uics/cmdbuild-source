@@ -14,7 +14,7 @@ public class DomainTranslation implements TranslationObject {
 	private Map<String, String> translations;
 
 	@Override
-	public void accept(TranslationObjectVisitor visitor) {
+	public void accept(final TranslationObjectVisitor visitor) {
 		visitor.visit(this);
 	}
 
@@ -22,7 +22,7 @@ public class DomainTranslation implements TranslationObject {
 		return name;
 	}
 
-	public void setName(String className) {
+	public void setName(final String className) {
 		this.name = className;
 	}
 
@@ -30,7 +30,7 @@ public class DomainTranslation implements TranslationObject {
 		return field;
 	}
 
-	public void setField(String field) {
+	public void setField(final String field) {
 		this.field = field;
 	}
 

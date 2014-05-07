@@ -20,7 +20,7 @@ public abstract class BaseTranslation implements TranslationObject {
 		return name;
 	}
 
-	public void setName(String name) {
+	public void setName(final String name) {
 		this.name = name;
 	}
 
@@ -28,7 +28,7 @@ public abstract class BaseTranslation implements TranslationObject {
 		return field;
 	}
 
-	public void setField(String field) {
+	public void setField(final String field) {
 		this.field = field;
 	}
 
