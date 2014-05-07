@@ -13,6 +13,7 @@ import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
@@ -66,7 +67,7 @@ public class Data {
 	@Bean
 	@Scope(PROTOTYPE)
 	public DataDefinitionLogic dataDefinitionLogic() {
-		return new DataDefinitionLogic(systemDataView());
+		return new DefaultDataDefinitionLogic(systemDataView());
 	}
 
 	@Bean

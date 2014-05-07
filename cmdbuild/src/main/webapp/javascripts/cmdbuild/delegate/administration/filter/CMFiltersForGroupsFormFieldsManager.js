@@ -22,7 +22,7 @@
 		constructor: function() {
 			this.mixins.delegable.constructor.call(this,
 			"CMDBuild.delegate.administration.common.dataview.CMFilterDataViewFormDelegate");
-			
+
 			this.callParent(arguments);
 		},
 
@@ -34,6 +34,10 @@
 
 			var fields = this.callParent(arguments);
 
+			Ext.apply(this.description, {
+				translationsKeyType: "Filter",
+				translationsKeyField: "Description"
+			});
 			this.classes = new CMDBuild.field.ErasableCombo({
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -47,7 +51,7 @@
 				listeners: {
 					select: function(combo, records, options) {
 						var className = null;
-						if (Ext.isArray(records) 
+						if (Ext.isArray(records)
 								&& records.length > 0) {
 							var record = records[0];
 							className = record.get(me.classes.valueField);
@@ -75,7 +79,7 @@
 		},
 
 		/**
-		 * 
+		 *
 		 * @param {Ext.data.Model} record
 		 * the record to use to fill the field values
 		 */
@@ -88,6 +92,9 @@
 			this.classes.setValue(className);
 			// the set value programmatic does not fire the select
 			// event, so call the delegates manually
+			Ext.apply(this.description, {
+				translationsKeyName: record.get("name")
+			});
 			this.callDelegates("onFilterDataViewFormBuilderClassSelected", [this, className]);
 		},
 

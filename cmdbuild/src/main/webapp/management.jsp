@@ -49,52 +49,53 @@
 			CMDBuild.Runtime.DefaultGroupName = '<%= group.getName() %>';
 			CMDBuild.Runtime.DefaultGroupDescription = '<%= group.getDescription() %>';
 			CMDBuild.Runtime.IsAdministrator = <%= operationUser.hasAdministratorPrivileges() %>;
-<%	
-	// FIXME: The field LoginGroupId is currently never used, remove it from here?
-	if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { 
-%>
-			CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
-<%	} %>
-			CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
-			CMDBuild.Runtime.CanChangePassword = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
-<%
-	if (group.getStartingClassId() != null) {
-%>
-			CMDBuild.Runtime.StartingClassId = <%= group.getStartingClassId() %>;
-<%
-	}
-%>
-
+			<%
+				// FIXME: The field LoginGroupId is currently never used, remove it from here?
+				if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) {
+			%>
+					CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
+			<%	} %>
+					CMDBuild.Runtime.AllowsPasswordLogin = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
+					CMDBuild.Runtime.CanChangePassword = <%= operationUser.getAuthenticatedUser().canChangePassword() %>;
+			<%
+				if (group.getStartingClassId() != null) {
+			%>
+					CMDBuild.Runtime.StartingClassId = <%= group.getStartingClassId() %>;
+			<%
+				}
+			%>
 		</script>
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
 		<script type="text/javascript" src="services/json/utils/gettranslationobject"></script>
 
 		<%@ include file="coreJsFiles.jsp"%>
 		<%@ include file="managementJsFiles.jsp"%>
+		<%@ include file="bimJsFiles.jsp"%>
 <!--
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-core.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/cmdbuild-management.js"></script>
 -->
 
-<%
-		GisProperties g =  GisProperties.getInstance();
-		if (g.isEnabled()) {
-			if (g.isServiceOn(GisProperties.GOOGLE)) {
-				%>
-				<script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=<%=g.getGoogleKey()%>'></script>
-				<%
-			}
-			if (g.isServiceOn(GisProperties.YAHOO)) {
-				%>
-				<script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=<%=g.getYahooKey()%>"></script>
-				<%
-			}
-%>
+		<!-- GIS -->
+			<%
+				GisProperties g =  GisProperties.getInstance();
+				if (g.isEnabled()) {
+					if (g.isServiceOn(GisProperties.GOOGLE)) {
+			%>
+						<script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=<%=g.getGoogleKey()%>'></script>
+			<%
+					}
 
-			<%@ include file="gisJsFiles.jsp"%>
-
-<%		}
-%>
+					if (g.isServiceOn(GisProperties.YAHOO)) {
+			%>
+						<script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=<%=g.getYahooKey()%>"></script>
+			<%
+					}
+			%>
+					<%@ include file="gisJsFiles.jsp" %>
+			<%
+				}
+			%>
 
 		<script type="text/javascript">
 			Ext.onReady(function() {
@@ -115,26 +116,25 @@
 				<div id="msg">
 					<div id="msg-inner">
 						<p><tr:translation key="common.user"/>: <strong><%= operationUser.getAuthenticatedUser().getDescription() %></strong> | <a href="logout.jsp"><tr:translation key="common.logout"/></a></p>
-						<% 
-							if (defaultGroupName == null ||
-									"".equals(defaultGroupName) ) { %>
-								<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><%= group.getDescription() %></strong>
+						<% if (defaultGroupName == null || "".equals(defaultGroupName) ) { %>
+							<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><%= group.getDescription() %></strong>
 						<%	} else { %>
-								<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
-								<script type="text/javascript">
-								CMDBuild.Runtime.GroupDescriptions = '<%= groupDecriptions %>';
-								</script>
-						<%	} %>
+							<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
 
-						<%	if (operationUser.hasAdministratorPrivileges()) { %>
-								| <a href="administration.jsp"><tr:translation key="administration.description"/></a>
-						<%	} %>
+							<script type="text/javascript">
+								CMDBuild.Runtime.GroupDescriptions = '<%= groupDecriptions %>';
+							</script>
+						<% } %>
+
+						<% if (operationUser.hasAdministratorPrivileges()) { %>
+							| <a href="administration.jsp"><tr:translation key="administration.description"/></a>
+						<% } %>
 						</p>
 					</div>
 				</div>
 			</div>
 		</div>
-		
+
 		<div id="footer" class="cm_no_display">
 			<div class="fl"><a href="http://www.cmdbuild.org" target="_blank">www.cmdbuild.org</a></div>
 			<div id="cmdbuild_credits_link" class="fc"><tr:translation key="common.credits"/></div>

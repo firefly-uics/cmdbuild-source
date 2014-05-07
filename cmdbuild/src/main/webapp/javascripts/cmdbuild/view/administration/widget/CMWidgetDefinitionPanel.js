@@ -42,14 +42,14 @@
 
 			var me = this;
 			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.btns.save,
+				text: CMDBuild.Translation.common.buttons.save,
 				handler: function() {
 					me.fireEvent("cm-save");
 				}
 			});
 
 			this.abortButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.btns.abort,
+				text: CMDBuild.Translation.common.buttons.abort,
 				handler: function() {
 					me.fireEvent("cm-abort");
 				}

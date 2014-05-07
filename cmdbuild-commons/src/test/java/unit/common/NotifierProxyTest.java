@@ -24,11 +24,11 @@ public class NotifierProxyTest {
 
 	}
 
-	private static class ForwardingCustom implements Custom {
+	private static abstract class ForwardingCustom implements Custom {
 
 		private final Custom delegate;
 
-		public ForwardingCustom(final Custom delegate) {
+		protected ForwardingCustom(final Custom delegate) {
 			this.delegate = delegate;
 		}
 
@@ -61,13 +61,14 @@ public class NotifierProxyTest {
 
 		wellFormedBuilder = NotifierProxy.<Custom> newInstance() //
 				.withType(Custom.class) //
-				.withDelegate(new ForwardingCustom(delegate)) //
+				.withDelegate(new ForwardingCustom(delegate) {
+				}) //
 				.withNotifier(notifier);
 
 		proxy = wellFormedBuilder.build().get();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void typeMustBeSpecified() throws Exception {
 		// given
 		wellFormedBuilder.withType(null);
@@ -76,7 +77,7 @@ public class NotifierProxyTest {
 		wellFormedBuilder.build();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void delegateMustBeSpecified() throws Exception {
 		// given
 		wellFormedBuilder.withDelegate(null);
@@ -85,7 +86,7 @@ public class NotifierProxyTest {
 		wellFormedBuilder.build();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void notifierMustBeSpecified() throws Exception {
 		// given
 		wellFormedBuilder.withNotifier(null);

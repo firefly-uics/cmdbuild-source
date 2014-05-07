@@ -3,7 +3,7 @@ package org.cmdbuild.api.fluent.ws;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.api.fluent.ws.ClassAttribute.classAttribute;
 import static org.cmdbuild.api.fluent.ws.FunctionInput.functionInput;
 import static org.cmdbuild.api.fluent.ws.FunctionOutput.functionOutput;
@@ -22,7 +22,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.URLDataSource;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.api.fluent.Card;
 import org.cmdbuild.api.fluent.CardDescriptor;
 import org.cmdbuild.api.fluent.CreateReport;
@@ -35,11 +35,14 @@ import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.Function;
 import org.cmdbuild.api.fluent.FunctionCall;
+import org.cmdbuild.api.fluent.Lookup;
 import org.cmdbuild.api.fluent.NewCard;
 import org.cmdbuild.api.fluent.NewProcessInstance;
 import org.cmdbuild.api.fluent.NewRelation;
 import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
+import org.cmdbuild.api.fluent.QueryAllLookup;
 import org.cmdbuild.api.fluent.QueryClass;
+import org.cmdbuild.api.fluent.QuerySingleLookup;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.common.Constants;
@@ -487,6 +490,14 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 				setValue(attributeValue);
 			}
 		};
+	}
+
+	public Iterable<Lookup> fetch(final QueryAllLookup queryLookup) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	public Lookup fetch(final QuerySingleLookup querySingleLookup) {
+		throw new UnsupportedOperationException("TODO");
 	}
 
 }

@@ -8,6 +8,8 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMForm", {
 
 	// configuration
 	modifyButtonText: "Modify",
+	withRemoveButton: true,
+	withEnableDisableButton: false,
 	removeButtonText: "Remove",
 	// configuration
 
@@ -26,6 +28,8 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMForm", {
 	initComponent: function() {
 		var me = this;
 
+		this.cmTBar = [];
+
 		this.modifyButton = new Ext.button.Button({
 			iconCls: "modify",
 			text: this.modifyButtonText,
@@ -33,14 +37,31 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMForm", {
 				me.callDelegates("onFormModifyButtonClick", me);
 			}
 		});
+		this.cmTBar.push(this.modifyButton);
 
-		this.removeButton = new Ext.button.Button({
-			iconCls: "delete",
-			text: this.removeButtonText,
-			handler: function() {
-				me.callDelegates("onFormRemoveButtonClick", me);
-			}
-		});
+		if (this.withRemoveButton) {
+			this.removeButton = new Ext.button.Button({
+				iconCls: "delete",
+				text: this.removeButtonText,
+				handler: function() {
+					me.callDelegates("onFormRemoveButtonClick", me);
+				}
+			});
+			this.cmTBar.push(this.removeButton);
+		}
+
+		if (this.withEnableDisableButton) {
+			this.enableDisableButton = new Ext.button.Button({
+				iconCls: "delete",
+				text: CMDBuild.Translation.disable,
+				action: "disable",
+				handler: function() {
+					me.callDelegates("onEnableDisableButtonClick", [me, this.action]);
+				}
+			});
+
+			this.cmTBar.push(this.enableDisableButton);
+		}
 
 		this.saveButton = new CMDBuild.buttons.SaveButton({
 			handler: function() {
@@ -54,7 +75,6 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMForm", {
 			}
 		});
 
-		this.cmTBar = [this.modifyButton, this.removeButton];
 		this.cmButtons = [this.saveButton, this.abortButton];
 		this.buttonAlign = "center";
 		this.buttons = this.cmButtons;
@@ -62,6 +82,22 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMForm", {
 		this.autoScroll = true;
 
 		this.callParent(arguments);
+	},
+
+	updateEnableDisableButton : function(activate) {
+		if (!this.enableDisableButton) {
+			return;
+		}
+
+		if (activate) {
+			this.enableDisableButton.setText(CMDBuild.Translation.enable);
+			this.enableDisableButton.setIconCls("ok");
+			this.enableDisableButton.action = "enable";
+		} else {
+			this.enableDisableButton.setText(CMDBuild.Translation.disable);
+			this.enableDisableButton.setIconCls("delete");
+			this.enableDisableButton.action = "disable";
+		}
 	},
 
 	/**

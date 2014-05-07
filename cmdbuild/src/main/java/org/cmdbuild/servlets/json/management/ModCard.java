@@ -52,13 +52,13 @@ import org.cmdbuild.logic.data.access.CMCardWithPosition;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.json.util.FlowStatusFilterElementGetter;
-import org.cmdbuild.servlets.json.util.JsonFilterHelper;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -175,7 +175,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
-		return cardSerializer().toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
+		return cardSerializer().toClient(response.elements(), response.totalSize());
 	}
 
 	private JSONObject getCardList(final String className, final JSONObject filter, final int limit, final int offset,
@@ -196,7 +196,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
-		return cardSerializer().toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
+		return cardSerializer().toClient(response.elements(), response.totalSize());
 	}
 
 	@JSONExported
@@ -216,7 +216,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.build();
 
 		final FetchCardListResponse response = systemDataAccessLogic().fetchSQLCards(functionName, queryOptions);
-		return cardSerializer().toClient(response.getPaginatedCards(), response.getTotalNumberOfCards(), CARDS);
+		return cardSerializer().toClient(response.elements(), response.totalSize(), CARDS);
 	}
 
 	@JSONExported
@@ -387,10 +387,10 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
 		if (!confirmed) {
-			final int numberOfCardsToUpdate = response.getTotalNumberOfCards() - cards.length();
+			final int numberOfCardsToUpdate = response.totalSize() - cards.length();
 			return out.put(COUNT, numberOfCardsToUpdate);
 		}
-		final Iterable<Card> fetchedCards = response.getPaginatedCards();
+		final Iterable<Card> fetchedCards = response.elements();
 		attributes.remove(CLASS_NAME);
 		attributes.remove(CARDS);
 		attributes.remove(FILTER);

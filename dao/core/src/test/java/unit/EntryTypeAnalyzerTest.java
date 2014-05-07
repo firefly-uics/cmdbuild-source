@@ -32,7 +32,7 @@ public class EntryTypeAnalyzerTest {
 		view = mock(CMDataView.class);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void shouldNotCreateAEntryTypeAnalyzerWithNullEntryType() throws Exception {
 		inspect(null, null);
 	}

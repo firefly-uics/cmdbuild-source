@@ -5,7 +5,7 @@ import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.exception.ORMException.ORMExceptionType.ORM_CHANGE_LOOKUPTYPE_ERROR;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
 import static org.cmdbuild.logic.data.lookup.Util.actives;

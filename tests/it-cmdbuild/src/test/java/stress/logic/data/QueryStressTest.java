@@ -10,7 +10,6 @@ import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.lookup.DataViewLookupStore;
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -61,7 +60,7 @@ public class QueryStressTest extends IntegrationTestBase {
 		final QueryOptions queryOptions = createQueryOptions(100, 0, null, null);
 
 		// when
-		final Iterable<Card> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions).getPaginatedCards();
+		final Iterable<Card> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions).elements();
 
 		// then
 		assertEquals(size(cards), 100);
@@ -77,7 +76,7 @@ public class QueryStressTest extends IntegrationTestBase {
 		final QueryOptions queryOptions = createQueryOptions(150, 0, sortersArray, filter);
 
 		// when
-		final Iterable<Card> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions).getPaginatedCards();
+		final Iterable<Card> cards = dataAccessLogic.fetchCards(CLASS_NAME, queryOptions).elements();
 
 		// then
 		assertEquals(size(cards), 1);

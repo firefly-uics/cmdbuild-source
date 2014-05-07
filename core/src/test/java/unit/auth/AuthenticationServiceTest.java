@@ -67,12 +67,12 @@ public class AuthenticationServiceTest {
 	 * Constructor and setters
 	 */
 
-	@Test(expected = java.lang.IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void configurationMustBeNotNull() {
 		new DefaultAuthenticationService(null, dataView);
 	}
 
-	@Test(expected = java.lang.IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void passwordAuthenticatorsMustBeNotNull() {
 		final AuthenticationService as = authenticationService();
 		as.setPasswordAuthenticators((PasswordAuthenticator[]) null);
@@ -84,7 +84,7 @@ public class AuthenticationServiceTest {
 		as.setPasswordAuthenticators(new PasswordAuthenticator[] { null });
 	}
 
-	@Test(expected = java.lang.IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void clientRequestAuthenticatorsMustBeNotNull() {
 		final AuthenticationService as = authenticationService();
 		as.setClientRequestAuthenticators((ClientRequestAuthenticator[]) null);
@@ -96,7 +96,7 @@ public class AuthenticationServiceTest {
 		as.setClientRequestAuthenticators(new ClientRequestAuthenticator[] { null });
 	}
 
-	@Test(expected = java.lang.IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void userFetchersMustBeNotNull() {
 		final AuthenticationService as = authenticationService();
 		as.setUserFetchers((UserFetcher[]) null);
@@ -108,7 +108,7 @@ public class AuthenticationServiceTest {
 		as.setUserFetchers(new UserFetcher[] { null });
 	}
 
-	@Test(expected = java.lang.IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void userStoreMustBeNotNull() {
 		final AuthenticationService as = authenticationService();
 		as.setUserStore(null);

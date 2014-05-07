@@ -112,6 +112,7 @@
 			buildNoteController(me, me.view.getNotePanel());
 			buildAttachmentsController(me, me.view.getAttachmentsPanel());
 			buildHistoryController(me, me.view.getHistoryPanel());
+			buildBimController(me, me.view.getGrid());
 			Ext.resumeLayouts();
 		},
 
@@ -131,8 +132,28 @@
 
 			_CMCardModuleState.setEntryType(entryType, dc, filter);
 			_CMUIState.onlyGridIfFullScreen();
+			this.changeClassUIConfigurationForGroup(entryTypeId);
 		},
 
+		changeClassUIConfigurationForGroup: function(classId) {
+			var me = this;
+			CMDBuild.ServiceProxy.group.loadClassUiConfiguration({
+				params: {
+					groupId: "",
+					classId: classId
+				},
+				success: function(operation, config, response) {
+					var disabledForGroupButtons = Ext.JSON.decode(response.response);
+					me.view.addCardButton.disabledForGroup = disabledForGroupButtons.create;
+					if (me.view.addCardButton.disabledForGroup)
+						me.view.addCardButton.disable();
+					else
+						me.view.addCardButton.enable();
+					me.cardPanelController.changeClassUIConfigurationForGroup(disabledForGroupButtons);
+				}
+			});
+		},
+		
 		onGridVisible: function onCardGridVisible(visible, selection) {
 			if (visible 
 					&& this.entryType
@@ -280,6 +301,14 @@
 
 		me.cardHistoryPanelController = new CMDBuild.controller.management.classes.CMCardHistoryPanelController(view);
 		me.subControllers.push(me.cardHistoryPanelController);
+	}
+
+	function buildBimController(me, view) {
+		if (view == null) {return;}
+
+		if (CMDBuild.Config.bim.enabled) {
+			new CMDBuild.bim.management.CMBimController(view);
+		}
 	}
 
 	function onSelectionWentWrong() {

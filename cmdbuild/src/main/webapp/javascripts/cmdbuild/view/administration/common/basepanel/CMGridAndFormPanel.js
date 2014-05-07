@@ -16,6 +16,9 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 	addButtonText: "Add",
 	modifyButtonText: "Modify",
 	removeButtonText: "Remove",
+	withRemoveButton: true,
+	withEnableDisableButton: false,
+	fileUpload: false,
 	withPagingBar: true,
 	// configuration
 
@@ -41,7 +44,7 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 
 		this.callParent(arguments);
 
-		_CMUtils.forwardMethods(this, this.form, ["buildFields", "disableModify", "enableModify"]);
+		_CMUtils.forwardMethods(this, this.form, ["buildFields", "disableModify", "enableModify", "updateEnableDisableButton"]);
 		_CMUtils.forwardMethods(this, this.grid, ["configureGrid"]);
 	},
 
@@ -64,6 +67,9 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 		var form = new CMDBuild.view.administration.common.basepanel.CMForm({
 			modifyButtonText: this.modifyButtonText,
 			removeButtonText: this.removeButtonText,
+			withRemoveButton: this.withRemoveButton,
+			withEnableDisableButton: this.withEnableDisableButton,
+			fileUpload: this.fileUpload,
 
 			region: "south",
 			height: "70%",
@@ -79,5 +85,13 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 
 	clearSelection: function() {
 		this.grid.getSelectionModel().deselectAll();
+	},
+
+	getBasicForm: function() {
+		if (this.form) {
+			return this.form.getForm();
+		} else {
+			return null;
+		}
 	}
 });

@@ -1,6 +1,6 @@
 package org.cmdbuild.common.utils;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class Arrays {
 

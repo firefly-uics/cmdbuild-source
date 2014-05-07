@@ -3,7 +3,7 @@ package org.cmdbuild.dao.function;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.addAll;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.DBTypeObject;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.DBEntryType.EntryTypeMetadata;

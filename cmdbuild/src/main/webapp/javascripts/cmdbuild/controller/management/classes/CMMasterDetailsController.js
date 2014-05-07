@@ -245,7 +245,6 @@
 		var targetPanel = tab.targetPanel,
 			type = targetPanel.detailType,
 			detail = this.view.details[type][targetPanel.detailId];
-
 		this.view.addDetailButton.enable();
 		this.currentTab = tab;
 

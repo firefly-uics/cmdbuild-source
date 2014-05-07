@@ -1,11 +1,11 @@
 package org.cmdbuild.dms.alfresco.webservice;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import org.alfresco.webservice.types.NamedValue;
 import org.alfresco.webservice.types.ResultSetRow;
 import org.alfresco.webservice.util.Constants;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.cmdbuild.dms.StoredDocument;
 
 enum AlfrescoConstant {

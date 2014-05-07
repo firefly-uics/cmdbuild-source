@@ -2,7 +2,7 @@ package org.cmdbuild.workflow.widget;
 
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.model.widget.OpenReport;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;

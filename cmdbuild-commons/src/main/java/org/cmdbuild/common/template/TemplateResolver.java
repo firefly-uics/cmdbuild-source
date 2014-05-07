@@ -1,14 +1,17 @@
 package org.cmdbuild.common.template;
 
+/**
+ * Resolver for templates.
+ */
 public interface TemplateResolver {
 
 	/**
-	 * Evaluates the specified template with no specific engine.
+	 * Resolves the specified template.
 	 * 
 	 * @param template
 	 * 
-	 * @return the evaluated template.
+	 * @return the resolved template.
 	 */
-	String simpleEval(String template);
+	String resolve(String template);
 
 }

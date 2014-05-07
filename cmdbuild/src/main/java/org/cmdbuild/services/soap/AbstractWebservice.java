@@ -1,6 +1,7 @@
 package org.cmdbuild.services.soap;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,15 +17,14 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.dao.view.user.UserDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SoapDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.operation.AuthenticationLogicHelper;
@@ -76,7 +76,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	protected CMDataView userDataView() {
-		return applicationContext.getBean(UserDataView.class);
+		return applicationContext.getBean(BEAN_USER_DATA_VIEW, CMDataView.class);
 	}
 
 	protected DmsLogicHelper dmsLogicHelper() {
@@ -92,14 +92,14 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	protected WorkflowLogicHelper workflowLogicHelper() {
 		return new WorkflowLogicHelper( //
 				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
-				applicationContext.getBean(UserDataView.class), //
+				applicationContext.getBean(BEAN_USER_DATA_VIEW, CMDataView.class), //
 				metadataStoreFactory, //
 				cardAdapter());
 	}
 
 	protected DataAccessLogicHelper dataAccessLogicHelper() {
 		final DataAccessLogicHelper helper = new DataAccessLogicHelper( //
-				applicationContext.getBean(UserDataView.class),//
+				applicationContext.getBean(BEAN_USER_DATA_VIEW, CMDataView.class),//
 				applicationContext.getBean(SoapDataAccessLogicBuilder.class).build(), //
 				applicationContext.getBean(UserWorkflowLogicBuilder.class).build(), //
 				applicationContext.getBean("operationUser", OperationUser.class), //
@@ -115,7 +115,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 	}
 
 	private CardAdapter cardAdapter() {
-		return new CardAdapter(applicationContext.getBean(UserDataView.class), lookupStore());
+		return new CardAdapter(userDataView(), lookupStore());
 	}
 
 	protected WorkflowEventManager workflowEventManager() {

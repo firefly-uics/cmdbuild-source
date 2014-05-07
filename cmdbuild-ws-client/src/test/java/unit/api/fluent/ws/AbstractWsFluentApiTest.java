@@ -1,6 +1,6 @@
 package unit.api.fluent.ws;
 
-import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.mockito.Mockito.mock;
 
 import org.cmdbuild.api.fluent.FluentApi;

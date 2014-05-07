@@ -450,7 +450,7 @@
 
 			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var parameters = {};
-			parameters[parameterNames.CARD_ID] = this.getCardId()
+			parameters[parameterNames.CARD_ID] = this.getCardId();
 			parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
 			parameters[parameterNames.DOMAIN_ID] = node.get("dom_id");
 			parameters[parameterNames.DOMAIN_SOURCE] = node.get("src");

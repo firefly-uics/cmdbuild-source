@@ -2,7 +2,7 @@ package org.cmdbuild.cql.facade;
 
 import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
-import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;

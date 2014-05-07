@@ -19,19 +19,19 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityInstance;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonProcessCard;
 import org.cmdbuild.servlets.json.util.FlowStatusFilterElementGetter;
-import org.cmdbuild.servlets.json.util.JsonFilterHelper;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.ActivityPerformer;
 import org.cmdbuild.workflow.ActivityPerformerExpressionEvaluator;
@@ -122,7 +122,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 			final String expression = performer.getValue();
 
 			final TemplateResolver templateResolver = activityPerformerTemplateResolverFactory().create();
-			final String resolvedExpression = templateResolver.simpleEval(expression);
+			final String resolvedExpression = templateResolver.resolve(expression);
 
 			final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
 					resolvedExpression);

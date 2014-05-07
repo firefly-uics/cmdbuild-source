@@ -8,7 +8,7 @@ import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 
 import com.google.common.collect.Maps;
 
-public class EmailAccountStorableConverter extends BaseStorableConverter<EmailAccount> {
+public class EmailAccountStorableConverter extends BaseStorableConverter<StorableEmailAccount> {
 
 	private static final String EMAIL_ACCOUNT = "_EmailAccount";
 
@@ -34,44 +34,54 @@ public class EmailAccountStorableConverter extends BaseStorableConverter<EmailAc
 	}
 
 	@Override
-	public EmailAccount convert(final CMCard card) {
-		final EmailAccount emailAccount = new EmailAccount(card.getId());
-		emailAccount.setDefault(card.get(IS_DEFAULT, Boolean.class));
-		emailAccount.setName(card.get(CODE, String.class));
-		emailAccount.setAddress(card.get(ADDRESS, String.class));
-		emailAccount.setUsername(card.get(USERNAME, String.class));
-		emailAccount.setPassword(card.get(PASSWORD, String.class));
-		emailAccount.setSmtpServer(card.get(SMTP_SERVER, String.class));
-		emailAccount.setSmtpPort(card.get(SMTP_PORT, Integer.class));
-		emailAccount.setSmtpSsl(card.get(SMTP_SSL, Boolean.class));
-		emailAccount.setImapServer(card.get(IMAP_SERVER, String.class));
-		emailAccount.setImapPort(card.get(IMAP_PORT, Integer.class));
-		emailAccount.setImapSsl(card.get(IMAP_SSL, Boolean.class));
-		emailAccount.setInputFolder(card.get(INPUT_FOLDER, String.class));
-		emailAccount.setProcessedFolder(card.get(PROCESSED_FOLDER, String.class));
-		emailAccount.setRejectedFolder(card.get(REJECTED_FOLDER, String.class));
-		emailAccount.setRejectNotMatching(card.get(REJECT_NOT_MATCHING, Boolean.class));
-		return emailAccount;
+	public StorableEmailAccount convert(final CMCard card) {
+		return StorableEmailAccount.newInstance() //
+				.withId(card.getId()) //
+				.withDefaultStatus(defaultBoolean(card.get(IS_DEFAULT, Boolean.class), false)) //
+				.withName(card.get(CODE, String.class)) //
+				.withAddress(card.get(ADDRESS, String.class)) //
+				.withUsername(card.get(USERNAME, String.class)) //
+				.withPassword(card.get(PASSWORD, String.class)) //
+				.withSmtpServer(card.get(SMTP_SERVER, String.class)) //
+				.withSmtpPort(card.get(SMTP_PORT, Integer.class)) //
+				.withSmtpSsl(defaultBoolean(card.get(SMTP_SSL, Boolean.class), false)) //
+				.withImapServer(card.get(IMAP_SERVER, String.class)) //
+				.withImapPort(card.get(IMAP_PORT, Integer.class)) //
+				.withImapSsl(defaultBoolean(card.get(IMAP_SSL, Boolean.class), false)) //
+				.withInputFolder(card.get(INPUT_FOLDER, String.class)) //
+				.withProcessedFolder(card.get(PROCESSED_FOLDER, String.class)) //
+				.withRejectedFolder(card.get(REJECTED_FOLDER, String.class)) //
+				.withRejectNotMatchingStatus(defaultBoolean(card.get(REJECT_NOT_MATCHING, Boolean.class), false)) //
+				.build();
 	}
 
 	@Override
-	public Map<String, Object> getValues(final EmailAccount emailAccount) {
+	public String getIdentifierAttributeName() {
+		return CODE;
+	}
+
+	private boolean defaultBoolean(final Boolean value, final boolean defaultValue) {
+		return (value == null) ? defaultValue : value;
+	}
+
+	@Override
+	public Map<String, Object> getValues(final StorableEmailAccount storable) {
 		final Map<String, Object> values = Maps.newHashMap();
-		values.put(IS_DEFAULT, emailAccount.isDefault());
-		values.put(CODE, emailAccount.getName());
-		values.put(ADDRESS, emailAccount.getAddress());
-		values.put(USERNAME, emailAccount.getUsername());
-		values.put(PASSWORD, emailAccount.getPassword());
-		values.put(SMTP_SERVER, emailAccount.getSmtpServer());
-		values.put(SMTP_PORT, emailAccount.getSmtpPort());
-		values.put(SMTP_SSL, emailAccount.isSmtpSsl());
-		values.put(IMAP_SERVER, emailAccount.getImapServer());
-		values.put(IMAP_PORT, emailAccount.getImapPort());
-		values.put(IMAP_SSL, emailAccount.isImapSsl());
-		values.put(INPUT_FOLDER, emailAccount.getInputFolder());
-		values.put(PROCESSED_FOLDER, emailAccount.getProcessedFolder());
-		values.put(REJECTED_FOLDER, emailAccount.getRejectedFolder());
-		values.put(REJECT_NOT_MATCHING, emailAccount.isRejectNotMatching());
+		values.put(IS_DEFAULT, storable.isDefault());
+		values.put(CODE, storable.getName());
+		values.put(ADDRESS, storable.getAddress());
+		values.put(USERNAME, storable.getUsername());
+		values.put(PASSWORD, storable.getPassword());
+		values.put(SMTP_SERVER, storable.getSmtpServer());
+		values.put(SMTP_PORT, storable.getSmtpPort());
+		values.put(SMTP_SSL, storable.isSmtpSsl());
+		values.put(IMAP_SERVER, storable.getImapServer());
+		values.put(IMAP_PORT, storable.getImapPort());
+		values.put(IMAP_SSL, storable.isImapSsl());
+		values.put(INPUT_FOLDER, storable.getInputFolder());
+		values.put(PROCESSED_FOLDER, storable.getProcessedFolder());
+		values.put(REJECTED_FOLDER, storable.getRejectedFolder());
+		values.put(REJECT_NOT_MATCHING, storable.isRejectNotMatching());
 		return values;
 	}
 

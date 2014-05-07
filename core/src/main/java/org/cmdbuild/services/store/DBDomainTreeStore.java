@@ -17,8 +17,16 @@ import org.cmdbuild.model.domainTree.DomainTreeNode;
 
 public class DBDomainTreeStore {
 	private enum Attributes {
-		BASE_NODE("BaseNode"), DIRECT("Direct"), DOMAIN_NAME("DomainName"), ID_GROUP("IdGroup"), ID_PARENT("IdParent"), TARGET_CLASS_DESCRIPTION(
-				"TargetClassDescription"), TARGET_CLASS_NAME("TargetClassName"), TYPE("Type");
+		BASE_NODE("BaseNode"), //
+		DESCRIPTION("Description"), //
+		DIRECT("Direct"), //
+		DOMAIN_NAME("DomainName"), //
+		FILTER("TargetFilter"), //
+		ID_GROUP("IdGroup"), //
+		ID_PARENT("IdParent"), //
+		TARGET_CLASS_DESCRIPTION("TargetClassDescription"), //
+		TARGET_CLASS_NAME("TargetClassName"), //
+		TYPE("Type");
 
 		private String name;
 
@@ -38,9 +46,9 @@ public class DBDomainTreeStore {
 		this.dataView = dataView;
 	}
 
-	public void createOrReplaceTree(final String treeType, final DomainTreeNode root) {
+	public void createOrReplaceTree(final String treeType, String description, final DomainTreeNode root) {
 		removeTree(treeType);
-		saveNode(treeType, root);
+		saveNode(treeType, description, root);
 	}
 
 	public void removeTree(final String treeType) {
@@ -59,6 +67,20 @@ public class DBDomainTreeStore {
 			dataView.delete(domainTreeNode.getCard(table));
 		}
 
+	}
+	public Map<String, String> getTreeNames() {
+		final CMClass table = getTable();
+		final CMQueryResult domainTreeNames = dataView //
+				.select(anyAttribute(table)) //
+				.from(table) //
+				.run();
+		final Map<String, String> names = new HashMap<String, String>();
+		for (final CMQueryRow layerAsQueryRow : domainTreeNames) {
+			final String name = (String) layerAsQueryRow.getCard(table).get(Attributes.TYPE.getName());
+			final String description = (String) layerAsQueryRow.getCard(table).get(Attributes.DESCRIPTION.getName());
+			names.put(name, description);
+		}
+		return names;
 	}
 
 	public DomainTreeNode getDomainTree(final String treeType) {
@@ -104,25 +126,28 @@ public class DBDomainTreeStore {
 		return root;
 	}
 
-	private void saveNode(final String treeType, final DomainTreeNode root) {
+	private void saveNode(final String treeType, String description, final DomainTreeNode root) {
 		final CMCard newNode = dataView.createCardFor(getTable()).set(Attributes.DIRECT.getName(), root.isDirect())
 				.set(Attributes.DOMAIN_NAME.getName(), root.getDomainName()).set(Attributes.TYPE.getName(), treeType)
 				.set(Attributes.ID_GROUP.getName(), root.getIdGroup())
 				.set(Attributes.ID_PARENT.getName(), root.getIdParent())
 				.set(Attributes.TARGET_CLASS_NAME.getName(), root.getTargetClassName())
 				.set(Attributes.TARGET_CLASS_DESCRIPTION.getName(), root.getTargetClassDescription())
+				.set(Attributes.FILTER.getName(), root.getTargetFilter())
+				.set(Attributes.DESCRIPTION.getName(), description)
 				.set(Attributes.BASE_NODE.getName(), root.isBaseNode()).save();
 
 		final Long id = newNode.getId();
 		for (final DomainTreeNode child : root.getChildNodes()) {
 			child.setIdParent(id);
-			saveNode(treeType, child);
+			saveNode(treeType, description, child);
 		}
 	}
 
 	private DomainTreeNode cardToDomainTreeNode(final CMCard card) {
 		final DomainTreeNode domainTreeNode = new DomainTreeNode();
 		domainTreeNode.setId(card.getId());
+		domainTreeNode.setDescription((String) card.get(Attributes.DESCRIPTION.getName()));
 		domainTreeNode.setDirect(booleanCast(card.get(Attributes.DIRECT.getName())));
 		domainTreeNode.setDomainName((String) card.get(Attributes.DOMAIN_NAME.getName()));
 		domainTreeNode.setType((String) card.get(Attributes.TYPE.getName()));
@@ -131,6 +156,7 @@ public class DBDomainTreeStore {
 		domainTreeNode.setTargetClassDescription((String) card.get(Attributes.TARGET_CLASS_DESCRIPTION.getName()));
 		domainTreeNode.setTargetClassName(((String) card.get(Attributes.TARGET_CLASS_NAME.getName())));
 		domainTreeNode.setBaseNode((booleanCast(card.get(Attributes.BASE_NODE.getName()))));
+		domainTreeNode.setTargetFilter((String) card.get(Attributes.FILTER.getName()));
 
 		return domainTreeNode;
 	}
@@ -139,9 +165,9 @@ public class DBDomainTreeStore {
 		return dataView.findClass(TABLE_NAME);
 	}
 
-	// the getValue method of a ICard return
-	// an Object. For the Ids return a Integer
-	// but we want long. Cast them ignoring the null values
+	// getValue method of a Card returns
+	// an Object. For the Ids it returns an Integer
+	// but we want a Long. Cast them ignoring null values
 	private Long safeLongCast(final Object o) {
 		if (o == null) {
 			return null;

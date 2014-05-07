@@ -1,7 +1,7 @@
 package org.cmdbuild.data.store.lookup;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.lookup.LookupType.LookupTypeBuilder;
@@ -156,5 +156,10 @@ public final class Lookup implements Storable {
 
 	public void setId(final Long id) {
 		this.id = id;
+	}
+	
+	// FIXME Do I really need it?
+	public String getDescription(){
+		return description;
 	}
 }

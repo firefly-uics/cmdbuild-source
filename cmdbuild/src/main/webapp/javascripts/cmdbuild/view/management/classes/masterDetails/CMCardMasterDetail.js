@@ -201,7 +201,6 @@
 				t;
 
 			var sortedKeys = sortKeys(tabs);
-
 			for (var i = 0, l=sortedKeys.length; i<l; i++) {
 				var detailId = sortedKeys[i];
 				t = tabs[detailId];
