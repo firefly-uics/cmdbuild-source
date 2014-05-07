@@ -26,13 +26,14 @@
 			}
 		},
 
-		getValueGroups: function() {
-			return this.view.groups.getValue();
-		},
+		// GETters functions
+			getValueGroups: function() {
+				return this.view.groups.getValue();
+			},
 
-		getValueId: function() {
-			return this.view.idField.getValue();
-		},
+			getValueId: function() {
+				return this.view.idField.getValue();
+			},
 
 		isEmptyClass: function() {
 			if (this.view.classNameCombo.getValue())
@@ -41,32 +42,47 @@
 			return true;
 		},
 
-		setDisabledButtonNext: function(state) {
-			this.parentDelegate.setDisabledButtonNext(state);
-		},
+		// SETters functions
+			selectGroups: function(itemsToSelect) {
+				this.view.groups.setValue(itemsToSelect);
+			},
 
-		setDisabledTypeField: function(state) {
-			this.view.typeField.setDisabled(state);
-		},
+			setDisabledButtonNext: function(state) {
+				this.parentDelegate.setDisabledButtonNext(state);
+			},
 
-		setValueActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
+			setDisabledTypeField: function(state) {
+				this.view.typeField.setDisabled(state);
+			},
 
-		setValueDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
+			setValueActive: function(value) {
+				this.view.activeField.setValue(value);
+			},
 
-		setValueId: function(value) {
-			this.view.idField.setValue(value);
-		},
+			setValueClassName: function(value) {
+				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+				this.view.classNameCombo.forceSelection = false;
+				this.view.classNameCombo.setValue(value);
+				this.view.classNameCombo.forceSelection = true;
 
-		setValuePhase: function(value) {
-			// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-			this.view.phaseCombo.forceSelection = false;
-			this.view.phaseCombo.setValue(value);
-			this.view.phaseCombo.forceSelection = true;
-		}
+				// Manually select event fire
+				this.cmOn('onClassSelected', { className: value });
+			},
+
+			setValueDescription: function(value) {
+				this.view.descriptionField.setValue(value);
+			},
+
+			setValueId: function(value) {
+				this.view.idField.setValue(value);
+			},
+
+			setValuePhase: function(value) {
+				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+				this.view.phaseCombo.forceSelection = false;
+				this.view.phaseCombo.setValue(value);
+				this.view.phaseCombo.forceSelection = true;
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep1', {
@@ -84,9 +100,9 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
+				name: CMDBuild.ServiceProxy.parameter.TYPE,
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.ServiceProxy.parameter.TYPE,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				value: tr.tasksTypes.event + ' ' + tr.tasksTypes.eventTypes.synchronous.toLowerCase(),
 				disabled: true,
@@ -124,10 +140,12 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
 				forceSelection: true,
-				editable: false
+				editable: false,
+				allowBlank: false
 			});
 
 			this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
+				name: CMDBuild.ServiceProxy.parameter.GROUPS,
 				fieldLabel: tr.taskEvent.groupsToApply,
 				height: 300,
 				valueField: CMDBuild.ServiceProxy.parameter.NAME,
@@ -178,7 +196,6 @@
 				if (this.delegate.isEmptyClass())
 					this.delegate.setDisabledButtonNext(true);
 
-				// TODO: fix check only if no already selected - Select all groups by default or forceSelection
 				this.groups.selectAll();
 			}
 		}

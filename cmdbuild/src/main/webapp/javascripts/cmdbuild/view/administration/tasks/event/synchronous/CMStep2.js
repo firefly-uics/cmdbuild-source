@@ -6,6 +6,7 @@
 		parentDelegate: undefined,
 		view: undefined,
 		className: undefined,
+		filterValues: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -28,24 +29,39 @@
 			var me = this;
 
 			if (this.className) {
-				_CMCache.getAttributeList(_CMCache.getEntryTypeByName(this.className).getId(), function(attributes) {
-					me.view.filterTabPanel.removeAll();
+				_CMCache.getAttributeList(
+					_CMCache.getEntryTypeByName(this.className).getId(),
+					function(attributes) {
+						me.view.filterTabPanel.removeAll();
 
-					// Filter tabs
-					me.view.filterAttributesTab = Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributes', {
-						attributes: attributes
-					});
-					me.view.filterRelationsTab = Ext.create('CMDBuild.view.management.common.filter.CMRelations', {
-						className: me.className,
-						height: '100%'
-					});
-					me.view.filterFunctionsTab = Ext.create('CMDBuild.view.management.common.filter.CMFunctions', {
-						className: me.className
-					});
+						// Filter tabs
+						me.view.filterAttributesTab = Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributes', {
+							attributes: attributes
+						});
+						me.view.filterRelationsTab = Ext.create('CMDBuild.view.management.common.filter.CMRelations', {
+							className: me.className,
+							height: '100%'
+						});
+						me.view.filterFunctionsTab = Ext.create('CMDBuild.view.management.common.filter.CMFunctions', {
+							className: me.className
+						});
 
-					me.view.filterTabPanel.add([me.view.filterAttributesTab, me.view.filterRelationsTab, me.view.filterFunctionsTab]);
-					me.view.filterTabPanel.doLayout();
-				});
+						// To setup filters values
+						if (typeof me.filterValues != 'undefined') {
+							if (typeof me.view.filterAttributesTab != 'undefined' && me.filterValues.attributes)
+								me.view.filterAttributesTab.setData(me.filterValues.attributes);
+
+							if (typeof me.view.filterRelationsTab != 'undefined' && me.filterValues.relations)
+								me.view.filterRelationsTab.setData(me.filterValues.relations);
+
+							if (typeof me.view.filterFunctionsTab != 'undefined' && me.filterValues.functions)
+								me.view.filterFunctionsTab.setData(me.filterValues.functions);
+						}
+
+						me.view.filterTabPanel.add([me.view.filterAttributesTab, me.view.filterRelationsTab, me.view.filterFunctionsTab]);
+						me.view.filterTabPanel.doLayout();
+					}
+				);
 			}
 		},
 
@@ -68,6 +84,22 @@
 			}
 
 			return null;
+		},
+
+		/**
+		 * To setup all filters
+		 *
+		 * @param (Object) filterValuesObject
+		 *
+		 * example:
+		 * 		{
+		 * 			"attributes": {...},
+		 * 			"relations": {...},
+		 * 			"functions": {...}
+		 * 		}
+		 */
+		setValueFilters: function(filterValuesObject) {
+			this.filterValues = filterValuesObject;
 		}
 	});
 

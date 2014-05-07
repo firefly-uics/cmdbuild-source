@@ -81,11 +81,11 @@
 		},
 
 		// overwrite
-		onModifyButtonClick: function() {
-			this.callParent(arguments);
-
-			_debug('onModifyButtonClick to implement');
-		},
+//		onModifyButtonClick: function() {
+//			this.callParent(arguments);
+//
+//			this.delegateStep[1].setValueFilters(record.get(CMDBuild.ServiceProxy.parameter.FILTER));
+//		},
 
 		// overwrite
 		onRowSelected: function() {
@@ -105,19 +105,31 @@
 							var record = records[0];
 
 // TODO: to check if response has phase data or not to extends taskType value
-							_debug(this.selectedType);
+
 							this.parentDelegate.loadForm(this.selectedType);
 
 							// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
-// TODO
+
 							// Set step1 [0] datas
+							this.delegateStep[0].selectGroups(record.get(CMDBuild.ServiceProxy.parameter.GROUPS));
 							this.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
+							this.delegateStep[0].setValueClassName(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME));
 							this.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
 							this.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
-//
-//							// Set step2 [1] datas
-//							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
-//							this.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+							this.delegateStep[0].setValuePhase(record.get(CMDBuild.ServiceProxy.parameter.PHASE));
+
+							// Set step2 [1] datas
+							this.delegateStep[1].setValueFilters(
+								Ext.decode(record.get(CMDBuild.ServiceProxy.parameter.FILTER))
+							);
+
+							// Set step3 [2] datas
+							this.delegateStep[2].setValueNotificationFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE));
+							this.delegateStep[2].setValueNotificationEmailAccount(record.get(CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT));
+							this.delegateStep[2].setValueNotificationEmailTemplate(record.get(CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE));
+							this.delegateStep[2].setValueWorkflowAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES));
+							this.delegateStep[2].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME));
+							this.delegateStep[2].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE));
 
 							this.view.disableModify(true);
 						}
@@ -137,7 +149,7 @@
 				return;
 			}
 
-//			CMDBuild.LoadMask.get().show();
+			CMDBuild.LoadMask.get().show();
 			var filterData = this.delegateStep[1].getDataFilters();
 			var formData = this.view.getData(true);
 			var submitDatas = {};
@@ -174,7 +186,7 @@
 
 				var workflowFieldsetCheckboxValue = this.delegateStep[2].getValueWorkflowFieldsetCheckbox();
 				if (workflowFieldsetCheckboxValue) {
-					var attributesGridValues = this.delegateStep[2].getValueAttributeGrid();
+					var attributesGridValues = this.delegateStep[2].getValueWorkflowAttributeGrid();
 
 					if (!CMDBuild.Utils.isEmpty(attributesGridValues))
 						submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
@@ -195,24 +207,43 @@
 _debug(filterData);
 _debug(formData);
 _debug(submitDatas);
-//			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
-//				CMDBuild.core.proxy.CMProxyTasks.create({
-//					type: this.delegateStep[0].taskType,
-//					params: submitDatas,
-//					scope: this,
-//					success: this.success,
-//					callback: this.callback
-//				});
-//			} else {
-//				CMDBuild.core.proxy.CMProxyTasks.update({
-//					type: this.delegateStep[0].taskType,
-//					params: submitDatas,
-//					scope: this,
-//					success: this.success,
-//					callback: this.callback
-//				});
-//			}
-		}
+			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
+				CMDBuild.core.proxy.CMProxyTasks.create({
+					type: this.delegateStep[0].taskType,
+					params: submitDatas,
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			} else {
+				CMDBuild.core.proxy.CMProxyTasks.update({
+					type: this.delegateStep[0].taskType,
+					params: submitDatas,
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			}
+		},
+
+		// overwrite
+		removeItem: function() {
+			if (this.selectedId == null) {
+				// Nothing to remove
+				return;
+			}
+
+			CMDBuild.LoadMask.get().show();
+			CMDBuild.core.proxy.CMProxyTasks.remove({
+				type: this.selectedType,
+				params: {
+					id: this.selectedId
+				},
+				scope: this,
+				success: this.success,
+				callback: this.callback
+			});
+		},
 	});
 
 })();

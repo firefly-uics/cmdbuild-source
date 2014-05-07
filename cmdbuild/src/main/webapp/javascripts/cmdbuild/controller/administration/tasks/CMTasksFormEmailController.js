@@ -186,7 +186,7 @@
 
 				var workflowFieldsetCheckboxValue = this.delegateStep[3].getValueWorkflowFieldsetCheckbox();
 				if (workflowFieldsetCheckboxValue) {
-					var attributesGridValues = this.delegateStep[3].getValueAttributeGrid();
+					var attributesGridValues = this.delegateStep[3].getValueWorkflowAttributeGrid();
 
 					if (!CMDBuild.Utils.isEmpty(attributesGridValues))
 						submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
