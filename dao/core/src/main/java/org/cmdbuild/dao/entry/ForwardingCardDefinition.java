@@ -30,6 +30,12 @@ public abstract class ForwardingCardDefinition extends ForwardingEntryDefinition
 	}
 
 	@Override
+	public CMCardDefinition setCurrentId(final Long currentId) {
+		delegate.setCurrentId(currentId);
+		return this;
+	}
+
+	@Override
 	public CMCard save() {
 		return delegate.save();
 	}
