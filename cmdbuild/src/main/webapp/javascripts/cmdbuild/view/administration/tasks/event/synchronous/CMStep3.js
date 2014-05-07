@@ -32,41 +32,79 @@
 			return false;
 		},
 
-		getWorkflowDelegate: function() {
-			return this.view.workflowForm.delegate;
-		},
+		// GETters functions
+			getWorkflowDelegate: function() {
+				return this.view.workflowForm.delegate;
+			},
 
-		getValueAttributeGrid: function() {
-			return this.getWorkflowDelegate().getValueGrid();
-		},
+			getValueWorkflowAttributeGrid: function() {
+				return this.getWorkflowDelegate().getValueGrid();
+			},
 
-		getValueWorkflowCombo: function() {
-			return this.getWorkflowDelegate().getValueCombo();
-		},
+			getValueWorkflowCombo: function() {
+				return this.getWorkflowDelegate().getValueCombo();
+			},
 
-		getValueNotificationFieldsetCheckbox: function() {
-			return this.view.notificationFieldset.checkboxCmp.getValue();
-		},
+			getValueWorkflowFieldsetCheckbox: function() {
+				return this.view.workflowFieldset.checkboxCmp.getValue();
+			},
 
-		getValueWorkflowFieldsetCheckbox: function() {
-			return this.view.workflowFieldset.checkboxCmp.getValue();
-		},
+			getValueNotificationFieldsetCheckbox: function() {
+				return this.view.notificationFieldset.checkboxCmp.getValue();
+			},
 
-		setDisabledWorkflowAttributesGrid: function(state) {
-			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
-		},
+		// SETters functions
+			setDisabledWorkflowAttributesGrid: function(state) {
+				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
+			},
 
-		setValueAttributesGrid: function(data) {
-			this.getWorkflowDelegate().setValueGrid(data);
-		},
+			/**
+			 * @param (Boolean) value
+			 */
+			setValueNotificationFieldsetCheckbox: function(value) {
+				if (value) {
+					this.view.notificationFieldset.expand();
+				} else {
+					this.view.notificationFieldset.collapse();
+				}
+			},
 
-		setValueWorkflowFieldsetCheckbox: function(value) {
-			if (value) {
-				this.view.workflowFieldset.expand();
-			} else {
-				this.view.workflowFieldset.collapse();
+			setValueNotificationEmailAccount: function(value) {
+				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+				this.view.notificationEmailAccountCombo.forceSelection = false;
+				this.view.notificationEmailAccountCombo.setValue(value);
+				this.view.notificationEmailAccountCombo.forceSelection = true;
+			},
+
+			setValueNotificationEmailTemplate: function(value) {
+				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+				this.view.notificationEmailTemplateCombo.forceSelection = false;
+				this.view.notificationEmailTemplateCombo.setValue(value);
+				this.view.notificationEmailTemplateCombo.forceSelection = true;
+			},
+
+			setValueWorkflowAttributesGrid: function(value) {
+				this.getWorkflowDelegate().setValueGrid(value);
+			},
+
+			setValueWorkflowAttributesGrid: function(value) {
+				this.getWorkflowDelegate().setValueGrid(value);
+			},
+
+			setValueWorkflowCombo: function(value) {
+				this.getWorkflowDelegate().setValueCombo(value);
+			},
+
+			/**
+			 * @param (Boolean) value
+			 */
+			setValueWorkflowFieldsetCheckbox: function(value) {
+				if (value) {
+					this.view.workflowFieldset.expand();
+				} else {
+					this.view.workflowFieldset.collapse();
+				}
 			}
-		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep3', {
@@ -83,7 +121,7 @@
 
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', this);
 
-			// SendMail configuration
+			// Email notification configuration
 				this.notificationEmailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT,
 					fieldLabel: tr.taskEmail.emailAccount,
@@ -118,7 +156,7 @@
 					},
 					items: [this.notificationEmailAccountCombo, this.notificationEmailTemplateCombo]
 				});
-			// END: SendMail configuration
+			// END: Email notification configuration
 
 			// Workflow configuration
 				this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {

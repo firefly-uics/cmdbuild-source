@@ -83,14 +83,13 @@
 									{
 										text: tr.tasksTypes.event,
 										menu: [
-// TODO: future implementation
-//											{
-//												text: tr.tasksTypes.eventTypes.asynchronous,
-//												scope: this,
-//												handler: function() {
-//													this.delegate.cmOn('onAddButtonClick', { type: 'event_asynchronous' });
-//												}
-//											},
+											{
+												text: tr.tasksTypes.eventTypes.asynchronous,
+												scope: this,
+												handler: function() {
+													this.delegate.cmOn('onAddButtonClick', { type: 'event_asynchronous' });
+												}
+											},
 											{
 												text: tr.tasksTypes.eventTypes.synchronous,
 												scope: this,

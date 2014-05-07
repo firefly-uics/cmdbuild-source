@@ -85,9 +85,9 @@
 
 							// Set step1 [0] datas
 							this.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-							this.delegateStep[0].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES));
 							this.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
 							this.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
+							this.delegateStep[0].setValueWorkflowAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES));
 							this.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME));
 
 							// Set step2 [1] datas
@@ -114,7 +114,7 @@
 
 			CMDBuild.LoadMask.get().show();
 			var formData = this.view.getData(true);
-			var attributesGridValues = this.delegateStep[0].getValueAttributeGrid();
+			var attributesGridValues = this.delegateStep[0].getValueWorkflowAttributeGrid();
 			var submitDatas = {};
 
 			submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(

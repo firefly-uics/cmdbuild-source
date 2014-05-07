@@ -36,7 +36,7 @@
 			return this.view.workflowForm.delegate;
 		},
 
-		getValueAttributeGrid: function() {
+		getValueWorkflowAttributeGrid: function() {
 			return this.getWorkflowDelegate().getValueGrid();
 		},
 
@@ -48,7 +48,7 @@
 			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 		},
 
-		setValueAttributesGrid: function(data) {
+		setValueWorkflowAttributesGrid: function(data) {
 			this.getWorkflowDelegate().setValueGrid(data);
 		}
 	});

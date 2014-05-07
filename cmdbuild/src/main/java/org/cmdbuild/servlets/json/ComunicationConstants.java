@@ -142,6 +142,8 @@ public class ComunicationConstants {
 			NOT_NULL = "isnotnull", //
 			NOTES = "Notes", //
 			NOTIFICATION_ACTIVE = "notificationActive", //
+			NOTIFICATION_EMAIL_ACCOUNT = "notificationEmailAccount", //
+			NOTIFICATION_EMAIL_TEMPLATE = "notificationEmailTemplate", //
 			NUMBER = "Number", //
 			OLD_PASSWORD = "oldpassword", //
 			ORIG_TYPE = "orig_type", //

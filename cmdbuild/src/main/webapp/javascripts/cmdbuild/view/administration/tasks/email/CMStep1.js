@@ -27,48 +27,50 @@
 			}
 		},
 
-		getFromAddressFilterDelegate: function() {
-			return this.view.fromAddresFilter.delegate;
-		},
+		// GETters functions
+			getFromAddressFilterDelegate: function() {
+				return this.view.fromAddresFilter.delegate;
+			},
 
-		getSubjectFilterDelegate: function() {
-			return this.view.subjectFilter.delegate;
-		},
+			getSubjectFilterDelegate: function() {
+				return this.view.subjectFilter.delegate;
+			},
 
-		getValueId: function() {
-			return this.view.idField.getValue();
-		},
+			getValueId: function() {
+				return this.view.idField.getValue();
+			},
 
-		setDisabledTypeField: function(state) {
-			this.view.typeField.setDisabled(state);
-		},
+		// SETters functions
+			setDisabledTypeField: function(state) {
+				this.view.typeField.setDisabled(state);
+			},
 
-		setValueActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
+			setValueActive: function(value) {
+				this.view.activeField.setValue(value);
+			},
 
-		setValueDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
+			setValueDescription: function(value) {
+				this.view.descriptionField.setValue(value);
+			},
 
-		setValueEmailAccount: function(emailAccountName) {
-			// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-			this.view.emailAccountCombo.forceSelection = false;
-			this.view.emailAccountCombo.setValue(emailAccountName);
-			this.view.emailAccountCombo.forceSelection = true;
-		},
+			setValueEmailAccount: function(emailAccountName) {
+				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+				this.view.emailAccountCombo.forceSelection = false;
+				this.view.emailAccountCombo.setValue(emailAccountName);
+				this.view.emailAccountCombo.forceSelection = true;
+			},
 
-		setValueFilterFromAddress: function(filterString) {
-			this.getFromAddressFilterDelegate().setValue(filterString);
-		},
+			setValueFilterFromAddress: function(value) {
+				this.getFromAddressFilterDelegate().setValue(value);
+			},
 
-		setValueFilterSubject: function(filterString) {
-			this.getSubjectFilterDelegate().setValue(filterString);
-		},
+			setValueFilterSubject: function(value) {
+				this.getSubjectFilterDelegate().setValue(value);
+			},
 
-		setValueId: function(value) {
-			this.view.idField.setValue(value);
-		}
+			setValueId: function(value) {
+				this.view.idField.setValue(value);
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1', {

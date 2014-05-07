@@ -5,9 +5,9 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_ACCOUNT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_TEMPLATE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NOTIFICATION_ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NOTIFICATION_EMAIL_ACCOUNT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NOTIFICATION_EMAIL_TEMPLATE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.GROUPS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
@@ -126,17 +126,17 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 			return delegate.getFilter();
 		}
 
-		@JsonProperty(EMAIL_ACTIVE)
+		@JsonProperty(NOTIFICATION_ACTIVE)
 		public boolean isEmailEnabled() {
 			return delegate.isEmailEnabled();
 		}
 
-		@JsonProperty(EMAIL_ACCOUNT)
+		@JsonProperty(NOTIFICATION_EMAIL_ACCOUNT)
 		public String getEmailAccount() {
 			return delegate.getEmailAccount();
 		}
 
-		@JsonProperty(EMAIL_TEMPLATE)
+		@JsonProperty(NOTIFICATION_EMAIL_TEMPLATE)
 		public String getEmailTemplate() {
 			return delegate.getEmailTemplate();
 		}
@@ -172,9 +172,9 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 			@Parameter(value = GROUPS, required = false) final JSONArray groups, //
 			@Parameter(value = CLASS_NAME, required = false) final String classname, //
 			@Parameter(value = FILTER, required = false) final String filter, //
-			@Parameter(value = EMAIL_ACTIVE, required = false) final Boolean emailActive, //
-			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
-			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
+			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean emailActive, //
+			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String emailAccount, //
+			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE, required = false) final String emailTemplate, //
 			@Parameter(value = WORKFLOW_ACTIVE, required = false) final Boolean workflowActive, //
 			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
 			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes //
@@ -235,9 +235,9 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 			@Parameter(value = GROUPS, required = false) final JSONArray groups, //
 			@Parameter(value = CLASS_NAME, required = false) final String classname, //
 			@Parameter(value = FILTER, required = false) final String filter, //
-			@Parameter(value = EMAIL_ACTIVE, required = false) final Boolean emailActive, //
-			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
-			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
+			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean emailActive, //
+			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String emailAccount, //
+			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE, required = false) final String emailTemplate, //
 			@Parameter(value = WORKFLOW_ACTIVE, required = false) final Boolean workflowActive, //
 			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
 			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes //

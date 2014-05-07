@@ -33,45 +33,47 @@
 			return false;
 		},
 
-		getWorkflowDelegate: function() {
-			return this.view.workflowForm.delegate;
-		},
+		// GETters functions
+			getValueId: function() {
+				return this.view.idField.getValue();
+			},
 
-		getValueAttributeGrid: function() {
-			return this.getWorkflowDelegate().getValueGrid();
-		},
+			getWorkflowDelegate: function() {
+				return this.view.workflowForm.delegate;
+			},
 
-		getValueId: function() {
-			return this.view.idField.getValue();
-		},
+			getValueWorkflowAttributeGrid: function() {
+				return this.getWorkflowDelegate().getValueGrid();
+			},
 
-		setDisabledWorkflowAttributesGrid: function(state) {
-			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
-		},
+		// SETters functions
+			setDisabledTypeField: function(state) {
+				this.view.typeField.setDisabled(state);
+			},
 
-		setDisabledTypeField: function(state) {
-			this.view.typeField.setDisabled(state);
-		},
+			setDisabledWorkflowAttributesGrid: function(state) {
+				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
+			},
 
-		setValueActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
+			setValueActive: function(value) {
+				this.view.activeField.setValue(value);
+			},
 
-		setValueAttributesGrid: function(data) {
-			this.getWorkflowDelegate().setValueGrid(data);
-		},
+			setValueDescription: function(value) {
+				this.view.descriptionField.setValue(value);
+			},
 
-		setValueDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
+			setValueId: function(value) {
+				this.view.idField.setValue(value);
+			},
 
-		setValueId: function(value) {
-			this.view.idField.setValue(value);
-		},
+			setValueWorkflowAttributesGrid: function(value) {
+				this.getWorkflowDelegate().setValueGrid(value);
+			},
 
-		setValueWorkflowCombo: function(workflowName) {
-			this.getWorkflowDelegate().setValueCombo(workflowName);
-		}
+			setValueWorkflowCombo: function(value) {
+				this.getWorkflowDelegate().setValueCombo(value);
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1', {

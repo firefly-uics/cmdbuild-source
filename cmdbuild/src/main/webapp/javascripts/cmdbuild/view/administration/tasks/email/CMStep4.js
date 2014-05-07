@@ -32,37 +32,42 @@
 			return false;
 		},
 
-		getWorkflowDelegate: function() {
-			return this.view.workflowForm.delegate;
-		},
+		// GETters functions
+			getWorkflowDelegate: function() {
+				return this.view.workflowForm.delegate;
+			},
 
-		getValueAttributeGrid: function() {
-			return this.getWorkflowDelegate().getValueGrid();
-		},
+			getValueWorkflowAttributeGrid: function() {
+				return this.getWorkflowDelegate().getValueGrid();
+			},
 
-		getValueWorkflowFieldsetCheckbox: function() {
-			return this.view.workflowFieldset.checkboxCmp.getValue();
-		},
+			getValueWorkflowFieldsetCheckbox: function() {
+				return this.view.workflowFieldset.checkboxCmp.getValue();
+			},
 
-		setDisabledWorkflowAttributesGrid: function(state) {
-			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
-		},
+		// SETters functions
+			setDisabledWorkflowAttributesGrid: function(state) {
+				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
+			},
 
-		setValueWorkflowAttributesGrid: function(data) {
-			this.getWorkflowDelegate().setValueGrid(data);
-		},
+			setValueWorkflowAttributesGrid: function(value) {
+				this.getWorkflowDelegate().setValueGrid(value);
+			},
 
-		setValueWorkflowCombo: function(value) {
-			this.getWorkflowDelegate().setValueCombo(value);
-		},
+			setValueWorkflowCombo: function(value) {
+				this.getWorkflowDelegate().setValueCombo(value);
+			},
 
-		setValueWorkflowFieldsetCheckbox: function(value) {
-			if (value) {
-				this.view.workflowFieldset.expand();
-			} else {
-				this.view.workflowFieldset.collapse();
+			/**
+			 * @param (Boolean) value
+			 */
+			setValueWorkflowFieldsetCheckbox: function(value) {
+				if (value) {
+					this.view.workflowFieldset.expand();
+				} else {
+					this.view.workflowFieldset.collapse();
+				}
 			}
-		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep4', {

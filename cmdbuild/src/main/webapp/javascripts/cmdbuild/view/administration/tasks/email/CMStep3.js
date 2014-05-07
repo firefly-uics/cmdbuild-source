@@ -28,18 +28,19 @@
 			}
 		},
 
-		getValueAttachmentsFieldsetCheckbox: function() {
-			return this.view.attachmentsFieldset.checkboxCmp.getValue();
-		},
+		// GETters functions
+			getValueAttachmentsFieldsetCheckbox: function() {
+				return this.view.attachmentsFieldset.checkboxCmp.getValue();
+			},
 
 // TODO
-//		getValueNotificationFieldsetCheckbox: function() {
-//			return this.view.notificationFieldset.checkboxCmp.getValue();
-//		},
+//			getValueNotificationFieldsetCheckbox: function() {
+//				return this.view.notificationFieldset.checkboxCmp.getValue();
+//			},
 
-		getValueParsingFieldsetCheckbox: function() {
-			return this.view.parsingFieldset.checkboxCmp.getValue();
-		},
+			getValueParsingFieldsetCheckbox: function() {
+				return this.view.parsingFieldset.checkboxCmp.getValue();
+			},
 
 		/**
 		 * Read CMDBuild's alfresco configuration from server and set Combobox store
@@ -60,52 +61,53 @@
 			}
 		},
 
-		setValueAttachmentsCombo: function(value) {
-			if (!Ext.isEmpty(value)) {
-				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				this.view.attachmentsCombo.forceSelection = false;
-				this.view.attachmentsCombo.setValue(value);
-				this.view.attachmentsCombo.forceSelection = true;
-			}
-		},
+		// SETters functions
+			setValueAttachmentsCombo: function(value) {
+				if (!Ext.isEmpty(value)) {
+					// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+					this.view.attachmentsCombo.forceSelection = false;
+					this.view.attachmentsCombo.setValue(value);
+					this.view.attachmentsCombo.forceSelection = true;
+				}
+			},
 
-		/**
-		 * @param (Boolean) value
-		 */
-		setValueAttachmentsFieldsetCheckbox: function(value) {
-			if (value) {
-				this.view.attachmentsFieldset.expand();
-				this.onCheckedAttachmentsFieldset();
-			} else {
-				this.view.attachmentsFieldset.collapse();
-			}
-		},
+			/**
+			 * @param (Boolean) value
+			 */
+			setValueAttachmentsFieldsetCheckbox: function(value) {
+				if (value) {
+					this.view.attachmentsFieldset.expand();
+					this.onCheckedAttachmentsFieldset();
+				} else {
+					this.view.attachmentsFieldset.collapse();
+				}
+			},
 
-		/**
-		 * Setup all parsing fieldset input values
-		 *
-		 * @param (String) keyInit
-		 * @param (String) keyEnd
-		 * @param (String) valueInit
-		 * @param (String) valueEnd
-		 */
-		setValueParsingFields: function(keyInit, keyEnd, valueInit, valueEnd) {
-			this.view.parsingKeyInit.setValue(keyInit);
-			this.view.parsingKeyEnd.setValue(keyEnd);
-			this.view.parsingValueInit.setValue(valueInit);
-			this.view.parsingValueEnd.setValue(valueEnd);
-		},
+			/**
+			 * Setup all parsing fieldset input values
+			 *
+			 * @param (String) keyInit
+			 * @param (String) keyEnd
+			 * @param (String) valueInit
+			 * @param (String) valueEnd
+			 */
+			setValueParsingFields: function(keyInit, keyEnd, valueInit, valueEnd) {
+				this.view.parsingKeyInit.setValue(keyInit);
+				this.view.parsingKeyEnd.setValue(keyEnd);
+				this.view.parsingValueInit.setValue(valueInit);
+				this.view.parsingValueEnd.setValue(valueEnd);
+			},
 
-		/**
-		 * @param (Boolean) value
-		 */
-		setValueParsingFieldsetCheckbox: function(value) {
-			if (value) {
-				this.view.parsingFieldset.expand();
-			} else {
-				this.view.parsingFieldset.collapse();
+			/**
+			 * @param (Boolean) value
+			 */
+			setValueParsingFieldsetCheckbox: function(value) {
+				if (value) {
+					this.view.parsingFieldset.expand();
+				} else {
+					this.view.parsingFieldset.collapse();
+				}
 			}
-		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep3', {
@@ -178,9 +180,9 @@
 				});
 			// END: BodyParsing configuration
 
-			// SendMail configuration
+			// Email notification configuration
 				this.notificationEmailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
+					name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE,
 					fieldLabel: CMDBuild.Translation.administration.tasks.template,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
@@ -201,7 +203,7 @@
 					},
 					items: [this.notificationEmailTemplateCombo]
 				});
-			// END: SendMail configuration
+			// END: Email notification configuration
 
 			// Alfresco configuration
 				this.attachmentsCombo = Ext.create('Ext.form.field.ComboBox', {
