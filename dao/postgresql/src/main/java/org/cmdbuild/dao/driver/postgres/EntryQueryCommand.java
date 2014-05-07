@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.driver.postgres;
 
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.CurrentId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
@@ -144,6 +145,7 @@ class EntryQueryCommand implements LoggingSupport {
 				card.setUser(rs.getString(nameForSystemAttribute(alias, User)));
 				card.setBeginDate(getDateTime(rs, nameForSystemAttribute(alias, BeginDate)));
 				card.setEndDate(getDateTime(rs, nameForSystemAttribute(alias, EndDate)));
+				card.setCurrentId(getLong(rs, nameForSystemAttribute(alias, CurrentId)));
 
 				addUserAttributes(alias, card, rs);
 				row.setCard(alias, card);
@@ -185,6 +187,14 @@ class EntryQueryCommand implements LoggingSupport {
 				} else {
 					return null;
 				}
+			} catch (final SQLException ex) {
+				return null;
+			}
+		}
+
+		private Long getLong(final ResultSet rs, final String attributeAlias) throws SQLException {
+			try {
+				return rs.getLong(attributeAlias);
 			} catch (final SQLException ex) {
 				return null;
 			}

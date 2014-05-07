@@ -45,17 +45,17 @@ public class UserClass extends UserEntryType implements CMClass {
 	}
 
 	@Override
-	public Iterable<UserClass> getChildren() {
+	public Iterable<CMClass> getChildren() {
 		return view.proxyClasses(inner.getChildren());
 	}
 
 	@Override
-	public Iterable<UserClass> getLeaves() {
+	public Iterable<CMClass> getLeaves() {
 		return view.proxyClasses(inner.getLeaves());
 	}
 
 	@Override
-	public Iterable<UserClass> getDescendants() {
+	public Iterable<CMClass> getDescendants() {
 		return view.proxyClasses(inner.getDescendants());
 	}
 

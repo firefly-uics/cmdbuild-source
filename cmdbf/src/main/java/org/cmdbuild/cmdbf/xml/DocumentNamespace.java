@@ -309,7 +309,7 @@ public class DocumentNamespace extends AbstractNamespace {
 		if (metadata.getType() == MetadataType.BOOLEAN) {
 			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_BOOLEAN);
 		} else if (metadata.getType() == MetadataType.INTEGER) {
-			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_INTEGER);
+			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_INT);
 		} else if (metadata.getType() == MetadataType.FLOAT) {
 			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_FLOAT);
 		} else if (metadata.getType() == MetadataType.DATE) {

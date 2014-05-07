@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entry.ForwardingAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 
 public class UserAttribute extends ForwardingAttribute {
@@ -44,7 +45,7 @@ public class UserAttribute extends ForwardingAttribute {
 	}
 
 	@Override
-	public UserEntryType getOwner() {
+	public CMEntryType getOwner() {
 		return view.proxy(super.getOwner());
 	}
 

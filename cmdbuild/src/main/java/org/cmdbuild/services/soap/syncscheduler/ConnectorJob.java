@@ -327,7 +327,7 @@ public class ConnectorJob implements Runnable {
 	private void addReferenceAttributeTo(final CMAttribute attribute, final CardBuilder cardBuilder,
 			final String attributeValue) {
 		final ReferenceAttributeType referenceAttributeType = (ReferenceAttributeType) attribute.getType();
-		if (!attributeValue.equals(StringUtils.EMPTY)) {
+		if (StringUtils.isNotBlank(attributeValue)) {
 			final String domainName = referenceAttributeType.getDomainName();
 			final CMDomain referenceDomain = view.findDomain(domainName);
 			final CMClass referencedClass = referencedClass(referenceDomain, (CMClass) attribute.getOwner());
@@ -345,14 +345,16 @@ public class ConnectorJob implements Runnable {
 
 	private void addLookupAttributeTo(final CMAttribute attribute, final CardBuilder cardBuilder,
 			final String attributeValue) {
-		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();
-		final String lookupTypeName = lookupAttributeType.getLookupTypeName();
-		for (final Lookup lookupDto : lookupStore.listForType(LookupType.newInstance() //
-				.withName(lookupTypeName) //
-				.build())) {
+		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();		
+		if (StringUtils.isNotBlank(attributeValue)) {
+			final String lookupTypeName = lookupAttributeType.getLookupTypeName();
+			for (final Lookup lookupDto : lookupStore.listForType(LookupType.newInstance() //
+					.withName(lookupTypeName) //
+					.build())) {
 				if (lookupDto.description.equals(attributeValue)) {
 					cardBuilder.withAttribute(attribute.getName(), lookupDto.getId());
 				}
+			}
 		}
 	}
 

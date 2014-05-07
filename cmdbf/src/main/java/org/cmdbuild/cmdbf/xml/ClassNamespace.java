@@ -54,10 +54,10 @@ public class ClassNamespace extends EntryNamespace {
 	private static final String CLASS_PROCESS = "process";
 	private static final String CLASS_STOPPABLE = "stoppable";
 
-	public ClassNamespace(final String name, final DataAccessLogic systemdataAccessLogic,
+	public ClassNamespace(final String name, final DataAccessLogic systemDataAccessLogic,
 			final DataAccessLogic userDataAccessLogic, final DataDefinitionLogic dataDefinitionLogic,
 			final LookupLogic lookupLogic, final CmdbfConfiguration cmdbfConfiguration) {
-		super(name, systemdataAccessLogic, userDataAccessLogic, dataDefinitionLogic, lookupLogic, cmdbfConfiguration);
+		super(name, systemDataAccessLogic, userDataAccessLogic, dataDefinitionLogic, lookupLogic, cmdbfConfiguration);
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class ClassNamespace extends EntryNamespace {
 
 	@Override
 	public Iterable<? extends CMClass> getTypes(final Class<?> cls) {
-		if (CMClass.class.isAssignableFrom(cls)) {
+		if (CMClass.class.isAssignableFrom(cls) && !CMClassHistory.class.isAssignableFrom(cls)) {
 			return Iterables.filter(systemDataAccessLogic.findActiveClasses(), new Predicate<CMClass>() {
 				@Override
 				public boolean apply(final CMClass input) {
@@ -129,7 +129,7 @@ public class ClassNamespace extends EntryNamespace {
 	@Override
 	public QName getTypeQName(final Object type) {
 		QName qname = null;
-		if (type instanceof CMClass) {
+		if (type instanceof CMClass && !(type instanceof CMClassHistory)) {
 			final CMEntryType entryType = (CMEntryType) type;
 			qname = new QName(getNamespaceURI(), entryType.getIdentifier().getLocalName(), getNamespacePrefix());
 		}
@@ -142,7 +142,7 @@ public class ClassNamespace extends EntryNamespace {
 			return Iterables.tryFind(userDataAccessLogic.findActiveClasses(), new Predicate<CMClass>() {
 				@Override
 				public boolean apply(final CMClass input) {
-					return input.getIdentifier().getLocalName().equals(qname.getLocalPart());
+					return !input.isSystem() && input.getIdentifier().getLocalName().equals(qname.getLocalPart());
 				}
 			}).orNull();
 		} else {
@@ -153,7 +153,7 @@ public class ClassNamespace extends EntryNamespace {
 	@Override
 	public boolean serialize(final Node xml, final Object entry) {
 		boolean serialized = false;
-		if (entry instanceof CMCard) {
+		if (entry instanceof CMCard && !(entry instanceof CMCardHistory)) {
 			final CMCard card = (CMCard) entry;
 			serialized = serialize(xml, card.getType(), card.getValues());
 		}
@@ -225,70 +225,73 @@ public class ClassNamespace extends EntryNamespace {
 		if (type != null) {
 			final Map<String, String> properties = getAnnotations(type);
 			if (type instanceof XmlSchemaComplexType) {
-				String parent = null;
-				XmlSchemaParticle particle = ((XmlSchemaComplexType) type).getParticle();
-				if (particle == null) {
-					final XmlSchemaContentModel contentModel = ((XmlSchemaComplexType) type).getContentModel();
-					if (contentModel != null) {
-						final XmlSchemaContent content = contentModel.getContent();
-						if (content != null && content instanceof XmlSchemaComplexContentExtension) {
-							final XmlSchemaComplexContentExtension extension = (XmlSchemaComplexContentExtension) content;
-							particle = extension.getParticle();
-							final QName baseType = extension.getBaseTypeName();
-							if (baseType != null && getNamespaceURI().equals(baseType.getNamespaceURI())) {
-								parent = baseType.getLocalPart();
+				cmClass = userDataAccessLogic.findClass(type.getName());
+				if (cmClass == null || !cmClass.isSystem()) {
+					String parent = null;
+					XmlSchemaParticle particle = ((XmlSchemaComplexType) type).getParticle();
+					if (particle == null) {
+						final XmlSchemaContentModel contentModel = ((XmlSchemaComplexType) type).getContentModel();
+						if (contentModel != null) {
+							final XmlSchemaContent content = contentModel.getContent();
+							if (content != null && content instanceof XmlSchemaComplexContentExtension) {
+								final XmlSchemaComplexContentExtension extension = (XmlSchemaComplexContentExtension) content;
+								particle = extension.getParticle();
+								final QName baseType = extension.getBaseTypeName();
+								if (baseType != null && getNamespaceURI().equals(baseType.getNamespaceURI())) {
+									parent = baseType.getLocalPart();
+								}
 							}
 						}
 					}
-				}
-				CMClass parentClass = null;
-				if (parent != null) {
-					parentClass = userDataAccessLogic.findClass(parent);
-					if (parentClass == null) {
-						XmlSchemaType parentType = schema.getTypeByName(parent);
-						final Iterator<XmlSchemaElement> iterator = schema.getElements().values().iterator();
-						while (parentType == null && iterator.hasNext()) {
-							final XmlSchemaElement element = iterator.next();
-							if (element.getSchemaType().getName().equals(parent)) {
-								parentType = element.getSchemaType();
+					CMClass parentClass = null;
+					if (parent != null) {
+						parentClass = userDataAccessLogic.findClass(parent);
+						if (parentClass == null) {
+							XmlSchemaType parentType = schema.getTypeByName(parent);
+							final Iterator<XmlSchemaElement> iterator = schema.getElements().values().iterator();
+							while (parentType == null && iterator.hasNext()) {
+								final XmlSchemaElement element = iterator.next();
+								if (element.getSchemaType().getName().equals(parent)) {
+									parentType = element.getSchemaType();
+								}
+							}
+							if (parentType != null) {
+								parentClass = classFromXsd(parentType, schema);
 							}
 						}
-						if (parentType != null) {
-							parentClass = classFromXsd(parentType, schema);
-						}
 					}
-				}
-				final ClassBuilder classBuilder = EntryType.newClass().withName(type.getName());
-				if (parentClass != null) {
-					classBuilder.withParent(parentClass.getId());
-				}
-				if (properties.containsKey(CLASS_DESCRIPTION)) {
-					classBuilder.withDescription(properties.get(CLASS_DESCRIPTION));
-				}
-				if (properties.containsKey(CLASS_SUPERCLASS)) {
-					classBuilder.thatIsSuperClass(Boolean.parseBoolean(properties.get(CLASS_SUPERCLASS)));
-				}
-				if (properties.containsKey(CLASS_PROCESS)) {
-					classBuilder.thatIsProcess(Boolean.parseBoolean(properties.get(CLASS_PROCESS)));
-				}
-				if (properties.containsKey(CLASS_STOPPABLE)) {
-					classBuilder.thatIsUserStoppable(Boolean.parseBoolean(properties.get(CLASS_STOPPABLE)));
-				}
-				if (properties.containsKey(CLASS_TYPE)) {
-					classBuilder.withTableType(Enum.valueOf(EntryType.TableType.class, properties.get(CLASS_TYPE)));
-				}
-				if (properties.containsKey(CLASS_ACTIVE)) {
-					classBuilder.thatIsActive(Boolean.parseBoolean(properties.get(CLASS_ACTIVE)));
-				} else {
-					classBuilder.thatIsActive(true);
-				}
-				cmClass = dataDefinitionLogic.createOrUpdate(classBuilder.build());
-				if (particle != null && particle instanceof XmlSchemaSequence) {
-					final XmlSchemaSequence sequence = (XmlSchemaSequence) particle;
-					for (final XmlSchemaSequenceMember schemaItem : sequence.getItems()) {
-						if (schemaItem instanceof XmlSchemaElement) {
-							final XmlSchemaElement element = (XmlSchemaElement) schemaItem;
-							addAttributeFromXsd(element, schema, cmClass);
+					final ClassBuilder classBuilder = EntryType.newClass().withName(type.getName());
+					if (parentClass != null) {
+						classBuilder.withParent(parentClass.getId());
+					}
+					if (properties.containsKey(CLASS_DESCRIPTION)) {
+						classBuilder.withDescription(properties.get(CLASS_DESCRIPTION));
+					}
+					if (properties.containsKey(CLASS_SUPERCLASS)) {
+						classBuilder.thatIsSuperClass(Boolean.parseBoolean(properties.get(CLASS_SUPERCLASS)));
+					}
+					if (properties.containsKey(CLASS_PROCESS)) {
+						classBuilder.thatIsProcess(Boolean.parseBoolean(properties.get(CLASS_PROCESS)));
+					}
+					if (properties.containsKey(CLASS_STOPPABLE)) {
+						classBuilder.thatIsUserStoppable(Boolean.parseBoolean(properties.get(CLASS_STOPPABLE)));
+					}
+					if (properties.containsKey(CLASS_TYPE)) {
+						classBuilder.withTableType(Enum.valueOf(EntryType.TableType.class, properties.get(CLASS_TYPE)));
+					}
+					if (properties.containsKey(CLASS_ACTIVE)) {
+						classBuilder.thatIsActive(Boolean.parseBoolean(properties.get(CLASS_ACTIVE)));
+					} else {
+						classBuilder.thatIsActive(true);
+					}
+					cmClass = dataDefinitionLogic.createOrUpdate(classBuilder.build());
+					if (particle != null && particle instanceof XmlSchemaSequence) {
+						final XmlSchemaSequence sequence = (XmlSchemaSequence) particle;
+						for (final XmlSchemaSequenceMember schemaItem : sequence.getItems()) {
+							if (schemaItem instanceof XmlSchemaElement) {
+								final XmlSchemaElement element = (XmlSchemaElement) schemaItem;
+								addAttributeFromXsd(element, schema, cmClass);
+							}
 						}
 					}
 				}

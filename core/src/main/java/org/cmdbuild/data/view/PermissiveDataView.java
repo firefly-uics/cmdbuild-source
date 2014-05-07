@@ -11,8 +11,6 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.ForwardingClass;
 import org.cmdbuild.dao.entrytype.ForwardingDomain;
-import org.cmdbuild.dao.query.QuerySpecsBuilder;
-import org.cmdbuild.dao.query.QuerySpecsBuilderImpl;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.ForwardingDataView;
 
@@ -126,12 +124,6 @@ public class PermissiveDataView extends ForwardingDataView {
 		final CMDomain found = super.findDomain(name);
 		final CMDomain foundInFallback = (found != null) ? null : fallbackDataView.findDomain(name);
 		return (found != null) ? found : (foundInFallback != null) ? new PermissiveDomain(foundInFallback) : null;
-	}
-
-	@Override
-	public final QuerySpecsBuilder select(final Object... attrDef) {
-		return new QuerySpecsBuilderImpl(fallbackDataView, this) //
-				.select(attrDef);
 	}
 
 }

@@ -10,6 +10,8 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.sf.jasperreports.engine.util.ObjectUtils;
+
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
@@ -156,17 +158,27 @@ public class LookupNamespace extends AbstractNamespace {
 	public LookupValue deserializeValue(final Node xml, final Object type) {
 		LookupValue value = null;
 		if (LookupValue.class.equals(type)) {
-			Long id = null;
-			String lookupType = null;
 			if (xml instanceof Element) {
 				final Element element = (Element) xml;
+				Long lookupId = null;
+				final String lookupTypeName = element.getAttribute(SystemNamespace.LOOKUP_TYPE_NAME);
+				final String lookupValue = xml.getTextContent();
 				final String idValue = element.getAttribute(SystemNamespace.LOOKUP_ID);
-				if (idValue != null) {
-					id = Long.parseLong(idValue);
+				if (idValue != null && !idValue.isEmpty()) {
+					lookupId = Long.parseLong(idValue);
 				}
-				lookupType = element.getAttribute(SystemNamespace.LOOKUP_TYPE_NAME);
+				if (lookupId <= 0 && lookupTypeName != null && !lookupTypeName.isEmpty()) {
+					final LookupType lookupType = getType(new QName(getNamespaceURI(), lookupTypeName));
+					if (lookupType != null) {
+						for (final Lookup lookup : lookupLogic.getAllLookup(lookupType, true)) {
+							if (lookup.description != null && ObjectUtils.equals(lookup.description, lookupValue)) {
+								lookupId = lookup.getId();
+							}
+						}
+					}
+				}
+				value = new LookupValue(lookupId, lookupValue, lookupTypeName);
 			}
-			value = new LookupValue(id, xml.getTextContent(), lookupType);
 		}
 		return value;
 	}
@@ -227,23 +239,26 @@ public class LookupNamespace extends AbstractNamespace {
 					final XmlSchemaContent content = contentModel.getContent();
 					if (content != null && content instanceof XmlSchemaSimpleContentRestriction) {
 						final XmlSchemaSimpleContentRestriction restriction = (XmlSchemaSimpleContentRestriction) content;
-						if (restriction.getBaseTypeName().equals(
-								org.apache.ws.commons.schema.constants.Constants.XSD_STRING)) {
+						if (restriction.getBaseTypeName().equals(getRegistry().getTypeQName(LookupValue.class))) {
 							final Map<String, String> properties = getAnnotations(type);
 							final String parent = properties.get(LOOKUP_PARENT);
 							String name = properties.get(LOOKUP_NAME);
 							if (name == null) {
 								name = type.getName();
 							}
-							final LookupTypeBuilder lookupTypeBuilder = LookupType.newInstance().withName(name);
 							LookupType parentLookupType = null;
-							if (parent != null && !parent.isEmpty()) {
-								lookupTypeBuilder.withParent(parent);
-								parentLookupType = getLookupType(parent);
+							lookupType = getLookupType(name);
+							if (lookupType == null) {
+								final LookupTypeBuilder lookupTypeBuilder = LookupType.newInstance().withName(name);
+								if (parent != null && !parent.isEmpty()) {
+									parentLookupType = getLookupType(parent);
+									if (parentLookupType != null) {
+										lookupTypeBuilder.withParent(parent);
+									}
+								}
+								lookupType = lookupTypeBuilder.build();
+								lookupLogic.saveLookupType(lookupType, lookupType);
 							}
-							lookupType = lookupTypeBuilder.build();
-							final LookupType oldLookupType = getLookupType(lookupType.name);
-							lookupLogic.saveLookupType(lookupType, oldLookupType);
 							for (final XmlSchemaFacet facet : restriction.getFacets()) {
 								if (facet instanceof XmlSchemaEnumerationFacet) {
 									final XmlSchemaEnumerationFacet enumeration = (XmlSchemaEnumerationFacet) facet;
@@ -288,7 +303,7 @@ public class LookupNamespace extends AbstractNamespace {
 			public boolean apply(final LookupType input) {
 				return input.name.equals(name);
 			}
-		});
+		}, null);
 	}
 
 	private Lookup getLookup(final LookupType type, final String id, final String name, final Lookup parent,
@@ -308,9 +323,10 @@ public class LookupNamespace extends AbstractNamespace {
 			lookup = Iterables.find(lookupLogic.getAllLookup(type, false), new Predicate<Lookup>() {
 				@Override
 				public boolean apply(final Lookup input) {
-					return input.description.equals(name) && (parent == null || input.parent.equals(parent));
+					return input.description != null && input.description.equals(name)
+							&& (parent == null || input.parent.equals(parent));
 				}
-			});
+			}, null);
 		}
 		return lookup;
 	}
