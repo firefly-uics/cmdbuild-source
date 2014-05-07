@@ -32,7 +32,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 	private static final String BUTTON_LABEL_FOR_CLIENT = "ButtonLabel";
 	private static final String BUTTON_LABEL_FOR_PERSISTENCE = "buttonlabel	";
 
-	private static enum ClassFieldMapper {
+	private static enum FieldMapper {
 
 		DESCRIPTION(DESCRIPTION_FOR_CLIENT, DESCRIPTION_FOR_PERSISTENCE), //
 		DIRECT_DESCRIPTION(DIRECT_DESCRIPTION_FOR_CLIENT, DIRECT_DESCRIPTION_FOR_PERSISTENCE), //
@@ -41,8 +41,8 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		BUTTON_LABEL(BUTTON_LABEL_FOR_CLIENT, BUTTON_LABEL_FOR_PERSISTENCE), //
 		;
 
-		public static ClassFieldMapper of(final String value) {
-			for (ClassFieldMapper element : values()) {
+		public static FieldMapper of(final String value) {
+			for (final FieldMapper element : values()) {
 				if (element.expected.equals(value)) {
 					return element;
 				}
@@ -53,7 +53,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		private final String expected;
 		private final String result;
 
-		private ClassFieldMapper(final String expected, final String result) {
+		private FieldMapper(final String expected, final String result) {
 			this.expected = expected;
 			this.result = result;
 		}
@@ -87,14 +87,14 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		public void visit(final ClassTranslation translationObject) {
 			value = format("class.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final DomainTranslation translationObject) {
 			value = format("domain.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
@@ -102,7 +102,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			value = format("attributeclass.%s.%s.%s", //
 					translationObject.getName(), //
 					translationObject.getAttributeName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
@@ -110,28 +110,28 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			value = format("attributedomain.%s.%s.%s", //
 					translationObject.getName(), //
 					translationObject.getAttributeName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final FilterViewTranslation translationObject) {
 			value = format("filterview.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final SqlViewTranslation translationObject) {
 			value = format("sqlview.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final FilterTranslation translationObject) {
 			value = format("filter.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
@@ -143,42 +143,42 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		public void visit(final WidgetTranslation translationObject) {
 			value = format("widget.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final DashboardTranslation translationObject) {
 			value = format("dashboard.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final ChartTranslation translationObject) {
 			value = format("chart.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final ReportTranslation translationObject) {
 			value = format("report.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final LookupTranslation translationObject) {
 			value = format("lookup.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final GisIconTranslation translationObject) {
 			value = format("gisicon.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 	}
@@ -196,8 +196,8 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		@Override
-		public boolean apply(Translation input) {
-			for (Translation translation : translations) {
+		public boolean apply(final Translation input) {
+			for (final Translation translation : translations) {
 				if (translation.getLang().equals(input.getLang())) {
 					return true;
 				}

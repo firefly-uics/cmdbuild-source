@@ -1,19 +1,19 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.WIDGET_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TRANSLATIONS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTENAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.VIEWNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTERNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DASHBOARDNAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CHARTNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.REPORTNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUPID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DASHBOARDNAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.FILTERNAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ICONNAME;
-import static org.cmdbuild.servlets.json.schema.Utils.*;
+import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUPID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.REPORTNAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TRANSLATIONS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.VIEWNAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.WIDGET_ID;
+import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.util.Map;
 
@@ -23,7 +23,6 @@ import org.cmdbuild.logic.translation.AttributeDomainTranslation;
 import org.cmdbuild.logic.translation.ChartTranslation;
 import org.cmdbuild.logic.translation.ClassTranslation;
 import org.cmdbuild.logic.translation.DashboardTranslation;
-import org.cmdbuild.logic.translation.DefaultEnabledLanguagesLogic;
 import org.cmdbuild.logic.translation.DomainTranslation;
 import org.cmdbuild.logic.translation.EnabledLanguagesLogic;
 import org.cmdbuild.logic.translation.FilterTranslation;
