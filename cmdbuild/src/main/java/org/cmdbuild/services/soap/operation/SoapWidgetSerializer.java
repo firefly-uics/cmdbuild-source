@@ -175,6 +175,8 @@ class SoapWidgetSerializer implements WidgetVisitor {
 		parameters.add(parameterFor(GridWidgetFactory.MAP_SEPARATOR, grid.getMapSeparator()));
 		parameters.add(parameterFor(GridWidgetFactory.ENTRY_SEPARATOR, grid.getEntrySeparator()));
 		parameters.add(parameterFor(GridWidgetFactory.KEY_VALUE_SEPARATOR, grid.getKeyValueSeparator()));
+		parameters.add(parameterFor(GridWidgetFactory.SERIALIZATION_TYPE, grid.getSerializationType()));
+		parameters.add(parameterFor(GridWidgetFactory.WRITE_ON_ADVANCE, grid.isWriteOnAdvance()));
 		for (final Entry<String, Object> entry : grid.getPreset().entrySet()) {
 			parameters.add(parameterFor(entry.getKey(), entry.getValue()));
 		}
