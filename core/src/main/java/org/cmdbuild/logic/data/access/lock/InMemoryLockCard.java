@@ -3,7 +3,7 @@ package org.cmdbuild.logic.data.access.lock;
 import java.util.List;
 
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.model.LockedCard;
@@ -26,8 +26,7 @@ public class InMemoryLockCard implements LockCardManager {
 	public synchronized void lock(final Long cardId) {
 		final LockedCard lockedCard = lockedCardStore.read(storable(cardId));
 		final boolean cardAlreadyLocked = lockedCard != null;
-		if (cardAlreadyLocked
-				&& !getCurrentlyLoggedUsername().equals(lockedCard.getLockerUsername())) {
+		if (cardAlreadyLocked && !getCurrentlyLoggedUsername().equals(lockedCard.getLockerUsername())) {
 
 			throw createLockedCardException(lockedCard);
 		}

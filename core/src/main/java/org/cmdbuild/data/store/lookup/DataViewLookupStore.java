@@ -6,6 +6,8 @@ import static com.google.common.collect.Maps.newHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.data.store.Groupable;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -23,12 +25,12 @@ public class DataViewLookupStore implements LookupStore {
 	}
 
 	@Override
-	public org.cmdbuild.data.store.Store.Storable create(final Lookup storable) {
+	public org.cmdbuild.data.store.Storable create(final Lookup storable) {
 		return inner.create(storable);
 	}
 
 	@Override
-	public Lookup read(final org.cmdbuild.data.store.Store.Storable storable) {
+	public Lookup read(final org.cmdbuild.data.store.Storable storable) {
 		return inner.read(storable);
 	}
 
@@ -45,6 +47,11 @@ public class DataViewLookupStore implements LookupStore {
 	@Override
 	public List<Lookup> list() {
 		return inner.list();
+	}
+
+	@Override
+	public List<Lookup> list(final Groupable groupable) {
+		return inner.list(groupable);
 	}
 
 	@Override

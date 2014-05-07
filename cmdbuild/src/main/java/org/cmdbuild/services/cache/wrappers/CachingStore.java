@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.data.store.ForwardingStore;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.services.cache.CachingService.Cacheable;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
