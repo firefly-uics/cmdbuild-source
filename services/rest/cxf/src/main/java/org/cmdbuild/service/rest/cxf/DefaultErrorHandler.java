@@ -9,16 +9,23 @@ import org.cmdbuild.service.rest.serialization.ErrorHandler;
 public class DefaultErrorHandler implements ErrorHandler {
 
 	@Override
-	public void classNotFound(final String className) {
+	public void entryTypeNotFound(final String name) {
 		throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
-				.entity(className) //
+				.entity(name) //
 				.build());
 	}
 
 	@Override
-	public void domainNotFound(final String domainName) {
+	public void classNotFound(final String name) {
 		throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
-				.entity(domainName) //
+				.entity(name) //
+				.build());
+	}
+
+	@Override
+	public void domainNotFound(final String name) {
+		throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
+				.entity(name) //
 				.build());
 	}
 

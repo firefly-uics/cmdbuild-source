@@ -13,7 +13,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @XmlRootElement(name = LOOKUP_TYPE_DETAIL)
 public class LookupTypeDetail {
 
-	public static class Builder implements org.cmdbuild.common.Builder<LookupTypeDetail> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<LookupTypeDetail> {
 
 		private String name;
 		private String parent;

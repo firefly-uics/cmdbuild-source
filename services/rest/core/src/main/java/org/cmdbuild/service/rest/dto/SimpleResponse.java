@@ -11,7 +11,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public abstract class SimpleResponse<T> {
 
 	public static abstract class Builder<T, R extends SimpleResponse<T>> implements
-			org.cmdbuild.common.Builder<SimpleResponse<T>> {
+			org.apache.commons.lang3.builder.Builder<SimpleResponse<T>> {
 
 		protected T element;
 

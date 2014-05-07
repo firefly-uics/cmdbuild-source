@@ -165,7 +165,7 @@ public class ClassNamespace extends EntryNamespace {
 		Card value = null;
 		final CMEntryType type = getType(new QName(xml.getNamespaceURI(), xml.getLocalName()));
 		if (type != null) {
-			final Card.CardBuilder builder = Card.newInstance().withClassName(type.getIdentifier().getLocalName());
+			final Card.Builder builder = Card.newInstance().withClassName(type.getIdentifier().getLocalName());
 			builder.withAllAttributes(deserialize(xml, type));
 			value = builder.build();
 		}

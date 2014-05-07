@@ -2,10 +2,6 @@ package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -26,9 +22,7 @@ public class CxfAttributes extends CxfService implements Attributes {
 			final Integer limit, final Integer offset) {
 		final CMClass target = userDataAccessLogic().findClass(name);
 		if (target == null) {
-			throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
-					.entity(name) //
-					.build());
+			errorHandler().entryTypeNotFound(name);
 		}
 		final PagedElements<CMAttribute> filteredAttributes = userDataAccessLogic().getAttributes( //
 				name, //

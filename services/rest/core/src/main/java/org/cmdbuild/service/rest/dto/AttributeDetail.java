@@ -28,7 +28,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @XmlRootElement(name = ATTRIBUTE_DETAIL)
 public class AttributeDetail {
 
-	public static class Builder implements org.cmdbuild.common.Builder<AttributeDetail> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<AttributeDetail> {
 
 		private String type;
 		private String name;

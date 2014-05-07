@@ -57,7 +57,7 @@ public class LogicFluentApiExecutor implements FluentApiExecutor {
 		@Override
 		public org.cmdbuild.model.data.Card apply(final ExistingCard input) {
 			final String className = input.getClassName();
-			final org.cmdbuild.model.data.Card.CardBuilder builder = org.cmdbuild.model.data.Card.newInstance()
+			final org.cmdbuild.model.data.Card.Builder builder = org.cmdbuild.model.data.Card.newInstance()
 					.withClassName(className) //
 					.withId((input.getId() == null) ? null : input.getId().longValue());
 			final Map<String, Object> attributeMap = input.getAttributes();

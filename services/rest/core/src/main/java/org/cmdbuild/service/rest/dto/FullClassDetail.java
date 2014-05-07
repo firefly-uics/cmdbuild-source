@@ -18,7 +18,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @XmlRootElement(name = FULL_CLASS_DETAIL)
 public class FullClassDetail {
 
-	public static class Builder implements org.cmdbuild.common.Builder<FullClassDetail> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<FullClassDetail> {
 
 		private String name;
 		private String description;
