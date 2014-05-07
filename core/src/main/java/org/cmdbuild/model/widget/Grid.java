@@ -15,15 +15,20 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class Grid extends Widget {
 
-	private static final String DEFAULT_MAP_SEPARATOR = "\n";
-	private static final String DEFAULT_ENTRY_SEPARATOR = ",";
-	private static final String DEFAULT_KEYVALUE_SEPARATOR = "=";
+	public static final String DEFAULT_MAP_SEPARATOR = "\n";
+	public static final String DEFAULT_ENTRY_SEPARATOR = ",";
+	public static final String DEFAULT_KEYVALUE_SEPARATOR = "=";
+	public static final String TEXT_SERIALIZATION = "text";
+	public static final String DEFAULT_SERIALIZATION = TEXT_SERIALIZATION;
+	public static final boolean DEFAULT_WRITE_ON_ADVANCE = false;
 	private String className;
 	private String outputName;
 	private Map<String, Object> preset;
 	private String mapSeparator;
 	private String entrySeparator;
 	private String keyValueSeparator;
+	private String serializationType;
+	private boolean writeOnAdvance = false;
 
 	public String getClassName() {
 		return className;
@@ -39,6 +44,22 @@ public class Grid extends Widget {
 
 	public String getOutputName() {
 		return outputName;
+	}
+
+	public String getSerializationType() {
+		return serializationType;
+	}
+
+	public void setSerializationType(String serializationType) {
+		this.serializationType = serializationType;
+	}
+
+	public boolean isWriteOnAdvance() {
+		return writeOnAdvance;
+	}
+
+	public void setWriteOnAdvance(boolean writeOnAdvance) {
+		this.writeOnAdvance = writeOnAdvance;
 	}
 
 	public void setMapSeparator(final String mapSeparator) {
@@ -83,7 +104,12 @@ public class Grid extends Widget {
 	}
 
 	private Submission decodeInput(final Object input) {
-
+		if (writeOnAdvance) {
+			throw new UnsupportedOperationException("'WriteOnAdvance ' not yet supported");
+		}
+		if (!serializationType.equals(TEXT_SERIALIZATION)) {
+			throw new UnsupportedOperationException("Only " + TEXT_SERIALIZATION + " serialization is supported");
+		}
 		String output = EMPTY;
 		final StringBuilder outputBuilder = new StringBuilder();
 		@SuppressWarnings("unchecked")
