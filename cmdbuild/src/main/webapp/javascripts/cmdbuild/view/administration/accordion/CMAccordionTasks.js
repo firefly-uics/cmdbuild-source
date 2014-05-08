@@ -11,7 +11,6 @@
 		constructor: function(){
 			this.callParent(arguments);
 			this.updateStore();
-			this.selectFirstSelectableNode();
 		},
 
 		updateStore: function() {

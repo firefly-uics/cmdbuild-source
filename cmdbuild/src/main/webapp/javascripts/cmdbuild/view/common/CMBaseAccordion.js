@@ -62,7 +62,7 @@
 			this.animCollapse = false;
 			this.floatable = false;
 			this.bodyStyle = {
-				background: '#FFFFFF'
+				background: '#ffffff'
 			};
 
 			this.callParent(arguments);
@@ -85,20 +85,18 @@
 		selectNodeById: function(node) {
 			var sm = this.getSelectionModel();
 
-			if (typeof node != 'object') {
+			if (typeof node != 'object')
 				node = this.getNodeById(node);
-			}
 
 			if (node) {
 				// the expand fail if the accordion is not really
 				// visible to the user. But I can not know when
 				// a parent of the accordion will be visible, so
 				// skip only the expand to avoid the fail
-				if (this.isVisible(deep = true)) {
+				if (this.isVisible(deep = true))
 					node.bubble(function() {
 						this.expand();
 					});
-				}
 
 				sm.select(node);
 			} else {
@@ -165,9 +163,8 @@
 		},
 
 		getFirtsSelectableNode: function() {
-			if (this.disabled) {
+			if (this.disabled)
 				return null;
-			}
 
 			var l = this.getRootNode(),
 				out = null;

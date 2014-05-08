@@ -90,14 +90,14 @@
 		 * @param (Array) parameters
 		 */
 		onFilterChange: function(parameters) {
-			if (typeof this.textAreaFieldValueBuffer == 'undefined')
+			if (Ext.isEmpty(this.textAreaFieldValueBuffer))
 				this.textAreaFieldValueBuffer = this.textareaField.getValue();
 
 			this.textareaField.setValue(this.filterStringBuild(parameters));
 		},
 
 		onFilterWindowAbort: function() {
-			if (typeof this.textAreaFieldValueBuffer != 'undefined') {
+			if (Ext.isEmpty(this.textAreaFieldValueBuffer)) {
 				this.textareaField.setValue(this.textAreaFieldValueBuffer);
 			} else {
 				this.textareaField.reset();

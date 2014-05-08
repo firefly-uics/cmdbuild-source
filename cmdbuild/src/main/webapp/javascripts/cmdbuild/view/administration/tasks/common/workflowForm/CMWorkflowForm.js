@@ -23,14 +23,14 @@
 		constructor: function(configuration) {
 			this.delegate = Ext.create('CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController', this);
 
-			if (typeof configuration == 'undefined' || typeof configuration.combo == 'undefined') {
+			if (Ext.isEmpty(configuration) || Ext.isEmpty(configuration.combo)) {
 				this.comboConfig = { delegate: this.delegate };
 			} else {
 				this.comboConfig = configuration.combo;
 				this.comboConfig.delegate = this.delegate;
 			}
 
-			if (typeof configuration == 'undefined' || typeof configuration.grid == 'undefined') {
+			if (Ext.isEmpty(configuration) || Ext.isEmpty(configuration.grid)) {
 				this.gridConfig = { delegate: this.delegate };
 			} else {
 				this.gridConfig = configuration.grid;

@@ -77,7 +77,7 @@
 		onSelectWorkflow: function(name, modify) {
 			var me = this;
 
-			if (typeof modify == 'undefined')
+			if (Ext.isEmpty(modify))
 				modify = false;
 
 			CMDBuild.core.proxy.CMProxyTasks.getWorkflowAttributes({

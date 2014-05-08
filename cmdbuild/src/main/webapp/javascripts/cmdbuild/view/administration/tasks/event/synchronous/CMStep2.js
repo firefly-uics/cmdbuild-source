@@ -47,14 +47,14 @@
 						});
 
 						// To setup filters values
-						if (typeof me.filterValues != 'undefined') {
-							if (typeof me.view.filterAttributesTab != 'undefined' && me.filterValues.attributes)
+						if (!Ext.isEmpty(me.filterValues)) {
+							if (!Ext.isEmpty(me.view.filterAttributesTab) && !Ext.isEmpty(me.filterValues.attributes))
 								me.view.filterAttributesTab.setData(me.filterValues.attributes);
 
-							if (typeof me.view.filterRelationsTab != 'undefined' && me.filterValues.relations)
+							if (!Ext.isEmpty(me.view.filterRelationsTab) && !Ext.isEmpty(me.filterValues.relations))
 								me.view.filterRelationsTab.setData(me.filterValues.relations);
 
-							if (typeof me.view.filterFunctionsTab != 'undefined' && me.filterValues.functions)
+							if (!Ext.isEmpty(me.view.filterFunctionsTab) && !Ext.isEmpty(me.filterValues.functions))
 								me.view.filterFunctionsTab.setData(me.filterValues.functions);
 						}
 
@@ -72,9 +72,9 @@
 		 */
 		getDataFilters: function() {
 			if (
-				typeof this.view.filterAttributesTab != 'undefined'
-				&& typeof this.view.filterRelationsTab != 'undefined'
-				&& typeof this.view.filterFunctionsTab != 'undefined'
+				!Ext.isEmpty(this.view.filterAttributesTab)
+				&& !Ext.isEmpty(this.view.filterRelationsTab)
+				&& !Ext.isEmpty(this.view.filterFunctionsTab)
 			) {
 				return {
 					attributes: this.view.filterAttributesTab.getData(),
@@ -127,9 +127,7 @@
 		},
 
 		listeners: {
-			/**
-			 * Draw tabs on show
-			 */
+			// Draw tabs on show
 			show: function(panel, eOpts) {
 				this.delegate.drawFilterTabs();
 			}

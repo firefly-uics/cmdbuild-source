@@ -116,10 +116,7 @@
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
 				case CMDBuild.ServiceProxy.parameter.DOMAIN_NAME: {
-					if (
-						(typeof rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME] != 'undefined')
-						&& !Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME])
-					) {
+					if (!Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME])) {
 						this.buildDomainCombo(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
 					} else {
 						var columnModel = this.view.referenceMappingGrid.columns[1];
@@ -234,9 +231,7 @@
 		},
 
 		listeners: {
-			/**
-			 * To populate grid with selected classes
-			 */
+			// To populate grid with selected classes
 			show: function(view, eOpts) {
 				this.delegate.buildClassCombo();
 			}

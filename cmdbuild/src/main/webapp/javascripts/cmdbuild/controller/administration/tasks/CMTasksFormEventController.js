@@ -10,7 +10,6 @@
 		view: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
-//		taskType: 'event',
 
 		/**
 		 * Gatherer function to catch events
@@ -29,7 +28,7 @@
 					return this.onAddButtonClick(name, param, callBack);
 
 				case 'onClassSelected':
-					this.onClassSelected(param.className);
+					return this.onClassSelected(param.className);
 
 				case 'onCloneButtonClick':
 					return this.onCloneButtonClick();
@@ -79,13 +78,6 @@
 			this.setDisabledButtonNext(false);
 			this.delegateStep[1].className = className;
 		},
-
-		// overwrite
-//		onModifyButtonClick: function() {
-//			this.callParent(arguments);
-//
-//			this.delegateStep[1].setValueFilters(record.get(CMDBuild.ServiceProxy.parameter.FILTER));
-//		},
 
 		// overwrite
 		onRowSelected: function() {

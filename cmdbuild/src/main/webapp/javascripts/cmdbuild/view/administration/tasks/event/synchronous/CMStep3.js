@@ -129,7 +129,7 @@
 					store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
 					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					forceSelection: true,
 					editable: false
 				});
@@ -143,7 +143,7 @@
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
 					forceSelection: true,
 					editable: false,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
