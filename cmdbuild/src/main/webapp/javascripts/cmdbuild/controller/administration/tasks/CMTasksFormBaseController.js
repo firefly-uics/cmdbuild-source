@@ -3,6 +3,7 @@
 	/**
 	 * Base class to extends to create form controller implementation
 	 */
+	// abstract
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormBaseController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
@@ -12,7 +13,7 @@
 		selectionModel: undefined,
 		taskType: undefined,
 
-		// Abstract
+		// abstract
 		cmOn: function() {
 			throw 'CMTasksFormBaseController: cmOn() unimplemented method';
 		},
@@ -74,12 +75,12 @@
 			});
 		},
 
-		// Abstract
+		// abstract
 		onRowSelected: function() {
 			throw 'CMTasksFormBaseController: onRowSelected() unimplemented method';
 		},
 
-		// Abstract
+		// abstract
 		onSaveButtonClick: function() {
 			throw 'CMTasksFormBaseController: onSaveButtonClick() unimplemented method';
 		},

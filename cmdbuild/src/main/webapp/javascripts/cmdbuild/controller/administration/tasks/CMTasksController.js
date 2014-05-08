@@ -21,7 +21,7 @@
 		],
 		view: undefined,
 
-		// Overwrite
+		// overwrite
 		constructor: function(view) {
 			// Handlers exchange and controller setup
 			this.view = view;
@@ -35,9 +35,9 @@
 			this.callParent(arguments);
 		},
 
-		// Overwrite
+		// overwrite
 		onViewOnFront: function(parameters) {
-			if (typeof parameters != 'undefined') {
+			if (!Ext.isEmpty(parameters)) {
 				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
 
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
@@ -121,6 +121,7 @@
 			return string;
 		},
 
+		// overwrite
 		callback: function() {
 			this.grid.store.load();
 
@@ -129,6 +130,7 @@
 
 		/**
 		 * @param (String) type - form type identifier
+		 *
 		 * @return (Boolean) type recognition state
 		 */
 		correctTaskTypeCheck: function(type) {

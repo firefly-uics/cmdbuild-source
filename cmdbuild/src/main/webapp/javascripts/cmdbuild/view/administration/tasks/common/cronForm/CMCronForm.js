@@ -15,14 +15,14 @@
 		constructor: function(configuration) {
 			this.delegate = Ext.create('CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController', this);
 
-			if (typeof configuration == 'undefined' || typeof configuration.advanced == 'undefined') {
+			if (Ext.isEmpty(configuration) || Ext.isEmpty(configuration.advanced)) {
 				this.advancedConfig = { delegate: this.delegate };
 			} else {
 				this.advancedConfig = configuration.advanced;
 				this.advancedConfig.delegate = this.delegate;
 			}
 
-			if (typeof configuration == 'undefined' || typeof configuration.base == 'undefined') {
+			if (Ext.isEmpty(configuration) || Ext.isEmpty(configuration.base)) {
 				this.baseConfig = { delegate: this.delegate };
 			} else {
 				this.baseConfig = configuration.base;

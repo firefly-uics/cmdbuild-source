@@ -52,7 +52,7 @@
 
 		fieldWidthsFix: function() {
 			this.cascade(function(item) {
-				if (typeof item.checkboxToggle == 'undefined') {
+				if (Ext.isEmpty(item.checkboxToggle)) {
 					item.labelWidth = item.labelWidth - 10;
 					item.width = item.width - 10;
 				}
@@ -68,7 +68,7 @@
 
 		reset: function() { // Resets all items except fieldset toglecheckbox
 			this.cascade(function(item) {
-				if (typeof item.checkboxToggle == 'undefined')
+				if (Ext.isEmpty(item.checkboxToggle))
 					item.reset();
 			});
 		}

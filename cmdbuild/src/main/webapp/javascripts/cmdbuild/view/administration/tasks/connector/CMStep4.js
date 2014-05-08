@@ -118,7 +118,7 @@
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
 				case CMDBuild.ServiceProxy.parameter.CLASS_NAME: {
-					if (typeof rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME] != 'undefined') {
+					if (!Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME])) {
 						this.buildClassCombo(false);
 					} else {
 						var columnModel = this.view.classLevelMappingGrid.columns[1];
@@ -143,7 +143,7 @@
 			var me = this;
 			var columnModel = this.view.classLevelMappingGrid.columns[1];
 
-			if (typeof onStepEditExecute == 'undefined')
+			if (Ext.isEmpty(onStepEditExecute))
 				var onStepEditExecute = true;
 
 			columnModel.setEditor({
@@ -314,9 +314,7 @@
 		},
 
 		listeners: {
-			/**
-			 * Disable next button only if grid haven't selected class
-			 */
+			// Disable next button only if grid haven't selected class
 			show: function(view, eOpts) {
 				var me = this;
 

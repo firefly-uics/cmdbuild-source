@@ -117,7 +117,7 @@
 				var me = this;
 				var attributesListStore = [];
 
-				if (typeof onStepEditExecute == 'undefined')
+				if (Ext.isEmpty(onStepEditExecute))
 					var onStepEditExecute = true;
 
 				for (var key in _CMCache.getClasses()) {
@@ -191,7 +191,7 @@
 					{ 'name': 'Function3', 'description': 'Function 3' }
 				];
 
-				if (typeof onStepEditExecute == 'undefined')
+				if (Ext.isEmpty(onStepEditExecute))
 					var onStepEditExecute = true;
 
 // TODO: to finish implementation when stores will be ready
@@ -235,10 +235,7 @@
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
 				case CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE: {
-					if (
-						(typeof rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME] != 'undefined')
-						&& !Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME])
-					) {
+					if (!Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME])) {
 						this.buildClassAttributesCombo(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME], false);
 					} else {
 						var columnModel = this.view.attributeLevelMappingGrid.columns[3];
@@ -253,10 +250,7 @@
 				} break;
 
 				case CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE: {
-					if (
-						(typeof rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME] != 'undefined')
-						&& !Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME])
-					) {
+					if (!Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME])) {
 						this.buildViewAttributesCombo(rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME], false);
 					} else {
 						var columnModel = this.view.attributeLevelMappingGrid.columns[1];
@@ -440,9 +434,7 @@
 		},
 
 		listeners: {
-			/**
-			 * Disable next button only if grid haven't selected class and setup class and view combo editors
-			 */
+			// Disable next button only if grid haven't selected class and setup class and view combo editors
 			show: function(view, eOpts) {
 				var me = this;
 

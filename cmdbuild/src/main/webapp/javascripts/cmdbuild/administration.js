@@ -130,10 +130,12 @@
 									]);
 								}
 
-								_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(new CMDBuild.view.CMMainViewport({
-									cmAccordions: [],
-									cmPanels: panels
-								}));
+								_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
+									new CMDBuild.view.CMMainViewport({
+										cmAccordions: [],
+										cmPanels: panels
+									})
+								);
 
 								me.loadResources();
 							}

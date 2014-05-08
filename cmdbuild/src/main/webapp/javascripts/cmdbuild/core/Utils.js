@@ -152,6 +152,8 @@
 			},
 
 			/**
+			 * Test if object is empty
+			 *
 			 * @param (Object) obj
 			 * @return (Boolean)
 			 */

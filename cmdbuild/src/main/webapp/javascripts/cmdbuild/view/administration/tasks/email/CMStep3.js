@@ -190,7 +190,7 @@
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
 					forceSelection: true,
 					editable: false,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
@@ -214,7 +214,7 @@
 					valueField: 'Id',
 					forceSelection: true,
 					editable: false,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				});
 
 				this.attachmentsFieldset = Ext.create('Ext.form.FieldSet', {

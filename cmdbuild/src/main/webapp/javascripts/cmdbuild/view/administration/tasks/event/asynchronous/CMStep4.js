@@ -78,7 +78,7 @@
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
 					forceSelection: true,
 					editable: false,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				});
 
 				this.sendMailFieldset = Ext.create('Ext.form.FieldSet', {

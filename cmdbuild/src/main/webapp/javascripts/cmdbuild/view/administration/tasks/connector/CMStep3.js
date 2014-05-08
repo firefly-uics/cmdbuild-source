@@ -78,7 +78,7 @@
 					store: CMDBuild.core.proxy.CMProxyTasks.getDbTypes(),
 					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.VALUE,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					forceSelection: true,
 					editable: false
 				});

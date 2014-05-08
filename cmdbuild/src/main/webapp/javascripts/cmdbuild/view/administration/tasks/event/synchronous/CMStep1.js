@@ -191,12 +191,13 @@
 
 		listeners: {
 			show: function(view, eOpts) {
-
 				// Disable next button only if class is not selected
 				if (this.delegate.isEmptyClass())
 					this.delegate.setDisabledButtonNext(true);
 
-				this.groups.selectAll();
+				// Select all groups by default only if there aren't other selections
+				if (this.groups.getValue().length == 0)
+					this.groups.selectAll();
 			}
 		}
 	});

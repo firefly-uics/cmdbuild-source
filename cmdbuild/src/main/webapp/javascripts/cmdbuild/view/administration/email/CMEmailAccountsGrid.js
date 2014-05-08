@@ -31,7 +31,7 @@
 					flex: 1
 				},
 				{
-					text: tr.address,
+					text: CMDBuild.Translation.address,
 					dataIndex: CMDBuild.ServiceProxy.parameter.ADDRESS,
 					flex: 1
 				}

@@ -21,18 +21,18 @@
 		constructor: function(configuration) {
 			this.delegate = Ext.create('CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController', this);
 
-			if (typeof configuration != 'undefined' || typeof configuration.fieldContainer != 'undefined') {
+			if (!Ext.isEmpty(configuration) || !Ext.isEmpty(configuration.fieldContainer)) {
 				Ext.apply(this, configuration.fieldContainer);
 			}
 
-			if (typeof configuration == 'undefined' || typeof configuration.textarea == 'undefined') {
+			if (Ext.isEmpty(configuration) || Ext.isEmpty(configuration.textarea)) {
 				this.textareaConfig = { delegate: this.delegate };
 			} else {
 				this.textareaConfig = configuration.textarea;
 				this.textareaConfig.delegate = this.delegate;
 			}
 
-			if (typeof configuration == 'undefined' || typeof configuration.button == 'undefined') {
+			if (Ext.isEmpty(configuration) || Ext.isEmpty(configuration.button)) {
 				this.buttonConfig = { delegate: this.delegate };
 			} else {
 				this.buttonConfig = configuration.button;
