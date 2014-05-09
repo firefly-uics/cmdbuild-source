@@ -51,6 +51,11 @@
 					var comboRecord = h.field.store.findRecord("Id", value); 
 					value = (comboRecord) ?	comboRecord.get("Description") : "";
 				}
+				else if (value && typeof value == "object") {
+					if (isADate(value)) {
+						value = formatDate(value);
+					}
+				}
 				if (Ext.String.trim(value) == "" && required) {
 					value = "<div style='width:100%; height:100%; border:1px; border-style:dotted; border-color:red'>";
 				}
@@ -236,6 +241,23 @@
 		}
 		
 	});
+	function formatDate(date) {
+		var toString = "";
+
+		var day = date.getDate();
+		if (day < 10) {
+			day = "0" + day;
+		}
+		toString += day + "/";
+
+		var month = date.getMonth() + 1; // getMonth return 0-11
+		if (month < 10) {
+			month = "0"+month;
+		}
+		toString += month + "/" + date.getFullYear();
+
+		return toString;
+	}
 	function buildFormFields(record, attributes) {
 		var items = [];
 		for (var i = 0; i < attributes.length; i++) {
