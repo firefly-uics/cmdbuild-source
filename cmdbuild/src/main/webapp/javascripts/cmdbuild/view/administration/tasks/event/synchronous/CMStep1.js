@@ -47,6 +47,10 @@
 				this.view.groups.setValue(itemsToSelect);
 			},
 
+			setAllowBlankPhaseCombo: function(state) {
+				this.view.phaseCombo.allowBlank = state;
+			},
+
 			setDisabledButtonNext: function(state) {
 				this.parentDelegate.setDisabledButtonNext(state);
 			},
@@ -140,8 +144,7 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
 				forceSelection: true,
-				editable: false,
-				allowBlank: false
+				editable: false
 			});
 
 			this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {

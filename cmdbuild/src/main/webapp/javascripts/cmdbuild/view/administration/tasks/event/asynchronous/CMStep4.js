@@ -67,30 +67,29 @@
 
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.asynchronous.CMStep4Delegate', this);
 
-			// SendMail configuration
-				this.emailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
-					fieldLabel: tr.template,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					itemId: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
-					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					forceSelection: true,
-					editable: false,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+			// Email notification configuration
+				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
+					sender: {
+						disabled: false
+					},
+					template: {
+						disabled: false
+					}
 				});
 
-				this.sendMailFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.sendMail,
+				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
+					title: tr.notificationForm.title,
 					checkboxToggle: true,
+					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
 					collapsed: true,
+
 					layout: {
 						type: 'vbox'
 					},
-					items: [this.emailTemplateCombo]
+
+					items: [this.notificationForm]
 				});
-			// END: SendMail configuration
+			// END: Email notification configuration
 
 			// Workflow configuration
 				this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
@@ -115,7 +114,7 @@
 
 			Ext.apply(this, {
 				items: [
-					this.sendMailFieldset,
+					this.notificationFieldset,
 					this.workflowFieldset
 				]
 			});

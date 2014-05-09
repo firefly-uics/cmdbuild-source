@@ -52,7 +52,7 @@
 
 		fieldWidthsFix: function() {
 			this.cascade(function(item) {
-				if (Ext.isEmpty(item.checkboxToggle)) {
+				if (Ext.isEmpty(item.checkboxToggle) && item instanceof Ext.form.Field) {
 					item.labelWidth = item.labelWidth - 10;
 					item.width = item.width - 10;
 				}

@@ -5,10 +5,9 @@
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
-		parentDelegate: undefined,
-
 		form: undefined,
 		grid: undefined,
+		parentDelegate: undefined,
 		selectionModel: undefined,
 		tasksDatas: [ // Used to validate tasks
 			'all',

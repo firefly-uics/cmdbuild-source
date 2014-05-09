@@ -89,6 +89,9 @@
 		getData: function() {
 			var data = [];
 
+			if (Ext.isEmpty(this.view.gridSelectionModel))
+				return data;
+
 			// To validate and filter grid rows
 			this.view.referenceMappingGrid.getStore().each(function(record) {
 				if (

@@ -29,14 +29,17 @@
 		},
 
 		// GETters functions
+			getNotificationDelegate: function() {
+				return this.view.notificationForm.delegate;
+			},
+
 			getValueAttachmentsFieldsetCheckbox: function() {
 				return this.view.attachmentsFieldset.checkboxCmp.getValue();
 			},
 
-// TODO
-//			getValueNotificationFieldsetCheckbox: function() {
-//				return this.view.notificationFieldset.checkboxCmp.getValue();
-//			},
+			getValueNotificationFieldsetCheckbox: function() {
+				return this.view.notificationFieldset.checkboxCmp.getValue();
+			},
 
 			getValueParsingFieldsetCheckbox: function() {
 				return this.view.parsingFieldset.checkboxCmp.getValue();
@@ -62,13 +65,34 @@
 		},
 
 		// SETters functions
+			/**
+			 * Set attachments field as required/unrequired
+			 *
+			 * @param (Boolean) state
+			 */
+			setAllowBlankAttachmentsField: function(state) {
+				this.view.attachmentsCombo.allowBlank = state;
+			},
+
+
+			/**
+			 * Set parsing fields as required/unrequired
+			 *
+			 * @param (Boolean) state
+			 */
+			setAllowBlankParsingFields: function(state) {
+				this.view.parsingKeyInit.allowBlank = state;
+				this.view.parsingKeyEnd.allowBlank = state;
+				this.view.parsingValueInit.allowBlank = state;
+				this.view.parsingValueEnd.allowBlank = state;
+				this.view.parsingFieldset.allowBlank = state;
+			},
+
 			setValueAttachmentsCombo: function(value) {
-				if (!Ext.isEmpty(value)) {
-					// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-					this.view.attachmentsCombo.forceSelection = false;
-					this.view.attachmentsCombo.setValue(value);
-					this.view.attachmentsCombo.forceSelection = true;
-				}
+				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+				this.view.attachmentsCombo.forceSelection = false;
+				this.view.attachmentsCombo.setValue(value);
+				this.view.attachmentsCombo.forceSelection = true;
 			},
 
 			/**
@@ -81,6 +105,14 @@
 				} else {
 					this.view.attachmentsFieldset.collapse();
 				}
+			},
+
+			setValueNotificationAccount: function(value) {
+				this.getNotificationDelegate().setValueSender(value);
+			},
+
+			setValueNotificationTemplate: function(value) {
+				this.getNotificationDelegate().setValueTemplate(value);
 			},
 
 			/**
@@ -160,10 +192,12 @@
 					checkboxToggle: true,
 					checkboxName: CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE,
 					collapsed: true,
+
 					layout: {
 						type: 'vbox',
 						align: 'stretch'
 					},
+
 					items: [
 						{
 							xtype: 'container',
@@ -181,31 +215,27 @@
 			// END: BodyParsing configuration
 
 			// Email notification configuration
-				this.notificationEmailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE,
-					fieldLabel: CMDBuild.Translation.administration.tasks.template,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					forceSelection: true,
-					editable: false,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
+					template: {
+						disabled: false
+					}
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
-					title: CMDBuild.Translation.administration.tasks.sendMail,
+					title: CMDBuild.Translation.administration.tasks.notificationForm.title,
 					checkboxToggle: true,
 					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
 					collapsed: true,
+
 					layout: {
 						type: 'vbox'
 					},
-					items: [this.notificationEmailTemplateCombo]
+
+					items: [this.notificationForm]
 				});
 			// END: Email notification configuration
 
-			// Alfresco configuration
+			// Attachments configuration
 				this.attachmentsCombo = Ext.create('Ext.form.field.ComboBox', {
 					name: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY,
 					fieldLabel: tr.attachmentsCategory,
@@ -222,9 +252,11 @@
 					checkboxToggle: true,
 					checkboxName: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE,
 					collapsed: true,
+
 					layout: {
 						type: 'vbox'
 					},
+
 					items: [this.attachmentsCombo],
 
 					listeners: {
@@ -233,7 +265,7 @@
 						}
 					}
 				});
-			// END: Alfresco configuration
+			// END: Attachments configuration
 
 			Ext.apply(this, {
 				items: [

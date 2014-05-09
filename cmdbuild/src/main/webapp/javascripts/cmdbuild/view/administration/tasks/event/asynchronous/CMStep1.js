@@ -26,9 +26,10 @@
 			}
 		},
 
-		getValueId: function() {
-			return this.view.idField.getValue();
-		},
+		// GETters functions
+			getValueId: function() {
+				return this.view.idField.getValue();
+			},
 
 		isEmptyClass: function() {
 			if (this.view.className.getValue())
@@ -37,25 +38,26 @@
 			return true;
 		},
 
-		setDisabledButtonNext: function(state) {
-			this.parentDelegate.setDisabledButtonNext(state);
-		},
+		// SETters functions
+			setDisabledButtonNext: function(state) {
+				this.parentDelegate.setDisabledButtonNext(state);
+			},
 
-		setDisabledTypeField: function(state) {
-			this.view.typeField.setDisabled(state);
-		},
+			setDisabledTypeField: function(state) {
+				this.view.typeField.setDisabled(state);
+			},
 
-		setValueActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
+			setValueActive: function(value) {
+				this.view.activeField.setValue(value);
+			},
 
-		setValueDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
+			setValueDescription: function(value) {
+				this.view.descriptionField.setValue(value);
+			},
 
-		setValueId: function(value) {
-			this.view.idField.setValue(value);
-		}
+			setValueId: function(value) {
+				this.view.idField.setValue(value);
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep1', {

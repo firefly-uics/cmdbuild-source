@@ -8,10 +8,10 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		parentDelegate: undefined,
-		view: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
 		taskType: undefined,
+		view: undefined,
 
 		// abstract
 		cmOn: function() {
@@ -137,6 +137,23 @@
 
 			this.view.disableModify(true);
 			this.view.wizard.changeTab(0);
+		},
+
+		/**
+		 * Task validation
+		 *
+		 * @param (Boolean) enable
+		 *
+		 * @return (Boolean)
+		 */
+		validate: function(enable, type) {
+			// Final check for invalid fields
+			if (this.view.getNonValidFields().length > 0) {
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+				return false;
+			}
+
+			return true;
 		}
 	});
 

@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
+
 	Ext.define('CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController', {
 
 		buttonField: undefined,

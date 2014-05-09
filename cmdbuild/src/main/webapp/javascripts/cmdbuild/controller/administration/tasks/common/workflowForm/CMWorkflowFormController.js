@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
+
 	Ext.define('CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController', {
 
 		comboField: undefined,
@@ -29,6 +31,10 @@
 
 		/**
 		 * Workflow attribute store builder for onWorkflowSelected event
+		 *
+		 * @param (Object) attributes
+		 *
+		 * @return (Object) store
 		 */
 		buildWorkflowAttributesStore: function(attributes) {
 			if (attributes) {
@@ -46,6 +52,11 @@
 			}
 		},
 
+		/**
+		 * @param (Object) attributes
+		 *
+		 * @return (Object) out
+		 */
 		cleanServerAttributes: function(attributes) {
 			var out = {};
 
@@ -64,6 +75,10 @@
 
 		getValueGrid: function() {
 			return this.gridField.getData();
+		},
+
+		isEmptyCombo: function() {
+			return Ext.isEmpty(this.comboField.getValue());
 		},
 
 		onSelectAttributeCombo: function(rowIndex) {
@@ -99,6 +114,15 @@
 			});
 		},
 
+		/**
+		 * Set combo as required/unrequired
+		 *
+		 * @param (Boolean) state
+		 */
+		setAllowBlankCombo: function(state) {
+			this.comboField.allowBlank = state;
+		},
+
 		setDisabledAttributesGrid: function(state) {
 			this.gridField.setDisabled(state);
 		},
@@ -113,6 +137,21 @@
 		setValueGrid: function(data) {
 			if (!Ext.isEmpty(data))
 				this.gridField.fillWithData(data);
+		},
+
+		/**
+		 * Workflow form validation
+		 *
+		 * @param (Boolean) enable
+		 *
+		 * @return (Boolean)
+		 */
+		validate: function(enable) {
+			if (this.isEmptyCombo() && enable) {
+				this.setAllowBlankCombo(false);
+			} else {
+				this.setAllowBlankCombo(true);
+			}
 		}
 	});
 

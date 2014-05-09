@@ -3,12 +3,12 @@
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormWorkflowController', {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
-		parentDelegate: undefined,
 		delegateStep: undefined,
-		view: undefined,
+		parentDelegate: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
 		taskType: 'workflow',
+		view: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -105,29 +105,23 @@
 
 		// overwrite
 		onSaveButtonClick: function() {
-			var nonvalid = this.view.getNonValidFields();
-
-			if (nonvalid.length > 0) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-				return;
-			}
-
-			CMDBuild.LoadMask.get().show();
 			var formData = this.view.getData(true);
 			var attributesGridValues = this.delegateStep[0].getValueWorkflowAttributeGrid();
 			var submitDatas = {};
+
+			// Stop save process if not valid
+			if (!this.validate(formData[CMDBuild.ServiceProxy.parameter.ACTIVE]))
+				return;
+
+			CMDBuild.LoadMask.get().show();
 
 			submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
 				formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
 			);
 
 			// Form submit values formatting
-				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
-
-			// Cron field validation
-				if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
-					return;
+			if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+				submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
 
 			// Data filtering to submit only right values
 			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
@@ -152,6 +146,17 @@
 					callback: this.callback
 				});
 			}
+		},
+
+		// overwrite
+		validate: function(enable) {
+			// Cron field validation
+			this.delegateStep[1].getCronDelegate().validate(enable);
+
+			// Workflow form validation
+			this.delegateStep[0].getWorkflowDelegate().validate(enable);
+
+			return this.callParent(arguments);
 		}
 	});
 

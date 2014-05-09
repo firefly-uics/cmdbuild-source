@@ -2,8 +2,6 @@
 
 	var tr = CMDBuild.Translation.administration.tasks;
 
-	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
-
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 		extend: 'Ext.form.FieldContainer',
 
@@ -11,7 +9,6 @@
 		fieldLabel: tr.workflow,
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		width: '100%',
-		considerAsFieldToDisable: true,
 
 		/**
 		 * To acquire informations to setup fields before creation

@@ -102,37 +102,31 @@
 				editable: false
 			});
 
-			// SendMail configuration
-				this.senderEmailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.SENDER_ACCOUNT,
-					fieldLabel: tr.taskConnector.senderAccount,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					forceSelection: true,
-					editable: false
+			// Email notification configuration
+				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
+					sender: {
+						disabled: false
+					},
+					template: {
+						disabled: false
+					}
 				});
 
-				this.recipientEmailAccountField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.ServiceProxy.parameter.RECIPIENT_ADDRESS,
-					fieldLabel: tr.taskConnector.recipientAddress,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
-				});
-
-				this.sendMailFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.sendMail,
+				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
+					title: tr.notificationForm.title,
 					checkboxToggle: true,
+					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
 					collapsed: true,
-					layout: 'vbox',
 
-					items: [this.senderEmailAccountCombo, this.recipientEmailAccountField]
+					layout: {
+						type: 'vbox'
+					},
+
+					items: [this.notificationForm]
 				});
 
-				this.sendMailFieldset.fieldWidthsFix();
-			// END: SendMail configuration
+				this.notificationFieldset.fieldWidthsFix();
+			// END: Email notification configuration
 
 			Ext.apply(this, {
 				items: [
@@ -141,7 +135,7 @@
 					this.descriptionField,
 					this.activeField,
 					this.operationsCombo,
-					this.sendMailFieldset
+					this.notificationFieldset
 				]
 			});
 

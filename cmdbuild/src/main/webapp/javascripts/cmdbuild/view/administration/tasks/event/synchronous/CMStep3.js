@@ -33,8 +33,16 @@
 		},
 
 		// GETters functions
+			getNotificationDelegate: function() {
+				return this.view.notificationForm.delegate;
+			},
+
 			getWorkflowDelegate: function() {
 				return this.view.workflowForm.delegate;
+			},
+
+			getValueNotificationFieldsetCheckbox: function() {
+				return this.view.notificationFieldset.checkboxCmp.getValue();
 			},
 
 			getValueWorkflowAttributeGrid: function() {
@@ -69,22 +77,12 @@
 				}
 			},
 
-			setValueNotificationEmailAccount: function(value) {
-				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				this.view.notificationEmailAccountCombo.forceSelection = false;
-				this.view.notificationEmailAccountCombo.setValue(value);
-				this.view.notificationEmailAccountCombo.forceSelection = true;
+			setValueNotificationAccount: function(value) {
+				this.getNotificationDelegate().setValueSender(value);
 			},
 
-			setValueNotificationEmailTemplate: function(value) {
-				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				this.view.notificationEmailTemplateCombo.forceSelection = false;
-				this.view.notificationEmailTemplateCombo.setValue(value);
-				this.view.notificationEmailTemplateCombo.forceSelection = true;
-			},
-
-			setValueWorkflowAttributesGrid: function(value) {
-				this.getWorkflowDelegate().setValueGrid(value);
+			setValueNotificationTemplate: function(value) {
+				this.getNotificationDelegate().setValueTemplate(value);
 			},
 
 			setValueWorkflowAttributesGrid: function(value) {
@@ -122,39 +120,26 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', this);
 
 			// Email notification configuration
-				this.notificationEmailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT,
-					fieldLabel: tr.taskEmail.emailAccount,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					forceSelection: true,
-					editable: false
-				});
-
-				this.notificationEmailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE,
-					fieldLabel: tr.template,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					forceSelection: true,
-					editable: false,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
+					sender: {
+						disabled: false
+					},
+					template: {
+						disabled: false
+					}
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.sendMail,
+					title: tr.notificationForm.title,
 					checkboxToggle: true,
 					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
 					collapsed: true,
+
 					layout: {
 						type: 'vbox'
 					},
-					items: [this.notificationEmailAccountCombo, this.notificationEmailTemplateCombo]
+
+					items: [this.notificationForm]
 				});
 			// END: Email notification configuration
 
