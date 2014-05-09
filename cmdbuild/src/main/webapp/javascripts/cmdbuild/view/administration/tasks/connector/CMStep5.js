@@ -35,6 +35,9 @@
 			var data = [];
 			var isKeySelection = null;
 
+			if (Ext.isEmpty(this.view.gridSelectionModel))
+				return data;
+
 			if (this.view.gridSelectionModel.hasSelection())
 				isKeySelection = this.view.gridSelectionModel.getSelection();
 

@@ -5,13 +5,12 @@
 	Ext.define("CMDBuild.controller.administration.tasks.CMTasksFormConnectorController", {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
-		parentDelegate: undefined,
 		delegateStep: undefined,
-		view: undefined,
+		parentDelegate: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
 		taskType: 'connector',
-
+		view: undefined,
 
 		/**
 		 * Gatherer function to catch events

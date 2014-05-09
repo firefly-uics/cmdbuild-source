@@ -41,6 +41,10 @@
 			},
 
 		// SETters functions
+			setAllowBlankEmailAccountCombo: function(state) {
+				this.view.emailAccountCombo.allowBlank = state;
+			},
+
 			setDisabledTypeField: function(state) {
 				this.view.typeField.setDisabled(state);
 			},

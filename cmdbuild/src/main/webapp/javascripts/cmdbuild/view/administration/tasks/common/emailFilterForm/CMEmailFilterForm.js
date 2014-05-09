@@ -1,7 +1,5 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
-
 	Ext.define('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
 		extend: 'Ext.form.FieldContainer',
 

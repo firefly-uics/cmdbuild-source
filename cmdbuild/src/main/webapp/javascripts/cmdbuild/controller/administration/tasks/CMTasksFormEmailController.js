@@ -1,17 +1,16 @@
 (function() {
 
 	Ext.require('CMDBuild.core.proxy.CMProxyEmailAccounts');
-	Ext.require('CMDBuild.core.proxy.CMProxyEmailTemplates');
 
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormEmailController', {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
-		parentDelegate: undefined,
 		delegateStep: undefined,
-		view: undefined,
+		parentDelegate: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
 		taskType: 'email',
+		view: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -133,16 +132,14 @@
 
 		// overwrite
 		onSaveButtonClick: function() {
-			var nonvalid = this.view.getNonValidFields();
-
-			if (nonvalid.length > 0) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-				return;
-			}
-
-			CMDBuild.LoadMask.get().show();
 			var formData = this.view.getData(true);
 			var submitDatas = {};
+_debug(formData);
+			// Stop save process if not valid
+			if (!this.validate(formData[CMDBuild.ServiceProxy.parameter.ACTIVE]))
+				return;
+
+			CMDBuild.LoadMask.get().show();
 
 			submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
 				formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
@@ -169,11 +166,12 @@
 					submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE] = attachmentsFieldsetCheckboxValue;
 					submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY] = formData[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY];
 				}
-// TODO
-//				var notificationFieldsetCheckboxValue = this.delegateStep[2].getValueNotificationFieldsetCheckbox();
-//				if (notificationFieldsetCheckboxValue) {
-//					submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE];
-//				}
+
+				var notificationFieldsetCheckboxValue = this.delegateStep[2].getValueNotificationFieldsetCheckbox();
+				if (notificationFieldsetCheckboxValue) {
+					submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
+					submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE];
+				}
 
 				var parsingFieldsetCheckboxValue = this.delegateStep[2].getValueParsingFieldsetCheckbox();
 				if (parsingFieldsetCheckboxValue) {
@@ -194,10 +192,6 @@
 					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
 					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
 				}
-
-			// Cron field validation
-				if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
-					return;
 
 			// Data filtering to submit only right values
 			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
@@ -223,6 +217,48 @@ _debug(submitDatas);
 					callback: this.callback
 				});
 			}
+		},
+
+		/**
+		 * @param (Boolean) enable
+		 *
+		 * @return (Boolean)
+		 */
+		// overwrite
+		validate: function(enable) {
+			// Email account validation
+			this.delegateStep[0].setAllowBlankEmailAccountCombo(!enable);
+
+			// Cron field validation
+			this.delegateStep[1].getCronDelegate().validate(enable);
+
+			// Parsing validation
+			if (this.delegateStep[2].getValueParsingFieldsetCheckbox() && enable) {
+				this.delegateStep[2].setAllowBlankParsingFields(false);
+			} else {
+				this.delegateStep[2].setAllowBlankParsingFields(true);
+			}
+
+			// Notification validation
+			this.delegateStep[2].getNotificationDelegate().validate(
+				this.delegateStep[2].getValueNotificationFieldsetCheckbox()
+				&& enable
+			);
+
+			// Attachments validation
+			if (this.delegateStep[2].getValueAttachmentsFieldsetCheckbox() && enable) {
+				this.delegateStep[2].setAllowBlankAttachmentsField(false);
+			} else {
+				this.delegateStep[2].setAllowBlankAttachmentsField(true);
+			}
+
+			// Workflow form validation
+			this.delegateStep[3].getWorkflowDelegate().validate(
+				this.delegateStep[3].getValueWorkflowFieldsetCheckbox()
+				&& enable
+			);
+
+			return this.callParent(arguments);
 		}
 	});
 

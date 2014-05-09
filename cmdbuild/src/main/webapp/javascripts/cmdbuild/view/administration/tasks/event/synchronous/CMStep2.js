@@ -3,10 +3,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep2Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		parentDelegate: undefined,
-		view: undefined,
 		className: undefined,
 		filterValues: undefined,
+		parentDelegate: undefined,
+		view: undefined,
 
 		/**
 		 * Gatherer function to catch events

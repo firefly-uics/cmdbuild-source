@@ -5,11 +5,11 @@
 	Ext.define("CMDBuild.controller.administration.tasks.CMTasksFormEventController", {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
-		parentDelegate: undefined,
 		delegateStep: undefined,
-		view: undefined,
+		parentDelegate: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
+		view: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -117,8 +117,8 @@
 
 							// Set step3 [2] datas
 							this.delegateStep[2].setValueNotificationFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE));
-							this.delegateStep[2].setValueNotificationEmailAccount(record.get(CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT));
-							this.delegateStep[2].setValueNotificationEmailTemplate(record.get(CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE));
+							this.delegateStep[2].setValueNotificationAccount(record.get(CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT));
+							this.delegateStep[2].setValueNotificationTemplate(record.get(CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE));
 							this.delegateStep[2].setValueWorkflowAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES));
 							this.delegateStep[2].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME));
 							this.delegateStep[2].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE));
@@ -134,62 +134,82 @@
 
 		// overwrite
 		onSaveButtonClick: function() {
-			var nonvalid = this.view.getNonValidFields();
-
-			if (nonvalid.length > 0) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-				return;
-			}
-
-			CMDBuild.LoadMask.get().show();
 			var filterData = this.delegateStep[1].getDataFilters();
 			var formData = this.view.getData(true);
 			var submitDatas = {};
 
-			// Form validating by type
+			// Form actions by type
 				switch (this.delegateStep[0].taskType) {
 					case 'event_asynchronous': {
+						// Stop save process if not valid
+						if (!this.validate(formData[CMDBuild.ServiceProxy.parameter.ACTIVE], 'asynchronous'))
+							return;
 
-						// Cron field validation
-							if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
-								return;
+						CMDBuild.LoadMask.get().show();
 
 						submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
 							formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
 						);
+
+						// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
+							var notificationFieldsetCheckboxValue = this.delegateStep[3].getValueNotificationFieldsetCheckbox();
+							if (notificationFieldsetCheckboxValue) {
+								submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
+								submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT] = formData[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT];
+								submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE];
+							}
+
+							var workflowFieldsetCheckboxValue = this.delegateStep[3].getValueWorkflowFieldsetCheckbox();
+							if (workflowFieldsetCheckboxValue) {
+								var attributesGridValues = this.delegateStep[3].getValueWorkflowAttributeGrid();
+
+								if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+									submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
+
+								submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
+								submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
+							}
+
+							// TODO
 					} break;
 
 					case 'event_synchronous': {
+						// Stop save process if not valid
+						if (!this.validate(formData[CMDBuild.ServiceProxy.parameter.ACTIVE], 'synchronous'))
+							return;
+
+						CMDBuild.LoadMask.get().show();
+
 						submitDatas[CMDBuild.ServiceProxy.parameter.PHASE] = formData[CMDBuild.ServiceProxy.parameter.PHASE];
 						submitDatas[CMDBuild.ServiceProxy.parameter.GROUPS] = Ext.encode(this.delegateStep[0].getValueGroups());
+
+						// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
+							var notificationFieldsetCheckboxValue = this.delegateStep[2].getValueNotificationFieldsetCheckbox();
+							if (notificationFieldsetCheckboxValue) {
+								submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
+								submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT] = formData[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT];
+								submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE];
+							}
+
+							var workflowFieldsetCheckboxValue = this.delegateStep[2].getValueWorkflowFieldsetCheckbox();
+							if (workflowFieldsetCheckboxValue) {
+								var attributesGridValues = this.delegateStep[2].getValueWorkflowAttributeGrid();
+
+								if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+									submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
+
+								submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
+								submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
+							}
 					} break;
 
 					default:
 						throw 'CMTasksFormEventController error: task type not recognized';
 				}
 
-			// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
-				var notificationFieldsetCheckboxValue = this.delegateStep[2].getValueNotificationFieldsetCheckbox();
-				if (notificationFieldsetCheckboxValue) {
-					submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
-					submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT] = formData[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT];
-					submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE];
-				}
-
-				var workflowFieldsetCheckboxValue = this.delegateStep[2].getValueWorkflowFieldsetCheckbox();
-				if (workflowFieldsetCheckboxValue) {
-					var attributesGridValues = this.delegateStep[2].getValueWorkflowAttributeGrid();
-
-					if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-						submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
-
-					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
-					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
-				}
-
-			// Filters validation
-				if (!Ext.isEmpty(filterData))
-					submitDatas[CMDBuild.ServiceProxy.parameter.FILTER] = Ext.encode(filterData);
+			// Form submit values formatting
+			if (!Ext.isEmpty(filterData))
+				submitDatas[CMDBuild.ServiceProxy.parameter.FILTER] = Ext.encode(filterData);
 
 			// Data filtering to submit only right values
 			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
@@ -236,6 +256,98 @@ _debug(submitDatas);
 				callback: this.callback
 			});
 		},
+
+		/**
+		 * @param (Boolean) enable
+		 *
+		 * @return (Boolean)
+		 */
+		// overwrite
+		validate: function(enable, type) {
+			if (enable) {
+				switch (type) {
+					case 'asynchronous': {
+						// Cron field validation
+						this.delegateStep[3].getCronDelegate().validate(enable);
+
+//						// Notification validation
+//						this.delegateStep[3].getNotificationDelegate().validate(
+//							this.delegateStep[3].getValueNotificationFieldsetCheckbox()
+//							&& enable
+//						);
+
+//						// Workflow form validation
+//						this.delegateStep[3].getWorkflowDelegate().validate(
+//							this.delegateStep[3].getValueWorkflowFieldsetCheckbox()
+//							&& enable
+//						);
+
+						// TODO
+					} break;
+
+					case 'synchronous': {
+						this.delegateStep[0].setAllowBlankPhaseCombo(false);
+
+						// Notification validation
+						this.delegateStep[2].getNotificationDelegate().validate(
+							this.delegateStep[2].getValueNotificationFieldsetCheckbox()
+							&& enable
+						);
+
+						// Workflow form validation
+						this.delegateStep[2].getWorkflowDelegate().validate(
+							this.delegateStep[2].getValueWorkflowFieldsetCheckbox()
+							&& enable
+						);
+					} break;
+
+					default:
+						throw 'CMTasksFormEventController validate error: type not recognized';
+				}
+			} else { // Restore "not required"
+				switch (type) {
+					case 'asynchronous': {
+						// Cron field validation
+						this.delegateStep[3].getCronDelegate().validate(enable);
+
+//						// Notification validation
+//						this.delegateStep[3].getNotificationDelegate().validate(
+//							this.delegateStep[3].getValueNotificationFieldsetCheckbox()
+//							&& enable
+//						);
+
+//						// Workflow form validation
+//						this.delegateStep[3].getWorkflowDelegate().validate(
+//							this.delegateStep[3].getValueWorkflowFieldsetCheckbox()
+//							&& enable
+//						);
+
+						// TODO
+					} break;
+
+					case 'synchronous': {
+						this.delegateStep[0].setAllowBlankPhaseCombo(true);
+
+						// Notification validation
+						this.delegateStep[2].getNotificationDelegate().validate(
+							this.delegateStep[2].getValueNotificationFieldsetCheckbox()
+							&& enable
+						);
+
+						// Workflow form validation
+						this.delegateStep[2].getWorkflowDelegate().validate(
+							this.delegateStep[2].getValueWorkflowFieldsetCheckbox()
+							&& enable
+						);
+					} break;
+
+					default:
+						throw 'CMTasksFormEventController validate error: type not recognized';
+				}
+			}
+
+			return this.callParent(arguments);
+		}
 	});
 
 })();

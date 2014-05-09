@@ -35,6 +35,9 @@
 			var data = [];
 			var mainClassName = null;
 
+			if (Ext.isEmpty(this.view.gridSelectionModel))
+				return data;
+
 			if (this.view.gridSelectionModel.hasSelection())
 				mainClassName = this.view.gridSelectionModel.getSelection()[0];
 

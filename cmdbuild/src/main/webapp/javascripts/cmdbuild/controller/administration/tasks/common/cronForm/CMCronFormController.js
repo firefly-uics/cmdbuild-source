@@ -32,6 +32,7 @@
 
 		/**
 		 * @param (Array) fields
+		 *
 		 * @return (String) cron expression
 		 */
 		buildCronExpression: function(fields) {
@@ -52,6 +53,7 @@
 		 *
 		 * @param (String) name
 		 * @param (String) label
+		 *
 		 * @return (Object) CMDBuild.view.common.field.CMCronTriggerField
 		 */
 		createCronField: function(name, label) {
@@ -62,7 +64,6 @@
 				fieldLabel: label,
 				cmImmutable: true,
 				disabled: true,
-				allowBlank: false,
 
 				listeners: {
 					change: function(field, newValue, oldValue) {
@@ -88,6 +89,7 @@
 		 * Get cron form formatted values
 		 *
 		 * @param (Boolean) cronInputType
+		 *
 		 * @return (String) cronExpression
 		 */
 		getValue: function(cronInputType) {
@@ -115,19 +117,15 @@
 				&& Ext.isEmpty(this.advancedField.advancedFields[2].getValue())
 				&& Ext.isEmpty(this.advancedField.advancedFields[3].getValue())
 				&& Ext.isEmpty(this.advancedField.advancedFields[4].getValue())
-			)
+			) {
 				return true;
+			}
 
 			return false;
 		},
 
 		isEmptyBase: function() {
 			return Ext.isEmpty(this.baseField.baseCombo.getValue());
-		},
-
-		markInvalidAdvancedFields: function(message) {
-			for(item in this.advancedField.advancedFields)
-				this.advancedField.advancedFields[item].markInvalid(message);
 		},
 
 		onChangeAdvancedRadio: function(value) {
@@ -140,6 +138,28 @@
 			this.setDisabledBaseCombo(!value);
 		},
 
+		/**
+		 * Set fields as required/unrequired
+		 *
+		 * @param (Boolean) state
+		 */
+		setAllowBlankAdvancedFields: function(state) {
+			for(item in this.advancedField.advancedFields)
+				this.advancedField.advancedFields[item].allowBlank = state;
+		},
+
+		setDisabledAdvancedFields: function(value) {
+			for (var key in this.advancedField.advancedFields)
+				this.advancedField.advancedFields[key].setDisabled(value);
+		},
+
+		setDisabledBaseCombo: function(value) {
+			this.baseField.baseCombo.setDisabled(value);
+		},
+
+		/**
+		 * @param (String) cronExpression
+		 */
 		setValueAdvancedFields: function(cronExpression) {
 			var values = cronExpression.split(' ');
 			var fields = this.advancedField.advancedFields;
@@ -152,15 +172,6 @@
 
 		setValueAdvancedRadio: function(value) {
 			this.advancedField.advanceRadio.setValue(value);
-		},
-
-		setDisabledAdvancedFields: function(value) {
-			for (var key in this.advancedField.advancedFields)
-				this.advancedField.advancedFields[key].setDisabled(value);
-		},
-
-		setDisabledBaseCombo: function(value) {
-			this.baseField.baseCombo.setDisabled(value);
 		},
 
 		/**
@@ -178,27 +189,24 @@
 			}
 		},
 
+		setValueBaseRadio: function(value) {
+			this.baseField.baseRadio.setValue(value);
+		},
+
 		/**
-		 * Cron validation
+		 * Cron form validation
 		 *
-		 * @param (Object) wizard - reference to wizard object
 		 * @return (Boolean)
 		 */
-		validate: function(wizard) {
-			if (this.isEmptyAdvanced()) {
-				this.markInvalidAdvancedFields('This field is required');
-
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-
-				CMDBuild.LoadMask.get().hide();
-
-				wizard.changeTab(1);
-				this.setValueAdvancedRadio(true);
-
-				return false;
+		validate: function(enable) {
+			if (
+				this.isEmptyAdvanced()
+				&& enable
+			) {
+				this.setAllowBlankAdvancedFields(false);
+			} else {
+				this.setAllowBlankAdvancedFields(true);
 			}
-
-			return true;
 		}
 	});
 
