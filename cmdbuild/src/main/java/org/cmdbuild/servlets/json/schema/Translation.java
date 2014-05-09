@@ -17,14 +17,12 @@ import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.util.Map;
 
-import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.logic.translation.AttributeClassTranslation;
 import org.cmdbuild.logic.translation.AttributeDomainTranslation;
 import org.cmdbuild.logic.translation.ChartTranslation;
 import org.cmdbuild.logic.translation.ClassTranslation;
 import org.cmdbuild.logic.translation.DashboardTranslation;
 import org.cmdbuild.logic.translation.DomainTranslation;
-import org.cmdbuild.logic.translation.EnabledLanguagesLogic;
 import org.cmdbuild.logic.translation.FilterTranslation;
 import org.cmdbuild.logic.translation.FilterViewTranslation;
 import org.cmdbuild.logic.translation.GisIconTranslation;
@@ -36,33 +34,10 @@ import org.cmdbuild.logic.translation.WidgetTranslation;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.utils.Parameter;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SetupTranslations extends JSONBaseWithSpringContext {
+public class Translation extends JSONBaseWithSpringContext {
 
-	@JSONExported
-	@Admin
-	public JsonResponse getConfiguration( //
-	) throws JSONException, AuthException {
-		final EnabledLanguagesLogic enableLanguages = enabledLanguagesLogic();
-		final Map<String, String> languages = enableLanguages.read();
-		return JsonResponse.success(languages);
-	}
-
-	@JSONExported
-	@Admin
-	public void saveConfiguration( //
-			final Map<String, String> requestParams //
-	) {
-		final EnabledLanguagesLogic enableLanguages = enabledLanguagesLogic();
-		enableLanguages.write(requestParams);
-
-	}
-	
-	/* Translations: 
-	 * CREATE
-	 */
 	@JSONExported
 	@Admin
 	public void createForClass( //
@@ -272,9 +247,6 @@ public class SetupTranslations extends JSONBaseWithSpringContext {
 
 	}
 
-	/* Translations: 
-	 * READ
-	 */
 	@JSONExported
 	@Admin
 	public JsonResponse readForClass( //
@@ -338,8 +310,7 @@ public class SetupTranslations extends JSONBaseWithSpringContext {
 	@Admin
 	public JsonResponse readForFilterView( //
 			@Parameter(value = VIEWNAME) final String viewName, //
-			@Parameter(value = FIELD) final String field
-	) {
+			@Parameter(value = FIELD) final String field) {
 		final FilterViewTranslation translation = new FilterViewTranslation();
 		translation.setName(viewName);
 		translation.setField(field);
@@ -352,8 +323,7 @@ public class SetupTranslations extends JSONBaseWithSpringContext {
 	@Admin
 	public JsonResponse readForSqlView( //
 			@Parameter(value = VIEWNAME) final String viewName, //
-			@Parameter(value = FIELD) final String field
-	) {
+			@Parameter(value = FIELD) final String field) {
 		final SqlViewTranslation translation = new SqlViewTranslation();
 		translation.setName(viewName);
 		translation.setField(field);
@@ -366,8 +336,7 @@ public class SetupTranslations extends JSONBaseWithSpringContext {
 	@Admin
 	public JsonResponse readForFilter( //
 			@Parameter(value = FILTERNAME) final String filterName, //
-			@Parameter(value = FIELD) final String field
-	) {
+			@Parameter(value = FIELD) final String field) {
 		final FilterTranslation translation = new FilterTranslation();
 		translation.setName(filterName);
 		translation.setField(field);
@@ -469,9 +438,6 @@ public class SetupTranslations extends JSONBaseWithSpringContext {
 
 	}
 
-	/* Translations: 
-	 * UPDATE
-	 */
 	@JSONExported
 	@Admin
 	public void updateForClass( //
@@ -681,9 +647,6 @@ public class SetupTranslations extends JSONBaseWithSpringContext {
 
 	}
 
-	/* Translations: 
-	 * DELETE
-	 */
 	@JSONExported
 	@Admin
 	public void deleteForClass( //

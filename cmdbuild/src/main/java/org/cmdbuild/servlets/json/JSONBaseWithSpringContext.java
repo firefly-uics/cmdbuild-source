@@ -41,8 +41,6 @@ import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.setup.SetupLogic;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
-import org.cmdbuild.logic.translation.DefaultEnabledLanguagesLogic;
-import org.cmdbuild.logic.translation.EnabledLanguagesLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
@@ -131,10 +129,6 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	/*
 	 * Logics
 	 */
-
-	protected EnabledLanguagesLogic enabledLanguagesLogic() {
-		return applicationContext().getBean(EnabledLanguagesLogic.class);
-	}
 
 	protected AuthenticationLogic authLogic() {
 		return applicationContext().getBean(DefaultAuthenticationLogicBuilder.class).build();

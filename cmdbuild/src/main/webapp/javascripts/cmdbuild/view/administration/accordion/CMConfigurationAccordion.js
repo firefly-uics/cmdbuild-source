@@ -59,7 +59,7 @@
 					{
 						text: CMDBuild.Translation.translations_enabled, 
 						leaf: true,
-						cmName: 'modsetuptranslations'
+						cmName: 'modtranslations'
 					}
 				]);
 			}

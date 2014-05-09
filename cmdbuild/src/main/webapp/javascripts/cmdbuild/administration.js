@@ -109,7 +109,7 @@
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationTranslations({
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationTranslationsController,
-											cmName: "modsetuptranslations"
+											cmName: "modtranslations"
 										}),
 										Ext.create('CMDBuild.view.administration.email.CMEmailAccounts', {
 											cmControllerType: CMDBuild.controller.administration.email.CMEmailAccountsController,
