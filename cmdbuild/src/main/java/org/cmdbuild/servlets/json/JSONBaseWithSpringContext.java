@@ -58,6 +58,7 @@ import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
+import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
 
 public class JSONBaseWithSpringContext extends JSONBase {
@@ -65,6 +66,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	protected OperationUser operationUser() {
 		return applicationContext().getBean("operationUser", OperationUser.class);
 	}
+
 
 	/*
 	 * Properties
@@ -247,6 +249,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 						.getTranslation(languageStore().getLanguage(), key);
 			}
 		};
+	}
+	
+	protected TranslationFacade translationFacade() {
+		return applicationContext().getBean(TranslationFacade.class);
 	}
 
 	/*

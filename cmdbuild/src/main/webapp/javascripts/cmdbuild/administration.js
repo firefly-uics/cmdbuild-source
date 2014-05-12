@@ -30,12 +30,13 @@
 
 				// maybe a single request with all the configuration could be better
 				CMDBuild.ServiceProxy.group.getUIConfiguration({
-					success: function(response, options, decoded) {
+					success: function(response, options,decoded) {
 						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
 
 						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 							success: function(response, options, decoded) {
 								CMDBuild.Config.cmdbuild = decoded.data;
+
 								/* **********************************************
 								 * Suspend here the layouts, and resume after all
 								 * the load are end
@@ -43,7 +44,6 @@
 								Ext.suspendLayouts();
 								/* ***********************************************/
 								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
-
 								var panels = [
 									new Ext.Panel({
 										cls: 'empty_panel x-panel-body'

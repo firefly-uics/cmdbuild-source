@@ -1,5 +1,6 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_VALUE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
@@ -49,6 +50,7 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.translation.AttributeClassTranslation;
 import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.json.JSONArray;
@@ -162,14 +164,43 @@ public class AttributeSerializer extends Serializer {
 		return jsonObject;
 	}
 
-	public static AttributeSerializer withView(final CMDataView view) {
-		return new AttributeSerializer(view);
+	// FIXME: cambiare nome o fare un builder
+	// public static AttributeSerializer withView(final CMDataView view, final
+	// TranslationFacade translationFacade) {
+	// return new AttributeSerializer(view, translationFacade);
+	// }
+
+	public static Builder newInstance() {
+		return new Builder();
+	}
+
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<AttributeSerializer> {
+
+		CMDataView dataView;
+		TranslationFacade translationFacade;
+
+		@Override
+		public AttributeSerializer build() {
+			return new AttributeSerializer(this);
+		}
+
+		public Builder withDataView(CMDataView dataView) {
+			this.dataView = dataView;
+			return this;
+		}
+
+		public Builder withTranslationFacade(TranslationFacade translationFacade) {
+			this.translationFacade = translationFacade;
+			return this;
+		}
 	}
 
 	private final CMDataView view;
+	private final TranslationFacade translationFacade;
 
-	private AttributeSerializer(final CMDataView view) {
-		this.view = view;
+	private AttributeSerializer(Builder builder) {
+		this.view = builder.dataView;
+		this.translationFacade = builder.translationFacade;
 	}
 
 	// FIXME: replace List<CMAttributeType<?>> with List<String> with attribute
@@ -416,12 +447,19 @@ public class AttributeSerializer extends Serializer {
 			 * common
 			 */
 			serialization.put(NAME, attribute.getName());
+
+			final AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
+					.forClass(attribute.getOwner().getName()).withField("Description") //
+					.withName(attribute.getName()) //
+					.build();
+			final String translatedDescription = translationFacade.read(translationObject);
+
 			String description = attribute.getDescription();
 			if ("".equals(description) || description == null) {
 				description = attribute.getName();
 			}
 
-			serialization.put(DESCRIPTION, description);
+			serialization.put(DESCRIPTION, defaultIfNull(translatedDescription, description));
 			serialization.put(TYPE,
 					new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(attribute.getType()).getTypeName());
 			serialization.put(SHOW_IN_GRID, attribute.isDisplayableInList());

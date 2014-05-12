@@ -11,10 +11,13 @@ public class DomainSerializer extends Serializer {
 
 	private final CMDataView dataView;
 	private final PrivilegeContext privilegeContext;
+	private final TranslationFacade translationFacade;
 
-	public DomainSerializer(final CMDataView dataView, final PrivilegeContext privilegeContext) {
+	public DomainSerializer(final CMDataView dataView, final PrivilegeContext privilegeContext,
+			final TranslationFacade translationFacade) {
 		this.dataView = dataView;
 		this.privilegeContext = privilegeContext;
+		this.translationFacade = translationFacade;
 	}
 
 	public JSONObject toClient(final CMDomain domain, final boolean activeOnly) throws JSONException {
@@ -49,8 +52,11 @@ public class DomainSerializer extends Serializer {
 		jsonDomain.put("active", domain.isActive());
 		jsonDomain.put("cardinality", domain.getCardinality());
 		// FIXME should not be used in this way
-		jsonDomain.put("attributes", AttributeSerializer.withView(dataView)
-				.toClient(domain.getAttributes(), activeOnly));
+		final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
+				.withDataView(dataView) //
+				.withTranslationFacade(translationFacade) //
+				.build();
+		jsonDomain.put("attributes", attributeSerializer.toClient(domain.getAttributes(), activeOnly));
 
 		addAccessPrivileges(jsonDomain, domain);
 		// TODO: complete ...
