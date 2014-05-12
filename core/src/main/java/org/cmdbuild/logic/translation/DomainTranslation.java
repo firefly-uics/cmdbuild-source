@@ -13,8 +13,14 @@ public class DomainTranslation implements TranslationObject {
 	private String field;
 	private Map<String, String> translations;
 
+	public DomainTranslation(Builder builder) {
+		this.name = builder.name;
+		this.field = builder.field;
+		this.translations = builder.translations;
+	}
+
 	@Override
-	public void accept(final TranslationObjectVisitor visitor) {
+	public void accept(final TranslationObjectVisitor visitor) {		
 		visitor.visit(this);
 	}
 
@@ -41,6 +47,38 @@ public class DomainTranslation implements TranslationObject {
 
 	public void setTranslations(final Map<String, String> translations) {
 		this.translations = translations;
+	}
+
+	public static Builder newInstance() {
+		return new Builder();
+	}
+
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<DomainTranslation> {
+		
+		private String name;
+		private String field;
+		private Map<String, String> translations;
+
+		@Override
+		public DomainTranslation build() {
+			return new DomainTranslation(this);
+		}
+		
+		public Builder withField(String field){
+			this.field = field;
+			return this;
+		}
+		
+		public Builder withName(String name){
+			this.name = name;
+			return this;
+		}
+		
+		public Builder withTranslations(Map<String, String> translations){
+			this.translations = translations;
+			return this;
+		}
+
 	}
 
 }

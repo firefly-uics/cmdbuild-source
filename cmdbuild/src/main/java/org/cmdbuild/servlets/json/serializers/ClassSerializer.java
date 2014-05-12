@@ -1,6 +1,11 @@
 package org.cmdbuild.servlets.json.serializers;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_CLASS_DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.common.Constants;
@@ -79,16 +84,16 @@ public class ClassSerializer extends Serializer {
 		} else {
 			jsonObject.put("type", "class");
 		}
-		jsonObject.put("id", cmClass.getId());
-		jsonObject.put("name", cmClass.getName());
+		jsonObject.put(ID, cmClass.getId());
+		jsonObject.put(NAME, cmClass.getName());
 
 		final ClassTranslation translationObject = ClassTranslation.newInstance() //
-				.withField("Description") //
+				.withField(DESCRIPTION_FOR_CLIENT) //
 				.withName(cmClass.getName()) //
 				.build();
 		final String translatedDescription = translationFacade.read(translationObject);
-		jsonObject.put("text", defaultIfNull(translatedDescription, cmClass.getDescription()));
-
+		jsonObject.put(CLASS_DESCRIPTION, defaultIfNull(translatedDescription, cmClass.getDescription()));
+		jsonObject.put(DEFAULT_CLASS_DESCRIPTION, cmClass.getDescription());
 		jsonObject.put("superclass", cmClass.isSuperclass());
 		jsonObject.put("active", cmClass.isActive());
 		jsonObject.put("tableType", cmClass.holdsHistory() ? "standard" : "simpletable");
