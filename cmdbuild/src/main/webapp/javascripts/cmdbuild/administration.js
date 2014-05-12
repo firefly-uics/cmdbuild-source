@@ -42,6 +42,7 @@
 								 * **********************************************/
 								Ext.suspendLayouts();
 								/* ***********************************************/
+								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
 
 								var panels = [
 									new Ext.Panel({
