@@ -1,7 +1,9 @@
 package org.cmdbuild.servlets.json.serializers;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_VALUE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EDITOR_TYPE;
@@ -184,12 +186,12 @@ public class AttributeSerializer extends Serializer {
 			return new AttributeSerializer(this);
 		}
 
-		public Builder withDataView(CMDataView dataView) {
+		public Builder withDataView(final CMDataView dataView) {
 			this.dataView = dataView;
 			return this;
 		}
 
-		public Builder withTranslationFacade(TranslationFacade translationFacade) {
+		public Builder withTranslationFacade(final TranslationFacade translationFacade) {
 			this.translationFacade = translationFacade;
 			return this;
 		}
@@ -198,7 +200,7 @@ public class AttributeSerializer extends Serializer {
 	private final CMDataView view;
 	private final TranslationFacade translationFacade;
 
-	private AttributeSerializer(Builder builder) {
+	private AttributeSerializer(final Builder builder) {
 		this.view = builder.dataView;
 		this.translationFacade = builder.translationFacade;
 	}
@@ -449,7 +451,7 @@ public class AttributeSerializer extends Serializer {
 			serialization.put(NAME, attribute.getName());
 
 			final AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
-					.forClass(attribute.getOwner().getName()).withField("Description") //
+					.forClass(attribute.getOwner().getName()).withField(DESCRIPTION_FOR_CLIENT) //
 					.withName(attribute.getName()) //
 					.build();
 			final String translatedDescription = translationFacade.read(translationObject);
@@ -460,6 +462,8 @@ public class AttributeSerializer extends Serializer {
 			}
 
 			serialization.put(DESCRIPTION, defaultIfNull(translatedDescription, description));
+			serialization.put(DEFAULT_DESCRIPTION, description);
+
 			serialization.put(TYPE,
 					new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(attribute.getType()).getTypeName());
 			serialization.put(SHOW_IN_GRID, attribute.isDisplayableInList());
