@@ -208,7 +208,7 @@
 				params: {
 					id: record.get(CMDBuild.ServiceProxy.parameter.ID)
 				},
-				success: this.success(record.get(CMDBuild.ServiceProxy.parameter.ID)),
+				success: this.success,
 				callback: this.callback
 			});
 		},
@@ -223,22 +223,22 @@
 				params: {
 					id: record.get(CMDBuild.ServiceProxy.parameter.ID)
 				},
-				success: this.success(record.get(CMDBuild.ServiceProxy.parameter.ID)),
+				success: this.success,
 				callback: this.callback
 			});
 		},
 
-		/**
-		 * @param (Int) id
-		 */
-		success: function(id) {
+		success: function(result, options, decodedResult) {
 			var me = this;
 
 			this.grid.store.load({
 				callback: function() {
 					me.form.reset();
 
-					var rowIndex = this.find(CMDBuild.ServiceProxy.parameter.ID, id);
+					var rowIndex = this.find(
+						CMDBuild.ServiceProxy.parameter.ID,
+						options.params[CMDBuild.ServiceProxy.parameter.ID]
+					);
 
 					me.selectionModel.deselectAll();
 					me.selectionModel.select(

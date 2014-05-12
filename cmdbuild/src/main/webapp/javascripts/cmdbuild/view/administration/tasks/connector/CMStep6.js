@@ -60,29 +60,38 @@
 		 */
 		buildDomainCombo: function(className) {
 			if (!Ext.isEmpty(className)) {
-				this.view.referenceMappingGrid.columns[1].setEditor({
-					xtype: 'combo',
-					displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					forceSelection: true,
-					editable: false,
-					allowBlank: false,
+				var domainStore = _CMCache.getDomainsBy(function(domain) {
+					if (
+						(domain.get(CMDBuild.ServiceProxy.parameter.NAME_CLASS_1) == className)
+						|| (domain.get(CMDBuild.ServiceProxy.parameter.NAME_CLASS_2) == className)
+					) {
+						return true;
+					}
 
-					store: Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-						data: _CMCache.getDomainsBy(function(domain) {
-							if (
-								(domain.get(CMDBuild.ServiceProxy.parameter.NAME_CLASS_1) == className)
-								|| (domain.get(CMDBuild.ServiceProxy.parameter.NAME_CLASS_2) == className)
-							) {
-								return true;
-							}
-
-							return false;
-						})
-					})
+					return false;
 				});
+
+				if (domainStore.length > 0) {
+					this.view.referenceMappingGrid.columns[1].setEditor({
+						xtype: 'combo',
+						displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+						valueField: CMDBuild.ServiceProxy.parameter.NAME,
+						forceSelection: true,
+						editable: false,
+						allowBlank: false,
+
+						store: Ext.create('Ext.data.Store', {
+							autoLoad: true,
+							fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+							data: domainStore
+						})
+					});
+				} else {
+					this.view.referenceMappingGrid.columns[1].setEditor({
+						xtype: 'combo',
+						disabled: true
+					});
+				}
 			}
 		},
 

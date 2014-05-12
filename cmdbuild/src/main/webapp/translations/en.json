@@ -671,15 +671,16 @@
 				"mounth": "Month"
 			},
 			"modify": "Modify task",
+			"notificationForm": {
+				"title": "Send notification email"
+			},
 			"remove": "Remove task",
 			"running": "Running",
-			"sendMail": "Send mail",
 			"startLabel": "Start task",
 			"startOnSave": "Start on save",
 			"startWorkflow": "Start workflow",
 			"stopLabel": "Stop task",
 			"stopped": "Stopped",
-			"template": "Template",
 			"title": "Task manager",
 			"type": "Type",
 			"taskConnector": {
@@ -1029,6 +1030,7 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Check if the namespace, the method name and the parameters of the web service are correct"
 		},
 		"reference_invalid": "The value doesn't match the filter",
+		"requiredFieldMessage": "This field is required",
 		"server_error": "Server unreachable",
 		"server_error_code": "An error has occurred while sending data to the server: ",
 		"show_detail": "Show details",
@@ -1474,8 +1476,8 @@
 	"reset": "Reset",
 	"root": "Root",
 	"rotate": "Rotate",
-	"row_and_column_privileges": "Rows and columns privileges",
 	"row_add": "Add row",
+	"row_and_column_privileges": "Rows and columns privileges",
 	"row_delete": "Delete row",
 	"row_edit": "Edit row",
 	"search_filters": "Search Filters",
@@ -1495,10 +1497,10 @@
 	"translations_enabled" : "Enabled languages",
 	"transparent": "Transparent",
 	"tree": "Tree",
+	"tree_modify": "Modify tree",
 	"tree_navigation": "Navigation tree",
 	"tree_navigation_add": "Add navigation tree",
 	"tree_navigation_attributes": "Navigation tree attributes",
-	"tree_modify": "Modify tree",
 	"tree_remove": "Remove tree",
 	"tree_root_cql": "Root CQL filter",
 	"trees_navigation": "Navigation trees",
