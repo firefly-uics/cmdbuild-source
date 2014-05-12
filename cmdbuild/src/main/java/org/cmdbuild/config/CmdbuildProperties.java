@@ -25,6 +25,7 @@ public class CmdbuildProperties extends DefaultProperties implements CmdbuildCon
 	private static final String LOCK_CARD = "lockcardenabled";
 	private static final String LOCKER_CARD_USER_VISIBLE = "lockcarduservisible";
 	private static final String LOCK_CARD_TIME_OUT = "lockcardtimeout";
+	private static final String ENABLED_LANGUAGES = "enabled_languages";
 
 	private static final String DEMO_MODE_ADMIN = "demomode";
 
@@ -45,6 +46,7 @@ public class CmdbuildProperties extends DefaultProperties implements CmdbuildCon
 		setProperty(LOCK_CARD, String.valueOf(true));
 		setProperty(LOCKER_CARD_USER_VISIBLE, String.valueOf(true));
 		setProperty(LOCK_CARD_TIME_OUT, "300");
+		setProperty(ENABLED_LANGUAGES, "");
 	}
 
 	public static CmdbuildProperties getInstance() {
@@ -153,6 +155,16 @@ public class CmdbuildProperties extends DefaultProperties implements CmdbuildCon
 	@Override
 	public void setLockCardTimeOut(final long seconds) {
 		setProperty(LOCK_CARD_TIME_OUT, String.valueOf(seconds));
+	}
+
+	@Override
+	public String getEnabledLanguages() {
+		return getProperty(ENABLED_LANGUAGES);
+	}
+
+	@Override
+	public void setEnabledLanguages(final String enabledLanguages) {
+		setProperty(ENABLED_LANGUAGES, enabledLanguages);
 	}
 
 }

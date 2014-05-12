@@ -1,9 +1,9 @@
 (function() {
 	var withTranslations = false;
 	var activeTranslations = [];
-	var observers = [];
 	var translationsToSave = [];
 	var translationsInAdding = false;
+	var observers = [];
 	Ext.define("CMDBUild.cache.CMCacheTranslationsFunctions", {
 		initAddingTranslations: function() {
 			translationsToSave = [];
@@ -83,50 +83,43 @@
 		isMultiLanguages: function() {
 			return withTranslations;
 		},
-		resetMultiLanguages: function() {
-			setActiveTranslations();
+		setActiveTranslations: function(activeLanguages) {
+			activeLanguages = activeLanguages.split(", ");
+			setActiveTranslations(activeLanguages);
 		},
-		getActiveTranslations: function() {
+		getActiveTranslations: function(activeLanguages) {
 			return activeTranslations;
 		},
-		registerTranslatableText: function(text) {
-			observers.push(text);
+		registerOnTranslations: function(observer) {
+			observers.push(observer);
 		}
 	});
-	function callObservers() {
-		for (var i = 0; i < observers.length; i++) {
-			var text = observers[i];
-			text.resetLanguageButton();
-		}
-	}
-	function setActiveTranslations() {
+	function setActiveTranslations(activeLanguages) {
 		activeTranslations = [];
-		CMDBuild.ServiceProxy.translations.readActiveTranslations({
-			scope: this,
-			success: function(response){
-//				var activeLanguages = Ext.JSON.decode(response.responseText).data;
-				var responseText = Ext.JSON.decode(response.responseText);
-				var activeLanguages = responseText.response;
-				CMDBuild.ServiceProxy.translations.readAvailableTranslations({
-					success : function(response, options, decoded) {
-						withTranslations = false;
-						for (key in decoded.translations) {
-							if (activeLanguages[decoded.translations[key].name] != "on") {
-								continue;
-							}
-							var item = {
-								name: decoded.translations[key].name,
-								image: "ux-flag-" + decoded.translations[key].name,
-								language: decoded.translations[key].value
-							};
-							activeTranslations.push(item);
-							withTranslations = true;
-						}
-						callObservers();
+		CMDBuild.ServiceProxy.translations.readAvailableTranslations({
+			success : function(response, options, decoded) {
+				withTranslations = false;
+				for (key in decoded.translations) {
+					if (! Ext.Array.contains(activeLanguages, decoded.translations[key].name)) {
+						continue;
 					}
-				});
+					var item = {
+						name: decoded.translations[key].name,
+						image: "ux-flag-" + decoded.translations[key].name,
+						language: decoded.translations[key].value
+					};
+					activeTranslations.push(item);
+					withTranslations = true;
+				}
+				callObservers();
 			}
 		});
+	}
+	function callObservers() {
+		for (var i = 0; i < observers.length; i++) {
+			var observer = observers[i];
+			observer.resetLanguages();
+		}
 	}
 	function isEmpty(o) {
 	    for ( var p in o ) { 
@@ -143,7 +136,6 @@
 		var updateValues = {};
 		var deleteValues = {};
 		for (var prop in values) {
-			console.log(prop + "-----" + values[prop] + "----" + oldValues[prop]);
 			if (emptyValue(values[prop]) && ! emptyValue(oldValues[prop])) {
 				deleteValues[prop] = "";
 			}

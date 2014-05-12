@@ -36,8 +36,10 @@
 			CMDBuild.ServiceProxy.configuration.read({
 				scope: this,
 				success: function(response){
-					this.view.populateForm(Ext.JSON.decode(response.responseText));
-					this.view.afterSubmit(Ext.JSON.decode(response.responseText).data);
+					var decoded = Ext.JSON.decode(response.responseText);
+					_CMCache.setActiveTranslations(decoded.data.enabled_languages);
+					this.view.populateForm(decoded);
+					this.view.afterSubmit(decoded.data);
 				}
 			}, name = this.view.configFileName);
 		}

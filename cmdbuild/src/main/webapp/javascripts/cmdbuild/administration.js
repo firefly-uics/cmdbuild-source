@@ -27,17 +27,15 @@
 				delete Ext.tip.Tip.prototype.minWidth;
 
 				CMDBuild.view.CMMainViewport.showSplash(forCredits, administration);
-				_CMCache.resetMultiLanguages();
 
 				// maybe a single request with all the configuration could be better
 				CMDBuild.ServiceProxy.group.getUIConfiguration({
-					success: function(response, options,decoded) {
+					success: function(response, options, decoded) {
 						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
 
 						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 							success: function(response, options, decoded) {
 								CMDBuild.Config.cmdbuild = decoded.data;
-
 								/* **********************************************
 								 * Suspend here the layouts, and resume after all
 								 * the load are end
@@ -106,10 +104,6 @@
 										new CMDBuild.view.administration.configuration.CMModConfigurationServer({
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationServerController,
 											cmName: "modsetupserver"
-										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationTranslations({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationTranslationsController,
-											cmName: "modtranslations"
 										}),
 										Ext.create('CMDBuild.view.administration.email.CMEmailAccounts', {
 											cmControllerType: CMDBuild.controller.administration.email.CMEmailAccountsController,
