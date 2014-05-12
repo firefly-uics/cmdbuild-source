@@ -653,6 +653,100 @@
 				"user": "Username"
 			}
 		},
+		"tasks": {
+			"active": "Active",
+			"add": "Add task",
+			"all": "All",
+			"clone": "Clone task",
+			"cronForm" : {
+				"dayOfMounth": "Day of month",
+				"advanced": "Advanced",
+				"basic": "Basic",
+				"dayOfWeek": "Day of week",
+				"everyDay": "Every day",
+				"everyHour": "Every hour",
+				"everyMounth": "Every month",
+				"everyYear": "Every year",
+				"hour": "Hour",
+				"minute": "Minute",
+				"mounth": "Month"
+			},
+			"modify": "Modify task",
+			"notificationForm": {
+				"title": "Send notification email"
+			},
+			"remove": "Remove task",
+			"running": "Running",
+			"startLabel": "Start task",
+			"startOnSave": "Start on save",
+			"startWorkflow": "Start workflow",
+			"stopLabel": "Stop task",
+			"stopped": "Stopped",
+			"title": "Task manager",
+			"type": "Type",
+			"taskConnector": {
+				"attributeLevelMapping": "@@ Attribute mapping",
+				"classLevelMapping": "@@ Class mapping",
+				"datasourceDbFieldset": "Datasource: Relational database",
+				"datasourceLdapFieldset": "Datasource: LDAP directory",
+				"dbName": "Database name",
+				"deletionType": "@@ Deletion type",
+				"deletionTypes": {
+					"logic": "@@ Logic",
+					"notLogic": "@@ Not logic"
+				},
+				"domainName": "@@ Domain name",
+				"isKey": "@@ Is key",
+				"operations": "@@ Operations",
+				"operationsTypes": {
+					"filter": "@@ Filter",
+					"none": "@@ None"
+				},
+				"recipientAddress": "Recipient address",
+				"referenceMapping": "@@ References mapping",
+				"senderAccount": "Sender account",
+				"toSynchronize": "To synchronize",
+				"viewAttribute": "@@ View attribute",
+				"viewName": "@@ View name",
+				"viewPrefix": "View prefix"
+			},
+			"taskEmail": {
+				"attachmentsCategory": "Category",
+				"bodyParsing": "Body parsing",
+				"emailAccount": "Email account",
+				"fromAddressFilter": "Filter on FromAddress",
+				"parsingKeyEnd": "Key end",
+				"parsingKeyInit": "Key init",
+				"parsingValueEnd": "Value end",
+				"parsingValueInit": "Value init",
+				"saveToAlfresco": "Save attachments to Alfresco",
+				"subjectFilter": "Filter on Subject"
+			},
+			"taskEvent": {
+				"eventPhases" : {
+					"afterCreate": "@@ After creation",
+					"afterUpdate": "@@ After update",
+					"beforeDelete": "@@ Before delete",
+					"beforeUpdate": "@@ Before update"
+				},
+				"groupsToApply": "@@ Group to apply",
+				"phase": "@@ Phase"
+			},
+			"tasksTypes": {
+				"connector": "Connector",
+				"email": "Email",
+				"event": "Event",
+				"eventTypes": {
+					"asynchronous": "Asynchronous",
+					"synchronous": "Synchronous"
+				},
+				"workflow": "Workflow"
+			},
+			"workflow": "Workflow",
+			"workflowForm": {
+				"attributes": "Workflow attributes",
+			}
+		},
 		"welcome": {
 			"body": "Modulo di Amministrazione.",
 			"title": "Benvenuto"
