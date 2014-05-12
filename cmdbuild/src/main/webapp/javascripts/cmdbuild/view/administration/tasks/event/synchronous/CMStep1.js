@@ -35,6 +35,10 @@
 				return this.view.idField.getValue();
 			},
 
+			getValuePhase: function() {
+				return this.view.phaseCombo.getValue();
+			},
+
 		isEmptyClass: function() {
 			if (this.view.classNameCombo.getValue())
 				return false;

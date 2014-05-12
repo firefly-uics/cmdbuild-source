@@ -18,9 +18,6 @@
 		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onBeforeEdit':
-					return this.onBeforeEdit(param.fieldName, param.rowData);
-
 				case 'onStepEdit':
 					return this.onStepEdit();
 
@@ -113,64 +110,6 @@
 		},
 
 		/**
-		 * Function to update row stores/editor on beforeEdit event
-		 *
-		 * @param (String) fieldName
-		 * @param (Object) rowData
-		 */
-		onBeforeEdit: function(fieldName, rowData) {
-			switch (fieldName) {
-				case CMDBuild.ServiceProxy.parameter.CLASS_NAME: {
-					if (!Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME])) {
-						this.buildClassCombo(false);
-					} else {
-						var columnModel = this.view.classLevelMappingGrid.columns[1];
-						var columnEditor = columnModel.getEditor();
-
-						if (!columnEditor.disabled)
-							columnModel.setEditor({
-								xtype: 'combo',
-								disabled: true
-							});
-					}
-				} break;
-			}
-		},
-
-		/**
-		 * To setup class combo editor
-		 *
-		 * @param (Boolean) onStepEditExecute
-		 */
-		buildClassCombo: function(onStepEditExecute) {
-			var me = this;
-			var columnModel = this.view.classLevelMappingGrid.columns[1];
-
-			if (Ext.isEmpty(onStepEditExecute))
-				var onStepEditExecute = true;
-
-			columnModel.setEditor({
-				xtype: 'combo',
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
-				forceSelection: true,
-				editable: false,
-				allowBlank: false,
-				store: _CMCache.getClassesStore(),
-				queryMode: 'local',
-
-				listeners: {
-					select: function(combo, records, eOpts) {
-						me.cmOn('onStepEdit');
-					}
-				}
-			});
-
-			if (onStepEditExecute)
-				this.onStepEdit();
-		},
-
-		/**
 		 * Step validation (at least one class/view association and main view check)
 		 */
 		onStepEdit: function() {
@@ -222,16 +161,7 @@
 			});
 
 			this.gridEditorPlugin = Ext.create('Ext.grid.plugin.CellEditing', {
-				clicksToEdit: 1,
-
-				listeners: {
-					beforeedit: function(editor, e, eOpts) {
-						me.delegate.cmOn('onBeforeEdit', {
-							fieldName: e.field,
-							rowData: e.record.data
-						});
-					}
-				}
+				clicksToEdit: 1
 			});
 
 			this.classLevelMappingGrid = Ext.create('Ext.grid.Panel', {
@@ -257,7 +187,7 @@
 
 							listeners: {
 								select: function(combo, records, eOpts) {
-									me.delegate.buildClassCombo();
+									me.delegate.cmOn('onStepEdit');
 								}
 							}
 						},
@@ -268,7 +198,19 @@
 						dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
-							disabled: true
+							displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+							valueField: CMDBuild.ServiceProxy.parameter.NAME,
+							forceSelection: true,
+							editable: false,
+							allowBlank: false,
+							store: _CMCache.getClassesStore(),
+							queryMode: 'local',
+
+							listeners: {
+								select: function(combo, records, eOpts) {
+									me.delegate.cmOn('onStepEdit');
+								}
+							}
 						},
 						flex: 1
 					},
