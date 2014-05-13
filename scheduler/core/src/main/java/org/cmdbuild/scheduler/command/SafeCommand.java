@@ -1,18 +1,22 @@
-package org.cmdbuild.services.scheduler;
+package org.cmdbuild.scheduler.command;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import org.cmdbuild.logger.Log;
+import org.cmdbuild.scheduler.logging.LoggingSupport;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 public class SafeCommand extends ForwardingCommand {
 
-	private static final Logger logger = Log.PERSISTENCE;
+	private static final Logger logger = LoggingSupport.logger;
 	private static final Marker marker = MarkerFactory.getMarker(SafeCommand.class.getName());
+
+	public static SafeCommand safe(final Command delegate) {
+		return of(delegate);
+	}
 
 	public static SafeCommand of(final Command delegate) {
 		final Object proxy = Proxy.newProxyInstance( //
