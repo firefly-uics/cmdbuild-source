@@ -107,7 +107,7 @@
 					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
 					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.DOMAIN_NAME))
 				) {
-					var buffer = [];
+					var buffer = {};
 
 					buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
 					buffer[CMDBuild.ServiceProxy.parameter.DOMAIN_NAME] = record.get(CMDBuild.ServiceProxy.parameter.DOMAIN_NAME);

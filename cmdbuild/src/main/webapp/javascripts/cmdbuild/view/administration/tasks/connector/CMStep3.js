@@ -59,13 +59,6 @@
 
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep3Delegate', this);
 
-			this.prefixField = Ext.create('Ext.form.field.Text', {
-				fieldLabel: tr.viewPrefix,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.ServiceProxy.parameter.VIEW_PREFIX,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH
-			});
-
 			this.dataSourceField = Ext.create('Ext.form.field.Hidden', {
 				name: CMDBuild.ServiceProxy.parameter.DATA_SOURCE_TYPE
 			});
@@ -126,6 +119,13 @@
 					allowBlank: false
 				});
 
+				this.tableViewFilterField = Ext.create('Ext.form.field.Text', {
+					fieldLabel: tr.tableViewFilter,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					name: CMDBuild.ServiceProxy.parameter.TABLE_VIEW_PREFIX,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				});
+
 				this.dbFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.datasourceDbFieldset,
 					checkboxToggle: true,
@@ -138,7 +138,8 @@
 						this.dbPortField,
 						this.dbNameField,
 						this.dbUsernameField,
-						this.dbPasswordField
+						this.dbPasswordField,
+						this.tableViewFilterField
 					],
 
 					listeners: {
@@ -201,7 +202,6 @@
 
 			Ext.apply(this, {
 				items: [
-					this.prefixField,
 					this.dataSourceField,
 					this.dbFieldset
 // TODO: future implementation

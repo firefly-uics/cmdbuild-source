@@ -30,34 +30,17 @@
 
 		getData: function() {
 			var data = [];
-			var mainClassName = null;
 
-			if (Ext.isEmpty(this.view.gridSelectionModel))
-				return data;
-
-			if (this.view.gridSelectionModel.hasSelection())
-				mainClassName = this.view.gridSelectionModel.getSelection()[0];
-
-			// To validate and filter grid rows and creating isMain attributes
-			this.view.gridSelectionModel.getStore().each(function(record) {
+			// To validate and filter grid rows
+			this.view.classLevelMappingGrid.getStore().each(function(record) {
 				if (
 					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
-					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME))
+					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
 				) {
 					var buffer = [];
 
 					buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
-					buffer[CMDBuild.ServiceProxy.parameter.VIEW_NAME] = record.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME);
-					buffer[CMDBuild.ServiceProxy.parameter.IS_MAIN] = false;
-
-					// Check to setup isMain parameter
-					if (
-						mainClassName != null
-						&& buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] == mainClassName.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME)
-						&& buffer[CMDBuild.ServiceProxy.parameter.VIEW_NAME] == mainClassName.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME)
-					) {
-						buffer[CMDBuild.ServiceProxy.parameter.IS_MAIN] = true;
-					}
+					buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME);
 
 					data.push(buffer);
 				}
@@ -76,7 +59,7 @@
 			var gridData = this.getData();
 
 			for (key in gridData) {
-				if (selectedClassArray.indexOf(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]) == -1)
+//				if (selectedClassArray.indexOf(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]) == -1)
 					selectedClassArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
 			}
 
@@ -84,20 +67,19 @@
 		},
 
 		/**
-		 * Function used from next step to get all selected view names
+		 * Function used from next step to get all selected source names
 		 *
-		 * @return (Array) selectedViewArray
+		 * @return (Array) selectedSourceArray
 		 */
-		getSelectedViewArray: function() {
-			var selectedViewArray = [];
+		getSelectedSourceArray: function() {
+			var selectedSourceArray = [];
 			var gridData = this.getData();
 
 			for (key in gridData) {
-				if (selectedViewArray.indexOf(gridData[key][CMDBuild.ServiceProxy.parameter.VIEW_NAME]) == -1)
-					selectedViewArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.VIEW_NAME]);
+				selectedSourceArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.SOURCE_NAME]);
 			}
 
-			return selectedViewArray;
+			return selectedSourceArray;
 		},
 
 		isEmptyMappingGrid: function() {
@@ -110,15 +92,12 @@
 		},
 
 		/**
-		 * Step validation (at least one class/view association and main view check)
+		 * Step validation (at least one class/source association)
 		 */
 		onStepEdit: function() {
 			this.view.gridEditorPlugin.completeEdit();
 
-			if (
-				!this.isEmptyMappingGrid()
-				&& this.view.gridSelectionModel.hasSelection()
-			) {
+			if (!this.isEmptyMappingGrid()) {
 				this.setDisabledButtonNext(false);
 			} else {
 				this.setDisabledButtonNext(true);
@@ -144,22 +123,6 @@
 
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep4Delegate', this);
 
-			this.gridSelectionModel = Ext.create('Ext.selection.CheckboxModel', {
-				mode: 'single',
-				showHeaderCheckbox: false,
-				headerText: CMDBuild.Translation.main,
-				headerWidth: 50,
-				dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_MAIN_NAME,
-				checkOnly: true,
-				selectByPosition: Ext.emptyFn, // FIX: to avoid checkbox selection on cellediting (workaround)
-
-				listeners: {
-					selectionchange: function(model, record, index, eOpts) {
-						me.delegate.cmOn('onStepEdit');
-					}
-				}
-			});
-
 			this.gridEditorPlugin = Ext.create('Ext.grid.plugin.CellEditing', {
 				clicksToEdit: 1
 			});
@@ -169,21 +132,17 @@
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 
-				selModel: this.gridSelectionModel,
 				plugins: this.gridEditorPlugin,
 
 				columns: [
 					{
-						header: tr.viewName,
-						dataIndex: CMDBuild.ServiceProxy.parameter.VIEW_NAME,
+						header: tr.sourceName,
+						dataIndex: CMDBuild.ServiceProxy.parameter.SOURCE_NAME,
 						editor: {
 							xtype: 'combo',
-							displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+							displayField: CMDBuild.ServiceProxy.parameter.NAME,
 							valueField: CMDBuild.ServiceProxy.parameter.NAME,
-							forceSelection: true,
-							editable: false,
-							allowBlank: false,
-							store: CMDBuild.core.proxy.CMProxyTasks.getViewStore(),
+							store: CMDBuild.core.proxy.CMProxyTasks.getSourceStore(),
 
 							listeners: {
 								select: function(combo, records, eOpts) {

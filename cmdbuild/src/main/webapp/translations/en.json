@@ -672,7 +672,9 @@
 			},
 			"modify": "Modify task",
 			"notificationForm": {
-				"title": "Send notification email"
+				"templateError": "Error template",
+				"title": "Send notification email",
+				"titlePlur": "Send notifications email"
 			},
 			"remove": "Remove task",
 			"running": "Running",
@@ -704,10 +706,10 @@
 				"recipientAddress": "Recipient address",
 				"referenceMapping": "@@ References mapping",
 				"senderAccount": "Sender account",
-				"toSynchronize": "To synchronize",
-				"viewAttribute": "@@ View attribute",
-				"viewName": "@@ View name",
-				"viewPrefix": "View prefix"
+				"sourceAttribute": "@@ Source attribute",
+				"sourceName": "@@ Source name",
+				"tableViewFilter": "Table/View filter",
+				"toSynchronize": "To synchronize"
 			},
 			"taskEmail": {
 				"attachmentsCategory": "Category",

@@ -58,14 +58,16 @@
 		 *
 		 * @return (Object) store
 		 */
-		getFilteredClassStore: function() {
+		getStoreFilteredClass: function() {
 			var store = _CMCache.getClassesStore();
 
 			store.filterBy(
 				function(record, id) {
-					if (CMDBuild.Utils.inArray(record.get(CMDBuild.ServiceProxy.parameter.NAME), this.delegateStep[3].getSelectedClassArray()))
+					if (CMDBuild.Utils.inArray(record.get(CMDBuild.ServiceProxy.parameter.NAME), this.delegateStep[3].getSelectedClassArray())) {
+						_debug('true');
 						return true;
-
+					}
+					_debug('false');
 					return false;
 				}, this
 			);
@@ -74,21 +76,20 @@
 		},
 
 		/**
-		 * Filter view store to delete unselected views
+		 * Filter source store to delete unselected views
 		 *
 		 * @return (Object) store
 		 */
-		getFilteredViewStore: function() {
-			var store = CMDBuild.core.proxy.CMProxyTasks.getViewStore();
+		getStoreFilteredSource: function() {
+			var sourceArray = this.delegateStep[3].getSelectedSourceArray();
+			var store = Ext.create('Ext.data.Store', {
+				autoLoad: true,
+				fields: [CMDBuild.ServiceProxy.parameter.NAME],
+				data: []
+			});
 
-			store.filterBy(
-				function(record, id) {
-					if (CMDBuild.Utils.inArray(record.get(CMDBuild.ServiceProxy.parameter.NAME), this.delegateStep[3].getSelectedViewArray()))
-						return true;
-
-					return false;
-				}, this
-			);
+			for(item in sourceArray)
+				store.add({ name: sourceArray[item] });
 
 			return store;
 		},
@@ -102,9 +103,14 @@ _debug(this.delegateStep[3].getData());
 
 _debug('Step 5 datas [4]');
 _debug(this.delegateStep[4].getData());
+_debug(Ext.encode(this.delegateStep[4].getData()));
 
 _debug('Step 6 datas [5]');
-_debug(this.delegateStep[5].getData());
+_debug(Ext.encode(this.delegateStep[5].getData()));
+
+_debug('Filtered class and source');
+_debug(this.getFilteredClassStore());
+_debug(this.getFilteredSourceStore());
 
 _debug(formData);
 
