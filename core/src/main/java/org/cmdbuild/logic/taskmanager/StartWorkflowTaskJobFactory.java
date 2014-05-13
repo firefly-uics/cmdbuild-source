@@ -1,29 +1,26 @@
 package org.cmdbuild.logic.taskmanager;
 
-import static com.google.common.collect.Maps.transformValues;
+import static org.cmdbuild.scheduler.command.SafeCommand.safe;
 
 import org.cmdbuild.logic.Action;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter.AbstractJobFactory;
 import org.cmdbuild.logic.workflow.StartProcess;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.scheduler.Job;
-import org.cmdbuild.services.scheduler.Command;
-import org.cmdbuild.services.scheduler.DefaultJob;
-import org.cmdbuild.services.scheduler.SafeCommand;
-
-import com.google.common.base.Functions;
+import org.cmdbuild.scheduler.command.BuildableCommandBasedJob;
+import org.cmdbuild.scheduler.command.Command;
 
 public class StartWorkflowTaskJobFactory extends AbstractJobFactory<StartWorkflowTask> {
 
-	private static class SchedulerCommandWrapper implements Command {
+	private static class StartProcessCommandWrapper implements Command {
 
-		public static SchedulerCommandWrapper of(final Action delegate) {
-			return new SchedulerCommandWrapper(delegate);
+		public static StartProcessCommandWrapper of(final Action delegate) {
+			return new StartProcessCommandWrapper(delegate);
 		}
 
 		private final Action delegate;
 
-		private SchedulerCommandWrapper(final Action delegate) {
+		private StartProcessCommandWrapper(final Action delegate) {
 			this.delegate = delegate;
 		}
 
@@ -48,23 +45,14 @@ public class StartWorkflowTaskJobFactory extends AbstractJobFactory<StartWorkflo
 	@Override
 	protected Job doCreate(final StartWorkflowTask task) {
 		final String name = task.getId().toString();
-		return DefaultJob.newInstance() //
+		final StartProcess startProcess = StartProcess.newInstance() //
+				.withWorkflowLogic(workflowLogic) //
+				.withClassName(task.getProcessClass()) //
+				.withAttributes(task.getAttributes()) //
+				.build();
+		return BuildableCommandBasedJob.newInstance() //
 				.withName(name) //
-				.withAction( //
-						SafeCommand.of( //
-								SchedulerCommandWrapper.of( //
-										StartProcess.newInstance() //
-												.withWorkflowLogic(workflowLogic) //
-												.withClassName(task.getProcessClass()) //
-												.withAttributes( //
-														transformValues( //
-																task.getAttributes(), //
-																Functions.identity()) //
-												) //
-												.build() //
-										) //
-								) //
-				) //
+				.withAction(safe(StartProcessCommandWrapper.of(startProcess))) //
 				.build();
 	}
 
