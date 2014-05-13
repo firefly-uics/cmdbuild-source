@@ -108,12 +108,13 @@
 						disabled: false
 					},
 					template: {
-						disabled: false
+						disabled: false,
+						fieldLabel: tr.notificationForm.templateError
 					}
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.notificationForm.title,
+					title: tr.notificationForm.titlePlur,
 					checkboxToggle: true,
 					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
 					collapsed: true,

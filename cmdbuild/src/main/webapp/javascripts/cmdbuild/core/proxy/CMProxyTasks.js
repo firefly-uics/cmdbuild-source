@@ -149,6 +149,7 @@
 				/**
 				 * @return (Object) store
 				 */
+				// TODO
 				getDbTypes: function() {
 					return Ext.create('Ext.data.Store', {
 						autoLoad: true,
@@ -212,14 +213,14 @@
 				/**
 				 * @return (Object) store
 				 */
-				getViewStore: function() {
+				getSourceStore: function() {
 					return Ext.create('Ext.data.Store', {
 						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+						fields: [CMDBuild.ServiceProxy.parameter.NAME],
 						data: [
-							{ name: 'ViewName1', description: 'View name 1' },
-							{ name: 'ViewName2', description: 'View name 2' },
-							{ name: 'ViewName3', description: 'View name 3' }
+							{ name: 'SourceName1' },
+							{ name: 'SourceName2' },
+							{ name: 'SourceName3' }
 						]
 					});
 				},
@@ -227,14 +228,14 @@
 				/**
 				 * @return (Object) store
 				 */
-				getViewAttributeNames: function(viewName) {
+				getSourceAttributeNames: function(viewName) {
 					return Ext.create('Ext.data.Store', {
 						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+						fields: [CMDBuild.ServiceProxy.parameter.NAME],
 						data: [
-							{ name: 'ViewAttributeName1', description: 'View attribute name 1' },
-							{ name: 'ViewAttributeName2', description: 'View attribute name 2' },
-							{ name: 'ViewAttributeName3', description: 'View attribute name 3' }
+							{ name: 'SourceAttributeName1' },
+							{ name: 'SourceAttributeName2' },
+							{ name: 'SourceAttributeName3' }
 						]
 					});
 				},

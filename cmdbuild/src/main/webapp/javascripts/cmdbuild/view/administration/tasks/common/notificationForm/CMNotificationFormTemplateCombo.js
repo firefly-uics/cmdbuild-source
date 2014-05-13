@@ -5,15 +5,14 @@
 
 		// Required
 		delegate: undefined,
-
 		fieldLabel: CMDBuild.Translation.administration.email.templates.template,
+
 		name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE,
 		valueField: CMDBuild.ServiceProxy.parameter.NAME,
 		displayField: CMDBuild.ServiceProxy.parameter.NAME,
 		store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
 		labelWidth: CMDBuild.LABEL_WIDTH,
-//		width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-		width: (CMDBuild.ADM_BIG_FIELD_WIDTH - CMDBuild.LABEL_WIDTH - 5), // FIX: To solve a problem of width
+		width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 		forceSelection: true,
 		editable: false,
 
