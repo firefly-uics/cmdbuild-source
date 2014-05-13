@@ -282,7 +282,11 @@ public class ModClass extends JSONBaseWithSpringContext {
 			attributesForClass = dataLogic.findClass(className).getAttributes();
 		}
 
-		out.put(ATTRIBUTES, AttributeSerializer.withView(dataLogic.getView()).toClient(attributesForClass, onlyActive));
+		final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
+				.withDataView(dataLogic.getView()) //
+				.withTranslationFacade(translationFacade()) //
+				.build();
+		out.put(ATTRIBUTES, attributeSerializer.toClient(attributesForClass, onlyActive));
 		return out;
 	}
 
@@ -370,7 +374,12 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.build();
 		final DataDefinitionLogic logic = dataDefinitionLogic();
 		final CMAttribute cmAttribute = logic.createOrUpdate(attribute);
-		final JSONObject result = AttributeSerializer.withView(logic.getView()).toClient(cmAttribute,
+
+		final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
+				.withDataView(logic.getView()) //
+				.withTranslationFacade(translationFacade()) //
+				.build();
+		final JSONObject result = attributeSerializer.toClient(cmAttribute,
 				buildMetadataForSerialization(attribute.getMetadata()));
 		serializer.put(ATTRIBUTE, result);
 		return serializer;
@@ -646,9 +655,11 @@ public class ModClass extends JSONBaseWithSpringContext {
 					final CMClass referencedClass = logic.findClass(referencedClassName);
 					if (referencedClass.isAncestorOf(targetClass)) {
 						final boolean serializeAlsoClassId = true;
-						final JSONObject jsonAttribute = AttributeSerializer //
-								.withView(logic.getView()) //
-								.toClient(attribute, serializeAlsoClassId);
+						final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
+								.withDataView(logic.getView()) //
+								.withTranslationFacade(translationFacade()) //
+								.build();
+						final JSONObject jsonAttribute = attributeSerializer.toClient(attribute, serializeAlsoClassId);
 
 						fk.put(jsonAttribute);
 					}

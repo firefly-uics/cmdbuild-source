@@ -30,6 +30,7 @@ public class ComunicationConstants {
 			CLASS_NAME = "className", //
 			CLASS_ID = "classId", //
 			CLASS_ID_CAPITAL = "IdClass", //
+			CLASS_DESCRIPTION = "text", //
 			CODE = "code", //
 			CODE_CAPITAL = "Code", //
 			CONFIGURATION = "configuration", //
@@ -43,7 +44,12 @@ public class ComunicationConstants {
 			DB_NAME = "db_name", //
 			DB_TYPE = "db_type", //
 			DEFAULT = "Default", //
+			DEFAULT_CLASS_DESCRIPTION = "text_default", //
+			DEFAULT_DESCRIPTION = "description_default", //
+			DEFAULT_DIRECT_DESCRIPTION = "descrdir_default", //
 			DEFAULT_GROUP = "defaultgroup", //
+			DEFAULT_INVERSE_DESCRIPTION = "descrinv_default", //
+			DEFAULT_MASTERDETAIL_LABEL = "md_label_default", //
 			DEFAULT_VALUE = "defaultvalue", //
 			DESCRIPTION = "description", //
 			DESCRIPTION_CAPITAL = "Description", //
@@ -51,6 +57,7 @@ public class ComunicationConstants {
 			DISABLED_ATTRIBUTES = "disabledAttributes", //
 			DETAIL_CARD_ID = "detailCardId", //
 			DETAIL_CLASS_NAME = "detailClassName", //
+			DIRECT_DESCRIPTION = "descrdir", //
 			DMS_ATTACHMENTS_LOOKUP = "alfrescoLookupType", //
 			DOMAIN = "domain", //
 			DOMAINS = "domains", //
@@ -110,6 +117,7 @@ public class ComunicationConstants {
 			INDEX = "index", //
 			INHERIT = "inherits", //
 			INHERITED = "inherited", //
+			INVERSE_DESCRIPTION = "descrinv", //
 			IS_ACTIVE = "isActive", //
 			IS_ADMINISTRATOR = "isAdministrator", //
 			IS_DEFAULT = "isDefault", //
@@ -134,6 +142,7 @@ public class ComunicationConstants {
 			MASTER = "master", //
 			MASTER_CARD_ID = "masterCardId", //
 			MASTER_CLASS_NAME = "masterClassName", //
+			MASTERDETAIL_LABEL = "md_label", //
 			MENU = "menu", //
 			META_DATA = "meta", //
 			NAME = "name", //
@@ -221,6 +230,7 @@ public class ComunicationConstants {
 			TASK_START_WORKFLOW = "workflow", //
 			TASK_SYNCHRONOUS_EVENT = "event_synchronous", //
 			TEMPORARY_ID = "temporaryId", //
+
 			TRANSLATIONS = "translations", //
 			VALUE = "value",//
 			VIEWNAME = "viewName", //

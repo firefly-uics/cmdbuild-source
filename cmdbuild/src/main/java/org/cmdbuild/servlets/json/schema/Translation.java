@@ -45,10 +45,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final ClassTranslation translation = new ClassTranslation();
-		translation.setName(className);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final ClassTranslation translation = ClassTranslation.newInstance() //
+				.withName(className) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().create(translation);
 	}
 
@@ -60,13 +61,13 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final AttributeClassTranslation translation = new AttributeClassTranslation();
-		translation.setName(className);
-		translation.setAttributeName(attributeName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final AttributeClassTranslation translation = AttributeClassTranslation.newInstance() //
+				.forClass(className) //
+				.withField(field) //
+				.withName(attributeName) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().create(translation);
-
 	}
 
 	@JSONExported
@@ -76,12 +77,12 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final DomainTranslation translation = new DomainTranslation();
-		translation.setName(domainName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final DomainTranslation translation = DomainTranslation.newInstance() //
+				.withName(domainName) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().create(translation);
-
 	}
 
 	@JSONExported
@@ -253,9 +254,10 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final ClassTranslation translation = new ClassTranslation();
-		translation.setName(className);
-		translation.setField(field);
+		final ClassTranslation translation = ClassTranslation.newInstance() //
+				.withName(className) //
+				.withField(field) //
+				.build();
 		final Map<String, String> translations = translationLogic().read(translation);
 		return JsonResponse.success(translations);
 	}
@@ -267,13 +269,13 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final AttributeClassTranslation translation = new AttributeClassTranslation();
-		translation.setName(className);
-		translation.setAttributeName(attributeName);
-		translation.setField(field);
+		final AttributeClassTranslation translation = AttributeClassTranslation.newInstance() //
+				.forClass(className) //
+				.withName(attributeName) //
+				.withField(field) //
+				.build();
 		final Map<String, String> translations = translationLogic().read(translation);
 		return JsonResponse.success(translations);
-
 	}
 
 	@JSONExported
@@ -282,9 +284,10 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = DOMAIN_NAME) final String domainName, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final DomainTranslation translation = new DomainTranslation();
-		translation.setName(domainName);
-		translation.setField(field);
+		final DomainTranslation translation = DomainTranslation.newInstance() //
+				.withName(domainName) //
+				.withField(field) //
+				.build();
 		final Map<String, String> translations = translationLogic().read(translation);
 		return JsonResponse.success(translations);
 
@@ -438,6 +441,9 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	}
 
+	/*
+	 * Translations: UPDATE
+	 */
 	@JSONExported
 	@Admin
 	public void updateForClass( //
@@ -445,10 +451,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final ClassTranslation translation = new ClassTranslation();
-		translation.setName(className);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final ClassTranslation translation = ClassTranslation.newInstance() //
+				.withName(className) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().update(translation);
 	}
 
@@ -460,13 +467,12 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final AttributeClassTranslation translation = new AttributeClassTranslation();
-		translation.setName(className);
-		translation.setAttributeName(attributeName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final AttributeClassTranslation translation = AttributeClassTranslation.newInstance() //
+				.forClass(className) //
+				.withName(attributeName) //
+				.withField(field) //
+				.build();
 		translationLogic().update(translation);
-
 	}
 
 	@JSONExported
@@ -476,10 +482,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final DomainTranslation translation = new DomainTranslation();
-		translation.setName(domainName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final DomainTranslation translation = DomainTranslation.newInstance() //
+				.withName(domainName) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().update(translation);
 
 	}
@@ -492,11 +499,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final AttributeDomainTranslation translation = new AttributeDomainTranslation();
-		translation.setName(domainName);
-		translation.setAttributeName(attributeName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final DomainTranslation translation = DomainTranslation.newInstance() //
+				.withName(domainName) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().update(translation);
 
 	}
@@ -654,10 +661,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final ClassTranslation translation = new ClassTranslation();
-		translation.setName(className);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final ClassTranslation translation = ClassTranslation.newInstance() //
+				.withName(className) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().delete(translation);
 	}
 
@@ -669,11 +677,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final AttributeClassTranslation translation = new AttributeClassTranslation();
-		translation.setName(className);
-		translation.setAttributeName(attributeName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final AttributeClassTranslation translation = AttributeClassTranslation.newInstance() //
+				.forClass(className) //
+				.withName(attributeName) //
+				.withField(field) //
+				.build();
 		translationLogic().delete(translation);
 
 	}
@@ -685,12 +693,12 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final DomainTranslation translation = new DomainTranslation();
-		translation.setName(domainName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final DomainTranslation translation = DomainTranslation.newInstance() //
+				.withName(domainName) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().delete(translation);
-
 	}
 
 	@JSONExported

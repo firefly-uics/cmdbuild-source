@@ -69,14 +69,12 @@
 				cmImmutable: true
 			});
 
-			this.treeDescription = new Ext.form.CMTranslatableText({
+			this.treeDescription = new Ext.form.TextField({
 				fieldLabel : CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : "description",
 				allowBlank : false,
-				translationsKeyType: "Tree", 
-				translationsKeyField: "Description",
 				vtype : 'cmdbcomment'
 			});
 			this.rootName = new CMDBuild.field.CMBaseCombo({

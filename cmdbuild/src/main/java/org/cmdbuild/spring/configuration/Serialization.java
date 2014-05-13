@@ -2,10 +2,12 @@ package org.cmdbuild.spring.configuration;
 
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
+import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
+import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,9 +25,20 @@ public class Serialization {
 	@Autowired
 	private Workflow workflow;
 
+	@Autowired
+	private Translation translation;
+
+	@Autowired
+	private LanguageStore languageStore;
+
 	@Bean
 	public CardSerializer cardSerializer() {
 		return new CardSerializer(data.systemDataAccessLogicBuilder(), relationAttributeSerializer());
+	}
+
+	@Bean
+	public TranslationFacade translationFacade() {
+		return new TranslationFacade(languageStore, translation.translationLogic());
 	}
 
 	@Bean
@@ -34,7 +47,8 @@ public class Serialization {
 		return new ClassSerializer( //
 				data.systemDataView(), //
 				workflow.systemWorkflowLogicBuilder(), //
-				privilegeManagement.userPrivilegeContext());
+				privilegeManagement.userPrivilegeContext(), //
+				translationFacade());
 	}
 
 	@Bean
@@ -42,7 +56,7 @@ public class Serialization {
 	public DomainSerializer domainSerializer() {
 		return new DomainSerializer( //
 				data.systemDataView(), //
-				privilegeManagement.userPrivilegeContext());
+				privilegeManagement.userPrivilegeContext(), translationFacade());
 	}
 
 	@Bean

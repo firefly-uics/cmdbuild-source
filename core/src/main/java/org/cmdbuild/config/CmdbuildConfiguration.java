@@ -42,4 +42,8 @@ public interface CmdbuildConfiguration {
 
 	void setLockCardTimeOut(long seconds);
 
+	String getEnabledLanguages();
+
+	void setEnabledLanguages(String enabledLanguages);
+
 }
