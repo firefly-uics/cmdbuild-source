@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.entry;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.joda.time.DateTime;
@@ -16,6 +17,8 @@ public interface CMEntry extends CMValueSet {
 	interface CMEntryDefinition {
 
 		CMEntryDefinition set(String key, Object value);
+
+		CMEntryDefinition set(Iterable<? extends Entry<String, ? extends Object>> keysAndValues);
 
 		CMEntryDefinition setUser(String user);
 
