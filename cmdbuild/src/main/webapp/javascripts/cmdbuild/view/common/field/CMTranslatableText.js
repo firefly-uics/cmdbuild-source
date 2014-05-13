@@ -35,7 +35,7 @@
 			this.text.disable();
 			this.translationsButton.disable();
 		},
-		resetLanguageButton: function() {
+		resetLanguages: function() {
 			if (_CMCache.isMultiLanguages()) {
 				this.translationsButton.show();
 			}
@@ -77,9 +77,9 @@
 			});
 			this.setButtonMargin();
 			this.items = [this.text, this.translationsButton];
-			_CMCache.registerTranslatableText(this);
+			_CMCache.registerOnTranslations(this);
 			this.callParent(arguments);
-			this.resetLanguageButton();
+			this.resetLanguages();
 		}
 	});
 	Ext.define("Ext.form.CMTranslatableTextArea", {

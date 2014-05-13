@@ -117,13 +117,15 @@ public class ModReport extends JSONBaseWithSpringContext {
 			} else {
 				for (final ReportParameter reportParameter : factory.getReportParameters()) {
 					final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
-					out.append("attribute", AttributeSerializer.withView(systemDataView()).toClient(attribute));
+					final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
+							.withDataView(systemDataView()) //
+							.withTranslationFacade(translationFacade()) //
+							.build();
+					out.append("attribute", attributeSerializer.toClient(attribute));
 				}
 			}
-
 			out.put("filled", filled);
 		}
-
 		sessionVars().setReportFactory(factory);
 		return out;
 	}
@@ -164,7 +166,11 @@ public class ModReport extends JSONBaseWithSpringContext {
 					for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 						final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
 						// FIXME should not be used in this way
-						out.append("attribute", AttributeSerializer.withView(systemDataView()).toClient(attribute));
+						final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
+								.withDataView(systemDataView()) //
+								.withTranslationFacade(translationFacade()) //
+								.build();
+						out.append("attribute", attributeSerializer.toClient(attribute));
 					}
 				}
 			}

@@ -21,15 +21,15 @@ import com.google.common.collect.Lists;
 
 public class DefaultTranslationLogic implements TranslationLogic {
 
-	private static final String DESCRIPTION_FOR_CLIENT = "Description";
+	public static final String DESCRIPTION_FOR_CLIENT = "Description";
 	private static final String DESCRIPTION_FOR_PERSISTENCE = "description";
-	private static final String DIRECT_DESCRIPTION_FOR_CLIENT = "directDescription";
+	public static final String DIRECT_DESCRIPTION_FOR_CLIENT = "directDescription";
 	private static final String DIRECT_DESCRIPTION_FOR_PERSISTENCE = "directdescription";
-	private static final String INVERSE_DESCRIPTION_FOR_CLIENT = "inverseDescription";
+	public static final String INVERSE_DESCRIPTION_FOR_CLIENT = "inverseDescription";
 	private static final String INVERSE_DESCRIPTION_FOR_PERSISTENCE = "inversedescription";
-	private static final String MASTER_DETAIL_LABEL_FOR_CLIENT = "masterDetailLabel";
+	public static final String MASTER_DETAIL_LABEL_FOR_CLIENT = "masterDetailLabel";
 	private static final String MASTER_DETAIL_LABEL_FOR_PERSISTENCE = "masterdetaillabel	";
-	private static final String BUTTON_LABEL_FOR_CLIENT = "ButtonLabel";
+	public static final String BUTTON_LABEL_FOR_CLIENT = "ButtonLabel";
 	private static final String BUTTON_LABEL_FOR_PERSISTENCE = "buttonlabel	";
 
 	private static enum FieldMapper {

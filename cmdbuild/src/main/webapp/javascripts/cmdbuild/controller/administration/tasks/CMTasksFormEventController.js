@@ -264,86 +264,45 @@ _debug(submitDatas);
 		 */
 		// overwrite
 		validate: function(enable, type) {
-			if (enable) {
-				switch (type) {
-					case 'asynchronous': {
-						// Cron field validation
-						this.delegateStep[3].getCronDelegate().validate(enable);
+			switch (type) {
+				case 'asynchronous': {
+					// Cron field validation
+					this.delegateStep[3].getCronDelegate().validate(enable);
 
-//						// Notification validation
-//						this.delegateStep[3].getNotificationDelegate().validate(
-//							this.delegateStep[3].getValueNotificationFieldsetCheckbox()
-//							&& enable
-//						);
+//					// Notification validation
+//					this.delegateStep[3].getNotificationDelegate().validate(
+//						this.delegateStep[3].getValueNotificationFieldsetCheckbox()
+//						&& enable
+//					);
 
-//						// Workflow form validation
-//						this.delegateStep[3].getWorkflowDelegate().validate(
-//							this.delegateStep[3].getValueWorkflowFieldsetCheckbox()
-//							&& enable
-//						);
+//					// Workflow form validation
+//					this.delegateStep[3].getWorkflowDelegate().validate(
+//						this.delegateStep[3].getValueWorkflowFieldsetCheckbox()
+//						&& enable
+//					);
 
-						// TODO
-					} break;
+					// TODO
+				} break;
 
-					case 'synchronous': {
-						this.delegateStep[0].setAllowBlankPhaseCombo(false);
+				case 'synchronous': {
+					// Phase validation
+					this.delegateStep[0].setAllowBlankPhaseCombo(!enable);
 
-						// Notification validation
-						this.delegateStep[2].getNotificationDelegate().validate(
-							this.delegateStep[2].getValueNotificationFieldsetCheckbox()
-							&& enable
-						);
+					// Notification validation
+					this.delegateStep[2].getNotificationDelegate().validate(
+						this.delegateStep[2].getValueNotificationFieldsetCheckbox()
+						&& enable
+					);
 
-						// Workflow form validation
-						this.delegateStep[2].getWorkflowDelegate().validate(
-							this.delegateStep[2].getValueWorkflowFieldsetCheckbox()
-							&& enable
-						);
-					} break;
+					// Workflow form validation
+					this.delegateStep[2].getWorkflowDelegate().validate(
+						this.delegateStep[2].getValueWorkflowFieldsetCheckbox()
+						&& enable
+					);
+				} break;
 
-					default:
-						throw 'CMTasksFormEventController validate error: type not recognized';
-				}
-			} else { // Restore "not required"
-				switch (type) {
-					case 'asynchronous': {
-						// Cron field validation
-						this.delegateStep[3].getCronDelegate().validate(enable);
-
-//						// Notification validation
-//						this.delegateStep[3].getNotificationDelegate().validate(
-//							this.delegateStep[3].getValueNotificationFieldsetCheckbox()
-//							&& enable
-//						);
-
-//						// Workflow form validation
-//						this.delegateStep[3].getWorkflowDelegate().validate(
-//							this.delegateStep[3].getValueWorkflowFieldsetCheckbox()
-//							&& enable
-//						);
-
-						// TODO
-					} break;
-
-					case 'synchronous': {
-						this.delegateStep[0].setAllowBlankPhaseCombo(true);
-
-						// Notification validation
-						this.delegateStep[2].getNotificationDelegate().validate(
-							this.delegateStep[2].getValueNotificationFieldsetCheckbox()
-							&& enable
-						);
-
-						// Workflow form validation
-						this.delegateStep[2].getWorkflowDelegate().validate(
-							this.delegateStep[2].getValueWorkflowFieldsetCheckbox()
-							&& enable
-						);
-					} break;
-
-					default:
-						throw 'CMTasksFormEventController validate error: type not recognized';
-				}
+				default:
+					throw 'CMTasksFormEventController validate error: type not recognized';
 			}
 
 			return this.callParent(arguments);
