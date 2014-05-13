@@ -58,6 +58,11 @@ public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConve
 		}
 
 		@Override
+		public void visit(final ConnectorTask task) {
+			job = factories.get(task.getClass()).create(task);
+		}
+
+		@Override
 		public void visit(final ReadEmailTask task) {
 			job = factories.get(task.getClass()).create(task);
 		}

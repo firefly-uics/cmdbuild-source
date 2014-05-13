@@ -12,6 +12,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
+import org.cmdbuild.logic.taskmanager.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.ReadEmail;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.StartWorkflow;
@@ -36,6 +37,53 @@ public class DefaultLogicAndStoreConverterTest {
 	@Before
 	public void setUp() throws Exception {
 		converter = new DefaultLogicAndStoreConverter();
+	}
+
+	@Test
+	public void connectorTaskSuccessfullyConvertedToStore() throws Exception {
+		// given
+		final ConnectorTask source = ConnectorTask.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withActiveStatus(true) //
+				.withCronExpression("cron expression") //
+				.build();
+
+		// when
+		final org.cmdbuild.data.store.task.Task converted = converter.from(source).toStore();
+
+		// then
+		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.ConnectorTask.class));
+		assertThat(converted.getId(), equalTo(42L));
+		assertThat(converted.getDescription(), equalTo("description"));
+		assertThat(converted.getCronExpression(), equalTo("cron expression"));
+		assertThat(converted.isRunning(), equalTo(true));
+
+		final Map<String, String> parameters = converted.getParameters();
+		assertThat(parameters.isEmpty(), is(true));
+	}
+
+	@Test
+	public void connectorTaskSuccessfullyConvertedToLogic() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.ConnectorTask source = org.cmdbuild.data.store.task.ConnectorTask
+				.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withRunningStatus(true) //
+				.withCronExpression("cron expression") //
+				.build();
+
+		// when
+		final Task _converted = converter.from(source).toLogic();
+
+		// then
+		assertThat(_converted, instanceOf(ConnectorTask.class));
+		final ConnectorTask converted = ConnectorTask.class.cast(_converted);
+		assertThat(converted.getId(), equalTo(42L));
+		assertThat(converted.getDescription(), equalTo("description"));
+		assertThat(converted.isActive(), equalTo(true));
+		assertThat(converted.getCronExpression(), equalTo("cron expression"));
 	}
 
 	@Test

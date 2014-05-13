@@ -50,6 +50,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		}
 
 		@Override
+		public void visit(final ConnectorTask task) {
+			schedulerFacade.create(task);
+		}
+
+		@Override
 		public void visit(final ReadEmailTask task) {
 			schedulerFacade.create(task);
 		}
@@ -164,6 +169,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			return new TaskVistor() {
 
 				@Override
+				public void visit(final ConnectorTask task) {
+					schedulerFacade.delete(task);
+				}
+
+				@Override
 				public void visit(final ReadEmailTask task) {
 					schedulerFacade.delete(task);
 				}
@@ -183,6 +193,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		private TaskVistor after() {
 			return new TaskVistor() {
+
+				@Override
+				public void visit(final ConnectorTask task) {
+					schedulerFacade.create(task);
+				}
 
 				@Override
 				public void visit(final ReadEmailTask task) {
@@ -229,6 +244,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			final org.cmdbuild.data.store.task.Task storable = converter.from(task).toStore();
 			store.delete(storable);
 			return null;
+		}
+
+		@Override
+		public void visit(final ConnectorTask task) {
+			schedulerFacade.delete(task);
 		}
 
 		@Override
@@ -285,6 +305,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		}
 
 		@Override
+		public void visit(final ConnectorTask task) {
+			schedulerFacade.create(task);
+		}
+
+		@Override
 		public void visit(final ReadEmailTask task) {
 			schedulerFacade.create(task);
 		}
@@ -335,6 +360,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			final Task task = converter.from(updated).toLogic();
 			task.accept(this);
 			return null;
+		}
+
+		@Override
+		public void visit(final ConnectorTask task) {
+			schedulerFacade.delete(task);
 		}
 
 		@Override

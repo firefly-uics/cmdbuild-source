@@ -326,6 +326,16 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		}
 
 		@Override
+		public void visit(final ConnectorTask task) {
+			this.target = org.cmdbuild.data.store.task.ConnectorTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withRunningStatus(task.isActive()) //
+					.withCronExpression(task.getCronExpression()) //
+					.build();
+		}
+
+		@Override
 		public void visit(final ReadEmailTask task) {
 			this.target = org.cmdbuild.data.store.task.ReadEmailTask.newInstance() //
 					.withId(task.getId()) //
@@ -424,6 +434,16 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 			source.accept(this);
 			Validate.notNull(target, "conversion error");
 			return target;
+		}
+
+		@Override
+		public void visit(final org.cmdbuild.data.store.task.ConnectorTask task) {
+			target = ConnectorTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withActiveStatus(task.isRunning()) //
+					.withCronExpression(task.getCronExpression()) //
+					.build();
 		}
 
 		@Override

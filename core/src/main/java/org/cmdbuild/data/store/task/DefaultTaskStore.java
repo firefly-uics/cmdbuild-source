@@ -82,6 +82,11 @@ public class DefaultTaskStore implements TaskStore {
 				}
 
 				@Override
+				public void visit(final ConnectorTask connectorTask) {
+					builder = ConnectorTaskDefinition.newInstance();
+				}
+
+				@Override
 				public void visit(final ReadEmailTask task) {
 					builder = ReadEmailTaskDefinition.newInstance();
 				}
@@ -114,6 +119,11 @@ public class DefaultTaskStore implements TaskStore {
 					definition.accept(this);
 					Validate.notNull(builder, "cannot create builder");
 					return builder;
+				}
+
+				@Override
+				public void visit(final ConnectorTaskDefinition connectorTaskDefinition) {
+					builder = ConnectorTask.newInstance();
 				}
 
 				@Override
