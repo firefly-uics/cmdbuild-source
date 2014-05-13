@@ -226,6 +226,7 @@ public class ComunicationConstants {
 			USER_NAME = "username", //
 			USER_STOPPABLE = "userstoppable", //
 			USER_TYPE = "user_type", //
+			TASK_CONNECTOR = "connector", //
 			TASK_READ_EMAIL = "email", //
 			TASK_START_WORKFLOW = "workflow", //
 			TASK_SYNCHRONOUS_EVENT = "event_synchronous", //
