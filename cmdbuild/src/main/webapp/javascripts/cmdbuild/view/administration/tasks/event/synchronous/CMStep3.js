@@ -26,10 +26,7 @@
 		},
 
 		checkWorkflowComboSelected: function() {
-			if (this.getValueWorkflowCombo())
-				return true;
-
-			return false;
+			return this.getValueWorkflowCombo();
 		},
 
 		// GETters functions

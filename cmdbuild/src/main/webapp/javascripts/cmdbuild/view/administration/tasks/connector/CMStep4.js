@@ -28,6 +28,9 @@
 			}
 		},
 
+		/**
+		 * @return (Array) data
+		 */
 		getData: function() {
 			var data = [];
 
@@ -58,10 +61,8 @@
 			var selectedClassArray = [];
 			var gridData = this.getData();
 
-			for (key in gridData) {
-//				if (selectedClassArray.indexOf(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]) == -1)
-					selectedClassArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
-			}
+			for (key in gridData)
+				selectedClassArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
 
 			return selectedClassArray;
 		},
@@ -75,20 +76,14 @@
 			var selectedSourceArray = [];
 			var gridData = this.getData();
 
-			for (key in gridData) {
+			for (key in gridData)
 				selectedSourceArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.SOURCE_NAME]);
-			}
 
 			return selectedSourceArray;
 		},
 
 		isEmptyMappingGrid: function() {
-			var gridData = this.getData();
-
-			if (Ext.isEmpty(gridData) || (gridData.length == 0))
-				return true;
-
-			return false;
+			return CMDBuild.Utils.isEmpty(this.getData());
 		},
 
 		/**
@@ -162,7 +157,7 @@
 							forceSelection: true,
 							editable: false,
 							allowBlank: false,
-							store: _CMCache.getClassesStore(),
+							store: CMDBuild.core.proxy.CMProxyTasks.getClassStore(),
 							queryMode: 'local',
 
 							listeners: {

@@ -5,8 +5,15 @@
 
 	Ext.define('CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController', {
 
-		senderCombo: undefined,
-		templateCombo: undefined,
+//		senderCombo: undefined,
+//		templateCombo: undefined,
+		/**
+		 * Array = [
+		 * 		'internalId': { Input object },
+		 * 		...
+		 * ]
+		 */
+		inputFields: {},
 
 		/**
 		 * Gatherer function to catch events

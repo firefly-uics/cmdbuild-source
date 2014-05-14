@@ -25,6 +25,17 @@
 	/*
 	 * Models for single tasks get proxy calls
 	 */
+	Ext.define('CMDBuild.model.CMModelTasks.singleTask.connector', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
+			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.ServiceProxy.parameter.ATTRIBUTE_MAPPING, type: 'auto'}
+		]
+	});
+
 	Ext.define('CMDBuild.model.CMModelTasks.singleTask.email', {
 		extend: 'Ext.data.Model',
 

@@ -708,8 +708,7 @@
 				"senderAccount": "Sender account",
 				"sourceAttribute": "@@ Source attribute",
 				"sourceName": "@@ Source name",
-				"tableViewFilter": "Table/View filter",
-				"toSynchronize": "To synchronize"
+				"tableViewFilter": "Table/View filter"
 			},
 			"taskEmail": {
 				"attachmentsCategory": "Category",
