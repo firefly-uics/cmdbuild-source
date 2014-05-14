@@ -149,10 +149,10 @@
 				stop: 'services/json/schema/taskmanager/stop',
 
 				connector: {
-					delete: '',
-					get: '',
-					post: '',
-					put: '',
+					delete: 'services/json/schema/taskmanager/connector/delete',
+					get: 'services/json/schema/taskmanager/connector/read',
+					post: 'services/json/schema/taskmanager/connector/create',
+					put: 'services/json/schema/taskmanager/connector/update',
 
 					getStore: 'services/json/schema/taskmanager/connector/readall',
 				},

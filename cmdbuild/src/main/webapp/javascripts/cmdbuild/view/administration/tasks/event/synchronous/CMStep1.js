@@ -40,10 +40,7 @@
 			},
 
 		isEmptyClass: function() {
-			if (this.view.classNameCombo.getValue())
-				return false;
-
-			return true;
+			return Ext.isEmpty(this.view.classNameCombo.getValue());
 		},
 
 		// SETters functions

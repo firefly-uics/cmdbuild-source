@@ -21,8 +21,6 @@
 		bodyCls: 'cmgraypanel',
 
 		initComponent: function() {
-//			var me = this;
-
 			// Buttons configuration
 			this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
 				scope: this,

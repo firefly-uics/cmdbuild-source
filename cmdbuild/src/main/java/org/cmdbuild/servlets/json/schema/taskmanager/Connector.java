@@ -2,6 +2,7 @@ package org.cmdbuild.servlets.json.schema.taskmanager;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE_MAPPING;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
@@ -26,6 +27,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.google.common.base.Function;
 
@@ -159,7 +162,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
-			@Parameter(ATTRIBUTE_MAPPING) final String jsonAttributeMapping //
+			@Parameter(value = ATTRIBUTE_MAPPING, required = false) final String jsonAttributeMapping //
 	) throws Exception {
 		final ConnectorTask task = ConnectorTask.newInstance() //
 				.withDescription(description) //
@@ -196,7 +199,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
-			@Parameter(ATTRIBUTE_MAPPING) final String jsonAttributeMapping //
+			@Parameter(value = ATTRIBUTE_MAPPING, required = false) final String jsonAttributeMapping //
 	) throws Exception {
 		final ConnectorTask task = ConnectorTask.newInstance() //
 				.withId(id) //
@@ -226,9 +229,11 @@ public class Connector extends JSONBaseWithSpringContext {
 
 	private Iterable<AttributeMapping> attributeMappingOf(final String json) throws JsonParseException,
 			JsonMappingException, IOException {
+		// TODO find a better way to provide a default empty JSON
+		final String _json = defaultIfBlank(json, new JSONArray().toString());
 		final Iterable<JsonAttributeMapping> jsonAttributeMappings = new ObjectMapper() //
 				.readValue( //
-						json, //
+						defaultString(_json), //
 						new TypeReference<Set<JsonAttributeMapping>>() {
 						});
 		return from(jsonAttributeMappings) //

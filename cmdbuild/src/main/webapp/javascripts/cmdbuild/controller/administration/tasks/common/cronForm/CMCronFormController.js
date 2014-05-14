@@ -111,17 +111,13 @@
 		},
 
 		isEmptyAdvanced: function() {
-			if (
+			return (
 				Ext.isEmpty(this.advancedField.advancedFields[0].getValue())
 				&& Ext.isEmpty(this.advancedField.advancedFields[1].getValue())
 				&& Ext.isEmpty(this.advancedField.advancedFields[2].getValue())
 				&& Ext.isEmpty(this.advancedField.advancedFields[3].getValue())
 				&& Ext.isEmpty(this.advancedField.advancedFields[4].getValue())
-			) {
-				return true;
-			}
-
-			return false;
+			);
 		},
 
 		isEmptyBase: function() {

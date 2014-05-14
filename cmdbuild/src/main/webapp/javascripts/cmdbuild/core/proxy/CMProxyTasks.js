@@ -105,7 +105,7 @@
 					case 'all':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks;
 
-					case 'connector': // TODO
+					case 'connector':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.connector;
 
 					case 'email':
@@ -131,21 +131,6 @@
 			/**
 			 * Connector specific proxies
 			 */
-				/**
-				 * @return (Object) store
-				 */
-				getConnectorOperations: function() {
-					return Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.VALUE],
-						data: [
-							{ name: 'New cards', value: 'NewCards' },
-							{ name: 'Edited cards', value: 'EditedCards' },
-							{ name: 'Deleted not matching cards', value: 'DeletedNotMatchingCards' }
-						]
-					});
-				},
-
 				/**
 				 * @return (Object) store
 				 */
@@ -213,6 +198,14 @@
 				/**
 				 * @return (Object) store
 				 */
+				getClassStore: function() {
+					return _CMCache.getClassesStore();
+				},
+
+				/**
+				 * @return (Object) store
+				 */
+				// TODO: delete or implement real server call
 				getSourceStore: function() {
 					return Ext.create('Ext.data.Store', {
 						autoLoad: true,
@@ -228,6 +221,7 @@
 				/**
 				 * @return (Object) store
 				 */
+				// TODO: delete or implement real server call
 				getSourceAttributeNames: function(viewName) {
 					return Ext.create('Ext.data.Store', {
 						autoLoad: true,
