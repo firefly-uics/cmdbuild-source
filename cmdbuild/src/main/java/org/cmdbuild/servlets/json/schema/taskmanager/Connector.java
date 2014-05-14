@@ -14,8 +14,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.cmdbuild.data.store.task.ConnectorTask.AttributeMapping;
 import org.cmdbuild.logic.taskmanager.ConnectorTask;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;

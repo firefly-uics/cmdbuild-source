@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.task.ConnectorTask.AttributeMapping;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter.AbstractJobFactory;
 import org.cmdbuild.scheduler.Job;
 import org.cmdbuild.scheduler.command.BuildableCommandBasedJob;
