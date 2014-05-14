@@ -26,8 +26,8 @@ public class StoreSynchronizerTest {
 		final Store right = mock(Store.class);
 		final Store target = mock(Store.class);
 		final Builder builder = StoreSynchronizer.newInstance() //
-				.setRight(right) //
-				.setTarget(target);
+				.withRight(right) //
+				.withTarget(target);
 
 		// when
 		builder.build();
@@ -39,8 +39,8 @@ public class StoreSynchronizerTest {
 		final Store left = mock(Store.class);
 		final Store target = mock(Store.class);
 		final Builder builder = StoreSynchronizer.newInstance() //
-				.setLeft(left) //
-				.setTarget(target);
+				.withLeft(left) //
+				.withTarget(target);
 
 		// when
 		builder.build();
@@ -52,8 +52,8 @@ public class StoreSynchronizerTest {
 		final Store left = mock(Store.class);
 		final Store target = mock(Store.class);
 		final Builder builder = StoreSynchronizer.newInstance() //
-				.setLeft(left) //
-				.setTarget(target);
+				.withLeft(left) //
+				.withTarget(target);
 
 		// when
 		builder.build();
@@ -66,9 +66,9 @@ public class StoreSynchronizerTest {
 		final Store right = mock(Store.class);
 		final Store target = mock(Store.class);
 		final Builder builder = StoreSynchronizer.newInstance() //
-				.setLeft(left) //
-				.setRight(right) //
-				.setTarget(target);
+				.withLeft(left) //
+				.withRight(right) //
+				.withTarget(target);
 
 		// when
 		builder.build();
@@ -89,9 +89,9 @@ public class StoreSynchronizerTest {
 				.thenReturn(NO_ENTRIES);
 		final Store target = mock(Store.class);
 		final StoreSynchronizer synchronizer = StoreSynchronizer.newInstance() //
-				.setLeft(left) //
-				.setRight(right) //
-				.setTarget(target) //
+				.withLeft(left) //
+				.withRight(right) //
+				.withTarget(target) //
 				.build();
 
 		// when
@@ -123,9 +123,9 @@ public class StoreSynchronizerTest {
 				.thenReturn(listOf(rightEntry));
 		final Store target = mock(Store.class);
 		final StoreSynchronizer synchronizer = StoreSynchronizer.newInstance() //
-				.setLeft(left) //
-				.setRight(right) //
-				.setTarget(target) //
+				.withLeft(left) //
+				.withRight(right) //
+				.withTarget(target) //
 				.build();
 
 		// when
@@ -154,9 +154,9 @@ public class StoreSynchronizerTest {
 				.thenReturn(listOf(rightOnlyEntry));
 		final Store target = mock(Store.class);
 		final StoreSynchronizer synchronizer = StoreSynchronizer.newInstance() //
-				.setLeft(left) //
-				.setRight(right) //
-				.setTarget(target) //
+				.withLeft(left) //
+				.withRight(right) //
+				.withTarget(target) //
 				.build();
 
 		// when

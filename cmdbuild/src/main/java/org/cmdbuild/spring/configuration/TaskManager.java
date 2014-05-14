@@ -137,7 +137,7 @@ public class TaskManager {
 
 	@Bean
 	protected ConnectorTaskJobFactory connectorTaskJobFactory() {
-		return new ConnectorTaskJobFactory();
+		return new ConnectorTaskJobFactory(data.systemDataView());
 	}
 
 	@Bean
