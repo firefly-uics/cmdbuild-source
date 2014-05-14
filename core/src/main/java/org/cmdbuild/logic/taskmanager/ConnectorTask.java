@@ -1,7 +1,14 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static com.google.common.collect.Iterables.addAll;
+
+import java.util.Collection;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.cmdbuild.data.store.task.ConnectorTask.AttributeMapping;
+
+import com.google.common.collect.Sets;
 
 public class ConnectorTask implements ScheduledTask {
 
@@ -11,6 +18,7 @@ public class ConnectorTask implements ScheduledTask {
 		private String description;
 		private Boolean active;
 		private String cronExpression;
+		private final Collection<AttributeMapping> attributeMappings = Sets.newHashSet();
 
 		private Builder() {
 			// use factory method
@@ -46,6 +54,11 @@ public class ConnectorTask implements ScheduledTask {
 			return this;
 		}
 
+		public Builder withAttributeMapping(final Iterable<? extends AttributeMapping> attributeMappings) {
+			addAll(this.attributeMappings, attributeMappings);
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -56,12 +69,14 @@ public class ConnectorTask implements ScheduledTask {
 	private final String description;
 	private final boolean active;
 	private final String cronExpression;
+	private final Iterable<AttributeMapping> attributeMappings;
 
 	private ConnectorTask(final Builder builder) {
 		this.id = builder.id;
 		this.description = builder.description;
 		this.active = builder.active;
 		this.cronExpression = builder.cronExpression;
+		this.attributeMappings = builder.attributeMappings;
 	}
 
 	@Override
@@ -87,6 +102,10 @@ public class ConnectorTask implements ScheduledTask {
 	@Override
 	public String getCronExpression() {
 		return cronExpression;
+	}
+
+	public Iterable<AttributeMapping> getAttributeMappings() {
+		return attributeMappings;
 	}
 
 	@Override

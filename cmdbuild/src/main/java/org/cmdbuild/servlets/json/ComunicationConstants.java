@@ -15,6 +15,7 @@ public class ComunicationConstants {
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTENAME = "attributeName", //
 			ATTRIBUTES = "attributes", //
+			ATTRIBUTE_MAPPING = "attributeMapping", //
 			BIM_LAYER = "bimLayer", //
 			BIM_PROJECTS = "bimProjects", //
 			BIM_ROOT = "root", //

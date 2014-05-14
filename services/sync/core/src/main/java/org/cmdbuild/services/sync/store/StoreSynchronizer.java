@@ -36,17 +36,17 @@ public class StoreSynchronizer implements Synchronizer {
 			Validate.notNull(target, "missing target");
 		}
 
-		public Builder setLeft(final Store left) {
+		public Builder withLeft(final Store left) {
 			this.left = left;
 			return this;
 		}
 
-		public Builder setRight(final Store right) {
+		public Builder withRight(final Store right) {
 			this.right = right;
 			return this;
 		}
 
-		public Builder setTarget(final Store target) {
+		public Builder withTarget(final Store target) {
 			this.target = target;
 			return this;
 		}
