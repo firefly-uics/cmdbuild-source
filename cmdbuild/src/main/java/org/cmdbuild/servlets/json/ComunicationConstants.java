@@ -54,6 +54,7 @@ public class ComunicationConstants {
 			DEFAULT_VALUE = "defaultvalue", //
 			DESCRIPTION = "description", //
 			DESCRIPTION_CAPITAL = "Description", //
+			DEFAULT_DESCRIPTION_CAPITAL = "Description_default", //
 			DISABLE = "disable", //
 			DISABLED_ATTRIBUTES = "disabledAttributes", //
 			DETAIL_CARD_ID = "detailCardId", //
@@ -160,6 +161,8 @@ public class ComunicationConstants {
 			OUT_OF_FILTER = "outOfFilter", //
 			PARAMS = "params", //
 			PARENT = "parent", //
+			PARENT_DESCRIPTION = "ParentDescription", //
+			DEFAULT_PARENT_DESCRIPTION = "ParentDescription_default", //
 			PARENT_ID = "ParentId", //
 			PASSWORD = "password", //
 			PATCHES = "patches", //

@@ -22,13 +22,14 @@ public abstract class AbstractAttributeValueVisitor implements CMAttributeTypeVi
 
 	protected final Object value;
 	protected final CMAttributeType<?> type;
-
+	protected final TranslationFacade translationFacade;
 	protected Object convertedValue;
 
-	public AbstractAttributeValueVisitor(final CMAttributeType<?> type, final Object value) {
+	public AbstractAttributeValueVisitor(final CMAttributeType<?> type, final Object value, TranslationFacade translationFacade) {
 		this.value = value;
 		this.type = type;
 		this.convertedValue = null;
+		this.translationFacade = translationFacade;
 	}
 
 	@Override

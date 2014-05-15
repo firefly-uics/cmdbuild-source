@@ -7,7 +7,7 @@ public class ClassTranslation extends BaseTranslation {
 	private ClassTranslation(final Builder builder) {
 		this.setField(builder.field);
 		this.setName(builder.name);
-		this.setTranslations(builder.tranlslations);
+		this.setTranslations(builder.translations);
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public class ClassTranslation extends BaseTranslation {
 
 		private String name;
 		private String field;
-		private Map<String, String> tranlslations;
+		private Map<String, String> translations;
 
 		private Builder() {
 		}
@@ -44,7 +44,7 @@ public class ClassTranslation extends BaseTranslation {
 		}
 
 		public Builder withTranslations(final Map<String, String> translations) {
-			this.tranlslations = translations;
+			this.translations = translations;
 			return this;
 		}
 
