@@ -58,6 +58,7 @@ import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
+import org.cmdbuild.servlets.json.serializers.DefaultTranslationFacade;
 import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
 
@@ -252,7 +253,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 	
 	protected TranslationFacade translationFacade() {
-		return applicationContext().getBean(TranslationFacade.class);
+		return applicationContext().getBean(DefaultTranslationFacade.class);
 	}
 
 	/*

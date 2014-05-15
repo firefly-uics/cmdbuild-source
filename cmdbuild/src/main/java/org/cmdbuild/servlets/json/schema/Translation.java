@@ -225,12 +225,12 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final LookupTranslation translation = new LookupTranslation();
-		translation.setName(lookupId);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final LookupTranslation translation = LookupTranslation.newInstance() //
+				.withName(lookupId) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().create(translation);
-
 	}
 
 	@JSONExported
@@ -419,9 +419,10 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = LOOKUPID) final String lookupId, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final LookupTranslation translation = new LookupTranslation();
-		translation.setName(lookupId);
-		translation.setField(field);
+		final LookupTranslation translation = LookupTranslation.newInstance() //
+				.withName(lookupId) //
+				.withField(field) //
+				.build();
 		final Map<String, String> translations = translationLogic().read(translation);
 		return JsonResponse.success(translations);
 
@@ -621,7 +622,6 @@ public class Translation extends JSONBaseWithSpringContext {
 		translation.setField(field);
 		translation.setTranslations(toMap(translations));
 		translationLogic().update(translation);
-
 	}
 
 	@JSONExported
@@ -631,12 +631,12 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final LookupTranslation translation = new LookupTranslation();
-		translation.setName(lookupId);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final LookupTranslation translation = LookupTranslation.newInstance() //
+				.withName(lookupId) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().update(translation);
-
 	}
 
 	@JSONExported
@@ -651,7 +651,6 @@ public class Translation extends JSONBaseWithSpringContext {
 		translation.setField(field);
 		translation.setTranslations(toMap(translations));
 		translationLogic().update(translation);
-
 	}
 
 	@JSONExported
@@ -683,7 +682,6 @@ public class Translation extends JSONBaseWithSpringContext {
 				.withField(field) //
 				.build();
 		translationLogic().delete(translation);
-
 	}
 
 	@JSONExported
@@ -715,7 +713,6 @@ public class Translation extends JSONBaseWithSpringContext {
 		translation.setField(field);
 		translation.setTranslations(toMap(translations));
 		translationLogic().delete(translation);
-
 	}
 
 	@JSONExported
@@ -841,10 +838,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final LookupTranslation translation = new LookupTranslation();
-		translation.setName(lookupId);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final LookupTranslation translation = LookupTranslation.newInstance() //
+				.withName(lookupId) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().delete(translation);
 
 	}
