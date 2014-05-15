@@ -106,7 +106,10 @@
 			fields: [
 				{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string' },
 				{ name: CMDBuild.ServiceProxy.parameter.VIEW_NAME, type: 'string' },
-				{ name: CMDBuild.ServiceProxy.parameter.IS_MAIN, type: 'boolean' }
+				{ name: CMDBuild.ServiceProxy.parameter.CREATE, type: 'boolean', defaultValue: true },
+				{ name: CMDBuild.ServiceProxy.parameter.UPDATE, type: 'boolean', defaultValue: true },
+				{ name: CMDBuild.ServiceProxy.parameter.DELETE, type: 'boolean', defaultValue: true },
+				{ name: CMDBuild.ServiceProxy.parameter.DELETION_TYPE, type: 'string' }
 			]
 		});
 

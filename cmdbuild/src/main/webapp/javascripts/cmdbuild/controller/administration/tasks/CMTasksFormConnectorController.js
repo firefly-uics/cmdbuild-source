@@ -150,6 +150,29 @@
 				if (!Ext.isEmpty(attributeMappingData))
 					submitDatas[CMDBuild.ServiceProxy.parameter.ATTRIBUTE_MAPPING] = Ext.encode(attributeMappingData);
 
+				var dataSourceType = this.delegateStep[2].getTypeDataSource();
+				if (dataSourceType) {
+					var configurationObject = {};
+
+					switch (dataSourceType) {
+						case 'db': {
+							configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_ADDRESS] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_ADDRESS];
+							configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_NAME] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_NAME];
+							configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PASSWORD] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PASSWORD];
+							configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PORT] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PORT];
+							configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_TYPE] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_TYPE];
+							configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_USERNAME] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_USERNAME];
+							configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_TABLE_VIEW_PREFIX] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_TABLE_VIEW_PREFIX];
+						} break;
+
+						default:
+							throw 'CMTasksFormConnectorController: onSaveButtonClick() datasource type not recognized';
+					}
+
+					submitDatas[CMDBuild.ServiceProxy.parameter.DATASOURCE_TYPE] = dataSourceType;
+					submitDatas[CMDBuild.ServiceProxy.parameter.DATASOURCE_CONFIGURATION] = Ext.encode(configurationObject);
+				}
+
 			// Data filtering to submit only right values
 			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
 			submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
@@ -167,23 +190,23 @@ _debug(Ext.encode(this.delegateStep[5].getData()));
 
 _debug(formData);
 _debug(submitDatas);
-			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
-				CMDBuild.core.proxy.CMProxyTasks.create({
-					type: this.taskType,
-					params: submitDatas,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
-			} else {
-				CMDBuild.core.proxy.CMProxyTasks.update({
-					type: this.taskType,
-					params: submitDatas,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
-			}
+//			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
+//				CMDBuild.core.proxy.CMProxyTasks.create({
+//					type: this.taskType,
+//					params: submitDatas,
+//					scope: this,
+//					success: this.success,
+//					callback: this.callback
+//				});
+//			} else {
+//				CMDBuild.core.proxy.CMProxyTasks.update({
+//					type: this.taskType,
+//					params: submitDatas,
+//					scope: this,
+//					success: this.success,
+//					callback: this.callback
+//				});
+//			}
 		}
 	});
 

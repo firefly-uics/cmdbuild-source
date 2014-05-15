@@ -93,12 +93,12 @@
 			// Email notification configuration
 				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
 					sender: {
-						disabled: false,
-						type: 'sender'
+						type: 'sender',
+						disabled: false
 					},
 					template: {
-						disabled: false,
 						type: 'template',
+						disabled: false,
 						fieldLabel: tr.notificationForm.templateError
 					}
 				});

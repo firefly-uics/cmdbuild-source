@@ -107,12 +107,8 @@
 				}
 			},
 
-			setValueNotificationAccount: function(value) {
-				this.getNotificationDelegate().setValueSender(value);
-			},
-
 			setValueNotificationTemplate: function(value) {
-				this.getNotificationDelegate().setValueTemplate(value);
+				this.getNotificationDelegate().setValue('template', value);
 			},
 
 			/**
@@ -217,6 +213,7 @@
 			// Email notification configuration
 				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
 					template: {
+						type: 'template',
 						disabled: false
 					}
 				});

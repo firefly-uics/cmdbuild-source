@@ -5,15 +5,13 @@
 
 	Ext.define('CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController', {
 
-//		senderCombo: undefined,
-//		templateCombo: undefined,
 		/**
 		 * Array = [
 		 * 		'internalId': { Input object },
 		 * 		...
 		 * ]
 		 */
-		inputFields: {},
+		inputFields: [],
 
 		/**
 		 * Gatherer function to catch events
@@ -31,18 +29,15 @@
 			}
 		},
 
-		isEmptySenderCombo: function() {
-			if (!Ext.isEmpty(this.senderCombo))
-				return Ext.isEmpty(this.senderCombo.getValue());
+		isEmpty: function() {
+			var returnBoolean = true;
 
-			return true;
-		},
+			for (field in this.inputFields) {
+				if (!Ext.isEmpty(this.inputFields[field]))
+					returnBoolean = Ext.isEmpty(this.inputFields[field].getValue());
+			}
 
-		isEmptyTemplateCombo: function() {
-			if (!Ext.isEmpty(this.templateCombo))
-				return Ext.isEmpty(this.templateCombo.getValue());
-
-			return true;
+			return returnBoolean;
 		},
 
 		/**
@@ -51,34 +46,23 @@
 		 * @param (Boolean) state
 		 */
 		setAllowBlankFields: function(state) {
-			if (!Ext.isEmpty(this.senderCombo))
-				this.senderCombo.allowBlank = state;
-
-			if (!Ext.isEmpty(this.templateCombo))
-				this.templateCombo.allowBlank = state;
-		},
-
-		/**
-		 * @param (String) value
-		 */
-		setValueSender: function(value) {
-			if (!Ext.isEmpty(value)) {
-				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				this.senderCombo.forceSelection = false;
-				this.senderCombo.setValue(value);
-				this.senderCombo.forceSelection = true;
+			for (field in this.inputFields[field]) {
+				if (!Ext.isEmpty(this.inputFields[field]))
+					this.inputFields[field].allowBlank = state;
 			}
 		},
 
 		/**
 		 * @param (String) value
 		 */
-		setValueTemplate: function(value) {
-			if (!Ext.isEmpty(value)) {
+		setValue: function(internalId, value) {
+			var inputField = this.inputFields[internalId];
+
+			if (!Ext.isEmpty(inputField) && !Ext.isEmpty(value)) {
 				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				this.templateCombo.forceSelection = false;
-				this.templateCombo.setValue(value);
-				this.templateCombo.forceSelection = true;
+				inputField.forceSelection = false;
+				inputField.setValue(value);
+				inputField.forceSelection = true;
 			}
 		},
 
@@ -90,14 +74,10 @@
 		 * @return (Boolean)
 		 */
 		validate: function(enable) {
-			if (
-				this.isEmptySenderCombo()
-				&& this.isEmptyTemplateCombo()
-				&& enable
-			) {
-				this.setAllowBlankCombo(false);
+			if (this.isEmpty() && enable) {
+				this.setAllowBlankFields(false);
 			} else {
-				this.setAllowBlankCombo(true);
+				this.setAllowBlankFields(true);
 			}
 		}
 	});
