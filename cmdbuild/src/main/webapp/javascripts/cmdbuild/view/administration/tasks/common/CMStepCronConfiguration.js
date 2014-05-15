@@ -58,9 +58,7 @@
 		},
 
 		listeners: {
-			/**
-			 * To correctly enable radio fields on tab show
-			 */
+			// To correctly enable radio fields on tab show
 			show: function(view, eOpts) {
 				this.cronForm.fireEvent('show', view, eOpts);
 			}

@@ -54,15 +54,7 @@
 				return this.view.workflowFieldset.checkboxCmp.getValue();
 			},
 
-			getValueNotificationFieldsetCheckbox: function() {
-				return this.view.notificationFieldset.checkboxCmp.getValue();
-			},
-
 		// SETters functions
-			setDisabledWorkflowAttributesGrid: function(state) {
-				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
-			},
-
 			/**
 			 * @param (Boolean) value
 			 */
@@ -74,12 +66,16 @@
 				}
 			},
 
+			setDisabledWorkflowAttributesGrid: function(state) {
+				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
+			},
+
 			setValueNotificationAccount: function(value) {
-				this.getNotificationDelegate().setValueSender(value);
+				this.getNotificationDelegate().setValue('sender', value);
 			},
 
 			setValueNotificationTemplate: function(value) {
-				this.getNotificationDelegate().setValueTemplate(value);
+				this.getNotificationDelegate().setValue('template', value);
 			},
 
 			setValueWorkflowAttributesGrid: function(value) {
@@ -119,9 +115,11 @@
 			// Email notification configuration
 				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
 					sender: {
+						type: 'sender',
 						disabled: false
 					},
 					template: {
+						type: 'template',
 						disabled: false
 					}
 				});

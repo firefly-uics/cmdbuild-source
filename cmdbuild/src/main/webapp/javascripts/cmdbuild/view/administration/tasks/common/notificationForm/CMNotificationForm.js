@@ -23,13 +23,13 @@
 		 * 		notificationInputIdentifier1: {
 		 * 			type: 'sender',
 		 * 			delegate: (Object),
-		 * 			inputlabel: (String),
+		 * 			fieldLabel: (String),
 		 * 			...
 		 * 		},
 		 * 		notificationInputIdentifier2: {
 		 * 			type: 'template',
 		 * 			delegate: (Object),
-		 * 			inputlabel: (String),
+		 * 			fieldLabel: (String),
 		 * 			...
 		 * 		},
 		 * 	}
@@ -63,33 +63,34 @@
 		},
 
 		initComponent: function() {
-//			var itemsArray = [];
-//
-//			if (!Ext.isEmpty(this.inputFieldsConfiguration)) {
-//				for (itemIndex in this.inputFieldsConfiguration) {
-//					var itemConfig = this.inputFieldsConfiguration[itemIndex];
-//					var inputField = null;
-//
-//					switch (itemConfig.type) {
-//						case 'sender': {
-//							if (!itemConfig.disabled)
-//								inputField = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormSenderCombo', itemConfig);
-//						} break;
-//
-//						case 'template': {
-//							if (!itemConfig.disabled)
-//								inputField = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormTemplateCombo', itemConfig);
-//						} break;
-//					}
-//
-//					this.inputFields.push(inputField);
-//					this.delegate.inputFields[itemIndex] = inputField; // Delegate inputFields array
-//				}
-//			}
-//
-//			Ext.apply(this, {
-//				items: this.inputFields
-//			});
+			this.inputFields = []; // Buffer reset
+			this.delegate.inputFields = []; // Delegate inputFields buffer reset
+
+			if (!Ext.isEmpty(this.inputFieldsConfiguration)) {
+				for (itemIndex in this.inputFieldsConfiguration) {
+					var itemConfig = this.inputFieldsConfiguration[itemIndex];
+					var inputField = null;
+
+					switch (itemConfig.type) {
+						case 'sender': {
+							if (!itemConfig.disabled)
+								inputField = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormSenderCombo', itemConfig);
+						} break;
+
+						case 'template': {
+							if (!itemConfig.disabled)
+								inputField = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormTemplateCombo', itemConfig);
+						} break;
+					}
+
+					this.inputFields.push(inputField);
+					this.delegate.inputFields[itemIndex] = inputField; // Delegate inputFields buffer array
+				}
+			}
+
+			Ext.apply(this, {
+				items: this.inputFields
+			});
 
 			this.callParent(arguments);
 		}

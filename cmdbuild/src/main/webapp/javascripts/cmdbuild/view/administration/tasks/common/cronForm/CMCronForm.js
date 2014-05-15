@@ -49,11 +49,14 @@
 		listeners: {
 			// To correctly enable radio fields on tab show
 			show: function(view, eOpts) {
-				if (this.delegate.isEmptyBase()) {
+				if (this.delegate.isEmptyBase())
 					this.delegate.setValueAdvancedRadio(true);
-				} else {
+
+				if (this.delegate.isEmptyAdvanced())
 					this.delegate.setValueBaseRadio(true);
-				}
+
+				if (!this.delegate.isEmptyBase() && !this.delegate.isEmptyAdvanced())
+					this.delegate.setValueBaseRadio(true);
 			}
 		}
 	});
