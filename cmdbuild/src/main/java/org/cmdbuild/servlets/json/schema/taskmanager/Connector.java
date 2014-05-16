@@ -2,25 +2,25 @@ package org.cmdbuild.servlets.json.schema.taskmanager;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE_MAPPING;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.*;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 
 import java.io.IOException;
 import java.util.Set;
 
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.logic.taskmanager.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfiguration;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -31,6 +31,7 @@ import com.google.common.base.Function;
 
 public class Connector extends JSONBaseWithSpringContext {
 
+	// TODO annotations
 	public static class JsonAttributeMapping {
 
 		private String sourceType;
@@ -159,13 +160,16 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
+			@Parameter(value = DATA_SOURCE_TYPE, required = false) final String dataSourceType, //
+			@Parameter(value = DATA_SOURCE_CONFIGURATION, required = false) final String jsonDataSourceConfiguration, //
 			@Parameter(ATTRIBUTE_MAPPING) final String jsonAttributeMapping //
 	) throws Exception {
 		final ConnectorTask task = ConnectorTask.newInstance() //
 				.withDescription(description) //
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
-				.withAttributeMapping(attributeMappingOf(jsonAttributeMapping)) //
+				.withSourceConfiguration(sourceConfigurationOf(dataSourceType, jsonDataSourceConfiguration)) //
+				.withAttributeMappings(attributeMappingOf(jsonAttributeMapping)) //
 				.build();
 		final Long id = taskManagerLogic().create(task);
 		return JsonResponse.success(id);
@@ -191,11 +195,13 @@ public class Connector extends JSONBaseWithSpringContext {
 
 	@Admin
 	@JSONExported
-	public JsonResponse update( //
+	public JsonResponse update( // //
 			@Parameter(ID) final Long id, //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
+			@Parameter(value = DATA_SOURCE_TYPE, required = false) final String dataSourceType, //
+			@Parameter(value = DATA_SOURCE_CONFIGURATION, required = false) final String jsonDataSourceConfiguration, //
 			@Parameter(ATTRIBUTE_MAPPING) final String jsonAttributeMapping //
 	) throws Exception {
 		final ConnectorTask task = ConnectorTask.newInstance() //
@@ -203,7 +209,8 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withDescription(description) //
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
-				.withAttributeMapping(attributeMappingOf(jsonAttributeMapping)) //
+				.withSourceConfiguration(sourceConfigurationOf(dataSourceType, jsonDataSourceConfiguration)) //
+				.withAttributeMappings(attributeMappingOf(jsonAttributeMapping)) //
 				.build();
 		taskManagerLogic().update(task);
 		return JsonResponse.success();
@@ -223,6 +230,53 @@ public class Connector extends JSONBaseWithSpringContext {
 	/*
 	 * Utilities
 	 */
+
+	private static enum JsonSourceConfigurationHandler {
+
+		SQL(DATA_SOURCE_TYPE_SQL) {
+
+			@Override
+			public SourceConfiguration convert(final String json) throws Exception {
+				final JsonNode jsonNode = objectMapper.readTree(json);
+				return SqlSourceConfiguration.newInstance() //
+						.withHost(jsonNode.get("host").asText()) //
+						.withPort(jsonNode.get("port").asInt()) //
+						.withUsername(jsonNode.get("username").asText()) //
+						.withPassword(jsonNode.get("password").asText()) //
+						.build();
+			}
+
+		}, //
+		;
+
+		private static final ObjectMapper objectMapper = new ObjectMapper();
+
+		public static JsonSourceConfigurationHandler of(final String type) {
+			JsonSourceConfigurationHandler found = null;
+			for (final JsonSourceConfigurationHandler element : values()) {
+				if (element.clientValue.equals(type)) {
+					found = element;
+					break;
+				}
+			}
+			Validate.notNull(found, "type '%s' not found", type);
+			return found;
+		}
+
+		private final String clientValue;
+
+		private JsonSourceConfigurationHandler(final String clientValue) {
+			this.clientValue = clientValue;
+		}
+
+		public abstract SourceConfiguration convert(String json) throws Exception;
+
+	}
+
+	private SourceConfiguration sourceConfigurationOf(final String type, final String jsonConfiguration)
+			throws Exception {
+		return JsonSourceConfigurationHandler.of(type).convert(jsonConfiguration);
+	}
 
 	private Iterable<AttributeMapping> attributeMappingOf(final String json) throws JsonParseException,
 			JsonMappingException, IOException {

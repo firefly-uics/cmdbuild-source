@@ -1,15 +1,17 @@
 package org.cmdbuild.services.sync.store.internal;
 
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.addAll;
+import static com.google.common.collect.Sets.newHashSet;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
 import org.cmdbuild.services.sync.store.Type;
 
-import static com.google.common.base.Predicates.*;
-import static com.google.common.collect.FluentIterable.*;
-import static com.google.common.collect.Iterables.*;
-import static com.google.common.collect.Sets.*;
+import com.google.common.base.Predicate;
 
 public class BuildableCatalog implements Catalog {
 
@@ -55,4 +57,18 @@ public class BuildableCatalog implements Catalog {
 		return types;
 	}
 
+	@Override
+	public <T extends Type> T getType(final String name, final Class<T> type) {
+		return from(types) //
+				.filter(type) //
+				.firstMatch(new Predicate<Type>() {
+
+					@Override
+					public boolean apply(final Type input) {
+						return input.getName().equals(name);
+					}
+
+				}) //
+				.orNull();
+	}
 }

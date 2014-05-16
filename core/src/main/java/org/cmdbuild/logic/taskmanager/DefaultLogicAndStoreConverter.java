@@ -1,28 +1,53 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.data.store.task.ConnectorTaskDefinition;
 import org.cmdbuild.data.store.task.ReadEmailTaskDefinition;
 import org.cmdbuild.data.store.task.StartWorkflowTaskDefinition;
 import org.cmdbuild.data.store.task.SynchronousEventTaskDefinition;
 import org.cmdbuild.data.store.task.TaskVisitor;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask.Phase;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 
 public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
+
+	/**
+	 * Container for all {@link ConnectorTaskDefinition} parameter names.
+	 */
+	public static class Connector {
+
+		private Connector() {
+			// prevents instantiation
+		}
+
+		private static final String ALL_PREFIX = "connector.";
+
+		private static final String MAPPING_PREFIX = ALL_PREFIX + "mapping.";
+
+		public static final String MAPPING_TYPE = MAPPING_PREFIX + "types";
+
+		private static final String MAPPING_SEPARATOR = ",";
+
+	}
 
 	/**
 	 * Container for all {@link ReadEmailTaskDefinition} parameter names.
@@ -147,6 +172,38 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public static final String ACTION_SCRIPT_SAFE = ACTION_SCRIPT_PREFIX + "safe";
 
 	}
+
+	private static final Function<AttributeMapping, String> ATTRIBUTE_MAPPING_TO_STRING = new Function<AttributeMapping, String>() {
+
+		@Override
+		public String apply(final AttributeMapping input) {
+			return Joiner.on(Connector.MAPPING_SEPARATOR) //
+					.join(asList( //
+							input.getSourceType(), //
+							input.getSourceAttribute(), //
+							input.getTargetType(), //
+							input.getTargetAttribute(), //
+							Boolean.toString(input.isKey()) //
+					));
+		}
+
+	};
+
+	private static final Function<String, AttributeMapping> STRING_TO_ATTRIBUTE_MAPPING = new Function<String, AttributeMapping>() {
+
+		@Override
+		public AttributeMapping apply(final String input) {
+			final List<String> elements = Splitter.on(Connector.MAPPING_SEPARATOR).splitToList(input);
+			return AttributeMapping.newInstance() //
+					.withSourceType(elements.get(0)) //
+					.withSourceAttribute(elements.get(1)) //
+					.withTargetType(elements.get(2)) //
+					.withTargetAttribute(elements.get(3)) //
+					.withKeyStatus(Boolean.parseBoolean(elements.get(4))) //
+					.build();
+		}
+
+	};
 
 	private static final String KEY_VALUE_SEPARATOR = "=";
 	private static final String GROUPS_SEPARATOR = ",";
@@ -332,6 +389,11 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withDescription(task.getDescription()) //
 					.withRunningStatus(task.isActive()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withParameter(Connector.MAPPING_TYPE, Joiner.on(LINE_SEPARATOR) //
+							.join( //
+							FluentIterable.from(task.getAttributeMappings()) //
+									.transform(ATTRIBUTE_MAPPING_TO_STRING)) //
+					) //
 					.build();
 		}
 
@@ -416,6 +478,8 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 	private static class DefaultStoreAsSourceConverter implements StoreAsSourceConverter, TaskVisitor {
 
+		private static final Iterable<AttributeMapping> NO_ATTRIBUTE_MAPPINGS = Collections.emptyList();
+
 		private static final Iterable<String> EMPTY_GROUPS = Collections.emptyList();
 		private static final Iterable<String> EMPTY_FILTERS = Collections.emptyList();
 		private static final Map<String, String> EMPTY_PARAMETERS = Collections.emptyMap();
@@ -438,11 +502,17 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		@Override
 		public void visit(final org.cmdbuild.data.store.task.ConnectorTask task) {
+			final String typeMapping = task.getParameter(Connector.MAPPING_TYPE);
 			target = ConnectorTask.newInstance() //
 					.withId(task.getId()) //
 					.withDescription(task.getDescription()) //
 					.withActiveStatus(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withAttributeMappings( //
+							isEmpty(typeMapping) ? NO_ATTRIBUTE_MAPPINGS : FluentIterable.from( //
+									Splitter.on(LINE_SEPARATOR) //
+											.split(typeMapping)) //
+									.transform(STRING_TO_ATTRIBUTE_MAPPING)) //
 					.build();
 		}
 
