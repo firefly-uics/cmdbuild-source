@@ -5,18 +5,17 @@
 	Ext.define('CMDBuild.view.administration.accordion.CMAccordionTasks', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		title: tr.title,
 		cmName: 'tasks',
+		title: tr.title,
 
 		constructor: function(){
 			this.callParent(arguments);
 			this.updateStore();
 		},
 
+		// overwrite
 		updateStore: function() {
-			var root = this.store.getRootNode();
-
-			root.appendChild([
+			this.store.getRootNode().appendChild([
 				{
 					id: 'all',
 					cmName: 'tasks',

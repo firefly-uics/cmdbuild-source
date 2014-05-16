@@ -4,6 +4,7 @@
 		extend: 'Ext.form.FieldContainer',
 
 		delegate: undefined,
+
 		inputFields: [],
 		inputFieldsConfiguration: undefined,
 		notificationFieldType: [ // Used to validate notification field types

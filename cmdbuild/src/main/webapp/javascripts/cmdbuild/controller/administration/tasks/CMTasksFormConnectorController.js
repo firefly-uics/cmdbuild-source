@@ -1,7 +1,5 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyEmailAccounts');
-
 	Ext.define("CMDBuild.controller.administration.tasks.CMTasksFormConnectorController", {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
@@ -207,6 +205,42 @@ _debug(submitDatas);
 //					callback: this.callback
 //				});
 //			}
+		},
+
+		/**
+		 * Task validation
+		 *
+		 * @param (Boolean) enable
+		 *
+		 * @return (Boolean)
+		 */
+		// overwrite
+		validate: function(enable) {
+			// TODO
+			return this.callParent(arguments);
+		},
+
+		/**
+		 * Function to validate single step grids deleting invalid fields
+		 *
+		 * @param (Object) gridStore
+		 */
+		validateStepGrid: function(gridStore) {
+			if (gridStore.count() > 0) {
+				gridStore.each(function(record, id) {
+					if (
+						!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
+						&& !CMDBuild.Utils.inArray(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME), this.delegateStep[3].getSelectedClassArray())
+					)
+						record.set(CMDBuild.ServiceProxy.parameter.CLASS_NAME, '');
+
+					if (
+						!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
+						&& !CMDBuild.Utils.inArray(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME), this.delegateStep[3].getSelectedSourceArray())
+					)
+						record.set(CMDBuild.ServiceProxy.parameter.SOURCE_NAME, '');
+				}, this);
+			}
 		}
 	});
 

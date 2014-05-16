@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
+
 		filterWindow: undefined,
 		view: undefined,
 
@@ -24,17 +25,28 @@
 			}
 		},
 
-		getCronDelegate: function() {
-			return this.view.cronForm.delegate;
-		},
+		// GETters functions
+			/**
+			 * @return (Object) delegate
+			 */
+			getCronDelegate: function() {
+				return this.view.cronForm.delegate;
+			},
 
-		setValueAdvancedFields: function(cronExpression) {
-			this.getCronDelegate().setValueAdvancedFields(cronExpression);
-		},
+		// SETters functions
+			/**
+			 * @param (String) cronExpression
+			 */
+			setValueAdvancedFields: function(cronExpression) {
+				this.getCronDelegate().setValueAdvancedFields(cronExpression);
+			},
 
-		setValueBase: function(value) {
-			this.getCronDelegate().setValueBase(value);
-		}
+			/**
+			 * @param (String) value
+			 */
+			setValueBase: function(value) {
+				this.getCronDelegate().setValueBase(value);
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.common.CMStepCronConfiguration', {

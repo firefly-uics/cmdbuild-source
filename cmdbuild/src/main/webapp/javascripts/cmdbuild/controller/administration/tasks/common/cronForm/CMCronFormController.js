@@ -33,7 +33,7 @@
 		/**
 		 * @param (Array) fields
 		 *
-		 * @return (String) cron expression
+		 * @return (String) cronExpression
 		 */
 		buildCronExpression: function(fields) {
 			var cronExpression = '';
@@ -54,7 +54,7 @@
 		 * @param (String) name
 		 * @param (String) label
 		 *
-		 * @return (Object) CMDBuild.view.common.field.CMCronTriggerField
+		 * @return (Object)
 		 */
 		createCronField: function(name, label) {
 			var me = this;
@@ -81,35 +81,42 @@
 			});
 		},
 
-		getBaseCombo: function() {
-			return this.baseField.baseCombo;
-		},
+		// GETters functions
+			/**
+			 * @return (Object)
+			 */
+			getBaseCombo: function() {
+				return this.baseField.baseCombo;
+			},
+
+			/**
+			 * Get cron form formatted values
+			 *
+			 * @param (Boolean) cronInputType
+			 *
+			 * @return (String) cronExpression
+			 */
+			getValue: function(cronInputType) {
+				var cronExpression;
+
+				if (cronInputType) {
+					cronExpression = this.buildCronExpression([
+						this.advancedField.advancedFields[0].getValue(),
+						this.advancedField.advancedFields[1].getValue(),
+						this.advancedField.advancedFields[2].getValue(),
+						this.advancedField.advancedFields[3].getValue(),
+						this.advancedField.advancedFields[4].getValue()
+					]);
+				} else {
+					cronExpression = this.baseField.baseCombo.getValue();
+				}
+
+				return cronExpression;
+			},
 
 		/**
-		 * Get cron form formatted values
-		 *
-		 * @param (Boolean) cronInputType
-		 *
-		 * @return (String) cronExpression
+		 * @return (Boolean)
 		 */
-		getValue: function(cronInputType) {
-			var cronExpression;
-
-			if (cronInputType) {
-				cronExpression = this.buildCronExpression([
-					this.advancedField.advancedFields[0].getValue(),
-					this.advancedField.advancedFields[1].getValue(),
-					this.advancedField.advancedFields[2].getValue(),
-					this.advancedField.advancedFields[3].getValue(),
-					this.advancedField.advancedFields[4].getValue()
-				]);
-			} else {
-				cronExpression = this.baseField.baseCombo.getValue();
-			}
-
-			return cronExpression;
-		},
-
 		isEmptyAdvanced: function() {
 			return (
 				Ext.isEmpty(this.advancedField.advancedFields[0].getValue())
@@ -120,89 +127,107 @@
 			);
 		},
 
+		/**
+		 * @return (Boolean)
+		 */
 		isEmptyBase: function() {
 			return Ext.isEmpty(this.baseField.baseCombo.getValue());
 		},
 
-		onChangeAdvancedRadio: function(value) {
-			this.setDisabledAdvancedFields(!value);
-			this.setDisabledBaseCombo(value);
-		},
-
-		onChangeBaseRadio: function(value) {
-			this.setDisabledAdvancedFields(value);
-			this.setDisabledBaseCombo(!value);
-		},
-
 		/**
-		 * Set fields as required/unrequired
-		 *
 		 * @param (Boolean) state
 		 */
-		setAllowBlankAdvancedFields: function(state) {
-			for(item in this.advancedField.advancedFields)
-				this.advancedField.advancedFields[item].allowBlank = state;
-		},
-
-		setDisabledAdvancedFields: function(value) {
-			for (var key in this.advancedField.advancedFields)
-				this.advancedField.advancedFields[key].setDisabled(value);
-		},
-
-		setDisabledBaseCombo: function(value) {
-			this.baseField.baseCombo.setDisabled(value);
+		onChangeAdvancedRadio: function(state) {
+			this.setDisabledAdvancedFields(!state);
+			this.setDisabledBaseCombo(state);
 		},
 
 		/**
-		 * @param (String) cronExpression
+		 * @param (Boolean) state
 		 */
-		setValueAdvancedFields: function(cronExpression) {
-			var values = cronExpression.split(' ');
-			var fields = this.advancedField.advancedFields;
-
-			for (var i = 0; i < fields.length; i++) {
-				if (values[i])
-					fields[i].setValue(values[i]);
-			}
+		onChangeBaseRadio: function(state) {
+			this.setDisabledAdvancedFields(state);
+			this.setDisabledBaseCombo(!state);
 		},
 
-		setValueAdvancedRadio: function(value) {
-			this.advancedField.advanceRadio.setValue(value);
-		},
+		// SETters functions
+			/**
+			 * Set fields as required/unrequired
+			 *
+			 * @param (Boolean) state
+			 */
+			setAllowBlankAdvancedFields: function(state) {
+				for(item in this.advancedField.advancedFields)
+					this.advancedField.advancedFields[item].allowBlank = state;
+			},
 
-		/**
-		 * Try to find the correspondence of advanced cronExpression in baseCombo's store
-		 *
-		 * @param (String) value
-		 */
-		setValueBase: function(value) {
-			var index = this.baseField.baseCombo.store.find(CMDBuild.ServiceProxy.parameter.VALUE, value);
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledAdvancedFields: function(state) {
+				for (var key in this.advancedField.advancedFields)
+					this.advancedField.advancedFields[key].setDisabled(state);
+			},
 
-			if (index > -1) {
-				this.baseField.baseCombo.setValue(value);
-			} else {
-				this.baseField.baseCombo.setValue();
-			}
-		},
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledBaseCombo: function(state) {
+				this.baseField.baseCombo.setDisabled(state);
+			},
 
-		setValueBaseRadio: function(value) {
-			this.baseField.baseRadio.setValue(value);
-		},
+			/**
+			 * @param (String) cronExpression
+			 */
+			setValueAdvancedFields: function(cronExpression) {
+				var values = cronExpression.split(' ');
+				var fields = this.advancedField.advancedFields;
+
+				for (var i = 0; i < fields.length; i++) {
+					if (values[i])
+						fields[i].setValue(values[i]);
+				}
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueAdvancedRadio: function(value) {
+				this.advancedField.advanceRadio.setValue(value);
+			},
+
+			/**
+			 * Try to find the correspondence of advanced cronExpression in baseCombo's store
+			 *
+			 * @param (String) value
+			 */
+			setValueBase: function(value) {
+				var index = this.baseField.baseCombo.store.find(CMDBuild.ServiceProxy.parameter.VALUE, value);
+
+				if (index > -1) {
+					this.baseField.baseCombo.setValue(value);
+				} else {
+					this.baseField.baseCombo.setValue();
+				}
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueBaseRadio: function(value) {
+				this.baseField.baseRadio.setValue(value);
+			},
 
 		/**
 		 * Cron form validation
 		 *
-		 * @return (Boolean)
+		 * @param (Boolean) enable
 		 */
 		validate: function(enable) {
-			if (
-				this.isEmptyAdvanced()
-				&& enable
-			) {
-				this.setAllowBlankAdvancedFields(false);
-			} else {
-				this.setAllowBlankAdvancedFields(true);
-			}
+			this.setValueAdvancedRadio(true);
+			this.setAllowBlankAdvancedFields(
+				!(this.isEmptyAdvanced() && enable)
+			);
 		}
 	});
 

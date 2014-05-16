@@ -12,13 +12,13 @@
 		delegate: undefined,
 
 		autoScroll: false,
+		bodyCls: 'cmgraypanel',
+		border: false,
 		buttonAlign: 'center',
+		cls: 'x-panel-body-default-framed cmbordertop',
+		frame: false,
 		layout: 'fit',
 		split: true,
-		frame: false,
-		border: false,
-		cls: 'x-panel-body-default-framed cmbordertop',
-		bodyCls: 'cmgraypanel',
 
 		initComponent: function() {
 			// Buttons configuration
@@ -57,7 +57,6 @@
 			];
 			// END: Buttons configuration
 
-			// Splitted-view wrapper
 			this.nameField = Ext.create('Ext.form.field.Text', {
 				name: CMDBuild.ServiceProxy.parameter.NAME,
 				itemId: CMDBuild.ServiceProxy.parameter.NAME,
@@ -66,6 +65,7 @@
 				allowBlank: false
 			});
 
+			// Splitted-view wrapper
 			this.wrapper = Ext.create('Ext.container.Container', {
 				region: 'center',
 				frame: false,
@@ -150,7 +150,14 @@
 			});
 
 			Ext.apply(this, {
-				tbar: this.cmTBar,
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP,
+						items: this.cmTBar
+					}
+				],
 				items: [this.wrapper],
 				buttons: this.cmButtons
 			});

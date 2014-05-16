@@ -4,6 +4,10 @@
 
 	Ext.define('CMDBuild.core.proxy.CMProxyTasks', {
 		statics: {
+
+			/**
+			 * @param (Object) parameters
+			 */
 			create: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
@@ -15,6 +19,9 @@
 				});
 			},
 
+			/**
+			 * @return (Object) store
+			 */
 			get: function(type) {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: false,
@@ -30,6 +37,9 @@
 				});
 			},
 
+			/**
+			 * @return (Object) store
+			 */
 			getStore: function(type) {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: false,
@@ -49,8 +59,11 @@
 				});
 			},
 
+			/**
+			 * @param (Object) parameters
+			 */
 			remove: function(parameters) {
-				CMDBuild.ServiceProxy.core.doRequest({
+				CMDBuild.Ajax.request({
 					method: 'POST',
 					url: this.getUrl(parameters.type).delete,
 					params: parameters.params,
@@ -60,8 +73,11 @@
 				});
 			},
 
+			/**
+			 * @param (Object) parameters
+			 */
 			start: function(parameters) {
-				CMDBuild.ServiceProxy.core.doRequest({
+				CMDBuild.Ajax.request({
 					method: 'POST',
 					url: this.getUrl('all').start,
 					params: parameters.params,
@@ -71,8 +87,11 @@
 				});
 			},
 
+			/**
+			 * @param (Object) parameters
+			 */
 			stop: function(parameters) {
-				CMDBuild.ServiceProxy.core.doRequest({
+				CMDBuild.Ajax.request({
 					method: 'POST',
 					url: this.getUrl('all').stop,
 					params: parameters.params,
@@ -82,6 +101,9 @@
 				});
 			},
 
+			/**
+			 * @param (Object) parameters
+			 */
 			update: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
@@ -134,7 +156,7 @@
 				/**
 				 * @return (Object) store
 				 */
-				// TODO
+				// TODO: get from server side
 				getDbTypes: function() {
 					return Ext.create('Ext.data.Store', {
 						autoLoad: true,
@@ -178,22 +200,6 @@
 //						]
 //					});
 //				},
-
-				/**
-				 * @return (Object) store
-				 */
-				getOperations: function() {
-					var tr = CMDBuild.Translation.administration.tasks.taskConnector.operationsTypes;
-
-					return Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.DESCRIPTION, CMDBuild.ServiceProxy.parameter.VALUE],
-						data: [
-							{ description: tr.none, value: 'none' },
-							{ description: tr.filter, value: 'filter' }
-						]
-					});
-				},
 
 				/**
 				 * @return (Object) store
@@ -310,11 +316,17 @@
 					});
 				},
 
+				/**
+				 * @param (Object) parameters
+				 */
 				getWorkflowAttributes: function(parameters) {
-					Ext.Ajax.request({
+					CMDBuild.Ajax.request({
+						method: 'POST',
 						url: CMDBuild.ServiceProxy.url.attribute.read,
 						params: parameters.params,
-						success: parameters.success
+						scope: parameters.scope,
+						success: parameters.success,
+						callback: parameters.callback
 					});
 				}
 		}

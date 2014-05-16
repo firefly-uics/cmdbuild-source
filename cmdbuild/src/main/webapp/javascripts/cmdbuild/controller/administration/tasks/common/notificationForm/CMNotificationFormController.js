@@ -29,56 +29,55 @@
 			}
 		},
 
+		/**
+		 * @return (Boolean) returnBoolean
+		 */
 		isEmpty: function() {
 			var returnBoolean = true;
 
-			for (field in this.inputFields) {
+			for (field in this.inputFields)
 				if (!Ext.isEmpty(this.inputFields[field]))
 					returnBoolean = Ext.isEmpty(this.inputFields[field].getValue());
-			}
 
 			return returnBoolean;
 		},
 
-		/**
-		 * Set fields as required/unrequired
-		 *
-		 * @param (Boolean) state
-		 */
-		setAllowBlankFields: function(state) {
-			for (field in this.inputFields[field]) {
-				if (!Ext.isEmpty(this.inputFields[field]))
-					this.inputFields[field].allowBlank = state;
-			}
-		},
+		// SETters functions
+			/**
+			 * Set fields as required/unrequired
+			 *
+			 * @param (Boolean) state
+			 */
+			setAllowBlankFields: function(state) {
+				for (field in this.inputFields)
+					if (!Ext.isEmpty(this.inputFields[field]))
+						this.inputFields[field].allowBlank = state;
+			},
 
-		/**
-		 * @param (String) value
-		 */
-		setValue: function(internalId, value) {
-			var inputField = this.inputFields[internalId];
+			/**
+			 * @param (String) internalId
+			 * @param (String) value
+			 */
+			setValue: function(internalId, value) {
+				var inputField = this.inputFields[internalId];
 
-			if (!Ext.isEmpty(inputField) && !Ext.isEmpty(value)) {
-				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				inputField.forceSelection = false;
-				inputField.setValue(value);
-				inputField.forceSelection = true;
-			}
-		},
+				if (!Ext.isEmpty(inputField) && !Ext.isEmpty(value)) {
+					// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+					inputField.forceSelection = false;
+					inputField.setValue(value);
+					inputField.forceSelection = true;
+				}
+			},
 
 		/**
 		 * Notification form validation
 		 *
 		 * @param (Boolean) enable
-		 *
-		 * @return (Boolean)
 		 */
 		validate: function(enable) {
-			if (this.isEmpty() && enable) {
-				this.setAllowBlankFields(false);
-			} else {
-				this.setAllowBlankFields(true);
-			}
+			this.setAllowBlankFields(
+				!(this.isEmpty() && enable)
+			);
 		}
 	});
 

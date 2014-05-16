@@ -105,9 +105,11 @@
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.notificationForm.titlePlur,
-					checkboxToggle: true,
 					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
+					checkboxToggle: true,
 					collapsed: true,
+					collapsible: true,
+					toggleOnTitleClick: true,
 
 					layout: {
 						type: 'vbox'
