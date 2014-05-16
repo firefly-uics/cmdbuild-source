@@ -33,9 +33,8 @@
 				}
 			}];
 
-			if (typeof this.content !== 'undefined') {
+			if (!Ext.isEmpty(this.content))
 				contentItems = this.content.split(this.textareaConcatParameter);
-			}
 
 			this.contentComponent = Ext.create('Ext.form.Panel', {
 				layout: {

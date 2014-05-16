@@ -25,41 +25,62 @@
 			}
 		},
 
+		/**
+		 * @return (String)
+		 */
 		checkWorkflowComboSelected: function() {
 			return this.getWorkflowDelegate().getValueCombo();
 		},
 
 		// GETters functions
+			/**
+			 * @return (Object) delegate
+			 */
 			getWorkflowDelegate: function() {
 				return this.view.workflowForm.delegate;
 			},
 
+			/**
+			 * @return (String)
+			 */
 			getValueWorkflowAttributeGrid: function() {
 				return this.getWorkflowDelegate().getValueGrid();
 			},
 
+			/**
+			 * @return (Boolean)
+			 */
 			getValueWorkflowFieldsetCheckbox: function() {
 				return this.view.workflowFieldset.checkboxCmp.getValue();
 			},
 
 		// SETters functions
+			/**
+			 * @param (Boolean) state
+			 */
 			setDisabledWorkflowAttributesGrid: function(state) {
 				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 			},
 
+			/**
+			 * @param (Object) value
+			 */
 			setValueWorkflowAttributesGrid: function(value) {
 				this.getWorkflowDelegate().setValueGrid(value);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueWorkflowCombo: function(value) {
 				this.getWorkflowDelegate().setValueCombo(value);
 			},
 
 			/**
-			 * @param (Boolean) value
+			 * @param (Boolean) state
 			 */
-			setValueWorkflowFieldsetCheckbox: function(value) {
-				if (value) {
+			setValueWorkflowFieldsetCheckbox: function(state) {
+				if (state) {
 					this.view.workflowFieldset.expand();
 				} else {
 					this.view.workflowFieldset.collapse();
@@ -87,9 +108,11 @@
 
 			this.workflowFieldset = Ext.create('Ext.form.FieldSet', {
 				title: tr.startWorkflow,
-				checkboxToggle: true,
 				checkboxName: CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE,
+				checkboxToggle: true,
 				collapsed: true,
+				collapsible: true,
+				toggleOnTitleClick: true,
 
 				layout: {
 					type: 'vbox',

@@ -8,8 +8,8 @@
 		delegate: undefined,
 
 		border: false,
-		frame: false,
 		cls: 'cmborderbottom',
+		frame: false,
 
 		initComponent: function() {
 			this.gridColumns = [
@@ -56,9 +56,7 @@
 				this.delegate.cmOn('onRowSelected');
 			},
 
-			/**
-			 * Event to load store on view display and first row selection as CMDbuild standard
-			 */
+			// Event to load store on view display and first row selection as CMDbuild standard
 			viewready: function() {
 				this.store.load({
 					scope: this,
@@ -71,20 +69,12 @@
 		},
 
 		/**
-		 * isDefault renderer to add icon in grid
+		 * Default column renderer to add icon in grid
 		 *
-		 * @param (Object) value
+		 * @param (Boolean) value
 		 */
 		defaultGridColumnRenderer: function(value) {
-			if(typeof value == 'boolean') {
-				if(value) {
-					value = '<img src="images/icons/tick.png" alt="Is Default" />';
-				} else {
-					value = null;
-				}
-			}
-
-			return value;
+			return value ? '<img src="images/icons/tick.png" alt="' + tr.isDefault + '" />' : null;
 		}
 	});
 
