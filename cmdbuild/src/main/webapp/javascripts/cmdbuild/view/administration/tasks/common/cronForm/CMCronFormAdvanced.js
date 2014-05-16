@@ -42,6 +42,7 @@
 						xtype: 'container',
 						frame: false,
 						border: false,
+
 						items: this.advancedFields
 					}
 				]

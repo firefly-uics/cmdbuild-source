@@ -22,7 +22,7 @@
 					return this.onBeforeEdit(param.fieldName, param.rowData);
 
 				case 'onCheckDelete':
-					return this.onCheckDelete(param);
+					return this.onCheckDelete(param.checked, param.rowIndex);
 
 				case 'onStepEdit':
 					return this.onStepEdit();
@@ -43,7 +43,7 @@
 				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
 				forceSelection: true,
 				editable: false,
-				allowBlank: false,
+				allowBlank: true,
 				store: CMDBuild.core.proxy.CMProxyTasks.getDeletionTypes(),
 
 				listeners: {
@@ -113,20 +113,14 @@
 		},
 
 		/**
-		 * Resetting deletionType combo value if checkbox is unchecked
+		 * Resetting deletionType cell value if checkbox is unchecked
 		 *
 		 * @param (Boolean) checked
+		 * @param (Int) rowIndex
 		 */
-		onCheckDelete: function(checked) {
-			if (!checked) {_debug('if');
-				var columnModel = this.view.classLevelMappingGrid.columns[5];
-				var columnEditor = columnModel.getEditor();
-
-				columnModel.setEditor({
-					xtype: 'textfield',
-					value: ''
-				});
-			}
+		onCheckDelete: function(checked, rowIndex) {
+			if (!checked)
+				this.view.classLevelMappingGrid.getStore().getAt(rowIndex).set(CMDBuild.ServiceProxy.parameter.DELETION_TYPE, '');
 		},
 
 		/**
@@ -135,7 +129,7 @@
 		 * @param (String) fieldName
 		 * @param (Object) rowData
 		 */
-		onBeforeEdit: function(fieldName, rowData) {_debug('onBeforeEdit');_debug(fieldName);_debug(rowData);
+		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
 				case CMDBuild.ServiceProxy.parameter.DELETION_TYPE: {
 					if (rowData[CMDBuild.ServiceProxy.parameter.DELETE]) {
@@ -343,12 +337,10 @@
 		listeners: {
 			// Disable next button only if grid haven't selected class
 			show: function(view, eOpts) {
-				var me = this;
-
 //				Ext.Function.createDelayed(function() { // HACK: to fix problem which fires show event before changeTab() function
-//					if (me.delegate.isEmptyMappingGrid())
-//						me.delegate.setDisabledButtonNext(true);
-//				}, 1)();
+//					if (this.delegate.isEmptyMappingGrid())
+//						this.delegate.setDisabledButtonNext(true);
+//				}, 1, this)();
 			}
 		}
 	});

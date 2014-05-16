@@ -128,7 +128,7 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : _CMProxy.parameter.DESCRIPTION,
 				allowBlank : false,
-				translationsKeyType: "ClassAttribute", 
+				translationsKeyType: "ClassAttribute",
 				translationsKeyField: "Description",
 				vtype : 'cmdbcomment'
 			});
@@ -354,13 +354,12 @@
 			this.buildBasePropertiesPanel();
 
 			this.specificProperties = new Ext.form.FieldSet({
-				margin: "0 0 5 5",
-				padding: "5 5 20 5",
+				margin: '0 0 0 3',
 				title : tr.typeProperties,
 				overflowY : "auto",
 				defaultType : "textfield",
 				flex: 1,
-				items : [
+				items: [
 					this.comboType,
 					this.stringLength,
 					this.decimalPrecision,
@@ -389,6 +388,13 @@
 			this.layout = {
 				type: 'hbox',
 				align: 'stretch'
+			};
+			this.defaults = {
+				flex: 1,
+				layout: {
+					type: 'vbox',
+					align: 'stretch'
+				}
 			};
 			this.items = [this.baseProperties, this.specificProperties];
 			this.callParent(arguments);
@@ -430,14 +436,14 @@
 
 		onAttributeSelected : function(attribute) {
 			this.reset();
-			
+
 			if (attribute) {
 				this.getForm().setValues(attribute.raw);
 				this.disableModify(enableCMTbar = true);
 				this.deleteButton.setDisabled(attribute.get("inherited"));
 				this.hideContextualFields();
 				this.showContextualFieldsByType(attribute.get("type"));
-	
+
 				this.referenceFilterMetadata = attribute.raw.meta || {};
 				this.referenceFilterMetadataDirty = false;
 				Ext.apply(this.attributeDescription, {
@@ -504,12 +510,12 @@
 
 		buildBasePropertiesPanel: function() {
 			this.baseProperties = new Ext.form.FieldSet({
-				title : tr.baseProperties,
-				padding: "5 5 20 5",
-				overflowY : "auto",
-				defaultType : "textfield",
+				title: tr.baseProperties,
+				margin: '0 3 0 0',
+				overflowY: "auto",
+				defaultType: "textfield",
 				flex: 1,
-				items : [
+				items: [
 					this.attributeName,
 					this.attributeDescription,
 					this.attributeGroup,
@@ -555,7 +561,7 @@
 			 * Someone has verified that disable the description
 			 * attribute could be a problem. This is true if
 			 * the class is used to fill a reference.
-			 * 
+			 *
 			 * So, deny to the user to turn it off
 			 */
 			if (this.attributeName.getValue() == "Description") {

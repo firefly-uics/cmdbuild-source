@@ -34,6 +34,9 @@
 			this.callParent(arguments);
 		},
 
+		/**
+		 * @param (Object) parameters - AccordionStoreModel
+		 */
 		// overwrite
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
@@ -50,9 +53,9 @@
 
 				// Fire show event on accordion click
 				this.view.fireEvent('show');
-			}
 
-			this.callParent(arguments);
+				this.callParent(arguments);
+			}
 		},
 
 		/**
@@ -100,7 +103,7 @@
 		buildFormController: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
 				this.form.delegate = Ext.create(
-					'CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(this.typeSerialize(type, 1)) + 'Controller',
+					'CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitalizeFirstLetter(this.typeSerialize(type, 1)) + 'Controller',
 					this.form
 				);
 				this.form.delegate.parentDelegate = this;
@@ -109,13 +112,15 @@
 		},
 
 		/**
+		 * Capitalize first string's letter
+		 *
 		 * @param (String) string
+		 *
 		 * @return (String) string - capitalized string
 		 */
-		capitaliseFirstLetter: function(string) {
-			if (typeof string == 'string') {
-				return string.charAt(0).toUpperCase() + string.slice(1);
-			}
+		capitalizeFirstLetter: function(string) {
+			if (typeof string == 'string')
+				string = string.charAt(0).toUpperCase() + string.slice(1);
 
 			return string;
 		},
@@ -143,7 +148,6 @@
 		 */
 		loadForm: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
-
 				// Clear all old tabs listeners
 				this.form.wizard.items.each(function(item) {
 					item.clearListeners();
@@ -152,7 +156,7 @@
 				this.form.wizard.removeAll();
 				this.form.delegate.delegateStep = [];
 
-				var items = Ext.create('CMDBuild.view.administration.tasks.' + this.typeSerialize(type, 0) + '.CMTaskTabs').getTabs();
+				var items = Ext.create('CMDBuild.view.administration.tasks.' + this.typeSerialize(type, 0) + '.CMTaskTabs');
 
 				for (key in items) {
 					items[key].delegate.parentDelegate = this.form.delegate; // Controller relations propagation
@@ -166,6 +170,11 @@
 			}
 		},
 
+		/**
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		onAddButtonClick: function(name, param, callBack) {
 			this.selectionModel.deselectAll();
 			this.buildFormController(param.type);
@@ -174,7 +183,7 @@
 		},
 
 		onItemDoubleClick: function() {
-			return this.form.delegate.onModifyButtonClick();
+			this.form.delegate.onModifyButtonClick();
 		},
 
 		/**
@@ -190,9 +199,8 @@
 			if (
 				!this.form.delegate
 				|| (this.form.delegate.taskType != selectedType)
-			) {
+			)
 				this.buildFormController(selectedType);
-			}
 
 			if (this.form.delegate)
 				this.form.delegate.cmOn(name, param, callBack);
@@ -228,6 +236,11 @@
 			});
 		},
 
+		/**
+		 * @param (Object) result
+		 * @param (Object) options
+		 * @param (Object) decodedResult
+		 */
 		success: function(result, options, decodedResult) {
 			var me = this;
 
@@ -254,11 +267,11 @@
 		 *
 		 * @param (String) type
 		 * @param (Imt) itemsToReturn
-		 * @return (String) class path string for type
+		 *
+		 * @return (String)
 		 */
 		typeSerialize: function(type, itemsToReturn) {
 			var splittedType = type.split('_');
-			var returnString;
 
 			if (
 				splittedType.length > 1

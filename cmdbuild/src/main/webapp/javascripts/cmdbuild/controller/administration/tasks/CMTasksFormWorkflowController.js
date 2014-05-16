@@ -48,6 +48,11 @@
 			}
 		},
 
+		/**
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		// overwrite
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
@@ -148,6 +153,13 @@
 			}
 		},
 
+		/**
+		 * Task validation
+		 *
+		 * @param (Boolean) enable
+		 *
+		 * @return (Boolean)
+		 */
 		// overwrite
 		validate: function(enable) {
 			// Cron field validation

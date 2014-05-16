@@ -3,16 +3,16 @@
 	Ext.define('CMDBuild.core.fixes.CMFixCheckboxModel', {
 		override: 'Ext.selection.CheckboxModel',
 
-		headerText: '&#160;',
-		headerAlign: 'center',
 		dataIndex: '',
+		headerAlign: 'center',
+		headerText: '&#160;',
 
 		/**
 		 * Fixed to accept also headerText, align, dataIndex - 18/04/2014
 		 */
 		getHeaderConfig: function() {
-			var me = this,
-				showCheck = me.showHeaderCheckbox !== false;
+			var me = this;
+			var showCheck = me.showHeaderCheckbox !== false;
 
 			return {
 					isCheckerHd: showCheck,
@@ -37,7 +37,9 @@
 		 */
 		renderer: function(value, metaData, record, rowIndex, colIndex, store, view) {
 			var baseCSSPrefix = Ext.baseCSSPrefix;
+
 			metaData.tdCls = baseCSSPrefix + 'grid-cell-special ' + baseCSSPrefix + 'grid-cell-row-checker';
+
 			return '<div class="' + baseCSSPrefix + 'grid-row-checker" style="margin: 0px auto;">&#160;</div>';
 		}
 	});

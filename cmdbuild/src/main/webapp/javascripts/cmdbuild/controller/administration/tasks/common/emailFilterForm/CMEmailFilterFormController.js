@@ -6,9 +6,9 @@
 
 		buttonField: undefined,
 		filterWindow: undefined,
-		textareaField: undefined,
 		textAreaFieldValueBuffer: undefined,
 		textareaConcatParameter: ' OR ',
+		textareaField: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -42,6 +42,7 @@
 		 * Concats array's items with textareaConcatParameter
 		 *
 		 * @param (Array) parameters
+		 *
 		 * @return (String) filterString
 		 */
 		filterStringBuild: function(parameters) {
@@ -49,8 +50,8 @@
 				var filterString = '';
 
 				for (key in parameters) {
-					if (parameters[key] != '') {
-						if (filterString != '')
+					if (!Ext.isEmpty(parameters[key])) {
+						if (!Ext.isEmpty(filterString))
 							filterString = filterString + this.getTextareaConcatParameter();
 
 						filterString = filterString.concat(parameters[key]);
@@ -63,9 +64,13 @@
 			return filterString;
 		},
 
-		getTextareaConcatParameter: function() {
-			return this.textareaConcatParameter;
-		},
+		// GETters functions
+			/**
+			 * @return (String)
+			 */
+			getTextareaConcatParameter: function() {
+				return this.textareaConcatParameter;
+			},
 
 		/**
 		 * Creates filter window structure
@@ -108,9 +113,13 @@
 			this.filterWindow.hide();
 		},
 
-		setValue: function(filterString) {
-			this.textareaField.setValue(filterString);
-		}
+		// SETters functions
+			/**
+			 * @param (String) value
+			 */
+			setValue: function(value) {
+				this.textareaField.setValue(value);
+			}
 	});
 
 })();

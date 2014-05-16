@@ -5,6 +5,15 @@
 	Ext.define('CMDBuild.controller.administration.email.CMEmailTemplatesController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
+		form: undefined,
+		grid: undefined,
+		selectedName: undefined,
+		selectionModel: undefined,
+		view: undefined,
+
+		/**
+		 * @param (Object) view
+		 */
 		// Overwrite
 		constructor: function(view) {
 			this.callParent(arguments);
@@ -16,7 +25,6 @@
 			this.grid.delegate = this;
 			this.form.delegate = this;
 
-			this.selectedName = null;
 			this.selectionModel = this.grid.getSelectionModel();
 		},
 
@@ -60,7 +68,7 @@
 		},
 
 		onAbortButtonClick: function() {
-			if (this.selectedName != null) {
+			if (!Ext.isEmpty(this.selectedName)) {
 				this.onRowSelected();
 			} else {
 				this.form.reset();
@@ -89,9 +97,8 @@
 				scope: this,
 				buttons: Ext.Msg.YESNO,
 				fn: function(button) {
-					if (button == 'yes') {
+					if (button == 'yes')
 						this.removeItem();
-					}
 				}
 			});
 		},
@@ -116,17 +123,15 @@
 		},
 
 		onSaveButtonClick: function() {
-			var nonvalid = this.form.getNonValidFields();
-
-			if (nonvalid.length > 0) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+			// Stop save process if not valid
+			if (!this.validate(this.form))
 				return;
-			}
 
 			CMDBuild.LoadMask.get().show();
+
 			var formData = this.form.getData(true);
 
-			if (formData.id == null || formData.id == '') {
+			if (Ext.isEmpty(formData.id)) {
 				CMDBuild.core.proxy.CMProxyEmailTemplates.create({
 					params: formData,
 					scope: this,
@@ -144,10 +149,9 @@
 		},
 
 		removeItem: function() {
-			if (this.selectedName == null) {
-				// Nothing to remove
+			// Nothing to remove
+			if (Ext.isEmpty(this.selectedName))
 				return;
-			}
 
 			var me = this;
 			var store = this.grid.store;
@@ -171,6 +175,11 @@
 			});
 		},
 
+		/**
+		 * @param (Object) result
+		 * @param (Object) options
+		 * @param (Object) decodedResult
+		 */
 		success: function(result, options, decodedResult) {
 			var me = this;
 			var store = this.grid.store;
