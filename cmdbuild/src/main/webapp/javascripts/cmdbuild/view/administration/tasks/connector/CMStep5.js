@@ -429,15 +429,16 @@
 		listeners: {
 			// Disable next button only if grid haven't selected class and setup class and source combo editors
 			show: function(view, eOpts) {
-				var me = this;
-
 				this.delegate.buildSourceCombo();
 				this.delegate.buildClassCombo();
 
+				// Step validate
+				this.delegate.parentDelegate.validateStepGrid(this.attributeLevelMappingGrid.getStore());
+
 //				Ext.Function.createDelayed(function() { // HACK: to fix problem witch fires show event before changeTab() function
-//					if (me.delegate.isEmptyMappingGrid())
-//						me.delegate.setDisabledButtonNext(true);
-//				}, 1)();
+//					if (this.delegate.isEmptyMappingGrid())
+//						this.delegate.setDisabledButtonNext(true);
+//				}, 1, this)();
 			}
 		}
 	});

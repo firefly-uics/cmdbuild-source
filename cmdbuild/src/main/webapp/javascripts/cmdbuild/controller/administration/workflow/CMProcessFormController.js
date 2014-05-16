@@ -1,6 +1,7 @@
 (function() {
+
 	var tr = CMDBuild.Translation.administration.modClass.classProperties;
-	
+
 	Ext.define("CMDBuild.controller.administration.workflow.CMProcessFormController", {
 		extend: "CMDBuild.controller.administration.classes.CMClassFormController",
 
@@ -25,7 +26,7 @@
 
 				// Fill the version combo
 				CMDBuild.Ajax.request({
-					url : 'services/json/workflow/xpdlversions',
+					url: 'services/json/workflow/xpdlversions',
 					method: 'POST',
 					params: {idClass : id},
 					scope: this.view,
@@ -37,17 +38,18 @@
 						store.removeAll();
 						for(var i=0; i<versions.length; i++) {
 							var v = versions[i];
+
 							store.add({id: v, index: v});
 						}
-						store.add({id: "template", index: 0});
-			
+						store.add({ id: "template", index: 0 });
+
 						store.sort([
 							{
 								property : "index",
 								direction: 'DESC'
 							}
 						]);
-			
+
 						this.versionCombo.setValue(store.getAt(0).getId());
 					},
 
@@ -57,7 +59,7 @@
 				});
 			}
 		},
-		
+
 		onAddClassButtonClick: function() {
 			this.selection = null;
 			this.view.onAddClassButtonClick();
@@ -66,7 +68,8 @@
 
 		// override
 		buildSaveParams: function() {
-			var params = this.callParent(arguments)
+			var params = this.callParent(arguments);
+
 			params.isprocess = true;
 
 			return params;
@@ -81,6 +84,7 @@
 		//override
 		deleteSuccessCB: function(r) {
 			var removedClassId = this.selection.get("id");
+
 			_CMCache.onProcessDeleted(removedClassId);
 
 			this.selection = null;
@@ -92,6 +96,7 @@
 		CMDBuild.LoadMask.get().show();
 
 		var basicForm = this.view.xpdlForm.getForm();
+
 		basicForm.standardSubmit = false;
 
 		basicForm.submit({
@@ -105,8 +110,9 @@
 				var messages = (Ext.decode(action.response.responseText) || {}).response;
 				if (messages && messages.length > 0) {
 					var msg = "";
+
 					for (var i=0, len=messages.length; i<len; ++i) {
-						msg += "<p>" 
+						msg += "<p>"
 							+ CMDBuild.Translation.administration.modWorkflow.xpdlUpload[messages[i]]
 							+ "<p>";
 					}
@@ -120,9 +126,10 @@
 			}
 		});
 	}
-	
+
 	function onDownloadSubmitClick() {
 		var version = this.view.versionCombo.getValue(),
+
 		url = "";
 
 		if (version == 'template' || !version) {
@@ -143,4 +150,5 @@
 			}
 		});
 	}
+
 })();

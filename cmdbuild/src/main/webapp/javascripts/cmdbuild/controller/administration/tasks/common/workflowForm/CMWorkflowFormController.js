@@ -40,9 +40,8 @@
 			if (attributes) {
 				var data = [];
 
-				for (var key in attributes) {
+				for (var key in attributes)
 					data.push({ value: key });
-				}
 
 				return Ext.create('Ext.data.Store', {
 					fields: [CMDBuild.ServiceProxy.parameter.VALUE],
@@ -60,27 +59,37 @@
 		cleanServerAttributes: function(attributes) {
 			var out = {};
 
-			for (var i = 0, l = attributes.length; i < l; ++i) {
-				var attr = attributes[i];
-
-				out[attr.name] = '';
-			}
+			for (item in attributes)
+				out[attributes[item].name] = '';
 
 			return out;
 		},
 
-		getValueCombo: function() {
-			return this.comboField.getValue();
-		},
+		// GETters functions
+			/**
+			 * @return (String)
+			 */
+			getValueCombo: function() {
+				return this.comboField.getValue();
+			},
 
-		getValueGrid: function() {
-			return this.gridField.getData();
-		},
+			/**
+			 * @return (Object)
+			 */
+			getValueGrid: function() {
+				return this.gridField.getData();
+			},
 
+		/**
+		 * @return (Boolean)
+		 */
 		isEmptyCombo: function() {
 			return Ext.isEmpty(this.comboField.getValue());
 		},
 
+		/**
+		 * @return (Int) rowIndex
+		 */
 		onSelectAttributeCombo: function(rowIndex) {
 			this.gridField.cellEditing.startEditByPosition({ row: rowIndex, column: 1 });
 		},
@@ -114,44 +123,50 @@
 			});
 		},
 
-		/**
-		 * Set combo as required/unrequired
-		 *
-		 * @param (Boolean) state
-		 */
-		setAllowBlankCombo: function(state) {
-			this.comboField.allowBlank = state;
-		},
+		// SETters functions
+			/**
+			 * Set combo as required/unrequired
+			 *
+			 * @param (Boolean) state
+			 */
+			setAllowBlankCombo: function(state) {
+				this.comboField.allowBlank = state;
+			},
 
-		setDisabledAttributesGrid: function(state) {
-			this.gridField.setDisabled(state);
-		},
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledAttributesGrid: function(state) {
+				this.gridField.setDisabled(state);
+			},
 
-		setValueCombo: function(workflowName) {
-			if (!Ext.isEmpty(workflowName)) {
-				this.comboField.setValue(workflowName);
-				this.onSelectWorkflow(workflowName, true);
-			}
-		},
+			/**
+			 * @param (String) value
+			 */
+			setValueCombo: function(value) {
+				if (!Ext.isEmpty(value)) {
+					this.comboField.setValue(value);
+					this.onSelectWorkflow(value, true);
+				}
+			},
 
-		setValueGrid: function(data) {
-			if (!Ext.isEmpty(data))
-				this.gridField.fillWithData(data);
-		},
+			/**
+			 * @param (Object) value
+			 */
+			setValueGrid: function(value) {
+				if (!Ext.isEmpty(value))
+					this.gridField.fillWithData(value);
+			},
 
 		/**
 		 * Workflow form validation
 		 *
 		 * @param (Boolean) enable
-		 *
-		 * @return (Boolean)
 		 */
 		validate: function(enable) {
-			if (this.isEmptyCombo() && enable) {
-				this.setAllowBlankCombo(false);
-			} else {
-				this.setAllowBlankCombo(true);
-			}
+			this.setAllowBlankCombo(
+				!(this.isEmptyCombo() && enable)
+			);
 		}
 	});
 

@@ -137,7 +137,12 @@
 					title: tr.dataSourceDbFieldset,
 					checkboxToggle: true,
 					collapsed: true,
-					layout: 'vbox',
+					collapsible: true,
+					toggleOnTitleClick: true,
+
+					layout: {
+						type: 'vbox'
+					},
 
 					items: [
 						this.dbType,
@@ -189,7 +194,12 @@
 					title: tr.dataSourceLdapFieldset,
 					checkboxToggle: true,
 					collapsed: true,
-					layout: 'vbox',
+					collapsible: true,
+					toggleOnTitleClick: true,
+
+					layout: {
+						type: 'vbox'
+					},
 
 					items: [
 						this.ldapAddressField,

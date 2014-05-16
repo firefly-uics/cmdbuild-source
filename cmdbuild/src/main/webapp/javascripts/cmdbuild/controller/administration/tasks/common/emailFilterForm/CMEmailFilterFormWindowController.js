@@ -4,6 +4,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
+
 		type: undefined,
 		view: undefined,
 
@@ -31,15 +32,15 @@
 		 * Builds window input and button item
 		 *
 		 * @param (Array) values
+		 *
 		 * @return (Array) items
 		 */
 		buildWindowItem: function(values) {
 			var me = this;
 			var items = [];
 
-			if (typeof values == 'undefined') {
+			if (Ext.isEmpty(values))
 				values = [''];
-			}
 
 			for (key in values) {
 				items.push({
@@ -89,6 +90,9 @@
 			return items;
 		},
 
+		/**
+		 * Add input fields to filter window content
+		 */
 		onFilterWindowAdd: function() {
 			this.view.contentComponent.add(this.buildWindowItem());
 			this.view.contentComponent.doLayout();

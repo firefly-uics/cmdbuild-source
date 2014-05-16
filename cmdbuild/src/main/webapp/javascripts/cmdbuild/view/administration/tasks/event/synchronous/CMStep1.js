@@ -6,8 +6,9 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
-		view: undefined,
+
 		taskType: 'event_synchronous',
+		view: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -27,43 +28,73 @@
 		},
 
 		// GETters functions
+			/**
+			 * @return (String)
+			 */
 			getValueGroups: function() {
 				return this.view.groups.getValue();
 			},
 
+			/**
+			 * @return (String)
+			 */
 			getValueId: function() {
 				return this.view.idField.getValue();
 			},
 
+			/**
+			 * @return (String)
+			 */
 			getValuePhase: function() {
 				return this.view.phaseCombo.getValue();
 			},
 
+		/**
+		 * @return (Boolean)
+		 */
 		isEmptyClass: function() {
 			return Ext.isEmpty(this.view.classNameCombo.getValue());
 		},
 
 		// SETters functions
+			/**
+			 * @param (Array) itemsToSelect
+			 */
 			selectGroups: function(itemsToSelect) {
 				this.view.groups.setValue(itemsToSelect);
 			},
 
+			/**
+			 * @param (Boolean) state
+			 */
 			setAllowBlankPhaseCombo: function(state) {
 				this.view.phaseCombo.allowBlank = state;
 			},
 
+			/**
+			 * @param (Boolean) state
+			 */
 			setDisabledButtonNext: function(state) {
 				this.parentDelegate.setDisabledButtonNext(state);
 			},
 
+			/**
+			 * @param (Boolean) state
+			 */
 			setDisabledTypeField: function(state) {
 				this.view.typeField.setDisabled(state);
 			},
 
-			setValueActive: function(value) {
-				this.view.activeField.setValue(value);
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueActive: function(state) {
+				this.view.activeField.setValue(state);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueClassName: function(value) {
 				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
 				this.view.classNameCombo.forceSelection = false;
@@ -74,14 +105,23 @@
 				this.cmOn('onClassSelected', { className: value });
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueDescription: function(value) {
 				this.view.descriptionField.setValue(value);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueId: function(value) {
 				this.view.idField.setValue(value);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValuePhase: function(value) {
 				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
 				this.view.phaseCombo.forceSelection = false;

@@ -265,6 +265,9 @@
 			// To populate grid with selected classes
 			show: function(view, eOpts) {
 				this.delegate.buildClassCombo();
+
+				// Step validate
+				this.delegate.parentDelegate.validateStepGrid(this.referenceMappingGrid.getStore());
 			}
 		},
 	});

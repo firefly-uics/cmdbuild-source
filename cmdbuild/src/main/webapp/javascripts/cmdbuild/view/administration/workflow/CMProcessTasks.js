@@ -11,11 +11,12 @@
 
 		delegate: undefined,
 
-		layout: 'fit',
-		frame: false,
 		border: true,
+		frame: false,
+		layout: 'fit',
 
 		initComponent: function() {
+			// Buttons configuration
 			this.addButton = Ext.create('Ext.button.Button', {
 				iconCls: 'add',
 				text: tr.add,
@@ -42,6 +43,7 @@
 					this.delegate.cmOn('onRemoveButtonClick', { type: 'workflow' });
 				}
 			});
+			// END: Buttons configuration
 
 			this.grid = Ext.create('CMDBuild.view.administration.workflow.CMProcessTasksGrid');
 
