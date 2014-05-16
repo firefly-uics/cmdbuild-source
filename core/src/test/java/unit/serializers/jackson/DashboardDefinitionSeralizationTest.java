@@ -18,7 +18,8 @@ import java.util.LinkedHashMap;
 import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.ChartDefinition.ChartInput;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;
+import org.cmdbuild.model.dashboard.DefaultDashboardDefinition;
+import org.cmdbuild.model.dashboard.DefaultDashboardDefinition.DashboardColumn;
 import org.cmdbuild.model.dashboard.DashboardObjectMapper;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -345,7 +346,7 @@ public class DashboardDefinitionSeralizationTest {
 	 */
 	@Test
 	public void dashboardDefinitionSerialization() throws JsonGenerationException, JsonMappingException, IOException {
-		final DashboardDefinition dd = new DashboardDefinition();
+		final DashboardDefinition dd = new DefaultDashboardDefinition();
 
 		String jDd = mapper.writeValueAsString(dd);
 
@@ -376,7 +377,7 @@ public class DashboardDefinitionSeralizationTest {
 	@Test
 	public void dashboardDefinitionDeserialization() throws JsonGenerationException, JsonMappingException, IOException {
 		String jdd = "{}";
-		DashboardDefinition dd = mapper.readValue(jdd, DashboardDefinition.class);
+		DashboardDefinition dd = mapper.readValue(jdd, DefaultDashboardDefinition.class);
 
 		assertNull(dd.getName());
 		assertNull(dd.getDescription());
@@ -388,7 +389,7 @@ public class DashboardDefinitionSeralizationTest {
 				+ "\"charts\":{\"key\":{\"name\":\"a chart\"}}," + "\"groups\":[\"a group\", \"another group\"],"
 				+ "\"columns\":[{\"width\":0.3,\"charts\":[\"key\"]}]" + "}";
 
-		dd = mapper.readValue(jdd, DashboardDefinition.class);
+		dd = mapper.readValue(jdd, DefaultDashboardDefinition.class);
 		assertEquals("the name", dd.getName());
 		assertEquals("the description", dd.getDescription());
 

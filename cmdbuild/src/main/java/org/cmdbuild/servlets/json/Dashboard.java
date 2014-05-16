@@ -1,14 +1,19 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_PERSISTENCE;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.DashboardLogic.GetChartDataResponse;
+import org.cmdbuild.logic.translation.DashboardTranslation;
 import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;
+import org.cmdbuild.model.dashboard.DefaultDashboardDefinition;
+import org.cmdbuild.model.dashboard.DefaultDashboardDefinition.DashboardColumn;
 import org.cmdbuild.model.dashboard.DashboardObjectMapper;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonDashboardDTO.JsonDashboardListResponse;
@@ -29,7 +34,8 @@ public class Dashboard extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse fullList() {
 		final DashboardLogic logic = dashboardLogic();
-		final JsonDashboardListResponse response = new JsonDashboardListResponse(logic.fullListDashboards(),
+		Map<Integer, DashboardDefinition> allDashboards = logic.fullListDashboards();
+		final JsonDashboardListResponse response = new JsonDashboardListResponse(allDashboards,
 				logic.listDataSources());
 		return JsonResponse.success(response);
 	}
@@ -50,7 +56,7 @@ public class Dashboard extends JSONBaseWithSpringContext {
 			@Parameter(value = "dashboardConfiguration") final String jsonDashboard //
 	) throws Exception {
 		final DashboardLogic logic = dashboardLogic();
-		final DashboardDefinition dashboard = mapper.readValue(jsonDashboard, DashboardDefinition.class);
+		final DashboardDefinition dashboard = mapper.readValue(jsonDashboard, DefaultDashboardDefinition.class);
 
 		final Long dashboardId = logic.add(dashboard);
 
@@ -65,7 +71,7 @@ public class Dashboard extends JSONBaseWithSpringContext {
 	) throws Exception {
 
 		final DashboardLogic logic = dashboardLogic();
-		final DashboardDefinition dashboard = mapper.readValue(jsonDashboard, DashboardDefinition.class);
+		final DashboardDefinition dashboard = mapper.readValue(jsonDashboard, DefaultDashboardDefinition.class);
 
 		logic.modifyBaseProperties(dashboardId, dashboard);
 	}

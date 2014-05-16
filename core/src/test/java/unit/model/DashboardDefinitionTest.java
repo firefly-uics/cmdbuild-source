@@ -7,7 +7,8 @@ import java.util.ArrayList;
 
 import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;
+import org.cmdbuild.model.dashboard.DefaultDashboardDefinition;
+import org.cmdbuild.model.dashboard.DefaultDashboardDefinition.DashboardColumn;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ public class DashboardDefinitionTest {
 
 	@Before
 	public void setUp() {
-		dashboard = new DashboardDefinition();
+		dashboard = new DefaultDashboardDefinition();
 		dashboard.setName("Foo");
 	}
 
@@ -33,7 +34,7 @@ public class DashboardDefinitionTest {
 			dashboard.addChart(chartId, chart);
 			fail("Cannot use the same Id twice");
 		} catch (final IllegalArgumentException e) {
-			final String expectedMsg = DashboardDefinition.errors.duplicateChartIdForDashboard(chartId,
+			final String expectedMsg = DefaultDashboardDefinition.errors.duplicateChartIdForDashboard(chartId,
 					dashboard.getName());
 			assertEquals(expectedMsg, e.getMessage());
 		}
@@ -48,7 +49,7 @@ public class DashboardDefinitionTest {
 			dashboard.getChart(chartId);
 			fail("Cannot retrieve a chart from an empty dashboard");
 		} catch (final IllegalArgumentException e) {
-			final String expectedMsg = DashboardDefinition.errors.notFoundChartIdForDashboard(chartId,
+			final String expectedMsg = DefaultDashboardDefinition.errors.notFoundChartIdForDashboard(chartId,
 					dashboard.getName());
 			assertEquals(expectedMsg, e.getMessage());
 		}
@@ -69,7 +70,7 @@ public class DashboardDefinitionTest {
 			dashboard.modifyChart(chartId, null);
 			fail("Can not modify a chart that is not in the dashboard");
 		} catch (final IllegalArgumentException e) {
-			final String expectedMsg = DashboardDefinition.errors.notFoundChartIdForDashboard(chartId,
+			final String expectedMsg = DefaultDashboardDefinition.errors.notFoundChartIdForDashboard(chartId,
 					dashboard.getName());
 			assertEquals(expectedMsg, e.getMessage());
 		}
@@ -80,7 +81,7 @@ public class DashboardDefinitionTest {
 			dashboard.modifyChart(chartId, null);
 			fail("Can not modify a chart that is not in the dashboard");
 		} catch (final IllegalArgumentException e) {
-			final String expectedMsg = DashboardDefinition.errors.nullChart(dashboard.getName());
+			final String expectedMsg = DefaultDashboardDefinition.errors.nullChart(dashboard.getName());
 			assertEquals(expectedMsg, e.getMessage());
 		}
 
@@ -97,7 +98,7 @@ public class DashboardDefinitionTest {
 			dashboard.popChart(chartId);
 			fail("Cannot remove a chart if you have not add it to the dashboard");
 		} catch (final IllegalArgumentException e) {
-			final String expectedMsg = DashboardDefinition.errors.notFoundChartIdForDashboard(chartId,
+			final String expectedMsg = DefaultDashboardDefinition.errors.notFoundChartIdForDashboard(chartId,
 					dashboard.getName());
 			assertEquals(expectedMsg, e.getMessage());
 		}
@@ -110,7 +111,7 @@ public class DashboardDefinitionTest {
 
 	@Test
 	public void addColumn() {
-		final DashboardDefinition dashboard = new DashboardDefinition();
+		final DashboardDefinition dashboard = new DefaultDashboardDefinition();
 		final DashboardColumn column = new DashboardColumn();
 		final String chartId = "aChart";
 		final ChartDefinition chart = new ChartDefinition();
@@ -122,7 +123,7 @@ public class DashboardDefinitionTest {
 			dashboard.addColumn(column);
 			fail("Cannot add a column with a reference to a chart that is not in the dashboard");
 		} catch (final IllegalArgumentException e) {
-			final String expectedMsg = DashboardDefinition.errors.wrongChartInColumn(chartId, dashboard.getName());
+			final String expectedMsg = DefaultDashboardDefinition.errors.wrongChartInColumn(chartId, dashboard.getName());
 			assertEquals(expectedMsg, e.getMessage());
 		}
 
@@ -134,7 +135,7 @@ public class DashboardDefinitionTest {
 
 	@Test
 	public void setColumns() {
-		final DashboardDefinition dashboard = new DashboardDefinition();
+		final DashboardDefinition dashboard = new DefaultDashboardDefinition();
 		final DashboardColumn column1 = new DashboardColumn();
 		final DashboardColumn column2 = new DashboardColumn();
 		final ArrayList<DashboardColumn> columns = new ArrayList<DashboardColumn>();
@@ -157,7 +158,7 @@ public class DashboardDefinitionTest {
 
 	@Test
 	public void removeColumn() {
-		final DashboardDefinition dashboard = new DashboardDefinition();
+		final DashboardDefinition dashboard = new DefaultDashboardDefinition();
 		final DashboardColumn column1 = new DashboardColumn();
 		final DashboardColumn column2 = new DashboardColumn();
 		final ArrayList<DashboardColumn> columns = new ArrayList<DashboardColumn>();
