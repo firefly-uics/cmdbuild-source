@@ -134,7 +134,7 @@
 		onSaveButtonClick: function() {
 			var formData = this.view.getData(true);
 			var submitDatas = {};
-_debug(formData);
+
 			// Stop save process if not valid
 			if (!this.validate(formData[CMDBuild.ServiceProxy.parameter.ACTIVE]))
 				return;

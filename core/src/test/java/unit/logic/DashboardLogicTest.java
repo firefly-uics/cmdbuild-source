@@ -16,7 +16,8 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.model.dashboard.DashboardDefinition.DashboardColumn;
+import org.cmdbuild.model.dashboard.DefaultDashboardDefinition;
+import org.cmdbuild.model.dashboard.DefaultDashboardDefinition.DashboardColumn;
 import org.cmdbuild.services.store.DashboardStore;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,13 +35,13 @@ public class DashboardLogicTest {
 		final CMGroup selectedGroup = mock(CMGroup.class);
 		operationUser = new OperationUser(authUser, privilegeCtx, selectedGroup);
 		store = mock(DashboardStore.class);
-		logic = new DashboardLogic(null, store, operationUser);
+		logic = new DashboardLogic(null, store, operationUser, null, null);
 	}
 
 	@SuppressWarnings("serial")
 	@Test
 	public void addDashboard() {
-		final DashboardDefinition dd = new DashboardDefinition();
+		final DashboardDefinition dd = new DefaultDashboardDefinition();
 
 		when(store.create(dd)).thenReturn(new Long(11));
 
@@ -49,7 +50,7 @@ public class DashboardLogicTest {
 		verify(store).create(dd);
 		assertEquals(new Long(11), newDashboardId);
 
-		final DashboardDefinition dd2 = new DashboardDefinition();
+		final DashboardDefinition dd2 = new DefaultDashboardDefinition();
 		dd2.setColumns(new ArrayList<DashboardColumn>() {
 			{
 				add(new DashboardColumn());
@@ -65,7 +66,7 @@ public class DashboardLogicTest {
 			assertEquals(expectedMsg, e.getMessage());
 		}
 
-		final DashboardDefinition dd3 = new DashboardDefinition();
+		final DashboardDefinition dd3 = new DefaultDashboardDefinition();
 		dd3.addChart("aChart", new ChartDefinition());
 
 		try {
@@ -80,7 +81,7 @@ public class DashboardLogicTest {
 	@SuppressWarnings("serial")
 	@Test
 	public void modifyDashboard() {
-		final DashboardDefinition dashboard = mock(DashboardDefinition.class);
+		final DefaultDashboardDefinition dashboard = mock(DefaultDashboardDefinition.class);
 		final Long dashboardId = new Long(123);
 		final String name = "name", description = "description";
 		final ArrayList<String> groups = new ArrayList<String>() {
@@ -89,7 +90,7 @@ public class DashboardLogicTest {
 			}
 		};
 
-		final DashboardDefinition changes = new DashboardDefinition() {
+		final DashboardDefinition changes = new DefaultDashboardDefinition() {
 			{
 				setName(name);
 				setDescription(description);
@@ -136,7 +137,7 @@ public class DashboardLogicTest {
 	public void addChart() {
 		final Long dashboardId = new Long(11);
 		final ChartDefinition chart = new ChartDefinition();
-		final DashboardDefinition dashboard = mock(DashboardDefinition.class);
+		final DefaultDashboardDefinition dashboard = mock(DefaultDashboardDefinition.class);
 
 		when(store.read(dashboardId)).thenReturn(dashboard);
 
@@ -151,7 +152,7 @@ public class DashboardLogicTest {
 	public void removeChart() {
 		final Long dashboardId = new Long(11);
 		final String chartId = "a_unique_id";
-		final DashboardDefinition dashboard = mock(DashboardDefinition.class);
+		final DefaultDashboardDefinition dashboard = mock(DefaultDashboardDefinition.class);
 
 		when(store.read(dashboardId)).thenReturn(dashboard);
 
@@ -167,7 +168,7 @@ public class DashboardLogicTest {
 		final Long dashboardId = new Long(11);
 		final String chartId = "a_unique_id";
 		final ChartDefinition chart = mock(ChartDefinition.class);
-		final DashboardDefinition dashboard = mock(DashboardDefinition.class);
+		final DefaultDashboardDefinition dashboard = mock(DefaultDashboardDefinition.class);
 
 		when(store.read(dashboardId)).thenReturn(dashboard);
 
@@ -184,8 +185,8 @@ public class DashboardLogicTest {
 		final Long fromDashboardId = new Long(12);
 		final String chartId = "a_unique_id";
 		final ChartDefinition removedChart = mock(ChartDefinition.class);
-		final DashboardDefinition toDashboard = mock(DashboardDefinition.class);
-		final DashboardDefinition fromDashboard = mock(DashboardDefinition.class);
+		final DefaultDashboardDefinition toDashboard = mock(DefaultDashboardDefinition.class);
+		final DefaultDashboardDefinition fromDashboard = mock(DefaultDashboardDefinition.class);
 
 		when(store.read(toDashboardId)).thenReturn(toDashboard);
 		when(store.read(fromDashboardId)).thenReturn(fromDashboard);
@@ -205,7 +206,7 @@ public class DashboardLogicTest {
 	@Test
 	public void setColumns() {
 		final Long dashboardId = new Long(12);
-		final DashboardDefinition dashboard = mock(DashboardDefinition.class);
+		final DefaultDashboardDefinition dashboard = mock(DefaultDashboardDefinition.class);
 		final ArrayList<DashboardColumn> columns = new ArrayList<DashboardColumn>();
 
 		when(store.read(dashboardId)).thenReturn(dashboard);

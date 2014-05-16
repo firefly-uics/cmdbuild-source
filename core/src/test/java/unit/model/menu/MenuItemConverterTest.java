@@ -17,6 +17,7 @@ import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
+import org.cmdbuild.model.dashboard.DefaultDashboardDefinition;
 import org.cmdbuild.services.store.menu.MenuItemConverter;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
@@ -130,7 +131,7 @@ public class MenuItemConverterTest {
 	}
 
 	private DashboardDefinition mockDashboard(final String description) {
-		final DashboardDefinition mock = mock(DashboardDefinition.class);
+		final DashboardDefinition mock = mock(DefaultDashboardDefinition.class);
 		when(mock.getDescription()).thenReturn(description);
 
 		return mock;

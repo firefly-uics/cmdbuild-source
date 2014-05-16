@@ -2,6 +2,7 @@ package org.cmdbuild.spring.configuration;
 
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
+import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.DashboardLogic;
@@ -21,6 +22,12 @@ public class Dashboard {
 	@Autowired
 	private UserStore userStore;
 
+	@Autowired
+	private Translation translation;
+
+	@Autowired
+	private LanguageStore languageStore;
+
 	@Bean
 	public DashboardStore dashboardStore() {
 		return new DBDashboardStore(systemDataView);
@@ -29,7 +36,8 @@ public class Dashboard {
 	@Bean
 	@Scope(PROTOTYPE)
 	public DashboardLogic dashboardLogic() {
-		return new DashboardLogic(systemDataView, dashboardStore(), userStore.getUser());
+		return new DashboardLogic(systemDataView, dashboardStore(), userStore.getUser(),
+				translation.translationLogic(), languageStore);
 	}
 
 }

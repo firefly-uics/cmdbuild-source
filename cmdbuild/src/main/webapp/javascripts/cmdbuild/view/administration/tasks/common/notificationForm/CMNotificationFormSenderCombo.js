@@ -6,8 +6,8 @@
 		// Required
 		delegate: undefined,
 		fieldLabel: CMDBuild.Translation.administration.email.accounts.account,
-
 		name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT,
+
 		valueField: CMDBuild.ServiceProxy.parameter.NAME,
 		displayField: CMDBuild.ServiceProxy.parameter.NAME,
 		store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),

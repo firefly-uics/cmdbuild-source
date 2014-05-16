@@ -82,8 +82,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 		final LookupType lookupType = LookupType.newInstance().withName(type).build();
 		final Iterable<Lookup> elements = lookupLogic().getAllLookup(lookupType, active);
 
+		final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade());
+
 		for (final Lookup element : elements) {
-			serializer.append("rows", LookupSerializer.serializeLookup(element, shortForm));
+			serializer.append("rows", lookupSerializer.serializeLookup(element, shortForm));
 		}
 
 		serializer.put("total", size(elements));
@@ -99,8 +101,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 		final LookupType lookupType = LookupType.newInstance().withName(type).build();
 		final Iterable<Lookup> elements = lookupLogic().getAllLookupOfParent(lookupType);
 
+		final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade());
+
 		for (final Lookup lookup : elements) {
-			out.append("rows", LookupSerializer.serializeLookupParent(lookup));
+			out.append("rows", lookupSerializer.serializeLookupParent(lookup));
 		}
 
 		return out;
@@ -141,7 +145,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 				.withCode(code) //
 				.withDescription(description) //
 				.withType(LookupType.newInstance() //
-				.withName(type)) //
+						.withName(type)) //
 				.withParentId(Long.valueOf(parentId)) //
 				.withNotes(notes) //
 				.withDefaultStatus(isDefault) //
@@ -150,8 +154,8 @@ public class ModLookup extends JSONBaseWithSpringContext {
 
 		final Long lookupId = lookupLogic().createOrUpdateLookup(lookup);
 		lookup.setId(lookupId);
-
-		serializer.put("lookup", LookupSerializer.serializeLookup(lookup));
+		final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade());
+		serializer.put("lookup", lookupSerializer.serializeLookup(lookup));
 		return serializer;
 	}
 

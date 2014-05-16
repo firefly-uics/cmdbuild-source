@@ -31,6 +31,9 @@
 			}
 		},
 
+		/**
+		 * @return (Array) data
+		 */
 		getData: function() {
 			var data = [];
 			var isKeySelection = null;
@@ -78,10 +81,7 @@
 		},
 
 		isEmptyMappingGrid: function() {
-			if (CMDBuild.Utils.isEmpty(this.getData()))
-				return true;
-
-			return false;
+			return CMDBuild.Utils.isEmpty(this.getData());
 		},
 
 		buildClassCombo: function() {
@@ -96,10 +96,6 @@
 				allowBlank: false,
 				store: this.parentDelegate.getStoreFilteredClass(),
 				queryMode: 'local',
-
-				// To make sure the filter in the store is not cleared
-				triggerAction: 'all',
-				lastQuery: '',
 
 				listeners: {
 					select: function(combo, records, eOpts) {
@@ -165,6 +161,7 @@
 				editable: false,
 				allowBlank: false,
 				store: this.parentDelegate.getStoreFilteredSource(),
+				queryMode: 'local',
 
 				listeners: {
 					select: function(combo, records, eOpts) {
@@ -203,9 +200,6 @@
 					xtype: 'combo',
 					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					forceSelection: true,
-					editable: false,
-					allowBlank: false,
 
 					store: Ext.create('Ext.data.Store', {
 						autoLoad: true,

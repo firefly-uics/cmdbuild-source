@@ -26,10 +26,7 @@
 		},
 
 		checkWorkflowComboSelected: function() {
-			if (this.getValueWorkflowCombo())
-				return true;
-
-			return false;
+			return this.getValueWorkflowCombo();
 		},
 
 		getWorkflowDelegate: function() {
@@ -70,9 +67,11 @@
 			// Email notification configuration
 				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
 					sender: {
+						type: 'sender',
 						disabled: false
 					},
 					template: {
+						type: 'template',
 						disabled: false
 					}
 				});

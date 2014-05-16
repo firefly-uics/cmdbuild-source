@@ -18,6 +18,12 @@
 		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onBeforeEdit':
+					return this.onBeforeEdit(param.fieldName, param.rowData);
+
+				case 'onCheckDelete':
+					return this.onCheckDelete(param);
+
 				case 'onStepEdit':
 					return this.onStepEdit();
 
@@ -28,6 +34,29 @@
 			}
 		},
 
+		buildDeletionTypeCombo: function() {
+			var me = this;
+
+			this.view.classLevelMappingGrid.columns[5].setEditor({
+				xtype: 'combo',
+				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
+				forceSelection: true,
+				editable: false,
+				allowBlank: false,
+				store: CMDBuild.core.proxy.CMProxyTasks.getDeletionTypes(),
+
+				listeners: {
+					select: function(combo, records, eOpts) {
+						me.cmOn('onStepEdit');
+					}
+				}
+			});
+		},
+
+		/**
+		 * @return (Array) data
+		 */
 		getData: function() {
 			var data = [];
 
@@ -58,10 +87,8 @@
 			var selectedClassArray = [];
 			var gridData = this.getData();
 
-			for (key in gridData) {
-//				if (selectedClassArray.indexOf(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]) == -1)
-					selectedClassArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
-			}
+			for (key in gridData)
+				selectedClassArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
 
 			return selectedClassArray;
 		},
@@ -75,20 +102,56 @@
 			var selectedSourceArray = [];
 			var gridData = this.getData();
 
-			for (key in gridData) {
+			for (key in gridData)
 				selectedSourceArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.SOURCE_NAME]);
-			}
 
 			return selectedSourceArray;
 		},
 
 		isEmptyMappingGrid: function() {
-			var gridData = this.getData();
+			return CMDBuild.Utils.isEmpty(this.getData());
+		},
 
-			if (Ext.isEmpty(gridData) || (gridData.length == 0))
-				return true;
+		/**
+		 * Resetting deletionType combo value if checkbox is unchecked
+		 *
+		 * @param (Boolean) checked
+		 */
+		onCheckDelete: function(checked) {
+			if (!checked) {_debug('if');
+				var columnModel = this.view.classLevelMappingGrid.columns[5];
+				var columnEditor = columnModel.getEditor();
 
-			return false;
+				columnModel.setEditor({
+					xtype: 'textfield',
+					value: ''
+				});
+			}
+		},
+
+		/**
+		 * Function to update rows stores/editors on beforeEdit event
+		 *
+		 * @param (String) fieldName
+		 * @param (Object) rowData
+		 */
+		onBeforeEdit: function(fieldName, rowData) {_debug('onBeforeEdit');_debug(fieldName);_debug(rowData);
+			switch (fieldName) {
+				case CMDBuild.ServiceProxy.parameter.DELETION_TYPE: {
+					if (rowData[CMDBuild.ServiceProxy.parameter.DELETE]) {
+						this.buildDeletionTypeCombo();
+					} else {
+						var columnModel = this.view.classLevelMappingGrid.columns[5];
+						var columnEditor = columnModel.getEditor();
+
+						if (!columnEditor.disabled)
+							columnModel.setEditor({
+								xtype: 'combo',
+								disabled: true
+							});
+					}
+				} break;
+			}
 		},
 
 		/**
@@ -124,7 +187,16 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep4Delegate', this);
 
 			this.gridEditorPlugin = Ext.create('Ext.grid.plugin.CellEditing', {
-				clicksToEdit: 1
+				clicksToEdit: 1,
+
+				listeners: {
+					beforeedit: function(editor, e, eOpts) {
+						me.delegate.cmOn('onBeforeEdit', {
+							fieldName: e.field,
+							rowData: e.record.data
+						});
+					}
+				}
 			});
 
 			this.classLevelMappingGrid = Ext.create('Ext.grid.Panel', {
@@ -162,7 +234,7 @@
 							forceSelection: true,
 							editable: false,
 							allowBlank: false,
-							store: _CMCache.getClassesStore(),
+							store: CMDBuild.core.proxy.CMProxyTasks.getClassStore(),
 							queryMode: 'local',
 
 							listeners: {
@@ -172,6 +244,57 @@
 							}
 						},
 						flex: 1
+					},
+					{
+						xtype : 'checkcolumn',
+						header: tr.cudActions.create,
+						dataIndex: CMDBuild.ServiceProxy.parameter.CREATE,
+						width: 50,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					},
+					{
+						xtype : 'checkcolumn',
+						header: tr.cudActions.update,
+						dataIndex: CMDBuild.ServiceProxy.parameter.UPDATE,
+						width: 50,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					},
+					{
+						xtype : 'checkcolumn',
+						header: tr.cudActions.delete,
+						dataIndex: CMDBuild.ServiceProxy.parameter.DELETE,
+						width: 50,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true,
+
+						listeners: {
+							checkchange: function(checkbox, rowIndex, checked, eOpts) {
+								me.delegate.cmOn('onCheckDelete', {
+									checked: checked,
+									rowIndex: rowIndex
+								});
+							}
+						}
+					},
+					{
+						header: tr.deletionType,
+						dataIndex: CMDBuild.ServiceProxy.parameter.DELETION_TYPE,
+						editor: {
+							xtype: 'combo',
+							disabled: true
+						},
+						width: 100
 					},
 					{
 						xtype: 'actioncolumn',
