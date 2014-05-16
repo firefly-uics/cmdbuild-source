@@ -34,7 +34,6 @@ public class DefaultDashboardDefinition implements DashboardDefinition {
 		return description;
 	}
 	
-
 	@Override
 	public String getDefaultDescription() {
 		return description;
@@ -44,7 +43,11 @@ public class DefaultDashboardDefinition implements DashboardDefinition {
 	public void setDescription(final String description) {
 		this.description = description;
 	}
-
+	
+	public void setDefaultDescription(final String defaultDescription) {
+		this.description = defaultDescription;
+	}
+	
 	// charts
 	@Override
 	public LinkedHashMap<String, ChartDefinition> getCharts() {
