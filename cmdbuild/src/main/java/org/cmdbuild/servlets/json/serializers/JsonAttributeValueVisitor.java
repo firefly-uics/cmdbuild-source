@@ -18,7 +18,7 @@ public class JsonAttributeValueVisitor extends AbstractAttributeValueVisitor {
 
 	public JsonAttributeValueVisitor(final CMAttributeType<?> type, final Object value,
 			final TranslationFacade translationFacade) {
-		super(type, value, null);
+		super(type, value, translationFacade);
 	}
 
 	@Override
