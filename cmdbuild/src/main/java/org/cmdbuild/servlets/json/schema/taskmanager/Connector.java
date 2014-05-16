@@ -2,7 +2,16 @@ package org.cmdbuild.servlets.json.schema.taskmanager;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE_MAPPING;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_CONFIGURATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_TYPE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_TYPE_SQL;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 
 import java.io.IOException;
@@ -26,6 +35,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.json.JSONArray;
 
 import com.google.common.base.Function;
 
@@ -280,9 +290,11 @@ public class Connector extends JSONBaseWithSpringContext {
 
 	private Iterable<AttributeMapping> attributeMappingOf(final String json) throws JsonParseException,
 			JsonMappingException, IOException {
+		// TODO find a better way to provide a default empty JSON
+		final String _json = defaultIfBlank(json, new JSONArray().toString());
 		final Iterable<JsonAttributeMapping> jsonAttributeMappings = new ObjectMapper() //
 				.readValue( //
-						json, //
+						defaultString(_json), //
 						new TypeReference<Set<JsonAttributeMapping>>() {
 						});
 		return from(jsonAttributeMappings) //

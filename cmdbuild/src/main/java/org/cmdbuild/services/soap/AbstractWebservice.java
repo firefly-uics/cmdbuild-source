@@ -35,6 +35,7 @@ import org.cmdbuild.services.soap.operation.LookupLogicHelper;
 import org.cmdbuild.services.soap.operation.WorkflowLogicHelper;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.report.ReportStore;
+import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.cmdbuild.workflow.event.WorkflowEventManager;
 import org.slf4j.Logger;
 import org.springframework.beans.BeansException;
@@ -60,6 +61,9 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	@Autowired
 	private MetadataStoreFactory metadataStoreFactory;
+	
+	@Autowired
+	protected TranslationFacade translationFacade;
 
 	@Autowired
 	@Qualifier("soap")

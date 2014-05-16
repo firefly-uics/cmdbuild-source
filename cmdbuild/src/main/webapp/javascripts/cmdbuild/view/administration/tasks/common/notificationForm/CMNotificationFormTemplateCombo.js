@@ -6,8 +6,8 @@
 		// Required
 		delegate: undefined,
 		fieldLabel: CMDBuild.Translation.administration.email.templates.template,
-
 		name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE,
+
 		valueField: CMDBuild.ServiceProxy.parameter.NAME,
 		displayField: CMDBuild.ServiceProxy.parameter.NAME,
 		store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),

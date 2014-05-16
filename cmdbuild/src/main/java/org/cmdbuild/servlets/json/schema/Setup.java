@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.schema;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.logic.translation.DefaultTranslationLogic.INSTANCENAME_FOR_SERVER;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DATA;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NAMES;
@@ -8,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.exception.AuthException;
+import org.cmdbuild.logic.translation.InstanceNameTranslation;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -16,6 +19,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Setup extends JSONBaseWithSpringContext {
+
+	private static final String DEFAULT_INSTANCE_NAME = "instance_name_default";
+	private static final String INSTANCE_NAME = "instance_name";
 
 	@JSONExported
 	@Unauthorized
@@ -57,7 +63,15 @@ public class Setup extends JSONBaseWithSpringContext {
 		final Map<String, String> config = setUpLogic().load(module);
 		final JSONObject data = new JSONObject();
 		for (final Entry<String, String> entry : config.entrySet()) {
-			data.put(entry.getKey(), entry.getValue());
+			if (entry.getKey().equals(INSTANCE_NAME)) {
+				final InstanceNameTranslation instanceNameTranslation = new InstanceNameTranslation();
+				instanceNameTranslation.setName(INSTANCENAME_FOR_SERVER);
+				final String translatedInstanceName = translationFacade().read(instanceNameTranslation);
+				data.put(entry.getKey(), defaultIfNull(translatedInstanceName, entry.getValue()));
+				data.put(DEFAULT_INSTANCE_NAME, entry.getValue());
+			} else {
+				data.put(entry.getKey(), entry.getValue());
+			}
 		}
 		return data;
 	}

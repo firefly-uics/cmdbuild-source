@@ -688,8 +688,13 @@
 			"taskConnector": {
 				"attributeLevelMapping": "@@ Attribute mapping",
 				"classLevelMapping": "@@ Class mapping",
-				"datasourceDbFieldset": "Datasource: Relational database",
-				"datasourceLdapFieldset": "Datasource: LDAP directory",
+				"cudActions": {
+					"create": "Create",
+					"delete": "Delete",
+					"update": "Update"
+				},
+				"dataSourceDbFieldset": "Datasource: Relational database",
+				"dataSourceLdapFieldset": "Datasource: LDAP directory",
 				"dbName": "Database name",
 				"deletionType": "@@ Deletion type",
 				"deletionTypes": {
@@ -708,8 +713,7 @@
 				"senderAccount": "Sender account",
 				"sourceAttribute": "@@ Source attribute",
 				"sourceName": "@@ Source name",
-				"tableViewFilter": "Table/View filter",
-				"toSynchronize": "To synchronize"
+				"tableViewFilter": "Table/View filter"
 			},
 			"taskEmail": {
 				"attachmentsCategory": "Category",

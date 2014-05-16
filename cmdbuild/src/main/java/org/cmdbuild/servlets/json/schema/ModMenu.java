@@ -35,7 +35,11 @@ public class ModMenu extends JSONBaseWithSpringContext {
 		final MenuStore store = menuStore();
 		final MenuItem menu = store.read(groupName);
 		final boolean withWrapper = true;
-		return MenuSerializer.toClient(menu, withWrapper);
+		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
+				.withRootItem(menu) //
+				.withTranslationFacade(translationFacade()) //
+				.build();
+		return menuSerializer.toClient(withWrapper);
 	}
 
 	/**
@@ -58,7 +62,11 @@ public class ModMenu extends JSONBaseWithSpringContext {
 		final MenuItem availableMenu = store.getAvailableItems(groupName);
 		final boolean withWrapper = true;
 		final boolean sortByDescription = true;
-		return MenuSerializer.toClient(availableMenu, withWrapper, sortByDescription);
+		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
+				.withRootItem(availableMenu) //
+				.withTranslationFacade(translationFacade()) //
+				.build();
+		return menuSerializer.toClient(availableMenu, withWrapper, sortByDescription);
 	}
 
 	/**
@@ -118,8 +126,11 @@ public class ModMenu extends JSONBaseWithSpringContext {
 		final MenuStore store = menuStore();
 		final MenuItem menu = store.getMenuToUseForGroup(groupName);
 		final boolean withWrapper = true;
-		return MenuSerializer.toClient(menu, withWrapper);
-
+		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
+				.withRootItem(menu) //
+				.withTranslationFacade(translationFacade()) //
+				.build();
+		return menuSerializer.toClient(withWrapper);
 	}
 
 }

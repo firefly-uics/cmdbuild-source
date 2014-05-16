@@ -1,63 +1,95 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks;
-
 	Ext.define('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
 		extend: 'Ext.form.FieldContainer',
+
+		delegate: undefined,
+		inputFields: [],
+		inputFieldsConfiguration: undefined,
+		notificationFieldType: [ // Used to validate notification field types
+			'sender',
+			'template'
+		],
 
 		border: false,
 		width: '100%',
 
 		/**
-		 * To acquire informations to setup fields before creation
+		 * To check and acquire input fields configurations
 		 *
 		 * @param (Object) configuration
-		 * @param (Object) configuration.sender
-		 * @param (Object) configuration.template
+		 * Example:
+		 * 	{
+		 * 		notificationInputIdentifier1: {
+		 * 			type: 'sender',
+		 * 			delegate: (Object),
+		 * 			fieldLabel: (String),
+		 * 			...
+		 * 		},
+		 * 		notificationInputIdentifier2: {
+		 * 			type: 'template',
+		 * 			delegate: (Object),
+		 * 			fieldLabel: (String),
+		 * 			...
+		 * 		},
+		 * 	}
 		 */
 		constructor: function(configuration) {
 			this.delegate = Ext.create('CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController', this);
 
-			if (Ext.isEmpty(configuration) || Ext.isEmpty(configuration.sender)) {
-				this.senderComboConfig = { delegate: this.delegate };
-			} else {
-				this.senderComboConfig = configuration.sender;
-				this.senderComboConfig.delegate = this.delegate;
-			}
+			if (!Ext.isEmpty(configuration)) {
+				for (itemConfig in configuration) {
+					if (
+						Ext.isEmpty(configuration[itemConfig])
+						|| this.notificationFieldType.indexOf(configuration[itemConfig].type) < 0
+					) {
+						delete configuration[itemConfig];
+					} else {
+						// Default configuration: delegate
+						if (Ext.isEmpty(configuration[itemConfig].delegate))
+							configuration[itemConfig].delegate = this.delegate;
 
-			if (Ext.isEmpty(configuration) || Ext.isEmpty(configuration.template)) {
-				this.templateComboConfig = { delegate: this.delegate };
-			} else {
-				this.templateComboConfig = configuration.template;
-				this.templateComboConfig.delegate = this.delegate;
-			}
+						// Default configuration: disabled
+						if (Ext.isEmpty(configuration[itemConfig].disabled))
+							configuration[itemConfig].disabled = true;
+					}
+				}
 
-			// Default configuration disabled
-			if (Ext.isEmpty(this.senderComboConfig.disabled)) {
-				this.senderComboConfig.disabled = true;
-			}
-
-			// Default configuration disabled
-			if (Ext.isEmpty(this.templateComboConfig.disabled)) {
-				this.senderComboConfig.disabled = true;
+				if (!Ext.isEmpty(configuration))
+					this.inputFieldsConfiguration = configuration;
 			}
 
 			this.callParent(arguments);
 		},
 
 		initComponent: function() {
-			if (!this.senderComboConfig.disabled) {
-				this.senderCombo = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormSenderCombo', this.senderComboConfig);
-				this.delegate.senderCombo = this.senderCombo;
-			}
+			this.inputFields = []; // Buffer reset
+			this.delegate.inputFields = []; // Delegate inputFields buffer reset
 
-			if (!this.templateComboConfig.disabled) {
-				this.templateCombo = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormTemplateCombo', this.templateComboConfig);
-				this.delegate.templateCombo = this.templateCombo;
+			if (!Ext.isEmpty(this.inputFieldsConfiguration)) {
+				for (itemIndex in this.inputFieldsConfiguration) {
+					var itemConfig = this.inputFieldsConfiguration[itemIndex];
+					var inputField = null;
+
+					switch (itemConfig.type) {
+						case 'sender': {
+							if (!itemConfig.disabled)
+								inputField = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormSenderCombo', itemConfig);
+						} break;
+
+						case 'template': {
+							if (!itemConfig.disabled)
+								inputField = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormTemplateCombo', itemConfig);
+						} break;
+					}
+
+					this.inputFields.push(inputField);
+					this.delegate.inputFields[itemIndex] = inputField; // Delegate inputFields buffer array
+				}
 			}
 
 			Ext.apply(this, {
-				items: [this.senderCombo, this.templateCombo]
+				items: this.inputFields
 			});
 
 			this.callParent(arguments);
