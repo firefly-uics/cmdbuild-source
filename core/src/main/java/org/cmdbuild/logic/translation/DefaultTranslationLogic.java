@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
 public class DefaultTranslationLogic implements TranslationLogic {
 
 	public static final String DESCRIPTION_FOR_CLIENT = "Description";
-	private static final String DESCRIPTION_FOR_PERSISTENCE = "description";
+	public static final String DESCRIPTION_FOR_PERSISTENCE = "description";
 	public static final String DIRECT_DESCRIPTION_FOR_CLIENT = "directDescription";
 	private static final String DIRECT_DESCRIPTION_FOR_PERSISTENCE = "directdescription";
 	public static final String INVERSE_DESCRIPTION_FOR_CLIENT = "inverseDescription";
