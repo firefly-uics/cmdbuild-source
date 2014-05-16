@@ -60,6 +60,7 @@
 		<module>shark/client</module>
 		<module>services/sync/core</module>
 		<module>services/sync/internal</module>
+		<module>services/sync/sql</module>
 		<module>shark/commons</module>
 		<module>shark/extensions</module>
 		<module>shark/legacy-extensions</module>

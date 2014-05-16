@@ -4,6 +4,7 @@ import static com.google.common.collect.Iterables.addAll;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -13,7 +14,125 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.google.common.collect.Sets;
 
 public class ConnectorTask implements ScheduledTask {
-	
+
+	public static interface SourceConfiguration {
+
+		void accept(SourceConfigurationVisitor visitor);
+
+	}
+
+	public static interface SourceConfigurationVisitor {
+
+		void visit(final SqlSourceConfiguration sourceConfiguration);
+
+	}
+
+	private static final SourceConfiguration NULL_SOURCE_CONFIGURATION = new SourceConfiguration() {
+
+		@Override
+		public void accept(final SourceConfigurationVisitor visitor) {
+			// nothing to do
+		}
+
+	};
+
+	public static final class SqlSourceConfiguration implements SourceConfiguration {
+
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<SqlSourceConfiguration> {
+
+			// TODO type
+			private String host;
+			private Integer port;
+			private String database;
+			private String username;
+			private String password;
+
+			private Builder() {
+				// user factory method
+			}
+
+			@Override
+			public SqlSourceConfiguration build() {
+				validate();
+				return new SqlSourceConfiguration(this);
+			}
+
+			private void validate() {
+				port = defaultIfNull(port, 0);
+			}
+
+			public Builder withHost(final String host) {
+				this.host = host;
+				return this;
+			}
+
+			public Builder withPort(final int port) {
+				this.port = port;
+				return this;
+			}
+
+			public Builder withDatabase(final String database) {
+				this.database = database;
+				return this;
+			}
+
+			public Builder withUsername(final String username) {
+				this.username = username;
+				return this;
+			}
+
+			public Builder withPassword(final String password) {
+				this.password = password;
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private final String host;
+		private final int port;
+		private final String database;
+		private final String username;
+		private final String password;
+
+		private SqlSourceConfiguration(final Builder builder) {
+			this.host = builder.host;
+			this.port = builder.port;
+			this.database = builder.database;
+			this.username = builder.username;
+			this.password = builder.password;
+		}
+
+		@Override
+		public void accept(final SourceConfigurationVisitor visitor) {
+			visitor.visit(this);
+		}
+
+		public String getHost() {
+			return host;
+		}
+
+		public int getPort() {
+			return port;
+		}
+
+		public String getDatabase() {
+			return database;
+		}
+
+		public String getUsername() {
+			return username;
+		}
+
+		public String getPassword() {
+			return password;
+		}
+
+	}
+
 	public static class AttributeMapping {
 
 		public static class Builder implements org.apache.commons.lang3.builder.Builder<AttributeMapping> {
@@ -134,10 +253,13 @@ public class ConnectorTask implements ScheduledTask {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ConnectorTask> {
 
+		private static final Iterable<AttributeMapping> NO_MAPPING = Collections.emptyList();
+
 		private Long id;
 		private String description;
 		private Boolean active;
 		private String cronExpression;
+		private SourceConfiguration sourceConfiguration;
 		private final Collection<AttributeMapping> attributeMappings = Sets.newHashSet();
 
 		private Builder() {
@@ -151,7 +273,8 @@ public class ConnectorTask implements ScheduledTask {
 		}
 
 		private void validate() {
-			active = (active == null) ? false : active;
+			active = defaultIfNull(active, Boolean.FALSE);
+			sourceConfiguration = defaultIfNull(sourceConfiguration, NULL_SOURCE_CONFIGURATION);
 		}
 
 		public Builder withId(final Long id) {
@@ -174,8 +297,18 @@ public class ConnectorTask implements ScheduledTask {
 			return this;
 		}
 
-		public Builder withAttributeMapping(final Iterable<? extends AttributeMapping> attributeMappings) {
-			addAll(this.attributeMappings, attributeMappings);
+		public Builder withSourceConfiguration(final SourceConfiguration sourceConfiguration) {
+			this.sourceConfiguration = sourceConfiguration;
+			return this;
+		}
+
+		public Builder withAttributeMapping(final AttributeMapping attributeMapping) {
+			this.attributeMappings.add(attributeMapping);
+			return this;
+		}
+
+		public Builder withAttributeMappings(final Iterable<? extends AttributeMapping> attributeMappings) {
+			addAll(this.attributeMappings, defaultIfNull(attributeMappings, NO_MAPPING));
 			return this;
 		}
 
@@ -189,6 +322,7 @@ public class ConnectorTask implements ScheduledTask {
 	private final String description;
 	private final boolean active;
 	private final String cronExpression;
+	private final SourceConfiguration sourceConfiguration;
 	private final Iterable<AttributeMapping> attributeMappings;
 
 	private ConnectorTask(final Builder builder) {
@@ -196,6 +330,7 @@ public class ConnectorTask implements ScheduledTask {
 		this.description = builder.description;
 		this.active = builder.active;
 		this.cronExpression = builder.cronExpression;
+		this.sourceConfiguration = builder.sourceConfiguration;
 		this.attributeMappings = builder.attributeMappings;
 	}
 
@@ -222,6 +357,10 @@ public class ConnectorTask implements ScheduledTask {
 	@Override
 	public String getCronExpression() {
 		return cronExpression;
+	}
+
+	public SourceConfiguration getSourceConfiguration() {
+		return sourceConfiguration;
 	}
 
 	public Iterable<AttributeMapping> getAttributeMappings() {

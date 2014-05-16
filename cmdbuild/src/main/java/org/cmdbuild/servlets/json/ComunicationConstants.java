@@ -40,8 +40,11 @@ public class ComunicationConstants {
 			CONTAINER = "container", //
 			COUNT = "count", //
 			CRON_EXPRESSION = "cronExpression", //
-			DATA = "data", //
 			DASHBOARDNAME = "dashboardName", //
+			DATA = "data", //
+			DATA_SOURCE_TYPE = "datasourceType", //
+			DATA_SOURCE_TYPE_SQL = "db", //
+			DATA_SOURCE_CONFIGURATION = "datasourceConfiguration", //
 			DB_NAME = "db_name", //
 			DB_TYPE = "db_type", //
 			DEFAULT = "Default", //
