@@ -29,6 +29,8 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -53,6 +55,8 @@ import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.translation.AttributeClassTranslation;
+import org.cmdbuild.logic.translation.AttributeDomainTranslation;
+import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.json.JSONArray;
@@ -450,10 +454,39 @@ public class AttributeSerializer extends Serializer {
 			 */
 			serialization.put(NAME, attribute.getName());
 
-			final AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
-					.forClass(attribute.getOwner().getName()).withField(DESCRIPTION_FOR_CLIENT) //
-					.withName(attribute.getName()) //
-					.build();
+			final TranslationObject translationObject = new CMEntryTypeVisitor() {
+
+				TranslationObject translationObject;
+
+				public TranslationObject buildTranslationObject() {
+					attribute.getOwner().accept(this);
+					return translationObject;
+				}
+
+				@Override
+				public void visit(final CMFunctionCall type) {
+					throw new UnsupportedOperationException();
+				}
+
+				@Override
+				public void visit(final CMDomain type) {
+					translationObject = AttributeDomainTranslation.newInstance() //
+							.forDomain(attribute.getOwner().getName()) //
+							.withField(DESCRIPTION_FOR_CLIENT) //
+							.withAttributeName(attribute.getName()) //
+							.build();
+				}
+
+				@Override
+				public void visit(final CMClass type) {
+					translationObject = AttributeClassTranslation.newInstance() //
+							.forClass(attribute.getOwner().getName()) //
+							.withField(DESCRIPTION_FOR_CLIENT) //
+							.withName(attribute.getName()) //
+							.build();
+				}
+			}.buildTranslationObject();
+
 			final String translatedDescription = translationFacade.read(translationObject);
 
 			String description = attribute.getDescription();

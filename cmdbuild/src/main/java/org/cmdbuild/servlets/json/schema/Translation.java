@@ -93,13 +93,13 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final AttributeDomainTranslation translation = new AttributeDomainTranslation();
-		translation.setName(domainName);
-		translation.setAttributeName(attributeName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final AttributeDomainTranslation translation = AttributeDomainTranslation.newInstance() //
+				.forDomain(domainName) //
+				.withField(field) //
+				.withAttributeName(attributeName) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().create(translation);
-
 	}
 
 	@JSONExported
@@ -300,10 +300,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = ATTRIBUTENAME) final String attributeName, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final AttributeDomainTranslation translation = new AttributeDomainTranslation();
-		translation.setName(domainName);
-		translation.setAttributeName(attributeName);
-		translation.setField(field);
+		final AttributeDomainTranslation translation = AttributeDomainTranslation.newInstance() //
+				.forDomain(domainName) //
+				.withField(field) //
+				.withAttributeName(attributeName) //
+				.build();
 		final Map<String, String> translations = translationLogic().read(translation);
 		return JsonResponse.success(translations);
 
@@ -707,11 +708,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final AttributeDomainTranslation translation = new AttributeDomainTranslation();
-		translation.setName(domainName);
-		translation.setAttributeName(attributeName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final AttributeDomainTranslation translation = AttributeDomainTranslation.newInstance() //
+				.forDomain(domainName) //
+				.withField(field) //
+				.withAttributeName(attributeName) //
+				.withTranslations(toMap(translations)).build();
 		translationLogic().delete(translation);
 	}
 
