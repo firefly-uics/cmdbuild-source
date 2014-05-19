@@ -137,9 +137,11 @@ public class JsonWorkflowDTOs {
 		private static final Marker marker = MarkerFactory.getMarker(JsonProcessCard.class.getName());
 
 		private final UserProcessInstance processInstance;
+		private final TranslationFacade translationFacade;
 
-		public JsonProcessCard(final UserProcessInstance processInstance) {
+		public JsonProcessCard(final UserProcessInstance processInstance, TranslationFacade translationFacade) {
 			this.processInstance = processInstance;
+			this.translationFacade = translationFacade;
 		}
 
 		public Long getId() {
@@ -203,7 +205,7 @@ public class JsonWorkflowDTOs {
 
 		@Override
 		protected Object javaToJsonValue(final CMAttributeType<?> type, final Object value) {
-			return new JsonAttributeValueVisitor(type, value).convertValue();
+			return new JsonAttributeValueVisitor(type, value, translationFacade).convertValue();
 		}
 	}
 

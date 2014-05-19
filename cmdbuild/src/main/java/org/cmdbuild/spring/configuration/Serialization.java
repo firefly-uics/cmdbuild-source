@@ -7,6 +7,7 @@ import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
+import org.cmdbuild.servlets.json.serializers.DefaultTranslationFacade;
 import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +34,13 @@ public class Serialization {
 
 	@Bean
 	public CardSerializer cardSerializer() {
-		return new CardSerializer(data.systemDataAccessLogicBuilder(), relationAttributeSerializer());
+		return new CardSerializer(data.systemDataAccessLogicBuilder(), relationAttributeSerializer(),
+				translationFacade());
 	}
 
 	@Bean
 	public TranslationFacade translationFacade() {
-		return new TranslationFacade(languageStore, translation.translationLogic());
+		return new DefaultTranslationFacade(languageStore, translation.translationLogic());
 	}
 
 	@Bean

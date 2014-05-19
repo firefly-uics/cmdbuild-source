@@ -31,6 +31,9 @@
 			}
 		},
 
+		/**
+		 * @return (Array) data
+		 */
 		getData: function() {
 			var data = [];
 			var isKeySelection = null;
@@ -46,15 +49,15 @@
 				if (
 					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
 					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE))
-					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME))
-					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE))
+					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
+					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE))
 				) {
-					var buffer = [];
+					var buffer = {};
 
 					buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
 					buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE);
-					buffer[CMDBuild.ServiceProxy.parameter.VIEW_NAME] = record.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME);
-					buffer[CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE);
+					buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME);
+					buffer[CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE);
 					buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = false;
 
 					// Check to setup isKey parameter
@@ -62,8 +65,8 @@
 						if (
 							buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.CLASS_NAME)
 							&& buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE)
-							&& buffer[CMDBuild.ServiceProxy.parameter.VIEW_NAME] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.VIEW_NAME)
-							&& buffer[CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE)
+							&& buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME)
+							&& buffer[CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE)
 						) {
 							buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = true;
 							break;
@@ -78,10 +81,7 @@
 		},
 
 		isEmptyMappingGrid: function() {
-			if (CMDBuild.Utils.isEmpty(this.getData()))
-				return true;
-
-			return false;
+			return CMDBuild.Utils.isEmpty(this.getData());
 		},
 
 		buildClassCombo: function() {
@@ -94,12 +94,8 @@
 				forceSelection: true,
 				editable: false,
 				allowBlank: false,
-				store: this.parentDelegate.getFilteredClassStore(),
+				store: this.parentDelegate.getStoreFilteredClass(),
 				queryMode: 'local',
-
-				// To make sure the filter in the store is not cleared
-				triggerAction: 'all',
-				lastQuery: '',
 
 				listeners: {
 					select: function(combo, records, eOpts) {
@@ -154,38 +150,35 @@
 			}
 		},
 
-		buildViewCombo: function() {
+		buildSourceCombo: function() {
 			var me = this;
 
 			this.view.attributeLevelMappingGrid.columns[0].setEditor({
 				xtype: 'combo',
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				displayField: CMDBuild.ServiceProxy.parameter.NAME,
 				valueField: CMDBuild.ServiceProxy.parameter.NAME,
 				forceSelection: true,
 				editable: false,
 				allowBlank: false,
-				store: this.parentDelegate.getFilteredViewStore(),
-
-				// To make sure the filter in the store is not cleared
-				triggerAction: 'all',
-				lastQuery: '',
+				store: this.parentDelegate.getStoreFilteredSource(),
+				queryMode: 'local',
 
 				listeners: {
 					select: function(combo, records, eOpts) {
-						me.buildViewAttributesCombo(records[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
+						me.buildSourceAttributesCombo(records[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
 					}
 				}
 			});
 		},
 
 		/**
-		 * To setup view attribute combo editor
+		 * To setup source attribute combo editor
 		 *
-		 * @param (String) viewName
+		 * @param (String) sourceName
 		 * @param (Boolean) onStepEditExecute
 		 */
-		buildViewAttributesCombo: function(viewName, onStepEditExecute) {
-			if (!Ext.isEmpty(viewName)) {
+		buildSourceAttributesCombo: function(sourceName, onStepEditExecute) {
+			if (!Ext.isEmpty(sourceName)) {
 				var me = this;
 
 				var attributesListStore = [
@@ -205,15 +198,12 @@
 
 				this.view.attributeLevelMappingGrid.columns[1].setEditor({
 					xtype: 'combo',
-					displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+					displayField: CMDBuild.ServiceProxy.parameter.NAME,
 					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					forceSelection: true,
-					editable: false,
-					allowBlank: false,
 
 					store: Ext.create('Ext.data.Store', {
 						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+						fields: [CMDBuild.ServiceProxy.parameter.NAME],
 						data: attributesListStore
 					}),
 
@@ -252,9 +242,9 @@
 					}
 				} break;
 
-				case CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE: {
-					if (!Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME])) {
-						this.buildViewAttributesCombo(rowData[CMDBuild.ServiceProxy.parameter.VIEW_NAME], false);
+				case CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE: {
+					if (!Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.SOURCE_NAME])) {
+						this.buildSourceAttributesCombo(rowData[CMDBuild.ServiceProxy.parameter.SOURCE_NAME], false);
 					} else {
 						var columnModel = this.view.attributeLevelMappingGrid.columns[1];
 						var columnEditor = columnModel.getEditor();
@@ -270,7 +260,7 @@
 		},
 
 		/**
-		 * Step validation (at least one class/view association and main view check)
+		 * Step validation (at least one class/source association)
 		 */
 		onStepEdit: function() {
 			this.view.gridEditorPlugin.completeEdit();
@@ -342,8 +332,8 @@
 
 				columns: [
 					{
-						header: tr.viewName,
-						dataIndex: CMDBuild.ServiceProxy.parameter.VIEW_NAME,
+						header: tr.sourceName,
+						dataIndex: CMDBuild.ServiceProxy.parameter.SOURCE_NAME,
 						editor: {
 							xtype: 'combo',
 							disabled: true
@@ -351,8 +341,8 @@
 						flex: 1
 					},
 					{
-						header: tr.viewAttribute,
-						dataIndex: CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE,
+						header: tr.sourceAttribute,
+						dataIndex: CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE,
 						editor: {
 							xtype: 'combo',
 							disabled: true
@@ -437,17 +427,18 @@
 		},
 
 		listeners: {
-			// Disable next button only if grid haven't selected class and setup class and view combo editors
+			// Disable next button only if grid haven't selected class and setup class and source combo editors
 			show: function(view, eOpts) {
-				var me = this;
-
-				this.delegate.buildViewCombo();
+				this.delegate.buildSourceCombo();
 				this.delegate.buildClassCombo();
 
+				// Step validate
+				this.delegate.parentDelegate.validateStepGrid(this.attributeLevelMappingGrid.getStore());
+
 //				Ext.Function.createDelayed(function() { // HACK: to fix problem witch fires show event before changeTab() function
-//					if (me.delegate.isEmptyMappingGrid())
-//						me.delegate.setDisabledButtonNext(true);
-//				}, 1)();
+//					if (this.delegate.isEmptyMappingGrid())
+//						this.delegate.setDisabledButtonNext(true);
+//				}, 1, this)();
 			}
 		}
 	});

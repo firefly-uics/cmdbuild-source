@@ -7,6 +7,7 @@ import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.map;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
+import static org.cmdbuild.scheduler.command.SafeCommand.safe;
 import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.template.engine.EngineNames.EMAIL_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.GROUP_PREFIX;
@@ -46,6 +47,8 @@ import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.EmailConstants;
 import org.cmdbuild.scheduler.Job;
+import org.cmdbuild.scheduler.command.BuildableCommandBasedJob;
+import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.email.CollectingEmailCallbackHandler;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailPersistence;
@@ -54,9 +57,6 @@ import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.PredicateEmailAccountSupplier;
 import org.cmdbuild.services.email.SubjectHandler;
 import org.cmdbuild.services.email.SubjectHandler.ParsedSubject;
-import org.cmdbuild.services.scheduler.Command;
-import org.cmdbuild.services.scheduler.DefaultJob;
-import org.cmdbuild.services.scheduler.SafeCommand;
 import org.cmdbuild.services.template.engine.EmailEngine;
 import org.cmdbuild.services.template.engine.GroupEmailEngine;
 import org.cmdbuild.services.template.engine.GroupUsersEmailEngine;
@@ -469,12 +469,9 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		}
 
 		final String name = task.getId().toString();
-		return DefaultJob.newInstance() //
+		return BuildableCommandBasedJob.newInstance() //
 				.withName(name) //
-				.withAction( //
-						SafeCommand.of( //
-								readEmail.build()) //
-				) //
+				.withAction(safe(readEmail.build())) //
 				.build();
 	}
 

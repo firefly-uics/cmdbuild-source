@@ -13,6 +13,8 @@ import org.cmdbuild.data.store.task.TaskParameter;
 import org.cmdbuild.data.store.task.TaskParameterConverter;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.logic.taskmanager.ConnectorTask;
+import org.cmdbuild.logic.taskmanager.ConnectorTaskJobFactory;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter;
@@ -127,9 +129,15 @@ public class TaskManager {
 	@Bean
 	protected LogicAndSchedulerConverter defaultLogicAndSchedulerConverter() {
 		final DefaultLogicAndSchedulerConverter converter = new DefaultLogicAndSchedulerConverter();
+		converter.register(ConnectorTask.class, connectorTaskJobFactory());
 		converter.register(ReadEmailTask.class, readEmailTaskJobFactory());
 		converter.register(StartWorkflowTask.class, startWorkflowTaskJobFactory());
 		return converter;
+	}
+
+	@Bean
+	protected ConnectorTaskJobFactory connectorTaskJobFactory() {
+		return new ConnectorTaskJobFactory(data.systemDataView());
 	}
 
 	@Bean

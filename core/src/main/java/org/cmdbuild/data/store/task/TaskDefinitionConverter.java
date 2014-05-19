@@ -15,6 +15,14 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 
 	private static enum Factory {
 
+		CONNECTOR(TYPE_CONNECTOR) {
+
+			@Override
+			protected Builder<? extends TaskDefinition> create(final CMCard card) {
+				return ConnectorTaskDefinition.newInstance();
+			}
+
+		}, //
 		READ_EMAIL(TYPE_EMAIL) {
 
 			@Override
@@ -71,6 +79,11 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 				}
 
 				@Override
+				public void visit(final ConnectorTaskDefinition connectorTaskDefinition) {
+					element = CONNECTOR;
+				}
+
+				@Override
 				public void visit(final ReadEmailTaskDefinition taskDefinition) {
 					element = READ_EMAIL;
 				}
@@ -96,6 +109,7 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 	public static final String TYPE = "Type";
 	public static final String RUNNING = "Running";
 
+	private static final String TYPE_CONNECTOR = "connector";
 	private static final String TYPE_EMAIL = "emailService";
 	private static final String TYPE_WORKFLOW = "workflow";
 	private static final String TYPE_SYNCHRONOUS_EVENT = "synchronous_event";

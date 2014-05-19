@@ -5,10 +5,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		parentDelegate: undefined,
 		filterWindow: undefined,
-		view: undefined,
+		parentDelegate: undefined,
 		taskType: 'email',
+		view: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -28,50 +28,83 @@
 		},
 
 		// GETters functions
+			/**
+			 * @return (Object) delegate
+			 */
 			getFromAddressFilterDelegate: function() {
 				return this.view.fromAddresFilter.delegate;
 			},
 
+			/**
+			 * @return (Object) delegate
+			 */
 			getSubjectFilterDelegate: function() {
 				return this.view.subjectFilter.delegate;
 			},
 
+			/**
+			 * @return (String)
+			 */
 			getValueId: function() {
 				return this.view.idField.getValue();
 			},
 
 		// SETters functions
+			/**
+			 * @param (Boolean) state
+			 */
 			setAllowBlankEmailAccountCombo: function(state) {
 				this.view.emailAccountCombo.allowBlank = state;
 			},
 
+			/**
+			 * @param (Boolean) state
+			 */
 			setDisabledTypeField: function(state) {
 				this.view.typeField.setDisabled(state);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueActive: function(value) {
 				this.view.activeField.setValue(value);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueDescription: function(value) {
 				this.view.descriptionField.setValue(value);
 			},
 
-			setValueEmailAccount: function(emailAccountName) {
+			/**
+			 * @param (String) value
+			 */
+			setValueEmailAccount: function(value) {
 				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
 				this.view.emailAccountCombo.forceSelection = false;
-				this.view.emailAccountCombo.setValue(emailAccountName);
+				this.view.emailAccountCombo.setValue(value);
 				this.view.emailAccountCombo.forceSelection = true;
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueFilterFromAddress: function(value) {
 				this.getFromAddressFilterDelegate().setValue(value);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueFilterSubject: function(value) {
 				this.getSubjectFilterDelegate().setValue(value);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueId: function(value) {
 				this.view.idField.setValue(value);
 			}
@@ -87,8 +120,6 @@
 		overflowY: 'auto',
 
 		initComponent: function() {
-			var me = this;
-
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {

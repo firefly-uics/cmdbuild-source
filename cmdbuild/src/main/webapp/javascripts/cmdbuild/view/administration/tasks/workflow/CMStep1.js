@@ -26,51 +26,81 @@
 			}
 		},
 
+		/**
+		 * @return (String)
+		 */
 		checkWorkflowComboSelected: function() {
-			if (this.getWorkflowDelegate().getValueCombo())
-				return true;
-
-			return false;
+			return this.getWorkflowDelegate().getValueCombo();
 		},
 
 		// GETters functions
+			/**
+			 * @return (String)
+			 */
 			getValueId: function() {
 				return this.view.idField.getValue();
 			},
 
+			/**
+			 * @return (Object) delegate
+			 */
 			getWorkflowDelegate: function() {
 				return this.view.workflowForm.delegate;
 			},
 
+			/**
+			 * @return (Object)
+			 */
 			getValueWorkflowAttributeGrid: function() {
 				return this.getWorkflowDelegate().getValueGrid();
 			},
 
 		// SETters functions
+			/**
+			 * @param (Boolean) state
+			 */
 			setDisabledTypeField: function(state) {
 				this.view.typeField.setDisabled(state);
 			},
 
+			/**
+			 * @param (Boolean) state
+			 */
 			setDisabledWorkflowAttributesGrid: function(state) {
 				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueActive: function(value) {
 				this.view.activeField.setValue(value);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueDescription: function(value) {
 				this.view.descriptionField.setValue(value);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueId: function(value) {
 				this.view.idField.setValue(value);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueWorkflowAttributesGrid: function(value) {
 				this.getWorkflowDelegate().setValueGrid(value);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueWorkflowCombo: function(value) {
 				this.getWorkflowDelegate().setValueCombo(value);
 			}

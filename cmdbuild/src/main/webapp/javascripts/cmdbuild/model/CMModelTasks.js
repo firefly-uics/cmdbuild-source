@@ -25,6 +25,17 @@
 	/*
 	 * Models for single tasks get proxy calls
 	 */
+	Ext.define('CMDBuild.model.CMModelTasks.singleTask.connector', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
+			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.ServiceProxy.parameter.ATTRIBUTE_MAPPING, type: 'auto'}
+		]
+	});
+
 	Ext.define('CMDBuild.model.CMModelTasks.singleTask.email', {
 		extend: 'Ext.data.Model',
 
@@ -95,7 +106,10 @@
 			fields: [
 				{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string' },
 				{ name: CMDBuild.ServiceProxy.parameter.VIEW_NAME, type: 'string' },
-				{ name: CMDBuild.ServiceProxy.parameter.IS_MAIN, type: 'boolean' }
+				{ name: CMDBuild.ServiceProxy.parameter.CREATE, type: 'boolean', defaultValue: true },
+				{ name: CMDBuild.ServiceProxy.parameter.UPDATE, type: 'boolean', defaultValue: true },
+				{ name: CMDBuild.ServiceProxy.parameter.DELETE, type: 'boolean', defaultValue: true },
+				{ name: CMDBuild.ServiceProxy.parameter.DELETION_TYPE, type: 'string' }
 			]
 		});
 

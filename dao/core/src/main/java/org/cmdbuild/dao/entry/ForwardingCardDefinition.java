@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.entry;
 
+import java.util.Map.Entry;
+
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 
 public abstract class ForwardingCardDefinition extends ForwardingEntryDefinition implements CMCardDefinition {
@@ -14,6 +16,12 @@ public abstract class ForwardingCardDefinition extends ForwardingEntryDefinition
 	@Override
 	public CMCardDefinition set(final String key, final Object value) {
 		delegate.set(key, value);
+		return this;
+	}
+
+	@Override
+	public CMCardDefinition set(final Iterable<? extends Entry<String, ? extends Object>> keysAndValues) {
+		delegate.set(keysAndValues);
 		return this;
 	}
 

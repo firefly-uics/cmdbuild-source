@@ -672,7 +672,9 @@
 			},
 			"modify": "Modify task",
 			"notificationForm": {
-				"title": "Send notification email"
+				"templateError": "Error template",
+				"title": "Send notification email",
+				"titlePlur": "Send notifications email"
 			},
 			"remove": "Remove task",
 			"running": "Running",
@@ -686,8 +688,13 @@
 			"taskConnector": {
 				"attributeLevelMapping": "@@ Attribute mapping",
 				"classLevelMapping": "@@ Class mapping",
-				"datasourceDbFieldset": "Datasource: Relational database",
-				"datasourceLdapFieldset": "Datasource: LDAP directory",
+				"cudActions": {
+					"create": "Create",
+					"delete": "Delete",
+					"update": "Update"
+				},
+				"dataSourceDbFieldset": "Datasource: Relational database",
+				"dataSourceLdapFieldset": "Datasource: LDAP directory",
 				"dbName": "Database name",
 				"deletionType": "@@ Deletion type",
 				"deletionTypes": {
@@ -696,18 +703,12 @@
 				},
 				"domainName": "@@ Domain name",
 				"isKey": "@@ Is key",
-				"operations": "@@ Operations",
-				"operationsTypes": {
-					"filter": "@@ Filter",
-					"none": "@@ None"
-				},
 				"recipientAddress": "Recipient address",
 				"referenceMapping": "@@ References mapping",
 				"senderAccount": "Sender account",
-				"toSynchronize": "To synchronize",
-				"viewAttribute": "@@ View attribute",
-				"viewName": "@@ View name",
-				"viewPrefix": "View prefix"
+				"sourceAttribute": "@@ Source attribute",
+				"sourceName": "@@ Source name",
+				"tableViewFilter": "Table/View filter"
 			},
 			"taskEmail": {
 				"attachmentsCategory": "Category",

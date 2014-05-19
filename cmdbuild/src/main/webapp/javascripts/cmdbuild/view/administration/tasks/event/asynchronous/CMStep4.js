@@ -26,10 +26,7 @@
 		},
 
 		checkWorkflowComboSelected: function() {
-			if (this.getValueWorkflowCombo())
-				return true;
-
-			return false;
+			return this.getValueWorkflowCombo();
 		},
 
 		getWorkflowDelegate: function() {
@@ -70,18 +67,22 @@
 			// Email notification configuration
 				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
 					sender: {
+						type: 'sender',
 						disabled: false
 					},
 					template: {
+						type: 'template',
 						disabled: false
 					}
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.notificationForm.title,
-					checkboxToggle: true,
 					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
+					checkboxToggle: true,
 					collapsed: true,
+					collapsible: true,
+					toggleOnTitleClick: true,
 
 					layout: {
 						type: 'vbox'
@@ -102,6 +103,8 @@
 					title: tr.startWorkflow,
 					checkboxToggle: true,
 					collapsed: true,
+					collapsible: true,
+					toggleOnTitleClick: true,
 
 					layout: {
 						type: 'vbox',
