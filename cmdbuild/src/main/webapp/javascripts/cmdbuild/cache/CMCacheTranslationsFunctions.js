@@ -84,8 +84,13 @@
 			return withTranslations;
 		},
 		setActiveTranslations: function(activeLanguages) {
-			activeLanguages = activeLanguages.split(", ");
-			setActiveTranslations(activeLanguages);
+			if (activeLanguages) {
+				activeLanguages = activeLanguages.split(", ");
+				setActiveTranslations(activeLanguages);
+			}
+			else {
+				var pippo = 1;
+			}
 		},
 		getActiveTranslations: function(activeLanguages) {
 			return activeTranslations;
