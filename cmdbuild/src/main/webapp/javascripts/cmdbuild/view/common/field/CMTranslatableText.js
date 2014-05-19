@@ -16,7 +16,7 @@
 		textArea : false,
 		vtype : '',
 		setValue: function(value) {
-			return this.text.setValue(value);
+			this.text.setValue(value);
 		},
 		getValue: function() {
 			return this.text.getValue();
@@ -53,12 +53,25 @@
 				vtype : this.vtype,
 			});
 		},
+		createHiddenValue: function(valueField) {
+			return new Ext.form.field.Text( {
+				hidden: true,
+				name : this.original_name,
+				valueField: valueField,
+				//override
+				getValue : function() {
+					return this.valueField.getValue();
+				}
+			});
+		},
 		setButtonMargin: Ext.emptyFn,
 		initComponent : function() {
-			this.name += "_default";
-			this.text = this.createTextItem();
-			this.width += 22;
 			var me = this;
+			this.original_name = this.name + "pp";
+//			this.name += "_default";
+			this.text = this.createTextItem();
+			this.hiddenValue = this.createHiddenValue(this.text);
+			this.width += 22;
 			this.translationsButton = new Ext.Button( {
 				iconCls: 'translate',
 				width: 22,
@@ -77,7 +90,7 @@
 				}
 			});
 			this.setButtonMargin();
-			this.items = [this.text, this.translationsButton];
+			this.items = [this.text, this.translationsButton, this.hiddenValue];
 			_CMCache.registerOnTranslations(this);
 			this.callParent(arguments);
 			this.resetLanguages();

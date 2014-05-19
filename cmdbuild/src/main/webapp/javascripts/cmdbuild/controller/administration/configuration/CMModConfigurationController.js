@@ -37,7 +37,9 @@
 				scope: this,
 				success: function(response){
 					var decoded = Ext.JSON.decode(response.responseText);
-					_CMCache.setActiveTranslations(decoded.data.enabled_languages);
+					if (decoded.data.enabled_languages) {
+						_CMCache.setActiveTranslations(decoded.data.enabled_languages);
+					}
 					this.view.populateForm(decoded);
 					this.view.afterSubmit(decoded.data);
 				}
