@@ -31,59 +31,6 @@
 			}
 		},
 
-		/**
-		 * @return (Array) data
-		 */
-		getData: function() {
-			var data = [];
-			var isKeySelection = null;
-
-			if (Ext.isEmpty(this.view.gridSelectionModel))
-				return data;
-
-			if (this.view.gridSelectionModel.hasSelection())
-				isKeySelection = this.view.gridSelectionModel.getSelection();
-
-			// To validate and filter grid rows and creating isKey attributes
-			this.view.attributeLevelMappingGrid.getStore().each(function(record) {
-				if (
-					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
-					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE))
-					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
-					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE))
-				) {
-					var buffer = {};
-
-					buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
-					buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE);
-					buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME);
-					buffer[CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE);
-					buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = false;
-
-					// Check to setup isKey parameter
-					for (key in isKeySelection) {
-						if (
-							buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.CLASS_NAME)
-							&& buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE)
-							&& buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME)
-							&& buffer[CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE)
-						) {
-							buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = true;
-							break;
-						}
-					}
-
-					data.push(buffer);
-				}
-			});
-
-			return data;
-		},
-
-		isEmptyMappingGrid: function() {
-			return CMDBuild.Utils.isEmpty(this.getData());
-		},
-
 		buildClassCombo: function() {
 			var me = this;
 
@@ -119,10 +66,9 @@
 				if (Ext.isEmpty(onStepEditExecute))
 					var onStepEditExecute = true;
 
-				for (var key in _CMCache.getClasses()) {
+				for (var key in _CMCache.getClasses())
 					if (key == _CMCache.getEntryTypeByName(className).get(CMDBuild.ServiceProxy.parameter.ID))
 						attributesListStore.push(this.view.classesAttributesMap[key]);
-				}
 
 				this.view.attributeLevelMappingGrid.columns[3].setEditor({
 					xtype: 'combo',
@@ -191,10 +137,9 @@
 					var onStepEditExecute = true;
 
 // TODO: to finish implementation when stores will be ready
-//				for (var key in _CMCache.getClasses()) {
+//				for (var key in _CMCache.getClasses())
 //					if (key == classId)
 //						attributesListStore.push(this.view.classesAttributesMap[key]);
-//				}
 
 				this.view.attributeLevelMappingGrid.columns[1].setEditor({
 					xtype: 'combo',
@@ -217,6 +162,62 @@
 				if (onStepEditExecute)
 					this.onStepEdit();
 			}
+		},
+
+		// GETters functions
+			/**
+			 * @return (Array) data
+			 */
+			getData: function() {
+				var data = [];
+				var isKeySelection = null;
+
+				if (!Ext.isEmpty(this.view.gridSelectionModel)) {
+					if (this.view.gridSelectionModel.hasSelection())
+						isKeySelection = this.view.gridSelectionModel.getSelection();
+
+					// To validate and filter grid rows and creating isKey attributes
+					this.view.attributeLevelMappingGrid.getStore().each(function(record) {
+						if (
+							!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
+							&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE))
+							&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
+							&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE))
+						) {
+							var buffer = {};
+
+							buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
+							buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE);
+							buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME);
+							buffer[CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE);
+							buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = false;
+
+							// Check to setup isKey parameter
+							for (key in isKeySelection) {
+								if (
+									buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.CLASS_NAME)
+									&& buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE)
+									&& buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME)
+									&& buffer[CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE)
+								) {
+									buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = true;
+									break;
+								}
+							}
+
+							data.push(buffer);
+						}
+					});
+				}
+
+				return data;
+			},
+
+		/**
+		 * @return (Boolean)
+		 */
+		isEmptyMappingGrid: function() {
+			return CMDBuild.Utils.isEmpty(this.getData());
 		},
 
 		/**
@@ -272,9 +273,13 @@
 			}
 		},
 
-		setDisabledButtonNext: function(state) {
-			this.parentDelegate.setDisabledButtonNext(state);
-		}
+		// SETters functions
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledButtonNext: function(state) {
+				this.parentDelegate.setDisabledButtonNext(state);
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep5', {

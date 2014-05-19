@@ -80,12 +80,10 @@
 		 * @param (String) content
 		 */
 		onFilterButtonClick: function(titleWindow, type, content) {
-			var me = this;
-
 			this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterFormWindow', {
 				title: titleWindow,
 				type: type,
-				content: me.textareaField.getValue(),
+				content: this.textareaField.getValue(),
 				textareaConcatParameter: this.getTextareaConcatParameter()
 			});
 

@@ -33,6 +33,9 @@
 		},
 
 		// GETters functions
+			/**
+			 * @return (String) dataSourceType or false
+			 */
 			getTypeDataSource: function() {
 				if (this.view.dbFieldset.checkboxCmp.getValue())
 					return 'db';

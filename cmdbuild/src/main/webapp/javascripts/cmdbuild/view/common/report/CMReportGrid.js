@@ -65,7 +65,13 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 	},
 
 	load: function() {
-		this.getStore().load();
+		this.getStore().load({
+			scope: this,
+			callback: function() {
+				if (!this.getSelectionModel().hasSelection())
+					this.getSelectionModel().select(0, true);
+			}
+		});
 	},
 
 	requestReport: function(reportParams) {

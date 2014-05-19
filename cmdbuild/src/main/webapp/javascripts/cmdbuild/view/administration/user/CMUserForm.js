@@ -206,11 +206,19 @@
 
 		enableFieldset : function(f) {
 			f.cascade(function(item) {
-				if (item && (item instanceof Ext.form.Field)) {
-					var name = item._name || item.name;// for compatibility I can not change the name of old attrs
-					if (!item.cmImmutable) {
+				if (
+					item
+					&& (
+						item instanceof Ext.form.Field
+						|| item instanceof Ext.form.FieldSet
+						|| item.considerAsFieldToDisable
+					)
+				) {
+					var name = item._name || item.name; // for compatibility I can not change the name of old attrs
+					var toBeEnabled = (true || !item.cmImmutable) && item.isVisible();
+
+					if (toBeEnabled)
 						item.enable();
-					}
 				}
 			});
 			this.disableCMTbar();

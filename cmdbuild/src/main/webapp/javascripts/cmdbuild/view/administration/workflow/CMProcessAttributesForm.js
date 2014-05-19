@@ -9,8 +9,9 @@
 		buildBasePropertiesPanel: function() {
 			this.baseProperties = Ext.create('Ext.form.FieldSet', {
 				title: tr.baseProperties,
-				margins: '0 0 0 3',
-				autoScroll: true,
+				margin: '0 3 0 0',
+				overflowY: 'auto',
+				flex: 1,
 
 				items: [
 					this.attributeName,

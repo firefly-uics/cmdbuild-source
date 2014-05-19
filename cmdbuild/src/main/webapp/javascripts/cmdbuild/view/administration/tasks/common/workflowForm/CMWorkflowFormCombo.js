@@ -19,10 +19,6 @@
 			select: function(combo, records, eOpts) {
 				this.delegate.cmOn('onSelectWorkflow', this.getValue());
 			}
-		},
-
-		initComponent: function() {
-			this.callParent(arguments);
 		}
 	});
 

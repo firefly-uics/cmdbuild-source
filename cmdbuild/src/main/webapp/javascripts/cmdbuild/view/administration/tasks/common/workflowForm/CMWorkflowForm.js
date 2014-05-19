@@ -6,6 +6,7 @@
 		extend: 'Ext.form.FieldContainer',
 
 		border: false,
+		considerAsFieldToDisable: true,
 		fieldLabel: tr.workflow,
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		width: '100%',

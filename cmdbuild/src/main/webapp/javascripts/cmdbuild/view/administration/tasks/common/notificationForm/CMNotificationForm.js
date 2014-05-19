@@ -1,17 +1,17 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
-		extend: 'Ext.form.FieldContainer',
+		extend: 'Ext.container.Container',
 
 		delegate: undefined,
 
+		considerAsFieldToDisable: true,
 		inputFields: [],
 		inputFieldsConfiguration: undefined,
 		notificationFieldType: [ // Used to validate notification field types
 			'sender',
 			'template'
 		],
-
 		border: false,
 		width: '100%',
 

@@ -36,7 +36,7 @@
 				disabled: true
 			});
 
-			this.cronPanel = Ext.create('CMDBuild.view.administration.workflow.CMProcessTasks', {
+			this.taskManagerPanel = Ext.create('CMDBuild.view.administration.workflow.CMProcessTasks', {
 				title: CMDBuild.Translation.administration.tasks.title,
 				border: false,
 				disabled: true
@@ -51,8 +51,7 @@
 					this.processForm,
 					this.attributesPanel,
 					this.domainGrid,
-					this.emailTemplatePanel,
-					this.cronPanel
+					this.taskManagerPanel
 				]
 			});
 

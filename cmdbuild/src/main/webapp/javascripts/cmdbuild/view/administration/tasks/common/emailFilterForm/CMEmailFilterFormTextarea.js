@@ -10,11 +10,7 @@
 		id: undefined,
 
 		readOnly: true,
-		flex: 1,
-
-		initComponent: function() {
-			this.callParent(arguments);
-		}
+		flex: 1
 	});
 
 })();

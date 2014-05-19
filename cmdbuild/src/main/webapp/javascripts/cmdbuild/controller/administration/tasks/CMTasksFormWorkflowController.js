@@ -110,46 +110,45 @@
 
 		// overwrite
 		onSaveButtonClick: function() {
-			var formData = this.view.getData(true);
 			var attributesGridValues = this.delegateStep[0].getValueWorkflowAttributeGrid();
+			var formData = this.view.getData(true);
 			var submitDatas = {};
 
-			// Stop save process if not valid
-			if (!this.validate(formData[CMDBuild.ServiceProxy.parameter.ACTIVE]))
-				return;
+			// Validate before save
+			if (this.validate(formData[CMDBuild.ServiceProxy.parameter.ACTIVE])) {
+				CMDBuild.LoadMask.get().show();
 
-			CMDBuild.LoadMask.get().show();
+				submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
+					formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
+				);
 
-			submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
-				formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
-			);
+				// Form submit values formatting
+				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
 
-			// Form submit values formatting
-			if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-				submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
+				// Data filtering to submit only right values
+				submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
+				submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
+				submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
+				submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
 
-			// Data filtering to submit only right values
-			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
-			submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
-			submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
-			submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
-
-			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
-				CMDBuild.core.proxy.CMProxyTasks.create({
-					type: this.taskType,
-					params: submitDatas,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
-			} else {
-				CMDBuild.core.proxy.CMProxyTasks.update({
-					type: this.taskType,
-					params: submitDatas,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
+				if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
+					CMDBuild.core.proxy.CMProxyTasks.create({
+						type: this.taskType,
+						params: submitDatas,
+						scope: this,
+						success: this.success,
+						callback: this.callback
+					});
+				} else {
+					CMDBuild.core.proxy.CMProxyTasks.update({
+						type: this.taskType,
+						params: submitDatas,
+						scope: this,
+						success: this.success,
+						callback: this.callback
+					});
+				}
 			}
 		},
 

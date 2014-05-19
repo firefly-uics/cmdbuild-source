@@ -104,32 +104,31 @@
 			}
 		},
 
-		/**
-		 * @return (Array) data
-		 */
-		getData: function() {
-			var data = [];
+		// GETters functions
+			/**
+			 * @return (Array) data
+			 */
+			getData: function() {
+				var data = [];
 
-			if (Ext.isEmpty(this.view.gridSelectionModel))
+				if (!Ext.isEmpty(this.view.gridSelectionModel))
+					// To validate and filter grid rows
+					this.view.referenceMappingGrid.getStore().each(function(record) {
+						if (
+							!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
+							&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.DOMAIN_NAME))
+						) {
+							var buffer = {};
+
+							buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
+							buffer[CMDBuild.ServiceProxy.parameter.DOMAIN_NAME] = record.get(CMDBuild.ServiceProxy.parameter.DOMAIN_NAME);
+
+							data.push(buffer);
+						}
+					});
+
 				return data;
-
-			// To validate and filter grid rows
-			this.view.referenceMappingGrid.getStore().each(function(record) {
-				if (
-					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
-					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.DOMAIN_NAME))
-				) {
-					var buffer = {};
-
-					buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
-					buffer[CMDBuild.ServiceProxy.parameter.DOMAIN_NAME] = record.get(CMDBuild.ServiceProxy.parameter.DOMAIN_NAME);
-
-					data.push(buffer);
-				}
-			});
-
-			return data;
-		},
+			},
 
 		/**
 		 * Function to update rows stores/editors on beforeEdit event

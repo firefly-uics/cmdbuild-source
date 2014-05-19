@@ -123,56 +123,54 @@
 		},
 
 		onSaveButtonClick: function() {
-			// Stop save process if not valid
-			if (!this.validate(this.form))
-				return;
+			// Validate before save
+			if (this.validate(this.form)) {
+				var formData = this.form.getData(true);
 
-			CMDBuild.LoadMask.get().show();
+				CMDBuild.LoadMask.get().show();
 
-			var formData = this.form.getData(true);
-
-			if (Ext.isEmpty(formData.id)) {
-				CMDBuild.core.proxy.CMProxyEmailTemplates.create({
-					params: formData,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
-			} else {
-				CMDBuild.core.proxy.CMProxyEmailTemplates.update({
-					params: formData,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
+				if (Ext.isEmpty(formData.id)) {
+					CMDBuild.core.proxy.CMProxyEmailTemplates.create({
+						params: formData,
+						scope: this,
+						success: this.success,
+						callback: this.callback
+					});
+				} else {
+					CMDBuild.core.proxy.CMProxyEmailTemplates.update({
+						params: formData,
+						scope: this,
+						success: this.success,
+						callback: this.callback
+					});
+				}
 			}
 		},
 
 		removeItem: function() {
-			// Nothing to remove
-			if (Ext.isEmpty(this.selectedName))
-				return;
+			if (!Ext.isEmpty(this.selectedName)) {
+				var me = this;
+				var store = this.grid.store;
 
-			var me = this;
-			var store = this.grid.store;
+				CMDBuild.LoadMask.get().show();
 
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.CMProxyEmailTemplates.remove({
-				params: {
-					name: this.selectedName
-				},
-				scope: this,
-				success: function() {
-					this.form.reset();
+				CMDBuild.core.proxy.CMProxyEmailTemplates.remove({
+					params: {
+						name: this.selectedName
+					},
+					scope: this,
+					success: function() {
+						this.form.reset();
 
-					store.load({
-						callback: function() {
-							me.selectionModel.select(0, true);
-						}
-					});
-				},
-				callback: this.callback()
-			});
+						store.load({
+							callback: function() {
+								me.selectionModel.select(0, true);
+							}
+						});
+					},
+					callback: this.callback()
+				});
+			}
 		},
 
 		/**

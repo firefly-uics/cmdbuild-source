@@ -54,60 +54,64 @@
 			});
 		},
 
+		// GETters functions
+			/**
+			 * @return (Array) data
+			 */
+			getData: function() {
+				var data = [];
+
+				// To validate and filter grid rows
+				this.view.classLevelMappingGrid.getStore().each(function(record) {
+					if (
+						!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
+						&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
+					) {
+						var buffer = [];
+
+						buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
+						buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME);
+
+						data.push(buffer);
+					}
+				});
+
+				return data;
+			},
+
+			/**
+			 * Function used from next step to get all selected class names
+			 *
+			 * @return (Array) selectedClassArray
+			 */
+			getSelectedClassArray: function() {
+				var selectedClassArray = [];
+				var gridData = this.getData();
+
+				for (key in gridData)
+					selectedClassArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
+
+				return selectedClassArray;
+			},
+
+			/**
+			 * Function used from next step to get all selected source names
+			 *
+			 * @return (Array) selectedSourceArray
+			 */
+			getSelectedSourceArray: function() {
+				var selectedSourceArray = [];
+				var gridData = this.getData();
+
+				for (key in gridData)
+					selectedSourceArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.SOURCE_NAME]);
+
+				return selectedSourceArray;
+			},
+
 		/**
-		 * @return (Array) data
+		 * @return (Boolean)
 		 */
-		getData: function() {
-			var data = [];
-
-			// To validate and filter grid rows
-			this.view.classLevelMappingGrid.getStore().each(function(record) {
-				if (
-					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
-					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
-				) {
-					var buffer = [];
-
-					buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
-					buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME);
-
-					data.push(buffer);
-				}
-			});
-
-			return data;
-		},
-
-		/**
-		 * Function used from next step to get all selected class names
-		 *
-		 * @return (Array) selectedClassArray
-		 */
-		getSelectedClassArray: function() {
-			var selectedClassArray = [];
-			var gridData = this.getData();
-
-			for (key in gridData)
-				selectedClassArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
-
-			return selectedClassArray;
-		},
-
-		/**
-		 * Function used from next step to get all selected source names
-		 *
-		 * @return (Array) selectedSourceArray
-		 */
-		getSelectedSourceArray: function() {
-			var selectedSourceArray = [];
-			var gridData = this.getData();
-
-			for (key in gridData)
-				selectedSourceArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.SOURCE_NAME]);
-
-			return selectedSourceArray;
-		},
-
 		isEmptyMappingGrid: function() {
 			return CMDBuild.Utils.isEmpty(this.getData());
 		},
@@ -161,9 +165,13 @@
 			}
 		},
 
-		setDisabledButtonNext: function(state) {
-			this.parentDelegate.setDisabledButtonNext(state);
-		}
+		// SETters functions
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledButtonNext: function(state) {
+				this.parentDelegate.setDisabledButtonNext(state);
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep4', {

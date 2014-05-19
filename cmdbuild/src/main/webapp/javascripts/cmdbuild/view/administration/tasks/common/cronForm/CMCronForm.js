@@ -1,9 +1,10 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.tasks.common.cronForm.CMCronForm', {
-		extend: 'Ext.form.FieldContainer',
+		extend: 'Ext.container.Container',
 
 		border: false,
+		considerAsFieldToDisable: true,
 
 		/**
 		 * To acquire informations to setup fields before creation

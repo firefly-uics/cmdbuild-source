@@ -183,10 +183,9 @@
 				var values = cronExpression.split(' ');
 				var fields = this.advancedField.advancedFields;
 
-				for (var i = 0; i < fields.length; i++) {
+				for (var i = 0; i < fields.length; i++)
 					if (values[i])
 						fields[i].setValue(values[i]);
-				}
 			},
 
 			/**

@@ -14,11 +14,7 @@
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 		forceSelection: true,
-		editable: false,
-
-		initComponent: function() {
-			this.callParent(arguments);
-		}
+		editable: false
 	});
 
 })();

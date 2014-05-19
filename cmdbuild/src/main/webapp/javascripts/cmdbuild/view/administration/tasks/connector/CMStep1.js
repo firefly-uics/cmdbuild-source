@@ -6,6 +6,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
+
 		view: undefined,
 		taskType: 'connector',
 
@@ -26,25 +27,42 @@
 			}
 		},
 
-		getValueId: function() {
-			return this.view.idField.getValue();
-		},
+		// GETters functions
+			/**
+			 * @return (String)
+			 */
+			getValueId: function() {
+				return this.view.idField.getValue();
+			},
 
-		setDisabledTypeField: function(state) {
-			this.view.typeField.setDisabled(state);
-		},
+		// GETters functions
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledTypeField: function(state) {
+				this.view.typeField.setDisabled(state);
+			},
 
-		setValueActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
+			/**
+			 * @param (Object) value
+			 */
+			setValueActive: function(value) {
+				this.view.activeField.setValue(value);
+			},
 
-		setValueDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
+			/**
+			 * @param (Object) value
+			 */
+			setValueDescription: function(value) {
+				this.view.descriptionField.setValue(value);
+			},
 
-		setValueId: function(value) {
-			this.view.idField.setValue(value);
-		}
+			/**
+			 * @param (Object) value
+			 */
+			setValueId: function(value) {
+				this.view.idField.setValue(value);
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep1', {

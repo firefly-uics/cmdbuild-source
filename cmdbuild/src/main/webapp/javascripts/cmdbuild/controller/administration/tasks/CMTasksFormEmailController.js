@@ -140,87 +140,86 @@
 			var formData = this.view.getData(true);
 			var submitDatas = {};
 
-			// Stop save process if not valid
-			if (!this.validate(formData[CMDBuild.ServiceProxy.parameter.ACTIVE]))
-				return;
+			// Validate before save
+			if (this.validate(formData[CMDBuild.ServiceProxy.parameter.ACTIVE])) {
+				CMDBuild.LoadMask.get().show();
 
-			CMDBuild.LoadMask.get().show();
+				submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
+					formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
+				);
 
-			submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
-				formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
-			);
+				// Form submit values formatting
+					if (!Ext.isEmpty(formData.filterFromAddress))
+						submitDatas[CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS] = Ext.encode(
+							formData[CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS].split(
+								this.delegateStep[0].getFromAddressFilterDelegate().getTextareaConcatParameter()
+							)
+						);
 
-			// Form submit values formatting
-				if (!Ext.isEmpty(formData.filterFromAddress))
-					submitDatas[CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS] = Ext.encode(
-						formData[CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS].split(
-							this.delegateStep[0].getFromAddressFilterDelegate().getTextareaConcatParameter()
-						)
-					);
+					if (!Ext.isEmpty(formData.filterSubject))
+						submitDatas[CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT] = Ext.encode(
+							formData[CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT].split(
+								this.delegateStep[0].getSubjectFilterDelegate().getTextareaConcatParameter()
+							)
+						);
 
-				if (!Ext.isEmpty(formData.filterSubject))
-					submitDatas[CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT] = Ext.encode(
-						formData[CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT].split(
-							this.delegateStep[0].getSubjectFilterDelegate().getTextareaConcatParameter()
-						)
-					);
+				// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
+					var attachmentsFieldsetCheckboxValue = this.delegateStep[2].getValueAttachmentsFieldsetCheckbox();
+					if (attachmentsFieldsetCheckboxValue) {
+						submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE] = attachmentsFieldsetCheckboxValue;
+						submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY] = formData[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY];
+					}
 
-			// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
-				var attachmentsFieldsetCheckboxValue = this.delegateStep[2].getValueAttachmentsFieldsetCheckbox();
-				if (attachmentsFieldsetCheckboxValue) {
-					submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE] = attachmentsFieldsetCheckboxValue;
-					submitDatas[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY] = formData[CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY];
-				}
+					var notificationFieldsetCheckboxValue = this.delegateStep[2].getValueNotificationFieldsetCheckbox();
+					if (notificationFieldsetCheckboxValue) {
+						submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
+						submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE];
+					}
 
-				var notificationFieldsetCheckboxValue = this.delegateStep[2].getValueNotificationFieldsetCheckbox();
-				if (notificationFieldsetCheckboxValue) {
-					submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
-					submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE];
-				}
+					var parsingFieldsetCheckboxValue = this.delegateStep[2].getValueParsingFieldsetCheckbox();
+					if (parsingFieldsetCheckboxValue) {
+						submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE] = parsingFieldsetCheckboxValue;
+						submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_KEY_END] = formData[CMDBuild.ServiceProxy.parameter.PARSING_KEY_END];
+						submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT] = formData[CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT];
+						submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END] = formData[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END];
+						submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT] = formData[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT];
+					}
 
-				var parsingFieldsetCheckboxValue = this.delegateStep[2].getValueParsingFieldsetCheckbox();
-				if (parsingFieldsetCheckboxValue) {
-					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE] = parsingFieldsetCheckboxValue;
-					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_KEY_END] = formData[CMDBuild.ServiceProxy.parameter.PARSING_KEY_END];
-					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT] = formData[CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT];
-					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END] = formData[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END];
-					submitDatas[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT] = formData[CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT];
-				}
+					var workflowFieldsetCheckboxValue = this.delegateStep[3].getValueWorkflowFieldsetCheckbox();
+					if (workflowFieldsetCheckboxValue) {
+						var attributesGridValues = this.delegateStep[3].getValueWorkflowAttributeGrid();
 
-				var workflowFieldsetCheckboxValue = this.delegateStep[3].getValueWorkflowFieldsetCheckbox();
-				if (workflowFieldsetCheckboxValue) {
-					var attributesGridValues = this.delegateStep[3].getValueWorkflowAttributeGrid();
+						if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+							submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
 
-					if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-						submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
+						submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
+						submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
+					}
 
-					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
-					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
-				}
-
-			// Data filtering to submit only right values
-			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
-			submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
-			submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT];
-			submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
+				// Data filtering to submit only right values
+				submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
+				submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
+				submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT];
+				submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
 _debug(formData);
 _debug(submitDatas);
-			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
-				CMDBuild.core.proxy.CMProxyTasks.create({
-					type: this.taskType,
-					params: submitDatas,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
-			} else {
-				CMDBuild.core.proxy.CMProxyTasks.update({
-					type: this.taskType,
-					params: submitDatas,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
+				if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
+					CMDBuild.core.proxy.CMProxyTasks.create({
+						type: this.taskType,
+						params: submitDatas,
+						scope: this,
+						success: this.success,
+						callback: this.callback
+					});
+				} else {
+					CMDBuild.core.proxy.CMProxyTasks.update({
+						type: this.taskType,
+						params: submitDatas,
+						scope: this,
+						success: this.success,
+						callback: this.callback
+					});
+				}
 			}
 		},
 

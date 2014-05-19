@@ -4,10 +4,10 @@
 		extend: 'Ext.form.FieldContainer',
 
 		border: false,
-		layout: 'hbox',
-		labelWidth: CMDBuild.LABEL_WIDTH,
-		width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 		considerAsFieldToDisable: true,
+		labelWidth: CMDBuild.LABEL_WIDTH,
+		layout: 'hbox',
+		width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 
 		/**
 		 * To acquire informations to setup fields before creation

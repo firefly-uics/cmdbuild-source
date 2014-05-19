@@ -91,20 +91,19 @@
 		},
 
 		removeItem: function() {
-			// Nothing to remove
-			if (this.selectedId == null)
-				return;
+			if (!Ext.isEmpty(this.selectedId)) {
+				CMDBuild.LoadMask.get().show();
 
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.CMProxyTasks.remove({
-				type: this.taskType,
-				params: {
-					id: this.selectedId
-				},
-				scope: this,
-				success: this.success,
-				callback: this.callback
-			});
+				CMDBuild.core.proxy.CMProxyTasks.remove({
+					type: this.taskType,
+					params: {
+						id: this.selectedId
+					},
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			}
 		},
 
 		resetIdField: function() {
