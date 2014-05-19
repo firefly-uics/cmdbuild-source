@@ -55,6 +55,7 @@
 		},
 		setButtonMargin: Ext.emptyFn,
 		initComponent : function() {
+			this.name += "_default";
 			this.text = this.createTextItem();
 			this.width += 22;
 			var me = this;
