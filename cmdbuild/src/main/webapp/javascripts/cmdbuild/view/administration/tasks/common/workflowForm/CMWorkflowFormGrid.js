@@ -5,7 +5,6 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid', {
 		extend: 'CMDBuild.view.administration.common.CMDynamicKeyValueGrid',
 
-		// Required
 		delegate: undefined,
 
 		title: tr.attributes,

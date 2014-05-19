@@ -1,13 +1,13 @@
-package org.cmdbuild.services.scheduler;
+package org.cmdbuild.scheduler.command;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.scheduler.Job;
 
-public class DefaultJob implements Job {
+public class BuildableCommandBasedJob implements Job {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<DefaultJob> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<BuildableCommandBasedJob> {
 
 		private static final Command NULL = new Command() {
 
@@ -26,9 +26,9 @@ public class DefaultJob implements Job {
 		}
 
 		@Override
-		public DefaultJob build() {
+		public BuildableCommandBasedJob build() {
 			validate();
-			return new DefaultJob(this);
+			return new BuildableCommandBasedJob(this);
 		}
 
 		public Builder withName(final String name) {
@@ -55,7 +55,7 @@ public class DefaultJob implements Job {
 	private final String name;
 	private final Command action;
 
-	private DefaultJob(final Builder builder) {
+	private BuildableCommandBasedJob(final Builder builder) {
 		this.name = builder.name;
 		this.action = builder.action;
 	}

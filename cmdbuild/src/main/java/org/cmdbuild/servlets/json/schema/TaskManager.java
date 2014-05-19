@@ -5,6 +5,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.TASK_CONNECTOR;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TASK_READ_EMAIL;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TASK_START_WORKFLOW;
 import static org.cmdbuild.servlets.json.ComunicationConstants.TASK_SYNCHRONOUS_EVENT;
@@ -15,6 +16,7 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.cmdbuild.logic.taskmanager.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
@@ -32,6 +34,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 	private static enum TaskType {
 
+		CONNECTOR(TASK_CONNECTOR), //
 		READ_EMAIL(TASK_READ_EMAIL), //
 		START_WORKFLOW(TASK_START_WORKFLOW), //
 		SYNCHRONOUS_EVENT(TASK_SYNCHRONOUS_EVENT), //
@@ -66,6 +69,11 @@ public class TaskManager extends JSONBaseWithSpringContext {
 			task.accept(this);
 			Validate.notNull(type, "type not found");
 			return type;
+		}
+		
+		@Override
+		public void visit(ConnectorTask task) {
+			type = TaskType.CONNECTOR;
 		}
 
 		@Override

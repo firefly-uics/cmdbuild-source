@@ -32,6 +32,11 @@
 			}
 		},
 
+		/**
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		onAddButtonClick: function(name, param, callBack) {
 			this.selectionModel.deselectAll();
 			this.selectedId = null;
@@ -86,10 +91,9 @@
 		},
 
 		removeItem: function() {
-			if (this.selectedId == null) {
-				// Nothing to remove
+			// Nothing to remove
+			if (this.selectedId == null)
 				return;
-			}
 
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyTasks.remove({
@@ -114,6 +118,11 @@
 			this.view.nextButton.setDisabled(state);
 		},
 
+		/**
+		 * @param (Object) result
+		 * @param (Object) options
+		 * @param (Object) decodedResult
+		 */
 		success: function(result, options, decodedResult) {
 			var me = this;
 			var taskId = this.delegateStep[0].getValueId();
@@ -146,14 +155,9 @@
 		 *
 		 * @return (Boolean)
 		 */
+		// overwrite
 		validate: function(enable, type) {
-			// Final check for invalid fields
-			if (this.view.getNonValidFields().length > 0) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-				return false;
-			}
-
-			return true;
+			this.callParent([this.view]);
 		}
 	});
 

@@ -90,33 +90,26 @@
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
 
-			this.operationsCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.ServiceProxy.parameter.TO_SYNCHRONIZE,
-				fieldLabel: tr.taskConnector.toSynchronize,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				store: CMDBuild.core.proxy.CMProxyTasks.getConnectorOperations(),
-				displayField: CMDBuild.ServiceProxy.parameter.NAME,
-				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				forceSelection: true,
-				editable: false
-			});
-
 			// Email notification configuration
 				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
 					sender: {
+						type: 'sender',
 						disabled: false
 					},
 					template: {
-						disabled: false
+						type: 'template',
+						disabled: false,
+						fieldLabel: tr.notificationForm.templateError
 					}
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.notificationForm.title,
-					checkboxToggle: true,
+					title: tr.notificationForm.titlePlur,
 					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
+					checkboxToggle: true,
 					collapsed: true,
+					collapsible: true,
+					toggleOnTitleClick: true,
 
 					layout: {
 						type: 'vbox'
@@ -134,7 +127,6 @@
 					this.idField,
 					this.descriptionField,
 					this.activeField,
-					this.operationsCombo,
 					this.notificationFieldset
 				]
 			});

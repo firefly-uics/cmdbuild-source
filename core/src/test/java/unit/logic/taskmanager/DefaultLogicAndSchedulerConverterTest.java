@@ -4,6 +4,7 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.cmdbuild.logic.taskmanager.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter.JobFactory;
 import org.cmdbuild.logic.taskmanager.ReadEmailTask;
@@ -20,6 +21,26 @@ public class DefaultLogicAndSchedulerConverterTest {
 	@Before
 	public void setUp() throws Exception {
 		converter = new DefaultLogicAndSchedulerConverter();
+	}
+
+	@Test
+	public void connectorTaskSuccessfullyConvertedToJob() throws Exception {
+		// given
+		final ConnectorTask task = ConnectorTask.newInstance().build();
+
+		final Job job = mock(Job.class);
+		final JobFactory<ConnectorTask> factory = mock(JobFactory.class);
+		when(factory.create(task)) //
+				.thenReturn(job);
+		converter.register(ConnectorTask.class, factory);
+
+		// when
+		converter.from(task).toJob();
+
+		// then
+		final InOrder inOrder = inOrder(factory);
+		inOrder.verify(factory).create(task);
+		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test

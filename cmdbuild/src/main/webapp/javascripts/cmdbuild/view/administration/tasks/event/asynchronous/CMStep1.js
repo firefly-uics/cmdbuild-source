@@ -32,10 +32,7 @@
 			},
 
 		isEmptyClass: function() {
-			if (this.view.className.getValue())
-				return false;
-
-			return true;
+			return Ext.isEmpty(this.view.className.getValue());
 		},
 
 		// SETters functions

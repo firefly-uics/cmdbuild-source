@@ -1,4 +1,4 @@
-package org.cmdbuild.services.scheduler;
+package org.cmdbuild.scheduler.command;
 
 public abstract class ForwardingCommand implements Command {
 

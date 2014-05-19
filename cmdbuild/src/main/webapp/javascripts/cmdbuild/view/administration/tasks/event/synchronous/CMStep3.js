@@ -6,6 +6,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
+
 		view: undefined,
 
 		/**
@@ -25,79 +26,108 @@
 			}
 		},
 
+		/**
+		 * @return (String)
+		 */
 		checkWorkflowComboSelected: function() {
-			if (this.getValueWorkflowCombo())
-				return true;
-
-			return false;
+			return this.getValueWorkflowCombo();
 		},
 
 		// GETters functions
+			/**
+			 * @return (Object) delegate
+			 */
 			getNotificationDelegate: function() {
 				return this.view.notificationForm.delegate;
 			},
 
+			/**
+			 * @return (Object) delegate
+			 */
 			getWorkflowDelegate: function() {
 				return this.view.workflowForm.delegate;
 			},
 
+			/**
+			 * @return (Boolean)
+			 */
 			getValueNotificationFieldsetCheckbox: function() {
 				return this.view.notificationFieldset.checkboxCmp.getValue();
 			},
 
+			/**
+			 * @return (Object)
+			 */
 			getValueWorkflowAttributeGrid: function() {
 				return this.getWorkflowDelegate().getValueGrid();
 			},
 
+			/**
+			 * @return (String)
+			 */
 			getValueWorkflowCombo: function() {
 				return this.getWorkflowDelegate().getValueCombo();
 			},
 
+			/**
+			 * @return (Boolean)
+			 */
 			getValueWorkflowFieldsetCheckbox: function() {
 				return this.view.workflowFieldset.checkboxCmp.getValue();
 			},
 
-			getValueNotificationFieldsetCheckbox: function() {
-				return this.view.notificationFieldset.checkboxCmp.getValue();
-			},
-
 		// SETters functions
+			/**
+			 * @param (Boolean) state
+			 */
 			setDisabledWorkflowAttributesGrid: function(state) {
 				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 			},
 
 			/**
-			 * @param (Boolean) value
+			 * @param (String) value
 			 */
-			setValueNotificationFieldsetCheckbox: function(value) {
-				if (value) {
+			setValueNotificationAccount: function(value) {
+				this.getNotificationDelegate().setValue('sender', value);
+			},
+
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueNotificationFieldsetCheckbox: function(state) {
+				if (state) {
 					this.view.notificationFieldset.expand();
 				} else {
 					this.view.notificationFieldset.collapse();
 				}
 			},
 
-			setValueNotificationAccount: function(value) {
-				this.getNotificationDelegate().setValueSender(value);
-			},
-
+			/**
+			 * @param (String) value
+			 */
 			setValueNotificationTemplate: function(value) {
-				this.getNotificationDelegate().setValueTemplate(value);
+				this.getNotificationDelegate().setValue('template', value);
 			},
 
+			/**
+			 * @param (Object) value
+			 */
 			setValueWorkflowAttributesGrid: function(value) {
 				this.getWorkflowDelegate().setValueGrid(value);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueWorkflowCombo: function(value) {
 				this.getWorkflowDelegate().setValueCombo(value);
 			},
 
 			/**
-			 * @param (Boolean) value
+			 * @param (Boolean) state
 			 */
-			setValueWorkflowFieldsetCheckbox: function(value) {
-				if (value) {
+			setValueWorkflowFieldsetCheckbox: function(state) {
+				if (state) {
 					this.view.workflowFieldset.expand();
 				} else {
 					this.view.workflowFieldset.collapse();
@@ -115,25 +145,27 @@
 		overflowY: 'auto',
 
 		initComponent: function() {
-			var me = this;
-
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', this);
 
 			// Email notification configuration
 				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
 					sender: {
+						type: 'sender',
 						disabled: false
 					},
 					template: {
+						type: 'template',
 						disabled: false
 					}
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.notificationForm.title,
-					checkboxToggle: true,
 					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
+					checkboxToggle: true,
 					collapsed: true,
+					collapsible: true,
+					toggleOnTitleClick: true,
 
 					layout: {
 						type: 'vbox'
@@ -154,6 +186,8 @@
 					title: tr.startWorkflow,
 					checkboxToggle: true,
 					collapsed: true,
+					collapsible: true,
+					toggleOnTitleClick: true,
 
 					layout: {
 						type: 'vbox',
@@ -175,9 +209,7 @@
 		},
 
 		listeners: {
-			/**
-			 * Disable attribute table to correct malfunction that enables on class select
-			 */
+			// Disable attribute table to correct malfunction that enables on class select
 			show: function(view, eOpts) {
 				if (!this.delegate.checkWorkflowComboSelected())
 					this.delegate.setDisabledWorkflowAttributesGrid(true);

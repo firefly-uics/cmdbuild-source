@@ -53,7 +53,9 @@
 		},
 
 		/**
-		 * @param (String) type
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
 		 */
 		// overwrite
 		onAddButtonClick: function(name, param, callBack) {
@@ -240,10 +242,9 @@ _debug(submitDatas);
 
 		// overwrite
 		removeItem: function() {
-			if (this.selectedId == null) {
-				// Nothing to remove
+			// Nothing to remove
+			if (this.selectedId == null)
 				return;
-			}
 
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.CMProxyTasks.remove({
@@ -258,7 +259,10 @@ _debug(submitDatas);
 		},
 
 		/**
+		 * Task validation
+		 *
 		 * @param (Boolean) enable
+		 * @param (String) type
 		 *
 		 * @return (Boolean)
 		 */

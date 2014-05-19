@@ -15,6 +15,7 @@ public class ComunicationConstants {
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTENAME = "attributeName", //
 			ATTRIBUTES = "attributes", //
+			ATTRIBUTE_MAPPING = "attributeMapping", //
 			BIM_LAYER = "bimLayer", //
 			BIM_PROJECTS = "bimProjects", //
 			BIM_ROOT = "root", //
@@ -39,8 +40,11 @@ public class ComunicationConstants {
 			CONTAINER = "container", //
 			COUNT = "count", //
 			CRON_EXPRESSION = "cronExpression", //
-			DATA = "data", //
 			DASHBOARDNAME = "dashboardName", //
+			DATA = "data", //
+			DATA_SOURCE_TYPE = "datasourceType", //
+			DATA_SOURCE_TYPE_SQL = "db", //
+			DATA_SOURCE_CONFIGURATION = "datasourceConfiguration", //
 			DB_NAME = "db_name", //
 			DB_TYPE = "db_type", //
 			DEFAULT = "Default", //
@@ -53,6 +57,7 @@ public class ComunicationConstants {
 			DEFAULT_VALUE = "defaultvalue", //
 			DESCRIPTION = "description", //
 			DESCRIPTION_CAPITAL = "Description", //
+			DEFAULT_DESCRIPTION_CAPITAL = "Description_default", //
 			DISABLE = "disable", //
 			DISABLED_ATTRIBUTES = "disabledAttributes", //
 			DETAIL_CARD_ID = "detailCardId", //
@@ -159,6 +164,8 @@ public class ComunicationConstants {
 			OUT_OF_FILTER = "outOfFilter", //
 			PARAMS = "params", //
 			PARENT = "parent", //
+			PARENT_DESCRIPTION = "ParentDescription", //
+			DEFAULT_PARENT_DESCRIPTION = "ParentDescription_default", //
 			PARENT_ID = "ParentId", //
 			PASSWORD = "password", //
 			PATCHES = "patches", //
@@ -226,6 +233,7 @@ public class ComunicationConstants {
 			USER_NAME = "username", //
 			USER_STOPPABLE = "userstoppable", //
 			USER_TYPE = "user_type", //
+			TASK_CONNECTOR = "connector", //
 			TASK_READ_EMAIL = "email", //
 			TASK_START_WORKFLOW = "workflow", //
 			TASK_SYNCHRONOUS_EVENT = "event_synchronous", //

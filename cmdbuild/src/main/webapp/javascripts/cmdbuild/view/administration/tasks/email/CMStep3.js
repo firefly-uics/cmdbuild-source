@@ -29,18 +29,30 @@
 		},
 
 		// GETters functions
+			/**
+			 * @return (Object) delegate
+			 */
 			getNotificationDelegate: function() {
 				return this.view.notificationForm.delegate;
 			},
 
+			/**
+			 * @return (Boolean)
+			 */
 			getValueAttachmentsFieldsetCheckbox: function() {
 				return this.view.attachmentsFieldset.checkboxCmp.getValue();
 			},
 
+			/**
+			 * @return (Boolean)
+			 */
 			getValueNotificationFieldsetCheckbox: function() {
 				return this.view.notificationFieldset.checkboxCmp.getValue();
 			},
 
+			/**
+			 * @return (Boolean)
+			 */
 			getValueParsingFieldsetCheckbox: function() {
 				return this.view.parsingFieldset.checkboxCmp.getValue();
 			},
@@ -51,7 +63,7 @@
 		onCheckedAttachmentsFieldset: function() {
 			var me = this;
 
-			if (this.view.attachmentsCombo.store.getCount() == 0) {
+			if (this.view.attachmentsCombo.store.getCount() == 0)
 				CMDBuild.ServiceProxy.configuration.read({
 					success: function(response) {
 						var decodedJson = Ext.JSON.decode(response.responseText);
@@ -61,7 +73,6 @@
 						);
 					}
 				}, name = 'dms');
-			}
 		},
 
 		// SETters functions
@@ -88,6 +99,9 @@
 				this.view.parsingFieldset.allowBlank = state;
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueAttachmentsCombo: function(value) {
 				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
 				this.view.attachmentsCombo.forceSelection = false;
@@ -96,10 +110,10 @@
 			},
 
 			/**
-			 * @param (Boolean) value
+			 * @param (Boolean) state
 			 */
-			setValueAttachmentsFieldsetCheckbox: function(value) {
-				if (value) {
+			setValueAttachmentsFieldsetCheckbox: function(state) {
+				if (state) {
 					this.view.attachmentsFieldset.expand();
 					this.onCheckedAttachmentsFieldset();
 				} else {
@@ -107,12 +121,11 @@
 				}
 			},
 
-			setValueNotificationAccount: function(value) {
-				this.getNotificationDelegate().setValueSender(value);
-			},
-
+			/**
+			 * @param (String) value
+			 */
 			setValueNotificationTemplate: function(value) {
-				this.getNotificationDelegate().setValueTemplate(value);
+				this.getNotificationDelegate().setValue('template', value);
 			},
 
 			/**
@@ -131,10 +144,10 @@
 			},
 
 			/**
-			 * @param (Boolean) value
+			 * @param (Boolean) state
 			 */
-			setValueParsingFieldsetCheckbox: function(value) {
-				if (value) {
+			setValueParsingFieldsetCheckbox: function(state) {
+				if (state) {
 					this.view.parsingFieldset.expand();
 				} else {
 					this.view.parsingFieldset.collapse();
@@ -189,9 +202,11 @@
 
 				this.parsingFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.bodyParsing,
-					checkboxToggle: true,
 					checkboxName: CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE,
+					checkboxToggle: true,
 					collapsed: true,
+					collapsible: true,
+					toggleOnTitleClick: true,
 
 					layout: {
 						type: 'vbox',
@@ -217,15 +232,18 @@
 			// Email notification configuration
 				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
 					template: {
+						type: 'template',
 						disabled: false
 					}
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.administration.tasks.notificationForm.title,
-					checkboxToggle: true,
 					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
+					checkboxToggle: true,
 					collapsed: true,
+					collapsible: true,
+					toggleOnTitleClick: true,
 
 					layout: {
 						type: 'vbox'
@@ -249,9 +267,11 @@
 
 				this.attachmentsFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.saveToAlfresco,
-					checkboxToggle: true,
 					checkboxName: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE,
+					checkboxToggle: true,
 					collapsed: true,
+					collapsible: true,
+					toggleOnTitleClick: true,
 
 					layout: {
 						type: 'vbox'

@@ -21,6 +21,9 @@
 				case 'onBeforeEdit':
 					return this.onBeforeEdit(param.fieldName, param.rowData);
 
+				case 'onStepEdit':
+					return this.onStepEdit();
+
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
@@ -38,12 +41,8 @@
 				forceSelection: true,
 				editable: false,
 				allowBlank: false,
-				store: this.parentDelegate.getFilteredClassStore(),
+				store: this.parentDelegate.getStoreFilteredClass(),
 				queryMode: 'local',
-
-				// To make sure the filter in the store is not cleared
-				triggerAction: 'all',
-				lastQuery: '',
 
 				listeners: {
 					select: function(combo, records, eOpts) {
@@ -57,19 +56,20 @@
 		 * To setup domain combo editor
 		 *
 		 * @param (String) className
+		 * @param (Boolean) onStepEditExecute
 		 */
-		buildDomainCombo: function(className) {
+		buildDomainCombo: function(className, onStepEditExecute) {
 			if (!Ext.isEmpty(className)) {
+				var me = this;
 				var domainStore = _CMCache.getDomainsBy(function(domain) {
-					if (
+					return (
 						(domain.get(CMDBuild.ServiceProxy.parameter.NAME_CLASS_1) == className)
 						|| (domain.get(CMDBuild.ServiceProxy.parameter.NAME_CLASS_2) == className)
-					) {
-						return true;
-					}
-
-					return false;
+					);
 				});
+
+				if (Ext.isEmpty(onStepEditExecute))
+					var onStepEditExecute = true;
 
 				if (domainStore.length > 0) {
 					this.view.referenceMappingGrid.columns[1].setEditor({
@@ -84,7 +84,13 @@
 							autoLoad: true,
 							fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
 							data: domainStore
-						})
+						}),
+
+						listeners: {
+							select: function(combo, records, eOpts) {
+								me.cmOn('onStepEdit');
+							}
+						}
 					});
 				} else {
 					this.view.referenceMappingGrid.columns[1].setEditor({
@@ -92,9 +98,15 @@
 						disabled: true
 					});
 				}
+
+				if (onStepEditExecute)
+					this.onStepEdit();
 			}
 		},
 
+		/**
+		 * @return (Array) data
+		 */
 		getData: function() {
 			var data = [];
 
@@ -107,7 +119,7 @@
 					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
 					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.DOMAIN_NAME))
 				) {
-					var buffer = [];
+					var buffer = {};
 
 					buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
 					buffer[CMDBuild.ServiceProxy.parameter.DOMAIN_NAME] = record.get(CMDBuild.ServiceProxy.parameter.DOMAIN_NAME);
@@ -142,6 +154,13 @@
 					}
 				} break;
 			}
+		},
+
+		/**
+		 * Step validation (at least one class/source association)
+		 */
+		onStepEdit: function() {
+			this.view.gridEditorPlugin.completeEdit();
 		}
 	});
 
@@ -246,6 +265,9 @@
 			// To populate grid with selected classes
 			show: function(view, eOpts) {
 				this.delegate.buildClassCombo();
+
+				// Step validate
+				this.delegate.parentDelegate.validateStepGrid(this.referenceMappingGrid.getStore());
 			}
 		},
 	});

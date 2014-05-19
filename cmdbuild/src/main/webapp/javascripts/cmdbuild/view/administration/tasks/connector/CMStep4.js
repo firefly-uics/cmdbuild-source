@@ -18,6 +18,12 @@
 		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onBeforeEdit':
+					return this.onBeforeEdit(param.fieldName, param.rowData);
+
+				case 'onCheckDelete':
+					return this.onCheckDelete(param.checked, param.rowIndex);
+
 				case 'onStepEdit':
 					return this.onStepEdit();
 
@@ -28,36 +34,42 @@
 			}
 		},
 
+		buildDeletionTypeCombo: function() {
+			var me = this;
+
+			this.view.classLevelMappingGrid.columns[5].setEditor({
+				xtype: 'combo',
+				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
+				forceSelection: true,
+				editable: false,
+				allowBlank: true,
+				store: CMDBuild.core.proxy.CMProxyTasks.getDeletionTypes(),
+
+				listeners: {
+					select: function(combo, records, eOpts) {
+						me.cmOn('onStepEdit');
+					}
+				}
+			});
+		},
+
+		/**
+		 * @return (Array) data
+		 */
 		getData: function() {
 			var data = [];
-			var mainClassName = null;
 
-			if (Ext.isEmpty(this.view.gridSelectionModel))
-				return data;
-
-			if (this.view.gridSelectionModel.hasSelection())
-				mainClassName = this.view.gridSelectionModel.getSelection()[0];
-
-			// To validate and filter grid rows and creating isMain attributes
-			this.view.gridSelectionModel.getStore().each(function(record) {
+			// To validate and filter grid rows
+			this.view.classLevelMappingGrid.getStore().each(function(record) {
 				if (
 					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
-					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME))
+					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
 				) {
 					var buffer = [];
 
 					buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
-					buffer[CMDBuild.ServiceProxy.parameter.VIEW_NAME] = record.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME);
-					buffer[CMDBuild.ServiceProxy.parameter.IS_MAIN] = false;
-
-					// Check to setup isMain parameter
-					if (
-						mainClassName != null
-						&& buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] == mainClassName.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME)
-						&& buffer[CMDBuild.ServiceProxy.parameter.VIEW_NAME] == mainClassName.get(CMDBuild.ServiceProxy.parameter.VIEW_NAME)
-					) {
-						buffer[CMDBuild.ServiceProxy.parameter.IS_MAIN] = true;
-					}
+					buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME);
 
 					data.push(buffer);
 				}
@@ -75,50 +87,74 @@
 			var selectedClassArray = [];
 			var gridData = this.getData();
 
-			for (key in gridData) {
-				if (selectedClassArray.indexOf(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]) == -1)
-					selectedClassArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
-			}
+			for (key in gridData)
+				selectedClassArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
 
 			return selectedClassArray;
 		},
 
 		/**
-		 * Function used from next step to get all selected view names
+		 * Function used from next step to get all selected source names
 		 *
-		 * @return (Array) selectedViewArray
+		 * @return (Array) selectedSourceArray
 		 */
-		getSelectedViewArray: function() {
-			var selectedViewArray = [];
+		getSelectedSourceArray: function() {
+			var selectedSourceArray = [];
 			var gridData = this.getData();
 
-			for (key in gridData) {
-				if (selectedViewArray.indexOf(gridData[key][CMDBuild.ServiceProxy.parameter.VIEW_NAME]) == -1)
-					selectedViewArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.VIEW_NAME]);
-			}
+			for (key in gridData)
+				selectedSourceArray.push(gridData[key][CMDBuild.ServiceProxy.parameter.SOURCE_NAME]);
 
-			return selectedViewArray;
+			return selectedSourceArray;
 		},
 
 		isEmptyMappingGrid: function() {
-			var gridData = this.getData();
-
-			if (Ext.isEmpty(gridData) || (gridData.length == 0))
-				return true;
-
-			return false;
+			return CMDBuild.Utils.isEmpty(this.getData());
 		},
 
 		/**
-		 * Step validation (at least one class/view association and main view check)
+		 * Resetting deletionType cell value if checkbox is unchecked
+		 *
+		 * @param (Boolean) checked
+		 * @param (Int) rowIndex
+		 */
+		onCheckDelete: function(checked, rowIndex) {
+			if (!checked)
+				this.view.classLevelMappingGrid.getStore().getAt(rowIndex).set(CMDBuild.ServiceProxy.parameter.DELETION_TYPE, '');
+		},
+
+		/**
+		 * Function to update rows stores/editors on beforeEdit event
+		 *
+		 * @param (String) fieldName
+		 * @param (Object) rowData
+		 */
+		onBeforeEdit: function(fieldName, rowData) {
+			switch (fieldName) {
+				case CMDBuild.ServiceProxy.parameter.DELETION_TYPE: {
+					if (rowData[CMDBuild.ServiceProxy.parameter.DELETE]) {
+						this.buildDeletionTypeCombo();
+					} else {
+						var columnModel = this.view.classLevelMappingGrid.columns[5];
+						var columnEditor = columnModel.getEditor();
+
+						if (!columnEditor.disabled)
+							columnModel.setEditor({
+								xtype: 'combo',
+								disabled: true
+							});
+					}
+				} break;
+			}
+		},
+
+		/**
+		 * Step validation (at least one class/source association)
 		 */
 		onStepEdit: function() {
 			this.view.gridEditorPlugin.completeEdit();
 
-			if (
-				!this.isEmptyMappingGrid()
-				&& this.view.gridSelectionModel.hasSelection()
-			) {
+			if (!this.isEmptyMappingGrid()) {
 				this.setDisabledButtonNext(false);
 			} else {
 				this.setDisabledButtonNext(true);
@@ -144,24 +180,17 @@
 
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep4Delegate', this);
 
-			this.gridSelectionModel = Ext.create('Ext.selection.CheckboxModel', {
-				mode: 'single',
-				showHeaderCheckbox: false,
-				headerText: CMDBuild.Translation.main,
-				headerWidth: 50,
-				dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_MAIN_NAME,
-				checkOnly: true,
-				selectByPosition: Ext.emptyFn, // FIX: to avoid checkbox selection on cellediting (workaround)
+			this.gridEditorPlugin = Ext.create('Ext.grid.plugin.CellEditing', {
+				clicksToEdit: 1,
 
 				listeners: {
-					selectionchange: function(model, record, index, eOpts) {
-						me.delegate.cmOn('onStepEdit');
+					beforeedit: function(editor, e, eOpts) {
+						me.delegate.cmOn('onBeforeEdit', {
+							fieldName: e.field,
+							rowData: e.record.data
+						});
 					}
 				}
-			});
-
-			this.gridEditorPlugin = Ext.create('Ext.grid.plugin.CellEditing', {
-				clicksToEdit: 1
 			});
 
 			this.classLevelMappingGrid = Ext.create('Ext.grid.Panel', {
@@ -169,21 +198,17 @@
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 
-				selModel: this.gridSelectionModel,
 				plugins: this.gridEditorPlugin,
 
 				columns: [
 					{
-						header: tr.viewName,
-						dataIndex: CMDBuild.ServiceProxy.parameter.VIEW_NAME,
+						header: tr.sourceName,
+						dataIndex: CMDBuild.ServiceProxy.parameter.SOURCE_NAME,
 						editor: {
 							xtype: 'combo',
-							displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+							displayField: CMDBuild.ServiceProxy.parameter.NAME,
 							valueField: CMDBuild.ServiceProxy.parameter.NAME,
-							forceSelection: true,
-							editable: false,
-							allowBlank: false,
-							store: CMDBuild.core.proxy.CMProxyTasks.getViewStore(),
+							store: CMDBuild.core.proxy.CMProxyTasks.getSourceStore(),
 
 							listeners: {
 								select: function(combo, records, eOpts) {
@@ -203,7 +228,7 @@
 							forceSelection: true,
 							editable: false,
 							allowBlank: false,
-							store: _CMCache.getClassesStore(),
+							store: CMDBuild.core.proxy.CMProxyTasks.getClassStore(),
 							queryMode: 'local',
 
 							listeners: {
@@ -213,6 +238,57 @@
 							}
 						},
 						flex: 1
+					},
+					{
+						xtype : 'checkcolumn',
+						header: tr.cudActions.create,
+						dataIndex: CMDBuild.ServiceProxy.parameter.CREATE,
+						width: 50,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					},
+					{
+						xtype : 'checkcolumn',
+						header: tr.cudActions.update,
+						dataIndex: CMDBuild.ServiceProxy.parameter.UPDATE,
+						width: 50,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					},
+					{
+						xtype : 'checkcolumn',
+						header: tr.cudActions.delete,
+						dataIndex: CMDBuild.ServiceProxy.parameter.DELETE,
+						width: 50,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true,
+
+						listeners: {
+							checkchange: function(checkbox, rowIndex, checked, eOpts) {
+								me.delegate.cmOn('onCheckDelete', {
+									checked: checked,
+									rowIndex: rowIndex
+								});
+							}
+						}
+					},
+					{
+						header: tr.deletionType,
+						dataIndex: CMDBuild.ServiceProxy.parameter.DELETION_TYPE,
+						editor: {
+							xtype: 'combo',
+							disabled: true
+						},
+						width: 100
 					},
 					{
 						xtype: 'actioncolumn',
@@ -261,12 +337,10 @@
 		listeners: {
 			// Disable next button only if grid haven't selected class
 			show: function(view, eOpts) {
-				var me = this;
-
 //				Ext.Function.createDelayed(function() { // HACK: to fix problem which fires show event before changeTab() function
-//					if (me.delegate.isEmptyMappingGrid())
-//						me.delegate.setDisabledButtonNext(true);
-//				}, 1)();
+//					if (this.delegate.isEmptyMappingGrid())
+//						this.delegate.setDisabledButtonNext(true);
+//				}, 1, this)();
 			}
 		}
 	});

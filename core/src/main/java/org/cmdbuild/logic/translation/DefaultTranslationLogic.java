@@ -22,7 +22,7 @@ import com.google.common.collect.Lists;
 public class DefaultTranslationLogic implements TranslationLogic {
 
 	public static final String DESCRIPTION_FOR_CLIENT = "Description";
-	private static final String DESCRIPTION_FOR_PERSISTENCE = "description";
+	public static final String DESCRIPTION_FOR_PERSISTENCE = "description";
 	public static final String DIRECT_DESCRIPTION_FOR_CLIENT = "directDescription";
 	private static final String DIRECT_DESCRIPTION_FOR_PERSISTENCE = "directdescription";
 	public static final String INVERSE_DESCRIPTION_FOR_CLIENT = "inverseDescription";
@@ -31,6 +31,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 	private static final String MASTER_DETAIL_LABEL_FOR_PERSISTENCE = "masterdetaillabel	";
 	public static final String BUTTON_LABEL_FOR_CLIENT = "ButtonLabel";
 	private static final String BUTTON_LABEL_FOR_PERSISTENCE = "buttonlabel	";
+	public static final String INSTANCENAME_FOR_SERVER = "instancename";
 
 	private static enum FieldMapper {
 
@@ -65,6 +66,8 @@ public class DefaultTranslationLogic implements TranslationLogic {
 	}
 
 	private static class ElementCreator implements TranslationObjectVisitor {
+
+		
 
 		private static ElementCreator of(final TranslationObject translationObject) {
 			return new ElementCreator(translationObject);
@@ -136,7 +139,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 
 		@Override
 		public void visit(final InstanceNameTranslation translationObject) {
-			value = format("instancename");
+			value = format(INSTANCENAME_FOR_SERVER);
 		}
 
 		@Override

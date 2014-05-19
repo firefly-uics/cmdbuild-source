@@ -6,11 +6,10 @@
 		delegate: undefined,
 
 		border: false,
-		frame: false,
 		cls: 'cmborderbottom',
+		frame: false,
 
 		initComponent: function() {
-
 			this.gridColumns = [
 				{
 					dataIndex: CMDBuild.ServiceProxy.parameter.NAME,
@@ -48,9 +47,7 @@
 				this.delegate.cmOn('onRowSelected');
 			},
 
-			/**
-			 * Event to load store on view display and first row selection as CMDbuild standard
-			 */
+			// Event to load store on view display and first row selection as CMDbuild standard
 			viewready: function() {
 				this.store.load({
 					scope: this,

@@ -50,6 +50,11 @@
 			}
 		},
 
+		/**
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		// overwrite
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
@@ -134,7 +139,7 @@
 		onSaveButtonClick: function() {
 			var formData = this.view.getData(true);
 			var submitDatas = {};
-_debug(formData);
+
 			// Stop save process if not valid
 			if (!this.validate(formData[CMDBuild.ServiceProxy.parameter.ACTIVE]))
 				return;
@@ -220,6 +225,8 @@ _debug(submitDatas);
 		},
 
 		/**
+		 * Task validation
+		 *
 		 * @param (Boolean) enable
 		 *
 		 * @return (Boolean)

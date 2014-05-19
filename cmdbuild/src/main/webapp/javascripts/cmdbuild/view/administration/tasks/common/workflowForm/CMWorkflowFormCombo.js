@@ -3,14 +3,15 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormCombo', {
 		extend: 'Ext.form.field.ComboBox',
 
-		// Required
 		delegate: undefined,
+
+		// Required
 		name: undefined,
 
 		valueField: CMDBuild.ServiceProxy.parameter.NAME,
 		displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
 		store: CMDBuild.core.proxy.CMProxyTasks.getStoreAllWorkflow(),
-		width: (CMDBuild.ADM_BIG_FIELD_WIDTH - CMDBuild.LABEL_WIDTH - 5), // FIX: To solve a problem of width
+		width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 		forceSelection: true,
 		editable: false,
 

@@ -5,8 +5,13 @@
 
 	Ext.define('CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController', {
 
-		senderCombo: undefined,
-		templateCombo: undefined,
+		/**
+		 * Array = [
+		 * 		'internalId': { Input object },
+		 * 		...
+		 * ]
+		 */
+		inputFields: [],
 
 		/**
 		 * Gatherer function to catch events
@@ -24,74 +29,55 @@
 			}
 		},
 
-		isEmptySenderCombo: function() {
-			if (!Ext.isEmpty(this.senderCombo))
-				return Ext.isEmpty(this.senderCombo.getValue());
-
-			return true;
-		},
-
-		isEmptyTemplateCombo: function() {
-			if (!Ext.isEmpty(this.templateCombo))
-				return Ext.isEmpty(this.templateCombo.getValue());
-
-			return true;
-		},
-
 		/**
-		 * Set fields as required/unrequired
-		 *
-		 * @param (Boolean) state
+		 * @return (Boolean) returnBoolean
 		 */
-		setAllowBlankFields: function(state) {
-			if (!Ext.isEmpty(this.senderCombo))
-				this.senderCombo.allowBlank = state;
+		isEmpty: function() {
+			var returnBoolean = true;
 
-			if (!Ext.isEmpty(this.templateCombo))
-				this.templateCombo.allowBlank = state;
+			for (field in this.inputFields)
+				if (!Ext.isEmpty(this.inputFields[field]))
+					returnBoolean = Ext.isEmpty(this.inputFields[field].getValue());
+
+			return returnBoolean;
 		},
 
-		/**
-		 * @param (String) value
-		 */
-		setValueSender: function(value) {
-			if (!Ext.isEmpty(value)) {
-				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				this.senderCombo.forceSelection = false;
-				this.senderCombo.setValue(value);
-				this.senderCombo.forceSelection = true;
-			}
-		},
+		// SETters functions
+			/**
+			 * Set fields as required/unrequired
+			 *
+			 * @param (Boolean) state
+			 */
+			setAllowBlankFields: function(state) {
+				for (field in this.inputFields)
+					if (!Ext.isEmpty(this.inputFields[field]))
+						this.inputFields[field].allowBlank = state;
+			},
 
-		/**
-		 * @param (String) value
-		 */
-		setValueTemplate: function(value) {
-			if (!Ext.isEmpty(value)) {
-				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				this.templateCombo.forceSelection = false;
-				this.templateCombo.setValue(value);
-				this.templateCombo.forceSelection = true;
-			}
-		},
+			/**
+			 * @param (String) internalId
+			 * @param (String) value
+			 */
+			setValue: function(internalId, value) {
+				var inputField = this.inputFields[internalId];
+
+				if (!Ext.isEmpty(inputField) && !Ext.isEmpty(value)) {
+					// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+					inputField.forceSelection = false;
+					inputField.setValue(value);
+					inputField.forceSelection = true;
+				}
+			},
 
 		/**
 		 * Notification form validation
 		 *
 		 * @param (Boolean) enable
-		 *
-		 * @return (Boolean)
 		 */
 		validate: function(enable) {
-			if (
-				this.isEmptySenderCombo()
-				&& this.isEmptyTemplateCombo()
-				&& enable
-			) {
-				this.setAllowBlankCombo(false);
-			} else {
-				this.setAllowBlankCombo(true);
-			}
+			this.setAllowBlankFields(
+				!(this.isEmpty() && enable)
+			);
 		}
 	});
 
