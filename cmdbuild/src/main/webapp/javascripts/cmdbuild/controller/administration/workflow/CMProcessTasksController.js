@@ -21,6 +21,7 @@
 			this.grid = view.grid;
 			this.view.delegate = this;
 			this.grid.delegate = this;
+
 			this.selectionModel = this.grid.getSelectionModel();
 		},
 
@@ -84,6 +85,8 @@
 		},
 
 		/**
+		 * On grid row double click to select task in administration tasks form
+		 *
 		 * @param (String) name
 		 * @param (Object) param
 		 * @param (Function) callback
@@ -166,16 +169,12 @@
 			if (this.currentProcessTaskId) {
 				param.id = this.currentProcessTaskId;
 
-				this.targetAccordion.expand();
+				this.onItemDoubleClick(null, param);
 
 				Ext.Function.createDelayed(function() {
-					this.targetAccordion.selectNodeById(param.type);
-
-					Ext.Function.createDelayed(function() {
-						if (this.targetController.form.delegate.selectedId != null)
-							this.targetController.form.delegate.onRemoveButtonClick();
-					}, 1000, this)();
-				}, 500, this)();
+					if (this.targetController.form.delegate.selectedId != null)
+						this.targetController.form.delegate.onRemoveButtonClick();
+				}, 1000, this)();
 			}
 		},
 

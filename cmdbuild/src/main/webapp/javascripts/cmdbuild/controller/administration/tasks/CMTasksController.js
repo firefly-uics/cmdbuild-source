@@ -182,6 +182,9 @@
 			return this.form.delegate.cmOn(name, param, callBack);
 		},
 
+		/**
+		 * On grid item double click to edit double-clicked task
+		 */
 		onItemDoubleClick: function() {
 			this.form.delegate.onModifyButtonClick();
 		},
@@ -211,6 +214,7 @@
 		 */
 		onStartButtonClick: function(record) {
 			CMDBuild.LoadMask.get().show();
+
 			CMDBuild.core.proxy.CMProxyTasks.start({
 				scope: this,
 				params: {
@@ -226,6 +230,7 @@
 		 */
 		onStopButtonClick: function(record) {
 			CMDBuild.LoadMask.get().show();
+
 			CMDBuild.core.proxy.CMProxyTasks.stop({
 				scope: this,
 				params: {
