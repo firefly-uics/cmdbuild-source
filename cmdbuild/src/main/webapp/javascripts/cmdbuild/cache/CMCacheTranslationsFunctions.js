@@ -89,7 +89,7 @@
 				setActiveTranslations(activeLanguages);
 			}
 			else {
-				var pippo = 1;
+				// there are not enabled languages
 			}
 		},
 		getActiveTranslations: function(activeLanguages) {
