@@ -88,7 +88,9 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public static final String ATTACHMENTS_ACTIVE = ATTACHMENTS_PREFIX + "active";
 		public static final String ATTACHMENTS_CATEGORY = ATTACHMENTS_PREFIX + "category";
 
-		public static final String NOTIFICATION_ACTIVE = RULE_PREFIX + "notification.active";
+		private static final String NOTIFICATION_PREFIX = RULE_PREFIX + "notification.";
+		public static final String NOTIFICATION_ACTIVE = NOTIFICATION_PREFIX + "active";
+		public static final String NOTIFICATION_TEMPLATE = NOTIFICATION_PREFIX + "template";
 
 		private static final String WORKFLOW_PREFIX = RULE_PREFIX + "workflow.";
 		public static final String WORKFLOW_ACTIVE = WORKFLOW_PREFIX + "active";
@@ -451,6 +453,8 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							.join(task.getRegexSubjectFilter())) //
 					.withParameter(ReadEmail.NOTIFICATION_ACTIVE, //
 							Boolean.toString(task.isNotificationActive())) //
+					.withParameter(ReadEmail.NOTIFICATION_TEMPLATE, //
+							defaultString(task.getNotificationTemplate())) //
 					.withParameter(ReadEmail.ATTACHMENTS_ACTIVE, //
 							Boolean.toString(task.isAttachmentsActive())) //
 					.withParameter(ReadEmail.ATTACHMENTS_CATEGORY, //
@@ -599,6 +603,8 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 									.split(subjectRegexFilters)) //
 					.withNotificationStatus( //
 							Boolean.valueOf(task.getParameter(ReadEmail.NOTIFICATION_ACTIVE))) //
+					.withNotificationTemplate( //
+							task.getParameter(ReadEmail.NOTIFICATION_TEMPLATE)) //
 					.withAttachmentsActive( //
 							Boolean.valueOf(task.getParameter(ReadEmail.ATTACHMENTS_ACTIVE))) //
 					.withAttachmentsCategory(task.getParameter(ReadEmail.ATTACHMENTS_CATEGORY)) //
