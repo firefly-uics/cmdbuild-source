@@ -1,13 +1,13 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CONFIGURATION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.COUNT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ENTRY_TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTERS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TEMPLATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIGURATION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.COUNT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ENTRY_TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTERS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPLATE;
 
 import org.cmdbuild.services.store.FilterDTO;
 import org.cmdbuild.services.store.FilterStore.Filter;

@@ -1,11 +1,11 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.START;
-import static org.cmdbuild.servlets.json.ComunicationConstants.STATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.START;
+import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 
 import java.io.IOException;
 import java.io.InputStream;

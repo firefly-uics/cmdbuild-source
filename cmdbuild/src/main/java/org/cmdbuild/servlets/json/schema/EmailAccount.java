@@ -1,24 +1,24 @@
 package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ADDRESS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ELEMENTS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ENABLE_MOVE_REJECTED_NOT_MATCHING;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.IMAP_PORT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.IMAP_SERVER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.IMAP_SSL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.INCOMING_FOLDER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.IS_DEFAULT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PASSWORD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PROCESSED_FOLDER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.REJECTED_FOLDER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.REJECT_NOT_MATCHING;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SMTP_PORT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SMTP_SERVER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SMTP_SSL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ADDRESS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ENABLE_MOVE_REJECTED_NOT_MATCHING;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IMAP_PORT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IMAP_SERVER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IMAP_SSL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.INCOMING_FOLDER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IS_DEFAULT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PASSWORD;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PROCESSED_FOLDER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.REJECTED_FOLDER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.REJECT_NOT_MATCHING;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SMTP_PORT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SMTP_SERVER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SMTP_SSL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.USER_NAME;
 
 import java.util.List;
 

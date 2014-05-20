@@ -2,8 +2,8 @@ package org.cmdbuild.servlets.json.serializers;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 
 import org.cmdbuild.logic.translation.ClassTranslation;
 import org.cmdbuild.services.store.menu.MenuItemDTO;

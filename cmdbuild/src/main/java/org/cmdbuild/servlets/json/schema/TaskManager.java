@@ -1,15 +1,15 @@
 package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ELEMENTS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TASK_CONNECTOR;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TASK_READ_EMAIL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TASK_START_WORKFLOW;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TASK_SYNCHRONOUS_EVENT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_CONNECTOR;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_READ_EMAIL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_START_WORKFLOW;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_SYNCHRONOUS_EVENT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
 
 import java.util.List;
 

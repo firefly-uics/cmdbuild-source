@@ -1,6 +1,6 @@
 package org.cmdbuild.servlets.json;
 
-public class ComunicationConstants {
+public class CommunicationConstants {
 
 	public static final String //
 			ACTIVE = "active", //

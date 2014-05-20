@@ -1,12 +1,12 @@
 package org.cmdbuild.servlets.json;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_FUNCTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_FUNCTION;
 
 import java.util.List;
 

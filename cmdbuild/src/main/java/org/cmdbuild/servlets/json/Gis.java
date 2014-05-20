@@ -1,8 +1,8 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ROOT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ROOT;
 
 import java.io.IOException;
 import java.util.HashSet;

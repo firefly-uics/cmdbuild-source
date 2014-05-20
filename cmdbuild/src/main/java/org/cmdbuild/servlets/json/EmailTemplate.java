@@ -1,15 +1,15 @@
 package org.cmdbuild.servlets.json;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.servlets.json.ComunicationConstants.BCC;
-import static org.cmdbuild.servlets.json.ComunicationConstants.BODY;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CC;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ELEMENTS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SUBJECT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TO;
+import static org.cmdbuild.servlets.json.CommunicationConstants.BCC;
+import static org.cmdbuild.servlets.json.CommunicationConstants.BODY;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CC;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SUBJECT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TO;
 
 import java.util.List;
 
