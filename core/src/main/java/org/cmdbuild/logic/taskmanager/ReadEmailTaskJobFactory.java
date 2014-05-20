@@ -3,6 +3,7 @@ package org.cmdbuild.logic.taskmanager;
 import static com.google.common.base.Suppliers.ofInstance;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.map;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
@@ -348,7 +349,8 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 								@Override
 								public Template get() {
-									final String name = email.getNotifyWith();
+									final String name = defaultIfBlank(task.getNotificationTemplate(),
+											email.getNotifyWith());
 									return emailTemplateLogic.read(name);
 								}
 

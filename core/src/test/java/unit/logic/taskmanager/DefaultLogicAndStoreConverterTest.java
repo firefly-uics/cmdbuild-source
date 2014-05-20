@@ -233,6 +233,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withRegexFromFilter(asList("regex", "from", "filter")) //
 				.withRegexSubjectFilter(asList("regex", "subject", "filter")) //
 				.withNotificationStatus(true) //
+				.withNotificationTemplate("template") //
 				.withAttachmentsActive(true) //
 				.withAttachmentsCategory("category") //
 				.withWorkflowActive(true) //
@@ -258,6 +259,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(ReadEmail.FILTER_FROM_REGEX, "regex\nfrom\nfilter"));
 		assertThat(parameters, hasEntry(ReadEmail.FILTER_SUBJECT_REGEX, "regex\nsubject\nfilter"));
 		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_ACTIVE, "true"));
+		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_TEMPLATE, "template"));
 		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_CATEGORY, "category"));
 		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ACTIVE, "true"));
@@ -305,6 +307,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(ReadEmail.FILTER_FROM_REGEX, "regex\nfrom\nfilter") //
 				.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, "regex\nsubject\nfilter") //
 				.withParameter(ReadEmail.NOTIFICATION_ACTIVE, "true") //
+				.withParameter(ReadEmail.NOTIFICATION_TEMPLATE, "template") //
 				.withParameter(ReadEmail.ATTACHMENTS_ACTIVE, "true") //
 				.withParameter(ReadEmail.ATTACHMENTS_CATEGORY, "category") //
 				.withParameter(ReadEmail.WORKFLOW_ACTIVE, "true") //
@@ -327,6 +330,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
 		assertThat(converted.getEmailAccount(), equalTo("email account"));
 		assertThat(converted.isNotificationActive(), equalTo(true));
+		assertThat(converted.getNotificationTemplate(), equalTo("template"));
 		assertThat(converted.getRegexFromFilter(), containsInAnyOrder("regex", "from", "filter"));
 		assertThat(converted.getRegexSubjectFilter(), containsInAnyOrder("regex", "subject", "filter"));
 		assertThat(converted.isAttachmentsActive(), equalTo(true));
