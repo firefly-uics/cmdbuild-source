@@ -9,7 +9,6 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ATTACHMENTS_CATEG
 import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_ACCOUNT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_TEMPLATE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER_FROM_ADDRESS;
 import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER_SUBJECT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
@@ -19,6 +18,7 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.MAPPER_KEY_INIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.MAPPER_VALUE_END;
 import static org.cmdbuild.servlets.json.ComunicationConstants.MAPPER_VALUE_INIT;
 import static org.cmdbuild.servlets.json.ComunicationConstants.NOTIFICATION_ACTIVE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NOTIFICATION_EMAIL_TEMPLATE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ADVANCEABLE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ATTACHMENTS_CATEGORY;
@@ -99,6 +99,11 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			return delegate.isNotificationActive();
 		}
 
+		@JsonProperty(NOTIFICATION_EMAIL_TEMPLATE)
+		public String getNotificationTemplate() {
+			return delegate.getNotificationTemplate();
+		}
+
 		@JsonProperty(ATTACHMENTS_ACTIVE)
 		public boolean isAttachmentsActive() {
 			return delegate.isAttachmentsActive();
@@ -177,7 +182,8 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
 			@Parameter(value = FILTER_FROM_ADDRESS, required = false) final JSONArray filterFromAddress, //
 			@Parameter(value = FILTER_SUBJECT, required = false) final JSONArray filterSubject, //
-			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
+			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
+			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE, required = false) final String emailTemplate, //
 			@Parameter(value = ATTACHMENTS_CATEGORY, required = false) final String attachmentsCategory, //
 			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
 			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes, //
@@ -200,8 +206,8 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withRegexSubjectFilter(toIterable(filterSubject)) //
 				//
 				// send notification
-				// TODO necessary?
-				.withNotificationStatus(isNotBlank(emailTemplate)) //
+				.withNotificationStatus(defaultIfNull(notificationActive, false)) //
+				.withNotificationTemplate(defaultIfNull(emailTemplate, null)) //
 				//
 				// store attachments
 				.withAttachmentsActive(isNotBlank(attachmentsCategory)) //
@@ -253,7 +259,8 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
 			@Parameter(value = FILTER_FROM_ADDRESS, required = false) final JSONArray filterFromAddress, //
 			@Parameter(value = FILTER_SUBJECT, required = false) final JSONArray filterSubject, //
-			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
+			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
+			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE, required = false) final String emailTemplate, //
 			@Parameter(value = ATTACHMENTS_CATEGORY, required = false) final String attachmentsCategory, //
 			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
 			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes, //
@@ -277,8 +284,8 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withRegexSubjectFilter(toIterable(filterSubject)) //
 				//
 				// send notification
-				// TODO necessary?
-				.withNotificationStatus(isNotBlank(emailTemplate)) //
+				.withNotificationStatus(defaultIfNull(notificationActive, false)) //
+				.withNotificationTemplate(defaultIfNull(emailTemplate, null)) //
 				//
 				// store attachments
 				.withAttachmentsActive(isNotBlank(attachmentsCategory)) //
