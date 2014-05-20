@@ -28,10 +28,11 @@ public class ComunicationConstants {
 			CARD_BINDING = "cardBinding", //
 			CC = "cc", //
 			CHARTNAME = "chartName", //
-			CLASS_NAME = "className", //
+			CLASS_ATTRIBUTE = "classAttribute", //
+			CLASS_DESCRIPTION = "text", //
 			CLASS_ID = "classId", //
 			CLASS_ID_CAPITAL = "IdClass", //
-			CLASS_DESCRIPTION = "text", //
+			CLASS_NAME = "className", //
 			CODE = "code", //
 			CODE_CAPITAL = "Code", //
 			CONFIGURATION = "configuration", //
@@ -132,6 +133,7 @@ public class ComunicationConstants {
 			IS_ACTIVE = "isActive", //
 			IS_ADMINISTRATOR = "isAdministrator", //
 			IS_DEFAULT = "isDefault", //
+			IS_KEY = "isKey", //
 			IS_PROCESS = "isprocess", //
 			JRXML = "jrxml", //
 			LANGUAGE = "language", //
@@ -222,8 +224,10 @@ public class ComunicationConstants {
 			SMTP_PORT = "smtpPort", //
 			SMTP_SERVER = "smtpServer", //
 			SMTP_SSL = "smtpSsl", //
+			SOURCE_ATTRIBUTE = "sourceAttribute", //
 			SOURCE_CLASS_NAME = "sourceClassName", //
 			SOURCE_FUNCTION = "sourceFunction", //
+			SOURCE_NAME = "sourceName", //
 			SORT = "sort", //
 			START = "start", //
 			STATE = "state", //

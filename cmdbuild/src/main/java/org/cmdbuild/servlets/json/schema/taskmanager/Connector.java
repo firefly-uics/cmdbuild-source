@@ -6,6 +6,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.logic.taskmanager.ConnectorTask.NULL_SOURCE_CONFIGURATION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE_MAPPING;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_ATTRIBUTE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_CONFIGURATION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_DB_ADDRESS;
@@ -18,10 +20,14 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_TYPE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_TYPE_SQL;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.ComunicationConstants.IS_KEY;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_ATTRIBUTE;
+import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_NAME;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -46,7 +52,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 import com.google.common.base.Function;
-import com.google.common.collect.BiMap;
 
 public class Connector extends JSONBaseWithSpringContext {
 
@@ -101,7 +106,7 @@ public class Connector extends JSONBaseWithSpringContext {
 		private String targetAttribute;
 		private Boolean isKey;
 
-		@JsonProperty("sourceType")
+		@JsonProperty(SOURCE_NAME)
 		public String getSourceType() {
 			return sourceType;
 		}
@@ -110,7 +115,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			this.sourceType = sourceType;
 		}
 
-		@JsonProperty("sourceAttribute")
+		@JsonProperty(SOURCE_ATTRIBUTE)
 		public String getSourceAttribute() {
 			return sourceAttribute;
 		}
@@ -119,7 +124,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			this.sourceAttribute = sourceAttribute;
 		}
 
-		@JsonProperty("targetType")
+		@JsonProperty(CLASS_NAME)
 		public String getTargetType() {
 			return targetType;
 		}
@@ -128,7 +133,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			this.targetType = targetType;
 		}
 
-		@JsonProperty("targetAttribute")
+		@JsonProperty(CLASS_ATTRIBUTE)
 		public String getTargetAttribute() {
 			return targetAttribute;
 		}
@@ -137,7 +142,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			this.targetAttribute = targetAttribute;
 		}
 
-		@JsonProperty("isKey")
+		@JsonProperty(IS_KEY)
 		public boolean isKey() {
 			return defaultIfNull(isKey, false);
 		}
@@ -174,6 +179,36 @@ public class Connector extends JSONBaseWithSpringContext {
 		}
 
 	}
+
+	private static final Function<AttributeMapping, JsonAttributeMapping> ATTRIBUTE_MAPPING_TO_JSON_ATTRIBUTE_MAPPING = new Function<AttributeMapping, JsonAttributeMapping>() {
+
+		@Override
+		public JsonAttributeMapping apply(final AttributeMapping input) {
+			final JsonAttributeMapping output = new JsonAttributeMapping();
+			output.setSourceType(input.getSourceType());
+			output.setSourceAttribute(input.getSourceAttribute());
+			output.setTargetType(input.getTargetType());
+			output.setTargetAttribute(input.getTargetAttribute());
+			output.setIsKey(input.isKey());
+			return output;
+		}
+
+	};
+
+	private static final Function<JsonAttributeMapping, AttributeMapping> JSON_ATTRIBUTE_MAPPING_TO_ATTRIBUTE_MAPPING = new Function<JsonAttributeMapping, AttributeMapping>() {
+
+		@Override
+		public AttributeMapping apply(final JsonAttributeMapping input) {
+			return AttributeMapping.newInstance() //
+					.withSourceType(input.getSourceType()) //
+					.withSourceAttribute(input.getSourceAttribute()) //
+					.withTargetType(input.getTargetType()) //
+					.withTargetAttribute(input.getTargetAttribute()) //
+					.withKeyStatus(input.isKey()) //
+					.build();
+		}
+
+	};
 
 	private static class JsonConnectorTask {
 
@@ -241,24 +276,19 @@ public class Connector extends JSONBaseWithSpringContext {
 			}.asJsonObject();
 		}
 
-	}
-
-	private static final Function<JsonAttributeMapping, AttributeMapping> JSON_ATTRIBUTE_MAPPING_TO_ATTRIBUTE_MAPPING = new Function<JsonAttributeMapping, AttributeMapping>() {
-
-		@Override
-		public AttributeMapping apply(final JsonAttributeMapping input) {
-			return AttributeMapping.newInstance() //
-					.withSourceType(input.getSourceType()) //
-					.withSourceAttribute(input.getSourceAttribute()) //
-					.withTargetType(input.getTargetType()) //
-					.withTargetAttribute(input.getTargetAttribute()) //
-					.withKeyStatus(input.isKey()) //
-					.build();
+		@JsonProperty(ATTRIBUTE_MAPPING)
+		public List<JsonAttributeMapping> getAttributeMapping() {
+			return from(delegate.getAttributeMappings()) //
+					.transform(ATTRIBUTE_MAPPING_TO_JSON_ATTRIBUTE_MAPPING) //
+					.toList();
 		}
 
-	};
+	}
 
 	private static final Iterable<JsonAttributeMapping> NO_MAPPINGS = Collections.emptyList();
+
+	private static final TypeReference<Set<? extends JsonAttributeMapping>> JSON_ATTRIBUTE_MAPPINGS_TYPE_REFERENCE = new TypeReference<Set<? extends JsonAttributeMapping>>() {
+	};
 
 	@Admin
 	@JSONExported
@@ -401,10 +431,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			jsonAttributeMappings = NO_MAPPINGS;
 		} else {
 			jsonAttributeMappings = new ObjectMapper() //
-					.readValue( //
-							json, //
-							new TypeReference<Set<JsonAttributeMapping>>() {
-							});
+					.readValue(json, JSON_ATTRIBUTE_MAPPINGS_TYPE_REFERENCE);
 		}
 		return from(jsonAttributeMappings) //
 				.transform(JSON_ATTRIBUTE_MAPPING_TO_ATTRIBUTE_MAPPING);
