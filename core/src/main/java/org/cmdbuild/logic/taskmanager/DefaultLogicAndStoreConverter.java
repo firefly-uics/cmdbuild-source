@@ -3,8 +3,10 @@ package org.cmdbuild.logic.taskmanager;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.NULL_SOURCE_CONFIGURATION;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +19,9 @@ import org.cmdbuild.data.store.task.StartWorkflowTaskDefinition;
 import org.cmdbuild.data.store.task.SynchronousEventTaskDefinition;
 import org.cmdbuild.data.store.task.TaskVisitor;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfiguration;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfigurationVisitor;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask.Phase;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -41,8 +46,19 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		private static final String ALL_PREFIX = "connector.";
 
-		private static final String MAPPING_PREFIX = ALL_PREFIX + "mapping.";
+		private static final String DATA_SOURCE_PREFIX = ALL_PREFIX + "datasource.";
+		public static final String DATA_SOURCE_TYPE = DATA_SOURCE_PREFIX + "type";
+		public static final String DATA_SOURCE_CONFIGURATION = DATA_SOURCE_PREFIX + "configuration";
 
+		private static final String SQL_PREFIX = EMPTY;
+		public static final String SQL_HOSTNAME = SQL_PREFIX + "hostname";
+		public static final String SQL_PORT = SQL_PREFIX + "port";
+		public static final String SQL_DATABASE = SQL_PREFIX + "database";
+		public static final String SQL_USERNAME = SQL_PREFIX + "username";
+		public static final String SQL_PASSWORD = SQL_PREFIX + "password";
+		public static final String SQL_FILTER = SQL_PREFIX + "filter";
+
+		private static final String MAPPING_PREFIX = ALL_PREFIX + "mapping.";
 		public static final String MAPPING_TYPE = MAPPING_PREFIX + "types";
 
 		private static final String MAPPING_SEPARATOR = ",";
@@ -384,17 +400,41 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		@Override
 		public void visit(final ConnectorTask task) {
+			final SourceConfiguration sourceConfiguration = task.getSourceConfiguration();
 			this.target = org.cmdbuild.data.store.task.ConnectorTask.newInstance() //
 					.withId(task.getId()) //
 					.withDescription(task.getDescription()) //
 					.withRunningStatus(task.isActive()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withParameters(parametersOf(sourceConfiguration)) //
 					.withParameter(Connector.MAPPING_TYPE, Joiner.on(LINE_SEPARATOR) //
 							.join( //
 							FluentIterable.from(task.getAttributeMappings()) //
 									.transform(ATTRIBUTE_MAPPING_TO_STRING)) //
 					) //
 					.build();
+		}
+
+		private Map<String, String> parametersOf(final SourceConfiguration sourceConfiguration) {
+			final Map<String, String> parameters = Maps.newHashMap();
+			sourceConfiguration.accept(new SourceConfigurationVisitor() {
+
+				@Override
+				public void visit(final SqlSourceConfiguration sourceConfiguration) {
+					final Map<String, String> lol = Maps.newHashMap();
+					lol.put(Connector.SQL_HOSTNAME, sourceConfiguration.getHost());
+					lol.put(Connector.SQL_PORT, Integer.toString(sourceConfiguration.getPort()));
+					lol.put(Connector.SQL_DATABASE, sourceConfiguration.getDatabase());
+					lol.put(Connector.SQL_USERNAME, sourceConfiguration.getUsername());
+					lol.put(Connector.SQL_PASSWORD, sourceConfiguration.getPassword());
+					lol.put(Connector.SQL_FILTER, sourceConfiguration.getFilter());
+					parameters.put(Connector.DATA_SOURCE_TYPE, "sql");
+					parameters.put(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
+							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+							.join(lol));
+				}
+			});
+			return parameters;
 		}
 
 		@Override
@@ -502,18 +542,42 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		@Override
 		public void visit(final org.cmdbuild.data.store.task.ConnectorTask task) {
+			final String dataSourceType = task.getParameter(Connector.DATA_SOURCE_TYPE);
+			final String dataSourceConfiguration = task.getParameter(Connector.DATA_SOURCE_CONFIGURATION);
 			final String typeMapping = task.getParameter(Connector.MAPPING_TYPE);
 			target = ConnectorTask.newInstance() //
 					.withId(task.getId()) //
 					.withDescription(task.getDescription()) //
 					.withActiveStatus(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withSourceConfiguration(sourceConfigurationOf(dataSourceType, dataSourceConfiguration)) //
 					.withAttributeMappings( //
 							isEmpty(typeMapping) ? NO_ATTRIBUTE_MAPPINGS : FluentIterable.from( //
 									Splitter.on(LINE_SEPARATOR) //
 											.split(typeMapping)) //
 									.transform(STRING_TO_ATTRIBUTE_MAPPING)) //
 					.build();
+		}
+
+		private SourceConfiguration sourceConfigurationOf(final String type, final String configuration) {
+			// TODO check type
+			final SourceConfiguration sourceConfiguration;
+			if (isBlank(configuration)) {
+				sourceConfiguration = NULL_SOURCE_CONFIGURATION;
+			} else {
+				final Map<String, String> map = Splitter.on(LINE_SEPARATOR) //
+						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+						.split(defaultString(configuration));
+				sourceConfiguration = SqlSourceConfiguration.newInstance() //
+						.withHost(map.get(Connector.SQL_HOSTNAME)) //
+						.withPort(Integer.parseInt(map.get(Connector.SQL_PORT))) //
+						.withDatabase(map.get(Connector.SQL_DATABASE)) //
+						.withUsername(map.get(Connector.SQL_USERNAME)) //
+						.withPassword(map.get(Connector.SQL_PASSWORD)) //
+						.withFilter(map.get(Connector.SQL_FILTER)) //
+						.build();
+			}
+			return sourceConfiguration;
 		}
 
 		@Override
