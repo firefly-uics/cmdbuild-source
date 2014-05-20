@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json.schema;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ALREADY_ASSOCIATED;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CONFIRMATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_GROUP;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DISABLE;
@@ -476,5 +477,28 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		out.put(ROWS, Serializer.serialize(user));
 		return out;
+	}
+
+	@JSONExported
+	public JsonResponse loadClassUiConfiguration( //
+			@Parameter(GROUP_ID) final Long groupId, //
+			@Parameter(CLASS_ID) final Long classId
+			) throws JSONException, AuthException {
+
+		return JsonResponse.success("{\"modify\": true, \"clone\": false, \"remove\": true, \"create\": false}");
+	}
+	
+	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public JsonResponse saveClassUiConfiguration( //
+			@Parameter(GROUP_ID) final Long groupId, //
+			@Parameter(CLASS_ID) final Long classId, //
+			@Parameter("create") final boolean create,
+			@Parameter("modify") final boolean modify,
+			@Parameter("clone") final boolean clone,
+			@Parameter("remove") final boolean remove
+			) throws JSONException, AuthException {
+
+		return JsonResponse.success(null);
 	}
 }

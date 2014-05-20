@@ -122,7 +122,9 @@
 		},
 
 		enableStopButton : function() {
-			this.deleteCardButton.enable();
+			if (! this.deleteCardButton.disabledForGroup) {
+				this.deleteCardButton.enable();
+			}
 		},
 
 		updateInfo : function(performerName, activityDescription) {
