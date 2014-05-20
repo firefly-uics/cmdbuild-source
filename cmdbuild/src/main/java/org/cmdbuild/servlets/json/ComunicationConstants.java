@@ -42,9 +42,15 @@ public class ComunicationConstants {
 			CRON_EXPRESSION = "cronExpression", //
 			DASHBOARDNAME = "dashboardName", //
 			DATA = "data", //
-			DATA_SOURCE_TYPE = "datasourceType", //
+			DATA_SOURCE_CONFIGURATION = "dataSourceConfiguration", //
+			DATA_SOURCE_DB_ADDRESS = "dataSourceAddress", //
+			DATA_SOURCE_DB_FILTER = "dataSourceTableViewPrefix", //
+			DATA_SOURCE_DB_NAME = "dataSourceDbName", //
+			DATA_SOURCE_DB_PASSWORD = "dataSourceDbPassword", //
+			DATA_SOURCE_DB_PORT = "dataSourceDbPort", //
+			DATA_SOURCE_DB_USERNAME = "dataSourceDbUsername", //
+			DATA_SOURCE_TYPE = "dataSourceType", //
 			DATA_SOURCE_TYPE_SQL = "db", //
-			DATA_SOURCE_CONFIGURATION = "datasourceConfiguration", //
 			DB_NAME = "db_name", //
 			DB_TYPE = "db_type", //
 			DEFAULT = "Default", //

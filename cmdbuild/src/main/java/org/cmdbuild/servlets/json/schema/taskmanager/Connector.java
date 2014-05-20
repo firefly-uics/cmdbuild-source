@@ -2,12 +2,18 @@ package org.cmdbuild.servlets.json.schema.taskmanager;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.NULL_SOURCE_CONFIGURATION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE_MAPPING;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_CONFIGURATION;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_DB_ADDRESS;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_DB_FILTER;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_DB_NAME;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_DB_PASSWORD;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_DB_PORT;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_DB_USERNAME;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_TYPE;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DATA_SOURCE_TYPE_SQL;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
@@ -15,14 +21,17 @@ import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Set;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.logic.taskmanager.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfiguration;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfigurationVisitor;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
@@ -35,14 +44,56 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.json.JSONArray;
 
 import com.google.common.base.Function;
+import com.google.common.collect.BiMap;
 
 public class Connector extends JSONBaseWithSpringContext {
 
-	// TODO annotations
-	public static class JsonAttributeMapping {
+	private static abstract class JsonDataSource {
+	}
+
+	private static class JsonSqlDataSource extends JsonDataSource {
+
+		private final SqlSourceConfiguration delegate;
+
+		public JsonSqlDataSource(final SqlSourceConfiguration delegate) {
+			this.delegate = delegate;
+		}
+
+		@JsonProperty(DATA_SOURCE_DB_ADDRESS)
+		public String getHost() {
+			return delegate.getHost();
+		}
+
+		@JsonProperty(DATA_SOURCE_DB_PORT)
+		public int getPort() {
+			return delegate.getPort();
+		}
+
+		@JsonProperty(DATA_SOURCE_DB_NAME)
+		public String getDatabase() {
+			return delegate.getDatabase();
+		}
+
+		@JsonProperty(DATA_SOURCE_DB_USERNAME)
+		public String getUsername() {
+			return delegate.getUsername();
+		}
+
+		@JsonProperty(DATA_SOURCE_DB_PASSWORD)
+		public String getPassword() {
+			return delegate.getPassword();
+		}
+
+		@JsonProperty(DATA_SOURCE_DB_FILTER)
+		public String getFilter() {
+			return delegate.getFilter();
+		}
+
+	}
+
+	private static class JsonAttributeMapping {
 
 		private String sourceType;
 		private String sourceAttribute;
@@ -50,6 +101,7 @@ public class Connector extends JSONBaseWithSpringContext {
 		private String targetAttribute;
 		private Boolean isKey;
 
+		@JsonProperty("sourceType")
 		public String getSourceType() {
 			return sourceType;
 		}
@@ -58,6 +110,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			this.sourceType = sourceType;
 		}
 
+		@JsonProperty("sourceAttribute")
 		public String getSourceAttribute() {
 			return sourceAttribute;
 		}
@@ -66,6 +119,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			this.sourceAttribute = sourceAttribute;
 		}
 
+		@JsonProperty("targetType")
 		public String getTargetType() {
 			return targetType;
 		}
@@ -74,6 +128,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			this.targetType = targetType;
 		}
 
+		@JsonProperty("targetAttribute")
 		public String getTargetAttribute() {
 			return targetAttribute;
 		}
@@ -82,6 +137,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			this.targetAttribute = targetAttribute;
 		}
 
+		@JsonProperty("isKey")
 		public boolean isKey() {
 			return defaultIfNull(isKey, false);
 		}
@@ -147,6 +203,44 @@ public class Connector extends JSONBaseWithSpringContext {
 			return delegate.getCronExpression();
 		}
 
+		@JsonProperty(DATA_SOURCE_TYPE)
+		public String getSourceType() {
+			return new SourceConfigurationVisitor() {
+
+				private String type;
+
+				public String asJsonObject() {
+					delegate.getSourceConfiguration().accept(this);
+					return type;
+				}
+
+				@Override
+				public void visit(final SqlSourceConfiguration sourceConfiguration) {
+					type = DATA_SOURCE_TYPE_SQL;
+				}
+
+			}.asJsonObject();
+		}
+
+		@JsonProperty(DATA_SOURCE_CONFIGURATION)
+		public JsonDataSource getSourceConfiguration() {
+			return new SourceConfigurationVisitor() {
+
+				private JsonDataSource jsonDataSource;
+
+				public JsonDataSource asJsonObject() {
+					delegate.getSourceConfiguration().accept(this);
+					return jsonDataSource;
+				}
+
+				@Override
+				public void visit(final SqlSourceConfiguration sourceConfiguration) {
+					jsonDataSource = new JsonSqlDataSource(sourceConfiguration);
+				}
+
+			}.asJsonObject();
+		}
+
 	}
 
 	private static final Function<JsonAttributeMapping, AttributeMapping> JSON_ATTRIBUTE_MAPPING_TO_ATTRIBUTE_MAPPING = new Function<JsonAttributeMapping, AttributeMapping>() {
@@ -164,6 +258,8 @@ public class Connector extends JSONBaseWithSpringContext {
 
 	};
 
+	private static final Iterable<JsonAttributeMapping> NO_MAPPINGS = Collections.emptyList();
+
 	@Admin
 	@JSONExported
 	public JsonResponse create( //
@@ -172,7 +268,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = DATA_SOURCE_TYPE, required = false) final String dataSourceType, //
 			@Parameter(value = DATA_SOURCE_CONFIGURATION, required = false) final String jsonDataSourceConfiguration, //
-			@Parameter(ATTRIBUTE_MAPPING) final String jsonAttributeMapping //
+			@Parameter(value = ATTRIBUTE_MAPPING, required = false) final String jsonAttributeMapping //
 	) throws Exception {
 		final ConnectorTask task = ConnectorTask.newInstance() //
 				.withDescription(description) //
@@ -212,7 +308,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = DATA_SOURCE_TYPE, required = false) final String dataSourceType, //
 			@Parameter(value = DATA_SOURCE_CONFIGURATION, required = false) final String jsonDataSourceConfiguration, //
-			@Parameter(ATTRIBUTE_MAPPING) final String jsonAttributeMapping //
+			@Parameter(value = ATTRIBUTE_MAPPING, required = false) final String jsonAttributeMapping //
 	) throws Exception {
 		final ConnectorTask task = ConnectorTask.newInstance() //
 				.withId(id) //
@@ -249,11 +345,21 @@ public class Connector extends JSONBaseWithSpringContext {
 			public SourceConfiguration convert(final String json) throws Exception {
 				final JsonNode jsonNode = objectMapper.readTree(json);
 				return SqlSourceConfiguration.newInstance() //
-						.withHost(jsonNode.get("host").asText()) //
-						.withPort(jsonNode.get("port").asInt()) //
-						.withUsername(jsonNode.get("username").asText()) //
-						.withPassword(jsonNode.get("password").asText()) //
+						.withHost(jsonNode.get(DATA_SOURCE_DB_ADDRESS).asText()) //
+						.withPort(jsonNode.get(DATA_SOURCE_DB_PORT).asInt()) //
+						.withDatabase(jsonNode.get(DATA_SOURCE_DB_NAME).asText()) //
+						.withUsername(jsonNode.get(DATA_SOURCE_DB_USERNAME).asText()) //
+						.withPassword(jsonNode.get(DATA_SOURCE_DB_PASSWORD).asText()) //
+						.withFilter(jsonNode.get(DATA_SOURCE_DB_FILTER).asText()) //
 						.build();
+			}
+
+		}, //
+		UNDEFINED(null) {
+
+			@Override
+			public SourceConfiguration convert(final String json) throws Exception {
+				return NULL_SOURCE_CONFIGURATION;
 			}
 
 		}, //
@@ -264,7 +370,7 @@ public class Connector extends JSONBaseWithSpringContext {
 		public static JsonSourceConfigurationHandler of(final String type) {
 			JsonSourceConfigurationHandler found = null;
 			for (final JsonSourceConfigurationHandler element : values()) {
-				if (element.clientValue.equals(type)) {
+				if (ObjectUtils.equals(element.clientValue, type)) {
 					found = element;
 					break;
 				}
@@ -290,13 +396,16 @@ public class Connector extends JSONBaseWithSpringContext {
 
 	private Iterable<AttributeMapping> attributeMappingOf(final String json) throws JsonParseException,
 			JsonMappingException, IOException {
-		// TODO find a better way to provide a default empty JSON
-		final String _json = defaultIfBlank(json, new JSONArray().toString());
-		final Iterable<JsonAttributeMapping> jsonAttributeMappings = new ObjectMapper() //
-				.readValue( //
-						defaultString(_json), //
-						new TypeReference<Set<JsonAttributeMapping>>() {
-						});
+		final Iterable<JsonAttributeMapping> jsonAttributeMappings;
+		if (isBlank(json)) {
+			jsonAttributeMappings = NO_MAPPINGS;
+		} else {
+			jsonAttributeMappings = new ObjectMapper() //
+					.readValue( //
+							json, //
+							new TypeReference<Set<JsonAttributeMapping>>() {
+							});
+		}
 		return from(jsonAttributeMappings) //
 				.transform(JSON_ATTRIBUTE_MAPPING_TO_ATTRIBUTE_MAPPING);
 	}
