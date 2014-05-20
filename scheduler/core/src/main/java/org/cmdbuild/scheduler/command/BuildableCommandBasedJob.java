@@ -1,6 +1,7 @@
 package org.cmdbuild.scheduler.command;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.scheduler.command.NullCommand.nullCommand;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.scheduler.Job;
@@ -9,17 +10,8 @@ public class BuildableCommandBasedJob implements Job {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<BuildableCommandBasedJob> {
 
-		private static final Command NULL = new Command() {
-
-			@Override
-			public void execute() {
-				// nothing to do
-			}
-
-		};
-
 		private String name;
-		private Command action;
+		private Command command;
 
 		private Builder() {
 			// use factory method
@@ -31,19 +23,19 @@ public class BuildableCommandBasedJob implements Job {
 			return new BuildableCommandBasedJob(this);
 		}
 
+		private void validate() {
+			Validate.notBlank(name);
+			command = defaultIfNull(command, nullCommand());
+		}
+
 		public Builder withName(final String name) {
 			this.name = name;
 			return this;
 		}
 
-		public Builder withAction(final Command action) {
-			this.action = action;
+		public Builder withCommand(final Command command) {
+			this.command = command;
 			return this;
-		}
-
-		private void validate() {
-			Validate.notBlank(name);
-			action = defaultIfNull(action, NULL);
 		}
 
 	}
@@ -53,11 +45,11 @@ public class BuildableCommandBasedJob implements Job {
 	}
 
 	private final String name;
-	private final Command action;
+	private final Command command;
 
 	private BuildableCommandBasedJob(final Builder builder) {
 		this.name = builder.name;
-		this.action = builder.action;
+		this.command = builder.command;
 	}
 
 	@Override
@@ -67,7 +59,7 @@ public class BuildableCommandBasedJob implements Job {
 
 	@Override
 	public void execute() {
-		action.execute();
+		command.execute();
 	}
 
 }

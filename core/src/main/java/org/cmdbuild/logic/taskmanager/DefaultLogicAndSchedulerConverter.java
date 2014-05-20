@@ -1,9 +1,14 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static org.cmdbuild.scheduler.command.NullCommand.nullCommand;
+import static org.cmdbuild.scheduler.command.SafeCommand.safe;
+
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.scheduler.Job;
+import org.cmdbuild.scheduler.command.BuildableCommandBasedJob;
+import org.cmdbuild.scheduler.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
@@ -14,7 +19,7 @@ public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConve
 
 	public static interface JobFactory<T extends ScheduledTask> {
 
-		public Job create(ScheduledTask task);
+		Job create(ScheduledTask task, boolean execution);
 
 	}
 
@@ -26,11 +31,19 @@ public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConve
 		protected abstract Class<T> getType();
 
 		@Override
-		public final Job create(final ScheduledTask task) {
-			return doCreate(getType().cast(task));
+		public final Job create(final ScheduledTask task, final boolean execution) {
+			final T specificTask = getType().cast(task);
+			return BuildableCommandBasedJob.newInstance() //
+					.withName(name(specificTask)) //
+					.withCommand(execution ? safe(command(specificTask)) : nullCommand()) //
+					.build();
 		}
 
-		protected abstract Job doCreate(T task);
+		private String name(final T task) {
+			return task.getId().toString();
+		}
+
+		protected abstract Command command(T task);
 
 	}
 
@@ -40,14 +53,21 @@ public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConve
 
 		private final Map<Class<? extends ScheduledTask>, JobFactory<? extends ScheduledTask>> factories;
 		private final ScheduledTask source;
+		private final boolean execution;
 
 		private Job job;
 
 		public DefaultLogicAsSourceConverter(
 				final Map<Class<? extends ScheduledTask>, JobFactory<? extends ScheduledTask>> factories,
-				final ScheduledTask source) {
+				final ScheduledTask source, final boolean execution) {
 			this.factories = factories;
 			this.source = source;
+			this.execution = execution;
+		}
+
+		@Override
+		public LogicAsSourceConverter withNoExecution() {
+			return new DefaultLogicAsSourceConverter(factories, source, false);
 		}
 
 		@Override
@@ -59,17 +79,17 @@ public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConve
 
 		@Override
 		public void visit(final ConnectorTask task) {
-			job = factories.get(task.getClass()).create(task);
+			job = factories.get(task.getClass()).create(task, execution);
 		}
 
 		@Override
 		public void visit(final ReadEmailTask task) {
-			job = factories.get(task.getClass()).create(task);
+			job = factories.get(task.getClass()).create(task, execution);
 		}
 
 		@Override
 		public void visit(final StartWorkflowTask task) {
-			job = factories.get(task.getClass()).create(task);
+			job = factories.get(task.getClass()).create(task, execution);
 		}
 
 		@Override
@@ -91,7 +111,7 @@ public class DefaultLogicAndSchedulerConverter implements LogicAndSchedulerConve
 
 	@Override
 	public LogicAsSourceConverter from(final ScheduledTask source) {
-		return new DefaultLogicAsSourceConverter(factories, source);
+		return new DefaultLogicAsSourceConverter(factories, source, true);
 	}
 
 }
