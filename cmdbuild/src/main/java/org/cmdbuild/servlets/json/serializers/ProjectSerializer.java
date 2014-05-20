@@ -1,14 +1,14 @@
 package org.cmdbuild.servlets.json.serializers;
 
 import static org.cmdbuild.common.Constants.DATETIME_FOUR_DIGIT_YEAR_FORMAT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_BINDING;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EXPORT_MAPPING;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.IMPORT_MAPPING;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LAST_CHECKIN;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_BINDING;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EXPORT_MAPPING;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IMPORT_MAPPING;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LAST_CHECKIN;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 
 import java.util.Iterator;
 

@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 
 import java.util.Map;
 

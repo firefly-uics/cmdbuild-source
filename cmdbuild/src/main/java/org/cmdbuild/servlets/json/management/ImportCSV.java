@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.management;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILE_CSV;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SEPARATOR;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_CSV;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
 
 import java.io.IOException;
 import java.util.LinkedList;

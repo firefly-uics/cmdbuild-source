@@ -1,11 +1,11 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_ID_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.RESULTS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.RESULTS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ROWS;
 
 import java.util.Map;
 

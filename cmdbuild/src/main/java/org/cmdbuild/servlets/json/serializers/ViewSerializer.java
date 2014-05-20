@@ -1,13 +1,13 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_FUNCTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.VIEWS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_FUNCTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.VIEWS;
 
 import java.util.List;
 

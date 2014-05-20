@@ -1,18 +1,18 @@
 package org.cmdbuild.servlets.json.management;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CODE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EXTENSION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FORMAT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.START;
-import static org.cmdbuild.servlets.json.ComunicationConstants.STATE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CODE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EXTENSION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FORMAT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.START;
+import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
 
 import java.io.OutputStream;
 import java.util.LinkedList;

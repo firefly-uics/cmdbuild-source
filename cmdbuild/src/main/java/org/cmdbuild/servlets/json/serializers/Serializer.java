@@ -1,10 +1,10 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.IS_ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USER_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IS_ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.USER_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.USER_NAME;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.text.SimpleDateFormat;

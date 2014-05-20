@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.MENU;
+import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MENU;
 
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException;

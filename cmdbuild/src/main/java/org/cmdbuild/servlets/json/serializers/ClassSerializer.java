@@ -2,10 +2,10 @@ package org.cmdbuild.servlets.json.serializers;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_CLASS_DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_CLASS_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.common.Constants;

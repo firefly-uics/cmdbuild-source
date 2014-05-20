@@ -1,18 +1,18 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTENAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CHARTNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DASHBOARDNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTERNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ICONNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUPID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.REPORTNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TRANSLATIONS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.VIEWNAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.WIDGET_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTENAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CHARTNAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DASHBOARDNAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTERNAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ICONNAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUPID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.REPORTNAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.VIEWNAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WIDGET_ID;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.util.Map;

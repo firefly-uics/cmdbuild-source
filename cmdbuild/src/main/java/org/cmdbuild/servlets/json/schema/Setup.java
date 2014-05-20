@@ -2,9 +2,9 @@ package org.cmdbuild.servlets.json.schema;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.INSTANCENAME_FOR_SERVER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DATA;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAMES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DATA;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAMES;
 
 import java.util.Map;
 import java.util.Map.Entry;

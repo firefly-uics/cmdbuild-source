@@ -1,8 +1,8 @@
 package org.cmdbuild.servlets.json;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 
 import java.io.IOException;
 import java.util.List;

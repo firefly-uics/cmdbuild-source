@@ -1,8 +1,8 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.WIDGET;
-import static org.cmdbuild.servlets.json.ComunicationConstants.WIDGET_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WIDGET;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WIDGET_ID;
 
 import java.io.IOException;
 import java.util.HashMap;

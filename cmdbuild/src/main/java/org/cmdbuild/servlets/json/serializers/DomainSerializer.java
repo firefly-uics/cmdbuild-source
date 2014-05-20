@@ -5,14 +5,14 @@ import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DIRECT_DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.INVERSE_DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.MASTER_DETAIL_LABEL_FOR_CLIENT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_DIRECT_DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_INVERSE_DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_MASTERDETAIL_LABEL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DIRECT_DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.INVERSE_DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.MASTERDETAIL_LABEL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DIRECT_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_INVERSE_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_MASTERDETAIL_LABEL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DIRECT_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.INVERSE_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MASTERDETAIL_LABEL;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMClass;
