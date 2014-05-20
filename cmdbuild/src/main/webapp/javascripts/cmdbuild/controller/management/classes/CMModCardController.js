@@ -132,28 +132,8 @@
 
 			_CMCardModuleState.setEntryType(entryType, dc, filter);
 			_CMUIState.onlyGridIfFullScreen();
-			this.changeClassUIConfigurationForGroup(entryTypeId);
 		},
 
-		changeClassUIConfigurationForGroup: function(classId) {
-			var me = this;
-			CMDBuild.ServiceProxy.group.loadClassUiConfiguration({
-				params: {
-					groupId: "",
-					classId: classId
-				},
-				success: function(operation, config, response) {
-					var disabledForGroupButtons = Ext.JSON.decode(response.response);
-					me.view.addCardButton.disabledForGroup = disabledForGroupButtons.create;
-					if (me.view.addCardButton.disabledForGroup)
-						me.view.addCardButton.disable();
-					else
-						me.view.addCardButton.enable();
-					me.cardPanelController.changeClassUIConfigurationForGroup(disabledForGroupButtons);
-				}
-			});
-		},
-		
 		onGridVisible: function onCardGridVisible(visible, selection) {
 			if (visible 
 					&& this.entryType

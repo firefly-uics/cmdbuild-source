@@ -3,36 +3,32 @@
 	Ext.define("CMDBUild.view.common.CMFormFunctions", {
 
 		enableCMButtons: function() {
-			this.iterateOverCMButtons(function(item) {
-				if (item && item.enable)
-					item.enable();
+			this.iterateOverCMButtons(function(b) {
+				if (b && b.enable) {
+					b.enable();
+				}
 			});
 		},
 
 		disableCMButtons: function() {
-			this.iterateOverCMButtons(function(item) {
-				if (item && item.disable)
-					item.disable();
+			this.iterateOverCMButtons(function(b) {
+				if (b && b.disable) {
+					b.disable();
+				}
 			});
 		},
 
 		disableCMTbar: function() {
-			this.iterateOverCMTBar(function(item) {
-				if (item && item.disable)
-					item.disable();
+			this.iterateOverCMTBar(function(i) {
+				if (i && i.disable) {
+					i.disable();
+				}
 			});
 		},
 
 		disableFields: function() {
 			this.cascade(function(item) {
-				if (
-					item
-					&& (
-						item instanceof Ext.form.Field
-						|| item instanceof Ext.form.FieldSet
-						|| item.considerAsFieldToDisable
-					)
-				) {
+				if (item && ((item instanceof Ext.form.Field) || item.considerAsFieldToDisable)) {
 					item.disable();
 				}
 			});
@@ -51,9 +47,10 @@
 		},
 
 		enableCMTbar: function() {
-			this.iterateOverCMTBar(function(item) {
-				if (item && item.enable && !item.disabledForGroup)
-					item.enable();
+			this.iterateOverCMTBar(function(i) {
+				if (i && i.enable) {
+					i.enable();
+				}
 			});
 		},
 
@@ -73,38 +70,26 @@
 
 		enableFields: function(enableAll) {
 			this.cascade(function(item) {
-				if (
-					item
-					&& (
-						item instanceof Ext.form.Field
-						|| item instanceof Ext.form.FieldSet
-						|| item.considerAsFieldToDisable
-					)
-				) {
-					var name = item._name || item.name; // for compatibility I can not change the name of old attrs
+				if (item && ((item instanceof Ext.form.Field) || item.considerAsFieldToDisable)) {
+					var name = item._name || item.name;// for compatibility I can not change the name of old attrs
 					var toBeEnabled = (enableAll || !item.cmImmutable) && item.isVisible();
 
-					if (toBeEnabled)
+					if (toBeEnabled) {
 						item.enable();
+					}
 				}
 			});
 		},
 
 		enableTabbedFields: function(enableAll) {
 			this.cascade(function(item) {
-				if (
-					item
-					&& (
-						item instanceof Ext.form.Field
-						|| item instanceof Ext.form.FieldSet
-						|| item.considerAsFieldToDisable
-					)
-				) {
+				if (item && ((item instanceof Ext.form.Field) || item.considerAsFieldToDisable)) {
 					var name = item._name || item.name; // for compatibility I can not change the name of old attrs
 					var toBeEnabled = (enableAll || !item.cmImmutable);
 
-					if (toBeEnabled)
+					if (toBeEnabled) {
 						item.enable();
+					}
 				}
 			});
 		},
@@ -171,8 +156,9 @@
 		iterateOverArray: function(array, fn) {
 			array = array || [];
 
-			for (var i = 0, l = array.length; i < l; ++i)
+			for (var i = 0, l = array.length; i < l; ++i) {
 				fn(array[i]);
+			}
 		},
 
 		reset: function() {
