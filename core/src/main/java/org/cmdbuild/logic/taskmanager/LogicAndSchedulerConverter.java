@@ -6,6 +6,8 @@ public interface LogicAndSchedulerConverter {
 
 	interface LogicAsSourceConverter {
 
+		LogicAsSourceConverter withNoExecution();
+
 		Job toJob();
 
 	}
