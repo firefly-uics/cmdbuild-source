@@ -29,6 +29,7 @@ public class ReadEmailTask implements ScheduledTask {
 		private final Collection<String> regexFromFilter = Lists.newArrayList();
 		private final Collection<String> regexSubjectFilter = Lists.newArrayList();
 		private Boolean notificationActive;
+		private String notificationTemplate;
 		private Boolean attachmentsActive;
 		private String attachmentsCategory;
 		private Boolean workflowActive;
@@ -111,6 +112,11 @@ public class ReadEmailTask implements ScheduledTask {
 			return this;
 		}
 
+		public Builder withNotificationTemplate(final String notificationTemplate) {
+			this.notificationTemplate = notificationTemplate;
+			return this;
+		}
+
 		public Builder withAttachmentsActive(final Boolean attachmentsActive) {
 			this.attachmentsActive = attachmentsActive;
 			return this;
@@ -170,6 +176,7 @@ public class ReadEmailTask implements ScheduledTask {
 	private final Iterable<String> regexFromFilter;
 	private final Iterable<String> regexSubjectFilter;
 	private final boolean notificationActive;
+	private final String notificationTemplate;
 	private final boolean attachmentsActive;
 	private final String attachmentsCategory;
 	private final boolean workflowActive;
@@ -189,6 +196,7 @@ public class ReadEmailTask implements ScheduledTask {
 		this.regexFromFilter = builder.regexFromFilter;
 		this.regexSubjectFilter = builder.regexSubjectFilter;
 		this.notificationActive = builder.notificationActive;
+		this.notificationTemplate = builder.notificationTemplate;
 		this.attachmentsActive = builder.attachmentsActive;
 		this.attachmentsCategory = builder.attachmentsCategory;
 		this.workflowActive = builder.workflowActive;
@@ -231,6 +239,10 @@ public class ReadEmailTask implements ScheduledTask {
 
 	public boolean isNotificationActive() {
 		return notificationActive;
+	}
+
+	public String getNotificationTemplate() {
+		return notificationTemplate;
 	}
 
 	public Iterable<String> getRegexFromFilter() {
