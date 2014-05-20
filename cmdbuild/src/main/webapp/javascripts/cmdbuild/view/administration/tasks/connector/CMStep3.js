@@ -1,0 +1,275 @@
+(function() {
+
+	var tr = CMDBuild.Translation.administration.tasks.taskConnector;
+
+	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep3Delegate', {
+		extend: 'CMDBuild.controller.CMBasePanelController',
+
+		parentDelegate: undefined,
+		filterWindow: undefined,
+		view: undefined,
+
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
+		// overwrite
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				case 'onDbFieldsetExpand':
+					return this.onDbFieldsetExpand();
+
+				case 'onLdapFieldsetExpand':
+					return this.onLdapFieldsetExpand();
+
+				default: {
+					if (this.parentDelegate)
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
+			}
+		},
+
+		// GETters functions
+			/**
+			 * @return (String) dataSourceType or false
+			 */
+			getTypeDataSource: function() {
+				if (this.view.dbFieldset.checkboxCmp.getValue())
+					return 'db';
+
+				if (this.view.ldapFieldset.checkboxCmp.getValue())
+					return 'ldap';
+
+				return false;
+			},
+
+		onDbFieldsetExpand: function() {
+			this.view.ldapFieldset.collapse();
+			this.view.ldapFieldset.reset();
+		},
+
+		onLdapFieldsetExpand: function() {
+			this.view.dbFieldset.collapse();
+			this.view.dbFieldset.reset();
+		},
+
+		// SETters functions
+			/**
+			 * @param (String) dataSourceType
+			 * @param (Object) configurationObject
+			 */
+			setValueDataSourceConfiguration: function(dataSourceType, configurationObject) {
+				if (!CMDBuild.Utils.isEmpty(configurationObject))
+					switch (dataSourceType) {
+						case 'db': {
+							this.view.dbFieldset.expand();
+
+							// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
+							this.view.dbTypeCombo.forceSelection = false;
+							this.view.dbTypeCombo.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_TYPE]);
+							this.view.dbTypeCombo.forceSelection = true;
+
+							this.view.dbAddressField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_ADDRESS]);
+							this.view.dbPortField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PORT]);
+							this.view.dbNameField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_NAME]);
+							this.view.dbUsernameField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_USERNAME]);
+							this.view.dbPasswordField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PASSWORD]);
+							this.view.tableViewFilterField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_TABLE_VIEW_PREFIX]);
+						} break;
+
+						default:
+							throw 'CMTasksFormConnectorController: onSaveButtonClick() datasource type not recognized';
+					}
+			},
+
+		/**
+		 * Set dataSource configuration fields as required/unrequired
+		 *
+		 * @param (Boolean) enable
+		 */
+		validate: function(enable) {
+			this.view.dbTypeCombo.allowBlank = !enable;
+			this.view.dbAddressField.allowBlank = !enable;
+
+			this.view.dbPortField.allowBlank = !enable;
+			this.view.dbPortField.setMinValue(enable ? 1 : 0);
+
+			this.view.dbNameField.allowBlank = !enable;
+			this.view.dbUsernameField.allowBlank = !enable;
+			this.view.dbPasswordField.allowBlank = !enable;
+		}
+	});
+
+	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep3', {
+		extend: 'Ext.panel.Panel',
+
+		delegate: undefined,
+
+		border: false,
+		height: '100%',
+		overflowY: 'auto',
+
+		initComponent: function() {
+			var me = this;
+
+			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep3Delegate', this);
+
+			// DataSource: relationa databases configuration
+				this.dbTypeCombo = Ext.create('Ext.form.field.ComboBox', {
+					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_TYPE,
+					fieldLabel: CMDBuild.Translation.administration.tasks.type,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					store: CMDBuild.core.proxy.CMProxyTasks.getDbTypes(),
+					displayField: CMDBuild.ServiceProxy.parameter.NAME,
+					valueField: CMDBuild.ServiceProxy.parameter.VALUE,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					forceSelection: true,
+					editable: false
+				});
+
+				this.dbAddressField = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_ADDRESS,
+					fieldLabel: CMDBuild.Translation.address,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				});
+
+				this.dbPortField = Ext.create('Ext.form.field.Number', {
+					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PORT,
+					fieldLabel: CMDBuild.Translation.port,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					minValue: 1,
+					maxValue: 65535
+				});
+
+				this.dbNameField = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_NAME,
+					fieldLabel: tr.dbName,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				});
+
+				this.dbUsernameField = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_USERNAME,
+					fieldLabel: CMDBuild.Translation.username,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				});
+
+				this.dbPasswordField = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PASSWORD,
+					inputType: 'password',
+					fieldLabel: CMDBuild.Translation.password,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				});
+
+				this.tableViewFilterField = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_TABLE_VIEW_PREFIX,
+					fieldLabel: tr.tableViewFilter,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				});
+
+				this.dbFieldset = Ext.create('Ext.form.FieldSet', {
+					title: tr.dataSourceDbFieldset,
+					checkboxToggle: true,
+					collapsed: true,
+					collapsible: true,
+					toggleOnTitleClick: true,
+
+					layout: {
+						type: 'vbox'
+					},
+
+					items: [
+						this.dbTypeCombo,
+						this.dbAddressField,
+						this.dbPortField,
+						this.dbNameField,
+						this.dbUsernameField,
+						this.dbPasswordField,
+						this.tableViewFilterField
+					],
+
+					listeners: {
+						beforeexpand: function(fieldset, eOpts) {
+							me.delegate.cmOn('onDbFieldsetExpand');
+						}
+					}
+				});
+
+				this.dbFieldset.fieldWidthsFix();
+			// END - DataSource: relationa databases configuration
+
+			// DataSource: LDAP configuration
+				this.ldapAddressField = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.ServiceProxy.parameter.ADDRESS,
+					fieldLabel: CMDBuild.Translation.address,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					allowBlank: false
+				});
+
+				this.ldapUsernameField = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.ServiceProxy.parameter.USERNAME,
+					fieldLabel: CMDBuild.Translation.username,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					allowBlank: false
+				});
+
+				this.ldapPasswordField = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.ServiceProxy.parameter.PASSWORD,
+					inputType: 'password',
+					fieldLabel: CMDBuild.Translation.password,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					allowBlank: false
+				});
+
+				this.ldapFieldset = Ext.create('Ext.form.FieldSet', {
+					title: tr.dataSourceLdapFieldset,
+					checkboxToggle: true,
+					collapsed: true,
+					collapsible: true,
+					toggleOnTitleClick: true,
+
+					layout: {
+						type: 'vbox'
+					},
+
+					items: [
+						this.ldapAddressField,
+						this.ldapUsernameField,
+						this.ldapPasswordField
+					],
+
+					listeners: {
+						beforeexpand: function(fieldset, eOpts) {
+							me.delegate.cmOn('onLdapFieldsetExpand');
+						}
+					}
+				});
+
+				this.ldapFieldset.fieldWidthsFix();
+			// END - DataSource: LDAP configuration
+
+			Ext.apply(this, {
+				items: [
+					this.dbFieldset
+// TODO: future implementation
+//					,
+//					this.ldapFieldset
+				]
+			});
+
+			this.callParent(arguments);
+		}
+	});
+
+})();
