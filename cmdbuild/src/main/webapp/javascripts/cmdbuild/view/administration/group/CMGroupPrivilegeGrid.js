@@ -1,6 +1,8 @@
 (function() {
 
 	var tr = CMDBuild.Translation.administration.modsecurity.privilege;
+	var ACTION_SET_PRIVILEGE_FILTER = "action-filter-set";
+	var ACTION_REMOVE_PRIVILEGE_FILTER = "action-filter-remove";
 	var parameter = _CMProxy.parameter;
 
 	Ext.define("CMDBuild.view.administration.group.CMGroupPrivilegeGrid", {
@@ -60,16 +62,31 @@
 			buildCheckColumn(this, 'none_privilege', this.withPermissionNone);
 			buildCheckColumn(this, 'read_privilege', this.withPermissionRead);
 			buildCheckColumn(this, 'write_privilege', this.withPermissionWrite);
-			
+
 			var setPrivilegeTranslation = CMDBuild.Translation.row_and_column_privileges;
 			var removePrivilegeTranslation = CMDBuild.Translation.clear_row_and_colun_privilege;
 
-			var me = this;
 			if (this.withFilterEditor) {
-				this.columns.push(iconButton(me, "privilege_filter", setPrivilegeTranslation, "", onSetPrivilegeFilterClick));
-				this.columns.push(iconButton(me, "privilege_filter_remove", removePrivilegeTranslation, "", onRemovePrivilegeFilterClick));
+				this.columns.push({
+					header: '&nbsp',
+					fixed: true, 
+					sortable: false, 
+					align: 'center',
+					tdCls: 'grid-button',
+					menuDisabled: true,
+					hideable: false,
+					renderer: function() {
+						return '<img class="' 
+							+ ACTION_SET_PRIVILEGE_FILTER
+							+ '" src="images/icons/privilege_filter.png"'
+							+ '" title="' + setPrivilegeTranslation + '"/>' +
+						'<img class="'
+							+ ACTION_REMOVE_PRIVILEGE_FILTER
+							+ '" src="images/icons/privilege_filter_remove.png"'
+							+ '" title="' + removePrivilegeTranslation + '"/>';
+					}
+				});
 			}
-			this.columns.push(iconButton(me, "uiconfiguration", CMDBuild.Translation.ui_configuration_for_groups, "UI", onChangeClassUIConfiguration));
 
 			this.viewConfig = {
 				forceFit: true
@@ -86,6 +103,11 @@
 
 			this.callParent(arguments);
 
+			this.callBacks = {};
+			this.callBacks[ACTION_SET_PRIVILEGE_FILTER] = onSetPrivilegeFilterClick;
+			this.callBacks[ACTION_REMOVE_PRIVILEGE_FILTER] = onRemovePrivilegeFilterClick;
+
+			this.on('beforeitemclick', cellclickHandler, this);
 		},
 
 		loadStoreForGroup: function(group) {
@@ -120,28 +142,7 @@
 				});
 			}
 		},
-		// as CMGroupClassUIConfiguration delegate
-		cmOn: function(name, param, callBack) {
-			switch (name) {
-				case 'onSaveClassUIConfiguration':
-					param.groupId = this.currentGroup;
-					this.windowChangeClassUIConfiguration.destroy();
-					saveClassUIConfiguration(param);
-					break;
-				case 'onAbortClassUIConfiguration':
-					this.windowChangeClassUIConfiguration.destroy();
-					break;
-				default: {
-					if (
-						this.parentDelegate
-						&& typeof this.parentDelegate === 'object'
-					) {
-						return this.parentDelegate.cmOn(name, param, callBack);
-					}
-				}
-			}
-			return undefined;
-		},
+
 		// as cmFilterWindowDelegate
 
 		/**
@@ -225,29 +226,8 @@
 		}
 	});
 
-	function iconButton(me, icon, tooltip, header, callFunction) {
-		return {
-			header: header,
-			fixed: true, 
-			sortable: false, 
-			align: 'center',
-			tdCls: 'grid-button',
-			menuDisabled: true,
-			hideable: false,
-            xtype:'actioncolumn',
-            width:30,
-            items: [{
-    			icon: "images/icons/" + icon + ".png",
-                tooltip: tooltip, 
-                handler: function(grid, rowIndex, colIndex) {
-                	var model = grid.getStore().getAt(rowIndex);
-                	callFunction(me, model);
-                }
-            }]
-		};	
-	}
 	// scope this
-	function onSetPrivilegeFilterClick(me, model) {
+	function onSetPrivilegeFilterClick(model) {
 
 		var className = model.get("privilegedObjectName");
 		var entryType = _CMCache.getEntryTypeByName(className);
@@ -260,7 +240,7 @@
 			configuration: Ext.decode(filterConfiguration)
 		});
 
-//		var me = this;
+		var me = this;
 		var parameterNames = CMDBuild.ServiceProxy.parameter;
 		var params = {};
 		params[parameterNames.ACTIVE] = false; // all the attributes
@@ -285,12 +265,12 @@
 	}
 
 	// scope this
-	function onRemovePrivilegeFilterClick(me, model) {
-//		var me = this;
+	function onRemovePrivilegeFilterClick(model) {
+		var me = this;
 		Ext.Msg.show({
 			title: CMDBuild.Translation.attention,
 			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
-			scope: me,
+			scope: this,
 			buttons: Ext.Msg.YESNO,
 			fn: function(button) {
 				if (button == "yes") {
@@ -310,28 +290,15 @@
 		});
 
 	}
-	function onChangeClassUIConfiguration(me, model) {
-		CMDBuild.ServiceProxy.group.loadClassUiConfiguration({
-			params: {
-				groupId: me.currentGroup,
-				classId: model.get("privilegedObjectId")
-			},
-			success: function(operation, config, response) {
-				var values = Ext.JSON.decode(response.response);
-				me.windowChangeClassUIConfiguration = Ext.create('CMDBuild.view.administration.group.CMGroupClassUIConfiguration', {
-					delegate: me,
-					model: model,
-					values: values
-				});
-				me.windowChangeClassUIConfiguration.show();
-			}
-		});
+
+	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
+		var className = event.target.className; 
+
+		if (this.callBacks[className]) {
+			this.callBacks[className].call(this, model);
+		}
 	}
-	function saveClassUIConfiguration(param) {
-		CMDBuild.ServiceProxy.group.saveClassUiConfiguration({
-			params: param
-		});
-	}
+
 	function buildCheckColumn(me, dataIndex, condition) {
 		if (condition) {
 			var checkColumn = new Ext.ux.CheckColumn({
@@ -345,5 +312,4 @@
 			me.mon(checkColumn, "checkchange", me.clickPrivileges, me);
 		}
 	}
-
 })();

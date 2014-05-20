@@ -478,34 +478,4 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		out.put(ROWS, Serializer.serialize(user));
 		return out;
 	}
-
-	@JSONExported
-	public JsonResponse loadClassUiConfiguration( //
-			@Parameter(GROUP_ID) final Long groupId, //
-			@Parameter(CLASS_ID) final Long classId
-	) throws JSONException, AuthException {
-//		if (classId == 227716)
-//			return JsonResponse.success("{\"modify\": true, \"clone\": false, \"remove\": true, \"create\": false}");
-//		if (classId == 228102)
-//			return JsonResponse.success("{\"modify\": false, \"clone\": true, \"remove\": true, \"create\": true}");
-//		if (classId == 230471)
-//			return JsonResponse.success("{\"modify\": true, \"clone\": true, \"remove\": true, \"create\": true}");
-//		if (classId == 228513)
-//			return JsonResponse.success("{\"modify\": true, \"clone\": true, \"remove\": true, \"create\": true}");
-		return JsonResponse.success("{}");
-	}
-	
-	@Admin(AdminAccess.DEMOSAFE)
-	@JSONExported
-	public JsonResponse saveClassUiConfiguration( //
-			@Parameter(GROUP_ID) final Long groupId, //
-			@Parameter(CLASS_ID) final Long classId, //
-			@Parameter("create") final boolean create,
-			@Parameter("modify") final boolean modify,
-			@Parameter("clone") final boolean clone,
-			@Parameter("remove") final boolean remove
-			) throws JSONException, AuthException {
-
-		return JsonResponse.success(null);
-	}
 }

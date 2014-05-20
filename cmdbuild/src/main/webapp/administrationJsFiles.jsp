@@ -84,7 +84,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMPrivilegeWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupPrivilegeGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupClassUIConfiguration.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMGroupUsers.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/group/CMModGroup.js"></script>
 
