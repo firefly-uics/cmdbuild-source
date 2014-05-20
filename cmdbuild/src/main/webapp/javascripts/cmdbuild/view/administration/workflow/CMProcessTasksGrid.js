@@ -63,14 +63,6 @@
 		 * @param (Boolean) value
 		 */
 		activeGridColumnRenderer: function(value, metaData, record) {
-//			if(typeof value == 'boolean') {
-//				if(value) {
-//					value = '<img src="images/icons/accept.png" alt="' + tr.running + '" />';
-//				} else {
-//					value = '<img src="images/icons/cancel.png" alt="' + tr.stopped + '" />';
-//				}
-//			}
-
 			return value ? '<img src="images/icons/accept.png" alt="' + tr.running + '" />' : '<img src="images/icons/cancel.png" alt="' + tr.stopped + '" />';
 		}
 	});

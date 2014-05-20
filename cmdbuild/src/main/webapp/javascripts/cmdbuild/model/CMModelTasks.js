@@ -5,9 +5,10 @@
 
 		fields: [
 			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
-			{ name: CMDBuild.ServiceProxy.parameter.TYPE, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'}
+			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'},
+
+			{ name: CMDBuild.ServiceProxy.parameter.TYPE, type: 'string' }
 		]
 	});
 
@@ -32,7 +33,11 @@
 			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
 			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.ServiceProxy.parameter.ATTRIBUTE_MAPPING, type: 'auto'}
+
+			{ name: CMDBuild.ServiceProxy.parameter.ATTRIBUTE_MAPPING, type: 'auto'},
+			{ name: CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION, type: 'string'},
+			{ name: CMDBuild.ServiceProxy.parameter.DATASOURCE_CONFIGURATION, type: 'auto'},
+			{ name: CMDBuild.ServiceProxy.parameter.DATASOURCE_TYPE, type: 'string' }
 		]
 	});
 
@@ -43,6 +48,7 @@
 			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
 			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'},
+
 			{ name: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE, type: 'boolean'},
 			{ name: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY, type: 'int'},
 			{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string'},
@@ -70,6 +76,7 @@
 			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
 			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'},
+
 			{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string'},
 			{ name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE, type: 'boolean'},
 			{ name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT, type: 'string'},
@@ -90,6 +97,7 @@
 			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
 			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'},
+
 			{ name: CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION, type: 'string'},
 			{ name: CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES, type: 'auto'},
 			{ name: CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME, type: 'string'}

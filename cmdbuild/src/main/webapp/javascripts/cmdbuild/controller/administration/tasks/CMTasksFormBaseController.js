@@ -156,7 +156,7 @@
 		 */
 		// overwrite
 		validate: function(enable, type) {
-			this.callParent([this.view]);
+			return this.callParent([this.view]);
 		}
 	});
 
