@@ -4,7 +4,6 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.cmdbuild.common.utils.guava.Functions.build;
-import static org.cmdbuild.scheduler.command.SafeCommand.safe;
 
 import java.util.Collection;
 import java.util.Map;
@@ -16,8 +15,6 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfigurationVisitor;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter.AbstractJobFactory;
-import org.cmdbuild.scheduler.Job;
-import org.cmdbuild.scheduler.command.BuildableCommandBasedJob;
 import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.sync.store.ClassType;
 import org.cmdbuild.services.sync.store.SimpleAttribute;
@@ -164,13 +161,8 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 	}
 
 	@Override
-	protected Job doCreate(final ConnectorTask task) {
-		final String name = task.getId().toString();
-		final Command command = new ConnectorTaskCommandWrapper(dataView, task);
-		return BuildableCommandBasedJob.newInstance() //
-				.withName(name) //
-				.withAction(safe(command)) //
-				.build();
+	protected Command command(final ConnectorTask task) {
+		return new ConnectorTaskCommandWrapper(dataView, task);
 	}
 
 }
