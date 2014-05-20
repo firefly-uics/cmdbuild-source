@@ -56,16 +56,6 @@
 			name: "loaded",
 			type: "boolean"
 		}]
-//	,
-//
-//		getNodesIn: function() {
-//			return this.get("nodesIn");
-//		},
-//
-//		setNodesIn: function(nodesIn) {
-//			this.set("nodesIn", nodesIn);
-//		}
-
 	});
 
 	function createRoot() {
