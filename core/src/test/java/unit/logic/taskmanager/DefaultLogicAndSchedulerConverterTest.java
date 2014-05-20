@@ -30,7 +30,7 @@ public class DefaultLogicAndSchedulerConverterTest {
 
 		final Job job = mock(Job.class);
 		final JobFactory<ConnectorTask> factory = mock(JobFactory.class);
-		when(factory.create(task)) //
+		when(factory.create(task, true)) //
 				.thenReturn(job);
 		converter.register(ConnectorTask.class, factory);
 
@@ -39,7 +39,7 @@ public class DefaultLogicAndSchedulerConverterTest {
 
 		// then
 		final InOrder inOrder = inOrder(factory);
-		inOrder.verify(factory).create(task);
+		inOrder.verify(factory).create(task, true);
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -50,7 +50,7 @@ public class DefaultLogicAndSchedulerConverterTest {
 
 		final Job job = mock(Job.class);
 		final JobFactory<ReadEmailTask> factory = mock(JobFactory.class);
-		when(factory.create(task)) //
+		when(factory.create(task, true)) //
 				.thenReturn(job);
 		converter.register(ReadEmailTask.class, factory);
 
@@ -59,7 +59,7 @@ public class DefaultLogicAndSchedulerConverterTest {
 
 		// then
 		final InOrder inOrder = inOrder(factory);
-		inOrder.verify(factory).create(task);
+		inOrder.verify(factory).create(task, true);
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -70,7 +70,7 @@ public class DefaultLogicAndSchedulerConverterTest {
 
 		final Job job = mock(Job.class);
 		final JobFactory<StartWorkflowTask> factory = mock(JobFactory.class);
-		when(factory.create(task)) //
+		when(factory.create(task, true)) //
 				.thenReturn(job);
 		converter.register(StartWorkflowTask.class, factory);
 
@@ -79,7 +79,7 @@ public class DefaultLogicAndSchedulerConverterTest {
 
 		// then
 		final InOrder inOrder = inOrder(factory);
-		inOrder.verify(factory).create(task);
+		inOrder.verify(factory).create(task, true);
 		inOrder.verifyNoMoreInteractions();
 	}
 

@@ -7,7 +7,6 @@ import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.map;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
-import static org.cmdbuild.scheduler.command.SafeCommand.safe;
 import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.template.engine.EngineNames.EMAIL_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.GROUP_PREFIX;
@@ -46,8 +45,6 @@ import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.email.Attachment;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.EmailConstants;
-import org.cmdbuild.scheduler.Job;
-import org.cmdbuild.scheduler.command.BuildableCommandBasedJob;
 import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.email.CollectingEmailCallbackHandler;
 import org.cmdbuild.services.email.EmailAccount;
@@ -327,7 +324,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	}
 
 	@Override
-	protected Job doCreate(final ReadEmailTask task) {
+	protected Command command(final ReadEmailTask task) {
 		final String emailAccountName = task.getEmailAccount();
 		final EmailAccount selectedEmailAccount = emailAccountFor(emailAccountName);
 		final EmailService service = emailServiceFactory.create(ofInstance(selectedEmailAccount));
@@ -468,11 +465,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 		}
 
-		final String name = task.getId().toString();
-		return BuildableCommandBasedJob.newInstance() //
-				.withName(name) //
-				.withAction(safe(readEmail.build())) //
-				.build();
+		return readEmail.build();
 	}
 
 	private Iterable<Document> documentsFrom(final Iterable<Attachment> attachments) {

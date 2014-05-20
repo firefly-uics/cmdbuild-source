@@ -132,11 +132,14 @@ public class DefaultSchedulerFacadeTest {
 				.withActiveStatus(false) //
 				.build();
 		final Job job = mock(Job.class);
-		final LogicAsSourceConverter logicAsSourceConverter = mock(LogicAsSourceConverter.class);
-		when(logicAsSourceConverter.toJob()) //
+		final LogicAsSourceConverter logicAsSourceConverterWithNoExecution = mock(LogicAsSourceConverter.class);
+		when(logicAsSourceConverterWithNoExecution.toJob()) //
 				.thenReturn(job);
+		final LogicAsSourceConverter logicAsSourceConverterWithExecution = mock(LogicAsSourceConverter.class);
+		when(logicAsSourceConverterWithExecution.withNoExecution()) //
+				.thenReturn(logicAsSourceConverterWithNoExecution);
 		when(converter.from(task)) //
-				.thenReturn(logicAsSourceConverter);
+				.thenReturn(logicAsSourceConverterWithExecution);
 
 		// when
 		schedulerFacade.delete(task);
