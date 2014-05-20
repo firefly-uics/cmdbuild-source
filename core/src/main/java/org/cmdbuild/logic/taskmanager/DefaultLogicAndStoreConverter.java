@@ -392,7 +392,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		@Override
 		public org.cmdbuild.data.store.task.Task toStore() {
-			logger.info(marker, "converting task '{}' to scheduler job", source);
+			logger.info(marker, "converting logic task '{}' to store task", source);
 			source.accept(this);
 			Validate.notNull(target, "conversion error");
 			return target;
@@ -534,7 +534,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 		@Override
 		public Task toLogic() {
-			logger.info(marker, "converting scheduler job '{}' to scheduled task");
+			logger.info(marker, "converting store task '{}' to logic task", source);
 			source.accept(this);
 			Validate.notNull(target, "conversion error");
 			return target;

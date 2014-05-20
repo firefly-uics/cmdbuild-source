@@ -13,6 +13,7 @@ import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
@@ -120,7 +121,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 
 			@Override
 			public boolean apply(final StartWorkflowTask input) {
-				return input.getProcessClass().equals(className);
+				return ObjectUtils.equals(input.getProcessClass(), className);
 			}
 
 		};

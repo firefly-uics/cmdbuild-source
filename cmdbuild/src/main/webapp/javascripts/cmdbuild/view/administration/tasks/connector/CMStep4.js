@@ -56,7 +56,7 @@
 
 		// GETters functions
 			/**
-			 * @return (Array) data
+			 * @return (Object) data
 			 */
 			getData: function() {
 				var data = [];
@@ -67,7 +67,7 @@
 						!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
 						&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
 					) {
-						var buffer = [];
+						var buffer = {};
 
 						buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
 						buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME);

@@ -180,12 +180,14 @@
 			 * @param (String) cronExpression
 			 */
 			setValueAdvancedFields: function(cronExpression) {
-				var values = cronExpression.split(' ');
-				var fields = this.advancedField.advancedFields;
+				if (!Ext.isEmpty(cronExpression)) {
+					var values = cronExpression.split(' ');
+					var fields = this.advancedField.advancedFields;
 
-				for (var i = 0; i < fields.length; i++)
-					if (values[i])
-						fields[i].setValue(values[i]);
+					for (var i = 0; i < fields.length; i++)
+						if (values[i])
+							fields[i].setValue(values[i]);
+				}
 			},
 
 			/**
@@ -223,7 +225,7 @@
 		 * @param (Boolean) enable
 		 */
 		validate: function(enable) {
-			this.setValueAdvancedRadio(true);
+			this.setValueAdvancedRadio(enable);
 			this.setAllowBlankAdvancedFields(
 				!(this.isEmptyAdvanced() && enable)
 			);
