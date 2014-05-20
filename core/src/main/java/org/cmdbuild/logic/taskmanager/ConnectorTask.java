@@ -27,7 +27,7 @@ public class ConnectorTask implements ScheduledTask {
 
 	}
 
-	private static final SourceConfiguration NULL_SOURCE_CONFIGURATION = new SourceConfiguration() {
+	public static final SourceConfiguration NULL_SOURCE_CONFIGURATION = new SourceConfiguration() {
 
 		@Override
 		public void accept(final SourceConfigurationVisitor visitor) {
@@ -36,7 +36,32 @@ public class ConnectorTask implements ScheduledTask {
 
 	};
 
-	public static final class SqlSourceConfiguration implements SourceConfiguration {
+	private static abstract class AbstractSourceConfiguration implements SourceConfiguration {
+
+		@Override
+		public final boolean equals(final Object obj) {
+			return doEquals(obj);
+		}
+
+		protected abstract boolean doEquals(Object obj);
+
+		@Override
+		public final int hashCode() {
+			return doHashCode();
+		}
+
+		protected abstract int doHashCode();
+
+		@Override
+		public final String toString() {
+			return doToString();
+		}
+
+		protected abstract String doToString();
+
+	}
+
+	public static final class SqlSourceConfiguration extends AbstractSourceConfiguration {
 
 		public static class Builder implements org.apache.commons.lang3.builder.Builder<SqlSourceConfiguration> {
 
@@ -46,6 +71,7 @@ public class ConnectorTask implements ScheduledTask {
 			private String database;
 			private String username;
 			private String password;
+			private String filter;
 
 			private Builder() {
 				// user factory method
@@ -86,6 +112,11 @@ public class ConnectorTask implements ScheduledTask {
 				return this;
 			}
 
+			public Builder withFilter(final String filter) {
+				this.filter = filter;
+				return this;
+			}
+
 		}
 
 		public static Builder newInstance() {
@@ -97,6 +128,7 @@ public class ConnectorTask implements ScheduledTask {
 		private final String database;
 		private final String username;
 		private final String password;
+		private final String filter;
 
 		private SqlSourceConfiguration(final Builder builder) {
 			this.host = builder.host;
@@ -104,6 +136,7 @@ public class ConnectorTask implements ScheduledTask {
 			this.database = builder.database;
 			this.username = builder.username;
 			this.password = builder.password;
+			this.filter = builder.filter;
 		}
 
 		@Override
@@ -129,6 +162,46 @@ public class ConnectorTask implements ScheduledTask {
 
 		public String getPassword() {
 			return password;
+		}
+
+		public String getFilter() {
+			return filter;
+		}
+
+		@Override
+		protected boolean doEquals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof SqlSourceConfiguration)) {
+				return false;
+			}
+			final SqlSourceConfiguration other = SqlSourceConfiguration.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(host, other.host) //
+					.append(port, other.port) //
+					.append(database, other.database) //
+					.append(username, other.username) //
+					.append(password, other.password) //
+					.append(filter, other.filter) //
+					.isEquals();
+		}
+
+		@Override
+		protected int doHashCode() {
+			return new HashCodeBuilder() //
+					.append(host) //
+					.append(port) //
+					.append(database) //
+					.append(username) //
+					.append(password) //
+					.append(filter) //
+					.toHashCode();
+		}
+
+		@Override
+		protected String doToString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
 
 	}

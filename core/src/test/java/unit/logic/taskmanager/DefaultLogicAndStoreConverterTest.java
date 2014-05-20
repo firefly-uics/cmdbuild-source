@@ -16,6 +16,8 @@ import java.util.Map;
 
 import org.cmdbuild.logic.taskmanager.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfiguration;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.Connector;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.ReadEmail;
@@ -32,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 
@@ -95,6 +98,44 @@ public class DefaultLogicAndStoreConverterTest {
 	}
 
 	@Test
+	public void sqlDataSourceSuccessfullyConvertedToStore() throws Exception {
+		// given
+		final ConnectorTask source = ConnectorTask.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withActiveStatus(true) //
+				.withCronExpression("cron expression") //
+				.withSourceConfiguration(SqlSourceConfiguration.newInstance() //
+						.withHost("example.com") //
+						.withPort(12345) //
+						.withDatabase("db") //
+						.withUsername("user") //
+						.withPassword("pwd") //
+						.withFilter("filter") //
+						.build()) //
+				.build();
+
+		// when
+		final org.cmdbuild.data.store.task.Task converted = converter.from(source).toStore();
+
+		// then
+		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.ConnectorTask.class));
+
+		final Map<String, String> parameters = converted.getParameters();
+		assertThat(parameters, hasEntry(Connector.DATA_SOURCE_TYPE, "sql"));
+
+		final Map<String, String> configuration = Splitter.on(LINE_SEPARATOR) //
+				.withKeyValueSeparator("=") //
+				.split(parameters.get(Connector.DATA_SOURCE_CONFIGURATION));
+		assertThat(configuration, hasEntry(Connector.SQL_HOSTNAME, "example.com"));
+		assertThat(configuration, hasEntry(Connector.SQL_PORT, "12345"));
+		assertThat(configuration, hasEntry(Connector.SQL_DATABASE, "db"));
+		assertThat(configuration, hasEntry(Connector.SQL_USERNAME, "user"));
+		assertThat(configuration, hasEntry(Connector.SQL_PASSWORD, "pwd"));
+		assertThat(configuration, hasEntry(Connector.SQL_FILTER, "filter"));
+	}
+
+	@Test
 	public void connectorTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
 		final org.cmdbuild.data.store.task.ConnectorTask source = org.cmdbuild.data.store.task.ConnectorTask
@@ -133,6 +174,47 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(second.getTargetType(), equalTo("targetTypeB"));
 		assertThat(second.getTargetAttribute(), equalTo("targetAttributeB"));
 		assertThat(second.isKey(), is(false));
+	}
+
+	@Test
+	public void sqlDataSourceSuccessfullyConvertedToLogic() throws Exception {
+		// given
+		final Map<String, String> configuration = Maps.newHashMap();
+		configuration.put(Connector.SQL_HOSTNAME, "example.com");
+		configuration.put(Connector.SQL_PORT, "12345");
+		configuration.put(Connector.SQL_DATABASE, "db");
+		configuration.put(Connector.SQL_USERNAME, "user");
+		configuration.put(Connector.SQL_PASSWORD, "pwd");
+		configuration.put(Connector.SQL_FILTER, "filter");
+		final org.cmdbuild.data.store.task.ConnectorTask source = org.cmdbuild.data.store.task.ConnectorTask
+				.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withRunningStatus(true) //
+				.withCronExpression("cron expression") //
+				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
+				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
+						.withKeyValueSeparator("=") //
+						.join(configuration)) //
+				.build();
+
+		// when
+		final Task _converted = converter.from(source).toLogic();
+
+		// then
+		assertThat(_converted, instanceOf(ConnectorTask.class));
+		final ConnectorTask converted = ConnectorTask.class.cast(_converted);
+		final SourceConfiguration sourceConfiguration = converted.getSourceConfiguration();
+		assertThat(sourceConfiguration, instanceOf(SqlSourceConfiguration.class));
+		final SqlSourceConfiguration sqlSourceConfiguration = SqlSourceConfiguration.class.cast(sourceConfiguration);
+		assertThat(sqlSourceConfiguration, equalTo(SqlSourceConfiguration.newInstance() //
+				.withHost("example.com") //
+				.withPort(12345) //
+				.withDatabase("db") //
+				.withUsername("user") //
+				.withPassword("pwd") //
+				.withFilter("filter") //
+				.build()));
 	}
 
 	@Test

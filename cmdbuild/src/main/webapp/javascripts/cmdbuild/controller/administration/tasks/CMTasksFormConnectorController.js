@@ -188,23 +188,23 @@ _debug(Ext.encode(this.delegateStep[5].getData()));
 
 _debug(formData);
 _debug(submitDatas);
-//			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
-//				CMDBuild.core.proxy.CMProxyTasks.create({
-//					type: this.taskType,
-//					params: submitDatas,
-//					scope: this,
-//					success: this.success,
-//					callback: this.callback
-//				});
-//			} else {
-//				CMDBuild.core.proxy.CMProxyTasks.update({
-//					type: this.taskType,
-//					params: submitDatas,
-//					scope: this,
-//					success: this.success,
-//					callback: this.callback
-//				});
-//			}
+			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
+				CMDBuild.core.proxy.CMProxyTasks.create({
+					type: this.taskType,
+					params: submitDatas,
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			} else {
+				CMDBuild.core.proxy.CMProxyTasks.update({
+					type: this.taskType,
+					params: submitDatas,
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			}
 		},
 
 		/**
