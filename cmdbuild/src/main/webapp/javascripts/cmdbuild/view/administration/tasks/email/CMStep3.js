@@ -103,10 +103,7 @@
 			 * @param (String) value
 			 */
 			setValueAttachmentsCombo: function(value) {
-				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				this.view.attachmentsCombo.forceSelection = false;
 				this.view.attachmentsCombo.setValue(value);
-				this.view.attachmentsCombo.forceSelection = true;
 			},
 
 			/**
@@ -118,6 +115,17 @@
 					this.onCheckedAttachmentsFieldset();
 				} else {
 					this.view.attachmentsFieldset.collapse();
+				}
+			},
+
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueNotificationFieldsetCheckbox: function(state) {
+				if (state) {
+					this.view.notificationFieldset.expand();
+				} else {
+					this.view.notificationFieldset.collapse();
 				}
 			},
 

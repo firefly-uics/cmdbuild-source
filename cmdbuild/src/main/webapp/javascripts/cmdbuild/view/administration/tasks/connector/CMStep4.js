@@ -166,6 +166,13 @@
 		},
 
 		// SETters functions
+//			/**
+//			 * @param (Object) data
+//			 */
+//			setData: function(data) {
+//				this.view.classLevelMappingGrid.getStore().loadData(data);
+//			},
+
 			/**
 			 * @param (Boolean) state
 			 */
@@ -248,7 +255,7 @@
 						flex: 1
 					},
 					{
-						xtype : 'checkcolumn',
+						xtype: 'checkcolumn',
 						header: tr.cudActions.create,
 						dataIndex: CMDBuild.ServiceProxy.parameter.CREATE,
 						width: 50,
@@ -259,7 +266,7 @@
 						fixed: true
 					},
 					{
-						xtype : 'checkcolumn',
+						xtype: 'checkcolumn',
 						header: tr.cudActions.update,
 						dataIndex: CMDBuild.ServiceProxy.parameter.UPDATE,
 						width: 50,
@@ -270,7 +277,7 @@
 						fixed: true
 					},
 					{
-						xtype : 'checkcolumn',
+						xtype: 'checkcolumn',
 						header: tr.cudActions.delete,
 						dataIndex: CMDBuild.ServiceProxy.parameter.DELETE,
 						width: 50,

@@ -113,7 +113,7 @@
 
 			fields: [
 				{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string' },
-				{ name: CMDBuild.ServiceProxy.parameter.VIEW_NAME, type: 'string' },
+				{ name: CMDBuild.ServiceProxy.parameter.SOURCE_NAME, type: 'string' },
 				{ name: CMDBuild.ServiceProxy.parameter.CREATE, type: 'boolean', defaultValue: true },
 				{ name: CMDBuild.ServiceProxy.parameter.UPDATE, type: 'boolean', defaultValue: true },
 				{ name: CMDBuild.ServiceProxy.parameter.DELETE, type: 'boolean', defaultValue: true },
@@ -127,8 +127,8 @@
 			fields: [
 				{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string' },
 				{ name: CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE, type: 'string' },
-				{ name: CMDBuild.ServiceProxy.parameter.VIEW_NAME, type: 'string' },
-				{ name: CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE, type: 'string' },
+				{ name: CMDBuild.ServiceProxy.parameter.SOURCE_NAME, type: 'string' },
+				{ name: CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE, type: 'string' },
 				{ name: CMDBuild.ServiceProxy.parameter.IS_KEY, type: 'boolean' }
 			]
 		});
