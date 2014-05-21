@@ -61,12 +61,8 @@
 			setValue: function(internalId, value) {
 				var inputField = this.inputFields[internalId];
 
-				if (!Ext.isEmpty(inputField) && !Ext.isEmpty(value)) {
-					// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-					inputField.forceSelection = false;
+				if (!Ext.isEmpty(inputField) && !Ext.isEmpty(value))
 					inputField.setValue(value);
-					inputField.forceSelection = true;
-				}
 			},
 
 		/**

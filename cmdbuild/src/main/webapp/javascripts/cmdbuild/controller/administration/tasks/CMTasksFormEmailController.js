@@ -113,6 +113,8 @@
 							// Set step3 [2] datas
 							this.delegateStep[2].setValueAttachmentsFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE));
 							this.delegateStep[2].setValueAttachmentsCombo(record.get(CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY));
+							this.delegateStep[2].setValueNotificationFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE));
+							this.delegateStep[2].setValueNotificationTemplate(record.get(CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE));
 							this.delegateStep[2].setValueParsingFieldsetCheckbox(record.get(CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE));
 							this.delegateStep[2].setValueParsingFields(
 								record.get(CMDBuild.ServiceProxy.parameter.PARSING_KEY_END),
@@ -201,8 +203,7 @@
 				submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
 				submitDatas[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT] = formData[CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT];
 				submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
-_debug(formData);
-_debug(submitDatas);
+
 				if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
 					CMDBuild.core.proxy.CMProxyTasks.create({
 						type: this.taskType,

@@ -185,21 +185,6 @@
 						]
 					});
 				},
-// TODO: future implementation
-//				/**
-//				 * @return (Object) store
-//				 */
-//				getFunctionStore: function() {
-//					return Ext.create('Ext.data.Store', {
-//						autoLoad: true,
-//						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-//						data: [
-//							{ name: 'Function1', description: 'Function 1' },
-//							{ name: 'Function2', description: 'Function 2' },
-//							{ name: 'Function3', description: 'Function 3' }
-//						]
-//					});
-//				},
 
 				/**
 				 * @return (Object) store

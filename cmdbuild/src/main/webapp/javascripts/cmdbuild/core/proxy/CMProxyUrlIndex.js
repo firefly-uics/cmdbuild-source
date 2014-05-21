@@ -163,7 +163,7 @@
 					getStore: 'services/json/schema/taskmanager/reademail/readall'
 				},
 				event: {
-					getStore: 'services/json/schema/taskmanager/event/readall',
+					getStore: 'services/json/schema/taskmanager/synchronousevent/readall', // TODO: change with real call
 
 					asynchronous: {
 						delete: 'services/json/schema/taskmanager/asynchronousevent/delete',

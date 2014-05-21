@@ -96,10 +96,7 @@
 			 * @param (String) value
 			 */
 			setValueClassName: function(value) {
-				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				this.view.classNameCombo.forceSelection = false;
 				this.view.classNameCombo.setValue(value);
-				this.view.classNameCombo.forceSelection = true;
 
 				// Manually select event fire
 				this.cmOn('onClassSelected', { className: value });
@@ -123,10 +120,7 @@
 			 * @param (String) value
 			 */
 			setValuePhase: function(value) {
-				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				this.view.phaseCombo.forceSelection = false;
 				this.view.phaseCombo.setValue(value);
-				this.view.phaseCombo.forceSelection = true;
 			}
 	});
 

@@ -132,6 +132,7 @@
 							// Set step4 [3] datas
 
 							// Set step5 [4] datas
+							this.delegateStep[4].setData(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTE_MAPPING));
 
 							// Set step6 [5] datas
 

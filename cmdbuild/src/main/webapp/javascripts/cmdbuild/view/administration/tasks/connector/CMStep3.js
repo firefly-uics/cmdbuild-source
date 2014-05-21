@@ -67,11 +67,7 @@
 						case 'db': {
 							this.view.dbFieldset.expand();
 
-							// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-							this.view.dbTypeCombo.forceSelection = false;
 							this.view.dbTypeCombo.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_TYPE]);
-							this.view.dbTypeCombo.forceSelection = true;
-
 							this.view.dbAddressField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_ADDRESS]);
 							this.view.dbPortField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PORT]);
 							this.view.dbNameField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_NAME]);

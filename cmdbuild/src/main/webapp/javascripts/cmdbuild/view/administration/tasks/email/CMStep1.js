@@ -82,10 +82,7 @@
 			 * @param (String) value
 			 */
 			setValueEmailAccount: function(value) {
-				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				this.view.emailAccountCombo.forceSelection = false;
 				this.view.emailAccountCombo.setValue(value);
-				this.view.emailAccountCombo.forceSelection = true;
 			},
 
 			/**

@@ -41,6 +41,7 @@
 				forceSelection: true,
 				editable: false,
 				allowBlank: false,
+
 				store: this.parentDelegate.getStoreFilteredClass(),
 				queryMode: 'local',
 
@@ -106,6 +107,7 @@
 				forceSelection: true,
 				editable: false,
 				allowBlank: false,
+
 				store: this.parentDelegate.getStoreFilteredSource(),
 				queryMode: 'local',
 
@@ -170,45 +172,26 @@
 			 */
 			getData: function() {
 				var data = [];
-				var isKeySelection = null;
 
-				if (!Ext.isEmpty(this.view.gridSelectionModel)) {
-					if (this.view.gridSelectionModel.hasSelection())
-						isKeySelection = this.view.gridSelectionModel.getSelection();
+				// To validate and filter grid rows
+				this.view.attributeLevelMappingGrid.getStore().each(function(record) {
+					if (
+						!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
+						&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE))
+						&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
+						&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE))
+					) {
+						var buffer = {};
 
-					// To validate and filter grid rows and creating isKey attributes
-					this.view.attributeLevelMappingGrid.getStore().each(function(record) {
-						if (
-							!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
-							&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE))
-							&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
-							&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE))
-						) {
-							var buffer = {};
+						buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
+						buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE);
+						buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME);
+						buffer[CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE);
+						buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = record.get(CMDBuild.ServiceProxy.parameter.IS_KEY);
 
-							buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
-							buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE);
-							buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME);
-							buffer[CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE);
-							buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = false;
-
-							// Check to setup isKey parameter
-							for (key in isKeySelection) {
-								if (
-									buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.CLASS_NAME)
-									&& buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE)
-									&& buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME)
-									&& buffer[CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE] == isKeySelection[key].get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE)
-								) {
-									buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = true;
-									break;
-								}
-							}
-
-							data.push(buffer);
-						}
-					});
-				}
+						data.push(buffer);
+					}
+				});
 
 				return data;
 			},
@@ -275,6 +258,13 @@
 
 		// SETters functions
 			/**
+			 * @param (Object) data
+			 */
+			setData: function(data) {
+				this.view.attributeLevelMappingGrid.getStore().loadData(data);
+			},
+
+			/**
 			 * @param (Boolean) state
 			 */
 			setDisabledButtonNext: function(state) {
@@ -297,23 +287,6 @@
 			this.classesAttributesMap = _CMCache.getAllAttributesList();
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep5Delegate', this);
 
-			this.gridSelectionModel = Ext.create('Ext.selection.CheckboxModel', {
-				mode: 'multi',
-				showHeaderCheckbox: false,
-				headerText: tr.isKey,
-				headerWidth: 50,
-				dataIndex: CMDBuild.ServiceProxy.parameter.IS_KEY,
-				checkOnly: true,
-				selectByPosition: Ext.emptyFn, // FIX: to avoid checkbox selection on cellediting (workaround)
-				injectCheckbox: 4,
-
-				listeners: {
-					selectionchange: function(model, record, index, eOpts) {
-						me.delegate.cmOn('onStepEdit');
-					}
-				}
-			});
-
 			this.gridEditorPlugin = Ext.create('Ext.grid.plugin.CellEditing', {
 				clicksToEdit: 1,
 
@@ -332,7 +305,6 @@
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 
-				selModel: this.gridSelectionModel,
 				plugins: this.gridEditorPlugin,
 
 				columns: [
@@ -372,21 +344,17 @@
 						},
 						flex: 1
 					},
-// TODO: Future implementation
-//					{
-//						header: 'tr.function',
-//						dataIndex: 'CMDBuild.ServiceProxy.parameter.FUNCTION',
-//						editor: {
-//							xtype: 'combo',
-//							valueField: CMDBuild.ServiceProxy.parameter.VALUE,
-//							displayField: CMDBuild.ServiceProxy.parameter.NAME,
-//							forceSelection: true,
-//							editable: false,
-//							allowBlank: false,
-//							store: CMDBuild.core.proxy.CMProxyTasks.getFunctionStore()
-//						},
-//						flex: 1
-//					},
+					{
+						xtype: 'checkcolumn',
+						header: tr.isKey,
+						dataIndex: CMDBuild.ServiceProxy.parameter.IS_KEY,
+						width: 50,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					},
 					{
 						xtype: 'actioncolumn',
 						width: 30,
@@ -438,7 +406,7 @@
 				this.delegate.buildClassCombo();
 
 				// Step validate
-				this.delegate.parentDelegate.validateStepGrid(this.attributeLevelMappingGrid.getStore());
+//				this.delegate.parentDelegate.validateStepGrid(this.attributeLevelMappingGrid.getStore());
 
 //				Ext.Function.createDelayed(function() { // HACK: to fix problem witch fires show event before changeTab() function
 //					if (this.delegate.isEmptyMappingGrid())
