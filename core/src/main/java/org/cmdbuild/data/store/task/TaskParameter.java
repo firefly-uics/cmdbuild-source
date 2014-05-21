@@ -1,6 +1,5 @@
 package org.cmdbuild.data.store.task;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import org.apache.commons.lang3.Validate;
@@ -31,7 +30,12 @@ public class TaskParameter implements Storable {
 
 		private void validate() {
 			Validate.notNull(owner, "invalid owner");
-			Validate.isTrue(isNotBlank(key), "invalid key");
+			Validate.notBlank(key, "invalid key");
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
 
 		public Builder withId(final Long id) {
@@ -54,11 +58,6 @@ public class TaskParameter implements Storable {
 			return this;
 		}
 
-		@Override
-		public String toString() {
-			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-		}
-
 	}
 
 	public static Builder newInstance() {
@@ -70,11 +69,7 @@ public class TaskParameter implements Storable {
 	private final String key;
 	private final String value;
 
-	public TaskParameter() {
-		this(null);
-	}
-
-	public TaskParameter(final Builder builder) {
+	private TaskParameter(final Builder builder) {
 		this.id = builder.id;
 		this.owner = builder.owner;
 		this.key = builder.key;
@@ -104,7 +99,12 @@ public class TaskParameter implements Storable {
 
 	@Override
 	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this);
+		return new HashCodeBuilder() //
+				.append(id) //
+				.append(owner) //
+				.append(key) //
+				.append(value) //
+				.toHashCode();
 	}
 
 	@Override
@@ -116,7 +116,12 @@ public class TaskParameter implements Storable {
 			return false;
 		}
 		final TaskParameter other = TaskParameter.class.cast(obj);
-		return EqualsBuilder.reflectionEquals(this, other);
+		return new EqualsBuilder() //
+				.append(id, other.id) //
+				.append(owner, other.owner) //
+				.append(key, other.key) //
+				.append(value, other.value) //
+				.isEquals();
 	}
 
 	@Override

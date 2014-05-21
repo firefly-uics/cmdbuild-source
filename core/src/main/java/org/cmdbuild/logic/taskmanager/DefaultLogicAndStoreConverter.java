@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.taskmanager;
 
+import static org.apache.commons.lang3.math.NumberUtils.*;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -7,11 +8,16 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 import static org.cmdbuild.logic.taskmanager.ConnectorTask.NULL_SOURCE_CONFIGURATION;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.MySqlSourceType.mysql;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.OracleSourceType.oracle;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.PostgreSqlSourceType.postgresql;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.SqlServerSourceType.sqlserver;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.task.ConnectorTaskDefinition;
 import org.cmdbuild.data.store.task.ReadEmailTaskDefinition;
@@ -22,6 +28,7 @@ import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfiguration;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfigurationVisitor;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceType;
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask.Phase;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -51,6 +58,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public static final String DATA_SOURCE_CONFIGURATION = DATA_SOURCE_PREFIX + "configuration";
 
 		private static final String SQL_PREFIX = EMPTY;
+		public static final String SQL_TYPE = SQL_PREFIX + "type";
 		public static final String SQL_HOSTNAME = SQL_PREFIX + "hostname";
 		public static final String SQL_PORT = SQL_PREFIX + "port";
 		public static final String SQL_DATABASE = SQL_PREFIX + "database";
@@ -188,6 +196,43 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public static final String ACTION_SCRIPT_ENGINE = ACTION_SCRIPT_PREFIX + "engine";
 		public static final String ACTION_SCRIPT_SCRIPT = ACTION_SCRIPT_PREFIX + "script";
 		public static final String ACTION_SCRIPT_SAFE = ACTION_SCRIPT_PREFIX + "safe";
+
+	}
+
+	private static enum SqlSourceHandler {
+
+		MYSQL("mysql", mysql()), //
+		ORACLE("oracle", oracle()), //
+		POSTGRES("postgresql", postgresql()), //
+		SQLSERVER("sqlserver", sqlserver()), //
+		UNKNOWN(null, null);
+		;
+
+		public static SqlSourceHandler of(final String store) {
+			for (final SqlSourceHandler value : values()) {
+				if (ObjectUtils.equals(value.store, store)) {
+					return value;
+				}
+			}
+			return UNKNOWN;
+		}
+
+		public static SqlSourceHandler of(final SqlSourceType type) {
+			for (final SqlSourceHandler value : values()) {
+				if (ObjectUtils.equals(value.type, type)) {
+					return value;
+				}
+			}
+			return UNKNOWN;
+		}
+
+		public final String store;
+		public final SqlSourceType type;
+
+		private SqlSourceHandler(final String client, final SqlSourceType server) {
+			this.store = client;
+			this.type = server;
+		}
 
 	}
 
@@ -423,17 +468,19 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 				@Override
 				public void visit(final SqlSourceConfiguration sourceConfiguration) {
-					final Map<String, String> lol = Maps.newHashMap();
-					lol.put(Connector.SQL_HOSTNAME, sourceConfiguration.getHost());
-					lol.put(Connector.SQL_PORT, Integer.toString(sourceConfiguration.getPort()));
-					lol.put(Connector.SQL_DATABASE, sourceConfiguration.getDatabase());
-					lol.put(Connector.SQL_USERNAME, sourceConfiguration.getUsername());
-					lol.put(Connector.SQL_PASSWORD, sourceConfiguration.getPassword());
-					lol.put(Connector.SQL_FILTER, sourceConfiguration.getFilter());
+					final Map<String, String> map = Maps.newHashMap();
+					map.put(Connector.SQL_TYPE, SqlSourceHandler.of(sourceConfiguration.getType()).store);
+					map.put(Connector.SQL_HOSTNAME, sourceConfiguration.getHost());
+					map.put(Connector.SQL_PORT, Integer.toString(sourceConfiguration.getPort()));
+					map.put(Connector.SQL_DATABASE, sourceConfiguration.getDatabase());
+					map.put(Connector.SQL_USERNAME, sourceConfiguration.getUsername());
+					map.put(Connector.SQL_PASSWORD, sourceConfiguration.getPassword());
+					map.put(Connector.SQL_FILTER, sourceConfiguration.getFilter());
 					parameters.put(Connector.DATA_SOURCE_TYPE, "sql");
 					parameters.put(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
-							.join(lol));
+							.useForNull(EMPTY) //
+							.join(map));
 				}
 			});
 			return parameters;
@@ -573,8 +620,9 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 						.split(defaultString(configuration));
 				sourceConfiguration = SqlSourceConfiguration.newInstance() //
+						.withType(SqlSourceHandler.of(map.get(Connector.SQL_TYPE)).type) //
 						.withHost(map.get(Connector.SQL_HOSTNAME)) //
-						.withPort(Integer.parseInt(map.get(Connector.SQL_PORT))) //
+						.withPort(createInteger(defaultString(map.get(Connector.SQL_PORT), null))) //
 						.withDatabase(map.get(Connector.SQL_DATABASE)) //
 						.withUsername(map.get(Connector.SQL_USERNAME)) //
 						.withPassword(map.get(Connector.SQL_PASSWORD)) //

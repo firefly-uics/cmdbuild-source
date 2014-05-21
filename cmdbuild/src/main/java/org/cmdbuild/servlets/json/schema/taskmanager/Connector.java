@@ -4,6 +4,10 @@ import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.logic.taskmanager.ConnectorTask.NULL_SOURCE_CONFIGURATION;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.MySqlSourceType.mysql;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.OracleSourceType.oracle;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.PostgreSqlSourceType.postgresql;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.SqlServerSourceType.sqlserver;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTE_MAPPING;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ATTRIBUTE;
@@ -15,6 +19,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_DB_F
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_DB_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_DB_PASSWORD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_DB_PORT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_DB_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_DB_USERNAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_TYPE_SQL;
@@ -39,8 +44,10 @@ import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfiguration;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfigurationVisitor;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceType;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
+import org.cmdbuild.servlets.json.CommunicationConstants;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -55,15 +62,57 @@ import com.google.common.base.Function;
 
 public class Connector extends JSONBaseWithSpringContext {
 
-	private static abstract class JsonDataSource {
+	private static abstract class JsonSource {
 	}
 
-	private static class JsonSqlDataSource extends JsonDataSource {
+	private static enum JsonSqlSourceHandler {
+
+		MYSQL(CommunicationConstants.MYSQL, mysql()), //
+		ORACLE(CommunicationConstants.ORACLE, oracle()), //
+		POSTGRES(CommunicationConstants.POSTGRESQL, postgresql()), //
+		SQLSERVER(CommunicationConstants.SQLSERVER, sqlserver()), //
+		UNKNOWN(null, null);
+		;
+
+		public static JsonSqlSourceHandler of(final String client) {
+			for (final JsonSqlSourceHandler value : values()) {
+				if (ObjectUtils.equals(value.client, client)) {
+					return value;
+				}
+			}
+			return UNKNOWN;
+		}
+
+		public static JsonSqlSourceHandler of(final SqlSourceType type) {
+			for (final JsonSqlSourceHandler value : values()) {
+				if (ObjectUtils.equals(value.server, type)) {
+					return value;
+				}
+			}
+			return UNKNOWN;
+		}
+
+		public final String client;
+		public final SqlSourceType server;
+
+		private JsonSqlSourceHandler(final String client, final SqlSourceType server) {
+			this.client = client;
+			this.server = server;
+		}
+
+	}
+
+	private static class JsonSqlSource extends JsonSource {
 
 		private final SqlSourceConfiguration delegate;
 
-		public JsonSqlDataSource(final SqlSourceConfiguration delegate) {
+		public JsonSqlSource(final SqlSourceConfiguration delegate) {
 			this.delegate = delegate;
+		}
+
+		@JsonProperty(DATA_SOURCE_DB_TYPE)
+		public String getType() {
+			return JsonSqlSourceHandler.of(delegate.getType()).client;
 		}
 
 		@JsonProperty(DATA_SOURCE_DB_ADDRESS)
@@ -258,19 +307,19 @@ public class Connector extends JSONBaseWithSpringContext {
 		}
 
 		@JsonProperty(DATA_SOURCE_CONFIGURATION)
-		public JsonDataSource getSourceConfiguration() {
+		public JsonSource getSourceConfiguration() {
 			return new SourceConfigurationVisitor() {
 
-				private JsonDataSource jsonDataSource;
+				private JsonSource jsonDataSource;
 
-				public JsonDataSource asJsonObject() {
+				public JsonSource asJsonObject() {
 					delegate.getSourceConfiguration().accept(this);
 					return jsonDataSource;
 				}
 
 				@Override
 				public void visit(final SqlSourceConfiguration sourceConfiguration) {
-					jsonDataSource = new JsonSqlDataSource(sourceConfiguration);
+					jsonDataSource = new JsonSqlSource(sourceConfiguration);
 				}
 
 			}.asJsonObject();
@@ -375,6 +424,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			public SourceConfiguration convert(final String json) throws Exception {
 				final JsonNode jsonNode = objectMapper.readTree(json);
 				return SqlSourceConfiguration.newInstance() //
+						.withType(JsonSqlSourceHandler.of(jsonNode.get(DATA_SOURCE_DB_TYPE).asText()).server) //
 						.withHost(jsonNode.get(DATA_SOURCE_DB_ADDRESS).asText()) //
 						.withPort(jsonNode.get(DATA_SOURCE_DB_PORT).asInt()) //
 						.withDatabase(jsonNode.get(DATA_SOURCE_DB_NAME).asText()) //
