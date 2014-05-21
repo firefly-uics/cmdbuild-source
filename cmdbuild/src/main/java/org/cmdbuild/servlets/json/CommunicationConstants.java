@@ -49,6 +49,7 @@ public class CommunicationConstants {
 			DATA_SOURCE_DB_NAME = "dataSourceDbName", //
 			DATA_SOURCE_DB_PASSWORD = "dataSourceDbPassword", //
 			DATA_SOURCE_DB_PORT = "dataSourceDbPort", //
+			DATA_SOURCE_DB_TYPE = "dataSourceDbType", //
 			DATA_SOURCE_DB_USERNAME = "dataSourceDbUsername", //
 			DATA_SOURCE_TYPE = "dataSourceType", //
 			DATA_SOURCE_TYPE_SQL = "db", //
@@ -158,6 +159,7 @@ public class CommunicationConstants {
 			MASTERDETAIL_LABEL = "md_label", //
 			MENU = "menu", //
 			META_DATA = "meta", //
+			MYSQL = "mysql", //
 			NAME = "name", //
 			NAMES = "names", //
 			NEW_PASSWORD = "newpassword", //
@@ -168,6 +170,7 @@ public class CommunicationConstants {
 			NOTIFICATION_EMAIL_TEMPLATE = "notificationEmailTemplate", //
 			NUMBER = "Number", //
 			OLD_PASSWORD = "oldpassword", //
+			ORACLE = "oracle", //
 			ORIG_TYPE = "orig_type", //
 			OUT_OF_FILTER = "outOfFilter", //
 			PARAMS = "params", //
@@ -195,6 +198,7 @@ public class CommunicationConstants {
 			PROCESSED_FOLDER = "processedFolder", //
 			PORT = "port", //
 			POSITION = "position", //
+			POSTGRESQL = "postgresql", //
 			PRECISION = "precision", //
 			REJECTED_FOLDER = "rejectedFolder", //
 			REJECT_NOT_MATCHING = "rejectNotMatching", //
@@ -229,6 +233,7 @@ public class CommunicationConstants {
 			SOURCE_FUNCTION = "sourceFunction", //
 			SOURCE_NAME = "sourceName", //
 			SORT = "sort", //
+			SQLSERVER = "sqlserver", //
 			START = "start", //
 			STATE = "state", //
 			SEPARATOR = "separator", //

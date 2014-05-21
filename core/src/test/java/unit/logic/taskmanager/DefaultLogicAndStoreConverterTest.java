@@ -3,6 +3,11 @@ package unit.logic.taskmanager;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
+import static org.cmdbuild.common.utils.BuilderUtils.a;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.MySqlSourceType.mysql;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.OracleSourceType.oracle;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.PostgreSqlSourceType.postgresql;
+import static org.cmdbuild.logic.taskmanager.ConnectorTask.SqlServerSourceType.sqlserver;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
@@ -59,26 +64,26 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void connectorTaskSuccessfullyConvertedToStore() throws Exception {
 		// given
-		final ConnectorTask source = ConnectorTask.newInstance() //
+		final ConnectorTask source = a(ConnectorTask.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
 				.withActiveStatus(true) //
 				.withCronExpression("cron expression") //
-				.withAttributeMapping(AttributeMapping.newInstance() //
+				.withAttributeMapping(a(AttributeMapping.newInstance() //
 						.withSourceType("sourceTypeA") //
 						.withSourceAttribute("sourceAttributeA") //
 						.withTargetType("targetTypeA") //
 						.withTargetAttribute("targetAttributeA") //
 						.withKeyStatus(true) //
-						.build()) //
-				.withAttributeMapping(AttributeMapping.newInstance() //
+						)) //
+				.withAttributeMapping(a(AttributeMapping.newInstance() //
 						.withSourceType("sourceTypeB") //
 						.withSourceAttribute("sourceAttributeB") //
 						.withTargetType("targetTypeB") //
 						.withTargetAttribute("targetAttributeB") //
 						.withKeyStatus(false) //
-						.build()) //
-				.build();
+						)) //
+		);
 
 		// when
 		final org.cmdbuild.data.store.task.Task converted = converter.from(source).toStore();
@@ -100,20 +105,21 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void sqlDataSourceSuccessfullyConvertedToStore() throws Exception {
 		// given
-		final ConnectorTask source = ConnectorTask.newInstance() //
+		final ConnectorTask source = a(ConnectorTask.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
 				.withActiveStatus(true) //
 				.withCronExpression("cron expression") //
-				.withSourceConfiguration(SqlSourceConfiguration.newInstance() //
+				.withSourceConfiguration(a(SqlSourceConfiguration.newInstance() //
+						.withType(postgresql()) //
 						.withHost("example.com") //
 						.withPort(12345) //
 						.withDatabase("db") //
 						.withUsername("user") //
 						.withPassword("pwd") //
 						.withFilter("filter") //
-						.build()) //
-				.build();
+						)) //
+		);
 
 		// when
 		final org.cmdbuild.data.store.task.Task converted = converter.from(source).toStore();
@@ -127,6 +133,7 @@ public class DefaultLogicAndStoreConverterTest {
 		final Map<String, String> configuration = Splitter.on(LINE_SEPARATOR) //
 				.withKeyValueSeparator("=") //
 				.split(parameters.get(Connector.DATA_SOURCE_CONFIGURATION));
+		assertThat(configuration, hasEntry(Connector.SQL_TYPE, "postgresql"));
 		assertThat(configuration, hasEntry(Connector.SQL_HOSTNAME, "example.com"));
 		assertThat(configuration, hasEntry(Connector.SQL_PORT, "12345"));
 		assertThat(configuration, hasEntry(Connector.SQL_DATABASE, "db"));
@@ -136,9 +143,105 @@ public class DefaultLogicAndStoreConverterTest {
 	}
 
 	@Test
+	public void mysqlTypeForSqlDataSuccessfullyConvertedToStore() throws Exception {
+		// given
+		final ConnectorTask sourceWithMySql = a(ConnectorTask.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withActiveStatus(true) //
+				.withCronExpression("cron expression") //
+				.withSourceConfiguration(a(SqlSourceConfiguration.newInstance() //
+						.withType(mysql()))) //
+		);
+
+		// when
+		final org.cmdbuild.data.store.task.Task converted = converter.from(sourceWithMySql).toStore();
+
+		// then
+		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.ConnectorTask.class));
+
+		final Map<String, String> configuration = Splitter.on(LINE_SEPARATOR) //
+				.withKeyValueSeparator("=") //
+				.split(converted.getParameters().get(Connector.DATA_SOURCE_CONFIGURATION));
+		assertThat(configuration, hasEntry(Connector.SQL_TYPE, "mysql"));
+	}
+
+	@Test
+	public void oracleTypeForSqlDataSuccessfullyConvertedToStore() throws Exception {
+		// given
+		final ConnectorTask sourceWithMySql = a(ConnectorTask.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withActiveStatus(true) //
+				.withCronExpression("cron expression") //
+				.withSourceConfiguration(a(SqlSourceConfiguration.newInstance() //
+						.withType(oracle()))) //
+		);
+
+		// when
+		final org.cmdbuild.data.store.task.Task converted = converter.from(sourceWithMySql).toStore();
+
+		// then
+		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.ConnectorTask.class));
+
+		final Map<String, String> configuration = Splitter.on(LINE_SEPARATOR) //
+				.withKeyValueSeparator("=") //
+				.split(converted.getParameters().get(Connector.DATA_SOURCE_CONFIGURATION));
+		assertThat(configuration, hasEntry(Connector.SQL_TYPE, "oracle"));
+	}
+
+	@Test
+	public void postgresqlTypeForSqlDataSuccessfullyConvertedToStore() throws Exception {
+		// given
+		final ConnectorTask sourceWithMySql = a(ConnectorTask.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withActiveStatus(true) //
+				.withCronExpression("cron expression") //
+				.withSourceConfiguration(a(SqlSourceConfiguration.newInstance() //
+						.withType(postgresql()))) //
+		);
+
+		// when
+		final org.cmdbuild.data.store.task.Task converted = converter.from(sourceWithMySql).toStore();
+
+		// then
+		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.ConnectorTask.class));
+
+		final Map<String, String> configuration = Splitter.on(LINE_SEPARATOR) //
+				.withKeyValueSeparator("=") //
+				.split(converted.getParameters().get(Connector.DATA_SOURCE_CONFIGURATION));
+		assertThat(configuration, hasEntry(Connector.SQL_TYPE, "postgresql"));
+	}
+
+	@Test
+	public void sqlserverTypeForSqlDataSuccessfullyConvertedToStore() throws Exception {
+		// given
+		final ConnectorTask sourceWithMySql = a(ConnectorTask.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withActiveStatus(true) //
+				.withCronExpression("cron expression") //
+				.withSourceConfiguration(a(SqlSourceConfiguration.newInstance() //
+						.withType(sqlserver()))) //
+		);
+
+		// when
+		final org.cmdbuild.data.store.task.Task converted = converter.from(sourceWithMySql).toStore();
+
+		// then
+		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.ConnectorTask.class));
+
+		final Map<String, String> configuration = Splitter.on(LINE_SEPARATOR) //
+				.withKeyValueSeparator("=") //
+				.split(converted.getParameters().get(Connector.DATA_SOURCE_CONFIGURATION));
+		assertThat(configuration, hasEntry(Connector.SQL_TYPE, "sqlserver"));
+	}
+
+	@Test
 	public void connectorTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ConnectorTask source = org.cmdbuild.data.store.task.ConnectorTask
+		final org.cmdbuild.data.store.task.ConnectorTask source = a(org.cmdbuild.data.store.task.ConnectorTask
 				.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
@@ -148,7 +251,7 @@ public class DefaultLogicAndStoreConverterTest {
 						+ "sourceTypeA,sourceAttributeA,targetTypeA,targetAttributeA,true" + LINE_SEPARATOR //
 						+ "sourceTypeB,sourceAttributeB,targetTypeB,targetAttributeB,false" //
 				) //
-				.build();
+		);
 
 		// when
 		final Task _converted = converter.from(source).toLogic();
@@ -180,13 +283,14 @@ public class DefaultLogicAndStoreConverterTest {
 	public void sqlDataSourceSuccessfullyConvertedToLogic() throws Exception {
 		// given
 		final Map<String, String> configuration = Maps.newHashMap();
+		configuration.put(Connector.SQL_TYPE, "postgresql");
 		configuration.put(Connector.SQL_HOSTNAME, "example.com");
 		configuration.put(Connector.SQL_PORT, "12345");
 		configuration.put(Connector.SQL_DATABASE, "db");
 		configuration.put(Connector.SQL_USERNAME, "user");
 		configuration.put(Connector.SQL_PASSWORD, "pwd");
 		configuration.put(Connector.SQL_FILTER, "filter");
-		final org.cmdbuild.data.store.task.ConnectorTask source = org.cmdbuild.data.store.task.ConnectorTask
+		final org.cmdbuild.data.store.task.ConnectorTask source = a(org.cmdbuild.data.store.task.ConnectorTask
 				.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
@@ -196,7 +300,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
 						.withKeyValueSeparator("=") //
 						.join(configuration)) //
-				.build();
+		);
 
 		// when
 		final Task _converted = converter.from(source).toLogic();
@@ -207,14 +311,140 @@ public class DefaultLogicAndStoreConverterTest {
 		final SourceConfiguration sourceConfiguration = converted.getSourceConfiguration();
 		assertThat(sourceConfiguration, instanceOf(SqlSourceConfiguration.class));
 		final SqlSourceConfiguration sqlSourceConfiguration = SqlSourceConfiguration.class.cast(sourceConfiguration);
-		assertThat(sqlSourceConfiguration, equalTo(SqlSourceConfiguration.newInstance() //
+		assertThat(sqlSourceConfiguration, equalTo(a(SqlSourceConfiguration.newInstance() //
+				.withType(postgresql()) //
 				.withHost("example.com") //
 				.withPort(12345) //
 				.withDatabase("db") //
 				.withUsername("user") //
 				.withPassword("pwd") //
 				.withFilter("filter") //
-				.build()));
+				)) //
+		);
+	}
+
+	@Test
+	public void mysqlTypeForSqlDataSuccessfullyConvertedToLogic() throws Exception {
+		// given
+		final Map<String, String> configuration = Maps.newHashMap();
+		configuration.put(Connector.SQL_TYPE, "mysql");
+		final org.cmdbuild.data.store.task.ConnectorTask source = a(org.cmdbuild.data.store.task.ConnectorTask
+				.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withRunningStatus(true) //
+				.withCronExpression("cron expression") //
+				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
+				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
+						.withKeyValueSeparator("=") //
+						.join(configuration)) //
+		);
+
+		// when
+		final Task _converted = converter.from(source).toLogic();
+
+		// then
+		assertThat(_converted, instanceOf(ConnectorTask.class));
+		final ConnectorTask converted = ConnectorTask.class.cast(_converted);
+		final SourceConfiguration sourceConfiguration = converted.getSourceConfiguration();
+		assertThat(sourceConfiguration, instanceOf(SqlSourceConfiguration.class));
+		final SqlSourceConfiguration sqlSourceConfiguration = SqlSourceConfiguration.class.cast(sourceConfiguration);
+		assertThat(sqlSourceConfiguration, equalTo(a(SqlSourceConfiguration.newInstance() //
+				.withType(mysql()))) //
+		);
+	}
+
+	@Test
+	public void oracleTypeForSqlDataSuccessfullyConvertedToLogic() throws Exception {
+		// given
+		final Map<String, String> configuration = Maps.newHashMap();
+		configuration.put(Connector.SQL_TYPE, "oracle");
+		final org.cmdbuild.data.store.task.ConnectorTask source = a(org.cmdbuild.data.store.task.ConnectorTask
+				.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withRunningStatus(true) //
+				.withCronExpression("cron expression") //
+				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
+				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
+						.withKeyValueSeparator("=") //
+						.join(configuration)) //
+		);
+
+		// when
+		final Task _converted = converter.from(source).toLogic();
+
+		// then
+		assertThat(_converted, instanceOf(ConnectorTask.class));
+		final ConnectorTask converted = ConnectorTask.class.cast(_converted);
+		final SourceConfiguration sourceConfiguration = converted.getSourceConfiguration();
+		assertThat(sourceConfiguration, instanceOf(SqlSourceConfiguration.class));
+		final SqlSourceConfiguration sqlSourceConfiguration = SqlSourceConfiguration.class.cast(sourceConfiguration);
+		assertThat(sqlSourceConfiguration, equalTo(a(SqlSourceConfiguration.newInstance() //
+				.withType(oracle()))) //
+		);
+	}
+
+	@Test
+	public void postgresqlTypeForSqlDataSuccessfullyConvertedToLogic() throws Exception {
+		// given
+		final Map<String, String> configuration = Maps.newHashMap();
+		configuration.put(Connector.SQL_TYPE, "postgresql");
+		final org.cmdbuild.data.store.task.ConnectorTask source = a(org.cmdbuild.data.store.task.ConnectorTask
+				.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withRunningStatus(true) //
+				.withCronExpression("cron expression") //
+				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
+				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
+						.withKeyValueSeparator("=") //
+						.join(configuration)) //
+		);
+
+		// when
+		final Task _converted = converter.from(source).toLogic();
+
+		// then
+		assertThat(_converted, instanceOf(ConnectorTask.class));
+		final ConnectorTask converted = ConnectorTask.class.cast(_converted);
+		final SourceConfiguration sourceConfiguration = converted.getSourceConfiguration();
+		assertThat(sourceConfiguration, instanceOf(SqlSourceConfiguration.class));
+		final SqlSourceConfiguration sqlSourceConfiguration = SqlSourceConfiguration.class.cast(sourceConfiguration);
+		assertThat(sqlSourceConfiguration, equalTo(a(SqlSourceConfiguration.newInstance() //
+				.withType(postgresql()))) //
+		);
+	}
+
+	@Test
+	public void sqlserverTypeForSqlDataSuccessfullyConvertedToLogic() throws Exception {
+		// given
+		final Map<String, String> configuration = Maps.newHashMap();
+		configuration.put(Connector.SQL_TYPE, "sqlserver");
+		final org.cmdbuild.data.store.task.ConnectorTask source = a(org.cmdbuild.data.store.task.ConnectorTask
+				.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withRunningStatus(true) //
+				.withCronExpression("cron expression") //
+				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
+				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
+						.withKeyValueSeparator("=") //
+						.join(configuration)) //
+		);
+
+		// when
+		final Task _converted = converter.from(source).toLogic();
+
+		// then
+		assertThat(_converted, instanceOf(ConnectorTask.class));
+		final ConnectorTask converted = ConnectorTask.class.cast(_converted);
+		final SourceConfiguration sourceConfiguration = converted.getSourceConfiguration();
+		assertThat(sourceConfiguration, instanceOf(SqlSourceConfiguration.class));
+		final SqlSourceConfiguration sqlSourceConfiguration = SqlSourceConfiguration.class.cast(sourceConfiguration);
+		assertThat(sqlSourceConfiguration, equalTo(a(SqlSourceConfiguration.newInstance() //
+				.withType(sqlserver()))) //
+		);
 	}
 
 	@Test
@@ -224,7 +454,7 @@ public class DefaultLogicAndStoreConverterTest {
 		attributes.put("foo", "bar");
 		attributes.put("bar", "baz");
 		attributes.put("baz", "foo");
-		final ReadEmailTask source = ReadEmailTask.newInstance() //
+		final ReadEmailTask source = a(ReadEmailTask.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
 				.withActiveStatus(true) //
@@ -242,7 +472,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withWorkflowAdvanceableStatus(true) //
 				.withWorkflowAttachmentsStatus(true) //
 				.withWorkflowAttachmentsCategory("workflow's attachments category") //
-				.build();
+		);
 
 		// when
 		final org.cmdbuild.data.store.task.Task converted = converter.from(source).toStore();
@@ -275,12 +505,13 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void keyValueMapperSuccessfullyConvertedToStore() throws Exception {
 		// given
-		final ReadEmailTask source = ReadEmailTask.newInstance() //
-				.withMapperEngine(KeyValueMapperEngine.newInstance() //
+		final ReadEmailTask source = a(ReadEmailTask.newInstance() //
+				.withMapperEngine(a(KeyValueMapperEngine.newInstance() //
 						.withKey("key_init", "key_end") //
 						.withValue("value_init", "value_end") //
-						.build() //
-				).build();
+						) //
+				) //
+		);
 
 		// when
 		final org.cmdbuild.data.store.task.Task converted = converter.from(source).toStore();
@@ -297,7 +528,7 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void readEmailTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ReadEmailTask source = org.cmdbuild.data.store.task.ReadEmailTask
+		final org.cmdbuild.data.store.task.ReadEmailTask source = a(org.cmdbuild.data.store.task.ReadEmailTask
 				.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
@@ -316,7 +547,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(ReadEmail.WORKFLOW_ADVANCE, "true") //
 				.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE, "true") //
 				.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY, "workflow's attachments category") //
-				.build();
+		);
 
 		// when
 		final Task _converted = converter.from(source).toLogic();
@@ -350,14 +581,14 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void keyValueMapperSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.ReadEmailTask source = org.cmdbuild.data.store.task.ReadEmailTask
+		final org.cmdbuild.data.store.task.ReadEmailTask source = a(org.cmdbuild.data.store.task.ReadEmailTask
 				.newInstance() //
 				.withParameter(ReadEmail.KeyValueMapperEngine.TYPE, "keyvalue") //
 				.withParameter(ReadEmail.KeyValueMapperEngine.KEY_INIT, "key_init") //
 				.withParameter(ReadEmail.KeyValueMapperEngine.KEY_END, "key_end") //
 				.withParameter(ReadEmail.KeyValueMapperEngine.VALUE_INIT, "value_init") //
 				.withParameter(ReadEmail.KeyValueMapperEngine.VALUE_END, "value_end") //
-				.build();
+		);
 
 		// when
 		final Task _converted = converter.from(source).toLogic();
@@ -381,14 +612,14 @@ public class DefaultLogicAndStoreConverterTest {
 		attributes.put("foo", "bar");
 		attributes.put("bar", "baz");
 		attributes.put("baz", "foo");
-		final StartWorkflowTask source = StartWorkflowTask.newInstance() //
+		final StartWorkflowTask source = a(StartWorkflowTask.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
 				.withActiveStatus(true) //
 				.withCronExpression("cron expression") //
 				.withProcessClass("class name") //
 				.withAttributes(attributes) //
-				.build();
+		);
 
 		// when
 		final org.cmdbuild.data.store.task.Task converted = converter.from(source).toStore();
@@ -410,7 +641,7 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void startWorkflowTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.StartWorkflowTask source = org.cmdbuild.data.store.task.StartWorkflowTask
+		final org.cmdbuild.data.store.task.StartWorkflowTask source = a(org.cmdbuild.data.store.task.StartWorkflowTask
 				.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
@@ -418,7 +649,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withCronExpression("cron expression") //
 				.withParameter(StartWorkflow.CLASSNAME, "class name") //
 				.withParameter(StartWorkflow.ATTRIBUTES, "foo=bar\nbar=baz\nbaz=foo") //
-				.build();
+		);
 
 		// when
 		final Task _converted = converter.from(source).toLogic();
@@ -441,7 +672,7 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void startWorkflowTaskWithEmptyAttributesSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.StartWorkflowTask source = org.cmdbuild.data.store.task.StartWorkflowTask
+		final org.cmdbuild.data.store.task.StartWorkflowTask source = a(org.cmdbuild.data.store.task.StartWorkflowTask
 				.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
@@ -449,7 +680,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withCronExpression("cron expression") //
 				.withParameter(StartWorkflow.CLASSNAME, "class name") //
 				.withParameter(StartWorkflow.ATTRIBUTES, EMPTY) //
-				.build();
+		);
 
 		// when
 		final Task _converted = converter.from(source).toLogic();
@@ -472,7 +703,7 @@ public class DefaultLogicAndStoreConverterTest {
 		attributes.put("foo", "bar");
 		attributes.put("bar", "baz");
 		attributes.put("baz", "foo");
-		final SynchronousEventTask source = SynchronousEventTask.newInstance() //
+		final SynchronousEventTask source = a(SynchronousEventTask.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
 				.withActiveStatus(true) //
@@ -490,7 +721,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withScriptingEngine("groovy") //
 				.withScript("blah blah blah") //
 				.withScriptingSafeStatus(true) //
-				.build();
+		);
 
 		// when
 		final org.cmdbuild.data.store.task.Task converted = converter.from(source).toStore();
@@ -523,18 +754,18 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void phaseOfSynchronousEventTaskSuccessfullyConvertedToStore() throws Exception {
 		// given
-		final SynchronousEventTask afterCreate = SynchronousEventTask.newInstance() //
+		final SynchronousEventTask afterCreate = a(SynchronousEventTask.newInstance() //
 				.withPhase(Phase.AFTER_CREATE) //
-				.build();
-		final SynchronousEventTask beforeUpdate = SynchronousEventTask.newInstance() //
+		);
+		final SynchronousEventTask beforeUpdate = a(SynchronousEventTask.newInstance() //
 				.withPhase(Phase.BEFORE_UPDATE) //
-				.build();
-		final SynchronousEventTask afterUpdate = SynchronousEventTask.newInstance() //
+		);
+		final SynchronousEventTask afterUpdate = a(SynchronousEventTask.newInstance() //
 				.withPhase(Phase.AFTER_UPDATE) //
-				.build();
-		final SynchronousEventTask beforeDelete = SynchronousEventTask.newInstance() //
+		);
+		final SynchronousEventTask beforeDelete = a(SynchronousEventTask.newInstance() //
 				.withPhase(Phase.BEFORE_DELETE) //
-				.build();
+		);
 
 		// when
 		final org.cmdbuild.data.store.task.Task convertedAfterCreate = converter.from(afterCreate).toStore();
@@ -552,7 +783,7 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void synchronousEventTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.SynchronousEventTask source = org.cmdbuild.data.store.task.SynchronousEventTask
+		final org.cmdbuild.data.store.task.SynchronousEventTask source = a(org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
 				.withId(42L) //
 				.withDescription("description") //
@@ -572,7 +803,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_SCRIPT, "blah blah blah") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_SAFE, "true") //
-				.build();
+		);
 
 		// when
 		final Task _converted = converter.from(source).toLogic();
@@ -605,22 +836,22 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void phaseOfSynchronousEventTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
-		final org.cmdbuild.data.store.task.SynchronousEventTask afterCreate = org.cmdbuild.data.store.task.SynchronousEventTask
+		final org.cmdbuild.data.store.task.SynchronousEventTask afterCreate = a(org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
 				.withParameter(SynchronousEvent.PHASE, "after_create") //
-				.build();
-		final org.cmdbuild.data.store.task.SynchronousEventTask beforeUpdate = org.cmdbuild.data.store.task.SynchronousEventTask
+		);
+		final org.cmdbuild.data.store.task.SynchronousEventTask beforeUpdate = a(org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
 				.withParameter(SynchronousEvent.PHASE, "before_update") //
-				.build();
-		final org.cmdbuild.data.store.task.SynchronousEventTask afterUpdate = org.cmdbuild.data.store.task.SynchronousEventTask
+		);
+		final org.cmdbuild.data.store.task.SynchronousEventTask afterUpdate = a(org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
 				.withParameter(SynchronousEvent.PHASE, "after_update") //
-				.build();
-		final org.cmdbuild.data.store.task.SynchronousEventTask beforeDelete = org.cmdbuild.data.store.task.SynchronousEventTask
+		);
+		final org.cmdbuild.data.store.task.SynchronousEventTask beforeDelete = a(org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
 				.withParameter(SynchronousEvent.PHASE, "before_delete") //
-				.build();
+		);
 
 		// when
 		final SynchronousEventTask convertedAfterCreate = SynchronousEventTask.class.cast(converter.from(afterCreate)

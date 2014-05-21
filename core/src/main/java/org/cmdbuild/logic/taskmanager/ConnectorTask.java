@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -61,11 +62,105 @@ public class ConnectorTask implements ScheduledTask {
 
 	}
 
+	public static interface SqlSourceType {
+
+		void accept(SqlSourceTypeVisitor visitor);
+
+	}
+
+	public static class MySqlSourceType implements SqlSourceType {
+
+		private static MySqlSourceType instance = new MySqlSourceType();
+
+		public static MySqlSourceType mysql() {
+			return instance;
+		}
+
+		private MySqlSourceType() {
+			// use factory method
+		}
+
+		@Override
+		public void accept(final SqlSourceTypeVisitor visitor) {
+			visitor.visit(this);
+		}
+
+	}
+
+	public static class OracleSourceType implements SqlSourceType {
+
+		private static OracleSourceType instance = new OracleSourceType();
+
+		public static OracleSourceType oracle() {
+			return instance;
+		}
+
+		private OracleSourceType() {
+			// use factory method
+		}
+
+		@Override
+		public void accept(final SqlSourceTypeVisitor visitor) {
+			visitor.visit(this);
+		}
+
+	}
+
+	public static class PostgreSqlSourceType implements SqlSourceType {
+
+		private static PostgreSqlSourceType instance = new PostgreSqlSourceType();
+
+		public static PostgreSqlSourceType postgresql() {
+			return instance;
+		}
+
+		private PostgreSqlSourceType() {
+			// use factory method
+		}
+
+		@Override
+		public void accept(final SqlSourceTypeVisitor visitor) {
+			visitor.visit(this);
+		}
+
+	}
+
+	public static class SqlServerSourceType implements SqlSourceType {
+
+		private static SqlServerSourceType instance = new SqlServerSourceType();
+
+		public static SqlServerSourceType sqlserver() {
+			return instance;
+		}
+
+		private SqlServerSourceType() {
+			// use factory method
+		}
+
+		@Override
+		public void accept(final SqlSourceTypeVisitor visitor) {
+			visitor.visit(this);
+		}
+
+	}
+
+	public static interface SqlSourceTypeVisitor {
+
+		void visit(MySqlSourceType sqlSourceType);
+
+		void visit(OracleSourceType sqlSourceType);
+
+		void visit(PostgreSqlSourceType sqlSourceType);
+
+		void visit(SqlServerSourceType sqlSourceType);
+
+	}
+
 	public static final class SqlSourceConfiguration extends AbstractSourceConfiguration {
 
 		public static class Builder implements org.apache.commons.lang3.builder.Builder<SqlSourceConfiguration> {
 
-			// TODO type
+			private SqlSourceType type;
 			private String host;
 			private Integer port;
 			private String database;
@@ -84,7 +179,13 @@ public class ConnectorTask implements ScheduledTask {
 			}
 
 			private void validate() {
+				type = Validate.notNull(type, "missing '%s'", type.getClass());
 				port = defaultIfNull(port, 0);
+			}
+
+			public Builder withType(final SqlSourceType type) {
+				this.type = type;
+				return this;
 			}
 
 			public Builder withHost(final String host) {
@@ -92,7 +193,7 @@ public class ConnectorTask implements ScheduledTask {
 				return this;
 			}
 
-			public Builder withPort(final int port) {
+			public Builder withPort(final Integer port) {
 				this.port = port;
 				return this;
 			}
@@ -123,6 +224,7 @@ public class ConnectorTask implements ScheduledTask {
 			return new Builder();
 		}
 
+		private final SqlSourceType type;
 		private final String host;
 		private final int port;
 		private final String database;
@@ -131,6 +233,7 @@ public class ConnectorTask implements ScheduledTask {
 		private final String filter;
 
 		private SqlSourceConfiguration(final Builder builder) {
+			this.type = builder.type;
 			this.host = builder.host;
 			this.port = builder.port;
 			this.database = builder.database;
@@ -142,6 +245,10 @@ public class ConnectorTask implements ScheduledTask {
 		@Override
 		public void accept(final SourceConfigurationVisitor visitor) {
 			visitor.visit(this);
+		}
+
+		public SqlSourceType getType() {
+			return type;
 		}
 
 		public String getHost() {
