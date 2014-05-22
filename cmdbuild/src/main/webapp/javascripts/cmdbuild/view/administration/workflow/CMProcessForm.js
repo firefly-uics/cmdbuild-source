@@ -78,8 +78,8 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
-				displayField: CMDBuild.ServiceProxy.parameter.ID,
-				valueField: CMDBuild.ServiceProxy.parameter.ID,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.ID,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
 				store: Ext.create('Ext.data.Store', {
 					model: 'XPDLVersionModel',
 					data: []

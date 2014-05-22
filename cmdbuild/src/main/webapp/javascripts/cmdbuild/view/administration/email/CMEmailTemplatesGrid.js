@@ -12,17 +12,17 @@
 		initComponent: function() {
 			this.gridColumns = [
 				{
-					dataIndex: CMDBuild.ServiceProxy.parameter.NAME,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
 					text: CMDBuild.Translation.name,
 					flex: 1
 				},
 				{
-					dataIndex: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 					header: CMDBuild.Translation.description_,
 					flex: 3
 				},
 				{
-					dataIndex: CMDBuild.ServiceProxy.parameter.SUBJECT,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 					header: CMDBuild.Translation.subject,
 					flex: 2
 				}

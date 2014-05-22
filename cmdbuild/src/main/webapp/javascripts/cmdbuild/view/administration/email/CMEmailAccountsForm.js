@@ -74,8 +74,8 @@
 			// Page FieldSets configuration
 				// Account
 				this.nameField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.ServiceProxy.parameter.NAME,
-					itemId: CMDBuild.ServiceProxy.parameter.NAME,
+					name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+					itemId: CMDBuild.core.proxy.CMProxyConstants.NAME,
 					fieldLabel: CMDBuild.Translation.name,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					allowBlank: false
@@ -83,7 +83,7 @@
 
 				this.isDefaultField = Ext.create('Ext.form.field.Checkbox', {
 					hidden: true,
-					name: CMDBuild.ServiceProxy.parameter.IS_DEFAULT
+					name: CMDBuild.core.proxy.CMProxyConstants.IS_DEFAULT
 				});
 
 				this.emailAccount = Ext.create('Ext.form.FieldSet', {
@@ -99,7 +99,7 @@
 						this.isDefaultField,
 						{
 							xtype: 'hiddenfield',
-							name: CMDBuild.ServiceProxy.parameter.ID,
+							name: CMDBuild.core.proxy.CMProxyConstants.ID,
 							labelWidth: CMDBuild.LABEL_WIDTH
 						}
 					]
@@ -122,13 +122,13 @@
 						{
 							fieldLabel: tr.username,
 							allowBlank: false,
-							name: CMDBuild.ServiceProxy.parameter.USERNAME
+							name: CMDBuild.core.proxy.CMProxyConstants.USERNAME
 						},
 						{
 							inputType: 'password',
 							fieldLabel: tr.password,
 							allowBlank: false,
-							name: CMDBuild.ServiceProxy.parameter.PASSWORD
+							name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD
 						}
 					]
 				});
@@ -150,11 +150,11 @@
 						{
 							fieldLabel: CMDBuild.Translation.address,
 							allowBlank: false,
-							name: CMDBuild.ServiceProxy.parameter.ADDRESS
+							name: CMDBuild.core.proxy.CMProxyConstants.ADDRESS
 						},
 						{
 							fieldLabel: tr.smtpServer,
-							name: CMDBuild.ServiceProxy.parameter.SMTP_SERVER
+							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_SERVER
 						},
 						{
 							xtype: 'numberfield',
@@ -162,12 +162,12 @@
 							allowBlank: true,
 							minValue: 1,
 							maxValue: 65535,
-							name: CMDBuild.ServiceProxy.parameter.SMTP_PORT
+							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_PORT
 						},
 						{
 							xtype: 'checkbox',
 							fieldLabel: tr.enableSsl,
-							name: CMDBuild.ServiceProxy.parameter.SMTP_SSL
+							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_SSL
 						}
 					]
 				});
@@ -195,7 +195,7 @@
 							items: [
 								{
 									fieldLabel: tr.imapServer,
-									name: CMDBuild.ServiceProxy.parameter.IMAP_SERVER
+									name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SERVER
 								},
 								{
 									xtype: 'numberfield',
@@ -203,12 +203,12 @@
 									allowBlank: true,
 									minValue: 1,
 									maxValue: 65535,
-									name: CMDBuild.ServiceProxy.parameter.IMAP_PORT
+									name: CMDBuild.core.proxy.CMProxyConstants.IMAP_PORT
 								},
 								{
 									xtype: 'checkbox',
 									fieldLabel: tr.enableSsl,
-									name: CMDBuild.ServiceProxy.parameter.IMAP_SSL
+									name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SSL
 								}
 							]
 						},
@@ -229,20 +229,20 @@
 							items: [
 								{
 									fieldLabel: tr.incomingFolder,
-									name: CMDBuild.ServiceProxy.parameter.INCOMING_FOLDER
+									name: CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER
 								},
 								{
 									fieldLabel: tr.processedFolder,
-									name: CMDBuild.ServiceProxy.parameter.PROCESSED_FOLDER
+									name: CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER
 								},
 								{
 									fieldLabel: tr.rejectedFolder,
-									name: CMDBuild.ServiceProxy.parameter.REJECTED_FOLDER
+									name: CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER
 								},
 								{
 									xtype: 'checkbox',
 									fieldLabel: tr.enableMoveRejectedNotMatching,
-									name: CMDBuild.ServiceProxy.parameter.ENABLE_MOVE_REJECTED_NOT_MATCHING
+									name: CMDBuild.core.proxy.CMProxyConstants.ENABLE_MOVE_REJECTED_NOT_MATCHING
 								}
 							]
 						}
@@ -288,7 +288,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: this.cmTBar
 					}
 				],

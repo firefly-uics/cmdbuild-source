@@ -37,17 +37,16 @@
 		 * @return (Object) store
 		 */
 		buildWorkflowAttributesStore: function(attributes) {
-			if (attributes) {
-				var data = [];
+			if (!Ext.isEmpty(attributes)) {
+				var store = Ext.create('Ext.data.Store', {
+					autoLoad: true,
+					fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE],
+					data: []
+				});
 
 				for (var key in attributes)
-					data.push({ value: key });
-
-				return Ext.create('Ext.data.Store', {
-					fields: [CMDBuild.ServiceProxy.parameter.VALUE],
-					data: data,
-					autoLoad: true
-				});
+					store.add({ value: key });
+				return store;
 			}
 		},
 
@@ -99,25 +98,26 @@
 		 * @param (Boolean) modify
 		 */
 		onSelectWorkflow: function(name, modify) {
-			var me = this;
-
 			if (Ext.isEmpty(modify))
 				modify = false;
 
 			CMDBuild.core.proxy.CMProxyTasks.getWorkflowAttributes({
+				scope: this,
 				params: {
 					className: name
 				},
 				success: function(response) {
 					var decodedResponse = Ext.JSON.decode(response.responseText);
 
-					me.gridField.keyEditorConfig.store = me.buildWorkflowAttributesStore(me.cleanServerAttributes(decodedResponse.attributes));
+					this.gridField.keyEditorConfig.store = this.buildWorkflowAttributesStore(
+						this.cleanServerAttributes(decodedResponse.attributes)
+					);
 
 					if (!modify) {
-						me.gridField.store.removeAll();
-						me.gridField.store.insert(0, { key: '', value: '' });
-						me.gridField.cellEditing.startEditByPosition({ row: 0, column: 0 });
-						me.setDisabledAttributesGrid(false);
+						this.gridField.store.removeAll();
+						this.gridField.store.insert(0, { key: '', value: '' });
+						this.gridField.cellEditing.startEditByPosition({ row: 0, column: 0 });
+						this.setDisabledAttributesGrid(false);
 					}
 				}
 			});

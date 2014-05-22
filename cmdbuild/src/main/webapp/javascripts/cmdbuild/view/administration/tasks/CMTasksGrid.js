@@ -14,12 +14,12 @@
 		initComponent: function() {
 			this.gridColumns = [
 				{
-					dataIndex: CMDBuild.ServiceProxy.parameter.ID,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ID,
 					hidden: true
 				},
 				{
 					text: tr.type,
-					dataIndex: CMDBuild.ServiceProxy.parameter.TYPE,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 					flex: 1,
 					scope: this,
 					renderer: function(value, metaData, record) {
@@ -28,14 +28,14 @@
 				},
 				{
 					text: CMDBuild.Translation.description_,
-					dataIndex: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 					flex: 4
 				},
 				{
 					text: tr.active,
 					width: 60,
 					align: 'center',
-					dataIndex: CMDBuild.ServiceProxy.parameter.ACTIVE,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 					hideable: false,
 					menuDisabled: true,
 					fixed: true,
@@ -61,7 +61,7 @@
 								this.delegate.cmOn('onStartButtonClick', record);
 							},
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return record.get(CMDBuild.ServiceProxy.parameter.ACTIVE);
+								return record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE);
 							}
 						}
 					]
@@ -83,7 +83,7 @@
 								this.delegate.cmOn('onStopButtonClick', record);
 							},
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return !record.get(CMDBuild.ServiceProxy.parameter.ACTIVE);
+								return !record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE);
 							}
 						}
 					]

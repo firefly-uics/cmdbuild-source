@@ -53,7 +53,7 @@
 						}
 					},
 					sorters: [{
-						property: CMDBuild.ServiceProxy.parameter.NAME,
+						property: CMDBuild.core.proxy.CMProxyConstants.NAME,
 						direction: 'ASC'
 					}]
 				});

@@ -153,6 +153,7 @@
 					put: 'services/json/schema/taskmanager/connector/update',
 
 					getStore: 'services/json/schema/taskmanager/connector/readall',
+					getSqlSources: 'services/json/schema/taskmanager/connector/availablesqlsources'
 				},
 				email: {
 					delete: 'services/json/schema/taskmanager/reademail/delete',
@@ -171,7 +172,7 @@
 						post: 'services/json/schema/taskmanager/asynchronousevent/create',
 						put: 'services/json/schema/taskmanager/asynchronousevent/update',
 
-						getStore: 'services/json/schema/taskmanager/asynchronousevent/readall',
+						getStore: 'services/json/schema/taskmanager/asynchronousevent/readall'
 					},
 					synchronous: {
 						delete: 'services/json/schema/taskmanager/synchronousevent/delete',
@@ -179,7 +180,7 @@
 						post: 'services/json/schema/taskmanager/synchronousevent/create',
 						put: 'services/json/schema/taskmanager/synchronousevent/update',
 
-						getStore: 'services/json/schema/taskmanager/synchronousevent/readall',
+						getStore: 'services/json/schema/taskmanager/synchronousevent/readall'
 					}
 				},
 				workflow: {

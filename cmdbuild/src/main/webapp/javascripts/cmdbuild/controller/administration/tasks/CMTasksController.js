@@ -197,7 +197,7 @@
 		 * @param (Function) callback
 		 */
 		onRowSelected: function(name, param, callBack) {
-			var selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.TYPE);
+			var selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.TYPE);
 
 			if (
 				!this.form.delegate
@@ -218,7 +218,7 @@
 			CMDBuild.core.proxy.CMProxyTasks.start({
 				scope: this,
 				params: {
-					id: record.get(CMDBuild.ServiceProxy.parameter.ID)
+					id: record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
 				},
 				success: this.success,
 				callback: this.callback
@@ -234,7 +234,7 @@
 			CMDBuild.core.proxy.CMProxyTasks.stop({
 				scope: this,
 				params: {
-					id: record.get(CMDBuild.ServiceProxy.parameter.ID)
+					id: record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
 				},
 				success: this.success,
 				callback: this.callback
@@ -254,8 +254,8 @@
 					me.form.reset();
 
 					var rowIndex = this.find(
-						CMDBuild.ServiceProxy.parameter.ID,
-						options.params[CMDBuild.ServiceProxy.parameter.ID]
+						CMDBuild.core.proxy.CMProxyConstants.ID,
+						options.params[CMDBuild.core.proxy.CMProxyConstants.ID]
 					);
 
 					me.selectionModel.deselectAll();

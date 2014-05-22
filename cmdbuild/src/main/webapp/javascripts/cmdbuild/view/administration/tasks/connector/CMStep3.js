@@ -25,6 +25,9 @@
 				case 'onLdapFieldsetExpand':
 					return this.onLdapFieldsetExpand();
 
+				case 'onSelectDbType':
+					return this.onSelectDbType(param);
+
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
@@ -56,6 +59,18 @@
 			this.view.dbFieldset.reset();
 		},
 
+		/**
+		 * To enable/disable dbInstanceNameField
+		 *
+		 * @param (String) selectedValue
+		 */
+		// TODO: setup string as proxyConstant
+		onSelectDbType: function(selectedValue) {
+			this.view.dbInstanceNameField.setDisabled(
+				!(selectedValue == 'mysql')
+			);
+		},
+
 		// SETters functions
 			/**
 			 * @param (String) dataSourceType
@@ -67,13 +82,14 @@
 						case 'db': {
 							this.view.dbFieldset.expand();
 
-							this.view.dbTypeCombo.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_TYPE]);
-							this.view.dbAddressField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_ADDRESS]);
-							this.view.dbPortField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PORT]);
-							this.view.dbNameField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_NAME]);
-							this.view.dbUsernameField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_USERNAME]);
-							this.view.dbPasswordField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PASSWORD]);
-							this.view.tableViewFilterField.setValue(configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_TABLE_VIEW_PREFIX]);
+							this.view.dbTypeCombo.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_TYPE]);
+							this.view.dbAddressField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_ADDRESS]);
+							this.view.dbPortField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_PORT]);
+							this.view.dbNameField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_NAME]);
+							this.view.dbInstanceNameField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_INSATANCE_NAME]);
+							this.view.dbUsernameField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_USERNAME]);
+							this.view.dbPasswordField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_PASSWORD]);
+							this.view.tableViewFilterField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TABLE_VIEW_PREFIX]);
 						} break;
 
 						default:
@@ -115,26 +131,32 @@
 
 			// DataSource: relationa databases configuration
 				this.dbTypeCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_TYPE,
+					name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_TYPE,
 					fieldLabel: CMDBuild.Translation.administration.tasks.type,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					store: CMDBuild.core.proxy.CMProxyTasks.getDbTypes(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.VALUE,
+					displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+					valueField: CMDBuild.core.proxy.CMProxyConstants.KEY,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					forceSelection: true,
-					editable: false
+					editable: false,
+
+					listeners: {
+						select: function(combo, records, options) {
+							me.delegate.cmOn('onSelectDbType', this.getValue());
+						}
+					}
 				});
 
 				this.dbAddressField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_ADDRESS,
+					name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_ADDRESS,
 					fieldLabel: CMDBuild.Translation.address,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				});
 
 				this.dbPortField = Ext.create('Ext.form.field.Number', {
-					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PORT,
+					name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_PORT,
 					fieldLabel: CMDBuild.Translation.port,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -143,21 +165,28 @@
 				});
 
 				this.dbNameField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_NAME,
+					name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_NAME,
 					fieldLabel: tr.dbName,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				});
 
+				this.dbInstanceNameField = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_INSATANCE_NAME,
+					fieldLabel: tr.instanceName,
+					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				});
+
 				this.dbUsernameField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_USERNAME,
+					name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_USERNAME,
 					fieldLabel: CMDBuild.Translation.username,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				});
 
 				this.dbPasswordField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PASSWORD,
+					name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_PASSWORD,
 					inputType: 'password',
 					fieldLabel: CMDBuild.Translation.password,
 					labelWidth: CMDBuild.LABEL_WIDTH,
@@ -165,7 +194,7 @@
 				});
 
 				this.tableViewFilterField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.ServiceProxy.parameter.DATASOURCE_TABLE_VIEW_PREFIX,
+					name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TABLE_VIEW_PREFIX,
 					fieldLabel: tr.tableViewFilter,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
@@ -187,6 +216,7 @@
 						this.dbAddressField,
 						this.dbPortField,
 						this.dbNameField,
+						this.dbInstanceNameField,
 						this.dbUsernameField,
 						this.dbPasswordField,
 						this.tableViewFilterField
@@ -204,7 +234,7 @@
 
 			// DataSource: LDAP configuration
 				this.ldapAddressField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.ServiceProxy.parameter.ADDRESS,
+					name: CMDBuild.core.proxy.CMProxyConstants.ADDRESS,
 					fieldLabel: CMDBuild.Translation.address,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
@@ -212,7 +242,7 @@
 				});
 
 				this.ldapUsernameField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.ServiceProxy.parameter.USERNAME,
+					name: CMDBuild.core.proxy.CMProxyConstants.USERNAME,
 					fieldLabel: CMDBuild.Translation.username,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
@@ -220,7 +250,7 @@
 				});
 
 				this.ldapPasswordField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.ServiceProxy.parameter.PASSWORD,
+					name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD,
 					inputType: 'password',
 					fieldLabel: CMDBuild.Translation.password,
 					labelWidth: CMDBuild.LABEL_WIDTH,
@@ -265,6 +295,13 @@
 			});
 
 			this.callParent(arguments);
+		},
+
+		listeners: {
+			// Disable instanceNameField
+			show: function(view, eOpts) {
+				this.dbInstanceNameField.setDisabled(true);
+			}
 		}
 	});
 

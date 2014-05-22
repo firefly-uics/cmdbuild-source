@@ -181,14 +181,14 @@
 				this.parsingKeyInit = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingKeyInit,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT,
+					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_INIT,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				});
 
 				this.parsingKeyEnd = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingKeyEnd,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_END,
+					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_END,
 					margin: '0 0 0 20',
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				});
@@ -196,21 +196,21 @@
 				this.parsingValueInit = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingValueInit,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT,
+					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_INIT,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				});
 
 				this.parsingValueEnd = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingValueEnd,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END,
+					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_END,
 					margin: '0 0 0 20',
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				});
 
 				this.parsingFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.bodyParsing,
-					checkboxName: CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE,
+					checkboxName: CMDBuild.core.proxy.CMProxyConstants.PARSING_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,
@@ -247,7 +247,7 @@
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
 					title: CMDBuild.Translation.administration.tasks.notificationForm.title,
-					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
+					checkboxName: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,
@@ -263,7 +263,7 @@
 
 			// Attachments configuration
 				this.attachmentsCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY,
+					name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_CATEGORY,
 					fieldLabel: tr.attachmentsCategory,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					displayField: 'Description',
@@ -275,7 +275,7 @@
 
 				this.attachmentsFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.saveToAlfresco,
-					checkboxName: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE,
+					checkboxName: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,
