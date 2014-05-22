@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public class BuildableTableOrViewMapping implements TableOrViewMapping {
 
@@ -60,6 +62,11 @@ public class BuildableTableOrViewMapping implements TableOrViewMapping {
 	@Override
 	public Iterable<TypeMapping> getTypeMappings() {
 		return typeMappings;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

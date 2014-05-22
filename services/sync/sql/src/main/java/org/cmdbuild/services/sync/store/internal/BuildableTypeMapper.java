@@ -10,6 +10,8 @@ import java.util.Collections;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.services.sync.store.ClassType;
 
 public class BuildableTypeMapper implements TypeMapping {
@@ -70,6 +72,16 @@ public class BuildableTypeMapper implements TypeMapping {
 	}
 
 	@Override
+	public ClassType getType() {
+		return type;
+	}
+
+	@Override
+	public Iterable<AttributeMapping> getAttributeMappings() {
+		return attributeMappings;
+	}
+
+	@Override
 	public boolean equals(final Object obj) {
 		if (obj == this) {
 			return true;
@@ -90,13 +102,8 @@ public class BuildableTypeMapper implements TypeMapping {
 	}
 
 	@Override
-	public ClassType getType() {
-		return type;
-	}
-
-	@Override
-	public Iterable<AttributeMapping> getAttributeMappings() {
-		return attributeMappings;
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

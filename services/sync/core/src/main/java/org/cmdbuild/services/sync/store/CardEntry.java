@@ -175,13 +175,7 @@ public class CardEntry extends AbstractEntry<ClassType> {
 			return false;
 		}
 		final CardEntry other = CardEntry.class.cast(obj);
-		if (!(type.equals(other.type))) {
-			return false;
-		}
-		if (!(values.equals(other.values))) {
-			return false;
-		}
-		return true;
+		return type.equals(other.type) && values.equals(other.values);
 	}
 
 	@Override

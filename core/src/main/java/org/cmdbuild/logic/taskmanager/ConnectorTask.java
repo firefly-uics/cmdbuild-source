@@ -357,6 +357,11 @@ public class ConnectorTask implements ScheduledTask {
 					.toHashCode();
 		}
 
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
 	}
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ConnectorTask> {

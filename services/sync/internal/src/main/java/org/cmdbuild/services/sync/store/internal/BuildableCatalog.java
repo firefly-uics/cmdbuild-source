@@ -19,7 +19,7 @@ public class BuildableCatalog implements Catalog {
 
 		private static final Iterable<? extends Type> NO_TYPES = Collections.emptyList();
 
-		public final Collection<Type> types = newHashSet();
+		private final Collection<Type> types = newHashSet();
 
 		private Builder() {
 			// use factory method
