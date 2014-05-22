@@ -6,6 +6,7 @@ import org.cmdbuild.common.annotations.Legacy;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.privileges.SecurityLogic;
 
 @Legacy("Spring should be used")
 public class TemporaryObjectsBeforeSpringDI {
@@ -22,4 +23,7 @@ public class TemporaryObjectsBeforeSpringDI {
 		return applicationContext().getBean("systemWorkflowLogic", WorkflowLogic.class);
 	}
 
+	public static SecurityLogic getSecurityLogic() {
+		return applicationContext().getBean(SecurityLogic.class);
+	}
 }

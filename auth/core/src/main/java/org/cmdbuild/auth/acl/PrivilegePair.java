@@ -1,5 +1,6 @@
 package org.cmdbuild.auth.acl;
 
+
 public class PrivilegePair {
 
 	public static final SerializablePrivilege GLOBAL_PRIVILEGE = new SerializablePrivilege() {
@@ -31,6 +32,7 @@ public class PrivilegePair {
 	public String privilegeFilter;
 	public String[] attributesPrivileges = new String[0];
 	public String privilegedObjectType;
+	public String cardEditMode;
 
 	public PrivilegePair(final CMPrivilege privilege) {
 		this.name = GLOBAL_PRIVILEGE.getPrivilegeId();
@@ -54,4 +56,8 @@ public class PrivilegePair {
 		this.name = name;
 		this.privilege = privilege;
 	}
+	
+	
+	
+	
 }

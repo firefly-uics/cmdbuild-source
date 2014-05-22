@@ -133,7 +133,9 @@ public class ComunicationConstants {
 			SUPERCLASS = "superclass", //
 			SUBJECT = "subject", //
 			SUCCESS = "success", //
-			UI_CONFIGURATION = "uiConfiguration", UNIQUE = "isunique", //
+			UI_CARD_EDIT_MODE = "ui_card_edit_mode", //
+			UI_CONFIGURATION = "uiConfiguration", //
+			UNIQUE = "isunique", //
 			USERS = "users", //
 			USER_ID = "userid", //
 			USER_NAME = "username", //

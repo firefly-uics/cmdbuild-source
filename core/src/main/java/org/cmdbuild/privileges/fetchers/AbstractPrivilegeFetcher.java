@@ -72,11 +72,13 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 						privilege);
 				privilegePair.privilegeFilter = extractPrivilegeFilter(privilegeCard);
 				privilegePair.attributesPrivileges = extractAttributesPrivileges(privilegeCard);
+				privilegePair.cardEditMode = extractCardEditMode(privilegeCard);
 				privilegesForDefinedType.add(privilegePair);
 			}
 		}
 		return privilegesForDefinedType;
 	}
+
 
 	private String extractPrivilegeFilter(final CMCard privilegeCard) {
 		if (getPrivilegedObjectType().getValue().equals(PrivilegedObjectType.CLASS.getValue())) {
@@ -86,6 +88,11 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 			}
 		}
 		return null;
+	}
+	
+
+	private String extractCardEditMode(CMCard privilegeCard) {
+		return String.class.cast(privilegeCard.get("UI_CardEditMode"));
 	}
 
 	private String[] extractAttributesPrivileges(final CMCard privilegeCard) {
@@ -116,7 +123,6 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 				mergedAttributesPrivileges.add(String.format("%s:%s", attribute.getName(), mode));
 			}
 		}
-
 		return mergedAttributesPrivileges.toArray(new String[mergedAttributesPrivileges.size()]);
 	}
 
