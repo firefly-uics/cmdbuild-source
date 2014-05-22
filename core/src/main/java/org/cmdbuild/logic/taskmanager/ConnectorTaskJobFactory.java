@@ -9,8 +9,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.sql.DataSource;
+
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.Builder;
+import org.cmdbuild.common.java.sql.DataSourceHelper;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfigurationVisitor;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
@@ -29,7 +32,6 @@ import org.cmdbuild.services.sync.store.internal.InternalStore;
 import org.cmdbuild.services.sync.store.internal.SqlStore;
 import org.cmdbuild.services.sync.store.internal.TableOrViewMapping;
 import org.cmdbuild.services.sync.store.internal.TypeMapping;
-import org.postgresql.ds.PGSimpleDataSource;
 
 import com.google.common.base.Function;
 
@@ -41,10 +43,13 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 		private static final Function<Builder<? extends TypeMapping>, TypeMapping> BUILD_TYPE_MAPPING = build();
 
 		private final CMDataView dataView;
+		private final DataSourceHelper jdbcService;
 		private final ConnectorTask task;
 
-		private ConnectorTaskCommandWrapper(final CMDataView dataView, final ConnectorTask task) {
+		private ConnectorTaskCommandWrapper(final CMDataView dataView, final DataSourceHelper jdbcService,
+				final ConnectorTask task) {
 			this.dataView = dataView;
+			this.jdbcService = jdbcService;
 			this.task = task;
 		}
 
@@ -98,13 +103,7 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 
 				@Override
 				public void visit(final SqlSourceConfiguration sourceConfiguration) {
-					final PGSimpleDataSource dataSource = new PGSimpleDataSource();
-					dataSource.setServerName(sourceConfiguration.getHost());
-					dataSource.setPortNumber(sourceConfiguration.getPort());
-					dataSource.setDatabaseName(sourceConfiguration.getDatabase());
-					dataSource.setUser(sourceConfiguration.getUsername());
-					dataSource.setPassword(sourceConfiguration.getPassword());
-
+					final DataSource dataSource = jdbcService.create(sourceConfiguration);
 					final Map<String, Map<String, BuildableTypeMapper.Builder>> allTypeMapperBuildersByTableOrViewName = newHashMap();
 					for (final ConnectorTask.AttributeMapping attributeMapping : task.getAttributeMappings()) {
 						final String tableOrViewName = attributeMapping.getSourceType();
@@ -150,9 +149,11 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 	}
 
 	private final CMDataView dataView;
+	private final DataSourceHelper jdbcService;
 
-	public ConnectorTaskJobFactory(final CMDataView dataView) {
+	public ConnectorTaskJobFactory(final CMDataView dataView, final DataSourceHelper jdbcService) {
 		this.dataView = dataView;
+		this.jdbcService = jdbcService;
 	}
 
 	@Override
@@ -162,7 +163,7 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 
 	@Override
 	protected Command command(final ConnectorTask task) {
-		return new ConnectorTaskCommandWrapper(dataView, task);
+		return new ConnectorTaskCommandWrapper(dataView, jdbcService, task);
 	}
 
 }
