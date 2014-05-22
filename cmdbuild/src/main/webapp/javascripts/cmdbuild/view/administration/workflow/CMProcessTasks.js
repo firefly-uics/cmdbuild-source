@@ -54,7 +54,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: this.cmTBar
 					}
 				],

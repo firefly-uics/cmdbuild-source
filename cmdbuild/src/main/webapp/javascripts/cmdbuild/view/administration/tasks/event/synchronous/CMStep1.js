@@ -139,7 +139,7 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.TYPE,
+				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
@@ -151,11 +151,11 @@
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.ServiceProxy.parameter.ID
+				name: CMDBuild.core.proxy.CMProxyConstants.ID
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
@@ -163,19 +163,19 @@
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
+				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: tr.startOnSave,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
 
 			this.phaseCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.ServiceProxy.parameter.PHASE,
+				name: CMDBuild.core.proxy.CMProxyConstants.PHASE,
 				fieldLabel: tr.taskEvent.phase,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				store: CMDBuild.core.proxy.CMProxyTasks.getPhases(),
-				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
 				forceSelection: true,
@@ -183,22 +183,22 @@
 			});
 
 			this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
-				name: CMDBuild.ServiceProxy.parameter.GROUPS,
+				name: CMDBuild.core.proxy.CMProxyConstants.GROUPS,
 				fieldLabel: tr.taskEvent.groupsToApply,
 				height: 300,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				considerAsFieldToDisable: true
 			});
 
 			this.classNameCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
+				name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				store: _CMCache.getClassesStore(),
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
 				allowBlank: false,
@@ -207,7 +207,7 @@
 
 				listeners: {
 					select: function(combo, records, options) {
-						me.delegate.cmOn('onClassSelected', { className: records[0].get(CMDBuild.ServiceProxy.parameter.NAME) });
+						me.delegate.cmOn('onClassSelected', { className: this.getValue() });
 					}
 				}
 			});

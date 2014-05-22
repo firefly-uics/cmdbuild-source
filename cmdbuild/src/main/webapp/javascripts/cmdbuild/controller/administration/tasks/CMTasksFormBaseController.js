@@ -131,7 +131,7 @@
 					me.view.reset();
 
 					var rowIndex = this.find(
-						CMDBuild.ServiceProxy.parameter.ID,
+						CMDBuild.core.proxy.CMProxyConstants.ID,
 						(decodedResult.response) ? decodedResult.response : taskId
 					);
 

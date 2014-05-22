@@ -102,13 +102,13 @@
 
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 				combo: {
-					name: CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME
+					name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME
 				}
 			});
 
 			this.workflowFieldset = Ext.create('Ext.form.FieldSet', {
 				title: tr.startWorkflow,
-				checkboxName: CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE,
+				checkboxName: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE,
 				checkboxToggle: true,
 				collapsed: true,
 				collapsible: true,

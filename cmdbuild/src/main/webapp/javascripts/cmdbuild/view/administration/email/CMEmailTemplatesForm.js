@@ -58,8 +58,8 @@
 			// END: Buttons configuration
 
 			this.nameField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.NAME,
-				itemId: CMDBuild.ServiceProxy.parameter.NAME,
+				name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				itemId: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				fieldLabel: CMDBuild.Translation.name,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				allowBlank: false
@@ -98,12 +98,12 @@
 							this.nameField,
 							{
 								xtype: 'textareafield',
-								name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+								name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 								fieldLabel: CMDBuild.Translation.description_
 							},
 							{
 								xtype: 'hiddenfield',
-								name: CMDBuild.ServiceProxy.parameter.ID
+								name: CMDBuild.core.proxy.CMProxyConstants.ID
 							}
 						]
 					},
@@ -120,25 +120,25 @@
 
 						items: [
 							{
-								name: CMDBuild.ServiceProxy.parameter.TO,
+								name: CMDBuild.core.proxy.CMProxyConstants.TO,
 								fieldLabel: CMDBuild.Translation.to,
 								allowBlank: false
 							},
 							{
-								name: CMDBuild.ServiceProxy.parameter.CC,
+								name: CMDBuild.core.proxy.CMProxyConstants.CC,
 								fieldLabel: CMDBuild.Translation.cc
 							},
 							{
-								name: CMDBuild.ServiceProxy.parameter.BCC,
+								name: CMDBuild.core.proxy.CMProxyConstants.BCC,
 								fieldLabel: CMDBuild.Translation.bcc
 							},
 							{
-								name: CMDBuild.ServiceProxy.parameter.SUBJECT,
+								name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 								fieldLabel: CMDBuild.Translation.subject,
 								allowBlank: false
 							},
 							Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
-								name: CMDBuild.ServiceProxy.parameter.BODY,
+								name: CMDBuild.core.proxy.CMProxyConstants.BODY,
 								fieldLabel: CMDBuild.Translation.administration.email.templates.body,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								considerAsFieldToDisable: true,
@@ -154,7 +154,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: this.cmTBar
 					}
 				],

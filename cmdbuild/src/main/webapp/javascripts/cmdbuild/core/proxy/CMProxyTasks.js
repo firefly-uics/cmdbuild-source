@@ -53,7 +53,7 @@
 						}
 					},
 					sorters: {
-						property: CMDBuild.ServiceProxy.parameter.TYPE,
+						property: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 						direction: 'ASC'
 					}
 				});
@@ -156,17 +156,19 @@
 				/**
 				 * @return (Object) store
 				 */
-				// TODO: get from server side
+				// TODO: setup string as proxyConstant
 				getDbTypes: function() {
 					return Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.VALUE],
-						data: [
-							{ name: 'MySQL', value: 'mysql' },
-							{ name: 'Oracle', value: 'oracle' },
-							{ name: 'PostgreSQL', value: 'postgresql' },
-							{ name: 'SQLServer', value: 'sqlserver' }
-						]
+						autoLoad: false,
+						model: 'CMDBuild.model.CMModelTasks.connector.availableSqlSources',
+						proxy: {
+							type: 'ajax',
+							url: this.getUrl('connector').getSqlSources,
+							reader: {
+								type: 'json',
+								root: 'response'
+							}
+						}
 					});
 				},
 
@@ -178,7 +180,7 @@
 
 					return Ext.create('Ext.data.Store', {
 						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.DESCRIPTION, CMDBuild.ServiceProxy.parameter.VALUE],
+						fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
 						data: [
 							{ description: tr.logic, value: 'logic' },
 							{ description: tr.notLogic, value: 'notLogic' }
@@ -200,7 +202,7 @@
 				getSourceStore: function() {
 					return Ext.create('Ext.data.Store', {
 						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME],
+						fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
 						data: [
 							{ name: 'SourceName1' },
 							{ name: 'SourceName2' },
@@ -216,7 +218,7 @@
 				getSourceAttributeNames: function(viewName) {
 					return Ext.create('Ext.data.Store', {
 						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME],
+						fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
 						data: [
 							{ name: 'SourceAttributeName1' },
 							{ name: 'SourceAttributeName2' },
@@ -238,7 +240,7 @@
 
 					return Ext.create('Ext.data.Store', {
 						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.DESCRIPTION, CMDBuild.ServiceProxy.parameter.VALUE],
+						fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
 						data: [
 							{ description: tr.afterCreate, value: 'afterCreate' },
 							{ description: tr.afterUpdate, value: 'afterUpdate' },
@@ -269,7 +271,7 @@
 							}
 						},
 						sorters: {
-							property: CMDBuild.ServiceProxy.parameter.TYPE,
+							property: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 							direction: 'ASC'
 						}
 					});
@@ -295,7 +297,7 @@
 					}
 
 					return Ext.create('Ext.data.Store', {
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+						fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 						data: data,
 						autoLoad: true
 					});
@@ -307,7 +309,7 @@
 				getWorkflowAttributes: function(parameters) {
 					CMDBuild.Ajax.request({
 						method: 'POST',
-						url: CMDBuild.ServiceProxy.url.attribute.read,
+						url: CMDBuild.core.proxy.CMProxyUrlIndex.attribute.read,
 						params: parameters.params,
 						scope: parameters.scope,
 						success: parameters.success,

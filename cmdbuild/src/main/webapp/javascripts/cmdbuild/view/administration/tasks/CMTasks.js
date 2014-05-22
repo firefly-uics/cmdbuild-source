@@ -28,7 +28,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: [this.addButton]
 					}
 				],
@@ -41,11 +41,11 @@
 		listeners: {
 			// To show correct button in top toolbar
 			show: function(panel, eOpts) {
-				this.getDockedComponent(CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP).removeAll();
+				this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP).removeAll();
 
 				switch (this.delegate.taskType) {
 					case 'all': {
-						this.getDockedComponent(CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP).add(
+						this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP).add(
 							Ext.create('Ext.button.Split', {
 								iconCls: 'add',
 								text: tr.add,
@@ -101,7 +101,7 @@
 					} break;
 
 					case 'event': {
-						this.getDockedComponent(CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP).add(
+						this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP).add(
 							Ext.create('Ext.button.Split', {
 								iconCls: 'add',
 								text: tr.add,
@@ -136,7 +136,7 @@
 					} break;
 
 					default: {
-						this.getDockedComponent(CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP).add(
+						this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP).add(
 							Ext.create('Ext.Button', {
 								iconCls: 'add',
 								text: tr.add,

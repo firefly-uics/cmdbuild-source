@@ -4,10 +4,10 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
-			{ name: CMDBuild.ServiceProxy.parameter.NAME, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.SUBJECT, type: 'string' }
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' }
 		]
 
 	});
@@ -16,14 +16,14 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
-			{ name: CMDBuild.ServiceProxy.parameter.NAME, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.TO, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.CC, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.BCC, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.SUBJECT, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.BODY, type: 'string' }
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TO, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CC, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.BCC, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.BODY, type: 'string' }
 		]
 	});
 

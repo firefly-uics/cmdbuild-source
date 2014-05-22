@@ -15,8 +15,8 @@
 			var me = this;
 
 			this.baseRadio = Ext.create('Ext.form.field.Radio', {
-				name: CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE,
-				inputValue: CMDBuild.ServiceProxy.parameter.BASE,
+				name: CMDBuild.core.proxy.CMProxyConstants.CRON_INPUT_TYPE,
+				inputValue: CMDBuild.core.proxy.CMProxyConstants.BASE,
 				boxLabel: tr.basic,
 				width: CMDBuild.LABEL_WIDTH,
 
@@ -30,7 +30,7 @@
 			this.baseCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: 'baseCombo',
 				store: Ext.create('Ext.data.SimpleStore', {
-					fields: [CMDBuild.ServiceProxy.parameter.VALUE, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+					fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 					data: [
 						['0 * * * ?', tr.everyHour],
 						['0 0 * * ?', tr.everyDay],
@@ -38,8 +38,8 @@
 						['0 0 1 1 ?', tr.everyYear]
 					]
 				}),
-				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				queryMode: 'local',
 				forceSelection: true,
 				editable: false,
@@ -47,7 +47,7 @@
 
 				listeners: {
 					select: function(combo, record, index) {
-						me.delegate.cmOn('onSelectBaseCombo', record[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
+						me.delegate.cmOn('onSelectBaseCombo', this.getValue());
 					}
 				}
 			});

@@ -77,7 +77,7 @@
 				Ext.Function.createDelayed(function() {
 					this.targetController.cmOn(name, param, callBack);
 					this.targetController.form.delegate.delegateStep[0].setValueWorkflowCombo(
-						this.currentProcess.get(CMDBuild.ServiceProxy.parameter.NAME)
+						this.currentProcess.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
 					);
 					this.targetController.form.delegate.onModifyButtonClick();
 				}, 100, this)();
@@ -100,7 +100,7 @@
 				this.targetController.grid.getStore().load({
 					scope: this,
 					callback: function() {
-						var selectionIndex = this.targetController.grid.getStore().find(CMDBuild.ServiceProxy.parameter.ID, param.id);
+						var selectionIndex = this.targetController.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, param.id);
 
 						if (selectionIndex > 0) {
 							this.targetController.grid.getSelectionModel().select(
@@ -154,7 +154,7 @@
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStoreByWorkflow());
 				this.grid.store.load({
 					params: {
-						workflowClassName: process.get(CMDBuild.ServiceProxy.parameter.NAME)
+						workflowClassName: process.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
 					}
 				});
 			}
@@ -180,7 +180,7 @@
 
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
-				this.currentProcessTaskId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
+				this.currentProcessTaskId = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.ID);
 				this.view.enableCMTbar();
 
 				// This declaration positioned in constructor doesn't works for targetAccordion
