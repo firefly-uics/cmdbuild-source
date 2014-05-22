@@ -3,11 +3,11 @@ package unit.logic.taskmanager;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
+import static org.cmdbuild.common.java.sql.DataSourceTypes.mysql;
+import static org.cmdbuild.common.java.sql.DataSourceTypes.oracle;
+import static org.cmdbuild.common.java.sql.DataSourceTypes.postgresql;
+import static org.cmdbuild.common.java.sql.DataSourceTypes.sqlserver;
 import static org.cmdbuild.common.utils.BuilderUtils.a;
-import static org.cmdbuild.logic.taskmanager.ConnectorTask.MySqlSourceType.mysql;
-import static org.cmdbuild.logic.taskmanager.ConnectorTask.OracleSourceType.oracle;
-import static org.cmdbuild.logic.taskmanager.ConnectorTask.PostgreSqlSourceType.postgresql;
-import static org.cmdbuild.logic.taskmanager.ConnectorTask.SqlServerSourceType.sqlserver;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
@@ -115,6 +115,7 @@ public class DefaultLogicAndStoreConverterTest {
 						.withHost("example.com") //
 						.withPort(12345) //
 						.withDatabase("db") //
+						.withInstance("instance") //
 						.withUsername("user") //
 						.withPassword("pwd") //
 						.withFilter("filter") //
@@ -137,6 +138,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(configuration, hasEntry(Connector.SQL_HOSTNAME, "example.com"));
 		assertThat(configuration, hasEntry(Connector.SQL_PORT, "12345"));
 		assertThat(configuration, hasEntry(Connector.SQL_DATABASE, "db"));
+		assertThat(configuration, hasEntry(Connector.SQL_INSTANCE, "instance"));
 		assertThat(configuration, hasEntry(Connector.SQL_USERNAME, "user"));
 		assertThat(configuration, hasEntry(Connector.SQL_PASSWORD, "pwd"));
 		assertThat(configuration, hasEntry(Connector.SQL_FILTER, "filter"));
@@ -287,6 +289,7 @@ public class DefaultLogicAndStoreConverterTest {
 		configuration.put(Connector.SQL_HOSTNAME, "example.com");
 		configuration.put(Connector.SQL_PORT, "12345");
 		configuration.put(Connector.SQL_DATABASE, "db");
+		configuration.put(Connector.SQL_INSTANCE, "instance");
 		configuration.put(Connector.SQL_USERNAME, "user");
 		configuration.put(Connector.SQL_PASSWORD, "pwd");
 		configuration.put(Connector.SQL_FILTER, "filter");
@@ -316,6 +319,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withHost("example.com") //
 				.withPort(12345) //
 				.withDatabase("db") //
+				.withInstance("instance") //
 				.withUsername("user") //
 				.withPassword("pwd") //
 				.withFilter("filter") //

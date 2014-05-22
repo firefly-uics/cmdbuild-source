@@ -21,6 +21,7 @@
 		<jcip-annotations.version>1.0</jcip-annotations.version>
 		<joda-time.version>2.3</joda-time.version>
 		<log4j.version>1.2.17</log4j.version>
+		<postgresql.version>9.1-901.jdbc4</postgresql.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<shark.version>4.4-1</shark.version>
 		<slf4j.version>1.7.6</slf4j.version>
@@ -69,6 +70,12 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>${postgresql.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.beanshell</groupId>
 				<artifactId>bsh</artifactId>
