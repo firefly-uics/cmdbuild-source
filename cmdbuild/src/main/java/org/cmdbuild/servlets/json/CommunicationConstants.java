@@ -161,6 +161,7 @@ public class CommunicationConstants {
 			MENU = "menu", //
 			META_DATA = "meta", //
 			MYSQL = "mysql", //
+			MYSQL_LABEL = "MySQL", //
 			NAME = "name", //
 			NAMES = "names", //
 			NEW_PASSWORD = "newpassword", //
@@ -172,6 +173,7 @@ public class CommunicationConstants {
 			NUMBER = "Number", //
 			OLD_PASSWORD = "oldpassword", //
 			ORACLE = "oracle", //
+			ORACLE_LABEL = "Oracle", //
 			ORIG_TYPE = "orig_type", //
 			OUT_OF_FILTER = "outOfFilter", //
 			PARAMS = "params", //
@@ -200,6 +202,7 @@ public class CommunicationConstants {
 			PORT = "port", //
 			POSITION = "position", //
 			POSTGRESQL = "postgresql", //
+			POSTGRESQL_LABEL = "PostgreSQL", //
 			PRECISION = "precision", //
 			REJECTED_FOLDER = "rejectedFolder", //
 			REJECT_NOT_MATCHING = "rejectNotMatching", //
@@ -235,6 +238,7 @@ public class CommunicationConstants {
 			SOURCE_NAME = "sourceName", //
 			SORT = "sort", //
 			SQLSERVER = "sqlserver", //
+			SQLSERVER_LABEL = "SQLServer", //
 			START = "start", //
 			STATE = "state", //
 			SEPARATOR = "separator", //
