@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.java.sql.DataSourceHelper;
 import org.cmdbuild.config.CmdbuildProperties;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
@@ -67,7 +68,6 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	protected OperationUser operationUser() {
 		return applicationContext().getBean("operationUser", OperationUser.class);
 	}
-
 
 	/*
 	 * Properties
@@ -251,7 +251,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 			}
 		};
 	}
-	
+
 	protected TranslationFacade translationFacade() {
 		return applicationContext().getBean(DefaultTranslationFacade.class);
 	}
@@ -263,6 +263,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory() {
 		return applicationContext().getBean(ActivityPerformerTemplateResolverFactory.class);
+	}
+
+	protected DataSourceHelper dataSourceHelper() {
+		return applicationContext().getBean(DataSourceHelper.class);
 	}
 
 	/*

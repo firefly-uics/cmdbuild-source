@@ -11,6 +11,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.cmdbuild.common.java.sql.DataSourceHelper;
+import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceType;
 
 import com.google.common.collect.Sets;
 
@@ -24,7 +26,7 @@ public class ConnectorTask implements ScheduledTask {
 
 	public static interface SourceConfigurationVisitor {
 
-		void visit(final SqlSourceConfiguration sourceConfiguration);
+		void visit(SqlSourceConfiguration sourceConfiguration);
 
 	}
 
@@ -62,108 +64,16 @@ public class ConnectorTask implements ScheduledTask {
 
 	}
 
-	public static interface SqlSourceType {
-
-		void accept(SqlSourceTypeVisitor visitor);
-
-	}
-
-	public static class MySqlSourceType implements SqlSourceType {
-
-		private static MySqlSourceType instance = new MySqlSourceType();
-
-		public static MySqlSourceType mysql() {
-			return instance;
-		}
-
-		private MySqlSourceType() {
-			// use factory method
-		}
-
-		@Override
-		public void accept(final SqlSourceTypeVisitor visitor) {
-			visitor.visit(this);
-		}
-
-	}
-
-	public static class OracleSourceType implements SqlSourceType {
-
-		private static OracleSourceType instance = new OracleSourceType();
-
-		public static OracleSourceType oracle() {
-			return instance;
-		}
-
-		private OracleSourceType() {
-			// use factory method
-		}
-
-		@Override
-		public void accept(final SqlSourceTypeVisitor visitor) {
-			visitor.visit(this);
-		}
-
-	}
-
-	public static class PostgreSqlSourceType implements SqlSourceType {
-
-		private static PostgreSqlSourceType instance = new PostgreSqlSourceType();
-
-		public static PostgreSqlSourceType postgresql() {
-			return instance;
-		}
-
-		private PostgreSqlSourceType() {
-			// use factory method
-		}
-
-		@Override
-		public void accept(final SqlSourceTypeVisitor visitor) {
-			visitor.visit(this);
-		}
-
-	}
-
-	public static class SqlServerSourceType implements SqlSourceType {
-
-		private static SqlServerSourceType instance = new SqlServerSourceType();
-
-		public static SqlServerSourceType sqlserver() {
-			return instance;
-		}
-
-		private SqlServerSourceType() {
-			// use factory method
-		}
-
-		@Override
-		public void accept(final SqlSourceTypeVisitor visitor) {
-			visitor.visit(this);
-		}
-
-	}
-
-	public static interface SqlSourceTypeVisitor {
-
-		void visit(MySqlSourceType sqlSourceType);
-
-		void visit(OracleSourceType sqlSourceType);
-
-		void visit(PostgreSqlSourceType sqlSourceType);
-
-		void visit(SqlServerSourceType sqlSourceType);
-
-	}
-
-	public static final class SqlSourceConfiguration extends AbstractSourceConfiguration {
+	public static final class SqlSourceConfiguration extends AbstractSourceConfiguration implements
+			DataSourceHelper.Configuration {
 
 		public static class Builder implements org.apache.commons.lang3.builder.Builder<SqlSourceConfiguration> {
 
-			private SqlSourceType type;
+			private DataSourceType type;
 			private String host;
 			private Integer port;
 			private String database;
+			private String instance;
 			private String username;
 			private String password;
 			private String filter;
@@ -183,7 +93,7 @@ public class ConnectorTask implements ScheduledTask {
 				port = defaultIfNull(port, 0);
 			}
 
-			public Builder withType(final SqlSourceType type) {
+			public Builder withType(final DataSourceType type) {
 				this.type = type;
 				return this;
 			}
@@ -200,6 +110,11 @@ public class ConnectorTask implements ScheduledTask {
 
 			public Builder withDatabase(final String database) {
 				this.database = database;
+				return this;
+			}
+
+			public Builder withInstance(final String instance) {
+				this.instance = instance;
 				return this;
 			}
 
@@ -224,10 +139,11 @@ public class ConnectorTask implements ScheduledTask {
 			return new Builder();
 		}
 
-		private final SqlSourceType type;
+		private final DataSourceType type;
 		private final String host;
 		private final int port;
 		private final String database;
+		private final String instance;
 		private final String username;
 		private final String password;
 		private final String filter;
@@ -237,6 +153,7 @@ public class ConnectorTask implements ScheduledTask {
 			this.host = builder.host;
 			this.port = builder.port;
 			this.database = builder.database;
+			this.instance = builder.instance;
 			this.username = builder.username;
 			this.password = builder.password;
 			this.filter = builder.filter;
@@ -247,26 +164,37 @@ public class ConnectorTask implements ScheduledTask {
 			visitor.visit(this);
 		}
 
-		public SqlSourceType getType() {
+		@Override
+		public DataSourceType getType() {
 			return type;
 		}
 
+		@Override
 		public String getHost() {
 			return host;
 		}
 
+		@Override
 		public int getPort() {
 			return port;
 		}
 
+		@Override
 		public String getDatabase() {
 			return database;
 		}
 
+		@Override
+		public String getInstance() {
+			return instance;
+		}
+
+		@Override
 		public String getUsername() {
 			return username;
 		}
 
+		@Override
 		public String getPassword() {
 			return password;
 		}
