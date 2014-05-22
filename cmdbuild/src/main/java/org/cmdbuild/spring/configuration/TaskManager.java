@@ -62,6 +62,9 @@ public class TaskManager {
 	private Email email;
 
 	@Autowired
+	private Other other;
+
+	@Autowired
 	private Scheduler scheduler;
 
 	@Autowired
@@ -137,7 +140,7 @@ public class TaskManager {
 
 	@Bean
 	protected ConnectorTaskJobFactory connectorTaskJobFactory() {
-		return new ConnectorTaskJobFactory(data.systemDataView());
+		return new ConnectorTaskJobFactory(data.systemDataView(), other.dataSourceHelper());
 	}
 
 	@Bean
