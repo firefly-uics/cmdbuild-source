@@ -1,5 +1,8 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.apache.commons.lang.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.servlets.json.ComunicationConstants.UI_CARD_EDIT_MODE;
+import static org.cmdbuild.servlets.json.schema.ModSecurity.LOGIC_TO_JSON;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import org.cmdbuild.auth.UserStore;
@@ -14,6 +17,8 @@ import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.WorkflowLogic;
+import org.cmdbuild.logic.privileges.CardEditMode;
+import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONException;
@@ -24,6 +29,7 @@ public class ClassSerializer extends Serializer {
 	private static final String WRITE_PRIVILEGE = "priv_write", CREATE_PRIVILEGE = "priv_create";
 	private final CMDataView dataView;
 	private final WorkflowLogic workflowLogic;
+	private final SecurityLogic securityLogic;
 
 	public static ClassSerializer newInstance() {
 		return new ClassSerializer();
@@ -32,6 +38,7 @@ public class ClassSerializer extends Serializer {
 	private ClassSerializer() {
 		dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
 		workflowLogic = TemporaryObjectsBeforeSpringDI.getSystemWorkflowLogic();
+		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
 	}
 
 	private JSONObject toClient(final UserProcessClass element, final String wrapperLabel,
@@ -41,11 +48,12 @@ public class ClassSerializer extends Serializer {
 
 		try {
 			jsonObject.put("startable", element.isStartable());
-		} catch (CMWorkflowException ex) {
+		} catch (final CMWorkflowException ex) {
 			Log.CMDBUILD.warn("Cannot fetch if the process '{}' is startable", element.getName());
-		} catch (CMDBWorkflowException ex) {
+		} catch (final CMDBWorkflowException ex) {
 			if (WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.equals(ex.getExceptionType())) {
-				requestListener().getCurrentRequest().pushWarning(ex);
+				requestListener();
+				RequestListener.getCurrentRequest().pushWarning(ex);
 			}
 		}
 
@@ -62,13 +70,13 @@ public class ClassSerializer extends Serializer {
 		final JSONObject jsonObject = new JSONObject();
 		final CMClass activityClass = dataView.findClass(Constants.BASE_PROCESS_CLASS_NAME);
 		if (activityClass.isAncestorOf(cmClass)) {
-			UserProcessClass userProcessClass = workflowLogic.findProcessClass(cmClass.getName());
+			final UserProcessClass userProcessClass = workflowLogic.findProcessClass(cmClass.getName());
 			if (userProcessClass != null) {
 				jsonObject.put("type", "processclass");
 				jsonObject.put("userstoppable", userProcessClass.isUserStoppable());
 				try {
 					jsonObject.put("startable", userProcessClass.isStartable());
-				} catch (CMWorkflowException e) {
+				} catch (final CMWorkflowException e) {
 				}
 			}
 		} else {
@@ -87,6 +95,7 @@ public class ClassSerializer extends Serializer {
 		// addGeoFeatureTypes(jsonTable, table);
 		addMetadata(jsonObject, cmClass);
 		addAccessPrivileges(cmClass, jsonObject);
+		addUiCardModePrivileges(cmClass, jsonObject);
 
 		final CMClass parent = cmClass.getParent();
 		if (parent != null) {
@@ -101,6 +110,14 @@ public class ClassSerializer extends Serializer {
 		} else {
 			return jsonObject;
 		}
+	}
+
+	private void addUiCardModePrivileges(final CMClass cmClass, final JSONObject json) throws JSONException {
+		final OperationUser user = applicationContext().getBean(UserStore.class).getUser();
+		CardEditMode cardEditMode = securityLogic.fetchCardEditModeForGroupAndClass(user.getPreferredGroup().getId(),
+				cmClass.getId());
+		cardEditMode = (CardEditMode) defaultIfNull(cardEditMode, CardEditMode.ALLOW_ALL);
+		json.put(UI_CARD_EDIT_MODE, LOGIC_TO_JSON.apply(cardEditMode));
 	}
 
 	public JSONObject toClient(final UserProcessClass element, final boolean addManagementInfo) throws JSONException,

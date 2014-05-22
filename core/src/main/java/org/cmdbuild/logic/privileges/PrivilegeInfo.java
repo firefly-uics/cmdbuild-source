@@ -13,11 +13,13 @@ public class PrivilegeInfo {
 
 	private String privilegeFilter;
 	private String[] attributesPrivileges;
+	private CardEditMode cardEditMode; 
 
-	public PrivilegeInfo(final Long groupId, final SerializablePrivilege privilegedObject, final PrivilegeMode mode) {
+	public PrivilegeInfo(final Long groupId, final SerializablePrivilege privilegedObject, final PrivilegeMode mode, CardEditMode cardEditMode) {
 		this.groupId = groupId;
 		this.mode = mode;
 		this.privilegedObject = privilegedObject;
+		this.cardEditMode = cardEditMode;
 	}
 
 	public String getPrivilegeFilter() {
@@ -35,7 +37,12 @@ public class PrivilegeInfo {
 	public void setAttributesPrivileges(final String[] attributesPrivileges) {
 		this.attributesPrivileges = attributesPrivileges;
 	}
-
+	
+	
+	public void setCardEditMode(CardEditMode cardEditMode) {
+		this.cardEditMode = cardEditMode;
+	}
+	
 	public PrivilegeMode getMode() {
 		return mode;
 	}
@@ -51,13 +58,17 @@ public class PrivilegeInfo {
 	public String getPrivilegedObjectDescription() {
 		return privilegedObject.getDescription();
 	}
-
+	
 	public Long getGroupId() {
 		return groupId;
 	}
 
 	public String getPrivilegeId() {
 		return privilegedObject.getPrivilegeId();
+	}
+	
+	public CardEditMode getCardEditMode() {
+		return cardEditMode;
 	}
 
 	@Override

@@ -14,5 +14,6 @@ public class GrantConstants {
 	public static final String PRIVILEGED_OBJECT_ID_ATTRIBUTE = "IdPrivilegedObject";
 	public static final String PRIVILEGE_FILTER_ATTRIBUTE = "PrivilegeFilter";
 	public static final String ATTRIBUTES_PRIVILEGES_ATTRIBUTE = "AttributesPrivileges";
+	public static final String UI_CARD_EDIT_MODE_ATTRIBUTE = "UI_CardEditMode";
 
 }
