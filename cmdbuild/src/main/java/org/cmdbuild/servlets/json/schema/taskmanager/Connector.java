@@ -36,9 +36,9 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.SQLSERVER_LABEL;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -56,6 +56,7 @@ import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.CommunicationConstants;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
+import org.cmdbuild.servlets.json.util.JsonImmutableEntry;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
@@ -65,7 +66,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class Connector extends JSONBaseWithSpringContext {
 
@@ -351,10 +352,10 @@ public class Connector extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported
 	public JsonResponse availableSqlSources() {
-		final Map<String, String> availableTypes = Maps.newHashMap();
+		final Collection<JsonImmutableEntry> availableTypes = Sets.newHashSet();
 		for (final DataSourceType element : dataSourceHelper().getAvailableTypes()) {
 			final JsonSqlSourceHandler handler = JsonSqlSourceHandler.of(element);
-			availableTypes.put(handler.client, handler.label);
+			availableTypes.add(JsonImmutableEntry.of(handler.client, handler.label));
 		}
 		return JsonResponse.success(availableTypes);
 	}
