@@ -67,8 +67,6 @@ public class DefaultTranslationLogic implements TranslationLogic {
 
 	private static class ElementCreator implements TranslationObjectVisitor {
 
-		
-
 		private static ElementCreator of(final TranslationObject translationObject) {
 			return new ElementCreator(translationObject);
 		}
@@ -117,15 +115,8 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		@Override
-		public void visit(final FilterViewTranslation translationObject) {
-			value = format("filterview.%s.%s", //
-					translationObject.getName(), //
-					FieldMapper.of(translationObject.getField()).getResult());
-		}
-
-		@Override
-		public void visit(final SqlViewTranslation translationObject) {
-			value = format("sqlview.%s.%s", //
+		public void visit(final ViewTranslation translationObject) {
+			value = format("view.%s.%s", //
 					translationObject.getName(), //
 					FieldMapper.of(translationObject.getField()).getResult());
 		}

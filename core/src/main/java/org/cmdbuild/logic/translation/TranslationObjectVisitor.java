@@ -10,9 +10,7 @@ public interface TranslationObjectVisitor {
 
 	void visit(AttributeDomainTranslation attributeClassTranslation);
 
-	void visit(FilterViewTranslation filterViewTranslation);
-
-	void visit(SqlViewTranslation sqlViewTranslation);
+	void visit(ViewTranslation filterViewTranslation);
 
 	void visit(FilterTranslation filterTranslation);
 

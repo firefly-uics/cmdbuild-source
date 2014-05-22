@@ -2,7 +2,6 @@ package org.cmdbuild.servlets.json.schema;
 
 import static org.cmdbuild.servlets.json.CommunicationConstants.ALREADY_ASSOCIATED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
-import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIRMATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_GROUP;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
@@ -346,13 +345,13 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
 			@Parameter(value = FILTER, required = false) final String filter, //
 			@Parameter(value = ATTRIBUTES, required = false) final JSONArray jsonAttributes //
-		) throws JSONException, AuthException {
+	) throws JSONException, AuthException {
 
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo( //
 				groupId, //
 				serializablePrivilege(privilegedObjectId), //
 				null //
-			);
+		);
 
 		// from jsonArray to string array
 		final int l = jsonAttributes == null ? 0 : jsonAttributes.length();

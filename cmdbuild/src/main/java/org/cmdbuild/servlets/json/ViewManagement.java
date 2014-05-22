@@ -20,17 +20,17 @@ import org.json.JSONObject;
 public class ViewManagement extends JSONBaseWithSpringContext {
 
 	/* ************************************************
-	 * Common 
-	 * *********************************************** */
+	 * Common ***********************************************
+	 */
 
 	@JSONExported
 	public JSONObject read() throws JSONException {
-		return ViewSerializer.toClient(viewLogic().fetchViewsOfAllTypes());
+		return new ViewSerializer(translationFacade()).toClient(viewLogic().fetchViewsOfAllTypes());
 	}
 
 	/* ************************************************
-	 * View from SQL
-	 * *********************************************** */
+	 * View from SQL ***********************************************
+	 */
 
 	@JSONExported
 	public void createSQLView(@Parameter(value = NAME) final String name, //
@@ -42,7 +42,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject readSQLView() throws JSONException {
-		return ViewSerializer.toClient(readByType(View.ViewType.SQL));
+		return new ViewSerializer(translationFacade()).toClient(readByType(View.ViewType.SQL));
 	}
 
 	@JSONExported
@@ -61,8 +61,8 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 	}
 
 	/* ************************************************
-	 * View from filter
-	 *********************************************** */
+	 * View from filter**********************************************
+	 */
 
 	@JSONExported
 	public void createFilterView(@Parameter(value = NAME) final String name, //
@@ -74,7 +74,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject readFilterView() throws JSONException {
-		return ViewSerializer.toClient(readByType(View.ViewType.FILTER));
+		return new ViewSerializer(translationFacade()).toClient(readByType(View.ViewType.FILTER));
 	}
 
 	@JSONExported
@@ -95,8 +95,8 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 	}
 
 	/* ************************************************
-	 * private
-	 *********************************************** */
+	 * private**********************************************
+	 */
 
 	private void createView(final View view) {
 		viewLogic().create(view);
