@@ -41,7 +41,7 @@ public class Filter extends JSONBaseWithSpringContext {
 			final @Parameter(value = LIMIT) int limit //
 	) throws JSONException, CMDBException {
 		final GetFiltersResponse userFilters = filterStore().getAllUserFilters(className, start, limit);
-		return FilterSerializer.toClient(userFilters);
+		return new FilterSerializer(translationFacade()).toClient(userFilters);
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class Filter extends JSONBaseWithSpringContext {
 			@Parameter(value = LIMIT) final int limit //
 	) throws JSONException, CMDBException {
 		final GetFiltersResponse response = filterStore().fetchAllGroupsFilters(start, limit);
-		return FilterSerializer.toClient(response);
+		return new FilterSerializer(translationFacade()).toClient(response);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class Filter extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className //
 	) throws JSONException {
 		final GetFiltersResponse userFilters = filterStore().getFiltersForCurrentlyLoggedUser(className);
-		return FilterSerializer.toClient(userFilters);
+		return new FilterSerializer(translationFacade()).toClient(userFilters);
 	}
 
 	@JSONExported
@@ -90,7 +90,7 @@ public class Filter extends JSONBaseWithSpringContext {
 	) throws JSONException, CMDBException {
 		final FilterStore.Filter filter = filterStore().create(
 				FilterSerializer.toServerForCreation(name, className, description, configuration, template));
-		return FilterSerializer.toClient(filter, FILTER);
+		return new FilterSerializer(translationFacade()).toClient(filter, FILTER);
 	}
 
 	@JSONExported
