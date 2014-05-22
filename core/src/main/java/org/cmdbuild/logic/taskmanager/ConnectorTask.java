@@ -1,0 +1,555 @@
+package org.cmdbuild.logic.taskmanager;
+
+import static com.google.common.collect.Iterables.addAll;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
+import java.util.Collection;
+import java.util.Collections;
+
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import com.google.common.collect.Sets;
+
+public class ConnectorTask implements ScheduledTask {
+
+	public static interface SourceConfiguration {
+
+		void accept(SourceConfigurationVisitor visitor);
+
+	}
+
+	public static interface SourceConfigurationVisitor {
+
+		void visit(final SqlSourceConfiguration sourceConfiguration);
+
+	}
+
+	public static final SourceConfiguration NULL_SOURCE_CONFIGURATION = new SourceConfiguration() {
+
+		@Override
+		public void accept(final SourceConfigurationVisitor visitor) {
+			// nothing to do
+		}
+
+	};
+
+	private static abstract class AbstractSourceConfiguration implements SourceConfiguration {
+
+		@Override
+		public final boolean equals(final Object obj) {
+			return doEquals(obj);
+		}
+
+		protected abstract boolean doEquals(Object obj);
+
+		@Override
+		public final int hashCode() {
+			return doHashCode();
+		}
+
+		protected abstract int doHashCode();
+
+		@Override
+		public final String toString() {
+			return doToString();
+		}
+
+		protected abstract String doToString();
+
+	}
+
+	public static interface SqlSourceType {
+
+		void accept(SqlSourceTypeVisitor visitor);
+
+	}
+
+	public static class MySqlSourceType implements SqlSourceType {
+
+		private static MySqlSourceType instance = new MySqlSourceType();
+
+		public static MySqlSourceType mysql() {
+			return instance;
+		}
+
+		private MySqlSourceType() {
+			// use factory method
+		}
+
+		@Override
+		public void accept(final SqlSourceTypeVisitor visitor) {
+			visitor.visit(this);
+		}
+
+	}
+
+	public static class OracleSourceType implements SqlSourceType {
+
+		private static OracleSourceType instance = new OracleSourceType();
+
+		public static OracleSourceType oracle() {
+			return instance;
+		}
+
+		private OracleSourceType() {
+			// use factory method
+		}
+
+		@Override
+		public void accept(final SqlSourceTypeVisitor visitor) {
+			visitor.visit(this);
+		}
+
+	}
+
+	public static class PostgreSqlSourceType implements SqlSourceType {
+
+		private static PostgreSqlSourceType instance = new PostgreSqlSourceType();
+
+		public static PostgreSqlSourceType postgresql() {
+			return instance;
+		}
+
+		private PostgreSqlSourceType() {
+			// use factory method
+		}
+
+		@Override
+		public void accept(final SqlSourceTypeVisitor visitor) {
+			visitor.visit(this);
+		}
+
+	}
+
+	public static class SqlServerSourceType implements SqlSourceType {
+
+		private static SqlServerSourceType instance = new SqlServerSourceType();
+
+		public static SqlServerSourceType sqlserver() {
+			return instance;
+		}
+
+		private SqlServerSourceType() {
+			// use factory method
+		}
+
+		@Override
+		public void accept(final SqlSourceTypeVisitor visitor) {
+			visitor.visit(this);
+		}
+
+	}
+
+	public static interface SqlSourceTypeVisitor {
+
+		void visit(MySqlSourceType sqlSourceType);
+
+		void visit(OracleSourceType sqlSourceType);
+
+		void visit(PostgreSqlSourceType sqlSourceType);
+
+		void visit(SqlServerSourceType sqlSourceType);
+
+	}
+
+	public static final class SqlSourceConfiguration extends AbstractSourceConfiguration {
+
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<SqlSourceConfiguration> {
+
+			private SqlSourceType type;
+			private String host;
+			private Integer port;
+			private String database;
+			private String username;
+			private String password;
+			private String filter;
+
+			private Builder() {
+				// user factory method
+			}
+
+			@Override
+			public SqlSourceConfiguration build() {
+				validate();
+				return new SqlSourceConfiguration(this);
+			}
+
+			private void validate() {
+				type = Validate.notNull(type, "missing '%s'", type.getClass());
+				port = defaultIfNull(port, 0);
+			}
+
+			public Builder withType(final SqlSourceType type) {
+				this.type = type;
+				return this;
+			}
+
+			public Builder withHost(final String host) {
+				this.host = host;
+				return this;
+			}
+
+			public Builder withPort(final Integer port) {
+				this.port = port;
+				return this;
+			}
+
+			public Builder withDatabase(final String database) {
+				this.database = database;
+				return this;
+			}
+
+			public Builder withUsername(final String username) {
+				this.username = username;
+				return this;
+			}
+
+			public Builder withPassword(final String password) {
+				this.password = password;
+				return this;
+			}
+
+			public Builder withFilter(final String filter) {
+				this.filter = filter;
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private final SqlSourceType type;
+		private final String host;
+		private final int port;
+		private final String database;
+		private final String username;
+		private final String password;
+		private final String filter;
+
+		private SqlSourceConfiguration(final Builder builder) {
+			this.type = builder.type;
+			this.host = builder.host;
+			this.port = builder.port;
+			this.database = builder.database;
+			this.username = builder.username;
+			this.password = builder.password;
+			this.filter = builder.filter;
+		}
+
+		@Override
+		public void accept(final SourceConfigurationVisitor visitor) {
+			visitor.visit(this);
+		}
+
+		public SqlSourceType getType() {
+			return type;
+		}
+
+		public String getHost() {
+			return host;
+		}
+
+		public int getPort() {
+			return port;
+		}
+
+		public String getDatabase() {
+			return database;
+		}
+
+		public String getUsername() {
+			return username;
+		}
+
+		public String getPassword() {
+			return password;
+		}
+
+		public String getFilter() {
+			return filter;
+		}
+
+		@Override
+		protected boolean doEquals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof SqlSourceConfiguration)) {
+				return false;
+			}
+			final SqlSourceConfiguration other = SqlSourceConfiguration.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(host, other.host) //
+					.append(port, other.port) //
+					.append(database, other.database) //
+					.append(username, other.username) //
+					.append(password, other.password) //
+					.append(filter, other.filter) //
+					.isEquals();
+		}
+
+		@Override
+		protected int doHashCode() {
+			return new HashCodeBuilder() //
+					.append(host) //
+					.append(port) //
+					.append(database) //
+					.append(username) //
+					.append(password) //
+					.append(filter) //
+					.toHashCode();
+		}
+
+		@Override
+		protected String doToString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
+	}
+
+	public static class AttributeMapping {
+
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<AttributeMapping> {
+
+			private String sourceType;
+			private String sourceAttribute;
+			private String targetType;
+			private String targetAttribute;
+			private Boolean isKey;
+
+			private Builder() {
+				// user factory method
+			}
+
+			@Override
+			public AttributeMapping build() {
+				validate();
+				return new AttributeMapping(this);
+			}
+
+			private void validate() {
+				isKey = defaultIfNull(isKey, false);
+			}
+
+			public Builder withSourceType(final String sourceType) {
+				this.sourceType = sourceType;
+				return this;
+			}
+
+			public Builder withSourceAttribute(final String sourceAttribute) {
+				this.sourceAttribute = sourceAttribute;
+				return this;
+			}
+
+			public Builder withTargetType(final String targetType) {
+				this.targetType = targetType;
+				return this;
+			}
+
+			public Builder withTargetAttribute(final String targetAttribute) {
+				this.targetAttribute = targetAttribute;
+				return this;
+			}
+
+			public Builder withKeyStatus(final boolean isKey) {
+				this.isKey = isKey;
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private final String sourceType;
+		private final String sourceAttribute;
+		private final String targetType;
+		private final String targetAttribute;
+		private final boolean isKey;
+
+		private AttributeMapping(final Builder builder) {
+			this.sourceType = builder.sourceType;
+			this.sourceAttribute = builder.sourceAttribute;
+			this.targetType = builder.targetType;
+			this.targetAttribute = builder.targetAttribute;
+			this.isKey = builder.isKey;
+		}
+
+		public String getSourceType() {
+			return sourceType;
+		}
+
+		public String getSourceAttribute() {
+			return sourceAttribute;
+		}
+
+		public String getTargetType() {
+			return targetType;
+		}
+
+		public String getTargetAttribute() {
+			return targetAttribute;
+		}
+
+		public boolean isKey() {
+			return isKey;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof AttributeMapping)) {
+				return false;
+			}
+			final AttributeMapping other = AttributeMapping.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(sourceType, other.sourceType) //
+					.append(sourceAttribute, other.sourceAttribute) //
+					.append(targetType, other.targetType) //
+					.append(targetAttribute, other.targetAttribute) //
+					.isEquals();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(sourceType) //
+					.append(sourceAttribute) //
+					.append(targetType) //
+					.append(targetAttribute) //
+					.toHashCode();
+		}
+
+	}
+
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<ConnectorTask> {
+
+		private static final Iterable<AttributeMapping> NO_MAPPING = Collections.emptyList();
+
+		private Long id;
+		private String description;
+		private Boolean active;
+		private String cronExpression;
+		private SourceConfiguration sourceConfiguration;
+		private final Collection<AttributeMapping> attributeMappings = Sets.newHashSet();
+
+		private Builder() {
+			// use factory method
+		}
+
+		@Override
+		public ConnectorTask build() {
+			validate();
+			return new ConnectorTask(this);
+		}
+
+		private void validate() {
+			active = defaultIfNull(active, Boolean.FALSE);
+			sourceConfiguration = defaultIfNull(sourceConfiguration, NULL_SOURCE_CONFIGURATION);
+		}
+
+		public Builder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public Builder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public Builder withActiveStatus(final boolean active) {
+			this.active = active;
+			return this;
+		}
+
+		public Builder withCronExpression(final String cronExpression) {
+			this.cronExpression = cronExpression;
+			return this;
+		}
+
+		public Builder withSourceConfiguration(final SourceConfiguration sourceConfiguration) {
+			this.sourceConfiguration = sourceConfiguration;
+			return this;
+		}
+
+		public Builder withAttributeMapping(final AttributeMapping attributeMapping) {
+			this.attributeMappings.add(attributeMapping);
+			return this;
+		}
+
+		public Builder withAttributeMappings(final Iterable<? extends AttributeMapping> attributeMappings) {
+			addAll(this.attributeMappings, defaultIfNull(attributeMappings, NO_MAPPING));
+			return this;
+		}
+
+	}
+
+	public static Builder newInstance() {
+		return new Builder();
+	}
+
+	private final Long id;
+	private final String description;
+	private final boolean active;
+	private final String cronExpression;
+	private final SourceConfiguration sourceConfiguration;
+	private final Iterable<AttributeMapping> attributeMappings;
+
+	private ConnectorTask(final Builder builder) {
+		this.id = builder.id;
+		this.description = builder.description;
+		this.active = builder.active;
+		this.cronExpression = builder.cronExpression;
+		this.sourceConfiguration = builder.sourceConfiguration;
+		this.attributeMappings = builder.attributeMappings;
+	}
+
+	@Override
+	public void accept(final TaskVistor visitor) {
+		visitor.visit(this);
+	}
+
+	@Override
+	public Long getId() {
+		return id;
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
+	public boolean isActive() {
+		return active;
+	}
+
+	@Override
+	public String getCronExpression() {
+		return cronExpression;
+	}
+
+	public SourceConfiguration getSourceConfiguration() {
+		return sourceConfiguration;
+	}
+
+	public Iterable<AttributeMapping> getAttributeMappings() {
+		return attributeMappings;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+	}
+
+}
