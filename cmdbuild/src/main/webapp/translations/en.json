@@ -702,6 +702,7 @@
 					"notLogic": "@@ Not logic"
 				},
 				"domainName": "@@ Domain name",
+				"instanceName": "Instance",
 				"isKey": "@@ Is key",
 				"recipientAddress": "Recipient address",
 				"referenceMapping": "@@ References mapping",

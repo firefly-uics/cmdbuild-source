@@ -3,7 +3,9 @@
 	/**
 	 * Constants with the standard parameter names
 	 */
-	Ext.define('CMDBuild.ServiceProxy.parameter', {
+	Ext.define('CMDBuild.core.proxy.CMProxyConstants', {
+		alternateClassName: 'CMDBuild.ServiceProxy.parameter', // Legacy class name
+
 		statics: {
 			ACTIVE: 'active',
 			ADDRESS: 'address',
@@ -28,6 +30,7 @@
 			DATASOURCE: 'dataSourceName',
 			DATASOURCE_ADDRESS: 'dataSourceAddress',
 			DATASOURCE_CONFIGURATION: 'dataSourceConfiguration',
+			DATASOURCE_DB_INSATANCE_NAME: 'dataSourceDbInstance',
 			DATASOURCE_DB_NAME: 'dataSourceDbName',
 			DATASOURCE_DB_PASSWORD: 'dataSourceDbPassword',
 			DATASOURCE_DB_PORT: 'dataSourceDbPort',
@@ -71,6 +74,7 @@
 			INDEX: 'index',
 			IS_DEFAULT: 'isDefault',
 			IS_KEY: 'isKey',
+			KEY: 'key',
 			LENGTH: 'len',
 			LOOKUP: 'lookup',
 			MENU: 'menu',

@@ -106,7 +106,7 @@
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				var me = this;
-				this.selectedName = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.NAME);
+				this.selectedName = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME);
 
 				// Selected user asynchronous store query
 				this.selectedDataStore = CMDBuild.core.proxy.CMProxyEmailTemplates.get();
@@ -185,8 +185,8 @@
 			store.load({
 				callback: function() {
 					var rowIndex = this.find(
-						CMDBuild.ServiceProxy.parameter.NAME,
-						me.form.getForm().findField(CMDBuild.ServiceProxy.parameter.NAME).getValue()
+						CMDBuild.core.proxy.CMProxyConstants.NAME,
+						me.form.getForm().findField(CMDBuild.core.proxy.CMProxyConstants.NAME).getValue()
 					);
 
 					me.selectionModel.select(rowIndex, true);

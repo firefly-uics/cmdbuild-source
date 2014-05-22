@@ -203,7 +203,7 @@
 			 * @param (String) value
 			 */
 			setValueBase: function(value) {
-				var index = this.baseField.baseCombo.store.find(CMDBuild.ServiceProxy.parameter.VALUE, value);
+				var index = this.baseField.baseCombo.store.find(CMDBuild.core.proxy.CMProxyConstants.VALUE, value);
 
 				if (index > -1) {
 					this.baseField.baseCombo.setValue(value);

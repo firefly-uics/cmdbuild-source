@@ -36,8 +36,8 @@
 
 			this.view.attributeLevelMappingGrid.columns[2].setEditor({
 				xtype: 'combo',
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				forceSelection: true,
 				editable: false,
 				allowBlank: false,
@@ -47,7 +47,7 @@
 
 				listeners: {
 					select: function(combo, records, eOpts) {
-						me.buildClassAttributesCombo(records[0].get(CMDBuild.ServiceProxy.parameter.NAME));
+						me.buildClassAttributesCombo(this.getValue());
 					}
 				}
 			});
@@ -68,20 +68,20 @@
 					var onStepEditExecute = true;
 
 				for (var key in _CMCache.getClasses())
-					if (key == _CMCache.getEntryTypeByName(className).get(CMDBuild.ServiceProxy.parameter.ID))
+					if (key == _CMCache.getEntryTypeByName(className).get(CMDBuild.core.proxy.CMProxyConstants.ID))
 						attributesListStore.push(this.view.classesAttributesMap[key]);
 
 				this.view.attributeLevelMappingGrid.columns[3].setEditor({
 					xtype: 'combo',
-					displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
+					displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 					forceSelection: true,
 					editable: false,
 					allowBlank: false,
 
 					store: Ext.create('Ext.data.Store', {
 						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+						fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 						data: attributesListStore[0]
 					}),
 
@@ -102,8 +102,8 @@
 
 			this.view.attributeLevelMappingGrid.columns[0].setEditor({
 				xtype: 'combo',
-				displayField: CMDBuild.ServiceProxy.parameter.NAME,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				forceSelection: true,
 				editable: false,
 				allowBlank: false,
@@ -113,7 +113,7 @@
 
 				listeners: {
 					select: function(combo, records, eOpts) {
-						me.buildSourceAttributesCombo(records[0].get(CMDBuild.ServiceProxy.parameter.VALUE));
+						me.buildSourceAttributesCombo(this.getValue());
 					}
 				}
 			});
@@ -145,12 +145,12 @@
 
 				this.view.attributeLevelMappingGrid.columns[1].setEditor({
 					xtype: 'combo',
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
+					displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+					valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 
 					store: Ext.create('Ext.data.Store', {
 						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME],
+						fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
 						data: attributesListStore
 					}),
 
@@ -176,18 +176,18 @@
 				// To validate and filter grid rows
 				this.view.attributeLevelMappingGrid.getStore().each(function(record) {
 					if (
-						!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
-						&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE))
-						&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
-						&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE))
+						!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME))
+						&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_ATTRIBUTE))
+						&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME))
+						&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_ATTRIBUTE))
 					) {
 						var buffer = {};
 
-						buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
-						buffer[CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE);
-						buffer[CMDBuild.ServiceProxy.parameter.SOURCE_NAME] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME);
-						buffer[CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE] = record.get(CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE);
-						buffer[CMDBuild.ServiceProxy.parameter.IS_KEY] = record.get(CMDBuild.ServiceProxy.parameter.IS_KEY);
+						buffer[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME);
+						buffer[CMDBuild.core.proxy.CMProxyConstants.CLASS_ATTRIBUTE] = record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_ATTRIBUTE);
+						buffer[CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME);
+						buffer[CMDBuild.core.proxy.CMProxyConstants.SOURCE_ATTRIBUTE] = record.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_ATTRIBUTE);
+						buffer[CMDBuild.core.proxy.CMProxyConstants.IS_KEY] = record.get(CMDBuild.core.proxy.CMProxyConstants.IS_KEY);
 
 						data.push(buffer);
 					}
@@ -211,9 +211,9 @@
 		 */
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
-				case CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE: {
-					if (!Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME])) {
-						this.buildClassAttributesCombo(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME], false);
+				case CMDBuild.core.proxy.CMProxyConstants.CLASS_ATTRIBUTE: {
+					if (!Ext.isEmpty(rowData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME])) {
+						this.buildClassAttributesCombo(rowData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME], false);
 					} else {
 						var columnModel = this.view.attributeLevelMappingGrid.columns[3];
 						var columnEditor = columnModel.getEditor();
@@ -226,9 +226,9 @@
 					}
 				} break;
 
-				case CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE: {
-					if (!Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.SOURCE_NAME])) {
-						this.buildSourceAttributesCombo(rowData[CMDBuild.ServiceProxy.parameter.SOURCE_NAME], false);
+				case CMDBuild.core.proxy.CMProxyConstants.SOURCE_ATTRIBUTE: {
+					if (!Ext.isEmpty(rowData[CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME])) {
+						this.buildSourceAttributesCombo(rowData[CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME], false);
 					} else {
 						var columnModel = this.view.attributeLevelMappingGrid.columns[1];
 						var columnEditor = columnModel.getEditor();
@@ -310,7 +310,7 @@
 				columns: [
 					{
 						header: tr.sourceName,
-						dataIndex: CMDBuild.ServiceProxy.parameter.SOURCE_NAME,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME,
 						editor: {
 							xtype: 'combo',
 							disabled: true
@@ -319,7 +319,7 @@
 					},
 					{
 						header: tr.sourceAttribute,
-						dataIndex: CMDBuild.ServiceProxy.parameter.SOURCE_ATTRIBUTE,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SOURCE_ATTRIBUTE,
 						editor: {
 							xtype: 'combo',
 							disabled: true
@@ -328,7 +328,7 @@
 					},
 					{
 						header: CMDBuild.Translation.className,
-						dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
 							disabled: true
@@ -337,7 +337,7 @@
 					},
 					{
 						header: CMDBuild.Translation.classAttribute,
-						dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CLASS_ATTRIBUTE,
 						editor: {
 							xtype: 'combo',
 							disabled: true
@@ -347,7 +347,7 @@
 					{
 						xtype: 'checkcolumn',
 						header: tr.isKey,
-						dataIndex: CMDBuild.ServiceProxy.parameter.IS_KEY,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_KEY,
 						width: 50,
 						align: 'center',
 						sortable: false,

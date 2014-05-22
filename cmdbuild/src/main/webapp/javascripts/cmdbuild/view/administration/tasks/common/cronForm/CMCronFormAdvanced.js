@@ -15,8 +15,8 @@
 			var me = this;
 
 			this.advanceRadio = Ext.create('Ext.form.field.Radio', {
-				name: CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE,
-				inputValue: CMDBuild.ServiceProxy.parameter.ADVANCED,
+				name: CMDBuild.core.proxy.CMProxyConstants.CRON_INPUT_TYPE,
+				inputValue: CMDBuild.core.proxy.CMProxyConstants.ADVANCED,
 				boxLabel: tr.advanced,
 				width: CMDBuild.LABEL_WIDTH,
 
@@ -28,11 +28,11 @@
 			});
 
 			this.advancedFields = [
-				this.delegate.createCronField(CMDBuild.ServiceProxy.parameter.MINUTE, tr.minute),
-				this.delegate.createCronField(CMDBuild.ServiceProxy.parameter.HOUR, tr.hour),
-				this.delegate.createCronField(CMDBuild.ServiceProxy.parameter.DAY_OF_MOUNTH, tr.dayOfMounth),
-				this.delegate.createCronField(CMDBuild.ServiceProxy.parameter.MOUNTH, tr.mounth),
-				this.delegate.createCronField(CMDBuild.ServiceProxy.parameter.DAY_OF_WEEK, tr.dayOfWeek)
+				this.delegate.createCronField(CMDBuild.core.proxy.CMProxyConstants.MINUTE, tr.minute),
+				this.delegate.createCronField(CMDBuild.core.proxy.CMProxyConstants.HOUR, tr.hour),
+				this.delegate.createCronField(CMDBuild.core.proxy.CMProxyConstants.DAY_OF_MOUNTH, tr.dayOfMounth),
+				this.delegate.createCronField(CMDBuild.core.proxy.CMProxyConstants.MOUNTH, tr.mounth),
+				this.delegate.createCronField(CMDBuild.core.proxy.CMProxyConstants.DAY_OF_WEEK, tr.dayOfWeek)
 			];
 
 			Ext.apply(this, {

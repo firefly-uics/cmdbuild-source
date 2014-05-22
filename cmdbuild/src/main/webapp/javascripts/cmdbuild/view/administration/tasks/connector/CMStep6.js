@@ -36,8 +36,8 @@
 
 			this.view.referenceMappingGrid.columns[0].setEditor({
 				xtype: 'combo',
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				forceSelection: true,
 				editable: false,
 				allowBlank: false,
@@ -46,7 +46,7 @@
 
 				listeners: {
 					select: function(combo, records, eOpts) {
-						me.buildDomainCombo(records[0].get(CMDBuild.ServiceProxy.parameter.NAME));
+						me.buildDomainCombo(this.getValue());
 					}
 				}
 			});
@@ -63,8 +63,8 @@
 				var me = this;
 				var domainStore = _CMCache.getDomainsBy(function(domain) {
 					return (
-						(domain.get(CMDBuild.ServiceProxy.parameter.NAME_CLASS_1) == className)
-						|| (domain.get(CMDBuild.ServiceProxy.parameter.NAME_CLASS_2) == className)
+						(domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME_CLASS_1) == className)
+						|| (domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME_CLASS_2) == className)
 					);
 				});
 
@@ -74,15 +74,15 @@
 				if (domainStore.length > 0) {
 					this.view.referenceMappingGrid.columns[1].setEditor({
 						xtype: 'combo',
-						displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-						valueField: CMDBuild.ServiceProxy.parameter.NAME,
+						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 						forceSelection: true,
 						editable: false,
 						allowBlank: false,
 
 						store: Ext.create('Ext.data.Store', {
 							autoLoad: true,
-							fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+							fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 							data: domainStore
 						}),
 
@@ -115,13 +115,13 @@
 					// To validate and filter grid rows
 					this.view.referenceMappingGrid.getStore().each(function(record) {
 						if (
-							!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
-							&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.DOMAIN_NAME))
+							!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME))
+							&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME))
 						) {
 							var buffer = {};
 
-							buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
-							buffer[CMDBuild.ServiceProxy.parameter.DOMAIN_NAME] = record.get(CMDBuild.ServiceProxy.parameter.DOMAIN_NAME);
+							buffer[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME);
+							buffer[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME);
 
 							data.push(buffer);
 						}
@@ -138,9 +138,9 @@
 		 */
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
-				case CMDBuild.ServiceProxy.parameter.DOMAIN_NAME: {
-					if (!Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME])) {
-						this.buildDomainCombo(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
+				case CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME: {
+					if (!Ext.isEmpty(rowData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME])) {
+						this.buildDomainCombo(rowData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
 					} else {
 						var columnModel = this.view.referenceMappingGrid.columns[1];
 						var columnEditor = columnModel.getEditor();
@@ -200,7 +200,7 @@
 				columns: [
 					{
 						header: CMDBuild.Translation.className,
-						dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
 							disabled: true
@@ -209,7 +209,7 @@
 					},
 					{
 						header: tr.domainName,
-						dataIndex: CMDBuild.ServiceProxy.parameter.DOMAIN_NAME,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME,
 						editor: {
 							xtype: 'combo',
 							disabled: true
