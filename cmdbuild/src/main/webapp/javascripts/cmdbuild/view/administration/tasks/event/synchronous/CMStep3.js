@@ -161,7 +161,7 @@
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.notificationForm.title,
-					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
+					checkboxName: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
 					collapsible: true,
@@ -178,7 +178,7 @@
 			// Workflow configuration
 				this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 					combo: {
-						name: CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME
+						name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME
 					}
 				});
 

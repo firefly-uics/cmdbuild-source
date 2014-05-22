@@ -8,8 +8,8 @@
 		// Required
 		name: undefined,
 
-		valueField: CMDBuild.ServiceProxy.parameter.NAME,
-		displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+		valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+		displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 		store: CMDBuild.core.proxy.CMProxyTasks.getStoreAllWorkflow(),
 		width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 		forceSelection: true,

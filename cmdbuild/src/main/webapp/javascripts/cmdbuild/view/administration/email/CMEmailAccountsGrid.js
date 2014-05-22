@@ -15,7 +15,7 @@
 			this.gridColumns = [
 				{
 					text: tr.isDefault,
-					dataIndex: CMDBuild.ServiceProxy.parameter.IS_DEFAULT,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.IS_DEFAULT,
 					align: 'center',
 					width: 50,
 					sortable: false,
@@ -27,12 +27,12 @@
 				},
 				{
 					text: CMDBuild.Translation.name,
-					dataIndex: CMDBuild.ServiceProxy.parameter.NAME,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
 					flex: 1
 				},
 				{
 					text: CMDBuild.Translation.address,
-					dataIndex: CMDBuild.ServiceProxy.parameter.ADDRESS,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ADDRESS,
 					flex: 1
 				}
 			];

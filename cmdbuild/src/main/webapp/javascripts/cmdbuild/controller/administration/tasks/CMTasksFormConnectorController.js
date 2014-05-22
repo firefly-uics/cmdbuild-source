@@ -60,15 +60,15 @@
 			var classStore = CMDBuild.core.proxy.CMProxyTasks.getClassStore();
 			var store = Ext.create('Ext.data.Store', {
 				autoLoad: true,
-				fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+				fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 				data: []
 			});
 
 			CMDBuild.core.proxy.CMProxyTasks.getClassStore().each(function(record, id) {
-				if (CMDBuild.Utils.inArray(record.get(CMDBuild.ServiceProxy.parameter.NAME), this.delegateStep[3].getSelectedClassArray()))
+				if (CMDBuild.Utils.inArray(record.get(CMDBuild.core.proxy.CMProxyConstants.NAME), this.delegateStep[3].getSelectedClassArray()))
 					store.add({
-						name: record.get(CMDBuild.ServiceProxy.parameter.NAME),
-						description: record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION)
+						name: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
+						description: record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
 					});
 			}, this);
 
@@ -84,7 +84,7 @@
 			var sourceArray = this.delegateStep[3].getSelectedSourceArray();
 			var store = Ext.create('Ext.data.Store', {
 				autoLoad: true,
-				fields: [CMDBuild.ServiceProxy.parameter.NAME],
+				fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
 				data: []
 			});
 
@@ -97,7 +97,7 @@
 		// overwrite
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
-				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
+				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.ID);
 
 				// Selected task asynchronous store query
 				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(this.taskType);
@@ -115,24 +115,24 @@
 							// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find a working fix, so i must set all fields manually
 
 							// Set step1 [0] datas
-							this.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-							this.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
-							this.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
+							this.delegateStep[0].setValueActive(record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE));
+							this.delegateStep[0].setValueDescription(record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION));
+							this.delegateStep[0].setValueId(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
 
 							// Set step2 [1] datas
-							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
-							this.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
+							this.delegateStep[1].setValueBase(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
 
 							// Set step3 [2] datas
 							this.delegateStep[2].setValueDataSourceConfiguration(
-								record.get(CMDBuild.ServiceProxy.parameter.DATASOURCE_TYPE),
-								record.get(CMDBuild.ServiceProxy.parameter.DATASOURCE_CONFIGURATION)
+								record.get(CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TYPE),
+								record.get(CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_CONFIGURATION)
 							);
 
 							// Set step4 [3] datas
 
 							// Set step5 [4] datas
-							this.delegateStep[4].setData(record.get(CMDBuild.ServiceProxy.parameter.ATTRIBUTE_MAPPING));
+							this.delegateStep[4].setData(record.get(CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_MAPPING));
 
 							// Set step6 [5] datas
 
@@ -151,17 +151,17 @@
 			var submitDatas = {};
 
 			// Validate before save
-			if (this.validate(formData[CMDBuild.ServiceProxy.parameter.ACTIVE])) {
+			if (this.validate(formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE])) {
 //				CMDBuild.LoadMask.get().show();
 
-				submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
-					formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
+					formData[CMDBuild.core.proxy.CMProxyConstants.CRON_INPUT_TYPE]
 				);
 
 				// Form submit values formatting
 					var attributeMappingData = this.delegateStep[4].getData();
 					if (!Ext.isEmpty(attributeMappingData))
-						submitDatas[CMDBuild.ServiceProxy.parameter.ATTRIBUTE_MAPPING] = Ext.encode(attributeMappingData);
+						submitDatas[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_MAPPING] = Ext.encode(attributeMappingData);
 
 					var dataSourceType = this.delegateStep[2].getTypeDataSource();
 					if (dataSourceType) {
@@ -169,27 +169,30 @@
 
 						switch (dataSourceType) {
 							case 'db': {
-								configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_ADDRESS] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_ADDRESS];
-								configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_NAME] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_NAME];
-								configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PASSWORD] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PASSWORD];
-								configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PORT] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_PORT];
-								configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_TYPE] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_TYPE];
-								configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_USERNAME] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_DB_USERNAME];
-								configurationObject[CMDBuild.ServiceProxy.parameter.DATASOURCE_TABLE_VIEW_PREFIX] = formData[CMDBuild.ServiceProxy.parameter.DATASOURCE_TABLE_VIEW_PREFIX];
+								configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_ADDRESS] = formData[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_ADDRESS];
+								configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_NAME] = formData[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_NAME];
+								configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_PASSWORD] = formData[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_PASSWORD];
+								configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_PORT] = formData[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_PORT];
+								configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_TYPE] = formData[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_TYPE];
+								configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_USERNAME] = formData[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_USERNAME];
+								configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TABLE_VIEW_PREFIX] = formData[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TABLE_VIEW_PREFIX];
+
+								if (!Ext.isEmpty(formData[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_INSATANCE_NAME]))
+									configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_INSATANCE_NAME] = formData[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_INSATANCE_NAME];
 							} break;
 
 							default:
 								throw 'CMTasksFormConnectorController: onSaveButtonClick() datasource type not recognized';
 						}
 
-						submitDatas[CMDBuild.ServiceProxy.parameter.DATASOURCE_TYPE] = dataSourceType;
-						submitDatas[CMDBuild.ServiceProxy.parameter.DATASOURCE_CONFIGURATION] = Ext.encode(configurationObject);
+						submitDatas[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TYPE] = dataSourceType;
+						submitDatas[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_CONFIGURATION] = Ext.encode(configurationObject);
 					}
 
 				// Data filtering to submit only right values
-				submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
-				submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
-				submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE];
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = formData[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ID] = formData[CMDBuild.core.proxy.CMProxyConstants.ID];
 _debug('Step 4 datas [3]');
 _debug(this.delegateStep[3].getData());
 _debug(Ext.encode(this.delegateStep[3].getData()));
@@ -203,7 +206,7 @@ _debug(Ext.encode(this.delegateStep[5].getData()));
 
 _debug(formData);
 _debug(submitDatas);
-				if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
+				if (Ext.isEmpty(formData[CMDBuild.core.proxy.CMProxyConstants.ID])) {
 					CMDBuild.core.proxy.CMProxyTasks.create({
 						type: this.taskType,
 						params: submitDatas,
@@ -250,16 +253,16 @@ _debug(submitDatas);
 			if (gridStore.count() > 0) {
 				gridStore.each(function(record, id) {
 					if (
-						!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
-						&& !CMDBuild.Utils.inArray(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME), this.delegateStep[3].getSelectedClassArray())
+						!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME))
+						&& !CMDBuild.Utils.inArray(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME), this.delegateStep[3].getSelectedClassArray())
 					)
-						record.set(CMDBuild.ServiceProxy.parameter.CLASS_NAME, '');
+						record.set(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, '');
 
 					if (
-						!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME))
-						&& !CMDBuild.Utils.inArray(record.get(CMDBuild.ServiceProxy.parameter.SOURCE_NAME), this.delegateStep[3].getSelectedSourceArray())
+						!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME))
+						&& !CMDBuild.Utils.inArray(record.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME), this.delegateStep[3].getSelectedSourceArray())
 					)
-						record.set(CMDBuild.ServiceProxy.parameter.SOURCE_NAME, '');
+						record.set(CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME, '');
 				}, this);
 			}
 		}

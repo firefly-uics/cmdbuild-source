@@ -122,7 +122,7 @@
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: CMDBuild.Translation.administration.tasks.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.ServiceProxy.parameter.TYPE,
+				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 				value: tr.tasksTypes.email,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				disabled: true,
@@ -132,11 +132,11 @@
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.ServiceProxy.parameter.ID
+				name: CMDBuild.core.proxy.CMProxyConstants.ID
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
@@ -144,19 +144,19 @@
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
+				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
 
 			this.emailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT,
+				name: CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT,
 				fieldLabel: tr.taskEmail.emailAccount,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
-				displayField: CMDBuild.ServiceProxy.parameter.NAME,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				forceSelection: true,
 				editable: false
@@ -167,7 +167,7 @@
 					fieldLabel: tr.taskEmail.fromAddressFilter
 				},
 				textarea: {
-					name: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS,
+					name: CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS,
 					id: 'FromAddresFilterField'
 				},
 				button: {
@@ -180,7 +180,7 @@
 					fieldLabel: tr.taskEmail.subjectFilter
 				},
 				textarea: {
-					name: CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT,
+					name: CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT,
 					id: 'SubjectFilterField'
 				},
 				button: {

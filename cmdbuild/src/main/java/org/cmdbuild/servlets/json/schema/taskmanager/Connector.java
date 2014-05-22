@@ -446,13 +446,13 @@ public class Connector extends JSONBaseWithSpringContext {
 				final JsonNode jsonNode = objectMapper.readTree(json);
 				return SqlSourceConfiguration.newInstance() //
 						.withType(JsonSqlSourceHandler.of(jsonNode.get(DATA_SOURCE_DB_TYPE).asText()).server) //
-						.withHost(jsonNode.get(DATA_SOURCE_DB_ADDRESS).asText()) //
-						.withPort(jsonNode.get(DATA_SOURCE_DB_PORT).asInt()) //
-						.withDatabase(jsonNode.get(DATA_SOURCE_DB_NAME).asText()) //
-						.withInstance(jsonNode.get(DATA_SOURCE_INSTANCE).asText()) //
-						.withUsername(jsonNode.get(DATA_SOURCE_DB_USERNAME).asText()) //
-						.withPassword(jsonNode.get(DATA_SOURCE_DB_PASSWORD).asText()) //
-						.withFilter(jsonNode.get(DATA_SOURCE_DB_FILTER).asText()) //
+						.withHost(textOf(jsonNode, DATA_SOURCE_DB_ADDRESS)) //
+						.withPort(integerOf(jsonNode, DATA_SOURCE_DB_PORT)) //
+						.withDatabase(textOf(jsonNode, DATA_SOURCE_DB_NAME)) //
+						.withInstance(textOf(jsonNode, DATA_SOURCE_INSTANCE)) //
+						.withUsername(textOf(jsonNode, DATA_SOURCE_DB_USERNAME)) //
+						.withPassword(textOf(jsonNode, DATA_SOURCE_DB_PASSWORD)) //
+						.withFilter(textOf(jsonNode, DATA_SOURCE_DB_FILTER)) //
 						.build();
 			}
 
@@ -466,6 +466,14 @@ public class Connector extends JSONBaseWithSpringContext {
 
 		}, //
 		;
+
+		private static String textOf(JsonNode node, String name) {
+			return node.has(name) ? node.get(name).asText() : null;
+		}
+
+		private static Integer integerOf(JsonNode node, String name) {
+			return node.has(name) ? node.get(name).asInt() : null;
+		}
 
 		private static final ObjectMapper objectMapper = new ObjectMapper();
 

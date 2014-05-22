@@ -74,7 +74,7 @@
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.ServiceProxy.parameter.TYPE,
+				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 				value: tr.tasksTypes.event + ' ' + tr.tasksTypes.eventTypes.asynchronous.toLowerCase(),
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				disabled: true,
@@ -84,11 +84,11 @@
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.ServiceProxy.parameter.ID
+				name: CMDBuild.core.proxy.CMProxyConstants.ID
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
@@ -96,19 +96,19 @@
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
+				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: tr.startOnSave,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.CFG_BIG_FIELD_WIDTH
 			});
 
 			this.className = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
+				name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				store: _CMCache.getClassesStore(),
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
 				allowBlank: false,
@@ -117,7 +117,7 @@
 
 				listeners: {
 					select: function(combo, records, options) {
-						me.delegate.cmOn('onClassSelected', { className: records[0].get(CMDBuild.ServiceProxy.parameter.NAME) });
+						me.delegate.cmOn('onClassSelected', { className: this.getValue() });
 					}
 				}
 			});

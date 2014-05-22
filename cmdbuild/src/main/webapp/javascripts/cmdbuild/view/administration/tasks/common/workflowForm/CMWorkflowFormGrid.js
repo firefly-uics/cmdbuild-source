@@ -18,8 +18,8 @@
 
 			this.keyEditorConfig = {
 				xtype: 'combo',
-				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
-				displayField: CMDBuild.ServiceProxy.parameter.VALUE,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
 				forceSelection: true,
 				editable: false,
 				allowBlank: false,
