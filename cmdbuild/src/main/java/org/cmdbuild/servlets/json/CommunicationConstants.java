@@ -51,6 +51,7 @@ public class CommunicationConstants {
 			DATA_SOURCE_DB_PORT = "dataSourceDbPort", //
 			DATA_SOURCE_DB_TYPE = "dataSourceDbType", //
 			DATA_SOURCE_DB_USERNAME = "dataSourceDbUsername", //
+			DATA_SOURCE_INSTANCE = "dataSourceInstance", //
 			DATA_SOURCE_TYPE = "dataSourceType", //
 			DATA_SOURCE_TYPE_SQL = "db", //
 			DB_NAME = "db_name", //
