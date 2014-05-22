@@ -27,14 +27,18 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_TYPE
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_KEY;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MYSQL_LABEL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ORACLE_LABEL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.POSTGRESQL_LABEL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_ATTRIBUTE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SQLSERVER_LABEL;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
@@ -61,6 +65,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 public class Connector extends JSONBaseWithSpringContext {
 
@@ -69,11 +74,11 @@ public class Connector extends JSONBaseWithSpringContext {
 
 	private static enum JsonSqlSourceHandler {
 
-		MYSQL(CommunicationConstants.MYSQL, mysql()), //
-		ORACLE(CommunicationConstants.ORACLE, oracle()), //
-		POSTGRES(CommunicationConstants.POSTGRESQL, postgresql()), //
-		SQLSERVER(CommunicationConstants.SQLSERVER, sqlserver()), //
-		UNKNOWN(null, null);
+		MYSQL(CommunicationConstants.MYSQL, mysql(), MYSQL_LABEL), //
+		ORACLE(CommunicationConstants.ORACLE, oracle(), ORACLE_LABEL), //
+		POSTGRES(CommunicationConstants.POSTGRESQL, postgresql(), POSTGRESQL_LABEL), //
+		SQLSERVER(CommunicationConstants.SQLSERVER, sqlserver(), SQLSERVER_LABEL), //
+		UNKNOWN(null, null, null);
 		;
 
 		public static JsonSqlSourceHandler of(final String client) {
@@ -96,10 +101,12 @@ public class Connector extends JSONBaseWithSpringContext {
 
 		public final String client;
 		public final DataSourceType server;
+		public final String label;
 
-		private JsonSqlSourceHandler(final String client, final DataSourceType server) {
+		private JsonSqlSourceHandler(final String client, final DataSourceType server, final String label) {
 			this.client = client;
 			this.server = server;
+			this.label = label;
 		}
 
 	}
@@ -341,21 +348,14 @@ public class Connector extends JSONBaseWithSpringContext {
 	private static final TypeReference<Set<? extends JsonAttributeMapping>> JSON_ATTRIBUTE_MAPPINGS_TYPE_REFERENCE = new TypeReference<Set<? extends JsonAttributeMapping>>() {
 	};
 
-	private static final Function<DataSourceType, String> DATA_SOURCE_TYPE_TO_STRING = new Function<DataSourceType, String>() {
-
-		@Override
-		public String apply(DataSourceType input) {
-			return JsonSqlSourceHandler.of(input).client;
-		}
-
-	};
-
 	@Admin
 	@JSONExported
 	public JsonResponse availableSqlSources() {
-		final Collection<String> availableTypes = from(dataSourceHelper().getAvailableTypes()) //
-				.transform(DATA_SOURCE_TYPE_TO_STRING) //
-				.toSet();
+		final Map<String, String> availableTypes = Maps.newHashMap();
+		for (final DataSourceType element : dataSourceHelper().getAvailableTypes()) {
+			final JsonSqlSourceHandler handler = JsonSqlSourceHandler.of(element);
+			availableTypes.put(handler.client, handler.label);
+		}
 		return JsonResponse.success(availableTypes);
 	}
 
