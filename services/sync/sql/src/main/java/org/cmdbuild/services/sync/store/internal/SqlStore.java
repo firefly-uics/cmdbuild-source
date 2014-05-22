@@ -101,6 +101,7 @@ public class SqlStore implements Store {
 							for (final AttributeMapping attributeMapping : typeMapping.getAttributeMappings()) {
 								builder.withValue(attributeMapping.to(), rs.getObject(attributeMapping.from()));
 							}
+							entries.add(builder.build());
 						}
 					}
 

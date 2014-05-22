@@ -75,7 +75,7 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 				final String typeName = attributeMapping.getTargetType();
 				ClassType.Builder typeBuilder = typeBuildersByName.get(typeName);
 				if (typeBuilder == null) {
-					typeBuilder = ClassType.newInstance();
+					typeBuilder = ClassType.newInstance().withName(typeName);
 					typeBuildersByName.put(typeName, typeBuilder);
 				}
 				typeBuilder.withAttribute(SimpleAttribute.newInstance() //

@@ -11,6 +11,7 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.CMCard;
@@ -24,6 +25,7 @@ import org.cmdbuild.services.sync.store.Store;
 import org.cmdbuild.services.sync.store.Type;
 import org.cmdbuild.services.sync.store.TypeVisitor;
 
+import com.google.common.base.Predicate;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -63,6 +65,25 @@ public class InternalStore implements Store {
 
 	public static Builder newInstance() {
 		return new Builder();
+	}
+
+	private static class AttributesOfType implements Predicate<Map.Entry<String, ? extends Object>> {
+
+		public static AttributesOfType of(final Type type) {
+			return new AttributesOfType(type);
+		}
+
+		private final Type type;
+
+		private AttributesOfType(final Type type) {
+			this.type = type;
+		}
+
+		@Override
+		public boolean apply(final Map.Entry<String, ? extends Object> input) {
+			return (type.getAttribute(input.getKey()) != null);
+		}
+
 	}
 
 	private static abstract class Action<T> {
@@ -136,7 +157,8 @@ public class InternalStore implements Store {
 			for (final CMCard card : cards) {
 				final CardEntry entry = CardEntry.newInstance() //
 						.withType(type) //
-						.withValues(card.getAllValues()) //
+						.withValues(from(card.getAllValues()) //
+								.filter(AttributesOfType.of(type))) //
 						.build();
 				cache.put(entry.getKey(), card.getId());
 				entries.add(entry);

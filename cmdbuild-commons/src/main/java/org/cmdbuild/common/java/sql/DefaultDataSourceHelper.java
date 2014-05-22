@@ -107,7 +107,7 @@ public class DefaultDataSourceHelper implements DataSourceHelper {
 
 			public DataSource create() {
 				configuration.getType().accept(this);
-				Validate.notNull(dataSource, "creation error for type '{}'", configuration.getType());
+				Validate.notNull(dataSource, "creation error for type '%s'", configuration.getType());
 				return dataSource;
 			}
 
@@ -119,6 +119,7 @@ public class DefaultDataSourceHelper implements DataSourceHelper {
 				dataSource.setDatabaseName(configuration.getDatabase());
 				dataSource.setUser(configuration.getUsername());
 				dataSource.setPassword(configuration.getPassword());
+				this.dataSource = dataSource;
 			}
 
 			@Override
@@ -154,6 +155,7 @@ public class DefaultDataSourceHelper implements DataSourceHelper {
 				dataSource.setDatabaseName(configuration.getDatabase());
 				dataSource.setUser(configuration.getUsername());
 				dataSource.setPassword(configuration.getPassword());
+				this.dataSource = dataSource;
 			}
 
 			@Override
@@ -167,6 +169,7 @@ public class DefaultDataSourceHelper implements DataSourceHelper {
 				}
 				dataSource.setUser(configuration.getUsername());
 				dataSource.setPassword(configuration.getPassword());
+				this.dataSource = dataSource;
 			}
 
 		}.create();
