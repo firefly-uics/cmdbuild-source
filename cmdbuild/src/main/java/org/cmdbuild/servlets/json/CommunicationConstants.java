@@ -201,6 +201,7 @@ public class CommunicationConstants {
 			POSITION = "position", //
 			POSTGRESQL = "postgresql", //
 			PRECISION = "precision", //
+			QUERY = "query", //
 			REJECTED_FOLDER = "rejectedFolder", //
 			REJECT_NOT_MATCHING = "rejectNotMatching", //
 			RELATION_ID = "relationId", //
@@ -216,6 +217,7 @@ public class CommunicationConstants {
 			TABLE_TYPE = "tableType", //
 			TEMPLATE = "template", //
 			TEMPLATES = "templates", //
+			TITLE = "title", //
 			TO = "to", //
 			TYPE = "type", //
 			TYPES = "types", //

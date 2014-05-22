@@ -24,6 +24,7 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 	@JsonProperty("id")
 	private String identifier;
 	private String label;
+	private String label_default;
 	private boolean active;
 	private boolean alwaysenabled;
 	@JsonIgnore
@@ -94,6 +95,14 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 	@Override
 	public final String getLabel() {
 		return label;
+	}
+	
+	public String getLabel_default() {
+		return label_default;
+	}
+	
+	public void setLabel_default(String label_default) {
+		this.label_default = label_default;
 	}
 
 	public final void setActive(final boolean active) {

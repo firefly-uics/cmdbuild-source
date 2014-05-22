@@ -152,10 +152,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final WidgetTranslation translationObject = new WidgetTranslation();
-		translationObject.setName(widgetId);
-		translationObject.setField(field);
-		translationObject.setTranslations(toMap(translations));
+		final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
+				.withName(widgetId) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().create(translationObject);
 	}
 
@@ -194,10 +195,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final ReportTranslation translationObject = new ReportTranslation();
-		translationObject.setName(reportName);
-		translationObject.setField(field);
-		translationObject.setTranslations(toMap(translations));
+		final ReportTranslation translationObject = ReportTranslation.newInstance() //
+				.withField(field) //
+				.withName(reportName) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().create(translationObject);
 	}
 
@@ -332,9 +334,10 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = WIDGET_ID) final String widgetId, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final WidgetTranslation translationObject = new WidgetTranslation();
-		translationObject.setName(widgetId);
-		translationObject.setField(field);
+		final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
+				.withName(widgetId) //
+				.withField(field) //
+				.build();
 		final Map<String, String> translations = translationLogic().read(translationObject);
 		return JsonResponse.success(translations);
 	}
@@ -371,9 +374,10 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = REPORTNAME) final String reportName, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final ReportTranslation translationObject = new ReportTranslation();
-		translationObject.setName(reportName);
-		translationObject.setField(field);
+		final ReportTranslation translationObject = ReportTranslation.newInstance() //
+				.withField(field) //
+				.withName(reportName) //
+				.build();
 		final Map<String, String> translations = translationLogic().read(translationObject);
 		return JsonResponse.success(translations);
 	}
@@ -520,10 +524,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final WidgetTranslation translationObject = new WidgetTranslation();
-		translationObject.setName(widgetId);
-		translationObject.setField(field);
-		translationObject.setTranslations(toMap(translations));
+		final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
+				.withName(widgetId) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().update(translationObject);
 	}
 
@@ -562,10 +567,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final ReportTranslation translationObject = new ReportTranslation();
-		translationObject.setName(reportName);
-		translationObject.setField(field);
-		translationObject.setTranslations(toMap(translations));
+		final ReportTranslation translationObject = ReportTranslation.newInstance() //
+				.withField(field) //
+				.withName(reportName) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().update(translationObject);
 	}
 
@@ -709,10 +715,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final WidgetTranslation translationObject = new WidgetTranslation();
-		translationObject.setName(widgetId);
-		translationObject.setField(field);
-		translationObject.setTranslations(toMap(translations));
+		final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
+				.withName(widgetId) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().delete(translationObject);
 	}
 
@@ -751,10 +758,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final ReportTranslation translationObject = new ReportTranslation();
-		translationObject.setName(reportName);
-		translationObject.setField(field);
-		translationObject.setTranslations(toMap(translations));
+		final ReportTranslation translationObject = ReportTranslation.newInstance() //
+				.withField(field) //
+				.withName(reportName) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().delete(translationObject);
 	}
 
