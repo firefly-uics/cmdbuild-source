@@ -3,11 +3,11 @@ package org.cmdbuild.servlets.json.schema.taskmanager;
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.cmdbuild.common.java.sql.DataSourceTypes.mysql;
+import static org.cmdbuild.common.java.sql.DataSourceTypes.oracle;
+import static org.cmdbuild.common.java.sql.DataSourceTypes.postgresql;
+import static org.cmdbuild.common.java.sql.DataSourceTypes.sqlserver;
 import static org.cmdbuild.logic.taskmanager.ConnectorTask.NULL_SOURCE_CONFIGURATION;
-import static org.cmdbuild.logic.taskmanager.ConnectorTask.MySqlSourceType.mysql;
-import static org.cmdbuild.logic.taskmanager.ConnectorTask.OracleSourceType.oracle;
-import static org.cmdbuild.logic.taskmanager.ConnectorTask.PostgreSqlSourceType.postgresql;
-import static org.cmdbuild.logic.taskmanager.ConnectorTask.SqlServerSourceType.sqlserver;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTE_MAPPING;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ATTRIBUTE;
@@ -21,6 +21,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_DB_P
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_DB_PORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_DB_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_DB_USERNAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_INSTANCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_TYPE_SQL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
@@ -31,6 +32,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_NAME;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -39,12 +41,12 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceType;
 import org.cmdbuild.logic.taskmanager.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfiguration;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfigurationVisitor;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
-import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceType;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.CommunicationConstants;
@@ -83,7 +85,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			return UNKNOWN;
 		}
 
-		public static JsonSqlSourceHandler of(final SqlSourceType type) {
+		public static JsonSqlSourceHandler of(final DataSourceType type) {
 			for (final JsonSqlSourceHandler value : values()) {
 				if (ObjectUtils.equals(value.server, type)) {
 					return value;
@@ -93,9 +95,9 @@ public class Connector extends JSONBaseWithSpringContext {
 		}
 
 		public final String client;
-		public final SqlSourceType server;
+		public final DataSourceType server;
 
-		private JsonSqlSourceHandler(final String client, final SqlSourceType server) {
+		private JsonSqlSourceHandler(final String client, final DataSourceType server) {
 			this.client = client;
 			this.server = server;
 		}
@@ -339,6 +341,24 @@ public class Connector extends JSONBaseWithSpringContext {
 	private static final TypeReference<Set<? extends JsonAttributeMapping>> JSON_ATTRIBUTE_MAPPINGS_TYPE_REFERENCE = new TypeReference<Set<? extends JsonAttributeMapping>>() {
 	};
 
+	private static final Function<DataSourceType, String> DATA_SOURCE_TYPE_TO_STRING = new Function<DataSourceType, String>() {
+
+		@Override
+		public String apply(DataSourceType input) {
+			return JsonSqlSourceHandler.of(input).client;
+		}
+
+	};
+
+	@Admin
+	@JSONExported
+	public JsonResponse availableSqlSources() {
+		final Collection<String> availableTypes = from(dataSourceHelper().getAvailableTypes()) //
+				.transform(DATA_SOURCE_TYPE_TO_STRING) //
+				.toSet();
+		return JsonResponse.success(availableTypes);
+	}
+
 	@Admin
 	@JSONExported
 	public JsonResponse create( //
@@ -428,6 +448,7 @@ public class Connector extends JSONBaseWithSpringContext {
 						.withHost(jsonNode.get(DATA_SOURCE_DB_ADDRESS).asText()) //
 						.withPort(jsonNode.get(DATA_SOURCE_DB_PORT).asInt()) //
 						.withDatabase(jsonNode.get(DATA_SOURCE_DB_NAME).asText()) //
+						.withInstance(jsonNode.get(DATA_SOURCE_INSTANCE).asText()) //
 						.withUsername(jsonNode.get(DATA_SOURCE_DB_USERNAME).asText()) //
 						.withPassword(jsonNode.get(DATA_SOURCE_DB_PASSWORD).asText()) //
 						.withFilter(jsonNode.get(DATA_SOURCE_DB_FILTER).asText()) //
