@@ -31,12 +31,16 @@ import org.cmdbuild.logic.translation.LookupTranslation;
 import org.cmdbuild.logic.translation.ReportTranslation;
 import org.cmdbuild.logic.translation.SqlViewTranslation;
 import org.cmdbuild.logic.translation.WidgetTranslation;
+import org.cmdbuild.services.CustomFilesStore;
+import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONObject;
 
 public class Translation extends JSONBaseWithSpringContext {
+
+	private static final FilesStore iconsFileStore = new CustomFilesStore();
 
 	@JSONExported
 	@Admin
@@ -139,10 +143,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final FilterTranslation translation = new FilterTranslation();
-		translation.setName(filterName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final FilterTranslation translation = FilterTranslation.newInstance() //
+				.withField(field) //
+				.withName(filterName) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().create(translation);
 
 	}
@@ -240,12 +245,13 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final GisIconTranslation translation = new GisIconTranslation();
-		translation.setName(iconName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final String description = iconsFileStore.removeExtension(iconName);
+		final GisIconTranslation translation = GisIconTranslation.newInstance() //
+				.withName(description) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().create(translation);
-
 	}
 
 	@JSONExported
@@ -341,9 +347,10 @@ public class Translation extends JSONBaseWithSpringContext {
 	public JsonResponse readForFilter( //
 			@Parameter(value = FILTERNAME) final String filterName, //
 			@Parameter(value = FIELD) final String field) {
-		final FilterTranslation translation = new FilterTranslation();
-		translation.setName(filterName);
-		translation.setField(field);
+		final FilterTranslation translation = FilterTranslation.newInstance() //
+				.withField(field) //
+				.withName(filterName) //
+				.build();
 		final Map<String, String> translations = translationLogic().read(translation);
 		return JsonResponse.success(translations);
 
@@ -435,12 +442,14 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = ICONNAME) final String iconName, //
 			@Parameter(value = FIELD) final String field //
 	) {
-		final GisIconTranslation translation = new GisIconTranslation();
-		translation.setName(iconName);
-		translation.setField(field);
+		final String description = iconsFileStore.removeExtension(iconName);
+		final GisIconTranslation translation = GisIconTranslation.newInstance() //
+				.withName(description) //
+				.withField(field) //
+				.build();
+		translationLogic().create(translation);
 		final Map<String, String> translations = translationLogic().read(translation);
 		return JsonResponse.success(translations);
-
 	}
 
 	/*
@@ -547,10 +556,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final FilterTranslation translation = new FilterTranslation();
-		translation.setName(filterName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final FilterTranslation translation = FilterTranslation.newInstance() //
+				.withField(field) //
+				.withName(filterName) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().update(translation);
 
 	}
@@ -647,10 +657,12 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final GisIconTranslation translation = new GisIconTranslation();
-		translation.setName(iconName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final String description = iconsFileStore.removeExtension(iconName);
+		final GisIconTranslation translation = GisIconTranslation.newInstance() //
+				.withName(description) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().update(translation);
 	}
 
@@ -753,10 +765,11 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final FilterTranslation translation = new FilterTranslation();
-		translation.setName(filterName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
+		final FilterTranslation translation = FilterTranslation.newInstance() //
+				.withField(field) //
+				.withName(filterName) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().delete(translation);
 
 	}
@@ -855,12 +868,14 @@ public class Translation extends JSONBaseWithSpringContext {
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
-		final GisIconTranslation translation = new GisIconTranslation();
-		translation.setName(iconName);
-		translation.setField(field);
-		translation.setTranslations(toMap(translations));
-		translationLogic().delete(translation);
 
+		final String description = iconsFileStore.removeExtension(iconName);
+		final GisIconTranslation translation = GisIconTranslation.newInstance() //
+				.withName(description) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
+		translationLogic().delete(translation);
 	}
 
 }
