@@ -77,10 +77,10 @@
 			this.fireEvent(this.CMEVENTS.cloneCard);
 		},
 
-		changeClassUIConfigurationForGroup: function(disabledForGroupButtons) {
-			this.view.form.modifyCardButton.disabledForGroup = disabledForGroupButtons.modify;
-			this.view.form.cloneCardButton.disabledForGroup = disabledForGroupButtons.clone;
-			this.view.form.deleteCardButton.disabledForGroup = disabledForGroupButtons.remove;
+		changeClassUIConfigurationForGroup: function(disabledModify, disabledClone, disabledRemove) {
+			this.view.form.modifyCardButton.disabledForGroup = disabledModify;
+			this.view.form.cloneCardButton.disabledForGroup = disabledClone;
+			this.view.form.deleteCardButton.disabledForGroup = disabledRemove;
 			if (this.view.form.modifyCardButton.disabledForGroup)
 				this.view.form.modifyCardButton.disable();
 			else

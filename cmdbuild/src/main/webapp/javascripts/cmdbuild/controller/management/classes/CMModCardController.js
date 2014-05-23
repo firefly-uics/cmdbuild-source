@@ -135,22 +135,16 @@
 		},
 
 		changeClassUIConfigurationForGroup: function(classId) {
-			var me = this;
-			CMDBuild.ServiceProxy.group.loadClassUiConfiguration({
-				params: {
-					groupId: "",
-					classId: classId
-				},
-				success: function(operation, config, response) {
-					var disabledForGroupButtons = Ext.JSON.decode(response.response);
-					me.view.addCardButton.disabledForGroup = disabledForGroupButtons.create;
-					if (me.view.addCardButton.disabledForGroup)
-						me.view.addCardButton.disable();
-					else
-						me.view.addCardButton.enable();
-					me.cardPanelController.changeClassUIConfigurationForGroup(disabledForGroupButtons);
-				}
-			});
+			var privileges = _CMUtils.getClassPrivileges(classId);
+			this.view.addCardButton.disabledForGroup = ! (privileges.write && ! privileges.crudDisabled.create);
+			if (this.view.addCardButton.disabledForGroup)
+				this.view.addCardButton.disable();
+			else
+				this.view.addCardButton.enable();
+			this.cardPanelController.changeClassUIConfigurationForGroup(
+					! (privileges.write && ! privileges.crudDisabled.modify),
+					! (privileges.write && ! privileges.crudDisabled.clone),
+					! (privileges.write && ! privileges.crudDisabled.remove));
 		},
 
 		onGridVisible: function onCardGridVisible(visible, selection) {
@@ -221,8 +215,11 @@
 			me.mon(me.gridController, me.gridController.CMEVENTS.gridVisible, me.onGridVisible, me);
 			me.mon(me.gridController, me.gridController.CMEVENTS.load, me.onGridLoad, me);
 			me.mon(me.gridController, me.gridController.CMEVENTS.itemdblclick, function() {
-				me.cardPanelController.onModifyCardClick();
-				_CMUIState.onlyFormIfFullScreen();
+				var privileges = _CMUtils.getEntryTypePrivilegesByCard(me.cardPanelController.card);
+				if (! privileges.crudDisabled.modify) {
+					me.cardPanelController.onModifyCardClick();
+					_CMUIState.onlyFormIfFullScreen();
+				}
 			}, me);
 
 			me.subControllers.push(me.gridController);

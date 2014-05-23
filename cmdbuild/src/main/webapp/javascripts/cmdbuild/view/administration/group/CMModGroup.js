@@ -21,6 +21,7 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 			store: _CMProxy.group.getClassPrivilegesGridStore(),
 			actionURL: _CMProxy.url.privileges.classes.update,
 			withFilterEditor: true,
+			withCRUDPermission: true,
 			border: false
 		});
 
@@ -29,6 +30,7 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 			store:_CMProxy.group.getDataViewPrivilegesGridStore(),
 			actionURL: _CMProxy.url.privileges.dataView.update,
 			withPermissionWrite: false,
+			withCRUDPermission: false,
 			border: false
 		});
 
@@ -37,6 +39,7 @@ Ext.define("CMDBuild.view.administration.group.CMModGroup", {
 			store:_CMProxy.group.getFilterPrivilegesGridStore(),
 			actionURL: _CMProxy.url.privileges.filter.update,
 			withPermissionWrite: false,
+			withCRUDPermission: false,
 			border: false
 		});
 
