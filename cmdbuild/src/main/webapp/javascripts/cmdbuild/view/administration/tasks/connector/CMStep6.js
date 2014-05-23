@@ -36,7 +36,7 @@
 
 			this.view.referenceMappingGrid.columns[0].setEditor({
 				xtype: 'combo',
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				forceSelection: true,
 				editable: false,
@@ -74,7 +74,7 @@
 				if (domainStore.length > 0) {
 					this.view.referenceMappingGrid.columns[1].setEditor({
 						xtype: 'combo',
-						displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 						forceSelection: true,
 						editable: false,
@@ -82,7 +82,7 @@
 
 						store: Ext.create('Ext.data.Store', {
 							autoLoad: true,
-							fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+							fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
 							data: domainStore
 						}),
 

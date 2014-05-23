@@ -57,19 +57,15 @@
 		 * @return (Object) store
 		 */
 		getStoreFilteredClass: function() {
-			var classStore = CMDBuild.core.proxy.CMProxyTasks.getClassStore();
 			var store = Ext.create('Ext.data.Store', {
 				autoLoad: true,
-				fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+				fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
 				data: []
 			});
 
 			CMDBuild.core.proxy.CMProxyTasks.getClassStore().each(function(record, id) {
 				if (CMDBuild.Utils.inArray(record.get(CMDBuild.core.proxy.CMProxyConstants.NAME), this.delegateStep[3].getSelectedClassArray()))
-					store.add({
-						name: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
-						description: record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)
-					});
+					store.add({ name: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME) });
 			}, this);
 
 			return store;

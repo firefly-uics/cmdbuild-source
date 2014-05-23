@@ -126,7 +126,7 @@
 				{ name: CMDBuild.core.proxy.CMProxyConstants.CREATE, type: 'boolean', defaultValue: true },
 				{ name: CMDBuild.core.proxy.CMProxyConstants.UPDATE, type: 'boolean', defaultValue: true },
 				{ name: CMDBuild.core.proxy.CMProxyConstants.DELETE, type: 'boolean', defaultValue: true },
-				{ name: CMDBuild.core.proxy.CMProxyConstants.DELETION_TYPE, type: 'string' }
+				{ name: CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE, type: 'string' }
 			]
 		});
 
@@ -148,6 +148,16 @@
 			fields: [
 				{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string' },
 				{ name: CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME, type: 'string' }
+			]
+		});
+
+	// Workflow form
+		Ext.define('CMDBuild.model.CMModelTasks.common.workflowForm', {
+			extend: 'Ext.data.Model',
+
+			fields: [
+				{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.VALUE, type: 'string' }
 			]
 		});
 })();
