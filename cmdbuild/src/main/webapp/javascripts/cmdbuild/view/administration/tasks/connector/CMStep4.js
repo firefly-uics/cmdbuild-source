@@ -71,6 +71,12 @@
 
 						buffer[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME);
 						buffer[CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME);
+						buffer[CMDBuild.core.proxy.CMProxyConstants.CREATE] = record.get(CMDBuild.core.proxy.CMProxyConstants.CREATE);
+						buffer[CMDBuild.core.proxy.CMProxyConstants.UPDATE] = record.get(CMDBuild.core.proxy.CMProxyConstants.UPDATE);
+						buffer[CMDBuild.core.proxy.CMProxyConstants.DELETE] = record.get(CMDBuild.core.proxy.CMProxyConstants.DELETE);
+
+						if (buffer[CMDBuild.core.proxy.CMProxyConstants.DELETE])
+							buffer[CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE] = record.get(CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE);
 
 						data.push(buffer);
 					}
@@ -124,7 +130,7 @@
 		 */
 		onCheckDelete: function(checked, rowIndex) {
 			if (!checked)
-				this.view.classLevelMappingGrid.getStore().getAt(rowIndex).set(CMDBuild.core.proxy.CMProxyConstants.DELETION_TYPE, '');
+				this.view.classLevelMappingGrid.getStore().getAt(rowIndex).set(CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE, '');
 		},
 
 		/**
@@ -135,7 +141,7 @@
 		 */
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
-				case CMDBuild.core.proxy.CMProxyConstants.DELETION_TYPE: {
+				case CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE: {
 					if (rowData[CMDBuild.core.proxy.CMProxyConstants.DELETE]) {
 						this.buildDeletionTypeCombo();
 					} else {
@@ -169,6 +175,7 @@
 //			/**
 //			 * @param (Object) data
 //			 */
+// TODO
 //			setData: function(data) {
 //				this.view.classLevelMappingGrid.getStore().loadData(data);
 //			},
@@ -298,7 +305,7 @@
 					},
 					{
 						header: tr.deletionType,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETION_TYPE,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE,
 						editor: {
 							xtype: 'combo',
 							disabled: true

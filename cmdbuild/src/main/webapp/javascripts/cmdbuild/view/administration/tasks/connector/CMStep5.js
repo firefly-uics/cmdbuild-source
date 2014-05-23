@@ -36,7 +36,7 @@
 
 			this.view.attributeLevelMappingGrid.columns[2].setEditor({
 				xtype: 'combo',
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				forceSelection: true,
 				editable: false,
@@ -73,7 +73,7 @@
 
 				this.view.attributeLevelMappingGrid.columns[3].setEditor({
 					xtype: 'combo',
-					displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 					valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 					forceSelection: true,
 					editable: false,
@@ -81,9 +81,10 @@
 
 					store: Ext.create('Ext.data.Store', {
 						autoLoad: true,
-						fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+						fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
 						data: attributesListStore[0]
 					}),
+					queryMode: 'local',
 
 					listeners: {
 						select: function(combo, records, eOpts) {
