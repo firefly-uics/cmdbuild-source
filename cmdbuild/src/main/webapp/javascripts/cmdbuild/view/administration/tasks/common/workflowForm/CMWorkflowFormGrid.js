@@ -3,7 +3,7 @@
 	var tr = CMDBuild.Translation.administration.tasks.workflowForm;
 
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid', {
-		extend: 'CMDBuild.view.administration.common.CMDynamicKeyValueGrid',
+		extend: 'Ext.grid.Panel',
 
 		delegate: undefined,
 
@@ -11,7 +11,11 @@
 		considerAsFieldToDisable: true,
 		margin: '0 0 5 0',
 
-		plugins: Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGridEditorPlugin'),
+		plugins: [
+			Ext.create('Ext.grid.plugin.CellEditing', {
+				clicksToEdit: 1
+			})
+		],
 
 		columns: [
 			{
@@ -19,7 +23,7 @@
 				dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				flex: 1,
 
-				editor: { xtype: 'textfield' }
+				editor: { xtype: 'combo' }
 			},
 			{
 				header: CMDBuild.Translation.value,
@@ -42,7 +46,7 @@
 						icon: 'images/icons/cross.png',
 						tooltip: CMDBuild.Translation.administration.modClass.attributeProperties.meta.remove,
 						handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-							me.store.remove(record);
+							grid.store.remove(record);
 						}
 					}
 				]
@@ -54,15 +58,21 @@
 			data: []
 		}),
 
-		tbar: [
-			{
-				text: CMDBuild.Translation.common.buttons.add,
-				iconCls: 'add',
-				handler: function() {
-					me.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.common.workflowForm'));
+		initComponent: function() {
+			var me = this;
+
+			this.tbar = [
+				{
+					text: CMDBuild.Translation.common.buttons.add,
+					iconCls: 'add',
+					handler: function() {
+						me.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.common.workflowForm'));
+					}
 				}
-			}
-		]
+			];
+
+			this.callParent(arguments);
+		}
 	});
 
 })();

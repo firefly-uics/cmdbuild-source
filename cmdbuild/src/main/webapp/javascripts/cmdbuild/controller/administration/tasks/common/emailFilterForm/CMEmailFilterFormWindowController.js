@@ -42,7 +42,7 @@
 			if (Ext.isEmpty(values))
 				values = [''];
 
-			for (key in values) {
+			for (var key in values) {
 				items.push({
 					frame: false,
 					border: false,
