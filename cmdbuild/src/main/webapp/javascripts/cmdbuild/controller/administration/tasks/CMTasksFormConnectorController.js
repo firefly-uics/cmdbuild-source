@@ -57,16 +57,15 @@
 		 * @return (Object) store
 		 */
 		getStoreFilteredClass: function() {
+			var selectedClassArray = this.delegateStep[3].getSelectedClassArray();
 			var store = Ext.create('Ext.data.Store', {
 				autoLoad: true,
 				fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
 				data: []
 			});
 
-			CMDBuild.core.proxy.CMProxyTasks.getClassStore().each(function(record, id) {
-				if (CMDBuild.Utils.inArray(record.get(CMDBuild.core.proxy.CMProxyConstants.NAME), this.delegateStep[3].getSelectedClassArray()))
-					store.add({ name: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME) });
-			}, this);
+			for (var item in selectedClassArray)
+				store.add({ name: selectedClassArray[item] });
 
 			return store;
 		},
@@ -77,15 +76,15 @@
 		 * @return (Object) store
 		 */
 		getStoreFilteredSource: function() {
-			var sourceArray = this.delegateStep[3].getSelectedSourceArray();
+			var selectedSourceArray = this.delegateStep[3].getSelectedSourceArray();
 			var store = Ext.create('Ext.data.Store', {
 				autoLoad: true,
 				fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
 				data: []
 			});
 
-			for(item in sourceArray)
-				store.add({ name: sourceArray[item] });
+			for (var item in selectedSourceArray)
+				store.add({ name: selectedSourceArray[item] });
 
 			return store;
 		},
@@ -126,6 +125,7 @@
 							);
 
 							// Set step4 [3] datas
+							this.delegateStep[3].setData(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_MAPPING));
 
 							// Set step5 [4] datas
 							this.delegateStep[4].setData(record.get(CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_MAPPING));
@@ -254,13 +254,13 @@ _debug(submitDatas);
 				gridStore.each(function(record, id) {
 					if (
 						!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME))
-						&& !CMDBuild.Utils.inArray(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME), this.delegateStep[3].getSelectedClassArray())
+						&& !Ext.Array.contains(this.delegateStep[3].getSelectedClassArray(), record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME))
 					)
 						record.set(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, '');
 
 					if (
 						!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME))
-						&& !CMDBuild.Utils.inArray(record.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME), this.delegateStep[3].getSelectedSourceArray())
+						&& !Ext.Array.contains(this.delegateStep[3].getSelectedSourceArray(), record.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME))
 					)
 						record.set(CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME, '');
 				}, this);

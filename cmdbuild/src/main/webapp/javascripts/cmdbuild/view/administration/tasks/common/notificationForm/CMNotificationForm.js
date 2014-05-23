@@ -39,7 +39,7 @@
 			this.delegate = Ext.create('CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController', this);
 
 			if (!Ext.isEmpty(configuration)) {
-				for (itemConfig in configuration) {
+				for (var itemConfig in configuration) {
 					if (
 						Ext.isEmpty(configuration[itemConfig])
 						|| this.notificationFieldType.indexOf(configuration[itemConfig].type) < 0
@@ -68,7 +68,7 @@
 			this.delegate.inputFields = []; // Delegate inputFields buffer reset
 
 			if (!Ext.isEmpty(this.inputFieldsConfiguration)) {
-				for (itemIndex in this.inputFieldsConfiguration) {
+				for (var itemIndex in this.inputFieldsConfiguration) {
 					var itemConfig = this.inputFieldsConfiguration[itemIndex];
 					var inputField = null;
 

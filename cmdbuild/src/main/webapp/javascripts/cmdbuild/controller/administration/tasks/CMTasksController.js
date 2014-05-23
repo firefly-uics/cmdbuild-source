@@ -158,7 +158,7 @@
 
 				var items = Ext.create('CMDBuild.view.administration.tasks.' + this.typeSerialize(type, 0) + '.CMTaskTabs');
 
-				for (key in items) {
+				for (var key in items) {
 					items[key].delegate.parentDelegate = this.form.delegate; // Controller relations propagation
 
 					this.form.delegate.delegateStep.push(items[key].delegate);
@@ -202,8 +202,9 @@
 			if (
 				!this.form.delegate
 				|| (this.form.delegate.taskType != selectedType)
-			)
+			) {
 				this.buildFormController(selectedType);
+			}
 
 			if (this.form.delegate)
 				this.form.delegate.cmOn(name, param, callBack);

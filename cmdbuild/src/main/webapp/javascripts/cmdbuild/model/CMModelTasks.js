@@ -35,6 +35,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
 
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_MAPPING, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_MAPPING, type: 'auto'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION, type: 'string'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_CONFIGURATION, type: 'auto'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TYPE, type: 'string' }
@@ -160,4 +161,5 @@
 				{ name: CMDBuild.core.proxy.CMProxyConstants.VALUE, type: 'string' }
 			]
 		});
+
 })();

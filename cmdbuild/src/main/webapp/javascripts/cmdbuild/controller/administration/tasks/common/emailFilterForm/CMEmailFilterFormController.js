@@ -49,7 +49,7 @@
 			if (typeof parameters == 'object') {
 				var filterString = '';
 
-				for (key in parameters) {
+				for (var key in parameters) {
 					if (!Ext.isEmpty(parameters[key])) {
 						if (!Ext.isEmpty(filterString))
 							filterString = filterString + this.getTextareaConcatParameter();

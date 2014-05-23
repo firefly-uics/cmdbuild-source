@@ -21,7 +21,7 @@
 		 */
 		callMethodForAllSubcontrollers: function(method, args) {
 			if (!Ext.isEmpty(this.subcontrollers)) {
-				for (item in this.subcontrollers) {
+				for (var item in this.subcontrollers) {
 					var subController = this.subcontrollers[item];
 
 					if (subController && typeof subController[method] == 'function')

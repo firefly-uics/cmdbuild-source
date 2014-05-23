@@ -35,7 +35,7 @@
 		isEmpty: function() {
 			var returnBoolean = true;
 
-			for (field in this.inputFields)
+			for (var field in this.inputFields)
 				if (!Ext.isEmpty(this.inputFields[field]))
 					returnBoolean = Ext.isEmpty(this.inputFields[field].getValue());
 
@@ -49,7 +49,7 @@
 			 * @param (Boolean) state
 			 */
 			setAllowBlankFields: function(state) {
-				for (field in this.inputFields)
+				for (var field in this.inputFields)
 					if (!Ext.isEmpty(this.inputFields[field]))
 						this.inputFields[field].allowBlank = state;
 			},

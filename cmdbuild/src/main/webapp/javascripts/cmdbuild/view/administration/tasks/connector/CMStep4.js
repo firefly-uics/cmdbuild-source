@@ -75,8 +75,9 @@
 						buffer[CMDBuild.core.proxy.CMProxyConstants.UPDATE] = record.get(CMDBuild.core.proxy.CMProxyConstants.UPDATE);
 						buffer[CMDBuild.core.proxy.CMProxyConstants.DELETE] = record.get(CMDBuild.core.proxy.CMProxyConstants.DELETE);
 
-						if (buffer[CMDBuild.core.proxy.CMProxyConstants.DELETE])
-							buffer[CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE] = record.get(CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE);
+//						// TODO: future implementation
+//						if (buffer[CMDBuild.core.proxy.CMProxyConstants.DELETE])
+//							buffer[CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE] = record.get(CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE);
 
 						data.push(buffer);
 					}
@@ -86,7 +87,7 @@
 			},
 
 			/**
-			 * Function used from next step to get all selected class names
+			 * Function used from next step to get all selected class names filtered from duplicates
 			 *
 			 * @return (Array) selectedClassArray
 			 */
@@ -95,13 +96,14 @@
 				var gridData = this.getData();
 
 				for (key in gridData)
-					selectedClassArray.push(gridData[key][CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
+					if (!Ext.Array.contains(selectedClassArray, gridData[key][CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]))
+						selectedClassArray.push(gridData[key][CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
 
 				return selectedClassArray;
 			},
 
 			/**
-			 * Function used from next step to get all selected source names
+			 * Function used from next step to get all selected source names filtered from duplicates
 			 *
 			 * @return (Array) selectedSourceArray
 			 */
@@ -109,8 +111,9 @@
 				var selectedSourceArray = [];
 				var gridData = this.getData();
 
-				for (key in gridData)
-					selectedSourceArray.push(gridData[key][CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME]);
+				for (var key in gridData)
+					if (!Ext.Array.contains(selectedSourceArray, gridData[key][CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME]))
+						selectedSourceArray.push(gridData[key][CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME]);
 
 				return selectedSourceArray;
 			},
@@ -172,13 +175,12 @@
 		},
 
 		// SETters functions
-//			/**
-//			 * @param (Object) data
-//			 */
-// TODO
-//			setData: function(data) {
-//				this.view.classLevelMappingGrid.getStore().loadData(data);
-//			},
+			/**
+			 * @param (Object) data
+			 */
+			setData: function(data) {
+				this.view.classLevelMappingGrid.getStore().loadData(data);
+			},
 
 			/**
 			 * @param (Boolean) state
