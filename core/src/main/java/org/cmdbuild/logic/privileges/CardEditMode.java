@@ -1,12 +1,17 @@
 package org.cmdbuild.logic.privileges;
 
+import static org.apache.commons.lang.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.UI_CARD_EDIT_MODE_ATTRIBUTE;
 
 import com.google.common.base.Function;
 
 public class CardEditMode {
 
-	private static final String CARD_EDIT_MODE_PERSISTENCE_FORMAT = "Create=%b,Modify=%b,Clone=%b,Remove=%b";
+	private static final String KEY_VALUE_SEPARATOR = "=";
+	private static final String ENTRY_SEPARATOR = ",";
+	private static final String CARD_EDIT_MODE_PERSISTENCE_FORMAT = "create=%b,modify=%b,clone=%b,remove=%b";
 	private final boolean allowCreate;
 	private final boolean allowUpdate;
 	private final boolean allowClone;
@@ -19,6 +24,10 @@ public class CardEditMode {
 		this.allowCreate = builder.allowCreate;
 		this.allowRemove = builder.allowRemove;
 		this.allowUpdate = builder.allowUpdate;
+	}
+
+	public boolean isAllowAll() {
+		return allowClone && allowCreate && allowRemove && allowUpdate;
 	}
 
 	public boolean isAllowCreate() {
@@ -75,16 +84,16 @@ public class CardEditMode {
 	}
 
 	public static Function<CardEditMode, String> LOGIC_TO_PERSISTENCE = new Function<CardEditMode, String>() {
+
 		@Override
 		public String apply(final CardEditMode input) {
 			String persistenceString = null;
-			if (input != null) {
-				persistenceString = String.format(CARD_EDIT_MODE_PERSISTENCE_FORMAT, //
-						input.isAllowCreate(), //
-						input.isAllowUpdate(), //
-						input.isAllowClone(), //
-						input.isAllowRemove());
-			}
+			final CardEditMode notNullInput = (CardEditMode) defaultIfNull(input, ALLOW_ALL);
+			persistenceString = String.format(CARD_EDIT_MODE_PERSISTENCE_FORMAT, //
+					notNullInput.isAllowCreate(), //
+					notNullInput.isAllowUpdate(), //
+					notNullInput.isAllowClone(), //
+					notNullInput.isAllowRemove());
 			return persistenceString;
 		}
 	};
@@ -94,13 +103,22 @@ public class CardEditMode {
 		public CardEditMode apply(final String input) {
 			CardEditMode cardEditMode = CardEditMode.ALLOW_ALL;
 			if (!isBlank(input)) {
-				final String[] modes = input.split(",");
-				cardEditMode = CardEditMode.newInstance() //
-						.isCreateAllowed(Boolean.parseBoolean(modes[0].split("=")[1])) //
-						.isUpdateAllowed(Boolean.parseBoolean(modes[1].split("=")[1])) //
-						.isCloneAllowed(Boolean.parseBoolean(modes[2].split("=")[1])) //
-						.isDeleteAllowed(Boolean.parseBoolean(modes[3].split("=")[1])) //
-						.build();
+				final String[] modes = input.split(ENTRY_SEPARATOR);
+				try {
+					cardEditMode = CardEditMode.newInstance() //
+							.isCreateAllowed(Boolean.parseBoolean(modes[0].split(KEY_VALUE_SEPARATOR)[1])) //
+							.isUpdateAllowed(Boolean.parseBoolean(modes[1].split(KEY_VALUE_SEPARATOR)[1])) //
+							.isCloneAllowed(Boolean.parseBoolean(modes[2].split(KEY_VALUE_SEPARATOR)[1])) //
+							.isDeleteAllowed(Boolean.parseBoolean(modes[3].split(KEY_VALUE_SEPARATOR)[1])) //
+							.build();
+				} catch (final Exception e) {
+					final String format = "Format '%s' not supported for '%s' attribute of '%s' table";
+					String.format(format, input, UI_CARD_EDIT_MODE_ATTRIBUTE, GRANT_CLASS_NAME);
+					throw new UnsupportedOperationException(String.format(format, //
+							input, //
+							UI_CARD_EDIT_MODE_ATTRIBUTE, //
+							GRANT_CLASS_NAME), e);
+				}
 			}
 			return cardEditMode;
 		}

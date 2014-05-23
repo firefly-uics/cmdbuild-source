@@ -1,6 +1,6 @@
 package org.cmdbuild.privileges.fetchers;
 
-import static org.cmdbuild.auth.privileges.constants.GrantConstants.ATTRIBUTES_PRIVILEGES_ATTRIBUTE;
+import static org.cmdbuild.auth.privileges.constants.GrantConstants.*;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GROUP_ID_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_CLASS_ID_ATTRIBUTE;
@@ -92,7 +92,7 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 	
 
 	private String extractCardEditMode(CMCard privilegeCard) {
-		return String.class.cast(privilegeCard.get("UI_CardEditMode"));
+		return String.class.cast(privilegeCard.get(UI_CARD_EDIT_MODE_ATTRIBUTE));
 	}
 
 	private String[] extractAttributesPrivileges(final CMCard privilegeCard) {

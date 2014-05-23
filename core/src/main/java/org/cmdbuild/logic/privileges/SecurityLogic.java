@@ -43,6 +43,7 @@ import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
+import org.cmdbuild.logic.privileges.PrivilegeInfo.Builder;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.profile.UIConfiguration;
 import org.cmdbuild.privileges.fetchers.PrivilegeFetcher;
@@ -359,22 +360,22 @@ public class SecurityLogic implements Logic {
 			mutableGrantCard.set(MODE_ATTRIBUTE, privilegeInfo.getMode().getValue()); //
 		}
 
+		final String persistenceCardEditMode = CardEditMode.LOGIC_TO_PERSISTENCE.apply(privilegeInfo.getCardEditMode());
+
 		mutableGrantCard //
 				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
 				.set(ATTRIBUTES_PRIVILEGES_ATTRIBUTE, privilegeInfo.getAttributesPrivileges()) //
-				.set(UI_CARD_EDIT_MODE_ATTRIBUTE,
-						CardEditMode.LOGIC_TO_PERSISTENCE.apply(privilegeInfo.getCardEditMode())).save();
+				.set(UI_CARD_EDIT_MODE_ATTRIBUTE, persistenceCardEditMode).save();
 	}
 
 	private void createClassGrantCard(final PrivilegeInfo privilegeInfo) {
 		final CMCardDefinition grantCardToBeCreated = view.createCardFor(grantClass);
 
 		// manage the null value for the privilege mode
-		// could happen updating row and column privileges
-		PrivilegeMode privilegeMode = privilegeInfo.getMode();
-		if (privilegeMode == null) {
-			privilegeMode = PrivilegeMode.NONE;
-		}
+		// it could happen updating row and column privileges
+		final PrivilegeMode privilegeMode = (PrivilegeMode) defaultIfNull(privilegeInfo.getMode(), PrivilegeMode.NONE);
+
+		final String persistenceCardEditMode = CardEditMode.LOGIC_TO_PERSISTENCE.apply(privilegeInfo.getCardEditMode());
 
 		grantCardToBeCreated //
 				.set(GROUP_ID_ATTRIBUTE, privilegeInfo.getGroupId()) //
@@ -384,8 +385,7 @@ public class SecurityLogic implements Logic {
 				.set(PRIVILEGE_FILTER_ATTRIBUTE, privilegeInfo.getPrivilegeFilter()) //
 				.set(ATTRIBUTES_PRIVILEGES_ATTRIBUTE, privilegeInfo.getAttributesPrivileges()) //
 				.set(STATUS_ATTRIBUTE, CardStatus.ACTIVE.value()) //
-				.set(UI_CARD_EDIT_MODE_ATTRIBUTE,
-						CardEditMode.LOGIC_TO_PERSISTENCE.apply(privilegeInfo.getCardEditMode())) //
+				.set(UI_CARD_EDIT_MODE_ATTRIBUTE, persistenceCardEditMode) //
 				.save();
 	}
 
@@ -495,34 +495,23 @@ public class SecurityLogic implements Logic {
 		} else {
 			final CMCard privilegeCard = _privilegeCard.get();
 			final PrivilegeMode classMode = PrivilegeMode.of(privilegeCard.get(MODE_ATTRIBUTE));
-			final String[] attributesPrivileges = (String[]) privilegeCard.get(ATTRIBUTES_PRIVILEGES_ATTRIBUTE);
-			// TODO find a nicer solution :/
-			final SerializablePrivilege privilegeObject = new SerializablePrivilege() {
+			final Object attributesPrivileges = privilegeCard.get(ATTRIBUTES_PRIVILEGES_ATTRIBUTE);
+			final Object privilegeFilter = privilegeCard.get(PRIVILEGE_FILTER_ATTRIBUTE);
+			final SerializablePrivilege privilegeObject = privilegeObjectFromId(privilegeInfoToSave
+					.getPrivilegedObjectId());
 
-				@Override
-				public String getPrivilegeId() {
-					throw new UnsupportedOperationException();
-				}
-
-				@Override
-				public String getName() {
-					throw new UnsupportedOperationException();
-				}
-
-				@Override
-				public Long getId() {
-					return privilegeInfoToSave.getPrivilegedObjectId();
-				}
-
-				@Override
-				public String getDescription() {
-					throw new UnsupportedOperationException();
-				}
-			};
-			final PrivilegeInfo privilegeToUpdate = new PrivilegeInfo(privilegeInfoToSave.getGroupId(), //
-					privilegeObject, classMode, privilegeInfoToSave.getCardEditMode());
-			privilegeToUpdate.setAttributesPrivileges(attributesPrivileges);
-
+			Builder privilegeBuilder = PrivilegeInfo.newInstance() //
+					.withGroupId(privilegeInfoToSave.getGroupId()) //
+					.withPrivilegedObject(privilegeObject) //
+					.withPrivilegeMode(classMode) //
+					.withCardEditMode(privilegeInfoToSave.getCardEditMode());
+			if (attributesPrivileges != null) {
+				privilegeBuilder = privilegeBuilder.withAttributesPrivileges((String[]) attributesPrivileges);
+			}
+			if (privilegeFilter != null) {
+				privilegeBuilder = privilegeBuilder.withPrivilegeFilter((String) privilegeFilter);
+			}
+			final PrivilegeInfo privilegeToUpdate = privilegeBuilder.build();
 			updateGrantCard(privilegeCard, privilegeToUpdate);
 		}
 
@@ -550,4 +539,28 @@ public class SecurityLogic implements Logic {
 		return optional;
 	}
 
+	private static final SerializablePrivilege privilegeObjectFromId(final Long id) {
+		return new SerializablePrivilege() {
+
+			@Override
+			public String getPrivilegeId() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public String getName() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public Long getId() {
+				return id;
+			}
+
+			@Override
+			public String getDescription() {
+				throw new UnsupportedOperationException();
+			}
+		};
+	}
 }
