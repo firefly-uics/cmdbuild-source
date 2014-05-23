@@ -70,7 +70,9 @@
 				this.columns.push(iconButton(me, "privilege_filter", setPrivilegeTranslation, "", onSetPrivilegeFilterClick));
 				this.columns.push(iconButton(me, "privilege_filter_remove", removePrivilegeTranslation, "", onRemovePrivilegeFilterClick));
 			}
-			this.columns.push(iconButton(me, "uiconfiguration", CMDBuild.Translation.ui_configuration_for_groups, "UI", onChangeClassUIConfiguration));
+			if (this.withCRUDPermission) {
+				this.columns.push(iconButton(me, "uiconfiguration", CMDBuild.Translation.ui_configuration_for_groups, "UI", onChangeClassUIConfiguration));
+			}
 			this.viewConfig = {
 				forceFit: true
 			};

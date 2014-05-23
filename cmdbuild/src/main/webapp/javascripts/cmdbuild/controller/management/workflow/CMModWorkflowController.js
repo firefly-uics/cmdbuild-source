@@ -79,22 +79,16 @@
 			this.changeClassUIConfigurationForGroup(entryTypeId);
 		},
 		changeClassUIConfigurationForGroup: function(classId) {
-			var me = this;
-			CMDBuild.ServiceProxy.group.loadClassUiConfiguration({
-				params: {
-					groupId: "",
-					classId: classId
-				},
-				success: function(operation, config, response) {
-					var disabledForGroupButtons = Ext.JSON.decode(response.response);
-					me.view.cardGrid.addCardButton.disabledForGroup = disabledForGroupButtons.create;
-					if (me.view.cardGrid.addCardButton.disabledForGroup)
-						me.view.cardGrid.addCardButton.disable();
-					else
-						me.view.cardGrid.addCardButton.enable();
-					me.activityPanelController.changeClassUIConfigurationForGroup(disabledForGroupButtons);
-				}
-			});
+			var privileges = _CMUtils.getClassPrivileges(classId);
+			this.view.cardGrid.addCardButton.disabledForGroup = ! (privileges.write && ! privileges.crudDisabled.create);
+			if (this.view.cardGrid.addCardButton.disabledForGroup)
+				this.view.cardGrid.addCardButton.disable();
+			else
+				this.view.cardGrid.addCardButton.enable();
+			this.activityPanelController.changeClassUIConfigurationForGroup(
+					! (privileges.write && ! privileges.crudDisabled.modify),
+					! (privileges.write && ! privileges.crudDisabled.clone),
+					! (privileges.write && ! privileges.crudDisabled.remove));
 		},
 
 	});

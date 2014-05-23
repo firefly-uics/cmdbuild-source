@@ -259,7 +259,8 @@
 		},
 
 		isEditable: function(card) {
-			return _CMUtils.getEntryTypePrivilegesByCard(card).create;
+			var privileges = _CMUtils.getEntryTypePrivilegesByCard(card);
+			return (privileges.create);
 		},
 
 		setWidgetManager: function(wm) {

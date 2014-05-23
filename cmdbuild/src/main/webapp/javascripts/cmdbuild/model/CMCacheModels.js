@@ -39,6 +39,7 @@
 			{name: "name",type: 'string'},
 			{name: "priv_create",type: 'boolean'},
 			{name: "priv_write",type: 'boolean'},
+			{name: "ui_card_edit_mode",type: 'object'},
 			{name: "meta", type:"auto"},
 			// Process only
 			{name: "userstoppable",type: 'boolean'},
