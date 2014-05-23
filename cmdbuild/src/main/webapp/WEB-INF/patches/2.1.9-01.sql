@@ -3,7 +3,7 @@
 CREATE OR REPLACE FUNCTION apply_patch() RETURNS VOID AS $$
 
 BEGIN
-	PERFORM cm_create_class_attribute('Grant', 'UI_CardEditMode', 'text', null, false, false, 'MODE: write|DESCR: UI_CardEditMode|INDEX: 12|BASEDSP: false|STATUS: active');
+	PERFORM cm_create_class_attribute('Grant', 'UI_EnabledCardEditMode', 'text', null, false, false, 'MODE: write|DESCR: UI_EnabledCardEditMode|INDEX: 12|BASEDSP: false|STATUS: active');
 END
 
 $$ LANGUAGE PLPGSQL;
