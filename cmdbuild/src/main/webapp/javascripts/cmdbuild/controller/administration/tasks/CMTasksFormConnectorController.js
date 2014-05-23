@@ -159,10 +159,6 @@
 				);
 
 				// Form submit values formatting
-					var attributeMappingData = this.delegateStep[4].getData();
-					if (!Ext.isEmpty(attributeMappingData))
-						submitDatas[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_MAPPING] = Ext.encode(attributeMappingData);
-
 					var dataSourceType = this.delegateStep[2].getTypeDataSource();
 					if (dataSourceType) {
 						var configurationObject = {};
@@ -188,6 +184,14 @@
 						submitDatas[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TYPE] = dataSourceType;
 						submitDatas[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_CONFIGURATION] = Ext.encode(configurationObject);
 					}
+
+					var classMappingData = this.delegateStep[3].getData();
+					if (!Ext.isEmpty(classMappingData))
+						submitDatas[CMDBuild.core.proxy.CMProxyConstants.CLASS_MAPPING] = Ext.encode(classMappingData);
+
+					var attributeMappingData = this.delegateStep[4].getData();
+					if (!Ext.isEmpty(attributeMappingData))
+						submitDatas[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_MAPPING] = Ext.encode(attributeMappingData);
 
 				// Data filtering to submit only right values
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE];
