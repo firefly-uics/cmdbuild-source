@@ -11,7 +11,9 @@ import static org.cmdbuild.logic.taskmanager.ConnectorTask.NULL_SOURCE_CONFIGURA
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTE_MAPPING;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ATTRIBUTE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_MAPPING;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CREATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_CONFIGURATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_DB_ADDRESS;
@@ -24,6 +26,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_DB_U
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_INSTANCE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DATA_SOURCE_TYPE_SQL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DELETE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_KEY;
@@ -33,6 +36,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.POSTGRESQL_LABEL
 import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_ATTRIBUTE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SQLSERVER_LABEL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.UPDATE;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 
 import java.io.IOException;
@@ -48,6 +52,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceType;
 import org.cmdbuild.logic.taskmanager.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.ClassMapping;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfiguration;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfigurationVisitor;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
@@ -157,13 +162,121 @@ public class Connector extends JSONBaseWithSpringContext {
 
 	}
 
+	private static class JsonClassMapping {
+
+		private String sourceType;
+		private String targetType;
+		private boolean create;
+		private boolean update;
+		private boolean delete;
+
+		@JsonProperty(SOURCE_NAME)
+		public String getSourceType() {
+			return sourceType;
+		}
+
+		public void setSourceType(final String sourceType) {
+			this.sourceType = sourceType;
+		}
+
+		@JsonProperty(CLASS_NAME)
+		public String getTargetType() {
+			return targetType;
+		}
+
+		public void setTargetType(final String targetType) {
+			this.targetType = targetType;
+		}
+
+		@JsonProperty(CREATE)
+		public boolean isCreate() {
+			return create;
+		}
+
+		public void setCreate(final boolean create) {
+			this.create = create;
+		}
+
+		@JsonProperty(UPDATE)
+		public boolean isUpdate() {
+			return update;
+		}
+
+		public void setUpdate(final boolean update) {
+			this.update = update;
+		}
+
+		@JsonProperty(DELETE)
+		public boolean isDelete() {
+			return delete;
+		}
+
+		public void setDelete(final boolean delete) {
+			this.delete = delete;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof JsonClassMapping)) {
+				return false;
+			}
+			final JsonClassMapping other = JsonClassMapping.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(sourceType, other.sourceType) //
+					.append(targetType, other.targetType) //
+					.isEquals();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(sourceType) //
+					.append(targetType) //
+					.toHashCode();
+		}
+
+	}
+
+	private static final Function<ClassMapping, JsonClassMapping> CLASS_MAPPING_TO_JSON_CLASS_MAPPING = new Function<ClassMapping, JsonClassMapping>() {
+
+		@Override
+		public JsonClassMapping apply(final ClassMapping input) {
+			final JsonClassMapping output = new JsonClassMapping();
+			output.setSourceType(input.getSourceType());
+			output.setTargetType(input.getTargetType());
+			output.setCreate(input.isCreate());
+			output.setUpdate(input.isUpdate());
+			output.setDelete(input.isDelete());
+			return output;
+		}
+
+	};
+
+	private static final Function<JsonClassMapping, ClassMapping> JSON_CLASS_MAPPING_TO_CLASS_MAPPING = new Function<JsonClassMapping, ClassMapping>() {
+
+		@Override
+		public ClassMapping apply(final JsonClassMapping input) {
+			return ClassMapping.newInstance() //
+					.withSourceType(input.getSourceType()) //
+					.withTargetType(input.getTargetType()) //
+					.withCreateStatus(input.isCreate()) //
+					.withUpdateStatus(input.isUpdate()) //
+					.withDeleteStatus(input.isDelete()) //
+					.build();
+		}
+
+	};
+
 	private static class JsonAttributeMapping {
 
 		private String sourceType;
 		private String sourceAttribute;
 		private String targetType;
 		private String targetAttribute;
-		private Boolean isKey;
+		private boolean key;
 
 		@JsonProperty(SOURCE_NAME)
 		public String getSourceType() {
@@ -203,11 +316,11 @@ public class Connector extends JSONBaseWithSpringContext {
 
 		@JsonProperty(IS_KEY)
 		public boolean isKey() {
-			return defaultIfNull(isKey, false);
+			return defaultIfNull(key, false);
 		}
 
-		public void setIsKey(final boolean isKey) {
-			this.isKey = isKey;
+		public void setKey(final boolean key) {
+			this.key = key;
 		}
 
 		@Override
@@ -248,7 +361,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			output.setSourceAttribute(input.getSourceAttribute());
 			output.setTargetType(input.getTargetType());
 			output.setTargetAttribute(input.getTargetAttribute());
-			output.setIsKey(input.isKey());
+			output.setKey(input.isKey());
 			return output;
 		}
 
@@ -335,6 +448,13 @@ public class Connector extends JSONBaseWithSpringContext {
 			}.asJsonObject();
 		}
 
+		@JsonProperty(CLASS_MAPPING)
+		public List<JsonClassMapping> getClassMapping() {
+			return from(delegate.getClassMappings()) //
+					.transform(CLASS_MAPPING_TO_JSON_CLASS_MAPPING) //
+					.toList();
+		}
+
 		@JsonProperty(ATTRIBUTE_MAPPING)
 		public List<JsonAttributeMapping> getAttributeMapping() {
 			return from(delegate.getAttributeMappings()) //
@@ -344,7 +464,11 @@ public class Connector extends JSONBaseWithSpringContext {
 
 	}
 
-	private static final Iterable<JsonAttributeMapping> NO_MAPPINGS = Collections.emptyList();
+	private static final Iterable<JsonClassMapping> NO_CLASS_MAPPINGS = Collections.emptyList();
+	private static final Iterable<JsonAttributeMapping> NO_ATTRIBUTE_MAPPINGS = Collections.emptyList();
+
+	private static final TypeReference<Set<? extends JsonClassMapping>> JSON_CLASS_MAPPINGS_TYPE_REFERENCE = new TypeReference<Set<? extends JsonClassMapping>>() {
+	};
 
 	private static final TypeReference<Set<? extends JsonAttributeMapping>> JSON_ATTRIBUTE_MAPPINGS_TYPE_REFERENCE = new TypeReference<Set<? extends JsonAttributeMapping>>() {
 	};
@@ -368,6 +492,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = DATA_SOURCE_TYPE, required = false) final String dataSourceType, //
 			@Parameter(value = DATA_SOURCE_CONFIGURATION, required = false) final String jsonDataSourceConfiguration, //
+			@Parameter(value = CLASS_MAPPING, required = false) final String jsonclassMapping, //
 			@Parameter(value = ATTRIBUTE_MAPPING, required = false) final String jsonAttributeMapping //
 	) throws Exception {
 		final ConnectorTask task = ConnectorTask.newInstance() //
@@ -375,6 +500,7 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
 				.withSourceConfiguration(sourceConfigurationOf(dataSourceType, jsonDataSourceConfiguration)) //
+				.withClassMappings(classMappingOf(jsonclassMapping)) //
 				.withAttributeMappings(attributeMappingOf(jsonAttributeMapping)) //
 				.build();
 		final Long id = taskManagerLogic().create(task);
@@ -408,6 +534,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = DATA_SOURCE_TYPE, required = false) final String dataSourceType, //
 			@Parameter(value = DATA_SOURCE_CONFIGURATION, required = false) final String jsonDataSourceConfiguration, //
+			@Parameter(value = CLASS_MAPPING, required = false) final String jsonclassMapping, //
 			@Parameter(value = ATTRIBUTE_MAPPING, required = false) final String jsonAttributeMapping //
 	) throws Exception {
 		final ConnectorTask task = ConnectorTask.newInstance() //
@@ -416,6 +543,7 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
 				.withSourceConfiguration(sourceConfigurationOf(dataSourceType, jsonDataSourceConfiguration)) //
+				.withClassMappings(classMappingOf(jsonclassMapping)) //
 				.withAttributeMappings(attributeMappingOf(jsonAttributeMapping)) //
 				.build();
 		taskManagerLogic().update(task);
@@ -504,11 +632,24 @@ public class Connector extends JSONBaseWithSpringContext {
 		return JsonSourceConfigurationHandler.of(type).convert(jsonConfiguration);
 	}
 
+	private Iterable<ClassMapping> classMappingOf(final String json) throws JsonParseException, JsonMappingException,
+			IOException {
+		final Iterable<JsonClassMapping> jsonClassMapping;
+		if (isBlank(json)) {
+			jsonClassMapping = NO_CLASS_MAPPINGS;
+		} else {
+			jsonClassMapping = new ObjectMapper() //
+					.readValue(json, JSON_CLASS_MAPPINGS_TYPE_REFERENCE);
+		}
+		return from(jsonClassMapping) //
+				.transform(JSON_CLASS_MAPPING_TO_CLASS_MAPPING);
+	}
+
 	private Iterable<AttributeMapping> attributeMappingOf(final String json) throws JsonParseException,
 			JsonMappingException, IOException {
 		final Iterable<JsonAttributeMapping> jsonAttributeMappings;
 		if (isBlank(json)) {
-			jsonAttributeMappings = NO_MAPPINGS;
+			jsonAttributeMappings = NO_ATTRIBUTE_MAPPINGS;
 		} else {
 			jsonAttributeMappings = new ObjectMapper() //
 					.readValue(json, JSON_ATTRIBUTE_MAPPINGS_TYPE_REFERENCE);

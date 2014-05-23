@@ -23,15 +23,15 @@ import org.cmdbuild.services.sync.store.ClassType;
 import org.cmdbuild.services.sync.store.SimpleAttribute;
 import org.cmdbuild.services.sync.store.Store;
 import org.cmdbuild.services.sync.store.StoreSynchronizer;
-import org.cmdbuild.services.sync.store.internal.BuildableAttributeMapping;
 import org.cmdbuild.services.sync.store.internal.BuildableCatalog;
-import org.cmdbuild.services.sync.store.internal.BuildableTableOrViewMapping;
-import org.cmdbuild.services.sync.store.internal.BuildableTypeMapper;
 import org.cmdbuild.services.sync.store.internal.Catalog;
 import org.cmdbuild.services.sync.store.internal.InternalStore;
-import org.cmdbuild.services.sync.store.internal.SqlStore;
-import org.cmdbuild.services.sync.store.internal.TableOrViewMapping;
-import org.cmdbuild.services.sync.store.internal.TypeMapping;
+import org.cmdbuild.services.sync.store.sql.BuildableAttributeMapping;
+import org.cmdbuild.services.sync.store.sql.BuildableTableOrViewMapping;
+import org.cmdbuild.services.sync.store.sql.BuildableTypeMapper;
+import org.cmdbuild.services.sync.store.sql.SqlStore;
+import org.cmdbuild.services.sync.store.sql.TableOrViewMapping;
+import org.cmdbuild.services.sync.store.sql.TypeMapping;
 
 import com.google.common.base.Function;
 

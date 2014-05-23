@@ -241,6 +241,127 @@ public class ConnectorTask implements ScheduledTask {
 
 	}
 
+	public static class ClassMapping {
+
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<ClassMapping> {
+
+			private String sourceType;
+			private String targetType;
+			private Boolean create;
+			private Boolean update;
+			private Boolean delete;
+
+			private Builder() {
+				// user factory method
+			}
+
+			@Override
+			public ClassMapping build() {
+				validate();
+				return new ClassMapping(this);
+			}
+
+			private void validate() {
+				create = defaultIfNull(create, false);
+				update = defaultIfNull(update, false);
+				delete = defaultIfNull(delete, false);
+			}
+
+			public Builder withSourceType(final String sourceType) {
+				this.sourceType = sourceType;
+				return this;
+			}
+
+			public Builder withTargetType(final String targetType) {
+				this.targetType = targetType;
+				return this;
+			}
+
+			public Builder withCreateStatus(final boolean create) {
+				this.create = create;
+				return this;
+			}
+
+			public Builder withUpdateStatus(final boolean update) {
+				this.update = update;
+				return this;
+			}
+
+			public Builder withDeleteStatus(final boolean delete) {
+				this.delete = delete;
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private final String sourceType;
+		private final String targetType;
+		private final boolean create;
+		private final boolean update;
+		private final boolean delete;
+
+		private ClassMapping(final Builder builder) {
+			this.sourceType = builder.sourceType;
+			this.targetType = builder.targetType;
+			this.create = builder.create;
+			this.update = builder.update;
+			this.delete = builder.delete;
+		}
+
+		public String getSourceType() {
+			return sourceType;
+		}
+
+		public String getTargetType() {
+			return targetType;
+		}
+
+		public boolean isCreate() {
+			return create;
+		}
+
+		public boolean isUpdate() {
+			return update;
+		}
+
+		public boolean isDelete() {
+			return delete;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof AttributeMapping)) {
+				return false;
+			}
+			final AttributeMapping other = AttributeMapping.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(sourceType, other.sourceType) //
+					.append(targetType, other.targetType) //
+					.isEquals();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(sourceType) //
+					.append(targetType) //
+					.toHashCode();
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
+	}
+
 	public static class AttributeMapping {
 
 		public static class Builder implements org.apache.commons.lang3.builder.Builder<AttributeMapping> {
@@ -366,13 +487,15 @@ public class ConnectorTask implements ScheduledTask {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ConnectorTask> {
 
-		private static final Iterable<AttributeMapping> NO_MAPPING = Collections.emptyList();
+		private static final Iterable<? extends ClassMapping> NO_CLASS_MAPPINGS = Collections.emptyList();
+		private static final Iterable<AttributeMapping> NO_ATTRIBUTE_MAPPINGS = Collections.emptyList();
 
 		private Long id;
 		private String description;
 		private Boolean active;
 		private String cronExpression;
 		private SourceConfiguration sourceConfiguration;
+		private final Collection<ClassMapping> classMappings = Sets.newHashSet();
 		private final Collection<AttributeMapping> attributeMappings = Sets.newHashSet();
 
 		private Builder() {
@@ -415,13 +538,23 @@ public class ConnectorTask implements ScheduledTask {
 			return this;
 		}
 
+		public Builder withClassMapping(final ClassMapping classMappings) {
+			this.classMappings.add(classMappings);
+			return this;
+		}
+
+		public Builder withClassMappings(final Iterable<? extends ClassMapping> classMappings) {
+			addAll(this.classMappings, defaultIfNull(classMappings, NO_CLASS_MAPPINGS));
+			return this;
+		}
+
 		public Builder withAttributeMapping(final AttributeMapping attributeMapping) {
 			this.attributeMappings.add(attributeMapping);
 			return this;
 		}
 
 		public Builder withAttributeMappings(final Iterable<? extends AttributeMapping> attributeMappings) {
-			addAll(this.attributeMappings, defaultIfNull(attributeMappings, NO_MAPPING));
+			addAll(this.attributeMappings, defaultIfNull(attributeMappings, NO_ATTRIBUTE_MAPPINGS));
 			return this;
 		}
 
@@ -436,6 +569,7 @@ public class ConnectorTask implements ScheduledTask {
 	private final boolean active;
 	private final String cronExpression;
 	private final SourceConfiguration sourceConfiguration;
+	private final Collection<ClassMapping> classMappings;
 	private final Iterable<AttributeMapping> attributeMappings;
 
 	private ConnectorTask(final Builder builder) {
@@ -444,6 +578,7 @@ public class ConnectorTask implements ScheduledTask {
 		this.active = builder.active;
 		this.cronExpression = builder.cronExpression;
 		this.sourceConfiguration = builder.sourceConfiguration;
+		this.classMappings = builder.classMappings;
 		this.attributeMappings = builder.attributeMappings;
 	}
 
@@ -474,6 +609,10 @@ public class ConnectorTask implements ScheduledTask {
 
 	public SourceConfiguration getSourceConfiguration() {
 		return sourceConfiguration;
+	}
+
+	public Collection<ClassMapping> getClassMappings() {
+		return classMappings;
 	}
 
 	public Iterable<AttributeMapping> getAttributeMappings() {
