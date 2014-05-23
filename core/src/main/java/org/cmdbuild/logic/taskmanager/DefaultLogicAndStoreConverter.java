@@ -26,6 +26,7 @@ import org.cmdbuild.data.store.task.StartWorkflowTaskDefinition;
 import org.cmdbuild.data.store.task.SynchronousEventTaskDefinition;
 import org.cmdbuild.data.store.task.TaskVisitor;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.ClassMapping;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfiguration;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfigurationVisitor;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
@@ -68,7 +69,8 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public static final String SQL_FILTER = SQL_PREFIX + "filter";
 
 		private static final String MAPPING_PREFIX = ALL_PREFIX + "mapping.";
-		public static final String MAPPING_TYPE = MAPPING_PREFIX + "types";
+		public static final String MAPPING_TYPES = MAPPING_PREFIX + "types";
+		public static final String MAPPING_ATTRIBUTES = MAPPING_PREFIX + "attributes";
 
 		private static final String MAPPING_SEPARATOR = ",";
 
@@ -237,6 +239,22 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 	}
 
+	private static final Function<ClassMapping, String> CLASS_MAPPING_TO_STRING = new Function<ClassMapping, String>() {
+
+		@Override
+		public String apply(final ClassMapping input) {
+			return Joiner.on(Connector.MAPPING_SEPARATOR) //
+					.join(asList( //
+							input.getSourceType(), //
+							input.getTargetType(), //
+							Boolean.toString(input.isCreate()), //
+							Boolean.toString(input.isUpdate()), //
+							Boolean.toString(input.isDelete()) //
+					));
+		}
+
+	};
+
 	private static final Function<AttributeMapping, String> ATTRIBUTE_MAPPING_TO_STRING = new Function<AttributeMapping, String>() {
 
 		@Override
@@ -249,6 +267,22 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							input.getTargetAttribute(), //
 							Boolean.toString(input.isKey()) //
 					));
+		}
+
+	};
+
+	private static final Function<String, ClassMapping> STRING_TO_CLASS_MAPPING = new Function<String, ClassMapping>() {
+
+		@Override
+		public ClassMapping apply(final String input) {
+			final List<String> elements = Splitter.on(Connector.MAPPING_SEPARATOR).splitToList(input);
+			return ClassMapping.newInstance() //
+					.withSourceType(elements.get(0)) //
+					.withTargetType(elements.get(1)) //
+					.withCreateStatus(Boolean.parseBoolean(elements.get(2))) //
+					.withUpdateStatus(Boolean.parseBoolean(elements.get(3))) //
+					.withDeleteStatus(Boolean.parseBoolean(elements.get(4))) //
+					.build();
 		}
 
 	};
@@ -455,7 +489,12 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withRunningStatus(task.isActive()) //
 					.withCronExpression(task.getCronExpression()) //
 					.withParameters(parametersOf(sourceConfiguration)) //
-					.withParameter(Connector.MAPPING_TYPE, Joiner.on(LINE_SEPARATOR) //
+					.withParameter(Connector.MAPPING_TYPES, Joiner.on(LINE_SEPARATOR) //
+							.join( //
+							FluentIterable.from(task.getClassMappings()) //
+									.transform(CLASS_MAPPING_TO_STRING)) //
+					) //
+					.withParameter(Connector.MAPPING_ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
 							.join( //
 							FluentIterable.from(task.getAttributeMappings()) //
 									.transform(ATTRIBUTE_MAPPING_TO_STRING)) //
@@ -571,6 +610,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 	private static class DefaultStoreAsSourceConverter implements StoreAsSourceConverter, TaskVisitor {
 
+		private static final Iterable<ClassMapping> NO_CLASS_MAPPINGS = Collections.emptyList();
 		private static final Iterable<AttributeMapping> NO_ATTRIBUTE_MAPPINGS = Collections.emptyList();
 
 		private static final Iterable<String> EMPTY_GROUPS = Collections.emptyList();
@@ -597,17 +637,23 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public void visit(final org.cmdbuild.data.store.task.ConnectorTask task) {
 			final String dataSourceType = task.getParameter(Connector.DATA_SOURCE_TYPE);
 			final String dataSourceConfiguration = task.getParameter(Connector.DATA_SOURCE_CONFIGURATION);
-			final String typeMapping = task.getParameter(Connector.MAPPING_TYPE);
+			final String typeMapping = task.getParameter(Connector.MAPPING_TYPES);
+			final String attributeMapping = task.getParameter(Connector.MAPPING_ATTRIBUTES);
 			target = ConnectorTask.newInstance() //
 					.withId(task.getId()) //
 					.withDescription(task.getDescription()) //
 					.withActiveStatus(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
 					.withSourceConfiguration(sourceConfigurationOf(dataSourceType, dataSourceConfiguration)) //
-					.withAttributeMappings( //
-							isEmpty(typeMapping) ? NO_ATTRIBUTE_MAPPINGS : FluentIterable.from( //
+					.withClassMappings( //
+							isEmpty(typeMapping) ? NO_CLASS_MAPPINGS : FluentIterable.from( //
 									Splitter.on(LINE_SEPARATOR) //
 											.split(typeMapping)) //
+									.transform(STRING_TO_CLASS_MAPPING)) //
+					.withAttributeMappings( //
+							isEmpty(attributeMapping) ? NO_ATTRIBUTE_MAPPINGS : FluentIterable.from( //
+									Splitter.on(LINE_SEPARATOR) //
+											.split(attributeMapping)) //
 									.transform(STRING_TO_ATTRIBUTE_MAPPING)) //
 					.build();
 		}

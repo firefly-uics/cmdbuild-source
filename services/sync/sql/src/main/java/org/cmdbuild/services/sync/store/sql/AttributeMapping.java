@@ -1,4 +1,4 @@
-package org.cmdbuild.services.sync.store.internal;
+package org.cmdbuild.services.sync.store.sql;
 
 public interface AttributeMapping {
 

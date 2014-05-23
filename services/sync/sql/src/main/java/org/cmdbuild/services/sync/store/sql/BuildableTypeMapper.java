@@ -1,4 +1,4 @@
-package org.cmdbuild.services.sync.store.internal;
+package org.cmdbuild.services.sync.store.sql;
 
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Sets.newHashSet;

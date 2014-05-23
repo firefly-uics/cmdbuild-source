@@ -1,4 +1,4 @@
-package org.cmdbuild.services.sync.store.internal;
+package org.cmdbuild.services.sync.store.sql;
 
 import org.cmdbuild.services.sync.store.ClassType;
 

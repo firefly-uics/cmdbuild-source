@@ -32,6 +32,7 @@ public class CommunicationConstants {
 			CLASS_DESCRIPTION = "text", //
 			CLASS_ID_CAPITAL = "IdClass", //
 			CLASS_ID = "classId", //
+			CLASS_MAPPING = "classMapping", //
 			CLASS_NAME = "className", //
 			CODE_CAPITAL = "Code", //
 			CODE = "code", //
@@ -40,6 +41,7 @@ public class CommunicationConstants {
 			CONFIRMED = "confirmed", //
 			CONTAINER = "container", //
 			COUNT = "count", //
+			CREATE = "create", //
 			CRON_EXPRESSION = "cronExpression", //
 			DASHBOARDNAME = "dashboardName", //
 			DATA = "data", //
@@ -66,6 +68,7 @@ public class CommunicationConstants {
 			DEFAULT_MASTERDETAIL_LABEL = "md_label_default", //
 			DEFAULT_PARENT_DESCRIPTION = "ParentDescription_default", //
 			DEFAULT_VALUE = "defaultvalue", //
+			DELETE = "delete", //
 			DESCRIPTION_CAPITAL = "Description", //
 			DESCRIPTION = "description", //
 			DETAIL_CARD_ID = "detailCardId", //
@@ -256,6 +259,7 @@ public class CommunicationConstants {
 			TYPE = "type", //
 			UI_CONFIGURATION = "uiConfiguration", //
 			UNIQUE = "isunique", //
+			UPDATE = "update", //
 			USER_ID = "userid", //
 			USER_NAME = "username", //
 			USER_STOPPABLE = "userstoppable", //

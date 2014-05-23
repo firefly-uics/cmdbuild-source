@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.cmdbuild.logic.taskmanager.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.ClassMapping;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfiguration;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter;
@@ -44,6 +45,15 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 
 public class DefaultLogicAndStoreConverterTest {
+
+	private static Comparator<ClassMapping> CLASS_MAPPING_COMPARATOR = new Comparator<ClassMapping>() {
+
+		@Override
+		public int compare(final ClassMapping o1, final ClassMapping o2) {
+			return o1.getSourceType().compareTo(o2.getSourceType());
+		}
+
+	};
 
 	private static Comparator<AttributeMapping> ATTRIBUTE_MAPPING_COMPARATOR = new Comparator<AttributeMapping>() {
 
@@ -69,6 +79,20 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withActiveStatus(true) //
 				.withCronExpression("cron expression") //
+				.withClassMapping(a(ClassMapping.newInstance() //
+						.withSourceType("sourceTypeA") //
+						.withTargetType("targetTypeA") //
+						.withCreateStatus(true) //
+						.withUpdateStatus(true) //
+						.withDeleteStatus(false) //
+						)) //
+				.withClassMapping(a(ClassMapping.newInstance() //
+						.withSourceType("sourceTypeB") //
+						.withTargetType("targetTypeB") //
+						.withCreateStatus(false) //
+						.withUpdateStatus(false) //
+						.withDeleteStatus(true) //
+						)) //
 				.withAttributeMapping(a(AttributeMapping.newInstance() //
 						.withSourceType("sourceTypeA") //
 						.withSourceAttribute("sourceAttributeA") //
@@ -96,7 +120,11 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.isRunning(), equalTo(true));
 
 		final Map<String, String> parameters = converted.getParameters();
-		assertThat(parameters, hasEntry(Connector.MAPPING_TYPE, "" //
+		assertThat(parameters, hasEntry(Connector.MAPPING_TYPES, "" //
+				+ "sourceTypeB,targetTypeB,false,false,true" + LINE_SEPARATOR //
+				+ "sourceTypeA,targetTypeA,true,true,false" //
+		));
+		assertThat(parameters, hasEntry(Connector.MAPPING_ATTRIBUTES, "" //
 				+ "sourceTypeA,sourceAttributeA,targetTypeA,targetAttributeA,true" + LINE_SEPARATOR //
 				+ "sourceTypeB,sourceAttributeB,targetTypeB,targetAttributeB,false" //
 		));
@@ -249,7 +277,11 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
-				.withParameter(Connector.MAPPING_TYPE, "" //
+				.withParameter(Connector.MAPPING_TYPES, "" //
+						+ "sourceTypeA,targetTypeA,true,true,false" + LINE_SEPARATOR //
+						+ "sourceTypeB,targetTypeB,false,false,true" //
+				) //
+				.withParameter(Connector.MAPPING_ATTRIBUTES, "" //
 						+ "sourceTypeA,sourceAttributeA,targetTypeA,targetAttributeA,true" + LINE_SEPARATOR //
 						+ "sourceTypeB,sourceAttributeB,targetTypeB,targetAttributeB,false" //
 				) //
@@ -265,20 +297,34 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.isActive(), equalTo(true));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
+		final List<ClassMapping> classMappings = Ordering.from(CLASS_MAPPING_COMPARATOR) //
+				.immutableSortedCopy(converted.getClassMappings());
+		final ClassMapping firstClassMapping = classMappings.get(0);
+		assertThat(firstClassMapping.getSourceType(), equalTo("sourceTypeA"));
+		assertThat(firstClassMapping.getTargetType(), equalTo("targetTypeA"));
+		assertThat(firstClassMapping.isCreate(), is(true));
+		assertThat(firstClassMapping.isUpdate(), is(true));
+		assertThat(firstClassMapping.isDelete(), is(false));
+		final ClassMapping secondClassMapping = classMappings.get(1);
+		assertThat(secondClassMapping.getSourceType(), equalTo("sourceTypeB"));
+		assertThat(secondClassMapping.getTargetType(), equalTo("targetTypeB"));
+		assertThat(secondClassMapping.isCreate(), is(false));
+		assertThat(secondClassMapping.isUpdate(), is(false));
+		assertThat(secondClassMapping.isDelete(), is(true));
 		final List<AttributeMapping> attributeMappings = Ordering.from(ATTRIBUTE_MAPPING_COMPARATOR) //
 				.immutableSortedCopy(converted.getAttributeMappings());
-		final AttributeMapping first = attributeMappings.get(0);
-		assertThat(first.getSourceType(), equalTo("sourceTypeA"));
-		assertThat(first.getSourceAttribute(), equalTo("sourceAttributeA"));
-		assertThat(first.getTargetType(), equalTo("targetTypeA"));
-		assertThat(first.getTargetAttribute(), equalTo("targetAttributeA"));
-		assertThat(first.isKey(), is(true));
-		final AttributeMapping second = attributeMappings.get(1);
-		assertThat(second.getSourceType(), equalTo("sourceTypeB"));
-		assertThat(second.getSourceAttribute(), equalTo("sourceAttributeB"));
-		assertThat(second.getTargetType(), equalTo("targetTypeB"));
-		assertThat(second.getTargetAttribute(), equalTo("targetAttributeB"));
-		assertThat(second.isKey(), is(false));
+		final AttributeMapping firstAttributeMapping = attributeMappings.get(0);
+		assertThat(firstAttributeMapping.getSourceType(), equalTo("sourceTypeA"));
+		assertThat(firstAttributeMapping.getSourceAttribute(), equalTo("sourceAttributeA"));
+		assertThat(firstAttributeMapping.getTargetType(), equalTo("targetTypeA"));
+		assertThat(firstAttributeMapping.getTargetAttribute(), equalTo("targetAttributeA"));
+		assertThat(firstAttributeMapping.isKey(), is(true));
+		final AttributeMapping secondAttributeMapping = attributeMappings.get(1);
+		assertThat(secondAttributeMapping.getSourceType(), equalTo("sourceTypeB"));
+		assertThat(secondAttributeMapping.getSourceAttribute(), equalTo("sourceAttributeB"));
+		assertThat(secondAttributeMapping.getTargetType(), equalTo("targetTypeB"));
+		assertThat(secondAttributeMapping.getTargetAttribute(), equalTo("targetAttributeB"));
+		assertThat(secondAttributeMapping.isKey(), is(false));
 	}
 
 	@Test

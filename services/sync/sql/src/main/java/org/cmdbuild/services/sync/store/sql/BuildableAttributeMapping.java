@@ -1,4 +1,4 @@
-package org.cmdbuild.services.sync.store.internal;
+package org.cmdbuild.services.sync.store.sql;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
