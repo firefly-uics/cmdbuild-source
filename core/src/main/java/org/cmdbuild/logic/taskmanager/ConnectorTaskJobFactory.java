@@ -2,12 +2,13 @@ package org.cmdbuild.logic.taskmanager;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
+import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.newHashSet;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.utils.guava.Functions.build;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
@@ -15,14 +16,18 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.common.java.sql.DataSourceHelper;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.taskmanager.ConnectorTask.ClassMapping;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfigurationVisitor;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter.AbstractJobFactory;
 import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.sync.store.ClassType;
+import org.cmdbuild.services.sync.store.Entry;
+import org.cmdbuild.services.sync.store.ForwardingStore;
 import org.cmdbuild.services.sync.store.SimpleAttribute;
 import org.cmdbuild.services.sync.store.Store;
 import org.cmdbuild.services.sync.store.StoreSynchronizer;
+import org.cmdbuild.services.sync.store.Type;
 import org.cmdbuild.services.sync.store.internal.BuildableCatalog;
 import org.cmdbuild.services.sync.store.internal.Catalog;
 import org.cmdbuild.services.sync.store.internal.InternalStore;
@@ -36,6 +41,92 @@ import org.cmdbuild.services.sync.store.sql.TypeMapping;
 import com.google.common.base.Function;
 
 public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
+
+	private static class PermissionBasedStore extends ForwardingStore {
+
+		public static interface Permission {
+
+			boolean allowsCreate(Entry<? extends Type> entry);
+
+			boolean allowsUpdate(Entry<? extends Type> entry);
+
+			boolean allowsDelete(Entry<? extends Type> entry);
+
+		}
+
+		private final Permission permission;
+
+		public PermissionBasedStore(final Store delegate, final Permission permission) {
+			super(delegate);
+			this.permission = permission;
+		}
+
+		@Override
+		public void create(final Entry<? extends Type> entry) {
+			if (permission.allowsCreate(entry)) {
+				super.create(entry);
+			}
+		}
+
+		@Override
+		public void update(final Entry<? extends Type> entry) {
+			if (permission.allowsUpdate(entry)) {
+				super.update(entry);
+			}
+		}
+
+		@Override
+		public void delete(final Entry<? extends Type> entry) {
+			if (permission.allowsDelete(entry)) {
+				super.delete(entry);
+			}
+		}
+
+	}
+
+	private static class ConnectorTaskPermission implements PermissionBasedStore.Permission {
+
+		private static final Function<ClassMapping, String> TARGET_NAME = new Function<ClassMapping, String>() {
+
+			@Override
+			public String apply(final ClassMapping input) {
+				return input.getTargetType();
+			};
+
+		};
+
+		private static final ClassMapping ALWAYS_TRUE = ClassMapping.newInstance() //
+				.withCreateStatus(true) //
+				.withUpdateStatus(true) //
+				.withDeleteStatus(true) //
+				.build();
+
+		private final Map<String, ClassMapping> classMappingByTypeName;
+
+		public ConnectorTaskPermission(final ConnectorTask task) {
+			classMappingByTypeName = uniqueIndex(task.getClassMappings(), TARGET_NAME);
+		}
+
+		@Override
+		public boolean allowsCreate(final Entry<? extends Type> entry) {
+			return mappingOf(entry).isCreate();
+		}
+
+		@Override
+		public boolean allowsUpdate(final Entry<? extends Type> entry) {
+			return mappingOf(entry).isUpdate();
+		}
+
+		@Override
+		public boolean allowsDelete(final Entry<? extends Type> entry) {
+			return mappingOf(entry).isDelete();
+		}
+
+		private ClassMapping mappingOf(final Entry<? extends Type> entry) {
+			return defaultIfNull(classMappingByTypeName.get(entry.getType().getName()), ALWAYS_TRUE);
+		}
+
+	}
 
 	private static class ConnectorTaskCommandWrapper implements Command {
 
@@ -64,7 +155,7 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 			StoreSynchronizer.newInstance() //
 					.withLeft(left) //
 					.withRight(rightAndTarget) //
-					.withTarget(rightAndTarget) //
+					.withTarget(wrap(rightAndTarget)) //
 					.build() //
 					.sync();
 		}
@@ -126,7 +217,7 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 								.build());
 					}
 					final Collection<TableOrViewMapping> tableOrViewMappings = newHashSet();
-					for (final Entry<String, Map<String, BuildableTypeMapper.Builder>> entry : allTypeMapperBuildersByTableOrViewName
+					for (final Map.Entry<String, Map<String, BuildableTypeMapper.Builder>> entry : allTypeMapperBuildersByTableOrViewName
 							.entrySet()) {
 						final String tableOrViewName = entry.getKey();
 						final Map<String, TypeMapping> typeMappingBuildersByTypeName = transformValues(
@@ -145,6 +236,10 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 				}
 
 			}.store();
+		}
+
+		private Store wrap(final Store store) {
+			return new PermissionBasedStore(store, new ConnectorTaskPermission(task));
 		}
 	}
 
