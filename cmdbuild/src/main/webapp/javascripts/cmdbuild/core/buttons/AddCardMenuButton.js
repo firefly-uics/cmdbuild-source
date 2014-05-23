@@ -121,7 +121,7 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 	function addSubclass(entry) {
 		var privileges = _CMUtils.getClassPrivileges(entry.get("id"));
 
-		if (privileges.create) {	
+		if (privileges.create && ! privileges.crudDisabled.create) {	
 			this.menu.add({
 				text: entry.get("text"),
 				subclassId: entry.get("id"),
