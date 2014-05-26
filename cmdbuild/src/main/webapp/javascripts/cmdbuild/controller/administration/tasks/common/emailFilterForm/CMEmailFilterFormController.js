@@ -46,9 +46,9 @@
 		 * @return (String) filterString
 		 */
 		filterStringBuild: function(parameters) {
-			if (typeof parameters == 'object') {
-				var filterString = '';
+			var filterString = '';
 
+			if (typeof parameters == 'object') {
 				for (var key in parameters) {
 					if (!Ext.isEmpty(parameters[key])) {
 						if (!Ext.isEmpty(filterString))

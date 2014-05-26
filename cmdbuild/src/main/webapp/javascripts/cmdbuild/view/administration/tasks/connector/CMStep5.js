@@ -250,11 +250,12 @@
 		onStepEdit: function() {
 			this.view.gridEditorPlugin.completeEdit();
 
-			if (!this.isEmptyMappingGrid()) {
-				this.setDisabledButtonNext(false);
-			} else {
-				this.setDisabledButtonNext(true);
-			}
+// TODO: re-enable when step6 will be implemented
+//			if (!this.isEmptyMappingGrid()) {
+//				this.setDisabledButtonNext(false);
+//			} else {
+//				this.setDisabledButtonNext(true);
+//			}
 		},
 
 		// SETters functions
@@ -306,7 +307,7 @@
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 
-				plugins: this.gridEditorPlugin,
+				plugins: [this.gridEditorPlugin],
 
 				columns: [
 					{
@@ -407,12 +408,12 @@
 				this.delegate.buildClassCombo();
 
 				// Step validate
-//				this.delegate.parentDelegate.validateStepGrid(this.attributeLevelMappingGrid.getStore());
+				this.delegate.parentDelegate.validateStepGrid(this.attributeLevelMappingGrid.getStore());
 
-//				Ext.Function.createDelayed(function() { // HACK: to fix problem witch fires show event before changeTab() function
-//					if (this.delegate.isEmptyMappingGrid())
-//						this.delegate.setDisabledButtonNext(true);
-//				}, 1, this)();
+				Ext.Function.createDelayed(function() { // HACK: to fix problem witch fires show event before changeTab() function
+					if (this.delegate.isEmptyMappingGrid())
+						this.delegate.setDisabledButtonNext(true);
+				}, 1, this)();
 			}
 		}
 	});

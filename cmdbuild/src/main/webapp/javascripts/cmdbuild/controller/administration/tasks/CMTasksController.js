@@ -153,7 +153,7 @@
 					item.clearListeners();
 				});
 
-				this.form.wizard.removeAll();
+				this.form.wizard.removeAll(true);
 				this.form.delegate.delegateStep = [];
 
 				var items = Ext.create('CMDBuild.view.administration.tasks.' + this.typeSerialize(type, 0) + '.CMTaskTabs');
