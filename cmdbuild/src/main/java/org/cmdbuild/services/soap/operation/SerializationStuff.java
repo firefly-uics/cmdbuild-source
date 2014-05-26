@@ -208,7 +208,7 @@ class SerializationStuff {
 
 	private FluentIterable<Metadata> storedMetadata(final CMAttribute attribute) {
 		final Store<org.cmdbuild.model.data.Metadata> store = metadataStoreFactory.storeForAttribute(attribute);
-		final Iterable<org.cmdbuild.model.data.Metadata> elements = store.list();
+		final Iterable<org.cmdbuild.model.data.Metadata> elements = store.readAll();
 		return from(elements) //
 				.transform(TO_SOAP_METADATA);
 	}

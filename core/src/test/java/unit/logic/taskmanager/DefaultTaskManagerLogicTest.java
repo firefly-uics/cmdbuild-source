@@ -142,7 +142,7 @@ public class DefaultTaskManagerLogicTest {
 				.withRunningStatus(ACTIVE_STATUS) //
 				.withCronExpression(CRON_EXPRESSION) //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(first, second));
 
 		// when
@@ -151,7 +151,7 @@ public class DefaultTaskManagerLogicTest {
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(converter, times(2)).from(any(org.cmdbuild.data.store.task.Task.class));
 		inOrder.verify(storeAsSourceConverter).toLogic();
 		inOrder.verifyNoMoreInteractions();
@@ -170,7 +170,7 @@ public class DefaultTaskManagerLogicTest {
 				.newInstance() //
 				.withId(2L) //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(first, second));
 
 		// when
@@ -179,7 +179,7 @@ public class DefaultTaskManagerLogicTest {
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(converter, times(2)).from(any(org.cmdbuild.data.store.task.Task.class));
 		inOrder.verify(storeAsSourceConverter).toLogic();
 		inOrder.verifyNoMoreInteractions();

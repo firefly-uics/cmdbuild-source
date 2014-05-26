@@ -302,7 +302,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 						lookupId = Long.parseLong((String) value);
 					}
 				} else {
-					final Iterable<Lookup> lookupList = lookupStore.list();
+					final Iterable<Lookup> lookupList = lookupStore.readAll();
 					for (final Lookup lookup : lookupList) {
 						if (lookup.active && //
 								lookup.type.name.equals(lookupTypeName) && //
@@ -328,7 +328,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	private boolean existsLookup(final String lookupTypeName, final Long lookupId) {
-		final Iterable<Lookup> lookupList = lookupStore.list();
+		final Iterable<Lookup> lookupList = lookupStore.readAll();
 		for (final Lookup lookup : lookupList) {
 			if (lookup.type.name.equals(lookupTypeName) && lookup.getId().equals(lookupId)) {
 				return true;

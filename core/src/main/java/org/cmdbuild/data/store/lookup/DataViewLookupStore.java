@@ -3,7 +3,7 @@ package org.cmdbuild.data.store.lookup;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newHashMap;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import org.cmdbuild.data.store.Groupable;
@@ -45,20 +45,20 @@ public class DataViewLookupStore implements LookupStore {
 	}
 
 	@Override
-	public List<Lookup> list() {
-		return inner.list();
+	public Collection<Lookup> readAll() {
+		return inner.readAll();
 	}
 
 	@Override
-	public List<Lookup> list(final Groupable groupable) {
-		return inner.list(groupable);
+	public Collection<Lookup> readAll(final Groupable groupable) {
+		return inner.readAll(groupable);
 	}
 
 	@Override
 	public Iterable<Lookup> listForType(final LookupType type) {
 		logger.debug(marker, "getting lookups with type '{}'", type);
 
-		final Iterable<Lookup> lookups = list();
+		final Iterable<Lookup> lookups = readAll();
 
 		final Map<Long, Lookup> lookupsById = newHashMap();
 		for (final Lookup lookup : lookups) {

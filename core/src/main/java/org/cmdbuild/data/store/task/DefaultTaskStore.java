@@ -7,6 +7,7 @@ import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.cmdbuild.data.store.task.TaskParameterGroupable.groupedBy;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -207,7 +208,7 @@ public class DefaultTaskStore implements TaskStore {
 		public Task execute() {
 			final Task task = Task.class.cast(storable);
 			final TaskDefinition definition = definitionsStore.read(definitionOf(task));
-			final Iterable<TaskParameter> parameters = parametersStore.list(groupedBy(definition));
+			final Iterable<TaskParameter> parameters = parametersStore.readAll(groupedBy(definition));
 			return of(definition, parameters);
 		}
 
@@ -229,14 +230,14 @@ public class DefaultTaskStore implements TaskStore {
 
 		@Override
 		public List<Task> execute() {
-			final Iterable<TaskDefinition> list = (groupable == null) ? definitionsStore.list() : definitionsStore
-					.list(groupable);
+			final Iterable<TaskDefinition> list = (groupable == null) ? definitionsStore.readAll() : definitionsStore
+					.readAll(groupable);
 			return from(list) //
 					.transform(new Function<TaskDefinition, Task>() {
 
 						@Override
 						public Task apply(final TaskDefinition input) {
-							final Iterable<TaskParameter> parameters = parametersStore.list(groupedBy(input));
+							final Iterable<TaskParameter> parameters = parametersStore.readAll(groupedBy(input));
 							return of(input, parameters);
 						}
 
@@ -263,7 +264,7 @@ public class DefaultTaskStore implements TaskStore {
 
 			final Map<String, TaskParameter> left = transformEntries(storable.getParameters(),
 					toTaskParameterMapOf(definition));
-			final Map<String, TaskParameter> right = uniqueIndex(parametersStore.list(groupedBy(definition)), BY_NAME);
+			final Map<String, TaskParameter> right = uniqueIndex(parametersStore.readAll(groupedBy(definition)), BY_NAME);
 			final MapDifference<String, TaskParameter> difference = difference(left, right);
 			for (final TaskParameter element : difference.entriesOnlyOnLeft().values()) {
 				parametersStore.create(element);
@@ -300,7 +301,7 @@ public class DefaultTaskStore implements TaskStore {
 			Validate.isInstanceOf(Task.class, storable);
 			final Task task = Task.class.cast(storable);
 			final TaskDefinition definition = definitionsStore.read(definitionOf(task));
-			for (final TaskParameter element : parametersStore.list(groupedBy(definition))) {
+			for (final TaskParameter element : parametersStore.readAll(groupedBy(definition))) {
 				parametersStore.delete(element);
 			}
 			definitionsStore.delete(definition);
@@ -321,9 +322,9 @@ public class DefaultTaskStore implements TaskStore {
 
 		@Override
 		public Task execute() {
-			for (final TaskDefinition definition : definitionsStore.list()) {
+			for (final TaskDefinition definition : definitionsStore.readAll()) {
 				if (definition.getId().equals(id)) {
-					final Iterable<TaskParameter> parameters = parametersStore.list(groupedBy(definition));
+					final Iterable<TaskParameter> parameters = parametersStore.readAll(groupedBy(definition));
 					return of(definition, parameters);
 				}
 			}
@@ -353,13 +354,13 @@ public class DefaultTaskStore implements TaskStore {
 	}
 
 	@Override
-	public List<Task> list() {
+	public Collection<Task> readAll() {
 		logger.info(MARKER, "getting all existing elements");
 		return execute(doReadAll());
 	}
 
 	@Override
-	public List<Task> list(final Groupable groupable) {
+	public Collection<Task> readAll(final Groupable groupable) {
 		logger.info(MARKER, "getting all existing elements for group '{}'", groupable);
 		return execute(doReadAll(groupable));
 	}

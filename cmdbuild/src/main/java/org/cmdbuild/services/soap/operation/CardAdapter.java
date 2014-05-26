@@ -40,7 +40,7 @@ public class CardAdapter {
 							attribute.setValue(value);
 						}
 					} else {
-						final Iterable<Lookup> lookupList = lookupStore.list();
+						final Iterable<Lookup> lookupList = lookupStore.readAll();
 						for (final Lookup lookup : lookupList) {
 							if (lookup.active && //
 									lookup.type.name.equals(lookupTypeName) && //
@@ -54,7 +54,7 @@ public class CardAdapter {
 				}
 
 				private boolean existsLookup(final String lookupTypeName, final Long lookupId) {
-					final Iterable<Lookup> lookupList = lookupStore.list();
+					final Iterable<Lookup> lookupList = lookupStore.readAll();
 					for (final Lookup lookup : lookupList) {
 						if (lookup.type.name.equals(lookupTypeName) && lookup.getId().equals(lookupId)) {
 							return true;

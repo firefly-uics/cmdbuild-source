@@ -31,7 +31,7 @@ public class PredicateEmailAccountSupplier implements Supplier<EmailAccount> {
 	@Override
 	public EmailAccount get() {
 		logger.debug("getting default email account");
-		return from(store.list()) //
+		return from(store.readAll()) //
 				.filter(EmailAccount.class) //
 				.filter(predicate) //
 				.first() //
