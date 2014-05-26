@@ -76,7 +76,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 	}
 
 	private Long getEmailLookupIdFrom(final EmailStatus emailStatus) {
-		for (final Lookup lookup : lookupStore.listForType(LookupType.newInstance() //
+		for (final Lookup lookup : lookupStore.readAll(LookupType.newInstance() //
 				.withName(EmailStatus.LOOKUP_TYPE) //
 				.build())) {
 			if (lookup.description.equals(emailStatus.getLookupName())) {

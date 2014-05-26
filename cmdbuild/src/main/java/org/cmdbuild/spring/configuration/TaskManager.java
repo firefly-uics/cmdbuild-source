@@ -15,6 +15,7 @@ import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.taskmanager.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.ConnectorTaskJobFactory;
+import org.cmdbuild.logic.taskmanager.DefaultAttributeValueAdapter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter;
@@ -140,7 +141,13 @@ public class TaskManager {
 
 	@Bean
 	protected ConnectorTaskJobFactory connectorTaskJobFactory() {
-		return new ConnectorTaskJobFactory(data.systemDataView(), other.dataSourceHelper());
+		return new ConnectorTaskJobFactory(data.systemDataView(), other.dataSourceHelper(),
+				defaultAttributeValueAdapter());
+	}
+
+	@Bean
+	protected DefaultAttributeValueAdapter defaultAttributeValueAdapter() {
+		return new DefaultAttributeValueAdapter(data.systemDataView(), data.lookupStore());
 	}
 
 	@Bean

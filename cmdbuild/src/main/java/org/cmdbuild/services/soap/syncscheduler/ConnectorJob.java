@@ -348,7 +348,7 @@ public class ConnectorJob implements Runnable {
 		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();		
 		if (StringUtils.isNotBlank(attributeValue)) {
 			final String lookupTypeName = lookupAttributeType.getLookupTypeName();
-			for (final Lookup lookupDto : lookupStore.listForType(LookupType.newInstance() //
+			for (final Lookup lookupDto : lookupStore.readAll(LookupType.newInstance() //
 					.withName(lookupTypeName) //
 					.build())) {
 				if (lookupDto.description.equals(attributeValue)) {

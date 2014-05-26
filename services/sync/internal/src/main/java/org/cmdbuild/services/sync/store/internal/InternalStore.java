@@ -3,6 +3,7 @@ package org.cmdbuild.services.sync.store.internal;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Sets.newHashSet;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.guava.Functions.toCard;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -28,13 +29,40 @@ import org.cmdbuild.services.sync.store.TypeVisitor;
 import com.google.common.base.Predicate;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Maps;
 
 public class InternalStore implements Store {
+
+	private static final AttributeValueAdapter NULL_ATTRIBUTE_VALUE_ADAPTER = new AttributeValueAdapter() {
+
+		@Override
+		public Iterable<Map.Entry<String, Object>> toSynchronizer(final ClassType type,
+				final Iterable<? extends Map.Entry<String, ? extends Object>> values) {
+			return identity(values);
+		}
+
+		@Override
+		public Iterable<Map.Entry<String, Object>> toInternal(final ClassType type,
+				final Iterable<? extends Map.Entry<String, ? extends Object>> values) {
+			return identity(values);
+		}
+
+		private Iterable<Map.Entry<String, Object>> identity(
+				final Iterable<? extends Map.Entry<String, ? extends Object>> values) {
+			final Map<String, Object> adapted = Maps.newHashMap();
+			for (final Map.Entry<String, ? extends Object> entry : values) {
+				adapted.put(entry.getKey(), entry.getValue());
+			}
+			return adapted.entrySet();
+		}
+
+	};
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<InternalStore> {
 
 		private CMDataView dataView;
 		private Catalog catalog;
+		private AttributeValueAdapter attributeValueAdapter;
 
 		private Builder() {
 			// use factory method
@@ -49,6 +77,7 @@ public class InternalStore implements Store {
 		private void validate() {
 			Validate.notNull(dataView, "missing '%s'", CMDataView.class);
 			Validate.notNull(catalog, "missing '%s'", Catalog.class);
+			attributeValueAdapter = defaultIfNull(attributeValueAdapter, NULL_ATTRIBUTE_VALUE_ADAPTER);
 		}
 
 		public Builder withDataView(final CMDataView dataView) {
@@ -58,6 +87,16 @@ public class InternalStore implements Store {
 
 		public Builder withCatalog(final Catalog catalog) {
 			this.catalog = catalog;
+			return this;
+		}
+
+		public Builder setAttributeValueAdapter(final AttributeValueAdapter attributeValueAdapter) {
+			this.attributeValueAdapter = attributeValueAdapter;
+			return this;
+		}
+
+		public Builder withAttributeValueAdapter(final AttributeValueAdapter attributeValueAdapter) {
+			this.attributeValueAdapter = attributeValueAdapter;
 			return this;
 		}
 
@@ -101,9 +140,12 @@ public class InternalStore implements Store {
 	private static class Create extends Action<Void> implements TypeVisitor {
 
 		private final Entry<? extends Type> entry;
+		private final AttributeValueAdapter attributeValueAdapter;
 
-		public Create(final CMDataView dataView, final Entry<? extends Type> entry) {
+		public Create(final CMDataView dataView, final AttributeValueAdapter attributeValueAdapter,
+				final Entry<? extends Type> entry) {
 			super(dataView);
+			this.attributeValueAdapter = attributeValueAdapter;
 			this.entry = entry;
 		}
 
@@ -118,8 +160,10 @@ public class InternalStore implements Store {
 			final String typeName = type.getName();
 			final CMClass targetType = dataView.findClass(typeName);
 			// TODO handle class not found
+			final Iterable<Map.Entry<String, Object>> rawValues = entry.getValues();
+			final Iterable<Map.Entry<String, Object>> adaptedValues = attributeValueAdapter.toInternal(type, rawValues);
 			dataView.createCardFor(targetType) //
-					.set(entry.getValues()) //
+					.set(adaptedValues) //
 					.save();
 			// TODO id and key
 		}
@@ -129,12 +173,15 @@ public class InternalStore implements Store {
 	private static class ReadAllByType extends Action<Iterable<Entry<?>>> implements TypeVisitor {
 
 		private final Cache<Key, Long> cache;
+		private final AttributeValueAdapter attributeValueAdapter;
 		private final Type type;
 		private final Collection<Entry<? extends Type>> entries;
 
-		public ReadAllByType(final CMDataView dataView, final Cache<Key, Long> cache, final Type type) {
+		public ReadAllByType(final CMDataView dataView, final Cache<Key, Long> cache,
+				final AttributeValueAdapter attributeValueAdapter, final Type type) {
 			super(dataView);
 			this.cache = cache;
+			this.attributeValueAdapter = attributeValueAdapter;
 			this.type = type;
 			this.entries = newHashSet();
 		}
@@ -155,10 +202,13 @@ public class InternalStore implements Store {
 					.run()) //
 					.transform(toCard(targetType));
 			for (final CMCard card : cards) {
+				final Iterable<Map.Entry<String, Object>> rawValues = from(card.getAllValues()) //
+						.filter(AttributesOfType.of(type));
+				final Iterable<Map.Entry<String, Object>> adaptedValues = attributeValueAdapter.toSynchronizer(type,
+						rawValues);
 				final CardEntry entry = CardEntry.newInstance() //
 						.withType(type) //
-						.withValues(from(card.getAllValues()) //
-								.filter(AttributesOfType.of(type))) //
+						.withValues(adaptedValues) //
 						.build();
 				cache.put(entry.getKey(), card.getId());
 				entries.add(entry);
@@ -170,11 +220,14 @@ public class InternalStore implements Store {
 	private static class Update extends Action<Void> implements TypeVisitor {
 
 		private final Cache<Key, Long> cache;
+		private final AttributeValueAdapter attributeValueAdapter;
 		private final Entry<? extends Type> entry;
 
-		public Update(final CMDataView dataView, final Cache<Key, Long> cache, final Entry<? extends Type> entry) {
+		public Update(final CMDataView dataView, final Cache<Key, Long> cache,
+				final AttributeValueAdapter attributeValueAdapter, final Entry<? extends Type> entry) {
 			super(dataView);
 			this.cache = cache;
+			this.attributeValueAdapter = attributeValueAdapter;
 			this.entry = entry;
 		}
 
@@ -199,8 +252,10 @@ public class InternalStore implements Store {
 					.getOnlyRow() //
 					.getCard(targetType);
 			// TODO handle card not found
+			final Iterable<Map.Entry<String, Object>> rawValues = entry.getValues();
+			final Iterable<Map.Entry<String, Object>> adaptedValues = attributeValueAdapter.toInternal(type, rawValues);
 			dataView.update(card) //
-					.set(entry.getValues()) //
+					.set(adaptedValues) //
 					.save();
 		}
 
@@ -245,11 +300,13 @@ public class InternalStore implements Store {
 
 	private final CMDataView dataView;
 	private final Catalog catalog;
+	private final AttributeValueAdapter attributeValueAdapter;
 	private final Cache<Key, Long> cache;
 
 	private InternalStore(final Builder builder) {
 		this.dataView = builder.dataView;
 		this.catalog = builder.catalog;
+		this.attributeValueAdapter = builder.attributeValueAdapter;
 		this.cache = CacheBuilder.newBuilder() //
 				.build();
 	}
@@ -280,15 +337,15 @@ public class InternalStore implements Store {
 	}
 
 	private Create doCreate(final Entry<? extends Type> entry) {
-		return new Create(dataView, entry);
+		return new Create(dataView, attributeValueAdapter, entry);
 	}
 
 	private ReadAllByType doReadAll(final Type type) {
-		return new ReadAllByType(dataView, cache, type);
+		return new ReadAllByType(dataView, cache, attributeValueAdapter, type);
 	}
 
 	private Update doUpdate(final Entry<? extends Type> entry) {
-		return new Update(dataView, cache, entry);
+		return new Update(dataView, cache, attributeValueAdapter, entry);
 	}
 
 	private Delete doDelete(final Entry<? extends Type> entry) {

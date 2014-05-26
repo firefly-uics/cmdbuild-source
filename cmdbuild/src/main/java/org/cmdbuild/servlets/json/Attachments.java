@@ -62,7 +62,7 @@ public class Attachments extends JSONBaseWithSpringContext {
 		final LookupType lookupType = LookupType.newInstance() //
 				.withName(dmsLogic().getCategoryLookupType()) //
 				.build();
-		final Iterable<Lookup> lookups = lookupStore().listForType(lookupType);
+		final Iterable<Lookup> lookups = lookupStore().readAll(lookupType);
 		final List<JsonCategoryDefinition> jsonCategories = Lists.newArrayList();
 		for (final Lookup lookup : from(lookups).filter(ACTIVE_ONLY)) {
 			final DocumentTypeDefinition categoryDefinition = categoryDefinition(lookup.description);

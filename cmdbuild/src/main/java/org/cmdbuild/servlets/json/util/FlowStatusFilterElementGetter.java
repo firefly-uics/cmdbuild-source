@@ -35,7 +35,7 @@ public class FlowStatusFilterElementGetter implements FilterElementGetter {
 		logger.debug(marker, "creating JSON flow status element for '{}'", flowStatus);
 		final JSONArray singleValue = new JSONArray();
 		final JSONArray allValues = new JSONArray();
-		for (final Lookup element : lookupStore.listForType(LookupType.newInstance() //
+		for (final Lookup element : lookupStore.readAll(LookupType.newInstance() //
 				.withName("FlowStatus") //
 				.build())) {
 			if (element.code.equals(flowStatus)) {

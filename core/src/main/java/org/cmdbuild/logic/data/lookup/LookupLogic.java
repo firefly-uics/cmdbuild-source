@@ -121,7 +121,7 @@ public class LookupLogic implements Logic {
 			store.create(lookup);
 		} else {
 			logger.debug(marker, "old one specified, modifying existing one");
-			for (final Lookup lookup : store.listForType(oldType)) {
+			for (final Lookup lookup : store.readAll(oldType)) {
 				final Lookup newLookup = Lookup.newInstance() //
 						.withId(lookup.getId()) //
 						.withCode(lookup.code) //
@@ -251,7 +251,7 @@ public class LookupLogic implements Logic {
 
 		logger.trace(marker, "getting all lookups for real type '{}'", realType);
 
-		final Iterable<Lookup> elements = store.listForType(realType);
+		final Iterable<Lookup> elements = store.readAll(realType);
 
 		if (!elements.iterator().hasNext()) {
 			logger.error(marker, "no lookup was found for type '{}'", realType);
@@ -275,7 +275,7 @@ public class LookupLogic implements Logic {
 		}
 
 		final LookupType parent = typeFor(typesWith(current.parent));
-		return store.listForType(parent);
+		return store.readAll(parent);
 	}
 
 	public Lookup getLookup(final Long id) {
@@ -383,7 +383,7 @@ public class LookupLogic implements Logic {
 					lookupWithRealType.number);
 			final Lookup toBeCreated;
 			if (hasNoValidNumber(lookupWithRealType)) {
-				final int count = size(store.listForType(lookupWithRealType.type));
+				final int count = size(store.readAll(lookupWithRealType.type));
 				toBeCreated = Lookup.newInstance() //
 						.clone(lookupWithRealType) //
 						.withNumber(count + 1) //
@@ -439,7 +439,7 @@ public class LookupLogic implements Logic {
 		assure(operationUser.hasAdministratorPrivileges());
 
 		final LookupType realType = typeFor(typesWith(type.name));
-		final Iterable<Lookup> lookups = store.listForType(realType);
+		final Iterable<Lookup> lookups = store.readAll(realType);
 		for (final Lookup lookup : lookups) {
 			if (positions.containsKey(lookup.getId())) {
 				final int index = positions.get(lookup.getId());

@@ -28,6 +28,7 @@ import org.cmdbuild.services.sync.store.SimpleAttribute;
 import org.cmdbuild.services.sync.store.Store;
 import org.cmdbuild.services.sync.store.StoreSynchronizer;
 import org.cmdbuild.services.sync.store.Type;
+import org.cmdbuild.services.sync.store.internal.AttributeValueAdapter;
 import org.cmdbuild.services.sync.store.internal.BuildableCatalog;
 import org.cmdbuild.services.sync.store.internal.Catalog;
 import org.cmdbuild.services.sync.store.internal.InternalStore;
@@ -134,13 +135,15 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 		private static final Function<Builder<? extends TypeMapping>, TypeMapping> BUILD_TYPE_MAPPING = build();
 
 		private final CMDataView dataView;
-		private final DataSourceHelper jdbcService;
+		private final DataSourceHelper dataSourceHelper;
+		private final AttributeValueAdapter attributeValueAdapter;
 		private final ConnectorTask task;
 
-		private ConnectorTaskCommandWrapper(final CMDataView dataView, final DataSourceHelper jdbcService,
-				final ConnectorTask task) {
+		private ConnectorTaskCommandWrapper(final CMDataView dataView, final DataSourceHelper dataSourceHelper,
+				final AttributeValueAdapter attributeValueAdapter, final ConnectorTask task) {
 			this.dataView = dataView;
-			this.jdbcService = jdbcService;
+			this.dataSourceHelper = dataSourceHelper;
+			this.attributeValueAdapter = attributeValueAdapter;
 			this.task = task;
 		}
 
@@ -151,6 +154,7 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 			final Store rightAndTarget = InternalStore.newInstance() //
 					.withDataView(dataView) //
 					.withCatalog(catalog) //
+					.withAttributeValueAdapter(attributeValueAdapter) //
 					.build();
 			StoreSynchronizer.newInstance() //
 					.withLeft(left) //
@@ -194,7 +198,7 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 
 				@Override
 				public void visit(final SqlSourceConfiguration sourceConfiguration) {
-					final DataSource dataSource = jdbcService.create(sourceConfiguration);
+					final DataSource dataSource = dataSourceHelper.create(sourceConfiguration);
 					final Map<String, Map<String, BuildableTypeMapper.Builder>> allTypeMapperBuildersByTableOrViewName = newHashMap();
 					for (final ConnectorTask.AttributeMapping attributeMapping : task.getAttributeMappings()) {
 						final String tableOrViewName = attributeMapping.getSourceType();
@@ -245,10 +249,13 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 
 	private final CMDataView dataView;
 	private final DataSourceHelper jdbcService;
+	private final AttributeValueAdapter attributeValueAdapter;
 
-	public ConnectorTaskJobFactory(final CMDataView dataView, final DataSourceHelper jdbcService) {
+	public ConnectorTaskJobFactory(final CMDataView dataView, final DataSourceHelper jdbcService,
+			final AttributeValueAdapter attributeValueAdapter) {
 		this.dataView = dataView;
 		this.jdbcService = jdbcService;
+		this.attributeValueAdapter = attributeValueAdapter;
 	}
 
 	@Override
@@ -258,7 +265,7 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 
 	@Override
 	protected Command command(final ConnectorTask task) {
-		return new ConnectorTaskCommandWrapper(dataView, jdbcService, task);
+		return new ConnectorTaskCommandWrapper(dataView, jdbcService, attributeValueAdapter, task);
 	}
 
 }
