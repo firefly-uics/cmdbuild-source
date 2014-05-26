@@ -138,7 +138,7 @@ public class SecurityLogic implements Logic {
 	private Iterable<View> fetchAllViews() {
 		// TODO must be an external dependency
 		final DataViewStore<View> viewStore = DataViewStore.newInstance(view, viewConverter);
-		return viewStore.list();
+		return viewStore.readAll();
 	}
 
 	private Iterable<Filter> fetchAllGroupsFilters() {

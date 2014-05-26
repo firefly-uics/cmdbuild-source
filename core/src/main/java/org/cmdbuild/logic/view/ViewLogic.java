@@ -35,7 +35,7 @@ public class ViewLogic implements Logic {
 
 	public List<View> fetchViewsOfAllTypes() {
 		final List<View> views = new ArrayList<View>();
-		for (final View view : store.list()) {
+		for (final View view : store.readAll()) {
 			if ((operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(view))) {
 				if (view.getType().equals(ViewType.FILTER)) {
 					if (isActive(view.getSourceClassName())) {

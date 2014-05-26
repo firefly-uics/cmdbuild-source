@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -66,11 +66,11 @@ public class MetadataStoreTest extends IntegrationTestBase {
 		metadataStore.create(element);
 
 		// when
-		final List<Metadata> list = metadataStore.list();
+		final Collection<Metadata> list = metadataStore.readAll();
 
 		// then
 		assertThat(list.size(), equalTo(1));
-		assertThat(list.get(0), equalTo(element));
+		assertThat(list.iterator().next(), equalTo(element));
 	}
 
 	@Test
@@ -80,7 +80,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 		metadataStore.create(Metadata.of("bar", "baz"));
 
 		// when
-		final List<Metadata> list = metadataStore.list();
+		final Collection<Metadata> list = metadataStore.readAll();
 
 		// then
 		assertThat(list.size(), equalTo(2));
@@ -108,7 +108,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 
 		// when
 		metadataStore.update(Metadata.of("foo", "foobar"));
-		final List<Metadata> list = metadataStore.list();
+		final Collection<Metadata> list = metadataStore.readAll();
 
 		// then
 		assertThat(list, containsInAnyOrder(Metadata.of("foo", "foobar"), Metadata.of("bar", "baz")));
@@ -122,7 +122,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 
 		// when
 		metadataStore.delete(Metadata.of("foo"));
-		final List<Metadata> list = metadataStore.list();
+		final Collection<Metadata> list = metadataStore.readAll();
 
 		// then
 		assertThat(list.size(), equalTo(1));
@@ -137,8 +137,8 @@ public class MetadataStoreTest extends IntegrationTestBase {
 		anotherMetadataStore.create(Metadata.of("foo", "2"));
 
 		// when
-		final List<Metadata> list = metadataStore.list();
-		final List<Metadata> anotherList = anotherMetadataStore.list();
+		final Collection<Metadata> list = metadataStore.readAll();
+		final Collection<Metadata> anotherList = anotherMetadataStore.readAll();
 
 		// then
 		assertThat(list.size(), equalTo(2));

@@ -96,10 +96,8 @@ public class ModWidget extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse getAllWidgets() {
 		final WidgetLogic widgetLogic = new WidgetLogic(systemDataView());
-		final List<Widget> fetchedWidgets = widgetLogic.getAllWidgets();
 		final Map<String, List<Widget>> classNameToWidgetList = Maps.newHashMap();
-		for (final Widget widget : fetchedWidgets) {
-
+		for (final Widget widget : widgetLogic.getAllWidgets()) {
 			final WidgetTranslation translationObject = WidgetTranslation.newInstance() //
 					.withField(BUTTON_LABEL_FOR_CLIENT).withName(widget.getIdentifier()).build();
 			final String translatedLabel = translationFacade().read(translationObject);

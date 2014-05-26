@@ -408,7 +408,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			final Store<Metadata> store = DataViewStore.newInstance(view, //
 					MetadataGroupable.of(existingAttribute), //
 					MetadataConverter.of(existingAttribute));
-			final Iterable<Metadata> allMetadata = store.list();
+			final Iterable<Metadata> allMetadata = store.readAll();
 			for (final Metadata metadata : allMetadata) {
 				store.delete(metadata);
 			}

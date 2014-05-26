@@ -95,7 +95,7 @@ public class LookupLogic implements Logic {
 
 	public Iterable<LookupType> getAllTypes() {
 		logger.trace(marker, "getting all lookup types");
-		return from(store.list()) //
+		return from(store.readAll()) //
 				.transform(toLookupType()) //
 				.filter(uniques());
 	}
@@ -280,7 +280,7 @@ public class LookupLogic implements Logic {
 
 	public Lookup getLookup(final Long id) {
 		logger.debug(marker, "getting lookup with id '{}'", id);
-		final Iterator<Lookup> elements = from(store.list()) //
+		final Iterator<Lookup> elements = from(store.readAll()) //
 				.filter(new Predicate<Lookup>() {
 					@Override
 					public boolean apply(final Lookup input) {
@@ -319,7 +319,7 @@ public class LookupLogic implements Logic {
 		}
 
 		logger.trace(marker, "getting lookup with id '{}'", id);
-		final Iterator<Lookup> shouldBeOneOnly = from(store.list()) //
+		final Iterator<Lookup> shouldBeOneOnly = from(store.readAll()) //
 				.filter(withId(id)) //
 				.iterator();
 

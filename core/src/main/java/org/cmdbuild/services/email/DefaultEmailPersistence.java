@@ -61,7 +61,7 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	@Override
 	public Iterable<EmailTemplate> getEmailTemplates() {
 		logger.info("getting all email templates");
-		return emailTemplateStore.list();
+		return emailTemplateStore.readAll();
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	@Override
 	public void delete(final Email email) {
 		logger.info("deleting email with id '{}'", email.getId());
-		final Optional<Email> optional = from(emailStore.list()) //
+		final Optional<Email> optional = from(emailStore.readAll()) //
 				.filter(EmailIdPredicate.of(email.getId())) //
 				.first();
 		if (optional.isPresent()) {
@@ -137,7 +137,7 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	@Override
 	public Iterable<Email> getEmails(final Long processId) {
 		logger.info("getting all emails for process' id '{}'", processId);
-		return from(emailStore.list(EmailOwnerGroupable.of(processId)));
+		return from(emailStore.readAll(EmailOwnerGroupable.of(processId)));
 	}
 
 }

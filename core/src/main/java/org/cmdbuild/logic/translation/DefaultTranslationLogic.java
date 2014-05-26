@@ -233,7 +233,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		final Element element = ElementCreator.of(translationObject).create();
 		final Store<Translation> store = storeFactory.create(element);
 		final Map<String, String> map = newLinkedHashMap();
-		for (final Translation translation : store.list()) {
+		for (final Translation translation : store.readAll()) {
 			map.put(translation.getLang(), translation.getValue());
 		}
 		return map;
@@ -246,7 +246,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		final Collection<Translation> translations = extractTranslations(translationObject, element);
 		final Map<String, Translation> translationsByLang = uniqueIndex(translations, TRANSLATION_TO_LANG);
 		final Store<Translation> store = storeFactory.create(element);
-		final Iterable<Translation> updateable = from(store.list()) //
+		final Iterable<Translation> updateable = from(store.readAll()) //
 				.filter(ContainedInTraslations.containedIn(translations));
 		for (final Translation translationOnStore : updateable) {
 			final String lang = translationOnStore.getLang();
@@ -261,7 +261,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		final Element element = ElementCreator.of(translationObject).create();
 		final Collection<Translation> translations = extractTranslations(translationObject, element);
 		final Store<Translation> store = storeFactory.create(element);
-		final Iterable<Translation> deleteable = from(store.list()) //
+		final Iterable<Translation> deleteable = from(store.readAll()) //
 				.filter(ContainedInTraslations.containedIn(translations));
 		for (final Translation translation : deleteable) {
 			store.delete(translation);

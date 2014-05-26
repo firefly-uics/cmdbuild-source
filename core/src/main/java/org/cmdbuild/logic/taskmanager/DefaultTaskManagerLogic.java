@@ -91,7 +91,7 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		@Override
 		public Iterable<Task> execute() {
-			return from(store.list()) //
+			return from(store.readAll()) //
 					.transform(toLogic()) //
 					.filter(instanceOf(type)) //
 					.toList();

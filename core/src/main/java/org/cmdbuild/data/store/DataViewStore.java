@@ -11,6 +11,7 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -262,6 +263,56 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	}
 
 	@Override
+	public Collection<T> readAll() {
+		logger.debug(marker, "listing all storable elements");
+		return readAll(NOT_GROUPABLE);
+	}
+
+	@Override
+	public Collection<T> readAll(final Groupable groupable) {
+		logger.debug(marker, "listing all storable elements with additional grouping condition '{}'", groupable);
+		final CMQueryResult result = view //
+				.select(anyAttribute(storeClass())) //
+				.from(storeClass()) //
+				.where(and(builtInGroupWhereClause(), groupWhereClause(groupable))) //
+				.run();
+
+		final List<T> list = transform(newArrayList(result), new Function<CMQueryRow, T>() {
+			@Override
+			public T apply(final CMQueryRow input) {
+				return converter.convert(input.getCard(storeClass()));
+			}
+		});
+		return list;
+	}
+
+	/**
+	 * Creates a {@link WhereClause} for the grouping.
+	 * 
+	 * @return the {@link WhereClause} for the grouping, {@link TrueWhereClause}
+	 *         if no grouping is available.
+	 */
+	private WhereClause builtInGroupWhereClause() {
+		logger.debug(marker, "building built-in group where clause");
+		return groupWhereClause(groupable);
+	}
+
+	private WhereClause groupWhereClause(final Groupable groupable) {
+		logger.debug(marker, "building group where clause");
+		final WhereClause clause;
+		final String attributeName = groupable.getGroupAttributeName();
+		if (attributeName != null) {
+			logger.debug(marker, "group attribute name is '{}', building where clause", attributeName);
+			final Object attributeValue = groupable.getGroupAttributeValue();
+			clause = condition(attribute(storeClass(), attributeName), eq(attributeValue));
+		} else {
+			logger.debug(marker, "group attribute name not specified");
+			clause = trueWhereClause();
+		}
+		return clause;
+	}
+
+	@Override
 	public void update(final T storable) {
 		logger.debug(marker, "updating storable element with identifier '{}'", storable.getIdentifier());
 
@@ -324,56 +375,6 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		}
 
 		return and(builtInGroupWhereClause(), condition(attribute(storeClass(), attributeName), eq(attributeValue)));
-	}
-
-	@Override
-	public List<T> list() {
-		logger.debug(marker, "listing all storable elements");
-		return list(NOT_GROUPABLE);
-	}
-
-	@Override
-	public List<T> list(final Groupable groupable) {
-		logger.debug(marker, "listing all storable elements with additional grouping condition '{}'", groupable);
-		final CMQueryResult result = view //
-				.select(anyAttribute(storeClass())) //
-				.from(storeClass()) //
-				.where(and(builtInGroupWhereClause(), groupWhereClause(groupable))) //
-				.run();
-
-		final List<T> list = transform(newArrayList(result), new Function<CMQueryRow, T>() {
-			@Override
-			public T apply(final CMQueryRow input) {
-				return converter.convert(input.getCard(storeClass()));
-			}
-		});
-		return list;
-	}
-
-	/**
-	 * Creates a {@link WhereClause} for the grouping.
-	 * 
-	 * @return the {@link WhereClause} for the grouping, {@link TrueWhereClause}
-	 *         if no grouping is available.
-	 */
-	private WhereClause builtInGroupWhereClause() {
-		logger.debug(marker, "building built-in group where clause");
-		return groupWhereClause(groupable);
-	}
-
-	private WhereClause groupWhereClause(final Groupable groupable) {
-		logger.debug(marker, "building group where clause");
-		final WhereClause clause;
-		final String attributeName = groupable.getGroupAttributeName();
-		if (attributeName != null) {
-			logger.debug(marker, "group attribute name is '{}', building where clause", attributeName);
-			final Object attributeValue = groupable.getGroupAttributeValue();
-			clause = condition(attribute(storeClass(), attributeName), eq(attributeValue));
-		} else {
-			logger.debug(marker, "group attribute name not specified");
-			clause = trueWhereClause();
-		}
-		return clause;
 	}
 
 }

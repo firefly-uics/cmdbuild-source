@@ -116,7 +116,7 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	@Override
 	public Iterable<Template> readAll() {
 		logger.info(marker, "reading all templates");
-		return from(store.list()) //
+		return from(store.readAll()) //
 				.transform(EMAIL_TEMPLATE_TO_TEMPLATE);
 	}
 
@@ -158,14 +158,14 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	}
 
 	private void assureNoOneWithName(final String name) {
-		final boolean existing = from(store.list()) //
+		final boolean existing = from(store.readAll()) //
 				.transform(TO_NAME) //
 				.contains(name);
 		Validate.isTrue(!existing, "already existing element");
 	}
 
 	private void assureOneOnlyWithName(final String name) {
-		final int count = from(store.list()) //
+		final int count = from(store.readAll()) //
 				.transform(TO_NAME) //
 				.filter(equalTo(name)) //
 				.size();

@@ -375,7 +375,7 @@ public class CQLAnalyzer {
 				if (fieldValue.getType() == FieldValueType.INT) {
 					value = fieldValue.getValue();
 				} else if (fieldValue.getType() == FieldValueType.STRING) {
-					for (final Lookup lookupDto : lookupStore.list()) {
+					for (final Lookup lookupDto : lookupStore.readAll()) {
 						if (lookupDto.description.equals(fieldValue.getValue().toString())) {
 							value = lookupDto.getId();
 						}
@@ -383,7 +383,7 @@ public class CQLAnalyzer {
 				} else {
 					try {
 						final Field lookupDtoField = Lookup.class.getField(node.getAttributeName());
-						for (final Lookup lookupDto : lookupStore.list()) {
+						for (final Lookup lookupDto : lookupStore.readAll()) {
 							if (lookupDtoField.get(lookupDto).equals(fieldValue.getValue().toString())) {
 								value = lookupDto.getId();
 							}

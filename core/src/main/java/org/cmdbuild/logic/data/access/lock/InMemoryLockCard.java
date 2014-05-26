@@ -1,7 +1,5 @@
 package org.cmdbuild.logic.data.access.lock;
 
-import java.util.List;
-
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.exception.ConsistencyException;
@@ -53,8 +51,7 @@ public class InMemoryLockCard implements LockCardManager {
 
 	@Override
 	public synchronized void unlockAll() {
-		final List<LockedCard> lockedCards = lockedCardStore.list();
-		for (final LockedCard cardToUnlock : lockedCards) {
+		for (final LockedCard cardToUnlock : lockedCardStore.readAll()) {
 			lockedCardStore.delete(storable(cardToUnlock.getIdentifier()));
 		}
 	}

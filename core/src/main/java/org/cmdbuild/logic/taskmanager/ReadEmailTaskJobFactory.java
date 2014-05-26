@@ -495,7 +495,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private StorableEmailAccount emailAccountFor(final String emailAccountName) {
 		logger.debug(marker, "getting email account for name '{}'", emailAccountName);
-		for (final StorableEmailAccount emailAccount : emailAccountStore.list()) {
+		for (final StorableEmailAccount emailAccount : emailAccountStore.readAll()) {
 			if (emailAccount.getName().equals(emailAccountName)) {
 				return emailAccount;
 			}

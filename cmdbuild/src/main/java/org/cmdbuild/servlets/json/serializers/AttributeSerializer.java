@@ -143,7 +143,7 @@ public class AttributeSerializer extends Serializer {
 	public JSONObject toClient(final CMAttribute attribute, final boolean withClassId) throws JSONException {
 		final MetadataStoreFactory metadataStoreFactory = applicationContext().getBean(MetadataStoreFactory.class);
 		final Store<Metadata> metadataStore = metadataStoreFactory.storeForAttribute(attribute);
-		final JSONObject jsonAttribute = toClient(attribute, metadataStore.list());
+		final JSONObject jsonAttribute = toClient(attribute, metadataStore.readAll());
 		if (withClassId) {
 			jsonAttribute.put("idClass", attribute.getOwner().getId());
 		}
