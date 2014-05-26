@@ -17,6 +17,7 @@
 <!-- FIXES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/fixes/CMFixCombobox.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/fixes/CMFixFieldset.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/core/fixes/CMFixLayoutContainerEditor.js"></script>
 
 <!--  PROXYES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>

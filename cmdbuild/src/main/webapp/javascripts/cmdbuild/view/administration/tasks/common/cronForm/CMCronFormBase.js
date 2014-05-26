@@ -29,6 +29,12 @@
 
 			this.baseCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: 'baseCombo',
+				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				forceSelection: true,
+				editable: false,
+				margins: '0 0 0 ' + (CMDBuild.LABEL_WIDTH - 45),
+
 				store: Ext.create('Ext.data.SimpleStore', {
 					fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
 					data: [
@@ -38,12 +44,7 @@
 						['0 0 1 1 ?', tr.everyYear]
 					]
 				}),
-				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				queryMode: 'local',
-				forceSelection: true,
-				editable: false,
-				margins: '0 0 0 ' + (CMDBuild.LABEL_WIDTH - 45),
 
 				listeners: {
 					select: function(combo, record, index) {

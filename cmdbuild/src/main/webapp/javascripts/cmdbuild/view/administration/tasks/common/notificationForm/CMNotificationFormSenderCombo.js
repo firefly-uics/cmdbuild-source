@@ -10,11 +10,12 @@
 
 		valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 		displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-		store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
 		labelWidth: CMDBuild.LABEL_WIDTH,
 		width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 		forceSelection: true,
-		editable: false
+		editable: false,
+
+		store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore()
 	});
 
 })();

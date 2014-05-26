@@ -1,5 +1,6 @@
 (function() {
 
+	// TODO: to update without extends CMDynamicKeyValueGrid
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormCombo', {
 		extend: 'Ext.form.field.ComboBox',
 
@@ -10,10 +11,12 @@
 
 		valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 		displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-		store: CMDBuild.core.proxy.CMProxyTasks.getStoreAllWorkflow(),
 		width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 		forceSelection: true,
 		editable: false,
+
+		store: CMDBuild.core.proxy.CMProxyTasks.getStoreAllWorkflow(),
+		queryMode: 'local',
 
 		listeners: {
 			select: function(combo, records, eOpts) {

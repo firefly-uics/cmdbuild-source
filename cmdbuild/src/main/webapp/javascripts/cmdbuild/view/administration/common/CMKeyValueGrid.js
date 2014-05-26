@@ -27,11 +27,13 @@
 		initComponent: function() {
 			Ext.apply(this, {
 				columns: this.getColumnsConf(),
+
 				store: Ext.create('Ext.data.Store', {
 					model: 'CMDBuild.model.CMKeyValueModel',
 					data: []
 				}),
-				plugins: this.cellEditing
+
+				plugins: [this.cellEditing]
 			});
 
 			this.callParent(arguments);

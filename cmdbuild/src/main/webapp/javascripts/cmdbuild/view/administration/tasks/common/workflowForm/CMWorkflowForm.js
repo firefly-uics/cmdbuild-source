@@ -2,6 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.tasks;
 
+	// TODO: to update without extends CMDynamicKeyValueGrid
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 		extend: 'Ext.form.FieldContainer',
 
@@ -44,7 +45,6 @@
 
 			this.grid = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid', this.gridConfig);
 			this.delegate.gridField = this.grid;
-			this.delegate.gridEditorPlugin = this.grid.plugins[0];
 
 			Ext.apply(this, {
 				items: [this.combo, this.grid]

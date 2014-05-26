@@ -195,7 +195,7 @@
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 
-				plugins: this.gridEditorPlugin,
+				plugins: [this.gridEditorPlugin],
 
 				columns: [
 					{

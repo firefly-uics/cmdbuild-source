@@ -2,11 +2,11 @@
 
 	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
 
+	// TODO: to update without extends CMDynamicKeyValueGrid
 	Ext.define('CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController', {
 
 		comboField: undefined,
 		gridField: undefined,
-		gridEditorPlugin: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -38,15 +38,20 @@
 		 * @return (Object) store
 		 */
 		buildWorkflowAttributesStore: function(attributes) {
-			if (!Ext.isEmpty(attributes)) {
+			if (attributes) {
 				var store = Ext.create('Ext.data.Store', {
 					autoLoad: true,
-					fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE],
+					fields: [CMDBuild.ServiceProxy.parameter.VALUE],
 					data: []
 				});
 
-				for (var key in attributes)
-					store.add({ value: key });
+				for (var key in attributes) {
+					var bufferObj = {};
+
+					bufferObj[CMDBuild.ServiceProxy.parameter.VALUE] = key;
+
+					store.add(bufferObj);
+				}
 
 				return store;
 			}
@@ -60,7 +65,7 @@
 		cleanServerAttributes: function(attributes) {
 			var out = {};
 
-			for (var item in attributes)
+			for (item in attributes)
 				out[attributes[item].name] = '';
 
 			return out;
@@ -78,24 +83,7 @@
 			 * @return (Object)
 			 */
 			getValueGrid: function() {
-				var data = [];
-
-				// To validate and filter grid rows
-				this.gridField.getStore().each(function(record) {
-					if (
-						!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.NAME))
-						&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE))
-					) {
-						var buffer = {};
-
-						buffer[CMDBuild.core.proxy.CMProxyConstants.NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-						buffer[CMDBuild.core.proxy.CMProxyConstants.VALUE] = record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE);
-
-						data.push(buffer);
-					}
-				});
-
-				return data;
+				return this.gridField.getData();
 			},
 
 		/**
@@ -106,61 +94,43 @@
 		},
 
 		/**
-		 * @param (Int) rowIndex
+		 * @return (Integer) rowIndex
 		 */
 		onSelectAttributeCombo: function(rowIndex) {
-			this.gridEditorPlugin.startEditByPosition({ row: rowIndex, column: 1 });
+			this.gridField.cellEditing.startEditByPosition({ row: rowIndex, column: 1 });
 		},
 
 		/**
-		 * @param (String) className
+		 * @param (String) name
 		 * @param (Boolean) modify
 		 */
-		onSelectWorkflow: function(className, modify) {
-_debug('onSelectWorkflow');
-_debug(this.gridField);
-			if (!Ext.isEmpty(className)) {
-				var me = this;
+		onSelectWorkflow: function(name, modify) {
+			var me = this;
 
-				if (Ext.isEmpty(modify))
-					modify = false;
+			if (Ext.isEmpty(modify))
+				modify = false;
 
-				CMDBuild.core.proxy.CMProxyTasks.getWorkflowAttributes({
-//					scope: this,
-					params: {
-						className: className
-					},
-					success: function(response) {
-						var decodedResponse = Ext.JSON.decode(response.responseText);
-_debug(decodedResponse);
-_debug(me.gridField.columns[0]);
-						me.gridField.columns[0].setEditor({
-							xtype: 'combo',
-							valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-							displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-							forceSelection: true,
-							editable: false,
-							allowBlank: false,
+			CMDBuild.core.proxy.CMProxyTasks.getWorkflowAttributes({
+				params: {
+					className: name
+				},
+				success: function(response) {
+					var decodedResponse = Ext.JSON.decode(response.responseText);
 
-							store: me.buildWorkflowAttributesStore(me.cleanServerAttributes(decodedResponse.attributes)),
-							queryMode: 'local',
+					me.gridField.keyEditorConfig.store = me.buildWorkflowAttributesStore(me.cleanServerAttributes(decodedResponse.attributes));
 
-							listeners: {
-								select: function(combo, records, eOpts) {
-									me.cmOn('onSelectAttributeCombo', me.gridField.store.indexOf(me.gridField.getSelectionModel().getSelection()[0]));
-								}
-							}
-						});
+					// To setup updated editor store
+					if (Ext.isFunction(me.gridField.columns[0].setEditor))
+						me.gridField.columns[0].setEditor(me.gridField.keyEditorConfig);
 
-						if (!modify) {
-							me.gridField.store.removeAll();
-							me.gridField.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.common.workflowForm'));
-							me.gridEditorPlugin.startEditByPosition({ row: 0, column: 0 });
-							me.setDisabledAttributesGrid(false);
-						}
+					if (!modify) {
+						me.gridField.store.removeAll();
+						me.gridField.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.common.workflowForm'));
+						me.gridField.cellEditing.startEditByPosition({ row: 0, column: 0 });
+						me.setDisabledAttributesGrid(false);
 					}
-				});
-			}
+				}
+			});
 		},
 
 		// SETters functions
@@ -191,31 +161,11 @@ _debug(me.gridField.columns[0]);
 			},
 
 			/**
-			 * Rewrite of loadData
-			 *
 			 * @param (Object) value
 			 */
 			setValueGrid: function(value) {
-				var store = this.gridField.getStore();
-				store.removeAll();
-
-				if (!Ext.isEmpty(value)) {
-					for (var key in value) {
-						var recordConf = {};
-
-						recordConf[CMDBuild.core.proxy.CMProxyConstants.NAME] = key;
-						recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = value[key] || '';
-
-						store.add(recordConf);
-					}
-				} else {
-					var recordConf = {};
-
-					recordConf[CMDBuild.core.proxy.CMProxyConstants.NAME] = '';
-					recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = '';
-
-					store.add(recordConf);
-				}
+				if (!Ext.isEmpty(value))
+					this.gridField.fillWithData(value);
 			},
 
 		/**

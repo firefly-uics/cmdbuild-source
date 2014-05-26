@@ -64,8 +64,13 @@
 				data: []
 			});
 
-			for (var item in selectedClassArray)
-				store.add({ name: selectedClassArray[item] });
+			for (var item in selectedClassArray) {
+				var bufferObj = {};
+
+				bufferObj[CMDBuild.core.proxy.CMProxyConstants.NAME] = selectedClassArray[item];
+
+				store.add(bufferObj);
+			}
 
 			return store;
 		},
@@ -83,8 +88,13 @@
 				data: []
 			});
 
-			for (var item in selectedSourceArray)
-				store.add({ name: selectedSourceArray[item] });
+			for (var item in selectedSourceArray) {
+				var bufferObj = {};
+
+				bufferObj[CMDBuild.core.proxy.CMProxyConstants.NAME] = selectedSourceArray[item];
+
+				store.add(bufferObj);
+			}
 
 			return store;
 		},
@@ -148,7 +158,7 @@
 
 			// Validate before save
 			if (this.validate(formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE])) {
-//				CMDBuild.LoadMask.get().show();
+				CMDBuild.LoadMask.get().show();
 
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
 					formData[CMDBuild.core.proxy.CMProxyConstants.CRON_INPUT_TYPE]
@@ -201,8 +211,8 @@ _debug('Step 5 datas [4]');
 _debug(this.delegateStep[4].getData());
 _debug(Ext.encode(this.delegateStep[4].getData()));
 
-_debug('Step 6 datas [5]');
-_debug(Ext.encode(this.delegateStep[5].getData()));
+//_debug('Step 6 datas [5]');
+//_debug(Ext.encode(this.delegateStep[5].getData()));
 
 _debug(formData);
 _debug(submitDatas);

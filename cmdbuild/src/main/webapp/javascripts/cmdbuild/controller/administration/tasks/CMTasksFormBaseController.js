@@ -73,9 +73,8 @@
 				scope: this,
 				buttons: Ext.Msg.YESNO,
 				fn: function(button) {
-					if (button == 'yes') {
+					if (button == 'yes')
 						this.removeItem();
-					}
 				}
 			});
 		},

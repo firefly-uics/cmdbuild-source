@@ -44,7 +44,9 @@
 				forceSelection: true,
 				editable: false,
 				allowBlank: true,
+
 				store: CMDBuild.core.proxy.CMProxyTasks.getDeletionTypes(),
+				queryMode: 'local',
 
 				listeners: {
 					select: function(combo, records, eOpts) {
@@ -222,7 +224,7 @@
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
 
-				plugins: this.gridEditorPlugin,
+				plugins: [this.gridEditorPlugin],
 
 				columns: [
 					{
@@ -361,10 +363,10 @@
 		listeners: {
 			// Disable next button only if grid haven't selected class
 			show: function(view, eOpts) {
-//				Ext.Function.createDelayed(function() { // HACK: to fix problem which fires show event before changeTab() function
-//					if (this.delegate.isEmptyMappingGrid())
-//						this.delegate.setDisabledButtonNext(true);
-//				}, 1, this)();
+				Ext.Function.createDelayed(function() { // HACK: to fix problem which fires show event before changeTab() function
+					if (this.delegate.isEmptyMappingGrid())
+						this.delegate.setDisabledButtonNext(true);
+				}, 1, this)();
 			}
 		}
 	});
