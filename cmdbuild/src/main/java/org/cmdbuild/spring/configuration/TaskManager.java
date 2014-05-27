@@ -141,8 +141,14 @@ public class TaskManager {
 
 	@Bean
 	protected ConnectorTaskJobFactory connectorTaskJobFactory() {
-		return new ConnectorTaskJobFactory(data.systemDataView(), other.dataSourceHelper(),
-				defaultAttributeValueAdapter());
+		return new ConnectorTaskJobFactory( //
+				data.systemDataView(), //
+				other.dataSourceHelper(), //
+				defaultAttributeValueAdapter(),//
+				email.emailAccountStore(), //
+				email.emailServiceFactory(), //
+				email.emailTemplateLogic() //
+		);
 	}
 
 	@Bean

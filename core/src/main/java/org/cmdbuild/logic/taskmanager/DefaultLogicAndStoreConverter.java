@@ -68,6 +68,12 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public static final String SQL_PASSWORD = SQL_PREFIX + "password";
 		public static final String SQL_FILTER = SQL_PREFIX + "filter";
 
+		private static final String NOTIFICATION_PREFIX = ALL_PREFIX + "notification.";
+		public static final String NOTIFICATION_ACTIVE = NOTIFICATION_PREFIX + "active";
+		public static final String NOTIFICATION_ACCOUNT = NOTIFICATION_PREFIX + "account";
+		private static final String NOTIFICATION_TEMPLATE = NOTIFICATION_PREFIX + "template.";
+		public static final String NOTIFICATION_ERROR_TEMPLATE = NOTIFICATION_TEMPLATE + "error";
+
 		private static final String MAPPING_PREFIX = ALL_PREFIX + "mapping.";
 		public static final String MAPPING_TYPES = MAPPING_PREFIX + "types";
 		public static final String MAPPING_ATTRIBUTES = MAPPING_PREFIX + "attributes";
@@ -488,6 +494,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withDescription(task.getDescription()) //
 					.withRunningStatus(task.isActive()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withParameter(Connector.NOTIFICATION_ACTIVE, //
+							Boolean.toString(task.isNotificationActive())) //
+					.withParameter(Connector.NOTIFICATION_ACCOUNT, task.getNotificationAccount()) //
+					.withParameter(Connector.NOTIFICATION_ERROR_TEMPLATE, task.getNotificationErrorTemplate()) //
 					.withParameters(parametersOf(sourceConfiguration)) //
 					.withParameter(Connector.MAPPING_TYPES, Joiner.on(LINE_SEPARATOR) //
 							.join( //
@@ -644,6 +654,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withDescription(task.getDescription()) //
 					.withActiveStatus(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withNotificationStatus( //
+							Boolean.valueOf(task.getParameter(Connector.NOTIFICATION_ACTIVE))) //
+					.withNotificationAccount(task.getParameter(Connector.NOTIFICATION_ACCOUNT)) //
+					.withNotificationErrorTemplate(task.getParameter(Connector.NOTIFICATION_ERROR_TEMPLATE)) //
 					.withSourceConfiguration(sourceConfigurationOf(dataSourceType, dataSourceConfiguration)) //
 					.withClassMappings( //
 							isEmpty(typeMapping) ? NO_CLASS_MAPPINGS : FluentIterable.from( //

@@ -5,7 +5,11 @@ import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.common.utils.guava.Functions.build;
+import static org.cmdbuild.scheduler.command.Commands.composeOnExeption;
+import static org.cmdbuild.services.email.Predicates.named;
 
 import java.util.Collection;
 import java.util.Map;
@@ -16,11 +20,18 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.common.java.sql.DataSourceHelper;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.email.StorableEmailAccount;
+import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
+import org.cmdbuild.logic.email.SendTemplateEmail;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.ClassMapping;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfigurationVisitor;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter.AbstractJobFactory;
 import org.cmdbuild.scheduler.command.Command;
+import org.cmdbuild.services.email.EmailAccount;
+import org.cmdbuild.services.email.EmailServiceFactory;
+import org.cmdbuild.services.email.PredicateEmailAccountSupplier;
 import org.cmdbuild.services.sync.store.ClassType;
 import org.cmdbuild.services.sync.store.Entry;
 import org.cmdbuild.services.sync.store.ForwardingStore;
@@ -40,6 +51,7 @@ import org.cmdbuild.services.sync.store.sql.TableOrViewMapping;
 import org.cmdbuild.services.sync.store.sql.TypeMapping;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 
@@ -245,17 +257,65 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 		private Store wrap(final Store store) {
 			return new PermissionBasedStore(store, new ConnectorTaskPermission(task));
 		}
+
+	}
+
+	private static class SendEmailTemplateCommandWrapper implements Command {
+
+		private final EmailServiceFactory emailServiceFactory;
+		private final org.cmdbuild.data.store.Store<StorableEmailAccount> emailAccountStore;
+		private final EmailTemplateLogic emailTemplateLogic;
+		private final ConnectorTask task;
+
+		public SendEmailTemplateCommandWrapper(
+				final org.cmdbuild.data.store.Store<StorableEmailAccount> emailAccountStore,
+				final EmailServiceFactory emailServiceFactory, final EmailTemplateLogic emailTemplateLogic,
+				final ConnectorTask task) {
+			this.emailServiceFactory = emailServiceFactory;
+			this.emailAccountStore = emailAccountStore;
+			this.emailTemplateLogic = emailTemplateLogic;
+			this.task = task;
+		}
+
+		@Override
+		public void execute() {
+			final Supplier<EmailAccount> emailAccountSupplier = PredicateEmailAccountSupplier.of(emailAccountStore,
+					named(task.getNotificationAccount()));
+			final Supplier<Template> emailTemplateSupplier = new Supplier<Template>() {
+
+				@Override
+				public Template get() {
+					final String name = defaultIfBlank(task.getNotificationErrorTemplate(), EMPTY);
+					return emailTemplateLogic.read(name);
+				}
+
+			};
+			SendTemplateEmail.newInstance() //
+					.withEmailAccountSupplier(emailAccountSupplier) //
+					.withEmailServiceFactory(emailServiceFactory) //
+					.withEmailTemplateSupplier(emailTemplateSupplier) //
+					.build();
+		}
+
 	}
 
 	private final CMDataView dataView;
 	private final DataSourceHelper jdbcService;
 	private final AttributeValueAdapter attributeValueAdapter;
+	private final org.cmdbuild.data.store.Store<StorableEmailAccount> emailAccountStore;
+	private final EmailServiceFactory emailServiceFactory;
+	private final EmailTemplateLogic emailTemplateLogic;
 
 	public ConnectorTaskJobFactory(final CMDataView dataView, final DataSourceHelper jdbcService,
-			final AttributeValueAdapter attributeValueAdapter) {
+			final AttributeValueAdapter attributeValueAdapter,
+			final org.cmdbuild.data.store.Store<StorableEmailAccount> emailAccountStore,
+			final EmailServiceFactory emailServiceFactory, final EmailTemplateLogic emailTemplateLogic) {
 		this.dataView = dataView;
 		this.jdbcService = jdbcService;
 		this.attributeValueAdapter = attributeValueAdapter;
+		this.emailServiceFactory = emailServiceFactory;
+		this.emailAccountStore = emailAccountStore;
+		this.emailTemplateLogic = emailTemplateLogic;
 	}
 
 	@Override
@@ -265,7 +325,16 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 
 	@Override
 	protected Command command(final ConnectorTask task) {
+		return composeOnExeption(connector(task), sendEmail(task));
+
+	}
+
+	private ConnectorTaskCommandWrapper connector(final ConnectorTask task) {
 		return new ConnectorTaskCommandWrapper(dataView, jdbcService, attributeValueAdapter, task);
+	}
+
+	private Command sendEmail(final ConnectorTask task) {
+		return new SendEmailTemplateCommandWrapper(emailAccountStore, emailServiceFactory, emailTemplateLogic, task);
 	}
 
 }

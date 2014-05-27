@@ -174,6 +174,7 @@ public class CommunicationConstants {
 			NOTIFICATION_ACTIVE = "notificationActive", //
 			NOTIFICATION_EMAIL_ACCOUNT = "notificationEmailAccount", //
 			NOTIFICATION_EMAIL_TEMPLATE = "notificationEmailTemplate", //
+			NOTIFICATION_EMAIL_TEMPLATE_ERROR = "notificationEmailTemplateError", //
 			NOT_NULL = "isnotnull", //
 			NUMBER = "Number", //
 			OLD_PASSWORD = "oldpassword", //

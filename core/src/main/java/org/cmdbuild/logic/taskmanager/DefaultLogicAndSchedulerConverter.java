@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.taskmanager;
 
-import static org.cmdbuild.scheduler.command.NullCommand.nullCommand;
-import static org.cmdbuild.scheduler.command.SafeCommand.safe;
+import static org.cmdbuild.scheduler.command.Commands.nullCommand;
+import static org.cmdbuild.scheduler.command.Commands.safe;
 
 import java.util.Map;
 
