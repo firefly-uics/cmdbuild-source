@@ -262,23 +262,12 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 
 	private static class SendEmailTemplateCommandWrapper implements Command {
 
-		private final EmailServiceFactory emailServiceFactory;
-		private final org.cmdbuild.data.store.Store<StorableEmailAccount> emailAccountStore;
-		private final EmailTemplateLogic emailTemplateLogic;
-		private final ConnectorTask task;
+		private final SendTemplateEmail sendEmailTemplate;
 
 		public SendEmailTemplateCommandWrapper(
 				final org.cmdbuild.data.store.Store<StorableEmailAccount> emailAccountStore,
 				final EmailServiceFactory emailServiceFactory, final EmailTemplateLogic emailTemplateLogic,
 				final ConnectorTask task) {
-			this.emailServiceFactory = emailServiceFactory;
-			this.emailAccountStore = emailAccountStore;
-			this.emailTemplateLogic = emailTemplateLogic;
-			this.task = task;
-		}
-
-		@Override
-		public void execute() {
 			final Supplier<EmailAccount> emailAccountSupplier = PredicateEmailAccountSupplier.of(emailAccountStore,
 					named(task.getNotificationAccount()));
 			final Supplier<Template> emailTemplateSupplier = new Supplier<Template>() {
@@ -290,12 +279,16 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 				}
 
 			};
-			SendTemplateEmail.newInstance() //
+			sendEmailTemplate = SendTemplateEmail.newInstance() //
 					.withEmailAccountSupplier(emailAccountSupplier) //
 					.withEmailServiceFactory(emailServiceFactory) //
 					.withEmailTemplateSupplier(emailTemplateSupplier) //
-					.build() //
-					.execute();;
+					.build();
+		}
+
+		@Override
+		public void execute() {
+			sendEmailTemplate.execute();
 		}
 
 	}
