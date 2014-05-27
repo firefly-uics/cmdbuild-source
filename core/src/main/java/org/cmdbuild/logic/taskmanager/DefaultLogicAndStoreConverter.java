@@ -462,7 +462,6 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 			} else {
 				converted = null;
 			}
-			Validate.notNull(converted, "conversion error");
 			return converted;
 		}
 

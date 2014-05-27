@@ -26,6 +26,7 @@ import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask.Phase;
 import org.cmdbuild.logic.taskmanager.Task;
@@ -58,7 +59,7 @@ public class SynchronousEvent extends JSONBaseWithSpringContext {
 
 		public static JsonPhase of(final Phase phase) {
 			for (final JsonPhase element : values()) {
-				if (element.phase.equals(phase)) {
+				if (ObjectUtils.equals(element.phase, phase)) {
 					return element;
 				}
 			}

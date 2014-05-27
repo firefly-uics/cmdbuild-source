@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.util.Comparator;
@@ -817,6 +818,7 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void phaseOfSynchronousEventTaskSuccessfullyConvertedToStore() throws Exception {
 		// given
+		final SynchronousEventTask missingPhase = a(SynchronousEventTask.newInstance());
 		final SynchronousEventTask afterCreate = a(SynchronousEventTask.newInstance() //
 				.withPhase(Phase.AFTER_CREATE) //
 		);
@@ -831,12 +833,14 @@ public class DefaultLogicAndStoreConverterTest {
 		);
 
 		// when
+		final org.cmdbuild.data.store.task.Task convertedMissingPhase = converter.from(missingPhase).toStore();
 		final org.cmdbuild.data.store.task.Task convertedAfterCreate = converter.from(afterCreate).toStore();
 		final org.cmdbuild.data.store.task.Task convertedBeforeUpdate = converter.from(beforeUpdate).toStore();
 		final org.cmdbuild.data.store.task.Task convertedAfterUpdate = converter.from(afterUpdate).toStore();
 		final org.cmdbuild.data.store.task.Task convertedBeforeDelete = converter.from(beforeDelete).toStore();
 
 		// then
+		assertThat(convertedMissingPhase.getParameters(), hasEntry(SynchronousEvent.PHASE, null));
 		assertThat(convertedAfterCreate.getParameters(), hasEntry(SynchronousEvent.PHASE, "after_create"));
 		assertThat(convertedBeforeUpdate.getParameters(), hasEntry(SynchronousEvent.PHASE, "before_update"));
 		assertThat(convertedAfterUpdate.getParameters(), hasEntry(SynchronousEvent.PHASE, "after_update"));
@@ -899,6 +903,10 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void phaseOfSynchronousEventTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
+		final org.cmdbuild.data.store.task.SynchronousEventTask missingPhase = a(org.cmdbuild.data.store.task.SynchronousEventTask
+				.newInstance() //
+				.withParameter(SynchronousEvent.PHASE, null) //
+		);
 		final org.cmdbuild.data.store.task.SynchronousEventTask afterCreate = a(org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
 				.withParameter(SynchronousEvent.PHASE, "after_create") //
@@ -917,6 +925,8 @@ public class DefaultLogicAndStoreConverterTest {
 		);
 
 		// when
+		final SynchronousEventTask convertedMissingPhase = SynchronousEventTask.class.cast(converter.from(missingPhase)
+				.toLogic());
 		final SynchronousEventTask convertedAfterCreate = SynchronousEventTask.class.cast(converter.from(afterCreate)
 				.toLogic());
 		final SynchronousEventTask convertedBeforeUpdate = SynchronousEventTask.class.cast(converter.from(beforeUpdate)
@@ -927,6 +937,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.toLogic());
 
 		// then
+		assertThat(convertedMissingPhase.getPhase(), is(nullValue()));
 		assertThat(convertedAfterCreate.getPhase(), equalTo(Phase.AFTER_CREATE));
 		assertThat(convertedBeforeUpdate.getPhase(), equalTo(Phase.BEFORE_UPDATE));
 		assertThat(convertedAfterUpdate.getPhase(), equalTo(Phase.AFTER_UPDATE));
