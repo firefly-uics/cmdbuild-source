@@ -79,6 +79,9 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withActiveStatus(true) //
 				.withCronExpression("cron expression") //
+				.withNotificationStatus(true) //
+				.withNotificationAccount("account") //
+				.withNotificationErrorTemplate("error template") //
 				.withClassMapping(a(ClassMapping.newInstance() //
 						.withSourceType("sourceTypeA") //
 						.withTargetType("targetTypeA") //
@@ -118,8 +121,12 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
 		assertThat(converted.isRunning(), equalTo(true));
+		assertThat(converted.isRunning(), equalTo(true));
 
 		final Map<String, String> parameters = converted.getParameters();
+		assertThat(parameters, hasEntry(Connector.NOTIFICATION_ACTIVE, "true"));
+		assertThat(parameters, hasEntry(Connector.NOTIFICATION_ACCOUNT, "account"));
+		assertThat(parameters, hasEntry(Connector.NOTIFICATION_ERROR_TEMPLATE, "error template"));
 		assertThat(parameters, hasEntry(Connector.MAPPING_TYPES, "" //
 				+ "sourceTypeB,targetTypeB,false,false,true" + LINE_SEPARATOR //
 				+ "sourceTypeA,targetTypeA,true,true,false" //
@@ -277,6 +284,9 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
+				.withParameter(Connector.NOTIFICATION_ACTIVE, "true") //
+				.withParameter(Connector.NOTIFICATION_ACCOUNT, "account") //
+				.withParameter(Connector.NOTIFICATION_ERROR_TEMPLATE, "error template") //
 				.withParameter(Connector.MAPPING_TYPES, "" //
 						+ "sourceTypeA,targetTypeA,true,true,false" + LINE_SEPARATOR //
 						+ "sourceTypeB,targetTypeB,false,false,true" //
@@ -297,6 +307,9 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.isActive(), equalTo(true));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
+		assertThat(converted.isNotificationActive(), equalTo(true));
+		assertThat(converted.getNotificationAccount(), equalTo("account"));
+		assertThat(converted.getNotificationErrorTemplate(), equalTo("error template"));
 		final List<ClassMapping> classMappings = Ordering.from(CLASS_MAPPING_COMPARATOR) //
 				.immutableSortedCopy(converted.getClassMappings());
 		final ClassMapping firstClassMapping = classMappings.get(0);

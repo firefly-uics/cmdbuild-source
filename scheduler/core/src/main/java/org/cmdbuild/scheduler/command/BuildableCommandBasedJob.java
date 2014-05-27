@@ -1,7 +1,7 @@
 package org.cmdbuild.scheduler.command;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.scheduler.command.NullCommand.nullCommand;
+import static org.cmdbuild.scheduler.command.Commands.nullCommand;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.scheduler.Job;

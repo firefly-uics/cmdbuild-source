@@ -494,6 +494,9 @@ public class ConnectorTask implements ScheduledTask {
 		private String description;
 		private Boolean active;
 		private String cronExpression;
+		private Boolean notificationActive;
+		private String notificationAcccount;
+		private String notificationErrorTemplate;
 		private SourceConfiguration sourceConfiguration;
 		private final Collection<ClassMapping> classMappings = Sets.newHashSet();
 		private final Collection<AttributeMapping> attributeMappings = Sets.newHashSet();
@@ -510,6 +513,7 @@ public class ConnectorTask implements ScheduledTask {
 
 		private void validate() {
 			active = defaultIfNull(active, Boolean.FALSE);
+			notificationActive = defaultIfNull(notificationActive, false);
 			sourceConfiguration = defaultIfNull(sourceConfiguration, NULL_SOURCE_CONFIGURATION);
 		}
 
@@ -530,6 +534,21 @@ public class ConnectorTask implements ScheduledTask {
 
 		public Builder withCronExpression(final String cronExpression) {
 			this.cronExpression = cronExpression;
+			return this;
+		}
+
+		public Builder withNotificationStatus(final Boolean notificationActive) {
+			this.notificationActive = notificationActive;
+			return this;
+		}
+
+		public Builder withNotificationAccount(final String notificationAcccount) {
+			this.notificationAcccount = notificationAcccount;
+			return this;
+		}
+
+		public Builder withNotificationErrorTemplate(final String notificationErrorTemplate) {
+			this.notificationErrorTemplate = notificationErrorTemplate;
 			return this;
 		}
 
@@ -568,6 +587,9 @@ public class ConnectorTask implements ScheduledTask {
 	private final String description;
 	private final boolean active;
 	private final String cronExpression;
+	private final boolean notificationActive;
+	private final String notificationAcccount;
+	private final String notificationErrorTemplate;
 	private final SourceConfiguration sourceConfiguration;
 	private final Collection<ClassMapping> classMappings;
 	private final Iterable<AttributeMapping> attributeMappings;
@@ -577,6 +599,9 @@ public class ConnectorTask implements ScheduledTask {
 		this.description = builder.description;
 		this.active = builder.active;
 		this.cronExpression = builder.cronExpression;
+		this.notificationActive = builder.notificationActive;
+		this.notificationAcccount = builder.notificationAcccount;
+		this.notificationErrorTemplate = builder.notificationErrorTemplate;
 		this.sourceConfiguration = builder.sourceConfiguration;
 		this.classMappings = builder.classMappings;
 		this.attributeMappings = builder.attributeMappings;
@@ -605,6 +630,18 @@ public class ConnectorTask implements ScheduledTask {
 	@Override
 	public String getCronExpression() {
 		return cronExpression;
+	}
+
+	public boolean isNotificationActive() {
+		return notificationActive;
+	}
+
+	public String getNotificationAccount() {
+		return notificationAcccount;
+	}
+
+	public String getNotificationErrorTemplate() {
+		return notificationErrorTemplate;
 	}
 
 	public SourceConfiguration getSourceConfiguration() {

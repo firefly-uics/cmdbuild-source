@@ -31,6 +31,9 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_KEY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MYSQL_LABEL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFICATION_ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFICATION_EMAIL_ACCOUNT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFICATION_EMAIL_TEMPLATE_ERROR;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ORACLE_LABEL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.POSTGRESQL_LABEL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_ATTRIBUTE;
@@ -410,6 +413,21 @@ public class Connector extends JSONBaseWithSpringContext {
 			return delegate.getCronExpression();
 		}
 
+		@JsonProperty(NOTIFICATION_ACTIVE)
+		public boolean isNotificationActive() {
+			return delegate.isNotificationActive();
+		}
+
+		@JsonProperty(NOTIFICATION_EMAIL_ACCOUNT)
+		public String getNotificationAcccount() {
+			return delegate.getNotificationAccount();
+		}
+
+		@JsonProperty(NOTIFICATION_EMAIL_TEMPLATE_ERROR)
+		public String getNotificationErrorTemplate() {
+			return delegate.getNotificationErrorTemplate();
+		}
+
 		@JsonProperty(DATA_SOURCE_TYPE)
 		public String getSourceType() {
 			return new SourceConfigurationVisitor() {
@@ -490,6 +508,9 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
+			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
+			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String notificationAcccount, //
+			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE_ERROR, required = false) final String notificationTemplate, //
 			@Parameter(value = DATA_SOURCE_TYPE, required = false) final String dataSourceType, //
 			@Parameter(value = DATA_SOURCE_CONFIGURATION, required = false) final String jsonDataSourceConfiguration, //
 			@Parameter(value = CLASS_MAPPING, required = false) final String jsonclassMapping, //
@@ -499,6 +520,9 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withDescription(description) //
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
+				.withNotificationStatus(notificationActive) //
+				.withNotificationAccount(notificationAcccount) //
+				.withNotificationErrorTemplate(notificationTemplate) //
 				.withSourceConfiguration(sourceConfigurationOf(dataSourceType, jsonDataSourceConfiguration)) //
 				.withClassMappings(classMappingOf(jsonclassMapping)) //
 				.withAttributeMappings(attributeMappingOf(jsonAttributeMapping)) //
@@ -532,6 +556,9 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
+			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
+			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String notificationAcccount, //
+			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE_ERROR, required = false) final String notificationTemplate, //
 			@Parameter(value = DATA_SOURCE_TYPE, required = false) final String dataSourceType, //
 			@Parameter(value = DATA_SOURCE_CONFIGURATION, required = false) final String jsonDataSourceConfiguration, //
 			@Parameter(value = CLASS_MAPPING, required = false) final String jsonclassMapping, //
@@ -542,6 +569,9 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withDescription(description) //
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
+				.withNotificationStatus(notificationActive) //
+				.withNotificationAccount(notificationAcccount) //
+				.withNotificationErrorTemplate(notificationTemplate) //
 				.withSourceConfiguration(sourceConfigurationOf(dataSourceType, jsonDataSourceConfiguration)) //
 				.withClassMappings(classMappingOf(jsonclassMapping)) //
 				.withAttributeMappings(attributeMappingOf(jsonAttributeMapping)) //
@@ -595,11 +625,11 @@ public class Connector extends JSONBaseWithSpringContext {
 		}, //
 		;
 
-		private static String textOf(JsonNode node, String name) {
+		private static String textOf(final JsonNode node, final String name) {
 			return node.has(name) ? node.get(name).asText() : null;
 		}
 
-		private static Integer integerOf(JsonNode node, String name) {
+		private static Integer integerOf(final JsonNode node, final String name) {
 			return node.has(name) ? node.get(name).asInt() : null;
 		}
 
