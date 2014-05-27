@@ -28,8 +28,16 @@
 		},
 		
 		getNavigationTrees: function() {
+			var nt = [];
+			for (nav in navigationTrees) {
+				// This "if" is for not have to change all the Gis module
+				// that is actually based on the cabled name of the tree of navigation
+				if (navigationTrees[nav].name != "gisnavigation") {
+					nt.push(navigationTrees[nav]);
+				}
+			}
 			return {
-				data: navigationTrees,
+				data: nt,
 				lastEntry: this.lastEntry
 			};
 		},
