@@ -294,7 +294,8 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 					.withEmailAccountSupplier(emailAccountSupplier) //
 					.withEmailServiceFactory(emailServiceFactory) //
 					.withEmailTemplateSupplier(emailTemplateSupplier) //
-					.build();
+					.build() //
+					.execute();;
 		}
 
 	}
