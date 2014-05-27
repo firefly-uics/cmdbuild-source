@@ -123,6 +123,8 @@
 							this.delegateStep[0].setValueActive(record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE));
 							this.delegateStep[0].setValueDescription(record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION));
 							this.delegateStep[0].setValueId(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+							this.delegateStep[0].setValueNotificationFieldsetCheckbox(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE));
+							this.delegateStep[0].setValueNotificationTemplateError(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE_ERROR));
 
 							// Set step2 [1] datas
 							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
@@ -159,6 +161,14 @@
 			// Validate before save
 			if (this.validate(formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE])) {
 				CMDBuild.LoadMask.get().show();
+
+				// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
+					var notificationFieldsetCheckboxValue = this.delegateStep[0].getValueNotificationFieldsetCheckbox();
+					if (notificationFieldsetCheckboxValue) {
+						submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
+						submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT] = formData[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT];
+						submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE_ERROR] = formData[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE_ERROR];
+					}
 
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
 					formData[CMDBuild.core.proxy.CMProxyConstants.CRON_INPUT_TYPE]
