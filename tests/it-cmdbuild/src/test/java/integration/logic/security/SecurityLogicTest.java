@@ -118,7 +118,7 @@ public class SecurityLogicTest extends IntegrationTestBase {
 
 		// when
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupA.getId(),
-				serializablePrivilege(createdClass.getId()), PrivilegeMode.READ);
+				serializablePrivilege(createdClass.getId()), PrivilegeMode.READ, null);
 		securityLogic.saveClassPrivilege(privilegeInfoToSave, true);
 
 		// then
