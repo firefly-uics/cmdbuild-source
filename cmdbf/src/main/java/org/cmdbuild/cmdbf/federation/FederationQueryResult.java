@@ -22,7 +22,6 @@ import org.dmtf.schemas.cmdbf._1.tns.query.XPathErrorFault;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.ContentSelectorType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.EdgesType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.ItemType;
-import org.dmtf.schemas.cmdbf._1.tns.servicedata.MdrScopedIdType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.NodesType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.QueryResultType;
 import org.dmtf.schemas.cmdbf._1.tns.servicedata.QueryType;
@@ -42,7 +41,6 @@ public class FederationQueryResult extends CMDBfQueryResult {
 		super(body);
 		mdrQueryResults = new ArrayList<QueryResultType>();
 		for (final ManagementDataRepository mdr : mdrCollection) {
-			// TODO preprocess query for reconciliation
 			mdrQueryResults.add(mdr.graphQuery(body));
 		}
 		execute();
@@ -62,7 +60,6 @@ public class FederationQueryResult extends CMDBfQueryResult {
 				});
 				if (templateResult != null) {
 					for (final ItemType item : templateResult.getItem()) {
-						// TODO items reconciliation
 						final CMDBfItem cmdbfItem = new CMDBfItem(item);
 						if (filter(cmdbfItem, instanceId, recordConstraint)) {
 							items.add(cmdbfItem);
@@ -76,7 +73,8 @@ public class FederationQueryResult extends CMDBfQueryResult {
 
 	@Override
 	protected Collection<CMDBfRelationship> getRelationships(final String templateId, final Set<CMDBfId> instanceId,
-			final Set<CMDBfId> source, final Set<CMDBfId> target, final RecordConstraintType recordConstraint) {
+			final ItemSet<CMDBfItem> source, final ItemSet<CMDBfItem> target,
+			final RecordConstraintType recordConstraint) {
 		final Collection<CMDBfRelationship> relationships = new ArrayList<CMDBfRelationship>();
 		for (final QueryResultType result : mdrQueryResults) {
 			if (result.getEdges() != null) {
@@ -87,7 +85,6 @@ public class FederationQueryResult extends CMDBfQueryResult {
 					}
 				});
 				if (templateResult != null) {
-					// TODO items reconciliation
 					for (final RelationshipType relationship : templateResult.getRelationship()) {
 						final CMDBfRelationship cmdbfRelationship = new CMDBfRelationship(relationship);
 						if (source.contains(cmdbfRelationship.getSource())
@@ -119,14 +116,5 @@ public class FederationQueryResult extends CMDBfQueryResult {
 			Iterables.transform(relationship.records(), new ContentSelectorFunction(contentSelector));
 		}
 
-	}
-
-	@Override
-	protected CMDBfId resolveAlias(final MdrScopedIdType alias) {
-		return alias instanceof CMDBfId ? (CMDBfId) alias : new CMDBfId(alias);
-	}
-
-	@Override
-	protected void fetchAlias(final CMDBfItem item) {
 	}
 }

@@ -78,7 +78,7 @@ abstract public class AbstractNamespace implements XmlNamespace {
 	}
 
 	@Override
-	public Object deserializeValue(final Node xml, final Object type) {
+	public Object deserializeValue(final Node xml, final Object type) throws Exception {
 		return null;
 	}
 
