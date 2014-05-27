@@ -10,21 +10,21 @@ import com.google.common.base.Function;
 public class CMClassHistory extends ForwardingClass {
 
 	private final CMClass delegate;
-	
+
 	public CMClassHistory(final CMClass delegate) {
 		super(delegate);
 		this.delegate = delegate;
 	}
-		
+
 	public CMClass getBaseType() {
 		return delegate;
 	}
-	
+
 	@Override
 	public CMClass getParent() {
 		return super.getParent() != null ? new CMClassHistory(super.getParent()) : null;
 	};
-	
+
 	@Override
 	public Iterable<? extends CMClass> getLeaves() {
 		return transform(super.getLeaves(), TO_HISTORIC);
@@ -34,19 +34,17 @@ public class CMClassHistory extends ForwardingClass {
 	public Iterable<? extends CMClass> getDescendants() {
 		return transform(super.getDescendants(), TO_HISTORIC);
 	}
-	
-	
-	
+
 	@Override
 	public int hashCode() {
 		return delegate.hashCode();
 	}
-	
-	@Override	
-	public boolean equals(Object obj) {
+
+	@Override
+	public boolean equals(final Object obj) {
 		return delegate.equals(obj);
 	}
-	
+
 	private static final Function<CMClass, CMClass> TO_HISTORIC = new Function<CMClass, CMClass>() {
 
 		@Override
@@ -56,4 +54,3 @@ public class CMClassHistory extends ForwardingClass {
 
 	};
 }
-

@@ -130,7 +130,11 @@ public class XmlRegistry {
 		return Iterables.find(Iterables.transform(getNamespaces(), new Function<XmlNamespace, Object>() {
 			@Override
 			public Object apply(final XmlNamespace input) {
-				return input.deserializeValue(xml, type);
+				try {
+					return input.deserializeValue(xml, type);
+				} catch (final Exception e) {
+					throw new Error(e.getMessage(), e);
+				}
 			}
 		}), Predicates.notNull());
 	}

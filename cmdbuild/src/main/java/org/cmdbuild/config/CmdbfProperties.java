@@ -2,7 +2,7 @@ package org.cmdbuild.config;
 
 import org.cmdbuild.services.Settings;
 
-public class CmdbfProperties  extends DefaultProperties implements CmdbfConfiguration {
+public class CmdbfProperties extends DefaultProperties implements CmdbfConfiguration {
 
 	private static final long serialVersionUID = 1L;
 
@@ -10,13 +10,14 @@ public class CmdbfProperties  extends DefaultProperties implements CmdbfConfigur
 
 	private static final String MDR_ID = "mdrid";
 	private static final String SCHEMA_LOCATION = "schemalocation";
+	private static final String RECONCILIATION_RULES = "reconciliationrules";
 
 	public CmdbfProperties() {
 		super();
 		setProperty(MDR_ID, "http://www.cmdbuild.org");
 		setProperty(SCHEMA_LOCATION, "http://localhost:8080/cmdbuild/services/cmdb-schema");
 	}
-	
+
 	public static CmdbfProperties getInstance() {
 		return (CmdbfProperties) Settings.getInstance().getModule(MODULE_NAME);
 	}
@@ -27,7 +28,7 @@ public class CmdbfProperties  extends DefaultProperties implements CmdbfConfigur
 	}
 
 	@Override
-	public void setMdrId(String mdrId) {
+	public void setMdrId(final String mdrId) {
 		setProperty(MDR_ID, mdrId);
 	}
 
@@ -37,12 +38,18 @@ public class CmdbfProperties  extends DefaultProperties implements CmdbfConfigur
 	}
 
 	@Override
-	public void setSchemaLocation(String schemaLocation) {
+	public void setSchemaLocation(final String schemaLocation) {
 		setProperty(SCHEMA_LOCATION, schemaLocation);
+	}
+	
+	@Override
+	public String getReconciliationRules() {
+		return getProperty(RECONCILIATION_RULES);
 	}
 
 	@Override
-	public void accept(final PropertiesVisitor visitor) {
-		visitor.visit(this);
+	public void setReconciliationRules(final String reconciliationRules) {
+		setProperty(RECONCILIATION_RULES, reconciliationRules);
 	}
+
 }
