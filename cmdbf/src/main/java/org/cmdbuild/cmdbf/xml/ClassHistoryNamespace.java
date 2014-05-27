@@ -32,10 +32,9 @@ import com.google.common.collect.Iterables;
 
 public class ClassHistoryNamespace extends EntryNamespace {
 
-	public ClassHistoryNamespace(String name, DataAccessLogic systemDataAccessLogic,
-			DataAccessLogic userDataAccessLogic, DataDefinitionLogic dataDefinitionLogic, LookupLogic lookupLogic,
-			CmdbfConfiguration cmdbfConfiguration)
-	{
+	public ClassHistoryNamespace(final String name, final DataAccessLogic systemDataAccessLogic,
+			final DataAccessLogic userDataAccessLogic, final DataDefinitionLogic dataDefinitionLogic,
+			final LookupLogic lookupLogic, final CmdbfConfiguration cmdbfConfiguration) {
 		super(name, systemDataAccessLogic, userDataAccessLogic, dataDefinitionLogic, lookupLogic, cmdbfConfiguration);
 	}
 
@@ -82,17 +81,18 @@ public class ClassHistoryNamespace extends EntryNamespace {
 	@Override
 	public Iterable<? extends CMClassHistory> getTypes(final Class<?> cls) {
 		if (CMClassHistory.class.isAssignableFrom(cls)) {
-			return Iterables.transform(Iterables.filter(systemDataAccessLogic.findActiveClasses(), new Predicate<CMClass>() {
-				@Override
-				public boolean apply(final CMClass input) {
-					return !input.isSystem() && input.holdsHistory();
-				}
-			}), new Function<Object, CMClassHistory>() {
-				@Override
-				public CMClassHistory apply(final Object input) {
-					return input instanceof CMClass ? new CMClassHistory((CMClass) input) : null;
-				}
-			});
+			return Iterables.transform(
+					Iterables.filter(systemDataAccessLogic.findActiveClasses(), new Predicate<CMClass>() {
+						@Override
+						public boolean apply(final CMClass input) {
+							return !input.isSystem() && input.holdsHistory();
+						}
+					}), new Function<Object, CMClassHistory>() {
+						@Override
+						public CMClassHistory apply(final Object input) {
+							return input instanceof CMClass ? new CMClassHistory((CMClass) input) : null;
+						}
+					});
 		} else {
 			return Collections.emptyList();
 		}
@@ -112,18 +112,21 @@ public class ClassHistoryNamespace extends EntryNamespace {
 	public CMClassHistory getType(final QName qname) {
 		CMClassHistory type = null;
 		if (getNamespaceURI().equals(qname.getNamespaceURI())) {
-			CMClass cmClass = Iterables.tryFind(systemDataAccessLogic.findActiveClasses(), new Predicate<CMClass>() {
-				@Override
-				public boolean apply(final CMClass input) {
-					return !input.isSystem() && input.holdsHistory() && input.getName().equals(qname.getLocalPart());
-				}
-			}).orNull();
-			if(cmClass != null)
+			final CMClass cmClass = Iterables.tryFind(systemDataAccessLogic.findActiveClasses(),
+					new Predicate<CMClass>() {
+						@Override
+						public boolean apply(final CMClass input) {
+							return !input.isSystem() && input.holdsHistory()
+									&& input.getName().equals(qname.getLocalPart());
+						}
+					}).orNull();
+			if (cmClass != null) {
 				type = new CMClassHistory(cmClass);
+			}
 		}
 		return type;
 	}
-	
+
 	@Override
 	public boolean serialize(final Node xml, final Object entry) {
 		boolean serialized = false;

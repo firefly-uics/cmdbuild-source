@@ -37,5 +37,5 @@ public interface XmlNamespace {
 
 	public boolean serializeValue(Node xml, Object object);
 
-	public Object deserializeValue(Node xml, Object type);
+	public Object deserializeValue(Node xml, Object type) throws Exception;
 }

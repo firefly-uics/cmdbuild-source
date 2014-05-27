@@ -68,3 +68,4 @@ SELECT cm_create_class_attribute('Grant', 'Type', 'varchar(70)', null, true, fal
 SELECT cm_create_class_attribute('Grant', 'IdPrivilegedObject', 'integer', null, false, false, 'MODE: read|DESCR: id of privileged object|INDEX: 9|STATUS: active');
 SELECT cm_create_class_attribute('Grant', 'PrivilegeFilter', 'text', null, false, false, 'MODE: read|DESCR: filter for row privileges|INDEX: 10|STATUS: active');
 SELECT cm_create_class_attribute('Grant', 'AttributesPrivileges', 'varchar[]', null, false, false, 'MODE: read|DESCR: Attributes privileges|INDEX: 11|STATUS: active');
+SELECT cm_create_class_attribute('Grant', 'UI_EnabledCardEditMode', 'text', null, false, false, 'MODE: write|DESCR: UI_CardEditMode|INDEX: 12|BASEDSP: false|STATUS: active');

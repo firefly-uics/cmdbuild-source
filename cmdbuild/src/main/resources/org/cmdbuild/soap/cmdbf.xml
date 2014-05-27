@@ -29,6 +29,17 @@
 		<constructor-arg ref="databaseProperties" />
 	</bean>
 
+	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetClass" value="java.lang.System" />
+		<property name="targetMethod" value="setProperty" />
+		<property name="arguments">
+			<list>
+				<value>org.apache.cxf.stax.maxChildElements</value>
+				<value>1000000</value>
+			</list>
+		</property>
+	</bean>
+
 	<jaxws:endpoint address="/CMDBfQuery">
 		<jaxws:implementor>
 			<bean class="org.cmdbuild.services.soap.CMDBfQueryImpl" />
