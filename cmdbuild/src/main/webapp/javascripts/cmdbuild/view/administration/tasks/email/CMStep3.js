@@ -85,16 +85,15 @@
 				this.view.attachmentsCombo.allowBlank = state;
 			},
 
-
 			/**
 			 * Set parsing fields as required/unrequired
 			 *
 			 * @param (Boolean) state
 			 */
 			setAllowBlankParsingFields: function(state) {
-				this.view.parsingKeyInit.allowBlank = state;
+				this.view.parsingKeyStart.allowBlank = state;
 				this.view.parsingKeyEnd.allowBlank = state;
-				this.view.parsingValueInit.allowBlank = state;
+				this.view.parsingValueStart.allowBlank = state;
 				this.view.parsingValueEnd.allowBlank = state;
 				this.view.parsingFieldset.allowBlank = state;
 			},
@@ -145,9 +144,9 @@
 			 * @param (String) valueEnd
 			 */
 			setValueParsingFields: function(keyInit, keyEnd, valueInit, valueEnd) {
-				this.view.parsingKeyInit.setValue(keyInit);
+				this.view.parsingKeyStart.setValue(keyInit);
 				this.view.parsingKeyEnd.setValue(keyEnd);
-				this.view.parsingValueInit.setValue(valueInit);
+				this.view.parsingValueStart.setValue(valueInit);
 				this.view.parsingValueEnd.setValue(valueEnd);
 			},
 
@@ -178,8 +177,8 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep3Delegate', this);
 
 			// Parsing configuration
-				this.parsingKeyInit = Ext.create('Ext.form.field.Text', {
-					fieldLabel: tr.parsingKeyInit,
+				this.parsingKeyStart = Ext.create('Ext.form.field.Text', {
+					fieldLabel: tr.parsingKeyStart,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_INIT,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH
@@ -193,8 +192,8 @@
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH
 				});
 
-				this.parsingValueInit = Ext.create('Ext.form.field.Text', {
-					fieldLabel: tr.parsingValueInit,
+				this.parsingValueStart = Ext.create('Ext.form.field.Text', {
+					fieldLabel: tr.parsingValueStart,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_INIT,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH
@@ -225,13 +224,13 @@
 						{
 							xtype: 'container',
 							layout: 'hbox',
-							items: [this.parsingKeyInit, this.parsingKeyEnd]
+							items: [this.parsingKeyStart, this.parsingKeyEnd]
 						},
 						{
 							xtype: 'container',
 							layout: 'hbox',
 							margin: '10 0',
-							items: [this.parsingValueInit, this.parsingValueEnd]
+							items: [this.parsingValueStart, this.parsingValueEnd]
 						}
 					]
 				});

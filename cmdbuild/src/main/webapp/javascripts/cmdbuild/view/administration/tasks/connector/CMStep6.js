@@ -199,7 +199,7 @@
 
 				columns: [
 					{
-						header: CMDBuild.Translation.className,
+						header: tr.className,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
@@ -228,7 +228,7 @@
 						items: [
 							{
 								icon: 'images/icons/cross.png',
-								tooltip: CMDBuild.Translation.administration.modClass.attributeProperties.meta.remove,
+								tooltip: CMDBuild.Translation.remove,
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									me.referenceMappingGrid.store.remove(record);
 								}
@@ -242,13 +242,20 @@
 					data: []
 				}),
 
-				tbar: [
+				dockedItems: [
 					{
-						text: CMDBuild.Translation.common.buttons.add,
-						iconCls: 'add',
-						handler: function() {
-							me.referenceMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.connector.referenceLevel'));
-						}
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						items: [
+							{
+								text: CMDBuild.Translation.common.buttons.add,
+								iconCls: 'add',
+								handler: function() {
+									me.referenceMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.connector.referenceLevel'));
+								}
+							}
+						]
 					}
 				]
 			});

@@ -79,6 +79,13 @@
 			},
 
 			/**
+			 * @param (Object) value
+			 */
+			setValueNotificationAccount: function(value) {
+				this.getNotificationDelegate().setValue('sender', value);
+			},
+
+			/**
 			 * @param (Boolean) state
 			 */
 			setValueNotificationFieldsetCheckbox: function(state) {

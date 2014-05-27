@@ -904,6 +904,10 @@ em { font-style: oblique !important; }
 	height: 100%;
 	width: 100%;
 }
+/**
+ * Validation classes
+ */
+.x-grid-invalid { border-color: #ff0000 !important; }
 
 /* FIX: Fieldset label CheckBox */
 	.x-form-cb-wrap { height: auto !important; }
