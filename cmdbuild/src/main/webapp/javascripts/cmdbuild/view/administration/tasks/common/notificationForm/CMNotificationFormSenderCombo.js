@@ -5,7 +5,7 @@
 
 		// Required
 		delegate: undefined,
-		fieldLabel: CMDBuild.Translation.administration.email.accounts.account,
+		fieldLabel: CMDBuild.Translation.administration.tasks.notificationForm.account,
 		name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT,
 
 		valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,

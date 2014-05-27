@@ -1,14 +1,12 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks.workflowForm;
-
 	// TODO: to update without extends CMDynamicKeyValueGrid
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid', {
 		extend: 'CMDBuild.view.administration.common.CMDynamicKeyValueGrid',
 
 		delegate: undefined,
 
-		title: tr.attributes,
+		title: CMDBuild.Translation.administration.tasks.workflowForm.attributes,
 		keyLabel: CMDBuild.Translation.name,
 		valueLabel: CMDBuild.Translation.value,
 		considerAsFieldToDisable: true,

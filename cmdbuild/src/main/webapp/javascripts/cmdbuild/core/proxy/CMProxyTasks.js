@@ -181,11 +181,11 @@
 					var store = Ext.create('Ext.data.SimpleStore', {
 						fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
 						data: [
-							[tr.logic, 'logic'],
-							[tr.notLogic, 'notLogic']
+							[tr.deleteCard, 'deleteCard'],
+							[tr.changeStatus, 'changeStatus']
 						]
 					});
-					_debug(store);
+
 					return store;
 				},
 

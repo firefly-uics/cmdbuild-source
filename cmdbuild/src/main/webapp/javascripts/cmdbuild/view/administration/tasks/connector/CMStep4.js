@@ -128,6 +128,20 @@
 		},
 
 		/**
+		 * @param (String) cls
+		 */
+		markInvalidTable: function(cls) {
+			this.view.classLevelMappingGrid.addBodyCls(cls);
+		},
+
+		/**
+		 * @param (String) cls
+		 */
+		markValidTable: function(cls) {
+			this.view.classLevelMappingGrid.removeBodyCls(cls);
+		},
+
+		/**
 		 * Resetting deletionType cell value if checkbox is unchecked
 		 *
 		 * @param (Boolean) checked
@@ -234,6 +248,7 @@
 							xtype: 'combo',
 							displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 							valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+
 							store: CMDBuild.core.proxy.CMProxyTasks.getSourceStore(),
 
 							listeners: {
@@ -245,7 +260,7 @@
 						flex: 1
 					},
 					{
-						header: CMDBuild.Translation.className,
+						header: tr.className,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
@@ -254,6 +269,7 @@
 							forceSelection: true,
 							editable: false,
 							allowBlank: false,
+
 							store: CMDBuild.core.proxy.CMProxyTasks.getClassStore(),
 							queryMode: 'local',
 
@@ -265,57 +281,62 @@
 						},
 						flex: 1
 					},
-					{
-						xtype: 'checkcolumn',
-						header: tr.cudActions.create,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CREATE,
-						width: 50,
-						align: 'center',
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true
-					},
-					{
-						xtype: 'checkcolumn',
-						header: tr.cudActions.update,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.UPDATE,
-						width: 50,
-						align: 'center',
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true
-					},
-					{
-						xtype: 'checkcolumn',
-						header: tr.cudActions.delete,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE,
-						width: 50,
-						align: 'center',
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true,
+//					{
+//						text: 'Actions',
+//						columns: [
+							{
+								xtype: 'checkcolumn',
+								header: tr.cudActions.create,
+								dataIndex: CMDBuild.core.proxy.CMProxyConstants.CREATE,
+								width: 50,
+								align: 'center',
+								sortable: false,
+								hideable: false,
+								menuDisabled: true,
+								fixed: true
+							},
+							{
+								xtype: 'checkcolumn',
+								header: tr.cudActions.update,
+								dataIndex: CMDBuild.core.proxy.CMProxyConstants.UPDATE,
+								width: 50,
+								align: 'center',
+								sortable: false,
+								hideable: false,
+								menuDisabled: true,
+								fixed: true
+							},
+							{
+								xtype: 'checkcolumn',
+								header: tr.cudActions.delete,
+								dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE,
+								width: 50,
+								align: 'center',
+								sortable: false,
+								hideable: false,
+								menuDisabled: true,
+								fixed: true,
 
-						listeners: {
-							checkchange: function(checkbox, rowIndex, checked, eOpts) {
-								me.delegate.cmOn('onCheckDelete', {
-									checked: checked,
-									rowIndex: rowIndex
-								});
-							}
-						}
-					},
-					{
-						header: tr.deletionType,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE,
-						editor: {
-							xtype: 'combo',
-							disabled: true
-						},
-						width: 100
-					},
+								listeners: {
+									checkchange: function(checkbox, rowIndex, checked, eOpts) {
+										me.delegate.cmOn('onCheckDelete', {
+											checked: checked,
+											rowIndex: rowIndex
+										});
+									}
+								}
+							},
+							{
+								header: tr.deletionType,
+								dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE,
+								editor: {
+									xtype: 'combo',
+									disabled: true
+								},
+								width: 100
+							},
+//						]
+//					},
 					{
 						xtype: 'actioncolumn',
 						width: 30,
@@ -328,7 +349,7 @@
 						items: [
 							{
 								icon: 'images/icons/cross.png',
-								tooltip: CMDBuild.Translation.administration.modClass.attributeProperties.meta.remove,
+								tooltip: CMDBuild.Translation.remove,
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									me.classLevelMappingGrid.store.remove(record);
 								}
@@ -342,13 +363,20 @@
 					data: []
 				}),
 
-				tbar: [
+				dockedItems: [
 					{
-						text: CMDBuild.Translation.common.buttons.add,
-						iconCls: 'add',
-						handler: function() {
-							me.classLevelMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.connector.classLevel'));
-						}
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						items: [
+							{
+								text: CMDBuild.Translation.common.buttons.add,
+								iconCls: 'add',
+								handler: function() {
+									me.classLevelMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.connector.classLevel'));
+								}
+							}
+						]
 					}
 				]
 			});

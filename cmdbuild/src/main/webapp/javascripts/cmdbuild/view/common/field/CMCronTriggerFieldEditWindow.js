@@ -1,6 +1,6 @@
 (function() {
 
-	var translation = CMDBuild.Translation.cron.triggerFieldWindow;
+	var tr = CMDBuild.Translation.cronTriggerField.triggerFieldWindow;
 
 	Ext.define('CMDBuild.view.common.field.CMCronTriggerFieldEditWindow', {
 		extend: 'Ext.Window',
@@ -15,7 +15,7 @@
 
 			this.each = Ext.create('Ext.form.field.Radio', {
 				name: 'criteria',
-				boxLabel: translation.every + this.title.toLowerCase(),
+				boxLabel: tr.every + this.title.toLowerCase(),
 				listeners: {
 					change: function(radio, value) {
 						me.selectedRadio = 'each';
@@ -25,7 +25,7 @@
 
 			this.step = Ext.create('Ext.form.field.Radio', {
 				name: 'criteria',
-				boxLabel: translation.inastepwith,
+				boxLabel: tr.inastepwith,
 				listeners: {
 					change: function(radio, value) {
 						me.selectedRadio = 'step';
@@ -42,7 +42,7 @@
 
 			this.range = Ext.create('Ext.form.field.Radio', {
 				name: 'criteria',
-				boxLabel: translation.range,
+				boxLabel: tr.range,
 				listeners: {
 					change: function(radio, value) {
 						me.selectedRadio = 'range';
@@ -53,20 +53,20 @@
 			});
 
 			this.rangeFrom = Ext.create('Ext.form.field.Text', {
-				fieldLabel: CMDBuild.Translation.from,
+				fieldLabel: CMDBuild.tr.from,
 				name: 'rangeFrom',
 				disabled: true
 			});
 
 			this.rangeTo = Ext.create('Ext.form.field.Text', {
-				fieldLabel: CMDBuild.Translation.to,
+				fieldLabel: CMDBuild.tr.to,
 				name: 'rangeTo',
 				disabled: true
 			});
 
 			this.exactly = Ext.create('Ext.form.field.Radio', {
 				name: 'criteria',
-				boxLabel: translation.exactly,
+				boxLabel: tr.exactly,
 				listeners: {
 					change: function(radio, value) {
 						me.selectedRadio = 'exactly';
@@ -130,12 +130,12 @@
 				buttons: [
 					{
 						scope: this,
-						text: CMDBuild.Translation.common.buttons.save,
+						text: CMDBuild.tr.common.buttons.save,
 						handler: this.onSave
 					},
 					{
 						scope: this,
-						text: CMDBuild.Translation.common.buttons.abort,
+						text: CMDBuild.tr.common.buttons.abort,
 						handler: function() {
 							this.destroy();
 						}

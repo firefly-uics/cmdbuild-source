@@ -48,6 +48,7 @@
 			// Check for invalid fields
 			if (!Ext.isEmpty(form) && (form.getNonValidFields().length > 0)) {
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+
 				return false;
 			}
 

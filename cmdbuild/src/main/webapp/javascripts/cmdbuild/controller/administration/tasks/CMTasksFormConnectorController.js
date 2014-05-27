@@ -1,5 +1,7 @@
 (function() {
 
+	var tr = CMDBuild.Translation.administration.tasks.errorMessages;
+
 	Ext.define("CMDBuild.controller.administration.tasks.CMTasksFormConnectorController", {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
@@ -123,6 +125,7 @@
 							this.delegateStep[0].setValueActive(record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE));
 							this.delegateStep[0].setValueDescription(record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION));
 							this.delegateStep[0].setValueId(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+							this.delegateStep[0].setValueNotificationAccount(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT));
 							this.delegateStep[0].setValueNotificationFieldsetCheckbox(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE));
 							this.delegateStep[0].setValueNotificationTemplateError(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE_ERROR));
 
@@ -213,19 +216,7 @@
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE];
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = formData[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ID] = formData[CMDBuild.core.proxy.CMProxyConstants.ID];
-_debug('Step 4 datas [3]');
-_debug(this.delegateStep[3].getData());
-_debug(Ext.encode(this.delegateStep[3].getData()));
 
-_debug('Step 5 datas [4]');
-_debug(this.delegateStep[4].getData());
-_debug(Ext.encode(this.delegateStep[4].getData()));
-
-//_debug('Step 6 datas [5]');
-//_debug(Ext.encode(this.delegateStep[5].getData()));
-
-_debug(formData);
-_debug(submitDatas);
 				if (Ext.isEmpty(formData[CMDBuild.core.proxy.CMProxyConstants.ID])) {
 					CMDBuild.core.proxy.CMProxyTasks.create({
 						type: this.taskType,
@@ -255,11 +246,47 @@ _debug(submitDatas);
 		 */
 		// overwrite
 		validate: function(enable) {
+			// Notification validation
+			this.delegateStep[0].getNotificationDelegate().validate(
+				this.delegateStep[0].getValueNotificationFieldsetCheckbox()
+				&& enable
+			);
+
 			// Cron field validation
 			this.delegateStep[1].getCronDelegate().validate(enable);
 
 			// DataSource configuration validation
 			this.delegateStep[2].validate(enable);
+
+			// Class-mapping validation
+			if (Ext.isEmpty(this.delegateStep[3].getData()) && enable) {
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, tr.taskConnector.emptyClassLevelMapping, false);
+
+				this.delegateStep[3].markInvalidTable("x-grid-invalid");
+
+				return false;
+			} else {
+				this.delegateStep[3].markValidTable("x-grid-invalid");
+			}
+
+			// Attribute-mapping validation
+			if (Ext.isEmpty(this.delegateStep[4].getData()) && enable) {
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, tr.taskConnector.emptyAttributeLevelMapping, false);
+
+				this.delegateStep[4].markInvalidTable("x-grid-invalid");
+
+				return false;
+			} else {
+				this.delegateStep[4].markValidTable("x-grid-invalid");
+			}
+
+			// Reference-mapping validation
+			// TODO: future implementation
+//			if (Ext.isEmpty(this.delegateStep[5].getData()) && enable) {
+//				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, tr.taskConnector.emptyReferenceLevelMapping, false);
+//
+//				return false;
+//			}
 
 			return this.callParent(arguments);
 		},

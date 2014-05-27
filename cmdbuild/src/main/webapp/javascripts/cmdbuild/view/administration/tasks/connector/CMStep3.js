@@ -41,10 +41,10 @@
 			 */
 			getTypeDataSource: function() {
 				if (this.view.dbFieldset.checkboxCmp.getValue())
-					return 'db';
+					return CMDBuild.core.proxy.CMProxyConstants.DB;
 
 				if (this.view.ldapFieldset.checkboxCmp.getValue())
-					return 'ldap';
+					return CMDBuild.core.proxy.CMProxyConstants.LDAP;
 
 				return false;
 			},
@@ -67,7 +67,7 @@
 		// TODO: setup string as proxyConstant
 		onSelectDbType: function(selectedValue) {
 			this.view.dbInstanceNameField.setDisabled(
-				!(selectedValue == 'mysql')
+				!(selectedValue == CMDBuild.core.proxy.CMProxyConstants.MYSQL)
 			);
 		},
 
@@ -79,7 +79,7 @@
 			setValueDataSourceConfiguration: function(dataSourceType, configurationObject) {
 				if (!CMDBuild.Utils.isEmpty(configurationObject))
 					switch (dataSourceType) {
-						case 'db': {
+						case CMDBuild.core.proxy.CMProxyConstants.DB: {
 							this.view.dbFieldset.expand();
 
 							this.view.dbTypeCombo.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_TYPE]);
@@ -89,7 +89,7 @@
 							this.view.dbInstanceNameField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_INSATANCE_NAME]);
 							this.view.dbUsernameField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_USERNAME]);
 							this.view.dbPasswordField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_PASSWORD]);
-							this.view.tableViewFilterField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TABLE_VIEW_PREFIX]);
+							this.view.sourceFilterField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TABLE_VIEW_PREFIX]);
 						} break;
 
 						default:
@@ -193,9 +193,9 @@
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				});
 
-				this.tableViewFilterField = Ext.create('Ext.form.field.Text', {
+				this.sourceFilterField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TABLE_VIEW_PREFIX,
-					fieldLabel: tr.tableViewFilter,
+					fieldLabel: tr.sourceFilter,
 					labelWidth: CMDBuild.LABEL_WIDTH,
 					width: CMDBuild.CFG_BIG_FIELD_WIDTH
 				});
@@ -219,7 +219,7 @@
 						this.dbInstanceNameField,
 						this.dbUsernameField,
 						this.dbPasswordField,
-						this.tableViewFilterField
+						this.sourceFilterField
 					],
 
 					listeners: {

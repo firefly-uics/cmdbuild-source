@@ -670,9 +670,18 @@
 				"minute": "Minute",
 				"mounth": "Month"
 			},
+			"errorMessages": {
+				"taskConnector": {
+					"emptyAttributeLevelMapping": "Attribute level mapping table must be correctly filled.",
+					"emptyClassLevelMapping": "Class level mapping table must be correctly filled.",
+					"emptyReferenceLevelMapping": "Reference level mapping table must be correctly filled."
+				}
+			},
 			"modify": "Modify task",
 			"notificationForm": {
-				"templateError": "Error template",
+				"account": "Account",
+				"template": "Email template",
+				"templateError": "Error email template",
 				"title": "Send notification email",
 				"titlePlur": "Send notifications email"
 			},
@@ -686,8 +695,10 @@
 			"title": "Task manager",
 			"type": "Type",
 			"taskConnector": {
-				"attributeLevelMapping": "@@ Attribute mapping",
-				"classLevelMapping": "@@ Class mapping",
+				"attributeLevelMapping": "Attribute mapping",
+				"classAttribute": "CMDBuild attribute",
+				"classLevelMapping": "Class mapping",
+				"className": "CMDBuild class",
 				"cudActions": {
 					"create": "Create",
 					"delete": "Delete",
@@ -696,42 +707,42 @@
 				"dataSourceDbFieldset": "Datasource: Relational database",
 				"dataSourceLdapFieldset": "Datasource: LDAP directory",
 				"dbName": "Database name",
-				"deletionType": "@@ Deletion type",
+				"deletionType": "Deletion type",
 				"deletionTypes": {
-					"logic": "@@ Logic",
-					"notLogic": "@@ Not logic"
+					"deleteCard": "Delete card",
+					"changeStatus": "Change status"
 				},
-				"domainName": "@@ Domain name",
+				"domainName": "Domain name",
 				"instanceName": "Instance",
-				"isKey": "@@ Is key",
+				"isKey": "Is key",
 				"recipientAddress": "Recipient address",
-				"referenceMapping": "@@ References mapping",
+				"referenceMapping": "References mapping",
 				"senderAccount": "Sender account",
-				"sourceAttribute": "@@ Source attribute",
-				"sourceName": "@@ Source name",
-				"tableViewFilter": "Table/View filter"
+				"sourceAttribute": "External attribute",
+				"sourceFilter": "Entity filter",
+				"sourceName": "External entity"
 			},
 			"taskEmail": {
 				"attachmentsCategory": "Category",
 				"bodyParsing": "Body parsing",
 				"emailAccount": "Email account",
 				"fromAddressFilter": "Filter on FromAddress",
-				"parsingKeyEnd": "Key end",
-				"parsingKeyInit": "Key init",
-				"parsingValueEnd": "Value end",
-				"parsingValueInit": "Value init",
+				"parsingKeyEnd": "Key end delimiter",
+				"parsingKeyStart": "Key start delimeter",
+				"parsingValueEnd": "Value end delimiter",
+				"parsingValueStart": "Value start delimeter",
 				"saveToAlfresco": "Save attachments to Alfresco",
 				"subjectFilter": "Filter on Subject"
 			},
 			"taskEvent": {
-				"eventPhases" : {
-					"afterCreate": "@@ After creation",
-					"afterUpdate": "@@ After update",
-					"beforeDelete": "@@ Before delete",
-					"beforeUpdate": "@@ Before update"
+				"eventPhases": {
+					"afterCreate": "After creation",
+					"afterUpdate": "After update",
+					"beforeDelete": "Before delete",
+					"beforeUpdate": "Before update"
 				},
-				"groupsToApply": "@@ Group to apply",
-				"phase": "@@ Phase"
+				"groupsToApply": "Group to apply",
+				"phase": "Phase"
 			},
 			"tasksTypes": {
 				"connector": "Connector",
@@ -879,7 +890,7 @@
 		},
 		"title": "Configure"
 	},
-	"cron": {
+	"cronTriggerField": {
 		"triggerFieldWindow": {
 			"every": "Every ",
 			"exactly": "At an exact",
@@ -1469,6 +1480,7 @@
 	"privileges_on_rows": "Rows privileges",
 	"projects": "Projects",
 	"reference_to_root": "Reference to Root",
+	"remove": "Remove",
 	"removeFilter": "Remove Filter",
 	"removeProject": "Remove Project",
 	"removeTemplate": "Remove Template",

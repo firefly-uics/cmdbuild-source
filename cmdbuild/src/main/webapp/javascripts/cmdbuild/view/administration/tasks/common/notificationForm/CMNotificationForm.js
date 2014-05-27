@@ -5,7 +5,6 @@
 
 		delegate: undefined,
 
-		considerAsFieldToDisable: true,
 		inputFields: [],
 		inputFieldsConfiguration: undefined,
 		notificationFieldType: [ // Used to validate notification field types
