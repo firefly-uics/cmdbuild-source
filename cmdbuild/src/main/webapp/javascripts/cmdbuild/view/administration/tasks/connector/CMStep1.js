@@ -29,6 +29,13 @@
 
 		// GETters functions
 			/**
+			 * @return (Object) delegate
+			 */
+			getNotificationDelegate: function() {
+				return this.view.notificationForm.delegate;
+			},
+
+			/**
 			 * @return (String)
 			 */
 			getValueId: function() {
