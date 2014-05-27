@@ -87,6 +87,7 @@
 			NOTIFICATION_ACTIVE: 'notificationActive',
 			NOTIFICATION_EMAIL_ACCOUNT: 'notificationEmailAccount',
 			NOTIFICATION_EMAIL_TEMPLATE: 'notificationEmailTemplate',
+			NOTIFICATION_EMAIL_TEMPLATE_ERROR: 'notificationEmailTemplateError',
 			NOT_NULL: 'isnotnull',
 			OPERATIONS: 'operations',
 			PARENT: 'parent',
