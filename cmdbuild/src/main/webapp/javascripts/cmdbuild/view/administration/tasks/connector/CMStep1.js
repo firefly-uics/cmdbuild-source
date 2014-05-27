@@ -35,6 +35,13 @@
 				return this.view.idField.getValue();
 			},
 
+			/**
+			 * @return (Boolean)
+			 */
+			getValueNotificationFieldsetCheckbox: function() {
+				return this.view.notificationFieldset.checkboxCmp.getValue();
+			},
+
 		// GETters functions
 			/**
 			 * @param (Boolean) state
@@ -62,6 +69,24 @@
 			 */
 			setValueId: function(value) {
 				this.view.idField.setValue(value);
+			},
+
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueNotificationFieldsetCheckbox: function(state) {
+				if (state) {
+					this.view.notificationFieldset.expand();
+				} else {
+					this.view.notificationFieldset.collapse();
+				}
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueNotificationTemplateError: function(value) {
+				this.getNotificationDelegate().setValue('templateError', value);
 			}
 	});
 
@@ -114,10 +139,11 @@
 						type: 'sender',
 						disabled: false
 					},
-					template: {
+					templateError: {
 						type: 'template',
 						disabled: false,
-						fieldLabel: tr.notificationForm.templateError
+						fieldLabel: tr.notificationForm.templateError,
+						name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE_ERROR
 					}
 				});
 
