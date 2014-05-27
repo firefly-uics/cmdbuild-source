@@ -8,16 +8,32 @@ public class PrivilegeInfo {
 	private final String[] EMPTY_ATTRIBUTES_PRIVILEGES = new String[0];
 
 	private final Long groupId;
-	private final PrivilegeMode mode;
+	private final PrivilegeMode classMode;
 	private final SerializablePrivilege privilegedObject;
 
 	private String privilegeFilter;
 	private String[] attributesPrivileges;
+	private CardEditMode cardEditMode;
 
-	public PrivilegeInfo(final Long groupId, final SerializablePrivilege privilegedObject, final PrivilegeMode mode) {
+	public PrivilegeInfo(final Long groupId, final SerializablePrivilege privilegedObject, final PrivilegeMode mode,
+			final CardEditMode cardEditMode) {
 		this.groupId = groupId;
-		this.mode = mode;
+		this.classMode = mode;
 		this.privilegedObject = privilegedObject;
+		this.cardEditMode = cardEditMode;
+	}
+
+	public PrivilegeInfo(final Builder builder) {
+		this.groupId = builder.groupId;
+		this.privilegedObject = builder.privilegedObject;
+		this.classMode = builder.classMode;
+		this.cardEditMode = builder.cardEditMode;
+		this.attributesPrivileges = builder.attributesPrivileges;
+		this.privilegeFilter = builder.privilegeFilter;
+	}
+
+	public static Builder newInstance() {
+		return new Builder();
 	}
 
 	public String getPrivilegeFilter() {
@@ -36,8 +52,12 @@ public class PrivilegeInfo {
 		this.attributesPrivileges = attributesPrivileges;
 	}
 
+	public void setCardEditMode(final CardEditMode cardEditMode) {
+		this.cardEditMode = cardEditMode;
+	}
+
 	public PrivilegeMode getMode() {
-		return mode;
+		return classMode;
 	}
 
 	public Long getPrivilegedObjectId() {
@@ -60,12 +80,16 @@ public class PrivilegeInfo {
 		return privilegedObject.getPrivilegeId();
 	}
 
+	public CardEditMode getCardEditMode() {
+		return cardEditMode;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((groupId == null) ? 0 : groupId.hashCode());
-		result = prime * result + ((mode == null) ? 0 : mode.hashCode());
+		result = prime * result + ((classMode == null) ? 0 : classMode.hashCode());
 		result = prime * result + ((privilegedObject == null) ? 0 : privilegedObject.hashCode());
 		return result;
 	}
@@ -79,9 +103,55 @@ public class PrivilegeInfo {
 			return false;
 		}
 		final PrivilegeInfo other = (PrivilegeInfo) obj;
-		return mode.equals(other.mode) //
+		return classMode.equals(other.classMode) //
 				&& groupId.equals(other.getGroupId()) //
 				&& getPrivilegedObjectId().equals(other.getPrivilegedObjectId());
+	}
+
+	public static class Builder implements org.cmdbuild.common.Builder<PrivilegeInfo> {
+
+		private Long groupId;
+		private SerializablePrivilege privilegedObject;
+		private PrivilegeMode classMode;
+		private String privilegeFilter;
+		private String[] attributesPrivileges = null;
+		private CardEditMode cardEditMode;
+
+		public Builder withGroupId(final Long groupId) {
+			this.groupId = groupId;
+			return this;
+		}
+
+		public Builder withPrivilegedObject(final SerializablePrivilege privilegedObject) {
+			this.privilegedObject = privilegedObject;
+			return this;
+		}
+
+		public Builder withPrivilegeMode(final PrivilegeMode classMode) {
+			this.classMode = classMode;
+			return this;
+		}
+
+		public Builder withCardEditMode(final CardEditMode cardEditMode) {
+			this.cardEditMode = cardEditMode;
+			return this;
+		}
+
+		public Builder withAttributesPrivileges(final String[] attributesPrivileges) {
+			this.attributesPrivileges = attributesPrivileges;
+			return this;
+		}
+
+		public Builder withPrivilegeFilter(final String privilegeFilter) {
+			this.privilegeFilter = privilegeFilter;
+			return this;
+		}
+
+		@Override
+		public PrivilegeInfo build() {
+			return new PrivilegeInfo(this);
+		}
+
 	}
 
 }

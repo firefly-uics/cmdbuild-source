@@ -2,6 +2,7 @@ package org.cmdbuild.spring.configuration;
 
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
@@ -21,6 +22,9 @@ public class Serialization {
 	private PrivilegeManagement privilegeManagement;
 
 	@Autowired
+	private UserStore userStore;
+
+	@Autowired
 	private Workflow workflow;
 
 	@Bean
@@ -34,7 +38,10 @@ public class Serialization {
 		return new ClassSerializer( //
 				data.systemDataView(), //
 				workflow.systemWorkflowLogicBuilder(), //
-				privilegeManagement.userPrivilegeContext());
+				privilegeManagement.userPrivilegeContext(), //
+				data.securityLogic(), //
+				userStore //
+		);
 	}
 
 	@Bean

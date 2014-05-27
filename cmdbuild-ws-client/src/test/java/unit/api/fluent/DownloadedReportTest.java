@@ -1,6 +1,5 @@
 package unit.api.fluent;
 
-import static java.lang.String.format;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -12,7 +11,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 public class DownloadedReportTest {
-	
+
 	@Rule
 	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -24,8 +23,8 @@ public class DownloadedReportTest {
 		assertThat(urlString, equalTo(expectedUrlFor(file)));
 	}
 
-	private String expectedUrlFor(final File file) {
-		return format("file:%s", file.getAbsolutePath());
+	private String expectedUrlFor(final File file) throws Exception {
+		return file.toURI().toURL().toString();
 	}
 
 }

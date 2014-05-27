@@ -2,6 +2,7 @@ package org.cmdbuild.servlets.json.schema;
 
 import static org.cmdbuild.servlets.json.ComunicationConstants.ALREADY_ASSOCIATED;
 import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_ID;
 import static org.cmdbuild.servlets.json.ComunicationConstants.CONFIRMATION;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_GROUP;
 import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
@@ -46,6 +47,7 @@ import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.GroupDTO.GroupDTOBuilder;
 import org.cmdbuild.logic.auth.UserDTO;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOBuilder;
+import org.cmdbuild.logic.privileges.CardEditMode;
 import org.cmdbuild.logic.privileges.PrivilegeInfo;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.model.profile.UIConfiguration;
@@ -63,10 +65,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class ModSecurity extends JSONBaseWithSpringContext {
 
+	private static final String REMOVE = "remove";
+	private static final String CLONE = "clone";
+	private static final String MODIFY = "modify";
+	private static final String CREATE = "create";
+	public static final String CARD_EDIT_MODE_JSON_FORMAT = "{\"modify\": %b, \"clone\": %b, \"remove\": %b, \"create\": %b}";
 	private static final ObjectMapper mapper = new UIConfigurationObjectMapper();
 
 	/*
@@ -273,7 +281,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException { //
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
-				mode);
+				mode, null);
 		securityLogic().saveClassPrivilege(privilegeInfoToSave, true);
 	}
 
@@ -310,7 +318,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException {
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
-				mode);
+				mode, null);
 		securityLogic().saveViewPrivilege(privilegeInfoToSave);
 	}
 
@@ -322,7 +330,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException {
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
-				mode);
+				mode, null);
 		securityLogic().saveFilterPrivilege(privilegeInfoToSave);
 	}
 
@@ -345,13 +353,13 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
 			@Parameter(value = FILTER, required = false) final String filter, //
 			@Parameter(value = ATTRIBUTES, required = false) final JSONArray jsonAttributes //
-		) throws JSONException, AuthException {
+	) throws JSONException, AuthException {
 
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo( //
 				groupId, //
 				serializablePrivilege(privilegedObjectId), //
 				null //
-			);
+				, null);
 
 		// from jsonArray to string array
 		final int l = jsonAttributes == null ? 0 : jsonAttributes.length();
@@ -477,4 +485,55 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 		out.put(ROWS, Serializer.serialize(user));
 		return out;
 	}
+
+	@JSONExported
+	public JsonResponse loadClassUiConfiguration( //
+			@Parameter(GROUP_ID) final Long groupId, //
+			@Parameter(CLASS_ID) final Long classId) throws JSONException, AuthException {
+
+		final CardEditMode cardEditMode = securityLogic().fetchCardEditModeForGroupAndClass(groupId, classId);
+		return JsonResponse.success(LOGIC_TO_JSON.apply(cardEditMode));
+	}
+
+	@Admin(AdminAccess.DEMOSAFE)
+	@JSONExported
+	public JsonResponse saveClassUiConfiguration(
+	//
+			@Parameter(GROUP_ID) final Long groupId, //
+			@Parameter(CLASS_ID) final Long classId, //
+			@Parameter(CREATE) final boolean disableCreate, //
+			@Parameter(MODIFY) final boolean disableUpdate, //
+			@Parameter(CLONE) final boolean disableClone, //
+			@Parameter(REMOVE) final boolean disableDelete) throws JSONException, AuthException {
+
+		final CardEditMode cardEditMode = CardEditMode.newInstance() //
+				.isCreateAllowed(!disableCreate) //
+				.isCloneAllowed(!disableClone) //
+				.isUpdateAllowed(!disableUpdate) //
+				.isDeleteAllowed(!disableDelete) //
+				.build();
+
+		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo( //
+				groupId, //
+				serializablePrivilege(classId), //
+				null, //
+				cardEditMode);
+
+		securityLogic().saveCardEditMode(privilegeInfoToSave);
+		return JsonResponse.success(null);
+	}
+
+	public static final Function<CardEditMode, String> LOGIC_TO_JSON = new Function<CardEditMode, String>() {
+
+		@Override
+		public String apply(final CardEditMode input) {
+			final String jsonCardEditMode = String.format(CARD_EDIT_MODE_JSON_FORMAT, //
+					!input.isAllowUpdate(), //
+					!input.isAllowClone(), //
+					!input.isAllowRemove(), //
+					!input.isAllowCreate());
+			return jsonCardEditMode;
+		}
+	};
+
 }

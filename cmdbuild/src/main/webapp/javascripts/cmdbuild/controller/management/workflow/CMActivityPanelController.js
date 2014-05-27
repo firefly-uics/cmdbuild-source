@@ -168,6 +168,24 @@
 			this.view.clear();
 		},
 
+		changeClassUIConfigurationForGroup: function(disabledModify, disabledClone, disabledRemove) {
+			this.view.form.modifyCardButton.disabledForGroup = disabledModify;
+			this.view.form.cloneCardButton.disabledForGroup = disabledClone;
+			this.view.form.deleteCardButton.disabledForGroup = disabledRemove;
+			if (this.view.form.modifyCardButton.disabledForGroup)
+				this.view.form.modifyCardButton.disable();
+			else
+				this.view.form.modifyCardButton.enable();
+			if (this.view.form.cloneCardButton.disabledForGroup)
+				this.view.form.cloneCardButton.disable();
+			else
+				this.view.form.cloneCardButton.enable();
+			if (this.view.form.deleteCardButton.disabledForGroup)
+				this.view.form.deleteCardButton.disable();
+			else
+				this.view.form.deleteCardButton.enable();
+		},
+
 		// override
 		loadFields: function(entryTypeId, cb) {
 			var me = this;

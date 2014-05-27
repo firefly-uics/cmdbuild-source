@@ -76,7 +76,21 @@
 			this.view.updateTitleForEntry(entryType);
 
 			_CMUIState.onlyGridIfFullScreen();
-		}
+			this.changeClassUIConfigurationForGroup(entryTypeId);
+		},
+		changeClassUIConfigurationForGroup: function(classId) {
+			var privileges = _CMUtils.getClassPrivileges(classId);
+			this.view.cardGrid.addCardButton.disabledForGroup = ! (privileges.write && ! privileges.crudDisabled.create);
+			if (this.view.cardGrid.addCardButton.disabledForGroup)
+				this.view.cardGrid.addCardButton.disable();
+			else
+				this.view.cardGrid.addCardButton.enable();
+			this.activityPanelController.changeClassUIConfigurationForGroup(
+					! (privileges.write && ! privileges.crudDisabled.modify),
+					! (privileges.write && ! privileges.crudDisabled.clone),
+					! (privileges.write && ! privileges.crudDisabled.remove));
+		},
+
 	});
 
 	function isStateOpen(card) {
