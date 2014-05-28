@@ -89,8 +89,9 @@ public class DefaultStartupLogicTest {
 		// then
 		final InOrder inOrder = inOrder(startupManager, patchManager, cachingLogic);
 		inOrder.verify(patchManager).applyPatchList();
-		inOrder.verify(startupManager).start();
 		inOrder.verify(cachingLogic).clearCache();
+		inOrder.verify(startupManager).start();
+		inOrder.verifyNoMoreInteractions();
 	}
 
 }
