@@ -32,7 +32,7 @@
 					flex: 4
 				},
 				{
-					text: tr.active,
+					text: CMDBuild.Translation.active,
 					width: 60,
 					align: 'center',
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
@@ -128,7 +128,7 @@
 						if (i == 0) {
 							value += eval('CMDBuild.Translation.administration.tasks.tasksTypes.' + splittedType[i]);
 						} else {
-							value += ' ' + eval('CMDBuild.Translation.administration.tasks.tasksTypes.' + splittedType[0] + 'Types.' + splittedType[i]);
+							value += ' ' + eval('CMDBuild.Translation.administration.tasks.tasksTypes.' + splittedType[0] + 'Types.' + splittedType[i]).toLowerCase();
 						}
 					}
 				}

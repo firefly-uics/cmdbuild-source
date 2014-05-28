@@ -281,62 +281,57 @@
 						},
 						flex: 1
 					},
-//					{
-//						text: 'Actions',
-//						columns: [
-							{
-								xtype: 'checkcolumn',
-								header: tr.cudActions.create,
-								dataIndex: CMDBuild.core.proxy.CMProxyConstants.CREATE,
-								width: 50,
-								align: 'center',
-								sortable: false,
-								hideable: false,
-								menuDisabled: true,
-								fixed: true
-							},
-							{
-								xtype: 'checkcolumn',
-								header: tr.cudActions.update,
-								dataIndex: CMDBuild.core.proxy.CMProxyConstants.UPDATE,
-								width: 50,
-								align: 'center',
-								sortable: false,
-								hideable: false,
-								menuDisabled: true,
-								fixed: true
-							},
-							{
-								xtype: 'checkcolumn',
-								header: tr.cudActions.delete,
-								dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE,
-								width: 50,
-								align: 'center',
-								sortable: false,
-								hideable: false,
-								menuDisabled: true,
-								fixed: true,
+					{
+						xtype: 'checkcolumn',
+						header: tr.cudActions.create,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CREATE,
+						width: 60,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					},
+					{
+						xtype: 'checkcolumn',
+						header: tr.cudActions.update,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.UPDATE,
+						width: 60,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					},
+					{
+						xtype: 'checkcolumn',
+						header: tr.cudActions.delete,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE,
+						width: 60,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true,
 
-								listeners: {
-									checkchange: function(checkbox, rowIndex, checked, eOpts) {
-										me.delegate.cmOn('onCheckDelete', {
-											checked: checked,
-											rowIndex: rowIndex
-										});
-									}
-								}
-							},
-							{
-								header: tr.deletionType,
-								dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE,
-								editor: {
-									xtype: 'combo',
-									disabled: true
-								},
-								width: 100
-							},
-//						]
-//					},
+						listeners: {
+							checkchange: function(checkbox, rowIndex, checked, eOpts) {
+								me.delegate.cmOn('onCheckDelete', {
+									checked: checked,
+									rowIndex: rowIndex
+								});
+							}
+						}
+					},
+					{
+						header: tr.deletionType,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE,
+						editor: {
+							xtype: 'combo',
+							disabled: true
+						},
+						width: 120
+					},
 					{
 						xtype: 'actioncolumn',
 						width: 30,

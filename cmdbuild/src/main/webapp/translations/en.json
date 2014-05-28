@@ -653,7 +653,6 @@
 			}
 		},
 		"tasks": {
-			"active": "Active",
 			"add": "Add task",
 			"all": "All",
 			"clone": "Clone task",
@@ -689,7 +688,7 @@
 			"running": "Running",
 			"startLabel": "Start task",
 			"startOnSave": "Start on save",
-			"startWorkflow": "Start workflow",
+			"startWorkflow": "Start process",
 			"stopLabel": "Stop task",
 			"stopped": "Stopped",
 			"title": "Task manager",
@@ -752,11 +751,11 @@
 					"asynchronous": "Asynchronous",
 					"synchronous": "Synchronous"
 				},
-				"workflow": "Workflow"
+				"workflow": "Process"
 			},
-			"workflow": "Workflow",
+			"workflow": "Process",
 			"workflowForm": {
-				"attributes": "Workflow attributes",
+				"attributes": "Process attributes"
 			}
 		},
 		"welcome": {
@@ -1523,8 +1522,8 @@
 	"username": "Username",
 	"value": "Value",
 	"views": "Views",
-	"workflow" : "Workflow",
-	"workflow_attributes" : "Workflow attributes",
+	"workflow": "Process",
+	"workflow_attributes" : "Process attributes",
 	"workflow_by_cql": "by Cql",
 	"workflow_by_name": "by name",
 	"workflow_cql_filter": "Cql filter",

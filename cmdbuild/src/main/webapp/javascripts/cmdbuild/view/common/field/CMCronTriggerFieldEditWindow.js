@@ -53,13 +53,13 @@
 			});
 
 			this.rangeFrom = Ext.create('Ext.form.field.Text', {
-				fieldLabel: CMDBuild.tr.from,
+				fieldLabel: CMDBuild.Translation.from,
 				name: 'rangeFrom',
 				disabled: true
 			});
 
 			this.rangeTo = Ext.create('Ext.form.field.Text', {
-				fieldLabel: CMDBuild.tr.to,
+				fieldLabel: CMDBuild.Translation.to,
 				name: 'rangeTo',
 				disabled: true
 			});
@@ -130,12 +130,12 @@
 				buttons: [
 					{
 						scope: this,
-						text: CMDBuild.tr.common.buttons.save,
+						text: CMDBuild.Translation.common.buttons.save,
 						handler: this.onSave
 					},
 					{
 						scope: this,
-						text: CMDBuild.tr.common.buttons.abort,
+						text: CMDBuild.Translation.common.buttons.abort,
 						handler: function() {
 							this.destroy();
 						}

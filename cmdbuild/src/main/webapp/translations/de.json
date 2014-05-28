@@ -9,7 +9,6 @@
 				"account": "<em>Account</em>",
 				"active": "<em>Active</em>",
 				"add": "<em>Add account</em>",
-				"address": "<em>Address</em>",
 				"credentials": "<em>Credentials</em>",
 				"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 				"enableSsl": "<em>Enable SSL</em>",
@@ -653,6 +652,112 @@
 				"user": "Benutzername"
 			}
 		},
+		"tasks": {
+			"add": "<em>Add task</em>",
+			"all": "<em>All</em>",
+			"clone": "<em>Clone task</em>",
+			"cronForm" : {
+				"dayOfMounth": "<em>Day of month</em>",
+				"advanced": "<em>Advanced</em>",
+				"basic": "<em>Basic</em>",
+				"dayOfWeek": "<em>Day of week</em>",
+				"everyDay": "<em>Every day</em>",
+				"everyHour": "<em>Every hour</em>",
+				"everyMounth": "<em>Every month</em>",
+				"everyYear": "<em>Every year</em>",
+				"hour": "<em>Hour</em>",
+				"minute": "<em>Minute</em>",
+				"mounth": "<em>Month</em>"
+			},
+			"errorMessages": {
+				"taskConnector": {
+					"emptyAttributeLevelMapping": "<em>Attribute level mapping table must be correctly filled.</em>",
+					"emptyClassLevelMapping": "<em>Class level mapping table must be correctly filled.</em>",
+					"emptyReferenceLevelMapping": "<em>Reference level mapping table must be correctly filled.</em>"
+				}
+			},
+			"modify": "<em>Modify task</em>",
+			"notificationForm": {
+				"account": "<em>Account</em>",
+				"template": "<em>Email template</em>",
+				"templateError": "<em>Error email template</em>",
+				"title": "<em>Send notification email</em>",
+				"titlePlur": "<em>Send notifications email</em>"
+			},
+			"remove": "<em>Remove task</em>",
+			"running": "<em>Running</em>",
+			"startLabel": "<em>Start task</em>",
+			"startOnSave": "<em>Start on save</em>",
+			"startWorkflow": "<em>Start process</em>",
+			"stopLabel": "<em>Stop task</em>",
+			"stopped": "<em>Stopped</em>",
+			"title": "<em>Task manager</em>",
+			"type": "<em>Type</em>",
+			"taskConnector": {
+				"attributeLevelMapping": "<em>Attribute mapping</em>",
+				"classAttribute": "<em>CMDBuild attribute</em>",
+				"classLevelMapping": "<em>Class mapping</em>",
+				"className": "<em>CMDBuild class</em>",
+				"cudActions": {
+					"create": "<em>Create</em>",
+					"delete": "<em>Delete</em>",
+					"update": "<em>Update</em>"
+				},
+				"dataSourceDbFieldset": "<em>Datasource: Relational database</em>",
+				"dataSourceLdapFieldset": "<em>Datasource: LDAP directory</em>",
+				"dbName": "<em>Database name</em>",
+				"deletionType": "<em>Deletion type</em>",
+				"deletionTypes": {
+					"deleteCard": "<em>Delete card</em>",
+					"changeStatus": "<em>Change status</em>"
+				},
+				"domainName": "<em>Domain name</em>",
+				"instanceName": "<em>Instance</em>",
+				"isKey": "<em>Is key</em>",
+				"recipientAddress": "<em>Recipient address</em>",
+				"referenceMapping": "<em>References mapping</em>",
+				"senderAccount": "<em>Sender account</em>",
+				"sourceAttribute": "<em>External attribute</em>",
+				"sourceFilter": "<em>Entity filter</em>",
+				"sourceName": "<em>External entity</em>"
+			},
+			"taskEmail": {
+				"attachmentsCategory": "<em>Category</em>",
+				"bodyParsing": "<em>Body parsing</em>",
+				"emailAccount": "<em>Email account</em>",
+				"fromAddressFilter": "<em>Filter on FromAddress</em>",
+				"parsingKeyEnd": "<em>Key end delimiter</em>",
+				"parsingKeyStart": "<em>Key start delimeter</em>",
+				"parsingValueEnd": "<em>Value end delimiter</em>",
+				"parsingValueStart": "<em>Value start delimeter</em>",
+				"saveToAlfresco": "<em>Save attachments to Alfresco</em>",
+				"subjectFilter": "<em>Filter on Subject</em>"
+			},
+			"taskEvent": {
+				"eventPhases": {
+					"afterCreate": "<em>After creation</em>",
+					"afterUpdate": "<em>After update</em>",
+					"beforeDelete": "<em>Before delete</em>",
+					"beforeUpdate": "<em>Before update</em>"
+				},
+				"groupsToApply": "<em>Group to apply</em>",
+				"phase": "<em>Phase</em>"
+			},
+			"tasksTypes": {
+				"connector": "<em>Connector</em>",
+				"email": "<em>Email</em>",
+				"event": "<em>Event</em>",
+				"eventTypes": {
+					"asynchronous": "<em>Asynchronous</em>",
+					"synchronous": "<em>Synchronous</em>"
+				},
+				"workflow": "<em>Process</em>"
+			},
+			"workflow": "<em>Process</em>",
+			"workflowForm": {
+				"attributes": "<em>Process attributes</em>"
+			}
+		},
 		"welcome": {
 			"body": "Verwaltungsformular",
 			"title": "Willkommen"
@@ -783,6 +888,14 @@
 			"title": "Die Installation wurde erfolgreich beendet"
 		},
 		"title": "Konfiguration"
+	},
+	"cronTriggerField": {
+		"triggerFieldWindow": {
+			"every": "<em>Every </em>",
+			"exactly": "<em>At an exact</em>",
+			"inastepwith": "<em>In a step width</em>",
+			"range": "<em>In a range</em>"
+		}
 	},
 	"errors": {
 		"busy_wf_widgets": "Die Sichtkontrolle sind besetzt. Prüfen Sie den Server-Status, bevor die Operation zu wiederholen.",
@@ -929,12 +1042,16 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Bitte prüfen Sie, ob Namespace, Zugriffsname und Parameters des Web Service korrekt sind"
 		},
 		"reference_invalid": "Der Wert stimmt das Filter nicht überein",
+		"requiredFieldMessage": "<em>This field is required</em>",
 		"server_error": "Server nicht erreichbar",
 		"server_error_code": "Fehler beim Server Dateien Versenden:",
 		"show_detail": "Details einblenden",
 		"template_error": "Fehler in einem Template",
 		"unknown_error": "Es handelte sich um einen Fehler",
 		"wrong_wf_widgets": "Fehler beim Speichern folgender Sichtkontrollen: "
+	},
+	"filterWindow": {
+		"add": "<em>Add filter</em>"
 	},
 	"info": {
 		"card_not_found": "Die Karte stimmt das eingestellte Filter nicht mehr überein"
@@ -1290,6 +1407,7 @@
 	"addTemplate": "<em>Add Template</em>",
 	"addView": "Sicht hinzufügen",
 	"add_attachment_from_db": "<em>Add attachments from database</em>",
+	"address": "<em>Address</em>",
 	"attachfile": "<em>Attach File</em>",
 	"attachmentsLookup": "<em>Email attachments Lookup</em>",
 	"attention": "Achtung",
@@ -1302,6 +1420,8 @@
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
 	"choose_attachment_from_db": "<em>Choose attachments from Database</em>",
 	"class": "<em>Class</em>",
+	"classAttribute": "<em>Class attribute</em>",
+	"className": "<em>Class name</em>",
 	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
 	"clearFilter": "<em>Clear Filter</em>",
 	"clear_row_and_colun_privilege": "Privilegien auf Zeilen und Spalten leeren",
@@ -1341,6 +1461,7 @@
 	"lock_timeout": "Maximale Zeitüberschreitung beim Sperren (Sekunden)",
 	"loggedGroup": "<em>Logged Group</em>",
 	"loggedUser": "<em>Logged User</em>",
+	"main": "<em>Main</em>",
 	"mode": "<em>Mode</em>",
 	"modifyFilter": "Filter bearbeiten",
 	"modifyProject": "<em>Modify Project</em>",
@@ -1353,10 +1474,12 @@
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
 	"pan": "<em>Pan</em>",
 	"password": "<em>Password</em>",
+	"port": "<em>Port</em>",
 	"privileges_on_columns": "Spalten-Privilegien",
 	"privileges_on_rows": "Zeilen-Privilegien",
 	"projects": "<em>Projects</em>",
 	"reference_to_root": "<em>Reference to Root</em>",
+	"remove": "<em>Remove</em>",
 	"removeFilter": "Filter löschen",
 	"removeProject": "<em>Remove Project</em>",
 	"removeTemplate": "<em>Remove Template</em>",
@@ -1365,8 +1488,8 @@
 	"reset": "<em>Reset</em>",
 	"root": "<em>Root</em>",
 	"rotate": "<em>Rotate</em>",
-	"row_and_column_privileges": "Zeilen- und Spalten-Privilegien",
 	"row_add": "<em>Add row</em>",
+	"row_and_column_privileges": "Zeilen- und Spalten-Privilegien",
 	"row_delete": "<em>Delete row</em>",
 	"row_edit": "<em>Edit row</em>",
 	"search_filters": "Suchfilters",
@@ -1386,10 +1509,10 @@
 	"translations_enabled" : "<em>Enabled languages</em>",
 	"transparent": "<em>Transparent</em>",
 	"tree": "<em>Tree</em>",
+	"tree_modify": "<em>Modify tree</em>",
 	"tree_navigation": "<em>Navigation tree</em>",
 	"tree_navigation_add": "<em>Add navigation tree</em>",
 	"tree_navigation_attributes": "<em>Navigation tree attributes</em>",
-	"tree_modify": "<em>Modify tree</em>",
 	"tree_remove": "<em>Remove tree</em>",
 	"tree_root_cql": "<em>Root CQL filter</em>",
 	"trees_navigation": "<em>Navigation trees</em>",
@@ -1399,8 +1522,8 @@
 	"username": "<em>Username</em>",
 	"value": "<em>Value</em>",
 	"views": "Sicht",
-	"workflow": "<em>Workflow</em>",
-	"workflow_attributes": "<em>Workflow attributes</em>",
+	"workflow": "<em>Process</em>",
+	"workflow_attributes": "<em>Process attributes</em>",
 	"workflow_by_cql": "<em>by Cql</em>",
 	"workflow_by_name": "<em>by name</em>",
 	"workflow_cql_filter": "<em>Cql filter</em>",
