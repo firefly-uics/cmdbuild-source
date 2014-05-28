@@ -81,45 +81,6 @@ public class Connector extends JSONBaseWithSpringContext {
 	private static abstract class JsonSource {
 	}
 
-	private static enum JsonSqlSourceHandler {
-
-		MYSQL(CommunicationConstants.MYSQL, mysql(), MYSQL_LABEL), //
-		ORACLE(CommunicationConstants.ORACLE, oracle(), ORACLE_LABEL), //
-		POSTGRES(CommunicationConstants.POSTGRESQL, postgresql(), POSTGRESQL_LABEL), //
-		SQLSERVER(CommunicationConstants.SQLSERVER, sqlserver(), SQLSERVER_LABEL), //
-		UNKNOWN(null, null, null);
-		;
-
-		public static JsonSqlSourceHandler of(final String client) {
-			for (final JsonSqlSourceHandler value : values()) {
-				if (ObjectUtils.equals(value.client, client)) {
-					return value;
-				}
-			}
-			return UNKNOWN;
-		}
-
-		public static JsonSqlSourceHandler of(final DataSourceType type) {
-			for (final JsonSqlSourceHandler value : values()) {
-				if (ObjectUtils.equals(value.server, type)) {
-					return value;
-				}
-			}
-			return UNKNOWN;
-		}
-
-		public final String client;
-		public final DataSourceType server;
-		public final String label;
-
-		private JsonSqlSourceHandler(final String client, final DataSourceType server, final String label) {
-			this.client = client;
-			this.server = server;
-			this.label = label;
-		}
-
-	}
-
 	private static class JsonSqlSource extends JsonSource {
 
 		private final SqlSourceConfiguration delegate;
@@ -161,6 +122,45 @@ public class Connector extends JSONBaseWithSpringContext {
 		@JsonProperty(DATA_SOURCE_DB_FILTER)
 		public String getFilter() {
 			return delegate.getFilter();
+		}
+
+	}
+
+	private static enum JsonSqlSourceHandler {
+
+		MYSQL(CommunicationConstants.MYSQL, mysql(), MYSQL_LABEL), //
+		ORACLE(CommunicationConstants.ORACLE, oracle(), ORACLE_LABEL), //
+		POSTGRES(CommunicationConstants.POSTGRESQL, postgresql(), POSTGRESQL_LABEL), //
+		SQLSERVER(CommunicationConstants.SQLSERVER, sqlserver(), SQLSERVER_LABEL), //
+		UNKNOWN(null, null, null);
+		;
+
+		public static JsonSqlSourceHandler of(final String client) {
+			for (final JsonSqlSourceHandler value : values()) {
+				if (ObjectUtils.equals(value.client, client)) {
+					return value;
+				}
+			}
+			return UNKNOWN;
+		}
+
+		public static JsonSqlSourceHandler of(final DataSourceType type) {
+			for (final JsonSqlSourceHandler value : values()) {
+				if (ObjectUtils.equals(value.server, type)) {
+					return value;
+				}
+			}
+			return UNKNOWN;
+		}
+
+		public final String client;
+		public final DataSourceType server;
+		public final String label;
+
+		private JsonSqlSourceHandler(final String client, final DataSourceType server, final String label) {
+			this.client = client;
+			this.server = server;
+			this.label = label;
 		}
 
 	}
@@ -243,36 +243,6 @@ public class Connector extends JSONBaseWithSpringContext {
 
 	}
 
-	private static final Function<ClassMapping, JsonClassMapping> CLASS_MAPPING_TO_JSON_CLASS_MAPPING = new Function<ClassMapping, JsonClassMapping>() {
-
-		@Override
-		public JsonClassMapping apply(final ClassMapping input) {
-			final JsonClassMapping output = new JsonClassMapping();
-			output.setSourceType(input.getSourceType());
-			output.setTargetType(input.getTargetType());
-			output.setCreate(input.isCreate());
-			output.setUpdate(input.isUpdate());
-			output.setDelete(input.isDelete());
-			return output;
-		}
-
-	};
-
-	private static final Function<JsonClassMapping, ClassMapping> JSON_CLASS_MAPPING_TO_CLASS_MAPPING = new Function<JsonClassMapping, ClassMapping>() {
-
-		@Override
-		public ClassMapping apply(final JsonClassMapping input) {
-			return ClassMapping.newInstance() //
-					.withSourceType(input.getSourceType()) //
-					.withTargetType(input.getTargetType()) //
-					.withCreateStatus(input.isCreate()) //
-					.withUpdateStatus(input.isUpdate()) //
-					.withDeleteStatus(input.isDelete()) //
-					.build();
-		}
-
-	};
-
 	private static class JsonAttributeMapping {
 
 		private String sourceType;
@@ -354,36 +324,6 @@ public class Connector extends JSONBaseWithSpringContext {
 		}
 
 	}
-
-	private static final Function<AttributeMapping, JsonAttributeMapping> ATTRIBUTE_MAPPING_TO_JSON_ATTRIBUTE_MAPPING = new Function<AttributeMapping, JsonAttributeMapping>() {
-
-		@Override
-		public JsonAttributeMapping apply(final AttributeMapping input) {
-			final JsonAttributeMapping output = new JsonAttributeMapping();
-			output.setSourceType(input.getSourceType());
-			output.setSourceAttribute(input.getSourceAttribute());
-			output.setTargetType(input.getTargetType());
-			output.setTargetAttribute(input.getTargetAttribute());
-			output.setKey(input.isKey());
-			return output;
-		}
-
-	};
-
-	private static final Function<JsonAttributeMapping, AttributeMapping> JSON_ATTRIBUTE_MAPPING_TO_ATTRIBUTE_MAPPING = new Function<JsonAttributeMapping, AttributeMapping>() {
-
-		@Override
-		public AttributeMapping apply(final JsonAttributeMapping input) {
-			return AttributeMapping.newInstance() //
-					.withSourceType(input.getSourceType()) //
-					.withSourceAttribute(input.getSourceAttribute()) //
-					.withTargetType(input.getTargetType()) //
-					.withTargetAttribute(input.getTargetAttribute()) //
-					.withKeyStatus(input.isKey()) //
-					.build();
-		}
-
-	};
 
 	private static class JsonConnectorTask {
 
@@ -482,14 +422,75 @@ public class Connector extends JSONBaseWithSpringContext {
 
 	}
 
-	private static final Iterable<JsonClassMapping> NO_CLASS_MAPPINGS = Collections.emptyList();
-	private static final Iterable<JsonAttributeMapping> NO_ATTRIBUTE_MAPPINGS = Collections.emptyList();
+	private static final Function<ClassMapping, JsonClassMapping> CLASS_MAPPING_TO_JSON_CLASS_MAPPING = new Function<ClassMapping, JsonClassMapping>() {
+
+		@Override
+		public JsonClassMapping apply(final ClassMapping input) {
+			final JsonClassMapping output = new JsonClassMapping();
+			output.setSourceType(input.getSourceType());
+			output.setTargetType(input.getTargetType());
+			output.setCreate(input.isCreate());
+			output.setUpdate(input.isUpdate());
+			output.setDelete(input.isDelete());
+			return output;
+		}
+
+	};
+
+	private static final Function<JsonClassMapping, ClassMapping> JSON_CLASS_MAPPING_TO_CLASS_MAPPING = new Function<JsonClassMapping, ClassMapping>() {
+
+		@Override
+		public ClassMapping apply(final JsonClassMapping input) {
+			return ClassMapping.newInstance() //
+					.withSourceType(input.getSourceType()) //
+					.withTargetType(input.getTargetType()) //
+					.withCreateStatus(input.isCreate()) //
+					.withUpdateStatus(input.isUpdate()) //
+					.withDeleteStatus(input.isDelete()) //
+					.build();
+		}
+
+	};
+
+	private static final Function<AttributeMapping, JsonAttributeMapping> ATTRIBUTE_MAPPING_TO_JSON_ATTRIBUTE_MAPPING = new Function<AttributeMapping, JsonAttributeMapping>() {
+
+		@Override
+		public JsonAttributeMapping apply(final AttributeMapping input) {
+			final JsonAttributeMapping output = new JsonAttributeMapping();
+			output.setSourceType(input.getSourceType());
+			output.setSourceAttribute(input.getSourceAttribute());
+			output.setTargetType(input.getTargetType());
+			output.setTargetAttribute(input.getTargetAttribute());
+			output.setKey(input.isKey());
+			return output;
+		}
+
+	};
+
+	private static final Function<JsonAttributeMapping, AttributeMapping> JSON_ATTRIBUTE_MAPPING_TO_ATTRIBUTE_MAPPING = new Function<JsonAttributeMapping, AttributeMapping>() {
+
+		@Override
+		public AttributeMapping apply(final JsonAttributeMapping input) {
+			return AttributeMapping.newInstance() //
+					.withSourceType(input.getSourceType()) //
+					.withSourceAttribute(input.getSourceAttribute()) //
+					.withTargetType(input.getTargetType()) //
+					.withTargetAttribute(input.getTargetAttribute()) //
+					.withKeyStatus(input.isKey()) //
+					.build();
+		}
+
+	};
 
 	private static final TypeReference<Set<? extends JsonClassMapping>> JSON_CLASS_MAPPINGS_TYPE_REFERENCE = new TypeReference<Set<? extends JsonClassMapping>>() {
 	};
 
 	private static final TypeReference<Set<? extends JsonAttributeMapping>> JSON_ATTRIBUTE_MAPPINGS_TYPE_REFERENCE = new TypeReference<Set<? extends JsonAttributeMapping>>() {
 	};
+
+	private static final Iterable<JsonClassMapping> NO_CLASS_MAPPINGS = Collections.emptyList();
+
+	private static final Iterable<JsonAttributeMapping> NO_ATTRIBUTE_MAPPINGS = Collections.emptyList();
 
 	@Admin
 	@JSONExported
