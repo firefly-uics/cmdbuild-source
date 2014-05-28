@@ -29,8 +29,8 @@ public class DefaultStartupLogic implements StartupLogic {
 	@Override
 	public void migrate() throws Exception {
 		patchManager.applyPatchList();
-		startupManager.start();
 		cachingLogic.clearCache();
+		startupManager.start();
 	}
 
 }
