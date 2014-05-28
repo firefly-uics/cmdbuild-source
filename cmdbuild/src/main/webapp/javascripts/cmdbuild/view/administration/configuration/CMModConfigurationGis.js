@@ -8,7 +8,9 @@
 		configFileName: 'gis',
 		
 		constructor: function() {
-			var navigationTreesStore = buildNavigationTreesStore();
+/*	This part was begun for the unification of the Gis navigation tree with the other navigation tree and is suspended 
+ * 	for the imminent release of the CMDBuild 2.2 version
+ * 			var navigationTreesStore = buildNavigationTreesStore();
 			this.navigationTreeName = new Ext.form.field.ComboBox({
 				name: "navigationTreeName",
 				fieldLabel: CMDBuild.Translation.tree_navigation, 
@@ -16,7 +18,7 @@
 				displayField: 'description',
 				store: navigationTreesStore
 			});
-			this.items = [{
+*/			this.items = [{
 				xtype: 'xcheckbox',
 				name: 'enabled',
 				fieldLabel: tr.enable
@@ -36,8 +38,8 @@
 				fieldLabel: tr.initial_zoom,
 				minValue : 0,
 				maxValue : 25
-			},
-			this.navigationTreeName
+			}/*,
+			this.navigationTreeName */
 		];
 
 			this.callParent(arguments);
@@ -59,7 +61,10 @@
 			}
 		}
 	});
-	function buildNavigationTreesStore() {
+/*	This part was begun for the unification of the Gis navigation tree with the other navigation tree and is suspended 
+ * 	for the imminent release of the CMDBuild 2.2 version
+ * 
+ * 	function buildNavigationTreesStore() {
 		_CMCache.listNavigationTrees({
 			success: function() {
 				var navigationTrees = _CMCache.getNavigationTrees();
@@ -87,4 +92,5 @@
 		});
 		
 	}
+*/
 })();
