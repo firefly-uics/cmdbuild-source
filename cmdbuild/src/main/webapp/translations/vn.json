@@ -1293,7 +1293,7 @@
 		"warning_message": "Cảnh báo"
 	},
 	"active": "Hoạt động",
-	"add_attachment_from_db": "<em>Add attachments from database</em>",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
 	"addFilter": "Thêm bộ lọc",
 	"addTemplate": "<em>Add Template</em>",
 	"addView": "Thêm lượt xem",

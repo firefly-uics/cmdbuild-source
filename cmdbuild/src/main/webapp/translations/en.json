@@ -1292,7 +1292,7 @@
 		"warning_message" : "Warning"
 	},
 	"active" : "Active",
-	"add_attachment_from_db" : "Add attachments from database",
+	"add_attachment_from_dms": "Add attachments from DMS",
 	"addFilter" : "Add Filter",
 	"addTemplate" : "Add Template",
 	"addView" : "Add View",

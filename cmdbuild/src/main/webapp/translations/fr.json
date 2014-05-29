@@ -1293,7 +1293,7 @@
 		"warning_message": "Attention"
 	},
 	"active": "Active",
-	"add_attachment_from_db": "<em>Add attachments from database</em>",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
 	"addFilter": "Ajouter un filtre",
 	"addTemplate": "<em>Add Template</em>",
 	"addView": "Ajouter une vue",

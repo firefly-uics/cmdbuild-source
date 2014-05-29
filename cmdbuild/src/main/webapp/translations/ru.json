@@ -1293,7 +1293,7 @@
 		"warning_message": "Предупреждение"
 	},
 	"active": "Активный",
-	"add_attachment_from_db": "Добавить вложения из базы данных",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
 	"addFilter": "Создать фильтр",
 	"addTemplate": "Создать шаблон",
 	"addView": "Создать представление",
