@@ -86,6 +86,7 @@ public class SendTemplateEmail implements Action {
 		final EmailService emailService = emailServiceFactory.create(ofInstance(emailAccount));
 		final Template template = emailTemplateSupplier.get();
 		final Email email = new Email();
+		email.setFromAddress(templateResolver.resolve(template.getFrom()));
 		email.setToAddresses(templateResolver.resolve(template.getTo()));
 		email.setCcAddresses(templateResolver.resolve(template.getCc()));
 		email.setBccAddresses(templateResolver.resolve(template.getBcc()));
