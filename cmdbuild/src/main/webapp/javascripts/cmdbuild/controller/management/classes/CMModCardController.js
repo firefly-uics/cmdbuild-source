@@ -155,11 +155,12 @@
 		 * @param (Object) args
 		 * @param (Array) args[1] - loaded records array
 		 */
-		onGridLoad: function(args) {
+		onGridLoad: function(args) {_debug(this.view);
 			// TODO notify to sub-controllers?
 			if (Ext.isEmpty(args[1])) {
 				this.view.getCardPanel().displayMode();
-				this.view.getCardPanel().reset();
+				this.view.cardTabPanel.reset();
+				this.view.getHistoryPanel().disable();
 			}
 		}
 	});
