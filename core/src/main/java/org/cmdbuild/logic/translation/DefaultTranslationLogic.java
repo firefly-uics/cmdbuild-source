@@ -175,6 +175,12 @@ public class DefaultTranslationLogic implements TranslationLogic {
 					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
+		@Override
+		public void visit(final MenuItemTranslation translationObject) {
+			value = format("menuitem.%s.%s", //
+					translationObject.getName(), //
+					FieldMapper.of(translationObject.getField()).getResult());
+		}
 	}
 
 	private static final class ContainedInTraslations implements Predicate<Translation> {

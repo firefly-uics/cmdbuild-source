@@ -1,9 +1,11 @@
 package unit.serializers;
 
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.services.store.DBDashboardStore;
@@ -61,7 +63,7 @@ public class MenuSerializerTest {
 	@Test
 	public void testRootOnlyToClient() throws JSONException {
 		// given
-		TranslationFacade facade = mock(TranslationFacade.class);
+		final TranslationFacade facade = mock(TranslationFacade.class);
 		when(facade.read(any(TranslationObject.class))).thenReturn(null);
 		final MenuItem menuItem = new MenuItemDTO();
 		menuItem.setType(MenuItemType.ROOT);
@@ -83,7 +85,7 @@ public class MenuSerializerTest {
 	@Test
 	public void testWithAClassToClient() throws JSONException {
 		// given
-		TranslationFacade facade = mock(TranslationFacade.class);
+		final TranslationFacade facade = mock(TranslationFacade.class);
 		when(facade.read(any(TranslationObject.class))).thenReturn(null);
 
 		final MenuItem root = new MenuItemDTO();
@@ -117,7 +119,7 @@ public class MenuSerializerTest {
 	@Test
 	public void testWithAFolderToClient() throws JSONException {
 		// given
-		TranslationFacade facade = mock(TranslationFacade.class);
+		final TranslationFacade facade = mock(TranslationFacade.class);
 		when(facade.read(any(TranslationObject.class))).thenReturn(null);
 		final MenuItem root = new MenuItemDTO();
 		root.setType(MenuItemType.ROOT);
@@ -139,13 +141,13 @@ public class MenuSerializerTest {
 				.withRootItem(root) //
 				.withTranslationFacade(facade) //
 				.build();
-		
-		//when
+
+		// when
 		final JSONObject jsonMenu = menuSerializer.toClient(false);
 		final JSONArray children = jsonMenu.getJSONArray(MenuSerializer.CHILDREN);
 		final JSONObject jsonFolder = children.getJSONObject(0);
-		
-		//then
+
+		// then
 		assertEquals(MenuItemType.FOLDER.getValue(), jsonFolder.getString(MenuSerializer.TYPE));
 		assertEquals(1, jsonFolder.getInt(MenuSerializer.INDEX));
 		assertEquals("FooFolderDescription", jsonFolder.get(DESCRIPTION));
@@ -161,6 +163,8 @@ public class MenuSerializerTest {
 
 	@Test
 	public void testWithADashboardToClient() throws JSONException {
+		final TranslationFacade facade = mock(TranslationFacade.class);
+		when(facade.read(any(TranslationObject.class))).thenReturn(null);
 		final MenuItem root = new MenuItemDTO();
 		root.setType(MenuItemType.ROOT);
 
@@ -175,6 +179,7 @@ public class MenuSerializerTest {
 
 		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
 				.withRootItem(root) //
+				.withTranslationFacade(facade) //
 				.build();
 		final JSONObject jsonMenu = menuSerializer.toClient(false);
 		final JSONArray children = jsonMenu.getJSONArray(MenuSerializer.CHILDREN);
