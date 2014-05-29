@@ -1293,7 +1293,7 @@
 		"warning_message": "警告"
 	},
 	"active": "アクティブ",
-	"add_attachment_from_db": "<em>Add attachments from database</em>",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
 	"addFilter": "フィルタを追加",
 	"addView": "ビューを追加",
 	"availableFilters": "使用可能なフィルタ",
