@@ -26,7 +26,7 @@
 			var fields = this.callParent(arguments);
 
 			Ext.apply(this.description, {
-				translationsKeyType: "FilterView", 
+				translationsKeyType: "View", 
 				translationsKeyField: "Description"
 			});
 			this.classes = new CMDBuild.field.ErasableCombo({

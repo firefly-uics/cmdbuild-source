@@ -455,7 +455,8 @@
 				me.view.selectAppliedFilter();
 
 				if (filter.isApplied()) {
-					me.view.setFilterButtonLabel(filter.getName());
+					var s = (Ext.String.trim(filter.getDescription()) == "") ? filter.getName() : filter.getDescription(); 
+					me.view.setFilterButtonLabel(s);
 				} 
 			}
 
@@ -518,7 +519,8 @@
 				addFilterToStore(me, filter, atFirst);
 			}
 
-			me.view.setFilterButtonLabel(filter.getName());
+			var s = (Ext.String.trim(filter.getDescription()) == "") ? filter.getName() : filter.getDescription(); 
+			me.view.setFilterButtonLabel(s);
 			me.view.applyFilterToStore( //
 					filter.getConfigurationMergedWithRuntimeAttributes(runtimeAttributeFields) //
 				);

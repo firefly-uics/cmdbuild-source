@@ -21,7 +21,7 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMSqlDataViewFormFi
 
 		var fields = this.callParent(arguments);
 		Ext.apply(this.description, {
-			translationsKeyType: "SqlView", 
+			translationsKeyType: "View", 
 			translationsKeyField: "Description"
 		});
 		fields.push(this.dataSource);
