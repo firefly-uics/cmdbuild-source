@@ -67,11 +67,11 @@
 			var me = this;
 
 			if (this.withFilterEditor) {
-				this.columns.push(iconButton(me, "privilege_filter", setPrivilegeTranslation, "", onSetPrivilegeFilterClick));
-				this.columns.push(iconButton(me, "privilege_filter_remove", removePrivilegeTranslation, "", onRemovePrivilegeFilterClick));
+				this.columns.push(iconButton(me, "privilege_filter", setPrivilegeTranslation, "", onSetPrivilegeFilterClick, false));
+				this.columns.push(iconButton(me, "privilege_filter_remove", removePrivilegeTranslation, "", onRemovePrivilegeFilterClick, false));
 			}
 			if (this.withCRUDPermission) {
-				this.columns.push(iconButton(me, "uiconfiguration", CMDBuild.Translation.ui_configuration_for_groups, "UI", onChangeClassUIConfiguration));
+				this.columns.push(iconButton(me, "uiconfiguration", CMDBuild.Translation.ui_configuration_for_groups, "UI", onChangeClassUIConfiguration, true));
 			}
 			this.viewConfig = {
 				forceFit: true
@@ -227,7 +227,21 @@
 		}
 	});
 
-	function iconButton(me, icon, tooltip, header, callFunction) {
+	function iconButton(me, icon, tooltip, header, callFunction, disabeldIfProcess) {
+		var button = {
+				icon: "images/icons/" + icon + ".png",
+			    tooltip: tooltip, 
+			    handler: function(grid, rowIndex, colIndex) {
+			    	var model = grid.getStore().getAt(rowIndex);
+			    	callFunction(me, model);
+			    }
+		};
+		if (disabeldIfProcess) {
+			button.isDisabled = function(view, rowIndex, colIndex, item, record) {
+				var id = record.get("privilegedObjectId");
+				return (_CMCache.getClassById(id)) ? false : true;
+	        };
+		};
 		return {
 			header: header,
 			fixed: true, 
@@ -238,14 +252,7 @@
 			hideable: false,
 			xtype:'actioncolumn',
 			width:30,
-			items: [{
-				icon: "images/icons/" + icon + ".png",
-			    tooltip: tooltip, 
-			    handler: function(grid, rowIndex, colIndex) {
-			    	var model = grid.getStore().getAt(rowIndex);
-			    	callFunction(me, model);
-			    }
-			}]
+			items: [button]
 		};	
 	}
 	// scope this
