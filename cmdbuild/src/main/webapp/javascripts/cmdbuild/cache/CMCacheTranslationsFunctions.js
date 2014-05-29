@@ -183,11 +183,8 @@
 			case "DomainAttribute" :
 				createForDomainAttribute(translationsKeyName, translationsKeySubName, translationsKeyField, values);
 				break;
-			case "FilterView" :
-				createForFilterView(translationsKeyName, translationsKeyField, values);
-				break;
-			case "SqlView" :
-				createForSqlView(translationsKeyName, translationsKeyField, values);
+			case "View" :
+				createForView(translationsKeyName, translationsKeyField, values);
 				break;
 			case "Filter" :
 				createForFilter(translationsKeyName, translationsKeyField, values);
@@ -250,21 +247,13 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.createForDomainAttribute);
 	}
-	function createForFilterView(translationsKeyName, translationsKeyField, values) {
+	function createForView(translationsKeyName, translationsKeyField, values) {
 		var params = {
 				viewName: translationsKeyName,
 				field: translationsKeyField,
 				translations: Ext.JSON.encodeValue(values)
 		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.createForFilterView);
-	}
-	function createForSqlView(translationsKeyName, translationsKeyField, values) {
-		var params = {
-				viewName: translationsKeyName,
-				field: translationsKeyField,
-				translations: Ext.JSON.encodeValue(values)
-		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.createForSqlView);
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.createForView);
 	}
 	function createForFilter(translationsKeyName, translationsKeyField, values) {
 		var params = {
@@ -347,11 +336,8 @@
 			case "DomainAttribute" :
 				readForDomainAttribute(translationsKeyName, translationsKeySubName, translationsKeyField, callBack);
 				break;
-			case "FilterView" :
-				readForFilterView(translationsKeyName, translationsKeyField, callBack);
-				break;
-			case "SqlView" :
-				readForSqlView(translationsKeyName, translationsKeyField, callBack);
+			case "View" :
+				readForView(translationsKeyName, translationsKeyField, callBack);
 				break;
 			case "Filter" :
 				readForFilter(translationsKeyName, translationsKeyField, callBack);
@@ -409,19 +395,12 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForDomainAttribute);
 	}
-	function readForFilterView(translationsKeyName, translationsKeyField, callBack) {
+	function readForView(translationsKeyName, translationsKeyField, callBack) {
 		var params = {
 				viewName: translationsKeyName,
 				field: translationsKeyField
 		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForFilterView);
-	}
-	function readForSqlView(translationsKeyName, translationsKeyField, callBack) {
-		var params = {
-				viewName: translationsKeyName,
-				field: translationsKeyField
-		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForSqlView);
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForView);
 	}
 	function readForFilter(translationsKeyName, translationsKeyField, callBack) {
 		var params = {
@@ -496,11 +475,8 @@
 			case "DomainAttribute" :
 				updateForDomainAttribute(translationsKeyName, translationsKeySubName, translationsKeyField, values);
 				break;
-			case "FilterView" :
-				updateForFilterView(translationsKeyName, translationsKeyField, values);
-				break;
-			case "SqlView" :
-				updateForSqlView(translationsKeyName, translationsKeyField, values);
+			case "View" :
+				updateForView(translationsKeyName, translationsKeyField, values);
 				break;
 			case "Filter" :
 				updateForFilter(translationsKeyName, translationsKeyField, values);
@@ -563,21 +539,13 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForDomainAttribute);
 	}
-	function updateForFilterView(translationsKeyName, translationsKeyField, values) {
+	function updateForView(translationsKeyName, translationsKeyField, values) {
 		var params = {
 				viewName: translationsKeyName,
 				field: translationsKeyField,
 				translations: Ext.JSON.encodeValue(values)
 		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForFilterView);
-	}
-	function updateForSqlView(translationsKeyName, translationsKeyField, values) {
-		var params = {
-				viewName: translationsKeyName,
-				field: translationsKeyField,
-				translations: Ext.JSON.encodeValue(values)
-		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForSqlView);
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForView);
 	}
 	function updateForFilter(translationsKeyName, translationsKeyField, values) {
 		var params = {
@@ -660,11 +628,8 @@
 			case "DomainAttribute" :
 				deleteForDomainAttribute(translationsKeyName, translationsKeySubName, translationsKeyField, values);
 				break;
-			case "FilterView" :
-				deleteForFilterView(translationsKeyName, translationsKeyField, values);
-				break;
-			case "SqlView" :
-				deleteForSqlView(translationsKeyName, translationsKeyField, values);
+			case "View" :
+				deleteForView(translationsKeyName, translationsKeyField, values);
 				break;
 			case "Filter" :
 				deleteForFilter(translationsKeyName, translationsKeyField, values);
@@ -727,21 +692,13 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForDomainAttribute);
 	}
-	function deleteForFilterView(translationsKeyName, translationsKeyField, values) {
+	function deleteForView(translationsKeyName, translationsKeyField, values) {
 		var params = {
 				viewName: translationsKeyName,
 				field: translationsKeyField,
 				translations: Ext.JSON.encodeValue(values)
 		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForFilterView);
-	}
-	function deleteForSqlView(translationsKeyName, translationsKeyField, values) {
-		var params = {
-				viewName: translationsKeyName,
-				field: translationsKeyField,
-				translations: Ext.JSON.encodeValue(values)
-		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForSqlView);
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForView);
 	}
 	function deleteForFilter(translationsKeyName, translationsKeyField, values) {
 		var params = {
