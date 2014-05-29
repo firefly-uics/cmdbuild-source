@@ -155,7 +155,7 @@
 		 * @param (Object) args
 		 * @param (Array) args[1] - loaded records array
 		 */
-		onGridLoad: function(args) {_debug(this.view);
+		onGridLoad: function(args) {
 			// TODO notify to sub-controllers?
 			if (Ext.isEmpty(args[1])) {
 				this.view.getCardPanel().displayMode();
