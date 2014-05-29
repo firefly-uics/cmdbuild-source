@@ -267,6 +267,7 @@ public class CommunicationConstants {
 			USERS = "users", //
 			USER_TYPE = "user_type", //
 			USER = "user", //
+			MENU_ITEM_UUID = "uuid", //
 			VALUE = "value",//
 			VIEWNAME = "viewName", //
 			VIEWS = "views", //

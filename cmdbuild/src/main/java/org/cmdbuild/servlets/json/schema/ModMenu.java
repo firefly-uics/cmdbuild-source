@@ -38,6 +38,7 @@ public class ModMenu extends JSONBaseWithSpringContext {
 		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
 				.withRootItem(menu) //
 				.withTranslationFacade(translationFacade()) //
+				.withDataView(systemDataView()) //
 				.build();
 		return menuSerializer.toClient(withWrapper);
 	}
@@ -65,6 +66,7 @@ public class ModMenu extends JSONBaseWithSpringContext {
 		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
 				.withRootItem(availableMenu) //
 				.withTranslationFacade(translationFacade()) //
+				.withDataView(systemDataView()) //
 				.build();
 		return menuSerializer.toClient(availableMenu, withWrapper, sortByDescription);
 	}
@@ -129,6 +131,7 @@ public class ModMenu extends JSONBaseWithSpringContext {
 		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
 				.withRootItem(menu) //
 				.withTranslationFacade(translationFacade()) //
+				.withDataView(systemDataView()) //
 				.build();
 		return menuSerializer.toClient(withWrapper);
 	}

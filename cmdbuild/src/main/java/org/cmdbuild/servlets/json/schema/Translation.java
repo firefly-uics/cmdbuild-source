@@ -9,6 +9,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTERNAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ICONNAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUPID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MENU_ITEM_UUID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.REPORTNAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.VIEWNAME;
@@ -27,6 +28,7 @@ import org.cmdbuild.logic.translation.FilterTranslation;
 import org.cmdbuild.logic.translation.GisIconTranslation;
 import org.cmdbuild.logic.translation.InstanceNameTranslation;
 import org.cmdbuild.logic.translation.LookupTranslation;
+import org.cmdbuild.logic.translation.MenuItemTranslation;
 import org.cmdbuild.logic.translation.ReportTranslation;
 import org.cmdbuild.logic.translation.ViewTranslation;
 import org.cmdbuild.logic.translation.WidgetTranslation;
@@ -142,6 +144,21 @@ public class Translation extends JSONBaseWithSpringContext {
 	) {
 		final InstanceNameTranslation translationObject = new InstanceNameTranslation();
 		translationObject.setTranslations(toMap(translations));
+		translationLogic().create(translationObject);
+	}
+
+	@JSONExported
+	@Admin
+	public void createForMenuItem( //
+			@Parameter(value = MENU_ITEM_UUID) final String itemUniqueIdentifier, //
+			@Parameter(value = FIELD) final String field, //
+			@Parameter(value = TRANSLATIONS) final JSONObject translations //
+	) {
+		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
+				.withName(itemUniqueIdentifier) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
 		translationLogic().create(translationObject);
 	}
 
@@ -398,6 +415,20 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
+	public JsonResponse readForMenuItem( //
+			@Parameter(value = MENU_ITEM_UUID) final String uniqueIdentifier, //
+			@Parameter(value = FIELD) final String field //
+	) {
+		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
+				.withName(uniqueIdentifier) //
+				.withField(field) //
+				.build();
+		final Map<String, String> translations = translationLogic().read(translationObject);
+		return JsonResponse.success(translations);
+	}
+
+	@JSONExported
+	@Admin
 	public JsonResponse readForGisIcon( //
 			@Parameter(value = ICONNAME) final String iconName, //
 			@Parameter(value = FIELD) final String field //
@@ -592,6 +623,21 @@ public class Translation extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
+	public void updateForMenuItem( //
+			@Parameter(value = MENU_ITEM_UUID) final String uniqueIdentifier, //
+			@Parameter(value = FIELD) final String field, //
+			@Parameter(value = TRANSLATIONS) final JSONObject translations //
+	) {
+		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
+				.withName(uniqueIdentifier) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
+		translationLogic().update(translationObject);
+	}
+
+	@JSONExported
+	@Admin
 	public void updateForGisIcon( //
 			@Parameter(value = ICONNAME) final String iconName, //
 			@Parameter(value = FIELD) final String field, //
@@ -775,6 +821,21 @@ public class Translation extends JSONBaseWithSpringContext {
 	) {
 		final LookupTranslation translationObject = LookupTranslation.newInstance() //
 				.withName(lookupId) //
+				.withField(field) //
+				.withTranslations(toMap(translations)) //
+				.build();
+		translationLogic().delete(translationObject);
+	}
+
+	@JSONExported
+	@Admin
+	public void deleteForMenuItem( //
+			@Parameter(value = MENU_ITEM_UUID) final String itemUniqueIdentifier, //
+			@Parameter(value = FIELD) final String field, //
+			@Parameter(value = TRANSLATIONS) final JSONObject translations //
+	) {
+		final MenuItemTranslation translationObject = MenuItemTranslation.newInstance() //
+				.withName(itemUniqueIdentifier) //
 				.withField(field) //
 				.withTranslations(toMap(translations)) //
 				.build();

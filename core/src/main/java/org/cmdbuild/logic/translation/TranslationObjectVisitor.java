@@ -28,4 +28,6 @@ public interface TranslationObjectVisitor {
 
 	void visit(GisIconTranslation gisIconTranslation);
 
+	void visit(MenuItemTranslation menuItemTranslation);
+
 }
