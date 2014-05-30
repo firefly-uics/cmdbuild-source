@@ -1,6 +1,6 @@
 package org.cmdbuild.services.template.store;
 
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 
 public class Template implements Storable {
 

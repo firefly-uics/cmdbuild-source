@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.soap.structure.MenuSchema;
 import org.cmdbuild.services.store.menu.MenuStore;
@@ -26,8 +26,12 @@ public class MenuSchemaSerializer {
 	private final WorkflowLogic workflowLogic;
 	private final MenuStore menuStore;
 
-	public MenuSchemaSerializer(final MenuStore menuStore, final OperationUser operationUser,
-			final DataAccessLogic dataAccessLogic, final WorkflowLogic workflowLogic) {
+	public MenuSchemaSerializer( //
+			final MenuStore menuStore, //
+			final OperationUser operationUser, //
+			final DataAccessLogic dataAccessLogic, //
+			final WorkflowLogic workflowLogic //
+	) {
 		this.operationUser = operationUser;
 		this.dataAccessLogic = dataAccessLogic;
 		this.workflowLogic = workflowLogic;

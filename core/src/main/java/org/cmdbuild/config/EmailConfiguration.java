@@ -2,11 +2,11 @@ package org.cmdbuild.config;
 
 public interface EmailConfiguration {
 
-	String getImapServer();
+	String getEmailAddress();
 
-	Integer getImapPort();
+	String getEmailUsername();
 
-	boolean imapNeedsSsl();
+	String getEmailPassword();
 
 	String getSmtpServer();
 
@@ -14,17 +14,22 @@ public interface EmailConfiguration {
 
 	boolean smtpNeedsSsl();
 
-	String getEmailAddress();
+	boolean isSmtpConfigured();
 
-	String getEmailUsername();
+	String getImapServer();
 
-	String getEmailPassword();
+	Integer getImapPort();
 
 	boolean isImapConfigured();
 
-	boolean isSmtpConfigured();
+	boolean imapNeedsSsl();
+
+	String getInputFolder();
+
+	String getProcessedFolder();
+
+	String getRejectedFolder();
 
 	boolean keepUnknownMessages();
 
-	Integer emailServiceDelay();
 }

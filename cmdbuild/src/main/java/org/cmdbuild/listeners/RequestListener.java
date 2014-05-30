@@ -1,7 +1,9 @@
 package org.cmdbuild.listeners;
 
+import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+
 import java.util.List;
-import static org.cmdbuild.spring.SpringIntegrationUtils.*;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
@@ -11,15 +13,17 @@ import javax.servlet.http.HttpSession;
 import org.cmdbuild.config.CmdbuildConfiguration;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.notification.Notifier;
+import org.cmdbuild.spring.annotations.CmdbuildComponent;
 
 import com.google.common.collect.Lists;
 
+@CmdbuildComponent
 public class RequestListener implements ServletRequestListener, Notifier {
 
 	public class CMDBContext {
 
-		private HttpServletRequest request;
-		private List<CMDBException> warnings = Lists.newLinkedList();
+		private final HttpServletRequest request;
+		private final List<CMDBException> warnings = Lists.newLinkedList();
 
 		private CMDBContext(final HttpServletRequest request) {
 			this.request = request;

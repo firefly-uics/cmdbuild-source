@@ -140,14 +140,14 @@ public class DefaultWorkflowEngine implements QueryableUserWorkflowEngine {
 
 	@Override
 	public UserProcessClass findProcessClassById(final Long id) {
-		logger.info(marker, "getting process classe with id '{}'", id);
+		logger.info(marker, "getting process class with id '{}'", id);
 		Validate.notNull(id);
 		return persistence.findProcessClass(id);
 	}
 
 	@Override
 	public UserProcessClass findProcessClassByName(final String name) {
-		logger.info(marker, "getting process classe with name '{}'", name);
+		logger.info(marker, "getting process class with name '{}'", name);
 		Validate.notNull(name);
 		return persistence.findProcessClass(name);
 	}
