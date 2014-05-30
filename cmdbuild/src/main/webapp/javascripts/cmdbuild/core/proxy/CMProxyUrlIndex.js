@@ -128,8 +128,10 @@
 					read: 'services/json/schema/modsecurity/getclassprivilegelist',
 					update: 'services/json/schema/modsecurity/saveclassprivilege',
 
-					clearRowAndColumnPrivileges: 'services/json/schema/modsecurity/clearrowandcolumnprivileges',
-					setRowAndColumnPrivileges: 'services/json/schema/modsecurity/setrowandcolumnprivileges',
+					clearRowAndColumnPrivileges: "services/json/schema/modsecurity/clearrowandcolumnprivileges",
+					setRowAndColumnPrivileges: "services/json/schema/modsecurity/setrowandcolumnprivileges",
+					saveClassUiConfiguration: 'services/json/schema/modsecurity/saveclassuiconfiguration',
+					loadClassUiConfiguration: 'services/json/schema/modsecurity/loadclassuiconfiguration'
 				},
 				dataView: {
 					read: 'services/json/schema/modsecurity/getviewprivilegelist',
