@@ -12,7 +12,7 @@
 			{ name: CMDBuild.ServiceProxy.parameter.TEXT, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.PARENT, type: 'string' },
-			{ name: CM_INDEX, type: 'ingeter' },
+			{ name: CM_INDEX, type: 'int' },
 			{ name: CMDBuild.ServiceProxy.parameter.NAME, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.TYPE, type: 'string' },
 			{ name: CMDBuild.ServiceProxy.parameter.FILTER, type: 'auto' },
