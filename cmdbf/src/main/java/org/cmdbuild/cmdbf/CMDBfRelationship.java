@@ -17,10 +17,12 @@ public class CMDBfRelationship extends CMDBfItem {
 
 	public CMDBfRelationship(final RelationshipType relationship) {
 		super(relationship.getInstanceId());
-		if(relationship.getSource() != null)
+		if (relationship.getSource() != null) {
 			setSource(new CMDBfId(relationship.getSource()));
-		if(relationship.getTarget() != null)
+		}
+		if (relationship.getTarget() != null) {
 			setTarget(new CMDBfId(relationship.getTarget()));
+		}
 		for (final RecordType record : relationship.getRecord()) {
 			records().add(record);
 		}

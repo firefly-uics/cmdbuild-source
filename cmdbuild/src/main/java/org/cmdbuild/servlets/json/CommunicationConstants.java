@@ -258,6 +258,7 @@ public class CommunicationConstants {
 			TYPE_CAPITAL = "Type", //
 			TYPES = "types", //
 			TYPE = "type", //
+			UI_CARD_EDIT_MODE = "ui_card_edit_mode", //
 			UI_CONFIGURATION = "uiConfiguration", //
 			UNIQUE = "isunique", //
 			UPDATE = "update", //

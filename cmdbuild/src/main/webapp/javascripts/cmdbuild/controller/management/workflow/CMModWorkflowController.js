@@ -76,7 +76,7 @@
 			this.view.updateTitleForEntry(entryType);
 
 			_CMUIState.onlyGridIfFullScreen();
-		}
+		},
 	});
 
 	function isStateOpen(card) {

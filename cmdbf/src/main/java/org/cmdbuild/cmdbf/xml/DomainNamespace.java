@@ -252,7 +252,13 @@ public class DomainNamespace extends EntryNamespace {
 						domainBuilder.thatIsMasterDetail(Boolean.parseBoolean(properties.get(DOMAIN_MASTER_DETAIL)));
 					}
 					if (!skip) {
-						domain = dataDefinitionLogic.createOrUpdate(domainBuilder.build());
+						final Domain newDomain = domainBuilder.build();
+						domain = dataDefinitionLogic.getView().findDomain(newDomain.getName());
+						if (domain == null) {
+							domain = dataDefinitionLogic.create(newDomain);
+						} else {
+							domain = dataDefinitionLogic.update(newDomain);
+						}
 
 						if (particle != null && particle instanceof XmlSchemaSequence) {
 							final XmlSchemaSequence sequence = (XmlSchemaSequence) particle;

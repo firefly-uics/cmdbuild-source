@@ -32,9 +32,9 @@ import com.google.common.collect.Iterables;
 
 public class DomainHistoryNamespace extends EntryNamespace {
 
-	public DomainHistoryNamespace(String name, DataAccessLogic systemDataAccessLogic,
-			DataAccessLogic userDataAccessLogic, DataDefinitionLogic dataDefinitionLogic, LookupLogic lookupLogic,
-			CmdbfConfiguration cmdbfConfiguration) {
+	public DomainHistoryNamespace(final String name, final DataAccessLogic systemDataAccessLogic,
+			final DataAccessLogic userDataAccessLogic, final DataDefinitionLogic dataDefinitionLogic,
+			final LookupLogic lookupLogic, final CmdbfConfiguration cmdbfConfiguration) {
 		super(name, systemDataAccessLogic, userDataAccessLogic, dataDefinitionLogic, lookupLogic, cmdbfConfiguration);
 	}
 
@@ -70,33 +70,35 @@ public class DomainHistoryNamespace extends EntryNamespace {
 	}
 
 	@Override
-	public boolean updateSchema(XmlSchema schema) {
+	public boolean updateSchema(final XmlSchema schema) {
 		return false;
 	}
 
 	@Override
-	public Iterable<? extends CMDomainHistory> getTypes(Class<?> cls) {
+	public Iterable<? extends CMDomainHistory> getTypes(final Class<?> cls) {
 
 		if (CMDomain.class.isAssignableFrom(cls)) {
-			return Iterables.transform(Iterables.filter(systemDataAccessLogic.findActiveDomains(), new Predicate<CMDomain>() {
-				@Override
-				public boolean apply(final CMDomain input) {
-					return !input.isSystem() && input.getClass1() != null && !input.getClass1().isSystem()
-							&& input.getClass2() != null && !input.getClass2().isSystem() && input.holdsHistory();
-				}
-			}), new Function<Object, CMDomainHistory>() {
-				@Override
-				public CMDomainHistory apply(final Object input) {
-					return input instanceof CMDomain ? new CMDomainHistory((CMDomain) input) : null;
-				}
-			});
+			return Iterables.transform(
+					Iterables.filter(systemDataAccessLogic.findActiveDomains(), new Predicate<CMDomain>() {
+						@Override
+						public boolean apply(final CMDomain input) {
+							return !input.isSystem() && input.getClass1() != null && !input.getClass1().isSystem()
+									&& input.getClass2() != null && !input.getClass2().isSystem()
+									&& input.holdsHistory();
+						}
+					}), new Function<Object, CMDomainHistory>() {
+						@Override
+						public CMDomainHistory apply(final Object input) {
+							return input instanceof CMDomain ? new CMDomainHistory((CMDomain) input) : null;
+						}
+					});
 		} else {
 			return Collections.emptyList();
 		}
 	}
 
 	@Override
-	public QName getTypeQName(Object type) {
+	public QName getTypeQName(final Object type) {
 		QName qname = null;
 		if (type instanceof CMDomainHistory) {
 			final CMEntryType entryType = (CMEntryType) type;
@@ -106,22 +108,24 @@ public class DomainHistoryNamespace extends EntryNamespace {
 	}
 
 	@Override
-	public CMDomainHistory getType(QName qname) {
+	public CMDomainHistory getType(final QName qname) {
 		CMDomainHistory type = null;
 		if (getNamespaceURI().equals(qname.getNamespaceURI())) {
-			CMDomain domain = Iterables.tryFind(systemDataAccessLogic.findActiveDomains(), new Predicate<CMDomain>() {
-				@Override
-				public boolean apply(final CMDomain input) {
-					return !input.isSystem() && input.getClass1() != null && !input.getClass1().isSystem()
-							&& input.getClass2() != null && !input.getClass2().isSystem() && input.holdsHistory();
-				}
-			}).orNull();
-			if(domain != null)
+			final CMDomain domain = Iterables.tryFind(systemDataAccessLogic.findActiveDomains(),
+					new Predicate<CMDomain>() {
+						@Override
+						public boolean apply(final CMDomain input) {
+							return !input.isSystem() && input.getClass1() != null && !input.getClass1().isSystem()
+									&& input.getClass2() != null && !input.getClass2().isSystem()
+									&& input.holdsHistory();
+						}
+					}).orNull();
+			if (domain != null) {
 				type = new CMDomainHistory(domain);
+			}
 		}
 		return type;
 	}
-
 
 	@Override
 	public boolean serialize(final Node xml, final Object entry) {
@@ -132,7 +136,7 @@ public class DomainHistoryNamespace extends EntryNamespace {
 		}
 		return serialized;
 	}
-	
+
 	private XmlSchemaType getXsd(final CMDomainHistory domain, final Document document, final XmlSchema schema,
 			final Set<String> imports) {
 		final XmlSchemaComplexType type = new XmlSchemaComplexType(schema, true);

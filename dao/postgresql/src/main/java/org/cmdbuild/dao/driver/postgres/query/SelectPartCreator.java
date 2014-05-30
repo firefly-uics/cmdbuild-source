@@ -3,6 +3,7 @@ package org.cmdbuild.dao.driver.postgres.query;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.join;
+import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.BeginDate;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.CurrentId;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId;
@@ -32,7 +33,7 @@ public class SelectPartCreator extends PartCreator {
 	private static final String SELECT = "SELECT";
 	private static final String DISTINCT_ON = "DISTINCT ON";
 	public static final String ATTRIBUTES_SEPARATOR = ", ";
-	private static final String LF = "\n";
+	private static final String LF = LINE_SEPARATOR;
 
 	private final QuerySpecs querySpecs;
 	private final SelectAttributesExpressions selectAttributesExpressions;

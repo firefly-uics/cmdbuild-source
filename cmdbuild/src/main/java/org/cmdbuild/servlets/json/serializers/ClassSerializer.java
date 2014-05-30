@@ -6,8 +6,12 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_DESCRIPTIO
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_CLASS_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.UI_CARD_EDIT_MODE;
+import static org.cmdbuild.servlets.json.schema.ModSecurity.LOGIC_TO_JSON;
 
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -17,6 +21,8 @@ import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.translation.ClassTranslation;
+import org.cmdbuild.logic.privileges.CardEditMode;
+import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -32,16 +38,23 @@ public class ClassSerializer extends Serializer {
 	private final WorkflowLogic workflowLogic;
 	private final PrivilegeContext privilegeContext;
 	private final TranslationFacade translationFacade;
+	private final SecurityLogic securityLogic;
+	private final UserStore userStore;
 
 	public ClassSerializer( //
 			final CMDataView dataView, //
 			final SystemWorkflowLogicBuilder workflowLogicBuilder, //
 			final PrivilegeContext privilegeContext, //
-			final TranslationFacade translationFacade) {
+			final TranslationFacade translationFacade, //
+			final SecurityLogic securityLogic, //
+			final UserStore userStore //
+	) {
 		this.dataView = dataView;
 		this.workflowLogic = workflowLogicBuilder.build();
 		this.privilegeContext = privilegeContext;
 		this.translationFacade = translationFacade;
+		this.securityLogic = securityLogic;
+		this.userStore = userStore;
 	}
 
 	private JSONObject toClient(final UserProcessClass element, final String wrapperLabel,
@@ -104,6 +117,7 @@ public class ClassSerializer extends Serializer {
 		// addGeoFeatureTypes(jsonTable, table);
 		addMetadata(jsonObject, cmClass);
 		addAccessPrivileges(cmClass, jsonObject);
+		addUiCardModePrivileges(cmClass, jsonObject);
 
 		final CMClass parent = cmClass.getParent();
 		if (parent != null) {
@@ -118,6 +132,14 @@ public class ClassSerializer extends Serializer {
 		} else {
 			return jsonObject;
 		}
+	}
+
+	private void addUiCardModePrivileges(final CMClass cmClass, final JSONObject json) throws JSONException {
+		final OperationUser user = userStore.getUser();
+		CardEditMode cardEditMode = securityLogic.fetchCardEditModeForGroupAndClass(user.getPreferredGroup().getId(),
+				cmClass.getId());
+		cardEditMode = (CardEditMode) defaultIfNull(cardEditMode, CardEditMode.ALLOW_ALL);
+		json.put(UI_CARD_EDIT_MODE, LOGIC_TO_JSON.apply(cardEditMode));
 	}
 
 	public JSONObject toClient(final UserProcessClass element, final boolean addManagementInfo) throws JSONException,

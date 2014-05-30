@@ -56,7 +56,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 abstract public class EntryNamespace extends AbstractNamespace {
-	
+
 	private static final String ATTRIBUTE_DESCRIPTION = "description";
 	private static final String ATTRIBUTE_ACTIVE = "active";
 	private static final String ATTRIBUTE_TYPE = "type";
@@ -74,6 +74,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 	private static final String ATTRIBUTE_SCALE = "scale";
 	private static final String ATTRIBUTE_LOOKUP = "lookup";
 	private static final String ATTRIBUTE_DOMAIN = "domain";
+	private static final String ATTRIBUTE_FILTER = "filter";
 	private static final String ATTRIBUTE_FK_DESTINATION = "fkDestination";
 	private static final String VALUE = "value";
 
@@ -109,6 +110,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 		properties.put(ATTRIBUTE_GROUP, attribute.getGroup());
 		properties.put(ATTRIBUTE_ORDER, Integer.toString(attribute.getClassOrder()));
 		properties.put(ATTRIBUTE_EDITOR, attribute.getEditorType());
+		properties.put(ATTRIBUTE_FILTER, attribute.getFilter());
 
 		if (attribute.isMandatory()) {
 			element.setMinOccurs(1);
@@ -136,7 +138,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 
 			@Override
 			public void visit(final StringAttributeType attributeType) {
-				//element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
+				// element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_STRING);
 				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.STRING.name());
 				properties.put(ATTRIBUTE_LENGTH, Integer.toString(attributeType.length));
 				final XmlSchemaSimpleType type = new XmlSchemaSimpleType(schema, false);
@@ -185,7 +187,7 @@ abstract public class EntryNamespace extends AbstractNamespace {
 			public void visit(final ForeignKeyAttributeType attributeType) {
 				final QName qname = getRegistry().getTypeQName(IdAndDescription.class);
 				imports.add(qname.getNamespaceURI());
-				element.setSchemaTypeName(qname);				
+				element.setSchemaTypeName(qname);
 				properties.put(ATTRIBUTE_TYPE, AttributeTypeBuilder.FOREIGNKEY.name());
 				properties.put(ATTRIBUTE_FK_DESTINATION, attributeType.getForeignKeyDestinationClassName());
 			}
@@ -325,6 +327,9 @@ abstract public class EntryNamespace extends AbstractNamespace {
 		}
 		if (properties.containsKey(ATTRIBUTE_MANDATORY)) {
 			attributeBuilder.thatIsMandatory(Boolean.parseBoolean(properties.get(ATTRIBUTE_MANDATORY)));
+		}
+		if (properties.containsKey(ATTRIBUTE_FILTER)) {
+			attributeBuilder.withFilter(properties.get(ATTRIBUTE_FILTER));
 		}
 		if (!skip) {
 			dataDefinitionLogic.createOrUpdate(attributeBuilder.build());

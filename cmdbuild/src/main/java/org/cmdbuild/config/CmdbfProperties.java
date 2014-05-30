@@ -10,6 +10,7 @@ public class CmdbfProperties extends DefaultProperties implements CmdbfConfigura
 
 	private static final String MDR_ID = "mdrid";
 	private static final String SCHEMA_LOCATION = "schemalocation";
+	private static final String RECONCILIATION_RULES = "reconciliationrules";
 
 	public CmdbfProperties() {
 		super();
@@ -39,6 +40,16 @@ public class CmdbfProperties extends DefaultProperties implements CmdbfConfigura
 	@Override
 	public void setSchemaLocation(final String schemaLocation) {
 		setProperty(SCHEMA_LOCATION, schemaLocation);
+	}
+	
+	@Override
+	public String getReconciliationRules() {
+		return getProperty(RECONCILIATION_RULES);
+	}
+
+	@Override
+	public void setReconciliationRules(final String reconciliationRules) {
+		setProperty(RECONCILIATION_RULES, reconciliationRules);
 	}
 
 }

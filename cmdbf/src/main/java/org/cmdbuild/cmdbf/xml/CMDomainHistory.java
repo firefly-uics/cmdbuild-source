@@ -5,7 +5,7 @@ import org.cmdbuild.dao.entrytype.ForwardingDomain;
 
 public class CMDomainHistory extends ForwardingDomain {
 
-	private CMDomain delegate;
+	private final CMDomain delegate;
 
 	public CMDomainHistory(final CMDomain delegate) {
 		super(delegate);
@@ -22,7 +22,7 @@ public class CMDomainHistory extends ForwardingDomain {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		return delegate.equals(obj);
 	}
 
