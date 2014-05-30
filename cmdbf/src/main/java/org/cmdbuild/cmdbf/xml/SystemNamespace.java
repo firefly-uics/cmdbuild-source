@@ -14,6 +14,7 @@ import org.apache.ws.commons.schema.XmlSchemaSimpleContentExtension;
 import org.cmdbuild.cmdbf.CMDBfId;
 import org.cmdbuild.cmdbf.cmdbmdr.MdrScopedIdRegistry;
 import org.cmdbuild.config.CmdbfConfiguration;
+import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -28,10 +29,11 @@ public class SystemNamespace extends AbstractNamespace {
 	static final String REFERENCE_TYPE = "Reference";
 	static final String REFERENCE_MDR_ID = "mdrId";
 	static final String REFERENCE_LOCAL_ID = "localId";
-	
-	private final MdrScopedIdRegistry aliasRegistry;	
 
-	public SystemNamespace(final String name, final MdrScopedIdRegistry aliasRegistry, final CmdbfConfiguration cmdbfConfiguration) {
+	private final MdrScopedIdRegistry aliasRegistry;
+
+	public SystemNamespace(final String name, final MdrScopedIdRegistry aliasRegistry,
+			final CmdbfConfiguration cmdbfConfiguration) {
 		super(name, cmdbfConfiguration);
 		this.aliasRegistry = aliasRegistry;
 	}
@@ -116,7 +118,7 @@ public class SystemNamespace extends AbstractNamespace {
 		if (entry instanceof IdAndDescription && !(entry instanceof LookupValue)) {
 			final IdAndDescription value = (IdAndDescription) entry;
 			if (xml instanceof Element && value.getId() != null) {
-				CMDBfId cmdbfId = aliasRegistry.getCMDBfId(value.getId());
+				final CMDBfId cmdbfId = aliasRegistry.getCMDBfId(value.getId(), "Class");
 				((Element) xml).setAttribute(REFERENCE_MDR_ID, cmdbfId.getMdrId());
 				((Element) xml).setAttribute(REFERENCE_LOCAL_ID, cmdbfId.getLocalId());
 			}
@@ -127,7 +129,7 @@ public class SystemNamespace extends AbstractNamespace {
 	}
 
 	@Override
-	public IdAndDescription deserializeValue(final Node xml, final Object type) {
+	public IdAndDescription deserializeValue(final Node xml, final Object type) throws Exception {
 		IdAndDescription value = null;
 		if (IdAndDescription.class.equals(type)) {
 			Long id = null;
@@ -135,10 +137,19 @@ public class SystemNamespace extends AbstractNamespace {
 				final Element element = (Element) xml;
 				final String mdrId = element.getAttribute(REFERENCE_MDR_ID);
 				final String localId = element.getAttribute(REFERENCE_LOCAL_ID);
-				if (mdrId != null && localId !=null) {
-					CMDBfId cmdbfId = aliasRegistry.resolveAlias(new CMDBfId(mdrId, localId));
-					if(cmdbfId != null)
+				if (mdrId != null && localId != null) {
+					CMDBfId cmdbfId = new CMDBfId(mdrId, localId);
+					if (!aliasRegistry.isLocal(cmdbfId)) {
+						final CMCard card = aliasRegistry.resolveItemAlias(cmdbfId);
+						if (card != null) {
+							cmdbfId = aliasRegistry.getCMDBfId(card);
+						} else {
+							cmdbfId = null;
+						}
+					}
+					if (cmdbfId != null) {
 						id = aliasRegistry.getInstanceId(cmdbfId);
+					}
 				}
 			}
 			value = new IdAndDescription(id, xml.getTextContent());

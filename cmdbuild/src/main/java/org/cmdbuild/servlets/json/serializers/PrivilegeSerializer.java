@@ -34,7 +34,7 @@ public class PrivilegeSerializer {
 		jsonPrivilege.put(PRIVILEGE_OBJ_DESCRIPTION, privilege.getPrivilegedObjectDescription());
 		jsonPrivilege.put(PRIVILEGE_FILTER, privilege.getPrivilegeFilter());
 		jsonPrivilege.put(ATTRIBUTES_PRIVILEGES, privilege.getAttributesPrivileges());
-
+		// TODO serialize cardEditMode too
 		return jsonPrivilege;
 	}
 

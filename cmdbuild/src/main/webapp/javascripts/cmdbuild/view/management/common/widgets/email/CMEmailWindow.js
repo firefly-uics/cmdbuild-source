@@ -231,7 +231,7 @@ function buildAttachmentButtonsContainer(me) {
 			,{
 				xtype: "button",
 				margin: "0 0 0 5",
-				text: CMDBuild.Translation.add_attachment_from_db,
+				text: CMDBuild.Translation.add_attachment_from_dms,
 				handler: function() {
 					me.delegate.onAddAttachmentFromDmsButtonClick(me, me.record);
 				}
