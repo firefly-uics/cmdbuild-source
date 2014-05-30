@@ -89,7 +89,9 @@
 				setActiveTranslations(activeLanguages);
 			}
 			else {
-				// there are not enabled languages
+				withTranslations = false;
+				activeTranslations = [];
+				callObservers();
 			}
 		},
 		getActiveTranslations: function(activeLanguages) {
