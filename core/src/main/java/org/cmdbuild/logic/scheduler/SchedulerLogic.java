@@ -1,45 +1,32 @@
 package org.cmdbuild.logic.scheduler;
 
-import java.util.Map;
-
 import org.cmdbuild.logic.Logic;
+import org.cmdbuild.model.scheduler.SchedulerJob;
 
 public interface SchedulerLogic extends Logic {
 
-	enum ScheduledJobType {
-		workflow,
-		emailService
-	}
+	Iterable<SchedulerJob> findAllScheduledJobs();
 
-	interface ScheduledJob {
+	Iterable<SchedulerJob> findJobsByDetail(String detail);
 
-		Long getId();
+	SchedulerJob createAndStart(SchedulerJob job);
 
-		String getDescription();
-
-		String getCronExpression();
-
-		String getDetail();
-
-		Map<String, String> getParams();
-
-		ScheduledJobType getJobType();
-
-		boolean isRunning();
-	}
-
-	Iterable<ScheduledJob> findAllScheduledJobs();
-
-	Iterable<ScheduledJob> findJobsByDetail(String detail);
-
-	ScheduledJob findJobById(Long jobId);
-
-	ScheduledJob createAndStart(ScheduledJob scheduledJob);
-
-	String fromParamsMapToString(Map<String, String> params);
-
-	void update(ScheduledJob jobToUpdate);
+	/**
+	 * Updates description, cron expression and (legacy) parameters for the
+	 * specified job.
+	 * 
+	 * @param job
+	 * 
+	 * @return the updated job.
+	 */
+	SchedulerJob update(SchedulerJob job);
 
 	void delete(Long jobId);
+
+	void startScheduler();
+
+	void stopScheduler();
+
+	void addAllScheduledJobs();
 
 }

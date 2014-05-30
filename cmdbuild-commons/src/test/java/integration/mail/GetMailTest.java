@@ -6,12 +6,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 
-import org.apache.commons.io.FileUtils;
+import javax.activation.DataHandler;
+
+import org.apache.commons.io.IOUtils;
 import org.cmdbuild.common.mail.DefaultMailApiFactory;
 import org.cmdbuild.common.mail.FetchedMail;
 import org.cmdbuild.common.mail.GetMail;
@@ -101,9 +101,12 @@ public class GetMailTest extends AbstractMailTest {
 		assertThat(contentOf(get(attachments, 0)), equalTo(BAZ));
 	}
 
-	private String contentOf(final Attachment attachment) throws URISyntaxException, IOException {
-		final URI uri = attachment.getUrl().toURI();
-		return FileUtils.readFileToString(new File(uri));
+	private String contentOf(final Attachment attachment) throws IOException {
+		final DataHandler dataHandler = attachment.getDataHandler();
+		final InputStream inputStream = dataHandler.getInputStream();
+		final String content = IOUtils.toString(inputStream);
+		IOUtils.closeQuietly(inputStream);
+		return content;
 	}
 
 	@Test

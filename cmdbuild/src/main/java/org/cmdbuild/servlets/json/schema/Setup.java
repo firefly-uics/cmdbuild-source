@@ -1,11 +1,12 @@
 package org.cmdbuild.servlets.json.schema;
 
-import java.io.IOException;
-import java.util.Map;
+import static org.cmdbuild.servlets.json.ComunicationConstants.DATA;
+import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
 
-import org.cmdbuild.config.DefaultProperties;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.cmdbuild.exception.AuthException;
-import org.cmdbuild.services.Settings;
 import org.cmdbuild.servlets.json.JSONBase.Admin.AdminAccess;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -17,45 +18,24 @@ public class Setup extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Unauthorized
 	public JSONObject getConfiguration( //
-			@Parameter("name") final String nameOfConfigFile //
-	) throws JSONException, AuthException {
+			@Parameter(NAME) final String nameOfConfigFile //
+	) throws JSONException, AuthException, Exception {
 		final JSONObject out = new JSONObject();
 		final JSONObject data = new JSONObject();
-
-		final DefaultProperties module = Settings.getInstance().getModule(nameOfConfigFile);
-		final boolean userIsAdmin = operationUser().hasAdministratorPrivileges();
-		for (final Object keyObject : module.keySet()) {
-			final String key = keyObject.toString();
-			if (userIsAdmin || !key.endsWith("password")) {
-				data.put(key, module.get(key));
-			}
+		for (final Entry<String, String> entry : setUpLogic().load(nameOfConfigFile).entrySet()) {
+			data.put(entry.getKey(), entry.getValue());
 		}
-
-		out.put("data", data);
+		out.put(DATA, data);
 		return out;
 	}
 
 	@JSONExported
 	@Admin(AdminAccess.DEMOSAFE)
 	public void saveConfiguration( //
-			@Parameter("name") final String nameOfConfigFile, //
+			@Parameter(NAME) final String nameOfConfigFile, //
 			final Map<String, String> requestParams //
-		) throws IOException {
-
-		final DefaultProperties module = Settings.getInstance().getModule(nameOfConfigFile);
-		for (final Object keyObject : module.keySet()) {
-			final String key = keyObject.toString();
-			if (requestParams.containsKey(key)) {
-				String value = requestParams.get(key);
-				if (value == null) {
-					value = "";
-				}
-
-				module.setProperty(key, value);
-			}
-		}
-
-		module.store();
-		module.accept(afterPropertiesSave());
+	) throws Exception {
+		setUpLogic().save(nameOfConfigFile, requestParams);
 	}
+
 }
