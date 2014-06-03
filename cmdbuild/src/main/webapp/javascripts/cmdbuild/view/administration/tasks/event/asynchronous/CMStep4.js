@@ -6,6 +6,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
+
 		view: undefined,
 
 		/**
@@ -25,29 +26,113 @@
 			}
 		},
 
+		/**
+		 * @return (String)
+		 */
 		checkWorkflowComboSelected: function() {
 			return this.getValueWorkflowCombo();
 		},
 
-		getWorkflowDelegate: function() {
-			return this.view.workflowForm.delegate;
-		},
+		// GETters functions
+			/**
+			 * @return (Object) delegate
+			 */
+			getNotificationDelegate: function() {
+				return this.view.notificationForm.delegate;
+			},
 
-		getValueWorkflowAttributeGrid: function() {
-			return this.getWorkflowDelegate().getValueGrid();
-		},
+			/**
+			 * @return (Object) delegate
+			 */
+			getWorkflowDelegate: function() {
+				return this.view.workflowForm.delegate;
+			},
 
-		getValueWorkflowCombo: function() {
-			return this.getWorkflowDelegate().getValueCombo();
-		},
+			/**
+			 * @return (Boolean)
+			 */
+			getValueNotificationFieldsetCheckbox: function() {
+				return this.view.notificationFieldset.checkboxCmp.getValue();
+			},
 
-		setDisabledWorkflowAttributesGrid: function(state) {
-			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
-		},
+			/**
+			 * @return (Object)
+			 */
+			getValueWorkflowAttributeGrid: function() {
+				return this.getWorkflowDelegate().getValueGrid();
+			},
 
-		setValueWorkflowAttributesGrid: function(data) {
-			this.getWorkflowDelegate().setValueGrid(data);
-		}
+			/**
+			 * @return (String)
+			 */
+			getValueWorkflowCombo: function() {
+				return this.getWorkflowDelegate().getValueCombo();
+			},
+
+			/**
+			 * @return (Boolean)
+			 */
+			getValueWorkflowFieldsetCheckbox: function() {
+				return this.view.workflowFieldset.checkboxCmp.getValue();
+			},
+
+		// SETters functions
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledWorkflowAttributesGrid: function(state) {
+				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueNotificationAccount: function(value) {
+				this.getNotificationDelegate().setValue('sender', value);
+			},
+
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueNotificationFieldsetCheckbox: function(state) {
+				if (state) {
+					this.view.notificationFieldset.expand();
+				} else {
+					this.view.notificationFieldset.collapse();
+				}
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueNotificationTemplate: function(value) {
+				this.getNotificationDelegate().setValue('template', value);
+			},
+
+			/**
+			 * @param (Object) value
+			 */
+			setValueWorkflowAttributesGrid: function(value) {
+				this.getWorkflowDelegate().setValueGrid(value);
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueWorkflowCombo: function(value) {
+				this.getWorkflowDelegate().setValueCombo(value);
+			},
+
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueWorkflowFieldsetCheckbox: function(state) {
+				if (state) {
+					this.view.workflowFieldset.expand();
+				} else {
+					this.view.workflowFieldset.collapse();
+				}
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep4', {
@@ -117,8 +202,10 @@
 
 			Ext.apply(this, {
 				items: [
-					this.notificationFieldset,
-					this.workflowFieldset
+					this.notificationFieldset
+// TODO: future implementation
+//					,
+//					this.workflowFieldset
 				]
 			});
 

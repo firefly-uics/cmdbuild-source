@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep2Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		parentDelegate: undefined,
+
 		className: undefined,
 		parentDelegate: undefined,
 		view: undefined,
@@ -24,6 +26,9 @@
 			}
 		},
 
+		/**
+		 * Create and draw filter tabs
+		 */
 		drawFilterTabs: function() {
 			var me = this;
 
@@ -108,8 +113,8 @@
 		delegate: undefined,
 
 		border: false,
-		overflowY: 'auto',
 		layout: 'fit',
+		overflowY: 'auto',
 
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.asynchronous.CMStep2Delegate', this);

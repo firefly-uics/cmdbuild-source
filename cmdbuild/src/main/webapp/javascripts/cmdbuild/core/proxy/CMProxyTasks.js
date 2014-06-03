@@ -136,7 +136,7 @@
 					case 'event':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event;
 
-					case 'event_asynchronous': // TODO
+					case 'event_asynchronous':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event.asynchronous;
 
 					case 'event_synchronous':
@@ -156,7 +156,6 @@
 				/**
 				 * @return (Object) store
 				 */
-				// TODO: setup string as proxyConstant
 				getDbTypes: function() {
 					return Ext.create('Ext.data.Store', {
 						autoLoad: false,
@@ -175,6 +174,7 @@
 				/**
 				 * @return (Object) store
 				 */
+				// TODO: strings as proxyContants
 				getDeletionTypes: function() {
 					var tr = CMDBuild.Translation.administration.tasks.taskConnector.deletionTypes;
 
@@ -238,6 +238,7 @@
 				 *
 				 * @return (Object) store
 				 */
+				// TODO: strings as proxyContants
 				getPhases: function() {
 					var tr = CMDBuild.Translation.administration.tasks.taskEvent.eventPhases;
 
