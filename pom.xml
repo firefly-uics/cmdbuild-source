@@ -48,14 +48,13 @@
 		<module>bim/bimserver</module>
 		<module>cmdbf</module>
 		<module>cmdbuild</module>
-		<module>cmdbuild-commons</module>
-		<module>cmdbuild-graph</module>
-		<module>cmdbuild-ws-client</module>
+		<module>commons</module>
 		<module>core</module>
 		<module>dao/core</module>
 		<module>dao/postgresql</module>
 		<module>dms/alfresco</module>
 		<module>dms/core</module>
+		<module>graph</module>
 		<module>scheduler/core</module>
 		<module>scheduler/quartz</module>
 		<module>shark/client</module>
@@ -66,6 +65,7 @@
 		<module>shark/extensions</module>
 		<module>shark/legacy-extensions</module>
 		<module>shark/server</module>
+		<module>ws-client</module>
 	</modules>
 
 	<dependencyManagement>
