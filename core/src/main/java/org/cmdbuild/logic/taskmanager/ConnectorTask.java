@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -494,6 +495,7 @@ public class ConnectorTask implements ScheduledTask {
 		private String description;
 		private Boolean active;
 		private String cronExpression;
+		private Date lastExecution;
 		private Boolean notificationActive;
 		private String notificationAcccount;
 		private String notificationErrorTemplate;
@@ -534,6 +536,11 @@ public class ConnectorTask implements ScheduledTask {
 
 		public Builder withCronExpression(final String cronExpression) {
 			this.cronExpression = cronExpression;
+			return this;
+		}
+
+		public Builder setLastExecution(final Date lastExecution) {
+			this.lastExecution = lastExecution;
 			return this;
 		}
 
@@ -587,6 +594,7 @@ public class ConnectorTask implements ScheduledTask {
 	private final String description;
 	private final boolean active;
 	private final String cronExpression;
+	private final Date lastExecution;
 	private final boolean notificationActive;
 	private final String notificationAcccount;
 	private final String notificationErrorTemplate;
@@ -599,6 +607,7 @@ public class ConnectorTask implements ScheduledTask {
 		this.description = builder.description;
 		this.active = builder.active;
 		this.cronExpression = builder.cronExpression;
+		this.lastExecution = builder.lastExecution;
 		this.notificationActive = builder.notificationActive;
 		this.notificationAcccount = builder.notificationAcccount;
 		this.notificationErrorTemplate = builder.notificationErrorTemplate;
@@ -630,6 +639,11 @@ public class ConnectorTask implements ScheduledTask {
 	@Override
 	public String getCronExpression() {
 		return cronExpression;
+	}
+
+	@Override
+	public Date getLastExecution() {
+		return lastExecution;
 	}
 
 	public boolean isNotificationActive() {

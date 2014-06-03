@@ -2,10 +2,12 @@ package org.cmdbuild.logic.taskmanager;
 
 import static com.google.common.base.Predicates.instanceOf;
 import static com.google.common.collect.FluentIterable.from;
+import static org.joda.time.DateTime.now;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.task.TaskStore;
+import org.cmdbuild.logic.taskmanager.SchedulerFacade.Callback;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -14,6 +16,27 @@ import com.google.common.base.Function;
 public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 	private static final Marker MARKER = MarkerFactory.getMarker(DefaultTaskManagerLogic.class.getName());
+
+	private static class StoreLastExecutionCallback implements Callback {
+
+		private final TaskStore store;
+		private final ScheduledTask task;
+
+		public StoreLastExecutionCallback(final TaskStore store, final ScheduledTask task) {
+			this.store = store;
+			this.task = task;
+		}
+
+		@Override
+		public void start() {
+			final org.cmdbuild.data.store.task.Task readed = store.read(task.getId());
+			final org.cmdbuild.data.store.task.Task updated = readed.modify() //
+					.withLastExecution(now()) //
+					.build();
+			store.update(updated);
+		}
+
+	}
 
 	private static interface Action<T> {
 
@@ -51,22 +74,26 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		@Override
 		public void visit(final ConnectorTask task) {
-			schedulerFacade.create(task);
+			schedulerFacade.create(task, storeLastExecutionOf(task));
 		}
 
 		@Override
 		public void visit(final ReadEmailTask task) {
-			schedulerFacade.create(task);
+			schedulerFacade.create(task, storeLastExecutionOf(task));
 		}
 
 		@Override
 		public void visit(final StartWorkflowTask task) {
-			schedulerFacade.create(task);
+			schedulerFacade.create(task, storeLastExecutionOf(task));
 		}
 
 		@Override
 		public void visit(final SynchronousEventTask task) {
 			synchronousEventFacade.create(task);
+		}
+
+		private StoreLastExecutionCallback storeLastExecutionOf(final ScheduledTask task) {
+			return new StoreLastExecutionCallback(store, task);
 		}
 
 	}
@@ -196,17 +223,17 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 				@Override
 				public void visit(final ConnectorTask task) {
-					schedulerFacade.create(task);
+					schedulerFacade.create(task, storeLastExecutionOf(task));
 				}
 
 				@Override
 				public void visit(final ReadEmailTask task) {
-					schedulerFacade.create(task);
+					schedulerFacade.create(task, storeLastExecutionOf(task));
 				}
 
 				@Override
 				public void visit(final StartWorkflowTask task) {
-					schedulerFacade.create(task);
+					schedulerFacade.create(task, storeLastExecutionOf(task));
 				}
 
 				@Override
@@ -215,6 +242,10 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 				}
 
 			};
+		}
+
+		private StoreLastExecutionCallback storeLastExecutionOf(final ScheduledTask task) {
+			return new StoreLastExecutionCallback(store, task);
 		}
 
 	}
@@ -306,22 +337,26 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		@Override
 		public void visit(final ConnectorTask task) {
-			schedulerFacade.create(task);
+			schedulerFacade.create(task, storeLastExecutionOf(task));
 		}
 
 		@Override
 		public void visit(final ReadEmailTask task) {
-			schedulerFacade.create(task);
+			schedulerFacade.create(task, storeLastExecutionOf(task));
 		}
 
 		@Override
 		public void visit(final StartWorkflowTask task) {
-			schedulerFacade.create(task);
+			schedulerFacade.create(task, storeLastExecutionOf(task));
 		}
 
 		@Override
 		public void visit(final SynchronousEventTask task) {
 			synchronousEventFacade.create(task);
+		}
+
+		private StoreLastExecutionCallback storeLastExecutionOf(final ScheduledTask task) {
+			return new StoreLastExecutionCallback(store, task);
 		}
 
 	}

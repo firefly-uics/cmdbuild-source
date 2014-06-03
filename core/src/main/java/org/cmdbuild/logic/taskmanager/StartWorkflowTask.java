@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.taskmanager;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -16,6 +17,7 @@ public class StartWorkflowTask implements ScheduledTask {
 		private String description;
 		private Boolean active;
 		private String cronExpression;
+		private Date lastExecution;
 		private String processClass;
 		private Map<String, String> attributes;
 
@@ -54,6 +56,11 @@ public class StartWorkflowTask implements ScheduledTask {
 			return this;
 		}
 
+		public Builder setLastExecution(final Date lastExecution) {
+			this.lastExecution = lastExecution;
+			return this;
+		}
+
 		public Builder withProcessClass(final String processClass) {
 			this.processClass = processClass;
 			return this;
@@ -74,6 +81,7 @@ public class StartWorkflowTask implements ScheduledTask {
 	private final String description;
 	private final boolean active;
 	private final String cronExpression;
+	private final Date lastExecution;
 	private final String processClass;
 	private final Map<String, String> attributes;
 
@@ -82,6 +90,7 @@ public class StartWorkflowTask implements ScheduledTask {
 		this.description = builder.description;
 		this.active = builder.active;
 		this.cronExpression = builder.cronExpression;
+		this.lastExecution = builder.lastExecution;
 		this.processClass = builder.processClass;
 		this.attributes = Collections.unmodifiableMap(builder.attributes);
 	}
@@ -109,6 +118,11 @@ public class StartWorkflowTask implements ScheduledTask {
 	@Override
 	public String getCronExpression() {
 		return cronExpression;
+	}
+
+	@Override
+	public Date getLastExecution() {
+		return lastExecution;
 	}
 
 	public String getProcessClass() {

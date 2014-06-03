@@ -8,6 +8,7 @@ import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
 import org.cmdbuild.data.store.task.TaskDefinition.Builder;
+import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 
@@ -108,6 +109,7 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 	public static final String CRON_EXPRESSION = "CronExpression";
 	public static final String TYPE = "Type";
 	public static final String RUNNING = "Running";
+	public static final String LAST_EXECUTION = "LastExecution";
 
 	private static final String TYPE_CONNECTOR = "connector";
 	private static final String TYPE_EMAIL = "emailService";
@@ -126,6 +128,7 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 				.withDescription(card.get(DESCRIPTION_ATTRIBUTE, String.class)) //
 				.withCronExpression(card.get(CRON_EXPRESSION, String.class)) //
 				.withRunning(card.get(RUNNING, Boolean.class)) //
+				.withLastExecution(card.get(LAST_EXECUTION, DateTime.class)) //
 				.build();
 	}
 
@@ -136,6 +139,7 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 		values.put(CRON_EXPRESSION, storable.getCronExpression());
 		values.put(TYPE, Factory.from(storable).attributeValue);
 		values.put(RUNNING, storable.isRunning());
+		values.put(LAST_EXECUTION, storable.getLastExecution());
 		return values;
 	}
 

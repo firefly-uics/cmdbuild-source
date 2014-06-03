@@ -81,6 +81,7 @@ SELECT cm_create_class('_Task', 'Class', 'MODE: reserved|TYPE: class|DESCR: Sche
 SELECT cm_create_class_attribute('_Task', 'CronExpression', 'text', null, false, false, 'MODE: write|DESCR: Cron Expression|STATUS: active');
 SELECT cm_create_class_attribute('_Task', 'Type', 'text', null, false, false, 'MODE: write|DESCR: Type|STATUS: active');
 SELECT cm_create_class_attribute('_Task', 'Running', 'boolean', null, false, false, 'MODE: write|DESCR: Running|STATUS: active');
+SELECT cm_create_class_attribute('_Task', 'LastExecution', 'timestamp', null, false, false, 'MODE: write|DESCR: Last Execution|STATUS: active');
 
 ---------------------------------------------
 -- Create Task Parameters class

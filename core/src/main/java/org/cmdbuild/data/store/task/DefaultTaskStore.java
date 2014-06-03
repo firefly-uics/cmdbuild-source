@@ -107,6 +107,7 @@ public class DefaultTaskStore implements TaskStore {
 					.withDescription(task.getDescription()) //
 					.withRunning(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
 					.build();
 		}
 
@@ -147,6 +148,7 @@ public class DefaultTaskStore implements TaskStore {
 					.withDescription(definition.getDescription()) //
 					.withRunningStatus(definition.isRunning()) //
 					.withCronExpression(definition.getCronExpression()) //
+					.withLastExecution(definition.getLastExecution()) //
 					.withParameters(transformValues( //
 							uniqueIndex(parameters, TASK_PARAMETER_TO_KEY), //
 							TASK_PARAMETER_TO_VALUE)) //
@@ -264,7 +266,8 @@ public class DefaultTaskStore implements TaskStore {
 
 			final Map<String, TaskParameter> left = transformEntries(storable.getParameters(),
 					toTaskParameterMapOf(definition));
-			final Map<String, TaskParameter> right = uniqueIndex(parametersStore.readAll(groupedBy(definition)), BY_NAME);
+			final Map<String, TaskParameter> right = uniqueIndex(parametersStore.readAll(groupedBy(definition)),
+					BY_NAME);
 			final MapDifference<String, TaskParameter> difference = difference(left, right);
 			for (final TaskParameter element : difference.entriesOnlyOnLeft().values()) {
 				parametersStore.create(element);

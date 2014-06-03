@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
@@ -25,6 +26,7 @@ public class ReadEmailTask implements ScheduledTask {
 		private String description;
 		private Boolean active;
 		private String cronExpression;
+		private Date lastExecution;
 		private String emailAccount;
 		private final Collection<String> regexFromFilter = Lists.newArrayList();
 		private final Collection<String> regexSubjectFilter = Lists.newArrayList();
@@ -89,6 +91,11 @@ public class ReadEmailTask implements ScheduledTask {
 
 		public Builder withCronExpression(final String cronExpression) {
 			this.cronExpression = cronExpression;
+			return this;
+		}
+
+		public Builder withLastExecution(final Date lastExecution) {
+			this.lastExecution = lastExecution;
 			return this;
 		}
 
@@ -172,6 +179,7 @@ public class ReadEmailTask implements ScheduledTask {
 	private final String description;
 	private final boolean active;
 	private final String cronExpression;
+	private final Date lastExecution;
 	private final String emailAccount;
 	private final Iterable<String> regexFromFilter;
 	private final Iterable<String> regexSubjectFilter;
@@ -192,6 +200,7 @@ public class ReadEmailTask implements ScheduledTask {
 		this.description = builder.description;
 		this.active = builder.active;
 		this.cronExpression = builder.cronExpression;
+		this.lastExecution = builder.lastExecution;
 		this.emailAccount = builder.emailAccount;
 		this.regexFromFilter = builder.regexFromFilter;
 		this.regexSubjectFilter = builder.regexSubjectFilter;
@@ -231,6 +240,11 @@ public class ReadEmailTask implements ScheduledTask {
 	@Override
 	public String getCronExpression() {
 		return cronExpression;
+	}
+
+	@Override
+	public Date getLastExecution() {
+		return lastExecution;
 	}
 
 	public String getEmailAccount() {
