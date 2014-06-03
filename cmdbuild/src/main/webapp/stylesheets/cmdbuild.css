@@ -390,79 +390,45 @@ em { font-style: oblique !important; }
 }
 
 /* ICONS */
-	.translate { background-image: url("../images/icons/translate.png") !important; }
-
 	.add { background-image: url("../images/icons/add.png") !important; }
-
-	.ok { background-image: url("../images/icons/tick.png") !important; }
-
-	.delete { background-image: url("../images/icons/cross.png") !important; }
-
-	.modify { background-image: url("../images/icons/modify.png") !important; }
-
-	.graph { background-image: url("../images/icons/chart_organisation.png") !important; }
-
-	.clone { background-image: url("../images/icons/clone.png") !important; }
-
-	.arrow_left { background-image: url("../images/icons/arrow_left.png") !important; }
-
-	.arrow_right { background-image: url("../images/icons/arrow_right.png") !important; }
-
-	.arrow_refresh { background-image: url("../images/icons/arrow_refresh.png") !important; }
-
-	.edit_form { background-image: url("../images/icons/application_form_edit.png") !important; }
-
-	.find { background-image: url("../images/icons/find.png") !important; }
-
-	.search { background-image: url("../images/icons/search.gif") !important; }
-
 	.add_filter { background-image: url("../images/icons/add_filter.png") !important; }
-
+	.arrow_left { background-image: url("../images/icons/arrow_left.png") !important; }
+	.arrow_refresh { background-image: url("../images/icons/arrow_refresh.png") !important; }
+	.arrow_right { background-image: url("../images/icons/arrow_right.png") !important; }
+	.attach { background-image: url("../images/icons/attach.png") !important; }
 	.clear_filter { background-image: url("../images/icons/clear_find.png") !important; }
-
-	.password { background-image: url("../images/icons/key.png") !important; }
-
-	.preview { background-image: url("../images/icons/preview.png") !important; }
-
-	.order { background-image: url("../images/icons/order.png") !important; }
-
-	.print { background-image: url("../images/icons/print.png") !important; }
-
-	.pdf { background-image: url("../images/icons/ico_pdf.png") !important; }
-
+	.clear_privileges { background-image: url("../images/icons/privilege_filter_remove.png") !important; }
+	.clone { background-image: url("../images/icons/clone.png") !important; }
+	.importIfc { background-image: url("../images/icons/page_white_go.png") !important; }
 	.csv { background-image: url("../images/icons/ico_csv.png") !important; }
-
-	.odt { background-image: url("../images/icons/ico_odt.png") !important; }
-
-	.rtf { background-image: url("../images/icons/ico_rtf.png") !important; }
-
+	.delete { background-image: url("../images/icons/cross.png") !important; }
+	.down { background-image: url("../images/icons/down.gif") !important;}
+	.down-hover { background-image: url("../images/icons/down-hover.gif") !important; }
+	.edit_form { background-image: url("../images/icons/application_form_edit.png") !important; }
+	.find { background-image: url("../images/icons/find.png") !important; }
+	.foreignkey { background-image: url("../images/icons/database_table.png") !important; }
+	.graph { background-image: url("../images/icons/chart_organisation.png") !important; }
 	.map { background-image: url("../images/icons/map.png") !important; }
-
+	.modify { background-image: url("../images/icons/modify.png") !important; }
+	.note { background-image: url("../images/icons/note.png") !important; }
+	.odt { background-image: url("../images/icons/ico_odt.png") !important; }
+	.ok { background-image: url("../images/icons/tick.png") !important; }
+	.order { background-image: url("../images/icons/order.png") !important; }
+	.password { background-image: url("../images/icons/key.png") !important; }
+	.pdf { background-image: url("../images/icons/ico_pdf.png") !important; }
+	.preview { background-image: url("../images/icons/preview.png") !important; }
+	.print { background-image: url("../images/icons/print.png") !important; }
+	.privileges { background-image: url("../images/icons/privilege_filter.png") !important; }
+	.rtf { background-image: url("../images/icons/ico_rtf.png") !important; }
+	.save { background-image: url("../images/icons/disk.png") !important; }
+	.search { background-image: url("../images/icons/search.gif") !important; }
 	.table { background-image: url("../images/icons/table.png") !important; }
+	.translate { background-image: url("../images/icons/translate.png") !important; }
+	.up { background-image: url("../images/icons/up.gif") !important; }
+	.up-hover { background-image: url("../images/icons/up-hover.gif") !important; }
 
 	.detail,
 	.domain { background-image: url("../images/icons/table_link.png") !important; }
-
-	.foreignkey { background-image: url("../images/icons/database_table.png") !important; }
-
-	.note { background-image: url("../images/icons/note.png") !important; }
-
-	.attach { background-image: url("../images/icons/attach.png") !important; }
-
-	.up { background-image: url("../images/icons/up.gif") !important; }
-
-	.down { background-image: url("../images/icons/down.gif") !important;}
-
-	.up-hover { background-image: url("../images/icons/up-hover.gif") !important; }
-
-	.down-hover { background-image: url("../images/icons/down-hover.gif") !important; }
-
-	.save { background-image: url("../images/icons/disk.png") !important; }
-
-	.privileges { background-image: url("../images/icons/privilege_filter.png") !important; }
-
-	.clear_privileges { background-image: url("../images/icons/privilege_filter_remove.png") !important; }
-
 	.expand,
 	.cmdisplayfield-expandbutton { background-image: url("../images/icons/expand.png") !important; }
 

@@ -1,6 +1,6 @@
 /**
  * @class CMDBuild.view.administration.common.basepanel.CMForm
- * 
+ *
  * The base of the new generation CMDBUild Form
  */
 Ext.define("CMDBuild.view.administration.common.basepanel.CMForm", {
@@ -101,7 +101,7 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMForm", {
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {CMDBuild.delegate.administration.common.basepanel.CMFormFiledsManager} fieldManager
 	 * Build the fields for this form, asking them to the given field manager
 	 */
