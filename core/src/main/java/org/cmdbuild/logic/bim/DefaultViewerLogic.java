@@ -116,7 +116,7 @@ public class DefaultViewerLogic implements ViewerLogic {
 
 	@Override
 	public String getOutputForBimViewer(final String revisionId, final String baseProjectId) {
-		System.out.println("----------\nGet output for viewer: open revision " + revisionId);
+		logger.info("Get output for viewer: open revision '{}'", revisionId);
 		final DataHandler jsonFile = bimServiceFacade.fetchProjectStructure(revisionId);
 		try {
 			final Long rootCardId = getRootCardIdForProjectId(baseProjectId);

@@ -22,5 +22,6 @@ public final class Log {
 	public static final Logger AUTH = org.cmdbuild.auth.logging.LoggingSupport.logger;
 	public static final Logger CMDBUILD = LoggerFactory.getLogger("cmdbuild");
 	public static final Logger SCHEDULER = org.cmdbuild.scheduler.logging.LoggingSupport.logger;
+	public static final Logger BIM = org.cmdbuild.bim.logging.LoggingSupport.logger;
 
 }

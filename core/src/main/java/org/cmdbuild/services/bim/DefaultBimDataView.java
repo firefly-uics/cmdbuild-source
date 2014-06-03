@@ -156,7 +156,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 				.run();
 
 		if (queryResult.isEmpty()) {
-			System.out.println("No bim data found for card " + id);
+			logger.warn("No bim data found for card " + id);
 		}
 		final CMQueryRow row = queryResult.getOnlyRow();
 		if (!isValid(row, f)) {
@@ -185,7 +185,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 			queryResult = dataView.select(anyAttribute(function, f))
 					.from(call(function, containerId, containerClassName), f).run();
 			if (queryResult.isEmpty()) {
-				System.out.println("No coordinates generated for card " + id);
+				logger.warn("No coordinates generated for card " + id);
 			}
 			final CMQueryRow rowCoordinates = queryResult.getOnlyRow();
 
@@ -237,7 +237,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 		final CMQueryResult queryResult = dataView.select(anyAttribute(function, f)).from(call(function, globalId), f)
 				.run();
 		if (queryResult.isEmpty()) {
-			System.out.println("No matching card found for globalid " + globalId);
+			logger.warn("No matching card found for globalid " + globalId);
 		}
 
 		final BimCard bimCard = new BimCard();

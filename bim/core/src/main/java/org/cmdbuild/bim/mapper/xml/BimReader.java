@@ -18,6 +18,7 @@ import javax.vecmath.Vector3d;
 
 import org.cmdbuild.bim.geometry.DefaultIfcGeometryHelper;
 import org.cmdbuild.bim.geometry.IfcGeometryHelper;
+import org.cmdbuild.bim.logging.LoggingSupport;
 import org.cmdbuild.bim.mapper.DefaultAttribute;
 import org.cmdbuild.bim.mapper.DefaultEntity;
 import org.cmdbuild.bim.mapper.Reader;
@@ -35,12 +36,15 @@ import org.cmdbuild.bim.service.BimService;
 import org.cmdbuild.bim.service.ListAttribute;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.SimpleAttribute;
+import org.slf4j.Logger;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class BimReader implements Reader {
+	
+	private static final Logger logger = LoggingSupport.logger;
 
 	private final BimService service;
 	private IfcGeometryHelper geometryHelper;
@@ -71,7 +75,7 @@ public class BimReader implements Reader {
 
 	private void read(ReaderListener listener, EntityDefinition entityDefinition) {
 
-		System.out.println("reading data for revision " + revisionId + " for class " + entityDefinition.getTypeName()
+		logger.debug("reading data for revision " + revisionId + " for class " + entityDefinition.getTypeName()
 				+ " corresponding to " + entityDefinition.getLabel());
 
 		geometryHelper = new DefaultIfcGeometryHelper(service, revisionId);
@@ -81,7 +85,7 @@ public class BimReader implements Reader {
 				throw new BimError("No entities of type " + entityDefinition.getTypeName() + " found in revision "
 						+ revisionId);
 			}
-			System.out.println(Iterables.size(entities) + " entities found");
+			logger.debug(Iterables.size(entities) + " entities found");
 			for (Entity entity : entities) {
 				final Entity entityToFill = DefaultEntity.withTypeAndKey(entityDefinition.getLabel(), entity.getAttributeByName(
 						IFC_GLOBALID).getValue());
@@ -102,7 +106,7 @@ public class BimReader implements Reader {
 		boolean exit = false;
 		// fetch and store the attributes
 		for (AttributeDefinition attributeDefinition : attributesToRead) {
-			System.out.println("attribute " + attributeDefinition.getName() + " of entity " + entity.getTypeName());
+			logger.debug("attribute " + attributeDefinition.getName() + " of entity " + entity.getTypeName());
 			if (!exit) {
 				String attributeName = attributeDefinition.getName();
 				if (attributeName.equals(COORDINATES)) {
@@ -117,18 +121,18 @@ public class BimReader implements Reader {
 						if (attributeDefinition instanceof SimpleAttributeDefinition) {
 							SimpleAttributeDefinition simpleAttributeDefinition = (SimpleAttributeDefinition) attributeDefinition;
 							if (simpleAttributeDefinition.getValue() != "") {
-								System.out.println(attributeName + " must have value "
+								logger.debug(attributeName + " must have value "
 										+ simpleAttributeDefinition.getValue());
-								System.out.println("It has value " + attribute.getValue());
+								logger.debug("It has value " + attribute.getValue());
 								if (!simpleAttributeDefinition.getValue().equals(attribute.getValue())) {
-									System.out.println("skip this entity");
+									logger.debug("skip this entity");
 									exit = true;
 									return false;
 								}
 							}
 							if (!exit) {
 								SimpleAttribute simpleAttribute = (SimpleAttribute) attribute;
-								System.out.println(attributeDefinition.getLabel() + ": "
+								logger.debug(attributeDefinition.getLabel() + ": "
 										+ simpleAttribute.getStringValue());
 								Attribute retrievedAttribute = DefaultAttribute.withNameAndValue(
 										attributeDefinition.getLabel(), simpleAttribute.getStringValue());
@@ -142,7 +146,7 @@ public class BimReader implements Reader {
 								readEntityAttributes(referencedEntity, referencedEntityDefinition, revisionId,
 										retrievedEntity);
 							} else {
-								System.out.println("referenced entity valid " + referencedEntity.isValid());
+								logger.debug("referenced entity valid " + referencedEntity.isValid());
 							}
 						} else if (attributeDefinition instanceof ListAttributeDefinition) {
 							ListAttribute list = (ListAttribute) attribute;

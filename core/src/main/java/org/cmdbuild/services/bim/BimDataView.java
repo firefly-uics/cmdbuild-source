@@ -2,13 +2,17 @@ package org.cmdbuild.services.bim;
 
 import java.util.List;
 
+import org.cmdbuild.auth.logging.LoggingSupport;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.services.bim.DefaultBimDataView.BimCard;
+import org.slf4j.Logger;
 
 public interface BimDataView {
+	
+	Logger logger = LoggingSupport.logger; 
 	
 	//read
 	
