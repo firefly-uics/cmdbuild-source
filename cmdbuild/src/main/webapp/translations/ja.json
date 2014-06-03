@@ -763,6 +763,13 @@
 			"title": "ようこそ"
 		}
 	},
+	"bimMod": {
+		"administration": {
+			"projects": {
+				"importIfc": "<em>Import IFC</em>"
+			}
+		}
+	},
 	"common": {
 		"buttons": {
 			"abort": "キャンセル",

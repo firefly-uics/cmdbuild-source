@@ -763,6 +763,13 @@
 			"title": "Willkommen"
 		}
 	},
+	"bimMod": {
+		"administration": {
+			"projects": {
+				"importIfc": "<em>Import IFC</em>"
+			}
+		}
+	},
 	"common": {
 		"buttons": {
 			"abort": "Abbrechen",

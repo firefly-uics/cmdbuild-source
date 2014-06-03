@@ -763,6 +763,13 @@
 			"title": "Dobro došli"
 		}
 	},
+	"bimMod": {
+		"administration": {
+			"projects": {
+				"importIfc": "<em>Import IFC</em>"
+			}
+		}
+	},
 	"common": {
 		"buttons": {
 			"abort": "Odustani",

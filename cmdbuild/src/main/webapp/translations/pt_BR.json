@@ -763,6 +763,13 @@
 			"title": "Bem vindo"
 		}
 	},
+	"bimMod": {
+		"administration": {
+			"projects": {
+				"importIfc": "<em>Import IFC</em>"
+			}
+		}
+	},
 	"common": {
 		"buttons": {
 			"abort": "Cancelar",

@@ -763,6 +763,13 @@
 			"title": "Chào mừng"
 		}
 	},
+	"bimMod": {
+		"administration": {
+			"projects": {
+				"importIfc": "<em>Import IFC</em>"
+			}
+		}
+	},
 	"common": {
 		"buttons": {
 			"abort": "Hủy bỏ",
