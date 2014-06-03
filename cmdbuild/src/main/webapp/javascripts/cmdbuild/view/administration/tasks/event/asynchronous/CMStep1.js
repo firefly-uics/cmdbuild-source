@@ -6,6 +6,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
+
 		view: undefined,
 		taskType: 'event_asynchronous',
 
@@ -27,31 +28,62 @@
 		},
 
 		// GETters functions
+			/**
+			 * @return (String)
+			 */
 			getValueId: function() {
 				return this.view.idField.getValue();
 			},
 
+		/**
+		 * @return (Boolean)
+		 */
 		isEmptyClass: function() {
-			return Ext.isEmpty(this.view.className.getValue());
+			return Ext.isEmpty(this.view.classNameCombo.getValue());
 		},
 
 		// SETters functions
+			/**
+			 * @param (Boolean) state
+			 */
 			setDisabledButtonNext: function(state) {
 				this.parentDelegate.setDisabledButtonNext(state);
 			},
 
+			/**
+			 * @param (Boolean) state
+			 */
 			setDisabledTypeField: function(state) {
 				this.view.typeField.setDisabled(state);
 			},
 
-			setValueActive: function(value) {
-				this.view.activeField.setValue(value);
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueActive: function(state) {
+				this.view.activeField.setValue(state);
 			},
 
+			/**
+			 * @param (String) value
+			 */
+			setValueClassName: function(value) {
+				this.view.classNameCombo.setValue(value);
+
+				// Manually select event fire
+				this.cmOn('onClassSelected', { className: value });
+			},
+
+			/**
+			 * @param (String) value
+			 */
 			setValueDescription: function(value) {
 				this.view.descriptionField.setValue(value);
 			},
 
+			/**
+			 * @param (String) value
+			 */
 			setValueId: function(value) {
 				this.view.idField.setValue(value);
 			}
@@ -136,9 +168,7 @@
 		},
 
 		listeners: {
-			/**
-			 * Disable next button only if class is not selected
-			 */
+			// Disable next button only if class is not selected
 			show: function(view, eOpts) {
 				if (this.delegate.isEmptyClass())
 					this.delegate.setDisabledButtonNext(true);
