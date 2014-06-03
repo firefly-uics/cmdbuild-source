@@ -156,7 +156,7 @@
 								me.delegate.onBimControlPanelExposeSliderChange(value);
 							}
 						}
-					}, {
+					}/*, {
 						xtype: "slider",
 						fieldLabel: CMDBuild.Translation.transparent,
 						value: 0,
@@ -167,7 +167,7 @@
 								me.delegate.onBimControlPanelTransparentSliderChange(value);
 							}
 						}
-					}]
+					}*/]
 				}],
 			}];
 
