@@ -69,7 +69,7 @@
 				cmImmutable: true
 			});
 
-			this.treeDescription = new Ext.form.TextField({
+			this.treeDescription = new Ext.form.CMTranslatableText({
 				fieldLabel : CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -99,7 +99,7 @@
 				defaults: {
 					labelWidth: CMDBuild.LABEL_WIDTH
 				},
-				items : [this.active, this.treeName, this.treeDescription, this.rootName]
+				items : [this.treeName, this.treeDescription, this.rootName, this.active, ]
 			});
 
 			Ext.apply(this, {
