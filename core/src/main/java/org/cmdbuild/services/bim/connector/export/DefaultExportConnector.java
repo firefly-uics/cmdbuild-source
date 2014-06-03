@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.activation.DataHandler;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cmdbuild.bim.logging.LoggingSupport;
 import org.cmdbuild.bim.mapper.DefaultAttribute;
 import org.cmdbuild.bim.mapper.DefaultEntity;
 import org.cmdbuild.bim.mapper.xml.XmlExportCatalogFactory;
@@ -42,6 +43,7 @@ import org.cmdbuild.services.bim.BimPersistence.PersistenceProject;
 import org.cmdbuild.services.bim.connector.export.DataChangedListener.DataChangedException;
 import org.cmdbuild.services.bim.connector.export.DataChangedListener.DataNotChangedException;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapDifference.ValueDifference;
@@ -58,6 +60,7 @@ public class DefaultExportConnector implements GenericMapper {
 	private String exportProjectId;
 	private String sourceProjectId;
 	private Long rootCardId;
+	private final Logger logger = LoggingSupport.logger;
 
 	public DefaultExportConnector(final BimDataView dataView, final BimFacade bimServiceFacade,
 			final BimPersistence bimPersistence, final ExportPolicy exportProjectPolicy) {
@@ -112,9 +115,9 @@ public class DefaultExportConnector implements GenericMapper {
 	@Override
 	public void afterExecution(final Output output) {
 		output.finalActions(exportProjectId);
-		System.out.println("Commit transaction...");
+		logger.debug("Commit transaction...");
 		final String revisionId = serviceFacade.commitTransaction();
-		System.out.println("Revision " + revisionId + " created at " + new DateTime());
+		logger.debug("Revision '{}' created at '{}'", revisionId, new DateTime());
 
 		/*
 		 * In order to see the generated objects I have to download and upload
@@ -127,7 +130,7 @@ public class DefaultExportConnector implements GenericMapper {
 			exportedData.writeTo(outputStream);
 			final String newExportProject = serviceFacade.createProject(revisionId + "-exported");
 			serviceFacade.checkin(newExportProject, file);
-			System.out.println("export file on new project " + newExportProject + " is ready");
+			logger.debug("export file on new project '{}' is ready", newExportProject);
 			final PersistenceProject baseProject = persistence.read(sourceProjectId);
 			final PersistenceProject updatedProject = TO_MODIFIABLE_PERSISTENCE_PROJECT.apply(baseProject);
 			updatedProject.setExportProjectId(newExportProject);

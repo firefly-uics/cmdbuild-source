@@ -44,7 +44,8 @@ public class DefaultSynchronizationLogic implements SynchronizationLogic {
 
 		final PersistenceProject immutableProject = bimPersistence.read(projectId);
 		final String xmlMapping = immutableProject.getImportMapping();
-		System.out.println("import mapping: \n" + xmlMapping);
+		logger.info("import mapping...");
+		logger.debug("{}", xmlMapping);
 		final Catalog catalog = XmlImportCatalogFactory.withXmlStringMapper(xmlMapping).create();
 
 		for (final EntityDefinition entityDefinition : catalog.getEntitiesDefinitions()) {

@@ -2,7 +2,7 @@ package org.cmdbuild.bim.service;
 
 import static org.cmdbuild.bim.utils.BimConstants.INVALID_ID;
 
-import org.cmdbuild.bim.utils.LoggerSupport;
+import org.cmdbuild.bim.logging.LoggingSupport;
 import org.slf4j.Logger;
 
 public class BimserviceTransactionHandler {
@@ -13,7 +13,7 @@ public class BimserviceTransactionHandler {
 
 	private String transactionId = "";
 
-	private static final Logger logger = LoggerSupport.logger;
+	private static final Logger logger = LoggingSupport.logger;
 
 	protected BimserviceTransactionHandler(BimService service, String projectId) {
 		this.service = service;

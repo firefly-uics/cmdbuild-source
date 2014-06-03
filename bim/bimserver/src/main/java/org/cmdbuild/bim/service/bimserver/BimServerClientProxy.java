@@ -4,8 +4,12 @@ import org.bimserver.client.BimServerClient;
 import org.bimserver.client.BimServerClientFactory;
 import org.bimserver.client.soap.SoapBimServerClientFactory;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
+import org.cmdbuild.bim.logging.LoggingSupport;
+import org.slf4j.Logger;
 
 public class BimServerClientProxy {
+
+	private static final Logger logger = LoggingSupport.logger;
 
 	BimServerClient client;
 	boolean connectionStatus;
@@ -22,7 +26,7 @@ public class BimServerClientProxy {
 					connectionStatus = true;
 				} catch (final Throwable t) {
 					connectionStatus = false;
-					System.out.println("Connection to BimServer failed");
+					logger.warn("Connection to BimServer failed", t);
 				}
 			}
 		} else {

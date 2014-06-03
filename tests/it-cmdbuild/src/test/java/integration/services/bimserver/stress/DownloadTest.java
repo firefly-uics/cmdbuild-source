@@ -99,19 +99,19 @@
 //						false, false, false, true);
 //
 //				String token = client.getToken();
-//				System.out.println("token: " + token);
+//				cippolippo("token: " + token);
 //
 //				String url = "http://localhost:8082/download?token=" + token + "&longActionId=" + actionId + "&zip=off"
 //						+ "&serializerOid=" + serializerOid;
-//				System.out.println(url);
+//				cippolippo(url);
 //
 //				URL obj = new URL(url);
 //				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 //				con.setRequestMethod("GET");
 //
 //				int responseCode = con.getResponseCode();
-//				System.out.println("\nSending 'GET' request to URL : " + url);
-//				System.out.println("Response Code : " + responseCode);
+//				cippolippo("\nSending 'GET' request to URL : " + url);
+//				cippolippo("Response Code : " + responseCode);
 //
 //				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 //				String inputLine;
@@ -123,13 +123,13 @@
 //				}
 //				in.close();
 //				// print result
-//				System.out.println("length " + response.length());
+//				cippolippo("length " + response.length());
 //
 //				//client.getBimsie1ServiceInterface().getDownloadData(actionId);
 //
 //				//
 //				
-//				System.out.println(i + " download completed");
+//				cippolippo(i + " download completed");
 //			}
 //		}
 //	}
