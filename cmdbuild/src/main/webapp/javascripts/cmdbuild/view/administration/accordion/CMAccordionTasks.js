@@ -10,6 +10,7 @@
 
 		constructor: function(){
 			this.callParent(arguments);
+
 			this.updateStore();
 		},
 
@@ -19,9 +20,9 @@
 				{
 					id: 'all',
 					cmName: 'tasks',
+					iconCls: 'cmdbuild-tree-tasks-group-icon',
 					leaf: false,
 					text: tr.all,
-					iconCls: 'cmdbuild-tree-tasks-group-icon',
 					children: [
 						{
 							id: 'connector',
@@ -40,9 +41,10 @@
 						{
 							id: 'event',
 							cmName: 'tasks',
+							expanded: true,
+							iconCls: 'cmdbuild-tree-tasks-group-icon',
 							leaf: false,
 							text: tr.tasksTypes.event,
-							iconCls: 'cmdbuild-tree-tasks-group-icon',
 							children: [
 								{
 									id: 'event_asynchronous',
