@@ -112,6 +112,7 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
 		layout: 'fit',
 		autoScroll: true,

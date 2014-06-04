@@ -137,6 +137,7 @@
 								name: CMDBuild.core.proxy.CMProxyConstants.BODY,
 								fieldLabel: CMDBuild.Translation.administration.email.templates.body,
 								labelWidth: CMDBuild.LABEL_WIDTH,
+								width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 								considerAsFieldToDisable: true,
 								enableFont: false
 							})
