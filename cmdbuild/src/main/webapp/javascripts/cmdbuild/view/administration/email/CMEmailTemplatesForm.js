@@ -11,7 +11,6 @@
 
 		delegate: undefined,
 
-		autoScroll: false,
 		bodyCls: 'cmgraypanel',
 		border: false,
 		buttonAlign: 'center',
@@ -67,7 +66,6 @@
 
 			// Splitted-view wrapper
 			this.wrapper = Ext.create('Ext.container.Container', {
-				region: 'center',
 				frame: false,
 				border: false,
 
@@ -77,11 +75,8 @@
 				},
 
 				defaults: {
-					flex: 1,
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					}
+					autoScroll: true,
+					flex: 1
 				},
 
 				items: [
@@ -91,7 +86,8 @@
 						margins: '0 3 0 0',
 
 						defaults: {
-							labelWidth: CMDBuild.LABEL_WIDTH
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							width: CMDBuild.ADM_BIG_FIELD_WIDTH
 						},
 
 						items: [
@@ -111,10 +107,10 @@
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.administration.email.templates.template,
 						margins: '0 0 0 3',
-						autoScroll: true,
 
 						defaults: {
 							labelWidth: CMDBuild.LABEL_WIDTH,
+							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 							xtype: 'textfield'
 						},
 

@@ -113,8 +113,7 @@
 		delegate: undefined,
 
 		border: false,
-		height: '100%',
-		overflowY: 'auto',
+		autoScroll: true,
 
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep1Delegate', this);

@@ -11,6 +11,7 @@
 		valueLabel: CMDBuild.Translation.value,
 		considerAsFieldToDisable: true,
 		margin: '0 0 5 0',
+		minWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 
 		initComponent: function() {
 			var me = this;

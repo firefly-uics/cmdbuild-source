@@ -8,15 +8,13 @@
 
 		activeTab: 0,
 		numberOfTabs: 0,
-		width: '100%',
-		height: '100%',
 		frame: false,
 		border: false,
 		bodyCls: 'cmgraypanel',
 
 		defaults: {
 			bodyPadding: 10,
-			layout: 'anchor'
+			layout: 'fit'
 		},
 
 		initComponent: function() {

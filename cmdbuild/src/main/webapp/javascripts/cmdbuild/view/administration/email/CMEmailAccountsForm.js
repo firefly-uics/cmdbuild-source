@@ -11,7 +11,6 @@
 
 		delegate: undefined,
 
-		autoScroll: false,
 		bodyCls: 'cmgraypanel',
 		border: false,
 		buttonAlign: 'center',
@@ -78,6 +77,7 @@
 					itemId: CMDBuild.core.proxy.CMProxyConstants.NAME,
 					fieldLabel: CMDBuild.Translation.name,
 					labelWidth: CMDBuild.LABEL_WIDTH,
+					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					allowBlank: false
 				});
 
@@ -88,11 +88,7 @@
 
 				this.emailAccount = Ext.create('Ext.form.FieldSet', {
 					title: tr.account,
-
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					},
+					autoScroll: true,
 
 					items: [
 						this.nameField,
@@ -108,13 +104,11 @@
 				// Credentials
 				this.credentials = Ext.create('Ext.form.FieldSet', {
 					title: tr.credentials,
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					},
+					autoScroll: true,
 
 					defaults: {
 						labelWidth: CMDBuild.LABEL_WIDTH,
+						width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						xtype: 'textfield'
 					},
 
@@ -136,13 +130,11 @@
 				// Outgoing
 				this.outgoing = Ext.create('Ext.form.FieldSet', {
 					title: tr.outgoing,
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					},
+					autoScroll: true,
 
 					defaults: {
 						labelWidth: CMDBuild.LABEL_WIDTH,
+						width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 						xtype: 'textfield'
 					},
 
@@ -175,6 +167,7 @@
 				// Incoming
 				this.incoming = Ext.create('Ext.form.FieldSet', {
 					title: tr.incoming,
+					autoScroll: true,
 
 					items: [
 						{
@@ -182,13 +175,9 @@
 							padding: '0 0 5 0',
 							cls: "x-panel-body-default-framed cmborderbottom",
 
-							layout: {
-								type: 'vbox',
-								align: 'stretch'
-							},
-
 							defaults: {
 								labelWidth: CMDBuild.LABEL_WIDTH,
+								width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 								xtype: 'textfield'
 							},
 
@@ -216,13 +205,9 @@
 							xtype: 'container',
 							padding: '5 0',
 
-							layout: {
-								type: 'vbox',
-								align: 'stretch'
-							},
-
 							defaults: {
 								labelWidth: CMDBuild.LABEL_WIDTH,
+								width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 								xtype: 'textfield'
 							},
 
@@ -252,7 +237,6 @@
 
 			// Splitted-view wrapper
 			this.wrapper = Ext.create('Ext.container.Container', {
-				region: 'center',
 				frame: false,
 				border: false,
 
@@ -262,11 +246,8 @@
 				},
 
 				defaults: {
-					flex: 1,
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					}
+					autoScroll: true,
+					flex: 1
 				},
 
 				items: [

@@ -11,14 +11,13 @@
 
 		delegate: undefined,
 
-		autoScroll: false,
+		bodyCls: 'cmgraypanel',
+		border: false,
 		buttonAlign: 'center',
+		cls: 'x-panel-body-default-framed cmbordertop',
+		frame: false,
 		layout: 'fit',
 		split: true,
-		frame: false,
-		border: false,
-		cls: 'x-panel-body-default-framed cmbordertop',
-		bodyCls: 'cmgraypanel',
 
 		initComponent: function() {
 			// Buttons configuration

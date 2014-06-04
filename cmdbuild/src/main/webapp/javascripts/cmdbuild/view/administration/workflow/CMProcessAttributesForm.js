@@ -10,7 +10,7 @@
 			this.baseProperties = Ext.create('Ext.form.FieldSet', {
 				title: tr.baseProperties,
 				margin: '0 3 0 0',
-				overflowY: 'auto',
+				autoScroll: true,
 				flex: 1,
 
 				items: [
