@@ -171,6 +171,7 @@
 
 			this.form = Ext.create('Ext.form.Panel', {
 				region: 'center',
+				bodyCls: 'cmgraypanel',
 				layout: {
 					type: 'hbox',
 					align: 'stretch'

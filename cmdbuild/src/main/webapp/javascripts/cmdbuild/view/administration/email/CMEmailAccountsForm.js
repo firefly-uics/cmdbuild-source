@@ -152,6 +152,7 @@
 							xtype: 'numberfield',
 							fieldLabel: tr.smtpPort,
 							allowBlank: true,
+							width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
 							minValue: 1,
 							maxValue: 65535,
 							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_PORT
@@ -173,7 +174,6 @@
 						{
 							xtype: 'container',
 							padding: '0 0 5 0',
-							cls: "x-panel-body-default-framed cmborderbottom",
 
 							defaults: {
 								labelWidth: CMDBuild.LABEL_WIDTH,
@@ -192,6 +192,7 @@
 									allowBlank: true,
 									minValue: 1,
 									maxValue: 65535,
+									width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
 									name: CMDBuild.core.proxy.CMProxyConstants.IMAP_PORT
 								},
 								{

@@ -7,10 +7,10 @@
 		nextButton: undefined,
 
 		activeTab: 0,
-		numberOfTabs: 0,
-		frame: false,
-		border: false,
 		bodyCls: 'cmgraypanel',
+		border: false,
+		frame: false,
+		numberOfTabs: 0,
 
 		defaults: {
 			bodyPadding: 10,

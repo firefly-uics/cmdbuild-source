@@ -168,6 +168,7 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
 		autoScroll: true,
 
