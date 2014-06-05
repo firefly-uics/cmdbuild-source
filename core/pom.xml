@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
-		<version>2.1.9-SNAPSHOT</version>
+		<version>2.1.9.b-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild-core</artifactId>
@@ -15,7 +15,6 @@
 		<itext.version>2.1.7</itext.version> <!-- jasperreports dependency -->
 		<jasperreports.version>5.1.2</jasperreports.version>
 		<json-java.version>20110113</json-java.version>
-		<quartz.version>1.8.3</quartz.version>
 		<restlet.version>2.0.1</restlet.version>
 	</properties>
 
@@ -33,6 +32,11 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-dms-alfresco</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-scheduler-quartz</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -167,23 +171,6 @@
 			<version>1.52</version>
 		</dependency>
 
-		<!-- Scheduler -->
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-			<version>${quartz.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>avalon-framework</artifactId>
-					<groupId>avalon-framework</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>logkit</artifactId>
-					<groupId>logkit</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 		<!-- REST Client API for GeoServer -->
 		<dependency>
 			<groupId>org.restlet.jse</groupId>
@@ -195,6 +182,12 @@
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>
 			<version>1.6.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
 		</dependency>
 	</dependencies>
 

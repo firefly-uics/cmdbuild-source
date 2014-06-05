@@ -6,8 +6,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Properties;
 
-public class DefaultProperties extends CMProperties {
+public class DefaultProperties extends Properties {
 
 	private static final long serialVersionUID = -1L;
 
@@ -27,16 +28,11 @@ public class DefaultProperties extends CMProperties {
 	}
 
 	@Override
-	public final synchronized Object setProperty(String key, String value) {
+	public final synchronized Object setProperty(final String key, final String value) {
 		return setProperty0(key, value);
 	}
 
-	@Override
-	public void accept(PropertiesVisitor visitor) {
-		// do nothing
-	}
-
-	protected Object setProperty0(String key, String value) {
+	protected Object setProperty0(final String key, final String value) {
 		return super.setProperty(key, value);
 	}
 }

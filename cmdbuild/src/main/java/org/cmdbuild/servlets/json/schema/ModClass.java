@@ -60,7 +60,6 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic.FunctionItem;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
@@ -79,8 +78,6 @@ import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer.JsonModeMapper;
-import org.cmdbuild.servlets.json.serializers.ClassSerializer;
-import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -144,13 +141,13 @@ public class ModClass extends JSONBaseWithSpringContext {
 				nonSystemButUsable()) : nonProcessClasses;
 
 		for (final CMClass cmClass : classesToBeReturned) {
-			final JSONObject classObject = ClassSerializer.newInstance().toClient(cmClass);
+			final JSONObject classObject = classSerializer().toClient(cmClass);
 			Serializer.addAttachmentsData(classObject, cmClass, dmsLogic());
 			serializedClasses.put(classObject);
 		}
 
 		for (final UserProcessClass userProcessClass : processClasses) {
-			final JSONObject classObject = ClassSerializer.newInstance().toClient(userProcessClass, activeOnly);
+			final JSONObject classObject = classSerializer().toClient(userProcessClass, activeOnly);
 			Serializer.addAttachmentsData(classObject, userProcessClass, dmsLogic());
 			serializedClasses.put(classObject);
 
@@ -263,7 +260,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.build();
 
 		final CMClass cmClass = dataDefinitionLogic().createOrUpdate(entryType, forceCreation);
-		return ClassSerializer.newInstance().toClient(cmClass, TABLE);
+		return classSerializer().toClient(cmClass, TABLE);
 	}
 
 	@JSONExported
@@ -272,7 +269,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * =========================================================== ATTRIBUTES
+	 * ===========================================================
+	 * ATTRIBUTES
 	 * ===========================================================
 	 */
 
@@ -516,7 +514,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * ========================================================= DOMAIN
+	 * =========================================================
+	 * DOMAIN
 	 * ===========================================================
 	 */
 
@@ -537,7 +536,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final JSONArray jsonDomains = new JSONArray();
 		out.put(DOMAINS, jsonDomains);
 		for (final CMDomain domain : domains) {
-			jsonDomains.put(DomainSerializer.toClient(domain, activeOnly));
+			jsonDomains.put(domainSerializer().toClient(domain, activeOnly));
 		}
 		return out;
 	}
@@ -598,7 +597,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 		} else {
 			createdOrUpdated = dataDefinitionLogic().update(domain);
 		}
-		return DomainSerializer.toClient(createdOrUpdated, false, DOMAIN);
+		return domainSerializer().toClient(createdOrUpdated, false, DOMAIN);
 	}
 
 	@JSONExported
@@ -616,11 +615,10 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final JSONObject out = new JSONObject();
 		final JSONArray jsonDomains = new JSONArray();
 		// TODO system really needed
-		final DataAccessLogic dataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
-		final List<CMDomain> domainsForSpecifiedClass = dataAccessLogic.findDomainsForClassWithName(className);
+		final List<CMDomain> domainsForSpecifiedClass = systemDataAccessLogic().findDomainsForClassWithName(className);
 		for (final CMDomain domain : domainsForSpecifiedClass) {
 			if (!domain.isSystem()) {
-				jsonDomains.put(DomainSerializer.toClient(domain, className));
+				jsonDomains.put(domainSerializer().toClient(domain, className));
 			}
 		}
 		out.put(DOMAINS, jsonDomains);
@@ -684,13 +682,12 @@ public class ModClass extends JSONBaseWithSpringContext {
 	@Admin
 	@JSONExported
 	public JSONObject getReferenceableDomainList(@Parameter(CLASS_NAME) final String className) throws JSONException {
-		final DataAccessLogic systemDataAccessLogic = TemporaryObjectsBeforeSpringDI.getSystemDataAccessLogic();
 		final JSONObject out = new JSONObject();
 		final JSONArray jsonDomains = new JSONArray();
-		final Iterable<? extends CMDomain> referenceableDomains = systemDataAccessLogic
-				.findReferenceableDomains(className);
+		final Iterable<? extends CMDomain> referenceableDomains = systemDataAccessLogic().findReferenceableDomains(
+				className);
 		for (final CMDomain domain : referenceableDomains) {
-			jsonDomains.put(DomainSerializer.toClient(domain, false));
+			jsonDomains.put(domainSerializer().toClient(domain, false));
 		}
 		out.put(DOMAINS, jsonDomains);
 		return out;

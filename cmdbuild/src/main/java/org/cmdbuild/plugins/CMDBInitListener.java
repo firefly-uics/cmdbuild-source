@@ -8,22 +8,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreatorFactory;
 import org.cmdbuild.dms.DocumentSearch;
-import org.cmdbuild.exception.CMDBException;
-import org.cmdbuild.exception.SchedulerException;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.DmsLogic;
-import org.cmdbuild.logic.scheduler.CMJobFactory;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
-import org.cmdbuild.logic.scheduler.SchedulerLogic.ScheduledJob;
-import org.cmdbuild.services.scheduler.SchedulerService;
-import org.cmdbuild.services.scheduler.job.CMJob;
-import org.cmdbuild.services.scheduler.trigger.JobTrigger;
-import org.cmdbuild.services.scheduler.trigger.RecurringTrigger;
 import org.slf4j.Logger;
 
 public class CMDBInitListener implements ServletContextListener {
@@ -65,36 +56,8 @@ public class CMDBInitListener implements ServletContextListener {
 
 	private void setupSchedulerService() {
 		final SchedulerLogic schedulerLogic = applicationContext().getBean(SchedulerLogic.class);
-		final SchedulerService scheduler = applicationContext().getBean(SchedulerService.class);
-		scheduler.start();
-
-		if (!DatabaseProperties.getInstance().isConfigured()) {
-			return;
-		}
-
-		try {
-			logger.info("Loading scheduled jobs");
-			final Iterable<ScheduledJob> scheduledJobs = schedulerLogic.findAllScheduledJobs();
-			for (final ScheduledJob job : scheduledJobs) {
-
-				if (!job.isRunning()) {
-					continue;
-				}
-
-				try {
-					final CMJob theJob = CMJobFactory.from(job);
-					if (theJob != null) {
-						final JobTrigger jobTrigger = new RecurringTrigger(job.getCronExpression());
-						scheduler.addJob(theJob, jobTrigger);
-					}
-				} catch (final SchedulerException e) {
-					logger.error("Exception occurred scheduling the job", e);
-				}
-			}
-
-		} catch (final CMDBException e) {
-			logger.warn("Could not load the scheduled jobs: first start or patch not yet applied?");
-		}
+		schedulerLogic.startScheduler();
+		schedulerLogic.addAllScheduledJobs();
 	}
 
 	private void clearDmsTemporary() {
@@ -122,8 +85,8 @@ public class CMDBInitListener implements ServletContextListener {
 	}
 
 	private void stopSchedulerService() {
-		final SchedulerService scheduler = applicationContext().getBean(SchedulerService.class);
-		scheduler.stop();
+		final SchedulerLogic schedulerLogic = applicationContext().getBean(SchedulerLogic.class);
+		schedulerLogic.stopScheduler();
 	}
 
 }

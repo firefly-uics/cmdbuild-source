@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
+import org.cmdbuild.data.store.Groupable;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.model.LockedCard;
@@ -65,6 +67,11 @@ public class LockedCardStore implements Store<LockedCard> {
 	public List<LockedCard> list() {
 		final Map<String, LockedCard> lockedCardsMap = lockedCards.asMap();
 		return Lists.newArrayList(lockedCardsMap.values());
+	}
+
+	@Override
+	public List<LockedCard> list(final Groupable groupable) {
+		throw new UnsupportedOperationException();
 	}
 
 }

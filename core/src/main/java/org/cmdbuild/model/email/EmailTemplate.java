@@ -3,7 +3,7 @@ package org.cmdbuild.model.email;
 import java.util.Arrays;
 import java.util.List;
 
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 
 public class EmailTemplate implements Storable {
 
