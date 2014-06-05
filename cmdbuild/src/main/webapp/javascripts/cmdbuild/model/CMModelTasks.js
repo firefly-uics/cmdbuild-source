@@ -73,6 +73,23 @@
 		]
 	});
 
+	Ext.define('CMDBuild.model.CMModelTasks.singleTask.event_asynchronous', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
+
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE, type: 'string'}
+		]
+	});
+
 	Ext.define('CMDBuild.model.CMModelTasks.singleTask.event_synchronous', {
 		extend: 'Ext.data.Model',
 
@@ -82,11 +99,11 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
 
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.GROUPS, type: 'auto'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE, type: 'boolean'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT, type: 'string'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE, type: 'string'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER, type: 'auto'},
-			{ name: CMDBuild.core.proxy.CMProxyConstants.GROUPS, type: 'auto'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PHASE, type: 'string'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE, type: 'boolean'},
 			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES, type: 'auto'},
