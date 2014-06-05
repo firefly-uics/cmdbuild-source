@@ -19,12 +19,12 @@ import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.logging.LoggingSupport;
+import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.logic.data.QueryOptions;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.FetchCardListResponse;
+import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
 import org.cmdbuild.logic.email.SendTemplateEmail;
@@ -67,15 +67,13 @@ public class DefaultObserverFactory implements ObserverFactory {
 	private static final Logger logger = LoggingSupport.logger;
 	private static final Marker marker = MarkerFactory.getMarker(DefaultObserverFactory.class.getName());
 
-	private static final JSONObject NULL_JSON_FILTER = new JSONObject();
-
 	private static class SynchronousEventTaskPredicate implements Predicate<CMCard> {
 
 		public static class Builder implements org.apache.commons.lang3.builder.Builder<SynchronousEventTaskPredicate> {
 
 			private SynchronousEventTask task;
 			private UserStore userStore;
-			private DataAccessLogic dataAccessLogic;
+			private Supplier<CMDataView> dataView;
 
 			private Builder() {
 				// use factory method
@@ -90,7 +88,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 			private void validate() {
 				Validate.notNull(task, "invalid '%s'", SynchronousEventTask.class);
 				Validate.notNull(userStore, "invalid '%s'", UserStore.class);
-				Validate.notNull(dataAccessLogic, "invalid '%s'", DataAccessLogic.class);
+				Validate.notNull(dataView, "invalid '%s'", CMDataView.class);
 			}
 
 			public Builder withTask(final SynchronousEventTask task) {
@@ -103,8 +101,8 @@ public class DefaultObserverFactory implements ObserverFactory {
 				return this;
 			}
 
-			public Builder withDataAccessLogic(final DataAccessLogic dataAccessLogic) {
-				this.dataAccessLogic = dataAccessLogic;
+			public Builder withDataView(final Supplier<CMDataView> dataView) {
+				this.dataView = dataView;
 				return this;
 			}
 
@@ -116,12 +114,12 @@ public class DefaultObserverFactory implements ObserverFactory {
 
 		private final SynchronousEventTask task;
 		private final UserStore userStore;
-		private final DataAccessLogic dataAccessLogic;
+		private final Supplier<CMDataView> dataView;
 
 		private SynchronousEventTaskPredicate(final Builder builder) {
 			this.task = builder.task;
 			this.userStore = builder.userStore;
-			this.dataAccessLogic = builder.dataAccessLogic;
+			this.dataView = builder.dataView;
 		}
 
 		@Override
@@ -146,13 +144,15 @@ public class DefaultObserverFactory implements ObserverFactory {
 			final String classname = task.getTargetClassname();
 			final String filter = task.getFilter();
 			try {
-				final JSONObject jsonFilter = (filter == null) ? NULL_JSON_FILTER : new JSONObject(filter);
+				final JSONObject jsonFilter = (filter == null) ? new JSONObject() : new JSONObject(filter);
 				final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 						.filter(new JsonFilterHelper(jsonFilter) //
 								.merge(CardIdFilterElementGetter.of(input))) //
 						.build();
-				final FetchCardListResponse response = dataAccessLogic.fetchCards(classname, queryOptions);
-				return response.totalSize() > 0;
+				final CMQueryResult result = new QuerySpecsBuilderFiller(dataView.get(), queryOptions, classname) //
+						.create() //
+						.run();
+				return !isEmpty(result);
 			} catch (final JSONException e) {
 				final String message = format("malformed filter: '%s'", filter);
 				logger.error(marker, message, e);
@@ -173,7 +173,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
 	private final CMDataView dataView;
-	private final DataAccessLogic dataAccessLogic;
+	private final Supplier<CMDataView> privilegedDataView;
 
 	public DefaultObserverFactory( //
 			final UserStore userStore, //
@@ -183,7 +183,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 			final EmailServiceFactory emailServiceFactory, //
 			final EmailTemplateLogic emailTemplateLogic, //
 			final CMDataView dataView, //
-			final DataAccessLogic dataAccessLogic //
+			final Supplier<CMDataView> privilegedDataView //
 	) {
 		this.userStore = userStore;
 		this.fluentApi = fluentApi;
@@ -192,7 +192,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 		this.emailServiceFactory = emailServiceFactory;
 		this.emailTemplateLogic = emailTemplateLogic;
 		this.dataView = dataView;
-		this.dataAccessLogic = dataAccessLogic;
+		this.privilegedDataView = privilegedDataView;
 	}
 
 	@Override
@@ -378,7 +378,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 		return SynchronousEventTaskPredicate.newInstance() //
 				.withTask(task) //
 				.withUserStore(userStore) //
-				.withDataAccessLogic(dataAccessLogic) //
+				.withDataView(privilegedDataView) //
 				.build();
 	}
 

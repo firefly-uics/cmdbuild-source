@@ -2,6 +2,7 @@ package org.cmdbuild.spring.configuration;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.config.DatabaseConfiguration;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
@@ -40,6 +41,8 @@ import org.cmdbuild.services.event.DefaultObserverCollector;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+
+import com.google.common.base.Supplier;
 
 @ConfigurationComponent
 public class TaskManager {
@@ -82,12 +85,9 @@ public class TaskManager {
 
 	@Bean
 	public TaskManagerLogic taskManagerLogic() {
-		return new TransactionalTaskManagerLogic(defaultTaskManagerLogic());
-	}
-
-	private DefaultTaskManagerLogic defaultTaskManagerLogic() {
-		return new DefaultTaskManagerLogic(defaultLogicAndStoreConverter(), defaultTaskStore(),
-				defaultSchedulerTaskFacade(), defaultSynchronousEventFacade());
+		final TaskManagerLogic defaultTaskManagerLogic = new DefaultTaskManagerLogic(defaultLogicAndStoreConverter(),
+				defaultTaskStore(), defaultSchedulerTaskFacade(), defaultSynchronousEventFacade());
+		return new TransactionalTaskManagerLogic(defaultTaskManagerLogic);
 	}
 
 	@Bean
@@ -209,8 +209,15 @@ public class TaskManager {
 				email.emailServiceFactory(), //
 				email.emailTemplateLogic(), //
 				data.systemDataView(), //
-				user.userDataAccessLogicBuilder().build() //
+				new Supplier<CMDataView>() {
+
+					@Override
+					public CMDataView get() {
+						return user.userDataView();
+					}
+
+				}
+
 		);
 	}
-
 }
