@@ -7,7 +7,15 @@ import static org.joda.time.DateTime.now;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.task.TaskStore;
-import org.cmdbuild.logic.taskmanager.SchedulerFacade.Callback;
+import org.cmdbuild.logic.taskmanager.event.SynchronousEventFacade;
+import org.cmdbuild.logic.taskmanager.scheduler.SchedulerFacade;
+import org.cmdbuild.logic.taskmanager.scheduler.SchedulerFacade.Callback;
+import org.cmdbuild.logic.taskmanager.store.LogicAndStoreConverter;
+import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
+import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
+import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 

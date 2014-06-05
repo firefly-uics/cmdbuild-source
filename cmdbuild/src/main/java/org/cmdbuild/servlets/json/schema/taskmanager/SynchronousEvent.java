@@ -27,8 +27,8 @@ import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
-import org.cmdbuild.logic.taskmanager.SynchronousEventTask.Phase;
+import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask.Phase;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
