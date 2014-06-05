@@ -22,11 +22,11 @@ import java.util.Map;
 
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.store.DefaultLogicAndStoreConverter;
-import org.cmdbuild.logic.taskmanager.store.DefaultLogicAndStoreConverter.AsynchronousEvent;
-import org.cmdbuild.logic.taskmanager.store.DefaultLogicAndStoreConverter.Connector;
-import org.cmdbuild.logic.taskmanager.store.DefaultLogicAndStoreConverter.ReadEmail;
-import org.cmdbuild.logic.taskmanager.store.DefaultLogicAndStoreConverter.StartWorkflow;
-import org.cmdbuild.logic.taskmanager.store.DefaultLogicAndStoreConverter.SynchronousEvent;
+import org.cmdbuild.logic.taskmanager.store.ParameterNames.AsynchronousEvent;
+import org.cmdbuild.logic.taskmanager.store.ParameterNames.Connector;
+import org.cmdbuild.logic.taskmanager.store.ParameterNames.ReadEmail;
+import org.cmdbuild.logic.taskmanager.store.ParameterNames.StartWorkflow;
+import org.cmdbuild.logic.taskmanager.store.ParameterNames.SynchronousEvent;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.AttributeMapping;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.ClassMapping;
