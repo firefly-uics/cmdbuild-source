@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.taskmanager.task.process;
 
+import static org.cmdbuild.common.utils.BuilderUtils.a;
+
 import org.cmdbuild.logic.taskmanager.commons.SchedulerCommandWrapper;
 import org.cmdbuild.logic.taskmanager.scheduler.AbstractJobFactory;
 import org.cmdbuild.logic.workflow.StartProcess;
@@ -21,11 +23,10 @@ public class StartWorkflowTaskJobFactory extends AbstractJobFactory<StartWorkflo
 
 	@Override
 	protected Command command(final StartWorkflowTask task) {
-		final StartProcess startProcess = StartProcess.newInstance() //
+		final StartProcess startProcess = a(StartProcess.newInstance() //
 				.withWorkflowLogic(workflowLogic) //
 				.withClassName(task.getProcessClass()) //
-				.withAttributes(task.getAttributes()) //
-				.build();
+				.withAttributes(task.getAttributes()));
 		return SchedulerCommandWrapper.of(startProcess);
 	}
 
