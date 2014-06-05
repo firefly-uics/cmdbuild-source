@@ -10,7 +10,6 @@
 		considerAsFieldToDisable: true,
 		fieldLabel: tr.workflow,
 		labelWidth: CMDBuild.LABEL_WIDTH,
-		width: '100%',
 
 		/**
 		 * To acquire informations to setup fields before creation

@@ -9,6 +9,14 @@
 			cmFormFunctions: 'CMDBUild.view.common.CMFormFunctions'
 		},
 
+		bodyCls: 'cmgraypanel',
+		border: false,
+		buttonAlign: 'center',
+		cls: 'x-panel-body-default-framed cmbordertop',
+		frame: false,
+		layout: 'fit',
+		split: true,
+
 		initComponent: function () {
 			this.modifyButton = Ext.create('Ext.button.Button', {
 				iconCls: 'modify',
@@ -108,10 +116,9 @@
 			this.userInfo = Ext.create('Ext.form.FieldSet', {
 				title: tr.user_info,
 				region: 'west',
-				margins: '5 0 5 5',
-				padding: '5 5 20 5',
+				margins: '5 0 0 5',
+				padding: '5 5 0 5',
 				autoScroll: true,
-				split: true,
 				flex: 1,
 
 				items: [
@@ -133,8 +140,8 @@
 				title: tr.password,
 				region: 'center',
 				autoScroll: true,
-				margins: '5 5 5 5',
-				padding: '5 5 20 5',
+				margins: '5 5 0 5',
+				padding: '5 5 0 5',
 				flex: 1,
 
 				items: [
@@ -164,24 +171,20 @@
 
 			this.form = Ext.create('Ext.form.Panel', {
 				region: 'center',
+				bodyCls: 'cmgraypanel',
 				layout: {
 					type: 'hbox',
 					align: 'stretch'
 				},
-				frame: true,
+				frame: false,
+				border: false,
 
 				items: [this.userInfo, this.userPassword]
 			});
 
 			Ext.apply(this, {
-				frame: false,
-				border: false,
-				cls: 'x-panel-body-default-framed cmbordertop',
-				bodyCls: 'cmgraypanel',
-				layout: 'border',
 				tbar: this.cmTBar,
 				items: [this.form],
-				buttonAlign: 'center',
 				buttons: this.cmButtons
 			});
 

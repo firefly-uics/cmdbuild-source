@@ -42,6 +42,7 @@ import java.util.Map.Entry;
 import javax.activation.DataHandler;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cmdbuild.auth.logging.LoggingSupport;
 import org.cmdbuild.bim.mapper.Reader;
 import org.cmdbuild.bim.mapper.xml.BimReader;
 import org.cmdbuild.bim.model.Attribute;
@@ -55,6 +56,7 @@ import org.cmdbuild.bim.service.ListAttribute;
 import org.cmdbuild.bim.service.ReferenceAttribute;
 import org.cmdbuild.bim.service.bimserver.BimserverEntity;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
 
@@ -64,6 +66,8 @@ public class DefaultBimFacade implements BimFacade {
 	private final TransactionManager transactionManager;
 	private final Reader reader;
 	private final Iterable<String> candidateTypes = Lists.newArrayList(IFC_BUILDING_ELEMENT_PROXY, IFC_FURNISHING);
+	
+	Logger logger = LoggingSupport.logger; 
 
 	public DefaultBimFacade(final BimService bimservice, final TransactionManager transactionManager) {
 		this.service = bimservice;
@@ -257,17 +261,16 @@ public class DefaultBimFacade implements BimFacade {
 		final String ycord = entityToCreate.getAttributeByName(Y_ATTRIBUTE).getValue();
 		final String zcord = entityToCreate.getAttributeByName(Z_ATTRIBUTE).getValue();
 
-		System.out.println("Insert card " + cmId);
-		System.out.println("IFC TYPE " + ifcType);
-		System.out.println("BASE_CLASS_NAME " + baseClass);
-		System.out.println("GLOBALID_ATTRIBUTE " + globalId);
-		System.out.println("CODE_ATTRIBUTE " + code);
-		System.out.println("DESCRIPTION_ATTRIBUTE " + description);
-		System.out.println("SHAPE OID " + shapeOid);
-		System.out.println("DEFAULT_TAG_EXPORT " + DEFAULT_TAG_EXPORT);
-		System.out.println("X " + xcord);
-		System.out.println("Y " + ycord);
-		System.out.println("Z " + zcord);
+		logger.debug("Insert card '{}'",cmId);
+		logger.debug("ifc type '{}'",ifcType);
+		logger.debug("globalId '{}'",globalId);
+		logger.debug("code '{}'",code);
+		logger.debug("description '{}'",description);
+		logger.debug("shape '{}' ", shapeOid);
+		logger.debug("tag '{}'",DEFAULT_TAG_EXPORT);
+		logger.debug("x '{}'", xcord);
+		logger.debug("y '{}'", ycord);
+		logger.debug("z '{}'", zcord);
 
 		final String objectOid = service.createObject(transactionManager.getId(), ifcType);
 		service.setStringAttribute(transactionManager.getId(), objectOid, IFC_OBJECT_TYPE, baseClass);
@@ -291,29 +294,28 @@ public class DefaultBimFacade implements BimFacade {
 
 	@Override
 	public void moveObject(final String projectId, final String globalId, final List<Double> coordinates) {
-		System.out.println("move on transaction " + transactionManager.getId());
+		logger.debug("move on transaction '{}'", transactionManager.getId());
 		openTransaction(projectId);
-		System.out.println("open transaction " + transactionManager.getId());
+		logger.debug("open transaction '{}'", transactionManager.getId());
 		final String revisionId = getLastRevisionOfProject(projectId);
-		System.out.println("revision is " + revisionId);
+		logger.debug("last revision is '{}'", revisionId);
 		final BimserverEntity object = (BimserverEntity) fetchEntityFromGlobalId(revisionId, globalId, candidateTypes);
-		System.out.println("object is " + object.getOid());
+		logger.debug("object is '{}'", object.getOid());
 		final BimserverEntity objectPlacement = (BimserverEntity) getReferencedEntity(revisionId, object,
 				IFC_OBJECT_PLACEMENT);
-		System.out.println("placement is " + objectPlacement.getOid());
+		logger.debug("placement is '{}'",objectPlacement.getOid());
 		final BimserverEntity relativePlacement = (BimserverEntity) getReferencedEntity(revisionId, objectPlacement,
 				IFC_RELATIVE_PLACEMENT);
-		System.out.println("relativePlacement is " + relativePlacement.getOid());
+		logger.debug("relativePlacement is '{}'",relativePlacement.getOid());
 		final BimserverEntity cartesianPoint = (BimserverEntity) getReferencedEntity(revisionId, relativePlacement,
 				IFC_LOCATION);
-		System.out.println("cartesianPoint is " + cartesianPoint.getOid());
+		logger.debug("cartesianPoint is '{}'",cartesianPoint.getOid());
 		final String cartesianPointId = String.valueOf(cartesianPoint.getOid());
 
 		service.setDoubleAttributes(transactionManager.getId(), cartesianPointId, IFC_COORDINATES, coordinates);
 
 		String newRevisionId = commitTransaction();
-		System.out.println("Revision " + newRevisionId + " created");
-		// refreshWithMerge(projectId);
+		logger.debug("Revision '{}' created",newRevisionId);
 	}
 
 	@Override
@@ -330,7 +332,7 @@ public class DefaultBimFacade implements BimFacade {
 		for (final Entity shape : shapeList) {
 			final Attribute shapeNameAttribute = shape.getAttributeByName("Name");
 			if (shapeNameAttribute.getValue() != null && shapeNameAttribute.getValue().equals(shapeName)) {
-				System.out.println("Shape found with id " + shape.getKey());
+				logger.debug("Shape found with id '{}'", shape.getKey());
 				return shape.getKey();
 			}
 		}
@@ -346,7 +348,7 @@ public class DefaultBimFacade implements BimFacade {
 		final String relativePlacementId = service.createObject(transactionId, IFC_AXIS2_PLACEMENT3D);
 		service.setReference(transactionId, placementId, IFC_RELATIVE_PLACEMENT, relativePlacementId);
 		final String cartesianPointId = service.createObject(transactionId, IFC_CARTESIAN_POINT);
-		System.out.println("Set coordinates " + x1d + " " + x2d + " " + x3d);
+		logger.debug("Set coordinates '{}' '{}' '{}'",x1d,x2d,x3d);
 		service.addDoubleAttribute(transactionId, cartesianPointId, IFC_COORDINATES, x1d);
 		service.addDoubleAttribute(transactionId, cartesianPointId, IFC_COORDINATES, x2d);
 		service.addDoubleAttribute(transactionId, cartesianPointId, IFC_COORDINATES, x3d);
@@ -452,15 +454,15 @@ public class DefaultBimFacade implements BimFacade {
 				relationOid = relationEntity.getOid().toString();
 			} else {
 				if (!relation.isValid()) {
-					System.out.println("Relation not found for space " + spaceGuid);
+					logger.debug("Relation not found for space {}", spaceGuid);
 					final Entity space = service.getEntityByGuid(sourceRevisionId, spaceGuid,
 							Lists.newArrayList("IfcSpace"));
 					final Long spaceOid = BimserverEntity.class.cast(space).getOid();
 					relationOid = service.createObject(transactionManager.getId(), IFC_REL_CONTAINED);
-					System.out.println("Relation with oid " + relationOid + " created");
+					logger.debug("Relation with oid '{}' created",relationOid);
 					service.setReference(transactionManager.getId(), relationOid, IFC_RELATING_STRUCTURE,
 							String.valueOf(spaceOid));
-					System.out.println("Relating structure " + spaceOid + " added to relation " + relationOid + "'");
+					logger.debug("Relating structure {} added to relation {}",spaceOid,relationOid);
 				}
 			}
 			final ListAttribute relatedElementsAttribute = ListAttribute.class.cast(relation
@@ -486,18 +488,18 @@ public class DefaultBimFacade implements BimFacade {
 					}
 				}
 				service.removeAllReferences(transactionManager.getId(), relationOid, IFC_RELATED_ELEMENTS);
-				System.out.println("remove all reference from relation '" + relationOid + "'");
+				logger.debug("remove all reference from relation '{}'",relationOid);
 				for (final Long indexToAdd : indicesToReadd) {
 					service.addReference(transactionManager.getId(), relationOid, IFC_RELATED_ELEMENTS,
 							indexToAdd.toString());
-					System.out.println("add reference '" + indexToAdd + "' to relation '" + relationOid + "'");
+					logger.debug("add reference '{}' to relation '{}'",indexToAdd,relationOid);
 				}
 			}
 			if (innerMap.containsKey("A")) {
 				final List<String> objectsToAdd = entry.getValue().get("A");
 				for (final String objectToAdd : objectsToAdd) {
 					service.addReference(transactionManager.getId(), relationOid, IFC_RELATED_ELEMENTS, objectToAdd);
-					System.out.println("add reference '" + objectToAdd + "' to relation '" + relationOid + "'");
+					logger.debug("add reference '{}' to relation '{}'",objectToAdd,relationOid);
 				}
 			}
 		}

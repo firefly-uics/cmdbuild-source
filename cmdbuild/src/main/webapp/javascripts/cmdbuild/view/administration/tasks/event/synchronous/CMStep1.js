@@ -129,9 +129,9 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
-		height: '100%',
-		overflowY: 'auto',
+		autoScroll: true,
 
 		initComponent: function() {
 			var me = this;

@@ -7,16 +7,14 @@
 		nextButton: undefined,
 
 		activeTab: 0,
-		numberOfTabs: 0,
-		width: '100%',
-		height: '100%',
-		frame: false,
-		border: false,
 		bodyCls: 'cmgraypanel',
+		border: false,
+		frame: false,
+		numberOfTabs: 0,
 
 		defaults: {
 			bodyPadding: 10,
-			layout: 'anchor'
+			layout: 'fit'
 		},
 
 		initComponent: function() {

@@ -168,9 +168,9 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
-		height: '100%',
-		overflowY: 'auto',
+		autoScroll: true,
 
 		initComponent: function() {
 			var me = this;
@@ -194,6 +194,7 @@
 				title: tr.referenceMapping,
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
+				minWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 
 				plugins: [this.gridEditorPlugin],
 
