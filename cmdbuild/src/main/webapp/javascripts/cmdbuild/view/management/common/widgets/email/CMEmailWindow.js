@@ -101,6 +101,7 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindow", {
 			}
 		});
 		var body = bodyBuild(me);
+		_CMProxy.emailTemplate.read({});
 		this.attachmentPanelsContainer = buildAttachmentPanelsContainer(me);
 		this.attachmentButtonsContainer = buildAttachmentButtonsContainer(me); 
 		var formPanel = buildFormPanel(me, body);
@@ -145,7 +146,9 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindow", {
 		}
 
 		this.on("beforedestroy", function () {
-			this.delegate.beforeCMEmailWindowDestroy(this);
+			if (this.save == true) {
+				this.delegate.beforeCMEmailWindowDestroy(this);
+			}
 		}, this);
 
 	},
@@ -207,13 +210,11 @@ function buildFormPanel(me, body) {
 				value: me.record.get(fields.FROM_ADDRESS)
 			},{
 				xtype: me.readOnly ? 'displayfield' : 'textfield',
-				vtype: me.readOnly ? undefined : 'emailaddrspec',
 				name : fields.TO_ADDRESS,
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld,
 				value: me.record.get(fields.TO_ADDRESS)
 			},{
 				xtype: me.readOnly ? 'displayfield' : 'textfield',
-				vtype: me.readOnly ? undefined : 'emailaddrspeclist',
 				name : fields.CC_ADDRESS,
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld,
 				value: me.record.get(fields.CC_ADDRESS)
@@ -239,6 +240,21 @@ function buildButtons(me) {
 		buttons = [
 			new CMDBuild.buttons.ConfirmButton({
 				scope: me,
+				handler: function() {
+					var valueTo = me.form.getValues()[fields.TO_ADDRESS];
+					var valueCC = me.form.getValues()[fields.CC_ADDRESS];
+					
+					if (controlAddresses(valueTo, valueCC)) {
+						me.save = true;
+						// Destroy call an event after(!) the destruction of the window
+						// the event saves the values of the form. For save the values only if are correct
+						// we have to put this boolean that is valdid only on the confirm button
+						me.destroy();
+						me.save = false;
+					}
+				}
+			}),
+			new CMDBuild.buttons.AbortButton({
 				handler: function() {
 					me.destroy();
 				}
@@ -315,6 +331,40 @@ function fixIEFocusIssue(me, body) {
 			} catch (e) {}
 		}, me);
 	}
+}
+function controlAddresses(valueTo, valueCC) {
+	var toStr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld;
+	var ccStr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld;
+	var strError = CMDBuild.Translation.error;
+	var errors = [];
+	errors = getAddressErrors(strError + " " + toStr + ": ", valueTo, errors);
+	if (Ext.String.trim(valueCC) != "") {
+		errors = getAddressErrors(strError + " " + ccStr + ": ", valueCC, errors);
+	}
+	if (errors.length > 0) {
+		var messages = htmlComposeMessage(errors);
+		CMDBuild.Msg.error(null, messages , false);
+		return false;
+	}
+	return true;
+}
+function getAddressErrors(str, value, errors) {
+	var ar = value.split(",");
+	for (var i = 0; i < ar.length; i++) {
+		var s = Ext.String.trim(ar[i]);
+		if (!(/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/.test(s))) {
+			errors.push(str + ": " + s);
+		}
+	}
+	return errors;
+}
+function htmlComposeMessage(errors) {
+	var messages = "";
+	for (var i = 0; i < errors.length; i++) {
+		var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, errors[i]);
+		messages += msg;
+	}
+	return messages;
 }
 function loadFormValues(form, record) {
 	form.setValues([{
