@@ -29,6 +29,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		@Override
 		public void start() {
+			// nothing to do
+		}
+
+		@Override
+		public void stop() {
 			final org.cmdbuild.data.store.task.Task readed = store.read(task.getId());
 			final org.cmdbuild.data.store.task.Task updated = readed.modify() //
 					.withLastExecution(now()) //
@@ -70,6 +75,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			final Task taskWithId = converter.from(read).toLogic();
 			taskWithId.accept(this);
 			return read.getId();
+		}
+
+		@Override
+		public void visit(final AsynchronousEventTask task) {
+			schedulerFacade.create(task, storeLastExecutionOf(task));
 		}
 
 		@Override
@@ -196,6 +206,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			return new TaskVistor() {
 
 				@Override
+				public void visit(final AsynchronousEventTask task) {
+					schedulerFacade.delete(task);
+				}
+
+				@Override
 				public void visit(final ConnectorTask task) {
 					schedulerFacade.delete(task);
 				}
@@ -220,6 +235,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 
 		private TaskVistor after() {
 			return new TaskVistor() {
+
+				@Override
+				public void visit(final AsynchronousEventTask task) {
+					schedulerFacade.create(task, storeLastExecutionOf(task));
+				}
 
 				@Override
 				public void visit(final ConnectorTask task) {
@@ -278,6 +298,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 		}
 
 		@Override
+		public void visit(final AsynchronousEventTask task) {
+			schedulerFacade.delete(task);
+		}
+
+		@Override
 		public void visit(final ConnectorTask task) {
 			schedulerFacade.delete(task);
 		}
@@ -333,6 +358,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			final Task task = converter.from(updated).toLogic();
 			task.accept(this);
 			return null;
+		}
+
+		@Override
+		public void visit(final AsynchronousEventTask task) {
+			schedulerFacade.create(task, storeLastExecutionOf(task));
 		}
 
 		@Override
@@ -395,6 +425,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			final Task task = converter.from(updated).toLogic();
 			task.accept(this);
 			return null;
+		}
+
+		@Override
+		public void visit(final AsynchronousEventTask task) {
+			schedulerFacade.delete(task);
 		}
 
 		@Override

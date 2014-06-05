@@ -28,6 +28,7 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 		public void execute() {
 			callback.start();
 			super.execute();
+			callback.stop();
 		}
 
 	}

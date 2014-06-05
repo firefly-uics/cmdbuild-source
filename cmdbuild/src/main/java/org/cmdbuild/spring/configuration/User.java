@@ -95,7 +95,7 @@ public class User {
 				userStore.getUser().getPrivilegeContext(), //
 				privilegeManagement.rowAndColumnPrivilegeFetcher(), //
 				userStore.getUser());
-		return new ObservableDataView(dataView, taskManager.observerCollector().allInOneObserver());
+		return new ObservableDataView(dataView, taskManager.defaultObserverCollector().allInOneObserver());
 	}
 
 	@Bean

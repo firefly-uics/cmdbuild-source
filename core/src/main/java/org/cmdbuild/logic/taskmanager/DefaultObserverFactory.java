@@ -3,14 +3,9 @@ package org.cmdbuild.logic.taskmanager;
 import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
-import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.EQUAL;
-import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
-import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.event.Commands.safe;
 import static org.cmdbuild.services.template.engine.EngineNames.GROUP_PREFIX;
@@ -34,8 +29,8 @@ import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
 import org.cmdbuild.logic.email.SendTemplateEmail;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
-import org.cmdbuild.logic.mapping.json.JsonFilterHelper.FilterElementGetter;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
+import org.cmdbuild.logic.taskmanager.util.CardIdFilterElementGetter;
 import org.cmdbuild.logic.workflow.StartProcess;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.email.EmailConstants;
@@ -58,7 +53,6 @@ import org.cmdbuild.services.template.engine.CardEngine;
 import org.cmdbuild.services.template.engine.GroupEmailEngine;
 import org.cmdbuild.services.template.engine.GroupUsersEmailEngine;
 import org.cmdbuild.services.template.engine.UserEmailEngine;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -74,36 +68,6 @@ public class DefaultObserverFactory implements ObserverFactory {
 	private static final Marker marker = MarkerFactory.getMarker(DefaultObserverFactory.class.getName());
 
 	private static final JSONObject NULL_JSON_FILTER = new JSONObject();
-
-	private static class CardIdFilterElementGetter implements FilterElementGetter {
-
-		public static CardIdFilterElementGetter of(final CMCard card) {
-			return new CardIdFilterElementGetter(card);
-		}
-
-		private final CMCard card;
-
-		private CardIdFilterElementGetter(final CMCard card) {
-			this.card = card;
-		}
-
-		@Override
-		public boolean hasElement() {
-			return true;
-		}
-
-		@Override
-		public JSONObject getElement() throws JSONException {
-			logger.debug(marker, "creating JSON element for '{}'", card.getId());
-			final JSONObject element = new JSONObject();
-			element.put(ATTRIBUTE_KEY, "Id");
-			element.put(OPERATOR_KEY, EQUAL);
-			element.put(VALUE_KEY, new JSONArray(asList(card.getId())));
-			logger.debug(marker, "resulting element is '{}'", element);
-			return element;
-		}
-
-	}
 
 	private static class SynchronousEventTaskPredicate implements Predicate<CMCard> {
 

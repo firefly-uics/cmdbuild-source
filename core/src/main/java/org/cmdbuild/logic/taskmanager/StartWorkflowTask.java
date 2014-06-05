@@ -1,11 +1,11 @@
 package org.cmdbuild.logic.taskmanager;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.joda.time.DateTime;
 
 public class StartWorkflowTask implements ScheduledTask {
 
@@ -17,7 +17,7 @@ public class StartWorkflowTask implements ScheduledTask {
 		private String description;
 		private Boolean active;
 		private String cronExpression;
-		private Date lastExecution;
+		private DateTime lastExecution;
 		private String processClass;
 		private Map<String, String> attributes;
 
@@ -56,7 +56,7 @@ public class StartWorkflowTask implements ScheduledTask {
 			return this;
 		}
 
-		public Builder setLastExecution(final Date lastExecution) {
+		public Builder withLastExecution(final DateTime lastExecution) {
 			this.lastExecution = lastExecution;
 			return this;
 		}
@@ -81,7 +81,7 @@ public class StartWorkflowTask implements ScheduledTask {
 	private final String description;
 	private final boolean active;
 	private final String cronExpression;
-	private final Date lastExecution;
+	private final DateTime lastExecution;
 	private final String processClass;
 	private final Map<String, String> attributes;
 
@@ -121,7 +121,7 @@ public class StartWorkflowTask implements ScheduledTask {
 	}
 
 	@Override
-	public Date getLastExecution() {
+	public DateTime getLastExecution() {
 		return lastExecution;
 	}
 

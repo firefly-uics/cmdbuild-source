@@ -20,12 +20,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.cmdbuild.logic.taskmanager.AsynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.ClassMapping;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfiguration;
 import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter;
+import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.AsynchronousEvent;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.Connector;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.ReadEmail;
 import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter.StartWorkflow;
@@ -37,6 +39,7 @@ import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.SynchronousEventTask.Phase;
 import org.cmdbuild.logic.taskmanager.Task;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -65,11 +68,83 @@ public class DefaultLogicAndStoreConverterTest {
 
 	};
 
+	private static final DateTime NOW = DateTime.now();
+
 	private DefaultLogicAndStoreConverter converter;
 
 	@Before
 	public void setUp() throws Exception {
 		converter = new DefaultLogicAndStoreConverter();
+	}
+
+	@Test
+	public void asynchronousEventTaskSuccessfullyConvertedToStore() throws Exception {
+		// given
+		final AsynchronousEventTask source = a(AsynchronousEventTask.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withActiveStatus(true) //
+				.withCronExpression("cron expression") //
+				.withLastExecution(NOW) //
+				.withTargetClass("classname") //
+				.withFilter("filter") //
+				.withNotificationStatus(true) //
+				.withNotificationAccount("account") //
+				.withNotificationErrorTemplate("error template") //
+		);
+
+		// when
+		final org.cmdbuild.data.store.task.Task converted = converter.from(source).toStore();
+
+		// then
+		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.AsynchronousEventTask.class));
+		assertThat(converted.getId(), equalTo(42L));
+		assertThat(converted.getDescription(), equalTo("description"));
+		assertThat(converted.getCronExpression(), equalTo("cron expression"));
+		assertThat(converted.isRunning(), equalTo(true));
+		assertThat(converted.getLastExecution(), equalTo(NOW));
+
+		final Map<String, String> parameters = converted.getParameters();
+		assertThat(parameters, hasEntry(AsynchronousEvent.FILTER_CLASSNAME, "classname"));
+		assertThat(parameters, hasEntry(AsynchronousEvent.FILTER_CARDS, "filter"));
+		assertThat(parameters, hasEntry(AsynchronousEvent.EMAIL_ACTIVE, "true"));
+		assertThat(parameters, hasEntry(AsynchronousEvent.EMAIL_ACCOUNT, "account"));
+		assertThat(parameters, hasEntry(AsynchronousEvent.EMAIL_TEMPLATE, "error template"));
+	}
+
+	@Test
+	public void asynchronousEventTaskSuccessfullyConvertedToLogic() throws Exception {
+		// given
+		final org.cmdbuild.data.store.task.AsynchronousEventTask source = a(org.cmdbuild.data.store.task.AsynchronousEventTask
+				.newInstance() //
+				.withId(42L) //
+				.withDescription("description") //
+				.withRunningStatus(true) //
+				.withCronExpression("cron expression") //
+				.withLastExecution(NOW) //
+				.withParameter(AsynchronousEvent.FILTER_CLASSNAME, "classname") //
+				.withParameter(AsynchronousEvent.FILTER_CARDS, "filter") //
+				.withParameter(AsynchronousEvent.EMAIL_ACTIVE, "true") //
+				.withParameter(AsynchronousEvent.EMAIL_ACCOUNT, "account") //
+				.withParameter(AsynchronousEvent.EMAIL_TEMPLATE, "error template") //
+		);
+
+		// when
+		final Task _converted = converter.from(source).toLogic();
+
+		// then
+		assertThat(_converted, instanceOf(AsynchronousEventTask.class));
+		final AsynchronousEventTask converted = AsynchronousEventTask.class.cast(_converted);
+		assertThat(converted.getId(), equalTo(42L));
+		assertThat(converted.getDescription(), equalTo("description"));
+		assertThat(converted.isActive(), equalTo(true));
+		assertThat(converted.getCronExpression(), equalTo("cron expression"));
+		assertThat(converted.getLastExecution(), equalTo(NOW));
+		assertThat(converted.getTargetClassname(), equalTo("classname"));
+		assertThat(converted.getFilter(), equalTo("filter"));
+		assertThat(converted.isNotificationActive(), equalTo(true));
+		assertThat(converted.getNotificationAccount(), equalTo("account"));
+		assertThat(converted.getNotificationTemplate(), equalTo("error template"));
 	}
 
 	@Test
@@ -80,6 +155,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withActiveStatus(true) //
 				.withCronExpression("cron expression") //
+				.withLastExecution(NOW) //
 				.withNotificationStatus(true) //
 				.withNotificationAccount("account") //
 				.withNotificationErrorTemplate("error template") //
@@ -122,7 +198,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
 		assertThat(converted.isRunning(), equalTo(true));
-		assertThat(converted.isRunning(), equalTo(true));
+		assertThat(converted.getLastExecution(), equalTo(NOW));
 
 		final Map<String, String> parameters = converted.getParameters();
 		assertThat(parameters, hasEntry(Connector.NOTIFICATION_ACTIVE, "true"));
@@ -285,6 +361,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
+				.withLastExecution(NOW) //
 				.withParameter(Connector.NOTIFICATION_ACTIVE, "true") //
 				.withParameter(Connector.NOTIFICATION_ACCOUNT, "account") //
 				.withParameter(Connector.NOTIFICATION_ERROR_TEMPLATE, "error template") //
@@ -308,6 +385,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.isActive(), equalTo(true));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
+		assertThat(converted.getLastExecution(), equalTo(NOW));
 		assertThat(converted.isNotificationActive(), equalTo(true));
 		assertThat(converted.getNotificationAccount(), equalTo("account"));
 		assertThat(converted.getNotificationErrorTemplate(), equalTo("error template"));
@@ -523,6 +601,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withActiveStatus(true) //
 				.withCronExpression("cron expression") //
+				.withLastExecution(NOW) //
 				.withEmailAccount("email account") //
 				.withRegexFromFilter(asList("regex", "from", "filter")) //
 				.withRegexSubjectFilter(asList("regex", "subject", "filter")) //
@@ -547,6 +626,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.isRunning(), equalTo(true));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
+		assertThat(converted.getLastExecution(), equalTo(NOW));
 
 		final Map<String, String> parameters = converted.getParameters();
 		assertThat(parameters, hasEntry(ReadEmail.ACCOUNT_NAME, "email account"));
@@ -598,6 +678,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
+				.withLastExecution(NOW) //
 				.withParameter(ReadEmail.ACCOUNT_NAME, "email account") //
 				.withParameter(ReadEmail.FILTER_FROM_REGEX, "regex\nfrom\nfilter") //
 				.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, "regex\nsubject\nfilter") //
@@ -623,6 +704,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.isActive(), equalTo(true));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
+		assertThat(converted.getLastExecution(), equalTo(NOW));
 		assertThat(converted.getEmailAccount(), equalTo("email account"));
 		assertThat(converted.isNotificationActive(), equalTo(true));
 		assertThat(converted.getNotificationTemplate(), equalTo("template"));
@@ -681,6 +763,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withActiveStatus(true) //
 				.withCronExpression("cron expression") //
+				.withLastExecution(NOW) //
 				.withProcessClass("class name") //
 				.withAttributes(attributes) //
 		);
@@ -694,6 +777,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
 		assertThat(converted.isRunning(), equalTo(true));
+		assertThat(converted.getLastExecution(), equalTo(NOW));
 
 		final Map<String, String> parameters = converted.getParameters();
 		assertThat(parameters, hasEntry(StartWorkflow.CLASSNAME, "class name"));
@@ -711,6 +795,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
+				.withLastExecution(NOW) //
 				.withParameter(StartWorkflow.CLASSNAME, "class name") //
 				.withParameter(StartWorkflow.ATTRIBUTES, "foo=bar\nbar=baz\nbaz=foo") //
 		);
@@ -725,6 +810,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.isActive(), equalTo(true));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
+		assertThat(converted.getLastExecution(), equalTo(NOW));
 		assertThat(converted.getProcessClass(), equalTo("class name"));
 		final Map<String, String> attributes = Maps.newHashMap();
 		attributes.put("foo", "bar");
@@ -742,6 +828,7 @@ public class DefaultLogicAndStoreConverterTest {
 				.withDescription("description") //
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
+				.withLastExecution(NOW) //
 				.withParameter(StartWorkflow.CLASSNAME, "class name") //
 				.withParameter(StartWorkflow.ATTRIBUTES, EMPTY) //
 		);
@@ -756,6 +843,7 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(converted.getDescription(), equalTo("description"));
 		assertThat(converted.isActive(), equalTo(true));
 		assertThat(converted.getCronExpression(), equalTo("cron expression"));
+		assertThat(converted.getLastExecution(), equalTo(NOW));
 		assertThat(converted.getProcessClass(), equalTo("class name"));
 		assertThat(converted.getAttributes().isEmpty(), is(true));
 	}

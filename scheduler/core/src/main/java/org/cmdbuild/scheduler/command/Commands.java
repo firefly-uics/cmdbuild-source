@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import com.google.common.base.Predicate;
+
 public class Commands {
 
 	private static class NullCommand implements Command {
@@ -74,6 +76,24 @@ public class Commands {
 
 	}
 
+	private static class Conditional extends ForwardingCommand {
+
+		private final Predicate<Void> predicate;
+
+		public Conditional(final Command delegate, final Predicate<Void> predicate) {
+			super(delegate);
+			this.predicate = predicate;
+		}
+
+		@Override
+		public void execute() {
+			if (predicate.apply(null)) {
+				super.execute();
+			}
+		}
+
+	}
+
 	private static final NullCommand INSTANCE = new NullCommand();
 
 	public static Command nullCommand() {
@@ -86,6 +106,10 @@ public class Commands {
 
 	public static Command composeOnExeption(final Command delegate, final Command onException) {
 		return new ComposeOnExeption(delegate, onException);
+	}
+
+	public static Command conditional(final Command delegate, final Predicate<Void> predicate) {
+		return new Conditional(delegate, predicate);
 	}
 
 	private Commands() {

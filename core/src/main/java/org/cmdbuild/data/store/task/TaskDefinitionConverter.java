@@ -16,6 +16,14 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 
 	private static enum Factory {
 
+		ASYNCHRONOUS_EVENT(TYPE_ASYNCHRONOUS_EVENT) {
+
+			@Override
+			protected Builder<? extends TaskDefinition> create(final CMCard card) {
+				return AsynchronousEventTaskDefinition.newInstance();
+			}
+
+		}, //
 		CONNECTOR(TYPE_CONNECTOR) {
 
 			@Override
@@ -80,7 +88,12 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 				}
 
 				@Override
-				public void visit(final ConnectorTaskDefinition connectorTaskDefinition) {
+				public void visit(final AsynchronousEventTaskDefinition taskDefinition) {
+					element = ASYNCHRONOUS_EVENT;
+				}
+
+				@Override
+				public void visit(final ConnectorTaskDefinition taskDefinition) {
 					element = CONNECTOR;
 				}
 
@@ -111,6 +124,7 @@ public class TaskDefinitionConverter extends BaseStorableConverter<TaskDefinitio
 	public static final String RUNNING = "Running";
 	public static final String LAST_EXECUTION = "LastExecution";
 
+	private static final String TYPE_ASYNCHRONOUS_EVENT = "asynchronous_event";
 	private static final String TYPE_CONNECTOR = "connector";
 	private static final String TYPE_EMAIL = "emailService";
 	private static final String TYPE_WORKFLOW = "workflow";

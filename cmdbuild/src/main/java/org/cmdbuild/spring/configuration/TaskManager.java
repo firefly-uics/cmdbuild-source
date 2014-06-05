@@ -13,6 +13,8 @@ import org.cmdbuild.data.store.task.TaskParameter;
 import org.cmdbuild.data.store.task.TaskParameterConverter;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.dms.DmsConfiguration;
+import org.cmdbuild.logic.taskmanager.AsynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.AsynchronousEventTaskJobFactory;
 import org.cmdbuild.logic.taskmanager.ConnectorTask;
 import org.cmdbuild.logic.taskmanager.ConnectorTaskJobFactory;
 import org.cmdbuild.logic.taskmanager.DefaultAttributeValueAdapter;
@@ -26,7 +28,6 @@ import org.cmdbuild.logic.taskmanager.DefaultSynchronousEventFacade;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.LogicAndObserverConverter;
 import org.cmdbuild.logic.taskmanager.LogicAndSchedulerConverter;
-import org.cmdbuild.logic.taskmanager.LogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.ReadEmailTaskJobFactory;
 import org.cmdbuild.logic.taskmanager.SchedulerFacade;
@@ -36,7 +37,6 @@ import org.cmdbuild.logic.taskmanager.SynchronousEventFacade;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TransactionalTaskManagerLogic;
 import org.cmdbuild.services.event.DefaultObserverCollector;
-import org.cmdbuild.services.event.ObserverCollector;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -86,8 +86,8 @@ public class TaskManager {
 	}
 
 	private DefaultTaskManagerLogic defaultTaskManagerLogic() {
-		return new DefaultTaskManagerLogic(taskConverter(), defaultTaskStore(), defaultSchedulerTaskFacade(),
-				defaultSynchronousEventFacade());
+		return new DefaultTaskManagerLogic(defaultLogicAndStoreConverter(), defaultTaskStore(),
+				defaultSchedulerTaskFacade(), defaultSynchronousEventFacade());
 	}
 
 	@Bean
@@ -96,12 +96,12 @@ public class TaskManager {
 	}
 
 	@Bean
-	public ObserverCollector observerCollector() {
+	public DefaultObserverCollector defaultObserverCollector() {
 		return new DefaultObserverCollector();
 	}
 
 	@Bean
-	protected LogicAndStoreConverter taskConverter() {
+	protected DefaultLogicAndStoreConverter defaultLogicAndStoreConverter() {
 		return new DefaultLogicAndStoreConverter();
 	}
 
@@ -133,10 +133,23 @@ public class TaskManager {
 	@Bean
 	protected LogicAndSchedulerConverter defaultLogicAndSchedulerConverter() {
 		final DefaultLogicAndSchedulerConverter converter = new DefaultLogicAndSchedulerConverter();
+		converter.register(AsynchronousEventTask.class, asynchronousEventTaskJobFactory());
 		converter.register(ConnectorTask.class, connectorTaskJobFactory());
 		converter.register(ReadEmailTask.class, readEmailTaskJobFactory());
 		converter.register(StartWorkflowTask.class, startWorkflowTaskJobFactory());
 		return converter;
+	}
+
+	@Bean
+	protected AsynchronousEventTaskJobFactory asynchronousEventTaskJobFactory() {
+		return new AsynchronousEventTaskJobFactory( //
+				data.systemDataView(), //
+				email.emailAccountStore(), //
+				email.emailServiceFactory(), //
+				email.emailTemplateLogic(), //
+				defaultTaskStore(), //
+				defaultLogicAndStoreConverter() //
+		);
 	}
 
 	@Bean
@@ -178,7 +191,7 @@ public class TaskManager {
 
 	@Bean
 	protected SynchronousEventFacade defaultSynchronousEventFacade() {
-		return new DefaultSynchronousEventFacade(observerCollector(), logicAndObserverConverter());
+		return new DefaultSynchronousEventFacade(defaultObserverCollector(), logicAndObserverConverter());
 	}
 
 	@Bean

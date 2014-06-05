@@ -7,8 +7,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.logic.taskmanager.DefaultSchedulerFacade;
@@ -175,7 +173,7 @@ public class DefaultSchedulerFacadeTest {
 
 		// then
 		final ArgumentCaptor<Job> jobCaptor = ArgumentCaptor.forClass(Job.class);
-		final InOrder inOrder = inOrder(schedulerService, converter);
+		InOrder inOrder = inOrder(schedulerService, converter);
 		inOrder.verify(converter).from(task);
 		inOrder.verify(schedulerService).add(jobCaptor.capture(), any(Trigger.class));
 		inOrder.verifyNoMoreInteractions();
@@ -187,8 +185,11 @@ public class DefaultSchedulerFacadeTest {
 		capturedJob.execute();
 
 		// then
-		verify(callback).start();
-		verifyNoMoreInteractions(callback);
+		
+		inOrder = inOrder(callback);
+		inOrder.verify(callback).start();
+		inOrder.verify(callback).stop();
+		inOrder.verifyNoMoreInteractions();
 	}
 
 }

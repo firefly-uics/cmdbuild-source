@@ -20,6 +20,7 @@ import java.util.Map;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceType;
+import org.cmdbuild.data.store.task.AsynchronousEventTaskDefinition;
 import org.cmdbuild.data.store.task.ConnectorTaskDefinition;
 import org.cmdbuild.data.store.task.ReadEmailTaskDefinition;
 import org.cmdbuild.data.store.task.StartWorkflowTaskDefinition;
@@ -44,6 +45,31 @@ import com.google.common.collect.Maps;
 public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 	/**
+	 * Container for all {@link AsynchronousEventTaskDefinition} parameter
+	 * names.
+	 */
+	public static class AsynchronousEvent {
+
+		private AsynchronousEvent() {
+			// prevents instantiation
+		}
+
+		private static final String ALL_PREFIX = EMPTY;
+
+		private static final String FILTER_PREFIX = ALL_PREFIX + "filter.";
+		public static final String FILTER_CLASSNAME = FILTER_PREFIX + "classname";
+		public static final String FILTER_CARDS = FILTER_PREFIX + "cards";
+
+		private static final String ACTION_PREFIX = ALL_PREFIX + "action.";
+
+		private static final String EMAIL_PREFIX = ACTION_PREFIX + "email.";
+		public static final String EMAIL_ACTIVE = EMAIL_PREFIX + "active";
+		public static final String EMAIL_ACCOUNT = EMAIL_PREFIX + "account";
+		public static final String EMAIL_TEMPLATE = EMAIL_PREFIX + "template";
+
+	}
+
+	/**
 	 * Container for all {@link ConnectorTaskDefinition} parameter names.
 	 */
 	public static class Connector {
@@ -52,7 +78,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 			// prevents instantiation
 		}
 
-		private static final String ALL_PREFIX = "connector.";
+		private static final String ALL_PREFIX = EMPTY;
 
 		private static final String DATA_SOURCE_PREFIX = ALL_PREFIX + "datasource.";
 		public static final String DATA_SOURCE_TYPE = DATA_SOURCE_PREFIX + "type";
@@ -91,7 +117,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 			// prevents instantiation
 		}
 
-		private static final String ALL_PREFIX = "email.";
+		private static final String ALL_PREFIX = EMPTY;
 
 		public static final String ACCOUNT_NAME = ALL_PREFIX + "account.name";
 
@@ -99,17 +125,17 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		public static final String FILTER_FROM_REGEX = FILTER_PREFIX + "from.regex";
 		public static final String FILTER_SUBJECT_REGEX = FILTER_PREFIX + "subject.regex";
 
-		private static final String RULE_PREFIX = ALL_PREFIX + "rule.";
+		private static final String ACTION_PREFIX = ALL_PREFIX + "action.";
 
-		private static final String ATTACHMENTS_PREFIX = RULE_PREFIX + "attachments.";
+		private static final String ATTACHMENTS_PREFIX = ACTION_PREFIX + "attachments.";
 		public static final String ATTACHMENTS_ACTIVE = ATTACHMENTS_PREFIX + "active";
 		public static final String ATTACHMENTS_CATEGORY = ATTACHMENTS_PREFIX + "category";
 
-		private static final String NOTIFICATION_PREFIX = RULE_PREFIX + "notification.";
+		private static final String NOTIFICATION_PREFIX = ACTION_PREFIX + "notification.";
 		public static final String NOTIFICATION_ACTIVE = NOTIFICATION_PREFIX + "active";
 		public static final String NOTIFICATION_TEMPLATE = NOTIFICATION_PREFIX + "template";
 
-		private static final String WORKFLOW_PREFIX = RULE_PREFIX + "workflow.";
+		private static final String WORKFLOW_PREFIX = ACTION_PREFIX + "workflow.";
 		public static final String WORKFLOW_ACTIVE = WORKFLOW_PREFIX + "active";
 		public static final String WORKFLOW_ADVANCE = WORKFLOW_PREFIX + "advance";
 		public static final String WORKFLOW_CLASS_NAME = WORKFLOW_PREFIX + "class.name";
@@ -161,8 +187,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 			// prevents instantiation
 		}
 
-		public static final String CLASSNAME = "classname";
-		public static final String ATTRIBUTES = "attributes";
+		private static final String ALL_PREFIX = EMPTY;
+
+		public static final String CLASSNAME = ALL_PREFIX + "classname";
+		public static final String ATTRIBUTES = ALL_PREFIX + "attributes";
 
 	}
 
@@ -486,6 +514,23 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		}
 
 		@Override
+		public void visit(final AsynchronousEventTask task) {
+			this.target = org.cmdbuild.data.store.task.AsynchronousEventTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withRunningStatus(task.isActive()) //
+					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
+					.withParameter(AsynchronousEvent.FILTER_CLASSNAME, task.getTargetClassname()) //
+					.withParameter(AsynchronousEvent.FILTER_CARDS, task.getFilter()) //
+					.withParameter(AsynchronousEvent.EMAIL_ACTIVE, //
+							Boolean.toString(task.isNotificationActive())) //
+					.withParameter(AsynchronousEvent.EMAIL_ACCOUNT, task.getNotificationAccount()) //
+					.withParameter(AsynchronousEvent.EMAIL_TEMPLATE, task.getNotificationTemplate()) //
+					.build();
+		}
+
+		@Override
 		public void visit(final ConnectorTask task) {
 			final SourceConfiguration sourceConfiguration = task.getSourceConfiguration();
 			this.target = org.cmdbuild.data.store.task.ConnectorTask.newInstance() //
@@ -493,6 +538,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withDescription(task.getDescription()) //
 					.withRunningStatus(task.isActive()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
 					.withParameter(Connector.NOTIFICATION_ACTIVE, //
 							Boolean.toString(task.isNotificationActive())) //
 					.withParameter(Connector.NOTIFICATION_ACCOUNT, task.getNotificationAccount()) //
@@ -543,6 +589,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withDescription(task.getDescription()) //
 					.withRunningStatus(task.isActive()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
 					.withParameter(ReadEmail.ACCOUNT_NAME, task.getEmailAccount()) //
 					.withParameter(ReadEmail.FILTER_FROM_REGEX, Joiner.on(LINE_SEPARATOR) //
 							.join(task.getRegexFromFilter())) //
@@ -579,6 +626,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withDescription(task.getDescription()) //
 					.withRunningStatus(task.isActive()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
 					.withParameter(StartWorkflow.CLASSNAME, task.getProcessClass()) //
 					.withParameter(StartWorkflow.ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
@@ -643,6 +691,23 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 		}
 
 		@Override
+		public void visit(final org.cmdbuild.data.store.task.AsynchronousEventTask task) {
+			target = AsynchronousEventTask.newInstance() //
+					.withId(task.getId()) //
+					.withDescription(task.getDescription()) //
+					.withActiveStatus(task.isRunning()) //
+					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
+					.withTargetClass(task.getParameter(AsynchronousEvent.FILTER_CLASSNAME)) //
+					.withFilter(task.getParameter(AsynchronousEvent.FILTER_CARDS)) //
+					.withNotificationStatus( //
+							Boolean.valueOf(task.getParameter(AsynchronousEvent.EMAIL_ACTIVE))) //
+					.withNotificationAccount(task.getParameter(AsynchronousEvent.EMAIL_ACCOUNT)) //
+					.withNotificationErrorTemplate(task.getParameter(AsynchronousEvent.EMAIL_TEMPLATE)) //
+					.build();
+		}
+
+		@Override
 		public void visit(final org.cmdbuild.data.store.task.ConnectorTask task) {
 			final String dataSourceType = task.getParameter(Connector.DATA_SOURCE_TYPE);
 			final String dataSourceConfiguration = task.getParameter(Connector.DATA_SOURCE_CONFIGURATION);
@@ -653,6 +718,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withDescription(task.getDescription()) //
 					.withActiveStatus(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
 					.withNotificationStatus( //
 							Boolean.valueOf(task.getParameter(Connector.NOTIFICATION_ACTIVE))) //
 					.withNotificationAccount(task.getParameter(Connector.NOTIFICATION_ACCOUNT)) //
@@ -703,6 +769,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withDescription(task.getDescription()) //
 					.withActiveStatus(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
 					.withEmailAccount(task.getParameter(ReadEmail.ACCOUNT_NAME)) //
 					.withRegexFromFilter( //
 							isEmpty(fromRegexFilters) ? EMPTY_FILTERS : Splitter.on(LINE_SEPARATOR) //
@@ -746,6 +813,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withDescription(task.getDescription()) //
 					.withActiveStatus(task.isRunning()) //
 					.withCronExpression(task.getCronExpression()) //
+					.withLastExecution(task.getLastExecution()) //
 					.withProcessClass(task.getParameter(StartWorkflow.CLASSNAME)) //
 					.withAttributes( //
 							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //

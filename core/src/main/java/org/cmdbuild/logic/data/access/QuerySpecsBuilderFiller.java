@@ -76,9 +76,13 @@ public class QuerySpecsBuilderFiller {
 	private CMClass sourceClass;
 
 	public QuerySpecsBuilderFiller(final CMDataView dataView, final QueryOptions queryOptions, final String className) {
+		this(dataView, queryOptions, dataView.findClass(className));
+	}
+
+	public QuerySpecsBuilderFiller(final CMDataView dataView, final QueryOptions queryOptions, final CMClass sourceClass) {
 		this.dataView = dataView;
 		this.queryOptions = queryOptions;
-		this.sourceClass = dataView.findClass(className);
+		this.sourceClass = sourceClass;
 	}
 
 	public CMClass getSourceClass() {

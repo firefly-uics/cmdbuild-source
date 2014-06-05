@@ -6,6 +6,8 @@ public interface SchedulerFacade {
 
 		void start();
 
+		void stop();
+
 	}
 
 	/**
