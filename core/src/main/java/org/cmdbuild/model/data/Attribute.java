@@ -1,19 +1,19 @@
 package org.cmdbuild.model.data;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.trim;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -166,7 +166,8 @@ public class Attribute {
 	public static class AttributeBuilder implements Builder<Attribute> {
 
 		private String name;
-		private String owner;
+		private String ownerName;
+		private String ownerNamespace;
 		private String description;
 		private String group;
 		private String fkDestinationName;
@@ -195,8 +196,8 @@ public class Attribute {
 		@Override
 		public Attribute build() {
 			Validate.isTrue(isNotBlank(name), "invalid name");
-			Validate.notNull(owner, "missing owner");
-			Validate.isTrue(isNotBlank(owner), "invalid name");
+			Validate.notNull(ownerName, "missing owner");
+			Validate.isTrue(isNotBlank(ownerName), "invalid name");
 			description = defaultIfBlank(description, name);
 			calculateType();
 			return new Attribute(this);
@@ -215,11 +216,16 @@ public class Attribute {
 			return this;
 		}
 
-		public AttributeBuilder withOwner(final String owner) {
-			this.owner = owner;
+		public AttributeBuilder withOwnerName(final String ownerName) {
+			this.ownerName = ownerName;
 			return this;
 		}
 
+		public AttributeBuilder withOwnerNamespace(final String ownerNamespace) {
+			this.ownerNamespace = ownerNamespace;
+			return this;
+		}
+		
 		public AttributeBuilder withDescription(final String description) {
 			this.description = description;
 			return this;
@@ -341,7 +347,8 @@ public class Attribute {
 
 	private final String name;
 	private final String description;
-	private final String owner;
+	private final String ownerName;
+	private final String ownerNamespace;
 	private final String group;
 	private final String fkDestinationName;
 	private final CMAttributeType<?> type;
@@ -358,8 +365,9 @@ public class Attribute {
 	private Attribute(final AttributeBuilder builder) {
 		this.name = builder.name;
 		this.description = builder.description;
-		this.owner = builder.owner;
-		this.group = builder.group == null ? StringUtils.EMPTY : builder.group;
+		this.ownerName = builder.ownerName;
+		this.ownerNamespace = builder.ownerNamespace;
+		this.group = builder.group == null ? EMPTY : builder.group;
 		this.fkDestinationName = builder.fkDestinationName;
 		this.type = builder.type;
 		this.defaultValue = builder.defaultValue;
@@ -381,10 +389,14 @@ public class Attribute {
 		return description;
 	}
 
-	public String getOwner() {
-		return owner;
+	public String getOwnerName() {
+		return ownerName;
 	}
 
+	public String getOwnerNamespace() {
+		return ownerNamespace;
+	}
+	
 	public String getGroup() {
 		return group;
 	}

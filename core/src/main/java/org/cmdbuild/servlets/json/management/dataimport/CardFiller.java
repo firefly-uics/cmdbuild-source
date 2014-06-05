@@ -132,7 +132,7 @@ public class CardFiller {
 		final LookupType lookupType = LookupType.newInstance().withName(lookupTypeName).build();
 
 		boolean set = false;
-		for (final Lookup lookup : lookupStore.listForType(lookupType)) {
+		for (final Lookup lookup : lookupStore.readAll(lookupType)) {
 			if (value.equals(lookup.description)) {
 				mutableCard.set( //
 						attributeName, //

@@ -218,7 +218,7 @@
 			text: CMDBuild.Translation.common.buttons.save,
 			disabled: true
 		}, {
-			text: CMDBuild.Translation.common.btns.abort,
+			text: CMDBuild.Translation.common.buttons.abort,
 			disabled: true
 		}];
 	}

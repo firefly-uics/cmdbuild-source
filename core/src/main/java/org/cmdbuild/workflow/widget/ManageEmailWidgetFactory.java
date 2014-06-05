@@ -1,8 +1,8 @@
 package org.cmdbuild.workflow.widget;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -74,14 +74,14 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 			final String templateName = readString(valueMap.get(key));
 			if (isNotBlank(templateName)) {
 				try {
-					final org.cmdbuild.model.email.EmailTemplate _template = emailTemplateLogic.read(templateName);
+					final EmailTemplateLogic.Template _template = emailTemplateLogic.read(templateName);
 					template.setFromAddress(_template.getFrom());
 					template.setToAddresses(_template.getTo());
-					template.setCcAddresses(_template.getCC());
+					template.setCcAddresses(_template.getCc());
 					template.setSubject(_template.getSubject());
 					template.setContent(_template.getBody());
 				} catch (final Exception e) {
-					logger.warn("error getting template, skipping", e);
+					logger.warn(marker, "error getting template, skipping", e);
 				}
 			}
 		}

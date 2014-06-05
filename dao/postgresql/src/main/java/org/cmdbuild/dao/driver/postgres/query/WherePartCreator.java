@@ -1,7 +1,7 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_GT;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_IN;
@@ -12,7 +12,6 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 
 import java.util.List;
 
-import org.cmdbuild.common.Holder;
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.SqlType;
@@ -51,6 +50,9 @@ import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+
 public class WherePartCreator extends PartCreator implements WhereClauseVisitor {
 
 	public static interface ActiveStatusChecker {
@@ -62,7 +64,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	private static final String CAST_OPERATOR = "::";
 	private static final String NO_CAST = null;
 
-	private static final Holder<Object> VALUE_NOT_REQUIRED = null;
+	private static final Supplier<Object> VALUE_NOT_REQUIRED = null;
 
 	private final QuerySpecs querySpecs;
 
@@ -234,20 +236,15 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 				append(String.format(template, quotedAttributeName));
 			}
 
-			private Holder<Object> valueOf(final Object value) {
+			private Supplier<Object> valueOf(final Object value) {
 				return WherePartCreator.this.valuesOf(value);
 			}
 
 		});
 	}
 
-	private Holder<Object> valuesOf(final Object value) {
-		return new Holder<Object>() {
-			@Override
-			public Object get() {
-				return value;
-			}
-		};
+	private Supplier<Object> valuesOf(final Object value) {
+		return Suppliers.ofInstance(value);
 	}
 
 	@Override
@@ -297,7 +294,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	}
 
 	private String attributeFilter(final QueryAliasAttribute attribute, final String attributeNameCast,
-			final String operator, final Holder<Object> holder) {
+			final String operator, final Supplier<Object> holder) {
 		final String attributeName = nameOf(attribute, attributeNameCast);
 		final String attributeCast = attributeCastOf(attribute, attributeNameCast);
 		return format("%s %s %s", attributeName, operator,

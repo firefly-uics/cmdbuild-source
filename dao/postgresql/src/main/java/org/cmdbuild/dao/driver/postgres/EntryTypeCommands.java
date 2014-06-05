@@ -1,9 +1,9 @@
 package org.cmdbuild.dao.driver.postgres;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.dao.driver.postgres.Const.DOMAIN_PREFIX;
 import static org.cmdbuild.dao.driver.postgres.SqlType.createAttributeType;
 import static org.cmdbuild.dao.driver.postgres.SqlType.getSqlTypeString;
@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -87,9 +87,11 @@ public class EntryTypeCommands implements LoggingSupport {
 				+ ", _cm_parent_id(table_id) AS parent_id" //
 				+ ", _cm_comment_for_table_id(table_id) AS table_comment" //
 				+ " FROM _cm_class_list() AS table_id"
-				// add where condition to retrieve only the
-				// classes in the default schema
-				+ " WHERE _cm_cmschema(table_id) = _cm_cmschema('\"Class\"'::regclass::oid)", classTreeBuilder);
+				/*
+				 * TODO configure usable schemas in another way
+				 */
+				+ " WHERE _cm_cmschema(table_id) IN (_cm_cmschema('\"Class\"'::regclass::oid), 'bim')",
+				classTreeBuilder);
 
 		return classTreeBuilder.getResult();
 	}

@@ -1,24 +1,24 @@
 package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.Iterables.size;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CODE_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUP_LIST;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NOTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NUMBER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ORIG_TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARENT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARENT_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SHORT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE_CAPITAL;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CODE_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUP_LIST;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NOTES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NUMBER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ORIG_TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PARENT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PARENT_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SHORT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE_CAPITAL;
 
 import java.util.Map;
 
@@ -82,8 +82,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 		final LookupType lookupType = LookupType.newInstance().withName(type).build();
 		final Iterable<Lookup> elements = lookupLogic().getAllLookup(lookupType, active);
 
+		final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade());
+
 		for (final Lookup element : elements) {
-			serializer.append("rows", LookupSerializer.serializeLookup(element, shortForm));
+			serializer.append("rows", lookupSerializer.serializeLookup(element, shortForm));
 		}
 
 		serializer.put("total", size(elements));
@@ -99,8 +101,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 		final LookupType lookupType = LookupType.newInstance().withName(type).build();
 		final Iterable<Lookup> elements = lookupLogic().getAllLookupOfParent(lookupType);
 
+		final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade());
+
 		for (final Lookup lookup : elements) {
-			out.append("rows", LookupSerializer.serializeLookupParent(lookup));
+			out.append("rows", lookupSerializer.serializeLookupParent(lookup));
 		}
 
 		return out;
@@ -141,7 +145,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 				.withCode(code) //
 				.withDescription(description) //
 				.withType(LookupType.newInstance() //
-				.withName(type)) //
+						.withName(type)) //
 				.withParentId(Long.valueOf(parentId)) //
 				.withNotes(notes) //
 				.withDefaultStatus(isDefault) //
@@ -150,8 +154,8 @@ public class ModLookup extends JSONBaseWithSpringContext {
 
 		final Long lookupId = lookupLogic().createOrUpdateLookup(lookup);
 		lookup.setId(lookupId);
-
-		serializer.put("lookup", LookupSerializer.serializeLookup(lookup));
+		final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade());
+		serializer.put("lookup", lookupSerializer.serializeLookup(lookup));
 		return serializer;
 	}
 

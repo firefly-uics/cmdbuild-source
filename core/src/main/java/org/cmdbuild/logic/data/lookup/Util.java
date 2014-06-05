@@ -2,7 +2,7 @@ package org.cmdbuild.logic.data.lookup;
 
 import java.util.Set;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.slf4j.Logger;

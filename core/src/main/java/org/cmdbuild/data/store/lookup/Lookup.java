@@ -1,14 +1,13 @@
 package org.cmdbuild.data.store.lookup;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-import org.cmdbuild.common.Builder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.lookup.LookupType.LookupTypeBuilder;
 
 public final class Lookup implements Storable {
 
-	public static class LookupBuilder implements Builder<Lookup> {
+	public static class LookupBuilder implements org.apache.commons.lang3.builder.Builder<Lookup> {
 
 		private Long id;
 		private String code;
@@ -70,7 +69,7 @@ public final class Lookup implements Storable {
 			return this;
 		}
 
-		public Lookup.LookupBuilder withType(final Builder<LookupType> value) {
+		public Lookup.LookupBuilder withType(final org.apache.commons.lang3.builder.Builder<LookupType> value) {
 			this.type = value.build();
 			return this;
 		}
@@ -156,5 +155,10 @@ public final class Lookup implements Storable {
 
 	public void setId(final Long id) {
 		this.id = id;
+	}
+
+	// FIXME Do I really need it?
+	public String getDescription() {
+		return description;
 	}
 }

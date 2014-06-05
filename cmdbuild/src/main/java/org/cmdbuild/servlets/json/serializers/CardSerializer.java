@@ -1,11 +1,11 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_ID_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.RESULTS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.RESULTS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ROWS;
 
 import java.util.Map;
 
@@ -33,13 +33,15 @@ public class CardSerializer {
 
 	private final DataAccessLogic dataAccessLogic;
 	private final RelationAttributeSerializer relationAttributeSerializer;
+	private final TranslationFacade translationFacade;
 
 	public CardSerializer( //
 			final SystemDataAccessLogicBuilder dataAccessLogicBuilder, //
-			final RelationAttributeSerializer relationAttributeSerializer //
-	) {
+			final RelationAttributeSerializer relationAttributeSerializer, //
+			final TranslationFacade translationFacade) {
 		this.dataAccessLogic = dataAccessLogicBuilder.build();
 		this.relationAttributeSerializer = relationAttributeSerializer;
+		this.translationFacade = translationFacade;
 	}
 
 	// TODO continue the implementation,
@@ -56,7 +58,8 @@ public class CardSerializer {
 			if (inValue instanceof IdAndDescription) {
 
 				if (inValue instanceof LookupValue) {
-					outValue = LookupSerializer.serializeLookupValue((LookupValue)inValue);
+					final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade);
+					outValue = lookupSerializer.serializeLookupValue((LookupValue) inValue);
 				} else {
 					final IdAndDescription idAndDescription = IdAndDescription.class.cast(inValue);
 					final Map<String, Object> map = Maps.newHashMap();
@@ -78,10 +81,9 @@ public class CardSerializer {
 		json.put(CLASS_ID_CAPITAL, card.getClassId());
 
 		/*
-		 * We must serialize the class description
-		 * Is used listing the card of a superclass to
-		 * know the effective class
-		 * The ugly key is driven by backward compatibility
+		 * We must serialize the class description Is used listing the card of a
+		 * superclass to know the effective class The ugly key is driven by
+		 * backward compatibility
 		 */
 		json.put("IdClass_value", card.getClassDescription());
 

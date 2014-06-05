@@ -7,8 +7,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.cmdbuild.logic.setup.DefaultModulesHandler;
-import org.cmdbuild.logic.setup.SetUpLogic.Module;
-import org.cmdbuild.logic.setup.SetUpLogic.ModulesHandler;
+import org.cmdbuild.logic.setup.SetupLogic.Module;
+import org.cmdbuild.logic.setup.SetupLogic.ModulesHandler;
 import org.junit.Before;
 import org.junit.Test;
 

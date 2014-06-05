@@ -1,11 +1,11 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.START;
-import static org.cmdbuild.servlets.json.ComunicationConstants.STATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.START;
+import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,19 +19,19 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityDefinition;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonActivityInstance;
 import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonProcessCard;
 import org.cmdbuild.servlets.json.util.FlowStatusFilterElementGetter;
-import org.cmdbuild.servlets.json.util.JsonFilterHelper;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.cmdbuild.workflow.ActivityPerformer;
 import org.cmdbuild.workflow.ActivityPerformerExpressionEvaluator;
@@ -87,7 +87,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 		final List<JsonProcessCard> processInstances = Lists.newArrayList();
 		final PagedElements<UserProcessInstance> response = workflowLogic().query(className, queryOptions);
 		for (final UserProcessInstance pi : response) {
-			processInstances.add(new JsonProcessCard(pi));
+			processInstances.add(new JsonProcessCard(pi, translationFacade()));
 		}
 
 		return JsonResponse.success(new HashMap<String, Object>() {
@@ -122,7 +122,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 			final String expression = performer.getValue();
 
 			final TemplateResolver templateResolver = activityPerformerTemplateResolverFactory().create();
-			final String resolvedExpression = templateResolver.simpleEval(expression);
+			final String resolvedExpression = templateResolver.resolve(expression);
 
 			final ActivityPerformerExpressionEvaluator evaluator = new BshActivityPerformerExpressionEvaluator(
 					resolvedExpression);

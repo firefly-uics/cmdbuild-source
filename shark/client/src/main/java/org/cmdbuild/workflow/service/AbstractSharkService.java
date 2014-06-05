@@ -7,8 +7,8 @@ import java.util.Properties;
 
 import javax.transaction.NotSupportedException;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.event.NullUpdateOperationListener;
 import org.enhydra.shark.api.client.wfmc.wapi.WAPI;
@@ -109,7 +109,7 @@ public abstract class AbstractSharkService implements CMWorkflowService {
 	}
 
 	public void setUpdateOperationListener(final UpdateOperationListener updateOperationListener) {
-		Validate.notNull(updateOperationListener);
+		Validate.notNull(updateOperationListener, "what a mess");
 		this.updateOperationListener = updateOperationListener;
 	}
 

@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.Iterables.isEmpty;
-import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
@@ -30,7 +30,7 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ON
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.collect.Mapper;
 import org.cmdbuild.cql.facade.CQLAnalyzer.Callback;
 import org.cmdbuild.cql.facade.CQLFacade;

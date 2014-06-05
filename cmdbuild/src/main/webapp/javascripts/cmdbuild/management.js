@@ -14,7 +14,7 @@
 	var processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
 		rootVisible: true
 	});
-	 // TODO move in common
+	// TODO move in common
 	var dashboardsAccordion = new CMDBuild.view.administration.accordion.CMDashboardAccordion();
 	var dataViewAccordion = new CMDBuild.view.management.dataView.CMDataViewAccordion({
 		cmControllerType: CMDBuild.controller.management.common.CMFakeIdAccordionController
@@ -34,7 +34,6 @@
 						me.buildComponents();
 					};
 
-
 				CMDBuild.view.CMMainViewport.showSplash();
 
 				// maybe a single request with all the configuration could be better
@@ -42,39 +41,49 @@
 					success: function(response, options,decoded) {
 						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
 
-						CMDBuild.ServiceProxy.configuration.readMainConfiguration({
+						CMDBuild.ServiceProxy.configuration.readAll({
 							success: function(response, options, decoded) {
-								CMDBuild.Config.cmdbuild = decoded.data;
+								// cmdbuild
+								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
 
-								CMDBuild.ServiceProxy.configuration.readGisConfiguration({
-									success: function(response, options, decoded) {
-										CMDBuild.Config.gis = decoded.data;
-										CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+								// bim
+								CMDBuild.Config.bim = decoded.bim;
+								CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
 
-										CMDBuild.ServiceProxy.configuration.read({
-											success: function(response, options,decoded) {
-												CMDBuild.Config.graph = decoded.data;
+								// graph
+								CMDBuild.Config.graph = decoded.graph;
 
-												CMDBuild.ServiceProxy.configuration.readWFConfiguration({
-													success : function(response, options, decoded) {
-														CMDBuild.Config.workflow = decoded.data;
+								// workflow
+								CMDBuild.Config.workflow = decoded.workflow;
 
-														CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
-														CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
-															success: function(operation, config, response) {
-																CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
-																CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = response.geoServerLayersMapping;
-															},
-															callback: cb
-														});
-													}
-												});
-											}
-										},"graph");
-									}
+								// gis
+								CMDBuild.Config.gis = decoded.gis;
+								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
+
+								// gis and bim extra configuration
+								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
+								CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
+									success: function(operation, config, response) {
+										CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root = response.root;
+										CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.geoServerLayersMapping = response.geoServerLayersMapping;
+
+										if (CMDBuild.Config.bim.enabled) {
+											CMDBuild.bim.proxy.rootClassName({
+												success: function(operation, config, response) {
+													CMDBuild.Config.bim.rootClass = response.root;
+												},
+												callback: cb
+											});
+										} else {
+											cb();
+										}
+
+									} 
 								});
+
 							}
 						});
+
 					}
 				});
 			},
@@ -124,14 +133,11 @@
 					this.cmAccordions.push(this.classesAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled(processAccordion.cmName)
-					&& CMDBuild.Config.workflow.enabled == "true") {
-
+				if (!_CMUIConfiguration.isModuleDisabled(processAccordion.cmName) && CMDBuild.Config.workflow.enabled == "true") {
 					this.processAccordion = processAccordion;
 					this.cmAccordions.push(this.processAccordion);
 				}
 				if (!_CMUIConfiguration.isModuleDisabled(dataViewAccordion.cmName)) {
-
 					this.dataViewAccordion = dataViewAccordion;
 					this.cmAccordions.push(this.dataViewAccordion);
 				}
@@ -150,26 +156,23 @@
 					title: CMDBuild.Translation.management.modutilities.title
 				});
 
-				if (this.utilitiesTree.getRootNode().childNodes.length > 0) {
+				if (this.utilitiesTree.getRootNode().childNodes.length > 0)
 					this.cmAccordions.push(this.utilitiesTree);
-				}
 
 				for (var moduleName in this.utilitiesTree.submodules) {
 					var cmName = this.utilitiesTree.getSubmoduleCMName(moduleName);
-					if (!_CMUIConfiguration.isModuleDisabled(cmName)) {
-						addUtilitySubpanel(cmName, this.cmPanels);
-					}
-				}
 
+					if (!_CMUIConfiguration.isModuleDisabled(cmName))
+						addUtilitySubpanel(cmName, this.cmPanels);
+				}
+				
 				this.loadResources();
 
-				if (_CMUIConfiguration.isFullScreenMode()) {
+				if (_CMUIConfiguration.isFullScreenMode())
 					_CMUIState.onlyGrid();
-				}
 			},
 
 			loadResources: function() {
-
 				_CMCache.syncAttachmentCategories();
 
 				var me = this,
@@ -188,10 +191,11 @@
 						);
 
 						/* *********************************
-						 * Resume here the layouts operations 
+						 * Resume here the layouts operations
 						 */
 						Ext.resumeLayouts(true);
 						/* *********************************/
+
 						_CMMainViewportController.viewport.doLayout();
 
 						CMDBuild.view.CMMainViewport.hideSplash(function() {
@@ -226,6 +230,7 @@
 						// loaded
 						var readMenuParams = {};
 						readMenuParams[_CMProxy.parameter.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
+
 						CMDBuild.ServiceProxy.menu.read({
 							params: readMenuParams,
 							success: function(response, options, decoded) {
@@ -323,8 +328,8 @@
 			}
 		};
 
-		if (typeof builders[cmName] == "function") {
+		if (typeof builders[cmName] == "function")
 			panels.push(builders[cmName]());
-		}
 	}
+
 })();

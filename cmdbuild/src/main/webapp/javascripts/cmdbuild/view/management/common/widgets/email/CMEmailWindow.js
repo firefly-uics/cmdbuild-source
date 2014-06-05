@@ -1,6 +1,7 @@
 (function() {
 
 // TODO bind X button on top of window, to save update after click
+	Ext.require('CMDBuild.core.proxy.CMProxyEmailTemplates');
 
 var reader = CMDBuild.management.model.widget.ManageEmailConfigurationReader;
 var fields = reader.FIELDS;
@@ -86,7 +87,19 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindow", {
 	initComponent : function() {
 
 		var me = this;
-
+		this.selectedDataStore = CMDBuild.core.proxy.CMProxyEmailTemplates.getStore();
+		this.selectedDataStore.load({
+			params: {},
+			callback: function(templates) {
+				for (var i = 0; i < templates.length; i++) {
+					var tmp = templates[i];
+					btnTemplates.menu.add({
+						text: tmp.get("name") + " - " + tmp.get("description"),
+						index: i
+					});
+				}
+			}
+		});
 		var body = bodyBuild(me);
 		_CMProxy.emailTemplate.read({});
 		this.attachmentPanelsContainer = buildAttachmentPanelsContainer(me);
@@ -95,6 +108,21 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindow", {
 
 		// to reach the basic form outside
 		this.form = formPanel.getForm();
+		var btnTemplates = {
+			iconCls : 'clone',
+			xtype: "splitbutton",
+			text : /*@@*/"Compose from template",
+		    menu: new Ext.menu.Menu({
+		        items: [],
+		        listeners: {
+		        	click: function( menu, item, e, eOpts ) {
+		        		var record = me.selectedDataStore.getAt(item.index);
+		        		loadFormValues(me.form, record.raw);
+		        	}
+		        }
+		    })
+		};
+		this.tbar = [btnTemplates];
 
 		this.title = CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose;
 		this.layout = {
@@ -337,5 +365,23 @@ function htmlComposeMessage(errors) {
 		messages += msg;
 	}
 	return messages;
+}
+function loadFormValues(form, record) {
+	form.setValues([{
+		id: fields.TO_ADDRESS,
+		value: record.to
+	},{
+		id: fields.FROM_ADDRESS,
+		value: record.from
+	},{
+		id: fields.CC_ADDRESS,
+		value: record.cc
+	},{
+		id: fields.SUBJECT,
+		value: record.subject
+	},{
+		id: fields.CONTENT,
+		value: record.body
+	}]);
 }
 })();

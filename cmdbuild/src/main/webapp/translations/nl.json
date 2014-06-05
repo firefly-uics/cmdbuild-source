@@ -1,8 +1,43 @@
 {
 	"description": "Nederlands",
-	"release": "2.1-dev",
+	"release": "2.2-dev",
 	"administration": {
 		"description": "Administratie module",
+		"email": {
+			"title": "<em>Email</em>",
+			"accounts": {
+				"account": "<em>Account</em>",
+				"active": "<em>Active</em>",
+				"add": "<em>Add account</em>",
+				"credentials": "<em>Credentials</em>",
+				"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
+				"enableSsl": "<em>Enable SSL</em>",
+				"imapPort": "<em>IMAP port</em>",
+				"imapServer": "<em>IMAP server</em>",
+				"incoming": "<em>Incoming</em>",
+				"incomingFolder": "<em>Incoming folder</em>",
+				"isDefault": "<em>Default</em>",
+				"modify": "<em>Modify account</em>",
+				"outgoing": "<em>Outgoing</em>",
+				"password": "<em>Password</em>",
+				"processedFolder": "<em>Processed folder</em>",
+				"rejectedFolder": "<em>Rejected folder</em>",
+				"remove": "<em>Remove account</em>",
+				"setDefault": "<em>Set as default</em>",
+				"smtpPort": "<em>SMTP Port</em>",
+				"smtpServer": "<em>SMTP server</em>",
+				"title": "<em>Accounts</em>",
+				"username": "<em>Username</em>"
+			},
+			"templates": {
+				"add": "<em>Add template</em>",
+				"body": "<em>Body</em>",
+				"modify": "<em>Modify template</em>",
+				"remove": "<em>Remove template</em>",
+				"template": "<em>Template</em>",
+				"title": "<em>Templates</em>"
+			}
+		},
 		"modClass": {
 			"add_class": "Klas toevoegen",
 			"attributeProperties": {
@@ -180,6 +215,9 @@
 				".Workflow": {
 					"title": "<em>Start workflow</em>"
 				},
+				".NavigationTree": {
+					"title": "<em>Navigation tree</em>"
+				},
 				".CreateModifyCard": {
 					"fields": {
 						"target": "Doel Klas",
@@ -337,41 +375,10 @@
 			},
 			"include_inherited": "Inclusief ge-erfte",
 			"process_property": "Eigenschap",
-			"scheduler": {
-				"addJob": "Taak toevoegen",
-				"addParameter": "Parameter toevoegen",
-				"advanced": "Geavanceerd",
-				"basic": "Basis",
-				"cronexpression": "Cron expressie",
-				"dayOfMounth": "Dag van de maand",
-				"dayOfWeek": "Dag van de week",
-				"deleteJob": "Verwijder taak",
-				"description": "Omschrijving",
-				"every": "Iedere ",
-				"everyDay": "Iedere dag",
-				"everyHour": "Ieder uur",
-				"everyMounth": "Iedere maand",
-				"everyYear": "Ieder jaar",
-				"exactly": "Op een precies",
-				"from": "van",
-				"hour": "uur",
-				"inastepwith": "Gelijktijdig met",
-				"job": "Taak",
-				"key": "Attribuut",
-				"minute": "Minuut",
-				"modifyJob": "Taak aanpassen",
-				"mounth": "Maand",
-				"params": "Parameters",
-				"range": "In een bereik",
-				"removeParameter": "Parameter verwijderen",
-				"to": "tot",
-				"value": "Waarde"
-			},
 			"tabs": {
 				"attributes": "Attributen",
 				"domains": "Domeinen",
 				"properties": "Eigenschappen",
-				"scheduling": "Rooster",
 				"xpdl": "XPDL"
 			},
 			"title": "Proces beheer",
@@ -634,18 +641,6 @@
 			"setupTitle": "Configuratie",
 			"workflow": {
 				"credential": "Rechten",
-				"email": {
-					"address": "Email adres",
-					"imapserver": "IMAP server",
-					"incoming_mail_server": "Inkomende mail server",
-					"outgoing_mail_srver": "Uitgaande mail server",
-					"password": "Wachtwoord",
-					"port": "Poort",
-					"smtpserver": "SMTP server",
-					"ssl": "Deblokkeer SSL",
-					"title": "Email",
-					"username": "Gebruikersnaam"
-				},
 				"enabled": "Geaktiveerd",
 				"endpoint": "Server URL",
 				"engine": "Machine naam",
@@ -657,30 +652,139 @@
 				"user": "Gebruikernaam"
 			}
 		},
+		"tasks": {
+			"add": "<em>Add task</em>",
+			"all": "<em>All</em>",
+			"clone": "<em>Clone task</em>",
+			"cronForm" : {
+				"dayOfMounth": "<em>Day of month</em>",
+				"advanced": "<em>Advanced</em>",
+				"basic": "<em>Basic</em>",
+				"dayOfWeek": "<em>Day of week</em>",
+				"everyDay": "<em>Every day</em>",
+				"everyHour": "<em>Every hour</em>",
+				"everyMounth": "<em>Every month</em>",
+				"everyYear": "<em>Every year</em>",
+				"hour": "<em>Hour</em>",
+				"minute": "<em>Minute</em>",
+				"mounth": "<em>Month</em>"
+			},
+			"errorMessages": {
+				"taskConnector": {
+					"emptyAttributeLevelMapping": "<em>Attribute level mapping table must be correctly filled.</em>",
+					"emptyClassLevelMapping": "<em>Class level mapping table must be correctly filled.</em>",
+					"emptyReferenceLevelMapping": "<em>Reference level mapping table must be correctly filled.</em>"
+				}
+			},
+			"modify": "<em>Modify task</em>",
+			"notificationForm": {
+				"account": "<em>Account</em>",
+				"template": "<em>Email template</em>",
+				"templateError": "<em>Error email template</em>",
+				"title": "<em>Send notification email</em>",
+				"titlePlur": "<em>Send notifications email</em>"
+			},
+			"remove": "<em>Remove task</em>",
+			"running": "<em>Running</em>",
+			"startLabel": "<em>Start task</em>",
+			"startOnSave": "<em>Start on save</em>",
+			"startWorkflow": "<em>Start process</em>",
+			"stopLabel": "<em>Stop task</em>",
+			"stopped": "<em>Stopped</em>",
+			"title": "<em>Task manager</em>",
+			"type": "<em>Type</em>",
+			"taskConnector": {
+				"attributeLevelMapping": "<em>Attribute mapping</em>",
+				"classAttribute": "<em>CMDBuild attribute</em>",
+				"classLevelMapping": "<em>Class mapping</em>",
+				"className": "<em>CMDBuild class</em>",
+				"cudActions": {
+					"create": "<em>Create</em>",
+					"delete": "<em>Delete</em>",
+					"update": "<em>Update</em>"
+				},
+				"dataSourceDbFieldset": "<em>Datasource: Relational database</em>",
+				"dataSourceLdapFieldset": "<em>Datasource: LDAP directory</em>",
+				"dbName": "<em>Database name</em>",
+				"deletionType": "<em>Deletion type</em>",
+				"deletionTypes": {
+					"deleteCard": "<em>Delete card</em>",
+					"changeStatus": "<em>Change status</em>"
+				},
+				"domainName": "<em>Domain name</em>",
+				"instanceName": "<em>Instance</em>",
+				"isKey": "<em>Is key</em>",
+				"recipientAddress": "<em>Recipient address</em>",
+				"referenceMapping": "<em>References mapping</em>",
+				"senderAccount": "<em>Sender account</em>",
+				"sourceAttribute": "<em>External attribute</em>",
+				"sourceFilter": "<em>Entity filter</em>",
+				"sourceName": "<em>External entity</em>"
+			},
+			"taskEmail": {
+				"attachmentsCategory": "<em>Category</em>",
+				"bodyParsing": "<em>Body parsing</em>",
+				"emailAccount": "<em>Email account</em>",
+				"fromAddressFilter": "<em>Filter on FromAddress</em>",
+				"parsingKeyEnd": "<em>Key end delimiter</em>",
+				"parsingKeyStart": "<em>Key start delimeter</em>",
+				"parsingValueEnd": "<em>Value end delimiter</em>",
+				"parsingValueStart": "<em>Value start delimeter</em>",
+				"saveToAlfresco": "<em>Save attachments to Alfresco</em>",
+				"subjectFilter": "<em>Filter on Subject</em>"
+			},
+			"taskEvent": {
+				"eventPhases": {
+					"afterCreate": "<em>After creation</em>",
+					"afterUpdate": "<em>After update</em>",
+					"beforeDelete": "<em>Before delete</em>",
+					"beforeUpdate": "<em>Before update</em>"
+				},
+				"groupsToApply": "<em>Group to apply</em>",
+				"phase": "<em>Phase</em>"
+			},
+			"tasksTypes": {
+				"connector": "<em>Connector</em>",
+				"email": "<em>Email</em>",
+				"event": "<em>Event</em>",
+				"eventTypes": {
+					"asynchronous": "<em>Asynchronous</em>",
+					"synchronous": "<em>Synchronous</em>"
+				},
+				"workflow": "<em>Process</em>"
+			},
+			"workflow": "<em>Process</em>",
+			"workflowForm": {
+				"attributes": "<em>Process attributes</em>"
+			}
+		},
 		"welcome": {
 			"body": "Administratie module.",
 			"title": "Welkom"
 		}
 	},
+	"bimMod": {
+		"administration": {
+			"projects": {
+				"importIfc": "<em>Import IFC</em>"
+			}
+		}
+	},
 	"common": {
-		"btns": {
-			"abort": "Annuleren",
-			"apply": "Toepassen",
-			"close": "Sluiten",
-			"confirm": "OK",
-			"exportbtn": "Export",
-			"importbtn": "Import",
-			"save": "Opslaan",
-			"update": "Bijwerken"
-		},
 		"buttons": {
 			"abort": "Annuleren",
 			"add": "Toevoegen",
+			"apply": "Toepassen",
 			"as": "als",
 			"clone": "Dupliceer",
 			"close": "Sluiten",
+			"confirm": "OK",
+			"export": "Export",
+			"import": "Import",
 			"load": "Laad",
 			"modify": "Aanpassen",
+			"next": "<em>Next</em>",
+			"previous": "<em>Previous</em>",
 			"print": "Afdrukken",
 			"remove": "Verwijderen",
 			"save": "Opslaan",
@@ -791,6 +895,14 @@
 			"title": "Setup is klaar"
 		},
 		"title": "Instellen"
+	},
+	"cronTriggerField": {
+		"triggerFieldWindow": {
+			"every": "<em>Every </em>",
+			"exactly": "<em>At an exact</em>",
+			"inastepwith": "<em>In a step width</em>",
+			"range": "<em>In a range</em>"
+		}
 	},
 	"errors": {
 		"busy_wf_widgets": "The visual controls are busy, check the status of the server before trying again.",
@@ -937,12 +1049,16 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Controleer of de naamgeving, de methode naam en de parameters van de web service juist zijn"
 		},
 		"reference_invalid": "De waarde komt niet overeen met het filter",
+		"requiredFieldMessage": "<em>This field is required</em>",
 		"server_error": "Server onbereikbaar",
 		"server_error_code": "Fout onstaan tijdens verzenden van gegevens naar de server: ",
 		"show_detail": "Toon details",
 		"template_error": "Sjabloon fout",
 		"unknown_error": "Er is een fout opgetreden",
 		"wrong_wf_widgets": "Er was een fout tijdens de opslag van de volgende visual controls: "
+	},
+	"filterWindow": {
+		"add": "<em>Add filter</em>"
 	},
 	"info": {
 		"card_not_found": "De kaart past niet bij het huidige filter"
@@ -1293,28 +1409,46 @@
 		"warning_message": "Waarschuwing"
 	},
 	"active": "Aktief",
-	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
 	"addFilter": "Filter toevoegen",
+	"addProject": "<em>Add Project</em>",
 	"addTemplate": "<em>Add Template</em>",
 	"addView": "Venster toevoegen",
-	"attachmentsLookup": "<em>Email attachments Lookup</em>",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
+	"address": "<em>Address</em>",
 	"attachfile": "<em>Attach File</em>",
-	"availableFilters": "Beschikbare Filters",
+	"attachmentsLookup": "<em>Email attachments Lookup</em>",
 	"attention": "Attentie",
 	"attribute": "<em>Attribute</em>",
+	"availableFilters": "Beschikbare Filters",
 	"bcc": "<em>Bcc</em>",
+	"bim": "<em>BIM</em>",
 	"buttons_to_disable": "<em>Buttons to disable</em>",
+	"camera": "<em>Camera</em>",
 	"cc": "<em>Cc</em>",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
 	"choose_attachment_from_db": "<em>Choose attachments from Database</em>",
+	"class": "<em>Class</em>",
+	"classAttribute": "<em>Class attribute</em>",
+	"className": "<em>Class name</em>",
 	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
-	"clear_row_and_colun_privilege": "Verwijder rij en kolom rechten",
 	"clearFilter": "<em>Clear Filter</em>",
+	"clear_row_and_colun_privilege": "Verwijder rij en kolom rechten",
+	"container": "<em>Container</em>",
+	"controls": "<em>Controls</em>",
+	"cql_filter": "<em>CQL filter</em>",
 	"description_": "Omschrijving",
+	"disable": "<em>Disable</em>",
+	"display_less_attributes": "<em>Display less attributes</em>",
+	"display_more_attributes": "<em>Display more attributes</em>",
+	"download_ifc_file": "<em>Download Ifc file</em>",
 	"emailBody": "<em>Body</em>",
 	"emailTemplate": "<em>Email Template</em>",
+	"enable": "<em>Enable</em>",
 	"enabled": "Geaktiveerd",
 	"error": "Fout",
+	"error_bimserver_connection": "<em>I'm not able to connect to Bimserver</em>",
+	"export": "<em>Export</em>",
+	"expose": "<em>Expose</em>",
 	"file_name": "<em>File name</em>",
 	"filter": "Filter",
 	"filterView": "Van Filter",
@@ -1323,39 +1457,79 @@
 	"format_odt": "<em>OpenOffice Odt</em>",
 	"format_pdf": "<em>Adobe Pdf</em>",
 	"format_rtf": "<em>Rich Text Format</em>",
+	"from": "<em>From<em>",
+	"front": "<em>Front</em>",
 	"global": "<em>Global</em>",
+	"ifc_file": "<em>File IFC</em>",
 	"itIsNotAllowedFilterWithCalculatedParams": "<em>It's not allowed to use a filter with calculated parameters</em>",
 	"itIsNotAllowedFilterWithRuntimeParams": "<em>It's not allowed to use a filter with user selectable parameters</em>",
-	"loggedGroup": "<em>Logged Group</em>",
-	"loggedUser": "<em>Logged User</em>",
+	"last_checkin": "<em>Last checkin</em>",
+	"layers": "<em>Layers</em>",
 	"lock_cards_in_edit": "Blokkeer kaarten tijdens bewerken",
 	"lock_timeout": "Blokkeer afloop (seconden)",
-	"name": "Naam",
-	"not_set": "Niet gezet",
+	"loggedGroup": "<em>Logged Group</em>",
+	"loggedUser": "<em>Logged User</em>",
+	"main": "<em>Main</em>",
+	"mode": "<em>Mode</em>",
 	"modifyFilter": "Bijwerken Filter",
+	"modifyProject": "<em>Modify Project</em>",
 	"modifyTemplate": "<em>Modify Template</em>",
 	"modifyView": "Bijwerken Venster",
 	"multiGroup": "<em>Multi group</em>",
+	"name": "Naam",
+	"no_bim_project_for_card": "<em>There is no BIM project for this card</em>",
+	"not_set": "Niet gezet",
+	"open_3d_viewer": "<em>Open 3D viewer</em>",
+	"pan": "<em>Pan</em>",
+	"password": "<em>Password</em>",
+	"port": "<em>Port</em>",
 	"privileges_on_columns": "Kolom rechten",
 	"privileges_on_rows": "Rij rechten",
+	"projects": "Projects",
+	"reference_to_root": "<em>Reference to Root</em>",
+	"remove": "<em>Remove</em>",
 	"removeFilter": "Verwijder Filter",
+	"removeProject": "<em>Remove Project</em>",
 	"removeTemplate": "<em>Remove Template</em>",
 	"removeView": "Verwijder Venster",
 	"remove_formatting": "<em>Remove formatting</em>",
+	"reset": "<em>Reset</em>",
+	"root": "<em>Root</em>",
+	"rotate": "<em>Rotate</em>",
+	"row_add": "<em>Add row</em>",
 	"row_and_column_privileges": "Rij en kolom rechten",
-	"search_filters": "Zoek Filters",
+	"row_delete": "<em>Delete row</em>",
+	"row_edit": "<em>Edit row</em>",
+	"search_filters": "Zoek filters",
 	"select_a_class": "<em>Select a Class</em>",
+	"selected_object": "<em>Selected Object</em>",
+	"set": "Instellen",
 	"setFilter": "<em>Set Filter</em>",
 	"setLater": "<em>Input Parameter</em>",
-	"set": "Instellen",
 	"show_name_of_locker_user": "Toon blokkeerder gebruikersnaam",
+	"side": "<em>Side</em>",
 	"sqlView": "Van SQL",
 	"subject": "<em>Subject</em>",
 	"targetClass": "Doel Klas",
 	"to": "<em>To</em>",
+	"top": "<em>Top</em>",
+	"translations" : "<em>Translations</em>",
+	"translations_enabled" : "<em>Enabled languages</em>",
+	"transparent": "<em>Transparent</em>",
+	"tree": "<em>Tree</em>",
+	"tree_modify": "<em>Modify tree</em>",
+	"tree_navigation": "<em>Navigation tree</em>",
+	"tree_navigation_add": "<em>Add navigation tree</em>",
+	"tree_navigation_attributes": "<em>Navigation tree attributes</em>",
+	"tree_remove": "<em>Remove tree</em>",
+	"tree_root_cql": "<em>Root CQL filter</em>",
+	"trees_navigation": "<em>Navigation trees</em>",
 	"ui_configuration_for_groups": "<em>UI configuration for group</em>",
 	"unlock_all_cards": "Deblokkeer alle kaarten",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
+	"url": "<em>URL</em>",
+	"username": "<em>Username</em>",
+	"value": "<em>Value</em>",
 	"views": "Vensters",
 	"workflow": "<em>Workflow</em>",
 	"workflow_attributes": "<em>Workflow attributes</em>",
@@ -1363,5 +1537,6 @@
 	"workflow_by_name": "<em>by name</em>",
 	"workflow_cql_filter": "<em>Cql filter</em>",
 	"workflow_query_tipology": "<em>Selection</em>",
-	"you_have_not_set_a_filter": "U heeft geen filter ingesteld"
+	"you_have_not_set_a_filter": "U heeft geen filter ingesteld",
+	"zoom": "<em>Zoom</em>"
 }

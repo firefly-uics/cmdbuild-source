@@ -2,7 +2,7 @@ package org.cmdbuild.dao.driver.postgres.query;
 
 import static com.google.common.collect.FluentIterable.from;
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.join;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
 
 import java.util.Iterator;
@@ -51,7 +51,7 @@ public class DirectJoinPartCreator extends PartCreator {
 	private Iterator<String> directJoinClausesAsStrings(final QuerySpecs querySpecs) {
 		return from(querySpecs.getDirectJoins()) //
 				.transform(TO_STRING) //
-				.toImmutableSet() // used here to avoid duplicate clauses
+				.toSet() // used here to avoid duplicate clauses
 				.iterator();
 	}
 

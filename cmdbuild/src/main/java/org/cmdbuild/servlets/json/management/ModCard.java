@@ -2,33 +2,33 @@ package org.cmdbuild.servlets.json.management;
 
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CARD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CARDS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CONFIRMED;
-import static org.cmdbuild.servlets.json.ComunicationConstants.COUNT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DETAIL_CARD_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DETAIL_CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_LIMIT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_SOURCE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FUNCTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.MASTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.MASTER_CARD_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.MASTER_CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.OUT_OF_FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.POSITION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.RELATION_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.RETRY_WITHOUT_FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.START;
-import static org.cmdbuild.servlets.json.ComunicationConstants.STATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARD;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARDS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIRMED;
+import static org.cmdbuild.servlets.json.CommunicationConstants.COUNT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CARD_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_LIMIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_SOURCE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FUNCTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MASTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MASTER_CARD_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MASTER_CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.OUT_OF_FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.POSITION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.RELATION_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.RETRY_WITHOUT_FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.START;
+import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -52,13 +52,13 @@ import org.cmdbuild.logic.data.access.CMCardWithPosition;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
+import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.json.util.FlowStatusFilterElementGetter;
-import org.cmdbuild.servlets.json.util.JsonFilterHelper;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -175,7 +175,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
-		return cardSerializer().toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
+		return cardSerializer().toClient(response.elements(), response.totalSize());
 	}
 
 	private JSONObject getCardList(final String className, final JSONObject filter, final int limit, final int offset,
@@ -196,7 +196,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
-		return cardSerializer().toClient(response.getPaginatedCards(), response.getTotalNumberOfCards());
+		return cardSerializer().toClient(response.elements(), response.totalSize());
 	}
 
 	@JSONExported
@@ -216,7 +216,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.build();
 
 		final FetchCardListResponse response = systemDataAccessLogic().fetchSQLCards(functionName, queryOptions);
-		return cardSerializer().toClient(response.getPaginatedCards(), response.getTotalNumberOfCards(), CARDS);
+		return cardSerializer().toClient(response.elements(), response.totalSize(), CARDS);
 	}
 
 	@JSONExported
@@ -387,10 +387,10 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
 		if (!confirmed) {
-			final int numberOfCardsToUpdate = response.getTotalNumberOfCards() - cards.length();
+			final int numberOfCardsToUpdate = response.totalSize() - cards.length();
 			return out.put(COUNT, numberOfCardsToUpdate);
 		}
-		final Iterable<Card> fetchedCards = response.getPaginatedCards();
+		final Iterable<Card> fetchedCards = response.elements();
 		attributes.remove(CLASS_NAME);
 		attributes.remove(CARDS);
 		attributes.remove(FILTER);

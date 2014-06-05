@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.privileges;
 
-import static org.apache.commons.lang.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.ATTRIBUTES_PRIVILEGES_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GRANT_CLASS_NAME;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.GROUP_ID_ATTRIBUTE;
@@ -155,7 +155,7 @@ public class SecurityLogic implements Logic {
 	private Iterable<View> fetchAllViews() {
 		// TODO must be an external dependency
 		final DataViewStore<View> viewStore = DataViewStore.newInstance(view, viewConverter);
-		return viewStore.list();
+		return viewStore.readAll();
 	}
 
 	private Iterable<Filter> fetchAllGroupsFilters() {

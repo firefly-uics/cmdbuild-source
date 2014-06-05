@@ -1,10 +1,10 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.IS_ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USER_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IS_ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.USER_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.USER_NAME;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.text.SimpleDateFormat;
@@ -24,8 +24,8 @@ import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
+import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;

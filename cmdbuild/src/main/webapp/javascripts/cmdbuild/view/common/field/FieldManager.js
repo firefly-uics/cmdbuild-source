@@ -28,6 +28,10 @@
 			CMDBuild.Cache.getAttributeList(classId, callback);		
 		},
 
+		getAttributesMap: function () {
+			return attributesMap;
+		}, 
+		
 		getFieldForAttr: function(attribute, readonly, skipSubAttributes) {
 			if (attribute.fieldmode == "hidden" || attributeTypeIsNotHandled(attribute)) { 
 				return undefined;

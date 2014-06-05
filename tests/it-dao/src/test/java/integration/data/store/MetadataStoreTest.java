@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -14,6 +14,7 @@ import org.cmdbuild.data.converter.MetadataGroupable;
 import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.Metadata;
@@ -33,7 +34,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 
 	@Before
 	public void setUp() throws Exception {
-		final DataDefinitionLogic dataDefinitionLogic = new DataDefinitionLogic(dbDataView());
+		final DataDefinitionLogic dataDefinitionLogic = new DefaultDataDefinitionLogic(dbDataView());
 
 		dataDefinitionLogic.createOrUpdate(newClass("testClass"));
 		final CMAttribute testAttribute = dataDefinitionLogic
@@ -65,11 +66,11 @@ public class MetadataStoreTest extends IntegrationTestBase {
 		metadataStore.create(element);
 
 		// when
-		final List<Metadata> list = metadataStore.list();
+		final Collection<Metadata> list = metadataStore.readAll();
 
 		// then
 		assertThat(list.size(), equalTo(1));
-		assertThat(list.get(0), equalTo(element));
+		assertThat(list.iterator().next(), equalTo(element));
 	}
 
 	@Test
@@ -79,7 +80,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 		metadataStore.create(Metadata.of("bar", "baz"));
 
 		// when
-		final List<Metadata> list = metadataStore.list();
+		final Collection<Metadata> list = metadataStore.readAll();
 
 		// then
 		assertThat(list.size(), equalTo(2));
@@ -107,7 +108,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 
 		// when
 		metadataStore.update(Metadata.of("foo", "foobar"));
-		final List<Metadata> list = metadataStore.list();
+		final Collection<Metadata> list = metadataStore.readAll();
 
 		// then
 		assertThat(list, containsInAnyOrder(Metadata.of("foo", "foobar"), Metadata.of("bar", "baz")));
@@ -121,7 +122,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 
 		// when
 		metadataStore.delete(Metadata.of("foo"));
-		final List<Metadata> list = metadataStore.list();
+		final Collection<Metadata> list = metadataStore.readAll();
 
 		// then
 		assertThat(list.size(), equalTo(1));
@@ -136,8 +137,8 @@ public class MetadataStoreTest extends IntegrationTestBase {
 		anotherMetadataStore.create(Metadata.of("foo", "2"));
 
 		// when
-		final List<Metadata> list = metadataStore.list();
-		final List<Metadata> anotherList = anotherMetadataStore.list();
+		final Collection<Metadata> list = metadataStore.readAll();
+		final Collection<Metadata> anotherList = anotherMetadataStore.readAll();
 
 		// then
 		assertThat(list.size(), equalTo(2));
@@ -159,7 +160,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 	private Attribute newAttribute(final String name, final String owner) {
 		return org.cmdbuild.model.data.Attribute.newAttribute() //
 				.withName(name) //
-				.withOwner(owner) //
+				.withOwnerName(owner) //
 				.withType("TEXT") //
 				.build();
 	}

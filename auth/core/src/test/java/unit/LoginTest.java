@@ -27,7 +27,7 @@ public class LoginTest {
 		assertThat(emailLogin.getType(), is(LoginType.EMAIL));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void disallowsNullLoginStrings() {
 		Login.newInstance(null);
 	}

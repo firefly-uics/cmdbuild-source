@@ -1,11 +1,11 @@
 package unit.serializers.cardEditMode;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.logic.privileges.CardEditMode.PERSISTENCE_TO_LOGIC;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.commons.lang.StringUtils;
 import org.cmdbuild.logic.privileges.CardEditMode;
 import org.junit.Test;
 
@@ -28,7 +28,7 @@ public class PersistenceToLogic {
 	@Test
 	public void emptyStringProducesDefaultElement() throws Exception {
 		// given
-		final String persistenceString = StringUtils.EMPTY;
+		final String persistenceString = EMPTY;
 
 		// when
 		final CardEditMode cardEditMode = PERSISTENCE_TO_LOGIC.apply(persistenceString);

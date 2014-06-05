@@ -78,7 +78,7 @@
 		callForSubControllers: function(fnName, params) {
 			for (var i=0, l = this.subControllers.length, ct=null; i<l; ++i) {
 				ct = this.subControllers[i];
-				if (typeof fnName == "string" 
+				if (typeof fnName == "string"
 					&& typeof ct[fnName] == "function") {
 
 					params = Ext.isArray(params) ? params : [params];
@@ -112,6 +112,7 @@
 			buildNoteController(me, me.view.getNotePanel());
 			buildAttachmentsController(me, me.view.getAttachmentsPanel());
 			buildHistoryController(me, me.view.getHistoryPanel());
+			buildBimController(me, me.view.getGrid());
 			Ext.resumeLayouts();
 		},
 
@@ -148,11 +149,11 @@
 		},
 
 		onGridVisible: function onCardGridVisible(visible, selection) {
-			if (visible 
+			if (visible
 					&& this.entryType
 					&& this.card) {
 
-				if (selection 
+				if (selection
 					&& selection[0] && selection[0].get("Id") != this.card.get("Id")) {
 						this.gridController.openCard({
 							IdClass: this.entryType.get("id"),
@@ -162,12 +163,18 @@
 			}
 		},
 
+		/**
+		 * To clear view if there are no loaded records
+		 *
+		 * @param (Object) args
+		 * @param (Array) args[1] - loaded records array
+		 */
 		onGridLoad: function(args) {
-			// TODO notify to sub-controllers ?
-			// args[1] is the array with the loaded records
-			// so, if there are no records clear the view
-			if (args[1] && args[1].length == 0) {
+			// TODO notify to sub-controllers?
+			if (Ext.isEmpty(args[1])) {
 				this.view.getCardPanel().displayMode();
+				this.view.cardTabPanel.reset();
+				this.view.getHistoryPanel().disable();
 			}
 		}
 	});
@@ -297,6 +304,14 @@
 
 		me.cardHistoryPanelController = new CMDBuild.controller.management.classes.CMCardHistoryPanelController(view);
 		me.subControllers.push(me.cardHistoryPanelController);
+	}
+
+	function buildBimController(me, view) {
+		if (view == null) {return;}
+
+		if (CMDBuild.Config.bim.enabled) {
+			new CMDBuild.bim.management.CMBimController(view);
+		}
 	}
 
 	function onSelectionWentWrong() {

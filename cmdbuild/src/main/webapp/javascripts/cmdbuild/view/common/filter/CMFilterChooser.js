@@ -15,7 +15,7 @@
 		// configuration
 		className: "",
 		firstShowDetectEvent: "activate",
-		saveButtonText: CMDBuild.Translation.common.btns.confirm,
+		saveButtonText: CMDBuild.Translation.common.buttons.confirm,
 		abortButtonText: CMDBuild.Translation.common.buttons.abort,
 		// configuration
 
@@ -66,12 +66,12 @@
 			this.layout = "border";
 			this.buildGrid();
 			this.items = [
-				this.grid, 
+				this.grid,
 			{
 				xtype: "tabpanel",
 				region: "center",
 				border: false,
-				items: [ 
+				items: [
 					this.filterAttributesPanel, // inherited
 					this.filterRelationsPanel, // inherited
 					this.filterFunctionsPanel // inherited

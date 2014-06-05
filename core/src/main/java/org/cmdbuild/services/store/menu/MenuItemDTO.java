@@ -16,7 +16,7 @@ public class MenuItemDTO implements MenuItem {
 	private Number referencedElementId = 0; // default value
 	private Integer parentId;
 	private MenuItemType type;
-	private String description, referencedClassName, groupName;
+	private String description, referencedClassName, groupName, uniqueIdentifier;
 	private final List<MenuItem> children;
 	private Map<String, Object> specificTypeValues;
 
@@ -134,5 +134,15 @@ public class MenuItemDTO implements MenuItem {
 	@Override
 	public void sortChildByDescription() {
 		Collections.sort(this.children, new MenuStore.MenuItemDescripionComparator());
+	}
+
+	@Override
+	public String getUniqueIdentifier() {
+		return uniqueIdentifier;
+	}
+
+	@Override
+	public void setUniqueIdentifier(final String uniqueIdentifier) {
+		this.uniqueIdentifier = uniqueIdentifier;
 	}
 }

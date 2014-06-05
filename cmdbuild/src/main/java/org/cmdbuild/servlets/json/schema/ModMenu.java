@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.MENU;
+import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MENU;
 
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException;
@@ -35,7 +35,12 @@ public class ModMenu extends JSONBaseWithSpringContext {
 		final MenuStore store = menuStore();
 		final MenuItem menu = store.read(groupName);
 		final boolean withWrapper = true;
-		return MenuSerializer.toClient(menu, withWrapper);
+		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
+				.withRootItem(menu) //
+				.withTranslationFacade(translationFacade()) //
+				.withDataView(systemDataView()) //
+				.build();
+		return menuSerializer.toClient(withWrapper);
 	}
 
 	/**
@@ -58,7 +63,12 @@ public class ModMenu extends JSONBaseWithSpringContext {
 		final MenuItem availableMenu = store.getAvailableItems(groupName);
 		final boolean withWrapper = true;
 		final boolean sortByDescription = true;
-		return MenuSerializer.toClient(availableMenu, withWrapper, sortByDescription);
+		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
+				.withRootItem(availableMenu) //
+				.withTranslationFacade(translationFacade()) //
+				.withDataView(systemDataView()) //
+				.build();
+		return menuSerializer.toClient(availableMenu, withWrapper, sortByDescription);
 	}
 
 	/**
@@ -118,8 +128,12 @@ public class ModMenu extends JSONBaseWithSpringContext {
 		final MenuStore store = menuStore();
 		final MenuItem menu = store.getMenuToUseForGroup(groupName);
 		final boolean withWrapper = true;
-		return MenuSerializer.toClient(menu, withWrapper);
-
+		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
+				.withRootItem(menu) //
+				.withTranslationFacade(translationFacade()) //
+				.withDataView(systemDataView()) //
+				.build();
+		return menuSerializer.toClient(withWrapper);
 	}
 
 }

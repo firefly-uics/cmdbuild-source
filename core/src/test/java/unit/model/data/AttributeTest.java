@@ -1,13 +1,13 @@
 package unit.model.data;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CharAttributeType;
@@ -42,11 +42,11 @@ public class AttributeTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void missingNameThrowsException() {
 		a(newEmptyAttribute() //
-				.withOwner(OWNER) //
+				.withOwnerName(OWNER) //
 				.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void missingOwnerThowsException() {
 		a(newEmptyAttribute() //
 				.withName(NAME) //
@@ -57,7 +57,7 @@ public class AttributeTest {
 	public void missingTypeThowsException() {
 		assertThat(a(newEmptyAttribute() //
 				.withName(NAME) //
-				.withOwner(OWNER)) //
+				.withOwnerName(OWNER)) //
 				.getType(), is(instanceOf(UndefinedAttributeType.class)));
 	}
 
@@ -80,10 +80,10 @@ public class AttributeTest {
 	public void nameOwnerAndTypeAreRequiredAtributes() {
 		final Attribute attribute = a(newEmptyAttribute() //
 				.withName(NAME) //
-				.withOwner(OWNER) //
+				.withOwnerName(OWNER) //
 				.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS));
 		assertThat(attribute.getName(), equalTo(NAME));
-		assertThat(attribute.getOwner(), equalTo(OWNER));
+		assertThat(attribute.getOwnerName(), equalTo(OWNER));
 		assertThat(attribute.getType(), instanceOf(BooleanAttributeType.class));
 	}
 
@@ -234,7 +234,7 @@ public class AttributeTest {
 
 	private AttributeBuilder newValidAttribute() {
 		return newEmptyAttribute() //
-				.withOwner(OWNER) //
+				.withOwnerName(OWNER) //
 				.withName(NAME) //
 				.withType(TYPE_THAT_DOES_NOT_REQUIRE_PARAMS);
 	}

@@ -1,6 +1,6 @@
 package org.cmdbuild.data.store.email;
 
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.data.store.email.EmailConstants.CC_ADDRESSES_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.CONTENT_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
@@ -76,7 +76,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 	}
 
 	private Long getEmailLookupIdFrom(final EmailStatus emailStatus) {
-		for (final Lookup lookup : lookupStore.listForType(LookupType.newInstance() //
+		for (final Lookup lookup : lookupStore.readAll(LookupType.newInstance() //
 				.withName(EmailStatus.LOOKUP_TYPE) //
 				.build())) {
 			if (lookup.description.equals(emailStatus.getLookupName())) {

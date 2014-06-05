@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
-		<version>2.1.9.b-SNAPSHOT</version>
+		<version>2.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild-core</artifactId>
@@ -37,6 +37,21 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-scheduler-quartz</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-services-sync-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-services-sync-internal</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-services-sync-sql</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -121,12 +136,16 @@
 					<artifactId>avalon-framework-impl</artifactId>
 					<groupId>avalon-framework</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>commons-lang</artifactId>
+					<groupId>commons-lang</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-all</artifactId>
-			<version>2.0.1</version>
+			<version>2.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.barbecue</groupId>
@@ -182,6 +201,13 @@
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>
 			<version>1.6.1</version>
+		</dependency>
+
+		<!-- BIM -->
+		<dependency>
+			<groupId>org.cmdbuild</groupId>
+			<artifactId>cmdbuild-bim-bimserver</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>

@@ -25,6 +25,10 @@
 
 			var fields = this.callParent(arguments);
 
+			Ext.apply(this.description, {
+				translationsKeyType: "View", 
+				translationsKeyField: "Description"
+			});
 			this.classes = new CMDBuild.field.ErasableCombo({
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -81,6 +85,9 @@
 				entryType: className
 			}));
 
+			Ext.apply(this.description, {
+				translationsKeyName: record.get("name")
+			});
 			this.classes.setValue(className);
 			// the set value programmatic does not fire the select
 			// event, so call the delegates manually

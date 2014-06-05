@@ -33,8 +33,8 @@ import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.MetadataType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.DmsLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.dms.DmsLogic;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 

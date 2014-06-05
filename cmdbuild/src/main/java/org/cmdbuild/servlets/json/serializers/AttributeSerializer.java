@@ -1,21 +1,24 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_VALUE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EDITOR_TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD_MODE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
-import static org.cmdbuild.servlets.json.ComunicationConstants.INHERITED;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LENGTH;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUP;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NOT_NULL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRECISION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SCALE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SHOW_IN_GRID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.UNIQUE;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_VALUE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EDITOR_TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD_MODE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP;
+import static org.cmdbuild.servlets.json.CommunicationConstants.INHERITED;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LENGTH;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUP;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NOT_NULL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRECISION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SCALE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SHOW_IN_GRID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.UNIQUE;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.util.List;
@@ -26,6 +29,8 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
+import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -49,6 +54,9 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.translation.AttributeClassTranslation;
+import org.cmdbuild.logic.translation.AttributeDomainTranslation;
+import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.json.JSONArray;
@@ -135,7 +143,7 @@ public class AttributeSerializer extends Serializer {
 	public JSONObject toClient(final CMAttribute attribute, final boolean withClassId) throws JSONException {
 		final MetadataStoreFactory metadataStoreFactory = applicationContext().getBean(MetadataStoreFactory.class);
 		final Store<Metadata> metadataStore = metadataStoreFactory.storeForAttribute(attribute);
-		final JSONObject jsonAttribute = toClient(attribute, metadataStore.list());
+		final JSONObject jsonAttribute = toClient(attribute, metadataStore.readAll());
 		if (withClassId) {
 			jsonAttribute.put("idClass", attribute.getOwner().getId());
 		}
@@ -162,14 +170,43 @@ public class AttributeSerializer extends Serializer {
 		return jsonObject;
 	}
 
-	public static AttributeSerializer withView(final CMDataView view) {
-		return new AttributeSerializer(view);
+	// FIXME: cambiare nome o fare un builder
+	// public static AttributeSerializer withView(final CMDataView view, final
+	// TranslationFacade translationFacade) {
+	// return new AttributeSerializer(view, translationFacade);
+	// }
+
+	public static Builder newInstance() {
+		return new Builder();
+	}
+
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<AttributeSerializer> {
+
+		CMDataView dataView;
+		TranslationFacade translationFacade;
+
+		@Override
+		public AttributeSerializer build() {
+			return new AttributeSerializer(this);
+		}
+
+		public Builder withDataView(final CMDataView dataView) {
+			this.dataView = dataView;
+			return this;
+		}
+
+		public Builder withTranslationFacade(final TranslationFacade translationFacade) {
+			this.translationFacade = translationFacade;
+			return this;
+		}
 	}
 
 	private final CMDataView view;
+	private final TranslationFacade translationFacade;
 
-	private AttributeSerializer(final CMDataView view) {
-		this.view = view;
+	private AttributeSerializer(final Builder builder) {
+		this.view = builder.dataView;
+		this.translationFacade = builder.translationFacade;
 	}
 
 	// FIXME: replace List<CMAttributeType<?>> with List<String> with attribute
@@ -416,12 +453,50 @@ public class AttributeSerializer extends Serializer {
 			 * common
 			 */
 			serialization.put(NAME, attribute.getName());
+
+			final TranslationObject translationObject = new CMEntryTypeVisitor() {
+
+				TranslationObject translationObject;
+
+				public TranslationObject buildTranslationObject() {
+					attribute.getOwner().accept(this);
+					return translationObject;
+				}
+
+				@Override
+				public void visit(final CMFunctionCall type) {
+					throw new UnsupportedOperationException();
+				}
+
+				@Override
+				public void visit(final CMDomain type) {
+					translationObject = AttributeDomainTranslation.newInstance() //
+							.forDomain(attribute.getOwner().getName()) //
+							.withField(DESCRIPTION_FOR_CLIENT) //
+							.withAttributeName(attribute.getName()) //
+							.build();
+				}
+
+				@Override
+				public void visit(final CMClass type) {
+					translationObject = AttributeClassTranslation.newInstance() //
+							.forClass(attribute.getOwner().getName()) //
+							.withField(DESCRIPTION_FOR_CLIENT) //
+							.withName(attribute.getName()) //
+							.build();
+				}
+			}.buildTranslationObject();
+
+			final String translatedDescription = translationFacade.read(translationObject);
+
 			String description = attribute.getDescription();
 			if ("".equals(description) || description == null) {
 				description = attribute.getName();
 			}
 
-			serialization.put(DESCRIPTION, description);
+			serialization.put(DESCRIPTION, defaultIfNull(translatedDescription, description));
+			serialization.put(DEFAULT_DESCRIPTION, description);
+
 			serialization.put(TYPE,
 					new JsonDashboardDTO.JsonDataSourceParameter.TypeConverter(attribute.getType()).getTypeName());
 			serialization.put(SHOW_IN_GRID, attribute.isDisplayableInList());

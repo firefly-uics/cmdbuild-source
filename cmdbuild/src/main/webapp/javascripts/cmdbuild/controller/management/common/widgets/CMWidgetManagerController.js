@@ -204,6 +204,12 @@
 		// workflow
 		addControllerClass(commonControllers.CMWorkflowController);
 
+		// navigationTree
+		addControllerClass(commonControllers.CMNavigationTreeController);
+
+		// grid
+		addControllerClass(commonControllers.CMGridController);
+
 		// openReport
 		addControllerClass(commonControllers.CMOpenReportController);
 

@@ -1,10 +1,12 @@
 package org.cmdbuild.logic.email;
 
+import static com.google.common.base.Suppliers.memoize;
+import static com.google.common.base.Suppliers.synchronizedSupplier;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 
 import java.io.IOException;
@@ -22,12 +24,13 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.TempDataSource;
-import org.cmdbuild.config.EmailConfiguration;
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreator;
@@ -46,11 +49,13 @@ import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.email.Email;
 import org.cmdbuild.model.email.Email.EmailStatus;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.email.EmailConfigurationFactory;
+import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailService;
+import org.cmdbuild.services.email.ForwardingEmailService;
 import org.cmdbuild.services.email.SubjectHandler;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -58,7 +63,7 @@ public class EmailLogic implements Logic {
 
 	public static class Upload {
 
-		public static class Builder implements org.cmdbuild.common.Builder<Upload> {
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<Upload> {
 
 			private String identifier;
 			private DataHandler dataHandler;
@@ -113,7 +118,7 @@ public class EmailLogic implements Logic {
 
 	public static class Delete {
 
-		public static class Builder implements org.cmdbuild.common.Builder<Delete> {
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<Delete> {
 
 			private String identifier;
 			private String fileName;
@@ -169,7 +174,7 @@ public class EmailLogic implements Logic {
 
 	public static class CopiableAttachment {
 
-		public static class Builder implements org.cmdbuild.common.Builder<CopiableAttachment> {
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<CopiableAttachment> {
 
 			private String className;
 			private Long cardId;
@@ -219,7 +224,7 @@ public class EmailLogic implements Logic {
 
 	public static class Copy {
 
-		public static class Builder implements org.cmdbuild.common.Builder<Copy> {
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<Copy> {
 
 			private String identifier;
 			private boolean temporary;
@@ -329,7 +334,7 @@ public class EmailLogic implements Logic {
 		}
 
 		@Override
-		public List<StoredDocument> search(DocumentSearch document) throws DmsError {
+		public List<StoredDocument> search(final DocumentSearch document) throws DmsError {
 			return dmsConfiguration.isEnabled() ? super.search(document) : EMPTY;
 		}
 
@@ -344,6 +349,49 @@ public class EmailLogic implements Logic {
 
 	};
 
+	private final Function<Email, EmailWithAttachmentNames> TO_EMAIL_WITH_ATTACHMENT_NAMES = new Function<Email, EmailWithAttachmentNames>() {
+
+		@Override
+		public EmailWithAttachmentNames apply(final Email input) {
+			final List<String> attachmentNames = Lists.newArrayList();
+			try {
+				final DocumentSearch allDocuments = documentCreator(FINAL) //
+						.createDocumentSearch(EMAIL_CLASS_NAME, input.getIdentifier());
+				for (final StoredDocument document : dmsService.search(allDocuments)) {
+					attachmentNames.add(document.getName());
+				}
+			} catch (final DmsError e) {
+				logger.warn("error getting attachments for email '{}', ignoring it", input.getId());
+				logger.warn("... cause was", e);
+			}
+			return new EmailWithAttachmentNames(input, attachmentNames);
+		}
+
+	};
+
+	private static final Iterable<Email> NO_EMAILS = Collections.emptyList();
+	private static final Iterable<EmailTemplate> NO_EMAIL_TEMPLATES = Collections.emptyList();
+
+	private static final EmailService UNSUPPORTED = UnsupportedProxyFactory.of(EmailService.class).create();
+	private static final EmailService EMAIL_SERVICE_FOR_INVALID_PROCESS_ID = new ForwardingEmailService(UNSUPPORTED) {
+
+		@Override
+		public Iterable<Email> getEmails(final Long processId) {
+			return NO_EMAILS;
+		};
+
+		@Override
+		public Iterable<Email> getOutgoingEmails(final Long processId) {
+			return NO_EMAILS;
+		};
+
+		@Override
+		public Iterable<EmailTemplate> getEmailTemplates(final Email email) {
+			return NO_EMAIL_TEMPLATES;
+		}
+
+	};
+
 	// TODO do in a better way
 	private static final boolean TEMPORARY = true;
 	private static final boolean FINAL = false;
@@ -353,8 +401,8 @@ public class EmailLogic implements Logic {
 	private static final Collection<EmailStatus> SAVEABLE_STATUSES = Arrays.asList(EmailStatus.DRAFT, MISSING_STATUS);
 
 	private final CMDataView view;
-	private final EmailConfigurationFactory configurationFactory;
-	private final EmailService service;
+	private final Supplier<EmailAccount> emailAccountSupplier;
+	private final EmailService emailService;
 	private final SubjectHandler subjectHandler;
 	private final DmsConfiguration dmsConfiguration;
 	private final DmsService dmsService;
@@ -364,8 +412,9 @@ public class EmailLogic implements Logic {
 
 	public EmailLogic( //
 			final CMDataView dataView, //
-			final EmailConfigurationFactory configurationFactory, //
-			final EmailService service, //
+			// FIXME why?
+			final Supplier<EmailAccount> emailConfigurationSupplier, //
+			final EmailService emailService, //
 			final SubjectHandler subjectHandler, //
 			final DmsConfiguration dmsConfiguration, //
 			final DmsService dmsService, //
@@ -374,8 +423,8 @@ public class EmailLogic implements Logic {
 			final OperationUser operationUser //
 	) {
 		this.view = dataView;
-		this.configurationFactory = configurationFactory;
-		this.service = service;
+		this.emailAccountSupplier = synchronizedSupplier(memoize(emailConfigurationSupplier));
+		this.emailService = emailService;
 		this.subjectHandler = subjectHandler;
 		this.dmsConfiguration = dmsConfiguration;
 		this.dmsService = new ConfigurationAwareDmsService(dmsService, dmsConfiguration);
@@ -384,40 +433,29 @@ public class EmailLogic implements Logic {
 		this.operationUser = operationUser;
 	}
 
+	private EmailService safeEmailService(final Long processCardId) {
+		final boolean isValid = (processCardId != null) && (processCardId > 0);
+		if (!isValid) {
+			logger.warn("invalid process id, returning a safe email service");
+		}
+		return isValid ? emailService : EMAIL_SERVICE_FOR_INVALID_PROCESS_ID;
+	}
+
 	public Iterable<EmailWithAttachmentNames> getEmails(final Long processCardId) {
-		final Function<Email, EmailWithAttachmentNames> TO_EMAIL_WITH_ATTACHMENT_NAMES = new Function<Email, EmailWithAttachmentNames>() {
-
-			@Override
-			public EmailWithAttachmentNames apply(final Email input) {
-				final List<String> attachmentNames = Lists.newArrayList();
-				try {
-					final DocumentSearch allDocuments = documentCreator(FINAL) //
-							.createDocumentSearch(EMAIL_CLASS_NAME, input.getIdentifier());
-					for (final StoredDocument document : dmsService.search(allDocuments)) {
-						attachmentNames.add(document.getName());
-					}
-				} catch (final DmsError e) {
-					logger.warn("error getting attachments for email '{}', ignoring it", input.getId());
-					logger.warn("... cause was", e);
-				}
-				return new EmailWithAttachmentNames(input, attachmentNames);
-			}
-
-		};
-		return from(service.getEmails(processCardId)) //
+		return from(safeEmailService(processCardId).getEmails(processCardId)) //
 				.transform(TO_EMAIL_WITH_ATTACHMENT_NAMES);
 	}
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
-		final EmailConfiguration configuration = configurationFactory.create();
-		for (final Email email : service.getOutgoingEmails(processCardId)) {
+		final EmailAccount configuration = emailAccountSupplier.get();
+		for (final Email email : safeEmailService(processCardId).getOutgoingEmails(processCardId)) {
 			if (isEmpty(email.getFromAddress())) {
-				email.setFromAddress(configuration.getEmailAddress());
+				email.setFromAddress(configuration.getAddress());
 			}
 			try {
 				// FIXME really needed here?
 				email.setSubject(defaultIfBlank(subjectHandler.compile(email).getSubject(), EMPTY));
-				service.send(email, attachmentsOf(email));
+				safeEmailService(processCardId).send(email, attachmentsOf(email));
 				email.setStatus(EmailStatus.SENT);
 			} catch (final CMDBException e) {
 				notifier.warn(e);
@@ -426,7 +464,7 @@ public class EmailLogic implements Logic {
 				notifier.warn(CMDBWorkflowException.WorkflowExceptionType.WF_EMAIL_NOT_SENT.createException());
 				email.setStatus(EmailStatus.OUTGOING);
 			}
-			service.save(email);
+			safeEmailService(processCardId).save(email);
 		}
 	}
 
@@ -483,7 +521,7 @@ public class EmailLogic implements Logic {
 			final Email found = storedEmails.get(emailId);
 			Validate.notNull(found, "email not found");
 			Validate.isTrue(SAVEABLE_STATUSES.contains(found.getStatus()), "specified email have no compatible status");
-			service.delete(found);
+			safeEmailService(processCardId).delete(found);
 		}
 	}
 
@@ -502,7 +540,7 @@ public class EmailLogic implements Logic {
 			final Email maybeUpdateable = alreadyStored ? alreadyStoredEmailSubmission : emailSubmission;
 			if (SAVEABLE_STATUSES.contains(maybeUpdateable.getStatus())) {
 				maybeUpdateable.setActivityId(processCardId);
-				final Long savedId = service.save(maybeUpdateable);
+				final Long savedId = safeEmailService(processCardId).save(maybeUpdateable);
 				if (!alreadyStored) {
 					moveAttachmentsFromTemporaryToFinalPosition(emailSubmission.getTemporaryId(), savedId.toString());
 				}
@@ -531,7 +569,7 @@ public class EmailLogic implements Logic {
 	}
 
 	private Map<Long, Email> storedEmailsById(final Long processCardId) {
-		return Maps.uniqueIndex(service.getEmails(processCardId), EMAIL_ID_FUNCTION);
+		return Maps.uniqueIndex(safeEmailService(processCardId).getEmails(processCardId), EMAIL_ID_FUNCTION);
 	}
 
 	public String uploadAttachment( //
