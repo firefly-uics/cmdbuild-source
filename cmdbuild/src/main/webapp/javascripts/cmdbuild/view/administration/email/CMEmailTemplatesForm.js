@@ -75,7 +75,7 @@
 				},
 
 				defaults: {
-					autoScroll: true,
+					overflowY: 'auto',
 					flex: 1
 				},
 
@@ -87,7 +87,8 @@
 
 						defaults: {
 							labelWidth: CMDBuild.LABEL_WIDTH,
-							width: CMDBuild.ADM_BIG_FIELD_WIDTH
+							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							anchor: '100%'
 						},
 
 						items: [
@@ -109,9 +110,10 @@
 						margins: '0 0 0 3',
 
 						defaults: {
+							xtype: 'textfield',
 							labelWidth: CMDBuild.LABEL_WIDTH,
-							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-							xtype: 'textfield'
+							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							anchor: '100%'
 						},
 
 						items: [
@@ -137,7 +139,7 @@
 								name: CMDBuild.core.proxy.CMProxyConstants.BODY,
 								fieldLabel: CMDBuild.Translation.administration.email.templates.body,
 								labelWidth: CMDBuild.LABEL_WIDTH,
-								width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 								considerAsFieldToDisable: true,
 								enableFont: false
 							})

@@ -213,7 +213,7 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		autoScroll: true,
+		overflowY: 'auto',
 
 		initComponent: function() {
 			var me = this;

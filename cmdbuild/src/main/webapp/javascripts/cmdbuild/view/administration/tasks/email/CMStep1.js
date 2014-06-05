@@ -114,7 +114,17 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		autoScroll: true,
+		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
+
+		defaults: {
+			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+			anchor: '100%'
+		},
 
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep1Delegate', this);
@@ -124,7 +134,6 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 				value: tr.tasksTypes.email,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true,
@@ -139,15 +148,13 @@
 				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
 				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: CMDBuild.Translation.administration.tasks.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
 			this.emailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
@@ -157,7 +164,6 @@
 				store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
 				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				forceSelection: true,
 				editable: false
 			});

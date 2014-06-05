@@ -10,7 +10,7 @@
 		frame: true,
 		layout: 'hbox',
 		margin: '0 0 5 0',
-		autoScroll: true,
+		overflowY: 'auto',
 
 		initComponent: function() {
 			var me = this;
