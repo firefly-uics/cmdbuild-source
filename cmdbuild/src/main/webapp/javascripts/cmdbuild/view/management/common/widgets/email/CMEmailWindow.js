@@ -87,21 +87,8 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindow", {
 	initComponent : function() {
 
 		var me = this;
-		this.selectedDataStore = CMDBuild.core.proxy.CMProxyEmailTemplates.getStore();
-		this.selectedDataStore.load({
-			params: {},
-			callback: function(templates) {
-				for (var i = 0; i < templates.length; i++) {
-					var tmp = templates[i];
-					btnTemplates.menu.add({
-						text: tmp.get("name") + " - " + tmp.get("description"),
-						index: i
-					});
-				}
-			}
-		});
 		var body = bodyBuild(me);
-		_CMProxy.emailTemplate.read({});
+		//_CMProxy.emailTemplate.read({});
 		this.attachmentPanelsContainer = buildAttachmentPanelsContainer(me);
 		this.attachmentButtonsContainer = buildAttachmentButtonsContainer(me); 
 		var formPanel = buildFormPanel(me, body);
@@ -122,6 +109,19 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindow", {
 		        }
 		    })
 		};
+		this.selectedDataStore = CMDBuild.core.proxy.CMProxyEmailTemplates.getStore();
+		this.selectedDataStore.load({
+			params: {},
+			callback: function(templates) {
+				for (var i = 0; i < templates.length; i++) {
+					var tmp = templates[i];
+					btnTemplates.menu.add({
+						text: tmp.get("name") + " - " + tmp.get("description"),
+						index: i
+					});
+				}
+			}
+		});
 		this.tbar = [btnTemplates];
 
 		this.title = CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose;
