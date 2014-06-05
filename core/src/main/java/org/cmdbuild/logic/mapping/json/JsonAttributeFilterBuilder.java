@@ -63,9 +63,9 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 	 * @param dataView
 	 */
 	public JsonAttributeFilterBuilder(final JSONObject filter, final CMEntryType entryType, final CMDataView dataView) {
-		Validate.notNull(filter);
-		Validate.notNull(entryType);
-		Validate.notNull(dataView);
+		Validate.notNull(filter, "missing filter");
+		Validate.notNull(entryType, "missing entry type");
+		Validate.notNull(dataView, "missing data view");
 		this.entryType = entryType;
 		this.filterObject = filter;
 		this.dataViewForBuild = dataView;
