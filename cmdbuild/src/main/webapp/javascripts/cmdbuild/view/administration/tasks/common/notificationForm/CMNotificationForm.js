@@ -12,7 +12,11 @@
 			'template'
 		],
 		border: false,
-		width: '100%',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
 
 		/**
 		 * To check and acquire input fields configurations

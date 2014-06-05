@@ -105,7 +105,7 @@
 			this.xpdlForm = Ext.create('Ext.form.Panel', {
 				frame: false,
 				border: false,
-				autoScroll: true,
+				overflowY: 'auto',
 				fileUpload: true,
 
 				defaults: {

@@ -169,7 +169,12 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		autoScroll: true,
+		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
 
 		initComponent: function() {
 			var me = this;
@@ -180,31 +185,35 @@
 				this.parsingKeyStart = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingKeyStart,
 					labelWidth: CMDBuild.LABEL_WIDTH,
+					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_INIT,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					anchor: '100%'
 				});
 
 				this.parsingKeyEnd = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingKeyEnd,
 					labelWidth: CMDBuild.LABEL_WIDTH,
+					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_END,
 					margin: '0 0 0 20',
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					anchor: '100%'
 				});
 
 				this.parsingValueStart = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingValueStart,
 					labelWidth: CMDBuild.LABEL_WIDTH,
+					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_INIT,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					anchor: '100%'
 				});
 
 				this.parsingValueEnd = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingValueEnd,
 					labelWidth: CMDBuild.LABEL_WIDTH,
+					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_END,
 					margin: '0 0 0 20',
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					anchor: '100%'
 				});
 
 				this.parsingFieldset = Ext.create('Ext.form.FieldSet', {
@@ -214,18 +223,38 @@
 					collapsed: true,
 					collapsible: true,
 					toggleOnTitleClick: true,
-					autoScroll: true,
+					overflowY: 'auto',
 
 					items: [
 						{
 							xtype: 'container',
-							layout: 'hbox',
+
+							layout: {
+								type: 'hbox',
+								align:'stretch'
+							},
+
+							defaults: {
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								anchor: '100%'
+							},
+
 							items: [this.parsingKeyStart, this.parsingKeyEnd]
 						},
 						{
 							xtype: 'container',
-							layout: 'hbox',
 							margin: '10 0',
+
+							layout: {
+								type: 'hbox',
+								align:'stretch'
+							},
+
+							defaults: {
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+								anchor: '100%'
+							},
+
 							items: [this.parsingValueStart, this.parsingValueEnd]
 						}
 					]
@@ -247,7 +276,7 @@
 					collapsed: true,
 					collapsible: true,
 					toggleOnTitleClick: true,
-					autoScroll: true,
+					overflowY: 'auto',
 
 					items: [this.notificationForm]
 				});
@@ -258,11 +287,12 @@
 					name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_CATEGORY,
 					fieldLabel: tr.attachmentsCategory,
 					labelWidth: CMDBuild.LABEL_WIDTH,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					anchor: '100%',
 					displayField: 'Description',
 					valueField: 'Id',
 					forceSelection: true,
-					editable: false,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					editable: false
 				});
 
 				this.attachmentsFieldset = Ext.create('Ext.form.FieldSet', {
@@ -272,7 +302,7 @@
 					collapsed: true,
 					collapsible: true,
 					toggleOnTitleClick: true,
-					autoScroll: true,
+					overflowY: 'auto',
 
 					items: [this.attachmentsCombo],
 

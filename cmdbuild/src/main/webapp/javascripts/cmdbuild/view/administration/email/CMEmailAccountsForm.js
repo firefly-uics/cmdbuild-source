@@ -77,7 +77,8 @@
 					itemId: CMDBuild.core.proxy.CMProxyConstants.NAME,
 					fieldLabel: CMDBuild.Translation.name,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					anchor: '100%',
 					allowBlank: false
 				});
 
@@ -88,15 +89,14 @@
 
 				this.emailAccount = Ext.create('Ext.form.FieldSet', {
 					title: tr.account,
-					autoScroll: true,
+					overflowY: 'auto',
 
 					items: [
 						this.nameField,
 						this.isDefaultField,
 						{
 							xtype: 'hiddenfield',
-							name: CMDBuild.core.proxy.CMProxyConstants.ID,
-							labelWidth: CMDBuild.LABEL_WIDTH
+							name: CMDBuild.core.proxy.CMProxyConstants.ID
 						}
 					]
 				});
@@ -104,12 +104,13 @@
 				// Credentials
 				this.credentials = Ext.create('Ext.form.FieldSet', {
 					title: tr.credentials,
-					autoScroll: true,
+					overflowY: 'auto',
 
 					defaults: {
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-						xtype: 'textfield'
+						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						xtype: 'textfield',
+						anchor: '100%'
 					},
 
 					items: [
@@ -130,12 +131,13 @@
 				// Outgoing
 				this.outgoing = Ext.create('Ext.form.FieldSet', {
 					title: tr.outgoing,
-					autoScroll: true,
+					overflowY: 'auto',
 
 					defaults: {
+						xtype: 'textfield',
 						labelWidth: CMDBuild.LABEL_WIDTH,
-						width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-						xtype: 'textfield'
+						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						anchor: '100%'
 					},
 
 					items: [
@@ -155,6 +157,7 @@
 							width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
 							minValue: 1,
 							maxValue: 65535,
+							maxWidth: CMDBuild.ADM_SMALL_FIELD_WIDTH,
 							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_PORT
 						},
 						{
@@ -168,69 +171,56 @@
 				// Incoming
 				this.incoming = Ext.create('Ext.form.FieldSet', {
 					title: tr.incoming,
-					autoScroll: true,
+					overflowY: 'auto',
+
+					defaults: {
+						xtype: 'textfield',
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						anchor: '100%'
+					},
 
 					items: [
 						{
-							xtype: 'container',
-							padding: '0 0 5 0',
-
-							defaults: {
-								labelWidth: CMDBuild.LABEL_WIDTH,
-								width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-								xtype: 'textfield'
-							},
-
-							items: [
-								{
-									fieldLabel: tr.imapServer,
-									name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SERVER
-								},
-								{
-									xtype: 'numberfield',
-									fieldLabel: tr.imapPort,
-									allowBlank: true,
-									minValue: 1,
-									maxValue: 65535,
-									width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
-									name: CMDBuild.core.proxy.CMProxyConstants.IMAP_PORT
-								},
-								{
-									xtype: 'checkbox',
-									fieldLabel: tr.enableSsl,
-									name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SSL
-								}
-							]
+							fieldLabel: tr.imapServer,
+							name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SERVER
 						},
 						{
+							xtype: 'numberfield',
+							fieldLabel: tr.imapPort,
+							allowBlank: true,
+							minValue: 1,
+							maxValue: 65535,
+							maxWidth: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+							name: CMDBuild.core.proxy.CMProxyConstants.IMAP_PORT
+						},
+						{
+							xtype: 'checkbox',
+							fieldLabel: tr.enableSsl,
+							name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SSL
+						},
+						{ // Splitter line
 							xtype: 'container',
-							padding: '5 0',
-
-							defaults: {
-								labelWidth: CMDBuild.LABEL_WIDTH,
-								width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-								xtype: 'textfield'
-							},
-
-							items: [
-								{
-									fieldLabel: tr.incomingFolder,
-									name: CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER
-								},
-								{
-									fieldLabel: tr.processedFolder,
-									name: CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER
-								},
-								{
-									fieldLabel: tr.rejectedFolder,
-									name: CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER
-								},
-								{
-									xtype: 'checkbox',
-									fieldLabel: tr.enableMoveRejectedNotMatching,
-									name: CMDBuild.core.proxy.CMProxyConstants.ENABLE_MOVE_REJECTED_NOT_MATCHING
-								}
-							]
+							margin: '5 0 5 0',
+							maxWidth: '100%',
+							cls: 'x-panel-body-default-framed cmborderbottom'
+						},
+						{
+							fieldLabel: tr.incomingFolder,
+							name: CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER
+						},
+						{
+							fieldLabel: tr.processedFolder,
+							name: CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER
+						},
+						{
+							fieldLabel: tr.rejectedFolder,
+							name: CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER
+						},
+						{
+							xtype: 'checkbox',
+							fieldLabel: tr.enableMoveRejectedNotMatching,
+							name: CMDBuild.core.proxy.CMProxyConstants.ENABLE_MOVE_REJECTED_NOT_MATCHING
 						}
 					]
 				});
@@ -247,7 +237,7 @@
 				},
 
 				defaults: {
-					autoScroll: true,
+					overflowY: 'auto',
 					flex: 1
 				},
 

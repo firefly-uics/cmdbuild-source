@@ -111,7 +111,17 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		autoScroll: true,
+		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
+
+		defaults: {
+			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+			anchor: '100%'
+		},
 
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep1Delegate', this);
@@ -121,7 +131,6 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 				value: tr.tasksTypes.connector,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true,
@@ -136,15 +145,13 @@
 				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
 				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: tr.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
 			// Email notification configuration
@@ -168,10 +175,7 @@
 					collapsed: true,
 					collapsible: true,
 					toggleOnTitleClick: true,
-
-					layout: {
-						type: 'vbox'
-					},
+					maxWidth: '100%',
 
 					items: [this.notificationForm]
 				});

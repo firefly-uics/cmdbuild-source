@@ -113,7 +113,12 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		autoScroll: true,
+		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
 
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', this);
@@ -122,8 +127,9 @@
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				value: tr.tasksTypes.workflow,
+				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				anchor: '100%',
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true,
@@ -138,7 +144,8 @@
 				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				anchor: '100%',
 				allowBlank: false
 			});
 
@@ -146,7 +153,8 @@
 				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: tr.startOnSave,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				anchor: '100%'
 			});
 
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
