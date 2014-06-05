@@ -112,9 +112,10 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
 		layout: 'fit',
-		overflowY: 'auto',
+		autoScroll: true,
 
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep2Delegate', this);

@@ -9,15 +9,18 @@ import java.io.IOException;
 import javax.activation.DataHandler;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cmdbuild.bim.logging.LoggingSupport;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimProject;
 import org.cmdbuild.services.bim.BimFacade;
+import org.slf4j.Logger;
 
 public class MergeOnlyBeforeExport implements ExportPolicy {
 
 	private static final String EXPORT_SUFFIX = "-export";
 	private final BimFacade bimFacade;
 	private final ExportPolicy delegate;
+	private final Logger logger = LoggingSupport.logger;
 
 	public MergeOnlyBeforeExport(final BimFacade bimFacade, final ExportPolicy delegate) {
 		this.bimFacade = bimFacade;
@@ -88,11 +91,11 @@ public class MergeOnlyBeforeExport implements ExportPolicy {
 			final FileOutputStream outputStream = new FileOutputStream(file);
 			exportedData.writeTo(outputStream);
 			bimFacade.checkin(exportProjectId, file);
-			System.out.println("export file is ready");
+			logger.debug("export file is ready");
 		} catch (final IOException e) {
 			throw new BimError("Unable to prepare project for export connector");
 		}
-		System.out.println("Project for export is ready");
+		logger.debug("Project for export is ready");
 	}
 
 	@Override

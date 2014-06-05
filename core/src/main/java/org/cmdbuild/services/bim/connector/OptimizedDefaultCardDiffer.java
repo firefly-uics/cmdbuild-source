@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
-import org.cmdbuild.bim.utils.LoggerSupport;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.IdAndDescription;
@@ -20,7 +19,6 @@ import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.services.bim.BimDataView;
-import org.slf4j.Logger;
 
 import com.google.common.collect.Maps;
 
@@ -29,10 +27,9 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 	private final CMDataView dataView;
 	private final BimDataView bimDataView;
 	private final LookupLogic lookupLogic;
-	private static final Logger logger = LoggerSupport.logger;
 
 	public OptimizedDefaultCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic,
-			BimDataView bimDataView) {
+			final BimDataView bimDataView) {
 		this.dataView = dataView;
 		this.bimDataView = bimDataView;
 		this.lookupLogic = lookupLogic;
@@ -44,13 +41,12 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 		final CMClass theClass = oldCard.getType();
 		final String className = theClass.getName();
 		if (!className.equals(sourceEntity.getTypeName())) {
-			// better safe than sorry...
 			return updatedCard;
 		}
 		final CMCardDefinition cardDefinition = dataView.update(oldCard);
 		logger.info("Updating card " + oldCard.getId() + " of type " + className);
 		boolean sendDelta = false;
-		Map<String, CMAttribute> cmAttributesMap = Maps.newHashMap();
+		final Map<String, CMAttribute> cmAttributesMap = Maps.newHashMap();
 		logger.debug("Build attributes map...");
 		for (final CMAttribute attribute : theClass.getAttributes()) {
 			if (!cmAttributesMap.containsKey(attribute.getName())) {
@@ -59,13 +55,13 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 		}
 		logger.debug("Success.");
 		for (final String attributeName : sourceEntity.getAttributes().keySet()) {
-			if(!cmAttributesMap.containsKey(attributeName)){
+			if (!cmAttributesMap.containsKey(attributeName)) {
 				continue;
 			}
 			final Attribute attribute = sourceEntity.getAttributeByName(attributeName);
 			if (attribute.isValid()) {
 				logger.info("attribute '{}' found", attributeName);
-				CMAttribute cmAttribute = cmAttributesMap.get(attributeName);
+				final CMAttribute cmAttribute = cmAttributesMap.get(attributeName);
 				final CMAttributeType<?> attributeType = cmAttribute.getType();
 				final boolean isReference = attributeType instanceof ReferenceAttributeType;
 				final boolean isLookup = attributeType instanceof LookupAttributeType;
@@ -116,7 +112,7 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 		}
 		logger.info("Building card of type " + theClass.getName());
 		final CMCardDefinition cardDefinition = dataView.createCardFor(theClass);
-		Map<String, CMAttribute> cmAttributesMap = Maps.newHashMap();
+		final Map<String, CMAttribute> cmAttributesMap = Maps.newHashMap();
 		logger.debug("Build attributes map...");
 		for (final CMAttribute attribute : theClass.getAttributes()) {
 			if (!cmAttributesMap.containsKey(attribute.getName())) {
@@ -127,12 +123,12 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 		boolean sendDelta = false;
 		for (final String attributeName : sourceEntity.getAttributes().keySet()) {
 			final Attribute attribute = sourceEntity.getAttributeByName(attributeName);
-			if(!cmAttributesMap.containsKey(attributeName)){
+			if (!cmAttributesMap.containsKey(attributeName)) {
 				continue;
 			}
 			if (attribute.isValid()) {
 				logger.info("attribute '{}' found", attributeName);
-				CMAttribute cmAttribute = cmAttributesMap.get(attributeName);
+				final CMAttribute cmAttribute = cmAttributesMap.get(attributeName);
 				final CMAttributeType<?> attributeType = cmAttribute.getType();
 				final boolean isReference = attributeType instanceof ReferenceAttributeType;
 				final boolean isLookup = attributeType instanceof LookupAttributeType;

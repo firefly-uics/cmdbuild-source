@@ -94,13 +94,17 @@
 			getEntryTypePrivileges: function(et) {
 				var privileges = {
 					write: false,
-					create: false
+					create: false,
+					crudDisabled: {}
 				};
 
 				if (et) {
+					var strUiCrud = et.get("ui_card_edit_mode");
+					var objUiCrud = Ext.JSON.decode(strUiCrud);
 					privileges = {
 						write: et.get("priv_write"),
-						create: et.isProcess() ? et.isStartable() : et.get("priv_create")
+						create: et.isProcess() ? et.isStartable() : et.get("priv_create"),
+						crudDisabled: objUiCrud
 					};
 				}
 
@@ -110,7 +114,8 @@
 			getEntryTypePrivilegesByCard: function(card) {
 				var privileges = {
 					write: false,
-					create: false
+					create: false,
+					crudDisabled: {}
 				};
 
 				if (card) {

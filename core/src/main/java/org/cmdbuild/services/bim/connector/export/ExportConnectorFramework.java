@@ -4,12 +4,14 @@ import static org.cmdbuild.bim.utils.BimConstants.isValidId;
 
 import java.util.Map;
 
+import org.cmdbuild.bim.logging.LoggingSupport;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.services.bim.BimDataView;
 import org.cmdbuild.services.bim.BimFacade;
 import org.cmdbuild.services.bim.BimPersistence;
 import org.cmdbuild.services.bim.connector.export.DataChangedListener.DataChangedException;
+import org.slf4j.Logger;
 
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.MapDifference.ValueDifference;
@@ -20,6 +22,7 @@ public class ExportConnectorFramework implements ConnectorFramework {
 	final private GenericMapper connector;
 	final private BimPersistence bimPersistence;
 	final private BimFacade bimServiceFacade;
+	private final Logger logger = LoggingSupport.logger;
 
 	public ExportConnectorFramework(final BimDataView dataView, final BimFacade bimServiceFacade,
 			final BimPersistence bimPersistence, final ExportPolicy exportProjectPolicy) {
@@ -75,7 +78,7 @@ public class ExportConnectorFramework implements ConnectorFramework {
 	@Override
 	public void executeConnector(final Object input, final Output output) {
 		final boolean isSynchronized = isSynch(input);
-		System.out.println("Is synchronized? " + isSynchronized);
+		logger.debug("Is synchronized? '{}'", isSynchronized);
 		if (!isSynchronized) {
 			performExportSynchronized(input, output);
 		}

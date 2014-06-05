@@ -10,6 +10,7 @@
 		frame: true,
 		layout: 'hbox',
 		margin: '0 0 5 0',
+		autoScroll: true,
 
 		initComponent: function() {
 			var me = this;
