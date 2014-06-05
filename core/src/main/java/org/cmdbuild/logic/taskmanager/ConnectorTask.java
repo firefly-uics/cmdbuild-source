@@ -5,7 +5,6 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -14,6 +13,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.java.sql.DataSourceHelper;
 import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceType;
+import org.joda.time.DateTime;
 
 import com.google.common.collect.Sets;
 
@@ -495,7 +495,7 @@ public class ConnectorTask implements ScheduledTask {
 		private String description;
 		private Boolean active;
 		private String cronExpression;
-		private Date lastExecution;
+		private DateTime lastExecution;
 		private Boolean notificationActive;
 		private String notificationAcccount;
 		private String notificationErrorTemplate;
@@ -539,7 +539,7 @@ public class ConnectorTask implements ScheduledTask {
 			return this;
 		}
 
-		public Builder setLastExecution(final Date lastExecution) {
+		public Builder withLastExecution(final DateTime lastExecution) {
 			this.lastExecution = lastExecution;
 			return this;
 		}
@@ -594,7 +594,7 @@ public class ConnectorTask implements ScheduledTask {
 	private final String description;
 	private final boolean active;
 	private final String cronExpression;
-	private final Date lastExecution;
+	private final DateTime lastExecution;
 	private final boolean notificationActive;
 	private final String notificationAcccount;
 	private final String notificationErrorTemplate;
@@ -642,7 +642,7 @@ public class ConnectorTask implements ScheduledTask {
 	}
 
 	@Override
-	public Date getLastExecution() {
+	public DateTime getLastExecution() {
 		return lastExecution;
 	}
 

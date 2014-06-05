@@ -510,7 +510,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
-			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String notificationAcccount, //
+			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String notificationAccount, //
 			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE_ERROR, required = false) final String notificationTemplate, //
 			@Parameter(value = DATA_SOURCE_TYPE, required = false) final String dataSourceType, //
 			@Parameter(value = DATA_SOURCE_CONFIGURATION, required = false) final String jsonDataSourceConfiguration, //
@@ -522,7 +522,7 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
 				.withNotificationStatus(notificationActive) //
-				.withNotificationAccount(notificationAcccount) //
+				.withNotificationAccount(notificationAccount) //
 				.withNotificationErrorTemplate(notificationTemplate) //
 				.withSourceConfiguration(sourceConfigurationOf(dataSourceType, jsonDataSourceConfiguration)) //
 				.withClassMappings(classMappingOf(jsonclassMapping)) //
@@ -558,7 +558,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
-			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String notificationAcccount, //
+			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String notificationAccount, //
 			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE_ERROR, required = false) final String notificationTemplate, //
 			@Parameter(value = DATA_SOURCE_TYPE, required = false) final String dataSourceType, //
 			@Parameter(value = DATA_SOURCE_CONFIGURATION, required = false) final String jsonDataSourceConfiguration, //
@@ -571,7 +571,7 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
 				.withNotificationStatus(notificationActive) //
-				.withNotificationAccount(notificationAcccount) //
+				.withNotificationAccount(notificationAccount) //
 				.withNotificationErrorTemplate(notificationTemplate) //
 				.withSourceConfiguration(sourceConfigurationOf(dataSourceType, jsonDataSourceConfiguration)) //
 				.withClassMappings(classMappingOf(jsonclassMapping)) //

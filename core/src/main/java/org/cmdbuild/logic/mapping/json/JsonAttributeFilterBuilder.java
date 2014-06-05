@@ -33,6 +33,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
+import org.cmdbuild.dao.query.clause.HistoricEntryType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
@@ -124,7 +125,13 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 		 * attributes, it is possible to fetch it to build the correct where
 		 * clause
 		 */
-		final CMEntryType dbEntryType = dataViewForBuild.findClass(entryType.getName());
+		final CMEntryType _entryType;
+		if (entryType instanceof HistoricEntryType<?>) {
+			_entryType = HistoricEntryType.class.cast(entryType).getType();
+		} else {
+			_entryType = entryType;
+		}
+		final CMEntryType dbEntryType = dataViewForBuild.findClass(_entryType.getName());
 		final CMAttribute a = dbEntryType.getAttribute(attribute.getName());
 		final CMAttributeType<?> type = (a == null) ? UndefinedAttributeType.undefined() : a.getType();
 		return buildSimpleWhereClause(attribute, operator, values, type);

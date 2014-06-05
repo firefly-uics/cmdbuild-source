@@ -83,7 +83,12 @@ public class DefaultTaskStore implements TaskStore {
 				}
 
 				@Override
-				public void visit(final ConnectorTask connectorTask) {
+				public void visit(final AsynchronousEventTask task) {
+					builder = AsynchronousEventTaskDefinition.newInstance();
+				}
+
+				@Override
+				public void visit(final ConnectorTask task) {
 					builder = ConnectorTaskDefinition.newInstance();
 				}
 
@@ -124,7 +129,12 @@ public class DefaultTaskStore implements TaskStore {
 				}
 
 				@Override
-				public void visit(final ConnectorTaskDefinition connectorTaskDefinition) {
+				public void visit(final AsynchronousEventTaskDefinition taskDefinition) {
+					builder = AsynchronousEventTask.newInstance();
+				}
+
+				@Override
+				public void visit(final ConnectorTaskDefinition taskDefinition) {
 					builder = ConnectorTask.newInstance();
 				}
 

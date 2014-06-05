@@ -245,6 +245,7 @@ public class CommunicationConstants {
 			SYNCHRONIZED = "synchronized", //
 			TABLE = "table", //
 			TABLE_TYPE = "tableType", //
+			TASK_ASYNCHRONOUS_EVENT = "event_asynchronous", //
 			TASK_CONNECTOR = "connector", //
 			TASK_READ_EMAIL = "email", //
 			TASK_START_WORKFLOW = "workflow", //

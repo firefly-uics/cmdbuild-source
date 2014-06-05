@@ -2,6 +2,8 @@ package org.cmdbuild.logic.taskmanager;
 
 public interface TaskVistor {
 
+	void visit(AsynchronousEventTask task);
+
 	void visit(ConnectorTask task);
 
 	void visit(ReadEmailTask task);

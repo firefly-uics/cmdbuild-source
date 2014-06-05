@@ -9,4 +9,10 @@
 		<relativePath>../..</relativePath>
 	</parent>
 	<artifactId>cmdbuild-scheduler-core</artifactId>
+	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+		</dependency>
+	</dependencies>
 </project>

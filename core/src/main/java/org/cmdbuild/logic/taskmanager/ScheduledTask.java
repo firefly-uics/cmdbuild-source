@@ -1,11 +1,11 @@
 package org.cmdbuild.logic.taskmanager;
 
-import java.util.Date;
+import org.joda.time.DateTime;
 
 public interface ScheduledTask extends Task {
 
 	String getCronExpression();
 
-	Date getLastExecution();
+	DateTime getLastExecution();
 
 }

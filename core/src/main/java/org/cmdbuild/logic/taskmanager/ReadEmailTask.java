@@ -5,12 +5,12 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.joda.time.DateTime;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -26,7 +26,7 @@ public class ReadEmailTask implements ScheduledTask {
 		private String description;
 		private Boolean active;
 		private String cronExpression;
-		private Date lastExecution;
+		private DateTime lastExecution;
 		private String emailAccount;
 		private final Collection<String> regexFromFilter = Lists.newArrayList();
 		private final Collection<String> regexSubjectFilter = Lists.newArrayList();
@@ -94,7 +94,7 @@ public class ReadEmailTask implements ScheduledTask {
 			return this;
 		}
 
-		public Builder withLastExecution(final Date lastExecution) {
+		public Builder withLastExecution(final DateTime lastExecution) {
 			this.lastExecution = lastExecution;
 			return this;
 		}
@@ -179,7 +179,7 @@ public class ReadEmailTask implements ScheduledTask {
 	private final String description;
 	private final boolean active;
 	private final String cronExpression;
-	private final Date lastExecution;
+	private final DateTime lastExecution;
 	private final String emailAccount;
 	private final Iterable<String> regexFromFilter;
 	private final Iterable<String> regexSubjectFilter;
@@ -243,7 +243,7 @@ public class ReadEmailTask implements ScheduledTask {
 	}
 
 	@Override
-	public Date getLastExecution() {
+	public DateTime getLastExecution() {
 		return lastExecution;
 	}
 
