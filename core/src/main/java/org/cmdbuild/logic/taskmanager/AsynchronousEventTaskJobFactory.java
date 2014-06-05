@@ -47,8 +47,6 @@ import com.google.common.collect.Ordering;
 
 public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<AsynchronousEventTask> {
 
-	private static final JSONObject NULL_JSON_FILTER = new JSONObject();
-
 	private static class NotificationEnabled implements Predicate<Void> {
 
 		private final AsynchronousEventTask task;
@@ -142,7 +140,7 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 
 				logger.debug(marker, "checking class '{}' with filter '{}'", classname, filter);
 
-				final JSONObject jsonFilter = (filter == null) ? NULL_JSON_FILTER : toJsonObject(filter);
+				final JSONObject jsonFilter = (filter == null) ? new JSONObject() : toJsonObject(filter);
 
 				final Iterable<CMCard> cards = currentCardsMatchingFilter(classname, jsonFilter);
 				for (final CMCard card : cards) {
