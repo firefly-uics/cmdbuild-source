@@ -48,6 +48,12 @@
 					callback: function() {
 						if (!this.selectionModel.hasSelection())
 							this.selectionModel.select(0, true);
+// TODO: form should be resetted (me.view.reset();)
+						if (!this.selectionModel.hasSelection()) {
+							this.cmOn('onAddButtonClick', { type: this.taskType });
+							this.form.disableModify(true);
+						}
+// END: workaround
 					}
 				});
 
@@ -252,7 +258,10 @@
 
 			this.grid.store.load({
 				callback: function() {
-					me.form.reset();
+// TODO: form should be resetted (me.view.reset();)
+					me.cmOn('onAddButtonClick', { type: me.delegateStep[0].taskType });
+					me.view.disableModify(true);
+// END: workaround
 
 					var rowIndex = this.find(
 						CMDBuild.core.proxy.CMProxyConstants.ID,

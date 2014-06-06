@@ -324,15 +324,16 @@
 							}
 						}
 					},
-					{
-						header: tr.deletionType,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE,
-						editor: {
-							xtype: 'combo',
-							disabled: true
-						},
-						width: 120
-					},
+// TODO: future implementation
+//					{
+//						header: tr.deletionType,
+//						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE,
+//						editor: {
+//							xtype: 'combo',
+//							disabled: true
+//						},
+//						width: 120
+//					},
 					{
 						xtype: 'actioncolumn',
 						width: 30,

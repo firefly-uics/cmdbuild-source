@@ -129,12 +129,7 @@
 		buildSourceAttributesCombo: function(sourceName, onStepEditExecute) {
 			if (!Ext.isEmpty(sourceName)) {
 				var me = this;
-
-				var attributesListStore = [
-					{ 'name': 'Function1', 'description': 'Function 1' },
-					{ 'name': 'Function2', 'description': 'Function 2' },
-					{ 'name': 'Function3', 'description': 'Function 3' }
-				];
+				var attributesListStore = [];
 
 				if (Ext.isEmpty(onStepEditExecute))
 					var onStepEditExecute = true;
