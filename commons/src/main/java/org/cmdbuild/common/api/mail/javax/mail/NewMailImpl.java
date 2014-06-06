@@ -55,6 +55,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import org.cmdbuild.common.api.mail.Configuration.Output;
+import org.cmdbuild.common.api.mail.MailException;
 import org.cmdbuild.common.api.mail.NewMail;
 import org.slf4j.Logger;
 
@@ -230,18 +231,10 @@ class NewMailImpl implements NewMail {
 
 			@Override
 			public void run() {
-				try {
-					final Session session = createSession();
-					message = messageFrom(session);
-					setFrom();
-					addRecipients();
-					setSubject();
-					setSentDate();
-					setBody();
-					send(session);
-				} catch (final MessagingException e) {
-					logger.error("error sending mail", e);
-				}
+				final Session session = createSession();
+				message = messageFrom(session);
+				fillMessage();
+				send(session);
 			}
 
 		};
@@ -259,6 +252,18 @@ class NewMailImpl implements NewMail {
 
 	private MimeMessage messageFrom(final Session session) {
 		return new MimeMessage(session);
+	}
+
+	private void fillMessage() {
+		try {
+			setFrom();
+			addRecipients();
+			setSubject();
+			setSentDate();
+			setBody();
+		} catch (MessagingException e) {
+			throw MailException.creation(e);
+		}
 	}
 
 	private Properties createConfigurationProperties() {
@@ -346,10 +351,14 @@ class NewMailImpl implements NewMail {
 		return !attachments.isEmpty();
 	}
 
-	private void addAttachmentBodyParts(final Multipart multipart) throws MessagingException {
-		for (final Entry<URL, String> attachment : attachments.entrySet()) {
-			final BodyPart bodyPart = getBodyPartFor(attachment.getKey(), attachment.getValue());
-			multipart.addBodyPart(bodyPart);
+	private void addAttachmentBodyParts(final Multipart multipart) {
+		try {
+			for (final Entry<URL, String> attachment : attachments.entrySet()) {
+				final BodyPart bodyPart = getBodyPartFor(attachment.getKey(), attachment.getValue());
+				multipart.addBodyPart(bodyPart);
+			}
+		} catch (MessagingException e) {
+			throw MailException.creation(e);
 		}
 	}
 
@@ -369,13 +378,13 @@ class NewMailImpl implements NewMail {
 		return name;
 	}
 
-	private void send(final Session session) throws MessagingException {
+	private void send(final Session session) {
 		Transport transport = null;
 		try {
 			transport = connect(session);
 			transport.sendMessage(message, message.getAllRecipients());
 		} catch (final MessagingException e) {
-			throw e;
+			throw MailException.send(e);
 		} finally {
 			closeIfOpened(transport);
 		}

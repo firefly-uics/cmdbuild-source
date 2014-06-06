@@ -32,6 +32,14 @@ public class MailException extends RuntimeException {
 		return new MailException(cause);
 	}
 
+	public static MailException creation(final MessagingException cause) {
+		return new MailException(cause);
+	}
+
+	public static MailException send(final MessagingException cause) {
+		return new MailException(cause);
+	}
+
 	private MailException(final Throwable cause) {
 		super(cause);
 	}
