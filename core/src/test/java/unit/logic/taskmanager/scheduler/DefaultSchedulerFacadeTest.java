@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -189,6 +190,50 @@ public class DefaultSchedulerFacadeTest {
 		inOrder = inOrder(callback);
 		inOrder.verify(callback).start();
 		inOrder.verify(callback).stop();
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void callbackUsedWhenJobThrowsAnException() throws Exception {
+		// given
+		final ScheduledTask task = ReadEmailTask.newInstance() //
+				.withActiveStatus(true) //
+				.withCronExpression("cron expression") //
+				.build();
+		final Throwable EXCEPTION = new RuntimeException();
+		final Job job = mock(Job.class);
+		doThrow(EXCEPTION).when(job).execute();
+		final LogicAsSourceConverter logicAsSourceConverter = mock(LogicAsSourceConverter.class);
+		when(logicAsSourceConverter.toJob()) //
+				.thenReturn(job);
+		when(converter.from(task)) //
+				.thenReturn(logicAsSourceConverter);
+
+		// when
+		schedulerFacade.create(task, callback);
+
+		// then
+		final ArgumentCaptor<Job> jobCaptor = ArgumentCaptor.forClass(Job.class);
+		InOrder inOrder = inOrder(schedulerService, converter);
+		inOrder.verify(converter).from(task);
+		inOrder.verify(schedulerService).add(jobCaptor.capture(), any(Trigger.class));
+		inOrder.verifyNoMoreInteractions();
+
+		// and given
+		final Job capturedJob = jobCaptor.getValue();
+
+		// when
+		try {
+			capturedJob.execute();
+		} catch (final Throwable e) {
+			// forgive
+		}
+
+		// then
+
+		inOrder = inOrder(callback);
+		inOrder.verify(callback).start();
+		inOrder.verify(callback).error(EXCEPTION);
 		inOrder.verifyNoMoreInteractions();
 	}
 

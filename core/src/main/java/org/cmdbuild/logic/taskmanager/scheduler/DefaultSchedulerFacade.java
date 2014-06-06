@@ -55,7 +55,7 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 		if (task.isActive()) {
 			final Job job = converter.from(task).toJob();
 			final Job jobWithCallback = new JobWithCallback(job, callback);
-			final Job jobWithLogging = new JobWithCallback(job, LoggingCallback.of(jobWithCallback));
+			final Job jobWithLogging = new JobWithCallback(jobWithCallback, LoggingCallback.of(jobWithCallback));
 			final Trigger trigger = RecurringTrigger.at(addSecondsField(task.getCronExpression()));
 			schedulerService.add(jobWithLogging, trigger);
 		}
