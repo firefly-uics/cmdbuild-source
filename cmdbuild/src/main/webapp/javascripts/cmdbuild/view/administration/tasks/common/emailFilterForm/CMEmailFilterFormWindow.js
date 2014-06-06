@@ -12,7 +12,7 @@
 		type: undefined,
 		textareaConcatParameter: undefined,
 
-		autoScroll: true,
+		overflowY: 'auto',
 		height: 300,
 		modal: true,
 		width: 400,

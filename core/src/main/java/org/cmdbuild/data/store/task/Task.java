@@ -11,6 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
+import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 
@@ -22,8 +23,9 @@ public abstract class Task implements Storable {
 
 		private Long id;
 		private String description;
-		private String cronExpression;
 		private Boolean running;
+		private String cronExpression;
+		private DateTime lastExecution;
 		private final Map<String, String> parameters = Maps.newHashMap();
 
 		protected Builder() {
@@ -67,6 +69,11 @@ public abstract class Task implements Storable {
 			return this;
 		}
 
+		public Builder<T> withLastExecution(final DateTime lastExecution) {
+			this.lastExecution = lastExecution;
+			return this;
+		}
+
 		public Builder<T> withParameters(final Map<String, ? extends String> parameters) {
 			this.parameters.putAll(defaultIfNull(parameters, NO_PARAMETERS));
 			return this;
@@ -82,6 +89,7 @@ public abstract class Task implements Storable {
 	private final Long id;
 	private final String description;
 	private final boolean running;
+	private final DateTime lastExecution;
 	private final String cronExpression;
 	private final Map<String, String> parameters;
 
@@ -90,6 +98,7 @@ public abstract class Task implements Storable {
 		this.description = builder.description;
 		this.running = builder.running;
 		this.cronExpression = builder.cronExpression;
+		this.lastExecution = builder.lastExecution;
 		this.parameters = builder.parameters;
 	}
 
@@ -100,6 +109,7 @@ public abstract class Task implements Storable {
 				.withId(id) //
 				.withDescription(description) //
 				.withRunningStatus(running) //
+				.withLastExecution(lastExecution) //
 				.withCronExpression(cronExpression) //
 				.withParameters(parameters);
 	}
@@ -126,6 +136,11 @@ public abstract class Task implements Storable {
 	// TODO move to parameters
 	public String getCronExpression() {
 		return cronExpression;
+	}
+
+	// TODO move some where else
+	public DateTime getLastExecution() {
+		return lastExecution;
 	}
 
 	// TODO use something different from Map

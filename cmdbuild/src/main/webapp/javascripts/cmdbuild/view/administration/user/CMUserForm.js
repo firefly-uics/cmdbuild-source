@@ -118,7 +118,7 @@
 				region: 'west',
 				margins: '5 0 0 5',
 				padding: '5 5 0 5',
-				autoScroll: true,
+				overflowY: 'auto',
 				flex: 1,
 
 				items: [
@@ -139,7 +139,7 @@
 			this.userPassword = Ext.create('Ext.form.FieldSet', {
 				title: tr.password,
 				region: 'center',
-				autoScroll: true,
+				overflowY: 'auto',
 				margins: '5 5 0 5',
 				padding: '5 5 0 5',
 				flex: 1,

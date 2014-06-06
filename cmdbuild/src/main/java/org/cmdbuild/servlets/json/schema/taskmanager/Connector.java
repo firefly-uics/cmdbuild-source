@@ -7,7 +7,7 @@ import static org.cmdbuild.common.java.sql.DataSourceTypes.mysql;
 import static org.cmdbuild.common.java.sql.DataSourceTypes.oracle;
 import static org.cmdbuild.common.java.sql.DataSourceTypes.postgresql;
 import static org.cmdbuild.common.java.sql.DataSourceTypes.sqlserver;
-import static org.cmdbuild.logic.taskmanager.ConnectorTask.NULL_SOURCE_CONFIGURATION;
+import static org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.NULL_SOURCE_CONFIGURATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTE_MAPPING;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ATTRIBUTE;
@@ -53,12 +53,12 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceType;
-import org.cmdbuild.logic.taskmanager.ConnectorTask;
-import org.cmdbuild.logic.taskmanager.ConnectorTask.AttributeMapping;
-import org.cmdbuild.logic.taskmanager.ConnectorTask.ClassMapping;
-import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfiguration;
-import org.cmdbuild.logic.taskmanager.ConnectorTask.SourceConfigurationVisitor;
-import org.cmdbuild.logic.taskmanager.ConnectorTask.SqlSourceConfiguration;
+import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
+import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.AttributeMapping;
+import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.ClassMapping;
+import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.SourceConfiguration;
+import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.SourceConfigurationVisitor;
+import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.SqlSourceConfiguration;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.CommunicationConstants;
@@ -510,7 +510,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
-			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String notificationAcccount, //
+			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String notificationAccount, //
 			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE_ERROR, required = false) final String notificationTemplate, //
 			@Parameter(value = DATA_SOURCE_TYPE, required = false) final String dataSourceType, //
 			@Parameter(value = DATA_SOURCE_CONFIGURATION, required = false) final String jsonDataSourceConfiguration, //
@@ -522,7 +522,7 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
 				.withNotificationStatus(notificationActive) //
-				.withNotificationAccount(notificationAcccount) //
+				.withNotificationAccount(notificationAccount) //
 				.withNotificationErrorTemplate(notificationTemplate) //
 				.withSourceConfiguration(sourceConfigurationOf(dataSourceType, jsonDataSourceConfiguration)) //
 				.withClassMappings(classMappingOf(jsonclassMapping)) //
@@ -558,7 +558,7 @@ public class Connector extends JSONBaseWithSpringContext {
 			@Parameter(ACTIVE) final Boolean active, //
 			@Parameter(CRON_EXPRESSION) final String cronExpression, //
 			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
-			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String notificationAcccount, //
+			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String notificationAccount, //
 			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE_ERROR, required = false) final String notificationTemplate, //
 			@Parameter(value = DATA_SOURCE_TYPE, required = false) final String dataSourceType, //
 			@Parameter(value = DATA_SOURCE_CONFIGURATION, required = false) final String jsonDataSourceConfiguration, //
@@ -571,7 +571,7 @@ public class Connector extends JSONBaseWithSpringContext {
 				.withActiveStatus(active) //
 				.withCronExpression(cronExpression) //
 				.withNotificationStatus(notificationActive) //
-				.withNotificationAccount(notificationAcccount) //
+				.withNotificationAccount(notificationAccount) //
 				.withNotificationErrorTemplate(notificationTemplate) //
 				.withSourceConfiguration(sourceConfigurationOf(dataSourceType, jsonDataSourceConfiguration)) //
 				.withClassMappings(classMappingOf(jsonclassMapping)) //

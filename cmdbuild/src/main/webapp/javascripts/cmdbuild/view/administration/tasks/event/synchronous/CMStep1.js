@@ -131,7 +131,17 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		autoScroll: true,
+		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
+
+		defaults: {
+			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+			anchor: '100%'
+		},
 
 		initComponent: function() {
 			var me = this;
@@ -142,7 +152,6 @@
 				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				value: tr.tasksTypes.event + ' ' + tr.tasksTypes.eventTypes.synchronous.toLowerCase(),
 				disabled: true,
 				cmImmutable: true,
@@ -158,15 +167,13 @@
 				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
 				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: tr.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
 			this.phaseCombo = Ext.create('Ext.form.field.ComboBox', {
@@ -176,7 +183,7 @@
 				store: CMDBuild.core.proxy.CMProxyTasks.getPhases(),
 				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
 				forceSelection: true,
 				editable: false
@@ -188,8 +195,9 @@
 				height: 300,
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				considerAsFieldToDisable: true
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				considerAsFieldToDisable: true,
+				anchor: '100%'
 			});
 
 			this.classNameCombo = Ext.create('Ext.form.field.ComboBox', {
@@ -198,7 +206,7 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				allowBlank: false,
 				forceSelection: true,
 				editable: false,

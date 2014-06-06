@@ -80,6 +80,8 @@
 		 * @param (String) content
 		 */
 		onFilterButtonClick: function(titleWindow, type, content) {
+			this.textAreaFieldValueBuffer = this.textareaField.getValue();
+
 			this.filterWindow = Ext.create('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterFormWindow', {
 				title: titleWindow,
 				type: type,
@@ -95,19 +97,11 @@
 		 * @param (Array) parameters
 		 */
 		onFilterChange: function(parameters) {
-			if (Ext.isEmpty(this.textAreaFieldValueBuffer))
-				this.textAreaFieldValueBuffer = this.textareaField.getValue();
-
 			this.textareaField.setValue(this.filterStringBuild(parameters));
 		},
 
 		onFilterWindowAbort: function() {
-			if (Ext.isEmpty(this.textAreaFieldValueBuffer)) {
-				this.textareaField.setValue(this.textAreaFieldValueBuffer);
-			} else {
-				this.textareaField.reset();
-			}
-
+			this.textareaField.setValue(this.textAreaFieldValueBuffer);
 			this.filterWindow.hide();
 		},
 

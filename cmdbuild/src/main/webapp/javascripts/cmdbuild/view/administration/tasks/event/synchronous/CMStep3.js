@@ -142,7 +142,7 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		autoScroll: true,
+		overflowY: 'auto',
 
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', this);
@@ -166,7 +166,7 @@
 					collapsed: true,
 					collapsible: true,
 					toggleOnTitleClick: true,
-					autoScroll: true,
+					overflowY: 'auto',
 
 					items: [this.notificationForm]
 				});
@@ -185,7 +185,7 @@
 					collapsed: true,
 					collapsible: true,
 					toggleOnTitleClick: true,
-					autoScroll: true,
+					overflowY: 'auto',
 
 					items: [this.workflowForm]
 				});

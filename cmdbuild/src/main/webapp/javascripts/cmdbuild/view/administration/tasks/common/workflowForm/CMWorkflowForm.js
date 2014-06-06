@@ -11,6 +11,11 @@
 		fieldLabel: tr.workflow,
 		labelWidth: CMDBuild.LABEL_WIDTH,
 
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
+
 		/**
 		 * To acquire informations to setup fields before creation
 		 *

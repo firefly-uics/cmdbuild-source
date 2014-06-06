@@ -120,7 +120,7 @@
 			 *
 			 * @param (String) type
 			 *
-			 * @return (Var) url address
+			 * @return (String) url object address
 			 */
 			getUrl: function(type) {
 				switch (type) {
@@ -174,15 +174,14 @@
 				/**
 				 * @return (Object) store
 				 */
-				// TODO: strings as proxyContants
 				getDeletionTypes: function() {
 					var tr = CMDBuild.Translation.administration.tasks.taskConnector.deletionTypes;
 
 					var store = Ext.create('Ext.data.SimpleStore', {
 						fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
 						data: [
-							[tr.deleteCard, 'deleteCard'],
-							[tr.changeStatus, 'changeStatus']
+							[tr.deleteCard, CMDBuild.core.proxy.CMProxyConstants.DELETE_CARD],
+							[tr.changeStatus, CMDBuild.core.proxy.CMProxyConstants.CHANGE_STATUS]
 						]
 					});
 
@@ -238,17 +237,16 @@
 				 *
 				 * @return (Object) store
 				 */
-				// TODO: strings as proxyContants
 				getPhases: function() {
 					var tr = CMDBuild.Translation.administration.tasks.taskEvent.eventPhases;
 
 					return Ext.create('Ext.data.SimpleStore', {
 						fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
 						data: [
-							[tr.afterCreate, 'afterCreate'],
-							[tr.afterUpdate, 'afterUpdate'],
-							[tr.beforeUpdate, 'beforeUpdate'],
-							[tr.beforeDelete, 'beforeDelete']
+							[tr.afterCreate, CMDBuild.core.proxy.CMProxyConstants.PHASE_AFTER_CREATE],
+							[tr.afterUpdate, CMDBuild.core.proxy.CMProxyConstants.PHASE_AFTER_UPDATE],
+							[tr.beforeUpdate, CMDBuild.core.proxy.CMProxyConstants.PHASE_BEFORE_UPDATE],
+							[tr.beforeDelete, CMDBuild.core.proxy.CMProxyConstants.PHASE_BEFORE_UPDATE]
 						]
 					});
 				},
