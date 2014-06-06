@@ -95,7 +95,7 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		autoScroll: true,
+		overflowY: 'auto',
 
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep4Delegate', this);
@@ -113,7 +113,7 @@
 				collapsed: true,
 				collapsible: true,
 				toggleOnTitleClick: true,
-				autoScroll: true,
+				overflowY: 'auto',
 
 				items: [this.workflowForm]
 			});

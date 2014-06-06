@@ -142,7 +142,7 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		autoScroll: true,
+		overflowY: 'auto',
 
 		initComponent: function() {
 			var me = this;
@@ -168,7 +168,7 @@
 					collapsed: true,
 					collapsible: true,
 					toggleOnTitleClick: true,
-					autoScroll: true,
+					overflowY: 'auto',
 
 					items: [this.notificationForm]
 				});
@@ -187,7 +187,7 @@
 					collapsed: true,
 					collapsible: true,
 					toggleOnTitleClick: true,
-					autoScroll: true,
+					overflowY: 'auto',
 
 					items: [this.workflowForm]
 				});

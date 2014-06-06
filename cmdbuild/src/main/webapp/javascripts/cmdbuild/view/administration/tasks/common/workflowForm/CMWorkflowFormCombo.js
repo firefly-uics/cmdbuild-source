@@ -11,9 +11,10 @@
 
 		valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 		displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-		width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+		maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 		forceSelection: true,
 		editable: false,
+		anchor: '100%',
 
 		store: CMDBuild.core.proxy.CMProxyTasks.getStoreAllWorkflow(),
 		queryMode: 'local',

@@ -96,7 +96,17 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		autoScroll: true,
+		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
+
+		defaults: {
+			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+			anchor: '100%'
+		},
 
 		initComponent: function() {
 			var me = this;
@@ -108,7 +118,6 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 				value: tr.tasksTypes.event + ' ' + tr.tasksTypes.eventTypes.asynchronous.toLowerCase(),
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true,
@@ -123,25 +132,23 @@
 				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
 				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: tr.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
-			this.className = Ext.create('Ext.form.field.ComboBox', {
+			this.classNameCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				store: _CMCache.getClassesStore(),
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
 				allowBlank: false,
 				forceSelection: true,
@@ -160,7 +167,7 @@
 					this.idField,
 					this.descriptionField,
 					this.activeField,
-					this.className
+					this.classNameCombo
 				]
 			});
 

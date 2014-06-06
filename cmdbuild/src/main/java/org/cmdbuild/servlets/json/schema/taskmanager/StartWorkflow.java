@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.Task;
+import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;

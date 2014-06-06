@@ -31,11 +31,11 @@ import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.taskmanager.KeyValueMapperEngine;
-import org.cmdbuild.logic.taskmanager.MapperEngine;
-import org.cmdbuild.logic.taskmanager.NullMapperEngine;
-import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.Task;
+import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
+import org.cmdbuild.logic.taskmanager.task.email.mapper.KeyValueMapperEngine;
+import org.cmdbuild.logic.taskmanager.task.email.mapper.MapperEngine;
+import org.cmdbuild.logic.taskmanager.task.email.mapper.NullMapperEngine;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;

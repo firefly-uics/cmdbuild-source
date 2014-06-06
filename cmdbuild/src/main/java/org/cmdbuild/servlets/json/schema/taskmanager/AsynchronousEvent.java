@@ -1,95 +1,78 @@
 package org.cmdbuild.servlets.json.schema.taskmanager;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CRON_EXPRESSION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.CommunicationConstants.GROUPS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFICATION_ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFICATION_EMAIL_ACCOUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFICATION_EMAIL_TEMPLATE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.PHASE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.PHASE_AFTER_CREATE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.PHASE_AFTER_UPDATE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.PHASE_BEFORE_DELETE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.PHASE_BEFORE_UPDATE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_ACTIVE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_ADVANCEABLE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_ATTRIBUTES;
-import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_CLASS_NAME;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
-import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
-import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
-import java.util.Collections;
-import java.util.Map;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
-import org.cmdbuild.logic.taskmanager.SynchronousEventTask.Phase;
 import org.cmdbuild.logic.taskmanager.Task;
+import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class AsynchronousEvent extends JSONBaseWithSpringContext {
 
 	private static class JsonAsynchronousEventTask {
 
-		public JsonAsynchronousEventTask() {
+		private final AsynchronousEventTask delegate;
+
+		public JsonAsynchronousEventTask(final AsynchronousEventTask delegate) {
+			this.delegate = delegate;
 		}
 
 		@JsonProperty(ID)
 		public Long getId() {
-			return null;
+			return delegate.getId();
 		}
 
 		@JsonProperty(DESCRIPTION)
 		public String getDescription() {
-			return null;
+			return delegate.getDescription();
 		}
 
 		@JsonProperty(ACTIVE)
 		public boolean isActive() {
-			return false;
+			return delegate.isActive();
 		}
 
 		@JsonProperty(CRON_EXPRESSION)
 		public String getCronExpression() {
-			return null;
+			return delegate.getCronExpression();
 		}
 
 		@JsonProperty(CLASS_NAME)
 		public String getTargetClassname() {
-			return null;
+			return delegate.getTargetClassname();
 		}
 
 		@JsonProperty(FILTER)
 		public String getFilter() {
-			return null;
+			return delegate.getFilter();
 		}
 
 		@JsonProperty(NOTIFICATION_ACTIVE)
 		public boolean isEmailEnabled() {
-			return false;
+			return delegate.isNotificationActive();
 		}
 
 		@JsonProperty(NOTIFICATION_EMAIL_ACCOUNT)
 		public String getEmailAccount() {
-			return null;
+			return delegate.getNotificationAccount();
 		}
 
 		@JsonProperty(NOTIFICATION_EMAIL_TEMPLATE)
 		public String getEmailTemplate() {
-			return null;
+			return delegate.getNotificationTemplate();
 		}
 
 	}
@@ -106,21 +89,34 @@ public class AsynchronousEvent extends JSONBaseWithSpringContext {
 			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String emailAccount, //
 			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE, required = false) final String emailTemplate //
 	) {
-		// TODO
-		return JsonResponse.success(null);
+		final AsynchronousEventTask task = AsynchronousEventTask.newInstance() //
+				.withDescription(description) //
+				.withActiveStatus(active) //
+				.withTargetClass(classname) //
+				.withCronExpression(cronExpression) //
+				.withFilter(filter) //
+				.withNotificationStatus(emailActive) //
+				.withNotificationAccount(emailAccount) //
+				.withNotificationErrorTemplate(emailTemplate) //
+				.build();
+		final Long id = taskManagerLogic().create(task);
+		return JsonResponse.success(id);
 	}
 
 	@JSONExported
 	public JsonResponse read( //
 			@Parameter(value = ID) final Long id //
 	) {
-		return JsonResponse.success(new JsonAsynchronousEventTask());
+		final AsynchronousEventTask task = AsynchronousEventTask.newInstance() //
+				.withId(id) //
+				.build();
+		final AsynchronousEventTask readed = taskManagerLogic().read(task, AsynchronousEventTask.class);
+		return JsonResponse.success(new JsonAsynchronousEventTask(readed));
 	}
 
 	@JSONExported
 	public JsonResponse readAll() {
-		// TODO
-		final Iterable<? extends Task> tasks = Collections.emptyList();
+		final Iterable<? extends Task> tasks = taskManagerLogic().read(AsynchronousEventTask.class);
 		return JsonResponse.success(JsonElements.of(from(tasks) //
 				.transform(TASK_TO_JSON_TASK)));
 	}
@@ -138,7 +134,18 @@ public class AsynchronousEvent extends JSONBaseWithSpringContext {
 			@Parameter(value = NOTIFICATION_EMAIL_ACCOUNT, required = false) final String emailAccount, //
 			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE, required = false) final String emailTemplate //
 	) {
-		// TODO
+		final AsynchronousEventTask task = AsynchronousEventTask.newInstance() //
+				.withId(id) //
+				.withDescription(description) //
+				.withActiveStatus(active) //
+				.withTargetClass(classname) //
+				.withCronExpression(cronExpression) //
+				.withFilter(filter) //
+				.withNotificationStatus(emailActive) //
+				.withNotificationAccount(emailAccount) //
+				.withNotificationErrorTemplate(emailTemplate) //
+				.build();
+		taskManagerLogic().update(task);
 		return JsonResponse.success();
 	}
 
@@ -147,8 +154,10 @@ public class AsynchronousEvent extends JSONBaseWithSpringContext {
 	public void delete( //
 			@Parameter(ID) final Long id //
 	) {
-		// TODO
-		// taskManagerLogic().delete(...);
+		final AsynchronousEventTask task = AsynchronousEventTask.newInstance() //
+				.withId(id) //
+				.build();
+		taskManagerLogic().delete(task);
 	}
 
 }

@@ -14,7 +14,7 @@ import org.cmdbuild.dao.entrytype.ForwardingClass;
 
 import com.google.common.base.Function;
 
-public class ClassHistory extends ForwardingClass {
+public class ClassHistory extends ForwardingClass implements HistoricEntryType<CMClass> {
 
 	public static CMClass history(final CMClass current) {
 		return of(current);
@@ -50,6 +50,7 @@ public class ClassHistory extends ForwardingClass {
 		visitor.visit(this);
 	}
 
+	@Override
 	public CMClass getType() {
 		return current;
 	}
@@ -96,7 +97,8 @@ public class ClassHistory extends ForwardingClass {
 
 	@Override
 	public boolean isAncestorOf(final CMClass cmClass) {
-		return current.isAncestorOf(cmClass);
+		final CMClass target = cmClass instanceof ClassHistory ? ClassHistory.class.cast(cmClass).current : cmClass;
+		return current.isAncestorOf(target);
 	}
 
 	@Override

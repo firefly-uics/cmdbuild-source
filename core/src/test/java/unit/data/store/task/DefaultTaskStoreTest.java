@@ -27,6 +27,7 @@ import org.cmdbuild.data.store.task.Task;
 import org.cmdbuild.data.store.task.TaskDefinition;
 import org.cmdbuild.data.store.task.TaskParameter;
 import org.hamcrest.Matcher;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -56,6 +57,11 @@ public class DefaultTaskStoreTest {
 
 		public TaskAssert description(final Matcher<String> matcher) {
 			assertThat(underTest.getDescription(), matcher);
+			return this;
+		}
+
+		public TaskAssert lastExecution(final Matcher<DateTime> matcher) {
+			assertThat(underTest.getLastExecution(), matcher);
 			return this;
 		}
 
@@ -99,6 +105,11 @@ public class DefaultTaskStoreTest {
 			return this;
 		}
 
+		public TaskDefinitionAssert lastExecution(final Matcher<DateTime> matcher) {
+			assertThat(underTest.getLastExecution(), matcher);
+			return this;
+		}
+
 	}
 
 	private static class TaskParameterAssert {
@@ -139,6 +150,8 @@ public class DefaultTaskStoreTest {
 
 	}
 
+	private static final DateTime now = DateTime.now();
+
 	private Store<TaskDefinition> definitionsStore;
 	private Store<TaskParameter> parametersStore;
 	private DefaultTaskStore store;
@@ -157,6 +170,7 @@ public class DefaultTaskStoreTest {
 				.withDescription("description") //
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
+				.withLastExecution(now) //
 				.withParameter("foo", "bar") //
 				.withParameter("bar", "baz") //
 				.build();
@@ -180,7 +194,8 @@ public class DefaultTaskStoreTest {
 		TaskDefinitionAssert.of(definitionCaptor.getValue()) //
 				.description(equalTo("description")) //
 				.runningStatus(equalTo(true)) //
-				.cronExpression(equalTo("cron expression"));
+				.cronExpression(equalTo("cron expression")) //
+				.lastExecution(equalTo(now));
 		TaskParameterAssert.of(parameterCaptor.getAllValues()) //
 				.valueOfParameter("foo", equalTo("bar")) //
 				.valueOfParameter("bar", equalTo("baz"));
@@ -193,6 +208,7 @@ public class DefaultTaskStoreTest {
 				.thenReturn(StartWorkflowTaskDefinition.newInstance() //
 						.withId(123L) //
 						.withDescription("description") //
+						.withLastExecution(now) //
 						.build());
 
 		when(parametersStore.readAll(any(Groupable.class))) //
@@ -229,6 +245,7 @@ public class DefaultTaskStoreTest {
 		TaskAssert.of(element) //
 				.id(equalTo(123L)) //
 				.description(equalTo("description")) //
+				.lastExecution(equalTo(now)) //
 				.valueOfParameter("foo", equalTo("FOO")) //
 				.valueOfParameter("bar", equalTo("BAR"));
 	}
@@ -241,10 +258,12 @@ public class DefaultTaskStoreTest {
 						(TaskDefinition) StartWorkflowTaskDefinition.newInstance() //
 								.withId(123L) //
 								.withDescription("first") //
+								.withLastExecution(now) //
 								.build(), //
 						(TaskDefinition) StartWorkflowTaskDefinition.newInstance() //
 								.withId(456L) //
 								.withDescription("second") //
+								.withLastExecution(now) //
 								.build()));
 
 		when(parametersStore.readAll(any(Groupable.class))) //
@@ -283,12 +302,14 @@ public class DefaultTaskStoreTest {
 		TaskAssert.of(get(elements, 0)) //
 				.id(equalTo(123L)) //
 				.description(equalTo("first")) //
+				.lastExecution(equalTo(now)) //
 				.valueOfParameter("foo", equalTo("FOO")) //
 				.valueOfParameter("bar", equalTo("BAR"));
 
 		TaskAssert.of(get(elements, 1)) //
 				.id(equalTo(456L)) //
 				.description(equalTo("second")) //
+				.lastExecution(equalTo(now)) //
 				.valueOfParameter("baz", equalTo("BAZ"));
 	}
 
@@ -300,10 +321,12 @@ public class DefaultTaskStoreTest {
 						(TaskDefinition) StartWorkflowTaskDefinition.newInstance() //
 								.withId(123L) //
 								.withDescription("first") //
+								.withLastExecution(now) //
 								.build(), //
 						(TaskDefinition) StartWorkflowTaskDefinition.newInstance() //
 								.withId(456L) //
 								.withDescription("second") //
+								.withLastExecution(now) //
 								.build()));
 
 		when(parametersStore.readAll(any(Groupable.class))) //
@@ -343,12 +366,14 @@ public class DefaultTaskStoreTest {
 		TaskAssert.of(get(elements, 0)) //
 				.id(equalTo(123L)) //
 				.description(equalTo("first")) //
+				.lastExecution(equalTo(now)) //
 				.valueOfParameter("foo", equalTo("FOO")) //
 				.valueOfParameter("bar", equalTo("BAR"));
 
 		TaskAssert.of(get(elements, 1)) //
 				.id(equalTo(456L)) //
 				.description(equalTo("second")) //
+				.lastExecution(equalTo(now)) //
 				.valueOfParameter("baz", equalTo("BAZ"));
 	}
 
@@ -360,6 +385,7 @@ public class DefaultTaskStoreTest {
 				.withDescription("description") //
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
+				.withLastExecution(now) //
 				.withParameter("foo", "FOO") //
 				.withParameter("bar", "bar") //
 				.build();
@@ -394,7 +420,8 @@ public class DefaultTaskStoreTest {
 		TaskDefinitionAssert.of(definitionCaptor.getValue()) //
 				.description(equalTo("description")) //
 				.runningStatus(equalTo(true)) //
-				.cronExpression(equalTo("cron expression"));
+				.cronExpression(equalTo("cron expression")) //
+				.lastExecution(equalTo(now));
 
 		TaskParameterAssert.of(createParameterCaptor.getAllValues()) //
 				.valueOfParameter("bar", equalTo("bar"));

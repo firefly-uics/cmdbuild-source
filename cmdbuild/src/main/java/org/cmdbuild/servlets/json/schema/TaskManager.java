@@ -5,6 +5,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_ASYNCHRONOUS_EVENT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_CONNECTOR;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_READ_EMAIL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TASK_START_WORKFLOW;
@@ -16,12 +17,13 @@ import java.util.List;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.logic.taskmanager.ConnectorTask;
-import org.cmdbuild.logic.taskmanager.ReadEmailTask;
-import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
-import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.Task;
 import org.cmdbuild.logic.taskmanager.TaskVistor;
+import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
+import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
+import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -34,6 +36,7 @@ public class TaskManager extends JSONBaseWithSpringContext {
 
 	private static enum TaskType {
 
+		ASYNCHRONOUS_EVENT(TASK_ASYNCHRONOUS_EVENT), //
 		CONNECTOR(TASK_CONNECTOR), //
 		READ_EMAIL(TASK_READ_EMAIL), //
 		START_WORKFLOW(TASK_START_WORKFLOW), //
@@ -70,7 +73,12 @@ public class TaskManager extends JSONBaseWithSpringContext {
 			Validate.notNull(type, "type not found");
 			return type;
 		}
-		
+
+		@Override
+		public void visit(AsynchronousEventTask task) {
+			type = TaskType.ASYNCHRONOUS_EVENT;
+		}
+
 		@Override
 		public void visit(ConnectorTask task) {
 			type = TaskType.CONNECTOR;

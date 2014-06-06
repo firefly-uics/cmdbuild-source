@@ -56,7 +56,7 @@
 
 		bodyCls: 'cmgraypanel',
 		border: false,
-		autoScroll: true,
+		overflowY: 'auto',
 
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.common.CMStepCronConfigurationDelegate', this);
