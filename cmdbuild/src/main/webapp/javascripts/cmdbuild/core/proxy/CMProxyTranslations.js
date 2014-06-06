@@ -20,6 +20,7 @@
 			createForReport:  "services/json/schema/translation/createforreport",
 			createForLookup:  "services/json/schema/translation/createforlookup",
 			createForGisIcon: "services/json/schema/translation/createforgisicon",
+			createForMenuItem: "services/json/schema/translation/createformenuitem",
 
 			readForClass:  "services/json/schema/translation/readforclass",
 			readForClassAttribute:  "services/json/schema/translation/readforclassattribute",
@@ -34,6 +35,7 @@
 			readForReport:  "services/json/schema/translation/readforreport",
 			readForLookup:  "services/json/schema/translation/readforlookup",
 			readForGisIcon: "services/json/schema/translation/readforgisicon",
+			readForMenuItem: "services/json/schema/translation/readformenuitem",
 
 			updateForClass:  "services/json/schema/translation/updateforclass",
 			updateForClassAttribute:  "services/json/schema/translation/updateforclassattribute",
@@ -48,6 +50,7 @@
 			updateForReport:  "services/json/schema/translation/updateforreport",
 			updateForLookup:  "services/json/schema/translation/updateforlookup",
 			updateForGisIcon: "services/json/schema/translation/updateforgisicon",
+			updateForMenuItem: "services/json/schema/translation/updateformenuitem",
 
 			deleteForClass:  "services/json/schema/translation/deleteforclass",
 			deleteForClassAttribute:  "services/json/schema/translation/deleteforclassattribute",
@@ -62,6 +65,7 @@
 			deleteForReport:  "services/json/schema/translation/deleteforreport",
 			deleteForLookup:  "services/json/schema/translation/deleteforlookup",
 			deleteForGisIcon: "services/json/schema/translation/deleteforgisicon",
+			deleteForMenuItem: "services/json/schema/translation/deleteformenuitem"
 
 };
 

@@ -123,7 +123,7 @@
 		var out = {};
 		var superclass = false;
 		var type = node.type;
-		var text = node.description;
+		var text = node.description_default;
 		if (type == "class" 
 			|| (type == "processclass" && _CMCache.isEntryTypeByName(node.referencedClassName)) ) {
 
@@ -136,11 +136,12 @@
 		// hack to manage the folder categories of
 		// the available menu items
 		if (type == "folder") {
-			text = CMDBuild.Translation.administration.modmenu.availabletree[node.description] || node.description;
-			out.folderType = node.description;
+			text = CMDBuild.Translation.administration.modmenu.availabletree[node.description_default] || node.description_default;
+			out.folderType = node.description_default;
 		}
 
 		out.type = type;
+		out.uuid = node.uuid;
 		out.index = node.index;
 		out.referencedClassName = node.referencedClassName;
 		out.referencedElementId = node.referencedElementId;
@@ -192,7 +193,8 @@
 			type: node.get("type"),
 			description: node.get("text"),
 			referencedClassName: node.get("referencedClassName"),
-			referencedElementId: node.get("referencedElementId")
+			referencedElementId: node.get("referencedElementId"),
+			uuid: node.get("uuid")
 		};
 
 	}
