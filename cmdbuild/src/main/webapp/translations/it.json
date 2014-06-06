@@ -735,7 +735,7 @@
 			},
 			"taskEvent": {
 				"eventPhases": {
-					"afterCreate": "Dopo la cancellazione",
+					"afterCreate": "Dopo la creazione",
 					"afterUpdate": "Dopo l'aggiornamento",
 					"beforeDelete": "Prima della cancellazione",
 					"beforeUpdate": "Prima dell'aggiornamento"
