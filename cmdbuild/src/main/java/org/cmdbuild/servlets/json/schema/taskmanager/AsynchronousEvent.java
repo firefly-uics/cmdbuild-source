@@ -92,7 +92,9 @@ public class AsynchronousEvent extends JSONBaseWithSpringContext {
 		final AsynchronousEventTask task = AsynchronousEventTask.newInstance() //
 				.withDescription(description) //
 				.withActiveStatus(active) //
+				.withTargetClass(classname) //
 				.withCronExpression(cronExpression) //
+				.withFilter(filter) //
 				.withNotificationStatus(emailActive) //
 				.withNotificationAccount(emailAccount) //
 				.withNotificationErrorTemplate(emailTemplate) //
@@ -136,7 +138,9 @@ public class AsynchronousEvent extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.withDescription(description) //
 				.withActiveStatus(active) //
+				.withTargetClass(classname) //
 				.withCronExpression(cronExpression) //
+				.withFilter(filter) //
 				.withNotificationStatus(emailActive) //
 				.withNotificationAccount(emailAccount) //
 				.withNotificationErrorTemplate(emailTemplate) //
