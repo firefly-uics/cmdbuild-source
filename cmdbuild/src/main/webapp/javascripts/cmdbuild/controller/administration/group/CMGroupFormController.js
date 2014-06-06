@@ -60,7 +60,7 @@
 		} else {
 			this.view.reset();
 		}
-		this.view.disableModify();
+		this.view.disableModify(true);
 	}
 
 	function onEnableGroupButtonClick() {
