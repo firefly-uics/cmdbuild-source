@@ -64,6 +64,36 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private static final Predicate<Email> ALWAYS = alwaysTrue();
 
+	private static enum TaskPredicate implements Predicate<ReadEmailTask> {
+
+		SEND_NOTIFICATION() {
+
+			@Override
+			public boolean apply(final ReadEmailTask input) {
+				return input.isNotificationActive();
+			}
+
+		}, //
+		STORE_ATTACHMENTS() {
+
+			@Override
+			public boolean apply(final ReadEmailTask input) {
+				return input.isAttachmentsActive();
+			}
+
+		}, //
+		START_PROCESS() {
+
+			@Override
+			public boolean apply(final ReadEmailTask input) {
+				return input.isWorkflowActive();
+			}
+
+		}, //
+		;
+
+	}
+
 	private static final Predicate<Email> HAS_ATTACHMENTS = new Predicate<Email>() {
 
 		@Override
