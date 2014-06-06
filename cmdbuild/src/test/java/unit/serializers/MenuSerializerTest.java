@@ -208,6 +208,7 @@ public class MenuSerializerTest {
 		jsonClassNode.put(MenuSerializer.INDEX, "1");
 		jsonClassNode.put(MenuSerializer.ELEMENT_ID, "25");
 		jsonClassNode.put(MenuSerializer.CLASS_NAME, "FooClass");
+		jsonClassNode.put(MenuSerializer.UUID, "uuid");
 
 		return jsonClassNode;
 	}
