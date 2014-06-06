@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.taskmanager.scheduler;
 
+import static com.google.common.base.Throwables.propagate;
+
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
 import org.cmdbuild.scheduler.ForwardingJob;
@@ -28,7 +30,12 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 		@Override
 		public void execute() {
 			callback.start();
-			super.execute();
+			try {
+				super.execute();
+			} catch (final Throwable e) {
+				callback.error(e);
+				propagate(e);
+			}
 			callback.stop();
 		}
 
@@ -46,9 +53,11 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 	public void create(final ScheduledTask task, final Callback callback) {
 		logger.info(MARKER, "creating a new scheduled task '{}'", task);
 		if (task.isActive()) {
-			final Job serviceJob = new JobWithCallback(converter.from(task).toJob(), callback);
+			final Job job = converter.from(task).toJob();
+			final Job jobWithCallback = new JobWithCallback(job, callback);
+			final Job jobWithLogging = new JobWithCallback(job, LoggingCallback.of(jobWithCallback));
 			final Trigger trigger = RecurringTrigger.at(addSecondsField(task.getCronExpression()));
-			schedulerService.add(serviceJob, trigger);
+			schedulerService.add(jobWithLogging, trigger);
 		}
 	}
 

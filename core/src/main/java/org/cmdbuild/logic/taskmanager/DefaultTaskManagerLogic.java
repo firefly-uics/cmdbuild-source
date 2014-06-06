@@ -49,6 +49,11 @@ public class DefaultTaskManagerLogic implements TaskManagerLogic {
 			store.update(updated);
 		}
 
+		@Override
+		public void error(final Throwable e) {
+			// nothing to do
+		}
+
 	}
 
 	private static interface Action<T> {

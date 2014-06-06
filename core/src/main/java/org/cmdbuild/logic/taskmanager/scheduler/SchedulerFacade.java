@@ -10,6 +10,8 @@ public interface SchedulerFacade {
 
 		void stop();
 
+		void error(Throwable e);
+
 	}
 
 	/**
