@@ -80,8 +80,8 @@
 				return;
 			}
 
-			if (this.readWrite
-					&& this.thereAreTemplates()
+			if (/*this.readWrite
+					&& */this.thereAreTemplates()
 					&& !this.view.hasDraftEmails()) {
 
 				_createEmailFromTemplate(this);
@@ -147,7 +147,7 @@
 			new CMDBuild.view.management.common.widgets.CMEmailWindow({
 				emailGrid: emailGrid,
 				delegate: this,
-				readOnly: false,
+				readOnly: ! this.readWrite,
 				record: emailRecord
 			}).show();
 		},

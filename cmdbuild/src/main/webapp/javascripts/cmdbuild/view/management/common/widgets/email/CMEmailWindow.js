@@ -99,6 +99,7 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindow", {
 			iconCls : 'clone',
 			xtype: "splitbutton",
 			text : /*@@*/"Compose from template",
+			disabled: this.readOnly,
 		    menu: new Ext.menu.Menu({
 		        items: [],
 		        listeners: {
@@ -207,21 +208,25 @@ function buildFormPanel(me, body) {
 				xtype: 'displayfield',
 				name : fields.FROM_ADDRESS,
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.fromfld,
+				disabled: me.readOnly,
 				value: me.record.get(fields.FROM_ADDRESS)
 			},{
 				xtype: me.readOnly ? 'displayfield' : 'textfield',
 				name : fields.TO_ADDRESS,
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld,
+				disabled: me.readOnly,
 				value: me.record.get(fields.TO_ADDRESS)
 			},{
 				xtype: me.readOnly ? 'displayfield' : 'textfield',
 				name : fields.CC_ADDRESS,
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld,
+				disabled: me.readOnly,
 				value: me.record.get(fields.CC_ADDRESS)
 			},{
 				xtype: me.readOnly ? 'displayfield' : 'textfield',
 				name : fields.SUBJECT,
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.subjectfld,
+				disabled: me.readOnly,
 				value: me.record.get(fields.SUBJECT)
 			},body]
 	});
@@ -270,6 +275,7 @@ function buildAttachmentButtonsContainer(me) {
 			type: 'hbox',
 			padding: '0 5'
 		},
+		disabled: me.readOnly,
 		items: [ //
 			buildUploadForm(me)
 			,{
@@ -288,6 +294,7 @@ function buildAttachmentPanelsContainer(me) {
 	return Ext.create('Ext.container.Container', {
 		autoScroll: true,
 		flex: 1,
+		disabled: me.readOnly,
 		getFileNames: function() {
 			var names = [];
 
