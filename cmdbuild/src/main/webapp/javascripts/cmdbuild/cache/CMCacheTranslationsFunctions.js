@@ -212,6 +212,9 @@
 			case "GisIcon" :
 				createForGisIcon(translationsKeyName, translationsKeyField, values);
 				break;
+			case "MenuItem" :
+				createForMenuItem(translationsKeyName, translationsKeyField, values);
+				break;
 		}
 		
 	}
@@ -319,6 +322,14 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.createForGisIcon);
 	}
+	function createForMenuItem(translationsKeyName, translationsKeyField, values) {
+		var params = {
+				uuid: translationsKeyName,
+				field: translationsKeyField,
+				translations: Ext.JSON.encodeValue(values)
+		};
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.createForMenuItem);
+	}
 
 	/*
 	 * READ
@@ -364,6 +375,9 @@
 				break;
 			case "GisIcon" :
 				readForGisIcon(translationsKeyName, translationsKeyField, callBack);
+				break;
+			case "MenuItem" :
+				readForMenuItem(translationsKeyName, translationsKeyField, callBack);
 				break;
 		}
 	}
@@ -458,6 +472,13 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForGisIcon);
 	}
+	function readForMenuItem(translationsKeyName, translationsKeyField, callBack) {
+		var params = {
+				uuid: translationsKeyName,
+				field: translationsKeyField
+		};
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForMenuItem);
+	}
 		
 	/*
 	 * UPDATE
@@ -503,6 +524,9 @@
 				break;
 			case "GisIcon" :
 				updateForGisIcon(translationsKeyName, translationsKeyField, values);
+				break;
+			case "MenuItem" :
+				updateForMenuItem(translationsKeyName, translationsKeyField, values);
 				break;
 		}
 		
@@ -611,6 +635,14 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForGisIcon);
 	}
+	function updateForMenuItem(translationsKeyName, translationsKeyField, values) {
+		var params = {
+				uuid: translationsKeyName,
+				field: translationsKeyField,
+				translations: Ext.JSON.encodeValue(values)
+		};
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForMenuItem);
+	}
 		
 	/*
 	 * DELETE
@@ -656,6 +688,9 @@
 				break;
 			case "GisIcon" :
 				deleteForGisIcon(translationsKeyName, translationsKeyField, values);
+				break;
+			case "MenuItem" :
+				deleteForMenuItem(translationsKeyName, translationsKeyField, values);
 				break;
 		}
 		
@@ -763,6 +798,14 @@
 				translations: Ext.JSON.encodeValue(values)
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForGisIcon);
+	}
+	function deleteForMenuItem(translationsKeyName, translationsKeyField, values) {
+		var params = {
+				uuid: translationsKeyName,
+				field: translationsKeyField,
+				translations: Ext.JSON.encodeValue(values)
+		};
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForMenuItem);
 	}
 		
 

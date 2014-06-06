@@ -280,6 +280,7 @@ public class MenuSerializer {
 			item.setIndex(jsonMenu.getInt(INDEX));
 			item.setReferedClassName(jsonMenu.getString(CLASS_NAME));
 			item.setReferencedElementId(getElementId(jsonMenu));
+			item.setUniqueIdentifier(jsonMenu.getString(UUID));
 		}
 
 		return item;
