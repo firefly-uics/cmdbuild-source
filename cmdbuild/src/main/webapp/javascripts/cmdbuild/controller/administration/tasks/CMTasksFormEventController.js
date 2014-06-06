@@ -241,9 +241,6 @@
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = formData[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ID] = formData[CMDBuild.core.proxy.CMProxyConstants.ID];
 
-_debug(formData);
-_debug(submitDatas);
-
 				if (Ext.isEmpty(formData[CMDBuild.core.proxy.CMProxyConstants.ID])) {
 					CMDBuild.core.proxy.CMProxyTasks.create({
 						type: taskType,
