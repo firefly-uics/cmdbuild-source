@@ -1,4 +1,6 @@
 (function() {
+	var NAME = _CMProxy.parameter.NAME;
+	var DESCRIPTION = _CMProxy.parameter.DESCRIPTION;
 
 	Ext.define('CMDBuild.delegate.administration.bim.CMBIMFormFieldsManager', {
 		extend: 'CMDBuild.delegate.administration.common.basepanel.CMBaseFormFiledsManager',
@@ -7,7 +9,24 @@
 		 * @return (Array) an array of Ext.component to use as form items
 		 */
 		build: function() {
-			var fields = this.callParent(arguments);
+			this.name = new Ext.form.TextField({
+				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.name,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				name: NAME,
+				allowBlank: false,
+				vtype: "alphanum",
+				cmImmutable: true
+			});
+
+			this.description= new Ext.form.TextField({
+				fieldLabel : CMDBuild.Translation.administration.modClass.attributeProperties.description,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				name: DESCRIPTION,
+				allowBlank : false,
+				vtype : "cmdbcomment"
+			});
 
 			this.activeCheckBox = Ext.create('Ext.ux.form.XCheckbox', {
 				fieldLabel: CMDBuild.Translation.active,
@@ -30,7 +49,7 @@
 
 			this.cardBinding = new CMDBuild.Administration.bim.BindCardFieldsetItem({});
 
-			fields.push(this.activeCheckBox, this.fileField, this.cardBinding, this.importIfcButton);
+			var fields = [this.name, this.description, this.activeCheckBox, this.fileField, this.cardBinding, this.importIfcButton];
 
 			return fields;
 		},
