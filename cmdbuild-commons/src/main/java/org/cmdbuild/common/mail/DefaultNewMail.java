@@ -229,18 +229,10 @@ class DefaultNewMail implements NewMail {
 
 			@Override
 			public void run() {
-				try {
-					final Session session = createSession();
-					message = messageFrom(session);
-					setFrom();
-					addRecipients();
-					setSubject();
-					setSentDate();
-					setBody();
-					send(session);
-				} catch (final MessagingException e) {
-					logger.error("error sending mail", e);
-				}
+				final Session session = createSession();
+				message = messageFrom(session);
+				fillMessage();
+				send(session);
 			}
 
 		};
@@ -258,6 +250,18 @@ class DefaultNewMail implements NewMail {
 
 	private MimeMessage messageFrom(final Session session) {
 		return new MimeMessage(session);
+	}
+
+	private void fillMessage() {
+		try {
+			setFrom();
+			addRecipients();
+			setSubject();
+			setSentDate();
+			setBody();
+		} catch (MessagingException e) {
+			throw MailException.creation(e);
+		}
 	}
 
 	private Properties createConfigurationProperties() {
@@ -345,10 +349,14 @@ class DefaultNewMail implements NewMail {
 		return !attachments.isEmpty();
 	}
 
-	private void addAttachmentBodyParts(final Multipart multipart) throws MessagingException {
-		for (final Entry<URL, String> attachment : attachments.entrySet()) {
-			final BodyPart bodyPart = getBodyPartFor(attachment.getKey(), attachment.getValue());
-			multipart.addBodyPart(bodyPart);
+	private void addAttachmentBodyParts(final Multipart multipart) {
+		try {
+			for (final Entry<URL, String> attachment : attachments.entrySet()) {
+				final BodyPart bodyPart = getBodyPartFor(attachment.getKey(), attachment.getValue());
+				multipart.addBodyPart(bodyPart);
+			}
+		} catch (MessagingException e) {
+			throw MailException.creation(e);
 		}
 	}
 
@@ -368,13 +376,13 @@ class DefaultNewMail implements NewMail {
 		return name;
 	}
 
-	private void send(final Session session) throws MessagingException {
+	private void send(final Session session) {
 		Transport transport = null;
 		try {
 			transport = connect(session);
 			transport.sendMessage(message, message.getAllRecipients());
 		} catch (final MessagingException e) {
-			throw e;
+			throw MailException.send(e);
 		} finally {
 			closeIfOpened(transport);
 		}
