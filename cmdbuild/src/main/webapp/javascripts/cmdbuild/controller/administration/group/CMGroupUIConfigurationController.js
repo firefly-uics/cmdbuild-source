@@ -54,7 +54,9 @@
 	}
 
 	function onSaveButtonClick() {
-		var uiConfiguration = this.view.getUIConfiguration().toString();
+		var uiConfiguration = this.view.getUIConfiguration();
+		this.currentUIConfiguration = uiConfiguration;
+		uiConfiguration = uiConfiguration.toString();
 		var gId = this.currentGroup.getId();
 
 		CMDBuild.LoadMask.get().show();
