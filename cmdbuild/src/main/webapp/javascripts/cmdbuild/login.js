@@ -62,6 +62,7 @@
 				name: 'role',
 				hiddenName: 'role',
 				valueField: 'name',
+				editable: false,
 				displayField : 'description',
 				queryMode: 'local',
 				store: new Ext.data.Store({
@@ -181,6 +182,10 @@
 		//private
 		doLogin: function(field, event) {
 			var form = this.form.getForm();
+			
+			var values = form.getValues();
+			if (values.role != undefined && values.role == "")
+				return;
 
 			if (!form.isValid())
 				return;
