@@ -172,10 +172,14 @@
 			{name: "createPrivileges", type: "boolean"},
 			{name: "writePrivileges", type: "boolean"},
 			{name: "isMasterDetail", type: "boolean"},
-			{name: "description", type: "stirng"},
-			{name: "descr_1", type: "stirng"},
-			{name: "descr_2", type: "stirng"},
-			{name: "md_label", type: "string"}
+			{name: "description", type: "string"},
+			{name: "descr_1", type: "string"},
+			{name: "descr_2", type: "string"},
+			{name: "md_label", type: "string"},
+			{name: "description_default", type: "string"},
+			{name: "descr_1_default", type: "string"},
+			{name: "descr_2_default", type: "string"},
+			{name: "md_label_default", type: "string"}
 		],
 
 		getAttributes: function() {
