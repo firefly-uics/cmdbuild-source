@@ -37,7 +37,7 @@
 				'action-masterdetail-delete': this.onDeleteDetailClick,
 				'action-masterdetail-graph': this.onOpenGraphClick,
 				'action-masterdetail-note': this.onOpenNoteClick,
-				'action-masterdetail-attach': this.onOpenAttachmentClick 
+				'action-masterdetail-attach': this.onOpenAttachmentClick
 			};
 		},
 
@@ -152,16 +152,24 @@
 
 		onOpenNoteClick: function(model) {
 			var editable = (model && model.raw && model.raw.priv_write);
-			var w = new CMDBuild.view.management.common.CMNoteWindow({
-				withButtons: editable
+
+			var noteWindow = new CMDBuild.view.management.common.CMNoteWindow({
+				withButtons: editable,
+				withTbar: false
 			}).show();
 
-			var wc = new CMDBuild.view.management.common.CMNoteWindowController(w);
-			wc.onCardSelected(model);
+			var noteWindowController = new CMDBuild.view.management.common.CMNoteWindowController(noteWindow);
+			noteWindowController.onCardSelected(model);
 
-			w.mon(w, "destroy", function() {
-				this.view.reload();
-			}, this, {single: true});
+			noteWindow.mon(
+				noteWindow,
+				'destroy',
+				function() {
+					this.view.reload();
+				},
+				this,
+				{ single: true }
+			);
 		},
 
 		onOpenAttachmentClick: function(model) {
@@ -213,7 +221,7 @@
 			}
 		});
 	}
-	
+
 	function updateDetailGrid() {
 		if (this.card != null) {
 			var p = {
@@ -272,7 +280,7 @@
 	function tabIsActive(t) {
 		return t.ownerCt.layout.getActiveItem().id == t.id;
 	}
-	
+
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
 		var className = event.target.className;
 
