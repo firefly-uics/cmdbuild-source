@@ -1,19 +1,18 @@
-package org.cmdbuild.model.email;
+package org.cmdbuild.data.store.email;
 
 import javax.activation.DataHandler;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.common.Builder;
 
 public class Attachment {
 
-	public static class AttachmentBuilder implements Builder<Attachment> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<Attachment> {
 
 		private String name;
 		private DataHandler dataHandler;
 
-		private AttachmentBuilder() {
+		private Builder() {
 			// prevents instantiation
 		}
 
@@ -22,26 +21,26 @@ public class Attachment {
 			return new Attachment(this);
 		}
 
-		public AttachmentBuilder withName(final String name) {
+		public Builder withName(final String name) {
 			this.name = name;
 			return this;
 		}
 
-		public AttachmentBuilder withDataHandler(final DataHandler dataHandler) {
+		public Builder withDataHandler(final DataHandler dataHandler) {
 			this.dataHandler = dataHandler;
 			return this;
 		}
 
 	}
 
-	public static AttachmentBuilder newInstance() {
-		return new AttachmentBuilder();
+	public static Builder newInstance() {
+		return new Builder();
 	}
 
 	private final String name;
 	private final DataHandler dataHandler;
 
-	private Attachment(final AttachmentBuilder builder) {
+	private Attachment(final Builder builder) {
 		this.name = builder.name;
 		this.dataHandler = builder.dataHandler;
 	}

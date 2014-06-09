@@ -3,8 +3,8 @@ package org.cmdbuild.services.email;
 import java.net.URL;
 import java.util.Map;
 
+import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.data.store.email.EmailTemplate;
-import org.cmdbuild.model.email.Email;
 
 public abstract class ForwardingEmailService implements EmailService {
 

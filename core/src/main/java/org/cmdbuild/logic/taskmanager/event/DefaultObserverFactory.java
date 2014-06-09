@@ -22,6 +22,7 @@ import org.cmdbuild.dao.logging.LoggingSupport;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.email.EmailConstants;
 import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
@@ -33,7 +34,6 @@ import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTas
 import org.cmdbuild.logic.taskmanager.util.CardIdFilterElementGetter;
 import org.cmdbuild.logic.workflow.StartProcess;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.model.email.EmailConstants;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.PredicateEmailAccountSupplier;

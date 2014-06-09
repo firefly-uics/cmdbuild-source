@@ -8,9 +8,9 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.email.EmailLogic.EmailWithAttachmentNames;
-import org.cmdbuild.model.email.Email;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMWorkflowException;

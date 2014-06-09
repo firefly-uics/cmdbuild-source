@@ -1,4 +1,4 @@
-package org.cmdbuild.model.email;
+package org.cmdbuild.data.store.email;
 
 import java.util.Collections;
 
@@ -9,35 +9,6 @@ import org.cmdbuild.model.AbstractEmail;
 import org.joda.time.DateTime;
 
 public class Email extends AbstractEmail implements Storable {
-
-	public static enum EmailStatus {
-		NEW("New"), //
-		RECEIVED("Received"), //
-		DRAFT("Draft"), //
-		OUTGOING("Outgoing"), //
-		SENT("Sent");
-
-		public static final String LOOKUP_TYPE = "EmailStatus";
-
-		private String lookupName;
-
-		EmailStatus(final String lookupName) {
-			this.lookupName = lookupName;
-		}
-
-		public String getLookupName() {
-			return lookupName;
-		}
-
-		public static EmailStatus fromName(final String lookupName) {
-			for (final EmailStatus status : EmailStatus.values()) {
-				if (status.getLookupName().equals(lookupName)) {
-					return status;
-				}
-			}
-			throw new IllegalArgumentException();
-		}
-	}
 
 	private final Long id;
 	private String fromAddress;
@@ -58,10 +29,12 @@ public class Email extends AbstractEmail implements Storable {
 		return id;
 	}
 
+	@Override
 	public String getFromAddress() {
 		return fromAddress;
 	}
 
+	@Override
 	public void setFromAddress(final String fromAddress) {
 		this.fromAddress = fromAddress;
 	}

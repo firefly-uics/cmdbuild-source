@@ -1,6 +1,6 @@
 package org.cmdbuild.logic.taskmanager.task.email;
 
-import org.cmdbuild.model.email.Email;
+import org.cmdbuild.data.store.email.Email;
 
 abstract class ForwardingAction implements Action {
 

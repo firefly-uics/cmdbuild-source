@@ -14,7 +14,7 @@ public class Predicates {
 
 		};
 	}
-	
+
 	public static Predicate<EmailAccount> isDefault() {
 		return new Predicate<EmailAccount>() {
 
