@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.schema.taskmanager;
+package org.cmdbuild.servlets.json.schema.taskmanager.event;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -38,7 +38,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class SynchronousEvent extends JSONBaseWithSpringContext {
+public class Synchronous extends JSONBaseWithSpringContext {
 
 	private static enum JsonPhase {
 		AFTER_CREATE(PHASE_AFTER_CREATE, Phase.AFTER_CREATE), //
