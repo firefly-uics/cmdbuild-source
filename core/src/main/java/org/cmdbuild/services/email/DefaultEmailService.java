@@ -1,6 +1,5 @@
 package org.cmdbuild.services.email;
 
-import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.Iterables.unmodifiableIterable;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -153,8 +152,8 @@ public class DefaultEmailService implements EmailService {
 			final MailApiFactory mailApiFactory, //
 			final EmailPersistence persistence //
 	) {
-		this.emailAccountSupplier = memoize(emailConfigurationSupplier);
-		this.mailApiSupplier = memoize(new MailApiSupplier(emailConfigurationSupplier, mailApiFactory));
+		this.emailAccountSupplier = emailConfigurationSupplier;
+		this.mailApiSupplier = new MailApiSupplier(emailConfigurationSupplier, mailApiFactory);
 		this.persistence = persistence;
 	}
 
