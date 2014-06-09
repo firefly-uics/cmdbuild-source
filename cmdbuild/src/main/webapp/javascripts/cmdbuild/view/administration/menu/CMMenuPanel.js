@@ -3,7 +3,7 @@
 		clicksToEdit: 2
 	});
 	var tr = CMDBuild.Translation.administration.modmenu;
-	var warningNoSaved = "@@ The menu have to been saved before access at the translations of this element.";
+	var warningNoSaved = "@@ The menu has to been saved before access at the translations of this element.";
 
 	Ext.define("MenuStore", {
 		extend: "Ext.data.TreeStore",

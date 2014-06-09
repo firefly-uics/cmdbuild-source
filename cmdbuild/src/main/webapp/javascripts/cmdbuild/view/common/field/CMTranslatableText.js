@@ -67,8 +67,8 @@
 		setButtonMargin: Ext.emptyFn,
 		initComponent : function() {
 			var me = this;
-			this.original_name = this.name + "pp";
-//			this.name += "_default";
+			this.original_name = this.name;
+			this.name += "_default";
 			this.text = this.createTextItem();
 			this.hiddenValue = this.createHiddenValue(this.text);
 			this.width += 22;
