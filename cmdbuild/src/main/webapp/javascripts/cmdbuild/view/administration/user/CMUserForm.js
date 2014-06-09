@@ -116,8 +116,7 @@
 			this.userInfo = Ext.create('Ext.form.FieldSet', {
 				title: tr.user_info,
 				region: 'west',
-				margins: '5 0 0 5',
-				padding: '5 5 0 5',
+				margins: '0 3 0 0',
 				overflowY: 'auto',
 				flex: 1,
 
@@ -140,8 +139,7 @@
 				title: tr.password,
 				region: 'center',
 				overflowY: 'auto',
-				margins: '5 5 0 5',
-				padding: '5 5 0 5',
+				margins: '0 0 0 3',
 				flex: 1,
 
 				items: [
