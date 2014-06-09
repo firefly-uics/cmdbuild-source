@@ -120,6 +120,7 @@ public class CommunicationConstants {
 			FROM = "from", //
 			FUNCTION = "function", //
 			GROUP = "group", //
+			GROUP_DEFAULT = "group_default", //
 			GROUP_ID = "groupId", //
 			GROUP_NAME = "groupName", //
 			GROUPS = "groups", //

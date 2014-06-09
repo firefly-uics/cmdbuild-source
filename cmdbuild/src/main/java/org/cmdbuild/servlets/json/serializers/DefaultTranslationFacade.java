@@ -13,10 +13,10 @@ public class DefaultTranslationFacade implements TranslationFacade {
 		this.languageStore = languageStore;
 		this.translationLogic = translationLogic;
 	}
-	
+
 	@Override
-	public String read(TranslationObject translationObject){
-		String language = languageStore.getLanguage();
+	public String read(final TranslationObject translationObject) {
+		final String language = languageStore.getLanguage();
 		return translationLogic.read(translationObject).get(language);
 	}
 

@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -280,7 +281,7 @@ public class MenuSerializer {
 			item.setIndex(jsonMenu.getInt(INDEX));
 			item.setReferedClassName(jsonMenu.getString(CLASS_NAME));
 			item.setReferencedElementId(getElementId(jsonMenu));
-			item.setUniqueIdentifier(jsonMenu.getString(UUID));
+			item.setUniqueIdentifier(defaultIfBlank(jsonMenu.getString(UUID),java.util.UUID.randomUUID().toString()));
 		}
 
 		return item;

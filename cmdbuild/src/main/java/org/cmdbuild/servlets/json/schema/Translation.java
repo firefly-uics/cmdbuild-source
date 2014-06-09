@@ -473,6 +473,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.forClass(className) //
 				.withName(attributeName) //
 				.withField(field) //
+				.withTranslations(toMap(translations)) //
 				.build();
 		translationLogic().update(translationObject);
 	}
@@ -679,6 +680,7 @@ public class Translation extends JSONBaseWithSpringContext {
 				.forClass(className) //
 				.withName(attributeName) //
 				.withField(field) //
+				.withTranslations(toMap(translations)) //
 				.build();
 		translationLogic().delete(translationObject);
 	}

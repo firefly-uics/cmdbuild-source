@@ -32,6 +32,8 @@ public class DefaultTranslationLogic implements TranslationLogic {
 	public static final String BUTTON_LABEL_FOR_CLIENT = "ButtonLabel";
 	private static final String BUTTON_LABEL_FOR_PERSISTENCE = "buttonlabel	";
 	public static final String INSTANCENAME_FOR_SERVER = "instancename";
+	public static final String GROUP_FOR_CLIENT = "group";
+	public static final String GROUP_FOR_PERSISTENCE = "group";
 
 	private static enum FieldMapper {
 
@@ -40,7 +42,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		INVERSE_DESCRIPTION(INVERSE_DESCRIPTION_FOR_CLIENT, INVERSE_DESCRIPTION_FOR_PERSISTENCE), //
 		MASTER_DETAIL_LABEL(MASTER_DETAIL_LABEL_FOR_CLIENT, MASTER_DETAIL_LABEL_FOR_PERSISTENCE), //
 		BUTTON_LABEL(BUTTON_LABEL_FOR_CLIENT, BUTTON_LABEL_FOR_PERSISTENCE), //
-		;
+		GROUP(GROUP_FOR_CLIENT, GROUP_FOR_PERSISTENCE);
 
 		public static FieldMapper of(final String value) {
 			for (final FieldMapper element : values()) {
@@ -224,7 +226,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 
 	@Override
 	public void create(final TranslationObject translationObject) {
-		// TODO check that element, lang and value must not be null
+		// TODO element, lang and value must not be null
 		final Element element = ElementCreator.of(translationObject).create();
 		final Collection<Translation> translations = extractTranslations(translationObject, element);
 		final Store<Translation> store = storeFactory.create(element);
@@ -235,7 +237,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 
 	@Override
 	public Map<String, String> read(final TranslationObject translationObject) {
-		// TODO check that element, lang and value must not be null
+		// TODO element, lang and value must not be null
 		final Element element = ElementCreator.of(translationObject).create();
 		final Store<Translation> store = storeFactory.create(element);
 		final Map<String, String> map = newLinkedHashMap();
@@ -247,7 +249,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 
 	@Override
 	public void update(final TranslationObject translationObject) {
-		// TODO check that element, lang and value must not be null
+		// TODO element, lang and value must not be null
 		final Element element = ElementCreator.of(translationObject).create();
 		final Collection<Translation> translations = extractTranslations(translationObject, element);
 		final Map<String, Translation> translationsByLang = uniqueIndex(translations, TRANSLATION_TO_LANG);

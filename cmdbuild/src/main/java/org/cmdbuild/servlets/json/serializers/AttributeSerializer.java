@@ -1,7 +1,11 @@
 package org.cmdbuild.servlets.json.serializers;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
+import static org.cmdbuild.logic.translation.DefaultTranslationLogic.GROUP_FOR_CLIENT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_VALUE;
@@ -9,6 +13,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EDITOR_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD_MODE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP;
+import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP_DEFAULT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.INHERITED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LENGTH;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUP;
@@ -29,6 +34,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMFunctionCall;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -487,12 +493,11 @@ public class AttributeSerializer extends Serializer {
 				}
 			}.buildTranslationObject();
 
-			final String translatedDescription = translationFacade.read(translationObject);
-
-			String description = attribute.getDescription();
-			if ("".equals(description) || description == null) {
-				description = attribute.getName();
+			String translatedDescription = translationFacade.read(translationObject);
+			if (isBlank(translatedDescription)) {
+				translatedDescription = getTranslationFromParent(attribute, DESCRIPTION_FOR_CLIENT);
 			}
+			final String description = defaultIfBlank(attribute.getDescription(), attribute.getName());
 
 			serialization.put(DESCRIPTION, defaultIfNull(translatedDescription, description));
 			serialization.put(DEFAULT_DESCRIPTION, description);
@@ -507,7 +512,22 @@ public class AttributeSerializer extends Serializer {
 			serialization.put(FIELD_MODE, JsonModeMapper.textFrom(attribute.getMode()));
 			serialization.put("index", attribute.getIndex()); // TODO: constant
 			serialization.put(DEFAULT_VALUE, attribute.getDefaultValue());
-			serialization.put(GROUP, attribute.getGroup() == null ? "" : attribute.getGroup());
+
+			final TranslationObject groupNameTranslationObject = AttributeClassTranslation.newInstance() //
+					.forClass(attribute.getOwner().getName()) //
+					.withField("group") //
+					.withName(attribute.getName()) //
+					.build();
+
+			String groupNameTranslation = translationFacade.read(groupNameTranslationObject);
+			if (isBlank(groupNameTranslation)) {
+				groupNameTranslation = getTranslationFromParent(attribute, GROUP_FOR_CLIENT);
+			}
+
+			final String defaultGroupName = defaultIfNull(attribute.getGroup(), EMPTY);
+			final String translatedGroupName = defaultIfNull(groupNameTranslation, defaultGroupName);
+			serialization.put(GROUP, translatedGroupName);
+			serialization.put(GROUP_DEFAULT, defaultGroupName);
 
 			final Map<String, String> metadataMap = Maps.newHashMap();
 			for (final Metadata element : metadata) {
@@ -533,6 +553,33 @@ public class AttributeSerializer extends Serializer {
 			serialization.put("absoluteClassOrder", absoluteClassOrder); // TODO
 																			// constant
 			return serialization;
+		}
+
+		private String getTranslationFromParent(final CMAttribute attribute, final String field) {
+			final CMEntryType attributeOwner = attribute.getOwner();
+			final String fieldToTranslate = field;
+			return searchTranslationAmongAllAncestors(attribute, (CMClass) attributeOwner, fieldToTranslate);
+		}
+
+		private String searchTranslationAmongAllAncestors(final CMAttribute attribute, final CMClass entryType,
+				final String fieldToTranslate) {
+			
+			AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
+					.forClass(entryType.getName()) //
+					.withField(fieldToTranslate) //
+					.withName(attribute.getName()) //
+					.build();
+			String inheritedTranslation = translationFacade.read(translationObject);
+			if(isBlank(inheritedTranslation)){
+				final CMClass parent = CMClass.class.cast(entryType).getParent();
+				if (parent != null) {
+					final CMAttribute inheritedAttribute = parent.getAttribute(attribute.getName());
+					if (inheritedAttribute != null) {
+						inheritedTranslation = searchTranslationAmongAllAncestors(inheritedAttribute, parent, fieldToTranslate);
+					}
+				}
+			}
+			return inheritedTranslation;
 		}
 
 		@Override
