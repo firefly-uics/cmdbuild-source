@@ -1,6 +1,5 @@
 package org.cmdbuild.logic.email;
 
-import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.base.Suppliers.synchronizedSupplier;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
@@ -423,7 +422,7 @@ public class EmailLogic implements Logic {
 			final OperationUser operationUser //
 	) {
 		this.view = dataView;
-		this.emailAccountSupplier = synchronizedSupplier(memoize(emailConfigurationSupplier));
+		this.emailAccountSupplier = synchronizedSupplier(emailConfigurationSupplier);
 		this.emailService = emailService;
 		this.subjectHandler = subjectHandler;
 		this.dmsConfiguration = dmsConfiguration;
