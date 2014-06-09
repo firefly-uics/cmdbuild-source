@@ -62,16 +62,16 @@ CREATE INDEX idx_activity_idclass
 --
 
 -- EmailStatus lookup
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'New', 'A', 'EmailStatus', 1, false);
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'Received', 'A', 'EmailStatus', 2, false);
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'Draft', 'A', 'EmailStatus', 3, false);
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'Outgoing', 'A', 'EmailStatus', 4, false);
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'Sent', 'A', 'EmailStatus', 5, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'New', 'New', 'A', 'EmailStatus', 1, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Received', 'Received', 'A', 'EmailStatus', 2, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Draft', 'Draft', 'A', 'EmailStatus', 3, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Outgoing', 'Outgoing', 'A', 'EmailStatus', 4, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Sent', 'Sent', 'A', 'EmailStatus', 5, false);
 
 -- Email class
 SELECT cm_create_class('Email', 'Class', 'MODE: user|TYPE: class|DESCR: Email|SUPERCLASS: false|STATUS: active');

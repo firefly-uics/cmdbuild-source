@@ -6,9 +6,9 @@ import static org.cmdbuild.common.template.TemplateResolvers.identity;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.template.TemplateResolver;
+import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.logic.Action;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
-import org.cmdbuild.model.email.Email;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;

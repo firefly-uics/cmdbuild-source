@@ -84,14 +84,14 @@ public class Email {
 	}
 
 	@Bean
-	protected Store<org.cmdbuild.model.email.Email> emailStore() {
+	protected Store<org.cmdbuild.data.store.email.Email> emailStore() {
 		return DataViewStore.newInstance( //
 				data.systemDataView(), //
 				emailStorableConverter());
 	}
 
 	@Bean
-	protected StorableConverter<org.cmdbuild.model.email.Email> emailStorableConverter() {
+	protected StorableConverter<org.cmdbuild.data.store.email.Email> emailStorableConverter() {
 		return new EmailConverter(data.lookupStore());
 	}
 

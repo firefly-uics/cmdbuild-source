@@ -3,7 +3,7 @@ package org.cmdbuild.services.email;
 import java.util.Collection;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.model.email.Email;
+import org.cmdbuild.data.store.email.Email;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
