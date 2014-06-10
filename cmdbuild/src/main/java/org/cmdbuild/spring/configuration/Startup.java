@@ -65,7 +65,7 @@ public class Startup {
 		return new Startable() {
 
 			private final SchedulerLogic schedulerLogic = scheduler.defaultSchedulerLogic();
-			private final TaskManagerLogic taskManagerLogic = taskManager.taskManagerLogic();
+			private final TaskManagerLogic taskManagerLogic = taskManager.transactionalTaskManagerLogic();
 
 			@Override
 			public void start() {
@@ -92,7 +92,7 @@ public class Startup {
 			 * be configured when injected inside DmsLogic
 			 */
 			@SuppressWarnings("unused")
-			private final DmsLogic dmsLogic = dms.dmsLogic();
+			private final DmsLogic dmsLogic = dms.defaultDmsLogic();
 			private final DmsConfiguration dmsConfiguration = properties.dmsProperties();
 			private final DmsService dmsService = dms.dmsService();
 			private final DocumentCreatorFactory documentCreatorFactory = dms.documentCreatorFactory();

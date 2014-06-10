@@ -1,11 +1,11 @@
 package org.cmdbuild.logic.taskmanager.task.event.synchronous;
 
+import static java.lang.Boolean.FALSE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.logic.taskmanager.Task;
@@ -96,27 +96,17 @@ public class SynchronousEventTask implements Task {
 		}
 
 		private void validate() {
-			active = (active == null) ? false : active;
+			active = defaultIfNull(active, FALSE);
 
-			groups = (groups == null) ? EMPTY_GROUPS : groups;
+			groups = defaultIfNull(groups, EMPTY_GROUPS);
 
-			emailEnabled = (emailEnabled == null) ? false : emailEnabled;
-			if (emailEnabled) {
-				Validate.notBlank(emailAccount, "missing email's account");
-				Validate.notBlank(emailTemplate, "missing email's template");
-			}
+			emailEnabled = defaultIfNull(emailEnabled, FALSE);
 
-			workflowEnabled = (workflowEnabled == null) ? false : workflowEnabled;
-			workflowAdvanceable = (workflowAdvanceable == null) ? false : workflowAdvanceable;
-			if (workflowEnabled) {
-				Validate.notBlank(workflowClassName, "missing workflow's class name");
-			}
+			workflowEnabled = defaultIfNull(workflowEnabled, FALSE);
+			workflowAdvanceable = defaultIfNull(workflowAdvanceable, FALSE);
 
-			scriptingEnabled = (scriptingEnabled == null) ? false : scriptingEnabled;
-			if (scriptingEnabled) {
-				Validate.notBlank(scriptingEngine, "missing scripting engine");
-			}
-			scriptingSafe = (scriptingSafe == null) ? false : scriptingSafe;
+			scriptingEnabled = defaultIfNull(scriptingEnabled, FALSE);
+			scriptingSafe = defaultIfNull(scriptingSafe, FALSE);
 		}
 
 		public Builder withId(final Long id) {

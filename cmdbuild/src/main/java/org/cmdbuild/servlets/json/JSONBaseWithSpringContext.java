@@ -14,6 +14,7 @@ import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.GISLogic;
@@ -35,6 +36,7 @@ import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
+import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
@@ -42,6 +44,7 @@ import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.setup.SetupLogic;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
+import org.cmdbuild.logic.taskmanager.TransactionalTaskManagerLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
@@ -57,9 +60,9 @@ import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
+import org.cmdbuild.servlets.json.serializers.DefaultTranslationFacade;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
-import org.cmdbuild.servlets.json.serializers.DefaultTranslationFacade;
 import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
 
@@ -72,6 +75,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	/*
 	 * Properties
 	 */
+
+	protected DmsConfiguration dmsConfiguration() {
+		return applicationContext().getBean(DmsConfiguration.class);
+	}
 
 	protected CmdbuildProperties cmdbuildConfiguration() {
 		return applicationContext().getBean(CmdbuildProperties.class);
@@ -174,7 +181,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected DmsLogic dmsLogic() {
-		return applicationContext().getBean(DmsLogic.class);
+		return applicationContext().getBean(PrivilegedDmsLogic.class);
 	}
 
 	protected EmailAccountLogic emailAccountLogic() {
@@ -230,7 +237,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected TaskManagerLogic taskManagerLogic() {
-		return applicationContext().getBean(TaskManagerLogic.class);
+		return applicationContext().getBean(TransactionalTaskManagerLogic.class);
 	}
 
 	protected TranslationLogic translationLogic() {

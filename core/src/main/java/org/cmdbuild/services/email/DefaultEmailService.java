@@ -240,6 +240,7 @@ public class DefaultEmailService implements EmailService {
 				if (callback.apply(email)) {
 					final Long id = persistence.save(email);
 					final Email stored = persistence.getEmail(id);
+					stored.setAttachments(email.getAttachments());
 					callback.accept(stored);
 				}
 			} catch (final Exception e) {
