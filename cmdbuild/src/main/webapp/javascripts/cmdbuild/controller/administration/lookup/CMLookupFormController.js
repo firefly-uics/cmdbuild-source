@@ -67,7 +67,7 @@
 			scope : this,
 			success : function(a, b, decoded) {
 				notifySubController.call(this, "onLookupSaved", decoded.lookup.Id);
-				_CMCache.flushTranslationsToSave(decoded.lookup.Id);
+				_CMCache.flushTranslationsToSave(decoded.lookup.TranslationUuid);
 			},
 			failure : function() {
 				reloadLookup.call(this);
