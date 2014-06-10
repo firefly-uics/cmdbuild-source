@@ -10,7 +10,8 @@
 		Type: 'Type',
 		ParentDescription: 'ParentDescription',
 		Active: 'Active',
-		Notes: 'Notes'
+		Notes: 'Notes',
+		TranslationUuid: 'TranslationUuid'
 	};
 
 	CMDBuild.ServiceProxy.LOOKUP_FIELDS = LOOKUP_FIELDS;

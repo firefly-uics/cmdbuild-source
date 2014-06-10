@@ -308,7 +308,7 @@
 	}
 	function createForLookup(translationsKeyName, translationsKeyField, values) {
 		var params = {
-				lookupId: translationsKeyName,
+				translationUuid: translationsKeyName,
 				field: translationsKeyField,
 				translations: Ext.JSON.encodeValue(values)
 		};
@@ -460,7 +460,7 @@
 	}
 	function readForLookup(translationsKeyName, translationsKeyField, callBack) {
 		var params = {
-				lookupId: translationsKeyName,
+				translationUuid: translationsKeyName,
 				field: translationsKeyField
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForLookup);
@@ -621,7 +621,7 @@
 	}
 	function updateForLookup(translationsKeyName, translationsKeyField, values) {
 		var params = {
-				lookupId: translationsKeyName,
+				translationUuid: translationsKeyName,
 				field: translationsKeyField,
 				translations: Ext.JSON.encodeValue(values)
 		};
@@ -785,7 +785,7 @@
 	}
 	function deleteForLookup(translationsKeyName, translationsKeyField, values) {
 		var params = {
-				lookupId: translationsKeyName,
+				translationUuid: translationsKeyName,
 				field: translationsKeyField,
 				translations: Ext.JSON.encodeValue(values)
 		};
