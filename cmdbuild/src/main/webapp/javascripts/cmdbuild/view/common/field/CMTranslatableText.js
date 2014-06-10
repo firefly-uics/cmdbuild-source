@@ -55,8 +55,10 @@
 		},
 		createHiddenValue: function(valueField) {
 			return new Ext.form.field.Text( {
-				hidden: true,
+//				hidden: true,
+				width: 0,
 				name : this.original_name,
+				submitValue: true,
 				valueField: valueField,
 				//override
 				getValue : function() {

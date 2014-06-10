@@ -67,8 +67,8 @@ public class Setup extends JSONBaseWithSpringContext {
 				final InstanceNameTranslation instanceNameTranslation = new InstanceNameTranslation();
 				instanceNameTranslation.setName(INSTANCENAME_FOR_SERVER);
 				final String translatedInstanceName = translationFacade().read(instanceNameTranslation);
-				data.put(entry.getKey(), defaultIfNull(translatedInstanceName, entry.getValue()));
 				data.put(DEFAULT_INSTANCE_NAME, entry.getValue());
+				data.put(entry.getKey(), defaultIfNull(translatedInstanceName, entry.getValue()));
 			} else {
 				data.put(entry.getKey(), entry.getValue());
 			}
