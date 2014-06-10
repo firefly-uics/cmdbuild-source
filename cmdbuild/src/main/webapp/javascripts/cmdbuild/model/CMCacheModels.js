@@ -297,6 +297,7 @@
 			{name: "groups", type: "string"},
 			{name: "query", type: "string"},
 			{name: "description", type: "string"},
+			{name: "description_default", type: "string"},
 			{name: "title", type: "string"}
 		]
 	});

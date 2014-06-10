@@ -73,7 +73,7 @@
 		onReportSelected: function(report) {
 			this.reset();
 			this.name.setValue(report.get("title"));
-			this.description.setValue(report.get("description"));
+			this.description.setValue(report.get("description_default"));
 			setValueToMultiselect(this.groups, report.get("groups"));
 			this.description.translationsKeyName = report.get("title");
 		}
