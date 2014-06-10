@@ -497,7 +497,8 @@ public class AttributeSerializer extends Serializer {
 			}.buildTranslationObject();
 
 			String translatedDescription = translationFacade.read(descriptionTranslationObject);
-			if (isBlank(translatedDescription)) {
+			//FIXME
+			if (isBlank(translatedDescription) && attribute.getOwner() instanceof CMClass) {
 				translatedDescription = getTranslationFromParent(attribute, DESCRIPTION_FOR_CLIENT);
 			}
 			final String description = defaultIfBlank(attribute.getDescription(), attribute.getName());
@@ -517,7 +518,8 @@ public class AttributeSerializer extends Serializer {
 			serialization.put(DEFAULT_VALUE, attribute.getDefaultValue());
 			
 			String groupNameTranslation = null;
-			if (!isBlank(attribute.getGroup())) {
+			//FIXME
+			if (!isBlank(attribute.getGroup()) && attribute.getOwner() instanceof CMClass) {
 				final TranslationObject groupNameTranslationObject = AttributeClassTranslation.newInstance() //
 						.forClass(attribute.getOwner().getName()) //
 						.withField("group") //
