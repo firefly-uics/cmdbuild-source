@@ -46,6 +46,7 @@
 			DELETE_CARD: 'deleteCard',
 			DELETE_TYPE: 'deletionType',
 			DESCRIPTION: 'description',
+			DESCRIPTION_DEFAULT: 'description_default',
 			DISPLAY_IN_GRID: 'isbasedsp',
 			DOMAIN_ID: 'domainId',
 			DOMAIN_LIMIT: 'domainlimit',
