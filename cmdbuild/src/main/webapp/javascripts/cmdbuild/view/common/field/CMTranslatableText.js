@@ -55,7 +55,6 @@
 		},
 		createHiddenValue: function(valueField) {
 			return new Ext.form.field.Text( {
-//				hidden: true,
 				width: 0,
 				name : this.original_name,
 				submitValue: true,
@@ -63,6 +62,10 @@
 				//override
 				getValue : function() {
 					return this.valueField.getValue();
+				},
+				//override
+				getRawValue : function() {
+					return this.valueField.getRawValue();
 				}
 			});
 		},

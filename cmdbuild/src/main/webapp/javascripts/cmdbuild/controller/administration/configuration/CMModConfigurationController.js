@@ -7,6 +7,7 @@
 
 			this.view.saveButton.on("click", function() {
 				CMDBuild.LoadMask.get().show();
+				params = this.view.getValues();
 				CMDBuild.ServiceProxy.configuration.save({
 					scope: this,
 					params: this.view.getValues(),
