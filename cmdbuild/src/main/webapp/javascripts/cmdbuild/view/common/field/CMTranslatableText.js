@@ -38,9 +38,11 @@
 		resetLanguages: function() {
 			if (_CMCache.isMultiLanguages()) {
 				this.translationsButton.show();
+				this.hiddenValue.show();
 			}
 			else {
 				this.translationsButton.hide();
+				this.hiddenValue.hide();
 			}
 		},
 		createTextItem: function() {
