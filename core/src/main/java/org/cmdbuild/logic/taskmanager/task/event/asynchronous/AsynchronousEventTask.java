@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.taskmanager.task.event.asynchronous;
 
+import static java.lang.Boolean.FALSE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
@@ -32,8 +33,8 @@ public class AsynchronousEventTask implements ScheduledTask {
 		}
 
 		private void validate() {
-			active = defaultIfNull(active, Boolean.FALSE);
-			notificationActive = defaultIfNull(notificationActive, false);
+			active = defaultIfNull(active, FALSE);
+			notificationActive = defaultIfNull(notificationActive, FALSE);
 		}
 
 		public Builder withId(final Long id) {

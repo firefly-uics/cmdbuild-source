@@ -25,6 +25,7 @@ import org.cmdbuild.logic.data.access.SoapDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
+import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.operation.AuthenticationLogicHelper;
@@ -85,7 +86,7 @@ abstract class AbstractWebservice implements ApplicationContextAware {
 
 	protected DmsLogicHelper dmsLogicHelper() {
 		final OperationUser operationUser = userStore.getUser();
-		final DmsLogic dmsLogic = applicationContext.getBean(DmsLogic.class);
+		final DmsLogic dmsLogic = applicationContext.getBean(PrivilegedDmsLogic.class);
 		return new DmsLogicHelper(operationUser, dmsLogic);
 	}
 

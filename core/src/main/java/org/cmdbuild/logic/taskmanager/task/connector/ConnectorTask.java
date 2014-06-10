@@ -6,7 +6,6 @@ import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -92,7 +91,6 @@ public class ConnectorTask implements ScheduledTask {
 			}
 
 			private void validate() {
-				type = Validate.notNull(type, "missing '%s'", type.getClass());
 				port = defaultIfNull(port, 0);
 			}
 

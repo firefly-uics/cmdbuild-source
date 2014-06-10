@@ -1,7 +1,5 @@
 package org.cmdbuild.logic.dms;
 
-import static org.cmdbuild.logic.PrivilegeUtils.assure;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -10,7 +8,6 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.Lookup;
@@ -39,15 +36,13 @@ public class DefaultDmsLogic implements org.cmdbuild.logic.dms.DmsLogic {
 
 	private final DmsService service;
 	private final DefinitionsFactory definitionsFactory;
-	private final PrivilegeContext privilegeContext;
-	private final CMDataView view;
+	private final CMDataView dataView;
 	private final DmsConfiguration configuration;
 	private final DocumentCreatorFactory documentCreatorFactory;
 
 	public DefaultDmsLogic( //
 			final DmsService service, //
-			final PrivilegeContext privilegeContext, //
-			final CMDataView view, //
+			final CMDataView dataView, //
 			final DmsConfiguration configuration, //
 			final DocumentCreatorFactory documentCreatorFactory //
 	) {
@@ -55,8 +50,7 @@ public class DefaultDmsLogic implements org.cmdbuild.logic.dms.DmsLogic {
 		this.service = service;
 		service.setConfiguration(configuration);
 		definitionsFactory = new DefaultDefinitionsFactory();
-		this.privilegeContext = privilegeContext;
-		this.view = view;
+		this.dataView = dataView;
 		this.configuration = configuration;
 		this.documentCreatorFactory = documentCreatorFactory;
 	}
@@ -166,7 +160,6 @@ public class DefaultDmsLogic implements org.cmdbuild.logic.dms.DmsLogic {
 		final StorableDocument document = createDocumentFactory(className) //
 				.createStorableDocument(author, className, cardId.toString(), inputStream, fileName, category,
 						description, metadataGroups);
-		assureWritePrivilege(className);
 		try {
 			service.upload(document);
 		} catch (final Exception e) {
@@ -197,7 +190,6 @@ public class DefaultDmsLogic implements org.cmdbuild.logic.dms.DmsLogic {
 	public void delete(final String className, final Long cardId, final String fileName) throws DmsException {
 		final DocumentDelete document = createDocumentFactory(className) //
 				.createDocumentDelete(className, cardId.toString(), fileName);
-		assureWritePrivilege(className);
 		try {
 			service.delete(document);
 		} catch (final Exception e) {
@@ -213,7 +205,6 @@ public class DefaultDmsLogic implements org.cmdbuild.logic.dms.DmsLogic {
 			final String description, final Iterable<MetadataGroup> metadataGroups) {
 		final DocumentUpdate document = createDocumentFactory(className) //
 				.createDocumentUpdate(className, cardId.toString(), filename, description, metadataGroups);
-		assureWritePrivilege(className);
 		try {
 			service.updateDescriptionAndMetadata(document);
 		} catch (final Exception e) {
@@ -225,13 +216,8 @@ public class DefaultDmsLogic implements org.cmdbuild.logic.dms.DmsLogic {
 	}
 
 	private DocumentCreator createDocumentFactory(final String className) {
-		final CMClass fetchedClass = view.findClass(className);
+		final CMClass fetchedClass = dataView.findClass(className);
 		return documentCreatorFactory.create(fetchedClass);
-	}
-
-	private void assureWritePrivilege(final String className) {
-		final CMClass fetchedClass = view.findClass(className);
-		assure(privilegeContext.hasWriteAccess(fetchedClass));
 	}
 
 }

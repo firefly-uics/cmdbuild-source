@@ -134,13 +134,14 @@ class SelectMailImpl implements SelectMail {
 					final String ctype = part.getContentType();
 					final String disposition = part.getDisposition();
 					if (disposition == null) {
+						final Object content = part.getContent();
 						if (ctype.toLowerCase().contains("text/plain")) {
-							plainAlternative = (String) part.getContent();
+							plainAlternative = String.class.cast(content);
 						} else {
-							if (part.getContent() instanceof String) {
-								parsedMessage += part.getContent();
-							} else if (part.getContent() instanceof Multipart) {
-								parsedMessage += parseContent(part.getContent());
+							if (content instanceof String) {
+								parsedMessage += content;
+							} else if (content instanceof Multipart) {
+								parsedMessage += parseContent(content);
 							}
 						}
 					}

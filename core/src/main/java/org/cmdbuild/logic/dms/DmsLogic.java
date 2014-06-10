@@ -16,7 +16,7 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logic.Logic;
 
-public interface DmsLogic extends Logic{
+public interface DmsLogic extends Logic {
 
 	/**
 	 * Gets the lookup type that represents attachment categories.

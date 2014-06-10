@@ -1,13 +1,13 @@
 package org.cmdbuild.logic.taskmanager.task.email;
 
 import static com.google.common.collect.Iterables.addAll;
+import static java.lang.Boolean.FALSE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
@@ -57,23 +57,15 @@ public class ReadEmailTask implements ScheduledTask {
 		}
 
 		private void validate() {
-			active = (active == null) ? false : active;
+			active = defaultIfNull(active, FALSE);
 
-			notificationActive = (notificationActive == null) ? false : notificationActive;
+			notificationActive = defaultIfNull(notificationActive, FALSE);
 
-			attachmentsActive = (attachmentsActive == null) ? false : attachmentsActive;
-			if (attachmentsActive) {
-				Validate.notNull(attachmentsCategory, "missing attachments category");
-			}
-			workflowActive = (workflowActive == null) ? false : workflowActive;
-			workflowAdvanceable = (workflowAdvanceable == null) ? false : workflowAdvanceable;
-			workflowAttachments = (workflowAttachments == null) ? false : workflowAttachments;
-			if (workflowActive) {
-				Validate.notNull(workflowClassName, "missing workflow's class name");
-				if (workflowAttachments) {
-					Validate.notNull(workflowAttachmentsCategory, "missing workflow's attachments category");
-				}
-			}
+			attachmentsActive = defaultIfNull(attachmentsActive, FALSE);
+
+			workflowActive = defaultIfNull(workflowActive, FALSE);
+			workflowAdvanceable = defaultIfNull(workflowAdvanceable, FALSE);
+			workflowAttachments = defaultIfNull(workflowAttachments, FALSE);
 
 			mapper = defaultIfNull(mapper, NullMapperEngine.getInstance());
 		}

@@ -1,5 +1,8 @@
 package org.cmdbuild.logic.taskmanager.task.process;
 
+import static java.lang.Boolean.FALSE;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -34,8 +37,8 @@ public class StartWorkflowTask implements ScheduledTask {
 		}
 
 		private void validate() {
-			active = (active == null) ? false : active;
-			attributes = (attributes == null) ? NO_ATTRIBUTES : attributes;
+			active = defaultIfNull(active, FALSE);
+			attributes = defaultIfNull(attributes, NO_ATTRIBUTES);
 		}
 
 		public Builder withId(final Long id) {

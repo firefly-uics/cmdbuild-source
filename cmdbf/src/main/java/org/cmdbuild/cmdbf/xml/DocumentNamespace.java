@@ -1,5 +1,8 @@
 package org.cmdbuild.cmdbf.xml;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.cmdbuild.logic.dms.Utils.valueForCategory;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -53,7 +56,7 @@ public class DocumentNamespace extends AbstractNamespace {
 
 		@Override
 		public boolean apply(final Lookup input) {
-			return input.description != null && !input.description.isEmpty();
+			return isNotBlank(valueForCategory(input));
 		}
 
 	};
@@ -66,12 +69,12 @@ public class DocumentNamespace extends AbstractNamespace {
 
 				@Override
 				public String getName() {
-					return input.description;
+					return valueForCategory(input);
 				}
 
 				@Override
 				public Iterable<MetadataGroupDefinition> getMetadataGroupDefinitions() {
-					return dmsLogic.getCategoryDefinition(input.description).getMetadataGroupDefinitions();
+					return dmsLogic.getCategoryDefinition(valueForCategory(input)).getMetadataGroupDefinitions();
 				}
 			};
 		}

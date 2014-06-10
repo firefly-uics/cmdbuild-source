@@ -84,10 +84,18 @@ public class TaskManager {
 	private Workflow workflow;
 
 	@Bean
-	public TaskManagerLogic taskManagerLogic() {
-		final TaskManagerLogic defaultTaskManagerLogic = new DefaultTaskManagerLogic(defaultLogicAndStoreConverter(),
-				defaultTaskStore(), defaultSchedulerTaskFacade(), defaultSynchronousEventFacade());
-		return new TransactionalTaskManagerLogic(defaultTaskManagerLogic);
+	public TransactionalTaskManagerLogic transactionalTaskManagerLogic() {
+		return new TransactionalTaskManagerLogic(defaultTaskManagerLogic());
+	}
+
+	@Bean
+	public DefaultTaskManagerLogic defaultTaskManagerLogic() {
+		return new DefaultTaskManagerLogic( //
+				defaultLogicAndStoreConverter(), //
+				defaultTaskStore(), //
+				defaultSchedulerTaskFacade(), //
+				defaultSynchronousEventFacade() //
+		);
 	}
 
 	@Bean
@@ -178,7 +186,7 @@ public class TaskManager {
 				email.emailPersistence(), //
 				workflow.systemWorkflowLogicBuilder() //
 						.build(), //
-				dms.dmsLogic(), //
+				dms.defaultDmsLogic(), //
 				data.systemDataView(), //
 				email.emailTemplateLogic() //
 		);
