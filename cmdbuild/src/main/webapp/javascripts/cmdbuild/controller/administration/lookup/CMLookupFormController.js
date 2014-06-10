@@ -25,7 +25,7 @@
 		onSelectLookupGrid: function(selection) {
 			this.currentLookup = selection;
 			this.view.onSelectLookupGrid(selection);
-			this.view.description.translationsKeyName = selection.get("Id");
+			this.view.description.translationsKeyName = selection.get(LOOKUP_FIELDS.TranslationUuid);
 		},
 		
 		onAddLookupClick: function() {

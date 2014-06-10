@@ -83,7 +83,7 @@
 				allowBlank : false,
 				disabled : true,
 				translationsKeyType: "Lookup",
-				translationsKeyField: "Description"
+				translationsKeyField: LOOKUP_FIELDS.Description
 			});
 
 			this.parentDescription = Ext.create('Ext.form.field.ComboBox', {
