@@ -1,6 +1,7 @@
 (function() {
 	var NAME = _CMProxy.parameter.NAME;
 	var DESCRIPTION = _CMProxy.parameter.DESCRIPTION;
+	var DESCRIPTION_DEFAULT = _CMProxy.parameter.DESCRIPTION_DEFAULT;
 
 	Ext.define("CMDBuild.delegate.administration.common.basepanel.CMBaseFormFiledsManager", {
 		extend: "CMDBuild.delegate.administration.common.basepanel.CMFormFiledsManager",
@@ -41,7 +42,7 @@
 		loadRecord: function(record) {
 			this.reset();
 			this.name.setValue(record.get(NAME));
-			this.description.setValue(record.get(DESCRIPTION));
+			this.description.setValue(record.get(DESCRIPTION_DEFAULT));
 		},
 
 		/**
