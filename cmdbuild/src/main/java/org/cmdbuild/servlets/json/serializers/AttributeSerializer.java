@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.ObjectUtils.*;
+
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -69,6 +70,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 
@@ -460,7 +463,7 @@ public class AttributeSerializer extends Serializer {
 			 */
 			serialization.put(NAME, attribute.getName());
 
-			final TranslationObject translationObject = new CMEntryTypeVisitor() {
+			final TranslationObject descriptionTranslationObject = new CMEntryTypeVisitor() {
 
 				TranslationObject translationObject;
 
@@ -493,7 +496,7 @@ public class AttributeSerializer extends Serializer {
 				}
 			}.buildTranslationObject();
 
-			String translatedDescription = translationFacade.read(translationObject);
+			String translatedDescription = translationFacade.read(descriptionTranslationObject);
 			if (isBlank(translatedDescription)) {
 				translatedDescription = getTranslationFromParent(attribute, DESCRIPTION_FOR_CLIENT);
 			}
@@ -512,18 +515,23 @@ public class AttributeSerializer extends Serializer {
 			serialization.put(FIELD_MODE, JsonModeMapper.textFrom(attribute.getMode()));
 			serialization.put("index", attribute.getIndex()); // TODO: constant
 			serialization.put(DEFAULT_VALUE, attribute.getDefaultValue());
+			
+			String groupNameTranslation = null;
+			if (!isBlank(attribute.getGroup())) {
+				final TranslationObject groupNameTranslationObject = AttributeClassTranslation.newInstance() //
+						.forClass(attribute.getOwner().getName()) //
+						.withField("group") //
+						.withName(attribute.getName()) //
+						.build();
 
-			final TranslationObject groupNameTranslationObject = AttributeClassTranslation.newInstance() //
-					.forClass(attribute.getOwner().getName()) //
-					.withField("group") //
-					.withName(attribute.getName()) //
-					.build();
-
-			String groupNameTranslation = translationFacade.read(groupNameTranslationObject);
-			if (isBlank(groupNameTranslation)) {
-				groupNameTranslation = getTranslationFromParent(attribute, GROUP_FOR_CLIENT);
+				groupNameTranslation = translationFacade.read(groupNameTranslationObject);
+				if (isBlank(groupNameTranslation)) {
+					groupNameTranslation = searchGroupNameTranslationFromOtherAttributes(attribute);
+				}
+				if (isBlank(groupNameTranslation)) {
+					groupNameTranslation = getTranslationFromParent(attribute, GROUP_FOR_CLIENT);
+				}
 			}
-
 			final String defaultGroupName = defaultIfNull(attribute.getGroup(), EMPTY);
 			final String translatedGroupName = defaultIfNull(groupNameTranslation, defaultGroupName);
 			serialization.put(GROUP, translatedGroupName);
@@ -555,6 +563,55 @@ public class AttributeSerializer extends Serializer {
 			return serialization;
 		}
 
+		private String searchGroupNameTranslationFromOtherAttributes(CMAttribute attribute) {
+			final String groupName = attribute.getGroup();
+			final CMClass owner = (CMClass) attribute.getOwner();
+
+			String translatedGroupName = new CMEntryTypeVisitor() {
+
+				String translatedGroupName;
+				String groupName;
+
+				public String searchGroupNameTranslation(CMClass owner, String groupName) {
+					this.groupName = groupName;
+					owner.accept(this);
+					return translatedGroupName;
+				}
+
+				@Override
+				public void visit(final CMFunctionCall type) {
+					throw new UnsupportedOperationException();
+				}
+
+				@Override
+				public void visit(final CMDomain type) {
+					throw new UnsupportedOperationException();
+				}
+
+				@Override
+				public void visit(final CMClass type) {
+					Iterable<? extends CMAttribute> allAttributes = owner.getAttributes();
+					for (CMAttribute a : allAttributes) {
+						if (!groupName.equals(a.getGroup())) {
+							continue;
+						}
+						final TranslationObject groupNameTranslationObject = AttributeClassTranslation.newInstance() //
+								.forClass(owner.getName()) //
+								.withField(GROUP_FOR_CLIENT) //
+								.withName(a.getName()) //
+								.build();
+						String groupNameTranslation = translationFacade.read(groupNameTranslationObject);
+						if (!isBlank(groupNameTranslation)) {
+							translatedGroupName = groupNameTranslation;
+							break;
+						}
+
+					}
+				}
+			}.searchGroupNameTranslation(owner, groupName);
+			return translatedGroupName;
+		}
+
 		private String getTranslationFromParent(final CMAttribute attribute, final String field) {
 			final CMEntryType attributeOwner = attribute.getOwner();
 			final String fieldToTranslate = field;
@@ -563,19 +620,20 @@ public class AttributeSerializer extends Serializer {
 
 		private String searchTranslationAmongAllAncestors(final CMAttribute attribute, final CMClass entryType,
 				final String fieldToTranslate) {
-			
+
 			AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
 					.forClass(entryType.getName()) //
 					.withField(fieldToTranslate) //
 					.withName(attribute.getName()) //
 					.build();
 			String inheritedTranslation = translationFacade.read(translationObject);
-			if(isBlank(inheritedTranslation)){
+			if (isBlank(inheritedTranslation)) {
 				final CMClass parent = CMClass.class.cast(entryType).getParent();
 				if (parent != null) {
 					final CMAttribute inheritedAttribute = parent.getAttribute(attribute.getName());
 					if (inheritedAttribute != null) {
-						inheritedTranslation = searchTranslationAmongAllAncestors(inheritedAttribute, parent, fieldToTranslate);
+						inheritedTranslation = searchTranslationAmongAllAncestors(inheritedAttribute, parent,
+								fieldToTranslate);
 					}
 				}
 			}

@@ -23,6 +23,7 @@ public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 	private static final String PARENT_ID = "ParentId";
 	private static final String NUMBER = "Number";
 	private static final String IS_DEFAULT = "IsDefault";
+	private static final String TRANSLATION_UUID = "TranslationUuid";
 
 	private static final String A = "A";
 	private static final String N = "N";
@@ -46,6 +47,7 @@ public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 				.withActiveStatus(A.equals(card.get(STATUS, String.class))) //
 				.withDefaultStatus(card.get(IS_DEFAULT, Boolean.class)) //
 				.withParentId(safeIntegerToLong(card.get(PARENT_ID, Integer.class), Long.class)) //
+				.withUuid((String)card.get(TRANSLATION_UUID)) //
 				.build();
 	}
 
@@ -65,6 +67,7 @@ public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 		values.put(STATUS, storable.active ? A : N);
 		values.put(IS_DEFAULT, storable.isDefault);
 		values.put(PARENT_ID, (storable.parentId != null && storable.parentId == 0) ? null : storable.parentId);
+		values.put(TRANSLATION_UUID, storable.translationUuid);
 		return filterValues(values, new Predicate<Object>() {
 			@Override
 			public boolean apply(final Object input) {
@@ -72,5 +75,7 @@ public class LookupStorableConverter extends BaseStorableConverter<Lookup> {
 			};
 		});
 	}
+	
+	
 
 }

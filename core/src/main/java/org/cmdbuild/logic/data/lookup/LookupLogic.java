@@ -96,8 +96,18 @@ public class LookupLogic implements Logic {
 	public Iterable<LookupType> getAllTypes() {
 		logger.trace(marker, "getting all lookup types");
 		return from(store.readAll()) //
-				.transform(toLookupType()) //
+				.transform(toLookupType()) // O
 				.filter(uniques());
+	}
+
+	public String fetchTranslationUuid(final int id) {
+		final Lookup lookupWithId = Lookup.newInstance().withId((long) id).build();
+		try {
+			final Lookup currentLookup = store.read(lookupWithId);
+			return currentLookup.getTranslationUuid();
+		} catch (final Throwable t) {
+			return null;
+		}
 	}
 
 	public void saveLookupType(final LookupType newType, final LookupType oldType) {

@@ -44,9 +44,10 @@ public class LookupSerializer {
 		if (lookup != null) {
 			serializer = new JSONObject();
 			serializer.put(ID_CAPITAL, lookup.getId());
+
 			final LookupTranslation translationObject = LookupTranslation.newInstance() //
 					.withField(DESCRIPTION_FOR_CLIENT) //
-					.withName(lookup.getId() != null ? lookup.getId().toString() : EMPTY) //
+					.withName(lookup.getTranslationUuid()) //
 					.build();
 
 			final String translatedDescription = translationFacade.read(translationObject);
@@ -61,6 +62,8 @@ public class LookupSerializer {
 				serializer.put("Notes", lookup.notes);
 				serializer.put("Default", lookup.isDefault);
 				serializer.put("Active", lookup.active);
+
+				serializer.put("TranslationUuid", lookup.translationUuid);
 			}
 
 			final Lookup parent = lookup.parent;
@@ -131,6 +134,9 @@ public class LookupSerializer {
 		final LookupTranslation lookupTranslation = LookupTranslation.newInstance() //
 				.withField(DESCRIPTION_FOR_CLIENT)//
 				.withName(value.getId() != null ? value.getId().toString() : EMPTY)//
+				// TODO
+				// .withName(value.getTranslationUuid() != null ?
+				// value.getTranslationUuid() : EMPTY)//
 				.build();
 
 		final String translatedDescription = translationFacade.read(lookupTranslation);
