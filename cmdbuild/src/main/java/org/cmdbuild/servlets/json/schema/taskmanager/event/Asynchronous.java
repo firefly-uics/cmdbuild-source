@@ -1,4 +1,4 @@
-package org.cmdbuild.servlets.json.schema.taskmanager;
+package org.cmdbuild.servlets.json.schema.taskmanager.event;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
@@ -20,7 +20,7 @@ import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class AsynchronousEvent extends JSONBaseWithSpringContext {
+public class Asynchronous extends JSONBaseWithSpringContext {
 
 	private static class JsonAsynchronousEventTask {
 

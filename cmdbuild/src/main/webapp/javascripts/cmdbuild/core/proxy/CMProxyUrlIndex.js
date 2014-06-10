@@ -166,23 +166,23 @@
 					getStore: 'services/json/schema/taskmanager/reademail/readall'
 				},
 				event: {
-					getStore: 'services/json/schema/taskmanager/synchronousevent/readall', // TODO: change with real call
+					getStore: 'services/json/schema/taskmanager/event/readall',
 
 					asynchronous: {
-						delete: 'services/json/schema/taskmanager/asynchronousevent/delete',
-						get: 'services/json/schema/taskmanager/asynchronousevent/read',
-						post: 'services/json/schema/taskmanager/asynchronousevent/create',
-						put: 'services/json/schema/taskmanager/asynchronousevent/update',
+						delete: 'services/json/schema/taskmanager/event/asynchronous/delete',
+						get: 'services/json/schema/taskmanager/event/asynchronous/read',
+						post: 'services/json/schema/taskmanager/event/asynchronous/create',
+						put: 'services/json/schema/taskmanager/event/asynchronous/update',
 
-						getStore: 'services/json/schema/taskmanager/asynchronousevent/readall'
+						getStore: 'services/json/schema/taskmanager/event/asynchronous/readall'
 					},
 					synchronous: {
-						delete: 'services/json/schema/taskmanager/synchronousevent/delete',
-						get: 'services/json/schema/taskmanager/synchronousevent/read',
-						post: 'services/json/schema/taskmanager/synchronousevent/create',
-						put: 'services/json/schema/taskmanager/synchronousevent/update',
+						delete: 'services/json/schema/taskmanager/event/synchronous/delete',
+						get: 'services/json/schema/taskmanager/event/synchronous/read',
+						post: 'services/json/schema/taskmanager/event/synchronous/create',
+						put: 'services/json/schema/taskmanager/event/synchronous/update',
 
-						getStore: 'services/json/schema/taskmanager/synchronousevent/readall'
+						getStore: 'services/json/schema/taskmanager/event/synchronous/readall'
 					}
 				},
 				workflow: {
