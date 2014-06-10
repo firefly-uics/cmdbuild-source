@@ -21,6 +21,7 @@ Ext.define("CMDBuild.model.CMDashboard", {
 	fields: [
 		{name : 'name', type : "string"},
 		{name : 'description', type : "string"},
+		{name : 'defaultDescription', type : "string"},
 		{name : 'id', type : "int"},
 		{name : 'groups', type: 'auto'},
 		{name : 'charts', type: 'auto'},
@@ -52,6 +53,10 @@ Ext.define("CMDBuild.model.CMDashboard", {
 
 	getDescription: function() {
 		return this.get("description");
+	},
+
+	getDescriptionDefault: function() {
+		return this.get("defaultDescription");
 	},
 
 	getGroups: function() {
