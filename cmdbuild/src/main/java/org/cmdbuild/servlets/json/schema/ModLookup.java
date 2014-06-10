@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.Iterables.size;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE_CAPITAL;
@@ -21,6 +22,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE_CAPITAL;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -56,8 +58,14 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			final @Parameter(ORIG_TYPE) String originalType, //
 			final @Parameter(value = PARENT, required = false) String parentType //
 	) throws JSONException {
-		final LookupType newType = LookupType.newInstance().withName(type).withParent(parentType).build();
-		final LookupType oldType = LookupType.newInstance().withName(originalType).withParent(parentType).build();
+		final LookupType newType = LookupType.newInstance() //
+				.withName(type)//
+				.withParent(parentType)//
+				.build();
+		final LookupType oldType = LookupType.newInstance() //
+				.withName(originalType)//
+				.withParent(parentType)//
+				.build();
 		lookupLogic().saveLookupType(newType, oldType);
 
 		final JSONObject jsonLookupType = LookupSerializer.serializeLookupTable(newType);
@@ -140,6 +148,9 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			final @Parameter(ACTIVE_CAPITAL) boolean isActive, //
 			final @Parameter(NUMBER) int number //
 	) throws JSONException {
+		
+		String translationUuid = defaultIfBlank(lookupLogic().fetchTranslationUuid(id),UUID.randomUUID().toString());
+		
 		final Lookup lookup = Lookup.newInstance() //
 				.withId(Long.valueOf(id)) //
 				.withCode(code) //
@@ -150,6 +161,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 				.withNotes(notes) //
 				.withDefaultStatus(isDefault) //
 				.withActiveStatus(isActive) //
+				.withUuid(translationUuid) //
 				.build();
 
 		final Long lookupId = lookupLogic().createOrUpdateLookup(lookup);

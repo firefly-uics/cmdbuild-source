@@ -257,6 +257,7 @@ public class CommunicationConstants {
 			TEMPORARY_ID = "temporaryId", //
 			TO = "to", //
 			TRANSLATIONS = "translations", //
+			TRANSLATION_UUID = "translationUuid", //
 			TYPE_CAPITAL = "Type", //
 			TYPES = "types", //
 			TYPE = "type", //

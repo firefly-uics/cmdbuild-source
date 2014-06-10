@@ -8,10 +8,10 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTERNAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ICONNAME;
-import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUPID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MENU_ITEM_UUID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.REPORTNAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATIONS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATION_UUID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.VIEWNAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.WIDGET_ID;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
@@ -223,12 +223,12 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void createForLookup( //
-			@Parameter(value = LOOKUPID) final String lookupId, //
+			@Parameter(value = TRANSLATION_UUID) final String translationUuid, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
 		final LookupTranslation translationObject = LookupTranslation.newInstance() //
-				.withName(lookupId) //
+				.withName(translationUuid) //
 				.withField(field) //
 				.withTranslations(toMap(translations)) //
 				.build();
@@ -402,7 +402,7 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public JsonResponse readForLookup( //
-			@Parameter(value = LOOKUPID) final String lookupId, //
+			@Parameter(value = TRANSLATION_UUID) final String lookupId, //
 			@Parameter(value = FIELD) final String field //
 	) {
 		final LookupTranslation translationObject = LookupTranslation.newInstance() //
@@ -610,7 +610,7 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void updateForLookup( //
-			@Parameter(value = LOOKUPID) final String lookupId, //
+			@Parameter(value = TRANSLATION_UUID) final String lookupId, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {
@@ -817,7 +817,7 @@ public class Translation extends JSONBaseWithSpringContext {
 	@JSONExported
 	@Admin
 	public void deleteForLookup( //
-			@Parameter(value = LOOKUPID) final String lookupId, //
+			@Parameter(value = TRANSLATION_UUID) final String lookupId, //
 			@Parameter(value = FIELD) final String field, //
 			@Parameter(value = TRANSLATIONS) final JSONObject translations //
 	) {

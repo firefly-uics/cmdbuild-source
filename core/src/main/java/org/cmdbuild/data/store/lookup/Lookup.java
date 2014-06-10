@@ -19,6 +19,7 @@ public final class Lookup implements Storable {
 		private boolean isDefault;
 		private Long parentId;
 		private Lookup parent;
+		private String translationUuid;
 
 		/**
 		 * instantiate using {@link Lookup#newInstance()}
@@ -37,6 +38,7 @@ public final class Lookup implements Storable {
 			this.isDefault = lookup.isDefault;
 			this.parentId = lookup.parentId;
 			this.parent = lookup.parent;
+			this.translationUuid = lookup.translationUuid;
 			return this;
 		}
 
@@ -100,6 +102,11 @@ public final class Lookup implements Storable {
 			return this;
 		}
 
+		public Lookup.LookupBuilder withUuid(final String translationUuid) {
+			this.translationUuid = translationUuid;
+			return this;
+		}
+
 		@Override
 		public Lookup build() {
 			return new Lookup(this);
@@ -121,6 +128,7 @@ public final class Lookup implements Storable {
 	public final boolean isDefault;
 	public final Long parentId;
 	public final Lookup parent;
+	public String translationUuid;
 
 	private final transient String toString;
 
@@ -135,13 +143,17 @@ public final class Lookup implements Storable {
 		this.isDefault = builder.isDefault;
 		this.parentId = builder.parentId;
 		this.parent = builder.parent;
-
+		this.translationUuid = builder.translationUuid;
 		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
 	}
 
 	@Override
 	public String getIdentifier() {
 		return id.toString();
+	}
+	
+	public String getTranslationUuid() {
+		return translationUuid;
 	}
 
 	@Override
