@@ -152,7 +152,9 @@ import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 public class CmdbMDR implements ManagementDataRepository {
 
@@ -479,55 +481,77 @@ public class CmdbMDR implements ManagementDataRepository {
 		return queryCapabilities;
 	}
 
+	private static class LazyRecordTypeList extends RecordTypeList {
+
+		private final Supplier<Iterable<RecordTypes>> supplier;
+
+		public LazyRecordTypeList(final Supplier<Iterable<RecordTypes>> supplier) {
+			this.supplier = supplier;
+		}
+
+		@Override
+		public List<RecordTypes> getRecordTypes() {
+			return Lists.newArrayList(supplier.get());
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	private RecordTypeList getRecordTypesList(final ObjectFactory factory) {
-		final Map<String, RecordTypes> recordTypesMap = new HashMap<String, RecordTypes>();
-		if (databaseConfiguration.isConfigured()) {
-			for (final Object type : Iterables.concat(xmlRegistry.getTypes(CMClass.class),
-					xmlRegistry.getTypes(CMClassHistory.class), xmlRegistry.getTypes(CMDomain.class),
-					xmlRegistry.getTypes(CMDomainHistory.class), xmlRegistry.getTypes(DocumentTypeDefinition.class),
-					xmlRegistry.getTypes(GeoClass.class))) {
-				final QName typeQName = xmlRegistry.getTypeQName(type);
-				final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordType recordType = factory.createRecordType();
-				recordType.setLocalName(typeQName.getLocalPart());
-				if (type instanceof CMClass) {
-					final CMClass cmClass = (CMClass) type;
-					recordType.setAppliesTo("item");
-					CMClass parent = null;
-					if (type instanceof CMClassHistory) {
-						parent = ((CMClassHistory) cmClass).getBaseType();
-					} else {
-						parent = cmClass.getParent();
-					}
-					if (parent != null) {
-						final QName parentQName = xmlRegistry.getTypeQName(parent);
-						final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QNameType qName = factory.createQNameType();
-						qName.setNamespace(parentQName.getNamespaceURI());
-						qName.setLocalName(parentQName.getLocalPart());
-						recordType.getSuperType().add(qName);
-					}
-				} else if (type instanceof CMDomain) {
-					recordType.setAppliesTo("relationship");
-				} else if (type instanceof DocumentTypeDefinition) {
-					recordType.setAppliesTo("item");
-				} else if (type instanceof GeoClass) {
-					recordType.setAppliesTo("item");
-				}
+		final Supplier<Iterable<RecordTypes>> supplier = new Supplier<Iterable<RecordTypes>>() {
 
-				RecordTypes recordTypes = recordTypesMap.get(typeQName.getNamespaceURI());
-				if (recordTypes == null) {
-					recordTypes = new RecordTypes();
-					recordTypes.setNamespace(typeQName.getNamespaceURI());
-					recordTypes.setSchemaLocation(xmlRegistry.getByNamespaceURI(typeQName.getNamespaceURI())
-							.getSchemaLocation());
-					recordTypesMap.put(typeQName.getNamespaceURI(), recordTypes);
+			@Override
+			public Iterable<RecordTypes> get() {
+				final Map<String, RecordTypes> recordTypesMap = new HashMap<String, RecordTypes>();
+				if (databaseConfiguration.isConfigured()) {
+					for (final Object type : Iterables.concat(xmlRegistry.getTypes(CMClass.class),
+							xmlRegistry.getTypes(CMClassHistory.class), xmlRegistry.getTypes(CMDomain.class),
+							xmlRegistry.getTypes(CMDomainHistory.class),
+							xmlRegistry.getTypes(DocumentTypeDefinition.class), xmlRegistry.getTypes(GeoClass.class))) {
+						final QName typeQName = xmlRegistry.getTypeQName(type);
+						final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.RecordType recordType = factory
+								.createRecordType();
+						recordType.setLocalName(typeQName.getLocalPart());
+						if (type instanceof CMClass) {
+							final CMClass cmClass = (CMClass) type;
+							recordType.setAppliesTo("item");
+							CMClass parent = null;
+							if (type instanceof CMClassHistory) {
+								parent = ((CMClassHistory) cmClass).getBaseType();
+							} else {
+								parent = cmClass.getParent();
+							}
+							if (parent != null) {
+								final QName parentQName = xmlRegistry.getTypeQName(parent);
+								final org.dmtf.schemas.cmdbf._1.tns.servicemetadata.QNameType qName = factory
+										.createQNameType();
+								qName.setNamespace(parentQName.getNamespaceURI());
+								qName.setLocalName(parentQName.getLocalPart());
+								recordType.getSuperType().add(qName);
+							}
+						} else if (type instanceof CMDomain) {
+							recordType.setAppliesTo("relationship");
+						} else if (type instanceof DocumentTypeDefinition) {
+							recordType.setAppliesTo("item");
+						} else if (type instanceof GeoClass) {
+							recordType.setAppliesTo("item");
+						}
+
+						RecordTypes recordTypes = recordTypesMap.get(typeQName.getNamespaceURI());
+						if (recordTypes == null) {
+							recordTypes = new RecordTypes();
+							recordTypes.setNamespace(typeQName.getNamespaceURI());
+							recordTypes.setSchemaLocation(xmlRegistry.getByNamespaceURI(typeQName.getNamespaceURI())
+									.getSchemaLocation());
+							recordTypesMap.put(typeQName.getNamespaceURI(), recordTypes);
+						}
+						recordTypes.getRecordType().add(recordType);
+					}
 				}
-				recordTypes.getRecordType().add(recordType);
+				return recordTypesMap.values();
 			}
-		}
-		final RecordTypeList recordTypeList = factory.createRecordTypeList();
-		recordTypeList.getRecordTypes().addAll(recordTypesMap.values());
-		return recordTypeList;
+
+		};
+		return new LazyRecordTypeList(supplier);
 	}
 
 	private boolean registerItem(final CMDBfItem item) throws Exception {
