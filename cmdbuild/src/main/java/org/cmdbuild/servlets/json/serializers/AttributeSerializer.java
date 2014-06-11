@@ -1,7 +1,5 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
-
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -70,8 +68,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
 
@@ -497,13 +493,12 @@ public class AttributeSerializer extends Serializer {
 			}.buildTranslationObject();
 
 			String translatedDescription = translationFacade.read(descriptionTranslationObject);
-			//FIXME
 			if (isBlank(translatedDescription) && attribute.getOwner() instanceof CMClass) {
 				translatedDescription = getTranslationFromParent(attribute, DESCRIPTION_FOR_CLIENT);
 			}
 			final String description = defaultIfBlank(attribute.getDescription(), attribute.getName());
 
-			serialization.put(DESCRIPTION, defaultIfNull(translatedDescription, description));
+			serialization.put(DESCRIPTION, defaultIfBlank(translatedDescription, description));
 			serialization.put(DEFAULT_DESCRIPTION, description);
 
 			serialization.put(TYPE,
@@ -516,9 +511,8 @@ public class AttributeSerializer extends Serializer {
 			serialization.put(FIELD_MODE, JsonModeMapper.textFrom(attribute.getMode()));
 			serialization.put("index", attribute.getIndex()); // TODO: constant
 			serialization.put(DEFAULT_VALUE, attribute.getDefaultValue());
-			
+
 			String groupNameTranslation = null;
-			//FIXME
 			if (!isBlank(attribute.getGroup()) && attribute.getOwner() instanceof CMClass) {
 				final TranslationObject groupNameTranslationObject = AttributeClassTranslation.newInstance() //
 						.forClass(attribute.getOwner().getName()) //
@@ -530,12 +524,9 @@ public class AttributeSerializer extends Serializer {
 				if (isBlank(groupNameTranslation)) {
 					groupNameTranslation = searchGroupNameTranslationFromOtherAttributes(attribute);
 				}
-				if (isBlank(groupNameTranslation)) {
-					groupNameTranslation = getTranslationFromParent(attribute, GROUP_FOR_CLIENT);
-				}
 			}
-			final String defaultGroupName = defaultIfNull(attribute.getGroup(), EMPTY);
-			final String translatedGroupName = defaultIfNull(groupNameTranslation, defaultGroupName);
+			final String defaultGroupName = defaultIfBlank(attribute.getGroup(), EMPTY);
+			final String translatedGroupName = defaultIfBlank(groupNameTranslation, defaultGroupName);
 			serialization.put(GROUP, translatedGroupName);
 			serialization.put(GROUP_DEFAULT, defaultGroupName);
 
@@ -622,20 +613,22 @@ public class AttributeSerializer extends Serializer {
 
 		private String searchTranslationAmongAllAncestors(final CMAttribute attribute, final CMClass entryType,
 				final String fieldToTranslate) {
-
-			AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
-					.forClass(entryType.getName()) //
-					.withField(fieldToTranslate) //
-					.withName(attribute.getName()) //
-					.build();
-			String inheritedTranslation = translationFacade.read(translationObject);
+			String inheritedTranslation = EMPTY;
 			if (isBlank(inheritedTranslation)) {
 				final CMClass parent = CMClass.class.cast(entryType).getParent();
 				if (parent != null) {
 					final CMAttribute inheritedAttribute = parent.getAttribute(attribute.getName());
 					if (inheritedAttribute != null) {
-						inheritedTranslation = searchTranslationAmongAllAncestors(inheritedAttribute, parent,
-								fieldToTranslate);
+						AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
+								.forClass(parent.getName()) //
+								.withField(fieldToTranslate) //
+								.withName(attribute.getName()) //
+								.build();
+						inheritedTranslation = translationFacade.read(translationObject);
+						if (isBlank(inheritedTranslation)) {
+							inheritedTranslation = searchTranslationAmongAllAncestors(inheritedAttribute, parent,
+									fieldToTranslate);
+						}
 					}
 				}
 			}

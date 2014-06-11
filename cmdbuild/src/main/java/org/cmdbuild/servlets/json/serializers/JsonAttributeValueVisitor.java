@@ -11,14 +11,15 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.data.store.lookup.LookupStore;
 
 import com.google.common.collect.Maps;
 
 public class JsonAttributeValueVisitor extends AbstractAttributeValueVisitor {
 
 	public JsonAttributeValueVisitor(final CMAttributeType<?> type, final Object value,
-			final TranslationFacade translationFacade) {
-		super(type, value, translationFacade);
+			final TranslationFacade translationFacade, final LookupStore lookupStore) {
+		super(type, value, translationFacade,lookupStore);
 	}
 
 	@Override
@@ -30,7 +31,7 @@ public class JsonAttributeValueVisitor extends AbstractAttributeValueVisitor {
 	public void visit(final LookupAttributeType attributeType) {
 		if (value instanceof IdAndDescription) {
 			if (value instanceof LookupValue) {
-				final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade);
+				final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade, lookupStore);
 				convertedValue = lookupSerializer.serializeLookupValue((LookupValue) value);
 			} else {
 				convertedValue = asMap((IdAndDescription) value);

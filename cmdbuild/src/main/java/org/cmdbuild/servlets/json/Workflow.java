@@ -87,7 +87,7 @@ public class Workflow extends JSONBaseWithSpringContext {
 		final List<JsonProcessCard> processInstances = Lists.newArrayList();
 		final PagedElements<UserProcessInstance> response = workflowLogic().query(className, queryOptions);
 		for (final UserProcessInstance pi : response) {
-			processInstances.add(new JsonProcessCard(pi, translationFacade()));
+			processInstances.add(new JsonProcessCard(pi, translationFacade(),lookupStore()));
 		}
 
 		return JsonResponse.success(new HashMap<String, Object>() {

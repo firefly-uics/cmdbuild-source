@@ -177,7 +177,7 @@ public class LookupNamespace extends AbstractNamespace {
 						}
 					}
 				}
-				value = new LookupValue(lookupId, lookupValue, lookupTypeName);
+				value = new LookupValue(lookupId, lookupValue, lookupTypeName, null);
 			}
 		}
 		return value;
