@@ -144,7 +144,7 @@
 			for (var j = 0; j < decoded.rows.length; j++) {
 				var row = decoded.rows[j];
 				var text = Ext.String.format(NODE_TEXT_TMP, "", row.Code, row.Description);
-				appendNode(node, text, row.Id, row.IdClass_value, nodesIn);
+				appendNode(node, text, row.Id, row.className, nodesIn);
 			}
 		});
 	}
