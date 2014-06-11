@@ -83,6 +83,8 @@
 				request.params.id = me.record.getId();
 				_CMProxy.dataView.filter.update(request);
 			}
+			this.view.disableModify(true);
+
 		},
 
 		/**
