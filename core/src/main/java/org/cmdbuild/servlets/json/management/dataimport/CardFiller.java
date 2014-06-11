@@ -138,8 +138,9 @@ public class CardFiller {
 						attributeName, //
 						new LookupValue( //
 								lookup.getId(), //
-								lookup.description, lookupTypeName //
-						) //
+								lookup.description, //
+								lookupTypeName, //
+								null) //
 						);
 
 				set = true;

@@ -90,7 +90,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 		final LookupType lookupType = LookupType.newInstance().withName(type).build();
 		final Iterable<Lookup> elements = lookupLogic().getAllLookup(lookupType, active);
 
-		final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade());
+		final LookupSerializer lookupSerializer = lookupSerializer();
 
 		for (final Lookup element : elements) {
 			serializer.append("rows", lookupSerializer.serializeLookup(element, shortForm));
@@ -109,7 +109,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 		final LookupType lookupType = LookupType.newInstance().withName(type).build();
 		final Iterable<Lookup> elements = lookupLogic().getAllLookupOfParent(lookupType);
 
-		final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade());
+		final LookupSerializer lookupSerializer = lookupSerializer();
 
 		for (final Lookup lookup : elements) {
 			out.append("rows", lookupSerializer.serializeLookupParent(lookup));
@@ -148,9 +148,9 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			final @Parameter(ACTIVE_CAPITAL) boolean isActive, //
 			final @Parameter(NUMBER) int number //
 	) throws JSONException {
-		
-		String translationUuid = defaultIfBlank(lookupLogic().fetchTranslationUuid(id),UUID.randomUUID().toString());
-		
+
+		String translationUuid = defaultIfBlank(lookupLogic().fetchTranslationUuid(id), UUID.randomUUID().toString());
+
 		final Lookup lookup = Lookup.newInstance() //
 				.withId(Long.valueOf(id)) //
 				.withCode(code) //
@@ -166,7 +166,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 
 		final Long lookupId = lookupLogic().createOrUpdateLookup(lookup);
 		lookup.setId(lookupId);
-		final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade());
+		final LookupSerializer lookupSerializer = lookupSerializer();
 		serializer.put("lookup", lookupSerializer.serializeLookup(lookup));
 		return serializer;
 	}
@@ -188,6 +188,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 					jsonElement.getInt("index"));
 		}
 		lookupLogic().reorderLookup(lookupType, positions);
+	}
+
+	private LookupSerializer lookupSerializer() {
+		return new LookupSerializer(translationFacade(), lookupStore());
 	}
 
 }

@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json.serializers;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+import static org.cmdbuild.data.store.Storables.storableById;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION_CAPITAL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_PARENT_DESCRIPTION;
@@ -12,13 +13,12 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CAPITAL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PARENT_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PARENT_ID;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TRANSLATION_UUID;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.LookupValue;
-import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -28,11 +28,12 @@ import org.json.JSONObject;
 
 public class LookupSerializer {
 
-	private final static LookupStore lookupStore = applicationContext().getBean(LookupStore.class);
 	private final TranslationFacade translationFacade;
+	private final LookupStore lookupStore;
 
-	public LookupSerializer(final TranslationFacade translationFacade) {
+	public LookupSerializer(final TranslationFacade translationFacade, final LookupStore lookupStore) {
 		this.translationFacade = translationFacade;
+		this.lookupStore = lookupStore;
 	}
 
 	public JSONObject serializeLookup(final Lookup lookup) throws JSONException {
@@ -121,22 +122,20 @@ public class LookupSerializer {
 	public Map<String, Object> serializeLookupValue( //
 			final LookupValue value //
 	) {
-
+		final Lookup lookup = lookup(value.getId());
 		final Map<String, Object> out = new HashMap<String, Object>();
 		out.put(ID, value.getId());
 		out.put(DESCRIPTION, description(value));
+		out.put(TRANSLATION_UUID, (lookup == null) ? null : lookup.translationUuid);
 		return out;
 	}
 
 	private String description(final LookupValue value) {
 		String description = value.getDescription();
-
+		String uuid = lookup(value.getId()) == null ? null : lookup(value.getId()).translationUuid;
 		final LookupTranslation lookupTranslation = LookupTranslation.newInstance() //
-				.withField(DESCRIPTION_FOR_CLIENT)//
-				.withName(value.getId() != null ? value.getId().toString() : EMPTY)//
-				// TODO
-				// .withName(value.getTranslationUuid() != null ?
-				// value.getTranslationUuid() : EMPTY)//
+				.withField(DESCRIPTION_FOR_CLIENT)
+				.withName(uuid)//
 				.build();
 
 		final String translatedDescription = translationFacade.read(lookupTranslation);
@@ -163,16 +162,12 @@ public class LookupSerializer {
 		return baseDescription;
 	}
 
-	private static Lookup lookup(final Long id) {
+	private Lookup lookup(final Long id) {
 		if (id != null) {
-			return lookupStore.read(new Storable() {
-				@Override
-				public String getIdentifier() {
-					return id.toString();
-				}
-			});
+			return lookupStore.read(storableById(id));
 		} else {
 			return null;
 		}
 	}
+
 }

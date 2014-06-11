@@ -1,6 +1,6 @@
 package org.cmdbuild.data.store;
 
-public class StorableUtils {
+public class Storables {
 
 	private static class StorableById implements Storable {
 
@@ -17,12 +17,12 @@ public class StorableUtils {
 
 	}
 
-	private StorableUtils() {
-		// prevents instantiation
-	}
-
 	public static Storable storableById(final Long id) {
 		return new StorableById(id);
+	}
+
+	private Storables() {
+		// prevents instantiation
 	}
 
 }
