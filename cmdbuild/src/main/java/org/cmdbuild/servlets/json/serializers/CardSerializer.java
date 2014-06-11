@@ -7,7 +7,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CAPITAL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.RESULTS;
-import static org.cmdbuild.servlets.json.CommunicationConstants.ROWS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.*;
 
 import java.util.Map;
 
@@ -83,6 +83,8 @@ public class CardSerializer {
 		json.put(ID_CAPITAL, card.getId());
 		// TODO if IdClass is no more needed, remove getClassId() method too
 		json.put(CLASS_ID_CAPITAL, card.getClassId());
+		
+		json.put(CLASS_NAME, card.getClassName());
 
 		/*
 		 * We must serialize the class description Is used listing the card of a
