@@ -15,6 +15,7 @@ import net.sf.jasperreports.engine.JRParameter;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.ForwardingEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -74,6 +75,11 @@ public class ReportParameterConverter {
 			public CMIdentifier getIdentifier() {
 				return FAKE_IDENTIFIER;
 			};
+
+			@Override
+			public void accept(final CMEntryTypeVisitor visitor) {
+				// nothing to do
+			}
 
 		};
 

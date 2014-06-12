@@ -62,6 +62,7 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.translation.AttributeClassTranslation;
 import org.cmdbuild.logic.translation.AttributeDomainTranslation;
 import org.cmdbuild.logic.translation.TranslationObject;
+import static org.cmdbuild.logic.translation.TranslationObjects.*;
 import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.json.JSONArray;
@@ -461,7 +462,7 @@ public class AttributeSerializer extends Serializer {
 
 			final TranslationObject descriptionTranslationObject = new CMEntryTypeVisitor() {
 
-				TranslationObject translationObject;
+				TranslationObject translationObject = nullTranslationObject();
 
 				public TranslationObject buildTranslationObject() {
 					attribute.getOwner().accept(this);
