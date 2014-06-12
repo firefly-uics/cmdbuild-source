@@ -98,6 +98,7 @@ import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.model.gis.LayerMetadata;
+import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.gis.GeoFeature;
 import org.cmdbuild.services.gis.GeoFeatureStore;
 import org.dmtf.schemas.cmdbf._1.tns.query.ExpensiveQueryErrorFault;
@@ -176,6 +177,7 @@ public class CmdbMDR implements ManagementDataRepository {
 	private final CmdbfConfiguration cmdbfConfiguration;
 	private final DmsConfiguration dmsConfiguration;
 	private final DatabaseConfiguration databaseConfiguration;
+	private final PatchManager patchManager;
 
 	private class CmdbQueryResult extends CMDBfQueryResult {
 
@@ -225,7 +227,8 @@ public class CmdbMDR implements ManagementDataRepository {
 	public CmdbMDR(final XmlRegistry xmlRegistry, final DataAccessLogic dataAccessLogic, final DmsLogic dmsLogic,
 			final GISLogic gisLogic, final GeoFeatureStore geoFeatureStore, final OperationUser operationUser,
 			final MdrScopedIdRegistry aliasRegistry, final CmdbfConfiguration cmdbfConfiguration,
-			final DmsConfiguration dmsConfiguration, final DatabaseConfiguration databaseConfiguration) {
+			final DmsConfiguration dmsConfiguration, final DatabaseConfiguration databaseConfiguration,
+			final PatchManager patchManager) {
 		this.xmlRegistry = xmlRegistry;
 		this.dataAccessLogic = dataAccessLogic;
 		this.dmsLogic = dmsLogic;
@@ -236,6 +239,7 @@ public class CmdbMDR implements ManagementDataRepository {
 		this.cmdbfConfiguration = cmdbfConfiguration;
 		this.dmsConfiguration = dmsConfiguration;
 		this.databaseConfiguration = databaseConfiguration;
+		this.patchManager = patchManager;
 	}
 
 	@Override
@@ -482,7 +486,7 @@ public class CmdbMDR implements ManagementDataRepository {
 	@SuppressWarnings("unchecked")
 	private RecordTypeList getRecordTypesList(final ObjectFactory factory) {
 		final Map<String, RecordTypes> recordTypesMap = new HashMap<String, RecordTypes>();
-		if (databaseConfiguration.isConfigured()) {
+		if (databaseConfiguration.isConfigured() && patchManager.isUpdated()) {
 			for (final Object type : Iterables.concat(xmlRegistry.getTypes(CMClass.class),
 					xmlRegistry.getTypes(CMClassHistory.class), xmlRegistry.getTypes(CMDomain.class),
 					xmlRegistry.getTypes(CMDomainHistory.class), xmlRegistry.getTypes(DocumentTypeDefinition.class),

@@ -27,6 +27,7 @@
 		<constructor-arg ref="cmdbfProperties" />
 		<constructor-arg ref="dmsProperties" />
 		<constructor-arg ref="databaseProperties" />
+		<constructor-arg ref="patchManager" />
 	</bean>
 
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
