@@ -50,7 +50,7 @@
 					CMDBuild.Translation.you_have_not_set_a_filter,
 					false//
 				);
-
+				this.view.disableModify(true);
 				return;
 			} else {
 				// BUSINNESS RULE: The user could not save a view if the filter
@@ -64,7 +64,7 @@
 						CMDBuild.Translation.itIsNotAllowedFilterWithRuntimeParams, //
 						false//
 					);
-
+					this.view.disableModify(true);
 					return;
 				}
 			}
