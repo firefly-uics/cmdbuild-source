@@ -58,20 +58,14 @@
 		 * @param (Ext.data.Model) record - record used to fill the field values
 		 */
 		// override
-		loadRecord: function(record) {
-			this.callParent(arguments);
-
-			this.activeCheckBox.setValue(record.get('active'));
-			this.cardBinding.setValue(record.get('cardBinding'));
-		},
-
-		// override
 		// here because the normal behavior of administration pages is use the description_default for languages
 		// translations
 		loadRecord: function(record) {
 			this.reset();
 			this.name.setValue(record.get(NAME));
 			this.description.setValue(record.get(DESCRIPTION));
+			this.activeCheckBox.setValue(record.get('active'));
+			this.cardBinding.setValue(record.get('cardBinding'));
 		},
 
 		/**
