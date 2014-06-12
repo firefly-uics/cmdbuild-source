@@ -7,6 +7,7 @@
 		alternateClassName: 'CMDBuild.ServiceProxy.parameter', // Legacy class name
 
 		statics: {
+			ABSOLUTE_CLASS_ORDER: 'absoluteClassOrder',
 			ACTIVE: 'active',
 			ADDRESS: 'address',
 			ADVANCED: 'advanced',
@@ -25,6 +26,7 @@
 			CLASS_ID: 'classId',
 			CLASS_MAPPING: 'classMapping',
 			CLASS_NAME: 'className',
+			CLASS_ORDER_SIGN: 'classOrderSign',
 			CONFIRMED: 'confirmed',
 			CREATE: 'create',
 			CRON_EXPRESSION: 'cronExpression',

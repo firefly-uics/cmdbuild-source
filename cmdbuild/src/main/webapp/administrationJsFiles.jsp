@@ -44,7 +44,6 @@
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMClassAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeSortingGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMSetOrderWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMClassAttributesPanel.js"></script>
