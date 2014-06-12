@@ -74,7 +74,7 @@ public class XmlParser implements Parser {
 			xmlDocument = db.parse(xmlSource);
 			xPath = XPathFactory.newInstance().newXPath();
 		} catch (Exception e) {
-			throw new BimError("Unable to parse export configuration '"+xmlString+"'");
+			throw new BimError("Unable to parse xml mapping '"+xmlString+"'");
 		} 
 	}
 

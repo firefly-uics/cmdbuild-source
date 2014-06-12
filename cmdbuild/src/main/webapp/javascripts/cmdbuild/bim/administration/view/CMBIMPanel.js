@@ -17,7 +17,7 @@
 				region: 'center',
 				border: false,
 				frame: false,
-				withPagingBar: this.withPagingBar
+				withPagingBar: false//this.withPagingBar
 			};
 
 			if (this.withPagingBar)

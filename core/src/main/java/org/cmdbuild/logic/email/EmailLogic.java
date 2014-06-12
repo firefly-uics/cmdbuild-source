@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.email;
 
+import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.base.Suppliers.synchronizedSupplier;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
@@ -446,12 +447,13 @@ public class EmailLogic implements Logic {
 	}
 
 	public void sendOutgoingAndDraftEmails(final Long processCardId) {
-		final EmailAccount configuration = emailAccountSupplier.get();
+		final Supplier<EmailAccount> supplier = memoize(emailAccountSupplier);
 		for (final Email email : safeEmailService(processCardId).getOutgoingEmails(processCardId)) {
-			if (isEmpty(email.getFromAddress())) {
-				email.setFromAddress(configuration.getAddress());
-			}
 			try {
+				if (isEmpty(email.getFromAddress())) {
+					final EmailAccount configuration = supplier.get();
+					email.setFromAddress(configuration.getAddress());
+				}
 				// FIXME really needed here?
 				email.setSubject(defaultIfBlank(subjectHandler.compile(email).getSubject(), EMPTY));
 				safeEmailService(processCardId).send(email, attachmentsOf(email));
