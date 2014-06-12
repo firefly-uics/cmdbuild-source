@@ -2,12 +2,13 @@ package unit.logic.taskmanager.store;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 import static org.cmdbuild.common.java.sql.DataSourceTypes.mysql;
 import static org.cmdbuild.common.java.sql.DataSourceTypes.oracle;
 import static org.cmdbuild.common.java.sql.DataSourceTypes.postgresql;
 import static org.cmdbuild.common.java.sql.DataSourceTypes.sqlserver;
 import static org.cmdbuild.common.utils.BuilderUtils.a;
+import static org.cmdbuild.logic.taskmanager.store.DefaultLogicAndStoreConverter.KEY_VALUE_SEPARATOR;
+import static org.cmdbuild.logic.taskmanager.store.DefaultLogicAndStoreConverter.SPECIAL_SEPARATOR;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
@@ -205,11 +206,11 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(Connector.NOTIFICATION_ACCOUNT, "account"));
 		assertThat(parameters, hasEntry(Connector.NOTIFICATION_ERROR_TEMPLATE, "error template"));
 		assertThat(parameters, hasEntry(Connector.MAPPING_TYPES, "" //
-				+ "sourceTypeB,targetTypeB,false,false,true" + LINE_SEPARATOR //
+				+ "sourceTypeB,targetTypeB,false,false,true" + SPECIAL_SEPARATOR //
 				+ "sourceTypeA,targetTypeA,true,true,false" //
 		));
 		assertThat(parameters, hasEntry(Connector.MAPPING_ATTRIBUTES, "" //
-				+ "sourceTypeA,sourceAttributeA,targetTypeA,targetAttributeA,true" + LINE_SEPARATOR //
+				+ "sourceTypeA,sourceAttributeA,targetTypeA,targetAttributeA,true" + SPECIAL_SEPARATOR //
 				+ "sourceTypeB,sourceAttributeB,targetTypeB,targetAttributeB,false" //
 		));
 	}
@@ -243,8 +244,8 @@ public class DefaultLogicAndStoreConverterTest {
 		final Map<String, String> parameters = converted.getParameters();
 		assertThat(parameters, hasEntry(Connector.DATA_SOURCE_TYPE, "sql"));
 
-		final Map<String, String> configuration = Splitter.on(LINE_SEPARATOR) //
-				.withKeyValueSeparator("=") //
+		final Map<String, String> configuration = Splitter.on(SPECIAL_SEPARATOR) //
+				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 				.split(parameters.get(Connector.DATA_SOURCE_CONFIGURATION));
 		assertThat(configuration, hasEntry(Connector.SQL_TYPE, "postgresql"));
 		assertThat(configuration, hasEntry(Connector.SQL_HOSTNAME, "example.com"));
@@ -274,8 +275,8 @@ public class DefaultLogicAndStoreConverterTest {
 		// then
 		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.ConnectorTask.class));
 
-		final Map<String, String> configuration = Splitter.on(LINE_SEPARATOR) //
-				.withKeyValueSeparator("=") //
+		final Map<String, String> configuration = Splitter.on(SPECIAL_SEPARATOR) //
+				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 				.split(converted.getParameters().get(Connector.DATA_SOURCE_CONFIGURATION));
 		assertThat(configuration, hasEntry(Connector.SQL_TYPE, "mysql"));
 	}
@@ -298,8 +299,8 @@ public class DefaultLogicAndStoreConverterTest {
 		// then
 		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.ConnectorTask.class));
 
-		final Map<String, String> configuration = Splitter.on(LINE_SEPARATOR) //
-				.withKeyValueSeparator("=") //
+		final Map<String, String> configuration = Splitter.on(SPECIAL_SEPARATOR) //
+				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 				.split(converted.getParameters().get(Connector.DATA_SOURCE_CONFIGURATION));
 		assertThat(configuration, hasEntry(Connector.SQL_TYPE, "oracle"));
 	}
@@ -322,8 +323,8 @@ public class DefaultLogicAndStoreConverterTest {
 		// then
 		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.ConnectorTask.class));
 
-		final Map<String, String> configuration = Splitter.on(LINE_SEPARATOR) //
-				.withKeyValueSeparator("=") //
+		final Map<String, String> configuration = Splitter.on(SPECIAL_SEPARATOR) //
+				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 				.split(converted.getParameters().get(Connector.DATA_SOURCE_CONFIGURATION));
 		assertThat(configuration, hasEntry(Connector.SQL_TYPE, "postgresql"));
 	}
@@ -346,8 +347,8 @@ public class DefaultLogicAndStoreConverterTest {
 		// then
 		assertThat(converted, instanceOf(org.cmdbuild.data.store.task.ConnectorTask.class));
 
-		final Map<String, String> configuration = Splitter.on(LINE_SEPARATOR) //
-				.withKeyValueSeparator("=") //
+		final Map<String, String> configuration = Splitter.on(SPECIAL_SEPARATOR) //
+				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 				.split(converted.getParameters().get(Connector.DATA_SOURCE_CONFIGURATION));
 		assertThat(configuration, hasEntry(Connector.SQL_TYPE, "sqlserver"));
 	}
@@ -366,11 +367,11 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(Connector.NOTIFICATION_ACCOUNT, "account") //
 				.withParameter(Connector.NOTIFICATION_ERROR_TEMPLATE, "error template") //
 				.withParameter(Connector.MAPPING_TYPES, "" //
-						+ "sourceTypeA,targetTypeA,true,true,false" + LINE_SEPARATOR //
+						+ "sourceTypeA,targetTypeA,true,true,false" + SPECIAL_SEPARATOR //
 						+ "sourceTypeB,targetTypeB,false,false,true" //
 				) //
 				.withParameter(Connector.MAPPING_ATTRIBUTES, "" //
-						+ "sourceTypeA,sourceAttributeA,targetTypeA,targetAttributeA,true" + LINE_SEPARATOR //
+						+ "sourceTypeA,sourceAttributeA,targetTypeA,targetAttributeA,true" + SPECIAL_SEPARATOR //
 						+ "sourceTypeB,sourceAttributeB,targetTypeB,targetAttributeB,false" //
 				) //
 		);
@@ -438,8 +439,8 @@ public class DefaultLogicAndStoreConverterTest {
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
 				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
-				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
-						.withKeyValueSeparator("=") //
+				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(SPECIAL_SEPARATOR) //
+						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 						.join(configuration)) //
 		);
 
@@ -477,8 +478,8 @@ public class DefaultLogicAndStoreConverterTest {
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
 				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
-				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
-						.withKeyValueSeparator("=") //
+				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(SPECIAL_SEPARATOR) //
+						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 						.join(configuration)) //
 		);
 
@@ -508,8 +509,8 @@ public class DefaultLogicAndStoreConverterTest {
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
 				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
-				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
-						.withKeyValueSeparator("=") //
+				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(SPECIAL_SEPARATOR) //
+						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 						.join(configuration)) //
 		);
 
@@ -539,8 +540,8 @@ public class DefaultLogicAndStoreConverterTest {
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
 				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
-				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
-						.withKeyValueSeparator("=") //
+				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(SPECIAL_SEPARATOR) //
+						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 						.join(configuration)) //
 		);
 
@@ -570,8 +571,8 @@ public class DefaultLogicAndStoreConverterTest {
 				.withRunningStatus(true) //
 				.withCronExpression("cron expression") //
 				.withParameter(Connector.DATA_SOURCE_TYPE, "sql") //
-				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
-						.withKeyValueSeparator("=") //
+				.withParameter(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(SPECIAL_SEPARATOR) //
+						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 						.join(configuration)) //
 		);
 
@@ -630,16 +631,20 @@ public class DefaultLogicAndStoreConverterTest {
 
 		final Map<String, String> parameters = converted.getParameters();
 		assertThat(parameters, hasEntry(ReadEmail.ACCOUNT_NAME, "email account"));
-		assertThat(parameters, hasEntry(ReadEmail.FILTER_FROM_REGEX, "regex\nfrom\nfilter"));
-		assertThat(parameters, hasEntry(ReadEmail.FILTER_SUBJECT_REGEX, "regex\nsubject\nfilter"));
+		assertThat(parameters, hasEntry(ReadEmail.FILTER_FROM_REGEX, "regex" + SPECIAL_SEPARATOR //
+				+ "from" + SPECIAL_SEPARATOR //
+				+ "filter"));
+		assertThat(parameters, hasEntry(ReadEmail.FILTER_SUBJECT_REGEX, "regex" + SPECIAL_SEPARATOR //
+				+ "subject" + SPECIAL_SEPARATOR //
+				+ "filter"));
 		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.NOTIFICATION_TEMPLATE, "template"));
 		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.ATTACHMENTS_CATEGORY, "category"));
 		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_CLASS_NAME, "workflow class name"));
-		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_FIELDS_MAPPING, Joiner.on(LINE_SEPARATOR) //
-				.withKeyValueSeparator("=") //
+		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_FIELDS_MAPPING, Joiner.on(SPECIAL_SEPARATOR) //
+				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 				.join(attributes)));
 		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ADVANCE, "true"));
 		assertThat(parameters, hasEntry(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE, "true"));
@@ -672,6 +677,10 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void readEmailTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
+		final Map<String, String> fieldsMapping = Maps.newHashMap();
+		fieldsMapping.put("foo", "bar");
+		fieldsMapping.put("bar", "baz");
+		fieldsMapping.put("baz", "foo");
 		final org.cmdbuild.data.store.task.ReadEmailTask source = a(org.cmdbuild.data.store.task.ReadEmailTask
 				.newInstance() //
 				.withId(42L) //
@@ -680,15 +689,21 @@ public class DefaultLogicAndStoreConverterTest {
 				.withCronExpression("cron expression") //
 				.withLastExecution(NOW) //
 				.withParameter(ReadEmail.ACCOUNT_NAME, "email account") //
-				.withParameter(ReadEmail.FILTER_FROM_REGEX, "regex\nfrom\nfilter") //
-				.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, "regex\nsubject\nfilter") //
+				.withParameter(ReadEmail.FILTER_FROM_REGEX, "regex" + SPECIAL_SEPARATOR //
+						+ "from" + SPECIAL_SEPARATOR //
+						+ "filter") //
+				.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, "regex" + SPECIAL_SEPARATOR //
+						+ "subject" + SPECIAL_SEPARATOR //
+						+ "filter") //
 				.withParameter(ReadEmail.NOTIFICATION_ACTIVE, "true") //
 				.withParameter(ReadEmail.NOTIFICATION_TEMPLATE, "template") //
 				.withParameter(ReadEmail.ATTACHMENTS_ACTIVE, "true") //
 				.withParameter(ReadEmail.ATTACHMENTS_CATEGORY, "category") //
 				.withParameter(ReadEmail.WORKFLOW_ACTIVE, "true") //
 				.withParameter(ReadEmail.WORKFLOW_CLASS_NAME, "workflow class name") //
-				.withParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING, "foo=bar\nbar=baz\nbaz=foo") //
+				.withParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING, Joiner.on(SPECIAL_SEPARATOR) //
+						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+						.join(fieldsMapping)) //
 				.withParameter(ReadEmail.WORKFLOW_ADVANCE, "true") //
 				.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_SAVE, "true") //
 				.withParameter(ReadEmail.WORKFLOW_ATTACHMENTS_CATEGORY, "workflow's attachments category") //
@@ -781,14 +796,18 @@ public class DefaultLogicAndStoreConverterTest {
 
 		final Map<String, String> parameters = converted.getParameters();
 		assertThat(parameters, hasEntry(StartWorkflow.CLASSNAME, "class name"));
-		assertThat(parameters, hasEntry(StartWorkflow.ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
-				.withKeyValueSeparator("=") //
+		assertThat(parameters, hasEntry(StartWorkflow.ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
+				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 				.join(attributes)));
 	}
 
 	@Test
 	public void startWorkflowTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
+		final Map<String, String> storedAttributes = Maps.newHashMap();
+		storedAttributes.put("foo", "bar");
+		storedAttributes.put("bar", "baz");
+		storedAttributes.put("baz", "foo");
 		final org.cmdbuild.data.store.task.StartWorkflowTask source = a(org.cmdbuild.data.store.task.StartWorkflowTask
 				.newInstance() //
 				.withId(42L) //
@@ -797,7 +816,9 @@ public class DefaultLogicAndStoreConverterTest {
 				.withCronExpression("cron expression") //
 				.withLastExecution(NOW) //
 				.withParameter(StartWorkflow.CLASSNAME, "class name") //
-				.withParameter(StartWorkflow.ATTRIBUTES, "foo=bar\nbar=baz\nbaz=foo") //
+				.withParameter(StartWorkflow.ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
+						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+						.join(storedAttributes)) //
 		);
 
 		// when
@@ -894,8 +915,8 @@ public class DefaultLogicAndStoreConverterTest {
 		assertThat(parameters, hasEntry(SynchronousEvent.EMAIL_TEMPLATE, "email template"));
 		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_CLASS_NAME, "workflow class name"));
-		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
-				.withKeyValueSeparator("=") //
+		assertThat(parameters, hasEntry(SynchronousEvent.WORKFLOW_ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
+				.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 				.join(attributes)));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true"));
 		assertThat(parameters, hasEntry(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy"));
@@ -938,6 +959,10 @@ public class DefaultLogicAndStoreConverterTest {
 	@Test
 	public void synchronousEventTaskSuccessfullyConvertedToLogic() throws Exception {
 		// given
+		final Map<String, String> workflowAttributes = Maps.newHashMap();
+		workflowAttributes.put("foo", "bar");
+		workflowAttributes.put("bar", "baz");
+		workflowAttributes.put("baz", "foo");
 		final org.cmdbuild.data.store.task.SynchronousEventTask source = a(org.cmdbuild.data.store.task.SynchronousEventTask
 				.newInstance() //
 				.withId(42L) //
@@ -952,7 +977,9 @@ public class DefaultLogicAndStoreConverterTest {
 				.withParameter(SynchronousEvent.EMAIL_TEMPLATE, "email template") //
 				.withParameter(SynchronousEvent.WORKFLOW_ACTIVE, "true") //
 				.withParameter(SynchronousEvent.WORKFLOW_CLASS_NAME, "workflow class name") //
-				.withParameter(SynchronousEvent.WORKFLOW_ATTRIBUTES, "foo=bar\nbar=baz\nbaz=foo") //
+				.withParameter(SynchronousEvent.WORKFLOW_ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
+						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
+						.join(workflowAttributes)) //
 				.withParameter(SynchronousEvent.WORKFLOW_ADVANCE, "true") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_ACTIVE, "true") //
 				.withParameter(SynchronousEvent.ACTION_SCRIPT_ENGINE, "groovy") //

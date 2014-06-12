@@ -5,7 +5,6 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 import static org.apache.commons.lang3.math.NumberUtils.createInteger;
 import static org.cmdbuild.common.java.sql.DataSourceTypes.mysql;
 import static org.cmdbuild.common.java.sql.DataSourceTypes.oracle;
@@ -157,8 +156,17 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 
 	};
 
-	private static final String KEY_VALUE_SEPARATOR = "=";
-	private static final String GROUPS_SEPARATOR = ",";
+	public static final String KEY_VALUE_SEPARATOR = "=";
+	public static final String GROUPS_SEPARATOR = ",";
+
+	/**
+	 * Used for separate those elements that should be separated by a line-feed
+	 * but that cannot be used because:<br>
+	 * 1) it could be used inside values<br>
+	 * 2) someone could edit database manually from a Windows host
+	 * It's the HTML entity for the '|' character.
+	 */
+	public static final String SPECIAL_SEPARATOR = "&#124;";
 
 	private static final Logger logger = TaskManagerLogic.logger;
 	private static final Marker marker = MarkerFactory.getMarker(DefaultLogicAndStoreConverter.class.getName());
@@ -364,12 +372,12 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(Connector.NOTIFICATION_ACCOUNT, task.getNotificationAccount()) //
 					.withParameter(Connector.NOTIFICATION_ERROR_TEMPLATE, task.getNotificationErrorTemplate()) //
 					.withParameters(parametersOf(sourceConfiguration)) //
-					.withParameter(Connector.MAPPING_TYPES, Joiner.on(LINE_SEPARATOR) //
+					.withParameter(Connector.MAPPING_TYPES, Joiner.on(SPECIAL_SEPARATOR) //
 							.join( //
 							FluentIterable.from(task.getClassMappings()) //
 									.transform(CLASS_MAPPING_TO_STRING)) //
 					) //
-					.withParameter(Connector.MAPPING_ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
+					.withParameter(Connector.MAPPING_ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
 							.join( //
 							FluentIterable.from(task.getAttributeMappings()) //
 									.transform(ATTRIBUTE_MAPPING_TO_STRING)) //
@@ -393,7 +401,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					map.put(Connector.SQL_PASSWORD, sourceConfiguration.getPassword());
 					map.put(Connector.SQL_FILTER, sourceConfiguration.getFilter());
 					parameters.put(Connector.DATA_SOURCE_TYPE, "sql");
-					parameters.put(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(LINE_SEPARATOR) //
+					parameters.put(Connector.DATA_SOURCE_CONFIGURATION, Joiner.on(SPECIAL_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 							.useForNull(EMPTY) //
 							.join(map));
@@ -411,9 +419,9 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withCronExpression(task.getCronExpression()) //
 					.withLastExecution(task.getLastExecution()) //
 					.withParameter(ReadEmail.ACCOUNT_NAME, task.getEmailAccount()) //
-					.withParameter(ReadEmail.FILTER_FROM_REGEX, Joiner.on(LINE_SEPARATOR) //
+					.withParameter(ReadEmail.FILTER_FROM_REGEX, Joiner.on(SPECIAL_SEPARATOR) //
 							.join(task.getRegexFromFilter())) //
-					.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, Joiner.on(LINE_SEPARATOR) //
+					.withParameter(ReadEmail.FILTER_SUBJECT_REGEX, Joiner.on(SPECIAL_SEPARATOR) //
 							.join(task.getRegexSubjectFilter())) //
 					.withParameter(ReadEmail.NOTIFICATION_ACTIVE, //
 							Boolean.toString(task.isNotificationActive())) //
@@ -426,7 +434,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(ReadEmail.WORKFLOW_ACTIVE, //
 							Boolean.toString(task.isWorkflowActive())) //
 					.withParameter(ReadEmail.WORKFLOW_CLASS_NAME, task.getWorkflowClassName()) //
-					.withParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING, Joiner.on(LINE_SEPARATOR) //
+					.withParameter(ReadEmail.WORKFLOW_FIELDS_MAPPING, Joiner.on(SPECIAL_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 							.join(task.getWorkflowAttributes())) //
 					.withParameter(ReadEmail.WORKFLOW_ADVANCE, //
@@ -448,7 +456,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withCronExpression(task.getCronExpression()) //
 					.withLastExecution(task.getLastExecution()) //
 					.withParameter(StartWorkflow.CLASSNAME, task.getProcessClass()) //
-					.withParameter(StartWorkflow.ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
+					.withParameter(StartWorkflow.ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 							.join(task.getAttributes())) //
 					.build();
@@ -472,7 +480,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withParameter(SynchronousEvent.WORKFLOW_ACTIVE, //
 							Boolean.toString(task.isWorkflowEnabled())) //
 					.withParameter(SynchronousEvent.WORKFLOW_CLASS_NAME, task.getWorkflowClassName()) //
-					.withParameter(SynchronousEvent.WORKFLOW_ATTRIBUTES, Joiner.on(LINE_SEPARATOR) //
+					.withParameter(SynchronousEvent.WORKFLOW_ATTRIBUTES, Joiner.on(SPECIAL_SEPARATOR) //
 							.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 							.join(task.getWorkflowAttributes())) //
 					.withParameter(SynchronousEvent.WORKFLOW_ADVANCE, //
@@ -546,12 +554,12 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withSourceConfiguration(sourceConfigurationOf(dataSourceType, dataSourceConfiguration)) //
 					.withClassMappings( //
 							isEmpty(typeMapping) ? NO_CLASS_MAPPINGS : FluentIterable.from( //
-									Splitter.on(LINE_SEPARATOR) //
+									Splitter.on(SPECIAL_SEPARATOR) //
 											.split(typeMapping)) //
 									.transform(STRING_TO_CLASS_MAPPING)) //
 					.withAttributeMappings( //
 							isEmpty(attributeMapping) ? NO_ATTRIBUTE_MAPPINGS : FluentIterable.from( //
-									Splitter.on(LINE_SEPARATOR) //
+									Splitter.on(SPECIAL_SEPARATOR) //
 											.split(attributeMapping)) //
 									.transform(STRING_TO_ATTRIBUTE_MAPPING)) //
 					.build();
@@ -562,7 +570,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 			if (isBlank(configuration)) {
 				sourceConfiguration = NULL_SOURCE_CONFIGURATION;
 			} else {
-				final Map<String, String> map = Splitter.on(LINE_SEPARATOR) //
+				final Map<String, String> map = Splitter.on(SPECIAL_SEPARATOR) //
 						.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 						.split(defaultString(configuration));
 				sourceConfiguration = SqlSourceConfiguration.newInstance() //
@@ -592,10 +600,10 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withLastExecution(task.getLastExecution()) //
 					.withEmailAccount(task.getParameter(ReadEmail.ACCOUNT_NAME)) //
 					.withRegexFromFilter( //
-							isEmpty(fromRegexFilters) ? EMPTY_FILTERS : Splitter.on(LINE_SEPARATOR) //
+							isEmpty(fromRegexFilters) ? EMPTY_FILTERS : Splitter.on(SPECIAL_SEPARATOR) //
 									.split(fromRegexFilters)) //
 					.withRegexSubjectFilter( //
-							isEmpty(subjectRegexFilters) ? EMPTY_FILTERS : Splitter.on(LINE_SEPARATOR) //
+							isEmpty(subjectRegexFilters) ? EMPTY_FILTERS : Splitter.on(SPECIAL_SEPARATOR) //
 									.split(subjectRegexFilters)) //
 					.withNotificationStatus( //
 							Boolean.valueOf(task.getParameter(ReadEmail.NOTIFICATION_ACTIVE))) //
@@ -608,7 +616,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							Boolean.valueOf(task.getParameter(ReadEmail.WORKFLOW_ACTIVE))) //
 					.withWorkflowClassName(task.getParameter(ReadEmail.WORKFLOW_CLASS_NAME)) //
 					.withWorkflowAttributes( //
-							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
+							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(SPECIAL_SEPARATOR) //
 									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 									.split(attributesAsString)) //
 					.withWorkflowAdvanceableStatus( //
@@ -636,7 +644,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 					.withLastExecution(task.getLastExecution()) //
 					.withProcessClass(task.getParameter(StartWorkflow.CLASSNAME)) //
 					.withAttributes( //
-							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
+							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(SPECIAL_SEPARATOR) //
 									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 									.split(attributesAsString)) //
 					.build();
@@ -665,7 +673,7 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 							Boolean.valueOf(task.getParameter(SynchronousEvent.WORKFLOW_ACTIVE))) //
 					.withWorkflowClassName(task.getParameter(SynchronousEvent.WORKFLOW_CLASS_NAME)) //
 					.withWorkflowAttributes( //
-							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(LINE_SEPARATOR) //
+							isEmpty(attributesAsString) ? EMPTY_PARAMETERS : Splitter.on(SPECIAL_SEPARATOR) //
 									.withKeyValueSeparator(KEY_VALUE_SEPARATOR) //
 									.split(attributesAsString)) //
 					.withWorkflowAdvanceable( //
