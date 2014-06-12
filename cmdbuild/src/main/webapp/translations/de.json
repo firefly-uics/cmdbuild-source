@@ -15,13 +15,13 @@
 				"imapPort": "IMAP Port",
 				"imapServer": "IMAP Server",
 				"incoming": "Eingehend",
-				"incomingFolder": "Eingehender Ordner",
+				"incomingFolder": "Ordner für eingegangene E-Mails",
 				"isDefault": "Default",
 				"modify": "Benutzerkonto verändern",
 				"outgoing": "Ausgehende",
 				"password": "Passwort",
-				"processedFolder": "Bearbeiteter Ordner",
-				"rejectedFolder": "Abgelehnter Ordner",
+				"processedFolder": "Ordner für verarbeitete E-Mails",
+				"rejectedFolder": "Ordner für abgelehnte E-Mails",
 				"remove": "Benutzerkonto entfernen",
 				"setDefault": "Als default einstellen",
 				"smtpPort": "SMTP Port",
@@ -78,7 +78,7 @@
 					"value": "Wert"
 				},
 				"modify_attribute": "Attribut bearbeiten",
-				"msg_warning_drop_row": "Sie können die Attribute sortieren, nur wenn auch die vererbten sichtbar sind",
+				"msg_warning_drop_row": "Sie können die Attribute nur sortieren, wenn auch die vererbten Attribute sichtbar sind",
 				"name": "Name",
 				"not_in_use": "Nicht verwendet",
 				"pipeNotAllowed": "OR statt | verwenden",
@@ -133,25 +133,25 @@
 			"errors": {
 				"table": {
 					"cast": "Es ist unmöglich die Eigenschaft \"Superklasse\" bearbeiten, diese Klasse enthält Daten oder Unterklassen",
-					"duplicate": "Es gibt bereits eine Klasse mit demselben Name",
+					"duplicate": "Es gibt bereits eine Klasse mit demselben Namen",
 					"parent_not_found": "Es gibt keine Superklasse"
 				}
 			},
 			"geo_attributes": {
 				"card_binding": "Karten assoziieren",
-				"externalGraphic": "Ikone",
+				"externalGraphic": "Icon",
 				"fillColor": "Füllfarbe",
 				"fillOpacity": "Füllopazität",
-				"graphicHeight": "Höhe der Ikone",
-				"graphicOpacity": "Opazität der Ikone",
-				"graphicWidth": "Breite der Ikone",
+				"graphicHeight": "Höhe der Icons",
+				"graphicOpacity": "Opazität der Icons",
+				"graphicWidth": "Breite der Icons",
 				"master": "Verweisklasse",
 				"max_zoom": "Maximaler Zoom",
 				"min_zoom": "Minimaler Zoom",
 				"pointRadius": "Radius",
-				"strokeColor": "Farbe der Linie",
+				"strokeColor": "Linienfarbe",
 				"strokeDashstyle": "Linienstil",
-				"strokeOpacity": "Opazität der Linie",
+				"strokeOpacity": "Linientransparenz",
 				"strokeStyles": {
 					"dash": "Striche",
 					"dashdot": "Punkte und Striche",
@@ -392,7 +392,7 @@
 			},
 			"xpdlUpload": {
 				"deleted_image": "Das graphische Schema wurde abgebrochen, weil es an die XPDL-Datei nicht gekoppelt ist",
-				"error": "Ladungsfehler der XPDL-Datei",
+				"error": "Fehler bein Laden der XPDL-Datei",
 				"jpg_file": "Graphisches Schema",
 				"saved_image": "Geladenes graphische Schema",
 				"saved_xpdl": "Geladene XPDL-Datei",
@@ -426,12 +426,12 @@
 			},
 			"icons": {
 				"alert": {
-					"msg": "Sind Sie sicher, dass Sie die Ikone abbrechen möchten?",
+					"msg": "Sind Sie sicher?",
 					"title": "Achtung"
 				},
 				"description": "Beschreibung",
 				"file": "Datei",
-				"title": "Ikonen-Steuerung"
+				"title": "Icon-Steuerung"
 			},
 			"layermanager": {
 				"title": "Ordnung der Ebenen"
@@ -442,7 +442,7 @@
 			"title": "GIS"
 		},
 		"modconnectors": {
-			"title": "Übergangsstelle"
+			"title": "Ãbergangsstelle"
 		},
 		"modmenu": {
 			"add_menu": "Menü hinzufügen",
@@ -454,7 +454,7 @@
 				"report": "Bericht",
 				"view": "Sicht"
 			},
-			"custom_menu": "Kundenspezifische Menü",
+			"custom_menu": "Kundenspezifisches Menü",
 			"custom_menus": "Menü",
 			"delete_menu": "Menü wegnehmen",
 			"menu_root": "Menü",
@@ -519,12 +519,12 @@
 			"privilege": {
 				"add_privilege": "Erlaubnis hinzufügen",
 				"classname": "Klasse",
-				"delete_privilege": "Erlaubnis abbrechen",
+				"delete_privilege": "Erlaubnis löschen",
 				"modify_privilege": "Erlaubnis bearbeiten",
 				"none_privilege": "Kein",
 				"privilege_mode": "Erlaubnis",
-				"read_privilege": "Einlesen",
-				"write_privilege": "Schrift"
+				"read_privilege": "Lesen",
+				"write_privilege": "Schreiben"
 			},
 			"tabs": {
 				"permissions": "Erlaubnis",
@@ -671,9 +671,9 @@
 			},
 			"errorMessages": {
 				"taskConnector": {
-					"emptyAttributeLevelMapping": "Die Tabelle für die Mapping der Attributsebene muss korrekt gefüllt werden.",
-					"emptyClassLevelMapping": "Die Tabelle für die Mapping der Klassenebene muss korrekt gefüllt werden.",
-					"emptyReferenceLevelMapping": "Die Tabelle für die Mapping der Reference-Ebene muss korrekt gefüllt werden."
+					"emptyAttributeLevelMapping": "Die Tabelle für das Mapping der Attributsebene muss korrekt gefüllt werden.",
+					"emptyClassLevelMapping": "Die Tabelle für das Mapping der Klassenebene muss korrekt gefüllt werden.",
+					"emptyReferenceLevelMapping": "Die Tabelle für das Mapping der Reference-Ebene muss korrekt gefüllt werden."
 				}
 			},
 			"modify": "Task verändern",
@@ -717,9 +717,9 @@
 				"recipientAddress": "Adressat",
 				"referenceMapping": "Mapping der Referenzen",
 				"senderAccount": "Absenderadresse",
-				"sourceAttribute": "Äußere Attribute",
-				"sourceFilter": "Gegenstandfilter",
-				"sourceName": "Äußere Gegenstand"
+				"sourceAttribute": "Attribute der Quelle",
+				"sourceFilter": "Filter der Quelle",
+				"sourceName": "Name der Quelle"
 			},
 			"taskEmail": {
 				"attachmentsCategory": "Kategorie",
@@ -735,7 +735,7 @@
 			},
 			"taskEvent": {
 				"eventPhases": {
-					"afterCreate": "Nach der Schaffung",
+					"afterCreate": "Nach der Erstellung",
 					"afterUpdate": "Nach der Aktualisierung",
 					"beforeDelete": "Vor der Löschung",
 					"beforeUpdate": "Vor der Aktualisierung"
@@ -770,7 +770,7 @@
 			"apply": "Anwenden",
 			"as": "als",
 			"clone": "Klonen",
-			"close": "Schließen",
+			"close": "SchlieÃen",
 			"confirm": "Bestätigen",
 			"export": "Exportieren",
 			"import": "Importieren",
@@ -840,7 +840,7 @@
 	},
 	"configure": {
 		"failure": {
-			"text": "Folgende Fehler sind bei der Installation der Updates erschienen: ",
+			"text": "Folgende Fehler sind bei der Installation der Updates aufgetreten: ",
 			"title": "Setup Fehler"
 		},
 		"finish": "Ende",
@@ -898,12 +898,12 @@
 		}
 	},
 	"errors": {
-		"busy_wf_widgets": "Die Sichtkontrolle sind besetzt. Prüfen Sie den Server-Status, bevor die Operation zu wiederholen.",
+		"busy_wf_widgets": "Das Widget antwortet nicht. Prüfen Sie den Server-Status, bevor Sie die Operation wiederholen.",
 		"detail": "Details",
 		"error_message": "Fehler",
 		"error_moving_row": "Es ist ein Fehler bei der Bewegung der Zeile aufgetreten",
 		"invalid_attributes": "Folgende Felder wurden nicht korrekt ausgefüllt:",
-		"invalid_extended_attributes": "Folgende Sichtkontrolle wurden nicht korrekt ausgefüllt:",
+		"invalid_extended_attributes": "Folgende Attribute wurden nicht korrekt ausgefüllt:",
 		"invalid_fields": "Einige Felder wurden nicht korrekt ausgefüllt",
 		"no_driver": "JDBC Treiber nicht anwesend.<br />Er kann in der CMDBuild Freigabedatei gefunden und in den Tomcat-Bibliotheken kopiert werden.",
 		"no_selections": "Sie haben keine Karte markiert",
@@ -1042,19 +1042,19 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Bitte prüfen Sie, ob Namespace, Zugriffsname und Parameters des Web Service korrekt sind"
 		},
 		"reference_invalid": "Der Wert stimmt das Filter nicht überein",
-		"requiredFieldMessage": "Das Feld is erfordelich",
+		"requiredFieldMessage": "Das Feld ist erfordelich",
 		"server_error": "Server nicht erreichbar",
 		"server_error_code": "Fehler beim Server Dateien Versenden:",
 		"show_detail": "Details einblenden",
 		"template_error": "Fehler in einem Template",
 		"unknown_error": "Es handelte sich um einen Fehler",
-		"wrong_wf_widgets": "Fehler beim Speichern folgender Sichtkontrollen: "
+		"wrong_wf_widgets": "Fehler beim Speichern folgender Elemente: "
 	},
 	"filterWindow": {
 		"add": "Filter hinzufügen"
 	},
 	"info": {
-		"card_not_found": "Die Karte stimmt das eingestellte Filter nicht mehr überein"
+		"card_not_found": "Die Karte stimmt nicht mehr mit dem eingestellten Filter überein"
 	},
 	"login": {
 		"change_user": "Benutzer ändern",
@@ -1063,7 +1063,7 @@
 		"login": "Anmelden",
 		"multi_group": "Eine Gruppe auswählen",
 		"password": "Passwort",
-		"relogin_message": "Verbindung zur Sitzung ist abgebrochen. Man muss das Passwort wieder eingeben.",
+		"relogin_message": "Verbindung zur Sitzung ist abgebrochen. Bitte melden Sie sich erneut an.",
 		"relogin_title": "Die Sitzung ist ausgefallen",
 		"title": "Geben Sie Ihre Zugangsdaten ein",
 		"username": "Benutzer",
@@ -1081,7 +1081,7 @@
 			"apply": "Anwenden",
 			"begin": "Starten mit",
 			"between": "Zwischen",
-			"clear_filter": "Filter reinigen",
+			"clear_filter": "Filter zurücksetzen",
 			"copyof": "Kopien von",
 			"different": "Verschieden",
 			"direction": "Richtung",
@@ -1152,7 +1152,7 @@
 				"filename": "Dateiname",
 				"item": "Anlage",
 				"items": "Anlagen",
-				"modification_date": "Änderungsdatum",
+				"modification_date": "Ãnderungsdatum",
 				"version": "Version"
 			},
 			"clone_card": "Karte klonen",
@@ -1398,7 +1398,7 @@
 	"warnings": {
 		"link_cards_changed_values": "Die Auswahl von \"{0}\" wurde aktualisiert",
 		"only_filtered": "Die Abänderungen können nur in die das laufende Filter respektierenden Karten Wirkungen zeigen",
-		"popup_block": "Es wurde ein Pop-up-Blocker erkannt. Bitte es sperren, um diese Operation auszuführen",
+		"popup_block": "Es wurde ein Pop-up-Blocker erkannt. Bitte den Blocker ausschalten, um diese Operation auszuführen",
 		"warning_message": "Achtung"
 	},
 	"active": "Aktiv",
@@ -1423,7 +1423,7 @@
 	"class": "Klasse",
 	"classAttribute": "Klasse-Attribut",
 	"className": "Klassenname",
-	"clean_word_pasted_text": "Den von Word oder anderen Rich Text Pogrammen eingefügten Text leeren",
+	"clean_word_pasted_text": "Den von Word oder anderen Rich Text Pogrammen eingefügten Text bereinigen",
 	"clearFilter": "Filter leeren",
 	"clear_row_and_colun_privilege": "Privilegien auf Zeilen und Spalten leeren",
 	"container": "Container",
@@ -1439,7 +1439,7 @@
 	"enable": "Aktivieren",
 	"enabled": "Freigegeben",
 	"error": "Fehler",
-	"error_bimserver_connection": "Ich kann nicht mit Bimserver zusammenhängen",
+	"error_bimserver_connection": "Ich kann nicht mit Bimserver verbinden",
 	"export": "Exportieren",
 	"expose": "Ausstellen",
 	"file_name": "File-Name",
@@ -1506,7 +1506,7 @@
 	"targetClass": "Ursprungsklasse",
 	"to": "An",
 	"top": "Oben>",
-	"translations" : "Übersetzungen",
+	"translations" : "Ãbersetzungen",
 	"translations_enabled" : "Aktivierte Sprachen",
 	"transparent": "Transparenz",
 	"tree": "Baum",
@@ -1519,7 +1519,7 @@
 	"trees_navigation": "Baumansichten",
 	"ui_configuration_for_groups": "Benutzeroberfläche-Konfiguration für Gruppen",
 	"unlock_all_cards": "Alle Karten entsperren",
-	"uploading_attachment": "Die Anlage wird gerade hochgeladet ...",
+	"uploading_attachment": "Die Anlage wird gerade hochgeladen ...",
 	"url": "URL",
 	"username": "Benutzername",
 	"value": "Wert",
@@ -1530,6 +1530,6 @@
 	"workflow_by_name": "durch name",
 	"workflow_cql_filter": "Cql Filter",
 	"workflow_query_tipology": "Markierung",
-	"you_have_not_set_a_filter": "Sie haben keine Filters eingestellt",
+	"you_have_not_set_a_filter": "Sie haben keine Filter eingestellt",
 	"zoom": "Zoom"
 }
