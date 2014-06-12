@@ -1,6 +1,6 @@
 Ext.define("CMDBuild.view.administration.bim.CMBimGrid", {
 	extend: "CMDBuild.view.administration.common.basepanel.CMGrid",
-	withPagingBar: true,
+	withPagingBar: false,
 	initComponent: function() {
 		var me = this;
 		this.callParent(arguments);
