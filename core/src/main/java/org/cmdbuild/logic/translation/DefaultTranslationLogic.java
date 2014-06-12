@@ -4,6 +4,7 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.Collection;
 import java.util.Map;
@@ -183,6 +184,12 @@ public class DefaultTranslationLogic implements TranslationLogic {
 					translationObject.getName(), //
 					FieldMapper.of(translationObject.getField()).getResult());
 		}
+
+		@Override
+		public void visit(final NullTranslationObject translationObject) {
+			value = EMPTY;
+		}
+
 	}
 
 	private static final class ContainedInTraslations implements Predicate<Translation> {

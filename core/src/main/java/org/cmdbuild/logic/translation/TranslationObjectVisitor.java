@@ -30,4 +30,6 @@ public interface TranslationObjectVisitor {
 
 	void visit(MenuItemTranslation menuItemTranslation);
 
+	void visit(NullTranslationObject translationObject);
+
 }
