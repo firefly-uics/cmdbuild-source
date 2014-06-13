@@ -46,14 +46,11 @@
 				this.grid.store.load({
 					scope: this,
 					callback: function() {
-						if (!this.selectionModel.hasSelection())
-							this.selectionModel.select(0, true);
-// TODO: form should be resetted (me.view.reset();)
 						if (!this.selectionModel.hasSelection()) {
-							this.cmOn('onAddButtonClick', { type: this.taskType });
-							this.form.disableModify(true);
+							this.selectionModel.select(0, true);
+							this.form.wizard.removeAll();
+							this.form.disableModify();
 						}
-// END: workaround
 					}
 				});
 
@@ -144,7 +141,10 @@
 		 * @return (Boolean) type recognition state
 		 */
 		correctTaskTypeCheck: function(type) {
-			return (type != '' && (this.tasksDatas.indexOf(type) >= 0)) ? true : false;
+			return (
+				!Ext.isEmpty(type)
+				&& (this.tasksDatas.indexOf(type) >= 0)
+			) ? true : false;
 		},
 
 		/**
@@ -258,10 +258,8 @@
 
 			this.grid.store.load({
 				callback: function() {
-// TODO: form should be resetted (me.view.reset();)
-					me.cmOn('onAddButtonClick', { type: me.delegateStep[0].taskType });
-					me.view.disableModify(true);
-// END: workaround
+					me.form.wizard.removeAll();
+					me.form.disableModify(true);
 
 					var rowIndex = this.find(
 						CMDBuild.core.proxy.CMProxyConstants.ID,
