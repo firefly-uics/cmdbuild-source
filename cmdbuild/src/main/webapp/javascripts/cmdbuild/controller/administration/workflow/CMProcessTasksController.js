@@ -102,7 +102,7 @@
 					callback: function() {
 						var selectionIndex = this.targetController.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, param.id);
 
-						if (selectionIndex > 0) {
+						if (selectionIndex >= 0) {
 							this.targetController.grid.getSelectionModel().select(
 								selectionIndex,
 								true
