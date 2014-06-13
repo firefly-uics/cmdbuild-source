@@ -127,10 +127,8 @@
 
 			this.parentDelegate.grid.store.load({
 				callback: function() {
-// TODO: form should be resetted (me.view.reset();)
-					me.cmOn('onAddButtonClick', { type: me.delegateStep[0].taskType });
+					me.view.wizard.removeAll();
 					me.view.disableModify(true);
-// END: workaround
 
 					var rowIndex = this.find(
 						CMDBuild.core.proxy.CMProxyConstants.ID,
