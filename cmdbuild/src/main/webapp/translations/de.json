@@ -10,7 +10,7 @@
 				"active": "Aktiv",
 				"add": "Benutzerkonto hinzufügen",
 				"credentials": "Berechtigungsnachweisen",
-				"enableMoveRejectedNotMatching": "unbehandelte E-mails verschieben",
+				"enableMoveRejectedNotMatching": "unbehandelte E-Mails verschieben",
 				"enableSsl": "SSL aktivieren",
 				"imapPort": "IMAP Port",
 				"imapServer": "IMAP Server",
@@ -437,7 +437,7 @@
 				"title": "Ordnung der Ebenen"
 			},
 			"navigationTree": {
-				"title": "GIS Surfen"
+				"title": "GIS-Navigation"
 			},
 			"title": "GIS"
 		},
@@ -513,7 +513,7 @@
 				"normal": "Normal",
 				"starting_class": "Startseite",
 				"title": "Gruppenverwaltung",
-				"usermanagement": "Assoziierte Benutzer Management"
+				"usermanagement": "Verwaltung assoziierter Benutzer"
 			},
 			"groups": "Gruppen",
 			"privilege": {
@@ -538,7 +538,7 @@
 				"generic_properties": {
 					"always_enabled_widgets": "Prozess-Widget immer freigegeben",
 					"card_simple_history": "Einfache Chronik für die Karte",
-					"full_screen_navigation": "Gesamter Bildschirm beim surfen",
+					"full_screen_navigation": "Vollbildmodus beim Navigieren",
 					"hide_side_panel": "Seitentafel ausblenden",
 					"process_simple_history": "Einfache Chronik für die Prozesse"
 				},
@@ -727,9 +727,9 @@
 				"emailAccount": "E-mail Account",
 				"fromAddressFilter": "Filter auf Absenderadresse",
 				"parsingKeyEnd": "Schlüssel: Markierung für Ende",
-				"parsingKeyStart": "Schlüssel: Markierung für Beginn",
+				"parsingKeyStart": "Schlüssel: Markierung für Start",
 				"parsingValueEnd": "Wert: Markierung für Ende",
-				"parsingValueStart": "Wert: Markierung für Beginn",
+				"parsingValueStart": "Wert: Markierung für Start",
 				"saveToAlfresco": "Anhänge auf Alfresco speichern",
 				"subjectFilter": "Betreff Filter"
 			},
@@ -1171,7 +1171,7 @@
 			"edit_relation": "Beziehung bearbeiten",
 			"gis": {
 				"geo_attributes": "Geographische Attribute",
-				"gisNavigation": "GIS Surfen",
+				"gisNavigation": "GIS Navigation",
 				"position": "Position",
 				"zoom": "Zoom"
 			},
@@ -1239,7 +1239,7 @@
 			"shownotes": "Ansicht Notizen"
 		},
 		"modmenu": {
-			"menu": "Surfen"
+			"menu": "Navigieren"
 		},
 		"modreport": {
 			"add_report": "Bericht hinzufügen",
@@ -1434,7 +1434,7 @@
 	"display_less_attributes": "Weniger Attribute zeigen",
 	"display_more_attributes": "Mehr Attribute zeigen",
 	"download_ifc_file": "Ifc File herunterladen",
-	"emailBody": "Körper",
+	"emailBody": "Inhalt",
 	"emailTemplate": "E-mail Template",
 	"enable": "Aktivieren",
 	"enabled": "Freigegeben",
@@ -1445,7 +1445,7 @@
 	"file_name": "File-Name",
 	"filter": "Filter",
 	"filterView": "Aus dem Filter",
-	"filters_for_groups": "Gruppenfilters",
+	"filters_for_groups": "Gruppenfilter",
 	"format_csv": "CSV",
 	"format_odt": "OpenOffice Odt",
 	"format_pdf": "Adobe Pdf",
@@ -1472,7 +1472,7 @@
 	"name": "Name",
 	"no_bim_project_for_card": "Es gibt keinen BIM Projekt für diese Karte",
 	"not_set": "Nicht eingestellt",
-	"open_3d_viewer": "3D-Sichtgerät öffnen",
+	"open_3d_viewer": "3D-Ansicht öffnen",
 	"pan": "Schwenken",
 	"password": "Passwort",
 	"port": "Port",
@@ -1493,13 +1493,13 @@
 	"row_and_column_privileges": "Zeilen- und Spalten-Privilegien",
 	"row_delete": "Zeile löschen",
 	"row_edit": "Zeile verändern",
-	"search_filters": "Suchfilters",
+	"search_filters": "Suchfilter",
 	"select_a_class": "Eine Klasse markieren",
 	"selected_object": "Markierter Gegenstand",
 	"set": "Eingestellt",
 	"setFilter": "Filter einstellen",
 	"setLater": "Input Parameter",
-	"show_name_of_locker_user": "Den Name des Benutzers anzeigen, der die Karte gesperrt hat",
+	"show_name_of_locker_user": "Den Namen des Benutzers anzeigen, der die Karte gesperrt hat",
 	"side": "Seitlich",
 	"sqlView": "Aus SQL",
 	"subject": "Betreff",
