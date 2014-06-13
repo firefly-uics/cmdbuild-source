@@ -322,6 +322,9 @@
 			name: "description",
 			type: "string"
 		}, {
+			name: "description_default",
+			type: "string"
+		}, {
 			name: "configuration",
 			type: "auto"
 		}, {
