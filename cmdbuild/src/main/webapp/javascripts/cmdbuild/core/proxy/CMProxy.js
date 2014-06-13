@@ -33,6 +33,7 @@
 				});
 
 				CMDBuild.Ajax.request({
+					timeout: p.timeout,
 					url: p.url,
 					method: p.method,
 					params: p.params || {},
