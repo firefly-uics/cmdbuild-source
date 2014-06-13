@@ -2,6 +2,7 @@ package org.cmdbuild.logic.taskmanager.task.email;
 
 import static com.google.common.base.Functions.identity;
 import static com.google.common.base.Predicates.alwaysTrue;
+import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Suppliers.ofInstance;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
@@ -354,6 +355,10 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private Predicate<Email> predicate(final ReadEmailTask task) {
 		logger.debug(marker, "creating main filter for email");
+		return and(fromAddressMatches(task), subjectMatches(task));
+	}
+
+	private Predicate<Email> fromAddressMatches(final ReadEmailTask task) {
 		return new Predicate<Email>() {
 
 			@Override
@@ -362,23 +367,32 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 				for (final String regex : task.getRegexFromFilter()) {
 					final Pattern fromPattern = Pattern.compile(regex);
 					final Matcher fromMatcher = fromPattern.matcher(email.getFromAddress());
-					if (!fromMatcher.matches()) {
-						logger.debug(marker, "from address not matching");
-						return false;
+					if (fromMatcher.matches()) {
+						return true;
 					}
 				}
+				logger.debug(marker, "from address not matching");
+				return false;
+			}
 
+		};
+	}
+
+	private Predicate<Email> subjectMatches(final ReadEmailTask task) {
+		return new Predicate<Email>() {
+
+			@Override
+			public boolean apply(final Email email) {
 				logger.debug(marker, "checking subject");
 				for (final String regex : task.getRegexSubjectFilter()) {
 					final Pattern subjectPattern = Pattern.compile(regex);
 					final Matcher subjectMatcher = subjectPattern.matcher(email.getSubject());
-					if (!subjectMatcher.matches()) {
-						logger.debug(marker, "subject not matching");
-						return false;
+					if (subjectMatcher.matches()) {
+						return true;
 					}
 				}
-
-				return true;
+				logger.debug(marker, "subject not matching");
+				return false;
 			}
 
 		};
