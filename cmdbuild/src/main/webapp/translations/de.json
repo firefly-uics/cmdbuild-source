@@ -10,7 +10,7 @@
 				"active": "Aktiv",
 				"add": "Benutzerkonto hinzufügen",
 				"credentials": "Berechtigungsnachweisen",
-				"enableMoveRejectedNotMatching": "Verlagerung der Abgelehnten aktivieren",
+				"enableMoveRejectedNotMatching": "unbehandelte E-mails verschieben",
 				"enableSsl": "SSL aktivieren",
 				"imapPort": "IMAP Port",
 				"imapServer": "IMAP Server",
@@ -141,9 +141,9 @@
 				"card_binding": "Karten assoziieren",
 				"externalGraphic": "Icon",
 				"fillColor": "Füllfarbe",
-				"fillOpacity": "Füllopazität",
+				"fillOpacity": "Füllungstransparenz",
 				"graphicHeight": "Höhe der Icons",
-				"graphicOpacity": "Opazität der Icons",
+				"graphicOpacity": "Transparenz der Icons",
 				"graphicWidth": "Breite der Icons",
 				"master": "Verweisklasse",
 				"max_zoom": "Maximaler Zoom",
@@ -392,7 +392,7 @@
 			},
 			"xpdlUpload": {
 				"deleted_image": "Das graphische Schema wurde abgebrochen, weil es an die XPDL-Datei nicht gekoppelt ist",
-				"error": "Fehler bein Laden der XPDL-Datei",
+				"error": "Fehler beim Laden der XPDL-Datei",
 				"jpg_file": "Graphisches Schema",
 				"saved_image": "Geladenes graphische Schema",
 				"saved_xpdl": "Geladene XPDL-Datei",
@@ -442,7 +442,7 @@
 			"title": "GIS"
 		},
 		"modconnectors": {
-			"title": "Ãbergangsstelle"
+			"title": "Übergangsstelle"
 		},
 		"modmenu": {
 			"add_menu": "Menü hinzufügen",
@@ -723,13 +723,13 @@
 			},
 			"taskEmail": {
 				"attachmentsCategory": "Kategorie",
-				"bodyParsing": "Körper Parsing",
+				"bodyParsing": "Inhalt durchsuchen",
 				"emailAccount": "E-mail Account",
 				"fromAddressFilter": "Filter auf Absenderadresse",
-				"parsingKeyEnd": "Endliche Schlüsselbegrenzung",
-				"parsingKeyStart": "Anfängliche Schlüsselbegrenzung",
-				"parsingValueEnd": "Endliche Wertbegrenzung",
-				"parsingValueStart": "Anfängliche Wertbegrenzung",
+				"parsingKeyEnd": "Schlüssel: Markierung für Ende",
+				"parsingKeyStart": "Schlüssel: Markierung für Beginn",
+				"parsingValueEnd": "Wert: Markierung für Ende",
+				"parsingValueStart": "Wert: Markierung für Beginn",
 				"saveToAlfresco": "Anhänge auf Alfresco speichern",
 				"subjectFilter": "Betreff Filter"
 			},
@@ -770,7 +770,7 @@
 			"apply": "Anwenden",
 			"as": "als",
 			"clone": "Klonen",
-			"close": "SchlieÃen",
+			"close": "Schließen",
 			"confirm": "Bestätigen",
 			"export": "Exportieren",
 			"import": "Importieren",
@@ -1152,7 +1152,7 @@
 				"filename": "Dateiname",
 				"item": "Anlage",
 				"items": "Anlagen",
-				"modification_date": "Ãnderungsdatum",
+				"modification_date": "Änderungsdatum",
 				"version": "Version"
 			},
 			"clone_card": "Karte klonen",
@@ -1506,7 +1506,7 @@
 	"targetClass": "Ursprungsklasse",
 	"to": "An",
 	"top": "Oben>",
-	"translations" : "Ãbersetzungen",
+	"translations" : "Übersetzungen",
 	"translations_enabled" : "Aktivierte Sprachen",
 	"transparent": "Transparenz",
 	"tree": "Baum",
