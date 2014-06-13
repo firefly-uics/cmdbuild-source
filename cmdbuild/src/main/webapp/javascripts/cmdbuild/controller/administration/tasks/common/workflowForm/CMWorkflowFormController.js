@@ -120,7 +120,7 @@
 					me.gridField.keyEditorConfig.store = me.buildWorkflowAttributesStore(me.cleanServerAttributes(decodedResponse.attributes));
 
 					// To setup updated editor store
-					if (Ext.isFunction(me.gridField.columns[0].setEditor))
+					if (!Ext.isEmpty(me.gridField.columns[0]) && Ext.isFunction(me.gridField.columns[0].setEditor))
 						me.gridField.columns[0].setEditor(me.gridField.keyEditorConfig);
 
 					if (!modify) {
