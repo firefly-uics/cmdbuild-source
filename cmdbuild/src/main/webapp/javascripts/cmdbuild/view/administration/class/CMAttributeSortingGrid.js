@@ -32,13 +32,15 @@
 				]
 			});
 
-			var comboOrderSign = new Ext.form.field.ComboBox({
-				typeAhead: true,
-				triggerAction: 'all',
-				selectOnTab: true,
+			var comboOrderSign = Ext.create('Ext.form.field.ComboBox', {
 				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				listClass: 'x-combo-list-small',
+				typeAhead: true,
+				triggerAction: 'all',
+				selectOnTab: true,
+				forceSelection: true,
+				editable: false,
 
 				queryMode: 'local',
 				store: Ext.create('Ext.data.Store', {
@@ -84,7 +86,7 @@
 					dataIndex: CMDBuild.core.proxy.CMProxyConstants.CLASS_ORDER_SIGN,
 					renderer: Ext.Function.bind(comboRender, this, [], true),
 					flex: 1,
-					field: comboOrderSign
+					editor: comboOrderSign
 				}
 			];
 
