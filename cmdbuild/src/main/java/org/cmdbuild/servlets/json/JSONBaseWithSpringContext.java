@@ -43,8 +43,8 @@ import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.setup.SetupLogic;
+import org.cmdbuild.logic.taskmanager.DefinitiveTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
-import org.cmdbuild.logic.taskmanager.TransactionalTaskManagerLogic;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
@@ -237,7 +237,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected TaskManagerLogic taskManagerLogic() {
-		return applicationContext().getBean(TransactionalTaskManagerLogic.class);
+		return applicationContext().getBean(DefinitiveTaskManagerLogic.class);
 	}
 
 	protected TranslationLogic translationLogic() {

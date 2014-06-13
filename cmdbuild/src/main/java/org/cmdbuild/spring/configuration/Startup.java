@@ -65,7 +65,7 @@ public class Startup {
 		return new Startable() {
 
 			private final SchedulerLogic schedulerLogic = scheduler.defaultSchedulerLogic();
-			private final TaskManagerLogic taskManagerLogic = taskManager.transactionalTaskManagerLogic();
+			private final TaskManagerLogic taskManagerLogic = taskManager.definitiveTaskManagerLogic();
 
 			@Override
 			public void start() {

@@ -15,6 +15,7 @@ import org.cmdbuild.data.store.task.TaskParameterConverter;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
+import org.cmdbuild.logic.taskmanager.DefinitiveTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TransactionalTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.event.DefaultLogicAndObserverConverter;
@@ -84,12 +85,17 @@ public class TaskManager {
 	private Workflow workflow;
 
 	@Bean
-	public TransactionalTaskManagerLogic transactionalTaskManagerLogic() {
+	public DefinitiveTaskManagerLogic definitiveTaskManagerLogic() {
+		return new DefinitiveTaskManagerLogic(transactionalTaskManagerLogic());
+	}
+
+	@Bean
+	protected TaskManagerLogic transactionalTaskManagerLogic() {
 		return new TransactionalTaskManagerLogic(defaultTaskManagerLogic());
 	}
 
 	@Bean
-	public DefaultTaskManagerLogic defaultTaskManagerLogic() {
+	protected TaskManagerLogic defaultTaskManagerLogic() {
 		return new DefaultTaskManagerLogic( //
 				defaultLogicAndStoreConverter(), //
 				defaultTaskStore(), //
