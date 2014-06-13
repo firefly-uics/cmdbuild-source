@@ -104,9 +104,6 @@ public class ManageEmail extends Widget {
 	@Override
 	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output)
 			throws Exception {
-		if (readOnly) {
-			return;
-		}
 		final Submission submission = decodeInput(input);
 		deleteEmails(activityInstance, submission.deleted);
 		updateEmails(activityInstance, submission.updated);
