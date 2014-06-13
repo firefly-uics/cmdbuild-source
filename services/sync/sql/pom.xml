@@ -5,8 +5,8 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
-		<version>2.2-SNAPSHOT</version>
-		<relativePath>../..</relativePath>
+		<version>2.2.0</version>
+		<relativePath>../../..</relativePath>
 	</parent>
 	<artifactId>cmdbuild-services-sync-sql</artifactId>
 	<dependencies>

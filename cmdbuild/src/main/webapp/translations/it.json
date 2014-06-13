@@ -1,6 +1,6 @@
 {
 	"description": "Italiano",
-	"release": "2.2-dev",
+	"release": "2.2.0 (13/06/2014)",
 	"administration": {
 		"description": "Modulo di Amministrazione",
 		"email": {
