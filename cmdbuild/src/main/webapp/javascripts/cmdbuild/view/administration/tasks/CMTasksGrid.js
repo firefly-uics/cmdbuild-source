@@ -24,7 +24,7 @@
 					scope: this,
 					renderer: function(value, metaData, record) {
 						return this.typeGridColumnRenderer(value, metaData, record);
-					},
+					}
 				},
 				{
 					text: CMDBuild.Translation.description_,
