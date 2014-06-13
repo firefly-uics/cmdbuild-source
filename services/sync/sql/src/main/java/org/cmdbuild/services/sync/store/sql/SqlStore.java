@@ -29,6 +29,7 @@ public class SqlStore implements Store {
 
 		private DataSource dataSource;
 		private final Collection<TableOrViewMapping> tableOrViewMappings = newHashSet();
+		private SqlType type;
 
 		private Builder() {
 			// user factory method
@@ -42,6 +43,7 @@ public class SqlStore implements Store {
 
 		private void validate() {
 			Validate.notNull(dataSource, "missing '%s'", dataSource.getClass());
+			Validate.notNull(type, "missing '%s'", Type.class);
 		}
 
 		public Builder withDataSource(final DataSource dataSource) {
@@ -51,6 +53,11 @@ public class SqlStore implements Store {
 
 		public Builder withTableOrViewMappings(final Iterable<? extends TableOrViewMapping> tableOrViewMappings) {
 			addAll(this.tableOrViewMappings, defaultIfNull(tableOrViewMappings, NO_MAPPINGS));
+			return this;
+		}
+
+		public Builder withType(final SqlType sqlType) {
+			this.type = sqlType;
 			return this;
 		}
 
@@ -79,18 +86,21 @@ public class SqlStore implements Store {
 
 		private final JdbcTemplate jdbcTemplate;
 		private final Iterable<TableOrViewMapping> tableOrViewMappings;
+		private final SqlType type;
 		private final Collection<Entry<? extends Type>> entries;
 
-		public ReadAll(final JdbcTemplate jdbcTemplate, final Iterable<TableOrViewMapping> tableOrViewMappings) {
+		public ReadAll(final JdbcTemplate jdbcTemplate, final Iterable<TableOrViewMapping> tableOrViewMappings,
+				final SqlType type) {
 			this.jdbcTemplate = jdbcTemplate;
 			this.tableOrViewMappings = tableOrViewMappings;
+			this.type = type;
 			this.entries = newHashSet();
 		}
 
 		@Override
 		public Iterable<Entry<?>> execute() {
 			for (final TableOrViewMapping tableOrViewMapping : tableOrViewMappings) {
-				final String sql = format("SELECT * FROM \"%s\"", tableOrViewMapping.getName());
+				final String sql = selectAllFrom(tableOrViewMapping);
 				jdbcTemplate.query(sql, new RowCallbackHandler() {
 
 					@Override
@@ -109,16 +119,36 @@ public class SqlStore implements Store {
 			}
 			return entries;
 		}
+
+		// TODO use a visitor
+		private String selectAllFrom(final TableOrViewMapping tableOrViewMapping) {
+			final String sql;
+			switch (type) {
+			case ORACLE:
+			case POSTGRESQL:
+				sql = format("SELECT * FROM \"%s\"", tableOrViewMapping.getName());
+				break;
+
+			case MYSQL:
+			case SQLSERVER:
+			default:
+				sql = format("SELECT * FROM %s", tableOrViewMapping.getName());
+				break;
+			}
+			return sql;
+		}
 	}
 
 	private static final Unsupported UNSUPPORTED = new Unsupported();
 
 	private final JdbcTemplate jdbcTemplate;
 	private final Iterable<TableOrViewMapping> tableOrViewMappers;
+	private final SqlType type;
 
 	private SqlStore(final Builder builder) {
 		this.jdbcTemplate = new JdbcTemplate(builder.dataSource);
 		this.tableOrViewMappers = builder.tableOrViewMappings;
+		this.type = builder.type;
 	}
 
 	@Override
@@ -142,7 +172,7 @@ public class SqlStore implements Store {
 	}
 
 	private ReadAll doReadAll() {
-		return new ReadAll(jdbcTemplate, tableOrViewMappers);
+		return new ReadAll(jdbcTemplate, tableOrViewMappers, type);
 	}
 
 	private <T> T execute(final Action<T> action) {

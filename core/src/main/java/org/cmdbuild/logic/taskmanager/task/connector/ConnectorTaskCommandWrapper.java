@@ -13,6 +13,12 @@ import javax.sql.DataSource;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.common.java.sql.DataSourceHelper;
+import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceType;
+import org.cmdbuild.common.java.sql.DataSourceTypes.DataSourceTypeVisitor;
+import org.cmdbuild.common.java.sql.DataSourceTypes.MySql;
+import org.cmdbuild.common.java.sql.DataSourceTypes.Oracle;
+import org.cmdbuild.common.java.sql.DataSourceTypes.PostgreSql;
+import org.cmdbuild.common.java.sql.DataSourceTypes.SqlServer;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.SourceConfigurationVisitor;
 import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask.SqlSourceConfiguration;
@@ -30,6 +36,7 @@ import org.cmdbuild.services.sync.store.sql.BuildableTableOrViewMapping;
 import org.cmdbuild.services.sync.store.sql.BuildableTypeMapper;
 import org.cmdbuild.services.sync.store.sql.SqlStore;
 import org.cmdbuild.services.sync.store.sql.TableOrViewMapping;
+import org.cmdbuild.services.sync.store.sql.SqlType;
 import org.cmdbuild.services.sync.store.sql.TypeMapping;
 
 import com.google.common.base.Function;
@@ -141,7 +148,41 @@ class ConnectorTaskCommandWrapper implements Command {
 				store = SqlStore.newInstance() //
 						.withDataSource(dataSource) //
 						.withTableOrViewMappings(tableOrViewMappings) //
+						.withType(typeOf(sourceConfiguration.getType())) //
 						.build();
+			}
+
+			private SqlType typeOf(final DataSourceType dataSourceType) {
+				return new DataSourceTypeVisitor() {
+
+					private SqlType _type;
+
+					public SqlType type() {
+						dataSourceType.accept(this);
+						return _type;
+					}
+
+					@Override
+					public void visit(final MySql type) {
+						_type = SqlType.MYSQL;
+					}
+
+					@Override
+					public void visit(final Oracle type) {
+						_type = SqlType.ORACLE;
+					}
+
+					@Override
+					public void visit(final PostgreSql type) {
+						_type = SqlType.POSTGRESQL;
+					}
+
+					@Override
+					public void visit(final SqlServer type) {
+						_type = SqlType.SQLSERVER;
+					}
+
+				}.type();
 			}
 
 		}.store();
