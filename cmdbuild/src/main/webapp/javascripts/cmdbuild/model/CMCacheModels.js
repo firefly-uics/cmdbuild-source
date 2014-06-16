@@ -31,6 +31,7 @@
 		fields: [
 			{name: "id",type: 'string'},
 			{name: "text",type: 'string'},
+			{name: "text_default",type: 'string'},
 			{name: "superclass",type: 'boolean'},
 			{name: "active",type: 'boolean'},
 			{name: "parent",type: 'string'},
