@@ -16,12 +16,12 @@ BEGIN
 	
 	RAISE INFO 'clean Code column';
 	RAISE INFO 'disable triggers';
-	ALTER TABLE "Menu" DISABLE TRIGGER ALL;
+	ALTER TABLE "Menu" DISABLE TRIGGER USER;
 	
 	UPDATE "Menu" 
 	SET "Code" = null;
 	RAISE INFO 'enable triggers';
-	ALTER TABLE "Menu" ENABLE TRIGGER ALL;
+	ALTER TABLE "Menu" ENABLE TRIGGER USER;
 		
 	RAISE INFO 'generate uuids for active rows';
 	UPDATE "Menu"
