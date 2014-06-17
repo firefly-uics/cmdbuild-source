@@ -104,7 +104,7 @@
 					}
 				});
 
-				this.view.wizard.changeTab(0);
+				this.parentDelegate.changeItem(0);
 			}
 		},
 

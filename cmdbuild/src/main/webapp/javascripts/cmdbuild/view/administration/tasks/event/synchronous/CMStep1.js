@@ -237,7 +237,7 @@
 		},
 
 		listeners: {
-			show: function(view, eOpts) {
+			activate: function(view, eOpts) {
 				// Disable next button only if class is not selected
 				if (this.delegate.isEmptyClass())
 					this.delegate.setDisabledButtonNext(true);

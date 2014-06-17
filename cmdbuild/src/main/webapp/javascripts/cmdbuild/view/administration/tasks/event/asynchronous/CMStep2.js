@@ -132,8 +132,8 @@
 		},
 
 		listeners: {
-			// Draw tabs on show
-			show: function(panel, eOpts) {
+			// Draw tabs on activate
+			activate: function(panel, eOpts) {
 				this.delegate.drawFilterTabs();
 			}
 		}

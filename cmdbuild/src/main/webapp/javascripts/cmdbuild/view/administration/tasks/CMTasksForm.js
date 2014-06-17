@@ -2,6 +2,9 @@
 
 	var tr = CMDBuild.Translation.administration.tasks; // Path to translation
 
+	/**
+	 * Form for task configuration (a.k.a. "wizard")
+	 */
 	Ext.define('CMDBuild.view.administration.tasks.CMTasksForm', {
 		extend: 'Ext.form.Panel',
 
@@ -11,13 +14,23 @@
 
 		delegate: undefined,
 
+		activeItem: 0,
 		bodyCls: 'cmgraypanel',
 		border: false,
 		buttonAlign: 'center',
 		cls: 'x-panel-body-default-framed cmbordertop',
 		frame: false,
-		layout: 'fit',
 		split: true,
+
+		layout: {
+			type: 'card',
+			align:'stretch'
+		},
+
+		defaults: {
+			bodyPadding: 10,
+			layout: 'fit'
+		},
 
 		initComponent: function() {
 			// Buttons configuration
@@ -77,11 +90,6 @@
 			});
 			// END: Buttons configuration
 
-			// Page FieldSets configuration
-			this.wizard = Ext.create('CMDBuild.view.administration.tasks.CMTasksWizard', {
-				previousButton: this.previousButton,
-				nextButton: this.nextButton
-			});
 			this.cmTBar = [this.modifyButton, this.removeButton, this.cloneButton];
 			this.cmButtons = [this.previousButton, this.saveButton, this.abortButton, this.nextButton];
 
@@ -94,7 +102,6 @@
 						items: this.cmTBar
 					}
 				],
-				items: [this.wizard],
 				buttons: this.cmButtons
 			});
 

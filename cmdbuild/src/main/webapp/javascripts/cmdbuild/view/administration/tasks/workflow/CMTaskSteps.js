@@ -1,7 +1,7 @@
 (function() {
 
 	// Wizard task tabs index
-	Ext.define('CMDBuild.view.administration.tasks.workflow.CMTaskTabs', {
+	Ext.define('CMDBuild.view.administration.tasks.workflow.CMTaskSteps', {
 
 		/**
 		 * @return (Array) task steps
