@@ -28,7 +28,7 @@
 			} else {
 				this.view.reset();
 				this.view.disableModify();
-				this.view.wizard.changeTab(0);
+				this.parentDelegate.changeItem(0);
 			}
 		},
 
@@ -44,7 +44,7 @@
 			this.view.reset();
 			this.view.enableTabbedModify();
 			this.disableTypeField();
-			this.view.wizard.changeTab(0);
+			this.parentDelegate.changeItem(0);
 		},
 
 		onCloneButtonClick: function() {
@@ -55,7 +55,7 @@
 			this.view.enableCMButtons();
 			this.view.enableTabbedModify(true);
 			this.disableTypeField();
-			this.view.wizard.changeTab(0);
+			this.parentDelegate.changeItem(0);
 		},
 
 		onModifyButtonClick: function() {
@@ -63,7 +63,7 @@
 			this.view.enableCMButtons();
 			this.view.enableTabbedModify(true);
 			this.disableTypeField();
-			this.view.wizard.changeTab(0);
+			this.parentDelegate.changeItem(0);
 		},
 
 		onRemoveButtonClick: function() {
@@ -127,7 +127,7 @@
 
 			this.parentDelegate.grid.store.load({
 				callback: function() {
-					me.view.wizard.removeAll();
+					me.view.removeAll();
 					me.view.disableModify(true);
 
 					var rowIndex = this.find(
@@ -144,7 +144,7 @@
 			});
 
 			this.view.disableModify(true);
-			this.view.wizard.changeTab(0);
+			this.parentDelegate.changeItem(0);
 		},
 
 		/**

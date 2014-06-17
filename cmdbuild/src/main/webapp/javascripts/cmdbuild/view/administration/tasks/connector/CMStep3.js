@@ -305,7 +305,7 @@
 
 		listeners: {
 			// Disable instanceNameField
-			show: function(view, eOpts) {
+			activate: function(view, eOpts) {
 				this.dbInstanceNameField.setDisabled(true);
 			}
 		}

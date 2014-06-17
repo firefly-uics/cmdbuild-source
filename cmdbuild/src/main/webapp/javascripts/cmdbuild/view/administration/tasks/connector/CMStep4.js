@@ -387,7 +387,7 @@
 
 		listeners: {
 			// Disable next button only if grid haven't selected class
-			show: function(view, eOpts) {
+			activate: function(view, eOpts) {
 				Ext.Function.createDelayed(function() { // HACK: to fix problem which fires show event before changeTab() function
 					if (this.delegate.isEmptyMappingGrid())
 						this.delegate.setDisabledButtonNext(true);

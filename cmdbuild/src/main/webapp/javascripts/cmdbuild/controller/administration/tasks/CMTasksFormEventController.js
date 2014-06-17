@@ -161,7 +161,7 @@
 					}
 				});
 
-				this.view.wizard.changeTab(0);
+				this.parentDelegate.changeItem(0);
 			}
 		},
 
@@ -174,7 +174,7 @@
 
 			// Validate before save
 			if (this.validate(formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE], taskType)) {
-//				CMDBuild.LoadMask.get().show();
+				CMDBuild.LoadMask.get().show();
 
 				// Form actions by type
 					switch (taskType) {

@@ -214,7 +214,7 @@
 
 		listeners: {
 			// Disable attribute table to correct malfunction that enables on class select
-			show: function(view, eOpts) {
+			activate: function(view, eOpts) {
 				if (!this.delegate.checkWorkflowComboSelected())
 					this.delegate.setDisabledWorkflowAttributesGrid(true);
 			}

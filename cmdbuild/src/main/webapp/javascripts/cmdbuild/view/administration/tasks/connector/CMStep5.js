@@ -420,7 +420,7 @@
 
 		listeners: {
 			// Disable next button only if grid haven't selected class and setup class and source combo editors
-			show: function(view, eOpts) {
+			activate: function(view, eOpts) {
 				this.delegate.buildSourceCombo();
 				this.delegate.buildClassCombo();
 

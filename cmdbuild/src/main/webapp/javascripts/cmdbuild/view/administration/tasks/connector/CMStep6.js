@@ -270,7 +270,7 @@
 
 		listeners: {
 			// To populate grid with selected classes
-			show: function(view, eOpts) {
+			activate: function(view, eOpts) {
 				this.delegate.buildClassCombo();
 
 				// Step validate
