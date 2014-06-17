@@ -55,6 +55,13 @@
 				return this.getWorkflowDelegate().getValueGrid();
 			},
 
+		/**
+		 * To erase workflow form used on addButtonClick
+		 */
+		eraseWorkflowForm: function() {
+			this.getWorkflowDelegate().eraseWorkflowForm();
+		},
+
 		// SETters functions
 			/**
 			 * @param (Boolean) state
@@ -160,7 +167,8 @@
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 				combo: {
 					name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME
-				}
+				},
+				widthFixDisable: false
 			});
 
 			Ext.apply(this, {

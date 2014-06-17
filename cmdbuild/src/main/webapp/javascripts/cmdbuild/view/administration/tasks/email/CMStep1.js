@@ -164,6 +164,7 @@
 				store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
 				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				forceSelection: true,
 				editable: false
 			});

@@ -63,10 +63,10 @@
 
 			switch (param.type) {
 				case 'event_asynchronous':
-					return this.delegateStep[3].setDisabledWorkflowAttributesGrid(true);
+					return this.delegateStep[3].eraseWorkflowForm();
 
 				case 'event_synchronous':
-					return this.delegateStep[2].setDisabledWorkflowAttributesGrid(true);
+					return this.delegateStep[2].eraseWorkflowForm();
 
 				default:
 					throw 'CMTasksFormEventController error: onAddButtonClick task type not recognized';

@@ -76,6 +76,13 @@
 				return this.view.workflowFieldset.checkboxCmp.getValue();
 			},
 
+		/**
+		 * To erase workflow form used on addButtonClick
+		 */
+		eraseWorkflowForm: function() {
+			this.getWorkflowDelegate().eraseWorkflowForm();
+		},
+
 		// SETters functions
 			/**
 			 * @param (Boolean) state
@@ -170,6 +177,8 @@
 
 					items: [this.notificationForm]
 				});
+
+				this.notificationFieldset.fieldWidthsFix();
 			// END: Email notification configuration
 
 			// Workflow configuration
@@ -189,6 +198,8 @@
 
 					items: [this.workflowForm]
 				});
+
+				this.workflowFieldset.fieldWidthsFix();
 			// END: Workflow configuration
 
 			Ext.apply(this, {

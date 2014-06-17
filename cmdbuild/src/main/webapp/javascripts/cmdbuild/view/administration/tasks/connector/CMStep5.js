@@ -379,7 +379,7 @@
 						items: [
 							{
 								icon: 'images/icons/cross.png',
-								tooltip: CMDBuild.Translation.remove,
+								tooltip: CMDBuild.Translation.common.buttons.remove,
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									me.attributeLevelMappingGrid.store.remove(record);
 								}

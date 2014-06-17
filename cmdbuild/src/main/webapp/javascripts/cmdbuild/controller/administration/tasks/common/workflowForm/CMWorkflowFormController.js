@@ -2,11 +2,16 @@
 
 	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
 
-	// TODO: to update without extends CMDynamicKeyValueGrid
 	Ext.define('CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController', {
 
 		comboField: undefined,
 		gridField: undefined,
+		gridEditorPlugin: undefined,
+		workflowAttributesStore: undefined,
+
+		constructor: function(view) {
+			this.view = view;
+		},
 
 		/**
 		 * Gatherer function to catch events
@@ -17,6 +22,9 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onBeforeEdit':
+					return this.onBeforeEdit(param.fieldName, param.rowData);
+
 				case 'onSelectAttributeCombo':
 					return this.onSelectAttributeCombo(param);
 
@@ -31,6 +39,33 @@
 		},
 
 		/**
+		 * Build real editor with generated store
+		 */
+		buildWorkflowAtributesComboEditor: function() {
+			if (!Ext.isEmpty(this.workflowAttributesStore)) {
+				var me = this;
+
+				this.gridField.columns[0].setEditor({
+					xtype: 'combo',
+					valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+					displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+					forceSelection: true,
+					editable: false,
+					allowBlank: false,
+
+					store: me.workflowAttributesStore,
+					queryMode: 'local',
+
+					listeners: {
+						select: function(combo, records, eOpts) {
+							me.cmOn('onSelectAttributeCombo', me.gridField.store.indexOf(me.gridField.getSelectionModel().getSelection()[0]));
+						}
+					}
+				});
+			}
+		},
+
+		/**
 		 * Workflow attribute store builder for onWorkflowSelected event
 		 *
 		 * @param (Object) attributes
@@ -38,20 +73,15 @@
 		 * @return (Object) store
 		 */
 		buildWorkflowAttributesStore: function(attributes) {
-			if (attributes) {
+			if (!Ext.isEmpty(attributes)) {
 				var store = Ext.create('Ext.data.Store', {
 					autoLoad: true,
-					fields: [CMDBuild.ServiceProxy.parameter.VALUE],
+					fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE],
 					data: []
 				});
 
-				for (var key in attributes) {
-					var bufferObj = {};
-
-					bufferObj[CMDBuild.ServiceProxy.parameter.VALUE] = key;
-
-					store.add(bufferObj);
-				}
+				for (var key in attributes)
+					store.add({ value: key });
 
 				return store;
 			}
@@ -65,10 +95,22 @@
 		cleanServerAttributes: function(attributes) {
 			var out = {};
 
-			for (item in attributes)
+			for (var item in attributes)
 				out[attributes[item].name] = '';
 
 			return out;
+		},
+
+		/**
+		 * An ExtJs fix to have a correct fields label and field width in FieldSet - 08/04/2014
+		 */
+		fieldWidthsFix: function() {
+			if (!Ext.isEmpty(this.view))
+				this.view.labelWidth = this.view.labelWidth - 10;
+
+			if (!Ext.isEmpty(this.comboField))
+				this.comboField.maxWidth = this.comboField.maxWidth - 10;
+
 		},
 
 		// GETters functions
@@ -80,10 +122,28 @@
 			},
 
 			/**
-			 * @return (Object)
+			 * @return (Object) data
+			 *
+			 * 	Example:
+			 * 		{
+			 * 			name1: value1,
+			 * 			name2: value2
+			 * 		}
 			 */
 			getValueGrid: function() {
-				return this.gridField.getData();
+				var data = {};
+
+				// To validate and filter grid rows
+				this.gridField.getStore().each(function(record) {
+					if (
+						!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.NAME))
+						&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE))
+					) {
+						data[record.get(CMDBuild.core.proxy.CMProxyConstants.NAME)] = record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE);
+					}
+				});
+
+				return data;
 			},
 
 		/**
@@ -94,43 +154,71 @@
 		},
 
 		/**
-		 * @return (Integer) rowIndex
+		 * Actions for addButtonClick event to erase workflowForm
 		 */
-		onSelectAttributeCombo: function(rowIndex) {
-			this.gridField.cellEditing.startEditByPosition({ row: rowIndex, column: 1 });
+		eraseWorkflowForm: function() {
+			this.gridField.store.removeAll();
+			this.setDisabledAttributesGrid(true);
 		},
 
 		/**
-		 * @param (String) name
-		 * @param (Boolean) modify
+		 * Function to update rows stores/editors on beforeEdit event
+		 *
+		 * @param (String) fieldName
+		 * @param (Object) rowData
 		 */
-		onSelectWorkflow: function(name, modify) {
-			var me = this;
-
-			if (Ext.isEmpty(modify))
-				modify = false;
-
-			CMDBuild.core.proxy.CMProxyTasks.getWorkflowAttributes({
-				params: {
-					className: name
-				},
-				success: function(response) {
-					var decodedResponse = Ext.JSON.decode(response.responseText);
-
-					me.gridField.keyEditorConfig.store = me.buildWorkflowAttributesStore(me.cleanServerAttributes(decodedResponse.attributes));
-
-					// To setup updated editor store
-					if (!Ext.isEmpty(me.gridField.columns[0]) && Ext.isFunction(me.gridField.columns[0].setEditor))
-						me.gridField.columns[0].setEditor(me.gridField.keyEditorConfig);
-
-					if (!modify) {
-						me.gridField.store.removeAll();
-						me.gridField.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.common.workflowForm'));
-						me.gridField.cellEditing.startEditByPosition({ row: 0, column: 0 });
-						me.setDisabledAttributesGrid(false);
+		onBeforeEdit: function(fieldName, rowData) {
+			switch (fieldName) {
+				case CMDBuild.core.proxy.CMProxyConstants.NAME: {
+					if (!this.isEmptyCombo()) {
+						this.buildWorkflowAtributesComboEditor();
+					} else {
+						this.setDisabledAttributesGrid(true);
 					}
-				}
-			});
+				} break;
+			}
+		},
+
+		/**
+		 * @param (Int) rowIndex
+		 */
+		onSelectAttributeCombo: function(rowIndex) {
+			this.gridEditorPlugin.startEditByPosition({ row: rowIndex, column: 1 });
+		},
+
+		/**
+		 * To build combo editors store
+		 *
+		 * @param (String) className
+		 * @param (Boolean) erase
+		 */
+		onSelectWorkflow: function(erase) {
+			var className = this.getValueCombo();
+
+			if (!Ext.isEmpty(className)) {
+				var me = this;
+
+				if (Ext.isEmpty(erase))
+					erase = false;
+
+				CMDBuild.core.proxy.CMProxyTasks.getWorkflowAttributes({
+					params: {
+						className: className
+					},
+					success: function(response) {
+						var decodedResponse = Ext.JSON.decode(response.responseText);
+
+						me.workflowAttributesStore = me.buildWorkflowAttributesStore(me.cleanServerAttributes(decodedResponse.attributes));
+
+						if (erase) {
+							me.gridField.store.removeAll();
+							me.gridField.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.common.workflowForm'));
+							me.gridEditorPlugin.startEditByPosition({ row: 0, column: 0 });
+							me.setDisabledAttributesGrid(false);
+						}
+					}
+				});
+			}
 		},
 
 		// SETters functions
@@ -156,16 +244,29 @@
 			setValueCombo: function(value) {
 				if (!Ext.isEmpty(value)) {
 					this.comboField.setValue(value);
-					this.onSelectWorkflow(value, true);
+					this.onSelectWorkflow(false);
 				}
 			},
 
 			/**
+			 * Rewrite of loadData
+			 *
 			 * @param (Object) value
 			 */
 			setValueGrid: function(value) {
-				if (!Ext.isEmpty(value))
-					this.gridField.fillWithData(value);
+				var store = this.gridField.getStore();
+				store.removeAll();
+
+				if (!Ext.isEmpty(value)) {
+					for (var key in value) {
+						var recordConf = {};
+
+						recordConf[CMDBuild.core.proxy.CMProxyConstants.NAME] = key;
+						recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = value[key] || '';
+
+						store.add(recordConf);
+					}
+				}
 			},
 
 		/**
