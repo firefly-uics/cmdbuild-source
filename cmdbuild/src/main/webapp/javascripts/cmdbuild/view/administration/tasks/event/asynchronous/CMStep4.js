@@ -76,6 +76,13 @@
 				return this.view.workflowFieldset.checkboxCmp.getValue();
 			},
 
+		/**
+		 * To erase workflow form used on addButtonClick
+		 */
+		eraseWorkflowForm: function() {
+			this.getWorkflowDelegate().eraseWorkflowForm();
+		},
+
 		// SETters functions
 			/**
 			 * @param (Boolean) state

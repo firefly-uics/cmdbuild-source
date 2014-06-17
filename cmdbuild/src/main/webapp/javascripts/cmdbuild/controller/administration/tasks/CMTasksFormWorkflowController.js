@@ -57,7 +57,7 @@
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
 
-			this.delegateStep[0].setDisabledWorkflowAttributesGrid(true);
+			this.delegateStep[0].eraseWorkflowForm();
 		},
 
 		// overwrite

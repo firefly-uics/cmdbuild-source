@@ -45,9 +45,18 @@
 		 * @return (Boolean)
 		 */
 		validate: function(form) {
-			// Check for invalid fields
-			if (!Ext.isEmpty(form) && (form.getNonValidFields().length > 0)) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+			var invalidFieldsArray = form.getNonValidFields();
+
+			// Check for invalid fields and builds errorMessage
+			if (!Ext.isEmpty(form) && (invalidFieldsArray.length > 0)) {
+				var errorMessage = CMDBuild.Translation.errors.invalid_fields + '<ul style="text-align: left;">';
+
+				for (index in invalidFieldsArray)
+					errorMessage += '<li>' + invalidFieldsArray[index].fieldLabel + '</li>';
+
+				errorMessage += '<ul>';
+
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, errorMessage, false);
 
 				return false;
 			}

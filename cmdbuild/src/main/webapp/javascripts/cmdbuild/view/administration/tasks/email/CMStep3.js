@@ -185,35 +185,35 @@
 				this.parsingKeyStart = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingKeyStart,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_INIT,
-					anchor: '100%'
+					flex: 1
 				});
 
 				this.parsingKeyEnd = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingKeyEnd,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_END,
 					margin: '0 0 0 20',
-					anchor: '100%'
+					flex: 1
 				});
 
 				this.parsingValueStart = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingValueStart,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_INIT,
-					anchor: '100%'
+					flex: 1
 				});
 
 				this.parsingValueEnd = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingValueEnd,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_END,
 					margin: '0 0 0 20',
-					anchor: '100%'
+					flex: 1
 				});
 
 				this.parsingFieldset = Ext.create('Ext.form.FieldSet', {
@@ -234,11 +234,6 @@
 								align:'stretch'
 							},
 
-							defaults: {
-								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-								anchor: '100%'
-							},
-
 							items: [this.parsingKeyStart, this.parsingKeyEnd]
 						},
 						{
@@ -250,15 +245,12 @@
 								align:'stretch'
 							},
 
-							defaults: {
-								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-								anchor: '100%'
-							},
-
 							items: [this.parsingValueStart, this.parsingValueEnd]
 						}
 					]
 				});
+
+				this.parsingFieldset.fieldWidthsFix();
 			// END: BodyParsing configuration
 
 			// Email notification configuration
@@ -280,6 +272,8 @@
 
 					items: [this.notificationForm]
 				});
+
+				this.notificationFieldset.fieldWidthsFix();
 			// END: Email notification configuration
 
 			// Attachments configuration
@@ -312,6 +306,8 @@
 						}
 					}
 				});
+
+				this.attachmentsFieldset.fieldWidthsFix();
 			// END: Attachments configuration
 
 			Ext.apply(this, {
