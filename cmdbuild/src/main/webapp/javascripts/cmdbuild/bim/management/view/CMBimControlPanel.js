@@ -185,19 +185,19 @@
 			// reset sliders
 			this.query("#" + ZOOM_SLIDER_ID)[0].setValue(0);
 			this.query("#" + EXPOSE_SLIDER_ID)[0].setValue(0);
-			this.query("#" + TRANSPARENT_SLIDER_ID)[0].setValue(0);
+//			this.query("#" + TRANSPARENT_SLIDER_ID)[0].setValue(0);
 
 			this.disableObjectSliders();
 		},
 
 		enableObjectSliders: function() {
 			this.query("#" + EXPOSE_SLIDER_ID)[0].enable();
-			this.query("#" + TRANSPARENT_SLIDER_ID)[0].enable();
+//			this.query("#" + TRANSPARENT_SLIDER_ID)[0].enable();
 		},
 
 		disableObjectSliders: function() {
 			this.query("#" + EXPOSE_SLIDER_ID)[0].disable();
-			this.query("#" + TRANSPARENT_SLIDER_ID)[0].disable();
+//			this.query("#" + TRANSPARENT_SLIDER_ID)[0].disable();
 		}
 	});
 
