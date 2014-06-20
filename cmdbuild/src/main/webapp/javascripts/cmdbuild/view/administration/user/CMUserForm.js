@@ -199,7 +199,7 @@
 			var store = this.defaultGroupStore;
 
 			this.reset();
-			this.disableModify(enableCMTBar = true);
+			this.disableModify(true);
 			this.updateDisableActionTextAndIconClass(user.get('isActive'));
 
 			store.load({
@@ -223,7 +223,7 @@
 
 		onAddUserClick: function() {
 			this.reset();
-			this.enableModify(all = true);
+			this.enableModify(true);
 			this.defaultGroup.disable();
 		},
 
@@ -236,12 +236,10 @@
 						|| item instanceof Ext.form.FieldSet
 						|| item.considerAsFieldToDisable
 					)
+					&& !item.cmImmutable
+					&& item.isVisible()
 				) {
-					var name = item._name || item.name; // for compatibility I can not change the name of old attrs
-					var toBeEnabled = (true || !item.cmImmutable) && item.isVisible();
-
-					if (toBeEnabled)
-						item.enable();
+					item.enable();
 				}
 			});
 
