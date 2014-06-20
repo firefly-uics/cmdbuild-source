@@ -143,6 +143,16 @@
 				}
 			},
 
+			relations: {
+				create: 'services/json/management/modcard/createrelations',
+				read: 'services/json/management/modcard/getrelationlist',
+				update: 'services/json/management/modcard/modifyrelation',
+				remove: 'services/json/management/modcard/deleterelation',
+
+				removeDetail: 'services/json/management/modcard/deletedetail',
+				isCardAssignedToRelation: 'services/json/management/modcard/iscardassignedtorelation'
+			},
+
 			tasks: {
 				getStore: 'services/json/schema/taskmanager/readall',
 				start: 'services/json/schema/taskmanager/start',

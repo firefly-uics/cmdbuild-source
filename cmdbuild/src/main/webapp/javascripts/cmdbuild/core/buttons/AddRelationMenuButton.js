@@ -1,7 +1,6 @@
 (function() {
 
 	Ext.define('CMDBuild.core.buttons.AddRelationMenuButton', {
-		alternateClassName: 'CMDBuild.AddRelationMenuButton', // Legacy class name
 		extend: 'Ext.button.Split',
 
 		iconCls: 'add',
@@ -33,7 +32,7 @@
 
 				this.menu.removeAll();
 
-				for (var i = 0, l = domains.length; i < l; ++i) {
+				for (var i = 0; i < domains.length; ++i) {
 					d = domains[i];
 
 					if (
