@@ -59,7 +59,7 @@
 	
 	function onSaveClick() {
 		CMDBuild.LoadMask.get().show();
-		var data = this.view.getData();
+		var data = this.view.getData(true);
 		data.Type = this.currentLookupType;
 		
 		CMDBuild.ServiceProxy.lookup.saveLookup({
