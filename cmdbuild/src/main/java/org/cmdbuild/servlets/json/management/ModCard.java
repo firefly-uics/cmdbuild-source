@@ -15,7 +15,9 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_LIMIT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_SOURCE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_ACCOUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_FROM_ADDRESS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FUNCTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
@@ -54,7 +56,9 @@ import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
+import org.cmdbuild.servlets.json.JSONBase.JSONExported;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -73,7 +77,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -103,7 +107,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	/**
 	 * Retrieves a list of cards for the specified class, returning only the
 	 * values for a subset of values
-	 * 
+	 *
 	 * @param filter
 	 *            null if no filter is specified
 	 * @param sorters
@@ -141,7 +145,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -470,7 +474,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param domainName
 	 *            is the domain between the source class and the destination
 	 *            class
@@ -623,4 +627,15 @@ public class ModCard extends JSONBaseWithSpringContext {
 		dataLogic.unlockAllCards();
 	}
 
+	// TODO: real implementation (we could change function name)
+	@JSONExported
+	public JsonResponse isCardAssignedToRelation( //
+			// TODO: i can also give datas encoded as JSON ... create CommunicationConstants and rename variables
+//			@Parameter(value = DOMAIN_ID) final Long domainId //
+//			@Parameter(value = CLASS_TARGET_ID) final Long classTargetId //
+//			@Parameter(value = CARDS, required = false) final JSONArray cardsIdArray //
+	) {
+		// TODO: to return a JSON array with already assigned cards ids
+		return JsonResponse.success();
+	}
 }

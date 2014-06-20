@@ -1,13 +1,14 @@
 (function() {
-	var TARGET_CLASS_ID = "dst_cid",
-		tr = CMDBuild.Translation.management.modcard,
-		col_tr = CMDBuild.Translation.management.modcard.relation_columns;
+
+	var TARGET_CLASS_ID = "dst_cid";
+	var tr = CMDBuild.Translation.management.modcard;
+	var col_tr = CMDBuild.Translation.management.modcard.relation_columns;
 
 	// Null-object to skip some checks
 	var nullButton = {
-		enable: function(){},
-		disable: function(){},
-		on: function(){}
+		enable: function() {},
+		disable: function() {},
+		on: function() {}
 	};
 
 	Ext.define("CMRelationPanelModel", {
@@ -22,6 +23,7 @@
 
 	Ext.define("CMDBuild.view.management.classes.CMCardRelationsPanel", {
 		extend: "Ext.tree.Panel",
+
 		cmWithAddButton: true,
 		cmWithEditRelationIcons: true,
 
@@ -49,19 +51,45 @@
 				}),
 				rootVisible: false,
 				columns: [
-					{header: col_tr.domain, sortable: false, dataIndex: 'dom_id', hidden: true},
-					{header: col_tr.destclass, flex: 2, sortable: false, dataIndex: 'label', xtype: 'treecolumn'},
-					{header: col_tr.begin_date, flex: 1, sortable: false, dataIndex: 'rel_date'},
-					{header: col_tr.code, flex: 1, sortable: false, dataIndex: 'dst_code'},
-					{header: col_tr.description, flex: 2, sortable: false, dataIndex: 'dst_desc'},
+					{
+						header: col_tr.domain,
+						sortable: false,
+						dataIndex: 'dom_id',
+						hidden: true
+					},
+					{
+						header: col_tr.destclass,
+						flex: 2,
+						sortable: false,
+						dataIndex: 'label',
+						xtype: 'treecolumn'
+					},
+					{
+						header: col_tr.begin_date,
+						flex: 1,
+						sortable: false,
+						dataIndex: 'rel_date'
+					},
+					{
+						header: col_tr.code,
+						flex: 1,
+						sortable: false,
+						dataIndex: 'dst_code'
+					},
+					{
+						header: col_tr.description,
+						flex: 2,
+						sortable: false,
+						dataIndex: 'dst_desc'
+					},
 					this.attrsColumn,
 					{
 						header: '&nbsp',
-						fixed: true, 
-						sortable: false, 
+						fixed: true,
+						sortable: false,
 						renderer: Ext.bind(this.renderRelationActions, this),
-						align: 'center', 
-						tdCls: 'grid-button', 
+						align: 'center',
+						tdCls: 'grid-button',
 						dataIndex: 'Fake',
 						menuDisabled: true,
 						hideable: false
@@ -83,25 +111,25 @@
 		},
 
 		buildTBar: function() {
+			var me = this;
+
 			this.tbar = [];
 
-			var me = this;
-			this.addRelationButton = new CMDBuild.AddRelationMenuButton({
-				text : tr.add_relations
+			this.addRelationButton = Ext.create('CMDBuild.core.buttons.AddRelationMenuButton', {
+				text: tr.add_relations
 			});
-			
-			this.mon(this.addRelationButton, "cmClick", function(d) {
+
+			this.mon(this.addRelationButton, 'cmClick', function(d) {
 				me.fireEvent(me.CMEVENTS.addButtonClick, d);
 			});
 
-			if (this.cmWithAddButton) {
+			if (this.cmWithAddButton)
 				this.tbar.push(this.addRelationButton);
-			}
 
-			if (CMDBuild.Config.graph.enabled=="true") {
+			if (CMDBuild.Config.graph.enabled == 'true') {
 				this.graphButton = new Ext.button.Button({
-					iconCls : "graph",
-					text : CMDBuild.Translation.management.graph.action,
+					iconCls: 'graph',
+					text: CMDBuild.Translation.management.graph.action,
 					handler: function() {
 						me.fireEvent(me.CMEVENTS.openGraphClick);
 					}
@@ -127,7 +155,7 @@
 			for (var i=0, l=domains.length; i<l; ++i) {
 				var domainResponseObj = domains[i],
 					domainCachedData = _CMCache.getDomainById(domainResponseObj.id);
-				
+
 				if (domainCachedData) {
 					nodes.push(buildNodeForDomain.call(this, domainResponseObj, domainCachedData));
 				} else {
@@ -156,12 +184,12 @@
 		onAddCardButtonClick: function() { _deprecated();
 			this.disable();
 		},
-	
+
 		onClassSelected: function() { _deprecated();
 			this.disable();
 		}
 	});
-	
+
 	function buildNodeForDomain(domainResponseObj, domainCachedData) {
 		var children = [],
 			attributes = domainCachedData.data.attributes || [],
@@ -172,10 +200,10 @@
 			node = {
 				dom_id: domId,
 				label: buildDescriptionForDomainNode(domainResponseObj, domainCachedData),
-	
+
 				src: src,
 				relations_size: domainResponseObj.relations_size,
-	
+
 				expanded: !oversize,
 				leaf: false,
 				children: [],
@@ -291,7 +319,7 @@
 		var prefix = domainCachedData.get("descr"+domainResponseObj.src),
 			s = domainResponseObj.relations_size,
 			postfix = s  > 1 ? CMDBuild.Translation.management.modcard.relation_columns.items : CMDBuild.Translation.management.modcard.relation_columns.item;
-		
+
 		return "<span class=\"cm-bold\">" + prefix + " ("+ s + " " + postfix + ")</span>" ;
 	}
 })();
