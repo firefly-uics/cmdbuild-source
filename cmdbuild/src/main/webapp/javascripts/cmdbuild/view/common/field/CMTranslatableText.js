@@ -38,11 +38,9 @@
 		resetLanguages: function() {
 			if (_CMCache.isMultiLanguages()) {
 				this.translationsButton.show();
-				this.hiddenValue.show();
 			}
 			else {
 				this.translationsButton.hide();
-				this.hiddenValue.hide();
 			}
 		},
 		createTextItem: function() {
@@ -56,7 +54,7 @@
 			});
 		},
 		createHiddenValue: function(valueField) {
-			return new Ext.form.field.Text( {
+			return new Ext.form.field.Hidden( {
 				width: 0,
 				name : this.original_name,
 				submitValue: true,
