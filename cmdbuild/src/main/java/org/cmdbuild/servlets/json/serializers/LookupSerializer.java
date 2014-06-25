@@ -1,8 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.cmdbuild.data.store.Storables.storableById;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION_CAPITAL;
@@ -30,6 +29,7 @@ public class LookupSerializer {
 
 	private final TranslationFacade translationFacade;
 	private final LookupStore lookupStore;
+	private static final String MULTILEVEL_FORMAT = "%s - %s";
 
 	public LookupSerializer(final TranslationFacade translationFacade, final LookupStore lookupStore) {
 		this.translationFacade = translationFacade;
@@ -53,12 +53,12 @@ public class LookupSerializer {
 
 			final String translatedDescription = translationFacade.read(translationObject);
 
-			serializer.put(DESCRIPTION_CAPITAL, defaultIfNull(translatedDescription, lookup.description));
+			serializer.put(DESCRIPTION_CAPITAL, defaultIfBlank(translatedDescription, lookup.description));
 			serializer.put(DEFAULT_DESCRIPTION_CAPITAL, lookup.description);
 
 			if (!shortForm) {
 				serializer.put("Type", lookup.type.name);
-				serializer.put("Code", defaultIfEmpty(lookup.code, EMPTY));
+				serializer.put("Code", defaultIfBlank(lookup.code, EMPTY));
 				serializer.put("Number", lookup.number);
 				serializer.put("Notes", lookup.notes);
 				serializer.put("Default", lookup.isDefault);
@@ -78,9 +78,9 @@ public class LookupSerializer {
 							.build();
 
 					final String parentTranslatedDescription = translationFacade.read(parentTranslationObject);
-					serializer.put(PARENT_DESCRIPTION, defaultIfNull(parentTranslatedDescription, parent.description));
+					serializer.put(PARENT_DESCRIPTION, defaultIfBlank(parentTranslatedDescription, parent.description));
 					serializer.put(DEFAULT_PARENT_DESCRIPTION,
-							defaultIfNull(parentTranslatedDescription, parent.description));
+							defaultIfBlank(parentTranslatedDescription, parent.description));
 					serializer.put("ParentType", parent.type);
 				}
 			}
@@ -101,7 +101,7 @@ public class LookupSerializer {
 
 			serializer = new JSONObject();
 			serializer.put(PARENT_ID, lookup.getId());
-			serializer.put(PARENT_DESCRIPTION, defaultIfNull(parentTranslatedDescription, lookup.description));
+			serializer.put(PARENT_DESCRIPTION, defaultIfBlank(parentTranslatedDescription, lookup.description));
 		}
 		return serializer;
 	}
@@ -131,35 +131,41 @@ public class LookupSerializer {
 	}
 
 	private String description(final LookupValue value) {
-		String description = value.getDescription();
-		String uuid = lookup(value.getId()) == null ? null : lookup(value.getId()).translationUuid;
+		final String uuid = lookup(value.getId()) == null ? null : lookup(value.getId()).translationUuid;
 		final LookupTranslation lookupTranslation = LookupTranslation.newInstance() //
-				.withField(DESCRIPTION_FOR_CLIENT)
-				.withName(uuid)//
+				.withField(DESCRIPTION_FOR_CLIENT).withName(uuid)//
 				.build();
 
-		final String translatedDescription = translationFacade.read(lookupTranslation);
-		final String baseDescription = defaultIfNull(translatedDescription, description);
+		final String lastLevelBaseDescription = value.getDescription();
+		final String lastLevelTranslatedDescription = translationFacade.read(lookupTranslation);
+
+		String baseDescription = lastLevelBaseDescription;
+		String translatedDescription = defaultIfBlank(lastLevelTranslatedDescription, lastLevelBaseDescription);
+		String jointBaseDescription = lastLevelBaseDescription;
+		String jointTranslatedDescription = translatedDescription;
 
 		if (value instanceof LookupValue) {
 			Lookup lookup = lookup(value.getId());
 			if (lookup != null) {
 				lookup = lookup(lookup.parentId);
 				while (lookup != null) {
-					final LookupTranslation parentTranslation = LookupTranslation.newInstance() //
+					final String parentBaseDescription = lookup.description;
+					final LookupTranslation parentTranslation = LookupTranslation.newInstance()//
 							.withField(DESCRIPTION_FOR_CLIENT)//
-							.withName(lookup.getId() != null ? value.getId().toString() : EMPTY)//
+							.withName(lookup.getTranslationUuid() != null ? lookup.getTranslationUuid() : EMPTY)//
 							.build();
 					final String parentTranslatedDescription = translationFacade.read(parentTranslation);
-
-					final String format = "%s - %s";
-					description = String.format(format, defaultIfNull(parentTranslatedDescription, lookup.description),
-							baseDescription);
+					jointBaseDescription = String.format(MULTILEVEL_FORMAT, parentBaseDescription, baseDescription);
+					jointTranslatedDescription = String.format(MULTILEVEL_FORMAT,
+							defaultIfBlank(parentTranslatedDescription, parentBaseDescription),
+							defaultIfBlank(translatedDescription, baseDescription));
 					lookup = lookup(lookup.parentId);
+					baseDescription = jointBaseDescription;
+					translatedDescription = jointTranslatedDescription;
 				}
 			}
 		}
-		return baseDescription;
+		return jointTranslatedDescription;
 	}
 
 	private Lookup lookup(final Long id) {
