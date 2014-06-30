@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.management;
 
+import static com.google.common.collect.FluentIterable.from;
+
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
@@ -9,15 +11,14 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIRMED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.COUNT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_LIMIT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_SOURCE;
-import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_ACCOUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_FROM_ADDRESS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FUNCTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
@@ -32,6 +33,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,6 +41,8 @@ import java.util.Map.Entry;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
@@ -58,16 +62,20 @@ import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
-import org.cmdbuild.servlets.json.JSONBase.JSONExported;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
 import org.cmdbuild.servlets.json.util.FlowStatusFilterElementGetter;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ModCard extends JSONBaseWithSpringContext {
@@ -77,7 +85,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -107,7 +115,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	/**
 	 * Retrieves a list of cards for the specified class, returning only the
 	 * values for a subset of values
-	 *
+	 * 
 	 * @param filter
 	 *            null if no filter is specified
 	 * @param sorters
@@ -145,7 +153,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -474,7 +482,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param domainName
 	 *            is the domain between the source class and the destination
 	 *            class
@@ -627,15 +635,88 @@ public class ModCard extends JSONBaseWithSpringContext {
 		dataLogic.unlockAllCards();
 	}
 
-	// TODO: real implementation (we could change function name)
 	@JSONExported
-	public JsonResponse isCardAssignedToRelation( //
-			// TODO: i can also give datas encoded as JSON ... create CommunicationConstants and rename variables
-//			@Parameter(value = DOMAIN_ID) final Long domainId //
-//			@Parameter(value = CLASS_TARGET_ID) final Long classTargetId //
-//			@Parameter(value = CARDS, required = false) final JSONArray cardsIdArray //
-	) {
-		// TODO: to return a JSON array with already assigned cards ids
-		return JsonResponse.success();
+	public JsonResponse getAlreadyRelatedCards( //
+			@Parameter(value = DOMAIN_NAME) final String domainName, //
+			@Parameter(value = CLASS_NAME) final String className, //
+			@Parameter(value = CARDS) final JSONArray cardsIdArray //
+	) throws JSONException {
+		final DataAccessLogic dataLogic = userDataAccessLogic();
+		final CMDomain domain = dataLogic.findDomain(domainName);
+		final CMClass cmClass = dataLogic.findClass(className);
+		final String domainDirection = (domain.getClass1().equals(cmClass)) ? //
+		Source._1.toString()
+				: Source._2.toString();
+		final DomainWithSource dom = DomainWithSource.create(domain.getId(), domainDirection);
+
+		final Predicate<Card> isCardAlreadyRelated = new Predicate<Card>() {
+			@Override
+			public boolean apply(final Card input) {
+				final GetRelationListResponse relationList = dataLogic.getRelationList(input, dom);
+				return relationList.getTotalNumberOfRelations() > 0;
+			}
+		};
+
+		final Collection<Card> cardsToCheck = Lists.newArrayList();
+		for (int i = 0; i < cardsIdArray.length(); i++) {
+			final Card card = dataLogic.fetchCard(className, Long.parseLong(String.valueOf(cardsIdArray.get(i))));
+			cardsToCheck.add(card);
+		}
+		final Iterable<Card> alreadyRelatedCards = Iterables.filter(cardsToCheck, isCardAlreadyRelated);
+		final Iterable<JsonCard> alreadyRelatedJsonCards = from(alreadyRelatedCards) //
+				.transform(CARD_TO_JSONCARD).toList();
+		return JsonResponse.success(alreadyRelatedJsonCards);
 	}
+
+	private static Function<Card, JsonCard> CARD_TO_JSONCARD = new Function<Card, JsonCard>() {
+
+		@Override
+		public JsonCard apply(final Card input) {
+			return new JsonCard(input);
+		}
+	};
+
+	private static class JsonCard {
+
+		private Long id;
+		private String className;
+		private String description;
+
+		public JsonCard(final Card card) {
+			this.id = card.getId();
+			this.className = card.getClassName();
+			this.description = String.class.cast(card.getAttribute(DESCRIPTION_ATTRIBUTE));
+		}
+
+		@JsonProperty(ID)
+		public Long getId() {
+			return id;
+		}
+
+		@JsonProperty(DESCRIPTION)
+		public String getDescription() {
+			return description;
+		}
+
+		@JsonProperty(CLASS_NAME)
+		public String getClassName() {
+			return className;
+		}
+
+		@JsonProperty(ID)
+		public void setId(final Long id) {
+			this.id = id;
+		}
+
+		@JsonProperty(CLASS_NAME)
+		public void setClassName(final String className) {
+			this.className = className;
+		}
+
+		@JsonProperty(DESCRIPTION)
+		public void setDescription(final String description) {
+			this.description = description;
+		}
+	}
+
 }
