@@ -18,6 +18,7 @@ import org.cmdbuild.data.store.translation.Translation;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class DefaultTranslationLogic implements TranslationLogic {
@@ -226,14 +227,16 @@ public class DefaultTranslationLogic implements TranslationLogic {
 	};
 
 	private final StoreFactory<Translation> storeFactory;
+	private final SetupFacade setupFacade;
 
-	public DefaultTranslationLogic(final StoreFactory<Translation> storeFactory) {
+	public DefaultTranslationLogic(final StoreFactory<Translation> storeFactory, final SetupFacade setupFacade) {
 		this.storeFactory = storeFactory;
+		this.setupFacade = setupFacade;
 	}
 
 	@Override
 	public void create(final TranslationObject translationObject) {
-		// TODO element, lang and value must not be null
+		// TODO element, language and value must not be null
 		final Element element = ElementCreator.of(translationObject).create();
 		final Collection<Translation> translations = extractTranslations(translationObject, element);
 		final Store<Translation> store = storeFactory.create(element);
@@ -244,19 +247,23 @@ public class DefaultTranslationLogic implements TranslationLogic {
 
 	@Override
 	public Map<String, String> read(final TranslationObject translationObject) {
-		// TODO element, lang and value must not be null
+		// TODO element, language and value must not be null
 		final Element element = ElementCreator.of(translationObject).create();
 		final Store<Translation> store = storeFactory.create(element);
 		final Map<String, String> map = newLinkedHashMap();
+		final Iterable<String> enabledLanguages = setupFacade.getEnabledLanguages();
 		for (final Translation translation : store.readAll()) {
-			map.put(translation.getLang(), translation.getValue());
+			final String lang = translation.getLang();
+			if (Iterables.contains(enabledLanguages, lang)) {
+				map.put(lang, translation.getValue());
+			}
 		}
 		return map;
 	}
 
 	@Override
 	public void update(final TranslationObject translationObject) {
-		// TODO element, lang and value must not be null
+		// TODO element, language and value must not be null
 		final Element element = ElementCreator.of(translationObject).create();
 		final Collection<Translation> translations = extractTranslations(translationObject, element);
 		final Map<String, Translation> translationsByLang = uniqueIndex(translations, TRANSLATION_TO_LANG);
