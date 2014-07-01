@@ -105,8 +105,14 @@
 	function getIconsToRender(record) {
 		var icons = ["showDetail", "showGraph", "note"];
 		var privileges = _CMUtils.getEntryTypePrivilegesByCard(record);
-		if (privileges.write) {
+		if (privileges.write && !(privileges.crudDisabled.modify || privileges.crudDisabled.remove)) {
 			icons = ["editDetail", "deleteDetail", "showGraph", "note"];
+		}
+		else if (privileges.write && ! privileges.crudDisabled.modify) {
+			icons = ["editDetail", "showGraph", "note"];
+		}
+		else if (privileges.write && ! privileges.crudDisabled.remove) {
+			icons = ["showDetail", "deleteDetail", "showGraph", "note"];
 		}
 
 		if (CMDBuild.Config.dms.enabled == "true") {
