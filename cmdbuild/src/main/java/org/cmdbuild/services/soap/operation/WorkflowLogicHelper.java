@@ -222,18 +222,10 @@ public class WorkflowLogicHelper implements SoapLogicHelper {
 
 	private Map<String, Object> variablesFor(final Card card) {
 		final Map<String, Object> variables = new HashMap<String, Object>();
-		for (final Attribute attribute : safeAttributesFor(card)) {
+		for (final Attribute attribute : card.getAttributeList()) {
 			variables.put(attribute.getName(), attribute.getValue());
 		}
 		return variables;
-	}
-
-	private List<Attribute> safeAttributesFor(final Card card) {
-		List<Attribute> attributes = card.getAttributeList();
-		if (attributes == null) {
-			attributes = Collections.emptyList();
-		}
-		return attributes;
 	}
 
 	private Map<String, Object> widgetSubmission(final List<CMActivityWidget> activityWidgets,
