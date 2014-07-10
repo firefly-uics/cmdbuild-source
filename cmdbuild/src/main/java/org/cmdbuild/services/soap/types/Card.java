@@ -3,9 +3,9 @@ package org.cmdbuild.services.soap.types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,6 +32,7 @@ public class Card {
 
 	public static final ValueSerializer LEGACY_VALUE_SERIALIZER = new LegacyValueSerializer();
 	public static final ValueSerializer HACK_VALUE_SERIALIZER = new HackValueSerializer();
+	private static final List<Attribute> NO_ATTRIBUTES = Collections.emptyList();
 
 	private static abstract class AbstractValueSerializer implements ValueSerializer {
 
@@ -170,8 +171,7 @@ public class Card {
 			tmpAttribute.setName(attributeName);
 			tmpAttribute.setValue(value);
 			if (isLookUpReferenceOrForeignKey(attributeType)) {
-				final IdAndDescription foreignReference = (IdAndDescription) cardModel
-						.getAttribute(attributeName);
+				final IdAndDescription foreignReference = (IdAndDescription) cardModel.getAttribute(attributeName);
 				if (foreignReference != null && foreignReference.getId() != null) {
 					tmpAttribute.setCode(foreignReference.getId().toString());
 				}
@@ -272,7 +272,7 @@ public class Card {
 	}
 
 	public List<Attribute> getAttributeList() {
-		return attributeList;
+		return (attributeList != null) ? attributeList : NO_ATTRIBUTES;
 	}
 
 	public void setAttributeList(final List<Attribute> attributeList) {
