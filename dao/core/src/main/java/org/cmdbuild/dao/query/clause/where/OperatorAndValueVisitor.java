@@ -22,4 +22,8 @@ public interface OperatorAndValueVisitor {
 
 	void visit(EmptyArrayOperatorAndValue operatorAndValue);
 
+	void visit(IsContainedWithinOrEquals operatorAndValue);
+
+	void visit(ContainsOrEquals operatorAndValue);
+
 }
