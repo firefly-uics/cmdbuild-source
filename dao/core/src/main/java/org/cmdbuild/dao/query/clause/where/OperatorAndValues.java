@@ -10,6 +10,10 @@ public class OperatorAndValues {
 		return ContainsOperatorAndValue.contains(value);
 	}
 
+	public static OperatorAndValue containsOrEquals(final Object value) {
+		return new ContainsOrEquals(value);
+	}
+
 	public static OperatorAndValue emptyArray() {
 		return EmptyArrayOperatorAndValue.emptyArray();
 	}
@@ -28,6 +32,10 @@ public class OperatorAndValues {
 
 	public static OperatorAndValue in(final Object... objects) {
 		return InOperatorAndValue.in(objects);
+	}
+
+	public static OperatorAndValue isContainedWithinOrEquals(final Object value) {
+		return new IsContainedWithinOrEquals(value);
 	}
 
 	public static OperatorAndValue lt(final Object value) {

@@ -52,4 +52,14 @@ public class NullOperatorAndValueVisitor implements OperatorAndValueVisitor {
 		// nothing to do
 	}
 
+	@Override
+	public void visit(final IsContainedWithinOrEquals operatorAndValue) {
+		// nothing to do
+	}
+
+	@Override
+	public void visit(final ContainsOrEquals operatorAndValue) {
+		// nothing to do
+	}
+
 }
