@@ -15,6 +15,7 @@ import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
 import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.*;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CLASSNAME_KEY;
@@ -196,6 +197,21 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 				_values.add(type.convertValue(get(values, i)));
 			}
 			return condition(attribute, in(_values.toArray()));
+		} else if (operator.equals(FilterOperator.NET_CONTAINED.toString())) {
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, networkContained(type.convertValue(get(values, 0))));
+		} else if (operator.equals(FilterOperator.NET_CONTAINED_OR_EQUAL.toString())) {
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, networkContainedOrEqual(type.convertValue(get(values, 0))));
+		} else if (operator.equals(FilterOperator.NET_CONTAINS.toString())) {
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, networkContains(type.convertValue(get(values, 0))));
+		} else if (operator.equals(FilterOperator.NET_CONTAINS_OR_EQUAL.toString())) {
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, networkContainsOrEqual(type.convertValue(get(values, 0))));
+		} else if (operator.equals(FilterOperator.NET_RELATIONED.toString())) {
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, networkRelationed(type.convertValue(get(values, 0))));
 		}
 		throw new IllegalArgumentException("The operator " + operator + " is not supported");
 	}
