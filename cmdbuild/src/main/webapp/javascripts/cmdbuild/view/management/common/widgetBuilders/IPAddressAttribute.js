@@ -10,3 +10,13 @@ CMDBuild.WidgetBuilders.IPAddressAttribute.prototype.customVType = "ipv4";
 CMDBuild.WidgetBuilders.IPAddressAttribute.prototype.gridRenderer = function(v) {
 	return "<div>" + v + "<div>";
 };
+CMDBuild.WidgetBuilders.IPAddressAttribute.prototype.getQueryOptions = function() {
+	var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
+	return [
+		[operator.NET_CONTAINS, "translation.net_contains"],
+		[operator.NET_CONTAINED, "translation.net_contained"],
+		[operator.NET_CONTAINS, "translation.net_containsorequal"],
+		[operator.NET_CONTAINED, "translation.net_containedorequal"],
+		[operator.NET_RELATION, "translation.net_relation"]
+	];
+};

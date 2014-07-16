@@ -20,7 +20,13 @@
 		BEGIN: "begin",
 		NOT_BEGIN: "notbegin",
 		END: "end",
-		NOT_END: "notend"
+		NOT_END: "notend",
+
+		NET_CONTAINS: "net_contains",
+		NET_CONTAINED: "net_contained",
+		NET_CONTAINSOREQUAL: "net_containsorequal",
+		NET_CONTAINEDOREQUAL: "net_containedorequal",
+		NET_RELATION: "net_relation"
 	};
 
 	CMDBuild.WidgetBuilders.BaseAttribute.prototype = {
