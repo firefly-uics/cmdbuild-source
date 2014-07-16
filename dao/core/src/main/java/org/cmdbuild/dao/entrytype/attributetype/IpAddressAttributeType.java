@@ -13,7 +13,6 @@ public class IpAddressAttributeType extends AbstractAttributeType<String> {
 	private static final String IPV4_OCTETS_SEPARATOR_REGEX = "\\.";
 	private static final String CLASS_SEPARATOR_REGEX = "/";
 	private static final String CLASS_REGEX = "0*(\\d|[1-2]\\d|3[0-2])";
-	private static final String CLASS_DEFAULT = CLASS_SEPARATOR_REGEX + "32";
 
 	private static final Pattern IPV4REGEX = Pattern.compile(EMPTY //
 			+ "^" //
@@ -40,14 +39,7 @@ public class IpAddressAttributeType extends AbstractAttributeType<String> {
 		if (isEmpty(stringValue)) {
 			return null;
 		} else if (ipv4matcher.matches()) {
-			final String mask = ipv4matcher.group(6);
-			final String returnValue;
-			if (mask == null) {
-				returnValue = stringValue + CLASS_DEFAULT;
-			} else {
-				returnValue = stringValue;
-			}
-			return returnValue;
+			return stringValue;
 		} else {
 			throw illegalValue(value);
 		}

@@ -76,7 +76,7 @@ public class NetworkAttributeTypeQueryTest extends IntegrationTestBase {
 	private static final String CLASS_NAME = "foo";
 	private static final String ATTRIBUTE_NAME = "bar";
 	private static final Object HOST_WITHOUT_CLASS = "192.168.1.1";
-	private static final Object HOST = "192.168.1.1/32";
+	private static final Object HOST = HOST_WITHOUT_CLASS + "/32";
 	private static final Object ANOTHER_HOST = "192.168.1.2/32";
 	private static final Object SUBNET_24 = "192.168.1.0/24";
 	private static final Object SUBNET_16 = "192.168.0.0/16";
@@ -116,12 +116,12 @@ public class NetworkAttributeTypeQueryTest extends IntegrationTestBase {
 	}
 
 	@Test
-	public void hostWithoutClass() throws Exception {
+	public void hostStrippedFromClassIf_32() throws Exception {
 		// given
-		cardWhereNetworkIs(HOST_WITHOUT_CLASS);
+		cardWhereNetworkIs(HOST);
 
 		// when/then
-		assertThat(queryCardsWhere(eq(HOST)), hasOneCard(equalTo(HOST)));
+		assertThat(queryCardsWhere(eq(HOST)), hasOneCard(equalTo(HOST_WITHOUT_CLASS)));
 	}
 
 	@Test
@@ -130,19 +130,20 @@ public class NetworkAttributeTypeQueryTest extends IntegrationTestBase {
 		cardWhereNetworkIs(HOST);
 
 		// when/then
-		assertThat(queryCardsWhere(eq(HOST)), hasOneCard(equalTo(HOST)));
+		assertThat(queryCardsWhere(eq(HOST)), hasOneCard(equalTo(HOST_WITHOUT_CLASS)));
+		assertThat(queryCardsWhere(eq(HOST_WITHOUT_CLASS)), hasOneCard(equalTo(HOST_WITHOUT_CLASS)));
 		assertThat(queryCardsWhere(eq(ANOTHER_HOST)), isEmpty());
 		assertThat(queryCardsWhere(eq(SUBNET_24)), isEmpty());
 		assertThat(queryCardsWhere(networkContains(HOST)), isEmpty());
-		assertThat(queryCardsWhere(networkContainsOrEqual(HOST)), hasOneCard(equalTo(HOST)));
+		assertThat(queryCardsWhere(networkContainsOrEqual(HOST)), hasOneCard(equalTo(HOST_WITHOUT_CLASS)));
 		assertThat(queryCardsWhere(networkContains(SUBNET_24)), isEmpty());
 		assertThat(queryCardsWhere(networkContainsOrEqual(SUBNET_24)), isEmpty());
 		assertThat(queryCardsWhere(networkContained(HOST)), isEmpty());
-		assertThat(queryCardsWhere(networkContainedOrEqual(HOST)), hasOneCard(equalTo(HOST)));
-		assertThat(queryCardsWhere(networkContainedOrEqual(SUBNET_24)), hasOneCard(equalTo(HOST)));
-		assertThat(queryCardsWhere(networkRelationed(HOST)), hasOneCard(equalTo(HOST)));
+		assertThat(queryCardsWhere(networkContainedOrEqual(HOST)), hasOneCard(equalTo(HOST_WITHOUT_CLASS)));
+		assertThat(queryCardsWhere(networkContainedOrEqual(SUBNET_24)), hasOneCard(equalTo(HOST_WITHOUT_CLASS)));
+		assertThat(queryCardsWhere(networkRelationed(HOST)), hasOneCard(equalTo(HOST_WITHOUT_CLASS)));
 		assertThat(queryCardsWhere(networkRelationed(ANOTHER_HOST)), isEmpty());
-		assertThat(queryCardsWhere(networkRelationed(SUBNET_24)), hasOneCard(equalTo(HOST)));
+		assertThat(queryCardsWhere(networkRelationed(SUBNET_24)), hasOneCard(equalTo(HOST_WITHOUT_CLASS)));
 	}
 
 	@Test

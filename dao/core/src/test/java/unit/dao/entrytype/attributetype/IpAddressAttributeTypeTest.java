@@ -76,19 +76,7 @@ public class IpAddressAttributeTypeTest {
 		final String converted = type.convertValue(raw);
 
 		// then
-		assertThat(converted, equalTo("192.168.1.1/32"));
-	}
-
-	@Test
-	public void classAddedInSlashNotationWhenMissing() throws Exception {
-		// given
-		final String raw = "192.168.1.1";
-
-		// when
-		final String converted = type.convertValue(raw);
-
-		// then
-		assertThat(converted, equalTo("192.168.1.1/32"));
+		assertThat(converted, equalTo("192.168.1.1"));
 	}
 
 	@Test
