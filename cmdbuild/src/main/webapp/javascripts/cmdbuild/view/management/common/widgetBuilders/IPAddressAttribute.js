@@ -13,11 +13,11 @@ CMDBuild.WidgetBuilders.IPAddressAttribute.prototype.gridRenderer = function(v) 
 CMDBuild.WidgetBuilders.IPAddressAttribute.prototype.getQueryOptions = function() {
 	var operator = CMDBuild.WidgetBuilders.BaseAttribute.FilterOperator;
 	return [
-		[operator.EQUAL, "translation.equals"],
-		[operator.NET_CONTAINS, "translation.net_contains"],
-		[operator.NET_CONTAINED, "translation.net_contained"],
-		[operator.NET_CONTAINS, "translation.net_containsorequal"],
-		[operator.NET_CONTAINED, "translation.net_containedorequal"],
-		[operator.NET_RELATION, "translation.net_relation"]
+		[operator.EQUAL, "equals"],
+		[operator.NET_CONTAINS, "net_contains"],
+		[operator.NET_CONTAINED, "net_contained"],
+		[operator.NET_CONTAINSOREQUAL, "net_containsorequal"],
+		[operator.NET_CONTAINEDOREQUAL, "net_containedorequal"],
+		[operator.NET_RELATION, "net_relation"]
 	];
 };
