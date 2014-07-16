@@ -34,12 +34,12 @@ Ext.define("CMDBuild.AddCardMenuButton", {
 		this.classId = entry.get("id");
 		fillMenu.call(this, entry);
 
+		var privileges = _CMUtils.getClassPrivileges(this.classId);
 		if (_CMUtils.isSuperclass(this.classId)) {
-			this.setDisabled(this.isEmpty());
+			this.setDisabled(this.isEmpty() || privileges.crudDisabled.create);
 			this.showDropDownArrow();
 		} else {
-			var privileges = _CMUtils.getClassPrivileges(this.classId);
-			this.setDisabled(!privileges.create);
+			this.setDisabled(!privileges.create || privileges.crudDisabled.create);
 			this.hideDropDownArrow();
 		}
 	},

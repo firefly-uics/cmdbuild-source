@@ -120,6 +120,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 				final Card cardToCreate = Card.newInstance() //
 						.withClassName(card.getType().getIdentifier().getLocalName()) //
 						.withAllAttributes(card.getValues()) //
+						.withUser(operationUser().getAuthenticatedUser().getUsername()) //
 						.build();
 
 				dataAccessLogic.createCard(cardToCreate, false);
