@@ -10,10 +10,6 @@ public class OperatorAndValues {
 		return ContainsOperatorAndValue.contains(value);
 	}
 
-	public static OperatorAndValue containsOrEquals(final Object value) {
-		return new ContainsOrEquals(value);
-	}
-
 	public static OperatorAndValue emptyArray() {
 		return EmptyArrayOperatorAndValue.emptyArray();
 	}
@@ -34,16 +30,32 @@ public class OperatorAndValues {
 		return InOperatorAndValue.in(objects);
 	}
 
-	public static OperatorAndValue isContainedWithinOrEquals(final Object value) {
-		return new IsContainedWithinOrEquals(value);
+	public static OperatorAndValue isNull() {
+		return NullOperatorAndValue.isNull();
 	}
 
 	public static OperatorAndValue lt(final Object value) {
 		return LessThanOperatorAndValue.lt(value);
 	}
 
-	public static OperatorAndValue isNull() {
-		return NullOperatorAndValue.isNull();
+	public static OperatorAndValue networkContained(final Object value) {
+		return new NetworkContained(value);
+	}
+
+	public static OperatorAndValue networkContainedOrEqual(final Object value) {
+		return new NetworkContainedOrEqual(value);
+	}
+
+	public static OperatorAndValue networkContains(final Object value) {
+		return new NetworkContains(value);
+	}
+
+	public static OperatorAndValue networkContainsOrEqual(final Object value) {
+		return new NetworkContainsOrEqual(value);
+	}
+
+	public static OperatorAndValue networkRelationed(final Object value) {
+		return new NetworkRelationed(value);
 	}
 
 	public static OperatorAndValue stringArrayOverlap(final Object value) {

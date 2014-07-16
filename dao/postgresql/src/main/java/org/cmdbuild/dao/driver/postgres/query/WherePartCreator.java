@@ -30,8 +30,10 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.NetworkContained;
+import org.cmdbuild.dao.query.clause.where.NetworkContains;
 import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
-import org.cmdbuild.dao.query.clause.where.ContainsOrEquals;
+import org.cmdbuild.dao.query.clause.where.NetworkContainsOrEqual;
 import org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue;
@@ -40,7 +42,8 @@ import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
 import org.cmdbuild.dao.query.clause.where.FunctionWhereClause;
 import org.cmdbuild.dao.query.clause.where.GreaterThanOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.InOperatorAndValue;
-import org.cmdbuild.dao.query.clause.where.IsContainedWithinOrEquals;
+import org.cmdbuild.dao.query.clause.where.NetworkRelationed;
+import org.cmdbuild.dao.query.clause.where.NetworkContainedOrEqual;
 import org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.NotWhereClause;
 import org.cmdbuild.dao.query.clause.where.NullOperatorAndValue;
@@ -170,7 +173,9 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	public void visit(final SimpleWhereClause whereClause) {
 		whereClause.getOperator().accept(new OperatorAndValueVisitor() {
 
+			private static final String OPERATOR_INET_IS_CONTAINED_WITHIN = "<<";
 			private static final String OPERATOR_INET_IS_CONTAINED_WITHIN_OR_EQUALS = "<<=";
+			private static final String OPERATOR_INET_CONTAINS = ">>";
 			private static final String OPERATOR_INET_CONTAINS_OR_EQUALS = ">>=";
 
 			@Override
@@ -242,15 +247,42 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 			}
 
 			@Override
-			public void visit(final IsContainedWithinOrEquals operatorAndValue) {
+			public void visit(NetworkContained operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(),
+						OPERATOR_INET_IS_CONTAINED_WITHIN, valueOf(operatorAndValue.getValue())));
+			}
+
+			@Override
+			public void visit(final NetworkContainedOrEqual operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(),
 						OPERATOR_INET_IS_CONTAINED_WITHIN_OR_EQUALS, valueOf(operatorAndValue.getValue())));
 			}
 
 			@Override
-			public void visit(ContainsOrEquals operatorAndValue) {
+			public void visit(final NetworkContains operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(),
+						OPERATOR_INET_CONTAINS, valueOf(operatorAndValue.getValue())));
+			}
+
+			@Override
+			public void visit(final NetworkContainsOrEqual operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(),
 						OPERATOR_INET_CONTAINS_OR_EQUALS, valueOf(operatorAndValue.getValue())));
+			}
+
+			@Override
+			public void visit(final NetworkRelationed operatorAndValue) {
+				final QueryAliasAttribute attribute = whereClause.getAttribute();
+				final String cast = whereClause.getAttributeNameCast();
+				final Supplier<Object> valueOf = valueOf(operatorAndValue.getValue());
+				append("(" //
+						+ //
+						attributeFilter(attribute, cast, OPERATOR_INET_IS_CONTAINED_WITHIN_OR_EQUALS, valueOf) //
+						+ " OR " //
+						+ attributeFilter(attribute, cast, OPERATOR_EQ, valueOf) //
+						+ " OR " //
+						+ attributeFilter(attribute, cast, OPERATOR_INET_CONTAINS_OR_EQUALS, valueOf) //
+						+ ")");
 			}
 
 			private Supplier<Object> valueOf(final Object value) {
@@ -394,4 +426,5 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		}.findAttribute(querySpecs.getFromClause().getType());
 		return (_attribute == null) ? UndefinedAttributeType.undefined() : _attribute.getType();
 	}
+
 }

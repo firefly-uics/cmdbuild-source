@@ -1,10 +1,10 @@
 package org.cmdbuild.dao.query.clause.where;
 
-public class ContainsOrEquals implements OperatorAndValue {
+public class NetworkContainedOrEqual implements OperatorAndValue {
 
 	private final Object value;
 
-	public ContainsOrEquals(final Object value) {
+	public NetworkContainedOrEqual(final Object value) {
 		this.value = value;
 	}
 
