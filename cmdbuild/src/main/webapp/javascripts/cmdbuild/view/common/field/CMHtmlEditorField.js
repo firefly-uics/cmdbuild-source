@@ -93,8 +93,15 @@
 					return this.callParent(arguments);
 			} else {
 				var value = this.getValue();
-				value = Ext.String.trim(value);
-				return value != "" && value != null;
+				if (! value) {
+					return false;
+				}
+				var controlValue = value;
+				controlValue = controlValue.split("<div>").join("");
+				controlValue = controlValue.split("</div>").join("");
+				controlValue = controlValue.split("<br>").join("");
+				var thereAreData = Ext.String.trim(controlValue);
+				return thereAreData != "";
 			}
 		}
 	});
