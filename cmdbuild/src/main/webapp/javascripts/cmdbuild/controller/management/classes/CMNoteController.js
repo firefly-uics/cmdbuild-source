@@ -49,7 +49,7 @@
 
 		updateViewPrivilegesForCard: function(card) {
 			var privileges = _CMUtils.getEntryTypePrivilegesByCard(card);
-			this.view.updateWritePrivileges(privileges.write);
+			this.view.updateWritePrivileges(privileges.write && ! privileges.crudDisabled.modify);
 		},
 
 		onSaveNoteClick: function() {

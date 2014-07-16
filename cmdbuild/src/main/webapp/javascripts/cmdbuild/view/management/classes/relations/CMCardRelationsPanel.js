@@ -266,13 +266,14 @@
 			tableId = record.get(TARGET_CLASS_ID),
 			domainObj = _CMCache.getDomainById(record.get("dom_id")),
 			table = _CMCache.getClassById(tableId);
-
+		var entryType = _CMCache.getEntryTypeById(tableId);
+		var privileges =  _CMUtils.getEntryTypePrivileges(entryType);
 		if (this.cmWithEditRelationIcons && domainObj.get("writePrivileges")) {
 			actionsHtml += '<img style="cursor:pointer" title="'+tr.edit_relation+'" class="action-relation-edit" src="images/icons/link_edit.png"/>'
 			+ '<img style="cursor:pointer" title="'+tr.delete_relation+'" class="action-relation-delete" src="images/icons/link_delete.png"/>';
 		}
 
-		if (table && table.get("priv_write")) {
+		if (table && table.get("priv_write") && ! privileges.crudDisabled.modify) {
 			actionsHtml += '<img style="cursor:pointer" class="action-relation-editcard" src="images/icons/modify.png"/>';
 		} else {
 			actionsHtml += '<img style="cursor:pointer" title="'+tr.view_relation+'" class="action-relation-viewcard" src="images/icons/zoom.png"/>';

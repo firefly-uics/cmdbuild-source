@@ -23,4 +23,7 @@
 	</bean>
 	<bean id="operationUserInterceptor" class="org.cmdbuild.services.soap.OperationUserInterceptor" />
 
+	<bean id="addDefaultNamespaceInterceptor"
+		class="org.cmdbuild.services.soap.AddDefaultNamespaceInterceptor" />
+
 </beans>
