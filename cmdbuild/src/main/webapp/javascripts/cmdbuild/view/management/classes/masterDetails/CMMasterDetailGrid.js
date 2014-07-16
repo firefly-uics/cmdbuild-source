@@ -103,12 +103,22 @@
 	}
 
 	function getIconsToRender(record) {
-		var icons = ["showDetail", "showGraph", "note"];
+		var icons = ["showDetail", "note"];
 		var privileges = _CMUtils.getEntryTypePrivilegesByCard(record);
-		if (privileges.write) {
-			icons = ["editDetail", "deleteDetail", "showGraph", "note"];
+		if (privileges.write && !(privileges.crudDisabled.modify || privileges.crudDisabled.remove)) {
+			icons = ["editDetail", "deleteDetail", "note"];
+		}
+		else if (privileges.write && ! privileges.crudDisabled.modify) {
+			icons = ["editDetail", "note"];
+		}
+		else if (privileges.write && ! privileges.crudDisabled.remove) {
+			icons = ["showDetail", "deleteDetail", "note"];
 		}
 
+		if (CMDBuild.Config.graph.enabled=="true") {
+			icons.push("showGraph");
+			
+		}
 		if (CMDBuild.Config.dms.enabled == "true") {
 			icons.push("attach");
 		}
