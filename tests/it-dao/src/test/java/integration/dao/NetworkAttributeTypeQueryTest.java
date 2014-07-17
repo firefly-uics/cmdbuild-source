@@ -16,6 +16,7 @@ import static utils.IntegrationTestUtils.newClass;
 
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType.Type;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.clause.where.OperatorAndValue;
 import org.hamcrest.Description;
@@ -83,7 +84,7 @@ public class NetworkAttributeTypeQueryTest extends IntegrationTestBase {
 	private static final Object ANOTHER_SUBNET_16 = "192.167.0.0/16";
 	private static final Object SUBNET_8 = "192.0.0.0/8";
 
-	private static final IpAddressAttributeType ATTRIBUTE_TYPE = new IpAddressAttributeType();
+	private static final IpAddressAttributeType ATTRIBUTE_TYPE = new IpAddressAttributeType(Type.IPV4);
 
 	private DBClass clazz;
 

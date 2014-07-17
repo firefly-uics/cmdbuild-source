@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType.Type;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.cmdbuild.model.data.Card;
@@ -22,7 +23,7 @@ public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 
 	@Override
 	protected void initializeDatabaseData() {
-		final DBAttribute createdAttribute = addAttributeToClass(INET_ATTRIBUTE, new IpAddressAttributeType(),
+		final DBAttribute createdAttribute = addAttributeToClass(INET_ATTRIBUTE, new IpAddressAttributeType(Type.IPV4),
 				createdClass);
 
 		dbDataView().createCardFor(createdClass) //

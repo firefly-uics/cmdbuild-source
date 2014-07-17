@@ -137,6 +137,7 @@ public class CommunicationConstants {
 			INHERITED = "inherited", //
 			INHERIT = "inherits", //
 			INVERSE_DESCRIPTION = "descrinv", //
+			IP_TYPE = "ipType", //
 			IS_ACTIVE = "isActive", //
 			IS_ADMINISTRATOR = "isAdministrator", //
 			IS_DEFAULT = "isDefault", //
