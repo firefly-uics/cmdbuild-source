@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entrytype.DBAttribute.AttributeMetadata;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType.Meta;
@@ -20,6 +21,7 @@ import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType.Type;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
@@ -67,6 +69,17 @@ public enum SqlType {
 		public String sqlCast() {
 			return "inet";
 		}
+
+		@Override
+		protected Object[] getConstructorParams(String[] stringParams, Meta meta) {
+			if (meta instanceof AttributeMetadata) {
+				final String typeValue = AttributeMetadata.class.cast(meta).get(AttributeMetadata.IP_TYPE);
+				final Type type = Type.of(typeValue, Type.IPV4);
+				return new Object[] { type };
+			}
+			return super.getConstructorParams(stringParams, meta);
+		}
+
 	}, //
 	int4(IntegerAttributeType.class, LookupAttributeType.class, ReferenceAttributeType.class,
 			ForeignKeyAttributeType.class) {

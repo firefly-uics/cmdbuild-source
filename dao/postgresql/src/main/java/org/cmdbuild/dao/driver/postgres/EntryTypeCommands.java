@@ -13,6 +13,7 @@ import static org.cmdbuild.dao.entrytype.DBIdentifier.fromNameAndNamespace;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType.Type;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
@@ -60,6 +62,9 @@ import org.cmdbuild.dao.view.DBDataView.DBDomainDefinition;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.RowMapper;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 public class EntryTypeCommands implements LoggingSupport {
 
@@ -373,7 +378,7 @@ public class EntryTypeCommands implements LoggingSupport {
 	private String commentFrom(final DBAttributeDefinition definition) {
 		return new CMAttributeTypeVisitor() {
 
-			private final StringBuilder builder = new StringBuilder();
+			private final Collection<String> elements = Lists.newArrayList();
 
 			@Override
 			public void visit(final BooleanAttributeType attributeType) {
@@ -414,6 +419,7 @@ public class EntryTypeCommands implements LoggingSupport {
 
 			@Override
 			public void visit(final IpAddressAttributeType attributeType) {
+				append(DBAttribute.AttributeMetadata.IP_TYPE, attributeType.getType().name().toLowerCase());
 			}
 
 			@Override
@@ -456,10 +462,7 @@ public class EntryTypeCommands implements LoggingSupport {
 			private void append(final String key, final String value) {
 				final CommentMapper commentMapper = CommentMappers.ATTRIBUTE_COMMENT_MAPPER;
 				final String commentKey = commentMapper.getCommentNameFromMeta(key);
-				if (builder.length() > 0) {
-					builder.append("|");
-				}
-				builder.append(format("%s: %s", commentKey, value));
+				elements.add(format("%s: %s", commentKey, value));
 			}
 
 			public String build(final DBAttributeDefinition definition) {
@@ -474,7 +477,7 @@ public class EntryTypeCommands implements LoggingSupport {
 				append(DBAttribute.AttributeMetadata.INDEX, Integer.toString(definition.getIndex()));
 				append(EntryTypeMetadata.MODE, definition.getMode().toString().toLowerCase());
 				append(DBAttribute.AttributeMetadata.FIELD_MODE, definition.getMode().toString().toLowerCase());
-				return builder.toString();
+				return Joiner.on("|").join(elements);
 			}
 
 		} //

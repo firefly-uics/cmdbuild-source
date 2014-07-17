@@ -448,7 +448,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		assertEquals("10/02/2012", fetchedCard.getAttribute(DATE_ATTRIBUTE_NAME));
 		assertEquals("18:22:11", fetchedCard.getAttribute(TIME_ATTRIBUTE_NAME));
 		assertEquals("10/02/2012 18:22:11", fetchedCard.getAttribute(TIMESTAMP_ATTRIBUTE_NAME));
-		assertEquals("192.168.0.1/32", fetchedCard.getAttribute(INET_ATTRIBUTE_NAME));
+		assertEquals("192.168.0.1", fetchedCard.getAttribute(INET_ATTRIBUTE_NAME));
 		assertEquals(true, fetchedCard.getAttribute(BOOLEAN_ATTRIBUTE_NAME));
 	}
 

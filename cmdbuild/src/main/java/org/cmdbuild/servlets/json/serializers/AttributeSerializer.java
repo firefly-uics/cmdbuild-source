@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.GROUP_FOR_CLIENT;
+import static org.cmdbuild.logic.translation.TranslationObjects.nullTranslationObject;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_VALUE;
@@ -14,6 +15,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD_MODE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP;
 import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP_DEFAULT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.INHERITED;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IP_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LENGTH;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUP;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
@@ -62,7 +64,7 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.translation.AttributeClassTranslation;
 import org.cmdbuild.logic.translation.AttributeDomainTranslation;
 import org.cmdbuild.logic.translation.TranslationObject;
-import static org.cmdbuild.logic.translation.TranslationObjects.*;
+import org.cmdbuild.model.data.Attribute.IpType;
 import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.json.JSONArray;
@@ -394,6 +396,7 @@ public class AttributeSerializer extends Serializer {
 
 		@Override
 		public void visit(final IpAddressAttributeType attributeType) {
+			serialization.put(IP_TYPE, IpType.of(attributeType.getType()).name);
 		}
 
 		@Override
@@ -557,16 +560,16 @@ public class AttributeSerializer extends Serializer {
 			return serialization;
 		}
 
-		private String searchGroupNameTranslationFromOtherAttributes(CMAttribute attribute) {
+		private String searchGroupNameTranslationFromOtherAttributes(final CMAttribute attribute) {
 			final String groupName = attribute.getGroup();
 			final CMClass owner = (CMClass) attribute.getOwner();
 
-			String translatedGroupName = new CMEntryTypeVisitor() {
+			final String translatedGroupName = new CMEntryTypeVisitor() {
 
 				String translatedGroupName;
 				String groupName;
 
-				public String searchGroupNameTranslation(CMClass owner, String groupName) {
+				public String searchGroupNameTranslation(final CMClass owner, final String groupName) {
 					this.groupName = groupName;
 					owner.accept(this);
 					return translatedGroupName;
@@ -584,8 +587,8 @@ public class AttributeSerializer extends Serializer {
 
 				@Override
 				public void visit(final CMClass type) {
-					Iterable<? extends CMAttribute> allAttributes = owner.getAttributes();
-					for (CMAttribute a : allAttributes) {
+					final Iterable<? extends CMAttribute> allAttributes = owner.getAttributes();
+					for (final CMAttribute a : allAttributes) {
 						if (!groupName.equals(a.getGroup())) {
 							continue;
 						}
@@ -594,7 +597,7 @@ public class AttributeSerializer extends Serializer {
 								.withField(GROUP_FOR_CLIENT) //
 								.withName(a.getName()) //
 								.build();
-						String groupNameTranslation = translationFacade.read(groupNameTranslationObject);
+						final String groupNameTranslation = translationFacade.read(groupNameTranslationObject);
 						if (!isBlank(groupNameTranslation)) {
 							translatedGroupName = groupNameTranslation;
 							break;
@@ -620,7 +623,7 @@ public class AttributeSerializer extends Serializer {
 				if (parent != null) {
 					final CMAttribute inheritedAttribute = parent.getAttribute(attribute.getName());
 					if (inheritedAttribute != null) {
-						AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
+						final AttributeClassTranslation translationObject = AttributeClassTranslation.newInstance() //
 								.forClass(parent.getName()) //
 								.withField(fieldToTranslate) //
 								.withName(attribute.getName()) //

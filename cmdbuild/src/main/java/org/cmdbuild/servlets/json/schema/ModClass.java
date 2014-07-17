@@ -27,6 +27,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.INDEX;
 import static org.cmdbuild.servlets.json.CommunicationConstants.INHERIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IP_TYPE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_PROCESS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LENGTH;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUP;
@@ -70,6 +71,7 @@ import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Delete
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Attribute;
+import org.cmdbuild.model.data.Attribute.IpType;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
@@ -349,7 +351,9 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(value = GROUP, required = false) final String group, //
 			@Parameter(value = META_DATA, required = false) final JSONObject meta, //
 			@Parameter(value = EDITOR_TYPE, required = false) final String editorType, //
-			@Parameter(value = CLASS_NAME) final String className) throws Exception {
+			@Parameter(value = IP_TYPE, required = false) final String ipType, //
+			@Parameter(value = CLASS_NAME) final String className //
+	) throws Exception {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(name) //
 				.withOwnerName(className) //
@@ -365,6 +369,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.withMode(JsonModeMapper.modeFrom(fieldMode)) //
 				.withEditorType(editorType) //
 				.withFilter(filter) //
+				.withIpType(IpType.of(ipType)) //
 				.withForeignKeyDestinationClassName(fkDestinationName) //
 				.thatIsDisplayableInList(isBaseDSP) //
 				.thatIsMandatory(isNotNull) //
