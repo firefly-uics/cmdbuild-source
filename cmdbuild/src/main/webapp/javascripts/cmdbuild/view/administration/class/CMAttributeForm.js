@@ -8,6 +8,10 @@
 		plain: "PLAIN",
 		html: "HTML"
 	};
+	IP_TYPE = {
+		ipv4: "ipv4",
+		ipv6: "ipv6"
+	};
 
 	function getTableType(classObj) {
 		return tableTypeMap[classObj.get("tableType")];
@@ -341,6 +345,24 @@
 					]
 				})
 			});
+			this.ipAttributeWidget = new Ext.form.ComboBox({
+				name: _CMProxy.parameter.IP_TYPE,
+				fieldLabel: "@@ IP Type",//CMDBuild.Translation.administration.modClass.attributeProperties.editorType.label,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.MIDDLE_FIELD_WIDTH,
+				valueField: "value",
+				displayField: "name",
+				queryMode: "local",
+				editable: false,
+				allowBlank: false,
+				store: new Ext.data.SimpleStore({
+					fields: ["value","name"],
+					data : [
+						[IP_TYPE.ipv4, "@@ ipv4"/*CMDBuild.Translation.administration.modClass.attributeProperties.editorType.plain*/],
+						[IP_TYPE.ipv6, "@@ ipv6"/*CMDBuild.Translation.administration.modClass.attributeProperties.editorType.html*/]
+					]
+				})
+			});
 
 			this.contextualFields = {
 				STRING : [ this.stringLength ],
@@ -348,7 +370,8 @@
 				LOOKUP : [ this.lookupTypes ],
 				FOREIGNKEY : [ this.foreignKeyDest ],
 				REFERENCE : [ this.referenceDomains, this.fieldFilter, this.addMetadataBtn ],
-				TEXT: [this.textAttributeWidget]
+				TEXT: [this.textAttributeWidget],
+				INET: [this.ipAttributeWidget]
 			};
 
 			this.buildBasePropertiesPanel();
@@ -369,7 +392,8 @@
 					this.lookupTypes,
 					this.fieldFilter,
 					this.addMetadataBtn,
-					this.textAttributeWidget
+					this.textAttributeWidget,
+					this.ipAttributeWidget
 				]
 			});
 
