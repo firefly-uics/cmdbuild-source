@@ -113,6 +113,7 @@
 										if (item[CMDBuild.core.proxy.CMProxyConstants.RELATIONS_SIZE] == 1)
 											toDisableButtons.push(domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.ID));
 									} break;
+
 									case '1:N': {
 										if (item[CMDBuild.core.proxy.CMProxyConstants.RELATIONS_SIZE] == 1)
 											toDisableButtons.push(domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.ID));
@@ -122,7 +123,15 @@
 
 							// Loop trough split button menu items and enable/disable
 							Ext.Array.forEach(this.view.addRelationButton.menu.items.items, function(item, index, allItems) {
-								item.setDisabled(Ext.Array.contains(toDisableButtons, item.domain.dom_id));
+//								item.setDisabled(Ext.Array.contains(toDisableButtons, item.domain.dom_id));
+								// TODO: setup error message
+								item.setHandler(function() {
+									CMDBuild.Msg.error(
+										CMDBuild.Translation.common.failure,
+										'errorMessage',
+										false
+									);
+								});
 							}, this);
 						// END: AddRelation button update
 					}
@@ -202,14 +211,14 @@
 						parameters[CMDBuild.core.proxy.CMProxyConstants.CARDS] = Ext.encode(cardsIdArray);
 
 						// TODO: change with real implementation
-//							CMDBuild.core.proxy.CMProxyRelations.isCardAssignedToRelation({
-//								params: parameters,
-//								scope: this,
-//								success: function(records, operation, success) {
-//									_debug('CMDBuild.ServiceProxy.relations.isCardAssignedToRelation success');
-//									// returns data to delete from grid
-//								}
-//							});
+//						CMDBuild.core.proxy.CMProxyRelations.isCardAssignedToRelation({
+//							params: parameters,
+//							scope: this,
+//							success: function(records, operation, success) {
+//								_debug('CMDBuild.ServiceProxy.relations.isCardAssignedToRelation success');
+//								// returns data to delete from grid
+//							}
+//						});
 
 						var array = CMDBuild.core.proxy.CMProxyRelations.isCardAssignedToRelation({
 							params: parameters,
