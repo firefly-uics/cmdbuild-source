@@ -12,6 +12,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
@@ -321,6 +322,10 @@ public class Utils {
 					return attributeWithNewValues.getType();
 				} else if (existingAttribute.getType() instanceof DecimalAttributeType
 						&& attributeWithNewValues.getType() instanceof DecimalAttributeType) {
+
+					return attributeWithNewValues.getType();
+				} else if (existingAttribute.getType() instanceof IpAddressAttributeType
+						&& attributeWithNewValues.getType() instanceof IpAddressAttributeType) {
 
 					return attributeWithNewValues.getType();
 				} else {

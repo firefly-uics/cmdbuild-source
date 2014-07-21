@@ -81,6 +81,7 @@
 			IMAP_SSL: 'imapSsl',
 			INCOMING_FOLDER: 'incomingFolder',
 			INDEX: 'index',
+			IP_TYPE: 'ipType',
 			IS_DEFAULT: 'isDefault',
 			IS_KEY: 'isKey',
 			KEY: 'key',
