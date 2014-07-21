@@ -123,15 +123,7 @@
 
 							// Loop trough split button menu items and enable/disable
 							Ext.Array.forEach(this.view.addRelationButton.menu.items.items, function(item, index, allItems) {
-//								item.setDisabled(Ext.Array.contains(toDisableButtons, item.domain.dom_id));
-								// TODO: setup error message
-								item.setHandler(function() {
-									CMDBuild.Msg.error(
-										CMDBuild.Translation.common.failure,
-										'errorMessage',
-										false
-									);
-								});
+								item.setDisabled(Ext.Array.contains(toDisableButtons, item.domain.dom_id));
 							}, this);
 						// END: AddRelation button update
 					}
