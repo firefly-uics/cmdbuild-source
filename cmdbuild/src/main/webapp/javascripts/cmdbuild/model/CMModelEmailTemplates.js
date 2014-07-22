@@ -27,4 +27,13 @@
 		]
 	});
 
+	Ext.define('CMDBuild.model.CMModelEmailTemplates.variablesWindow', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.core.proxy.CMProxyConstants.KEY, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.VALUE, type: 'string' }
+		]
+	});
+
 })();

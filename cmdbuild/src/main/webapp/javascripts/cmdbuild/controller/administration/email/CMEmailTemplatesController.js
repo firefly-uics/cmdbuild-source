@@ -9,6 +9,7 @@
 		grid: undefined,
 		selectedName: undefined,
 		selectionModel: undefined,
+		valuesWindowDataBuffer: undefined, // Buffer to hold all values windows grid datas
 		view: undefined,
 
 		/**
@@ -56,16 +57,88 @@
 				case 'onSaveButtonClick':
 					return this.onSaveButtonClick();
 
+				case 'onVariablesButtonClick':
+					return this.onVariablesButtonClick();
+
+				case 'onVariablesWindowAbort':
+					return this.onVariablesWindowAbort();
+
+				case 'onVariablesWindowSave':
+					return this.onVariablesWindowSave();
+
 				default: {
-					if (
-						this.parentDelegate
-						&& typeof this.parentDelegate == 'object'
-					) {
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
-					}
 				}
 			}
 		},
+
+		// Variables window controller functions
+			onVariablesButtonClick: function() {
+				this.variablesWindow = Ext.create('CMDBuild.view.administration.email.CMEmailTemplatesVariablesWindow');
+				this.setVariableWindowGridDatas(this.valuesWindowDataBuffer);
+				this.variablesWindow.delegate = this;
+				this.variablesWindow.show();
+			},
+
+			onVariablesWindowAbort: function() {
+				this.variablesWindow.hide();
+				this.setVariableWindowGridDatas(this.valuesWindowDataBuffer);
+			},
+
+			onVariablesWindowSave: function() {
+				this.variablesWindow.hide();
+				this.valuesWindowDataBuffer = this.getVariableWindowGridDatas();
+			},
+
+			// GETters functions
+				/**
+				 * @return (Object) data
+				 *
+				 * 	Example:
+				 * 		{
+				 * 			key1: value1,
+				 * 			key2: value2
+				 * 		}
+				 */
+				getVariableWindowGridDatas: function() {
+					var data = {};
+
+					// To validate and filter grid rows
+					this.variablesWindow.grid.getStore().each(function(record) {
+						if (
+							!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.KEY))
+							&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE))
+						) {
+							data[record.get(CMDBuild.core.proxy.CMProxyConstants.KEY)] = record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE);
+						}
+					});
+
+					return data;
+				},
+
+			// SETters functions
+				/**
+				 * Rewrite of loadData
+				 *
+				 * @param (Object) data
+				 */
+				setVariableWindowGridDatas: function(data) {
+					var store = this.variablesWindow.grid.getStore();
+					store.removeAll();
+
+					if (!Ext.isEmpty(data)) {
+						for (var key in data) {
+							var recordConf = {};
+
+							recordConf[CMDBuild.core.proxy.CMProxyConstants.KEY] = key;
+							recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = data[key] || '';
+
+							store.add(recordConf);
+						}
+					}
+				},
+		// END: Variables window controller functions
 
 		onAbortButtonClick: function() {
 			if (!Ext.isEmpty(this.selectedName)) {
@@ -116,6 +189,7 @@
 					},
 					callback: function() {
 						me.form.loadRecord(this.getAt(0));
+						me.valuesWindowDataBuffer = this.getAt(0).get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
 						me.form.disableModify(true);
 					}
 				});
@@ -126,6 +200,9 @@
 			// Validate before save
 			if (this.validate(this.form)) {
 				var formData = this.form.getData(true);
+
+				// To put and encode variablesWindow grid values
+				formData[CMDBuild.core.proxy.CMProxyConstants.VARIABLES] = Ext.encode(this.valuesWindowDataBuffer);
 
 				CMDBuild.LoadMask.get().show();
 

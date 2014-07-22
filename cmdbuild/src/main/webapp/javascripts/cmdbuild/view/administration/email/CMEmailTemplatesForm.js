@@ -64,6 +64,18 @@
 				allowBlank: false
 			});
 
+			this.addVariablesButton = Ext.create('Ext.button.Button', {
+				text: tr.valuesWindow.title,
+				scope: this,
+				iconCls: 'modify',
+				anchor: 'auto',
+				margin: '0 0 0 ' + (CMDBuild.LABEL_WIDTH + 5),
+
+				handler: function() {
+					this.delegate.cmOn('onVariablesButtonClick');
+				}
+			});
+
 			// Splitted-view wrapper
 			this.wrapper = Ext.create('Ext.container.Container', {
 				frame: false,
@@ -142,7 +154,8 @@
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 								considerAsFieldToDisable: true,
 								enableFont: false
-							})
+							}),
+							this.addVariablesButton
 						]
 					}
 				]
