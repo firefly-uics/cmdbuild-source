@@ -60,12 +60,8 @@
 					return this.onSetDefaultButtonClick();
 
 				default: {
-					if (
-						this.parentDelegate
-						&& typeof this.parentDelegate == 'object'
-					) {
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
-					}
 				}
 			}
 		},

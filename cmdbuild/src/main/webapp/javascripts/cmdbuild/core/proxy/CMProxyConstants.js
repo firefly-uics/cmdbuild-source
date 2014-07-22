@@ -150,6 +150,7 @@
 			UPDATE: 'update',
 			USERNAME: 'username',
 			VALUE: 'value',
+			VARIABLES: 'variables',
 			WIDGET: 'widget',
 			WIDGET_ID: 'widgetId',
 			WORKFLOW: 'workflow',
