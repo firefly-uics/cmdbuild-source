@@ -70,7 +70,7 @@ public class EntryTypeCommands implements LoggingSupport {
 
 	private static final String DEFAULT_SCHEMA = "public";
 
-	private static final Pattern COMMENT_PATTERN = Pattern.compile("(([A-Z0-9]+): ([^|]*))*");
+	private static final Pattern COMMENT_PATTERN = Pattern.compile("(([A-Z0-9_]+): ([^|]*))*");
 
 	private final DBDriver driver;
 	private final JdbcTemplate jdbcTemplate;
