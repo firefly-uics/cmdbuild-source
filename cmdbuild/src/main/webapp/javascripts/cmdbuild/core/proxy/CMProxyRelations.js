@@ -52,15 +52,15 @@
 			/**
 			 * @param (Object) parameters
 			 */
-			isCardAssignedToRelation: function(parameters) {
-				parameters.method = 'POST';
-				parameters.url = CMDBuild.core.proxy.CMProxyUrlIndex.relations.isCardAssignedToRelation;
-
-				// TODO: change with real implementation
-				//CMDBuild.ServiceProxy.core.doRequest(parameters);
-
-				var array = Ext.decode(parameters.params[CMDBuild.core.proxy.CMProxyConstants.CARDS]);
-				return [array[0], array[2]];
+			getAlreadyRelatedCards: function(parameters) {
+				CMDBuild.Ajax.request({
+					method: 'POST',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.relations.getAlreadyRelatedCards,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
 			}
 		}
 	});
