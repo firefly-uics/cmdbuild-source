@@ -81,6 +81,7 @@
 
 		loadData: function() {
 			if (this.card != null && tabIsActive(this.view)) {
+				var me = this;
 				var el = this.view.getEl();
 
 				if (el)
@@ -121,11 +122,9 @@
 								}
 							}, this);
 
-							// Loop trough split button menu items and enable/disable
+							// Loop trough split button menu items to modify handler if relation is full
 							Ext.Array.forEach(this.view.addRelationButton.menu.items.items, function(item, index, allItems) {
-//								item.setDisabled(Ext.Array.contains(toDisableButtons, item.domain.dom_id));
-
-								if (Ext.Array.contains(toDisableButtons, item.domain.dom_id))
+								if (Ext.Array.contains(toDisableButtons, item.domain.dom_id)) { // Overwrite button handler to display error popup
 									item.setHandler(function() {
 										CMDBuild.Msg.error(
 											CMDBuild.Translation.common.failure,
@@ -133,6 +132,11 @@
 											false
 										);
 									});
+								} else { // Setup standard handler for button
+									item.setHandler(function(item, e) {
+										me.view.addRelationButton.fireEvent('cmClick', item.domain);
+									});
+								}
 							}, this);
 						// END: AddRelation button update
 					}
@@ -163,6 +167,7 @@
 			var me = this;
 			var masterAndSlave = getMasterAndSlave(model.src);
 			var domain = _CMCache.getDomainById(model.dom_id);
+			var classData = _CMCache.getClassById(model.dst_cid);
 			var isMany = false;
 			var destination = model.src == '_1' ? '_2' : '_1';
 
@@ -207,36 +212,30 @@
 							cardsIdArray.push(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
 						});
 
-						parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_ID] = parseInt(model.dom_id);
-						parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_TARGET_ID] = model.dst_cid;
+						parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+						parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = classData.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
 						parameters[CMDBuild.core.proxy.CMProxyConstants.CARDS] = Ext.encode(cardsIdArray);
 
-						// TODO: change with real implementation
-//						CMDBuild.core.proxy.CMProxyRelations.isCardAssignedToRelation({
-//							params: parameters,
-//							scope: this,
-//							success: function(records, operation, success) {
-//								_debug('CMDBuild.ServiceProxy.relations.isCardAssignedToRelation success');
-//								// returns data to delete from grid
-//							}
-//						});
-
-						var array = CMDBuild.core.proxy.CMProxyRelations.isCardAssignedToRelation({
+						CMDBuild.core.proxy.CMProxyRelations.getAlreadyRelatedCards({
 							params: parameters,
 							scope: this,
-							success: function(records, operation, success) {
-								_debug('CMDBuild.ServiceProxy.relations.isCardAssignedToRelation success');
+							success: function(result, options, decodedResult) {
+								var alreadyRelatedCardsIds = [];
+
+								Ext.Array.forEach(decodedResult.response, function(item, index, allItems) {
+									if (item[CMDBuild.core.proxy.CMProxyConstants.ID])
+										alreadyRelatedCardsIds.push(item[CMDBuild.core.proxy.CMProxyConstants.ID]);
+								});
+
+								editRelationWindow.grid.getStore().clearFilter(true);
+								editRelationWindow.grid.getStore().filterBy(function(result, id) {
+									if (Ext.Array.contains(alreadyRelatedCardsIds, id))
+										return false;
+
+									return true;
+								}, this);
 							}
 						});
-
-						// TODO: move in proxy call success function
-						editRelationWindow.grid.getStore().clearFilter(true);
-						editRelationWindow.grid.getStore().filterBy(function(record, id) {
-							if (Ext.Array.contains(array, id))
-								return false;
-
-							return true;
-						}, this);
 					}, 100)();
 				}
 			});

@@ -150,7 +150,7 @@
 				remove: 'services/json/management/modcard/deleterelation',
 
 				removeDetail: 'services/json/management/modcard/deletedetail',
-				isCardAssignedToRelation: 'services/json/management/modcard/iscardassignedtorelation'
+				getAlreadyRelatedCards: 'services/json/management/modcard/getalreadyrelatedcards'
 			},
 
 			tasks: {
