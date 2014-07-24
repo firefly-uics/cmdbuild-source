@@ -1,10 +1,14 @@
 package org.cmdbuild.model.widget;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailLogic.EmailSubmission;
 import org.cmdbuild.model.AbstractEmail;
@@ -43,7 +47,11 @@ public class ManageEmail extends Widget {
 	}
 
 	public static class EmailTemplate extends AbstractEmail {
+
+		private static final Map<String, String> NO_VARIABLES = Collections.emptyMap();
+
 		private String condition;
+		private Map<String, String> variables;
 
 		public String getCondition() {
 			return condition;
@@ -52,6 +60,20 @@ public class ManageEmail extends Widget {
 		public void setCondition(final String condition) {
 			this.condition = condition;
 		}
+
+		public Map<String, String> getVariables() {
+			return defaultIfNull(variables, NO_VARIABLES);
+		}
+
+		public void setVariables(final Map<String, String> variables) {
+			this.variables = variables;
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
 	}
 
 	private boolean readOnly;
