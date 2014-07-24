@@ -6,6 +6,8 @@ import static com.google.common.collect.FluentIterable.from;
 import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailTemplate;
@@ -70,10 +72,15 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 		public String getBody() {
 			return delegate.getBody();
 		}
-		
+
 		@Override
 		public Map<String, String> getVariables() {
 			return delegate.getVariables();
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
 
 	}
