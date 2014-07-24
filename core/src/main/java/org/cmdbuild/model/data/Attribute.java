@@ -169,7 +169,7 @@ public class Attribute {
 
 		/**
 		 * Returns the enum constant with the specified name (case-insensitive).
-		 * 
+		 *
 		 * @throws IllegalArgumentException
 		 *             if no enum corresponds with the specified name
 		 */
@@ -179,7 +179,7 @@ public class Attribute {
 					return value;
 				}
 			}
-			throw new IllegalArgumentException(name);
+			return IPV4;
 		}
 
 		public static IpType of(final Type type) {
