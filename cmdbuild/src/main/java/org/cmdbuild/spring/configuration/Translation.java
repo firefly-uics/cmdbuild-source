@@ -1,9 +1,9 @@
 package org.cmdbuild.spring.configuration;
 
-import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Groupable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.StoreFactory;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.translation.TranslationConverter;
 import org.cmdbuild.logic.translation.DefaultTranslationLogic;
 import org.cmdbuild.logic.translation.SetupFacade;

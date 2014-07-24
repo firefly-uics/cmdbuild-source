@@ -6,19 +6,20 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.javax.mail.JavaxMailBasedMailApiFactory;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
 import org.cmdbuild.data.store.email.EmailConverter;
 import org.cmdbuild.data.store.email.EmailTemplate;
-import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
+import org.cmdbuild.data.store.email.EmailTemplateStore;
 import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.logic.email.TransactionalEmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
 import org.cmdbuild.services.email.DefaultEmailPersistence;
@@ -61,9 +62,10 @@ public class Email {
 
 	@Bean
 	public Store<StorableEmailAccount> emailAccountStore() {
-		return DataViewStore.newInstance( //
-				data.systemDataView(), //
-				emailAccountConverter());
+		return DataViewStore.<StorableEmailAccount> newInstance() //
+				.withDataView(data.systemDataView()) //
+				.withStorableConverter(emailAccountConverter()) //
+				.build();
 	}
 
 	@Bean
@@ -85,9 +87,10 @@ public class Email {
 
 	@Bean
 	protected Store<org.cmdbuild.data.store.email.Email> emailStore() {
-		return DataViewStore.newInstance( //
-				data.systemDataView(), //
-				emailStorableConverter());
+		return DataViewStore.<org.cmdbuild.data.store.email.Email> newInstance() //
+				.withDataView(data.systemDataView()) //
+				.withStorableConverter(emailStorableConverter()) //
+				.build();
 	}
 
 	@Bean
@@ -117,13 +120,10 @@ public class Email {
 	}
 
 	@Bean
-	protected EmailTemplateStorableConverter emailTemplateStorableConverter() {
-		return new EmailTemplateStorableConverter();
-	}
-
-	@Bean
 	protected Store<EmailTemplate> emailTemplateStore() {
-		return DataViewStore.newInstance(data.systemDataView(), emailTemplateStorableConverter());
+		return EmailTemplateStore.newInstance() //
+				.withDataView(data.systemDataView()) //
+				.build();
 	}
 
 	@Bean
@@ -142,9 +142,8 @@ public class Email {
 	}
 
 	@Bean
-	@Scope(PROTOTYPE)
 	public EmailTemplateLogic emailTemplateLogic() {
-		return new DefaultEmailTemplateLogic(emailTemplateStore());
+		return new TransactionalEmailTemplateLogic(new DefaultEmailTemplateLogic(emailTemplateStore()));
 	}
 
 	@Bean

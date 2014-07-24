@@ -73,6 +73,8 @@ COMMENT ON COLUMN "Metadata"."Code" IS 'MODE: read|DESCR: Schema|INDEX: 1';
 COMMENT ON COLUMN "Metadata"."Description" IS 'MODE: read|DESCR: Key|INDEX: 2';
 COMMENT ON COLUMN "Metadata"."Notes" IS 'MODE: read|DESCR: Value|INDEX: 3';
 
+SELECT cm_create_domain('ClassMetadata', 'MODE: reserved|TYPE: domain|CLASS1: Class|CLASS2: Metadata|DESCRDIR: |DESCRINV: |CARDIN: 1:N|STATUS: active');
+
 ---------------------------------------------
 -- Create Task class
 ---------------------------------------------
@@ -184,7 +186,7 @@ SELECT cm_create_class_attribute('_MdrScopedId', 'IdItem', 'int4', NULL, TRUE, F
 -- Email Templates
 ---------------------------------------------
 
-SELECT cm_create_class('_EmailTemplate', NULL, 'MODE: reserved|TYPE: class|DESCR: Email Templates|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class('_EmailTemplate', 'Class', 'MODE: reserved|TYPE: class|DESCR: Email Templates|SUPERCLASS: false|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'From', 'text', null, false, false, 'MODE: write|DESCR: From|INDEX: 2|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'To', 'text', null, false, false, 'MODE: write|DESCR: To|INDEX: 3|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'CC', 'text', null, false, false, 'MODE: write|DESCR: CC|INDEX: 4|STATUS: active');
@@ -198,7 +200,7 @@ SELECT _cm_attribute_set_uniqueness('"_EmailTemplate"'::regclass::oid, 'Code', T
 -- Email Accounts
 ---------------------------------------------
 
-SELECT cm_create_class('_EmailAccount', NULL, 'MODE: reserved|TYPE: class|DESCR: Email Accounts|SUPERCLASS: false|STATUS: active');
+SELECT cm_create_class('_EmailAccount', 'Class', 'MODE: reserved|TYPE: class|DESCR: Email Accounts|SUPERCLASS: false|STATUS: active');
 SELECT cm_create_class_attribute('_EmailAccount', 'IsDefault', 'boolean', null, false, false, 'MODE: write|DESCR: Is default|INDEX: 1|STATUS: active');
 SELECT cm_create_class_attribute('_EmailAccount', 'Address', 'varchar(100)', null, false, false, 'MODE: write|DESCR: Address|INDEX: 2|STATUS: active');
 SELECT cm_create_class_attribute('_EmailAccount', 'Username', 'varchar(100)', null, false, false, 'MODE: write|DESCR: Username|INDEX: 3|STATUS: active');

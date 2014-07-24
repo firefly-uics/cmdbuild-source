@@ -34,6 +34,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
+import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
 

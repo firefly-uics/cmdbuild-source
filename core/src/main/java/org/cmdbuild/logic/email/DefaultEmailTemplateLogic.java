@@ -3,6 +3,8 @@ package org.cmdbuild.logic.email;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.FluentIterable.from;
 
+import java.util.Map;
+
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
@@ -68,6 +70,11 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 		public String getBody() {
 			return delegate.getBody();
 		}
+		
+		@Override
+		public Map<String, String> getVariables() {
+			return delegate.getVariables();
+		}
 
 	}
 
@@ -93,6 +100,7 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 					.withBcc(input.getBcc()) //
 					.withSubject(input.getSubject()) //
 					.withBody(input.getBody()) //
+					.withVariables(input.getVariables()) //
 					.build();
 		};
 

@@ -44,10 +44,11 @@ import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.function.CMFunction;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.converter.MetadataConverter;
-import org.cmdbuild.data.converter.MetadataGroupable;
-import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.metadata.Metadata;
+import org.cmdbuild.data.store.metadata.MetadataConverter;
+import org.cmdbuild.data.store.metadata.MetadataGroupable;
 import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
@@ -59,7 +60,6 @@ import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
-import org.cmdbuild.model.data.Metadata;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -260,7 +260,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 		final Map<MetadataAction, List<Metadata>> elementsByAction = attribute.getMetadata();
 		final Store<Metadata> store = DataViewStore.newInstance(view, //
 				MetadataGroupable.of(createdOrUpdatedAttribute), //
-				MetadataConverter.of(createdOrUpdatedAttribute));
+				MetadataConverter.of(MetadataGroupable.of(createdOrUpdatedAttribute)));
 		for (final MetadataAction action : elementsByAction.keySet()) {
 			final Iterable<Metadata> elements = elementsByAction.get(action);
 			for (final Metadata element : elements) {
@@ -407,7 +407,7 @@ public class DefaultDataDefinitionLogic implements DataDefinitionLogic {
 			logger.info("deleting metadata for attribute '{}'", attribute.getName());
 			final Store<Metadata> store = DataViewStore.newInstance(view, //
 					MetadataGroupable.of(existingAttribute), //
-					MetadataConverter.of(existingAttribute));
+					MetadataConverter.of(MetadataGroupable.of(existingAttribute)));
 			final Iterable<Metadata> allMetadata = store.readAll();
 			for (final Metadata metadata : allMetadata) {
 				store.delete(metadata);

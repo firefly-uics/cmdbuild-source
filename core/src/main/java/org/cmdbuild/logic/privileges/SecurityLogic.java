@@ -38,7 +38,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
-import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.privileges.PrivilegeInfo.Builder;
 import org.cmdbuild.model.View;

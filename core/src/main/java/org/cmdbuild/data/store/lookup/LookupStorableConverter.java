@@ -5,7 +5,7 @@ import static com.google.common.collect.Maps.filterValues;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
+import org.cmdbuild.data.store.dao.BaseStorableConverter;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;

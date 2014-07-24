@@ -13,8 +13,8 @@ import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
-import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.View;
 

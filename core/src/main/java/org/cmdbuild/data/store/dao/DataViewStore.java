@@ -1,8 +1,9 @@
-package org.cmdbuild.data.store;
+package org.cmdbuild.data.store.dao;
 
 import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.transform;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -10,12 +11,14 @@ import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
+import static org.cmdbuild.data.store.Groupables.notGroupable;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -24,9 +27,10 @@ import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.Groupable;
+import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.data.store.Store;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.logic.data.Utils;
-import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -37,179 +41,107 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 	protected static final Marker marker = MarkerFactory.getMarker(DataViewStore.class.getName());
 
-	private static final String DEFAULT_IDENTIFIER_ATTRIBUTE_NAME = ID_ATTRIBUTE;
+	public static class Builder<T extends Storable> implements
+			org.apache.commons.lang3.builder.Builder<DataViewStore<T>> {
 
-	public static final Groupable NOT_GROUPABLE = new Groupable() {
+		private CMDataView dataView;
+		private StorableConverter<T> storableConverter;
+		private Groupable groupable;
 
-		@Override
-		public String getGroupAttributeName() {
-			return null;
+		private Builder() {
+			// use factory method
 		}
 
 		@Override
-		public Object getGroupAttributeValue() {
-			throw new IllegalStateException("should never call this");
+		public DataViewStore<T> build() {
+			validate();
+			return new DataViewStore<T>(this);
 		}
 
-	};
-
-	public static interface StorableConverter<T extends Storable> {
-
-		String SYSTEM_USER = "system"; // FIXME
-
-		/**
-		 * @return the name of the class in the store.
-		 */
-		String getClassName();
-
-		/**
-		 * @return the name of the identifier attribute.
-		 */
-		String getIdentifierAttributeName();
-
-		/**
-		 * Converts a card into a {@link Storable}.
-		 * 
-		 * @param card
-		 *            the cards that needs to be converted.
-		 * 
-		 * @return the instance of {@link Storable} representing the card.
-		 */
-		Storable storableOf(CMCard card);
-
-		/**
-		 * Converts a card into a {@link T}.
-		 * 
-		 * @param card
-		 *            the cards that needs to be converted.
-		 * 
-		 * @return the instance of {@link T} representing the card.
-		 */
-		T convert(CMCard card);
-
-		/**
-		 * Converts a generic type into a map of <String, Object>, corresponding
-		 * to attribute <name, value>
-		 * 
-		 * @param storable
-		 * @return
-		 */
-		Map<String, Object> getValues(T storable);
-
-		String getUser(T storable);
-
-	}
-
-	public static class ForwardingStorableConverter<T extends Storable> implements StorableConverter<T> {
-
-		private final StorableConverter<T> inner;
-
-		protected ForwardingStorableConverter(final StorableConverter<T> storableConverter) {
-			this.inner = storableConverter;
+		private void validate() {
+			Validate.notNull(dataView, "missing '%s'", CMDataView.class);
+			Validate.notNull(storableConverter, "missing '%s'", StorableConverter.class);
+			storableConverter = wrap(storableConverter);
+			groupable = defaultIfNull(groupable, notGroupable());
 		}
 
-		@Override
-		public String getClassName() {
-			return inner.getClassName();
-		}
-
-		@Override
-		public String getIdentifierAttributeName() {
-			return inner.getIdentifierAttributeName();
-		}
-
-		@Override
-		public Storable storableOf(final CMCard card) {
-			return inner.storableOf(card);
-		}
-
-		@Override
-		public T convert(final CMCard card) {
-			return inner.convert(card);
-		}
-
-		@Override
-		public Map<String, Object> getValues(final T storable) {
-			return inner.getValues(storable);
-		}
-
-		@Override
-		public String getUser(final T storable) {
-			return inner.getUser(storable);
-		}
-
-	}
-
-	public static abstract class BaseStorableConverter<T extends Storable> implements StorableConverter<T> {
-
-		protected Logger logger = DataViewStore.logger;
-
-		@Override
-		public String getIdentifierAttributeName() {
-			return DEFAULT_IDENTIFIER_ATTRIBUTE_NAME;
-		}
-
-		@Override
-		public Storable storableOf(final CMCard card) {
-			return new Storable() {
+		private StorableConverter<T> wrap(final StorableConverter<T> converter) {
+			return new ForwardingStorableConverter<T>(converter) {
 
 				@Override
-				public String getIdentifier() {
-					final String attributeName = getIdentifierAttributeName();
-					final String value;
-					if (DEFAULT_IDENTIFIER_ATTRIBUTE_NAME.equals(attributeName)) {
-						value = Long.toString(card.getId());
-					} else {
-						value = card.get(getIdentifierAttributeName(), String.class);
-					}
-					return value;
+				public String getIdentifierAttributeName() {
+					final String name = super.getIdentifierAttributeName();
+					return (name == null) ? DEFAULT_IDENTIFIER_ATTRIBUTE_NAME : name;
 				}
 
 			};
 		}
 
-		@Override
-		public String getUser(final T storable) {
-			return SYSTEM_USER;
-		};
-
-		// TODO use static methods directly instead
-		protected String readStringAttribute(final CMCard card, final String attributeName) {
-			return Utils.readString(card, attributeName);
+		public Builder<T> withDataView(final CMDataView dataView) {
+			this.dataView = dataView;
+			return this;
 		}
 
-		// TODO use static methods directly instead
-		protected Long readLongAttribute(final CMCard card, final String attributeName) {
-			return Utils.readLong(card, attributeName);
+		public Builder<T> withStorableConverter(final StorableConverter<T> storableConverter) {
+			this.storableConverter = storableConverter;
+			return this;
+		}
+
+		public Builder<T> withGroupable(final Groupable groupable) {
+			this.groupable = groupable;
+			return this;
 		}
 
 	}
 
+	static final String DEFAULT_IDENTIFIER_ATTRIBUTE_NAME = ID_ATTRIBUTE;
+
+	/**
+	 * @deprecated Use {@link newInstance()} instead.
+	 */
+	@Deprecated
 	public static <T extends Storable> DataViewStore<T> newInstance(final CMDataView view,
 			final StorableConverter<T> converter) {
-		return new DataViewStore<T>(view, NOT_GROUPABLE, converter);
+		return DataViewStore.<T> newInstance() //
+				.withDataView(view) //
+				.withGroupable(notGroupable()) //
+				.withStorableConverter(converter) //
+				.build();
 	}
 
+	/**
+	 * @deprecated Use {@link newInstance()} instead.
+	 */
+	@Deprecated
 	public static <T extends Storable> DataViewStore<T> newInstance(final CMDataView view, final Groupable groupable,
 			final StorableConverter<T> converter) {
-		return new DataViewStore<T>(view, groupable, converter);
+		return DataViewStore.<T> newInstance() //
+				.withDataView(view) //
+				.withGroupable(groupable) //
+				.withStorableConverter(converter) //
+				.build();
 	}
 
-	private final CMDataView view;
+	public static <T extends Storable> Builder<T> newInstance() {
+		return new Builder<T>();
+	}
+
+	private final CMDataView dataView;
 	private final Groupable groupable;
 	private final StorableConverter<T> converter;
 	private final Supplier<CMClass> storeClassHolder;
 
-	private DataViewStore(final CMDataView view, final Groupable groupable, final StorableConverter<T> converter) {
-		this.view = view;
-		this.groupable = groupable;
-		this.converter = wrap(converter);
+	private DataViewStore(final Builder<T> builder) {
+		this.dataView = builder.dataView;
+		this.groupable = builder.groupable;
+		this.converter = builder.storableConverter;
+		// TODO move within validation code
 		this.storeClassHolder = memoize(new Supplier<CMClass>() {
 
 			@Override
 			public CMClass get() {
 				final String className = converter.getClassName();
-				final CMClass target = view.findClass(className);
+				final CMClass target = dataView.findClass(className);
 				if (target == null) {
 					logger.error(marker, "class '{}' has not been found", converter.getClassName());
 					throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
@@ -218,18 +150,6 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 			}
 
 		});
-	}
-
-	private StorableConverter<T> wrap(final StorableConverter<T> converter) {
-		return new ForwardingStorableConverter<T>(converter) {
-
-			@Override
-			public String getIdentifierAttributeName() {
-				final String name = super.getIdentifierAttributeName();
-				return (name == null) ? DEFAULT_IDENTIFIER_ATTRIBUTE_NAME : name;
-			}
-
-		};
 	}
 
 	private CMClass storeClass() {
@@ -245,7 +165,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		final Map<String, Object> values = converter.getValues(storable);
 
 		logger.trace(marker, "filling new card's attributes");
-		final CMCardDefinition card = view.createCardFor(storeClass());
+		final CMCardDefinition card = dataView.createCardFor(storeClass());
 		fillCard(card, values, user);
 
 		logger.debug(marker, "saving card");
@@ -265,13 +185,13 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	@Override
 	public Collection<T> readAll() {
 		logger.debug(marker, "listing all storable elements");
-		return readAll(NOT_GROUPABLE);
+		return readAll(notGroupable());
 	}
 
 	@Override
 	public Collection<T> readAll(final Groupable groupable) {
 		logger.debug(marker, "listing all storable elements with additional grouping condition '{}'", groupable);
-		final CMQueryResult result = view //
+		final CMQueryResult result = dataView //
 				.select(anyAttribute(storeClass())) //
 				.from(storeClass()) //
 				.where(and(builtInGroupWhereClause(), groupWhereClause(groupable))) //
@@ -322,7 +242,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 		logger.trace(marker, "filling existing card's attributes");
 		final CMCard card = findCard(storable);
-		final CMCardDefinition updatedCard = view.update(card);
+		final CMCardDefinition updatedCard = dataView.update(card);
 		fillCard(updatedCard, values, user);
 
 		logger.debug(marker, "saving card");
@@ -333,7 +253,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	public void delete(final Storable storable) {
 		logger.debug(marker, "deleting storable element with identifier '{}'", storable.getIdentifier());
 		final CMCard cardToDelete = findCard(storable);
-		view.delete(cardToDelete);
+		dataView.delete(cardToDelete);
 	}
 
 	/**
@@ -341,7 +261,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	 */
 	private CMCard findCard(final Storable storable) {
 		logger.debug(marker, "looking for storable element with identifier '{}'", storable.getIdentifier());
-		return view //
+		return dataView //
 				.select(anyAttribute(storeClass())) //
 				.from(storeClass()) //
 				.where(whereClauseFor(storable)) //
@@ -367,7 +287,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 		final String attributeName = converter.getIdentifierAttributeName();
 		final Object attributeValue;
-		if (attributeName == DEFAULT_IDENTIFIER_ATTRIBUTE_NAME) {
+		if (DEFAULT_IDENTIFIER_ATTRIBUTE_NAME.equals(attributeName)) {
 			logger.debug(marker, "using default one identifier attribute, converting to default type");
 			attributeValue = Long.parseLong(storable.getIdentifier());
 		} else {

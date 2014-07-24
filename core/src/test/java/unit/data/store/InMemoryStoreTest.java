@@ -1,12 +1,10 @@
 package unit.data.store;
 
+import static org.cmdbuild.data.store.Groupables.nameAndValue;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.Collection;
-
-import org.cmdbuild.data.store.Groupable;
 import org.cmdbuild.data.store.InMemoryStore;
 import org.cmdbuild.data.store.Storable;
 import org.junit.Before;
@@ -123,19 +121,7 @@ public class InMemoryStoreTest {
 
 	@Test(expected = UnsupportedOperationException.class)
 	public void elementsAreNotGroupableYet() throws Exception {
-		store.readAll(new Groupable() {
-
-			@Override
-			public String getGroupAttributeName() {
-				return "foo";
-			}
-
-			@Override
-			public Object getGroupAttributeValue() {
-				return "bar";
-			}
-
-		});
+		store.readAll(nameAndValue("foo", "bar"));
 	}
 
 }

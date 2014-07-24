@@ -4,11 +4,14 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
+
+import com.google.common.collect.Maps;
 
 public class EmailTemplate implements Storable {
 
@@ -23,6 +26,7 @@ public class EmailTemplate implements Storable {
 		private String bcc;
 		private String subject;
 		private String body;
+		private final Map<String, String> variables = Maps.newHashMap();
 
 		private Builder() {
 			// use factory method
@@ -88,6 +92,11 @@ public class EmailTemplate implements Storable {
 			return this;
 		}
 
+		public Builder withVariables(final Map<String, String> variables) {
+			this.variables.putAll(variables);
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -103,6 +112,7 @@ public class EmailTemplate implements Storable {
 	private final String bcc;
 	private final String subject;
 	private final String body;
+	private final Map<String, String> variables;
 
 	private EmailTemplate(final Builder builder) {
 		this.id = builder.id;
@@ -114,6 +124,7 @@ public class EmailTemplate implements Storable {
 		this.bcc = builder.bcc;
 		this.subject = builder.subject;
 		this.body = builder.body;
+		this.variables = builder.variables;
 	}
 
 	@Override
@@ -179,6 +190,10 @@ public class EmailTemplate implements Storable {
 
 	public String getBody() {
 		return body;
+	}
+
+	public Map<String, String> getVariables() {
+		return variables;
 	}
 
 	@Override

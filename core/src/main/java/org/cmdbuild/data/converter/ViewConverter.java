@@ -6,7 +6,7 @@ import java.util.Map;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
+import org.cmdbuild.data.store.dao.BaseStorableConverter;
 import org.cmdbuild.model.View;
 
 public class ViewConverter extends BaseStorableConverter<View> {

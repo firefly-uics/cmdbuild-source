@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
+import org.cmdbuild.data.store.dao.BaseStorableConverter;
 import org.cmdbuild.data.store.task.TaskDefinition.Builder;
 import org.joda.time.DateTime;
 

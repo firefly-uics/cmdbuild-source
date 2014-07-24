@@ -1,7 +1,7 @@
 package org.cmdbuild.spring.configuration;
 
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.services.template.engine.DatabaseEngine;
 import org.cmdbuild.services.template.store.StoreTemplateRepository;
 import org.cmdbuild.services.template.store.TemplateStorableConverter;
