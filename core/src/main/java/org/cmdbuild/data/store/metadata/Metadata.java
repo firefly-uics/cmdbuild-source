@@ -1,4 +1,4 @@
-package org.cmdbuild.model.data;
+package org.cmdbuild.data.store.metadata;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -19,7 +19,7 @@ public class Metadata implements Storable {
 
 	private transient String toString;
 
-	public Metadata(final String name, final String value) {
+	private Metadata(final String name, final String value) {
 		this.name = name;
 		this.value = value;
 

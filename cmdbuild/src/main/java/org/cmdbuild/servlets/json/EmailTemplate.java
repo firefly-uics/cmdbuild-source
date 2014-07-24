@@ -1,17 +1,14 @@
 package org.cmdbuild.servlets.json;
 
+import static org.cmdbuild.servlets.json.schema.Utils.*;
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.servlets.json.CommunicationConstants.BCC;
-import static org.cmdbuild.servlets.json.CommunicationConstants.BODY;
-import static org.cmdbuild.servlets.json.CommunicationConstants.CC;
-import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
-import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
-import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.CommunicationConstants.SUBJECT;
-import static org.cmdbuild.servlets.json.CommunicationConstants.TO;
+import static org.cmdbuild.servlets.json.CommunicationConstants.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
+import static org.apache.commons.lang3.ObjectUtils.*;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -19,6 +16,7 @@ import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.json.JSONObject;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -26,6 +24,8 @@ import com.google.common.collect.Lists;
 public class EmailTemplate extends JSONBaseWithSpringContext {
 
 	private static class JsonTemplate implements Template {
+
+		private static final Map<String, String> NO_VARIABLES = Collections.emptyMap();
 
 		private Long id;
 		private String name;
@@ -36,6 +36,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		private String bcc;
 		private String subject;
 		private String body;
+		private Map<String, String> variables;
 
 		@Override
 		@JsonProperty(ID)
@@ -127,6 +128,16 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		}
 
 		@Override
+		@JsonProperty(VARIABLES)
+		public Map<String, String> getVariables() {
+			return defaultIfNull(variables, NO_VARIABLES);
+		}
+
+		public void setVariables(final Map<String, String> variables) {
+			this.variables = variables;
+		}
+
+		@Override
 		public String toString() {
 			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
@@ -167,6 +178,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			template.setBcc(input.getBcc());
 			template.setSubject(input.getSubject());
 			template.setBody(input.getBody());
+			template.setVariables(input.getVariables());
 			return template;
 		}
 
@@ -198,7 +210,8 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			@Parameter(CC) final String cc, //
 			@Parameter(BCC) final String bcc, //
 			@Parameter(SUBJECT) final String subject, //
-			@Parameter(BODY) final String body //
+			@Parameter(BODY) final String body, //
+			@Parameter(VARIABLES) final JSONObject jsonVariables //
 	) {
 		final JsonTemplate template = new JsonTemplate();
 		template.setName(name);
@@ -208,6 +221,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		template.setBcc(bcc);
 		template.setSubject(subject);
 		template.setBody(body);
+		template.setVariables(toMap(jsonVariables));
 		final Long id = emailTemplateLogic().create(template);
 		return JsonResponse.success(id);
 	}
@@ -221,7 +235,8 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			@Parameter(CC) final String cc, //
 			@Parameter(BCC) final String bcc, //
 			@Parameter(SUBJECT) final String subject, //
-			@Parameter(BODY) final String body //
+			@Parameter(BODY) final String body, //
+			@Parameter(VARIABLES) final JSONObject jsonVariables //
 	) {
 		final JsonTemplate template = new JsonTemplate();
 		template.setName(name);
@@ -231,6 +246,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		template.setBcc(bcc);
 		template.setSubject(subject);
 		template.setBody(body);
+		template.setVariables(toMap(jsonVariables));
 		emailTemplateLogic().update(template);
 	}
 

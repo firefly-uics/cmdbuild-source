@@ -1,6 +1,6 @@
 package org.cmdbuild.data.store;
 
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.dao.StorableConverter;
 
 public interface Groupable {
 

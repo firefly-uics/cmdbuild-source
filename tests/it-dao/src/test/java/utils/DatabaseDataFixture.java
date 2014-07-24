@@ -4,7 +4,7 @@ import javax.sql.DataSource;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.lookup.DataViewLookupStore;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;

@@ -6,8 +6,8 @@ import javax.sql.DataSource;
 
 import org.cmdbuild.common.java.sql.DataSourceHelper;
 import org.cmdbuild.common.java.sql.DefaultDataSourceHelper;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.services.DefaultPatchManager;

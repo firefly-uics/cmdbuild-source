@@ -9,15 +9,15 @@ import java.util.Collection;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.data.converter.MetadataConverter;
-import org.cmdbuild.data.converter.MetadataGroupable;
-import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.metadata.Metadata;
+import org.cmdbuild.data.store.metadata.MetadataConverter;
+import org.cmdbuild.data.store.metadata.MetadataGroupable;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.EntryType;
-import org.cmdbuild.model.data.Metadata;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,12 +42,12 @@ public class MetadataStoreTest extends IntegrationTestBase {
 		final CMAttribute anotherTestAttribute = dataDefinitionLogic.createOrUpdate(newAttribute(
 				"anotherTestAttribute", "testClass"));
 
-		metadataConverter = MetadataConverter.of(testAttribute);
+		metadataConverter = MetadataConverter.of(MetadataGroupable.of(testAttribute));
 		metadataStore = DataViewStore.newInstance(dbDataView(), //
 				MetadataGroupable.of(testAttribute), //
 				metadataConverter);
 
-		anotherMetadataConverter = MetadataConverter.of(anotherTestAttribute);
+		anotherMetadataConverter = MetadataConverter.of(MetadataGroupable.of(anotherTestAttribute));
 		anotherMetadataStore = DataViewStore.newInstance(dbDataView(), //
 				MetadataGroupable.of(anotherTestAttribute), //
 				anotherMetadataConverter);
@@ -62,7 +62,7 @@ public class MetadataStoreTest extends IntegrationTestBase {
 	@Test
 	public void elementCreatedAndRead() {
 		// given
-		final Metadata element = new Metadata("foo", "bar");
+		final Metadata element = Metadata.of("foo", "bar");
 		metadataStore.create(element);
 
 		// when

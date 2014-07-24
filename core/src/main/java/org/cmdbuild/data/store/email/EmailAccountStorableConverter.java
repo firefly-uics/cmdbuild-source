@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
+import org.cmdbuild.data.store.dao.BaseStorableConverter;
 
 import com.google.common.collect.Maps;
 

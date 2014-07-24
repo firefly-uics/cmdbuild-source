@@ -56,6 +56,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMTableType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
@@ -75,7 +76,6 @@ import org.cmdbuild.model.data.Attribute.IpType;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
-import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
@@ -439,7 +439,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 						list = Lists.newArrayList();
 						metadataMap.put(action, list);
 					}
-					list.add(new Metadata(name, value));
+					list.add(Metadata.of(name, value));
 
 				}
 			}

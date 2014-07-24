@@ -1,29 +1,20 @@
 package org.cmdbuild.data.store.task;
 
+import static org.cmdbuild.data.store.Groupables.nameAndValue;
+
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.data.store.ForwardingGroupable;
 import org.cmdbuild.data.store.Groupable;
 
-public class TaskParameterGroupable implements Groupable {
+public class TaskParameterGroupable extends ForwardingGroupable {
 
 	public static TaskParameterGroupable groupedBy(final TaskDefinition owner) {
-		return new TaskParameterGroupable(owner);
+		Validate.notNull(owner, "owner cannot be null");
+		return new TaskParameterGroupable(nameAndValue(TaskParameterConverter.OWNER, owner.getId()));
 	}
 
-	private final TaskDefinition owner;
-
-	private TaskParameterGroupable(final TaskDefinition schedulerJob) {
-		Validate.notNull(schedulerJob, "owner cannot be null");
-		this.owner = schedulerJob;
-	}
-
-	@Override
-	public String getGroupAttributeName() {
-		return TaskParameterConverter.OWNER;
-	}
-
-	@Override
-	public Object getGroupAttributeValue() {
-		return owner.getId();
+	private TaskParameterGroupable(final Groupable delegate) {
+		super(delegate);
 	}
 
 }
