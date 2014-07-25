@@ -48,6 +48,7 @@
 		loadCardStandardCallBack: function(card) {
 			var me = this;
 			this.card = card;
+
 			this.loadFields(card.get("IdClass"), function() {
 				me.view.loadCard(card, bothpanel = true);
 				if (me.isEditable(card)) {
@@ -61,7 +62,7 @@
 		},
 
 		isWidgetEditable: function(controller) {
-			return !this.widgetConf.readonly 
+			return !this.widgetConf.readonly
 				&& this.clientForm.owner._isInEditMode; // Ugly, but in the world there are also ugly stuff
 		},
 
@@ -72,24 +73,27 @@
 			this.targetClassName = this.widgetConf.targetClass;
 			this.entryType = _CMCache.getEntryTypeByName(this.targetClassName);
 
-			if (this.entryType != null) {
-				this.view.initWidget(this.entryType, this.isWidgetEditable());
+			Ext.defer(function() {
+				if (this.entryType != null) {
+					this.view.initWidget(this.entryType, this.isWidgetEditable());
 
-				this.templateResolver.resolveTemplates({
-					attributes: ["idcardcqlselector"],
-					callback: function(o) {
-						me.cardId = normalizeIdCard(o["idcardcqlselector"]);
-						if (me.cardId == null 
-							&& me.entryType.isSuperClass()) {
+					this.templateResolver.resolveTemplates({
+						attributes: ["idcardcqlselector"],
+						callback: function(o) {
+							me.cardId = normalizeIdCard(o["idcardcqlselector"]);
 
-							// could not add a card for a superclass
+							if (me.cardId == null
+								&& me.entryType.isSuperClass()) {
 
-						} else {
-							loadAndFillFields(me);
+								// could not add a card for a superclass
+
+							} else {
+								loadAndFillFields(me);
+							}
 						}
-					}
-				});
-			}
+					});
+				}
+			}, 10, this);
 		},
 
 		// override
@@ -163,7 +167,7 @@
 
 	function normalizeIdCard(idCard) {
 		if (typeof idCard == "string") {
-			idCard = parseInt(idCard);
+			idCard = parseInt(idCard.replace( /^\D+/g, ''));
 			if (isNaN(idCard)) {
 				return null;
 			}
