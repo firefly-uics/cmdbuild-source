@@ -35,7 +35,10 @@
 				"modify": "Sjabloon wijzigen",
 				"remove": "Sjabloon verwijderen",
 				"template": "Sjabloon",
-				"title": "Sjablonen"
+				"title": "Sjablonen",
+				"valuesWindow": {
+					"title": "<em>Edit values</em>",
+				}
 			}
 		},
 		"modClass": {
