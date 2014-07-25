@@ -85,7 +85,7 @@
 					xtype: 'tbspacer',
 					flex: 1
 				},
-				Ext.create('CMDBuild.buttons.SaveButton', {
+				Ext.create('CMDBuild.buttons.ConfirmButton', {
 					handler: function() {
 						me.delegate.cmOn('onVariablesWindowSave');
 					}
