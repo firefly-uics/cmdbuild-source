@@ -35,7 +35,10 @@
 				"modify": "Modifica plantilla",
 				"remove": "Quita plantilla",
 				"template": "Plantilla",
-				"title": "Plantillas"
+				"title": "Plantillas",
+				"valuesWindow": {
+					"title": "<em>Edit values</em>",
+				}
 			}
 		},
 		"modClass": {

@@ -35,7 +35,10 @@
 				"modify": "<em>Modify template</em>",
 				"remove": "<em>Remove template</em>",
 				"template": "<em>Template</em>",
-				"title": "<em>Templates</em>"
+				"title": "<em>Templates</em>",
+				"valuesWindow": {
+					"title": "<em>Edit values</em>",
+				}
 			}
 		},
 		"modClass": {

@@ -35,7 +35,10 @@
 				"modify": "テンプレートを修正",
 				"remove": "テンプレートを削除",
 				"template": "テンプレート",
-				"title": "テンプレート"
+				"title": "テンプレート",
+				"valuesWindow": {
+					"title": "<em>Edit values</em>",
+				}
 			}
 		},
 		"modClass": {
