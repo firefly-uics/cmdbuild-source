@@ -87,14 +87,13 @@
 				if (el)
 					el.mask();
 
-				var parameterNames = CMDBuild.ServiceProxy.parameter;
 				var parameters = {};
 
-				parameters[parameterNames.CARD_ID] = this.getCardId();
-				parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
-				parameters[parameterNames.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
+				parameters[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.getCardId();
+				parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.getClassId());
+				parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
 
-				CMDBuild.ServiceProxy.relations.getList({
+				CMDBuild.core.proxy.CMProxyRelations.getList({
 					params: parameters,
 					scope: this,
 					success: function(a, b, response) {
@@ -109,16 +108,21 @@
 							Ext.Array.forEach(response.domains, function(item, index, allItems) {
 								var domainObjext = _CMCache.getDomainById(item[CMDBuild.core.proxy.CMProxyConstants.ID]);
 
-								switch (domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY)) {
-									case '1:1': {
-										if (item[CMDBuild.core.proxy.CMProxyConstants.RELATIONS_SIZE] == 1)
-											toDisableButtons.push(domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.ID));
-									} break;
-
-									case '1:N': {
-										if (item[CMDBuild.core.proxy.CMProxyConstants.RELATIONS_SIZE] == 1)
-											toDisableButtons.push(domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.ID));
-									} break;
+								if ( // Checks when disable add buttons ...
+									item[CMDBuild.core.proxy.CMProxyConstants.RELATIONS_SIZE] == 1 // ... relation size equals 1 ...
+									&& ( // ... and i'm on 1 side of domain ...
+										(
+											domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
+											&& item[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1'
+										)
+										|| (
+											domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
+											&& item[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_2'
+										)
+										|| domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:1' // ... or i'm on 1:1 relation
+									)
+								) {
+									toDisableButtons.push(domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.ID));
 								}
 							}, this);
 
@@ -201,44 +205,58 @@
 			editRelationWindow.show();
 
 			// Card filter to avoid wrong selection on relation creation
-			editRelationWindow.grid.getStore().load({
-				scope: this,
-				callback: function(records, operation, success) {
-					Ext.Function.createDelayed(function() { // HACK to wait store to be correctly loaded
-						var parameters = {};
-						var cardsIdArray = [];
+			if ( // Checks when to apply filter on grids ...
+				domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:1' // ... i'm on 1:1 relation ...
+				// ... or if i'm on N side of domain
+				|| (
+					domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
+					&& destination == '_2'
+				)
+				|| (
+					domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
+					&& destination == '_1'
+				)
+			) {
+				editRelationWindow.grid.getStore().load({
+					scope: this,
+					callback: function(records, operation, success) {
+						Ext.Function.createDelayed(function() { // HACK to wait store to be correctly loaded
+							var parameters = {};
+							var cardsIdArray = [];
 
-						editRelationWindow.grid.getStore().each(function(record) {
-							cardsIdArray.push(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
-						});
+							editRelationWindow.grid.getStore().each(function(record) {
+								cardsIdArray.push(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+							});
 
-						parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-						parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = classData.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-						parameters[CMDBuild.core.proxy.CMProxyConstants.CARDS] = Ext.encode(cardsIdArray);
+							parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+							parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = classData.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+							parameters[CMDBuild.core.proxy.CMProxyConstants.CARDS] = Ext.encode(cardsIdArray);
 
-						CMDBuild.core.proxy.CMProxyRelations.getAlreadyRelatedCards({
-							params: parameters,
-							scope: this,
-							success: function(result, options, decodedResult) {
-								var alreadyRelatedCardsIds = [];
+							CMDBuild.core.proxy.CMProxyRelations.getAlreadyRelatedCards({
+								params: parameters,
+								scope: this,
+								success: function(result, options, decodedResult) {
+									var alreadyRelatedCardsIds = [];
 
-								Ext.Array.forEach(decodedResult.response, function(item, index, allItems) {
-									if (item[CMDBuild.core.proxy.CMProxyConstants.ID])
-										alreadyRelatedCardsIds.push(item[CMDBuild.core.proxy.CMProxyConstants.ID]);
-								});
+									// Create ids array to use as filter
+									Ext.Array.forEach(decodedResult.response, function(item, index, allItems) {
+										if (item[CMDBuild.core.proxy.CMProxyConstants.ID])
+											alreadyRelatedCardsIds.push(item[CMDBuild.core.proxy.CMProxyConstants.ID]);
+									});
 
-								editRelationWindow.grid.getStore().clearFilter(true);
-								editRelationWindow.grid.getStore().filterBy(function(result, id) {
-									if (Ext.Array.contains(alreadyRelatedCardsIds, id))
-										return false;
+									editRelationWindow.grid.getStore().clearFilter(true);
+									editRelationWindow.grid.getStore().filterBy(function(result, id) {
+										if (Ext.Array.contains(alreadyRelatedCardsIds, id))
+											return false;
 
-									return true;
-								}, this);
-							}
-						});
-					}, 100)();
-				}
-			});
+										return true;
+									}, this);
+								}
+							});
+						}, 100)();
+					}
+				});
+			}
 		},
 
 		onAddRelationSuccess: function() {
@@ -341,7 +359,7 @@
 					params[parameterNames.ATTRIBUTES] = Ext.encode(attributes);
 
 					CMDBuild.LoadMask.get().show();
-					CMDBuild.ServiceProxy.relations.remove({
+					CMDBuild.core.proxy.CMProxyRelations.remove({
 						params: params,
 						scope: this,
 						success: this.onDeleteRelationSuccess,
@@ -433,7 +451,7 @@
 				parameters[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(pi.getClassId());
 				parameters[parameterNames.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
 
-				CMDBuild.ServiceProxy.relations.getList({
+				CMDBuild.core.proxy.CMProxyRelations.getList({
 					params: parameters,
 					scope: this,
 					success: function(a,b, response) {
@@ -562,7 +580,7 @@
 			parameters[parameterNames.DOMAIN_ID] = node.get('dom_id');
 			parameters[parameterNames.DOMAIN_SOURCE] = node.get(CMDBuild.core.proxy.CMProxyConstants.SOURCE);
 
-			CMDBuild.ServiceProxy.relations.getList({
+			CMDBuild.core.proxy.CMProxyRelations.getList({
 				params: parameters,
 				scope: this,
 				success: function(a,b, response) {
