@@ -24,7 +24,7 @@
 		translation: CMDBuild.Translation.administration.modClass.attributeProperties.meta,
 		initComponent: function() {
 			this.deletedMeta = [];
-			this.saveBtn = new CMDBuild.buttons.SaveButton();
+			this.saveBtn = Ext.create('CMDBuild.buttons.ConfirmButton');
 
 			this.abortBtn = new CMDBuild.buttons.AbortButton({
 				handler: this.onAbort,
@@ -32,7 +32,7 @@
 			});
 
 			this.cellEditing = Ext.create( 'Ext.grid.plugin.CellEditing', {
-				clicksToEdit : 1
+				clicksToEdit: 1
 			});
 
 			this.grid = new Ext.grid.Panel({
@@ -56,13 +56,13 @@
 							allowBlank: false
 						}
 					},{
-						header: '&nbsp', 
-						width: 40, 
-						fixed: true, 
-						sortable: false, 
-						renderer: this.renderDeleteActions, 
-						align: 'center', 
-						tdCls: 'grid-button', 
+						header: '&nbsp',
+						width: 40,
+						fixed: true,
+						sortable: false,
+						renderer: this.renderDeleteActions,
+						align: 'center',
+						tdCls: 'grid-button',
 						dataIndex: 'delete',
 						menuDisabled: true,
 						hideable: false
@@ -87,7 +87,7 @@
 				buttonAlign: 'center',
 				buttons: [this.saveBtn, this.abortBtn]
 			});
-	
+
 			this.callParent(arguments);
 
 			this.mon(this.grid, 'beforeitemclick', this.onCellClick, this);
@@ -96,7 +96,7 @@
 		},
 
 		onCellClick: function(grid, model, htmlelement, rowIndex, event, opt) {
-			var className = event.target.className; 
+			var className = event.target.className;
 
 			if (className == "action-meta-delete") {
 				if (model.data.status != STATUS.NEW) {
@@ -107,13 +107,13 @@
 				this.grid.store.remove(model);
 			}
 		},
-	
+
 		renderDeleteActions: function() {
 			return '<img style="cursor:pointer" title="' +
-			CMDBuild.Translation.administration.modClass.attributeProperties.meta.remove + 
+			CMDBuild.Translation.administration.modClass.attributeProperties.meta.remove +
 			'" class="action-meta-delete" src="images/icons/cross.png"/>&nbsp;';
 		},
-	
+
 		addMetadata: function() {
 			var r = new CMDBuild.view.administration.classes.CMMetadataModel({
 				key: this.translation.key,
