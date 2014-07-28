@@ -13,6 +13,7 @@
 
 	Ext.define("CMRelationPanelModel", {
 		extend: "Ext.data.Model",
+
 		fields: [
 			'dom_id', 'dom_desc', 'label',
 			'dst_code', 'dst_id', 'dst_desc', 'dst_cid',
@@ -283,35 +284,40 @@
 		return nodes;
 	}
 
-	// scope: this
+	/**
+	 * @param (Object) value
+	 * @param (Object) metadata
+	 * @param (Object) record
+	 *
+	 * @return (String) actionsHtml - Empty if there aren't icons to render
+	 *
+	 * TODO: fix ugly code
+	 */
 	function renderRelationActions(value, metadata, record) {
-		if (record.get("depth") == 1) { // the domains node has no icons to render
-			return "";
-		}
+		// The domain node has no icons to render
+		if (record.get('depth') == 1)
+			return '';
 
-		var tr = CMDBuild.Translation.management.modcard,
-			actionsHtml = '<img style="cursor:pointer" title="'+tr.open_relation+'" class="action-relation-go" src="images/icons/bullet_go.png"/>',
-			tableId = record.get(TARGET_CLASS_ID),
-			domainObj = _CMCache.getDomainById(record.get("dom_id")),
-			table = _CMCache.getClassById(tableId);
+		var tr = CMDBuild.Translation.management.modcard;
+		var actionsHtml = '<img style="cursor:pointer" title="' + tr.open_relation + '" class="action-relation-go" src="images/icons/bullet_go.png"/>';
+		var tableId = record.get(TARGET_CLASS_ID);
+		var domainObj = _CMCache.getDomainById(record.get('dom_id'));
+		var table = _CMCache.getClassById(tableId);
 		var entryType = _CMCache.getEntryTypeById(tableId);
 		var privileges =  _CMUtils.getEntryTypePrivileges(entryType);
-		if (this.cmWithEditRelationIcons && domainObj.get("writePrivileges")) {
-			actionsHtml += '<img style="cursor:pointer" title="'+tr.edit_relation+'" class="action-relation-edit" src="images/icons/link_edit.png"/>'
-			+ '<img style="cursor:pointer" title="'+tr.delete_relation+'" class="action-relation-delete" src="images/icons/link_delete.png"/>';
-		}
 
-		if (table && table.get("priv_write") && ! privileges.crudDisabled.modify) {
-			actionsHtml += '<img style="cursor:pointer" title="'+tr.modify_card+'" class="action-relation-editcard" src="images/icons/modify.png"/>';
+		if (this.cmWithEditRelationIcons && domainObj.get('writePrivileges'))
+			actionsHtml += '<img style="cursor:pointer" title="' + tr.edit_relation + '" class="action-relation-edit" src="images/icons/link_edit.png"/>'
+				+ '<img style="cursor:pointer" title="' + tr.delete_relation + '" class="action-relation-delete" src="images/icons/link_delete.png"/>';
+
+		if (table && table.get('priv_write') && ! privileges.crudDisabled.modify) {
+			actionsHtml += '<img style="cursor:pointer" title="' + tr.modify_card + '" class="action-relation-editcard" src="images/icons/modify.png"/>';
 		} else {
-			actionsHtml += '<img style="cursor:pointer" title="'+tr.view_relation+'" class="action-relation-viewcard" src="images/icons/zoom.png"/>';
+			actionsHtml += '<img style="cursor:pointer" title="' + tr.view_relation + '" class="action-relation-viewcard" src="images/icons/zoom.png"/>';
 		}
 
-		if (CMDBuild.Config.dms.enabled == "true") {
-			actionsHtml += '<img style="cursor:pointer" title="'+
-				CMDBuild.Translation.management.moddetail.showattach+ // FIXME translation
-				'" class="action-relation-attach" src="images/icons/attach.png"/>';
-		}
+		if (CMDBuild.Config.dms.enabled == 'true')
+			actionsHtml += '<img style="cursor:pointer" title="' + tr.showattach + '" class="action-relation-attach" src="images/icons/attach.png"/>';
 
 		return actionsHtml;
 	}
@@ -323,4 +329,5 @@
 
 		return "<span class=\"cm-bold\">" + prefix + " ("+ s + " " + postfix + ")</span>" ;
 	}
+
 })();
