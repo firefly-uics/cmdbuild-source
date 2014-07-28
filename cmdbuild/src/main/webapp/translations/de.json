@@ -1225,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "Suchen in "
 			},
+			"showattach": "Ansicht Anlagen",
 			"subclass": "Unterklasse",
 			"tabs": {
 				"attachments": "Anlagen",

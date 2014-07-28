@@ -1225,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "検索"
 			},
+			"showattach": "添付表示",
 			"subclass": "サブクラス",
 			"tabs": {
 				"attachments": "添付",

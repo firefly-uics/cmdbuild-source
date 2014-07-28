@@ -1225,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "Search in "
 			},
+			"showattach": "Hiện thị các tập tin đính kèm",
 			"subclass": "Subclass",
 			"tabs": {
 				"attachments": "Các tập tin đính kèm",
