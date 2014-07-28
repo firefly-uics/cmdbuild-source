@@ -910,6 +910,7 @@
 	"errors": {
 		"busy_wf_widgets": "I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.",
 		"detail": "Dettagli",
+		"domainCardinalityViolation": "Violazione della cardinalità del dominio",
 		"error_message": "Errore",
 		"error_moving_row": "Si è verificato un errore muovendo la riga",
 		"invalid_attributes": "I seguenti campi non sono stati compilati correttamente:",

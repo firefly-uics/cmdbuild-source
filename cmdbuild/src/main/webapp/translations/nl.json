@@ -910,6 +910,7 @@
 	"errors": {
 		"busy_wf_widgets": "De visuele controls zijn bezig, controleer de status van de server voor volgende poging.",
 		"detail": "Details",
+		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
 		"error_message": "Fout",
 		"error_moving_row": "Er is een fout ontstaan tijdens het verplaatsen van de rij",
 		"invalid_attributes": "De volgende velden zijn niet correct ingevuld:",

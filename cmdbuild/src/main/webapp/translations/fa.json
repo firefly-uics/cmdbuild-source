@@ -910,6 +910,7 @@
 	"errors": {
 		"busy_wf_widgets": "کنترل های تصویری شلوغ اند، لطفا قبل از اینکه دوباره تکرار کنید وضعیت سرور را چک کنید",
 		"detail": "جزئیات",
+		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
 		"error_message": "خطا",
 		"error_moving_row": "با حذف سطر خطایی رخ داد",
 		"invalid_attributes": "فیلدهای زیر به درستی پر نشده اند:",
