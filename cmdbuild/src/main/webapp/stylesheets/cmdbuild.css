@@ -565,7 +565,7 @@ em { font-style: oblique !important; }
 	.ux-flag-en { background-image: url("../images/icons/flags/en.png") !important; }
 
 	.ux-flag-es { background-image: url("../images/icons/flags/es.png") !important; }
-	
+
 	.ux-flag-fa { background-image:url("../images/icons/flags/fa.png") !important; }
 
 	.ux-flag-fr { background-image:url("../images/icons/flags/fr.png") !important; }
@@ -876,6 +876,11 @@ em { font-style: oblique !important; }
  * Validation classes
  */
 .x-grid-invalid { border-color: #ff0000 !important; }
+
+/**
+ * Grid classes
+ */
+.grid-row-disabled { color: #666666 !important; }
 
 /* FIX: Fieldset label CheckBox */
 	.x-form-cb-wrap { height: auto !important; }
