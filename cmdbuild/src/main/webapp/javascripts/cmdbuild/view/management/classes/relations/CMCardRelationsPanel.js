@@ -302,7 +302,7 @@
 		}
 
 		if (table && table.get("priv_write") && ! privileges.crudDisabled.modify) {
-			actionsHtml += '<img style="cursor:pointer" class="action-relation-editcard" src="images/icons/modify.png"/>';
+			actionsHtml += '<img style="cursor:pointer" title="'+tr.modify_card+'" class="action-relation-editcard" src="images/icons/modify.png"/>';
 		} else {
 			actionsHtml += '<img style="cursor:pointer" title="'+tr.view_relation+'" class="action-relation-viewcard" src="images/icons/zoom.png"/>';
 		}

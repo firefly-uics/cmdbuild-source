@@ -62,6 +62,6 @@ Ext.define("CMDBuild.view.management.common.CMCardWindow", {
 
 		_CMUtils.forwardMethods(this, this.cardPanel, ["displayMode",
 				"editMode", "fillForm", "loadCard", "reset", "getForm",
-				"getWidgetButtonsPanel", "isInEditing"]);
+				"getWidgetButtonsPanel", "isInEditing", 'getFormForTemplateResolver']);
 	}
 });
