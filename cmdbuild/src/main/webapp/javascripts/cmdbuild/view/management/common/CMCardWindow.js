@@ -70,6 +70,7 @@
 				[
 					'displayMode',
 					'editMode',
+					'ensureEditPanel',
 					'fillForm',
 					'loadCard',
 					'reset',
