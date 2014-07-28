@@ -910,6 +910,7 @@
 	"errors": {
 		"busy_wf_widgets": "The visual controls are busy, check the status of the server before trying again.",
 		"detail": "Details",
+		"domainCardinalityViolation": "Domain cardinality violation",
 		"error_message": "Error",
 		"error_moving_row": "An error occourred while moving the row",
 		"invalid_attributes": "The following fields have not been filled correctly:",

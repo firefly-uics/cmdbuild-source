@@ -910,6 +910,7 @@
 	"errors": {
 		"busy_wf_widgets": "Виджеты заняты. Проверьте состояние сервера перед повторной попыткой.",
 		"detail": "Подробно",
+		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
 		"error_message": "Ошибка",
 		"error_moving_row": "При перемещении строки произошла ошибка",
 		"invalid_attributes": "Данные поля были заполнены с ошибками:",

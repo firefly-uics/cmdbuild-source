@@ -910,6 +910,7 @@
 	"errors": {
 		"busy_wf_widgets": "Vizelne kontrole su nedostupne, proverite status servera pre ponovnog pokušaja.",
 		"detail": "Detalji",
+		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
 		"error_message": "Greška",
 		"error_moving_row": "Došlo je do greške prilikom obrade reda",
 		"invalid_attributes": "Sledeća polja nisu korektno popunjena:",

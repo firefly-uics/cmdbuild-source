@@ -910,6 +910,7 @@
 	"errors": {
 		"busy_wf_widgets": "Các bộ điều khiển trực quan đang bận, kiểm tra tình trạng của máy chủ trước khi thử lại lần nữa.",
 		"detail": "Chi tiết",
+		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
 		"error_message": "Lỗi",
 		"error_moving_row": "Đã xảy ra lỗi trong khi chuyển",
 		"invalid_attributes": "Các trường sau đây đã không được điền đầy đủ một cách chính xác:",

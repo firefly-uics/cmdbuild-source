@@ -910,6 +910,7 @@
 	"errors": {
 		"busy_wf_widgets": "Das Widget antwortet nicht. Prüfen Sie den Server-Status, bevor Sie die Operation wiederholen.",
 		"detail": "Details",
+		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
 		"error_message": "Fehler",
 		"error_moving_row": "Es ist ein Fehler bei der Bewegung der Zeile aufgetreten",
 		"invalid_attributes": "Folgende Felder wurden nicht korrekt ausgefüllt:",
