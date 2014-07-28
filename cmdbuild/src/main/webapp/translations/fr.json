@@ -1225,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "Chercher dans"
 			},
+			"showattach": "Voir pièces jointes",
 			"subclass": "Subclass",
 			"tabs": {
 				"attachments": "Pièces jointes",

@@ -1225,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "Busca en "
 			},
+			"showattach": "Visualizar adjuntos",
 			"subclass": "Subclase",
 			"tabs": {
 				"attachments": "Adjuntos",

@@ -1225,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "Искать в "
 			},
+			"showattach": "Показать вложенные файлы",
 			"subclass": "Подкласс",
 			"tabs": {
 				"attachments": "Вложенные файлы",

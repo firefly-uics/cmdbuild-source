@@ -1225,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "Zoek in "
 			},
+			"showattach": "Toon bijlage",
 			"subclass": "Subklas",
 			"tabs": {
 				"attachments": "Bijlage",
