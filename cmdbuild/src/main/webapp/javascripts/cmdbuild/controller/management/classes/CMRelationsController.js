@@ -107,17 +107,18 @@
 							// Max relations number check on domains
 							Ext.Array.forEach(response.domains, function(item, index, allItems) {
 								var domainObjext = _CMCache.getDomainById(item[CMDBuild.core.proxy.CMProxyConstants.ID]);
+								var destination = item[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1' ? '_2' : '_1';
 
 								if ( // Checks when disable add buttons ...
 									item[CMDBuild.core.proxy.CMProxyConstants.RELATIONS_SIZE] == 1 // ... relation size equals 1 ...
 									&& ( // ... and i'm on 1 side of domain ...
 										(
 											domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
-											&& item[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1'
+											&& destination == '_2'
 										)
 										|| (
 											domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
-											&& item[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_2'
+											&& destination == '_1'
 										)
 										|| domainObjext.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:1' // ... or i'm on 1:1 relation
 									)
@@ -128,11 +129,11 @@
 
 							// Loop trough split button menu items to modify handler if relation is full
 							Ext.Array.forEach(this.view.addRelationButton.menu.items.items, function(item, index, allItems) {
-								if (Ext.Array.contains(toDisableButtons, item.domain.dom_id)) { // Overwrite button handler to display error popup
+								if (Ext.Array.contains(toDisableButtons, item.domain.dom_id)) { // Overwrites button handler to display error popup
 									item.setHandler(function() {
 										CMDBuild.Msg.error(
 											CMDBuild.Translation.common.failure,
-											'errorMessage', // TODO: setup error message
+											CMDBuild.Translation.errors.domainCardinalityViolation,
 											false
 										);
 									});
@@ -173,7 +174,7 @@
 			var domain = _CMCache.getDomainById(model.dom_id);
 			var classData = _CMCache.getClassById(model.dst_cid);
 			var isMany = false;
-			var destination = model.src == '_1' ? '_2' : '_1';
+			var destination = model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1' ? '_2' : '_1';
 
 			if (domain)
 				isMany = domain.isMany(destination);
@@ -244,13 +245,16 @@
 											alreadyRelatedCardsIds.push(item[CMDBuild.core.proxy.CMProxyConstants.ID]);
 									});
 
-									editRelationWindow.grid.getStore().clearFilter(true);
-									editRelationWindow.grid.getStore().filterBy(function(result, id) {
-										if (Ext.Array.contains(alreadyRelatedCardsIds, id))
-											return false;
+									// Add class to disable rows as user feedback
+									editRelationWindow.grid.getView().getRowClass = function(record, rowIndex, rowParams, store) {
+										return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? 'grid-row-disabled' : '';
+									};
+									editRelationWindow.grid.getView().refresh();
 
-										return true;
-									}, this);
+									// Disable row selection
+									editRelationWindow.grid.getSelectionModel().addListener('beforeselect', function(selectionModel, record, index, eOpts) {
+										return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? false : true;
+									});
 								}
 							});
 						}, 100)();
