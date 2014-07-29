@@ -10,7 +10,7 @@
 		onEntryTypeDidChange: function(state, entryType, danglingCard, filter) {},
 
 		/**
-		 * @param {CMDBuild.state.CMCardModuleState} state The state that calls the delegate 
+		 * @param {CMDBuild.state.CMCardModuleState} state The state that calls the delegate
 		 * @param {object} card The data of the new selected card
 		 */
 		onCardDidChange: function(state, card) {}
@@ -32,7 +32,7 @@
 
 		// TODO manage dangling card
 		setEntryType: function(entryType, danglingCard, filter) {
-			if ((entryType === this.entryType && this.filter) 
+			if ((entryType === this.entryType && this.filter)
 					|| danglingCard
 					|| filter
 					|| this.entryType !== entryType) {
@@ -48,11 +48,7 @@
 		},
 
 		setCard: function(card, cb) {
-			if (this.card === card) {
-				return;
-			}
-
-			if (card != null 
+			if (card != null
 					&& typeof card.data == "undefined") {
 
 				CMDBuild.ServiceProxy.card.get({
