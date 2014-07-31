@@ -8,8 +8,11 @@ import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
 import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.event.Commands.safe;
+import static org.cmdbuild.services.template.engine.EngineNames.CURRENT_CARD_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.GROUP_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.GROUP_USERS_PREFIX;
+import static org.cmdbuild.services.template.engine.EngineNames.NEXT_CARD_PREFIX;
+import static org.cmdbuild.services.template.engine.EngineNames.PREVIOUS_CARD_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.USER_PREFIX;
 
 import org.apache.commons.lang3.Validate;
@@ -161,10 +164,6 @@ public class DefaultObserverFactory implements ObserverFactory {
 		}
 
 	}
-
-	private static final String CURRENT_CARD_PREFIX = "current";
-	private static final String NEXT_CARD_PREFIX = "next";
-	private static final String PREVIOUS_CARD_PREFIX = "previous";
 
 	private final UserStore userStore;
 	private final FluentApi fluentApi;

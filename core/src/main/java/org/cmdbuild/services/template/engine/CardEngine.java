@@ -1,5 +1,7 @@
 package org.cmdbuild.services.template.engine;
 
+import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
+
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.template.engine.Engine;
 import org.cmdbuild.dao.entry.CMCard;
@@ -43,6 +45,9 @@ public class CardEngine implements Engine {
 
 	@Override
 	public Object eval(final String expression) {
+		if (ID_ATTRIBUTE.equalsIgnoreCase(expression)) {
+			return card.getId();
+		}
 		return card.get(expression);
 	}
 

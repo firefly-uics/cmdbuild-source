@@ -3,6 +3,8 @@ package org.cmdbuild.logic.taskmanager.task.event.asynchronous;
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
+import static org.cmdbuild.common.template.engine.Engines.nullOnError;
 import static org.cmdbuild.common.utils.BuilderUtils.a;
 import static org.cmdbuild.dao.guava.Functions.toCard;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -14,9 +16,11 @@ import static org.cmdbuild.dao.query.clause.where.WhereClauses.and;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.condition;
 import static org.cmdbuild.scheduler.command.Commands.conditional;
 import static org.cmdbuild.services.email.Predicates.named;
+import static org.cmdbuild.services.template.engine.EngineNames.CARD_PREFIX;
 
 import java.util.Comparator;
 
+import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -34,10 +38,10 @@ import org.cmdbuild.logic.taskmanager.scheduler.AbstractJobFactory;
 import org.cmdbuild.logic.taskmanager.store.LogicAndStoreConverter;
 import org.cmdbuild.logic.taskmanager.util.CardIdFilterElementGetter;
 import org.cmdbuild.scheduler.command.Command;
-import org.cmdbuild.scheduler.command.ForwardingCommand;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.PredicateEmailAccountSupplier;
+import org.cmdbuild.services.template.engine.CardEngine;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,7 +88,7 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 
 	@Override
 	protected Command command(final AsynchronousEventTask task) {
-		return new ForwardingCommand(sendEmail(task)) {
+		return new Command() {
 
 			@Override
 			public void execute() {
@@ -102,7 +106,7 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 					final CMClass cardType = card.getType();
 					if (createdAfterLastExecution(card, lastExecution)) {
 						logger.debug(marker, "history card not found");
-						doExecute();
+						sendEmail(task, card);
 					} else {
 						final Optional<CMCard> lastHistoryCardWithNoFilter = historyCardBeforeLastExecutionWithNoFilter(
 								cardType, card.getId(), lastExecution);
@@ -113,7 +117,7 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 									cardType, historyCardWithNoFilter, jsonFilter);
 							if (!historyCardWithFilter.isPresent()) {
 								logger.debug(marker, "filtered history card not found");
-								doExecute();
+								sendEmail(task, card);
 							}
 						}
 					}
@@ -122,7 +126,7 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 
 			private boolean createdAfterLastExecution(final CMCard card, final DateTime lastExecution) {
 				logger.debug(marker, "checking if card has been created after last execution");
-				return card.getBeginDate().compareTo(lastExecution) > 0;
+				return (lastExecution == null) ? true : card.getBeginDate().compareTo(lastExecution) > 0;
 			}
 
 			private JSONObject toJsonObject(final String filter) {
@@ -192,15 +196,10 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 				}
 			}
 
-			private void doExecute() {
-				logger.info(marker, "executing specified commands");
-				super.execute();
-			}
-
 		};
 	}
 
-	private Command sendEmail(final AsynchronousEventTask task) {
+	private void sendEmail(final AsynchronousEventTask task, final CMCard card) {
 		final Supplier<EmailAccount> emailAccountSupplier = PredicateEmailAccountSupplier.of(emailAccountStore,
 				named(task.getNotificationAccount()));
 		final Supplier<Template> emailTemplateSupplier = new Supplier<Template>() {
@@ -215,8 +214,16 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 		final Command command = SchedulerCommandWrapper.of(a(SendTemplateEmail.newInstance() //
 				.withEmailAccountSupplier(emailAccountSupplier) //
 				.withEmailServiceFactory(emailServiceFactory) //
-				.withEmailTemplateSupplier(emailTemplateSupplier)));
-		return conditional(command, new NotificationEnabled(task));
+				.withEmailTemplateSupplier(emailTemplateSupplier) //
+				.withTemplateResolver(EngineBasedTemplateResolver.newInstance() //
+						.withEngine(emptyStringOnNull(nullOnError( //
+								CardEngine.newInstance() //
+										.withCard(card) //
+										.build())), //
+								CARD_PREFIX) //
+						.build()) //
+				));
+		conditional(command, new NotificationEnabled(task)).execute();
 	}
 
 }
