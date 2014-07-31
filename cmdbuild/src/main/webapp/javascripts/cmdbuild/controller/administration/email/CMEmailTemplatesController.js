@@ -152,6 +152,7 @@
 		onAddButtonClick: function() {
 			this.selectionModel.deselectAll();
 			this.selectedName = null;
+			this.valuesWindowDataBuffer = null;
 			this.form.reset();
 			this.form.enableModify(true);
 		},
