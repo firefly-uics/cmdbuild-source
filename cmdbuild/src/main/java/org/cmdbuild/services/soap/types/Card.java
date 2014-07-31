@@ -3,7 +3,6 @@ package org.cmdbuild.services.soap.types;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -22,6 +21,8 @@ import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.logger.Log;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.Lists;
+
 public class Card {
 
 	public interface ValueSerializer {
@@ -32,7 +33,7 @@ public class Card {
 
 	public static final ValueSerializer LEGACY_VALUE_SERIALIZER = new LegacyValueSerializer();
 	public static final ValueSerializer HACK_VALUE_SERIALIZER = new HackValueSerializer();
-	private static final List<Attribute> NO_ATTRIBUTES = Collections.emptyList();
+	private static final List<Attribute> NO_ATTRIBUTES = Lists.newArrayList();
 
 	private static abstract class AbstractValueSerializer implements ValueSerializer {
 
