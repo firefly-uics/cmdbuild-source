@@ -211,7 +211,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			@Parameter(BCC) final String bcc, //
 			@Parameter(SUBJECT) final String subject, //
 			@Parameter(BODY) final String body, //
-			@Parameter(VARIABLES) final JSONObject jsonVariables //
+			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables //
 	) {
 		final JsonTemplate template = new JsonTemplate();
 		template.setName(name);
@@ -236,7 +236,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			@Parameter(BCC) final String bcc, //
 			@Parameter(SUBJECT) final String subject, //
 			@Parameter(BODY) final String body, //
-			@Parameter(VARIABLES) final JSONObject jsonVariables //
+			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables //
 	) {
 		final JsonTemplate template = new JsonTemplate();
 		template.setName(name);
