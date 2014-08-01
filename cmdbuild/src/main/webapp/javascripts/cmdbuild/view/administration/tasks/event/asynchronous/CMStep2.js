@@ -39,30 +39,30 @@
 						me.view.filterTabPanel.removeAll();
 
 						// Filter tabs
-						me.view.filterAttributesTab = Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributes', {
+						me.view.filterAttributeTab = Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributes', {
 							attributes: attributes
 						});
-						me.view.filterRelationsTab = Ext.create('CMDBuild.view.management.common.filter.CMRelations', {
+						me.view.filterRelationTab = Ext.create('CMDBuild.view.management.common.filter.CMRelations', {
 							className: me.className,
 							height: '100%'
 						});
-						me.view.filterFunctionsTab = Ext.create('CMDBuild.view.management.common.filter.CMFunctions', {
+						me.view.filterFunctionTab = Ext.create('CMDBuild.view.management.common.filter.CMFunctions', {
 							className: me.className
 						});
 
 						// To setup filters values
 						if (!Ext.isEmpty(me.filterValues)) {
-							if (!Ext.isEmpty(me.view.filterAttributesTab) && !Ext.isEmpty(me.filterValues.attributes))
-								me.view.filterAttributesTab.setData(me.filterValues.attributes);
+							if (!Ext.isEmpty(me.view.filterAttributeTab) && !Ext.isEmpty(me.filterValues.attributes))
+								me.view.filterAttributeTab.setData(me.filterValues.attributes);
 
-							if (!Ext.isEmpty(me.view.filterRelationsTab) && !Ext.isEmpty(me.filterValues.relations))
-								me.view.filterRelationsTab.setData(me.filterValues.relations);
+							if (!Ext.isEmpty(me.view.filterRelationTab) && !Ext.isEmpty(me.filterValues.relations))
+								me.view.filterRelationTab.setData(me.filterValues.relations);
 
-							if (!Ext.isEmpty(me.view.filterFunctionsTab) && !Ext.isEmpty(me.filterValues.functions))
-								me.view.filterFunctionsTab.setData(me.filterValues.functions);
+							if (!Ext.isEmpty(me.view.filterFunctionTab) && !Ext.isEmpty(me.filterValues.functions))
+								me.view.filterFunctionTab.setData(me.filterValues.functions);
 						}
 
-						me.view.filterTabPanel.add([me.view.filterAttributesTab, me.view.filterRelationsTab, me.view.filterFunctionsTab]);
+						me.view.filterTabPanel.add([me.view.filterAttributeTab, me.view.filterRelationTab, me.view.filterFunctionTab]);
 						me.view.filterTabPanel.doLayout();
 					}
 				);
@@ -76,15 +76,17 @@
 		 */
 		getDataFilters: function() {
 			if (
-				!Ext.isEmpty(this.view.filterAttributesTab)
-				&& !Ext.isEmpty(this.view.filterRelationsTab)
-				&& !Ext.isEmpty(this.view.filterFunctionsTab)
+				!Ext.isEmpty(this.view.filterAttributeTab)
+				&& !Ext.isEmpty(this.view.filterRelationTab)
+				&& !Ext.isEmpty(this.view.filterFunctionTab)
 			) {
-				return {
-					attributes: this.view.filterAttributesTab.getData(),
-					relations: this.view.filterRelationsTab.getData(),
-					functions: this.view.filterFunctionsTab.getData()
-				};
+				var returnArray = {};
+
+				returnArray[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE] = this.view.filterAttributeTab.getData();
+				returnArray[CMDBuild.core.proxy.CMProxyConstants.RELATION] = this.view.filterRelationTab.getData();
+				returnArray[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.view.filterFunctionTab.getData();
+
+				return returnArray;
 			}
 
 			return null;
