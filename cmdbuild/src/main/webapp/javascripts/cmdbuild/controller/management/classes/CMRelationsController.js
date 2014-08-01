@@ -212,16 +212,19 @@
 
 			// Card filter to avoid wrong selection on relation creation
 				if ( // Checks when to apply filter on grids ...
-					domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:1' // ... i'm on 1:1 relation ...
-					|| domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:N' // ... i'm on N:N relation ...
-					// ... or if i'm on N side of domain
-					|| (
-						domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
-						&& destination == '_2'
-					)
-					|| (
-						domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
-						&& destination == '_1'
+					!Ext.isEmpty(classData)
+					&& (
+						domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:1' // ... i'm on 1:1 relation ...
+						|| domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:N' // ... i'm on N:N relation ...
+						// ... or if i'm on N side of domain
+						|| (
+							domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
+							&& destination == '_2'
+						)
+						|| (
+							domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
+							&& destination == '_1'
+						)
 					)
 				) {
 					editRelationWindow.grid.getStore().load({
