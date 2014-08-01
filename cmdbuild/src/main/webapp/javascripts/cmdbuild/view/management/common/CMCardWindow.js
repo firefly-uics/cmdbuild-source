@@ -3,9 +3,10 @@
 	Ext.define('CMDBuild.view.management.common.CMCardWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
-		// Configs
-		cmEditMode: false, // If true, after the attributes load go in edit mode
-		withButtons: false, // True to use the buttons build by the CMCardPanel
+		// Configuration
+			cmEditMode: false, // If true, after the attributes load go in edit mode
+			withButtons: false, // True to use the buttons build by the CMCardPanel
+		// END: Configuration
 
 		border: false,
 		buttonAlign: 'center',

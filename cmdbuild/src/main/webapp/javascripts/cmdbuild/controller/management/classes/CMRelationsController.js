@@ -79,6 +79,9 @@
 			}
 		},
 
+		/**
+		 * Function to load data to treePanel and edit addRelation button to avoid to violate domains cardinality
+		 */
 		loadData: function() {
 			if (this.card != null && tabIsActive(this.view)) {
 				var me = this;
@@ -96,16 +99,16 @@
 				CMDBuild.core.proxy.CMProxyRelations.getList({
 					params: parameters,
 					scope: this,
-					success: function(a, b, response) {
+					success: function(result, options, decodedResult) {
 						el.unmask();
 
-						this.view.fillWithData(response.domains);
+						this.view.fillWithData(decodedResult.domains);
 
 						// AddRelation button update
 							var toDisableButtons = [];
 
 							// Max relations number check on domains
-							Ext.Array.forEach(response.domains, function(item, index, allItems) {
+							Ext.Array.forEach(decodedResult.domains, function(item, index, allItems) {
 								var domainObjext = _CMCache.getDomainById(item[CMDBuild.core.proxy.CMProxyConstants.ID]);
 								var destination = item[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1' ? '_2' : '_1';
 
@@ -166,6 +169,8 @@
 		},
 
 		/**
+		 * AddRelation click function to open CMEditRelationWindow filtered excluding already related cards based on relation type
+		 *
 		 * @param (object) model - relation model
 		 */
 		onAddRelationButtonClick: function(model) {
@@ -206,61 +211,94 @@
 			editRelationWindow.show();
 
 			// Card filter to avoid wrong selection on relation creation
-			if ( // Checks when to apply filter on grids ...
-				domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:1' // ... i'm on 1:1 relation ...
-				// ... or if i'm on N side of domain
-				|| (
-					domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
-					&& destination == '_2'
-				)
-				|| (
-					domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
-					&& destination == '_1'
-				)
-			) {
-				editRelationWindow.grid.getStore().load({
-					scope: this,
-					callback: function(records, operation, success) {
-						Ext.Function.createDelayed(function() { // HACK to wait store to be correctly loaded
-							var parameters = {};
-							var cardsIdArray = [];
+				if ( // Checks when to apply filter on grids ...
+					domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:1' // ... i'm on 1:1 relation ...
+					|| domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:N' // ... i'm on N:N relation ...
+					// ... or if i'm on N side of domain
+					|| (
+						domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == '1:N'
+						&& destination == '_2'
+					)
+					|| (
+						domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:1'
+						&& destination == '_1'
+					)
+				) {
+					editRelationWindow.grid.getStore().load({
+						scope: this,
+						callback: function(records, operation, success) {
+							Ext.Function.createDelayed(function() { // HACK to wait store to be correctly loaded
+								var parameters = {};
+								var cardsIdArray = [];
 
-							editRelationWindow.grid.getStore().each(function(record) {
-								cardsIdArray.push(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
-							});
+								editRelationWindow.grid.getStore().each(function(record) {
+									cardsIdArray.push(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+								});
 
-							parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-							parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = classData.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-							parameters[CMDBuild.core.proxy.CMProxyConstants.CARDS] = Ext.encode(cardsIdArray);
+								parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+								parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = classData.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+								parameters[CMDBuild.core.proxy.CMProxyConstants.CARDS] = Ext.encode(cardsIdArray);
 
-							CMDBuild.core.proxy.CMProxyRelations.getAlreadyRelatedCards({
-								params: parameters,
-								scope: this,
-								success: function(result, options, decodedResult) {
-									var alreadyRelatedCardsIds = [];
+								CMDBuild.core.proxy.CMProxyRelations.getAlreadyRelatedCards({
+									params: parameters,
+									scope: this,
+									success: function(result, options, decodedResult) {
+										var alreadyRelatedCardsIds = [];
 
-									// Create ids array to use as filter
-									Ext.Array.forEach(decodedResult.response, function(item, index, allItems) {
-										if (item[CMDBuild.core.proxy.CMProxyConstants.ID])
-											alreadyRelatedCardsIds.push(item[CMDBuild.core.proxy.CMProxyConstants.ID]);
-									});
+										// Create ids array to use as filter
+										Ext.Array.forEach(decodedResult.response, function(item, index, allItems) {
+											if (item[CMDBuild.core.proxy.CMProxyConstants.ID]) {
+												var parameters = {};
 
-									// Add class to disable rows as user feedback
-									editRelationWindow.grid.getView().getRowClass = function(record, rowIndex, rowParams, store) {
-										return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? 'grid-row-disabled' : '';
-									};
-									editRelationWindow.grid.getView().refresh();
+												parameters[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = item[CMDBuild.core.proxy.CMProxyConstants.ID];
+												parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = item[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
+												parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
 
-									// Disable row selection
-									editRelationWindow.grid.getSelectionModel().addListener('beforeselect', function(selectionModel, record, index, eOpts) {
-										return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? false : true;
-									});
-								}
-							});
-						}, 100)();
-					}
-				});
-			}
+												// Get all domains of grid-card to check if it have relation with current-card
+												CMDBuild.core.proxy.CMProxyRelations.getList({
+													params: parameters,
+													scope: this,
+													success: function(result, options, decodedResult) {
+														if (domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:N') {
+
+															// Loop through dard's domain array
+															Ext.Array.forEach(decodedResult[CMDBuild.core.proxy.CMProxyConstants.DOMAINS], function(item, index, allItems) {
+																if (item[CMDBuild.core.proxy.CMProxyConstants.ID] == domain.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
+
+																	// Loop through domain's relations array
+																	Ext.Array.forEach(item[CMDBuild.core.proxy.CMProxyConstants.RELATIONS], function(item, index, allItems) {
+
+																		// If grid-card have a relation with current-card in this domain add grid-card id to filter array
+																		if (item['dst_id'] == me.card.get(CMDBuild.core.proxy.CMProxyConstants.ID))
+																			alreadyRelatedCardsIds.push(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
+																	});
+																}
+															});
+														} else {
+															alreadyRelatedCardsIds.push(item[CMDBuild.core.proxy.CMProxyConstants.ID]);
+														}
+
+														// Add class to disable rows as user feedback
+														editRelationWindow.grid.getView().getRowClass = function(record, rowIndex, rowParams, store) {
+															return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? 'grid-row-disabled' : null;
+														};
+														editRelationWindow.grid.getView().refresh();
+
+														// Disable row selection
+														editRelationWindow.grid.getSelectionModel().addListener('beforeselect', function(selectionModel, record, index, eOpts) {
+															return Ext.Array.contains(alreadyRelatedCardsIds, record.get('Id')) ? false : true;
+														});
+													}
+												});
+											}
+										});
+									}
+								});
+							}, 100)();
+						}
+					});
+				}
+			// END: Card filter to avoid wrong selection on relation creation
 		},
 
 		onAddRelationSuccess: function() {
@@ -458,10 +496,10 @@
 				CMDBuild.core.proxy.CMProxyRelations.getList({
 					params: parameters,
 					scope: this,
-					success: function(a,b, response) {
+					success: function(result, options, decodedResult) {
 						el.unmask();
 						this.view.suspendLayouts();
-						this.view.fillWithData(response.domains);
+						this.view.fillWithData(decodedResult.domains);
 						this.view.resumeLayouts(true);
 					}
 				});
@@ -587,12 +625,12 @@
 			CMDBuild.core.proxy.CMProxyRelations.getList({
 				params: parameters,
 				scope: this,
-				success: function(a,b, response) {
+				success: function(result, options, decodedResult) {
 					el.unmask();
 					this.view.suspendLayouts();
 
 					var cc = this.view.convertRelationInNodes(
-						response.domains[0].relations,
+						decodedResult.domains[0].relations,
 						node.data.dom_id,
 						node.data.src,
 						node.data,
