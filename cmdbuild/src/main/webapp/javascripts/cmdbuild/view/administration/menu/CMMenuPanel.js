@@ -3,7 +3,7 @@
 		clicksToEdit: 2
 	});
 	var tr = CMDBuild.Translation.administration.modmenu;
-	var warningNoSaved = "@@ The menu has to been saved before access at the translations of this element.";
+	var warningNoSaved = CMDBuild.Translation.warnings.saveMenuBeforeAccess;
 
 	Ext.define("MenuStore", {
 		extend: "Ext.data.TreeStore",
@@ -31,7 +31,7 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 		openTranslationsWindow: function(uuid) {
 			var translationsWindow = new CMDBuild.view.common.CMTranslationsWindow({
 				title: CMDBuild.Translation.translations,
-				translationsKeyType: "MenuItem", 
+				translationsKeyType: "MenuItem",
 				translationsKeyField: "Description",
 				translationsKeyName: uuid
 			});
@@ -41,7 +41,7 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 			message = htmlComposeMessage(warningNoSaved);
 			CMDBuild.Msg.warn(null, message , false);
 		}
-		
+
 	},
 	initComponent : function() {
 		this.groupId = -1,
@@ -170,7 +170,7 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 				this.availabletreePanel
 			]
 		});
-		
+
 		this.callParent(arguments);
 	},
 

@@ -347,7 +347,7 @@
 			});
 			this.ipAttributeWidget = new Ext.form.ComboBox({
 				name: _CMProxy.parameter.IP_TYPE,
-				fieldLabel: "@@ IP Type",//CMDBuild.Translation.administration.modClass.attributeProperties.editorType.label,
+				fieldLabel: CMDBuild.Translation.ipType,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.MIDDLE_FIELD_WIDTH,
 				valueField: "value",
@@ -358,8 +358,8 @@
 				store: new Ext.data.SimpleStore({
 					fields: ["value","name"],
 					data : [
-						[IP_TYPE.ipv4, "@@ ipv4"/*CMDBuild.Translation.administration.modClass.attributeProperties.editorType.plain*/],
-						[IP_TYPE.ipv6, "@@ ipv6"/*CMDBuild.Translation.administration.modClass.attributeProperties.editorType.html*/]
+						[IP_TYPE.ipv4, CMDBuild.Translation.ipv4],
+						[IP_TYPE.ipv6, CMDBuild.Translation.ipv6]
 					]
 				})
 			});
