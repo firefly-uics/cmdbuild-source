@@ -247,9 +247,9 @@
 
 			this.items = [
 				this.removeFieldButton,
-				this.conditionCombo,
-				this.valueFields
-			];
+				this.conditionCombo
+			]
+			.concat(this.valueFields);
 
 			if (this.selectAtRuntimeCheckDisabled)
 				this.items.concat(this.selectAtRuntimeCheck);
@@ -284,8 +284,9 @@
 			var USE_MY_GROUP = -1;
 
 			var value = [];
-			for (var i=0; i < this.valueFields.length; ++i) {
+			for (var i = 0; i < this.valueFields.length; ++i) {
 				var field = this.valueFields[i];
+
 				if (!field.isDisabled())
 					value.push(field.getValue());
 			}
