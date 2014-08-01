@@ -364,7 +364,6 @@
 							field = me.TEMPLATE_FIELDS[j];
 							v[field] = values[field+i];
 						}
-
 						me.view.addTemplateToStore(v);
 					}
 				}
@@ -394,6 +393,10 @@
 		var variables = {};
 
 		for (var i=0, l=emailTemplates.length, t=null; i<l; ++i) {
+			t = emailTemplates[i].variables;
+			for (var key in t) {
+				variables[key] = t[key];
+			}
 			t = emailTemplates[i];
 			for (var key in t) {
 				variables[key + (i+1)] = t[key];
