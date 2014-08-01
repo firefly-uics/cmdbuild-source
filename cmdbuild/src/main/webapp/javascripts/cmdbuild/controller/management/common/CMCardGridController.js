@@ -212,7 +212,7 @@
 		},
 
 		/**
-		 * 
+		 *
 		 * @param {object} p
 		 * @param {int} p.IdClass the id of the class
 		 * @param {int} p.Id the id of the card to open
@@ -245,7 +245,7 @@
 					var position = resText.position,
 						found = position >= 0,
 						foundButNotInFilter = resText.outOfFilter;
-	
+
 					if (found) {
 						if (foundButNotInFilter) {
 							me._onGetPositionSuccessForcingTheFilter(p, position, resText);
@@ -260,7 +260,7 @@
 						} else {
 							me._onGetPositionFailureWithoutForcingTheFilter(resText);
 						}
-	
+
 						me.view.store.loadPage(1);
 					}
 				}
@@ -289,7 +289,7 @@
 		/**
 		 * Called by the CMFilterMenuButton when click
 		 * to on the save icon on a row of the picker
-		 * 
+		 *
 		 * @param {object} filter, the filter to save
 		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
 		 * the button that calls the delegate
@@ -314,7 +314,7 @@
 		/**
 		 * Called by the CMFilterMenuButton when click
 		 * to on the apply icon on a row of the picker
-		 * 
+		 *
 		 * @param {object} filter, the filter to apply
 		 */
 		onFilterMenuButtonApplyActionClick: function(button, filter) {
@@ -338,7 +338,7 @@
 		/**
 		 * Called by the CMFilterMenuButton when click
 		 * to on the modify icon on a row of the picker
-		 * 
+		 *
 		 * @param {object} filter, the filter to modify
 		 * @param {CMDBuild.view.management.common.filter.CMFilterMenuButton} button
 		 * the button that calls the delegate
@@ -351,16 +351,20 @@
 		},
 
 		/**
-		 * Called by the CMFilterMenuButton when click
-		 * to on the modify icon on a row of the picker
-		 * 
-		 * @param {object} filter, the filter to modify
+		 * Called by the CMFilterMenuButton when click to on the modify icon on a row of the picker
+		 *
+		 * @param {Object} filter - the filter to modify
 		 */
 		onFilterMenuButtonModifyActionClick: function(button, filter) {
-			var filterWindow = new CMDBuild.view.management.common.filter.CMFilterWindow({
+			var filterWindow = Ext.create('CMDBuild.view.management.common.filter.CMFilterWindow', {
 				filter: filter,
 				attributes: this.view.classAttributes,
-				className: _CMCache.getEntryTypeNameById(this.view.currentClassId)
+				className: _CMCache.getEntryTypeNameById(this.view.currentClassId),
+				filterTabToEnable: {
+					attributeTab: true,
+					relationTab: true,
+					functionTab: false
+				}
 			});
 
 			filterWindow.addDelegate(this);
@@ -370,7 +374,7 @@
 		/**
 		 * Called by the CMFilterMenuButton when click
 		 * to on the remove icon on a row of the picker
-		 * 
+		 *
 		 * @param {object} filter, the filter to remove
 		 */
 		onFilterMenuButtonRemoveActionClick: function(button, filter) {
@@ -455,9 +459,9 @@
 				me.view.selectAppliedFilter();
 
 				if (filter.isApplied()) {
-					var s = (Ext.String.trim(filter.getDescription()) == "") ? filter.getName() : filter.getDescription(); 
+					var s = (Ext.String.trim(filter.getDescription()) == "") ? filter.getName() : filter.getDescription();
 					me.view.setFilterButtonLabel(s);
-				} 
+				}
 			}
 
 			removeFilterFromStore(me, filter);
@@ -519,7 +523,7 @@
 				addFilterToStore(me, filter, atFirst);
 			}
 
-			var s = (Ext.String.trim(filter.getDescription()) == "") ? filter.getName() : filter.getDescription(); 
+			var s = (Ext.String.trim(filter.getDescription()) == "") ? filter.getName() : filter.getDescription();
 			me.view.setFilterButtonLabel(s);
 			me.view.applyFilterToStore( //
 					filter.getConfigurationMergedWithRuntimeAttributes(runtimeAttributeFields) //

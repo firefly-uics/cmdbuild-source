@@ -35,10 +35,15 @@
 			delegable: "CMDBuild.core.CMDelegable"
 		},
 
-		// configuration
+		// Configuration
 		attributes: {},
 		className: '',
 		filter: undefined,
+		filterTabToEnable: { // To enable/disable tabs visualization
+			attributeTab: true,
+			relationTab: true,
+			functionTab: true
+		},
 		/*
 		 * In some subclass the relations
 		 * panel is used in a tab panel,
@@ -46,7 +51,7 @@
 		 * first time that is shown is different (activate)
 		 */
 		firstShowDetectEvent: "expand",
-		// configuration
+		// END: Configuration
 
 		constructor: function() {
 			this.mixins.delegable.constructor.call(this,
@@ -60,6 +65,7 @@
 
 			this.layout = "accordion";
 			this.buttonAlign = "center";
+			this.items = [];
 
 			this.setWindowTitle();
 			this.buildItems();
@@ -127,7 +133,6 @@
 			}];
 		},
 
-		// protected
 		buildFilterAttributePanel: function() {
 			return new CMDBuild.view.management.common.filter.CMFilterAttributes({
 				attributes: this.attributes,
@@ -146,7 +151,16 @@
 				attributes: this.attributes,
 				className: this.className
 			});
-			this.items = [this.filterAttributesPanel, this.filterRelationsPanel, this.filterFunctionsPanel];
+//			this.items = [this.filterAttributesPanel, this.filterRelationsPanel, this.filterFunctionsPanel];
+
+			if (this.filterTabToEnable.attributeTab)
+				this.items.push(this.filterAttributesPanel);
+
+			if (this.filterTabToEnable.relationTab)
+				this.items.push(this.filterRelationsPanel);
+
+			if (this.filterTabToEnable.functionTab)
+				this.items.push(this.filterFunctionsPanel);
 		}
 	});
 
