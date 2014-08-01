@@ -176,74 +176,68 @@
 		}
 	};
 
-	Ext.define("CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanelDelegate", {
+	Ext.define('CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanelDelegate', {
 		/**
-		 * @param {CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel} condition
 		 * The condition panel to remove
+		 *
+		 * @param {CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel} condition
 		 */
 		onFilterAttributeConditionPanelRemoveButtonClick: Ext.emptyFn
 	});
 
-	Ext.define("CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel", {
-		extend: "Ext.container.Container",
+	Ext.define('CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel', {
+		extend: 'Ext.container.Container',
 
 		mixins: {
-			delegable: "CMDBuild.core.CMDelegable"
+			delegable: 'CMDBuild.core.CMDelegable'
+		},
+
+		defaults: {
+			margins:'0 5 0 0'
+		},
+		hideMode: 'offsets',
+		layout: {
+			type: 'hbox',
+			pack: 'start',
+			align: 'top'
 		},
 
 		// configuration
-		attributeName: "",
-		conditionCombo: null,
-		valueFields: [],
+			attributeName: '',
+			conditionCombo: null,
+			valueFields: [],
 		// configuration
 
 		selectAtRuntimeCheckDisabled: true, // Flag to enable/disable selectAtRuntime checkbox
 
 		constructor: function() {
-			this.mixins.delegable.constructor.call(this,
-				"CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanelDelegate");
+			this.mixins.delegable.constructor.call(this, 'CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanelDelegate');
 
 			this.callParent(arguments);
 		},
 
 		initComponent: function() {
-
-			this.hideMode = "offsets";
-
-			this.layout = {
-				type: "hbox",
-				pack:'start',
-				align:'top'
-			};
-
-			this.defaults = {
-				margins:'0 5 0 0'
-			};
-
 			var me = this;
 
-			this.removeFieldButton = new Ext.button.Button({
+			this.removeFieldButton = Ext.create('Ext.button.Button', {
 				iconCls: 'delete',
 				handler: function() {
-					me.callDelegates("onFilterAttributeConditionPanelRemoveButtonClick", [me]);
+					me.callDelegates('onFilterAttributeConditionPanelRemoveButtonClick', [me]);
 				}
 			});
 
-			this.selectAtRuntimeCheck = new Ext.form.field.Checkbox({
+			this.selectAtRuntimeCheck = Ext.create('Ext.form.field.Checkbox', {
 				boxLabel: CMDBuild.Translation.setLater,
 				handler: function(checkbox, setValueAtRuntime) {
-					// if the user choose to set the value at
-					// runtime, disable the valueFilds to say
-					// back to the user that the value fields are not considered
-					for (var i=0, l=me.valueFields.length; i<l; ++i) {
+					// If the user choose to set the value at runtime, disable the valueFilds to say back to the user that the value fields are not considered
+					for (var i = 0; i <  me.valueFields.length; ++i) {
 						var field = me.valueFields[i];
+
 						if (field) {
 							if (setValueAtRuntime) {
 								field.disable();
 							} else {
-								// set the value of the condition combo
-								// to enable only the value fields that are
-								// needed for the current operator
+								// Set the value of the condition combo to enable only the value fields that are needed for the current operator
 								me.conditionCombo.setValue(me.conditionCombo.getValue());
 							}
 						}
@@ -253,9 +247,9 @@
 
 			this.items = [
 				this.removeFieldButton,
-				this.conditionCombo
-			]
-			.concat(this.valueFields);
+				this.conditionCombo,
+				this.valueFields
+			];
 
 			if (this.selectAtRuntimeCheckDisabled)
 				this.items.concat(this.selectAtRuntimeCheck);
@@ -263,30 +257,26 @@
 			this.onConditionComboSelectStrategy = buildOnConditionComboSelectStrategy(this.valueFields);
 
 			this.conditionCombo.setValue = Ext.Function.createSequence(this.conditionCombo.setValue, function(value) {
-				// if the user wanna select at runtime the
-				// values, the fields are disabled, so do nothing
-				if (!me.selectAtRuntimeCheck.getValue()) {
+				// If the user wanna select at runtime the values, the fields are disabled, so do nothing
+				if (!me.selectAtRuntimeCheck.getValue())
 					me.onConditionComboSelectStrategy.run(this.getValue());
-				}
 			}, this.conditionCombo);
 
 			this.callParent(arguments);
 		},
 
 		showOr: function(){
-			if (!this.orPanel) {
+			if (!this.orPanel)
 				this.orPanel = new Ext.container.Container({
 					html: 'or'
 				});
-			}
 
 			this.add(this.orPanel);
 		},
 
 		hideOr: function() {
-			if (this.orPanel) {
+			if (this.orPanel)
 				this.remove(this.orPanel);
-			}
 		},
 
 		getData: function() {
@@ -294,11 +284,10 @@
 			var USE_MY_GROUP = -1;
 
 			var value = [];
-			for (var i=0, l=this.valueFields.length; i<l; ++i) {
+			for (var i=0; i < this.valueFields.length; ++i) {
 				var field = this.valueFields[i];
-				if (!field.isDisabled()) {
+				if (!field.isDisabled())
 					value.push(field.getValue());
-				}
 			}
 
 			var out = {
@@ -310,26 +299,23 @@
 			};
 
 			if (this.selectAtRuntimeCheck.getValue()) {
-				out.simple.parameterType = "runtime";
+				out.simple.parameterType = 'runtime';
 			} else {
-				out.simple.parameterType = "fixed";
+				out.simple.parameterType = 'fixed';
 			}
 
-			// manage "calculated values" for My User
-			// and My Group
+			// Manage 'calculated values' for My User and My Group
 			var field = this.valueFields[0];
-			if (Ext.getClassName(field) == "CMDBuild.Management.ReferenceField.Field") {
+			if (Ext.getClassName(field) == 'CMDBuild.Management.ReferenceField.Field') {
 				var cmAttribute = field.CMAttribute;
 
 				if (cmAttribute) {
-					if (cmAttribute.referencedClassName == "User"
-						&& field.getValue() == USE_MY_USER) {
-						out.simple.parameterType = "calculated";
-						out.simple.value = ["@MY_USER"];
-					} else if (cmAttribute.referencedClassName == "Role"
-						&& field.getValue() == USE_MY_GROUP) {
-						out.simple.parameterType = "calculated";
-						out.simple.value = ["@MY_GROUP"];
+					if (cmAttribute.referencedClassName == 'User' && field.getValue() == USE_MY_USER) {
+						out.simple.parameterType = 'calculated';
+						out.simple.value = ['@MY_USER'];
+					} else if (cmAttribute.referencedClassName == 'Role' && field.getValue() == USE_MY_GROUP) {
+						out.simple.parameterType = 'calculated';
+						out.simple.value = ['@MY_GROUP'];
 					}
 				}
 			}
@@ -337,25 +323,25 @@
 			return out;
 		},
 
+		/**
+		 * @param {Object} data
+		 */
 		setData: function(data) {
-			if (!data) {
-				return;
-			}
+			if (!Ext.isEmpty(data)) {
+				this.conditionCombo.setValue(data.operator);
 
-			this.conditionCombo.setValue(data.operator);
+				for (var i = 0; i < this.valueFields.length; ++i) {
+					var field = this.valueFields[i];
 
-			for (var i=0, l=this.valueFields.length; i<l; ++i) {
-				var field = this.valueFields[i];
-				try {
-					field.setValue(data.value[i]);
-				} catch (e) {
-					// the length of the value array on data is
-					// less than the number of fields
+					try {
+						field.setValue(data.value[i]);
+					} catch (e) {
+						// Length of the value array on data is less than the number of fields
+					}
 				}
-			}
 
-			if (data.parameterType == "runtime") {
-				this.selectAtRuntimeCheck.setValue(true);
+				if (data.parameterType == 'runtime')
+					this.selectAtRuntimeCheck.setValue(true);
 			}
 		},
 

@@ -18,11 +18,20 @@
 
 		title: tr.attributes,
 		autoScroll: true,
+		bodyCls: 'x-panel-default-framed',
+		defaults: {
+			padding: '5 5 0 5'
+		},
+		layout: {
+			type: 'vbox',
+			align: 'stretch'
+		},
+		items: [],
 
 		// Configuration
 			attributes: {}, // The attributes to use in the menu to set filtering over attribute values
 			readOnly: false, // Set true to have no menu with attributes and use the panel to only display the current filter
-		// Configuration
+		// END: Configuration
 
 		initComponent:function() {
 			this.fieldsetCategory = {};
@@ -50,19 +59,7 @@
 				tbar.push(this.resetFilterButton);
 			}
 
-			this.bodyCls = 'x-panel-default-framed';
-
-			this.layout = {
-				type: 'vbox',
-				align: 'stretch'
-			};
-
-			this.defaults = {
-				padding: '5 5 0 5'
-			};
-
 			this.tbar = tbar;
-			this.items = [];
 
 			this.mon(this, 'added', function(me) {
 				// Needed because the zIndexParent is not set for the menu, because when created is not owned in a floating element
@@ -221,6 +218,11 @@
 		return submenues;
 	}
 
+	/**
+	 * @param {Object} me
+	 * @param {Object} attribute
+	 * @param {Object} data
+	 */
 	function addFilterCondition(me, attribute, data) {
 		var category = attribute.name;
 
