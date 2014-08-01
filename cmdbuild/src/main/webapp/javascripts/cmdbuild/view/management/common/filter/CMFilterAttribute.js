@@ -19,10 +19,10 @@
 		title: tr.attributes,
 		autoScroll: true,
 
-		// configuration
-			attributes: {}, // the attributes to use in the menu to set filtering over attribute values
-			readOnly: false, // set true to have no menu with attributes and use the panel to only display the current filter
-		// configuration
+		// Configuration
+			attributes: {}, // The attributes to use in the menu to set filtering over attribute values
+			readOnly: false, // Set true to have no menu with attributes and use the panel to only display the current filter
+		// Configuration
 
 		initComponent:function() {
 			this.fieldsetCategory = {};
@@ -240,6 +240,7 @@
 		var filterCondition = Ext.create('CMDBuild.Management.FieldManager.getFieldSetForFilter', attribute);
 		me.fieldsetCategory[category].addCondition(filterCondition);
 		filterCondition.setData(data);
+		filterCondition.setDisabledRuntimeCheck(true);
 
 		Ext.resumeLayouts();
 		me.doLayout();
@@ -248,14 +249,14 @@
 	Ext.define('CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset', {
 		extend: 'Ext.form.FieldSet',
 
-		// configuration
-			attributeName: '',
-		// configuration
-
 		mixins: {
 			delegable: 'CMDBuild.core.CMDelegable',
 			conditionDelegate: 'CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanelDelegate'
 		},
+
+		// Configuration
+			attributeName: '',
+		// END: Configuration
 
 		constructor: function() {
 			this.mixins.delegable.constructor.call(this, 'CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldsetDelegate');

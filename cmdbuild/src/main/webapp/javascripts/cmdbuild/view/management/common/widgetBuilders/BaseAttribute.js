@@ -36,7 +36,7 @@
 		 * @param attribute
 		 * @return Ext.form.ComboBox
 		 */
-		getQueryCombo: function(attribute) {	
+		getQueryCombo: function(attribute) {
 			var store = new Ext.data.SimpleStore({
 				fields: ['id','type'],
 				data: this.getQueryOptions()
@@ -58,7 +58,7 @@
 				allowBlank: true,
 				width: 130
 			});
-			
+
 		},
 
 		getDefaultValueForQueryCombo: function() {
@@ -72,7 +72,7 @@
 		 */
 		getQueryOptions: function() {
 			throw new Error('not implemented');
-		},	
+		},
 
 		/**
 		 * Template method, call the buildAttributeField method that must be implemented in the subclass
@@ -123,20 +123,20 @@
 			throw new Error('not implemented');
 		},
 		/***
-		 * 
+		 *
 		 * @param attribute
 		 * @return a Ext.form.field.* used for the attribute in the grid
 		 */
 		buildCellEditor: function(attribute) {
 			return CMDBuild.Management.FieldManager.getFieldForAttr(attribute, readOnly = false);
 		},
-		
+
 		/**
 		 * @param attribute
-		 * @return Ext.form.FieldSet 
-		 * 
+		 * @return Ext.form.FieldSet
+		 *
 		 * this method prepare some variable and call the method buildFieldsetForFilter to have the fieldset
-		 * in the subclass is possible override buildFieldsetForFilter to build a different fieldset 
+		 * in the subclass is possible override buildFieldsetForFilter to build a different fieldset
 		 */
 		getFieldSetForFilter: function(attribute) {
 
@@ -146,19 +146,19 @@
 			}, attribute);
 
 			var field = this.buildField(attributeCopy, true);
-			var conditionCombo = this.getQueryCombo(attributeCopy); 
+			var conditionCombo = this.getQueryCombo(attributeCopy);
 
 			return this.buildFieldsetForFilter(field, conditionCombo, attributeCopy);
 		},
 
 		/**
-		 * 
+		 *
 		 * @param field
 		 * @param query
 		 * @param attribute
-		 * 
+		 *
 		 * @return Ext.form.FieldSet
-		 * 
+		 *
 		 * build a fieldSet with a combo-box and a field to edit a filtering criteria used in the
 		 * attribute section of the filter.
 		 */
@@ -196,6 +196,8 @@
 		conditionCombo: null,
 		valueFields: [],
 		// configuration
+
+		selectAtRuntimeCheckDisabled: true, // Flag to enable/disable selectAtRuntime checkbox
 
 		constructor: function() {
 			this.mixins.delegable.constructor.call(this,
@@ -253,8 +255,10 @@
 				this.removeFieldButton,
 				this.conditionCombo
 			]
-			.concat(this.valueFields)
-			.concat(this.selectAtRuntimeCheck);
+			.concat(this.valueFields);
+
+			if (this.selectAtRuntimeCheckDisabled)
+				this.items.concat(this.selectAtRuntimeCheck);
 
 			this.onConditionComboSelectStrategy = buildOnConditionComboSelectStrategy(this.valueFields);
 
@@ -353,6 +357,13 @@
 			if (data.parameterType == "runtime") {
 				this.selectAtRuntimeCheck.setValue(true);
 			}
+		},
+
+		/**
+		 * @param {Boolean} state
+		 */
+		setDisabledRuntimeCheck: function(state) {
+			this.selectAtRuntimeCheckDisabled = state;
 		}
 	});
 

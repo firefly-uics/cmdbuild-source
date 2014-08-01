@@ -44,16 +44,16 @@
 		layout: 'accordion',
 
 		// Configuration
-		attributes: {},
-		className: '',
-		filter: undefined,
-		filterTabToEnable: { // To enable/disable tabs visualization
-			attributeTab: true,
-			relationTab: true,
-			functionTab: true
-		},
-		firstShowDetectEvent: 'expand', // In some subclass the relations panel is used in a tab panel, so the event to listen for
-										// detect the first time that is shown is different (activate)
+			attributes: {},
+			className: '',
+			filter: undefined,
+			firstShowDetectEvent: 'expand', // In some subclass the relations panel is used in a tab panel, so the event to listen for
+											// detect the first time that is shown is different (activate)
+			filterTabToEnable: { // To enable/disable tabs visualization
+				attributeTab: true,
+				relationTab: true,
+				functionTab: true
+			},
 		// END: Configuration
 
 		constructor: function() {
