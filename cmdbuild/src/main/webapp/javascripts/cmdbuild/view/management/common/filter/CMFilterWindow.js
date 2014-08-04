@@ -47,9 +47,17 @@
 			attributes: {},
 			className: '',
 			filter: undefined,
-			firstShowDetectEvent: 'expand', // In some subclass the relations panel is used in a tab panel, so the event to listen for
-											// detect the first time that is shown is different (activate)
-			filterTabToEnable: { // To enable/disable tabs visualization
+
+			/**
+			 * In some subclass the relations panel is used in a tab panel, so the event to listen for detect the first time that is shown
+			 * is different (activate)
+			 */
+			firstShowDetectEvent: 'expand',
+
+			/**
+			 * To enable/disable tabs visualization
+			 */
+			filterTabToEnable: {
 				attributeTab: true,
 				relationTab: true,
 				functionTab: true
@@ -151,7 +159,9 @@
 			});
 		},
 
-		// protected
+		/**
+		 * @protected
+		 */
 		buildItems: function() {
 			this.filterAttributesPanel = this.buildFilterAttributePanel();
 			this.filterRelationsPanel = Ext.create('CMDBuild.view.management.common.filter.CMRelations', {
@@ -216,10 +226,17 @@
 		buttonAlign: 'center',
 		modal: true,
 
-		// configuration
-		filter: undefined, // a CMDBuild.model.CMFilterModel,
-		referredFilterWindow: undefined, // a CMFilterWindow, used outside to know the referred filter window and close it
-		// configuration
+		// Configuration
+			/**
+			 * a CMDBuild.model.CMFilterModel
+			 */
+			filter: undefined,
+
+			/**
+			 * a CMFilterWindow, used outside to know the referred filter window and close it
+			 */
+			referredFilterWindow: undefined,
+		// END: Configuration
 
 		constructor: function() {
 			this.mixins.delegable.constructor.call(this, 'CMDBuild.view.management.common.filter.CMSaveFilterWindowDelegate');

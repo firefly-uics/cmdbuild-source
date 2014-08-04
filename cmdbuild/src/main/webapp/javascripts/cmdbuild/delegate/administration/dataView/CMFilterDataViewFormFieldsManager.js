@@ -1,24 +1,23 @@
 (function() {
 
-	var FILTER = _CMProxy.parameter.FILTER;
-	var SOURCE_CLASS_NAME = _CMProxy.parameter.SOURCE_CLASS_NAME;
+	var FILTER = CMDBuild.core.proxy.CMProxyConstants.FILTER;
+	var SOURCE_CLASS_NAME = CMDBuild.core.proxy.CMProxyConstants.SOURCE_CLASS_NAME;
 
-	Ext.define("CMDBuild.delegate.administration.common.dataview.CMFilterDataViewFormFieldsManager", {
-		extend: "CMDBuild.delegate.administration.common.basepanel.CMBaseFormFiledsManager",
+	Ext.define('CMDBuild.delegate.administration.common.dataview.CMFilterDataViewFormFieldsManager', {
+		extend: 'CMDBuild.delegate.administration.common.basepanel.CMBaseFormFiledsManager',
 
 		mixins: {
-			delegable: "CMDBuild.core.CMDelegable"
+			delegable: 'CMDBuild.core.CMDelegable'
 		},
 
 		constructor: function() {
-			this.mixins.delegable.constructor.call(this,
-			"CMDBuild.delegate.administration.common.dataview.CMFilterDataViewFormDelegate");
+			this.mixins.delegable.constructor.call(this, 'CMDBuild.delegate.administration.common.dataview.CMFilterDataViewFormDelegate');
 
 			this.callParent(arguments);
 		},
 
 		/**
-		 * @return {array} an array of Ext.component to use as form items
+		 * @return {Array} an array of Ext.component to use as form items
 		 */
 		build: function() {
 			var me = this;
@@ -26,34 +25,36 @@
 			var fields = this.callParent(arguments);
 
 			Ext.apply(this.description, {
-				translationsKeyType: "View",
-				translationsKeyField: "Description"
+				translationsKeyType: 'View',
+				translationsKeyField: 'Description'
 			});
-			this.classes = new CMDBuild.field.ErasableCombo({
+
+			this.classes = Ext.create('CMDBuild.field.ErasableCombo', {
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name: SOURCE_CLASS_NAME,
-				valueField: 'name',
-				displayField: 'description',
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				editable: false,
 				store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
 				queryMode: 'local',
+
 				listeners: {
 					select: function(combo, records, options) {
 						var className = null;
-						if (Ext.isArray(records)
-								&& records.length > 0) {
+						if (Ext.isArray(records) && records.length > 0) {
 							var record = records[0];
+
 							className = record.get(me.classes.valueField);
 						}
 
-						me.callDelegates("onFilterDataViewFormBuilderClassSelected", [me, className]);
+						me.callDelegates('onFilterDataViewFormBuilderClassSelected', [me, className]);
 					}
 				}
 			});
 
-			this.filterChooser = new CMDBuild.view.common.field.CMFilterChooser({
+			this.filterChooser = Ext.create('CMDBuild.view.common.field.CMFilterChooser', {
 				fieldLabel: CMDBuild.Translation.filter,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: FILTER,
@@ -61,7 +62,7 @@
 					attributeTab: true,
 					relationTab: true,
 					functionTab: false
-				},
+				}
 			});
 
 			fields.push(this.classes);
@@ -75,51 +76,54 @@
 		},
 
 		/**
+		 * @param {Ext.data.Model} record - the record to use to fill the field values
 		 *
-		 * @param {Ext.data.Model} record
-		 * the record to use to fill the field values
+		 * @override
 		 */
-		// override
 		loadRecord: function(record) {
 			this.callParent(arguments);
+
 			var filterConfiguration = Ext.decode(record.get(FILTER));
 			var className = record.get(SOURCE_CLASS_NAME);
 
-			this.filterChooser.setFilter(new CMDBuild.model.CMFilterModel({
-				configuration: filterConfiguration,
-				entryType: className
-			}));
+			this.filterChooser.setFilter(
+				Ext.create('CMDBuild.model.CMFilterModel', {
+					configuration: filterConfiguration,
+					entryType: className
+				})
+			);
 
 			Ext.apply(this.description, {
-				translationsKeyName: record.get("name")
+				translationsKeyName: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
 			});
+
 			this.classes.setValue(className);
-			// the set value programmatic does not fire the select
-			// event, so call the delegates manually
-			this.callDelegates("onFilterDataViewFormBuilderClassSelected", [this, className]);
+
+			// The set value programmatic does not fire the select event, so call the delegates manually
+			this.callDelegates('onFilterDataViewFormBuilderClassSelected', [this, className]);
 		},
 
 		/**
-		 * @return {object} values
-		 * a key/value map with the values of the fields
+		 * @return {Object} values - a key/value map with the values of the fields
+		 *
+		 * @override
 		 */
-		// override
 		getValues: function() {
 			var values = this.callParent(arguments);
-
 			values[SOURCE_CLASS_NAME] = this.classes.getValue();
 			var filter = this.filterChooser.getFilter();
-			if (filter) {
+
+			if (filter)
 				values[FILTER] = Ext.encode(filter.getConfiguration());
-			}
 
 			return values;
 		},
 
 		/**
-		 * clear the values of his fields
+		 * Clear the values of his fields
+		 *
+		 * @override
 		 */
-		// override
 		reset: function() {
 			this.callParent(arguments);
 
@@ -127,4 +131,5 @@
 			this.filterChooser.reset();
 		}
 	});
+
 })();
