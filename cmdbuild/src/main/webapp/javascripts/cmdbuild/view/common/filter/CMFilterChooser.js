@@ -17,6 +17,15 @@
 		firstShowDetectEvent: "activate",
 		saveButtonText: CMDBuild.Translation.common.buttons.confirm,
 		abortButtonText: CMDBuild.Translation.common.buttons.abort,
+
+		/**
+		 * To enable/disable tabs visualization
+		 */
+		filterTabToEnable: {
+			attributeTab: true,
+			relationTab: true,
+			functionTab: true
+		},
 		// configuration
 
 		mixins: {
@@ -65,18 +74,27 @@
 
 			this.layout = "border";
 			this.buildGrid();
-			this.items = [
-				this.grid,
-			{
-				xtype: "tabpanel",
+
+			this.tabPanel = Ext.create('Ext.tab.Panel', {
 				region: "center",
 				border: false,
-				items: [
-					this.filterAttributesPanel, // inherited
-					this.filterRelationsPanel, // inherited
-					this.filterFunctionsPanel // inherited
-				]
-			}];
+				items: []
+			});
+
+			// Filter tabs
+			if (this.filterTabToEnable.attributeTab)
+				this.tabPanel.add(this.filterAttributesPanel); // Inherited
+
+			if (this.filterTabToEnable.relationTab)
+				this.tabPanel.add(this.filterRelationsPanel); // Inherited
+
+			if (this.filterTabToEnable.functionTab)
+				this.tabPanel.add(this.filterFunctionsPanel); // Inherited
+
+			this.items = [
+				this.grid,
+				this.tabPanel
+			];
 		},
 
 		// private
@@ -152,6 +170,15 @@
 		 * @see CMDBUild.view.common.CMFormFunctions.disableFields
 		 */
 		considerAsFieldToDisable: true,
+
+		/**
+		 * To enable/disable tabs visualization
+		 */
+		filterTabToEnable: {
+			attributeTab: true,
+			relationTab: true,
+			functionTab: true
+		},
 		// configuration
 
 		// override
@@ -216,7 +243,8 @@
 				var filterWindow = new CMDBuild.view.common.field.CMFilterChooserWindow({
 					filter: filter,
 					attributes: attributes,
-					className: className
+					className: className,
+					filterTabToEnable: me.filterTabToEnable
 				});
 
 				filterWindow.addDelegate(me);

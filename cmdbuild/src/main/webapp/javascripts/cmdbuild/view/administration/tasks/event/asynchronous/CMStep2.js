@@ -46,9 +46,6 @@
 							className: me.className,
 							height: '100%'
 						});
-						me.view.filterFunctionTab = Ext.create('CMDBuild.view.management.common.filter.CMFunctions', {
-							className: me.className
-						});
 
 						// To setup filters values
 						if (!Ext.isEmpty(me.filterValues)) {
@@ -57,12 +54,9 @@
 
 							if (!Ext.isEmpty(me.view.filterRelationTab) && !Ext.isEmpty(me.filterValues.relations))
 								me.view.filterRelationTab.setData(me.filterValues.relations);
-
-							if (!Ext.isEmpty(me.view.filterFunctionTab) && !Ext.isEmpty(me.filterValues.functions))
-								me.view.filterFunctionTab.setData(me.filterValues.functions);
 						}
 
-						me.view.filterTabPanel.add([me.view.filterAttributeTab, me.view.filterRelationTab, me.view.filterFunctionTab]);
+						me.view.filterTabPanel.add([me.view.filterAttributeTab, me.view.filterRelationTab]);
 						me.view.filterTabPanel.doLayout();
 					}
 				);
@@ -78,13 +72,11 @@
 			if (
 				!Ext.isEmpty(this.view.filterAttributeTab)
 				&& !Ext.isEmpty(this.view.filterRelationTab)
-				&& !Ext.isEmpty(this.view.filterFunctionTab)
 			) {
 				var returnArray = {};
 
 				returnArray[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE] = this.view.filterAttributeTab.getData();
 				returnArray[CMDBuild.core.proxy.CMProxyConstants.RELATION] = this.view.filterRelationTab.getData();
-				returnArray[CMDBuild.core.proxy.CMProxyConstants.FUNCTION] = this.view.filterFunctionTab.getData();
 
 				return returnArray;
 			}
@@ -100,8 +92,7 @@
 		 * example:
 		 * 		{
 		 * 			"attributes": {...},
-		 * 			"relations": {...},
-		 * 			"functions": {...}
+		 * 			"relations": {...}
 		 * 		}
 		 */
 		setValueFilters: function(filterValuesObject) {
