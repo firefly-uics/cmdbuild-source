@@ -40,7 +40,6 @@
 		},
 
 		buttonAlign: 'center',
-		items: [],
 		layout: 'accordion',
 
 		// Configuration
@@ -67,6 +66,10 @@
 		constructor: function() {
 			this.mixins.delegable.constructor.call(this, 'CMDBuild.view.management.common.filter.CMFilterWindowDelegate');
 
+
+			Ext.apply(this, {
+				items: []
+			});
 			this.callParent(arguments);
 		},
 
@@ -102,6 +105,7 @@
 		 */
 		onFirstShow: function() {
 			this.filterAttributesPanel.setData(this.filter.getAttributeConfiguration());
+
 			// Defer the setting of relations data to the moment in which the panel is expanded
 			// If never expanded take the data from the filter
 			this.filterRelationNeverExpansed = true;
