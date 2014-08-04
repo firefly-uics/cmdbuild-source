@@ -105,7 +105,7 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindow", {
 				listeners: {
 					click: function( menu, item, e, eOpts ) {
 						var record = me.selectedDataStore.getAt(item.index);
-						loadFormValues(me.form, record.raw);
+						loadFormValues(me, me.form, record.raw);
 					}
 				}
 			})
@@ -373,22 +373,40 @@ function htmlComposeMessage(errors) {
 	}
 	return messages;
 }
-function loadFormValues(form, record) {
-	form.setValues([{
-		id: fields.TO_ADDRESS,
-		value: record.to
-	},{
-		id: fields.FROM_ADDRESS,
-		value: record.from
-	},{
-		id: fields.CC_ADDRESS,
-		value: record.cc
-	},{
-		id: fields.SUBJECT,
-		value: record.subject
-	},{
-		id: fields.CONTENT,
-		value: record.body
-	}]);
+function loadFormValues(me, form, record) {
+	var xavars = Ext.apply({}, me.delegate.reader.templates(me.delegate.widgetConf), record);
+	for (var key in record.variables) {
+		xavars[key] = record.variables[key];
+	}
+	var templateResolver = new CMDBuild.Management.TemplateResolver({
+		clientForm: clientForm,
+		xaVars: xavars,
+		serverVars: me.delegate.getTemplateResolverServerVars()
+	});
+	_createEmailFromTemplate(templateResolver, record, form);
 }
+function _createEmailFromTemplate(templateResolver, emailTemplatesData, form) {
+	templateResolver.resolveTemplates({
+		attributes: Ext.Object.getKeys(emailTemplatesData),
+		callback: function onTemlatesWereSolved(values) {
+			form.setValues([{
+				id: fields.TO_ADDRESS,
+				value: values.to
+			},{
+				id: fields.FROM_ADDRESS,
+				value: values.from
+			},{
+				id: fields.CC_ADDRESS,
+				value: values.cc
+			},{
+				id: fields.SUBJECT,
+				value: values.subject
+			},{
+				id: fields.CONTENT,
+				value: values.body
+			}]);
+		}
+	});
+}
+
 })();
