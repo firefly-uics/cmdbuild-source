@@ -33,7 +33,7 @@ public class Card {
 
 	public static final ValueSerializer LEGACY_VALUE_SERIALIZER = new LegacyValueSerializer();
 	public static final ValueSerializer HACK_VALUE_SERIALIZER = new HackValueSerializer();
-	private static final List<Attribute> NO_ATTRIBUTES = Lists.newArrayList();
+	private final List<Attribute> NO_ATTRIBUTES = Lists.newArrayList();
 
 	private static abstract class AbstractValueSerializer implements ValueSerializer {
 
