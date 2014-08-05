@@ -49,11 +49,11 @@
 
 						// To setup filters values
 						if (!Ext.isEmpty(me.filterValues)) {
-							if (!Ext.isEmpty(me.view.filterAttributeTab) && !Ext.isEmpty(me.filterValues.attributes))
-								me.view.filterAttributeTab.setData(me.filterValues.attributes);
+							if (!Ext.isEmpty(me.view.filterAttributeTab) && !Ext.isEmpty(me.filterValues[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE]))
+								me.view.filterAttributeTab.setData(me.filterValues[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE]);
 
-							if (!Ext.isEmpty(me.view.filterRelationTab) && !Ext.isEmpty(me.filterValues.relations))
-								me.view.filterRelationTab.setData(me.filterValues.relations);
+							if (!Ext.isEmpty(me.view.filterRelationTab) && !Ext.isEmpty(me.filterValues[CMDBuild.core.proxy.CMProxyConstants.RELATION]))
+								me.view.filterRelationTab.setData(me.filterValues[CMDBuild.core.proxy.CMProxyConstants.RELATION]);
 						}
 
 						me.view.filterTabPanel.add([me.view.filterAttributeTab, me.view.filterRelationTab]);
