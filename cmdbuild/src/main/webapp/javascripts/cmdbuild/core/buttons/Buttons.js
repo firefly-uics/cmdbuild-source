@@ -37,13 +37,13 @@
 	Ext.define('CMDBuild.buttons.ImportButton', {
 		extend: 'CMDBuild.buttons.BaseButton',
 
-		text: CMDBuild.Translation.common.buttons.import
+		text: CMDBuild.Translation.common.buttons.importLabel
 	});
 
 	Ext.define('CMDBuild.buttons.ExportButton', {
 		extend: 'CMDBuild.buttons.BaseButton',
 
-		text: CMDBuild.Translation.common.buttons.export
+		text: CMDBuild.Translation.common.buttons.exportLabel
 	});
 
 	Ext.define('CMDBuild.buttons.UpdateButton', {

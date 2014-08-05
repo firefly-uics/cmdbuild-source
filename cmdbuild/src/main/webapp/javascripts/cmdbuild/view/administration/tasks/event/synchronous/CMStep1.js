@@ -202,7 +202,7 @@
 
 			this.classNameCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
-				fieldLabel: CMDBuild.Translation.class,
+				fieldLabel: CMDBuild.Translation.classLabel,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,

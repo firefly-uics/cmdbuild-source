@@ -65,7 +65,7 @@
 			remove: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
-					url: this.getUrl(parameters.type).delete,
+					url: this.getUrl(parameters.type).remove,
 					params: parameters.params,
 					scope: parameters.scope,
 					success: parameters.success,

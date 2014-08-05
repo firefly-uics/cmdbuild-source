@@ -13,7 +13,7 @@ Ext.define('CMDBuild.bim.data.CMBimLayerModel', {
 		name: 'root',
 		type: 'boolean'
 	}, {
-		name: 'export',
+		name: 'exported',
 		type: 'boolean'
 	}, {
 		name: 'container',

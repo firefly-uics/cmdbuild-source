@@ -186,7 +186,7 @@
 		correctTaskTypeCheck: function(type) {
 			return (
 				!Ext.isEmpty(type)
-				&& (this.tasksDatas.indexOf(type) >= 0)
+				&& Ext.Array.contains(this.tasksDatas, type)
 			) ? true : false;
 		},
 
