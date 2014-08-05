@@ -100,7 +100,7 @@ public class CommunicationConstants {
 			ENABLED = "enabled", //
 			ENABLE_MOVE_REJECTED_NOT_MATCHING = "enableMoveRejectedNotMatching", //
 			ENTRY_TYPE = "entryType", //
-			EXPORT = "export", //
+			EXPORTED = "exported", //
 			EXPORT_MAPPING = "ExportMapping", //
 			EXTENSION = "extension", //
 			FIELD = "field", //

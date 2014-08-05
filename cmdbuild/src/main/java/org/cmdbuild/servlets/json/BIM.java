@@ -10,7 +10,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.CARD;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CONTAINER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.CommunicationConstants.EXPORT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EXPORTED;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_IFC;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
@@ -286,7 +286,7 @@ public class BIM extends JSONBaseWithSpringContext {
 				out.put(CLASS_NAME, input.getClassName());
 				out.put(ACTIVE, input.isActive());
 				out.put(BIM_ROOT, input.isRoot());
-				out.put(EXPORT, input.isExport());
+				out.put(EXPORTED, input.isExport());
 				out.put(CONTAINER, input.isContainer());
 				out.put(ROOT_REFERENCE, input.getRootReference());
 				out.put(DESCRIPTION, input.getDescription());

@@ -65,7 +65,7 @@
 			remove: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.accounts.delete,
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.accounts.remove,
 					params: parameters.params,
 					scope: parameters.scope,
 					success: parameters.success,
