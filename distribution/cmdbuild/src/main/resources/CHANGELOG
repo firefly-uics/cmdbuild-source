@@ -1,3 +1,49 @@
+CMDBuild 2.2.1 (released 2014/08/06)
+
+
+NEW FEATURES
+
+ * Task Manager - Template engine for notifications sent from asynchronous events
+
+ * Improved support for hosts and networks type
+
+ * Prevent domain-cardinality violation while editing relations
+
+ * Variables support in email templates
+
+
+FIXES
+
+ * After aborting new card creation click for selection of first grid's row don't takes effect
+
+ * Editing card in relations tab, won't put form fields in editing mode
+
+ * Widget "Create or modify card" no displays data in popup window
+
+ * Search filters with SQL function do not work
+
+ * Update workflow does not work
+
+ * Classes relation UI fix
+
+ * IE8 problems
+
+ * Combo Box init with 0
+
+ * Error applying patches using a non administrator postgres user
+
+ * LookupType add problem on Description
+
+ * Read only multilevel lookup
+
+ * Update workflow does not work
+
+ * Service users should not be able to login using GUI
+
+
+
+
+
 CMDBuild 2.2.0 (released 2014/06/13)
 
 
@@ -6,21 +52,21 @@ NEW FEATURES
  * Starting a selection of workflows from a workflow or a card
 
  * Enable or disable the modify, add, clone, remove buttons
- 
+
  * CMDBf relation's history management
- 
+
  * CMDBf lookups can be setted using description as a value
- 
+
  * CMDBf optimizations for create, update and delete operations
- 
+
  * Task Manager
- 
+
  * Translation of the attributes of the entities defined in administration
- 
+
  * Definition of navigation trees on domain relations
- 
+
  * Widget for the selection of cards thorough a navigation tree
- 
+
  * BIM feature
 
 
@@ -51,7 +97,7 @@ FIXES
  * In the widget ManageMail CC and To can be no correct
 
  * Errors occurred when sending e-mails using widget are not notified
- 
+
  * Minor fixes
 
 
