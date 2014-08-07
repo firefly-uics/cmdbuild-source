@@ -48,15 +48,15 @@
 					},
 					success : function(response) {
 						var ret = Ext.JSON.decode(response.responseText);
-	
+
 						me.attributes = ret.filled ? [] : ret.attribute; // filled == with no parameters
-						me.view.configureForm(me.attributes);
+						me.view.configureForm(me.attributes, me.widgetConf);
 						me.templateResolver = new CMDBuild.Management.TemplateResolver({
 							clientForm: me.clientForm,
 							xaVars: me.presets,
 							serverVars: this.getTemplateResolverServerVars()
 						});
-	
+
 						resolveTemplate(me);
 						me.view.setLoading(false);
 						me.configured = true;
@@ -85,7 +85,7 @@
 
 	function onSaveCardClick() {
 		var form = this.view.formPanel.getForm();
-		
+
 		var formatName = this.view.formatCombo.getName(),
 			formatValue = this.view.formatCombo.getValue(),
 			params = {};

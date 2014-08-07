@@ -132,6 +132,7 @@
 			RELATION_ID: 'relationId',
 			RELATION_MASTER_SIDE: 'master',
 			RETRY_WITHOUT_FILTER: 'retryWithoutFilter',
+			READ_ONLY_ATTRIBUTES: 'readOnlyAttributes',
 			SCALE: 'scale',
 			SENDER_ACCOUNT: 'senderAccount',
 			SMTP_PORT: 'smtpPort',
