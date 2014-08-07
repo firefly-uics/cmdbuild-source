@@ -49,14 +49,6 @@
 				remove: 'services/json/schema/modclass/deletedomain'
 			},
 
-			navigationTrees: {
-				get: 'services/json/navigationtree/get',
-				read: 'services/json/navigationtree/read',
-				create: 'services/json/navigationtree/create',
-				save: 'services/json/navigationtree/save',
-				remove: 'services/json/navigationtree/remove'
-			},
-
 			dataView: {
 				read: 'services/json/viewmanagement/read',
 				filter: {
@@ -123,6 +115,14 @@
 				readAvailableItems: 'services/json/schema/modmenu/getavailablemenuitems'
 			},
 
+			navigationTrees: {
+				get: 'services/json/navigationtree/get',
+				read: 'services/json/navigationtree/read',
+				create: 'services/json/navigationtree/create',
+				save: 'services/json/navigationtree/save',
+				remove: 'services/json/navigationtree/remove'
+			},
+
 			privileges: {
 				classes: {
 					read: 'services/json/schema/modsecurity/getclassprivilegelist',
@@ -151,6 +151,11 @@
 
 				removeDetail: 'services/json/management/modcard/deletedetail',
 				getAlreadyRelatedCards: 'services/json/management/modcard/getalreadyrelatedcards'
+			},
+
+			reports: {
+				createReportFactoryByTypeCode: 'services/json/management/modreport/createreportfactorybytypecode',
+				updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
 			},
 
 			tasks: {
