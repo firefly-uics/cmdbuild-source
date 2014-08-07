@@ -87,7 +87,7 @@
 		},
 
 		// add the required attributes
-		configureForm: function(attributes, parameters) {
+		configureForm: function(attributes, widgetConfiguration) {
 			if (!this.formPanelCreated) {
 				this.formPanelCreated = true;
 				// add fields to form panel
@@ -96,6 +96,14 @@
 						field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false);
 
 					if (field) {
+						// To disable if field name is contained in widgetConfiguration.readOnlyAttributes
+						field.setDisabled(
+							Ext.Array.contains(
+								widgetConfiguration[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY_ATTRIBUTES],
+								attribute[CMDBuild.core.proxy.CMProxyConstants.NAME]
+							)
+						);
+
 						this.formFields[i] = field;
 						this.formPanel.add(field);
 					}
