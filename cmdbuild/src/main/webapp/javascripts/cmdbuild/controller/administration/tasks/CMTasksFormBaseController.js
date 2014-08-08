@@ -135,7 +135,6 @@
 			this.parentDelegate.grid.store.load({
 				callback: function() {
 					me.view.removeAll();
-					me.view.disableModify(true);
 
 					var rowIndex = this.find(
 						CMDBuild.core.proxy.CMProxyConstants.ID,
@@ -147,6 +146,9 @@
 						(rowIndex < 0) ? 0 : rowIndex,
 						true
 					);
+
+					if (!me.selectionModel.hasSelection())
+						me.view.disableModify();
 				}
 			});
 

@@ -244,6 +244,9 @@
 						store.load({
 							callback: function() {
 								me.selectionModel.select(0, true);
+
+								if (!me.selectionModel.hasSelection())
+									me.form.disableModify();
 							}
 						});
 					},
