@@ -163,8 +163,8 @@ public class DefaultLogicAndStoreConverter implements LogicAndStoreConverter {
 	 * Used for separate those elements that should be separated by a line-feed
 	 * but that cannot be used because:<br>
 	 * 1) it could be used inside values<br>
-	 * 2) someone could edit database manually from a Windows host
-	 * It's the HTML entity for the '|' character.
+	 * 2) someone could edit database manually from a Windows host It's the HTML
+	 * entity for the '|' character.
 	 */
 	public static final String SPECIAL_SEPARATOR = "&#124;";
 

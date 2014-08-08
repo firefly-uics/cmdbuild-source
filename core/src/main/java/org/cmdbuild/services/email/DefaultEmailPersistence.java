@@ -8,7 +8,7 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.data.store.email.EmailOwnerGroupable;
 import org.cmdbuild.data.store.email.EmailStatus;
-import org.cmdbuild.data.store.email.EmailTemplate;
+import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
 
@@ -51,15 +51,15 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	private static DraftAndOutgoingEmails DRAFT_AND_OUTGOING_EMAILS = new DraftAndOutgoingEmails();
 
 	private final Store<Email> emailStore;
-	private final Store<EmailTemplate> emailTemplateStore;
+	private final Store<ExtendedEmailTemplate> emailTemplateStore;
 
-	public DefaultEmailPersistence(final Store<Email> emailStore, final Store<EmailTemplate> emailTemplateStore) {
+	public DefaultEmailPersistence(final Store<Email> emailStore, final Store<ExtendedEmailTemplate> emailTemplateStore) {
 		this.emailStore = emailStore;
 		this.emailTemplateStore = emailTemplateStore;
 	}
 
 	@Override
-	public Iterable<EmailTemplate> getEmailTemplates() {
+	public Iterable<ExtendedEmailTemplate> getEmailTemplates() {
 		logger.info("getting all email templates");
 		return emailTemplateStore.readAll();
 	}

@@ -11,9 +11,10 @@ import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
 import org.cmdbuild.data.store.email.EmailConverter;
-import org.cmdbuild.data.store.email.EmailTemplate;
-import org.cmdbuild.data.store.email.EmailTemplateStore;
-import org.cmdbuild.data.store.email.StorableEmailAccount;
+import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
+import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
+import org.cmdbuild.data.store.email.ExtendedEmailTemplateStore;
+import org.cmdbuild.data.store.email.DefaultEmailAccount;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic;
@@ -56,13 +57,13 @@ public class Email {
 	private UserStore userStore;
 
 	@Bean
-	protected StorableConverter<StorableEmailAccount> emailAccountConverter() {
+	protected StorableConverter<EmailAccount> emailAccountConverter() {
 		return new EmailAccountStorableConverter();
 	}
 
 	@Bean
-	public Store<StorableEmailAccount> emailAccountStore() {
-		return DataViewStore.<StorableEmailAccount> newInstance() //
+	public Store<EmailAccount> emailAccountStore() {
+		return DataViewStore.<EmailAccount> newInstance() //
 				.withDataView(data.systemDataView()) //
 				.withStorableConverter(emailAccountConverter()) //
 				.build();
@@ -120,9 +121,15 @@ public class Email {
 	}
 
 	@Bean
-	protected Store<EmailTemplate> emailTemplateStore() {
-		return EmailTemplateStore.newInstance() //
+	protected EmailTemplateStorableConverter emailTemplateStorableConverter() {
+		return new EmailTemplateStorableConverter();
+	}
+
+	@Bean
+	protected Store<ExtendedEmailTemplate> emailTemplateStore() {
+		return ExtendedEmailTemplateStore.newInstance() //
 				.withDataView(data.systemDataView()) //
+				.withConverter(emailTemplateStorableConverter()) //
 				.build();
 	}
 

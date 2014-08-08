@@ -1,6 +1,10 @@
 package org.cmdbuild.services.email;
 
-public interface EmailAccount {
+import org.cmdbuild.data.store.Storable;
+
+public interface EmailAccount extends Storable {
+
+	Long getId();
 
 	String getName();
 

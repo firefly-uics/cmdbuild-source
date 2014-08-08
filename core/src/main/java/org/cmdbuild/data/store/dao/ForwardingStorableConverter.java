@@ -3,6 +3,7 @@ package org.cmdbuild.data.store.dao;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.data.store.Storable;
 
 public class ForwardingStorableConverter<T extends Storable> implements StorableConverter<T> {
@@ -31,6 +32,11 @@ public class ForwardingStorableConverter<T extends Storable> implements Storable
 	@Override
 	public T convert(final CMCard card) {
 		return inner.convert(card);
+	}
+
+	@Override
+	public CMCardDefinition fill(final CMCardDefinition card, final T storable) {
+		return inner.fill(card, storable);
 	}
 
 	@Override

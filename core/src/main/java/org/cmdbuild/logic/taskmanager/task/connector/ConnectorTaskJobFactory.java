@@ -9,7 +9,6 @@ import static org.cmdbuild.services.email.Predicates.named;
 
 import org.cmdbuild.common.java.sql.DataSourceHelper;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
 import org.cmdbuild.logic.email.SendTemplateEmail;
@@ -28,13 +27,13 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 	private final CMDataView dataView;
 	private final DataSourceHelper jdbcService;
 	private final AttributeValueAdapter attributeValueAdapter;
-	private final org.cmdbuild.data.store.Store<StorableEmailAccount> emailAccountStore;
+	private final org.cmdbuild.data.store.Store<EmailAccount> emailAccountStore;
 	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
 
 	public ConnectorTaskJobFactory(final CMDataView dataView, final DataSourceHelper jdbcService,
 			final AttributeValueAdapter attributeValueAdapter,
-			final org.cmdbuild.data.store.Store<StorableEmailAccount> emailAccountStore,
+			final org.cmdbuild.data.store.Store<EmailAccount> emailAccountStore,
 			final EmailServiceFactory emailServiceFactory, final EmailTemplateLogic emailTemplateLogic) {
 		this.dataView = dataView;
 		this.jdbcService = jdbcService;

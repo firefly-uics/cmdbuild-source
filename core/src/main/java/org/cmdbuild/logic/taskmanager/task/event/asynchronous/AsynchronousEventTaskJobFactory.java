@@ -25,7 +25,6 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
@@ -63,14 +62,14 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 	};
 
 	private final CMDataView dataView;
-	private final org.cmdbuild.data.store.Store<StorableEmailAccount> emailAccountStore;
+	private final org.cmdbuild.data.store.Store<EmailAccount> emailAccountStore;
 	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
 	private final TaskStore taskStore;
 	private final LogicAndStoreConverter logicAndStoreConverter;
 
 	public AsynchronousEventTaskJobFactory(final CMDataView dataView,
-			final org.cmdbuild.data.store.Store<StorableEmailAccount> emailAccountStore,
+			final org.cmdbuild.data.store.Store<EmailAccount> emailAccountStore,
 			final EmailServiceFactory emailServiceFactory, final EmailTemplateLogic emailTemplateLogic,
 			final TaskStore taskStore, final LogicAndStoreConverter logicAndStoreConverter) {
 		this.dataView = dataView;

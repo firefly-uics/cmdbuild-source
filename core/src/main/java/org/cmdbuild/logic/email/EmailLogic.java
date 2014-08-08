@@ -32,7 +32,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.data.store.email.EmailStatus;
-import org.cmdbuild.data.store.email.EmailTemplate;
+import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreator;
@@ -370,7 +370,7 @@ public class EmailLogic implements Logic {
 	};
 
 	private static final Iterable<Email> NO_EMAILS = Collections.emptyList();
-	private static final Iterable<EmailTemplate> NO_EMAIL_TEMPLATES = Collections.emptyList();
+	private static final Iterable<ExtendedEmailTemplate> NO_EMAIL_TEMPLATES = Collections.emptyList();
 
 	private static final EmailService UNSUPPORTED = UnsupportedProxyFactory.of(EmailService.class).create();
 	private static final EmailService EMAIL_SERVICE_FOR_INVALID_PROCESS_ID = new ForwardingEmailService(UNSUPPORTED) {
@@ -386,7 +386,7 @@ public class EmailLogic implements Logic {
 		};
 
 		@Override
-		public Iterable<EmailTemplate> getEmailTemplates(final Email email) {
+		public Iterable<ExtendedEmailTemplate> getEmailTemplates(final Email email) {
 			return NO_EMAIL_TEMPLATES;
 		}
 

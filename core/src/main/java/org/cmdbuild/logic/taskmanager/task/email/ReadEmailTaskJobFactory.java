@@ -31,7 +31,6 @@ import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.Attachment;
 import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.data.store.email.EmailConstants;
-import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.StoreDocument;
 import org.cmdbuild.logic.dms.StoreDocument.Document;
@@ -106,7 +105,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 	private static final Function<Email, Email> IDENTITY = identity();
 
-	private final Store<StorableEmailAccount> emailAccountStore;
+	private final Store<EmailAccount> emailAccountStore;
 	private final EmailServiceFactory emailServiceFactory;
 	private final SubjectHandler subjectHandler;
 	private final EmailPersistence emailPersistence;
@@ -116,7 +115,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	private final EmailTemplateLogic emailTemplateLogic;
 
 	public ReadEmailTaskJobFactory( //
-			final Store<StorableEmailAccount> emailAccountStore, //
+			final Store<EmailAccount> emailAccountStore, //
 			final EmailServiceFactory emailServiceFactory, //
 			final SubjectHandler subjectHandler, //
 			final EmailPersistence emailPersistence, //
@@ -343,9 +342,9 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 				});
 	}
 
-	private StorableEmailAccount emailAccountFor(final String emailAccountName) {
+	private EmailAccount emailAccountFor(final String emailAccountName) {
 		logger.debug(marker, "getting email account for name '{}'", emailAccountName);
-		for (final StorableEmailAccount emailAccount : emailAccountStore.readAll()) {
+		for (final EmailAccount emailAccount : emailAccountStore.readAll()) {
 			if (emailAccount.getName().equals(emailAccountName)) {
 				return emailAccount;
 			}

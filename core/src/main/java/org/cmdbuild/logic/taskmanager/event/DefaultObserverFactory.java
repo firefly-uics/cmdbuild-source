@@ -26,7 +26,6 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailConstants;
-import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
@@ -168,7 +167,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 	private final UserStore userStore;
 	private final FluentApi fluentApi;
 	private final WorkflowLogic workflowLogic;
-	private final Store<StorableEmailAccount> emailAccountStore;
+	private final Store<EmailAccount> emailAccountStore;
 	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
 	private final CMDataView dataView;
@@ -178,7 +177,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 			final UserStore userStore, //
 			final FluentApi fluentApi, //
 			final WorkflowLogic workflowLogic, //
-			final Store<StorableEmailAccount> emailAccountStore, //
+			final Store<EmailAccount> emailAccountStore, //
 			final EmailServiceFactory emailServiceFactory, //
 			final EmailTemplateLogic emailTemplateLogic, //
 			final CMDataView dataView, //

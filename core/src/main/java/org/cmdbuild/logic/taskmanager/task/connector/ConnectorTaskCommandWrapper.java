@@ -35,8 +35,8 @@ import org.cmdbuild.services.sync.store.sql.BuildableAttributeMapping;
 import org.cmdbuild.services.sync.store.sql.BuildableTableOrViewMapping;
 import org.cmdbuild.services.sync.store.sql.BuildableTypeMapper;
 import org.cmdbuild.services.sync.store.sql.SqlStore;
-import org.cmdbuild.services.sync.store.sql.TableOrViewMapping;
 import org.cmdbuild.services.sync.store.sql.SqlType;
+import org.cmdbuild.services.sync.store.sql.TableOrViewMapping;
 import org.cmdbuild.services.sync.store.sql.TypeMapping;
 
 import com.google.common.base.Function;

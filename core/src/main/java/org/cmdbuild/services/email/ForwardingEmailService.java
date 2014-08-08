@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.Map;
 
 import org.cmdbuild.data.store.email.Email;
-import org.cmdbuild.data.store.email.EmailTemplate;
+import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 
 public abstract class ForwardingEmailService implements EmailService {
 
@@ -35,7 +35,7 @@ public abstract class ForwardingEmailService implements EmailService {
 	}
 
 	@Override
-	public Iterable<EmailTemplate> getEmailTemplates(final Email email) {
+	public Iterable<ExtendedEmailTemplate> getEmailTemplates(final Email email) {
 		return delegate.getEmailTemplates(email);
 	}
 

@@ -10,7 +10,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.email.DefaultEmailTemplate;
+import org.cmdbuild.data.store.email.DefaultExtendedEmailTemplate;
 import org.cmdbuild.data.store.email.EmailTemplate;
+import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -22,9 +25,9 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 
 	private static class TemplateWrapper implements Template {
 
-		private final EmailTemplate delegate;
+		private final ExtendedEmailTemplate delegate;
 
-		public TemplateWrapper(final EmailTemplate delegate) {
+		public TemplateWrapper(final ExtendedEmailTemplate delegate) {
 			this.delegate = delegate;
 		}
 
@@ -79,52 +82,60 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 		}
 
 		@Override
+		public Long getAccount() {
+			return delegate.getAccount();
+		}
+
+		@Override
 		public String toString() {
 			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
 
 	}
 
-	private static final Function<EmailTemplate, Template> EMAIL_TEMPLATE_TO_TEMPLATE = new Function<EmailTemplate, Template>() {
+	private static final Function<ExtendedEmailTemplate, Template> EMAIL_TEMPLATE_TO_TEMPLATE = new Function<ExtendedEmailTemplate, Template>() {
 
 		@Override
-		public Template apply(final EmailTemplate input) {
+		public Template apply(final ExtendedEmailTemplate input) {
 			return new TemplateWrapper(input);
 		};
 
 	};
 
-	private static final Function<Template, EmailTemplate> TEMPLATE_TO_EMAIL_TEMPLATE = new Function<Template, EmailTemplate>() {
+	private static final Function<Template, ExtendedEmailTemplate> TEMPLATE_TO_EMAIL_TEMPLATE = new Function<Template, ExtendedEmailTemplate>() {
 
 		@Override
-		public EmailTemplate apply(final Template input) {
-			return EmailTemplate.newInstance() //
-					.withId(input.getId()) //
-					.withName(input.getName()) //
-					.withDescription(input.getDescription()) //
-					.withTo(input.getTo()) //
-					.withCc(input.getCc()) //
-					.withBcc(input.getBcc()) //
-					.withSubject(input.getSubject()) //
-					.withBody(input.getBody()) //
+		public ExtendedEmailTemplate apply(final Template input) {
+			return DefaultExtendedEmailTemplate.newInstance() //
+					.withDelegate(DefaultEmailTemplate.newInstance() //
+							.withId(input.getId()) //
+							.withName(input.getName()) //
+							.withDescription(input.getDescription()) //
+							.withTo(input.getTo()) //
+							.withCc(input.getCc()) //
+							.withBcc(input.getBcc()) //
+							.withSubject(input.getSubject()) //
+							.withBody(input.getBody()) //
+							.withAccount(input.getAccount()) //
+							.build()) //
 					.withVariables(input.getVariables()) //
 					.build();
 		};
 
 	};
 
-	private static Function<? super EmailTemplate, String> TO_NAME = new Function<EmailTemplate, String>() {
+	private static Function<? super ExtendedEmailTemplate, String> TO_NAME = new Function<ExtendedEmailTemplate, String>() {
 
 		@Override
-		public String apply(final EmailTemplate input) {
+		public String apply(final ExtendedEmailTemplate input) {
 			return input.getName();
 		}
 
 	};
 
-	private final Store<EmailTemplate> store;
+	private final Store<ExtendedEmailTemplate> store;
 
-	public DefaultEmailTemplateLogic(final Store<EmailTemplate> store) {
+	public DefaultEmailTemplateLogic(final Store<ExtendedEmailTemplate> store) {
 		this.store = store;
 	}
 
@@ -139,10 +150,12 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	public Template read(final String name) {
 		logger.info(marker, "reading template '{}'", name);
 		assureOneOnlyWithName(name);
-		final EmailTemplate template = EmailTemplate.newInstance() //
-				.withName(name) //
+		final ExtendedEmailTemplate template = DefaultExtendedEmailTemplate.newInstance() //
+				.withDelegate(DefaultEmailTemplate.newInstance() //
+						.withName(name) //
+						.build()) //
 				.build();
-		final EmailTemplate readed = store.read(template);
+		final ExtendedEmailTemplate readed = store.read(template);
 		return EMAIL_TEMPLATE_TO_TEMPLATE.apply(readed);
 	}
 
@@ -166,7 +179,7 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	public void delete(final String name) {
 		logger.info(marker, "deleting template '{}'", name);
 		assureOneOnlyWithName(name);
-		final EmailTemplate emailTemplate = EmailTemplate.newInstance() //
+		final EmailTemplate emailTemplate = DefaultEmailTemplate.newInstance() //
 				.withName(name) //
 				.build();
 		store.delete(emailTemplate);
