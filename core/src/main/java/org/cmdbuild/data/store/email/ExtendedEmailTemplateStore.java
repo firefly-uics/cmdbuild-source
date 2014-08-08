@@ -4,7 +4,6 @@ import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
-import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Utils.as;
@@ -13,14 +12,7 @@ import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.WhereClauses.alwaysTrue;
 import static org.cmdbuild.data.store.Groupables.notGroupable;
-import static org.cmdbuild.data.store.email.EmailTemplateStorableConverter.BCC;
-import static org.cmdbuild.data.store.email.EmailTemplateStorableConverter.BODY;
-import static org.cmdbuild.data.store.email.EmailTemplateStorableConverter.CC;
-import static org.cmdbuild.data.store.email.EmailTemplateStorableConverter.DESCRIPTION;
-import static org.cmdbuild.data.store.email.EmailTemplateStorableConverter.FROM;
 import static org.cmdbuild.data.store.email.EmailTemplateStorableConverter.NAME;
-import static org.cmdbuild.data.store.email.EmailTemplateStorableConverter.SUBJECT;
-import static org.cmdbuild.data.store.email.EmailTemplateStorableConverter.TO;
 
 import java.util.Collection;
 import java.util.Map;
@@ -55,30 +47,37 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class EmailTemplateStore implements Store<EmailTemplate> {
+public class ExtendedEmailTemplateStore implements Store<ExtendedEmailTemplate> {
 
-	private static final Marker marker = MarkerFactory.getMarker(EmailTemplateStore.class.getName());
+	private static final Marker marker = MarkerFactory.getMarker(ExtendedEmailTemplateStore.class.getName());
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<EmailTemplateStore> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<ExtendedEmailTemplateStore> {
 
 		private CMDataView dataView;
+		private EmailTemplateStorableConverter converter;
 
 		private Builder() {
 			// use factory method
 		}
 
 		@Override
-		public EmailTemplateStore build() {
+		public ExtendedEmailTemplateStore build() {
 			validate();
-			return new EmailTemplateStore(this);
+			return new ExtendedEmailTemplateStore(this);
 		}
 
 		private void validate() {
 			Validate.notNull(dataView, "missing '%s'", CMDataView.class);
+			Validate.notNull(converter, "missing '%s'", EmailTemplateStorableConverter.class);
 		}
 
 		public Builder withDataView(final CMDataView dataView) {
 			this.dataView = dataView;
+			return this;
+		}
+
+		public Builder withConverter(final EmailTemplateStorableConverter converter) {
+			this.converter = converter;
 			return this;
 		}
 
@@ -202,24 +201,16 @@ public class EmailTemplateStore implements Store<EmailTemplate> {
 
 	};
 
-	private static Function<Entry<CardSupplier, Collection<CardSupplier>>, EmailTemplate> TO_EMAIL_TEMPLATE = new Function<Entry<CardSupplier, Collection<CardSupplier>>, EmailTemplate>() {
+	private final Function<Entry<CardSupplier, Collection<CardSupplier>>, ExtendedEmailTemplate> TO_EMAIL_TEMPLATE = new Function<Entry<CardSupplier, Collection<CardSupplier>>, ExtendedEmailTemplate>() {
 
 		@Override
-		public EmailTemplate apply(final Entry<CardSupplier, Collection<CardSupplier>> input) {
+		public ExtendedEmailTemplate apply(final Entry<CardSupplier, Collection<CardSupplier>> input) {
 			final CMCard source = input.getKey().get();
 			final Collection<CardSupplier> destinations = input.getValue();
 			final Map<String, String> variables = transformValues(uniqueIndex(destinations, TO_METADATA_NAME),
 					TO_METADATA_VALUE);
-			return EmailTemplate.newInstance() //
-					.withId(source.getId()) //
-					.withName(defaultString(source.get(NAME, String.class))) //
-					.withDescription(defaultString(source.get(DESCRIPTION, String.class))) //
-					.withFrom(defaultString(source.get(FROM, String.class))) //
-					.withTo(defaultString(source.get(TO, String.class))) //
-					.withCc(defaultString(source.get(CC, String.class))) //
-					.withBcc(defaultString(source.get(BCC, String.class))) //
-					.withSubject(defaultString(source.get(SUBJECT, String.class))) //
-					.withBody(defaultString(source.get(BODY, String.class))) //
+			return DefaultExtendedEmailTemplate.newInstance() //
+					.withDelegate(converter.convert(source)) //
 					.withVariables(variables) //
 					.build();
 		}
@@ -234,12 +225,14 @@ public class EmailTemplateStore implements Store<EmailTemplate> {
 	protected static final Alias DOMAIN = NameAlias.as("DOM");
 
 	private final CMDataView dataView;
+	private final EmailTemplateStorableConverter converter;
 	private final Supplier<CMClass> source;
 	private final Supplier<CMClass> destination;
 	private final Supplier<CMDomain> domain;
 
-	private EmailTemplateStore(final Builder builder) {
+	private ExtendedEmailTemplateStore(final Builder builder) {
 		this.dataView = builder.dataView;
+		this.converter = builder.converter;
 		this.source = memoize(new ClassSupplier(dataView, BASE_CLASS));
 		this.destination = memoize(new ClassSupplier(dataView, MetadataConverter.CLASS_NAME));
 		this.domain = memoize(new DomainSupplier(dataView, CLASS_METADATA));
@@ -258,9 +251,9 @@ public class EmailTemplateStore implements Store<EmailTemplate> {
 	}
 
 	@Override
-	public Storable create(final EmailTemplate storable) {
+	public Storable create(final ExtendedEmailTemplate storable) {
 		logger.debug(marker, "creating new element");
-		final CMCard master = fill(dataView.createCardFor(emailTemplate()), storable).save();
+		final CMCard master = converter.fill(dataView.createCardFor(emailTemplate()), storable).save();
 		for (final Entry<String, String> entry : storable.getVariables().entrySet()) {
 			final CMCard detail = fill(dataView.createCardFor(metadata()), entry).save();
 			dataView.createRelationFor(domain()) //
@@ -272,7 +265,7 @@ public class EmailTemplateStore implements Store<EmailTemplate> {
 	}
 
 	@Override
-	public EmailTemplate read(final Storable storable) {
+	public ExtendedEmailTemplate read(final Storable storable) {
 		logger.debug(marker, "reading element '{}'", storable);
 		final Iterable<CMQueryRow> result = query(whereClauseOf(storable));
 		return from(convertToStorable(result)) //
@@ -281,13 +274,13 @@ public class EmailTemplateStore implements Store<EmailTemplate> {
 	}
 
 	@Override
-	public Collection<EmailTemplate> readAll() {
+	public Collection<ExtendedEmailTemplate> readAll() {
 		logger.debug(marker, "reading all elements");
 		return readAll(notGroupable());
 	}
 
 	@Override
-	public Collection<EmailTemplate> readAll(final Groupable groupable) {
+	public Collection<ExtendedEmailTemplate> readAll(final Groupable groupable) {
 		logger.debug(marker, "reading all elements with additional grouping condition '{}'", groupable);
 		final WhereClause whereClause = whereClauseOf(groupable);
 		final Iterable<CMQueryRow> result = query(whereClause);
@@ -296,11 +289,11 @@ public class EmailTemplateStore implements Store<EmailTemplate> {
 	}
 
 	@Override
-	public void update(final EmailTemplate storable) {
+	public void update(final ExtendedEmailTemplate storable) {
 		logger.debug(marker, "updating element '{}'", storable);
 		final Iterable<CMQueryRow> result = query(whereClauseOf(storable));
 		final CMCard emailTemplate = emailTemplateFrom(result.iterator().next());
-		fill(dataView.update(emailTemplate), storable).save();
+		converter.fill(dataView.update(emailTemplate), storable).save();
 		final Map<String, String> currentVariables = Maps.newHashMap(storable.getVariables());
 		for (final CMQueryRow row : result) {
 			final Optional<CMCard> optionalMetadata = metadataFrom(row);
@@ -357,18 +350,6 @@ public class EmailTemplateStore implements Store<EmailTemplate> {
 		dataView.delete(emailTemplate);
 	}
 
-	private CMCardDefinition fill(final CMCardDefinition card, final EmailTemplate emailTemplate) {
-		return card //
-				.set(NAME, emailTemplate.getName()) //
-				.set(DESCRIPTION, emailTemplate.getDescription()) //
-				.set(FROM, emailTemplate.getFrom()) //
-				.set(TO, emailTemplate.getTo()) //
-				.set(CC, emailTemplate.getCc()) //
-				.set(BCC, emailTemplate.getBcc()) //
-				.set(SUBJECT, emailTemplate.getSubject()) //
-				.set(BODY, emailTemplate.getBody());
-	}
-
 	private CMCardDefinition fill(final CMCardDefinition card, final Entry<String, String> metadata) {
 		return card //
 				.set(MetadataConverter.NAME, metadata.getKey()) //
@@ -406,7 +387,7 @@ public class EmailTemplateStore implements Store<EmailTemplate> {
 		return clause;
 	}
 
-	private Iterable<EmailTemplate> convertToStorable(final Iterable<CMQueryRow> result) {
+	private Iterable<ExtendedEmailTemplate> convertToStorable(final Iterable<CMQueryRow> result) {
 		final Map<CardSupplier, Collection<CardSupplier>> map = Maps.newHashMap();
 		for (final CMQueryRow row : result) {
 			final CMCard emailTemplate = emailTemplateFrom(row);

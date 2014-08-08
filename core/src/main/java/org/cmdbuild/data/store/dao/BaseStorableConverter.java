@@ -2,7 +2,11 @@ package org.cmdbuild.data.store.dao;
 
 import static org.cmdbuild.data.store.dao.DataViewStore.DEFAULT_IDENTIFIER_ATTRIBUTE_NAME;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.logic.data.Utils;
 import org.slf4j.Logger;
@@ -38,16 +42,32 @@ public abstract class BaseStorableConverter<T extends Storable> implements Stora
 	}
 
 	@Override
+	public CMCardDefinition fill(final CMCardDefinition card, final T storable) {
+		final Map<String, Object> values = getValues(storable);
+		for (final Entry<String, Object> entry : values.entrySet()) {
+			logger.debug("setting attribute '{}' with value '{}'", entry.getKey(), entry.getValue());
+			card.set(entry.getKey(), entry.getValue());
+		}
+		return card;
+	}
+
+	@Override
 	public String getUser(final T storable) {
 		return SYSTEM_USER;
 	};
 
-	// TODO use static methods directly instead
+	/**
+	 * @deprecated use static methods directly instead
+	 */
+	@Deprecated
 	protected String readStringAttribute(final CMCard card, final String attributeName) {
 		return Utils.readString(card, attributeName);
 	}
 
-	// TODO use static methods directly instead
+	/**
+	 * @deprecated use static methods directly instead
+	 */
+	@Deprecated
 	protected Long readLongAttribute(final CMCard card, final String attributeName) {
 		return Utils.readLong(card, attributeName);
 	}

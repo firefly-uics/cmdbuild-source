@@ -30,6 +30,12 @@ public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 	}
 
 	@Override
+	public DBCard setUser(final String user) {
+		super.setUser(user);
+		return this;
+	}
+
+	@Override
 	public DBClass getType() {
 		return (DBClass) super.getType();
 	}

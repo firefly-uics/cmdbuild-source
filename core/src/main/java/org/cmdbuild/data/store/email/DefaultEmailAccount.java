@@ -5,12 +5,11 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.services.email.EmailAccount;
 
-public class StorableEmailAccount implements EmailAccount, Storable {
+public class DefaultEmailAccount implements EmailAccount {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<StorableEmailAccount> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<DefaultEmailAccount> {
 
 		private Long id;
 		private String name;
@@ -34,9 +33,9 @@ public class StorableEmailAccount implements EmailAccount, Storable {
 		}
 
 		@Override
-		public StorableEmailAccount build() {
+		public DefaultEmailAccount build() {
 			validate();
-			return new StorableEmailAccount(this);
+			return new DefaultEmailAccount(this);
 		}
 
 		private void validate() {
@@ -151,7 +150,7 @@ public class StorableEmailAccount implements EmailAccount, Storable {
 	private final String rejectedFolder;
 	private final boolean rejectNotMatching;
 
-	private StorableEmailAccount(final Builder builder) {
+	private DefaultEmailAccount(final Builder builder) {
 		this.id = builder.id;
 		this.name = builder.name;
 		this.isDefault = builder.isDefault;
@@ -175,6 +174,7 @@ public class StorableEmailAccount implements EmailAccount, Storable {
 		return name;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

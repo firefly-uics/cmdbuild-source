@@ -15,8 +15,6 @@ import static org.cmdbuild.data.store.Groupables.notGroupable;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.CMCard;
@@ -160,13 +158,9 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	public Storable create(final T storable) {
 		logger.debug(marker, "creating a new storable element");
 
-		logger.trace(marker, "getting data to be stored");
-		final String user = converter.getUser(storable);
-		final Map<String, Object> values = converter.getValues(storable);
-
 		logger.trace(marker, "filling new card's attributes");
-		final CMCardDefinition card = dataView.createCardFor(storeClass());
-		fillCard(card, values, user);
+		final CMCardDefinition card = converter.fill(dataView.createCardFor(storeClass()) //
+				.setUser(converter.getUser(storable)), storable);
 
 		logger.debug(marker, "saving card");
 		return converter.storableOf(card.save());
@@ -236,14 +230,10 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 	public void update(final T storable) {
 		logger.debug(marker, "updating storable element with identifier '{}'", storable.getIdentifier());
 
-		logger.trace(marker, "getting data to be stored");
-		final String user = converter.getUser(storable);
-		final Map<String, Object> values = converter.getValues(storable);
-
 		logger.trace(marker, "filling existing card's attributes");
 		final CMCard card = findCard(storable);
-		final CMCardDefinition updatedCard = dataView.update(card);
-		fillCard(updatedCard, values, user);
+		final CMCardDefinition updatedCard = converter.fill(dataView.update(card) //
+				.setUser(converter.getUser(storable)), storable);
 
 		logger.debug(marker, "saving card");
 		updatedCard.save();
@@ -268,15 +258,6 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 				.run() //
 				.getOnlyRow() //
 				.getCard(storeClass());
-	}
-
-	private void fillCard(final CMCardDefinition card, final Map<String, Object> values, final String user) {
-		logger.debug(marker, "filling card's attributes with values '{}'", values);
-		for (final Entry<String, Object> entry : values.entrySet()) {
-			logger.debug(marker, "setting attribute '{}' with value '{}'", entry.getKey(), entry.getValue());
-			card.set(entry.getKey(), entry.getValue());
-		}
-		card.setUser(user);
 	}
 
 	/**

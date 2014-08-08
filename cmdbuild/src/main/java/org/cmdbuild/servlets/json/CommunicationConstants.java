@@ -3,6 +3,7 @@ package org.cmdbuild.servlets.json;
 public class CommunicationConstants {
 
 	public static final String //
+			ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
 			ADDRESS = "address", //

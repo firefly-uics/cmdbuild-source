@@ -3,7 +3,6 @@ package org.cmdbuild.services.email;
 import static com.google.common.collect.FluentIterable.from;
 
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
 
@@ -14,16 +13,15 @@ public class PredicateEmailAccountSupplier implements Supplier<EmailAccount> {
 
 	private static final Logger logger = Log.EMAIL;
 
-	public static PredicateEmailAccountSupplier of(final Store<StorableEmailAccount> store,
+	public static PredicateEmailAccountSupplier of(final Store<EmailAccount> store,
 			final Predicate<EmailAccount> predicate) {
 		return new PredicateEmailAccountSupplier(store, predicate);
 	}
 
-	private final Store<StorableEmailAccount> store;
+	private final Store<EmailAccount> store;
 	private final Predicate<EmailAccount> predicate;
 
-	private PredicateEmailAccountSupplier(final Store<StorableEmailAccount> store,
-			final Predicate<EmailAccount> predicate) {
+	private PredicateEmailAccountSupplier(final Store<EmailAccount> store, final Predicate<EmailAccount> predicate) {
 		this.store = store;
 		this.predicate = predicate;
 	}

@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
-import org.cmdbuild.data.store.email.StorableEmailAccount;
+import org.cmdbuild.data.store.email.DefaultEmailAccount;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic.Account;
 import org.cmdbuild.services.email.EmailAccount;
@@ -30,14 +30,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultEmailAccountLogicTest {
 
-	private static final List<StorableEmailAccount> NO_ELEMENTS = Collections.emptyList();
+	private static final List<EmailAccount> NO_ELEMENTS = Collections.emptyList();
 
 	@Mock
-	private Store<StorableEmailAccount> store;
+	private Store<EmailAccount> store;
 
 	private DefaultEmailAccountLogic logic;
 
-	private final ArgumentCaptor<StorableEmailAccount> captor = ArgumentCaptor.forClass(StorableEmailAccount.class);
+	private final ArgumentCaptor<EmailAccount> captor = ArgumentCaptor.forClass(EmailAccount.class);
 
 	@Before
 	public void setUp() throws Exception {
@@ -50,7 +50,7 @@ public class DefaultEmailAccountLogicTest {
 		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 		when(store.read(any(Storable.class))) //
-				.thenReturn(StorableEmailAccount.newInstance() //
+				.thenReturn(DefaultEmailAccount.newInstance() //
 						.withId(42L) //
 						.withName("foo") //
 						.build());
@@ -74,13 +74,13 @@ public class DefaultEmailAccountLogicTest {
 	@Test
 	public void elementCreatedWhenThereIsNoOtherOneWithSameName() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("bar") //
 				.build();
 		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		when(store.read(any(Storable.class))) //
-				.thenReturn(StorableEmailAccount.newInstance() //
+				.thenReturn(DefaultEmailAccount.newInstance() //
 						.withId(42L) //
 						.withName("foo") //
 						.build());
@@ -103,7 +103,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotCreateNewElementWhenAnotherWithSameNameExists() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
 		when(store.readAll()) //
@@ -142,7 +142,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotUpdateElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
 		when(store.readAll()) //
@@ -163,7 +163,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test
 	public void elementUpdatedWhenOneIsFound() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
 		when(store.readAll()) //
@@ -205,7 +205,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotDeleteElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
 		when(store.readAll()) //
@@ -223,7 +223,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotDeleteDefaultElement() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("foo") //
 				.withDefaultStatus(true) //
 				.build();
@@ -246,7 +246,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test
 	public void elementDeletedWhenAnotherOneWithSameNameIsFound() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
 		when(store.readAll()) //
@@ -287,7 +287,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotGetElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
 		when(store.readAll()) //
@@ -305,7 +305,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test
 	public void elementGetWhenOneIsFound() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
 		when(store.readAll()) //
@@ -338,7 +338,7 @@ public class DefaultEmailAccountLogicTest {
 		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 		when(store.read(any(Storable.class))) //
-				.thenReturn(StorableEmailAccount.newInstance() //
+				.thenReturn(DefaultEmailAccount.newInstance() //
 						.withId(42L) //
 						.withName("foo") //
 						.build());
@@ -366,7 +366,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test
 	public void defaultStatusIsKeptUpdatingAnElement() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("foo") //
 				.withDefaultStatus(true) //
 				.build();
@@ -395,7 +395,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test
 	public void defaultAttributeCannotBeSettedInCreateAndUpdateAccountOperations() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("bar") //
 				.build();
 		when(store.readAll()) //
@@ -449,7 +449,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotSetToDefaultAnElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
 		when(store.readAll()) //
@@ -467,7 +467,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test
 	public void settingDefaultAnAlreadyDefaultElementDoesNothing() throws Exception {
 		// given
-		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
+		final EmailAccount stored = DefaultEmailAccount.newInstance() //
 				.withName("foo") //
 				.withDefaultStatus(true) //
 				.build();
@@ -485,14 +485,14 @@ public class DefaultEmailAccountLogicTest {
 	@Test
 	public void defaultConditionIsSettedToSpecifiedOneAndRemovedFromActualOne() throws Exception {
 		// given
-		final StorableEmailAccount storedDefault = StorableEmailAccount.newInstance() //
+		final EmailAccount storedDefault = DefaultEmailAccount.newInstance() //
 				.withName("foo") //
 				.withDefaultStatus(true) //
 				.build();
-		final StorableEmailAccount storedNotDefault = StorableEmailAccount.newInstance() //
+		final EmailAccount storedNotDefault = DefaultEmailAccount.newInstance() //
 				.withName("bar") //
 				.build();
-		final StorableEmailAccount anotherStoredNotDefault = StorableEmailAccount.newInstance() //
+		final EmailAccount anotherStoredNotDefault = DefaultEmailAccount.newInstance() //
 				.withName("baz") //
 				.build();
 		when(store.readAll()) //

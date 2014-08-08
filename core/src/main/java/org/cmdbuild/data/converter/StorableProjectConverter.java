@@ -16,10 +16,9 @@ public class StorableProjectConverter extends BaseStorableConverter<StorableProj
 	public static final String TABLE_NAME = "_BimProject";
 	public static final String PROJECT_ID = "ProjectId";
 
-	final String NAME = "Code", DESCRIPTION = "Description", ACTIVE = "Active",
-			LAST_CHECKIN = "LastCheckin", SYNCHRONIZED = "Synchronized", IMPORT_MAPPING = "ImportMapping",
-			EXPORT_MAPPING = "ExportMapping", EXPORT_PROJECT_ID = "ExportProjectId",
-			SHAPE_PROJECT_ID = "ShapesProjectId";
+	final String NAME = "Code", DESCRIPTION = "Description", ACTIVE = "Active", LAST_CHECKIN = "LastCheckin",
+			SYNCHRONIZED = "Synchronized", IMPORT_MAPPING = "ImportMapping", EXPORT_MAPPING = "ExportMapping",
+			EXPORT_PROJECT_ID = "ExportProjectId", SHAPE_PROJECT_ID = "ShapesProjectId";
 
 	@Override
 	public String getClassName() {
@@ -63,12 +62,6 @@ public class StorableProjectConverter extends BaseStorableConverter<StorableProj
 		// values.put(EXPORT_MAPPING, storableProject.getExportMapping());
 		// values.put(SHAPE_PROJECT_ID, storableProject.getShapeProjectId());
 		return values;
-	}
-
-	@Override
-	public String getUser(StorableProject storable) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
