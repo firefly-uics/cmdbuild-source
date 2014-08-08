@@ -14,7 +14,6 @@ import org.cmdbuild.data.store.email.EmailConverter;
 import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplateStore;
-import org.cmdbuild.data.store.email.DefaultEmailAccount;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic;
@@ -150,7 +149,8 @@ public class Email {
 
 	@Bean
 	public EmailTemplateLogic emailTemplateLogic() {
-		return new TransactionalEmailTemplateLogic(new DefaultEmailTemplateLogic(emailTemplateStore()));
+		return new TransactionalEmailTemplateLogic(new DefaultEmailTemplateLogic(emailTemplateStore(),
+				emailAccountStore()));
 	}
 
 	@Bean

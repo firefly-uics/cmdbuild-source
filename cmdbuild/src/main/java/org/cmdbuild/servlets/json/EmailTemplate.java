@@ -2,7 +2,7 @@ package org.cmdbuild.servlets.json;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.servlets.json.CommunicationConstants.ACCOUNT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_ACCOUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BCC;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BODY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CC;
@@ -46,7 +46,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		private String subject;
 		private String body;
 		private Map<String, String> variables;
-		private Long account;
+		private String account;
 
 		@Override
 		@JsonProperty(ID)
@@ -148,12 +148,12 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		}
 
 		@Override
-		@JsonProperty(ACCOUNT)
-		public Long getAccount() {
+		@JsonProperty(DEFAULT_ACCOUNT)
+		public String getAccount() {
 			return account;
 		}
 
-		public void setAccount(final Long account) {
+		public void setAccount(final String account) {
 			this.account = account;
 		}
 
@@ -233,7 +233,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			@Parameter(SUBJECT) final String subject, //
 			@Parameter(BODY) final String body, //
 			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables, //
-			@Parameter(value = ACCOUNT, required = false) final Long account //
+			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName //
 	) {
 		final JsonTemplate template = new JsonTemplate();
 		template.setName(name);
@@ -244,7 +244,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		template.setSubject(subject);
 		template.setBody(body);
 		template.setVariables(toMap(jsonVariables));
-		template.setAccount(account);
+		template.setAccount(accountName);
 		final Long id = emailTemplateLogic().create(template);
 		return JsonResponse.success(id);
 	}
@@ -260,7 +260,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			@Parameter(SUBJECT) final String subject, //
 			@Parameter(BODY) final String body, //
 			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables, //
-			@Parameter(value = ACCOUNT, required = false) final Long account //
+			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName //
 	) {
 		final JsonTemplate template = new JsonTemplate();
 		template.setName(name);
@@ -271,7 +271,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		template.setSubject(subject);
 		template.setBody(body);
 		template.setVariables(toMap(jsonVariables));
-		template.setAccount(account);
+		template.setAccount(accountName);
 		emailTemplateLogic().update(template);
 	}
 

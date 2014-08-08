@@ -2,6 +2,8 @@ package org.cmdbuild.logic.email;
 
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.data.store.Storables.storableOf;
+import static org.cmdbuild.data.store.Stores.nullOnNotFoundRead;
 
 import java.util.Map;
 
@@ -14,6 +16,7 @@ import org.cmdbuild.data.store.email.DefaultEmailTemplate;
 import org.cmdbuild.data.store.email.DefaultExtendedEmailTemplate;
 import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
+import org.cmdbuild.services.email.EmailAccount;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -26,9 +29,11 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	private static class TemplateWrapper implements Template {
 
 		private final ExtendedEmailTemplate delegate;
+		private final Store<EmailAccount> store;
 
-		public TemplateWrapper(final ExtendedEmailTemplate delegate) {
+		public TemplateWrapper(final ExtendedEmailTemplate delegate, final Store<EmailAccount> store) {
 			this.delegate = delegate;
+			this.store = store;
 		}
 
 		@Override
@@ -82,9 +87,20 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 		}
 
 		@Override
-		public Long getAccount() {
-			return delegate.getAccount();
+		public String getAccount() {
+			return accountOf(delegate);
 		}
+
+		private String accountOf(final ExtendedEmailTemplate input) {
+			if (input.getAccount() != null) {
+				for (final EmailAccount account : store.readAll()) {
+					if (input.getAccount().equals(account.getId())) {
+						return account.getName();
+					}
+				}
+			}
+			return null;
+		};
 
 		@Override
 		public String toString() {
@@ -93,16 +109,28 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 
 	}
 
-	private static final Function<ExtendedEmailTemplate, Template> EMAIL_TEMPLATE_TO_TEMPLATE = new Function<ExtendedEmailTemplate, Template>() {
+	private static class EmailTemplate_to_Template implements Function<ExtendedEmailTemplate, Template> {
+
+		private final Store<EmailAccount> store;
+
+		public EmailTemplate_to_Template(final Store<EmailAccount> store) {
+			this.store = store;
+		}
 
 		@Override
 		public Template apply(final ExtendedEmailTemplate input) {
-			return new TemplateWrapper(input);
+			return new TemplateWrapper(input, store);
 		};
 
 	};
 
-	private static final Function<Template, ExtendedEmailTemplate> TEMPLATE_TO_EMAIL_TEMPLATE = new Function<Template, ExtendedEmailTemplate>() {
+	private static class Template_To_EmailTemplate implements Function<Template, ExtendedEmailTemplate> {
+
+		private final Store<EmailAccount> nullOnNotFoundStore;
+
+		public Template_To_EmailTemplate(final Store<EmailAccount> store) {
+			this.nullOnNotFoundStore = nullOnNotFoundRead(store);
+		}
 
 		@Override
 		public ExtendedEmailTemplate apply(final Template input) {
@@ -116,10 +144,15 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 							.withBcc(input.getBcc()) //
 							.withSubject(input.getSubject()) //
 							.withBody(input.getBody()) //
-							.withAccount(input.getAccount()) //
+							.withAccount(accountIdOf(input)) //
 							.build()) //
 					.withVariables(input.getVariables()) //
 					.build();
+		}
+
+		private Long accountIdOf(final Template input) {
+			final EmailAccount account = nullOnNotFoundStore.read(storableOf(input.getAccount()));
+			return (account == null) ? null : account.getId();
 		};
 
 	};
@@ -134,16 +167,20 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	};
 
 	private final Store<ExtendedEmailTemplate> store;
+	private final EmailTemplate_to_Template emailTemplate_to_Template;
+	private final Template_To_EmailTemplate template_To_EmailTemplate;
 
-	public DefaultEmailTemplateLogic(final Store<ExtendedEmailTemplate> store) {
+	public DefaultEmailTemplateLogic(final Store<ExtendedEmailTemplate> store, final Store<EmailAccount> accountStore) {
 		this.store = store;
+		this.emailTemplate_to_Template = new EmailTemplate_to_Template(accountStore);
+		this.template_To_EmailTemplate = new Template_To_EmailTemplate(accountStore);
 	}
 
 	@Override
 	public Iterable<Template> readAll() {
 		logger.info(marker, "reading all templates");
 		return from(store.readAll()) //
-				.transform(EMAIL_TEMPLATE_TO_TEMPLATE);
+				.transform(emailTemplate_to_Template);
 	}
 
 	@Override
@@ -156,14 +193,14 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 						.build()) //
 				.build();
 		final ExtendedEmailTemplate readed = store.read(template);
-		return EMAIL_TEMPLATE_TO_TEMPLATE.apply(readed);
+		return emailTemplate_to_Template.apply(readed);
 	}
 
 	@Override
 	public Long create(final Template template) {
 		logger.info(marker, "creating template '{}'", template);
 		assureNoOneWithName(template.getName());
-		final Storable created = store.create(TEMPLATE_TO_EMAIL_TEMPLATE.apply(template));
+		final Storable created = store.create(template_To_EmailTemplate.apply(template));
 		final EmailTemplate readed = store.read(created);
 		return readed.getId();
 	}
@@ -172,7 +209,7 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	public void update(final Template template) {
 		logger.info(marker, "updating template '{}'", template);
 		assureOneOnlyWithName(template.getName());
-		store.update(TEMPLATE_TO_EMAIL_TEMPLATE.apply(template));
+		store.update(template_To_EmailTemplate.apply(template));
 	}
 
 	@Override

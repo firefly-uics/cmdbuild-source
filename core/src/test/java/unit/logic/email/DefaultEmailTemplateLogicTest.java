@@ -21,6 +21,7 @@ import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
+import org.cmdbuild.services.email.EmailAccount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,13 +38,16 @@ public class DefaultEmailTemplateLogicTest {
 	@Mock
 	private Store<ExtendedEmailTemplate> store;
 
+	@Mock
+	private Store<EmailAccount> accountStore;
+
 	private DefaultEmailTemplateLogic logic;
 
 	private final ArgumentCaptor<ExtendedEmailTemplate> captor = ArgumentCaptor.forClass(ExtendedEmailTemplate.class);
 
 	@Before
 	public void setUp() throws Exception {
-		logic = new DefaultEmailTemplateLogic(store);
+		logic = new DefaultEmailTemplateLogic(store, accountStore);
 	}
 
 	@Test
