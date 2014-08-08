@@ -18,10 +18,10 @@
 		/**
 		 * To acquire informations to setup fields before creation
 		 *
-		 * @param (Object) configuration
-		 * @param (Object) configuration.combo
-		 * @param (Object) configuration.grid
-		 * @param (Object) configuration.widthFixDisable
+		 * @param {Object} configuration
+		 * @param {Object} configuration.combo
+		 * @param {Object} configuration.grid
+		 * @param {Object} configuration.widthFixDisable
 		 */
 		constructor: function(configuration) {
 			this.delegate = Ext.create('CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController', this);

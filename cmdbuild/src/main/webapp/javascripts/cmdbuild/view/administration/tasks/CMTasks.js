@@ -39,7 +39,12 @@
 		},
 
 		listeners: {
-			// To show correct button in top toolbar
+			/**
+			 * To show correct button in top toolbar
+			 *
+			 * @param {Ext.panel.Panel} panel
+			 * @param {Object} eOpts
+			 */
 			show: function(panel, eOpts) {
 				this.getDockedComponent(CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP).removeAll();
 

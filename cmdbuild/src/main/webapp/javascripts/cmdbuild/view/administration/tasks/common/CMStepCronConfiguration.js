@@ -11,15 +11,16 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -27,7 +28,7 @@
 
 		// GETters functions
 			/**
-			 * @return (Object) delegate
+			 * @return {CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController} delegate
 			 */
 			getCronDelegate: function() {
 				return this.view.cronForm.delegate;
@@ -35,14 +36,14 @@
 
 		// SETters functions
 			/**
-			 * @param (String) cronExpression
+			 * @param {String} cronExpression
 			 */
 			setValueAdvancedFields: function(cronExpression) {
 				this.getCronDelegate().setValueAdvancedFields(cronExpression);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueBase: function(value) {
 				this.getCronDelegate().setValueBase(value);

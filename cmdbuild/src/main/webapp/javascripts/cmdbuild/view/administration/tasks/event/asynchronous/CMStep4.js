@@ -12,22 +12,23 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
 		},
 
 		/**
-		 * @return (String)
+		 * @return {String}
 		 */
 		checkWorkflowComboSelected: function() {
 			return this.getValueWorkflowCombo();
@@ -35,42 +36,42 @@
 
 		// GETters functions
 			/**
-			 * @return (Object) delegate
+			 * @return {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController} delegate
 			 */
 			getNotificationDelegate: function() {
 				return this.view.notificationForm.delegate;
 			},
 
 			/**
-			 * @return (Object) delegate
+			 * @return {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController} delegate
 			 */
 			getWorkflowDelegate: function() {
 				return this.view.workflowForm.delegate;
 			},
 
 			/**
-			 * @return (Boolean)
+			 * @return {Boolean}
 			 */
 			getValueNotificationFieldsetCheckbox: function() {
 				return this.view.notificationFieldset.checkboxCmp.getValue();
 			},
 
 			/**
-			 * @return (Object)
+			 * @return {Object}
 			 */
 			getValueWorkflowAttributeGrid: function() {
 				return this.getWorkflowDelegate().getValueGrid();
 			},
 
 			/**
-			 * @return (String)
+			 * @return {String}
 			 */
 			getValueWorkflowCombo: function() {
 				return this.getWorkflowDelegate().getValueCombo();
 			},
 
 			/**
-			 * @return (Boolean)
+			 * @return {Boolean}
 			 */
 			getValueWorkflowFieldsetCheckbox: function() {
 				return this.view.workflowFieldset.checkboxCmp.getValue();
@@ -85,21 +86,21 @@
 
 		// SETters functions
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setDisabledWorkflowAttributesGrid: function(state) {
 				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueNotificationAccount: function(value) {
 				this.getNotificationDelegate().setValue('sender', value);
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setValueNotificationFieldsetCheckbox: function(state) {
 				if (state) {
@@ -110,28 +111,28 @@
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueNotificationTemplate: function(value) {
 				this.getNotificationDelegate().setValue('template', value);
 			},
 
 			/**
-			 * @param (Object) value
+			 * @param {Object} value
 			 */
 			setValueWorkflowAttributesGrid: function(value) {
 				this.getWorkflowDelegate().setValueGrid(value);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueWorkflowCombo: function(value) {
 				this.getWorkflowDelegate().setValueCombo(value);
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setValueWorkflowFieldsetCheckbox: function(state) {
 				if (state) {

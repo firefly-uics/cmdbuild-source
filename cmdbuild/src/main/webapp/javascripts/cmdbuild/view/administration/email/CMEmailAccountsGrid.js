@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email.accounts; // Path to translation
+	var tr = CMDBuild.Translation.administration.email.accounts;
 
 	Ext.define('CMDBuild.view.administration.email.CMEmailAccountsGrid', {
 		extend: 'Ext.grid.Panel',
@@ -71,7 +71,7 @@
 		/**
 		 * Default column renderer to add icon in grid
 		 *
-		 * @param (Boolean) value
+		 * @param {Boolean} value
 		 */
 		defaultGridColumnRenderer: function(value) {
 			return value ? '<img src="images/icons/tick.png" alt="' + tr.isDefault + '" />' : null;

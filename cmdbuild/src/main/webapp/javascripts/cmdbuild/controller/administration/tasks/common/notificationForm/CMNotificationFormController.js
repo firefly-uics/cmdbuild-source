@@ -16,21 +16,21 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
 		},
 
 		/**
-		 * @return (Boolean) returnBoolean
+		 * @return {Boolean} returnBoolean
 		 */
 		isEmpty: function() {
 			var returnBoolean = true;
@@ -46,7 +46,7 @@
 			/**
 			 * Set fields as required/unrequired
 			 *
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setAllowBlankFields: function(state) {
 				for (var field in this.inputFields)
@@ -55,8 +55,8 @@
 			},
 
 			/**
-			 * @param (String) internalId
-			 * @param (String) value
+			 * @param {String} internalId
+			 * @param {String} value
 			 */
 			setValue: function(internalId, value) {
 				var inputField = this.inputFields[internalId];
@@ -68,7 +68,7 @@
 		/**
 		 * Notification form validation
 		 *
-		 * @param (Boolean) enable
+		 * @param {Boolean} enable
 		 */
 		validate: function(enable) {
 			this.setAllowBlankFields(

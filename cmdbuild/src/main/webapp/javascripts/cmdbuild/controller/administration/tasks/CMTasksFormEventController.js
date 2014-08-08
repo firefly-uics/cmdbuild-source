@@ -14,11 +14,12 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onAbortButtonClick':
@@ -46,18 +47,19 @@
 					return this.onSaveButtonClick();
 
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
 		},
 
 		/**
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
 
@@ -74,14 +76,16 @@
 		},
 
 		/**
-		 * @param (String) className
+		 * @param {String} className
 		 */
 		onClassSelected: function(className) {
 			this.setDisabledButtonNext(false);
 			this.delegateStep[1].className = className;
 		},
 
-		// overwrite
+		/**
+		 * @overwrite
+		 */
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.ID);
@@ -165,7 +169,9 @@
 			}
 		},
 
-		// overwrite
+		/**
+		 * @overwrite
+		 */
 		onSaveButtonClick: function() {
 			var filterData = this.delegateStep[1].getDataFilters();
 			var formData = this.view.getData(true);
@@ -261,7 +267,9 @@
 			}
 		},
 
-		// overwrite
+		/**
+		 * @overwrite
+		 */
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedId)) {
 				CMDBuild.LoadMask.get().show();
@@ -281,12 +289,13 @@
 		/**
 		 * Task validation
 		 *
-		 * @param (Boolean) enable
-		 * @param (String) type
+		 * @param {Boolean} enable
+		 * @param {String} type
 		 *
-		 * @return (Boolean)
+		 * @return {Boolean}
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		validate: function(enable, type) {
 			switch (type) {
 				case 'event_asynchronous': {

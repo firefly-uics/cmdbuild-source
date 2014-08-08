@@ -2,8 +2,9 @@
 
 	/**
 	 * Base class to extends to create form controller implementation
+	 *
+	 * @abstract
 	 */
-	// abstract
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormBaseController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
@@ -13,7 +14,9 @@
 		taskType: undefined,
 		view: undefined,
 
-		// abstract
+		/**
+		 * @abstract
+		 */
 		cmOn: function() {
 			throw 'CMTasksFormBaseController: cmOn() unimplemented method';
 		},
@@ -33,9 +36,9 @@
 		},
 
 		/**
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
 		 */
 		onAddButtonClick: function(name, param, callBack) {
 			this.selectionModel.deselectAll();
@@ -79,12 +82,16 @@
 			});
 		},
 
-		// abstract
+		/**
+		 * @abstract
+		 */
 		onRowSelected: function() {
 			throw 'CMTasksFormBaseController: onRowSelected() unimplemented method';
 		},
 
-		// abstract
+		/**
+		 * @abstract
+		 */
 		onSaveButtonClick: function() {
 			throw 'CMTasksFormBaseController: onSaveButtonClick() unimplemented method';
 		},
@@ -110,16 +117,16 @@
 		},
 
 		/**
-		 * @param (Boolean) state
+		 * @param {Boolean} state
 		 */
 		setDisabledButtonNext: function(state) {
 			this.view.nextButton.setDisabled(state);
 		},
 
 		/**
-		 * @param (Object) result
-		 * @param (Object) options
-		 * @param (Object) decodedResult
+		 * @param {Object} result
+		 * @param {Object} options
+		 * @param {Object} decodedResult
 		 */
 		success: function(result, options, decodedResult) {
 			var me = this;
@@ -150,11 +157,12 @@
 		/**
 		 * Task validation
 		 *
-		 * @param (Boolean) enable
+		 * @param {Boolean} enable
 		 *
-		 * @return (Boolean)
+		 * @return {Boolean}
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		validate: function(enable, type) {
 			return this.callParent([this.view]);
 		}
