@@ -1500,6 +1500,7 @@
 	"privileges_on_columns": "Privilegi su colonne",
 	"privileges_on_rows": "Privilegi su righe",
 	"projects": "Progetti",
+	"readOnly": "Sola lettura",
 	"reference_to_root": "Reference alla Root",
 	"relation": "Relazioni",
 	"remove": "Rimuovi",

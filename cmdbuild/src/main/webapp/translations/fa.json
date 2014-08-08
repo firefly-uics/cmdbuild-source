@@ -1500,6 +1500,7 @@
 	"privileges_on_columns": "دسترسی ستونها",
 	"privileges_on_rows": "دسترسی سطرها",
 	"projects": "پروژه ها",
+	"readOnly": "تنها خواندن",
 	"reference_to_root": "Reference to Root",
 	"relation": "<em>Relation</em>",
 	"remove": "Remove",

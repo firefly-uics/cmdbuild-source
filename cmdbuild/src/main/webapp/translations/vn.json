@@ -1500,6 +1500,7 @@
 	"privileges_on_columns": "Các đặc quyền của các cột",
 	"privileges_on_rows": "Các đặc quyền của hàng ngang",
 	"projects": "Projects",
+	"readOnly": "Chỉ đọc",
 	"reference_to_root": "<em>Reference to Root</em>",
 	"relation": "<em>Relation</em>",
 	"remove": "<em>Remove</em>",
