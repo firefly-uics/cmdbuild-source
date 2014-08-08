@@ -1500,6 +1500,7 @@
 	"privileges_on_columns": "Spalten-Privilegien",
 	"privileges_on_rows": "Zeilen-Privilegien",
 	"projects": "Projekte",
+	"readOnly": "Nur Anzeige",
 	"reference_to_root": "Bezug mit Quelle",
 	"relation": "<em>Relation</em>",
 	"remove": "Entfernen",

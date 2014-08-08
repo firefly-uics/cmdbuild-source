@@ -1500,6 +1500,7 @@
 	"privileges_on_columns": "Права доступа к колонкам",
 	"privileges_on_rows": "Права доступа к строкам",
 	"projects": "Проекты",
+	"readOnly": "Только чтение",
 	"reference_to_root": "Ссылка на корень",
 	"relation": "<em>Relation</em>",
 	"remove": "Удалить",

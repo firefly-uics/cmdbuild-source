@@ -1500,6 +1500,7 @@
 	"privileges_on_columns": "Columns privileges",
 	"privileges_on_rows": "Rows privileges",
 	"projects": "Projects",
+	"readOnly": "Read only",
 	"reference_to_root": "Reference to Root",
 	"relation": "Relation",
 	"remove": "Remove",

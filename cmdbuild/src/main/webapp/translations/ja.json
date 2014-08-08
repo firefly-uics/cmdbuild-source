@@ -1500,6 +1500,7 @@
 	"privileges_on_columns": "列の権限",
 	"privileges_on_rows": "行の権限",
 	"projects": "Projects",
+	"readOnly": "読み取り専用",
 	"reference_to_root": "ルートへの参照",
 	"relation": "<em>Relation</em>",
 	"remove": "削除",

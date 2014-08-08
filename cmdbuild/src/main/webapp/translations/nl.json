@@ -1500,6 +1500,7 @@
 	"privileges_on_columns": "Kolom rechten",
 	"privileges_on_rows": "Rij rechten",
 	"projects": "Projects",
+	"readOnly": "Alleen lezen",
 	"reference_to_root": "Referentie naar Root",
 	"relation": "<em>Relation</em>",
 	"remove": "Verwijderen",

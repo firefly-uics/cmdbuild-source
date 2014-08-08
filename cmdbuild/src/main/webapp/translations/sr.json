@@ -1500,6 +1500,7 @@
 	"privileges_on_columns": "Prava nad kolonama",
 	"privileges_on_rows": "Prava nad redovima",
 	"projects": "Projects",
+	"readOnly": "Samo pregled",
 	"reference_to_root": "<em>Reference to Root</em>",
 	"relation": "<em>Relation</em>",
 	"remove": "<em>Remove</em>",
