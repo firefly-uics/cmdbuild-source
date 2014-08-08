@@ -11,11 +11,12 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onBeforeEdit':
@@ -25,7 +26,7 @@
 					return this.onStepEdit();
 
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -55,7 +56,7 @@
 		/**
 		 * To setup domain combo editor
 		 *
-		 * @param (String) className
+		 * @param {String} className
 		 * @param (Boolean) onStepEditExecute
 		 */
 		buildDomainCombo: function(className, onStepEditExecute) {
@@ -106,7 +107,7 @@
 
 		// GETters functions
 			/**
-			 * @return (Array) data
+			 * @return {Array} data
 			 */
 			getData: function() {
 				var data = [];
@@ -133,8 +134,8 @@
 		/**
 		 * Function to update rows stores/editors on beforeEdit event
 		 *
-		 * @param (String) fieldName
-		 * @param (Object) rowData
+		 * @param {String} fieldName
+		 * @param {Object} rowData
 		 */
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {

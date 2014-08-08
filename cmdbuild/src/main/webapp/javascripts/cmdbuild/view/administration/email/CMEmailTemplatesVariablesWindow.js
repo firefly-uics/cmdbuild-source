@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email.templates.valuesWindow; // Path to translation
+	var tr = CMDBuild.Translation.administration.email.templates.valuesWindow;
 
 	Ext.define('CMDBuild.view.administration.email.CMEmailTemplatesVariablesWindow', {
 		extend: 'CMDBuild.PopupWindow',

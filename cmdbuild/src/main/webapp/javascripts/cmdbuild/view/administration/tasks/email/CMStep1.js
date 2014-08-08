@@ -13,15 +13,16 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -29,21 +30,21 @@
 
 		// GETters functions
 			/**
-			 * @return (Object) delegate
+			 * @return {CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController} delegate
 			 */
 			getFromAddressFilterDelegate: function() {
 				return this.view.fromAddresFilter.delegate;
 			},
 
 			/**
-			 * @return (Object) delegate
+			 * @return {CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController} delegate
 			 */
 			getSubjectFilterDelegate: function() {
 				return this.view.subjectFilter.delegate;
 			},
 
 			/**
-			 * @return (String)
+			 * @return {String}
 			 */
 			getValueId: function() {
 				return this.view.idField.getValue();
@@ -51,56 +52,56 @@
 
 		// SETters functions
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setAllowBlankEmailAccountCombo: function(state) {
 				this.view.emailAccountCombo.allowBlank = state;
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setDisabledTypeField: function(state) {
 				this.view.typeField.setDisabled(state);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueActive: function(value) {
 				this.view.activeField.setValue(value);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueDescription: function(value) {
 				this.view.descriptionField.setValue(value);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueEmailAccount: function(value) {
 				this.view.emailAccountCombo.setValue(value);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueFilterFromAddress: function(value) {
 				this.getFromAddressFilterDelegate().setValue(value);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueFilterSubject: function(value) {
 				this.getSubjectFilterDelegate().setValue(value);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {Int} value
 			 */
 			setValueId: function(value) {
 				this.view.idField.setValue(value);

@@ -11,18 +11,19 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onCheckedAttachmentsFieldset':
 					return this.onCheckedAttachmentsFieldset();
 
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -30,28 +31,28 @@
 
 		// GETters functions
 			/**
-			 * @return (Object) delegate
+			 * @return {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController} delegate
 			 */
 			getNotificationDelegate: function() {
 				return this.view.notificationForm.delegate;
 			},
 
 			/**
-			 * @return (Boolean)
+			 * @return {Boolean}
 			 */
 			getValueAttachmentsFieldsetCheckbox: function() {
 				return this.view.attachmentsFieldset.checkboxCmp.getValue();
 			},
 
 			/**
-			 * @return (Boolean)
+			 * @return {Boolean}
 			 */
 			getValueNotificationFieldsetCheckbox: function() {
 				return this.view.notificationFieldset.checkboxCmp.getValue();
 			},
 
 			/**
-			 * @return (Boolean)
+			 * @return {Boolean}
 			 */
 			getValueParsingFieldsetCheckbox: function() {
 				return this.view.parsingFieldset.checkboxCmp.getValue();
@@ -83,7 +84,7 @@
 			/**
 			 * Set attachments field as required/unrequired
 			 *
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setAllowBlankAttachmentsField: function(state) {
 				this.view.attachmentsCombo.allowBlank = state;
@@ -92,7 +93,7 @@
 			/**
 			 * Set parsing fields as required/unrequired
 			 *
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setAllowBlankParsingFields: function(state) {
 				this.view.parsingKeyStart.allowBlank = state;
@@ -103,14 +104,14 @@
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueAttachmentsCombo: function(value) {
 				this.view.attachmentsCombo.setValue(value);
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setValueAttachmentsFieldsetCheckbox: function(state) {
 				if (state) {
@@ -122,7 +123,7 @@
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setValueNotificationFieldsetCheckbox: function(state) {
 				if (state) {
@@ -133,7 +134,7 @@
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueNotificationTemplate: function(value) {
 				this.getNotificationDelegate().setValue('template', value);
@@ -142,10 +143,10 @@
 			/**
 			 * Setup all parsing fieldset input values
 			 *
-			 * @param (String) keyInit
-			 * @param (String) keyEnd
-			 * @param (String) valueInit
-			 * @param (String) valueEnd
+			 * @param {String} keyInit
+			 * @param {String} keyEnd
+			 * @param {String} valueInit
+			 * @param {String} valueEnd
 			 */
 			setValueParsingFields: function(keyInit, keyEnd, valueInit, valueEnd) {
 				this.view.parsingKeyStart.setValue(keyInit);
@@ -155,7 +156,7 @@
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setValueParsingFieldsetCheckbox: function(state) {
 				if (state) {

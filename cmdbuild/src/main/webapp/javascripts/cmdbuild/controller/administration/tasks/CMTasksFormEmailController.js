@@ -15,11 +15,12 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onAbortButtonClick':
@@ -44,25 +45,28 @@
 					return this.onSaveButtonClick();
 
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
 		},
 
 		/**
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
 
 			this.delegateStep[3].eraseWorkflowForm();
 		},
 
-		// overwrite
+		/**
+		 * @overwrite
+		 */
 		onModifyButtonClick: function() {
 			this.callParent(arguments);
 
@@ -70,7 +74,9 @@
 				this.delegateStep[3].setDisabledWorkflowAttributesGrid(true);
 		},
 
-		// overwrite
+		/**
+		 * @overwrite
+		 */
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.ID);
@@ -137,7 +143,9 @@
 			}
 		},
 
-		// overwrite
+		/**
+		 * @overwrite
+		 */
 		onSaveButtonClick: function() {
 			var formData = this.view.getData(true);
 			var submitDatas = {};
@@ -227,11 +235,12 @@
 		/**
 		 * Task validation
 		 *
-		 * @param (Boolean) enable
+		 * @param {Boolean} enable
 		 *
-		 * @return (Boolean)
+		 * @return {Boolean}
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		validate: function(enable) {
 			// Email account validation
 			this.delegateStep[0].setAllowBlankEmailAccountCombo(!enable);

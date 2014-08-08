@@ -1,5 +1,6 @@
 (function() {
 
+	Ext.require('CMDBuild.core.proxy.CMProxyEmailAccounts');
 	Ext.require('CMDBuild.core.proxy.CMProxyEmailTemplates');
 
 	Ext.define('CMDBuild.controller.administration.email.CMEmailTemplatesController', {
@@ -13,9 +14,10 @@
 		view: undefined,
 
 		/**
-		 * @param (Object) view
+		 * @param {CMDBuild.view.administration.email.CMEmailTemplates} view
+		 *
+		 * @overwrite
 		 */
-		// Overwrite
 		constructor: function(view) {
 			this.callParent(arguments);
 
@@ -32,9 +34,9 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -93,7 +95,7 @@
 
 			// GETters functions
 				/**
-				 * @return (Object) data
+				 * @return {Object} data
 				 *
 				 * 	Example:
 				 * 		{
@@ -121,7 +123,7 @@
 				/**
 				 * Rewrite of loadData
 				 *
-				 * @param (Object) data
+				 * @param {Object} data
 				 */
 				setVariableWindowGridDatas: function(data) {
 					var store = this.variablesWindow.grid.getStore();
@@ -182,7 +184,6 @@
 				var me = this;
 				this.selectedName = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME);
 
-				// Selected user asynchronous store query
 				this.selectedDataStore = CMDBuild.core.proxy.CMProxyEmailTemplates.get();
 				this.selectedDataStore.load({
 					params: {
@@ -252,9 +253,9 @@
 		},
 
 		/**
-		 * @param (Object) result
-		 * @param (Object) options
-		 * @param (Object) decodedResult
+		 * @param {Object} result
+		 * @param {Object} options
+		 * @param {Object} decodedResult
 		 */
 		success: function(result, options, decodedResult) {
 			var me = this;

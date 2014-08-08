@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email.accounts; // Path to translation
+	var tr = CMDBuild.Translation.administration.email.accounts;
 
 	Ext.define('CMDBuild.view.administration.email.CMEmailAccountsForm', {
 		extend: 'Ext.form.Panel',
@@ -128,7 +128,6 @@
 					]
 				});
 
-				// Outgoing
 				this.outgoing = Ext.create('Ext.form.FieldSet', {
 					title: tr.outgoing,
 					overflowY: 'auto',
@@ -168,7 +167,6 @@
 					]
 				});
 
-				// Incoming
 				this.incoming = Ext.create('Ext.form.FieldSet', {
 					title: tr.incoming,
 					overflowY: 'auto',

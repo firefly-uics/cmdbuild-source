@@ -8,9 +8,9 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -24,16 +24,16 @@
 					return this.setValueAdvancedFields(param);
 
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
 		},
 
 		/**
-		 * @param (Array) fields
+		 * @param {Array} fields
 		 *
-		 * @return (String) cronExpression
+		 * @return {String} cronExpression
 		 */
 		buildCronExpression: function(fields) {
 			var cronExpression = '';
@@ -51,10 +51,10 @@
 		/**
 		 * Create CMCronTriggerField
 		 *
-		 * @param (String) name
-		 * @param (String) label
+		 * @param {String} name
+		 * @param {String} label
 		 *
-		 * @return (Object)
+		 * @return {Object}
 		 */
 		createCronField: function(name, label) {
 			var me = this;
@@ -83,7 +83,7 @@
 
 		// GETters functions
 			/**
-			 * @return (Object)
+			 * @return {Object} baseCombo
 			 */
 			getBaseCombo: function() {
 				return this.baseField.baseCombo;
@@ -92,9 +92,9 @@
 			/**
 			 * Get cron form formatted values
 			 *
-			 * @param (Boolean) cronInputType
+			 * @param {Boolean} cronInputType
 			 *
-			 * @return (String) cronExpression
+			 * @return {String} cronExpression
 			 */
 			getValue: function(cronInputType) {
 				var cronExpression;
@@ -115,7 +115,7 @@
 			},
 
 		/**
-		 * @return (Boolean)
+		 * @return {Boolean}
 		 */
 		isEmptyAdvanced: function() {
 			return (
@@ -128,14 +128,14 @@
 		},
 
 		/**
-		 * @return (Boolean)
+		 * @return {Boolean}
 		 */
 		isEmptyBase: function() {
 			return Ext.isEmpty(this.baseField.baseCombo.getValue());
 		},
 
 		/**
-		 * @param (Boolean) state
+		 * @param {Boolean} state
 		 */
 		onChangeAdvancedRadio: function(state) {
 			this.setDisabledAdvancedFields(!state);
@@ -143,7 +143,7 @@
 		},
 
 		/**
-		 * @param (Boolean) state
+		 * @param {Boolean} state
 		 */
 		onChangeBaseRadio: function(state) {
 			this.setDisabledAdvancedFields(state);
@@ -154,7 +154,7 @@
 			/**
 			 * Set fields as required/unrequired
 			 *
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setAllowBlankAdvancedFields: function(state) {
 				for(item in this.advancedField.advancedFields)
@@ -162,7 +162,7 @@
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setDisabledAdvancedFields: function(state) {
 				for (var key in this.advancedField.advancedFields)
@@ -170,14 +170,14 @@
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setDisabledBaseCombo: function(state) {
 				this.baseField.baseCombo.setDisabled(state);
 			},
 
 			/**
-			 * @param (String) cronExpression
+			 * @param {String} cronExpression
 			 */
 			setValueAdvancedFields: function(cronExpression) {
 				if (!Ext.isEmpty(cronExpression)) {
@@ -191,7 +191,7 @@
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueAdvancedRadio: function(value) {
 				this.advancedField.advanceRadio.setValue(value);
@@ -200,7 +200,7 @@
 			/**
 			 * Try to find the correspondence of advanced cronExpression in baseCombo's store
 			 *
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueBase: function(value) {
 				var index = this.baseField.baseCombo.store.find(CMDBuild.core.proxy.CMProxyConstants.VALUE, value);
@@ -213,7 +213,7 @@
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueBaseRadio: function(value) {
 				this.baseField.baseRadio.setValue(value);
@@ -222,7 +222,7 @@
 		/**
 		 * Cron form validation
 		 *
-		 * @param (Boolean) enable
+		 * @param {Boolean} enable
 		 */
 		validate: function(enable) {
 			this.setValueAdvancedRadio(enable);
