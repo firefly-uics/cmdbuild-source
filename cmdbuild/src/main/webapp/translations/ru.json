@@ -1478,6 +1478,7 @@
 	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "Не допускается использовать фильтр с вычисляемыми параметрами",
 	"itIsNotAllowedFilterWithRuntimeParams": "Не допускается использовать фильтр с переменными параметрами",
+	"key": "<em>Key</em>",
 	"last_checkin": "<em>Last checkin</em>",
 	"layers": "Слои",
 	"lock_cards_in_edit": "Блокирование редактируемых карточек",
