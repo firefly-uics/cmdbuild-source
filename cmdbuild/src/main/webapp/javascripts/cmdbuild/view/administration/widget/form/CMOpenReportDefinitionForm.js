@@ -1,4 +1,7 @@
 (function() {
+
+	var tr = CMDBuild.Translation.administration.modClass.widgets;
+
 	Ext.define("CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm", {
 		extend: "CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm",
 
@@ -23,7 +26,6 @@
 
 		// override
 		buildForm: function() {
-			var tr = CMDBuild.Translation.administration.modClass.widgets;
 			var me = this;
 
 			this.callParent(arguments);
@@ -64,12 +66,58 @@
 				items: [this.forceFormatCheck, this.forceFormatOptions]
 			});
 
-			this.presetGrid = new CMDBuild.view.administration.common.CMKeyValueGrid({
-				title: tr[me.self.WIDGET_NAME].fields.presets,
-				keyLabel: tr[me.self.WIDGET_NAME].presetGrid.attribute,
-				valueLabel: tr[me.self.WIDGET_NAME].presetGrid.value,
-				margin: "0 0 0 3"
-			});
+//			this.presetGrid = new CMDBuild.view.administration.common.CMKeyValueGrid({
+//				title: tr[me.self.WIDGET_NAME].fields.presets,
+//				keyLabel: tr[me.self.WIDGET_NAME].presetGrid.attribute,
+//				valueLabel: tr[me.self.WIDGET_NAME].presetGrid.value,
+//				margin: "0 0 0 3"
+//			});
+
+			// PresetGrid
+				this.gridEditorPlugin = Ext.create('Ext.grid.plugin.CellEditing', {
+					clicksToEdit: 1
+				});
+
+				this.presetGrid = Ext.create('Ext.grid.Panel', {
+					title: tr[me.self.WIDGET_NAME].fields.presets,
+					considerAsFieldToDisable: true,
+					margin: '0 0 0 3',
+					flex: 1,
+
+					plugins: [this.gridEditorPlugin],
+
+					columns: [
+						{
+							header: tr[me.self.WIDGET_NAME].presetGrid.attribute,
+							dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
+							editor: { xtype: 'textfield' },
+							flex: 1
+						},
+						{
+							header: tr[me.self.WIDGET_NAME].presetGrid.value,
+							dataIndex: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+							editor: { xtype: 'textfield' },
+							flex: 1
+						},
+						{
+							xtype: 'checkcolumn',
+							header: CMDBuild.Translation.readOnly,
+							dataIndex: CMDBuild.core.proxy.CMProxyConstants.READ_ONLY,
+							width: 60,
+							align: 'center',
+							sortable: false,
+							hideable: false,
+							menuDisabled: true,
+							fixed: true
+						}
+					],
+
+					store: Ext.create('Ext.data.Store', {
+						model: 'CMDBuild.model.widget.CMModelOpenReport.presetGrid',
+						data: []
+					})
+				});
+			// END: PresetGrid
 
 			// defaultFields is inherited
 			this.defaultFields.add(this.reportCode, this.forceFormat);
@@ -82,12 +130,63 @@
 			});
 		},
 
-		fillPresetWithData: function(data) {
-			this.presetGrid.fillWithData(data);
+		fillPresetWithData: function(data, readOnlyAttributes) {
+_debug('fillPresetWithData readOnlyAttributes', readOnlyAttributes);
+_debug('fillPresetWithData', data);
+//			this.presetGrid.fillWithData(data);
+			this.presetGrid.store.removeAll();
+
+			if (!Ext.isEmpty(data)) {
+				for (var key in data) {
+					var recordConf = {};
+
+					recordConf[CMDBuild.core.proxy.CMProxyConstants.NAME] = key;
+					recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = data[key] || '';
+
+					if (Ext.Array.contains(readOnlyAttributes, key)) {
+						recordConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] = true;
+					} else {
+						recordConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] = false;
+					}
+
+					this.presetGrid.store.add(recordConf);
+				}
+			} else {
+				var recordConf = {};
+
+				recordConf[CMDBuild.core.proxy.CMProxyConstants.NAME] = '';
+				recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = '';
+				recordConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] = false;
+
+				this.presetGrid.store.add(recordConf);
+			}
+		},
+
+		getPresetData: function() {
+			var records = this.presetGrid.store.getRange();
+			var data = {};
+			var readOnly = [];
+
+			for (var i = 0, l = records.length; i < l; ++i) {
+				var recData = records[i].data;
+
+				if (!Ext.isEmpty(recData[CMDBuild.core.proxy.CMProxyConstants.NAME]) && !Ext.isEmpty(recData[CMDBuild.core.proxy.CMProxyConstants.VALUE])) {
+					data[recData[CMDBuild.core.proxy.CMProxyConstants.NAME]] = recData[CMDBuild.core.proxy.CMProxyConstants.VALUE];
+
+					if (recData[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY])
+						readOnly.push(recData[CMDBuild.core.proxy.CMProxyConstants.NAME]);
+				}
+			}
+
+			return {
+				data: data,
+				readOnly: readOnly
+			}
 		},
 
 		// override
 		fillWithModel: function(model) {
+_debug('fillWithModel', model);
 			this.callParent(arguments);
 			this.reportCode.setValue(model.get("reportCode"));
 
@@ -97,7 +196,7 @@
 				this.forceFormatOptions.setValue(forceFormat);
 			}
 
-			this.fillPresetWithData(model.get("preset"));
+			this.fillPresetWithData(model.get("preset"), model.get(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY_ATTRIBUTES));
 		},
 
 		// override
@@ -113,16 +212,19 @@
 		// override
 		getWidgetDefinition: function() {
 			var me = this;
+			var returnObject = {};
+			var presetData = me.getPresetData();
 
-			return Ext.apply(me.callParent(arguments), {
-				forceFormat: (function() {
-					if (me.forceFormatCheck.getValue()) {
-						return me.forceFormatOptions.getValue();
-					}
-				})(),
-				reportCode: me.reportCode.getValue(),
-				preset: me.presetGrid.getData()
-			});
+			returnObject['forceFormat'] = function() {
+				if (me.forceFormatCheck.getValue()) {
+					return me.forceFormatOptions.getValue();
+				}
+			};
+			returnObject['reportCode'] = me.reportCode.getValue();
+			returnObject['preset'] = presetData.data;
+			returnObject[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY_ATTRIBUTES] = presetData.readOnly;
+
+			return Ext.apply(me.callParent(arguments), returnObject);
 		}
 	});
 })();
