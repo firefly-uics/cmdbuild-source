@@ -1,6 +1,7 @@
 package org.cmdbuild.services.email;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.data.store.Storables.storableOf;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Storable;
@@ -123,14 +124,7 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	@Override
 	public Email getEmail(final Long emailId) {
 		logger.info("getting email with id '{}'", emailId);
-		final Email email = emailStore.read(new Storable() {
-
-			@Override
-			public String getIdentifier() {
-				return emailId.toString();
-			}
-
-		});
+		final Email email = emailStore.read(storableOf(emailId.toString()));
 		return email;
 	}
 

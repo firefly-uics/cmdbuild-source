@@ -6,6 +6,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.EQUAL;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
@@ -45,14 +46,7 @@ class GuestFilter {
 	private static final String METADATA_PORTLET_USER = "org.cmdbuild.portlet.user.id";
 	private static final String CLASS_ATTRIBUTE_SEPARATOR = ".";
 
-	private static final Storable METADATA_PORTLET_USER_STORABLE = new Storable() {
-
-		@Override
-		public String getIdentifier() {
-			return METADATA_PORTLET_USER;
-		}
-
-	};
+	private static final Storable METADATA_PORTLET_USER_STORABLE = storableOf(METADATA_PORTLET_USER);
 
 	private final UserType userType;
 	private final Login login;

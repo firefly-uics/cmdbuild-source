@@ -2,7 +2,7 @@ package org.cmdbuild.servlets.json.serializers;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.cmdbuild.data.store.Storables.storableById;
+import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION_CAPITAL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_PARENT_DESCRIPTION;
@@ -170,7 +170,7 @@ public class LookupSerializer {
 
 	private Lookup lookup(final Long id) {
 		if (id != null) {
-			return lookupStore.read(storableById(id));
+			return lookupStore.read(storableOf(id));
 		} else {
 			return null;
 		}
