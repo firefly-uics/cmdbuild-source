@@ -1478,6 +1478,7 @@
 	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "Non è permesso usare filtri con parametri calcolati",
 	"itIsNotAllowedFilterWithRuntimeParams": "Non è permesso usare filtri con parametri selezionabili dall'utente",
+	"key": "Chiave",
 	"last_checkin": "Ultimo Checkin",
 	"layers": "Livelli",
 	"lock_cards_in_edit": "Blocco schede in modifica",

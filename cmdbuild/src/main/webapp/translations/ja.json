@@ -1478,6 +1478,7 @@
 	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "計算されたパラメータでフィルタを使用することを許可されていません",
 	"itIsNotAllowedFilterWithRuntimeParams": "ユーザが選択可能なパラメータでフィルタを使用することを許可されていません",
+	"key": "キー",
 	"last_checkin": "最後のチェックイン",
 	"layers": "レイヤー",
 	"lock_cards_in_edit": "編集中カードをロック",

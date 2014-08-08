@@ -1478,6 +1478,7 @@
 	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "Es ist nicht erlaubt, ein Filter mit gerechneten Parametern zu benutzen",
 	"itIsNotAllowedFilterWithRuntimeParams": "Es ist nicht erlaubt, ein Filter mit vom Benutzer selektierbaren Parametern zu benutzen",
+	"key": "Schlüssel",
 	"last_checkin": "Letzter Check-in",
 	"layers": "Ebenen",
 	"lock_cards_in_edit": "Kartensperrung wird bearbeitet",

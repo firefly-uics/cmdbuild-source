@@ -1478,6 +1478,7 @@
 	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "Het is niet toegestaan een filter te gebruiken met berekende parameters",
 	"itIsNotAllowedFilterWithRuntimeParams": "Het is niet toegestaan een filter te gebruiken met selecteerbare parameters",
+	"key": "Sleutel",
 	"last_checkin": "Laatst ingelogd",
 	"layers": "Lagen",
 	"lock_cards_in_edit": "Blokkeer kaarten tijdens bewerken",
