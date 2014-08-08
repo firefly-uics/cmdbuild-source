@@ -66,13 +66,6 @@
 				items: [this.forceFormatCheck, this.forceFormatOptions]
 			});
 
-//			this.presetGrid = new CMDBuild.view.administration.common.CMKeyValueGrid({
-//				title: tr[me.self.WIDGET_NAME].fields.presets,
-//				keyLabel: tr[me.self.WIDGET_NAME].presetGrid.attribute,
-//				valueLabel: tr[me.self.WIDGET_NAME].presetGrid.value,
-//				margin: "0 0 0 3"
-//			});
-
 			// PresetGrid
 				this.gridEditorPlugin = Ext.create('Ext.grid.plugin.CellEditing', {
 					clicksToEdit: 1
@@ -131,9 +124,6 @@
 		},
 
 		fillPresetWithData: function(data, readOnlyAttributes) {
-_debug('fillPresetWithData readOnlyAttributes', readOnlyAttributes);
-_debug('fillPresetWithData', data);
-//			this.presetGrid.fillWithData(data);
 			this.presetGrid.store.removeAll();
 
 			if (!Ext.isEmpty(data)) {
@@ -186,7 +176,6 @@ _debug('fillPresetWithData', data);
 
 		// override
 		fillWithModel: function(model) {
-_debug('fillWithModel', model);
 			this.callParent(arguments);
 			this.reportCode.setValue(model.get("reportCode"));
 
