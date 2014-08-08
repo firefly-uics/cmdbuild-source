@@ -22,6 +22,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.BCC, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.BODY, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CC, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TO, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.VARIABLES, type: 'auto' }
