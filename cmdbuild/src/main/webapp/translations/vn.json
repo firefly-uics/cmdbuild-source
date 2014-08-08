@@ -1478,6 +1478,7 @@
 	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": " Không được phép sử dụng  bộ lọc voi các thông số được tính toán ",
 	"itIsNotAllowedFilterWithRuntimeParams": " không được phép sử dụng bộ lọc với các thông số được chọn lựa boi Người dùng ",
+	"key": "Từ khóa",
 	"last_checkin": "<em>Last checkin</em>",
 	"layers": "<em>Layers</em>",
 	"lock_cards_in_edit": "Khóa thẻ khi chỉnh sửa",

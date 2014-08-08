@@ -75,7 +75,7 @@
 				"lookup": "مراجعه",
 				"meta": {
 					"add": "Add meta",
-					"key": "Key",
+					"key": "کلید",
 					"remove": "Delete meta",
 					"title": "Edit metadata",
 					"value": "Value"
@@ -1478,6 +1478,7 @@
 	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "اجازه ندارید که از فیلتر با پارامترهای محاسبه شده استفاده کنید",
 	"itIsNotAllowedFilterWithRuntimeParams": "اجازه ندارید که از فیلتری استفاده که کنید که کاربر بتواند انتخاب کند.",
+	"key": "کلید",
 	"last_checkin": "آخرین ورود",
 	"layers": "لایه ها",
 	"lock_cards_in_edit": "کارهای در حال ویرایش را قفل کن",

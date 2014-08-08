@@ -1478,6 +1478,7 @@
 	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "<em>It's not allowed to use a filter with calculated parameters</em>",
 	"itIsNotAllowedFilterWithRuntimeParams": "<em>It's not allowed to use a filter with user selectable parameters</em>",
+	"key": "Chave",
 	"last_checkin": "<em>Last checkin</em>",
 	"layers": "<em>Layers</em>",
 	"lock_cards_in_edit": "Cartões Travados para Edição",
