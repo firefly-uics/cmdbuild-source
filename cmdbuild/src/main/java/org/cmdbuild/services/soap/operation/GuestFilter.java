@@ -23,9 +23,9 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.NullOnNotFoundReadStore;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.Stores;
 import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -69,7 +69,7 @@ class GuestFilter {
 				attribute.getType().accept(new NullAttributeTypeVisitor() {
 
 					private final Store<Metadata> _store = metadataStoreFactory.storeForAttribute(attribute);
-					private final NullOnNotFoundReadStore<Metadata> store = NullOnNotFoundReadStore.of(_store);
+					private final Store<Metadata> store = Stores.nullOnNotFoundRead(_store);
 
 					@Override
 					public void visit(final ReferenceAttributeType attributeType) {
