@@ -1,4 +1,7 @@
 (function() {
+
+	Ext.require('CMDBuild.model.widget.CMModelOpenReport');
+
 	Ext.define("CMDBuild.controller.administration.widget.CMOpenReportController", {
 
 		extend: "CMDBuild.controller.administration.widget.CMBaseWidgetDefinitionFormController",
@@ -12,7 +15,7 @@
 
 			this.mon(this.view, "cm-selected-report", onReportSelected, this);
 
-			// to enable/disable the combo-box with the related check 
+			// to enable/disable the combo-box with the related check
 			this.view.forceFormatCheck.setValue = Ext.Function.createSequence(this.view.forceFormatCheck.setValue,
 				function(v) {
 					if (!this.forceFormatCheck.disabled) {
