@@ -7,6 +7,7 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.javax.mail.JavaxMailBasedMailApiFactory;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.StoreSupplier;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.data.store.email.EmailAccountStorableConverter;
@@ -28,7 +29,6 @@ import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;
-import org.cmdbuild.services.email.PredicateEmailAccountSupplier;
 import org.cmdbuild.services.email.SubjectHandler;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +70,7 @@ public class Email {
 
 	@Bean
 	public Supplier<EmailAccount> defaultEmailAccountSupplier() {
-		return PredicateEmailAccountSupplier.of(emailAccountStore(), isDefault());
+		return StoreSupplier.of(EmailAccount.class, emailAccountStore(), isDefault());
 	}
 
 	@Bean

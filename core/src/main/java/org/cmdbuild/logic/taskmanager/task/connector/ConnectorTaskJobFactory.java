@@ -1,14 +1,18 @@
 package org.cmdbuild.logic.taskmanager.task.connector;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static com.google.common.base.Suppliers.memoize;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.common.utils.BuilderUtils.a;
+import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
+import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
 import static org.cmdbuild.scheduler.command.Commands.composeOnExeption;
 import static org.cmdbuild.scheduler.command.Commands.conditional;
 import static org.cmdbuild.services.email.Predicates.named;
 
 import org.cmdbuild.common.java.sql.DataSourceHelper;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.StoreSupplier;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
 import org.cmdbuild.logic.email.SendTemplateEmail;
@@ -17,7 +21,6 @@ import org.cmdbuild.logic.taskmanager.scheduler.AbstractJobFactory;
 import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailServiceFactory;
-import org.cmdbuild.services.email.PredicateEmailAccountSupplier;
 import org.cmdbuild.services.sync.store.internal.AttributeValueAdapter;
 
 import com.google.common.base.Supplier;
@@ -59,17 +62,21 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 	}
 
 	private Command sendEmail(final ConnectorTask task) {
-		final Supplier<EmailAccount> emailAccountSupplier = PredicateEmailAccountSupplier.of(emailAccountStore,
-				named(task.getNotificationAccount()));
-		final Supplier<Template> emailTemplateSupplier = new Supplier<Template>() {
+		final Supplier<Template> emailTemplateSupplier = memoize(new Supplier<Template>() {
 
 			@Override
 			public Template get() {
-				final String name = defaultIfBlank(task.getNotificationErrorTemplate(), EMPTY);
+				final String name = defaultString(task.getNotificationErrorTemplate());
 				return emailTemplateLogic.read(name);
 			}
 
-		};
+		});
+		final Supplier<EmailAccount> templateEmailAccountSupplier = nullOnException(StoreSupplier.of(
+				EmailAccount.class, emailAccountStore, named(emailTemplateSupplier.get().getAccount())));
+		final Supplier<EmailAccount> taskEmailAccountSupplier = nullOnException(StoreSupplier.of(EmailAccount.class,
+				emailAccountStore, named(task.getNotificationAccount())));
+		final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(templateEmailAccountSupplier,
+				taskEmailAccountSupplier));
 		final Command command = SchedulerCommandWrapper.of(a(SendTemplateEmail.newInstance() //
 				.withEmailAccountSupplier(emailAccountSupplier) //
 				.withEmailServiceFactory(emailServiceFactory) //
