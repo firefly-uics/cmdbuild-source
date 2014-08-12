@@ -27,7 +27,6 @@ import org.cmdbuild.services.email.DefaultEmailPersistence;
 import org.cmdbuild.services.email.DefaultSubjectHandler;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailPersistence;
-import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.SubjectHandler;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
@@ -69,7 +68,7 @@ public class Email {
 	}
 
 	@Bean
-	public Supplier<EmailAccount> defaultEmailAccountSupplier() {
+	protected Supplier<EmailAccount> defaultEmailAccountSupplier() {
 		return StoreSupplier.of(EmailAccount.class, emailAccountStore(), isDefault());
 	}
 
@@ -99,18 +98,11 @@ public class Email {
 	}
 
 	@Bean
-	public EmailService defaultEmailService() {
-		return emailServiceFactory() //
-				.create();
-
-	}
-
-	@Bean
 	public EmailServiceFactory emailServiceFactory() {
 		return ConfigurableEmailServiceFactory.newInstance() //
 				.withApiFactory(mailApiFactory()) //
 				.withPersistence(emailPersistence()) //
-				.withConfiguration(defaultEmailAccountSupplier()) //
+				.withDefaultAccountSupplier(defaultEmailAccountSupplier()) //
 				.build();
 	}
 
@@ -137,8 +129,8 @@ public class Email {
 	public EmailLogic emailLogic() {
 		return new EmailLogic( //
 				data.systemDataView(), //
-				defaultEmailAccountSupplier(), //
-				defaultEmailService(), //
+				emailServiceFactory(), //
+				emailAccountStore(), //
 				subjectHandler(), //
 				properties.dmsProperties(), //
 				dms.dmsService(), //

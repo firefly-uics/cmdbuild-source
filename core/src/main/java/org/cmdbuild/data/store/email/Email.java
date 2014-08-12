@@ -16,6 +16,7 @@ public class Email extends AbstractEmail implements Storable {
 	private EmailStatus status;
 	private Long activityId;
 	private Iterable<Attachment> attachments;
+	private String account;
 
 	public Email() {
 		this.id = null;
@@ -23,6 +24,11 @@ public class Email extends AbstractEmail implements Storable {
 
 	public Email(final long id) {
 		this.id = id;
+	}
+
+	@Override
+	public String getIdentifier() {
+		return id.toString();
 	}
 
 	public Long getId() {
@@ -63,17 +69,20 @@ public class Email extends AbstractEmail implements Storable {
 		this.activityId = activityId;
 	}
 
-	@Override
-	public String getIdentifier() {
-		return id.toString();
-	}
-
 	public Iterable<Attachment> getAttachments() {
 		return (attachments == null) ? Collections.<Attachment> emptyList() : attachments;
 	}
 
 	public void setAttachments(final Iterable<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(final String account) {
+		this.account = account;
 	}
 
 	@Override

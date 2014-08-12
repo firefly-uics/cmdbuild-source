@@ -6,9 +6,10 @@ import static org.cmdbuild.data.store.email.EmailConstants.CONTENT_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_STATUS_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.FROM_ADDRESS_ATTRIBUTE;
-import static org.cmdbuild.data.store.email.EmailConstants.NOTIFY_WITH;
+import static org.cmdbuild.data.store.email.EmailConstants.NOTIFY_WITH_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.PROCESS_ID_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.SUBJECT_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.ACCOUNT_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.TO_ADDRESSES_ATTRIBUTE;
 
 import java.util.Map;
@@ -44,7 +45,8 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		email.setToAddresses(defaultIfBlank(card.get(TO_ADDRESSES_ATTRIBUTE, String.class), null));
 		email.setSubject(defaultIfBlank(card.get(SUBJECT_ATTRIBUTE, String.class), null));
 		email.setContent(defaultIfBlank(card.get(CONTENT_ATTRIBUTE, String.class), null));
-		email.setNotifyWith(defaultIfBlank(card.get(NOTIFY_WITH, String.class), null));
+		email.setNotifyWith(defaultIfBlank(card.get(NOTIFY_WITH_ATTRIBUTE, String.class), null));
+		email.setAccount(defaultIfBlank(card.get(ACCOUNT_ATTRIBUTE, String.class), null));
 		email.setDate((card.getBeginDate()));
 
 		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, IdAndDescription.class).getId();
@@ -66,7 +68,8 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		values.put(SUBJECT_ATTRIBUTE, email.getSubject());
 		values.put(CONTENT_ATTRIBUTE, email.getContent());
 		values.put(PROCESS_ID_ATTRIBUTE, email.getActivityId());
-		values.put(NOTIFY_WITH, email.getNotifyWith());
+		values.put(NOTIFY_WITH_ATTRIBUTE, email.getNotifyWith());
+		values.put(ACCOUNT_ATTRIBUTE, email.getAccount());
 		if (email.getStatus() != null) {
 			values.put(EMAIL_STATUS_ATTRIBUTE, getEmailLookupIdFrom(email.getStatus()));
 		}

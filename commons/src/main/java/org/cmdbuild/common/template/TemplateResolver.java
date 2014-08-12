@@ -6,7 +6,8 @@ package org.cmdbuild.common.template;
 public interface TemplateResolver {
 
 	/**
-	 * Resolves the specified template.
+	 * Resolves the specified template. A {@code null} template should be
+	 * resolved as {@code null}.
 	 * 
 	 * @param template
 	 * 
