@@ -55,6 +55,10 @@ public class EngineBasedTemplateResolver implements TemplateResolver {
 
 	@Override
 	public String resolve(final String template) {
+		return (template == null) ? null : resolve0(template);
+	}
+
+	private String resolve0(final String template) {
 		final StringBuilder sb = new StringBuilder();
 		final Matcher matcher = VAR_PATTERN.matcher(template);
 		while (matcher.find()) {

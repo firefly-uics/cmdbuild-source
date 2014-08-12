@@ -148,12 +148,12 @@ public class DefaultEmailService implements EmailService {
 	private final EmailPersistence persistence;
 
 	DefaultEmailService( //
-			final Supplier<EmailAccount> emailConfigurationSupplier, //
+			final Supplier<EmailAccount> emailAccountSupplier, //
 			final MailApiFactory mailApiFactory, //
 			final EmailPersistence persistence //
 	) {
-		this.emailAccountSupplier = emailConfigurationSupplier;
-		this.mailApiSupplier = new MailApiSupplier(emailConfigurationSupplier, mailApiFactory);
+		this.emailAccountSupplier = emailAccountSupplier;
+		this.mailApiSupplier = new MailApiSupplier(emailAccountSupplier, mailApiFactory);
 		this.persistence = persistence;
 	}
 

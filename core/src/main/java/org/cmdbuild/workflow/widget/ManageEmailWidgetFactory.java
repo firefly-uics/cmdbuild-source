@@ -80,6 +80,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 					template.setSubject(_template.getSubject());
 					template.setContent(_template.getBody());
 					template.setVariables(_template.getVariables());
+					template.setAccount(_template.getAccount());
 				} catch (final Exception e) {
 					logger.warn(marker, "error getting template, skipping", e);
 				}
