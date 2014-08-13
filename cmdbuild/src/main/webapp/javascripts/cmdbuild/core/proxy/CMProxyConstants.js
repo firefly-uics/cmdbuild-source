@@ -20,6 +20,7 @@
 			BCC: 'bcc',
 			BODY: 'body',
 			CARDINALITY: 'cardinality',
+			CARD: 'card',
 			CARDS: 'cards',
 			CARD_ID: 'cardId',
 			CC: 'cc',

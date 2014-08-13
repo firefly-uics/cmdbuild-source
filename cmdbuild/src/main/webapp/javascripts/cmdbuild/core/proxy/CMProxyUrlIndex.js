@@ -211,6 +211,14 @@
 				}
 			},
 
+			widgets: {
+				grid: {
+					clearSession: 'services/json/management/importcsv/clearsession',
+					getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
+					uploadCsv: 'services/json/management/importcsv/uploadcsv'
+				}
+			},
+
 			workflow: {
 				abortProcess: 'services/json/workflow/abortprocess',
 				getStartActivity: 'services/json/workflow/getstartactivity',
