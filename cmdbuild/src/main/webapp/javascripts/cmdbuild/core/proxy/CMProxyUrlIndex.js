@@ -75,7 +75,7 @@
 
 			email: {
 				accounts:{
-					delete: 'services/json/schema/emailaccount/delete',
+					remove: 'services/json/schema/emailaccount/delete',
 					get: 'services/json/schema/emailaccount/get',
 					post: 'services/json/schema/emailaccount/post',
 					put: 'services/json/schema/emailaccount/put',
@@ -85,7 +85,7 @@
 					setDefault: 'services/json/schema/emailaccount/setdefault'
 				},
 				templates:{
-					delete: 'services/json/emailtemplate/deletetemplate',
+					remove: 'services/json/emailtemplate/deletetemplate',
 					get: 'services/json/emailtemplate/readtemplate',
 					post: 'services/json/emailtemplate/createtemplate',
 					put: 'services/json/emailtemplate/updatetemplate',
@@ -128,8 +128,8 @@
 					read: 'services/json/schema/modsecurity/getclassprivilegelist',
 					update: 'services/json/schema/modsecurity/saveclassprivilege',
 
-					clearRowAndColumnPrivileges: 'services/json/schema/modsecurity/clearrowandcolumnprivileges',
-					setRowAndColumnPrivileges: 'services/json/schema/modsecurity/setrowandcolumnprivileges',
+					clearRowAndColumnPrivileges: "services/json/schema/modsecurity/clearrowandcolumnprivileges",
+					setRowAndColumnPrivileges: "services/json/schema/modsecurity/setrowandcolumnprivileges",
 					saveClassUiConfiguration: 'services/json/schema/modsecurity/saveclassuiconfiguration',
 					loadClassUiConfiguration: 'services/json/schema/modsecurity/loadclassuiconfiguration'
 				},
@@ -143,21 +143,32 @@
 				}
 			},
 
+			relations: {
+				create: 'services/json/management/modcard/createrelations',
+				read: 'services/json/management/modcard/getrelationlist',
+				update: 'services/json/management/modcard/modifyrelation',
+				remove: 'services/json/management/modcard/deleterelation',
+
+				removeDetail: 'services/json/management/modcard/deletedetail',
+				getAlreadyRelatedCards: 'services/json/management/modcard/getalreadyrelatedcards'
+			},
+
 			tasks: {
 				getStore: 'services/json/schema/taskmanager/readall',
 				start: 'services/json/schema/taskmanager/start',
 				stop: 'services/json/schema/taskmanager/stop',
 
 				connector: {
-					delete: '',
-					get: '',
-					post: '',
-					put: '',
+					remove: 'services/json/schema/taskmanager/connector/delete',
+					get: 'services/json/schema/taskmanager/connector/read',
+					post: 'services/json/schema/taskmanager/connector/create',
+					put: 'services/json/schema/taskmanager/connector/update',
 
 					getStore: 'services/json/schema/taskmanager/connector/readall',
+					getSqlSources: 'services/json/schema/taskmanager/connector/availablesqlsources'
 				},
 				email: {
-					delete: 'services/json/schema/taskmanager/reademail/delete',
+					remove: 'services/json/schema/taskmanager/reademail/delete',
 					get: 'services/json/schema/taskmanager/reademail/read',
 					post: 'services/json/schema/taskmanager/reademail/create',
 					put: 'services/json/schema/taskmanager/reademail/update',
@@ -168,24 +179,24 @@
 					getStore: 'services/json/schema/taskmanager/event/readall',
 
 					asynchronous: {
-						delete: 'services/json/schema/taskmanager/asynchronousevent/delete',
-						get: 'services/json/schema/taskmanager/asynchronousevent/read',
-						post: 'services/json/schema/taskmanager/asynchronousevent/create',
-						put: 'services/json/schema/taskmanager/asynchronousevent/update',
+						remove: 'services/json/schema/taskmanager/event/asynchronous/delete',
+						get: 'services/json/schema/taskmanager/event/asynchronous/read',
+						post: 'services/json/schema/taskmanager/event/asynchronous/create',
+						put: 'services/json/schema/taskmanager/event/asynchronous/update',
 
-						getStore: 'services/json/schema/taskmanager/asynchronousevent/readall',
+						getStore: 'services/json/schema/taskmanager/event/asynchronous/readall'
 					},
 					synchronous: {
-						delete: 'services/json/schema/taskmanager/synchronousevent/delete',
-						get: 'services/json/schema/taskmanager/synchronousevent/read',
-						post: 'services/json/schema/taskmanager/synchronousevent/create',
-						put: 'services/json/schema/taskmanager/synchronousevent/update',
+						remove: 'services/json/schema/taskmanager/event/synchronous/delete',
+						get: 'services/json/schema/taskmanager/event/synchronous/read',
+						post: 'services/json/schema/taskmanager/event/synchronous/create',
+						put: 'services/json/schema/taskmanager/event/synchronous/update',
 
-						getStore: 'services/json/schema/taskmanager/synchronousevent/readall',
+						getStore: 'services/json/schema/taskmanager/event/synchronous/readall'
 					}
 				},
 				workflow: {
-					delete: 'services/json/schema/taskmanager/startworkflow/delete',
+					remove: 'services/json/schema/taskmanager/startworkflow/delete',
 					get: 'services/json/schema/taskmanager/startworkflow/read',
 					post: 'services/json/schema/taskmanager/startworkflow/create',
 					put: 'services/json/schema/taskmanager/startworkflow/update',

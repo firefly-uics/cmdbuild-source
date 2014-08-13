@@ -8,6 +8,10 @@
 		plain: "PLAIN",
 		html: "HTML"
 	};
+	IP_TYPE = {
+		ipv4: "ipv4",
+		ipv6: "ipv6"
+	};
 
 	function getTableType(classObj) {
 		return tableTypeMap[classObj.get("tableType")];
@@ -128,7 +132,7 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : _CMProxy.parameter.DESCRIPTION,
 				allowBlank : false,
-				translationsKeyType: "ClassAttribute", 
+				translationsKeyType: "ClassAttribute",
 				translationsKeyField: "Description",
 				vtype : 'cmdbcomment'
 			});
@@ -341,6 +345,24 @@
 					]
 				})
 			});
+			this.ipAttributeWidget = new Ext.form.ComboBox({
+				name: _CMProxy.parameter.IP_TYPE,
+				fieldLabel: CMDBuild.Translation.ipType,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.MIDDLE_FIELD_WIDTH,
+				valueField: "value",
+				displayField: "name",
+				queryMode: "local",
+				editable: false,
+				allowBlank: false,
+				store: new Ext.data.SimpleStore({
+					fields: ["value","name"],
+					data : [
+						[IP_TYPE.ipv4, CMDBuild.Translation.ipv4],
+						[IP_TYPE.ipv6, CMDBuild.Translation.ipv6]
+					]
+				})
+			});
 
 			this.contextualFields = {
 				STRING : [ this.stringLength ],
@@ -348,19 +370,19 @@
 				LOOKUP : [ this.lookupTypes ],
 				FOREIGNKEY : [ this.foreignKeyDest ],
 				REFERENCE : [ this.referenceDomains, this.fieldFilter, this.addMetadataBtn ],
-				TEXT: [this.textAttributeWidget]
+				TEXT: [this.textAttributeWidget],
+				INET: [this.ipAttributeWidget]
 			};
 
 			this.buildBasePropertiesPanel();
 
 			this.specificProperties = new Ext.form.FieldSet({
-				margin: "0 0 5 5",
-				padding: "5 5 20 5",
+				margin: '0 0 0 3',
 				title : tr.typeProperties,
-				overflowY : "auto",
+				overflowY: 'auto',
 				defaultType : "textfield",
 				flex: 1,
-				items : [
+				items: [
 					this.comboType,
 					this.stringLength,
 					this.decimalPrecision,
@@ -370,7 +392,8 @@
 					this.lookupTypes,
 					this.fieldFilter,
 					this.addMetadataBtn,
-					this.textAttributeWidget
+					this.textAttributeWidget,
+					this.ipAttributeWidget
 				]
 			});
 
@@ -389,6 +412,13 @@
 			this.layout = {
 				type: 'hbox',
 				align: 'stretch'
+			};
+			this.defaults = {
+				flex: 1,
+				layout: {
+					type: 'vbox',
+					align: 'stretch'
+				}
 			};
 			this.items = [this.baseProperties, this.specificProperties];
 			this.callParent(arguments);
@@ -430,14 +460,14 @@
 
 		onAttributeSelected : function(attribute) {
 			this.reset();
-			
+
 			if (attribute) {
 				this.getForm().setValues(attribute.raw);
 				this.disableModify(enableCMTbar = true);
 				this.deleteButton.setDisabled(attribute.get("inherited"));
 				this.hideContextualFields();
 				this.showContextualFieldsByType(attribute.get("type"));
-	
+
 				this.referenceFilterMetadata = attribute.raw.meta || {};
 				this.referenceFilterMetadataDirty = false;
 				Ext.apply(this.attributeDescription, {
@@ -504,12 +534,12 @@
 
 		buildBasePropertiesPanel: function() {
 			this.baseProperties = new Ext.form.FieldSet({
-				title : tr.baseProperties,
-				padding: "5 5 20 5",
-				overflowY : "auto",
-				defaultType : "textfield",
+				title: tr.baseProperties,
+				margin: '0 3 0 0',
+				overflowY: 'auto',
+				defaultType: "textfield",
 				flex: 1,
-				items : [
+				items: [
 					this.attributeName,
 					this.attributeDescription,
 					this.attributeGroup,
@@ -555,7 +585,7 @@
 			 * Someone has verified that disable the description
 			 * attribute could be a problem. This is true if
 			 * the class is used to fill a reference.
-			 * 
+			 *
 			 * So, deny to the user to turn it off
 			 */
 			if (this.attributeName.getValue() == "Description") {

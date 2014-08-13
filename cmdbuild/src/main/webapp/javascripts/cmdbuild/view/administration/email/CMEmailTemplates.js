@@ -7,10 +7,10 @@
 
 		delegate: undefined,
 
-		title: tr.title,
-		frame: false,
 		border: true,
+		frame: false,
 		layout: 'border',
+		title: tr.title,
 
 		initComponent: function() {
 			this.addButton = Ext.create('Ext.Button', {
@@ -37,7 +37,7 @@
 					{
 						xtype: 'toolbar',
 						dock: 'top',
-						itemId: CMDBuild.ServiceProxy.parameter.TOOLBAR_TOP,
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
 						items: [this.addButton]
 					}
 				],

@@ -2,40 +2,43 @@ package org.cmdbuild.servlets.json.schema.taskmanager;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTACHMENTS_ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTACHMENTS_CATEGORY;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_ACCOUNT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL_TEMPLATE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER_FROM_ADDRESS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER_SUBJECT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.MAPPER_ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.MAPPER_KEY_END;
-import static org.cmdbuild.servlets.json.ComunicationConstants.MAPPER_KEY_INIT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.MAPPER_VALUE_END;
-import static org.cmdbuild.servlets.json.ComunicationConstants.MAPPER_VALUE_INIT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NOTIFICATION_ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ADVANCEABLE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ATTACHMENTS_CATEGORY;
-import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ATTRIBUTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_SAVE_ATTACHMENTS;
+import static org.cmdbuild.common.utils.BuilderUtils.a;
+import static org.cmdbuild.logic.dms.Utils.valueForCategory;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ATTACHMENTS_ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ATTACHMENTS_CATEGORY;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CRON_EXPRESSION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_ACCOUNT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_FROM_ADDRESS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER_SUBJECT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MAPPER_ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MAPPER_KEY_END;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MAPPER_KEY_INIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MAPPER_VALUE_END;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MAPPER_VALUE_INIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFICATION_ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFICATION_EMAIL_TEMPLATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_ADVANCEABLE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_ATTACHMENTS_CATEGORY;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_ATTRIBUTES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_SAVE_ATTACHMENTS;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.util.Map;
 
-import org.cmdbuild.logic.taskmanager.KeyValueMapperEngine;
-import org.cmdbuild.logic.taskmanager.MapperEngine;
-import org.cmdbuild.logic.taskmanager.NullMapperEngine;
-import org.cmdbuild.logic.taskmanager.ReadEmailTask;
+import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.taskmanager.Task;
+import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
+import org.cmdbuild.logic.taskmanager.task.email.mapper.KeyValueMapperEngine;
+import org.cmdbuild.logic.taskmanager.task.email.mapper.MapperEngine;
+import org.cmdbuild.logic.taskmanager.task.email.mapper.NullMapperEngine;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
@@ -44,14 +47,19 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+
 public class ReadEmail extends JSONBaseWithSpringContext {
 
 	private static class JsonReadEmailTask {
 
+		private final Map<String, Lookup> categoryLookupsByName;
 		private final ReadEmailTask delegate;
 		private final KeyValueMapperEngine engine;
 
-		public JsonReadEmailTask(final ReadEmailTask delegate) {
+		public JsonReadEmailTask(final Map<String, Lookup> categoryLookupsByName, final ReadEmailTask delegate) {
+			this.categoryLookupsByName = categoryLookupsByName;
 			this.delegate = delegate;
 			final MapperEngine current = delegate.getMapperEngine();
 			this.engine = (current instanceof KeyValueMapperEngine) ? KeyValueMapperEngine.class.cast(current) : null;
@@ -99,14 +107,19 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			return delegate.isNotificationActive();
 		}
 
+		@JsonProperty(NOTIFICATION_EMAIL_TEMPLATE)
+		public String getNotificationTemplate() {
+			return delegate.getNotificationTemplate();
+		}
+
 		@JsonProperty(ATTACHMENTS_ACTIVE)
 		public boolean isAttachmentsActive() {
 			return delegate.isAttachmentsActive();
 		}
 
 		@JsonProperty(ATTACHMENTS_CATEGORY)
-		public String getAttachmentsCategory() {
-			return delegate.getAttachmentsCategory();
+		public Long getAttachmentsCategory() {
+			return lookupIdOf(delegate.getAttachmentsCategory());
 		}
 
 		@JsonProperty(WORKFLOW_ACTIVE)
@@ -136,8 +149,8 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		}
 
 		@JsonProperty(WORKFLOW_ATTACHMENTS_CATEGORY)
-		public String getWorkflowAttachmentsCategory() {
-			return delegate.getWorkflowAttachmentsCategory();
+		public Long getWorkflowAttachmentsCategory() {
+			return lookupIdOf(delegate.getWorkflowAttachmentsCategory());
 		}
 
 		@JsonProperty(MAPPER_ACTIVE)
@@ -165,6 +178,11 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			return (engine == null) ? null : engine.getValueEnd();
 		}
 
+		private Long lookupIdOf(final String category) {
+			final Lookup lookup = categoryLookupsByName.get(category);
+			return (lookup == null) ? null : lookup.getId();
+		}
+
 	}
 
 	@Admin
@@ -177,11 +195,15 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
 			@Parameter(value = FILTER_FROM_ADDRESS, required = false) final JSONArray filterFromAddress, //
 			@Parameter(value = FILTER_SUBJECT, required = false) final JSONArray filterSubject, //
-			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
-			@Parameter(value = ATTACHMENTS_CATEGORY, required = false) final String attachmentsCategory, //
+			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
+			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE, required = false) final String emailTemplate, //
+			@Parameter(value = ATTACHMENTS_ACTIVE, required = false) final Boolean attachmentsActive, //
+			@Parameter(value = ATTACHMENTS_CATEGORY, required = false) final Long attachmentsCategoryId, //
+			@Parameter(value = WORKFLOW_ACTIVE, required = false) final Boolean workflowActive, //
 			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
 			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes, //
-			@Parameter(value = WORKFLOW_ATTACHMENTS_CATEGORY, required = false) final String workflowAttachmentsCategory, //
+			@Parameter(value = WORKFLOW_SAVE_ATTACHMENTS, required = false) final Boolean workflowSaveAttachments, //
+			@Parameter(value = WORKFLOW_ATTACHMENTS_CATEGORY, required = false) final String workflowAttachmentsCategoryId, //
 			@Parameter(value = MAPPER_ACTIVE, required = false) final Boolean mapperActive, //
 			@Parameter(value = MAPPER_KEY_INIT, required = false) final String keyInit, //
 			@Parameter(value = MAPPER_KEY_END, required = false) final String keyEnd, //
@@ -200,20 +222,20 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withRegexSubjectFilter(toIterable(filterSubject)) //
 				//
 				// send notification
-				// TODO necessary?
-				.withNotificationStatus(isNotBlank(emailTemplate)) //
+				.withNotificationStatus(defaultIfNull(notificationActive, false)) //
+				.withNotificationTemplate(defaultIfNull(emailTemplate, null)) //
 				//
 				// store attachments
-				.withAttachmentsActive(isNotBlank(attachmentsCategory)) //
-				.withAttachmentsCategory(attachmentsCategory) //
+				.withAttachmentsActive(attachmentsActive) //
+				.withAttachmentsCategory(lookupValueOf(attachmentsCategoryId)) //
 				//
 				// workflow (start process and, maybe, store attachments)
-				.withWorkflowActive(isNotBlank(workflowClassName)) //
+				.withWorkflowActive(workflowActive) //
 				.withWorkflowClassName(workflowClassName) //
 				.withWorkflowAttributes(toMap(workflowAttributes)) //
 				.withWorkflowAdvanceableStatus(true) //
-				.withWorkflowAttachmentsStatus(isNotBlank(workflowAttachmentsCategory)) //
-				.withWorkflowAttachmentsCategory(workflowAttachmentsCategory) //
+				.withWorkflowAttachmentsStatus(workflowSaveAttachments) //
+				.withWorkflowAttachmentsCategory(workflowAttachmentsCategoryId) //
 				//
 				// mapping
 				.withMapperEngine(mapperEngine(mapperActive, keyInit, keyEnd, valueInit, valueEnd) //
@@ -232,7 +254,7 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withId(id) //
 				.build();
 		final ReadEmailTask readed = taskManagerLogic().read(task, ReadEmailTask.class);
-		return JsonResponse.success(new JsonReadEmailTask(readed));
+		return JsonResponse.success(toJson(readed));
 	}
 
 	@JSONExported
@@ -253,11 +275,15 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 			@Parameter(value = EMAIL_ACCOUNT, required = false) final String emailAccount, //
 			@Parameter(value = FILTER_FROM_ADDRESS, required = false) final JSONArray filterFromAddress, //
 			@Parameter(value = FILTER_SUBJECT, required = false) final JSONArray filterSubject, //
-			@Parameter(value = EMAIL_TEMPLATE, required = false) final String emailTemplate, //
-			@Parameter(value = ATTACHMENTS_CATEGORY, required = false) final String attachmentsCategory, //
+			@Parameter(value = NOTIFICATION_ACTIVE, required = false) final Boolean notificationActive, //
+			@Parameter(value = NOTIFICATION_EMAIL_TEMPLATE, required = false) final String emailTemplate, //
+			@Parameter(value = ATTACHMENTS_ACTIVE, required = false) final Boolean attachmentsActive, //
+			@Parameter(value = ATTACHMENTS_CATEGORY, required = false) final Long attachmentsCategoryId, //
+			@Parameter(value = WORKFLOW_ACTIVE, required = false) final Boolean workflowActive, //
 			@Parameter(value = WORKFLOW_CLASS_NAME, required = false) final String workflowClassName, //
 			@Parameter(value = WORKFLOW_ATTRIBUTES, required = false) final JSONObject workflowAttributes, //
-			@Parameter(value = WORKFLOW_ATTACHMENTS_CATEGORY, required = false) final String workflowAttachmentsCategory, //
+			@Parameter(value = WORKFLOW_SAVE_ATTACHMENTS, required = false) final Boolean workflowSaveAttachments, //
+			@Parameter(value = WORKFLOW_ATTACHMENTS_CATEGORY, required = false) final String workflowAttachmentsCategoryId, //
 			@Parameter(value = MAPPER_ACTIVE, required = false) final Boolean mapperActive, //
 			@Parameter(value = MAPPER_KEY_INIT, required = false) final String keyInit, //
 			@Parameter(value = MAPPER_KEY_END, required = false) final String keyEnd, //
@@ -277,20 +303,20 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 				.withRegexSubjectFilter(toIterable(filterSubject)) //
 				//
 				// send notification
-				// TODO necessary?
-				.withNotificationStatus(isNotBlank(emailTemplate)) //
+				.withNotificationStatus(defaultIfNull(notificationActive, false)) //
+				.withNotificationTemplate(defaultIfNull(emailTemplate, null)) //
 				//
 				// store attachments
-				.withAttachmentsActive(isNotBlank(attachmentsCategory)) //
-				.withAttachmentsCategory(attachmentsCategory) //
+				.withAttachmentsActive(attachmentsActive) //
+				.withAttachmentsCategory(lookupValueOf(attachmentsCategoryId)) //
 				//
 				// workflow (start process and, maybe, store attachments)
-				.withWorkflowActive(isNotBlank(workflowClassName)) //
+				.withWorkflowActive(workflowActive) //
 				.withWorkflowClassName(workflowClassName) //
 				.withWorkflowAttributes(toMap(workflowAttributes)) //
 				.withWorkflowAdvanceableStatus(true) //
-				.withWorkflowAttachmentsStatus(isNotBlank(workflowAttachmentsCategory)) //
-				.withWorkflowAttachmentsCategory(workflowAttachmentsCategory) //
+				.withWorkflowAttachmentsStatus(workflowSaveAttachments) //
+				.withWorkflowAttachmentsCategory(workflowAttachmentsCategoryId) //
 				//
 				// mapping
 				.withMapperEngine(mapperEngine(mapperActive, keyInit, keyEnd, valueInit, valueEnd))
@@ -311,6 +337,16 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		taskManagerLogic().delete(task);
 	}
 
+	private String lookupValueOf(final Long id) {
+		final Lookup lookup;
+		if (id == 0) {
+			lookup = null;
+		} else {
+			lookup = lookupLogic().getLookup(id);
+		}
+		return (lookup == null) ? null : valueForCategory(lookup);
+	}
+
 	private MapperEngine mapperEngine(final Boolean active, final String keyInit, final String keyEnd,
 			final String valueInit, final String valueEnd) {
 		final MapperEngine engine;
@@ -325,4 +361,19 @@ public class ReadEmail extends JSONBaseWithSpringContext {
 		return engine;
 	}
 
+	private JsonReadEmailTask toJson(final ReadEmailTask readed) {
+		final String categoryLookupType = dmsConfiguration().getCmdbuildCategory();
+		final Iterable<Lookup> categoryLookups = lookupStore().readAll(a(LookupType.newInstance() //
+				.withName(categoryLookupType)));
+		final Map<String, Lookup> categoryLookupsByName = Maps.uniqueIndex(categoryLookups,
+				new Function<Lookup, String>() {
+
+					@Override
+					public String apply(final Lookup input) {
+						return valueForCategory(input);
+					}
+
+				});
+		return new JsonReadEmailTask(categoryLookupsByName, readed);
+	}
 }

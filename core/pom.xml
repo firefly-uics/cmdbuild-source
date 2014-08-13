@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
-		<version>2.2-SNAPSHOT</version>
+		<version>2.3-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild-core</artifactId>
@@ -37,6 +37,21 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-scheduler-quartz</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-services-sync-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-services-sync-internal</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-services-sync-sql</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -121,6 +136,10 @@
 					<artifactId>avalon-framework-impl</artifactId>
 					<groupId>avalon-framework</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>commons-lang</artifactId>
+					<groupId>commons-lang</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -156,6 +175,11 @@
 			<groupId>com.keypoint</groupId>
 			<artifactId>png-encoder</artifactId>
 			<version>1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.1</version>
 		</dependency>
 
 		<dependency>

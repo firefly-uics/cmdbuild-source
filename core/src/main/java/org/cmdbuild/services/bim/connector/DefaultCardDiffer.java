@@ -7,7 +7,6 @@ import java.util.Iterator;
 
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
-import org.cmdbuild.bim.utils.LoggerSupport;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entry.IdAndDescription;
@@ -29,7 +28,7 @@ public class DefaultCardDiffer implements CardDiffer {
 	private final CMDataView dataView;
 	private final LookupLogic lookupLogic;
 	private final MapperRules support;
-	private static final Logger logger = LoggerSupport.logger;
+	private final Logger logger = org.cmdbuild.bim.logging.LoggingSupport.logger;
 
 	public DefaultCardDiffer(final CMDataView dataView, final LookupLogic lookupLogic, final MapperRules support) {
 		this.dataView = dataView;
@@ -110,9 +109,8 @@ public class DefaultCardDiffer implements CardDiffer {
 		final Iterable<? extends CMAttribute> attributes = theClass.getAttributes();
 		logger.info("Building card of type " + className);
 		boolean sendDelta = false;
-		
-		
-		//FIXME Da ottimizzare!!!
+
+		// FIXME Da ottimizzare!!!
 		for (final CMAttribute attribute : attributes) {
 			final String attributeName = attribute.getName();
 			final boolean isReference = attribute.getType() instanceof ReferenceAttributeType;

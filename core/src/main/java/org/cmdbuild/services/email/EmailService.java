@@ -3,9 +3,9 @@ package org.cmdbuild.services.email;
 import java.net.URL;
 import java.util.Map;
 
+import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.data.store.email.EmailTemplate;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.model.email.Email;
 import org.slf4j.Logger;
 
 /**

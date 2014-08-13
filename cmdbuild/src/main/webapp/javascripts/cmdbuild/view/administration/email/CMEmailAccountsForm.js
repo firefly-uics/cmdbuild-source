@@ -11,14 +11,13 @@
 
 		delegate: undefined,
 
-		autoScroll: false,
+		bodyCls: 'cmgraypanel',
+		border: false,
 		buttonAlign: 'center',
+		cls: 'x-panel-body-default-framed cmbordertop',
+		frame: false,
 		layout: 'fit',
 		split: true,
-		frame: false,
-		border: false,
-		cls: 'x-panel-body-default-framed cmbordertop',
-		bodyCls: 'cmgraypanel',
 
 		initComponent: function() {
 			// Buttons configuration
@@ -72,183 +71,163 @@
 			// END: Buttons configuration
 
 			// Page FieldSets configuration
-			this.nameField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.NAME,
-				itemId: CMDBuild.ServiceProxy.parameter.NAME,
-				fieldLabel: CMDBuild.Translation.name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				allowBlank: false
-			});
-
-			this.isDefaultField = Ext.create('Ext.form.field.Checkbox', {
-				hidden: true,
-				name: CMDBuild.ServiceProxy.parameter.IS_DEFAULT
-			});
-
-			this.emailAccount = Ext.create('Ext.form.FieldSet', {
-				title: tr.account,
-
-				layout: {
-					type: 'vbox',
-					align: 'stretch'
-				},
-
-				items: [
-					this.nameField,
-					this.isDefaultField,
-					{
-						xtype: 'hiddenfield',
-						name: CMDBuild.ServiceProxy.parameter.ID,
-						labelWidth: CMDBuild.LABEL_WIDTH
-					}
-				]
-			});
-
-			this.credentials = Ext.create('Ext.form.FieldSet', {
-				title: tr.credentials,
-				layout: {
-					type: 'vbox',
-					align: 'stretch'
-				},
-
-				defaults: {
+				// Account
+				this.nameField = Ext.create('Ext.form.field.Text', {
+					name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+					itemId: CMDBuild.core.proxy.CMProxyConstants.NAME,
+					fieldLabel: CMDBuild.Translation.name,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					xtype: 'textfield'
-				},
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					anchor: '100%',
+					allowBlank: false
+				});
 
-				items: [
-					{
-						fieldLabel: tr.username,
-						allowBlank: false,
-						name: CMDBuild.ServiceProxy.parameter.USERNAME
+				this.isDefaultField = Ext.create('Ext.form.field.Checkbox', {
+					hidden: true,
+					name: CMDBuild.core.proxy.CMProxyConstants.IS_DEFAULT
+				});
+
+				this.emailAccount = Ext.create('Ext.form.FieldSet', {
+					title: tr.account,
+					overflowY: 'auto',
+
+					items: [
+						this.nameField,
+						this.isDefaultField,
+						{
+							xtype: 'hiddenfield',
+							name: CMDBuild.core.proxy.CMProxyConstants.ID
+						}
+					]
+				});
+
+				// Credentials
+				this.credentials = Ext.create('Ext.form.FieldSet', {
+					title: tr.credentials,
+					overflowY: 'auto',
+
+					defaults: {
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						xtype: 'textfield',
+						anchor: '100%'
 					},
-					{
-						inputType: 'password',
-						fieldLabel: tr.password,
-						allowBlank: false,
-						name: CMDBuild.ServiceProxy.parameter.PASSWORD
-					}
-				]
-			});
 
-			this.outgoing = Ext.create('Ext.form.FieldSet', {
-				title: tr.outgoing,
-				layout: {
-					type: 'vbox',
-					align: 'stretch'
-				},
-
-				defaults: {
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					xtype: 'textfield'
-				},
-
-				items: [
-					{
-						fieldLabel: CMDBuild.Translation.address,
-						allowBlank: false,
-						name: CMDBuild.ServiceProxy.parameter.ADDRESS
-					},
-					{
-						fieldLabel: tr.smtpServer,
-						name: CMDBuild.ServiceProxy.parameter.SMTP_SERVER
-					},
-					{
-						xtype: 'numberfield',
-						fieldLabel: tr.smtpPort,
-						allowBlank: true,
-						minValue: 1,
-						maxValue: 65535,
-						name: CMDBuild.ServiceProxy.parameter.SMTP_PORT
-					},
-					{
-						xtype: 'checkbox',
-						fieldLabel: tr.enableSsl,
-						name: CMDBuild.ServiceProxy.parameter.SMTP_SSL
-					}
-				]
-			});
-
-			this.incoming = Ext.create('Ext.form.FieldSet', {
-				title: tr.incoming,
-
-				items: [
-					{
-						xtype: 'container',
-						padding: '0 0 5 0',
-						cls: "x-panel-body-default-framed cmborderbottom",
-
-						layout: {
-							type: 'vbox',
-							align: 'stretch'
+					items: [
+						{
+							fieldLabel: tr.username,
+							allowBlank: false,
+							name: CMDBuild.core.proxy.CMProxyConstants.USERNAME
 						},
+						{
+							inputType: 'password',
+							fieldLabel: tr.password,
+							allowBlank: false,
+							name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD
+						}
+					]
+				});
 
-						defaults: {
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							xtype: 'textfield'
-						},
+				// Outgoing
+				this.outgoing = Ext.create('Ext.form.FieldSet', {
+					title: tr.outgoing,
+					overflowY: 'auto',
 
-						items: [
-							{
-								fieldLabel: tr.imapServer,
-								name: CMDBuild.ServiceProxy.parameter.IMAP_SERVER
-							},
-							{
-								xtype: 'numberfield',
-								fieldLabel: tr.imapPort,
-								allowBlank: true,
-								minValue: 1,
-								maxValue: 65535,
-								name: CMDBuild.ServiceProxy.parameter.IMAP_PORT
-							},
-							{
-								xtype: 'checkbox',
-								fieldLabel: tr.enableSsl,
-								name: CMDBuild.ServiceProxy.parameter.IMAP_SSL
-							}
-						]
+					defaults: {
+						xtype: 'textfield',
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						anchor: '100%'
 					},
-					{
-						xtype: 'container',
-						padding: '5 0',
 
-						layout: {
-							type: 'vbox',
-							align: 'stretch'
+					items: [
+						{
+							fieldLabel: CMDBuild.Translation.address,
+							allowBlank: false,
+							name: CMDBuild.core.proxy.CMProxyConstants.ADDRESS
 						},
-
-						defaults: {
-							labelWidth: CMDBuild.LABEL_WIDTH,
-							xtype: 'textfield'
+						{
+							fieldLabel: tr.smtpServer,
+							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_SERVER
 						},
+						{
+							xtype: 'numberfield',
+							fieldLabel: tr.smtpPort,
+							allowBlank: true,
+							width: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+							minValue: 1,
+							maxValue: 65535,
+							maxWidth: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_PORT
+						},
+						{
+							xtype: 'checkbox',
+							fieldLabel: tr.enableSsl,
+							name: CMDBuild.core.proxy.CMProxyConstants.SMTP_SSL
+						}
+					]
+				});
 
-						items: [
-							{
-								fieldLabel: tr.incomingFolder,
-								name: CMDBuild.ServiceProxy.parameter.INCOMING_FOLDER
-							},
-							{
-								fieldLabel: tr.processedFolder,
-								name: CMDBuild.ServiceProxy.parameter.PROCESSED_FOLDER
-							},
-							{
-								fieldLabel: tr.rejectedFolder,
-								name: CMDBuild.ServiceProxy.parameter.REJECTED_FOLDER
-							},
-							{
-								xtype: 'checkbox',
-								fieldLabel: tr.enableMoveRejectedNotMatching,
-								name: CMDBuild.ServiceProxy.parameter.ENABLE_MOVE_REJECTED_NOT_MATCHING
-							}
-						]
-					}
-				]
-			});
+				// Incoming
+				this.incoming = Ext.create('Ext.form.FieldSet', {
+					title: tr.incoming,
+					overflowY: 'auto',
+
+					defaults: {
+						xtype: 'textfield',
+						labelWidth: CMDBuild.LABEL_WIDTH,
+						maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+						anchor: '100%'
+					},
+
+					items: [
+						{
+							fieldLabel: tr.imapServer,
+							name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SERVER
+						},
+						{
+							xtype: 'numberfield',
+							fieldLabel: tr.imapPort,
+							allowBlank: true,
+							minValue: 1,
+							maxValue: 65535,
+							maxWidth: CMDBuild.ADM_SMALL_FIELD_WIDTH,
+							name: CMDBuild.core.proxy.CMProxyConstants.IMAP_PORT
+						},
+						{
+							xtype: 'checkbox',
+							fieldLabel: tr.enableSsl,
+							name: CMDBuild.core.proxy.CMProxyConstants.IMAP_SSL
+						},
+						{ // Splitter line
+							xtype: 'container',
+							margin: '5 0 5 0',
+							maxWidth: '100%',
+							cls: 'x-panel-body-default-framed cmborderbottom'
+						},
+						{
+							fieldLabel: tr.incomingFolder,
+							name: CMDBuild.core.proxy.CMProxyConstants.INCOMING_FOLDER
+						},
+						{
+							fieldLabel: tr.processedFolder,
+							name: CMDBuild.core.proxy.CMProxyConstants.PROCESSED_FOLDER
+						},
+						{
+							fieldLabel: tr.rejectedFolder,
+							name: CMDBuild.core.proxy.CMProxyConstants.REJECTED_FOLDER
+						},
+						{
+							xtype: 'checkbox',
+							fieldLabel: tr.enableMoveRejectedNotMatching,
+							name: CMDBuild.core.proxy.CMProxyConstants.ENABLE_MOVE_REJECTED_NOT_MATCHING
+						}
+					]
+				});
 			// END: Page FieldSets configuration
 
 			// Splitted-view wrapper
 			this.wrapper = Ext.create('Ext.container.Container', {
-				region: 'center',
 				frame: false,
 				border: false,
 
@@ -258,11 +237,8 @@
 				},
 
 				defaults: {
-					flex: 1,
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					}
+					overflowY: 'auto',
+					flex: 1
 				},
 
 				items: [
@@ -280,7 +256,14 @@
 			});
 
 			Ext.apply(this, {
-				tbar: this.cmTBar,
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						items: this.cmTBar
+					}
+				],
 				items: [this.wrapper],
 				buttons: this.cmButtons
 			});

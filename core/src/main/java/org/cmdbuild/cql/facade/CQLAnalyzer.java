@@ -102,7 +102,7 @@ public class CQLAnalyzer {
 
 	private static class JoinElement {
 
-		public static class Builder implements org.cmdbuild.common.Builder<JoinElement> {
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<JoinElement> {
 
 			private String domain;
 			private Alias domainAlias;
@@ -375,7 +375,7 @@ public class CQLAnalyzer {
 				if (fieldValue.getType() == FieldValueType.INT) {
 					value = fieldValue.getValue();
 				} else if (fieldValue.getType() == FieldValueType.STRING) {
-					for (final Lookup lookupDto : lookupStore.list()) {
+					for (final Lookup lookupDto : lookupStore.readAll()) {
 						if (lookupDto.description.equals(fieldValue.getValue().toString())) {
 							value = lookupDto.getId();
 						}
@@ -383,7 +383,7 @@ public class CQLAnalyzer {
 				} else {
 					try {
 						final Field lookupDtoField = Lookup.class.getField(node.getAttributeName());
-						for (final Lookup lookupDto : lookupStore.list()) {
+						for (final Lookup lookupDto : lookupStore.readAll()) {
 							if (lookupDtoField.get(lookupDto).equals(fieldValue.getValue().toString())) {
 								value = lookupDto.getId();
 							}
@@ -436,7 +436,7 @@ public class CQLAnalyzer {
 										.withName(attributeType.getLookupTypeName()) //
 										.build();
 
-								for (final Lookup lookup : lookupStore.listForType(lookupType)) {
+								for (final Lookup lookup : lookupStore.readAll(lookupType)) {
 									if (lookup.description.equals(firstStringValue)) {
 										searchedLookup = lookup;
 										values.add(searchedLookup.getId());

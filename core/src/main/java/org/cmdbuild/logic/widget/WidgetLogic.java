@@ -1,11 +1,11 @@
 package org.cmdbuild.logic.widget;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.WidgetConverter;
-import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.widget.Widget;
 
@@ -18,9 +18,8 @@ public class WidgetLogic implements Logic {
 		widgetStore = DataViewStore.newInstance(dataView, converter);
 	}
 
-	public List<Widget> getAllWidgets() {
-		final List<Widget> fetchedWidgets = widgetStore.list();
-		return fetchedWidgets;
+	public Collection<Widget> getAllWidgets() {
+		return widgetStore.readAll();
 	}
 
 	public Widget getWidget(final Long widgetId) {

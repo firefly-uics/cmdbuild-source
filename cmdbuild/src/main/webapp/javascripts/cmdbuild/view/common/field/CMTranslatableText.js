@@ -16,7 +16,7 @@
 		textArea : false,
 		vtype : '',
 		setValue: function(value) {
-			return this.text.setValue(value);
+			this.text.setValue(value);
 		},
 		getValue: function() {
 			return this.text.getValue();
@@ -35,7 +35,7 @@
 			this.text.disable();
 			this.translationsButton.disable();
 		},
-		resetLanguageButton: function() {
+		resetLanguages: function() {
 			if (_CMCache.isMultiLanguages()) {
 				this.translationsButton.show();
 			}
@@ -53,11 +53,30 @@
 				vtype : this.vtype,
 			});
 		},
+		createHiddenValue: function(valueField) {
+			return new Ext.form.field.Hidden( {
+				width: 0,
+				name : this.original_name,
+				submitValue: true,
+				valueField: valueField,
+				//override
+				getValue : function() {
+					return this.valueField.getValue();
+				},
+				//override
+				getRawValue : function() {
+					return this.valueField.getRawValue();
+				}
+			});
+		},
 		setButtonMargin: Ext.emptyFn,
 		initComponent : function() {
-			this.text = this.createTextItem();
-			this.width += 22;
 			var me = this;
+			this.original_name = this.name;
+			this.name += "_default";
+			this.text = this.createTextItem();
+			this.hiddenValue = this.createHiddenValue(this.text);
+			this.width += 22;
 			this.translationsButton = new Ext.Button( {
 				iconCls: 'translate',
 				width: 22,
@@ -76,10 +95,10 @@
 				}
 			});
 			this.setButtonMargin();
-			this.items = [this.text, this.translationsButton];
-			_CMCache.registerTranslatableText(this);
+			this.items = [this.text, this.translationsButton, this.hiddenValue];
+			_CMCache.registerOnTranslations(this);
 			this.callParent(arguments);
-			this.resetLanguageButton();
+			this.resetLanguages();
 		}
 	});
 	Ext.define("Ext.form.CMTranslatableTextArea", {

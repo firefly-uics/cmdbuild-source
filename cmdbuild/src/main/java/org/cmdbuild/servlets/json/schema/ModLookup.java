@@ -1,26 +1,28 @@
 package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.Iterables.size;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CODE_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUP_LIST;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NOTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NUMBER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ORIG_TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARENT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PARENT_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SHORT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CODE_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUP_LIST;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NOTES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NUMBER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ORIG_TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PARENT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PARENT_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SHORT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE_CAPITAL;
 
 import java.util.Map;
+import java.util.UUID;
 
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -86,8 +88,14 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			final @Parameter(ORIG_TYPE) String originalType, //
 			final @Parameter(value = PARENT, required = false) String parentType //
 	) throws JSONException {
-		final LookupType newType = LookupType.newInstance().withName(type).withParent(parentType).build();
-		final LookupType oldType = LookupType.newInstance().withName(originalType).withParent(parentType).build();
+		final LookupType newType = LookupType.newInstance() //
+				.withName(type)//
+				.withParent(parentType)//
+				.build();
+		final LookupType oldType = LookupType.newInstance() //
+				.withName(originalType)//
+				.withParent(parentType)//
+				.build();
 		lookupLogic().saveLookupType(newType, oldType);
 
 		final JSONObject jsonLookupType = LookupSerializer.serializeLookupTable(newType);
@@ -112,8 +120,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 		final LookupType lookupType = LookupType.newInstance().withName(type).build();
 		final Iterable<Lookup> elements = lookupLogic().getAllLookup(lookupType, active, UNUSED_LOOKUP_QUERY);
 
+		final LookupSerializer lookupSerializer = lookupSerializer();
+
 		for (final Lookup element : elements) {
-			serializer.append("rows", LookupSerializer.serializeLookup(element, shortForm));
+			serializer.append("rows", lookupSerializer.serializeLookup(element, shortForm));
 		}
 
 		serializer.put("total", size(elements));
@@ -129,8 +139,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 		final LookupType lookupType = LookupType.newInstance().withName(type).build();
 		final Iterable<Lookup> elements = lookupLogic().getAllLookupOfParent(lookupType);
 
+		final LookupSerializer lookupSerializer = lookupSerializer();
+
 		for (final Lookup lookup : elements) {
-			out.append("rows", LookupSerializer.serializeLookupParent(lookup));
+			out.append("rows", lookupSerializer.serializeLookupParent(lookup));
 		}
 
 		return out;
@@ -166,6 +178,9 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			final @Parameter(ACTIVE_CAPITAL) boolean isActive, //
 			final @Parameter(NUMBER) int number //
 	) throws JSONException {
+
+		String translationUuid = defaultIfBlank(lookupLogic().fetchTranslationUuid(id), UUID.randomUUID().toString());
+
 		final Lookup lookup = Lookup.newInstance() //
 				.withId(Long.valueOf(id)) //
 				.withCode(code) //
@@ -176,12 +191,13 @@ public class ModLookup extends JSONBaseWithSpringContext {
 				.withNotes(notes) //
 				.withDefaultStatus(isDefault) //
 				.withActiveStatus(isActive) //
+				.withUuid(translationUuid) //
 				.build();
 
 		final Long lookupId = lookupLogic().createOrUpdateLookup(lookup);
 		lookup.setId(lookupId);
-
-		serializer.put("lookup", LookupSerializer.serializeLookup(lookup));
+		final LookupSerializer lookupSerializer = lookupSerializer();
+		serializer.put("lookup", lookupSerializer.serializeLookup(lookup));
 		return serializer;
 	}
 
@@ -202,6 +218,10 @@ public class ModLookup extends JSONBaseWithSpringContext {
 					jsonElement.getInt("index"));
 		}
 		lookupLogic().reorderLookup(lookupType, positions);
+	}
+
+	private LookupSerializer lookupSerializer() {
+		return new LookupSerializer(translationFacade(), lookupStore());
 	}
 
 }

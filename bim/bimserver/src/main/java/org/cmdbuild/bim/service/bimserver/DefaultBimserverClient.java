@@ -23,6 +23,7 @@ import org.bimserver.interfaces.objects.SRevision;
 import org.bimserver.interfaces.objects.SSerializerPluginConfiguration;
 import org.bimserver.shared.UsernamePasswordAuthenticationInfo;
 import org.bimserver.shared.exceptions.UserException;
+import org.cmdbuild.bim.logging.LoggingSupport;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.bim.service.BimProject;
@@ -34,6 +35,7 @@ import org.cmdbuild.bim.service.bimserver.BimserverConfiguration.ChangeListener;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -42,6 +44,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 
 	private final BimserverConfiguration configuration;
 	private BimServerClient client;
+	private final Logger logger = LoggingSupport.logger;
 
 	public DefaultBimserverClient(final BimserverConfiguration configuration) {
 		this.configuration = configuration;
@@ -57,10 +60,10 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 					final BimServerClientFactory factory = new SoapBimServerClientFactory(configuration.getUrl());
 					client = factory.create(new UsernamePasswordAuthenticationInfo(configuration.getUsername(),
 							configuration.getPassword()));
-					System.out.println("Bimserver connection established");
+					logger.info("Bimserver connection established");
 				}
 			} catch (final Throwable t) {
-				System.out.println("Bimserver connection failed");
+				logger.warn("Bimserver connection failed");
 			}
 		}
 	}
@@ -400,14 +403,14 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			try {
 				if (candidateTypes != null) {
 					for (final String type : candidateTypes) {
-						System.out.println("Search among type '" + type + "'...");
+						logger.debug("Search among type '" + type + "'...");
 						final List<SDataObject> objectList = client.getBimsie1LowLevelInterface().getDataObjectsByType(
 								roid, type);
 						if (objectList != null) {
 							for (final SDataObject object : objectList) {
 								if (object.getGuid().equals(guid)) {
 									entity = new BimserverEntity(object);
-									System.out.println("found!");
+									logger.debug("element found");
 									return entity;
 								}
 							}
@@ -622,13 +625,13 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			final String str = fmt.print(new DateTime());
 			final String tmpName = String.format("tmp-%s-%s", projectId, str);
 			final BimProject tmpProject = createProjectWithName(tmpName);
-			System.out.println("tmp project " + tmpProject.getIdentifier() + " for merge created");
+			logger.debug("tmp project " + tmpProject.getIdentifier() + " for merge created");
 			final BimProject shapeProject = createProjectWithNameAndParent("shapes", tmpProject.getIdentifier());
 			final BimProject baseProject = createProjectWithNameAndParent("base", tmpProject.getIdentifier());
 			branchRevisionToExistingProject(baseRevision, baseProject.getIdentifier());
 			branchRevisionToExistingProject(shapeRevision, shapeProject.getIdentifier());
 			final String mergedRevisionId = getLastRevisionOfProject(tmpProject.getIdentifier());
-			System.out.println("merged revision " + mergedRevisionId + " for export created");
+			logger.debug("merged revision " + mergedRevisionId + " for export created");
 			if (INVALID_ID.equals(mergedRevisionId)) {
 				throw new BimError("merged revision for export not created");
 			}
@@ -643,7 +646,7 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 			// branchToExistingProject(mergedRevisionId, exportProjectId);
 
 			final String exportRevisionId = getLastRevisionOfProject(exportProjectId);
-			System.out.println("Revision " + exportRevisionId + " for export created");
+			logger.debug("Revision " + exportRevisionId + " for export created");
 		} catch (final Throwable e) {
 			throw new BimError(e);
 		}
@@ -659,17 +662,17 @@ public class DefaultBimserverClient implements BimserverClient, ChangeListener {
 		final String tmpName = String.format("tmp-%s", str);
 		final BimProject tmpProject = createProjectWithName(tmpName);
 		final String mergedProjectId = tmpProject.getIdentifier();
-		System.out.println("tmp project " + mergedProjectId + " for merge created");
+		logger.debug("tmp project " + mergedProjectId + " for merge created");
 		final BimProject project1 = createProjectWithNameAndParent("project1", mergedProjectId);
 		final BimProject project2 = createProjectWithNameAndParent("project2", mergedProjectId);
-		System.out.println("Branching revision " + revision1 + "...");
+		logger.debug("Branching revision " + revision1 + "...");
 		branchRevisionToExistingProject(revision1, project1.getIdentifier());
-		System.out.println("Done");
-		System.out.println("Branching revision " + revision2 + "...");
+		logger.debug("Done");
+		logger.debug("Branching revision " + revision2 + "...");
 		branchRevisionToExistingProject(revision2, project2.getIdentifier());
-		System.out.println("Done");
+		logger.debug("Done");
 		final String mergedRevisionId = getLastRevisionOfProject(mergedProjectId);
-		System.out.println("merged revision " + mergedRevisionId + " for export created");
+		logger.debug("merged revision " + mergedRevisionId + " for export created");
 		if (INVALID_ID.equals(mergedRevisionId)) {
 			throw new BimError("merged revision for export not created");
 		}

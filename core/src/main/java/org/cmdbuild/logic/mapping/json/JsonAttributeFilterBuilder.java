@@ -15,6 +15,7 @@ import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
 import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.*;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CLASSNAME_KEY;
@@ -33,6 +34,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
+import org.cmdbuild.dao.query.clause.HistoricEntryType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
@@ -62,9 +64,9 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 	 * @param dataView
 	 */
 	public JsonAttributeFilterBuilder(final JSONObject filter, final CMEntryType entryType, final CMDataView dataView) {
-		Validate.notNull(filter);
-		Validate.notNull(entryType);
-		Validate.notNull(dataView);
+		Validate.notNull(filter, "missing filter");
+		Validate.notNull(entryType, "missing entry type");
+		Validate.notNull(dataView, "missing data view");
 		this.entryType = entryType;
 		this.filterObject = filter;
 		this.dataViewForBuild = dataView;
@@ -124,7 +126,13 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 		 * attributes, it is possible to fetch it to build the correct where
 		 * clause
 		 */
-		final CMEntryType dbEntryType = dataViewForBuild.findClass(entryType.getName());
+		final CMEntryType _entryType;
+		if (entryType instanceof HistoricEntryType<?>) {
+			_entryType = HistoricEntryType.class.cast(entryType).getType();
+		} else {
+			_entryType = entryType;
+		}
+		final CMEntryType dbEntryType = dataViewForBuild.findClass(_entryType.getName());
 		final CMAttribute a = dbEntryType.getAttribute(attribute.getName());
 		final CMAttributeType<?> type = (a == null) ? UndefinedAttributeType.undefined() : a.getType();
 		return buildSimpleWhereClause(attribute, operator, values, type);
@@ -189,6 +197,21 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 				_values.add(type.convertValue(get(values, i)));
 			}
 			return condition(attribute, in(_values.toArray()));
+		} else if (operator.equals(FilterOperator.NET_CONTAINED.toString())) {
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, networkContained(type.convertValue(get(values, 0))));
+		} else if (operator.equals(FilterOperator.NET_CONTAINED_OR_EQUAL.toString())) {
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, networkContainedOrEqual(type.convertValue(get(values, 0))));
+		} else if (operator.equals(FilterOperator.NET_CONTAINS.toString())) {
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, networkContains(type.convertValue(get(values, 0))));
+		} else if (operator.equals(FilterOperator.NET_CONTAINS_OR_EQUAL.toString())) {
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, networkContainsOrEqual(type.convertValue(get(values, 0))));
+		} else if (operator.equals(FilterOperator.NET_RELATIONED.toString())) {
+			Validate.isTrue(size(values) == 1);
+			return condition(attribute, networkRelationed(type.convertValue(get(values, 0))));
 		}
 		throw new IllegalArgumentException("The operator " + operator + " is not supported");
 	}

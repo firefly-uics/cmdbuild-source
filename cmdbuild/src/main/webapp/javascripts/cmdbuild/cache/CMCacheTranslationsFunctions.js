@@ -1,9 +1,9 @@
 (function() {
 	var withTranslations = false;
 	var activeTranslations = [];
-	var observers = [];
 	var translationsToSave = [];
 	var translationsInAdding = false;
+	var observers = [];
 	Ext.define("CMDBUild.cache.CMCacheTranslationsFunctions", {
 		initAddingTranslations: function() {
 			translationsToSave = [];
@@ -83,50 +83,50 @@
 		isMultiLanguages: function() {
 			return withTranslations;
 		},
-		resetMultiLanguages: function() {
-			setActiveTranslations();
+		setActiveTranslations: function(activeLanguages) {
+			if (activeLanguages) {
+				activeLanguages = activeLanguages.split(", ");
+				setActiveTranslations(activeLanguages);
+			}
+			else {
+				withTranslations = false;
+				activeTranslations = [];
+				callObservers();
+			}
 		},
-		getActiveTranslations: function() {
+		getActiveTranslations: function(activeLanguages) {
 			return activeTranslations;
 		},
-		registerTranslatableText: function(text) {
-			observers.push(text);
+		registerOnTranslations: function(observer) {
+			observers.push(observer);
 		}
 	});
-	function callObservers() {
-		for (var i = 0; i < observers.length; i++) {
-			var text = observers[i];
-			text.resetLanguageButton();
-		}
-	}
-	function setActiveTranslations() {
+	function setActiveTranslations(activeLanguages) {
 		activeTranslations = [];
-		CMDBuild.ServiceProxy.translations.readActiveTranslations({
-			scope: this,
-			success: function(response){
-//				var activeLanguages = Ext.JSON.decode(response.responseText).data;
-				var responseText = Ext.JSON.decode(response.responseText);
-				var activeLanguages = responseText.response;
-				CMDBuild.ServiceProxy.translations.readAvailableTranslations({
-					success : function(response, options, decoded) {
-						withTranslations = false;
-						for (key in decoded.translations) {
-							if (activeLanguages[decoded.translations[key].name] != "on") {
-								continue;
-							}
-							var item = {
-								name: decoded.translations[key].name,
-								image: "ux-flag-" + decoded.translations[key].name,
-								language: decoded.translations[key].value
-							};
-							activeTranslations.push(item);
-							withTranslations = true;
-						}
-						callObservers();
+		CMDBuild.ServiceProxy.translations.readAvailableTranslations({
+			success : function(response, options, decoded) {
+				withTranslations = false;
+				for (key in decoded.translations) {
+					if (! Ext.Array.contains(activeLanguages, decoded.translations[key].name)) {
+						continue;
 					}
-				});
+					var item = {
+						name: decoded.translations[key].name,
+						image: "ux-flag-" + decoded.translations[key].name,
+						language: decoded.translations[key].value
+					};
+					activeTranslations.push(item);
+					withTranslations = true;
+				}
+				callObservers();
 			}
 		});
+	}
+	function callObservers() {
+		for (var i = 0; i < observers.length; i++) {
+			var observer = observers[i];
+			observer.resetLanguages();
+		}
 	}
 	function isEmpty(o) {
 	    for ( var p in o ) { 
@@ -143,7 +143,6 @@
 		var updateValues = {};
 		var deleteValues = {};
 		for (var prop in values) {
-			console.log(prop + "-----" + values[prop] + "----" + oldValues[prop]);
 			if (emptyValue(values[prop]) && ! emptyValue(oldValues[prop])) {
 				deleteValues[prop] = "";
 			}
@@ -186,11 +185,8 @@
 			case "DomainAttribute" :
 				createForDomainAttribute(translationsKeyName, translationsKeySubName, translationsKeyField, values);
 				break;
-			case "FilterView" :
-				createForFilterView(translationsKeyName, translationsKeyField, values);
-				break;
-			case "SqlView" :
-				createForSqlView(translationsKeyName, translationsKeyField, values);
+			case "View" :
+				createForView(translationsKeyName, translationsKeyField, values);
 				break;
 			case "Filter" :
 				createForFilter(translationsKeyName, translationsKeyField, values);
@@ -215,6 +211,9 @@
 				break;
 			case "GisIcon" :
 				createForGisIcon(translationsKeyName, translationsKeyField, values);
+				break;
+			case "MenuItem" :
+				createForMenuItem(translationsKeyName, translationsKeyField, values);
 				break;
 		}
 		
@@ -253,21 +252,13 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.createForDomainAttribute);
 	}
-	function createForFilterView(translationsKeyName, translationsKeyField, values) {
+	function createForView(translationsKeyName, translationsKeyField, values) {
 		var params = {
 				viewName: translationsKeyName,
 				field: translationsKeyField,
 				translations: Ext.JSON.encodeValue(values)
 		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.createForFilterView);
-	}
-	function createForSqlView(translationsKeyName, translationsKeyField, values) {
-		var params = {
-				viewName: translationsKeyName,
-				field: translationsKeyField,
-				translations: Ext.JSON.encodeValue(values)
-		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.createForSqlView);
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.createForView);
 	}
 	function createForFilter(translationsKeyName, translationsKeyField, values) {
 		var params = {
@@ -317,7 +308,7 @@
 	}
 	function createForLookup(translationsKeyName, translationsKeyField, values) {
 		var params = {
-				lookupId: translationsKeyName,
+				translationUuid: translationsKeyName,
 				field: translationsKeyField,
 				translations: Ext.JSON.encodeValue(values)
 		};
@@ -330,6 +321,14 @@
 				translations: Ext.JSON.encodeValue(values)
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.createForGisIcon);
+	}
+	function createForMenuItem(translationsKeyName, translationsKeyField, values) {
+		var params = {
+				uuid: translationsKeyName,
+				field: translationsKeyField,
+				translations: Ext.JSON.encodeValue(values)
+		};
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.createForMenuItem);
 	}
 
 	/*
@@ -350,11 +349,8 @@
 			case "DomainAttribute" :
 				readForDomainAttribute(translationsKeyName, translationsKeySubName, translationsKeyField, callBack);
 				break;
-			case "FilterView" :
-				readForFilterView(translationsKeyName, translationsKeyField, callBack);
-				break;
-			case "SqlView" :
-				readForSqlView(translationsKeyName, translationsKeyField, callBack);
+			case "View" :
+				readForView(translationsKeyName, translationsKeyField, callBack);
 				break;
 			case "Filter" :
 				readForFilter(translationsKeyName, translationsKeyField, callBack);
@@ -379,6 +375,9 @@
 				break;
 			case "GisIcon" :
 				readForGisIcon(translationsKeyName, translationsKeyField, callBack);
+				break;
+			case "MenuItem" :
+				readForMenuItem(translationsKeyName, translationsKeyField, callBack);
 				break;
 		}
 	}
@@ -412,19 +411,12 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForDomainAttribute);
 	}
-	function readForFilterView(translationsKeyName, translationsKeyField, callBack) {
+	function readForView(translationsKeyName, translationsKeyField, callBack) {
 		var params = {
 				viewName: translationsKeyName,
 				field: translationsKeyField
 		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForFilterView);
-	}
-	function readForSqlView(translationsKeyName, translationsKeyField, callBack) {
-		var params = {
-				viewName: translationsKeyName,
-				field: translationsKeyField
-		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForSqlView);
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForView);
 	}
 	function readForFilter(translationsKeyName, translationsKeyField, callBack) {
 		var params = {
@@ -468,7 +460,7 @@
 	}
 	function readForLookup(translationsKeyName, translationsKeyField, callBack) {
 		var params = {
-				lookupId: translationsKeyName,
+				translationUuid: translationsKeyName,
 				field: translationsKeyField
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForLookup);
@@ -479,6 +471,13 @@
 				field: translationsKeyField
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForGisIcon);
+	}
+	function readForMenuItem(translationsKeyName, translationsKeyField, callBack) {
+		var params = {
+				uuid: translationsKeyName,
+				field: translationsKeyField
+		};
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params, success: callBack}, CMDBuild.ServiceProxy.url.translations.readForMenuItem);
 	}
 		
 	/*
@@ -499,11 +498,8 @@
 			case "DomainAttribute" :
 				updateForDomainAttribute(translationsKeyName, translationsKeySubName, translationsKeyField, values);
 				break;
-			case "FilterView" :
-				updateForFilterView(translationsKeyName, translationsKeyField, values);
-				break;
-			case "SqlView" :
-				updateForSqlView(translationsKeyName, translationsKeyField, values);
+			case "View" :
+				updateForView(translationsKeyName, translationsKeyField, values);
 				break;
 			case "Filter" :
 				updateForFilter(translationsKeyName, translationsKeyField, values);
@@ -528,6 +524,9 @@
 				break;
 			case "GisIcon" :
 				updateForGisIcon(translationsKeyName, translationsKeyField, values);
+				break;
+			case "MenuItem" :
+				updateForMenuItem(translationsKeyName, translationsKeyField, values);
 				break;
 		}
 		
@@ -566,21 +565,13 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForDomainAttribute);
 	}
-	function updateForFilterView(translationsKeyName, translationsKeyField, values) {
+	function updateForView(translationsKeyName, translationsKeyField, values) {
 		var params = {
 				viewName: translationsKeyName,
 				field: translationsKeyField,
 				translations: Ext.JSON.encodeValue(values)
 		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForFilterView);
-	}
-	function updateForSqlView(translationsKeyName, translationsKeyField, values) {
-		var params = {
-				viewName: translationsKeyName,
-				field: translationsKeyField,
-				translations: Ext.JSON.encodeValue(values)
-		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForSqlView);
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForView);
 	}
 	function updateForFilter(translationsKeyName, translationsKeyField, values) {
 		var params = {
@@ -630,7 +621,7 @@
 	}
 	function updateForLookup(translationsKeyName, translationsKeyField, values) {
 		var params = {
-				lookupId: translationsKeyName,
+				translationUuid: translationsKeyName,
 				field: translationsKeyField,
 				translations: Ext.JSON.encodeValue(values)
 		};
@@ -643,6 +634,14 @@
 				translations: Ext.JSON.encodeValue(values)
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForGisIcon);
+	}
+	function updateForMenuItem(translationsKeyName, translationsKeyField, values) {
+		var params = {
+				uuid: translationsKeyName,
+				field: translationsKeyField,
+				translations: Ext.JSON.encodeValue(values)
+		};
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.updateForMenuItem);
 	}
 		
 	/*
@@ -663,11 +662,8 @@
 			case "DomainAttribute" :
 				deleteForDomainAttribute(translationsKeyName, translationsKeySubName, translationsKeyField, values);
 				break;
-			case "FilterView" :
-				deleteForFilterView(translationsKeyName, translationsKeyField, values);
-				break;
-			case "SqlView" :
-				deleteForSqlView(translationsKeyName, translationsKeyField, values);
+			case "View" :
+				deleteForView(translationsKeyName, translationsKeyField, values);
 				break;
 			case "Filter" :
 				deleteForFilter(translationsKeyName, translationsKeyField, values);
@@ -692,6 +688,9 @@
 				break;
 			case "GisIcon" :
 				deleteForGisIcon(translationsKeyName, translationsKeyField, values);
+				break;
+			case "MenuItem" :
+				deleteForMenuItem(translationsKeyName, translationsKeyField, values);
 				break;
 		}
 		
@@ -730,21 +729,13 @@
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForDomainAttribute);
 	}
-	function deleteForFilterView(translationsKeyName, translationsKeyField, values) {
+	function deleteForView(translationsKeyName, translationsKeyField, values) {
 		var params = {
 				viewName: translationsKeyName,
 				field: translationsKeyField,
 				translations: Ext.JSON.encodeValue(values)
 		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForFilterView);
-	}
-	function deleteForSqlView(translationsKeyName, translationsKeyField, values) {
-		var params = {
-				viewName: translationsKeyName,
-				field: translationsKeyField,
-				translations: Ext.JSON.encodeValue(values)
-		};
-		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForSqlView);
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForView);
 	}
 	function deleteForFilter(translationsKeyName, translationsKeyField, values) {
 		var params = {
@@ -794,7 +785,7 @@
 	}
 	function deleteForLookup(translationsKeyName, translationsKeyField, values) {
 		var params = {
-				lookupId: translationsKeyName,
+				translationUuid: translationsKeyName,
 				field: translationsKeyField,
 				translations: Ext.JSON.encodeValue(values)
 		};
@@ -807,6 +798,14 @@
 				translations: Ext.JSON.encodeValue(values)
 		};
 		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForGisIcon);
+	}
+	function deleteForMenuItem(translationsKeyName, translationsKeyField, values) {
+		var params = {
+				uuid: translationsKeyName,
+				field: translationsKeyField,
+				translations: Ext.JSON.encodeValue(values)
+		};
+		CMDBuild.ServiceProxy.translations.manageTranslations({params : params}, CMDBuild.ServiceProxy.url.translations.deleteForMenuItem);
 	}
 		
 

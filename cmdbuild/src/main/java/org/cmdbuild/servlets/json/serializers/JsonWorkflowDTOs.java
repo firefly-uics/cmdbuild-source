@@ -8,9 +8,10 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.data.store.email.Email;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.email.EmailLogic.EmailWithAttachmentNames;
-import org.cmdbuild.model.email.Email;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -137,9 +138,13 @@ public class JsonWorkflowDTOs {
 		private static final Marker marker = MarkerFactory.getMarker(JsonProcessCard.class.getName());
 
 		private final UserProcessInstance processInstance;
+		private final TranslationFacade translationFacade;
+		private final LookupStore lookupStore;
 
-		public JsonProcessCard(final UserProcessInstance processInstance) {
+		public JsonProcessCard(final UserProcessInstance processInstance, TranslationFacade translationFacade, LookupStore lookupStore) {
 			this.processInstance = processInstance;
+			this.translationFacade = translationFacade;
+			this.lookupStore = lookupStore;
 		}
 
 		public Long getId() {
@@ -203,7 +208,7 @@ public class JsonWorkflowDTOs {
 
 		@Override
 		protected Object javaToJsonValue(final CMAttributeType<?> type, final Object value) {
-			return new JsonAttributeValueVisitor(type, value).convertValue();
+			return new JsonAttributeValueVisitor(type, value, translationFacade,lookupStore).convertValue();
 		}
 	}
 

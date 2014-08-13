@@ -1,15 +1,13 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
-
 	Ext.define('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
 		extend: 'Ext.form.FieldContainer',
 
 		border: false,
-		layout: 'hbox',
-		labelWidth: CMDBuild.LABEL_WIDTH,
-		width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 		considerAsFieldToDisable: true,
+		labelWidth: CMDBuild.LABEL_WIDTH,
+		layout: 'hbox',
+		width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 
 		/**
 		 * To acquire informations to setup fields before creation
@@ -21,18 +19,18 @@
 		constructor: function(configuration) {
 			this.delegate = Ext.create('CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController', this);
 
-			if (typeof configuration != 'undefined' || typeof configuration.fieldContainer != 'undefined') {
+			if (!Ext.isEmpty(configuration) || !Ext.isEmpty(configuration.fieldContainer)) {
 				Ext.apply(this, configuration.fieldContainer);
 			}
 
-			if (typeof configuration == 'undefined' || typeof configuration.textarea == 'undefined') {
+			if (Ext.isEmpty(configuration) || Ext.isEmpty(configuration.textarea)) {
 				this.textareaConfig = { delegate: this.delegate };
 			} else {
 				this.textareaConfig = configuration.textarea;
 				this.textareaConfig.delegate = this.delegate;
 			}
 
-			if (typeof configuration == 'undefined' || typeof configuration.button == 'undefined') {
+			if (Ext.isEmpty(configuration) || Ext.isEmpty(configuration.button)) {
 				this.buttonConfig = { delegate: this.delegate };
 			} else {
 				this.buttonConfig = configuration.button;

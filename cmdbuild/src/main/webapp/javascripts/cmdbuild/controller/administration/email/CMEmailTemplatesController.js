@@ -5,6 +5,16 @@
 	Ext.define('CMDBuild.controller.administration.email.CMEmailTemplatesController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
+		form: undefined,
+		grid: undefined,
+		selectedName: undefined,
+		selectionModel: undefined,
+		valuesWindowDataBuffer: undefined, // Buffer to hold all values windows grid datas
+		view: undefined,
+
+		/**
+		 * @param (Object) view
+		 */
 		// Overwrite
 		constructor: function(view) {
 			this.callParent(arguments);
@@ -16,7 +26,6 @@
 			this.grid.delegate = this;
 			this.form.delegate = this;
 
-			this.selectedName = null;
 			this.selectionModel = this.grid.getSelectionModel();
 		},
 
@@ -48,19 +57,91 @@
 				case 'onSaveButtonClick':
 					return this.onSaveButtonClick();
 
+				case 'onVariablesButtonClick':
+					return this.onVariablesButtonClick();
+
+				case 'onVariablesWindowAbort':
+					return this.onVariablesWindowAbort();
+
+				case 'onVariablesWindowSave':
+					return this.onVariablesWindowSave();
+
 				default: {
-					if (
-						this.parentDelegate
-						&& typeof this.parentDelegate == 'object'
-					) {
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
-					}
 				}
 			}
 		},
 
+		// Variables window controller functions
+			onVariablesButtonClick: function() {
+				this.variablesWindow = Ext.create('CMDBuild.view.administration.email.CMEmailTemplatesVariablesWindow');
+				this.setVariableWindowGridDatas(this.valuesWindowDataBuffer);
+				this.variablesWindow.delegate = this;
+				this.variablesWindow.show();
+			},
+
+			onVariablesWindowAbort: function() {
+				this.variablesWindow.hide();
+				this.setVariableWindowGridDatas(this.valuesWindowDataBuffer);
+			},
+
+			onVariablesWindowSave: function() {
+				this.variablesWindow.hide();
+				this.valuesWindowDataBuffer = this.getVariableWindowGridDatas();
+			},
+
+			// GETters functions
+				/**
+				 * @return (Object) data
+				 *
+				 * 	Example:
+				 * 		{
+				 * 			key1: value1,
+				 * 			key2: value2
+				 * 		}
+				 */
+				getVariableWindowGridDatas: function() {
+					var data = {};
+
+					// To validate and filter grid rows
+					this.variablesWindow.grid.getStore().each(function(record) {
+						if (
+							!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.KEY))
+							&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE))
+						) {
+							data[record.get(CMDBuild.core.proxy.CMProxyConstants.KEY)] = record.get(CMDBuild.core.proxy.CMProxyConstants.VALUE);
+						}
+					});
+
+					return data;
+				},
+
+			// SETters functions
+				/**
+				 * Rewrite of loadData
+				 *
+				 * @param (Object) data
+				 */
+				setVariableWindowGridDatas: function(data) {
+					var store = this.variablesWindow.grid.getStore();
+					store.removeAll();
+
+					if (!Ext.isEmpty(data)) {
+						for (var key in data) {
+							var recordConf = {};
+
+							recordConf[CMDBuild.core.proxy.CMProxyConstants.KEY] = key;
+							recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = data[key] || '';
+
+							store.add(recordConf);
+						}
+					}
+				},
+		// END: Variables window controller functions
+
 		onAbortButtonClick: function() {
-			if (this.selectedName != null) {
+			if (!Ext.isEmpty(this.selectedName)) {
 				this.onRowSelected();
 			} else {
 				this.form.reset();
@@ -71,6 +152,7 @@
 		onAddButtonClick: function() {
 			this.selectionModel.deselectAll();
 			this.selectedName = null;
+			this.valuesWindowDataBuffer = null;
 			this.form.reset();
 			this.form.enableModify(true);
 		},
@@ -89,9 +171,8 @@
 				scope: this,
 				buttons: Ext.Msg.YESNO,
 				fn: function(button) {
-					if (button == 'yes') {
+					if (button == 'yes')
 						this.removeItem();
-					}
 				}
 			});
 		},
@@ -99,7 +180,7 @@
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
 				var me = this;
-				this.selectedName = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.NAME);
+				this.selectedName = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME);
 
 				// Selected user asynchronous store query
 				this.selectedDataStore = CMDBuild.core.proxy.CMProxyEmailTemplates.get();
@@ -109,6 +190,7 @@
 					},
 					callback: function() {
 						me.form.loadRecord(this.getAt(0));
+						me.valuesWindowDataBuffer = this.getAt(0).get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
 						me.form.disableModify(true);
 					}
 				});
@@ -116,61 +198,64 @@
 		},
 
 		onSaveButtonClick: function() {
-			var nonvalid = this.form.getNonValidFields();
+			// Validate before save
+			if (this.validate(this.form)) {
+				var formData = this.form.getData(true);
 
-			if (nonvalid.length > 0) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-				return;
-			}
+				// To put and encode variablesWindow grid values
+				formData[CMDBuild.core.proxy.CMProxyConstants.VARIABLES] = Ext.encode(this.valuesWindowDataBuffer);
 
-			CMDBuild.LoadMask.get().show();
-			var formData = this.form.getData(true);
+				CMDBuild.LoadMask.get().show();
 
-			if (formData.id == null || formData.id == '') {
-				CMDBuild.core.proxy.CMProxyEmailTemplates.create({
-					params: formData,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
-			} else {
-				CMDBuild.core.proxy.CMProxyEmailTemplates.update({
-					params: formData,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
+				if (Ext.isEmpty(formData.id)) {
+					CMDBuild.core.proxy.CMProxyEmailTemplates.create({
+						params: formData,
+						scope: this,
+						success: this.success,
+						callback: this.callback
+					});
+				} else {
+					CMDBuild.core.proxy.CMProxyEmailTemplates.update({
+						params: formData,
+						scope: this,
+						success: this.success,
+						callback: this.callback
+					});
+				}
 			}
 		},
 
 		removeItem: function() {
-			if (this.selectedName == null) {
-				// Nothing to remove
-				return;
+			if (!Ext.isEmpty(this.selectedName)) {
+				var me = this;
+				var store = this.grid.store;
+
+				CMDBuild.LoadMask.get().show();
+
+				CMDBuild.core.proxy.CMProxyEmailTemplates.remove({
+					params: {
+						name: this.selectedName
+					},
+					scope: this,
+					success: function() {
+						this.form.reset();
+
+						store.load({
+							callback: function() {
+								me.selectionModel.select(0, true);
+							}
+						});
+					},
+					callback: this.callback()
+				});
 			}
-
-			var me = this;
-			var store = this.grid.store;
-
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.CMProxyEmailTemplates.remove({
-				params: {
-					name: this.selectedName
-				},
-				scope: this,
-				success: function() {
-					this.form.reset();
-
-					store.load({
-						callback: function() {
-							me.selectionModel.select(0, true);
-						}
-					});
-				},
-				callback: this.callback()
-			});
 		},
 
+		/**
+		 * @param (Object) result
+		 * @param (Object) options
+		 * @param (Object) decodedResult
+		 */
 		success: function(result, options, decodedResult) {
 			var me = this;
 			var store = this.grid.store;
@@ -178,8 +263,8 @@
 			store.load({
 				callback: function() {
 					var rowIndex = this.find(
-						CMDBuild.ServiceProxy.parameter.NAME,
-						me.form.getForm().findField(CMDBuild.ServiceProxy.parameter.NAME).getValue()
+						CMDBuild.core.proxy.CMProxyConstants.NAME,
+						me.form.getForm().findField(CMDBuild.core.proxy.CMProxyConstants.NAME).getValue()
 					);
 
 					me.selectionModel.select(rowIndex, true);

@@ -1,6 +1,8 @@
 package org.cmdbuild.cmdbf.xml;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_QUERY;
+import static org.cmdbuild.logic.dms.Utils.valueForCategory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -55,7 +57,7 @@ public class DocumentNamespace extends AbstractNamespace {
 
 		@Override
 		public boolean apply(final Lookup input) {
-			return input.description != null && !input.description.isEmpty();
+			return isNotBlank(valueForCategory(input));
 		}
 
 	};
@@ -68,12 +70,12 @@ public class DocumentNamespace extends AbstractNamespace {
 
 				@Override
 				public String getName() {
-					return input.description;
+					return valueForCategory(input);
 				}
 
 				@Override
 				public Iterable<MetadataGroupDefinition> getMetadataGroupDefinitions() {
-					return dmsLogic.getCategoryDefinition(input.description).getMetadataGroupDefinitions();
+					return dmsLogic.getCategoryDefinition(valueForCategory(input)).getMetadataGroupDefinitions();
 				}
 			};
 		}
@@ -311,7 +313,7 @@ public class DocumentNamespace extends AbstractNamespace {
 		if (metadata.getType() == MetadataType.BOOLEAN) {
 			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_BOOLEAN);
 		} else if (metadata.getType() == MetadataType.INTEGER) {
-			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_INTEGER);
+			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_INT);
 		} else if (metadata.getType() == MetadataType.FLOAT) {
 			element.setSchemaTypeName(org.apache.ws.commons.schema.constants.Constants.XSD_FLOAT);
 		} else if (metadata.getType() == MetadataType.DATE) {

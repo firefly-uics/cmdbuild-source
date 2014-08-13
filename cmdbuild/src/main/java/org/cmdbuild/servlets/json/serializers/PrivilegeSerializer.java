@@ -1,15 +1,15 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES_PRIVILEGES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_NONE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_OBJ_DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_OBJ_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_OBJ_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_READ;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_WRITE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES_PRIVILEGES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_NONE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_OBJ_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_OBJ_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_OBJ_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_READ;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_WRITE;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class PrivilegeSerializer {
 		jsonPrivilege.put(PRIVILEGE_OBJ_DESCRIPTION, privilege.getPrivilegedObjectDescription());
 		jsonPrivilege.put(PRIVILEGE_FILTER, privilege.getPrivilegeFilter());
 		jsonPrivilege.put(ATTRIBUTES_PRIVILEGES, privilege.getAttributesPrivileges());
-
+		// TODO serialize cardEditMode too
 		return jsonPrivilege;
 	}
 

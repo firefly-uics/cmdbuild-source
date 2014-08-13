@@ -11,14 +11,13 @@
 
 		delegate: undefined,
 
-		autoScroll: false,
+		bodyCls: 'cmgraypanel',
+		border: false,
 		buttonAlign: 'center',
+		cls: 'x-panel-body-default-framed cmbordertop',
+		frame: false,
 		layout: 'fit',
 		split: true,
-		frame: false,
-		border: false,
-		cls: 'x-panel-body-default-framed cmbordertop',
-		bodyCls: 'cmgraypanel',
 
 		initComponent: function() {
 			// Buttons configuration
@@ -57,17 +56,28 @@
 			];
 			// END: Buttons configuration
 
-			// Splitted-view wrapper
 			this.nameField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.NAME,
-				itemId: CMDBuild.ServiceProxy.parameter.NAME,
+				name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				itemId: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				fieldLabel: CMDBuild.Translation.name,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				allowBlank: false
 			});
 
+			this.addVariablesButton = Ext.create('Ext.button.Button', {
+				text: tr.valuesWindow.title,
+				scope: this,
+				iconCls: 'modify',
+				anchor: 'auto',
+				margin: '0 0 0 ' + (CMDBuild.LABEL_WIDTH + 5),
+
+				handler: function() {
+					this.delegate.cmOn('onVariablesButtonClick');
+				}
+			});
+
+			// Splitted-view wrapper
 			this.wrapper = Ext.create('Ext.container.Container', {
-				region: 'center',
 				frame: false,
 				border: false,
 
@@ -77,11 +87,8 @@
 				},
 
 				defaults: {
-					flex: 1,
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					}
+					overflowY: 'auto',
+					flex: 1
 				},
 
 				items: [
@@ -91,19 +98,21 @@
 						margins: '0 3 0 0',
 
 						defaults: {
-							labelWidth: CMDBuild.LABEL_WIDTH
+							labelWidth: CMDBuild.LABEL_WIDTH,
+							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							anchor: '100%'
 						},
 
 						items: [
 							this.nameField,
 							{
 								xtype: 'textareafield',
-								name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+								name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 								fieldLabel: CMDBuild.Translation.description_
 							},
 							{
 								xtype: 'hiddenfield',
-								name: CMDBuild.ServiceProxy.parameter.ID
+								name: CMDBuild.core.proxy.CMProxyConstants.ID
 							}
 						]
 					},
@@ -111,46 +120,56 @@
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.administration.email.templates.template,
 						margins: '0 0 0 3',
-						autoScroll: true,
 
 						defaults: {
+							xtype: 'textfield',
 							labelWidth: CMDBuild.LABEL_WIDTH,
-							xtype: 'textfield'
+							maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+							anchor: '100%'
 						},
 
 						items: [
 							{
-								name: CMDBuild.ServiceProxy.parameter.TO,
+								name: CMDBuild.core.proxy.CMProxyConstants.TO,
 								fieldLabel: CMDBuild.Translation.to,
 								allowBlank: false
 							},
 							{
-								name: CMDBuild.ServiceProxy.parameter.CC,
+								name: CMDBuild.core.proxy.CMProxyConstants.CC,
 								fieldLabel: CMDBuild.Translation.cc
 							},
 							{
-								name: CMDBuild.ServiceProxy.parameter.BCC,
+								name: CMDBuild.core.proxy.CMProxyConstants.BCC,
 								fieldLabel: CMDBuild.Translation.bcc
 							},
 							{
-								name: CMDBuild.ServiceProxy.parameter.SUBJECT,
+								name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 								fieldLabel: CMDBuild.Translation.subject,
 								allowBlank: false
 							},
 							Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
-								name: CMDBuild.ServiceProxy.parameter.BODY,
+								name: CMDBuild.core.proxy.CMProxyConstants.BODY,
 								fieldLabel: CMDBuild.Translation.administration.email.templates.body,
 								labelWidth: CMDBuild.LABEL_WIDTH,
+								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
 								considerAsFieldToDisable: true,
 								enableFont: false
-							})
+							}),
+							this.addVariablesButton
 						]
 					}
 				]
 			});
 
 			Ext.apply(this, {
-				tbar: this.cmTBar,
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						items: this.cmTBar
+					}
+				],
 				items: [this.wrapper],
 				buttons: this.cmButtons
 			});

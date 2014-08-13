@@ -3,7 +3,11 @@ package org.cmdbuild.logic.email;
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.FluentIterable.from;
 
+import java.util.Map;
+
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.email.EmailTemplate;
@@ -69,6 +73,16 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 			return delegate.getBody();
 		}
 
+		@Override
+		public Map<String, String> getVariables() {
+			return delegate.getVariables();
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
 	}
 
 	private static final Function<EmailTemplate, Template> EMAIL_TEMPLATE_TO_TEMPLATE = new Function<EmailTemplate, Template>() {
@@ -93,6 +107,7 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 					.withBcc(input.getBcc()) //
 					.withSubject(input.getSubject()) //
 					.withBody(input.getBody()) //
+					.withVariables(input.getVariables()) //
 					.build();
 		};
 
@@ -116,7 +131,7 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	@Override
 	public Iterable<Template> readAll() {
 		logger.info(marker, "reading all templates");
-		return from(store.list()) //
+		return from(store.readAll()) //
 				.transform(EMAIL_TEMPLATE_TO_TEMPLATE);
 	}
 
@@ -158,14 +173,14 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	}
 
 	private void assureNoOneWithName(final String name) {
-		final boolean existing = from(store.list()) //
+		final boolean existing = from(store.readAll()) //
 				.transform(TO_NAME) //
 				.contains(name);
 		Validate.isTrue(!existing, "already existing element");
 	}
 
 	private void assureOneOnlyWithName(final String name) {
-		final int count = from(store.list()) //
+		final int count = from(store.readAll()) //
 				.transform(TO_NAME) //
 				.filter(equalTo(name)) //
 				.size();

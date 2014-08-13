@@ -44,7 +44,7 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 	public interface Default {
 
 		String ENABLED = Boolean.FALSE.toString();
-		String SERVER_URL = "http://localhost:8181/alfresco/api";
+		String SERVER_URL = "http://localhost:10080/alfresco/api";
 		String FILE_SERVER_PORT = "1121";
 		String FILE_SERVER_URL = "localhost";
 		String FILE_SERVER_TYPE = "AlfrescoFTP";

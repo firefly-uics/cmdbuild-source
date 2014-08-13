@@ -26,52 +26,91 @@
 			}
 		},
 
+		/**
+		 * @return (String)
+		 */
 		checkWorkflowComboSelected: function() {
-			if (this.getWorkflowDelegate().getValueCombo())
-				return true;
-
-			return false;
+			return this.getWorkflowDelegate().getValueCombo();
 		},
 
-		getWorkflowDelegate: function() {
-			return this.view.workflowForm.delegate;
+		// GETters functions
+			/**
+			 * @return (String)
+			 */
+			getValueId: function() {
+				return this.view.idField.getValue();
+			},
+
+			/**
+			 * @return (Object) delegate
+			 */
+			getWorkflowDelegate: function() {
+				return this.view.workflowForm.delegate;
+			},
+
+			/**
+			 * @return (Object)
+			 */
+			getValueWorkflowAttributeGrid: function() {
+				return this.getWorkflowDelegate().getValueGrid();
+			},
+
+		/**
+		 * To erase workflow form used on addButtonClick
+		 */
+		eraseWorkflowForm: function() {
+			this.getWorkflowDelegate().eraseWorkflowForm();
 		},
 
-		getValueAttributeGrid: function() {
-			return this.getWorkflowDelegate().getValueGrid();
-		},
+		// SETters functions
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledTypeField: function(state) {
+				this.view.typeField.setDisabled(state);
+			},
 
-		getValueId: function() {
-			return this.view.idField.getValue();
-		},
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledWorkflowAttributesGrid: function(state) {
+				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
+			},
 
-		setDisabledWorkflowAttributesGrid: function(state) {
-			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
-		},
+			/**
+			 * @param (String) value
+			 */
+			setValueActive: function(value) {
+				this.view.activeField.setValue(value);
+			},
 
-		setDisabledTypeField: function(state) {
-			this.view.typeField.setDisabled(state);
-		},
+			/**
+			 * @param (String) value
+			 */
+			setValueDescription: function(value) {
+				this.view.descriptionField.setValue(value);
+			},
 
-		setValueActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
+			/**
+			 * @param (String) value
+			 */
+			setValueId: function(value) {
+				this.view.idField.setValue(value);
+			},
 
-		setValueAttributesGrid: function(data) {
-			this.getWorkflowDelegate().setValueGrid(data);
-		},
+			/**
+			 * @param (String) value
+			 */
+			setValueWorkflowAttributesGrid: function(value) {
+				this.getWorkflowDelegate().setValueGrid(value);
+			},
 
-		setValueDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
-
-		setValueId: function(value) {
-			this.view.idField.setValue(value);
-		},
-
-		setValueWorkflowCombo: function(workflowName) {
-			this.getWorkflowDelegate().setValueCombo(workflowName);
-		}
+			/**
+			 * @param (String) value
+			 */
+			setValueWorkflowCombo: function(value) {
+				this.getWorkflowDelegate().setValueCombo(value);
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1', {
@@ -79,9 +118,14 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
-		height: '100%',
 		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
 
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', this);
@@ -89,9 +133,10 @@
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.ServiceProxy.parameter.TYPE,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 				value: tr.tasksTypes.workflow,
+				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				anchor: '100%',
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true,
@@ -99,29 +144,31 @@
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.ServiceProxy.parameter.ID
+				name: CMDBuild.core.proxy.CMProxyConstants.ID
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				anchor: '100%',
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
+				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: tr.startOnSave,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+				anchor: '100%'
 			});
 
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 				combo: {
-					name: CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME,
-					allowBlank: false
-				}
+					name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME
+				},
+				widthFixDisable: false
 			});
 
 			Ext.apply(this, {

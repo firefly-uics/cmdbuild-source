@@ -17,6 +17,13 @@ import org.cmdbuild.model.domainTree.DomainTreeNode;
 
 public class DBDomainTreeStore {
 	private enum Attributes {
+		/*
+		 * TODO
+		 * BASE_NODE is a specific field of the GIS navigation tree
+		 * for the moment the field is left here for not touch all the GIS module
+		 * but the column redundant because define only one node and only in 
+		 * the GIS navigation Tree
+		 */
 		BASE_NODE("BaseNode"), //
 		DESCRIPTION("Description"), //
 		DIRECT("Direct"), //

@@ -7,11 +7,15 @@
 		currentProcessTaskId: undefined,
 		grid: undefined,
 		selectionModel: undefined,
+		targetAccordion: undefined,
+		targetController: undefined,
 		view: undefined,
 
+		/**
+		 * @param (Object) view
+		 */
 		// Overwrite
 		constructor: function(view) {
-
 			// Handlers exchange
 			this.view = view;
 			this.grid = view.grid;
@@ -34,13 +38,13 @@
 					return this.onAddButtonClick(name, param, callBack);
 
 				case 'onItemDoubleClick':
-					return this.onItemDoubleClick(name, param);
+					return this.onItemDoubleClick(name, param, callBack);
 
 				case 'onModifyButtonClick':
-					return this.onModifyButtonClick(name, param);
+					return this.onModifyButtonClick(name, param, callBack);
 
 				case 'onRemoveButtonClick':
-					return this.onRemoveButtonClick(name, param);
+					return this.onRemoveButtonClick(name, param, callBack);
 
 				case 'onRowSelected':
 					return this.onRowSelected();
@@ -52,36 +56,54 @@
 			}
 		},
 
+		/**
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		onAddButtonClick: function(name, param, callBack) {
-			var me = this;
+			// Security checks
+				if (Ext.isEmpty(this.targetAccordion))
+					this.targetAccordion = _CMMainViewportController.findAccordionByCMName('tasks');
+
+				if (Ext.isEmpty(this.targetController))
+					this.targetController = _CMMainViewportController.panelControllers['tasks'];
 
 			this.targetAccordion.expand();
 
 			Ext.Function.createDelayed(function() {
-				me.targetAccordion.selectNodeById(param.type);
+				this.targetAccordion.selectNodeById(param.type);
 
 				Ext.Function.createDelayed(function() {
-					me.targetController.cmOn(name, param, callBack);
-					me.targetController.form.delegate.delegateStep[0].setValueWorkflowCombo(me.currentProcess.get(CMDBuild.ServiceProxy.parameter.NAME));
-					me.targetController.form.delegate.onModifyButtonClick();
-				}, 100)();
-			}, 500)();
+					this.targetController.cmOn(name, param, callBack);
+					this.targetController.form.delegate.delegateStep[0].setValueWorkflowCombo(
+						this.currentProcess.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
+					);
+					this.targetController.form.delegate.onModifyButtonClick();
+				}, 100, this)();
+			}, 500, this)();
 		},
 
-		onItemDoubleClick: function(name, param) {
-			var me = this;
-
+		/**
+		 * On grid row double click to select task in administration tasks form
+		 *
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
+		onItemDoubleClick: function(name, param, callBack) {
 			this.targetAccordion.expand();
 
 			Ext.Function.createDelayed(function() {
-				me.targetAccordion.selectNodeById(param.type);
+				this.targetAccordion.selectNodeById(param.type);
 
-				me.targetController.grid.getStore().load({
+				this.targetController.grid.getStore().load({
+					scope: this,
 					callback: function() {
-						var selectionIndex = me.targetController.grid.getStore().find(CMDBuild.ServiceProxy.parameter.ID, param.id);
+						var selectionIndex = this.targetController.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, param.id);
 
-						if (selectionIndex > 0) {
-							me.targetController.grid.getSelectionModel().select(
+						if (selectionIndex >= 0) {
+							this.targetController.grid.getSelectionModel().select(
 								selectionIndex,
 								true
 							);
@@ -91,29 +113,36 @@
 								Ext.String.format('Cannot find taks with id ' + param.id + ' in store')
 							);
 
-							me.targetController.form.delegate.selectedId = null;
-							me.targetController.form.disableModify();
+							this.targetController.form.delegate.selectedId = null;
+							this.targetController.form.disableModify();
 						}
 					}
 				});
-			}, 500)();
+			}, 500, this)();
 		},
 
-		onModifyButtonClick: function(name, param) {
-			var me = this;
-
+		/**
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
+		onModifyButtonClick: function(name, param, callBack) {
 			if (this.currentProcessTaskId) {
 				param.id = this.currentProcessTaskId;
 
 				this.onItemDoubleClick(null, param);
 
 				Ext.Function.createDelayed(function() {
-					if (me.targetController.form.delegate.selectedId != null)
-						me.targetController.form.delegate.onModifyButtonClick();
-				}, 1000)();
+					if (this.targetController.form.delegate.selectedId != null)
+						this.targetController.form.delegate.onModifyButtonClick();
+				}, 1000, this)();
 			}
 		},
 
+		/**
+		 * @param (Int) processId
+		 * @param (Object) process
+		 */
 		onProcessSelected: function(processId, process) {
 			this.currentProcess = process;
 
@@ -125,34 +154,33 @@
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStoreByWorkflow());
 				this.grid.store.load({
 					params: {
-						workflowClassName: process.get(CMDBuild.ServiceProxy.parameter.NAME)
+						workflowClassName: process.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
 					}
 				});
 			}
 		},
 
-		onRemoveButtonClick: function(name, param) {
-			var me = this;
-
+		/**
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
+		onRemoveButtonClick: function(name, param, callBack) {
 			if (this.currentProcessTaskId) {
 				param.id = this.currentProcessTaskId;
 
-				this.targetAccordion.expand();
+				this.onItemDoubleClick(null, param);
 
 				Ext.Function.createDelayed(function() {
-					me.targetAccordion.selectNodeById(param.type);
-
-					Ext.Function.createDelayed(function() {
-						if (me.targetController.form.delegate.selectedId != null)
-							me.targetController.form.delegate.onRemoveButtonClick();
-					}, 1000)();
-				}, 500)();
+					if (this.targetController.form.delegate.selectedId != null)
+						this.targetController.form.delegate.onRemoveButtonClick();
+				}, 1000, this)();
 			}
 		},
 
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
-				this.currentProcessTaskId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
+				this.currentProcessTaskId = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.ID);
 				this.view.enableCMTbar();
 
 				// This declaration positioned in constructor doesn't works for targetAccordion

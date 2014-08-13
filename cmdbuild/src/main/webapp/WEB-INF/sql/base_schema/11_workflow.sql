@@ -62,24 +62,24 @@ CREATE INDEX idx_activity_idclass
 --
 
 -- EmailStatus lookup
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'New', 'A', 'EmailStatus', 1, false);
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'Received', 'A', 'EmailStatus', 2, false);
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'Draft', 'A', 'EmailStatus', 3, false);
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'Outgoing', 'A', 'EmailStatus', 4, false);
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'Sent', 'A', 'EmailStatus', 5, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'New', 'New', 'A', 'EmailStatus', 1, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Received', 'Received', 'A', 'EmailStatus', 2, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Draft', 'Draft', 'A', 'EmailStatus', 3, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Outgoing', 'Outgoing', 'A', 'EmailStatus', 4, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Sent', 'Sent', 'A', 'EmailStatus', 5, false);
 
--- Email class (base)
-SELECT cm_create_class('Email', 'Class', 'MODE: reserved|TYPE: class|DESCR: Email|SUPERCLASS: false|STATUS: active');
+-- Email class
+SELECT cm_create_class('Email', 'Class', 'MODE: user|TYPE: class|DESCR: Email|SUPERCLASS: false|STATUS: active');
 
 -- ActivityEmail domain
-SELECT cm_create_domain('ActivityEmail', 'MODE: reserved|TYPE: domain|CLASS1: Activity|CLASS2: Email|DESCRDIR: |DESCRINV: |CARDIN: 1:N|STATUS: active');
+SELECT cm_create_domain('ActivityEmail', 'MODE: user|TYPE: domain|CLASS1: Activity|CLASS2: Email|DESCRDIR: |DESCRINV: |CARDIN: 1:N|STATUS: active');
 
--- Email class (attributes)
+-- Email class (attribute)
 SELECT cm_create_class_attribute('Email', 'Activity', 'integer', '', false, false, 'MODE: read|FIELDMODE: write|DESCR: Activity|INDEX: 4|REFERENCEDOM: ActivityEmail|REFERENCEDIRECT: false|REFERENCETYPE: restrict|STATUS: active');
 SELECT cm_create_class_attribute('Email', 'EmailStatus', 'integer', '', true, false, 'MODE: read|FIELDMODE: write|DESCR: EmailStatus|INDEX: 5|BASEDSP: true|LOOKUP: EmailStatus|STATUS: active');
 SELECT cm_create_class_attribute('Email', 'FromAddress', 'text', '', false, false, 'MODE: read|FIELDMODE: write|DESCR: From|INDEX: 6|BASEDSP: true|STATUS: active');
@@ -88,3 +88,4 @@ SELECT cm_create_class_attribute('Email', 'CcAddresses', 'text', '', false, fals
 SELECT cm_create_class_attribute('Email', 'Subject', 'text', '', false, false, 'MODE: read|FIELDMODE: write|DESCR: Subject|INDEX: 9|BASEDSP: true|STATUS: active');
 SELECT cm_create_class_attribute('Email', 'Content', 'text', '', false, false, 'MODE: read|FIELDMODE: write|DESCR: Body|INDEX: 10|BASEDSP: false|STATUS: active');
 SELECT cm_create_class_attribute('Email', 'NotifyWith', 'text', null, false, false, 'MODE: write|DESCR: NotifyWith|INDEX: 10|BASEDSP: false|STATUS: active');
+

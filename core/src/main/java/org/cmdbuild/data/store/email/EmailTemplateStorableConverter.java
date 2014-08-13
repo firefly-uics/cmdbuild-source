@@ -5,20 +5,20 @@ import java.util.Map;
 
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
+import org.cmdbuild.data.store.dao.BaseStorableConverter;
 
 public class EmailTemplateStorableConverter extends BaseStorableConverter<EmailTemplate> {
 
-	private final String TABLE_NAME = "_EmailTemplate";
+	public static final String TABLE_NAME = "_EmailTemplate";
 
-	private final String NAME = Constants.CODE_ATTRIBUTE;
-	private final String DESCRIPTION = Constants.DESCRIPTION_ATTRIBUTE;
-	private final String FROM = "From";
-	private final String TO = "To";
-	private final String CC = "CC";
-	private final String BCC = "BCC";
-	private final String SUBJECT = "Subject";
-	private final String BODY = "Body";
+	public static final String NAME = Constants.CODE_ATTRIBUTE;
+	public static final String DESCRIPTION = Constants.DESCRIPTION_ATTRIBUTE;
+	public static final String FROM = "From";
+	public static final String TO = "To";
+	public static final String CC = "CC";
+	public static final String BCC = "BCC";
+	public static final String SUBJECT = "Subject";
+	public static final String BODY = "Body";
 
 	@Override
 	public String getClassName() {

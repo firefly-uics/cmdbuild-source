@@ -6,7 +6,7 @@ DECLARE
 	schedulerJob record;
 BEGIN
 	RAISE INFO 'disabling triggers';
-	ALTER TABLE "_SchedulerJob" DISABLE TRIGGER ALL;
+	ALTER TABLE "_SchedulerJob" DISABLE TRIGGER USER;
 
 	RAISE INFO 'moving data';
 	FOR schedulerJob IN (
@@ -35,7 +35,7 @@ BEGIN
 	PERFORM cm_delete_attribute('"_SchedulerJob"'::regclass::oid, 'Detail');
 
 	RAISE INFO 'enabling triggers';
-	ALTER TABLE "_SchedulerJob" ENABLE TRIGGER ALL;
+	ALTER TABLE "_SchedulerJob" ENABLE TRIGGER USER;
 END;
 $$ LANGUAGE PLPGSQL;
 

@@ -1,14 +1,18 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CONFIGURATION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.COUNT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ENTRY_TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTERS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TEMPLATE;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIGURATION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.COUNT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ENTRY_TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTERS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPLATE;
 
+import org.cmdbuild.logic.translation.FilterTranslation;
 import org.cmdbuild.services.store.FilterDTO;
 import org.cmdbuild.services.store.FilterStore.Filter;
 import org.cmdbuild.services.store.FilterStore.GetFiltersResponse;
@@ -18,7 +22,13 @@ import org.json.JSONObject;
 
 public class FilterSerializer {
 
-	public static JSONObject toClient(final GetFiltersResponse filters) throws JSONException {
+	private final TranslationFacade translationFacade;
+
+	public FilterSerializer(final TranslationFacade translationFacade) {
+		this.translationFacade = translationFacade;
+	}
+
+	public JSONObject toClient(final GetFiltersResponse filters) throws JSONException {
 		final JSONObject out = new JSONObject();
 		final JSONArray jsonFilters = new JSONArray();
 
@@ -31,17 +41,23 @@ public class FilterSerializer {
 		return out;
 	}
 
-	public static JSONObject toClient(final Filter filter) throws JSONException {
+	public JSONObject toClient(final Filter filter) throws JSONException {
 		return toClient(filter, null);
 	}
 
-	public static JSONObject toClient(final Filter filter, final String wrapperName
-			) throws JSONException {
+	public JSONObject toClient(final Filter filter, final String wrapperName) throws JSONException {
 
 		final JSONObject jsonFilter = new JSONObject();
 		jsonFilter.put(ID, filter.getId());
 		jsonFilter.put(NAME, filter.getName());
-		jsonFilter.put(DESCRIPTION, filter.getDescription());
+
+		final FilterTranslation translationObject = FilterTranslation.newInstance() //
+				.withField(DESCRIPTION_FOR_CLIENT) //
+				.withName(filter.getName()) //
+				.build();
+		final String translatedDescription = translationFacade.read(translationObject);
+		jsonFilter.put(DESCRIPTION, defaultIfNull(translatedDescription, filter.getDescription()));
+		jsonFilter.put(DEFAULT_DESCRIPTION, filter.getDescription());
 		jsonFilter.put(ENTRY_TYPE, filter.getClassName());
 		jsonFilter.put(TEMPLATE, filter.isTemplate());
 		jsonFilter.put(CONFIGURATION, new JSONObject(filter.getValue()));
@@ -77,7 +93,7 @@ public class FilterSerializer {
 			final String name, //
 			final String className, //
 			final String description, //
-			final JSONObject configuration ) {
+			final JSONObject configuration) {
 
 		return FilterDTO.newFilter() //
 				.withId(id) //

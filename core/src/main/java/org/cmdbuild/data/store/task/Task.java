@@ -1,11 +1,17 @@
 package org.cmdbuild.data.store.task;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.Storable;
+import org.joda.time.DateTime;
 
 import com.google.common.collect.Maps;
 
@@ -13,13 +19,14 @@ public abstract class Task implements Storable {
 
 	public static abstract class Builder<T extends Task> implements org.apache.commons.lang3.builder.Builder<T> {
 
-		private static final Map<String, String> EMPTY = Collections.emptyMap();
+		private static final Map<String, String> NO_PARAMETERS = Collections.emptyMap();
 
 		private Long id;
 		private String description;
-		private String cronExpression;
 		private Boolean running;
-		private Map<String, String> parameters = Maps.newHashMap();
+		private String cronExpression;
+		private DateTime lastExecution;
+		private final Map<String, String> parameters = Maps.newHashMap();
 
 		protected Builder() {
 			// usable by subclasses only
@@ -33,7 +40,6 @@ public abstract class Task implements Storable {
 
 		private void validate() {
 			running = (running == null) ? Boolean.FALSE : running;
-			parameters = (parameters == null) ? EMPTY : parameters;
 		}
 
 		protected abstract T doBuild();
@@ -63,8 +69,13 @@ public abstract class Task implements Storable {
 			return this;
 		}
 
-		public Builder<T> withParameters(final Map<String, String> parameters) {
-			this.parameters.putAll(parameters);
+		public Builder<T> withLastExecution(final DateTime lastExecution) {
+			this.lastExecution = lastExecution;
+			return this;
+		}
+
+		public Builder<T> withParameters(final Map<String, ? extends String> parameters) {
+			this.parameters.putAll(defaultIfNull(parameters, NO_PARAMETERS));
 			return this;
 		}
 
@@ -78,6 +89,7 @@ public abstract class Task implements Storable {
 	private final Long id;
 	private final String description;
 	private final boolean running;
+	private final DateTime lastExecution;
 	private final String cronExpression;
 	private final Map<String, String> parameters;
 
@@ -86,6 +98,7 @@ public abstract class Task implements Storable {
 		this.description = builder.description;
 		this.running = builder.running;
 		this.cronExpression = builder.cronExpression;
+		this.lastExecution = builder.lastExecution;
 		this.parameters = builder.parameters;
 	}
 
@@ -96,8 +109,9 @@ public abstract class Task implements Storable {
 				.withId(id) //
 				.withDescription(description) //
 				.withRunningStatus(running) //
+				.withLastExecution(lastExecution) //
 				.withCronExpression(cronExpression) //
-				.withParameters(Maps.newHashMap(parameters));
+				.withParameters(parameters);
 	}
 
 	protected abstract Builder<? extends Task> builder();
@@ -124,6 +138,11 @@ public abstract class Task implements Storable {
 		return cronExpression;
 	}
 
+	// TODO move some where else
+	public DateTime getLastExecution() {
+		return lastExecution;
+	}
+
 	// TODO use something different from Map
 	public Map<String, String> getParameters() {
 		return parameters;
@@ -131,6 +150,40 @@ public abstract class Task implements Storable {
 
 	public String getParameter(final String key) {
 		return parameters.get(key);
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof Task)) {
+			return false;
+		}
+		final Task other = Task.class.cast(obj);
+		return new EqualsBuilder() //
+				.append(id, other.id) //
+				.append(description, other.description) //
+				.append(running, other.running) //
+				.append(cronExpression, other.cronExpression) //
+				.append(parameters, other.parameters) //
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder() //
+				.append(id) //
+				.append(description) //
+				.append(running) //
+				.append(cronExpression) //
+				.append(parameters) //
+				.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE);
 	}
 
 }

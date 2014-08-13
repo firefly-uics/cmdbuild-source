@@ -18,7 +18,7 @@ Ext.define("CMDBuild.view.management.common.widgets.CMManageEmail", {
 		this.emailGrid = new CMDBuild.view.management.common.widgets.CMEmailGrid({
 			autoScroll : true,
 			processId : this.activity.Id,
-			readWrite : !this.widgetConf.ReadOnly,
+			readWrite : !this.widgetConf.readOnly,
 			frame: false,
 			border: false
 		});

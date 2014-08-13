@@ -2,10 +2,11 @@ package org.cmdbuild.spring.configuration;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.config.DatabaseConfiguration;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.data.store.task.DefaultTaskStore;
 import org.cmdbuild.data.store.task.TaskDefinition;
 import org.cmdbuild.data.store.task.TaskDefinitionConverter;
@@ -13,30 +14,36 @@ import org.cmdbuild.data.store.task.TaskParameter;
 import org.cmdbuild.data.store.task.TaskParameterConverter;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.dms.DmsConfiguration;
-import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter;
-import org.cmdbuild.logic.taskmanager.DefaultLogicAndObserverConverter.ObserverFactory;
-import org.cmdbuild.logic.taskmanager.DefaultLogicAndSchedulerConverter;
-import org.cmdbuild.logic.taskmanager.DefaultLogicAndStoreConverter;
-import org.cmdbuild.logic.taskmanager.DefaultObserverFactory;
-import org.cmdbuild.logic.taskmanager.DefaultSchedulerFacade;
-import org.cmdbuild.logic.taskmanager.DefaultSynchronousEventFacade;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
-import org.cmdbuild.logic.taskmanager.LogicAndObserverConverter;
-import org.cmdbuild.logic.taskmanager.LogicAndSchedulerConverter;
-import org.cmdbuild.logic.taskmanager.LogicAndStoreConverter;
-import org.cmdbuild.logic.taskmanager.ReadEmailTask;
-import org.cmdbuild.logic.taskmanager.ReadEmailTaskJobFactory;
-import org.cmdbuild.logic.taskmanager.SchedulerFacade;
-import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
-import org.cmdbuild.logic.taskmanager.StartWorkflowTaskJobFactory;
-import org.cmdbuild.logic.taskmanager.SynchronousEventFacade;
+import org.cmdbuild.logic.taskmanager.DefinitiveTaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TaskManagerLogic;
 import org.cmdbuild.logic.taskmanager.TransactionalTaskManagerLogic;
+import org.cmdbuild.logic.taskmanager.event.DefaultLogicAndObserverConverter;
+import org.cmdbuild.logic.taskmanager.event.DefaultObserverFactory;
+import org.cmdbuild.logic.taskmanager.event.DefaultSynchronousEventFacade;
+import org.cmdbuild.logic.taskmanager.event.LogicAndObserverConverter;
+import org.cmdbuild.logic.taskmanager.event.ObserverFactory;
+import org.cmdbuild.logic.taskmanager.event.SynchronousEventFacade;
+import org.cmdbuild.logic.taskmanager.scheduler.DefaultLogicAndSchedulerConverter;
+import org.cmdbuild.logic.taskmanager.scheduler.DefaultSchedulerFacade;
+import org.cmdbuild.logic.taskmanager.scheduler.LogicAndSchedulerConverter;
+import org.cmdbuild.logic.taskmanager.scheduler.SchedulerFacade;
+import org.cmdbuild.logic.taskmanager.store.DefaultLogicAndStoreConverter;
+import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTask;
+import org.cmdbuild.logic.taskmanager.task.connector.ConnectorTaskJobFactory;
+import org.cmdbuild.logic.taskmanager.task.connector.DefaultAttributeValueAdapter;
+import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
+import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTaskJobFactory;
+import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTask;
+import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventTaskJobFactory;
+import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
+import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTaskJobFactory;
 import org.cmdbuild.services.event.DefaultObserverCollector;
-import org.cmdbuild.services.event.ObserverCollector;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+
+import com.google.common.base.Supplier;
 
 @ConfigurationComponent
 public class TaskManager {
@@ -60,6 +67,9 @@ public class TaskManager {
 	private Email email;
 
 	@Autowired
+	private Other other;
+
+	@Autowired
 	private Scheduler scheduler;
 
 	@Autowired
@@ -75,13 +85,23 @@ public class TaskManager {
 	private Workflow workflow;
 
 	@Bean
-	public TaskManagerLogic taskManagerLogic() {
+	public DefinitiveTaskManagerLogic definitiveTaskManagerLogic() {
+		return new DefinitiveTaskManagerLogic(transactionalTaskManagerLogic());
+	}
+
+	@Bean
+	protected TaskManagerLogic transactionalTaskManagerLogic() {
 		return new TransactionalTaskManagerLogic(defaultTaskManagerLogic());
 	}
 
-	private DefaultTaskManagerLogic defaultTaskManagerLogic() {
-		return new DefaultTaskManagerLogic(taskConverter(), defaultTaskStore(), defaultSchedulerTaskFacade(),
-				defaultSynchronousEventFacade());
+	@Bean
+	protected TaskManagerLogic defaultTaskManagerLogic() {
+		return new DefaultTaskManagerLogic( //
+				defaultLogicAndStoreConverter(), //
+				defaultTaskStore(), //
+				defaultSchedulerTaskFacade(), //
+				defaultSynchronousEventFacade() //
+		);
 	}
 
 	@Bean
@@ -90,12 +110,12 @@ public class TaskManager {
 	}
 
 	@Bean
-	public ObserverCollector observerCollector() {
+	public DefaultObserverCollector defaultObserverCollector() {
 		return new DefaultObserverCollector();
 	}
 
 	@Bean
-	protected LogicAndStoreConverter taskConverter() {
+	protected DefaultLogicAndStoreConverter defaultLogicAndStoreConverter() {
 		return new DefaultLogicAndStoreConverter();
 	}
 
@@ -127,9 +147,40 @@ public class TaskManager {
 	@Bean
 	protected LogicAndSchedulerConverter defaultLogicAndSchedulerConverter() {
 		final DefaultLogicAndSchedulerConverter converter = new DefaultLogicAndSchedulerConverter();
+		converter.register(AsynchronousEventTask.class, asynchronousEventTaskJobFactory());
+		converter.register(ConnectorTask.class, connectorTaskJobFactory());
 		converter.register(ReadEmailTask.class, readEmailTaskJobFactory());
 		converter.register(StartWorkflowTask.class, startWorkflowTaskJobFactory());
 		return converter;
+	}
+
+	@Bean
+	protected AsynchronousEventTaskJobFactory asynchronousEventTaskJobFactory() {
+		return new AsynchronousEventTaskJobFactory( //
+				data.systemDataView(), //
+				email.emailAccountStore(), //
+				email.emailServiceFactory(), //
+				email.emailTemplateLogic(), //
+				defaultTaskStore(), //
+				defaultLogicAndStoreConverter() //
+		);
+	}
+
+	@Bean
+	protected ConnectorTaskJobFactory connectorTaskJobFactory() {
+		return new ConnectorTaskJobFactory( //
+				data.systemDataView(), //
+				other.dataSourceHelper(), //
+				defaultAttributeValueAdapter(),//
+				email.emailAccountStore(), //
+				email.emailServiceFactory(), //
+				email.emailTemplateLogic() //
+		);
+	}
+
+	@Bean
+	protected DefaultAttributeValueAdapter defaultAttributeValueAdapter() {
+		return new DefaultAttributeValueAdapter(data.systemDataView(), data.lookupStore());
 	}
 
 	@Bean
@@ -141,7 +192,7 @@ public class TaskManager {
 				email.emailPersistence(), //
 				workflow.systemWorkflowLogicBuilder() //
 						.build(), //
-				dms.dmsLogic(), //
+				dms.defaultDmsLogic(), //
 				data.systemDataView(), //
 				email.emailTemplateLogic() //
 		);
@@ -154,7 +205,7 @@ public class TaskManager {
 
 	@Bean
 	protected SynchronousEventFacade defaultSynchronousEventFacade() {
-		return new DefaultSynchronousEventFacade(observerCollector(), logicAndObserverConverter());
+		return new DefaultSynchronousEventFacade(defaultObserverCollector(), logicAndObserverConverter());
 	}
 
 	@Bean
@@ -172,8 +223,15 @@ public class TaskManager {
 				email.emailServiceFactory(), //
 				email.emailTemplateLogic(), //
 				data.systemDataView(), //
-				user.userDataAccessLogicBuilder().build() //
+				new Supplier<CMDataView>() {
+
+					@Override
+					public CMDataView get() {
+						return user.userDataView();
+					}
+
+				}
+
 		);
 	}
-
 }

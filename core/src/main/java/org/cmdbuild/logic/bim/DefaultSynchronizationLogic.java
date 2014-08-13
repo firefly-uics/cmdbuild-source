@@ -41,10 +41,12 @@ public class DefaultSynchronizationLogic implements SynchronizationLogic {
 
 	@Override
 	public void importIfc(final String projectId) {
-
+		
+		logger.info("start import");
 		final PersistenceProject immutableProject = bimPersistence.read(projectId);
 		final String xmlMapping = immutableProject.getImportMapping();
-		System.out.println("import mapping: \n" + xmlMapping);
+		logger.info("read import mapping");
+		logger.debug("{}", xmlMapping);
 		final Catalog catalog = XmlImportCatalogFactory.withXmlStringMapper(xmlMapping).create();
 
 		for (final EntityDefinition entityDefinition : catalog.getEntitiesDefinitions()) {
@@ -54,11 +56,12 @@ public class DefaultSynchronizationLogic implements SynchronizationLogic {
 				mapper.update(source);
 			}
 		}
-
+		
 		final PersistenceProject projectSynchronized = TO_MODIFIABLE_PERSISTENCE_PROJECT.apply(immutableProject);
 		projectSynchronized.setProjectId(projectId);
 		projectSynchronized.setSynch(true);
 		bimPersistence.saveProject(projectSynchronized);
+		logger.info("import done");
 	}
 
 	@Override

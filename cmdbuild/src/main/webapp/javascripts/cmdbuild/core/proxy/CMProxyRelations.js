@@ -1,70 +1,80 @@
 (function() {
 
-	CMDBuild.ServiceProxy.url.relations = {
-		create: 'services/json/management/modcard/createrelations',
-		read: 'services/json/management/modcard/getrelationlist',
-		update: 'services/json/management/modcard/modifyrelation',
-		remove: 'services/json/management/modcard/deleterelation',
-		removeDetail: "services/json/management/modcard/deletedetail"
-	};
+	Ext.define('CMDBuild.core.proxy.CMProxyRelations', {
+		alternateClassName: 'CMDBuild.ServiceProxy.relations', // Legacy class name
 
-	CMDBuild.ServiceProxy.relations = {
-		/**
-		 * 
-		 * @param {object} p
-		 * @param {object} p.params
-		 * @param {int} p.params.cardId
-		 * @param {string} p.params.className
-		 * @param {int} p.params.domainId
-		 * @param {string} p.params.src "_1" | "_2"
-		 * @param {int} p.params.domainlimit
-		 */
-		getList: function(p) {
-			adaptGetListRequestParameter(p);
-			p.method = "GET";
-			p.url = CMDBuild.ServiceProxy.url.relations.read;
+		statics: {
+			/**
+			 * @param (Object) p
+			 * @param (Object) p.params
+			 * @param (Int) p.params.cardId
+			 * @param (String) p.params.className
+			 * @param (Int) p.params.domainId
+			 * @param (String) p.params.src '_1' | '_2'
+			 * @param (Int) p.params.domainlimit
+			 */
+			getList: function(p) {
+				adaptGetListRequestParameter(p);
+				p.method = 'GET';
+				p.url = CMDBuild.core.proxy.CMProxyUrlIndex.relations.read;
 
-			CMDBuild.ServiceProxy.core.doRequest(p);
-		},
+				CMDBuild.ServiceProxy.core.doRequest(p);
+			},
 
-		modify: function(p) {
-			p.method = "POST";
-			p.url = CMDBuild.ServiceProxy.url.relations.update;
+			modify: function(p) {
+				p.method = 'POST';
+				p.url = CMDBuild.core.proxy.CMProxyUrlIndex.relations.update;
 
-			CMDBuild.ServiceProxy.core.doRequest(p);
-		},
+				CMDBuild.ServiceProxy.core.doRequest(p);
+			},
 
-		add: function(p) {
-			p.method = "POST";
-			p.url = CMDBuild.ServiceProxy.url.relations.create;
+			add: function(p) {
+				p.method = 'POST';
+				p.url = CMDBuild.core.proxy.CMProxyUrlIndex.relations.create;
 
-			CMDBuild.ServiceProxy.core.doRequest(p);
-		},
+				CMDBuild.ServiceProxy.core.doRequest(p);
+			},
 
-		remove: function(p) {
-			p.method = "POST";
-			p.url = CMDBuild.ServiceProxy.url.relations.remove;
+			remove: function(p) {
+				p.method = 'POST';
+				p.url = CMDBuild.core.proxy.CMProxyUrlIndex.relations.remove;
 
-			CMDBuild.ServiceProxy.core.doRequest(p);
-		},
+				CMDBuild.ServiceProxy.core.doRequest(p);
+			},
 
-		removeDetail: function(p) {
-			p.method = "POST";
-			p.url = CMDBuild.ServiceProxy.url.relations.removeDetail;
+			removeDetail: function(p) {
+				p.method = 'POST';
+				p.url = CMDBuild.core.proxy.CMProxyUrlIndex.relations.removeDetail;
 
-			CMDBuild.ServiceProxy.core.doRequest(p);
+				CMDBuild.ServiceProxy.core.doRequest(p);
+			},
+
+			/**
+			 * @param (Object) parameters
+			 */
+			getAlreadyRelatedCards: function(parameters) {
+				CMDBuild.Ajax.request({
+					method: 'POST',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.relations.getAlreadyRelatedCards,
+					params: parameters.params,
+					scope: parameters.scope,
+					success: parameters.success,
+					callback: parameters.callback
+				});
+			}
 		}
-	};
+	});
 
-	/* Currently the getList receive an object like this
-	{
-		Id: me.card.get("Id"),
-		IdClass: me.entryType.getId(),
-		domainId: me.view.detail.get("id"),
-		src : me.view.detail.getDetailSide()
-	}
+	/**
+	 * Currently the getList receive an object like this
+	 * {
+	 *		Id: me.card.get('Id'),
+	 *		IdClass: me.entryType.getId(),
+	 *		domainId: me.view.detail.get('id'),
+	 *		src: me.view.detail.getDetailSide()
+	 * }
 	* for server refactoring we want
-	* 
+	*
 	* cardId = Id
 	* className -> take it from cache
 	* domainId = domainId
@@ -72,9 +82,8 @@
 	*/
 	function adaptGetListRequestParameter(p) {
 		var parameterName = CMDBuild.ServiceProxy.parameter;
-		if (p.params 
-				&& p.params.IdClass) {
-			_debug("DEPRECATED: CMDBuild.ServiceProxy.relations.getList will change the request params as soon as possible", p.params);
+		if (p.params && p.params.IdClass) {
+			_debug('DEPRECATED: CMDBuild.ServiceProxy.relations.getList will change the request params as soon as possible', p.params);
 
 			p.params[parameterName.CARD_ID] = p.params.Id;
 			delete p.params.Id;
@@ -82,4 +91,5 @@
 			delete p.params.IdClass;
 		}
 	}
+
 })();

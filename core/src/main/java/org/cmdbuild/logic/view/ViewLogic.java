@@ -7,9 +7,9 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
-import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.View.ViewType;
@@ -35,7 +35,7 @@ public class ViewLogic implements Logic {
 
 	public List<View> fetchViewsOfAllTypes() {
 		final List<View> views = new ArrayList<View>();
-		for (final View view : store.list()) {
+		for (final View view : store.readAll()) {
 			if ((operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(view))) {
 				if (view.getType().equals(ViewType.FILTER)) {
 					if (isActive(view.getSourceClassName())) {

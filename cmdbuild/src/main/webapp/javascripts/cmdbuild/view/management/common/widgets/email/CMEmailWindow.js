@@ -1,6 +1,7 @@
 (function() {
 
 // TODO bind X button on top of window, to save update after click
+	Ext.require('CMDBuild.core.proxy.CMProxyEmailTemplates');
 
 var reader = CMDBuild.management.model.widget.ManageEmailConfigurationReader;
 var fields = reader.FIELDS;
@@ -86,14 +87,43 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindow", {
 	initComponent : function() {
 
 		var me = this;
-
 		var body = bodyBuild(me);
+		//_CMProxy.emailTemplate.read({});
 		this.attachmentPanelsContainer = buildAttachmentPanelsContainer(me);
-		this.attachmentButtonsContainer = buildAttachmentButtonsContainer(me); 
+		this.attachmentButtonsContainer = buildAttachmentButtonsContainer(me);
 		var formPanel = buildFormPanel(me, body);
 
 		// to reach the basic form outside
 		this.form = formPanel.getForm();
+		var btnTemplates = {
+			iconCls : 'clone',
+			xtype: "splitbutton",
+			text: CMDBuild.Translation.composeFromTemplate,
+			disabled: this.readOnly,
+			menu: new Ext.menu.Menu({
+				items: [],
+				listeners: {
+					click: function( menu, item, e, eOpts ) {
+						var record = me.selectedDataStore.getAt(item.index);
+						loadFormValues(me, me.form, record.raw);
+					}
+				}
+			})
+		};
+		this.selectedDataStore = CMDBuild.core.proxy.CMProxyEmailTemplates.getStore();
+		this.selectedDataStore.load({
+			params: {},
+			callback: function(templates) {
+				for (var i = 0; i < templates.length; i++) {
+					var tmp = templates[i];
+					btnTemplates.menu.add({
+						text: tmp.get("name") + " - " + tmp.get("description"),
+						index: i
+					});
+				}
+			}
+		});
+		this.tbar = [btnTemplates];
 
 		this.title = CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose;
 		this.layout = {
@@ -117,7 +147,9 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindow", {
 		}
 
 		this.on("beforedestroy", function () {
-			this.delegate.beforeCMEmailWindowDestroy(this);
+			if (this.save == true) {
+				this.delegate.beforeCMEmailWindowDestroy(this);
+			}
 		}, this);
 
 	},
@@ -176,23 +208,25 @@ function buildFormPanel(me, body) {
 				xtype: 'displayfield',
 				name : fields.FROM_ADDRESS,
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.fromfld,
+				disabled: me.readOnly,
 				value: me.record.get(fields.FROM_ADDRESS)
 			},{
 				xtype: me.readOnly ? 'displayfield' : 'textfield',
-				vtype: me.readOnly ? undefined : 'emailaddrspec',
 				name : fields.TO_ADDRESS,
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld,
+				disabled: me.readOnly,
 				value: me.record.get(fields.TO_ADDRESS)
 			},{
 				xtype: me.readOnly ? 'displayfield' : 'textfield',
-				vtype: me.readOnly ? undefined : 'emailaddrspeclist',
 				name : fields.CC_ADDRESS,
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld,
+				disabled: me.readOnly,
 				value: me.record.get(fields.CC_ADDRESS)
 			},{
 				xtype: me.readOnly ? 'displayfield' : 'textfield',
 				name : fields.SUBJECT,
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.subjectfld,
+				disabled: me.readOnly,
 				value: me.record.get(fields.SUBJECT)
 			},body]
 	});
@@ -212,6 +246,21 @@ function buildButtons(me) {
 			new CMDBuild.buttons.ConfirmButton({
 				scope: me,
 				handler: function() {
+					var valueTo = me.form.getValues()[fields.TO_ADDRESS];
+					var valueCC = me.form.getValues()[fields.CC_ADDRESS];
+
+					if (controlAddresses(valueTo, valueCC)) {
+						me.save = true;
+						// Destroy call an event after(!) the destruction of the window
+						// the event saves the values of the form. For save the values only if are correct
+						// we have to put this boolean that is valdid only on the confirm button
+						me.destroy();
+						me.save = false;
+					}
+				}
+			}),
+			new CMDBuild.buttons.AbortButton({
+				handler: function() {
 					me.destroy();
 				}
 			})
@@ -226,12 +275,13 @@ function buildAttachmentButtonsContainer(me) {
 			type: 'hbox',
 			padding: '0 5'
 		},
+		disabled: me.readOnly,
 		items: [ //
 			buildUploadForm(me)
 			,{
 				xtype: "button",
 				margin: "0 0 0 5",
-				text: CMDBuild.Translation.add_attachment_from_db,
+				text: CMDBuild.Translation.add_attachment_from_dms,
 				handler: function() {
 					me.delegate.onAddAttachmentFromDmsButtonClick(me, me.record);
 				}
@@ -244,6 +294,7 @@ function buildAttachmentPanelsContainer(me) {
 	return Ext.create('Ext.container.Container', {
 		autoScroll: true,
 		flex: 1,
+		disabled: me.readOnly,
 		getFileNames: function() {
 			var names = [];
 
@@ -288,4 +339,74 @@ function fixIEFocusIssue(me, body) {
 		}, me);
 	}
 }
+function controlAddresses(valueTo, valueCC) {
+	var toStr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld;
+	var ccStr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld;
+	var strError = CMDBuild.Translation.error;
+	var errors = [];
+	errors = getAddressErrors(strError + " " + toStr + ": ", valueTo, errors);
+	if (Ext.String.trim(valueCC) != "") {
+		errors = getAddressErrors(strError + " " + ccStr + ": ", valueCC, errors);
+	}
+	if (errors.length > 0) {
+		var messages = htmlComposeMessage(errors);
+		CMDBuild.Msg.error(null, messages , false);
+		return false;
+	}
+	return true;
+}
+function getAddressErrors(str, value, errors) {
+	var ar = value.split(",");
+	for (var i = 0; i < ar.length; i++) {
+		var s = Ext.String.trim(ar[i]);
+		if (!(/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/.test(s))) {
+			errors.push(str + ": " + s);
+		}
+	}
+	return errors;
+}
+function htmlComposeMessage(errors) {
+	var messages = "";
+	for (var i = 0; i < errors.length; i++) {
+		var msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, errors[i]);
+		messages += msg;
+	}
+	return messages;
+}
+function loadFormValues(me, form, record) {
+	var xavars = Ext.apply({}, me.delegate.reader.templates(me.delegate.widgetConf), record);
+	for (var key in record.variables) {
+		xavars[key] = record.variables[key];
+	}
+	var templateResolver = new CMDBuild.Management.TemplateResolver({
+		clientForm: clientForm,
+		xaVars: xavars,
+		serverVars: me.delegate.getTemplateResolverServerVars()
+	});
+	_createEmailFromTemplate(templateResolver, record, form);
+}
+function _createEmailFromTemplate(templateResolver, emailTemplatesData, form) {
+	templateResolver.resolveTemplates({
+		attributes: Ext.Object.getKeys(emailTemplatesData),
+		callback: function onTemlatesWereSolved(values) {
+			form.setValues([{
+				id: fields.TO_ADDRESS,
+				value: values.to
+			},{
+				id: fields.FROM_ADDRESS,
+				value: values.from
+			},{
+				id: fields.CC_ADDRESS,
+				value: values.cc
+			},{
+				id: fields.SUBJECT,
+				value: values.subject
+			},{
+				id: fields.CONTENT,
+				value: values.body
+			}]);
+		}
+	});
+}
+
 })();

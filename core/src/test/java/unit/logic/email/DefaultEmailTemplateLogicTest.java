@@ -46,7 +46,7 @@ public class DefaultEmailTemplateLogicTest {
 	@Test
 	public void elementCreatedWhenThereAreNoOtherElements() throws Exception {
 		// given
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 		when(store.read(any(Storable.class))) //
 				.thenReturn(EmailTemplate.newInstance() //
@@ -62,7 +62,7 @@ public class DefaultEmailTemplateLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).create(captor.capture());
 		inOrder.verify(store).read(any(Storable.class));
 		final EmailTemplate captured = captor.getValue();
@@ -76,7 +76,7 @@ public class DefaultEmailTemplateLogicTest {
 		final EmailTemplate stored = EmailTemplate.newInstance() //
 				.withName("bar") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		when(store.read(any(Storable.class))) //
 				.thenReturn(EmailTemplate.newInstance() //
@@ -92,7 +92,7 @@ public class DefaultEmailTemplateLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).create(captor.capture());
 		final EmailTemplate captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
@@ -105,7 +105,7 @@ public class DefaultEmailTemplateLogicTest {
 		final EmailTemplate stored = EmailTemplate.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		final Template newOne = mock(Template.class);
 		when(newOne.getName()) //
@@ -115,7 +115,7 @@ public class DefaultEmailTemplateLogicTest {
 		try {
 			logic.create(newOne);
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -123,7 +123,7 @@ public class DefaultEmailTemplateLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotUpdateNonExistingElement() throws Exception {
 		// given
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 		final Template existing = mock(Template.class);
 		when(existing.getName()) //
@@ -133,7 +133,7 @@ public class DefaultEmailTemplateLogicTest {
 		try {
 			logic.update(existing);
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -144,7 +144,7 @@ public class DefaultEmailTemplateLogicTest {
 		final EmailTemplate stored = EmailTemplate.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored, stored, stored));
 		final Template existing = mock(Template.class);
 		when(existing.getName()) //
@@ -154,7 +154,7 @@ public class DefaultEmailTemplateLogicTest {
 		try {
 			logic.update(existing);
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -165,7 +165,7 @@ public class DefaultEmailTemplateLogicTest {
 		final EmailTemplate stored = EmailTemplate.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		final Template existing = mock(Template.class);
 		when(existing.getName()) //
@@ -176,7 +176,7 @@ public class DefaultEmailTemplateLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).update(captor.capture());
 		verifyNoMoreInteractions(store);
 		final EmailTemplate captured = captor.getValue();
@@ -186,14 +186,14 @@ public class DefaultEmailTemplateLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotDeleteNonExistingAccount() throws Exception {
 		// given
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 
 		// when
 		try {
 			logic.delete("foo");
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -204,14 +204,14 @@ public class DefaultEmailTemplateLogicTest {
 		final EmailTemplate stored = EmailTemplate.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored, stored, stored));
 
 		// when
 		try {
 			logic.delete("foo");
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -222,7 +222,7 @@ public class DefaultEmailTemplateLogicTest {
 		final EmailTemplate stored = EmailTemplate.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 
 		// when
@@ -230,7 +230,7 @@ public class DefaultEmailTemplateLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).delete(captor.capture());
 		verifyNoMoreInteractions(store);
 		final EmailTemplate captured = captor.getValue();
@@ -240,14 +240,14 @@ public class DefaultEmailTemplateLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotGetNotExistingElement() throws Exception {
 		// given
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 
 		// when
 		try {
 			logic.read("foo");
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -258,14 +258,14 @@ public class DefaultEmailTemplateLogicTest {
 		final EmailTemplate stored = EmailTemplate.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored, stored, stored));
 
 		// when
 		try {
 			logic.read("foo");
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -276,7 +276,7 @@ public class DefaultEmailTemplateLogicTest {
 		final EmailTemplate stored = EmailTemplate.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 
 		// when
@@ -284,7 +284,7 @@ public class DefaultEmailTemplateLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).read(captor.capture());
 		verifyNoMoreInteractions(store);
 		assertThat(captor.getValue().getName(), equalTo("foo"));
@@ -296,7 +296,7 @@ public class DefaultEmailTemplateLogicTest {
 		logic.readAll();
 
 		// then
-		verify(store).list();
+		verify(store).readAll();
 		verifyNoMoreInteractions(store);
 	}
 

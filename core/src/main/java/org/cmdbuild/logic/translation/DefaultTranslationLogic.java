@@ -4,6 +4,7 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.Collection;
 import java.util.Map;
@@ -17,32 +18,36 @@ import org.cmdbuild.data.store.translation.Translation;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class DefaultTranslationLogic implements TranslationLogic {
 
-	private static final String DESCRIPTION_FOR_CLIENT = "Description";
-	private static final String DESCRIPTION_FOR_PERSISTENCE = "description";
-	private static final String DIRECT_DESCRIPTION_FOR_CLIENT = "directDescription";
+	public static final String DESCRIPTION_FOR_CLIENT = "Description";
+	public static final String DESCRIPTION_FOR_PERSISTENCE = "description";
+	public static final String DIRECT_DESCRIPTION_FOR_CLIENT = "directDescription";
 	private static final String DIRECT_DESCRIPTION_FOR_PERSISTENCE = "directdescription";
-	private static final String INVERSE_DESCRIPTION_FOR_CLIENT = "inverseDescription";
+	public static final String INVERSE_DESCRIPTION_FOR_CLIENT = "inverseDescription";
 	private static final String INVERSE_DESCRIPTION_FOR_PERSISTENCE = "inversedescription";
-	private static final String MASTER_DETAIL_LABEL_FOR_CLIENT = "masterDetailLabel";
+	public static final String MASTER_DETAIL_LABEL_FOR_CLIENT = "masterDetailLabel";
 	private static final String MASTER_DETAIL_LABEL_FOR_PERSISTENCE = "masterdetaillabel	";
-	private static final String BUTTON_LABEL_FOR_CLIENT = "ButtonLabel";
+	public static final String BUTTON_LABEL_FOR_CLIENT = "ButtonLabel";
 	private static final String BUTTON_LABEL_FOR_PERSISTENCE = "buttonlabel	";
+	public static final String INSTANCENAME_FOR_SERVER = "instancename";
+	public static final String GROUP_FOR_CLIENT = "group";
+	public static final String GROUP_FOR_PERSISTENCE = "group";
 
-	private static enum ClassFieldMapper {
+	private static enum FieldMapper {
 
 		DESCRIPTION(DESCRIPTION_FOR_CLIENT, DESCRIPTION_FOR_PERSISTENCE), //
 		DIRECT_DESCRIPTION(DIRECT_DESCRIPTION_FOR_CLIENT, DIRECT_DESCRIPTION_FOR_PERSISTENCE), //
 		INVERSE_DESCRIPTION(INVERSE_DESCRIPTION_FOR_CLIENT, INVERSE_DESCRIPTION_FOR_PERSISTENCE), //
 		MASTER_DETAIL_LABEL(MASTER_DETAIL_LABEL_FOR_CLIENT, MASTER_DETAIL_LABEL_FOR_PERSISTENCE), //
 		BUTTON_LABEL(BUTTON_LABEL_FOR_CLIENT, BUTTON_LABEL_FOR_PERSISTENCE), //
-		;
+		GROUP(GROUP_FOR_CLIENT, GROUP_FOR_PERSISTENCE);
 
-		public static ClassFieldMapper of(final String value) {
-			for (ClassFieldMapper element : values()) {
+		public static FieldMapper of(final String value) {
+			for (final FieldMapper element : values()) {
 				if (element.expected.equals(value)) {
 					return element;
 				}
@@ -53,7 +58,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		private final String expected;
 		private final String result;
 
-		private ClassFieldMapper(final String expected, final String result) {
+		private FieldMapper(final String expected, final String result) {
 			this.expected = expected;
 			this.result = result;
 		}
@@ -87,14 +92,14 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		public void visit(final ClassTranslation translationObject) {
 			value = format("class.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final DomainTranslation translationObject) {
 			value = format("domain.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
@@ -102,7 +107,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			value = format("attributeclass.%s.%s.%s", //
 					translationObject.getName(), //
 					translationObject.getAttributeName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
@@ -110,75 +115,80 @@ public class DefaultTranslationLogic implements TranslationLogic {
 			value = format("attributedomain.%s.%s.%s", //
 					translationObject.getName(), //
 					translationObject.getAttributeName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
-		public void visit(final FilterViewTranslation translationObject) {
-			value = format("filterview.%s.%s", //
+		public void visit(final ViewTranslation translationObject) {
+			value = format("view.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
-		}
-
-		@Override
-		public void visit(final SqlViewTranslation translationObject) {
-			value = format("sqlview.%s.%s", //
-					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final FilterTranslation translationObject) {
 			value = format("filter.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final InstanceNameTranslation translationObject) {
-			value = format("instancename");
+			value = format(INSTANCENAME_FOR_SERVER);
 		}
 
 		@Override
 		public void visit(final WidgetTranslation translationObject) {
 			value = format("widget.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final DashboardTranslation translationObject) {
 			value = format("dashboard.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final ChartTranslation translationObject) {
 			value = format("chart.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final ReportTranslation translationObject) {
 			value = format("report.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final LookupTranslation translationObject) {
 			value = format("lookup.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
 		}
 
 		@Override
 		public void visit(final GisIconTranslation translationObject) {
 			value = format("gisicon.%s.%s", //
 					translationObject.getName(), //
-					ClassFieldMapper.of(translationObject.getField()).getResult());
+					FieldMapper.of(translationObject.getField()).getResult());
+		}
+
+		@Override
+		public void visit(final MenuItemTranslation translationObject) {
+			value = format("menuitem.%s.%s", //
+					translationObject.getName(), //
+					FieldMapper.of(translationObject.getField()).getResult());
+		}
+
+		@Override
+		public void visit(final NullTranslationObject translationObject) {
+			value = EMPTY;
 		}
 
 	}
@@ -196,8 +206,8 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		}
 
 		@Override
-		public boolean apply(Translation input) {
-			for (Translation translation : translations) {
+		public boolean apply(final Translation input) {
+			for (final Translation translation : translations) {
 				if (translation.getLang().equals(input.getLang())) {
 					return true;
 				}
@@ -217,14 +227,16 @@ public class DefaultTranslationLogic implements TranslationLogic {
 	};
 
 	private final StoreFactory<Translation> storeFactory;
+	private final SetupFacade setupFacade;
 
-	public DefaultTranslationLogic(final StoreFactory<Translation> storeFactory) {
+	public DefaultTranslationLogic(final StoreFactory<Translation> storeFactory, final SetupFacade setupFacade) {
 		this.storeFactory = storeFactory;
+		this.setupFacade = setupFacade;
 	}
 
 	@Override
 	public void create(final TranslationObject translationObject) {
-		// TODO check that element, lang and value must not be null
+		// TODO element, language and value must not be null
 		final Element element = ElementCreator.of(translationObject).create();
 		final Collection<Translation> translations = extractTranslations(translationObject, element);
 		final Store<Translation> store = storeFactory.create(element);
@@ -235,24 +247,28 @@ public class DefaultTranslationLogic implements TranslationLogic {
 
 	@Override
 	public Map<String, String> read(final TranslationObject translationObject) {
-		// TODO check that element, lang and value must not be null
+		// TODO element, language and value must not be null
 		final Element element = ElementCreator.of(translationObject).create();
 		final Store<Translation> store = storeFactory.create(element);
 		final Map<String, String> map = newLinkedHashMap();
-		for (final Translation translation : store.list()) {
-			map.put(translation.getLang(), translation.getValue());
+		final Iterable<String> enabledLanguages = setupFacade.getEnabledLanguages();
+		for (final Translation translation : store.readAll()) {
+			final String lang = translation.getLang();
+			if (Iterables.contains(enabledLanguages, lang)) {
+				map.put(lang, translation.getValue());
+			}
 		}
 		return map;
 	}
 
 	@Override
 	public void update(final TranslationObject translationObject) {
-		// TODO check that element, lang and value must not be null
+		// TODO element, language and value must not be null
 		final Element element = ElementCreator.of(translationObject).create();
 		final Collection<Translation> translations = extractTranslations(translationObject, element);
 		final Map<String, Translation> translationsByLang = uniqueIndex(translations, TRANSLATION_TO_LANG);
 		final Store<Translation> store = storeFactory.create(element);
-		final Iterable<Translation> updateable = from(store.list()) //
+		final Iterable<Translation> updateable = from(store.readAll()) //
 				.filter(ContainedInTraslations.containedIn(translations));
 		for (final Translation translationOnStore : updateable) {
 			final String lang = translationOnStore.getLang();
@@ -267,7 +283,7 @@ public class DefaultTranslationLogic implements TranslationLogic {
 		final Element element = ElementCreator.of(translationObject).create();
 		final Collection<Translation> translations = extractTranslations(translationObject, element);
 		final Store<Translation> store = storeFactory.create(element);
-		final Iterable<Translation> deleteable = from(store.list()) //
+		final Iterable<Translation> deleteable = from(store.readAll()) //
 				.filter(ContainedInTraslations.containedIn(translations));
 		for (final Translation translation : deleteable) {
 			store.delete(translation);

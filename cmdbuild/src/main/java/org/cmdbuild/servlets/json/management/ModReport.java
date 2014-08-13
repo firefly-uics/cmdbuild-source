@@ -1,18 +1,18 @@
 package org.cmdbuild.servlets.json.management;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CODE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EXTENSION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FORMAT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SORT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.START;
-import static org.cmdbuild.servlets.json.ComunicationConstants.STATE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CODE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EXTENSION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FORMAT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.START;
+import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
 
 import java.io.OutputStream;
 import java.util.LinkedList;
@@ -78,7 +78,7 @@ public class ModReport extends JSONBaseWithSpringContext {
 			if (report.isUserAllowed()) {
 				++numRecords;
 				if (numRecords > offset && numRecords <= offset + limit) {
-					rows.put(ReportSerializer.toClient(report));
+					rows.put(new ReportSerializer(translationFacade()).toClient(report));
 				}
 			}
 		}
@@ -117,13 +117,15 @@ public class ModReport extends JSONBaseWithSpringContext {
 			} else {
 				for (final ReportParameter reportParameter : factory.getReportParameters()) {
 					final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
-					out.append("attribute", AttributeSerializer.withView(systemDataView()).toClient(attribute));
+					final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
+							.withDataView(systemDataView()) //
+							.withTranslationFacade(translationFacade()) //
+							.build();
+					out.append("attribute", attributeSerializer.toClient(attribute));
 				}
 			}
-
 			out.put("filled", filled);
 		}
-
 		sessionVars().setReportFactory(factory);
 		return out;
 	}
@@ -164,7 +166,11 @@ public class ModReport extends JSONBaseWithSpringContext {
 					for (final ReportParameter reportParameter : reportFactory.getReportParameters()) {
 						final CMAttribute attribute = ReportParameterConverter.of(reportParameter).toCMAttribute();
 						// FIXME should not be used in this way
-						out.append("attribute", AttributeSerializer.withView(systemDataView()).toClient(attribute));
+						final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
+								.withDataView(systemDataView()) //
+								.withTranslationFacade(translationFacade()) //
+								.build();
+						out.append("attribute", attributeSerializer.toClient(attribute));
 					}
 				}
 			}

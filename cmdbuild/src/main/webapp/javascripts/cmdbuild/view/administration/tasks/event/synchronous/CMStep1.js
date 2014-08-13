@@ -6,8 +6,9 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
-		view: undefined,
+
 		taskType: 'event_synchronous',
+		view: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -26,47 +27,101 @@
 			}
 		},
 
-		getValueGroups: function() {
-			return this.view.groups.getValue();
-		},
+		// GETters functions
+			/**
+			 * @return (String)
+			 */
+			getValueGroups: function() {
+				return this.view.groups.getValue();
+			},
 
-		getValueId: function() {
-			return this.view.idField.getValue();
-		},
+			/**
+			 * @return (String)
+			 */
+			getValueId: function() {
+				return this.view.idField.getValue();
+			},
 
+			/**
+			 * @return (String)
+			 */
+			getValuePhase: function() {
+				return this.view.phaseCombo.getValue();
+			},
+
+		/**
+		 * @return (Boolean)
+		 */
 		isEmptyClass: function() {
-			if (this.view.classNameCombo.getValue())
-				return false;
-
-			return true;
+			return Ext.isEmpty(this.view.classNameCombo.getValue());
 		},
 
-		setDisabledButtonNext: function(state) {
-			this.parentDelegate.setDisabledButtonNext(state);
-		},
+		// SETters functions
+			/**
+			 * @param (Array) itemsToSelect
+			 */
+			selectGroups: function(itemsToSelect) {
+				this.view.groups.setValue(itemsToSelect);
+			},
 
-		setDisabledTypeField: function(state) {
-			this.view.typeField.setDisabled(state);
-		},
+			/**
+			 * @param (Boolean) state
+			 */
+			setAllowBlankPhaseCombo: function(state) {
+				this.view.phaseCombo.allowBlank = state;
+			},
 
-		setValueActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledButtonNext: function(state) {
+				this.parentDelegate.setDisabledButtonNext(state);
+			},
 
-		setValueDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledTypeField: function(state) {
+				this.view.typeField.setDisabled(state);
+			},
 
-		setValueId: function(value) {
-			this.view.idField.setValue(value);
-		},
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueActive: function(state) {
+				this.view.activeField.setValue(state);
+			},
 
-		setValuePhase: function(value) {
-			// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-			this.view.phaseCombo.forceSelection = false;
-			this.view.phaseCombo.setValue(value);
-			this.view.phaseCombo.forceSelection = true;
-		}
+			/**
+			 * @param (String) value
+			 */
+			setValueClassName: function(value) {
+				this.view.classNameCombo.setValue(value);
+
+				// Manually select event fire
+				this.cmOn('onClassSelected', { className: value });
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueDescription: function(value) {
+				this.view.descriptionField.setValue(value);
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueId: function(value) {
+				this.view.idField.setValue(value);
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValuePhase: function(value) {
+				this.view.phaseCombo.setValue(value);
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep1', {
@@ -74,9 +129,19 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
-		height: '100%',
 		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
+
+		defaults: {
+			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+			anchor: '100%'
+		},
 
 		initComponent: function() {
 			var me = this;
@@ -84,10 +149,9 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate', this);
 
 			this.typeField = Ext.create('Ext.form.field.Text', {
+				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.ServiceProxy.parameter.TYPE,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				value: tr.tasksTypes.event + ' ' + tr.tasksTypes.eventTypes.synchronous.toLowerCase(),
 				disabled: true,
 				cmImmutable: true,
@@ -96,62 +160,63 @@
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.ServiceProxy.parameter.ID
+				name: CMDBuild.core.proxy.CMProxyConstants.ID
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
+				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: tr.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
 			this.phaseCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.ServiceProxy.parameter.PHASE,
+				name: CMDBuild.core.proxy.CMProxyConstants.PHASE,
 				fieldLabel: tr.taskEvent.phase,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				store: CMDBuild.core.proxy.CMProxyTasks.getPhases(),
-				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
 				forceSelection: true,
 				editable: false
 			});
 
 			this.groups = Ext.create('CMDBuild.view.common.field.CMGroupSelectionList', {
+				name: CMDBuild.core.proxy.CMProxyConstants.GROUPS,
 				fieldLabel: tr.taskEvent.groupsToApply,
 				height: 300,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				considerAsFieldToDisable: true
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				considerAsFieldToDisable: true,
+				anchor: '100%'
 			});
 
 			this.classNameCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
-				fieldLabel: CMDBuild.Translation.targetClass,
+				name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
+				fieldLabel: CMDBuild.Translation.classLabel,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				store: _CMCache.getClassesStore(),
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				queryMode: 'local',
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				allowBlank: false,
 				forceSelection: true,
 				editable: false,
 
+				store: _CMCache.getClassesStore(),
+				queryMode: 'local',
+
 				listeners: {
 					select: function(combo, records, options) {
-						me.delegate.cmOn('onClassSelected', { className: records[0].get(CMDBuild.ServiceProxy.parameter.NAME) });
+						me.delegate.cmOn('onClassSelected', { className: this.getValue() });
 					}
 				}
 			});
@@ -172,14 +237,14 @@
 		},
 
 		listeners: {
-			show: function(view, eOpts) {
-
+			activate: function(view, eOpts) {
 				// Disable next button only if class is not selected
 				if (this.delegate.isEmptyClass())
 					this.delegate.setDisabledButtonNext(true);
 
-				// TODO: fix check only if no already selected - Select all groups by default or forceSelection
-				this.groups.selectAll();
+				// Select all groups by default only if there aren't other selections
+				if (this.groups.getValue().length == 0)
+					this.groups.selectAll();
 			}
 		}
 	});

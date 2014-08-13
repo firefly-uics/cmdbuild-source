@@ -13,7 +13,7 @@
 		applySetup: function(p) {
 			p.method = "POST";
 			p.url = 'services/json/configure/apply';
-
+			p.timeout = 12000000;
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
 

@@ -3,13 +3,13 @@ package org.cmdbuild.bim.mapper.xml;
 import java.io.File;
 import java.util.List;
 
+import org.cmdbuild.bim.logging.LoggingSupport;
 import org.cmdbuild.bim.mapper.Parser;
 import org.cmdbuild.bim.model.Catalog;
 import org.cmdbuild.bim.model.CatalogFactory;
 import org.cmdbuild.bim.model.EntityDefinition;
 import org.cmdbuild.bim.model.implementation.ExportEntityDefinition;
 import org.cmdbuild.bim.service.BimError;
-import org.cmdbuild.bim.utils.LoggerSupport;
 import org.slf4j.Logger;
 
 import com.google.common.collect.Lists;
@@ -58,7 +58,7 @@ public class XmlExportCatalogFactory implements CatalogFactory {
 		}
 	}
 
-	private static final Logger logger = LoggerSupport.logger;
+	private static final Logger logger = LoggingSupport.logger;
 	private final Parser parser;
 	private final List<EntityDefinition> entities;
 

@@ -2,13 +2,12 @@ package org.cmdbuild.data.store.lookup;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.lookup.LookupType.LookupTypeBuilder;
 
 public final class Lookup implements Storable {
 
-	public static class LookupBuilder implements Builder<Lookup> {
+	public static class LookupBuilder implements org.apache.commons.lang3.builder.Builder<Lookup> {
 
 		private Long id;
 		private String code;
@@ -20,6 +19,7 @@ public final class Lookup implements Storable {
 		private boolean isDefault;
 		private Long parentId;
 		private Lookup parent;
+		private String translationUuid;
 
 		/**
 		 * instantiate using {@link Lookup#newInstance()}
@@ -38,6 +38,7 @@ public final class Lookup implements Storable {
 			this.isDefault = lookup.isDefault;
 			this.parentId = lookup.parentId;
 			this.parent = lookup.parent;
+			this.translationUuid = lookup.translationUuid;
 			return this;
 		}
 
@@ -70,7 +71,7 @@ public final class Lookup implements Storable {
 			return this;
 		}
 
-		public Lookup.LookupBuilder withType(final Builder<LookupType> value) {
+		public Lookup.LookupBuilder withType(final org.apache.commons.lang3.builder.Builder<LookupType> value) {
 			this.type = value.build();
 			return this;
 		}
@@ -101,6 +102,11 @@ public final class Lookup implements Storable {
 			return this;
 		}
 
+		public Lookup.LookupBuilder withUuid(final String translationUuid) {
+			this.translationUuid = translationUuid;
+			return this;
+		}
+
 		@Override
 		public Lookup build() {
 			return new Lookup(this);
@@ -122,6 +128,7 @@ public final class Lookup implements Storable {
 	public final boolean isDefault;
 	public final Long parentId;
 	public final Lookup parent;
+	public String translationUuid;
 
 	private final transient String toString;
 
@@ -136,13 +143,17 @@ public final class Lookup implements Storable {
 		this.isDefault = builder.isDefault;
 		this.parentId = builder.parentId;
 		this.parent = builder.parent;
-
+		this.translationUuid = builder.translationUuid;
 		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SIMPLE_STYLE);
 	}
 
 	@Override
 	public String getIdentifier() {
 		return id.toString();
+	}
+	
+	public String getTranslationUuid() {
+		return translationUuid;
 	}
 
 	@Override
@@ -157,9 +168,9 @@ public final class Lookup implements Storable {
 	public void setId(final Long id) {
 		this.id = id;
 	}
-	
+
 	// FIXME Do I really need it?
-	public String getDescription(){
+	public String getDescription() {
 		return description;
 	}
 }

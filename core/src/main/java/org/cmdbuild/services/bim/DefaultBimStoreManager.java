@@ -1,7 +1,5 @@
 package org.cmdbuild.services.bim;
 
-import java.util.List;
-
 import org.cmdbuild.bim.service.BimError;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
@@ -20,7 +18,7 @@ public class DefaultBimStoreManager implements BimStoreManager {
 
 	@Override
 	public Iterable<StorableProject> readAll() {
-		return projectStore.list();
+		return projectStore.readAll();
 	}
 
 	@Override
@@ -88,7 +86,7 @@ public class DefaultBimStoreManager implements BimStoreManager {
 
 	@Override
 	public Iterable<StorableLayer> readAllLayers() {
-		return layerStore.list();
+		return layerStore.readAll();
 	}
 
 	@Override
@@ -163,8 +161,7 @@ public class DefaultBimStoreManager implements BimStoreManager {
 
 	@Override
 	public StorableLayer findRoot() {
-		List<StorableLayer> layerList = layerStore.list();
-		for (StorableLayer layer : layerList) {
+		for (StorableLayer layer : layerStore.readAll()) {
 			if (layer.isRoot()) {
 				return layer;
 			}
@@ -174,8 +171,7 @@ public class DefaultBimStoreManager implements BimStoreManager {
 
 	@Override
 	public StorableLayer findContainer() {
-		List<StorableLayer> layerList = layerStore.list();
-		for (StorableLayer layer : layerList) {
+		for (StorableLayer layer : layerStore.readAll()) {
 			if (layer.isContainer()) {
 				return layer;
 			}

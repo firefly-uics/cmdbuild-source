@@ -75,8 +75,6 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : "description",
 				allowBlank : false,
-				translationsKeyType: "Tree", 
-				translationsKeyField: "Description",
 				vtype : 'cmdbcomment'
 			});
 			this.rootName = new CMDBuild.field.CMBaseCombo({
@@ -101,7 +99,7 @@
 				defaults: {
 					labelWidth: CMDBuild.LABEL_WIDTH
 				},
-				items : [this.active, this.treeName, this.treeDescription, this.rootName]
+				items : [this.treeName, this.treeDescription, this.rootName, this.active, ]
 			});
 
 			Ext.apply(this, {

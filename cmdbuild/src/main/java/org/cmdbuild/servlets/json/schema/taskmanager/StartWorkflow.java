@@ -1,20 +1,21 @@
 package org.cmdbuild.servlets.json.schema.taskmanager;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CRON_EXPRESSION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_ATTRIBUTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.WORKFLOW_CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CRON_EXPRESSION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_ATTRIBUTES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.WORKFLOW_CLASS_NAME;
 import static org.cmdbuild.servlets.json.schema.TaskManager.TASK_TO_JSON_TASK;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.util.List;
 import java.util.Map;
 
-import org.cmdbuild.logic.taskmanager.StartWorkflowTask;
+import org.apache.commons.lang3.ObjectUtils;
 import org.cmdbuild.logic.taskmanager.Task;
+import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.schema.TaskManager.JsonElements;
@@ -120,7 +121,7 @@ public class StartWorkflow extends JSONBaseWithSpringContext {
 
 			@Override
 			public boolean apply(final StartWorkflowTask input) {
-				return input.getProcessClass().equals(className);
+				return ObjectUtils.equals(input.getProcessClass(), className);
 			}
 
 		};

@@ -12,7 +12,7 @@
 		type: undefined,
 		textareaConcatParameter: undefined,
 
-		autoScroll: true,
+		overflowY: 'auto',
 		height: 300,
 		modal: true,
 		width: 400,
@@ -33,9 +33,8 @@
 				}
 			}];
 
-			if (typeof this.content !== 'undefined') {
+			if (!Ext.isEmpty(this.content))
 				contentItems = this.content.split(this.textareaConcatParameter);
-			}
 
 			this.contentComponent = Ext.create('Ext.form.Panel', {
 				layout: {

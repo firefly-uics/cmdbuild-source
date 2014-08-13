@@ -47,7 +47,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test
 	public void elementCreatedWhenThereAreNoOtherElements() throws Exception {
 		// given
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 		when(store.read(any(Storable.class))) //
 				.thenReturn(StorableEmailAccount.newInstance() //
@@ -63,7 +63,7 @@ public class DefaultEmailAccountLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).create(captor.capture());
 		inOrder.verify(store).read(any(Storable.class));
 		final EmailAccount captured = captor.getValue();
@@ -77,7 +77,7 @@ public class DefaultEmailAccountLogicTest {
 		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
 				.withName("bar") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		when(store.read(any(Storable.class))) //
 				.thenReturn(StorableEmailAccount.newInstance() //
@@ -93,7 +93,7 @@ public class DefaultEmailAccountLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).create(captor.capture());
 		final EmailAccount captured = captor.getValue();
 		assertThat(captured.getName(), equalTo("foo"));
@@ -106,7 +106,7 @@ public class DefaultEmailAccountLogicTest {
 		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		final Account newOne = mock(Account.class);
 		when(newOne.getName()) //
@@ -116,7 +116,7 @@ public class DefaultEmailAccountLogicTest {
 		try {
 			logic.create(newOne);
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -124,7 +124,7 @@ public class DefaultEmailAccountLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotUpdateNonExistingElement() throws Exception {
 		// given
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 		final Account existing = mock(Account.class);
 		when(existing.getName()) //
@@ -134,7 +134,7 @@ public class DefaultEmailAccountLogicTest {
 		try {
 			logic.update(existing);
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -145,7 +145,7 @@ public class DefaultEmailAccountLogicTest {
 		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored, stored, stored));
 		final Account existing = mock(Account.class);
 		when(existing.getName()) //
@@ -155,7 +155,7 @@ public class DefaultEmailAccountLogicTest {
 		try {
 			logic.update(existing);
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -166,7 +166,7 @@ public class DefaultEmailAccountLogicTest {
 		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		when(store.read(any(Storable.class))) //
 				.thenReturn(stored);
@@ -179,7 +179,7 @@ public class DefaultEmailAccountLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).read(any(Storable.class));
 		inOrder.verify(store).update(captor.capture());
 		verifyNoMoreInteractions(store);
@@ -190,14 +190,14 @@ public class DefaultEmailAccountLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotDeleteNonExistingAccount() throws Exception {
 		// given
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 
 		// when
 		try {
 			logic.delete("foo");
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -208,14 +208,14 @@ public class DefaultEmailAccountLogicTest {
 		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored, stored, stored));
 
 		// when
 		try {
 			logic.delete("foo");
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -227,7 +227,7 @@ public class DefaultEmailAccountLogicTest {
 				.withName("foo") //
 				.withDefaultStatus(true) //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		when(store.read(any(Storable.class))) //
 				.thenReturn(stored);
@@ -236,7 +236,7 @@ public class DefaultEmailAccountLogicTest {
 		try {
 			logic.delete("foo");
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verify(store).read(captor.capture());
 			verifyNoMoreInteractions(store);
 			assertThat(captor.getValue().getName(), equalTo("foo"));
@@ -249,7 +249,7 @@ public class DefaultEmailAccountLogicTest {
 		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		when(store.read(any(Storable.class))) //
 				.thenReturn(stored);
@@ -259,7 +259,7 @@ public class DefaultEmailAccountLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).read(captor.capture());
 		inOrder.verify(store).delete(captor.capture());
 		verifyNoMoreInteractions(store);
@@ -272,14 +272,14 @@ public class DefaultEmailAccountLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotGetNotExistingElement() throws Exception {
 		// given
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 
 		// when
 		try {
 			logic.getAccount("foo");
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -290,14 +290,14 @@ public class DefaultEmailAccountLogicTest {
 		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored, stored, stored));
 
 		// when
 		try {
 			logic.getAccount("foo");
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -308,7 +308,7 @@ public class DefaultEmailAccountLogicTest {
 		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 
 		// when
@@ -316,7 +316,7 @@ public class DefaultEmailAccountLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).read(captor.capture());
 		verifyNoMoreInteractions(store);
 		assertThat(captor.getValue().getName(), equalTo("foo"));
@@ -328,14 +328,14 @@ public class DefaultEmailAccountLogicTest {
 		logic.getAll();
 
 		// then
-		verify(store).list();
+		verify(store).readAll();
 		verifyNoMoreInteractions(store);
 	}
 
 	@Test
 	public void firstCreatedElementIsDefaultEvenIfNotSetted() throws Exception {
 		// given
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 		when(store.read(any(Storable.class))) //
 				.thenReturn(StorableEmailAccount.newInstance() //
@@ -353,7 +353,7 @@ public class DefaultEmailAccountLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).create(captor.capture());
 		inOrder.verify(store).read(any(Storable.class));
 		verifyNoMoreInteractions(store);
@@ -370,7 +370,7 @@ public class DefaultEmailAccountLogicTest {
 				.withName("foo") //
 				.withDefaultStatus(true) //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		when(store.read(any(Storable.class))) //
 				.thenReturn(stored);
@@ -383,7 +383,7 @@ public class DefaultEmailAccountLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).read(captor.capture());
 		inOrder.verify(store).update(captor.capture());
 		verifyNoMoreInteractions(store);
@@ -398,7 +398,7 @@ public class DefaultEmailAccountLogicTest {
 		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
 				.withName("bar") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		when(store.read(any(Storable.class))) //
 				.thenReturn(stored);
@@ -434,14 +434,14 @@ public class DefaultEmailAccountLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotSetToDefaultNonExistingElement() throws Exception {
 		// given
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 
 		// when
 		try {
 			logic.setDefault("foo");
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -452,14 +452,14 @@ public class DefaultEmailAccountLogicTest {
 		final StorableEmailAccount stored = StorableEmailAccount.newInstance() //
 				.withName("foo") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored, stored, stored));
 
 		// when
 		try {
 			logic.setDefault("foo");
 		} finally {
-			verify(store).list();
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
 		}
 	}
@@ -471,14 +471,14 @@ public class DefaultEmailAccountLogicTest {
 				.withName("foo") //
 				.withDefaultStatus(true) //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(stored));
 
 		// when
 		logic.setDefault("foo");
 
 		// then
-		verify(store).list();
+		verify(store).readAll();
 		verifyNoMoreInteractions(store);
 	}
 
@@ -495,7 +495,7 @@ public class DefaultEmailAccountLogicTest {
 		final StorableEmailAccount anotherStoredNotDefault = StorableEmailAccount.newInstance() //
 				.withName("baz") //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(storedDefault, storedNotDefault, anotherStoredNotDefault));
 		when(store.read(any(Storable.class))) //
 				.thenReturn(storedNotDefault);
@@ -505,7 +505,7 @@ public class DefaultEmailAccountLogicTest {
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).update(captor.capture());
 		inOrder.verify(store).read(captor.capture());
 		inOrder.verify(store).update(captor.capture());

@@ -1,35 +1,35 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.ALREADY_ASSOCIATED;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CONFIRMATION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_GROUP;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DISABLE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EMAIL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUPS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.IS_ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NEW_PASSWORD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.OLD_PASSWORD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PASSWORD;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_MODE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_OBJ_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_READ;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRIVILEGE_WRITE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.RESULT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.STARTING_CLASS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.UI_CONFIGURATION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USERS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USER_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USER_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ALREADY_ASSOCIATED;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIRMATION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_GROUP;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DISABLE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP;
+import static org.cmdbuild.servlets.json.CommunicationConstants.GROUPS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IS_ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NEW_PASSWORD;
+import static org.cmdbuild.servlets.json.CommunicationConstants.OLD_PASSWORD;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PASSWORD;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_MODE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_OBJ_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_READ;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRIVILEGE_WRITE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.RESULT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ROWS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.STARTING_CLASS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.UI_CONFIGURATION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.USERS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.USER_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.USER_NAME;
 
 import java.io.IOException;
 import java.util.List;
@@ -47,6 +47,7 @@ import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.GroupDTO.GroupDTOBuilder;
 import org.cmdbuild.logic.auth.UserDTO;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOBuilder;
+import org.cmdbuild.logic.privileges.CardEditMode;
 import org.cmdbuild.logic.privileges.PrivilegeInfo;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.model.profile.UIConfiguration;
@@ -64,10 +65,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class ModSecurity extends JSONBaseWithSpringContext {
 
+	private static final String REMOVE = "remove";
+	private static final String CLONE = "clone";
+	private static final String MODIFY = "modify";
+	private static final String CREATE = "create";
+	public static final String CARD_EDIT_MODE_JSON_FORMAT = "{\"modify\": %b, \"clone\": %b, \"remove\": %b, \"create\": %b}";
 	private static final ObjectMapper mapper = new UIConfigurationObjectMapper();
 
 	/*
@@ -274,7 +281,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException { //
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
-				mode);
+				mode, null);
 		securityLogic().saveClassPrivilege(privilegeInfoToSave, true);
 	}
 
@@ -311,7 +318,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException {
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
-				mode);
+				mode, null);
 		securityLogic().saveViewPrivilege(privilegeInfoToSave);
 	}
 
@@ -323,7 +330,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(PRIVILEGE_MODE) final String privilegeMode) throws JSONException, AuthException {
 		final PrivilegeMode mode = extractPrivilegeMode(privilegeMode);
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo(groupId, serializablePrivilege(privilegedObjectId),
-				mode);
+				mode, null);
 		securityLogic().saveFilterPrivilege(privilegeInfoToSave);
 	}
 
@@ -346,13 +353,14 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(PRIVILEGE_OBJ_ID) final Long privilegedObjectId, //
 			@Parameter(value = FILTER, required = false) final String filter, //
 			@Parameter(value = ATTRIBUTES, required = false) final JSONArray jsonAttributes //
-		) throws JSONException, AuthException {
+	) throws JSONException, AuthException {
 
 		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo( //
 				groupId, //
 				serializablePrivilege(privilegedObjectId), //
+				null, //
 				null //
-			);
+		);
 
 		// from jsonArray to string array
 		final int l = jsonAttributes == null ? 0 : jsonAttributes.length();
@@ -482,30 +490,51 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse loadClassUiConfiguration( //
 			@Parameter(GROUP_ID) final Long groupId, //
-			@Parameter(CLASS_ID) final Long classId
-	) throws JSONException, AuthException {
-//		if (classId == 227716)
-//			return JsonResponse.success("{\"modify\": true, \"clone\": false, \"remove\": true, \"create\": false}");
-//		if (classId == 228102)
-//			return JsonResponse.success("{\"modify\": false, \"clone\": true, \"remove\": true, \"create\": true}");
-//		if (classId == 230471)
-//			return JsonResponse.success("{\"modify\": true, \"clone\": true, \"remove\": true, \"create\": true}");
-//		if (classId == 228513)
-//			return JsonResponse.success("{\"modify\": true, \"clone\": true, \"remove\": true, \"create\": true}");
-		return JsonResponse.success("{}");
+			@Parameter(CLASS_ID) final Long classId) throws JSONException, AuthException {
+
+		final CardEditMode cardEditMode = securityLogic().fetchCardEditModeForGroupAndClass(groupId, classId);
+		return JsonResponse.success(LOGIC_TO_JSON.apply(cardEditMode));
 	}
-	
+
 	@Admin(AdminAccess.DEMOSAFE)
 	@JSONExported
-	public JsonResponse saveClassUiConfiguration( //
+	public JsonResponse saveClassUiConfiguration(
+	//
 			@Parameter(GROUP_ID) final Long groupId, //
 			@Parameter(CLASS_ID) final Long classId, //
-			@Parameter("create") final boolean create,
-			@Parameter("modify") final boolean modify,
-			@Parameter("clone") final boolean clone,
-			@Parameter("remove") final boolean remove
-			) throws JSONException, AuthException {
+			@Parameter(CREATE) final boolean disableCreate, //
+			@Parameter(MODIFY) final boolean disableUpdate, //
+			@Parameter(CLONE) final boolean disableClone, //
+			@Parameter(REMOVE) final boolean disableDelete) throws JSONException, AuthException {
 
+		final CardEditMode cardEditMode = CardEditMode.newInstance() //
+				.isCreateAllowed(!disableCreate) //
+				.isCloneAllowed(!disableClone) //
+				.isUpdateAllowed(!disableUpdate) //
+				.isDeleteAllowed(!disableDelete) //
+				.build();
+
+		final PrivilegeInfo privilegeInfoToSave = new PrivilegeInfo( //
+				groupId, //
+				serializablePrivilege(classId), //
+				null, //
+				cardEditMode);
+
+		securityLogic().saveCardEditMode(privilegeInfoToSave);
 		return JsonResponse.success(null);
 	}
+
+	public static final Function<CardEditMode, String> LOGIC_TO_JSON = new Function<CardEditMode, String>() {
+
+		@Override
+		public String apply(final CardEditMode input) {
+			final String jsonCardEditMode = String.format(CARD_EDIT_MODE_JSON_FORMAT, //
+					!input.isAllowUpdate(), //
+					!input.isAllowClone(), //
+					!input.isAllowRemove(), //
+					!input.isAllowCreate());
+			return jsonCardEditMode;
+		}
+	};
+
 }

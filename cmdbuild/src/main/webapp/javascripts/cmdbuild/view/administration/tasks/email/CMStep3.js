@@ -28,18 +28,34 @@
 			}
 		},
 
-		getValueAttachmentsFieldsetCheckbox: function() {
-			return this.view.attachmentsFieldset.checkboxCmp.getValue();
-		},
+		// GETters functions
+			/**
+			 * @return (Object) delegate
+			 */
+			getNotificationDelegate: function() {
+				return this.view.notificationForm.delegate;
+			},
 
-// TODO
-//		getValueNotificationFieldsetCheckbox: function() {
-//			return this.view.notificationFieldset.checkboxCmp.getValue();
-//		},
+			/**
+			 * @return (Boolean)
+			 */
+			getValueAttachmentsFieldsetCheckbox: function() {
+				return this.view.attachmentsFieldset.checkboxCmp.getValue();
+			},
 
-		getValueParsingFieldsetCheckbox: function() {
-			return this.view.parsingFieldset.checkboxCmp.getValue();
-		},
+			/**
+			 * @return (Boolean)
+			 */
+			getValueNotificationFieldsetCheckbox: function() {
+				return this.view.notificationFieldset.checkboxCmp.getValue();
+			},
+
+			/**
+			 * @return (Boolean)
+			 */
+			getValueParsingFieldsetCheckbox: function() {
+				return this.view.parsingFieldset.checkboxCmp.getValue();
+			},
 
 		/**
 		 * Read CMDBuild's alfresco configuration from server and set Combobox store
@@ -47,7 +63,7 @@
 		onCheckedAttachmentsFieldset: function() {
 			var me = this;
 
-			if (this.view.attachmentsCombo.store.getCount() == 0) {
+			if (this.view.attachmentsCombo.store.getCount() == 0)
 				CMDBuild.ServiceProxy.configuration.read({
 					success: function(response) {
 						var decodedJson = Ext.JSON.decode(response.responseText);
@@ -55,57 +71,99 @@
 						me.view.attachmentsCombo.bindStore(
 							CMDBuild.ServiceProxy.lookup.getLookupFieldStore(decodedJson.data['category.lookup'])
 						);
+
+						// FIX: to avoid default int value (0) to be displayed
+						if (me.view.attachmentsCombo.getValue() == 0)
+							me.view.attachmentsCombo.setValue();
 					}
-				}, name = 'dms');
-			}
+				}, 'dms');
 		},
 
-		setValueAttachmentsCombo: function(value) {
-			if (!Ext.isEmpty(value)) {
-				// HACK to avoid forceSelection timing problem witch don't permits to set combobox value
-				this.view.attachmentsCombo.forceSelection = false;
+		// SETters functions
+			/**
+			 * Set attachments field as required/unrequired
+			 *
+			 * @param (Boolean) state
+			 */
+			setAllowBlankAttachmentsField: function(state) {
+				this.view.attachmentsCombo.allowBlank = state;
+			},
+
+			/**
+			 * Set parsing fields as required/unrequired
+			 *
+			 * @param (Boolean) state
+			 */
+			setAllowBlankParsingFields: function(state) {
+				this.view.parsingKeyStart.allowBlank = state;
+				this.view.parsingKeyEnd.allowBlank = state;
+				this.view.parsingValueStart.allowBlank = state;
+				this.view.parsingValueEnd.allowBlank = state;
+				this.view.parsingFieldset.allowBlank = state;
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueAttachmentsCombo: function(value) {
 				this.view.attachmentsCombo.setValue(value);
-				this.view.attachmentsCombo.forceSelection = true;
-			}
-		},
+			},
 
-		/**
-		 * @param (Boolean) value
-		 */
-		setValueAttachmentsFieldsetCheckbox: function(value) {
-			if (value) {
-				this.view.attachmentsFieldset.expand();
-				this.onCheckedAttachmentsFieldset();
-			} else {
-				this.view.attachmentsFieldset.collapse();
-			}
-		},
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueAttachmentsFieldsetCheckbox: function(state) {
+				if (state) {
+					this.view.attachmentsFieldset.expand();
+					this.onCheckedAttachmentsFieldset();
+				} else {
+					this.view.attachmentsFieldset.collapse();
+				}
+			},
 
-		/**
-		 * Setup all parsing fieldset input values
-		 *
-		 * @param (String) keyInit
-		 * @param (String) keyEnd
-		 * @param (String) valueInit
-		 * @param (String) valueEnd
-		 */
-		setValueParsingFields: function(keyInit, keyEnd, valueInit, valueEnd) {
-			this.view.parsingKeyInit.setValue(keyInit);
-			this.view.parsingKeyEnd.setValue(keyEnd);
-			this.view.parsingValueInit.setValue(valueInit);
-			this.view.parsingValueEnd.setValue(valueEnd);
-		},
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueNotificationFieldsetCheckbox: function(state) {
+				if (state) {
+					this.view.notificationFieldset.expand();
+				} else {
+					this.view.notificationFieldset.collapse();
+				}
+			},
 
-		/**
-		 * @param (Boolean) value
-		 */
-		setValueParsingFieldsetCheckbox: function(value) {
-			if (value) {
-				this.view.parsingFieldset.expand();
-			} else {
-				this.view.parsingFieldset.collapse();
+			/**
+			 * @param (String) value
+			 */
+			setValueNotificationTemplate: function(value) {
+				this.getNotificationDelegate().setValue('template', value);
+			},
+
+			/**
+			 * Setup all parsing fieldset input values
+			 *
+			 * @param (String) keyInit
+			 * @param (String) keyEnd
+			 * @param (String) valueInit
+			 * @param (String) valueEnd
+			 */
+			setValueParsingFields: function(keyInit, keyEnd, valueInit, valueEnd) {
+				this.view.parsingKeyStart.setValue(keyInit);
+				this.view.parsingKeyEnd.setValue(keyEnd);
+				this.view.parsingValueStart.setValue(valueInit);
+				this.view.parsingValueEnd.setValue(valueEnd);
+			},
+
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueParsingFieldsetCheckbox: function(state) {
+				if (state) {
+					this.view.parsingFieldset.expand();
+				} else {
+					this.view.parsingFieldset.collapse();
+				}
 			}
-		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep3', {
@@ -113,9 +171,14 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
-		height: '100%',
 		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
 
 		initComponent: function() {
 			var me = this;
@@ -123,106 +186,122 @@
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.email.CMStep3Delegate', this);
 
 			// Parsing configuration
-				this.parsingKeyInit = Ext.create('Ext.form.field.Text', {
-					fieldLabel: tr.parsingKeyInit,
+				this.parsingKeyStart = Ext.create('Ext.form.field.Text', {
+					fieldLabel: tr.parsingKeyStart,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_INIT,
+					flex: 1
 				});
 
 				this.parsingKeyEnd = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingKeyEnd,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_END,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_END,
 					margin: '0 0 0 20',
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					flex: 1
 				});
 
-				this.parsingValueInit = Ext.create('Ext.form.field.Text', {
-					fieldLabel: tr.parsingValueInit,
+				this.parsingValueStart = Ext.create('Ext.form.field.Text', {
+					fieldLabel: tr.parsingValueStart,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_INIT,
+					flex: 1
 				});
 
 				this.parsingValueEnd = Ext.create('Ext.form.field.Text', {
 					fieldLabel: tr.parsingValueEnd,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_END,
 					margin: '0 0 0 20',
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
+					flex: 1
 				});
 
 				this.parsingFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.bodyParsing,
+					checkboxName: CMDBuild.core.proxy.CMProxyConstants.PARSING_ACTIVE,
 					checkboxToggle: true,
-					checkboxName: CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE,
 					collapsed: true,
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					},
+					collapsible: true,
+					toggleOnTitleClick: true,
+					overflowY: 'auto',
+
 					items: [
 						{
 							xtype: 'container',
-							layout: 'hbox',
-							items: [this.parsingKeyInit, this.parsingKeyEnd]
+
+							layout: {
+								type: 'hbox',
+								align:'stretch'
+							},
+
+							items: [this.parsingKeyStart, this.parsingKeyEnd]
 						},
 						{
 							xtype: 'container',
-							layout: 'hbox',
 							margin: '10 0',
-							items: [this.parsingValueInit, this.parsingValueEnd]
+
+							layout: {
+								type: 'hbox',
+								align:'stretch'
+							},
+
+							items: [this.parsingValueStart, this.parsingValueEnd]
 						}
 					]
 				});
+
+				this.parsingFieldset.fieldWidthsFix();
 			// END: BodyParsing configuration
 
-			// SendMail configuration
-				this.notificationEmailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE,
-					fieldLabel: CMDBuild.Translation.administration.tasks.template,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					forceSelection: true,
-					editable: false,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+			// Email notification configuration
+				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
+					template: {
+						type: 'template',
+						disabled: false
+					}
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
-					title: CMDBuild.Translation.administration.tasks.sendMail,
+					title: CMDBuild.Translation.administration.tasks.notificationForm.title,
+					checkboxName: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE,
 					checkboxToggle: true,
-					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
 					collapsed: true,
-					layout: {
-						type: 'vbox'
-					},
-					items: [this.notificationEmailTemplateCombo]
-				});
-			// END: SendMail configuration
+					collapsible: true,
+					toggleOnTitleClick: true,
+					overflowY: 'auto',
 
-			// Alfresco configuration
+					items: [this.notificationForm]
+				});
+
+				this.notificationFieldset.fieldWidthsFix();
+			// END: Email notification configuration
+
+			// Attachments configuration
 				this.attachmentsCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY,
+					name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_CATEGORY,
 					fieldLabel: tr.attachmentsCategory,
 					labelWidth: CMDBuild.LABEL_WIDTH,
+					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+					anchor: '100%',
 					displayField: 'Description',
 					valueField: 'Id',
 					forceSelection: true,
-					editable: false,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+					editable: false
 				});
 
 				this.attachmentsFieldset = Ext.create('Ext.form.FieldSet', {
 					title: tr.saveToAlfresco,
+					checkboxName: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_ACTIVE,
 					checkboxToggle: true,
-					checkboxName: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE,
 					collapsed: true,
-					layout: {
-						type: 'vbox'
-					},
+					collapsible: true,
+					toggleOnTitleClick: true,
+					overflowY: 'auto',
+
 					items: [this.attachmentsCombo],
 
 					listeners: {
@@ -231,7 +310,9 @@
 						}
 					}
 				});
-			// END: Alfresco configuration
+
+				this.attachmentsFieldset.fieldWidthsFix();
+			// END: Attachments configuration
 
 			Ext.apply(this, {
 				items: [

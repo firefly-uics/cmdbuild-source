@@ -21,6 +21,9 @@
 				case 'onBeforeEdit':
 					return this.onBeforeEdit(param.fieldName, param.rowData);
 
+				case 'onStepEdit':
+					return this.onStepEdit();
+
 				default: {
 					if (this.parentDelegate)
 						return this.parentDelegate.cmOn(name, param, callBack);
@@ -33,21 +36,17 @@
 
 			this.view.referenceMappingGrid.columns[0].setEditor({
 				xtype: 'combo',
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				forceSelection: true,
 				editable: false,
 				allowBlank: false,
-				store: this.parentDelegate.getFilteredClassStore(),
+				store: this.parentDelegate.getStoreFilteredClass(),
 				queryMode: 'local',
-
-				// To make sure the filter in the store is not cleared
-				triggerAction: 'all',
-				lastQuery: '',
 
 				listeners: {
 					select: function(combo, records, eOpts) {
-						me.buildDomainCombo(records[0].get(CMDBuild.ServiceProxy.parameter.NAME));
+						me.buildDomainCombo(this.getValue());
 					}
 				}
 			});
@@ -57,55 +56,79 @@
 		 * To setup domain combo editor
 		 *
 		 * @param (String) className
+		 * @param (Boolean) onStepEditExecute
 		 */
-		buildDomainCombo: function(className) {
+		buildDomainCombo: function(className, onStepEditExecute) {
 			if (!Ext.isEmpty(className)) {
-				this.view.referenceMappingGrid.columns[1].setEditor({
-					xtype: 'combo',
-					displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					forceSelection: true,
-					editable: false,
-					allowBlank: false,
-
-					store: Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-						data: _CMCache.getDomainsBy(function(domain) {
-							if (
-								(domain.get(CMDBuild.ServiceProxy.parameter.NAME_CLASS_1) == className)
-								|| (domain.get(CMDBuild.ServiceProxy.parameter.NAME_CLASS_2) == className)
-							) {
-								return true;
-							}
-
-							return false;
-						})
-					})
+				var me = this;
+				var domainStore = _CMCache.getDomainsBy(function(domain) {
+					return (
+						(domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME_CLASS_1) == className)
+						|| (domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME_CLASS_2) == className)
+					);
 				});
+
+				if (Ext.isEmpty(onStepEditExecute))
+					var onStepEditExecute = true;
+
+				if (domainStore.length > 0) {
+					this.view.referenceMappingGrid.columns[1].setEditor({
+						xtype: 'combo',
+						displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						forceSelection: true,
+						editable: false,
+						allowBlank: false,
+
+						store: Ext.create('Ext.data.Store', {
+							autoLoad: true,
+							fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
+							data: domainStore
+						}),
+
+						listeners: {
+							select: function(combo, records, eOpts) {
+								me.cmOn('onStepEdit');
+							}
+						}
+					});
+				} else {
+					this.view.referenceMappingGrid.columns[1].setEditor({
+						xtype: 'combo',
+						disabled: true
+					});
+				}
+
+				if (onStepEditExecute)
+					this.onStepEdit();
 			}
 		},
 
-		getData: function() {
-			var data = [];
+		// GETters functions
+			/**
+			 * @return (Array) data
+			 */
+			getData: function() {
+				var data = [];
 
-			// To validate and filter grid rows
-			this.view.referenceMappingGrid.getStore().each(function(record) {
-				if (
-					!Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME))
-					&& !Ext.isEmpty(record.get(CMDBuild.ServiceProxy.parameter.DOMAIN_NAME))
-				) {
-					var buffer = [];
+				if (!Ext.isEmpty(this.view.gridSelectionModel))
+					// To validate and filter grid rows
+					this.view.referenceMappingGrid.getStore().each(function(record) {
+						if (
+							!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME))
+							&& !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME))
+						) {
+							var buffer = {};
 
-					buffer[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = record.get(CMDBuild.ServiceProxy.parameter.CLASS_NAME);
-					buffer[CMDBuild.ServiceProxy.parameter.DOMAIN_NAME] = record.get(CMDBuild.ServiceProxy.parameter.DOMAIN_NAME);
+							buffer[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME);
+							buffer[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = record.get(CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME);
 
-					data.push(buffer);
-				}
-			});
+							data.push(buffer);
+						}
+					});
 
-			return data;
-		},
+				return data;
+			},
 
 		/**
 		 * Function to update rows stores/editors on beforeEdit event
@@ -115,12 +138,9 @@
 		 */
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
-				case CMDBuild.ServiceProxy.parameter.DOMAIN_NAME: {
-					if (
-						(typeof rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME] != 'undefined')
-						&& !Ext.isEmpty(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME])
-					) {
-						this.buildDomainCombo(rowData[CMDBuild.ServiceProxy.parameter.CLASS_NAME]);
+				case CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME: {
+					if (!Ext.isEmpty(rowData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME])) {
+						this.buildDomainCombo(rowData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
 					} else {
 						var columnModel = this.view.referenceMappingGrid.columns[1];
 						var columnEditor = columnModel.getEditor();
@@ -133,6 +153,13 @@
 					}
 				} break;
 			}
+		},
+
+		/**
+		 * Step validation (at least one class/source association)
+		 */
+		onStepEdit: function() {
+			this.view.gridEditorPlugin.completeEdit();
 		}
 	});
 
@@ -141,8 +168,8 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
-		height: '100%',
 		overflowY: 'auto',
 
 		initComponent: function() {
@@ -167,13 +194,14 @@
 				title: tr.referenceMapping,
 				considerAsFieldToDisable: true,
 				margin: '0 0 5 0',
+				minWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 
-				plugins: this.gridEditorPlugin,
+				plugins: [this.gridEditorPlugin],
 
 				columns: [
 					{
-						header: CMDBuild.Translation.className,
-						dataIndex: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
+						header: tr.className,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
 						editor: {
 							xtype: 'combo',
 							disabled: true
@@ -182,7 +210,7 @@
 					},
 					{
 						header: tr.domainName,
-						dataIndex: CMDBuild.ServiceProxy.parameter.DOMAIN_NAME,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME,
 						editor: {
 							xtype: 'combo',
 							disabled: true
@@ -201,7 +229,7 @@
 						items: [
 							{
 								icon: 'images/icons/cross.png',
-								tooltip: CMDBuild.Translation.administration.modClass.attributeProperties.meta.remove,
+								tooltip: CMDBuild.Translation.common.buttons.remove,
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									me.referenceMappingGrid.store.remove(record);
 								}
@@ -215,13 +243,20 @@
 					data: []
 				}),
 
-				tbar: [
+				dockedItems: [
 					{
-						text: CMDBuild.Translation.common.buttons.add,
-						iconCls: 'add',
-						handler: function() {
-							me.referenceMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.connector.referenceLevel'));
-						}
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						items: [
+							{
+								text: CMDBuild.Translation.common.buttons.add,
+								iconCls: 'add',
+								handler: function() {
+									me.referenceMappingGrid.store.insert(0, Ext.create('CMDBuild.model.CMModelTasks.connector.referenceLevel'));
+								}
+							}
+						]
 					}
 				]
 			});
@@ -234,11 +269,12 @@
 		},
 
 		listeners: {
-			/**
-			 * To populate grid with selected classes
-			 */
-			show: function(view, eOpts) {
+			// To populate grid with selected classes
+			activate: function(view, eOpts) {
 				this.delegate.buildClassCombo();
+
+				// Step validate
+				this.delegate.parentDelegate.validateStepGrid(this.referenceMappingGrid.getStore());
 			}
 		},
 	});

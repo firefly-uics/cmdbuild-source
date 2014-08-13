@@ -8,13 +8,6 @@
 		modal: true,
 		title: NO_PERMISSION_TO,
 		width: CMDBuild.LABEL_WIDTH + 100,
-		
-/*	 Create parameters
- * 		delegate: me,
- * 		model: model,
- * 		values: values
- * 
-*/
 
 		initComponent: function() {
 			var me = this;
@@ -42,8 +35,9 @@
 			this.clone = Ext.create("Ext.form.field.Checkbox", {
 				fieldLabel : CMDBuild.Translation.common.buttons.clone,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				checked: this.values.clone, 
+				checked: this.values.clone,
 				hidden: isProcess // if process does not have clone
+				
 			});
 			this.form = Ext.create('Ext.form.Panel', {
 				bodyCls: 'cmgraypanel',

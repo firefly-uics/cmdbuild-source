@@ -5,10 +5,9 @@
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
-		parentDelegate: undefined,
-
 		form: undefined,
 		grid: undefined,
+		parentDelegate: undefined,
 		selectionModel: undefined,
 		tasksDatas: [ // Used to validate tasks
 			'all',
@@ -21,12 +20,13 @@
 		],
 		view: undefined,
 
-		// Overwrite
+		// overwrite
 		constructor: function(view) {
 			// Handlers exchange and controller setup
 			this.view = view;
 			this.grid = view.grid;
 			this.form = view.form;
+			this.formLayout = view.form.getLayout();
 			this.view.delegate = this;
 			this.grid.delegate = this;
 
@@ -35,25 +35,31 @@
 			this.callParent(arguments);
 		},
 
-		// Overwrite
+		/**
+		 * @param (Object) parameters - AccordionStoreModel
+		 */
+		// overwrite
 		onViewOnFront: function(parameters) {
-			if (typeof parameters != 'undefined') {
+			if (!Ext.isEmpty(parameters)) {
 				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
 
 				this.grid.reconfigure(CMDBuild.core.proxy.CMProxyTasks.getStore(this.taskType));
 				this.grid.store.load({
 					scope: this,
 					callback: function() {
-						if (!this.selectionModel.hasSelection())
+						if (!this.selectionModel.hasSelection()) {
 							this.selectionModel.select(0, true);
+							this.form.removeAll();
+							this.form.disableModify();
+						}
 					}
 				});
 
 				// Fire show event on accordion click
 				this.view.fireEvent('show');
-			}
 
-			this.callParent(arguments);
+				this.callParent(arguments);
+			}
 		},
 
 		/**
@@ -72,10 +78,10 @@
 					return this.onItemDoubleClick();
 
 				case 'onNextButtonClick':
-					return this.form.wizard.changeTab(+1);
+					return this.changeItem('next');
 
 				case 'onPreviousButtonClick':
-					return this.form.wizard.changeTab(-1);
+					return this.changeItem('prev');
 
 				case 'onRowSelected':
 					return this.onRowSelected(name, param, callBack);
@@ -101,7 +107,7 @@
 		buildFormController: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
 				this.form.delegate = Ext.create(
-					'CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitaliseFirstLetter(this.typeSerialize(type, 1)) + 'Controller',
+					'CMDBuild.controller.administration.tasks.CMTasksForm' + this.capitalizeFirstLetter(this.typeSerialize(type, 1)) + 'Controller',
 					this.form
 				);
 				this.form.delegate.parentDelegate = this;
@@ -110,17 +116,20 @@
 		},
 
 		/**
+		 * Capitalize first string's letter
+		 *
 		 * @param (String) string
+		 *
 		 * @return (String) string - capitalized string
 		 */
-		capitaliseFirstLetter: function(string) {
-			if (typeof string == 'string') {
-				return string.charAt(0).toUpperCase() + string.slice(1);
-			}
+		capitalizeFirstLetter: function(string) {
+			if (typeof string == 'string')
+				string = string.charAt(0).toUpperCase() + string.slice(1);
 
 			return string;
 		},
 
+		// overwrite
 		callback: function() {
 			this.grid.store.load();
 
@@ -128,11 +137,57 @@
 		},
 
 		/**
+		 * To change wizard displayed item
+		 *
+		 * @param (String/Integer) action
+		 */
+		changeItem: function(action) {
+			if (
+				typeof action == 'number'
+				&& (action >= 0 && action < this.form.items.lenght)
+			) {
+				this.formLayout.setActiveItem(action);
+			} else {
+				switch (action) {
+					case 'next': {
+						if (this.formLayout.getNext())
+							this.formLayout.next();
+					} break;
+
+					case 'prev': {
+						if (this.formLayout.getPrev())
+							this.formLayout.prev();
+					} break;
+				}
+			}
+
+			if (this.formLayout.getPrev()) {
+				this.form.previousButton.setDisabled(false);
+			} else {
+				this.form.previousButton.setDisabled(true);
+			}
+
+			if (this.formLayout.getNext()) {
+				this.form.nextButton.setDisabled(false);
+			} else {
+				this.form.nextButton.setDisabled(true);
+			}
+
+			// Fires activate event on first item
+			if (!Ext.isEmpty(this.formLayout.getActiveItem()) && !this.formLayout.getPrev())
+				this.formLayout.getActiveItem().fireEvent('activate');
+		},
+
+		/**
 		 * @param (String) type - form type identifier
+		 *
 		 * @return (Boolean) type recognition state
 		 */
 		correctTaskTypeCheck: function(type) {
-			return (type != '' && (this.tasksDatas.indexOf(type) >= 0)) ? true : false;
+			return (
+				!Ext.isEmpty(type)
+				&& Ext.Array.contains(this.tasksDatas, type)
+			) ? true : false;
 		},
 
 		/**
@@ -142,29 +197,27 @@
 		 */
 		loadForm: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
-
-				// Clear all old tabs listeners
-				this.form.wizard.items.each(function(item) {
-					item.clearListeners();
-				});
-
-				this.form.wizard.removeAll();
+				this.form.removeAll(true);
 				this.form.delegate.delegateStep = [];
 
-				var items = Ext.create('CMDBuild.view.administration.tasks.' + this.typeSerialize(type, 0) + '.CMTaskTabs').getTabs();
+				var items = Ext.create('CMDBuild.view.administration.tasks.' + this.typeSerialize(type, 0) + '.CMTaskSteps');
 
-				for (key in items) {
+				for (var key in items) {
 					items[key].delegate.parentDelegate = this.form.delegate; // Controller relations propagation
 
 					this.form.delegate.delegateStep.push(items[key].delegate);
-					this.form.wizard.add(items[key]);
+					this.form.add(items[key]);
 				}
 
-				this.form.wizard.numberOfTabs = items.length;
-				this.form.wizard.changeTab(0);
+				this.changeItem(0);
 			}
 		},
 
+		/**
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		onAddButtonClick: function(name, param, callBack) {
 			this.selectionModel.deselectAll();
 			this.buildFormController(param.type);
@@ -172,8 +225,11 @@
 			return this.form.delegate.cmOn(name, param, callBack);
 		},
 
+		/**
+		 * On grid item double click to edit double-clicked task
+		 */
 		onItemDoubleClick: function() {
-			return this.form.delegate.onModifyButtonClick();
+			this.form.delegate.onModifyButtonClick();
 		},
 
 		/**
@@ -184,7 +240,7 @@
 		 * @param (Function) callback
 		 */
 		onRowSelected: function(name, param, callBack) {
-			var selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.TYPE);
+			var selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.TYPE);
 
 			if (
 				!this.form.delegate
@@ -202,12 +258,13 @@
 		 */
 		onStartButtonClick: function(record) {
 			CMDBuild.LoadMask.get().show();
+
 			CMDBuild.core.proxy.CMProxyTasks.start({
 				scope: this,
 				params: {
-					id: record.get(CMDBuild.ServiceProxy.parameter.ID)
+					id: record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
 				},
-				success: this.success(record.get(CMDBuild.ServiceProxy.parameter.ID)),
+				success: this.success,
 				callback: this.callback
 			});
 		},
@@ -217,27 +274,34 @@
 		 */
 		onStopButtonClick: function(record) {
 			CMDBuild.LoadMask.get().show();
+
 			CMDBuild.core.proxy.CMProxyTasks.stop({
 				scope: this,
 				params: {
-					id: record.get(CMDBuild.ServiceProxy.parameter.ID)
+					id: record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
 				},
-				success: this.success(record.get(CMDBuild.ServiceProxy.parameter.ID)),
+				success: this.success,
 				callback: this.callback
 			});
 		},
 
 		/**
-		 * @param (Int) id
+		 * @param (Object) result
+		 * @param (Object) options
+		 * @param (Object) decodedResult
 		 */
-		success: function(id) {
+		success: function(result, options, decodedResult) {
 			var me = this;
 
 			this.grid.store.load({
 				callback: function() {
-					me.form.reset();
+					me.form.removeAll();
+					me.form.disableModify(true);
 
-					var rowIndex = this.find(CMDBuild.ServiceProxy.parameter.ID, id);
+					var rowIndex = this.find(
+						CMDBuild.core.proxy.CMProxyConstants.ID,
+						options.params[CMDBuild.core.proxy.CMProxyConstants.ID]
+					);
 
 					me.selectionModel.deselectAll();
 					me.selectionModel.select(
@@ -253,11 +317,11 @@
 		 *
 		 * @param (String) type
 		 * @param (Imt) itemsToReturn
-		 * @return (String) class path string for type
+		 *
+		 * @return (String)
 		 */
 		typeSerialize: function(type, itemsToReturn) {
 			var splittedType = type.split('_');
-			var returnString;
 
 			if (
 				splittedType.length > 1

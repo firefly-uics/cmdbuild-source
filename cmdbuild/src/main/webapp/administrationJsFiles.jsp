@@ -44,7 +44,6 @@
 	<!-- CLASSES -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMClassAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeSortingGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMAttributeGrid.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMSetOrderWindow.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/class/CMClassAttributesPanel.js"></script>
@@ -105,7 +104,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMConfigurationAccordion.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGenericOption.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGis.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationTranslations.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationGraph.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationAlfresco.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/configuration/CMModConfigurationWorkflow.js"></script>
@@ -145,7 +143,8 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMBaseWidgetDefinitionForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMOpenReportDefinitionForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMCalendarDefinitionForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMNavigationTreeDefinitionForm.js"></script>
+<!-- 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMNavigationTreeDefinitionForm.js"></script>
+ -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMWorkflowDefinitionForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMPingDefinitionForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/widget/form/CMCreateModifyCardDefinitionForm.js"></script>
@@ -179,7 +178,6 @@
 	<!-- CONFIGURATION -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationServerController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/configuration/CMModConfigurationTranslationsController.js"></script>
 
 	<!-- LOOKUP -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMLookupAccordionController.js"></script>
@@ -244,8 +242,9 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMWidgetDefinitionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMOpenReportController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMCalendarController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMNavigationTreeController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMWorkflowController.js"></script>
+<!-- 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMNavigationTreeController.js"></script>
+ -->
+ 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMWorkflowController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMPingController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/widget/CMCreateModifyCardController.js"></script>
 

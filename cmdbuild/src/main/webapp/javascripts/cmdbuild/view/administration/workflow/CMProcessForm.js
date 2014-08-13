@@ -28,8 +28,22 @@
 			this.callParent(arguments);
 
 			// Live the fields of the XpdlForm always enabled
-			this.versionCombo.enable();
-			this.fileField.enable();
+			this.xpdlForm.cascade(function(item) {
+				if (
+					item
+					&& (
+						item instanceof Ext.form.Field
+						|| item instanceof Ext.form.FieldSet
+						|| item.considerAsFieldToDisable
+					)
+				) {
+					var name = item._name || item.name; // for compatibility I can not change the name of old attrs
+					var toBeEnabled = (true || !item.cmImmutable) && item.isVisible();
+
+					if (toBeEnabled)
+						item.enable();
+				}
+			});
 		},
 
 		// override
@@ -64,8 +78,8 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
-				displayField: CMDBuild.ServiceProxy.parameter.ID,
-				valueField: CMDBuild.ServiceProxy.parameter.ID,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.ID,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
 				store: Ext.create('Ext.data.Store', {
 					model: 'XPDLVersionModel',
 					data: []
@@ -91,7 +105,7 @@
 			this.xpdlForm = Ext.create('Ext.form.Panel', {
 				frame: false,
 				border: false,
-				autoScroll: true,
+				overflowY: 'auto',
 				fileUpload: true,
 
 				defaults: {

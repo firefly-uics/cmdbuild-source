@@ -8,7 +8,7 @@ import static utils.IntegrationTestUtils.newClass;
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.query.CMQueryResult;
-import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.lookup.DataViewLookupStore;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.data.QueryOptions;

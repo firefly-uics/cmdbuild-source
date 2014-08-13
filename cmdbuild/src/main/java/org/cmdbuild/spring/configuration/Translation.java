@@ -1,11 +1,12 @@
 package org.cmdbuild.spring.configuration;
 
-import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Groupable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.StoreFactory;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.translation.TranslationConverter;
 import org.cmdbuild.logic.translation.DefaultTranslationLogic;
+import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,13 @@ public class Translation {
 
 	@Autowired
 	private Data data;
+	
+	@Autowired
+	private SetupFacade setupFacade;
 
 	@Bean
 	public TranslationLogic translationLogic() {
-		return new DefaultTranslationLogic(translationStoreFactory());
+		return new DefaultTranslationLogic(translationStoreFactory(), setupFacade);
 	}
 
 	@Bean

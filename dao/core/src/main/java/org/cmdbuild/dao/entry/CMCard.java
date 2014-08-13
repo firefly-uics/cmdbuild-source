@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.entry;
 
+import java.util.Map.Entry;
+
 import org.cmdbuild.dao.entrytype.CMClass;
 
 /**
@@ -15,9 +17,14 @@ public interface CMCard extends CMEntry {
 		@Override
 		CMCardDefinition set(String key, Object value);
 
+		@Override
+		CMCardDefinition set(Iterable<? extends Entry<String, ? extends Object>> keysAndValues);
+
 		CMCardDefinition setCode(Object value);
 
 		CMCardDefinition setDescription(Object value);
+
+		CMCardDefinition setCurrentId(Long currentId);
 
 		@Override
 		CMCard save();
@@ -46,5 +53,7 @@ public interface CMCard extends CMEntry {
 	 *             if attribute is not present.
 	 */
 	Object getDescription();
+
+	Long getCurrentId();
 
 }

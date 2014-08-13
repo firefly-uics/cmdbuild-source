@@ -83,7 +83,24 @@
 				allowBlank : false,
 				disabled : true,
 				translationsKeyType: "Lookup",
-				translationsKeyField: "Description"
+				translationsKeyField: LOOKUP_FIELDS.Description
+			});
+
+			this.parentDescription = Ext.create('Ext.form.field.ComboBox', {
+				fieldLabel : tr.parentdescription,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				name : LOOKUP_FIELDS.ParentId,
+				hiddenName : LOOKUP_FIELDS.ParentId,
+				valueField : LOOKUP_FIELDS.ParentId,
+				displayField : LOOKUP_FIELDS.ParentDescription,
+				minChars : 0,
+				disabled : true,
+				store : this.parentStore,
+				queryMode: "local",
+				listConfig: {
+					loadMask: false
+				}
 			});
 
 			this.items = [{
@@ -106,23 +123,9 @@
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					disabled : true
 				},
-					this.description,
+				this.description,
+				this.parentDescription,
 				{
-					xtype : 'combo',
-					fieldLabel : tr.parentdescription,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name : LOOKUP_FIELDS.ParentId,
-					hiddenName : LOOKUP_FIELDS.ParentId,
-					valueField : LOOKUP_FIELDS.ParentId,
-					displayField : LOOKUP_FIELDS.ParentDescription,
-					minChars : 0,
-					disabled : true,
-					store : this.parentStore,
-					queryMode: "local",
-					listConfig: {
-						loadMask: false
-					}
-				}, {
 					xtype : 'textarea',
 					fieldLabel : tr.notes,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
@@ -159,6 +162,10 @@
 			this.getForm().loadRecord(selection);
 			this.updateDisableEnableLookup();
 			this.disableModify(enableCMTbar = true);
+
+			// FIX: to avoid default int value (0) to be displayed
+			if (this.parentDescription.getValue() == 0)
+				this.parentDescription.setValue();
 		},
 
 		onAddLookupClick: function() {

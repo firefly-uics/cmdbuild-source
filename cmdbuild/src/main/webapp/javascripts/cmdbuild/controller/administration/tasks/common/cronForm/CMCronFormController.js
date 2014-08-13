@@ -32,7 +32,8 @@
 
 		/**
 		 * @param (Array) fields
-		 * @return (String) cron expression
+		 *
+		 * @return (String) cronExpression
 		 */
 		buildCronExpression: function(fields) {
 			var cronExpression = '';
@@ -52,7 +53,8 @@
 		 *
 		 * @param (String) name
 		 * @param (String) label
-		 * @return (Object) CMDBuild.view.common.field.CMCronTriggerField
+		 *
+		 * @return (Object)
 		 */
 		createCronField: function(name, label) {
 			var me = this;
@@ -62,7 +64,6 @@
 				fieldLabel: label,
 				cmImmutable: true,
 				disabled: true,
-				allowBlank: false,
 
 				listeners: {
 					change: function(field, newValue, oldValue) {
@@ -80,125 +81,154 @@
 			});
 		},
 
-		getBaseCombo: function() {
-			return this.baseField.baseCombo;
-		},
+		// GETters functions
+			/**
+			 * @return (Object)
+			 */
+			getBaseCombo: function() {
+				return this.baseField.baseCombo;
+			},
+
+			/**
+			 * Get cron form formatted values
+			 *
+			 * @param (Boolean) cronInputType
+			 *
+			 * @return (String) cronExpression
+			 */
+			getValue: function(cronInputType) {
+				var cronExpression;
+
+				if (cronInputType) {
+					cronExpression = this.buildCronExpression([
+						this.advancedField.advancedFields[0].getValue(),
+						this.advancedField.advancedFields[1].getValue(),
+						this.advancedField.advancedFields[2].getValue(),
+						this.advancedField.advancedFields[3].getValue(),
+						this.advancedField.advancedFields[4].getValue()
+					]);
+				} else {
+					cronExpression = this.baseField.baseCombo.getValue();
+				}
+
+				return cronExpression;
+			},
 
 		/**
-		 * Get cron form formatted values
-		 *
-		 * @param (Boolean) cronInputType
-		 * @return (String) cronExpression
+		 * @return (Boolean)
 		 */
-		getValue: function(cronInputType) {
-			var cronExpression;
-
-			if (cronInputType) {
-				cronExpression = this.buildCronExpression([
-					this.advancedField.advancedFields[0].getValue(),
-					this.advancedField.advancedFields[1].getValue(),
-					this.advancedField.advancedFields[2].getValue(),
-					this.advancedField.advancedFields[3].getValue(),
-					this.advancedField.advancedFields[4].getValue()
-				]);
-			} else {
-				cronExpression = this.baseField.baseCombo.getValue();
-			}
-
-			return cronExpression;
-		},
-
 		isEmptyAdvanced: function() {
-			if (
+			return (
 				Ext.isEmpty(this.advancedField.advancedFields[0].getValue())
 				&& Ext.isEmpty(this.advancedField.advancedFields[1].getValue())
 				&& Ext.isEmpty(this.advancedField.advancedFields[2].getValue())
 				&& Ext.isEmpty(this.advancedField.advancedFields[3].getValue())
 				&& Ext.isEmpty(this.advancedField.advancedFields[4].getValue())
-			)
-				return true;
-
-			return false;
+			);
 		},
 
+		/**
+		 * @return (Boolean)
+		 */
 		isEmptyBase: function() {
 			return Ext.isEmpty(this.baseField.baseCombo.getValue());
 		},
 
-		markInvalidAdvancedFields: function(message) {
-			for(item in this.advancedField.advancedFields)
-				this.advancedField.advancedFields[item].markInvalid(message);
-		},
-
-		onChangeAdvancedRadio: function(value) {
-			this.setDisabledAdvancedFields(!value);
-			this.setDisabledBaseCombo(value);
-		},
-
-		onChangeBaseRadio: function(value) {
-			this.setDisabledAdvancedFields(value);
-			this.setDisabledBaseCombo(!value);
-		},
-
-		setValueAdvancedFields: function(cronExpression) {
-			var values = cronExpression.split(' ');
-			var fields = this.advancedField.advancedFields;
-
-			for (var i = 0; i < fields.length; i++) {
-				if (values[i])
-					fields[i].setValue(values[i]);
-			}
-		},
-
-		setValueAdvancedRadio: function(value) {
-			this.advancedField.advanceRadio.setValue(value);
-		},
-
-		setDisabledAdvancedFields: function(value) {
-			for (var key in this.advancedField.advancedFields)
-				this.advancedField.advancedFields[key].setDisabled(value);
-		},
-
-		setDisabledBaseCombo: function(value) {
-			this.baseField.baseCombo.setDisabled(value);
+		/**
+		 * @param (Boolean) state
+		 */
+		onChangeAdvancedRadio: function(state) {
+			this.setDisabledAdvancedFields(!state);
+			this.setDisabledBaseCombo(state);
 		},
 
 		/**
-		 * Try to find the correspondence of advanced cronExpression in baseCombo's store
-		 *
-		 * @param (String) value
+		 * @param (Boolean) state
 		 */
-		setValueBase: function(value) {
-			var index = this.baseField.baseCombo.store.find(CMDBuild.ServiceProxy.parameter.VALUE, value);
-
-			if (index > -1) {
-				this.baseField.baseCombo.setValue(value);
-			} else {
-				this.baseField.baseCombo.setValue();
-			}
+		onChangeBaseRadio: function(state) {
+			this.setDisabledAdvancedFields(state);
+			this.setDisabledBaseCombo(!state);
 		},
 
+		// SETters functions
+			/**
+			 * Set fields as required/unrequired
+			 *
+			 * @param (Boolean) state
+			 */
+			setAllowBlankAdvancedFields: function(state) {
+				for(item in this.advancedField.advancedFields)
+					this.advancedField.advancedFields[item].allowBlank = state;
+			},
+
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledAdvancedFields: function(state) {
+				for (var key in this.advancedField.advancedFields)
+					this.advancedField.advancedFields[key].setDisabled(state);
+			},
+
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledBaseCombo: function(state) {
+				this.baseField.baseCombo.setDisabled(state);
+			},
+
+			/**
+			 * @param (String) cronExpression
+			 */
+			setValueAdvancedFields: function(cronExpression) {
+				if (!Ext.isEmpty(cronExpression)) {
+					var values = cronExpression.split(' ');
+					var fields = this.advancedField.advancedFields;
+
+					for (var i = 0; i < fields.length; i++)
+						if (values[i])
+							fields[i].setValue(values[i]);
+				}
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueAdvancedRadio: function(value) {
+				this.advancedField.advanceRadio.setValue(value);
+			},
+
+			/**
+			 * Try to find the correspondence of advanced cronExpression in baseCombo's store
+			 *
+			 * @param (String) value
+			 */
+			setValueBase: function(value) {
+				var index = this.baseField.baseCombo.store.find(CMDBuild.core.proxy.CMProxyConstants.VALUE, value);
+
+				if (index > -1) {
+					this.baseField.baseCombo.setValue(value);
+				} else {
+					this.baseField.baseCombo.setValue();
+				}
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueBaseRadio: function(value) {
+				this.baseField.baseRadio.setValue(value);
+			},
+
 		/**
-		 * Cron validation
+		 * Cron form validation
 		 *
-		 * @param (Object) wizard - reference to wizard object
-		 * @return (Boolean)
+		 * @param (Boolean) enable
 		 */
-		validate: function(wizard) {
-			if (this.isEmptyAdvanced()) {
-				this.markInvalidAdvancedFields('This field is required');
-
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-
-				CMDBuild.LoadMask.get().hide();
-
-				wizard.changeTab(1);
-				this.setValueAdvancedRadio(true);
-
-				return false;
-			}
-
-			return true;
+		validate: function(enable) {
+			this.setValueAdvancedRadio(enable);
+			this.setAllowBlankAdvancedFields(
+				!(this.isEmptyAdvanced() && enable)
+			);
 		}
 	});
 

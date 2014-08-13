@@ -3,16 +3,17 @@
 	/**
 	 * Base class to extends to create form controller implementation
 	 */
+	// abstract
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormBaseController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		parentDelegate: undefined,
-		view: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
 		taskType: undefined,
+		view: undefined,
 
-		// Abstract
+		// abstract
 		cmOn: function() {
 			throw 'CMTasksFormBaseController: cmOn() unimplemented method';
 		},
@@ -27,10 +28,15 @@
 			} else {
 				this.view.reset();
 				this.view.disableModify();
-				this.view.wizard.changeTab(0);
+				this.parentDelegate.changeItem(0);
 			}
 		},
 
+		/**
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		onAddButtonClick: function(name, param, callBack) {
 			this.selectionModel.deselectAll();
 			this.selectedId = null;
@@ -38,7 +44,7 @@
 			this.view.reset();
 			this.view.enableTabbedModify();
 			this.disableTypeField();
-			this.view.wizard.changeTab(0);
+			this.parentDelegate.changeItem(0);
 		},
 
 		onCloneButtonClick: function() {
@@ -49,7 +55,7 @@
 			this.view.enableCMButtons();
 			this.view.enableTabbedModify(true);
 			this.disableTypeField();
-			this.view.wizard.changeTab(0);
+			this.parentDelegate.changeItem(0);
 		},
 
 		onModifyButtonClick: function() {
@@ -57,7 +63,7 @@
 			this.view.enableCMButtons();
 			this.view.enableTabbedModify(true);
 			this.disableTypeField();
-			this.view.wizard.changeTab(0);
+			this.parentDelegate.changeItem(0);
 		},
 
 		onRemoveButtonClick: function() {
@@ -67,39 +73,36 @@
 				scope: this,
 				buttons: Ext.Msg.YESNO,
 				fn: function(button) {
-					if (button == 'yes') {
+					if (button == 'yes')
 						this.removeItem();
-					}
 				}
 			});
 		},
 
-		// Abstract
+		// abstract
 		onRowSelected: function() {
 			throw 'CMTasksFormBaseController: onRowSelected() unimplemented method';
 		},
 
-		// Abstract
+		// abstract
 		onSaveButtonClick: function() {
 			throw 'CMTasksFormBaseController: onSaveButtonClick() unimplemented method';
 		},
 
 		removeItem: function() {
-			if (this.selectedId == null) {
-				// Nothing to remove
-				return;
-			}
+			if (!Ext.isEmpty(this.selectedId)) {
+				CMDBuild.LoadMask.get().show();
 
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.CMProxyTasks.remove({
-				type: this.taskType,
-				params: {
-					id: this.selectedId
-				},
-				scope: this,
-				success: this.success,
-				callback: this.callback
-			});
+				CMDBuild.core.proxy.CMProxyTasks.remove({
+					type: this.taskType,
+					params: {
+						id: this.selectedId
+					},
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			}
 		},
 
 		resetIdField: function() {
@@ -113,16 +116,22 @@
 			this.view.nextButton.setDisabled(state);
 		},
 
+		/**
+		 * @param (Object) result
+		 * @param (Object) options
+		 * @param (Object) decodedResult
+		 */
 		success: function(result, options, decodedResult) {
 			var me = this;
 			var taskId = this.delegateStep[0].getValueId();
 
 			this.parentDelegate.grid.store.load({
 				callback: function() {
-					me.view.reset();
+					me.view.removeAll();
+					me.view.disableModify(true);
 
 					var rowIndex = this.find(
-						CMDBuild.ServiceProxy.parameter.ID,
+						CMDBuild.core.proxy.CMProxyConstants.ID,
 						(decodedResult.response) ? decodedResult.response : taskId
 					);
 
@@ -135,7 +144,19 @@
 			});
 
 			this.view.disableModify(true);
-			this.view.wizard.changeTab(0);
+			this.parentDelegate.changeItem(0);
+		},
+
+		/**
+		 * Task validation
+		 *
+		 * @param (Boolean) enable
+		 *
+		 * @return (Boolean)
+		 */
+		// overwrite
+		validate: function(enable, type) {
+			return this.callParent([this.view]);
 		}
 	});
 

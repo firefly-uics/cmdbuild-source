@@ -14,28 +14,28 @@
 		initComponent: function() {
 			this.gridColumns = [
 				{
-					dataIndex: CMDBuild.ServiceProxy.parameter.ID,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ID,
 					hidden: true
 				},
 				{
 					text: tr.type,
-					dataIndex: CMDBuild.ServiceProxy.parameter.TYPE,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 					flex: 1,
 					scope: this,
 					renderer: function(value, metaData, record) {
 						return this.typeGridColumnRenderer(value, metaData, record);
-					},
+					}
 				},
 				{
 					text: CMDBuild.Translation.description_,
-					dataIndex: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 					flex: 4
 				},
 				{
-					text: tr.active,
+					text: CMDBuild.Translation.active,
 					width: 60,
 					align: 'center',
-					dataIndex: CMDBuild.ServiceProxy.parameter.ACTIVE,
+					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 					hideable: false,
 					menuDisabled: true,
 					fixed: true,
@@ -61,7 +61,7 @@
 								this.delegate.cmOn('onStartButtonClick', record);
 							},
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return record.get(CMDBuild.ServiceProxy.parameter.ACTIVE);
+								return record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE);
 							}
 						}
 					]
@@ -83,23 +83,14 @@
 								this.delegate.cmOn('onStopButtonClick', record);
 							},
 							isDisabled: function(grid, rowIndex, colIndex, item, record) {
-								return !record.get(CMDBuild.ServiceProxy.parameter.ACTIVE);
+								return !record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE);
 							}
 						}
 					]
 				}
 			];
 
-//			// TODO: maybe for a future implementation
-//			this.pagingBar = Ext.create('Ext.toolbar.Paging', {
-//				store: this.store,
-//				displayInfo: true,
-//				displayMsg: ' {0} - {1} ' + CMDBuild.Translation.common.display_topic_of+' {2}',
-//				emptyMsg: CMDBuild.Translation.common.display_topic_none
-//			});
-
 			Ext.apply(this, {
-//				bbar: this.pagingBar,
 				columns: this.gridColumns
 			});
 
@@ -121,15 +112,7 @@
 		 * Used to render active value to add icon in grid
 		 */
 		activeGridColumnRenderer: function(value, metaData, record) {
-			if (typeof value == 'boolean') {
-				if (value) {
-					value = '<img src="images/icons/accept.png" alt="' + tr.running + '" />';
-				} else {
-					value = '<img src="images/icons/cancel.png" alt="' + tr.stopped + '" />';
-				}
-			}
-
-			return value;
+			return value ? '<img src="images/icons/accept.png" alt="' + tr.running + '" />' : '<img src="images/icons/cancel.png" alt="' + tr.stopped + '" />';
 		},
 
 		/**
@@ -145,7 +128,7 @@
 						if (i == 0) {
 							value += eval('CMDBuild.Translation.administration.tasks.tasksTypes.' + splittedType[i]);
 						} else {
-							value += ' ' + eval('CMDBuild.Translation.administration.tasks.tasksTypes.' + splittedType[0] + 'Types.' + splittedType[i]);
+							value += ' ' + eval('CMDBuild.Translation.administration.tasks.tasksTypes.' + splittedType[0] + 'Types.' + splittedType[i]).toLowerCase();
 						}
 					}
 				}

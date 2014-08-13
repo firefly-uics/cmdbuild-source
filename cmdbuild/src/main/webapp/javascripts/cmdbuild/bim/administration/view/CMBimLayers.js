@@ -16,12 +16,12 @@
 		fields: ['classNameattributeName', 'attributeDescription'],
 		data: []
 	});
-	
+
 	Ext.define("CMDBuild.bim.administration.view.CMBimLayersDelegate", {
 		/**
 		 * Called after a click on
 		 * a check column
-		 * 
+		 *
 		 * @param {CMDBuild.bim.administration.view.CMBimLayers} grid the grid
 		 * that call this method
 		 * @param {CMDBuild.bim.data.CMBimLayerModel} record the record
@@ -63,18 +63,18 @@
 				columns: [
 					{
 						flex: 1,
-						text: CMDBuild.Translation.class,
+						text: CMDBuild.Translation.classLabel,
 						dataIndex: 'description'
 					},
 					checkColumn(me, CMDBuild.Translation.active, "active"),
 					checkColumn(me, CMDBuild.Translation.root, "root"),
-					checkColumn(me, CMDBuild.Translation.export, "export"),
+					checkColumn(me, CMDBuild.Translation.exportLabel, "exported"),
 					checkColumn(me, CMDBuild.Translation.container, "container"),
-					{ 
-						text: CMDBuild.Translation.reference_to_root, 
-						dataIndex: 'rootreference', 
+					{
+						text: CMDBuild.Translation.reference_to_root,
+						dataIndex: 'rootreference',
 						flex: 1,
-						editor: this.attributesCombo, 
+						editor: this.attributesCombo,
 						renderer: this.renderClass
 					}
 				],
@@ -138,14 +138,14 @@
 					description: records[i].description,
 					active: records[i].active,
 					root: records[i].root,
-					export: records[i].export,
+					exported: records[i].exported,
 					container: records[i].container,
 					rootreference: (! records[i].rootreference) ? "" : records[i].className + SEPARATOR + records[i].rootreference,
 				};
 				this.store.add(model);
 			}
 			Ext.resumeLayouts();
-			
+
 		},
 
 		loadAttributes: function(root, allRecords, records, references) {
@@ -172,7 +172,7 @@
 				});
 			}
 		},
-		
+
 		loadReferences: function(root, className, references, attributes) {
 			for(var i = 0; i < attributes.length; i++) {
 				var type = attributes[i].type;
@@ -192,7 +192,7 @@
 			var record = attributesStore.findRecord("classNameattributeName", attributeName);
 			return (record) ? record.get("attributeDescription") : "";
 		},
-		
+
 		onCheckColumnChange: function(cell, recordIndex, checked) {
 			var dataIndex = cell.dataIndex;
 			var record = this.store.getAt(recordIndex);

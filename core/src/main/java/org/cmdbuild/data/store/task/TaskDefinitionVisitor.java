@@ -2,10 +2,14 @@ package org.cmdbuild.data.store.task;
 
 public interface TaskDefinitionVisitor {
 
-	void visit(final ReadEmailTaskDefinition taskDefinition);
+	void visit(AsynchronousEventTaskDefinition taskDefinition);
 
-	void visit(final StartWorkflowTaskDefinition taskDefinition);
+	void visit(ConnectorTaskDefinition connectorTaskDefinition);
 
-	void visit(final SynchronousEventTaskDefinition taskDefinition);
+	void visit(ReadEmailTaskDefinition taskDefinition);
+
+	void visit(StartWorkflowTaskDefinition taskDefinition);
+
+	void visit(SynchronousEventTaskDefinition taskDefinition);
 
 }

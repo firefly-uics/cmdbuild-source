@@ -4,10 +4,11 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
-			{ name: CMDBuild.ServiceProxy.parameter.TYPE, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'}
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
+
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TYPE, type: 'string' }
 		]
 	});
 
@@ -16,39 +17,76 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
-			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'}
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'}
 		]
 	});
 
 	/*
 	 * Models for single tasks get proxy calls
 	 */
+	Ext.define('CMDBuild.model.CMModelTasks.singleTask.connector', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
+
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_MAPPING, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_MAPPING, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_CONFIGURATION, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TYPE, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE, type: 'boolean' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE_ERROR, type: 'string' }
+		]
+	});
+
 	Ext.define('CMDBuild.model.CMModelTasks.singleTask.email', {
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
-			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.ServiceProxy.parameter.ATTACHMENTS_CATEGORY, type: 'int'},
-			{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.FILTER_FROM_ADDRESS, type: 'auto'},
-			{ name: CMDBuild.ServiceProxy.parameter.FILTER_SUBJECT, type: 'auto'},
-			{ name: CMDBuild.ServiceProxy.parameter.PARSING_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_END, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.PARSING_KEY_INIT, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_END, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.PARSING_VALUE_INIT, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES, type: 'auto'},
-			{ name: CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME, type: 'string'}
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
+
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS_CATEGORY, type: 'int'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.EMAIL_ACCOUNT, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER_FROM_ADDRESS, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER_SUBJECT, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_END, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_INIT, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_END, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_INIT, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME, type: 'string'}
+		]
+	});
+
+	Ext.define('CMDBuild.model.CMModelTasks.singleTask.event_asynchronous', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
+
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE, type: 'string'}
 		]
 	});
 
@@ -56,16 +94,20 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
-			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_ACCOUNT, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.EMAIL_TEMPLATE, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.PHASE, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES, type: 'auto'},
-			{ name: CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME, type: 'string'}
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
+
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.FILTER, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.GROUPS, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.PHASE, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE, type: 'boolean'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME, type: 'string'}
 		]
 	});
 
@@ -73,12 +115,13 @@
 		extend: 'Ext.data.Model',
 
 		fields: [
-			{ name: CMDBuild.ServiceProxy.parameter.ID, type: 'int' },
-			{ name: CMDBuild.ServiceProxy.parameter.DESCRIPTION, type: 'string' },
-			{ name: CMDBuild.ServiceProxy.parameter.ACTIVE, type: 'boolean'},
-			{ name: CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION, type: 'string'},
-			{ name: CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES, type: 'auto'},
-			{ name: CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME, type: 'string'}
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE, type: 'boolean'},
+
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION, type: 'string'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES, type: 'auto'},
+			{ name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME, type: 'string'}
 		]
 	});
 
@@ -86,13 +129,25 @@
 	 * Inner tasks models
 	 */
 	// Connector
+		Ext.define('CMDBuild.model.CMModelTasks.connector.availableSqlSources', { // Step 3 type field store
+			extend: 'Ext.data.Model',
+
+			fields: [
+				{ name: CMDBuild.core.proxy.CMProxyConstants.KEY, type: 'string' },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.VALUE, type: 'string' }
+			]
+		});
+
 		Ext.define('CMDBuild.model.CMModelTasks.connector.classLevel', { // Step 4 grid store
 			extend: 'Ext.data.Model',
 
 			fields: [
-				{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string' },
-				{ name: CMDBuild.ServiceProxy.parameter.VIEW_NAME, type: 'string' },
-				{ name: CMDBuild.ServiceProxy.parameter.IS_MAIN, type: 'boolean' }
+				{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.CREATE, type: 'boolean', defaultValue: true },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.UPDATE, type: 'boolean', defaultValue: true },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.DELETE, type: 'boolean', defaultValue: true },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.DELETE_TYPE, type: 'string' }
 			]
 		});
 
@@ -100,11 +155,11 @@
 			extend: 'Ext.data.Model',
 
 			fields: [
-				{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string' },
-				{ name: CMDBuild.ServiceProxy.parameter.CLASS_ATTRIBUTE, type: 'string' },
-				{ name: CMDBuild.ServiceProxy.parameter.VIEW_NAME, type: 'string' },
-				{ name: CMDBuild.ServiceProxy.parameter.VIEW_ATTRIBUTE, type: 'string' },
-				{ name: CMDBuild.ServiceProxy.parameter.IS_KEY, type: 'boolean' }
+				{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_ATTRIBUTE, type: 'string' },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.SOURCE_NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.SOURCE_ATTRIBUTE, type: 'string' },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.IS_KEY, type: 'boolean' }
 			]
 		});
 
@@ -112,8 +167,19 @@
 			extend: 'Ext.data.Model',
 
 			fields: [
-				{ name: CMDBuild.ServiceProxy.parameter.CLASS_NAME, type: 'string' },
-				{ name: CMDBuild.ServiceProxy.parameter.DOMAIN_NAME, type: 'string' }
+				{ name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME, type: 'string' }
 			]
 		});
+
+	// Workflow form
+		Ext.define('CMDBuild.model.CMModelTasks.common.workflowForm', {
+			extend: 'Ext.data.Model',
+
+			fields: [
+				{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
+				{ name: CMDBuild.core.proxy.CMProxyConstants.VALUE, type: 'string' }
+			]
+		});
+
 })();

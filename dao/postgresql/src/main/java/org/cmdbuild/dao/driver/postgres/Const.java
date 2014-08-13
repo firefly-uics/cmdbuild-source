@@ -21,6 +21,7 @@ public interface Const {
 		IdClass("IdClass", SqlType.regclass.sqlCast()), //
 		ClassId1("IdClass1", SqlType.regclass.sqlCast()), //
 		ClassId2("IdClass2", SqlType.regclass.sqlCast()), //
+		CurrentId("CurrentId"), //
 		DomainId("IdDomain", SqlType.regclass.sqlCast()), //
 		DomainId1("IdObj1"), //
 		DomainId2("IdObj2"), //

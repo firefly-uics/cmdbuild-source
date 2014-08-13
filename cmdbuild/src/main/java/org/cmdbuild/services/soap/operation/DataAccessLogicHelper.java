@@ -13,7 +13,6 @@ import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -110,8 +109,6 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	private static final String ACTIVITY_DESCRIPTION_ATTRIBUTE = "ActivityDescription";
 	private static final String INVALID_ACTIVITY_DESCRIPTION = EMPTY;
-
-	private static final List<Attribute> EMPTY_ATTRIBUTES = Collections.emptyList();
 
 	private static final Comparator<Card> BEGIN_DATE_DESC = new Comparator<Card>() {
 
@@ -283,8 +280,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	private List<Attribute> attributesOf(final org.cmdbuild.services.soap.types.Card card) {
-		final List<Attribute> attributes = card.getAttributeList();
-		return (attributes == null) ? EMPTY_ATTRIBUTES : attributes;
+		return card.getAttributeList();
 	}
 
 	private Map<String, Object> transform(final List<Attribute> attributes, final CMEntryType entryType) {
@@ -302,7 +298,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 						lookupId = Long.parseLong((String) value);
 					}
 				} else {
-					final Iterable<Lookup> lookupList = lookupStore.list();
+					final Iterable<Lookup> lookupList = lookupStore.readAll();
 					for (final Lookup lookup : lookupList) {
 						if (lookup.active && //
 								lookup.type.name.equals(lookupTypeName) && //
@@ -328,7 +324,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	private boolean existsLookup(final String lookupTypeName, final Long lookupId) {
-		final Iterable<Lookup> lookupList = lookupStore.list();
+		final Iterable<Lookup> lookupList = lookupStore.readAll();
 		for (final Lookup lookup : lookupList) {
 			if (lookup.type.name.equals(lookupTypeName) && lookup.getId().equals(lookupId)) {
 				return true;

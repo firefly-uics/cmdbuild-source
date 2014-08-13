@@ -1,6 +1,6 @@
 {
 	"description": "Italiano",
-	"release": "2.2-dev",
+	"release": "2.3-dev",
 	"administration": {
 		"description": "Modulo di Amministrazione",
 		"email": {
@@ -9,7 +9,6 @@
 				"account": "Account",
 				"active": "Attivo",
 				"add": "Aggiungi account",
-				"address": "Indirizzo",
 				"credentials": "Credenziali",
 				"enableMoveRejectedNotMatching": "Abilita spostamento respinte",
 				"enableSsl": "Abilita SSL",
@@ -36,7 +35,10 @@
 				"modify": "Modifica template",
 				"remove": "Rimuovi template",
 				"template": "Template",
-				"title": "Templates"
+				"title": "Templates",
+				"valuesWindow": {
+					"title": "Modifica valori",
+				}
 			}
 		},
 		"modClass": {
@@ -653,9 +655,122 @@
 				"user": "Username"
 			}
 		},
+		"tasks": {
+			"add": "Aggiungi task",
+			"all": "Tutti",
+			"clone": "Clona task",
+			"cronForm" : {
+				"dayOfMounth": "Giorno del mese",
+				"advanced": "Avanzata",
+				"basic": "Base",
+				"dayOfWeek": "Giorno della settimana",
+				"everyDay": "Ogni giorno",
+				"everyHour": "Ogni ora",
+				"everyMounth": "Ogni mese",
+				"everyYear": "Ogni anno",
+				"hour": "Ora",
+				"minute": "Minuto",
+				"mounth": "Mese"
+			},
+			"errorMessages": {
+				"taskConnector": {
+					"emptyAttributeLevelMapping": "La tabella di mapping degli attributi dev'essere completata correttamente.",
+					"emptyClassLevelMapping": "La tabella di mapping delle classi dev'essere completata correttamente.",
+					"emptyReferenceLevelMapping": "La tabella di mapping degli attributi reference dev'essere completata correttamente."
+				}
+			},
+			"modify": "Modifica task",
+			"notificationForm": {
+				"account": "Account",
+				"template": "Email template",
+				"templateError": "Email template d'errore",
+				"title": "Invia email di notifica",
+				"titlePlur": "Invia email di notifica"
+			},
+			"remove": "Rimuovi task",
+			"running": "In esecuzione",
+			"startLabel": "Attiva task",
+			"startOnSave": "Attiva al salvataggio",
+			"startWorkflow": "Attiva processo",
+			"stopLabel": "Disattiva task",
+			"stopped": "Disattivato",
+			"title": "Task manager",
+			"type": "Tipo",
+			"taskConnector": {
+				"attributeLevelMapping": "Mapping degli attributi",
+				"classAttribute": "Attributo CMDBuild",
+				"classLevelMapping": "Mapping delle classi",
+				"className": "Classe CMDBuild",
+				"cudActions": {
+					"create": "Crea",
+					"delete": "Cancella",
+					"update": "Aggiorna"
+				},
+				"dataSourceDbFieldset": "Sorgente dati: Database relazionale",
+				"dataSourceLdapFieldset": "Sorgente dati: Directory LDAP",
+				"dbName": "Nome database",
+				"deletionType": "Tipo di cancellazione",
+				"deletionTypes": {
+					"deleteCard": "Cancella card",
+					"changeStatus": "Cambia stato"
+				},
+				"domainName": "Nome dominio",
+				"instanceName": "Istanza",
+				"isKey": "Chiave",
+				"recipientAddress": "Indirizzo destinatario",
+				"referenceMapping": "Mapping degli attributi reference",
+				"senderAccount": "Account mittente",
+				"sourceAttribute": "Attributo esterno",
+				"sourceFilter": "Filtro entità",
+				"sourceName": "Entità esterna"
+			},
+			"taskEmail": {
+				"attachmentsCategory": "Categoria",
+				"bodyParsing": "Parsing corpo del messaggio",
+				"emailAccount": "Account email",
+				"fromAddressFilter": "Filtro indirizzo mittente",
+				"parsingKeyEnd": "Delimitatore finale di chiave",
+				"parsingKeyStart": "Delimitatore iniziale di chiave",
+				"parsingValueEnd": "Delimitatore finale di valore",
+				"parsingValueStart": "Delimitatore iniziale di valore",
+				"saveToAlfresco": "Salva allegati su Alfresco",
+				"subjectFilter": "Filtro soggetto"
+			},
+			"taskEvent": {
+				"eventPhases": {
+					"afterCreate": "Dopo la creazione",
+					"afterUpdate": "Dopo l'aggiornamento",
+					"beforeDelete": "Prima della cancellazione",
+					"beforeUpdate": "Prima dell'aggiornamento"
+				},
+				"groupsToApply": "Applica ai gruppi",
+				"phase": "Fase"
+			},
+			"tasksTypes": {
+				"connector": "Connettore",
+				"email": "Email",
+				"event": "Evento",
+				"eventTypes": {
+					"asynchronous": "Asincrono",
+					"synchronous": "Sincrono"
+				},
+				"workflow": "Processo"
+			},
+			"workflow": "Processo",
+			"workflowForm": {
+				"attributes": "Attributi processo"
+			}
+		},
 		"welcome": {
 			"body": "Modulo di Amministrazione.",
 			"title": "Benvenuto"
+		}
+	},
+	"bimMod": {
+		"administration": {
+			"projects": {
+				"importIfc": "Importa IFC"
+			}
 		}
 	},
 	"common": {
@@ -667,8 +782,8 @@
 			"clone": "Clona",
 			"close": "Chiudi",
 			"confirm": "Conferma",
-			"export": "Esporta",
-			"import": "Importa",
+			"exportLabel": "Esporta",
+			"importLabel": "Importa",
 			"load": "Carica",
 			"modify": "Modifica",
 			"next": "Successivo",
@@ -784,9 +899,18 @@
 		},
 		"title": "Configurazione"
 	},
+	"cronTriggerField": {
+		"triggerFieldWindow": {
+			"every": "Ogni ",
+			"exactly": "Esattamente al",
+			"inastepwith": "Ogni",
+			"range": "In un intervallo"
+		}
+	},
 	"errors": {
 		"busy_wf_widgets": "I controlli visuali risultano occupati, controlla lo stato del server prima di riprovare.",
 		"detail": "Dettagli",
+		"domainCardinalityViolation": "Violazione della cardinalità del dominio",
 		"error_message": "Errore",
 		"error_moving_row": "Si è verificato un errore muovendo la riga",
 		"invalid_attributes": "I seguenti campi non sono stati compilati correttamente:",
@@ -929,12 +1053,16 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Controlla se il namespace, il nome del metodo, e i parametri del web service sono corretti"
 		},
 		"reference_invalid": "Il valore non rispetta il filtro impostato",
+		"requiredFieldMessage": "Questo campo è richiesto",
 		"server_error": "Impossibile contattare il server",
 		"server_error_code": "Si è verificato un errore nella spedizione dei dati al server: ",
 		"show_detail": "Mostra dettagli",
 		"template_error": "Errore in un template",
 		"unknown_error": "Si è verificato un errore",
 		"wrong_wf_widgets": "C'è stato un errore nel salvataggio dei seguenti controlli visuali: "
+	},
+	"filterWindow": {
+		"add": "Aggiungi filtro"
 	},
 	"info": {
 		"card_not_found": "La scheda non rispetta più il filtro impostato"
@@ -1097,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "Cerca in "
 			},
+			"showattach": "Visualizza allegati",
 			"subclass": "Sottoclasse",
 			"tabs": {
 				"attachments": "Allegati",
@@ -1282,6 +1411,7 @@
 		"link_cards_changed_values": "La selezione di \"{0}\" è stata aggiornata",
 		"only_filtered": "Le modifiche avranno effetto solo sulle schede che rispettano il filtro corrente",
 		"popup_block": "Abbiamo rilevato un blocco popup, disabilitato per eseguire questa operazione",
+		"saveMenuBeforeAccess": "Il menu deve essere salvato prima di accedere alla traduzione di questo elemento.",
 		"warning_message": "Attenzione"
 	},
 	"active": "Attivo",
@@ -1289,7 +1419,8 @@
 	"addProject": "Aggiungi Progetto",
 	"addTemplate": "Aggiungi Template",
 	"addView": "Aggiungi Vista",
-	"add_attachment_from_db": "Aggiungi allegato da database",
+	"add_attachment_from_dms": "Aggiungi allegato da DMS",
+	"address": "Indirizzo",
 	"attachfile": "Allega file",
 	"attachmentsLookup": "Lokup allegati email",
 	"attention": "Attenzione",
@@ -1302,11 +1433,18 @@
 	"cc": "Cc",
 	"checkFrequency": "Frequenza controllo (minuti)",
 	"choose_attachment_from_db": "Seleziona allegati da Database",
-	"class": "Classe",
+	"classLabel": "Classe",
+	"classAttribute": "Attributo di classe",
+	"className": "Nome classe",
 	"clean_word_pasted_text": "Pulisce il testo incollato da Word o altri editor di testo",
 	"clearFilter": "Cancella Filtro",
 	"clear_row_and_colun_privilege": "Rimuovi privilegi su righe e colonne",
+	"composeFromTemplate": "Componi dal template",
+	"contained": "Contenuto",
+	"containedorequal": "Contenuto o uguale",
 	"container": "Container",
+	"contains": "Contiene",
+	"containsorequal": "Contiene o uguale",
 	"controls": "Controlli",
 	"cql_filter": "Filtro CQL",
 	"description_": "Descrizione",
@@ -1334,6 +1472,9 @@
 	"front": "Frontale",
 	"global": "Globale",
 	"ifc_file": "File IFC",
+	"ipType": "Tipo IP",
+	"ipv4": "ipv4",
+	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "Non è permesso usare filtri con parametri calcolati",
 	"itIsNotAllowedFilterWithRuntimeParams": "Non è permesso usare filtri con parametri selezionabili dall'utente",
 	"last_checkin": "Ultimo Checkin",
@@ -1342,6 +1483,7 @@
 	"lock_timeout": "Tempo massimo di blocco (secondi)",
 	"loggedGroup": "Gruppo corrente",
 	"loggedUser": "Utente corrente",
+	"main": "Principale",
 	"mode": "Modalità",
 	"modifyFilter": "Modifica Filtro",
 	"modifyProject": "Modifica Progetto",
@@ -1354,10 +1496,13 @@
 	"open_3d_viewer": "Apri il visualizzatore 3D",
 	"pan": "Sposta",
 	"password": "Password",
+	"port": "Porta",
 	"privileges_on_columns": "Privilegi su colonne",
 	"privileges_on_rows": "Privilegi su righe",
 	"projects": "Progetti",
 	"reference_to_root": "Reference alla Root",
+	"relation": "Relazioni",
+	"remove": "Rimuovi",
 	"removeFilter": "Rimuovi Filtro",
 	"removeProject": "Rimuovi Progetto",
 	"removeTemplate": "Rimuovi Template",
@@ -1366,8 +1511,8 @@
 	"reset": "Reset",
 	"root": "Root",
 	"rotate": "Ruota",
-	"row_and_column_privileges": "Privilegi su righe e colonne",
 	"row_add": "Aggiungi una riga",
+	"row_and_column_privileges": "Privilegi su righe e colonne",
 	"row_delete": "Cancella la riga",
 	"row_edit": "Modifica la riga",
 	"search_filters": "Filtri di ricerca",
@@ -1376,24 +1521,25 @@
 	"set": "Impostato",
 	"setFilter": "Imposta Filtro",
 	"setLater": "Parametro di input",
+	"showHideThisFeatureOnly": "Mostra/nascondi solo questa funzione",
 	"show_name_of_locker_user": "Mostra il nome dell'utente che ha bloccato la scheda",
 	"side": "Laterale",
 	"sqlView": "Da SQL",
 	"subject": "Oggetto",
-	"targetClass": "Classe Origine",
+	"targetClass": "Classe origine",
 	"to": "A",
 	"top": "Alto",
 	"translations" : "Traduzioni",
 	"translations_enabled" : "Lingue abilitate",
 	"transparent": "Trasparenza",
 	"tree": "Albero",
+	"tree_modify": "Modifica albero",
 	"tree_navigation": "Alberi di navigazione",
-	"tree_navigation_add": "<em>Aggiungi albero di navigazione</em>",
-	"tree_navigation_attributes": "<em>Attributi albero</em>",
-	"tree_modify": "<em>Modifica albero</em>",
-	"tree_remove": "<em>Rimuovi albero</em>",
-	"tree_root_cql": "<em>Filtro CQL sulla radice</em>",
-	"trees_navigation": "<em>Alberi di navigazione</em>",
+	"tree_navigation_add": "Aggiungi albero di navigazione",
+	"tree_navigation_attributes": "Attributi albero",
+	"tree_remove": "Rimuovi albero",
+	"tree_root_cql": "Filtro CQL sulla radice",
+	"trees_navigation": "Alberi di navigazione",
 	"ui_configuration_for_groups": "Configurazione UI per il gruppo",
 	"unlock_all_cards": "Sblocca tutte le schede",
 	"uploading_attachment": "Caricamento allegato...",

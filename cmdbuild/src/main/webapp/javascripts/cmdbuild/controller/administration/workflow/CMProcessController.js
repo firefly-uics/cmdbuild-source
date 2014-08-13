@@ -6,9 +6,9 @@
 		// override
 		buildSubcontrollers: function() {
 			this.attributePanelController = Ext.create('CMDBuild.controller.administration.classes.CMClassAttributeController', this.view.attributesPanel);
-			this.cronPanelController = Ext.create('CMDBuild.controller.administration.workflow.CMProcessTasksController', this.view.cronPanel);
 			this.domainTabController = Ext.create('CMDBuild.controller.administration.classes.CMDomainTabController', this.view.domainGrid);
 			this.processFormController = Ext.create('CMDBuild.controller.administration.workflow.CMProcessFormController', this.view.processForm);
+			this.taskManagerPanelController = Ext.create('CMDBuild.controller.administration.workflow.CMProcessTasksController', this.view.taskManagerPanel);
 		},
 
 		// override
@@ -31,7 +31,7 @@
 				this.processFormController.onProcessSelected(processId);
 				this.attributePanelController.onClassSelected(processId);
 				this.domainTabController.onClassSelected(processId);
-				this.cronPanelController.onProcessSelected(processId, process);
+				this.taskManagerPanelController.onProcessSelected(processId, process);
 			}
 		},
 
@@ -40,9 +40,10 @@
 			this.processFormController.onAddClassButtonClick();
 			this.domainTabController.onAddClassButtonClick();
 			this.attributePanelController.onAddClassButtonClick();
-			this.cronPanelController.onAddClassButtonClick();
 
+			this.view.taskManagerPanel.setDisabled(true);
 			this.view.onAddClassButtonClick();
+
 			_CMMainViewportController.deselectAccordionByName('process');
 		}
 	});

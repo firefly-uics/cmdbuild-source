@@ -79,3 +79,4 @@ SELECT cm_create_class_attribute('LookUp', 'ParentType', 'character varying(64)'
 SELECT cm_create_class_attribute('LookUp', 'ParentId', 'integer', NULL, FALSE, FALSE, 'MODE: read');
 SELECT cm_create_class_attribute('LookUp', 'Number', 'integer', NULL, TRUE, FALSE, 'MODE: read');
 SELECT cm_create_class_attribute('LookUp', 'IsDefault', 'boolean', NULL, FALSE, FALSE, 'MODE: read');
+SELECT cm_create_class_attribute('LookUp', 'TranslationUuid', 'text', NULL, FALSE, FALSE, 'MODE: write|DESCR: Translations Uuid|STATUS: active');

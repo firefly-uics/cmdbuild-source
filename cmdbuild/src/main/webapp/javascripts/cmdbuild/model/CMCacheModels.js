@@ -31,6 +31,7 @@
 		fields: [
 			{name: "id",type: 'string'},
 			{name: "text",type: 'string'},
+			{name: "text_default",type: 'string'},
 			{name: "superclass",type: 'boolean'},
 			{name: "active",type: 'boolean'},
 			{name: "parent",type: 'string'},
@@ -39,6 +40,7 @@
 			{name: "name",type: 'string'},
 			{name: "priv_create",type: 'boolean'},
 			{name: "priv_write",type: 'boolean'},
+			{name: "ui_card_edit_mode",type: 'object'},
 			{name: "meta", type:"auto"},
 			// Process only
 			{name: "userstoppable",type: 'boolean'},
@@ -171,10 +173,14 @@
 			{name: "createPrivileges", type: "boolean"},
 			{name: "writePrivileges", type: "boolean"},
 			{name: "isMasterDetail", type: "boolean"},
-			{name: "description", type: "stirng"},
-			{name: "descr_1", type: "stirng"},
-			{name: "descr_2", type: "stirng"},
-			{name: "md_label", type: "string"}
+			{name: "description", type: "string"},
+			{name: "descr_1", type: "string"},
+			{name: "descr_2", type: "string"},
+			{name: "md_label", type: "string"},
+			{name: "description_default", type: "string"},
+			{name: "descr_1_default", type: "string"},
+			{name: "descr_2_default", type: "string"},
+			{name: "md_label_default", type: "string"}
 		],
 
 		getAttributes: function() {
@@ -292,6 +298,7 @@
 			{name: "groups", type: "string"},
 			{name: "query", type: "string"},
 			{name: "description", type: "string"},
+			{name: "description_default", type: "string"},
 			{name: "title", type: "string"}
 		]
 	});
@@ -314,6 +321,9 @@
 			type: "string"
 		}, {
 			name: "description",
+			type: "string"
+		}, {
+			name: "description_default",
 			type: "string"
 		}, {
 			name: "configuration",

@@ -8,4 +8,8 @@ public interface CmdbfConfiguration {
 	String getSchemaLocation();
 
 	void setSchemaLocation(String schemaLocation);
+
+	String getReconciliationRules();
+
+	void setReconciliationRules(String reconciliationRules);
 }

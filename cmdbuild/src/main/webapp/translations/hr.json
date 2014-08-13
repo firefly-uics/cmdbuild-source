@@ -1,6 +1,6 @@
 {
 	"description": "Hrvatski",
-	"release": "2.2-dev",
+	"release": "2.3-dev",
 	"administration": {
 		"description": "Upravljački modul",
 		"email": {
@@ -9,7 +9,6 @@
 				"account": "<em>Account</em>",
 				"active": "<em>Active</em>",
 				"add": "<em>Add account</em>",
-				"address": "<em>Address</em>",
 				"credentials": "<em>Credentials</em>",
 				"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 				"enableSsl": "<em>Enable SSL</em>",
@@ -36,7 +35,10 @@
 				"modify": "<em>Modify template</em>",
 				"remove": "<em>Remove template</em>",
 				"template": "<em>Template</em>",
-				"title": "<em>Templates</em>"
+				"title": "<em>Templates</em>",
+				"valuesWindow": {
+					"title": "<em>Edit values</em>",
+				}
 			}
 		},
 		"modClass": {
@@ -653,9 +655,122 @@
 				"user": "Korisničko ime"
 			}
 		},
+		"tasks": {
+			"add": "<em>Add task</em>",
+			"all": "<em>All</em>",
+			"clone": "<em>Clone task</em>",
+			"cronForm" : {
+				"dayOfMounth": "<em>Day of month</em>",
+				"advanced": "<em>Advanced</em>",
+				"basic": "<em>Basic</em>",
+				"dayOfWeek": "<em>Day of week</em>",
+				"everyDay": "<em>Every day</em>",
+				"everyHour": "<em>Every hour</em>",
+				"everyMounth": "<em>Every month</em>",
+				"everyYear": "<em>Every year</em>",
+				"hour": "<em>Hour</em>",
+				"minute": "<em>Minute</em>",
+				"mounth": "<em>Month</em>"
+			},
+			"errorMessages": {
+				"taskConnector": {
+					"emptyAttributeLevelMapping": "<em>Attribute level mapping table must be correctly filled.</em>",
+					"emptyClassLevelMapping": "<em>Class level mapping table must be correctly filled.</em>",
+					"emptyReferenceLevelMapping": "<em>Reference level mapping table must be correctly filled.</em>"
+				}
+			},
+			"modify": "<em>Modify task</em>",
+			"notificationForm": {
+				"account": "<em>Account</em>",
+				"template": "<em>Email template</em>",
+				"templateError": "<em>Error email template</em>",
+				"title": "<em>Send notification email</em>",
+				"titlePlur": "<em>Send notifications email</em>"
+			},
+			"remove": "<em>Remove task</em>",
+			"running": "<em>Running</em>",
+			"startLabel": "<em>Start task</em>",
+			"startOnSave": "<em>Start on save</em>",
+			"startWorkflow": "<em>Start process</em>",
+			"stopLabel": "<em>Stop task</em>",
+			"stopped": "<em>Stopped</em>",
+			"title": "<em>Task manager</em>",
+			"type": "<em>Type</em>",
+			"taskConnector": {
+				"attributeLevelMapping": "<em>Attribute mapping</em>",
+				"classAttribute": "<em>CMDBuild attribute</em>",
+				"classLevelMapping": "<em>Class mapping</em>",
+				"className": "<em>CMDBuild class</em>",
+				"cudActions": {
+					"create": "<em>Create</em>",
+					"delete": "<em>Delete</em>",
+					"update": "<em>Update</em>"
+				},
+				"dataSourceDbFieldset": "<em>Datasource: Relational database</em>",
+				"dataSourceLdapFieldset": "<em>Datasource: LDAP directory</em>",
+				"dbName": "<em>Database name</em>",
+				"deletionType": "<em>Deletion type</em>",
+				"deletionTypes": {
+					"deleteCard": "<em>Delete card</em>",
+					"changeStatus": "<em>Change status</em>"
+				},
+				"domainName": "<em>Domain name</em>",
+				"instanceName": "<em>Instance</em>",
+				"isKey": "<em>Is key</em>",
+				"recipientAddress": "<em>Recipient address</em>",
+				"referenceMapping": "<em>References mapping</em>",
+				"senderAccount": "<em>Sender account</em>",
+				"sourceAttribute": "<em>External attribute</em>",
+				"sourceFilter": "<em>Entity filter</em>",
+				"sourceName": "<em>External entity</em>"
+			},
+			"taskEmail": {
+				"attachmentsCategory": "<em>Category</em>",
+				"bodyParsing": "<em>Body parsing</em>",
+				"emailAccount": "<em>Email account</em>",
+				"fromAddressFilter": "<em>Filter on FromAddress</em>",
+				"parsingKeyEnd": "<em>Key end delimiter</em>",
+				"parsingKeyStart": "<em>Key start delimeter</em>",
+				"parsingValueEnd": "<em>Value end delimiter</em>",
+				"parsingValueStart": "<em>Value start delimeter</em>",
+				"saveToAlfresco": "<em>Save attachments to Alfresco</em>",
+				"subjectFilter": "<em>Filter on Subject</em>"
+			},
+			"taskEvent": {
+				"eventPhases": {
+					"afterCreate": "<em>After creation</em>",
+					"afterUpdate": "<em>After update</em>",
+					"beforeDelete": "<em>Before delete</em>",
+					"beforeUpdate": "<em>Before update</em>"
+				},
+				"groupsToApply": "<em>Group to apply</em>",
+				"phase": "<em>Phase</em>"
+			},
+			"tasksTypes": {
+				"connector": "<em>Connector</em>",
+				"email": "<em>Email</em>",
+				"event": "<em>Event</em>",
+				"eventTypes": {
+					"asynchronous": "<em>Asynchronous</em>",
+					"synchronous": "<em>Synchronous</em>"
+				},
+				"workflow": "<em>Process</em>"
+			},
+			"workflow": "<em>Process</em>",
+			"workflowForm": {
+				"attributes": "<em>Process attributes</em>"
+			}
+		},
 		"welcome": {
 			"body": "Upravljački modul.",
 			"title": "Dobro došli"
+		}
+	},
+	"bimMod": {
+		"administration": {
+			"projects": {
+				"importIfc": "<em>Import IFC</em>"
+			}
 		}
 	},
 	"common": {
@@ -667,8 +782,8 @@
 			"clone": "Kloniraj",
 			"close": "Zatvori",
 			"confirm": "Potvrdi",
-			"export": "Izvezi",
-			"import": "Uvezi",
+			"exportLabel": "Izvezi",
+			"importLabel": "Uvezi",
 			"load": "Učitaj",
 			"modify": "Izmjeni",
 			"next": "<em>Next</em>",
@@ -784,9 +899,18 @@
 		},
 		"title": "Postavke"
 	},
+	"cronTriggerField": {
+		"triggerFieldWindow": {
+			"every": "<em>Every </em>",
+			"exactly": "<em>At an exact</em>",
+			"inastepwith": "<em>In a step width</em>",
+			"range": "<em>In a range</em>"
+		}
+	},
 	"errors": {
 		"busy_wf_widgets": "Vizualne kontrole su nedostupne, provjerite status servera prije ponovnog pokušaja.",
 		"detail": "Detalji",
+		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
 		"error_message": "Greška",
 		"error_moving_row": "Došlo je do greške prilikom obrade reda",
 		"invalid_attributes": "Slijedeća polja nisu redno popunjena:",
@@ -929,12 +1053,16 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Provjerite jesu li prostor imena, naziv metode i parametri web servisa točni."
 		},
 		"reference_invalid": "Vrijednost ne zadovoljava postavljeni filter",
+		"requiredFieldMessage": "<em>This field is required</em>",
 		"server_error": "Server je trenutno nedostupan",
 		"server_error_code": "Došlo je do greške prilikom obrade podataka na serveru: ",
 		"show_detail": "Prikaži detalje",
 		"template_error": "Greška u predlošku (templateu)",
 		"unknown_error": "Došlo je do greške",
 		"wrong_wf_widgets": "Došlo je do greške prilikom snimanja slijedeće vizualne kotrole: "
+	},
+	"filterWindow": {
+		"add": "<em>Add filter</em>"
 	},
 	"info": {
 		"card_not_found": "Kartica ne odgovara trenutnim uvjetima filtriranja"
@@ -975,7 +1103,7 @@
 			"equals": "Jednake",
 			"filter": "Filter",
 			"fromSelection": "Iz odabira",
-			"functions" : "<em>Function</em>",
+			"functions": "<em>Function</em>",
 			"go_filter": "Filtriraj",
 			"like": "Koji sadrže",
 			"list": "Lista",
@@ -1097,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "Traži u "
 			},
+			"showattach": "Prikaži priloge",
 			"subclass": "Podklase",
 			"tabs": {
 				"attachments": "Prilozi",
@@ -1282,6 +1411,7 @@
 		"link_cards_changed_values": "Izabrani(a) \"{0}\" je ažuriran(a)",
 		"only_filtered": "Izjmene će biti primjenjene samo na kartice podataka koje zadovoljavaju postavljeni filter.",
 		"popup_block": "Detektiran je program za blokiranje popup prozora, isključite ga kako biste mogli nastaviti operaciju",
+		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "Pažnja"
 	},
 	"active": "Aktivan",
@@ -1289,7 +1419,8 @@
 	"addProject": "<em>Add Project</em>",
 	"addTemplate": "Dodaj Predložak",
 	"addView": "Dodaj pogled",
-	"add_attachment_from_db": "<em>Add attachments from database</em>",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
+	"address": "<em>Address</em>",
 	"attachfile": "<em>Attach File</em>",
 	"attachmentsLookup": "Pretraživanje e-mail priloga",
 	"attention": "Pažnja",
@@ -1302,11 +1433,18 @@
 	"cc": "Cc",
 	"checkFrequency": "Učestalost provjere (u minutama)",
 	"choose_attachment_from_db": "<em>Choose attachments from Database</em>",
-	"class": "<em>Class</em>",
+	"classLabel": "<em>Class</em>",
+	"classAttribute": "<em>Class attribute</em>",
+	"className": "<em>Class name</em>",
 	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
 	"clearFilter": "Očisti Filter",
 	"clear_row_and_colun_privilege": "Obriši prava pristupa na redove i kolumne",
+	"composeFromTemplate": "<em>Compose from template</em>",
+	"contained": "<em>Contained</em>",
+	"containedorequal": "<em>Contained or equal</em>",
 	"container": "<em>Container</em>",
+	"contains": "<em>Contains</em>",
+	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "<em>Controls</em>",
 	"cql_filter": "<em>CQL filter</em>",
 	"description_": "Opis",
@@ -1334,6 +1472,9 @@
 	"front": "<em>Front</em>",
 	"global": "Global",
 	"ifc_file": "<em>File IFC</em>",
+	"ipType": "<em>IP type</em>",
+	"ipv4": "ipv4",
+	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "Nije dozvoljeno koristiti filter za izračunatim parametrima",
 	"itIsNotAllowedFilterWithRuntimeParams": "Nije dozvoljeno koristiti filter sa korisnički odabranim parametrima",
 	"last_checkin": "<em>Last checkin</em>",
@@ -1342,6 +1483,7 @@
 	"lock_timeout": "Istek zaključavanja (sekundi)",
 	"loggedGroup": "Prijavljena Grupa",
 	"loggedUser": "Prijavljeni Korisnik",
+	"main": "<em>Main</em>",
 	"mode": "<em>Mode</em>",
 	"modifyFilter": "Uredi filter",
 	"modifyProject": "<em>Modify Project</em>",
@@ -1354,10 +1496,13 @@
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
 	"pan": "<em>Pan</em>",
 	"password": "<em>Password</em>",
+	"port": "<em>Port</em>",
 	"privileges_on_columns": "Prava nad kolumnama",
 	"privileges_on_rows": "Prava nad redovima",
 	"projects": "Projects",
 	"reference_to_root": "<em>Reference to Root</em>",
+	"relation": "<em>Relation</em>",
+	"remove": "<em>Remove</em>",
 	"removeFilter": "Ukloni filter",
 	"removeProject": "<em>Remove Project</em>",
 	"removeTemplate": "Ukloni Predložak",
@@ -1366,8 +1511,8 @@
 	"reset": "<em>Reset</em>",
 	"root": "<em>Root</em>",
 	"rotate": "<em>Rotate</em>",
-	"row_and_column_privileges": "Prava nad redovima i kolumnama",
 	"row_add": "<em>Add row</em>",
+	"row_and_column_privileges": "Prava nad redovima i kolumnama",
 	"row_delete": "<em>Delete row</em>",
 	"row_edit": "<em>Edit row</em>",
 	"search_filters": "Filteri za pretraživanje",
@@ -1376,6 +1521,7 @@
 	"set": "Postavi",
 	"setFilter": "Podesi Filter",
 	"setLater": "Ulazni Parametar",
+	"showHideThisFeatureOnly": "<em>Show/hide this feature only</em>",
 	"show_name_of_locker_user": "Prikaži ime korisnika koji je zaključao",
 	"side": "<em>Side</em>",
 	"sqlView": "Iz SQL-a",
@@ -1387,10 +1533,10 @@
 	"translations_enabled" : "<em>Enabled languages</em>",
 	"transparent": "<em>Transparent</em>",
 	"tree": "<em>Tree</em>",
+	"tree_modify": "<em>Modify tree</em>",
 	"tree_navigation": "<em>Navigation tree</em>",
 	"tree_navigation_add": "<em>Add navigation tree</em>",
 	"tree_navigation_attributes": "<em>Navigation tree attributes</em>",
-	"tree_modify": "<em>Modify tree</em>",
 	"tree_remove": "<em>Remove tree</em>",
 	"tree_root_cql": "<em>Root CQL filter</em>",
 	"trees_navigation": "<em>Navigation trees</em>",

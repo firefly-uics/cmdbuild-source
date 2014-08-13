@@ -6,9 +6,9 @@ import static org.cmdbuild.common.template.TemplateResolvers.identity;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.template.TemplateResolver;
+import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.logic.Action;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
-import org.cmdbuild.model.email.Email;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;
@@ -86,6 +86,7 @@ public class SendTemplateEmail implements Action {
 		final EmailService emailService = emailServiceFactory.create(ofInstance(emailAccount));
 		final Template template = emailTemplateSupplier.get();
 		final Email email = new Email();
+		email.setFromAddress(templateResolver.resolve(template.getFrom()));
 		email.setToAddresses(templateResolver.resolve(template.getTo()));
 		email.setCcAddresses(templateResolver.resolve(template.getCc()));
 		email.setBccAddresses(templateResolver.resolve(template.getBcc()));

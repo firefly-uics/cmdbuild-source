@@ -1,8 +1,9 @@
 package org.cmdbuild.servlets.json;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CARD_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
+import static org.cmdbuild.logic.dms.Utils.valueForCategory;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 
 import java.io.IOException;
 import java.util.List;
@@ -62,10 +63,10 @@ public class Attachments extends JSONBaseWithSpringContext {
 		final LookupType lookupType = LookupType.newInstance() //
 				.withName(dmsLogic().getCategoryLookupType()) //
 				.build();
-		final Iterable<Lookup> lookups = lookupStore().listForType(lookupType);
+		final Iterable<Lookup> lookups = lookupStore().readAll(lookupType);
 		final List<JsonCategoryDefinition> jsonCategories = Lists.newArrayList();
 		for (final Lookup lookup : from(lookups).filter(ACTIVE_ONLY)) {
-			final DocumentTypeDefinition categoryDefinition = categoryDefinition(lookup.description);
+			final DocumentTypeDefinition categoryDefinition = categoryDefinition(valueForCategory(lookup));
 			jsonCategories.add(JsonCategoryDefinition.from(lookup, categoryDefinition));
 		}
 		return JsonResponse.success(JsonAttachmentsContext.from(jsonCategories));

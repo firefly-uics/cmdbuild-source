@@ -393,7 +393,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	}
 
 	private String nativeValueToWsString(final CMAttributeType<?> type, final Object value) {
-		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value) {
+		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value, translationFacade,lookupStore()) {
 
 			@Override
 			public void visit(final EntryTypeAttributeType attributeType) {

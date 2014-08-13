@@ -1,5 +1,6 @@
 package org.cmdbuild.auth.privileges.constants;
 
+
 public enum PrivilegeMode {
 
 	READ("r"), //
@@ -14,6 +15,15 @@ public enum PrivilegeMode {
 
 	public String getValue() {
 		return this.value;
+	}
+	
+	public static PrivilegeMode of(final Object object) {
+		for (final PrivilegeMode element : values()) {
+			if (element.getValue().equals(object)) {
+				return element;
+			}
+		}
+		return NONE;
 	}
 
 }

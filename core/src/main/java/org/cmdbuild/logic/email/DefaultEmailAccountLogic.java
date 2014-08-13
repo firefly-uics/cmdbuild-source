@@ -4,7 +4,7 @@ import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -344,7 +344,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	@Override
 	public Long create(final Account account) {
 		logger.info(marker, "creating account '{}'", account);
-		final List<StorableEmailAccount> elements = store.list();
+		final Collection<StorableEmailAccount> elements = store.readAll();
 		assureNoOneWithName(account.getName(), elements);
 		final Account readyAccount = isEmpty(elements) ? AlwaysDefault.of(account) : NeverDefault.of(account);
 		final StorableEmailAccount emailAccount = ACCOUNT_TO_EMAIL_ACCOUNT.apply(readyAccount);
@@ -367,7 +367,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	@Override
 	public Iterable<Account> getAll() {
 		logger.info(marker, "getting all accounts");
-		return from(store.list()) //
+		return from(store.readAll()) //
 				.transform(EMAIL_ACCOUNT_TO_ACCOUNT);
 	}
 
@@ -396,7 +396,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	@Override
 	public void setDefault(final String name) {
 		logger.info(marker, "setting to default '{}'", name);
-		final List<StorableEmailAccount> elements = store.list();
+		final Collection<StorableEmailAccount> elements = store.readAll();
 		assureOnlyOneWithName(name, elements);
 		boolean alreadyDefault = false;
 		for (final StorableEmailAccount element : from(elements).filter(IS_DEFAULT)) {
@@ -427,7 +427,7 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 	}
 
 	private void assureOnlyOneWithName(final String name) {
-		assureOnlyOneWithName(name, store.list());
+		assureOnlyOneWithName(name, store.readAll());
 	}
 
 	private void assureOnlyOneWithName(final String name, final Iterable<StorableEmailAccount> elements) {

@@ -6,9 +6,13 @@ import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.ForwardingDomain;
 
-public class DomainHistory extends ForwardingDomain {
+public class DomainHistory extends ForwardingDomain implements HistoricEntryType<CMDomain> {
 
 	public static CMDomain history(final CMDomain current) {
+		return of(current);
+	}
+
+	public static CMDomain of(final CMDomain current) {
 		return new DomainHistory(current);
 	}
 
@@ -25,8 +29,18 @@ public class DomainHistory extends ForwardingDomain {
 	}
 
 	@Override
+	public CMDomain getType() {
+		return current;
+	}
+
+	@Override
 	public CMIdentifier getIdentifier() {
 		return current.getIdentifier();
+	}
+
+	@Override
+	public Long getId() {
+		return current.getId();
 	}
 
 	@Override

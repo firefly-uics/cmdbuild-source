@@ -1,6 +1,6 @@
 {
 	"description": "English",
-	"release": "2.2-dev",
+	"release": "2.3-dev",
 	"administration": {
 		"description": "Administration module",
 		"email": {
@@ -35,7 +35,10 @@
 				"modify": "Modify template",
 				"remove": "Remove template",
 				"template": "Template",
-				"title": "Templates"
+				"title": "Templates",
+				"valuesWindow": {
+					"title": "Edit values",
+				}
 			}
 		},
 		"modClass": {
@@ -653,7 +656,6 @@
 			}
 		},
 		"tasks": {
-			"active": "Active",
 			"add": "Add task",
 			"all": "All",
 			"clone": "Clone task",
@@ -670,65 +672,79 @@
 				"minute": "Minute",
 				"mounth": "Month"
 			},
+			"errorMessages": {
+				"taskConnector": {
+					"emptyAttributeLevelMapping": "Attribute level mapping table must be correctly filled.",
+					"emptyClassLevelMapping": "Class level mapping table must be correctly filled.",
+					"emptyReferenceLevelMapping": "Reference level mapping table must be correctly filled."
+				}
+			},
 			"modify": "Modify task",
+			"notificationForm": {
+				"account": "Account",
+				"template": "Email template",
+				"templateError": "Error email template",
+				"title": "Send notification email",
+				"titlePlur": "Send notifications email"
+			},
 			"remove": "Remove task",
 			"running": "Running",
-			"sendMail": "Send mail",
 			"startLabel": "Start task",
 			"startOnSave": "Start on save",
-			"startWorkflow": "Start workflow",
+			"startWorkflow": "Start process",
 			"stopLabel": "Stop task",
 			"stopped": "Stopped",
-			"template": "Template",
 			"title": "Task manager",
 			"type": "Type",
 			"taskConnector": {
-				"attributeLevelMapping": "@@ Attribute mapping",
-				"classLevelMapping": "@@ Class mapping",
-				"datasourceDbFieldset": "Datasource: Relational database",
-				"datasourceLdapFieldset": "Datasource: LDAP directory",
+				"attributeLevelMapping": "Attribute mapping",
+				"classAttribute": "CMDBuild attribute",
+				"classLevelMapping": "Class mapping",
+				"className": "CMDBuild class",
+				"cudActions": {
+					"create": "Create",
+					"delete": "Delete",
+					"update": "Update"
+				},
+				"dataSourceDbFieldset": "Datasource: Relational database",
+				"dataSourceLdapFieldset": "Datasource: LDAP directory",
 				"dbName": "Database name",
-				"deletionType": "@@ Deletion type",
+				"deletionType": "Deletion type",
 				"deletionTypes": {
-					"logic": "@@ Logic",
-					"notLogic": "@@ Not logic"
+					"deleteCard": "Delete card",
+					"changeStatus": "Change status"
 				},
-				"domainName": "@@ Domain name",
-				"isKey": "@@ Is key",
-				"operations": "@@ Operations",
-				"operationsTypes": {
-					"filter": "@@ Filter",
-					"none": "@@ None"
-				},
+				"domainName": "Domain name",
+				"instanceName": "Instance",
+				"isKey": "Is key",
 				"recipientAddress": "Recipient address",
-				"referenceMapping": "@@ References mapping",
+				"referenceMapping": "References mapping",
 				"senderAccount": "Sender account",
-				"toSynchronize": "To synchronize",
-				"viewAttribute": "@@ View attribute",
-				"viewName": "@@ View name",
-				"viewPrefix": "View prefix"
+				"sourceAttribute": "External attribute",
+				"sourceFilter": "Entity filter",
+				"sourceName": "External entity"
 			},
 			"taskEmail": {
 				"attachmentsCategory": "Category",
 				"bodyParsing": "Body parsing",
 				"emailAccount": "Email account",
 				"fromAddressFilter": "Filter on FromAddress",
-				"parsingKeyEnd": "Key end",
-				"parsingKeyInit": "Key init",
-				"parsingValueEnd": "Value end",
-				"parsingValueInit": "Value init",
+				"parsingKeyEnd": "Key end delimiter",
+				"parsingKeyStart": "Key start delimeter",
+				"parsingValueEnd": "Value end delimiter",
+				"parsingValueStart": "Value start delimeter",
 				"saveToAlfresco": "Save attachments to Alfresco",
 				"subjectFilter": "Filter on Subject"
 			},
 			"taskEvent": {
-				"eventPhases" : {
-					"afterCreate": "@@ After creation",
-					"afterUpdate": "@@ After update",
-					"beforeDelete": "@@ Before delete",
-					"beforeUpdate": "@@ Before update"
+				"eventPhases": {
+					"afterCreate": "After creation",
+					"afterUpdate": "After update",
+					"beforeDelete": "Before delete",
+					"beforeUpdate": "Before update"
 				},
-				"groupsToApply": "@@ Group to apply",
-				"phase": "@@ Phase"
+				"groupsToApply": "Group to apply",
+				"phase": "Phase"
 			},
 			"tasksTypes": {
 				"connector": "Connector",
@@ -738,16 +754,23 @@
 					"asynchronous": "Asynchronous",
 					"synchronous": "Synchronous"
 				},
-				"workflow": "Workflow"
+				"workflow": "Process"
 			},
-			"workflow": "Workflow",
+			"workflow": "Process",
 			"workflowForm": {
-				"attributes": "Workflow attributes",
+				"attributes": "Process attributes"
 			}
 		},
 		"welcome": {
 			"body": "Administration module.",
 			"title": "Welcome"
+		}
+	},
+	"bimMod": {
+		"administration": {
+			"projects": {
+				"importIfc": "Import IFC"
+			}
 		}
 	},
 	"common": {
@@ -759,8 +782,8 @@
 			"clone": "Clone",
 			"close": "Close",
 			"confirm": "OK",
-			"export": "Export",
-			"import": "Import",
+			"exportLabel": "Export",
+			"importLabel": "Import",
 			"load": "Load",
 			"modify": "Modify",
 			"next": "Next",
@@ -876,7 +899,7 @@
 		},
 		"title": "Configure"
 	},
-	"cron": {
+	"cronTriggerField": {
 		"triggerFieldWindow": {
 			"every": "Every ",
 			"exactly": "At an exact",
@@ -887,6 +910,7 @@
 	"errors": {
 		"busy_wf_widgets": "The visual controls are busy, check the status of the server before trying again.",
 		"detail": "Details",
+		"domainCardinalityViolation": "Domain cardinality violation",
 		"error_message": "Error",
 		"error_moving_row": "An error occourred while moving the row",
 		"invalid_attributes": "The following fields have not been filled correctly:",
@@ -1029,6 +1053,7 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Check if the namespace, the method name and the parameters of the web service are correct"
 		},
 		"reference_invalid": "The value doesn't match the filter",
+		"requiredFieldMessage": "This field is required",
 		"server_error": "Server unreachable",
 		"server_error_code": "An error has occurred while sending data to the server: ",
 		"show_detail": "Show details",
@@ -1200,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "Search in "
 			},
+			"showattach": "Show attachments",
 			"subclass": "Subclass",
 			"tabs": {
 				"attachments": "Attachments",
@@ -1385,6 +1411,7 @@
 		"link_cards_changed_values": "The selection of \"{0}\" has been updated",
 		"only_filtered": "The changes will be applied only to the cards that meet the current filter",
 		"popup_block": "We have detected that you are using popup blocking software, please disable to run operation",
+		"saveMenuBeforeAccess": "The menu has to been saved before access at the translations of this element.",
 		"warning_message": "Warning"
 	},
 	"active": "Active",
@@ -1392,7 +1419,7 @@
 	"addProject": "Add Project",
 	"addTemplate": "Add Template",
 	"addView": "Add View",
-	"add_attachment_from_db": "Add attachments from database",
+	"add_attachment_from_dms": "Add attachments from DMS",
 	"address": "Address",
 	"attachfile": "Attach File",
 	"attachmentsLookup": "Email attachments Lookup",
@@ -1406,13 +1433,18 @@
 	"cc": "Cc",
 	"checkFrequency": "Check frequency (minutes)",
 	"choose_attachment_from_db": "Choose attachments from Database",
-	"class": "Class",
+	"classLabel": "Class",
 	"classAttribute": "Class attribute",
 	"className": "Class name",
 	"clean_word_pasted_text": "Clean the text pasted from Word or other Rich Text applications",
 	"clearFilter": "Clear Filter",
 	"clear_row_and_colun_privilege": "Clear rows and columns privileges",
+	"composeFromTemplate": "Compose from template",
+	"contained": "Contained",
+	"containedorequal": "Contained or equal",
 	"container": "Container",
+	"contains": "Contains",
+	"containsorequal": "Contains or equal",
 	"controls": "Controls",
 	"cql_filter": "CQL filter",
 	"description_": "Description",
@@ -1426,7 +1458,7 @@
 	"enabled": "Enabled",
 	"error": "Error",
 	"error_bimserver_connection": "I'm not able to connect to Bimserver",
-	"export": "Export",
+	"exportLabel": "Export",
 	"expose": "Expose",
 	"file_name": "File name",
 	"filter": "Filter",
@@ -1440,6 +1472,9 @@
 	"front": "Front",
 	"global": "Global",
 	"ifc_file": "File IFC",
+	"ipType": "IP type",
+	"ipv4": "ipv4",
+	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "It's not allowed to use a filter with calculated parameters",
 	"itIsNotAllowedFilterWithRuntimeParams": "It's not allowed to use a filter with user selectable parameters",
 	"last_checkin": "Last checkin",
@@ -1466,6 +1501,8 @@
 	"privileges_on_rows": "Rows privileges",
 	"projects": "Projects",
 	"reference_to_root": "Reference to Root",
+	"relation": "Relation",
+	"remove": "Remove",
 	"removeFilter": "Remove Filter",
 	"removeProject": "Remove Project",
 	"removeTemplate": "Remove Template",
@@ -1474,16 +1511,17 @@
 	"reset": "Reset",
 	"root": "Root",
 	"rotate": "Rotate",
-	"row_and_column_privileges": "Rows and columns privileges",
 	"row_add": "Add row",
+	"row_and_column_privileges": "Rows and columns privileges",
 	"row_delete": "Delete row",
 	"row_edit": "Edit row",
-	"search_filters": "Search Filters",
+	"search_filters": "Search filters",
 	"select_a_class": "Select a Class",
 	"selected_object": "Selected Object",
 	"set": "Set",
 	"setFilter": "Set Filter",
 	"setLater": "Input Parameter",
+	"showHideThisFeatureOnly": "Show/hide this feature only",
 	"show_name_of_locker_user": "Show locker username",
 	"side": "Side",
 	"sqlView": "From SQL",
@@ -1495,10 +1533,10 @@
 	"translations_enabled" : "Enabled languages",
 	"transparent": "Transparent",
 	"tree": "Tree",
+	"tree_modify": "Modify tree",
 	"tree_navigation": "Navigation tree",
 	"tree_navigation_add": "Add navigation tree",
 	"tree_navigation_attributes": "Navigation tree attributes",
-	"tree_modify": "Modify tree",
 	"tree_remove": "Remove tree",
 	"tree_root_cql": "Root CQL filter",
 	"trees_navigation": "Navigation trees",
@@ -1509,8 +1547,8 @@
 	"username": "Username",
 	"value": "Value",
 	"views": "Views",
-	"workflow" : "Workflow",
-	"workflow_attributes" : "Workflow attributes",
+	"workflow": "Process",
+	"workflow_attributes" : "Process attributes",
 	"workflow_by_cql": "by Cql",
 	"workflow_by_name": "by name",
 	"workflow_cql_filter": "Cql filter",

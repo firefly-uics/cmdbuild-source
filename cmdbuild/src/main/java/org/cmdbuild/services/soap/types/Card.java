@@ -21,6 +21,8 @@ import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.logger.Log;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.Lists;
+
 public class Card {
 
 	public interface ValueSerializer {
@@ -31,6 +33,7 @@ public class Card {
 
 	public static final ValueSerializer LEGACY_VALUE_SERIALIZER = new LegacyValueSerializer();
 	public static final ValueSerializer HACK_VALUE_SERIALIZER = new HackValueSerializer();
+	private final List<Attribute> NO_ATTRIBUTES = Lists.newArrayList();
 
 	private static abstract class AbstractValueSerializer implements ValueSerializer {
 
@@ -169,8 +172,7 @@ public class Card {
 			tmpAttribute.setName(attributeName);
 			tmpAttribute.setValue(value);
 			if (isLookUpReferenceOrForeignKey(attributeType)) {
-				final IdAndDescription foreignReference = (IdAndDescription) cardModel
-						.getAttribute(attributeName);
+				final IdAndDescription foreignReference = (IdAndDescription) cardModel.getAttribute(attributeName);
 				if (foreignReference != null && foreignReference.getId() != null) {
 					tmpAttribute.setCode(foreignReference.getId().toString());
 				}
@@ -271,7 +273,7 @@ public class Card {
 	}
 
 	public List<Attribute> getAttributeList() {
-		return attributeList;
+		return (attributeList != null) ? attributeList : NO_ATTRIBUTES;
 	}
 
 	public void setAttributeList(final List<Attribute> attributeList) {

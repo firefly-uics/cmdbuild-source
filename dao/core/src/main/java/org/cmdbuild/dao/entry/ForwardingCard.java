@@ -25,5 +25,10 @@ public abstract class ForwardingCard extends ForwardingEntry implements CMCard {
 	public Object getDescription() {
 		return delegate.getDescription();
 	}
+	
+	@Override
+	public Long getCurrentId() {
+		return delegate.getCurrentId();
+	}
 
 }

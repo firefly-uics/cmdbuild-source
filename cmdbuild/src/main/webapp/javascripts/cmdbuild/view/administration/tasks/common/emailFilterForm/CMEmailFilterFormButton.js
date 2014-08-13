@@ -13,10 +13,6 @@
 		border: true,
 		margin: '2 0 0 2',
 
-		initComponent: function() {
-			this.callParent(arguments);
-		},
-
 		handler: function() {
 			this.delegate.cmOn('onFilterButtonClick', {
 				titleWindow: this.titleWindow

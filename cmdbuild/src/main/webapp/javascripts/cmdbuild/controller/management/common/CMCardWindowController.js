@@ -1,5 +1,4 @@
 Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
-
 	extend: "CMDBuild.controller.management.classes.CMBaseCardPanelController",
 
 	mixins: {
@@ -53,13 +52,23 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 	},
 
 	onSaveCardClick: function() {
-		var form = this.getForm(),
-			params = this.buildSaveParams();
+		var form = this.getForm();
+		var params = this.buildSaveParams();
 
 		this.beforeRequest(form);
 
+		// Check form fields validity
 		if (form.isValid()) {
 			this.doFormSubmit(params);
+		} else {
+			CMDBuild.Msg.error(
+				null,
+				Ext.String.format(
+					'<p class="{0}">{1}</p>',
+					CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes
+				) + CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form),
+				false
+			);
 		}
 	},
 

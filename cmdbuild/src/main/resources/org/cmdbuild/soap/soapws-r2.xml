@@ -24,7 +24,12 @@
 	<bean id="privateProxy" factory-bean="privateProxyBuilder"
 		factory-method="build" />
 
-	<jaxws:endpoint address="/Private">
+	<jaxws:endpoint address="/soap/Private">
+		<jaxws:properties>
+			<!-- Uncomment the next two elements for disable replay attacks check -->
+			<!-- <entry key="ws-security.enable.nonce.cache" value="false" /> -->
+			<!-- <entry key="ws-security.enable.timestamp.cache" value="false" /> -->
+		</jaxws:properties>
 		<jaxws:implementor>
 			<bean factory-bean="privateProxy" factory-method="get" />
 		</jaxws:implementor>
@@ -33,6 +38,8 @@
 		</jaxws:binding>
 		<jaxws:inInterceptors>
 			<ref bean="operationUserInterceptor" />
+			<!-- Uncomment the next element for non-standard web service clients -->
+			<!-- <ref bean="addDefaultNamespaceInterceptor" /> -->
 			<ref bean="cmdbuildPasswordCallbackInterceptor" />
 		</jaxws:inInterceptors>
 	</jaxws:endpoint>

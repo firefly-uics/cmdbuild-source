@@ -16,13 +16,14 @@ import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.data.store.task.TaskVisitor;
 import org.cmdbuild.logic.taskmanager.DefaultTaskManagerLogic;
-import org.cmdbuild.logic.taskmanager.LogicAndStoreConverter;
-import org.cmdbuild.logic.taskmanager.ReadEmailTask;
 import org.cmdbuild.logic.taskmanager.ScheduledTask;
-import org.cmdbuild.logic.taskmanager.SchedulerFacade;
-import org.cmdbuild.logic.taskmanager.SynchronousEventFacade;
-import org.cmdbuild.logic.taskmanager.SynchronousEventTask;
 import org.cmdbuild.logic.taskmanager.Task;
+import org.cmdbuild.logic.taskmanager.event.SynchronousEventFacade;
+import org.cmdbuild.logic.taskmanager.scheduler.SchedulerFacade;
+import org.cmdbuild.logic.taskmanager.scheduler.SchedulerFacade.Callback;
+import org.cmdbuild.logic.taskmanager.store.LogicAndStoreConverter;
+import org.cmdbuild.logic.taskmanager.task.email.ReadEmailTask;
+import org.cmdbuild.logic.taskmanager.task.event.synchronous.SynchronousEventTask;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -142,7 +143,7 @@ public class DefaultTaskManagerLogicTest {
 				.withRunningStatus(ACTIVE_STATUS) //
 				.withCronExpression(CRON_EXPRESSION) //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(first, second));
 
 		// when
@@ -151,7 +152,7 @@ public class DefaultTaskManagerLogicTest {
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(converter, times(2)).from(any(org.cmdbuild.data.store.task.Task.class));
 		inOrder.verify(storeAsSourceConverter).toLogic();
 		inOrder.verifyNoMoreInteractions();
@@ -170,7 +171,7 @@ public class DefaultTaskManagerLogicTest {
 				.newInstance() //
 				.withId(2L) //
 				.build();
-		when(store.list()) //
+		when(store.readAll()) //
 				.thenReturn(asList(first, second));
 
 		// when
@@ -179,7 +180,7 @@ public class DefaultTaskManagerLogicTest {
 		// then
 		final InOrder inOrder = inOrder(converter, logicAsSourceConverter, storeAsSourceConverter, store,
 				scheduledTaskFacade, synchronousEventFacade);
-		inOrder.verify(store).list();
+		inOrder.verify(store).readAll();
 		inOrder.verify(converter, times(2)).from(any(org.cmdbuild.data.store.task.Task.class));
 		inOrder.verify(storeAsSourceConverter).toLogic();
 		inOrder.verifyNoMoreInteractions();
@@ -263,7 +264,7 @@ public class DefaultTaskManagerLogicTest {
 		inOrder.verify(store).read(storable);
 		inOrder.verify(converter).from(createdOne);
 		inOrder.verify(storeAsSourceConverter).toLogic();
-		inOrder.verify(scheduledTaskFacade).create(convertedAfterRead);
+		inOrder.verify(scheduledTaskFacade).create(eq(convertedAfterRead), any(Callback.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -297,7 +298,7 @@ public class DefaultTaskManagerLogicTest {
 		inOrder.verify(storeAsSourceConverter).toLogic();
 		inOrder.verify(scheduledTaskFacade).delete(scheduledTaskCaptor.capture());
 		inOrder.verify(store).update(DUMMY_STORABLE_TASK);
-		inOrder.verify(scheduledTaskFacade).create(task);
+		inOrder.verify(scheduledTaskFacade).create(eq(task), any(Callback.class));
 		inOrder.verifyNoMoreInteractions();
 
 		final ScheduledTask captured = scheduledTaskCaptor.getValue();
@@ -348,7 +349,7 @@ public class DefaultTaskManagerLogicTest {
 		inOrder.verify(store).read(eq(42L));
 		inOrder.verify(converter).from(stored);
 		inOrder.verify(storeAsSourceConverter).toLogic();
-		inOrder.verify(scheduledTaskFacade).create(any(ReadEmailTask.class));
+		inOrder.verify(scheduledTaskFacade).create(any(ReadEmailTask.class), any(Callback.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -381,7 +382,7 @@ public class DefaultTaskManagerLogicTest {
 		inOrder.verify(store).update(storedTaskCaptor.capture());
 		inOrder.verify(converter).from(storedTaskCaptor.capture());
 		inOrder.verify(storeAsSourceConverter).toLogic();
-		inOrder.verify(scheduledTaskFacade).create(scheduledTaskCaptor.capture());
+		inOrder.verify(scheduledTaskFacade).create(scheduledTaskCaptor.capture(), any(Callback.class));
 		inOrder.verifyNoMoreInteractions();
 
 		final org.cmdbuild.data.store.task.Task updatedTask = storedTaskCaptor.getAllValues().get(0);

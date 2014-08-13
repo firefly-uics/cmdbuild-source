@@ -33,6 +33,7 @@
 				});
 
 				CMDBuild.Ajax.request({
+					timeout: p.timeout,
 					url: p.url,
 					method: p.method,
 					params: p.params || {},
@@ -51,7 +52,7 @@
 	 =========================================== */
 
 	CMDBuild.ServiceProxy.doLogin = function(p) {
-		CMDBuild.Ajax.request( {
+		CMDBuild.Ajax.request({
 			important: true,
 			url: CMDBuild.ServiceProxy.url.login,
 			method: 'POST',
@@ -65,7 +66,7 @@
 
 	// TODO duplicate in card section, remove this
 	CMDBuild.ServiceProxy.getCardList = function(p) {
-		CMDBuild.Ajax.request( {
+		CMDBuild.Ajax.request({
 			url: CMDBuild.ServiceProxy.url.cardList,
 			method: 'GET',
 			params: p.params,

@@ -9,7 +9,7 @@ import static org.cmdbuild.data.store.translation.Constants.VALUE;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
+import org.cmdbuild.data.store.dao.BaseStorableConverter;
 
 import com.google.common.collect.Maps;
 
@@ -30,7 +30,7 @@ public class TranslationConverter extends BaseStorableConverter<Translation> {
 	}
 
 	@Override
-	public Map<String, Object> getValues(Translation storable) {
+	public Map<String, Object> getValues(final Translation storable) {
 		final Map<String, Object> values = Maps.newHashMap();
 		values.put(ELEMENT, storable.getElement());
 		values.put(LANG, storable.getLang());

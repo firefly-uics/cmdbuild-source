@@ -68,16 +68,19 @@
 			this.supercontroller.ignoreDeselect = false;
 
 			var keepExistingSelection = true;
-			var checkedCards = this.supercontroller.currentDomain.getCheckedCards();
 
-			for (var i = 0, l = checkedCards.length; i < l; ++i) {
-				var cardInfo = checkedCards[i];
-				var recordIndex = grid.store.findBy(function(record) {
-					return cardInfo.className == _CMCache.getEntryTypeNameById(record.get('IdClass')) && cardInfo.id == record.get('Id');
-				});
+			if (!Ext.isEmpty(this.supercontroller.currentDomain)) { // FIX: to avoid error throw in task filter step
+				var checkedCards = this.supercontroller.currentDomain.getCheckedCards();
 
-				if (recordIndex >= 0)
-					grid.getSelectionModel().select(recordIndex, keepExistingSelection);
+				for (var i = 0, l = checkedCards.length; i < l; ++i) {
+					var cardInfo = checkedCards[i];
+					var recordIndex = grid.store.findBy(function(record) {
+						return cardInfo.className == _CMCache.getEntryTypeNameById(record.get('IdClass')) && cardInfo.id == record.get('Id');
+					});
+
+					if (recordIndex >= 0)
+						grid.getSelectionModel().select(recordIndex, keepExistingSelection);
+				}
 			}
 		}
 	});

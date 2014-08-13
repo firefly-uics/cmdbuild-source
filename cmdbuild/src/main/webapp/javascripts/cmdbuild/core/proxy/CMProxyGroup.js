@@ -13,18 +13,6 @@
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
 
-		saveClassUiConfiguration: function(p) {
-			p.method = 'POST';
-			p.url = _CMProxy.url.privileges.classes.saveClassUiConfiguration;
-			CMDBuild.ServiceProxy.core.doRequest(p);
-		},
-
-		loadClassUiConfiguration: function(p) {
-			p.method = 'GET';
-			p.url = _CMProxy.url.privileges.classes.loadClassUiConfiguration;
-			CMDBuild.ServiceProxy.core.doRequest(p);
-		},
-
 		clearRowAndColumnPrivileges: function(p) {
 			p.method = 'POST';
 			p.url = _CMProxy.url.privileges.classes.clearRowAndColumnPrivileges;
@@ -126,7 +114,20 @@
 				failure: cbs.failure || Ext.emptyFn,
 				callback: cbs.callback || Ext.emptyFn
 			});
-		}
+		},
+
+		saveClassUiConfiguration: function(p) {
+			p.method = 'POST';
+			p.url = _CMProxy.url.privileges.classes.saveClassUiConfiguration;
+			CMDBuild.ServiceProxy.core.doRequest(p);
+		},
+
+		loadClassUiConfiguration: function(p) {
+			p.method = 'GET';
+			p.url = _CMProxy.url.privileges.classes.loadClassUiConfiguration;
+			CMDBuild.ServiceProxy.core.doRequest(p);
+		},	
+		
 	};
 
 	function getGridPrivilegeStore(url) {

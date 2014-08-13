@@ -53,7 +53,7 @@ Ext.define("CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel", {
 			region: "center",
 			border: false,
 			frame: false,
-			withPagingBar: this.withPagingBar	
+			withPagingBar: this.withPagingBar
 		};
 
 		if (this.withPagingBar) {

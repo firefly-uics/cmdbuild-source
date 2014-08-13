@@ -1,11 +1,11 @@
 (function() {
 
-	/**
-	 * An ExtJs fix for CellEditing plugin within Fieldset 21/03/2014
-	 */
 	Ext.define('CMDBuild.core.fixes.CMFixFieldset', {
 		override: 'Ext.form.FieldSet',
 
+		/**
+		 * An ExtJs fix for CellEditing plugin within Fieldset 21/03/2014
+		 */
 		setExpanded: function(expanded) {
 			var me = this;
 			var checkboxCmp = me.checkboxCmp;
@@ -41,34 +41,26 @@
 			}
 
 			return me;
-		}
-	});
+		},
 
-	/**
-	 * An ExtJs fix to have a correct fields label and field width in FieldSet - 08/04/2014
-	 */
-	Ext.define('CMDBuild.core.fixes.CMFixFieldsetFieldWidths', {
-		override: 'Ext.form.FieldSet',
-
+		/**
+		 * An ExtJs fix to have a correct fields label and field width in FieldSet - 08/04/2014
+		 */
 		fieldWidthsFix: function() {
 			this.cascade(function(item) {
-				if (typeof item.checkboxToggle == 'undefined') {
+				if (Ext.isEmpty(item.checkboxToggle) && item instanceof Ext.form.Field) {
 					item.labelWidth = item.labelWidth - 10;
 					item.width = item.width - 10;
 				}
 			});
-		}
-	});
+		},
 
-	/**
-	 * An ExtJs feature implementation to reset function for FieldSet - 08/04/2014
-	 */
-	Ext.define('CMDBuild.core.fixes.CMFixFieldsetReset', {
-		override: 'Ext.form.FieldSet',
-
+		/**
+		 * An ExtJs feature implementation to reset function for FieldSet - 08/04/2014
+		 */
 		reset: function() { // Resets all items except fieldset toglecheckbox
 			this.cascade(function(item) {
-				if (typeof item.checkboxToggle == 'undefined')
+				if (Ext.isEmpty(item.checkboxToggle))
 					item.reset();
 			});
 		}

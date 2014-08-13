@@ -6,6 +6,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
+
 		view: undefined,
 		taskType: 'connector',
 
@@ -26,25 +27,81 @@
 			}
 		},
 
-		getValueId: function() {
-			return this.view.idField.getValue();
-		},
+		// GETters functions
+			/**
+			 * @return (Object) delegate
+			 */
+			getNotificationDelegate: function() {
+				return this.view.notificationForm.delegate;
+			},
 
-		setDisabledTypeField: function(state) {
-			this.view.typeField.setDisabled(state);
-		},
+			/**
+			 * @return (String)
+			 */
+			getValueId: function() {
+				return this.view.idField.getValue();
+			},
 
-		setValueActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
+			/**
+			 * @return (Boolean)
+			 */
+			getValueNotificationFieldsetCheckbox: function() {
+				return this.view.notificationFieldset.checkboxCmp.getValue();
+			},
 
-		setValueDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
+		// GETters functions
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledTypeField: function(state) {
+				this.view.typeField.setDisabled(state);
+			},
 
-		setValueId: function(value) {
-			this.view.idField.setValue(value);
-		}
+			/**
+			 * @param (Object) value
+			 */
+			setValueActive: function(value) {
+				this.view.activeField.setValue(value);
+			},
+
+			/**
+			 * @param (Object) value
+			 */
+			setValueDescription: function(value) {
+				this.view.descriptionField.setValue(value);
+			},
+
+			/**
+			 * @param (Object) value
+			 */
+			setValueId: function(value) {
+				this.view.idField.setValue(value);
+			},
+
+			/**
+			 * @param (Object) value
+			 */
+			setValueNotificationAccount: function(value) {
+				this.getNotificationDelegate().setValue('sender', value);
+			},
+
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueNotificationFieldsetCheckbox: function(state) {
+				if (state) {
+					this.view.notificationFieldset.expand();
+				} else {
+					this.view.notificationFieldset.collapse();
+				}
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueNotificationTemplateError: function(value) {
+				this.getNotificationDelegate().setValue('templateError', value);
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep1', {
@@ -52,9 +109,19 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
-		height: '100%',
 		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
+
+		defaults: {
+			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+			anchor: '100%'
+		},
 
 		initComponent: function() {
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.connector.CMStep1Delegate', this);
@@ -62,9 +129,8 @@
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.ServiceProxy.parameter.TYPE,
+				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 				value: tr.tasksTypes.connector,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true,
@@ -72,67 +138,50 @@
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.ServiceProxy.parameter.ID
+				name: CMDBuild.core.proxy.CMProxyConstants.ID
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
+				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: tr.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
-			this.operationsCombo = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.ServiceProxy.parameter.TO_SYNCHRONIZE,
-				fieldLabel: tr.taskConnector.toSynchronize,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				store: CMDBuild.core.proxy.CMProxyTasks.getConnectorOperations(),
-				displayField: CMDBuild.ServiceProxy.parameter.NAME,
-				valueField: CMDBuild.ServiceProxy.parameter.VALUE,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-				forceSelection: true,
-				editable: false
-			});
-
-			// SendMail configuration
-				this.senderEmailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.SENDER_ACCOUNT,
-					fieldLabel: tr.taskConnector.senderAccount,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-					forceSelection: true,
-					editable: false
+			// Email notification configuration
+				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
+					sender: {
+						type: 'sender',
+						disabled: false
+					},
+					templateError: {
+						type: 'template',
+						disabled: false,
+						fieldLabel: tr.notificationForm.templateError,
+						name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE_ERROR
+					}
 				});
 
-				this.recipientEmailAccountField = Ext.create('Ext.form.field.Text', {
-					name: CMDBuild.ServiceProxy.parameter.RECIPIENT_ADDRESS,
-					fieldLabel: tr.taskConnector.recipientAddress,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
-				});
-
-				this.sendMailFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.sendMail,
+				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
+					title: tr.notificationForm.titlePlur,
+					checkboxName: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE,
 					checkboxToggle: true,
 					collapsed: true,
-					layout: 'vbox',
+					collapsible: true,
+					toggleOnTitleClick: true,
+					maxWidth: '100%',
 
-					items: [this.senderEmailAccountCombo, this.recipientEmailAccountField]
+					items: [this.notificationForm]
 				});
 
-				this.sendMailFieldset.fieldWidthsFix();
-			// END: SendMail configuration
+				this.notificationFieldset.fieldWidthsFix();
+			// END: Email notification configuration
 
 			Ext.apply(this, {
 				items: [
@@ -140,8 +189,7 @@
 					this.idField,
 					this.descriptionField,
 					this.activeField,
-					this.operationsCombo,
-					this.sendMailFieldset
+					this.notificationFieldset
 				]
 			});
 

@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.email;
 
+import java.util.Map;
+
 import org.cmdbuild.logic.Logic;
 
 public interface EmailTemplateLogic extends Logic {
@@ -23,6 +25,8 @@ public interface EmailTemplateLogic extends Logic {
 		String getSubject();
 
 		String getBody();
+
+		Map<String, String> getVariables();
 
 	}
 

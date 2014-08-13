@@ -25,7 +25,7 @@
 		onSelectLookupGrid: function(selection) {
 			this.currentLookup = selection;
 			this.view.onSelectLookupGrid(selection);
-			this.view.description.translationsKeyName = selection.get("Id");
+			this.view.description.translationsKeyName = selection.get(LOOKUP_FIELDS.TranslationUuid);
 		},
 		
 		onAddLookupClick: function() {
@@ -59,7 +59,7 @@
 	
 	function onSaveClick() {
 		CMDBuild.LoadMask.get().show();
-		var data = this.view.getData();
+		var data = this.view.getData(true);
 		data.Type = this.currentLookupType;
 		
 		CMDBuild.ServiceProxy.lookup.saveLookup({
@@ -67,7 +67,7 @@
 			scope : this,
 			success : function(a, b, decoded) {
 				notifySubController.call(this, "onLookupSaved", decoded.lookup.Id);
-				_CMCache.flushTranslationsToSave(decoded.lookup.Id);
+				_CMCache.flushTranslationsToSave(decoded.lookup.TranslationUuid);
 			},
 			failure : function() {
 				reloadLookup.call(this);

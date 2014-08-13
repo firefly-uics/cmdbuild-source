@@ -4,6 +4,10 @@
 
 	Ext.define('CMDBuild.core.proxy.CMProxyTasks', {
 		statics: {
+
+			/**
+			 * @param (Object) parameters
+			 */
 			create: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
@@ -15,6 +19,9 @@
 				});
 			},
 
+			/**
+			 * @return (Object) store
+			 */
 			get: function(type) {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: false,
@@ -30,6 +37,9 @@
 				});
 			},
 
+			/**
+			 * @return (Object) store
+			 */
 			getStore: function(type) {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: false,
@@ -43,16 +53,19 @@
 						}
 					},
 					sorters: {
-						property: CMDBuild.ServiceProxy.parameter.TYPE,
+						property: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 						direction: 'ASC'
 					}
 				});
 			},
 
+			/**
+			 * @param (Object) parameters
+			 */
 			remove: function(parameters) {
-				CMDBuild.ServiceProxy.core.doRequest({
+				CMDBuild.Ajax.request({
 					method: 'POST',
-					url: this.getUrl(parameters.type).delete,
+					url: this.getUrl(parameters.type).remove,
 					params: parameters.params,
 					scope: parameters.scope,
 					success: parameters.success,
@@ -60,8 +73,11 @@
 				});
 			},
 
+			/**
+			 * @param (Object) parameters
+			 */
 			start: function(parameters) {
-				CMDBuild.ServiceProxy.core.doRequest({
+				CMDBuild.Ajax.request({
 					method: 'POST',
 					url: this.getUrl('all').start,
 					params: parameters.params,
@@ -71,8 +87,11 @@
 				});
 			},
 
+			/**
+			 * @param (Object) parameters
+			 */
 			stop: function(parameters) {
-				CMDBuild.ServiceProxy.core.doRequest({
+				CMDBuild.Ajax.request({
 					method: 'POST',
 					url: this.getUrl('all').stop,
 					params: parameters.params,
@@ -82,6 +101,9 @@
 				});
 			},
 
+			/**
+			 * @param (Object) parameters
+			 */
 			update: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
@@ -98,14 +120,14 @@
 			 *
 			 * @param (String) type
 			 *
-			 * @return (Var) url address
+			 * @return (String) url object address
 			 */
 			getUrl: function(type) {
 				switch (type) {
 					case 'all':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks;
 
-					case 'connector': // TODO
+					case 'connector':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.connector;
 
 					case 'email':
@@ -114,7 +136,7 @@
 					case 'event':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event;
 
-					case 'event_asynchronous': // TODO
+					case 'event_asynchronous':
 						return CMDBuild.core.proxy.CMProxyUrlIndex.tasks.event.asynchronous;
 
 					case 'event_synchronous':
@@ -134,31 +156,18 @@
 				/**
 				 * @return (Object) store
 				 */
-				getConnectorOperations: function() {
-					return Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.VALUE],
-						data: [
-							{ name: 'New cards', value: 'NewCards' },
-							{ name: 'Edited cards', value: 'EditedCards' },
-							{ name: 'Deleted not matching cards', value: 'DeletedNotMatchingCards' }
-						]
-					});
-				},
-
-				/**
-				 * @return (Object) store
-				 */
 				getDbTypes: function() {
 					return Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.VALUE],
-						data: [
-							{ name: 'MySQL', value: 'mysql' },
-							{ name: 'Oracle', value: 'oracle' },
-							{ name: 'PostgreSQL', value: 'postgresql' },
-							{ name: 'SQLServer', value: 'sqlserver' }
-						]
+						autoLoad: false,
+						model: 'CMDBuild.model.CMModelTasks.connector.availableSqlSources',
+						proxy: {
+							type: 'ajax',
+							url: this.getUrl('connector').getSqlSources,
+							reader: {
+								type: 'json',
+								root: 'response'
+							}
+						}
 					});
 				},
 
@@ -168,75 +177,56 @@
 				getDeletionTypes: function() {
 					var tr = CMDBuild.Translation.administration.tasks.taskConnector.deletionTypes;
 
-					return Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.DESCRIPTION, CMDBuild.ServiceProxy.parameter.VALUE],
+					var store = Ext.create('Ext.data.SimpleStore', {
+						fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
 						data: [
-							{ description: tr.logic, value: 'logic' },
-							{ description: tr.notLogic, value: 'notLogic' }
+							[tr.deleteCard, CMDBuild.core.proxy.CMProxyConstants.DELETE_CARD],
+							[tr.changeStatus, CMDBuild.core.proxy.CMProxyConstants.CHANGE_STATUS]
 						]
 					});
+
+					return store;
 				},
-// TODO: future implementation
-//				/**
-//				 * @return (Object) store
-//				 */
-//				getFunctionStore: function() {
-//					return Ext.create('Ext.data.Store', {
-//						autoLoad: true,
-//						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
+
+				/**
+				 * @return (Object) store
+				 */
+				getClassStore: function() {
+					return _CMCache.getClassesStore();
+				},
+
+				/**
+				 * @return (Object) store
+				 */
+				// TODO: delete or implement real server call
+				getSourceStore: function() {
+//					return Ext.create('Ext.data.SimpleStore', {
+//						fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
 //						data: [
-//							{ name: 'Function1', description: 'Function 1' },
-//							{ name: 'Function2', description: 'Function 2' },
-//							{ name: 'Function3', description: 'Function 3' }
+//							['SourceName1'],
+//							['SourceName2'],
+//							['SourceName3']
 //						]
 //					});
-//				},
 
-				/**
-				 * @return (Object) store
-				 */
-				getOperations: function() {
-					var tr = CMDBuild.Translation.administration.tasks.taskConnector.operationsTypes;
-
-					return Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.DESCRIPTION, CMDBuild.ServiceProxy.parameter.VALUE],
-						data: [
-							{ description: tr.none, value: 'none' },
-							{ description: tr.filter, value: 'filter' }
-						]
-					});
+					return null;
 				},
 
 				/**
 				 * @return (Object) store
 				 */
-				getViewStore: function() {
-					return Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-						data: [
-							{ name: 'ViewName1', description: 'View name 1' },
-							{ name: 'ViewName2', description: 'View name 2' },
-							{ name: 'ViewName3', description: 'View name 3' }
-						]
-					});
-				},
+				// TODO: delete or implement real server call
+				getSourceAttributeNames: function(viewName) {
+//					return Ext.create('Ext.data.SimpleStore', {
+//						fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
+//						data: [
+//							['SourceAttributeName1'],
+//							['SourceAttributeName2'],
+//							['SourceAttributeName3']
+//						]
+//					});
 
-				/**
-				 * @return (Object) store
-				 */
-				getViewAttributeNames: function(viewName) {
-					return Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-						data: [
-							{ name: 'ViewAttributeName1', description: 'View attribute name 1' },
-							{ name: 'ViewAttributeName2', description: 'View attribute name 2' },
-							{ name: 'ViewAttributeName3', description: 'View attribute name 3' }
-						]
-					});
+					return null;
 				},
 
 			/**
@@ -250,14 +240,13 @@
 				getPhases: function() {
 					var tr = CMDBuild.Translation.administration.tasks.taskEvent.eventPhases;
 
-					return Ext.create('Ext.data.Store', {
-						autoLoad: true,
-						fields: [CMDBuild.ServiceProxy.parameter.DESCRIPTION, CMDBuild.ServiceProxy.parameter.VALUE],
+					return Ext.create('Ext.data.SimpleStore', {
+						fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
 						data: [
-							{ description: tr.afterCreate, value: 'afterCreate' },
-							{ description: tr.afterUpdate, value: 'afterUpdate' },
-							{ description: tr.beforeUpdate, value: 'beforeUpdate' },
-							{ description: tr.beforeDelete, value: 'beforeDelete' }
+							[tr.afterCreate, CMDBuild.core.proxy.CMProxyConstants.PHASE_AFTER_CREATE],
+							[tr.afterUpdate, CMDBuild.core.proxy.CMProxyConstants.PHASE_AFTER_UPDATE],
+							[tr.beforeUpdate, CMDBuild.core.proxy.CMProxyConstants.PHASE_BEFORE_UPDATE],
+							[tr.beforeDelete, CMDBuild.core.proxy.CMProxyConstants.PHASE_BEFORE_UPDATE]
 						]
 					});
 				},
@@ -283,7 +272,7 @@
 							}
 						},
 						sorters: {
-							property: CMDBuild.ServiceProxy.parameter.TYPE,
+							property: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 							direction: 'ASC'
 						}
 					});
@@ -294,32 +283,40 @@
 				 */
 				getStoreAllWorkflow: function() {
 					var processes = _CMCache.getProcesses();
-					var data = [];
+					var store = Ext.create('Ext.data.Store', {
+						autoLoad: true,
+						fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+						data: []
+					});
 
 					for (var key in processes) {
 						var obj = processes[key];
 
-						if (obj.raw.superclass)
-							continue;
+						if (!obj.raw.superclass) {
+							// Building object to add to store using proxy costants
+							var bufferStoreObj = {};
 
-						data.push({
-							name: _CMCache.getEntryTypeNameById(obj.raw.id),
-							description: obj.raw.text
-						});
+							bufferStoreObj[CMDBuild.core.proxy.CMProxyConstants.NAME] = _CMCache.getEntryTypeNameById(obj.raw.id);
+							bufferStoreObj[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = obj.raw.text;
+
+							store.add(bufferStoreObj);
+						}
 					}
 
-					return Ext.create('Ext.data.Store', {
-						fields: [CMDBuild.ServiceProxy.parameter.NAME, CMDBuild.ServiceProxy.parameter.DESCRIPTION],
-						data: data,
-						autoLoad: true
-					});
+					return store;
 				},
 
+				/**
+				 * @param (Object) parameters
+				 */
 				getWorkflowAttributes: function(parameters) {
-					Ext.Ajax.request({
-						url: CMDBuild.ServiceProxy.url.attribute.read,
+					CMDBuild.Ajax.request({
+						method: 'POST',
+						url: CMDBuild.core.proxy.CMProxyUrlIndex.attribute.read,
 						params: parameters.params,
-						success: parameters.success
+						scope: parameters.scope,
+						success: parameters.success,
+						callback: parameters.callback
 					});
 				}
 		}

@@ -18,11 +18,20 @@
 
 		title: tr.attributes,
 		autoScroll: true,
+		bodyCls: 'x-panel-default-framed',
+		defaults: {
+			padding: '5 5 0 5'
+		},
+		layout: {
+			type: 'vbox',
+			align: 'stretch'
+		},
+		items: [],
 
-		// configuration
-			attributes: {}, // the attributes to use in the menu to set filtering over attribute values
-			readOnly: false, // set true to have no menu with attributes and use the panel to only display the current filter
-		// configuration
+		// Configuration
+			attributes: {}, // The attributes to use in the menu to set filtering over attribute values
+			readOnly: false, // Set true to have no menu with attributes and use the panel to only display the current filter
+		// END: Configuration
 
 		initComponent:function() {
 			this.fieldsetCategory = {};
@@ -50,19 +59,7 @@
 				tbar.push(this.resetFilterButton);
 			}
 
-			this.bodyCls = 'x-panel-default-framed';
-
-			this.layout = {
-				type: 'vbox',
-				align: 'stretch'
-			};
-
-			this.defaults = {
-				padding: '5 5 0 5'
-			};
-
 			this.tbar = tbar;
-			this.items = [];
 
 			this.mon(this, 'added', function(me) {
 				// Needed because the zIndexParent is not set for the menu, because when created is not owned in a floating element
@@ -221,6 +218,11 @@
 		return submenues;
 	}
 
+	/**
+	 * @param {Object} me
+	 * @param {Object} attribute
+	 * @param {Object} data
+	 */
 	function addFilterCondition(me, attribute, data) {
 		var category = attribute.name;
 
@@ -240,6 +242,7 @@
 		var filterCondition = Ext.create('CMDBuild.Management.FieldManager.getFieldSetForFilter', attribute);
 		me.fieldsetCategory[category].addCondition(filterCondition);
 		filterCondition.setData(data);
+		filterCondition.setDisabledRuntimeCheck(true);
 
 		Ext.resumeLayouts();
 		me.doLayout();
@@ -248,14 +251,14 @@
 	Ext.define('CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset', {
 		extend: 'Ext.form.FieldSet',
 
-		// configuration
-			attributeName: '',
-		// configuration
-
 		mixins: {
 			delegable: 'CMDBuild.core.CMDelegable',
 			conditionDelegate: 'CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanelDelegate'
 		},
+
+		// Configuration
+			attributeName: '',
+		// END: Configuration
 
 		constructor: function() {
 			this.mixins.delegable.constructor.call(this, 'CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldsetDelegate');

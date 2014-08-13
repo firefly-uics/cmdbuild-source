@@ -6,6 +6,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
+
 		view: undefined,
 
 		/**
@@ -25,48 +26,120 @@
 			}
 		},
 
+		/**
+		 * @return (String)
+		 */
 		checkWorkflowComboSelected: function() {
-			if (this.getValueWorkflowCombo())
-				return true;
-
-			return false;
+			return this.getValueWorkflowCombo();
 		},
 
-		getWorkflowDelegate: function() {
-			return this.view.workflowForm.delegate;
+		// GETters functions
+			/**
+			 * @return (Object) delegate
+			 */
+			getNotificationDelegate: function() {
+				return this.view.notificationForm.delegate;
+			},
+
+			/**
+			 * @return (Object) delegate
+			 */
+			getWorkflowDelegate: function() {
+				return this.view.workflowForm.delegate;
+			},
+
+			/**
+			 * @return (Boolean)
+			 */
+			getValueNotificationFieldsetCheckbox: function() {
+				return this.view.notificationFieldset.checkboxCmp.getValue();
+			},
+
+			/**
+			 * @return (Object)
+			 */
+			getValueWorkflowAttributeGrid: function() {
+				return this.getWorkflowDelegate().getValueGrid();
+			},
+
+			/**
+			 * @return (String)
+			 */
+			getValueWorkflowCombo: function() {
+				return this.getWorkflowDelegate().getValueCombo();
+			},
+
+			/**
+			 * @return (Boolean)
+			 */
+			getValueWorkflowFieldsetCheckbox: function() {
+				return this.view.workflowFieldset.checkboxCmp.getValue();
+			},
+
+		/**
+		 * To erase workflow form used on addButtonClick
+		 */
+		eraseWorkflowForm: function() {
+			this.getWorkflowDelegate().eraseWorkflowForm();
 		},
 
-		getValueAttributeGrid: function() {
-			return this.getWorkflowDelegate().getValueGrid();
-		},
+		// SETters functions
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledWorkflowAttributesGrid: function(state) {
+				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
+			},
 
-		getValueWorkflowCombo: function() {
-			return this.getWorkflowDelegate().getValueCombo();
-		},
+			/**
+			 * @param (String) value
+			 */
+			setValueNotificationAccount: function(value) {
+				this.getNotificationDelegate().setValue('sender', value);
+			},
 
-		getValueNotificationFieldsetCheckbox: function() {
-			return this.view.notificationFieldset.checkboxCmp.getValue();
-		},
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueNotificationFieldsetCheckbox: function(state) {
+				if (state) {
+					this.view.notificationFieldset.expand();
+				} else {
+					this.view.notificationFieldset.collapse();
+				}
+			},
 
-		getValueWorkflowFieldsetCheckbox: function() {
-			return this.view.workflowFieldset.checkboxCmp.getValue();
-		},
+			/**
+			 * @param (String) value
+			 */
+			setValueNotificationTemplate: function(value) {
+				this.getNotificationDelegate().setValue('template', value);
+			},
 
-		setDisabledWorkflowAttributesGrid: function(state) {
-			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
-		},
+			/**
+			 * @param (Object) value
+			 */
+			setValueWorkflowAttributesGrid: function(value) {
+				this.getWorkflowDelegate().setValueGrid(value);
+			},
 
-		setValueAttributesGrid: function(data) {
-			this.getWorkflowDelegate().setValueGrid(data);
-		},
+			/**
+			 * @param (String) value
+			 */
+			setValueWorkflowCombo: function(value) {
+				this.getWorkflowDelegate().setValueCombo(value);
+			},
 
-		setValueWorkflowFieldsetCheckbox: function(value) {
-			if (value) {
-				this.view.workflowFieldset.expand();
-			} else {
-				this.view.workflowFieldset.collapse();
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueWorkflowFieldsetCheckbox: function(state) {
+				if (state) {
+					this.view.workflowFieldset.expand();
+				} else {
+					this.view.workflowFieldset.collapse();
+				}
 			}
-		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep3', {
@@ -74,56 +147,44 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
-		height: '100%',
 		overflowY: 'auto',
 
 		initComponent: function() {
-			var me = this;
-
 			this.delegate = Ext.create('CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate', this);
 
-			// SendMail configuration
-				this.notificationEmailAccountCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT,
-					fieldLabel: tr.taskEmail.emailAccount,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-					forceSelection: true,
-					editable: false
-				});
-
-				this.notificationEmailTemplateCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE,
-					fieldLabel: tr.template,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore(),
-					displayField: CMDBuild.ServiceProxy.parameter.NAME,
-					valueField: CMDBuild.ServiceProxy.parameter.NAME,
-					forceSelection: true,
-					editable: false,
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH
+			// Email notification configuration
+				this.notificationForm = Ext.create('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
+					sender: {
+						type: 'sender',
+						disabled: false
+					},
+					template: {
+						type: 'template',
+						disabled: false
+					}
 				});
 
 				this.notificationFieldset = Ext.create('Ext.form.FieldSet', {
-					title: tr.sendMail,
+					title: tr.notificationForm.title,
+					checkboxName: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE,
 					checkboxToggle: true,
-					checkboxName: CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE,
 					collapsed: true,
-					layout: {
-						type: 'vbox'
-					},
-					items: [this.notificationEmailAccountCombo, this.notificationEmailTemplateCombo]
+					collapsible: true,
+					toggleOnTitleClick: true,
+					overflowY: 'auto',
+
+					items: [this.notificationForm]
 				});
-			// END: SendMail configuration
+
+				this.notificationFieldset.fieldWidthsFix();
+			// END: Email notification configuration
 
 			// Workflow configuration
 				this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 					combo: {
-						name: CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME
+						name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME
 					}
 				});
 
@@ -131,14 +192,14 @@
 					title: tr.startWorkflow,
 					checkboxToggle: true,
 					collapsed: true,
-
-					layout: {
-						type: 'vbox',
-						align: 'stretch'
-					},
+					collapsible: true,
+					toggleOnTitleClick: true,
+					overflowY: 'auto',
 
 					items: [this.workflowForm]
 				});
+
+				this.workflowFieldset.fieldWidthsFix();
 			// END: Workflow configuration
 
 			Ext.apply(this, {
@@ -152,10 +213,8 @@
 		},
 
 		listeners: {
-			/**
-			 * Disable attribute table to correct malfunction that enables on class select
-			 */
-			show: function(view, eOpts) {
+			// Disable attribute table to correct malfunction that enables on class select
+			activate: function(view, eOpts) {
 				if (!this.delegate.checkWorkflowComboSelected())
 					this.delegate.setDisabledWorkflowAttributesGrid(true);
 			}

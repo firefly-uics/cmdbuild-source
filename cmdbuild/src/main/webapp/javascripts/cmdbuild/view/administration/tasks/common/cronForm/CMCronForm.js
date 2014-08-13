@@ -1,9 +1,10 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.tasks.common.cronForm.CMCronForm', {
-		extend: 'Ext.form.FieldContainer',
+		extend: 'Ext.container.Container',
 
 		border: false,
+		considerAsFieldToDisable: true,
 
 		/**
 		 * To acquire informations to setup fields before creation
@@ -15,14 +16,14 @@
 		constructor: function(configuration) {
 			this.delegate = Ext.create('CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController', this);
 
-			if (typeof configuration == 'undefined' || typeof configuration.advanced == 'undefined') {
+			if (Ext.isEmpty(configuration) || Ext.isEmpty(configuration.advanced)) {
 				this.advancedConfig = { delegate: this.delegate };
 			} else {
 				this.advancedConfig = configuration.advanced;
 				this.advancedConfig.delegate = this.delegate;
 			}
 
-			if (typeof configuration == 'undefined' || typeof configuration.base == 'undefined') {
+			if (Ext.isEmpty(configuration) || Ext.isEmpty(configuration.base)) {
 				this.baseConfig = { delegate: this.delegate };
 			} else {
 				this.baseConfig = configuration.base;
@@ -47,15 +48,16 @@
 		},
 
 		listeners: {
-			/**
-			 * To correctly enable radio fields on tab show
-			 */
+			// To correctly enable radio fields on tab show
 			show: function(view, eOpts) {
-				if (this.delegate.isEmptyBase() && !this.delegate.isEmptyAdvanced()) {
-					this.advanced.advanceRadio.setValue(true);
-				} else {
-					this.base.baseRadio.setValue(true);
-				}
+				if (this.delegate.isEmptyBase())
+					this.delegate.setValueAdvancedRadio(true);
+
+				if (this.delegate.isEmptyAdvanced())
+					this.delegate.setValueBaseRadio(true);
+
+				if (!this.delegate.isEmptyBase() && !this.delegate.isEmptyAdvanced())
+					this.delegate.setValueBaseRadio(true);
 			}
 		}
 	});

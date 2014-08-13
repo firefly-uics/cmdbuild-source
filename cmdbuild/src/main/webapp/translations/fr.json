@@ -1,6 +1,6 @@
 {
 	"description": "Français",
-	"release": "2.2-dev",
+	"release": "2.3-dev",
 	"administration": {
 		"description": "Module d'administration",
 		"email": {
@@ -9,7 +9,6 @@
 				"account": "<em>Account</em>",
 				"active": "<em>Active</em>",
 				"add": "<em>Add account</em>",
-				"address": "<em>Address</em>",
 				"credentials": "<em>Credentials</em>",
 				"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
 				"enableSsl": "<em>Enable SSL</em>",
@@ -36,7 +35,10 @@
 				"modify": "<em>Modify template</em>",
 				"remove": "<em>Remove template</em>",
 				"template": "<em>Template</em>",
-				"title": "<em>Templates</em>"
+				"title": "<em>Templates</em>",
+				"valuesWindow": {
+					"title": "<em>Edit values</em>",
+				}
 			}
 		},
 		"modClass": {
@@ -653,9 +655,122 @@
 				"user": "Utilisateur"
 			}
 		},
+		"tasks": {
+			"add": "<em>Add task</em>",
+			"all": "<em>All</em>",
+			"clone": "<em>Clone task</em>",
+			"cronForm" : {
+				"dayOfMounth": "<em>Day of month</em>",
+				"advanced": "<em>Advanced</em>",
+				"basic": "<em>Basic</em>",
+				"dayOfWeek": "<em>Day of week</em>",
+				"everyDay": "<em>Every day</em>",
+				"everyHour": "<em>Every hour</em>",
+				"everyMounth": "<em>Every month</em>",
+				"everyYear": "<em>Every year</em>",
+				"hour": "<em>Hour</em>",
+				"minute": "<em>Minute</em>",
+				"mounth": "<em>Month</em>"
+			},
+			"errorMessages": {
+				"taskConnector": {
+					"emptyAttributeLevelMapping": "<em>Attribute level mapping table must be correctly filled.</em>",
+					"emptyClassLevelMapping": "<em>Class level mapping table must be correctly filled.</em>",
+					"emptyReferenceLevelMapping": "<em>Reference level mapping table must be correctly filled.</em>"
+				}
+			},
+			"modify": "<em>Modify task</em>",
+			"notificationForm": {
+				"account": "<em>Account</em>",
+				"template": "<em>Email template</em>",
+				"templateError": "<em>Error email template</em>",
+				"title": "<em>Send notification email</em>",
+				"titlePlur": "<em>Send notifications email</em>"
+			},
+			"remove": "<em>Remove task</em>",
+			"running": "<em>Running</em>",
+			"startLabel": "<em>Start task</em>",
+			"startOnSave": "<em>Start on save</em>",
+			"startWorkflow": "<em>Start process</em>",
+			"stopLabel": "<em>Stop task</em>",
+			"stopped": "<em>Stopped</em>",
+			"title": "<em>Task manager</em>",
+			"type": "<em>Type</em>",
+			"taskConnector": {
+				"attributeLevelMapping": "<em>Attribute mapping</em>",
+				"classAttribute": "<em>CMDBuild attribute</em>",
+				"classLevelMapping": "<em>Class mapping</em>",
+				"className": "<em>CMDBuild class</em>",
+				"cudActions": {
+					"create": "<em>Create</em>",
+					"delete": "<em>Delete</em>",
+					"update": "<em>Update</em>"
+				},
+				"dataSourceDbFieldset": "<em>Datasource: Relational database</em>",
+				"dataSourceLdapFieldset": "<em>Datasource: LDAP directory</em>",
+				"dbName": "<em>Database name</em>",
+				"deletionType": "<em>Deletion type</em>",
+				"deletionTypes": {
+					"deleteCard": "<em>Delete card</em>",
+					"changeStatus": "<em>Change status</em>"
+				},
+				"domainName": "<em>Domain name</em>",
+				"instanceName": "<em>Instance</em>",
+				"isKey": "<em>Is key</em>",
+				"recipientAddress": "<em>Recipient address</em>",
+				"referenceMapping": "<em>References mapping</em>",
+				"senderAccount": "<em>Sender account</em>",
+				"sourceAttribute": "<em>External attribute</em>",
+				"sourceFilter": "<em>Entity filter</em>",
+				"sourceName": "<em>External entity</em>"
+			},
+			"taskEmail": {
+				"attachmentsCategory": "<em>Category</em>",
+				"bodyParsing": "<em>Body parsing</em>",
+				"emailAccount": "<em>Email account</em>",
+				"fromAddressFilter": "<em>Filter on FromAddress</em>",
+				"parsingKeyEnd": "<em>Key end delimiter</em>",
+				"parsingKeyStart": "<em>Key start delimeter</em>",
+				"parsingValueEnd": "<em>Value end delimiter</em>",
+				"parsingValueStart": "<em>Value start delimeter</em>",
+				"saveToAlfresco": "<em>Save attachments to Alfresco</em>",
+				"subjectFilter": "<em>Filter on Subject</em>"
+			},
+			"taskEvent": {
+				"eventPhases": {
+					"afterCreate": "<em>After creation</em>",
+					"afterUpdate": "<em>After update</em>",
+					"beforeDelete": "<em>Before delete</em>",
+					"beforeUpdate": "<em>Before update</em>"
+				},
+				"groupsToApply": "<em>Group to apply</em>",
+				"phase": "<em>Phase</em>"
+			},
+			"tasksTypes": {
+				"connector": "<em>Connector</em>",
+				"email": "<em>Email</em>",
+				"event": "<em>Event</em>",
+				"eventTypes": {
+					"asynchronous": "<em>Asynchronous</em>",
+					"synchronous": "<em>Synchronous</em>"
+				},
+				"workflow": "<em>Process</em>"
+			},
+			"workflow": "<em>Process</em>",
+			"workflowForm": {
+				"attributes": "<em>Process attributes</em>"
+			}
+		},
 		"welcome": {
 			"body": "Administration module.",
 			"title": "Bienvenue"
+		}
+	},
+	"bimMod": {
+		"administration": {
+			"projects": {
+				"importIfc": "<em>Import IFC</em>"
+			}
 		}
 	},
 	"common": {
@@ -667,8 +782,8 @@
 			"clone": "Copier",
 			"close": "Fermer",
 			"confirm": "Confirmer",
-			"export": "Exporter",
-			"import": "Importer",
+			"exportLabel": "Exporter",
+			"importLabel": "Importer",
 			"load": "Charger",
 			"modify": "Modifier",
 			"next": "<em>Next</em>",
@@ -784,9 +899,18 @@
 		},
 		"title": "Configuration"
 	},
+	"cronTriggerField": {
+		"triggerFieldWindow": {
+			"every": "<em>Every </em>",
+			"exactly": "<em>At an exact</em>",
+			"inastepwith": "<em>In a step width</em>",
+			"range": "<em>In a range</em>"
+		}
+	},
 	"errors": {
 		"busy_wf_widgets": "Les contrôles visuels sont occupés, regardez le status du serveur avant de recommencer l'opération.",
 		"detail": "Détails",
+		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
 		"error_message": "Erreur",
 		"error_moving_row": "Une erreur est survenue lors du déplacement de la colonne",
 		"invalid_attributes": "Les différents champs n'ont pas été rempli correctement:",
@@ -929,12 +1053,16 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Vérifier si le nom, la mèthode et les paramètres du service web sont corrects"
 		},
 		"reference_invalid": "La valeur ne correspond pas au filtre",
+		"requiredFieldMessage": "<em>This field is required</em>",
 		"server_error": "Serveur injoignable",
 		"server_error_code": "Une erreur a été rencontrée durant la trasnmission des données au serveur:",
 		"show_detail": "Voir details",
 		"template_error": "Erreur de modèle",
 		"unknown_error": "Une erreur est survenue",
 		"wrong_wf_widgets": "Il y a eu une erreur d'enregistrement des contrôles visuels suivants: "
+	},
+	"filterWindow": {
+		"add": "<em>Add filter</em>"
 	},
 	"info": {
 		"card_not_found": "Aucune fiche avec le filtre sélectionné"
@@ -975,7 +1103,7 @@
 			"equals": "Egale",
 			"filter": "Filtre",
 			"fromSelection": "De la selection",
-			"functions" : "<em>Function</em>",
+			"functions": "<em>Function</em>",
 			"go_filter": "Filtre",
 			"like": "Contient",
 			"list": "Liste",
@@ -1097,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "Chercher dans"
 			},
+			"showattach": "Voir pièces jointes",
 			"subclass": "Subclass",
 			"tabs": {
 				"attachments": "Pièces jointes",
@@ -1282,6 +1411,7 @@
 		"link_cards_changed_values": "La séléction de \"{0}\" a été mise à jour",
 		"only_filtered": "Les changements seront appliqués sur les fiches avec le filtre en cours.",
 		"popup_block": "Nous avons détecté que vous utilisiez un programme pour bloquer les popups, merci de le désactiver",
+		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "Attention"
 	},
 	"active": "Active",
@@ -1289,7 +1419,8 @@
 	"addProject": "<em>Add Project</em>",
 	"addTemplate": "<em>Add Template</em>",
 	"addView": "Ajouter une vue",
-	"add_attachment_from_db": "<em>Add attachments from database</em>",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
+	"address": "<em>Address</em>",
 	"attachfile": "<em>Attach File</em>",
 	"attachmentsLookup": "<em>Email attachments Lookup</em>",
 	"attention": "Attention",
@@ -1302,11 +1433,18 @@
 	"cc": "<em>Cc</em>",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
 	"choose_attachment_from_db": "<em>Choose attachments from Database</em>",
-	"class": "<em>Class</em>",
+	"classLabel": "<em>Class</em>",
+	"classAttribute": "<em>Class attribute</em>",
+	"className": "<em>Class name</em>",
 	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
 	"clearFilter": "<em>Clear Filter</em>",
 	"clear_row_and_colun_privilege": "Effacer les privilèges des lignes et des colonnes",
+	"composeFromTemplate": "<em>Compose from template</em>",
+	"contained": "<em>Contained</em>",
+	"containedorequal": "<em>Contained or equal</em>",
 	"container": "<em>Container</em>",
+	"contains": "<em>Contains</em>",
+	"containsorequal": "<em>Contains or equal</em>",
 	"controls": "<em>Controls</em>",
 	"cql_filter": "<em>CQL filter</em>",
 	"description_": "Description",
@@ -1334,6 +1472,9 @@
 	"front": "<em>Front</em>",
 	"global": "<em>Global</em>",
 	"ifc_file": "<em>File IFC</em>",
+	"ipType": "<em>IP type</em>",
+	"ipv4": "ipv4",
+	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "<em>It's not allowed to use a filter with calculated parameters</em>",
 	"itIsNotAllowedFilterWithRuntimeParams": "<em>It's not allowed to use a filter with user selectable parameters</em>",
 	"last_checkin": "<em>Last checkin</em>",
@@ -1342,6 +1483,7 @@
 	"lock_timeout": "Temps de blocage (seconds)",
 	"loggedGroup": "<em>Logged Group</em>",
 	"loggedUser": "<em>Logged User</em>",
+	"main": "<em>Main</em>",
 	"mode": "<em>Mode</em>",
 	"modifyFilter": "Modifier un filtre",
 	"modifyProject": "<em>Modify Project</em>",
@@ -1354,10 +1496,13 @@
 	"open_3d_viewer": "<em>Open 3D viewer</em>",
 	"pan": "<em>Pan</em>",
 	"password": "<em>Password</em>",
+	"port": "<em>Port</em>",
 	"privileges_on_columns": "Privilèges des colonnes",
 	"privileges_on_rows": "Privilèges des lignes",
 	"projects": "Projects",
 	"reference_to_root": "<em>Reference to Root</em>",
+	"relation": "<em>Relation</em>",
+	"remove": "<em>Remove</em>",
 	"removeFilter": "Supprimer un filtre",
 	"removeProject": "<em>Remove Project</em>",
 	"removeTemplate": "<em>Remove Template</em>",
@@ -1366,16 +1511,17 @@
 	"reset": "<em>Reset</em>",
 	"root": "<em>Root</em>",
 	"rotate": "<em>Rotate</em>",
-	"row_and_column_privileges": "Privilèges des lignes et colonnes",
 	"row_add": "<em>Add row</em>",
+	"row_and_column_privileges": "Privilèges des lignes et colonnes",
 	"row_delete": "<em>Delete row</em>",
 	"row_edit": "<em>Edit row</em>",
-	"search_filters": "Chercher Filtres",
+	"search_filters": "Chercher filtres",
 	"select_a_class": "<em>Select a Class</em>",
 	"selected_object": "<em>Selected Object</em>",
 	"set": "Affecté",
 	"setFilter": "<em>Set Filter</em>",
 	"setLater": "<em>Input Parameter</em>",
+	"showHideThisFeatureOnly": "<em>Show/hide this feature only</em>",
 	"show_name_of_locker_user": "Voir les utilisateurs verrouillés",
 	"side": "<em>Side</em>",
 	"sqlView": "En SQL",
@@ -1387,10 +1533,10 @@
 	"translations_enabled" : "<em>Enabled languages</em>",
 	"transparent": "<em>Transparent</em>",
 	"tree": "<em>Tree</em>",
+	"tree_modify": "<em>Modify tree</em>",
 	"tree_navigation": "<em>Navigation tree</em>",
 	"tree_navigation_add": "<em>Add navigation tree</em>",
 	"tree_navigation_attributes": "<em>Navigation tree attributes</em>",
-	"tree_modify": "<em>Modify tree</em>",
 	"tree_remove": "<em>Remove tree</em>",
 	"tree_root_cql": "<em>Root CQL filter</em>",
 	"trees_navigation": "<em>Navigation trees</em>",

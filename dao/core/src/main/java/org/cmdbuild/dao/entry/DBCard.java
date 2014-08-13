@@ -1,5 +1,7 @@
 package org.cmdbuild.dao.entry;
 
+import java.util.Map.Entry;
+
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.DBClass;
@@ -7,6 +9,7 @@ import org.cmdbuild.dao.entrytype.DBClass;
 public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 
 	private static final Long NOT_EXISTING_CARD_ID = null;
+	private Long currentId;
 
 	private DBCard(final DBDriver driver, final DBClass type, final Long id) {
 		super(driver, type, id);
@@ -15,6 +18,14 @@ public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 	@Override
 	public final DBCard set(final String key, final Object value) {
 		setOnly(key, value);
+		return this;
+	}
+
+	@Override
+	public final DBCard set(final Iterable<? extends Entry<String, ? extends Object>> keysAndValues) {
+		for (final Entry<String, ? extends Object> entry : keysAndValues) {
+			set(entry.getKey(), entry.getValue());
+		}
 		return this;
 	}
 
@@ -41,6 +52,17 @@ public class DBCard extends DBEntry implements CMCard, CMCardDefinition {
 	@Override
 	public CMCardDefinition setDescription(final Object value) {
 		return set(getType().getDescriptionAttributeName(), value);
+	}
+
+	@Override
+	public CMCardDefinition setCurrentId(final Long currentId) {
+		this.currentId = currentId;
+		return this;
+	}
+
+	@Override
+	public Long getCurrentId() {
+		return currentId;
 	}
 
 	@Override

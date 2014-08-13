@@ -27,7 +27,6 @@
 				delete Ext.tip.Tip.prototype.minWidth;
 
 				CMDBuild.view.CMMainViewport.showSplash(forCredits, administration);
-				_CMCache.resetMultiLanguages();
 
 				// maybe a single request with all the configuration could be better
 				CMDBuild.ServiceProxy.group.getUIConfiguration({
@@ -44,7 +43,7 @@
 								 * **********************************************/
 								Ext.suspendLayouts();
 								/* ***********************************************/
-
+								_CMCache.setActiveTranslations(decoded.data.enabled_languages);
 								var panels = [
 									new Ext.Panel({
 										cls: 'empty_panel x-panel-body'
@@ -107,10 +106,6 @@
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationServerController,
 											cmName: "modsetupserver"
 										}),
-										new CMDBuild.view.administration.configuration.CMModConfigurationTranslations({
-											cmControllerType: controllerNS.administration.configuration.CMModConfigurationTranslationsController,
-											cmName: "modsetuptranslations"
-										}),
 										Ext.create('CMDBuild.view.administration.email.CMEmailAccounts', {
 											cmControllerType: CMDBuild.controller.administration.email.CMEmailAccountsController,
 											cmName: 'emailAccounts'
@@ -130,10 +125,12 @@
 									]);
 								}
 
-								_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(new CMDBuild.view.CMMainViewport({
-									cmAccordions: [],
-									cmPanels: panels
-								}));
+								_CMMainViewportController = new CMDBuild.controller.CMMainViewportController(
+									new CMDBuild.view.CMMainViewport({
+										cmAccordions: [],
+										cmPanels: panels
+									})
+								);
 
 								me.loadResources();
 							}

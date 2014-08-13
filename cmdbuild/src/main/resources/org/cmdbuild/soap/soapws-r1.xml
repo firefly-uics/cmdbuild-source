@@ -24,10 +24,12 @@
 	<bean id="webservicesProxy" factory-bean="webservicesProxyBuilder"
 		factory-method="build" />
 
-	<bean id="addDefaultNamespaceInterceptor"
-		class="org.cmdbuild.services.soap.AddDefaultNamespaceInterceptor" />
-
 	<jaxws:endpoint address="/soap/Webservices">
+		<jaxws:properties>
+			<!-- Uncomment the next two elements for disable replay attacks check -->
+			<!-- <entry key="ws-security.enable.nonce.cache" value="false" /> -->
+			<!-- <entry key="ws-security.enable.timestamp.cache" value="false" /> -->
+		</jaxws:properties>
 		<jaxws:implementor>
 			<bean factory-bean="webservicesProxy" factory-method="get" />
 		</jaxws:implementor>
@@ -36,7 +38,8 @@
 		</jaxws:binding>
 		<jaxws:inInterceptors>
 			<ref bean="operationUserInterceptor" />
-			<!-- Fix for non-standard webservice clients <ref bean="addDefaultNamespaceInterceptor"/> -->
+			<!-- Uncomment the next element for non-standard web service clients -->
+			<!-- <ref bean="addDefaultNamespaceInterceptor" /> -->
 			<ref bean="cmdbuildPasswordCallbackInterceptor" />
 		</jaxws:inInterceptors>
 	</jaxws:endpoint>

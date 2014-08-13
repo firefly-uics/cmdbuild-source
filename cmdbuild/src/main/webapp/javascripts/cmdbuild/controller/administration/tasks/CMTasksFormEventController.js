@@ -5,12 +5,11 @@
 	Ext.define("CMDBuild.controller.administration.tasks.CMTasksFormEventController", {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
-		parentDelegate: undefined,
 		delegateStep: undefined,
-		view: undefined,
+		parentDelegate: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
-//		taskType: 'event',
+		view: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -29,7 +28,7 @@
 					return this.onAddButtonClick(name, param, callBack);
 
 				case 'onClassSelected':
-					this.onClassSelected(param.className);
+					return this.onClassSelected(param.className);
 
 				case 'onCloneButtonClick':
 					return this.onCloneButtonClick();
@@ -54,7 +53,9 @@
 		},
 
 		/**
-		 * @param (String) type
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
 		 */
 		// overwrite
 		onAddButtonClick: function(name, param, callBack) {
@@ -62,13 +63,13 @@
 
 			switch (param.type) {
 				case 'event_asynchronous':
-					return this.delegateStep[3].setDisabledWorkflowAttributesGrid(true);
+					return this.delegateStep[3].eraseWorkflowForm();
 
 				case 'event_synchronous':
-					return this.delegateStep[2].setDisabledWorkflowAttributesGrid(true);
+					return this.delegateStep[2].eraseWorkflowForm();
 
 				default:
-					throw 'CMTasksFormEventController error: task type not recognized';
+					throw 'CMTasksFormEventController error: onAddButtonClick task type not recognized';
 			}
 		},
 
@@ -81,17 +82,10 @@
 		},
 
 		// overwrite
-		onModifyButtonClick: function() {
-			this.callParent(arguments);
-
-			_debug('onModifyButtonClick to implement');
-		},
-
-		// overwrite
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
-				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
-				this.selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.TYPE);
+				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.ID);
+				this.selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.TYPE);
 
 				// Selected task asynchronous store query
 				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(this.selectedType);
@@ -104,114 +98,237 @@
 						if (!Ext.isEmpty(records)) {
 							var record = records[0];
 
-// TODO: to check if response has phase data or not to extends taskType value
-							_debug(this.selectedType);
 							this.parentDelegate.loadForm(this.selectedType);
 
 							// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
-// TODO
-							// Set step1 [0] datas
-							this.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-							this.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
-							this.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
-//
-//							// Set step2 [1] datas
-//							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
-//							this.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+
+							switch (this.selectedType) {
+								case 'event_asynchronous': { // TODO
+									// Set step1 [0] datas
+									this.delegateStep[0].setValueActive(record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE));
+									this.delegateStep[0].setValueClassName(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME));
+									this.delegateStep[0].setValueDescription(record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION));
+									this.delegateStep[0].setValueId(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+
+									// Set step2 [1] datas
+									this.delegateStep[1].setValueFilters(
+										Ext.decode(record.get(CMDBuild.core.proxy.CMProxyConstants.FILTER))
+									);
+
+									// Set step3 [2] datas
+									this.delegateStep[2].setValueAdvancedFields(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
+									this.delegateStep[2].setValueBase(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
+
+									// Set step4 [3] datas
+									this.delegateStep[3].setValueNotificationFieldsetCheckbox(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE));
+									this.delegateStep[3].setValueNotificationAccount(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT));
+									this.delegateStep[3].setValueNotificationTemplate(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE));
+// TODO: future implementation
+//									this.delegateStep[3].setValueWorkflowAttributesGrid(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES));
+//									this.delegateStep[3].setValueWorkflowCombo(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME));
+//									this.delegateStep[3].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE));
+								} break;
+
+								case 'event_synchronous': {
+									// Set step1 [0] datas
+									this.delegateStep[0].selectGroups(record.get(CMDBuild.core.proxy.CMProxyConstants.GROUPS));
+									this.delegateStep[0].setValueActive(record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE));
+									this.delegateStep[0].setValueClassName(record.get(CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME));
+									this.delegateStep[0].setValueDescription(record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION));
+									this.delegateStep[0].setValueId(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+									this.delegateStep[0].setValuePhase(record.get(CMDBuild.core.proxy.CMProxyConstants.PHASE));
+
+									// Set step2 [1] datas
+									this.delegateStep[1].setValueFilters(
+										Ext.decode(record.get(CMDBuild.core.proxy.CMProxyConstants.FILTER))
+									);
+
+									// Set step3 [2] datas
+									this.delegateStep[2].setValueNotificationFieldsetCheckbox(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE));
+									this.delegateStep[2].setValueNotificationAccount(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT));
+									this.delegateStep[2].setValueNotificationTemplate(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE));
+									this.delegateStep[2].setValueWorkflowAttributesGrid(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES));
+									this.delegateStep[2].setValueWorkflowCombo(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME));
+									this.delegateStep[2].setValueWorkflowFieldsetCheckbox(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE));
+								} break;
+
+								default:
+									throw 'CMTasksFormEventController error: onRowSelected task type not recognized';
+							}
 
 							this.view.disableModify(true);
 						}
 					}
 				});
 
-				this.view.wizard.changeTab(0);
+				this.parentDelegate.changeItem(0);
 			}
 		},
 
 		// overwrite
 		onSaveButtonClick: function() {
-			var nonvalid = this.view.getNonValidFields();
-
-			if (nonvalid.length > 0) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-				return;
-			}
-
-//			CMDBuild.LoadMask.get().show();
 			var filterData = this.delegateStep[1].getDataFilters();
 			var formData = this.view.getData(true);
 			var submitDatas = {};
+			var taskType = this.delegateStep[0].taskType;
 
-			// Form validating by type
-				switch (this.delegateStep[0].taskType) {
-					case 'event_asynchronous': {
+			// Validate before save
+			if (this.validate(formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE], taskType)) {
+				CMDBuild.LoadMask.get().show();
 
-						// Cron field validation
-							if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
-								return;
+				// Form actions by type
+					switch (taskType) {
+						case 'event_asynchronous': {
+							submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[2].getCronDelegate().getValue(
+								formData[CMDBuild.core.proxy.CMProxyConstants.CRON_INPUT_TYPE]
+							);
 
-						submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
-							formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
-						);
-					} break;
+							// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
+								var notificationFieldsetCheckboxValue = this.delegateStep[3].getValueNotificationFieldsetCheckbox();
+								if (notificationFieldsetCheckboxValue) {
+									submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
+									submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT] = formData[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT];
+									submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE];
+								}
+// TODO: future implementation
+//								var workflowFieldsetCheckboxValue = this.delegateStep[3].getValueWorkflowFieldsetCheckbox();
+//								if (workflowFieldsetCheckboxValue) {
+//									var attributesGridValues = this.delegateStep[3].getValueWorkflowAttributeGrid();
+//
+//									if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+//										submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
+//
+//									submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
+//									submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME] = formData[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME];
+//								}
+						} break;
 
-					case 'event_synchronous': {
-						submitDatas[CMDBuild.ServiceProxy.parameter.PHASE] = formData[CMDBuild.ServiceProxy.parameter.PHASE];
-						submitDatas[CMDBuild.ServiceProxy.parameter.GROUPS] = Ext.encode(this.delegateStep[0].getValueGroups());
-					} break;
+						case 'event_synchronous': {
+							submitDatas[CMDBuild.core.proxy.CMProxyConstants.PHASE] = formData[CMDBuild.core.proxy.CMProxyConstants.PHASE];
+							submitDatas[CMDBuild.core.proxy.CMProxyConstants.GROUPS] = Ext.encode(this.delegateStep[0].getValueGroups());
 
-					default:
-						throw 'CMTasksFormEventController error: task type not recognized';
-				}
+							// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
+								var notificationFieldsetCheckboxValue = this.delegateStep[2].getValueNotificationFieldsetCheckbox();
+								if (notificationFieldsetCheckboxValue) {
+									submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
+									submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT] = formData[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_ACCOUNT];
+									submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE];
+								}
 
-			// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
-				var notificationFieldsetCheckboxValue = this.delegateStep[2].getValueNotificationFieldsetCheckbox();
-				if (notificationFieldsetCheckboxValue) {
-					submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_ACTIVE] = notificationFieldsetCheckboxValue;
-					submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT] = formData[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_ACCOUNT];
-					submitDatas[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE] = formData[CMDBuild.ServiceProxy.parameter.NOTIFICATION_EMAIL_TEMPLATE];
-				}
+								var workflowFieldsetCheckboxValue = this.delegateStep[2].getValueWorkflowFieldsetCheckbox();
+								if (workflowFieldsetCheckboxValue) {
+									var attributesGridValues = this.delegateStep[2].getValueWorkflowAttributeGrid();
 
-				var workflowFieldsetCheckboxValue = this.delegateStep[2].getValueWorkflowFieldsetCheckbox();
-				if (workflowFieldsetCheckboxValue) {
-					var attributesGridValues = this.delegateStep[2].getValueAttributeGrid();
+									if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+										submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
 
-					if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-						submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
+									submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
+									submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME] = formData[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME];
+								}
+						} break;
 
-					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE] = workflowFieldsetCheckboxValue;
-					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
-				}
+						default:
+							throw 'CMTasksFormEventController error: onSaveButtonClick task type not recognized';
+					}
 
-			// Filters validation
+				// Form submit values formatting
 				if (!Ext.isEmpty(filterData))
-					submitDatas[CMDBuild.ServiceProxy.parameter.FILTER] = Ext.encode(filterData);
+					submitDatas[CMDBuild.core.proxy.CMProxyConstants.FILTER] = Ext.encode(filterData);
 
-			// Data filtering to submit only right values
-			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
-			submitDatas[CMDBuild.ServiceProxy.parameter.CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.CLASS_NAME];
-			submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
-			submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
-_debug(filterData);
-_debug(formData);
-_debug(submitDatas);
-//			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
-//				CMDBuild.core.proxy.CMProxyTasks.create({
-//					type: this.delegateStep[0].taskType,
-//					params: submitDatas,
-//					scope: this,
-//					success: this.success,
-//					callback: this.callback
-//				});
-//			} else {
-//				CMDBuild.core.proxy.CMProxyTasks.update({
-//					type: this.delegateStep[0].taskType,
-//					params: submitDatas,
-//					scope: this,
-//					success: this.success,
-//					callback: this.callback
-//				});
-//			}
+				// Data filtering to submit only right values
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE];
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = formData[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = formData[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ID] = formData[CMDBuild.core.proxy.CMProxyConstants.ID];
+
+				if (Ext.isEmpty(formData[CMDBuild.core.proxy.CMProxyConstants.ID])) {
+					CMDBuild.core.proxy.CMProxyTasks.create({
+						type: taskType,
+						params: submitDatas,
+						scope: this,
+						success: this.success,
+						callback: this.callback
+					});
+				} else {
+					CMDBuild.core.proxy.CMProxyTasks.update({
+						type: taskType,
+						params: submitDatas,
+						scope: this,
+						success: this.success,
+						callback: this.callback
+					});
+				}
+			}
+		},
+
+		// overwrite
+		removeItem: function() {
+			if (!Ext.isEmpty(this.selectedId)) {
+				CMDBuild.LoadMask.get().show();
+
+				CMDBuild.core.proxy.CMProxyTasks.remove({
+					type: this.selectedType,
+					params: {
+						id: this.selectedId
+					},
+					scope: this,
+					success: this.success,
+					callback: this.callback
+				});
+			}
+		},
+
+		/**
+		 * Task validation
+		 *
+		 * @param (Boolean) enable
+		 * @param (String) type
+		 *
+		 * @return (Boolean)
+		 */
+		// overwrite
+		validate: function(enable, type) {
+			switch (type) {
+				case 'event_asynchronous': {
+					// Cron field validation
+					this.delegateStep[2].getCronDelegate().validate(enable);
+
+					// Notification validation
+					this.delegateStep[3].getNotificationDelegate().validate(
+						this.delegateStep[3].getValueNotificationFieldsetCheckbox()
+						&& enable
+					);
+
+// TODO: future implementation
+//					// Workflow form validation
+//					this.delegateStep[3].getWorkflowDelegate().validate(
+//						this.delegateStep[3].getValueWorkflowFieldsetCheckbox()
+//						&& enable
+//					);
+				} break;
+
+				case 'event_synchronous': {
+					// Phase validation
+					this.delegateStep[0].setAllowBlankPhaseCombo(!enable);
+
+					// Notification validation
+					this.delegateStep[2].getNotificationDelegate().validate(
+						this.delegateStep[2].getValueNotificationFieldsetCheckbox()
+						&& enable
+					);
+
+					// Workflow form validation
+					this.delegateStep[2].getWorkflowDelegate().validate(
+						this.delegateStep[2].getValueWorkflowFieldsetCheckbox()
+						&& enable
+					);
+				} break;
+
+				default:
+					throw 'CMTasksFormEventController error: validate task type not recognized';
+			}
+
+			return this.callParent(arguments);
 		}
 	});
 

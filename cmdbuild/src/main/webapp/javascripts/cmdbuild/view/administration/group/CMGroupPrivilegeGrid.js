@@ -60,17 +60,19 @@
 			buildCheckColumn(this, 'none_privilege', this.withPermissionNone);
 			buildCheckColumn(this, 'read_privilege', this.withPermissionRead);
 			buildCheckColumn(this, 'write_privilege', this.withPermissionWrite);
-			
+
 			var setPrivilegeTranslation = CMDBuild.Translation.row_and_column_privileges;
 			var removePrivilegeTranslation = CMDBuild.Translation.clear_row_and_colun_privilege;
-
+			
 			var me = this;
-			if (this.withFilterEditor) {
-				this.columns.push(iconButton(me, "privilege_filter", setPrivilegeTranslation, "", onSetPrivilegeFilterClick));
-				this.columns.push(iconButton(me, "privilege_filter_remove", removePrivilegeTranslation, "", onRemovePrivilegeFilterClick));
-			}
-			this.columns.push(iconButton(me, "uiconfiguration", CMDBuild.Translation.ui_configuration_for_groups, "UI", onChangeClassUIConfiguration));
 
+			if (this.withFilterEditor) {
+				this.columns.push(iconButton(me, "privilege_filter", setPrivilegeTranslation, "", onSetPrivilegeFilterClick, false));
+				this.columns.push(iconButton(me, "privilege_filter_remove", removePrivilegeTranslation, "", onRemovePrivilegeFilterClick, false));
+			}
+			if (this.withCRUDPermission) {
+				this.columns.push(iconButton(me, "uiconfiguration", CMDBuild.Translation.ui_configuration_for_groups, "UI", onChangeClassUIConfiguration, true));
+			}
 			this.viewConfig = {
 				forceFit: true
 			};
@@ -85,7 +87,6 @@
 			this.border = false;
 
 			this.callParent(arguments);
-
 		},
 
 		loadStoreForGroup: function(group) {
@@ -120,6 +121,7 @@
 				});
 			}
 		},
+
 		// as CMGroupClassUIConfiguration delegate
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -225,7 +227,21 @@
 		}
 	});
 
-	function iconButton(me, icon, tooltip, header, callFunction) {
+	function iconButton(me, icon, tooltip, header, callFunction, disabeldIfProcess) {
+		var button = {
+				icon: "images/icons/" + icon + ".png",
+			    tooltip: tooltip, 
+			    handler: function(grid, rowIndex, colIndex) {
+			    	var model = grid.getStore().getAt(rowIndex);
+			    	callFunction(me, model);
+			    }
+		};
+		if (disabeldIfProcess) {
+			button.isDisabled = function(view, rowIndex, colIndex, item, record) {
+				var id = record.get("privilegedObjectId");
+				return (_CMCache.getClassById(id)) ? false : true;
+	        };
+		};
 		return {
 			header: header,
 			fixed: true, 
@@ -234,16 +250,9 @@
 			tdCls: 'grid-button',
 			menuDisabled: true,
 			hideable: false,
-            xtype:'actioncolumn',
-            width:30,
-            items: [{
-    			icon: "images/icons/" + icon + ".png",
-                tooltip: tooltip, 
-                handler: function(grid, rowIndex, colIndex) {
-                	var model = grid.getStore().getAt(rowIndex);
-                	callFunction(me, model);
-                }
-            }]
+			xtype:'actioncolumn',
+			width:30,
+			items: [button]
 		};	
 	}
 	// scope this
@@ -260,7 +269,6 @@
 			configuration: Ext.decode(filterConfiguration)
 		});
 
-//		var me = this;
 		var parameterNames = CMDBuild.ServiceProxy.parameter;
 		var params = {};
 		params[parameterNames.ACTIVE] = false; // all the attributes
@@ -286,7 +294,6 @@
 
 	// scope this
 	function onRemovePrivilegeFilterClick(me, model) {
-//		var me = this;
 		Ext.Msg.show({
 			title: CMDBuild.Translation.attention,
 			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
@@ -310,6 +317,7 @@
 		});
 
 	}
+
 	function onChangeClassUIConfiguration(me, model) {
 		CMDBuild.ServiceProxy.group.loadClassUiConfiguration({
 			params: {
@@ -327,11 +335,13 @@
 			}
 		});
 	}
+
 	function saveClassUIConfiguration(param) {
 		CMDBuild.ServiceProxy.group.saveClassUiConfiguration({
 			params: param
 		});
 	}
+		 
 	function buildCheckColumn(me, dataIndex, condition) {
 		if (condition) {
 			var checkColumn = new Ext.ux.CheckColumn({
@@ -345,5 +355,4 @@
 			me.mon(checkColumn, "checkchange", me.clickPrivileges, me);
 		}
 	}
-
 })();

@@ -5,25 +5,24 @@
 	Ext.define('CMDBuild.view.administration.accordion.CMAccordionTasks', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
 
-		title: tr.title,
 		cmName: 'tasks',
+		title: tr.title,
 
 		constructor: function(){
 			this.callParent(arguments);
+
 			this.updateStore();
-			this.selectFirstSelectableNode();
 		},
 
+		// overwrite
 		updateStore: function() {
-			var root = this.store.getRootNode();
-
-			root.appendChild([
+			this.store.getRootNode().appendChild([
 				{
 					id: 'all',
 					cmName: 'tasks',
+					iconCls: 'cmdbuild-tree-tasks-group-icon',
 					leaf: false,
 					text: tr.all,
-					iconCls: 'cmdbuild-tree-tasks-group-icon',
 					children: [
 						{
 							id: 'connector',
@@ -42,18 +41,18 @@
 						{
 							id: 'event',
 							cmName: 'tasks',
+							expanded: true,
+							iconCls: 'cmdbuild-tree-tasks-group-icon',
 							leaf: false,
 							text: tr.tasksTypes.event,
-							iconCls: 'cmdbuild-tree-tasks-group-icon',
 							children: [
-// TODO: future implementation
-//								{
-//									id: 'event_asynchronous',
-//									cmName: 'tasks',
-//									leaf: true,
-//									text: tr.tasksTypes.eventTypes.asynchronous,
-//									iconCls: 'cmdbuild-tree-tasks-icon'
-//								},
+								{
+									id: 'event_asynchronous',
+									cmName: 'tasks',
+									leaf: true,
+									text: tr.tasksTypes.eventTypes.asynchronous,
+									iconCls: 'cmdbuild-tree-tasks-icon'
+								},
 								{
 									id: 'event_synchronous',
 									cmName: 'tasks',

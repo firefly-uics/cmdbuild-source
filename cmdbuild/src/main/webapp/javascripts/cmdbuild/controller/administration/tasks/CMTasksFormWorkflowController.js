@@ -3,12 +3,12 @@
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormWorkflowController', {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
-		parentDelegate: undefined,
 		delegateStep: undefined,
-		view: undefined,
+		parentDelegate: undefined,
 		selectedId: undefined,
 		selectionModel: undefined,
 		taskType: 'workflow',
+		view: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -48,11 +48,16 @@
 			}
 		},
 
+		/**
+		 * @param (String) name
+		 * @param (Object) param
+		 * @param (Function) callback
+		 */
 		// overwrite
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
 
-			this.delegateStep[0].setDisabledWorkflowAttributesGrid(true);
+			this.delegateStep[0].eraseWorkflowForm();
 		},
 
 		// overwrite
@@ -66,7 +71,7 @@
 		// overwrite
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
-				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.ServiceProxy.parameter.ID);
+				this.selectedId = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.ID);
 
 				// Selected task asynchronous store query
 				this.selectedDataStore = CMDBuild.core.proxy.CMProxyTasks.get(this.taskType);
@@ -84,74 +89,85 @@
 							// HOPING FOR A FIX: loadRecord() fails with comboboxes, and i can't find good fix, so i must set all fields manually
 
 							// Set step1 [0] datas
-							this.delegateStep[0].setValueActive(record.get(CMDBuild.ServiceProxy.parameter.ACTIVE));
-							this.delegateStep[0].setValueAttributesGrid(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES));
-							this.delegateStep[0].setValueDescription(record.get(CMDBuild.ServiceProxy.parameter.DESCRIPTION));
-							this.delegateStep[0].setValueId(record.get(CMDBuild.ServiceProxy.parameter.ID));
-							this.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME));
+							this.delegateStep[0].setValueActive(record.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE));
+							this.delegateStep[0].setValueDescription(record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION));
+							this.delegateStep[0].setValueId(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+							this.delegateStep[0].setValueWorkflowAttributesGrid(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES));
+							this.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME));
 
 							// Set step2 [1] datas
-							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
-							this.delegateStep[1].setValueBase(record.get(CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION));
+							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
+							this.delegateStep[1].setValueBase(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
 
 							this.view.disableModify(true);
 						}
 					}
 				});
 
-				this.view.wizard.changeTab(0);
+				this.parentDelegate.changeItem(0);
 			}
 		},
 
 		// overwrite
 		onSaveButtonClick: function() {
-			var nonvalid = this.view.getNonValidFields();
-
-			if (nonvalid.length > 0) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-				return;
-			}
-
-			CMDBuild.LoadMask.get().show();
+			var attributesGridValues = this.delegateStep[0].getValueWorkflowAttributeGrid();
 			var formData = this.view.getData(true);
-			var attributesGridValues = this.delegateStep[0].getValueAttributeGrid();
 			var submitDatas = {};
 
-			submitDatas[CMDBuild.ServiceProxy.parameter.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
-				formData[CMDBuild.ServiceProxy.parameter.CRON_INPUT_TYPE]
-			);
+			// Validate before save
+			if (this.validate(formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE])) {
+				CMDBuild.LoadMask.get().show();
 
-			// Form submit values formatting
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
+					formData[CMDBuild.core.proxy.CMProxyConstants.CRON_INPUT_TYPE]
+				);
+
+				// Form submit values formatting
 				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
-					submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
+					submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
 
-			// Cron field validation
-				if (!this.delegateStep[1].getCronDelegate().validate(this.parentDelegate.form.wizard))
-					return;
+				// Data filtering to submit only right values
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ACTIVE] = formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE];
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = formData[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.ID] = formData[CMDBuild.core.proxy.CMProxyConstants.ID];
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME] = formData[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME];
 
-			// Data filtering to submit only right values
-			submitDatas[CMDBuild.ServiceProxy.parameter.ACTIVE] = formData[CMDBuild.ServiceProxy.parameter.ACTIVE];
-			submitDatas[CMDBuild.ServiceProxy.parameter.DESCRIPTION] = formData[CMDBuild.ServiceProxy.parameter.DESCRIPTION];
-			submitDatas[CMDBuild.ServiceProxy.parameter.ID] = formData[CMDBuild.ServiceProxy.parameter.ID];
-			submitDatas[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME] = formData[CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME];
-
-			if (Ext.isEmpty(formData[CMDBuild.ServiceProxy.parameter.ID])) {
-				CMDBuild.core.proxy.CMProxyTasks.create({
-					type: this.taskType,
-					params: submitDatas,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
-			} else {
-				CMDBuild.core.proxy.CMProxyTasks.update({
-					type: this.taskType,
-					params: submitDatas,
-					scope: this,
-					success: this.success,
-					callback: this.callback
-				});
+				if (Ext.isEmpty(formData[CMDBuild.core.proxy.CMProxyConstants.ID])) {
+					CMDBuild.core.proxy.CMProxyTasks.create({
+						type: this.taskType,
+						params: submitDatas,
+						scope: this,
+						success: this.success,
+						callback: this.callback
+					});
+				} else {
+					CMDBuild.core.proxy.CMProxyTasks.update({
+						type: this.taskType,
+						params: submitDatas,
+						scope: this,
+						success: this.success,
+						callback: this.callback
+					});
+				}
 			}
+		},
+
+		/**
+		 * Task validation
+		 *
+		 * @param (Boolean) enable
+		 *
+		 * @return (Boolean)
+		 */
+		// overwrite
+		validate: function(enable) {
+			// Cron field validation
+			this.delegateStep[1].getCronDelegate().validate(enable);
+
+			// Workflow form validation
+			this.delegateStep[0].getWorkflowDelegate().validate(enable);
+
+			return this.callParent(arguments);
 		}
 	});
 

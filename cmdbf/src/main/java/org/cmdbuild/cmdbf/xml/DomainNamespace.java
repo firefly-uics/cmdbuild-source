@@ -25,6 +25,7 @@ import org.apache.ws.commons.schema.XmlSchemaType;
 import org.cmdbuild.config.CmdbfConfiguration;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
@@ -52,10 +53,10 @@ public class DomainNamespace extends EntryNamespace {
 	private static final String DOMAIN_MASTER_DETAIL = "masterDetail";
 	private static final String DOMAIN_MASTER_DETAIL_DESCRIPTION = "masterDetailDescription";
 
-	public DomainNamespace(final String name, final DataAccessLogic systemdataAccessLogic,
+	public DomainNamespace(final String name, final DataAccessLogic systemDataAccessLogic,
 			final DataAccessLogic userDataAccessLogic, final DataDefinitionLogic dataDefinitionLogic,
 			final LookupLogic lookupLogic, final CmdbfConfiguration cmdbfConfiguration) {
-		super(name, systemdataAccessLogic, userDataAccessLogic, dataDefinitionLogic, lookupLogic, cmdbfConfiguration);
+		super(name, systemDataAccessLogic, userDataAccessLogic, dataDefinitionLogic, lookupLogic, cmdbfConfiguration);
 	}
 
 	@Override
@@ -102,11 +103,12 @@ public class DomainNamespace extends EntryNamespace {
 
 	@Override
 	public Iterable<? extends CMDomain> getTypes(final Class<?> cls) {
-		if (CMDomain.class.isAssignableFrom(cls)) {
+		if (CMDomain.class.isAssignableFrom(cls) && !CMDomainHistory.class.isAssignableFrom(cls)) {
 			return Iterables.filter(systemDataAccessLogic.findActiveDomains(), new Predicate<CMDomain>() {
 				@Override
 				public boolean apply(final CMDomain input) {
-					return !input.isSystem();
+					return !input.isSystem() && input.getClass1() != null && !input.getClass1().isSystem()
+							&& input.getClass2() != null && !input.getClass2().isSystem();
 				}
 			});
 		} else {
@@ -117,7 +119,7 @@ public class DomainNamespace extends EntryNamespace {
 	@Override
 	public QName getTypeQName(final Object type) {
 		QName qname = null;
-		if (type instanceof CMDomain) {
+		if (type instanceof CMDomain && !(type instanceof CMDomainHistory)) {
 			final CMEntryType entryType = (CMEntryType) type;
 			qname = new QName(getNamespaceURI(), entryType.getIdentifier().getLocalName(), getNamespacePrefix());
 		}
@@ -141,7 +143,7 @@ public class DomainNamespace extends EntryNamespace {
 	@Override
 	public boolean serialize(final Node xml, final Object entry) {
 		boolean serialized = false;
-		if (entry instanceof CMRelation) {
+		if (entry instanceof CMRelation && !(entry instanceof CMRelationHistory)) {
 			final CMRelation relation = (CMRelation) entry;
 			serialized = serialize(xml, relation.getType(), relation.getValues());
 		}
@@ -156,7 +158,7 @@ public class DomainNamespace extends EntryNamespace {
 			value = new RelationDTO();
 			value.domainName = type.getIdentifier().getLocalName();
 			value.relationAttributeToValue = deserialize(xml, type);
-			value.master = Source._1.name();			
+			value.master = Source._1.name();
 		}
 		return value;
 	}
@@ -204,46 +206,68 @@ public class DomainNamespace extends EntryNamespace {
 		if (type != null) {
 			final Map<String, String> properties = getAnnotations(type);
 			if (type instanceof XmlSchemaComplexType) {
+				boolean skip = false;
 				final XmlSchemaParticle particle = ((XmlSchemaComplexType) type).getParticle();
 
-				final DomainBuilder domainBuilder = Domain.newDomain().withName(type.getName());
-				if (properties.containsKey(DOMAIN_CLASS1)) {
-					domainBuilder.withIdClass1(userDataAccessLogic.findClass(properties.get(DOMAIN_CLASS1)).getId());
-				}
-				if (properties.containsKey(DOMAIN_CLASS2)) {
-					domainBuilder.withIdClass2(userDataAccessLogic.findClass(properties.get(DOMAIN_CLASS2)).getId());
-				}
-				if (properties.containsKey(DOMAIN_DESCRIPTION)) {
-					domainBuilder.withDescription(properties.get(DOMAIN_DESCRIPTION));
-				}
-				if (properties.containsKey(DOMAIN_DESCRIPTION1)) {
-					domainBuilder.withDirectDescription(properties.get(DOMAIN_DESCRIPTION1));
-				}
-				if (properties.containsKey(DOMAIN_DESCRIPTION2)) {
-					domainBuilder.withInverseDescription(properties.get(DOMAIN_DESCRIPTION2));
-				}
-				if (properties.containsKey(DOMAIN_CARDINALITY)) {
-					domainBuilder.withCardinality(properties.get(DOMAIN_CARDINALITY));
-				}
-				if (properties.containsKey(DOMAIN_MASTER_DETAIL_DESCRIPTION)) {
-					domainBuilder.withMasterDetailDescription(properties.get(DOMAIN_MASTER_DETAIL_DESCRIPTION));
-				}
-				if (properties.containsKey(DOMAIN_ACTIVE)) {
-					domainBuilder.thatIsActive(Boolean.parseBoolean(properties.get(DOMAIN_ACTIVE)));
-				} else {
-					domainBuilder.thatIsActive(true);
-				}
-				if (properties.containsKey(DOMAIN_MASTER_DETAIL)) {
-					domainBuilder.thatIsMasterDetail(Boolean.parseBoolean(properties.get(DOMAIN_MASTER_DETAIL)));
-				}
-				domain = dataDefinitionLogic.createOrUpdate(domainBuilder.build());
+				domain = userDataAccessLogic.findDomain(type.getName());
+				if (domain == null || !domain.isSystem()) {
+					final DomainBuilder domainBuilder = Domain.newDomain().withName(type.getName());
+					if (properties.containsKey(DOMAIN_CLASS1)) {
+						final CMClass class1 = userDataAccessLogic.findClass(properties.get(DOMAIN_CLASS1));
+						if (class1 != null && !class1.isSystem()) {
+							domainBuilder.withIdClass1(class1.getId());
+						} else {
+							skip = true;
+						}
+					}
+					if (properties.containsKey(DOMAIN_CLASS2)) {
+						final CMClass class2 = userDataAccessLogic.findClass(properties.get(DOMAIN_CLASS2));
+						if (class2 != null && !class2.isSystem()) {
+							domainBuilder.withIdClass2(class2.getId());
+						} else {
+							skip = true;
+						}
+					}
+					if (properties.containsKey(DOMAIN_DESCRIPTION)) {
+						domainBuilder.withDescription(properties.get(DOMAIN_DESCRIPTION));
+					}
+					if (properties.containsKey(DOMAIN_DESCRIPTION1)) {
+						domainBuilder.withDirectDescription(properties.get(DOMAIN_DESCRIPTION1));
+					}
+					if (properties.containsKey(DOMAIN_DESCRIPTION2)) {
+						domainBuilder.withInverseDescription(properties.get(DOMAIN_DESCRIPTION2));
+					}
+					if (properties.containsKey(DOMAIN_CARDINALITY)) {
+						domainBuilder.withCardinality(properties.get(DOMAIN_CARDINALITY));
+					}
+					if (properties.containsKey(DOMAIN_MASTER_DETAIL_DESCRIPTION)) {
+						domainBuilder.withMasterDetailDescription(properties.get(DOMAIN_MASTER_DETAIL_DESCRIPTION));
+					}
+					if (properties.containsKey(DOMAIN_ACTIVE)) {
+						domainBuilder.thatIsActive(Boolean.parseBoolean(properties.get(DOMAIN_ACTIVE)));
+					} else {
+						domainBuilder.thatIsActive(true);
+					}
+					if (properties.containsKey(DOMAIN_MASTER_DETAIL)) {
+						domainBuilder.thatIsMasterDetail(Boolean.parseBoolean(properties.get(DOMAIN_MASTER_DETAIL)));
+					}
+					if (!skip) {
+						final Domain newDomain = domainBuilder.build();
+						domain = dataDefinitionLogic.getView().findDomain(newDomain.getName());
+						if (domain == null) {
+							domain = dataDefinitionLogic.create(newDomain);
+						} else {
+							domain = dataDefinitionLogic.update(newDomain);
+						}
 
-				if (particle != null && particle instanceof XmlSchemaSequence) {
-					final XmlSchemaSequence sequence = (XmlSchemaSequence) particle;
-					for (final XmlSchemaSequenceMember schemaItem : sequence.getItems()) {
-						if (schemaItem instanceof XmlSchemaElement) {
-							final XmlSchemaElement element = (XmlSchemaElement) schemaItem;
-							addAttributeFromXsd(element, schema, domain);
+						if (particle != null && particle instanceof XmlSchemaSequence) {
+							final XmlSchemaSequence sequence = (XmlSchemaSequence) particle;
+							for (final XmlSchemaSequenceMember schemaItem : sequence.getItems()) {
+								if (schemaItem instanceof XmlSchemaElement) {
+									final XmlSchemaElement element = (XmlSchemaElement) schemaItem;
+									addAttributeFromXsd(element, schema, domain);
+								}
+							}
 						}
 					}
 				}

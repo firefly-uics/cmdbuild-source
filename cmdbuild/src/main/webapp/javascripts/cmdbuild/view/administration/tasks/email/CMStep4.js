@@ -25,44 +25,74 @@
 			}
 		},
 
+		/**
+		 * @return (String)
+		 */
 		checkWorkflowComboSelected: function() {
-			if (this.getWorkflowDelegate().getValueCombo())
-				return true;
-
-			return false;
+			return this.getWorkflowDelegate().getValueCombo();
 		},
 
-		getWorkflowDelegate: function() {
-			return this.view.workflowForm.delegate;
+		// GETters functions
+			/**
+			 * @return (Object) delegate
+			 */
+			getWorkflowDelegate: function() {
+				return this.view.workflowForm.delegate;
+			},
+
+			/**
+			 * @return (String)
+			 */
+			getValueWorkflowAttributeGrid: function() {
+				return this.getWorkflowDelegate().getValueGrid();
+			},
+
+			/**
+			 * @return (Boolean)
+			 */
+			getValueWorkflowFieldsetCheckbox: function() {
+				return this.view.workflowFieldset.checkboxCmp.getValue();
+			},
+
+		/**
+		 * To erase workflow form used on addButtonClick
+		 */
+		eraseWorkflowForm: function() {
+			this.getWorkflowDelegate().eraseWorkflowForm();
 		},
 
-		getValueAttributeGrid: function() {
-			return this.getWorkflowDelegate().getValueGrid();
-		},
+		// SETters functions
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledWorkflowAttributesGrid: function(state) {
+				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
+			},
 
-		getValueWorkflowFieldsetCheckbox: function() {
-			return this.view.workflowFieldset.checkboxCmp.getValue();
-		},
+			/**
+			 * @param (Object) value
+			 */
+			setValueWorkflowAttributesGrid: function(value) {
+				this.getWorkflowDelegate().setValueGrid(value);
+			},
 
-		setDisabledWorkflowAttributesGrid: function(state) {
-			this.getWorkflowDelegate().setDisabledAttributesGrid(state);
-		},
+			/**
+			 * @param (String) value
+			 */
+			setValueWorkflowCombo: function(value) {
+				this.getWorkflowDelegate().setValueCombo(value);
+			},
 
-		setValueWorkflowAttributesGrid: function(data) {
-			this.getWorkflowDelegate().setValueGrid(data);
-		},
-
-		setValueWorkflowCombo: function(value) {
-			this.getWorkflowDelegate().setValueCombo(value);
-		},
-
-		setValueWorkflowFieldsetCheckbox: function(value) {
-			if (value) {
-				this.view.workflowFieldset.expand();
-			} else {
-				this.view.workflowFieldset.collapse();
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueWorkflowFieldsetCheckbox: function(state) {
+				if (state) {
+					this.view.workflowFieldset.expand();
+				} else {
+					this.view.workflowFieldset.collapse();
+				}
 			}
-		}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep4', {
@@ -70,8 +100,8 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
-		height: '100%',
 		overflowY: 'auto',
 
 		initComponent: function() {
@@ -79,23 +109,23 @@
 
 			this.workflowForm = Ext.create('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 				combo: {
-					name: CMDBuild.ServiceProxy.parameter.WORKFLOW_CLASS_NAME
+					name: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME
 				}
 			});
 
 			this.workflowFieldset = Ext.create('Ext.form.FieldSet', {
 				title: tr.startWorkflow,
+				checkboxName: CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ACTIVE,
 				checkboxToggle: true,
-				checkboxName: CMDBuild.ServiceProxy.parameter.WORKFLOW_ACTIVE,
 				collapsed: true,
-
-				layout: {
-					type: 'vbox',
-					align: 'stretch'
-				},
+				collapsible: true,
+				toggleOnTitleClick: true,
+				overflowY: 'auto',
 
 				items: [this.workflowForm]
 			});
+
+			this.workflowFieldset.fieldWidthsFix();
 
 			Ext.apply(this, {
 				items: [this.workflowFieldset]

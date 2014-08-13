@@ -6,6 +6,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		parentDelegate: undefined,
+
 		view: undefined,
 		taskType: 'event_asynchronous',
 
@@ -26,36 +27,66 @@
 			}
 		},
 
-		getValueId: function() {
-			return this.view.idField.getValue();
-		},
+		// GETters functions
+			/**
+			 * @return (String)
+			 */
+			getValueId: function() {
+				return this.view.idField.getValue();
+			},
 
+		/**
+		 * @return (Boolean)
+		 */
 		isEmptyClass: function() {
-			if (this.view.className.getValue())
-				return false;
-
-			return true;
+			return Ext.isEmpty(this.view.classNameCombo.getValue());
 		},
 
-		setDisabledButtonNext: function(state) {
-			this.parentDelegate.setDisabledButtonNext(state);
-		},
+		// SETters functions
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledButtonNext: function(state) {
+				this.parentDelegate.setDisabledButtonNext(state);
+			},
 
-		setDisabledTypeField: function(state) {
-			this.view.typeField.setDisabled(state);
-		},
+			/**
+			 * @param (Boolean) state
+			 */
+			setDisabledTypeField: function(state) {
+				this.view.typeField.setDisabled(state);
+			},
 
-		setValueActive: function(value) {
-			this.view.activeField.setValue(value);
-		},
+			/**
+			 * @param (Boolean) state
+			 */
+			setValueActive: function(state) {
+				this.view.activeField.setValue(state);
+			},
 
-		setValueDescription: function(value) {
-			this.view.descriptionField.setValue(value);
-		},
+			/**
+			 * @param (String) value
+			 */
+			setValueClassName: function(value) {
+				this.view.classNameCombo.setValue(value);
 
-		setValueId: function(value) {
-			this.view.idField.setValue(value);
-		}
+				// Manually select event fire
+				this.cmOn('onClassSelected', { className: value });
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueDescription: function(value) {
+				this.view.descriptionField.setValue(value);
+			},
+
+			/**
+			 * @param (String) value
+			 */
+			setValueId: function(value) {
+				this.view.idField.setValue(value);
+			}
 	});
 
 	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep1', {
@@ -63,9 +94,19 @@
 
 		delegate: undefined,
 
+		bodyCls: 'cmgraypanel',
 		border: false,
-		height: '100%',
 		overflowY: 'auto',
+
+		layout: {
+			type: 'vbox',
+			align:'stretch'
+		},
+
+		defaults: {
+			maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
+			anchor: '100%'
+		},
 
 		initComponent: function() {
 			var me = this;
@@ -75,9 +116,8 @@
 			this.typeField = Ext.create('Ext.form.field.Text', {
 				fieldLabel: tr.type,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name: CMDBuild.ServiceProxy.parameter.TYPE,
+				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
 				value: tr.tasksTypes.event + ' ' + tr.tasksTypes.eventTypes.asynchronous.toLowerCase(),
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				disabled: true,
 				cmImmutable: true,
 				readOnly: true,
@@ -85,32 +125,30 @@
 			});
 
 			this.idField = Ext.create('Ext.form.field.Hidden', {
-				name: CMDBuild.ServiceProxy.parameter.ID
+				name: CMDBuild.core.proxy.CMProxyConstants.ID
 			});
 
 			this.descriptionField = Ext.create('Ext.form.field.Text', {
-				name: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
+				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				fieldLabel: CMDBuild.Translation.description_,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH,
 				allowBlank: false
 			});
 
 			this.activeField = Ext.create('Ext.form.field.Checkbox', {
-				name: CMDBuild.ServiceProxy.parameter.ACTIVE,
+				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: tr.startOnSave,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.CFG_BIG_FIELD_WIDTH
+				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
-			this.className = Ext.create('Ext.form.field.ComboBox', {
-				name: CMDBuild.ServiceProxy.parameter.CLASS_NAME,
+			this.classNameCombo = Ext.create('Ext.form.field.ComboBox', {
+				name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
 				fieldLabel: CMDBuild.Translation.targetClass,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				store: _CMCache.getClassesStore(),
-				valueField: CMDBuild.ServiceProxy.parameter.NAME,
-				displayField: CMDBuild.ServiceProxy.parameter.DESCRIPTION,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				queryMode: 'local',
 				allowBlank: false,
 				forceSelection: true,
@@ -118,7 +156,7 @@
 
 				listeners: {
 					select: function(combo, records, options) {
-						me.delegate.cmOn('onClassSelected', { className: records[0].get(CMDBuild.ServiceProxy.parameter.NAME) });
+						me.delegate.cmOn('onClassSelected', { className: this.getValue() });
 					}
 				}
 			});
@@ -129,7 +167,7 @@
 					this.idField,
 					this.descriptionField,
 					this.activeField,
-					this.className
+					this.classNameCombo
 				]
 			});
 
@@ -137,10 +175,8 @@
 		},
 
 		listeners: {
-			/**
-			 * Disable next button only if class is not selected
-			 */
-			show: function(view, eOpts) {
+			// Disable next button only if class is not selected
+			activate: function(view, eOpts) {
 				if (this.delegate.isEmptyClass())
 					this.delegate.setDisabledButtonNext(true);
 			}

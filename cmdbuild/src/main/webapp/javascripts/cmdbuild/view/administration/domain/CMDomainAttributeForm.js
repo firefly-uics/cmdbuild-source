@@ -1,7 +1,7 @@
 (function() {
-	
+
 	var tr =  CMDBuild.Translation.administration.modClass.attributeProperties;
-	
+
 	Ext.define("CMDBuild.view.administration.domain.CMDomainAttributeFormPanel",{
 		extend: "CMDBuild.view.administration.classes.CMAttributeForm",
 		domainName : undefined,
@@ -14,7 +14,7 @@
 			});
 		},
 
-		onClassSelected: Ext.emptyFn, 
+		onClassSelected: Ext.emptyFn,
 
 		onDomainSelected: function(cmDomain) {
 			this.domainName = cmDomain.getName();
@@ -40,12 +40,12 @@
 
 		buildBasePropertiesPanel: function() {
 			this.baseProperties = new Ext.form.FieldSet({
-				title : tr.baseProperties,
-                padding: "5 5 20 5",
-				autoScroll : true,
-				defaultType : "textfield",
+				title: tr.baseProperties,
+				margin: '0 3 0 0',
+				autoScroll: true,
+				defaultType: "textfield",
 				flex: 1,
-				items : [
+				items: [
 					this.attributeName,
 					this.attributeDescription,
 					this.isBasedsp,
@@ -60,10 +60,10 @@
 				]
 			});
 			Ext.apply(this.attributeDescription, {
-				translationsKeyType: "DomainAttribute", 
+				translationsKeyType: "DomainAttribute",
 				translationsKeyField: "Description"
 			});
 		}
 
-	});	
+	});
 })();

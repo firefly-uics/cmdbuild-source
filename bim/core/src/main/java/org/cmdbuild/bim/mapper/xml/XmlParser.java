@@ -13,9 +13,9 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.cmdbuild.bim.logging.LoggingSupport;
 import org.cmdbuild.bim.mapper.Parser;
 import org.cmdbuild.bim.service.BimError;
-import org.cmdbuild.bim.utils.LoggerSupport;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -29,7 +29,7 @@ public class XmlParser implements Parser {
 
 	/** the root node of the XML file */
 	public static final String ROOT = "bim-conf";
-	private static final Logger logger = LoggerSupport.logger;
+	private static final Logger logger = LoggingSupport.logger;
 
 	private static Document xmlDocument; 
 
@@ -74,7 +74,7 @@ public class XmlParser implements Parser {
 			xmlDocument = db.parse(xmlSource);
 			xPath = XPathFactory.newInstance().newXPath();
 		} catch (Exception e) {
-			throw new BimError("Unable to parse export configuration '"+xmlString+"'");
+			throw new BimError("Unable to parse xml mapping '"+xmlString+"'");
 		} 
 	}
 

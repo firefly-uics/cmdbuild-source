@@ -16,12 +16,10 @@ import java.util.NoSuchElementException;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
-import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
+import org.cmdbuild.data.store.dao.BaseStorableConverter;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;
-import org.cmdbuild.model.email.Email;
-import org.cmdbuild.model.email.Email.EmailStatus;
 
 import com.google.common.collect.Maps;
 
@@ -53,7 +51,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		final Lookup lookup = lookupStore.read(Lookup.newInstance() //
 				.withId(emailStatusLookupId) //
 				.build());
-		email.setStatus(EmailStatus.fromName(lookup.description));
+		email.setStatus(EmailStatus.of(identifierOf(lookup)));
 		email.setActivityId((card.get(PROCESS_ID_ATTRIBUTE) != null) ? card.get(PROCESS_ID_ATTRIBUTE,
 				IdAndDescription.class).getId() : null);
 		return email;
@@ -76,14 +74,18 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 	}
 
 	private Long getEmailLookupIdFrom(final EmailStatus emailStatus) {
-		for (final Lookup lookup : lookupStore.listForType(LookupType.newInstance() //
+		for (final Lookup lookup : lookupStore.readAll(LookupType.newInstance() //
 				.withName(EmailStatus.LOOKUP_TYPE) //
 				.build())) {
-			if (lookup.description.equals(emailStatus.getLookupName())) {
+			if (identifierOf(lookup).equals(emailStatus.getLookupName())) {
 				return lookup.getId();
 			}
 		}
 		throw new NoSuchElementException();
+	}
+
+	private String identifierOf(final Lookup lookup) {
+		return lookup.code;
 	}
 
 }

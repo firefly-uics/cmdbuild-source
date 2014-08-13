@@ -5,7 +5,7 @@
 	<groupId>org.cmdbuild</groupId>
 	<artifactId>cmdbuild-main</artifactId>
 	<packaging>pom</packaging>
-	<version>2.2-SNAPSHOT</version>
+	<version>2.3-SNAPSHOT</version>
 	<name>CMDBuild</name>
 	<url>http://www.cmdbuild.org</url>
 	<properties>
@@ -21,6 +21,7 @@
 		<jcip-annotations.version>1.0</jcip-annotations.version>
 		<joda-time.version>2.3</joda-time.version>
 		<log4j.version>1.2.17</log4j.version>
+		<postgresql.version>9.1-901.jdbc4</postgresql.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<shark.version>4.4-1</shark.version>
 		<slf4j.version>1.7.6</slf4j.version>
@@ -47,27 +48,36 @@
 		<module>bim/bimserver</module>
 		<module>cmdbf</module>
 		<module>cmdbuild</module>
-		<module>cmdbuild-commons</module>
-		<module>cmdbuild-graph</module>
-		<module>cmdbuild-ws-client</module>
+		<module>commons</module>
 		<module>core</module>
 		<module>dao/core</module>
 		<module>dao/postgresql</module>
 		<module>dms/alfresco</module>
 		<module>dms/core</module>
+		<module>graph</module>
 		<module>scheduler/core</module>
 		<module>scheduler/quartz</module>
 		<module>services/rest/core</module>
 		<module>services/rest/cxf</module>
 		<module>shark/client</module>
+		<module>services/sync/core</module>
+		<module>services/sync/internal</module>
+		<module>services/sync/sql</module>
 		<module>shark/commons</module>
 		<module>shark/extensions</module>
 		<module>shark/legacy-extensions</module>
 		<module>shark/server</module>
+		<module>ws-client</module>
 	</modules>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>${postgresql.version}</version>
+			</dependency>
+
 			<dependency>
 				<groupId>org.beanshell</groupId>
 				<artifactId>bsh</artifactId>

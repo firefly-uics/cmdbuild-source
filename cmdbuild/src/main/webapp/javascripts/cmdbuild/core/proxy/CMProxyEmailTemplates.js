@@ -4,6 +4,10 @@
 
 	Ext.define('CMDBuild.core.proxy.CMProxyEmailTemplates', {
 		statics: {
+
+			/**
+			 * @param (Object) parameters
+			 */
 			create: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
@@ -15,8 +19,11 @@
 				});
 			},
 
+			/**
+			 * @return (Object) store
+			 */
 			get: function() {
-				return Ext.create('Ext.data.JsonStore', {
+				return Ext.create('Ext.data.Store', {
 					autoLoad: false,
 					model: 'CMDBuild.model.CMModelEmailTemplates.singleTemplate',
 					proxy: {
@@ -30,6 +37,9 @@
 				});
 			},
 
+			/**
+			 * @return (Object) store
+			 */
 			getStore: function() {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: false,
@@ -43,16 +53,19 @@
 						}
 					},
 					sorters: [{
-						property: CMDBuild.ServiceProxy.parameter.NAME,
+						property: CMDBuild.core.proxy.CMProxyConstants.NAME,
 						direction: 'ASC'
 					}]
 				});
 			},
 
+			/**
+			 * @param (Object) parameters
+			 */
 			remove: function(parameters) {
-				CMDBuild.ServiceProxy.core.doRequest({
+				CMDBuild.Ajax.request({
 					method: 'POST',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.delete,
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.remove,
 					params: parameters.params,
 					scope: parameters.scope,
 					success: parameters.success,
@@ -60,6 +73,9 @@
 				});
 			},
 
+			/**
+			 * @param (Object) parameters
+			 */
 			update: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',

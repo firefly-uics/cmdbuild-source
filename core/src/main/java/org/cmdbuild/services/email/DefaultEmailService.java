@@ -1,6 +1,5 @@
 package org.cmdbuild.services.email;
 
-import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.Iterables.unmodifiableIterable;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -21,11 +20,11 @@ import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.MailException;
 import org.cmdbuild.common.api.mail.NewMail;
 import org.cmdbuild.common.api.mail.SelectMail;
+import org.cmdbuild.data.store.email.Attachment;
+import org.cmdbuild.data.store.email.Email;
+import org.cmdbuild.data.store.email.EmailConstants;
+import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.data.store.email.EmailTemplate;
-import org.cmdbuild.model.email.Attachment;
-import org.cmdbuild.model.email.Email;
-import org.cmdbuild.model.email.Email.EmailStatus;
-import org.cmdbuild.model.email.EmailConstants;
 import org.slf4j.Logger;
 
 import com.google.common.base.Predicates;
@@ -153,8 +152,8 @@ public class DefaultEmailService implements EmailService {
 			final MailApiFactory mailApiFactory, //
 			final EmailPersistence persistence //
 	) {
-		this.emailAccountSupplier = memoize(emailConfigurationSupplier);
-		this.mailApiSupplier = memoize(new MailApiSupplier(emailConfigurationSupplier, mailApiFactory));
+		this.emailAccountSupplier = emailConfigurationSupplier;
+		this.mailApiSupplier = new MailApiSupplier(emailConfigurationSupplier, mailApiFactory);
 		this.persistence = persistence;
 	}
 
@@ -181,6 +180,7 @@ public class DefaultEmailService implements EmailService {
 			}
 			newMail.send();
 		} catch (final MailException e) {
+			logger.error("error sending email", e);
 			throw EmailServiceException.send(e);
 		}
 	}
@@ -240,6 +240,7 @@ public class DefaultEmailService implements EmailService {
 				if (callback.apply(email)) {
 					final Long id = persistence.save(email);
 					final Email stored = persistence.getEmail(id);
+					stored.setAttachments(email.getAttachments());
 					callback.accept(stored);
 				}
 			} catch (final Exception e) {

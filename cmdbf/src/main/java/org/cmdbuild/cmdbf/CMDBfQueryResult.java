@@ -217,7 +217,6 @@ public abstract class CMDBfQueryResult extends QueryResultType {
 					final ItemSet<CMDBfItem> itemSet = itemMap.get(itemTemplate.getId());
 					fetchItemRecords(itemTemplate.getId(), itemSet, itemTemplate.getContentSelector());
 					for (final CMDBfItem item : itemSet) {
-						fetchAlias(item);
 						final ItemType resultItem = new ItemType();
 						resultItem.getInstanceId().addAll(item.instanceIds());
 						nodesResult.getItem().add(resultItem);
@@ -236,7 +235,6 @@ public abstract class CMDBfQueryResult extends QueryResultType {
 					fetchRelationshipRecords(relationshipTemplate.getId(), relationshipSet,
 							relationshipTemplate.getContentSelector());
 					for (final CMDBfRelationship relationship : relationshipSet) {
-						fetchAlias(relationship);
 						final RelationshipType resultRelationship = new RelationshipType();
 						resultRelationship.getInstanceId().addAll(relationship.instanceIds());
 						resultRelationship.setSource(relationship.getSource());
@@ -252,13 +250,13 @@ public abstract class CMDBfQueryResult extends QueryResultType {
 		}
 	}
 
-	private Set<CMDBfItem> getItems(final ItemTemplateType itemTemplate) {
+	private Set<CMDBfItem> getItems(final ItemTemplateType itemTemplate) throws QueryErrorFault {
 		ItemSet<CMDBfItem> itemTemplateResultSet = null;
 		Set<CMDBfId> instanceId = null;
 		if (itemTemplate.getInstanceIdConstraint() != null) {
 			instanceId = new HashSet<CMDBfId>();
-			for (final MdrScopedIdType alias : itemTemplate.getInstanceIdConstraint().getInstanceId()) {
-				final CMDBfId id = resolveAlias(alias);
+			for (final MdrScopedIdType constraintId : itemTemplate.getInstanceIdConstraint().getInstanceId()) {
+				final CMDBfId id = constraintId instanceof CMDBfId ? (CMDBfId) constraintId : new CMDBfId(constraintId);
 				if (id != null) {
 					instanceId.add(id);
 				}
@@ -284,13 +282,13 @@ public abstract class CMDBfQueryResult extends QueryResultType {
 	}
 
 	private Set<CMDBfRelationship> getRelationships(final RelationshipTemplateType relationshipTemplate,
-			final ItemSet<CMDBfItem> sources, final ItemSet<CMDBfItem> targets) {
+			final ItemSet<CMDBfItem> sources, final ItemSet<CMDBfItem> targets) throws QueryErrorFault {
 		ItemSet<CMDBfRelationship> relationshipTemplateResultSet = null;
 		Set<CMDBfId> instanceId = null;
 		if (relationshipTemplate.getInstanceIdConstraint() != null) {
 			instanceId = new HashSet<CMDBfId>();
-			for (final MdrScopedIdType alias : relationshipTemplate.getInstanceIdConstraint().getInstanceId()) {
-				final CMDBfId id = resolveAlias(alias);
+			for (final MdrScopedIdType constraintId : relationshipTemplate.getInstanceIdConstraint().getInstanceId()) {
+				final CMDBfId id = constraintId instanceof CMDBfId ? (CMDBfId) constraintId : new CMDBfId(constraintId);
 				if (id != null) {
 					instanceId.add(id);
 				}
@@ -302,9 +300,8 @@ public abstract class CMDBfQueryResult extends QueryResultType {
 					&& (relationshipTemplateResultSet == null || !relationshipTemplateResultSet.isEmpty())) {
 				final RecordConstraintType recordConstraint = recordIterator.next();
 				final ItemSet<CMDBfRelationship> recordConstraintResultSet = new ItemSet<CMDBfRelationship>();
-				recordConstraintResultSet.addAll(getRelationships(relationshipTemplate.getId(), instanceId,
-						sources != null ? sources.idSet() : null, targets != null ? targets.idSet() : null,
-						recordConstraint));
+				recordConstraintResultSet.addAll(getRelationships(relationshipTemplate.getId(), instanceId, sources,
+						targets, recordConstraint));
 				if (relationshipTemplateResultSet == null) {
 					relationshipTemplateResultSet = recordConstraintResultSet;
 				} else {
@@ -313,8 +310,8 @@ public abstract class CMDBfQueryResult extends QueryResultType {
 			}
 		} else {
 			relationshipTemplateResultSet = new ItemSet<CMDBfRelationship>();
-			relationshipTemplateResultSet.addAll(getRelationships(relationshipTemplate.getId(), instanceId,
-					sources != null ? sources.idSet() : null, targets != null ? targets.idSet() : null, null));
+			relationshipTemplateResultSet.addAll(getRelationships(relationshipTemplate.getId(), instanceId, sources,
+					targets, null));
 		}
 		return relationshipTemplateResultSet;
 	}
@@ -403,18 +400,15 @@ public abstract class CMDBfQueryResult extends QueryResultType {
 	}
 
 	abstract protected Collection<CMDBfItem> getItems(String templateId, Set<CMDBfId> instanceId,
-			RecordConstraintType recordConstraint);
+			RecordConstraintType recordConstraint) throws QueryErrorFault;
 
 	abstract protected Collection<CMDBfRelationship> getRelationships(String templateId, Set<CMDBfId> instanceId,
-			Set<CMDBfId> source, Set<CMDBfId> target, RecordConstraintType recordConstraint);
+			ItemSet<CMDBfItem> source, ItemSet<CMDBfItem> target, RecordConstraintType recordConstraint)
+			throws QueryErrorFault;
 
 	abstract protected void fetchItemRecords(String templateId, ItemSet<CMDBfItem> items,
-			ContentSelectorType contentSelector);
+			ContentSelectorType contentSelector) throws QueryErrorFault;
 
 	abstract protected void fetchRelationshipRecords(String templateId, PathSet relationships,
-			ContentSelectorType contentSelector);
-
-	abstract protected CMDBfId resolveAlias(MdrScopedIdType alias);
-
-	abstract protected void fetchAlias(CMDBfItem item);
+			ContentSelectorType contentSelector) throws QueryErrorFault;
 }

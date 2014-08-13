@@ -86,7 +86,7 @@
 				throw this.EXCEPTIONS.notAWidget(widgetName);
 			}
 
-			this.form.removeAll();
+			this.form.removeAll(false);
 			this.form.add(widget);
 			this.widgetForm = widget;
 
