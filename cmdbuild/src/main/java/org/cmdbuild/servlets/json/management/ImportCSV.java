@@ -29,7 +29,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 
 	/**
 	 * Stores in the session the records of the file that the user has uploaded
-	 * 
+	 *
 	 * @param file
 	 *            is the uploaded file
 	 * @param separatorString
@@ -48,7 +48,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the serialization of the cards
 	 */
 	@JSONExported
@@ -139,7 +139,8 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 		}
 	}
 
-	private void clearSession() {
+	@JSONExported
+	public void clearSession() {
 		sessionVars().setCsvData(null);
 	}
 
