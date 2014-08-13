@@ -36,7 +36,6 @@ import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.model.data.Card.CardBuilder;
 import org.cmdbuild.services.soap.connector.DomainDirection;
 import org.dom4j.Element;
 
@@ -266,7 +265,7 @@ public class ConnectorJob implements Runnable {
 						+ " does not exist or the user does not have the privileges to read it");
 				throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 			}
-			final CardBuilder cardBuilder = Card.newInstance(fetchedClass);
+			final Card.Builder cardBuilder = Card.newInstance(fetchedClass);
 			setCardValues(fetchedClass, cardBuilder);
 			if (!referenceName.equals(StringUtils.EMPTY)) {
 				Log.SOAP.info("ExternalSync - the card [class:" + this.detailClassName
@@ -296,7 +295,7 @@ public class ConnectorJob implements Runnable {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void setCardValues(final CMClass cmClass, final CardBuilder cardBuilder) {
+	private void setCardValues(final CMClass cmClass, final Card.Builder cardBuilder) {
 		final Iterator<Element> attributeIterator = elementCard.elementIterator();
 		while (attributeIterator.hasNext()) {
 			final Element cardAttribute = attributeIterator.next();
@@ -324,7 +323,7 @@ public class ConnectorJob implements Runnable {
 		}
 	}
 
-	private void addReferenceAttributeTo(final CMAttribute attribute, final CardBuilder cardBuilder,
+	private void addReferenceAttributeTo(final CMAttribute attribute, final Card.Builder cardBuilder,
 			final String attributeValue) {
 		final ReferenceAttributeType referenceAttributeType = (ReferenceAttributeType) attribute.getType();
 		if (StringUtils.isNotBlank(attributeValue)) {
@@ -343,7 +342,7 @@ public class ConnectorJob implements Runnable {
 		}
 	}
 
-	private void addLookupAttributeTo(final CMAttribute attribute, final CardBuilder cardBuilder,
+	private void addLookupAttributeTo(final CMAttribute attribute, final Card.Builder cardBuilder,
 			final String attributeValue) {
 		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();		
 		if (StringUtils.isNotBlank(attributeValue)) {
@@ -374,7 +373,7 @@ public class ConnectorJob implements Runnable {
 				Log.SOAP.info("ExternalSync - set card fields [id:" + this.detailCardId + " classname: "
 						+ this.detailClassName + "]");
 
-				final CardBuilder cardBuilder = Card.newInstance().clone(cardToUpdate);
+				final Card.Builder cardBuilder = Card.newInstance().clone(cardToUpdate);
 				setCardValues(view.findClass(detailClassName), cardBuilder);
 
 				Log.SOAP.info("ExternalSync - end set card fields [id:" + this.detailCardId + " classname: "

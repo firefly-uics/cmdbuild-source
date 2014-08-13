@@ -558,7 +558,7 @@ public class CmdbMDR implements ManagementDataRepository {
 		boolean retry = false;
 		CMClass cmType = cmCard != null ? cmCard.getType() : null;
 		;
-		Card.CardBuilder cardBuilder = null;
+		Card.Builder cardBuilder = null;
 		DateTime recordLastModified = null;
 		for (final RecordType record : item.records()) {
 			final QName recordQName = CMDBfUtils.getRecordType(record);

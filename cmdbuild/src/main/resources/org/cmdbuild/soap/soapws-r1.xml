@@ -24,7 +24,7 @@
 	<bean id="webservicesProxy" factory-bean="webservicesProxyBuilder"
 		factory-method="build" />
 
-	<jaxws:endpoint address="/Webservices">
+	<jaxws:endpoint address="/soap/Webservices">
 		<jaxws:properties>
 			<!-- Uncomment the next two elements for disable replay attacks check -->
 			<!-- <entry key="ws-security.enable.nonce.cache" value="false" /> -->
