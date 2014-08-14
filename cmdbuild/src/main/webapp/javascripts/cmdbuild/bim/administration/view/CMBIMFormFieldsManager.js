@@ -43,7 +43,7 @@
 			});
 
 			this.importIfcButton = Ext.create('Ext.button.Button', {
-				iconCls: 'importIfc',
+				iconCls: 'import',
 				text: CMDBuild.Translation.bimMod.administration.projects.importIfc
 			});
 

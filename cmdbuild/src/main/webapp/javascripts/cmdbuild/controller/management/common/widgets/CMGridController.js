@@ -39,8 +39,6 @@
 			this.grid = view.grid;
 			this.view.delegate = this;
 
-			this.view.classIdField.setValue(this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID));
-
 			CMDBuild.Management.FieldManager.loadAttributes(
 				this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
 				function(attributes) {
@@ -61,6 +59,9 @@
 			switch (name) {
 				case 'onAddRowButtonClick' :
 					return this.onAddRowButtonClick();
+
+				case 'onCSVImportButtonClick':
+					return this.onCSVImportButtonClick();
 
 				case 'onCSVUploadButtonClick':
 					return this.onCSVUploadButtonClick();
@@ -257,21 +258,6 @@
 		},
 
 		/**
-		 * @param {Array} fields
-		 *
-		 * @return {Ext.data.Store}
-		 */
-		getStoreForFields: function(fields) {
-			fields.push({ name: 'Id', type: 'int' });
-			fields.push({ name: 'IdClass', type: 'int' });
-
-			return Ext.create('Ext.data.Store', {
-				fields: fields,
-				data: []
-			});
-		},
-
-		/**
 		 * Adapter for grid's loarRecords function
 		 *
 		 * @param {Array} rawData - Ex. [{ card: {...}, not_valid_fields: {...} }, {...}]
@@ -291,8 +277,36 @@
 			}
 		},
 
+		/**
+		 * @param {Array} fields
+		 *
+		 * @return {Ext.data.Store}
+		 */
+		getStoreForFields: function(fields) {
+			fields.push({ name: 'Id', type: 'int' });
+			fields.push({ name: 'IdClass', type: 'int' });
+
+			return Ext.create('Ext.data.Store', {
+				fields: fields,
+				data: []
+			});
+		},
+
 		onAddRowButtonClick: function() {
 			this.grid.getStore().add(this.getStoreForFields(this.columns.fields));
+		},
+
+		/**
+		 * Opens importCSV configuration popup
+		 */
+		onCSVImportButtonClick: function() {
+			this.importCSVWindow = Ext.create('CMDBuild.view.management.common.widgets.grid.CMImportCSVWindow', {
+				title: '@@ Import from CSV',
+				classId: this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+				delegate: this
+			});
+
+			this.importCSVWindow.show();
 		},
 
 		/**
@@ -301,13 +315,14 @@
 		onCSVUploadButtonClick: function() {
 			CMDBuild.LoadMask.get().show();
 			CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.uploadCsv({
-				form: this.view.csvUploadForm.getForm(),
+				form: this.importCSVWindow.csvUploadForm.getForm(),
 				scope: this,
 				success: function(response, options) {
 					CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.getCsvRecords({
 						scope: this,
 						success: function(result, options, decodedResult) {
 							this.gridLoadData(decodedResult.rows);
+							this.importCSVWindow.destroy();
 						}
 					});
 				},

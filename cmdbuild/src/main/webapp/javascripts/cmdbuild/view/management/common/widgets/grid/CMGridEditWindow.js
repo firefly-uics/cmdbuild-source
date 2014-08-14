@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.common.widgets.grid.CMGridEditWindow', {
-		extend: 'CMDBuild.PopupWindow',
+		extend: 'CMDBuild.core.PopupWindow',
 
 		defaultSizeW: 0.90,
 		defaultSizeH: 0.80,
@@ -10,7 +10,7 @@
 			delegate: undefined,
 			cardAttributes: undefined,
 			record: undefined,
-		// EDN: Configurations
+		// END: Configurations
 
 		buttonAlign: 'center',
 
@@ -20,6 +20,7 @@
 			this.closeButton = Ext.create('Ext.button.Button', {
 				scope: this,
 				text: CMDBuild.Translation.common.buttons.close,
+
 				handler: function() {
 					this.delegate.cmOn('onEditWindowClosed');
 				}
