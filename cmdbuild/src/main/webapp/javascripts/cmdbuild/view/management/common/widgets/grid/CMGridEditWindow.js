@@ -13,6 +13,7 @@
 		// END: Configurations
 
 		buttonAlign: 'center',
+		border: false,
 
 		initComponent: function() {
 			var me = this;
@@ -27,12 +28,9 @@
 			});
 
 			this.form = Ext.create('Ext.form.Panel', {
-				cls: 'x-panel-body-default-framed',
 				autoScroll: true,
-				bodyCls: 'x-panel-body-default-framed',
-				bodyStyle: {
-					padding: '5px 5px 0px 5px'
-				},
+				frame: true,
+				border: false,
 
 				items: me.buildFormFields()
 			});
