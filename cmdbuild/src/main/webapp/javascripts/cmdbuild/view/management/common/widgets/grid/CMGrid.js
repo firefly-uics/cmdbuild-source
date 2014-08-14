@@ -30,77 +30,30 @@
 				}
 			});
 
-			// File upload fields
-				this.classIdField = Ext.create('Ext.form.field.Hidden', {
-					name: 'idClass'
-				});
+			this.importFromCSVButton = Ext.create('Ext.button.Button', {
+				iconCls: 'import',
+				text: '@@ Import CSV file',
+				scope: this,
 
-				this.csvFileField = Ext.create('Ext.form.field.File', {
-					name: 'filecsv',
-					allowBlank: true,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH
-				});
-
-				this.csvUploadButton = Ext.create('Ext.button.Button', {
-					text: '@@ Upload',
-					margins: '0 0 0 5',
-					scope: this,
-
-					handler: function() {
-						this.delegate.cmOn('onCSVUploadButtonClick');
-					}
-				});
-
-				this.csvSeparatorCombo = Ext.create('Ext.form.field.ComboBox', {
-					name: 'separator',
-					fieldLabel: CMDBuild.Translation.management.modutilities.csv.separator,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-					displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-					width: 200,
-					value: ';',
-					editable: false,
-					allowBlank: false,
-
-					store: CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.getCsvSeparatorStore(),
-					queryMode: 'local'
-				});
-
-				this.csvUploadForm = Ext.create('Ext.form.Panel', {
-					frame: false,
-					border: false,
-					encoding: 'multipart/form-data',
-					fileUpload: true,
-					monitorValid: true,
-
-					items: [this.classIdField, this.csvFileField, this.csvSeparatorCombo, this.csvUploadButton]
-				});
-
-				this.csvUploadContainer = Ext.create('Ext.form.FieldContainer', {
-					fieldLabel: '@@ Import from CSV',
-					border: false,
-					considerAsFieldToDisable: true,
-					labelWidth: CMDBuild.LABEL_WIDTH,
-					labelStyle: 'padding: 3px 0px 0px 3px',
-					width: CMDBuild.CFG_BIG_FIELD_WIDTH,
-					region: 'north',
-
-					layout: {
-						type: 'hbox',
-						padding:'3 0 3 3'
-					},
-
-					items: [this.csvUploadForm]
-				});
-			// EDN: File upload fields
+				handler: function() {
+					this.delegate.cmOn('onCSVImportButtonClick');
+				}
+			});
 
 			this.grid = Ext.create('CMDBuild.view.management.common.widgets.grid.CMGridPanel', {
 				region: 'center'
 			});
 
 			Ext.apply(this, {
-				tbar: [this.addButton],
-				items: [this.csvUploadContainer, this.grid]
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						items: [this.addButton, this.importFromCSVButton]
+					}
+				],
+				items: [this.grid]
 			});
 
 			this.callParent(arguments);
