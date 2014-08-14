@@ -1,21 +1,22 @@
 package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.dto.Constants.ACTIVE;
-import static org.cmdbuild.service.rest.dto.Constants.CODE;
-import static org.cmdbuild.service.rest.dto.Constants.DEFAULT;
-import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;
-import static org.cmdbuild.service.rest.dto.Constants.ID;
-import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_DETAIL;
-import static org.cmdbuild.service.rest.dto.Constants.NUMBER;
-import static org.cmdbuild.service.rest.dto.Constants.PARENT_ID;
-import static org.cmdbuild.service.rest.dto.Constants.PARENT_TYPE;
-import static org.cmdbuild.service.rest.dto.Constants.TYPE;
+import static org.cmdbuild.service.rest.constants.Serialization.ACTIVE;
+import static org.cmdbuild.service.rest.constants.Serialization.CODE;
+import static org.cmdbuild.service.rest.constants.Serialization.DEFAULT;
+import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
+import static org.cmdbuild.service.rest.constants.Serialization.ID;
+import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_TYPE_DETAIL;
+import static org.cmdbuild.service.rest.constants.Serialization.NUMBER;
+import static org.cmdbuild.service.rest.constants.Serialization.PARENT_ID;
+import static org.cmdbuild.service.rest.constants.Serialization.PARENT_TYPE;
+import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement(name = LOOKUP_TYPE_DETAIL)
 public class LookupDetail {
@@ -182,6 +183,7 @@ public class LookupDetail {
 	}
 
 	@XmlAttribute(name = PARENT_ID)
+	@JsonProperty(PARENT_ID)
 	public Long getParentId() {
 		return parentId;
 	}
@@ -190,11 +192,12 @@ public class LookupDetail {
 		this.parentId = parentId;
 	}
 
+	@XmlAttribute(name = PARENT_TYPE)
+	@JsonProperty(PARENT_TYPE)
 	public String getParentType() {
 		return parentType;
 	}
 
-	@XmlAttribute(name = PARENT_TYPE)
 	void setParentType(final String parentType) {
 		this.parentType = parentType;
 	}

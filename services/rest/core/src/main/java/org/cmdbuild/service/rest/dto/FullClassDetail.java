@@ -1,12 +1,12 @@
 package org.cmdbuild.service.rest.dto;
 
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;
-import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION_ATTRIBUTE_NAME;
-import static org.cmdbuild.service.rest.dto.Constants.FULL_CLASS_DETAIL;
-import static org.cmdbuild.service.rest.dto.Constants.NAME;
-import static org.cmdbuild.service.rest.dto.Constants.PARENT;
-import static org.cmdbuild.service.rest.dto.Constants.SUPERCLASS;
+import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
+import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION_ATTRIBUTE_NAME;
+import static org.cmdbuild.service.rest.constants.Serialization.FULL_CLASS_DETAIL;
+import static org.cmdbuild.service.rest.constants.Serialization.NAME;
+import static org.cmdbuild.service.rest.constants.Serialization.PARENT;
+import static org.cmdbuild.service.rest.constants.Serialization.SUPERCLASS;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;

@@ -1,9 +1,9 @@
 package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.dto.Constants.DESCRIPTION;
-import static org.cmdbuild.service.rest.dto.Constants.NAME;
-import static org.cmdbuild.service.rest.dto.Constants.PARENT;
-import static org.cmdbuild.service.rest.dto.Constants.SIMPLE_CLASS_DETAIL;
+import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
+import static org.cmdbuild.service.rest.constants.Serialization.NAME;
+import static org.cmdbuild.service.rest.constants.Serialization.PARENT;
+import static org.cmdbuild.service.rest.constants.Serialization.SIMPLE_CLASS_DETAIL;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;

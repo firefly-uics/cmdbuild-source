@@ -1,7 +1,7 @@
 package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.dto.Constants.DATA;
-import static org.cmdbuild.service.rest.dto.Constants.RESPONSE_METADATA;
+import static org.cmdbuild.service.rest.constants.Serialization.DATA;
+import static org.cmdbuild.service.rest.constants.Serialization.RESPONSE_METADATA;
 
 import java.util.Collection;
 

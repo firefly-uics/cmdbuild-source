@@ -1,8 +1,5 @@
 package org.cmdbuild.service.rest.serialization;
 
-import static org.cmdbuild.service.rest.dto.Constants.CLASSNAME_WITH_UNSERSCORE;
-import static org.cmdbuild.service.rest.dto.Constants.ID_WITH_UNSERSCORE;
-
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -14,13 +11,15 @@ import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.service.rest.constants.Serialization;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
 public abstract class FromSomeKindOfCardToMap<T> implements Function<T, Map<String, Object>> {
 
-	public static abstract class Builder<T> implements org.cmdbuild.common.Builder<FromSomeKindOfCardToMap<T>> {
+	public static abstract class Builder<T> implements
+			org.apache.commons.lang3.builder.Builder<FromSomeKindOfCardToMap<T>> {
 
 		private CMDataView dataView;
 		private ErrorHandler errorHandler;
@@ -70,8 +69,8 @@ public abstract class FromSomeKindOfCardToMap<T> implements Function<T, Map<Stri
 		}
 		final Map<String, Object> values = Maps.newHashMap();
 		if (idAndClassnameRequired()) {
-			values.put(ID_WITH_UNSERSCORE, idOf(input));
-			values.put(CLASSNAME_WITH_UNSERSCORE, className);
+			values.put(Serialization.ID_WITH_UNSERSCORE, idOf(input));
+			values.put(Serialization.CLASSNAME_WITH_UNSERSCORE, className);
 		}
 		// TODO effective class
 		for (final Entry<String, Object> entry : valuesOf(input)) {
