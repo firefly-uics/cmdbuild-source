@@ -12,6 +12,7 @@
 		// END: Configurations
 
 		buttonAlign: 'center',
+		border: false,
 
 		initComponent: function() {
 			var me = this;
@@ -66,12 +67,7 @@
 			});
 
 			this.csvUploadForm = Ext.create('Ext.form.Panel', {
-				cls: 'x-panel-body-default-framed',
-				bodyCls: 'x-panel-body-default-framed',
-				bodyStyle: {
-					padding: '5px 5px 0px 5px'
-				},
-				frame: false,
+				frame: true,
 				border: false,
 				encoding: 'multipart/form-data',
 				fileUpload: true,
