@@ -7,7 +7,7 @@ import com.google.common.base.Function;
 
 public class ToSimpleClassDetail implements Function<CMClass, SimpleClassDetail> {
 
-	public static class Builder implements org.cmdbuild.common.Builder<ToSimpleClassDetail> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToSimpleClassDetail> {
 
 		private Builder() {
 			// use static method

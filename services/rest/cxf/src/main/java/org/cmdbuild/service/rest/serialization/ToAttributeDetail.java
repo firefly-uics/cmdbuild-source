@@ -18,7 +18,7 @@ import com.google.common.base.Function;
 
 public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail> {
 
-	public static class Builder implements org.cmdbuild.common.Builder<ToAttributeDetail> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToAttributeDetail> {
 
 		private AttributeTypeResolver attributeTypeResolver;
 		private CMDataView dataView;

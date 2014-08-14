@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.dto.Constants.CARD_DETAIL_RESPONSE;
+import static org.cmdbuild.service.rest.constants.Serialization.CARD_DETAIL_RESPONSE;
 
 import java.util.Map;
 

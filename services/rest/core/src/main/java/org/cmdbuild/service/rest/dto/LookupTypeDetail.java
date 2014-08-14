@@ -1,8 +1,8 @@
 package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.dto.Constants.LOOKUP_TYPE_DETAIL;
-import static org.cmdbuild.service.rest.dto.Constants.NAME;
-import static org.cmdbuild.service.rest.dto.Constants.PARENT;
+import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_TYPE_DETAIL;
+import static org.cmdbuild.service.rest.constants.Serialization.NAME;
+import static org.cmdbuild.service.rest.constants.Serialization.PARENT;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;

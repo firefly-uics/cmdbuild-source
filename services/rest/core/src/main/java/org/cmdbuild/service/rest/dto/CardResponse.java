@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.dto.Constants.ATTRIBUTE_DETAIL_RESPONSE;
+import static org.cmdbuild.service.rest.constants.Serialization.ATTRIBUTE_DETAIL_RESPONSE;
 
 import java.util.Map;
 

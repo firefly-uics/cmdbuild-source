@@ -7,7 +7,7 @@ import com.google.common.base.Function;
 
 public class ToLookupDetail implements Function<Lookup, LookupDetail> {
 
-	public static class Builder implements org.cmdbuild.common.Builder<ToLookupDetail> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToLookupDetail> {
 
 		private Builder() {
 			// use static method

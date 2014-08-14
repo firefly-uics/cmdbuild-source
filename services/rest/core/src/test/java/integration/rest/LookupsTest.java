@@ -4,17 +4,17 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.cmdbuild.service.rest.LookupTypes;
+import org.cmdbuild.service.rest.Lookups;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.LookupTypeDetail;
-import org.cmdbuild.service.rest.dto.LookupTypeListResponse;
-import org.cmdbuild.service.rest.dto.LookupTypeResponse;
+import org.cmdbuild.service.rest.dto.LookupDetail;
+import org.cmdbuild.service.rest.dto.LookupDetailResponse;
+import org.cmdbuild.service.rest.dto.LookupResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,14 +23,14 @@ import support.ForwardingProxy;
 import support.JsonSupport;
 import support.ServerResource;
 
-public class LookupTypesTest {
+public class LookupsTest {
 
-	private final ForwardingProxy<LookupTypes> forwardingProxy = ForwardingProxy.of(LookupTypes.class);
-	private LookupTypes service;
+	private final ForwardingProxy<Lookups> forwardingProxy = ForwardingProxy.of(Lookups.class);
+	private Lookups service;
 
 	@Rule
 	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(LookupTypes.class) //
+			.withServiceClass(Lookups.class) //
 			.withService(forwardingProxy.get()) //
 			.withPort(8080) //
 			.build();
@@ -42,7 +42,7 @@ public class LookupTypesTest {
 
 	@Before
 	public void mockService() throws Exception {
-		service = mock(LookupTypes.class);
+		service = mock(Lookups.class);
 		forwardingProxy.set(service);
 	}
 
@@ -52,25 +52,27 @@ public class LookupTypesTest {
 	}
 
 	@Test
-	public void getLookupTypes() throws Exception {
+	public void getLookups() throws Exception {
 		// given
-		final LookupTypeListResponse expectedResponse = LookupTypeListResponse.newInstance() //
+		final LookupDetailResponse expectedResponse = LookupDetailResponse.newInstance() //
 				.withElements(asList( //
-						LookupTypeDetail.newInstance() //
-								.withName("foo") //
+						LookupDetail.newInstance() //
+								.withId(123L) //
+								.withCode("foo") //
 								.build(), //
-						LookupTypeDetail.newInstance() //
-								.withName("bar") //
+						LookupDetail.newInstance() //
+								.withId(456L) //
+								.withCode("bar") //
 								.build())) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(2) //
 						.build()) //
 				.build();
-		when(service.readAll(anyInt(), anyInt())) //
+		when(service.readAll(eq("foo"), eq(false), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/");
+		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/foo/values/");
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -79,18 +81,24 @@ public class LookupTypesTest {
 	}
 
 	@Test
-	public void getLookupType() throws Exception {
+	public void getLookup() throws Exception {
 		// given
-		final LookupTypeResponse expectedResponse = LookupTypeResponse.newInstance() //
-				.withElement(LookupTypeDetail.newInstance() //
-						.withName("foo") //
+		final LookupResponse expectedResponse = LookupResponse.newInstance() //
+				.withElement(LookupDetail.newInstance() //
+						.withType("type") //
+						.withId(123L) //
+						.withCode("code") //
+						.withDescription("description") //
+						.withNumber(42) //
+						.withParentType("parent_type") //
+						.withParentId(456L) //
 						.build()) //
 				.build();
-		when(service.read(anyString())) //
+		when(service.read(eq("foo"), eq(123L))) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/foo/");
+		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/foo/values/123/");
 		final int result = httpclient.executeMethod(get);
 
 		// then

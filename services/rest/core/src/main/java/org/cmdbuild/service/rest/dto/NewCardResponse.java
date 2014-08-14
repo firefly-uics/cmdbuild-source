@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.dto.Constants.NEW_CARD_RESPONSE;
+import static org.cmdbuild.service.rest.constants.Serialization.NEW_CARD_RESPONSE;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
