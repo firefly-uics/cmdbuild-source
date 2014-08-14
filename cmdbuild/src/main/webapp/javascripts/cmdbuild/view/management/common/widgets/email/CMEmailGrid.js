@@ -10,12 +10,13 @@
 	Ext.define("CMDBuild.management.mail.Model", {
 		extend: 'Ext.data.Model',
 		fields: [
+			CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
 			fields.ID,
 			fields.STATUS,
 			fields.BEGIN_DATE,
 			fields.FROM_ADDRESS,
 			fields.TO_ADDRESS,
-			fields.CC_ADDRESS, 
+			fields.CC_ADDRESS,
 			fields.SUBJECT,
 			fields.CONTENT,
 			"temporaryId",
@@ -115,6 +116,12 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 		}
 
 		this.columns = [
+			{
+				header: '&nbsp',
+				sortable: true,
+				dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
+				hidden: true
+			},
 			{header: '&nbsp', sortable: true, dataIndex: fields.STATUS, hidden: true},
 			{header: tr.datehdr, sortable: true, dataIndex: fields.BEGIN_DATE, flex: 1},
 			{header: tr.addresshdr, sortable: false, renderer: renderAddress, dataIndex: 'Fake', flex: 1},
@@ -199,7 +206,7 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 					return;
 				}
 				this.removeRecord(record);
-	 		}, this);
+			}, this);
 	},
 
 	removeRecord: function(record) {

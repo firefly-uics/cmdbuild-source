@@ -8,6 +8,7 @@
 
 		statics: {
 			ABSOLUTE_CLASS_ORDER: 'absoluteClassOrder',
+			ACCOUNT: 'account',
 			ACTIVE: 'active',
 			ADDRESS: 'address',
 			ADVANCED: 'advanced',

@@ -204,7 +204,13 @@ function buildFormPanel(me, body) {
 		defaults: {
 			labelAlign: "right"
 		},
-		items : [{
+		items : [
+			{
+				xtype: 'hidden',
+				name: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
+				value: me.record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT)
+			},
+			{
 				xtype: 'displayfield',
 				name : fields.FROM_ADDRESS,
 				fieldLabel : CMDBuild.Translation.management.modworkflow.extattrs.manageemail.fromfld,

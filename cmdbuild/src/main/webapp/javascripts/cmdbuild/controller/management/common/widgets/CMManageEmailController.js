@@ -15,7 +15,7 @@
 			WIDGET_NAME: ".ManageEmail"
 		},
 
-		TEMPLATE_FIELDS: ['toAddresses','ccAddresses','subject','content','condition', 'notifyWith', 'fromAddress'],
+		TEMPLATE_FIELDS: [CMDBuild.core.proxy.CMProxyConstants.ACCOUNT, 'toAddresses','ccAddresses','subject','content','condition', 'notifyWith', 'fromAddress'],
 		TEMPLATE_CONDITION: 'condition',
 
 		constructor: function(view, supercontroller, widget, clientForm, card) {
@@ -46,7 +46,7 @@
 		/*
 		 * If the grid is already loaded add the emails generated from the templates
 		 * (if there are templates, and if the email are not already generated).
-		 * Otherwise, load the grid before. 
+		 * Otherwise, load the grid before.
 		 */
 		beforeActiveView: function() {
 			var pi = _CMWFState.getProcessInstance();
@@ -384,7 +384,7 @@
 	 * Extract the variables of each EmailTemplate,
 	 * add a suffix to them with the index,
 	 * and put them all in the templates map.
-	 * 
+	 *
 	 * This is needed to be passed as a unique map to the
 	 * template resolver.
 	 */
