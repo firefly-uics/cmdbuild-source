@@ -71,7 +71,7 @@
 				labelAlign: 'right',
 				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-				width: CMDBuild.LABEL_WIDTH + CMDBuild.MEDIUM_FIELD_ONLY_WIDTH, // FIXME: CMDBuild.MEDIUM_FIELD_WIDTH is wrong u dunno why!!
+				width: CMDBuild.MEDIUM_FIELD_WIDTH,
 				value: 'replace',
 				editable: false,
 				allowBlank: false,
