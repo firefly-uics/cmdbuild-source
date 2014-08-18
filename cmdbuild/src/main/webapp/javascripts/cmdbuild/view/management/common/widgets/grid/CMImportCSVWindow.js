@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.core.PopupWindow',
 
 		defaultSizeW: 0.90,
-		defaultSizeH: 0.20,
+		defaultSizeH: 0.25,
 
 		// Configurations
 			delegate: undefined,
@@ -15,8 +15,6 @@
 		border: false,
 
 		initComponent: function() {
-			var me = this;
-
 			// Buttons configuration
 				this.cancelButton = Ext.create('CMDBuild.buttons.AbortButton', {
 					scope: this,
@@ -28,7 +26,7 @@
 
 				this.csvUploadButton = Ext.create('Ext.button.Button', {
 					scope: this,
-					text: '@@ Upload',
+					text: CMDBuild.Translation.upload,
 
 					handler: function() {
 						this.delegate.cmOn('onCSVUploadButtonClick');
@@ -43,7 +41,7 @@
 
 			this.csvFileField = Ext.create('Ext.form.field.File', {
 				name: 'filecsv',
-				fieldLabel: '@@ CSV file',
+				fieldLabel: CMDBuild.Translation.csvFile,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				labelAlign: 'right',
 				allowBlank: true,
@@ -52,7 +50,7 @@
 
 			this.csvSeparatorCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: 'separator',
-				fieldLabel: '@@ Separator',
+				fieldLabel: CMDBuild.Translation.separator,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				labelAlign: 'right',
 				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
@@ -66,6 +64,28 @@
 				queryMode: 'local'
 			});
 
+			this.csvImportModeCombo = Ext.create('Ext.form.field.ComboBox', {
+				name: CMDBuild.core.proxy.CMProxyConstants.MODE,
+				fieldLabel: CMDBuild.Translation.mode,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				labelAlign: 'right',
+				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				width: CMDBuild.LABEL_WIDTH + CMDBuild.MEDIUM_FIELD_ONLY_WIDTH, // FIXME: CMDBuild.MEDIUM_FIELD_WIDTH is wrong u dunno why!!
+				value: 'replace',
+				editable: false,
+				allowBlank: false,
+
+				store: Ext.create('Ext.data.SimpleStore', {
+					fields: [CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, CMDBuild.core.proxy.CMProxyConstants.VALUE],
+					data: [
+						[CMDBuild.Translation.add, 'add'],
+						[CMDBuild.Translation.replace , 'replace']
+					]
+				}),
+				queryMode: 'local'
+			});
+
 			this.csvUploadForm = Ext.create('Ext.form.Panel', {
 				frame: true,
 				border: false,
@@ -73,7 +93,7 @@
 				fileUpload: true,
 				monitorValid: true,
 
-				items: [this.classIdField, this.csvFileField, this.csvSeparatorCombo]
+				items: [this.classIdField, this.csvFileField, this.csvSeparatorCombo, this.csvImportModeCombo]
 			});
 
 			Ext.apply(this, {

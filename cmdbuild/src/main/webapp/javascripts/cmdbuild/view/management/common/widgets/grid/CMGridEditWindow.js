@@ -18,14 +18,23 @@
 		initComponent: function() {
 			var me = this;
 
-			this.closeButton = Ext.create('Ext.button.Button', {
-				scope: this,
-				text: CMDBuild.Translation.common.buttons.close,
+			// Buttons configuration
+				this.saveButton = Ext.create('CMDBuild.buttons.SaveButton', {
+					scope: this,
 
-				handler: function() {
-					this.delegate.cmOn('onEditWindowClosed');
-				}
-			});
+					handler: function() {
+						this.delegate.cmOn('onEditWindowSaveButtonClick');
+					}
+				});
+
+				this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
+					scope: this,
+
+					handler: function() {
+						this.delegate.cmOn('onEditWindowAbortButtonClick');
+					}
+				});
+			// END: Buttons configuration
 
 			this.form = Ext.create('Ext.form.Panel', {
 				autoScroll: true,
@@ -37,7 +46,7 @@
 
 			Ext.apply(this, {
 				items: [this.form],
-				buttons: [this.closeButton]
+				buttons: [this.saveButton, this.abortButton]
 			});
 
 			this.callParent(arguments);
