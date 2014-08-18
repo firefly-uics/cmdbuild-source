@@ -37,6 +37,7 @@ public class ToSimpleClassDetail implements Function<CMClass, SimpleClassDetail>
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.withParent((parent == null) ? MISSING_PARENT : parent.getName()) //
+				.withSuperclassStatus(input.isSuperclass()) //
 				.build();
 	}
 

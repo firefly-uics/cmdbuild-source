@@ -1,9 +1,11 @@
 package org.cmdbuild.service.rest.dto;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.PARENT;
 import static org.cmdbuild.service.rest.constants.Serialization.SIMPLE_CLASS_DETAIL;
+import static org.cmdbuild.service.rest.constants.Serialization.SUPERCLASS;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,6 +21,7 @@ public class SimpleClassDetail {
 		private String name;
 		private String description;
 		private String parent;
+		private Boolean superclass;
 
 		private Builder() {
 			// use static method
@@ -26,7 +29,12 @@ public class SimpleClassDetail {
 
 		@Override
 		public SimpleClassDetail build() {
+			validate();
 			return new SimpleClassDetail(this);
+		}
+
+		private void validate() {
+			superclass = defaultIfNull(superclass, false);
 		}
 
 		public Builder withName(final String name) {
@@ -44,6 +52,11 @@ public class SimpleClassDetail {
 			return this;
 		}
 
+		public Builder withSuperclassStatus(final boolean superclass) {
+			this.superclass = superclass;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -53,6 +66,7 @@ public class SimpleClassDetail {
 	private String name;
 	private String description;
 	private String parent;
+	private boolean superclass;
 
 	SimpleClassDetail() {
 		// package visibility
@@ -62,6 +76,7 @@ public class SimpleClassDetail {
 		this.name = builder.name;
 		this.description = builder.description;
 		this.parent = builder.parent;
+		this.superclass = builder.superclass;
 	}
 
 	@XmlAttribute(name = NAME)
@@ -89,6 +104,15 @@ public class SimpleClassDetail {
 
 	void setParent(final String parent) {
 		this.parent = parent;
+	}
+
+	@XmlAttribute(name = SUPERCLASS)
+	public boolean isSuperclass() {
+		return superclass;
+	}
+
+	void setSuperclass(final boolean superclass) {
+		this.superclass = superclass;
 	}
 
 	@Override
