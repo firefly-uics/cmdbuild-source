@@ -62,7 +62,7 @@ public class CxfClasses extends CxfService implements Classes {
 		return ClassListResponse.newInstance() //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
-						.withTotal(size(elements)) //
+						.withTotal(size(ordered)) //
 						.build()) //
 				.build();
 	}
