@@ -10,20 +10,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
-import org.cmdbuild.common.utils.PagedElements;
-import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.service.rest.Classes;
-import org.cmdbuild.service.rest.dto.AttributeDetail;
-import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
 import org.cmdbuild.service.rest.dto.ClassListResponse;
 import org.cmdbuild.service.rest.dto.ClassResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.FullClassDetail;
 import org.cmdbuild.service.rest.dto.SimpleClassDetail;
-import org.cmdbuild.service.rest.serialization.AttributeTypeResolver;
-import org.cmdbuild.service.rest.serialization.ToAttributeDetail;
 import org.cmdbuild.service.rest.serialization.ToFullClassDetail;
 import org.cmdbuild.service.rest.serialization.ToSimpleClassDetail;
 import org.cmdbuild.workflow.user.UserProcessClass;
@@ -34,7 +27,6 @@ public class CxfClasses extends CxfService implements Classes {
 
 	private static final ToFullClassDetail TO_FULL_CLASS_DETAIL = ToFullClassDetail.newInstance().build();
 	private static final ToSimpleClassDetail TO_SIMPLE_CLASS_DETAIL = ToSimpleClassDetail.newInstance().build();
-	private static final AttributeTypeResolver ATTRIBUTE_TYPE_RESOLVER = new AttributeTypeResolver();
 
 	private static final Comparator<CMClass> NAME_ASC = new Comparator<CMClass>() {
 
@@ -84,45 +76,6 @@ public class CxfClasses extends CxfService implements Classes {
 		final FullClassDetail element = TO_FULL_CLASS_DETAIL.apply(found);
 		return ClassResponse.newInstance() //
 				.withElement(element) //
-				.build();
-	}
-
-	@Override
-	public AttributeDetailResponse getAttributes(final String name, final boolean activeOnly, final Integer limit,
-			final Integer offset) {
-		final CMClass target = userDataAccessLogic().findClass(name);
-		if (target == null) {
-			errorHandler().entryTypeNotFound(name);
-		}
-		final PagedElements<CMAttribute> filteredAttributes = userDataAccessLogic().getAttributes( //
-				name, //
-				activeOnly, //
-				new AttributesQuery() {
-
-					@Override
-					public Integer limit() {
-						return limit;
-					}
-
-					@Override
-					public Integer offset() {
-						return offset;
-					}
-
-				});
-
-		final ToAttributeDetail toAttributeDetails = ToAttributeDetail.newInstance() //
-				.withAttributeTypeResolver(ATTRIBUTE_TYPE_RESOLVER) //
-				.withDataView(systemDataView()) //
-				.withErrorHandler(errorHandler()) //
-				.build();
-		final Iterable<AttributeDetail> elements = from(filteredAttributes) //
-				.transform(toAttributeDetails);
-		return AttributeDetailResponse.newInstance() //
-				.withElements(elements) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
-						.withTotal(filteredAttributes.totalSize()) //
-						.build()) //
 				.build();
 	}
 

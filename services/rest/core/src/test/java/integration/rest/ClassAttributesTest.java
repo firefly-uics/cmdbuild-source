@@ -11,12 +11,10 @@ import static org.mockito.Mockito.when;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.cmdbuild.service.rest.Classes;
-import org.cmdbuild.service.rest.dto.ClassListResponse;
-import org.cmdbuild.service.rest.dto.ClassResponse;
+import org.cmdbuild.service.rest.ClassAttributes;
+import org.cmdbuild.service.rest.dto.AttributeDetail;
+import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.FullClassDetail;
-import org.cmdbuild.service.rest.dto.SimpleClassDetail;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,14 +23,14 @@ import support.ForwardingProxy;
 import support.JsonSupport;
 import support.ServerResource;
 
-public class ClassesTest {
+public class ClassAttributesTest {
 
-	private final ForwardingProxy<Classes> forwardingProxy = ForwardingProxy.of(Classes.class);
-	private Classes service;
+	private final ForwardingProxy<ClassAttributes> forwardingProxy = ForwardingProxy.of(ClassAttributes.class);
+	private ClassAttributes service;
 
 	@Rule
 	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Classes.class) //
+			.withServiceClass(ClassAttributes.class) //
 			.withService(forwardingProxy.get()) //
 			.withPort(8080) //
 			.build();
@@ -44,7 +42,7 @@ public class ClassesTest {
 
 	@Before
 	public void mockService() throws Exception {
-		service = mock(Classes.class);
+		service = mock(ClassAttributes.class);
 		forwardingProxy.set(service);
 	}
 
@@ -54,45 +52,25 @@ public class ClassesTest {
 	}
 
 	@Test
-	public void getClasses() throws Exception {
+	public void getClassAttributes() throws Exception {
 		// given
-		final ClassListResponse expectedResponse = ClassListResponse.newInstance() //
+		final AttributeDetailResponse expectedResponse = AttributeDetailResponse.newInstance() //
 				.withElements(asList( //
-						SimpleClassDetail.newInstance() //
-								.withName("foo") //
-								.build(), //
-						SimpleClassDetail.newInstance() //
+						AttributeDetail.newInstance() //
 								.withName("bar") //
+								.build(), //
+						AttributeDetail.newInstance() //
+								.withName("baz") //
 								.build())) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(2) //
 						.build()) //
 				.build();
-		when(service.getClasses(anyBoolean(), anyInt(), anyInt())) //
+		when(service.getAttributes(eq("foo"), anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/classes/");
-		final int result = httpclient.executeMethod(get);
-
-		// then
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
-	}
-
-	@Test
-	public void getClassDetail() throws Exception {
-		// given
-		final ClassResponse expectedResponse = ClassResponse.newInstance() //
-				.withElement(FullClassDetail.newInstance() //
-						.withName("foo") //
-						.build()) //
-				.build();
-		when(service.getClassDetail(eq("foo"))) //
-				.thenReturn(expectedResponse);
-
-		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/classes/foo/");
+		final GetMethod get = new GetMethod("http://localhost:8080/classes/foo/attributes/");
 		final int result = httpclient.executeMethod(get);
 
 		// then

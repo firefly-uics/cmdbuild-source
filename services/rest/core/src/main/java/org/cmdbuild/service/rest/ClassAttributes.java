@@ -13,25 +13,19 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.ClassListResponse;
-import org.cmdbuild.service.rest.dto.ClassResponse;
+import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
 
-@Path("classes/")
+@Path("classes/{name}/attributes/")
 @Produces(APPLICATION_JSON)
-public interface Classes {
+public interface ClassAttributes {
 
 	@GET
 	@Path(EMPTY)
-	ClassListResponse getClasses( //
+	AttributeDetailResponse getAttributes( //
+			@PathParam(NAME) String name, //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
-	);
-
-	@GET
-	@Path("{name}/")
-	ClassResponse getClassDetail( //
-			@PathParam(NAME) String name //
 	);
 
 }

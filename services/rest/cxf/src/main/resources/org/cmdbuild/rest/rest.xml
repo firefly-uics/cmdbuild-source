@@ -30,6 +30,7 @@
 			<bean class="org.cmdbuild.service.rest.cxf.CxfAttributes" />
 			<bean class="org.cmdbuild.service.rest.cxf.CxfCards" />
 			<bean class="org.cmdbuild.service.rest.cxf.CxfClasses" />
+			<bean class="org.cmdbuild.service.rest.cxf.CxfClassAttributes" />
 			<bean class="org.cmdbuild.service.rest.cxf.CxfLookups" />
 			<bean class="org.cmdbuild.service.rest.cxf.CxfLookupTypes" />
 		</jaxrs:serviceBeans>
