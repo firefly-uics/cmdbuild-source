@@ -32,7 +32,7 @@
 
 			this.importFromCSVButton = Ext.create('Ext.button.Button', {
 				iconCls: 'import',
-				text: '@@ Import from CSV',
+				text: CMDBuild.Translation.importFromCSV,
 				scope: this,
 
 				handler: function() {

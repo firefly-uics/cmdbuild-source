@@ -72,8 +72,11 @@
 				case 'onEditRowButtonClick' :
 					return this.onEditRowButtonClick(param.record);
 
-				case 'onEditWindowClosed' :
-					return this.onEditWindowClosed();
+				case 'onEditWindowAbortButtonClick':
+					return this.onEditWindowAbortButtonClick();
+
+				case 'onEditWindowSaveButtonClick' :
+					return this.onEditWindowSaveButtonClick();
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -263,7 +266,9 @@
 		 * @param {Array} rawData - Ex. [{ card: {...}, not_valid_fields: {...} }, {...}]
 		 */
 		gridLoadData: function(rawData) {
-			this.grid.getStore().removeAll(); // To clear all grid datas
+			// To clear all grid data if mode = 'replace'
+			if (this.importCSVWindow.csvImportModeCombo.getValue() == 'replace')
+				this.grid.getStore().removeAll();
 
 			for (var i = 0; i < rawData.length; ++i) {
 				var cardData = rawData[i][CMDBuild.core.proxy.CMProxyConstants.CARD];
@@ -301,12 +306,10 @@
 		 */
 		onCSVImportButtonClick: function() {
 			this.importCSVWindow = Ext.create('CMDBuild.view.management.common.widgets.grid.CMImportCSVWindow', {
-				title: '@@ Import from CSV',
+				title: CMDBuild.Translation.importFromCSV,
 				classId: this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
 				delegate: this
-			});
-
-			this.importCSVWindow.show();
+			}).show();
 		},
 
 		/**
@@ -349,21 +352,23 @@
 				title: CMDBuild.Translation.row_edit,
 				record: record,
 				delegate: this
-			});
+			}).show();
+		},
 
-			this.editWindow.show();
+		onEditWindowAbortButtonClick: function() {
+			this.editWindow.destroy();
 		},
 
 		/**
-		 * Saves datas to widget's grid record
+		 * Saves data to widget's grid
 		 */
-		onEditWindowClosed: function() {
+		onEditWindowSaveButtonClick: function() {
 			var values = this.editWindow.form.getValues();
 
 			for (var property in values)
 				this.editWindow.record.set(property, values[property]);
 
-			this.editWindow.destroy();
+			this.onEditWindowAbortButtonClick();
 		},
 
 		/**

@@ -98,6 +98,7 @@
 			LOOKUP: 'lookup',
 			MENU: 'menu',
 			MINUTE: 'minute',
+			MODE: 'mode',
 			MOUNTH: 'mounth',
 			MYSQL: 'mysql',
 			NAME: 'name',
