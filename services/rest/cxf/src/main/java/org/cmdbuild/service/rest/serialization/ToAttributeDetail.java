@@ -128,6 +128,7 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 				}
 
 				builder.withTargetClass(target.getIdentifier().getLocalName());
+				builder.withFilter(attribute.getFilter());
 			};
 
 			@Override

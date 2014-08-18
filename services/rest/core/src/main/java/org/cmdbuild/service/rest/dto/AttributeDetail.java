@@ -6,6 +6,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.DEFAULT_VALUE;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.DISPLAYABLE_IN_LIST;
 import static org.cmdbuild.service.rest.constants.Serialization.EDITOR_TYPE;
+import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.constants.Serialization.GROUP;
 import static org.cmdbuild.service.rest.constants.Serialization.INDEX;
 import static org.cmdbuild.service.rest.constants.Serialization.INHERITED;
@@ -47,6 +48,7 @@ public class AttributeDetail {
 		private Integer length;
 		private String editorType;
 		private String lookupTypeName;
+		private String filter;
 
 		private Builder() {
 			// use static method
@@ -142,6 +144,11 @@ public class AttributeDetail {
 			return this;
 		}
 
+		public Builder withFilter(final String filter) {
+			this.filter = filter;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -165,6 +172,7 @@ public class AttributeDetail {
 	private Integer length;
 	private String editorType;
 	private String lookupTypeName;
+	private String filter;
 
 	AttributeDetail() {
 		// package visibility
@@ -188,6 +196,7 @@ public class AttributeDetail {
 		this.length = builder.length;
 		this.editorType = builder.editorType;
 		this.lookupTypeName = builder.lookupTypeName;
+		this.filter = builder.filter;
 	}
 
 	@XmlAttribute(name = TYPE)
@@ -341,6 +350,15 @@ public class AttributeDetail {
 
 	void setLookupTypeName(final String lookupTypeName) {
 		this.lookupTypeName = lookupTypeName;
+	}
+
+	@XmlAttribute(name = FILTER)
+	public String getFilter() {
+		return filter;
+	}
+
+	void setFilter(final String filter) {
+		this.filter = filter;
 	}
 
 	@Override
