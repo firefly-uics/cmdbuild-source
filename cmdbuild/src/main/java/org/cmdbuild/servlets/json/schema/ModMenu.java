@@ -16,6 +16,9 @@ import org.json.JSONObject;
 
 public class ModMenu extends JSONBaseWithSpringContext {
 
+	private static final boolean WITH_WRAPPER = true;
+	private static final boolean SORT_BY_DESCRIPTION = true;
+
 	/**
 	 * 
 	 * @param groupName
@@ -30,17 +33,14 @@ public class ModMenu extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject getMenuConfiguration( //
 			@Parameter(GROUP_NAME) final String groupName //
-	) throws JSONException, AuthException, NotFoundException, ORMException {
-
-		final MenuStore store = menuStore();
-		final MenuItem menu = store.read(groupName);
-		final boolean withWrapper = true;
+	) throws JSONException, AuthException, NotFoundException, ORMException {		
+		final MenuItem menu = menuLogic().read(groupName);
 		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
 				.withRootItem(menu) //
 				.withTranslationFacade(translationFacade()) //
 				.withDataView(systemDataView()) //
 				.build();
-		return menuSerializer.toClient(withWrapper);
+		return menuSerializer.toClient(WITH_WRAPPER);
 	}
 
 	/**
@@ -58,17 +58,13 @@ public class ModMenu extends JSONBaseWithSpringContext {
 	public JSONObject getAvailableMenuItems( //
 			@Parameter(GROUP_NAME) final String groupName //
 	) throws JSONException {
-
-		final MenuStore store = menuStore();
-		final MenuItem availableMenu = store.getAvailableItems(groupName);
-		final boolean withWrapper = true;
-		final boolean sortByDescription = true;
+		final MenuItem availableMenu = menuLogic().readAvailableItems(groupName);
 		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
 				.withRootItem(availableMenu) //
 				.withTranslationFacade(translationFacade()) //
 				.withDataView(systemDataView()) //
 				.build();
-		return menuSerializer.toClient(availableMenu, withWrapper, sortByDescription);
+		return menuSerializer.toClient(availableMenu, WITH_WRAPPER, SORT_BY_DESCRIPTION);
 	}
 
 	/**
@@ -85,10 +81,8 @@ public class ModMenu extends JSONBaseWithSpringContext {
 			@Parameter(GROUP_NAME) final String groupName, //
 			@Parameter(MENU) final JSONObject jsonMenu //
 	) throws Exception {
-
-		final MenuStore store = menuStore();
 		final MenuItem menu = MenuSerializer.toServer(jsonMenu);
-		store.save(groupName, menu);
+		menuLogic().save(groupName, menu);
 	}
 
 	/**
@@ -103,9 +97,7 @@ public class ModMenu extends JSONBaseWithSpringContext {
 	public void deleteMenu( //
 			@Parameter(GROUP_NAME) final String groupName //
 	) throws JSONException {
-
-		final MenuStore store = menuStore();
-		store.delete(groupName);
+		menuLogic().delete(groupName);
 	}
 
 	/**
@@ -124,16 +116,13 @@ public class ModMenu extends JSONBaseWithSpringContext {
 	public JSONObject getAssignedMenu( //
 			@Parameter(GROUP_NAME) final String groupName //
 	) throws JSONException {
-
-		final MenuStore store = menuStore();
-		final MenuItem menu = store.getMenuToUseForGroup(groupName);
-		final boolean withWrapper = true;
+		final MenuItem menu = menuLogic().readMenuWithPrivileges(groupName);
 		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
 				.withRootItem(menu) //
 				.withTranslationFacade(translationFacade()) //
 				.withDataView(systemDataView()) //
 				.build();
-		return menuSerializer.toClient(withWrapper);
+		return menuSerializer.toClient(WITH_WRAPPER);
 	}
 
 }

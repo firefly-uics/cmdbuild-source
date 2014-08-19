@@ -33,6 +33,7 @@
 			<bean class="org.cmdbuild.service.rest.cxf.CxfClassAttributes" />
 			<bean class="org.cmdbuild.service.rest.cxf.CxfLookups" />
 			<bean class="org.cmdbuild.service.rest.cxf.CxfLookupTypes" />
+			<bean class="org.cmdbuild.service.rest.cxf.CxfMenu" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="xml" value="application/xml" />

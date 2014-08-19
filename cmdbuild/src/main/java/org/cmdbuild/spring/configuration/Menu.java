@@ -8,6 +8,8 @@ import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
+import org.cmdbuild.logic.menu.DefaultMenuLogic;
+import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.services.store.menu.DataViewMenuStore;
 import org.cmdbuild.services.store.menu.MenuItemConverter;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
@@ -41,6 +43,12 @@ public class Menu {
 
 	@Autowired
 	private View view;
+
+	@Bean
+	@Scope(PROTOTYPE)
+	public MenuLogic menuLogic() {
+		return new DefaultMenuLogic(dataViewMenuStore());
+	}
 
 	@Bean
 	public MenuItemConverter menuItemConverter() {

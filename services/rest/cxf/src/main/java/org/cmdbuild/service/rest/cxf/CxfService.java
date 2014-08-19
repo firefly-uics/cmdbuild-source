@@ -1,10 +1,13 @@
 package org.cmdbuild.service.rest.cxf;
 
+import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.serialization.ErrorHandler;
@@ -24,6 +27,10 @@ public abstract class CxfService {
 		return errorHandler;
 	}
 
+	protected CMGroup currentGroup() {
+		return applicationContext.getBean(UserStore.class).getUser().getPreferredGroup();
+	}
+
 	protected DataAccessLogic userDataAccessLogic() {
 		// TODO change class when authentication will be implemented
 		return applicationContext.getBean(SystemDataAccessLogicBuilder.class).build();
@@ -31,6 +38,10 @@ public abstract class CxfService {
 
 	protected LookupLogic lookupLogic() {
 		return applicationContext.getBean(LookupLogic.class);
+	}
+
+	protected MenuLogic menuLogic() {
+		return applicationContext.getBean(MenuLogic.class);
 	}
 
 	protected WorkflowLogic userWorkflowLogic() {
