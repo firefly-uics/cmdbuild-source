@@ -6,8 +6,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.MENU;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException;
-import org.cmdbuild.services.store.menu.MenuStore;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
+import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.MenuSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -33,7 +32,7 @@ public class ModMenu extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JSONObject getMenuConfiguration( //
 			@Parameter(GROUP_NAME) final String groupName //
-	) throws JSONException, AuthException, NotFoundException, ORMException {		
+	) throws JSONException, AuthException, NotFoundException, ORMException {
 		final MenuItem menu = menuLogic().read(groupName);
 		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
 				.withRootItem(menu) //

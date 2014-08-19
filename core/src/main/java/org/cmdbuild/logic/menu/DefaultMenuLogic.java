@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.menu;
 
+import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 
 public class DefaultMenuLogic implements MenuLogic {
 

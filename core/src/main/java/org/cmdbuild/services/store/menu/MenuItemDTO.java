@@ -1,13 +1,13 @@
 package org.cmdbuild.services.store.menu;
 
+import static org.cmdbuild.services.store.menu.Comparators.byDescription;
+import static org.cmdbuild.services.store.menu.Comparators.byIndex;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 
 public class MenuItemDTO implements MenuItem {
 
@@ -128,12 +128,12 @@ public class MenuItemDTO implements MenuItem {
 
 	@Override
 	public void sortChildByIndex() {
-		Collections.sort(this.children, new MenuStore.MenuItemIndexComparator());
+		Collections.sort(this.children, byIndex());
 	}
 
 	@Override
 	public void sortChildByDescription() {
-		Collections.sort(this.children, new MenuStore.MenuItemDescripionComparator());
+		Collections.sort(this.children, byDescription());
 	}
 
 	@Override

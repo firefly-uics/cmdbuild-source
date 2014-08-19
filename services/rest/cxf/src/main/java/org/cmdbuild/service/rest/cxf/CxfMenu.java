@@ -1,13 +1,13 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.services.store.menu.Comparators.byIndex;
 
 import org.cmdbuild.service.rest.Menu;
 import org.cmdbuild.service.rest.dto.MenuDetail;
 import org.cmdbuild.service.rest.dto.MenuDetailResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
-import org.cmdbuild.services.store.menu.MenuStore;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
+import org.cmdbuild.services.store.menu.MenuItem;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Ordering;
@@ -26,7 +26,7 @@ public class CxfMenu extends CxfService implements Menu {
 					.withObjectDescription(input.getDescription()) //
 					.withChildren( //
 							from( //
-									Ordering.from(new MenuStore.MenuItemIndexComparator()) //
+									Ordering.from(byIndex()) //
 											.sortedCopy(input.getChildren()) //
 							) //
 							.transform(MENU_ITEM_TO_MENU_DETAIL) //

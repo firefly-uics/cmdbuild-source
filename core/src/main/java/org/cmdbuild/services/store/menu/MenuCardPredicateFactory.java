@@ -16,7 +16,6 @@ import org.cmdbuild.privileges.predicates.IsReadableClass;
 import org.cmdbuild.privileges.predicates.IsReadableDashboard;
 import org.cmdbuild.privileges.predicates.IsReadableReport;
 import org.cmdbuild.privileges.predicates.IsReadableView;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 import org.cmdbuild.services.store.report.ReportStore;
 
 import com.google.common.base.Predicate;
