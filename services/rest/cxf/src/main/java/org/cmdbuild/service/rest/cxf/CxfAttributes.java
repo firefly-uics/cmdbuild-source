@@ -18,7 +18,7 @@ public class CxfAttributes extends CxfService implements Attributes {
 	private static final AttributeTypeResolver ATTRIBUTE_TYPE_RESOLVER = new AttributeTypeResolver();
 
 	@Override
-	public AttributeDetailResponse getAttributes(final String type, final String name, final boolean activeOnly,
+	public AttributeDetailResponse readAll(final String type, final String name, final boolean activeOnly,
 			final Integer limit, final Integer offset) {
 		final CMClass target = userDataAccessLogic().findClass(name);
 		if (target == null) {

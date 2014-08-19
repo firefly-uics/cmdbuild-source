@@ -44,7 +44,7 @@ public class CxfClasses extends CxfService implements Classes {
 	protected UriInfo uriInfo;
 
 	@Override
-	public ClassListResponse getClasses(final boolean activeOnly, final Integer limit, final Integer offset) {
+	public ClassListResponse readAll(final boolean activeOnly, final Integer limit, final Integer offset) {
 		// FIXME do all the following it within the same logic
 		// <<<<<
 		final Iterable<? extends CMClass> allClasses = userDataAccessLogic().findClasses(activeOnly);
@@ -68,7 +68,7 @@ public class CxfClasses extends CxfService implements Classes {
 	}
 
 	@Override
-	public ClassResponse getClassDetail(final String name) {
+	public ClassResponse read(final String name) {
 		final CMClass found = userDataAccessLogic().findClass(name);
 		if (found == null) {
 			errorHandler().classNotFound(name);

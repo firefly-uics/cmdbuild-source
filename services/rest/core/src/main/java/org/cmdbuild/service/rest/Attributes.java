@@ -21,7 +21,7 @@ public interface Attributes {
 
 	@GET
 	@Path("{type}/{name}/")
-	AttributeDetailResponse getAttributes( //
+	AttributeDetailResponse readAll( //
 			@PathParam(TYPE) String type, //
 			@PathParam(NAME) String name, //
 			@QueryParam(ACTIVE) boolean activeOnly, //

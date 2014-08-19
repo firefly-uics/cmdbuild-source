@@ -21,7 +21,7 @@ public interface ClassAttributes {
 
 	@GET
 	@Path(EMPTY)
-	AttributeDetailResponse getAttributes( //
+	AttributeDetailResponse readAll( //
 			@PathParam(NAME) String name, //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //

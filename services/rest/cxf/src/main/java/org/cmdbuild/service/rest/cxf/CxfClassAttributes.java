@@ -28,7 +28,7 @@ public class CxfClassAttributes extends CxfService implements ClassAttributes {
 	protected UriInfo uriInfo;
 
 	@Override
-	public AttributeDetailResponse getAttributes(final String name, final boolean activeOnly, final Integer limit,
+	public AttributeDetailResponse readAll(final String name, final boolean activeOnly, final Integer limit,
 			final Integer offset) {
 		final CMClass target = userDataAccessLogic().findClass(name);
 		if (target == null) {

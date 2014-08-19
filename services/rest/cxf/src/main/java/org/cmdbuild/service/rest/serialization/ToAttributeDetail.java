@@ -152,7 +152,7 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 
 			private Map<String, String> toMap(final Collection<Metadata> elements) {
 				final Map<String, String> map = Maps.newHashMap();
-				for (Metadata element : elements) {
+				for (final Metadata element : elements) {
 					map.put(element.name, element.value);
 				}
 				return map;
