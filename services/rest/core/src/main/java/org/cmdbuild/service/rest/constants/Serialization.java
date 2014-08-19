@@ -10,6 +10,7 @@ public class Serialization {
 			ATTRIBUTE_DETAIL_RESPONSE = "attributeDetailResponse", //
 			CARD_DETAIL = "cardDetail", //
 			CARD_DETAIL_RESPONSE = "cardDetailResponse", //
+			CHILDREN = "children", //
 			CLASS_DETAIL_RESPONSE = "classDetailResponse", //
 			CLASSNAME = "classname", //
 			CLASSNAME_WITH_UNSERSCORE = "_" + CLASSNAME, //
@@ -35,10 +36,15 @@ public class Serialization {
 			LOOKUP_TYPE_NAME = "lookupTypeName", //
 			LOOKUP_TYPE_RESPONSE = "lookupTypeResponse", //
 			MANDATORY = "mandatory", //
+			MENU_DETAIL = "menuDetail", //
+			MENU_DETAIL_RESPONSE = "menuDetailResponse", //
 			NAME = "name", //
 			NEW_CARD_RESPONSE = "newCardResponse", //
 			NUMBER = "number", //
 			PARAMS = "params", //
+			OBJECT_DESCRIPTION = "objectDescription", //
+			OBJECT_ID = "objectId", //
+			OBJECT_TYPE = "objectType", //
 			PARENT_ID = "parent_id", //
 			PARENT = "parent", //
 			PARENT_TYPE = "parent_type", //

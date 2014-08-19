@@ -40,6 +40,7 @@ import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.setup.SetupLogic;
@@ -124,10 +125,6 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(LookupStore.class);
 	}
 
-	protected MenuStore menuStore() {
-		return applicationContext().getBean(MenuStore.class);
-	}
-
 	protected ReportStore reportStore() {
 		return applicationContext().getBean(ReportStore.class);
 	}
@@ -202,6 +199,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected LookupLogic lookupLogic() {
 		return applicationContext().getBean(LookupLogic.class);
+	}
+
+	protected MenuLogic menuLogic() {
+		return applicationContext().getBean(MenuLogic.class);
 	}
 
 	protected NavigationTreeLogic navigationTreeLogic() {
