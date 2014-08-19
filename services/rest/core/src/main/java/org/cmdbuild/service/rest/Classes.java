@@ -22,7 +22,7 @@ public interface Classes {
 
 	@GET
 	@Path(EMPTY)
-	ClassListResponse getClasses( //
+	ClassListResponse readAll( //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
@@ -30,7 +30,7 @@ public interface Classes {
 
 	@GET
 	@Path("{name}/")
-	ClassResponse getClassDetail( //
+	ClassResponse read( //
 			@PathParam(NAME) String name //
 	);
 

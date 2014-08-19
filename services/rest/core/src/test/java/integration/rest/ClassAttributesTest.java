@@ -66,7 +66,7 @@ public class ClassAttributesTest {
 						.withTotal(2) //
 						.build()) //
 				.build();
-		when(service.getAttributes(eq("foo"), anyBoolean(), anyInt(), anyInt())) //
+		when(service.readAll(eq("foo"), anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when

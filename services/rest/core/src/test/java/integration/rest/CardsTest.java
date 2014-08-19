@@ -17,6 +17,7 @@ import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
+import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.dto.CardListResponse;
 import org.cmdbuild.service.rest.dto.CardResponse;
@@ -62,17 +63,11 @@ public class CardsTest {
 	@Test
 	public void getCards() throws Exception {
 		// given
-		final Map<String, Object> first = new HashMap<String, Object>() {
-			{
-				put("foo", "foo");
-				put("bar", "bar");
-			}
-		};
-		final Map<String, Object> second = new HashMap<String, Object>() {
-			{
-				put("bar", "baz");
-			}
-		};
+		final Map<String, Object> first = ChainablePutMap.of(new HashMap<String, Object>()) //
+				.chainablePut("foo", "foo") //
+				.chainablePut("bar", "bar");
+		final Map<String, Object> second = ChainablePutMap.of(new HashMap<String, Object>()) //
+				.chainablePut("bar", "baz");
 		final CardListResponse expectedResponse = CardListResponse.newInstance() //
 				.withElements(asList(first, second)) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
@@ -120,13 +115,10 @@ public class CardsTest {
 	@Test
 	public void readCard() throws Exception {
 		// given
-		final Map<String, Object> values = new HashMap<String, Object>() {
-			{
-				put("foo", "foo");
-				put("bar", "bar");
-				put("bar", "baz");
-			}
-		};
+		final Map<String, Object> values = ChainablePutMap.of(new HashMap<String, Object>()) //
+				.chainablePut("foo", "foo") //
+				.chainablePut("bar", "bar") //
+				.chainablePut("bar", "baz");
 		final CardResponse expectedResponse = CardResponse.newInstance() //
 				.withElement(values) //
 				.build();

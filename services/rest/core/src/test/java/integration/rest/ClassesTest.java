@@ -68,7 +68,7 @@ public class ClassesTest {
 						.withTotal(2) //
 						.build()) //
 				.build();
-		when(service.getClasses(anyBoolean(), anyInt(), anyInt())) //
+		when(service.readAll(anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
@@ -88,7 +88,7 @@ public class ClassesTest {
 						.withName("foo") //
 						.build()) //
 				.build();
-		when(service.getClassDetail(eq("foo"))) //
+		when(service.read(eq("foo"))) //
 				.thenReturn(expectedResponse);
 
 		// when
