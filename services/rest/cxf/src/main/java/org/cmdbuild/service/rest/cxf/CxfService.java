@@ -8,6 +8,7 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.serialization.ErrorHandler;
+import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -44,6 +45,10 @@ public abstract class CxfService {
 
 	protected CMDataView systemDataView() {
 		return applicationContext.getBean(DBDataView.class);
+	}
+
+	protected MetadataStoreFactory metadataStoreFactory() {
+		return applicationContext.getBean(MetadataStoreFactory.class);
 	}
 
 }

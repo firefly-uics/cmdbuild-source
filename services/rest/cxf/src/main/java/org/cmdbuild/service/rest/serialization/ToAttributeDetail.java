@@ -1,5 +1,8 @@
 package org.cmdbuild.service.rest.serialization;
 
+import java.util.Collection;
+import java.util.Map;
+
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -12,9 +15,13 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
+import org.cmdbuild.service.rest.dto.AttributeDetail.Filter;
+import org.cmdbuild.services.meta.MetadataStoreFactory;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail> {
 
@@ -23,6 +30,7 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 		private AttributeTypeResolver attributeTypeResolver;
 		private CMDataView dataView;
 		private ErrorHandler errorHandler;
+		private MetadataStoreFactory metadataStoreFactory;
 
 		private Builder() {
 			// use static method
@@ -35,9 +43,10 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 		}
 
 		private void validate() {
-			Validate.notNull(attributeTypeResolver, "invalid attribute type resolver");
-			Validate.notNull(dataView, "invalid data view");
-			Validate.notNull(errorHandler, "invalid error handler");
+			Validate.notNull(attributeTypeResolver, "missing '%s'", AttributeTypeResolver.class);
+			Validate.notNull(dataView, "missing '%s'", CMDataView.class);
+			Validate.notNull(errorHandler, "missing '%s'", ErrorHandler.class);
+			Validate.notNull(metadataStoreFactory, "missing '%s'", MetadataStoreFactory.class);
 		}
 
 		public Builder withAttributeTypeResolver(final AttributeTypeResolver attributeTypeResolver) {
@@ -55,6 +64,11 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 			return this;
 		}
 
+		public Builder withMetadataStoreFactory(final MetadataStoreFactory metadataStoreFactory) {
+			this.metadataStoreFactory = metadataStoreFactory;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
@@ -64,11 +78,13 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 	private final AttributeTypeResolver attributeTypeResolver;
 	private final CMDataView dataView;
 	private final ErrorHandler errorHandler;
+	private final MetadataStoreFactory metadataStoreFactory;
 
 	private ToAttributeDetail(final Builder builder) {
 		this.attributeTypeResolver = builder.attributeTypeResolver;
 		this.dataView = builder.dataView;
 		this.errorHandler = builder.errorHandler;
+		this.metadataStoreFactory = builder.metadataStoreFactory;
 	}
 
 	@Override
@@ -127,9 +143,20 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 					target = domain.getClass1();
 				}
 
-				builder.withTargetClass(target.getIdentifier().getLocalName());
-				builder.withFilter(attribute.getFilter());
+				builder.withTargetClass(target.getIdentifier().getLocalName()) //
+						.withFilter(Filter.newInstance() //
+								.withText(attribute.getFilter()) //
+								.withParams(toMap(metadataStoreFactory.storeForAttribute(attribute).readAll())) //
+								.build());
 			};
+
+			private Map<String, String> toMap(final Collection<Metadata> elements) {
+				final Map<String, String> map = Maps.newHashMap();
+				for (Metadata element : elements) {
+					map.put(element.name, element.value);
+				}
+				return map;
+			}
 
 			@Override
 			public void visit(final StringAttributeType attributeType) {

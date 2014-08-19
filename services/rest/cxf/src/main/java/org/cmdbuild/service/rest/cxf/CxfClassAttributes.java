@@ -55,6 +55,7 @@ public class CxfClassAttributes extends CxfService implements ClassAttributes {
 				.withAttributeTypeResolver(ATTRIBUTE_TYPE_RESOLVER) //
 				.withDataView(systemDataView()) //
 				.withErrorHandler(errorHandler()) //
+				.withMetadataStoreFactory(metadataStoreFactory()) //
 				.build();
 		final Iterable<AttributeDetail> elements = from(filteredAttributes) //
 				.transform(toAttributeDetails);

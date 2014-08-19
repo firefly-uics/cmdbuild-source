@@ -38,6 +38,7 @@ public class Serialization {
 			NAME = "name", //
 			NEW_CARD_RESPONSE = "newCardResponse", //
 			NUMBER = "number", //
+			PARAMS = "params", //
 			PARENT_ID = "parent_id", //
 			PARENT = "parent", //
 			PARENT_TYPE = "parent_type", //
@@ -48,6 +49,7 @@ public class Serialization {
 			START = "start", //
 			SUPERCLASS = "superclass", //
 			TARGET_CLASS = "targetClass", //
+			TEXT = "text", //
 			TOTAL = "total", //
 			TYPE_BOOLEAN = "boolean", //
 			TYPE_CHAR = "char", //
