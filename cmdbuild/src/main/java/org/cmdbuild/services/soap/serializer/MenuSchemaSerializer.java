@@ -9,9 +9,9 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.services.auth.PrivilegeManager.PrivilegeType;
 import org.cmdbuild.services.soap.structure.MenuSchema;
+import org.cmdbuild.services.store.menu.MenuItem;
+import org.cmdbuild.services.store.menu.MenuItemType;
 import org.cmdbuild.services.store.menu.MenuStore;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 
 import com.google.common.collect.Iterables;
 

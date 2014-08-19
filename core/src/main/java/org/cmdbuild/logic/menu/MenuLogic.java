@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.menu;
 
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
+import org.cmdbuild.services.store.menu.MenuItem;
 
 public interface MenuLogic extends Logic {
 

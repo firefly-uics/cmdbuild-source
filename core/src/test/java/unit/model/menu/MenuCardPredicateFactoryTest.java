@@ -18,7 +18,7 @@ import org.cmdbuild.privileges.predicates.IsAlwaysReadable;
 import org.cmdbuild.privileges.predicates.IsReadableClass;
 import org.cmdbuild.privileges.predicates.IsReadableDashboard;
 import org.cmdbuild.services.store.menu.MenuCardPredicateFactory;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
+import org.cmdbuild.services.store.menu.MenuItemType;
 import org.junit.Before;
 import org.junit.Test;
 
