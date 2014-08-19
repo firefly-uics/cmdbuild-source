@@ -14,11 +14,15 @@ import static org.cmdbuild.service.rest.constants.Serialization.LENGTH;
 import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_TYPE_NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.MANDATORY;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
+import static org.cmdbuild.service.rest.constants.Serialization.PARAMS;
 import static org.cmdbuild.service.rest.constants.Serialization.PRECISION;
 import static org.cmdbuild.service.rest.constants.Serialization.SCALE;
 import static org.cmdbuild.service.rest.constants.Serialization.TARGET_CLASS;
+import static org.cmdbuild.service.rest.constants.Serialization.TEXT;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNIQUE;
+
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,6 +32,80 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @XmlRootElement(name = ATTRIBUTE_DETAIL)
 public class AttributeDetail {
+
+	public static class Filter {
+
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<Filter> {
+
+			private String text;
+			private Map<String, String> params;
+
+			private Builder() {
+				// use factory method
+			}
+
+			@Override
+			public Filter build() {
+				validate();
+				return new Filter(this);
+			}
+
+			private void validate() {
+				// TODO Auto-generated method stub
+			}
+
+			public Builder withText(final String text) {
+				this.text = text;
+				return this;
+			}
+
+			public Builder withParams(final Map<String, String> params) {
+				this.params = params;
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private String text;
+		private Map<String, String> params;
+
+		Filter() {
+			// package visibility
+		}
+
+		private Filter(final Builder builder) {
+			this.text = builder.text;
+			this.params = builder.params;
+		}
+
+		@XmlAttribute(name = TEXT)
+		public String getText() {
+			return text;
+		}
+
+		void setText(final String text) {
+			this.text = text;
+		}
+
+		@XmlAttribute(name = PARAMS)
+		public Map<String, String> getParams() {
+			return params;
+		}
+
+		void setParams(final Map<String, String> params) {
+			this.params = params;
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
+		}
+
+	}
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<AttributeDetail> {
 
@@ -48,7 +126,7 @@ public class AttributeDetail {
 		private Integer length;
 		private String editorType;
 		private String lookupTypeName;
-		private String filter;
+		private Filter filter;
 
 		private Builder() {
 			// use static method
@@ -144,7 +222,7 @@ public class AttributeDetail {
 			return this;
 		}
 
-		public Builder withFilter(final String filter) {
+		public Builder withFilter(final Filter filter) {
 			this.filter = filter;
 			return this;
 		}
@@ -172,7 +250,7 @@ public class AttributeDetail {
 	private Integer length;
 	private String editorType;
 	private String lookupTypeName;
-	private String filter;
+	private Filter filter;
 
 	AttributeDetail() {
 		// package visibility
@@ -353,11 +431,11 @@ public class AttributeDetail {
 	}
 
 	@XmlAttribute(name = FILTER)
-	public String getFilter() {
+	public Filter getFilter() {
 		return filter;
 	}
 
-	void setFilter(final String filter) {
+	void setFilter(final Filter filter) {
 		this.filter = filter;
 	}
 
