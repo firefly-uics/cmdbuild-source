@@ -1,14 +1,23 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.schema.Utils.*;
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.servlets.json.CommunicationConstants.*;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_ACCOUNT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.BCC;
+import static org.cmdbuild.servlets.json.CommunicationConstants.BODY;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CC;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SUBJECT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TO;
+import static org.cmdbuild.servlets.json.CommunicationConstants.VARIABLES;
+import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static org.apache.commons.lang3.ObjectUtils.*;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -37,6 +46,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		private String subject;
 		private String body;
 		private Map<String, String> variables;
+		private String account;
 
 		@Override
 		@JsonProperty(ID)
@@ -138,6 +148,16 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		}
 
 		@Override
+		@JsonProperty(DEFAULT_ACCOUNT)
+		public String getAccount() {
+			return account;
+		}
+
+		public void setAccount(final String account) {
+			this.account = account;
+		}
+
+		@Override
 		public String toString() {
 			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
@@ -179,6 +199,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			template.setSubject(input.getSubject());
 			template.setBody(input.getBody());
 			template.setVariables(input.getVariables());
+			template.setAccount(input.getAccount());
 			return template;
 		}
 
@@ -211,7 +232,8 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			@Parameter(BCC) final String bcc, //
 			@Parameter(SUBJECT) final String subject, //
 			@Parameter(BODY) final String body, //
-			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables //
+			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables, //
+			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName //
 	) {
 		final JsonTemplate template = new JsonTemplate();
 		template.setName(name);
@@ -222,6 +244,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		template.setSubject(subject);
 		template.setBody(body);
 		template.setVariables(toMap(jsonVariables));
+		template.setAccount(accountName);
 		final Long id = emailTemplateLogic().create(template);
 		return JsonResponse.success(id);
 	}
@@ -236,7 +259,8 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 			@Parameter(BCC) final String bcc, //
 			@Parameter(SUBJECT) final String subject, //
 			@Parameter(BODY) final String body, //
-			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables //
+			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables, //
+			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName //
 	) {
 		final JsonTemplate template = new JsonTemplate();
 		template.setName(name);
@@ -247,6 +271,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 		template.setSubject(subject);
 		template.setBody(body);
 		template.setVariables(toMap(jsonVariables));
+		template.setAccount(accountName);
 		emailTemplateLogic().update(template);
 	}
 

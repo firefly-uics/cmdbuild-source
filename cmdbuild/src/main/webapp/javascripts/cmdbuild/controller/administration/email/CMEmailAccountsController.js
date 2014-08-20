@@ -12,9 +12,10 @@
 		view: undefined,
 
 		/**
-		 * @param (Object) view
+		 * @param {CMDBuild.view.administration.email.CMEmailAccounts} view
+		 *
+		 * @overwrite
 		 */
-		// Overwrite
 		constructor: function(view) {
 			this.callParent(arguments);
 
@@ -31,9 +32,9 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -176,6 +177,9 @@
 						store.load({
 							callback: function() {
 								me.selectionModel.select(0, true);
+
+								if (!me.selectionModel.hasSelection())
+									me.form.disableModify();
 							}
 						});
 					},
@@ -185,9 +189,9 @@
 		},
 
 		/**
-		 * @param (Object) result
-		 * @param (Object) options
-		 * @param (Object) decodedResult
+		 * @param {Object} result
+		 * @param {Object} options
+		 * @param {Object} decodedResult
 		 */
 		success: function(result, options, decodedResult) {
 			var me = this;

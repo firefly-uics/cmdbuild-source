@@ -4,7 +4,7 @@
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMTaskSteps', {
 
 		/**
-		 * @return (Array) task steps
+		 * @return {Array} task steps
 		 */
 		constructor: function() {
 			return [

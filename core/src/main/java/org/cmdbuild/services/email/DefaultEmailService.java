@@ -24,7 +24,7 @@ import org.cmdbuild.data.store.email.Attachment;
 import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.data.store.email.EmailConstants;
 import org.cmdbuild.data.store.email.EmailStatus;
-import org.cmdbuild.data.store.email.EmailTemplate;
+import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.slf4j.Logger;
 
 import com.google.common.base.Predicates;
@@ -148,12 +148,12 @@ public class DefaultEmailService implements EmailService {
 	private final EmailPersistence persistence;
 
 	DefaultEmailService( //
-			final Supplier<EmailAccount> emailConfigurationSupplier, //
+			final Supplier<EmailAccount> emailAccountSupplier, //
 			final MailApiFactory mailApiFactory, //
 			final EmailPersistence persistence //
 	) {
-		this.emailAccountSupplier = emailConfigurationSupplier;
-		this.mailApiSupplier = new MailApiSupplier(emailConfigurationSupplier, mailApiFactory);
+		this.emailAccountSupplier = emailAccountSupplier;
+		this.mailApiSupplier = new MailApiSupplier(emailAccountSupplier, mailApiFactory);
 		this.persistence = persistence;
 	}
 
@@ -302,11 +302,11 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	@Override
-	public Iterable<EmailTemplate> getEmailTemplates(final Email email) {
+	public Iterable<ExtendedEmailTemplate> getEmailTemplates(final Email email) {
 		logger.info("getting email templates for email with id '{}'", email.getId());
-		final List<EmailTemplate> templates = Lists.newArrayList();
+		final List<ExtendedEmailTemplate> templates = Lists.newArrayList();
 		if (isNotBlank(email.getNotifyWith())) {
-			for (final EmailTemplate template : persistence.getEmailTemplates()) {
+			for (final ExtendedEmailTemplate template : persistence.getEmailTemplates()) {
 				if (template.getName().equals(email.getNotifyWith())) {
 					templates.add(template);
 				}

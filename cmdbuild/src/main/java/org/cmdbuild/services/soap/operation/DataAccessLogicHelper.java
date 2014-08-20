@@ -5,6 +5,7 @@ import static com.google.common.collect.Iterables.size;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
+import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.services.soap.utils.SoapToJsonUtils.createJsonFilterFrom;
 import static org.cmdbuild.services.soap.utils.SoapToJsonUtils.toJsonArray;
 
@@ -44,7 +45,6 @@ import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
@@ -376,18 +376,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		if (lookupId == null) {
 			return null;
 		} else {
-			final Lookup fetchedLookup = lookupStore.read(fakeLookupWithId(lookupId));
+			final Lookup fetchedLookup = lookupStore.read(storableOf(lookupId));
 			return fetchedLookup.description;
 		}
-	}
-
-	private Storable fakeLookupWithId(final Long lookupId) {
-		return new Storable() {
-			@Override
-			public String getIdentifier() {
-				return String.valueOf(lookupId);
-			}
-		};
 	}
 
 	public List<Relation> getRelations(final String className, final String domainName, final Long cardId) {

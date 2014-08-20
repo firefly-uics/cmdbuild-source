@@ -58,10 +58,11 @@ public class CommunicationConstants {
 			DATA_SOURCE_TYPE_SQL = "db", //
 			DB_NAME = "db_name", //
 			DB_TYPE = "db_type", //
-			DEFAULT_CLASS_DESCRIPTION = "text_default", //
 			DEFAULT = "Default", //
-			DEFAULT_DESCRIPTION_CAPITAL = "Description_default", //
+			DEFAULT_ACCOUNT = "defaultAccount", //
+			DEFAULT_CLASS_DESCRIPTION = "text_default", //
 			DEFAULT_DESCRIPTION = "description_default", //
+			DEFAULT_DESCRIPTION_CAPITAL = "Description_default", //
 			DEFAULT_DIRECT_DESCRIPTION = "descrdir_default", //
 			DEFAULT_GROUP = "defaultgroup", //
 			DEFAULT_INVERSE_DESCRIPTION = "descrinv_default", //

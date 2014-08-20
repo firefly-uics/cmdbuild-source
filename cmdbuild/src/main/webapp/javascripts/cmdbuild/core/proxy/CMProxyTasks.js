@@ -6,7 +6,7 @@
 		statics: {
 
 			/**
-			 * @param (Object) parameters
+			 * @param {Object} parameters
 			 */
 			create: function(parameters) {
 				CMDBuild.Ajax.request({
@@ -20,7 +20,7 @@
 			},
 
 			/**
-			 * @return (Object) store
+			 * @return {Ext.data.Store} store
 			 */
 			get: function(type) {
 				return Ext.create('Ext.data.Store', {
@@ -38,7 +38,7 @@
 			},
 
 			/**
-			 * @return (Object) store
+			 * @return {Ext.data.Store} store
 			 */
 			getStore: function(type) {
 				return Ext.create('Ext.data.Store', {
@@ -60,7 +60,7 @@
 			},
 
 			/**
-			 * @param (Object) parameters
+			 * @param {Object} parameters
 			 */
 			remove: function(parameters) {
 				CMDBuild.Ajax.request({
@@ -74,7 +74,7 @@
 			},
 
 			/**
-			 * @param (Object) parameters
+			 * @param {Object} parameters
 			 */
 			start: function(parameters) {
 				CMDBuild.Ajax.request({
@@ -88,7 +88,7 @@
 			},
 
 			/**
-			 * @param (Object) parameters
+			 * @param {Object} parameters
 			 */
 			stop: function(parameters) {
 				CMDBuild.Ajax.request({
@@ -102,7 +102,7 @@
 			},
 
 			/**
-			 * @param (Object) parameters
+			 * @param {Object} parameters
 			 */
 			update: function(parameters) {
 				CMDBuild.Ajax.request({
@@ -118,9 +118,9 @@
 			/**
 			 * To transform type in server call url
 			 *
-			 * @param (String) type
+			 * @param {String} type
 			 *
-			 * @return (String) url object address
+			 * @return {String} url address
 			 */
 			getUrl: function(type) {
 				switch (type) {
@@ -154,7 +154,7 @@
 			 * Connector specific proxies
 			 */
 				/**
-				 * @return (Object) store
+				 * @return {Ext.data.Store} store
 				 */
 				getDbTypes: function() {
 					return Ext.create('Ext.data.Store', {
@@ -172,7 +172,7 @@
 				},
 
 				/**
-				 * @return (Object) store
+				 * @return {Ext.data.SimpleStore} store
 				 */
 				getDeletionTypes: function() {
 					var tr = CMDBuild.Translation.administration.tasks.taskConnector.deletionTypes;
@@ -189,16 +189,16 @@
 				},
 
 				/**
-				 * @return (Object) store
+				 * @return {Object} store
 				 */
 				getClassStore: function() {
 					return _CMCache.getClassesStore();
 				},
 
 				/**
-				 * @return (Object) store
+				 * @return {Ext.data.SimpleStore} store
 				 */
-				// TODO: delete or implement real server call
+				// TODO: implement real server call
 				getSourceStore: function() {
 //					return Ext.create('Ext.data.SimpleStore', {
 //						fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
@@ -213,9 +213,9 @@
 				},
 
 				/**
-				 * @return (Object) store
+				 * @return {Ext.data.SimpleStore} store
 				 */
-				// TODO: delete or implement real server call
+				// TODO: implement real server call
 				getSourceAttributeNames: function(viewName) {
 //					return Ext.create('Ext.data.SimpleStore', {
 //						fields: [CMDBuild.core.proxy.CMProxyConstants.NAME],
@@ -235,7 +235,7 @@
 				/**
 				 * Returns synchronous event phases
 				 *
-				 * @return (Object) store
+				 * @return {Ext.data.SimpleStore} store
 				 */
 				getPhases: function() {
 					var tr = CMDBuild.Translation.administration.tasks.taskEvent.eventPhases;
@@ -257,7 +257,7 @@
 				/**
 				 * Used from Processes -> Task Manager tab to get all processes by workflow name
 				 *
-				 * @return (Object) store
+				 * @return {Ext.data.Store} store
 				 */
 				getStoreByWorkflow: function() {
 					return Ext.create('Ext.data.Store', {
@@ -279,7 +279,7 @@
 				},
 
 				/**
-				 * @return (Object) store
+				 * @return {Ext.data.Store} store
 				 */
 				getStoreAllWorkflow: function() {
 					var processes = _CMCache.getProcesses();
@@ -307,7 +307,7 @@
 				},
 
 				/**
-				 * @param (Object) parameters
+				 * @param {Object} parameters
 				 */
 				getWorkflowAttributes: function(parameters) {
 					CMDBuild.Ajax.request({

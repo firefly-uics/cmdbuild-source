@@ -11,18 +11,19 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onFilterWindowAdd':
 					return this.onFilterWindowAdd();
 
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -31,9 +32,9 @@
 		/**
 		 * Builds window input and button item
 		 *
-		 * @param (Array) values
+		 * @param {Array} values
 		 *
-		 * @return (Array) items
+		 * @return {Array} items
 		 */
 		buildWindowItem: function(values) {
 			var me = this;

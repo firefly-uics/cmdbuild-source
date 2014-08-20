@@ -5,10 +5,11 @@ import java.util.Map;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.data.store.dao.BaseStorableConverter;
+import org.cmdbuild.services.email.EmailAccount;
 
 import com.google.common.collect.Maps;
 
-public class EmailAccountStorableConverter extends BaseStorableConverter<StorableEmailAccount> {
+public class EmailAccountStorableConverter extends BaseStorableConverter<EmailAccount> {
 
 	private static final String EMAIL_ACCOUNT = "_EmailAccount";
 
@@ -34,8 +35,8 @@ public class EmailAccountStorableConverter extends BaseStorableConverter<Storabl
 	}
 
 	@Override
-	public StorableEmailAccount convert(final CMCard card) {
-		return StorableEmailAccount.newInstance() //
+	public EmailAccount convert(final CMCard card) {
+		return DefaultEmailAccount.newInstance() //
 				.withId(card.getId()) //
 				.withDefaultStatus(defaultBoolean(card.get(IS_DEFAULT, Boolean.class), false)) //
 				.withName(card.get(CODE, String.class)) //
@@ -65,7 +66,7 @@ public class EmailAccountStorableConverter extends BaseStorableConverter<Storabl
 	}
 
 	@Override
-	public Map<String, Object> getValues(final StorableEmailAccount storable) {
+	public Map<String, Object> getValues(final EmailAccount storable) {
 		final Map<String, Object> values = Maps.newHashMap();
 		values.put(IS_DEFAULT, storable.isDefault());
 		values.put(CODE, storable.getName());

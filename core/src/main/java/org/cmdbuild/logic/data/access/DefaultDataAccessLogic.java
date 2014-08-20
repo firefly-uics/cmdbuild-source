@@ -16,6 +16,7 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.data.store.Storables.storableOf;
 
 import java.io.File;
 import java.io.IOException;
@@ -636,12 +637,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		 * fetch card from database (bug #812: if some triggers are executed,
 		 * data must be fetched from db)
 		 */
-		final Card fetchedCard = store.read(new Storable() {
-			@Override
-			public String getIdentifier() {
-				return userGivenCard.getIdentifier();
-			}
-		});
+		final Card fetchedCard = store.read(storableOf(userGivenCard.getIdentifier()));
 
 		updateRelationAttributesFromReference(updatedCard.getId(), fetchedCard, userGivenCard, entryType);
 

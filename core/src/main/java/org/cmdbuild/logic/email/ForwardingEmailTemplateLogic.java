@@ -14,22 +14,22 @@ public abstract class ForwardingEmailTemplateLogic implements EmailTemplateLogic
 	}
 
 	@Override
-	public Template read(String name) {
+	public Template read(final String name) {
 		return delegate.read(name);
 	}
 
 	@Override
-	public Long create(Template template) {
+	public Long create(final Template template) {
 		return delegate.create(template);
 	}
 
 	@Override
-	public void update(Template template) {
+	public void update(final Template template) {
 		delegate.update(template);
 	}
 
 	@Override
-	public void delete(String name) {
+	public void delete(final String name) {
 		delegate.delete(name);
 	}
 

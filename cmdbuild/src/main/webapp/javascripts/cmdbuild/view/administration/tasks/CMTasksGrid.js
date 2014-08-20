@@ -110,6 +110,10 @@
 
 		/**
 		 * Used to render active value to add icon in grid
+		 *
+		 * @param {Mixed} value
+		 * @param {Object} metaData
+		 * @param {Object} record
 		 */
 		activeGridColumnRenderer: function(value, metaData, record) {
 			return value ? '<img src="images/icons/accept.png" alt="' + tr.running + '" />' : '<img src="images/icons/cancel.png" alt="' + tr.stopped + '" />';
@@ -117,6 +121,10 @@
 
 		/**
 		 * Rendering task type translating with local language data
+		 *
+		 * @param {Mixed} value
+		 * @param {Object} metaData
+		 * @param {Object} record
 		 */
 		typeGridColumnRenderer: function(value, metaData, record) {
 			if (typeof value == 'string') {

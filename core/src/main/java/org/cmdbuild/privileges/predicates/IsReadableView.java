@@ -1,5 +1,6 @@
 package org.cmdbuild.privileges.predicates;
 
+import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_OBJECT_ID_ATTRIBUTE;
 
 import java.util.NoSuchElementException;
@@ -8,7 +9,6 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
-import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.View;
@@ -43,12 +43,7 @@ public class IsReadableView implements Predicate<CMCard> {
 		View fetchedView = null;
 
 		try {
-			fetchedView = store.read(new Storable() {
-				@Override
-				public String getIdentifier() {
-					return viewId.toString();
-				}
-			});
+			fetchedView = store.read(storableOf(viewId.toString()));
 		} catch (final NoSuchElementException e) {
 			final Marker marker = MarkerFactory.getMarker(IsReadableView.class.getName());
 			Log.CMDBUILD.debug(marker, "No such the View {} looking if it is readable", viewId.toString());

@@ -20,6 +20,9 @@ public interface CMCard extends CMEntry {
 		@Override
 		CMCardDefinition set(Iterable<? extends Entry<String, ? extends Object>> keysAndValues);
 
+		@Override
+		CMCardDefinition setUser(String user);
+
 		CMCardDefinition setCode(Object value);
 
 		CMCardDefinition setDescription(Object value);

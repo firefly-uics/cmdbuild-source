@@ -1,11 +1,16 @@
 package org.cmdbuild.logic.taskmanager.event;
 
+import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
+import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
+import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
 import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.event.Commands.safe;
 import static org.cmdbuild.services.template.engine.EngineNames.CURRENT_CARD_PREFIX;
@@ -25,8 +30,8 @@ import org.cmdbuild.dao.logging.LoggingSupport;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.StoreSupplier;
 import org.cmdbuild.data.store.email.EmailConstants;
-import org.cmdbuild.data.store.email.StorableEmailAccount;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
@@ -39,7 +44,6 @@ import org.cmdbuild.logic.workflow.StartProcess;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailServiceFactory;
-import org.cmdbuild.services.email.PredicateEmailAccountSupplier;
 import org.cmdbuild.services.event.Command;
 import org.cmdbuild.services.event.Context;
 import org.cmdbuild.services.event.ContextVisitor;
@@ -168,7 +172,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 	private final UserStore userStore;
 	private final FluentApi fluentApi;
 	private final WorkflowLogic workflowLogic;
-	private final Store<StorableEmailAccount> emailAccountStore;
+	private final Store<EmailAccount> emailAccountStore;
 	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
 	private final CMDataView dataView;
@@ -178,7 +182,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 			final UserStore userStore, //
 			final FluentApi fluentApi, //
 			final WorkflowLogic workflowLogic, //
-			final Store<StorableEmailAccount> emailAccountStore, //
+			final Store<EmailAccount> emailAccountStore, //
 			final EmailServiceFactory emailServiceFactory, //
 			final EmailTemplateLogic emailTemplateLogic, //
 			final CMDataView dataView, //
@@ -324,39 +328,45 @@ public class DefaultObserverFactory implements ObserverFactory {
 
 			@Override
 			public void execute(final Context context) {
-				final Supplier<EmailAccount> emailAccountSupplier = PredicateEmailAccountSupplier.of(emailAccountStore,
-						named(task.getEmailAccount()));
+				final Supplier<Template> emailTemplateSupplier = memoize(new Supplier<Template>() {
+
+					@Override
+					public Template get() {
+						final String name = defaultString(task.getEmailTemplate());
+						return emailTemplateLogic.read(name);
+					}
+
+				});
+				final Supplier<EmailAccount> templateEmailAccountSupplier = nullOnException(StoreSupplier.of(
+						EmailAccount.class, emailAccountStore, named(emailTemplateSupplier.get().getAccount())));
+				final Supplier<EmailAccount> taskEmailAccountSupplier = nullOnException(StoreSupplier.of(
+						EmailAccount.class, emailAccountStore, named(task.getEmailAccount())));
+				final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(templateEmailAccountSupplier,
+						taskEmailAccountSupplier));
+				final EngineBasedTemplateResolver templateResolver = EngineBasedTemplateResolver.newInstance() //
+						.withEngine(emptyStringOnNull(nullOnError( //
+								UserEmailEngine.newInstance() //
+										.withDataView(dataView) //
+										.build())), //
+								USER_PREFIX) //
+						.withEngine(emptyStringOnNull(nullOnError( //
+								GroupEmailEngine.newInstance() //
+										.withDataView(dataView) //
+										.build())), //
+								GROUP_PREFIX) //
+						.withEngine(emptyStringOnNull(nullOnError( //
+								GroupUsersEmailEngine.newInstance() //
+										.withDataView(dataView) //
+										.withSeparator(EmailConstants.ADDRESSES_SEPARATOR) //
+										.build() //
+								)), //
+								GROUP_USERS_PREFIX) //
+						.build();
 				SendTemplateEmail.newInstance() //
 						.withEmailAccountSupplier(emailAccountSupplier) //
 						.withEmailServiceFactory(emailServiceFactory) //
-						.withEmailTemplateSupplier(new Supplier<Template>() {
-
-							@Override
-							public Template get() {
-								final String name = task.getEmailTemplate();
-								return emailTemplateLogic.read(name);
-							}
-
-						}) //
-						.withTemplateResolver(EngineBasedTemplateResolver.newInstance() //
-								.withEngine(emptyStringOnNull(nullOnError( //
-										UserEmailEngine.newInstance() //
-												.withDataView(dataView) //
-												.build())), //
-										USER_PREFIX) //
-								.withEngine(emptyStringOnNull(nullOnError( //
-										GroupEmailEngine.newInstance() //
-												.withDataView(dataView) //
-												.build())), //
-										GROUP_PREFIX) //
-								.withEngine(emptyStringOnNull(nullOnError( //
-										GroupUsersEmailEngine.newInstance() //
-												.withDataView(dataView) //
-												.withSeparator(EmailConstants.ADDRESSES_SEPARATOR) //
-												.build() //
-										)), //
-										GROUP_USERS_PREFIX) //
-								.build()) //
+						.withEmailTemplateSupplier(emailTemplateSupplier) //
+						.withTemplateResolver(templateResolver) //
 						.build() //
 						.execute();
 			}

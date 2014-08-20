@@ -39,7 +39,7 @@ public class ConfigurableEmailServiceFactory implements EmailServiceFactory {
 			return this;
 		}
 
-		public Builder withConfiguration(final Supplier<EmailAccount> accountSupplier) {
+		public Builder withDefaultAccountSupplier(final Supplier<EmailAccount> accountSupplier) {
 			this.accountSupplier = accountSupplier;
 			return this;
 		}

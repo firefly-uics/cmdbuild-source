@@ -1,23 +1,30 @@
 (function() {
-	Ext.define("CMDBuild.controller.management.common.widgets.CMOpenReportControllerWidgetReader",{
-		getType: function(w) {return "custom";},
-		getCode: function(w) {return w.reportCode;},
-		getPreset: function(w) {return w.preset;},
-		getForceFormat: function(w) {return w.forceFormat;}
+
+	Ext.define('CMDBuild.controller.management.common.widgets.CMOpenReportControllerWidgetReader',{
+		getType: function(w) {return 'custom'; },
+		getCode: function(w) { return w.reportCode; },
+		getPreset: function(w) { return w.preset; },
+		getForceFormat: function(w) { return w.forceFormat; }
 	});
 
-	Ext.define("CMDBuild.controller.management.common.widgets.CMOpenReportController", {
+	Ext.define('CMDBuild.controller.management.common.widgets.CMOpenReportController', {
 		mixins: {
-			observable: "Ext.util.Observable",
-			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
+			observable: 'Ext.util.Observable',
+			widgetcontroller: 'CMDBuild.controller.management.common.widgets.CMWidgetController'
 		},
 
 		statics: {
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMOpenReport.WIDGET_NAME
 		},
 
+		/**
+		 * @param {CMDBuild.view.management.common.widgets.CMOpenReport} view
+		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
+		 * @param {Object} widgetDef
+		 * @param {Ext.form.Basic} clientForm
+		 * @param {CMDBuild.model.CMActivityInstance} card
+		 */
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
-
 			this.mixins.observable.constructor.call(this);
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
@@ -28,41 +35,38 @@
 		},
 
 		beforeActiveView: function() {
-			var me = this,
-				wr = this.widgetReader;
+			var me = this;
+			var wr = this.widgetReader;
 
-			if (!me.widgetReader) {
-				return;
-			}
+			if (!Ext.isEmpty(me.widgetReader)) {
+				if (me.configured && me.templateResolver) {
+					resolveTemplate(me);
+				} else {
+					me.view.setLoading(true);
 
-			if (me.configured && me.templateResolver) {
-				resolveTemplate(me);
-			} else {
-				me.view.setLoading(true);
+					Ext.Ajax.request({
+						scope: me,
+						url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactoryByTypeCode,
+						params: {
+							type: wr.getType(me.widgetConf),
+							code: wr.getCode(me.widgetConf)
+						},
+						success: function(result, options, decodedResult) {
+							me.attributes = decodedResult.filled ? [] : decodedResult.attribute; // filled == with no parameters
+							me.view.configureForm(me.attributes, me.widgetConf);
 
-				Ext.Ajax.request({
-					url : 'services/json/management/modreport/createreportfactorybytypecode',
-					params : {
-						type: wr.getType(me.widgetConf),
-						code: wr.getCode(me.widgetConf)
-					},
-					success : function(response) {
-						var ret = Ext.JSON.decode(response.responseText);
-	
-						me.attributes = ret.filled ? [] : ret.attribute; // filled == with no parameters
-						me.view.configureForm(me.attributes);
-						me.templateResolver = new CMDBuild.Management.TemplateResolver({
-							clientForm: me.clientForm,
-							xaVars: me.presets,
-							serverVars: this.getTemplateResolverServerVars()
-						});
-	
-						resolveTemplate(me);
-						me.view.setLoading(false);
-						me.configured = true;
-					},
-					scope: me
-				});
+							me.templateResolver = new CMDBuild.Management.TemplateResolver({
+								clientForm: me.clientForm,
+								xaVars: me.presets,
+								serverVars: this.getTemplateResolverServerVars()
+							});
+							resolveTemplate(me);
+
+							me.view.setLoading(false);
+							me.configured = true;
+						}
+					});
+				}
 			}
 		},
 
@@ -85,10 +89,9 @@
 
 	function onSaveCardClick() {
 		var form = this.view.formPanel.getForm();
-		
-		var formatName = this.view.formatCombo.getName(),
-			formatValue = this.view.formatCombo.getValue(),
-			params = {};
+		var formatName = this.view.formatCombo.getName();
+		var formatValue = this.view.formatCombo.getValue();
+		var params = {};
 
 		params[formatName] = formatValue;
 
@@ -96,14 +99,21 @@
 			CMDBuild.LoadMask.get().show();
 
 			form.submit({
-				method : 'POST',
-				url : 'services/json/management/modreport/updatereportfactoryparams',
-				params : params,
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.updateReportFactoryParams,
+				params: params,
 				scope: this,
-				success : function(form, action) {
-					var popup = window.open("services/json/management/modreport/printreportfactory?donotdelete=true", "Report", "height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable");
+				success: function(form, action) {
+					var popup = window.open(
+						"services/json/management/modreport/printreportfactory?donotdelete=true",
+						"Report",
+						"height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable"
+					);
 					if (!popup) {
-						CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
+						CMDBuild.Msg.warn(
+							CMDBuild.Translation.warnings.warning_message,
+							CMDBuild.Translation.warnings.popup_block
+						);
 					}
 					CMDBuild.LoadMask.get().hide();
 				},
@@ -113,4 +123,5 @@
 			});
 		}
 	}
+
 })();

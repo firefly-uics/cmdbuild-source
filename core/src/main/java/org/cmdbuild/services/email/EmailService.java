@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.Map;
 
 import org.cmdbuild.data.store.email.Email;
-import org.cmdbuild.data.store.email.EmailTemplate;
+import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
 
@@ -53,7 +53,7 @@ public interface EmailService {
 	 * 
 	 * @return all templates.
 	 */
-	Iterable<EmailTemplate> getEmailTemplates(Email email);
+	Iterable<ExtendedEmailTemplate> getEmailTemplates(Email email);
 
 	Long save(Email email);
 

@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.widget;
 
+import static org.cmdbuild.data.store.Storables.storableOf;
+
 import java.util.Collection;
 
 import org.cmdbuild.dao.view.CMDataView;
@@ -23,12 +25,7 @@ public class WidgetLogic implements Logic {
 	}
 
 	public Widget getWidget(final Long widgetId) {
-		return widgetStore.read(new Storable() {
-			@Override
-			public String getIdentifier() {
-				return widgetId.toString();
-			}
-		});
+		return widgetStore.read(storableOf(widgetId));
 	}
 
 	public Widget createWidget(final Widget widgetToCreate) {
@@ -40,12 +37,7 @@ public class WidgetLogic implements Logic {
 	}
 
 	public void deleteWidget(final Long widgetId) {
-		final Storable storableToDelete = new Storable() {
-			@Override
-			public String getIdentifier() {
-				return Long.toString(widgetId);
-			}
-		};
+		final Storable storableToDelete = storableOf((widgetId));
 		widgetStore.delete(storableToDelete);
 	}
 

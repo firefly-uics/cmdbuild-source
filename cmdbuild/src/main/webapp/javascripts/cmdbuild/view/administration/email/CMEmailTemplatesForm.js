@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email.templates; // Path to translation
+	var tr = CMDBuild.Translation.administration.email.templates;
 
 	Ext.define('CMDBuild.view.administration.email.CMEmailTemplatesForm', {
 		extend: 'Ext.form.Panel',
@@ -76,6 +76,18 @@
 				}
 			});
 
+			this.defaultAccountCombo = Ext.create('CMDBuild.view.common.field.CMErasableCombo', {
+				name: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT,
+				fieldLabel: CMDBuild.Translation.defaultAccount,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
+				displayField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				forceSelection: true,
+				editable: false
+			});
+
 			// Splitted-view wrapper
 			this.wrapper = Ext.create('Ext.container.Container', {
 				frame: false,
@@ -129,6 +141,7 @@
 						},
 
 						items: [
+							this.defaultAccountCombo,
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.TO,
 								fieldLabel: CMDBuild.Translation.to,

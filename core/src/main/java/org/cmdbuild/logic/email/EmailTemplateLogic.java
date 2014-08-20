@@ -28,6 +28,8 @@ public interface EmailTemplateLogic extends Logic {
 
 		Map<String, String> getVariables();
 
+		String getAccount();
+
 	}
 
 	/**

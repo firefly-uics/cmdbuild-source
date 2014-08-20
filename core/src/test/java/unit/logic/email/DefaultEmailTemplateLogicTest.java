@@ -15,9 +15,13 @@ import java.util.List;
 
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.email.DefaultEmailTemplate;
+import org.cmdbuild.data.store.email.DefaultExtendedEmailTemplate;
 import org.cmdbuild.data.store.email.EmailTemplate;
+import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
+import org.cmdbuild.services.email.EmailAccount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,18 +33,21 @@ import org.mockito.runners.MockitoJUnitRunner;
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultEmailTemplateLogicTest {
 
-	private static final List<EmailTemplate> NO_ELEMENTS = Collections.emptyList();
+	private static final List<ExtendedEmailTemplate> NO_ELEMENTS = Collections.emptyList();
 
 	@Mock
-	private Store<EmailTemplate> store;
+	private Store<ExtendedEmailTemplate> store;
+
+	@Mock
+	private Store<EmailAccount> accountStore;
 
 	private DefaultEmailTemplateLogic logic;
 
-	private final ArgumentCaptor<EmailTemplate> captor = ArgumentCaptor.forClass(EmailTemplate.class);
+	private final ArgumentCaptor<ExtendedEmailTemplate> captor = ArgumentCaptor.forClass(ExtendedEmailTemplate.class);
 
 	@Before
 	public void setUp() throws Exception {
-		logic = new DefaultEmailTemplateLogic(store);
+		logic = new DefaultEmailTemplateLogic(store, accountStore);
 	}
 
 	@Test
@@ -49,10 +56,10 @@ public class DefaultEmailTemplateLogicTest {
 		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 		when(store.read(any(Storable.class))) //
-				.thenReturn(EmailTemplate.newInstance() //
+				.thenReturn(extended(DefaultEmailTemplate.newInstance() //
 						.withId(42L) //
 						.withName("foo") //
-						.build());
+						.build()));
 		final Template newOne = mock(Template.class);
 		when(newOne.getName()) //
 				.thenReturn("foo");
@@ -73,16 +80,16 @@ public class DefaultEmailTemplateLogicTest {
 	@Test
 	public void elementCreatedWhenThereIsNoOtherOneWithSameName() throws Exception {
 		// given
-		final EmailTemplate stored = EmailTemplate.newInstance() //
+		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("bar") //
-				.build();
+				.build());
 		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		when(store.read(any(Storable.class))) //
-				.thenReturn(EmailTemplate.newInstance() //
+				.thenReturn(extended(DefaultEmailTemplate.newInstance() //
 						.withId(42L) //
 						.withName("foo") //
-						.build());
+						.build()));
 		final Template newOne = mock(Template.class);
 		when(newOne.getName()) //
 				.thenReturn("foo");
@@ -102,9 +109,9 @@ public class DefaultEmailTemplateLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotCreateNewElementWhenAnotherWithSameNameExists() throws Exception {
 		// given
-		final EmailTemplate stored = EmailTemplate.newInstance() //
+		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
-				.build();
+				.build());
 		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		final Template newOne = mock(Template.class);
@@ -141,9 +148,9 @@ public class DefaultEmailTemplateLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotUpdateElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
 		// given
-		final EmailTemplate stored = EmailTemplate.newInstance() //
+		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
-				.build();
+				.build());
 		when(store.readAll()) //
 				.thenReturn(asList(stored, stored, stored));
 		final Template existing = mock(Template.class);
@@ -162,9 +169,9 @@ public class DefaultEmailTemplateLogicTest {
 	@Test
 	public void elementUpdatedWhenOneIsFound() throws Exception {
 		// given
-		final EmailTemplate stored = EmailTemplate.newInstance() //
+		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
-				.build();
+				.build());
 		when(store.readAll()) //
 				.thenReturn(asList(stored));
 		final Template existing = mock(Template.class);
@@ -201,9 +208,9 @@ public class DefaultEmailTemplateLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotDeleteElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
 		// given
-		final EmailTemplate stored = EmailTemplate.newInstance() //
+		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
-				.build();
+				.build());
 		when(store.readAll()) //
 				.thenReturn(asList(stored, stored, stored));
 
@@ -219,9 +226,9 @@ public class DefaultEmailTemplateLogicTest {
 	@Test
 	public void elementDeletedWhenAnotherOneWithSameNameIsFound() throws Exception {
 		// given
-		final EmailTemplate stored = EmailTemplate.newInstance() //
+		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
-				.build();
+				.build());
 		when(store.readAll()) //
 				.thenReturn(asList(stored));
 
@@ -255,9 +262,9 @@ public class DefaultEmailTemplateLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotGetElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
 		// given
-		final EmailTemplate stored = EmailTemplate.newInstance() //
+		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
-				.build();
+				.build());
 		when(store.readAll()) //
 				.thenReturn(asList(stored, stored, stored));
 
@@ -273,9 +280,9 @@ public class DefaultEmailTemplateLogicTest {
 	@Test
 	public void elementGetWhenOneIsFound() throws Exception {
 		// given
-		final EmailTemplate stored = EmailTemplate.newInstance() //
+		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
-				.build();
+				.build());
 		when(store.readAll()) //
 				.thenReturn(asList(stored));
 
@@ -298,6 +305,12 @@ public class DefaultEmailTemplateLogicTest {
 		// then
 		verify(store).readAll();
 		verifyNoMoreInteractions(store);
+	}
+
+	private static ExtendedEmailTemplate extended(final EmailTemplate delegate) {
+		return DefaultExtendedEmailTemplate.newInstance() //
+				.withDelegate(delegate) //
+				.build();
 	}
 
 }

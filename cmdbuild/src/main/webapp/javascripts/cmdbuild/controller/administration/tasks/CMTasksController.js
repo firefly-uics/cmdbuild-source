@@ -20,7 +20,11 @@
 		],
 		view: undefined,
 
-		// overwrite
+		/**
+		 * @param {Object} view
+		 *
+		 * @overwrite
+		 */
 		constructor: function(view) {
 			// Handlers exchange and controller setup
 			this.view = view;
@@ -36,9 +40,10 @@
 		},
 
 		/**
-		 * @param (Object) parameters - AccordionStoreModel
+		 * @param {Object} parameters - AccordionStoreModel
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
 				this.taskType = (this.correctTaskTypeCheck(parameters.internalId)) ? parameters.internalId : this.tasksDatas[0];
@@ -65,9 +70,9 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -93,7 +98,7 @@
 					return this.onStopButtonClick(param);
 
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -102,7 +107,7 @@
 		/**
 		 * Automated form controller constructor
 		 *
-		 * @param (String) type
+		 * @param {String} type
 		 */
 		buildFormController: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
@@ -118,9 +123,9 @@
 		/**
 		 * Capitalize first string's letter
 		 *
-		 * @param (String) string
+		 * @param {String} string
 		 *
-		 * @return (String) string - capitalized string
+		 * @return {String} string - capitalized string
 		 */
 		capitalizeFirstLetter: function(string) {
 			if (typeof string == 'string')
@@ -179,9 +184,9 @@
 		},
 
 		/**
-		 * @param (String) type - form type identifier
+		 * @param {String} type - form type identifier
 		 *
-		 * @return (Boolean) type recognition state
+		 * @return {Boolean} type recognition state
 		 */
 		correctTaskTypeCheck: function(type) {
 			return (
@@ -193,7 +198,7 @@
 		/**
 		 * Form wizard creator
 		 *
-		 * @param (String) type - form type identifier
+		 * @param {String} type - form type identifier
 		 */
 		loadForm: function(type) {
 			if (this.correctTaskTypeCheck(type)) {
@@ -214,9 +219,9 @@
 		},
 
 		/**
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
 		 */
 		onAddButtonClick: function(name, param, callBack) {
 			this.selectionModel.deselectAll();
@@ -235,9 +240,9 @@
 		/**
 		 * Check for a right form controller and/or creates it and then calls delegate's onRowSelected function
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
 		 */
 		onRowSelected: function(name, param, callBack) {
 			var selectedType = this.selectionModel.getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.TYPE);
@@ -254,7 +259,7 @@
 		},
 
 		/**
-		 * @param (Object) record
+		 * @param {Object} record
 		 */
 		onStartButtonClick: function(record) {
 			CMDBuild.LoadMask.get().show();
@@ -270,7 +275,7 @@
 		},
 
 		/**
-		 * @param (Object) record
+		 * @param {Object} record
 		 */
 		onStopButtonClick: function(record) {
 			CMDBuild.LoadMask.get().show();
@@ -286,9 +291,9 @@
 		},
 
 		/**
-		 * @param (Object) result
-		 * @param (Object) options
-		 * @param (Object) decodedResult
+		 * @param {Object} result
+		 * @param {Object} options
+		 * @param {Object} decodedResult
 		 */
 		success: function(result, options, decodedResult) {
 			var me = this;
@@ -315,10 +320,10 @@
 		/**
 		 * Function to serialize type and return as class path string (without header and footer dots)
 		 *
-		 * @param (String) type
-		 * @param (Imt) itemsToReturn
+		 * @param {String} type
+		 * @param {Int} itemsToReturn
 		 *
-		 * @return (String)
+		 * @return {String}
 		 */
 		typeSerialize: function(type, itemsToReturn) {
 			var splittedType = type.split('_');

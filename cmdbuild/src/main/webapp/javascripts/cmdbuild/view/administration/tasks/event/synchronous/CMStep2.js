@@ -12,15 +12,16 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -66,7 +67,7 @@
 		/**
 		 * Function to get filter's datas
 		 *
-		 * @return (Object) filter's tab datas or null
+		 * @return {Object} filter's tab datas or null
 		 */
 		getDataFilters: function() {
 			if (
@@ -87,7 +88,7 @@
 		/**
 		 * To setup all filters
 		 *
-		 * @param (Object) filterValuesObject
+		 * @param {Object} filterValuesObject
 		 *
 		 * example:
 		 * 		{

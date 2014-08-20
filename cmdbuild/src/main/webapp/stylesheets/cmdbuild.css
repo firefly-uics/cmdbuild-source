@@ -399,7 +399,7 @@ em { font-style: oblique !important; }
 	.clear_filter { background-image: url("../images/icons/clear_find.png") !important; }
 	.clear_privileges { background-image: url("../images/icons/privilege_filter_remove.png") !important; }
 	.clone { background-image: url("../images/icons/clone.png") !important; }
-	.importIfc { background-image: url("../images/icons/page_white_go.png") !important; }
+	.import { background-image: url("../images/icons/page_white_go.png") !important; }
 	.csv { background-image: url("../images/icons/ico_csv.png") !important; }
 	.delete { background-image: url("../images/icons/cross.png") !important; }
 	.down { background-image: url("../images/icons/down.gif") !important;}

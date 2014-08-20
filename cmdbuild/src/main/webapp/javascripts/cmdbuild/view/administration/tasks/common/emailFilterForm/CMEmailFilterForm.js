@@ -12,9 +12,9 @@
 		/**
 		 * To acquire informations to setup fields before creation
 		 *
-		 * @param (Object) configuration
-		 * @param (Object) configuration.textarea
-		 * @param (Object) configuration.button
+		 * @param {Object} configuration
+		 * @param {Object} configuration.textarea
+		 * @param {Object} configuration.button
 		 */
 		constructor: function(configuration) {
 			this.delegate = Ext.create('CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController', this);

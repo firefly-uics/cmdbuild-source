@@ -21,7 +21,7 @@
 		/**
 		 * To check and acquire input fields configurations
 		 *
-		 * @param (Object) configuration
+		 * @param {Object} configuration
 		 * Example:
 		 * 	{
 		 * 		notificationInputIdentifier1: {
