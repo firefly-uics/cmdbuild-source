@@ -10,7 +10,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.DomainListResponse;
+import org.cmdbuild.service.rest.dto.ListResponse;
+import org.cmdbuild.service.rest.dto.SimpleDomainDetail;
 
 @Path("domains/")
 @Produces(APPLICATION_JSON)
@@ -18,7 +19,7 @@ public interface Domains {
 
 	@GET
 	@Path(EMPTY)
-	DomainListResponse readAll( //
+	ListResponse<SimpleDomainDetail> readAll( //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);

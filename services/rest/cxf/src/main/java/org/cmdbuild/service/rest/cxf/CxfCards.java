@@ -17,10 +17,9 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.service.rest.Cards;
-import org.cmdbuild.service.rest.dto.CardListResponse;
-import org.cmdbuild.service.rest.dto.CardResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.NewCardResponse;
+import org.cmdbuild.service.rest.dto.ListResponse;
+import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.service.rest.serialization.FromCMCardToCardDetail;
 import org.cmdbuild.service.rest.serialization.FromCardToCardDetail;
 import org.cmdbuild.service.rest.serialization.FromSomeKindOfCardToMap;
@@ -45,7 +44,7 @@ public class CxfCards extends CxfService implements Cards {
 	protected UriInfo uriInfo;
 
 	@Override
-	public NewCardResponse create(final String name, final MultivaluedMap<String, String> formParam) {
+	public SimpleResponse<Long> create(final String name, final MultivaluedMap<String, String> formParam) {
 		final CMClass targetClass = userDataView().findClass(name);
 		if (targetClass == null) {
 			errorHandler().classNotFound(name);
@@ -55,13 +54,13 @@ public class CxfCards extends CxfService implements Cards {
 				.withAllAttributes(attributes) //
 				.build();
 		final Long id = userDataAccessLogic().createCard(card);
-		return NewCardResponse.newInstance() //
+		return SimpleResponse.<Long> newInstance() //
 				.withElement(id) //
 				.build();
 	}
 
 	@Override
-	public CardResponse read(final String name, final Long id) {
+	public SimpleResponse<Map<String, Object>> read(final String name, final Long id) {
 		// TODO inject error management within logic
 		if (userDataView().findClass(name) == null) {
 			errorHandler().classNotFound(name);
@@ -73,7 +72,7 @@ public class CxfCards extends CxfService implements Cards {
 					.withErrorHandler(errorHandler()) //
 					.build() //
 					.apply(fetched);
-			return CardResponse.newInstance() //
+			return SimpleResponse.<Map<String, Object>> newInstance() //
 					.withElement(elements) //
 					.build();
 		} catch (final NotFoundException e) {
@@ -84,7 +83,8 @@ public class CxfCards extends CxfService implements Cards {
 	}
 
 	@Override
-	public CardListResponse readAll(final String name, final String filter, final Integer limit, final Integer offset) {
+	public ListResponse<Map<String, Object>> readAll(final String name, final String filter, final Integer limit,
+			final Integer offset) {
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.filter(safeJsonObject(filter)) //
 				.limit(limit) //
@@ -98,7 +98,7 @@ public class CxfCards extends CxfService implements Cards {
 				.build();
 		final Iterable<Map<String, Object>> elements = from(response.elements()) //
 				.transform(toCardDetail);
-		return CardListResponse.newInstance() //
+		return ListResponse.<Map<String, Object>> newInstance() //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(response.totalSize()) //

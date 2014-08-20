@@ -1,36 +1,40 @@
 package org.cmdbuild.service.rest.dto;
 
 import static org.cmdbuild.service.rest.constants.Serialization.DATA;
+import static org.cmdbuild.service.rest.constants.Serialization.SIMPLE_RESPONSE;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public abstract class SimpleResponse<T> {
+@XmlRootElement(name = SIMPLE_RESPONSE)
+public class SimpleResponse<T> {
 
-	public static abstract class Builder<T, R extends SimpleResponse<T>> implements
-			org.apache.commons.lang3.builder.Builder<SimpleResponse<T>> {
+	public static class Builder<T> implements org.apache.commons.lang3.builder.Builder<SimpleResponse<T>> {
 
-		protected T element;
+		private T element;
 
-		protected Builder() {
-			// usable by sublasses only
+		private Builder() {
+			// use factory method
 		}
 
 		@Override
-		public R build() {
-			return doBuild();
+		public SimpleResponse<T> build() {
+			return new SimpleResponse<T>(this);
 		}
 
-		protected abstract R doBuild();
-
-		public Builder<T, R> withElement(final T element) {
+		public Builder<T> withElement(final T element) {
 			this.element = element;
 			return this;
 		}
 
+	}
+
+	public static <T> Builder<T> newInstance() {
+		return new Builder<T>();
 	}
 
 	private T element;
@@ -39,7 +43,7 @@ public abstract class SimpleResponse<T> {
 		// package visibility
 	}
 
-	protected SimpleResponse(final Builder<T, ?> builder) {
+	private SimpleResponse(final Builder<T> builder) {
 		this.element = builder.element;
 	}
 

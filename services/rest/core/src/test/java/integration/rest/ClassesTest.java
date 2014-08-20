@@ -12,11 +12,11 @@ import static org.mockito.Mockito.when;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.Classes;
-import org.cmdbuild.service.rest.dto.ClassListResponse;
-import org.cmdbuild.service.rest.dto.ClassResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.FullClassDetail;
+import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleClassDetail;
+import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class ClassesTest {
 	@Test
 	public void getClasses() throws Exception {
 		// given
-		final ClassListResponse expectedResponse = ClassListResponse.newInstance() //
+		final ListResponse<SimpleClassDetail> expectedResponse = ListResponse.<SimpleClassDetail> newInstance() //
 				.withElements(asList( //
 						SimpleClassDetail.newInstance() //
 								.withName("foo") //
@@ -83,7 +83,7 @@ public class ClassesTest {
 	@Test
 	public void getClassDetail() throws Exception {
 		// given
-		final ClassResponse expectedResponse = ClassResponse.newInstance() //
+		final SimpleResponse<FullClassDetail> expectedResponse = SimpleResponse.<FullClassDetail> newInstance() //
 				.withElement(FullClassDetail.newInstance() //
 						.withName("foo") //
 						.build()) //

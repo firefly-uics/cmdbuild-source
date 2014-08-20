@@ -7,11 +7,8 @@ public class Serialization {
 	public static final String //
 			ACTIVE = "active", //
 			ATTRIBUTE_DETAIL = "attributeDetail", //
-			ATTRIBUTE_DETAIL_RESPONSE = "attributeDetailResponse", //
 			CARD_DETAIL = "cardDetail", //
-			CARD_DETAIL_RESPONSE = "cardDetailResponse", //
 			CHILDREN = "children", //
-			CLASS_DETAIL_RESPONSE = "classDetailResponse", //
 			CLASSNAME = "classname", //
 			CLASSNAME_WITH_UNSERSCORE = "_" + CLASSNAME, //
 			CODE = "code", //
@@ -31,15 +28,12 @@ public class Serialization {
 			INHERITED = "inherited", //
 			LENGTH = "length", //
 			LIMIT = "limit", //
+			LIST_RESPONSE = "listResponse", //
 			LOOKUP_TYPE_DETAIL = "lookupTypeDetail", //
-			LOOKUP_TYPE_LIST_RESPONSE = "lookupTypeListResponse", //
 			LOOKUP_TYPE_NAME = "lookupTypeName", //
-			LOOKUP_TYPE_RESPONSE = "lookupTypeResponse", //
 			MANDATORY = "mandatory", //
 			MENU_DETAIL = "menuDetail", //
-			MENU_DETAIL_RESPONSE = "menuDetailResponse", //
 			NAME = "name", //
-			NEW_CARD_RESPONSE = "newCardResponse", //
 			NUMBER = "number", //
 			PARAMS = "params", //
 			OBJECT_DESCRIPTION = "objectDescription", //
@@ -52,6 +46,7 @@ public class Serialization {
 			RESPONSE_METADATA = "meta", //
 			SCALE = "scale", //
 			SIMPLE_CLASS_DETAIL = "simpleClassDetail", //
+			SIMPLE_RESPONSE = "simpleResponse", //
 			START = "start", //
 			SUPERCLASS = "superclass", //
 			TARGET_CLASS = "targetClass", //

@@ -13,8 +13,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.ClassAttributes;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
-import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
+import org.cmdbuild.service.rest.dto.ListResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,7 +54,7 @@ public class ClassAttributesTest {
 	@Test
 	public void getClassAttributes() throws Exception {
 		// given
-		final AttributeDetailResponse expectedResponse = AttributeDetailResponse.newInstance() //
+		final ListResponse<AttributeDetail> expectedResponse = ListResponse.<AttributeDetail> newInstance() //
 				.withElements(asList( //
 						AttributeDetail.newInstance() //
 								.withName("bar") //

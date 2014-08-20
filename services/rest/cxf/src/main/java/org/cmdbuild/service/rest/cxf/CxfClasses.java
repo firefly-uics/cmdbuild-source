@@ -12,11 +12,11 @@ import javax.ws.rs.core.UriInfo;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.service.rest.Classes;
-import org.cmdbuild.service.rest.dto.ClassListResponse;
-import org.cmdbuild.service.rest.dto.ClassResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.FullClassDetail;
+import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleClassDetail;
+import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.service.rest.serialization.ToFullClassDetail;
 import org.cmdbuild.service.rest.serialization.ToSimpleClassDetail;
 import org.cmdbuild.workflow.user.UserProcessClass;
@@ -44,7 +44,7 @@ public class CxfClasses extends CxfService implements Classes {
 	protected UriInfo uriInfo;
 
 	@Override
-	public ClassListResponse readAll(final boolean activeOnly, final Integer limit, final Integer offset) {
+	public ListResponse<SimpleClassDetail> readAll(final boolean activeOnly, final Integer limit, final Integer offset) {
 		// FIXME do all the following it within the same logic
 		// <<<<<
 		final Iterable<? extends CMClass> allClasses = userDataAccessLogic().findClasses(activeOnly);
@@ -59,7 +59,7 @@ public class CxfClasses extends CxfService implements Classes {
 				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
 				.transform(TO_SIMPLE_CLASS_DETAIL);
 		// <<<<<
-		return ClassListResponse.newInstance() //
+		return ListResponse.<SimpleClassDetail> newInstance() //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(size(ordered)) //
@@ -68,13 +68,13 @@ public class CxfClasses extends CxfService implements Classes {
 	}
 
 	@Override
-	public ClassResponse read(final String name) {
+	public SimpleResponse<FullClassDetail> read(final String name) {
 		final CMClass found = userDataAccessLogic().findClass(name);
 		if (found == null) {
 			errorHandler().classNotFound(name);
 		}
 		final FullClassDetail element = TO_FULL_CLASS_DETAIL.apply(found);
-		return ClassResponse.newInstance() //
+		return SimpleResponse.<FullClassDetail> newInstance() //
 				.withElement(element) //
 				.build();
 	}

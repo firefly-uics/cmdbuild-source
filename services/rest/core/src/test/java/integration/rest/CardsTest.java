@@ -19,10 +19,9 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.Cards;
-import org.cmdbuild.service.rest.dto.CardListResponse;
-import org.cmdbuild.service.rest.dto.CardResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.NewCardResponse;
+import org.cmdbuild.service.rest.dto.ListResponse;
+import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -68,7 +67,7 @@ public class CardsTest {
 				.chainablePut("bar", "bar");
 		final Map<String, Object> second = ChainablePutMap.of(new HashMap<String, Object>()) //
 				.chainablePut("bar", "baz");
-		final CardListResponse expectedResponse = CardListResponse.newInstance() //
+		final ListResponse<Map<String, Object>> expectedResponse = ListResponse.<Map<String, Object>> newInstance() //
 				.withElements(asList(first, second)) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(2) //
@@ -90,7 +89,7 @@ public class CardsTest {
 	public void createCard() throws Exception {
 		// given
 		final ArgumentCaptor<MultivaluedMap> multivaluedMapCaptor = ArgumentCaptor.forClass(MultivaluedMap.class);
-		final NewCardResponse expectedResponse = NewCardResponse.newInstance() //
+		final SimpleResponse<Long> expectedResponse = SimpleResponse.<Long> newInstance() //
 				.withElement(123L) //
 				.build();
 		when(service.create(eq("foo"), multivaluedMapCaptor.capture())) //
@@ -119,7 +118,7 @@ public class CardsTest {
 				.chainablePut("foo", "foo") //
 				.chainablePut("bar", "bar") //
 				.chainablePut("bar", "baz");
-		final CardResponse expectedResponse = CardResponse.newInstance() //
+		final SimpleResponse<Map<String, Object>> expectedResponse = SimpleResponse.<Map<String, Object>> newInstance() //
 				.withElement(values) //
 				.build();
 		when(service.read("foo", 123L)) //

@@ -11,7 +11,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.Domains;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.DomainListResponse;
+import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleDomainDetail;
 import org.junit.Before;
 import org.junit.Rule;
@@ -52,7 +52,7 @@ public class DomainsTest {
 	@Test
 	public void getDomains() throws Exception {
 		// given
-		final DomainListResponse expectedResponse = DomainListResponse.newInstance() //
+		final ListResponse<SimpleDomainDetail> expectedResponse = ListResponse.<SimpleDomainDetail> newInstance() //
 				.withElements(asList( //
 						SimpleDomainDetail.newInstance() //
 								.withName("foo") //

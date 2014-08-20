@@ -13,7 +13,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
+import org.cmdbuild.service.rest.dto.AttributeDetail;
+import org.cmdbuild.service.rest.dto.ListResponse;
 
 @Path("attributes/")
 @Produces(APPLICATION_JSON)
@@ -21,7 +22,7 @@ public interface Attributes {
 
 	@GET
 	@Path("{type}/{name}/")
-	AttributeDetailResponse readAll( //
+	ListResponse<AttributeDetail> readAll( //
 			@PathParam(TYPE) String type, //
 			@PathParam(NAME) String name, //
 			@QueryParam(ACTIVE) boolean activeOnly, //
