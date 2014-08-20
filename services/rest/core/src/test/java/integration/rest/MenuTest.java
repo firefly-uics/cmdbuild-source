@@ -9,7 +9,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.Menu;
 import org.cmdbuild.service.rest.dto.MenuDetail;
-import org.cmdbuild.service.rest.dto.MenuDetailResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.Rule;
@@ -50,7 +49,7 @@ public class MenuTest {
 	@Test
 	public void getMenu() throws Exception {
 		// given
-		final SimpleResponse<MenuDetail> expectedResponse = MenuDetailResponse.newInstance() //
+		final SimpleResponse<MenuDetail> expectedResponse = SimpleResponse.<MenuDetail> newInstance() //
 				.withElement(MenuDetail.newInstance() //
 						.withType("root") //
 						.build()) //

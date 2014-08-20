@@ -8,8 +8,8 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.service.rest.Attributes;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
-import org.cmdbuild.service.rest.dto.AttributeDetailResponse;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
+import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.serialization.AttributeTypeResolver;
 import org.cmdbuild.service.rest.serialization.ToAttributeDetail;
 
@@ -18,7 +18,7 @@ public class CxfAttributes extends CxfService implements Attributes {
 	private static final AttributeTypeResolver ATTRIBUTE_TYPE_RESOLVER = new AttributeTypeResolver();
 
 	@Override
-	public AttributeDetailResponse readAll(final String type, final String name, final boolean activeOnly,
+	public ListResponse<AttributeDetail> readAll(final String type, final String name, final boolean activeOnly,
 			final Integer limit, final Integer offset) {
 		final CMClass target = userDataAccessLogic().findClass(name);
 		if (target == null) {
@@ -49,7 +49,7 @@ public class CxfAttributes extends CxfService implements Attributes {
 				.build();
 		final Iterable<AttributeDetail> elements = from(filteredAttributes) //
 				.transform(toAttributeDetails);
-		return AttributeDetailResponse.newInstance() //
+		return ListResponse.<AttributeDetail> newInstance() //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(filteredAttributes.totalSize()) //

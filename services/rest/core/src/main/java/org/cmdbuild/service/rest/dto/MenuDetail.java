@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -156,7 +157,7 @@ public class MenuDetail {
 		this.objectDescription = description;
 	}
 
-	@XmlAttribute(name = CHILDREN)
+	@XmlElement(name = CHILDREN, type = MenuDetail.class)
 	public List<MenuDetail> getChildren() {
 		return children;
 	}

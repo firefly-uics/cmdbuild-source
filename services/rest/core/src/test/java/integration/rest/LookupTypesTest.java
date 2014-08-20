@@ -12,9 +12,9 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.LookupTypes;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
+import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
-import org.cmdbuild.service.rest.dto.LookupTypeListResponse;
-import org.cmdbuild.service.rest.dto.LookupTypeResponse;
+import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,7 +54,7 @@ public class LookupTypesTest {
 	@Test
 	public void getLookupTypes() throws Exception {
 		// given
-		final LookupTypeListResponse expectedResponse = LookupTypeListResponse.newInstance() //
+		final ListResponse<LookupTypeDetail> expectedResponse = ListResponse.<LookupTypeDetail> newInstance() //
 				.withElements(asList( //
 						LookupTypeDetail.newInstance() //
 								.withName("foo") //
@@ -81,7 +81,7 @@ public class LookupTypesTest {
 	@Test
 	public void getLookupType() throws Exception {
 		// given
-		final LookupTypeResponse expectedResponse = LookupTypeResponse.newInstance() //
+		final SimpleResponse<LookupTypeDetail> expectedResponse = SimpleResponse.<LookupTypeDetail> newInstance() //
 				.withElement(LookupTypeDetail.newInstance() //
 						.withName("foo") //
 						.build()) //

@@ -5,7 +5,6 @@ import static org.cmdbuild.services.store.menu.Comparators.byIndex;
 
 import org.cmdbuild.service.rest.Menu;
 import org.cmdbuild.service.rest.dto.MenuDetail;
-import org.cmdbuild.service.rest.dto.MenuDetailResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.services.store.menu.MenuItem;
 
@@ -41,7 +40,7 @@ public class CxfMenu extends CxfService implements Menu {
 		final String group = currentGroup().getName();
 		final MenuItem menuItem = menuLogic().read(group);
 		final MenuDetail element = MENU_ITEM_TO_MENU_DETAIL.apply(menuItem);
-		return MenuDetailResponse.newInstance() //
+		return SimpleResponse.<MenuDetail> newInstance() //
 				.withElement(element) //
 				.build();
 	}

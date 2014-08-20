@@ -25,6 +25,8 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNIQUE;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -33,6 +35,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 @XmlRootElement(name = ATTRIBUTE_DETAIL)
 public class AttributeDetail {
 
+	@XmlRootElement(name = FILTER)
 	public static class Filter {
 
 		public static class Builder implements org.apache.commons.lang3.builder.Builder<Filter> {
@@ -54,19 +57,19 @@ public class AttributeDetail {
 				// TODO Auto-generated method stub
 			}
 
-			public Builder withText(final String text) {
+			public Filter.Builder withText(final String text) {
 				this.text = text;
 				return this;
 			}
 
-			public Builder withParams(final Map<String, String> params) {
+			public Filter.Builder withParams(final Map<String, String> params) {
 				this.params = params;
 				return this;
 			}
 
 		}
 
-		public static Builder newInstance() {
+		public static Filter.Builder newInstance() {
 			return new Builder();
 		}
 
@@ -77,7 +80,7 @@ public class AttributeDetail {
 			// package visibility
 		}
 
-		private Filter(final Builder builder) {
+		private Filter(final Filter.Builder builder) {
 			this.text = builder.text;
 			this.params = builder.params;
 		}
@@ -91,7 +94,7 @@ public class AttributeDetail {
 			this.text = text;
 		}
 
-		@XmlAttribute(name = PARAMS)
+		@XmlElementWrapper(name = PARAMS)
 		public Map<String, String> getParams() {
 			return params;
 		}
@@ -244,10 +247,10 @@ public class AttributeDetail {
 	private int index;
 	private String defaultValue;
 	private String group;
-	private Integer precision;
-	private Integer scale;
+	private int precision;
+	private int scale;
 	private String targetClass;
-	private Integer length;
+	private int length;
 	private String editorType;
 	private String lookupTypeName;
 	private Filter filter;
@@ -404,11 +407,11 @@ public class AttributeDetail {
 	}
 
 	@XmlAttribute(name = LENGTH)
-	public Integer getLength() {
+	public int getLength() {
 		return length;
 	}
 
-	void setLength(final Integer length) {
+	void setLength(final int length) {
 		this.length = length;
 	}
 
@@ -430,7 +433,7 @@ public class AttributeDetail {
 		this.lookupTypeName = lookupTypeName;
 	}
 
-	@XmlAttribute(name = FILTER)
+	@XmlElement(name = FILTER)
 	public Filter getFilter() {
 		return filter;
 	}

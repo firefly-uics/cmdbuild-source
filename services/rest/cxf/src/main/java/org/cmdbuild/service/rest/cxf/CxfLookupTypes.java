@@ -9,8 +9,6 @@ import org.cmdbuild.service.rest.LookupTypes;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
-import org.cmdbuild.service.rest.dto.LookupTypeListResponse;
-import org.cmdbuild.service.rest.dto.LookupTypeResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.service.rest.serialization.ToLookupTypeDetail;
 
@@ -48,7 +46,7 @@ public class CxfLookupTypes extends CxfService implements LookupTypes {
 				.transform(TO_LOOKUP_TYPE_DETAIL) //
 				.first() //
 				.get();
-		return LookupTypeResponse.newInstance() //
+		return SimpleResponse.<LookupTypeDetail> newInstance() //
 				.withElement(elements) //
 				.build();
 	}
@@ -71,7 +69,7 @@ public class CxfLookupTypes extends CxfService implements LookupTypes {
 
 		final Iterable<LookupTypeDetail> elements = from(lookupTypes) //
 				.transform(TO_LOOKUP_TYPE_DETAIL);
-		return LookupTypeListResponse.newInstance() //
+		return ListResponse.<LookupTypeDetail> newInstance() //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(lookupTypes.totalSize()) //

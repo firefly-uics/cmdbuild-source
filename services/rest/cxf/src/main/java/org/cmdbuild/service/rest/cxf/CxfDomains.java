@@ -10,7 +10,7 @@ import javax.ws.rs.core.UriInfo;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.service.rest.Domains;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.DomainListResponse;
+import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleDomainDetail;
 import org.cmdbuild.service.rest.serialization.ToSimpleDomainDetail;
 
@@ -25,13 +25,13 @@ public class CxfDomains extends CxfService implements Domains {
 	protected UriInfo uriInfo;
 
 	@Override
-	public DomainListResponse readAll(final Integer limit, final Integer offset) {
+	public ListResponse<SimpleDomainDetail> readAll(final Integer limit, final Integer offset) {
 		final Iterable<? extends CMDomain> domains = userDataAccessLogic().findAllDomains();
 		final Iterable<SimpleDomainDetail> elements = from(domains) //
 				.skip((offset == null) ? 0 : offset) //
 				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
 				.transform(TO_SIMPLE_DOMAIN_DETAIL);
-		return DomainListResponse.newInstance() //
+		return ListResponse.<SimpleDomainDetail> newInstance() //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(size(domains)) //

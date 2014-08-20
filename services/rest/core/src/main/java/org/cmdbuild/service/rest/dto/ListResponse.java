@@ -1,11 +1,13 @@
 package org.cmdbuild.service.rest.dto;
 
 import static org.cmdbuild.service.rest.constants.Serialization.DATA;
+import static org.cmdbuild.service.rest.constants.Serialization.LIST_RESPONSE;
 import static org.cmdbuild.service.rest.constants.Serialization.RESPONSE_METADATA;
 
 import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -14,35 +16,37 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-public abstract class ListResponse<T> {
+@XmlRootElement(name = LIST_RESPONSE)
+public class ListResponse<T> {
 
-	public static abstract class Builder<T, R extends ListResponse<T>> implements
-			org.apache.commons.lang3.builder.Builder<ListResponse<T>> {
+	public static class Builder<T> implements org.apache.commons.lang3.builder.Builder<ListResponse<T>> {
 
-		protected Iterable<T> elements;
-		protected DetailResponseMetadata metadata;
+		private Iterable<T> elements;
+		private DetailResponseMetadata metadata;
 
-		protected Builder() {
-			// usable by sublasses only
+		private Builder() {
+			// use factory method
 		}
 
 		@Override
-		public R build() {
-			return doBuild();
+		public ListResponse<T> build() {
+			return new ListResponse<T>(this);
 		}
 
-		protected abstract R doBuild();
-
-		public Builder<T, R> withElements(final Iterable<T> elements) {
+		public Builder<T> withElements(final Iterable<T> elements) {
 			this.elements = elements;
 			return this;
 		}
 
-		public Builder<T, R> withMetadata(final DetailResponseMetadata metadata) {
+		public Builder<T> withMetadata(final DetailResponseMetadata metadata) {
 			this.metadata = metadata;
 			return this;
 		}
 
+	}
+
+	public static <T> Builder<T> newInstance() {
+		return new Builder<T>();
 	}
 
 	private Collection<T> elements;
@@ -52,7 +56,7 @@ public abstract class ListResponse<T> {
 		// package visibility
 	}
 
-	protected ListResponse(final Builder<T, ?> builder) {
+	private ListResponse(final Builder<T> builder) {
 		this.elements = Lists.newArrayList(builder.elements);
 		this.metadata = builder.metadata;
 	}

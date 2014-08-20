@@ -13,8 +13,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.ClassListResponse;
-import org.cmdbuild.service.rest.dto.ClassResponse;
+import org.cmdbuild.service.rest.dto.FullClassDetail;
+import org.cmdbuild.service.rest.dto.ListResponse;
+import org.cmdbuild.service.rest.dto.SimpleClassDetail;
+import org.cmdbuild.service.rest.dto.SimpleResponse;
 
 @Path("classes/")
 @Produces(APPLICATION_JSON)
@@ -22,7 +24,7 @@ public interface Classes {
 
 	@GET
 	@Path(EMPTY)
-	ClassListResponse readAll( //
+	ListResponse<SimpleClassDetail> readAll( //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
@@ -30,7 +32,7 @@ public interface Classes {
 
 	@GET
 	@Path("{name}/")
-	ClassResponse read( //
+	SimpleResponse<FullClassDetail> read( //
 			@PathParam(NAME) String name //
 	);
 
