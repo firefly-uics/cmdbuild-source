@@ -26,6 +26,12 @@ public abstract class ForwardingCardDefinition extends ForwardingEntryDefinition
 	}
 
 	@Override
+	public CMCardDefinition setUser(final String user) {
+		delegate.setUser(user);
+		return this;
+	}
+
+	@Override
 	public CMCardDefinition setCode(final Object value) {
 		delegate.setCode(value);
 		return this;

@@ -6,7 +6,7 @@
 		statics: {
 
 			/**
-			 * @param (Object) parameters
+			 * @param {Object} parameters
 			 */
 			create: function(parameters) {
 				CMDBuild.Ajax.request({
@@ -20,7 +20,7 @@
 			},
 
 			/**
-			 * @return (Object) store
+			 * @return {Ext.data.Store} store
 			 */
 			get: function() {
 				return Ext.create('Ext.data.Store', {
@@ -38,7 +38,7 @@
 			},
 
 			/**
-			 * @return (Object) store
+			 * @return {Ext.data.Store} store
 			 */
 			getStore: function() {
 				return Ext.create('Ext.data.Store', {
@@ -60,7 +60,7 @@
 			},
 
 			/**
-			 * @param (Object) parameters
+			 * @param {Object} parameters
 			 */
 			remove: function(parameters) {
 				CMDBuild.Ajax.request({
@@ -74,7 +74,7 @@
 			},
 
 			/**
-			 * @param (Object) parameters
+			 * @param {Object} parameters
 			 */
 			setDefault: function(parameters) {
 				CMDBuild.Ajax.request({
@@ -88,7 +88,7 @@
 			},
 
 			/**
-			 * @param (Object) parameters
+			 * @param {Object} parameters
 			 */
 			update: function(parameters) {
 				CMDBuild.Ajax.request({

@@ -29,6 +29,7 @@ public class ManageEmail extends Widget {
 	private static final String SUBJECT_ATTRIBUTE = "subject";
 	private static final String CONTENT_ATTRIBUTE = "content";
 	private static final String NOTIFY_WITH_ATTRIBUTE = "notifyWith";
+	private static final String ACCOUNT_ATTRIBUTE = "account";
 	private static final String TEMPORARY_ID = "temporaryId";
 
 	private static class Submission {
@@ -52,6 +53,7 @@ public class ManageEmail extends Widget {
 
 		private String condition;
 		private Map<String, String> variables;
+		private String account;
 
 		public String getCondition() {
 			return condition;
@@ -67,6 +69,14 @@ public class ManageEmail extends Widget {
 
 		public void setVariables(final Map<String, String> variables) {
 			this.variables = variables;
+		}
+
+		public String getAccount() {
+			return account;
+		}
+
+		public void setAccount(final String account) {
+			this.account = account;
 		}
 
 		@Override
@@ -164,6 +174,7 @@ public class ManageEmail extends Widget {
 		email.setSubject((String) emailMap.get(SUBJECT_ATTRIBUTE));
 		email.setContent((String) emailMap.get(CONTENT_ATTRIBUTE));
 		email.setNotifyWith((String) emailMap.get(NOTIFY_WITH_ATTRIBUTE));
+		email.setAccount((String) emailMap.get(ACCOUNT_ATTRIBUTE));
 		email.setTemporaryId((String) emailMap.get(TEMPORARY_ID));
 		return email;
 	}

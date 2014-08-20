@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email.templates; // Path to translation
+	var tr = CMDBuild.Translation.administration.email.templates;
 
 	Ext.define('CMDBuild.view.administration.email.CMEmailTemplates', {
 		extend: 'Ext.panel.Panel',

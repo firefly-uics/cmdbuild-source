@@ -16,9 +16,9 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -32,7 +32,7 @@
 					return this.onSelectWorkflow(param);
 
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -68,9 +68,9 @@
 		/**
 		 * Workflow attribute store builder for onWorkflowSelected event
 		 *
-		 * @param (Object) attributes
+		 * @param {Object} attributes
 		 *
-		 * @return (Object) store
+		 * @return {Object} store
 		 */
 		buildWorkflowAttributesStore: function(attributes) {
 			if (!Ext.isEmpty(attributes)) {
@@ -88,9 +88,9 @@
 		},
 
 		/**
-		 * @param (Object) attributes
+		 * @param {Object} attributes
 		 *
-		 * @return (Object) out
+		 * @return {Object} out
 		 */
 		cleanServerAttributes: function(attributes) {
 			var out = {};
@@ -115,14 +115,14 @@
 
 		// GETters functions
 			/**
-			 * @return (String)
+			 * @return {String}
 			 */
 			getValueCombo: function() {
 				return this.comboField.getValue();
 			},
 
 			/**
-			 * @return (Object) data
+			 * @return {Object} data
 			 *
 			 * 	Example:
 			 * 		{
@@ -147,7 +147,7 @@
 			},
 
 		/**
-		 * @return (Boolean)
+		 * @return {Boolean}
 		 */
 		isEmptyCombo: function() {
 			return Ext.isEmpty(this.comboField.getValue());
@@ -164,8 +164,8 @@
 		/**
 		 * Function to update rows stores/editors on beforeEdit event
 		 *
-		 * @param (String) fieldName
-		 * @param (Object) rowData
+		 * @param {String} fieldName
+		 * @param {Object} rowData
 		 */
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
@@ -180,7 +180,7 @@
 		},
 
 		/**
-		 * @param (Int) rowIndex
+		 * @param {Int} rowIndex
 		 */
 		onSelectAttributeCombo: function(rowIndex) {
 			this.gridEditorPlugin.startEditByPosition({ row: rowIndex, column: 1 });
@@ -189,8 +189,8 @@
 		/**
 		 * To build combo editors store
 		 *
-		 * @param (String) className
-		 * @param (Boolean) erase
+		 * @param {String} className
+		 * @param {Boolean} erase
 		 */
 		onSelectWorkflow: function(erase) {
 			var className = this.getValueCombo();
@@ -225,21 +225,21 @@
 			/**
 			 * Set combo as required/unrequired
 			 *
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setAllowBlankCombo: function(state) {
 				this.comboField.allowBlank = state;
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setDisabledAttributesGrid: function(state) {
 				this.gridField.setDisabled(state);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueCombo: function(value) {
 				if (!Ext.isEmpty(value)) {
@@ -251,7 +251,7 @@
 			/**
 			 * Rewrite of loadData
 			 *
-			 * @param (Object) value
+			 * @param {Object} value
 			 */
 			setValueGrid: function(value) {
 				var store = this.gridField.getStore();
@@ -272,7 +272,7 @@
 		/**
 		 * Workflow form validation
 		 *
-		 * @param (Boolean) enable
+		 * @param {Boolean} enable
 		 */
 		validate: function(enable) {
 			this.setAllowBlankCombo(

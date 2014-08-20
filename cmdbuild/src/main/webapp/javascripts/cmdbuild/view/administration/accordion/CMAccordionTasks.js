@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks; // Path to translation
+	var tr = CMDBuild.Translation.administration.tasks;
 
 	Ext.define('CMDBuild.view.administration.accordion.CMAccordionTasks', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
@@ -14,7 +14,9 @@
 			this.updateStore();
 		},
 
-		// overwrite
+		/**
+		 * @overwrite
+		 */
 		updateStore: function() {
 			this.store.getRootNode().appendChild([
 				{

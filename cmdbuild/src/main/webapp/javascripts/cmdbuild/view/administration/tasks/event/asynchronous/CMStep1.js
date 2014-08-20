@@ -13,15 +13,16 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -29,14 +30,14 @@
 
 		// GETters functions
 			/**
-			 * @return (String)
+			 * @return {String}
 			 */
 			getValueId: function() {
 				return this.view.idField.getValue();
 			},
 
 		/**
-		 * @return (Boolean)
+		 * @return {Boolean}
 		 */
 		isEmptyClass: function() {
 			return Ext.isEmpty(this.view.classNameCombo.getValue());
@@ -44,28 +45,28 @@
 
 		// SETters functions
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setDisabledButtonNext: function(state) {
 				this.parentDelegate.setDisabledButtonNext(state);
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setDisabledTypeField: function(state) {
 				this.view.typeField.setDisabled(state);
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setValueActive: function(state) {
 				this.view.activeField.setValue(state);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueClassName: function(value) {
 				this.view.classNameCombo.setValue(value);
@@ -75,14 +76,14 @@
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueDescription: function(value) {
 				this.view.descriptionField.setValue(value);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueId: function(value) {
 				this.view.idField.setValue(value);

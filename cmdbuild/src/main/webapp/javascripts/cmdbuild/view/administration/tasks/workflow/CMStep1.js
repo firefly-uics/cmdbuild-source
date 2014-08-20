@@ -12,22 +12,23 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
 		},
 
 		/**
-		 * @return (String)
+		 * @return {String}
 		 */
 		checkWorkflowComboSelected: function() {
 			return this.getWorkflowDelegate().getValueCombo();
@@ -35,21 +36,21 @@
 
 		// GETters functions
 			/**
-			 * @return (String)
+			 * @return {String}
 			 */
 			getValueId: function() {
 				return this.view.idField.getValue();
 			},
 
 			/**
-			 * @return (Object) delegate
+			 * @return {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController} delegate
 			 */
 			getWorkflowDelegate: function() {
 				return this.view.workflowForm.delegate;
 			},
 
 			/**
-			 * @return (Object)
+			 * @return {Object}
 			 */
 			getValueWorkflowAttributeGrid: function() {
 				return this.getWorkflowDelegate().getValueGrid();
@@ -64,49 +65,49 @@
 
 		// SETters functions
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setDisabledTypeField: function(state) {
 				this.view.typeField.setDisabled(state);
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setDisabledWorkflowAttributesGrid: function(state) {
 				this.getWorkflowDelegate().setDisabledAttributesGrid(state);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueActive: function(value) {
 				this.view.activeField.setValue(value);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueDescription: function(value) {
 				this.view.descriptionField.setValue(value);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueId: function(value) {
 				this.view.idField.setValue(value);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueWorkflowAttributesGrid: function(value) {
 				this.getWorkflowDelegate().setValueGrid(value);
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueWorkflowCombo: function(value) {
 				this.getWorkflowDelegate().setValueCombo(value);

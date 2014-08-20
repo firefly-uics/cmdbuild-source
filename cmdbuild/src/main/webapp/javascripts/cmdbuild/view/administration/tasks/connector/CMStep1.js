@@ -13,15 +13,16 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
+		 * @param {String} name
+		 * @param {Object} param
 		 * @param (Function) callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -29,21 +30,21 @@
 
 		// GETters functions
 			/**
-			 * @return (Object) delegate
+			 * @return {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController} delegate
 			 */
 			getNotificationDelegate: function() {
 				return this.view.notificationForm.delegate;
 			},
 
 			/**
-			 * @return (String)
+			 * @return {String}
 			 */
 			getValueId: function() {
 				return this.view.idField.getValue();
 			},
 
 			/**
-			 * @return (Boolean)
+			 * @return {Boolean}
 			 */
 			getValueNotificationFieldsetCheckbox: function() {
 				return this.view.notificationFieldset.checkboxCmp.getValue();
@@ -51,42 +52,42 @@
 
 		// GETters functions
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setDisabledTypeField: function(state) {
 				this.view.typeField.setDisabled(state);
 			},
 
 			/**
-			 * @param (Object) value
+			 * @param {Boolean} value
 			 */
 			setValueActive: function(value) {
 				this.view.activeField.setValue(value);
 			},
 
 			/**
-			 * @param (Object) value
+			 * @param {String} value
 			 */
 			setValueDescription: function(value) {
 				this.view.descriptionField.setValue(value);
 			},
 
 			/**
-			 * @param (Object) value
+			 * @param {Int} value
 			 */
 			setValueId: function(value) {
 				this.view.idField.setValue(value);
 			},
 
 			/**
-			 * @param (Object) value
+			 * @param {Object} value
 			 */
 			setValueNotificationAccount: function(value) {
 				this.getNotificationDelegate().setValue('sender', value);
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setValueNotificationFieldsetCheckbox: function(state) {
 				if (state) {
@@ -97,7 +98,7 @@
 			},
 
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValueNotificationTemplateError: function(value) {
 				this.getNotificationDelegate().setValue('templateError', value);

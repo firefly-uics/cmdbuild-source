@@ -1,12 +1,13 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.cmdbuild.data.store.Storables.storableOf;
+
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
-import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
@@ -45,7 +46,7 @@ public class RelationAttributeSerializer {
 				final IdAndDescription cardReference = IdAndDescription.class.cast(value);
 				Lookup lookup = null;
 				if (cardReference.getId() != null) {
-					lookup = lookupStore.read(createFakeStorableFrom((cardReference.getId())));
+					lookup = lookupStore.read(storableOf(cardReference.getId()));
 				}
 
 				if (lookup != null) {
@@ -67,12 +68,4 @@ public class RelationAttributeSerializer {
 		return jsonAttributes;
 	}
 
-	private static Storable createFakeStorableFrom(final Long storableId) {
-		return new Storable() {
-			@Override
-			public String getIdentifier() {
-				return storableId.toString();
-			}
-		};
-	}
 }

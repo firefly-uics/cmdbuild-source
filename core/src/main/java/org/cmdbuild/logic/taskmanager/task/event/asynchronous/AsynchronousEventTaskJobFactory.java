@@ -1,11 +1,14 @@
 package org.cmdbuild.logic.taskmanager.task.event.asynchronous;
 
+import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.FluentIterable.from;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
 import static org.cmdbuild.common.utils.BuilderUtils.a;
+import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
+import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
 import static org.cmdbuild.dao.guava.Functions.toCard;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.ClassHistory.history;
@@ -25,7 +28,7 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.email.StorableEmailAccount;
+import org.cmdbuild.data.store.StoreSupplier;
 import org.cmdbuild.data.store.task.TaskStore;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.QuerySpecsBuilderFiller;
@@ -40,7 +43,6 @@ import org.cmdbuild.logic.taskmanager.util.CardIdFilterElementGetter;
 import org.cmdbuild.scheduler.command.Command;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailServiceFactory;
-import org.cmdbuild.services.email.PredicateEmailAccountSupplier;
 import org.cmdbuild.services.template.engine.CardEngine;
 import org.joda.time.DateTime;
 import org.json.JSONException;
@@ -63,14 +65,14 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 	};
 
 	private final CMDataView dataView;
-	private final org.cmdbuild.data.store.Store<StorableEmailAccount> emailAccountStore;
+	private final org.cmdbuild.data.store.Store<EmailAccount> emailAccountStore;
 	private final EmailServiceFactory emailServiceFactory;
 	private final EmailTemplateLogic emailTemplateLogic;
 	private final TaskStore taskStore;
 	private final LogicAndStoreConverter logicAndStoreConverter;
 
 	public AsynchronousEventTaskJobFactory(final CMDataView dataView,
-			final org.cmdbuild.data.store.Store<StorableEmailAccount> emailAccountStore,
+			final org.cmdbuild.data.store.Store<EmailAccount> emailAccountStore,
 			final EmailServiceFactory emailServiceFactory, final EmailTemplateLogic emailTemplateLogic,
 			final TaskStore taskStore, final LogicAndStoreConverter logicAndStoreConverter) {
 		this.dataView = dataView;
@@ -200,28 +202,33 @@ public class AsynchronousEventTaskJobFactory extends AbstractJobFactory<Asynchro
 	}
 
 	private void sendEmail(final AsynchronousEventTask task, final CMCard card) {
-		final Supplier<EmailAccount> emailAccountSupplier = PredicateEmailAccountSupplier.of(emailAccountStore,
-				named(task.getNotificationAccount()));
-		final Supplier<Template> emailTemplateSupplier = new Supplier<Template>() {
+		final Supplier<Template> emailTemplateSupplier = memoize(new Supplier<Template>() {
 
 			@Override
 			public Template get() {
-				final String name = defaultIfBlank(task.getNotificationTemplate(), EMPTY);
+				final String name = defaultString(task.getNotificationTemplate());
 				return emailTemplateLogic.read(name);
 			}
 
-		};
+		});
+		final Supplier<EmailAccount> templateEmailAccountSupplier = nullOnException(StoreSupplier.of(
+				EmailAccount.class, emailAccountStore, named(emailTemplateSupplier.get().getAccount())));
+		final Supplier<EmailAccount> taskEmailAccountSupplier = nullOnException(StoreSupplier.of(EmailAccount.class,
+				emailAccountStore, named(task.getNotificationAccount())));
+		final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(templateEmailAccountSupplier,
+				taskEmailAccountSupplier));
+		final EngineBasedTemplateResolver templateResolver = EngineBasedTemplateResolver.newInstance() //
+				.withEngine(emptyStringOnNull(nullOnError( //
+						CardEngine.newInstance() //
+								.withCard(card) //
+								.build())), //
+						CARD_PREFIX) //
+				.build();
 		final Command command = SchedulerCommandWrapper.of(a(SendTemplateEmail.newInstance() //
 				.withEmailAccountSupplier(emailAccountSupplier) //
 				.withEmailServiceFactory(emailServiceFactory) //
 				.withEmailTemplateSupplier(emailTemplateSupplier) //
-				.withTemplateResolver(EngineBasedTemplateResolver.newInstance() //
-						.withEngine(emptyStringOnNull(nullOnError( //
-								CardEngine.newInstance() //
-										.withCard(card) //
-										.build())), //
-								CARD_PREFIX) //
-						.build()) //
+				.withTemplateResolver(templateResolver) //
 				));
 		conditional(command, new NotificationEnabled(task)).execute();
 	}

@@ -13,9 +13,9 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -32,7 +32,7 @@
 					return this.filterWindow.hide();
 
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -41,9 +41,9 @@
 		/**
 		 * Concats array's items with textareaConcatParameter
 		 *
-		 * @param (Array) parameters
+		 * @param {Array} parameters
 		 *
-		 * @return (String) filterString
+		 * @return {String} filterString
 		 */
 		filterStringBuild: function(parameters) {
 			var filterString = '';
@@ -66,7 +66,7 @@
 
 		// GETters functions
 			/**
-			 * @return (String)
+			 * @return {String}
 			 */
 			getTextareaConcatParameter: function() {
 				return this.textareaConcatParameter;
@@ -75,9 +75,9 @@
 		/**
 		 * Creates filter window structure
 		 *
-		 * @param (String) titleWindow
-		 * @param (String) type
-		 * @param (String) content
+		 * @param {String} titleWindow
+		 * @param {String} type
+		 * @param {String} content
 		 */
 		onFilterButtonClick: function(titleWindow, type, content) {
 			this.textAreaFieldValueBuffer = this.textareaField.getValue();
@@ -94,7 +94,7 @@
 		},
 
 		/**
-		 * @param (Array) parameters
+		 * @param {Array} parameters
 		 */
 		onFilterChange: function(parameters) {
 			this.textareaField.setValue(this.filterStringBuild(parameters));
@@ -107,7 +107,7 @@
 
 		// SETters functions
 			/**
-			 * @param (String) value
+			 * @param {String} value
 			 */
 			setValue: function(value) {
 				this.textareaField.setValue(value);

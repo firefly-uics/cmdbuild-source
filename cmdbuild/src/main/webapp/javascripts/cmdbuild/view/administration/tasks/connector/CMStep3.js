@@ -12,11 +12,12 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onDbFieldsetExpand':
@@ -29,7 +30,7 @@
 					return this.onSelectDbType(param);
 
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -37,7 +38,7 @@
 
 		// GETters functions
 			/**
-			 * @return (String) dataSourceType or false
+			 * @return {Mixed} dataSourceType or false
 			 */
 			getTypeDataSource: function() {
 				if (this.view.dbFieldset.checkboxCmp.getValue())
@@ -62,9 +63,8 @@
 		/**
 		 * To enable/disable dbInstanceNameField
 		 *
-		 * @param (String) selectedValue
+		 * @param {String} selectedValue
 		 */
-		// TODO: setup string as proxyConstant
 		onSelectDbType: function(selectedValue) {
 			this.view.dbInstanceNameField.setDisabled(
 				!(selectedValue == CMDBuild.core.proxy.CMProxyConstants.MYSQL)
@@ -73,8 +73,8 @@
 
 		// SETters functions
 			/**
-			 * @param (String) dataSourceType
-			 * @param (Object) configurationObject
+			 * @param {String} dataSourceType
+			 * @param {Object} configurationObject
 			 */
 			setValueDataSourceConfiguration: function(dataSourceType, configurationObject) {
 				if (!CMDBuild.Utils.isEmpty(configurationObject))
@@ -100,7 +100,7 @@
 		/**
 		 * Set dataSource configuration fields as required/unrequired
 		 *
-		 * @param (Boolean) enable
+		 * @param {Boolean} enable
 		 */
 		validate: function(enable) {
 			this.view.dbTypeCombo.allowBlank = !enable;

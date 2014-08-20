@@ -95,7 +95,7 @@
 				var widgetUI = null;
 				if (me.tabbedWidgetDelegate) {
 					widgetUI = me.tabbedWidgetDelegate.getAttachmentsPanel() || null;
-					
+
 					if (widgetUI != null) {
 						widgetUI.configure({
 							widget: widget,
@@ -185,9 +185,10 @@
 		};
 
 		// grid
-		me.builders[pkg.CMGrid.WIDGET_NAME] = function(widget, card) {
-			var w = new pkg.CMGrid();
+		me.builders[CMDBuild.view.management.common.widgets.grid.CMGrid.WIDGET_NAME] = function(widget, card) {
+			var w = Ext.create('CMDBuild.view.management.common.widgets.grid.CMGrid');
 			me.widgetsContainer.addWidgt(w);
+
 			return w;
 		};
 

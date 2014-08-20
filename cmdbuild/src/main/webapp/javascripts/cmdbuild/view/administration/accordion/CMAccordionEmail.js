@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email; // Path to translation
+	var tr = CMDBuild.Translation.administration.email;
 
 	Ext.define('CMDBuild.view.administration.accordion.CMAccordionEmail', {
 		extend: 'CMDBuild.view.common.CMBaseAccordion',
@@ -13,7 +13,9 @@
 			this.updateStore();
 		},
 
-		// overwrite
+		/**
+		 * @overwrite
+		 */
 		updateStore: function() {
 			this.store.getRootNode().appendChild([
 				{

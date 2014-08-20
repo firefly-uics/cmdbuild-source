@@ -13,8 +13,8 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.StorableProjectConverter;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.dao.StorableConverter;
-import org.cmdbuild.data.store.NullOnNotFoundReadStore;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.Stores;
 import org.cmdbuild.logic.bim.DefaultLayerLogic;
 import org.cmdbuild.logic.bim.DefaultSynchronizationLogic;
 import org.cmdbuild.logic.bim.DefaultViewerLogic;
@@ -167,7 +167,7 @@ public class Bim {
 
 	@Bean
 	protected Store<StorableProject> projectStore() {
-		return NullOnNotFoundReadStore.of(DataViewStore.newInstance(systemDataView, storbaleProjectConverter()));
+		return Stores.nullOnNotFoundRead(DataViewStore.newInstance(systemDataView, storbaleProjectConverter()));
 	}
 
 	@Bean
@@ -177,7 +177,7 @@ public class Bim {
 
 	@Bean
 	protected Store<StorableLayer> layerStore() {
-		return NullOnNotFoundReadStore.of(DataViewStore.newInstance(systemDataView, storableLayerConverter()));
+		return Stores.nullOnNotFoundRead(DataViewStore.newInstance(systemDataView, storableLayerConverter()));
 	}
 
 	@Bean

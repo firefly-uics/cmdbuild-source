@@ -11,11 +11,12 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onBeforeEdit':
@@ -28,7 +29,7 @@
 					return this.onStepEdit();
 
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -58,7 +59,7 @@
 
 		// GETters functions
 			/**
-			 * @return (Object) data
+			 * @return {Array} data
 			 */
 			getData: function() {
 				var data = [];
@@ -91,7 +92,7 @@
 			/**
 			 * Function used from next step to get all selected class names filtered from duplicates
 			 *
-			 * @return (Array) selectedClassArray
+			 * @return {Array} selectedClassArray
 			 */
 			getSelectedClassArray: function() {
 				var selectedClassArray = [];
@@ -107,7 +108,7 @@
 			/**
 			 * Function used from next step to get all selected source names filtered from duplicates
 			 *
-			 * @return (Array) selectedSourceArray
+			 * @return {Array} selectedSourceArray
 			 */
 			getSelectedSourceArray: function() {
 				var selectedSourceArray = [];
@@ -121,21 +122,21 @@
 			},
 
 		/**
-		 * @return (Boolean)
+		 * @return {Boolean}
 		 */
 		isEmptyMappingGrid: function() {
 			return CMDBuild.Utils.isEmpty(this.getData());
 		},
 
 		/**
-		 * @param (String) cls
+		 * @param {String} cls
 		 */
 		markInvalidTable: function(cls) {
 			this.view.classLevelMappingGrid.addBodyCls(cls);
 		},
 
 		/**
-		 * @param (String) cls
+		 * @param {String} cls
 		 */
 		markValidTable: function(cls) {
 			this.view.classLevelMappingGrid.removeBodyCls(cls);
@@ -144,8 +145,8 @@
 		/**
 		 * Resetting deletionType cell value if checkbox is unchecked
 		 *
-		 * @param (Boolean) checked
-		 * @param (Int) rowIndex
+		 * @param {Boolean} checked
+		 * @param {Int} rowIndex
 		 */
 		onCheckDelete: function(checked, rowIndex) {
 			if (!checked)
@@ -155,8 +156,8 @@
 		/**
 		 * Function to update rows stores/editors on beforeEdit event
 		 *
-		 * @param (String) fieldName
-		 * @param (Object) rowData
+		 * @param {String} fieldName
+		 * @param {Object} rowData
 		 */
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
@@ -192,14 +193,14 @@
 
 		// SETters functions
 			/**
-			 * @param (Object) data
+			 * @param {Object} data
 			 */
 			setData: function(data) {
 				this.view.classLevelMappingGrid.getStore().loadData(data);
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setDisabledButtonNext: function(state) {
 				this.parentDelegate.setDisabledButtonNext(state);

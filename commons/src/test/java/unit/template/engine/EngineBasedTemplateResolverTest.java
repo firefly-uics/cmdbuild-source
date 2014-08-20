@@ -2,6 +2,8 @@ package unit.template.engine;
 
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -16,7 +18,19 @@ public class EngineBasedTemplateResolverTest {
 	private static final Object NULL_OBJECT = null;
 
 	@Test
-	public void aSimpleStringIsKeptAsItIs() {
+	public void nullResolvedAsNull() throws Exception {
+		// given
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance().build();
+
+		// when
+		final String value = tr.resolve(null);
+
+		// then
+		assertThat(value, is(nullValue()));
+	}
+
+	@Test
+	public void aSimpleStringIsKeptAsItIs() throws Exception {
 		// given
 		final String template = "A simple string";
 		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance().build();
@@ -24,11 +38,12 @@ public class EngineBasedTemplateResolverTest {
 		// when
 		final String value = tr.resolve(template);
 
+		// then
 		assertThat(value, equalTo(template));
 	}
 
 	@Test
-	public void inexistentEngineIsExpandedWithNull() {
+	public void inexistentEngineIsExpandedWithNull() throws Exception {
 		// given
 		final Engine engine = mock(Engine.class);
 		when(engine.eval(anyString())).thenReturn(null);
@@ -43,7 +58,7 @@ public class EngineBasedTemplateResolverTest {
 	}
 
 	@Test
-	public void inexistentVariablesAreExpandedWithNull() {
+	public void inexistentVariablesAreExpandedWithNull() throws Exception {
 		// given
 		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
 				.withEngine(engineWithParam("param", "value"), "e1") //
@@ -57,7 +72,7 @@ public class EngineBasedTemplateResolverTest {
 	}
 
 	@Test
-	public void simpleVariablesAreExpandedWithEnginesEvaluation() {
+	public void simpleVariablesAreExpandedWithEnginesEvaluation() throws Exception {
 		// given
 		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
 				.withEngine(engineWithParam("stringParam", "string param"), "e1") //
@@ -74,7 +89,7 @@ public class EngineBasedTemplateResolverTest {
 	}
 
 	@Test
-	public void leadingPartsAreKeptIntact() {
+	public void leadingPartsAreKeptIntact() throws Exception {
 		// given
 		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
 				.withEngine(engineWithParam("param", 42), "e1") //
@@ -88,7 +103,7 @@ public class EngineBasedTemplateResolverTest {
 	}
 
 	@Test
-	public void moreThanOneParameterIsExpanded() {
+	public void moreThanOneParameterIsExpanded() throws Exception {
 		// given
 		final Object value1 = 42, value2 = "st";
 

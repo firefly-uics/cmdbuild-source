@@ -11,11 +11,12 @@
 		/**
 		 * Gatherer function to catch events
 		 *
-		 * @param (String) name
-		 * @param (Object) param
-		 * @param (Function) callback
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 *
+		 * @overwrite
 		 */
-		// overwrite
 		cmOn: function(name, param, callBack) {
 			switch (name) {
 				case 'onBeforeEdit':
@@ -25,7 +26,7 @@
 					return this.onStepEdit();
 
 				default: {
-					if (this.parentDelegate)
+					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
@@ -56,8 +57,8 @@
 		/**
 		 * To setup class attribute combo editor
 		 *
-		 * @param (String) className
-		 * @param (Boolean) onStepEditExecute
+		 * @param {String} className
+		 * @param {Boolean} onStepEditExecute
 		 */
 		buildClassAttributesCombo: function(className, onStepEditExecute) {
 			if (!Ext.isEmpty(className)) {
@@ -123,8 +124,8 @@
 		/**
 		 * To setup source attribute combo editor
 		 *
-		 * @param (String) sourceName
-		 * @param (Boolean) onStepEditExecute
+		 * @param {String} sourceName
+		 * @param {Boolean} onStepEditExecute
 		 */
 		buildSourceAttributesCombo: function(sourceName, onStepEditExecute) {
 			if (!Ext.isEmpty(sourceName)) {
@@ -164,7 +165,7 @@
 
 		// GETters functions
 			/**
-			 * @return (Array) data
+			 * @return {Array} data
 			 */
 			getData: function() {
 				var data = [];
@@ -193,21 +194,21 @@
 			},
 
 		/**
-		 * @return (Boolean)
+		 * @return {Boolean}
 		 */
 		isEmptyMappingGrid: function() {
 			return CMDBuild.Utils.isEmpty(this.getData());
 		},
 
 		/**
-		 * @param (String) cls
+		 * @param {String} cls
 		 */
 		markInvalidTable: function(cls) {
 			this.view.attributeLevelMappingGrid.addBodyCls(cls);
 		},
 
 		/**
-		 * @param (String) cls
+		 * @param {String} cls
 		 */
 		markValidTable: function(cls) {
 			this.view.attributeLevelMappingGrid.removeBodyCls(cls);
@@ -216,8 +217,8 @@
 		/**
 		 * Function to update rows stores/editors on beforeEdit event
 		 *
-		 * @param (String) fieldName
-		 * @param (Object) rowData
+		 * @param {String} fieldName
+		 * @param {Object} rowData
 		 */
 		onBeforeEdit: function(fieldName, rowData) {
 			switch (fieldName) {
@@ -269,14 +270,14 @@
 
 		// SETters functions
 			/**
-			 * @param (Object) data
+			 * @param {Object} data
 			 */
 			setData: function(data) {
 				this.view.attributeLevelMappingGrid.getStore().loadData(data);
 			},
 
 			/**
-			 * @param (Boolean) state
+			 * @param {Boolean} state
 			 */
 			setDisabledButtonNext: function(state) {
 				this.parentDelegate.setDisabledButtonNext(state);
