@@ -17,35 +17,27 @@ import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 
-import support.ForwardingProxy;
 import support.JsonSupport;
 import support.ServerResource;
 
 public class ClassAttributesTest {
 
-	private final ForwardingProxy<ClassAttributes> forwardingProxy = ForwardingProxy.of(ClassAttributes.class);
-	private ClassAttributes service;
+	private static ClassAttributes service;
 
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
+	@ClassRule
+	public static ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(ClassAttributes.class) //
-			.withService(forwardingProxy.get()) //
+			.withService(service = mock(ClassAttributes.class)) //
 			.withPort(randomPort()) //
 			.build();
 
-	@Rule
-	public JsonSupport json = new JsonSupport();
+	@ClassRule
+	public static JsonSupport json = new JsonSupport();
 
 	private HttpClient httpclient;
-
-	@Before
-	public void mockService() throws Exception {
-		service = mock(ClassAttributes.class);
-		forwardingProxy.set(service);
-	}
 
 	@Before
 	public void createHttpClient() throws Exception {

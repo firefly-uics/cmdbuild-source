@@ -19,35 +19,27 @@ import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleClassDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 
-import support.ForwardingProxy;
 import support.JsonSupport;
 import support.ServerResource;
 
 public class ClassesTest {
 
-	private final ForwardingProxy<Classes> forwardingProxy = ForwardingProxy.of(Classes.class);
-	private Classes service;
+	private static Classes service;
 
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
+	@ClassRule
+	public static ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(Classes.class) //
-			.withService(forwardingProxy.get()) //
+			.withService(service = mock(Classes.class)) //
 			.withPort(randomPort()) //
 			.build();
 
-	@Rule
-	public JsonSupport json = new JsonSupport();
+	@ClassRule
+	public static JsonSupport json = new JsonSupport();
 
 	private HttpClient httpclient;
-
-	@Before
-	public void mockService() throws Exception {
-		service = mock(Classes.class);
-		forwardingProxy.set(service);
-	}
 
 	@Before
 	public void createHttpClient() throws Exception {

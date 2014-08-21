@@ -12,35 +12,27 @@ import org.cmdbuild.service.rest.Menu;
 import org.cmdbuild.service.rest.dto.MenuDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 
-import support.ForwardingProxy;
 import support.JsonSupport;
 import support.ServerResource;
 
 public class MenuTest {
 
-	private final ForwardingProxy<Menu> forwardingProxy = ForwardingProxy.of(Menu.class);
-	private Menu service;
+	private static Menu service;
 
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
+	@ClassRule
+	public static ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(Menu.class) //
-			.withService(forwardingProxy.get()) //
+			.withService(service = mock(Menu.class)) //
 			.withPort(randomPort()) //
 			.build();
 
-	@Rule
-	public JsonSupport json = new JsonSupport();
+	@ClassRule
+	public static JsonSupport json = new JsonSupport();
 
 	private HttpClient httpclient;
-
-	@Before
-	public void mockService() throws Exception {
-		service = mock(Menu.class);
-		forwardingProxy.set(service);
-	}
 
 	@Before
 	public void createHttpClient() throws Exception {
