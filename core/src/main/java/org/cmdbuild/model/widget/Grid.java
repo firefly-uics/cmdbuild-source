@@ -21,6 +21,7 @@ public class Grid extends Widget {
 	public static final String TEXT_SERIALIZATION = "text";
 	public static final String DEFAULT_SERIALIZATION = TEXT_SERIALIZATION;
 	public static final boolean DEFAULT_WRITE_ON_ADVANCE = false;
+	public static final String DEFAULT_PRESETS_TYPE = "text";
 
 	private String className;
 	private String outputName;
@@ -31,6 +32,7 @@ public class Grid extends Widget {
 	private String serializationType;
 	private boolean writeOnAdvance;
 	private String presets;
+	private String presetsType;
 
 	public String getClassName() {
 		return className;
@@ -94,6 +96,14 @@ public class Grid extends Widget {
 
 	public void setPresets(final String presets) {
 		this.presets = presets;
+	}
+
+	public String getPresetsType() {
+		return presetsType;
+	}
+
+	public void setPresetsType(final String presetsType) {
+		this.presetsType = presetsType;
 	}
 
 	public Map<String, Object> getVariables() {

@@ -470,6 +470,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.withSystemDataView(systemDataView) //
 				.withQueryOptions(queryOptions) //
 				.withFunction(fetchedFunction) //
+				.withParameters(queryOptions.getParameters()) //
 				.withAlias(functionAlias) //
 				.build() //
 				.count() //

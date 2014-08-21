@@ -1,5 +1,6 @@
 (function() {
 
+	// TODO: use CMDBuild.model.CMModelFunctions.list and delete this one
 	Ext.define('Functions', {
 		extend: 'Ext.data.Model',
 		fields: [

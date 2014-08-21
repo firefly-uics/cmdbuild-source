@@ -1,5 +1,7 @@
 (function() {
 
+	Ext.require('CMDBuild.model.CMModelFunctions');
+
 	Ext.define('CMDBuild.core.proxy.widgets.CMProxyWidgetGrid', {
 		statics: {
 
@@ -52,6 +54,33 @@
 					]
 				});
 			},
+
+			/**
+			 * @param {Object} parameters
+			 *
+			 * @return {Ext.data.Store}
+			 *
+			 * TODO
+			 */
+			getStoreFromFunction: function(parameters) {
+				return Ext.create('Ext.data.Store', {
+					fields: _CMCache.getDataSourceOutput(presetsString),
+					autoLoad: true,
+					proxy: {
+						type: 'ajax',
+						url: 'services/json/management/modcard/getsqlcardlist',
+						reader: {
+							root: 'cards',
+							type: 'json',
+							totalProperty: 'results',
+						},
+						extraParams: {
+							'function': presetsString,
+							params: Ext.encode(params)
+						}
+					}
+				})
+			}
 		}
 	});
 

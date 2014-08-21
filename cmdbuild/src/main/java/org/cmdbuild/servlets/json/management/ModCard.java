@@ -1,7 +1,6 @@
 package org.cmdbuild.servlets.json.management;
 
 import static com.google.common.collect.FluentIterable.from;
-
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
@@ -26,6 +25,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.MASTER;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MASTER_CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MASTER_CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.OUT_OF_FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PARAMS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.POSITION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.RELATION_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.RETRY_WITHOUT_FILTER;
@@ -62,6 +62,7 @@ import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
+import org.cmdbuild.servlets.json.schema.Utils;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -216,7 +217,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final @Parameter(FUNCTION) String functionName, //
 			final @Parameter(START) int offset, //
 			final @Parameter(LIMIT) int limit, //
-			// TODO the params for the SQL function
+			final @Parameter(value = PARAMS, required = false) JSONObject jsonParameters, //
 			final @Parameter(value = FILTER, required = false) JSONObject filter, //
 			final @Parameter(value = SORT, required = false) JSONArray sorters //
 	) throws JSONException { //
@@ -225,6 +226,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.offset(offset) //
 				.orderBy(sorters) //
 				.filter(filter) //
+				.parameters(Utils.toMap(jsonParameters)) //
 				.build();
 
 		final FetchCardListResponse response = systemDataAccessLogic().fetchSQLCards(functionName, queryOptions);
