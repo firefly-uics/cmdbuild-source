@@ -145,11 +145,11 @@ public class MenuDetail {
 	}
 
 	@XmlAttribute(name = OBJECT_DESCRIPTION)
-	public String getDescription() {
+	public String getObjectDescription() {
 		return objectDescription;
 	}
 
-	void setDescription(final String description) {
+	void setObjectDescription(final String description) {
 		this.objectDescription = description;
 	}
 

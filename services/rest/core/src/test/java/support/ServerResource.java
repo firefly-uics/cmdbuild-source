@@ -1,7 +1,11 @@
 package support;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
+import java.util.Random;
+
+import org.apache.commons.lang3.Range;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
@@ -14,7 +18,7 @@ public class ServerResource extends ExternalResource {
 
 	private static final Logger logger = LoggerFactory.getLogger(ServerResource.class);
 
-	public static class Builder implements org.cmdbuild.common.Builder<ServerResource> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<ServerResource> {
 
 		private Class<?> serviceClass;
 		private Object service;
@@ -46,6 +50,13 @@ public class ServerResource extends ExternalResource {
 		return new Builder();
 	}
 
+	private static final Random random = new Random();
+
+	public static final int DEFAULT_RANGE_MIN_INCLUSIVE = 1024;
+	public static final int DEFAULT_RANGE_MAX_INCLUSIVE = 65535;
+	public static final Range<Integer> DEFAULT_RANGE = Range.between(DEFAULT_RANGE_MIN_INCLUSIVE,
+			DEFAULT_RANGE_MAX_INCLUSIVE);
+
 	private final Class<?> serviceClass;
 	private final Object service;
 	private final int port;
@@ -65,17 +76,33 @@ public class ServerResource extends ExternalResource {
 		final JAXRSServerFactoryBean serverFactory = new JAXRSServerFactoryBean();
 		serverFactory.setResourceClasses(serviceClass);
 		serverFactory.setResourceProvider(serviceClass, new SingletonResourceProvider(service));
-		serverFactory.setAddress(format("http://localhost:%d/", port));
+		serverFactory.setAddress(address());
 		serverFactory.setProvider(new JacksonJaxbJsonProvider());
 
 		server = serverFactory.create();
-		logger.info("server ready...");
+		logger.info(format("server ready on port %d ...", port));
 	}
 
 	@Override
 	protected void after() {
 		logger.info("server exiting...");
 		server.destroy();
+	}
+
+	public String address() {
+		return resource(EMPTY);
+	}
+
+	public String resource(final String resource) {
+		return format("http://localhost:%d/%s", port, resource);
+	}
+
+	public static int randomPort() {
+		return randomPort(DEFAULT_RANGE);
+	}
+
+	public static int randomPort(final Range<Integer> range) {
+		return random.nextInt(range.getMaximum() - range.getMinimum()) + range.getMinimum();
 	}
 
 }

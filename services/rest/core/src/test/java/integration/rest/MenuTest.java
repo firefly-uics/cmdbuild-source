@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -27,7 +28,7 @@ public class MenuTest {
 	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(Menu.class) //
 			.withService(forwardingProxy.get()) //
-			.withPort(8080) //
+			.withPort(randomPort()) //
 			.build();
 
 	@Rule
@@ -58,7 +59,7 @@ public class MenuTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/menu/");
+		final GetMethod get = new GetMethod(server.resource("menu/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
