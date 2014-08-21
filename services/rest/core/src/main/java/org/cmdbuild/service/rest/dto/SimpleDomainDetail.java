@@ -2,7 +2,7 @@ package org.cmdbuild.service.rest.dto;
 
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
-import static org.cmdbuild.service.rest.constants.Serialization.SIMPLE_CLASS_DETAIL;
+import static org.cmdbuild.service.rest.constants.Serialization.SIMPLE_DOMAIN_DETAIL;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-@XmlRootElement(name = SIMPLE_CLASS_DETAIL)
+@XmlRootElement(name = SIMPLE_DOMAIN_DETAIL)
 public class SimpleDomainDetail {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<SimpleDomainDetail> {
