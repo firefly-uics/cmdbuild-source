@@ -224,13 +224,76 @@
 		},
 
 		/**
-		 * To decode text serializationType strings, uses widget separators
+		 * To decode "function" presetsType and fill grid store
+		 *
+		 * @param {String} presetsString
+		 *
+		 * TODO: spostare nel proxy
+		 */
+		decodeFunctionPresets: function(presetsString) {
+			// Validate presetsString
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.functions.getFunctions,
+				scope: this,
+				success: function(result, options, decodedResult) {
+					var isPresetsStringValid = false;
+
+					Ext.Array.each(decodedResult.response, function(record) {
+						if (record[CMDBuild.core.proxy.CMProxyConstants.NAME] == presetsString)
+							isPresetsStringValid = true;
+					});
+
+					if (isPresetsStringValid) {
+						var functionParamsNames = [];
+						var widgetUnmanagedVariables = this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.VARIABLES];
+						var widgetUnmanagedVariablesNames = Object.keys(widgetUnmanagedVariables);
+						var params = {};
+
+						// Builds functionParams with all params names
+						for (var index in _CMCache.getDataSourceInput(presetsString)) {
+							var functionParamDefinitionObject = _CMCache.getDataSourceInput(presetsString)[index];
+
+							functionParamsNames.push(functionParamDefinitionObject[CMDBuild.core.proxy.CMProxyConstants.NAME]);
+						}
+
+						var functionParams = Ext.Array.intersect(functionParamsNames, widgetUnmanagedVariablesNames);
+
+						for (var index in functionParams)
+							params[functionParams[index]] = widgetUnmanagedVariables[functionParams[index]];
+
+						this.grid.reconfigure(
+							Ext.create('Ext.data.Store', {
+								fields: _CMCache.getDataSourceOutput(presetsString),
+								autoLoad: true,
+								proxy: {
+									type: 'ajax',
+									url: 'services/json/management/modcard/getsqlcardlist',
+									reader: {
+										root: 'cards',
+										type: 'json',
+										totalProperty: 'results',
+									},
+									extraParams: {
+										'function': presetsString,
+										params: Ext.encode(params)
+									}
+								}
+							})
+						);
+					}
+				}
+			});
+		},
+
+		/**
+		 * To decode "text" presetsType strings, uses widget separators
 		 *
 		 * @param {String} presetsString
 		 *
 		 * @return {Array} decodedArray
 		 */
-		decodeTextSerialization: function(presetsString) {
+		decodeTextPresets: function(presetsString) {
 			var cardsArray = presetsString.split(this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.CARD_SEPARATOR]);
 			var decodedArray = [];
 
@@ -324,12 +387,17 @@
 		 */
 		loadPresets: function() {
 			if (!Ext.isEmpty(this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.PRESETS])) {
-				switch (this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.SERIALIZATION_TYPE]) {
+				switch (this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.PRESETS_TYPE]) {
 					case 'text':
-						return this.setGridDataFromPresets(
-							this.decodeTextSerialization(
+						return this.setGridDataFromTextPresets(
+							this.decodeTextPresets(
 								this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.PRESETS]
 							)
+						);
+
+					case 'function':
+						return this.decodeFunctionPresets(
+							this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.PRESETS]
 						);
 
 					default:
@@ -414,21 +482,21 @@
 			this.onEditWindowAbortButtonClick();
 		},
 
-		/**
-		 * Build columns for class in view's grid
-		 */
-		setColumnsForClass: function() {
-			this.columns = this.buildColumnsForAttributes();
-
-			this.addActionColumns();
-
-			this.grid.reconfigure(
-				this.getStoreForFields(this.columns.fields),
-				this.columns.headers
-			);
-		},
-
 		// SETters functions
+			/**
+			 * Build columns for class in view's grid
+			 */
+			setColumnsForClass: function() {
+				this.columns = this.buildColumnsForAttributes();
+
+				this.addActionColumns();
+
+				this.grid.reconfigure(
+					this.getStoreForFields(this.columns.fields),
+					this.columns.headers
+				);
+			},
+
 			/**
 			 * Adapter for grid's loarRecords function
 			 *
@@ -454,7 +522,7 @@
 			/**
 			 * @param {Object} data
 			 */
-			setGridDataFromPresets: function(data) {
+			setGridDataFromTextPresets: function(data) {
 				this.grid.getStore().loadData(data);
 			}
 	});
