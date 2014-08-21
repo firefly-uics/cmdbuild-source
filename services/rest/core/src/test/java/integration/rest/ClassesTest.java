@@ -8,6 +8,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -34,7 +35,7 @@ public class ClassesTest {
 	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(Classes.class) //
 			.withService(forwardingProxy.get()) //
-			.withPort(8080) //
+			.withPort(randomPort()) //
 			.build();
 
 	@Rule
@@ -72,7 +73,7 @@ public class ClassesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/classes/");
+		final GetMethod get = new GetMethod(server.resource("classes/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -92,7 +93,7 @@ public class ClassesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/classes/foo/");
+		final GetMethod get = new GetMethod(server.resource("classes/foo/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then

@@ -1,12 +1,18 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static support.ServerResource.randomPort;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +47,7 @@ public class CardsTest {
 	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(Cards.class) //
 			.withService(forwardingProxy.get()) //
-			.withPort(8080) //
+			.withPort(randomPort()) //
 			.build();
 
 	@Rule
@@ -61,7 +67,7 @@ public class CardsTest {
 	}
 
 	@Test
-	public void getCards() throws Exception {
+	public void allCardReadedUsingGet() throws Exception {
 		// given
 		final Map<String, Object> first = ChainablePutMap.of(new HashMap<String, Object>()) //
 				.chainablePut("foo", "foo") //
@@ -74,20 +80,21 @@ public class CardsTest {
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll("foo", null, anyInt(), anyInt())) //
+		when(service.readAll(eq("foo"), isNull(String.class), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/classes/foo/cards");
+		final GetMethod get = new GetMethod(server.resource("classes/foo/cards"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
+		verify(service).readAll(eq("foo"), isNull(String.class), anyInt(), anyInt());
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
-	public void createCard() throws Exception {
+	public void cardCreatedUsingPost() throws Exception {
 		// given
 		final ArgumentCaptor<MultivaluedMap> multivaluedMapCaptor = ArgumentCaptor.forClass(MultivaluedMap.class);
 		final SimpleResponse<Long> expectedResponse = SimpleResponse.<Long> newInstance() //
@@ -97,13 +104,14 @@ public class CardsTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final PostMethod post = new PostMethod("http://localhost:8080/classes/foo/cards/");
+		final PostMethod post = new PostMethod(server.resource("classes/foo/cards/"));
 		post.addParameter("foo", "bar");
 		post.addParameter("bar", "baz");
 		post.addParameter("baz", "foo");
 		final int result = httpclient.executeMethod(post);
 
 		// then
+		verify(service).create(eq("foo"), any(MultivaluedMap.class));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 		final MultivaluedMap captured = multivaluedMapCaptor.getValue();
@@ -113,7 +121,7 @@ public class CardsTest {
 	}
 
 	@Test
-	public void readCard() throws Exception {
+	public void cardReadedUsingGet() throws Exception {
 		// given
 		final Map<String, Object> values = ChainablePutMap.of(new HashMap<String, Object>()) //
 				.chainablePut("foo", "foo") //
@@ -126,31 +134,35 @@ public class CardsTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/classes/foo/cards/123/");
+		final GetMethod get = new GetMethod(server.resource("classes/foo/cards/123/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
+		verify(service).read(eq("foo"), eq(123L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
-	public void updateCard() throws Exception {
+	public void cardUpdatedUsingPut() throws Exception {
 		// when
-		final PutMethod put = new PutMethod("http://localhost:8080/classes/foo/cards/123/");
+		final PutMethod put = new PutMethod(server.resource("classes/foo/cards/123/"));
+		put.addRequestHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
 		final int result = httpclient.executeMethod(put);
 
 		// then
+		verify(service).update(eq("foo"), eq(123L), any(MultivaluedMap.class));
 		assertThat(result, equalTo(204));
 	}
 
 	@Test
-	public void deleteCard() throws Exception {
+	public void cardDeletedUsingDelete() throws Exception {
 		// when
-		final DeleteMethod delete = new DeleteMethod("http://localhost:8080/classes/foo/cards/123/");
+		final DeleteMethod delete = new DeleteMethod(server.resource("classes/foo/cards/123/"));
 		final int result = httpclient.executeMethod(delete);
 
 		// then
+		verify(service).delete(eq("foo"), eq(123L));
 		assertThat(result, equalTo(204));
 	}
 

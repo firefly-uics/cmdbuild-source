@@ -438,7 +438,7 @@ public class AttributeDetail {
 		this.lookupTypeName = lookupTypeName;
 	}
 
-	@XmlElement(name = FILTER)
+	@XmlElement(name = FILTER, nillable = true)
 	public Filter getFilter() {
 		return filter;
 	}

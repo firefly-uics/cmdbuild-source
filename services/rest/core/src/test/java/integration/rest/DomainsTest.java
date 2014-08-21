@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -30,7 +31,7 @@ public class DomainsTest {
 	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(Domains.class) //
 			.withService(forwardingProxy.get()) //
-			.withPort(8080) //
+			.withPort(randomPort()) //
 			.build();
 
 	@Rule
@@ -68,7 +69,7 @@ public class DomainsTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/domains/");
+		final GetMethod get = new GetMethod(server.resource("domains/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then

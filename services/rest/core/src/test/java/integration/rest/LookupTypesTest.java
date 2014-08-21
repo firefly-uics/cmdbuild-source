@@ -7,6 +7,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -32,7 +33,7 @@ public class LookupTypesTest {
 	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(LookupTypes.class) //
 			.withService(forwardingProxy.get()) //
-			.withPort(8080) //
+			.withPort(randomPort()) //
 			.build();
 
 	@Rule
@@ -70,7 +71,7 @@ public class LookupTypesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/");
+		final GetMethod get = new GetMethod(server.resource("lookuptypes/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -90,7 +91,7 @@ public class LookupTypesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod("http://localhost:8080/lookuptypes/foo/");
+		final GetMethod get = new GetMethod(server.resource("lookuptypes/foo/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
