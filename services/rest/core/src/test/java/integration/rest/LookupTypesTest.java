@@ -17,35 +17,27 @@ import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 
-import support.ForwardingProxy;
 import support.JsonSupport;
 import support.ServerResource;
 
 public class LookupTypesTest {
 
-	private final ForwardingProxy<LookupTypes> forwardingProxy = ForwardingProxy.of(LookupTypes.class);
-	private LookupTypes service;
+	private static LookupTypes service;
 
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
+	@ClassRule
+	public static ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(LookupTypes.class) //
-			.withService(forwardingProxy.get()) //
+			.withService(service = mock(LookupTypes.class)) //
 			.withPort(randomPort()) //
 			.build();
 
-	@Rule
-	public JsonSupport json = new JsonSupport();
+	@ClassRule
+	public static JsonSupport json = new JsonSupport();
 
 	private HttpClient httpclient;
-
-	@Before
-	public void mockService() throws Exception {
-		service = mock(LookupTypes.class);
-		forwardingProxy.set(service);
-	}
 
 	@Before
 	public void createHttpClient() throws Exception {

@@ -30,36 +30,28 @@ import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import support.ForwardingProxy;
 import support.JsonSupport;
 import support.ServerResource;
 
 public class CardsTest {
 
-	private final ForwardingProxy<Cards> forwardingProxy = ForwardingProxy.of(Cards.class);
-	private Cards service;
+	private static Cards service;
 
-	@Rule
-	public ServerResource server = ServerResource.newInstance() //
+	@ClassRule
+	public static ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(Cards.class) //
-			.withService(forwardingProxy.get()) //
+			.withService(service = mock(Cards.class)) //
 			.withPort(randomPort()) //
 			.build();
 
-	@Rule
-	public JsonSupport json = new JsonSupport();
+	@ClassRule
+	public static JsonSupport json = new JsonSupport();
 
 	private HttpClient httpclient;
-
-	@Before
-	public void mockService() throws Exception {
-		service = mock(Cards.class);
-		forwardingProxy.set(service);
-	}
 
 	@Before
 	public void createHttpClient() throws Exception {
