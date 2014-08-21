@@ -98,7 +98,7 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 				.thatIsMandatory(input.isMandatory()) //
 				.thatIsInherited(input.isInherited()) //
 				.thatIsActive(input.isActive()) //
-				.withIndex(input.getIndex()) //
+				.withIndex(Long.valueOf(input.getIndex())) //
 				.withDefaultValue(input.getDefaultValue()) //
 				.withGroup(input.getGroup());
 		new NullAttributeTypeVisitor() {
@@ -114,7 +114,8 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 
 			@Override
 			public void visit(final DecimalAttributeType attributeType) {
-				builder.withPrecision(attributeType.precision).withScale(attributeType.scale);
+				builder.withPrecision(Long.valueOf(attributeType.precision)) //
+						.withScale(Long.valueOf(attributeType.scale));
 			}
 
 			@Override
@@ -160,7 +161,7 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 
 			@Override
 			public void visit(final StringAttributeType attributeType) {
-				builder.withLength(attributeType.length);
+				builder.withLength(Long.valueOf(attributeType.length));
 			}
 
 			@Override

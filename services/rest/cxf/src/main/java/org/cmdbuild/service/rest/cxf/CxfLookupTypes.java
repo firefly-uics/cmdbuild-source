@@ -4,6 +4,7 @@ import static com.google.common.collect.FluentIterable.from;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.data.store.lookup.LookupType;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic.LookupTypeQuery;
 import org.cmdbuild.service.rest.LookupTypes;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
@@ -14,13 +15,19 @@ import org.cmdbuild.service.rest.serialization.ToLookupTypeDetail;
 
 import com.google.common.base.Predicate;
 
-public class CxfLookupTypes extends CxfService implements LookupTypes {
+public class CxfLookupTypes implements LookupTypes {
 
 	private static final ToLookupTypeDetail TO_LOOKUP_TYPE_DETAIL = ToLookupTypeDetail.newInstance().build();
 
+	private final LookupLogic lookupLogic;
+
+	public CxfLookupTypes(final LookupLogic lookupLogic) {
+		this.lookupLogic = lookupLogic;
+	}
+
 	@Override
 	public SimpleResponse<LookupTypeDetail> read(final String type) {
-		final PagedElements<LookupType> lookupTypes = lookupLogic().getAllTypes(new LookupTypeQuery() {
+		final PagedElements<LookupType> lookupTypes = lookupLogic.getAllTypes(new LookupTypeQuery() {
 
 			@Override
 			public Integer limit() {
@@ -53,7 +60,7 @@ public class CxfLookupTypes extends CxfService implements LookupTypes {
 
 	@Override
 	public ListResponse<LookupTypeDetail> readAll(final Integer limit, final Integer offset) {
-		final PagedElements<LookupType> lookupTypes = lookupLogic().getAllTypes(new LookupTypeQuery() {
+		final PagedElements<LookupType> lookupTypes = lookupLogic.getAllTypes(new LookupTypeQuery() {
 
 			@Override
 			public Integer limit() {
@@ -72,7 +79,7 @@ public class CxfLookupTypes extends CxfService implements LookupTypes {
 		return ListResponse.<LookupTypeDetail> newInstance() //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
-						.withTotal(lookupTypes.totalSize()) //
+						.withTotal(Long.valueOf(lookupTypes.totalSize())) //
 						.build()) //
 				.build();
 	}

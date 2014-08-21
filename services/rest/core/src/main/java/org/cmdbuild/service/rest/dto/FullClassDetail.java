@@ -50,7 +50,7 @@ public class FullClassDetail {
 			return this;
 		}
 
-		public Builder withSuperclassStatus(final boolean superclass) {
+		public Builder withSuperclassStatus(final Boolean superclass) {
 			this.superclass = superclass;
 			return this;
 		}
@@ -73,7 +73,7 @@ public class FullClassDetail {
 
 	private String name;
 	private String description;
-	private boolean superclass;
+	private Boolean superclass;
 	private String descriptionAttributeName;
 	private String parent;
 
@@ -108,11 +108,11 @@ public class FullClassDetail {
 	}
 
 	@XmlAttribute(name = SUPERCLASS)
-	public boolean isSuperclass() {
+	public Boolean isSuperclass() {
 		return superclass;
 	}
 
-	void setSuperclass(final boolean superclass) {
+	void setSuperclass(final Boolean superclass) {
 		this.superclass = superclass;
 	}
 

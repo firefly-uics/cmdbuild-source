@@ -115,18 +115,18 @@ public class AttributeDetail {
 		private String type;
 		private String name;
 		private String description;
-		private boolean displayableInList;
-		private boolean unique;
-		private boolean mandatory;
-		private boolean inherited;
-		private boolean active;
-		private int index;
+		private Boolean displayableInList;
+		private Boolean unique;
+		private Boolean mandatory;
+		private Boolean inherited;
+		private Boolean active;
+		private Long index;
 		private String defaultValue;
 		private String group;
-		private Integer precision;
-		private Integer scale;
+		private Long precision;
+		private Long scale;
 		private String targetClass;
-		private Integer length;
+		private Long length;
 		private String editorType;
 		private String lookupTypeName;
 		private Filter filter;
@@ -137,7 +137,12 @@ public class AttributeDetail {
 
 		@Override
 		public AttributeDetail build() {
+			validate();
 			return new AttributeDetail(this);
+		}
+
+		private void validate() {
+			// TODO Auto-generated method stub
 		}
 
 		public Builder withType(final String type) {
@@ -155,32 +160,32 @@ public class AttributeDetail {
 			return this;
 		}
 
-		public Builder thatIsDisplayableInList(final boolean displayableInList) {
+		public Builder thatIsDisplayableInList(final Boolean displayableInList) {
 			this.displayableInList = displayableInList;
 			return this;
 		}
 
-		public Builder thatIsUnique(final boolean unique) {
+		public Builder thatIsUnique(final Boolean unique) {
 			this.unique = unique;
 			return this;
 		}
 
-		public Builder thatIsMandatory(final boolean mandatory) {
+		public Builder thatIsMandatory(final Boolean mandatory) {
 			this.mandatory = mandatory;
 			return this;
 		}
 
-		public Builder thatIsInherited(final boolean inherited) {
+		public Builder thatIsInherited(final Boolean inherited) {
 			this.inherited = inherited;
 			return this;
 		}
 
-		public Builder thatIsActive(final boolean active) {
+		public Builder thatIsActive(final Boolean active) {
 			this.active = active;
 			return this;
 		}
 
-		public Builder withIndex(final int index) {
+		public Builder withIndex(final Long index) {
 			this.index = index;
 			return this;
 		}
@@ -195,12 +200,12 @@ public class AttributeDetail {
 			return this;
 		}
 
-		public Builder withPrecision(final Integer precision) {
+		public Builder withPrecision(final Long precision) {
 			this.precision = precision;
 			return this;
 		}
 
-		public Builder withScale(final Integer scale) {
+		public Builder withScale(final Long scale) {
 			this.scale = scale;
 			return this;
 		}
@@ -210,7 +215,7 @@ public class AttributeDetail {
 			return this;
 		}
 
-		public Builder withLength(final Integer length) {
+		public Builder withLength(final Long length) {
 			this.length = length;
 			return this;
 		}
@@ -239,18 +244,18 @@ public class AttributeDetail {
 	private String type;
 	private String name;
 	private String description;
-	private boolean displayableInList;
-	private boolean unique;
-	private boolean mandatory;
-	private boolean inherited;
-	private boolean active;
-	private int index;
+	private Boolean displayableInList;
+	private Boolean unique;
+	private Boolean mandatory;
+	private Boolean inherited;
+	private Boolean active;
+	private Long index;
 	private String defaultValue;
 	private String group;
-	private int precision;
-	private int scale;
+	private Long precision;
+	private Long scale;
 	private String targetClass;
-	private int length;
+	private Long length;
 	private String editorType;
 	private String lookupTypeName;
 	private Filter filter;
@@ -308,56 +313,56 @@ public class AttributeDetail {
 	}
 
 	@XmlAttribute(name = DISPLAYABLE_IN_LIST)
-	public boolean isDisplayableInList() {
+	public Boolean isDisplayableInList() {
 		return displayableInList;
 	}
 
-	void setDisplayableInList(final boolean displayableInList) {
+	void setDisplayableInList(final Boolean displayableInList) {
 		this.displayableInList = displayableInList;
 	}
 
 	@XmlAttribute(name = UNIQUE)
-	public boolean isUnique() {
+	public Boolean isUnique() {
 		return unique;
 	}
 
-	void setUnique(final boolean unique) {
+	void setUnique(final Boolean unique) {
 		this.unique = unique;
 	}
 
 	@XmlAttribute(name = MANDATORY)
-	public boolean isMandatory() {
+	public Boolean isMandatory() {
 		return mandatory;
 	}
 
-	void setMandatory(final boolean mandatory) {
+	void setMandatory(final Boolean mandatory) {
 		this.mandatory = mandatory;
 	}
 
 	@XmlAttribute(name = INHERITED)
-	public boolean isInherited() {
+	public Boolean isInherited() {
 		return inherited;
 	}
 
-	void setInherited(final boolean inherited) {
+	void setInherited(final Boolean inherited) {
 		this.inherited = inherited;
 	}
 
 	@XmlAttribute(name = ACTIVE)
-	public boolean isActive() {
+	public Boolean isActive() {
 		return active;
 	}
 
-	void setActive(final boolean active) {
+	void setActive(final Boolean active) {
 		this.active = active;
 	}
 
 	@XmlAttribute(name = INDEX)
-	public int getIndex() {
+	public Long getIndex() {
 		return index;
 	}
 
-	void setIndex(final int index) {
+	void setIndex(final Long index) {
 		this.index = index;
 	}
 
@@ -380,20 +385,20 @@ public class AttributeDetail {
 	}
 
 	@XmlAttribute(name = PRECISION)
-	public Integer getPrecision() {
+	public Long getPrecision() {
 		return precision;
 	}
 
-	void setPrecision(final Integer precision) {
+	void setPrecision(final Long precision) {
 		this.precision = precision;
 	}
 
 	@XmlAttribute(name = SCALE)
-	public Integer getScale() {
+	public Long getScale() {
 		return scale;
 	}
 
-	void setScale(final Integer scale) {
+	void setScale(final Long scale) {
 		this.scale = scale;
 	}
 
@@ -407,11 +412,11 @@ public class AttributeDetail {
 	}
 
 	@XmlAttribute(name = LENGTH)
-	public int getLength() {
+	public Long getLength() {
 		return length;
 	}
 
-	void setLength(final int length) {
+	void setLength(final Long length) {
 		this.length = length;
 	}
 

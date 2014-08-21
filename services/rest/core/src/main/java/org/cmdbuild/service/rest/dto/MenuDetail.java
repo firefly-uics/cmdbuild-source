@@ -62,10 +62,6 @@ public class MenuDetail {
 			return this;
 		}
 
-		public Builder withIndex(final Integer index) {
-			return withIndex(index.longValue());
-		}
-
 		public Builder withObjectType(final String objectType) {
 			this.objectType = objectType;
 			return this;
@@ -93,7 +89,7 @@ public class MenuDetail {
 	}
 
 	private String type;
-	private long index;
+	private Long index;
 	private String objectType;
 	private String objectId;
 	private String objectDescription;
@@ -122,7 +118,7 @@ public class MenuDetail {
 	}
 
 	@XmlAttribute(name = INDEX)
-	public long getIndex() {
+	public Long getIndex() {
 		return index;
 	}
 

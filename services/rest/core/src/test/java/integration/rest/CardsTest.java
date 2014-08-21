@@ -3,6 +3,7 @@ package integration.rest;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -70,10 +71,10 @@ public class CardsTest {
 		final ListResponse<Map<String, Object>> expectedResponse = ListResponse.<Map<String, Object>> newInstance() //
 				.withElements(asList(first, second)) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
-						.withTotal(2) //
+						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll("foo", null, null, null)) //
+		when(service.readAll("foo", null, anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when

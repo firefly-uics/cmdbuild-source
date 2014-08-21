@@ -65,7 +65,7 @@ public class ClassesTest {
 								.withName("bar") //
 								.build())) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
-						.withTotal(2) //
+						.withTotal(2L) //
 						.build()) //
 				.build();
 		when(service.readAll(anyBoolean(), anyInt(), anyInt())) //

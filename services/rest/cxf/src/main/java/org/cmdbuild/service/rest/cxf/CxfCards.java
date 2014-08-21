@@ -6,20 +6,21 @@ import static com.google.common.collect.Maps.transformEntries;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.QueryOptions;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.serialization.ErrorHandler;
 import org.cmdbuild.service.rest.serialization.FromCMCardToCardDetail;
 import org.cmdbuild.service.rest.serialization.FromCardToCardDetail;
 import org.cmdbuild.service.rest.serialization.FromSomeKindOfCardToMap;
@@ -29,7 +30,7 @@ import org.json.JSONObject;
 import com.google.common.collect.Maps.EntryTransformer;
 import com.mchange.util.AssertException;
 
-public class CxfCards extends CxfService implements Cards {
+public class CxfCards implements Cards {
 
 	private static final EntryTransformer<String, List<String>, String> FIRST_ELEMENT = new EntryTransformer<String, List<String>, String>() {
 
@@ -40,20 +41,30 @@ public class CxfCards extends CxfService implements Cards {
 
 	};
 
-	@Context
-	protected UriInfo uriInfo;
+	private final ErrorHandler errorHandler;
+	private final DataAccessLogic userDataAccessLogic;
+	private final CMDataView systemDataView;
+	private final CMDataView userDataView;
+
+	public CxfCards(final ErrorHandler errorHandler, final DataAccessLogic userDataAccessLogic,
+			final CMDataView systemDataView, final CMDataView userDataView) {
+		this.errorHandler = errorHandler;
+		this.userDataAccessLogic = userDataAccessLogic;
+		this.systemDataView = systemDataView;
+		this.userDataView = userDataView;
+	}
 
 	@Override
 	public SimpleResponse<Long> create(final String name, final MultivaluedMap<String, String> formParam) {
-		final CMClass targetClass = userDataView().findClass(name);
+		final CMClass targetClass = userDataView.findClass(name);
 		if (targetClass == null) {
-			errorHandler().classNotFound(name);
+			errorHandler.classNotFound(name);
 		}
 		final Map<String, String> attributes = transformEntries(formParam, FIRST_ELEMENT);
 		final Card card = Card.newInstance(targetClass) //
 				.withAllAttributes(attributes) //
 				.build();
-		final Long id = userDataAccessLogic().createCard(card);
+		final Long id = userDataAccessLogic.createCard(card);
 		return SimpleResponse.<Long> newInstance() //
 				.withElement(id) //
 				.build();
@@ -62,21 +73,21 @@ public class CxfCards extends CxfService implements Cards {
 	@Override
 	public SimpleResponse<Map<String, Object>> read(final String name, final Long id) {
 		// TODO inject error management within logic
-		if (userDataView().findClass(name) == null) {
-			errorHandler().classNotFound(name);
+		if (userDataView.findClass(name) == null) {
+			errorHandler.classNotFound(name);
 		}
 		try {
-			final CMCard fetched = userDataAccessLogic().fetchCMCard(name, id);
+			final CMCard fetched = userDataAccessLogic.fetchCMCard(name, id);
 			final Map<String, Object> elements = FromCMCardToCardDetail.newInstance() //
-					.withDataView(userDataView()) //
-					.withErrorHandler(errorHandler()) //
+					.withDataView(userDataView) //
+					.withErrorHandler(errorHandler) //
 					.build() //
 					.apply(fetched);
 			return SimpleResponse.<Map<String, Object>> newInstance() //
 					.withElement(elements) //
 					.build();
 		} catch (final NotFoundException e) {
-			errorHandler().cardNotFound(id);
+			errorHandler.cardNotFound(id);
 			throw new AssertException("should not come here");
 		}
 
@@ -90,18 +101,18 @@ public class CxfCards extends CxfService implements Cards {
 				.limit(limit) //
 				.offset(offset) //
 				.build();
-		final FetchCardListResponse response = userDataAccessLogic().fetchCards(name, queryOptions);
+		final FetchCardListResponse response = userDataAccessLogic.fetchCards(name, queryOptions);
 
 		final FromSomeKindOfCardToMap<Card> toCardDetail = FromCardToCardDetail.newInstance() //
-				.withDataView(systemDataView()) //
-				.withErrorHandler(errorHandler()) //
+				.withDataView(systemDataView) //
+				.withErrorHandler(errorHandler) //
 				.build();
 		final Iterable<Map<String, Object>> elements = from(response.elements()) //
 				.transform(toCardDetail);
 		return ListResponse.<Map<String, Object>> newInstance() //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
-						.withTotal(response.totalSize()) //
+						.withTotal(Long.valueOf(response.totalSize())) //
 						.build()) //
 				.build();
 	}
@@ -117,9 +128,9 @@ public class CxfCards extends CxfService implements Cards {
 
 	@Override
 	public void update(final String name, final Long id, final MultivaluedMap<String, String> formParam) {
-		final CMClass targetClass = userDataView().findClass(name);
+		final CMClass targetClass = userDataView.findClass(name);
 		if (targetClass == null) {
-			errorHandler().classNotFound(name);
+			errorHandler.classNotFound(name);
 		}
 		// TODO check for missing id (inside logic, please)
 		final Map<String, String> attributes = transformEntries(formParam, FIRST_ELEMENT);
@@ -127,17 +138,17 @@ public class CxfCards extends CxfService implements Cards {
 				.withId(id) //
 				.withAllAttributes(attributes) //
 				.build();
-		userDataAccessLogic().updateCard(card);
+		userDataAccessLogic.updateCard(card);
 	}
 
 	@Override
 	public void delete(final String name, final Long id) {
-		final CMClass targetClass = userDataView().findClass(name);
+		final CMClass targetClass = userDataView.findClass(name);
 		if (targetClass == null) {
-			errorHandler().classNotFound(name);
+			errorHandler.classNotFound(name);
 		}
 		// TODO check for missing id (inside logic, please)
-		userDataAccessLogic().deleteCard(name, id);
+		userDataAccessLogic.deleteCard(name, id);
 	}
 
 }
