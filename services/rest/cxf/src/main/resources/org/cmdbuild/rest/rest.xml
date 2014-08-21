@@ -6,7 +6,7 @@
 		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<context:component-scan base-package="org.cmdbuild" />
+	<context:component-scan base-package="org.cmdbuild.service.rest.cxf.configuration" />
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-extension-*.xml" />
@@ -18,8 +18,6 @@
 		<property name="linkJsonToXmlSchema" value="true" />
 	</bean>
 
-	<bean id="errorHandler" class="org.cmdbuild.service.rest.cxf.DefaultErrorHandler" />
-
 	<jaxrs:server id="restContainer" address="/rest">
 		<jaxrs:providers>
 			<ref bean="jaxbProvider" />
@@ -27,14 +25,14 @@
 			<ref bean="wadlProvider" />
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
-			<bean class="org.cmdbuild.service.rest.cxf.CxfAttributes" />
-			<bean class="org.cmdbuild.service.rest.cxf.CxfCards" />
-			<bean class="org.cmdbuild.service.rest.cxf.CxfClasses" />
-			<bean class="org.cmdbuild.service.rest.cxf.CxfClassAttributes" />
-			<bean class="org.cmdbuild.service.rest.cxf.CxfDomains" />
-			<bean class="org.cmdbuild.service.rest.cxf.CxfLookups" />
-			<bean class="org.cmdbuild.service.rest.cxf.CxfLookupTypes" />
-			<bean class="org.cmdbuild.service.rest.cxf.CxfMenu" />
+			<ref bean="cxfAttributes" />
+			<ref bean="cxfCards" />
+			<ref bean="cxfClasses" />
+			<ref bean="cxfClassAttributes" />
+			<ref bean="cxfDomains" />
+			<ref bean="cxfLookups" />
+			<ref bean="cxfLookupTypes" />
+			<ref bean="cxfMenu" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="xml" value="application/xml" />

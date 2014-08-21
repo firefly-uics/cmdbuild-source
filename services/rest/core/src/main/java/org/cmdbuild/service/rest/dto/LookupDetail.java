@@ -27,9 +27,9 @@ public class LookupDetail {
 		private String code;
 		private String description;
 		private String type;
-		private Integer number;
-		private boolean active;
-		private boolean isDefault;
+		private Long number;
+		private Boolean active;
+		private Boolean isDefault;
 		private Long parentId;
 		private String parentType;
 
@@ -39,7 +39,12 @@ public class LookupDetail {
 
 		@Override
 		public LookupDetail build() {
+			validate();
 			return new LookupDetail(this);
+		}
+
+		private void validate() {
+			// TODO Auto-generated method stub
 		}
 
 		public Builder withId(final Long id) {
@@ -62,17 +67,17 @@ public class LookupDetail {
 			return this;
 		}
 
-		public Builder withNumber(final Integer number) {
+		public Builder withNumber(final Long number) {
 			this.number = number;
 			return this;
 		}
 
-		public Builder thatIsActive(final boolean active) {
+		public Builder thatIsActive(final Boolean active) {
 			this.active = active;
 			return this;
 		}
 
-		public Builder thatIsDefault(final boolean isDefault) {
+		public Builder thatIsDefault(final Boolean isDefault) {
 			this.isDefault = isDefault;
 			return this;
 		}
@@ -97,9 +102,9 @@ public class LookupDetail {
 	private String code;
 	private String description;
 	private String type;
-	private Integer number;
-	private boolean active;
-	private boolean isDefault;
+	private Long number;
+	private Boolean active;
+	private Boolean isDefault;
 	private Long parentId;
 	private String parentType;
 
@@ -156,29 +161,29 @@ public class LookupDetail {
 	}
 
 	@XmlAttribute(name = NUMBER)
-	public Integer getNumber() {
+	public Long getNumber() {
 		return number;
 	}
 
-	void setNumber(final Integer number) {
+	void setNumber(final Long number) {
 		this.number = number;
 	}
 
 	@XmlAttribute(name = ACTIVE)
-	public boolean isActive() {
+	public Boolean isActive() {
 		return active;
 	}
 
-	void setActive(final boolean active) {
+	void setActive(final Boolean active) {
 		this.active = active;
 	}
 
 	@XmlAttribute(name = DEFAULT)
-	public boolean isDefault() {
+	public Boolean isDefault() {
 		return isDefault;
 	}
 
-	void setDefault(final boolean isDefault) {
+	void setDefault(final Boolean isDefault) {
 		this.isDefault = isDefault;
 	}
 

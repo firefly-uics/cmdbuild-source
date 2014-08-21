@@ -65,7 +65,7 @@ public class LookupsTest {
 								.withCode("bar") //
 								.build())) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
-						.withTotal(2) //
+						.withTotal(2L) //
 						.build()) //
 				.build();
 		when(service.readAll(eq("foo"), eq(false), anyInt(), anyInt())) //
@@ -89,7 +89,7 @@ public class LookupsTest {
 						.withId(123L) //
 						.withCode("code") //
 						.withDescription("description") //
-						.withNumber(42) //
+						.withNumber(42L) //
 						.withParentType("parent_type") //
 						.withParentId(456L) //
 						.build()) //

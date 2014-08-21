@@ -35,7 +35,7 @@ public class ToLookupDetail implements Function<Lookup, LookupDetail> {
 				.withCode(lookup.code) //
 				.withDescription(lookup.description) //
 				.withType(lookup.type.name) //
-				.withNumber(lookup.number) //
+				.withNumber(Long.valueOf(lookup.number)) //
 				.thatIsActive(lookup.active) //
 				.thatIsDefault(lookup.isDefault) //
 				.withParentId(lookup.parentId) //

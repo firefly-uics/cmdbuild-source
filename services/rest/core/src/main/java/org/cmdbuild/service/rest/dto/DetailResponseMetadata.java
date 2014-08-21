@@ -11,7 +11,7 @@ public class DetailResponseMetadata {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<DetailResponseMetadata> {
 
-		private int total;
+		private Long total;
 
 		private Builder() {
 			// use factory method
@@ -27,7 +27,7 @@ public class DetailResponseMetadata {
 			// TODO Auto-generated method stub
 		}
 
-		public Builder withTotal(final int total) {
+		public Builder withTotal(final Long total) {
 			this.total = total;
 			return this;
 		}
@@ -38,7 +38,7 @@ public class DetailResponseMetadata {
 		return new Builder();
 	}
 
-	private int total;
+	private Long total;
 
 	DetailResponseMetadata() {
 		// package visibility
@@ -49,11 +49,11 @@ public class DetailResponseMetadata {
 	}
 
 	@XmlAttribute(name = TOTAL)
-	public int getTotal() {
+	public Long getTotal() {
 		return total;
 	}
 
-	void setTotal(final int total) {
+	void setTotal(final Long total) {
 		this.total = total;
 	}
 

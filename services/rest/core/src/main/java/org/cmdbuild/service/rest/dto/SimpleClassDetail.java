@@ -52,7 +52,7 @@ public class SimpleClassDetail {
 			return this;
 		}
 
-		public Builder withSuperclassStatus(final boolean superclass) {
+		public Builder withSuperclassStatus(final Boolean superclass) {
 			this.superclass = superclass;
 			return this;
 		}
@@ -66,7 +66,7 @@ public class SimpleClassDetail {
 	private String name;
 	private String description;
 	private String parent;
-	private boolean superclass;
+	private Boolean superclass;
 
 	SimpleClassDetail() {
 		// package visibility
@@ -107,11 +107,11 @@ public class SimpleClassDetail {
 	}
 
 	@XmlAttribute(name = SUPERCLASS)
-	public boolean isSuperclass() {
+	public Boolean isSuperclass() {
 		return superclass;
 	}
 
-	void setSuperclass(final boolean superclass) {
+	void setSuperclass(final Boolean superclass) {
 		this.superclass = superclass;
 	}
 

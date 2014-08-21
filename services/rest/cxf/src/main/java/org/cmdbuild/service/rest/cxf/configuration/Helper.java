@@ -1,7 +1,6 @@
-package org.cmdbuild.service.rest.cxf;
+package org.cmdbuild.service.rest.cxf.configuration;
 
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -10,55 +9,58 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
-import org.cmdbuild.service.rest.serialization.ErrorHandler;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Configuration;
 
-public abstract class CxfService {
+import com.google.common.base.Supplier;
+
+@Configuration
+public class Helper {
 
 	@Autowired
 	private ApplicationContext applicationContext;
 
-	@Autowired
-	private ErrorHandler errorHandler;
+	public Supplier<String> currentGroupNameSupplier() {
+		return new Supplier<String>() {
 
-	protected ErrorHandler errorHandler() {
-		return errorHandler;
+			@Override
+			public String get() {
+				return applicationContext.getBean(UserStore.class).getUser().getPreferredGroup().getName();
+			}
+
+		};
 	}
 
-	protected CMGroup currentGroup() {
-		return applicationContext.getBean(UserStore.class).getUser().getPreferredGroup();
-	}
-
-	protected DataAccessLogic userDataAccessLogic() {
+	public DataAccessLogic userDataAccessLogic() {
 		// TODO change class when authentication will be implemented
 		return applicationContext.getBean(SystemDataAccessLogicBuilder.class).build();
 	}
 
-	protected LookupLogic lookupLogic() {
+	public LookupLogic lookupLogic() {
 		return applicationContext.getBean(LookupLogic.class);
 	}
 
-	protected MenuLogic menuLogic() {
+	public MenuLogic menuLogic() {
 		return applicationContext.getBean(MenuLogic.class);
 	}
 
-	protected WorkflowLogic userWorkflowLogic() {
+	public WorkflowLogic userWorkflowLogic() {
 		// TODO change class when authentication will be implemented
 		return applicationContext.getBean(SystemWorkflowLogicBuilder.class).build();
 	}
 
-	protected CMDataView userDataView() {
+	public CMDataView userDataView() {
 		// TODO change class when authentication will be implemented
 		return applicationContext.getBean(DBDataView.class);
 	}
 
-	protected CMDataView systemDataView() {
+	public CMDataView systemDataView() {
 		return applicationContext.getBean(DBDataView.class);
 	}
 
-	protected MetadataStoreFactory metadataStoreFactory() {
+	public MetadataStoreFactory metadataStoreFactory() {
 		return applicationContext.getBean(MetadataStoreFactory.class);
 	}
 
