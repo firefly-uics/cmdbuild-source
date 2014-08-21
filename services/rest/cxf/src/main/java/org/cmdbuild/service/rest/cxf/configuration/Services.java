@@ -46,7 +46,7 @@ public class Services {
 
 	@Bean
 	public CxfDomains cxfDomains() {
-		return new CxfDomains(helper.userDataAccessLogic());
+		return new CxfDomains(utilities.defaultErrorHandler(), helper.userDataAccessLogic());
 	}
 
 	@Bean

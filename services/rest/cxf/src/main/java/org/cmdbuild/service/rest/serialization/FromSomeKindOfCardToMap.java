@@ -69,8 +69,8 @@ public abstract class FromSomeKindOfCardToMap<T> implements Function<T, Map<Stri
 		}
 		final Map<String, Object> values = Maps.newHashMap();
 		if (idAndClassnameRequired()) {
-			values.put(Serialization.ID_WITH_UNSERSCORE, idOf(input));
-			values.put(Serialization.CLASSNAME_WITH_UNSERSCORE, className);
+			values.put(Serialization.UNDERSCORED_ID, idOf(input));
+			values.put(Serialization.UNDERSCORED_CLASSNAME, className);
 		}
 		// TODO effective class
 		for (final Entry<String, Object> entry : valuesOf(input)) {

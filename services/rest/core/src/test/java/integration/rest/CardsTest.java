@@ -59,7 +59,7 @@ public class CardsTest {
 	}
 
 	@Test
-	public void allCardReadedUsingGet() throws Exception {
+	public void cardsReadUsingGet() throws Exception {
 		// given
 		final Map<String, Object> first = ChainablePutMap.of(new HashMap<String, Object>()) //
 				.chainablePut("foo", "foo") //
@@ -113,7 +113,7 @@ public class CardsTest {
 	}
 
 	@Test
-	public void cardReadedUsingGet() throws Exception {
+	public void cardReadUsingGet() throws Exception {
 		// given
 		final Map<String, Object> values = ChainablePutMap.of(new HashMap<String, Object>()) //
 				.chainablePut("foo", "foo") //
