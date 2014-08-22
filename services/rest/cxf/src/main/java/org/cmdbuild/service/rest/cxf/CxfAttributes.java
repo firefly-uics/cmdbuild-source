@@ -1,77 +1,68 @@
 package org.cmdbuild.service.rest.cxf;
 
-import static com.google.common.collect.FluentIterable.from;
+import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
-import org.cmdbuild.common.utils.PagedElements;
-import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.service.rest.Attributes;
+import org.cmdbuild.service.rest.ClassAttributes;
+import org.cmdbuild.service.rest.DomainAttributes;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.serialization.AttributeTypeResolver;
 import org.cmdbuild.service.rest.serialization.ErrorHandler;
-import org.cmdbuild.service.rest.serialization.ToAttributeDetail;
-import org.cmdbuild.services.meta.MetadataStoreFactory;
 
 public class CxfAttributes implements Attributes {
 
-	private static final AttributeTypeResolver ATTRIBUTE_TYPE_RESOLVER = new AttributeTypeResolver();
+	private static enum Type {
+		CLASS("class"), //
+		DOMAIN("domain"), //
+		UNKNOWN(null), //
+		;
+
+		private final String value;
+
+		private Type(final String value) {
+			this.value = value;
+		}
+
+		public static Type of(final String value) {
+			for (final Type element : values()) {
+				if (equalsIgnoreCase(element.value, value)) {
+					return element;
+				}
+			}
+			return UNKNOWN;
+		}
+
+	}
 
 	private final ErrorHandler errorHandler;
-	private final DataAccessLogic userDataAccessLogic;
-	private final CMDataView systemDataView;
-	private final MetadataStoreFactory metadataStoreFactory;
+	private final ClassAttributes classAttributes;
+	private final DomainAttributes domainAttributes;
 
-	public CxfAttributes(final ErrorHandler errorHandler, final DataAccessLogic userDataAccessLogic,
-			final CMDataView systemDataView, final MetadataStoreFactory metadataStoreFactory) {
+	public CxfAttributes(final ErrorHandler errorHandler, final ClassAttributes classAttributes,
+			final DomainAttributes domainAttributes) {
 		this.errorHandler = errorHandler;
-		this.userDataAccessLogic = userDataAccessLogic;
-		this.systemDataView = systemDataView;
-		this.metadataStoreFactory = metadataStoreFactory;
+		this.classAttributes = classAttributes;
+		this.domainAttributes = domainAttributes;
 	}
 
 	@Override
-	public ListResponse<AttributeDetail> readAll(final String type, final String name, final boolean activeOnly,
+	public ListResponse<AttributeDetail> readAll(final String type, final String id, final boolean activeOnly,
 			final Integer limit, final Integer offset) {
-		final CMClass target = userDataAccessLogic.findClass(name);
-		if (target == null) {
-			errorHandler.entryTypeNotFound(name);
+		final ListResponse<AttributeDetail> response;
+		switch (Type.of(type)) {
+		case CLASS:
+			response = classAttributes.readAll(id, activeOnly, limit, offset);
+			break;
+
+		case DOMAIN:
+			response = domainAttributes.readAll(id, activeOnly, limit, offset);
+			break;
+
+		default:
+			errorHandler.invalidParam(type);
+			response = null;
 		}
-		final PagedElements<CMAttribute> filteredAttributes = userDataAccessLogic.getAttributes( //
-				name, //
-				activeOnly, //
-				new AttributesQuery() {
-
-					@Override
-					public Integer limit() {
-						return (limit == 0) ? Integer.MAX_VALUE : limit;
-					}
-
-					@Override
-					public Integer offset() {
-						return offset;
-					}
-
-				});
-
-		final ToAttributeDetail toAttributeDetails = ToAttributeDetail.newInstance() //
-				.withAttributeTypeResolver(ATTRIBUTE_TYPE_RESOLVER) //
-				.withDataView(systemDataView) //
-				.withErrorHandler(errorHandler) //
-				.withMetadataStoreFactory(metadataStoreFactory) //
-				.build();
-		final Iterable<AttributeDetail> elements = from(filteredAttributes) //
-				.transform(toAttributeDetails);
-		return ListResponse.<AttributeDetail> newInstance() //
-				.withElements(elements) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
-						.withTotal(Long.valueOf(filteredAttributes.totalSize())) //
-						.build()) //
-				.build();
+		return response;
 	}
 
 }

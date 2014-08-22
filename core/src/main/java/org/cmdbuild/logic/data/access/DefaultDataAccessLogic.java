@@ -314,6 +314,22 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return new PagedElements<CMAttribute>(limited, size(elements));
 	}
 
+	@Override
+	public PagedElements<CMAttribute> getDomainAttributes(final String className, final boolean onlyActive,
+			final AttributesQuery attributesQuery) {
+		final CMDomain target = findDomain(className);
+		final Iterable<? extends CMAttribute> elements = onlyActive ? target.getActiveAttributes() : target
+				.getAttributes();
+		final Iterable<? extends CMAttribute> ordered = Ordering.from(NAME_ASC).sortedCopy(elements);
+		final Integer offset = attributesQuery.offset();
+		final Integer limit = attributesQuery.limit();
+		final FluentIterable<CMAttribute> limited = from(ordered) //
+				.skip((offset == null) ? 0 : offset) //
+				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
+				.transform(Functions.<CMAttribute> identity());
+		return new PagedElements<CMAttribute>(limited, size(elements));
+	}
+
 	/**
 	 * Fetches the card with the specified Id from the class with the specified
 	 * name
