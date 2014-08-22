@@ -1,10 +1,14 @@
 package org.cmdbuild.service.rest.dto;
 
+import static com.google.common.collect.Iterables.addAll;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.constants.Serialization.DATA;
 import static org.cmdbuild.service.rest.constants.Serialization.LIST_RESPONSE;
 import static org.cmdbuild.service.rest.constants.Serialization.RESPONSE_METADATA;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,7 +25,9 @@ public class ListResponse<T> {
 
 	public static class Builder<T> implements org.apache.commons.lang3.builder.Builder<ListResponse<T>> {
 
-		private Iterable<T> elements;
+		private final Iterable<T> NO_ELEMENTS = Collections.emptyList();
+
+		private final Collection<T> elements = Lists.newArrayList();
 		private DetailResponseMetadata metadata;
 
 		private Builder() {
@@ -33,8 +39,14 @@ public class ListResponse<T> {
 			return new ListResponse<T>(this);
 		}
 
+		@SuppressWarnings("unchecked")
+		public Builder<T> withElement(final T element) {
+			addAll(this.elements, (element == null) ? NO_ELEMENTS : asList(element));
+			return this;
+		}
+
 		public Builder<T> withElements(final Iterable<T> elements) {
-			this.elements = elements;
+			addAll(this.elements, defaultIfNull(elements, NO_ELEMENTS));
 			return this;
 		}
 
@@ -57,7 +69,7 @@ public class ListResponse<T> {
 	}
 
 	private ListResponse(final Builder<T> builder) {
-		this.elements = Lists.newArrayList(builder.elements);
+		this.elements = builder.elements;
 		this.metadata = builder.metadata;
 	}
 

@@ -11,9 +11,8 @@ import static org.mockito.Mockito.when;
 import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.cmdbuild.service.rest.Attributes;
+import org.cmdbuild.service.rest.DomainAttributes;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
@@ -24,14 +23,14 @@ import org.junit.Test;
 import support.JsonSupport;
 import support.ServerResource;
 
-public class AttributesTest {
+public class DomainAttributesTest {
 
-	private static Attributes service;
+	private static DomainAttributes service;
 
 	@ClassRule
 	public static ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Attributes.class) //
-			.withService(service = mock(Attributes.class)) //
+			.withServiceClass(DomainAttributes.class) //
+			.withService(service = mock(DomainAttributes.class)) //
 			.withPort(randomPort()) //
 			.build();
 
@@ -46,7 +45,7 @@ public class AttributesTest {
 	}
 
 	@Test
-	public void getAttributesForName() throws Exception {
+	public void getDomainAttributes() throws Exception {
 		// given
 		final ListResponse<AttributeDetail> expectedResponse = ListResponse.<AttributeDetail> newInstance() //
 				.withElements(asList( //
@@ -60,12 +59,11 @@ public class AttributesTest {
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll(eq("foo"), eq("bar"), anyBoolean(), anyInt(), anyInt())) //
+		when(service.readAll(eq("foo"), anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("attributes/"));
-		get.setQueryString(new NameValuePair[] { new NameValuePair("type", "foo"), new NameValuePair("id", "bar") });
+		final GetMethod get = new GetMethod(server.resource("domains/foo/attributes/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then

@@ -100,6 +100,8 @@ public interface DataAccessLogic extends Logic {
 
 	PagedElements<CMAttribute> getAttributes(String className, boolean onlyActive, AttributesQuery attributesQuery);
 
+	PagedElements<CMAttribute> getDomainAttributes(String className, boolean onlyActive, AttributesQuery attributesQuery);
+
 	/**
 	 * Fetches the card with the specified Id from the class with the specified
 	 * name

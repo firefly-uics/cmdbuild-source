@@ -10,4 +10,6 @@ public interface ErrorHandler {
 
 	void cardNotFound(Long id);
 
+	void invalidParam(String value);
+
 }

@@ -30,6 +30,7 @@
 			<ref bean="cxfClasses" />
 			<ref bean="cxfClassAttributes" />
 			<ref bean="cxfDomains" />
+			<ref bean="cxfDomainAttributes" />
 			<ref bean="cxfLookups" />
 			<ref bean="cxfLookupTypes" />
 			<ref bean="cxfMenu" />
