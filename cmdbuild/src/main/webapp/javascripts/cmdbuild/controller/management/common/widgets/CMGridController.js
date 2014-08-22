@@ -227,14 +227,10 @@
 		 * To decode "function" presetsType and fill grid store
 		 *
 		 * @param {String} presetsString
-		 *
-		 * TODO: spostare nel proxy
 		 */
 		decodeFunctionPresets: function(presetsString) {
 			// Validate presetsString
-			CMDBuild.Ajax.request({
-				method: 'POST',
-				url: CMDBuild.core.proxy.CMProxyUrlIndex.functions.getFunctions,
+			CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.getFunctions({
 				scope: this,
 				success: function(result, options, decodedResult) {
 					var isPresetsStringValid = false;
@@ -246,9 +242,8 @@
 
 					if (isPresetsStringValid) {
 						var functionParamsNames = [];
-						var widgetUnmanagedVariables = this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.VARIABLES];
-						var widgetUnmanagedVariablesNames = Object.keys(widgetUnmanagedVariables);
 						var params = {};
+						var widgetUnmanagedVariables = this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.VARIABLES];
 
 						// Builds functionParams with all params names
 						for (var index in _CMCache.getDataSourceInput(presetsString)) {
@@ -257,30 +252,22 @@
 							functionParamsNames.push(functionParamDefinitionObject[CMDBuild.core.proxy.CMProxyConstants.NAME]);
 						}
 
-						var functionParams = Ext.Array.intersect(functionParamsNames, widgetUnmanagedVariablesNames);
+						var functionParams = Ext.Array.intersect(functionParamsNames, Object.keys(widgetUnmanagedVariables));
 
 						for (var index in functionParams)
 							params[functionParams[index]] = widgetUnmanagedVariables[functionParams[index]];
 
 						this.grid.reconfigure(
-							Ext.create('Ext.data.Store', {
+							CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.getStoreFromFunction({
 								fields: _CMCache.getDataSourceOutput(presetsString),
-								autoLoad: true,
-								proxy: {
-									type: 'ajax',
-									url: 'services/json/management/modcard/getsqlcardlist',
-									reader: {
-										root: 'cards',
-										type: 'json',
-										totalProperty: 'results',
-									},
-									extraParams: {
-										'function': presetsString,
-										params: Ext.encode(params)
-									}
+								extraParams: {
+									'function': presetsString,
+									params: Ext.encode(params)
 								}
 							})
 						);
+					} else {
+						throw 'CMGridController decodeFunctionPresets: SQL function not found.';
 					}
 				}
 			});
