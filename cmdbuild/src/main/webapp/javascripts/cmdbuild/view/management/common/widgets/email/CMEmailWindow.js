@@ -100,10 +100,10 @@
 			var body = bodyBuild(me);
 			this.attachmentPanelsContainer = buildAttachmentPanelsContainer(me);
 			this.attachmentButtonsContainer = buildAttachmentButtonsContainer(me);
-			var formPanel = buildFormPanel(me, body);
+			this.formPanel = buildFormPanel(me, body);
 
 			// To reach the basic form outside
-			this.form = formPanel.getForm();
+			this.form = this.formPanel.getForm();
 
 			var btnTemplates = {
 				iconCls: 'clone',
@@ -141,7 +141,7 @@
 
 			Ext.apply(this, {
 				buttons: buildButtons(me),
-				items: [formPanel, this.attachmentButtonsContainer, this.attachmentPanelsContainer],
+				items: [this.formPanel, this.attachmentButtonsContainer, this.attachmentPanelsContainer],
 				tbar: [btnTemplates],
 			});
 
@@ -177,6 +177,28 @@
 			);
 
 			this.attachmentPanelsContainer.doLayout();
+		},
+
+		/**
+		 * TODO: would be better to build formPanel extending CMDBUild.view.common.CMFormFunctions as all other CMSDBuild forms so this function will be useless
+		 *
+		 * @return {Array} data
+		 */
+		getNonValidFormFields: function() {
+			var data = [];
+
+			this.formPanel.cascade(function(item) {
+				if (item
+					&& (item instanceof Ext.form.Field)
+					&& !item.disabled
+				) {
+					if (!item.isValid()) {
+						data.push(item);
+					}
+				}
+			});
+
+			return data;
 		}
 	});
 
@@ -246,13 +268,16 @@
 					name: fields.FROM_ADDRESS,
 					fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.fromfld,
 					disabled: me.readOnly,
+					vtype: me.readOnly ? null : 'multiemail',
 					value: me.record.get(fields.FROM_ADDRESS)
 				},
 				{
 					xtype: me.readOnly ? 'displayfield' : 'textfield',
 					name: fields.TO_ADDRESS,
+					allowBlank: false,
 					fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld,
 					disabled: me.readOnly,
+					vtype: me.readOnly ? null : 'multiemail',
 					value: me.record.get(fields.TO_ADDRESS)
 				},
 				{
@@ -260,11 +285,13 @@
 					name: fields.CC_ADDRESS,
 					fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld,
 					disabled: me.readOnly,
+					vtype: me.readOnly ? null : 'multiemail',
 					value: me.record.get(fields.CC_ADDRESS)
 				},
 				{
 					xtype: me.readOnly ? 'displayfield' : 'textfield',
 					name: fields.SUBJECT,
+					allowBlank: false,
 					fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.subjectfld,
 					disabled: me.readOnly,
 					value: me.record.get(fields.SUBJECT)
@@ -299,10 +326,12 @@
 						var valueTo = me.form.getValues()[fields.TO_ADDRESS];
 						var valueCC = me.form.getValues()[fields.CC_ADDRESS];
 
-						if (controlAddresses(valueTo, valueCC)) {
+						if (me.getNonValidFormFields().length > 0) {
+							CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+						} else {
 							me.save = true;
 							// Destroy call an event after(!) the destruction of the window the event saves the values of the form. For save the values
-							// only if are correct we have to put this boolean that is valdid only on the confirm button
+							// only if are correct we have to put this boolean that is valid only on the confirm button
 							me.destroy();
 							me.save = false;
 						}
@@ -408,55 +437,6 @@
 				} catch (e) {}
 			}, me);
 		}
-	}
-
-	/**
-	 * @param {String} valueTo
-	 * @param {String} valueCC
-	 *
-	 * @return {Boolean}
-	 */
-	function controlAddresses(valueTo, valueCC) {
-		var toStr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld;
-		var ccStr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld;
-		var strError = CMDBuild.Translation.error;
-		var errors = [];
-
-		errors = getAddressErrors(strError + ' ' + toStr + ': ', valueTo, errors);
-
-		if (Ext.String.trim(valueCC) != '')
-			errors = getAddressErrors(strError + ' ' + ccStr + ': ', valueCC, errors);
-
-		if (errors.length > 0) {
-			var messages = htmlComposeMessage(errors);
-
-			CMDBuild.Msg.error(null, messages , false);
-
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * @param {String} str
-	 * @param {String} value
-	 * @param {Array} errors
-	 *
-	 * @return  {Array} errors
-	 */
-	function getAddressErrors(str, value, errors) {
-		var ar = value.split(',');
-
-		for (var i = 0; i < ar.length; i++) {
-			var s = Ext.String.trim(ar[i]);
-
-			if (!(/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/.test(s)))
-				errors.push(str + ': ' + s);
-
-		}
-
-		return errors;
 	}
 
 	/**
