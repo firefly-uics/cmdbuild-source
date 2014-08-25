@@ -7,8 +7,9 @@ import org.cmdbuild.service.rest.cxf.CxfClassCards;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
 import org.cmdbuild.service.rest.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.cxf.CxfDomains;
+import org.cmdbuild.service.rest.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.cxf.CxfLookupTypes;
-import org.cmdbuild.service.rest.cxf.CxfLookups;
+import org.cmdbuild.service.rest.cxf.CxfLookupValues;
 import org.cmdbuild.service.rest.cxf.CxfMenu;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -62,13 +63,18 @@ public class Services {
 	}
 
 	@Bean
-	public CxfLookups cxfLookups() {
-		return new CxfLookups(helper.lookupLogic());
+	public CxfLookupTypes cxfLookupTypes() {
+		return new CxfLookupTypes(helper.lookupLogic());
 	}
 
 	@Bean
-	public CxfLookupTypes cxfLookupTypes() {
-		return new CxfLookupTypes(helper.lookupLogic());
+	public CxfLookupTypeValues cxfLookupTypeValues() {
+		return new CxfLookupTypeValues(helper.lookupLogic());
+	}
+
+	@Bean
+	public CxfLookupValues cxfLookupValues() {
+		return new CxfLookupValues(cxfLookupTypeValues());
 	}
 
 	@Bean

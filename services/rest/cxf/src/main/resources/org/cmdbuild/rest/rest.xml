@@ -32,8 +32,9 @@
 			<ref bean="cxfClassAttributes" />
 			<ref bean="cxfDomains" />
 			<ref bean="cxfDomainAttributes" />
-			<ref bean="cxfLookups" />
 			<ref bean="cxfLookupTypes" />
+			<ref bean="cxfLookupTypeValues" />
+			<ref bean="cxfLookupValues" />
 			<ref bean="cxfMenu" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>

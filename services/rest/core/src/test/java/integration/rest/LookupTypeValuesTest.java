@@ -3,15 +3,18 @@ package integration.rest;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.cmdbuild.service.rest.Lookups;
+import org.cmdbuild.service.rest.LookupTypeValues;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
@@ -23,14 +26,14 @@ import org.junit.Test;
 import support.JsonSupport;
 import support.ServerResource;
 
-public class LookupsTest {
+public class LookupTypeValuesTest {
 
-	private static Lookups service;
+	private static LookupTypeValues service;
 
 	@ClassRule
 	public static ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Lookups.class) //
-			.withService(service = mock(Lookups.class)) //
+			.withServiceClass(LookupTypeValues.class) //
+			.withService(service = mock(LookupTypeValues.class)) //
 			.withPort(randomPort()) //
 			.build();
 
@@ -61,14 +64,15 @@ public class LookupsTest {
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll(eq("foo"), eq(false), anyInt(), anyInt())) //
+		when(service.readAll(anyString(), anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("lookuptypes/foo/values/"));
+		final GetMethod get = new GetMethod(server.resource("lookup_types/foo/values/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
+		verify(service).readAll("foo", false, null, null);
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -87,14 +91,15 @@ public class LookupsTest {
 						.withParentId(456L) //
 						.build()) //
 				.build();
-		when(service.read(eq("foo"), eq(123L))) //
+		when(service.read(anyString(), anyLong())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("lookuptypes/foo/values/123/"));
+		final GetMethod get = new GetMethod(server.resource("lookup_types/foo/values/123/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
+		verify(service).read("foo", 123L);
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
