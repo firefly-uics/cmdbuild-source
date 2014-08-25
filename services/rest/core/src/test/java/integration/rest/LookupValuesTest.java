@@ -3,19 +3,23 @@ package integration.rest;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static support.HttpClientUtils.all;
+import static support.HttpClientUtils.param;
 import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.cmdbuild.service.rest.LookupTypes;
+import org.cmdbuild.service.rest.LookupValues;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.LookupTypeDetail;
+import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -24,14 +28,14 @@ import org.junit.Test;
 import support.JsonSupport;
 import support.ServerResource;
 
-public class LookupTypesTest {
+public class LookupValuesTest {
 
-	private static LookupTypes service;
+	private static LookupValues service;
 
 	@ClassRule
 	public static ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(LookupTypes.class) //
-			.withService(service = mock(LookupTypes.class)) //
+			.withServiceClass(LookupValues.class) //
+			.withService(service = mock(LookupValues.class)) //
 			.withPort(randomPort()) //
 			.build();
 
@@ -46,50 +50,60 @@ public class LookupTypesTest {
 	}
 
 	@Test
-	public void getLookupTypes() throws Exception {
+	public void getLookups() throws Exception {
 		// given
-		final ListResponse<LookupTypeDetail> expectedResponse = ListResponse.<LookupTypeDetail> newInstance() //
+		final ListResponse<LookupDetail> expectedResponse = ListResponse.<LookupDetail> newInstance() //
 				.withElements(asList( //
-						LookupTypeDetail.newInstance() //
-								.withName("foo") //
+						LookupDetail.newInstance() //
+								.withId(123L) //
+								.withCode("foo") //
 								.build(), //
-						LookupTypeDetail.newInstance() //
-								.withName("bar") //
+						LookupDetail.newInstance() //
+								.withId(456L) //
+								.withCode("bar") //
 								.build())) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll(anyInt(), anyInt())) //
+		when(service.readAll(anyString(), anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("lookup_types/"));
+		final GetMethod get = new GetMethod(server.resource("lookup_values/"));
+		get.setQueryString(all(param("type", "foo")));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).readAll(null, null);
+		verify(service).readAll("foo", false, null, null);
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
-	public void getLookupType() throws Exception {
+	public void getLookup() throws Exception {
 		// given
-		final SimpleResponse<LookupTypeDetail> expectedResponse = SimpleResponse.<LookupTypeDetail> newInstance() //
-				.withElement(LookupTypeDetail.newInstance() //
-						.withName("foo") //
+		final SimpleResponse<LookupDetail> expectedResponse = SimpleResponse.<LookupDetail> newInstance() //
+				.withElement(LookupDetail.newInstance() //
+						.withType("type") //
+						.withId(123L) //
+						.withCode("code") //
+						.withDescription("description") //
+						.withNumber(42L) //
+						.withParentType("parent_type") //
+						.withParentId(456L) //
 						.build()) //
 				.build();
-		when(service.read(anyString())) //
+		when(service.read(anyString(), anyLong())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("lookup_types/foo/"));
+		final GetMethod get = new GetMethod(server.resource("lookup_values/123/"));
+		get.setQueryString(all(param("type", "foo")));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read("foo");
+		verify(service).read("foo", 123L);
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}

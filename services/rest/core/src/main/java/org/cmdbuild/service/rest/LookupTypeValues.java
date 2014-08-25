@@ -18,9 +18,9 @@ import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 
-@Path("lookuptypes/{type}/values/")
+@Path("lookup_types/{type}/values/")
 @Produces(APPLICATION_JSON)
-public interface Lookups {
+public interface LookupTypeValues {
 
 	@GET
 	@Path("{id}/")

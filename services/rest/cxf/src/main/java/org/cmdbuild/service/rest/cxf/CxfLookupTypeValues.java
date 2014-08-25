@@ -7,20 +7,20 @@ import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic.LookupQuery;
-import org.cmdbuild.service.rest.Lookups;
+import org.cmdbuild.service.rest.LookupTypeValues;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.service.rest.serialization.ToLookupDetail;
 
-public class CxfLookups implements Lookups {
+public class CxfLookupTypeValues implements LookupTypeValues {
 
 	private static final ToLookupDetail TO_LOOKUP_DETAIL = ToLookupDetail.newInstance().build();
 
 	private final LookupLogic lookupLogic;
 
-	public CxfLookups(final LookupLogic lookupLogic) {
+	public CxfLookupTypeValues(final LookupLogic lookupLogic) {
 		this.lookupLogic = lookupLogic;
 	}
 

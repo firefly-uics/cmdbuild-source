@@ -15,11 +15,11 @@ import org.cmdbuild.service.rest.serialization.ErrorHandler;
 public class CxfCards implements Cards {
 
 	private final ErrorHandler errorHandler;
-	private final ClassCards classCards;
+	private final ClassCards delegate;
 
-	public CxfCards(final ErrorHandler errorHandler, final ClassCards classCards) {
+	public CxfCards(final ErrorHandler errorHandler, final ClassCards delegate) {
 		this.errorHandler = errorHandler;
-		this.classCards = classCards;
+		this.delegate = delegate;
 	}
 
 	@Override
@@ -29,19 +29,19 @@ public class CxfCards implements Cards {
 			errorHandler.missingParam(UNDERSCORED_CLASSNAME);
 		}
 		formParam.remove(UNDERSCORED_CLASSNAME);
-		return classCards.create(name, formParam);
+		return delegate.create(name, formParam);
 	}
 
 	@Override
 	public SimpleResponse<Map<String, Object>> read(final String name, final Long id) {
-		return classCards.read(name, id);
+		return delegate.read(name, id);
 
 	}
 
 	@Override
 	public ListResponse<Map<String, Object>> readAll(final String name, final String filter, final Integer limit,
 			final Integer offset) {
-		return classCards.readAll(name, filter, limit, offset);
+		return delegate.readAll(name, filter, limit, offset);
 	}
 
 	@Override
@@ -51,12 +51,12 @@ public class CxfCards implements Cards {
 			errorHandler.missingParam(UNDERSCORED_CLASSNAME);
 		}
 		formParam.remove(UNDERSCORED_CLASSNAME);
-		classCards.update(name, id, formParam);
+		delegate.update(name, id, formParam);
 	}
 
 	@Override
 	public void delete(final String name, final Long id) {
-		classCards.delete(name, id);
+		delegate.delete(name, id);
 	}
 
 }
