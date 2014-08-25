@@ -5,8 +5,8 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.constants.Serialization.ID;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CLASSNAME;
 
 import java.util.Map;
 
@@ -23,27 +23,28 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 
-@Path("cards/")
+@Path("classes/{name}/cards/")
 @Produces(APPLICATION_JSON)
-public interface Cards {
+public interface ClassCards {
 
 	@POST
 	@Path(EMPTY)
 	SimpleResponse<Long> create( //
+			@PathParam(NAME) String name, //
 			MultivaluedMap<String, String> formParam //
 	);
 
 	@GET
 	@Path("{id}/")
 	SimpleResponse<Map<String, Object>> read( //
-			@QueryParam(UNDERSCORED_CLASSNAME) String name, //
+			@PathParam(NAME) String name, //
 			@PathParam(ID) Long id //
 	);
 
 	@GET
 	@Path(EMPTY)
 	ListResponse<Map<String, Object>> readAll( //
-			@QueryParam(UNDERSCORED_CLASSNAME) String name, //
+			@PathParam(NAME) String name, //
 			@QueryParam(FILTER) String filter, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
@@ -52,6 +53,7 @@ public interface Cards {
 	@PUT
 	@Path("{id}/")
 	void update( //
+			@PathParam(NAME) String name, //
 			@PathParam(ID) Long id, //
 			MultivaluedMap<String, String> formParam //
 	);
@@ -59,7 +61,7 @@ public interface Cards {
 	@DELETE
 	@Path("{id}/")
 	void delete( //
-			@QueryParam(UNDERSCORED_CLASSNAME) String name, //
+			@PathParam(NAME) String name, //
 			@PathParam(ID) Long id //
 	);
 

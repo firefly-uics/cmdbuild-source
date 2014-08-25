@@ -3,6 +3,7 @@ package org.cmdbuild.service.rest.cxf.configuration;
 import org.cmdbuild.service.rest.cxf.CxfAttributes;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
+import org.cmdbuild.service.rest.cxf.CxfClassCards;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
 import org.cmdbuild.service.rest.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.cxf.CxfDomains;
@@ -29,14 +30,19 @@ public class Services {
 
 	@Bean
 	public CxfCards cxfCards() {
-		return new CxfCards(utilities.defaultErrorHandler(), helper.userDataAccessLogic(), helper.systemDataView(),
-				helper.userDataView());
+		return new CxfCards(utilities.defaultErrorHandler(), cxfClassCards());
 	}
 
 	@Bean
 	public CxfClassAttributes cxfClassAttributes() {
 		return new CxfClassAttributes(utilities.defaultErrorHandler(), helper.userDataAccessLogic(),
 				helper.systemDataView(), helper.metadataStoreFactory());
+	}
+
+	@Bean
+	public CxfClassCards cxfClassCards() {
+		return new CxfClassCards(utilities.defaultErrorHandler(), helper.userDataAccessLogic(),
+				helper.systemDataView(), helper.userDataView());
 	}
 
 	@Bean

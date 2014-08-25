@@ -43,4 +43,11 @@ public class DefaultErrorHandler implements ErrorHandler {
 				.build());
 	}
 
+	@Override
+	public void missingParam(final String value) {
+		throw new WebApplicationException(Response.status(Status.BAD_REQUEST) //
+				.entity(value) //
+				.build());
+	}
+
 }
