@@ -7,15 +7,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static support.HttpClientUtils.all;
-import static support.HttpClientUtils.param;
 import static support.ServerResource.randomPort;
 
 import java.util.HashMap;
@@ -29,33 +25,26 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.cmdbuild.common.collect.ChainablePutMap;
-import org.cmdbuild.service.rest.Cards;
+import org.cmdbuild.service.rest.ClassCards;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import support.JsonSupport;
 import support.ServerResource;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CardsTest {
+public class ClassCardsTest {
 
-	@Captor
-	private ArgumentCaptor<MultivaluedMap<String, String>> multivaluedMapCaptor;
-
-	private static Cards service;
+	private static ClassCards service;
 
 	@ClassRule
 	public static ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Cards.class) //
-			.withService(service = mock(Cards.class)) //
+			.withServiceClass(ClassCards.class) //
+			.withService(service = mock(ClassCards.class)) //
 			.withPort(randomPort()) //
 			.build();
 
@@ -83,12 +72,11 @@ public class CardsTest {
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll(anyString(), isNull(String.class), anyInt(), anyInt())) //
+		when(service.readAll(eq("foo"), isNull(String.class), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("cards/"));
-		get.setQueryString(all(param("_classname", "foo")));
+		final GetMethod get = new GetMethod(server.resource("classes/foo/cards"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -100,26 +88,25 @@ public class CardsTest {
 	@Test
 	public void cardCreatedUsingPost() throws Exception {
 		// given
+		final ArgumentCaptor<MultivaluedMap> multivaluedMapCaptor = ArgumentCaptor.forClass(MultivaluedMap.class);
 		final SimpleResponse<Long> expectedResponse = SimpleResponse.<Long> newInstance() //
 				.withElement(123L) //
 				.build();
-		when(service.create(any(MultivaluedMap.class))) //
+		when(service.create(eq("foo"), multivaluedMapCaptor.capture())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final PostMethod post = new PostMethod(server.resource("cards/"));
-		post.addParameter("_classname", "foo");
+		final PostMethod post = new PostMethod(server.resource("classes/foo/cards/"));
 		post.addParameter("foo", "bar");
 		post.addParameter("bar", "baz");
 		post.addParameter("baz", "foo");
 		final int result = httpclient.executeMethod(post);
 
 		// then
-		verify(service).create(multivaluedMapCaptor.capture());
+		verify(service).create(eq("foo"), any(MultivaluedMap.class));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
-		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
-		assertThat(captured.getFirst("_classname"), equalTo((Object) "foo"));
+		final MultivaluedMap captured = multivaluedMapCaptor.getValue();
 		assertThat(captured.getFirst("foo"), equalTo((Object) "bar"));
 		assertThat(captured.getFirst("bar"), equalTo((Object) "baz"));
 		assertThat(captured.getFirst("baz"), equalTo((Object) "foo"));
@@ -135,12 +122,11 @@ public class CardsTest {
 		final SimpleResponse<Map<String, Object>> expectedResponse = SimpleResponse.<Map<String, Object>> newInstance() //
 				.withElement(values) //
 				.build();
-		when(service.read(anyString(), anyLong())) //
+		when(service.read("foo", 123L)) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("cards/123/"));
-		get.setQueryString(all(param("_classname", "foo")));
+		final GetMethod get = new GetMethod(server.resource("classes/foo/cards/123/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -152,31 +138,19 @@ public class CardsTest {
 	@Test
 	public void cardUpdatedUsingPut() throws Exception {
 		// when
-		final PutMethod put = new PutMethod(server.resource("cards/123/"));
+		final PutMethod put = new PutMethod(server.resource("classes/foo/cards/123/"));
 		put.addRequestHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
-		put.setQueryString(all( //
-				param("_classname", "foo"), //
-				param("foo", "bar"), //
-				param("bar", "baz"), //
-				param("baz", "foo") //
-		));
 		final int result = httpclient.executeMethod(put);
 
 		// then
-		verify(service).update(eq(123L), multivaluedMapCaptor.capture());
+		verify(service).update(eq("foo"), eq(123L), any(MultivaluedMap.class));
 		assertThat(result, equalTo(204));
-		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
-		assertThat(captured.getFirst("_classname"), equalTo((Object) "foo"));
-		assertThat(captured.getFirst("foo"), equalTo((Object) "bar"));
-		assertThat(captured.getFirst("bar"), equalTo((Object) "baz"));
-		assertThat(captured.getFirst("baz"), equalTo((Object) "foo"));
 	}
 
 	@Test
 	public void cardDeletedUsingDelete() throws Exception {
 		// when
-		final DeleteMethod delete = new DeleteMethod(server.resource("cards/123/"));
-		delete.setQueryString(all(param("_classname", "foo")));
+		final DeleteMethod delete = new DeleteMethod(server.resource("classes/foo/cards/123/"));
 		final int result = httpclient.executeMethod(delete);
 
 		// then

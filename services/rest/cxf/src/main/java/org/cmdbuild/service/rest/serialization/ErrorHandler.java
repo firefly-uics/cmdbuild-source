@@ -12,4 +12,6 @@ public interface ErrorHandler {
 
 	void invalidParam(String value);
 
+	void missingParam(String value);
+
 }
