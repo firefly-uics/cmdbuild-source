@@ -42,6 +42,7 @@ public class Serialization {
 			NAME = "name", //
 			NUMBER = "number", //
 			PARAMS = "params", //
+			PROTOTYPE = "prototype", //
 			OBJECT_DESCRIPTION = "objectDescription", //
 			OBJECT_ID = "objectId", //
 			OBJECT_TYPE = "objectType", //
@@ -53,9 +54,9 @@ public class Serialization {
 			SCALE = "scale", //
 			SIMPLE_CLASS_DETAIL = "simpleClassDetail", //
 			SIMPLE_DOMAIN_DETAIL = "simpleDomainDetail", //
+			SIMPLE_PROCESS_DETAIL = "simpleProcessDetail", //
 			SIMPLE_RESPONSE = "simpleResponse", //
 			START = "start", //
-			SUPERCLASS = "superclass", //
 			TARGET_CLASS = "targetClass", //
 			TEXT = "text", //
 			TOTAL = "total", //

@@ -3,38 +3,37 @@ package org.cmdbuild.service.rest.dto;
 import static java.lang.Boolean.FALSE;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
-import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION_ATTRIBUTE_NAME;
-import static org.cmdbuild.service.rest.constants.Serialization.FULL_CLASS_DETAIL;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.PARENT;
 import static org.cmdbuild.service.rest.constants.Serialization.PROTOTYPE;
+import static org.cmdbuild.service.rest.constants.Serialization.SIMPLE_CLASS_DETAIL;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.codehaus.jackson.annotate.JsonProperty;
 
-@XmlRootElement(name = FULL_CLASS_DETAIL)
-public class FullClassDetail {
+@XmlRootElement(name = SIMPLE_CLASS_DETAIL)
+public class SimpleProcessDetail {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<FullClassDetail> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<SimpleProcessDetail> {
 
 		private String name;
 		private String description;
-		private Boolean prototype;
-		private String descriptionAttributeName;
 		private String parent;
+		private Boolean prototype;
 
 		private Builder() {
 			// use static method
 		}
 
 		@Override
-		public FullClassDetail build() {
+		public SimpleProcessDetail build() {
 			validate();
-			return new FullClassDetail(this);
+			return new SimpleProcessDetail(this);
 		}
 
 		private void validate() {
@@ -51,18 +50,13 @@ public class FullClassDetail {
 			return this;
 		}
 
-		public Builder thatIsPrototype(final Boolean superclass) {
-			this.prototype = superclass;
-			return this;
-		}
-
-		public Builder withDescriptionAttributeName(final String descriptionAttributeName) {
-			this.descriptionAttributeName = descriptionAttributeName;
-			return this;
-		}
-
 		public Builder withParent(final String parent) {
 			this.parent = parent;
+			return this;
+		}
+
+		public Builder thatIsPrototype(final Boolean prototype) {
+			this.prototype = prototype;
 			return this;
 		}
 
@@ -74,20 +68,18 @@ public class FullClassDetail {
 
 	private String name;
 	private String description;
-	private boolean prototype;
-	private String descriptionAttributeName;
 	private String parent;
+	private boolean prototype;
 
-	FullClassDetail() {
+	SimpleProcessDetail() {
 		// package visibility
 	}
 
-	private FullClassDetail(final Builder builder) {
+	private SimpleProcessDetail(final Builder builder) {
 		this.name = builder.name;
 		this.description = builder.description;
-		this.prototype = builder.prototype;
-		this.descriptionAttributeName = builder.descriptionAttributeName;
 		this.parent = builder.parent;
+		this.prototype = builder.prototype;
 	}
 
 	@XmlAttribute(name = NAME)
@@ -108,25 +100,6 @@ public class FullClassDetail {
 		this.description = description;
 	}
 
-	@XmlAttribute(name = PROTOTYPE)
-	public boolean isPrototype() {
-		return prototype;
-	}
-
-	void setPrototype(final boolean prototype) {
-		this.prototype = prototype;
-	}
-
-	@XmlAttribute(name = DESCRIPTION_ATTRIBUTE_NAME)
-	@JsonProperty(DESCRIPTION_ATTRIBUTE_NAME)
-	public String getDescriptionAttributeName() {
-		return descriptionAttributeName;
-	}
-
-	void setDescriptionAttributeName(final String descriptionAttributeName) {
-		this.descriptionAttributeName = descriptionAttributeName;
-	}
-
 	@XmlAttribute(name = PARENT)
 	public String getParent() {
 		return parent;
@@ -136,23 +109,43 @@ public class FullClassDetail {
 		this.parent = parent;
 	}
 
+	@XmlAttribute(name = PROTOTYPE)
+	public boolean isPrototype() {
+		return prototype;
+	}
+
+	void setPrototype(final boolean prototype) {
+		this.prototype = prototype;
+	}
+
 	@Override
 	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
 
-		if (!(obj instanceof FullClassDetail)) {
+		if (!(obj instanceof SimpleProcessDetail)) {
 			return false;
 		}
 
-		final FullClassDetail other = FullClassDetail.class.cast(obj);
-		return name.equals(other.name);
+		final SimpleProcessDetail other = SimpleProcessDetail.class.cast(obj);
+
+		return new EqualsBuilder() //
+				.append(this.name, other.name) //
+				.append(this.description, other.description) //
+				.append(this.parent, other.parent) //
+				.append(this.prototype, other.prototype) //
+				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return new HashCodeBuilder() //
+				.append(this.name) //
+				.append(this.description) //
+				.append(this.parent) //
+				.append(this.prototype) //
+				.toHashCode();
 	}
 
 	@Override
