@@ -14,21 +14,17 @@ CMDBuild.Management.MapBuilder = (function() {
 			maxExtent: bounds,
 			div: divId,
 			initBaseLayers: initBaseLayers,
-			// Set starting size object
-			// to avoid null pointer exception
-			// on Firefox
-			size: new OpenLayers.Size(0,0)
+			size: new OpenLayers.Size(0,0) // Set starting size object to avoid null pointer exception on Firefox
 		};
 
 		var map = new CMDBuild.Management.CMMap(options);
 		map.cmBaseLayers = [];
 
-		// map.addControl(new OpenLayers.Control.LayerSwitcher());
 		map.addControl(new OpenLayers.Control.ScaleLine());
 
 		map.addControl(new CMDBuild.Management.CMZoomAndMousePositionControl({
-			zoomLabel : CMDBuild.Translation.management.modcard.gis.zoom,
-			positionLabel : CMDBuild.Translation.management.modcard.gis.position
+			zoomLabel: CMDBuild.Translation.management.modcard.gis.zoom,
+			positionLabel: CMDBuild.Translation.management.modcard.gis.position
 		}));
 
 		addFakeLayer(map);
@@ -65,25 +61,27 @@ CMDBuild.Management.MapBuilder = (function() {
 		}
 
 		// add GOOGLE if configured
-		if (gisConfig.google && gisConfig.google == "on") {
+		if (gisConfig.google && gisConfig.google == 'on') {
 			var googleLayer = new OpenLayers.Layer.Google(
-				"Google",
+				'Google Maps',
 				{
-					sphericalMercator: true
+					sphericalMercator: true,
+					cmdb_minZoom: gisConfig.google_minzoom || DEFAULT_MIN_ZOOM,
+					cmdb_maxZoom: gisConfig.google_maxzoom || DEFAULT_MAX_ZOOM,
+
+					setVisibilityByZoom: function(zoom) {
+						var max = this.cmdb_maxZoom <= DEFAULT_MAX_ZOOM ? this.cmdb_maxZoom : DEFAULT_MAX_ZOOM;
+						var isInRange = (zoom >= this.cmdb_minZoom && zoom <= max);
+
+						this.setVisibility(isInRange);
+					}
 				}
 			);
 
-			googleLayer.cmdb_minZoom = gisConfig.google_minzoom || DEFAULT_MIN_ZOOM;
-			googleLayer.cmdb_maxZoom = gisConfig.google_maxzoom || DEFAULT_MAX_ZOOM;
-			googleLayer.setVisibilityByZoom = function(zoom) {
-				var max = this.cmdb_maxZoom <= DEFAULT_MAX_ZOOM ? this.cmdb_maxZoom : DEFAULT_MAX_ZOOM;
-				var isInRange = (zoom >= this.cmdb_minZoom && zoom <= max);
-
-				this.setVisibility(isInRange);
-			};
-
 			map.addLayers([googleLayer]);
 			map.setBaseLayer(googleLayer);
+
+			googleLayer.setVisibility(true); // FIX To display map, by default visibility is set to false
 		}
 
 		// add YAHOO if configured
@@ -112,7 +110,7 @@ CMDBuild.Management.MapBuilder = (function() {
 	function addFakeLayer(map) {
 		// add a fake base layer to set as base layer
 		// when the real base layers are out of range.
-		// Without this, the continue to ask the tails 
+		// Without this, the continue to ask the tails
 		var fakeBaseLayer = new OpenLayers.Layer.Vector("", {
 			displayInLayerSwitcher: false,
 			isBaseLayer: true
