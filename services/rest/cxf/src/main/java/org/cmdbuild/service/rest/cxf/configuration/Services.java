@@ -11,6 +11,7 @@ import org.cmdbuild.service.rest.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.cxf.CxfLookupTypes;
 import org.cmdbuild.service.rest.cxf.CxfLookupValues;
 import org.cmdbuild.service.rest.cxf.CxfMenu;
+import org.cmdbuild.service.rest.cxf.CxfProcessAttributes;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +28,8 @@ public class Services {
 
 	@Bean
 	public CxfAttributes cxfAttributes() {
-		return new CxfAttributes(utilities.defaultErrorHandler(), cxfClassAttributes(), cxfDomainAttributes());
+		return new CxfAttributes(utilities.defaultErrorHandler(), cxfClassAttributes(), cxfDomainAttributes(),
+				cxfProcessAttributes());
 	}
 
 	@Bean
@@ -81,6 +83,12 @@ public class Services {
 	@Bean
 	public CxfMenu cxfMenu() {
 		return new CxfMenu(helper.currentGroupNameSupplier(), helper.menuLogic());
+	}
+
+	@Bean
+	public CxfProcessAttributes cxfProcessAttributes() {
+		return new CxfProcessAttributes(utilities.defaultErrorHandler(), helper.userDataAccessLogic(),
+				helper.systemDataView(), helper.metadataStoreFactory());
 	}
 
 	@Bean

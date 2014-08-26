@@ -36,6 +36,7 @@
 			<ref bean="cxfLookupTypeValues" />
 			<ref bean="cxfLookupValues" />
 			<ref bean="cxfMenu" />
+			<ref bean="cxfProcessAttributes" />
 			<ref bean="cxfProcesses" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
