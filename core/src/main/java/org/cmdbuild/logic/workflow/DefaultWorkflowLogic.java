@@ -112,7 +112,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	}
 
 	@Override
-	public Iterable<? extends UserProcessClass> findActiveProcessClasses() {
+	public Iterable<UserProcessClass> findActiveProcessClasses() {
 		final Iterable<UserProcessClass> allClasses;
 		if (configuration.isEnabled()) {
 			allClasses = workflowEngine.findProcessClasses();
@@ -123,8 +123,8 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	}
 
 	@Override
-	public Iterable<? extends UserProcessClass> findProcessClasses(final boolean activeOnly) {
-		final Iterable<? extends UserProcessClass> processClasses;
+	public Iterable<UserProcessClass> findProcessClasses(final boolean activeOnly) {
+		final Iterable<UserProcessClass> processClasses;
 		if (activeOnly) {
 			processClasses = filter(findActiveProcessClasses(), processesWithXpdlAssociated());
 		} else {

@@ -1,21 +1,21 @@
 package org.cmdbuild.service.rest.serialization;
 
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.service.rest.dto.SimpleClassDetail;
+import org.cmdbuild.service.rest.dto.SimpleProcessDetail;
 
 import com.google.common.base.Function;
 
-public class ToSimpleClassDetail implements Function<CMClass, SimpleClassDetail> {
+public class ToSimpleProcessDetail implements Function<CMClass, SimpleProcessDetail> {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToSimpleClassDetail> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToSimpleProcessDetail> {
 
 		private Builder() {
 			// use static method
 		}
 
 		@Override
-		public ToSimpleClassDetail build() {
-			return new ToSimpleClassDetail(this);
+		public ToSimpleProcessDetail build() {
+			return new ToSimpleProcessDetail(this);
 		}
 
 	}
@@ -26,14 +26,14 @@ public class ToSimpleClassDetail implements Function<CMClass, SimpleClassDetail>
 
 	private static final String MISSING_PARENT = null;
 
-	private ToSimpleClassDetail(final Builder builder) {
+	private ToSimpleProcessDetail(final Builder builder) {
 		// nothing to do
 	}
 
 	@Override
-	public SimpleClassDetail apply(final CMClass input) {
+	public SimpleProcessDetail apply(final CMClass input) {
 		final CMClass parent = input.getParent();
-		return SimpleClassDetail.newInstance() //
+		return SimpleProcessDetail.newInstance() //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.withParent((parent == null) ? MISSING_PARENT : parent.getName()) //

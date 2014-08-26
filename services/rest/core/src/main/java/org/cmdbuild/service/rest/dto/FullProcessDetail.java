@@ -17,9 +17,9 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement(name = FULL_CLASS_DETAIL)
-public class FullClassDetail {
+public class FullProcessDetail {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<FullClassDetail> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<FullProcessDetail> {
 
 		private String name;
 		private String description;
@@ -32,9 +32,9 @@ public class FullClassDetail {
 		}
 
 		@Override
-		public FullClassDetail build() {
+		public FullProcessDetail build() {
 			validate();
-			return new FullClassDetail(this);
+			return new FullProcessDetail(this);
 		}
 
 		private void validate() {
@@ -78,11 +78,11 @@ public class FullClassDetail {
 	private String descriptionAttributeName;
 	private String parent;
 
-	FullClassDetail() {
+	FullProcessDetail() {
 		// package visibility
 	}
 
-	private FullClassDetail(final Builder builder) {
+	private FullProcessDetail(final Builder builder) {
 		this.name = builder.name;
 		this.description = builder.description;
 		this.prototype = builder.prototype;
@@ -142,11 +142,11 @@ public class FullClassDetail {
 			return true;
 		}
 
-		if (!(obj instanceof FullClassDetail)) {
+		if (!(obj instanceof FullProcessDetail)) {
 			return false;
 		}
 
-		final FullClassDetail other = FullClassDetail.class.cast(obj);
+		final FullProcessDetail other = FullProcessDetail.class.cast(obj);
 		return name.equals(other.name);
 	}
 
