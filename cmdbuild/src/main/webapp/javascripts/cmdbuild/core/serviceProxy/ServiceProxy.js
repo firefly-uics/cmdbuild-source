@@ -340,7 +340,7 @@ CMDBuild.ServiceProxy.card = {
 	get: function(p) {
 		adaptGetCardCallParams(p);
 		p.method = GET;
-		p.url = CMDBuild.ServiceProxy.url.card.read,
+		p.url = CMDBuild.ServiceProxy.url.card.read;
 
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	},
