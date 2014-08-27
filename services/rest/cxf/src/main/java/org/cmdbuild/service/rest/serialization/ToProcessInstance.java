@@ -30,9 +30,9 @@ public class ToProcessInstance implements Function<UserProcessInstance, ProcessI
 
 	@Override
 	public ProcessInstance apply(final UserProcessInstance input) {
-		final ProcessInstance processInstance = new ProcessInstance();
-		processInstance.setName(input.getProcessInstanceId());
-		return processInstance;
+		return ProcessInstance.newInstance() //
+				.withName(input.getProcessInstanceId()) //
+				.build();
 	}
 
 }

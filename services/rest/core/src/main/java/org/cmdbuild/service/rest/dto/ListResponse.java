@@ -13,6 +13,8 @@ import java.util.Collections;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -57,11 +59,11 @@ public class ListResponse<T> {
 
 	}
 
-	public static <T> Builder<T> newInstance() {
-		return new Builder<T>();
+	public static <T> Builder<T> newInstance(final Class<T> type) {
+		return newInstance();
 	}
 
-	public static <T> Builder<T> newInstance(final Class<T> type) {
+	public static <T> Builder<T> newInstance() {
 		return new Builder<T>();
 	}
 
@@ -95,6 +97,32 @@ public class ListResponse<T> {
 
 	void setMetadata(final DetailResponseMetadata metadata) {
 		this.metadata = metadata;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof ListResponse)) {
+			return false;
+		}
+
+		@SuppressWarnings("unchecked")
+		final ListResponse<T> other = ListResponse.class.cast(obj);
+		return new EqualsBuilder() //
+				.append(this.elements, other.elements) //
+				.append(this.metadata, other.metadata) //
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder() //
+				.append(this.elements) //
+				.append(this.metadata) //
+				.toHashCode();
 	}
 
 	@Override

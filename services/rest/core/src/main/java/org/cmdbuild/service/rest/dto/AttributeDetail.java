@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -101,6 +103,29 @@ public class AttributeDetail {
 
 		void setParams(final Map<String, String> params) {
 			this.params = params;
+		}
+
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof Filter)) {
+				return false;
+			}
+			final Filter other = Filter.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(this.text, other.text) //
+					.append(this.params, other.params) //
+					.isEquals();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(text) //
+					.append(params) //
+					.toHashCode();
 		}
 
 		@Override
@@ -407,7 +432,7 @@ public class AttributeDetail {
 		return targetClass;
 	}
 
-	public void setTargetClass(final String targetClass) {
+	void setTargetClass(final String targetClass) {
 		this.targetClass = targetClass;
 	}
 
@@ -458,12 +483,50 @@ public class AttributeDetail {
 		}
 
 		final AttributeDetail other = AttributeDetail.class.cast(obj);
-		return name.equals(other.name);
+		return new EqualsBuilder() //
+				.append(this.type, other.type) //
+				.append(this.name, other.name) //
+				.append(this.description, other.description) //
+				.append(this.displayableInList, other.displayableInList) //
+				.append(this.unique, other.unique) //
+				.append(this.mandatory, other.mandatory) //
+				.append(this.inherited, other.inherited) //
+				.append(this.active, other.active) //
+				.append(this.index, other.index) //
+				.append(this.defaultValue, other.defaultValue) //
+				.append(this.group, other.group) //
+				.append(this.precision, other.precision) //
+				.append(this.scale, other.scale) //
+				.append(this.targetClass, other.targetClass) //
+				.append(this.length, other.length) //
+				.append(this.editorType, other.editorType) //
+				.append(this.lookupTypeName, other.lookupTypeName) //
+				.append(this.filter, other.filter) //
+				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return new HashCodeBuilder() //
+				.append(this.type) //
+				.append(this.name) //
+				.append(this.description) //
+				.append(this.displayableInList) //
+				.append(this.unique) //
+				.append(this.mandatory) //
+				.append(this.inherited) //
+				.append(this.active) //
+				.append(this.index) //
+				.append(this.defaultValue) //
+				.append(this.group) //
+				.append(this.precision) //
+				.append(this.scale) //
+				.append(this.targetClass) //
+				.append(this.length) //
+				.append(this.editorType) //
+				.append(this.lookupTypeName) //
+				.append(this.filter) //
+				.toHashCode();
 	}
 
 	@Override
