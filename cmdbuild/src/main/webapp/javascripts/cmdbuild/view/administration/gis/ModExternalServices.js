@@ -32,7 +32,7 @@
 			// END: Buttons configuration
 
 			this.googleMapsFieldset = Ext.create('Ext.form.FieldSet', {
-				title: tr.description['google'],
+				title: tr.description.google,
 				checkboxToggle: true,
 				collapsed: true,
 				collapsible: true,
@@ -50,7 +50,7 @@
 				items: [
 					{
 						name: 'google_key',
-						fieldLabel: tr['key']
+						fieldLabel: CMDBuild.Translation.key
 					},
 					Ext.create('CMDBuild.form.RangeSliders', {
 						minSliderField: Ext.create('Ext.slider.Single', {
@@ -59,7 +59,7 @@
 							value: 0,
 							width: 300,
 							name: 'google_minzoom',
-							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes['min_zoom'],
+							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.min_zoom,
 							labelWidth: CMDBuild.LABEL_WIDTH,
 							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 							clickToChange: false,
@@ -71,7 +71,7 @@
 							value: 0,
 							width: 300,
 							name: 'google_maxzoom',
-							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes['max_zoom'],
+							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.max_zoom,
 							labelWidth: CMDBuild.LABEL_WIDTH,
 							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 							clickToChange: false,
@@ -82,13 +82,13 @@
 
 				listeners: {
 					beforeexpand: function(fieldset, eOpts) {
-						me.delegate.cmOn('onGoogleMapsFieldsetExpand', 'google');
+						me.delegate.cmOn('onFieldsetExpand', 'google');
 					}
 				}
 			});
 
 			this.yahooMapsFieldset = Ext.create('Ext.form.FieldSet', {
-				title: tr.description['yahoo'],
+				title: tr.description.yahoo,
 				checkboxToggle: true,
 				collapsed: true,
 				collapsible: true,
@@ -106,7 +106,7 @@
 				items: [
 					{
 						name: 'yahoo_key',
-						fieldLabel: tr['key']
+						fieldLabel: CMDBuild.Translation.key
 					},
 					Ext.create('CMDBuild.form.RangeSliders', {
 						minSliderField: Ext.create('Ext.slider.Single', {
@@ -115,7 +115,7 @@
 							value: 0,
 							width: 300,
 							name: 'yahoo_minzoom',
-							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes['min_zoom'],
+							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.min_zoom,
 							labelWidth: CMDBuild.LABEL_WIDTH,
 							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 							clickToChange: false,
@@ -127,7 +127,7 @@
 							value: 0,
 							width: 300,
 							name: 'yahoo_maxzoom',
-							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes['max_zoom'],
+							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.max_zoom,
 							labelWidth: CMDBuild.LABEL_WIDTH,
 							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 							clickToChange: false,
@@ -138,13 +138,13 @@
 
 				listeners: {
 					beforeexpand: function(fieldset, eOpts) {
-						me.delegate.cmOn('onYahooMapsFieldsetExpand', 'yahoo');
+						me.delegate.cmOn('onFieldsetExpand', 'yahoo');
 					}
 				}
 			});
 
 			this.openStreetMapsFieldset = Ext.create('Ext.form.FieldSet', {
-				title: tr.description['osm'],
+				title: tr.description.osm,
 				checkboxToggle: true,
 				collapsed: true,
 				collapsible: true,
@@ -167,7 +167,7 @@
 							value: 0,
 							width: 300,
 							name: 'osm_minzoom',
-							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes['min_zoom'],
+							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.min_zoom,
 							labelWidth: CMDBuild.LABEL_WIDTH,
 							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 							clickToChange: false,
@@ -179,7 +179,7 @@
 							value: 0,
 							width: 300,
 							name: 'osm_maxzoom',
-							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes['max_zoom'],
+							fieldLabel: CMDBuild.Translation.administration.modClass.geo_attributes.max_zoom,
 							labelWidth: CMDBuild.LABEL_WIDTH,
 							width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 							clickToChange: false,
@@ -190,13 +190,13 @@
 
 				listeners: {
 					beforeexpand: function(fieldset, eOpts) {
-						me.delegate.cmOn('onOpenStreetMapsFieldsetExpand', 'osm');
+						me.delegate.cmOn('onFieldsetExpand', 'osm');
 					}
 				}
 			});
 
 			this.geoServerFieldset = Ext.create('Ext.form.FieldSet', {
-				title: tr.description['geoserver'],
+				title: tr.description.geoserver,
 				checkboxToggle: true,
 				collapsed: true,
 				collapsible: true,
@@ -214,19 +214,19 @@
 				items: [
 					{
 						name: 'geoserver_url',
-						fieldLabel: tr['url']
+						fieldLabel: tr.url
 					},
 					{
 						name: 'geoserver_workspace',
-						fieldLabel: tr['workspace']
+						fieldLabel: tr.workspace
 					},
 					{
 						name: 'geoserver_admin_user',
-						fieldLabel: tr['admin_user']
+						fieldLabel: tr.admin_user
 					},
 					{
 						name: 'geoserver_admin_password',
-						fieldLabel: tr['admin_password'],
+						fieldLabel: tr.admin_password,
 						inputType: 'password'
 					},
 				]
