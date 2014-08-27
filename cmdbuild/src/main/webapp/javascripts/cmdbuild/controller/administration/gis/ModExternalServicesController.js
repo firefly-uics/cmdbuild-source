@@ -18,13 +18,7 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onGoogleMapsFieldsetExpand':
-					return this.onFieldsetExpand(param);
-
-				case 'onYahooMapsFieldsetExpand':
-					return this.onFieldsetExpand(param);
-
-				case 'onOpenStreetMapsFieldsetExpand':
+				case 'onFieldsetExpand':
 					return this.onFieldsetExpand(param);
 
 				case 'onSaveButtonClick':
@@ -85,7 +79,7 @@
 		getValues: function() {
 			var values = {};
 
-			this.view.wrapper.items.each(function(item) {
+			Ext.Array.each(this.view.wrapper.items.items, function(item, index, allItems) {
 				if (typeof item.serviceName == 'string') {
 					if (item.collapsed) {
 						values[item.serviceName] = 'off';
@@ -98,7 +92,7 @@
 						});
 					}
 				}
-			});
+			}, this);
 
 			return values;
 		},
@@ -111,21 +105,6 @@
 				if (item.serviceName != expandedName && item.serviceName != 'geoserver')
 					item.collapse();
 			}, this);
-		},
-
-		onGoogleMapsFieldsetExpand: function() {
-//			this.view.ldapFieldset.collapse();
-//			this.view.ldapFieldset.reset();
-		},
-
-		onYahooMapsFieldsetExpand: function() {
-//			this.view.ldapFieldset.collapse();
-//			this.view.ldapFieldset.reset();
-		},
-
-		onOpenStreetMapsFieldsetExpand: function() {
-//			this.view.ldapFieldset.collapse();
-//			this.view.ldapFieldset.reset();
 		},
 
 		onSaveButtonClick: function() {
