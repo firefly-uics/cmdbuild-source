@@ -82,7 +82,7 @@
 				if (g.isEnabled()) {
 					if (g.isServiceOn(GisProperties.GOOGLE)) {
 			%>
-						<script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=<%=g.getGoogleKey()%>'></script>
+						<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
 			<%
 					}
 
