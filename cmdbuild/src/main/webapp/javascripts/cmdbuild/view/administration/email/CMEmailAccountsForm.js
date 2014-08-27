@@ -26,6 +26,7 @@
 				iconCls: 'delete',
 				text: tr.remove,
 				scope: this,
+
 				handler: function() {
 					this.delegate.cmOn('onRemoveButtonClick');
 				}
@@ -36,6 +37,7 @@
 				iconCls: 'ok',
 				text: tr.setDefault,
 				scope: this,
+
 				handler: function() {
 					this.delegate.cmOn('onSetDefaultButtonClick');
 				}
@@ -46,6 +48,7 @@
 					iconCls: 'modify',
 					text: tr.modify,
 					scope: this,
+
 					handler: function() {
 						this.delegate.cmOn('onModifyButtonClick');
 					}
@@ -57,12 +60,14 @@
 			this.cmButtons = [
 				Ext.create('CMDBuild.buttons.SaveButton', {
 					scope: this,
+
 					handler: function() {
 						this.delegate.cmOn('onSaveButtonClick');
 					}
 				}),
 				Ext.create('CMDBuild.buttons.AbortButton', {
 					scope: this,
+
 					handler: function() {
 						this.delegate.cmOn('onAbortButtonClick');
 					}
@@ -143,6 +148,7 @@
 						{
 							fieldLabel: CMDBuild.Translation.address,
 							allowBlank: false,
+							vtype: 'email',
 							name: CMDBuild.core.proxy.CMProxyConstants.ADDRESS
 						},
 						{
