@@ -1,11 +1,12 @@
 package org.cmdbuild.logic.data;
 
+import static com.google.common.base.Functions.identity;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CQL_KEY;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.cmdbuild.common.Builder;
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.logger.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,7 +28,7 @@ public class QueryOptions {
 		private JSONObject filter;
 		private JSONArray sorters;
 		private JSONArray attributeSubset;
-		private Map<String, Object> parameters;
+		private Map<String, ? extends Object> parameters;
 
 		private QueryOptionsBuilder() {
 			limit = Integer.MAX_VALUE;
@@ -57,7 +58,7 @@ public class QueryOptions {
 			try {
 				final Map<String, Object> cqlParameters = Maps.newHashMap();
 				boolean addParameters = false;
-				for (final Entry<String, Object> entry : parameters.entrySet()) {
+				for (final Entry<String, ? extends Object> entry : parameters.entrySet()) {
 					final String key = entry.getKey();
 					if (key.equals(CQL_KEY)) {
 						filter.put(CQL_KEY, entry.getValue());
@@ -113,7 +114,7 @@ public class QueryOptions {
 			return this;
 		}
 
-		public QueryOptionsBuilder parameters(final Map<String, Object> parameters) {
+		public QueryOptionsBuilder parameters(final Map<String, ? extends Object> parameters) {
 			this.parameters = parameters;
 			return this;
 		}
@@ -147,7 +148,7 @@ public class QueryOptions {
 		this.filter = builder.filter;
 		this.sorters = builder.sorters;
 		this.attributes = builder.attributeSubset;
-		this.parameters = builder.parameters;
+		this.parameters = Maps.transformValues(builder.parameters, identity());
 	}
 
 	public int getLimit() {

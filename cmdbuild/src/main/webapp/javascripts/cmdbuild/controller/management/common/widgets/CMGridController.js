@@ -16,6 +16,9 @@
 		// Configurations
 			cardAttributes: undefined,
 			columns: undefined, // Grid column configuration variable
+			grid: undefined,
+			view: undefined,
+			widgetDefinition: undefined,
 		// END: Configurations
 
 		/**
@@ -32,9 +35,10 @@
 
 			this.mixins.observable.constructor.call(this);
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
-			this.ownerController = ownerController;
 
 			this.classType = _CMCache.getEntryTypeByName(widgetDef.className);
+			this.widgetDefinition = widgetDef;
+
 			this.view = view;
 			this.grid = view.grid;
 			this.view.delegate = this;
@@ -44,6 +48,7 @@
 				function(attributes) {
 					me.cardAttributes = attributes;
 					me.setColumnsForClass();
+					me.loadPresets();
 				}
 			);
 		},
@@ -195,8 +200,14 @@
 						editor.required = true;
 					}
 
-					header.field = editor;
-					this.addRendererToHeader(header, attribute.isnotnull);
+					// Do not overwrite renderer, add editor on checkbox columns and make it editable
+					if (attribute.type != 'BOOLEAN') {
+						header.field = editor;
+						this.addRendererToHeader(header, attribute.isnotnull);
+					} else {
+						header.cmReadOnly = false;
+					}
+
 					headers.push(header);
 
 					fields.push(header.dataIndex);
@@ -210,6 +221,88 @@
 				headers: headers,
 				fields: fields
 			};
+		},
+
+		/**
+		 * To decode "function" presetsType and fill grid store
+		 *
+		 * @param {String} presetsString
+		 */
+		decodeFunctionPresets: function(presetsString) {
+			// Validate presetsString
+			CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.getFunctions({
+				scope: this,
+				success: function(result, options, decodedResult) {
+					var isPresetsStringValid = false;
+
+					Ext.Array.each(decodedResult.response, function(record) {
+						if (record[CMDBuild.core.proxy.CMProxyConstants.NAME] == presetsString)
+							isPresetsStringValid = true;
+					});
+
+					if (isPresetsStringValid) {
+						var functionParamsNames = [];
+						var params = {};
+						var widgetUnmanagedVariables = this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.VARIABLES];
+
+						// Builds functionParams with all params names
+						for (var index in _CMCache.getDataSourceInput(presetsString)) {
+							var functionParamDefinitionObject = _CMCache.getDataSourceInput(presetsString)[index];
+
+							functionParamsNames.push(functionParamDefinitionObject[CMDBuild.core.proxy.CMProxyConstants.NAME]);
+						}
+
+						var functionParams = Ext.Array.intersect(functionParamsNames, Object.keys(widgetUnmanagedVariables));
+
+						for (var index in functionParams)
+							params[functionParams[index]] = widgetUnmanagedVariables[functionParams[index]];
+
+						this.grid.reconfigure(
+							CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.getStoreFromFunction({
+								fields: _CMCache.getDataSourceOutput(presetsString),
+								extraParams: {
+									'function': presetsString,
+									params: Ext.encode(params)
+								}
+							})
+						);
+					} else {
+						throw 'CMGridController decodeFunctionPresets: SQL function not found.';
+					}
+				}
+			});
+		},
+
+		/**
+		 * To decode "text" presetsType strings, uses widget separators
+		 *
+		 * @param {String} presetsString
+		 *
+		 * @return {Array} decodedArray
+		 */
+		decodeTextPresets: function(presetsString) {
+			var cardsArray = presetsString.split(this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.CARD_SEPARATOR]);
+			var decodedArray = [];
+
+			for (var item in cardsArray) { // Decode cards
+				var card = cardsArray[item];
+
+				if (!Ext.isEmpty(card)) {
+					var buffer = {};
+					var cardAttributes = card.split(this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_SEPARATOR]);
+
+					for (var index in cardAttributes) { // Decode card's attributes
+						var attribute = cardAttributes[index];
+						var keyValueArray = attribute.split(this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.KEY_VALUE_SEPARATOR]);
+
+						buffer[keyValueArray[0]] = keyValueArray[1];
+					}
+
+					decodedArray.push(buffer);
+				}
+			}
+
+			return decodedArray;
 		},
 
 		/**
@@ -230,71 +323,76 @@
 			return day + '/' + month + '/' + date.getFullYear();
 		},
 
-		/**
-		 * @return {Array} cardAttributes
-		 */
-		getCardAttributes: function() {
-			return this.cardAttributes;
-		},
+		// GETters functions
+			/**
+			 * @return {Array} cardAttributes
+			 */
+			getCardAttributes: function() {
+				return this.cardAttributes;
+			},
+
+			/**
+			 * @return {Object} out
+			 *
+			 * @override
+			 */
+			getData: function() {
+				var out = {};
+				var data = [];
+				var store = this.grid.getStore();
+
+				for (var i = 0; i < store.getCount(); i++) {
+					var item = store.getAt(i);
+
+					item = Ext.encode(item.data);
+					data.push(item);
+				}
+
+				if (!this.readOnly)
+					out['output'] = data;
+
+				return out;
+			},
+
+			/**
+			 * @param {Array} fields
+			 *
+			 * @return {Ext.data.Store}
+			 */
+			getStoreForFields: function(fields) {
+				fields.push({ name: 'Id', type: 'int' });
+				fields.push({ name: 'IdClass', type: 'int' });
+
+				return Ext.create('Ext.data.Store', {
+					fields: fields,
+					data: []
+				});
+			},
 
 		/**
-		 * @return {Object} out
-		 *
-		 * @override
+		 * Read presets and loads data to grid store
 		 */
-		getData: function() {
-			var out = {};
-			var data = [];
-			var store = this.grid.getStore();
+		loadPresets: function() {
+			if (!Ext.isEmpty(this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.PRESETS])) {
+				switch (this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.PRESETS_TYPE]) {
+					case 'text':
+						return this.setGridDataFromTextPresets(
+							this.decodeTextPresets(
+								this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.PRESETS]
+							)
+						);
 
-			for (var i = 0; i < store.getCount(); i++) {
-				var item = store.getAt(i);
+					case 'function':
+						return this.decodeFunctionPresets(
+							this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.PRESETS]
+						);
 
-				item = Ext.encode(item.data);
-				data.push(item);
+					default:
+						throw 'CMGridController: wrong serializationType ('
+							+ this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.SERIALIZATION_TYPE]
+							+ ') format or value';
+				}
 			}
-
-			if (!this.readOnly)
-				out['output'] = data;
-
-			return out;
-		},
-
-		/**
-		 * Adapter for grid's loarRecords function
-		 *
-		 * @param {Array} rawData - Ex. [{ card: {...}, not_valid_fields: {...} }, {...}]
-		 */
-		gridLoadData: function(rawData) {
-			// To clear all grid data if mode = 'replace'
-			if (this.importCSVWindow.csvImportModeCombo.getValue() == 'replace')
-				this.grid.getStore().removeAll();
-
-			for (var i = 0; i < rawData.length; ++i) {
-				var cardData = rawData[i][CMDBuild.core.proxy.CMProxyConstants.CARD];
-
-				// Resolve objects returned for reference fields, just rewrite with object's id
-				for (var item in cardData)
-					if (typeof cardData[item] == 'object' && !Ext.isEmpty(cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID]))
-						cardData[item] = cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID];
-
-				this.grid.getStore().add(Ext.create('CMDBuild.DummyModel', cardData));
-			}
-		},
-
-		/**
-		 * @param {Array} fields
-		 *
-		 * @return {Ext.data.Store}
-		 */
-		getStoreForFields: function(fields) {
-			fields.push({ name: 'Id', type: 'int' });
-			fields.push({ name: 'IdClass', type: 'int' });
-
-			return Ext.create('Ext.data.Store', {
-				fields: fields,
-				data: []
-			});
 		},
 
 		onAddRowButtonClick: function() {
@@ -324,7 +422,7 @@
 					CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.getCsvRecords({
 						scope: this,
 						success: function(result, options, decodedResult) {
-							this.gridLoadData(decodedResult.rows);
+							this.setGridDataFromCsv(decodedResult.rows);
 							this.importCSVWindow.destroy();
 						}
 					});
@@ -371,19 +469,49 @@
 			this.onEditWindowAbortButtonClick();
 		},
 
-		/**
-		 * Build columns for class in view's grid
-		 */
-		setColumnsForClass: function() {
-			this.columns = this.buildColumnsForAttributes();
+		// SETters functions
+			/**
+			 * Build columns for class in view's grid
+			 */
+			setColumnsForClass: function() {
+				this.columns = this.buildColumnsForAttributes();
 
-			this.addActionColumns();
+				this.addActionColumns();
 
-			this.grid.reconfigure(
-				this.getStoreForFields(this.columns.fields),
-				this.columns.headers
-			);
-		}
+				this.grid.reconfigure(
+					this.getStoreForFields(this.columns.fields),
+					this.columns.headers
+				);
+			},
+
+			/**
+			 * Adapter for grid's loarRecords function
+			 *
+			 * @param {Array} rawData - Ex. [{ card: {...}, not_valid_fields: {...} }, {...}]
+			 */
+			setGridDataFromCsv: function(rawData) {
+				// To clear all grid data if mode = 'replace'
+				if (!Ext.isEmpty(this.importCSVWindow) && this.importCSVWindow.csvImportModeCombo.getValue() == 'replace')
+					this.grid.getStore().removeAll();
+
+				for (var i = 0; i < rawData.length; ++i) {
+					var cardData = rawData[i][CMDBuild.core.proxy.CMProxyConstants.CARD];
+
+					// Resolve objects returned for reference fields, just rewrite with object's id
+					for (var item in cardData)
+						if (typeof cardData[item] == 'object' && !Ext.isEmpty(cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID]))
+							cardData[item] = cardData[item][CMDBuild.core.proxy.CMProxyConstants.ID];
+
+					this.grid.getStore().add(Ext.create('CMDBuild.DummyModel', cardData));
+				}
+			},
+
+			/**
+			 * @param {Object} data
+			 */
+			setGridDataFromTextPresets: function(data) {
+				this.grid.getStore().loadData(data);
+			}
 	});
 
 })();

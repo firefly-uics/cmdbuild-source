@@ -21,14 +21,18 @@ public class Grid extends Widget {
 	public static final String TEXT_SERIALIZATION = "text";
 	public static final String DEFAULT_SERIALIZATION = TEXT_SERIALIZATION;
 	public static final boolean DEFAULT_WRITE_ON_ADVANCE = false;
+	public static final String DEFAULT_PRESETS_TYPE = "text";
+
 	private String className;
 	private String outputName;
-	private Map<String, Object> preset;
-	private String mapSeparator;
-	private String entrySeparator;
+	private Map<String, Object> variables;
+	private String cardSeparator;
+	private String attributeSeparator;
 	private String keyValueSeparator;
 	private String serializationType;
-	private boolean writeOnAdvance = false;
+	private boolean writeOnAdvance;
+	private String presets;
+	private String presetsType;
 
 	public String getClassName() {
 		return className;
@@ -62,20 +66,20 @@ public class Grid extends Widget {
 		this.writeOnAdvance = writeOnAdvance;
 	}
 
-	public void setMapSeparator(final String mapSeparator) {
-		this.mapSeparator = StringUtils.defaultIfBlank(mapSeparator, DEFAULT_MAP_SEPARATOR);
+	public void setCardSeparator(final String cardSeparator) {
+		this.cardSeparator = StringUtils.defaultIfBlank(cardSeparator, DEFAULT_MAP_SEPARATOR);
 	}
 
-	public String getMapSeparator() {
-		return mapSeparator;
+	public String getCardSeparator() {
+		return cardSeparator;
 	}
 
-	public void setEntrySeparator(final String entrySeparator) {
-		this.entrySeparator = StringUtils.defaultIfBlank(entrySeparator, DEFAULT_ENTRY_SEPARATOR);
+	public void setAttributeSeparator(final String attributeSeparator) {
+		this.attributeSeparator = StringUtils.defaultIfBlank(attributeSeparator, DEFAULT_ENTRY_SEPARATOR);
 	}
 
-	public String getEntrySeparator() {
-		return entrySeparator;
+	public String getAttributeSeparator() {
+		return attributeSeparator;
 	}
 
 	public void setKeyValueSeparator(final String keyValueSeparator) {
@@ -84,6 +88,30 @@ public class Grid extends Widget {
 
 	public String getKeyValueSeparator() {
 		return keyValueSeparator;
+	}
+
+	public String getPresets() {
+		return presets;
+	}
+
+	public void setPresets(final String presets) {
+		this.presets = presets;
+	}
+
+	public String getPresetsType() {
+		return presetsType;
+	}
+
+	public void setPresetsType(final String presetsType) {
+		this.presetsType = presetsType;
+	}
+
+	public Map<String, Object> getVariables() {
+		return variables;
+	}
+
+	public void setVariables(final Map<String, Object> variables) {
+		this.variables = variables;
 	}
 
 	@Override
@@ -132,7 +160,7 @@ public class Grid extends Widget {
 					final String format = "%s" + keyValueSeparator + "%s";
 					final String attributeString = String.format(format, key, attribute.getValue());
 					outputBuilder.append(attributeString);
-					outputBuilder.append(entrySeparator);
+					outputBuilder.append(attributeSeparator);
 				}
 			} catch (final JsonParseException e) {
 				e.printStackTrace();
@@ -141,7 +169,7 @@ public class Grid extends Widget {
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}
-			outputBuilder.append(mapSeparator);
+			outputBuilder.append(cardSeparator);
 		}
 		output = outputBuilder.toString();
 		final Submission submission = new Submission();
@@ -152,14 +180,6 @@ public class Grid extends Widget {
 	@Override
 	public void accept(final WidgetVisitor visitor) {
 		visitor.visit(this);
-	}
-
-	public void setPreset(final Map<String, Object> preset) {
-		this.preset = preset;
-	}
-
-	public Map<String, Object> getPreset() {
-		return preset;
 	}
 
 	public static class Submission {
