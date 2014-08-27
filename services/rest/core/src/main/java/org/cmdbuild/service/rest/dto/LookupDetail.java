@@ -14,6 +14,8 @@ import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -218,12 +220,32 @@ public class LookupDetail {
 		}
 
 		final LookupDetail other = LookupDetail.class.cast(obj);
-		return id.equals(other.id);
+		return new EqualsBuilder() //
+				.append(this.id, other.id) //
+				.append(this.code, other.code) //
+				.append(this.description, other.description) //
+				.append(this.type, other.type) //
+				.append(this.number, other.number) //
+				.append(this.active, other.active) //
+				.append(this.isDefault, other.isDefault) //
+				.append(this.parentId, other.parentId) //
+				.append(this.parentType, other.parentType) //
+				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return id.hashCode();
+		return new HashCodeBuilder() //
+				.append(id) //
+				.append(code) //
+				.append(description) //
+				.append(type) //
+				.append(number) //
+				.append(active) //
+				.append(isDefault) //
+				.append(parentId) //
+				.append(parentType) //
+				.toHashCode();
 	}
 
 	@Override

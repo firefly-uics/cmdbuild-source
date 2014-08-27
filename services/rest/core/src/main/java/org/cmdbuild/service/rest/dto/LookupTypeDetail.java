@@ -7,6 +7,8 @@ import static org.cmdbuild.service.rest.constants.Serialization.PARENT;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -84,12 +86,18 @@ public class LookupTypeDetail {
 		}
 
 		final LookupTypeDetail other = LookupTypeDetail.class.cast(obj);
-		return name.equals(other.name) && parent.equals(other.parent);
+		return new EqualsBuilder() //
+				.append(this.name, other.name) //
+				.append(this.parent, other.parent) //
+				.isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return name.hashCode();
+		return new HashCodeBuilder() //
+				.append(name) //
+				.append(parent) //
+				.toHashCode();
 	}
 
 	@Override

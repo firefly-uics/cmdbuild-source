@@ -48,16 +48,12 @@ public class ProcessInstancesTest {
 		// given
 		final ListResponse<ProcessInstance> expectedResponse = ListResponse.<ProcessInstance> newInstance() //
 				.withElements(asList( //
-						new ProcessInstance() {
-							{ //
-								setName("bar");
-							}
-						}, //
-						new ProcessInstance() {
-							{ //
-								setName("baz");
-							}
-						} //
+						ProcessInstance.newInstance() //
+								.withName("bar") //
+								.build(), //
+						ProcessInstance.newInstance() //
+								.withName("baz") //
+								.build() //
 						)) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(2L) //

@@ -6,6 +6,8 @@ import static org.cmdbuild.service.rest.constants.Serialization.SIMPLE_RESPONSE;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -33,6 +35,10 @@ public class SimpleResponse<T> {
 
 	}
 
+	public static <T> Builder<T> newInstance(Class<T> type) {
+		return newInstance();
+	}
+
 	public static <T> Builder<T> newInstance() {
 		return new Builder<T>();
 	}
@@ -55,6 +61,30 @@ public class SimpleResponse<T> {
 
 	void setElement(final T element) {
 		this.element = element;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+
+		if (!(obj instanceof SimpleResponse)) {
+			return false;
+		}
+
+		@SuppressWarnings("unchecked")
+		final SimpleResponse<T> other = SimpleResponse.class.cast(obj);
+		return new EqualsBuilder() //
+				.append(this.element, other.element) //
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder() //
+				.append(this.element) //
+				.toHashCode();
 	}
 
 	@Override

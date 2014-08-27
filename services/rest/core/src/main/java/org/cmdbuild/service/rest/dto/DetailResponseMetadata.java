@@ -6,6 +6,11 @@ import static org.cmdbuild.service.rest.constants.Serialization.TOTAL;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 @XmlRootElement(name = RESPONSE_METADATA)
 public class DetailResponseMetadata {
 
@@ -44,7 +49,7 @@ public class DetailResponseMetadata {
 		// package visibility
 	}
 
-	public DetailResponseMetadata(final Builder builder) {
+	private DetailResponseMetadata(final Builder builder) {
 		this.total = builder.total;
 	}
 
@@ -55,6 +60,32 @@ public class DetailResponseMetadata {
 
 	void setTotal(final Long total) {
 		this.total = total;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof DetailResponseMetadata)) {
+			return false;
+		}
+		final DetailResponseMetadata other = DetailResponseMetadata.class.cast(obj);
+		return new EqualsBuilder() //
+				.append(this.total, other.total) //
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder() //
+				.append(this.total) //
+				.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
 	}
 
 }
