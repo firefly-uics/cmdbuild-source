@@ -12,6 +12,7 @@ import org.cmdbuild.service.rest.cxf.CxfLookupTypes;
 import org.cmdbuild.service.rest.cxf.CxfLookupValues;
 import org.cmdbuild.service.rest.cxf.CxfMenu;
 import org.cmdbuild.service.rest.cxf.CxfProcessAttributes;
+import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -94,6 +95,11 @@ public class Services {
 	@Bean
 	public CxfProcesses cxfProcesses() {
 		return new CxfProcesses(utilities.defaultErrorHandler(), helper.userWorkflowLogic());
+	}
+
+	@Bean
+	public CxfProcessInstances cxfProcessInstances() {
+		return new CxfProcessInstances(utilities.defaultErrorHandler(), helper.userWorkflowLogic());
 	}
 
 }

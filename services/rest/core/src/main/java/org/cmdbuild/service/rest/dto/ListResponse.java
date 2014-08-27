@@ -61,6 +61,10 @@ public class ListResponse<T> {
 		return new Builder<T>();
 	}
 
+	public static <T> Builder<T> newInstance(final Class<T> type) {
+		return new Builder<T>();
+	}
+
 	private Collection<T> elements;
 	private DetailResponseMetadata metadata;
 

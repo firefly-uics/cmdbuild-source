@@ -42,6 +42,7 @@ public class Serialization {
 			NAME = "name", //
 			NUMBER = "number", //
 			PARAMS = "params", //
+			PROCESS_INSTANCE = "processInstance", //
 			PROTOTYPE = "prototype", //
 			OBJECT_DESCRIPTION = "objectDescription", //
 			OBJECT_ID = "objectId", //
