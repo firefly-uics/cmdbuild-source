@@ -261,7 +261,7 @@
 								new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
 									cmControllerType: controllerNS.administration.gis.CMModGISNavigationConfigurationController
 								}),
-								new CMDBuild.Administration.ModExternalServices(),
+								Ext.create('CMDBuild.view.administration.gis.ModExternalServices'),
 								new CMDBuild.view.administration.gis.CMModGeoServer({
 									cmControllerType: controllerNS.administration.gis.CMModGeoServerController
 								}),

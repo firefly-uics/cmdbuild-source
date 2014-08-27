@@ -90,7 +90,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/form/FormOverride.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/form/FormPlugin.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/form/HexColorField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/form/RangeSlidersFieldSet.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/form/RangeSliders.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/form/SetValueOnLoadPlugin.js"></script>
 
 <!-- WIDGETS BUILDERS -->
