@@ -134,7 +134,9 @@
 			return string;
 		},
 
-		// overwrite
+		/**
+		 * @overwrite
+		 */
 		callback: function() {
 			this.grid.store.load();
 
