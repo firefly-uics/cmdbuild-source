@@ -214,6 +214,7 @@
 			widgets: {
 				grid: {
 					clearSession: 'services/json/management/importcsv/clearsession',
+					getSqlCardList: 'services/json/management/modcard/getsqlcardlist',
 					getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
 					uploadCsv: 'services/json/management/importcsv/uploadcsv'
 				}

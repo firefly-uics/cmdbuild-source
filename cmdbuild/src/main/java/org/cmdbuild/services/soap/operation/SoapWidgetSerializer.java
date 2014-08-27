@@ -42,9 +42,9 @@ class SoapWidgetSerializer implements WidgetVisitor {
 
 	/**
 	 * These constants are intended to be for legacy purpose only!
-	 * 
-	 * Only the constants defined in the {@link OpenReportWidgetFactory} implementations
-	 * should be used.
+	 *
+	 * Only the constants defined in the {@link OpenReportWidgetFactory}
+	 * implementations should be used.
 	 */
 	@Legacy("no comment")
 	private static class LegacyConstants {
@@ -172,12 +172,14 @@ class SoapWidgetSerializer implements WidgetVisitor {
 	public void visit(final Grid grid) {
 		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
 		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, grid.getLabel()));
-		parameters.add(parameterFor(GridWidgetFactory.MAP_SEPARATOR, grid.getMapSeparator()));
-		parameters.add(parameterFor(GridWidgetFactory.ENTRY_SEPARATOR, grid.getEntrySeparator()));
+		parameters.add(parameterFor(GridWidgetFactory.CLASS_NAME, grid.getClassName()));
+		parameters.add(parameterFor(GridWidgetFactory.CARD_SEPARATOR, grid.getCardSeparator()));
+		parameters.add(parameterFor(GridWidgetFactory.ATTRIBUTE_SEPARATOR, grid.getAttributeSeparator()));
 		parameters.add(parameterFor(GridWidgetFactory.KEY_VALUE_SEPARATOR, grid.getKeyValueSeparator()));
 		parameters.add(parameterFor(GridWidgetFactory.SERIALIZATION_TYPE, grid.getSerializationType()));
 		parameters.add(parameterFor(GridWidgetFactory.WRITE_ON_ADVANCE, grid.isWriteOnAdvance()));
-		for (final Entry<String, Object> entry : grid.getPreset().entrySet()) {
+		parameters.add(parameterFor(GridWidgetFactory.PRESETS, grid.getPresets()));
+		for (final Entry<String, Object> entry : grid.getVariables().entrySet()) {
 			parameters.add(parameterFor(entry.getKey(), entry.getValue()));
 		}
 		definition.setParameters(parameters);
