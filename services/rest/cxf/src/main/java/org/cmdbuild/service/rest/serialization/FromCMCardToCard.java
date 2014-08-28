@@ -4,20 +4,20 @@ import java.util.Map.Entry;
 
 import org.cmdbuild.dao.entry.CMCard;
 
-public class FromCMCardToCardDetail extends FromSomeKindOfCardToMap<CMCard> {
+public class FromCMCardToCard extends ToCardFunction<CMCard> {
 
 	public static Builder<CMCard> newInstance() {
 		return new Builder<CMCard>() {
 
 			@Override
-			protected FromSomeKindOfCardToMap<CMCard> doBuild() {
-				return new FromCMCardToCardDetail(this);
+			protected ToCardFunction<CMCard> doBuild() {
+				return new FromCMCardToCard(this);
 			};
 
 		};
 	}
 
-	private FromCMCardToCardDetail(final Builder<CMCard> builder) {
+	private FromCMCardToCard(final Builder<CMCard> builder) {
 		super(builder);
 	}
 
@@ -29,11 +29,6 @@ public class FromCMCardToCardDetail extends FromSomeKindOfCardToMap<CMCard> {
 	@Override
 	protected Long idOf(final CMCard input) {
 		return input.getId();
-	}
-
-	@Override
-	protected boolean idAndClassnameRequired() {
-		return true;
 	}
 
 	@Override

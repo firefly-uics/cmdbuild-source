@@ -2,12 +2,11 @@ package org.cmdbuild.service.rest.cxf;
 
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CLASSNAME;
 
-import java.util.Map;
-
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.ClassCards;
+import org.cmdbuild.service.rest.dto.Card;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.service.rest.serialization.ErrorHandler;
@@ -33,14 +32,13 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public SimpleResponse<Map<String, Object>> read(final String name, final Long id) {
+	public SimpleResponse<Card> read(final String name, final Long id) {
 		return delegate.read(name, id);
 
 	}
 
 	@Override
-	public ListResponse<Map<String, Object>> readAll(final String name, final String filter, final Integer limit,
-			final Integer offset) {
+	public ListResponse<Card> readAll(final String name, final String filter, final Integer limit, final Integer offset) {
 		return delegate.readAll(name, filter, limit, offset);
 	}
 

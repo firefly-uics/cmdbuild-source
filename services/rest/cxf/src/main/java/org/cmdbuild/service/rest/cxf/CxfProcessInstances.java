@@ -18,10 +18,6 @@ import com.google.common.base.Function;
 
 public class CxfProcessInstances implements ProcessInstances {
 
-	private static final Function<UserProcessInstance, ProcessInstance> TO_PROCESS_INSTANCE = ToProcessInstance //
-			.newInstance() //
-			.build();
-
 	private final ErrorHandler errorHandler;
 	private final WorkflowLogic workflowLogic;
 
@@ -43,9 +39,12 @@ public class CxfProcessInstances implements ProcessInstances {
 				// TODO sorters
 				.build();
 		final PagedElements<UserProcessInstance> elements = workflowLogic.query(name, queryOptions);
+		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
+				.withType(found) //
+				.build();
 		return ListResponse.newInstance(ProcessInstance.class) //
 				.withElements(from(elements) //
-						.transform(TO_PROCESS_INSTANCE)) //
+						.transform(toProcessInstance)) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(Long.valueOf(elements.totalSize())) //
 						.build()) //

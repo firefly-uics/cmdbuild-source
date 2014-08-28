@@ -10,14 +10,14 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -25,6 +25,7 @@ import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.ClassCards;
 import org.cmdbuild.service.rest.cxf.CxfCards;
+import org.cmdbuild.service.rest.dto.Card;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.service.rest.serialization.ErrorHandler;
@@ -98,18 +99,22 @@ public class CxfCardsTest {
 	@Test
 	public void readDelegated() throws Exception {
 		// given
-		final Map<String, Object> values = ChainablePutMap.of(new HashMap<String, Object>()) //
-				.chainablePut("foo", "bar") //
-				.chainablePut("bar", "baz") //
-				.chainablePut("baz", "foo");
-		final SimpleResponse<Map<String, Object>> expectedResponse = SimpleResponse.<Map<String, Object>> newInstance() //
-				.withElement(values) //
+		final SimpleResponse<Card> expectedResponse = SimpleResponse.newInstance(Card.class) //
+				.withElement(Card.newInstance() //
+						.withType("foo") //
+						.withId(123L) //
+						.withValues(ChainablePutMap.of(new HashMap<String, Object>()) //
+								.chainablePut("foo", "bar") //
+								.chainablePut("bar", "baz") //
+								.chainablePut("baz", "foo")) //
+						.build() //
+				) //
 				.build();
-		when(classCards.read(anyString(), anyLong())) //
-				.thenReturn(expectedResponse);
+		doReturn(expectedResponse) //
+				.when(classCards).read(anyString(), anyLong());
 
 		// when
-		final SimpleResponse<Map<String, Object>> response = cxfCards.read("foo", 123L);
+		final SimpleResponse<Card> response = cxfCards.read("foo", 123L);
 
 		// then
 		assertThat(response, equalTo(expectedResponse));
@@ -120,18 +125,22 @@ public class CxfCardsTest {
 	@Test
 	public void readAllDelegated() throws Exception {
 		// given
-		final Map<String, Object> values = ChainablePutMap.of(new HashMap<String, Object>()) //
-				.chainablePut("foo", "bar") //
-				.chainablePut("bar", "baz") //
-				.chainablePut("baz", "foo");
-		final ListResponse<Map<String, Object>> expectedResponse = ListResponse.<Map<String, Object>> newInstance() //
-				.withElement(values) //
+		final ListResponse<Card> expectedResponse = ListResponse.newInstance(Card.class) //
+				.withElements(Arrays.asList(Card.newInstance() //
+						.withType("foo") //
+						.withId(123L) //
+						.withValues(ChainablePutMap.of(new HashMap<String, Object>()) //
+								.chainablePut("foo", "bar") //
+								.chainablePut("bar", "baz") //
+								.chainablePut("baz", "foo")) //
+						.build() //
+						)) //
 				.build();
-		when(classCards.readAll(anyString(), anyString(), anyInt(), anyInt())) //
-				.thenReturn(expectedResponse);
+		doReturn(expectedResponse) //
+				.when(classCards).readAll(anyString(), anyString(), anyInt(), anyInt());
 
 		// when
-		final ListResponse<Map<String, Object>> response = cxfCards.readAll("foo", "filter", 123, 456);
+		final ListResponse<Card> response = cxfCards.readAll("foo", "filter", 123, 456);
 
 		// then
 		assertThat(response, equalTo(expectedResponse));

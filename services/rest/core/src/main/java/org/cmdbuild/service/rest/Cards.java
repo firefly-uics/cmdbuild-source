@@ -8,8 +8,6 @@ import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CLASSNAME;
 
-import java.util.Map;
-
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,6 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.cmdbuild.service.rest.dto.Card;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 
@@ -35,14 +34,14 @@ public interface Cards {
 
 	@GET
 	@Path("{id}/")
-	SimpleResponse<Map<String, Object>> read( //
+	SimpleResponse<Card> read( //
 			@QueryParam(UNDERSCORED_CLASSNAME) String name, //
 			@PathParam(ID) Long id //
 	);
 
 	@GET
 	@Path(EMPTY)
-	ListResponse<Map<String, Object>> readAll( //
+	ListResponse<Card> readAll( //
 			@QueryParam(UNDERSCORED_CLASSNAME) String name, //
 			@QueryParam(FILTER) String filter, //
 			@QueryParam(LIMIT) Integer limit, //

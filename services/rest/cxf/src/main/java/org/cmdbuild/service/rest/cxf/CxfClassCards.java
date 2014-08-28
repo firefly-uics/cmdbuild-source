@@ -15,15 +15,15 @@ import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
-import org.cmdbuild.model.data.Card;
 import org.cmdbuild.service.rest.ClassCards;
+import org.cmdbuild.service.rest.dto.Card;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.service.rest.serialization.ErrorHandler;
-import org.cmdbuild.service.rest.serialization.FromCMCardToCardDetail;
-import org.cmdbuild.service.rest.serialization.FromCardToCardDetail;
-import org.cmdbuild.service.rest.serialization.FromSomeKindOfCardToMap;
+import org.cmdbuild.service.rest.serialization.FromCMCardToCard;
+import org.cmdbuild.service.rest.serialization.FromCardToCard;
+import org.cmdbuild.service.rest.serialization.ToCardFunction;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,7 +61,7 @@ public class CxfClassCards implements ClassCards {
 			errorHandler.classNotFound(name);
 		}
 		final Map<String, String> attributes = transformEntries(formParam, FIRST_ELEMENT);
-		final Card card = Card.newInstance(targetClass) //
+		final org.cmdbuild.model.data.Card card = org.cmdbuild.model.data.Card.newInstance(targetClass) //
 				.withAllAttributes(attributes) //
 				.build();
 		final Long id = userDataAccessLogic.createCard(card);
@@ -71,20 +71,20 @@ public class CxfClassCards implements ClassCards {
 	}
 
 	@Override
-	public SimpleResponse<Map<String, Object>> read(final String name, final Long id) {
+	public SimpleResponse<Card> read(final String name, final Long id) {
 		// TODO inject error management within logic
 		if (userDataView.findClass(name) == null) {
 			errorHandler.classNotFound(name);
 		}
 		try {
 			final CMCard fetched = userDataAccessLogic.fetchCMCard(name, id);
-			final Map<String, Object> elements = FromCMCardToCardDetail.newInstance() //
+			final Card element = FromCMCardToCard.newInstance() //
 					.withDataView(userDataView) //
 					.withErrorHandler(errorHandler) //
 					.build() //
 					.apply(fetched);
-			return SimpleResponse.<Map<String, Object>> newInstance() //
-					.withElement(elements) //
+			return SimpleResponse.newInstance(Card.class) //
+					.withElement(element) //
 					.build();
 		} catch (final NotFoundException e) {
 			errorHandler.cardNotFound(id);
@@ -94,22 +94,20 @@ public class CxfClassCards implements ClassCards {
 	}
 
 	@Override
-	public ListResponse<Map<String, Object>> readAll(final String name, final String filter, final Integer limit,
-			final Integer offset) {
+	public ListResponse<Card> readAll(final String name, final String filter, final Integer limit, final Integer offset) {
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.filter(safeJsonObject(filter)) //
 				.limit(limit) //
 				.offset(offset) //
 				.build();
 		final FetchCardListResponse response = userDataAccessLogic.fetchCards(name, queryOptions);
-
-		final FromSomeKindOfCardToMap<Card> toCardDetail = FromCardToCardDetail.newInstance() //
+		final ToCardFunction<org.cmdbuild.model.data.Card> toCardDetail = FromCardToCard.newInstance() //
 				.withDataView(systemDataView) //
 				.withErrorHandler(errorHandler) //
 				.build();
-		final Iterable<Map<String, Object>> elements = from(response.elements()) //
+		final Iterable<Card> elements = from(response.elements()) //
 				.transform(toCardDetail);
-		return ListResponse.<Map<String, Object>> newInstance() //
+		return ListResponse.newInstance(Card.class) //
 				.withElements(elements) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(Long.valueOf(response.totalSize())) //
@@ -134,7 +132,7 @@ public class CxfClassCards implements ClassCards {
 		}
 		// TODO check for missing id (inside logic, please)
 		final Map<String, String> attributes = transformEntries(formParam, FIRST_ELEMENT);
-		final Card card = Card.newInstance(targetClass) //
+		final org.cmdbuild.model.data.Card card = org.cmdbuild.model.data.Card.newInstance(targetClass) //
 				.withId(id) //
 				.withAllAttributes(attributes) //
 				.build();

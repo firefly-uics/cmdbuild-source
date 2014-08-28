@@ -4,20 +4,20 @@ import java.util.Map.Entry;
 
 import org.cmdbuild.model.data.Card;
 
-public class FromCardToCardDetail extends FromSomeKindOfCardToMap<Card> {
+public class FromCardToCard extends ToCardFunction<Card> {
 
 	public static Builder<Card> newInstance() {
 		return new Builder<Card>() {
 
 			@Override
-			protected FromSomeKindOfCardToMap<Card> doBuild() {
-				return new FromCardToCardDetail(this);
+			protected ToCardFunction<Card> doBuild() {
+				return new FromCardToCard(this);
 			}
 
 		};
 	}
 
-	private FromCardToCardDetail(final Builder<Card> builder) {
+	private FromCardToCard(final Builder<Card> builder) {
 		super(builder);
 	}
 
@@ -29,11 +29,6 @@ public class FromCardToCardDetail extends FromSomeKindOfCardToMap<Card> {
 	@Override
 	protected Long idOf(final Card input) {
 		return input.getId();
-	}
-
-	@Override
-	protected boolean idAndClassnameRequired() {
-		return true;
 	}
 
 	@Override

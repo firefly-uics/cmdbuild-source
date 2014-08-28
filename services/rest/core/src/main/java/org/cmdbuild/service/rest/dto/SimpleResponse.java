@@ -35,7 +35,7 @@ public class SimpleResponse<T> {
 
 	}
 
-	public static <T> Builder<T> newInstance(Class<T> type) {
+	public static <T> Builder<T> newInstance(final Class<T> type) {
 		return newInstance();
 	}
 

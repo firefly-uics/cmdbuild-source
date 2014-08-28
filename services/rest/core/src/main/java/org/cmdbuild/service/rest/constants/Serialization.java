@@ -7,6 +7,7 @@ public class Serialization {
 	public static final String //
 			ACTIVE = "active", //
 			ATTRIBUTE_DETAIL = "attributeDetail", //
+			CARD = "card", //
 			CARD_DETAIL = "cardDetail", //
 			CARDINALITY = "cardinality", //
 			CHILDREN = "children", //
@@ -80,8 +81,10 @@ public class Serialization {
 			TYPE = "type", //
 			UNDERSCORED_CLASSNAME = "_" + CLASSNAME, //
 			UNDERSCORED_ID = "_" + ID, //
+			UNDERSCORED_NAME = "_" + NAME, //
 			UNIQUE = "unique", //
-			VALUE = "value";
+			VALUE = "value", //
+			VALUES = "values";
 
 	private Serialization() {
 		// prevents instantiation

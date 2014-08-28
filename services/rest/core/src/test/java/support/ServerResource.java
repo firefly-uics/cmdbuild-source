@@ -57,6 +57,8 @@ public class ServerResource extends ExternalResource {
 	public static final Range<Integer> DEFAULT_RANGE = Range.between(DEFAULT_RANGE_MIN_INCLUSIVE,
 			DEFAULT_RANGE_MAX_INCLUSIVE);
 
+	public static final JacksonJaxbJsonProvider JSON_PROVIDER = new JacksonJaxbJsonProvider();
+
 	private final Class<?> serviceClass;
 	private final Object service;
 	private final int port;
@@ -77,7 +79,7 @@ public class ServerResource extends ExternalResource {
 		serverFactory.setResourceClasses(serviceClass);
 		serverFactory.setResourceProvider(serviceClass, new SingletonResourceProvider(service));
 		serverFactory.setAddress(address());
-		serverFactory.setProvider(new JacksonJaxbJsonProvider());
+		serverFactory.setProvider(JSON_PROVIDER);
 
 		server = serverFactory.create();
 		logger.info(format("server ready on port %d ...", port));

@@ -27,7 +27,7 @@ import org.junit.Test;
 
 import support.ServerResource;
 
-public class DefaultValues {
+public class DefaultValuesTest {
 
 	@Path("resource/")
 	@Produces(APPLICATION_JSON)
