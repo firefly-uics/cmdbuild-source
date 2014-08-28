@@ -13,9 +13,14 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
+import java.util.HashMap;
+
 import javax.ws.rs.WebApplicationException;
 
+import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.common.utils.PagedElements;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
@@ -64,13 +69,30 @@ public class CxfProcessInstancesTest {
 	@Test
 	public void allInstancesReturned() throws Exception {
 		// given
+		final CMAttribute attribute = mock(CMAttribute.class);
+		doReturn(new StringAttributeType()) //
+				.when(attribute).getType();
 		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
 		doReturn(userProcessClass) //
 				.when(workflowLogic).findProcessClass(anyString());
+		doReturn(attribute) //
+				.when(userProcessClass).getAttribute(anyString());
 		final UserProcessInstance foo = mock(UserProcessInstance.class);
-		doReturn("foo").when(foo).getProcessInstanceId();
+		doReturn("foo") //
+				.when(foo).getProcessInstanceId();
+		doReturn(ChainablePutMap.of(new HashMap<String, String>()) //
+				.chainablePut("foo", "bar") //
+				.chainablePut("bar", "baz") //
+				.entrySet()) //
+				.when(foo).getAllValues();
 		final UserProcessInstance bar = mock(UserProcessInstance.class);
-		doReturn("bar").when(bar).getProcessInstanceId();
+		doReturn("bar") //
+				.when(bar).getProcessInstanceId();
+		doReturn(ChainablePutMap.of(new HashMap<String, String>()) //
+				.chainablePut("bar", "baz") //
+				.chainablePut("baz", "foo") //
+				.entrySet()) //
+				.when(bar).getAllValues();
 		final PagedElements<UserProcessInstance> pagedElements = new PagedElements<UserProcessInstance>(
 				asList(foo, bar), 4);
 		doReturn(pagedElements) //

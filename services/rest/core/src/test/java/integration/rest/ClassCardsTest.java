@@ -3,17 +3,21 @@ package integration.rest;
 import static java.util.Arrays.asList;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CLASSNAME;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static support.ServerResource.randomPort;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,17 +30,22 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.ClassCards;
+import org.cmdbuild.service.rest.dto.Card;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import support.JsonSupport;
 import support.ServerResource;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ClassCardsTest {
 
 	private static ClassCards service;
@@ -51,6 +60,9 @@ public class ClassCardsTest {
 	@ClassRule
 	public static JsonSupport json = new JsonSupport();
 
+	@Captor
+	private ArgumentCaptor<MultivaluedMap<String, String>> multivaluedMapCaptor;
+
 	private HttpClient httpclient;
 
 	@Before
@@ -61,19 +73,49 @@ public class ClassCardsTest {
 	@Test
 	public void cardsReadUsingGet() throws Exception {
 		// given
-		final Map<String, Object> first = ChainablePutMap.of(new HashMap<String, Object>()) //
-				.chainablePut("foo", "foo") //
-				.chainablePut("bar", "bar");
-		final Map<String, Object> second = ChainablePutMap.of(new HashMap<String, Object>()) //
+		final String type = "foo";
+		final Long firstId = 123L;
+		final Long secondId = 456L;
+		final Map<String, String> firstValues = ChainablePutMap.of(new HashMap<String, String>()) //
+				.chainablePut("foo", "bar") //
 				.chainablePut("bar", "baz");
-		final ListResponse<Map<String, Object>> expectedResponse = ListResponse.<Map<String, Object>> newInstance() //
-				.withElements(asList(first, second)) //
+		final Map<String, String> secondValues = ChainablePutMap.of(new HashMap<String, String>()) //
+				.chainablePut("bar", "baz");
+		final ListResponse<Card> sentResponse = ListResponse.newInstance(Card.class) //
+				.withElements(asList( //
+						Card.newInstance() //
+								.withType(type) //
+								.withId(firstId) //
+								.withValues(firstValues) //
+								.build(), //
+						Card.newInstance() //
+								.withType(type) //
+								.withId(secondId) //
+								.withValues(secondValues) //
+								.build() //
+						)) //
 				.withMetadata(DetailResponseMetadata.newInstance() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll(eq("foo"), isNull(String.class), anyInt(), anyInt())) //
-				.thenReturn(expectedResponse);
+		@SuppressWarnings("unchecked")
+		final ListResponse<Map<String, Object>> expectedResponse = ListResponse.<Map<String, Object>> newInstance() //
+				.withElements(Arrays.<Map<String, Object>> asList( //
+						ChainablePutMap.of(new HashMap<String, Object>()) //
+								.chainablePut(UNDERSCORED_CLASSNAME, type) //
+								.chainablePut(UNDERSCORED_ID, firstId) //
+								.chainablePutAll(firstValues), //
+						ChainablePutMap.of(new HashMap<String, Object>()) //
+								.chainablePut(UNDERSCORED_CLASSNAME, type) //
+								.chainablePut(UNDERSCORED_ID, secondId) //
+								.chainablePutAll(secondValues) //
+						)) //
+				.withMetadata(DetailResponseMetadata.newInstance() //
+						.withTotal(2L) //
+						.build()) //
+				.build();
+		doReturn(sentResponse) //
+				.when(service).readAll(anyString(), isNull(String.class), anyInt(), anyInt());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("classes/foo/cards"));
@@ -88,12 +130,11 @@ public class ClassCardsTest {
 	@Test
 	public void cardCreatedUsingPost() throws Exception {
 		// given
-		final ArgumentCaptor<MultivaluedMap> multivaluedMapCaptor = ArgumentCaptor.forClass(MultivaluedMap.class);
 		final SimpleResponse<Long> expectedResponse = SimpleResponse.<Long> newInstance() //
 				.withElement(123L) //
 				.build();
-		when(service.create(eq("foo"), multivaluedMapCaptor.capture())) //
-				.thenReturn(expectedResponse);
+		doReturn(expectedResponse) //
+				.when(service).create(anyString(), multivaluedMapCaptor.capture());
 
 		// when
 		final PostMethod post = new PostMethod(server.resource("classes/foo/cards/"));
@@ -103,27 +144,41 @@ public class ClassCardsTest {
 		final int result = httpclient.executeMethod(post);
 
 		// then
-		verify(service).create(eq("foo"), any(MultivaluedMap.class));
+		verify(service).create(eq("foo"), multivaluedMapCaptor.capture());
 		assertThat(result, equalTo(200));
 		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
-		final MultivaluedMap captured = multivaluedMapCaptor.getValue();
-		assertThat(captured.getFirst("foo"), equalTo((Object) "bar"));
-		assertThat(captured.getFirst("bar"), equalTo((Object) "baz"));
-		assertThat(captured.getFirst("baz"), equalTo((Object) "foo"));
+		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
+		assertThat(captured.getFirst("foo"), equalTo("bar"));
+		assertThat(captured.getFirst("bar"), equalTo("baz"));
+		assertThat(captured.getFirst("baz"), equalTo("foo"));
 	}
 
 	@Test
 	public void cardReadUsingGet() throws Exception {
 		// given
-		final Map<String, Object> values = ChainablePutMap.of(new HashMap<String, Object>()) //
-				.chainablePut("foo", "foo") //
-				.chainablePut("bar", "bar") //
+		final String type = "foo";
+		final Long firstId = 123L;
+		final Map<String, String> firstValues = ChainablePutMap.of(new HashMap<String, String>()) //
+				.chainablePut("foo", "bar") //
+				.chainablePut("bar", "baz") //
 				.chainablePut("bar", "baz");
-		final SimpleResponse<Map<String, Object>> expectedResponse = SimpleResponse.<Map<String, Object>> newInstance() //
-				.withElement(values) //
+		final SimpleResponse<Card> sentResponse = SimpleResponse.newInstance(Card.class) //
+				.withElement(Card.newInstance() //
+						.withType(type) //
+						.withId(firstId) //
+						.withValues(firstValues) //
+						.build() //
+				) //
 				.build();
-		when(service.read("foo", 123L)) //
-				.thenReturn(expectedResponse);
+		final SimpleResponse<Map<String, Object>> expectedResponse = SimpleResponse.<Map<String, Object>> newInstance() //
+				.withElement(ChainablePutMap.of(new HashMap<String, Object>()) //
+						.chainablePut(UNDERSCORED_CLASSNAME, type) //
+						.chainablePut(UNDERSCORED_ID, firstId) //
+						.chainablePutAll(firstValues) //
+				) //
+				.build();
+		doReturn(sentResponse) //
+				.when(service).read(anyString(), anyLong());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("classes/foo/cards/123/"));
@@ -143,7 +198,7 @@ public class ClassCardsTest {
 		final int result = httpclient.executeMethod(put);
 
 		// then
-		verify(service).update(eq("foo"), eq(123L), any(MultivaluedMap.class));
+		verify(service).update(eq("foo"), eq(123L), multivaluedMapCaptor.capture());
 		assertThat(result, equalTo(204));
 	}
 

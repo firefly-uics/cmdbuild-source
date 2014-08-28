@@ -5,8 +5,9 @@ import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
-import static org.cmdbuild.service.rest.constants.Serialization.NAME;
-import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_INSTANCE;
+import static org.cmdbuild.service.rest.constants.Serialization.CARD;
+import static org.cmdbuild.service.rest.constants.Serialization.ID;
+import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.VALUES;
 
 import java.util.Map;
@@ -20,20 +21,18 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.service.rest.dto.adapter.ProcessInstanceAdapter;
+import org.cmdbuild.service.rest.dto.adapter.CardAdapter;
 
 import com.google.common.base.Function;
 
-@XmlRootElement(name = PROCESS_INSTANCE)
-@XmlJavaTypeAdapter(ProcessInstanceAdapter.class)
-public class ProcessInstance {
+@XmlRootElement(name = CARD)
+@XmlJavaTypeAdapter(CardAdapter.class)
+public class Card {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<ProcessInstance> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<Card> {
 
-		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
-		private static final Function<Entry<? extends String, ? extends Object>, Object> VALUE = toValue();
-
-		private String name;
+		private String type;
+		private Long id;
 		private final Map<String, Object> values = newHashMap();
 
 		private Builder() {
@@ -41,22 +40,30 @@ public class ProcessInstance {
 		}
 
 		@Override
-		public ProcessInstance build() {
+		public Card build() {
 			validate();
-			return new ProcessInstance(this);
+			return new Card(this);
 		}
 
 		private void validate() {
 			// TODO Auto-generated method stub
 		}
 
-		public Builder withName(final String name) {
-			this.name = name;
+		public Builder withType(final String type) {
+			this.type = type;
+			return this;
+		}
+
+		public Builder withId(final Long id) {
+			this.id = id;
 			return this;
 		}
 
 		public Builder withValues(final Iterable<? extends Entry<String, ? extends Object>> values) {
-			return withValues(transformValues(uniqueIndex(values, KEY), VALUE));
+			final Function<Entry<? extends String, ? extends Object>, String> key = toKey();
+			final Function<Entry<? extends String, ? extends Object>, Object> value = toValue();
+			final Map<String, Object> allValues = transformValues(uniqueIndex(values, key), value);
+			return withValues(allValues);
 		}
 
 		public Builder withValues(final Map<String, ? extends Object> values) {
@@ -70,25 +77,36 @@ public class ProcessInstance {
 		return new Builder();
 	}
 
-	ProcessInstance() {
+	Card() {
 		// package visibility
 	}
 
-	private String name;
+	private String type;
+	private Long id;
 	private Map<String, Object> values;
 
-	private ProcessInstance(final Builder builder) {
-		this.name = builder.name;
+	private Card(final Builder builder) {
+		this.type = builder.type;
+		this.id = builder.id;
 		this.values = builder.values;
 	}
 
-	@XmlAttribute(name = NAME)
-	public String getName() {
-		return name;
+	@XmlAttribute(name = TYPE)
+	public String getType() {
+		return type;
 	}
 
-	void setName(final String name) {
-		this.name = name;
+	void setType(final String type) {
+		this.type = type;
+	}
+
+	@XmlAttribute(name = ID)
+	public Long getId() {
+		return id;
+	}
+
+	void setId(final Long id) {
+		this.id = id;
 	}
 
 	@XmlAttribute(name = VALUES)
@@ -106,13 +124,14 @@ public class ProcessInstance {
 			return true;
 		}
 
-		if (!(obj instanceof ProcessInstance)) {
+		if (!(obj instanceof Card)) {
 			return false;
 		}
 
-		final ProcessInstance other = ProcessInstance.class.cast(obj);
+		final Card other = Card.class.cast(obj);
 		return new EqualsBuilder() //
-				.append(this.name, other.name) //
+				.append(this.type, other.type) //
+				.append(this.id, other.id) //
 				.append(this.values, other.values) //
 				.isEquals();
 	}
@@ -120,7 +139,8 @@ public class ProcessInstance {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder() //
-				.append(name) //
+				.append(type) //
+				.append(id) //
 				.append(values) //
 				.toHashCode();
 	}
