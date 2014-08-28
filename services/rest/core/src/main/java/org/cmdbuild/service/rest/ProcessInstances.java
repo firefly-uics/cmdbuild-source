@@ -15,7 +15,7 @@ import javax.ws.rs.QueryParam;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.ProcessInstance;
 
-@Path("processes/{name}/instances/")
+@Path("processes/{" + NAME + "}/instances/")
 @Produces(APPLICATION_JSON)
 public interface ProcessInstances {
 

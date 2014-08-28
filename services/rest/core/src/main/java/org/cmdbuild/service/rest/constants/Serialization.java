@@ -14,7 +14,6 @@ public class Serialization {
 			CLASS = "class", //
 			CLASS_DESTINATION = CLASS + "Destination", //
 			CLASS_SOURCE = CLASS + "Source", //
-			CLASSNAME = "classname", //
 			CODE = "code", //
 			DATA = "data", //
 			DEFAULT = "default", //
@@ -79,7 +78,6 @@ public class Serialization {
 			TYPE_TEXT = "text", //
 			TYPE_TIME = "time", //
 			TYPE = "type", //
-			UNDERSCORED_CLASSNAME = "_" + CLASSNAME, //
 			UNDERSCORED_ID = "_" + ID, //
 			UNDERSCORED_NAME = "_" + NAME, //
 			UNDERSCORED_TYPE = "_" + TYPE, //

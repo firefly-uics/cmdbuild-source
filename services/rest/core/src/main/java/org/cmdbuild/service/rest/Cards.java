@@ -6,7 +6,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.constants.Serialization.ID;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CLASSNAME;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -33,32 +33,32 @@ public interface Cards {
 	);
 
 	@GET
-	@Path("{id}/")
+	@Path("{" + ID + "}/")
 	SimpleResponse<Card> read( //
-			@QueryParam(UNDERSCORED_CLASSNAME) String name, //
+			@QueryParam(UNDERSCORED_TYPE) String type, //
 			@PathParam(ID) Long id //
 	);
 
 	@GET
 	@Path(EMPTY)
-	ListResponse<Card> readAll( //
-			@QueryParam(UNDERSCORED_CLASSNAME) String name, //
+	ListResponse<Card> read( //
+			@QueryParam(UNDERSCORED_TYPE) String type, //
 			@QueryParam(FILTER) String filter, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);
 
 	@PUT
-	@Path("{id}/")
+	@Path("{" + ID + "}/")
 	void update( //
 			@PathParam(ID) Long id, //
 			MultivaluedMap<String, String> formParam //
 	);
 
 	@DELETE
-	@Path("{id}/")
+	@Path("{" + ID + "}/")
 	void delete( //
-			@QueryParam(UNDERSCORED_CLASSNAME) String name, //
+			@QueryParam(UNDERSCORED_TYPE) String type, //
 			@PathParam(ID) Long id //
 	);
 

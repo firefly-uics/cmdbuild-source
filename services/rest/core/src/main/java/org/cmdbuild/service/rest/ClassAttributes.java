@@ -16,7 +16,7 @@ import javax.ws.rs.QueryParam;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.ListResponse;
 
-@Path("classes/{name}/attributes/")
+@Path("classes/{" + NAME + "}/attributes/")
 @Produces(APPLICATION_JSON)
 public interface ClassAttributes {
 

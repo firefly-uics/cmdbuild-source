@@ -18,12 +18,12 @@ import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 
-@Path("lookup_types/{type}/values/")
+@Path("lookup_types/{" + TYPE + "}/values/")
 @Produces(APPLICATION_JSON)
 public interface LookupTypeValues {
 
 	@GET
-	@Path("{id}/")
+	@Path("{" + ID + "}/")
 	SimpleResponse<LookupDetail> read( //
 			@PathParam(TYPE) String type, //
 			@PathParam(ID) Long id //
