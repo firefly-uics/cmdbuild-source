@@ -72,6 +72,8 @@ public class ToProcessInstance implements Function<UserProcessInstance, ProcessI
 
 		};
 		return ProcessInstance.newInstance() //
+				.withType(input.getType().getName()) //
+				.withId(input.getId()) //
 				.withName(input.getProcessInstanceId()) //
 				.withValues(transformEntries(values, transformer)) //
 				.build();

@@ -5,8 +5,10 @@ import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
+import static org.cmdbuild.service.rest.constants.Serialization.ID;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_INSTANCE;
+import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.VALUES;
 
 import java.util.Map;
@@ -33,6 +35,8 @@ public class ProcessInstance {
 		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
 		private static final Function<Entry<? extends String, ? extends Object>, Object> VALUE = toValue();
 
+		private String type;
+		private Long id;
 		private String name;
 		private final Map<String, Object> values = newHashMap();
 
@@ -48,6 +52,16 @@ public class ProcessInstance {
 
 		private void validate() {
 			// TODO Auto-generated method stub
+		}
+
+		public Builder withType(final String type) {
+			this.type = type;
+			return this;
+		}
+
+		public Builder withId(final Long id) {
+			this.id = id;
+			return this;
 		}
 
 		public Builder withName(final String name) {
@@ -74,12 +88,34 @@ public class ProcessInstance {
 		// package visibility
 	}
 
+	private String type;
+	private Long id;
 	private String name;
 	private Map<String, Object> values;
 
 	private ProcessInstance(final Builder builder) {
+		this.type = builder.type;
+		this.id = builder.id;
 		this.name = builder.name;
 		this.values = builder.values;
+	}
+
+	@XmlAttribute(name = TYPE)
+	public String getType() {
+		return type;
+	}
+
+	void setType(final String type) {
+		this.type = type;
+	}
+
+	@XmlAttribute(name = ID)
+	public Long getId() {
+		return id;
+	}
+
+	void setId(final Long id) {
+		this.id = id;
 	}
 
 	@XmlAttribute(name = NAME)
@@ -112,6 +148,8 @@ public class ProcessInstance {
 
 		final ProcessInstance other = ProcessInstance.class.cast(obj);
 		return new EqualsBuilder() //
+				.append(this.type, other.type) //
+				.append(this.id, other.id) //
 				.append(this.name, other.name) //
 				.append(this.values, other.values) //
 				.isEquals();
@@ -120,6 +158,8 @@ public class ProcessInstance {
 	@Override
 	public int hashCode() {
 		return new HashCodeBuilder() //
+				.append(type) //
+				.append(id) //
 				.append(name) //
 				.append(values) //
 				.toHashCode();

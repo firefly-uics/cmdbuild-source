@@ -1,7 +1,9 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -52,20 +54,27 @@ public class ProcessInstancesTest {
 	@Test
 	public void instancesReadUsingGet() throws Exception {
 		// given
+		final String type = "type";
+		final Long firstId = 123L;
 		final String firstName = "foo";
+		final Long secondId = 456L;
 		final String secondName = "bar";
-		final Map<String, String> firstValues = ChainablePutMap.of(new HashMap<String, String>()) //
+		final Map<String, Object> firstValues = ChainablePutMap.of(new HashMap<String, Object>()) //
 				.chainablePut("foo", "bar") //
 				.chainablePut("bar", "baz");
-		final Map<String, String> secondValues = ChainablePutMap.of(new HashMap<String, String>()) //
+		final Map<String, Object> secondValues = ChainablePutMap.of(new HashMap<String, Object>()) //
 				.chainablePut("bar", "baz");
 		final ListResponse<ProcessInstance> sentResponse = ListResponse.newInstance(ProcessInstance.class) //
 				.withElements(asList( //
 						ProcessInstance.newInstance() //
+								.withType(type) //
+								.withId(firstId) //
 								.withName(firstName) //
 								.withValues(firstValues) //
 								.build(), //
 						ProcessInstance.newInstance() //
+								.withType(type) //
+								.withId(secondId) //
 								.withName(secondName) //
 								.withValues(secondValues) //
 								.build() //
@@ -75,12 +84,16 @@ public class ProcessInstancesTest {
 						.build()) //
 				.build();
 		@SuppressWarnings("unchecked")
-		final ListResponse<Map<String, String>> expectedResponse = ListResponse.<Map<String, String>> newInstance() //
-				.withElements(Arrays.<Map<String, String>> asList( //
-						ChainablePutMap.of(new HashMap<String, String>()) //
+		final ListResponse<Map<String, Object>> expectedResponse = ListResponse.<Map<String, Object>> newInstance() //
+				.withElements(Arrays.<Map<String, Object>> asList( //
+						ChainablePutMap.of(new HashMap<String, Object>()) //
+								.chainablePut(UNDERSCORED_TYPE, type) //
+								.chainablePut(UNDERSCORED_ID, firstId) //
 								.chainablePut(UNDERSCORED_NAME, firstName) //
 								.chainablePutAll(firstValues), //
-						ChainablePutMap.of(new HashMap<String, String>()) //
+						ChainablePutMap.of(new HashMap<String, Object>()) //
+								.chainablePut(UNDERSCORED_TYPE, type) //
+								.chainablePut(UNDERSCORED_ID, secondId) //
 								.chainablePut(UNDERSCORED_NAME, secondName) //
 								.chainablePutAll(secondValues) //
 						)) //
