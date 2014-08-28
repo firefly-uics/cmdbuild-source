@@ -23,7 +23,7 @@ import org.cmdbuild.service.rest.dto.SimpleResponse;
 public interface LookupValues {
 
 	@GET
-	@Path("{id}/")
+	@Path("{" + ID + "}/")
 	SimpleResponse<LookupDetail> read( //
 			@QueryParam(TYPE) String type, //
 			@PathParam(ID) Long id //

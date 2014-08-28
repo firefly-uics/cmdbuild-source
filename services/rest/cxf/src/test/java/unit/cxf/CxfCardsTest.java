@@ -1,7 +1,7 @@
 package unit.cxf;
 
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CLASSNAME;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -68,7 +68,7 @@ public class CxfCardsTest {
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, classCards);
-		inOrder.verify(errorHandler).missingParam(UNDERSCORED_CLASSNAME);
+		inOrder.verify(errorHandler).missingParam(UNDERSCORED_TYPE);
 		inOrder.verify(classCards).create(null, params);
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -77,7 +77,7 @@ public class CxfCardsTest {
 	public void createDelegated() throws Exception {
 		// given
 		final MultivaluedMap<String, String> params = new MetadataMap<String, String>();
-		params.put(UNDERSCORED_CLASSNAME, asList("foo"));
+		params.put(UNDERSCORED_TYPE, asList("foo"));
 		params.put("foo", asList("bar"));
 		params.put("bar", asList("baz"));
 		params.put("baz", asList("foo"));
@@ -90,7 +90,7 @@ public class CxfCardsTest {
 		verifyNoMoreInteractions(errorHandler, classCards);
 
 		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
-		assertThat(captured.getFirst(UNDERSCORED_CLASSNAME), is(nullValue()));
+		assertThat(captured.getFirst(UNDERSCORED_TYPE), is(nullValue()));
 		assertThat(captured.getFirst("foo"), equalTo((Object) "bar"));
 		assertThat(captured.getFirst("bar"), equalTo((Object) "baz"));
 		assertThat(captured.getFirst("baz"), equalTo((Object) "foo"));
@@ -137,14 +137,14 @@ public class CxfCardsTest {
 						)) //
 				.build();
 		doReturn(expectedResponse) //
-				.when(classCards).readAll(anyString(), anyString(), anyInt(), anyInt());
+				.when(classCards).read(anyString(), anyString(), anyInt(), anyInt());
 
 		// when
-		final ListResponse<Card> response = cxfCards.readAll("foo", "filter", 123, 456);
+		final ListResponse<Card> response = cxfCards.read("foo", "filter", 123, 456);
 
 		// then
 		assertThat(response, equalTo(expectedResponse));
-		verify(classCards).readAll("foo", "filter", 123, 456);
+		verify(classCards).read("foo", "filter", 123, 456);
 		verifyNoMoreInteractions(errorHandler, classCards);
 	}
 
@@ -161,7 +161,7 @@ public class CxfCardsTest {
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, classCards);
-		inOrder.verify(errorHandler).missingParam(UNDERSCORED_CLASSNAME);
+		inOrder.verify(errorHandler).missingParam(UNDERSCORED_TYPE);
 		inOrder.verify(classCards).update(null, 123L, params);
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -170,7 +170,7 @@ public class CxfCardsTest {
 	public void updatedDelegated() throws Exception {
 		// given
 		final MultivaluedMap<String, String> params = new MetadataMap<String, String>();
-		params.put(UNDERSCORED_CLASSNAME, asList("foo"));
+		params.put(UNDERSCORED_TYPE, asList("foo"));
 		params.put("foo", asList("bar"));
 		params.put("bar", asList("baz"));
 		params.put("baz", asList("foo"));
@@ -183,7 +183,7 @@ public class CxfCardsTest {
 		verifyNoMoreInteractions(errorHandler, classCards);
 
 		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
-		assertThat(captured.getFirst(UNDERSCORED_CLASSNAME), is(nullValue()));
+		assertThat(captured.getFirst(UNDERSCORED_TYPE), is(nullValue()));
 		assertThat(captured.getFirst("foo"), equalTo((Object) "bar"));
 		assertThat(captured.getFirst("bar"), equalTo((Object) "baz"));
 		assertThat(captured.getFirst("baz"), equalTo((Object) "foo"));

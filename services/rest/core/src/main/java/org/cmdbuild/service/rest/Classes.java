@@ -31,7 +31,7 @@ public interface Classes {
 	);
 
 	@GET
-	@Path("{name}/")
+	@Path("{" + NAME + "}/")
 	SimpleResponse<FullClassDetail> read( //
 			@PathParam(NAME) String name //
 	);

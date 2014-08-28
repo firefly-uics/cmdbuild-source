@@ -21,7 +21,7 @@ import org.cmdbuild.service.rest.dto.SimpleResponse;
 public interface LookupTypes {
 
 	@GET
-	@Path("{type}/")
+	@Path("{" + TYPE + "}/")
 	SimpleResponse<LookupTypeDetail> read( //
 			@PathParam(TYPE) String type //
 	);

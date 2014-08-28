@@ -3,8 +3,8 @@ package integration.rest;
 import static java.util.Arrays.asList;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CLASSNAME;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -102,11 +102,11 @@ public class ClassCardsTest {
 		final ListResponse<Map<String, Object>> expectedResponse = ListResponse.<Map<String, Object>> newInstance() //
 				.withElements(Arrays.<Map<String, Object>> asList( //
 						ChainablePutMap.of(new HashMap<String, Object>()) //
-								.chainablePut(UNDERSCORED_CLASSNAME, type) //
+								.chainablePut(UNDERSCORED_TYPE, type) //
 								.chainablePut(UNDERSCORED_ID, firstId) //
 								.chainablePutAll(firstValues), //
 						ChainablePutMap.of(new HashMap<String, Object>()) //
-								.chainablePut(UNDERSCORED_CLASSNAME, type) //
+								.chainablePut(UNDERSCORED_TYPE, type) //
 								.chainablePut(UNDERSCORED_ID, secondId) //
 								.chainablePutAll(secondValues) //
 						)) //
@@ -115,14 +115,14 @@ public class ClassCardsTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).readAll(anyString(), isNull(String.class), anyInt(), anyInt());
+				.when(service).read(anyString(), isNull(String.class), anyInt(), anyInt());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("classes/foo/cards"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).readAll(eq("foo"), isNull(String.class), anyInt(), anyInt());
+		verify(service).read(eq("foo"), isNull(String.class), anyInt(), anyInt());
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -172,7 +172,7 @@ public class ClassCardsTest {
 				.build();
 		final SimpleResponse<Map<String, Object>> expectedResponse = SimpleResponse.<Map<String, Object>> newInstance() //
 				.withElement(ChainablePutMap.of(new HashMap<String, Object>()) //
-						.chainablePut(UNDERSCORED_CLASSNAME, type) //
+						.chainablePut(UNDERSCORED_TYPE, type) //
 						.chainablePut(UNDERSCORED_ID, firstId) //
 						.chainablePutAll(firstValues) //
 				) //

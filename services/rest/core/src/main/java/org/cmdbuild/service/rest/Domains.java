@@ -29,7 +29,7 @@ public interface Domains {
 	);
 
 	@GET
-	@Path("{name}/")
+	@Path("{" + NAME + "}/")
 	SimpleResponse<FullDomainDetail> read( //
 			@PathParam(NAME) String name //
 	);

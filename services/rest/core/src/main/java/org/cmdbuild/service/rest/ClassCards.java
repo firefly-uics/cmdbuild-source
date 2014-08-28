@@ -5,8 +5,8 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.constants.Serialization.ID;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
-import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
+import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -22,45 +22,45 @@ import org.cmdbuild.service.rest.dto.Card;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 
-@Path("classes/{name}/cards/")
+@Path("classes/{" + TYPE + "}/cards/")
 @Produces(APPLICATION_JSON)
 public interface ClassCards {
 
 	@POST
 	@Path(EMPTY)
 	SimpleResponse<Long> create( //
-			@PathParam(NAME) String name, //
+			@PathParam(TYPE) String type, //
 			MultivaluedMap<String, String> formParam //
 	);
 
 	@GET
-	@Path("{id}/")
+	@Path("{" + ID + "}/")
 	SimpleResponse<Card> read( //
-			@PathParam(NAME) String name, //
+			@PathParam(TYPE) String type, //
 			@PathParam(ID) Long id //
 	);
 
 	@GET
 	@Path(EMPTY)
-	ListResponse<Card> readAll( //
-			@PathParam(NAME) String name, //
+	ListResponse<Card> read( //
+			@PathParam(TYPE) String type, //
 			@QueryParam(FILTER) String filter, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);
 
 	@PUT
-	@Path("{id}/")
+	@Path("{" + ID + "}/")
 	void update( //
-			@PathParam(NAME) String name, //
+			@PathParam(TYPE) String type, //
 			@PathParam(ID) Long id, //
 			MultivaluedMap<String, String> formParam //
 	);
 
 	@DELETE
-	@Path("{id}/")
+	@Path("{" + ID + "}/")
 	void delete( //
-			@PathParam(NAME) String name, //
+			@PathParam(TYPE) String type, //
 			@PathParam(ID) Long id //
 	);
 

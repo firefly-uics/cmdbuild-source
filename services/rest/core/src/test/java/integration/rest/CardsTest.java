@@ -3,8 +3,8 @@ package integration.rest;
 import static java.util.Arrays.asList;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CLASSNAME;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -104,11 +104,11 @@ public class CardsTest {
 		final ListResponse<Map<String, Object>> expectedResponse = ListResponse.<Map<String, Object>> newInstance() //
 				.withElements(Arrays.<Map<String, Object>> asList( //
 						ChainablePutMap.of(new HashMap<String, Object>()) //
-								.chainablePut(UNDERSCORED_CLASSNAME, type) //
+								.chainablePut(UNDERSCORED_TYPE, type) //
 								.chainablePut(UNDERSCORED_ID, firstId) //
 								.chainablePutAll(firstValues), //
 						ChainablePutMap.of(new HashMap<String, Object>()) //
-								.chainablePut(UNDERSCORED_CLASSNAME, type) //
+								.chainablePut(UNDERSCORED_TYPE, type) //
 								.chainablePut(UNDERSCORED_ID, secondId) //
 								.chainablePutAll(secondValues) //
 						)) //
@@ -117,15 +117,15 @@ public class CardsTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).readAll(anyString(), isNull(String.class), anyInt(), anyInt());
+				.when(service).read(anyString(), isNull(String.class), anyInt(), anyInt());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("cards/"));
-		get.setQueryString(all(param("_classname", "foo")));
+		get.setQueryString(all(param(UNDERSCORED_TYPE, "foo")));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).readAll(eq("foo"), isNull(String.class), anyInt(), anyInt());
+		verify(service).read(eq("foo"), isNull(String.class), anyInt(), anyInt());
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -141,7 +141,7 @@ public class CardsTest {
 
 		// when
 		final PostMethod post = new PostMethod(server.resource("cards/"));
-		post.addParameter("_classname", "foo");
+		post.addParameter(UNDERSCORED_TYPE, "foo");
 		post.addParameter("foo", "bar");
 		post.addParameter("bar", "baz");
 		post.addParameter("baz", "foo");
@@ -152,7 +152,7 @@ public class CardsTest {
 		assertThat(result, equalTo(200));
 		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
-		assertThat(captured.getFirst("_classname"), equalTo((Object) "foo"));
+		assertThat(captured.getFirst(UNDERSCORED_TYPE), equalTo((Object) "foo"));
 		assertThat(captured.getFirst("foo"), equalTo((Object) "bar"));
 		assertThat(captured.getFirst("bar"), equalTo((Object) "baz"));
 		assertThat(captured.getFirst("baz"), equalTo((Object) "foo"));
@@ -177,7 +177,7 @@ public class CardsTest {
 				.build();
 		final SimpleResponse<Map<String, Object>> expectedResponse = SimpleResponse.<Map<String, Object>> newInstance() //
 				.withElement(ChainablePutMap.of(new HashMap<String, Object>()) //
-						.chainablePut(UNDERSCORED_CLASSNAME, type) //
+						.chainablePut(UNDERSCORED_TYPE, type) //
 						.chainablePut(UNDERSCORED_ID, firstId) //
 						.chainablePutAll(firstValues) //
 				) //
@@ -187,7 +187,7 @@ public class CardsTest {
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("cards/123/"));
-		get.setQueryString(all(param("_classname", "foo")));
+		get.setQueryString(all(param(UNDERSCORED_TYPE, "foo")));
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -202,7 +202,7 @@ public class CardsTest {
 		final PutMethod put = new PutMethod(server.resource("cards/123/"));
 		put.addRequestHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
 		put.setQueryString(all( //
-				param("_classname", "foo"), //
+				param(UNDERSCORED_TYPE, "foo"), //
 				param("foo", "bar"), //
 				param("bar", "baz"), //
 				param("baz", "foo") //
@@ -213,7 +213,7 @@ public class CardsTest {
 		verify(service).update(eq(123L), multivaluedMapCaptor.capture());
 		assertThat(result, equalTo(204));
 		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
-		assertThat(captured.getFirst("_classname"), equalTo((Object) "foo"));
+		assertThat(captured.getFirst(UNDERSCORED_TYPE), equalTo((Object) "foo"));
 		assertThat(captured.getFirst("foo"), equalTo((Object) "bar"));
 		assertThat(captured.getFirst("bar"), equalTo((Object) "baz"));
 		assertThat(captured.getFirst("baz"), equalTo((Object) "foo"));
@@ -223,7 +223,7 @@ public class CardsTest {
 	public void cardDeletedUsingDelete() throws Exception {
 		// when
 		final DeleteMethod delete = new DeleteMethod(server.resource("cards/123/"));
-		delete.setQueryString(all(param("_classname", "foo")));
+		delete.setQueryString(all(param(UNDERSCORED_TYPE, "foo")));
 		final int result = httpclient.executeMethod(delete);
 
 		// then

@@ -1,7 +1,7 @@
 package org.cmdbuild.service.rest.dto.adapter;
 
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CLASSNAME;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,7 +23,7 @@ public class CardAdapter extends XmlAdapter<Map<String, Object>, Card> {
 		 * predefined attributes must always be added at last so they are not
 		 * overwritten
 		 */
-		map.put(UNDERSCORED_CLASSNAME, input.getType());
+		map.put(UNDERSCORED_TYPE, input.getType());
 		map.put(UNDERSCORED_ID, input.getId());
 		return map;
 	}
@@ -31,7 +31,7 @@ public class CardAdapter extends XmlAdapter<Map<String, Object>, Card> {
 	@Override
 	public Card unmarshal(final Map<String, Object> input) throws Exception {
 		return Card.newInstance() //
-				.withType(getAndRemove(input, UNDERSCORED_CLASSNAME, String.class)) //
+				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
 				.withValues(input) //
 				.build();

@@ -31,7 +31,7 @@ public interface Processes {
 	);
 
 	@GET
-	@Path("{name}/")
+	@Path("{" + NAME + "}/")
 	SimpleResponse<FullProcessDetail> read( //
 			@PathParam(NAME) String name //
 	);

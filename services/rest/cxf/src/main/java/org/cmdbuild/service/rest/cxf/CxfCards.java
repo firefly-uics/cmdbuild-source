@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.cxf;
 
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CLASSNAME;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -23,38 +23,38 @@ public class CxfCards implements Cards {
 
 	@Override
 	public SimpleResponse<Long> create(final MultivaluedMap<String, String> formParam) {
-		final String name = formParam.getFirst(UNDERSCORED_CLASSNAME);
+		final String name = formParam.getFirst(UNDERSCORED_TYPE);
 		if (name == null) {
-			errorHandler.missingParam(UNDERSCORED_CLASSNAME);
+			errorHandler.missingParam(UNDERSCORED_TYPE);
 		}
-		formParam.remove(UNDERSCORED_CLASSNAME);
+		formParam.remove(UNDERSCORED_TYPE);
 		return delegate.create(name, formParam);
 	}
 
 	@Override
-	public SimpleResponse<Card> read(final String name, final Long id) {
-		return delegate.read(name, id);
+	public SimpleResponse<Card> read(final String type, final Long id) {
+		return delegate.read(type, id);
 
 	}
 
 	@Override
-	public ListResponse<Card> readAll(final String name, final String filter, final Integer limit, final Integer offset) {
-		return delegate.readAll(name, filter, limit, offset);
+	public ListResponse<Card> read(final String type, final String filter, final Integer limit, final Integer offset) {
+		return delegate.read(type, filter, limit, offset);
 	}
 
 	@Override
 	public void update(final Long id, final MultivaluedMap<String, String> formParam) {
-		final String name = formParam.getFirst(UNDERSCORED_CLASSNAME);
+		final String name = formParam.getFirst(UNDERSCORED_TYPE);
 		if (name == null) {
-			errorHandler.missingParam(UNDERSCORED_CLASSNAME);
+			errorHandler.missingParam(UNDERSCORED_TYPE);
 		}
-		formParam.remove(UNDERSCORED_CLASSNAME);
+		formParam.remove(UNDERSCORED_TYPE);
 		delegate.update(name, id, formParam);
 	}
 
 	@Override
-	public void delete(final String name, final Long id) {
-		delegate.delete(name, id);
+	public void delete(final String type, final Long id) {
+		delegate.delete(type, id);
 	}
 
 }

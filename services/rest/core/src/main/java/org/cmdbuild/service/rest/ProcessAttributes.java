@@ -16,7 +16,7 @@ import javax.ws.rs.QueryParam;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.ListResponse;
 
-@Path("processes/{name}/attributes/")
+@Path("processes/{" + NAME + "}/attributes/")
 @Produces(APPLICATION_JSON)
 public interface ProcessAttributes {
 
