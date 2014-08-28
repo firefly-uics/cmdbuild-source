@@ -73,11 +73,17 @@ public class CxfProcessInstancesTest {
 		doReturn(new StringAttributeType()) //
 				.when(attribute).getType();
 		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
+		doReturn("type") //
+				.when(userProcessClass).getName();
 		doReturn(userProcessClass) //
 				.when(workflowLogic).findProcessClass(anyString());
 		doReturn(attribute) //
 				.when(userProcessClass).getAttribute(anyString());
 		final UserProcessInstance foo = mock(UserProcessInstance.class);
+		doReturn(userProcessClass) //
+				.when(foo).getType();
+		doReturn(123L) //
+				.when(foo).getId();
 		doReturn("foo") //
 				.when(foo).getProcessInstanceId();
 		doReturn(ChainablePutMap.of(new HashMap<String, String>()) //
@@ -86,6 +92,10 @@ public class CxfProcessInstancesTest {
 				.entrySet()) //
 				.when(foo).getAllValues();
 		final UserProcessInstance bar = mock(UserProcessInstance.class);
+		doReturn(userProcessClass) //
+				.when(bar).getType();
+		doReturn(456L) //
+				.when(bar).getId();
 		doReturn("bar") //
 				.when(bar).getProcessInstanceId();
 		doReturn(ChainablePutMap.of(new HashMap<String, String>()) //
@@ -116,5 +126,4 @@ public class CxfProcessInstancesTest {
 		assertThat(get(elements, 0).getName(), equalTo("foo"));
 		assertThat(get(elements, 1).getName(), equalTo("bar"));
 	}
-
 }

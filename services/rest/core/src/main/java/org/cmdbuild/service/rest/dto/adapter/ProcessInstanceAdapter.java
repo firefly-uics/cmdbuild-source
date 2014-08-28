@@ -1,6 +1,8 @@
 package org.cmdbuild.service.rest.dto.adapter;
 
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -22,6 +24,8 @@ public class ProcessInstanceAdapter extends XmlAdapter<Map<String, Object>, Proc
 		 * predefined attributes must always be added at last so they are not
 		 * overwritten
 		 */
+		map.put(UNDERSCORED_TYPE, input.getType());
+		map.put(UNDERSCORED_ID, input.getId());
 		map.put(UNDERSCORED_NAME, input.getName());
 		return map;
 	}
@@ -29,6 +33,8 @@ public class ProcessInstanceAdapter extends XmlAdapter<Map<String, Object>, Proc
 	@Override
 	public ProcessInstance unmarshal(final Map<String, Object> input) throws Exception {
 		return ProcessInstance.newInstance() //
+				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
+				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
 				.withName(getAndRemove(input, UNDERSCORED_NAME, String.class)) //
 				.withValues(input) //
 				.build();

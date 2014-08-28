@@ -82,6 +82,7 @@ public class Serialization {
 			UNDERSCORED_CLASSNAME = "_" + CLASSNAME, //
 			UNDERSCORED_ID = "_" + ID, //
 			UNDERSCORED_NAME = "_" + NAME, //
+			UNDERSCORED_TYPE = "_" + TYPE, //
 			UNIQUE = "unique", //
 			VALUE = "value", //
 			VALUES = "values";
