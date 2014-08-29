@@ -4,8 +4,10 @@ import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -26,6 +28,7 @@ import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.ProcessInstance;
+import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.service.rest.serialization.ErrorHandler;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -49,20 +52,20 @@ public class CxfProcessInstancesTest {
 	}
 
 	@Test(expected = WebApplicationException.class)
-	public void exceptionWhenProcessNotFound() throws Exception {
+	public void exceptionWhenReadingAllInstancesButProcessNotFound() throws Exception {
 		// given
 		doReturn(null) //
 				.when(workflowLogic).findProcessClass(anyString());
 		doThrow(WebApplicationException.class) //
-				.when(errorHandler).classNotFound("foo");
+				.when(errorHandler).processNotFound(anyString());
 
 		// when
-		cxfProcessInstances.readAll("foo", null, null);
+		cxfProcessInstances.read("foo", null, null);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
 		inOrder.verify(workflowLogic).findProcessClass("foo");
-		inOrder.verify(errorHandler).classNotFound("foo");
+		inOrder.verify(errorHandler).processNotFound("foo");
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -109,7 +112,7 @@ public class CxfProcessInstancesTest {
 				.when(workflowLogic).query(anyString(), any(QueryOptions.class));
 
 		// when
-		final ListResponse<ProcessInstance> response = cxfProcessInstances.readAll("foo", null, null);
+		final ListResponse<ProcessInstance> response = cxfProcessInstances.read("foo", null, null);
 
 		// then
 		final ArgumentCaptor<QueryOptions> queryOptionsCaptor = ArgumentCaptor.forClass(QueryOptions.class);
@@ -126,4 +129,92 @@ public class CxfProcessInstancesTest {
 		assertThat(get(elements, 0).getName(), equalTo("foo"));
 		assertThat(get(elements, 1).getName(), equalTo("bar"));
 	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenReadingInstanceButProcessNotFound() throws Exception {
+		// given
+		doReturn(null) //
+				.when(workflowLogic).findProcessClass(anyString());
+		doThrow(WebApplicationException.class) //
+				.when(errorHandler).processNotFound("foo");
+
+		// when
+		cxfProcessInstances.read("foo", 123L);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		inOrder.verify(workflowLogic).findProcessClass("foo");
+		inOrder.verify(errorHandler).processNotFound("foo");
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenReadingInstanceButInstanceNotFound() throws Exception {
+		// given
+		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
+		doReturn(userProcessClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+		final PagedElements<UserProcessInstance> noElements = new PagedElements<UserProcessInstance>(null, 0);
+		doReturn(noElements) //
+				.when(workflowLogic).query(anyString(), any(QueryOptions.class));
+		doThrow(WebApplicationException.class) //
+				.when(errorHandler).processInstanceNotFound(anyLong());
+
+		// when
+		cxfProcessInstances.read("foo", 123L);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		inOrder.verify(workflowLogic).findProcessClass("foo");
+		inOrder.verify(workflowLogic).query(eq("foo"), any(QueryOptions.class));
+		inOrder.verify(errorHandler).processInstanceNotFound(123L);
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void singleInstanceReturned() throws Exception {
+		// given
+		final CMAttribute attribute = mock(CMAttribute.class);
+		doReturn(new StringAttributeType()) //
+				.when(attribute).getType();
+		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
+		doReturn("type") //
+				.when(userProcessClass).getName();
+		doReturn(userProcessClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+		doReturn(attribute) //
+				.when(userProcessClass).getAttribute(anyString());
+		final UserProcessInstance instance = mock(UserProcessInstance.class);
+		doReturn(userProcessClass) //
+				.when(instance).getType();
+		doReturn(123L) //
+				.when(instance).getId();
+		doReturn("foo") //
+				.when(instance).getProcessInstanceId();
+		doReturn(ChainablePutMap.of(new HashMap<String, String>()) //
+				.chainablePut("foo", "bar") //
+				.chainablePut("bar", "baz") //
+				.entrySet()) //
+				.when(instance).getAllValues();
+		final PagedElements<UserProcessInstance> pagedElements = new PagedElements<UserProcessInstance>(
+				asList(instance), 1);
+		doReturn(pagedElements) //
+				.when(workflowLogic).query(anyString(), any(QueryOptions.class));
+
+		// when
+		final SimpleResponse<ProcessInstance> response = cxfProcessInstances.read("foo", 123L);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		inOrder.verify(workflowLogic).findProcessClass("foo");
+		inOrder.verify(workflowLogic).query(eq("foo"), any(QueryOptions.class));
+		inOrder.verifyNoMoreInteractions();
+		final ProcessInstance element = response.getElement();
+		assertThat(element.getType(), equalTo("type"));
+		assertThat(element.getId(), equalTo(123L));
+		assertThat(element.getName(), equalTo("foo"));
+		assertThat(element.getValues(), hasEntry("foo", (Object) "bar"));
+		assertThat(element.getValues(), hasEntry("bar", (Object) "baz"));
+	}
+
 }

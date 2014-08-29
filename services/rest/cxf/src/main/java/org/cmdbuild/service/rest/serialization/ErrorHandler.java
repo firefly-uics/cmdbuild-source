@@ -2,16 +2,22 @@ package org.cmdbuild.service.rest.serialization;
 
 public interface ErrorHandler {
 
-	void entryTypeNotFound(String name);
+	void typeNotFound(String id);
 
-	void classNotFound(String name);
+	void classNotFound(String id);
 
-	void domainNotFound(String name);
+	void domainNotFound(String id);
+
+	void processNotFound(String id);
+
+	void processInstanceNotFound(Long id);
 
 	void cardNotFound(Long id);
 
+	void missingParam(String name);
+
 	void invalidParam(String value);
 
-	void missingParam(String value);
+	void propagate(Throwable e);
 
 }

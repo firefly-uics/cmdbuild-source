@@ -7,6 +7,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -23,6 +24,7 @@ import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.ProcessInstance;
+import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -49,6 +51,42 @@ public class ProcessInstancesTest {
 	@Before
 	public void createHttpClient() throws Exception {
 		httpclient = new HttpClient();
+	}
+
+	@Test
+	public void instanceReadUsingGet() throws Exception {
+		// given
+		final String type = "type";
+		final Long id = 123L;
+		final String name = "foo";
+		final Map<String, Object> values = ChainablePutMap.of(new HashMap<String, Object>()) //
+				.chainablePut("foo", "bar") //
+				.chainablePut("bar", "baz");
+		final SimpleResponse<ProcessInstance> sentResponse = SimpleResponse.newInstance(ProcessInstance.class) //
+				.withElement(ProcessInstance.newInstance() //
+						.withType(type) //
+						.withId(id) //
+						.withName(name) //
+						.withValues(values) //
+						.build()) //
+				.build();
+		final SimpleResponse<Map<String, Object>> expectedResponse = SimpleResponse.<Map<String, Object>> newInstance() //
+				.withElement(ChainablePutMap.of(new HashMap<String, Object>()) //
+						.chainablePut(UNDERSCORED_TYPE, type) //
+						.chainablePut(UNDERSCORED_ID, id) //
+						.chainablePut(UNDERSCORED_NAME, name) //
+						.chainablePutAll(values)) //
+				.build();
+		doReturn(sentResponse) //
+				.when(service).read(anyString(), anyLong());
+
+		// when
+		final GetMethod get = new GetMethod(server.resource("processes/foo/instances/123/"));
+		final int result = httpclient.executeMethod(get);
+
+		// then
+		assertThat(result, equalTo(200));
+		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
@@ -102,7 +140,7 @@ public class ProcessInstancesTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).readAll(anyString(), anyInt(), anyInt());
+				.when(service).read(anyString(), anyInt(), anyInt());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("processes/foo/instances/"));

@@ -39,7 +39,7 @@ public class CxfProcessAttributes implements ProcessAttributes {
 			final Integer offset) {
 		final CMClass target = userDataAccessLogic.findClass(name);
 		if (target == null) {
-			errorHandler.entryTypeNotFound(name);
+			errorHandler.typeNotFound(name);
 		}
 		final PagedElements<CMAttribute> filteredAttributes = userDataAccessLogic.getAttributes( //
 				name, //

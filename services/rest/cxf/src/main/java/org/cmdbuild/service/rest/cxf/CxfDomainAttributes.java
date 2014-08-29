@@ -39,7 +39,7 @@ public class CxfDomainAttributes implements DomainAttributes {
 			final Integer offset) {
 		final CMDomain target = userDataAccessLogic.findDomain(name);
 		if (target == null) {
-			errorHandler.entryTypeNotFound(name);
+			errorHandler.typeNotFound(name);
 		}
 		final PagedElements<CMAttribute> filteredAttributes = userDataAccessLogic.getDomainAttributes( //
 				name, //
