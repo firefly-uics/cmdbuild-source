@@ -26,8 +26,9 @@
 		 * @overwrite
 		 */
 		constructor: function(view) {
+			this.callParent(arguments);
+
 			// Handlers exchange and controller setup
-			this.view = view;
 			this.grid = view.grid;
 			this.form = view.form;
 			this.formLayout = view.form.getLayout();
@@ -35,8 +36,6 @@
 			this.grid.delegate = this;
 
 			this.selectionModel = this.grid.getSelectionModel();
-
-			this.callParent(arguments);
 		},
 
 		/**
