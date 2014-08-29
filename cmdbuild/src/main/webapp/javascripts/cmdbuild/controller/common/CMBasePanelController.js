@@ -4,7 +4,7 @@
 		alternateClassName: 'CMDBuild.controller.CMBasePanelController', // Legacy class name
 
 		/**
-		 * @param (Object) view
+		 * @param {Object} view
 		 */
 		constructor: function(view) {
 			this.view = view;
@@ -16,8 +16,8 @@
 		},
 
 		/**
-		 * @param (String) method
-		 * @param (Object) args
+		 * @param {String} method
+		 * @param {Object} args
 		 */
 		callMethodForAllSubcontrollers: function(method, args) {
 			if (!Ext.isEmpty(this.subcontrollers)) {
@@ -31,7 +31,7 @@
 		},
 
 		/**
-		 * @param (Object) parameters
+		 * @param {Object} parameters
 		 */
 		onViewOnFront: function(parameters) {
 			CMDBuild.log.info('onPanelActivate ' + this.view.title, this, parameters);
@@ -40,9 +40,9 @@
 		/**
 		 * Validation input form
 		 *
-		 * @param (Object) form
+		 * @param {Ext.formPanel} form
 		 *
-		 * @return (Boolean)
+		 * @return {Boolean}
 		 */
 		validate: function(form) {
 			var invalidFieldsArray = form.getNonValidFields();
