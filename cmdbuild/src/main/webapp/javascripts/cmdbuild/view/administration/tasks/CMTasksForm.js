@@ -28,7 +28,6 @@
 		},
 
 		defaults: {
-			bodyPadding: 10,
 			layout: 'fit'
 		},
 

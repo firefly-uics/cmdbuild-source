@@ -169,8 +169,8 @@
 
 		delegate: undefined,
 
-		bodyCls: 'cmgraypanel',
 		border: false,
+		frame: true,
 		overflowY: 'auto',
 
 		initComponent: function() {
