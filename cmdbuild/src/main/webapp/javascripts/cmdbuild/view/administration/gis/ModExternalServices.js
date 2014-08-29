@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.modcartography.external_services;
 
-	Ext.define('CMDBuild.view.administration.gis.ModExternalServices', {
+	Ext.define('CMDBuild.view.administration.gis.ExternalServices', {
 		extend: 'Ext.form.Panel',
 
 		cmName: 'gis-external-services',
@@ -17,7 +17,7 @@
 
 			this.services = ['google', 'yahoo', 'osm', 'geoserver'];
 
-			this.delegate = Ext.create('CMDBuild.controller.administration.gis.ModExternalServicesController', this);
+			this.delegate = Ext.create('CMDBuild.controller.administration.gis.ExternalServicesController', this);
 
 			// Buttons configuration
 				this.saveButton = Ext.create('Ext.button.Button', {

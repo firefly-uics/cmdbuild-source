@@ -69,8 +69,6 @@
 
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMGISAccordion.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/GeoServerLayersGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/GeoServerForm.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/CMModGeoServer.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModGISNavigationConfiguration.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModExternalServices.js"></script>
