@@ -16,7 +16,7 @@
 		buttonAlign: 'center',
 		cls: 'x-panel-body-default-framed cmbordertop',
 		frame: false,
-		layout: 'fit',
+		layout: 'border',
 		split: true,
 
 		initComponent: function() {
@@ -231,8 +231,9 @@
 			// END: Page FieldSets configuration
 
 			// Splitted-view wrapper
-			this.wrapper = Ext.create('Ext.container.Container', {
-				frame: false,
+			this.wrapper = Ext.create('Ext.panel.Panel', {
+				region: 'center',
+				frame: true,
 				border: false,
 
 				layout: {
