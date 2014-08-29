@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.proxy.CMProxyConfiguration');
 
-	Ext.define('CMDBuild.controller.administration.gis.ModExternalServicesController', {
+	Ext.define('CMDBuild.controller.administration.gis.ExternalServicesController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		view: undefined,
