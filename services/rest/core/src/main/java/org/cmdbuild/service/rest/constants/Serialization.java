@@ -6,7 +6,9 @@ public class Serialization {
 
 	public static final String //
 			ACTIVE = "active", //
+			ATTRIBUTE = "attribute", //
 			ATTRIBUTE_DETAIL = "attributeDetail", //
+			ATTRIBUTES = "attributes", //
 			CARD = "card", //
 			CARD_DETAIL = "cardDetail", //
 			CARDINALITY = "cardinality", //
@@ -32,6 +34,7 @@ public class Serialization {
 			ID = "id", //
 			INDEX = "index", //
 			INHERITED = "inherited", //
+			INSTRUCTIONS = "instructions", //
 			LENGTH = "length", //
 			LIMIT = "limit", //
 			LIST_RESPONSE = "listResponse", //
@@ -42,6 +45,7 @@ public class Serialization {
 			NAME = "name", //
 			NUMBER = "number", //
 			PARAMS = "params", //
+			PROCESS_ACTIVITY = "processActivity", //
 			PROCESS_INSTANCE = "processInstance", //
 			PROTOTYPE = "prototype", //
 			OBJECT_DESCRIPTION = "objectDescription", //
