@@ -9,31 +9,44 @@ import org.cmdbuild.service.rest.serialization.ErrorHandler;
 public class DefaultErrorHandler implements ErrorHandler {
 
 	@Override
-	public void entryTypeNotFound(final String name) {
-		throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
-				.entity(name) //
-				.build());
+	public void typeNotFound(final String id) {
+		notFound(id);
 	}
 
 	@Override
-	public void classNotFound(final String name) {
-		throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
-				.entity(name) //
-				.build());
+	public void classNotFound(final String id) {
+		notFound(id);
 	}
 
 	@Override
-	public void domainNotFound(final String name) {
-		throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
-				.entity(name) //
-				.build());
+	public void domainNotFound(final String id) {
+		notFound(id);
+	}
+
+	@Override
+	public void processNotFound(final String id) {
+		notFound(id);
+	}
+
+	@Override
+	public void processInstanceNotFound(final Long id) {
+		notFound(id);
 	}
 
 	@Override
 	public void cardNotFound(final Long id) {
+		notFound(id);
+	}
+
+	private void notFound(final Object entity) {
 		throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
-				.entity(id) //
+				.entity(entity) //
 				.build());
+	}
+
+	@Override
+	public void missingParam(final String name) {
+		notFound(name);
 	}
 
 	@Override
@@ -44,9 +57,9 @@ public class DefaultErrorHandler implements ErrorHandler {
 	}
 
 	@Override
-	public void missingParam(final String value) {
-		throw new WebApplicationException(Response.status(Status.BAD_REQUEST) //
-				.entity(value) //
+	public void propagate(final Throwable e) {
+		throw new WebApplicationException(e, Response.status(Status.INTERNAL_SERVER_ERROR) //
+				.entity(e.getMessage()) //
 				.build());
 	}
 
