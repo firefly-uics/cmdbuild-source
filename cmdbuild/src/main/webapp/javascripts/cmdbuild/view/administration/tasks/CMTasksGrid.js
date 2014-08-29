@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks; // Path to translation
+	var tr = CMDBuild.Translation.administration.tasks;
 
 	Ext.define('CMDBuild.view.administration.tasks.CMTasksGrid', {
 		extend: 'Ext.grid.Panel',

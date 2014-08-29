@@ -2,6 +2,9 @@
 
 	var tr = CMDBuild.Translation.administration.email.templates;
 
+	Ext.require('CMDBuild.core.proxy.CMProxyEmailAccounts');
+	Ext.require('CMDBuild.core.proxy.CMProxyEmailTemplates');
+
 	Ext.define('CMDBuild.view.administration.email.CMEmailTemplates', {
 		extend: 'Ext.panel.Panel',
 
