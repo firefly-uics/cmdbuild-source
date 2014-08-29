@@ -1,6 +1,7 @@
 (function() {
 
-	Ext.define('CMDBuild.delegate.common.field.CMFilterChooserWindowDelegate', {
+	Ext.define('CMDBuild.delegate.common.filter.CMFilterChooserWindowDelegate', {
+		alternateClassName: 'CMDBuild.delegate.common.field.CMFilterChooserWindowDelegate', // Legacy class name
 		/**
 		 * @params {CMDBuild.view.common.field.CMFilterChooserWindow} filterWindow - the window that call the delegate
 		 * @params {Ext.data.Model} filter -the selected record
@@ -8,7 +9,8 @@
 		onCMFilterChooserWindowRecordSelect: function(filterWindow, filter) {}
 	});
 
-	Ext.define('CMDBuild.view.common.field.CMFilterChooserWindow', {
+	Ext.define('CMDBuild.view.common.filter.CMFilterChooserWindow', {
+		alternateClassName: 'CMDBuild.view.common.field.CMFilterChooserWindow', // Legacy class name
 		extend: 'CMDBuild.view.management.common.filter.CMFilterWindow',
 
 		mixins: {
@@ -160,7 +162,8 @@
 	var SET = CMDBuild.Translation.set;
 	var UNSET = CMDBuild.Translation.not_set;
 
-	Ext.define('CMDBuild.view.common.field.CMFilterChooser', {
+	Ext.define('CMDBuild.view.common.filter.CMFilterChooser', {
+		alternateClassName: 'CMDBuild.view.common.field.CMFilterChooser', // Legacy class name
 		extend: 'Ext.form.FieldContainer',
 
 		mixins: {
