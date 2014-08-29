@@ -69,9 +69,7 @@
 
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMGISAccordion.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/CMModGeoServer.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModGISNavigationConfiguration.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModExternalServices.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModIcons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModLayerOrder.js"></script>
 
@@ -163,6 +161,7 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGeoServerController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModLayerOrderController.js"></script>
+	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/ExternalServicesController.js"></script>
 
 	<!-- GROUP -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMGroupAccordionController.js"></script>

@@ -261,10 +261,13 @@
 								new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
 									cmControllerType: controllerNS.administration.gis.CMModGISNavigationConfigurationController
 								}),
-								Ext.create('CMDBuild.view.administration.gis.ExternalServices'),
+								Ext.create('CMDBuild.view.administration.gis.ExternalServices', {
+									cmControllerType: CMDBuild.controller.administration.gis.ExternalServicesController,
+									cmName: 'gis-external-services'
+								}),
 								Ext.create('CMDBuild.view.administration.gis.CMModGeoServer', {
-									cmControllerType: controllerNS.administration.gis.CMModGeoServerController,
-									cmName: 'gis-geoserver',
+									cmControllerType: CMDBuild.controller.administration.gis.CMModGeoServerController,
+									cmName: 'gis-geoserver'
 								}),
 								new CMDBuild.Administration.ModLayerOrder({
 									cmControllerType: controllerNS.administration.gis.CMModLayerOrderController

@@ -1,11 +1,31 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyConfiguration');
-
 	Ext.define('CMDBuild.controller.administration.gis.ExternalServicesController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		view: undefined,
+
+		/**
+		 * @param {CMDBuild.view.administration.gis.ExternalServices} view
+		 *
+		 * @overwrite
+		 */
+		constructor: function(view) {
+			this.callParent(arguments);
+
+			this.view.delegate = this;
+		},
+
+		/**
+		 * @param {Object} parameters - AccordionStoreModel
+		 *
+		 * @overwrite
+		 */
+		onViewOnFront: function(parameters) {
+			this.callParent(arguments);
+
+			this.getConfigFromServer();
+		},
 
 		/**
 		 * Gatherer function to catch events
@@ -24,8 +44,8 @@
 				case 'onSaveButtonClick':
 					return this.onSaveButtonClick();
 
-				case 'onShow':
-					return this.getConfigFromServer();
+//				case 'onShow':
+//					return this.getConfigFromServer();
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -63,7 +83,7 @@
 		/**
 		 * Reads configuration from server call, fill form with response and expands all active fieldset
 		 */
-		getConfigFromServer: function(){
+		getConfigFromServer: function() {
 			CMDBuild.ServiceProxy.configuration.read({
 				scope: this,
 				success: function(result, options, decodedResult) {
