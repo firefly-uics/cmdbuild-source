@@ -1,7 +1,5 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyEmailAccounts');
-
 	Ext.define('CMDBuild.controller.administration.email.CMEmailAccountsController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 

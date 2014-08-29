@@ -1,7 +1,5 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
-
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
