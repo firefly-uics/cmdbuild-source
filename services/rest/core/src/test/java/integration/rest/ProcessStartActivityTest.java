@@ -11,8 +11,8 @@ import static support.ServerResource.randomPort;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.ProcessStartActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivity.Attribute;
+import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
+import org.cmdbuild.service.rest.dto.ProcessActivityDefinition.Attribute;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -45,8 +45,9 @@ public class ProcessStartActivityTest {
 	@Test
 	public void readUsingGet() throws Exception {
 		// given
-		final SimpleResponse<ProcessActivity> sentResponse = SimpleResponse.newInstance(ProcessActivity.class) //
-				.withElement(ProcessActivity.newInstance() //
+		final SimpleResponse<ProcessActivityDefinition> sentResponse = SimpleResponse
+				.newInstance(ProcessActivityDefinition.class) //
+				.withElement(ProcessActivityDefinition.newInstance() //
 						.withId("id") //
 						.withDescription("description") //
 						.withInstructions("instructions") //
@@ -63,7 +64,7 @@ public class ProcessStartActivityTest {
 								)) //
 						.build()) //
 				.build();
-		final SimpleResponse<ProcessActivity> expectedResponse = sentResponse;
+		final SimpleResponse<ProcessActivityDefinition> expectedResponse = sentResponse;
 		doReturn(sentResponse) //
 				.when(service).read(anyString());
 

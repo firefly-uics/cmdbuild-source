@@ -34,6 +34,11 @@ public class DefaultErrorHandler implements ErrorHandler {
 	}
 
 	@Override
+	public void processActivityNotFound(final String id) {
+		notFound(id);
+	}
+
+	@Override
 	public void cardNotFound(final Long id) {
 		notFound(id);
 	}

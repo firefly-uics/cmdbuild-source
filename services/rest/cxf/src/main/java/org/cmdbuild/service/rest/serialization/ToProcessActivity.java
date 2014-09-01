@@ -1,16 +1,14 @@
 package org.cmdbuild.service.rest.serialization;
 
-import static com.google.common.collect.FluentIterable.from;
-
 import org.cmdbuild.service.rest.dto.ProcessActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivity.Attribute;
-import org.cmdbuild.workflow.CMActivity;
+import org.cmdbuild.service.rest.dto.ProcessActivityDefinition.Attribute;
+import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 
 import com.google.common.base.Function;
 
-public class ToProcessActivity implements Function<CMActivity, ProcessActivity> {
+public class ToProcessActivity implements Function<UserActivityInstance, ProcessActivity> {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToProcessActivity> {
 
@@ -54,15 +52,10 @@ public class ToProcessActivity implements Function<CMActivity, ProcessActivity> 
 	}
 
 	@Override
-	public ProcessActivity apply(final CMActivity input) {
+	public ProcessActivity apply(final UserActivityInstance input) {
 		return ProcessActivity.newInstance() //
 				.withId(input.getId()) //
-				.withDescription(input.getDescription()) //
-				.withInstructions(input.getInstructions()) //
-				.withAttributes(from(input.getVariables()) //
-						.transform(TO_ATTRIBUTE) //
-						.toList() //
-				) //
+				.withWritableStatus(input.isWritable()) //
 				.build();
 	}
 }

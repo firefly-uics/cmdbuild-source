@@ -1,25 +1,27 @@
 package org.cmdbuild.service.rest.serialization;
 
-import org.cmdbuild.service.rest.dto.ProcessActivity.Attribute;
-import org.cmdbuild.service.rest.dto.ProcessActivityShort;
-import org.cmdbuild.workflow.user.UserActivityInstance;
+import static com.google.common.collect.FluentIterable.from;
+
+import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
+import org.cmdbuild.service.rest.dto.ProcessActivityDefinition.Attribute;
+import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 
 import com.google.common.base.Function;
 
-public class ToProcessActivityShort implements Function<UserActivityInstance, ProcessActivityShort> {
+public class ToProcessActivityDefinition implements Function<CMActivity, ProcessActivityDefinition> {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToProcessActivityShort> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToProcessActivityDefinition> {
 
 		private Builder() {
 			// use static method
 		}
 
 		@Override
-		public ToProcessActivityShort build() {
+		public ToProcessActivityDefinition build() {
 			validate();
-			return new ToProcessActivityShort(this);
+			return new ToProcessActivityDefinition(this);
 		}
 
 		private void validate() {
@@ -47,15 +49,20 @@ public class ToProcessActivityShort implements Function<UserActivityInstance, Pr
 
 	public static final ToAttribute TO_ATTRIBUTE = new ToAttribute();
 
-	private ToProcessActivityShort(final Builder builder) {
+	private ToProcessActivityDefinition(final Builder builder) {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public ProcessActivityShort apply(final UserActivityInstance input) {
-		return ProcessActivityShort.newInstance() //
+	public ProcessActivityDefinition apply(final CMActivity input) {
+		return ProcessActivityDefinition.newInstance() //
 				.withId(input.getId()) //
-				.withWritableStatus(input.isWritable()) //
+				.withDescription(input.getDescription()) //
+				.withInstructions(input.getInstructions()) //
+				.withAttributes(from(input.getVariables()) //
+						.transform(TO_ATTRIBUTE) //
+						.toList() //
+				) //
 				.build();
 	}
 }

@@ -5,7 +5,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.CODE;
 import static org.cmdbuild.service.rest.constants.Serialization.DEFAULT;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.ID;
-import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_TYPE_DETAIL;
+import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_DETAIL;
 import static org.cmdbuild.service.rest.constants.Serialization.NUMBER;
 import static org.cmdbuild.service.rest.constants.Serialization.PARENT_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.PARENT_TYPE;
@@ -20,7 +20,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-@XmlRootElement(name = LOOKUP_TYPE_DETAIL)
+@XmlRootElement(name = LOOKUP_DETAIL)
 public class LookupDetail {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<LookupDetail> {
