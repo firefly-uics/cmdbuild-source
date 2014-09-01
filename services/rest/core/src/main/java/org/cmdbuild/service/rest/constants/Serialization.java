@@ -6,6 +6,7 @@ public class Serialization {
 
 	public static final String //
 			ACTIVE = "active", //
+			ACTIVITY = "activity", //
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTE_DETAIL = "attributeDetail", //
 			ATTRIBUTES = "attributes", //
@@ -39,6 +40,7 @@ public class Serialization {
 			LENGTH = "length", //
 			LIMIT = "limit", //
 			LIST_RESPONSE = "listResponse", //
+			LOOKUP_DETAIL = "lookupDetail", //
 			LOOKUP_TYPE_DETAIL = "lookupTypeDetail", //
 			LOOKUP_TYPE_NAME = "lookupTypeName", //
 			MANDATORY = "mandatory", //
@@ -47,6 +49,7 @@ public class Serialization {
 			NUMBER = "number", //
 			PARAMS = "params", //
 			PROCESS_ACTIVITY = "processActivity", //
+			PROCESS_ACTIVITY_DEFINITION = "processActivityDefinition", //
 			PROCESS_INSTANCE = "processInstance", //
 			PROTOTYPE = "prototype", //
 			OBJECT_DESCRIPTION = "objectDescription", //

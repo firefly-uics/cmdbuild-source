@@ -16,8 +16,8 @@ import javax.ws.rs.WebApplicationException;
 
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.cxf.CxfProcessStartActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivity.Attribute;
+import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
+import org.cmdbuild.service.rest.dto.ProcessActivityDefinition.Attribute;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.service.rest.serialization.ErrorHandler;
 import org.cmdbuild.workflow.CMActivity;
@@ -103,14 +103,14 @@ public class CxfProcessStartActivityTest {
 				.when(workflowLogic).getStartActivity(anyString());
 
 		// when
-		final SimpleResponse<ProcessActivity> response = cxfProcessStartActivity.read("foo");
+		final SimpleResponse<ProcessActivityDefinition> response = cxfProcessStartActivity.read("foo");
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
 		inOrder.verify(workflowLogic).findProcessClass("foo");
 		inOrder.verify(workflowLogic).getStartActivity("foo");
 		inOrder.verifyNoMoreInteractions();
-		final ProcessActivity element = response.getElement();
+		final ProcessActivityDefinition element = response.getElement();
 		assertThat(element.getId(), equalTo(activity.getId()));
 		assertThat(element.getDescription(), equalTo(activity.getDescription()));
 		assertThat(element.getInstructions(), equalTo(activity.getInstructions()));

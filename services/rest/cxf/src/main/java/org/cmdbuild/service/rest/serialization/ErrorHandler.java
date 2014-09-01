@@ -12,6 +12,8 @@ public interface ErrorHandler {
 
 	void processInstanceNotFound(Long id);
 
+	void processActivityNotFound(String id);
+
 	void cardNotFound(Long id);
 
 	void missingParam(String name);

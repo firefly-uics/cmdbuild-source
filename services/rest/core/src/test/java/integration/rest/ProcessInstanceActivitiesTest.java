@@ -12,7 +12,10 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.ProcessInstanceActivities;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.ProcessActivityShort;
+import org.cmdbuild.service.rest.dto.ProcessActivity;
+import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
+import org.cmdbuild.service.rest.dto.ProcessActivityDefinition.Attribute;
+import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -44,13 +47,13 @@ public class ProcessInstanceActivitiesTest {
 	@Test
 	public void instancesReadUsingGet() throws Exception {
 		// given
-		final ListResponse<ProcessActivityShort> sentResponse = ListResponse.newInstance(ProcessActivityShort.class) //
+		final ListResponse<ProcessActivity> sentResponse = ListResponse.newInstance(ProcessActivity.class) //
 				.withElements(asList( //
-						ProcessActivityShort.newInstance() //
+						ProcessActivity.newInstance() //
 								.withId("first") //
 								.withWritableStatus(true) //
 								.build(), //
-						ProcessActivityShort.newInstance() //
+						ProcessActivity.newInstance() //
 								.withId("second") //
 								.withWritableStatus(false) //
 								.build() //
@@ -59,12 +62,47 @@ public class ProcessInstanceActivitiesTest {
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		final ListResponse<ProcessActivityShort> expectedResponse = sentResponse;
+		final ListResponse<ProcessActivity> expectedResponse = sentResponse;
 		doReturn(sentResponse) //
 				.when(service).read("foo", 123L);
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("processes/foo/instances/123/activities"));
+		final int result = httpclient.executeMethod(get);
+
+		// then
+		assertThat(result, equalTo(200));
+		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+	}
+
+	@Test
+	public void instanceReadUsingGet() throws Exception {
+		// given
+		final SimpleResponse<ProcessActivityDefinition> sentResponse = SimpleResponse
+				.newInstance(ProcessActivityDefinition.class) //
+				.withElement(ProcessActivityDefinition.newInstance() //
+						.withId("id") //
+						.withDescription("description") //
+						.withInstructions("instructions") //
+						.withAttributes(asList( //
+								Attribute.newInstance() //
+										.withId("foo") //
+										.withWritable(true) //
+										.withMandatory(false) //
+										.build(), //
+								Attribute.newInstance() //
+										.withId("bar") //
+										.withMandatory(true) //
+										.build() //
+								)) //
+						.build()) //
+				.build();
+		final SimpleResponse<ProcessActivityDefinition> expectedResponse = sentResponse;
+		doReturn(sentResponse) //
+				.when(service).read("foo", 123L, "bar");
+
+		// when
+		final GetMethod get = new GetMethod(server.resource("processes/foo/instances/123/activities/bar"));
 		final int result = httpclient.executeMethod(get);
 
 		// then

@@ -3,10 +3,10 @@ package org.cmdbuild.service.rest.cxf;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.ProcessStartActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivity;
+import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.service.rest.serialization.ErrorHandler;
-import org.cmdbuild.service.rest.serialization.ToProcessActivity;
+import org.cmdbuild.service.rest.serialization.ToProcessActivityDefinition;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
@@ -15,7 +15,7 @@ public class CxfProcessStartActivity implements ProcessStartActivity {
 
 	private static final CMActivity UNSUPPORTED_ACTIVITY = UnsupportedProxyFactory.of(CMActivity.class).create();
 
-	private static final ToProcessActivity TO_PROCESS_ACTIVITY = ToProcessActivity.newInstance() //
+	private static final ToProcessActivityDefinition TO_PROCESS_ACTIVITY = ToProcessActivityDefinition.newInstance() //
 			.build();
 
 	private final ErrorHandler errorHandler;
@@ -27,14 +27,14 @@ public class CxfProcessStartActivity implements ProcessStartActivity {
 	}
 
 	@Override
-	public SimpleResponse<ProcessActivity> read(final String type) {
+	public SimpleResponse<ProcessActivityDefinition> read(final String type) {
 		final UserProcessClass found = workflowLogic.findProcessClass(type);
 		if (found == null) {
 			errorHandler.processNotFound(type);
 		}
 		final CMActivity activity = startActivityFor(type);
-		final ProcessActivity element = TO_PROCESS_ACTIVITY.apply(activity);
-		return SimpleResponse.newInstance(ProcessActivity.class) //
+		final ProcessActivityDefinition element = TO_PROCESS_ACTIVITY.apply(activity);
+		return SimpleResponse.newInstance(ProcessActivityDefinition.class) //
 				.withElement(element) //
 				.build();
 	}
