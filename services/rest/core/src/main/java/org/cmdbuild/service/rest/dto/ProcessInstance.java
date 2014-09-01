@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -23,6 +24,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.service.rest.dto.adapter.ProcessInstanceAdapter;
+import org.cmdbuild.service.rest.dto.adapter.StringObjectMapAdapter;
 
 import com.google.common.base.Function;
 
@@ -127,7 +129,8 @@ public class ProcessInstance {
 		this.name = name;
 	}
 
-	@XmlAttribute(name = VALUES)
+	@XmlElement(name = VALUES)
+	@XmlJavaTypeAdapter(StringObjectMapAdapter.class)
 	public Map<String, Object> getValues() {
 		return values;
 	}

@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -241,7 +242,7 @@ public class ProcessActivityDefinition {
 		this.instructions = instructions;
 	}
 
-	@XmlAttribute(name = ATTRIBUTES)
+	@XmlElement(name = ATTRIBUTES)
 	public Collection<Attribute> getAttributes() {
 		return attributes;
 	}
