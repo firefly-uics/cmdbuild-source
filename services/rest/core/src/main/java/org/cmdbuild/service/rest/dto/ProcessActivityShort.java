@@ -1,17 +1,11 @@
 package org.cmdbuild.service.rest.dto;
 
 import static java.lang.Boolean.FALSE;
-import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.constants.Serialization.ATTRIBUTE;
-import static org.cmdbuild.service.rest.constants.Serialization.ATTRIBUTES;
-import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.ID;
-import static org.cmdbuild.service.rest.constants.Serialization.INSTRUCTIONS;
 import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_ACTIVITY;
-
-import java.util.Collection;
-import java.util.Collections;
+import static org.cmdbuild.service.rest.constants.Serialization.WRITABLE;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,10 +15,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import com.google.common.collect.Lists;
-
 @XmlRootElement(name = PROCESS_ACTIVITY)
-public class ProcessActivity {
+public class ProcessActivityShort {
 
 	@XmlRootElement(name = ATTRIBUTE)
 	public static class Attribute {
@@ -60,10 +52,6 @@ public class ProcessActivity {
 				return this;
 			}
 
-			public Builder withMandatory(final Boolean mandatory) {
-				this.mandatory = mandatory;
-				return this;
-			}
 		}
 
 		public static Attribute.Builder newInstance() {
@@ -141,27 +129,23 @@ public class ProcessActivity {
 
 	}
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<ProcessActivity> {
-
-		private static final Collection<? extends Attribute> NO_ATTRIBUTES = Collections.emptyList();
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<ProcessActivityShort> {
 
 		private String id;
-		private String description;
-		private String instructions;
-		private final Collection<Attribute> attributes = Lists.newArrayList();
+		private Boolean writable;
 
 		private Builder() {
 			// use static method
 		}
 
 		@Override
-		public ProcessActivity build() {
+		public ProcessActivityShort build() {
 			validate();
-			return new ProcessActivity(this);
+			return new ProcessActivityShort(this);
 		}
 
 		private void validate() {
-			// TODO Auto-generated method stub
+			writable = defaultIfNull(writable, FALSE);
 		}
 
 		public Builder withId(final String id) {
@@ -169,26 +153,8 @@ public class ProcessActivity {
 			return this;
 		}
 
-		public Builder withDescription(final String description) {
-			this.description = description;
-			return this;
-		}
-
-		public Builder withInstructions(final String instructions) {
-			this.instructions = instructions;
-			return this;
-		}
-
-		public Builder withAttribute(final Attribute.Builder attribute) {
-			return withAttribute(attribute.build());
-		}
-
-		public Builder withAttribute(final Attribute attribute) {
-			return withAttributes(asList(attribute));
-		}
-
-		public Builder withAttributes(final Collection<? extends Attribute> attributes) {
-			this.attributes.addAll(defaultIfNull(attributes, NO_ATTRIBUTES));
+		public Builder withWritableStatus(final boolean writable) {
+			this.writable = writable;
 			return this;
 		}
 
@@ -198,20 +164,16 @@ public class ProcessActivity {
 		return new Builder();
 	}
 
-	ProcessActivity() {
+	ProcessActivityShort() {
 		// package visibility
 	}
 
 	private String id;
-	private String description;
-	private String instructions;
-	private Collection<Attribute> attributes;
+	private boolean writable;
 
-	private ProcessActivity(final Builder builder) {
+	private ProcessActivityShort(final Builder builder) {
 		this.id = builder.id;
-		this.description = builder.description;
-		this.instructions = builder.instructions;
-		this.attributes = builder.attributes;
+		this.writable = builder.writable;
 	}
 
 	@XmlAttribute(name = ID)
@@ -223,31 +185,13 @@ public class ProcessActivity {
 		this.id = id;
 	}
 
-	@XmlAttribute(name = DESCRIPTION)
-	public String getDescription() {
-		return description;
+	@XmlAttribute(name = WRITABLE)
+	public boolean isWritable() {
+		return writable;
 	}
 
-	void setDescription(final String description) {
-		this.description = description;
-	}
-
-	@XmlAttribute(name = INSTRUCTIONS)
-	public String getInstructions() {
-		return instructions;
-	}
-
-	void setInstructions(final String instructions) {
-		this.instructions = instructions;
-	}
-
-	@XmlAttribute(name = ATTRIBUTES)
-	public Collection<Attribute> getAttributes() {
-		return attributes;
-	}
-
-	void setAttributes(final Collection<Attribute> attributes) {
-		this.attributes = attributes;
+	public void setWritable(final boolean writable) {
+		this.writable = writable;
 	}
 
 	@Override
@@ -256,15 +200,14 @@ public class ProcessActivity {
 			return true;
 		}
 
-		if (!(obj instanceof ProcessActivity)) {
+		if (!(obj instanceof ProcessActivityShort)) {
 			return false;
 		}
 
-		final ProcessActivity other = ProcessActivity.class.cast(obj);
+		final ProcessActivityShort other = ProcessActivityShort.class.cast(obj);
 		return new EqualsBuilder() //
 				.append(this.id, other.id) //
-				.append(this.description, other.description) //
-				.append(this.instructions, other.instructions) //
+				.append(this.writable, other.writable) //
 				.isEquals();
 	}
 
@@ -272,8 +215,7 @@ public class ProcessActivity {
 	public int hashCode() {
 		return new HashCodeBuilder() //
 				.append(id) //
-				.append(description) //
-				.append(instructions) //
+				.append(writable) //
 				.toHashCode();
 	}
 
