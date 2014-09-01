@@ -12,6 +12,7 @@ import org.cmdbuild.service.rest.cxf.CxfLookupTypes;
 import org.cmdbuild.service.rest.cxf.CxfLookupValues;
 import org.cmdbuild.service.rest.cxf.CxfMenu;
 import org.cmdbuild.service.rest.cxf.CxfProcessAttributes;
+import org.cmdbuild.service.rest.cxf.CxfProcessInstanceActivities;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.cxf.CxfProcessStartActivity;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
@@ -96,6 +97,11 @@ public class Services {
 	@Bean
 	public CxfProcesses cxfProcesses() {
 		return new CxfProcesses(utilities.defaultErrorHandler(), helper.userWorkflowLogic());
+	}
+
+	@Bean
+	public CxfProcessInstanceActivities cxfProcessInstanceActivities() {
+		return new CxfProcessInstanceActivities(utilities.defaultErrorHandler(), helper.userWorkflowLogic());
 	}
 
 	@Bean

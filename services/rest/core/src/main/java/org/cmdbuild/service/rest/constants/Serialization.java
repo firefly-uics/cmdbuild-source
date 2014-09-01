@@ -34,6 +34,7 @@ public class Serialization {
 			ID = "id", //
 			INDEX = "index", //
 			INHERITED = "inherited", //
+			INSTANCE = "instance", //
 			INSTRUCTIONS = "instructions", //
 			LENGTH = "length", //
 			LIMIT = "limit", //
@@ -87,7 +88,8 @@ public class Serialization {
 			UNDERSCORED_TYPE = "_" + TYPE, //
 			UNIQUE = "unique", //
 			VALUE = "value", //
-			VALUES = "values";
+			VALUES = "values", //
+			WRITABLE = "writable";
 
 	private Serialization() {
 		// prevents instantiation
