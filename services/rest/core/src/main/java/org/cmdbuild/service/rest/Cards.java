@@ -9,6 +9,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -29,6 +30,7 @@ public interface Cards {
 	@POST
 	@Path(EMPTY)
 	SimpleResponse<Long> create( //
+			@FormParam(UNDERSCORED_TYPE) String type, //
 			MultivaluedMap<String, String> formParam //
 	);
 
@@ -52,6 +54,7 @@ public interface Cards {
 	@Path("{" + ID + "}/")
 	void update( //
 			@PathParam(ID) Long id, //
+			@FormParam(UNDERSCORED_TYPE) String type, //
 			MultivaluedMap<String, String> formParam //
 	);
 

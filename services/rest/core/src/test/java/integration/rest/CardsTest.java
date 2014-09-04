@@ -7,6 +7,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -137,18 +138,21 @@ public class CardsTest {
 				.withElement(123L) //
 				.build();
 		doReturn(expectedResponse) //
-				.when(service).create(multivaluedMapCaptor.capture());
+				.when(service).create(anyString(), any(MultivaluedMap.class));
 
 		// when
 		final PostMethod post = new PostMethod(server.resource("cards/"));
 		post.addParameter(UNDERSCORED_TYPE, "foo");
-		post.addParameter("foo", "bar");
-		post.addParameter("bar", "baz");
-		post.addParameter("baz", "foo");
+		post.setQueryString(all( //
+				param(UNDERSCORED_TYPE, "foo"), //
+				param("foo", "bar"), //
+				param("bar", "baz"), //
+				param("baz", "foo") //
+		));
 		final int result = httpclient.executeMethod(post);
 
 		// then
-		verify(service).create(multivaluedMapCaptor.capture());
+		verify(service).create(eq("foo"), multivaluedMapCaptor.capture());
 		assertThat(result, equalTo(200));
 		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
@@ -210,7 +214,7 @@ public class CardsTest {
 		final int result = httpclient.executeMethod(put);
 
 		// then
-		verify(service).update(eq(123L), multivaluedMapCaptor.capture());
+		verify(service).update(eq(123L), eq("foo"), multivaluedMapCaptor.capture());
 		assertThat(result, equalTo(204));
 		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
 		assertThat(captured.getFirst(UNDERSCORED_TYPE), equalTo((Object) "foo"));

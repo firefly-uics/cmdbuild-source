@@ -5,8 +5,8 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.assertj.core.util.Lists;
-import org.assertj.core.util.Maps;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public abstract class MapAdapter<K, V> extends XmlAdapter<MapAdapter.AdaptedMap<K, V>, Map<K, V>> {
 
