@@ -20,7 +20,6 @@ import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.dataimport.CardFiller;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVCard;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
-import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,7 +72,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	// TODO: move to the logic to the logic??
 	public void updateCSVRecords( //
 			@Parameter("data") final JSONArray jsonCards //
-		) throws JSONException {
+	) throws JSONException {
 
 		final DataAccessLogic dataAccessLogic = systemDataAccessLogic();
 		final CSVData csvData = sessionVars().getCsvData();
@@ -98,7 +97,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 								mutableCard, //
 								attributeName, //
 								attributeValue //
-							);
+								);
 					} catch (final Exception ex) {
 						csvCard.addInvalidAttribute(attributeName, attributeValue);
 					}
@@ -130,13 +129,13 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 		}
 
 		/*
-		 * Remove the created cards.
-		 * So if some cards have wrong fields
-		 * them can be modified
+		 * Remove the created cards. So if some cards have wrong fields them can
+		 * be modified
 		 */
 		if (createdCardFakeIdList.size() > 0) {
-			for (Long id: createdCardFakeIdList)
-			csvData.removeCard(id);
+			for (final Long id : createdCardFakeIdList) {
+				csvData.removeCard(id);
+			}
 		}
 	}
 
@@ -148,13 +147,13 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 			final CSVCard csvCard, //
 			final CMClass entryType //
 
-		) throws JSONException {
+	) throws JSONException {
 
 		final DataAccessLogic dataAccessLogic = systemDataAccessLogic();
 		final CMCard cmCard = dataAccessLogic.resolveCardReferences(entryType, csvCard.getCMCard());
 		final Card card = CardStorableConverter.of(cmCard).convert(cmCard);
 
-		final JSONObject jsonCard = CardSerializer.toClient(card);
+		final JSONObject jsonCard = cardSerializer().toClient(card);
 		addEmptyAttributesToSerialization(jsonCard, cmCard);
 		final JSONObject output = new JSONObject();
 		final JSONObject notValidValues = new JSONObject();
@@ -171,10 +170,10 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	}
 
 	/*
-	 * The client needs to know all the attributes for each card,
-	 * but the serializer does not add the attributes with
-	 * no value to the JSONCard. Use this method to check
-	 * the output of the serializer and add the empty attributes
+	 * The client needs to know all the attributes for each card, but the
+	 * serializer does not add the attributes with no value to the JSONCard. Use
+	 * this method to check the output of the serializer and add the empty
+	 * attributes
 	 */
 	private void addEmptyAttributesToSerialization(final JSONObject jsonCard, final CMCard cmCard) throws JSONException {
 		final CMClass entryType = cmCard.getType();

@@ -2,7 +2,7 @@ package org.cmdbuild.model.data;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 
 public class Metadata implements Storable {
 

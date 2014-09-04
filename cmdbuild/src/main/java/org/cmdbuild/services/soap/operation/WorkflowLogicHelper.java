@@ -14,7 +14,7 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.WorkflowLogic;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.soap.structure.ActivitySchema;
@@ -42,8 +42,12 @@ public class WorkflowLogicHelper implements SoapLogicHelper {
 	private final SerializationStuff serializationUtils;
 	private final CardAdapter cardAdapter;
 
-	public WorkflowLogicHelper(final WorkflowLogic workflowLogic, final CMDataView view,
-			final MetadataStoreFactory metedataStoreFactory, final CardAdapter cardAdapter) {
+	public WorkflowLogicHelper( //
+			final WorkflowLogic workflowLogic, //
+			final CMDataView view, //
+			final MetadataStoreFactory metedataStoreFactory, //
+			final CardAdapter cardAdapter //
+	) {
 		this.workflowLogic = workflowLogic;
 		this.serializationUtils = new SerializationStuff(view, metedataStoreFactory);
 		this.cardAdapter = cardAdapter;
