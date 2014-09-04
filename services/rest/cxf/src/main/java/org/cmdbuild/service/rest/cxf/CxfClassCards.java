@@ -16,6 +16,7 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.service.rest.ClassCards;
+import org.cmdbuild.service.rest.cxf.util.Maps;
 import org.cmdbuild.service.rest.dto.Card;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
@@ -32,14 +33,7 @@ import com.mchange.util.AssertException;
 
 public class CxfClassCards implements ClassCards {
 
-	private static final EntryTransformer<String, List<String>, String> FIRST_ELEMENT = new EntryTransformer<String, List<String>, String>() {
-
-		@Override
-		public String transformEntry(final String key, final List<String> value) {
-			return value.isEmpty() ? null : value.get(0);
-		}
-
-	};
+	private static final EntryTransformer<String, List<? extends String>, String> FIRST_ELEMENT = Maps.firstElement();
 
 	private final ErrorHandler errorHandler;
 	private final DataAccessLogic userDataAccessLogic;

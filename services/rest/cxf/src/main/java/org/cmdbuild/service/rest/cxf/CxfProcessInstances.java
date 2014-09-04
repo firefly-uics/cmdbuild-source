@@ -1,6 +1,13 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Maps.transformEntries;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -8,6 +15,7 @@ import org.cmdbuild.logic.mapping.json.FilterElementGetters;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.ProcessInstances;
+import org.cmdbuild.service.rest.cxf.util.Maps;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.ProcessInstance;
@@ -20,8 +28,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Maps.EntryTransformer;
 
 public class CxfProcessInstances implements ProcessInstances {
+
+	private static final EntryTransformer<String, List<? extends String>, String> FIRST_ELEMENT = Maps.firstElement();
+
+	private static Map<String, Object> NO_WIDGET_SUBMISSION = Collections.emptyMap();
+
+	private static final AssertionError SHOULD_NEVER_HAPPEN = new AssertionError("should never happen");
 
 	private final ErrorHandler errorHandler;
 	private final WorkflowLogic workflowLogic;
@@ -29,6 +44,25 @@ public class CxfProcessInstances implements ProcessInstances {
 	public CxfProcessInstances(final ErrorHandler errorHandler, final WorkflowLogic workflowLogic) {
 		this.errorHandler = errorHandler;
 		this.workflowLogic = workflowLogic;
+	}
+
+	@Override
+	public SimpleResponse<Long> create(final String type, final boolean advance,
+			final MultivaluedMap<String, String> formParam) {
+		final UserProcessClass found = workflowLogic.findProcessClass(type);
+		if (found == null) {
+			errorHandler.processNotFound(type);
+		}
+		final Map<String, String> vars = transformEntries(formParam, FIRST_ELEMENT);
+		try {
+			final UserProcessInstance instance = workflowLogic.startProcess(type, vars, NO_WIDGET_SUBMISSION, advance);
+			return SimpleResponse.newInstance(Long.class) //
+					.withElement(instance.getId()) //
+					.build();
+		} catch (final Throwable e) {
+			errorHandler.propagate(e);
+		}
+		return null;
 	}
 
 	@Override

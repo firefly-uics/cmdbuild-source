@@ -7,6 +7,7 @@ public class Serialization {
 	public static final String //
 			ACTIVE = "active", //
 			ACTIVITY = "activity", //
+			ADVANCE = "advance", //
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTE_DETAIL = "attributeDetail", //
 			ATTRIBUTES = "attributes", //
@@ -86,6 +87,7 @@ public class Serialization {
 			TYPE_TEXT = "text", //
 			TYPE_TIME = "time", //
 			TYPE = "type", //
+			UNDERSCORED_ADVANCE = "_" + ADVANCE, //
 			UNDERSCORED_ID = "_" + ID, //
 			UNDERSCORED_NAME = "_" + NAME, //
 			UNDERSCORED_TYPE = "_" + TYPE, //

@@ -64,7 +64,6 @@ public class DefaultErrorHandler implements ErrorHandler {
 	@Override
 	public void propagate(final Throwable e) {
 		throw new WebApplicationException(e, Response.status(Status.INTERNAL_SERVER_ERROR) //
-				.entity(e.getMessage()) //
 				.build());
 	}
 
