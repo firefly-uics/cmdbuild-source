@@ -72,35 +72,41 @@
 		// override
 		show: function() {
 			this.callParent(arguments);
+
 			this.attributesPanel.editMode();
+
 			var fields = this.attributesPanel.getFields();
 			var rel_attrs = this.relation.rel_attr || {};
-			for (var i = 0, l=fields.length; i<l; ++i) {
+
+			for (var i = 0; i < fields.length; ++i) {
 				var f = fields[i];
 				var name;
 
 				if (f.CMAttribute) {
-					name = f.CMAttribute.name;
+					name = f.CMAttribute['name'];
 				} else {
-					name = f.name;
+					name = f['name'];
 				}
 
 				var val = rel_attrs[name];
-				f.setValue(val.id || val);
+				f.setValue(val['id'] || val);
+
 				if (val) {
 					if (f.CMAttribute.type == "LOOKUP") {
 						var store = _CMCache.getLookupStore(f.CMAttribute.lookup);
-						for (var j = 0; j < 4; j++) {
-							Ext.Function.createDelayed(function() {
-								for (var y = 0; y < store.data.items.length; y++) {
-									if (val == store.data.items[y].raw.Description) {
-										val = store.data.items[y].raw.Id;
-										f.setValue(val);
+						store.load({
+							value: val,
+							field: f,
+							callback: function(records, operation, success) {
+								Ext.Array.each(records, function(item, index, allItems) {
+									if (operation['value'] == item.raw['Description']) {
+										operation['field'].setValue(item.raw['Id']);
+
 										return;
 									}
-								}
-							}, 500)();
-						}
+								});
+							}
+						});
 					}
 				}
 			}
@@ -138,7 +144,7 @@
 	 * 	domainName: string,
 	 * 	relationId: int,
 	 *  master: string, "_1" | "_2" the side of the domain to consider as master
-	 *  
+	 *
 	 *  // assuming the master is "_1"
 	 *  attributes: {
 	 *  	_1: [{
@@ -151,7 +157,7 @@
 	 *  	}, {
 	 *  		eventually other card objects
 	 *  	}],
-	 *  	
+	 *
 	 *  	// the attribute defined for the domain as key/value pairs
 	 *  	...
 	 *  	attributeName1: value,
