@@ -17,13 +17,13 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.DBDomain;
 import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.lookup.DataViewLookupStore;
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
@@ -68,7 +68,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 				.build();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void shouldThrowExceptionIfNullClassName() throws Exception {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());
@@ -80,7 +80,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());
 		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards("not_existent_class_name", queryOptions)
-				.getPaginatedCards();
+				.elements();
 
 		// then
 		assertTrue(isEmpty(fetchedCards));
@@ -107,7 +107,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), null);
 		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
-				queryOptions).getPaginatedCards();
+				queryOptions).elements();
 
 		// then
 		assertEquals(size(fetchedCards), 3);
@@ -134,7 +134,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), new JSONObject());
 		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
-				queryOptions).getPaginatedCards();
+				queryOptions).elements();
 
 		// then
 		assertEquals(size(fetchedCards), 3);
@@ -167,7 +167,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, sortersArray, null);
 		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
-				queryOptions).getPaginatedCards();
+				queryOptions).elements();
 
 		// then
 		assertEquals(get(fetchedCards, 0).getAttribute("Code"), "bar");
@@ -203,7 +203,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), filterObject);
 		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
-				queryOptions).getPaginatedCards();
+				queryOptions).elements();
 
 		// then
 		assertEquals(size(fetchedCards), 1);
@@ -237,7 +237,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, new JSONArray(), filterObject);
 		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
-				queryOptions).getPaginatedCards();
+				queryOptions).elements();
 
 		// then
 		assertEquals(size(fetchedCards), 1);
@@ -273,7 +273,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 		// when
 		final QueryOptions queryOptions = createQueryOptions(10, 0, sortersArray, filterObject);
 		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
-				queryOptions).getPaginatedCards();
+				queryOptions).elements();
 
 		// then
 		assertEquals(size(fetchedCards), 3);
@@ -308,9 +308,9 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final Iterable<Card> firstPageOfCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
-				createQueryOptions(3, 0, null, null)).getPaginatedCards();
+				createQueryOptions(3, 0, null, null)).elements();
 		final Iterable<Card> secondPageOfCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
-				createQueryOptions(3, 3, null, null)).getPaginatedCards();
+				createQueryOptions(3, 3, null, null)).elements();
 
 		// then
 		assertEquals(size(firstPageOfCards), 3);
@@ -344,7 +344,7 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 		// when
 		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(newClass.getIdentifier().getLocalName(),
-				createQueryOptions(10, 0, null, filterObject)).getPaginatedCards();
+				createQueryOptions(10, 0, null, filterObject)).elements();
 
 		// then
 		assertEquals(size(fetchedCards), 1);
@@ -454,53 +454,54 @@ public class DataAccessLogicTest extends IntegrationTestBase {
 
 	private CMClass createClassWithAllTypeOfAttributes() {
 		final CMClass fooClass = dbDataView().create(newClass("Foo"));
-		final DataDefinitionLogic dataDefinitionLogic = new DataDefinitionLogic(new DBDataView(createBaseDriver()));
+		final DataDefinitionLogic dataDefinitionLogic = new DefaultDataDefinitionLogic(new DBDataView(
+				createBaseDriver()));
 
 		final Attribute integerAttribute = Attribute.newAttribute() //
 				.withName(INTEGER_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("INTEGER").build();
 		final Attribute doubleAttribute = Attribute.newAttribute() //
-				.withName(DOUBLE_ATTRIBUTE_NAME).withOwner(fooClass.getName()) //
+				.withName(DOUBLE_ATTRIBUTE_NAME).withOwnerName(fooClass.getName()) //
 				.withType("DOUBLE").build();
 		final Attribute decimalAttribute = Attribute.newAttribute() //
 				.withName(DECIMAL_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("DECIMAL") //
 				.withPrecision(5) //
 				.withScale(2).build();
 		final Attribute stringAttribute = Attribute.newAttribute() //
 				.withName(STRING_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("STRING") //
 				.withLength(30).build();
 		final Attribute charAttribute = Attribute.newAttribute() //
 				.withName(CHAR_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("CHAR").build();
 		final Attribute textAttribute = Attribute.newAttribute() //
 				.withName(TEXT_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("TEXT").build();
 		final Attribute dateAttribute = Attribute.newAttribute() //
 				.withName(DATE_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("DATE").build();
 		final Attribute timeAttribute = Attribute.newAttribute() //
 				.withName(TIME_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("TIME").build();
 		final Attribute timestampAttribute = Attribute.newAttribute() //
 				.withName(TIMESTAMP_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("TIMESTAMP").build();
 		final Attribute inetAttribute = Attribute.newAttribute() //
 				.withName(INET_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("INET").build();
 		final Attribute booleanAttribute = Attribute.newAttribute() //
 				.withName(BOOLEAN_ATTRIBUTE_NAME) //
-				.withOwner(fooClass.getName()) //
+				.withOwnerName(fooClass.getName()) //
 				.withType("BOOLEAN").build();
 
 		dataDefinitionLogic.createOrUpdate(integerAttribute);

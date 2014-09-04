@@ -62,7 +62,7 @@ public class PingWidgetTest {
 		final TemplateResolver tr = mock(TemplateResolver.class);
 		final PingTestDouble pingWidget = new PingTestDouble();
 		pingWidget.setCount(10);
-		when(tr.simpleEval(anyString())).thenReturn(LOCALIP);
+		when(tr.resolve(anyString())).thenReturn(LOCALIP);
 		final String command = pingWidget.getCommandLine(tr);
 
 		final ExecuteCommandAction action = new ExecuteCommandAction(command, 100L);
@@ -78,7 +78,7 @@ public class PingWidgetTest {
 
 		pingWidget.getCommandLine(tr);
 
-		verify(tr, only()).simpleEval(LOCALHOST);
+		verify(tr, only()).resolve(LOCALHOST);
 	}
 
 	/*

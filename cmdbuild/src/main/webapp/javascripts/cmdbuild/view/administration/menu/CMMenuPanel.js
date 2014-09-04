@@ -1,14 +1,21 @@
 (function() {
+	var cellEditor = Ext.create('Ext.grid.plugin.CellEditing', {
+		clicksToEdit: 2
+	});
 	var tr = CMDBuild.Translation.administration.modmenu;
+	var warningNoSaved = CMDBuild.Translation.warnings.saveMenuBeforeAccess;
 
 	Ext.define("MenuStore", {
 		extend: "Ext.data.TreeStore",
 		fields: [
 			{name: "type", type: "string"},
 			{name: "text", type: "string"},
+			{name: "description_default", type: "string"},
 			{name: "index", type: "ingeter"},
 			{name: "referencedClassName", type: "string"},
 			{name: "referencedElementId", type: "string"},
+			{name: "uuid", type: "string"},
+			{name: "button", type: "boolean"},
 			{name: "folderType", type: "string"} // used to retrieve the folder of the available items
 		],
 		root : {
@@ -20,6 +27,22 @@
 
 Ext.define("CMDBuild.Administration.MenuPanel", {
 	extend: "Ext.panel.Panel",
+	statics: {
+		openTranslationsWindow: function(uuid) {
+			var translationsWindow = new CMDBuild.view.common.CMTranslationsWindow({
+				title: CMDBuild.Translation.translations,
+				translationsKeyType: "MenuItem",
+				translationsKeyField: "Description",
+				translationsKeyName: uuid
+			});
+			translationsWindow.show();
+		},
+		warningNoSaveWindow: function() {
+			message = htmlComposeMessage(warningNoSaved);
+			CMDBuild.Msg.warn(null, message , false);
+		}
+
+	},
 	initComponent : function() {
 		this.groupId = -1,
 
@@ -52,6 +75,14 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 			border: true,
 			rootVisible: true,
 			hideHeaders: true,
+			listeners: {
+				selectionchange: function(tree, selected, eOpts) {
+					if (selected[0]) {
+						clearNodes(this.getRootNode());
+						selected[0].set("button", true);
+					}
+				}
+			},
 			columns: [{
 				dataIndex: "text",
 				editor: {
@@ -60,11 +91,16 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 				},
 				flex: 1,
 				xtype: "treecolumn"
+			}, {
+				width: 30,
+				align: 'center',
+				sortable: false,
+				hideable: false,
+				menuDisabled: true,
+				fixed: true,
+				renderer: renderTranslationButton
 			}],
-			plugins : {
-				ptype: "treeediting",
-				clicksToEdit: 2
-			},
+			plugins : cellEditor,
 			viewConfig : {
 				plugins : {
 					ptype: "treeviewdragdrop"
@@ -134,7 +170,7 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 				this.availabletreePanel
 			]
 		});
-		
+
 		this.callParent(arguments);
 	},
 
@@ -166,4 +202,30 @@ Ext.define("CMDBuild.Administration.MenuPanel", {
 		}
 	}
 });
+function clearNodes(node) {
+	node.set("button", false);
+	for (var i = 0; node.childNodes && i < node.childNodes.length; i++) {
+		clearNodes(node.childNodes[i]);
+	}
+}
+function renderTranslationButton(value, metadata, record) {
+	if (! record.get("button") || ! _CMCache.isMultiLanguages()) {
+		return '<div/>';
+	}
+	var uuid = record.get("uuid");
+	if (! uuid) {
+		return 	'<img style="cursor:pointer" title="'+warningNoSaved+
+		'" onclick=CMDBuild.Administration.MenuPanel.warningNoSaveWindow() src="images/icons/exclamation.png"/>';
+
+	}
+	return '<img style="cursor:pointer" title="'+CMDBuild.Translation.translations+
+			'" onclick=CMDBuild.Administration.MenuPanel.openTranslationsWindow("' + uuid + '") src="images/icons/translate.png"/>';
+}
+function htmlComposeMessage(msg) {
+	msg = Ext.String.format("<p class=\"{0}\">{1}</p>", CMDBuild.Constants.css.error_msg, msg);
+	return msg;
+}
+
+
 })();
+/*TODO put this function in a static class function*/

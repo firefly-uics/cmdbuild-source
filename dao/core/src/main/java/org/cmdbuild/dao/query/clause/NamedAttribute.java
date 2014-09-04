@@ -1,6 +1,6 @@
 package org.cmdbuild.dao.query.clause;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class NamedAttribute implements QueryAttribute {
 

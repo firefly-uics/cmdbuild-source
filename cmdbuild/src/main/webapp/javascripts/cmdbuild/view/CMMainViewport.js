@@ -2,15 +2,15 @@
 	var DELAY = 500;
 
 	var tr = CMDBuild.Translation.common.splash,
-	
+
 		credits = '<ul class="splashScreen_central">'
 		+ '<li> <span class="splashBold"> <a href="http://www.tecnoteca.com" target="_blank"> Tecnoteca srl </a></span> '
 		+ tr.design + ', '+tr.implementation+', '+ tr.maintainer +'</li>'
 		+ '<li> <span class="splashBold"> <a href="http://www.comune.udine.it" target="_blank"> ' + tr.municipality + ' </a> </span> '+ tr.principal+'</li> '
-		+ '<li> <span class="splashBold"> <a href="http://www.cogitek.it" target="_blank"> Cogitek srl</a> </span> '+ tr.consultant +' </li>'		
+		+ '<li> <span class="splashBold"> <a href="http://www.cogitek.it" target="_blank"> Cogitek srl</a> </span> '+ tr.consultant +' </li>'
 		+ '</ul>',
 
-		splashText = '<div class="splashScreen_central">' + 
+		splashText = '<div class="splashScreen_central">' +
 			'<div class="spalshMotto">Open Source Configuration and Management Database</div>' +
 			'<span class="splashSubTitle copyright">Copyright &copy; Tecnoteca srl</span>' +
 		'</div>',
@@ -120,9 +120,9 @@
 				var creditsHtml =	'<div id="cm-credits-content" class="cm-credits-container">' +
 										'<div class="cm-credits-logo-container">' +
 											'<img src="images/logo.jpg">' +
-											'<p class="cm-credits-release-version">' + l.version + ' ' + CMDBuild.Translation.release + '</p>' + 
+											'<p class="cm-credits-release-version">' + l.version + ' ' + CMDBuild.Translation.release + '</p>' +
 										'</div>' +
-						
+
 										'<div class="cm-credits-links-container">' +
 											'<div class="cm-credits-links-left">' +
 												'<h1>' + l.needYouHelp + '</h1>' +
@@ -140,13 +140,13 @@
 													'<li class="cm-credit-last-link">' + l.participatesInTheLinkedInGroup + '</li>' +
 												'</ul>'+
 											'</div>' +
-						
+
 											'<div class="cm-credits-producer">' +
 												'<h1>Credits</h1>' +
 												'<p>' + l.cmdbuildIsASofwareDevelopedByTecnoteca + '</p>' +
 												'<p>' + l.cmdbuildIsAtradeMarkRegisterd + '</p>' +
 											'</div>' +
-						
+
 										'</div>' +
 									'</div>';
 
@@ -168,7 +168,7 @@
 				margin: this.hideAccordions ? "0 2 0 0" : "0",
 				region: 'west',
 				split: true,
-				collapsible: true, 
+				collapsible: true,
 				collapseMode: 'mini',
 				collapsed: this.hideAccordions,
 				preventHeader: true,
@@ -337,7 +337,7 @@
 						}
 					}
 				});
-	
+
 				return a;
 			}
 		},

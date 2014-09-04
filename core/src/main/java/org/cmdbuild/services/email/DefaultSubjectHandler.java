@@ -1,14 +1,14 @@
 package org.cmdbuild.services.email;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
+import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.model.email.Email;
 import org.slf4j.Logger;
 
 public class DefaultSubjectHandler implements SubjectHandler {

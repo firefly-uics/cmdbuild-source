@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import javax.activation.DataSource;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public class FileItemDataSource implements DataSource {
 

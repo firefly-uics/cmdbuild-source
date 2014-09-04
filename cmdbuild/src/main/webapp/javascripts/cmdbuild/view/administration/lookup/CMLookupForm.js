@@ -2,22 +2,23 @@
 
 	var LOOKUP_FIELDS = CMDBuild.ServiceProxy.LOOKUP_FIELDS;
 	var tr = CMDBuild.Translation.administration.modLookup.lookupForm;
-	
+
 	Ext.define("CMDBuild.view.administration.lookup.CMLookupForm", {
 		extend : "Ext.form.Panel",
 		mixins: {
 			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
 		},
-		
+
 		alias : "widget.lookupform",
-		
+
 		constructor : function() {
 
 			this.modifyButton = new Ext.button.Button({
 				iconCls: 'modify',
 				text: tr.update_lookup,
 				handler: function() {
-					this.enableModify()
+					this.enableModify();
+					_CMCache.initModifyingTranslations();
 				},
 				scope: this
 			});
@@ -30,12 +31,12 @@
 			});
 
 			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.btns.save,
+				text: CMDBuild.Translation.common.buttons.save,
 				disabled: true
 			})
 
 	 		this.abortButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.btns.abort,
+				text: CMDBuild.Translation.common.buttons.abort,
 				disabled: true,
 				scope: this,
 				handler: function() {
@@ -72,9 +73,36 @@
 				checked : true,
 				disabled : true
 			});
-			
+
 			this.layout = "border",
-			
+			this.description = new Ext.form.CMTranslatableText( {
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				fieldLabel : tr.description,
+				name : LOOKUP_FIELDS.Description,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				allowBlank : false,
+				disabled : true,
+				translationsKeyType: "Lookup",
+				translationsKeyField: LOOKUP_FIELDS.Description
+			});
+
+			this.parentDescription = Ext.create('Ext.form.field.ComboBox', {
+				fieldLabel : tr.parentdescription,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				name : LOOKUP_FIELDS.ParentId,
+				hiddenName : LOOKUP_FIELDS.ParentId,
+				valueField : LOOKUP_FIELDS.ParentId,
+				displayField : LOOKUP_FIELDS.ParentDescription,
+				minChars : 0,
+				disabled : true,
+				store : this.parentStore,
+				queryMode: "local",
+				listConfig: {
+					loadMask: false
+				}
+			});
+
 			this.items = [{
 				xtype: "panel",
 				frame: true,
@@ -94,37 +122,18 @@
 					name : LOOKUP_FIELDS.Code,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					disabled : true
-				}, {
-					xtype : 'textfield',
-					fieldLabel : tr.description,
-					name : LOOKUP_FIELDS.Description,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					allowBlank : false,
-					disabled : true
-				}, {
-					xtype : 'combo',
-					fieldLabel : tr.parentdescription,
-					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					name : LOOKUP_FIELDS.ParentId,
-					hiddenName : LOOKUP_FIELDS.ParentId,
-					valueField : LOOKUP_FIELDS.ParentId,
-					displayField : LOOKUP_FIELDS.ParentDescription,
-					minChars : 0,
-					disabled : true,
-					store : this.parentStore,
-					queryMode: "local",
-					listConfig: {
-						loadMask: false
-					}
-				}, {
+				},
+				this.description,
+				this.parentDescription,
+				{
 					xtype : 'textarea',
 					fieldLabel : tr.notes,
 					width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					name : LOOKUP_FIELDS.Notes,
 					disabled : true
-				}, this.activeCheck] 
+				}, this.activeCheck]
 			}];
-			
+
 			Ext.apply(this, {
 				tbar : this.cmTBar,
 				defaultType : 'textfield',
@@ -138,7 +147,7 @@
 
 			this.callParent(arguments);
 		},
-		
+
 		onSelectLookupType: function(lookupType) {
 			if (lookupType) {
 				this.type = lookupType;
@@ -148,11 +157,15 @@
 			this.getForm().reset();
 			this.disableModify(enableCMTBar = false);
 		},
-		
+
 		onSelectLookupGrid: function(selection) {
 			this.getForm().loadRecord(selection);
 			this.updateDisableEnableLookup();
 			this.disableModify(enableCMTbar = true);
+
+			// FIX: to avoid default int value (0) to be displayed
+			if (this.parentDescription.getValue() == 0)
+				this.parentDescription.setValue();
 		},
 
 		onAddLookupClick: function() {

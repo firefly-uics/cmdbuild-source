@@ -1,5 +1,6 @@
 package org.cmdbuild.services.store;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,17 @@ public class LockedCardStore implements Store<LockedCard> {
 	}
 
 	@Override
+	public Collection<LockedCard> readAll() {
+		final Map<String, LockedCard> lockedCardsMap = lockedCards.asMap();
+		return Lists.newArrayList(lockedCardsMap.values());
+	}
+
+	@Override
+	public Collection<LockedCard> readAll(final Groupable groupable) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void update(final LockedCard lockedCard) {
 		throw new UnsupportedOperationException("A locked card can't be modified");
 	}
@@ -61,17 +73,6 @@ public class LockedCardStore implements Store<LockedCard> {
 	@Override
 	public void delete(final Storable storable) {
 		lockedCards.invalidate(storable.getIdentifier());
-	}
-
-	@Override
-	public List<LockedCard> list() {
-		final Map<String, LockedCard> lockedCardsMap = lockedCards.asMap();
-		return Lists.newArrayList(lockedCardsMap.values());
-	}
-
-	@Override
-	public List<LockedCard> list(final Groupable groupable) {
-		throw new UnsupportedOperationException();
 	}
 
 }

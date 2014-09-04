@@ -11,7 +11,9 @@ import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.dms.DocumentCreatorFactory;
 import org.cmdbuild.dms.LoggedDmsService;
 import org.cmdbuild.dms.alfresco.AlfrescoDmsService;
-import org.cmdbuild.logic.DmsLogic;
+import org.cmdbuild.logic.dms.DefaultDmsLogic;
+import org.cmdbuild.logic.dms.DmsLogic;
+import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,10 +55,19 @@ public class Dms {
 
 	@Bean
 	@Scope(PROTOTYPE)
-	public DmsLogic dmsLogic() {
-		return new DmsLogic( //
+	@Qualifier(DEFAULT)
+	public PrivilegedDmsLogic privilegedDmsLogic() {
+		return new PrivilegedDmsLogic( //
+				defaultDmsLogic(), //
+				systemDataView, //
+				privilegeManagement.userPrivilegeContext() //
+		);
+	}
+
+	@Bean
+	public DefaultDmsLogic defaultDmsLogic() {
+		return new DefaultDmsLogic( //
 				dmsService(), //
-				privilegeManagement.userPrivilegeContext(), //
 				systemDataView, //
 				dmsConfiguration, //
 				documentCreatorFactory());

@@ -4,7 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.cmdbuild.model.email.Email;
+import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.services.email.DefaultSubjectHandler;
 import org.cmdbuild.services.email.SubjectHandler.CompiledSubject;
 import org.cmdbuild.services.email.SubjectHandler.ParsedSubject;

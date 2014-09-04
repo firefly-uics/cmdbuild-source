@@ -1,7 +1,7 @@
 package org.cmdbuild.model.widget;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static org.apache.commons.lang.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.join;
 
 import java.util.List;
 import java.util.Map;

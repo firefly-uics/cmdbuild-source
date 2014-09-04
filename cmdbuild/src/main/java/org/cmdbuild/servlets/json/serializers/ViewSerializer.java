@@ -1,21 +1,38 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_FUNCTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.VIEWS;
+
 import java.util.List;
 
+import org.cmdbuild.logic.translation.ViewTranslation;
 import org.cmdbuild.model.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.*;
-
 public class ViewSerializer {
 
-	public static JSONObject toClient(List<View> views) throws JSONException {
+	private final TranslationFacade translationFacade;
+
+	public ViewSerializer(final TranslationFacade translationFacade) {
+		this.translationFacade = translationFacade;
+	}
+
+	public JSONObject toClient(final List<View> views) throws JSONException {
 		final JSONObject out = new JSONObject();
 		final JSONArray jsonViews = new JSONArray();
 
-		for (View view: views) {
+		for (final View view : views) {
 			jsonViews.put(toClient(view));
 		}
 
@@ -24,9 +41,16 @@ public class ViewSerializer {
 		return out;
 	}
 
-	public static JSONObject toClient(View view) throws JSONException {
+	public JSONObject toClient(final View view) throws JSONException {
 		final JSONObject jsonView = new JSONObject();
-		jsonView.put(DESCRIPTION, view.getDescription());
+		final ViewTranslation translationObject = ViewTranslation.newInstance() //
+				.withField(DESCRIPTION_FOR_CLIENT) //
+				.withName(view.getName()) //
+				.build();
+		final String translatedDescription = translationFacade.read(translationObject);
+
+		jsonView.put(DESCRIPTION, defaultIfNull(translatedDescription, view.getDescription()));
+		jsonView.put(DEFAULT_DESCRIPTION, view.getDescription());
 		jsonView.put(FILTER, view.getFilter());
 		jsonView.put(ID, view.getId());
 		jsonView.put(NAME, view.getName());

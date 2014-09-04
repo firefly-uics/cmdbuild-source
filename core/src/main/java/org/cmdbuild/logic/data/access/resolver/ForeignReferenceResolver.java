@@ -2,29 +2,16 @@ package org.cmdbuild.logic.data.access.resolver;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newHashSet;
-import static org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
-import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
-import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
-import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
 import java.util.Map;
 import java.util.Set;
 
 import org.cmdbuild.common.Builder;
-import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
-import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
-import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
-import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.exception.NotFoundException.NotFoundExceptionType;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;

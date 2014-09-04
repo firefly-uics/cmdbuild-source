@@ -1,7 +1,5 @@
 package org.cmdbuild.logic.data.access.resolver;
 
-import java.util.Map;
-
 import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.data.store.lookup.LookupStore;

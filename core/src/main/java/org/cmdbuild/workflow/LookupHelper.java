@@ -49,7 +49,7 @@ class LookupHelper {
 	}
 
 	private Lookup flowStatusWithCode(final String code) {
-		for (final Lookup lookup : lookupStore.listForType(FLOW_STATUS)) {
+		for (final Lookup lookup : lookupStore.readAll(FLOW_STATUS)) {
 			if (code.equals(lookup.code)) {
 				return lookup;
 			}
@@ -58,7 +58,7 @@ class LookupHelper {
 	}
 
 	public WSProcessInstanceState stateForLookupId(final Long id) {
-		for (final Lookup lookup : lookupStore.listForType(FLOW_STATUS)) {
+		for (final Lookup lookup : lookupStore.readAll(FLOW_STATUS)) {
 			if (id.equals(lookup.getId())) {
 				final WSProcessInstanceState state = stateForLookupCode(lookup.code);
 				return (state == null) ? WSProcessInstanceState.UNSUPPORTED : state;

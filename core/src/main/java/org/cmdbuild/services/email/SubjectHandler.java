@@ -1,6 +1,6 @@
 package org.cmdbuild.services.email;
 
-import org.cmdbuild.model.email.Email;
+import org.cmdbuild.data.store.email.Email;
 
 /**
  * Parses a string that should be the mail's subject according with an expected

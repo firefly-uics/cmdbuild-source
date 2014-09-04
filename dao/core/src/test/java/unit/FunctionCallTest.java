@@ -37,7 +37,7 @@ public class FunctionCallTest {
 
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void functionMustBeProvided() {
 		FunctionCall.call(null, new Object[0]);
 	}

@@ -278,7 +278,7 @@
 		// as CMCardGridDelegate
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 * @param {Ext.data.Model} record
 		 */
@@ -287,7 +287,7 @@
 		},
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 */
 		onCMCardGridLoad: function(grid) {
@@ -317,12 +317,12 @@
 	function buildButtons(me) {
 		me.buttonAlign = "center";
 		me.buttons = [{
-			text: CMDBuild.Translation.common.btns.confirm,
+			text: CMDBuild.Translation.common.buttons.confirm,
 			handler: function() {
 				me.delegate.onCMDMSAttachmentPickerOKButtonClick(me, me.emailRecord, me.emailWindow);
 			}
 		}, {
-			text: CMDBuild.Translation.common.btns.abort,
+			text: CMDBuild.Translation.common.buttons.abort,
 			handler: function() {
 				me.delegate.onCMDMSAttachmentPickerCancelButtonClick(me);
 			}

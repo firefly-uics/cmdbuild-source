@@ -1,15 +1,15 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CONFIGURATION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LIMIT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.POSITION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.START;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TEMPLATE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CONFIGURATION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LIMIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.POSITION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.START;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPLATE;
 
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.services.store.FilterDTO;
@@ -41,7 +41,7 @@ public class Filter extends JSONBaseWithSpringContext {
 			final @Parameter(value = LIMIT) int limit //
 	) throws JSONException, CMDBException {
 		final GetFiltersResponse userFilters = filterStore().getAllUserFilters(className, start, limit);
-		return FilterSerializer.toClient(userFilters);
+		return new FilterSerializer(translationFacade()).toClient(userFilters);
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class Filter extends JSONBaseWithSpringContext {
 			@Parameter(value = LIMIT) final int limit //
 	) throws JSONException, CMDBException {
 		final GetFiltersResponse response = filterStore().fetchAllGroupsFilters(start, limit);
-		return FilterSerializer.toClient(response);
+		return new FilterSerializer(translationFacade()).toClient(response);
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class Filter extends JSONBaseWithSpringContext {
 			@Parameter(value = CLASS_NAME) final String className //
 	) throws JSONException {
 		final GetFiltersResponse userFilters = filterStore().getFiltersForCurrentlyLoggedUser(className);
-		return FilterSerializer.toClient(userFilters);
+		return new FilterSerializer(translationFacade()).toClient(userFilters);
 	}
 
 	@JSONExported
@@ -90,7 +90,7 @@ public class Filter extends JSONBaseWithSpringContext {
 	) throws JSONException, CMDBException {
 		final FilterStore.Filter filter = filterStore().create(
 				FilterSerializer.toServerForCreation(name, className, description, configuration, template));
-		return FilterSerializer.toClient(filter, FILTER);
+		return new FilterSerializer(translationFacade()).toClient(filter, FILTER);
 	}
 
 	@JSONExported
