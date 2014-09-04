@@ -6,11 +6,13 @@ import static org.cmdbuild.service.rest.constants.Serialization.ID;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ACTIVITY;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ADVANCE;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -46,6 +48,16 @@ public interface ProcessInstances {
 			@PathParam(TYPE) String type, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
+	);
+
+	@PUT
+	@Path("{" + ID + "}")
+	void update( //
+			@PathParam(TYPE) String type, //
+			@PathParam(ID) Long id, //
+			@FormParam(UNDERSCORED_ACTIVITY) String activity, //
+			@FormParam(UNDERSCORED_ADVANCE) boolean advance, //
+			MultivaluedMap<String, String> formParam //
 	);
 
 }

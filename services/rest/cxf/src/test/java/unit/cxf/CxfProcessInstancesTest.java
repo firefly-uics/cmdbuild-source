@@ -305,4 +305,81 @@ public class CxfProcessInstancesTest {
 		assertThat(element.getValues(), hasEntry("bar", (Object) "baz"));
 	}
 
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenUpdatingInstanceButProcessNotFound() throws Exception {
+		// given
+		doReturn(null) //
+				.when(workflowLogic).findProcessClass(anyString());
+		doThrow(WebApplicationException.class) //
+				.when(errorHandler).processNotFound(anyString());
+
+		// when
+		cxfProcessInstances.update("foo", 123L, "bar", true, null);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		inOrder.verify(workflowLogic).findProcessClass("foo");
+		inOrder.verify(errorHandler).processNotFound("foo");
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenUpdatingInstanceButBusinessLogicThrowsException() throws Exception {
+		// given
+		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
+		doReturn(userProcessClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+		final MetadataMap<String, String> formParam = new MetadataMap<String, String>();
+		ChainablePutMap.of(formParam) //
+				.chainablePut("foo", asList("oof")) //
+				.chainablePut("bar", asList("rab")) //
+				.chainablePut("baz", asList("zab"));
+		final Map<String, String> vars = transformEntries(formParam, Maps.<String, String> firstElement());
+		final CMWorkflowException workflowException = new CMWorkflowException("error");
+		doThrow(workflowException) //
+				.when(workflowLogic).updateProcess(anyString(), anyLong(), anyString(),
+						anyMapOf(String.class, String.class), anyMapOf(String.class, Object.class), anyBoolean());
+		doThrow(new WebApplicationException(workflowException)) //
+				.when(errorHandler).propagate(workflowException);
+
+		// when
+		cxfProcessInstances.update("foo", 123L, "bar", true, formParam);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		inOrder.verify(workflowLogic).findProcessClass("foo");
+		inOrder.verify(workflowLogic).updateProcess("foo", 123L, "bar", vars, NO_WIDGETS, true);
+		inOrder.verify(errorHandler).propagate(workflowException);
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void businessLogicCalledSuccessfullyWhenUpdatingInstance() throws Exception {
+		// given
+		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
+		doReturn(userProcessClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+		final MetadataMap<String, String> formParam = new MetadataMap<String, String>();
+		ChainablePutMap.of(formParam) //
+				.chainablePut("foo", asList("oof")) //
+				.chainablePut("bar", asList("rab")) //
+				.chainablePut("baz", asList("zab"));
+		final Map<String, String> vars = transformEntries(formParam, Maps.<String, String> firstElement());
+		final UserProcessInstance userProcessInstance = mock(UserProcessInstance.class);
+		doReturn(123L) //
+				.when(userProcessInstance).getId();
+		doReturn(userProcessInstance) //
+				.when(workflowLogic).startProcess(anyString(), anyMapOf(String.class, String.class),
+						anyMapOf(String.class, Object.class), anyBoolean());
+
+		// when
+		cxfProcessInstances.update("foo", 123L, "bar", true, formParam);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		inOrder.verify(workflowLogic).findProcessClass("foo");
+		inOrder.verify(workflowLogic).updateProcess("foo", 123L, "bar", vars, NO_WIDGETS, true);
+		inOrder.verifyNoMoreInteractions();
+	}
+
 }

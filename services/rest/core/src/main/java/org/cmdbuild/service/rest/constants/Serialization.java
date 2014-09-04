@@ -87,6 +87,7 @@ public class Serialization {
 			TYPE_TEXT = "text", //
 			TYPE_TIME = "time", //
 			TYPE = "type", //
+			UNDERSCORED_ACTIVITY = "_" + ACTIVITY, //
 			UNDERSCORED_ADVANCE = "_" + ADVANCE, //
 			UNDERSCORED_ID = "_" + ID, //
 			UNDERSCORED_NAME = "_" + NAME, //

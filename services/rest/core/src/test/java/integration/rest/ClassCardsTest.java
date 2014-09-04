@@ -16,6 +16,8 @@ import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static support.HttpClientUtils.all;
+import static support.HttpClientUtils.param;
 import static support.ServerResource.randomPort;
 
 import java.util.Arrays;
@@ -196,11 +198,20 @@ public class ClassCardsTest {
 		// when
 		final PutMethod put = new PutMethod(server.resource("classes/foo/cards/123/"));
 		put.addRequestHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
+		put.setQueryString(all( //
+				param("foo", "bar"), //
+				param("bar", "baz"), //
+				param("baz", "foo") //
+		));
 		final int result = httpclient.executeMethod(put);
 
 		// then
 		verify(service).update(eq("foo"), eq(123L), multivaluedMapCaptor.capture());
 		assertThat(result, equalTo(204));
+		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
+		assertThat(captured.getFirst("foo"), equalTo("bar"));
+		assertThat(captured.getFirst("bar"), equalTo("baz"));
+		assertThat(captured.getFirst("baz"), equalTo("foo"));
 	}
 
 	@Test

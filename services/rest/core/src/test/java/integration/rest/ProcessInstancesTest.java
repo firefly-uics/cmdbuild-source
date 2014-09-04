@@ -1,6 +1,9 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ACTIVITY;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ADVANCE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
@@ -29,6 +32,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
@@ -198,6 +202,31 @@ public class ProcessInstancesTest {
 		// then
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+	}
+
+	@Test
+	public void instanceUpdatedUsingPost() throws Exception {
+		// when
+		final PutMethod put = new PutMethod(server.resource("processes/foo/instances/123/"));
+		put.addRequestHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
+		put.setQueryString(all( //
+				param(UNDERSCORED_ACTIVITY, "bar"), //
+				param(UNDERSCORED_ADVANCE, "true"), //
+				param("foo", "bar"), //
+				param("bar", "baz"), //
+				param("baz", "foo") //
+		));
+		final int result = httpclient.executeMethod(put);
+
+		// then
+		verify(service).update(eq("foo"), eq(123L), eq("bar"), eq(true), multivaluedMapCaptor.capture());
+		assertThat(result, equalTo(204));
+		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
+		assertThat(captured.getFirst(UNDERSCORED_ACTIVITY), equalTo("bar"));
+		assertThat(captured.getFirst(UNDERSCORED_ADVANCE), equalTo("true"));
+		assertThat(captured.getFirst("foo"), equalTo("bar"));
+		assertThat(captured.getFirst("bar"), equalTo("baz"));
+		assertThat(captured.getFirst("baz"), equalTo("foo"));
 	}
 
 }
