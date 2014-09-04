@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;

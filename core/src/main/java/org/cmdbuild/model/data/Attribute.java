@@ -1,20 +1,21 @@
 package org.cmdbuild.model.data;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.trim;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-import org.cmdbuild.common.Builder;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.Builder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -26,12 +27,14 @@ import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType.Type;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
+import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
 
@@ -82,7 +85,8 @@ public class Attribute {
 		INET {
 			@Override
 			public CMAttributeType<?> buildFrom(final AttributeBuilder builder) {
-				return new IpAddressAttributeType();
+				final Type type = defaultIfNull(builder.ipType, IpType.IPV4).type;
+				return new IpAddressAttributeType(type);
 			}
 		}, //
 		INTEGER {
@@ -151,8 +155,46 @@ public class Attribute {
 
 	}
 
-	private static enum Condition {
+	public static enum IpType {
+		IPV4(Type.IPV4), //
+		IPV6(Type.IPV6), //
+		;
 
+		public final Type type;
+		public final String name;
+
+		private IpType(final Type type) {
+			this.type = type;
+			this.name = name().toLowerCase();
+		}
+
+		/**
+		 * Returns the enum constant with the specified name (case-insensitive).
+		 *
+		 * @throws IllegalArgumentException
+		 *             if no enum corresponds with the specified name
+		 */
+		public static IpType of(final String name) {
+			for (final IpType value : values()) {
+				if (value.name.equals(name)) {
+					return value;
+				}
+			}
+			return IPV4;
+		}
+
+		public static IpType of(final Type type) {
+			for (final IpType value : values()) {
+				if (value.type == type) {
+					return value;
+				}
+			}
+			throw new IllegalArgumentException(type.name());
+		}
+
+	}
+
+	private static enum Condition {
 		ACTIVE, //
 		DISPLAYABLE_IN_LIST, //
 		HIDDEN, //
@@ -160,13 +202,13 @@ public class Attribute {
 		READ_ONLY, //
 		UNIQUE_VALUES, //
 		WRITABLE, //
-
 	}
 
 	public static class AttributeBuilder implements Builder<Attribute> {
 
 		private String name;
-		private String owner;
+		private String ownerName;
+		private String ownerNamespace;
 		private String description;
 		private String group;
 		private String fkDestinationName;
@@ -184,6 +226,7 @@ public class Attribute {
 		private String domain;
 		private String editorType;
 		private String filter;
+		private IpType ipType;
 		private Map<MetadataAction, List<Metadata>> metadataByAction = Maps.newHashMap();
 		private final Set<Condition> conditions;
 
@@ -195,8 +238,8 @@ public class Attribute {
 		@Override
 		public Attribute build() {
 			Validate.isTrue(isNotBlank(name), "invalid name");
-			Validate.notNull(owner, "missing owner");
-			Validate.isTrue(isNotBlank(owner), "invalid name");
+			Validate.notNull(ownerName, "missing owner");
+			Validate.isTrue(isNotBlank(ownerName), "invalid name");
 			description = defaultIfBlank(description, name);
 			calculateType();
 			return new Attribute(this);
@@ -215,8 +258,13 @@ public class Attribute {
 			return this;
 		}
 
-		public AttributeBuilder withOwner(final String owner) {
-			this.owner = owner;
+		public AttributeBuilder withOwnerName(final String ownerName) {
+			this.ownerName = ownerName;
+			return this;
+		}
+
+		public AttributeBuilder withOwnerNamespace(final String ownerNamespace) {
+			this.ownerNamespace = ownerNamespace;
 			return this;
 		}
 
@@ -328,6 +376,11 @@ public class Attribute {
 			return this;
 		}
 
+		public AttributeBuilder withIpType(final IpType ipType) {
+			this.ipType = ipType;
+			return this;
+		}
+
 		public AttributeBuilder withMetadata(final Map<MetadataAction, List<Metadata>> metadataByAction) {
 			this.metadataByAction = metadataByAction;
 			return this;
@@ -341,7 +394,8 @@ public class Attribute {
 
 	private final String name;
 	private final String description;
-	private final String owner;
+	private final String ownerName;
+	private final String ownerNamespace;
 	private final String group;
 	private final String fkDestinationName;
 	private final CMAttributeType<?> type;
@@ -358,8 +412,9 @@ public class Attribute {
 	private Attribute(final AttributeBuilder builder) {
 		this.name = builder.name;
 		this.description = builder.description;
-		this.owner = builder.owner;
-		this.group = builder.group == null ? StringUtils.EMPTY : builder.group;
+		this.ownerName = builder.ownerName;
+		this.ownerNamespace = builder.ownerNamespace;
+		this.group = builder.group == null ? EMPTY : builder.group;
 		this.fkDestinationName = builder.fkDestinationName;
 		this.type = builder.type;
 		this.defaultValue = builder.defaultValue;
@@ -381,8 +436,12 @@ public class Attribute {
 		return description;
 	}
 
-	public String getOwner() {
-		return owner;
+	public String getOwnerName() {
+		return ownerName;
+	}
+
+	public String getOwnerNamespace() {
+		return ownerNamespace;
 	}
 
 	public String getGroup() {

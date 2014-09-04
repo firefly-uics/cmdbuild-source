@@ -1,6 +1,6 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class EntryTypeAttributeType extends AbstractAttributeType<Long> {
 

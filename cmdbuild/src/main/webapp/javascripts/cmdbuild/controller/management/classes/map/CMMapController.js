@@ -1,6 +1,6 @@
 (function() {
-	Ext.define("CMDBuild.controller.management.classes.CMMapController", {
 
+	Ext.define("CMDBuild.controller.management.classes.CMMapController", {
 		extend: "CMDBuild.controller.management.classes.CMCardDataProvider",
 
 		mixins: {
@@ -102,7 +102,7 @@
 //						layers[i].setVisibility(checked);
 //					}
 //				}
-				
+
 			});
 		},
 
@@ -163,14 +163,6 @@
 			var map = this.mapPanel.getMap();
 			var layers = map.layers;
 			var layersPanel = this.mapPanel.getLayerSwitcherPanel();
-//			for (var i=0, l=layers.length; i<l; ++i) {
-//				if (/*layers[i].visibility === undefined && */layers[i].CM_geoserverLayer && layers[i].geoAttribute !== undefined) {
-//					var checked = getLayerVisibility(this.currentCardId, layers[i].geoAttribute.cardBinding, layers[i].geoAttribute.visibility);
-//					layersPanel.setItemCheckByLayerId(layers[i].id, checked);
-//					layers[i].visibility = undefined;
-//					layers[i].setVisibility(checked);
-//				}
-//			}
 		},
 
 		onAddCardButtonClick: function() {
@@ -201,8 +193,7 @@
 				if (layers.length > 0) {
 					var layer = layers[0];
 					if (me.map.getZoom() < layer.minZoom ) {
-						// change the zoom to the minimum to
-						// show the feature
+						// change the zoom to the minimum to show the feature
 						me.map.setCenter(me.map.getCenter(), layer.minZoom);
 					}
 					CMDBuild.ServiceProxy.getFeature(params.IdClass, params.Id, onSuccess);
@@ -232,12 +223,9 @@
 
 		onCardSaved: function(c) {
 			/*
-			 * Normally after the save, the main controller
-			 * say to the grid to reload it, and select the
-			 * new card. If the map is visible on save, this
-			 * could not be done, so say to this controller
-			 * to refresh the features loaded, and set the
-			 * new card as selected
+			 * Normally after the save, the main controller say to the grid to reload it, and select the new card. If the map is
+			 * visible on save, this could not be done, so say to this controller to refresh the features loaded, and set the new card
+			 * as selected
 			 */
 			if (this.mapPanel.cmVisible) {
 				var me = this;
@@ -352,9 +340,11 @@
 				}
 			}
 		},
+
 		getCurrentCardId: function() {
 			return this.currentCardId;
 		},
+
 		getCurrentMap: function() {
 			return this.map;
 		}
@@ -370,31 +360,39 @@
 		}
 		return false;
 	}
+
+	/**
+	 * Executed after zoomEvent to update mapState object and manually redraw all map's layers
+	 */
 	function onZoomEnd() {
 		var map = this.map;
 		var zoom = map.getZoom();
 		this.mapState.updateForZoom(zoom);
-
 		var baseLayers = map.cmBaseLayers;
 		var haveABaseLayer = false;
-		for (var i=0, l=baseLayers.length; i<l; ++i) {
+
+		// Manually force redraw of all layers to fix a problem with GoogleMaps
+		Ext.Array.each(map.layers, function(item, index, allItems) {
+			item.redraw();
+		});
+
+		for (var i = 0; i < baseLayers.length; ++i) {
 			var layer = baseLayers[i];
 
-			if (!layer || typeof layer.isInZoomRange != "function") {
+			if (!layer || typeof layer.isInZoomRange != 'function')
 				continue;
-			}
 
 			if (layer.isInZoomRange(zoom)) {
 				map.setBaseLayer(layer);
 				haveABaseLayer = true;
+
 				break;
 			}
 		}
 
-		if (!haveABaseLayer) {
+		if (!haveABaseLayer)
 			map.setBaseLayer(map.cmFakeBaseLayer);
-		}
-	};
+	}
 
 	function buildLongPressController(me) {
 		var map = me.map;
@@ -468,7 +466,7 @@
 
 	function getCardData() {
 		return Ext.JSON.encode(this.mapPanel.getMap().getEditedGeometries());
-	};
+	}
 
 	function onEntryTypeSelected(et, danglingCard) {
 		if (!et || !this.mapPanel.cmVisible) {
@@ -578,7 +576,7 @@
 		var layer = o.object,
 			feature = o.feature;
 
-		if (this.currentCardId 
+		if (this.currentCardId
 				&& this.currentCardId == feature.data.master_card) {
 
 			layer.selectFeature(feature);
@@ -590,12 +588,12 @@
 			var lastClass = _CMCardModuleState.entryType,
 				lastCard = _CMCardModuleState.card;
 
-			if (lastClass 
+			if (lastClass
 				&& this.currentClassId != lastClass.get("id")) {
 
 				this.onEntryTypeSelected(lastClass);
 			} else {
-				if (lastCard 
+				if (lastCard
 						&& (!this.currentCardId || this.currentCardId != lastCard.get("Id"))) {
 
 					this.centerMapOnFeature(lastCard.data);
@@ -620,7 +618,7 @@
 	function removeLayerForGeoAttribute(map, geoAttribute, me) {
 		var l = getLayerByGeoAttribute(map, geoAttribute);
 		if (l) {
-			if (!geoAttribute.isUsed() 
+			if (!geoAttribute.isUsed()
 					&& l.editLayer) {
 
 				map.removeLayer(l.editLayer);
@@ -639,7 +637,7 @@
 			return;
 		}
 
-		addLayerToMap(map, // 
+		addLayerToMap(map, //
 			CMDBuild.Management.CMMap.LayerBuilder.buildLayer({
 				classId : _CMCardModuleState.entryType.get("id"),
 				geoAttribute : geoAttribute.getValues(),
@@ -671,7 +669,7 @@
 	function getLayerByGeoAttribute(me, geoAttribute) {
 		for (var i=0, l=me.layers.length; i<l; ++i) {
 			var layer = me.layers[i];
-			if (!layer.geoAttribute 
+			if (!layer.geoAttribute
 					|| layer.CM_EditLayer) {
 				continue;
 			} else if (CMDBuild.state.GeoAttributeState.getKey(layer.geoAttribute)
@@ -705,5 +703,6 @@
 		}
 
 		return cmdbuildLayers.concat(geoserverLayers);
-	};
+	}
+
 })();

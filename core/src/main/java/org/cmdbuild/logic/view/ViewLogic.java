@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.view;
 
+import static org.cmdbuild.data.store.Storables.storableOf;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,9 +9,8 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.View.ViewType;
@@ -35,7 +36,7 @@ public class ViewLogic implements Logic {
 
 	public List<View> fetchViewsOfAllTypes() {
 		final List<View> views = new ArrayList<View>();
-		for (final View view : store.list()) {
+		for (final View view : store.readAll()) {
 			if ((operationUser.hasAdministratorPrivileges() || operationUser.hasReadAccess(view))) {
 				if (view.getType().equals(ViewType.FILTER)) {
 					if (isActive(view.getSourceClassName())) {
@@ -65,7 +66,7 @@ public class ViewLogic implements Logic {
 	}
 
 	public View read(final Long id) {
-		return store.read(getFakeStorable(id));
+		return store.read(storableOf(id));
 	}
 
 	public void create(final View view) {
@@ -77,16 +78,8 @@ public class ViewLogic implements Logic {
 	}
 
 	public void delete(final Long id) {
-		store.delete(getFakeStorable(id));
+		store.delete(storableOf(id));
 		grantCleaner.deleteGrantReferingTo(id);
 	}
 
-	private Storable getFakeStorable(final Long id) {
-		return new Storable() {
-			@Override
-			public String getIdentifier() {
-				return id.toString();
-			}
-		};
-	}
 }

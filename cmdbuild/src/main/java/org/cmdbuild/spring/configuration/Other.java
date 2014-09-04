@@ -4,8 +4,10 @@ import static org.cmdbuild.spring.util.Constants.ROOT;
 
 import javax.sql.DataSource;
 
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.common.java.sql.DataSourceHelper;
+import org.cmdbuild.common.java.sql.DefaultDataSourceHelper;
+import org.cmdbuild.data.store.dao.DataViewStore;
+import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.services.DefaultPatchManager;
@@ -64,6 +66,11 @@ public class Other {
 	@Bean
 	public MetadataStoreFactory metadataStoreFactory() {
 		return new MetadataStoreFactory(data.systemDataView());
+	}
+
+	@Bean
+	public DataSourceHelper dataSourceHelper() {
+		return new DefaultDataSourceHelper();
 	}
 
 }

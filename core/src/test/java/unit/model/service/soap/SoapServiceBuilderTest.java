@@ -7,7 +7,7 @@ import org.junit.Test;
 
 public class SoapServiceBuilderTest {
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void shouldThrowExceptionIfUrlIsNull() throws Exception {
 		// given
 		final String nullUrl = null;
@@ -68,7 +68,7 @@ public class SoapServiceBuilderTest {
 
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void methodNameCannotBeNull() throws Exception {
 		// given
 		final String url = "http://example:8080/";

@@ -14,7 +14,7 @@ import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.FilesStore;
-import org.cmdbuild.services.template.TemplateResolverEngineNames;
+import org.cmdbuild.services.template.engine.EngineNames;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
 import org.cmdbuild.workflow.DataViewWorkflowPersistence;
@@ -118,7 +118,7 @@ public class Workflow {
 	protected ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory() {
 		return new ActivityPerformerTemplateResolverFactory( //
 				template.databaseTemplateEngine(), //
-				TemplateResolverEngineNames.DB_TEMPLATE);
+				EngineNames.DB_TEMPLATE);
 	}
 
 	@Bean

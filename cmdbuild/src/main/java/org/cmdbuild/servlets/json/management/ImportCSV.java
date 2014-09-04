@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.management;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILE_CSV;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SEPARATOR;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_CSV;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -29,7 +29,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 
 	/**
 	 * Stores in the session the records of the file that the user has uploaded
-	 * 
+	 *
 	 * @param file
 	 *            is the uploaded file
 	 * @param separatorString
@@ -48,7 +48,7 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the serialization of the cards
 	 */
 	@JSONExported
@@ -139,7 +139,8 @@ public class ImportCSV extends JSONBaseWithSpringContext {
 		}
 	}
 
-	private void clearSession() {
+	@JSONExported
+	public void clearSession() {
 		sessionVars().setCsvData(null);
 	}
 

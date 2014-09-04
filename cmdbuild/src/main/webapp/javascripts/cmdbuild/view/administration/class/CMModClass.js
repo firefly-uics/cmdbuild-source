@@ -28,7 +28,7 @@
 				title: tr.tabs.attributes,
 				border: false,
 				disabled: true
-			})
+			});
 
 			this.domainGrid = new CMDBuild.Administration.DomainGrid({
 				title : tr.tabs.domains,

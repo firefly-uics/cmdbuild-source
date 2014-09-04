@@ -1,12 +1,12 @@
 package org.cmdbuild.model.data;
 
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.trim;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.trim;
 
-import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMClass;
 
@@ -21,6 +21,7 @@ public class EntryType {
 	public static class ClassBuilder implements Builder<EntryType> {
 
 		private String name;
+		private String namespace;
 		private String description;
 		private Long parentId;
 		private boolean isSimpleTable = false;
@@ -38,6 +39,11 @@ public class EntryType {
 
 		public ClassBuilder withName(final String name) {
 			this.name = trim(name);
+			return this;
+		}
+
+		public ClassBuilder withNamespace(String namespace) {
+			this.namespace = trim(namespace);
 			return this;
 		}
 
@@ -113,6 +119,7 @@ public class EntryType {
 	}
 
 	private final String name;
+	private final String namespace;
 	private final String description;
 	private final Long parentId;
 	private final boolean isSuperClass;
@@ -125,6 +132,7 @@ public class EntryType {
 
 	private EntryType(final ClassBuilder builder) {
 		this.name = builder.name;
+		this.namespace = builder.namespace;
 		this.description = builder.description;
 		this.parentId = builder.parentId;
 		this.isSuperClass = builder.isSuperClass;
@@ -138,6 +146,10 @@ public class EntryType {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getNamespace() {
+		return namespace;
 	}
 
 	public String getDescription() {

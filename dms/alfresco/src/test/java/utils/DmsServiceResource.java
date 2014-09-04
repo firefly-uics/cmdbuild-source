@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.alfresco.webservice.test.BaseWebServiceSystemTest;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dms.DefaultDocumentCreator;
 import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.dms.DmsService;

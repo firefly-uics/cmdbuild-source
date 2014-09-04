@@ -1,47 +1,45 @@
 (function() {
-	var _FIELDS = {
-		name: "name",
-		description: "description",
-		value: "value"
-	};
 
 	Ext.define('CMDBuild.model.CMKeyValueModel', {
-		statics: {
-			_FIELDS: _FIELDS
-		},
 		extend: 'Ext.data.Model',
+
 		fields: [
-			{name: _FIELDS.name, type: "string"},
-			{name: _FIELDS.value, type: "string"}
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.VALUE, type: 'string' }
 		]
 	});
 
-	Ext.define("CMDBuild.view.administration.common.CMKeyValueGrid", {
-		extend: "Ext.grid.Panel",
+	Ext.define('CMDBuild.view.administration.common.CMKeyValueGrid', {
+		extend: 'Ext.grid.Panel',
+
+		considerAsFieldToDisable: true,
 		frame: false,
 		flex: 1,
+		keyLabel: '',
+		valueLabel: '',
+		keyEditorConfig: { xtype: 'textfield' },
+		valueEditorConfig: { xtype: 'textfield' },
 
-		keyLabel: "",
-		valueLabel: "",
+		cellEditing: Ext.create('Ext.grid.plugin.CellEditing', {
+			clicksToEdit: 1
+		}),
 
 		initComponent: function() {
-			this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-				clicksToEdit : 1
-			});
-
 			Ext.apply(this, {
-				columns: this.getCoulumnsConf(),
-				store: new Ext.data.Store({
-					model: "CMDBuild.model.CMKeyValueModel",
+				columns: this.getColumnsConf(),
+
+				store: Ext.create('Ext.data.Store', {
+					model: 'CMDBuild.model.CMKeyValueModel',
 					data: []
 				}),
+
 				plugins: [this.cellEditing]
 			});
 
 			this.callParent(arguments);
 		},
 
-		getCoulumnsConf: function() {
+		getColumnsConf: function() {
 			return [
 				this.getKeyColumnConf(),
 				this.getValueColumnConf()
@@ -49,38 +47,42 @@
 		},
 
 		getKeyColumnConf: function() {
-			var me = this;
 			return {
-				header: me.keyLabel || CMDBuild.Translation.administration.modClass.attributeProperties.name,
-				dataIndex : CMDBuild.model.CMKeyValueModel._FIELDS.name,
+				header: this.keyLabel || CMDBuild.Translation.name,
+				dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				editor: this.keyEditorConfig,
 				flex: 1
 			};
 		},
 
 		getValueColumnConf: function() {
-			var me = this;
 			return {
-				header: me.valueLabel || CMDBuild.Translation.administration.modClass.attributeProperties.meta.value,
-				dataIndex: CMDBuild.model.CMKeyValueModel._FIELDS.value,
-				editor: {
-					xtype: "textfield"
-				},
+				header: this.valueLabel || CMDBuild.Translation.value,
+				dataIndex: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				editor: this.valueEditorConfig,
 				flex: 1
 			};
 		},
 
 		fillWithData: function(data) {
 			this.store.removeAll();
-			if (data) {
-				var fields = CMDBuild.model.CMKeyValueModel._FIELDS;
 
+			if (data) {
 				for (var key in data) {
 					var recordConf = {};
-					recordConf[fields.name] = key;
-					recordConf[fields.value] = data[key] || "";
 
-					this.store.add(new CMDBuild.model.CMKeyValueModel(recordConf));
+					recordConf[CMDBuild.core.proxy.CMProxyConstants.NAME] = key;
+					recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = data[key] || '';
+
+					this.store.add(recordConf);
 				}
+			} else {
+				var recordConf = {};
+
+				recordConf[CMDBuild.core.proxy.CMProxyConstants.NAME] = '';
+				recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = '';
+
+				this.store.add(recordConf);
 			}
 		},
 
@@ -89,16 +91,18 @@
 		},
 
 		getData: function() {
-			var records = this.store.getRange(),
-				fields = CMDBuild.model.CMKeyValueModel._FIELDS,
-				data = {};
+			var records = this.store.getRange();
+			var data = {};
 
-			for (var i=0, l=records.length; i<l; ++i) {
+			for (var i = 0, l = records.length; i < l; ++i) {
 				var recData = records[i].data;
-				data[recData[fields.name]] = recData[fields.value];
+
+				if (recData[CMDBuild.core.proxy.CMProxyConstants.NAME] != '')
+					data[recData[CMDBuild.core.proxy.CMProxyConstants.NAME]] = recData[CMDBuild.core.proxy.CMProxyConstants.VALUE];
 			}
 
 			return data;
 		}
 	});
+
 })();

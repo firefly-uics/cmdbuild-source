@@ -1,13 +1,13 @@
 package org.cmdbuild.servlets.json.schema;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FORMAT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUPS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.JRXML;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.REPORT_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FORMAT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.GROUPS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.JRXML;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.REPORT_ID;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

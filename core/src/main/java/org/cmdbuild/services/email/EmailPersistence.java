@@ -2,8 +2,8 @@ package org.cmdbuild.services.email;
 
 import java.util.NoSuchElementException;
 
-import org.cmdbuild.model.email.Email;
-import org.cmdbuild.model.email.EmailTemplate;
+import org.cmdbuild.data.store.email.Email;
+import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 
 public interface EmailPersistence {
 
@@ -12,7 +12,7 @@ public interface EmailPersistence {
 	 * 
 	 * @return all mail templates.
 	 */
-	Iterable<EmailTemplate> getEmailTemplates();
+	Iterable<ExtendedEmailTemplate> getEmailTemplates();
 
 	/**
 	 * Gets all outgoing emails for the specified process' id.

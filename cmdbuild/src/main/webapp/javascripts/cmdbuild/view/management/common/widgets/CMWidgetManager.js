@@ -95,7 +95,7 @@
 				var widgetUI = null;
 				if (me.tabbedWidgetDelegate) {
 					widgetUI = me.tabbedWidgetDelegate.getAttachmentsPanel() || null;
-					
+
 					if (widgetUI != null) {
 						widgetUI.configure({
 							widget: widget,
@@ -174,6 +174,21 @@
 		me.builders[pkg.CMWorkflow.WIDGET_NAME] = function(widget, card) {
 			var w = new pkg.CMWorkflow();
 			me.widgetsContainer.addWidgt(w);
+			return w;
+		};
+
+		// navigationTree
+		me.builders[pkg.CMNavigationTree.WIDGET_NAME] = function(widget, card) {
+			var w = new pkg.CMNavigationTree();
+			me.widgetsContainer.addWidgt(w);
+			return w;
+		};
+
+		// grid
+		me.builders[CMDBuild.view.management.common.widgets.grid.CMGrid.WIDGET_NAME] = function(widget, card) {
+			var w = Ext.create('CMDBuild.view.management.common.widgets.grid.CMGrid');
+			me.widgetsContainer.addWidgt(w);
+
 			return w;
 		};
 

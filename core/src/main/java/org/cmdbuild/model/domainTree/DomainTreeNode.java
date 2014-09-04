@@ -4,7 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DomainTreeNode {
-	private String targetClassName, targetClassDescription, domainName, Type;
+	private String targetClassName, targetClassDescription, //
+			domainName, type, //
+			targetFilter, description;
 	private Long idParent, idGroup, id;
 	private boolean direct, baseNode;
 	private List<DomainTreeNode> childNodes;
@@ -46,11 +48,11 @@ public class DomainTreeNode {
 	}
 
 	public String getType() {
-		return Type;
+		return type;
 	}
 
 	public void setType(final String type) {
-		Type = type;
+		this.type = type;
 	}
 
 	public Long getIdParent() {
@@ -95,6 +97,22 @@ public class DomainTreeNode {
 
 	public void addChildNode(final DomainTreeNode childNode) {
 		childNodes.add(childNode);
+	}
+
+	public String getTargetFilter() {
+		return targetFilter;
+	}
+
+	public void setTargetFilter(final String filter) {
+		this.targetFilter = filter;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(final String description) {
+		this.description = description;
 	}
 
 }

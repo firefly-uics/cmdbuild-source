@@ -55,17 +55,17 @@ public class DefaultPrivilegeContextTest {
 	 * Builder tests
 	 */
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void nullGlobalPrivilegeCannotBeAdded() {
 		builder.withPrivilege(null);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void nullPrivilegedObjectCannotBeAdded() {
 		builder.withPrivilege(new SimplePrivilege(), null);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void nullPrivilegeCannotBeAdded() {
 		builder.withPrivilege(null, DUMMY_PRIV_OBJECT);
 	}

@@ -7,7 +7,7 @@ import static utils.EventManagerMatchers.isActivity;
 import static utils.EventManagerMatchers.isProcess;
 import static utils.XpdlTestUtils.randomName;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
 import org.cmdbuild.workflow.xpdl.XpdlProcess;
