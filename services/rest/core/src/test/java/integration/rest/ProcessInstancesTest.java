@@ -1,24 +1,34 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ADVANCE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static support.HttpClientUtils.all;
+import static support.HttpClientUtils.param;
 import static support.ServerResource.randomPort;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.MultivaluedMap;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
@@ -28,10 +38,15 @@ import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import support.JsonSupport;
 import support.ServerResource;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ProcessInstancesTest {
 
 	private static ProcessInstances service;
@@ -46,11 +61,45 @@ public class ProcessInstancesTest {
 	@ClassRule
 	public static JsonSupport json = new JsonSupport();
 
+	@Captor
+	private ArgumentCaptor<MultivaluedMap<String, String>> multivaluedMapCaptor;
+
 	private HttpClient httpclient;
 
 	@Before
 	public void createHttpClient() throws Exception {
 		httpclient = new HttpClient();
+	}
+
+	@Test
+	public void instanceCreatedUsingPost() throws Exception {
+		// given
+		final SimpleResponse<Long> expectedResponse = SimpleResponse.<Long> newInstance() //
+				.withElement(123L) //
+				.build();
+		doReturn(expectedResponse) //
+				.when(service).create(anyString(), anyBoolean(), any(MultivaluedMap.class));
+
+		// when
+		final PostMethod post = new PostMethod(server.resource("processes/foo/instances/"));
+		post.addParameter(UNDERSCORED_ADVANCE, "true");
+		post.setQueryString(all( //
+				param(UNDERSCORED_ADVANCE, "true"), //
+				param("foo", "bar"), //
+				param("bar", "baz"), //
+				param("baz", "foo") //
+		));
+		final int result = httpclient.executeMethod(post);
+
+		// then
+		verify(service).create(eq("foo"), eq(true), multivaluedMapCaptor.capture());
+		assertThat(result, equalTo(200));
+		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
+		assertThat(captured.getFirst(UNDERSCORED_ADVANCE), equalTo("true"));
+		assertThat(captured.getFirst("foo"), equalTo("bar"));
+		assertThat(captured.getFirst("bar"), equalTo("baz"));
+		assertThat(captured.getFirst("baz"), equalTo("foo"));
 	}
 
 	@Test

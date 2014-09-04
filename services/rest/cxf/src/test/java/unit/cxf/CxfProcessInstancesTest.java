@@ -2,12 +2,15 @@ package unit.cxf;
 
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
+import static com.google.common.collect.Maps.transformEntries;
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -15,10 +18,13 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -26,10 +32,12 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
+import org.cmdbuild.service.rest.cxf.util.Maps;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.ProcessInstance;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.cmdbuild.service.rest.serialization.ErrorHandler;
+import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.junit.Before;
@@ -38,6 +46,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 
 public class CxfProcessInstancesTest {
+
+	private static final Map<String, Object> NO_WIDGETS = Collections.emptyMap();
 
 	private ErrorHandler errorHandler;
 	private WorkflowLogic workflowLogic;
@@ -49,6 +59,84 @@ public class CxfProcessInstancesTest {
 		errorHandler = mock(ErrorHandler.class);
 		workflowLogic = mock(WorkflowLogic.class);
 		cxfProcessInstances = new CxfProcessInstances(errorHandler, workflowLogic);
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenCreatingInstanceButProcessNotFound() throws Exception {
+		// given
+		doReturn(null) //
+				.when(workflowLogic).findProcessClass(anyString());
+		doThrow(WebApplicationException.class) //
+				.when(errorHandler).processNotFound(anyString());
+
+		// when
+		cxfProcessInstances.create("foo", false, null);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		inOrder.verify(workflowLogic).findProcessClass("foo");
+		inOrder.verify(errorHandler).processNotFound("foo");
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenCreatingInstanceButBusinessLogicThrowsException() throws Exception {
+		// given
+		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
+		doReturn(userProcessClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+		final MetadataMap<String, String> formParam = new MetadataMap<String, String>();
+		ChainablePutMap.of(formParam) //
+				.chainablePut("foo", asList("oof")) //
+				.chainablePut("bar", asList("rab")) //
+				.chainablePut("baz", asList("zab"));
+		final Map<String, String> vars = transformEntries(formParam, Maps.<String, String> firstElement());
+		final CMWorkflowException workflowException = new CMWorkflowException("error");
+		doThrow(workflowException) //
+				.when(workflowLogic).startProcess(anyString(), anyMapOf(String.class, String.class),
+						anyMapOf(String.class, Object.class), anyBoolean());
+		doThrow(new WebApplicationException(workflowException)) //
+				.when(errorHandler).propagate(workflowException);
+
+		// when
+		cxfProcessInstances.create("foo", true, formParam);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		inOrder.verify(workflowLogic).findProcessClass("foo");
+		inOrder.verify(workflowLogic).startProcess("foo", vars, NO_WIDGETS, true);
+		inOrder.verify(errorHandler).propagate(workflowException);
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void businessLogicCalledSuccessfullyWhenCreatingInstance() throws Exception {
+		// given
+		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
+		doReturn(userProcessClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+		final MetadataMap<String, String> formParam = new MetadataMap<String, String>();
+		ChainablePutMap.of(formParam) //
+				.chainablePut("foo", asList("oof")) //
+				.chainablePut("bar", asList("rab")) //
+				.chainablePut("baz", asList("zab"));
+		final Map<String, String> vars = transformEntries(formParam, Maps.<String, String> firstElement());
+		final UserProcessInstance userProcessInstance = mock(UserProcessInstance.class);
+		doReturn(123L) //
+				.when(userProcessInstance).getId();
+		doReturn(userProcessInstance) //
+				.when(workflowLogic).startProcess(anyString(), anyMapOf(String.class, String.class),
+						anyMapOf(String.class, Object.class), anyBoolean());
+
+		// when
+		final SimpleResponse<Long> response = cxfProcessInstances.create("foo", true, formParam);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		inOrder.verify(workflowLogic).findProcessClass("foo");
+		inOrder.verify(workflowLogic).startProcess("foo", vars, NO_WIDGETS, true);
+		inOrder.verifyNoMoreInteractions();
+		assertThat(response.getElement(), equalTo(123L));
 	}
 
 	@Test(expected = WebApplicationException.class)
