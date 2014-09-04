@@ -7,6 +7,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
@@ -134,7 +135,7 @@ public class ClassCardsTest {
 				.withElement(123L) //
 				.build();
 		doReturn(expectedResponse) //
-				.when(service).create(anyString(), multivaluedMapCaptor.capture());
+				.when(service).create(anyString(), any(MultivaluedMap.class));
 
 		// when
 		final PostMethod post = new PostMethod(server.resource("classes/foo/cards/"));

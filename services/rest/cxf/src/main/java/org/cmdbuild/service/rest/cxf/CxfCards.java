@@ -1,7 +1,5 @@
 package org.cmdbuild.service.rest.cxf;
 
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
-
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.cmdbuild.service.rest.Cards;
@@ -9,26 +7,18 @@ import org.cmdbuild.service.rest.ClassCards;
 import org.cmdbuild.service.rest.dto.Card;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
-import org.cmdbuild.service.rest.serialization.ErrorHandler;
 
 public class CxfCards implements Cards {
 
-	private final ErrorHandler errorHandler;
 	private final ClassCards delegate;
 
-	public CxfCards(final ErrorHandler errorHandler, final ClassCards delegate) {
-		this.errorHandler = errorHandler;
+	public CxfCards(final ClassCards delegate) {
 		this.delegate = delegate;
 	}
 
 	@Override
-	public SimpleResponse<Long> create(final MultivaluedMap<String, String> formParam) {
-		final String name = formParam.getFirst(UNDERSCORED_TYPE);
-		if (name == null) {
-			errorHandler.missingParam(UNDERSCORED_TYPE);
-		}
-		formParam.remove(UNDERSCORED_TYPE);
-		return delegate.create(name, formParam);
+	public SimpleResponse<Long> create(final String type, final MultivaluedMap<String, String> formParam) {
+		return delegate.create(type, formParam);
 	}
 
 	@Override
@@ -43,13 +33,8 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public void update(final Long id, final MultivaluedMap<String, String> formParam) {
-		final String name = formParam.getFirst(UNDERSCORED_TYPE);
-		if (name == null) {
-			errorHandler.missingParam(UNDERSCORED_TYPE);
-		}
-		formParam.remove(UNDERSCORED_TYPE);
-		delegate.update(name, id, formParam);
+	public void update(final Long id, final String type, final MultivaluedMap<String, String> formParam) {
+		delegate.update(type, id, formParam);
 	}
 
 	@Override
