@@ -214,11 +214,6 @@ public class DmsProperties extends DefaultProperties implements DmsConfiguration
 		return contentOf(getMetadataAutocompletionFileName());
 	}
 
-	@Override
-	public void accept(final PropertiesVisitor visitor) {
-		visitor.visit(this);
-	}
-
 	private String contentOf(final String filename) {
 		final File configurationPath = getPath();
 		final File file = new File(configurationPath, filename);
