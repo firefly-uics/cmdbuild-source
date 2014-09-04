@@ -7,11 +7,11 @@ import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic.LookupTypeQuery;
 import org.cmdbuild.service.rest.LookupTypes;
+import org.cmdbuild.service.rest.cxf.serialization.ToLookupTypeDetail;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
-import org.cmdbuild.service.rest.serialization.ToLookupTypeDetail;
 
 import com.google.common.base.Predicate;
 

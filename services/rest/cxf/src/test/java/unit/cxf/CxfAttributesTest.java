@@ -14,10 +14,10 @@ import org.cmdbuild.service.rest.ClassAttributes;
 import org.cmdbuild.service.rest.DomainAttributes;
 import org.cmdbuild.service.rest.ProcessAttributes;
 import org.cmdbuild.service.rest.cxf.CxfAttributes;
+import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.serialization.ErrorHandler;
 import org.junit.Before;
 import org.junit.Test;
 

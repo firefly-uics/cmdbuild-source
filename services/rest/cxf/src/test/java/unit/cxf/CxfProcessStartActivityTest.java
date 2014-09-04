@@ -16,10 +16,10 @@ import javax.ws.rs.WebApplicationException;
 
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.cxf.CxfProcessStartActivity;
+import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
 import org.cmdbuild.service.rest.dto.ProcessActivityDefinition.Attribute;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
-import org.cmdbuild.service.rest.serialization.ErrorHandler;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;

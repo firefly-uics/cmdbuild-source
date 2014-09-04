@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.serialization;
+package org.cmdbuild.service.rest.cxf.serialization;
 
 import static com.google.common.collect.Maps.transformEntries;
 import static com.google.common.collect.Maps.transformValues;

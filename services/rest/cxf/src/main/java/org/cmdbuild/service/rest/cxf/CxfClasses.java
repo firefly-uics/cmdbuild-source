@@ -8,14 +8,13 @@ import java.util.Comparator;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.Classes;
+import org.cmdbuild.service.rest.cxf.serialization.ToFullClassDetail;
+import org.cmdbuild.service.rest.cxf.serialization.ToSimpleClassDetail;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.FullClassDetail;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleClassDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
-import org.cmdbuild.service.rest.serialization.ErrorHandler;
-import org.cmdbuild.service.rest.serialization.ToFullClassDetail;
-import org.cmdbuild.service.rest.serialization.ToSimpleClassDetail;
 
 import com.google.common.collect.Ordering;
 

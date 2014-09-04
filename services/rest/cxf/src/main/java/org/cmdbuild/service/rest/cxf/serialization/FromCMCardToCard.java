@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.serialization;
+package org.cmdbuild.service.rest.cxf.serialization;
 
 import java.util.Map.Entry;
 

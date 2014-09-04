@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.serialization;
+package org.cmdbuild.service.rest.cxf.serialization;
 
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;

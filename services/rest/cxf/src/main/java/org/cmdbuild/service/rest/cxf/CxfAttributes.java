@@ -8,7 +8,6 @@ import org.cmdbuild.service.rest.DomainAttributes;
 import org.cmdbuild.service.rest.ProcessAttributes;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.serialization.ErrorHandler;
 
 public class CxfAttributes implements Attributes {
 

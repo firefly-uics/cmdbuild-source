@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.serialization;
+package org.cmdbuild.service.rest.cxf.serialization;
 
 import java.util.Collection;
 import java.util.Map;
@@ -16,6 +16,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.metadata.Metadata;
+import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.AttributeDetail.Filter;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
