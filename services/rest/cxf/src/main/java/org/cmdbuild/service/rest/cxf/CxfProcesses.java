@@ -8,14 +8,13 @@ import java.util.Comparator;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.Processes;
+import org.cmdbuild.service.rest.cxf.serialization.ToFullProcessDetail;
+import org.cmdbuild.service.rest.cxf.serialization.ToSimpleProcessDetail;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.FullProcessDetail;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleProcessDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
-import org.cmdbuild.service.rest.serialization.ErrorHandler;
-import org.cmdbuild.service.rest.serialization.ToFullProcessDetail;
-import org.cmdbuild.service.rest.serialization.ToSimpleProcessDetail;
 import org.cmdbuild.workflow.user.UserProcessClass;
 
 import com.google.common.collect.Ordering;

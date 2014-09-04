@@ -9,12 +9,11 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.service.rest.DomainAttributes;
+import org.cmdbuild.service.rest.cxf.serialization.AttributeTypeResolver;
+import org.cmdbuild.service.rest.cxf.serialization.ToAttributeDetail;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.serialization.AttributeTypeResolver;
-import org.cmdbuild.service.rest.serialization.ErrorHandler;
-import org.cmdbuild.service.rest.serialization.ToAttributeDetail;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 
 public class CxfDomainAttributes implements DomainAttributes {

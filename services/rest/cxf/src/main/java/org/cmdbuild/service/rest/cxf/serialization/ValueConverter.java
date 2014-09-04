@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.serialization;
+package org.cmdbuild.service.rest.cxf.serialization;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.IdAndDescription;

@@ -8,11 +8,11 @@ import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic.LookupQuery;
 import org.cmdbuild.service.rest.LookupTypeValues;
+import org.cmdbuild.service.rest.cxf.serialization.ToLookupDetail;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
-import org.cmdbuild.service.rest.serialization.ToLookupDetail;
 
 public class CxfLookupTypeValues implements LookupTypeValues {
 

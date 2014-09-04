@@ -6,14 +6,13 @@ import static com.google.common.collect.Iterables.size;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.Domains;
+import org.cmdbuild.service.rest.cxf.serialization.ToFullDomainDetail;
+import org.cmdbuild.service.rest.cxf.serialization.ToSimpleDomainDetail;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.FullDomainDetail;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleDomainDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
-import org.cmdbuild.service.rest.serialization.ErrorHandler;
-import org.cmdbuild.service.rest.serialization.ToFullDomainDetail;
-import org.cmdbuild.service.rest.serialization.ToSimpleDomainDetail;
 
 public class CxfDomains implements Domains {
 

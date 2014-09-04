@@ -1,21 +1,21 @@
-package org.cmdbuild.service.rest.serialization;
+package org.cmdbuild.service.rest.cxf.serialization;
 
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.service.rest.dto.FullProcessDetail;
+import org.cmdbuild.service.rest.dto.FullClassDetail;
 
 import com.google.common.base.Function;
 
-public class ToFullProcessDetail implements Function<CMClass, FullProcessDetail> {
+public class ToFullClassDetail implements Function<CMClass, FullClassDetail> {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToFullProcessDetail> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToFullClassDetail> {
 
 		private Builder() {
 			// use static method
 		}
 
 		@Override
-		public ToFullProcessDetail build() {
-			return new ToFullProcessDetail(this);
+		public ToFullClassDetail build() {
+			return new ToFullClassDetail(this);
 		}
 
 	}
@@ -24,14 +24,14 @@ public class ToFullProcessDetail implements Function<CMClass, FullProcessDetail>
 		return new Builder();
 	}
 
-	private ToFullProcessDetail(final Builder builder) {
+	private ToFullClassDetail(final Builder builder) {
 		// nothing to do
 	}
 
 	@Override
-	public FullProcessDetail apply(final CMClass input) {
+	public FullClassDetail apply(final CMClass input) {
 		final CMClass parent = input.getParent();
-		return FullProcessDetail.newInstance() //
+		return FullClassDetail.newInstance() //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.thatIsPrototype(input.isSuperclass()) //

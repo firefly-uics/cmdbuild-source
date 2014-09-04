@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.serialization;
+package org.cmdbuild.service.rest.cxf.serialization;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.dto.Card;
 
 import com.google.common.base.Function;

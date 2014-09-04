@@ -16,15 +16,14 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.service.rest.ClassCards;
+import org.cmdbuild.service.rest.cxf.serialization.FromCMCardToCard;
+import org.cmdbuild.service.rest.cxf.serialization.FromCardToCard;
+import org.cmdbuild.service.rest.cxf.serialization.ToCardFunction;
 import org.cmdbuild.service.rest.cxf.util.Maps;
 import org.cmdbuild.service.rest.dto.Card;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
-import org.cmdbuild.service.rest.serialization.ErrorHandler;
-import org.cmdbuild.service.rest.serialization.FromCMCardToCard;
-import org.cmdbuild.service.rest.serialization.FromCardToCard;
-import org.cmdbuild.service.rest.serialization.ToCardFunction;
 import org.json.JSONException;
 import org.json.JSONObject;
 

@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest.serialization;
+package org.cmdbuild.service.rest.cxf.serialization;
 
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
