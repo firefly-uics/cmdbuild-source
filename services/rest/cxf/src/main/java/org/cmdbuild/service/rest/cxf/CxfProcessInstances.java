@@ -35,8 +35,6 @@ public class CxfProcessInstances implements ProcessInstances {
 
 	private static Map<String, Object> NO_WIDGET_SUBMISSION = Collections.emptyMap();
 
-	private static final AssertionError SHOULD_NEVER_HAPPEN = new AssertionError("should never happen");
-
 	private final ErrorHandler errorHandler;
 	private final WorkflowLogic workflowLogic;
 
@@ -124,6 +122,21 @@ public class CxfProcessInstances implements ProcessInstances {
 						.withTotal(Long.valueOf(elements.totalSize())) //
 						.build()) //
 				.build();
+	}
+
+	@Override
+	public void update(final String type, final Long id, final String activity, final boolean advance,
+			final MultivaluedMap<String, String> formParam) {
+		final UserProcessClass found = workflowLogic.findProcessClass(type);
+		if (found == null) {
+			errorHandler.processNotFound(type);
+		}
+		final Map<String, String> vars = transformEntries(formParam, FIRST_ELEMENT);
+		try {
+			workflowLogic.updateProcess(type, id, activity, vars, NO_WIDGET_SUBMISSION, advance);
+		} catch (final Throwable e) {
+			errorHandler.propagate(e);
+		}
 	}
 
 }
