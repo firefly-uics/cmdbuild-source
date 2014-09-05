@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
+import org.cmdbuild.service.rest.Activities;
 import org.cmdbuild.service.rest.Attributes;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.ClassAttributes;
@@ -22,6 +23,7 @@ import org.cmdbuild.service.rest.ProcessInstanceActivities;
 import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.ProcessStartActivity;
 import org.cmdbuild.service.rest.Processes;
+import org.cmdbuild.service.rest.cxf.CxfActivities;
 import org.cmdbuild.service.rest.cxf.CxfAttributes;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
@@ -55,6 +57,12 @@ public class Services implements LoggingSupport {
 
 	@Autowired
 	private Utilities utilities;
+
+	@Bean
+	public Activities cxfActivities() {
+		final CxfActivities service = new CxfActivities(cxfProcessInstanceActivities());
+		return proxy(Activities.class, service);
+	}
 
 	@Bean
 	public Attributes cxfAttributes() {
