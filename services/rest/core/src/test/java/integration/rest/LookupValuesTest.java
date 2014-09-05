@@ -23,6 +23,7 @@ import org.cmdbuild.service.rest.dto.LookupDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import support.JsonSupport;
@@ -30,10 +31,10 @@ import support.ServerResource;
 
 public class LookupValuesTest {
 
-	private static LookupValues service;
+	private LookupValues service;
 
-	@ClassRule
-	public static ServerResource server = ServerResource.newInstance() //
+	@Rule
+	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(LookupValues.class) //
 			.withService(service = mock(LookupValues.class)) //
 			.withPort(randomPort()) //

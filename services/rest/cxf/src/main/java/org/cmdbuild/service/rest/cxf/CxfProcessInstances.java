@@ -139,4 +139,17 @@ public class CxfProcessInstances implements ProcessInstances {
 		}
 	}
 
+	@Override
+	public void delete(final String type, final Long id) {
+		final UserProcessClass found = workflowLogic.findProcessClass(type);
+		if (found == null) {
+			errorHandler.processNotFound(type);
+		}
+		try {
+			workflowLogic.abortProcess(type, id);
+		} catch (final Throwable e) {
+			errorHandler.propagate(e);
+		}
+	}
+
 }

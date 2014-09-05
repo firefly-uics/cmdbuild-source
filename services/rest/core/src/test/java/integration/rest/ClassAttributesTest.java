@@ -18,6 +18,7 @@ import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import support.JsonSupport;
@@ -25,10 +26,10 @@ import support.ServerResource;
 
 public class ClassAttributesTest {
 
-	private static ClassAttributes service;
+	private ClassAttributes service;
 
-	@ClassRule
-	public static ServerResource server = ServerResource.newInstance() //
+	@Rule
+	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(ClassAttributes.class) //
 			.withService(service = mock(ClassAttributes.class)) //
 			.withPort(randomPort()) //

@@ -16,6 +16,7 @@ import org.cmdbuild.service.rest.dto.ProcessActivityDefinition.Attribute;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import support.JsonSupport;
@@ -23,10 +24,10 @@ import support.ServerResource;
 
 public class ProcessStartActivityTest {
 
-	private static ProcessStartActivity service;
+	private ProcessStartActivity service;
 
-	@ClassRule
-	public static ServerResource server = ServerResource.newInstance() //
+	@Rule
+	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(ProcessStartActivity.class) //
 			.withService(service = mock(ProcessStartActivity.class)) //
 			.withPort(randomPort()) //

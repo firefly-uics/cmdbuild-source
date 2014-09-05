@@ -382,4 +382,62 @@ public class CxfProcessInstancesTest {
 		inOrder.verifyNoMoreInteractions();
 	}
 
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenDeletingInstanceButProcessNotFound() throws Exception {
+		// given
+		doReturn(null) //
+				.when(workflowLogic).findProcessClass(anyString());
+		doThrow(WebApplicationException.class) //
+				.when(errorHandler).processNotFound(anyString());
+
+		// when
+		cxfProcessInstances.delete("foo", 123L);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		inOrder.verify(workflowLogic).findProcessClass("foo");
+		inOrder.verify(errorHandler).processNotFound("foo");
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenDeletingInstanceButBusinessLogicThrowsException() throws Exception {
+		// given
+		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
+		doReturn(userProcessClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+		final CMWorkflowException workflowException = new CMWorkflowException("error");
+		doThrow(workflowException) //
+				.when(workflowLogic).abortProcess(anyString(), anyLong());
+		doThrow(new WebApplicationException(workflowException)) //
+				.when(errorHandler).propagate(workflowException);
+
+		// when
+		cxfProcessInstances.delete("foo", 123L);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		inOrder.verify(workflowLogic).findProcessClass("foo");
+		inOrder.verify(workflowLogic).abortProcess("foo", 123L);
+		inOrder.verify(errorHandler).propagate(workflowException);
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void businessLogicCalledSuccessfullyWhenDeletingInstance() throws Exception {
+		// given
+		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
+		doReturn(userProcessClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+
+		// when
+		cxfProcessInstances.delete("foo", 123L);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		inOrder.verify(workflowLogic).findProcessClass("foo");
+		inOrder.verify(workflowLogic).abortProcess("foo", 123L);
+		inOrder.verifyNoMoreInteractions();
+	}
+
 }
