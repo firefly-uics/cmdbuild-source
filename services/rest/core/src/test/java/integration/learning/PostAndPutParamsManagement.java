@@ -12,7 +12,6 @@ import static support.HttpClientUtils.all;
 import static support.HttpClientUtils.param;
 import static support.ServerResource.randomPort;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -41,7 +40,6 @@ public class PostAndPutParamsManagement {
 
 	private static final String FORM_PARAM = "formParam";
 
-	@Consumes(APPLICATION_FORM_URLENCODED)
 	public static interface Dummy {
 
 		@POST

@@ -8,10 +8,11 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static support.HttpClientUtils.all;
+import static support.HttpClientUtils.param;
 import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.Attributes;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
@@ -66,7 +67,10 @@ public class AttributesTest {
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("attributes/"));
-		get.setQueryString(new NameValuePair[] { new NameValuePair("type", "foo"), new NameValuePair("id", "bar") });
+		get.setQueryString(all( //
+				param("type", "foo"), //
+				param("id", "bar") //
+		));
 		final int result = httpclient.executeMethod(get);
 
 		// then
