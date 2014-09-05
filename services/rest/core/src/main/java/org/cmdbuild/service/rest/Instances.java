@@ -8,6 +8,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ACTIVITY;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ADVANCE;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -24,29 +25,29 @@ import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.ProcessInstance;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 
-@Path("processes/{" + TYPE + "}/instances/")
+@Path("process_instances/")
 @Produces(APPLICATION_JSON)
-public interface ProcessInstances {
+public interface Instances {
 
 	@POST
 	@Path(EMPTY)
 	SimpleResponse<Long> create( //
-			@PathParam(TYPE) String type, //
 			MultivaluedMap<String, String> formParams, //
+			@FormParam(UNDERSCORED_TYPE) String type, //
 			@FormParam(UNDERSCORED_ADVANCE) boolean advance //
 	);
 
 	@GET
 	@Path("{" + ID + "}")
 	SimpleResponse<ProcessInstance> read( //
-			@PathParam(TYPE) String type, //
-			@PathParam(ID) Long id //
+			@PathParam(ID) Long id, //
+			@QueryParam(TYPE) String type //
 	);
 
 	@GET
 	@Path(EMPTY)
 	ListResponse<ProcessInstance> read( //
-			@PathParam(TYPE) String type, //
+			@QueryParam(TYPE) String type, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);
@@ -54,8 +55,8 @@ public interface ProcessInstances {
 	@PUT
 	@Path("{" + ID + "}")
 	void update( //
-			@PathParam(TYPE) String type, //
 			@PathParam(ID) Long id, //
+			@FormParam(UNDERSCORED_TYPE) String type, //
 			@FormParam(UNDERSCORED_ACTIVITY) String activity, //
 			@FormParam(UNDERSCORED_ADVANCE) boolean advance, //
 			MultivaluedMap<String, String> formParams //
@@ -64,8 +65,8 @@ public interface ProcessInstances {
 	@DELETE
 	@Path("{" + ID + "}")
 	void delete( //
-			@PathParam(TYPE) String type, //
-			@PathParam(ID) Long id //
+			@PathParam(ID) Long id, //
+			@FormParam(TYPE) String type //
 	);
 
 }
