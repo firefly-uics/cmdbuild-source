@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
@@ -41,6 +42,7 @@ import org.cmdbuild.service.rest.dto.ProcessInstance;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -53,10 +55,10 @@ import support.ServerResource;
 @RunWith(MockitoJUnitRunner.class)
 public class ProcessInstancesTest {
 
-	private static ProcessInstances service;
+	private ProcessInstances service;
 
-	@ClassRule
-	public static ServerResource server = ServerResource.newInstance() //
+	@Rule
+	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(ProcessInstances.class) //
 			.withService(service = mock(ProcessInstances.class)) //
 			.withPort(randomPort()) //
@@ -226,6 +228,17 @@ public class ProcessInstancesTest {
 		assertThat(captured.getFirst("foo"), equalTo("bar"));
 		assertThat(captured.getFirst("bar"), equalTo("baz"));
 		assertThat(captured.getFirst("baz"), equalTo("foo"));
+	}
+
+	@Test
+	public void instanceDeleted() throws Exception {
+		// when
+		final DeleteMethod delete = new DeleteMethod(server.resource("processes/foo/instances/123/"));
+		final int result = httpclient.executeMethod(delete);
+
+		// then
+		verify(service).delete(eq("foo"), eq(123L));
+		assertThat(result, equalTo(204));
 	}
 
 }

@@ -39,6 +39,7 @@ import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -51,10 +52,10 @@ import support.ServerResource;
 @RunWith(MockitoJUnitRunner.class)
 public class ClassCardsTest {
 
-	private static ClassCards service;
+	private ClassCards service;
 
-	@ClassRule
-	public static ServerResource server = ServerResource.newInstance() //
+	@Rule
+	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(ClassCards.class) //
 			.withService(service = mock(ClassCards.class)) //
 			.withPort(randomPort()) //

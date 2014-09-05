@@ -19,6 +19,7 @@ import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import support.JsonSupport;
@@ -29,14 +30,14 @@ public class AttributesTest {
 	private static Attributes service;
 
 	@ClassRule
-	public static ServerResource server = ServerResource.newInstance() //
+	public static JsonSupport json = new JsonSupport();
+
+	@Rule
+	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(Attributes.class) //
 			.withService(service = mock(Attributes.class)) //
 			.withPort(randomPort()) //
 			.build();
-
-	@ClassRule
-	public static JsonSupport json = new JsonSupport();
 
 	private HttpClient httpclient;
 

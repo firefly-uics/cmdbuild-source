@@ -519,15 +519,23 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	}
 
 	@Override
-	public void abortProcess(final Long processClassId, final long processCardId) throws CMWorkflowException {
-		logger.info("aborting process with id '{}' for class '{}'", processCardId, processClassId);
+	public void abortProcess(final String processClassName, final long processCardId) throws CMWorkflowException {
+		logger.info("aborting process with id '{}' for class '{}'", processCardId, processClassName);
 		if (processCardId < 0) {
 			logger.error("invalid card id '{}'", processCardId);
 			throw WorkflowExceptionType.WF_CANNOT_ABORT_PROCESS.createException();
 		}
-		final CMProcessClass process = workflowEngine.findProcessClassById(processClassId);
+		final CMProcessClass process = workflowEngine.findProcessClassByName(processClassName);
 		final UserProcessInstance pi = workflowEngine.findProcessInstance(process, processCardId);
 		workflowEngine.abortProcessInstance(pi);
+
+	}
+
+	@Override
+	public void abortProcess(final Long processClassId, final long processCardId) throws CMWorkflowException {
+		logger.info("aborting process with id '{}' for class '{}'", processCardId, processClassId);
+		final CMProcessClass processClass = workflowEngine.findProcessClassById(processClassId);
+		abortProcess(processClass.getName(), processCardId);
 	}
 
 }

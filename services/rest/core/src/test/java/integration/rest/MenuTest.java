@@ -13,6 +13,7 @@ import org.cmdbuild.service.rest.dto.MenuDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import support.JsonSupport;
@@ -20,10 +21,10 @@ import support.ServerResource;
 
 public class MenuTest {
 
-	private static Menu service;
+	private Menu service;
 
-	@ClassRule
-	public static ServerResource server = ServerResource.newInstance() //
+	@Rule
+	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(Menu.class) //
 			.withService(service = mock(Menu.class)) //
 			.withPort(randomPort()) //

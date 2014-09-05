@@ -158,6 +158,8 @@ public interface WorkflowLogic extends Logic {
 
 	void addSketch(Long processClassId, DataSource ds) throws IOException;
 
+	void abortProcess(String processClassName, long processCardId) throws CMWorkflowException;
+
 	void abortProcess(Long processClassId, long processCardId) throws CMWorkflowException;
 
 }

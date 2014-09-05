@@ -22,7 +22,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.dto.AttributeDetail;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import support.ServerResource;
@@ -77,10 +77,10 @@ public class DefaultValuesTest {
 
 	}
 
-	private static Dummy service;
+	private Dummy service;
 
-	@ClassRule
-	public static ServerResource server = ServerResource.newInstance() //
+	@Rule
+	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(Dummy.class) //
 			.withService(service = mock(Dummy.class)) //
 			.withPort(randomPort()) //

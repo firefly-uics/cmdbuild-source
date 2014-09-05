@@ -20,6 +20,7 @@ import org.cmdbuild.service.rest.dto.SimpleProcessDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import support.JsonSupport;
@@ -27,10 +28,10 @@ import support.ServerResource;
 
 public class ProcessesTest {
 
-	private static Processes service;
+	private Processes service;
 
-	@ClassRule
-	public static ServerResource server = ServerResource.newInstance() //
+	@Rule
+	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(Processes.class) //
 			.withService(service = mock(Processes.class)) //
 			.withPort(randomPort()) //

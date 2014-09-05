@@ -21,6 +21,7 @@ import org.cmdbuild.service.rest.dto.SimpleDomainDetail;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import support.JsonSupport;
@@ -28,10 +29,10 @@ import support.ServerResource;
 
 public class DomainsTest {
 
-	private static Domains service;
+	private Domains service;
 
-	@ClassRule
-	public static ServerResource server = ServerResource.newInstance() //
+	@Rule
+	public ServerResource server = ServerResource.newInstance() //
 			.withServiceClass(Domains.class) //
 			.withService(service = mock(Domains.class)) //
 			.withPort(randomPort()) //

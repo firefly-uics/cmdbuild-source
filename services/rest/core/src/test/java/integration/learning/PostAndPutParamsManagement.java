@@ -70,7 +70,7 @@ public class PostAndPutParamsManagement {
 
 	}
 
-	private static Dummy service;
+	private Dummy service;
 
 	@Rule
 	public ServerResource server = ServerResource.newInstance() //

@@ -11,6 +11,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ACTI
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ADVANCE;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -61,6 +62,13 @@ public interface ProcessInstances {
 			@FormParam(UNDERSCORED_ACTIVITY) String activity, //
 			@FormParam(UNDERSCORED_ADVANCE) boolean advance, //
 			MultivaluedMap<String, String> formParams //
+	);
+
+	@DELETE
+	@Path("{" + ID + "}")
+	void delete( //
+			@PathParam(TYPE) String type, //
+			@PathParam(ID) Long id //
 	);
 
 }
