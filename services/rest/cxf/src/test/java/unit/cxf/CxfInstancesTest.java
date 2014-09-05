@@ -56,7 +56,6 @@ public class CxfInstancesTest {
 	@Test
 	public void readSingleDelegatedCorrectly() throws Exception {
 		// given
-		final MultivaluedMap<String, String> formParams = mock(MultivaluedMap.class);
 		final SimpleResponse<ProcessInstance> expectedResponse = SimpleResponse.newInstance(ProcessInstance.class) //
 				.withElement(ProcessInstance.newInstance() //
 						// not important
