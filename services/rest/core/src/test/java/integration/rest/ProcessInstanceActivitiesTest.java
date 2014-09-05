@@ -45,7 +45,7 @@ public class ProcessInstanceActivitiesTest {
 	}
 
 	@Test
-	public void instancesReadUsingGet() throws Exception {
+	public void instancesRead() throws Exception {
 		// given
 		final ListResponse<ProcessActivity> sentResponse = ListResponse.newInstance(ProcessActivity.class) //
 				.withElements(asList( //
@@ -76,7 +76,7 @@ public class ProcessInstanceActivitiesTest {
 	}
 
 	@Test
-	public void instanceReadUsingGet() throws Exception {
+	public void instanceRead() throws Exception {
 		// given
 		final SimpleResponse<ProcessActivityDefinition> sentResponse = SimpleResponse
 				.newInstance(ProcessActivityDefinition.class) //

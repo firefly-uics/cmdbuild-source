@@ -44,13 +44,13 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public SimpleResponse<Long> create(final String type, final boolean advance,
-			final MultivaluedMap<String, String> formParam) {
+	public SimpleResponse<Long> create(final String type, final MultivaluedMap<String, String> formParams,
+			final boolean advance) {
 		final UserProcessClass found = workflowLogic.findProcessClass(type);
 		if (found == null) {
 			errorHandler.processNotFound(type);
 		}
-		final Map<String, String> vars = transformEntries(formParam, FIRST_ELEMENT);
+		final Map<String, String> vars = transformEntries(formParams, FIRST_ELEMENT);
 		try {
 			final UserProcessInstance instance = workflowLogic.startProcess(type, vars, NO_WIDGET_SUBMISSION, advance);
 			return SimpleResponse.newInstance(Long.class) //
@@ -126,12 +126,12 @@ public class CxfProcessInstances implements ProcessInstances {
 
 	@Override
 	public void update(final String type, final Long id, final String activity, final boolean advance,
-			final MultivaluedMap<String, String> formParam) {
+			final MultivaluedMap<String, String> formParams) {
 		final UserProcessClass found = workflowLogic.findProcessClass(type);
 		if (found == null) {
 			errorHandler.processNotFound(type);
 		}
-		final Map<String, String> vars = transformEntries(formParam, FIRST_ELEMENT);
+		final Map<String, String> vars = transformEntries(formParams, FIRST_ELEMENT);
 		try {
 			workflowLogic.updateProcess(type, id, activity, vars, NO_WIDGET_SUBMISSION, advance);
 		} catch (final Throwable e) {

@@ -48,7 +48,7 @@ public class DomainsTest {
 	}
 
 	@Test
-	public void domainsReadUsingGet() throws Exception {
+	public void domainsRead() throws Exception {
 		// given
 		final ListResponse<SimpleDomainDetail> expectedResponse = ListResponse.<SimpleDomainDetail> newInstance() //
 				.withElements(asList( //
@@ -76,7 +76,7 @@ public class DomainsTest {
 	}
 
 	@Test
-	public void domainReadUsingGet() throws Exception {
+	public void domainRead() throws Exception {
 		// given
 		final SimpleResponse<FullDomainDetail> expectedResponse = SimpleResponse.<FullDomainDetail> newInstance() //
 				.withElement(FullDomainDetail.newInstance() //

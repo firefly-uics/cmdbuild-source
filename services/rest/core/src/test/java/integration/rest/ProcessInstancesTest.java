@@ -76,18 +76,17 @@ public class ProcessInstancesTest {
 	}
 
 	@Test
-	public void instanceCreatedUsingPost() throws Exception {
+	public void instanceCreated() throws Exception {
 		// given
 		final SimpleResponse<Long> expectedResponse = SimpleResponse.<Long> newInstance() //
 				.withElement(123L) //
 				.build();
 		doReturn(expectedResponse) //
-				.when(service).create(anyString(), anyBoolean(), any(MultivaluedMap.class));
+				.when(service).create(anyString(), any(MultivaluedMap.class), anyBoolean());
 
 		// when
 		final PostMethod post = new PostMethod(server.resource("processes/foo/instances/"));
-		post.addParameter(UNDERSCORED_ADVANCE, "true");
-		post.setQueryString(all( //
+		post.setRequestBody(all( //
 				param(UNDERSCORED_ADVANCE, "true"), //
 				param("foo", "bar"), //
 				param("bar", "baz"), //
@@ -96,7 +95,7 @@ public class ProcessInstancesTest {
 		final int result = httpclient.executeMethod(post);
 
 		// then
-		verify(service).create(eq("foo"), eq(true), multivaluedMapCaptor.capture());
+		verify(service).create(eq("foo"), multivaluedMapCaptor.capture(), eq(true));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
@@ -107,7 +106,7 @@ public class ProcessInstancesTest {
 	}
 
 	@Test
-	public void instanceReadUsingGet() throws Exception {
+	public void instanceRead() throws Exception {
 		// given
 		final String type = "type";
 		final Long id = 123L;
@@ -143,7 +142,7 @@ public class ProcessInstancesTest {
 	}
 
 	@Test
-	public void instancesReadUsingGet() throws Exception {
+	public void instancesRead() throws Exception {
 		// given
 		final String type = "type";
 		final Long firstId = 123L;
@@ -205,7 +204,7 @@ public class ProcessInstancesTest {
 	}
 
 	@Test
-	public void instanceUpdatedUsingPost() throws Exception {
+	public void instanceUpdated() throws Exception {
 		// when
 		final PutMethod put = new PutMethod(server.resource("processes/foo/instances/123/"));
 		put.addRequestHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);

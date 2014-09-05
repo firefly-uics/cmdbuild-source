@@ -74,7 +74,7 @@ public class CardsTest {
 	}
 
 	@Test
-	public void cardsReadUsingGet() throws Exception {
+	public void cardsRead() throws Exception {
 		// given
 		final String type = "foo";
 		final Long firstId = 123L;
@@ -132,18 +132,17 @@ public class CardsTest {
 	}
 
 	@Test
-	public void cardCreatedUsingPost() throws Exception {
+	public void cardCreated() throws Exception {
 		// given
 		final SimpleResponse<Long> expectedResponse = SimpleResponse.<Long> newInstance() //
 				.withElement(123L) //
 				.build();
 		doReturn(expectedResponse) //
-				.when(service).create(anyString(), any(MultivaluedMap.class));
+				.when(service).create(any(MultivaluedMap.class), anyString());
 
 		// when
 		final PostMethod post = new PostMethod(server.resource("cards/"));
-		post.addParameter(UNDERSCORED_TYPE, "foo");
-		post.setQueryString(all( //
+		post.setRequestBody(all( //
 				param(UNDERSCORED_TYPE, "foo"), //
 				param("foo", "bar"), //
 				param("bar", "baz"), //
@@ -152,7 +151,7 @@ public class CardsTest {
 		final int result = httpclient.executeMethod(post);
 
 		// then
-		verify(service).create(eq("foo"), multivaluedMapCaptor.capture());
+		verify(service).create(multivaluedMapCaptor.capture(), eq("foo"));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
@@ -163,7 +162,7 @@ public class CardsTest {
 	}
 
 	@Test
-	public void cardReadUsingGet() throws Exception {
+	public void cardRead() throws Exception {
 		// given
 		final String type = "foo";
 		final Long firstId = 123L;
@@ -201,7 +200,7 @@ public class CardsTest {
 	}
 
 	@Test
-	public void cardUpdatedUsingPut() throws Exception {
+	public void cardUpdated() throws Exception {
 		// when
 		final PutMethod put = new PutMethod(server.resource("cards/123/"));
 		put.addRequestHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
@@ -214,7 +213,7 @@ public class CardsTest {
 		final int result = httpclient.executeMethod(put);
 
 		// then
-		verify(service).update(eq(123L), eq("foo"), multivaluedMapCaptor.capture());
+		verify(service).update(eq(123L), multivaluedMapCaptor.capture(), eq("foo"));
 		assertThat(result, equalTo(204));
 		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
 		assertThat(captured.getFirst(UNDERSCORED_TYPE), equalTo((Object) "foo"));
@@ -224,7 +223,7 @@ public class CardsTest {
 	}
 
 	@Test
-	public void cardDeletedUsingDelete() throws Exception {
+	public void cardDeleted() throws Exception {
 		// when
 		final DeleteMethod delete = new DeleteMethod(server.resource("cards/123/"));
 		delete.setQueryString(all(param(UNDERSCORED_TYPE, "foo")));

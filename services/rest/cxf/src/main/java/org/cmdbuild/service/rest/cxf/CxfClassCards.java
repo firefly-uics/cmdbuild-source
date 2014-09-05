@@ -48,12 +48,12 @@ public class CxfClassCards implements ClassCards {
 	}
 
 	@Override
-	public SimpleResponse<Long> create(final String type, final MultivaluedMap<String, String> formParam) {
+	public SimpleResponse<Long> create(final String type, final MultivaluedMap<String, String> formParams) {
 		final CMClass targetClass = userDataView.findClass(type);
 		if (targetClass == null) {
 			errorHandler.classNotFound(type);
 		}
-		final Map<String, String> attributes = transformEntries(formParam, FIRST_ELEMENT);
+		final Map<String, String> attributes = transformEntries(formParams, FIRST_ELEMENT);
 		final org.cmdbuild.model.data.Card card = org.cmdbuild.model.data.Card.newInstance(targetClass) //
 				.withAllAttributes(attributes) //
 				.build();
@@ -118,13 +118,13 @@ public class CxfClassCards implements ClassCards {
 	}
 
 	@Override
-	public void update(final String type, final Long id, final MultivaluedMap<String, String> formParam) {
+	public void update(final String type, final Long id, final MultivaluedMap<String, String> formParams) {
 		final CMClass targetClass = userDataView.findClass(type);
 		if (targetClass == null) {
 			errorHandler.classNotFound(type);
 		}
 		// TODO check for missing id (inside logic, please)
-		final Map<String, String> attributes = transformEntries(formParam, FIRST_ELEMENT);
+		final Map<String, String> attributes = transformEntries(formParams, FIRST_ELEMENT);
 		final org.cmdbuild.model.data.Card card = org.cmdbuild.model.data.Card.newInstance(targetClass) //
 				.withId(id) //
 				.withAllAttributes(attributes) //

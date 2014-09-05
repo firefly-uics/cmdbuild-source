@@ -56,7 +56,7 @@ public class CxfCardsTest {
 		params.put("baz", asList("foo"));
 
 		// when
-		cxfCards.create("foo", params);
+		cxfCards.create(params, "foo");
 
 		// then
 		verify(classCards).create(eq("foo"), multivaluedMapCaptor.capture());
@@ -129,7 +129,7 @@ public class CxfCardsTest {
 		params.put("baz", asList("foo"));
 
 		// when
-		cxfCards.update(123L, "type", params);
+		cxfCards.update(123L, params, "type");
 
 		// then
 		verify(classCards).update(eq("type"), eq(123L), multivaluedMapCaptor.capture());

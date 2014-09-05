@@ -70,7 +70,7 @@ public class CxfProcessInstancesTest {
 				.when(errorHandler).processNotFound(anyString());
 
 		// when
-		cxfProcessInstances.create("foo", false, null);
+		cxfProcessInstances.create("foo", null, false);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
@@ -99,7 +99,7 @@ public class CxfProcessInstancesTest {
 				.when(errorHandler).propagate(workflowException);
 
 		// when
-		cxfProcessInstances.create("foo", true, formParam);
+		cxfProcessInstances.create("foo", formParam, true);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
@@ -129,7 +129,7 @@ public class CxfProcessInstancesTest {
 						anyMapOf(String.class, Object.class), anyBoolean());
 
 		// when
-		final SimpleResponse<Long> response = cxfProcessInstances.create("foo", true, formParam);
+		final SimpleResponse<Long> response = cxfProcessInstances.create("foo", formParam, true);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
