@@ -18,7 +18,7 @@ public interface ErrorHandler {
 
 	void missingParam(String name);
 
-	void invalidParam(String value);
+	void invalidType(String id);
 
 	void propagate(Throwable e);
 

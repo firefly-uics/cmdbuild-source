@@ -4,40 +4,49 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-public class DefaultErrorHandler implements ErrorHandler {
+import org.cmdbuild.service.rest.logging.LoggingSupport;
+
+public class DefaultErrorHandler implements ErrorHandler, LoggingSupport {
 
 	@Override
 	public void typeNotFound(final String id) {
+		logger.error("type not found '{}'", id);
 		notFound(id);
 	}
 
 	@Override
 	public void classNotFound(final String id) {
+		logger.error("class not found '{}'", id);
 		notFound(id);
 	}
 
 	@Override
 	public void domainNotFound(final String id) {
+		logger.error("domain not found '{}'", id);
 		notFound(id);
 	}
 
 	@Override
 	public void processNotFound(final String id) {
+		logger.error("process not found '{}'", id);
 		notFound(id);
 	}
 
 	@Override
 	public void processInstanceNotFound(final Long id) {
+		logger.error("process instance not found '{}'", id);
 		notFound(id);
 	}
 
 	@Override
 	public void processActivityNotFound(final String id) {
+		logger.error("process instance activity not found '{}'", id);
 		notFound(id);
 	}
 
 	@Override
 	public void cardNotFound(final Long id) {
+		logger.error("card not found '{}'", id);
 		notFound(id);
 	}
 
@@ -49,18 +58,21 @@ public class DefaultErrorHandler implements ErrorHandler {
 
 	@Override
 	public void missingParam(final String name) {
+		logger.error("missing param '{}'", name);
 		notFound(name);
 	}
 
 	@Override
-	public void invalidParam(final String value) {
+	public void invalidType(final String id) {
+		logger.error("invalid param '{}'", id);
 		throw new WebApplicationException(Response.status(Status.BAD_REQUEST) //
-				.entity(value) //
+				.entity(id) //
 				.build());
 	}
 
 	@Override
 	public void propagate(final Throwable e) {
+		logger.error("unhandled exception", e);
 		throw new WebApplicationException(e, Response.status(Status.INTERNAL_SERVER_ERROR) //
 				.build());
 	}
