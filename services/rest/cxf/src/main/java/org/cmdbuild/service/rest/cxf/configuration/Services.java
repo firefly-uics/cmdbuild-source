@@ -1,5 +1,10 @@
 package org.cmdbuild.service.rest.cxf.configuration;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+
+import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
+import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
 import org.cmdbuild.service.rest.Attributes;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.ClassAttributes;
@@ -32,6 +37,7 @@ import org.cmdbuild.service.rest.cxf.CxfProcessInstanceActivities;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.cxf.CxfProcessStartActivity;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
+import org.cmdbuild.service.rest.logging.LoggingSupport;
 import org.cmdbuild.service.rest.reflect.MultivaluedMapFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +46,7 @@ import org.springframework.context.annotation.Configuration;
 import com.google.common.reflect.Reflection;
 
 @Configuration
-public class Services {
+public class Services implements LoggingSupport {
 
 	@Autowired
 	private Helper helper;
@@ -153,8 +159,24 @@ public class Services {
 	}
 
 	private <T> T proxy(final Class<T> type, final T service) {
-		final MultivaluedMapFilter<T> filter = MultivaluedMapFilter.of(service);
-		return Reflection.newProxy(type, filter);
+		logger.info("creating proxy for '{}' with invoker '{}'", type, MultivaluedMapFilter.class);
+		final InvocationHandler filter = MultivaluedMapFilter.of(service);
+		final InvocationHandler filterPlusLogger = AnnouncingInvocationHandler.of(filter, announceable());
+		return Reflection.newProxy(type, filterPlusLogger);
+	}
+
+	@Bean
+	protected Announceable announceable() {
+		return new LoggingAnnounceable();
+	}
+
+	private static final class LoggingAnnounceable implements Announceable {
+
+		@Override
+		public void announce(final Method method, final Object[] args) {
+			logger.info("invoking method '{}' with arguments '{}'", method, args);
+		}
+
 	}
 
 }

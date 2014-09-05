@@ -16,7 +16,6 @@ public final class Log {
 	public static final Logger JSONRPC = LoggerFactory.getLogger("jsonrpc");
 	public static final Logger SOAP = LoggerFactory.getLogger("soap");
 	public static final Logger DMS = DmsService.LoggingSupport.logger;
-	public static final Logger REST = LoggerFactory.getLogger("rest");
 	public static final Logger REPORT = LoggerFactory.getLogger("report");
 	public static final Logger EMAIL = LoggerFactory.getLogger("email");
 	public static final Logger AUTH = org.cmdbuild.auth.logging.LoggingSupport.logger;

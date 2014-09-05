@@ -66,7 +66,7 @@ public class CxfAttributes implements Attributes {
 			break;
 
 		default:
-			errorHandler.invalidParam(type);
+			errorHandler.invalidType(type);
 			response = null;
 		}
 		return response;

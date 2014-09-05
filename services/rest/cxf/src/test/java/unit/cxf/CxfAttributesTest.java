@@ -44,7 +44,7 @@ public class CxfAttributesTest {
 		// when
 		cxfAttributes.readAll("foo", "bar", true, 123, 456);
 
-		verify(errorHandler).invalidParam("foo");
+		verify(errorHandler).invalidType("foo");
 		verifyNoMoreInteractions(errorHandler, classAttributes, domainAttributes);
 	}
 
