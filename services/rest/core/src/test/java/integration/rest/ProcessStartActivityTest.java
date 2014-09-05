@@ -43,7 +43,7 @@ public class ProcessStartActivityTest {
 	}
 
 	@Test
-	public void readUsingGet() throws Exception {
+	public void read() throws Exception {
 		// given
 		final SimpleResponse<ProcessActivityDefinition> sentResponse = SimpleResponse
 				.newInstance(ProcessActivityDefinition.class) //

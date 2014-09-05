@@ -30,7 +30,7 @@ public interface ClassCards {
 	@Path(EMPTY)
 	SimpleResponse<Long> create( //
 			@PathParam(TYPE) String type, //
-			MultivaluedMap<String, String> formParam //
+			MultivaluedMap<String, String> formParams //
 	);
 
 	@GET
@@ -54,7 +54,7 @@ public interface ClassCards {
 	void update( //
 			@PathParam(TYPE) String type, //
 			@PathParam(ID) Long id, //
-			MultivaluedMap<String, String> formParam //
+			MultivaluedMap<String, String> formParams //
 	);
 
 	@DELETE

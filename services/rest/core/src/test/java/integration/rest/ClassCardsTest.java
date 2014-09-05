@@ -74,7 +74,7 @@ public class ClassCardsTest {
 	}
 
 	@Test
-	public void cardsReadUsingGet() throws Exception {
+	public void cardsRead() throws Exception {
 		// given
 		final String type = "foo";
 		final Long firstId = 123L;
@@ -131,7 +131,7 @@ public class ClassCardsTest {
 	}
 
 	@Test
-	public void cardCreatedUsingPost() throws Exception {
+	public void cardCreated() throws Exception {
 		// given
 		final SimpleResponse<Long> expectedResponse = SimpleResponse.<Long> newInstance() //
 				.withElement(123L) //
@@ -141,9 +141,11 @@ public class ClassCardsTest {
 
 		// when
 		final PostMethod post = new PostMethod(server.resource("classes/foo/cards/"));
-		post.addParameter("foo", "bar");
-		post.addParameter("bar", "baz");
-		post.addParameter("baz", "foo");
+		post.setRequestBody(all( //
+				param("foo", "bar"), //
+				param("bar", "baz"), //
+				param("baz", "foo") //
+		));
 		final int result = httpclient.executeMethod(post);
 
 		// then
@@ -157,7 +159,7 @@ public class ClassCardsTest {
 	}
 
 	@Test
-	public void cardReadUsingGet() throws Exception {
+	public void cardRead() throws Exception {
 		// given
 		final String type = "foo";
 		final Long firstId = 123L;
@@ -194,7 +196,7 @@ public class ClassCardsTest {
 	}
 
 	@Test
-	public void cardUpdatedUsingPut() throws Exception {
+	public void cardUpdated() throws Exception {
 		// when
 		final PutMethod put = new PutMethod(server.resource("classes/foo/cards/123/"));
 		put.addRequestHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
@@ -215,7 +217,7 @@ public class ClassCardsTest {
 	}
 
 	@Test
-	public void cardDeletedUsingDelete() throws Exception {
+	public void cardDeleted() throws Exception {
 		// when
 		final DeleteMethod delete = new DeleteMethod(server.resource("classes/foo/cards/123/"));
 		final int result = httpclient.executeMethod(delete);

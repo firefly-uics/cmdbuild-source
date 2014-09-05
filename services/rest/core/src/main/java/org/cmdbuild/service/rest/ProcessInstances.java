@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.service.rest.constants.Serialization.ID;
@@ -9,6 +10,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ACTIVITY;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ADVANCE;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -29,10 +31,11 @@ public interface ProcessInstances {
 
 	@POST
 	@Path(EMPTY)
+	@Consumes(APPLICATION_FORM_URLENCODED)
 	SimpleResponse<Long> create( //
 			@PathParam(TYPE) String type, //
-			@FormParam(UNDERSCORED_ADVANCE) boolean advance, //
-			MultivaluedMap<String, String> formParam //
+			MultivaluedMap<String, String> formParams, //
+			@FormParam(UNDERSCORED_ADVANCE) boolean advance //
 	);
 
 	@GET
@@ -57,7 +60,7 @@ public interface ProcessInstances {
 			@PathParam(ID) Long id, //
 			@FormParam(UNDERSCORED_ACTIVITY) String activity, //
 			@FormParam(UNDERSCORED_ADVANCE) boolean advance, //
-			MultivaluedMap<String, String> formParam //
+			MultivaluedMap<String, String> formParams //
 	);
 
 }

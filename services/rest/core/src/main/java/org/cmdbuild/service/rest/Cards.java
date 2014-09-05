@@ -30,8 +30,8 @@ public interface Cards {
 	@POST
 	@Path(EMPTY)
 	SimpleResponse<Long> create( //
-			@FormParam(UNDERSCORED_TYPE) String type, //
-			MultivaluedMap<String, String> formParam //
+			MultivaluedMap<String, String> formParams, //
+			@FormParam(UNDERSCORED_TYPE) String type //
 	);
 
 	@GET
@@ -54,8 +54,8 @@ public interface Cards {
 	@Path("{" + ID + "}/")
 	void update( //
 			@PathParam(ID) Long id, //
-			@FormParam(UNDERSCORED_TYPE) String type, //
-			MultivaluedMap<String, String> formParam //
+			MultivaluedMap<String, String> formParams, //
+			@FormParam(UNDERSCORED_TYPE) String type //
 	);
 
 	@DELETE

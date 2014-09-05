@@ -17,8 +17,8 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public SimpleResponse<Long> create(final String type, final MultivaluedMap<String, String> formParam) {
-		return delegate.create(type, formParam);
+	public SimpleResponse<Long> create(final MultivaluedMap<String, String> formParams, final String type) {
+		return delegate.create(type, formParams);
 	}
 
 	@Override
@@ -33,8 +33,8 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public void update(final Long id, final String type, final MultivaluedMap<String, String> formParam) {
-		delegate.update(type, id, formParam);
+	public void update(final Long id, final MultivaluedMap<String, String> formParams, final String type) {
+		delegate.update(type, id, formParams);
 	}
 
 	@Override
