@@ -169,7 +169,6 @@
 				region: 'west',
 				split: true,
 				collapsible: true,
-				collapseMode: 'mini',
 				collapsed: this.hideAccordions,
 				preventHeader: true,
 				layout: "accordion",
