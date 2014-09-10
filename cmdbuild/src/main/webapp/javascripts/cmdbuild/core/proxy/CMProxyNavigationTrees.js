@@ -18,7 +18,7 @@
 					success: parameters.success
 				});
 			},
-			
+
 			save: function(parameters) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
@@ -27,6 +27,7 @@
 					success: parameters.success
 				});
 			},
+
 			remove: function(parameters, success) {
 				CMDBuild.Ajax.request({
 					method: 'POST',
