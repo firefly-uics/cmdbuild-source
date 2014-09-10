@@ -23,14 +23,14 @@
 		get: function(p) {
 			adaptGetCardCallParams(p);
 			p.method = 'GET';
-			p.url = CMDBuild.ServiceProxy.url.card.read,
+			p.url = CMDBuild.ServiceProxy.url.card.read;
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
 
 		remove: function(p) {
 			p.method = 'POST';
-			p.url = CMDBuild.ServiceProxy.url.card.remove,
+			p.url = CMDBuild.ServiceProxy.url.card.remove;
 			p.important = true;
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
