@@ -702,9 +702,9 @@
 				"classLevelMapping": "Mapping de las clases",
 				"className": "Clase CMDBuild",
 				"cudActions": {
-					"create": "Crea",
-					"delete": "Borra",
-					"update": "Actualiza"
+					"createLabel": "Crea",
+					"deleteLabel": "Borra",
+					"updateLabel": "Actualiza"
 				},
 				"dataSourceDbFieldset": "Datasource: Base de datos relacional",
 				"dataSourceLdapFieldset": "Datasource: Carpeta LDAP",

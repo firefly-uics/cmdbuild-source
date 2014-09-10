@@ -702,9 +702,9 @@
 				"classLevelMapping": "Klas verbinding",
 				"className": "CMDBuild klas",
 				"cudActions": {
-					"create": "Aanmaken",
-					"delete": "Verwijderen",
-					"update": "Bijwerken"
+					"createLabel": "Aanmaken",
+					"deleteLabel": "Verwijderen",
+					"updateLabel": "Bijwerken"
 				},
 				"dataSourceDbFieldset": "Databron: Relationele database",
 				"dataSourceLdapFieldset": "Databron: LDAP directorie",

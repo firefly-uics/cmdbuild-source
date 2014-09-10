@@ -702,9 +702,9 @@
 				"classLevelMapping": "Class mapping",
 				"className": "CMDBuild class",
 				"cudActions": {
-					"create": "Create",
-					"delete": "Delete",
-					"update": "Update"
+					"createLabel": "Create",
+					"deleteLabel": "Delete",
+					"updateLabel": "Update"
 				},
 				"dataSourceDbFieldset": "Datasource: Relational database",
 				"dataSourceLdapFieldset": "Datasource: LDAP directory",

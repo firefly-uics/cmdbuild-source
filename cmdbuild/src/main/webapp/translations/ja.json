@@ -702,9 +702,9 @@
 				"classLevelMapping": "クラスマッピング",
 				"className": "CMDBuildクラス",
 				"cudActions": {
-					"create": "作成",
-					"delete": "削除",
-					"update": "更新"
+					"createLabel": "作成",
+					"deleteLabel": "削除",
+					"updateLabel": "更新"
 				},
 				"dataSourceDbFieldset": "データソース: リレーショナルデータベース",
 				"dataSourceLdapFieldset": "データソース: LDAP ディレクトリー",
