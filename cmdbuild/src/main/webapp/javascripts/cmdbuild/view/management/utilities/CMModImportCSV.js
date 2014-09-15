@@ -456,7 +456,7 @@
 	}
 
 	function formatDate(date) {
-		var toString = ""
+		var toString = "";
 
 		var day = date.getDate();
 		if (day < 10) {

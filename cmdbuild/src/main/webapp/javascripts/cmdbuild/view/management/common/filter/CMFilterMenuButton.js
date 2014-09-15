@@ -375,7 +375,7 @@
 			this.resizable = false;
 			this.frame = true;
 			this.border = false;
-			this.rowTemplate = '<p class="filterMenuButtonGrid-name" title="{1}">{0}</p>';
+			this.rowTemplate = '<p class="filterMenuButtonGrid-name" title="{0} - {1}">{1}</p>';
 
 			this.cls = "filterMenuButtonGrid";
 
@@ -402,8 +402,8 @@
 						if (record.dirty) {
 							name += "*";
 						}
-
-						return Ext.String.format(me.rowTemplate, name, description);
+						var s = (Ext.String.trim(description) == "") ? name : description;
+						return Ext.String.format(me.rowTemplate, name, s);
 					},
 					flex: 1,
 					menuDisabled: true,

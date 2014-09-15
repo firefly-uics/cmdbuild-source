@@ -7,8 +7,8 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.apache.commons.lang.SystemUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.widget.service.soap.exception.ConnectionException;
 import org.slf4j.Logger;

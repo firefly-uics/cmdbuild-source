@@ -12,11 +12,11 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
-import org.cmdbuild.data.store.DataViewStore;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.lookup.DataViewLookupStore;
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
@@ -54,7 +54,7 @@ public abstract class FilteredCardsFixture extends IntegrationTestBase {
 
 	@Before
 	public void setUp() throws Exception {
-		dataDefinitionLogic = new DataDefinitionLogic(dbDataView());
+		dataDefinitionLogic = new DefaultDataDefinitionLogic(dbDataView());
 		dataAccessLogic = new UserDataAccessLogicBuilder( //
 				dbDataView(), //
 				new DataViewLookupStore( //

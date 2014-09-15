@@ -18,6 +18,8 @@
 		statics: {
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMWorkflow.WIDGET_NAME
 		},
+		processId: null,
+		processClassName: null,
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
 			this.ownerController = ownerController;
@@ -63,8 +65,8 @@
 			filterTemplateResolver.xaVars[FILTER_FIELD] = this.filter;
 			filterTemplateResolver.resolveTemplates({
 				attributes: [FILTER_FIELD],
-				callback: function(o) {
-					var callParams = filterTemplateResolver.buildCQLQueryParameters(o[FILTER_FIELD]);
+				callback: function(response) {
+					var callParams = filterTemplateResolver.buildCQLQueryParameters(response[FILTER_FIELD]);
 					var filter = Ext.encode({
 						CQL: callParams.CQL
 					});
@@ -72,7 +74,7 @@
 						url: 'services/json/management/modcard/getcardlistshort',
 					    params: {
 					    	className: "Activity",
-					        limit: 100,
+					        limit: 1000,
 					        start: 0,
 					        filter: filter
 					    },
@@ -86,6 +88,20 @@
 				}
 			});
 		},
+
+		getData: function() {
+			var out = null;
+			if (!this.readOnly) {
+				out = {};
+				out["output"] = {
+					id : this.processId,
+					className: this.processClassName
+				};
+			}
+
+			return out;
+		},
+
 		ensureEditPanel: function() {
 		},
 		onWidgetButtonClick: function(widget) {
@@ -187,6 +203,10 @@
 					CMDBuild.LoadMask.get().hide();
 				},
 				success: function(operation, requestConfiguration, decodedResponse) {
+					me.processId = decodedResponse.response.Id;
+					var processClassId = decodedResponse.response.IdClass;
+					var entity =_CMCache.getEntryTypeById(processClassId);
+					me.processClassName = entity.get("name");
 				}
 			});
 			me.ownerController.hideWidgetsContainer();

@@ -65,7 +65,7 @@ public class SoapToJsonUtilsTest {
 		// given
 		final Query query = queryForLookupAttribute(LOOKUP_ATTRIBUTE_NAME,
 				"Answer to the Ultimate Question of Life, the Universe, and Everything");
-		when(lookupStore.listForType(LookupType.newInstance() //
+		when(lookupStore.readAll(LookupType.newInstance() //
 				.withName(LOOKUP_TYPE) //
 				.build())) //
 				.thenReturn(asList( //
@@ -89,7 +89,7 @@ public class SoapToJsonUtilsTest {
 		// given
 		final Query query = queryForLookupAttribute(LOOKUP_ATTRIBUTE_NAME,
 				"Answer to the Ultimate Question of Life, the Universe, and Everything");
-		when(lookupStore.listForType(LookupType.newInstance() //
+		when(lookupStore.readAll(LookupType.newInstance() //
 				.withName(LOOKUP_TYPE) //
 				.build())) //
 				.thenReturn(asList(lookup(24L, "bar")));

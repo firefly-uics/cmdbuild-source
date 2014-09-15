@@ -8,8 +8,8 @@ import static org.junit.Assert.assertTrue;
 import static utils.XpdlTestUtils.randomName;
 
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
-import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
+import org.cmdbuild.workflow.xpdl.XpdlProcess;
 import org.cmdbuild.workflow.xpdl.XpdlTransition;
 import org.junit.Before;
 import org.junit.Test;

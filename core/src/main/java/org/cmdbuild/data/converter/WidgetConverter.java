@@ -5,7 +5,7 @@ import static java.lang.String.format;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
+import org.cmdbuild.data.store.dao.BaseStorableConverter;
 import org.cmdbuild.model.widget.Widget;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;

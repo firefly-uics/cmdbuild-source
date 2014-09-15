@@ -1,6 +1,6 @@
 package org.cmdbuild.servlets.json.legacy;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.config.GraphProperties;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.model.data.Card;

@@ -1,8 +1,7 @@
 package org.cmdbuild.services.soap.operation;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-import groovy.swing.factory.WidgetFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,9 +12,11 @@ import org.cmdbuild.exception.ReportException.ReportExceptionType;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.model.widget.Calendar;
 import org.cmdbuild.model.widget.CreateModifyCard;
+import org.cmdbuild.model.widget.Grid;
 import org.cmdbuild.model.widget.LinkCards;
 import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageRelation;
+import org.cmdbuild.model.widget.NavigationTree;
 import org.cmdbuild.model.widget.OpenAttachment;
 import org.cmdbuild.model.widget.OpenNote;
 import org.cmdbuild.model.widget.OpenReport;
@@ -32,6 +33,7 @@ import org.cmdbuild.services.store.report.JDBCReportStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.workflow.widget.CalendarWidgetFactory;
 import org.cmdbuild.workflow.widget.CreateModifyCardWidgetFactory;
+import org.cmdbuild.workflow.widget.GridWidgetFactory;
 import org.cmdbuild.workflow.widget.LinkCardsWidgetFactory;
 import org.cmdbuild.workflow.widget.OpenReportWidgetFactory;
 import org.cmdbuild.workflow.widget.ValuePairWidgetFactory;
@@ -40,9 +42,9 @@ class SoapWidgetSerializer implements WidgetVisitor {
 
 	/**
 	 * These constants are intended to be for legacy purpose only!
-	 * 
-	 * Only the constants defined in the {@link WidgetFactory} implementations
-	 * should be used.
+	 *
+	 * Only the constants defined in the {@link OpenReportWidgetFactory}
+	 * implementations should be used.
 	 */
 	@Legacy("no comment")
 	private static class LegacyConstants {
@@ -151,6 +153,33 @@ class SoapWidgetSerializer implements WidgetVisitor {
 		parameters.add(parameterFor(OpenReportWidgetFactory.STORE_IN_PROCESS, false));
 		parameters.add(parameterFor(LegacyConstants.FORCE_EXTENSION, openReport.getForceFormat()));
 		for (final Entry<String, Object> entry : openReport.getPreset().entrySet()) {
+			parameters.add(parameterFor(entry.getKey(), entry.getValue()));
+		}
+		definition.setParameters(parameters);
+	}
+
+	@Override
+	public void visit(final NavigationTree navigationTree) {
+		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
+		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, navigationTree.getLabel()));
+		for (final Entry<String, Object> entry : navigationTree.getPreset().entrySet()) {
+			parameters.add(parameterFor(entry.getKey(), entry.getValue()));
+		}
+		definition.setParameters(parameters);
+	}
+
+	@Override
+	public void visit(final Grid grid) {
+		final List<WorkflowWidgetDefinitionParameter> parameters = new ArrayList<WorkflowWidgetDefinitionParameter>();
+		parameters.add(parameterFor(ValuePairWidgetFactory.BUTTON_LABEL, grid.getLabel()));
+		parameters.add(parameterFor(GridWidgetFactory.CLASS_NAME, grid.getClassName()));
+		parameters.add(parameterFor(GridWidgetFactory.CARD_SEPARATOR, grid.getCardSeparator()));
+		parameters.add(parameterFor(GridWidgetFactory.ATTRIBUTE_SEPARATOR, grid.getAttributeSeparator()));
+		parameters.add(parameterFor(GridWidgetFactory.KEY_VALUE_SEPARATOR, grid.getKeyValueSeparator()));
+		parameters.add(parameterFor(GridWidgetFactory.SERIALIZATION_TYPE, grid.getSerializationType()));
+		parameters.add(parameterFor(GridWidgetFactory.WRITE_ON_ADVANCE, grid.isWriteOnAdvance()));
+		parameters.add(parameterFor(GridWidgetFactory.PRESETS, grid.getPresets()));
+		for (final Entry<String, Object> entry : grid.getVariables().entrySet()) {
 			parameters.add(parameterFor(entry.getKey(), entry.getValue()));
 		}
 		definition.setParameters(parameters);

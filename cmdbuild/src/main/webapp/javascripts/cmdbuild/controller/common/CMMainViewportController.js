@@ -1,4 +1,5 @@
 (function() {
+
 	Ext.ns("CMDBuild.controller");
 	var ns = CMDBuild.controller;
 
@@ -148,7 +149,7 @@
 	 * p = {
 			Id: the id of the card
 			IdClass: the id of the class which the card belongs,
-			activateFirstTab: true to force the tab panel to return to the first tab 
+			activateFirstTab: true to force the tab panel to return to the first tab
 		}
 	*/
 	ns.CMMainViewportController.prototype.openCard = function(p) {
@@ -178,17 +179,23 @@
 		}
 	}
 
+	/**
+	 * @param {Object} me
+	 * @param {Object} panel - a view
+	 */
 	function buildPanelController(me, panel) {
-		if (typeof panel.cmControllerType == "function") {
-			// We start to use the cmcreate factory method to have the possibility
-			// to inject the sub-controllers in tests
+		if (typeof panel.cmControllerType == 'function') {
+			// We start to use the cmcreate factory method to have the possibility to inject the sub-controllers in tests
 			if (typeof panel.cmControllerType.cmcreate == "function") {
 				me.panelControllers[panel.cmName] = new panel.cmControllerType.cmcreate(panel);
 			} else {
 				me.panelControllers[panel.cmName] = new panel.cmControllerType(panel);
 			}
+		} else if (typeof panel.cmControllerType == "string") { // To use Ext.loader to asynchronous load also controllers
+			me.panelControllers[panel.cmName] = Ext.create(panel.cmControllerType, panel);
 		} else {
 			me.panelControllers[panel.cmName] = new ns.CMBasePanelController(panel);
 		}
 	}
+
 })();

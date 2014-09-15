@@ -15,7 +15,7 @@
 		// override
 		buildExtraColumns: function() {
 			return [{
-				header: '&nbsp', 
+				header: '&nbsp',
 				width: 30,
 				tdCls: "grid-button",
 				fixed: true,
@@ -33,7 +33,7 @@
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMPresetFromCardDelegate", {
 		/**
-		 * 
+		 *
 		 * Called after the click on save button
  		 * @param {CMDBuild.view.management.common.widgets.CMPresetFromCard} presetFromCardWidget
 		 */
@@ -100,7 +100,7 @@
 			var me = this;
 			return [ //
 				new Ext.Button({
-					text: CMDBuild.Translation.common.btns.confirm,
+					text: CMDBuild.Translation.common.buttons.confirm,
 					name: 'saveButton',
 					handler: function() {
 						me.callDelegates("onPresetFromCardSaveButtonClick", [me]);

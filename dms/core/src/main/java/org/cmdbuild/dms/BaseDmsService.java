@@ -1,6 +1,6 @@
 package org.cmdbuild.dms;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dms.DmsConfiguration.NullDmsConfiguration;
 
 public abstract class BaseDmsService implements DmsService {

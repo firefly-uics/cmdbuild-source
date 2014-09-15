@@ -1,7 +1,7 @@
 package org.cmdbuild.dms.alfresco;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.util.Collections;
 import java.util.List;

@@ -37,7 +37,11 @@ public class ChartDefinition {
 	public void setDescription(final String description) {
 		this.description = description;
 	}
-
+	
+	public void setDefaultDescription(final String description) {
+		this.description = description;
+	}
+	
 	public String getDataSourceName() {
 		return dataSourceName;
 	}

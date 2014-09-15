@@ -2,8 +2,6 @@ package org.cmdbuild.servlets.json.management.dataimport.csv;
 
 import java.util.Map;
 
-import org.cmdbuild.servlets.json.management.dataimport.csv.CSVCard;
-
 public class CSVData {
 
 	private final Iterable<String> headers;

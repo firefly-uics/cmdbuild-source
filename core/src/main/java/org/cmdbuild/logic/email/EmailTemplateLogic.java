@@ -1,36 +1,62 @@
 package org.cmdbuild.logic.email;
 
-import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.model.email.EmailTemplate;
 
 public interface EmailTemplateLogic extends Logic {
 
-	/**
-	 * Return all the email templates defined for the given EntryType, and the
-	 * templates that have no owner EntryType
-	 */
-	List<EmailTemplate> readForEntryTypeName(final String entryTypeName);
+	interface Template {
+
+		Long getId();
+
+		String getName();
+
+		String getDescription();
+
+		String getFrom();
+
+		String getTo();
+
+		String getCc();
+
+		String getBcc();
+
+		String getSubject();
+
+		String getBody();
+
+		Map<String, String> getVariables();
+
+		String getAccount();
+
+	}
 
 	/**
-	 * Returns the {@link EmailTemplate} with the specified name.
+	 * Reads all {@link Template}s.
 	 */
-	EmailTemplate read(final String name);
+	Iterable<Template> readAll();
 
 	/**
-	 * Store a new email template
+	 * Reads the {@link Template} with the specified name.
 	 */
-	void create(final EmailTemplate emailTemplate);
+	Template read(String name);
 
 	/**
-	 * Update the given email template
+	 * Creates a new {@link Template}.
+	 * 
+	 * @return the id of the created {@link Template}.
 	 */
-	void update(final EmailTemplate emailTemplate);
+	Long create(final Template template);
 
 	/**
-	 * Remove the email template with the given name
+	 * Updates the given {@link Template}.
 	 */
-	void delete(final String emailTemplateName);
+	void update(final Template template);
+
+	/**
+	 * Remove the {@link Template} with the given name.
+	 */
+	void delete(final String name);
 
 }

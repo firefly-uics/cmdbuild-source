@@ -1,11 +1,13 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_ID_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID_CAPITAL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.RESULTS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ROWS;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.RESULTS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.*;
 
 import java.util.Map;
 
@@ -16,12 +18,15 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
+import org.cmdbuild.logic.translation.ClassTranslation;
+import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.model.data.Card;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,57 +38,70 @@ public class CardSerializer {
 
 	private final DataAccessLogic dataAccessLogic;
 	private final RelationAttributeSerializer relationAttributeSerializer;
+	private final TranslationFacade translationFacade;
+	private final LookupStore lookupStore;
 
 	public CardSerializer( //
 			final SystemDataAccessLogicBuilder dataAccessLogicBuilder, //
-			final RelationAttributeSerializer relationAttributeSerializer //
-	) {
+			final RelationAttributeSerializer relationAttributeSerializer, //
+			final TranslationFacade translationFacade, final LookupStore lookupStore) {
 		this.dataAccessLogic = dataAccessLogicBuilder.build();
 		this.relationAttributeSerializer = relationAttributeSerializer;
+		this.translationFacade = translationFacade;
+		this.lookupStore = lookupStore;
 	}
 
-	// TODO continue the implementation,
-	// pay attention to lookup and references
+	/*
+	 * TODO continue the implementation, pay attention to lookup and references
+	 */
 
 	public JSONObject toClient(final Card card, final String wrapperLabel) throws JSONException {
 		final JSONObject json = new JSONObject();
 
 		// add the attributes
 		for (final Map.Entry<String, Object> entry : card.getAttributes().entrySet()) {
-			final Object outValue;
-			final Object inValue = entry.getValue();
+			final Object output;
+			final Object input = entry.getValue();
 
-			if (inValue instanceof IdAndDescription) {
+			if (input instanceof IdAndDescription) {
 
-				if (inValue instanceof LookupValue) {
-					outValue = LookupSerializer.serializeLookupValue((LookupValue)inValue);
+				if (input instanceof LookupValue) {
+					final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade, lookupStore);
+					output = lookupSerializer.serializeLookupValue((LookupValue) input);
 				} else {
-					final IdAndDescription idAndDescription = IdAndDescription.class.cast(inValue);
+					final IdAndDescription idAndDescription = IdAndDescription.class.cast(input);
 					final Map<String, Object> map = Maps.newHashMap();
 					map.put(ID, idAndDescription.getId());
 					map.put(DESCRIPTION, idAndDescription.getDescription());
-					outValue = map;
+					output = map;
 				}
 
 			} else {
-				outValue = entry.getValue();
+				output = entry.getValue();
 			}
 
-			json.put(entry.getKey(), outValue);
+			json.put(entry.getKey(), output);
 		}
 
 		// add some required info
 		json.put(ID_CAPITAL, card.getId());
 		// TODO if IdClass is no more needed, remove getClassId() method too
 		json.put(CLASS_ID_CAPITAL, card.getClassId());
+		
+		json.put(CLASS_NAME, card.getClassName());
 
 		/*
-		 * We must serialize the class description
-		 * Is used listing the card of a superclass to
-		 * know the effective class
-		 * The ugly key is driven by backward compatibility
+		 * We must serialize the class description Is used listing the card of a
+		 * superclass to know the effective class The ugly key is driven by
+		 * backward compatibility
 		 */
-		json.put("IdClass_value", card.getClassDescription());
+		json.put("IdClass_value_default", card.getClassDescription());
+
+		final TranslationObject classTranslationObject = ClassTranslation.newInstance().withName(card.getClassName())
+				.withField(DESCRIPTION_FOR_CLIENT).build();
+
+		final String translatedClassDescription = translationFacade.read(classTranslationObject);
+		json.put("IdClass_value", defaultIfNull(translatedClassDescription, card.getClassDescription()));
 
 		// wrap in a JSON object if required
 		if (wrapperLabel != null) {
