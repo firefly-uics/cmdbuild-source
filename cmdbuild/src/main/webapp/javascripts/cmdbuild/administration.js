@@ -129,7 +129,7 @@
 
 
 						/* *********************************
-						 * Resume here the layouts operations 
+						 * Resume here the layouts operations
 						 */
 						Ext.resumeLayouts(true);
 						/* *********************************/
@@ -204,7 +204,7 @@
 
 							processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
 								cmControllerType : CMDBuild.controller.accordion.CMProcessAccordionController,
-								disabled: !CMDBuild.Config.workflow.enabled
+								disabled: (CMDBuild.Config.workflow) ? !CMDBuild.Config.workflow.enabled : true // FIX: to avoid InternetExplorer error on startup
 							});
 							processAccordion.updateStore();
 
