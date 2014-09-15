@@ -20,7 +20,7 @@ public class MetadataGroupable extends ForwardingGroupable {
 		final String value;
 		if (owner != null) {
 			final CMIdentifier identifier = owner.getIdentifier();
-			final boolean skipNamespace = identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE;
+			final boolean skipNamespace = identifier.getNameSpace() == CMIdentifier.DEFAULT_NAMESPACE;
 			value = new StringBuilder() //
 					.append(skipNamespace ? EMPTY : format("%s.", identifier.getNameSpace())) //
 					.append(format("%s.", identifier.getLocalName())) //
