@@ -53,7 +53,11 @@ public class JsonFullTextQueryBuilder implements Builder<WhereClause> {
 	private final CMEntryType entryType;
 	private final Alias entryTypeAlias;
 
-	public JsonFullTextQueryBuilder(final String fullTextQuery, final CMEntryType entryType, final Alias entryTypeAlias) {
+	public JsonFullTextQueryBuilder( //
+			final String fullTextQuery, //
+			final CMEntryType entryType, //
+			final Alias entryTypeAlias //
+	) {
 		Validate.notNull(fullTextQuery);
 		Validate.notNull(entryType);
 		this.fullTextQuery = fullTextQuery;

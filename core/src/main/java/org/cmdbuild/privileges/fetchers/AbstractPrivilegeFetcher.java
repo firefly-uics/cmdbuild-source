@@ -12,8 +12,7 @@ import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Collections;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMPrivilege;
@@ -25,7 +24,7 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -38,10 +37,12 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 	private static final Logger logger = Log.PERSISTENCE;
 	private static final Marker marker = MarkerFactory.getMarker(AbstractPrivilegeFetcher.class.getName());
 
-	private final DBDataView view;
+	private static final List<CMAttribute> EMPTY_ATTRIBUTES = Collections.emptyList();
+
+	private final CMDataView view;
 	private final Long groupId;
 
-	protected AbstractPrivilegeFetcher(final DBDataView view, final Long groupId) {
+	protected AbstractPrivilegeFetcher(final CMDataView view, final Long groupId) {
 		this.view = view;
 		this.groupId = groupId;
 	}
@@ -97,7 +98,7 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 
 	private String[] extractAttributesPrivileges(final CMCard privilegeCard) {
 		final Iterable<? extends CMAttribute> attributes = getClassAttributes(privilegeCard);
-		final List<String> mergedAttributesPrivileges = new ArrayList<String>();
+		final List<String> mergedAttributesPrivileges = Lists.newArrayList();
 
 		// Extract the stored privileges
 		final Object groupLevelAttributesPrivilegesObject = privilegeCard.get(ATTRIBUTES_PRIVILEGES_ATTRIBUTE);
@@ -149,12 +150,7 @@ public abstract class AbstractPrivilegeFetcher implements PrivilegeFetcher {
 		 * cmClass is null if the privilege card describes privileges over
 		 * filter/dashboard/view
 		 */
-		if (cmClass == null) {
-			return new LinkedList<CMAttribute>();
-		} else {
-			return cmClass.getAttributes();
-		}
-
+		return (cmClass == null) ? EMPTY_ATTRIBUTES : cmClass.getAttributes();
 	}
 
 	/*****************************************************************************

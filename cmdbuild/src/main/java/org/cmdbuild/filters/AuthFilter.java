@@ -1,6 +1,6 @@
 package org.cmdbuild.filters;
 
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import java.io.IOException;
 
@@ -20,10 +20,16 @@ import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationRequest;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationResponse;
+import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
+import org.cmdbuild.spring.annotations.FilterComponent;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 
+@FilterComponent("AuthFilter")
+@Scope(PROTOTYPE)
 public class AuthFilter implements Filter {
 
 	private static final Logger logger = Log.CMDBUILD;
@@ -94,6 +100,16 @@ public class AuthFilter implements Filter {
 	public static final String LOGIN_URL = "index.jsp";
 	public static final String LOGOUT_URL = "logout.jsp";
 
+	@Autowired
+	private UserStore userStore;
+
+	private AuthenticationLogic authenticationLogic;
+
+	@Autowired
+	public void setAuthenticationLogicBuilder(final DefaultAuthenticationLogicBuilder authenticationLogicBuilder) {
+		this.authenticationLogic = authenticationLogicBuilder.build();
+	}
+
 	@Override
 	public void init(final FilterConfig filterConfig) throws ServletException {
 	}
@@ -110,8 +126,6 @@ public class AuthFilter implements Filter {
 		try {
 			final String uri = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
 			logger.debug(marker, "request received for '{}'", uri);
-
-			final UserStore userStore = applicationContext().getBean(UserStore.class);
 
 			if (isRootPage(uri)) {
 				logger.debug(marker, "root page, redirecting to login");
@@ -148,8 +162,6 @@ public class AuthFilter implements Filter {
 	}
 
 	private ClientAuthenticationResponse doLogin(final HttpServletRequest httpRequest, final UserStore userStore) {
-		final AuthenticationLogic authenticationLogic = applicationContext().getBean("authLogic",
-				AuthenticationLogic.class);
 		final ClientAuthenticationResponse clientAuthenticatorResponse = authenticationLogic.login(ClientRequestWrapper
 				.newInstance() //
 				.withRequest(httpRequest) //
@@ -181,7 +193,7 @@ public class AuthFilter implements Filter {
 		return uri.equals("/" + LOGIN_URL);
 	}
 
-	private boolean isLogoutPage(String uri) {
+	private boolean isLogoutPage(final String uri) {
 		return uri.equals("/" + LOGOUT_URL);
 	}
 

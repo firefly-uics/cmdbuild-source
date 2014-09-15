@@ -8,21 +8,22 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.common.Holder;
+import org.cmdbuild.common.SingletonHolder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.query.QuerySpecsBuilder;
+import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.Store.Storable;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.Utils;
 import org.slf4j.Logger;
@@ -37,7 +38,19 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 	private static final String DEFAULT_IDENTIFIER_ATTRIBUTE_NAME = ID_ATTRIBUTE;
 
-	private static final WhereClause NO_GROUP_WHERE_CLAUSE = null;
+	public static final Groupable NOT_GROUPABLE = new Groupable() {
+
+		@Override
+		public String getGroupAttributeName() {
+			return null;
+		}
+
+		@Override
+		public Object getGroupAttributeValue() {
+			throw new IllegalStateException("should never call this");
+		}
+
+	};
 
 	public static interface StorableConverter<T extends Storable> {
 
@@ -47,25 +60,6 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		 * @return the name of the class in the store.
 		 */
 		String getClassName();
-
-		/**
-		 * Returns the name of the attribute that represents the group of the
-		 * {@link Storable} objects, {@code null} if there is no grouping.
-		 * Within a group the identifier must be unique. Implies a restriction
-		 * over the {@link Store#read(Storable)}, {@link Store#update(Storable)}
-		 * and {@link Store#list()} methods.
-		 * 
-		 * @return the name of the attribute or {@code null}.
-		 */
-		String getGroupAttributeName();
-
-		/**
-		 * Returns the name of the group. See
-		 * {@link StorableConverter#getGroupAttributeName()}.
-		 * 
-		 * @return the name of the group.
-		 */
-		Object getGroupAttributeValue();
 
 		/**
 		 * @return the name of the identifier attribute.
@@ -105,19 +99,49 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 	}
 
+	public static class ForwardingStorableConverter<T extends Storable> implements StorableConverter<T> {
+
+		private final StorableConverter<T> inner;
+
+		public ForwardingStorableConverter(final StorableConverter<T> storableConverter) {
+			this.inner = storableConverter;
+		}
+
+		@Override
+		public String getClassName() {
+			return inner.getClassName();
+		}
+
+		@Override
+		public String getIdentifierAttributeName() {
+			return inner.getIdentifierAttributeName();
+		}
+
+		@Override
+		public Storable storableOf(final CMCard card) {
+			return inner.storableOf(card);
+		}
+
+		@Override
+		public T convert(final CMCard card) {
+			return inner.convert(card);
+		}
+
+		@Override
+		public Map<String, Object> getValues(final T storable) {
+			return inner.getValues(storable);
+		}
+
+		@Override
+		public String getUser(final T storable) {
+			return inner.getUser(storable);
+		}
+
+	}
+
 	public static abstract class BaseStorableConverter<T extends Storable> implements StorableConverter<T> {
 
 		protected Logger logger = DataViewStore.logger;
-
-		@Override
-		public final String getGroupAttributeName() {
-			return null;
-		}
-
-		@Override
-		public final Object getGroupAttributeValue() {
-			return null;
-		}
 
 		@Override
 		public String getIdentifierAttributeName() {
@@ -162,41 +186,53 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 
 	public static <T extends Storable> DataViewStore<T> newInstance(final CMDataView view,
 			final StorableConverter<T> converter) {
-		return new DataViewStore<T>(view, converter);
+		return new DataViewStore<T>(view, NOT_GROUPABLE, converter);
+	}
+
+	public static <T extends Storable> DataViewStore<T> newInstance(final CMDataView view, final Groupable groupable,
+			final StorableConverter<T> converter) {
+		return new DataViewStore<T>(view, groupable, converter);
 	}
 
 	private final CMDataView view;
+	private final Groupable groupable;
 	private final StorableConverter<T> converter;
-	private final Holder<CMClass> storeClass;
+	private final Holder<CMClass> storeClassHolder;
 
-	public DataViewStore(final CMDataView view, final StorableConverter<T> converter) {
+	private DataViewStore(final CMDataView view, final Groupable groupable, final StorableConverter<T> converter) {
 		this.view = view;
-		this.converter = converter;
-		this.storeClass = new Holder<CMClass>() {
-
-			private CMClass storeClass;
+		this.groupable = groupable;
+		this.converter = wrap(converter);
+		this.storeClassHolder = new SingletonHolder<CMClass>() {
 
 			@Override
-			public CMClass get() {
-				logger.debug(marker, "looking for class with name '{}'", converter.getClassName());
-				CMClass storeClass = this.storeClass;
-				if (storeClass == null) {
-					synchronized (this) {
-						storeClass = this.storeClass;
-						if (storeClass == null) {
-							final String className = converter.getClassName();
-							this.storeClass = storeClass = view.findClass(className);
-							if (this.storeClass == null) {
-								logger.error(marker, "class '{}' has not been found", converter.getClassName());
-								throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
-							}
-						}
-					}
+			protected CMClass doGet() {
+				final String className = converter.getClassName();
+				final CMClass target = view.findClass(className);
+				if (target == null) {
+					logger.error(marker, "class '{}' has not been found", converter.getClassName());
+					throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
 				}
-				return storeClass;
+				return target;
 			}
 
 		};
+	}
+
+	private StorableConverter<T> wrap(final StorableConverter<T> converter) {
+		return new ForwardingStorableConverter<T>(converter) {
+
+			@Override
+			public String getIdentifierAttributeName() {
+				final String name = super.getIdentifierAttributeName();
+				return (name == null) ? DEFAULT_IDENTIFIER_ATTRIBUTE_NAME : name;
+			}
+
+		};
+	}
+
+	private CMClass storeClass() {
+		return storeClassHolder.get();
 	}
 
 	@Override
@@ -208,7 +244,7 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		final Map<String, Object> values = converter.getValues(storable);
 
 		logger.trace(marker, "filling new card's attributes");
-		final CMCardDefinition card = view.createCardFor(storeClass.get());
+		final CMCardDefinition card = view.createCardFor(storeClass());
 		fillCard(card, values, user);
 
 		logger.debug(marker, "saving card");
@@ -249,47 +285,18 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		view.delete(cardToDelete);
 	}
 
-	@Override
-	public List<T> list() {
-		logger.debug(marker, "listing all storable elements");
-		final QuerySpecsBuilder querySpecsBuilder = view //
-				.select(anyAttribute(storeClass.get())) //
-				.from(storeClass.get());
-		final WhereClause clause = groupWhereClause(storeClass.get());
-		if (clause != NO_GROUP_WHERE_CLAUSE) {
-			querySpecsBuilder.where(clause);
-		}
-		final CMQueryResult result = querySpecsBuilder.run();
-
-		final List<T> list = transform(newArrayList(result), new Function<CMQueryRow, T>() {
-			@Override
-			public T apply(final CMQueryRow input) {
-				return converter.convert(input.getCard(storeClass.get()));
-			}
-		});
-		return list;
-	}
-
 	/**
 	 * Returns the {@link CMCard} corresponding to the {@link Storable} object.<br>
-	 * 
-	 * Override this if the {@link Storable#getIdentifier()} does not represent
-	 * the card's id.
-	 * 
-	 * @param storable
-	 *            the storable object.
-	 * 
-	 * @return the
-	 * 
 	 */
 	private CMCard findCard(final Storable storable) {
 		logger.debug(marker, "looking for storable element with identifier '{}'", storable.getIdentifier());
-		final CMQueryRow row = view.select(anyAttribute(storeClass.get())) //
-				.from(storeClass.get()) //
-				.where(specificWhereClause(storeClass.get(), storable)) //
+		return view //
+				.select(anyAttribute(storeClass())) //
+				.from(storeClass()) //
+				.where(whereClauseFor(storable)) //
 				.run() //
-				.getOnlyRow();
-		return row.getCard(storeClass.get());
+				.getOnlyRow() //
+				.getCard(storeClass());
 	}
 
 	private void fillCard(final CMCardDefinition card, final Map<String, Object> values, final String user) {
@@ -301,50 +308,72 @@ public class DataViewStore<T extends Storable> implements Store<T> {
 		card.setUser(user);
 	}
 
-	private WhereClause specificWhereClause(final CMClass storeClass, final Storable storable) {
+	/**
+	 * Builds the where clause for the specified {@link Storable} object.
+	 */
+	private WhereClause whereClauseFor(final Storable storable) {
 		logger.debug(marker, "building specific where clause");
 
-		String identifierAttributeName = converter.getIdentifierAttributeName();
-		if (identifierAttributeName == null) {
-			logger.debug(marker, "identifier attribute not specified, using default one");
-			identifierAttributeName = DEFAULT_IDENTIFIER_ATTRIBUTE_NAME;
-		}
-
-		final Object identifierAttributeValue;
-		if (identifierAttributeName == DEFAULT_IDENTIFIER_ATTRIBUTE_NAME) {
+		final String attributeName = converter.getIdentifierAttributeName();
+		final Object attributeValue;
+		if (attributeName == DEFAULT_IDENTIFIER_ATTRIBUTE_NAME) {
 			logger.debug(marker, "using default one identifier attribute, converting to default type");
-			identifierAttributeValue = Long.parseLong(storable.getIdentifier());
+			attributeValue = Long.parseLong(storable.getIdentifier());
 		} else {
-			identifierAttributeValue = storable.getIdentifier();
+			attributeValue = storable.getIdentifier();
 		}
 
-		final WhereClause identifierWhereClause = condition(attribute(storeClass, identifierAttributeName),
-				eq(identifierAttributeValue));
-
-		final WhereClause groupWhereClause = groupWhereClause(storeClass);
-		final WhereClause whereClause;
-		if (groupWhereClause == null) {
-			logger.debug(marker, "grouping not setted, using identifier only");
-			whereClause = identifierWhereClause;
-		} else {
-			logger.debug(marker, "grouping setted, using both identifier and group");
-			whereClause = and(groupWhereClause, identifierWhereClause);
-		}
-		return whereClause;
+		return and(builtInGroupWhereClause(), condition(attribute(storeClass(), attributeName), eq(attributeValue)));
 	}
 
-	private WhereClause groupWhereClause(final CMClass storeClass) {
+	@Override
+	public List<T> list() {
+		logger.debug(marker, "listing all storable elements");
+		return list(NOT_GROUPABLE);
+	}
+
+	@Override
+	public List<T> list(final Groupable groupable) {
+		logger.debug(marker, "listing all storable elements with additional grouping condition '{}'", groupable);
+		final CMQueryResult result = view //
+				.select(anyAttribute(storeClass())) //
+				.from(storeClass()) //
+				.where(and(builtInGroupWhereClause(), groupWhereClause(groupable))) //
+				.run();
+
+		final List<T> list = transform(newArrayList(result), new Function<CMQueryRow, T>() {
+			@Override
+			public T apply(final CMQueryRow input) {
+				return converter.convert(input.getCard(storeClass()));
+			}
+		});
+		return list;
+	}
+
+	/**
+	 * Creates a {@link WhereClause} for the grouping.
+	 * 
+	 * @return the {@link WhereClause} for the grouping, {@link TrueWhereClause}
+	 *         if no grouping is available.
+	 */
+	private WhereClause builtInGroupWhereClause() {
+		logger.debug(marker, "building built-in group where clause");
+		return groupWhereClause(groupable);
+	}
+
+	private WhereClause groupWhereClause(final Groupable groupable) {
 		logger.debug(marker, "building group where clause");
 		final WhereClause clause;
-		final String groupAttributeName = converter.getGroupAttributeName();
-		if (groupAttributeName != null) {
-			logger.debug(marker, "group attribute name is '{}', building where clause", groupAttributeName);
-			final Object groupAttributeValue = converter.getGroupAttributeValue();
-			clause = condition(attribute(storeClass, groupAttributeName), eq(groupAttributeValue));
+		final String attributeName = groupable.getGroupAttributeName();
+		if (attributeName != null) {
+			logger.debug(marker, "group attribute name is '{}', building where clause", attributeName);
+			final Object attributeValue = groupable.getGroupAttributeValue();
+			clause = condition(attribute(storeClass(), attributeName), eq(attributeValue));
 		} else {
 			logger.debug(marker, "group attribute name not specified");
-			clause = NO_GROUP_WHERE_CLAUSE;
+			clause = trueWhereClause();
 		}
 		return clause;
 	}
+
 }

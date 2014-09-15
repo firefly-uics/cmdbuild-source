@@ -16,11 +16,14 @@ import org.cmdbuild.model.Report;
 import org.cmdbuild.report.ReportFactory;
 import org.cmdbuild.services.auth.UserType;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
+import org.cmdbuild.spring.annotations.CmdbuildComponent;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /*
  * Should be merged with the RequestListener
  */
 
+@CmdbuildComponent
 public class SessionVars implements UserStore, AuthenticationStore, LanguageStore {
 
 	private static final String AUTH_KEY = "auth";
@@ -34,7 +37,11 @@ public class SessionVars implements UserStore, AuthenticationStore, LanguageStor
 	private final RequestListener requestListener;
 	private final CmdbuildConfiguration configuration;
 
-	public SessionVars(final RequestListener requestListener, final CmdbuildConfiguration configuration) {
+	@Autowired
+	public SessionVars( //
+			final RequestListener requestListener, //
+			final CmdbuildConfiguration configuration //
+	) {
 		this.requestListener = requestListener;
 		this.configuration = configuration;
 	}

@@ -66,6 +66,12 @@ public class OperationUser {
 		return selectedGroup;
 	}
 
+	/**
+	 * Don't remove now, used from Spring.
+	 * 
+	 * @deprecated access to {@link PrivilegeContext} directly.
+	 */
+	@Deprecated
 	public PrivilegeContext getPrivilegeContext() {
 		return privilegeCtx;
 	}
@@ -82,26 +88,50 @@ public class OperationUser {
 		throw new UnsupportedOperationException("The impersonate method is not implemented yet");
 	}
 
+	/**
+	 * @deprecated access to {@link PrivilegeContext} directly.
+	 */
+	@Deprecated
 	public boolean hasReadAccess(final CMPrivilegedObject privilegedObject) {
 		return privilegeCtx.hasReadAccess(privilegedObject);
 	}
 
+	/**
+	 * @deprecated access to {@link PrivilegeContext} directly.
+	 */
+	@Deprecated
 	public boolean hasWriteAccess(final CMPrivilegedObject privilegedObject) {
 		return privilegeCtx.hasWriteAccess(privilegedObject);
 	}
 
+	/**
+	 * @deprecated access to {@link PrivilegeContext} directly.
+	 */
+	@Deprecated
 	public boolean hasAdministratorPrivileges() {
 		return privilegeCtx.hasAdministratorPrivileges();
 	}
 
+	/**
+	 * @deprecated access to {@link PrivilegeContext} directly.
+	 */
+	@Deprecated
 	public boolean hasDatabaseDesignerPrivileges() {
 		return privilegeCtx.hasDatabaseDesignerPrivileges();
 	}
 
+	/**
+	 * @deprecated access to {@link PrivilegeContext} directly.
+	 */
+	@Deprecated
 	public boolean hasPrivilege(final CMPrivilege privilege) {
 		return privilegeCtx.hasPrivilege(privilege);
 	}
 
+	/**
+	 * @deprecated access to {@link PrivilegeContext} directly.
+	 */
+	@Deprecated
 	public boolean hasPrivilege(final CMPrivilege requested, final CMPrivilegedObject privilegedObject) {
 		return privilegeCtx.hasPrivilege(requested, privilegedObject);
 	}

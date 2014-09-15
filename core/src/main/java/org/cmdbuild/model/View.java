@@ -1,7 +1,7 @@
 package org.cmdbuild.model;
 
 import org.cmdbuild.auth.acl.SerializablePrivilege;
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 
 public class View implements Storable, SerializablePrivilege {
 	public enum ViewType {
