@@ -204,8 +204,8 @@
 							classesAccordion.updateStore();
 
 							processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
-								cmControllerType: CMDBuild.controller.accordion.CMAccordionProcessController,
-								disabled: !CMDBuild.Config.workflow.enabled
+								cmControllerType: CMDBuild.controller.accordion.CMProcessAccordionController,
+								disabled: (CMDBuild.Config.workflow) ? !CMDBuild.Config.workflow.enabled : true // FIX: to avoid InternetExplorer error on startup
 							});
 							processAccordion.updateStore();
 
