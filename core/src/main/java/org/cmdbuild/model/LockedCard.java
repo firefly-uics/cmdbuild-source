@@ -2,7 +2,7 @@ package org.cmdbuild.model;
 
 import java.util.Date;
 
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 
 public class LockedCard implements Storable {
 

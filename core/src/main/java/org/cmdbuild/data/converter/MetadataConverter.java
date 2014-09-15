@@ -1,6 +1,5 @@
 package org.cmdbuild.data.converter;
 
-import static java.lang.String.format;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Code;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Description;
@@ -10,47 +9,26 @@ import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.data.store.DataViewStore.StorableConverter;
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.services.meta.MetadataService;
 
 import com.google.common.collect.Maps;
 
-public class MetadataConverter implements StorableConverter<Metadata> {
+public class MetadataConverter extends MetadataStoreStuff implements StorableConverter<Metadata> {
 
-	private final String groupAttributeValue;
+	public static MetadataConverter of(final CMAttribute attribute) {
+		return new MetadataConverter(attribute);
+	}
 
-	public MetadataConverter(final CMAttribute attribute) {
-		final StringBuilder sb = new StringBuilder();
-		final CMEntryType owner = attribute.getOwner();
-		if (owner != null) {
-			final CMIdentifier identifier = owner.getIdentifier();
-			if (identifier.getNameSpace() != CMIdentifier.DEFAULT_NAMESPACE) {
-				sb.append(format("%s.", identifier.getNameSpace()));
-			}
-			sb.append(format("%s.", identifier.getLocalName()));
-			sb.append(attribute.getName());
-		}
-
-		this.groupAttributeValue = sb.toString();
+	private MetadataConverter(final CMAttribute attribute) {
+		super(attribute);
 	}
 
 	@Override
 	public String getClassName() {
 		return MetadataService.METADATA_CLASS_NAME;
-	}
-
-	@Override
-	public String getGroupAttributeName() {
-		return Code.getDBName();
-	}
-
-	@Override
-	public Object getGroupAttributeValue() {
-		return groupAttributeValue;
 	}
 
 	@Override
