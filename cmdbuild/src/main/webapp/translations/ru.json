@@ -702,9 +702,9 @@
 				"classLevelMapping": "Соответствие классов",
 				"className": "Класс CMDBuild",
 				"cudActions": {
-					"create": "Создание",
-					"delete": "Удаление",
-					"update": "Обновление"
+					"createLabel": "Создание",
+					"deleteLabel": "Удаление",
+					"updateLabel": "Обновление"
 				},
 				"dataSourceDbFieldset": "Источник данных: реляционная БД",
 				"dataSourceLdapFieldset": "Источник данных: LDAP каталог",

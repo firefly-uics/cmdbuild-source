@@ -61,7 +61,7 @@
 		 * @param {object} p.params.menu
 		 */
 		save: function(p) {
-			p.method = 'POST',
+			p.method = 'POST';
 			p.url = CMDBuild.ServiceProxy.url.menu.update;
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
@@ -74,7 +74,7 @@
 		 * @param {string} p.params.groupName
 		 */
 		remove: function(p) {
-			p.method = 'POST',
+			p.method = 'POST';
 			p.url = CMDBuild.ServiceProxy.url.menu.remove;
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
