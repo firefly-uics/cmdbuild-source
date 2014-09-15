@@ -98,7 +98,7 @@
 				</bean>
 				<bean id="documentNS" class="org.cmdbuild.cmdbf.xml.DocumentNamespace">
 					<constructor-arg name="name" value="document" />
-					<constructor-arg name="dmsLogic" ref="dmsLogic" />
+					<constructor-arg name="dmsLogic" ref="privilegedDmsLogic" />
 					<constructor-arg name="lookupLogic" ref="lookupLogic" />
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 					<constructor-arg name="dmsConfiguration" ref="dmsProperties" />

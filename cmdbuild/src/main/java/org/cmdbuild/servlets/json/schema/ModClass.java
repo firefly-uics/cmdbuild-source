@@ -2,47 +2,48 @@ package org.cmdbuild.servlets.json.schema;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.filter;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ACTIVE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ATTRIBUTES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DEFAULT_VALUE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAINS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_CARDINALITY;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_FIRST_CLASS_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_IS_MASTER_DETAIL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_MASTER_DETAIL_LABEL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.DOMAIN_SECOND_CLASS_ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.EDITOR_TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FIELD_MODE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FK_DESTINATION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FORCE_CREATION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.GROUP;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.INDEX;
-import static org.cmdbuild.servlets.json.ComunicationConstants.INHERIT;
-import static org.cmdbuild.servlets.json.ComunicationConstants.IS_PROCESS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LENGTH;
-import static org.cmdbuild.servlets.json.ComunicationConstants.LOOKUP;
-import static org.cmdbuild.servlets.json.ComunicationConstants.META_DATA;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NOT_NULL;
-import static org.cmdbuild.servlets.json.ComunicationConstants.PRECISION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SCALE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SHOW_IN_GRID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SUPERCLASS;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TABLE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TABLE_TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.TYPES;
-import static org.cmdbuild.servlets.json.ComunicationConstants.UNIQUE;
-import static org.cmdbuild.servlets.json.ComunicationConstants.USER_STOPPABLE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_VALUE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAINS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_CARDINALITY;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_FIRST_CLASS_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_IS_MASTER_DETAIL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_MASTER_DETAIL_LABEL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_SECOND_CLASS_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.EDITOR_TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FIELD_MODE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FK_DESTINATION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FORCE_CREATION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.GROUP;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.INDEX;
+import static org.cmdbuild.servlets.json.CommunicationConstants.INHERIT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IP_TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.IS_PROCESS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LENGTH;
+import static org.cmdbuild.servlets.json.CommunicationConstants.LOOKUP;
+import static org.cmdbuild.servlets.json.CommunicationConstants.META_DATA;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NOT_NULL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PRECISION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SCALE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SHOW_IN_GRID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SUPERCLASS;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TABLE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TABLE_TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TYPES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.UNIQUE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.USER_STOPPABLE;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -55,6 +56,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.CMTableType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
+import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.CMDBWorkflowException;
@@ -64,16 +66,16 @@ import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DataDefinitionLogic.FunctionItem;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction;
 import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataAction.Visitor;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Create;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Delete;
-import org.cmdbuild.logic.data.DataDefinitionLogic.MetadataActions.Update;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Create;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Delete;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic.MetadataActions.Update;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Attribute;
+import org.cmdbuild.model.data.Attribute.IpType;
 import org.cmdbuild.model.data.ClassOrder;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
-import org.cmdbuild.model.data.Metadata;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.AttributeSerializer;
@@ -268,12 +270,6 @@ public class ModClass extends JSONBaseWithSpringContext {
 		dataDefinitionLogic().deleteOrDeactivate(className);
 	}
 
-	/*
-	 * ===========================================================
-	 * ATTRIBUTES
-	 * ===========================================================
-	 */
-
 	@JSONExported
 	public JSONObject getAttributeList(@Parameter(value = ACTIVE, required = false) final boolean onlyActive, //
 			@Parameter(value = CLASS_NAME) final String className) throws JSONException, AuthException {
@@ -288,7 +284,11 @@ public class ModClass extends JSONBaseWithSpringContext {
 			attributesForClass = dataLogic.findClass(className).getAttributes();
 		}
 
-		out.put(ATTRIBUTES, AttributeSerializer.withView(dataLogic.getView()).toClient(attributesForClass, onlyActive));
+		final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
+				.withDataView(dataLogic.getView()) //
+				.withTranslationFacade(translationFacade()) //
+				.build();
+		out.put(ATTRIBUTES, attributeSerializer.toClient(attributesForClass, onlyActive));
 		return out;
 	}
 
@@ -351,10 +351,12 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(value = GROUP, required = false) final String group, //
 			@Parameter(value = META_DATA, required = false) final JSONObject meta, //
 			@Parameter(value = EDITOR_TYPE, required = false) final String editorType, //
-			@Parameter(value = CLASS_NAME) final String className) throws Exception {
+			@Parameter(value = IP_TYPE, required = false) final String ipType, //
+			@Parameter(value = CLASS_NAME) final String className //
+	) throws Exception {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(name) //
-				.withOwner(className) //
+				.withOwnerName(className) //
 				.withDescription(description) //
 				.withGroup(group) //
 				.withType(attributeTypeString) //
@@ -367,6 +369,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.withMode(JsonModeMapper.modeFrom(fieldMode)) //
 				.withEditorType(editorType) //
 				.withFilter(filter) //
+				.withIpType(IpType.of(ipType)) //
 				.withForeignKeyDestinationClassName(fkDestinationName) //
 				.thatIsDisplayableInList(isBaseDSP) //
 				.thatIsMandatory(isNotNull) //
@@ -376,7 +379,12 @@ public class ModClass extends JSONBaseWithSpringContext {
 				.build();
 		final DataDefinitionLogic logic = dataDefinitionLogic();
 		final CMAttribute cmAttribute = logic.createOrUpdate(attribute);
-		final JSONObject result = AttributeSerializer.withView(logic.getView()).toClient(cmAttribute,
+
+		final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
+				.withDataView(logic.getView()) //
+				.withTranslationFacade(translationFacade()) //
+				.build();
+		final JSONObject result = attributeSerializer.toClient(cmAttribute,
 				buildMetadataForSerialization(attribute.getMetadata()));
 		serializer.put(ATTRIBUTE, result);
 		return serializer;
@@ -431,7 +439,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 						list = Lists.newArrayList();
 						metadataMap.put(action, list);
 					}
-					list.add(new Metadata(name, value));
+					list.add(Metadata.of(name, value));
 
 				}
 			}
@@ -489,7 +497,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 			@Parameter(CLASS_NAME) final String className) {
 		final Attribute attribute = Attribute.newAttribute() //
 				.withName(attributeName) //
-				.withOwner(className) //
+				.withOwnerName(className) //
 				.build();
 		dataDefinitionLogic().deleteOrDeactivate(attribute);
 	}
@@ -503,7 +511,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final JSONArray jsonAttributes = new JSONArray(jsonAttributeList);
 		for (int i = 0; i < jsonAttributes.length(); i++) {
 			final JSONObject jsonAttribute = jsonAttributes.getJSONObject(i);
-			attributes.add(Attribute.newAttribute().withOwner(className)//
+			attributes.add(Attribute.newAttribute().withOwnerName(className)//
 					.withName(jsonAttribute.getString(NAME)) //
 					.withIndex(jsonAttribute.getInt(INDEX)).build());
 		}
@@ -512,12 +520,6 @@ public class ModClass extends JSONBaseWithSpringContext {
 			dataDefinitionLogic().reorder(attribute);
 		}
 	}
-
-	/*
-	 * =========================================================
-	 * DOMAIN
-	 * ===========================================================
-	 */
 
 	@JSONExported
 	public JSONObject getAllDomains(@Parameter(value = ACTIVE, required = false) final boolean activeOnly)
@@ -604,7 +606,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 	public void deleteDomain(@Parameter(value = DOMAIN_NAME, required = false) final String domainName //
 	) throws JSONException {
 
-		dataDefinitionLogic().deleteDomainByName(domainName);
+		dataDefinitionLogic().deleteDomainIfExists(domainName);
 	}
 
 	@Admin
@@ -658,9 +660,11 @@ public class ModClass extends JSONBaseWithSpringContext {
 					final CMClass referencedClass = logic.findClass(referencedClassName);
 					if (referencedClass.isAncestorOf(targetClass)) {
 						final boolean serializeAlsoClassId = true;
-						final JSONObject jsonAttribute = AttributeSerializer //
-								.withView(logic.getView()) //
-								.toClient(attribute, serializeAlsoClassId);
+						final AttributeSerializer attributeSerializer = AttributeSerializer.newInstance() //
+								.withDataView(logic.getView()) //
+								.withTranslationFacade(translationFacade()) //
+								.build();
+						final JSONObject jsonAttribute = attributeSerializer.toClient(attribute, serializeAlsoClassId);
 
 						fk.put(jsonAttribute);
 					}
@@ -698,7 +702,7 @@ public class ModClass extends JSONBaseWithSpringContext {
 		return JsonResponse.success( //
 				from(dataDefinitionLogic().functions()) //
 						.transform(toJsonFunction) //
-						.toImmutableList());
+						.toList());
 	}
 
 }

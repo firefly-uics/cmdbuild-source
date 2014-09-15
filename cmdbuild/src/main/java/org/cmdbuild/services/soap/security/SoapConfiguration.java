@@ -1,6 +1,6 @@
 package org.cmdbuild.services.soap.security;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.cmdbuild.auth.DefaultAuthenticationService.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,17 +19,17 @@ public class SoapConfiguration implements Configuration {
 	}
 
 	@Override
-	public Set<String> getActiveAuthenticators() {
+	public Collection<String> getActiveAuthenticators() {
 		return Sets.newHashSet(SoapPasswordAuthenticator.class.getSimpleName());
 	}
 
 	@Override
-	public Set<String> getServiceUsers() {
+	public Collection<String> getServiceUsers() {
 		return configuration.getServiceUsers();
 	}
 
 	@Override
-	public Set<String> getPrivilegedServiceUsers() {
+	public Collection<String> getPrivilegedServiceUsers() {
 		return configuration.getPrivilegedServiceUsers();
 	}
 

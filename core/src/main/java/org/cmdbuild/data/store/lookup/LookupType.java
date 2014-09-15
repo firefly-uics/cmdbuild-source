@@ -1,16 +1,15 @@
 package org.cmdbuild.data.store.lookup;
 
-import static org.apache.commons.lang.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-import org.cmdbuild.common.Builder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 public final class LookupType {
 
-	public static class LookupTypeBuilder implements Builder<LookupType> {
+	public static class LookupTypeBuilder implements org.apache.commons.lang3.builder.Builder<LookupType> {
 
 		private String name;
 		private String parent;

@@ -6,14 +6,16 @@ import java.util.Map;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.DataViewStore.BaseStorableConverter;
+import org.cmdbuild.data.store.dao.BaseStorableConverter;
 import org.cmdbuild.model.View;
 
 public class ViewConverter extends BaseStorableConverter<View> {
 
+	public static final String VIEW_CLASS_NAME = "_View";
+
 	private final static String //
-			CLASS_NAME = "_View",
-			DESCRIPTION = "Description", FILTER = "Filter", ID = "id", NAME = "Name",
+			DESCRIPTION = "Description",
+			FILTER = "Filter", ID = "id", NAME = "Name",
 			SOURCE_CLASS = "IdSourceClass",
 			SOURCE_FUNCTION = "SourceFunction", TYPE = "Type";
 
@@ -25,7 +27,7 @@ public class ViewConverter extends BaseStorableConverter<View> {
 
 	@Override
 	public String getClassName() {
-		return CLASS_NAME;
+		return VIEW_CLASS_NAME;
 	}
 
 	@Override

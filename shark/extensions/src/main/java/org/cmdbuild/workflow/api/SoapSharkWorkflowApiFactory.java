@@ -1,12 +1,13 @@
 package org.cmdbuild.workflow.api;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.workflow.Constants.CURRENT_GROUP_NAME_VARIABLE;
 import static org.cmdbuild.workflow.Constants.CURRENT_USER_USERNAME_VARIABLE;
 
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor;
-import org.cmdbuild.common.mail.MailApi;
-import org.cmdbuild.common.mail.MailApiFactory;
+import org.cmdbuild.common.api.mail.Configuration;
+import org.cmdbuild.common.api.mail.MailApi;
+import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.workflow.ConfigurationHelper;
@@ -109,10 +110,9 @@ public class SoapSharkWorkflowApiFactory implements SharkWorkflowApiFactory {
 	private MailApi mailApi() {
 		try {
 			final ConfigurationHelper helper = new ConfigurationHelper(cus);
-			final MailApi.Configuration mailApiConfiguration = helper.getMailApiConfiguration();
+			final Configuration.All mailApiConfiguration = helper.getMailApiConfiguration();
 			final MailApiFactory mailApiFactory = helper.getMailApiFactory();
-			mailApiFactory.setConfiguration(mailApiConfiguration);
-			return mailApiFactory.createMailApi();
+			return mailApiFactory.create(mailApiConfiguration);
 		} catch (final Exception e) {
 			return NULL_MAIL_API;
 		}

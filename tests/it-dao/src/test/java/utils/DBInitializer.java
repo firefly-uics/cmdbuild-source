@@ -12,7 +12,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.dao.driver.AbstractDBDriver.DefaultTypeObjectCache;
@@ -165,6 +165,14 @@ public class DBInitializer implements LoggingSupport {
 		updateWithPatches();
 	}
 
+	public void drop() {
+		logger.info("dropping database");
+		if (databaseExists()) {
+			dbConfigurator.drop();
+			logger.info("database dropped");
+		}
+	}
+
 	private void setupDatabaseProperties() {
 		final org.cmdbuild.config.DatabaseConfiguration dp = DatabaseProperties.getInstance();
 		dp.setDatabaseUrl(format("jdbc:postgresql://%1$s:%2$s/%3$s", //
@@ -211,6 +219,10 @@ public class DBInitializer implements LoggingSupport {
 				}
 			}
 		}
+	}
+
+	public DataSource dataSource() {
+		return dbConfigurator.systemDataSource();
 	}
 
 	public DBDriver getDriver() {

@@ -6,9 +6,11 @@ import java.util.List;
 
 import org.cmdbuild.model.widget.Calendar;
 import org.cmdbuild.model.widget.CreateModifyCard;
+import org.cmdbuild.model.widget.Grid;
 import org.cmdbuild.model.widget.LinkCards;
 import org.cmdbuild.model.widget.ManageEmail;
 import org.cmdbuild.model.widget.ManageRelation;
+import org.cmdbuild.model.widget.NavigationTree;
 import org.cmdbuild.model.widget.OpenAttachment;
 import org.cmdbuild.model.widget.OpenNote;
 import org.cmdbuild.model.widget.OpenReport;
@@ -93,6 +95,16 @@ class WidgetSubmissionConverter implements WidgetVisitor {
 
 	@Override
 	public void visit(final OpenReport openReport) {
+		// nothing to do
+	}
+
+	@Override
+	public void visit(final NavigationTree navigationTree) {
+		// nothing to do
+	}
+
+	@Override
+	public void visit(final Grid grid) {
 		// nothing to do
 	}
 

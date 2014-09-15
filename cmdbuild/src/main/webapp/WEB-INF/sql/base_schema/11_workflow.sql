@@ -62,16 +62,16 @@ CREATE INDEX idx_activity_idclass
 --
 
 -- EmailStatus lookup
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'New', 'A', 'EmailStatus', 1, false);
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'Received', 'A', 'EmailStatus', 2, false);
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'Draft', 'A', 'EmailStatus', 3, false);
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'Outgoing', 'A', 'EmailStatus', 4, false);
-INSERT INTO "LookUp" ("IdClass", "Description", "Status", "Type", "Number", "IsDefault")
-    VALUES ('"LookUp"'::regclass, 'Sent', 'A', 'EmailStatus', 5, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'New', 'New', 'A', 'EmailStatus', 1, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Received', 'Received', 'A', 'EmailStatus', 2, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Draft', 'Draft', 'A', 'EmailStatus', 3, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Outgoing', 'Outgoing', 'A', 'EmailStatus', 4, false);
+INSERT INTO "LookUp" ("IdClass", "Code", "Description", "Status", "Type", "Number", "IsDefault")
+    VALUES ('"LookUp"'::regclass, 'Sent', 'Sent', 'A', 'EmailStatus', 5, false);
 
 -- Email class
 SELECT cm_create_class('Email', 'Class', 'MODE: user|TYPE: class|DESCR: Email|SUPERCLASS: false|STATUS: active');
@@ -88,4 +88,4 @@ SELECT cm_create_class_attribute('Email', 'CcAddresses', 'text', '', false, fals
 SELECT cm_create_class_attribute('Email', 'Subject', 'text', '', false, false, 'MODE: read|FIELDMODE: write|DESCR: Subject|INDEX: 9|BASEDSP: true|STATUS: active');
 SELECT cm_create_class_attribute('Email', 'Content', 'text', '', false, false, 'MODE: read|FIELDMODE: write|DESCR: Body|INDEX: 10|BASEDSP: false|STATUS: active');
 SELECT cm_create_class_attribute('Email', 'NotifyWith', 'text', null, false, false, 'MODE: write|DESCR: NotifyWith|INDEX: 10|BASEDSP: false|STATUS: active');
-
+SELECT cm_create_class_attribute('Email', 'Account', 'text', null, false, false, 'MODE: user|DESCR: Account|INDEX: 11|BASEDSP: false|STATUS: active');

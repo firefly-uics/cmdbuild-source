@@ -2,7 +2,7 @@ package org.cmdbuild.dao.entrytype.attributetype;
 
 import java.math.BigDecimal;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public class DecimalAttributeType extends AbstractAttributeType<BigDecimal> {
 

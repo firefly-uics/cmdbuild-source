@@ -37,7 +37,7 @@ BEGIN
 				SELECT "Grant"."Id", "Grant"."IdClass", "Grant"."Code", "Grant"."Description", "Grant"."Status", "Grant"."User", "Grant"."BeginDate", "Grant"."Notes", "Grant"."IdRole", "Grant"."IdGrantedClass", "Grant"."Mode"
 					FROM "Grant"
 				UNION
-				SELECT (-1), '"Grant"'::regclass AS regclass, ''::character varying AS "varchar", ''::character varying AS "varchar", 'A'::bpchar AS bpchar, 'admin'::character varying AS "varchar", now() AS now, NULL::text AS unknown, "Role"."Id", system_classcatalog.classid::regclass AS classid, '-'::character varying AS "varchar"
+				SELECT (-1), '"Grant"'::regclass AS regclass, ''::character varying AS "varchar", ''::character varying AS "varchar", 'A'::bpchar AS bpchar, 'admin'::character varying AS "varchar", now() AS now, NULL::text AS unknown, "Role"."Id", system_classcatalog.classid::regclass, '-'::character varying AS "varchar"
 					FROM system_classcatalog, "Role"
 					WHERE system_classcatalog.classid::regclass::oid <> '"Class"'::regclass::oid AND NOT ("Role"."Id"::text || system_classcatalog.classid::integer::text IN (SELECT "Grant"."IdRole"::text || "Grant"."IdGrantedClass"::oid::integer::text FROM "Grant"))) permission
 				JOIN system_classcatalog ON permission."IdGrantedClass"::oid = system_classcatalog.classid AND (_cm_legacy_read_comment(system_classcatalog.classcomment::character varying::text, 'MODE'::character varying::text)::text = ANY (ARRAY['write'::character varying::text, 'read'::character varying::text]))

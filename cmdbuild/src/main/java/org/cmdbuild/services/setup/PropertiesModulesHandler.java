@@ -1,13 +1,13 @@
 package org.cmdbuild.services.setup;
 
-import static org.apache.commons.lang.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.config.DefaultProperties;
-import org.cmdbuild.logic.setup.SetUpLogic.Module;
-import org.cmdbuild.logic.setup.SetUpLogic.ModulesHandler;
+import org.cmdbuild.logic.setup.SetupLogic.Module;
+import org.cmdbuild.logic.setup.SetupLogic.ModulesHandler;
 import org.cmdbuild.services.Settings;
 
 import com.google.common.collect.Maps;

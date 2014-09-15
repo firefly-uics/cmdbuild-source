@@ -29,9 +29,9 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 
 		/*
 		 * when _growSizeFix abort because the combo
-		 * is not visible (this.isVisibile(deep=true)), 
-		 * there are no way to know when it return to be 
-		 * shown. So, use this event to eventually 
+		 * is not visible (this.isVisibile(deep=true)),
+		 * there are no way to know when it return to be
+		 * shown. So, use this event to eventually
 		 * adjust the size when the combo is actually used
 		 */
 		this.mon(this, "focus", function() {
@@ -123,7 +123,7 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 
 	// private
 	extractIdIfValueIsObject: function(v) {
-		if (v != null 
+		if (v != null
 				&& typeof v == "object" // the new serialization of reference and lookup
 				&& !Ext.isArray(v) // is an array when select a value from the UI
 				) {

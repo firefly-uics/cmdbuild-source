@@ -1,15 +1,16 @@
 package org.cmdbuild.services.email;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.data.store.Storables.storableOf;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.email.Email;
 import org.cmdbuild.data.store.email.EmailOwnerGroupable;
+import org.cmdbuild.data.store.email.EmailStatus;
+import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.model.email.Email;
-import org.cmdbuild.model.email.Email.EmailStatus;
-import org.cmdbuild.model.email.EmailTemplate;
 import org.slf4j.Logger;
 
 import com.google.common.base.Optional;
@@ -51,17 +52,17 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	private static DraftAndOutgoingEmails DRAFT_AND_OUTGOING_EMAILS = new DraftAndOutgoingEmails();
 
 	private final Store<Email> emailStore;
-	private final Store<EmailTemplate> emailTemplateStore;
+	private final Store<ExtendedEmailTemplate> emailTemplateStore;
 
-	public DefaultEmailPersistence(final Store<Email> emailStore, final Store<EmailTemplate> emailTemplateStore) {
+	public DefaultEmailPersistence(final Store<Email> emailStore, final Store<ExtendedEmailTemplate> emailTemplateStore) {
 		this.emailStore = emailStore;
 		this.emailTemplateStore = emailTemplateStore;
 	}
 
 	@Override
-	public Iterable<EmailTemplate> getEmailTemplates() {
+	public Iterable<ExtendedEmailTemplate> getEmailTemplates() {
 		logger.info("getting all email templates");
-		return emailTemplateStore.list();
+		return emailTemplateStore.readAll();
 	}
 
 	@Override
@@ -110,7 +111,7 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	@Override
 	public void delete(final Email email) {
 		logger.info("deleting email with id '{}'", email.getId());
-		final Optional<Email> optional = from(emailStore.list()) //
+		final Optional<Email> optional = from(emailStore.readAll()) //
 				.filter(EmailIdPredicate.of(email.getId())) //
 				.first();
 		if (optional.isPresent()) {
@@ -123,21 +124,14 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	@Override
 	public Email getEmail(final Long emailId) {
 		logger.info("getting email with id '{}'", emailId);
-		final Email email = emailStore.read(new Storable() {
-
-			@Override
-			public String getIdentifier() {
-				return emailId.toString();
-			}
-
-		});
+		final Email email = emailStore.read(storableOf(emailId.toString()));
 		return email;
 	}
 
 	@Override
 	public Iterable<Email> getEmails(final Long processId) {
 		logger.info("getting all emails for process' id '{}'", processId);
-		return from(emailStore.list(EmailOwnerGroupable.of(processId)));
+		return from(emailStore.readAll(EmailOwnerGroupable.of(processId)));
 	}
 
 }

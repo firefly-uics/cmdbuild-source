@@ -44,7 +44,7 @@ public interface JsonDashboardDTO {
 		private final Map<Integer, DashboardDefinition> dashboards;
 		private final Iterable<JsonDataSource> dataSources;
 
-		public JsonDashboardListResponse(final Map<Integer, DashboardDefinition> dashboards) {
+		public JsonDashboardListResponse(final Map<Integer,DashboardDefinition> dashboards) {
 			this.dashboards = dashboards;
 			this.dataSources = new LinkedList<JsonDataSource>();
 		}

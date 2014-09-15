@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.management;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SEPARATOR;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SEPARATOR;
 
 import java.io.File;
 import java.io.FileInputStream;
