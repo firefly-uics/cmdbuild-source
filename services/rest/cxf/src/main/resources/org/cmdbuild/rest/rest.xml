@@ -33,7 +33,7 @@
 			<ref bean="cxfClassAttributes" />
 			<ref bean="cxfDomains" />
 			<ref bean="cxfDomainAttributes" />
-			<ref bean="cxfDomainRelations" />
+			<ref bean="cxfRelations" />
 			<ref bean="cxfInstances" />
 			<ref bean="cxfLookupTypes" />
 			<ref bean="cxfLookupTypeValues" />

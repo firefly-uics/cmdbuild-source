@@ -13,7 +13,7 @@ import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.service.rest.DomainRelations;
+import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.dto.Card;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
@@ -21,7 +21,7 @@ import org.cmdbuild.service.rest.dto.Relation;
 
 import com.google.common.base.Function;
 
-public class CxfDomainRelations implements DomainRelations {
+public class CxfRelations implements Relations {
 
 	private static final Function<RelationInfo, Relation> RELATION_INFO_TO_RELATION = new Function<RelationInfo, Relation>() {
 
@@ -55,7 +55,7 @@ public class CxfDomainRelations implements DomainRelations {
 	private final ErrorHandler errorHandler;
 	private final DataAccessLogic dataAccessLogic;
 
-	public CxfDomainRelations(final ErrorHandler errorHandler, final DataAccessLogic dataAccessLogic) {
+	public CxfRelations(final ErrorHandler errorHandler, final DataAccessLogic dataAccessLogic) {
 		this.errorHandler = errorHandler;
 		this.dataAccessLogic = dataAccessLogic;
 	}
