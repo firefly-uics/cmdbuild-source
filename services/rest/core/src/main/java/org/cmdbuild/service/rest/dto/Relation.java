@@ -1,14 +1,14 @@
 package org.cmdbuild.service.rest.dto;
 
-import static com.google.common.collect.Maps.immutableEntry;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
-import static java.util.Arrays.asList;
 import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
-import static org.cmdbuild.service.rest.constants.Serialization.CARD;
+import static org.cmdbuild.service.rest.constants.Serialization.DESTINATION;
 import static org.cmdbuild.service.rest.constants.Serialization.ID;
+import static org.cmdbuild.service.rest.constants.Serialization.RELATION;
+import static org.cmdbuild.service.rest.constants.Serialization.SOURCE;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.VALUES;
 
@@ -24,19 +24,21 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.service.rest.dto.adapter.CardAdapter;
+import org.cmdbuild.service.rest.dto.adapter.RelationAdapter;
 import org.cmdbuild.service.rest.dto.adapter.StringObjectMapAdapter;
 
 import com.google.common.base.Function;
 
-@XmlRootElement(name = CARD)
-@XmlJavaTypeAdapter(CardAdapter.class)
-public class Card {
+@XmlRootElement(name = RELATION)
+@XmlJavaTypeAdapter(RelationAdapter.class)
+public class Relation {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<Card> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<Relation> {
 
 		private String type;
 		private Long id;
+		private Card source;
+		private Card destination;
 		private final Map<String, Object> values = newHashMap();
 
 		private Builder() {
@@ -44,9 +46,9 @@ public class Card {
 		}
 
 		@Override
-		public Card build() {
+		public Relation build() {
 			validate();
-			return new Card(this);
+			return new Relation(this);
 		}
 
 		private void validate() {
@@ -63,12 +65,14 @@ public class Card {
 			return this;
 		}
 
-		public Builder withValue(final String name, final Object value) {
-			return withValue(immutableEntry(name, value));
+		public Builder withSource(final Card source) {
+			this.source = source;
+			return this;
 		}
 
-		public Builder withValue(final Entry<String, ? extends Object> value) {
-			return withValues(asList(value));
+		public Builder withDestination(final Card destination) {
+			this.destination = destination;
+			return this;
 		}
 
 		public Builder withValues(final Iterable<? extends Entry<String, ? extends Object>> values) {
@@ -89,17 +93,21 @@ public class Card {
 		return new Builder();
 	}
 
-	Card() {
+	Relation() {
 		// package visibility
 	}
 
 	private String type;
 	private Long id;
+	private Card source;
+	private Card destination;
 	private Map<String, Object> values;
 
-	private Card(final Builder builder) {
+	private Relation(final Builder builder) {
 		this.type = builder.type;
 		this.id = builder.id;
+		this.source = builder.source;
+		this.destination = builder.destination;
 		this.values = builder.values;
 	}
 
@@ -121,6 +129,24 @@ public class Card {
 		this.id = id;
 	}
 
+	@XmlAttribute(name = SOURCE)
+	public Card getSource() {
+		return source;
+	}
+
+	void setSource(final Card source) {
+		this.source = source;
+	}
+
+	@XmlAttribute(name = DESTINATION)
+	public Card getDestination() {
+		return destination;
+	}
+
+	void setDestination(final Card destination) {
+		this.destination = destination;
+	}
+
 	@XmlElement(name = VALUES)
 	@XmlJavaTypeAdapter(StringObjectMapAdapter.class)
 	public Map<String, Object> getValues() {
@@ -137,11 +163,11 @@ public class Card {
 			return true;
 		}
 
-		if (!(obj instanceof Card)) {
+		if (!(obj instanceof Relation)) {
 			return false;
 		}
 
-		final Card other = Card.class.cast(obj);
+		final Relation other = Relation.class.cast(obj);
 		return new EqualsBuilder() //
 				.append(this.type, other.type) //
 				.append(this.id, other.id) //
