@@ -19,7 +19,6 @@ import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
-import org.cmdbuild.dao.query.clause.OrderByClause;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryRelation;
@@ -35,9 +34,9 @@ public class AbstractGetRelation {
 
 	protected static abstract class GetRelationResponse {
 
-		protected final void addRelation(final QueryRelation relation, final CMCard destination) {
+		protected final void addRelation(final QueryRelation relation, final CMCard source, final CMCard destination) {
 			if ((relation != null) && (destination != null)) {
-				doAddRelation(new RelationInfo(relation, destination));
+				doAddRelation(new RelationInfo(relation, source, destination));
 			}
 		}
 
@@ -74,17 +73,17 @@ public class AbstractGetRelation {
 				clause = and(condition(attribute(srcCardType, ID), eq(src.getId())), whereClause);
 			}
 		}
-		return view.select(anyAttribute(DOM_ALIAS), attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION)) //
-				.from(srcCardType) //
-				.join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS))) //
-				.where(clause) //
-				.orderBy(attribute(DST_ALIAS, DESCRIPTION), Direction.ASC);
+		return getRelationQuery(srcCardType, domain) //
+				.where(clause);
 	}
 
 	protected QuerySpecsBuilder getRelationQuery(final CMClass sourceType, final CMDomain domain) {
-		return view.select(anyAttribute(DOM_ALIAS), attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION))
-				.from(sourceType).join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS)))
-				.orderBy(attribute(DST_ALIAS, DESCRIPTION), OrderByClause.Direction.ASC);
+		return view
+				.select(attribute(sourceType, CODE), attribute(sourceType, DESCRIPTION), anyAttribute(DOM_ALIAS),
+						attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION)) //
+				.from(sourceType) //
+				.join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS))) //
+				.orderBy(attribute(DST_ALIAS, DESCRIPTION), Direction.ASC);
 	}
 
 	protected CMClass getCardType(final Card src) {
@@ -96,11 +95,33 @@ public class AbstractGetRelation {
 	public static class RelationInfo {
 
 		private final QueryRelation rel;
+		private final CMCard src;
 		private final CMCard dst;
 
-		protected RelationInfo(final QueryRelation rel, final CMCard dst) {
+		protected RelationInfo(final QueryRelation rel, final CMCard src, final CMCard dst) {
 			this.rel = rel;
+			this.src = src;
 			this.dst = dst;
+		}
+
+		public String getSourceDescription() {
+			return ObjectUtils.toString(src.get(DESCRIPTION));
+		}
+
+		public String getSourceCode() {
+			return ObjectUtils.toString(src.get(CODE));
+		}
+
+		public CMCard getSourceCard() {
+			return src;
+		}
+
+		public Long getSourceId() {
+			return src.getId();
+		}
+
+		public CMClass getSourceType() {
+			return src.getType();
 		}
 
 		public String getTargetDescription() {
