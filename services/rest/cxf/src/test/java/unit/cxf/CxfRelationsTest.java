@@ -10,16 +10,13 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
-import java.util.Collections;
-import java.util.Map;
-
 import javax.ws.rs.WebApplicationException;
 
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.service.rest.cxf.CxfDomainRelations;
+import org.cmdbuild.service.rest.cxf.CxfRelations;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -27,20 +24,18 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 
-public class CxfDomainRelationsTest {
-
-	private static final Map<String, Object> NO_WIDGETS = Collections.emptyMap();
+public class CxfRelationsTest {
 
 	private ErrorHandler errorHandler;
 	private DataAccessLogic dataAccessLogic;
 
-	private CxfDomainRelations cxfDomainRelations;
+	private CxfRelations cxfRelations;
 
 	@Before
 	public void setUp() throws Exception {
 		errorHandler = mock(ErrorHandler.class);
 		dataAccessLogic = mock(DataAccessLogic.class);
-		cxfDomainRelations = new CxfDomainRelations(errorHandler, dataAccessLogic);
+		cxfRelations = new CxfRelations(errorHandler, dataAccessLogic);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -52,7 +47,7 @@ public class CxfDomainRelationsTest {
 				.when(errorHandler).domainNotFound(anyString());
 
 		// when
-		cxfDomainRelations.read("foo", null, null, null, null, null);
+		cxfRelations.read("foo", null, null, null, null, null);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, dataAccessLogic);
@@ -76,7 +71,7 @@ public class CxfDomainRelationsTest {
 				.when(errorHandler).propagate(exception);
 
 		// when
-		cxfDomainRelations.read("foo", "bar", 42L, "baz", null, null);
+		cxfRelations.read("foo", "bar", 42L, "baz", null, null);
 
 		// then
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);

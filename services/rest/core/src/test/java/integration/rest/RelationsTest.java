@@ -30,7 +30,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.common.collect.ChainablePutMap;
-import org.cmdbuild.service.rest.DomainRelations;
+import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
 import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.Relation;
@@ -47,14 +47,14 @@ import support.JsonSupport;
 import support.ServerResource;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DomainRelationsTest {
+public class RelationsTest {
 
-	private DomainRelations service;
+	private Relations service;
 
 	@Rule
 	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(DomainRelations.class) //
-			.withService(service = mock(DomainRelations.class)) //
+			.withServiceClass(Relations.class) //
+			.withService(service = mock(Relations.class)) //
 			.withPort(randomPort()) //
 			.build();
 

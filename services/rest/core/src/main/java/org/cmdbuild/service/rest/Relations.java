@@ -20,7 +20,7 @@ import org.cmdbuild.service.rest.dto.Relation;
 
 @Path("domains/{" + TYPE + "}/relations/")
 @Produces(APPLICATION_JSON)
-public interface DomainRelations {
+public interface Relations {
 
 	@GET
 	@Path(EMPTY)

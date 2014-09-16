@@ -12,7 +12,7 @@ import org.cmdbuild.service.rest.ClassAttributes;
 import org.cmdbuild.service.rest.ClassCards;
 import org.cmdbuild.service.rest.Classes;
 import org.cmdbuild.service.rest.DomainAttributes;
-import org.cmdbuild.service.rest.DomainRelations;
+import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.Domains;
 import org.cmdbuild.service.rest.Instances;
 import org.cmdbuild.service.rest.LookupTypeValues;
@@ -31,7 +31,7 @@ import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
 import org.cmdbuild.service.rest.cxf.CxfClassCards;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
 import org.cmdbuild.service.rest.cxf.CxfDomainAttributes;
-import org.cmdbuild.service.rest.cxf.CxfDomainRelations;
+import org.cmdbuild.service.rest.cxf.CxfRelations;
 import org.cmdbuild.service.rest.cxf.CxfDomains;
 import org.cmdbuild.service.rest.cxf.CxfInstances;
 import org.cmdbuild.service.rest.cxf.CxfLookupTypeValues;
@@ -107,10 +107,9 @@ public class Services implements LoggingSupport {
 	}
 
 	@Bean
-	public DomainRelations cxfDomainRelations() {
-		final CxfDomainRelations service = new CxfDomainRelations(utilities.defaultErrorHandler(),
-				helper.userDataAccessLogic());
-		return proxy(DomainRelations.class, service);
+	public Relations cxfRelations() {
+		final CxfRelations service = new CxfRelations(utilities.defaultErrorHandler(), helper.userDataAccessLogic());
+		return proxy(Relations.class, service);
 	}
 
 	@Bean
