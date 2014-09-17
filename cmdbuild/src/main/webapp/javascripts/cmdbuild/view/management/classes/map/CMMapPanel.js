@@ -1,7 +1,8 @@
 (function() {
+
 	Ext.define("CMDBuild.view.management.map.CMMapPanelDelegate", {
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.map.CMMapPanel} mapPanel The map panel which has added the layer
 		 * @param {Object} params Information about the layer
 		 * @param {OpenLayers.Map} params.object The OpenLayer map which has added the layer
@@ -10,7 +11,7 @@
 		onLayerAdded: Ext.emptyFn,
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.map.CMMapPanel} mapPanel The map panel which has removed the layer
 		 * @param {Object} params Information about the layer
 		 * @param {OpenLayers.Map} params.object The OpenLayer map which has removed the layer
@@ -19,7 +20,7 @@
 		onLayerRemoved: Ext.emptyFn,
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.map.CMMapPanel} mapPanel The map panel which has removed the layer
 		 * @param {Object} params Information about the layer
 		 * @param {OpenLayers.Layer} params.layer The OpenLayer layer which is removed
@@ -29,14 +30,15 @@
 		onLayerChanged: Ext.emptyFn,
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.map.CMMapPanel} mapPanel The map panel which has removed the layer
 		 * @param {boolean} visible If the map is now visible or not
 		 */
 		onMapPanelVisibilityChanged: Ext.emptyFn
 	});
 
-	Ext.define("CMDBuild.view.management.map.CMMapPanel", {
+	Ext.define("CMDBuild.view.management.classes.map.CMMapPanel", {
+		alternateClassName: 'CMDBuild.Management.MapPanel', // Legacy class name
 		extend: "Ext.panel.Panel",
 
 		mixins: {
@@ -48,8 +50,7 @@
 		initialZoomLevel: undefined,
 
 		constructor: function() {
-			this.mixins.delegable.constructor.call(this,
-					"CMDBuild.view.management.map.CMMapPanelDelegate");
+			this.mixins.delegable.constructor.call(this, "CMDBuild.view.management.map.CMMapPanelDelegate");
 
 			this.callParent(arguments);
 
@@ -63,7 +64,6 @@
 		},
 
 		initComponent: function() {
-
 			var me = this;
 
 			this.actualMapPanel = new Ext.panel.Panel({
@@ -85,14 +85,14 @@
 
 			if (CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root) {
 				var root = CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration.root;
-				
+
 				this.cardBrowser = new CMDBuild.view.management.CMCardBrowserTree({
 					title: CMDBuild.Translation.management.modcard.gis.gisNavigation,
 					frame: false,
 					border: false,
 					rootText: root.classDescription || root.className
 				});
-				
+
 				tabs.push(this.cardBrowser);
 			}
 
@@ -119,7 +119,7 @@
 					cls: "cmborderleft",
 					width: "25%",
 					split: true,
-					collapsible: true, 
+					collapsible: true,
 					collapseMode: 'mini',
 					header: false,
 					frame: false,
@@ -133,7 +133,7 @@
 
 			this.callParent(arguments);
 		},
-	
+
 		setCmVisible: function(visible) {
 			this.cmVisible = visible;
 			this.callDelegates("onMapPanelVisibilityChanged", [this, visible]);
@@ -145,19 +145,19 @@
 				this.cmAlreadyDisplayed = true;
 			}
 		},
-	
+
 		editMode: function() {
 			if (this.editingWindow) {
 				this.editingWindow.show();
 			}
 		},
-	
+
 		displayMode: function() {
 			if (this.editingWindow) {
 				this.editingWindow.hide();
 			}
 		},
-	
+
 		updateMap: function(entryType) {
 			this.editingWindow.removeAllLayerBinding();
 		},
@@ -233,4 +233,5 @@
 
 		map.setCenter(projectedCenter, initialZoomLevel);
 	}
+
 })();

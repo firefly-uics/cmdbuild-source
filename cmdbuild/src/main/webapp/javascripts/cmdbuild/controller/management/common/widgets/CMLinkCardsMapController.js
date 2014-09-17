@@ -1,86 +1,95 @@
 (function() {
-	var TRUE = "1";
 
-	Ext.define("CMDBuild.controller.management.workflow.widgets.CMLinkCardsMapController", {
-		mixins: {
-			observable: "Ext.util.Observable"
-		},
+	Ext.define("CMDBuild.controller.management.widgets.CMLinkCardsMapController", {
+		extend: "CMDBuild.controller.management.classes.map.CMMapController",
+
+		lastSelection: undefined,
+
 		/*
 		 * conf is an object like
 		 * {
-				view: this.view.mapPanel, 
-				ownerController: this,
-				model: this.model,
-				widgetConf: this.widgetConf
-			}
-		 * 
+		 *		view: this.view.mapPanel,
+		 *		ownerController: this,
+		 *		model: this.model,
+		 *		widgetConf: this.widgetConf
+		 *	}
+		 *
 		 */
 		constructor: function(conf) {
+			var me = this;
+			this.view = conf.view;
+			this.mapPanel = conf.view; // Use mapPanel for compatibility mode with extended class
 			Ext.apply(this, conf);
 
-			this.classId = this.widgetConf.ClassId;
+			if (!_CMCache.isEntryTypeByName(this.widgetConf.className))
+				throw 'CMLinkCardsMapController constructor: className not valid';
 
-			var multipleSelect = this.NoSelect!=TRUE && !this.SingleSelect,
-				referredEntryType = _CMCache.getEntryTypeById(this.classId);
+			this.entryType = _CMCache.getEntryTypeByName(this.widgetConf.className);
+			this.classId = this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 
-			this.lastSelection = null;
+			this.mon(
+				this.view,
+				"afterrender",
+				function() {
+					this.mapPanel.addDelegate(this);
 
-			this.mon(this.view, "addlayer", onLayerAdded, this);
-			this.mon(this.view, "removelayer",onLayerRemoved,this);
+					// set me as delegate of the OpenLayers.Map (pimped in CMMap)
+					this.map = this.mapPanel.getMap();
+					this.map.delegate = this;
 
-			this.mon(this.model, "select", this.selectByCardId, this);
-			this.mon(this.model, "deselect", this.deselectByCardId, this);
+					this.cmIsInEditing = false;
 
-			this.mon(this.view, "render", function() {
-				this.map = this.view.getMap();
+					// init the map state
+					this.mapState = new CMDBuild.state.CMMapState(this);
+					_CMMapState = this.mapState;
 
-				this.selectControl = new CMDBuild.Management.CMSelectFeatureController([], {
-					hover: false,
-					toggle: true,
-					clickout: false,
-					multiple: multipleSelect,
-					multipleKey: "shiftKey"
-				});
-	
-				this.map.addControl(this.selectControl);
-				this.selectControl.activate();
-	
-				this.popupControl = new CMDBuild.Management.PopupController();
-				this.map.addControl(this.popupControl);
-				this.popupControl.activate();
+					// set the switcher controller as a map delegate
+					var layerSwitcher = this.mapPanel.getLayerSwitcherPanel();
+					this.mapPanel.addDelegate(
+							new CMDBuild.controller.management.classes
+								.CMMapLayerSwitcherController(layerSwitcher, this.map));
 
-				if (referredEntryType) {
-					this.map.update(referredEntryType, withEditLayer = false);
-				}
-			}, this, {single: true});
-		},
+					// set me as a delegate of the switcher
+					layerSwitcher.addDelegate(this);
 
-		buildEditControls: function() {
-			_debug("Build edit controls");
-		},
+					// set me as a delegate of the cardBrowser
+					var cardbrowserPanel = this.mapPanel.getCardBrowserPanel();
+					if (cardbrowserPanel) {
+						new CMDBuild.controller.management.classes.CMCardBrowserTreeDataSource(cardbrowserPanel, this.mapState);
+						cardbrowserPanel.addDelegate(new CMDBuild.controller.management.classes.map.CMCardBrowserDelegate(this));
+					}
 
-		setSelectableLayers: function() {
-			_debug("setSelectableLayers");
-		},
+					// set me as delegate of the mini card grid
+					this.mapPanel.getMiniCardGrid().addDelegate(this);
 
-		selectByCardId: function(cardId) {
-			if (this.map) {
-				var feature = getFeatureByMasterCard.call(this, cardId);
+					// init the miniCardGridWindowController
+					this.miniCardGridWindowController = new CMDBuild.controller.management.CMMiniCardGridWindowFeaturesController();
 
-				if (feature != null) {
-					this.selectControl.select(feature);
-				}
-			}
-		},
+					// initialize editing control
+					this.editingWindowDelegate = new CMDBuild.controller.management.classes.map.CMMapEditingWindowDelegate(this);
+					this.mapPanel.editingWindow.addDelegate(this.editingWindowDelegate);
+					this.selectControl = new CMDBuild.Management.CMSelectFeatureController([], {
+						hover: false,
+						renderIntent: "default",
+						eventListeners: {
+							featurehighlighted: function(e) {
+								me.onFeatureSelect(e.feature);
+							}
+						}
+					});
 
-		deselectByCardId: function(cardId) {
-			if (this.map) {
-				var feature = getFeatureByMasterCard.call(this, cardId);
+					this.map.addControl(this.selectControl);
+					this.selectControl.activate();
 
-				if (feature != null) {
-					this.selectControl.unselect(feature);
-				}
-			}
+					// add me to the CMCardModuleStateDelegates
+					_CMCardModuleState.addDelegate(this);
+					_CMCardModuleState.setEntryType(this.entryType);
+
+					this.map.events.register("zoomend", this, onZoomEnd);
+				},
+				this,
+				{ single: true }
+			);
 		},
 
 		getLastSelection: function() {
@@ -91,114 +100,88 @@
 			var me = this;
 
 			if (this.model.hasSelection()) {
-				var ss = this.model.getSelections(),
-					s = ss[0];
-	
-				function onSuccess(resp, req, feature) {
-					// the card could have no feature
-					if (feature.properties) {
-						me.map.centerOnGeometry(feature);
+				var ss = this.model.getSelections();
+				var s = ss[0];
+
+				CMDBuild.ServiceProxy.getFeature(
+					this.classId,
+					s,
+					function onSuccess(result, options, decodedResult) {
+						// The card could have no decodedResult
+						if (decodedResult.properties) {
+							me.map.centerOnGeometry(decodedResult);
+						}
 					}
-				};
-	
-				CMDBuild.ServiceProxy.getFeature(this.classId, s, onSuccess);
+				);
+			}
+		},
+
+		onCardSelected: function(card) {
+			if (this.mapPanel.cmVisible) {
+				var id = card;
+				if (card && typeof card.get == "function")
+					id = card.get("Id");
+
+				if (id != this.currentCardId) {
+					this.currentCardId = id;
+					var layers = this.mapPanel.getMap().getCmdbLayers();
+
+					for (var i=0, l=layers.length; i<l; ++i) {
+						layers[i].clearSelection();
+						layers[i].selectFeatureByMasterCard(this.currentCardId);
+					}
+				}
+
+				// To sync the cardBrowserPanelSelection
+				if (this.mapPanel.getCardBrowserPanel()) {
+					this.mapPanel.getCardBrowserPanel().checkCardNodeAncestors(card);
+					this.mapPanel.getCardBrowserPanel().selectCardNodePath(card);
+				}
+
+				// To sync the miniCardGrid
+				// TODO ensure that the grid is on the right page
+				this.mapPanel.getMiniCardGrid().selectCardSilently(card);
+
+				if (card)
+					this.centerMapOnFeature(card.data);
+
+				// To sync selected feature with grid card
+				this.lastSelection = id;
 			}
 		}
 	});
 
-	function onLayerAdded(params) {
-		var layer = params.layer,
-		me = this;
+	/**
+	 * Executed after zoomEvent to update mapState object and manually redraw all map's layers
+	 */
+	function onZoomEnd() {
+		var map = this.map;
+		var zoom = map.getZoom();
+		this.mapState.updateForZoom(zoom);
+		var baseLayers = map.cmBaseLayers;
+		var haveABaseLayer = false;
 
-		if (layer == null || !layer.CM_Layer) {
-			return;
-		}
-
-		this.popupControl.addLayer(layer);
-		this.selectControl.addLayer(layer);
-
-		layer.events.on({
-			"featureselected": onFeatureSelected,
-			"featureunselected": onFeatureUnselected,
-			"featureadded": onFeatureAdded,
-			scope: me
+		// Manually force redraw of all layers to fix a problem with GoogleMaps
+		Ext.Array.each(map.layers, function(item, index, allItems) {
+			item.redraw();
 		});
-	}
 
-	function onLayerRemoved(params) {
-		var layer = params.layer,
-		me = this;
+		for (var i = 0; i < baseLayers.length; ++i) {
+			var layer = baseLayers[i];
 
-		if (layer == null || !layer.CM_Layer) {
-			return;
-		}
+			if (!layer || typeof layer.isInZoomRange != 'function')
+				continue;
 
-		this.popupControl.addLayer(layer);
-		this.selectControl.removeLayer(layer);
+			if (layer.isInZoomRange(zoom)) {
+				map.setBaseLayer(layer);
+				haveABaseLayer = true;
 
-		layer.events.un({
-			"featureselected": onFeatureSelected,
-			"featureunselected": onFeatureUnselected,
-			"featureadded": onFeatureAdded,
-			scope: me
-		});
-	}
-
-	function onFeatureSelected(params) {
-		var cardId = params.feature.attributes.master_card;
-		this.model.select(cardId);
-		this.lastSelection = cardId;
-	}
-
-	function onFeatureUnselected(params) {
-		var cardId = params.feature.attributes.master_card;
-		this.model.deselect(cardId);
-		if (this.lastSelection == cardId) {
-			this.lastSelection = null;
-		}
-	}
-
-	function onFeatureAdded(p) {
-		var master_card = p.feature.attributes.master_card;
-		if (master_card && this.model.isSelected(master_card)) {
-			this.selectControl.select(p.feature);
-			centerMapOnLoadedFeature.call(this, p.feature);
-		}
-	}
-
-	function centerMapOnLoadedFeature(feature) {
-		var center = feature.geometry.getCentroid();
-		var lonLat = new OpenLayers.LonLat(center.x, center.y);
-		this.map.setCenter(lonLat);
-	}
-
-	function centerMapOnCardId(cardId) {
-		var me = this;
-
-		function onSuccess(resp, req, feature) {
-			// the card could have no feature
-			if (feature.geometry) {
-				me.map.centerOnGeometry(feature);
-			}
-		};
-
-		CMDBuild.ServiceProxy.getFeature(this.classId, cardId, onSuccess);
-	}
-
-	function getFeatureByMasterCard(id) {
-		return this.map.getFeatureByMasterCard(id);
-	}
-
-	function featureInLayerSelection(feature) {
-		var layer = feature.layer;
-		var selections = layer.selectedFeatures;
-		
-		for (var i=0, l=selections.length; i<l; ++i) {
-			var f = selections[i];
-			if (f.attributes.master_card == feature.attributes.master_card) {
-				return true;
+				break;
 			}
 		}
-		return false;
+
+		if (!haveABaseLayer)
+			map.setBaseLayer(map.cmFakeBaseLayer);
 	}
+
 })();

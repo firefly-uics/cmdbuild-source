@@ -1,6 +1,7 @@
 (function() {
 
-	Ext.define("CMDBuild.controller.management.classes.CMMapController", {
+	Ext.define("CMDBuild.controller.management.classes.map.CMMapController", {
+		alternateClassName: "CMDBuild.controller.management.classes.CMMapController", // Legacy class name
 		extend: "CMDBuild.controller.management.classes.CMCardDataProvider",
 
 		mixins: {
