@@ -88,9 +88,8 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailWindow", {
 		var me = this;
 
 		var body = bodyBuild(me);
-		_CMProxy.emailTemplate.read({});
 		this.attachmentPanelsContainer = buildAttachmentPanelsContainer(me);
-		this.attachmentButtonsContainer = buildAttachmentButtonsContainer(me); 
+		this.attachmentButtonsContainer = buildAttachmentButtonsContainer(me);
 		var formPanel = buildFormPanel(me, body);
 
 		// to reach the basic form outside
@@ -215,7 +214,7 @@ function buildButtons(me) {
 				handler: function() {
 					var valueTo = me.form.getValues()[fields.TO_ADDRESS];
 					var valueCC = me.form.getValues()[fields.CC_ADDRESS];
-					
+
 					if (controlAddresses(valueTo, valueCC)) {
 						me.save = true;
 						// Destroy call an event after(!) the destruction of the window
