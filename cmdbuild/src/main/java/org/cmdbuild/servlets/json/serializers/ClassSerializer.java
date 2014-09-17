@@ -3,9 +3,9 @@ package org.cmdbuild.servlets.json.serializers;
 import static org.apache.commons.lang.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.servlets.json.ComunicationConstants.UI_CARD_EDIT_MODE;
 import static org.cmdbuild.servlets.json.schema.ModSecurity.LOGIC_TO_JSON;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Constants;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -15,10 +15,10 @@ import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.TemporaryObjectsBeforeSpringDI;
-import org.cmdbuild.logic.WorkflowLogic;
 import org.cmdbuild.logic.privileges.CardEditMode;
 import org.cmdbuild.logic.privileges.SecurityLogic;
+import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONException;
@@ -27,18 +27,25 @@ import org.json.JSONObject;
 public class ClassSerializer extends Serializer {
 
 	private static final String WRITE_PRIVILEGE = "priv_write", CREATE_PRIVILEGE = "priv_create";
+
 	private final CMDataView dataView;
 	private final WorkflowLogic workflowLogic;
+	private final PrivilegeContext privilegeContext;
 	private final SecurityLogic securityLogic;
+	private final UserStore userStore;
 
-	public static ClassSerializer newInstance() {
-		return new ClassSerializer();
-	}
-
-	private ClassSerializer() {
-		dataView = TemporaryObjectsBeforeSpringDI.getSystemView();
-		workflowLogic = TemporaryObjectsBeforeSpringDI.getSystemWorkflowLogic();
-		securityLogic = TemporaryObjectsBeforeSpringDI.getSecurityLogic();
+	public ClassSerializer( //
+			final CMDataView dataView, //
+			final SystemWorkflowLogicBuilder workflowLogicBuilder, //
+			final PrivilegeContext privilegeContext, //
+			final SecurityLogic securityLogic, //
+			final UserStore userStore //
+	) {
+		this.dataView = dataView;
+		this.workflowLogic = workflowLogicBuilder.build();
+		this.privilegeContext = privilegeContext;
+		this.securityLogic = securityLogic;
+		this.userStore = userStore;
 	}
 
 	private JSONObject toClient(final UserProcessClass element, final String wrapperLabel,
@@ -52,7 +59,6 @@ public class ClassSerializer extends Serializer {
 			Log.CMDBUILD.warn("Cannot fetch if the process '{}' is startable", element.getName());
 		} catch (final CMDBWorkflowException ex) {
 			if (WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.equals(ex.getExceptionType())) {
-				requestListener();
 				RequestListener.getCurrentRequest().pushWarning(ex);
 			}
 		}
@@ -113,7 +119,7 @@ public class ClassSerializer extends Serializer {
 	}
 
 	private void addUiCardModePrivileges(final CMClass cmClass, final JSONObject json) throws JSONException {
-		final OperationUser user = applicationContext().getBean(UserStore.class).getUser();
+		final OperationUser user = userStore.getUser();
 		CardEditMode cardEditMode = securityLogic.fetchCardEditModeForGroupAndClass(user.getPreferredGroup().getId(),
 				cmClass.getId());
 		cardEditMode = (CardEditMode) defaultIfNull(cardEditMode, CardEditMode.ALLOW_ALL);
@@ -129,9 +135,8 @@ public class ClassSerializer extends Serializer {
 		return toClient(element, null);
 	}
 
-	private static void addAccessPrivileges(final CMEntryType entryType, final JSONObject json) throws JSONException {
-		final OperationUser user = applicationContext().getBean(UserStore.class).getUser();
-		final boolean writePrivilege = user.hasWriteAccess(entryType);
+	private void addAccessPrivileges(final CMEntryType entryType, final JSONObject json) throws JSONException {
+		final boolean writePrivilege = privilegeContext.hasWriteAccess(entryType);
 		json.put(WRITE_PRIVILEGE, writePrivilege);
 		boolean createPrivilege = writePrivilege;
 		if (entryType instanceof CMClass) {
@@ -141,7 +146,4 @@ public class ClassSerializer extends Serializer {
 		json.put(CREATE_PRIVILEGE, createPrivilege);
 	}
 
-	protected RequestListener requestListener() {
-		return applicationContext().getBean(RequestListener.class);
-	}
 }

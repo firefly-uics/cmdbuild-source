@@ -109,8 +109,10 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 					entryType, dataView));
 		}
 		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
-			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder(
-					filterObject.getString(FULL_TEXT_QUERY_KEY), entryType, entryTypeAlias);
+			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder( //
+					filterObject.getString(FULL_TEXT_QUERY_KEY), //
+					entryType, //
+					entryTypeAlias);
 			whereClauseBuilders.add(jsonFullTextQueryBuilder);
 		}
 		if (filterObject.has(RELATION_KEY)) {
