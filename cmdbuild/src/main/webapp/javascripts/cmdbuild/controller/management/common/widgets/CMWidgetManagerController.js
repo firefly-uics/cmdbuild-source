@@ -15,7 +15,7 @@
 		buildControllers: function(card) {
 			var me = this;
 			me.removeAll();
-	
+
 			if (card) {
 				var definitions = me.takeWidgetFromCard(card);
 				for (var i=0, l=definitions.length, w=null, ui=null; i<l; ++i) {
@@ -31,7 +31,7 @@
 				}
 			}
 		},
-	
+
 		onWidgetButtonClick: function(w) {
 			this.delegate.ensureEditPanel();
 			var me = this;
@@ -43,7 +43,7 @@
 				}
 			}, 1);
 		},
-	
+
 		onCardGoesInEdit: function() {
 			for (var wc in this.controllers) {
 				wc = this.controllers[wc];
@@ -52,11 +52,11 @@
 				}
 			}
 		},
-	
+
 		getWrongWFAsHTML: function getWrongWFAsHTML() {
 			var out = "<ul>",
 				valid = true;
-	
+
 			for (var wc in this.controllers) {
 				wc = this.controllers[wc];
 				if (!wc.isValid()) {
@@ -65,14 +65,14 @@
 				}
 			}
 			out + "</ul>";
-	
+
 			if (valid) {
 				return null;
 			} else {
 				return out;
 			}
 		},
-	
+
 		removeAll: function clearWidgetControllers() {
 			this.view.reset();
 			for (var wcId in this.controllers) {
@@ -82,7 +82,7 @@
 				delete wc;
 			}
 		},
-	
+
 		areThereBusyWidget: function areThereBusyWidget() {
 			for (var wc in this.controllers) {
 				wc = this.controllers[wc];
@@ -92,13 +92,13 @@
 					continue;
 				}
 			}
-	
+
 			return false;
 		},
 
 		waitForBusyWidgets: function waitForBusyWidgets(cb, cbScope) {
 			var me = this;
-	
+
 			new _CMUtils.PollingFunction({
 				success: cb,
 				failure: function failure() {
@@ -112,12 +112,12 @@
 				checkFnScope: this
 			}).run();
 		},
-	
+
 		getData: function(advance) {
 			var ww = {};
 			for (var wc in this.controllers) {
 				wc = this.controllers[wc];
-	
+
 				if (typeof wc.getData == "function") {
 					var wcData = wc.getData(advance);
 					if (wcData != null) {
@@ -125,14 +125,14 @@
 					}
 				}
 			}
-	
+
 			return ww;
 		},
-	
+
 		hideWidgetsContainer: function() {
 			this.view.widgetsContainer.hide();
 		},
-	
+
 		buildWidgetController: function buildWidgetController(ui, widgetDef, card) {
 			var me = this,
 				controllerClass = me.controllerClasses[widgetDef.type];
@@ -153,7 +153,7 @@
 		hideWidgetsContainer: function() {
 			this.view.hideWidgetsContainer();
 		},
-	
+
 		takeWidgetFromCard: function(card) {
 			var widgets = [];
 			if (Ext.getClassName(card) == "CMDBuild.model.CMActivityInstance") {
@@ -167,7 +167,7 @@
 
 			return widgets;
 		},
-	
+
 		getWidgetId: function(widget) {
 			return widget.id;
 		},
@@ -207,14 +207,14 @@
 		// navigationTree
 		addControllerClass(commonControllers.CMNavigationTreeController);
 
-		// grid
+		// Grid
 		addControllerClass(commonControllers.CMGridController);
 
 		// openReport
 		addControllerClass(commonControllers.CMOpenReportController);
 
-		// linkCards
-		addControllerClass(commonControllers.CMLinkCardsController);
+		// LinkCards
+		addControllerClass(CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController);
 
 		// manageRelation
 		addControllerClass(commonControllers.CMManageRelationController);
@@ -236,7 +236,7 @@
 		buildControllers: function(widgets) {
 			var me = this;
 			me.removeAll();
-	
+
 			for (var w in widgets) {
 				ui = me.view.buildWidget(widgets[w], undefined);
 
