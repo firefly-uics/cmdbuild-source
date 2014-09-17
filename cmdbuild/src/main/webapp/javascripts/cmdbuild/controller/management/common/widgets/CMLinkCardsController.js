@@ -1,16 +1,16 @@
 (function() {
 	/*
-	 * The grid must be reload when is shown, so resolve the template and load it
-	 * 
-	 * If there is a defaultSelection, when the activity form goes in edit mode resolve
-	 * the template to calculate the selection and if needed add dependencies to the fields
+	 * The grid must be reload when is shown, so resolve the template and load it.
+	 *
+	 * If there is a defaultSelection, when the activity form goes in edit mode resolve the template to calculate the selection and if needed add
+	 * dependencies to the fields.
 	 */
 
-	var FILTER = "filter",
-		DEFAULT_SELECTION = "defaultSelection",
-		TABLE_VIEW_NAME = "table",
-		STARTING_VIEW = TABLE_VIEW_NAME,
-		widgetReader = CMDBuild.management.model.widget.LinkCardsConfigurationReader;
+	var FILTER = "filter";
+	var DEFAULT_SELECTION = "defaultSelection";
+	var TABLE_VIEW_NAME = "table";
+	var STARTING_VIEW = TABLE_VIEW_NAME;
+	var widgetReader = CMDBuild.management.model.widget.LinkCardsConfigurationReader;
 
 	Ext.define("CMDBuild.controller.management.common.widgets.CMLinkCardsController", {
 
@@ -24,17 +24,16 @@
 		},
 
 		constructor: function(view, supercontroller, widget, clientForm, card) {
-
 			this.mixins.observable.constructor.call(this);
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
-			this.targetEntryType = _CMCache.getEntryTypeByName(widgetReader.className(this.widgetConf));
+			this.widget = widget;
+			this.targetEntryType = _CMCache.getEntryTypeByName(widgetReader.className(this.widget));
 			this.currentView = STARTING_VIEW;
 			this.templateResolverIsBusy = false; // is busy when load the default selection
 			this.alertIfChangeDefaultSelection = false;
-			this.singleSelect = widgetReader.singleSelect(this.widgetConf);
-			this.readOnly = widgetReader.readOnly(this.widgetConf);
-
+			this.singleSelect = widgetReader.singleSelect(this.widget);
+			this.readOnly = widgetReader.readOnly(this.widget);
 
 			this.callBacks = {
 				'action-card-edit': this.onEditCardkClick,
@@ -54,7 +53,7 @@
 
 			this.mon(this.view.grid, 'beforeitemclick', cellclickHandler, this);
 			this.mon(this.view.grid, 'itemdblclick', onItemDoubleclick, this);
-			this.mon(this.view, "select", onSelect, this);
+			this.mon(this.view, "select", this.onSelect, this);
 			this.mon(this.view, "deselect", onDeselect, this);
 
 			if (this.view.hasMap()) {
@@ -70,7 +69,7 @@
 			}
 
 			var classId = this.targetEntryType.getId(),
-				cqlQuery = widgetReader.filter(this.widgetConf);
+				cqlQuery = widgetReader.filter(this.widget);
 
 			loadTheGridAsSoonAsPossible(this, cqlQuery, classId);
 		},
@@ -100,22 +99,16 @@
 		// override
 		isValid: function() {
 			if (!this.readOnly &&
-					widgetReader.required(this.widgetConf)) {
+					widgetReader.required(this.widget)) {
 				return this.model.hasSelection();
 			} else {
 				return true;
 			}
 		},
 
-		syncSelections: function() {
-			this.model._silent = true;
-			this.view.syncSelections();
-			this.model._silent = false;
-		},
-
 		onEditCardkClick: function(model) {
-			var editable = true,
-				w = getCardWindow(model, editable);
+			var editable = true;
+			var w = getCardWindow(model, editable);
 
 			w.on("destroy", function() {
 				this.view.grid.reload();
@@ -125,14 +118,62 @@
 		},
 
 		onShowCardkClick: function(model) {
-			var editable = false,
-				w = getCardWindow(model, editable);
+			var editable = false;
+			var w = getCardWindow(model, editable);
 
 			w.show();
 		},
 
 		getLabel: function() {
-			return widgetReader.label(this.widgetConf);
+			return widgetReader.label(this.widget);
+		},
+
+		onSelect: function(cardId) {
+			if (!Ext.isEmpty(cardId)) {
+				this.mapController.onCardSelected(cardId);
+				this.view.grid.getSelectionModel().select(
+					this.view.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, cardId)
+				);
+				this.model.select(cardId);
+			} else {
+				this.view.grid.getSelectionModel().reset();
+				this.model.reset();
+			}
+		},
+
+		// used only on toggle the map
+		loadPageForLastSelection: function(selection) {
+			if (!Ext.isEmpty(selection)) {
+				var params = {};
+				params[_CMProxy.parameter.CARD_ID] = selection;
+				params[_CMProxy.parameter.CLASS_NAME] = this.widget.className;
+				params[_CMProxy.parameter.RETRY_WITHOUT_FILTER] = true;
+
+				this.model._silent = true;
+
+				CMDBuild.ServiceProxy.card.getPosition({
+					scope: this,
+					params: params,
+					success: function(result, options, decodedResult) {
+						var position = decodedResult.position;
+
+						if (position >= 0) {
+							var	pageNumber = _CMUtils.grid.getPageNumber(position);
+
+							this.view.grid.loadPage(
+								pageNumber,
+								{
+									scope: this,
+									cb: function() {
+										this.onSelect(options.params[_CMProxy.parameter.CARD_ID]);
+									}
+								}
+							);
+						}
+					}
+				});
+
+			}
 		}
 	});
 
@@ -178,18 +219,30 @@
 				v.showGrid();
 				v.mapButton.setIconCls("map");
 				v.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
-				loadPageForLastSelection.call(me, me.mapController.getLastSelection());
+				me.loadPageForLastSelection(me.mapController.getLastSelection());
 			}
 		}, me);
 	}
 
 	function buildMapController(me) {
-		me.mapController = new CMDBuild.controller.management.workflow.widgets.CMLinkCardsMapController({
-			view: me.view.mapPanel, 
-			ownerController: me,
-			model: me.model,
-			widgetConf: me.widgetConf
-		});
+		if (typeof me.view.getMapPanel == "function") {
+			me.mapController = new CMDBuild.controller.management.widgets.CMLinkCardsMapController({
+				view: me.view.getMapPanel(),
+				ownerController: me,
+				model: me.model,
+				widgetConf: me.widgetConf
+			});
+		} else {
+			me.mapController = {
+				onEntryTypeSelected: Ext.emptyFn,
+				onAddCardButtonClick: Ext.emptyFn,
+				onCardSaved: Ext.emptyFn,
+				getValues: function() { return false; },
+				refresh: Ext.emptyFn,
+				editMode: Ext.emptyFn,
+				displayMode: Ext.emptyFn
+			};
+		}
 	}
 
 	function getCardWindow(model, editable) {
@@ -208,50 +261,9 @@
 		return w;
 	}
 
-	// used only on toggle the map
-	function loadPageForLastSelection(selection) {
-		if (selection != null) {
-			var params = {
-				"retryWithoutFilter": true,
-				IdClass: this.widgetConf.ClassId, // FIXME there is no classid
-				Id: selection
-			}, 
-			me = this, 
-			grid = this.view.grid;
-
-			me.model._silent = true;
-
-			CMDBuild.ServiceProxy.card.getPosition({
-				params: params,
-				success: function onGetPositionSuccess(response, options, resText) {
-					var position = resText.position,
-						found = position >= 0;
-	
-					if (found) {
-						var	pageNumber = grid.getPageNumber(position);
-						grid.loadPage(pageNumber, {
-							scope: me,
-							cb: function() {
-								me.model._silent = false;
-							}
-						});
-					}
-				}
-			});
-
-		} else {
-			this.syncSelections();
-		}
-	}
-
-	function onSelect(cardId) {
-		this.model.select(cardId);
-	}
-
 	function onDeselect(cardId) {
 		this.model.deselect(cardId);
 	}
-
 
 	function alertIfNeeded(me) {
 		if (me.alertIfChangeDefaultSelection) {
@@ -264,7 +276,7 @@
 	}
 
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
-		var className = event.target.className; 
+		var className = event.target.className;
 
 		if (this.callBacks[className]) {
 			this.callBacks[className].call(this, model);
@@ -272,7 +284,7 @@
 	}
 
 	function onItemDoubleclick(grid, model, html, index, e, options) {
-		if (! widgetReader.allowCardEditing(this.widgetConf)) {
+		if (! widgetReader.allowCardEditing(this.widget)) {
 			return;
 		}
 
@@ -331,7 +343,7 @@
 									me.model.select(r.Id);
 								}
 							}
-			
+
 							me.templateResolverIsBusy = false;
 						}
 					});
@@ -368,4 +380,5 @@
 
 		return output;
 	}
+
 })();
