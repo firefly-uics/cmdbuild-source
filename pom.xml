@@ -5,7 +5,7 @@
 	<groupId>org.cmdbuild</groupId>
 	<artifactId>cmdbuild-main</artifactId>
 	<packaging>pom</packaging>
-	<version>2.1.9-SNAPSHOT</version>
+	<version>2.1.9.b-SNAPSHOT</version>
 	<name>CMDBuild</name>
 	<url>http://www.cmdbuild.org</url>
 	<properties>
@@ -23,8 +23,8 @@
 		<log4j.version>1.2.16</log4j.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<shark.version>4.4-1</shark.version>
-		<slf4j.version>1.6.4</slf4j.version>
-		<spring.version>3.0.6.RELEASE</spring.version>
+		<slf4j.version>1.6.6</slf4j.version>
+		<spring.version>3.2.3.RELEASE</spring.version>
 		<tomcat.version>6.0.29</tomcat.version>
 		<tomcat-plugin.version>1.1</tomcat-plugin.version>
 		<!-- Test -->
@@ -53,6 +53,8 @@
 		<module>cmdbuild-graph</module>
 		<module>cmdbuild-ws-client</module>
 		<module>cmdbf</module>
+		<module>scheduler/core</module>
+		<module>scheduler/quartz</module>
 		<module>shark/commons</module>
 		<module>shark/client</module>
 		<module>shark/extensions</module>

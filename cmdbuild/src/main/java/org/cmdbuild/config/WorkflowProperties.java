@@ -67,11 +67,6 @@ public class WorkflowProperties extends DefaultProperties implements WorkflowCon
 		notifyListeners();
 	}
 
-	@Override
-	public void accept(final PropertiesVisitor visitor) {
-		visitor.visit(this);
-	}
-
 	private void notifyListeners() {
 		for (final ChangeListener changeListener : changeListeners) {
 			changeListener.configurationChanged();
