@@ -12,7 +12,9 @@
 	var STARTING_VIEW = TABLE_VIEW_NAME;
 	var widgetReader = CMDBuild.management.model.widget.LinkCardsConfigurationReader;
 
-	Ext.define("CMDBuild.controller.management.common.widgets.CMLinkCardsController", {
+	Ext.require('CMDBuild.model.widget.ModelLinkCards');
+
+	Ext.define("CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController", {
 
 		mixins: {
 			observable: "Ext.util.Observable",
@@ -40,7 +42,7 @@
 				"action-card-show": this.onShowCardkClick
 			};
 
-			this.model = new CMDBuild.Management.LinkCardsModel({
+			this.model = Ext.create('CMDBuild.model.widget.ModelLinkCards', {
 				singleSelect: this.singleSelect
 			});
 			this.view.setModel(this.model);
@@ -226,7 +228,7 @@
 
 	function buildMapController(me) {
 		if (typeof me.view.getMapPanel == "function") {
-			me.mapController = new CMDBuild.controller.management.widgets.CMLinkCardsMapController({
+			me.mapController = Ext.create('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsMapController', {
 				view: me.view.getMapPanel(),
 				ownerController: me,
 				model: me.model,

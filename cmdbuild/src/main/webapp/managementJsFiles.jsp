@@ -21,7 +21,6 @@
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/model/widget/CMLinkCardsModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/widget/CMWidgetReaders.js"></script>
 
 <!-- DATASOURCES -->
@@ -52,6 +51,7 @@
 
 		<!-- WIDGETS -->
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/grid/CMGrid.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/linkCards/LinkCards.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMNavigationTree.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWidgetsWindow.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWidgetButtonsPanel.js"></script>
@@ -67,7 +67,6 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/email/CMEmailGrid.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/email/CMManageEmail.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMManageRelation.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMLinkCards.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMWebService.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/management/common/widgets/CMPresetFromCard.js"></script>
 
@@ -146,11 +145,10 @@
 		<!--  -->
 
 		<!-- WIDGETS -->
+		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/linkCards/LinkCardsController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMGridController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMNavigationTreeController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMWidgetController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMLinkCardsController.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMLinkCardsMapController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMManageEmailController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMManageRelationController.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/controller/management/common/widgets/CMOpenNoteController.js"></script>
