@@ -1,5 +1,6 @@
 package integration;
 
+import static org.apache.commons.lang3.SystemUtils.USER_DIR;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.hamcrest.core.IsNot.not;
@@ -24,7 +25,7 @@ public class TranslationTest {
 	private static TranslationService ts;
 
 	static {
-		final String webRoot = System.getProperty("user.dir").concat("/src/main/webapp/"); // TODO
+		final String webRoot = USER_DIR.concat("/src/main/webapp/"); // TODO
 		Settings.getInstance().setRootPath(webRoot);
 		ts = TranslationService.getInstance();
 	}

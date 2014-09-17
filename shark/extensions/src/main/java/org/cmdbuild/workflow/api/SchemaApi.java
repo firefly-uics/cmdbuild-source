@@ -1,7 +1,7 @@
 package org.cmdbuild.workflow.api;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.WsType;
 import org.cmdbuild.workflow.type.LookupType;

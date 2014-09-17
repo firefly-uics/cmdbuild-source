@@ -81,17 +81,17 @@ public class OperationUserTest {
 		mockGroup = mock(CMGroup.class);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void shouldFailCreationIfAuthenticatedUserIsNull() {
 		final OperationUser operationUser = new OperationUser(null, new NullPrivilegeContext(), new NullGroup());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void shouldFailCreationIfPrivilegeContextIsNull() {
 		final OperationUser operationUser = new OperationUser(ANONYMOUS_USER, null, new NullGroup());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void shouldFailCreationIfSelectedGroupIsNull() {
 		final OperationUser operationUser = new OperationUser(ANONYMOUS_USER, new NullPrivilegeContext(), null);
 	}

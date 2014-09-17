@@ -1,6 +1,6 @@
 package org.cmdbuild.dao.query.clause.alias;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 public class NameAlias implements Alias {
 

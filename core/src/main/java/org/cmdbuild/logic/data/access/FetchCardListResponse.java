@@ -9,12 +9,4 @@ public class FetchCardListResponse extends PagedElements<Card> {
 		super(elements, totalSize);
 	}
 
-	public Iterable<Card> getPaginatedCards() {
-		return super.elements();
-	}
-
-	public int getTotalNumberOfCards() {
-		return super.totalSize();
-	}
-
 }

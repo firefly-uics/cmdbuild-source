@@ -20,6 +20,10 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMSqlDataViewFormFi
 		});
 
 		var fields = this.callParent(arguments);
+		Ext.apply(this.description, {
+			translationsKeyType: "View", 
+			translationsKeyField: "Description"
+		});
 		fields.push(this.dataSource);
 
 		return fields;
@@ -33,6 +37,9 @@ Ext.define("CMDBuild.delegate.administration.common.dataview.CMSqlDataViewFormFi
 	loadRecord: function(record) {
 		this.callParent(arguments);
 		this.dataSource.setValue(record.get(_CMProxy.parameter.SOURCE_FUNCTION));
+		Ext.apply(this.description, {
+			translationsKeyName: record.get("name")
+		});
 	},
 
 	/**

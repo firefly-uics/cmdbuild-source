@@ -79,6 +79,11 @@ public abstract class ForwardingDataView implements CMDataView {
 	public CMDomain findDomain(final String name) {
 		return delegate.findDomain(name);
 	}
+	
+	@Override
+	public CMDomain findDomain(final CMIdentifier identifier) {
+		return delegate.findDomain(identifier);
+	}
 
 	@Override
 	public Iterable<? extends CMDomain> findDomains() {

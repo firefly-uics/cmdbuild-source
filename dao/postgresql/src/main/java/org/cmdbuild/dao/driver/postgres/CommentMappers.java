@@ -79,6 +79,7 @@ class CommentMappers {
 			define("REFERENCETYPE", AttributeMetadata.REFERENCE_TYPE);
 			define("FKTARGETCLASS", AttributeMetadata.FK_TARGET_CLASS);
 			define("FILTER", AttributeMetadata.FILTER);
+			define("IP_TYPE", AttributeMetadata.IP_TYPE);
 		}
 	};
 

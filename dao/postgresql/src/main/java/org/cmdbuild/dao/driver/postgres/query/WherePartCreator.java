@@ -1,7 +1,7 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_EQ;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_GT;
 import static org.cmdbuild.dao.driver.postgres.Const.OPERATOR_IN;
@@ -12,7 +12,6 @@ import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 
 import java.util.List;
 
-import org.cmdbuild.common.Holder;
 import org.cmdbuild.dao.CardStatus;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.driver.postgres.SqlType;
@@ -31,7 +30,10 @@ import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.from.FromClause;
 import org.cmdbuild.dao.query.clause.where.AndWhereClause;
 import org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.NetworkContained;
+import org.cmdbuild.dao.query.clause.where.NetworkContains;
 import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.NetworkContainsOrEqual;
 import org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.EndsWithOperatorAndValue;
@@ -40,6 +42,8 @@ import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
 import org.cmdbuild.dao.query.clause.where.FunctionWhereClause;
 import org.cmdbuild.dao.query.clause.where.GreaterThanOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.InOperatorAndValue;
+import org.cmdbuild.dao.query.clause.where.NetworkRelationed;
+import org.cmdbuild.dao.query.clause.where.NetworkContainedOrEqual;
 import org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.NotWhereClause;
 import org.cmdbuild.dao.query.clause.where.NullOperatorAndValue;
@@ -50,6 +54,9 @@ import org.cmdbuild.dao.query.clause.where.StringArrayOverlapOperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.TrueWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClauseVisitor;
+
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 
 public class WherePartCreator extends PartCreator implements WhereClauseVisitor {
 
@@ -62,7 +69,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	private static final String CAST_OPERATOR = "::";
 	private static final String NO_CAST = null;
 
-	private static final Holder<Object> VALUE_NOT_REQUIRED = null;
+	private static final Supplier<Object> VALUE_NOT_REQUIRED = null;
 
 	private final QuerySpecs querySpecs;
 
@@ -166,6 +173,11 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	public void visit(final SimpleWhereClause whereClause) {
 		whereClause.getOperator().accept(new OperatorAndValueVisitor() {
 
+			private static final String OPERATOR_INET_IS_CONTAINED_WITHIN = "<<";
+			private static final String OPERATOR_INET_IS_CONTAINED_WITHIN_OR_EQUALS = "<<=";
+			private static final String OPERATOR_INET_CONTAINS = ">>";
+			private static final String OPERATOR_INET_CONTAINS_OR_EQUALS = ">>=";
+
 			@Override
 			public void visit(final EqualsOperatorAndValue operatorAndValue) {
 				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(), OPERATOR_EQ,
@@ -234,20 +246,54 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 				append(String.format(template, quotedAttributeName));
 			}
 
-			private Holder<Object> valueOf(final Object value) {
+			@Override
+			public void visit(NetworkContained operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(),
+						OPERATOR_INET_IS_CONTAINED_WITHIN, valueOf(operatorAndValue.getValue())));
+			}
+
+			@Override
+			public void visit(final NetworkContainedOrEqual operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(),
+						OPERATOR_INET_IS_CONTAINED_WITHIN_OR_EQUALS, valueOf(operatorAndValue.getValue())));
+			}
+
+			@Override
+			public void visit(final NetworkContains operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(),
+						OPERATOR_INET_CONTAINS, valueOf(operatorAndValue.getValue())));
+			}
+
+			@Override
+			public void visit(final NetworkContainsOrEqual operatorAndValue) {
+				append(attributeFilter(whereClause.getAttribute(), whereClause.getAttributeNameCast(),
+						OPERATOR_INET_CONTAINS_OR_EQUALS, valueOf(operatorAndValue.getValue())));
+			}
+
+			@Override
+			public void visit(final NetworkRelationed operatorAndValue) {
+				final QueryAliasAttribute attribute = whereClause.getAttribute();
+				final String cast = whereClause.getAttributeNameCast();
+				final Supplier<Object> valueOf = valueOf(operatorAndValue.getValue());
+				append("(" //
+						+ //
+						attributeFilter(attribute, cast, OPERATOR_INET_IS_CONTAINED_WITHIN_OR_EQUALS, valueOf) //
+						+ " OR " //
+						+ attributeFilter(attribute, cast, OPERATOR_EQ, valueOf) //
+						+ " OR " //
+						+ attributeFilter(attribute, cast, OPERATOR_INET_CONTAINS_OR_EQUALS, valueOf) //
+						+ ")");
+			}
+
+			private Supplier<Object> valueOf(final Object value) {
 				return WherePartCreator.this.valuesOf(value);
 			}
 
 		});
 	}
 
-	private Holder<Object> valuesOf(final Object value) {
-		return new Holder<Object>() {
-			@Override
-			public Object get() {
-				return value;
-			}
-		};
+	private Supplier<Object> valuesOf(final Object value) {
+		return Suppliers.ofInstance(value);
 	}
 
 	@Override
@@ -297,7 +343,7 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 	}
 
 	private String attributeFilter(final QueryAliasAttribute attribute, final String attributeNameCast,
-			final String operator, final Holder<Object> holder) {
+			final String operator, final Supplier<Object> holder) {
 		final String attributeName = nameOf(attribute, attributeNameCast);
 		final String attributeCast = attributeCastOf(attribute, attributeNameCast);
 		return format("%s %s %s", attributeName, operator,
@@ -380,4 +426,5 @@ public class WherePartCreator extends PartCreator implements WhereClauseVisitor 
 		}.findAttribute(querySpecs.getFromClause().getType());
 		return (_attribute == null) ? UndefinedAttributeType.undefined() : _attribute.getType();
 	}
+
 }

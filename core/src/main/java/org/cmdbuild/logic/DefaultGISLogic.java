@@ -366,7 +366,7 @@ public class DefaultGISLogic implements GISLogic {
 
 	@Override
 	public void saveGisTreeNavigation(final DomainTreeNode root) {
-		domainTreeStore.createOrReplaceTree(DOMAIN_TREE_TYPE, root);
+		domainTreeStore.createOrReplaceTree(DOMAIN_TREE_TYPE, null, root);
 	}
 
 	@Override

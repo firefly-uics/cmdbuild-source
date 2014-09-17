@@ -4,7 +4,7 @@
 	 * @class CMDBuild.WidgetBuilders.LookupAttribute
 	 * @extends CMDBuild.WidgetBuilders.ComboAttribute
 	 */
-	Ext.ns("CMDBuild.WidgetBuilders"); 
+	Ext.ns("CMDBuild.WidgetBuilders");
 	CMDBuild.WidgetBuilders.LookupAttribute = function() {};
 	CMDBuild.extend(CMDBuild.WidgetBuilders.LookupAttribute, CMDBuild.WidgetBuilders.ComboAttribute);
 
@@ -30,13 +30,13 @@
 	 */
 	CMDBuild.WidgetBuilders.LookupAttribute.prototype.buildCellEditor = function(attribute) {
 		var field = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, readOnly = false);
-	
+
 		if (field.isMultiLevel) {
 			var fake_field = buildFakeField(attribute);
 			fake_field.on("focus", function() {
 				onFakeFieldFocus.call(this, attribute);
 			}, fake_field);
-	
+
 			return fake_field;
 		} else {
 			return field;
@@ -46,7 +46,7 @@
 	/**
 	 * @override
 	 */
-	
+
 	CMDBuild.WidgetBuilders.LookupAttribute.prototype.genericBuildFieldsetForFilter = function(fieldId, fields, query, originalFieldName) {
 
 		var field = fields[0];
@@ -57,7 +57,7 @@
 				border : false,
 				padding : "3 0 0 3"
 			});
-	
+
 			var orPanel = new Ext.Panel({
 				columnWidth: 0.2,
 				html : 'or',
@@ -89,7 +89,7 @@
 					margins:'0 5 0 0'
 				},
 
-				items : [removeFieldButton, query, field, orPanel],	
+				items : [removeFieldButton, query, field, orPanel],
 
 				getAttributeField : function() {
 					return fields[0];
@@ -159,7 +159,7 @@
 			buttonAlign: "center",
 			buttons: [{
 				xtype: "button",
-				text: CMDBuild.Translation.common.btns.confirm,
+				text: CMDBuild.Translation.common.buttons.confirm,
 				handler: function() {
 					var value = fieldForTheWindow.getValue(),
 						rawValue = fieldForTheWindow.getRawValue(),
@@ -184,7 +184,7 @@
 				}
 			},{
 				xtype: "button",
-				text: CMDBuild.Translation.common.btns.abort,
+				text: CMDBuild.Translation.common.buttons.abort,
 				handler: function() {
 					me.editingWindow.destroy();
 					delete me.editingWindow;

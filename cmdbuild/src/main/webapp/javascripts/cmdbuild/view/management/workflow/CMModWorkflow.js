@@ -1,8 +1,10 @@
 (function() {
-	var tr = CMDBuild.Translation.management.modworkflow;
+
+	Ext.require('CMDBuild.core.proxy.CMProxyWorkflow');
 
 	Ext.define("CMDBuild.view.management.workflow.CMModProcess", {
 		extend: "CMDBuild.view.management.classes.CMModCard",
+
 		cmName: "process",
 
 		whitMap: false,
@@ -53,4 +55,5 @@
 			};
 		}
 	});
+
 })();

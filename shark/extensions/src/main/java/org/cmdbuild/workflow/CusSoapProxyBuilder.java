@@ -1,10 +1,10 @@
 package org.cmdbuild.workflow;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.services.soap.Private;
 import org.cmdbuild.services.soap.client.CmdbuildSoapClient.PasswordType;

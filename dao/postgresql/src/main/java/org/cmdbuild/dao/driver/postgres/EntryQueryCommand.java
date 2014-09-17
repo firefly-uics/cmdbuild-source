@@ -222,7 +222,8 @@ class EntryQueryCommand implements LoggingSupport {
 								value = new LookupValue( //
 										id, //
 										description, //
-										type //
+										type, //
+										null
 								);
 
 							} else {

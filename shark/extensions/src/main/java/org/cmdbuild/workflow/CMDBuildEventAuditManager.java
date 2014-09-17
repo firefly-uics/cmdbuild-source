@@ -1,6 +1,6 @@
 package org.cmdbuild.workflow;
 
-import static java.lang.String.*;
+import static java.lang.String.format;
 
 import org.cmdbuild.services.soap.AbstractWorkflowEvent;
 import org.cmdbuild.services.soap.Private;

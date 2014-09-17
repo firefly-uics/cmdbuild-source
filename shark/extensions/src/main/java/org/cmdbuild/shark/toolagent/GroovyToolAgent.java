@@ -2,7 +2,7 @@ package org.cmdbuild.shark.toolagent;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.enhydra.jxpdl.XPDLConstants.FORMAL_PARAMETER_MODE_INOUT;
 import static org.enhydra.jxpdl.XPDLConstants.FORMAL_PARAMETER_MODE_OUT;
 import groovy.lang.Binding;

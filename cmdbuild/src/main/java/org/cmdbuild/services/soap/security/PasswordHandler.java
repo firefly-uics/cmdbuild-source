@@ -1,6 +1,6 @@
 package org.cmdbuild.services.soap.security;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -10,8 +10,8 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.ws.security.WSPasswordCallback;
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.AuthenticationService.PasswordCallback;

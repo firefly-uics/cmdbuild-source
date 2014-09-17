@@ -1,5 +1,4 @@
 package org.cmdbuild.workflow;
-
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static java.lang.String.format;
 import static org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
@@ -7,6 +6,7 @@ import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.data.store.Storables.storableOf;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -35,7 +35,6 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.workflow.type.LookupType;
@@ -323,12 +322,7 @@ public class SharkTypesConverter implements WorkflowTypesConverter {
 			return SharkTypeDefaults.defaultLookup();
 		}
 		try {
-			final org.cmdbuild.data.store.lookup.Lookup lookupFromStore = lookupStore.read(new Storable() {
-				@Override
-				public String getIdentifier() {
-					return Long.toString(id);
-				}
-			});
+			final org.cmdbuild.data.store.lookup.Lookup lookupFromStore = lookupStore.read(storableOf(id));
 			final LookupType lookupType = new LookupType();
 			lookupType.setType(lookupFromStore.type.name);
 			lookupType.setId(objectIdToInt(lookupFromStore.getId()));

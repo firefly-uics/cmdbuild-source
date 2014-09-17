@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
-import org.cmdbuild.logic.setup.SetUpLogic.Module;
+import org.cmdbuild.logic.setup.SetupLogic.Module;
 
 import com.google.common.collect.Maps;
 

@@ -60,7 +60,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 				if (splitLocalName.detail) {
 					CMDBuild.log.warn("Detail can only be specified for lookup and reference types");
 					CMDBuild.Msg.warn(CMDBuild.Translation.errors.warning_message,
-							CMDBuild.Translation.errors.template_error);
+							CMDBuild.Translation.errors.template_error + ' ' + splitLocalName.name + ' ' + splitLocalName.detail);
 				}
 
 				if (typeof field.getRawValue == "function") {
@@ -81,7 +81,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 		 * Look also into the DisplayFields
 		 */
 		function lookForFieldName(f) {
-			return f.name == varName; 
+			return f.name == varName;
 		}
 
 		/*
@@ -116,7 +116,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 		}
 
 		var v = sv[splitLocalname.name];
-		if (v != null && 
+		if (v != null &&
 				typeof v == "object") {
 
 			if (splitLocalname.detail == "Description") {
@@ -217,7 +217,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 	/********************************
 	 * template expansion functions *
 	 ********************************/
-	
+
 	/*
 	 * conf:
 	 *   attributes: attribute name array
@@ -453,7 +453,7 @@ CMDBuild.Management.TemplateResolver.prototype = {
 
 	/*
 	 * Fills the template substituting the variables with string
-	 * constants with their value 
+	 * constants with their value
 	 */
 	//private
 	evalJSTemplate: function(templateName, template, ctx) {

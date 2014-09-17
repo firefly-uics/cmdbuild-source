@@ -1,15 +1,15 @@
 package org.cmdbuild.logic.mapping.json;
 
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.function;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.FUNCTION_NAME_KEY;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import static org.cmdbuild.dao.query.clause.where.WhereClauses.*;
 import org.cmdbuild.dao.view.CMDataView;
 import org.json.JSONException;
 import org.json.JSONObject;

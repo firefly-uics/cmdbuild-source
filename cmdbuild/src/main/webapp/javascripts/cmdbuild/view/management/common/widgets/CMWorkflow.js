@@ -77,7 +77,7 @@
 				hidden: true
 			});
 			_CMUtils.forwardMethods(this, this.widgets, ["removeAllButtons", "addWidget"]);
-			
+
 			Ext.apply(this, {
 				layout: 'border',
 				buttonAlign: 'center',
@@ -101,7 +101,7 @@
 		getExtraButtons: function() {
 			var me = this;
 			this.saveButton = new Ext.Button( {
-				text : CMDBuild.Translation.common.btns.save,
+				text : CMDBuild.Translation.common.buttons.save,
 				name : 'saveButton',
 				hidden: true,
 				handler: function() {
@@ -119,7 +119,7 @@
 			return [this.saveButton, this.advanceButton];
 		},
 
-	
+
 		// add the required attributes
 		configureForm: function(attributes, parameters) {
 			this.saveButton.show();
@@ -137,11 +137,11 @@
 			}
 			this.formPanel.doLayout();
 		},
-	
+
 		getFormForTemplateResolver: function() {
 			return this.formPanel.getForm();
 		},
-		
+
 		getWidgetButtonsPanel: function() {
 			return this.widgets;
 		},
@@ -180,7 +180,7 @@
 		clearWindow: function() {
 			this.saveButton.hide();
 			this.advanceButton.hide();
-			
+
 			if (this.formPanel) {
 				this.formPanel.removeAll(true);
 				this.remove(this.formPanel, true);
@@ -203,7 +203,7 @@
 			padding: "5",
 			items : []
 		});
-		
+
 	}
 
 })();

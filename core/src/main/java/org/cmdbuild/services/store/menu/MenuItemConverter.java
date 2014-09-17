@@ -1,5 +1,7 @@
 package org.cmdbuild.services.store.menu;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.data.converter.ViewConverter.VIEW_CLASS_NAME;
 import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_CLASS_ATTRIBUTE;
 import static org.cmdbuild.services.store.menu.MenuConstants.ELEMENT_OBJECT_ID_ATTRIBUTE;
 import static org.cmdbuild.services.store.menu.MenuConstants.GROUP_NAME_ATTRIBUTE;
@@ -162,7 +164,7 @@ public class MenuItemConverter {
 		final MenuItem menuItem = new MenuItemDTO();
 
 		menuItem.setType(MenuItemType.VIEW);
-		menuItem.setReferedClassName("_View");
+		menuItem.setReferedClassName(VIEW_CLASS_NAME);
 		menuItem.setReferencedElementId(view.getId());
 		menuItem.setDescription(view.getDescription());
 		menuItem.setGroupName(NO_GROUP_NAME);
@@ -174,7 +176,8 @@ public class MenuItemConverter {
 	private ConvertingItem convertMenuCardToMenuItemBuilder(final CMCard menuCard) {
 		final MenuItem menuItem = new MenuItemDTO();
 		menuItem.setId(new Long(menuCard.getId()));
-		menuItem.setType(MenuItemType.getType((String) menuCard.getCode()));
+		menuItem.setUniqueIdentifier((String) menuCard.getCode());
+		menuItem.setType(MenuItemType.getType(menuCard.get(TYPE_ATTRIBUTE, String.class)));
 		menuItem.setDescription((String) menuCard.getDescription());
 		menuItem.setParentId((Integer) menuCard.get(PARENT_ID_ATTRIBUTE));
 		menuItem.setIndex((Integer) menuCard.get(NUMBER_ATTRIBUTE));
@@ -190,7 +193,6 @@ public class MenuItemConverter {
 						menuItem.getReferencedElementId().longValue() //
 						);
 
-				// it's late
 				final Map<String, Object> specificTypeValues = new HashMap<String, Object>();
 				specificTypeValues.put("type", viewCard.getAttribute("Type"));
 				specificTypeValues.put("filter", viewCard.getAttribute("Filter"));
@@ -212,13 +214,11 @@ public class MenuItemConverter {
 	CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
 		final CMCardDefinition menuCard = dataView.createCardFor(dataView.findClass(MENU_CLASS_NAME));
 
+		final String UUID = defaultIfNull(menuItem.getUniqueIdentifier(), java.util.UUID.randomUUID().toString());
+
 		final String typeAsString = menuItem.getType().getValue();
-		// In the menu card, the code stores the node type.
-		// The column Type store an info that could be used
-		// for the report, but there are four years that is not implemented,
-		// so does not consider this column!!
-		menuCard.setCode(typeAsString);
-		menuCard.set(TYPE_ATTRIBUTE, typeAsString); // FIXME ?
+		menuCard.setCode(UUID);
+		menuCard.set(TYPE_ATTRIBUTE, typeAsString);
 		menuCard.setDescription(menuItem.getDescription());
 		menuCard.set(NUMBER_ATTRIBUTE, menuItem.getIndex());
 		menuCard.set(GROUP_NAME_ATTRIBUTE, groupName);
@@ -300,7 +300,7 @@ public class MenuItemConverter {
 		public CMCardDefinition fromMenuItemToMenuCard(final String groupName, final MenuItem menuItem) {
 			final CMCardDefinition menuCard = super.fromMenuItemToMenuCard(groupName, menuItem);
 			menuCard.set(ELEMENT_OBJECT_ID_ATTRIBUTE, menuItem.getReferencedElementId());
-			final Long viewClassId = dataView.findClass("_View").getId();
+			final Long viewClassId = dataView.findClass(VIEW_CLASS_NAME).getId();
 			menuCard.set(ELEMENT_CLASS_ATTRIBUTE, viewClassId);
 			return menuCard;
 		}
