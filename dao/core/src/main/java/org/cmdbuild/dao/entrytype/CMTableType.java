@@ -13,6 +13,7 @@ import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType.Type;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
@@ -42,7 +43,7 @@ public enum CMTableType {
 				add(new StringAttributeType());
 				add(new TextAttributeType());
 				add(new LookupAttributeType("")); // FIXME
-				add(new IpAddressAttributeType());
+				add(new IpAddressAttributeType(Type.IPV4));
 				add(new TimeAttributeType());
 				// add(AttributeType.REGCLASS);
 				// add(AttributeType.BINARY);

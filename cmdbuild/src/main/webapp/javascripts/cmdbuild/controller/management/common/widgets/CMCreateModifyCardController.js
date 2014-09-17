@@ -1,4 +1,5 @@
 (function() {
+
 	Ext.define("CMDBuild.controller.management.common.widgets.CMCreateModifyCardController", {
 		extend: "CMDBuild.controller.management.classes.CMBaseCardPanelController",
 
@@ -48,6 +49,7 @@
 		loadCardStandardCallBack: function(card) {
 			var me = this;
 			this.card = card;
+
 			this.loadFields(card.get("IdClass"), function() {
 				me.view.loadCard(card, bothpanel = true);
 				if (me.isEditable(card)) {
@@ -61,35 +63,40 @@
 		},
 
 		isWidgetEditable: function(controller) {
-			return !this.widgetConf.readonly 
+			return !this.widgetConf.readonly
 				&& this.clientForm.owner._isInEditMode; // Ugly, but in the world there are also ugly stuff
 		},
 
-		// override
+		/**
+		 * Executed before view activation, loads fields and sets the cardId variable value
+		 *
+		 * @override
+		 */
 		beforeActiveView: function() {
 			var me = this;
 			this.card = null;
 			this.targetClassName = this.widgetConf.targetClass;
 			this.entryType = _CMCache.getEntryTypeByName(this.targetClassName);
 
-			if (this.entryType != null) {
-				this.view.initWidget(this.entryType, this.isWidgetEditable());
+			// Deferred function to avoid bug that won't fill window form first time that window is displayed
+			Ext.defer(function() {
+				if (this.entryType != null) {
+					this.view.initWidget(this.entryType, this.isWidgetEditable());
 
-				this.templateResolver.resolveTemplates({
-					attributes: ["idcardcqlselector"],
-					callback: function(o) {
-						me.cardId = normalizeIdCard(o["idcardcqlselector"]);
-						if (me.cardId == null 
-							&& me.entryType.isSuperClass()) {
+					this.templateResolver.resolveTemplates({
+						attributes: ['idcardcqlselector'],
+						callback: function(out, ctx) {
+							me.cardId = normalizeIdCard(out['idcardcqlselector']);
 
-							// could not add a card for a superclass
-
-						} else {
-							loadAndFillFields(me);
+							if (me.cardId == null && me.entryType.isSuperClass()) {
+								// could not add a card for a superclass
+							} else {
+								loadAndFillFields(me);
+							}
 						}
-					}
-				});
-			}
+					});
+				}
+			}, 10, this);
 		},
 
 		// override
@@ -161,14 +168,19 @@
 		}
 	}
 
+	/**
+	 * Parse idCard from input string witch derivates from templateResolver's idcardcqlselector
+	 *
+	 * @param (string) idCard
+	 *
+	 * @return (mixed) idCard - null or cardId parsed from input
+	 */
 	function normalizeIdCard(idCard) {
-		if (typeof idCard == "string") {
-			idCard = parseInt(idCard);
-			if (isNaN(idCard)) {
-				return null;
-			}
+		if (typeof idCard == 'string') {
+			idCard = parseInt(idCard.replace( /^\D+/g, ''));
 
-			return idCard;
+			if (!isNaN(idCard))
+				return idCard;
 		}
 
 		return null;
@@ -217,4 +229,5 @@
 		this.cardId = null;
 		loadAndFillFields(this, o.classId);
 	}
+
 })();

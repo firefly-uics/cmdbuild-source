@@ -25,7 +25,20 @@
 		 * 
 		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
 		 */
-		onCMCardGridLoad: function(grid) {}
+		onCMCardGridLoad: function(grid) {},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 */
+		onCMCardGridColumnsReconfigured: function(grid) {},
+
+		/**
+		 * 
+		 * @param {CMDBuild.view.management.common.CMCardGrid} grid
+		 */
+		onCMCardGridIconRowClick: function(grid, action, model) {}
+
 	});
 
 	Ext.define("CMDBuild.view.management.common.CMCardGridPagingBar", {
@@ -237,6 +250,8 @@
 			if (this.pagingBar) {
 				this.pagingBar.bindStore(s);
 			}
+
+			this.callDelegates("onCMCardGridColumnsReconfigured", this);
 		},
 
 		// protected
@@ -524,6 +539,7 @@
 
 		 if (c && c.get("tableType") != "simpletable") {
 			var graphHeader = {
+					noWrap: true,
 				header: '&nbsp', 
 				width: 30,
 				tdCls: "grid-button",
@@ -546,8 +562,11 @@
 	}
 
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
-		if (event.target.className == 'action-open-graph') {
+		var action = event.target.className;
+		if (action == 'action-open-graph') {
 			CMDBuild.Management.showGraphWindow(model.get("IdClass"), model.get("Id"));
 		}
+
+		this.callDelegates("onCMCardGridIconRowClick", [grid, action, model]);
 	}
 })();

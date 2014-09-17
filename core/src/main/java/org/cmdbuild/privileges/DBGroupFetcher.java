@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.GroupFetcher;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.DefaultPrivileges;

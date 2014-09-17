@@ -9,7 +9,7 @@ import static org.cmdbuild.workflow.ProcessAttributes.UniqueProcessDefinition;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;

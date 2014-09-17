@@ -1,6 +1,6 @@
 (function() {
 	var tr = CMDBuild.Translation.administration.modLookup.lookupTypeForm;
-	
+
 	Ext.define('CMLookupTypeFormModel', {
 		extend: 'Ext.data.Model',
 		fields: [
@@ -9,7 +9,7 @@
 			{name: "parent", type: "string"}
 		]
 	});
-	
+
 	Ext.define("CMDBuild.view.administration.lookup.CMLookupTypeForm", {
 		extend: "Ext.form.Panel",
 		mixins: {
@@ -27,22 +27,22 @@
 				scope: this,
 				disabled: true
 			}),
-			
+
 			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.btns.save,
+				text: CMDBuild.Translation.common.buttons.save,
 				disabled: true
 			})
 
 			this.abortButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.btns.abort,
+				text: CMDBuild.Translation.common.buttons.abort,
 				disabled: true
 			})
-			
+
 			this.cmButtons = [this.saveButton, this.abortButton];
 			this.cmTBar = [this.modifyButton];
 
 			var parentStore = _CMCache.getLookupTypeAsStore();
-			
+
 			this.parentCombo = Ext.create('Ext.form.ComboBox', {
 				fieldLabel: tr.parent,
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -71,7 +71,7 @@
 	 			frame: true,
 	 			region: "center",
 	 			items: [ //
-	 				this.descriptionField, 
+	 				this.descriptionField,
 					this.parentCombo
 				]
 	 		}];
@@ -105,7 +105,7 @@
 		},
 
 		onNewLookupType: function(params) {
-			this.getForm().reset();	  
+			this.getForm().reset();
 			this.enableModify(all=true);
 		},
 

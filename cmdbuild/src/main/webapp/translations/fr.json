@@ -1,8 +1,46 @@
 {
 	"description": "Français",
-	"release": "2.1-dev",
+	"release": "2.2-dev",
 	"administration": {
 		"description": "Module d'administration",
+		"email": {
+			"title": "<em>Email</em>",
+			"accounts": {
+				"account": "<em>Account</em>",
+				"active": "<em>Active</em>",
+				"add": "<em>Add account</em>",
+				"credentials": "<em>Credentials</em>",
+				"enableMoveRejectedNotMatching": "<em>Enable move rejected not matching</em>",
+				"enableSsl": "<em>Enable SSL</em>",
+				"imapPort": "<em>IMAP port</em>",
+				"imapServer": "<em>IMAP server</em>",
+				"incoming": "<em>Incoming</em>",
+				"incomingFolder": "<em>Incoming folder</em>",
+				"isDefault": "<em>Default</em>",
+				"modify": "<em>Modify account</em>",
+				"outgoing": "<em>Outgoing</em>",
+				"password": "<em>Password</em>",
+				"processedFolder": "<em>Processed folder</em>",
+				"rejectedFolder": "<em>Rejected folder</em>",
+				"remove": "<em>Remove account</em>",
+				"setDefault": "<em>Set as default</em>",
+				"smtpPort": "<em>SMTP Port</em>",
+				"smtpServer": "<em>SMTP server</em>",
+				"title": "<em>Accounts</em>",
+				"username": "<em>Username</em>"
+			},
+			"templates": {
+				"add": "<em>Add template</em>",
+				"body": "<em>Body</em>",
+				"modify": "<em>Modify template</em>",
+				"remove": "<em>Remove template</em>",
+				"template": "<em>Template</em>",
+				"title": "<em>Templates</em>",
+				"valuesWindow": {
+					"title": "<em>Edit values</em>",
+				}
+			}
+		},
 		"modClass": {
 			"add_class": "Ajouter Class",
 			"attributeProperties": {
@@ -180,6 +218,9 @@
 				".Workflow": {
 					"title": "<em>Start workflow</em>"
 				},
+				".NavigationTree": {
+					"title": "<em>Navigation tree</em>"
+				},
 				".CreateModifyCard": {
 					"fields": {
 						"target": "Class cible",
@@ -337,41 +378,10 @@
 			},
 			"include_inherited": "Inclure héritage",
 			"process_property": "Propriétés",
-			"scheduler": {
-				"addJob": "Ajouter Job",
-				"addParameter": "Ajouter paramètres",
-				"advanced": "Avancé",
-				"basic": "Basic",
-				"cronexpression": "Cron expression",
-				"dayOfMounth": "Jour du mois",
-				"dayOfWeek": "Jour de la semaine",
-				"deleteJob": "Supprimer Job",
-				"description": "Description",
-				"every": "Chaque",
-				"everyDay": "Chaque jour",
-				"everyHour": "Chaque heure",
-				"everyMounth": "Chaque mois",
-				"everyYear": "Chaque année",
-				"exactly": "Au moment exacte",
-				"from": "de",
-				"hour": "Heure",
-				"inastepwith": "Dans une étape avec",
-				"job": "Job",
-				"key": "Attribut",
-				"minute": "Minute",
-				"modifyJob": "Modifier Job",
-				"mounth": "Mois",
-				"params": "Paramètres",
-				"range": "Dans une gamme",
-				"removeParameter": "Supprimer Paramètres",
-				"to": "vers",
-				"value": "Valeur"
-			},
 			"tabs": {
 				"attributes": "Attributs",
 				"domains": "Liens",
 				"properties": "Propriétés",
-				"scheduling": "Planning",
 				"xpdl": "XPDL"
 			},
 			"title": "Gestion processus",
@@ -634,18 +644,6 @@
 			"setupTitle": "Setup",
 			"workflow": {
 				"credential": "Credits",
-				"email": {
-					"address": "Email address",
-					"imapserver": "IMAP server",
-					"incoming_mail_server": "Serveur de mail entrant",
-					"outgoing_mail_srver": "Serveur de mail sortant",
-					"password": "Password",
-					"port": "Port",
-					"smtpserver": "SMTP server",
-					"ssl": "Enable SSL",
-					"title": "Email",
-					"username": "Utilisateur"
-				},
 				"enabled": "Activé",
 				"endpoint": "Serveur URL",
 				"engine": "Nom moteur",
@@ -657,30 +655,139 @@
 				"user": "Utilisateur"
 			}
 		},
+		"tasks": {
+			"add": "<em>Add task</em>",
+			"all": "<em>All</em>",
+			"clone": "<em>Clone task</em>",
+			"cronForm" : {
+				"dayOfMounth": "<em>Day of month</em>",
+				"advanced": "<em>Advanced</em>",
+				"basic": "<em>Basic</em>",
+				"dayOfWeek": "<em>Day of week</em>",
+				"everyDay": "<em>Every day</em>",
+				"everyHour": "<em>Every hour</em>",
+				"everyMounth": "<em>Every month</em>",
+				"everyYear": "<em>Every year</em>",
+				"hour": "<em>Hour</em>",
+				"minute": "<em>Minute</em>",
+				"mounth": "<em>Month</em>"
+			},
+			"errorMessages": {
+				"taskConnector": {
+					"emptyAttributeLevelMapping": "<em>Attribute level mapping table must be correctly filled.</em>",
+					"emptyClassLevelMapping": "<em>Class level mapping table must be correctly filled.</em>",
+					"emptyReferenceLevelMapping": "<em>Reference level mapping table must be correctly filled.</em>"
+				}
+			},
+			"modify": "<em>Modify task</em>",
+			"notificationForm": {
+				"account": "<em>Account</em>",
+				"template": "<em>Email template</em>",
+				"templateError": "<em>Error email template</em>",
+				"title": "<em>Send notification email</em>",
+				"titlePlur": "<em>Send notifications email</em>"
+			},
+			"remove": "<em>Remove task</em>",
+			"running": "<em>Running</em>",
+			"startLabel": "<em>Start task</em>",
+			"startOnSave": "<em>Start on save</em>",
+			"startWorkflow": "<em>Start process</em>",
+			"stopLabel": "<em>Stop task</em>",
+			"stopped": "<em>Stopped</em>",
+			"title": "<em>Task manager</em>",
+			"type": "<em>Type</em>",
+			"taskConnector": {
+				"attributeLevelMapping": "<em>Attribute mapping</em>",
+				"classAttribute": "<em>CMDBuild attribute</em>",
+				"classLevelMapping": "<em>Class mapping</em>",
+				"className": "<em>CMDBuild class</em>",
+				"cudActions": {
+					"createLabel": "<em>Create</em>",
+					"deleteLabel": "<em>Delete</em>",
+					"updateLabel": "<em>Update</em>"
+				},
+				"dataSourceDbFieldset": "<em>Datasource: Relational database</em>",
+				"dataSourceLdapFieldset": "<em>Datasource: LDAP directory</em>",
+				"dbName": "<em>Database name</em>",
+				"deletionType": "<em>Deletion type</em>",
+				"deletionTypes": {
+					"deleteCard": "<em>Delete card</em>",
+					"changeStatus": "<em>Change status</em>"
+				},
+				"domainName": "<em>Domain name</em>",
+				"instanceName": "<em>Instance</em>",
+				"isKey": "<em>Is key</em>",
+				"recipientAddress": "<em>Recipient address</em>",
+				"referenceMapping": "<em>References mapping</em>",
+				"senderAccount": "<em>Sender account</em>",
+				"sourceAttribute": "<em>External attribute</em>",
+				"sourceFilter": "<em>Entity filter</em>",
+				"sourceName": "<em>External entity</em>"
+			},
+			"taskEmail": {
+				"attachmentsCategory": "<em>Category</em>",
+				"bodyParsing": "<em>Body parsing</em>",
+				"emailAccount": "<em>Email account</em>",
+				"fromAddressFilter": "<em>Filter on FromAddress</em>",
+				"parsingKeyEnd": "<em>Key end delimiter</em>",
+				"parsingKeyStart": "<em>Key start delimeter</em>",
+				"parsingValueEnd": "<em>Value end delimiter</em>",
+				"parsingValueStart": "<em>Value start delimeter</em>",
+				"saveToAlfresco": "<em>Save attachments to Alfresco</em>",
+				"subjectFilter": "<em>Filter on Subject</em>"
+			},
+			"taskEvent": {
+				"eventPhases": {
+					"afterCreate": "<em>After creation</em>",
+					"afterUpdate": "<em>After update</em>",
+					"beforeDelete": "<em>Before delete</em>",
+					"beforeUpdate": "<em>Before update</em>"
+				},
+				"groupsToApply": "<em>Group to apply</em>",
+				"phase": "<em>Phase</em>"
+			},
+			"tasksTypes": {
+				"connector": "<em>Connector</em>",
+				"email": "<em>Email</em>",
+				"event": "<em>Event</em>",
+				"eventTypes": {
+					"asynchronous": "<em>Asynchronous</em>",
+					"synchronous": "<em>Synchronous</em>"
+				},
+				"workflow": "<em>Process</em>"
+			},
+			"workflow": "<em>Process</em>",
+			"workflowForm": {
+				"attributes": "<em>Process attributes</em>"
+			}
+		},
 		"welcome": {
 			"body": "Administration module.",
 			"title": "Bienvenue"
 		}
 	},
+	"bimMod": {
+		"administration": {
+			"projects": {
+				"importIfc": "<em>Import IFC</em>"
+			}
+		}
+	},
 	"common": {
-		"btns": {
-			"abort": "Abandonner",
-			"apply": "Appliquer",
-			"close": "Fermer",
-			"confirm": "Confirmer",
-			"exportbtn": "Exporter",
-			"importbtn": "Importer",
-			"save": "Sauver",
-			"update": "Mettre à jour"
-		},
 		"buttons": {
 			"abort": "Abandonner",
 			"add": "Ajouter",
+			"apply": "Appliquer",
 			"as": "Comme",
 			"clone": "Copier",
 			"close": "Fermer",
+			"confirm": "Confirmer",
+			"exportLabel": "Exporter",
+			"importLabel": "Importer",
 			"load": "Charger",
 			"modify": "Modifier",
+			"next": "<em>Next</em>",
+			"previous": "<em>Previous</em>",
 			"print": "Imprimer",
 			"remove": "Supprimer",
 			"save": "Confirmer",
@@ -792,9 +899,18 @@
 		},
 		"title": "Configuration"
 	},
+	"cronTriggerField": {
+		"triggerFieldWindow": {
+			"every": "<em>Every </em>",
+			"exactly": "<em>At an exact</em>",
+			"inastepwith": "<em>In a step width</em>",
+			"range": "<em>In a range</em>"
+		}
+	},
 	"errors": {
 		"busy_wf_widgets": "Les contrôles visuels sont occupés, regardez le status du serveur avant de recommencer l'opération.",
 		"detail": "Détails",
+		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
 		"error_message": "Erreur",
 		"error_moving_row": "Une erreur est survenue lors du déplacement de la colonne",
 		"invalid_attributes": "Les différents champs n'ont pas été rempli correctement:",
@@ -937,12 +1053,16 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Vérifier si le nom, la mèthode et les paramètres du service web sont corrects"
 		},
 		"reference_invalid": "La valeur ne correspond pas au filtre",
+		"requiredFieldMessage": "<em>This field is required</em>",
 		"server_error": "Serveur injoignable",
 		"server_error_code": "Une erreur a été rencontrée durant la trasnmission des données au serveur:",
 		"show_detail": "Voir details",
 		"template_error": "Erreur de modèle",
 		"unknown_error": "Une erreur est survenue",
 		"wrong_wf_widgets": "Il y a eu une erreur d'enregistrement des contrôles visuels suivants: "
+	},
+	"filterWindow": {
+		"add": "<em>Add filter</em>"
 	},
 	"info": {
 		"card_not_found": "Aucune fiche avec le filtre sélectionné"
@@ -1105,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "Chercher dans"
 			},
+			"showattach": "Voir pièces jointes",
 			"subclass": "Subclass",
 			"tabs": {
 				"attachments": "Pièces jointes",
@@ -1159,7 +1280,7 @@
 				"validationtext": "Les mots de passes ne sont pas identiques"
 			},
 			"csv": {
-				"csvfile": "fichier CSV",
+				"csvfile": "Fichier CSV",
 				"error": "Erreur",
 				"exportfile": "Export",
 				"importfailure": "Import échoué",
@@ -1290,31 +1411,58 @@
 		"link_cards_changed_values": "La séléction de \"{0}\" a été mise à jour",
 		"only_filtered": "Les changements seront appliqués sur les fiches avec le filtre en cours.",
 		"popup_block": "Nous avons détecté que vous utilisiez un programme pour bloquer les popups, merci de le désactiver",
+		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "Attention"
 	},
 	"active": "Active",
-	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
+	"add": "Ajouter",
 	"addFilter": "Ajouter un filtre",
+	"addProject": "<em>Add Project</em>",
 	"addTemplate": "<em>Add Template</em>",
 	"addView": "Ajouter une vue",
-	"attachmentsLookup": "<em>Email attachments Lookup</em>",
+	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
+	"address": "<em>Address</em>",
 	"attachfile": "<em>Attach File</em>",
+	"attachmentsLookup": "<em>Email attachments Lookup</em>",
+	"attention": "Attention",
 	"attribute": "<em>Attribute</em>",
 	"availableFilters": "Filtres disponibles",
-	"attention": "Attention",
 	"bcc": "<em>Bcc</em>",
+	"bim": "<em>BIM</em>",
 	"buttons_to_disable": "<em>Buttons to disable</em>",
+	"camera": "<em>Camera</em>",
 	"cc": "<em>Cc</em>",
 	"checkFrequency": "<em>Check frequency (minutes)</em>",
 	"choose_attachment_from_db": "<em>Choose attachments from Database</em>",
+	"classAttribute": "<em>Class attribute</em>",
+	"classLabel": "<em>Class</em>",
+	"className": "<em>Class name</em>",
 	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
-	"clear_row_and_colun_privilege": "Effacer les privilèges des lignes et des colonnes",
 	"clearFilter": "<em>Clear Filter</em>",
+	"clear_row_and_colun_privilege": "Effacer les privilèges des lignes et des colonnes",
+	"composeFromTemplate": "<em>Compose from template</em>",
+	"contained": "<em>Contained</em>",
+	"containedorequal": "<em>Contained or equal</em>",
+	"container": "<em>Container</em>",
+	"contains": "<em>Contains</em>",
+	"containsorequal": "<em>Contains or equal</em>",
+	"controls": "<em>Controls</em>",
+	"cql_filter": "<em>CQL filter</em>",
+	"csvFile": "Fichier CSV",
+	"defaultAccount": "<em>Default account</em>",
 	"description_": "Description",
+	"disable": "<em>Disable</em>",
+	"display_less_attributes": "<em>Display less attributes</em>",
+	"display_more_attributes": "<em>Display more attributes</em>",
+	"download_ifc_file": "<em>Download Ifc file</em>",
 	"emailBody": "<em>Body</em>",
 	"emailTemplate": "<em>Email Template</em>",
+	"enable": "<em>Enable</em>",
 	"enabled": "Activé",
 	"error": "Erreur",
+	"error_bimserver_connection": "<em>I'm not able to connect to Bimserver</em>",
+	"export": "<em>Export</em>",
+	"expose": "<em>Expose</em>",
 	"file_name": "<em>File name</em>",
 	"filter": "Filtre",
 	"filterView": "Pour Filtrer",
@@ -1323,38 +1471,90 @@
 	"format_odt": "<em>OpenOffice Odt</em>",
 	"format_pdf": "<em>Adobe Pdf</em>",
 	"format_rtf": "<em>Rich Text Format</em>",
+	"from": "<em>From<em>",
+	"front": "<em>Front</em>",
 	"global": "<em>Global</em>",
+	"ifc_file": "<em>File IFC</em>",
+	"importFromCSV": "<em>Import from CSV</em>",
+	"ipType": "<em>IP type</em>",
+	"ipv4": "ipv4",
+	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "<em>It's not allowed to use a filter with calculated parameters</em>",
 	"itIsNotAllowedFilterWithRuntimeParams": "<em>It's not allowed to use a filter with user selectable parameters</em>",
-	"loggedGroup": "<em>Logged Group</em>",
-	"loggedUser": "<em>Logged User</em>",
+	"key": "<em>Key</em>",
+	"last_checkin": "<em>Last checkin</em>",
+	"layers": "<em>Layers</em>",
 	"lock_cards_in_edit": "Blocage des fiches en édition",
 	"lock_timeout": "Temps de blocage (seconds)",
-	"name": "Nom",
-	"not_set": "Non affecté",
+	"loggedGroup": "<em>Logged Group</em>",
+	"loggedUser": "<em>Logged User</em>",
+	"main": "<em>Main</em>",
+	"mode": "<em>Mode</em>",
 	"modifyFilter": "Modifier un filtre",
+	"modifyProject": "<em>Modify Project</em>",
 	"modifyTemplate": "<em>Modify Template</em>",
 	"modifyView": "Modifier la Vue",
 	"multiGroup": "<em>Multi group</em>",
+	"name": "Nom",
+	"no_bim_project_for_card": "<em>There is no BIM project for this card</em>",
+	"not_set": "Non affecté",
+	"open_3d_viewer": "<em>Open 3D viewer</em>",
+	"pan": "<em>Pan</em>",
+	"password": "<em>Password</em>",
+	"port": "<em>Port</em>",
 	"privileges_on_columns": "Privilèges des colonnes",
 	"privileges_on_rows": "Privilèges des lignes",
+	"projects": "Projects",
+	"readOnly": "Lecture seule",
+	"reference_to_root": "<em>Reference to Root</em>",
+	"relation": "<em>Relation</em>",
+	"remove": "<em>Remove</em>",
 	"removeFilter": "Supprimer un filtre",
+	"removeProject": "<em>Remove Project</em>",
 	"removeTemplate": "<em>Remove Template</em>",
 	"removeView": "Supprimer la vue",
+	"remove_formatting": "<em>Remove formatting</em>",
+	"replace": "<em>Replace</em>",
+	"reset": "<em>Reset</em>",
+	"root": "<em>Root</em>",
+	"rotate": "<em>Rotate</em>",
+	"row_add": "<em>Add row</em>",
 	"row_and_column_privileges": "Privilèges des lignes et colonnes",
-	"search_filters": "Chercher Filtres",
+	"row_delete": "<em>Delete row</em>",
+	"row_edit": "<em>Edit row</em>",
+	"search_filters": "Chercher filtres",
 	"select_a_class": "<em>Select a Class</em>",
+	"selected_object": "<em>Selected Object</em>",
+	"separator": "Separateur",
+	"set": "Affecté",
 	"setFilter": "<em>Set Filter</em>",
 	"setLater": "<em>Input Parameter</em>",
-	"set": "Affecté",
+	"showHideThisFeatureOnly": "<em>Show/hide this feature only</em>",
 	"show_name_of_locker_user": "Voir les utilisateurs verrouillés",
+	"side": "<em>Side</em>",
 	"sqlView": "En SQL",
 	"subject": "<em>Subject</em>",
 	"targetClass": "Class Dsetination",
 	"to": "<em>To</em>",
+	"top": "<em>Top</em>",
+	"translations" : "<em>Translations</em>",
+	"translations_enabled" : "<em>Enabled languages</em>",
+	"transparent": "<em>Transparent</em>",
+	"tree": "<em>Tree</em>",
+	"tree_modify": "<em>Modify tree</em>",
+	"tree_navigation": "<em>Navigation tree</em>",
+	"tree_navigation_add": "<em>Add navigation tree</em>",
+	"tree_navigation_attributes": "<em>Navigation tree attributes</em>",
+	"tree_remove": "<em>Remove tree</em>",
+	"tree_root_cql": "<em>Root CQL filter</em>",
+	"trees_navigation": "<em>Navigation trees</em>",
 	"ui_configuration_for_groups": "<em>UI configuration for group</em>",
 	"unlock_all_cards": "Débloquer toutes les fiches",
+	"upload": "Charger",
 	"uploading_attachment": "<em>Uploading attachment...</em>",
+	"url": "<em>URL</em>",
+	"username": "<em>Username</em>",
+	"value": "<em>Value</em>",
 	"views": "Vues",
 	"workflow": "<em>Workflow</em>",
 	"workflow_attributes": "<em>Workflow attributes</em>",
@@ -1362,5 +1562,6 @@
 	"workflow_by_name": "<em>by name</em>",
 	"workflow_cql_filter": "<em>Cql filter</em>",
 	"workflow_query_tipology": "<em>Selection</em>",
-	"you_have_not_set_a_filter": "Vous n'avez pas de filtre"
+	"you_have_not_set_a_filter": "Vous n'avez pas de filtre",
+	"zoom": "<em>Zoom</em>"
 }

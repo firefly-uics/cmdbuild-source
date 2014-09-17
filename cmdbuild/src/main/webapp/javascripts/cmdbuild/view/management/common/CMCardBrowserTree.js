@@ -47,7 +47,7 @@
 
 		isBindingCard: function(card) {
 			var out = false;
-			if (card 
+			if (card
 					&& typeof card == "object") {
 
 				out = this.getCardId() == card.get("Id")
@@ -98,7 +98,7 @@
 
 	Ext.define("CMDBuild.view.management.CMCardBrowserTreeDelegate", {
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.management.CMCardBrowserTree} tree The tree who call the method
 		 * @param {Ext.data.NodeInterface} node The node which has changed his check
 		 * @param {Boolean} checked the state of the check
@@ -107,8 +107,8 @@
 		onCardBrowserTreeCheckChange: Ext.emptyFn,
 
 		/**
-		 * 
-		 * @param {CMDBuild.view.management.CMCardBrowserTree} tree The tree who call the method 
+		 *
+		 * @param {CMDBuild.view.management.CMCardBrowserTree} tree The tree who call the method
 		 * @param {Ext.data.NodeInterface} node The node which was expanded
 		 */
 		onCardBrowserTreeItemExpand: Ext.emptyFn,
@@ -127,7 +127,7 @@
 
 		/**
 		 * @param {CMDBuild.view.management.CMCardBrowserTree} tree The activated panel
-		 * @param {Ext.data.NodeInterface} node The node that was added 
+		 * @param {Ext.data.NodeInterface} node The node that was added
 		 */
 		onCardBrowserTreeNodeAppend: Ext.emptyFn
 	});
@@ -180,7 +180,7 @@
 				width : 40,
 				menuDisabled : true,
 				dataIndex : 'visible',
-				tooltip : "@@ show/hide this feature only",
+				tooltip : CMDBuild.Translation.showHideThisFeatureOnly,
 				align : 'center',
 				sortable : false,
 				icon : HIDE_ICON,

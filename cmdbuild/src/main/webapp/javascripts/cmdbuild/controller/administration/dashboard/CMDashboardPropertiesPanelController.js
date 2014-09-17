@@ -29,6 +29,8 @@
 			this.view.enableButtons();
 			this.view.enableFields(all=true);
 			this.view.cleanFields();
+			_CMCache.initAddingTranslations();
+			this.view.descriptionField.translationsKeyName = "";
 		},
 
 		// CMDashboardPropertiesDelegate
@@ -37,6 +39,8 @@
 			this.view.enableFields(all=false);
 			this.view.enableButtons();
 			this.view.disableTBarButtons();
+			_CMCache.initModifyingTranslations();
+			this.view.descriptionField.translationsKeyName = this.dashboard.get("name");
 		},
 
 		onAbortButtonClick: function() {
@@ -62,6 +66,7 @@
 			if (this.dashboard) {
 				CMDBuild.ServiceProxy.Dashboard.modify(this.dashboard.getId(), data, proxySuccess, this);
 			} else {
+				_CMCache.flushTranslationsToSave(data.name);
 				CMDBuild.ServiceProxy.Dashboard.add(data, proxySuccess, this);
 			}
 		},
@@ -76,6 +81,7 @@
 		me.view.fillFieldsWith({
 			name: me.dashboard.getName(),
 			description: me.dashboard.getDescription(),
+			description_default: me.dashboard.getDescriptionDefault(),
 			groups: me.dashboard.getGroups()
 		});
 	}

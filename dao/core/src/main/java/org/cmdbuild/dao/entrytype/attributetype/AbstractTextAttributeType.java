@@ -1,6 +1,6 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public abstract class AbstractTextAttributeType extends AbstractAttributeType<String> {
 

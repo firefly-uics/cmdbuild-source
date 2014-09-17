@@ -2,10 +2,11 @@ package org.cmdbuild.services.soap.operation;
 
 import static java.lang.String.format;
 import static java.util.regex.Pattern.quote;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.EQUAL;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
@@ -22,17 +23,17 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.NullOnNotFoundReadStore;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.Stores;
+import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
-import org.cmdbuild.model.data.Metadata;
+import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
+import org.cmdbuild.logic.mapping.json.JsonFilterHelper.FilterElementGetter;
 import org.cmdbuild.services.auth.UserType;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
-import org.cmdbuild.servlets.json.util.JsonFilterHelper;
-import org.cmdbuild.servlets.json.util.JsonFilterHelper.FilterElementGetter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,14 +46,7 @@ class GuestFilter {
 	private static final String METADATA_PORTLET_USER = "org.cmdbuild.portlet.user.id";
 	private static final String CLASS_ATTRIBUTE_SEPARATOR = ".";
 
-	private static final Storable METADATA_PORTLET_USER_STORABLE = new Storable() {
-
-		@Override
-		public String getIdentifier() {
-			return METADATA_PORTLET_USER;
-		}
-
-	};
+	private static final Storable METADATA_PORTLET_USER_STORABLE = storableOf(METADATA_PORTLET_USER);
 
 	private final UserType userType;
 	private final Login login;
@@ -75,7 +69,7 @@ class GuestFilter {
 				attribute.getType().accept(new NullAttributeTypeVisitor() {
 
 					private final Store<Metadata> _store = metadataStoreFactory.storeForAttribute(attribute);
-					private final NullOnNotFoundReadStore<Metadata> store = NullOnNotFoundReadStore.of(_store);
+					private final Store<Metadata> store = Stores.nullOnNotFoundRead(_store);
 
 					@Override
 					public void visit(final ReferenceAttributeType attributeType) {

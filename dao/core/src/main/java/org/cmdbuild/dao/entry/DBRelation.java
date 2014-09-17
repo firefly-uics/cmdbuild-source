@@ -1,6 +1,7 @@
 package org.cmdbuild.dao.entry;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.cmdbuild.dao.driver.DBDriver;
 import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
@@ -79,6 +80,14 @@ public class DBRelation extends DBEntry implements CMRelation, CMRelationDefinit
 			setCard2(CMCard.class.cast(value));
 		} else {
 			setOnly(key, value);
+		}
+		return this;
+	}
+
+	@Override
+	public final DBRelation set(final Iterable<? extends Entry<String, ? extends Object>> keysAndValues) {
+		for (final Entry<String, ? extends Object> entry : keysAndValues) {
+			set(entry.getKey(), entry.getValue());
 		}
 		return this;
 	}

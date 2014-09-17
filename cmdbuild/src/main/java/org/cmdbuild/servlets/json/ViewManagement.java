@@ -1,16 +1,16 @@
 package org.cmdbuild.servlets.json;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.FILTER;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
-import static org.cmdbuild.servlets.json.ComunicationConstants.NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_CLASS_NAME;
-import static org.cmdbuild.servlets.json.ComunicationConstants.SOURCE_FUNCTION;
-import static org.apache.commons.lang.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.FILTER;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_CLASS_NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.SOURCE_FUNCTION;
 
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.model.View;
 import org.cmdbuild.servlets.json.serializers.ViewSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -20,17 +20,17 @@ import org.json.JSONObject;
 public class ViewManagement extends JSONBaseWithSpringContext {
 
 	/* ************************************************
-	 * Common 
-	 * *********************************************** */
+	 * Common ***********************************************
+	 */
 
 	@JSONExported
 	public JSONObject read() throws JSONException {
-		return ViewSerializer.toClient(viewLogic().fetchViewsOfAllTypes());
+		return new ViewSerializer(translationFacade()).toClient(viewLogic().fetchViewsOfAllTypes());
 	}
 
 	/* ************************************************
-	 * View from SQL
-	 * *********************************************** */
+	 * View from SQL ***********************************************
+	 */
 
 	@JSONExported
 	public void createSQLView(@Parameter(value = NAME) final String name, //
@@ -42,7 +42,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject readSQLView() throws JSONException {
-		return ViewSerializer.toClient(readByType(View.ViewType.SQL));
+		return new ViewSerializer(translationFacade()).toClient(readByType(View.ViewType.SQL));
 	}
 
 	@JSONExported
@@ -61,8 +61,8 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 	}
 
 	/* ************************************************
-	 * View from filter
-	 *********************************************** */
+	 * View from filter**********************************************
+	 */
 
 	@JSONExported
 	public void createFilterView(@Parameter(value = NAME) final String name, //
@@ -74,7 +74,7 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JSONObject readFilterView() throws JSONException {
-		return ViewSerializer.toClient(readByType(View.ViewType.FILTER));
+		return new ViewSerializer(translationFacade()).toClient(readByType(View.ViewType.FILTER));
 	}
 
 	@JSONExported
@@ -95,8 +95,8 @@ public class ViewManagement extends JSONBaseWithSpringContext {
 	}
 
 	/* ************************************************
-	 * private
-	 *********************************************** */
+	 * private**********************************************
+	 */
 
 	private void createView(final View view) {
 		viewLogic().create(view);

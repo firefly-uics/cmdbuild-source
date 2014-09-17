@@ -1,11 +1,11 @@
 package org.cmdbuild.dms.alfresco.webservice;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import org.alfresco.webservice.authentication.AuthenticationFault;
 import org.alfresco.webservice.util.AuthenticationUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dms.DmsService.LoggingSupport;
 
 class AlfrescoSession implements LoggingSupport {

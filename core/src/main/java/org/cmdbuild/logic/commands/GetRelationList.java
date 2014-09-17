@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -33,13 +33,10 @@ import org.cmdbuild.model.data.Card;
 
 public class GetRelationList extends AbstractGetRelation {
 
-	private final CMDataView systemDataView;
-
 	private boolean emptyCardForWrongId;
 
-	public GetRelationList(final CMDataView view, final CMDataView systemDataView) {
+	public GetRelationList(final CMDataView view) {
 		super(view);
-		this.systemDataView = systemDataView;
 	}
 
 	/**
@@ -98,7 +95,6 @@ public class GetRelationList extends AbstractGetRelation {
 		final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
 		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
 				.withDataView(view) //
-				.withSystemDataView(systemDataView) //
 				.withEntryType(view.findClass(src.getClassName())) //
 				.withFilterObject(queryOptions.getFilter()) //
 				.build();

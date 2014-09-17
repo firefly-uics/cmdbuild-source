@@ -45,7 +45,7 @@
 		 * callbak function of the form submit
 		 **/
 		afterSubmit: function() {
-			_debug("before submit of the templateModSetuo");
+			_debug("before submit of the templateModSetup");
 		}
 	});
 

@@ -2,6 +2,7 @@ package org.cmdbuild.privileges.fetchers;
 
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.MODE_ATTRIBUTE;
 import static org.cmdbuild.auth.privileges.constants.GrantConstants.PRIVILEGED_OBJECT_ID_ATTRIBUTE;
+import static org.cmdbuild.data.store.Storables.storableOf;
 
 import java.util.NoSuchElementException;
 
@@ -13,8 +14,7 @@ import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
-import org.cmdbuild.data.store.DataViewStore;
-import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.View;
 
@@ -40,21 +40,12 @@ public class ViewPrivilegeFetcher extends AbstractPrivilegeFetcher {
 		final DataViewStore<View> viewStore = DataViewStore.newInstance(view, converter);
 		View view = null;
 		try {
-			view = viewStore.read(getFakeViewWithId(viewId));
+			view = viewStore.read(storableOf(viewId));
 		} catch (final NoSuchElementException ex) {
 			Log.CMDBUILD.warn("Cannot fetch view with id " + viewId
 					+ ". Check all references to that view in Grant table");
 		}
 		return view;
-	}
-
-	private Storable getFakeViewWithId(final Integer viewId) {
-		return new Storable() {
-			@Override
-			public String getIdentifier() {
-				return viewId.toString();
-			}
-		};
 	}
 
 	@Override

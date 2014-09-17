@@ -1,4 +1,5 @@
 (function() {
+
 	Ext.ns("CMDBuild");
 
 	// global constants
@@ -8,7 +9,7 @@
 	CMDBuild.MEDIUM_FIELD_ONLY_WIDTH = 150;
 	CMDBuild.SMALL_FIELD_ONLY_WIDTH = 100;
 	CMDBuild.BIG_FIELD_WIDTH = CMDBuild.LABEL_WIDTH + CMDBuild.BIG_FIELD_ONLY_WIDTH;
-	CMDBuild.MEDIUM_FIELD_WIDTH = CMDBuild.LABEL_WIDTH + CMDBuild.SMALL_FIELD_ONLY_WIDTH;
+	CMDBuild.MEDIUM_FIELD_WIDTH = CMDBuild.LABEL_WIDTH + CMDBuild.MEDIUM_FIELD_ONLY_WIDTH;
 	CMDBuild.SMALL_FIELD_WIDTH = CMDBuild.LABEL_WIDTH + CMDBuild.SMALL_FIELD_ONLY_WIDTH;
 
 	CMDBuild.ADM_BIG_FIELD_WIDTH = CMDBuild.LABEL_WIDTH + 250;
@@ -28,27 +29,27 @@
 	// convenience methods to debug
 	_debug = function() {
 		var prefix = "DEBUG";
-		if (typeof arguments[0] == "string") { 
+
+		if (typeof arguments[0] == "string")
 			arguments[0] = prefix + ": " + arguments[0];
-		}
 
 		CMDBuild.log.debug.apply(CMDBuild.log, arguments);
 	};
 
 	_warning = function() {
 		var prefix = "WARNING";
-		if (typeof arguments[0] == "string") { 
+
+		if (typeof arguments[0] == "string")
 			arguments[0] = prefix + ": " + arguments[0];
-		}
 
 		CMDBuild.log.warn.apply(CMDBuild.log, arguments);
 	};
 
 	_trace = function() {
 		_debug("TRACE", arguments);
-		if (console && typeof console.trace == "function") {
+
+		if (console && typeof console.trace == "function")
 			console.trace();
-		}
 	};
 
 	_deprecated = function() {
@@ -66,18 +67,18 @@
 	// TODO: Read from real configuration
 	CMDBuild.Config.defaultTimeout = 90;
 
-	Ext.override(Ext.data.Connection, {
-		timeout : CMDBuild.Config.defaultTimeout * 1000
+	Ext.override('Ext.data.Connection', {
+		timeout: CMDBuild.Config.defaultTimeout * 1000
 	});
-	
-	Ext.override(Ext.data.proxy.Ajax, { 
-		timeout : CMDBuild.Config.defaultTimeout * 1000 
+
+	Ext.override('Ext.data.proxy.Ajax', {
+		timeout: CMDBuild.Config.defaultTimeout * 1000
 	});
-	
-	Ext.override(Ext.form.BasicForm, {
-		timeout : CMDBuild.Config.defaultTimeout
+
+	Ext.override('Ext.form.BasicForm', {
+		timeout: CMDBuild.Config.defaultTimeout
 	});
-	
+
 	// Component masks are shown at 20000 z-index. This oddly fixes
 	// the problem of masks appearing on top of new windows.
 	// Ext.WindowMgr.zseed = 30000;
@@ -85,4 +86,5 @@
 	Ext.WindowManager.getNextZSeed();	// to increase the default zseed. Is needed for the combo on windoows
 										// probably it fix also the prev problem
 	Ext.enableFx = false;
+
 })();

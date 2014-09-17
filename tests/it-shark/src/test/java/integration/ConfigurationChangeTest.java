@@ -7,7 +7,7 @@ import static utils.XpdlTestUtils.randomName;
 
 import java.net.UnknownHostException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.xpdl.XpdlActivity;
 import org.cmdbuild.workflow.xpdl.XpdlDocument.ScriptLanguage;
@@ -27,6 +27,7 @@ public class ConfigurationChangeTest extends AbstractRemoteSharkServiceTest {
 			startSimpleProcess();
 			fail();
 		} catch (final CMWorkflowException e) {
+			e.printStackTrace();
 			assertThat(e.getCause().getMessage(), containsString(UnknownHostException.class.getName()));
 		} finally {
 			revertConfiguration();
