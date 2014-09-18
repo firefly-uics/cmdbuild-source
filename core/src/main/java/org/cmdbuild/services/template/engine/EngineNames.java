@@ -10,6 +10,7 @@ public class EngineNames {
 	public static final String PARM = "parm";
 
 	public static final String CARD_PREFIX = "card";
+	public static final String CQL_PREFIX = "cql";
 	public static final String EMAIL_PREFIX = "email";
 	public static final String GROUP_PREFIX = "group";
 	public static final String GROUP_USERS_PREFIX = "groupUsers";

@@ -12,7 +12,6 @@ import org.cmdbuild.dms.DocumentCreatorFactory;
 import org.cmdbuild.dms.LoggedDmsService;
 import org.cmdbuild.dms.alfresco.AlfrescoDmsService;
 import org.cmdbuild.logic.dms.DefaultDmsLogic;
-import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;

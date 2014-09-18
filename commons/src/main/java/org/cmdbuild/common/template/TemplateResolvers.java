@@ -5,8 +5,8 @@ public class TemplateResolvers {
 	private static class IdentityTemplateResolver implements TemplateResolver {
 
 		@Override
-		public String resolve(final String template) {
-			return template;
+		public String resolve(final String expression) {
+			return expression;
 		}
 
 	}

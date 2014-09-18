@@ -1,19 +1,30 @@
 package org.cmdbuild.common.template.engine;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.cmdbuild.common.template.engine.RegexUtils.capture;
+import static org.cmdbuild.common.template.engine.RegexUtils.exclude;
+import static org.cmdbuild.common.template.engine.RegexUtils.group;
+import static org.cmdbuild.common.template.engine.RegexUtils.oneOrMore;
+import static org.cmdbuild.common.template.engine.RegexUtils.wordCharacter;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.cmdbuild.common.template.TemplateResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 
 /**
  * {@link TemplateResolver} based on {@link Engine}s.
  */
 public class EngineBasedTemplateResolver implements TemplateResolver {
+
+	private static final Logger logger = LoggerFactory.getLogger(EngineBasedTemplateResolver.class);
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<EngineBasedTemplateResolver> {
 
@@ -45,43 +56,51 @@ public class EngineBasedTemplateResolver implements TemplateResolver {
 		return new Builder();
 	}
 
-	private static final Pattern VAR_PATTERN = Pattern.compile("([^\\{]+)?(\\{(\\w+):(\\w+)\\})?");
+	private static final String START_TEMPLATE = "\\{";
+	private static final String END_TEMPLATE = "\\}";
+	private static final String KEY_VALUE_SEPARATOR = ":";
+	private static final String ENGINE_PREFIX = capture(oneOrMore(wordCharacter()));
+	private static final String EXPRESSION = capture(oneOrMore(group(exclude(START_TEMPLATE, END_TEMPLATE))));
+	private static final String REGEX = Joiner.on(EMPTY) //
+			.join(START_TEMPLATE, ENGINE_PREFIX, KEY_VALUE_SEPARATOR, EXPRESSION, END_TEMPLATE);
+
+	private static final Pattern VAR_PATTERN = Pattern.compile(REGEX);
 
 	private final Map<String, Engine> engines;
 
 	private EngineBasedTemplateResolver(final Builder builder) {
+		logger.debug("using pattern '{}'", VAR_PATTERN.pattern());
 		this.engines = builder.engines;
 	}
 
 	@Override
-	public String resolve(final String template) {
-		return (template == null) ? null : resolve0(template);
+	public String resolve(final String expression) {
+		return (expression == null) ? null : resolve0(expression);
 	}
 
-	private String resolve0(final String template) {
-		final StringBuilder sb = new StringBuilder();
-		final Matcher matcher = VAR_PATTERN.matcher(template);
+	private String resolve0(final String expression) {
+		logger.debug("trying to resolve '{}'", expression);
+		String resolved = expression;
+		Matcher matcher = VAR_PATTERN.matcher(resolved);
 		while (matcher.find()) {
-			final String nonvarPart = matcher.group(1);
-			final String varPart = matcher.group(2);
-			if (nonvarPart != null) {
-				sb.append(nonvarPart);
-			}
-			if (varPart != null) {
-				final String enginePrefix = matcher.group(3);
-				final String variable = matcher.group(4);
-				final Object value = expandVariable(enginePrefix, variable);
-				sb.append(String.valueOf(value));
-			}
+			logger.debug("match found");
+			final String engine = matcher.group(1);
+			final String expressionForEngine = matcher.group(2);
+			final Object value = eval(engine, expressionForEngine);
+			logger.debug("replacing match with '{}'", value);
+			resolved = matcher.replaceFirst(String.valueOf(value));
+			matcher = VAR_PATTERN.matcher(resolved);
 		}
-		return sb.toString();
+		return resolved;
 	}
 
-	private Object expandVariable(final String enginePrefix, final String variable) {
-		final Engine e = engines.get(enginePrefix);
-		if (e != null) {
-			return e.eval(variable);
+	private Object eval(final String enginePrefix, final String expression) {
+		logger.debug("evaluating '{}' with engine '{}'", expression, enginePrefix);
+		final Engine engine = engines.get(enginePrefix);
+		if (engine != null) {
+			return engine.eval(expression);
 		} else {
+			logger.warn("engine with prefix '{}' not found", enginePrefix);
 			return null;
 		}
 	}
