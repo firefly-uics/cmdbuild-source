@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define("CMDBuild.controller.management.widgets.CMLinkCardsMapController", {
+	Ext.define("CMDBuild.controller.management.common.widgets.linkCards.LinkCardsMapController", {
 		extend: "CMDBuild.controller.management.classes.map.CMMapController",
 
 		lastSelection: undefined,
