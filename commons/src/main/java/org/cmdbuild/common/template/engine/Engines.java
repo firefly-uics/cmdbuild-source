@@ -5,7 +5,9 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.Map;
 
-public class Engines {
+import org.cmdbuild.common.template.LoggingSupport;
+
+public class Engines implements LoggingSupport {
 
 	private static class EmptyStringOnNullEngine extends ForwardingEngine {
 
@@ -46,7 +48,7 @@ public class Engines {
 			try {
 				return super.eval(expression);
 			} catch (final Throwable e) {
-				// TODO log
+				logger.warn("evaluation error, returning 'null' value", e);
 				return null;
 			}
 		}
