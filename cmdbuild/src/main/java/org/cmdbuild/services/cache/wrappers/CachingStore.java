@@ -3,6 +3,7 @@ package org.cmdbuild.services.cache.wrappers;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.newConcurrentMap;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ public class CachingStore<T extends Storable> extends ForwardingStore<T> impleme
 		private void initCacheIfEmpty() {
 			if (cache.isEmpty()) {
 				Cacheable.logger.info(marker, "initializing cache");
-				for (final T storable : store.list()) {
+				for (final T storable : store.readAll()) {
 					_add(storable);
 				}
 			}
@@ -87,6 +88,13 @@ public class CachingStore<T extends Storable> extends ForwardingStore<T> impleme
 	}
 
 	@Override
+	public Collection<T> readAll() {
+		return cache.values();
+	}
+	
+	// TODO readAll with Groupable
+
+	@Override
 	public void update(final T storable) {
 		super.update(storable);
 		cache.add(storable);
@@ -96,11 +104,6 @@ public class CachingStore<T extends Storable> extends ForwardingStore<T> impleme
 	public void delete(final Storable storable) {
 		super.delete(storable);
 		cache.remove(storable);
-	}
-
-	@Override
-	public List<T> list() {
-		return cache.values();
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
-import static org.cmdbuild.servlets.json.ComunicationConstants.DESCRIPTION;
-import static org.cmdbuild.servlets.json.ComunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 
 import java.util.Map;
 
@@ -11,13 +11,15 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.EntryTypeAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.data.store.lookup.LookupStore;
 
 import com.google.common.collect.Maps;
 
 public class JsonAttributeValueVisitor extends AbstractAttributeValueVisitor {
 
-	public JsonAttributeValueVisitor(final CMAttributeType<?> type, final Object value) {
-		super(type, value);
+	public JsonAttributeValueVisitor(final CMAttributeType<?> type, final Object value,
+			final TranslationFacade translationFacade, final LookupStore lookupStore) {
+		super(type, value, translationFacade,lookupStore);
 	}
 
 	@Override
@@ -29,7 +31,8 @@ public class JsonAttributeValueVisitor extends AbstractAttributeValueVisitor {
 	public void visit(final LookupAttributeType attributeType) {
 		if (value instanceof IdAndDescription) {
 			if (value instanceof LookupValue) {
-				convertedValue = LookupSerializer.serializeLookupValue((LookupValue)value);
+				final LookupSerializer lookupSerializer = new LookupSerializer(translationFacade, lookupStore);
+				convertedValue = lookupSerializer.serializeLookupValue((LookupValue) value);
 			} else {
 				convertedValue = asMap((IdAndDescription) value);
 			}

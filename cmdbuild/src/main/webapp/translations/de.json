@@ -1,8 +1,46 @@
 {
 	"description": "Deutsch",
-	"release": "2.1-dev",
+	"release": "2.2-dev",
 	"administration": {
 		"description": "Verwaltungsformular",
+		"email": {
+			"title": "E-mail",
+			"accounts": {
+				"account": "Benutzerkonto",
+				"active": "Aktiv",
+				"add": "Benutzerkonto hinzufügen",
+				"credentials": "Berechtigungsnachweisen",
+				"enableMoveRejectedNotMatching": "unbehandelte E-Mails verschieben",
+				"enableSsl": "SSL aktivieren",
+				"imapPort": "IMAP Port",
+				"imapServer": "IMAP Server",
+				"incoming": "Eingehend",
+				"incomingFolder": "Ordner für eingegangene E-Mails",
+				"isDefault": "Default",
+				"modify": "Benutzerkonto verändern",
+				"outgoing": "Ausgehende",
+				"password": "Passwort",
+				"processedFolder": "Ordner für verarbeitete E-Mails",
+				"rejectedFolder": "Ordner für abgelehnte E-Mails",
+				"remove": "Benutzerkonto entfernen",
+				"setDefault": "Als default einstellen",
+				"smtpPort": "SMTP Port",
+				"smtpServer": "SMTP Server",
+				"title": "Benutzerkonten",
+				"username": "Benutzername"
+			},
+			"templates": {
+				"add": "Template hinzufügen",
+				"body": "Body",
+				"modify": "Template verändern",
+				"remove": "Template entfernen",
+				"template": "Template",
+				"title": "Templates",
+				"valuesWindow": {
+					"title": "<em>Edit values</em>",
+				}
+			}
+		},
 		"modClass": {
 			"add_class": "Klasse hinzufügen",
 			"attributeProperties": {
@@ -43,7 +81,7 @@
 					"value": "Wert"
 				},
 				"modify_attribute": "Attribut bearbeiten",
-				"msg_warning_drop_row": "Sie können die Attribute sortieren, nur wenn auch die vererbten sichtbar sind",
+				"msg_warning_drop_row": "Sie können die Attribute nur sortieren, wenn auch die vererbten Attribute sichtbar sind",
 				"name": "Name",
 				"not_in_use": "Nicht verwendet",
 				"pipeNotAllowed": "OR statt | verwenden",
@@ -98,25 +136,25 @@
 			"errors": {
 				"table": {
 					"cast": "Es ist unmöglich die Eigenschaft \"Superklasse\" bearbeiten, diese Klasse enthält Daten oder Unterklassen",
-					"duplicate": "Es gibt bereits eine Klasse mit demselben Name",
+					"duplicate": "Es gibt bereits eine Klasse mit demselben Namen",
 					"parent_not_found": "Es gibt keine Superklasse"
 				}
 			},
 			"geo_attributes": {
 				"card_binding": "Karten assoziieren",
-				"externalGraphic": "Ikone",
+				"externalGraphic": "Icon",
 				"fillColor": "Füllfarbe",
-				"fillOpacity": "Füllopazität",
-				"graphicHeight": "Höhe der Ikone",
-				"graphicOpacity": "Opazität der Ikone",
-				"graphicWidth": "Breite der Ikone",
+				"fillOpacity": "Füllungstransparenz",
+				"graphicHeight": "Höhe der Icons",
+				"graphicOpacity": "Transparenz der Icons",
+				"graphicWidth": "Breite der Icons",
 				"master": "Verweisklasse",
 				"max_zoom": "Maximaler Zoom",
 				"min_zoom": "Minimaler Zoom",
 				"pointRadius": "Radius",
-				"strokeColor": "Farbe der Linie",
+				"strokeColor": "Linienfarbe",
 				"strokeDashstyle": "Linienstil",
-				"strokeOpacity": "Opazität der Linie",
+				"strokeOpacity": "Linientransparenz",
 				"strokeStyles": {
 					"dash": "Striche",
 					"dashdot": "Punkte und Striche",
@@ -178,7 +216,10 @@
 					"title": "Ping"
 				},
 				".Workflow": {
-					"title": "<em>Start workflow</em>"
+					"title": "Workflow starten"
+				},
+				".NavigationTree": {
+					"title": "Baumansicht"
 				},
 				".CreateModifyCard": {
 					"fields": {
@@ -337,41 +378,10 @@
 			},
 			"include_inherited": "Geerbte enthalten",
 			"process_property": "Eigenschaften",
-			"scheduler": {
-				"addJob": "Job hinzufügen",
-				"addParameter": "Parameter hinzufügen",
-				"advanced": "Hochentwickelt",
-				"basic": "Grundsätzlich",
-				"cronexpression": "Cron-Ausdruck",
-				"dayOfMounth": "Tag des Monats",
-				"dayOfWeek": "Tag der Woche",
-				"deleteJob": "Job abbrechen",
-				"description": "Beschreibung",
-				"every": "Jede ",
-				"everyDay": "Jeden Tag",
-				"everyHour": "Jede Stunde",
-				"everyMounth": "Jeden Monat",
-				"everyYear": "Jedes Jahr",
-				"exactly": "Genau am",
-				"from": "Vom",
-				"hour": "Uhr",
-				"inastepwith": "In Intervallen von",
-				"job": "Job",
-				"key": "Attribut",
-				"minute": "Minute",
-				"modifyJob": "Job bearbeiten",
-				"mounth": "Monat",
-				"params": "Parameter",
-				"range": "Im Intervall",
-				"removeParameter": "Parameter abbrechen",
-				"to": "Bis",
-				"value": "Wert"
-			},
 			"tabs": {
 				"attributes": "Attribute",
 				"domains": "Domains",
 				"properties": "Eigeschaften",
-				"scheduling": "Planung",
 				"xpdl": "XPDL"
 			},
 			"title": "Verwaltung von Prozessen",
@@ -385,7 +395,7 @@
 			},
 			"xpdlUpload": {
 				"deleted_image": "Das graphische Schema wurde abgebrochen, weil es an die XPDL-Datei nicht gekoppelt ist",
-				"error": "Ladungsfehler der XPDL-Datei",
+				"error": "Fehler beim Laden der XPDL-Datei",
 				"jpg_file": "Graphisches Schema",
 				"saved_image": "Geladenes graphische Schema",
 				"saved_xpdl": "Geladene XPDL-Datei",
@@ -419,18 +429,18 @@
 			},
 			"icons": {
 				"alert": {
-					"msg": "Sind Sie sicher, dass Sie die Ikone abbrechen möchten?",
+					"msg": "Sind Sie sicher?",
 					"title": "Achtung"
 				},
 				"description": "Beschreibung",
 				"file": "Datei",
-				"title": "Ikonen-Steuerung"
+				"title": "Icon-Steuerung"
 			},
 			"layermanager": {
 				"title": "Ordnung der Ebenen"
 			},
 			"navigationTree": {
-				"title": "GIS Surfen"
+				"title": "GIS-Navigation"
 			},
 			"title": "GIS"
 		},
@@ -447,7 +457,7 @@
 				"report": "Bericht",
 				"view": "Sicht"
 			},
-			"custom_menu": "Kundenspezifische Menü",
+			"custom_menu": "Kundenspezifisches Menü",
 			"custom_menus": "Menü",
 			"delete_menu": "Menü wegnehmen",
 			"menu_root": "Menü",
@@ -506,18 +516,18 @@
 				"normal": "Normal",
 				"starting_class": "Startseite",
 				"title": "Gruppenverwaltung",
-				"usermanagement": "Assoziierte Benutzer Management"
+				"usermanagement": "Verwaltung assoziierter Benutzer"
 			},
 			"groups": "Gruppen",
 			"privilege": {
 				"add_privilege": "Erlaubnis hinzufügen",
 				"classname": "Klasse",
-				"delete_privilege": "Erlaubnis abbrechen",
+				"delete_privilege": "Erlaubnis löschen",
 				"modify_privilege": "Erlaubnis bearbeiten",
 				"none_privilege": "Kein",
 				"privilege_mode": "Erlaubnis",
-				"read_privilege": "Einlesen",
-				"write_privilege": "Schrift"
+				"read_privilege": "Lesen",
+				"write_privilege": "Schreiben"
 			},
 			"tabs": {
 				"permissions": "Erlaubnis",
@@ -531,7 +541,7 @@
 				"generic_properties": {
 					"always_enabled_widgets": "Prozess-Widget immer freigegeben",
 					"card_simple_history": "Einfache Chronik für die Karte",
-					"full_screen_navigation": "Gesamter Bildschirm beim surfen",
+					"full_screen_navigation": "Vollbildmodus beim Navigieren",
 					"hide_side_panel": "Seitentafel ausblenden",
 					"process_simple_history": "Einfache Chronik für die Prozesse"
 				},
@@ -634,18 +644,6 @@
 			"setupTitle": "Konfiguration",
 			"workflow": {
 				"credential": "Berechtigungsnachweis",
-				"email": {
-					"address": "E-Mail Adresse",
-					"imapserver": "IMAP Server",
-					"incoming_mail_server": "Posteingangsserver",
-					"outgoing_mail_srver": "Postausgangsserver",
-					"password": "Passwort",
-					"port": "Port",
-					"smtpserver": "SMTP Server",
-					"ssl": "SSL freigeben",
-					"title": "E-Mail",
-					"username": "Benutzername"
-				},
 				"enabled": "Freigegeben",
 				"endpoint": "Dienst-URL",
 				"engine": "Engine-Name",
@@ -657,30 +655,139 @@
 				"user": "Benutzername"
 			}
 		},
+		"tasks": {
+			"add": "Task hinzufügen",
+			"all": "Alle",
+			"clone": "Task klonen",
+			"cronForm" : {
+				"dayOfMounth": "Tag des Monats",
+				"advanced": "Fortgeschritten",
+				"basic": "Grundlegend",
+				"dayOfWeek": "Tag der Woche",
+				"everyDay": "Jeden Tag",
+				"everyHour": "Jede Stunde",
+				"everyMounth": "Jeden Monat",
+				"everyYear": "Jedes Jahr",
+				"hour": "Stunde",
+				"minute": "Minute",
+				"month": "Monat"
+			},
+			"errorMessages": {
+				"taskConnector": {
+					"emptyAttributeLevelMapping": "Die Tabelle für das Mapping der Attributsebene muss korrekt gefüllt werden.",
+					"emptyClassLevelMapping": "Die Tabelle für das Mapping der Klassenebene muss korrekt gefüllt werden.",
+					"emptyReferenceLevelMapping": "Die Tabelle für das Mapping der Reference-Ebene muss korrekt gefüllt werden."
+				}
+			},
+			"modify": "Task verändern",
+			"notificationForm": {
+				"account": "Benutzerkonto",
+				"template": "E-mail Template",
+				"templateError": "Fehler E-mail Template",
+				"title": "E-mail Mitteilung senden",
+				"titlePlur": "E-mail Mitteilung senden"
+			},
+			"remove": "Task entfernen",
+			"running": "Laufend",
+			"startLabel": "Task starten",
+			"startOnSave": "Beim Speichern aktivieren",
+			"startWorkflow": "Prozess starten",
+			"stopLabel": "Task beenden",
+			"stopped": "Beendet",
+			"title": "Prozessmanager",
+			"type": "Typ",
+			"taskConnector": {
+				"attributeLevelMapping": "Mapping der Attribute",
+				"classAttribute": "Attribute in CMDBuild",
+				"classLevelMapping": "Mapping der Klassen",
+				"className": "Klasse in CMDBuild",
+				"cudActions": {
+					"createLabel": "Erstellen",
+					"deleteLabel": "Löschen",
+					"updateLabel": "Aktualisieren"
+				},
+				"dataSourceDbFieldset": "Datasource: Relationale Datenbank",
+				"dataSourceLdapFieldset": "Datasource: LDAP Ordner",
+				"dbName": "Name der Datenbank",
+				"deletionType": "Löschungstyp",
+				"deletionTypes": {
+					"deleteCard": "Karte löschen",
+					"changeStatus": "Status verändern"
+				},
+				"domainName": "Name des Domains",
+				"instanceName": "Instanz",
+				"isKey": "Schlüssel",
+				"recipientAddress": "Adressat",
+				"referenceMapping": "Mapping der Referenzen",
+				"senderAccount": "Absenderadresse",
+				"sourceAttribute": "Attribute der Quelle",
+				"sourceFilter": "Filter der Quelle",
+				"sourceName": "Name der Quelle"
+			},
+			"taskEmail": {
+				"attachmentsCategory": "Kategorie",
+				"bodyParsing": "Inhalt durchsuchen",
+				"emailAccount": "E-mail Account",
+				"fromAddressFilter": "Filter auf Absenderadresse",
+				"parsingKeyEnd": "Schlüssel: Markierung für Ende",
+				"parsingKeyStart": "Schlüssel: Markierung für Start",
+				"parsingValueEnd": "Wert: Markierung für Ende",
+				"parsingValueStart": "Wert: Markierung für Start",
+				"saveToAlfresco": "Anhänge auf Alfresco speichern",
+				"subjectFilter": "Betreff Filter"
+			},
+			"taskEvent": {
+				"eventPhases": {
+					"afterCreate": "Nach der Erstellung",
+					"afterUpdate": "Nach der Aktualisierung",
+					"beforeDelete": "Vor der Löschung",
+					"beforeUpdate": "Vor der Aktualisierung"
+				},
+				"groupsToApply": "Auf die Gruppen anwenden",
+				"phase": "Phase"
+			},
+			"tasksTypes": {
+				"connector": "Anschluss",
+				"email": "E-mail",
+				"event": "Ereignis",
+				"eventTypes": {
+					"asynchronous": "Asynchron",
+					"synchronous": "Synchron"
+				},
+				"workflow": "Prozess"
+			},
+			"workflow": "Prozess",
+			"workflowForm": {
+				"attributes": "Prozess-Attribute"
+			}
+		},
 		"welcome": {
 			"body": "Verwaltungsformular",
 			"title": "Willkommen"
 		}
 	},
+	"bimMod": {
+		"administration": {
+			"projects": {
+				"importIfc": "<em>Import IFC</em>"
+			}
+		}
+	},
 	"common": {
-		"btns": {
-			"abort": "Abbrechen",
-			"apply": "Anwenden",
-			"close": "Schließen",
-			"confirm": "Bestätigen",
-			"exportbtn": "Exportieren",
-			"importbtn": "Importieren",
-			"save": "Speichern",
-			"update": "Auffrischen"
-		},
 		"buttons": {
 			"abort": "Abbrechen",
 			"add": "Hinzufügen",
+			"apply": "Anwenden",
 			"as": "als",
 			"clone": "Klonen",
 			"close": "Schließen",
+			"confirm": "Bestätigen",
+			"exportLabel": "Exportieren",
+			"importLabel": "Importieren",
 			"load": "Load",
 			"modify": "Bearbeiten",
+			"next": "Nächste",
+			"previous": "Vorige",
 			"print": "Ausdrucken",
 			"remove": "Löschen",
 			"save": "Bestätigen",
@@ -743,7 +850,7 @@
 	},
 	"configure": {
 		"failure": {
-			"text": "Folgende Fehler sind bei der Installation der Updates erschienen: ",
+			"text": "Folgende Fehler sind bei der Installation der Updates aufgetreten: ",
 			"title": "Setup Fehler"
 		},
 		"finish": "Ende",
@@ -792,13 +899,22 @@
 		},
 		"title": "Konfiguration"
 	},
+	"cronTriggerField": {
+		"triggerFieldWindow": {
+			"every": "Jede",
+			"exactly": "Genau um",
+			"inastepwith": "Jede",
+			"range": "In einem Intervall"
+		}
+	},
 	"errors": {
-		"busy_wf_widgets": "Die Sichtkontrolle sind besetzt. Prüfen Sie den Server-Status, bevor die Operation zu wiederholen.",
+		"busy_wf_widgets": "Das Widget antwortet nicht. Prüfen Sie den Server-Status, bevor Sie die Operation wiederholen.",
 		"detail": "Details",
+		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
 		"error_message": "Fehler",
 		"error_moving_row": "Es ist ein Fehler bei der Bewegung der Zeile aufgetreten",
 		"invalid_attributes": "Folgende Felder wurden nicht korrekt ausgefüllt:",
-		"invalid_extended_attributes": "Folgende Sichtkontrolle wurden nicht korrekt ausgefüllt:",
+		"invalid_extended_attributes": "Folgende Attribute wurden nicht korrekt ausgefüllt:",
 		"invalid_fields": "Einige Felder wurden nicht korrekt ausgefüllt",
 		"no_driver": "JDBC Treiber nicht anwesend.<br />Er kann in der CMDBuild Freigabedatei gefunden und in den Tomcat-Bibliotheken kopiert werden.",
 		"no_selections": "Sie haben keine Karte markiert",
@@ -876,7 +992,7 @@
 			"ORM_TABLE_HAS_DOMAIN": "Man kann die mit einen Domain Klassen nicht löschen",
 			"ORM_TYPE_ERROR": "Nicht entsprechender Typ",
 			"ORM_UNIQUE_VIOLATION": "Unique Einschränkung verletzt",
-			"OUT_OF_DATE_PROCESS": "<em>Process was not congruent, reload the list</em>",
+			"OUT_OF_DATE_PROCESS": "Der Prozess war nicht kongruent, Liste neu laden",
 			"PARAMETER_CLASS_UNAVAILABLE": "Nicht instanziierbare Java Klasse {0}",
 			"PRIVILEGE_GROUP_NOTFOUND": "Nicht gefundene Privilegien für die Gruppe {0}",
 			"PRIVILEGE_NOTFOUND": "Nicht gefundene Privilegien für die Gruppe {0} auf der Klasse {1}",
@@ -926,7 +1042,7 @@
 			"WF_GENERIC_ERROR": "Es handelt sich um einen allgemeinen Fehler",
 			"WF_PACKAGE_ERROR": "Fehler im XPDL Paket",
 			"WF_PROCESSINFO_NOT_FOUND": "XPDL Datei für das Vorgang nicht geladen.",
-			"WF_START_ACTIVITY_NOT_FOUND": "<em>I have not found a start activity for process {0}</em>",
+			"WF_START_ACTIVITY_NOT_FOUND": "Ich habe keine Anfangsaktivität für den Prozess gefunden {0}",
 			"WF_WAPI_CONNECTION_ERROR": "Der Vorgangsserver kann nicht in Verbindung gesetzt werden",
 			"WF_WORKITEM_VARIABLES_REQUIRED": "Mussfeld: {0}",
 			"WF_WRONG_CREDENTIALS": "Falsche Ausstellung von Berechtigungsnachweisen",
@@ -937,15 +1053,19 @@
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "Bitte prüfen Sie, ob Namespace, Zugriffsname und Parameters des Web Service korrekt sind"
 		},
 		"reference_invalid": "Der Wert stimmt das Filter nicht überein",
+		"requiredFieldMessage": "Das Feld ist erfordelich",
 		"server_error": "Server nicht erreichbar",
 		"server_error_code": "Fehler beim Server Dateien Versenden:",
 		"show_detail": "Details einblenden",
 		"template_error": "Fehler in einem Template",
 		"unknown_error": "Es handelte sich um einen Fehler",
-		"wrong_wf_widgets": "Fehler beim Speichern folgender Sichtkontrollen: "
+		"wrong_wf_widgets": "Fehler beim Speichern folgender Elemente: "
+	},
+	"filterWindow": {
+		"add": "Filter hinzufügen"
 	},
 	"info": {
-		"card_not_found": "Die Karte stimmt das eingestellte Filter nicht mehr überein"
+		"card_not_found": "Die Karte stimmt nicht mehr mit dem eingestellten Filter überein"
 	},
 	"login": {
 		"change_user": "Benutzer ändern",
@@ -954,7 +1074,7 @@
 		"login": "Anmelden",
 		"multi_group": "Eine Gruppe auswählen",
 		"password": "Passwort",
-		"relogin_message": "Verbindung zur Sitzung ist abgebrochen. Man muss das Passwort wieder eingeben.",
+		"relogin_message": "Verbindung zur Sitzung ist abgebrochen. Bitte melden Sie sich erneut an.",
 		"relogin_title": "Die Sitzung ist ausgefallen",
 		"title": "Geben Sie Ihre Zugangsdaten ein",
 		"username": "Benutzer",
@@ -972,7 +1092,7 @@
 			"apply": "Anwenden",
 			"begin": "Starten mit",
 			"between": "Zwischen",
-			"clear_filter": "Filter reinigen",
+			"clear_filter": "Filter zurücksetzen",
 			"copyof": "Kopien von",
 			"different": "Verschieden",
 			"direction": "Richtung",
@@ -983,7 +1103,7 @@
 			"equals": "Gleich",
 			"filter": "Filter",
 			"fromSelection": "Aus der Auswahl",
-			"functions": "<em>Function</em>",
+			"functions" : "Funktion",
 			"go_filter": "Filtern",
 			"like": "Enthält",
 			"list": "Liste",
@@ -1062,7 +1182,7 @@
 			"edit_relation": "Beziehung bearbeiten",
 			"gis": {
 				"geo_attributes": "Geographische Attribute",
-				"gisNavigation": "GIS Surfen",
+				"gisNavigation": "GIS Navigation",
 				"position": "Position",
 				"zoom": "Zoom"
 			},
@@ -1105,6 +1225,7 @@
 			"search_reference_window": {
 				"window_title": "Suchen in "
 			},
+			"showattach": "Ansicht Anlagen",
 			"subclass": "Unterklasse",
 			"tabs": {
 				"attachments": "Anlagen",
@@ -1130,7 +1251,7 @@
 			"shownotes": "Ansicht Notizen"
 		},
 		"modmenu": {
-			"menu": "Surfen"
+			"menu": "Navigieren"
 		},
 		"modreport": {
 			"add_report": "Bericht hinzufügen",
@@ -1207,7 +1328,7 @@
 					"addresshdr": "Adresse",
 					"ccfld": "CC",
 					"compose": "E-Mail schreiben",
-					"datehdr": "<em>Archiving date</em>",
+					"datehdr": "Archivierungsdatum",
 					"deleteicon": "Löschen",
 					"editicon": "Bearbeiten",
 					"fromfld": "Absender",
@@ -1289,77 +1410,158 @@
 	"warnings": {
 		"link_cards_changed_values": "Die Auswahl von \"{0}\" wurde aktualisiert",
 		"only_filtered": "Die Abänderungen können nur in die das laufende Filter respektierenden Karten Wirkungen zeigen",
-		"popup_block": "Es wurde ein Pop-up-Blocker erkannt. Bitte es sperren, um diese Operation auszuführen",
+		"popup_block": "Es wurde ein Pop-up-Blocker erkannt. Bitte den Blocker ausschalten, um diese Operation auszuführen",
+		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
 		"warning_message": "Achtung"
 	},
 	"active": "Aktiv",
-	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
+	"add": "Hinzufügen",
 	"addFilter": "Filter hinzufügen",
-	"addTemplate": "<em>Add Template</em>",
+	"addProject": "Projekt hinzufügen",
+	"addTemplate": "Template hinzufügen",
 	"addView": "Sicht hinzufügen",
-	"attachmentsLookup": "<em>Email attachments Lookup</em>",
-	"attachfile": "<em>Attach File</em>",
-	"availableFilters": "Verfügbare Filters",
+	"add_attachment_from_dms": "Anhänge aus DMS hinzufügen",
+	"address": "Adresse",
+	"attachfile": "File beilegen",
+	"attachmentsLookup": "E-mail Anhänge Lookup",
 	"attention": "Achtung",
-	"attribute": "<em>Attribute</em>",
-	"bcc": "<em>Bcc</em>",
-	"buttons_to_disable": "<em>Buttons to disable</em>",
-	"cc": "<em>Cc</em>",
-	"checkFrequency": "<em>Check frequency (minutes)</em>",
-	"choose_attachment_from_db": "<em>Choose attachments from Database</em>",
+	"attribute": "Attribut",
+	"availableFilters": "Verfügbare Filters",
+	"bcc": "Bcc",
+	"bim": "BIM",
+	"buttons_to_disable": "Schaltfläche zum Ausschalten",
+	"camera": "Kamera",
+	"cc": "Cc",
+	"checkFrequency": "Häufigkeit kontrollieren (Minuten)",
+	"choose_attachment_from_db": "Anhang aus Datenbank auswählen",
+	"classAttribute": "Klasse-Attribut",
+	"classLabel": "Klasse",
+	"className": "Klassenname",
+	"clean_word_pasted_text": "Den von Word oder anderen Rich Text Pogrammen eingefügten Text bereinigen",
+	"clearFilter": "Filter leeren",
 	"clear_row_and_colun_privilege": "Privilegien auf Zeilen und Spalten leeren",
-	"clearFilter": "<em>Clear Filter</em>",
+	"composeFromTemplate": "<em>Compose from template</em>",
+	"contained": "<em>Contained</em>",
+	"containedorequal": "<em>Contained or equal</em>",
+	"container": "Container",
+	"contains": "<em>Contains</em>",
+	"containsorequal": "<em>Contains or equal</em>",
+	"controls": "Controls",
+	"cql_filter": "CQL Filter",
+	"csvFile": "CSV Datei",
+	"defaultAccount": "<em>Default account</em>",
 	"description_": "Beschreibung",
-	"emailBody": "<em>Body</em>",
-	"emailTemplate": "<em>Email Template</em>",
+	"disable": "Ausschalten",
+	"display_less_attributes": "Weniger Attribute zeigen",
+	"display_more_attributes": "Mehr Attribute zeigen",
+	"download_ifc_file": "Ifc File herunterladen",
+	"emailBody": "Inhalt",
+	"emailTemplate": "E-mail Template",
+	"enable": "Aktivieren",
 	"enabled": "Freigegeben",
 	"error": "Fehler",
-	"file_name": "<em>File name</em>",
+	"error_bimserver_connection": "Ich kann nicht mit Bimserver verbinden",
+	"export": "Exportieren",
+	"expose": "Ausstellen",
+	"file_name": "File-Name",
 	"filter": "Filter",
 	"filterView": "Aus dem Filter",
-	"filters_for_groups": "Gruppenfilters",
-	"format_csv": "<em>CSV</em>",
-	"format_odt": "<em>OpenOffice Odt</em>",
-	"format_pdf": "<em>Adobe Pdf</em>",
-	"format_rtf": "<em>Rich Text Format</em>",
-	"global": "<em>Global</em>",
-	"itIsNotAllowedFilterWithCalculatedParams": "<em>It's not allowed to use a filter with calculated parameters</em>",
-	"itIsNotAllowedFilterWithRuntimeParams": "<em>It's not allowed to use a filter with user selectable parameters</em>",
-	"loggedGroup": "<em>Logged Group</em>",
-	"loggedUser": "<em>Logged User</em>",
+	"filters_for_groups": "Gruppenfilter",
+	"format_csv": "CSV",
+	"format_odt": "OpenOffice Odt",
+	"format_pdf": "Adobe Pdf",
+	"format_rtf": "Rich Text Format",
+	"from": "Von",
+	"front": "Frontal",
+	"global": "Global",
+	"ifc_file": "IFC File",
+	"importFromCSV": "<em>Import from CSV</em>",
+	"ipType": "<em>IP type</em>",
+	"ipv4": "ipv4",
+	"ipv6": "ipv6",
+	"itIsNotAllowedFilterWithCalculatedParams": "Es ist nicht erlaubt, ein Filter mit gerechneten Parametern zu benutzen",
+	"itIsNotAllowedFilterWithRuntimeParams": "Es ist nicht erlaubt, ein Filter mit vom Benutzer selektierbaren Parametern zu benutzen",
+	"key": "Schlüssel",
+	"last_checkin": "Letzter Check-in",
+	"layers": "Ebenen",
 	"lock_cards_in_edit": "Kartensperrung wird bearbeitet",
 	"lock_timeout": "Maximale Zeitüberschreitung beim Sperren (Sekunden)",
-	"name": "Name",
-	"not_set": "Nicht eingestellt",
+	"loggedGroup": "Angemeldete Gruppe",
+	"loggedUser": "Angemeldeter Benutzer",
+	"main": "Hauptsächlich",
+	"mode": "Modus",
 	"modifyFilter": "Filter bearbeiten",
-	"modifyTemplate": "<em>Modify Template</em>",
+	"modifyProject": "Projekt verändern",
+	"modifyTemplate": "Template verändern",
 	"modifyView": "Sicht bearbeiten",
-	"multiGroup": "<em>Multi group</em>",
+	"multiGroup": "Multigruppe",
+	"name": "Name",
+	"no_bim_project_for_card": "Es gibt keinen BIM Projekt für diese Karte",
+	"not_set": "Nicht eingestellt",
+	"open_3d_viewer": "3D-Ansicht öffnen",
+	"pan": "Schwenken",
+	"password": "Passwort",
+	"port": "Port",
 	"privileges_on_columns": "Spalten-Privilegien",
 	"privileges_on_rows": "Zeilen-Privilegien",
+	"projects": "Projekte",
+	"readOnly": "Nur Anzeige",
+	"reference_to_root": "Bezug mit Quelle",
+	"relation": "<em>Relation</em>",
+	"remove": "Entfernen",
 	"removeFilter": "Filter löschen",
-	"removeTemplate": "<em>Remove Template</em>",
+	"removeProject": "Projekt entfernen",
+	"removeTemplate": "Template entfernen",
 	"removeView": "Sicht löschen",
+	"remove_formatting": "Formatierung entfernen",
+	"replace": "<em>Replace</em>",
+	"reset": "Auf null stellen",
+	"root": "Quelle",
+	"rotate": "Rotieren",
+	"row_add": "Zeile hinzufügen",
 	"row_and_column_privileges": "Zeilen- und Spalten-Privilegien",
-	"search_filters": "Suchfilters",
-	"select_a_class": "<em>Select a Class</em>",
-	"setFilter": "<em>Set Filter</em>",
-	"setLater": "<em>Input Parameter</em>",
+	"row_delete": "Zeile löschen",
+	"row_edit": "Zeile verändern",
+	"search_filters": "Suchfilter",
+	"select_a_class": "Eine Klasse markieren",
+	"selected_object": "Markierter Gegenstand",
+	"separator": "Trennzeichen",
 	"set": "Eingestellt",
-	"show_name_of_locker_user": "Den Name des Benutzers anzeigen, der die Karte gesperrt hat",
+	"setFilter": "Filter einstellen",
+	"setLater": "Input Parameter",
+	"showHideThisFeatureOnly": "<em>Show/hide this feature only</em>",
+	"show_name_of_locker_user": "Den Namen des Benutzers anzeigen, der die Karte gesperrt hat",
+	"side": "Seitlich",
 	"sqlView": "Aus SQL",
-	"subject": "<em>Subject</em>",
+	"subject": "Betreff",
 	"targetClass": "Ursprungsklasse",
-	"to": "<em>To</em>",
-	"ui_configuration_for_groups": "<em>UI configuration for group</em>",
+	"to": "An",
+	"top": "Oben>",
+	"translations" : "Übersetzungen",
+	"translations_enabled" : "Aktivierte Sprachen",
+	"transparent": "Transparenz",
+	"tree": "Baum",
+	"tree_modify": "Baum verändern",
+	"tree_navigation": "Baumansicht",
+	"tree_navigation_add": "Baumansicht hinzufügen",
+	"tree_navigation_attributes": "Baumansicht-Attribut",
+	"tree_remove": "Baum löschen",
+	"tree_root_cql": "Quelle - CQL filter",
+	"trees_navigation": "Baumansichten",
+	"ui_configuration_for_groups": "Benutzeroberfläche-Konfiguration für Gruppen",
 	"unlock_all_cards": "Alle Karten entsperren",
-	"uploading_attachment": "<em>Uploading attachment...</em>",
+	"upload": "Laden",
+	"uploading_attachment": "Die Anlage wird gerade hochgeladen ...",
+	"url": "URL",
+	"username": "Benutzername",
+	"value": "Wert",
 	"views": "Sicht",
-	"workflow": "<em>Workflow</em>",
-	"workflow_attributes": "<em>Workflow attributes</em>",
-	"workflow_by_cql": "<em>by Cql</em>",
-	"workflow_by_name": "<em>by name</em>",
-	"workflow_cql_filter": "<em>Cql filter</em>",
-	"workflow_query_tipology": "<em>Selection</em>",
-	"you_have_not_set_a_filter": "Sie haben keine Filters eingestellt"
+	"workflow": "Prozesse",
+	"workflow_attributes": "Attribute des Prozesses",
+	"workflow_by_cql": "durch Cql",
+	"workflow_by_name": "durch name",
+	"workflow_cql_filter": "Cql Filter",
+	"workflow_query_tipology": "Markierung",
+	"you_have_not_set_a_filter": "Sie haben keine Filter eingestellt",
+	"zoom": "Zoom"
 }

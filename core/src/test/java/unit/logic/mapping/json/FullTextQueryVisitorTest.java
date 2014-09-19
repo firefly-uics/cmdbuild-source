@@ -11,6 +11,7 @@ import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DoubleAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType.Type;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue;
@@ -159,7 +160,7 @@ public class FullTextQueryVisitorTest {
 	@Test
 	public void shouldReturnEqualOperatorAndValueForInetType() {
 		// given
-		final CMAttributeType<?> attributeType = new IpAddressAttributeType();
+		final CMAttributeType<?> attributeType = new IpAddressAttributeType(Type.IPV4);
 		final String fullText = "192.168.0.2";
 		final FullTextQueryOperatorVisitor visitor = new FullTextQueryOperatorVisitor(attributeType, fullText);
 
@@ -174,7 +175,7 @@ public class FullTextQueryVisitorTest {
 	@Test
 	public void shouldReturnNullIfFullTextQueryIsNotAValidIpAddress() {
 		// given
-		final CMAttributeType<?> attributeType = new IpAddressAttributeType();
+		final CMAttributeType<?> attributeType = new IpAddressAttributeType(Type.IPV4);
 		final String fullText = "192.168.024.2554";
 		final FullTextQueryOperatorVisitor visitor = new FullTextQueryOperatorVisitor(attributeType, fullText);
 

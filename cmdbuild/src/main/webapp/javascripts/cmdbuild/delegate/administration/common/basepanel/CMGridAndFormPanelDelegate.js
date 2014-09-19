@@ -2,7 +2,7 @@
  * Give a base implementation of the delegates
  * 	CMDBuild.delegate.administration.common.basepanel.CMFormDelegate
  * 	CMDBuild.delegate.administration.common.basepanel.CMGridDelegate
- * 
+ *
  * and add his own method that are called form a CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel
  */
 
@@ -35,7 +35,7 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 	},
 
 	/**
-	 * 
+	 *
 	 * @param {CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel} panel
 	 * called from the panel after a click on the add button
 	 */
@@ -45,6 +45,7 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 		this.fieldManager.reset();
 		panel.enableModify(all);
 		panel.clearSelection();
+		_CMCache.initAddingTranslations();
 	},
 
 	/**
@@ -59,10 +60,22 @@ Ext.define("CMDBuild.delegate.administration.common.basepanel.CMGridAndFormPanel
 	 */
 	onGridAndFormPanelRemoveConfirmed: function(form) {},
 
+	/**
+	 *
+	 * @param {CMDBuild.view.administration.common.basepanel.CMForm} form
+	 * the form that call the function
+	 *
+	 * @param {String} action
+	 * a string that say if the button is clicked when configured
+	 * to activate or deactivate something ["enable" | "disable"]
+	 */
+	onEnableDisableButtonClick: function(form, action) {},
+
 	// as form delegate
 
 	onFormModifyButtonClick: function(form) {
 		this.view.enableModify();
+		_CMCache.initModifyingTranslations();
 	},
 
 	onFormRemoveButtonClick: function(form) {

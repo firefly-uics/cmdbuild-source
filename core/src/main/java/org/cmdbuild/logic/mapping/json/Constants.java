@@ -10,21 +10,26 @@ public final class Constants {
 	 * Filter operators
 	 */
 	public enum FilterOperator {
-		EQUAL("equal"), //
-		NOT_EQUAL("notequal"), //
-		NULL("isnull"), //
-		NOT_NULL("isnotnull"), //
-		GREATER_THAN("greater"), //
-		LESS_THAN("less"), //
-		BETWEEN("between"), //
-		LIKE("like"), //
-		CONTAIN("contain"), //
-		NOT_CONTAIN("notcontain"), //
 		BEGIN("begin"), //
-		NOT_BEGIN("notbegin"), //
+		BETWEEN("between"), //
+		CONTAIN("contain"), //
 		END("end"), //
-		NOT_END("notend"), //
+		EQUAL("equal"), //
+		GREATER_THAN("greater"), //
 		IN("in"), //
+		LESS_THAN("less"), //
+		LIKE("like"), //
+		NET_CONTAINS("net_contains"), //
+		NET_CONTAINED("net_contained"), //
+		NET_CONTAINS_OR_EQUAL("net_containsorequal"), //
+		NET_CONTAINED_OR_EQUAL("net_containedorequal"), //
+		NET_RELATIONED("net_relation"), //
+		NOT_BEGIN("notbegin"), //
+		NOT_CONTAIN("notcontain"), //
+		NOT_END("notend"), //
+		NOT_EQUAL("notequal"), //
+		NOT_NULL("isnotnull"), //
+		NULL("isnull"), //
 		;
 
 		private String toString;

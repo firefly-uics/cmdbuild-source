@@ -1,16 +1,18 @@
 package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.Iterables.isEmpty;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
-import org.cmdbuild.common.Builder;
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -90,12 +92,16 @@ public class DataViewCardFetcher {
 	@Deprecated
 	public static class SqlQuerySpecsBuilderBuilder extends AbstractQuerySpecsBuilderBuilder {
 
+		private static final Map<String, Object> NO_PARAMETERS = Collections.emptyMap();
+
 		private CMFunction fetchedFunction;
+		private Map<String, Object> parameters;
 		private Alias functionAlias;
 
 		@Override
 		public QuerySpecsBuilder build() {
-			final FunctionCall functionCall = FunctionCall.call(fetchedFunction, new HashMap<String, Object>());
+			final FunctionCall functionCall = FunctionCall.call(fetchedFunction,
+					defaultIfNull(parameters, NO_PARAMETERS));
 			final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
 					.withDataView(dataView) //
 					.withDataView(systemDataView) //
@@ -146,6 +152,11 @@ public class DataViewCardFetcher {
 
 		public SqlQuerySpecsBuilderBuilder withFunction(final CMFunction value) {
 			fetchedFunction = value;
+			return this;
+		}
+
+		public SqlQuerySpecsBuilderBuilder withParameters(final Map<String, Object> value) {
+			parameters = value;
 			return this;
 		}
 

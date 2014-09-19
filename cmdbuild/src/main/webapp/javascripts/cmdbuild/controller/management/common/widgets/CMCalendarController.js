@@ -108,7 +108,7 @@
 				// the event has no end so we want
 				// only the ones that starts in the temporal window
 
-				out += " FROM " + className + 
+				out += " FROM " + className +
 				" WHERE " + e_start + " >= " + addSingleQuote(v_start) +
 				" AND " + e_start + " <= " + addSingleQuote(v_end) + "\"";
 			}
@@ -203,7 +203,7 @@
 				withButtons: false,
 				title: model.get("Title")
 			});
-	
+
 			new CMDBuild.controller.management.common.CMCardWindowController(w, {
 				entryType: target.get("id"), // classid of the destination
 				card: model.get("EventId"), // id of the card destination

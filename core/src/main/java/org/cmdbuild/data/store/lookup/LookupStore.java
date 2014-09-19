@@ -4,6 +4,8 @@ import org.cmdbuild.data.store.Store;
 
 public interface LookupStore extends Store<Lookup> {
 
-	Iterable<Lookup> listForType(LookupType type);
+	Iterable<Lookup> readAll(LookupType type);
+
+	Iterable<LookupType> readAllTypes();
 
 }

@@ -1,5 +1,8 @@
 package org.cmdbuild.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public abstract class AbstractEmail {
 
 	private String fromAddress;
@@ -77,4 +80,10 @@ public abstract class AbstractEmail {
 	public void setNotifyWith(final String notifyWith) {
 		this.notifyWith = notifyWith;
 	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+	}
+
 }

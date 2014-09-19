@@ -3,7 +3,7 @@ package utils;
 import static org.mockito.Mockito.mock;
 
 import org.cmdbuild.api.fluent.FluentApiExecutor;
-import org.cmdbuild.common.mail.MailApi;
+import org.cmdbuild.common.api.mail.MailApi;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
 import org.cmdbuild.workflow.api.WorkflowApi;

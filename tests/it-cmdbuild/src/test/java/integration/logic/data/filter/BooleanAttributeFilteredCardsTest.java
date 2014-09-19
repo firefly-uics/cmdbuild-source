@@ -54,8 +54,7 @@ public class BooleanAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(2, size(fetchedCards));
@@ -70,8 +69,7 @@ public class BooleanAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(1, size(fetchedCards));
@@ -85,8 +83,7 @@ public class BooleanAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(3, size(fetchedCards));

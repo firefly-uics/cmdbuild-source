@@ -65,9 +65,15 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 	},
 
 	load: function() {
-		this.getStore().load();
+		this.getStore().load({
+			scope: this,
+			callback: function() {
+				if (!this.getSelectionModel().hasSelection())
+					this.getSelectionModel().select(0, true);
+			}
+		});
 	},
-	
+
 	requestReport: function(reportParams) {
 		Ext.Ajax.request({
 			url: 'services/json/management/modreport/createreportfactory',
@@ -127,12 +133,12 @@ function loadReportIcons(reportType,x,store) {
 function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
 	var reportExtension = event.target.className;
 	var selectedRow = grid.getStore().getAt(rowIndex).json;
-	if (reportExtension == 'pdf' 
-		|| reportExtension == 'csv' 
-			|| reportExtension == 'odt' 
-				|| reportExtension == 'zip' 
+	if (reportExtension == 'pdf'
+		|| reportExtension == 'csv'
+			|| reportExtension == 'odt'
+				|| reportExtension == 'zip'
 					|| reportExtension == 'rtf') {
-		
+
 		this.requestReport({
 				id: model.get("id"),
 				type: model.get("type"),
@@ -148,7 +154,7 @@ function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
 				html: '<pre style="padding:5px; font-size: 1.2em">' + model.get("query") + '</pre>'
 			}],
 			buttons: [{
-				text: CMDBuild.Translation.common.btns.close,
+				text: CMDBuild.Translation.common.buttons.close,
 				handler: function() {
 					win.destroy();
 				}

@@ -1,6 +1,6 @@
 package org.cmdbuild.workflow.service;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.enhydra.shark.api.client.wfmc.wapi.WMActivityInstance;
 import org.enhydra.shark.api.client.wfmc.wapi.WMParticipant;
 

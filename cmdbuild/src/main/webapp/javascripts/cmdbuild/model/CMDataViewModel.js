@@ -10,6 +10,9 @@ Ext.define('CMDBuild.model.CMDataViewModel', {
 		name: 'description',
 		type: 'string'
 	}, {
+		name: 'description_default',
+		type: 'string'
+	}, {
 		name: 'filter',
 		type: 'auto'
 	}, {

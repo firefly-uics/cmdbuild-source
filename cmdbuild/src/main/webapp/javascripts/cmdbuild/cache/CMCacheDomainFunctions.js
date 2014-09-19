@@ -31,9 +31,13 @@
 				description: d.description,
 				descr_1: d.descrdir,
 				descr_2: d.descrinv,
+				description_default: d.description_default,
+				descr_1_default: d.descrdir_default,
+				descr_2_default: d.descrinv_default,
 				meta: d.meta,
 				attributes: d.attributes,
-				md_label: d.md_label
+				md_label: d.md_label,
+				md_label_default: d.md_label_default
 			});
 
 			domainModel.isMany = function(side) {

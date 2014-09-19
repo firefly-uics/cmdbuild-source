@@ -2,8 +2,10 @@ package org.cmdbuild.data.store.lookup;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newHashMap;
+import static org.cmdbuild.data.store.lookup.Functions.toLookUpType;
+import static org.cmdbuild.data.store.lookup.Predicates.lookupWithType;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import org.cmdbuild.data.store.Groupable;
@@ -11,8 +13,6 @@ import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-
-import com.google.common.base.Predicate;
 
 public class DataViewLookupStore implements LookupStore {
 
@@ -45,20 +45,20 @@ public class DataViewLookupStore implements LookupStore {
 	}
 
 	@Override
-	public List<Lookup> list() {
-		return inner.list();
+	public Collection<Lookup> readAll() {
+		return inner.readAll();
 	}
 
 	@Override
-	public List<Lookup> list(final Groupable groupable) {
-		return inner.list(groupable);
+	public Collection<Lookup> readAll(final Groupable groupable) {
+		return inner.readAll(groupable);
 	}
 
 	@Override
-	public Iterable<Lookup> listForType(final LookupType type) {
+	public Iterable<Lookup> readAll(final LookupType type) {
 		logger.debug(marker, "getting lookups with type '{}'", type);
 
-		final Iterable<Lookup> lookups = list();
+		final Iterable<Lookup> lookups = readAll();
 
 		final Map<Long, Lookup> lookupsById = newHashMap();
 		for (final Lookup lookup : lookups) {
@@ -71,7 +71,7 @@ public class DataViewLookupStore implements LookupStore {
 		}
 
 		return from(lookupsById.values()) //
-				.filter(withType(type));
+				.filter(lookupWithType(type));
 	}
 
 	private Lookup buildLookupWithParentLookup(final Lookup lookup, final Map<Long, Lookup> lookupsById) {
@@ -95,16 +95,11 @@ public class DataViewLookupStore implements LookupStore {
 		return lookupWithParent;
 	}
 
-	public static Predicate<Lookup> withType(final LookupType type) {
-		logger.debug("filtering lookups with type '{}'", type);
-		return new Predicate<Lookup>() {
-
-			@Override
-			public boolean apply(final Lookup input) {
-				return input.type.equals(type);
-			}
-
-		};
+	@Override
+	public Iterable<LookupType> readAllTypes() {
+		return from(readAll()) //
+				.transform(toLookUpType()) //
+				.toSet();
 	}
 
 }

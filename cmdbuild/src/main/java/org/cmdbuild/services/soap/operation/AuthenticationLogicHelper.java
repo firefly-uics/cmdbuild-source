@@ -61,7 +61,7 @@ public class AuthenticationLogicHelper implements SoapLogicHelper {
 						return userGroup;
 					}
 				}) //
-				.toImmutableSet();
+				.toSet();
 	}
 
 }

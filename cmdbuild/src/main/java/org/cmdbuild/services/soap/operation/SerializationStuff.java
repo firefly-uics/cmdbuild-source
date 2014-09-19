@@ -3,7 +3,7 @@ package org.cmdbuild.services.soap.operation;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.cmdbuild.common.Constants.Webservices.BOOLEAN_TYPE_NAME;
 import static org.cmdbuild.common.Constants.Webservices.CHAR_TYPE_NAME;
 import static org.cmdbuild.common.Constants.Webservices.DATE_TYPE_NAME;
@@ -62,10 +62,10 @@ class SerializationStuff {
 	private static final Logger logger = SoapLogicHelper.logger;
 	private static final Marker marker = MarkerFactory.getMarker(SerializationStuff.class.getName());
 
-	private static final Function<org.cmdbuild.model.data.Metadata, Metadata> TO_SOAP_METADATA = new Function<org.cmdbuild.model.data.Metadata, Metadata>() {
+	private static final Function<org.cmdbuild.data.store.metadata.Metadata, Metadata> TO_SOAP_METADATA = new Function<org.cmdbuild.data.store.metadata.Metadata, Metadata>() {
 
 		@Override
-		public Metadata apply(final org.cmdbuild.model.data.Metadata input) {
+		public Metadata apply(final org.cmdbuild.data.store.metadata.Metadata input) {
 			final Metadata element = new Metadata();
 			element.setKey(input.name);
 			element.setValue(input.value);
@@ -207,8 +207,8 @@ class SerializationStuff {
 	}
 
 	private FluentIterable<Metadata> storedMetadata(final CMAttribute attribute) {
-		final Store<org.cmdbuild.model.data.Metadata> store = metadataStoreFactory.storeForAttribute(attribute);
-		final Iterable<org.cmdbuild.model.data.Metadata> elements = store.list();
+		final Store<org.cmdbuild.data.store.metadata.Metadata> store = metadataStoreFactory.storeForAttribute(attribute);
+		final Iterable<org.cmdbuild.data.store.metadata.Metadata> elements = store.readAll();
 		return from(elements) //
 				.transform(TO_SOAP_METADATA);
 	}

@@ -10,7 +10,6 @@ import org.cmdbuild.auth.acl.DefaultPrivileges;
 import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.privileges.constants.PrivilegedObjectType;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logger.Log;

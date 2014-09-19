@@ -45,11 +45,13 @@
 		this.currentReport = null;
 		this.form.reset();
 		this.form.enableModify(all = true);
+		_CMCache.initAddingTranslations();
 	}
 	
 	function onModifyButtonClick() {
 		this.form.step1.fileField.allowBlank = true;
 		this.form.enableModify();
+		_CMCache.initModifyingTranslations();
 	}
 	
 	function onSaveButtonClick() {
@@ -58,6 +60,7 @@
 		} else {
 			insertJasperReport.call(this);
 		}
+		this.gridSM.deselectAll();
 	}
 	
 	function onAbortButtonClick() {
@@ -104,6 +107,7 @@
 		this.grid.load();
 		_CMCache.reloadReportStores();
 		this.form.disableModify();
+		_CMCache.flushTranslationsToSave(this.form.step1.name.getValue());
 		this.form.reset();
 		this.form.step2.removeAll();
 		this.form.showStep1();

@@ -85,12 +85,12 @@
 				items: [me.portal],
 				buttonAlign: "center",
 				buttons: [{
-					text: CMDBuild.Translation.common.btns.save,
+					text: CMDBuild.Translation.common.buttons.save,
 					handler: function() {
 						me.delegate.onSaveButtonClick();
 					}
 				}, {
-					text: CMDBuild.Translation.common.btns.abort,
+					text: CMDBuild.Translation.common.buttons.abort,
 					handler: function() {
 						me.delegate.onAbortButtonClick();
 					}

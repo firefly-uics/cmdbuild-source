@@ -1,17 +1,19 @@
 (function() {
-	var TARGET_CLASS_ID = "dst_cid",
-		tr = CMDBuild.Translation.management.modcard,
-		col_tr = CMDBuild.Translation.management.modcard.relation_columns;
+
+	var TARGET_CLASS_ID = "dst_cid";
+	var tr = CMDBuild.Translation.management.modcard;
+	var col_tr = CMDBuild.Translation.management.modcard.relation_columns;
 
 	// Null-object to skip some checks
 	var nullButton = {
-		enable: function(){},
-		disable: function(){},
-		on: function(){}
+		enable: function() {},
+		disable: function() {},
+		on: function() {}
 	};
 
 	Ext.define("CMRelationPanelModel", {
 		extend: "Ext.data.Model",
+
 		fields: [
 			'dom_id', 'dom_desc', 'label',
 			'dst_code', 'dst_id', 'dst_desc', 'dst_cid',
@@ -22,6 +24,7 @@
 
 	Ext.define("CMDBuild.view.management.classes.CMCardRelationsPanel", {
 		extend: "Ext.tree.Panel",
+
 		cmWithAddButton: true,
 		cmWithEditRelationIcons: true,
 
@@ -49,19 +52,45 @@
 				}),
 				rootVisible: false,
 				columns: [
-					{header: col_tr.domain, sortable: false, dataIndex: 'dom_id', hidden: true},
-					{header: col_tr.destclass, flex: 2, sortable: false, dataIndex: 'label', xtype: 'treecolumn'},
-					{header: col_tr.begin_date, flex: 1, sortable: false, dataIndex: 'rel_date'},
-					{header: col_tr.code, flex: 1, sortable: false, dataIndex: 'dst_code'},
-					{header: col_tr.description, flex: 2, sortable: false, dataIndex: 'dst_desc'},
+					{
+						header: col_tr.domain,
+						sortable: false,
+						dataIndex: 'dom_id',
+						hidden: true
+					},
+					{
+						header: col_tr.destclass,
+						flex: 2,
+						sortable: false,
+						dataIndex: 'label',
+						xtype: 'treecolumn'
+					},
+					{
+						header: col_tr.begin_date,
+						flex: 1,
+						sortable: false,
+						dataIndex: 'rel_date'
+					},
+					{
+						header: col_tr.code,
+						flex: 1,
+						sortable: false,
+						dataIndex: 'dst_code'
+					},
+					{
+						header: col_tr.description,
+						flex: 2,
+						sortable: false,
+						dataIndex: 'dst_desc'
+					},
 					this.attrsColumn,
 					{
 						header: '&nbsp',
-						fixed: true, 
-						sortable: false, 
+						fixed: true,
+						sortable: false,
 						renderer: Ext.bind(this.renderRelationActions, this),
-						align: 'center', 
-						tdCls: 'grid-button', 
+						align: 'center',
+						tdCls: 'grid-button',
 						dataIndex: 'Fake',
 						menuDisabled: true,
 						hideable: false
@@ -83,25 +112,25 @@
 		},
 
 		buildTBar: function() {
+			var me = this;
+
 			this.tbar = [];
 
-			var me = this;
-			this.addRelationButton = new CMDBuild.AddRelationMenuButton({
-				text : tr.add_relations
+			this.addRelationButton = Ext.create('CMDBuild.core.buttons.AddRelationMenuButton', {
+				text: tr.add_relations
 			});
-			
-			this.mon(this.addRelationButton, "cmClick", function(d) {
+
+			this.mon(this.addRelationButton, 'cmClick', function(d) {
 				me.fireEvent(me.CMEVENTS.addButtonClick, d);
 			});
 
-			if (this.cmWithAddButton) {
+			if (this.cmWithAddButton)
 				this.tbar.push(this.addRelationButton);
-			}
 
-			if (CMDBuild.Config.graph.enabled=="true") {
+			if (CMDBuild.Config.graph.enabled == 'true') {
 				this.graphButton = new Ext.button.Button({
-					iconCls : "graph",
-					text : CMDBuild.Translation.management.graph.action,
+					iconCls: 'graph',
+					text: CMDBuild.Translation.management.graph.action,
 					handler: function() {
 						me.fireEvent(me.CMEVENTS.openGraphClick);
 					}
@@ -127,7 +156,7 @@
 			for (var i=0, l=domains.length; i<l; ++i) {
 				var domainResponseObj = domains[i],
 					domainCachedData = _CMCache.getDomainById(domainResponseObj.id);
-				
+
 				if (domainCachedData) {
 					nodes.push(buildNodeForDomain.call(this, domainResponseObj, domainCachedData));
 				} else {
@@ -156,12 +185,12 @@
 		onAddCardButtonClick: function() { _deprecated();
 			this.disable();
 		},
-	
+
 		onClassSelected: function() { _deprecated();
 			this.disable();
 		}
 	});
-	
+
 	function buildNodeForDomain(domainResponseObj, domainCachedData) {
 		var children = [],
 			attributes = domainCachedData.data.attributes || [],
@@ -172,10 +201,10 @@
 			node = {
 				dom_id: domId,
 				label: buildDescriptionForDomainNode(domainResponseObj, domainCachedData),
-	
+
 				src: src,
 				relations_size: domainResponseObj.relations_size,
-	
+
 				expanded: !oversize,
 				leaf: false,
 				children: [],
@@ -255,35 +284,40 @@
 		return nodes;
 	}
 
-	// scope: this
+	/**
+	 * @param (Object) value
+	 * @param (Object) metadata
+	 * @param (Object) record
+	 *
+	 * @return (String) actionsHtml - Empty if there aren't icons to render
+	 *
+	 * TODO: fix ugly code
+	 */
 	function renderRelationActions(value, metadata, record) {
-		if (record.get("depth") == 1) { // the domains node has no icons to render
-			return "";
-		}
+		// The domain node has no icons to render
+		if (record.get('depth') == 1)
+			return '';
 
-		var tr = CMDBuild.Translation.management.modcard,
-			actionsHtml = '<img style="cursor:pointer" title="'+tr.open_relation+'" class="action-relation-go" src="images/icons/bullet_go.png"/>',
-			tableId = record.get(TARGET_CLASS_ID),
-			domainObj = _CMCache.getDomainById(record.get("dom_id")),
-			table = _CMCache.getClassById(tableId);
+		var tr = CMDBuild.Translation.management.modcard;
+		var actionsHtml = '<img style="cursor:pointer" title="' + tr.open_relation + '" class="action-relation-go" src="images/icons/bullet_go.png"/>';
+		var tableId = record.get(TARGET_CLASS_ID);
+		var domainObj = _CMCache.getDomainById(record.get('dom_id'));
+		var table = _CMCache.getClassById(tableId);
 		var entryType = _CMCache.getEntryTypeById(tableId);
 		var privileges =  _CMUtils.getEntryTypePrivileges(entryType);
-		if (this.cmWithEditRelationIcons && domainObj.get("writePrivileges")) {
-			actionsHtml += '<img style="cursor:pointer" title="'+tr.edit_relation+'" class="action-relation-edit" src="images/icons/link_edit.png"/>'
-			+ '<img style="cursor:pointer" title="'+tr.delete_relation+'" class="action-relation-delete" src="images/icons/link_delete.png"/>';
-		}
 
-		if (table && table.get("priv_write") && ! privileges.crudDisabled.modify) {
-			actionsHtml += '<img style="cursor:pointer" class="action-relation-editcard" src="images/icons/modify.png"/>';
+		if (this.cmWithEditRelationIcons && domainObj.get('writePrivileges'))
+			actionsHtml += '<img style="cursor:pointer" title="' + tr.edit_relation + '" class="action-relation-edit" src="images/icons/link_edit.png"/>'
+				+ '<img style="cursor:pointer" title="' + tr.delete_relation + '" class="action-relation-delete" src="images/icons/link_delete.png"/>';
+
+		if (table && table.get('priv_write') && ! privileges.crudDisabled.modify) {
+			actionsHtml += '<img style="cursor:pointer" title="' + tr.modify_card + '" class="action-relation-editcard" src="images/icons/modify.png"/>';
 		} else {
-			actionsHtml += '<img style="cursor:pointer" title="'+tr.view_relation+'" class="action-relation-viewcard" src="images/icons/zoom.png"/>';
+			actionsHtml += '<img style="cursor:pointer" title="' + tr.view_relation + '" class="action-relation-viewcard" src="images/icons/zoom.png"/>';
 		}
 
-		if (CMDBuild.Config.dms.enabled == "true") {
-			actionsHtml += '<img style="cursor:pointer" title="'+
-				CMDBuild.Translation.management.moddetail.showattach+ // FIXME translation
-				'" class="action-relation-attach" src="images/icons/attach.png"/>';
-		}
+		if (CMDBuild.Config.dms.enabled == 'true')
+			actionsHtml += '<img style="cursor:pointer" title="' + tr.showattach + '" class="action-relation-attach" src="images/icons/attach.png"/>';
 
 		return actionsHtml;
 	}
@@ -292,7 +326,8 @@
 		var prefix = domainCachedData.get("descr"+domainResponseObj.src),
 			s = domainResponseObj.relations_size,
 			postfix = s  > 1 ? CMDBuild.Translation.management.modcard.relation_columns.items : CMDBuild.Translation.management.modcard.relation_columns.item;
-		
+
 		return "<span class=\"cm-bold\">" + prefix + " ("+ s + " " + postfix + ")</span>" ;
 	}
+
 })();

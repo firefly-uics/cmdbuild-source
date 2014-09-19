@@ -9,7 +9,7 @@ import org.alfresco.webservice.types.ResultSet;
 import org.alfresco.webservice.types.ResultSetRow;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.WebServiceFactory;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dms.DocumentSearch;
 
 class SearchCommand extends AbstractSearchCommand<ResultSetRow[]> {

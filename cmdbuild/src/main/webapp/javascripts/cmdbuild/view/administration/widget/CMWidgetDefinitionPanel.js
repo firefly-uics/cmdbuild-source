@@ -42,14 +42,14 @@
 
 			var me = this;
 			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.btns.save,
+				text: CMDBuild.Translation.common.buttons.save,
 				handler: function() {
 					me.fireEvent("cm-save");
 				}
 			});
 
 			this.abortButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.btns.abort,
+				text: CMDBuild.Translation.common.buttons.abort,
 				handler: function() {
 					me.fireEvent("cm-abort");
 				}
@@ -86,7 +86,7 @@
 				throw this.EXCEPTIONS.notAWidget(widgetName);
 			}
 
-			this.form.removeAll();
+			this.form.removeAll(false);
 			this.form.add(widget);
 			this.widgetForm = widget;
 

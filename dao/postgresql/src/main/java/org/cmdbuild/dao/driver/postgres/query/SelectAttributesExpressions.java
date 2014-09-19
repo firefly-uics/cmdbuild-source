@@ -1,12 +1,12 @@
 package org.cmdbuild.dao.driver.postgres.query;
 
 import static com.google.common.collect.Iterables.transform;
-import static org.apache.commons.lang.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.dao.driver.postgres.Utils.quoteAttribute;
 
 import java.util.Collection;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.dao.driver.postgres.logging.LoggingSupport;
 import org.cmdbuild.dao.driver.postgres.quote.AliasQuoter;
 import org.cmdbuild.dao.query.clause.alias.Alias;
