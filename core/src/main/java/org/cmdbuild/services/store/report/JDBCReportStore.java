@@ -45,7 +45,10 @@ public class JDBCReportStore implements ReportStore {
 		Groups, //
 	};
 
-	public JDBCReportStore(final UserStore userStore, final DataSource dataSource) {
+	public JDBCReportStore( //
+			final UserStore userStore, //
+			final DataSource dataSource //
+	) {
 		this.userStore = userStore;
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 	}

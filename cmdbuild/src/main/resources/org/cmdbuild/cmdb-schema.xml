@@ -15,7 +15,10 @@
 		factory-method="getInstance" />
 
 	<bean id="idRegistry" class="org.cmdbuild.cmdbf.cmdbmdr.MdrScopedIdRegistry">
-		<constructor-arg name="dataAccessLogic" ref="systemDataAccessLogic" />
+		<constructor-arg name="dataAccessLogic">
+			<bean factory-bean="systemDataAccessLogicBuilder"
+				factory-method="build" scope="prototype" />
+		</constructor-arg>
 		<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 	</bean>
 
@@ -28,34 +31,62 @@
 					<constructor-arg name="aliasRegistry" ref="idRegistry" />
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 				</bean>
-				<bean id="classNS" class="org.cmdbuild.cmdbf.xml.ClassNamespace">
+				<bean id="classNS" class="org.cmdbuild.cmdbf.xml.ClassNamespace"
+					scope="prototype">
 					<constructor-arg name="name" value="class" />
-					<constructor-arg name="systemDataAccessLogic" ref="systemDataAccessLogic" />
-					<constructor-arg name="userDataAccessLogic" ref="userDataAccessLogic" />
+					<constructor-arg name="systemDataAccessLogic">
+						<bean factory-bean="systemDataAccessLogicBuilder"
+							factory-method="build" scope="prototype" />
+					</constructor-arg>
+					<constructor-arg name="userDataAccessLogic">
+						<bean factory-bean="userDataAccessLogicBuilder"
+							factory-method="build" scope="prototype" />
+					</constructor-arg>
 					<constructor-arg name="dataDefinitionLogic" ref="dataDefinitionLogic" />
 					<constructor-arg name="lookupLogic" ref="lookupLogic" />
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 				</bean>
-				<bean id="classHistoryNS" class="org.cmdbuild.cmdbf.xml.ClassHistoryNamespace">
+				<bean id="classHistoryNS" class="org.cmdbuild.cmdbf.xml.ClassHistoryNamespace"
+					scope="prototype">
 					<constructor-arg name="name" value="class-history" />
-					<constructor-arg name="systemDataAccessLogic" ref="systemDataAccessLogic" />
-					<constructor-arg name="userDataAccessLogic" ref="userDataAccessLogic" />
+					<constructor-arg name="systemDataAccessLogic">
+						<bean factory-bean="systemDataAccessLogicBuilder"
+							factory-method="build" scope="prototype" />
+					</constructor-arg>
+					<constructor-arg name="userDataAccessLogic">
+						<bean factory-bean="userDataAccessLogicBuilder"
+							factory-method="build" scope="prototype" />
+					</constructor-arg>
 					<constructor-arg name="dataDefinitionLogic" ref="dataDefinitionLogic" />
 					<constructor-arg name="lookupLogic" ref="lookupLogic" />
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 				</bean>
-				<bean id="domainNS" class="org.cmdbuild.cmdbf.xml.DomainNamespace">
+				<bean id="domainNS" class="org.cmdbuild.cmdbf.xml.DomainNamespace"
+					scope="prototype">
 					<constructor-arg name="name" value="domain" />
-					<constructor-arg name="systemDataAccessLogic" ref="systemDataAccessLogic" />
-					<constructor-arg name="userDataAccessLogic" ref="userDataAccessLogic" />
+					<constructor-arg name="systemDataAccessLogic">
+						<bean factory-bean="systemDataAccessLogicBuilder"
+							factory-method="build" scope="prototype" />
+					</constructor-arg>
+					<constructor-arg name="userDataAccessLogic">
+						<bean factory-bean="userDataAccessLogicBuilder"
+							factory-method="build" scope="prototype" />
+					</constructor-arg>
 					<constructor-arg name="dataDefinitionLogic" ref="dataDefinitionLogic" />
 					<constructor-arg name="lookupLogic" ref="lookupLogic" />
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 				</bean>
-				<bean id="domainHistoryNS" class="org.cmdbuild.cmdbf.xml.DomainHistoryNamespace">
+				<bean id="domainHistoryNS" class="org.cmdbuild.cmdbf.xml.DomainHistoryNamespace"
+					scope="prototype">
 					<constructor-arg name="name" value="domain-history" />
-					<constructor-arg name="systemDataAccessLogic" ref="systemDataAccessLogic" />
-					<constructor-arg name="userDataAccessLogic" ref="userDataAccessLogic" />
+					<constructor-arg name="systemDataAccessLogic">
+						<bean factory-bean="systemDataAccessLogicBuilder"
+							factory-method="build" scope="prototype" />
+					</constructor-arg>
+					<constructor-arg name="userDataAccessLogic">
+						<bean factory-bean="userDataAccessLogicBuilder"
+							factory-method="build" scope="prototype" />
+					</constructor-arg>
 					<constructor-arg name="dataDefinitionLogic" ref="dataDefinitionLogic" />
 					<constructor-arg name="lookupLogic" ref="lookupLogic" />
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
@@ -74,7 +105,7 @@
 				</bean>
 				<bean id="geoNS" class="org.cmdbuild.cmdbf.xml.GeoNamespace">
 					<constructor-arg name="name" value="geo" />
-					<constructor-arg name="dataView" ref="dbDataView" />
+					<constructor-arg name="dataView" ref="systemDataView" />
 					<constructor-arg name="gisLogic" ref="gisLogic" />
 					<constructor-arg name="cmdbfConfiguration" ref="cmdbfProperties" />
 				</bean>

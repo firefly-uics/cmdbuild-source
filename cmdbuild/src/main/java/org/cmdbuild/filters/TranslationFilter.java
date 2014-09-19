@@ -1,7 +1,5 @@
 package org.cmdbuild.filters;
 
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
-
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -12,6 +10,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.cmdbuild.auth.LanguageStore;
+import org.cmdbuild.spring.annotations.FilterComponent;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  * 
@@ -20,22 +22,34 @@ import org.cmdbuild.auth.LanguageStore;
  * 
  */
 
-public class TranslationFilter implements Filter {
+@FilterComponent("TranslationFilter")
+public class TranslationFilter implements Filter, ApplicationContextAware {
 
 	private static final String LANGUAGE_ARG = "language";
 
-	public void init(FilterConfig arg0) throws ServletException {
+	private ApplicationContext applicationContext;
+
+	@Override
+	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
+	@Override
+	public void init(final FilterConfig arg0) throws ServletException {
+	}
+
+	@Override
 	public void destroy() {
 	}
 
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException,
-			ServletException {
-		String language = request.getParameter(LANGUAGE_ARG);
+	@Override
+	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain filterChain)
+			throws IOException, ServletException {
+		final String language = request.getParameter(LANGUAGE_ARG);
 		if (language != null) {
-			applicationContext().getBean(LanguageStore.class).setLanguage(language);
+			applicationContext.getBean(LanguageStore.class).setLanguage(language);
 		}
 		filterChain.doFilter(request, response);
 	}
+
 }

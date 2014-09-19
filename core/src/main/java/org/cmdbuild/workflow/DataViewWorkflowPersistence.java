@@ -1,6 +1,7 @@
 package org.cmdbuild.workflow;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.common.Constants.BASE_PROCESS_CLASS_NAME;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -11,9 +12,9 @@ import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 import static org.cmdbuild.workflow.ProcessAttributes.ProcessInstanceId;
 import static org.cmdbuild.workflow.service.WSProcessInstanceState.OPEN;
 import static org.cmdbuild.workflow.service.WSProcessInstanceState.SUSPENDED;
-import static org.cmdbuild.common.Constants.*;
 
 import org.apache.commons.lang.Validate;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.common.utils.PagedElements;
@@ -45,6 +46,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 
 	public static class DataViewWorkflowPersistenceBuilder implements Builder<DataViewWorkflowPersistence> {
 
+		private PrivilegeContext privilegeContext;
 		private OperationUser operationUser;
 		private CMDataView dataView;
 		private ProcessDefinitionManager processDefinitionManager;
@@ -63,11 +65,21 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		}
 
 		private void validate() {
+			Validate.notNull(privilegeContext, "invalid privilege context");
 			Validate.notNull(operationUser, "invalid operation user");
 			Validate.notNull(dataView, "invalid data view");
 			Validate.notNull(processDefinitionManager, "invalid process definition manager");
 			Validate.notNull(lookupStore, "invalid lookup store");
 			Validate.notNull(workflowService, "invalid workflow service");
+		}
+
+		public DataViewWorkflowPersistenceBuilder withPrivilegeContext(final PrivilegeContext privilegeContext) {
+			setPrivilegeContext(privilegeContext);
+			return this;
+		}
+
+		public void setPrivilegeContext(final PrivilegeContext privilegeContext) {
+			this.privilegeContext = privilegeContext;
 		}
 
 		public DataViewWorkflowPersistenceBuilder withOperationUser(final OperationUser operationUser) {
@@ -133,6 +145,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		return new DataViewWorkflowPersistenceBuilder();
 	}
 
+	private final PrivilegeContext privilegeContext;
 	private final OperationUser operationUser;
 	private final CMDataView dataView;
 	private final ProcessDefinitionManager processDefinitionManager;
@@ -141,6 +154,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 	private final ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory;
 
 	private DataViewWorkflowPersistence(final DataViewWorkflowPersistenceBuilder builder) {
+		this.privilegeContext = builder.privilegeContext;
 		this.operationUser = builder.operationUser;
 		this.dataView = builder.dataView;
 		this.processDefinitionManager = builder.processDefinitionManager;
@@ -174,8 +188,8 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			@Override
 			public boolean apply(final CMClass input) {
 				return input.getName().equals(BASE_PROCESS_CLASS_NAME) || //
-						operationUser.hasAdministratorPrivileges() || //
-						operationUser.hasReadAccess(input);
+						privilegeContext.hasAdministratorPrivileges() || //
+						privilegeContext.hasReadAccess(input);
 			}
 		};
 	}
@@ -350,13 +364,14 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 
 	private UserProcessClass wrap(final CMClass clazz) {
 		logger.debug(marker, "wrapping '{}' into '{}'", CMClass.class, UserProcessClass.class);
-		return new ProcessClassImpl(operationUser, clazz, processDefinitionManager);
+		return new ProcessClassImpl(operationUser, privilegeContext, clazz, processDefinitionManager);
 	}
 
 	private UserProcessInstance wrap(final CMCard card) {
 		logger.debug(marker, "wrapping '{}' into '{}'", CMCard.class, UserProcessInstance.class);
 		return ProcessInstanceImpl.newInstance() //
 				.withOperationUser(operationUser) //
+				.withPrivilegeContext(privilegeContext) //
 				.withProcessDefinitionManager(processDefinitionManager) //
 				.withLookupHelper(lookupHelper) //
 				.withCard(card) //
