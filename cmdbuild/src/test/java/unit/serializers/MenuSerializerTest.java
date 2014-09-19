@@ -1,14 +1,20 @@
 package unit.serializers;
 
+import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.services.store.DBDashboardStore;
 import org.cmdbuild.services.store.menu.MenuItemDTO;
 import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
 import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
 import org.cmdbuild.servlets.json.serializers.MenuSerializer;
+import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,17 +62,32 @@ public class MenuSerializerTest {
 
 	@Test
 	public void testRootOnlyToClient() throws JSONException {
+		// given
+		final TranslationFacade facade = mock(TranslationFacade.class);
+		when(facade.read(any(TranslationObject.class))).thenReturn(null);
 		final MenuItem menuItem = new MenuItemDTO();
 		menuItem.setType(MenuItemType.ROOT);
-		final JSONObject jsonMenu = MenuSerializer.toClient(menuItem, false);
+		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
+				.withRootItem(menuItem) //
+				.withTranslationFacade(facade) //
+				.build();
+
+		// when
+		final JSONObject jsonMenu = menuSerializer.toClient(false);
+
+		// then
 		assertEquals(MenuItemType.ROOT.getValue(), jsonMenu.getString(MenuSerializer.TYPE));
 		assertEquals(0, jsonMenu.getInt(MenuSerializer.INDEX));
-		assertFalse(jsonMenu.has(MenuSerializer.DESCRIPTION));
+		assertFalse(jsonMenu.has(DESCRIPTION));
 		assertFalse(jsonMenu.has(MenuSerializer.CLASS_NAME));
 	}
 
 	@Test
 	public void testWithAClassToClient() throws JSONException {
+		// given
+		final TranslationFacade facade = mock(TranslationFacade.class);
+		when(facade.read(any(TranslationObject.class))).thenReturn(null);
+
 		final MenuItem root = new MenuItemDTO();
 		root.setType(MenuItemType.ROOT);
 
@@ -78,18 +99,28 @@ public class MenuSerializerTest {
 
 		root.addChild(classMenuItem);
 
-		final JSONObject jsonMenu = MenuSerializer.toClient(root, false);
+		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
+				.withRootItem(root) //
+				.withTranslationFacade(facade) //
+				.build();
+
+		// when
+		final JSONObject jsonMenu = menuSerializer.toClient(false);
 		final JSONArray children = jsonMenu.getJSONArray(MenuSerializer.CHILDREN);
 		final JSONObject jsonClass = children.getJSONObject(0);
 
+		// then
 		assertEquals(MenuItemType.CLASS.getValue(), jsonClass.getString(MenuSerializer.TYPE));
 		assertEquals(1, jsonClass.getInt(MenuSerializer.INDEX));
-		assertEquals("FooDescription", jsonClass.get(MenuSerializer.DESCRIPTION));
+		assertEquals("FooDescription", jsonClass.get(DESCRIPTION));
 		assertEquals("FooClassName", jsonClass.get(MenuSerializer.CLASS_NAME));
 	}
 
 	@Test
 	public void testWithAFolderToClient() throws JSONException {
+		// given
+		final TranslationFacade facade = mock(TranslationFacade.class);
+		when(facade.read(any(TranslationObject.class))).thenReturn(null);
 		final MenuItem root = new MenuItemDTO();
 		root.setType(MenuItemType.ROOT);
 
@@ -106,25 +137,34 @@ public class MenuSerializerTest {
 		classMenuItem.setIndex(2);
 		folder.addChild(classMenuItem);
 
-		final JSONObject jsonMenu = MenuSerializer.toClient(root, false);
+		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
+				.withRootItem(root) //
+				.withTranslationFacade(facade) //
+				.build();
+
+		// when
+		final JSONObject jsonMenu = menuSerializer.toClient(false);
 		final JSONArray children = jsonMenu.getJSONArray(MenuSerializer.CHILDREN);
 		final JSONObject jsonFolder = children.getJSONObject(0);
 
+		// then
 		assertEquals(MenuItemType.FOLDER.getValue(), jsonFolder.getString(MenuSerializer.TYPE));
 		assertEquals(1, jsonFolder.getInt(MenuSerializer.INDEX));
-		assertEquals("FooFolderDescription", jsonFolder.get(MenuSerializer.DESCRIPTION));
+		assertEquals("FooFolderDescription", jsonFolder.get(DESCRIPTION));
 		assertEquals(1, jsonFolder.getJSONArray(MenuSerializer.CHILDREN).length());
 		assertFalse(jsonFolder.has(MenuSerializer.CLASS_NAME));
 
 		final JSONObject jsonClass = jsonFolder.getJSONArray(MenuSerializer.CHILDREN).getJSONObject(0);
 		assertEquals(MenuItemType.CLASS.getValue(), jsonClass.getString(MenuSerializer.TYPE));
 		assertEquals(2, jsonClass.getInt(MenuSerializer.INDEX));
-		assertEquals("FooDescription", jsonClass.get(MenuSerializer.DESCRIPTION));
+		assertEquals("FooDescription", jsonClass.get(DESCRIPTION));
 		assertEquals("FooClassName", jsonClass.get(MenuSerializer.CLASS_NAME));
 	}
 
 	@Test
 	public void testWithADashboardToClient() throws JSONException {
+		final TranslationFacade facade = mock(TranslationFacade.class);
+		when(facade.read(any(TranslationObject.class))).thenReturn(null);
 		final MenuItem root = new MenuItemDTO();
 		root.setType(MenuItemType.ROOT);
 
@@ -137,13 +177,17 @@ public class MenuSerializerTest {
 
 		root.addChild(dashboardMenuItem);
 
-		final JSONObject jsonMenu = MenuSerializer.toClient(root, false);
+		final MenuSerializer menuSerializer = MenuSerializer.newInstance() //
+				.withRootItem(root) //
+				.withTranslationFacade(facade) //
+				.build();
+		final JSONObject jsonMenu = menuSerializer.toClient(false);
 		final JSONArray children = jsonMenu.getJSONArray(MenuSerializer.CHILDREN);
 		final JSONObject jsonDashboard = children.getJSONObject(0);
 
 		assertEquals(MenuItemType.DASHBOARD.getValue(), jsonDashboard.getString(MenuSerializer.TYPE));
 		assertEquals(1, jsonDashboard.getInt(MenuSerializer.INDEX));
-		assertEquals("FooDashboardDescription", jsonDashboard.get(MenuSerializer.DESCRIPTION));
+		assertEquals("FooDashboardDescription", jsonDashboard.get(DESCRIPTION));
 		assertEquals(DBDashboardStore.DASHBOARD_TABLE, jsonDashboard.get(MenuSerializer.CLASS_NAME));
 		assertEquals(15, jsonDashboard.getLong(MenuSerializer.ELEMENT_ID));
 	}
@@ -160,10 +204,11 @@ public class MenuSerializerTest {
 	private JSONObject jsonClassNode() throws JSONException {
 		final JSONObject jsonClassNode = new JSONObject();
 		jsonClassNode.put(MenuSerializer.TYPE, "class");
-		jsonClassNode.put(MenuSerializer.DESCRIPTION, "The class description");
+		jsonClassNode.put(DESCRIPTION, "The class description");
 		jsonClassNode.put(MenuSerializer.INDEX, "1");
 		jsonClassNode.put(MenuSerializer.ELEMENT_ID, "25");
 		jsonClassNode.put(MenuSerializer.CLASS_NAME, "FooClass");
+		jsonClassNode.put(MenuSerializer.UUID, "uuid");
 
 		return jsonClassNode;
 	}

@@ -1,6 +1,7 @@
 package org.cmdbuild.model.domainTree;
 
-import static org.apache.commons.lang.StringUtils.*;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;

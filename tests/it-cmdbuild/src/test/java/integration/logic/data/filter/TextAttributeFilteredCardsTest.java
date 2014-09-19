@@ -56,9 +56,9 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 
 		// when
 		final Iterable<Card> fetchedCards1 = dataAccessLogic.fetchCards(createdClass.getName(),
-				queryOptionsForEmptyResult).getPaginatedCards();
+				queryOptionsForEmptyResult).elements();
 		final Iterable<Card> fetchedCards2 = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+				.elements();
 
 		// then
 		assertEquals(0, size(fetchedCards1));
@@ -72,8 +72,7 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(4, size(fetchedCards));
@@ -86,8 +85,7 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(2, size(fetchedCards));
@@ -100,8 +98,7 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(1, size(fetchedCards));
@@ -115,8 +112,7 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(3, size(fetchedCards));
@@ -133,9 +129,9 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 
 		// when
 		final Iterable<Card> notContainFetchedCards = dataAccessLogic.fetchCards(createdClass.getName(),
-				notContainQueryOptions).getPaginatedCards();
+				notContainQueryOptions).elements();
 		final Iterable<Card> containFetchedCards = dataAccessLogic.fetchCards(createdClass.getName(),
-				containQueryOptions).getPaginatedCards();
+				containQueryOptions).elements();
 
 		// then
 		assertEquals(4, size(notContainFetchedCards) + size(containFetchedCards));
@@ -148,8 +144,7 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(2, size(fetchedCards));
@@ -162,8 +157,7 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(2, size(fetchedCards));
@@ -176,8 +170,7 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(1, size(fetchedCards));
@@ -190,8 +183,7 @@ public class TextAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(3, size(fetchedCards));

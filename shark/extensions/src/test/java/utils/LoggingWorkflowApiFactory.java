@@ -33,22 +33,25 @@ import org.cmdbuild.api.fluent.ExistingRelation;
 import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.api.fluent.FunctionCall;
+import org.cmdbuild.api.fluent.Lookup;
 import org.cmdbuild.api.fluent.NewCard;
 import org.cmdbuild.api.fluent.NewProcessInstance;
 import org.cmdbuild.api.fluent.NewRelation;
 import org.cmdbuild.api.fluent.ProcessInstanceDescriptor;
+import org.cmdbuild.api.fluent.QueryAllLookup;
 import org.cmdbuild.api.fluent.QueryClass;
+import org.cmdbuild.api.fluent.QuerySingleLookup;
 import org.cmdbuild.api.fluent.Relation;
 import org.cmdbuild.api.fluent.RelationsQuery;
 import org.cmdbuild.api.fluent.ws.EntryTypeAttribute;
 import org.cmdbuild.api.fluent.ws.WsFluentApiExecutor.WsType;
-import org.cmdbuild.common.mail.FetchedMail;
-import org.cmdbuild.common.mail.GetMail;
-import org.cmdbuild.common.mail.MailApi;
-import org.cmdbuild.common.mail.MailException;
-import org.cmdbuild.common.mail.NewMail;
-import org.cmdbuild.common.mail.SelectFolder;
-import org.cmdbuild.common.mail.SelectMail;
+import org.cmdbuild.common.api.mail.FetchedMail;
+import org.cmdbuild.common.api.mail.GetMail;
+import org.cmdbuild.common.api.mail.MailApi;
+import org.cmdbuild.common.api.mail.MailException;
+import org.cmdbuild.common.api.mail.NewMail;
+import org.cmdbuild.common.api.mail.SelectFolder;
+import org.cmdbuild.common.api.mail.SelectMail;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.workflow.api.SchemaApi;
 import org.cmdbuild.workflow.api.SharkWorkflowApiFactory;
@@ -268,6 +271,16 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 						resumeProcessInstanceLogLine( //
 								processCard.getClassName(), //
 								processCard.getId()));
+			}
+
+			@Override
+			public Iterable<Lookup> fetch(final QueryAllLookup queryLookup) {
+				throw new UnsupportedOperationException("TODO");
+			}
+
+			@Override
+			public Lookup fetch(final QuerySingleLookup querySingleLookup) {
+				throw new UnsupportedOperationException("TODO");
 			}
 
 		}, new SchemaApi() {

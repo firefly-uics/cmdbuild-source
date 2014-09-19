@@ -119,6 +119,11 @@ public class UserDataView extends AbstractDataView {
 		return proxy(view.findDomain(name));
 	}
 
+	@Override
+	public UserDomain findDomain(final CMIdentifier identifier) {
+		return UserDomain.newInstance(this, view.findDomain(identifier));
+	}
+
 	/**
 	 * Returns the active and not active domains. It does not return reserved
 	 * domains

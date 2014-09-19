@@ -9,7 +9,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.model.widget.service.ExternalService;
 import org.cmdbuild.model.widget.service.soap.SoapRequest.SoapRequestBuilder;

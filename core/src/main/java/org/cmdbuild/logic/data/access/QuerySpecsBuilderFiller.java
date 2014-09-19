@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.Iterables.isEmpty;
-import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
@@ -30,9 +30,9 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.RELATION_TYPE_ON
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.collect.Mapper;
-import org.cmdbuild.cql.facade.CQLAnalyzer.Callback;
+import org.cmdbuild.cql.facade.CQLAnalyzer.NullCallback;
 import org.cmdbuild.cql.facade.CQLFacade;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -76,9 +76,13 @@ public class QuerySpecsBuilderFiller {
 	private CMClass sourceClass;
 
 	public QuerySpecsBuilderFiller(final CMDataView dataView, final QueryOptions queryOptions, final String className) {
+		this(dataView, queryOptions, dataView.findClass(className));
+	}
+
+	public QuerySpecsBuilderFiller(final CMDataView dataView, final QueryOptions queryOptions, final CMClass sourceClass) {
 		this.dataView = dataView;
 		this.queryOptions = queryOptions;
-		this.sourceClass = dataView.findClass(className);
+		this.sourceClass = sourceClass;
 	}
 
 	public CMClass getSourceClass() {
@@ -204,7 +208,7 @@ public class QuerySpecsBuilderFiller {
 			Log.CMDBUILD.info("Filter is a CQL filter");
 			final String cql = filterObject.getString(CQL_KEY);
 			final Map<String, Object> context = queryOptions.getParameters();
-			CQLFacade.compileAndAnalyze(cql, context, new Callback() {
+			CQLFacade.compileAndAnalyze(cql, context, new NullCallback() {
 
 				@Override
 				public void from(final CMClass source) {

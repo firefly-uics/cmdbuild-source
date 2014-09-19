@@ -1,7 +1,5 @@
 package org.cmdbuild.report;
 
-import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
-import static org.cmdbuild.services.store.report.JDBCReportStore.REPORT_CLASS_NAME;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
@@ -14,12 +12,6 @@ import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRPropertiesMap;
 
 import org.cmdbuild.common.Constants;
-import org.cmdbuild.common.utils.UnsupportedProxyFactory;
-import org.cmdbuild.dao.entrytype.CMAttribute;
-import org.cmdbuild.dao.entrytype.CMEntryType;
-import org.cmdbuild.dao.entrytype.CMIdentifier;
-import org.cmdbuild.dao.entrytype.ForwardingEntryType;
-import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.exception.ReportException.ReportExceptionType;
 
 /**

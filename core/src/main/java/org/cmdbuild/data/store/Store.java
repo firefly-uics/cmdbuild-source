@@ -1,6 +1,6 @@
 package org.cmdbuild.data.store;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.cmdbuild.dao.logging.LoggingSupport;
 import org.slf4j.Logger;
@@ -13,12 +13,12 @@ public interface Store<T extends Storable> {
 
 	T read(Storable storable);
 
+	Collection<T> readAll();
+
+	Collection<T> readAll(Groupable groupable);
+
 	void update(T storable);
 
 	void delete(Storable storable);
-
-	List<T> list();
-
-	List<T> list(Groupable groupable);
 
 }

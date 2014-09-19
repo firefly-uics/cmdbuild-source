@@ -34,7 +34,7 @@ import org.cmdbuild.cql.compiler.CQLCompilerListener;
 import org.cmdbuild.cql.compiler.impl.FactoryImpl;
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
 import org.cmdbuild.cql.facade.CQLAnalyzer;
-import org.cmdbuild.cql.facade.CQLAnalyzer.Callback;
+import org.cmdbuild.cql.facade.CQLAnalyzer.NullCallback;
 import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMEntry;
@@ -64,7 +64,7 @@ public class MdrScopedIdRegistry {
 	private final CmdbfConfiguration cmdbfConfiguration;
 	private final List<ReconciliationRule> rules;
 
-	private class CQLCallback implements Callback {
+	private class CQLCallback extends NullCallback {
 
 		private final QuerySpecsBuilder queryBuilder;
 		private CMClass type;

@@ -35,7 +35,7 @@
 			this.classesMenu.addDelegate(this);
 
 			this.saveButton = new Ext.button.Button({
-				text: CMDBuild.Translation.common.btns.save,
+				text: CMDBuild.Translation.common.buttons.save,
 				disabled: true,
 				handler: function() {
 					me.callDelegates("onGISNavigationSaveButtonClick", me);
@@ -183,7 +183,7 @@
 		},
 
 		/**
-		 * 
+		 *
 		 * @param {Object} conf
 		 * has the form:
 		 * {
@@ -305,7 +305,7 @@
 	}
 
 	function serializeNodeForStructure(node) {
-		if (!node 
+		if (!node
 				|| !node.get("checked")) {
 			return null;
 		}

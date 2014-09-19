@@ -41,6 +41,7 @@ Ext.define("CMDBuild.controller.administration.dataview.CMSqlDataViewController"
 		var request = {
 			params: values,
 			success: function() {
+				_CMCache.flushTranslationsToSave(values["name"]);
 				me.gridConfigurator.getStore().load();
 			}
 		};
@@ -51,6 +52,7 @@ Ext.define("CMDBuild.controller.administration.dataview.CMSqlDataViewController"
 			request.params.id = me.record.getId();
 			_CMProxy.dataView.sql.update(request);
 		}
+		this.view.disableModify(true);
 	},
 
 	/**

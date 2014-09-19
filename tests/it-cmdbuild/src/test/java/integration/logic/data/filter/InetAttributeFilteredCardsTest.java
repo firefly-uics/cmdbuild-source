@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.cmdbuild.dao.entrytype.DBAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType.Type;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
 import org.cmdbuild.model.data.Card;
@@ -22,7 +23,7 @@ public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 
 	@Override
 	protected void initializeDatabaseData() {
-		final DBAttribute createdAttribute = addAttributeToClass(INET_ATTRIBUTE, new IpAddressAttributeType(),
+		final DBAttribute createdAttribute = addAttributeToClass(INET_ATTRIBUTE, new IpAddressAttributeType(Type.IPV4),
 				createdClass);
 
 		dbDataView().createCardFor(createdClass) //
@@ -54,8 +55,7 @@ public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(1, Iterables.size(fetchedCards));
@@ -70,8 +70,7 @@ public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(3, Iterables.size(fetchedCards));
@@ -84,8 +83,7 @@ public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(2, Iterables.size(fetchedCards));
@@ -98,8 +96,7 @@ public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(2, Iterables.size(fetchedCards));
@@ -113,8 +110,7 @@ public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(3, Iterables.size(fetchedCards));
@@ -127,8 +123,7 @@ public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(1, Iterables.size(fetchedCards));
@@ -142,8 +137,7 @@ public class InetAttributeFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions)
-				.getPaginatedCards();
+		final Iterable<Card> fetchedCards = dataAccessLogic.fetchCards(createdClass.getName(), queryOptions).elements();
 
 		// then
 		assertEquals(3, Iterables.size(fetchedCards));

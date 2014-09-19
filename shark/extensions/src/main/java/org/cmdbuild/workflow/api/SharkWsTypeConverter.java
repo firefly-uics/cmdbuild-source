@@ -1,8 +1,8 @@
 package org.cmdbuild.workflow.api;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.common.Constants.DATETIME_PRINTING_PATTERN;
 import static org.cmdbuild.common.Constants.DATE_PRINTING_PATTERN;
 import static org.cmdbuild.common.Constants.SOAP_ALL_DATES_PRINTING_PATTERN;

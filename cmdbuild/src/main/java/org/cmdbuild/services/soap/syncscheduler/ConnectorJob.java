@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.axis.AxisFault;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -348,7 +348,7 @@ public class ConnectorJob implements Runnable {
 		final LookupAttributeType lookupAttributeType = (LookupAttributeType) attribute.getType();		
 		if (StringUtils.isNotBlank(attributeValue)) {
 			final String lookupTypeName = lookupAttributeType.getLookupTypeName();
-			for (final Lookup lookupDto : lookupStore.listForType(LookupType.newInstance() //
+			for (final Lookup lookupDto : lookupStore.readAll(LookupType.newInstance() //
 					.withName(lookupTypeName) //
 					.build())) {
 				if (lookupDto.description.equals(attributeValue)) {

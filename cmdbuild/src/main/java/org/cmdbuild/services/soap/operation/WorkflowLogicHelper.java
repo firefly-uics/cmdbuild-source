@@ -2,7 +2,7 @@ package org.cmdbuild.services.soap.operation;
 
 import static com.google.common.collect.Collections2.filter;
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.ArrayList;
 import java.util.Arrays;

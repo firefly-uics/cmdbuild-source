@@ -15,6 +15,7 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
+import org.cmdbuild.model.dashboard.DefaultDashboardDefinition;
 import org.cmdbuild.model.dashboard.DashboardObjectMapper;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -85,10 +86,10 @@ public class DBDashboardStore implements DashboardStore {
 		return row.getCard(dashboardClass);
 	}
 
-	private DashboardDefinition cardToDashboardDefinition(final CMCard card) {
+	private DefaultDashboardDefinition cardToDashboardDefinition(final CMCard card) {
 		try {
 			final String serializedDefinition = (String) card.get(DEFINITION_ATTRIBUTE);
-			return mapper.readValue(serializedDefinition, DashboardDefinition.class);
+			return mapper.readValue(serializedDefinition, DefaultDashboardDefinition.class);
 		} catch (final Exception e) {
 			throw new IllegalArgumentException(errors.decodingError());
 		}

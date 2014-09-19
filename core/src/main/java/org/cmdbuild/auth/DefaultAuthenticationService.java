@@ -1,6 +1,6 @@
 package org.cmdbuild.auth;
 
-import static org.apache.commons.lang.BooleanUtils.isTrue;
+import static org.apache.commons.lang3.BooleanUtils.isTrue;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -9,11 +9,11 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
 import org.cmdbuild.auth.Login.LoginType;
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
@@ -55,7 +55,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		 * 
 		 * @return active authenticators or null
 		 */
-		Set<String> getActiveAuthenticators();
+		Collection<String> getActiveAuthenticators();
 
 		/**
 		 * Return the names of the service users. They can only log in with
@@ -64,7 +64,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		 * 
 		 * @return a list of service users or null
 		 */
-		Set<String> getServiceUsers();
+		Collection<String> getServiceUsers();
 
 		/**
 		 * Return the names of the privileged service users. Every operation
@@ -74,7 +74,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		 * 
 		 * @return a list of privileged service users or null.
 		 */
-		Set<String> getPrivilegedServiceUsers();
+		Collection<String> getPrivilegedServiceUsers();
 	}
 
 	private interface FetchCallback {
@@ -102,24 +102,24 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	private UserStore userStore;
 	private final CMDataView view;
 
-	private final Set<String> serviceUsers;
-	private final Set<String> authenticatorNames;
+	private final Collection<String> serviceUsers;
+	private final Collection<String> authenticatorNames;
 
 	public DefaultAuthenticationService(final CMDataView dataView) {
 		this(new Configuration() {
 
 			@Override
-			public Set<String> getActiveAuthenticators() {
+			public Collection<String> getActiveAuthenticators() {
 				return null;
 			}
 
 			@Override
-			public Set<String> getServiceUsers() {
+			public Collection<String> getServiceUsers() {
 				return null;
 			}
 
 			@Override
-			public Set<String> getPrivilegedServiceUsers() {
+			public Collection<String> getPrivilegedServiceUsers() {
 				return null;
 			}
 		}, dataView);

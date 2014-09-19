@@ -50,7 +50,7 @@
 					CMDBuild.Translation.you_have_not_set_a_filter,
 					false//
 				);
-
+				this.view.disableModify(true);
 				return;
 			} else {
 				// BUSINNESS RULE: The user could not save a view if the filter
@@ -64,7 +64,7 @@
 						CMDBuild.Translation.itIsNotAllowedFilterWithRuntimeParams, //
 						false//
 					);
-
+					this.view.disableModify(true);
 					return;
 				}
 			}
@@ -72,6 +72,7 @@
 			var request = {
 				params: values,
 				success: function() {
+					_CMCache.flushTranslationsToSave(values["name"]);
 					me.gridConfigurator.getStore().load();
 				}
 			};
@@ -82,6 +83,8 @@
 				request.params.id = me.record.getId();
 				_CMProxy.dataView.filter.update(request);
 			}
+			this.view.disableModify(true);
+
 		},
 
 		/**

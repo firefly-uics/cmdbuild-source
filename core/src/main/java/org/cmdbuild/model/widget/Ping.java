@@ -56,7 +56,7 @@ public class Ping extends AbstractCommandExecutionWidget {
 
 	@Override
 	protected String getCommandLine(final TemplateResolver tr) {
-		final String resolvedAddress = tr.simpleEval(getAddress());
+		final String resolvedAddress = tr.resolve(getAddress());
 		return getPingCommandLine(resolvedAddress);
 	}
 

@@ -1,8 +1,8 @@
 (function() {
+
 	var TITLE_PREFIX = CMDBuild.Translation.management.modcard.title;
 
 	Ext.define("CMDBuild.view.management.classes.CMModCard", {
-
 		extend: "Ext.panel.Panel",
 
 		mixins: {
@@ -277,7 +277,7 @@
 	}
 
 	function buildMapPanel() {
-		if (CMDBuild.Config.gis.enabled 
+		if (CMDBuild.Config.gis.enabled
 				&& this.whitMap) {
 			this.showGridButton = new Ext.button.Button({
 				text: CMDBuild.Translation.management.modcard.add_relations_window.list_tab,
@@ -297,8 +297,8 @@
 				this.fireEvent(this.CMEVENTS.addButtonClick, p);
 			}, this);
 
-			this.theMap = new CMDBuild.view.management.map.CMMapPanel({
-				tbar: [this.mapAddCardButton,'->', this.showGridButton],
+			this.theMap = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
+				tbar: [this.mapAddCardButton, '->', this.showGridButton],
 				frame: false,
 				border: false
 			});
@@ -314,4 +314,5 @@
 			};
 		}
 	}
+
 })();

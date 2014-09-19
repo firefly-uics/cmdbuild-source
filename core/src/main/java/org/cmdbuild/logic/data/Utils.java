@@ -1,7 +1,5 @@
 package org.cmdbuild.logic.data;
 
-import static org.cmdbuild.dao.entrytype.DBIdentifier.fromName;
-
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -14,6 +12,7 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.DecimalAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.IpAddressAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.view.CMAttributeDefinition;
@@ -21,6 +20,7 @@ import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Domain;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.workflow.CMProcessClass;
+import org.joda.time.DateTime;
 
 public class Utils {
 
@@ -28,12 +28,12 @@ public class Utils {
 		// prevents instantiation
 	}
 
-	public static CMClassDefinition definitionForNew(final EntryType clazz, final CMClass parentClass) {
+	public static CMClassDefinition definitionForNew(final EntryType entryType, final CMClass parentClass) {
 		return new CMClassDefinition() {
 
 			@Override
 			public CMIdentifier getIdentifier() {
-				return fromName(clazz.getName());
+				return fromName(entryType);
 			}
 
 			@Override
@@ -43,7 +43,7 @@ public class Utils {
 
 			@Override
 			public String getDescription() {
-				return clazz.getDescription();
+				return entryType.getDescription();
 			}
 
 			@Override
@@ -53,27 +53,43 @@ public class Utils {
 
 			@Override
 			public boolean isSuperClass() {
-				return clazz.isSuperClass();
+				return entryType.isSuperClass();
 			}
 
 			@Override
 			public boolean isHoldingHistory() {
-				return clazz.isHoldingHistory();
+				return entryType.isHoldingHistory();
 			}
 
 			@Override
 			public boolean isActive() {
-				return clazz.isActive();
+				return entryType.isActive();
 			}
 
 			@Override
 			public boolean isUserStoppable() {
-				return clazz.isUserStoppable();
+				return entryType.isUserStoppable();
 			}
 
 			@Override
 			public boolean isSystem() {
-				return clazz.isSystem();
+				return entryType.isSystem();
+			}
+
+		};
+	}
+
+	private static CMIdentifier fromName(final EntryType entryType) {
+		return new CMIdentifier() {
+
+			@Override
+			public String getLocalName() {
+				return entryType.getName();
+			}
+
+			@Override
+			public String getNameSpace() {
+				return entryType.getNamespace();
 			}
 
 		};
@@ -306,6 +322,10 @@ public class Utils {
 					return attributeWithNewValues.getType();
 				} else if (existingAttribute.getType() instanceof DecimalAttributeType
 						&& attributeWithNewValues.getType() instanceof DecimalAttributeType) {
+
+					return attributeWithNewValues.getType();
+				} else if (existingAttribute.getType() instanceof IpAddressAttributeType
+						&& attributeWithNewValues.getType() instanceof IpAddressAttributeType) {
 
 					return attributeWithNewValues.getType();
 				} else {
@@ -646,7 +666,7 @@ public class Utils {
 
 			@Override
 			public CMIdentifier getIdentifier() {
-				return fromName(domain.getName());
+				return fromName(domain);
 			}
 
 			@Override
@@ -697,6 +717,23 @@ public class Utils {
 			@Override
 			public boolean isActive() {
 				return domain.isActive();
+			}
+
+		};
+	}
+
+	private static CMIdentifier fromName(final Domain domain) {
+		return new CMIdentifier() {
+
+			@Override
+			public String getLocalName() {
+				return domain.getName();
+			}
+
+			@Override
+			public String getNameSpace() {
+				// TODO must be done ASAP
+				return null;
 			}
 
 		};
@@ -836,4 +873,25 @@ public class Utils {
 
 		return null;
 	}
+
+	/**
+	 * Read from the given card the attribute with the given name. If null
+	 * return null, otherwise try to cast the object to org.joda.time.DateTime
+	 * 
+	 * @param card
+	 * @param attributeName
+	 * @return
+	 */
+	public static DateTime readDateTime(final CMCard card, final String attributeName) {
+		Object value = card.get(attributeName);
+
+		if (value instanceof DateTime) {
+			return (DateTime) value;
+		} else if (value instanceof java.sql.Date) {
+			return new DateTime(((java.util.Date) value).getTime());
+		}
+
+		return null;
+	}
+
 }

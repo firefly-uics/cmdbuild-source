@@ -2,7 +2,7 @@ package org.cmdbuild.workflow.widget;
 
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.model.widget.Workflow;
 import org.cmdbuild.notification.Notifier;
@@ -43,6 +43,7 @@ public class StartWorkflowWidgetFactory extends ValuePairWidgetFactory {
 			final Workflow widget = new Workflow();
 			widget.setFilterType(filterType);
 			widget.setFilter(filter);
+			widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 			return widget;
 		}
 		else {
@@ -51,6 +52,7 @@ public class StartWorkflowWidgetFactory extends ValuePairWidgetFactory {
 			final Workflow widget = new Workflow();
 			widget.setWorkflowName(workflowCode);
 			widget.setPreset(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
+			widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 			return widget;
 		}
 	}

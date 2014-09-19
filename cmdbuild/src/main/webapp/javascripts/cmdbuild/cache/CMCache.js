@@ -14,7 +14,9 @@
 			dashboards: "CMDBuild.cache.CMCacheDashboardFunctions",
 			attachmentCategories: "CMDBUild.cache.CMCacheAttachmentCategoryFunctions",
 			gis: "CMDBUild.cache.CMCacheGisFunctions",
-			filters: "CMDBuild.cache.CMCacheFilterFunctions"
+			filters: "CMDBuild.cache.CMCacheFilterFunctions",
+			translations: "CMDBUild.cache.CMCacheTranslationsFunctions",
+			navigationTrees: "CMDBUild.cache.CMCacheNavigationTreesFunctions"
 		},
 
 		constructor: function() {
@@ -27,6 +29,21 @@
 			this.callParent(arguments);
 			this.mapOfAttributes = {};
 			this.mapOfReferenceStore = {};
+		},
+
+		/**
+		 * Loads all classes attributes
+		 *
+		 * @return (Array) mapOfAttributes
+		 */
+		getAllAttributesList: function() {
+			for (key in _CMCache.getClasses()) {
+				_CMCache.getAttributeList(key, function(attributes) {
+					return;
+				});
+			}
+
+			return this.mapOfAttributes;
 		},
 
 		getAttributeList: function(idClass, callback) {
@@ -56,7 +73,7 @@
 				}
 
 				visibleAttributes.sort(function(a,b){return a.index - b.index;});
-				
+
 				me.mapOfAttributes[classId] = visibleAttributes;
 				if (callback) {
 					callback(visibleAttributes);
@@ -84,7 +101,7 @@
 			}
 
 			//build a not filtered store and cache it
-			if (!this.mapOfReferenceStore[key]) {		
+			if (!this.mapOfReferenceStore[key]) {
 				this.mapOfReferenceStore[key] = this.buildReferenceStore(reference);
 			}
 
@@ -95,11 +112,11 @@
 
 			return oneTimeStore || this.mapOfReferenceStore[key];
 		},
-		
+
 		getReferenceStoreById: function(id) {
 			return this.mapOfReferenceStore[id];
 		},
-		
+
 		//private
 		buildReferenceStore: function(reference) {
 			var baseParams = this.buildParamsForReferenceRequest(reference),
@@ -123,7 +140,7 @@
 				},
 				sortInfo: {
 					field: 'Description',
-					direction: 'ASC' 
+					direction: 'ASC'
 				},
 				autoLoad : !isOneTime
 			});
@@ -138,7 +155,7 @@
 				|| _CMCache.getEntryTypeNameById(idClass);
 
 			var baseParams = {
-				className: className	
+				className: className
 			};
 
 			if (reference.filter) {
@@ -151,10 +168,10 @@
 
 			return baseParams;
 		},
-	
+
 		getForeignKeyStore: function(foreignKye) {
 			var maxCards = parseInt(CMDBuild.Config.cmdbuild.referencecombolimit),
-				baseParams = { 
+				baseParams = {
 					limit: maxCards,
 					className: foreignKye.fkDestination,
 					NoFilter: true
@@ -174,7 +191,7 @@
 				},
 				sortInfo: {
 					field: 'Description',
-					direction: 'ASC' 
+					direction: 'ASC'
 				},
 				autoLoad : true
 			});
@@ -266,9 +283,9 @@
 		} else {
 			type = table.type;
 		}
-		
+
 		if (constants.cachedTableType[type]) {
-			return type; 
+			return type;
 		} else {
 			throw new Error("Unsupported node type: "+type);
 		}
@@ -278,7 +295,7 @@
 		var rawAttributes = rawDomain.attributes;
 		var attributeLibrary = domain.getAttributeLibrary();
 		for (var i=0, l=rawAttributes.length; i<l; ++i) {
-			
+
 			var rawAttribute = rawAttributes[i];
 			try {
 				var attr = CMDBuild.core.model.CMAttributeModel.buildFromJson(rawAttribute);

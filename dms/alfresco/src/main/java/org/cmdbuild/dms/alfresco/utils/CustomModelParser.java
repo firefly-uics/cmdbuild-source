@@ -1,8 +1,8 @@
 package org.cmdbuild.dms.alfresco.utils;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import java.io.IOException;
 import java.io.StringReader;

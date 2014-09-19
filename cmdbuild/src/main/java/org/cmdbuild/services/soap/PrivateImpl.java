@@ -1,7 +1,7 @@
 package org.cmdbuild.services.soap;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 
@@ -14,8 +14,8 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.jws.WebService;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.common.digest.DigesterFactory;
 import org.cmdbuild.dao.entry.CMValueSet;
@@ -393,7 +393,7 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	}
 
 	private String nativeValueToWsString(final CMAttributeType<?> type, final Object value) {
-		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value) {
+		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value, translationFacade,lookupStore()) {
 
 			@Override
 			public void visit(final EntryTypeAttributeType attributeType) {

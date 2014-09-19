@@ -1,5 +1,5 @@
 (function() {
-	
+
 	Ext.define("CMDBuild.controller.administration.user.CMModUserController", {
 		extend: "CMDBuild.controller.CMBasePanelController",
 		constructor: function() {
@@ -8,7 +8,7 @@
 			this.form = this.view.userForm;
 			this.currentUser = null;
 			this.sm = this.grid.getSelectionModel();
-			
+
 			this.view.addUserButton.on("click", onAddUserClick, this);
 			this.form.saveButton.on("click", onSaveButtonClick, this);
 			this.form.abortButton.on("click", onAbortButtonClick, this);
@@ -17,23 +17,23 @@
 		},
 
 		onViewOnFront: function(selection) {
-			
+
 		}
 	});
-	
+
 	function onAddUserClick() {
 		this.currentUser = null;
 		this.form.onAddUserClick();
 		this.sm.deselectAll();
 	}
-	
+
 	function onSaveButtonClick() {
 		var nonvalid = this.form.getNonValidFields();
 		if (nonvalid.length > 0) {
 			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			return;
 		}
-		
+
 		var params = this.form.getData();
 		//if I'm not passing the "username" and the "description" I'm changing the password
 		//and i need to know the value of the "isactive" field to not set it to false anyway
@@ -83,7 +83,7 @@
 			params: {
 				userid: this.currentUser.get("userid"),
 				disable: this.currentUser.get("isActive")
-			},			
+			},
 			scope: this,
 			success : success,
 			callback: callback

@@ -2,6 +2,7 @@ package integration.logic.data;
 
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
+import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.model.data.Attribute;
 import org.cmdbuild.model.data.Attribute.AttributeBuilder;
 import org.cmdbuild.model.data.Domain;
@@ -19,7 +20,7 @@ public abstract class DataDefinitionLogicTest extends IntegrationTestBase {
 	@Before
 	public void createDataDefinitionLogic() throws Exception {
 		// TODO add privileges management as database designer
-		dataDefinitionLogic = new DataDefinitionLogic(dbDataView());
+		dataDefinitionLogic = new DefaultDataDefinitionLogic(dbDataView());
 	}
 
 	protected DataDefinitionLogic dataDefinitionLogic() {

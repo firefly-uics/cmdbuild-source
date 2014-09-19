@@ -2,7 +2,7 @@ package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.FluentIterable.from;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.RandomStringUtils.randomAscii;
+import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.filterActive;
@@ -14,6 +14,7 @@ import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.data.store.Storables.storableOf;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,9 +44,9 @@ import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.exception.NotFoundException;
@@ -128,23 +129,23 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	public Map<Object, List<RelationInfo>> relationsBySource(final String sourceTypeName, final DomainWithSource dom) {
-		return new GetRelationList(dataView, systemDataView).list(sourceTypeName, dom);
+		return new GetRelationList(dataView).list(sourceTypeName, dom);
 	}
 
 	@Override
 	public GetRelationListResponse getRelationList(final Card srcCard, final DomainWithSource dom,
 			final QueryOptions options) {
-		return new GetRelationList(dataView, systemDataView).exec(srcCard, dom, options);
+		return new GetRelationList(dataView).exec(srcCard, dom, options);
 	}
 
 	@Override
 	public GetRelationListResponse getRelationList(final Card srcCard, final DomainWithSource dom) {
-		return new GetRelationList(dataView, systemDataView).exec(srcCard, dom, QueryOptions.newQueryOption().build());
+		return new GetRelationList(dataView).exec(srcCard, dom, QueryOptions.newQueryOption().build());
 	}
 
 	@Override
 	public GetRelationListResponse getRelationListEmptyForWrongId(final Card srcCard, final DomainWithSource dom) {
-		return new GetRelationList(strictDataView, systemDataView).emptyForWrongId().exec(srcCard, dom,
+		return new GetRelationList(strictDataView).emptyForWrongId().exec(srcCard, dom,
 				QueryOptions.newQueryOption().build());
 	}
 
@@ -469,6 +470,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 				.withSystemDataView(systemDataView) //
 				.withQueryOptions(queryOptions) //
 				.withFunction(fetchedFunction) //
+				.withParameters(queryOptions.getParameters()) //
 				.withAlias(functionAlias) //
 				.build() //
 				.count() //
@@ -569,12 +571,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		 * fetch card from database (bug #812: if some triggers are executed,
 		 * data must be fetched from db)
 		 */
-		final Card fetchedCard = store.read(new Storable() {
-			@Override
-			public String getIdentifier() {
-				return userGivenCard.getIdentifier();
-			}
-		});
+		final Card fetchedCard = store.read(storableOf(userGivenCard.getIdentifier()));
 
 		updateRelationAttributesFromReference(updatedCard.getId(), fetchedCard, userGivenCard, entryType);
 

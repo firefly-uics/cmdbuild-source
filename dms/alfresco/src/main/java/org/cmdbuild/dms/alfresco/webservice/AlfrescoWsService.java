@@ -4,10 +4,10 @@ import static org.alfresco.webservice.util.Constants.ASPECT_VERSIONABLE;
 import static org.alfresco.webservice.util.Constants.PROP_DESCRIPTION;
 import static org.alfresco.webservice.util.Constants.PROP_TITLE;
 import static org.alfresco.webservice.util.Constants.createQNameString;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.replace;
-import static org.apache.commons.lang.StringUtils.startsWith;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.replace;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;

@@ -1,10 +1,10 @@
 (function() {
-	
+
 	Ext.define("CMDBuild.controller.administration.domain.CMDomainFormController", {
 		constructor: function(view) {
 			this.view = view;
 			this.currentDomain = null;
-			
+
 			this.view.saveButton.on("click", onSaveButtonClick, this);
 			this.view.deleteButton.on("click", onDeleteButtonClick, this);
 			this.view.abortButton.on("click", onAbortButtonClick, this);
@@ -19,7 +19,7 @@
 		},
 		onDomainDeleted: Ext.emptyFn
 	});
-	
+
 	function onSaveButtonClick() {
 		var invalidFields = this.view.getNonValidFields();
 
@@ -39,6 +39,7 @@
 				success: function(req, res, decoded) {
 					this.view.disableModify();
 					_CMCache.onDomainSaved(decoded.domain);
+					_CMCache.flushTranslationsToSave(decoded.domain.name);
 				},
 				callback: function() {
 					CMDBuild.LoadMask.get().hide();
@@ -49,7 +50,7 @@
 			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 		}
 	}
-	
+
 	function onAbortButtonClick() {
 		if (this.currentDomain != null) {
 			this.onDomainSelected(this.currentDomain);
@@ -72,7 +73,7 @@
 			}
 		});
 	}
-	
+
 	function deleteDomain() {
 		if (this.currentDomain == null) {
 			// nothing to delete
