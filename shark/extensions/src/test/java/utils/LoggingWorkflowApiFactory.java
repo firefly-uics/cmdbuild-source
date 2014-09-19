@@ -252,6 +252,24 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 								processCard.getAttributes()));
 			}
 
+			@Override
+			public void suspendProcessInstance(final ExistingProcessInstance processCard) {
+				cus.info(UNUSED_SHANDLE, //
+						LOGGER_CATEGORY, //
+						suspendProcessInstanceLogLine( //
+								processCard.getClassName(), //
+								processCard.getId()));
+			}
+
+			@Override
+			public void resumeProcessInstance(final ExistingProcessInstance processCard) {
+				cus.info(UNUSED_SHANDLE, //
+						LOGGER_CATEGORY, //
+						resumeProcessInstanceLogLine( //
+								processCard.getClassName(), //
+								processCard.getId()));
+			}
+
 		}, new SchemaApi() {
 
 			@Override
@@ -626,6 +644,20 @@ public class LoggingWorkflowApiFactory implements SharkWorkflowApiFactory {
 				linkedHashMapOf(entry("className", className)), //
 				linkedHashMapOf(entry("Id", Id)), //
 				treeMapOf(attributes));
+	}
+
+	@SuppressWarnings("unchecked")
+	public static String suspendProcessInstanceLogLine(final String className, final Integer Id) {
+		return logLine("suspendProcessInstance", //
+				linkedHashMapOf(entry("className", className)), //
+				linkedHashMapOf(entry("Id", Id)));
+	}
+
+	@SuppressWarnings("unchecked")
+	public static String resumeProcessInstanceLogLine(final String className, final Integer Id) {
+		return logLine("resumeProcessInstance", //
+				linkedHashMapOf(entry("className", className)), //
+				linkedHashMapOf(entry("Id", Id)));
 	}
 
 	public static String sendMail(final List<String> froms, final List<String> tos, final List<String> ccs,

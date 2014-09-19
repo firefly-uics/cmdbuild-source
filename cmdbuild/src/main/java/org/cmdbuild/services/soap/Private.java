@@ -208,4 +208,8 @@ public interface Private {
 			@WebParam(name = "extension") String extension, //
 			@WebParam(name = "params") ReportParams[] params);
 
+	public void suspendWorkflow(@WebParam(name = "card") Card card);
+
+	public void resumeWorkflow(@WebParam(name = "card") Card card);
+
 }

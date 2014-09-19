@@ -480,4 +480,14 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 		return digester.encrypt(plainText);
 	}
 
+	@Override
+	public void suspendWorkflow(final Card card) {
+		workflowLogicHelper().suspendProcess(card);
+	}
+
+	@Override
+	public void resumeWorkflow(final Card card) {
+		workflowLogicHelper().resumeProcess(card);
+	}
+
 }
