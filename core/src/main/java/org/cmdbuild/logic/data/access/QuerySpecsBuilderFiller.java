@@ -32,7 +32,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.collect.Mapper;
-import org.cmdbuild.cql.facade.CQLAnalyzer.Callback;
+import org.cmdbuild.cql.facade.CQLAnalyzer.NullCallback;
 import org.cmdbuild.cql.facade.CQLFacade;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -208,7 +208,7 @@ public class QuerySpecsBuilderFiller {
 			Log.CMDBUILD.info("Filter is a CQL filter");
 			final String cql = filterObject.getString(CQL_KEY);
 			final Map<String, Object> context = queryOptions.getParameters();
-			CQLFacade.compileAndAnalyze(cql, context, new Callback() {
+			CQLFacade.compileAndAnalyze(cql, context, new NullCallback() {
 
 				@Override
 				public void from(final CMClass source) {
