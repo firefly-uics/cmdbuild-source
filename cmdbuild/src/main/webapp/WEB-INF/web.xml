@@ -6,7 +6,7 @@
 
 	<context-param>
 		<param-name>modules</param-name>
-		<param-value>database,cmdbuild,dms,workflow,email,graph,gis,auth,cmdbf
+		<param-value>database,cmdbuild,dms,workflow,graph,gis,auth,cmdbf
 		</param-value>
 	</context-param>
 
@@ -21,8 +21,7 @@
 	</context-param>
 
 	<listener>
-		<listener-class>org.cmdbuild.plugins.ConfigurationListener
-		</listener-class>
+		<listener-class>org.cmdbuild.plugins.ConfigurationListener</listener-class>
 	</listener>
 
 	<listener>
@@ -36,7 +35,7 @@
 
 	<filter>
 		<filter-name>TranslationFilter</filter-name>
-		<filter-class>org.cmdbuild.filters.TranslationFilter</filter-class>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>TranslationFilter</filter-name>
@@ -51,17 +50,16 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	<filter>
-		<filter-name>PatchManager</filter-name>
-		<filter-class>org.cmdbuild.filters.PatchManagerFilter</filter-class>
+		<filter-name>PatchManagerFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	<filter-mapping>
-		<filter-name>PatchManager</filter-name>
+		<filter-name>PatchManagerFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	<filter>
 		<filter-name>AuthFilter</filter-name>
-		<filter-class>org.cmdbuild.filters.AuthFilter
-		</filter-class>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>AuthFilter</filter-name>
@@ -93,7 +91,7 @@
 		<servlet-name>soapws</servlet-name>
 		<url-pattern>/services/soap/*</url-pattern>
 	</servlet-mapping>
-
+	
 	<servlet>
 		<servlet-name>XsdSchema</servlet-name>
 		<servlet-class>org.cmdbuild.servlets.XsdSchema</servlet-class>

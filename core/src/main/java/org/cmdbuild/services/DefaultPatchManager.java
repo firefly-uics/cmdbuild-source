@@ -3,7 +3,6 @@ package org.cmdbuild.services;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,6 +29,7 @@ import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.model.data.EntryType;
 import org.cmdbuild.model.data.EntryType.TableType;
 import org.cmdbuild.utils.FileUtils;
@@ -135,12 +135,16 @@ public class DefaultPatchManager implements PatchManager {
 	private Patch lastAvaiablePatch;
 	private final List<Patch> availablePatch = Lists.newLinkedList();
 
-	public DefaultPatchManager(final DataSource dataSource, final CMDataView dataView,
-			final DataAccessLogic dataAccessLogic, final DataDefinitionLogic dataDefinitionLogic,
-			final FilesStore filesStore) {
+	public DefaultPatchManager( //
+			final DataSource dataSource, //
+			final CMDataView dataView, //
+			final SystemDataAccessLogicBuilder dataAccessLogicBuilder, //
+			final DataDefinitionLogic dataDefinitionLogic, //
+			final FilesStore filesStore //
+	) {
 		this.dataSource = dataSource;
 		this.dataView = dataView;
-		this.dataAccessLogic = dataAccessLogic;
+		this.dataAccessLogic = dataAccessLogicBuilder.build();
 		this.dataDefinitionLogic = dataDefinitionLogic;
 		this.filesStore = filesStore;
 		reset();
@@ -185,7 +189,7 @@ public class DefaultPatchManager implements PatchManager {
 					.thatIsSuperClass(false) //
 					.thatIsSystem(true) //
 					.build());
-			final JdbcTemplate template = new JdbcTemplate(applicationContext().getBean(DataSource.class));
+			final JdbcTemplate template = new JdbcTemplate(dataSource);
 			template.execute("COMMENT ON TABLE \"Patch\""
 					+ " IS 'DESCR: Applied patches|MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: class'");
 		}

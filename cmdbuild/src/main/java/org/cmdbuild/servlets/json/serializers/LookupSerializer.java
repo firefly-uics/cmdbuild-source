@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.LookupValue;
-import org.cmdbuild.data.store.Store.Storable;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.data.store.lookup.LookupType;

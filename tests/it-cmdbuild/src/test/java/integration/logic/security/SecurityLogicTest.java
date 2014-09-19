@@ -43,7 +43,7 @@ public class SecurityLogicTest extends IntegrationTestBase {
 	public void setUp() {
 		fixture = new UserRolePrivilegeFixture(dbDriver());
 
-		securityLogic = new SecurityLogic(dbDataView(), null, operationUser()); // FIXME
+		securityLogic = new SecurityLogic(dbDataView(), null, null);
 		populateDatabaseWithUsersGroupsAndPrivileges();
 	}
 

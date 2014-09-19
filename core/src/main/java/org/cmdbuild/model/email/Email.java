@@ -2,7 +2,9 @@ package org.cmdbuild.model.email;
 
 import java.util.Collections;
 
-import org.cmdbuild.data.store.Store.Storable;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.model.AbstractEmail;
 import org.joda.time.DateTime;
 
@@ -41,7 +43,7 @@ public class Email extends AbstractEmail implements Storable {
 	private String fromAddress;
 	private DateTime date;
 	private EmailStatus status;
-	private Integer activityId;
+	private Long activityId;
 	private Iterable<Attachment> attachments;
 
 	public Email() {
@@ -80,11 +82,11 @@ public class Email extends AbstractEmail implements Storable {
 		this.status = status;
 	}
 
-	public Integer getActivityId() {
+	public Long getActivityId() {
 		return activityId;
 	}
 
-	public void setActivityId(final Integer activityId) {
+	public void setActivityId(final Long activityId) {
 		this.activityId = activityId;
 	}
 
@@ -99,6 +101,11 @@ public class Email extends AbstractEmail implements Storable {
 
 	public void setAttachments(final Iterable<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }
