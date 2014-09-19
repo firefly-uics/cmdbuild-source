@@ -73,7 +73,7 @@
 						renderIntent: "default",
 						eventListeners: {
 							featurehighlighted: function(e) {
-								me.onFeatureSelect(e.feature);
+								me.onFeatureSelect(e);
 							}
 						}
 					});
@@ -96,33 +96,17 @@
 			return this.lastSelection;
 		},
 
-		centerMapOnSelection: function() {
-			var me = this;
-
-			if (this.model.hasSelection()) {
-				var ss = this.model.getSelections();
-				var s = ss[0];
-
-				CMDBuild.ServiceProxy.getFeature(
-					this.classId,
-					s,
-					function onSuccess(result, options, decodedResult) {
-						// The card could have no decodedResult
-						if (decodedResult.properties) {
-							me.map.centerOnGeometry(decodedResult);
-						}
-					}
-				);
-			}
-		},
-
 		onCardSelected: function(card) {
+_debug('onCardSelected', card);
 			if (this.mapPanel.cmVisible) {
 				var id = card;
+
 				if (card && typeof card.get == "function")
 					id = card.get("Id");
-
+_debug('onCardSelected id', id);
+_debug('onCardSelected this.currentCardId', this.currentCardId);
 				if (id != this.currentCardId) {
+_debug('onCardSelected if');
 					this.currentCardId = id;
 					var layers = this.mapPanel.getMap().getCmdbLayers();
 
@@ -139,16 +123,39 @@
 				}
 
 				// To sync the miniCardGrid
-				// TODO ensure that the grid is on the right page
 				this.mapPanel.getMiniCardGrid().selectCardSilently(card);
 
-				if (card)
+				if (card) {
+_debug('centerMapOnFeature', card.data);
 					this.centerMapOnFeature(card.data);
-
+				}
 				// To sync selected feature with grid card
+				this.model.select(id);
 				this.lastSelection = id;
+//				this.ownerController.loadPageForLastSelection(id);
 			}
-		}
+		},
+
+		/**
+		 * @param {Object} e
+		 * @param {OpenLayers.Feature.Vector} e.feature
+		 * @param {CMDBuild.Management.CMSelectFeatureController} e.object
+		 */
+		onFeatureSelect: function(e) {
+_debug('featurehighlighted', e);
+_debug('featurehighlighted getMouse', e.object.handlers.feature.evt.xy);
+_debug('featurehighlighted coords', this.map.getLonLatFromPixel(e.object.handlers.feature.evt.xy));
+			var feature = e.feature;
+			var prop = feature.attributes;
+			var layer = feature.layer;
+
+			if (layer.editLayer) { // the feature selected is in a cmdbLayer with an associated editLayer
+				_CMCardModuleState.setCard({
+					Id: prop.master_card,
+					IdClass: prop.master_class
+				});
+			}
+		},
 	});
 
 	/**

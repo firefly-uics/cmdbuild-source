@@ -9,10 +9,10 @@ public interface TemplateResolver {
 	 * Resolves the specified template. A {@code null} template should be
 	 * resolved as {@code null}.
 	 * 
-	 * @param template
+	 * @param expression
 	 * 
 	 * @return the resolved template.
 	 */
-	String resolve(String template);
+	String resolve(String expression);
 
 }

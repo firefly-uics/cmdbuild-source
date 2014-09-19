@@ -24,7 +24,7 @@ public class Serialization {
 
 	@Autowired
 	private LanguageStore languageStore;
-	
+
 	@Autowired
 	private LookupStore lookupStore;
 
@@ -43,7 +43,7 @@ public class Serialization {
 	@Bean
 	public CardSerializer cardSerializer() {
 		return new CardSerializer(data.systemDataAccessLogicBuilder(), relationAttributeSerializer(),
-				translationFacade(),lookupStore);
+				translationFacade(), lookupStore);
 	}
 
 	@Bean

@@ -25,6 +25,7 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import javax.sql.DataSource;
 
 import org.cmdbuild.cql.CQLBuilderListener.FieldInputValue;
 import org.cmdbuild.cql.CQLBuilderListener.FieldValueType;
+import org.cmdbuild.cql.compiler.impl.ClassDeclarationImpl;
 import org.cmdbuild.cql.compiler.impl.DomainDeclarationImpl;
 import org.cmdbuild.cql.compiler.impl.DomainObjectsReferenceImpl;
 import org.cmdbuild.cql.compiler.impl.FieldImpl;
@@ -41,9 +43,7 @@ import org.cmdbuild.cql.compiler.impl.GroupImpl;
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
 import org.cmdbuild.cql.compiler.impl.SelectImpl;
 import org.cmdbuild.cql.compiler.impl.WhereImpl;
-import org.cmdbuild.cql.compiler.select.ClassSelect;
 import org.cmdbuild.cql.compiler.select.FieldSelect;
-import org.cmdbuild.cql.compiler.select.SelectElement;
 import org.cmdbuild.cql.compiler.select.SelectItem;
 import org.cmdbuild.cql.compiler.where.DomainObjectsReference;
 import org.cmdbuild.cql.compiler.where.Field.FieldValue;
@@ -90,6 +90,8 @@ public class CQLAnalyzer {
 
 		void from(CMClass source);
 
+		void attributes(Iterable<QueryAliasAttribute> attributes);
+
 		void distinct();
 
 		void leftJoin(CMClass target, Alias alias, Over over);
@@ -97,6 +99,40 @@ public class CQLAnalyzer {
 		void join(CMClass target, Alias alias, Over over);
 
 		void where(WhereClause clause);
+
+	}
+
+	public static abstract class NullCallback implements Callback {
+
+		@Override
+		public void from(final CMClass source) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void attributes(final Iterable<QueryAliasAttribute> attributes) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void distinct() {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void leftJoin(final CMClass target, final Alias alias, final Over over) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void join(final CMClass target, final Alias alias, final Over over) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void where(final WhereClause clause) {
+			// TODO Auto-generated method stub
+		}
 
 	}
 
@@ -178,13 +214,15 @@ public class CQLAnalyzer {
 	private final Callback callback;
 
 	private CMClass fromClass;
-	private final List<WhereClause> whereClauses;
-	private final List<JoinElement> joinElements;
+	private final Collection<QueryAliasAttribute> attributes;
+	private final Collection<WhereClause> whereClauses;
+	private final Collection<JoinElement> joinElements;
 
 	public CQLAnalyzer(final QueryImpl query, final Map<String, Object> vars, final Callback callback) {
 		this.query = query;
 		this.vars = vars;
 		this.callback = callback;
+		this.attributes = Lists.newArrayList();
 		this.whereClauses = Lists.newArrayList();
 		this.joinElements = Lists.newArrayList();
 	}
@@ -196,6 +234,7 @@ public class CQLAnalyzer {
 
 	private void callback() {
 		callback.from(fromClass);
+		callback.attributes(attributes);
 		callback.where(isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses));
 		if (!joinElements.isEmpty()) {
 			callback.distinct();
@@ -215,32 +254,24 @@ public class CQLAnalyzer {
 	}
 
 	private void init() {
-		fromClass = query.getFrom().mainClass().getClassTable(dataView);
+		final ClassDeclarationImpl mainClass = query.getFrom().mainClass();
+
+		fromClass = mainClass.getClassTable(dataView);
+
+		final SelectImpl select = query.getSelect();
+		if (!select.isDefault()) {
+			for (final SelectItem item : select.get(mainClass).getElements()) {
+				if (item instanceof FieldSelect) {
+					final FieldSelect fieldSelect = FieldSelectImpl.class.cast(item);
+					final String name = fieldSelect.getName();
+					attributes.add(attribute(fromClass, name));
+				}
+			}
+		}
 
 		final WhereImpl where = query.getWhere();
 		for (final WhereElement element : where.getElements()) {
 			handleWhereElement(element, fromClass);
-		}
-
-		final SelectImpl select = query.getSelect();
-		if (!select.isDefault()) {
-			for (@SuppressWarnings("rawtypes")
-			final SelectElement selectElement : select.getElements()) {
-				if (selectElement instanceof ClassSelect) {
-					final ClassSelect classSelect = ClassSelect.class.cast(selectElement);
-					for (final SelectItem item : classSelect.getElements()) {
-						if (item instanceof FieldSelect) {
-							FieldSelectImpl.class.cast(item);
-							// ?
-						} else {
-							logger.warn(marker, "unsupported select item '{}'", selectElement.getClass()
-									.getSimpleName());
-						}
-					}
-				} else {
-					logger.warn("unsupported select element '{}'", selectElement.getClass().getSimpleName());
-				}
-			}
 		}
 	}
 
@@ -325,7 +356,8 @@ public class CQLAnalyzer {
 				whereClause = condition(attributeForQuery, endsWith(value));
 				break;
 			case BTW:
-				whereClause = and(condition(attributeForQuery, gt(value)), condition(attributeForQuery, lt(values.get(1))));
+				whereClause = and(condition(attributeForQuery, gt(value)),
+						condition(attributeForQuery, lt(values.get(1))));
 				break;
 			case IN:
 				whereClause = condition(attributeForQuery, in(values.toArray()));
