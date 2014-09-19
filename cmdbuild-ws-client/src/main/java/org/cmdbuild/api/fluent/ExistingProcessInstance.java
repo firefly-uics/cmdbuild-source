@@ -34,4 +34,13 @@ public class ExistingProcessInstance extends ActiveCard {
 	public void advance() {
 		api().getExecutor().updateProcessInstance(this, AdvanceProcess.YES);
 	}
+
+	public void suspend() {
+		api().getExecutor().suspendProcessInstance(this);
+	}
+
+	public void resume() {
+		api().getExecutor().resumeProcessInstance(this);
+	}
+
 }

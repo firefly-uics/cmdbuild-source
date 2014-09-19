@@ -278,7 +278,18 @@ public class WorkflowLogicHelper implements SoapLogicHelper {
 		throw new RuntimeException(message, e);
 	}
 
-	public void resumeProcess(final Card card) throws CMWorkflowException {
+	public void suspendProcess(final Card card) {
+		try {
+			workflowLogic.resumeProcess(card.getClassName(), longIdFor(card));
+		} catch (final CMWorkflowException e) {
+			final String message = format("cannot resume process for className '%s' and cardId '%d'",
+					card.getClassName(), card.getId());
+			logger.error(message, e);
+			forwardException(message, e);
+		}
+	}
+
+	public void resumeProcess(final Card card) {
 		try {
 			workflowLogic.resumeProcess(card.getClassName(), longIdFor(card));
 		} catch (final CMWorkflowException e) {
