@@ -1,34 +1,31 @@
 (function() {
 
-	Ext.define("CMDBuild.view.management.common.widgets.linkCards.LinkCards", {
-		extend: "Ext.panel.Panel",
+	Ext.define('CMDBuild.view.management.common.widgets.linkCards.LinkCards', {
+		extend: 'Ext.panel.Panel',
 
 		statics: {
-			WIDGET_NAME: ".LinkCards"
+			WIDGET_NAME: '.LinkCards'
 		},
 
 		delegate: undefined,
+		widget: undefined,
 
-		constructor: function(c) {
-			this.widget = c.widget;
-			this.widgetReader = CMDBuild.management.model.widget.LinkCardsConfigurationReader;
-			this.callParent([this.widget]); // to apply the conf to the panel
-		},
+		hideMode: 'offsets',
+		border: false,
+		frame: false,
+		cls: 'x-panel-body-default-framed',
 
-		setModel: function(m) {
-			this.model = m;
+		layout: {
+			type: 'border'
 		},
 
 		initComponent: function() {
-			var c = this.widget;
-			var selModel = selectionModelFromConfiguration(c, this);
-			var readOnly = this.widgetReader.readOnly(c);
-			var theMapIsToSet = (this.widgetReader.enableMap(c) && CMDBuild.Config.gis.enabled);
 			var allowEditCard = false;
 			var allowShowCard = false;
 
-			if (this.widgetReader.allowCardEditing(c)) {
-				var priv = _CMUtils.getClassPrivilegesByName(this.widgetReader.className(c));
+			if (this.widget.allowCardEditing) {
+				var priv = _CMUtils.getClassPrivilegesByName(this.widget.className);
+
 				if (priv && priv.write) {
 					allowEditCard = true;
 				} else {
@@ -37,149 +34,115 @@
 			}
 
 			this.grid = Ext.create('CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid', {
-				autoScroll : true,
-				filterSubcategory : this.widgetReader.id(c),
-				selModel: selModel,
-				readOnly: readOnly,
-				hideMode: "offsets",
-				region: "center",
+				autoScroll: true,
+				selModel: this.selectionModelFromConfiguration(),
+				readOnly: this.widget.readOnly,
+				hideMode: 'offsets',
+				region: 'center',
 				border: false,
+				filterSubcategory : this.widget.id,
 				cmAllowEditCard: allowEditCard,
 				cmAllowShowCard: allowShowCard
 			});
 
-			this.items = [this.grid];
-			this.layout = "border";
-
-			if (theMapIsToSet) {
-				this.buildMap();
-			}
+			this.selectionModel = this.grid.getSelectionModel();
 
 			Ext.apply(this, {
-				hideMode: "offsets",
-				border: false,
-				frame: false,
-				cls: "x-panel-body-default-framed"
+				items: [this.grid]
 			});
 
+			if (this.widget.enableMap && CMDBuild.Config.gis.enabled)
+				this.buildMap();
+
 			this.callParent(arguments);
-
-			this.mon(this.grid.getSelectionModel(), "select", function(sm, s) {
-				this.fireEvent("select", s);
-			}, this);
-
-			this.mon(this.grid.getSelectionModel(), "deselect", function(sm, s) {
-				this.fireEvent("deselect", s);
-			}, this);
-
-			this.mon(this.grid, "beforeload", onBeforeLoad, this);
-			// there is a problem with the loadMask, if remove the delay the
-			// selection is done before the unMask, then it is reset
-			this.mon(this.grid, "load", Ext.Function.createDelayed(onLoad, 1), this);
 		},
-
-		updateGrid: function(classId, cqlParams) {
-			this.grid.CQL = cqlParams;
-			this.grid.store.proxy.extraParams = this.grid.getStoreExtraParams();
-			this.grid.updateStoreForClassId(classId);
-		},
-
-		hasMap: function() {
-			return this.mapPanel != undefined;
-		},
-
-		reset: function() {
-			var sm = this.grid.getSelectionModel();
-			if (sm && typeof sm.reset == "function") {
-				sm.reset();
-			}
-
-			this.model.reset();
-		},
-
 
 		buildMap: function() {
-			this.mapButton = new Ext.Button({
+			this.mapButton = Ext.create('Ext.button.Button', {
 				text: CMDBuild.Translation.management.modcard.tabs.map,
 				iconCls: 'map',
 				scope: this,
+
 				handler: function() {
-					this.fireEvent("CM_toggle_map");
+					this.delegate.cmOn('onToggleMapButtonClick');
 				}
 			});
 
 			this.mapPanel = Ext.create('CMDBuild.view.management.classes.map.CMMapPanel', {
+				frame: false,
+				border: false,
+
 				lon: this.widget.StartMapWithLongitude || this.widget.mapLongitude,
 				lat: this.widget.StartMapWithLatitude || this.widget.mapLatitude,
-				initialZoomLevel: this.widget.StartMapWithZoom || this.widget.mapZoom,
-				frame: false,
-				border: false
+				initialZoomLevel: this.widget.StartMapWithZoom || this.widget.mapZoom
 			});
 
-			this.tbar = ["->", this.mapButton];
+			Ext.apply(this, {
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						items: ['->', this.mapButton]
+					}
+				],
+				layout: {
+					type: 'card'
+				},
+				items: [this.grid, this.mapPanel]
+			});
 
-			this.items = [this.grid, this.mapPanel];
-			this.layout = "card";
+			// Function definitions
+				this.showMap = function() {
+					this.layout.setActiveItem(this.mapPanel.id);
 
-			this.showMap = function() {
-				this.layout.setActiveItem(this.mapPanel.id);
+					this.mapPanel.updateSize();
 
-				this.mapPanel.updateSize();
+					this.mapPanel.setCmVisible(true);
+					this.grid.setCmVisible(false);
+				};
 
-				this.mapPanel.setCmVisible(true);
-				this.grid.setCmVisible(false);
+				this.showGrid = function() {
+					this.layout.setActiveItem(this.grid.id);
 
-//				this.delegate.syncSelections();
-			};
+					this.grid.setCmVisible(true);
+					this.mapPanel.setCmVisible(false);
+				};
 
-			this.showGrid = function() {
-				this.layout.setActiveItem(this.grid.id);
+				this.getMapPanel = function() {
+					return this.mapPanel;
+				};
+		},
 
-				this.grid.setCmVisible(true);
-				this.mapPanel.setCmVisible(false);
+		/**
+		 * @return {Boolean}
+		 */
+		hasMap: function() {
+			return this.mapPanel != undefined;
+		},
 
-//				this.delegate.syncSelections();
-			};
+		/**
+		 * @return {Ext.selection.RowModel}
+		 * @return {CMDBuild.selection.CMMultiPageSelectionModel} single select or multi select
+		 */
+		selectionModelFromConfiguration: function() {
+			if (this.widget.readOnly) {
+				return Ext.create('Ext.selection.RowModel');
+			}
 
-			this.getMapPanel = function() {
-				return this.mapPanel;
-			};
+			if (this.widget.singleSelect) {
+				return Ext.create('CMDBuild.selection.CMMultiPageSelectionModel', {
+					mode: 'SINGLE',
+					idProperty: 'Id' // Required to identify the records for the data and not the id of ext
+				});
+			}
+
+			return Ext.create('CMDBuild.selection.CMMultiPageSelectionModel', {
+				mode: 'MULTI',
+				avoidCheckerHeader: true,
+				idProperty: 'Id' // Required to identify the records for the data and not the id of ext
+			});
 		}
-//		,
-//
-//		syncSelections: function() {
-//			if (this.model) {
-//				this.grid.syncSelections(this.model.getSelections());
-//			}
-//		}
 	});
-
-	function selectionModelFromConfiguration(conf, me) {
-		if (me.widgetReader.readOnly(conf)) {
-			return new Ext.selection.RowModel();
-		}
-
-		if (me.widgetReader.singleSelect(conf)) {
-			return new CMDBuild.selection.CMMultiPageSelectionModel({
-				mode: "SINGLE",
-				idProperty: "Id" // required to identify the records for the data and not the id of ext
-			});
-		}
-
-		return new CMDBuild.selection.CMMultiPageSelectionModel({
-			mode: "MULTI",
-			avoidCheckerHeader: true,
-			idProperty: "Id" // required to identify the records for the data and not the id of ext
-		});
-	}
-
-	function onBeforeLoad() {
-		this.model.freeze();
-	}
-
-	function onLoad() {
-		this.model.defreeze();
-//		this.syncSelections();
-	}
 
 })();
