@@ -12,9 +12,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.cmdbuild.common.template.LoggingSupport;
 import org.cmdbuild.common.template.TemplateResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
@@ -22,9 +21,7 @@ import com.google.common.collect.Maps;
 /**
  * {@link TemplateResolver} based on {@link Engine}s.
  */
-public class EngineBasedTemplateResolver implements TemplateResolver {
-
-	private static final Logger logger = LoggerFactory.getLogger(EngineBasedTemplateResolver.class);
+public class EngineBasedTemplateResolver implements TemplateResolver, LoggingSupport {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<EngineBasedTemplateResolver> {
 
