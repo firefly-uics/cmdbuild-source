@@ -7,6 +7,8 @@
 			WIDGET_NAME: ".LinkCards"
 		},
 
+		delegate: undefined,
+
 		constructor: function(c) {
 			this.widget = c.widget;
 			this.widgetReader = CMDBuild.management.model.widget.LinkCardsConfigurationReader;
@@ -63,11 +65,11 @@
 			this.callParent(arguments);
 
 			this.mon(this.grid.getSelectionModel(), "select", function(sm, s) {
-				this.fireEvent("select", s.get("Id"));
+				this.fireEvent("select", s);
 			}, this);
 
 			this.mon(this.grid.getSelectionModel(), "deselect", function(sm, s) {
-				this.fireEvent("deselect", s.get("Id"));
+				this.fireEvent("deselect", s);
 			}, this);
 
 			this.mon(this.grid, "beforeload", onBeforeLoad, this);
@@ -126,6 +128,8 @@
 
 				this.mapPanel.setCmVisible(true);
 				this.grid.setCmVisible(false);
+
+//				this.delegate.syncSelections();
 			};
 
 			this.showGrid = function() {
@@ -133,12 +137,21 @@
 
 				this.grid.setCmVisible(true);
 				this.mapPanel.setCmVisible(false);
+
+//				this.delegate.syncSelections();
 			};
 
 			this.getMapPanel = function() {
 				return this.mapPanel;
 			};
 		}
+//		,
+//
+//		syncSelections: function() {
+//			if (this.model) {
+//				this.grid.syncSelections(this.model.getSelections());
+//			}
+//		}
 	});
 
 	function selectionModelFromConfiguration(conf, me) {
@@ -166,6 +179,7 @@
 
 	function onLoad() {
 		this.model.defreeze();
+//		this.syncSelections();
 	}
 
 })();

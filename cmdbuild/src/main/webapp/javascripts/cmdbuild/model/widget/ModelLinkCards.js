@@ -25,6 +25,7 @@
 		 * @param {Int} selection - card id
 		 */
 		select: function(selection) {
+_debug('Model select', selection);
 			if (!this._silent) {
 				if (this.isSelected(selection)) {
 					return;

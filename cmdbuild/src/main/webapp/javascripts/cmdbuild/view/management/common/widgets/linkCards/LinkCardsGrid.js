@@ -36,6 +36,18 @@
 				};
 			}
 		}
+//		,
+//
+//		syncSelections: function(s) {
+//			this.getSelectionModel().clearSelections();
+//
+//			if (!this.readOnly && s) {
+//				for (var i = 0, l = s.length; i<l; ++i) {
+//					var cardId = s[i];
+//					this.selectByCardId(cardId);
+//				}
+//			}
+//		}
 	});
 
 })();

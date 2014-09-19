@@ -37,6 +37,8 @@
 			this.singleSelect = widgetReader.singleSelect(this.widget);
 			this.readOnly = widgetReader.readOnly(this.widget);
 
+			this.view.delegate = this;
+
 			this.callBacks = {
 				'action-card-edit': this.onEditCardkClick,
 				"action-card-show": this.onShowCardkClick
@@ -94,8 +96,9 @@
 				out = {};
 				out["output"] = convertElementsFromStringToInt(this.model.getSelections());
 			}
-
-			return out;
+_debug('this.model.getSelections()', this.model.getSelections());
+_debug('widget output', out);
+//			return out;
 		},
 
 		// override
@@ -130,9 +133,20 @@
 			return widgetReader.label(this.widget);
 		},
 
-		onSelect: function(cardId) {
+		/**
+		 * @param {Object} record
+		 */
+		onSelect: function(record) {
+			var cardId = undefined;
+_debug('onSelect record', record);
+			if (typeof record == 'number')
+				cardId = record;
+			else
+				cardId = record.get('Id');
+
 			if (!Ext.isEmpty(cardId)) {
-				this.mapController.onCardSelected(cardId);
+				_CMCardModuleState.card = record;
+
 				this.view.grid.getSelectionModel().select(
 					this.view.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, cardId)
 				);
@@ -174,7 +188,6 @@
 						}
 					}
 				});
-
 			}
 		}
 	});
@@ -214,9 +227,6 @@
 				v.showMap();
 				v.mapButton.setIconCls("table");
 				v.mapButton.setText(CMDBuild.Translation.management.modcard.add_relations_window.list_tab);
-				if (me.mapController) {
-					me.mapController.centerMapOnSelection();
-				}
 			} else {
 				v.showGrid();
 				v.mapButton.setIconCls("map");
@@ -263,7 +273,9 @@
 		return w;
 	}
 
-	function onDeselect(cardId) {
+	function onDeselect(record) {
+		var cardId = record.get('Id');
+
 		this.model.deselect(cardId);
 	}
 
