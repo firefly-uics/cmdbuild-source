@@ -1,169 +1,395 @@
 (function() {
 	/*
 	 * The grid must be reload when is shown, so resolve the template and load it.
-	 *
-	 * If there is a defaultSelection, when the activity form goes in edit mode resolve the template to calculate the selection and if needed add
-	 * dependencies to the fields.
+	 * If there is a defaultSelection, when the activity form goes in edit mode resolve the template to calculate the selection and if needed add dependencies to the fields.
 	 */
-
-	var FILTER = "filter";
-	var DEFAULT_SELECTION = "defaultSelection";
-	var TABLE_VIEW_NAME = "table";
-	var STARTING_VIEW = TABLE_VIEW_NAME;
-	var widgetReader = CMDBuild.management.model.widget.LinkCardsConfigurationReader;
 
 	Ext.require('CMDBuild.model.widget.ModelLinkCards');
 
-	Ext.define("CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController", {
+	Ext.define('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController', {
 
 		mixins: {
-			observable: "Ext.util.Observable",
-			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
+			observable: 'Ext.util.Observable',
+			widgetcontroller: 'CMDBuild.controller.management.common.widgets.CMWidgetController'
 		},
 
 		statics: {
-			WIDGET_NAME: ".LinkCards"
+			WIDGET_NAME: CMDBuild.view.management.common.widgets.linkCards.LinkCards.WIDGET_NAME
 		},
 
-		constructor: function(view, supercontroller, widget, clientForm, card) {
+		/**
+		 * @param {CMDBuild.view.management.common.widgets.CMOpenReport} view
+		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
+		 * @param {Object} widgetDef
+		 * @param {Ext.form.Basic} clientForm
+		 * @param {CMDBuild.model.CMActivityInstance} card
+		 *
+		 * @override
+		 */
+		constructor: function(view, ownerController, widgetDef, clientForm, card) {
+			var me = this;
+
 			this.mixins.observable.constructor.call(this);
 			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
-			this.widget = widget;
-			this.targetEntryType = _CMCache.getEntryTypeByName(widgetReader.className(this.widget));
-			this.currentView = STARTING_VIEW;
-			this.templateResolverIsBusy = false; // is busy when load the default selection
+			this.widget = widgetDef;
+
+			if (!_CMCache.isEntryTypeByName(this.widgetConf.className))
+				throw 'LinkCardsController constructor: className not valid';
+
+			this.targetEntryType = _CMCache.getEntryTypeByName(this.widget.className);
+
+			this.templateResolverIsBusy = false; // Is busy when load the default selection
 			this.alertIfChangeDefaultSelection = false;
-			this.singleSelect = widgetReader.singleSelect(this.widget);
-			this.readOnly = widgetReader.readOnly(this.widget);
+			this.singleSelect = this.widget.singleSelect;
+			this.readOnly = this.widget.readOnly;
 
 			this.view.delegate = this;
+			this.view.grid.delegate = this;
+			this.view.widget = this.widget;
 
 			this.callBacks = {
 				'action-card-edit': this.onEditCardkClick,
-				"action-card-show": this.onShowCardkClick
+				'action-card-show': this.onShowCardkClick
 			};
 
 			this.model = Ext.create('CMDBuild.model.widget.ModelLinkCards', {
 				singleSelect: this.singleSelect
 			});
-			this.view.setModel(this.model);
+			this.setViewModel();
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
-				xaVars: _extractVariablesForTemplateResolver(widget),
+				xaVars: me._extractVariablesForTemplateResolver(),
 				serverVars: this.getTemplateResolverServerVars()
 			});
 
-			this.mon(this.view.grid, 'beforeitemclick', cellclickHandler, this);
-			this.mon(this.view.grid, 'itemdblclick', onItemDoubleclick, this);
-			this.mon(this.view, "select", this.onSelect, this);
-			this.mon(this.view, "deselect", onDeselect, this);
-
 			if (this.view.hasMap()) {
-				listenToggleMapEvents(this);
-				buildMapController(this);
+				if (this.view.hasMap()) {
+					this.mapController = Ext.create('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsMapController', {
+						view: this.view.getMapPanel(),
+						model: this.model,
+						parentDelegate: this,
+						widgetConf: this.widget
+					});
+				} else {
+					this.mapController = {
+						onEntryTypeSelected: Ext.emptyFn,
+						onAddCardButtonClick: Ext.emptyFn,
+						onCardSaved: Ext.emptyFn,
+						getValues: function() { return false; },
+						refresh: Ext.emptyFn,
+						editMode: Ext.emptyFn,
+						displayMode: Ext.emptyFn
+					};
+				}
+			}
+
+			this.mon(this.view.grid, 'beforeload', this.onBeforeLoad, this);
+			// There is a problem with the loadMask, if remove the delay the selection is done before the unMask, then it is reset
+			this.mon(this.view.grid, 'load', Ext.Function.createDelayed(this.onLoad, 1), this);
+		},
+
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 */
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				case 'onCellClick':
+					return this.onCellClick(param);
+
+				case 'onDeselect':
+					return this.onDeselect(param);
+
+				case 'onGridShow':
+					return this.onGridShow();
+
+				case 'onItemDoubleclick':
+					return this.onItemDoubleclick(param);
+
+				case 'onToggleMapButtonClick' :
+					return this.onToggleMapButtonClick();
+
+				case 'onSelect':
+					return this.onSelect(param.record);
+
+				default: {
+					if (!Ext.isEmpty(this.parentDelegate))
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
 			}
 		},
 
-		// override
+		/**
+		 * @return {Object} variables
+		 */
+		_extractVariablesForTemplateResolver: function() {
+			var variables = {};
+			variables[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_SELECTION] = this.widget.defaultSelection;
+			variables[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.widget.filter;
+
+			Ext.apply(variables, this.widget.templates || {});
+
+			return variables;
+		},
+
+		alertIfNeeded: function() {
+			if (this.alertIfChangeDefaultSelection) {
+				CMDBuild.Msg.warn(
+					null,
+					Ext.String.format(
+						CMDBuild.Translation.warnings.link_cards_changed_values,
+						this.widget.label || this.view.id
+					),
+					false
+				);
+
+				this.alertIfChangeDefaultSelection = false;
+			}
+		},
+
+		/**
+		 * @override
+		 */
 		beforeActiveView: function() {
-			if (this.targetEntryType == null) {
-				return;
+			// When the linkCard is not busy load the grid
+			if (!Ext.isEmpty(this.targetEntryType)) {
+				var me = this;
+				var classId = this.targetEntryType.getId();
+				var cqlQuery = this.widget.filter;
+
+				new _CMUtils.PollingFunction({
+					success: function() {
+						me.alertIfChangeDefaultSelection = true;
+
+						// CQL filter and regular filter cannot be merged now.
+						// The filter button should be enabled only if no other filter is present.
+						if (cqlQuery) {
+							me.resolveFilterTemplate(cqlQuery, classId);
+							me.view.grid.disableFilterMenuButton();
+						} else {
+							me.updateViewGrid(classId);
+							me.view.grid.enableFilterMenuButton();
+						}
+					},
+					failure: function() {
+						CMDBuild.Msg.error(null, CMDBuild.Translation.errors.busy_wf_widgets, false);
+					},
+					checkFn: function() {
+						// I want exit if I'm not busy
+						return !me.isBusy();
+					},
+					cbScope: me,
+					checkFnScope: me
+				}).run();
+			}
+		},
+
+		onBeforeLoad: function() {
+			this.model.freeze();
+		},
+
+		/**
+		 * Local solution for a global issue.
+		 * The card model is a CMDBuild.Dummymodel, it takes a map and set all the key as fields of the model, so there are no type specification.
+		 * Server side I want that the Ids are integer, so now cast it in this function, but the real solution is to find a way to say to the card that its id is a number.
+		 *
+		 * @param {Array} input
+		 *
+		 * @ŗeturn {Array} output
+		 */
+		convertElementsFromStringToInt: function(input) {
+			var output = [];
+
+			if (Ext.isArray(input))
+				for (var i = 0; i < input.length; ++i) {
+					var element = parseInt(input[i]);
+
+					if (element)
+						output.push(element);
+				}
+
+			return output;
+		},
+
+		/**
+		 * @param {Ext.data.Model} model
+		 * @param {Boolean] editable
+		 */
+		getCardWindow: function(model, editable) {
+			var cardWindow = Ext.create('CMDBuild.view.management.common.CMCardWindow', {
+				cmEditMode: editable,
+				withButtons: editable,
+				title: model.get('IdClass_value')
+			});
+
+			new CMDBuild.controller.management.common.CMCardWindowController(
+				cardWindow,
+				{
+					entryType: model.get('IdClass'),
+					card: model.get('Id'),
+					cmEditMode: editable
+				}
+			);
+
+			return cardWindow;
+		},
+
+		/**
+		 * @return {Object} out
+		 *
+		 * @override
+		 */
+		getData: function() {
+			var out = null;
+
+			if (!this.readOnly) {
+				out = {};
+				out['output'] = this.convertElementsFromStringToInt(this.model.getSelections());
 			}
 
-			var classId = this.targetEntryType.getId(),
-				cqlQuery = widgetReader.filter(this.widget);
-
-			loadTheGridAsSoonAsPossible(this, cqlQuery, classId);
+			return out;
 		},
 
-		// override
-		onEditMode: function() {
-			// for the auto-select
-			resolveDefaultSelectionTemplate(this);
+		/**
+		 * @return {String} label
+		 */
+		getLabel: function() {
+			return this.widget.label;
 		},
 
-		// override
+		/**
+		 * @return {Object} targetEntryType
+		 */
+		getTargetEntryType: function() {
+			return this.targetEntryType;
+		},
+
+		/**
+		 * @return {Boolean} templateResolverIsBusy
+		 *
+		 * @override
+		 */
 		isBusy: function() {
 			return this.templateResolverIsBusy;
 		},
 
-		// override
-		getData: function() {
-			var out = null;
-			if (!this.readOnly) {
-				out = {};
-				out["output"] = convertElementsFromStringToInt(this.model.getSelections());
+		/**
+		 * @param {Object} params
+		 * 	{
+		 * 		{Ext.data.Model} record
+		 * 		{Ext.EventObject} event
+		 * 	}
+		 */
+		onCellClick: function(params) {
+			var className = params.event.target[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
+
+			if (this.callBacks[className]) {
+				this.callBacks[className].call(this, params.record);
 			}
-_debug('this.model.getSelections()', this.model.getSelections());
-_debug('widget output', out);
-//			return out;
 		},
 
-		// override
+		/**
+		 * @param {Object} params
+		 * 	{
+		 * 		{Ext.data.Model} record
+		 * 	}
+		 */
+		onItemDoubleclick: function(params) {
+			if (this.widget.allowCardEditing) {
+				var priv = _CMUtils.getClassPrivileges(params.record.get('IdClass'));
+
+				if (priv && priv.write) {
+					this.onEditCardkClick(params.record);
+				} else {
+					this.onShowCardkClick(params.record);
+				}
+			}
+		},
+
+		onLoad: function() {
+			this.model.defreeze();
+		},
+
+		onToggleMapButtonClick: function() {
+			if (this.view.hasMap()) {
+				if (this.view.grid.isVisible()) {
+					this.view.showMap();
+					this.view.mapButton.setIconCls('table');
+					this.view.mapButton.setText(CMDBuild.Translation.management.modcard.add_relations_window.list_tab);
+				} else {
+					this.view.showGrid();
+					this.view.mapButton.setIconCls('map');
+					this.view.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
+				}
+			}
+		},
+
+		/**
+		 * @return {Boolean}
+		 *
+		 * @override
+		 */
 		isValid: function() {
-			if (!this.readOnly &&
-					widgetReader.required(this.widget)) {
+			if (!this.readOnly && this.widget.required) {
 				return this.model.hasSelection();
 			} else {
 				return true;
 			}
 		},
 
-		onEditCardkClick: function(model) {
-			var editable = true;
-			var w = getCardWindow(model, editable);
-
-			w.on("destroy", function() {
-				this.view.grid.reload();
-			}, this, {single: true});
-
-			w.show();
-		},
-
-		onShowCardkClick: function(model) {
-			var editable = false;
-			var w = getCardWindow(model, editable);
-
-			w.show();
-		},
-
-		getLabel: function() {
-			return widgetReader.label(this.widget);
+		/**
+		 * @param {Object} params
+		 * 	{
+		 * 		{Ext.data.Model} record
+		 * 	}
+		 */
+		onDeselect: function(params) {
+			this.model.deselect(params.record.get('Id'));
 		},
 
 		/**
-		 * @param {Object} record
+		 * @param {Ext.data.Model} model
 		 */
-		onSelect: function(record) {
-			var cardId = undefined;
-_debug('onSelect record', record);
-			if (typeof record == 'number')
-				cardId = record;
-			else
-				cardId = record.get('Id');
+		onEditCardkClick: function(model) {
+			var cardWindow = this.getCardWindow(model, true);
 
-			if (!Ext.isEmpty(cardId)) {
-				_CMCardModuleState.card = record;
+			cardWindow.on(
+				'destroy',
+				function() {
+					this.view.grid.reload();
+				},
+				this,
+				{ single: true }
+			);
 
-				this.view.grid.getSelectionModel().select(
-					this.view.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, cardId)
-				);
-				this.model.select(cardId);
-			} else {
-				this.view.grid.getSelectionModel().reset();
-				this.model.reset();
-			}
+			cardWindow.show();
 		},
 
-		// used only on toggle the map
-		loadPageForLastSelection: function(selection) {
-			if (!Ext.isEmpty(selection)) {
+		/**
+		 * For the auto-select
+		 *
+		 * @override
+		 */
+		onEditMode: function() {
+			this.resolveDefaultSelectionTemplate();
+		},
+
+		/**
+		 * Loads grid's page for last selection and select
+		 */
+		onGridShow: function() {
+			var lastSelection = this.mapController.getLastSelection();
+
+			if (!Ext.isEmpty(lastSelection)) {
 				var params = {};
-				params[_CMProxy.parameter.CARD_ID] = selection;
-				params[_CMProxy.parameter.CLASS_NAME] = this.widget.className;
-				params[_CMProxy.parameter.RETRY_WITHOUT_FILTER] = true;
+				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = lastSelection;
+				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.widget.className;
+				params[CMDBuild.core.proxy.CMProxyConstants.RETRY_WITHOUT_FILTER] = true;
 
 				this.model._silent = true;
 
@@ -181,7 +407,7 @@ _debug('onSelect record', record);
 								{
 									scope: this,
 									cb: function() {
-										this.onSelect(options.params[_CMProxy.parameter.CARD_ID]);
+										this.onSelect(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
 									}
 								}
 							);
@@ -189,210 +415,121 @@ _debug('onSelect record', record);
 					}
 				});
 			}
-		}
-	});
+		},
 
-	// when the linkCard is not busy load the grid
-	function loadTheGridAsSoonAsPossible(me, cqlQuery, classId) {
-		new _CMUtils.PollingFunction({
-			success: function() {
-				me.alertIfChangeDefaultSelection = true;
+		/**
+		 * @param {Int or Object} record
+		 */
+		onSelect: function(record) {
+			var cardId = undefined;
 
-				// CQL filter and regular filter cannot be merged now.
-				// The filter button should be enabled only if no other filter is present.
-				if (cqlQuery) {
-					resolveFilterTemplate(me, cqlQuery, classId);
-					me.view.grid.disableFilterMenuButton();
-				} else {
-					me.view.updateGrid(classId);
-					me.view.grid.enableFilterMenuButton();
-				}
-			},
-			failure: function failure() {
-				CMDBuild.Msg.error(null,CMDBuild.Translation.errors.busy_wf_widgets, false);
-			},
-			checkFn: function() {
-				// I want exit if I'm not busy
-				return !me.isBusy();
-			},
-			cbScope: me,
-			checkFnScope: me
-		}).run();
-	}
-
-	function listenToggleMapEvents(me) {
-		me.mon(me.view, "CM_toggle_map", function() {
-			var v = me.view;
-			if (v.grid.isVisible()) {
-				v.showMap();
-				v.mapButton.setIconCls("table");
-				v.mapButton.setText(CMDBuild.Translation.management.modcard.add_relations_window.list_tab);
+			if (typeof record == 'number') {
+				cardId = record;
 			} else {
-				v.showGrid();
-				v.mapButton.setIconCls("map");
-				v.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
-				me.loadPageForLastSelection(me.mapController.getLastSelection());
+				cardId = record.get('Id');
 			}
-		}, me);
-	}
 
-	function buildMapController(me) {
-		if (typeof me.view.getMapPanel == "function") {
-			me.mapController = Ext.create('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsMapController', {
-				view: me.view.getMapPanel(),
-				ownerController: me,
-				model: me.model,
-				widgetConf: me.widgetConf
-			});
-		} else {
-			me.mapController = {
-				onEntryTypeSelected: Ext.emptyFn,
-				onAddCardButtonClick: Ext.emptyFn,
-				onCardSaved: Ext.emptyFn,
-				getValues: function() { return false; },
-				refresh: Ext.emptyFn,
-				editMode: Ext.emptyFn,
-				displayMode: Ext.emptyFn
-			};
-		}
-	}
+			if (!Ext.isEmpty(cardId)) {
+				if (typeof record != 'number')
+					_CMCardModuleState.setCard(record);
 
-	function getCardWindow(model, editable) {
-		var w = new CMDBuild.view.management.common.CMCardWindow({
-			cmEditMode: editable,
-			withButtons: editable,
-			title: model.get("IdClass_value")
-		});
-
-		new CMDBuild.controller.management.common.CMCardWindowController(w, {
-			entryType: model.get("IdClass"),
-			card: model.get("Id"),
-			cmEditMode: editable
-		});
-
-		return w;
-	}
-
-	function onDeselect(record) {
-		var cardId = record.get('Id');
-
-		this.model.deselect(cardId);
-	}
-
-	function alertIfNeeded(me) {
-		if (me.alertIfChangeDefaultSelection) {
-			CMDBuild.Msg.warn(null, Ext.String.format(CMDBuild.Translation.warnings.link_cards_changed_values
-					, widgetReader.label(me.widgetConf) || me.view.id)
-					, popup=false);
-
-			me.alertIfChangeDefaultSelection = false;
-		}
-	}
-
-	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
-		var className = event.target.className;
-
-		if (this.callBacks[className]) {
-			this.callBacks[className].call(this, model);
-		}
-	}
-
-	function onItemDoubleclick(grid, model, html, index, e, options) {
-		if (! widgetReader.allowCardEditing(this.widget)) {
-			return;
-		}
-
-		var priv = _CMUtils.getClassPrivileges(model.get("IdClass"));
-		if (priv && priv.write) {
-			this.onEditCardkClick(model);
-		} else {
-			this.onShowCardkClick(model);
-		}
-	}
-
-	function _extractVariablesForTemplateResolver(widget) {
-		var variables = {};
-		variables[DEFAULT_SELECTION] = widgetReader.defaultSelection(widget);
-		variables[FILTER] = widgetReader.filter(widget);
-
-		Ext.apply(variables, widgetReader.templates(widget));
-		_debug("LinkCards template resolver init with:", variables);
-
-		return variables;
-	}
-
-	function resolveFilterTemplate(me, cqlQuery, classId) {
-		me.templateResolver.resolveTemplates({
-			attributes: [FILTER],
-			callback: function(out, ctx) {
-				var cardReqParams = me.templateResolver.buildCQLQueryParameters(cqlQuery, ctx);
-				me.view.updateGrid(classId, cardReqParams);
-
-				me.templateResolver.bindLocalDepsChange(function() {
-					me.view.reset();
-				});
+				this.view.grid.getSelectionModel().select(
+					this.view.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, cardId)
+				);
+				this.model.select(cardId);
+			} else {
+				this.view.grid.getSelectionModel().reset();
+				this.model.reset();
 			}
-		});
-	}
+		},
 
-	function resolveDefaultSelectionTemplate(me) {
-		me.templateResolverIsBusy = true;
-		me.view.reset();
-		alertIfNeeded(me);
+		/**
+		 * @param {Ext.data.Model} model
+		 */
+		onShowCardkClick: function(model) {
+			this.getCardWindow(model, false).show();
+		},
 
-		me.templateResolver.resolveTemplates({
-			attributes: [DEFAULT_SELECTION],
-			callback: function onDefaultSelectionTemplateResolved(out, ctx) {
-				var defaultSelection = me.templateResolver.buildCQLQueryParameters(out[DEFAULT_SELECTION], ctx);
-				// do the request only if there are a default selection
-				if (defaultSelection) {
-					CMDBuild.ServiceProxy.getCardList({
-						params: defaultSelection,
-						callback: function callback(request, options, response) {
-							var resp = Ext.JSON.decode(response.responseText);
+		resolveDefaultSelectionTemplate: function() {
+			var me = this;
 
-							if (resp.rows) {
-								for ( var i = 0, l = resp.rows.length; i < l; i++) {
-									var r = resp.rows[i];
-									me.model.select(r.Id);
-								}
+			this.templateResolverIsBusy = true;
+			this.viewReset();
+			this.alertIfNeeded();
+
+			this.templateResolver.resolveTemplates({
+				attributes: [CMDBuild.core.proxy.CMProxyConstants.DEFAULT_SELECTION],
+				callback: function(out, ctx) {
+					var defaultSelection = me.templateResolver.buildCQLQueryParameters(out[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_SELECTION], ctx);
+
+					// Do the request only if there are a default selection
+					if (defaultSelection) {
+						CMDBuild.ServiceProxy.getCardList({
+							params: defaultSelection,
+							callback: function(request, options, response) {
+								var resp = Ext.JSON.decode(response.responseText);
+
+								if (resp.rows)
+									for (var i = 0; i < resp.rows.length; i++) {
+										var r = resp.rows[i];
+
+										me.model.select(r.Id);
+									}
+
+								me.templateResolverIsBusy = false;
 							}
+						});
 
-							me.templateResolverIsBusy = false;
-						}
-					});
+						me.templateResolver.bindLocalDepsChange(function() {
+							me.resolveDefaultSelectionTemplate();
+						});
+					} else {
+						me.templateResolverIsBusy = false;
+					}
+				}
+			});
+		},
+
+		/**
+		 * @param {String} cqlQuery
+		 * @param {Int} classId
+		 */
+		resolveFilterTemplate: function(cqlQuery, classId) {
+			var me = this;
+
+			this.templateResolver.resolveTemplates({
+				attributes: [CMDBuild.core.proxy.CMProxyConstants.FILTER],
+				callback: function(out, ctx) {
+					var cardReqParams = me.templateResolver.buildCQLQueryParameters(cqlQuery, ctx);
+					me.updateViewGrid(classId, cardReqParams);
 
 					me.templateResolver.bindLocalDepsChange(function() {
-						resolveDefaultSelectionTemplate(me);
+						me.viewReset();
 					});
-
-				} else {
-					me.templateResolverIsBusy = false;
 				}
-			}
-		});
-	}
+			});
+		},
 
-	/*
-	 * Local solution for a global issue.
-	 * The card model is a CMDBuild.Dummymodel,
-	 * it takes a map and set all the key as fields of the model,
-	 * so there are no type specification.
-	 * Server side I want that the Ids are integer, so now
-	 * cast it in this function, but the real solution is to
-	 * find a way to say to the card that its id is a number.
-	 */
-	function convertElementsFromStringToInt(input) {
-		input = input || [];
-		var output = [];
-		for (var i=0, l=input.length, element=null; i<l; ++i) {
-			element = parseInt(input[i]);
-			if (element) {
-				output.push(element);
-			}
+		setViewModel: function() {
+			this.view.model = this.model;
+		},
+
+		/**
+		 * @param {Int} classId
+		 * @param {Object} cqlParams
+		 */
+		updateViewGrid: function(classId, cqlParams) {
+			this.view.grid.CQL = cqlParams;
+			this.view.grid.store.proxy.extraParams = this.view.grid.getStoreExtraParams();
+			this.view.grid.updateStoreForClassId(classId);
+		},
+
+		viewReset: function() {
+			if (this.view.selectionModel && typeof this.view.selectionModel.reset == 'function')
+				this.view.selectionModel.reset();
+
+			this.model.reset();
 		}
-
-		return output;
-	}
+	});
 
 })();

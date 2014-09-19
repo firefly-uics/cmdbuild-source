@@ -4,14 +4,14 @@
 		extend: 'Ext.util.Observable',
 
 		/**
-		 * @param {Object} config - { singleSelect: true/false }
+		 * @param {Object} configuration - { singleSelect: true/false }
 		 */
-		constructor: function(config) {
-			config = config || {};
+		constructor: function(configuration) {
+			configuration = configuration || {};
 
 			this.selections = {};
 			this._freezed = {};
-			this.singleSelect = config.singleSelect;
+			this.singleSelect = configuration[CMDBuild.core.proxy.CMProxyConstants.SINGLE_SELECT];
 
 			this.addEvents({
 				'select': true,
@@ -19,24 +19,6 @@
 			});
 
 			this.callParent(arguments);
-		},
-
-		/**
-		 * @param {Int} selection - card id
-		 */
-		select: function(selection) {
-_debug('Model select', selection);
-			if (!this._silent) {
-				if (this.isSelected(selection)) {
-					return;
-				} else {
-					if (this.singleSelect)
-						this.reset();
-
-					this.selections[selection] = true;
-					this.fireEvent('select', selection);
-				}
-			}
 		},
 
 		/**
@@ -51,8 +33,16 @@ _debug('Model select', selection);
 			}
 		},
 
+		defreeze: function() {
+			this.selections = Ext.apply({}, this._freezed);
+		},
+
+		freeze: function() {
+			this._freezed = Ext.apply({}, this.selections);
+		},
+
 		/**
-		 * @param {Array} selections
+		 * @return {Array} selections
 		 */
 		getSelections: function() {
 			var selections = [];
@@ -64,18 +54,17 @@ _debug('Model select', selection);
 		},
 
 		/**
+		 * @return {Boolean}
+		 */
+		hasSelection: function() {
+			return this.getSelections().length > 0;
+		},
+
+		/**
 		 * @param {Int} selection - card id
 		 */
 		isSelected: function(selection) {
 			return this.selections[selection];
-		},
-
-		freeze: function() {
-			this._freezed = Ext.apply({}, this.selections);
-		},
-
-		defreeze: function() {
-			this.selections = Ext.apply({}, this._freezed);
 		},
 
 		reset: function() {
@@ -84,17 +73,20 @@ _debug('Model select', selection);
 		},
 
 		/**
-		 * @param {Boolean}
+		 * @param {Int} selection - card id
 		 */
-		hasSelection: function() {
-			return this.getSelections().length > 0;
-		},
+		select: function(selection) {
+			if (!this._silent) {
+				if (this.isSelected(selection)) {
+					return;
+				} else {
+					if (this.singleSelect)
+						this.reset();
 
-		/**
-		 * @param {Int}
-		 */
-		length: function() {
-			return this.getSelections().length;
+					this.selections[selection] = true;
+					this.fireEvent('select', selection);
+				}
+			}
 		}
 	});
 
