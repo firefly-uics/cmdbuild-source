@@ -234,7 +234,9 @@ public class EmailService {
 	private String subjectFrom(final Email email) {
 		// TODO move into another component
 		final String emailSubject;
-		if (email.getActivityId() != null) {
+		if (email.isNoSubjectPrefix()) {
+			emailSubject = email.getSubject();
+		} else if (email.getActivityId() != null) {
 			final CMCard card = persistence.getProcessCardFrom(email);
 			if (StringUtils.isNotBlank(email.getNotifyWith())) {
 				emailSubject = String.format("[%s %d %s] %s", //

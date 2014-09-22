@@ -1,5 +1,6 @@
 package org.cmdbuild.data.converter;
 
+import static org.apache.commons.lang.BooleanUtils.toBooleanDefaultIfNull;
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
 
@@ -32,6 +33,7 @@ public class EmailConverter implements StorableConverter<Email> {
 	public static final String SUBJECT_ATTRIBUTE = "Subject";
 	public static final String CONTENT_ATTRIBUTE = "Content";
 	public static final String NOTIFY_WITH = "NotifyWith";
+	public static final String NO_SUBJECT_PREFIX = "NoSubjectPrefix";
 
 	private final LookupStore lookupStore;
 	private final Integer processId;
@@ -89,6 +91,7 @@ public class EmailConverter implements StorableConverter<Email> {
 		email.setSubject(defaultIfBlank(card.get(SUBJECT_ATTRIBUTE, String.class), null));
 		email.setContent(defaultIfBlank(card.get(CONTENT_ATTRIBUTE, String.class), null));
 		email.setNotifyWith(defaultIfBlank(card.get(NOTIFY_WITH, String.class), null));
+		email.setNoSubjectPrefix(toBooleanDefaultIfNull(card.get(NO_SUBJECT_PREFIX, Boolean.class), false));
 		email.setDate((card.getBeginDate()));
 
 		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, IdAndDescription.class).getId();
@@ -111,6 +114,7 @@ public class EmailConverter implements StorableConverter<Email> {
 		values.put(CONTENT_ATTRIBUTE, email.getContent());
 		values.put(PROCESS_ID_ATTRIBUTE, email.getActivityId());
 		values.put(NOTIFY_WITH, email.getNotifyWith());
+		values.put(NO_SUBJECT_PREFIX, email.isNoSubjectPrefix());
 		if (email.getStatus() != null) {
 			values.put(EMAIL_STATUS_ATTRIBUTE, getEmailLookupIdFrom(email.getStatus()));
 		}

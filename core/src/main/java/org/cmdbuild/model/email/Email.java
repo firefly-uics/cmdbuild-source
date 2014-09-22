@@ -43,6 +43,7 @@ public class Email extends AbstractEmail implements Storable {
 	private EmailStatus status;
 	private Integer activityId;
 	private Iterable<Attachment> attachments;
+	private boolean noSubjectPrefix;
 
 	public Email() {
 		this.id = null;
@@ -56,10 +57,12 @@ public class Email extends AbstractEmail implements Storable {
 		return id;
 	}
 
+	@Override
 	public String getFromAddress() {
 		return fromAddress;
 	}
 
+	@Override
 	public void setFromAddress(final String fromAddress) {
 		this.fromAddress = fromAddress;
 	}
@@ -99,6 +102,14 @@ public class Email extends AbstractEmail implements Storable {
 
 	public void setAttachments(final Iterable<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	public boolean isNoSubjectPrefix() {
+		return noSubjectPrefix;
+	}
+
+	public void setNoSubjectPrefix(final boolean noSubjectPrefix) {
+		this.noSubjectPrefix = noSubjectPrefix;
 	}
 
 }
