@@ -66,6 +66,7 @@
 			DOMAIN_LIMIT: 'domainlimit',
 			DOMAIN_NAME: 'domainName',
 			DOMAIN_SOURCE: 'src',
+			DOMAIN_DIRECTION: 'domainDirection',
 			EDITOR_TYPE: 'editorType',
 			EMAIL_ACCOUNT: 'emailAccount',
 			EMAIL_TEMPLATE: 'emailTemplate',

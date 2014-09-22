@@ -81,6 +81,7 @@ public class CommunicationConstants {
 			DOMAIN_CARDINALITY = "cardinality", //
 			DOMAIN_DESCRIPTION_STARTING_AT_THE_FIRST_CLASS = "descr_1", //
 			DOMAIN_DESCRIPTION_STARTING_AT_THE_SECOND_CLASS = "descr_2", //
+			DOMAIN_DIRECTION = "domainDirection",//
 			DOMAIN = "domain", //
 			DOMAIN_FIRST_CLASS_ID = "idClass1", //
 			DOMAIN_ID = "domainId", //

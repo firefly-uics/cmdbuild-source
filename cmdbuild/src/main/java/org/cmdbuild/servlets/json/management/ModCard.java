@@ -14,6 +14,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_DIRECTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_LIMIT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_SOURCE;
@@ -86,7 +87,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -116,7 +117,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	/**
 	 * Retrieves a list of cards for the specified class, returning only the
 	 * values for a subset of values
-	 * 
+	 *
 	 * @param filter
 	 *            null if no filter is specified
 	 * @param sorters
@@ -154,7 +155,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 * 
+	 *
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -484,7 +485,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param domainName
 	 *            is the domain between the source class and the destination
 	 *            class
@@ -640,15 +641,13 @@ public class ModCard extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse getAlreadyRelatedCards( //
 			@Parameter(value = DOMAIN_NAME) final String domainName, //
+			@Parameter(value = DOMAIN_DIRECTION) final String domainDirection, //
 			@Parameter(value = CLASS_NAME) final String className, //
 			@Parameter(value = CARDS) final JSONArray cardsIdArray //
 	) throws JSONException {
 		final DataAccessLogic dataLogic = userDataAccessLogic();
 		final CMDomain domain = dataLogic.findDomain(domainName);
-		final CMClass cmClass = dataLogic.findClass(className);
-		final String domainDirection = (domain.getClass1().equals(cmClass)) ? //
-		Source._1.toString()
-				: Source._2.toString();
+
 		final DomainWithSource dom = DomainWithSource.create(domain.getId(), domainDirection);
 
 		final Predicate<Card> isCardAlreadyRelated = new Predicate<Card>() {
