@@ -19,14 +19,11 @@ import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.template.store.TemplateRepository;
 import org.slf4j.Logger;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 
 	// TODO change logger
 	private static final Logger logger = Log.WORKFLOW;
-	private static final Marker marker = MarkerFactory.getMarker(ManageEmailWidgetFactory.class.getName());
 
 	private static final String IMPLICIT_TEMPLATE_NAME = "implicitTemplateName";
 	private final static String FROM_ADDRESS = "FromAddress";
@@ -38,6 +35,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	private final static String READ_ONLY = "ReadOnly";
 	private final static String NOTIFY_TEMPLATE_NAME = "NotifyWith";
 	private final static String TEMPLATE = "Template";
+	private final static String NO_SUBJECT_PREFIX = "NoSubjectPrefix";
 
 	private final static String WIDGET_NAME = "manageEmail";
 
@@ -135,6 +133,13 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 			template.setCondition(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(conditions.keySet());
+
+		final Map<String, String> noSubjectPrexifes = getAttributesStartingWith(valueMap, NO_SUBJECT_PREFIX);
+		for (final String key : noSubjectPrexifes.keySet()) {
+			final EmailTemplate template = getTemplateForKey(key, emailTemplate, NO_SUBJECT_PREFIX);
+			template.setNoSubjectPrefix(readBooleanTrueIfTrue(valueMap.get(key)));
+		}
+		managedParameters.addAll(noSubjectPrexifes.keySet());
 
 		widget.setEmailTemplates(emailTemplate.values());
 		widget.setTemplates(extractUnmanagedStringParameters(valueMap, managedParameters));

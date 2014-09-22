@@ -26,6 +26,7 @@ public class ManageEmail extends Widget {
 	private static final String CONTENT_ATTRIBUTE = "content";
 	private static final String NOTIFY_WITH_ATTRIBUTE = "notifyWith";
 	private static final String TEMPORARY_ID = "temporaryId";
+	private final static String NO_SUBJECT_PREFIX = "noSubjectPrefix";
 
 	private static class Submission {
 
@@ -43,7 +44,9 @@ public class ManageEmail extends Widget {
 	}
 
 	public static class EmailTemplate extends AbstractEmail {
+
 		private String condition;
+		private boolean noSubjectPrefix;
 
 		public String getCondition() {
 			return condition;
@@ -51,6 +54,14 @@ public class ManageEmail extends Widget {
 
 		public void setCondition(final String condition) {
 			this.condition = condition;
+		}
+
+		public boolean isNoSubjectPrefix() {
+			return noSubjectPrefix;
+		}
+
+		public void setNoSubjectPrefix(final boolean noSubjectPrefix) {
+			this.noSubjectPrefix = noSubjectPrefix;
 		}
 	}
 
@@ -146,6 +157,7 @@ public class ManageEmail extends Widget {
 		email.setContent((String) emailMap.get(CONTENT_ATTRIBUTE));
 		email.setNotifyWith((String) emailMap.get(NOTIFY_WITH_ATTRIBUTE));
 		email.setTemporaryId((String) emailMap.get(TEMPORARY_ID));
+		email.setNoSubjectPrefix(Boolean.parseBoolean((String) emailMap.get(NO_SUBJECT_PREFIX)));
 		return email;
 	}
 

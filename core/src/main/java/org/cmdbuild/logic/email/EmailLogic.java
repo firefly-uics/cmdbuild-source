@@ -333,7 +333,7 @@ public class EmailLogic implements Logic {
 		}
 
 		@Override
-		public List<StoredDocument> search(DocumentSearch document) throws DmsError {
+		public List<StoredDocument> search(final DocumentSearch document) throws DmsError {
 			return dmsConfiguration.isEnabled() ? super.search(document) : EMPTY;
 		}
 
