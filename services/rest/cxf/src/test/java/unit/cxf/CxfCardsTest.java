@@ -1,34 +1,32 @@
 package unit.cxf;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import java.util.Arrays;
-import java.util.HashMap;
-
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.apache.cxf.jaxrs.impl.MetadataMap;
-import org.cmdbuild.common.collect.ChainablePutMap;
-import org.cmdbuild.service.rest.ClassCards;
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.cxf.CxfCards;
+import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.dto.Card;
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.SimpleResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -37,118 +35,157 @@ public class CxfCardsTest {
 	@Captor
 	private ArgumentCaptor<MultivaluedMap<String, String>> multivaluedMapCaptor;
 
-	private ClassCards classCards;
+	private ErrorHandler errorHandler;
+	private DataAccessLogic userDataAccessLogic;
+	private CMDataView systemDataView;
+	private CMDataView userDataView;
 
 	private CxfCards cxfCards;
 
 	@Before
 	public void setUp() throws Exception {
-		classCards = mock(ClassCards.class);
-		cxfCards = new CxfCards(classCards);
+		errorHandler = mock(ErrorHandler.class);
+		userDataAccessLogic = mock(DataAccessLogic.class);
+		systemDataView = mock(CMDataView.class);
+		userDataView = mock(CMDataView.class);
+		cxfCards = new CxfCards(errorHandler, userDataAccessLogic, systemDataView, userDataView);
 	}
 
-	@Test
-	public void createDelegated() throws Exception {
+	@Test(expected = WebApplicationException.class)
+	public void createRaisesErrorWhenTypeIsNotFound() throws Exception {
 		// given
-		final MultivaluedMap<String, String> params = new MetadataMap<String, String>();
-		params.put("foo", asList("bar"));
-		params.put("bar", asList("baz"));
-		params.put("baz", asList("foo"));
+		doReturn(null) //
+				.when(userDataAccessLogic).findClass(anyString());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).classNotFound(anyString());
 
 		// when
-		cxfCards.create(params, "foo");
+		cxfCards.create("foo", Card.newInstance() //
+				.withType("bar") //
+				.build());
 
 		// then
-		verify(classCards).create(eq("foo"), multivaluedMapCaptor.capture());
-		verifyNoMoreInteractions(classCards);
-
-		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
-		assertThat(captured.getFirst("foo"), equalTo((Object) "bar"));
-		assertThat(captured.getFirst("bar"), equalTo((Object) "baz"));
-		assertThat(captured.getFirst("baz"), equalTo((Object) "foo"));
+		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		inOrder.verify(userDataAccessLogic).findClass(eq("foo"));
+		inOrder.verify(errorHandler).classNotFound("foo");
+		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
-	public void readDelegated() throws Exception {
+	public void logicCalledOnCreation() throws Exception {
 		// given
-		final SimpleResponse<Card> expectedResponse = SimpleResponse.newInstance(Card.class) //
-				.withElement(Card.newInstance() //
-						.withType("foo") //
-						.withId(123L) //
-						.withValues(ChainablePutMap.of(new HashMap<String, Object>()) //
-								.chainablePut("foo", "bar") //
-								.chainablePut("bar", "baz") //
-								.chainablePut("baz", "foo")) //
-						.build() //
-				) //
-				.build();
-		doReturn(expectedResponse) //
-				.when(classCards).read(anyString(), anyLong());
+		final CMClass type = mock(CMClass.class);
+		doReturn("baz") //
+				.when(type).getName();
+		doReturn(type) //
+				.when(userDataAccessLogic).findClass(anyString());
+		doReturn(123L) //
+				.when(userDataAccessLogic).createCard(any(org.cmdbuild.model.data.Card.class));
 
 		// when
-		final SimpleResponse<Card> response = cxfCards.read("foo", 123L);
+		final SimpleResponse<Long> response = cxfCards.create("foo", Card.newInstance() //
+				.withType("bar") //
+				.withValue("some name", "some value") //
+				.build());
 
 		// then
-		assertThat(response, equalTo(expectedResponse));
-		verify(classCards).read("foo", 123L);
-		verifyNoMoreInteractions(classCards);
+		final ArgumentCaptor<org.cmdbuild.model.data.Card> cardCaptor = ArgumentCaptor
+				.forClass(org.cmdbuild.model.data.Card.class);
+		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		inOrder.verify(userDataAccessLogic).findClass(eq("foo"));
+		inOrder.verify(userDataAccessLogic).createCard(cardCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+		final org.cmdbuild.model.data.Card captured = cardCaptor.getValue();
+		assertThat(captured.getClassName(), equalTo("baz"));
+		assertThat(captured.getAttributes(), hasEntry("some name", (Object) "some value"));
+		assertThat(response.getElement(), equalTo(123L));
 	}
 
-	@Test
-	public void readAllDelegated() throws Exception {
+	@Test(expected = WebApplicationException.class)
+	public void updateRaisesErrorWhenTypeIsNotFound() throws Exception {
 		// given
-		final ListResponse<Card> expectedResponse = ListResponse.newInstance(Card.class) //
-				.withElements(Arrays.asList(Card.newInstance() //
-						.withType("foo") //
-						.withId(123L) //
-						.withValues(ChainablePutMap.of(new HashMap<String, Object>()) //
-								.chainablePut("foo", "bar") //
-								.chainablePut("bar", "baz") //
-								.chainablePut("baz", "foo")) //
-						.build() //
-						)) //
-				.build();
-		doReturn(expectedResponse) //
-				.when(classCards).read(anyString(), anyString(), anyInt(), anyInt());
+		doReturn(null) //
+				.when(userDataAccessLogic).findClass(anyString());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).classNotFound(anyString());
 
 		// when
-		final ListResponse<Card> response = cxfCards.read("foo", "filter", 123, 456);
+		cxfCards.update("foo", 123L, Card.newInstance() //
+				.withType("bar") //
+				.withId(456L) //
+				.build());
 
 		// then
-		assertThat(response, equalTo(expectedResponse));
-		verify(classCards).read("foo", "filter", 123, 456);
-		verifyNoMoreInteractions(classCards);
+		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		inOrder.verify(userDataAccessLogic).findClass(eq("foo"));
+		inOrder.verify(errorHandler).classNotFound("foo");
+		inOrder.verifyNoMoreInteractions();
 	}
 
 	@Test
-	public void updatedDelegated() throws Exception {
+	public void logicCalledOnUpdate() throws Exception {
 		// given
-		final MultivaluedMap<String, String> params = new MetadataMap<String, String>();
-		params.put("foo", asList("bar"));
-		params.put("bar", asList("baz"));
-		params.put("baz", asList("foo"));
+		final CMClass type = mock(CMClass.class);
+		doReturn("baz") //
+				.when(type).getName();
+		doReturn(type) //
+				.when(userDataAccessLogic).findClass(anyString());
 
 		// when
-		cxfCards.update(123L, params, "type");
+		cxfCards.update("foo", 123L, Card.newInstance() //
+				.withType("bar") //
+				.withId(456L) //
+				.withValue("some name", "some value") //
+				.build());
 
 		// then
-		verify(classCards).update(eq("type"), eq(123L), multivaluedMapCaptor.capture());
-		verifyNoMoreInteractions(classCards);
-
-		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
-		assertThat(captured.getFirst("foo"), equalTo((Object) "bar"));
-		assertThat(captured.getFirst("bar"), equalTo((Object) "baz"));
-		assertThat(captured.getFirst("baz"), equalTo((Object) "foo"));
+		final ArgumentCaptor<org.cmdbuild.model.data.Card> cardCaptor = ArgumentCaptor
+				.forClass(org.cmdbuild.model.data.Card.class);
+		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		inOrder.verify(userDataAccessLogic).findClass(eq("foo"));
+		inOrder.verify(userDataAccessLogic).updateCard(cardCaptor.capture());
+		inOrder.verifyNoMoreInteractions();
+		final org.cmdbuild.model.data.Card captured = cardCaptor.getValue();
+		assertThat(captured.getClassName(), equalTo("baz"));
+		assertThat(captured.getId(), equalTo(456L));
+		assertThat(captured.getAttributes(), hasEntry("some name", (Object) "some value"));
 	}
 
-	@Test
-	public void deleteDelegated() throws Exception {
+	@Test(expected = WebApplicationException.class)
+	public void deleteRaisesErrorWhenTypeIsNotFound() throws Exception {
+		// given
+		doReturn(null) //
+				.when(userDataAccessLogic).findClass(anyString());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).classNotFound(anyString());
+
 		// when
 		cxfCards.delete("foo", 123L);
 
 		// then
-		verify(classCards).delete("foo", 123L);
-		verifyNoMoreInteractions(classCards);
+		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		inOrder.verify(userDataAccessLogic).findClass(eq("foo"));
+		inOrder.verify(errorHandler).classNotFound("foo");
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void logicCalledOnDeletion() throws Exception {
+		// given
+		final CMClass type = mock(CMClass.class);
+		doReturn("baz") //
+				.when(type).getName();
+		doReturn(type) //
+				.when(userDataAccessLogic).findClass(anyString());
+
+		// when
+		cxfCards.delete("foo", 123L);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		inOrder.verify(userDataAccessLogic).findClass(eq("foo"));
+		inOrder.verify(userDataAccessLogic).deleteCard(eq("foo"), eq(123L));
+		inOrder.verifyNoMoreInteractions();
 	}
 
 }
