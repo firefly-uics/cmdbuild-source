@@ -9,10 +9,8 @@ import org.cmdbuild.service.rest.Activities;
 import org.cmdbuild.service.rest.Attributes;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.ClassAttributes;
-import org.cmdbuild.service.rest.ClassCards;
 import org.cmdbuild.service.rest.Classes;
 import org.cmdbuild.service.rest.DomainAttributes;
-import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.Domains;
 import org.cmdbuild.service.rest.Instances;
 import org.cmdbuild.service.rest.LookupTypeValues;
@@ -24,14 +22,13 @@ import org.cmdbuild.service.rest.ProcessInstanceActivities;
 import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.ProcessStartActivity;
 import org.cmdbuild.service.rest.Processes;
+import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.cxf.CxfActivities;
 import org.cmdbuild.service.rest.cxf.CxfAttributes;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
-import org.cmdbuild.service.rest.cxf.CxfClassCards;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
 import org.cmdbuild.service.rest.cxf.CxfDomainAttributes;
-import org.cmdbuild.service.rest.cxf.CxfRelations;
 import org.cmdbuild.service.rest.cxf.CxfDomains;
 import org.cmdbuild.service.rest.cxf.CxfInstances;
 import org.cmdbuild.service.rest.cxf.CxfLookupTypeValues;
@@ -43,6 +40,7 @@ import org.cmdbuild.service.rest.cxf.CxfProcessInstanceActivities;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.cxf.CxfProcessStartActivity;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
+import org.cmdbuild.service.rest.cxf.CxfRelations;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
 import org.cmdbuild.service.rest.reflect.MultivaluedMapFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +73,8 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	public Cards cxfCards() {
-		final CxfCards service = new CxfCards(cxfClassCards());
+		final CxfCards service = new CxfCards(utilities.defaultErrorHandler(), helper.userDataAccessLogic(),
+				helper.systemDataView(), helper.userDataView());
 		return proxy(Cards.class, service);
 	}
 
@@ -84,13 +83,6 @@ public class Services implements LoggingSupport {
 		final CxfClassAttributes service = new CxfClassAttributes(utilities.defaultErrorHandler(),
 				helper.userDataAccessLogic(), helper.systemDataView(), helper.metadataStoreFactory());
 		return proxy(ClassAttributes.class, service);
-	}
-
-	@Bean
-	public ClassCards cxfClassCards() {
-		final CxfClassCards service = new CxfClassCards(utilities.defaultErrorHandler(), helper.userDataAccessLogic(),
-				helper.systemDataView(), helper.userDataView());
-		return proxy(ClassCards.class, service);
 	}
 
 	@Bean

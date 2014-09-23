@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.dto.adapter;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 
@@ -42,7 +43,22 @@ public class CardAdapter extends XmlAdapter<Map<String, Object>, Card> {
 			if (ObjectUtils.equals(element.getKey(), key)) {
 				final Object value = element.getValue();
 				mapType.remove(key);
-				return type.cast(value);
+				final Object _value;
+				if (Long.class.equals(type)) {
+					String s;
+					if (value instanceof Long) {
+						s = Long.class.cast(value).toString();
+					} else if (value instanceof Integer) {
+						s = Integer.class.cast(value).toString();
+					} else {
+						s = value.toString();
+					}
+					s = String.class.cast(s);
+					_value = isBlank(s) ? null : Long.parseLong(s);
+				} else {
+					_value = value;
+				}
+				return type.cast(_value);
 			}
 		}
 		return null;

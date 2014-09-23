@@ -1,11 +1,12 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
-import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.apache.commons.lang3.CharEncoding.UTF_8;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
@@ -16,21 +17,18 @@ import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static support.HttpClientUtils.all;
-import static support.HttpClientUtils.param;
 import static support.ServerResource.randomPort;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.core.MultivaluedMap;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.dto.Card;
@@ -41,18 +39,14 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import support.JsonSupport;
 import support.ServerResource;
 
-@RunWith(MockitoJUnitRunner.class)
 public class CardsTest {
 
-	private static Cards service;
+	private Cards service;
 
 	@Rule
 	public ServerResource server = ServerResource.newInstance() //
@@ -63,9 +57,6 @@ public class CardsTest {
 
 	@ClassRule
 	public static JsonSupport json = new JsonSupport();
-
-	@Captor
-	private ArgumentCaptor<MultivaluedMap<String, String>> multivaluedMapCaptor;
 
 	private HttpClient httpclient;
 
@@ -122,8 +113,7 @@ public class CardsTest {
 				.when(service).read(anyString(), isNull(String.class), anyInt(), anyInt());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("cards/"));
-		get.setQueryString(all(param(UNDERSCORED_TYPE, "foo")));
+		final GetMethod get = new GetMethod(server.resource("classes/foo/cards"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -139,27 +129,28 @@ public class CardsTest {
 				.withElement(123L) //
 				.build();
 		doReturn(expectedResponse) //
-				.when(service).create(any(MultivaluedMap.class), anyString());
+				.when(service).create(anyString(), any(Card.class));
 
 		// when
-		final PostMethod post = new PostMethod(server.resource("cards/"));
-		post.setRequestBody(all( //
-				param(UNDERSCORED_TYPE, "foo"), //
-				param("foo", "bar"), //
-				param("bar", "baz"), //
-				param("baz", "foo") //
-		));
+		final PostMethod post = new PostMethod(server.resource("classes/foo/cards/"));
+		post.setRequestEntity(new StringRequestEntity( //
+				"{\"_id\" : 123, \"_type\" : \"foo\", \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
+				APPLICATION_JSON, //
+				UTF_8) //
+		);
 		final int result = httpclient.executeMethod(post);
 
 		// then
-		verify(service).create(multivaluedMapCaptor.capture(), eq("foo"));
+		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
+		verify(service).create(eq("foo"), cardCaptor.capture());
 		assertThat(result, equalTo(200));
 		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
-		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
-		assertThat(captured.getFirst(UNDERSCORED_TYPE), equalTo((Object) "foo"));
-		assertThat(captured.getFirst("foo"), equalTo((Object) "bar"));
-		assertThat(captured.getFirst("bar"), equalTo((Object) "baz"));
-		assertThat(captured.getFirst("baz"), equalTo((Object) "foo"));
+		final Card captured = cardCaptor.getValue();
+		assertThat(captured.getType(), equalTo("foo"));
+		assertThat(captured.getId(), equalTo(123L));
+		final Map<String, Object> values = captured.getValues();
+		assertThat(values, hasEntry("bar", (Object) "BAR"));
+		assertThat(values, hasEntry("baz", (Object) "BAZ"));
 	}
 
 	@Test
@@ -190,8 +181,7 @@ public class CardsTest {
 				.when(service).read(anyString(), anyLong());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("cards/123/"));
-		get.setQueryString(all(param(UNDERSCORED_TYPE, "foo")));
+		final GetMethod get = new GetMethod(server.resource("classes/foo/cards/123/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -203,31 +193,30 @@ public class CardsTest {
 	@Test
 	public void cardUpdated() throws Exception {
 		// when
-		final PutMethod put = new PutMethod(server.resource("cards/123/"));
-		put.addRequestHeader(CONTENT_TYPE, APPLICATION_FORM_URLENCODED);
-		put.setQueryString(all( //
-				param(UNDERSCORED_TYPE, "foo"), //
-				param("foo", "bar"), //
-				param("bar", "baz"), //
-				param("baz", "foo") //
-		));
+		final PutMethod put = new PutMethod(server.resource("classes/foo/cards/123/"));
+		put.setRequestEntity(new StringRequestEntity( //
+				"{\"_id\" : 123, \"_type\" : \"foo\", \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
+				APPLICATION_JSON, //
+				UTF_8) //
+		);
 		final int result = httpclient.executeMethod(put);
 
 		// then
-		verify(service).update(eq(123L), multivaluedMapCaptor.capture(), eq("foo"));
+		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
+		verify(service).update(eq("foo"), eq(123L), cardCaptor.capture());
 		assertThat(result, equalTo(204));
-		final MultivaluedMap<String, String> captured = multivaluedMapCaptor.getValue();
-		assertThat(captured.getFirst(UNDERSCORED_TYPE), equalTo((Object) "foo"));
-		assertThat(captured.getFirst("foo"), equalTo((Object) "bar"));
-		assertThat(captured.getFirst("bar"), equalTo((Object) "baz"));
-		assertThat(captured.getFirst("baz"), equalTo((Object) "foo"));
+		final Card captured = cardCaptor.getValue();
+		assertThat(captured.getType(), equalTo("foo"));
+		assertThat(captured.getId(), equalTo(123L));
+		final Map<String, Object> values = captured.getValues();
+		assertThat(values, hasEntry("bar", (Object) "BAR"));
+		assertThat(values, hasEntry("baz", (Object) "BAZ"));
 	}
 
 	@Test
 	public void cardDeleted() throws Exception {
 		// when
-		final DeleteMethod delete = new DeleteMethod(server.resource("cards/123/"));
-		delete.setQueryString(all(param(UNDERSCORED_TYPE, "foo")));
+		final DeleteMethod delete = new DeleteMethod(server.resource("classes/foo/cards/123/"));
 		final int result = httpclient.executeMethod(delete);
 
 		// then
