@@ -29,6 +29,8 @@ public class MultivaluedMapFilterTest {
 
 	public static interface Dummy {
 
+		void dummy();
+
 		void dummy( //
 				@FormParam("foo") String foo, //
 				MultivaluedMap<String, String> values //
@@ -55,6 +57,12 @@ public class MultivaluedMapFilterTest {
 		delegate = mock(Dummy.class);
 		underTest = MultivaluedMapFilter.of(delegate);
 		proxy = Reflection.newProxy(Dummy.class, underTest);
+	}
+
+	@Test
+	public void noArgumentsShouldNotThrowException() throws Exception {
+		// when
+		proxy.dummy();
 	}
 
 	@Test
