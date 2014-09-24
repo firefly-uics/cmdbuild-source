@@ -3,6 +3,8 @@ package org.cmdbuild.service.rest.reflect;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.FormParam;
@@ -22,6 +24,8 @@ public class MultivaluedMapFilter<T> implements InvocationHandler, LoggingSuppor
 		return new MultivaluedMapFilter<T>(target);
 	}
 
+	private static final List<Object> NO_ARGS = Collections.emptyList();
+
 	private final T target;
 
 	private MultivaluedMapFilter(final T target) {
@@ -33,8 +37,9 @@ public class MultivaluedMapFilter<T> implements InvocationHandler, LoggingSuppor
 	public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
 		final List<MultivaluedMap> maps = Lists.newArrayList();
 		final List<String> keys = Lists.newArrayList();
-		for (int i = 0; i < args.length; i++) {
-			final Object arg = args[i];
+		final List<Object> iterableArgs = (args == null) ? NO_ARGS : Arrays.asList(args);
+		for (int i = 0; i < iterableArgs.size(); i++) {
+			final Object arg = iterableArgs.get(i);
 			if (arg instanceof MultivaluedMap) {
 				maps.add(MultivaluedMap.class.cast(arg));
 				logger.debug("argument '{}' is '{}'", i, MultivaluedMap.class);
@@ -57,4 +62,5 @@ public class MultivaluedMapFilter<T> implements InvocationHandler, LoggingSuppor
 		}
 		return method.invoke(target, args);
 	}
+
 }
