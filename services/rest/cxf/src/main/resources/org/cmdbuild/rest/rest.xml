@@ -28,7 +28,6 @@
 			<ref bean="cxfActivities" />
 			<ref bean="cxfAttributes" />
 			<ref bean="cxfCards" />
-			<ref bean="cxfClassCards" />
 			<ref bean="cxfClasses" />
 			<ref bean="cxfClassAttributes" />
 			<ref bean="cxfDomains" />
