@@ -150,18 +150,15 @@
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.TO,
 								fieldLabel: CMDBuild.Translation.to,
-								vtype: 'multiemail',
 								allowBlank: false
 							},
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.CC,
-								fieldLabel: CMDBuild.Translation.cc,
-								vtype: 'multiemail'
+								fieldLabel: CMDBuild.Translation.cc
 							},
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.BCC,
-								fieldLabel: CMDBuild.Translation.bcc,
-								vtype: 'multiemail'
+								fieldLabel: CMDBuild.Translation.bcc
 							},
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
