@@ -219,16 +219,18 @@
 	}
 
 	/**
-	 * @param {Object} me
+	 * @param {CMDBuild.view.management.common.filter.CMFilterAttributes} me
 	 * @param {Object} attribute
 	 * @param {Object} data
 	 */
 	function addFilterCondition(me, attribute, data) {
 		var category = attribute.name;
 
+		attribute.selectAtRuntimeCheckDisabled = false;
+
 		Ext.suspendLayouts();
 
-		if (typeof me.fieldsetCategory[category] == 'undefined' ) {
+		if (Ext.isEmpty(me.fieldsetCategory[category])) {
 			var fieldset = Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset', {
 				title: attribute.description,
 				attributeName: category
@@ -242,9 +244,9 @@
 		var filterCondition = Ext.create('CMDBuild.Management.FieldManager.getFieldSetForFilter', attribute);
 		me.fieldsetCategory[category].addCondition(filterCondition);
 		filterCondition.setData(data);
-		filterCondition.setDisabledRuntimeCheck(true);
 
 		Ext.resumeLayouts();
+
 		me.doLayout();
 	}
 
