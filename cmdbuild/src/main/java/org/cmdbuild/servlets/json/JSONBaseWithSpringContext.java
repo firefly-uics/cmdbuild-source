@@ -60,7 +60,6 @@ import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
-import org.cmdbuild.servlets.json.serializers.DefaultTranslationFacade;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.TranslationFacade;
@@ -260,7 +259,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected TranslationFacade translationFacade() {
-		return applicationContext().getBean(DefaultTranslationFacade.class);
+		return applicationContext().getBean(TranslationFacade.class);
 	}
 
 	/*
