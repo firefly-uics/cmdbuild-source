@@ -132,16 +132,16 @@
 		},
 
 		/**
-		 * @param attribute
-		 * @return Ext.form.FieldSet
+		 * This method prepare some variable and call the method buildFieldsetForFilter to have the fieldset in the subclass is possible override buildFieldsetForFilter
+		 * to build a different fieldset.
 		 *
-		 * this method prepare some variable and call the method buildFieldsetForFilter to have the fieldset
-		 * in the subclass is possible override buildFieldsetForFilter to build a different fieldset
+		 * @param {Object} attribute
+		 *
+		 * @return {CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel}
 		 */
 		getFieldSetForFilter: function(attribute) {
-
 			var attributeCopy = Ext.apply({}, {
-				fieldmode: "write", //change the fieldmode because in the filter must write on this field
+				fieldmode: 'write', // Change the fieldmode because in the filter must write on this field
 				name: attribute.name
 			}, attribute);
 
@@ -152,23 +152,30 @@
 		},
 
 		/**
+		 * Build a fieldSet with a combo-box and a field to edit a filtering criteria used in the attribute section of the filter.
 		 *
-		 * @param field
-		 * @param query
-		 * @param attribute
+		 * @param {Object} field
+		 * @param {Ext.form.field.ComboBox} query
+		 * @param {Object} attribute
 		 *
-		 * @return Ext.form.FieldSet
-		 *
-		 * build a fieldSet with a combo-box and a field to edit a filtering criteria used in the
-		 * attribute section of the filter.
+		 * @return {CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel}
 		 */
 		buildFieldsetForFilter: function(field, query, attribute) {
 			return this.genericBuildFieldsetForFilter([field], query, attribute);
 		},
 
-		// protected
+		/**
+		 * @param {Array} fields - Array of fields to display
+		 * @param {Ext.form.field.ComboBox} query
+		 * @param {Object} attribute
+		 *
+		 * @return {CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel}
+		 *
+		 * @protected
+		 */
 		genericBuildFieldsetForFilter: function(fields, query, attribute) {
-			return new CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel({
+			return Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanel', {
+				selectAtRuntimeCheckDisabled: attribute.selectAtRuntimeCheckDisabled,
 				attributeName: attribute.name,
 				conditionCombo: query,
 				valueFields: fields
@@ -195,18 +202,20 @@
 		defaults: {
 			margins:'0 5 0 0'
 		},
-		hideMode: 'offsets',
+
 		layout: {
 			type: 'hbox',
 			pack: 'start',
 			align: 'top'
 		},
 
-		// configuration
+		hideMode: 'offsets',
+
+		// Configuration
 			attributeName: '',
-			conditionCombo: null,
+			conditionCombo: '',
 			valueFields: [],
-		// configuration
+		// END: Configuration
 
 		selectAtRuntimeCheckDisabled: true, // Flag to enable/disable selectAtRuntime checkbox
 
@@ -236,8 +245,7 @@
 						if (field) {
 							if (setValueAtRuntime) {
 								field.disable();
-							} else {
-								// Set the value of the condition combo to enable only the value fields that are needed for the current operator
+							} else { // Set the value of the condition combo to enable only the value fields that are needed for the current operator
 								me.conditionCombo.setValue(me.conditionCombo.getValue());
 							}
 						}
@@ -245,14 +253,19 @@
 				}
 			});
 
-			this.items = [
-				this.removeFieldButton,
-				this.conditionCombo
-			]
-			.concat(this.valueFields);
+			Ext.apply(this, {
+				items: [
+					this.removeFieldButton,
+					this.conditionCombo
+				]
+			});
 
-			if (this.selectAtRuntimeCheckDisabled)
-				this.items.concat(this.selectAtRuntimeCheck);
+			this.callParent(arguments);
+
+			this.add(this.valueFields);
+
+			if (!this.selectAtRuntimeCheckDisabled)
+				this.add(this.selectAtRuntimeCheck);
 
 			this.onConditionComboSelectStrategy = buildOnConditionComboSelectStrategy(this.valueFields);
 
@@ -261,8 +274,6 @@
 				if (!me.selectAtRuntimeCheck.getValue())
 					me.onConditionComboSelectStrategy.run(this.getValue());
 			}, this.conditionCombo);
-
-			this.callParent(arguments);
 		},
 
 		showOr: function(){
@@ -344,13 +355,6 @@
 				if (data.parameterType == 'runtime')
 					this.selectAtRuntimeCheck.setValue(true);
 			}
-		},
-
-		/**
-		 * @param {Boolean} state
-		 */
-		setDisabledRuntimeCheck: function(state) {
-			this.selectAtRuntimeCheckDisabled = state;
 		}
 	});
 
