@@ -1,6 +1,9 @@
 package org.cmdbuild.servlets.json.management;
 
+import static com.google.common.base.Predicates.in;
+import static com.google.common.base.Predicates.not;
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTRIBUTES;
@@ -13,8 +16,8 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.COUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DETAIL_CLASS_NAME;
-import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_DIRECTION;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_LIMIT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DOMAIN_SOURCE;
@@ -33,6 +36,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.RETRY_WITHOUT_FI
 import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
+import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -43,7 +47,6 @@ import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
@@ -82,12 +85,36 @@ import com.google.common.collect.Maps;
 
 public class ModCard extends JSONBaseWithSpringContext {
 
+	private static class FilterAttribute implements Function<Card, Card> {
+
+		private final Iterable<String> whitelist;
+
+		public FilterAttribute(final Iterable<String> whitelist) {
+			this.whitelist = whitelist;
+		}
+
+		@Override
+		public Card apply(final Card input) {
+			if (!isEmpty(whitelist)) {
+				final Collection<String> collection = Lists.newArrayList(whitelist);
+				final Map<String, Object> map = input.getAttributes();
+				final Map<String, Object> filteredMap = Maps.filterKeys(map, not(in(collection)));
+				final Collection<String> removed = Lists.newArrayList(filteredMap.keySet());
+				for (final String remove : removed) {
+					map.remove(remove);
+				}
+			}
+			return input;
+		}
+
+	}
+
 	/**
 	 * Retrieves the cards for the specified class. If a filter is defined, only
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -117,7 +144,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	/**
 	 * Retrieves a list of cards for the specified class, returning only the
 	 * values for a subset of values
-	 *
+	 * 
 	 * @param filter
 	 *            null if no filter is specified
 	 * @param sorters
@@ -155,7 +182,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	 * the cards that match the filter are retrieved. The fetched cards are
 	 * sorted if a sorter is defined. Note that the max number of retrieved
 	 * cards is the 'limit' parameter
-	 *
+	 * 
 	 * @param className
 	 *            the name of the class for which I want to retrieve the cards
 	 * @param filter
@@ -210,7 +237,13 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
-		return cardSerializer().toClient(response.elements(), response.totalSize());
+		return cardSerializer().toClient(removeUnwantedAttributes(response.elements(), attributes),
+				response.totalSize());
+	}
+
+	private Iterable<Card> removeUnwantedAttributes(final Iterable<Card> elements, final JSONArray attributes) {
+		return from(elements) //
+				.transform(new FilterAttribute(toIterable(attributes)));
 	}
 
 	@JSONExported
@@ -485,7 +518,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param domainName
 	 *            is the domain between the source class and the destination
 	 *            class
