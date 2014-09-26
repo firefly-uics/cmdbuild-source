@@ -2,6 +2,9 @@ package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 
 import java.util.Comparator;
 
@@ -10,11 +13,10 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.Classes;
 import org.cmdbuild.service.rest.cxf.serialization.ToFullClassDetail;
 import org.cmdbuild.service.rest.cxf.serialization.ToSimpleClassDetail;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.FullClassDetail;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.SimpleClassDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ClassWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ClassWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 import com.google.common.collect.Ordering;
 
@@ -41,33 +43,34 @@ public class CxfClasses implements Classes {
 	}
 
 	@Override
-	public ListResponse<SimpleClassDetail> readAll(final boolean activeOnly, final Integer limit, final Integer offset) {
+	public ResponseMultiple<ClassWithBasicDetails> readAll(final boolean activeOnly, final Integer limit,
+			final Integer offset) {
 		// FIXME do all the following it within the same logic
 		// <<<<<
 		final Iterable<? extends CMClass> allClasses = userDataAccessLogic.findClasses(activeOnly);
 		final Iterable<? extends CMClass> ordered = Ordering.from(NAME_ASC) //
 				.sortedCopy(allClasses);
-		final Iterable<SimpleClassDetail> elements = from(ordered) //
+		final Iterable<ClassWithBasicDetails> elements = from(ordered) //
 				.skip((offset == null) ? 0 : offset) //
 				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
 				.transform(TO_SIMPLE_CLASS_DETAIL);
 		// <<<<<
-		return ListResponse.<SimpleClassDetail> newInstance() //
+		return newResponseMultiple(ClassWithBasicDetails.class) //
 				.withElements(elements) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(size(ordered))) //
 						.build()) //
 				.build();
 	}
 
 	@Override
-	public SimpleResponse<FullClassDetail> read(final String name) {
+	public ResponseSingle<ClassWithFullDetails> read(final String name) {
 		final CMClass found = userDataAccessLogic.findClass(name);
 		if (found == null) {
 			errorHandler.classNotFound(name);
 		}
-		final FullClassDetail element = TO_FULL_CLASS_DETAIL.apply(found);
-		return SimpleResponse.<FullClassDetail> newInstance() //
+		final ClassWithFullDetails element = TO_FULL_CLASS_DETAIL.apply(found);
+		return newResponseSingle(ClassWithFullDetails.class) //
 				.withElement(element) //
 				.build();
 	}

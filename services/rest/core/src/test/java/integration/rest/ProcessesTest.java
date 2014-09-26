@@ -1,6 +1,11 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessWithBasicDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessWithFullDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
@@ -13,11 +18,10 @@ import static support.ServerResource.randomPort;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.Processes;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.FullProcessDetail;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.SimpleProcessDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ProcessWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -50,15 +54,16 @@ public class ProcessesTest {
 	@Test
 	public void getClasses() throws Exception {
 		// given
-		final ListResponse<SimpleProcessDetail> expectedResponse = ListResponse.<SimpleProcessDetail> newInstance() //
+		final ResponseMultiple<ProcessWithBasicDetails> expectedResponse = newResponseMultiple(
+				ProcessWithBasicDetails.class) //
 				.withElements(asList( //
-						SimpleProcessDetail.newInstance() //
+						newProcessWithBasicDetails() //
 								.withName("foo") //
 								.build(), //
-						SimpleProcessDetail.newInstance() //
+						newProcessWithBasicDetails() //
 								.withName("bar") //
 								.build())) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
@@ -77,8 +82,8 @@ public class ProcessesTest {
 	@Test
 	public void getClassDetail() throws Exception {
 		// given
-		final SimpleResponse<FullProcessDetail> expectedResponse = SimpleResponse.<FullProcessDetail> newInstance() //
-				.withElement(FullProcessDetail.newInstance() //
+		final ResponseSingle<ProcessWithFullDetails> expectedResponse = newResponseSingle(ProcessWithFullDetails.class) //
+				.withElement(newProcessWithFullDetails() //
 						.withName("foo") //
 						.build()) //
 				.build();

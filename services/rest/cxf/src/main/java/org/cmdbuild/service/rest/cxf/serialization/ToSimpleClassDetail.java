@@ -1,11 +1,13 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.dto.Builders.newClassWithBasicDetails;
+
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.service.rest.dto.SimpleClassDetail;
+import org.cmdbuild.service.rest.dto.ClassWithBasicDetails;
 
 import com.google.common.base.Function;
 
-public class ToSimpleClassDetail implements Function<CMClass, SimpleClassDetail> {
+public class ToSimpleClassDetail implements Function<CMClass, ClassWithBasicDetails> {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToSimpleClassDetail> {
 
@@ -31,9 +33,10 @@ public class ToSimpleClassDetail implements Function<CMClass, SimpleClassDetail>
 	}
 
 	@Override
-	public SimpleClassDetail apply(final CMClass input) {
+	public ClassWithBasicDetails apply(final CMClass input) {
 		final CMClass parent = input.getParent();
-		return SimpleClassDetail.newInstance() //
+		return newClassWithBasicDetails() //
+				.withId(input.getId()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.withParent((parent == null) ? MISSING_PARENT : parent.getName()) //

@@ -5,6 +5,7 @@ import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessInstance;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -71,7 +72,7 @@ public class ToProcessInstance implements Function<UserProcessInstance, ProcessI
 			}
 
 		};
-		return ProcessInstance.newInstance() //
+		return newProcessInstance() //
 				.withType(input.getType().getName()) //
 				.withId(input.getId()) //
 				.withName(input.getProcessInstanceId()) //

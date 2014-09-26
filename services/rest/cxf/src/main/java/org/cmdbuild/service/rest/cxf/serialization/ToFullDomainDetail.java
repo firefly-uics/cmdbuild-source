@@ -1,11 +1,13 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.dto.Builders.newDomainWithFullDetails;
+
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.service.rest.dto.FullDomainDetail;
+import org.cmdbuild.service.rest.dto.DomainWithFullDetails;
 
 import com.google.common.base.Function;
 
-public class ToFullDomainDetail implements Function<CMDomain, FullDomainDetail> {
+public class ToFullDomainDetail implements Function<CMDomain, DomainWithFullDetails> {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToFullDomainDetail> {
 
@@ -29,8 +31,9 @@ public class ToFullDomainDetail implements Function<CMDomain, FullDomainDetail> 
 	}
 
 	@Override
-	public FullDomainDetail apply(final CMDomain input) {
-		return FullDomainDetail.newInstance() //
+	public DomainWithFullDetails apply(final CMDomain input) {
+		return newDomainWithFullDetails() //
+				.withId(input.getId()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.withClassSource(input.getClass1().getName()) //

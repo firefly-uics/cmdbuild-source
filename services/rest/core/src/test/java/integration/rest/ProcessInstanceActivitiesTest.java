@@ -1,6 +1,12 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.dto.Builders.newAttributeStatus;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithBasicDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithFullDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -10,12 +16,10 @@ import static support.ServerResource.randomPort;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.ProcessInstanceActivities;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.ProcessActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition.Attribute;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -48,22 +52,23 @@ public class ProcessInstanceActivitiesTest {
 	@Test
 	public void instancesRead() throws Exception {
 		// given
-		final ListResponse<ProcessActivity> sentResponse = ListResponse.newInstance(ProcessActivity.class) //
+		final ResponseMultiple<ProcessActivityWithBasicDetails> sentResponse = newResponseMultiple(
+				ProcessActivityWithBasicDetails.class) //
 				.withElements(asList( //
-						ProcessActivity.newInstance() //
-								.withId("first") //
+						newProcessActivityWithBasicDetails() //
+								.withId(123L) //
 								.withWritableStatus(true) //
 								.build(), //
-						ProcessActivity.newInstance() //
-								.withId("second") //
+						newProcessActivityWithBasicDetails() //
+								.withId(456L) //
 								.withWritableStatus(false) //
 								.build() //
 						)) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		final ListResponse<ProcessActivity> expectedResponse = sentResponse;
+		final ResponseMultiple<ProcessActivityWithBasicDetails> expectedResponse = sentResponse;
 		doReturn(sentResponse) //
 				.when(service).read("foo", 123L);
 
@@ -79,26 +84,26 @@ public class ProcessInstanceActivitiesTest {
 	@Test
 	public void instanceRead() throws Exception {
 		// given
-		final SimpleResponse<ProcessActivityDefinition> sentResponse = SimpleResponse
-				.newInstance(ProcessActivityDefinition.class) //
-				.withElement(ProcessActivityDefinition.newInstance() //
-						.withId("id") //
+		final ResponseSingle<ProcessActivityWithFullDetails> sentResponse = newResponseSingle(
+				ProcessActivityWithFullDetails.class) //
+				.withElement(newProcessActivityWithFullDetails() //
+						.withId(123L) //
 						.withDescription("description") //
 						.withInstructions("instructions") //
 						.withAttributes(asList( //
-								Attribute.newInstance() //
-										.withId("foo") //
+								newAttributeStatus() //
+										.withId(456L) //
 										.withWritable(true) //
 										.withMandatory(false) //
 										.build(), //
-								Attribute.newInstance() //
-										.withId("bar") //
+								newAttributeStatus() //
+										.withId(789L) //
 										.withMandatory(true) //
 										.build() //
 								)) //
 						.build()) //
 				.build();
-		final SimpleResponse<ProcessActivityDefinition> expectedResponse = sentResponse;
+		final ResponseSingle<ProcessActivityWithFullDetails> expectedResponse = sentResponse;
 		doReturn(sentResponse) //
 				.when(service).read("foo", 123L, "bar");
 

@@ -1,7 +1,5 @@
 package org.cmdbuild.service.rest.dto;
 
-import static java.lang.Boolean.FALSE;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.PARENT;
@@ -13,73 +11,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 @XmlRootElement(name = SIMPLE_CLASS_DETAIL)
-public class SimpleClassDetail {
-
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<SimpleClassDetail> {
-
-		private String name;
-		private String description;
-		private String parent;
-		private Boolean prototype;
-
-		private Builder() {
-			// use static method
-		}
-
-		@Override
-		public SimpleClassDetail build() {
-			validate();
-			return new SimpleClassDetail(this);
-		}
-
-		private void validate() {
-			prototype = defaultIfNull(prototype, FALSE);
-		}
-
-		public Builder withName(final String name) {
-			this.name = name;
-			return this;
-		}
-
-		public Builder withDescription(final String description) {
-			this.description = description;
-			return this;
-		}
-
-		public Builder withParent(final String parent) {
-			this.parent = parent;
-			return this;
-		}
-
-		public Builder thatIsPrototype(final Boolean prototype) {
-			this.prototype = prototype;
-			return this;
-		}
-
-	}
-
-	public static Builder newInstance() {
-		return new Builder();
-	}
+public class ClassWithBasicDetails extends AbstractModelWithId {
 
 	private String name;
 	private String description;
 	private String parent;
 	private boolean prototype;
 
-	SimpleClassDetail() {
+	ClassWithBasicDetails() {
 		// package visibility
-	}
-
-	private SimpleClassDetail(final Builder builder) {
-		this.name = builder.name;
-		this.description = builder.description;
-		this.parent = builder.parent;
-		this.prototype = builder.prototype;
 	}
 
 	@XmlAttribute(name = NAME)
@@ -119,18 +61,19 @@ public class SimpleClassDetail {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	protected boolean doEquals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
 
-		if (!(obj instanceof SimpleClassDetail)) {
+		if (!(obj instanceof ClassWithBasicDetails)) {
 			return false;
 		}
 
-		final SimpleClassDetail other = SimpleClassDetail.class.cast(obj);
+		final ClassWithBasicDetails other = ClassWithBasicDetails.class.cast(obj);
 
 		return new EqualsBuilder() //
+				.append(this.getId(), other.getId()) //
 				.append(this.name, other.name) //
 				.append(this.description, other.description) //
 				.append(this.parent, other.parent) //
@@ -139,18 +82,14 @@ public class SimpleClassDetail {
 	}
 
 	@Override
-	public int hashCode() {
+	protected int doHashCode() {
 		return new HashCodeBuilder() //
+				.append(this.getId()) //
 				.append(this.name) //
 				.append(this.description) //
 				.append(this.parent) //
 				.append(this.prototype) //
 				.toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
 	}
 
 }

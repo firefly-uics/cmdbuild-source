@@ -1,8 +1,8 @@
 package org.cmdbuild.service.rest.dto;
 
-import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_TYPE_DETAIL;
+import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
-import static org.cmdbuild.service.rest.constants.Serialization.PARENT;
+import static org.cmdbuild.service.rest.constants.Serialization.SIMPLE_DOMAIN_DETAIL;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,13 +10,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@XmlRootElement(name = LOOKUP_TYPE_DETAIL)
-public class LookupTypeDetail extends AbstractModelWithId {
+@XmlRootElement(name = SIMPLE_DOMAIN_DETAIL)
+public class DomainWithBasicDetails extends AbstractModelWithId {
 
 	private String name;
-	private String parent;
+	private String description;
 
-	LookupTypeDetail() {
+	DomainWithBasicDetails() {
 		// package visibility
 	}
 
@@ -29,13 +29,13 @@ public class LookupTypeDetail extends AbstractModelWithId {
 		this.name = name;
 	}
 
-	@XmlAttribute(name = PARENT)
-	public String getParent() {
-		return parent;
+	@XmlAttribute(name = DESCRIPTION)
+	public String getDescription() {
+		return description;
 	}
 
-	void setParent(final String parent) {
-		this.parent = parent;
+	void setDescription(final String description) {
+		this.description = description;
 	}
 
 	@Override
@@ -44,24 +44,22 @@ public class LookupTypeDetail extends AbstractModelWithId {
 			return true;
 		}
 
-		if (!(obj instanceof LookupTypeDetail)) {
+		if (!(obj instanceof DomainWithBasicDetails)) {
 			return false;
 		}
 
-		final LookupTypeDetail other = LookupTypeDetail.class.cast(obj);
+		final DomainWithBasicDetails other = DomainWithBasicDetails.class.cast(obj);
 		return new EqualsBuilder() //
-				.append(this.getId(), other.getId()) //
 				.append(this.name, other.name) //
-				.append(this.parent, other.parent) //
+				.append(this.description, other.description) //
 				.isEquals();
 	}
 
 	@Override
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
-				.append(getId()) //
 				.append(name) //
-				.append(parent) //
+				.append(description) //
 				.toHashCode();
 	}
 

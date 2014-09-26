@@ -1,11 +1,13 @@
 package org.cmdbuild.service.rest.cxf;
 
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
+
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.ProcessStartActivity;
 import org.cmdbuild.service.rest.cxf.serialization.ToProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
@@ -26,14 +28,14 @@ public class CxfProcessStartActivity implements ProcessStartActivity {
 	}
 
 	@Override
-	public SimpleResponse<ProcessActivityDefinition> read(final String type) {
+	public ResponseSingle<ProcessActivityWithFullDetails> read(final String type) {
 		final UserProcessClass found = workflowLogic.findProcessClass(type);
 		if (found == null) {
 			errorHandler.processNotFound(type);
 		}
 		final CMActivity activity = startActivityFor(type);
-		final ProcessActivityDefinition element = TO_PROCESS_ACTIVITY.apply(activity);
-		return SimpleResponse.newInstance(ProcessActivityDefinition.class) //
+		final ProcessActivityWithFullDetails element = TO_PROCESS_ACTIVITY.apply(activity);
+		return newResponseSingle(ProcessActivityWithFullDetails.class) //
 				.withElement(element) //
 				.build();
 	}

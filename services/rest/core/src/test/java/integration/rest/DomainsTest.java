@@ -1,6 +1,11 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.dto.Builders.newDomainWithBasicDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newDomainWithFullDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -14,11 +19,10 @@ import static support.ServerResource.randomPort;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.Domains;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.FullDomainDetail;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.SimpleDomainDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.DomainWithBasicDetails;
+import org.cmdbuild.service.rest.dto.DomainWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -51,15 +55,16 @@ public class DomainsTest {
 	@Test
 	public void domainsRead() throws Exception {
 		// given
-		final ListResponse<SimpleDomainDetail> expectedResponse = ListResponse.<SimpleDomainDetail> newInstance() //
+		final ResponseMultiple<DomainWithBasicDetails> expectedResponse = newResponseMultiple(
+				DomainWithBasicDetails.class) //
 				.withElements(asList( //
-						SimpleDomainDetail.newInstance() //
+						newDomainWithBasicDetails() //
 								.withName("foo") //
 								.build(), //
-						SimpleDomainDetail.newInstance() //
+						newDomainWithBasicDetails() //
 								.withName("bar") //
 								.build())) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
@@ -79,8 +84,8 @@ public class DomainsTest {
 	@Test
 	public void domainRead() throws Exception {
 		// given
-		final SimpleResponse<FullDomainDetail> expectedResponse = SimpleResponse.<FullDomainDetail> newInstance() //
-				.withElement(FullDomainDetail.newInstance() //
+		final ResponseSingle<DomainWithFullDetails> expectedResponse = newResponseSingle(DomainWithFullDetails.class) //
+				.withElement(newDomainWithFullDetails() //
 						.withName("foo") //
 						.build()) //
 				.build();

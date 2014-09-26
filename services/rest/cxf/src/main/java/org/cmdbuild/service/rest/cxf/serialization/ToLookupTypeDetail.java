@@ -1,5 +1,7 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.dto.Builders.newLookupTypeDetail;
+
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
 
@@ -30,7 +32,9 @@ public class ToLookupTypeDetail implements Function<LookupType, LookupTypeDetail
 
 	@Override
 	public LookupTypeDetail apply(final LookupType input) {
-		return LookupTypeDetail.newInstance() //
+		return newLookupTypeDetail() //
+				// TODO fake id
+				.withId(Long.valueOf(input.name.hashCode())) //
 				.withName(input.name) //
 				.withParent(input.parent) //
 				.build();

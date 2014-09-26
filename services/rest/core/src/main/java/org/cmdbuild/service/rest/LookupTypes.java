@@ -12,9 +12,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupTypeDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 @Path("lookup_types/")
 @Produces(APPLICATION_JSON)
@@ -22,13 +22,13 @@ public interface LookupTypes {
 
 	@GET
 	@Path("{" + TYPE + "}/")
-	SimpleResponse<LookupTypeDetail> read( //
+	ResponseSingle<LookupTypeDetail> read( //
 			@PathParam(TYPE) String type //
 	);
 
 	@GET
 	@Path(EMPTY)
-	ListResponse<LookupTypeDetail> readAll( //
+	ResponseMultiple<LookupTypeDetail> readAll( //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);

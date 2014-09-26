@@ -8,6 +8,9 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_DEST
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_SOURCE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newRelation;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -31,9 +34,9 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.Relations;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
+import org.cmdbuild.service.rest.dto.Builders;
 import org.cmdbuild.service.rest.dto.Relation;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -82,25 +85,26 @@ public class RelationsTest {
 				.chainablePut("bar", "baz");
 		final Map<String, String> secondValues = ChainablePutMap.of(new HashMap<String, String>()) //
 				.chainablePut("bar", "baz");
-		final ListResponse<Relation> sentResponse = ListResponse.newInstance(Relation.class) //
+		final ResponseMultiple<Relation> sentResponse = newResponseMultiple(Relation.class) //
 				.withElements(asList( //
-						Relation.newInstance() //
+						newRelation() //
 								.withType(type) //
 								.withId(firstId) //
 								.withValues(firstValues) //
 								.build(), //
-						Relation.newInstance() //
+						newRelation() //
 								.withType(type) //
 								.withId(secondId) //
 								.withValues(secondValues) //
 								.build() //
 						)) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
 		@SuppressWarnings("unchecked")
-		final ListResponse<Map<String, Object>> expectedResponse = ListResponse.<Map<String, Object>> newInstance() //
+		final ResponseMultiple<Map<String, Object>> expectedResponse = Builders
+				.<Map<String, Object>> newResponseMultiple() //
 				.withElements(Arrays.<Map<String, Object>> asList( //
 						ChainablePutMap.of(new HashMap<String, Object>()) //
 								.chainablePut(UNDERSCORED_TYPE, type) //
@@ -115,7 +119,7 @@ public class RelationsTest {
 								.chainablePut(UNDERSCORED_DESTINATION, null) //
 								.chainablePutAll(secondValues) //
 						)) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();

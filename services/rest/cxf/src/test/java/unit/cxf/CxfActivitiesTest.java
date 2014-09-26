@@ -1,5 +1,9 @@
 package unit.cxf;
 
+import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithBasicDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithFullDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyLong;
@@ -11,10 +15,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.cmdbuild.service.rest.ProcessInstanceActivities;
 import org.cmdbuild.service.rest.cxf.CxfActivities;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.ProcessActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,9 +37,9 @@ public class CxfActivitiesTest {
 	@Test
 	public void readSingleDelegatedCorrectly() throws Exception {
 		// given
-		final SimpleResponse<ProcessActivityDefinition> expectedResponse = SimpleResponse
-				.newInstance(ProcessActivityDefinition.class) //
-				.withElement(ProcessActivityDefinition.newInstance() //
+		final ResponseSingle<ProcessActivityWithFullDetails> expectedResponse = newResponseSingle(
+				ProcessActivityWithFullDetails.class) //
+				.withElement(newProcessActivityWithFullDetails() //
 						// not important
 						.build()) //
 				.build();
@@ -43,7 +47,7 @@ public class CxfActivitiesTest {
 				.when(processInstanceActivities).read(anyString(), anyLong(), anyString());
 
 		// when
-		final SimpleResponse<ProcessActivityDefinition> response = cxfActivities.read("foo", "bar", 123L);
+		final ResponseSingle<ProcessActivityWithFullDetails> response = cxfActivities.read("foo", "bar", 123L);
 
 		// then
 		assertThat(response, equalTo(expectedResponse));
@@ -54,8 +58,9 @@ public class CxfActivitiesTest {
 	@Test
 	public void readAllDelegatedCorrectly() throws Exception {
 		// given
-		final ListResponse<ProcessActivity> expectedResponse = ListResponse.newInstance(ProcessActivity.class) //
-				.withElement(ProcessActivity.newInstance() //
+		final ResponseMultiple<ProcessActivityWithBasicDetails> expectedResponse = newResponseMultiple(
+				ProcessActivityWithBasicDetails.class) //
+				.withElement(newProcessActivityWithBasicDetails() //
 						// not important
 						.build()) //
 				.build();
@@ -63,7 +68,7 @@ public class CxfActivitiesTest {
 				.when(processInstanceActivities).read(anyString(), anyLong());
 
 		// when
-		final ListResponse<ProcessActivity> response = cxfActivities.read("foo", 123L);
+		final ResponseMultiple<ProcessActivityWithBasicDetails> response = cxfActivities.read("foo", 123L);
 
 		// then
 		assertThat(response, equalTo(expectedResponse));

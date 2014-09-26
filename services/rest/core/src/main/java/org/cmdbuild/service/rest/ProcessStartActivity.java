@@ -9,8 +9,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 @Path("processes/{" + TYPE + "}/start_activity/")
 @Produces(APPLICATION_JSON)
@@ -18,7 +18,7 @@ public interface ProcessStartActivity {
 
 	@GET
 	@Path(EMPTY)
-	SimpleResponse<ProcessActivityDefinition> read( //
+	ResponseSingle<ProcessActivityWithFullDetails> read( //
 			@PathParam(TYPE) String type //
 	);
 

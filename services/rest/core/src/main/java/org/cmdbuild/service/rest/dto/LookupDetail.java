@@ -4,7 +4,6 @@ import static org.cmdbuild.service.rest.constants.Serialization.ACTIVE;
 import static org.cmdbuild.service.rest.constants.Serialization.CODE;
 import static org.cmdbuild.service.rest.constants.Serialization.DEFAULT;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
-import static org.cmdbuild.service.rest.constants.Serialization.ID;
 import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_DETAIL;
 import static org.cmdbuild.service.rest.constants.Serialization.NUMBER;
 import static org.cmdbuild.service.rest.constants.Serialization.PARENT_ID;
@@ -16,91 +15,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement(name = LOOKUP_DETAIL)
-public class LookupDetail {
+public class LookupDetail extends AbstractModelWithId {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<LookupDetail> {
-
-		private Long id;
-		private String code;
-		private String description;
-		private String type;
-		private Long number;
-		private Boolean active;
-		private Boolean isDefault;
-		private Long parentId;
-		private String parentType;
-
-		private Builder() {
-			// use static method
-		}
-
-		@Override
-		public LookupDetail build() {
-			validate();
-			return new LookupDetail(this);
-		}
-
-		private void validate() {
-			// TODO Auto-generated method stub
-		}
-
-		public Builder withId(final Long id) {
-			this.id = id;
-			return this;
-		}
-
-		public Builder withCode(final String code) {
-			this.code = code;
-			return this;
-		}
-
-		public Builder withDescription(final String description) {
-			this.description = description;
-			return this;
-		}
-
-		public Builder withType(final String type) {
-			this.type = type;
-			return this;
-		}
-
-		public Builder withNumber(final Long number) {
-			this.number = number;
-			return this;
-		}
-
-		public Builder thatIsActive(final Boolean active) {
-			this.active = active;
-			return this;
-		}
-
-		public Builder thatIsDefault(final Boolean isDefault) {
-			this.isDefault = isDefault;
-			return this;
-		}
-
-		public Builder withParentId(final Long parentId) {
-			this.parentId = parentId;
-			return this;
-		}
-
-		public Builder withParentType(final String parentType) {
-			this.parentType = parentType;
-			return this;
-		}
-
-	}
-
-	public static Builder newInstance() {
-		return new Builder();
-	}
-
-	private Long id;
 	private String code;
 	private String description;
 	private String type;
@@ -112,27 +31,6 @@ public class LookupDetail {
 
 	LookupDetail() {
 		// package visibility
-	}
-
-	private LookupDetail(final Builder builder) {
-		this.id = builder.id;
-		this.code = builder.code;
-		this.description = builder.description;
-		this.type = builder.type;
-		this.number = builder.number;
-		this.active = builder.active;
-		this.isDefault = builder.isDefault;
-		this.parentId = builder.parentId;
-		this.parentType = builder.parentType;
-	}
-
-	@XmlAttribute(name = ID)
-	public Long getId() {
-		return id;
-	}
-
-	void setId(final Long id) {
-		this.id = id;
 	}
 
 	@XmlAttribute(name = CODE)
@@ -210,7 +108,7 @@ public class LookupDetail {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	protected boolean doEquals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -221,7 +119,7 @@ public class LookupDetail {
 
 		final LookupDetail other = LookupDetail.class.cast(obj);
 		return new EqualsBuilder() //
-				.append(this.id, other.id) //
+				.append(this.getId(), other.getId()) //
 				.append(this.code, other.code) //
 				.append(this.description, other.description) //
 				.append(this.type, other.type) //
@@ -234,9 +132,9 @@ public class LookupDetail {
 	}
 
 	@Override
-	public int hashCode() {
+	protected int doHashCode() {
 		return new HashCodeBuilder() //
-				.append(id) //
+				.append(getId()) //
 				.append(code) //
 				.append(description) //
 				.append(type) //
@@ -246,11 +144,6 @@ public class LookupDetail {
 				.append(parentId) //
 				.append(parentType) //
 				.toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
 	}
 
 }

@@ -4,6 +4,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_DEST
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_SOURCE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
+import static org.cmdbuild.service.rest.dto.Builders.newRelation;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,7 +35,7 @@ public class RelationAdapter extends XmlAdapter<Map<String, Object>, Relation> {
 
 	@Override
 	public Relation unmarshal(final Map<String, Object> input) throws Exception {
-		return Relation.newInstance() //
+		return newRelation() //
 				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
 				.withValues(input) //

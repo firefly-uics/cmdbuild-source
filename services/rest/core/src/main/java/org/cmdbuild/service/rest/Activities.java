@@ -12,10 +12,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.ProcessActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 @Path("process_activities/")
 @Produces(APPLICATION_JSON)
@@ -23,14 +23,14 @@ public interface Activities {
 
 	@GET
 	@Path(EMPTY)
-	ListResponse<ProcessActivity> read( //
+	ResponseMultiple<ProcessActivityWithBasicDetails> read( //
 			@QueryParam(TYPE) String type, //
 			@QueryParam(INSTANCE) Long instance //
 	);
 
 	@GET
 	@Path("{" + ACTIVITY + "}/")
-	SimpleResponse<ProcessActivityDefinition> read( //
+	ResponseSingle<ProcessActivityWithFullDetails> read( //
 			@PathParam(ACTIVITY) String activity, //
 			@QueryParam(TYPE) String type, //
 			@QueryParam(INSTANCE) Long instance //

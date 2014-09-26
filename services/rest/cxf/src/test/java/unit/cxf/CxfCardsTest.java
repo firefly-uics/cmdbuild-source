@@ -1,5 +1,6 @@
 package unit.cxf;
 
+import static org.cmdbuild.service.rest.dto.Builders.newCard;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
@@ -19,8 +20,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
-import org.cmdbuild.service.rest.dto.Card;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,7 +60,7 @@ public class CxfCardsTest {
 				.when(errorHandler).classNotFound(anyString());
 
 		// when
-		cxfCards.create("foo", Card.newInstance() //
+		cxfCards.create("foo", newCard() //
 				.withType("bar") //
 				.build());
 
@@ -83,7 +83,7 @@ public class CxfCardsTest {
 				.when(userDataAccessLogic).createCard(any(org.cmdbuild.model.data.Card.class));
 
 		// when
-		final SimpleResponse<Long> response = cxfCards.create("foo", Card.newInstance() //
+		final ResponseSingle<Long> response = cxfCards.create("foo", newCard() //
 				.withType("bar") //
 				.withValue("some name", "some value") //
 				.build());
@@ -110,7 +110,7 @@ public class CxfCardsTest {
 				.when(errorHandler).classNotFound(anyString());
 
 		// when
-		cxfCards.update("foo", 123L, Card.newInstance() //
+		cxfCards.update("foo", 123L, newCard() //
 				.withType("bar") //
 				.withId(456L) //
 				.build());
@@ -132,7 +132,7 @@ public class CxfCardsTest {
 				.when(userDataAccessLogic).findClass(anyString());
 
 		// when
-		cxfCards.update("foo", 123L, Card.newInstance() //
+		cxfCards.update("foo", 123L, newCard() //
 				.withType("bar") //
 				.withId(456L) //
 				.withValue("some name", "some value") //

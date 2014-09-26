@@ -4,9 +4,9 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.cmdbuild.service.rest.Instances;
 import org.cmdbuild.service.rest.ProcessInstances;
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.ProcessInstance;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 public class CxfInstances implements Instances {
 
@@ -17,18 +17,18 @@ public class CxfInstances implements Instances {
 	}
 
 	@Override
-	public SimpleResponse<Long> create(final MultivaluedMap<String, String> formParams, final String type,
+	public ResponseSingle<Long> create(final MultivaluedMap<String, String> formParams, final String type,
 			final boolean advance) {
 		return delegate.create(type, formParams, advance);
 	}
 
 	@Override
-	public org.cmdbuild.service.rest.dto.SimpleResponse<ProcessInstance> read(final Long id, final String type) {
+	public org.cmdbuild.service.rest.dto.ResponseSingle<ProcessInstance> read(final Long id, final String type) {
 		return delegate.read(type, id);
 	};
 
 	@Override
-	public ListResponse<ProcessInstance> read(final String type, final Integer limit, final Integer offset) {
+	public ResponseMultiple<ProcessInstance> read(final String type, final Integer limit, final Integer offset) {
 		return delegate.read(type, limit, offset);
 	}
 

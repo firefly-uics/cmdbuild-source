@@ -19,8 +19,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
 import org.cmdbuild.service.rest.dto.Card;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 @Path("classes/{" + TYPE + "}/cards/")
 @Consumes(APPLICATION_JSON)
@@ -29,20 +29,20 @@ public interface Cards {
 
 	@POST
 	@Path(EMPTY)
-	SimpleResponse<Long> create( //
+	ResponseSingle<Long> create( //
 			@PathParam(TYPE) String type, //
 			Card card);
 
 	@GET
 	@Path("{" + ID + "}/")
-	SimpleResponse<Card> read( //
+	ResponseSingle<Card> read( //
 			@PathParam(TYPE) String type, //
 			@PathParam(ID) Long id //
 	);
 
 	@GET
 	@Path(EMPTY)
-	ListResponse<Card> read( //
+	ResponseMultiple<Card> read( //
 			@PathParam(TYPE) String type, //
 			@QueryParam(FILTER) String filter, //
 			@QueryParam(LIMIT) Integer limit, //

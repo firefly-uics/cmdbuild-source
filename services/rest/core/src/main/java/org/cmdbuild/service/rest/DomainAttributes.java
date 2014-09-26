@@ -13,8 +13,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.AttributeDetail;
-import org.cmdbuild.service.rest.dto.ListResponse;
+import org.cmdbuild.service.rest.dto.Attribute;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
 
 @Path("domains/{" + NAME + "}/attributes/")
 @Produces(APPLICATION_JSON)
@@ -22,7 +22,7 @@ public interface DomainAttributes {
 
 	@GET
 	@Path(EMPTY)
-	ListResponse<AttributeDetail> readAll( //
+	ResponseMultiple<Attribute> readAll( //
 			@PathParam(NAME) String name, //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //

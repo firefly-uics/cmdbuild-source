@@ -1,6 +1,5 @@
 package org.cmdbuild.service.rest.dto;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.constants.Serialization.CHILDREN;
 import static org.cmdbuild.service.rest.constants.Serialization.INDEX;
 import static org.cmdbuild.service.rest.constants.Serialization.MENU_DETAIL;
@@ -9,7 +8,6 @@ import static org.cmdbuild.service.rest.constants.Serialization.OBJECT_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.OBJECT_TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -18,75 +16,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
-import com.google.common.collect.Lists;
 
 @XmlRootElement(name = MENU_DETAIL)
-public class MenuDetail {
-
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<MenuDetail> {
-
-		private static final Iterable<MenuDetail> NO_CHILDREN = Collections.emptyList();
-
-		private String type;
-		private Long index;
-		private String objectType;
-		private String objectId;
-		private String objectDescription;
-		private Iterable<MenuDetail> children;
-
-		private Builder() {
-			// use static method
-		}
-
-		@Override
-		public MenuDetail build() {
-			validate();
-			return new MenuDetail(this);
-		}
-
-		private void validate() {
-			index = defaultIfNull(index, 0L);
-			children = defaultIfNull(children, NO_CHILDREN);
-		}
-
-		public Builder withType(final String type) {
-			this.type = type;
-			return this;
-		}
-
-		public Builder withIndex(final Long index) {
-			this.index = index;
-			return this;
-		}
-
-		public Builder withObjectType(final String objectType) {
-			this.objectType = objectType;
-			return this;
-		}
-
-		public Builder withObjectId(final String objectId) {
-			this.objectId = objectId;
-			return this;
-		}
-
-		public Builder withObjectDescription(final String objectDescription) {
-			this.objectDescription = objectDescription;
-			return this;
-		}
-
-		public Builder withChildren(final Iterable<MenuDetail> children) {
-			this.children = children;
-			return this;
-		}
-
-	}
-
-	public static Builder newInstance() {
-		return new Builder();
-	}
+public class MenuDetail extends AbstractModel {
 
 	private String type;
 	private Long index;
@@ -97,15 +29,6 @@ public class MenuDetail {
 
 	MenuDetail() {
 		// package visibility
-	}
-
-	private MenuDetail(final Builder builder) {
-		this.type = builder.type;
-		this.index = builder.index;
-		this.objectType = builder.objectType;
-		this.objectId = builder.objectId;
-		this.objectDescription = builder.objectDescription;
-		this.children = Lists.newArrayList(builder.children);
 	}
 
 	@XmlAttribute(name = TYPE)
@@ -163,7 +86,7 @@ public class MenuDetail {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	protected boolean doEquals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -184,7 +107,7 @@ public class MenuDetail {
 	}
 
 	@Override
-	public int hashCode() {
+	protected int doHashCode() {
 		return new HashCodeBuilder() //
 				.append(type) //
 				.append(index) //
@@ -193,11 +116,6 @@ public class MenuDetail {
 				.append(objectDescription) //
 				.append(children) //
 				.toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
 	}
 
 }

@@ -1,11 +1,13 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.dto.Builders.newDomainWithBasicDetails;
+
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.service.rest.dto.SimpleDomainDetail;
+import org.cmdbuild.service.rest.dto.DomainWithBasicDetails;
 
 import com.google.common.base.Function;
 
-public class ToSimpleDomainDetail implements Function<CMDomain, SimpleDomainDetail> {
+public class ToSimpleDomainDetail implements Function<CMDomain, DomainWithBasicDetails> {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToSimpleDomainDetail> {
 
@@ -29,8 +31,9 @@ public class ToSimpleDomainDetail implements Function<CMDomain, SimpleDomainDeta
 	}
 
 	@Override
-	public SimpleDomainDetail apply(final CMDomain input) {
-		return SimpleDomainDetail.newInstance() //
+	public DomainWithBasicDetails apply(final CMDomain input) {
+		return newDomainWithBasicDetails() //
+				.withId(input.getId()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.build();

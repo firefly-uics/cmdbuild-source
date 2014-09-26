@@ -2,6 +2,11 @@ package integration.rest;
 
 import static org.cmdbuild.service.rest.constants.Serialization.INSTANCE;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithBasicDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithFullDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyLong;
@@ -17,11 +22,10 @@ import static support.ServerResource.randomPort;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.Activities;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.ProcessActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -54,12 +58,13 @@ public class ActivitiesTest {
 	@Test
 	public void activitiesRead() throws Exception {
 		// given
-		final ListResponse<ProcessActivity> response = ListResponse.newInstance(ProcessActivity.class) //
-				.withElement(ProcessActivity.newInstance() //
+		final ResponseMultiple<ProcessActivityWithBasicDetails> response = newResponseMultiple(
+				ProcessActivityWithBasicDetails.class) //
+				.withElement(newProcessActivityWithBasicDetails() //
 						// not important
 						.build() //
 				) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						// not important
 						.build() //
 				).build();
@@ -84,9 +89,9 @@ public class ActivitiesTest {
 	@Test
 	public void activityRead() throws Exception {
 		// given
-		final SimpleResponse<ProcessActivityDefinition> expectedResponse = SimpleResponse
-				.newInstance(ProcessActivityDefinition.class) //
-				.withElement(ProcessActivityDefinition.newInstance() //
+		final ResponseSingle<ProcessActivityWithFullDetails> expectedResponse = newResponseSingle(
+				ProcessActivityWithFullDetails.class) //
+				.withElement(newProcessActivityWithFullDetails() //
 						// not important
 						.build()) //
 				.build();

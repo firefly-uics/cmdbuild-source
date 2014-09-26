@@ -2,6 +2,9 @@ package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.transformEntries;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 
 import java.util.Collections;
 import java.util.List;
@@ -17,10 +20,9 @@ import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.cxf.serialization.ToProcessInstance;
 import org.cmdbuild.service.rest.cxf.util.Maps;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.ProcessInstance;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.json.JSONException;
@@ -44,7 +46,7 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public SimpleResponse<Long> create(final String type, final MultivaluedMap<String, String> formParams,
+	public ResponseSingle<Long> create(final String type, final MultivaluedMap<String, String> formParams,
 			final boolean advance) {
 		final UserProcessClass found = workflowLogic.findProcessClass(type);
 		if (found == null) {
@@ -53,7 +55,7 @@ public class CxfProcessInstances implements ProcessInstances {
 		final Map<String, String> vars = transformEntries(formParams, FIRST_ELEMENT);
 		try {
 			final UserProcessInstance instance = workflowLogic.startProcess(type, vars, NO_WIDGET_SUBMISSION, advance);
-			return SimpleResponse.newInstance(Long.class) //
+			return newResponseSingle(Long.class) //
 					.withElement(instance.getId()) //
 					.build();
 		} catch (final Throwable e) {
@@ -63,7 +65,7 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public SimpleResponse<ProcessInstance> read(final String type, final Long id) {
+	public ResponseSingle<ProcessInstance> read(final String type, final Long id) {
 		final UserProcessClass found = workflowLogic.findProcessClass(type);
 		if (found == null) {
 			errorHandler.processNotFound(type);
@@ -80,7 +82,7 @@ public class CxfProcessInstances implements ProcessInstances {
 		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
 				.withType(found) //
 				.build();
-		return SimpleResponse.newInstance(ProcessInstance.class) //
+		return newResponseSingle(ProcessInstance.class) //
 				.withElement(from(elements) //
 						.transform(toProcessInstance) //
 						.first() //
@@ -100,7 +102,7 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public ListResponse<ProcessInstance> read(final String type, final Integer limit, final Integer offset) {
+	public ResponseMultiple<ProcessInstance> read(final String type, final Integer limit, final Integer offset) {
 		final UserProcessClass found = workflowLogic.findProcessClass(type);
 		if (found == null) {
 			errorHandler.processNotFound(type);
@@ -115,10 +117,10 @@ public class CxfProcessInstances implements ProcessInstances {
 		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
 				.withType(found) //
 				.build();
-		return ListResponse.newInstance(ProcessInstance.class) //
+		return newResponseMultiple(ProcessInstance.class) //
 				.withElements(from(elements) //
 						.transform(toProcessInstance)) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(elements.totalSize())) //
 						.build()) //
 				.build();
