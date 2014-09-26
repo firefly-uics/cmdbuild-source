@@ -13,13 +13,16 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 	 * }
 	 * */
 	constructor: function(view, conf) {
+		this.configuration = conf;
+
 		if (typeof conf.entryType == "undefined") {
 			return;
 		}
 
+		this.callParent(arguments);
+
 		this.mixins.observable.constructor.call(this, arguments);
 
-		this.callParent(arguments);
 		this.onEntryTypeSelected(_CMCache.getEntryTypeById(conf.entryType));
 
 		this.cmEditMode = conf.cmEditMode;
@@ -109,16 +112,14 @@ Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
 		me.editModeIfPossible();
 	},
 
-	// template to override in subclass
-	beforeRequest: Ext.emptyFn,
+//	// template to override in subclass
+//	beforeRequest: Ext.emptyFn,
 
 	editModeIfPossible: function() {
 		var me = this;
 
-		if (!me.card) {
-		// here add a new card, so there is
-		// nothing to lock
-			me.view.editMode();
+		if (!me.card) { // Here add a new card, so there is nothing to lock
+			me.onAddCardButtonClick(this.configuration.entryType);
 		} else if (me.cmEditMode) {
 			me.lockCard(function() {
 				me.view.editMode();
