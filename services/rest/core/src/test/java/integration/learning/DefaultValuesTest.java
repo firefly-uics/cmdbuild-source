@@ -19,8 +19,8 @@ import javax.ws.rs.QueryParam;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.cmdbuild.service.rest.dto.Attribute;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.model.Attribute;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

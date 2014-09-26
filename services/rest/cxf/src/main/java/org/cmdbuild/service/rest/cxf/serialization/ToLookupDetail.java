@@ -1,9 +1,9 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.dto.Builders.newLookupDetail;
+import static org.cmdbuild.service.rest.model.Builders.newLookupDetail;
 
 import org.cmdbuild.data.store.lookup.Lookup;
-import org.cmdbuild.service.rest.dto.LookupDetail;
+import org.cmdbuild.service.rest.model.LookupDetail;
 
 import com.google.common.base.Function;
 

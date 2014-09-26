@@ -1,6 +1,6 @@
 package unit.cxf;
 
-import static org.cmdbuild.service.rest.dto.Builders.newCard;
+import static org.cmdbuild.service.rest.model.Builders.newCard;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
@@ -20,7 +20,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

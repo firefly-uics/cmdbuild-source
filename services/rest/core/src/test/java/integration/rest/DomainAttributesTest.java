@@ -1,9 +1,9 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.dto.Builders.newAttribute;
-import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Builders.newAttribute;
+import static org.cmdbuild.service.rest.model.Builders.newMetadata;
+import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
@@ -16,8 +16,8 @@ import static support.ServerResource.randomPort;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.DomainAttributes;
-import org.cmdbuild.service.rest.dto.Attribute;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.model.Attribute;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;

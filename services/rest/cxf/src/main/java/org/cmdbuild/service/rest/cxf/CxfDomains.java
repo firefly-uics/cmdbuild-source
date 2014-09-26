@@ -2,19 +2,19 @@ package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
-import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Builders.newMetadata;
+import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.Domains;
 import org.cmdbuild.service.rest.cxf.serialization.ToFullDomainDetail;
 import org.cmdbuild.service.rest.cxf.serialization.ToSimpleDomainDetail;
-import org.cmdbuild.service.rest.dto.DomainWithBasicDetails;
-import org.cmdbuild.service.rest.dto.DomainWithFullDetails;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.DomainWithBasicDetails;
+import org.cmdbuild.service.rest.model.DomainWithFullDetails;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 public class CxfDomains implements Domains {
 

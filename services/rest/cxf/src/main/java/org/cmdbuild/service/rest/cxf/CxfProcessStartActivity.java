@@ -1,13 +1,13 @@
 package org.cmdbuild.service.rest.cxf;
 
-import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.ProcessStartActivity;
 import org.cmdbuild.service.rest.cxf.serialization.ToProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;

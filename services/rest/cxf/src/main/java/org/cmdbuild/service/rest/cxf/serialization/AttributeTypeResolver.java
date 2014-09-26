@@ -19,7 +19,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringArrayAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
-import org.cmdbuild.service.rest.dto.AttributeType;
+import org.cmdbuild.service.rest.model.AttributeType;
 
 public class AttributeTypeResolver implements CMAttributeTypeVisitor {
 

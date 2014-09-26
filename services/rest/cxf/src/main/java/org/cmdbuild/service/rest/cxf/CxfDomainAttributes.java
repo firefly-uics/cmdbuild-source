@@ -1,8 +1,8 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Builders.newMetadata;
+import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -13,8 +13,8 @@ import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.service.rest.DomainAttributes;
 import org.cmdbuild.service.rest.cxf.serialization.AttributeTypeResolver;
 import org.cmdbuild.service.rest.cxf.serialization.ToAttributeDetail;
-import org.cmdbuild.service.rest.dto.Attribute;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.model.Attribute;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 
 public class CxfDomainAttributes implements DomainAttributes {

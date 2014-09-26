@@ -20,9 +20,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.cmdbuild.service.rest.dto.ProcessInstance;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.ProcessInstance;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 @Path("processes/{" + TYPE + "}/instances/")
 @Produces(APPLICATION_JSON)

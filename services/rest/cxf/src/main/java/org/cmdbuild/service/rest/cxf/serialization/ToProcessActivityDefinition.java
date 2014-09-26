@@ -1,11 +1,11 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.service.rest.dto.Builders.newAttributeStatus;
-import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithFullDetails;
+import static org.cmdbuild.service.rest.model.Builders.newAttributeStatus;
+import static org.cmdbuild.service.rest.model.Builders.newProcessActivityWithFullDetails;
 
-import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
-import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails.AttributeStatus;
+import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails.AttributeStatus;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;

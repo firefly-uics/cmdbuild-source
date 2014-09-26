@@ -2,9 +2,9 @@ package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
-import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Builders.newMetadata;
+import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 
 import java.util.Comparator;
 
@@ -13,10 +13,10 @@ import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.Classes;
 import org.cmdbuild.service.rest.cxf.serialization.ToFullClassDetail;
 import org.cmdbuild.service.rest.cxf.serialization.ToSimpleClassDetail;
-import org.cmdbuild.service.rest.dto.ClassWithBasicDetails;
-import org.cmdbuild.service.rest.dto.ClassWithFullDetails;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.ClassWithBasicDetails;
+import org.cmdbuild.service.rest.model.ClassWithFullDetails;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 import com.google.common.collect.Ordering;
 

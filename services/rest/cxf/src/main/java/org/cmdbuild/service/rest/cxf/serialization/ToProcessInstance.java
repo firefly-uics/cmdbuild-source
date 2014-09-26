@@ -5,14 +5,14 @@ import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
-import static org.cmdbuild.service.rest.dto.Builders.newProcessInstance;
+import static org.cmdbuild.service.rest.model.Builders.newProcessInstance;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.service.rest.dto.ProcessInstance;
+import org.cmdbuild.service.rest.model.ProcessInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 
 import com.google.common.base.Function;

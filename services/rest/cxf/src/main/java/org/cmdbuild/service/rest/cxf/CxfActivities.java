@@ -2,10 +2,10 @@ package org.cmdbuild.service.rest.cxf;
 
 import org.cmdbuild.service.rest.Activities;
 import org.cmdbuild.service.rest.ProcessInstanceActivities;
-import org.cmdbuild.service.rest.dto.ProcessActivityWithBasicDetails;
-import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.ProcessActivityWithBasicDetails;
+import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 public class CxfActivities implements Activities {
 

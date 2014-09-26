@@ -15,8 +15,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.Relation;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.model.Relation;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
 
 @Path("domains/{" + TYPE + "}/relations/")
 @Produces(APPLICATION_JSON)

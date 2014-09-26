@@ -1,9 +1,9 @@
 package unit.cxf;
 
-import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithBasicDetails;
-import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithFullDetails;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Builders.newProcessActivityWithBasicDetails;
+import static org.cmdbuild.service.rest.model.Builders.newProcessActivityWithFullDetails;
+import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyLong;
@@ -15,10 +15,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import org.cmdbuild.service.rest.ProcessInstanceActivities;
 import org.cmdbuild.service.rest.cxf.CxfActivities;
-import org.cmdbuild.service.rest.dto.ProcessActivityWithBasicDetails;
-import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.ProcessActivityWithBasicDetails;
+import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.Test;
 

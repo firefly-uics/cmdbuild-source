@@ -12,10 +12,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.DomainWithBasicDetails;
-import org.cmdbuild.service.rest.dto.DomainWithFullDetails;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.DomainWithBasicDetails;
+import org.cmdbuild.service.rest.model.DomainWithFullDetails;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 @Path("domains/")
 @Produces(APPLICATION_JSON)

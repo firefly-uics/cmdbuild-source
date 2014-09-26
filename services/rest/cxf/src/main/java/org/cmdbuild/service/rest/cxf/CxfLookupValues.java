@@ -2,9 +2,9 @@ package org.cmdbuild.service.rest.cxf;
 
 import org.cmdbuild.service.rest.LookupTypeValues;
 import org.cmdbuild.service.rest.LookupValues;
-import org.cmdbuild.service.rest.dto.LookupDetail;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.LookupDetail;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 public class CxfLookupValues implements LookupValues {
 

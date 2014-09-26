@@ -1,9 +1,9 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.dto.Builders.newProcessWithBasicDetails;
+import static org.cmdbuild.service.rest.model.Builders.newProcessWithBasicDetails;
 
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.service.rest.dto.ProcessWithBasicDetails;
+import org.cmdbuild.service.rest.model.ProcessWithBasicDetails;
 
 import com.google.common.base.Function;
 

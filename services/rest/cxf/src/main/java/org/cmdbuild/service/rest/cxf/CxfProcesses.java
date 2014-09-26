@@ -2,9 +2,9 @@ package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
-import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Builders.newMetadata;
+import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 
 import java.util.Comparator;
 
@@ -13,10 +13,10 @@ import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.Processes;
 import org.cmdbuild.service.rest.cxf.serialization.ToFullProcessDetail;
 import org.cmdbuild.service.rest.cxf.serialization.ToSimpleProcessDetail;
-import org.cmdbuild.service.rest.dto.ProcessWithBasicDetails;
-import org.cmdbuild.service.rest.dto.ProcessWithFullDetails;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.ProcessWithBasicDetails;
+import org.cmdbuild.service.rest.model.ProcessWithFullDetails;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.workflow.user.UserProcessClass;
 
 import com.google.common.collect.Ordering;

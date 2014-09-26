@@ -1,9 +1,9 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Builders.newMetadata;
+import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -11,9 +11,9 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic.LookupTypeQuery;
 import org.cmdbuild.service.rest.LookupTypes;
 import org.cmdbuild.service.rest.cxf.serialization.ToLookupTypeDetail;
-import org.cmdbuild.service.rest.dto.LookupTypeDetail;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.LookupTypeDetail;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 import com.google.common.base.Predicate;
 

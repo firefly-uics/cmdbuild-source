@@ -3,10 +3,10 @@ package org.cmdbuild.service.rest.cxf;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Lists.newArrayList;
-import static org.cmdbuild.service.rest.dto.Builders.newCard;
-import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
-import static org.cmdbuild.service.rest.dto.Builders.newRelation;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Builders.newCard;
+import static org.cmdbuild.service.rest.model.Builders.newMetadata;
+import static org.cmdbuild.service.rest.model.Builders.newRelation;
+import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 
 import java.util.List;
 
@@ -18,8 +18,8 @@ import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.Relations;
-import org.cmdbuild.service.rest.dto.Relation;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.model.Relation;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
 
 import com.google.common.base.Function;
 
