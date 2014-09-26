@@ -13,8 +13,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.Attribute;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.model.Attribute;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
 
 @Path("classes/{" + NAME + "}/attributes/")
 @Produces(APPLICATION_JSON)

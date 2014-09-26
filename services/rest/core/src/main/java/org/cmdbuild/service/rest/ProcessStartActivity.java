@@ -9,8 +9,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 @Path("processes/{" + TYPE + "}/start_activity/")
 @Produces(APPLICATION_JSON)

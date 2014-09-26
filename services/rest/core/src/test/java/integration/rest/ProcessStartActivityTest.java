@@ -1,9 +1,9 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.dto.Builders.newAttributeStatus;
-import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithFullDetails;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Builders.newAttributeStatus;
+import static org.cmdbuild.service.rest.model.Builders.newProcessActivityWithFullDetails;
+import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -14,8 +14,8 @@ import static support.ServerResource.randomPort;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.ProcessStartActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;

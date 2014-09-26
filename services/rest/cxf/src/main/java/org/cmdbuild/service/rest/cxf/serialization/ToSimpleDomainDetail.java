@@ -1,9 +1,9 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.dto.Builders.newDomainWithBasicDetails;
+import static org.cmdbuild.service.rest.model.Builders.newDomainWithBasicDetails;
 
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.service.rest.dto.DomainWithBasicDetails;
+import org.cmdbuild.service.rest.model.DomainWithBasicDetails;
 
 import com.google.common.base.Function;
 

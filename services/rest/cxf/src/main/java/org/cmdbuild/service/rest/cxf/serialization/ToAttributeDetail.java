@@ -1,7 +1,7 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.dto.Builders.newAttribute;
-import static org.cmdbuild.service.rest.dto.Builders.newFilter;
+import static org.cmdbuild.service.rest.model.Builders.newAttribute;
+import static org.cmdbuild.service.rest.model.Builders.newFilter;
 
 import java.util.Collection;
 import java.util.Map;
@@ -20,8 +20,8 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
-import org.cmdbuild.service.rest.dto.Attribute;
-import org.cmdbuild.service.rest.dto.Builders.AttributeBuilder;
+import org.cmdbuild.service.rest.model.Attribute;
+import org.cmdbuild.service.rest.model.Builders.AttributeBuilder;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 
 import com.google.common.base.Function;

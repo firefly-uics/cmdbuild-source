@@ -1,8 +1,8 @@
 package unit.cxf;
 
-import static org.cmdbuild.service.rest.dto.Builders.newProcessInstance;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Builders.newProcessInstance;
+import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -19,9 +19,9 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.cxf.CxfInstances;
-import org.cmdbuild.service.rest.dto.ProcessInstance;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.ProcessInstance;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -4,9 +4,9 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.cmdbuild.service.rest.Instances;
 import org.cmdbuild.service.rest.ProcessInstances;
-import org.cmdbuild.service.rest.dto.ProcessInstance;
-import org.cmdbuild.service.rest.dto.ResponseMultiple;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.ProcessInstance;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 public class CxfInstances implements Instances {
 
@@ -23,7 +23,7 @@ public class CxfInstances implements Instances {
 	}
 
 	@Override
-	public org.cmdbuild.service.rest.dto.ResponseSingle<ProcessInstance> read(final Long id, final String type) {
+	public org.cmdbuild.service.rest.model.ResponseSingle<ProcessInstance> read(final Long id, final String type) {
 		return delegate.read(type, id);
 	};
 

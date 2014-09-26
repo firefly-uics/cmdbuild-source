@@ -7,8 +7,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.cmdbuild.service.rest.dto.MenuDetail;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.MenuDetail;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 @Path("menu/")
 @Produces(APPLICATION_JSON)

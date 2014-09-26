@@ -1,9 +1,9 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.dto.Builders.newClassWithBasicDetails;
+import static org.cmdbuild.service.rest.model.Builders.newClassWithBasicDetails;
 
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.service.rest.dto.ClassWithBasicDetails;
+import org.cmdbuild.service.rest.model.ClassWithBasicDetails;
 
 import com.google.common.base.Function;
 

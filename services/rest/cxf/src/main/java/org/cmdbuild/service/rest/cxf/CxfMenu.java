@@ -1,14 +1,14 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.service.rest.dto.Builders.newMenu;
-import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Builders.newMenu;
+import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.cmdbuild.services.store.menu.Comparators.byIndex;
 
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.service.rest.Menu;
-import org.cmdbuild.service.rest.dto.MenuDetail;
-import org.cmdbuild.service.rest.dto.ResponseSingle;
+import org.cmdbuild.service.rest.model.MenuDetail;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.services.store.menu.MenuItem;
 
 import com.google.common.base.Function;
@@ -24,6 +24,7 @@ public class CxfMenu implements Menu {
 			return newMenu() //
 					.withType(input.getType().getValue()) // TODO translate
 					.withIndex(Long.valueOf(input.getIndex())) //
+					// TODO use id
 					.withObjectType(input.getReferedClassName()) //
 					.withObjectId(input.getReferencedElementId().toString()) //
 					.withObjectDescription(input.getDescription()) //
