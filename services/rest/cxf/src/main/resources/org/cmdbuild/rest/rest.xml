@@ -25,17 +25,14 @@
 			<ref bean="wadlProvider" />
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
-			<ref bean="cxfActivities" />
 			<ref bean="cxfCards" />
 			<ref bean="cxfClasses" />
 			<ref bean="cxfClassAttributes" />
 			<ref bean="cxfDomains" />
 			<ref bean="cxfDomainAttributes" />
 			<ref bean="cxfRelations" />
-			<ref bean="cxfInstances" />
 			<ref bean="cxfLookupTypes" />
 			<ref bean="cxfLookupTypeValues" />
-			<ref bean="cxfLookupValues" />
 			<ref bean="cxfMenu" />
 			<ref bean="cxfProcessAttributes" />
 			<ref bean="cxfProcesses" />

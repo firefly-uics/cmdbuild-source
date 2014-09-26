@@ -5,16 +5,13 @@ import java.lang.reflect.Method;
 
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
-import org.cmdbuild.service.rest.Activities;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.ClassAttributes;
 import org.cmdbuild.service.rest.Classes;
 import org.cmdbuild.service.rest.DomainAttributes;
 import org.cmdbuild.service.rest.Domains;
-import org.cmdbuild.service.rest.Instances;
 import org.cmdbuild.service.rest.LookupTypeValues;
 import org.cmdbuild.service.rest.LookupTypes;
-import org.cmdbuild.service.rest.LookupValues;
 import org.cmdbuild.service.rest.Menu;
 import org.cmdbuild.service.rest.ProcessAttributes;
 import org.cmdbuild.service.rest.ProcessInstanceActivities;
@@ -22,16 +19,13 @@ import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.ProcessStartActivity;
 import org.cmdbuild.service.rest.Processes;
 import org.cmdbuild.service.rest.Relations;
-import org.cmdbuild.service.rest.cxf.CxfActivities;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
 import org.cmdbuild.service.rest.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.cxf.CxfDomains;
-import org.cmdbuild.service.rest.cxf.CxfInstances;
 import org.cmdbuild.service.rest.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.cxf.CxfLookupTypes;
-import org.cmdbuild.service.rest.cxf.CxfLookupValues;
 import org.cmdbuild.service.rest.cxf.CxfMenu;
 import org.cmdbuild.service.rest.cxf.CxfProcessAttributes;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstanceActivities;
@@ -55,12 +49,6 @@ public class Services implements LoggingSupport {
 
 	@Autowired
 	private Utilities utilities;
-
-	@Bean
-	public Activities cxfActivities() {
-		final CxfActivities service = new CxfActivities(cxfProcessInstanceActivities());
-		return proxy(Activities.class, service);
-	}
 
 	@Bean
 	public Cards cxfCards() {
@@ -102,12 +90,6 @@ public class Services implements LoggingSupport {
 	}
 
 	@Bean
-	public Instances cxfInstances() {
-		final CxfInstances service = new CxfInstances(cxfProcessInstances());
-		return proxy(Instances.class, service);
-	}
-
-	@Bean
 	public LookupTypes cxfLookupTypes() {
 		final CxfLookupTypes service = new CxfLookupTypes(helper.lookupLogic());
 		return proxy(LookupTypes.class, service);
@@ -117,12 +99,6 @@ public class Services implements LoggingSupport {
 	public LookupTypeValues cxfLookupTypeValues() {
 		final CxfLookupTypeValues service = new CxfLookupTypeValues(helper.lookupLogic());
 		return proxy(LookupTypeValues.class, service);
-	}
-
-	@Bean
-	public LookupValues cxfLookupValues() {
-		final CxfLookupValues service = new CxfLookupValues(cxfLookupTypeValues());
-		return proxy(LookupValues.class, service);
 	}
 
 	@Bean
