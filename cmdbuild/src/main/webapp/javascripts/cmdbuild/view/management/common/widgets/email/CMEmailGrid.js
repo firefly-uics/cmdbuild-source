@@ -6,6 +6,7 @@
 	var RECEIVED = 'Received';
 	var NEW	 = 'New';
 	var DRAFT = 'Draft';
+	var NO_SUBJECT_PREFIX = 'noSubjectPrefix';
 
 	Ext.define("CMDBuild.management.mail.Model", {
 		extend: 'Ext.data.Model',
@@ -15,12 +16,16 @@
 			fields.BEGIN_DATE,
 			fields.FROM_ADDRESS,
 			fields.TO_ADDRESS,
-			fields.CC_ADDRESS, 
+			fields.CC_ADDRESS,
 			fields.SUBJECT,
 			fields.CONTENT,
 			"temporaryId",
 			"notifyWith",
 			"attachments",
+			{
+				name: NO_SUBJECT_PREFIX,
+				type: 'boolean'
+			},
 			'Fake' // for the icons
 		],
 
@@ -51,8 +56,8 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 	processId: undefined,
 
 	initComponent: function() {
-		var readWrite = this.readWrite,
-			tr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail;
+		var readWrite = this.readWrite;
+		var tr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail;
 
 		this.deletedEmails = [];
 
@@ -115,6 +120,11 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 		}
 
 		this.columns = [
+			{
+				header: 'no SUBJ',
+				dataIndex: NO_SUBJECT_PREFIX,
+				hidden: false
+			},
 			{header: '&nbsp', sortable: true, dataIndex: fields.STATUS, hidden: true},
 			{header: tr.datehdr, sortable: true, dataIndex: fields.BEGIN_DATE, flex: 1},
 			{header: tr.addresshdr, sortable: false, renderer: renderAddress, dataIndex: 'Fake', flex: 1},
@@ -174,6 +184,8 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 
 	createRecord: function(recordValues) {
 		recordValues[fields.STATUS] = recordValues[fields.STATUS] || NEW;
+		recordValues[NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(NO_SUBJECT_PREFIX)) ? recordValues[NO_SUBJECT_PREFIX] : this.delegate.widget[NO_SUBJECT_PREFIX];
+
 		return new CMDBuild.management.mail.Model(recordValues);
 	},
 
@@ -199,7 +211,7 @@ Ext.define("CMDBuild.view.management.common.widgets.CMEmailGrid", {
 					return;
 				}
 				this.removeRecord(record);
-	 		}, this);
+			}, this);
 	},
 
 	removeRecord: function(record) {
