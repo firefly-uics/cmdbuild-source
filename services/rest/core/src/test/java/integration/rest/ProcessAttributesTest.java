@@ -1,6 +1,9 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.constants.Serialization.ACTIVE;
+import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.model.Builders.newAttribute;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
 import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
@@ -8,9 +11,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static support.HttpClientUtils.all;
+import static support.HttpClientUtils.param;
 import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -62,14 +69,20 @@ public class ProcessAttributesTest {
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll(eq("foo"), anyBoolean(), anyInt(), anyInt())) //
+		when(service.readAll(anyLong(), anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("processes/foo/attributes/"));
+		final GetMethod get = new GetMethod(server.resource("processes/123/attributes/"));
+		get.setQueryString(all( //
+				param(ACTIVE, "true"), //
+				param(LIMIT, "456"), //
+				param(START, "789") //
+		));
 		final int result = httpclient.executeMethod(get);
 
 		// then
+		verify(service).readAll(eq(123L), eq(true), eq(456), eq(789));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}

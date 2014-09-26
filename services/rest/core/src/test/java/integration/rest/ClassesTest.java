@@ -1,6 +1,9 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.constants.Serialization.ACTIVE;
+import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.model.Builders.newClassWithBasicDetails;
 import static org.cmdbuild.service.rest.model.Builders.newClassWithFullDetails;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
@@ -10,9 +13,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static support.HttpClientUtils.all;
+import static support.HttpClientUtils.param;
 import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -72,9 +79,15 @@ public class ClassesTest {
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("classes/"));
+		get.setQueryString(all( //
+				param(ACTIVE, "true"), //
+				param(LIMIT, "123"), //
+				param(START, "456") //
+		));
 		final int result = httpclient.executeMethod(get);
 
 		// then
+		verify(service).readAll(eq(true), eq(123), eq(456));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -87,11 +100,11 @@ public class ClassesTest {
 						.withName("foo") //
 						.build()) //
 				.build();
-		when(service.read(eq("foo"))) //
+		when(service.read(anyLong())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("classes/foo/"));
+		final GetMethod get = new GetMethod(server.resource("classes/123/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then

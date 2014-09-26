@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -109,15 +110,15 @@ public class CxfProcessesTest {
 		doReturn(null) //
 				.when(workflowLogic).findProcessClass(anyString());
 		doThrow(new WebApplicationException()) //
-				.when(errorHandler).classNotFound("foo");
+				.when(errorHandler).processNotFound(anyLong());
 
 		// when
-		cxfProcesses.read("foo");
+		cxfProcesses.read(123L);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
-		inOrder.verify(workflowLogic).findProcessClass("foo");
-		inOrder.verify(errorHandler).classNotFound("foo");
+		inOrder.verify(workflowLogic).findProcessClass(123L);
+		inOrder.verify(errorHandler).processNotFound(123L);
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -132,13 +133,13 @@ public class CxfProcessesTest {
 			when(foo.getParent()).thenReturn(null);
 		}
 		doReturn(foo) //
-				.when(workflowLogic).findProcessClass(anyString());
+				.when(workflowLogic).findProcessClass(anyLong());
 
 		// when
-		final ResponseSingle<ProcessWithFullDetails> response = cxfProcesses.read("foo");
+		final ResponseSingle<ProcessWithFullDetails> response = cxfProcesses.read(123L);
 
 		// then
-		verify(workflowLogic).findProcessClass("foo");
+		verify(workflowLogic).findProcessClass(123L);
 		verifyNoMoreInteractions(errorHandler, workflowLogic);
 		final ProcessWithFullDetails element = response.getElement();
 		assertThat(element.getName(), equalTo("foo"));

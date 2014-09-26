@@ -40,10 +40,10 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public ResponseSingle<Long> create(final String type, final Card card) {
-		final CMClass targetClass = userDataAccessLogic.findClass(type);
+	public ResponseSingle<Long> create(final Long classId, final Card card) {
+		final CMClass targetClass = userDataAccessLogic.findClass(classId);
 		if (targetClass == null) {
-			errorHandler.classNotFound(type);
+			errorHandler.classNotFound(classId);
 		}
 		final org.cmdbuild.model.data.Card _card = org.cmdbuild.model.data.Card.newInstance(targetClass) //
 				.withAllAttributes(card.getValues()) //
@@ -55,13 +55,14 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public ResponseSingle<Card> read(final String type, final Long id) {
+	public ResponseSingle<Card> read(final Long classId, final Long id) {
 		// TODO inject error management within logic
-		if (userDataAccessLogic.findClass(type) == null) {
-			errorHandler.classNotFound(type);
+		final CMClass targetClass = userDataAccessLogic.findClass(classId);
+		if (targetClass == null) {
+			errorHandler.classNotFound(classId);
 		}
 		try {
-			final CMCard fetched = userDataAccessLogic.fetchCMCard(type, id);
+			final CMCard fetched = userDataAccessLogic.fetchCMCard(targetClass.getName(), id);
 			final Card element = FromCMCardToCard.newInstance() //
 					.withDataView(userDataView) //
 					.withErrorHandler(errorHandler) //
@@ -78,13 +79,18 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public ResponseMultiple<Card> read(final String type, final String filter, final Integer limit, final Integer offset) {
+	public ResponseMultiple<Card> read(final Long classId, final String filter, final Integer limit,
+			final Integer offset) {
+		final CMClass targetClass = userDataAccessLogic.findClass(classId);
+		if (targetClass == null) {
+			errorHandler.classNotFound(classId);
+		}
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.filter(safeJsonObject(filter)) //
 				.limit(limit) //
 				.offset(offset) //
 				.build();
-		final FetchCardListResponse response = userDataAccessLogic.fetchCards(type, queryOptions);
+		final FetchCardListResponse response = userDataAccessLogic.fetchCards(targetClass.getName(), queryOptions);
 		final ToCardFunction<org.cmdbuild.model.data.Card> toCardDetail = FromCardToCard.newInstance() //
 				.withDataView(systemDataView) //
 				.withErrorHandler(errorHandler) //
@@ -109,26 +115,26 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public void update(final String type, final Long id, final Card card) {
-		final CMClass targetClass = userDataAccessLogic.findClass(type);
+	public void update(final Long classId, final Long id, final Card card) {
+		final CMClass targetClass = userDataAccessLogic.findClass(classId);
 		if (targetClass == null) {
-			errorHandler.classNotFound(type);
+			errorHandler.classNotFound(classId);
 		}
 		final org.cmdbuild.model.data.Card _card = org.cmdbuild.model.data.Card.newInstance(targetClass) //
-				.withId(card.getId()) //
+				.withId(id) //
 				.withAllAttributes(card.getValues()) //
 				.build();
 		userDataAccessLogic.updateCard(_card);
 	}
 
 	@Override
-	public void delete(final String type, final Long id) {
-		final CMClass targetClass = userDataAccessLogic.findClass(type);
+	public void delete(final Long classId, final Long id) {
+		final CMClass targetClass = userDataAccessLogic.findClass(classId);
 		if (targetClass == null) {
-			errorHandler.classNotFound(type);
+			errorHandler.classNotFound(classId);
 		}
 		// TODO check for missing id (inside logic, please)
-		userDataAccessLogic.deleteCard(type, id);
+		userDataAccessLogic.deleteCard(targetClass.getName(), id);
 	}
 
 }

@@ -2,13 +2,29 @@ package org.cmdbuild.service.rest.cxf;
 
 public interface ErrorHandler {
 
-	void typeNotFound(String id);
-
+	/**
+	 * @deprecated Use {@link classNotFound(Long)} instead.
+	 */
+	@Deprecated
 	void classNotFound(String id);
 
+	void classNotFound(Long id);
+
+	/**
+	 * @deprecated Use {@link domainNotFound(Long)} instead.
+	 */
+	@Deprecated
 	void domainNotFound(String id);
 
+	void domainNotFound(Long id);
+
+	/**
+	 * @deprecated Use {@link processNotFound(Long)} instead.
+	 */
+	@Deprecated
 	void processNotFound(String id);
+
+	void processNotFound(Long id);
 
 	void processInstanceNotFound(Long id);
 

@@ -63,14 +63,17 @@ public class CxfRelations implements Relations {
 	}
 
 	@Override
-	public ResponseMultiple<Relation> read(final String type, final String className, final Long cardId,
+	public ResponseMultiple<Relation> read(final Long domainId, final Long classId, final Long cardId,
 			final String domainSource, final Integer limit, final Integer offset) {
-		final CMDomain targetDomain = dataAccessLogic.findDomain(type);
+		final CMDomain targetDomain = dataAccessLogic.findDomain(domainId);
 		if (targetDomain == null) {
-			errorHandler.domainNotFound(type);
+			errorHandler.domainNotFound(domainId);
 		}
-		final org.cmdbuild.model.data.Card src = org.cmdbuild.model.data.Card.newInstance() //
-				.withClassName(className) //
+		final CMClass targetClass = dataAccessLogic.findClass(classId);
+		if (targetClass == null) {
+			errorHandler.classNotFound(classId);
+		}
+		final org.cmdbuild.model.data.Card src = org.cmdbuild.model.data.Card.newInstance(targetClass) //
 				.withId(cardId) //
 				.build();
 		final DomainWithSource dom = DomainWithSource.create(targetDomain.getId(), domainSource);

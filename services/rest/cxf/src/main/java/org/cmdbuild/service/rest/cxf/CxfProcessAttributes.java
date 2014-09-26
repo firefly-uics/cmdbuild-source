@@ -35,14 +35,14 @@ public class CxfProcessAttributes implements ProcessAttributes {
 	}
 
 	@Override
-	public ResponseMultiple<Attribute> readAll(final String name, final boolean activeOnly, final Integer limit,
+	public ResponseMultiple<Attribute> readAll(final Long processId, final boolean activeOnly, final Integer limit,
 			final Integer offset) {
-		final CMClass target = userDataAccessLogic.findClass(name);
+		final CMClass target = userDataAccessLogic.findClass(processId);
 		if (target == null) {
-			errorHandler.typeNotFound(name);
+			errorHandler.processNotFound(processId);
 		}
 		final PagedElements<CMAttribute> filteredAttributes = userDataAccessLogic.getAttributes( //
-				name, //
+				target.getName(), //
 				activeOnly, //
 				new AttributesQuery() {
 

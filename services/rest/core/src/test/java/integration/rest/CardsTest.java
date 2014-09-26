@@ -3,6 +3,9 @@ package integration.rest;
 import static java.util.Arrays.asList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.CharEncoding.UTF_8;
+import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
+import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.cmdbuild.service.rest.model.Builders.newCard;
@@ -17,10 +20,11 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static support.HttpClientUtils.all;
+import static support.HttpClientUtils.param;
 import static support.ServerResource.randomPort;
 
 import java.util.Arrays;
@@ -73,8 +77,8 @@ public class CardsTest {
 	public void cardsRead() throws Exception {
 		// given
 		final String type = "foo";
-		final Long firstId = 123L;
-		final Long secondId = 456L;
+		final Long firstId = 456L;
+		final Long secondId = 789L;
 		final Map<String, String> firstValues = ChainablePutMap.of(new HashMap<String, String>()) //
 				.chainablePut("foo", "bar") //
 				.chainablePut("bar", "baz");
@@ -115,14 +119,19 @@ public class CardsTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyString(), isNull(String.class), anyInt(), anyInt());
+				.when(service).read(anyLong(), anyString(), anyInt(), anyInt());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("classes/foo/cards"));
+		final GetMethod get = new GetMethod(server.resource("classes/123/cards"));
+		get.setQueryString(all( //
+				param(FILTER, "filter"), //
+				param(LIMIT, "456"), //
+				param(START, "789") //
+		));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq("foo"), isNull(String.class), anyInt(), anyInt());
+		verify(service).read(eq(123L), eq("filter"), eq(456), eq(789));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -134,12 +143,12 @@ public class CardsTest {
 				.withElement(123L) //
 				.build();
 		doReturn(expectedResponse) //
-				.when(service).create(anyString(), any(Card.class));
+				.when(service).create(anyLong(), any(Card.class));
 
 		// when
-		final PostMethod post = new PostMethod(server.resource("classes/foo/cards/"));
+		final PostMethod post = new PostMethod(server.resource("classes/123/cards/"));
 		post.setRequestEntity(new StringRequestEntity( //
-				"{\"_id\" : 123, \"_type\" : \"foo\", \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
+				"{\"_id\" : 456, \"_type\" : \"foo\", \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
 				APPLICATION_JSON, //
 				UTF_8) //
 		);
@@ -147,12 +156,12 @@ public class CardsTest {
 
 		// then
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
-		verify(service).create(eq("foo"), cardCaptor.capture());
+		verify(service).create(eq(123L), cardCaptor.capture());
 		assertThat(result, equalTo(200));
 		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 		final Card captured = cardCaptor.getValue();
 		assertThat(captured.getType(), equalTo("foo"));
-		assertThat(captured.getId(), equalTo(123L));
+		assertThat(captured.getId(), equalTo(456L));
 		final Map<String, Object> values = captured.getValues();
 		assertThat(values, hasEntry("bar", (Object) "BAR"));
 		assertThat(values, hasEntry("baz", (Object) "BAZ"));
@@ -183,14 +192,14 @@ public class CardsTest {
 				) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyString(), anyLong());
+				.when(service).read(anyLong(), anyLong());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("classes/foo/cards/123/"));
+		final GetMethod get = new GetMethod(server.resource("classes/123/cards/456/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq("foo"), eq(123L));
+		verify(service).read(eq(123L), eq(456L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -198,7 +207,7 @@ public class CardsTest {
 	@Test
 	public void cardUpdated() throws Exception {
 		// when
-		final PutMethod put = new PutMethod(server.resource("classes/foo/cards/123/"));
+		final PutMethod put = new PutMethod(server.resource("classes/123/cards/456/"));
 		put.setRequestEntity(new StringRequestEntity( //
 				"{\"_id\" : 123, \"_type\" : \"foo\", \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
 				APPLICATION_JSON, //
@@ -208,7 +217,7 @@ public class CardsTest {
 
 		// then
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
-		verify(service).update(eq("foo"), eq(123L), cardCaptor.capture());
+		verify(service).update(eq(123L), eq(456L), cardCaptor.capture());
 		assertThat(result, equalTo(204));
 		final Card captured = cardCaptor.getValue();
 		assertThat(captured.getType(), equalTo("foo"));
@@ -221,11 +230,11 @@ public class CardsTest {
 	@Test
 	public void cardDeleted() throws Exception {
 		// when
-		final DeleteMethod delete = new DeleteMethod(server.resource("classes/foo/cards/123/"));
+		final DeleteMethod delete = new DeleteMethod(server.resource("classes/123/cards/456/"));
 		final int result = httpclient.executeMethod(delete);
 
 		// then
-		verify(service).delete(eq("foo"), eq(123L));
+		verify(service).delete(eq(123L), eq(456L));
 		assertThat(result, equalTo(204));
 	}
 

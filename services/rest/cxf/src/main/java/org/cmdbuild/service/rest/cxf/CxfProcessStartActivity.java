@@ -28,21 +28,21 @@ public class CxfProcessStartActivity implements ProcessStartActivity {
 	}
 
 	@Override
-	public ResponseSingle<ProcessActivityWithFullDetails> read(final String type) {
-		final UserProcessClass found = workflowLogic.findProcessClass(type);
+	public ResponseSingle<ProcessActivityWithFullDetails> read(final Long processId) {
+		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
-			errorHandler.processNotFound(type);
+			errorHandler.processNotFound(processId);
 		}
-		final CMActivity activity = startActivityFor(type);
+		final CMActivity activity = startActivityFor(processId);
 		final ProcessActivityWithFullDetails element = TO_PROCESS_ACTIVITY.apply(activity);
 		return newResponseSingle(ProcessActivityWithFullDetails.class) //
 				.withElement(element) //
 				.build();
 	}
 
-	private CMActivity startActivityFor(final String type) {
+	private CMActivity startActivityFor(final Long processId) {
 		try {
-			return workflowLogic.getStartActivity(type);
+			return workflowLogic.getStartActivity(processId);
 		} catch (final CMWorkflowException e) {
 			errorHandler.propagate(e);
 			return UNSUPPORTED_ACTIVITY;

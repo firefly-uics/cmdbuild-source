@@ -6,9 +6,11 @@ import static org.cmdbuild.service.rest.model.Builders.newProcessActivityWithFul
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -69,13 +71,14 @@ public class ProcessStartActivityTest {
 				.build();
 		final ResponseSingle<ProcessActivityWithFullDetails> expectedResponse = sentResponse;
 		doReturn(sentResponse) //
-				.when(service).read(anyString());
+				.when(service).read(anyLong());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("processes/foo/start_activity/"));
+		final GetMethod get = new GetMethod(server.resource("processes/123/start_activity/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
+		verify(service).read(eq(123L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}

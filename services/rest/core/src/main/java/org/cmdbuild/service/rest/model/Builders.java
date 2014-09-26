@@ -667,10 +667,10 @@ public class Builders {
 
 		private static final Iterable<MenuDetail> NO_CHILDREN = Collections.emptyList();
 
-		private String type;
+		private String menuType;
 		private Long index;
-		private String objectType;
-		private String objectId;
+		private Long objectType;
+		private Long objectId;
 		private String objectDescription;
 		private Iterable<MenuDetail> children;
 
@@ -687,7 +687,7 @@ public class Builders {
 		@Override
 		protected MenuDetail doBuild() {
 			final MenuDetail output = new MenuDetail();
-			output.setType(type);
+			output.setMenuType(menuType);
 			output.setIndex(index);
 			output.setObjectType(objectType);
 			output.setObjectId(objectId);
@@ -696,8 +696,8 @@ public class Builders {
 			return output;
 		}
 
-		public MenuBuilder withType(final String type) {
-			this.type = type;
+		public MenuBuilder withMenuType(final String menuType) {
+			this.menuType = menuType;
 			return this;
 		}
 
@@ -706,12 +706,12 @@ public class Builders {
 			return this;
 		}
 
-		public MenuBuilder withObjectType(final String objectType) {
+		public MenuBuilder withObjectType(final Long objectType) {
 			this.objectType = objectType;
 			return this;
 		}
 
-		public MenuBuilder withObjectId(final String objectId) {
+		public MenuBuilder withObjectId(final Long objectId) {
 			this.objectId = objectId;
 			return this;
 		}
