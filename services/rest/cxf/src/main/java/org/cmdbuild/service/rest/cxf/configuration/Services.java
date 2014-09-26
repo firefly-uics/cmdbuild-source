@@ -103,7 +103,8 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	public Menu cxfMenu() {
-		final CxfMenu service = new CxfMenu(helper.currentGroupNameSupplier(), helper.menuLogic());
+		final CxfMenu service = new CxfMenu(helper.currentGroupNameSupplier(), helper.menuLogic(),
+				helper.systemDataView());
 		return proxy(Menu.class, service);
 	}
 

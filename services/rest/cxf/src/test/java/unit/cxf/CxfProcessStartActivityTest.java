@@ -6,7 +6,8 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -46,17 +47,17 @@ public class CxfProcessStartActivityTest {
 	public void exceptionWhenProcessNotFound() throws Exception {
 		// given
 		doReturn(null) //
-				.when(workflowLogic).findProcessClass(anyString());
+				.when(workflowLogic).findProcessClass(anyLong());
 		doThrow(WebApplicationException.class) //
-				.when(errorHandler).processNotFound(anyString());
+				.when(errorHandler).processNotFound(anyLong());
 
 		// when
-		cxfProcessStartActivity.read("foo");
+		cxfProcessStartActivity.read(123L);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
-		inOrder.verify(workflowLogic).findProcessClass("foo");
-		inOrder.verify(errorHandler).processNotFound("foo");
+		inOrder.verify(workflowLogic).findProcessClass(eq(123L));
+		inOrder.verify(errorHandler).processNotFound(eq(123L));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -65,17 +66,17 @@ public class CxfProcessStartActivityTest {
 		// given
 		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
 		doReturn(userProcessClass) //
-				.when(workflowLogic).findProcessClass(anyString());
+				.when(workflowLogic).findProcessClass(anyLong());
 		doThrow(WebApplicationException.class) //
-				.when(workflowLogic).getStartActivity(anyString());
+				.when(workflowLogic).getStartActivity(anyLong());
 
 		// when
-		cxfProcessStartActivity.read("foo");
+		cxfProcessStartActivity.read(123L);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
-		inOrder.verify(workflowLogic).findProcessClass("foo");
-		inOrder.verify(workflowLogic).getStartActivity("foo");
+		inOrder.verify(workflowLogic).findProcessClass(eq(123L));
+		inOrder.verify(workflowLogic).getStartActivity(eq(123L));
 		inOrder.verify(errorHandler).propagate(any(Throwable.class));
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -85,7 +86,7 @@ public class CxfProcessStartActivityTest {
 		// given
 		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
 		doReturn(userProcessClass) //
-				.when(workflowLogic).findProcessClass(anyString());
+				.when(workflowLogic).findProcessClass(anyLong());
 		final CMActivity activity = mock(CMActivity.class);
 		doReturn("id") //
 				.when(activity).getId();
@@ -100,30 +101,35 @@ public class CxfProcessStartActivityTest {
 				)) //
 				.when(activity).getVariables();
 		doReturn(activity) //
-				.when(workflowLogic).getStartActivity(anyString());
+				.when(workflowLogic).getStartActivity(anyLong());
 
 		// when
-		final ResponseSingle<ProcessActivityWithFullDetails> response = cxfProcessStartActivity.read("foo");
+		final ResponseSingle<ProcessActivityWithFullDetails> response = cxfProcessStartActivity.read(123L);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
-		inOrder.verify(workflowLogic).findProcessClass("foo");
-		inOrder.verify(workflowLogic).getStartActivity("foo");
+		inOrder.verify(workflowLogic).findProcessClass(eq(123L));
+		inOrder.verify(workflowLogic).getStartActivity(eq(123L));
 		inOrder.verifyNoMoreInteractions();
+
 		final ProcessActivityWithFullDetails element = response.getElement();
 		assertThat(element.getId(), equalTo(Long.valueOf(activity.getId().hashCode())));
 		assertThat(element.getDescription(), equalTo(activity.getDescription()));
 		assertThat(element.getInstructions(), equalTo(activity.getInstructions()));
+
 		final Iterable<AttributeStatus> attributes = element.getAttributes();
 		assertThat(size(attributes), equalTo(3));
+
 		final AttributeStatus fooReadOnly = get(attributes, 0);
 		assertThat(fooReadOnly.getId(), equalTo(Long.valueOf("foo".hashCode())));
 		assertThat(fooReadOnly.isWritable(), equalTo(false));
 		assertThat(fooReadOnly.isMandatory(), equalTo(false));
+
 		final AttributeStatus barWriteableAndNotMandatory = get(attributes, 1);
 		assertThat(barWriteableAndNotMandatory.getId(), equalTo(Long.valueOf("bar".hashCode())));
 		assertThat(barWriteableAndNotMandatory.isWritable(), equalTo(true));
 		assertThat(barWriteableAndNotMandatory.isMandatory(), equalTo(false));
+
 		final AttributeStatus bazWriteableAndMandatory = get(attributes, 2);
 		assertThat(bazWriteableAndMandatory.getId(), equalTo(Long.valueOf("baz".hashCode())));
 		assertThat(bazWriteableAndMandatory.isWritable(), equalTo(true));

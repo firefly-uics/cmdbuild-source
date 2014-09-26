@@ -5,6 +5,8 @@ import static org.cmdbuild.service.rest.model.Builders.newMenu;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.cmdbuild.services.store.menu.Comparators.byIndex;
 
+import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.service.rest.Menu;
 import org.cmdbuild.service.rest.model.MenuDetail;
@@ -17,23 +19,29 @@ import com.google.common.collect.Ordering;
 
 public class CxfMenu implements Menu {
 
-	private static final Function<MenuItem, MenuDetail> MENU_ITEM_TO_MENU_DETAIL = new Function<MenuItem, MenuDetail>() {
+	private static final class MenuItemToMenuDetail implements Function<MenuItem, MenuDetail> {
+
+		private final CMDataView dataView;
+
+		public MenuItemToMenuDetail(final CMDataView dataView) {
+			this.dataView = dataView;
+		}
 
 		@Override
 		public MenuDetail apply(final MenuItem input) {
+			final CMClass referencedClass = dataView.findClass(input.getReferedClassName());
 			return newMenu() //
-					.withType(input.getType().getValue()) // TODO translate
+					.withMenuType(input.getType().getValue()) // TODO translate
 					.withIndex(Long.valueOf(input.getIndex())) //
-					// TODO use id
-					.withObjectType(input.getReferedClassName()) //
-					.withObjectId(input.getReferencedElementId().toString()) //
+					.withObjectType((referencedClass == null) ? null : referencedClass.getId()) //
+					.withObjectId(input.getReferencedElementId().longValue()) //
 					.withObjectDescription(input.getDescription()) //
 					.withChildren( //
 							from( //
 									Ordering.from(byIndex()) //
 											.sortedCopy(input.getChildren()) //
 							) //
-							.transform(MENU_ITEM_TO_MENU_DETAIL) //
+							.transform(this) //
 									.toList()) //
 					.build();
 		}
@@ -42,17 +50,19 @@ public class CxfMenu implements Menu {
 
 	private final Supplier<String> currentGroupSupplier;
 	private final MenuLogic menuLogic;
+	private final CMDataView dataView;
 
-	public CxfMenu(final Supplier<String> currentGroupSupplier, final MenuLogic menuLogic) {
+	public CxfMenu(final Supplier<String> currentGroupSupplier, final MenuLogic menuLogic, final CMDataView dataView) {
 		this.currentGroupSupplier = currentGroupSupplier;
 		this.menuLogic = menuLogic;
+		this.dataView = dataView;
 	}
 
 	@Override
 	public ResponseSingle<MenuDetail> read() {
 		final String group = currentGroupSupplier.get();
 		final MenuItem menuItem = menuLogic.read(group);
-		final MenuDetail element = MENU_ITEM_TO_MENU_DETAIL.apply(menuItem);
+		final MenuDetail element = new MenuItemToMenuDetail(dataView).apply(menuItem);
 		return newResponseSingle(MenuDetail.class) //
 				.withElement(element) //
 				.build();

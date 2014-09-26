@@ -4,7 +4,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.mock;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
@@ -42,17 +44,17 @@ public class CxfRelationsTest {
 	public void exceptionWhenReadingRelationsButProcessNotFound() throws Exception {
 		// given
 		doReturn(null) //
-				.when(dataAccessLogic).findDomain(anyString());
+				.when(dataAccessLogic).findDomain(anyLong());
 		doThrow(WebApplicationException.class) //
-				.when(errorHandler).domainNotFound(anyString());
+				.when(errorHandler).domainNotFound(anyLong());
 
 		// when
-		cxfRelations.read("foo", null, null, null, null, null);
+		cxfRelations.read(123L, null, null, null, null, null);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, dataAccessLogic);
-		inOrder.verify(dataAccessLogic).findDomain("foo");
-		inOrder.verify(errorHandler).domainNotFound("foo");
+		inOrder.verify(dataAccessLogic).findDomain(eq(123L));
+		inOrder.verify(errorHandler).domainNotFound(eq(123L));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -63,25 +65,33 @@ public class CxfRelationsTest {
 		doReturn(123L) //
 				.when(domain).getId();
 		doReturn(domain) //
-				.when(dataAccessLogic).findDomain(anyString());
+				.when(dataAccessLogic).findDomain(anyLong());
+		final CMClass clazz = mock(CMClass.class);
+		doReturn("foo") //
+				.when(clazz).getName();
+		doReturn(clazz) //
+				.when(dataAccessLogic).findClass(anyLong());
+		doReturn(domain) //
+				.when(dataAccessLogic).findDomain(anyLong());
 		final RuntimeException exception = new RuntimeException();
 		doThrow(exception) //
 				.when(dataAccessLogic).getRelationListEmptyForWrongId(any(Card.class), any(DomainWithSource.class));
 		doThrow(new WebApplicationException(exception)) //
-				.when(errorHandler).propagate(exception);
+				.when(errorHandler).propagate(any(Exception.class));
 
 		// when
-		cxfRelations.read("foo", "bar", 42L, "baz", null, null);
+		cxfRelations.read(12L, 34L, 56L, "baz", null, null);
 
 		// then
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
 		final ArgumentCaptor<DomainWithSource> domainWithSourceCaptor = ArgumentCaptor.forClass(DomainWithSource.class);
 		final InOrder inOrder = inOrder(errorHandler, dataAccessLogic);
-		inOrder.verify(dataAccessLogic).findDomain("foo");
+		inOrder.verify(dataAccessLogic).findDomain(eq(12L));
+		inOrder.verify(dataAccessLogic).findClass(eq(34L));
 		// TODO capture and verify
 		inOrder.verify(dataAccessLogic).getRelationListEmptyForWrongId(cardCaptor.capture(),
 				domainWithSourceCaptor.capture());
-		inOrder.verify(errorHandler).propagate(exception);
+		inOrder.verify(errorHandler).propagate(eq(exception));
 		inOrder.verifyNoMoreInteractions();
 
 		final Card card = cardCaptor.getValue();

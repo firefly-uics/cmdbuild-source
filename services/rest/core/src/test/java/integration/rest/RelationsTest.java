@@ -124,21 +124,22 @@ public class RelationsTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyString(), anyString(), anyLong(), anyString(), anyInt(), anyInt());
+				.when(service).read(anyLong(), anyLong(), anyLong(), anyString(), anyInt(), anyInt());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("domains/foo/relations/"));
+		final GetMethod get = new GetMethod(server.resource("domains/12/relations/"));
 		get.setQueryString(all( //
-				param(CLASS_ID, "bar"), //
-				param(CARD_ID, "42"), //
+				param(CLASS_ID, "34"), //
+				param(CARD_ID, "56"), //
 				param(DOMAIN_SOURCE, "baz") //
 		));
 
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq("foo"), eq("bar"), eq(42L), eq("baz"), anyInt(), anyInt());
+		verify(service).read(eq(12L), eq(34L), eq(56L), eq("baz"), anyInt(), anyInt());
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
+
 }

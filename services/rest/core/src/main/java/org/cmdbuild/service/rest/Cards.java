@@ -2,11 +2,11 @@ package org.cmdbuild.service.rest;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.cmdbuild.service.rest.constants.Serialization.CLASS_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.constants.Serialization.ID;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
-import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -22,7 +22,7 @@ import org.cmdbuild.service.rest.model.Card;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
-@Path("classes/{" + TYPE + "}/cards/")
+@Path("classes/{" + CLASS_ID + "}/cards/")
 @Consumes(APPLICATION_JSON)
 @Produces(APPLICATION_JSON)
 public interface Cards {
@@ -30,20 +30,20 @@ public interface Cards {
 	@POST
 	@Path(EMPTY)
 	ResponseSingle<Long> create( //
-			@PathParam(TYPE) String type, //
+			@PathParam(CLASS_ID) Long classId, //
 			Card card);
 
 	@GET
 	@Path("{" + ID + "}/")
 	ResponseSingle<Card> read( //
-			@PathParam(TYPE) String type, //
+			@PathParam(CLASS_ID) Long classId, //
 			@PathParam(ID) Long id //
 	);
 
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<Card> read( //
-			@PathParam(TYPE) String type, //
+			@PathParam(CLASS_ID) Long classId, //
 			@QueryParam(FILTER) String filter, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
@@ -52,7 +52,7 @@ public interface Cards {
 	@PUT
 	@Path("{" + ID + "}/")
 	void update( //
-			@PathParam(TYPE) String type, //
+			@PathParam(CLASS_ID) Long classId, //
 			@PathParam(ID) Long id, //
 			Card card //
 	);
@@ -60,7 +60,7 @@ public interface Cards {
 	@DELETE
 	@Path("{" + ID + "}/")
 	void delete( //
-			@PathParam(TYPE) String type, //
+			@PathParam(CLASS_ID) Long classId, //
 			@PathParam(ID) Long id //
 	);
 

@@ -9,13 +9,13 @@ import org.cmdbuild.service.rest.logging.LoggingSupport;
 public class DefaultErrorHandler implements ErrorHandler, LoggingSupport {
 
 	@Override
-	public void typeNotFound(final String id) {
-		logger.error("type not found '{}'", id);
+	public void classNotFound(final String id) {
+		logger.error("class not found '{}'", id);
 		notFound(id);
 	}
 
 	@Override
-	public void classNotFound(final String id) {
+	public void classNotFound(final Long id) {
 		logger.error("class not found '{}'", id);
 		notFound(id);
 	}
@@ -27,7 +27,19 @@ public class DefaultErrorHandler implements ErrorHandler, LoggingSupport {
 	}
 
 	@Override
+	public void domainNotFound(final Long id) {
+		logger.error("domain not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
 	public void processNotFound(final String id) {
+		logger.error("process not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void processNotFound(final Long id) {
 		logger.error("process not found '{}'", id);
 		notFound(id);
 	}

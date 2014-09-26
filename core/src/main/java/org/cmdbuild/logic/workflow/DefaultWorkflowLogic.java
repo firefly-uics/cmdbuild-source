@@ -151,6 +151,18 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	}
 
 	@Override
+	public UserProcessClass findProcessClass(final Long classId) {
+		final Optional<UserProcessClass> optional = from(findAllProcessClasses()) //
+				.filter(new Predicate<UserProcessClass>() {
+					@Override
+					public boolean apply(final UserProcessClass input) {
+						return input.getId().equals(classId);
+					}
+				}).first();
+		return optional.isPresent() ? optional.get() : null;
+	}
+
+	@Override
 	public UserProcessClass findProcessClass(final String className) {
 		final Optional<UserProcessClass> optional = from(findAllProcessClasses()) //
 				.filter(new Predicate<UserProcessClass>() {

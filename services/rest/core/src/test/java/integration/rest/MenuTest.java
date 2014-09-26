@@ -5,6 +5,7 @@ import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static support.ServerResource.randomPort;
 
@@ -47,7 +48,7 @@ public class MenuTest {
 		// given
 		final ResponseSingle<MenuDetail> expectedResponse = newResponseSingle(MenuDetail.class) //
 				.withElement(newMenu() //
-						.withType("root") //
+						.withMenuType("root") //
 						.build()) //
 				.build();
 		when(service.read()) //
@@ -58,6 +59,7 @@ public class MenuTest {
 		final int result = httpclient.executeMethod(get);
 
 		// then
+		verify(service).read();
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}

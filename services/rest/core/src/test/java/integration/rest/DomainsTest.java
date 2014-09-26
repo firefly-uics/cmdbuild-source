@@ -1,6 +1,8 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.model.Builders.newDomainWithBasicDetails;
 import static org.cmdbuild.service.rest.model.Builders.newDomainWithFullDetails;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
@@ -9,11 +11,13 @@ import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static support.HttpClientUtils.all;
+import static support.HttpClientUtils.param;
 import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -73,10 +77,14 @@ public class DomainsTest {
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("domains/"));
+		get.setQueryString(all( //
+				param(LIMIT, "123"), //
+				param(START, "456") //
+		));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).readAll(isNull(Integer.class), isNull(Integer.class));
+		verify(service).readAll(eq(123), eq(456));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -89,15 +97,15 @@ public class DomainsTest {
 						.withName("foo") //
 						.build()) //
 				.build();
-		when(service.read(eq("foo"))) //
+		when(service.read(anyLong())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("domains/foo/"));
+		final GetMethod get = new GetMethod(server.resource("domains/123/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq("foo"));
+		verify(service).read(eq(123L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}

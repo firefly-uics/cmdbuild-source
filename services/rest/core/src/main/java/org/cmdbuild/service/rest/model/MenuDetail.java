@@ -3,10 +3,10 @@ package org.cmdbuild.service.rest.model;
 import static org.cmdbuild.service.rest.constants.Serialization.CHILDREN;
 import static org.cmdbuild.service.rest.constants.Serialization.INDEX;
 import static org.cmdbuild.service.rest.constants.Serialization.MENU_DETAIL;
+import static org.cmdbuild.service.rest.constants.Serialization.MENU_TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.OBJECT_DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.OBJECT_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.OBJECT_TYPE;
-import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 
 import java.util.List;
 
@@ -20,10 +20,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @XmlRootElement(name = MENU_DETAIL)
 public class MenuDetail extends AbstractModel {
 
-	private String type;
+	private String menuType;
 	private Long index;
-	private String objectType;
-	private String objectId;
+	private Long objectType;
+	private Long objectId;
 	private String objectDescription;
 	private List<MenuDetail> children;
 
@@ -31,13 +31,13 @@ public class MenuDetail extends AbstractModel {
 		// package visibility
 	}
 
-	@XmlAttribute(name = TYPE)
-	public String getType() {
-		return type;
+	@XmlAttribute(name = MENU_TYPE)
+	public String getMenuType() {
+		return menuType;
 	}
 
-	void setType(final String type) {
-		this.type = type;
+	void setMenuType(final String menuType) {
+		this.menuType = menuType;
 	}
 
 	@XmlAttribute(name = INDEX)
@@ -50,20 +50,20 @@ public class MenuDetail extends AbstractModel {
 	}
 
 	@XmlAttribute(name = OBJECT_TYPE)
-	public String getObjectType() {
+	public Long getObjectType() {
 		return objectType;
 	}
 
-	void setObjectType(final String objectType) {
+	void setObjectType(final Long objectType) {
 		this.objectType = objectType;
 	}
 
 	@XmlAttribute(name = OBJECT_ID)
-	public String getObjectId() {
+	public Long getObjectId() {
 		return objectId;
 	}
 
-	void setObjectId(final String objectId) {
+	void setObjectId(final Long objectId) {
 		this.objectId = objectId;
 	}
 
@@ -97,7 +97,7 @@ public class MenuDetail extends AbstractModel {
 
 		final MenuDetail other = MenuDetail.class.cast(obj);
 		return new EqualsBuilder() //
-				.append(this.type, other.type) //
+				.append(this.menuType, other.menuType) //
 				.append(this.index, other.index) //
 				.append(this.objectType, other.objectType) //
 				.append(this.objectId, other.objectId) //
@@ -109,7 +109,7 @@ public class MenuDetail extends AbstractModel {
 	@Override
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
-				.append(type) //
+				.append(menuType) //
 				.append(index) //
 				.append(objectType) //
 				.append(objectId) //

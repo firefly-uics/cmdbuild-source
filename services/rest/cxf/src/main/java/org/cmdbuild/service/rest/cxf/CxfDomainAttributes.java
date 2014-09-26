@@ -35,14 +35,14 @@ public class CxfDomainAttributes implements DomainAttributes {
 	}
 
 	@Override
-	public ResponseMultiple<Attribute> readAll(final String name, final boolean activeOnly, final Integer limit,
+	public ResponseMultiple<Attribute> readAll(final Long domainId, final boolean activeOnly, final Integer limit,
 			final Integer offset) {
-		final CMDomain target = userDataAccessLogic.findDomain(name);
+		final CMDomain target = userDataAccessLogic.findDomain(domainId);
 		if (target == null) {
-			errorHandler.typeNotFound(name);
+			errorHandler.domainNotFound(domainId);
 		}
 		final PagedElements<CMAttribute> filteredAttributes = userDataAccessLogic.getDomainAttributes( //
-				name, //
+				target.getName(), //
 				activeOnly, //
 				new AttributesQuery() {
 

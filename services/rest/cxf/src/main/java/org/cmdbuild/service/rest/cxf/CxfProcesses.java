@@ -62,10 +62,10 @@ public class CxfProcesses implements Processes {
 	}
 
 	@Override
-	public ResponseSingle<ProcessWithFullDetails> read(final String name) {
-		final CMClass found = workflowLogic.findProcessClass(name);
+	public ResponseSingle<ProcessWithFullDetails> read(final Long id) {
+		final CMClass found = workflowLogic.findProcessClass(id);
 		if (found == null) {
-			errorHandler.classNotFound(name);
+			errorHandler.processNotFound(id);
 		}
 		final ProcessWithFullDetails element = TO_FULL_DETAIL.apply(found);
 		return newResponseSingle(ProcessWithFullDetails.class) //

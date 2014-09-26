@@ -35,14 +35,14 @@ public class CxfClassAttributes implements ClassAttributes {
 	}
 
 	@Override
-	public ResponseMultiple<Attribute> readAll(final String name, final boolean activeOnly, final Integer limit,
+	public ResponseMultiple<Attribute> readAll(final Long classId, final boolean activeOnly, final Integer limit,
 			final Integer offset) {
-		final CMClass target = userDataAccessLogic.findClass(name);
+		final CMClass target = userDataAccessLogic.findClass(classId);
 		if (target == null) {
-			errorHandler.typeNotFound(name);
+			errorHandler.classNotFound(classId);
 		}
 		final PagedElements<CMAttribute> filteredAttributes = userDataAccessLogic.getAttributes( //
-				name, //
+				target.getName(), //
 				activeOnly, //
 				new AttributesQuery() {
 
