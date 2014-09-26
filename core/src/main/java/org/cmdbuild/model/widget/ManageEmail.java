@@ -71,6 +71,7 @@ public class ManageEmail extends Widget {
 
 	private Collection<EmailTemplate> emailTemplates;
 	private Map<String, String> templates;
+	private boolean noSubjectPrefix;
 
 	public ManageEmail(final EmailLogic emailLogic) {
 		super();
@@ -110,6 +111,14 @@ public class ManageEmail extends Widget {
 
 	public void setTemplates(final Map<String, String> templates) {
 		this.templates = templates;
+	}
+
+	public boolean isNoSubjectPrefix() {
+		return noSubjectPrefix;
+	}
+
+	public void setNoSubjectPrefix(final boolean noSubjectPrefix) {
+		this.noSubjectPrefix = noSubjectPrefix;
 	}
 
 	@Override
@@ -157,7 +166,7 @@ public class ManageEmail extends Widget {
 		email.setContent((String) emailMap.get(CONTENT_ATTRIBUTE));
 		email.setNotifyWith((String) emailMap.get(NOTIFY_WITH_ATTRIBUTE));
 		email.setTemporaryId((String) emailMap.get(TEMPORARY_ID));
-		email.setNoSubjectPrefix(Boolean.parseBoolean((String) emailMap.get(NO_SUBJECT_PREFIX)));
+		email.setNoSubjectPrefix((Boolean) emailMap.get(NO_SUBJECT_PREFIX));
 		return email;
 	}
 
