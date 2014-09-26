@@ -5,7 +5,6 @@
 
 		parentDelegate: undefined,
 
-		lastSelection: undefined,
 		mapPanel: undefined,
 
 		/**
@@ -16,6 +15,8 @@
 		 *		{CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController} parentDelegate,
 		 *		{Object} widgetConf
 		 *	}
+		 *
+		 * @override
 		 */
 		constructor: function(configuration) {
 			var me = this;
@@ -26,7 +27,6 @@
 			this.widgetConf = configuration.widgetConf;
 
 			this.targetEntryType = this.parentDelegate.getTargetEntryType();
-			this.classId = this.targetEntryType.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 
 			this.mon(
 				this.view,
@@ -96,16 +96,11 @@
 		},
 
 		/**
-		 * @return {Int} lastSelection
-		 */
-		getLastSelection: function() {
-			return this.lastSelection;
-		},
-
-		/**
 		 * @param {Object} e
 		 * @param {OpenLayers.Feature.Vector} e.feature
 		 * @param {CMDBuild.Management.CMSelectFeatureController} e.object
+		 *
+		 * @override
 		 */
 		onFeatureSelect: function(e) {
 _debug('featurehighlighted', e);
@@ -114,7 +109,7 @@ _debug('featurehighlighted coords', this.map.getLonLatFromPixel(e.object.handler
 			var attributes = e.feature.attributes;
 			var layer = e.feature.layer;
 
-			if (layer.editLayer) { // The feature selected is in a cmdbLayer with an associated editLayer
+			if (!Ext.isEmpty(layer.editLayer)) { // The feature selected is in a cmdbLayer with an associated editLayer
 				_CMCardModuleState.setCard({
 					Id: attributes.master_card,
 					IdClass: attributes.master_class
@@ -123,41 +118,9 @@ _debug('featurehighlighted coords', this.map.getLonLatFromPixel(e.object.handler
 		},
 
 		/**
-		 * Executed after zoomEvent to update mapState object and manually redraw all map's layers
-		 */
-		onZoomEnd: function() {
-			var zoom = this.map.getZoom();
-
-			this.mapState.updateForZoom(zoom);
-
-			var baseLayers = this.map.cmBaseLayers;
-			var haveABaseLayer = false;
-
-			// Manually force redraw of all layers to fix a problem with GoogleMaps
-			Ext.Array.each(this.map.layers, function(item, index, allItems) {
-				item.redraw();
-			});
-
-			for (var i = 0; i < baseLayers.length; ++i) {
-				var layer = baseLayers[i];
-
-				if (!layer || typeof layer.isInZoomRange != 'function')
-					continue;
-
-				if (layer.isInZoomRange(zoom)) {
-					this.map.setBaseLayer(layer);
-					haveABaseLayer = true;
-
-					break;
-				}
-			}
-
-			if (!haveABaseLayer)
-				this.map.setBaseLayer(this.map.cmFakeBaseLayer);
-		},
-
-		/**
 		 * @param {Object} or {Int} card
+		 *
+		 * @override
 		 */
 		onCardSelected: function(card) {
 			if (this.view.cmVisible) {
@@ -190,9 +153,44 @@ _debug('featurehighlighted coords', this.map.getLonLatFromPixel(e.object.handler
 
 				// To sync selected feature with grid card
 				this.model.select(id);
-				this.lastSelection = id;
 			}
 		},
+
+		/**
+		 * Executed after zoomEvent to update mapState object and manually redraw all map's layers
+		 *
+		 * @override
+		 */
+		onZoomEnd: function() {
+			var zoom = this.map.getZoom();
+
+			this.mapState.updateForZoom(zoom);
+
+			var baseLayers = this.map.cmBaseLayers;
+			var haveABaseLayer = false;
+
+			// Manually force redraw of all layers to fix a problem with GoogleMaps
+			Ext.Array.each(this.map.layers, function(item, index, allItems) {
+				item.redraw();
+			});
+
+			for (var i = 0; i < baseLayers.length; ++i) {
+				var layer = baseLayers[i];
+
+				if (!layer || typeof layer.isInZoomRange != 'function')
+					continue;
+
+				if (layer.isInZoomRange(zoom)) {
+					this.map.setBaseLayer(layer);
+					haveABaseLayer = true;
+
+					break;
+				}
+			}
+
+			if (!haveABaseLayer)
+				this.map.setBaseLayer(this.map.cmFakeBaseLayer);
+		}
 	});
 
 })();

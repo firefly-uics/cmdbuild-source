@@ -1,4 +1,5 @@
 (function() {
+
 	/*
 	 * The grid must be reload when is shown, so resolve the template and load it.
 	 * If there is a defaultSelection, when the activity form goes in edit mode resolve the template to calculate the selection and if needed add dependencies to the fields.
@@ -45,6 +46,7 @@
 			this.readOnly = this.widget.readOnly;
 
 			this.view.delegate = this;
+			this.grid = this.view.grid;
 			this.view.grid.delegate = this;
 			this.view.widget = this.widget;
 
@@ -85,9 +87,9 @@
 				}
 			}
 
-			this.mon(this.view.grid, 'beforeload', this.onBeforeLoad, this);
+			this.mon(this.grid, 'beforeload', this.onBeforeLoad, this);
 			// There is a problem with the loadMask, if remove the delay the selection is done before the unMask, then it is reset
-			this.mon(this.view.grid, 'load', Ext.Function.createDelayed(this.onLoad, 1), this);
+			this.mon(this.grid, 'load', Ext.Function.createDelayed(this.onLoad, 1), this);
 		},
 
 		/**
@@ -170,10 +172,10 @@
 						// The filter button should be enabled only if no other filter is present.
 						if (cqlQuery) {
 							me.resolveFilterTemplate(cqlQuery, classId);
-							me.view.grid.disableFilterMenuButton();
+							me.grid.disableFilterMenuButton();
 						} else {
 							me.updateViewGrid(classId);
-							me.view.grid.enableFilterMenuButton();
+							me.grid.enableFilterMenuButton();
 						}
 					},
 					failure: function() {
@@ -187,10 +189,6 @@
 					checkFnScope: me
 				}).run();
 			}
-		},
-
-		onBeforeLoad: function() {
-			this.model.freeze();
 		},
 
 		/**
@@ -279,6 +277,23 @@
 		},
 
 		/**
+		 * @return {Boolean}
+		 *
+		 * @override
+		 */
+		isValid: function() {
+			if (!this.readOnly && this.widget.required) {
+				return this.model.hasSelection();
+			} else {
+				return true;
+			}
+		},
+
+		onBeforeLoad: function() {
+			this.model.freeze();
+		},
+
+		/**
 		 * @param {Object} params
 		 * 	{
 		 * 		{Ext.data.Model} record
@@ -291,6 +306,82 @@
 			if (this.callBacks[className]) {
 				this.callBacks[className].call(this, params.record);
 			}
+		},
+
+		/**
+		 * @param {Object} params
+		 * 	{
+		 * 		{Ext.data.Model} record
+		 * 	}
+		 */
+		onDeselect: function(params) {
+			this.model.deselect(params.record.get('Id'));
+		},
+
+		/**
+		 * Loads grid's page for last selection and select
+		 */
+		onGridShow: function() {
+			var lastSelection = _CMCardModuleState.card;
+
+			if (!Ext.isEmpty(lastSelection)) {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = lastSelection.get('Id');
+				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.widget.className;
+				params[CMDBuild.core.proxy.CMProxyConstants.RETRY_WITHOUT_FILTER] = true;
+				params[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.grid.getStore().getProxy().extraParams[CMDBuild.core.proxy.CMProxyConstants.FILTER];
+
+				this.model._silent = true;
+
+				CMDBuild.ServiceProxy.card.getPosition({
+					scope: this,
+					params: params,
+					success: function(result, options, decodedResult) {
+						var position = decodedResult.position;
+
+						if (position >= 0) {
+							var	pageNumber = _CMUtils.grid.getPageNumber(position);
+
+							this.grid.loadPage(
+								pageNumber,
+								{
+									scope: this,
+									cb: function() {
+										this.onSelect(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
+									}
+								}
+							);
+						}
+					}
+				});
+			}
+		},
+
+		/**
+		 * @param {Ext.data.Model} model
+		 */
+		onEditCardkClick: function(model) {
+			var cardWindow = this.getCardWindow(model, true);
+
+			cardWindow.on(
+				'destroy',
+				function() {
+					this.grid.reload();
+				},
+				this,
+				{ single: true }
+			);
+
+			cardWindow.show();
+		},
+
+		/**
+		 * For the auto-select
+		 *
+		 * @override
+		 */
+		onEditMode: function() {
+			this.resolveDefaultSelectionTemplate();
 		},
 
 		/**
@@ -315,108 +406,6 @@
 			this.model.defreeze();
 		},
 
-		onToggleMapButtonClick: function() {
-			if (this.view.hasMap()) {
-				if (this.view.grid.isVisible()) {
-					this.view.showMap();
-					this.view.mapButton.setIconCls('table');
-					this.view.mapButton.setText(CMDBuild.Translation.management.modcard.add_relations_window.list_tab);
-				} else {
-					this.view.showGrid();
-					this.view.mapButton.setIconCls('map');
-					this.view.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
-				}
-			}
-		},
-
-		/**
-		 * @return {Boolean}
-		 *
-		 * @override
-		 */
-		isValid: function() {
-			if (!this.readOnly && this.widget.required) {
-				return this.model.hasSelection();
-			} else {
-				return true;
-			}
-		},
-
-		/**
-		 * @param {Object} params
-		 * 	{
-		 * 		{Ext.data.Model} record
-		 * 	}
-		 */
-		onDeselect: function(params) {
-			this.model.deselect(params.record.get('Id'));
-		},
-
-		/**
-		 * @param {Ext.data.Model} model
-		 */
-		onEditCardkClick: function(model) {
-			var cardWindow = this.getCardWindow(model, true);
-
-			cardWindow.on(
-				'destroy',
-				function() {
-					this.view.grid.reload();
-				},
-				this,
-				{ single: true }
-			);
-
-			cardWindow.show();
-		},
-
-		/**
-		 * For the auto-select
-		 *
-		 * @override
-		 */
-		onEditMode: function() {
-			this.resolveDefaultSelectionTemplate();
-		},
-
-		/**
-		 * Loads grid's page for last selection and select
-		 */
-		onGridShow: function() {
-			var lastSelection = this.mapController.getLastSelection();
-
-			if (!Ext.isEmpty(lastSelection)) {
-				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = lastSelection;
-				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.widget.className;
-				params[CMDBuild.core.proxy.CMProxyConstants.RETRY_WITHOUT_FILTER] = true;
-
-				this.model._silent = true;
-
-				CMDBuild.ServiceProxy.card.getPosition({
-					scope: this,
-					params: params,
-					success: function(result, options, decodedResult) {
-						var position = decodedResult.position;
-
-						if (position >= 0) {
-							var	pageNumber = _CMUtils.grid.getPageNumber(position);
-
-							this.view.grid.loadPage(
-								pageNumber,
-								{
-									scope: this,
-									cb: function() {
-										this.onSelect(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
-									}
-								}
-							);
-						}
-					}
-				});
-			}
-		},
-
 		/**
 		 * @param {Int or Object} record
 		 */
@@ -433,12 +422,12 @@
 				if (typeof record != 'number')
 					_CMCardModuleState.setCard(record);
 
-				this.view.grid.getSelectionModel().select(
-					this.view.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, cardId)
+				this.grid.getSelectionModel().select(
+					this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, cardId)
 				);
 				this.model.select(cardId);
 			} else {
-				this.view.grid.getSelectionModel().reset();
+				this.grid.getSelectionModel().reset();
 				this.model.reset();
 			}
 		},
@@ -448,6 +437,20 @@
 		 */
 		onShowCardkClick: function(model) {
 			this.getCardWindow(model, false).show();
+		},
+
+		onToggleMapButtonClick: function() {
+			if (this.view.hasMap()) {
+				if (this.grid.isVisible()) {
+					this.view.showMap();
+					this.view.mapButton.setIconCls('table');
+					this.view.mapButton.setText(CMDBuild.Translation.management.modcard.add_relations_window.list_tab);
+				} else {
+					this.view.showGrid();
+					this.view.mapButton.setIconCls('map');
+					this.view.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
+				}
+			}
 		},
 
 		resolveDefaultSelectionTemplate: function() {
@@ -473,7 +476,7 @@
 									for (var i = 0; i < resp.rows.length; i++) {
 										var r = resp.rows[i];
 
-										me.model.select(r.Id);
+										me.model.select(r['Id']);
 									}
 
 								me.templateResolverIsBusy = false;
@@ -519,9 +522,9 @@
 		 * @param {Object} cqlParams
 		 */
 		updateViewGrid: function(classId, cqlParams) {
-			this.view.grid.CQL = cqlParams;
-			this.view.grid.store.proxy.extraParams = this.view.grid.getStoreExtraParams();
-			this.view.grid.updateStoreForClassId(classId);
+			this.grid.CQL = cqlParams;
+			this.grid.store.proxy.extraParams = this.grid.getStoreExtraParams();
+			this.grid.updateStoreForClassId(classId);
 		},
 
 		viewReset: function() {
