@@ -18,7 +18,7 @@
 				withToolBar: this.withToolBar,
 				allowNoteFiled: true,
 				border: false,
-				frame: false,
+				frame: false
 			});
 
 			var ee = this.cardPanel.CMEVENTS;

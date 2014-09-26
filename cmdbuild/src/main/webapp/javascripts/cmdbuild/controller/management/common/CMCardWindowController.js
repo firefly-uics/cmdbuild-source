@@ -1,132 +1,168 @@
-Ext.define("CMDBuild.controller.management.common.CMCardWindowController", {
-	extend: "CMDBuild.controller.management.classes.CMBaseCardPanelController",
+(function() {
 
-	mixins: {
-		observable : "Ext.util.Observable"
-	},
+	Ext.define('CMDBuild.controller.management.common.CMCardWindowController', {
+		extend: 'CMDBuild.controller.management.classes.CMBaseCardPanelController',
 
-	/**
-	 * conf: {
-	 * 	entryType: id of the entry type,
-	 *  card: id of the card,
-	 *  cmEditMode: boolean
-	 * }
-	 * */
-	constructor: function(view, conf) {
-		this.configuration = conf;
+		mixins: {
+			observable : 'Ext.util.Observable'
+		},
 
-		if (typeof conf.entryType == "undefined") {
-			return;
-		}
+		/**
+		 * @param {CMDBuild.view.management.common.CMCardWindow} view
+		 * @param {Object} configuration
+		 * 	{
+		 * 		{Int} entryType - classTypeId
+		 * 		{Int} card - cardId
+		 * 		{Boolean} cmEditMode
+		 * 	}
+		 *
+		 * @override
+		 * */
+		constructor: function(view, configuration) {
+			this.configuration = configuration;
 
-		this.callParent(arguments);
+			if (!Ext.isEmpty(this.configuration.entryType)) {
+				var me = this;
 
-		this.mixins.observable.constructor.call(this, arguments);
+				this.callParent(arguments);
 
-		this.onEntryTypeSelected(_CMCache.getEntryTypeById(conf.entryType));
+				this.mixins.observable.constructor.call(this, arguments);
 
-		this.cmEditMode = conf.cmEditMode;
+				this.onEntryTypeSelected(_CMCache.getEntryTypeById(this.configuration.entryType));
+				this.cmEditMode = this.configuration.cmEditMode;
 
-		var me = this;
-		this.mon(me.view, "show", function() {
-			me.loadFields(conf.entryType, function() {
-				if (conf.card) {
-					var parameterNames = CMDBuild.ServiceProxy.parameter;
-					var params = {};
-					params[parameterNames.CARD_ID] = conf.card;
-					params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(conf.entryType);
+				this.mon(this.view, 'show', function() {
+					this.loadFields(this.configuration.entryType, function() {
+						if (me.configuration.card) {
+							var params = {};
+							params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = me.configuration.card;
+							params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.configuration.entryType);
 
-					me.loadCard(loadRemote=true, params, function(card) {
-						me.onCardLoaded(me, card);
+							me.loadCard(true, params, function(card) {
+								me.onCardLoaded(this, card);
+							});
+						} else {
+							me.editModeIfPossible();
+						}
 					});
-				} else {
-					me.editModeIfPossible();
-				}
-			});
-		});
+				}, this);
 
-		this.mon(this.view, "destroy", function() {
-			me.unlockCard();
-		});
-	},
+				this.mon(this.view, 'destroy', function() {
+					this.unlockCard();
+				}, this);
+			}
+		},
 
-	getForm: function() {
-		return this.view.cardPanel.getForm();
-	},
+		/**
+		 * @return {Ext.form.Basic}
+		 */
+		getForm: function() {
+			return this.view.cardPanel.getForm();
+		},
 
-	onSaveCardClick: function() {
-		var form = this.getForm();
-		var params = this.buildSaveParams();
+		/**
+		 * @override
+		 */
+		onSaveCardClick: function() {
+			var form = this.getForm();
+			var params = this.buildSaveParams();
 
-		this.beforeRequest(form);
+			this.beforeRequest(form);
 
-		// Check form fields validity
-		if (form.isValid()) {
-			this.doFormSubmit(params);
-		} else {
-			CMDBuild.Msg.error(
-				null,
-				Ext.String.format(
-					'<p class="{0}">{1}</p>',
-					CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes
-				) + CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form),
-				false
-			);
+			// Check form fields validity
+			if (form.isValid()) {
+				this.doFormSubmit(params);
+			} else {
+				CMDBuild.Msg.error(
+					null,
+					Ext.String.format(
+						'<p class="{0}">{1}</p>',
+						CMDBuild.Constants.css.error_msg, CMDBuild.Translation.errors.invalid_attributes
+					) + CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form),
+					false
+				);
+			}
+		},
+
+		/**
+		 * @override
+		 */
+		onAbortCardClick: function() {
+			this.view.destroy();
+		},
+
+		/**
+		 * @param {Object} entryType
+		 *
+		 * @override
+		 */
+		onEntryTypeSelected: function(entryType) {
+			this.callParent(arguments);
+
+			this.view.setTitle(this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.TEXT));
+		},
+
+		/**
+		 * @return {Object} params
+		 *
+		 * @protected
+		 */
+		buildSaveParams: function() {
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.entryType.getName();
+			params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = this.card ? this.card.get('Id') : -1;
+
+			return params;
+		},
+
+		/**
+		 * @param {Ext.form.Basic} form
+		 * @param {Ext.form.action.Submit} action
+		 *
+		 * @protected
+		 * @override
+		 */
+		onSaveSuccess: function(form, action) {
+			CMDBuild.LoadMask.get().hide();
+
+			_CMCache.onClassContentChanged(this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+
+			this.view.destroy();
+		},
+
+		/**
+		 * @param {Object} me
+		 * @param {Object} card
+		 *
+		 * @protected
+		 */
+		onCardLoaded: function(me, card) {
+			me.card = card;
+			me.view.loadCard(card);
+
+			if (me.widgetControllerManager)
+				me.widgetControllerManager.buildControllers(card);
+
+			me.editModeIfPossible();
+		},
+
+		// Template to override in subclass
+		beforeRequest: Ext.emptyFn,
+
+		editModeIfPossible: function() {
+			var me = this;
+
+			if (!me.card) { // Here add a new card, so there is nothing to lock
+				me.onAddCardButtonClick(this.configuration.entryType);
+			} else if (me.cmEditMode) {
+				me.lockCard(function() {
+					me.view.editMode();
+				});
+			} else {
+				me.view.displayMode();
+			}
 		}
-	},
 
-	onAbortCardClick: function() {
-		this.view.destroy();
-	},
+	});
 
-	onEntryTypeSelected: function(entryType) {
-		this.callParent(arguments);
-		this.view.setTitle(this.entryType.get("text"));
-	},
-
-	// protected
-	buildSaveParams: function() {
-		var parameter = _CMProxy.parameter;
-		var params = {};
-		params[parameter.CLASS_NAME] = this.entryType.getName();
-		params[parameter.CARD_ID] = this.card ? this.card.get("Id") : -1;
-
-		return params;
-	},
-
-	// protected
-	onSaveSuccess: function(form, action) {
-		CMDBuild.LoadMask.get().hide();
-		_CMCache.onClassContentChanged(this.entryType.get("id"));
-		this.view.destroy();
-	},
-
-	// protected
-	onCardLoaded: function(me, card) {
-		me.card = card;
-		me.view.loadCard(card);
-		if (me.widgetControllerManager) {
-			me.widgetControllerManager.buildControllers(card);
-		}
-
-		me.editModeIfPossible();
-	},
-
-//	// template to override in subclass
-//	beforeRequest: Ext.emptyFn,
-
-	editModeIfPossible: function() {
-		var me = this;
-
-		if (!me.card) { // Here add a new card, so there is nothing to lock
-			me.onAddCardButtonClick(this.configuration.entryType);
-		} else if (me.cmEditMode) {
-			me.lockCard(function() {
-				me.view.editMode();
-			});
-		} else {
-			me.view.displayMode();
-		}
-	}
-
-});
+})();
