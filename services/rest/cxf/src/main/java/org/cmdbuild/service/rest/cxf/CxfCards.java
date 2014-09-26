@@ -1,6 +1,9 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -14,9 +17,8 @@ import org.cmdbuild.service.rest.cxf.serialization.FromCMCardToCard;
 import org.cmdbuild.service.rest.cxf.serialization.FromCardToCard;
 import org.cmdbuild.service.rest.cxf.serialization.ToCardFunction;
 import org.cmdbuild.service.rest.dto.Card;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,7 +40,7 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public SimpleResponse<Long> create(final String type, final Card card) {
+	public ResponseSingle<Long> create(final String type, final Card card) {
 		final CMClass targetClass = userDataAccessLogic.findClass(type);
 		if (targetClass == null) {
 			errorHandler.classNotFound(type);
@@ -47,13 +49,13 @@ public class CxfCards implements Cards {
 				.withAllAttributes(card.getValues()) //
 				.build();
 		final Long id = userDataAccessLogic.createCard(_card);
-		return SimpleResponse.<Long> newInstance() //
+		return newResponseSingle(Long.class) //
 				.withElement(id) //
 				.build();
 	}
 
 	@Override
-	public SimpleResponse<Card> read(final String type, final Long id) {
+	public ResponseSingle<Card> read(final String type, final Long id) {
 		// TODO inject error management within logic
 		if (userDataAccessLogic.findClass(type) == null) {
 			errorHandler.classNotFound(type);
@@ -65,7 +67,7 @@ public class CxfCards implements Cards {
 					.withErrorHandler(errorHandler) //
 					.build() //
 					.apply(fetched);
-			return SimpleResponse.newInstance(Card.class) //
+			return newResponseSingle(Card.class) //
 					.withElement(element) //
 					.build();
 		} catch (final NotFoundException e) {
@@ -76,7 +78,7 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public ListResponse<Card> read(final String type, final String filter, final Integer limit, final Integer offset) {
+	public ResponseMultiple<Card> read(final String type, final String filter, final Integer limit, final Integer offset) {
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.filter(safeJsonObject(filter)) //
 				.limit(limit) //
@@ -89,9 +91,9 @@ public class CxfCards implements Cards {
 				.build();
 		final Iterable<Card> elements = from(response.elements()) //
 				.transform(toCardDetail);
-		return ListResponse.newInstance(Card.class) //
+		return newResponseMultiple(Card.class) //
 				.withElements(elements) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(response.totalSize())) //
 						.build()) //
 				.build();

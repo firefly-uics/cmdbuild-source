@@ -1,6 +1,10 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.dto.Builders.newLookupDetail;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
@@ -15,10 +19,9 @@ import static support.ServerResource.randomPort;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.LookupTypeValues;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -51,17 +54,17 @@ public class LookupTypeValuesTest {
 	@Test
 	public void getLookups() throws Exception {
 		// given
-		final ListResponse<LookupDetail> expectedResponse = ListResponse.<LookupDetail> newInstance() //
+		final ResponseMultiple<LookupDetail> expectedResponse = newResponseMultiple(LookupDetail.class) //
 				.withElements(asList( //
-						LookupDetail.newInstance() //
+						newLookupDetail() //
 								.withId(123L) //
 								.withCode("foo") //
 								.build(), //
-						LookupDetail.newInstance() //
+						newLookupDetail() //
 								.withId(456L) //
 								.withCode("bar") //
 								.build())) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
@@ -81,8 +84,8 @@ public class LookupTypeValuesTest {
 	@Test
 	public void getLookup() throws Exception {
 		// given
-		final SimpleResponse<LookupDetail> expectedResponse = SimpleResponse.<LookupDetail> newInstance() //
-				.withElement(LookupDetail.newInstance() //
+		final ResponseSingle<LookupDetail> expectedResponse = newResponseSingle(LookupDetail.class) //
+				.withElement(newLookupDetail() //
 						.withType("type") //
 						.withId(123L) //
 						.withCode("code") //

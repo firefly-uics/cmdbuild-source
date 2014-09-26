@@ -31,60 +31,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 @XmlRootElement(name = ATTRIBUTE_DETAIL)
-public class AttributeDetail {
+public class Attribute extends AbstractModelWithId {
 
 	@XmlRootElement(name = FILTER)
-	public static class Filter {
-
-		public static class Builder implements org.apache.commons.lang3.builder.Builder<Filter> {
-
-			private String text;
-			private Map<String, String> params;
-
-			private Builder() {
-				// use factory method
-			}
-
-			@Override
-			public Filter build() {
-				validate();
-				return new Filter(this);
-			}
-
-			private void validate() {
-				// TODO Auto-generated method stub
-			}
-
-			public Filter.Builder withText(final String text) {
-				this.text = text;
-				return this;
-			}
-
-			public Filter.Builder withParams(final Map<String, String> params) {
-				this.params = params;
-				return this;
-			}
-
-		}
-
-		public static Filter.Builder newInstance() {
-			return new Builder();
-		}
+	public static class Filter extends AbstractModel {
 
 		private String text;
 		private Map<String, String> params;
 
 		Filter() {
 			// package visibility
-		}
-
-		private Filter(final Filter.Builder builder) {
-			this.text = builder.text;
-			this.params = builder.params;
 		}
 
 		@XmlAttribute(name = TEXT)
@@ -106,7 +64,7 @@ public class AttributeDetail {
 		}
 
 		@Override
-		public boolean equals(final Object obj) {
+		protected boolean doEquals(final Object obj) {
 			if (obj == this) {
 				return true;
 			}
@@ -121,149 +79,13 @@ public class AttributeDetail {
 		}
 
 		@Override
-		public int hashCode() {
+		protected int doHashCode() {
 			return new HashCodeBuilder() //
 					.append(text) //
 					.append(params) //
 					.toHashCode();
 		}
 
-		@Override
-		public String toString() {
-			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
-		}
-
-	}
-
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<AttributeDetail> {
-
-		private String type;
-		private String name;
-		private String description;
-		private Boolean displayableInList;
-		private Boolean unique;
-		private Boolean mandatory;
-		private Boolean inherited;
-		private Boolean active;
-		private Long index;
-		private String defaultValue;
-		private String group;
-		private Long precision;
-		private Long scale;
-		private String targetClass;
-		private Long length;
-		private String editorType;
-		private String lookupTypeName;
-		private Filter filter;
-
-		private Builder() {
-			// use static method
-		}
-
-		@Override
-		public AttributeDetail build() {
-			validate();
-			return new AttributeDetail(this);
-		}
-
-		private void validate() {
-			// TODO Auto-generated method stub
-		}
-
-		public Builder withType(final String type) {
-			this.type = type;
-			return this;
-		}
-
-		public Builder withName(final String name) {
-			this.name = name;
-			return this;
-		}
-
-		public Builder withDescription(final String description) {
-			this.description = description;
-			return this;
-		}
-
-		public Builder thatIsDisplayableInList(final Boolean displayableInList) {
-			this.displayableInList = displayableInList;
-			return this;
-		}
-
-		public Builder thatIsUnique(final Boolean unique) {
-			this.unique = unique;
-			return this;
-		}
-
-		public Builder thatIsMandatory(final Boolean mandatory) {
-			this.mandatory = mandatory;
-			return this;
-		}
-
-		public Builder thatIsInherited(final Boolean inherited) {
-			this.inherited = inherited;
-			return this;
-		}
-
-		public Builder thatIsActive(final Boolean active) {
-			this.active = active;
-			return this;
-		}
-
-		public Builder withIndex(final Long index) {
-			this.index = index;
-			return this;
-		}
-
-		public Builder withDefaultValue(final String defaultValue) {
-			this.defaultValue = defaultValue;
-			return this;
-		}
-
-		public Builder withGroup(final String group) {
-			this.group = group;
-			return this;
-		}
-
-		public Builder withPrecision(final Long precision) {
-			this.precision = precision;
-			return this;
-		}
-
-		public Builder withScale(final Long scale) {
-			this.scale = scale;
-			return this;
-		}
-
-		public Builder withTargetClass(final String targetClass) {
-			this.targetClass = targetClass;
-			return this;
-		}
-
-		public Builder withLength(final Long length) {
-			this.length = length;
-			return this;
-		}
-
-		public Builder withEditorType(final String editorType) {
-			this.editorType = editorType;
-			return this;
-		}
-
-		public Builder withLookupType(final String lookupTypeName) {
-			this.lookupTypeName = lookupTypeName;
-			return this;
-		}
-
-		public Builder withFilter(final Filter filter) {
-			this.filter = filter;
-			return this;
-		}
-
-	}
-
-	public static Builder newInstance() {
-		return new Builder();
 	}
 
 	private String type;
@@ -285,29 +107,8 @@ public class AttributeDetail {
 	private String lookupTypeName;
 	private Filter filter;
 
-	AttributeDetail() {
+	Attribute() {
 		// package visibility
-	}
-
-	private AttributeDetail(final Builder builder) {
-		this.type = builder.type;
-		this.name = builder.name;
-		this.description = builder.description;
-		this.displayableInList = builder.displayableInList;
-		this.unique = builder.unique;
-		this.mandatory = builder.mandatory;
-		this.inherited = builder.inherited;
-		this.active = builder.active;
-		this.index = builder.index;
-		this.defaultValue = builder.defaultValue;
-		this.group = builder.group;
-		this.precision = builder.precision;
-		this.scale = builder.scale;
-		this.targetClass = builder.targetClass;
-		this.length = builder.length;
-		this.editorType = builder.editorType;
-		this.lookupTypeName = builder.lookupTypeName;
-		this.filter = builder.filter;
 	}
 
 	@XmlAttribute(name = TYPE)
@@ -473,17 +274,18 @@ public class AttributeDetail {
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	protected boolean doEquals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
 
-		if (!(obj instanceof AttributeDetail)) {
+		if (!(obj instanceof Attribute)) {
 			return false;
 		}
 
-		final AttributeDetail other = AttributeDetail.class.cast(obj);
+		final Attribute other = Attribute.class.cast(obj);
 		return new EqualsBuilder() //
+				.append(this.getId(), other.getId()) //
 				.append(this.type, other.type) //
 				.append(this.name, other.name) //
 				.append(this.description, other.description) //
@@ -506,8 +308,9 @@ public class AttributeDetail {
 	}
 
 	@Override
-	public int hashCode() {
+	protected int doHashCode() {
 		return new HashCodeBuilder() //
+				.append(this.getId()) //
 				.append(this.type) //
 				.append(this.name) //
 				.append(this.description) //
@@ -527,11 +330,6 @@ public class AttributeDetail {
 				.append(this.lookupTypeName) //
 				.append(this.filter) //
 				.toHashCode();
-	}
-
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
 	}
 
 }

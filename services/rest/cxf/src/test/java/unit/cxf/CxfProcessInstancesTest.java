@@ -34,9 +34,9 @@ import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.cxf.util.Maps;
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.ProcessInstance;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -129,7 +129,7 @@ public class CxfProcessInstancesTest {
 						anyMapOf(String.class, Object.class), anyBoolean());
 
 		// when
-		final SimpleResponse<Long> response = cxfProcessInstances.create("foo", formParam, true);
+		final ResponseSingle<Long> response = cxfProcessInstances.create("foo", formParam, true);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
@@ -200,7 +200,7 @@ public class CxfProcessInstancesTest {
 				.when(workflowLogic).query(anyString(), any(QueryOptions.class));
 
 		// when
-		final ListResponse<ProcessInstance> response = cxfProcessInstances.read("foo", null, null);
+		final ResponseMultiple<ProcessInstance> response = cxfProcessInstances.read("foo", null, null);
 
 		// then
 		final ArgumentCaptor<QueryOptions> queryOptionsCaptor = ArgumentCaptor.forClass(QueryOptions.class);
@@ -290,7 +290,7 @@ public class CxfProcessInstancesTest {
 				.when(workflowLogic).query(anyString(), any(QueryOptions.class));
 
 		// when
-		final SimpleResponse<ProcessInstance> response = cxfProcessInstances.read("foo", 123L);
+		final ResponseSingle<ProcessInstance> response = cxfProcessInstances.read("foo", 123L);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);

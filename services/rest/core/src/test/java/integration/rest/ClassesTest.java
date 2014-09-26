@@ -1,6 +1,11 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.dto.Builders.newClassWithBasicDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newClassWithFullDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
@@ -13,11 +18,10 @@ import static support.ServerResource.randomPort;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.Classes;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.FullClassDetail;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.SimpleClassDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ClassWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ClassWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -50,15 +54,16 @@ public class ClassesTest {
 	@Test
 	public void getClasses() throws Exception {
 		// given
-		final ListResponse<SimpleClassDetail> expectedResponse = ListResponse.<SimpleClassDetail> newInstance() //
+		final ResponseMultiple<ClassWithBasicDetails> expectedResponse = newResponseMultiple(
+				ClassWithBasicDetails.class) //
 				.withElements(asList( //
-						SimpleClassDetail.newInstance() //
+						newClassWithBasicDetails() //
 								.withName("foo") //
 								.build(), //
-						SimpleClassDetail.newInstance() //
+						newClassWithBasicDetails() //
 								.withName("bar") //
 								.build())) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
@@ -77,8 +82,8 @@ public class ClassesTest {
 	@Test
 	public void getClassDetail() throws Exception {
 		// given
-		final SimpleResponse<FullClassDetail> expectedResponse = SimpleResponse.<FullClassDetail> newInstance() //
-				.withElement(FullClassDetail.newInstance() //
+		final ResponseSingle<ClassWithFullDetails> expectedResponse = newResponseSingle(ClassWithFullDetails.class) //
+				.withElement(newClassWithFullDetails() //
 						.withName("foo") //
 						.build()) //
 				.build();

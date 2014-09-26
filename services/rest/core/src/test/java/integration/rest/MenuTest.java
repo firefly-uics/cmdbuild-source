@@ -1,5 +1,7 @@
 package integration.rest;
 
+import static org.cmdbuild.service.rest.dto.Builders.newMenu;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -10,7 +12,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.Menu;
 import org.cmdbuild.service.rest.dto.MenuDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -43,8 +45,8 @@ public class MenuTest {
 	@Test
 	public void getMenu() throws Exception {
 		// given
-		final SimpleResponse<MenuDetail> expectedResponse = SimpleResponse.<MenuDetail> newInstance() //
-				.withElement(MenuDetail.newInstance() //
+		final ResponseSingle<MenuDetail> expectedResponse = newResponseSingle(MenuDetail.class) //
+				.withElement(newMenu() //
 						.withType("root") //
 						.build()) //
 				.build();

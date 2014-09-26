@@ -1,6 +1,9 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.dto.Builders.newAttributeStatus;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithFullDetails;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -11,9 +14,8 @@ import static support.ServerResource.randomPort;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.ProcessStartActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition.Attribute;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -46,26 +48,26 @@ public class ProcessStartActivityTest {
 	@Test
 	public void read() throws Exception {
 		// given
-		final SimpleResponse<ProcessActivityDefinition> sentResponse = SimpleResponse
-				.newInstance(ProcessActivityDefinition.class) //
-				.withElement(ProcessActivityDefinition.newInstance() //
-						.withId("id") //
+		final ResponseSingle<ProcessActivityWithFullDetails> sentResponse = newResponseSingle(
+				ProcessActivityWithFullDetails.class) //
+				.withElement(newProcessActivityWithFullDetails() //
+						.withId(123L) //
 						.withDescription("description") //
 						.withInstructions("instructions") //
 						.withAttributes(asList( //
-								Attribute.newInstance() //
-										.withId("foo") //
+								newAttributeStatus() //
+										.withId(456L) //
 										.withWritable(true) //
 										.withMandatory(false) //
 										.build(), //
-								Attribute.newInstance() //
-										.withId("bar") //
+								newAttributeStatus() //
+										.withId(789L) //
 										.withMandatory(true) //
 										.build() //
 								)) //
 						.build()) //
 				.build();
-		final SimpleResponse<ProcessActivityDefinition> expectedResponse = sentResponse;
+		final ResponseSingle<ProcessActivityWithFullDetails> expectedResponse = sentResponse;
 		doReturn(sentResponse) //
 				.when(service).read(anyString());
 

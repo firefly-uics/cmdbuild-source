@@ -1,16 +1,18 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.service.rest.dto.Builders.newAttributeStatus;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithFullDetails;
 
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition.Attribute;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails.AttributeStatus;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 
 import com.google.common.base.Function;
 
-public class ToProcessActivityDefinition implements Function<CMActivity, ProcessActivityDefinition> {
+public class ToProcessActivityDefinition implements Function<CMActivity, ProcessActivityWithFullDetails> {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToProcessActivityDefinition> {
 
@@ -34,12 +36,13 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 		return new Builder();
 	}
 
-	private static class ToAttribute implements Function<CMActivityVariableToProcess, Attribute> {
+	private static class ToAttribute implements Function<CMActivityVariableToProcess, AttributeStatus> {
 
 		@Override
-		public Attribute apply(final CMActivityVariableToProcess input) {
-			return Attribute.newInstance() //
-					.withId(input.getName()) //
+		public AttributeStatus apply(final CMActivityVariableToProcess input) {
+			return newAttributeStatus() //
+					// TODO fake id
+					.withId(Long.valueOf(input.getName().hashCode())) //
 					.withWritable(input.getType() != Type.READ_ONLY) //
 					.withMandatory(input.getType() == Type.READ_WRITE_REQUIRED) //
 					.build();
@@ -54,9 +57,10 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 	}
 
 	@Override
-	public ProcessActivityDefinition apply(final CMActivity input) {
-		return ProcessActivityDefinition.newInstance() //
-				.withId(input.getId()) //
+	public ProcessActivityWithFullDetails apply(final CMActivity input) {
+		return newProcessActivityWithFullDetails() //
+				// TODO fake id
+				.withId(Long.valueOf(input.getId().hashCode())) //
 				.withDescription(input.getDescription()) //
 				.withInstructions(input.getInstructions()) //
 				.withAttributes(from(input.getVariables()) //

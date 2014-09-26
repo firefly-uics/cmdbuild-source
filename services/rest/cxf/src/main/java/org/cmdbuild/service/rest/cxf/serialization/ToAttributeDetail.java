@@ -1,5 +1,8 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.dto.Builders.newAttribute;
+import static org.cmdbuild.service.rest.dto.Builders.newFilter;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -17,14 +20,14 @@ import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.metadata.Metadata;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
-import org.cmdbuild.service.rest.dto.AttributeDetail;
-import org.cmdbuild.service.rest.dto.AttributeDetail.Filter;
+import org.cmdbuild.service.rest.dto.Attribute;
+import org.cmdbuild.service.rest.dto.Builders.AttributeBuilder;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
-public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail> {
+public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToAttributeDetail> {
 
@@ -89,8 +92,10 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 	}
 
 	@Override
-	public AttributeDetail apply(final CMAttribute input) {
-		final AttributeDetail.Builder builder = AttributeDetail.newInstance() //
+	public Attribute apply(final CMAttribute input) {
+		final AttributeBuilder builder = newAttribute() //
+				// TODO fake id
+				.withId(Long.valueOf(input.getName().hashCode())) //
 				.withType(attributeTypeResolver.resolve(input).asString()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
@@ -105,9 +110,9 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 		new NullAttributeTypeVisitor() {
 
 			private CMAttribute attribute;
-			private AttributeDetail.Builder builder;
+			private AttributeBuilder builder;
 
-			public void fill(final CMAttribute attribute, final AttributeDetail.Builder builder) {
+			public void fill(final CMAttribute attribute, final AttributeBuilder builder) {
 				this.attribute = attribute;
 				this.builder = builder;
 				attribute.getType().accept(this);
@@ -146,7 +151,7 @@ public class ToAttributeDetail implements Function<CMAttribute, AttributeDetail>
 				}
 
 				builder.withTargetClass(target.getIdentifier().getLocalName()) //
-						.withFilter(Filter.newInstance() //
+						.withFilter(newFilter() //
 								.withText(attribute.getFilter()) //
 								.withParams(toMap(metadataStoreFactory.storeForAttribute(attribute).readAll())) //
 								.build());

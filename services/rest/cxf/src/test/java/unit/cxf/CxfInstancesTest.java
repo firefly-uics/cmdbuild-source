@@ -1,5 +1,8 @@
 package unit.cxf;
 
+import static org.cmdbuild.service.rest.dto.Builders.newProcessInstance;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -16,9 +19,9 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.cxf.CxfInstances;
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.ProcessInstance;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,14 +41,14 @@ public class CxfInstancesTest {
 	public void createDelegatedCorrectly() throws Exception {
 		// given
 		final MultivaluedMap<String, String> formParams = mock(MultivaluedMap.class);
-		final SimpleResponse<Long> expectedResponse = SimpleResponse.newInstance(Long.class) //
+		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
 				.withElement(123L) //
 				.build();
 		doReturn(expectedResponse) //
 				.when(processInstances).create(anyString(), any(MultivaluedMap.class), anyBoolean());
 
 		// when
-		final SimpleResponse<Long> response = cxfInstances.create(formParams, "foo", true);
+		final ResponseSingle<Long> response = cxfInstances.create(formParams, "foo", true);
 
 		// then
 		assertThat(response, equalTo(expectedResponse));
@@ -56,8 +59,8 @@ public class CxfInstancesTest {
 	@Test
 	public void readSingleDelegatedCorrectly() throws Exception {
 		// given
-		final SimpleResponse<ProcessInstance> expectedResponse = SimpleResponse.newInstance(ProcessInstance.class) //
-				.withElement(ProcessInstance.newInstance() //
+		final ResponseSingle<ProcessInstance> expectedResponse = newResponseSingle(ProcessInstance.class) //
+				.withElement(newProcessInstance() //
 						// not important
 						.build()) //
 				.build();
@@ -65,7 +68,7 @@ public class CxfInstancesTest {
 				.when(processInstances).read(anyString(), anyLong());
 
 		// when
-		final SimpleResponse<ProcessInstance> response = cxfInstances.read(123L, "foo");
+		final ResponseSingle<ProcessInstance> response = cxfInstances.read(123L, "foo");
 
 		// then
 		assertThat(response, equalTo(expectedResponse));
@@ -76,8 +79,8 @@ public class CxfInstancesTest {
 	@Test
 	public void readAllDelegatedCorrectly() throws Exception {
 		// given
-		final ListResponse<ProcessInstance> expectedResponse = ListResponse.newInstance(ProcessInstance.class) //
-				.withElement(ProcessInstance.newInstance() //
+		final ResponseMultiple<ProcessInstance> expectedResponse = newResponseMultiple(ProcessInstance.class) //
+				.withElement(newProcessInstance() //
 						// not important
 						.build()) //
 				.build();
@@ -85,7 +88,7 @@ public class CxfInstancesTest {
 				.when(processInstances).read(anyString(), anyInt(), anyInt());
 
 		// when
-		final ListResponse<ProcessInstance> response = cxfInstances.read("foo", 123, 456);
+		final ResponseMultiple<ProcessInstance> response = cxfInstances.read("foo", 123, 456);
 
 		// then
 		assertThat(response, equalTo(expectedResponse));

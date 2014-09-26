@@ -1,14 +1,17 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import org.cmdbuild.service.rest.dto.ProcessActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition.Attribute;
+import static org.cmdbuild.service.rest.dto.Builders.newAttributeStatus;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessActivityWithBasicDetails;
+
+import org.cmdbuild.service.rest.dto.ProcessActivityWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails.AttributeStatus;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 
 import com.google.common.base.Function;
 
-public class ToProcessActivity implements Function<UserActivityInstance, ProcessActivity> {
+public class ToProcessActivity implements Function<UserActivityInstance, ProcessActivityWithBasicDetails> {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToProcessActivity> {
 
@@ -32,12 +35,13 @@ public class ToProcessActivity implements Function<UserActivityInstance, Process
 		return new Builder();
 	}
 
-	private static class ToAttribute implements Function<CMActivityVariableToProcess, Attribute> {
+	private static class ToAttribute implements Function<CMActivityVariableToProcess, AttributeStatus> {
 
 		@Override
-		public Attribute apply(final CMActivityVariableToProcess input) {
-			return Attribute.newInstance() //
-					.withId(input.getName()) //
+		public AttributeStatus apply(final CMActivityVariableToProcess input) {
+			return newAttributeStatus() //
+					// TODO fake attribute
+					.withId(Long.valueOf(input.getName().hashCode())) //
 					.withWritable(input.getType() != Type.READ_ONLY) //
 					.withMandatory(input.getType() == Type.READ_WRITE_REQUIRED) //
 					.build();
@@ -52,10 +56,12 @@ public class ToProcessActivity implements Function<UserActivityInstance, Process
 	}
 
 	@Override
-	public ProcessActivity apply(final UserActivityInstance input) {
-		return ProcessActivity.newInstance() //
-				.withId(input.getId()) //
+	public ProcessActivityWithBasicDetails apply(final UserActivityInstance input) {
+		return newProcessActivityWithBasicDetails() //
+				// TODO fake id
+				.withId(Long.valueOf(input.getId().hashCode())) //
 				.withWritableStatus(input.isWritable()) //
 				.build();
 	}
+
 }

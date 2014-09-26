@@ -3,6 +3,10 @@ package org.cmdbuild.service.rest.cxf;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Lists.newArrayList;
+import static org.cmdbuild.service.rest.dto.Builders.newCard;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newRelation;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
 
 import java.util.List;
 
@@ -14,10 +18,8 @@ import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.Relations;
-import org.cmdbuild.service.rest.dto.Card;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.Relation;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
 
 import com.google.common.base.Function;
 
@@ -29,16 +31,16 @@ public class CxfRelations implements Relations {
 		public Relation apply(final RelationInfo input) {
 			final CMClass sourceType = input.getSourceType();
 			final CMClass targetType = input.getTargetType();
-			return Relation.newInstance() //
+			return newRelation() //
 					.withId(input.getRelationId()) //
 					.withType(input.getQueryDomain().getDomain().getName()) //
-					.withSource(Card.newInstance() //
+					.withSource(newCard() //
 							.withType(sourceType.getName()) //
 							.withId(input.getSourceId()) //
 							.withValue(sourceType.getCodeAttributeName(), input.getSourceCode()) //
 							.withValue(sourceType.getDescriptionAttributeName(), input.getSourceDescription()) //
 							.build()) //
-					.withDestination(Card.newInstance() //
+					.withDestination(newCard() //
 							.withType(targetType.getName()) //
 							.withId(input.getTargetId()) //
 							.withValue(targetType.getCodeAttributeName(), input.getTargetCode()) //
@@ -61,7 +63,7 @@ public class CxfRelations implements Relations {
 	}
 
 	@Override
-	public ListResponse<Relation> read(final String type, final String className, final Long cardId,
+	public ResponseMultiple<Relation> read(final String type, final String className, final Long cardId,
 			final String domainSource, final Integer limit, final Integer offset) {
 		final CMDomain targetDomain = dataAccessLogic.findDomain(type);
 		if (targetDomain == null) {
@@ -79,9 +81,9 @@ public class CxfRelations implements Relations {
 				addAll(elements, from(domainInfo) //
 						.transform(RELATION_INFO_TO_RELATION));
 			}
-			return ListResponse.newInstance(Relation.class) //
+			return newResponseMultiple(Relation.class) //
 					.withElements(elements) //
-					.withMetadata(DetailResponseMetadata.newInstance() //
+					.withMetadata(newMetadata() //
 							.withTotal(Long.valueOf(response.getTotalNumberOfRelations())) //
 							.build()) //
 					.build();

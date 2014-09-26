@@ -1,11 +1,13 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.dto.Builders.newProcessWithBasicDetails;
+
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.service.rest.dto.SimpleProcessDetail;
+import org.cmdbuild.service.rest.dto.ProcessWithBasicDetails;
 
 import com.google.common.base.Function;
 
-public class ToSimpleProcessDetail implements Function<CMClass, SimpleProcessDetail> {
+public class ToSimpleProcessDetail implements Function<CMClass, ProcessWithBasicDetails> {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToSimpleProcessDetail> {
 
@@ -31,9 +33,10 @@ public class ToSimpleProcessDetail implements Function<CMClass, SimpleProcessDet
 	}
 
 	@Override
-	public SimpleProcessDetail apply(final CMClass input) {
+	public ProcessWithBasicDetails apply(final CMClass input) {
 		final CMClass parent = input.getParent();
-		return SimpleProcessDetail.newInstance() //
+		return newProcessWithBasicDetails() //
+				.withId(input.getId()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.withParent((parent == null) ? MISSING_PARENT : parent.getName()) //

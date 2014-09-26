@@ -22,10 +22,10 @@ import javax.ws.rs.WebApplicationException;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
-import org.cmdbuild.service.rest.dto.FullProcessDetail;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.SimpleProcessDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ProcessWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +54,7 @@ public class CxfProcessesTest {
 				.thenReturn(NO_PROCESSES);
 
 		// when
-		final ListResponse<SimpleProcessDetail> response = cxfProcesses.readAll(true, null, null);
+		final ResponseMultiple<ProcessWithBasicDetails> response = cxfProcesses.readAll(true, null, null);
 
 		// then
 		verify(workflowLogic).findProcessClasses(true);
@@ -84,19 +84,19 @@ public class CxfProcessesTest {
 				.thenReturn(asList(foo, bar));
 
 		// when
-		final ListResponse<SimpleProcessDetail> response = cxfProcesses.readAll(true, null, null);
+		final ResponseMultiple<ProcessWithBasicDetails> response = cxfProcesses.readAll(true, null, null);
 
 		// then
 		verify(workflowLogic).findProcessClasses(true);
 		verifyNoMoreInteractions(errorHandler, workflowLogic);
 		assertThat(response.getElements(), hasSize(2));
 		assertThat(response.getMetadata().getTotal(), equalTo(2L));
-		final SimpleProcessDetail first = get(response.getElements(), 0);
+		final ProcessWithBasicDetails first = get(response.getElements(), 0);
 		assertThat(first.getName(), equalTo("bar"));
 		assertThat(first.getDescription(), equalTo("Bar"));
 		assertThat(first.getParent(), equalTo("foo"));
 		assertThat(first.isPrototype(), equalTo(false));
-		final SimpleProcessDetail second = get(response.getElements(), 1);
+		final ProcessWithBasicDetails second = get(response.getElements(), 1);
 		assertThat(second.getName(), equalTo("foo"));
 		assertThat(second.getDescription(), equalTo("Foo"));
 		assertThat(second.getParent(), equalTo(null));
@@ -135,12 +135,12 @@ public class CxfProcessesTest {
 				.when(workflowLogic).findProcessClass(anyString());
 
 		// when
-		final SimpleResponse<FullProcessDetail> response = cxfProcesses.read("foo");
+		final ResponseSingle<ProcessWithFullDetails> response = cxfProcesses.read("foo");
 
 		// then
 		verify(workflowLogic).findProcessClass("foo");
 		verifyNoMoreInteractions(errorHandler, workflowLogic);
-		final FullProcessDetail element = response.getElement();
+		final ProcessWithFullDetails element = response.getElement();
 		assertThat(element.getName(), equalTo("foo"));
 		assertThat(element.getDescription(), equalTo("Foo"));
 		assertThat(element.getParent(), equalTo(null));

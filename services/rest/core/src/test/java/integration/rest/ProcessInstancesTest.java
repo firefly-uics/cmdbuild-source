@@ -8,6 +8,10 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ADVA
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessInstance;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -36,10 +40,10 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.ProcessInstances;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
+import org.cmdbuild.service.rest.dto.Builders;
 import org.cmdbuild.service.rest.dto.ProcessInstance;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -80,7 +84,7 @@ public class ProcessInstancesTest {
 	@Test
 	public void instanceCreated() throws Exception {
 		// given
-		final SimpleResponse<Long> expectedResponse = SimpleResponse.<Long> newInstance() //
+		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
 				.withElement(123L) //
 				.build();
 		doReturn(expectedResponse) //
@@ -116,15 +120,15 @@ public class ProcessInstancesTest {
 		final Map<String, Object> values = ChainablePutMap.of(new HashMap<String, Object>()) //
 				.chainablePut("foo", "bar") //
 				.chainablePut("bar", "baz");
-		final SimpleResponse<ProcessInstance> sentResponse = SimpleResponse.newInstance(ProcessInstance.class) //
-				.withElement(ProcessInstance.newInstance() //
+		final ResponseSingle<ProcessInstance> sentResponse = newResponseSingle(ProcessInstance.class) //
+				.withElement(newProcessInstance() //
 						.withType(type) //
 						.withId(id) //
 						.withName(name) //
 						.withValues(values) //
 						.build()) //
 				.build();
-		final SimpleResponse<Map<String, Object>> expectedResponse = SimpleResponse.<Map<String, Object>> newInstance() //
+		final ResponseSingle<Map<String, Object>> expectedResponse = Builders.<Map<String, Object>> newResponseSingle() //
 				.withElement(ChainablePutMap.of(new HashMap<String, Object>()) //
 						.chainablePut(UNDERSCORED_TYPE, type) //
 						.chainablePut(UNDERSCORED_ID, id) //
@@ -156,27 +160,28 @@ public class ProcessInstancesTest {
 				.chainablePut("bar", "baz");
 		final Map<String, Object> secondValues = ChainablePutMap.of(new HashMap<String, Object>()) //
 				.chainablePut("bar", "baz");
-		final ListResponse<ProcessInstance> sentResponse = ListResponse.newInstance(ProcessInstance.class) //
+		final ResponseMultiple<ProcessInstance> sentResponse = newResponseMultiple(ProcessInstance.class) //
 				.withElements(asList( //
-						ProcessInstance.newInstance() //
+						newProcessInstance() //
 								.withType(type) //
 								.withId(firstId) //
 								.withName(firstName) //
 								.withValues(firstValues) //
 								.build(), //
-						ProcessInstance.newInstance() //
+						newProcessInstance() //
 								.withType(type) //
 								.withId(secondId) //
 								.withName(secondName) //
 								.withValues(secondValues) //
 								.build() //
 						)) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
 		@SuppressWarnings("unchecked")
-		final ListResponse<Map<String, Object>> expectedResponse = ListResponse.<Map<String, Object>> newInstance() //
+		final ResponseMultiple<Map<String, Object>> expectedResponse = Builders
+				.<Map<String, Object>> newResponseMultiple() //
 				.withElements(Arrays.<Map<String, Object>> asList( //
 						ChainablePutMap.of(new HashMap<String, Object>()) //
 								.chainablePut(UNDERSCORED_TYPE, type) //
@@ -189,7 +194,7 @@ public class ProcessInstancesTest {
 								.chainablePut(UNDERSCORED_NAME, secondName) //
 								.chainablePutAll(secondValues) //
 						)) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();

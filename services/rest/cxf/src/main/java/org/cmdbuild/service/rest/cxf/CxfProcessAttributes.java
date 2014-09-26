@@ -1,6 +1,8 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMAttribute;
@@ -11,9 +13,8 @@ import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
 import org.cmdbuild.service.rest.ProcessAttributes;
 import org.cmdbuild.service.rest.cxf.serialization.AttributeTypeResolver;
 import org.cmdbuild.service.rest.cxf.serialization.ToAttributeDetail;
-import org.cmdbuild.service.rest.dto.AttributeDetail;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
+import org.cmdbuild.service.rest.dto.Attribute;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 
 public class CxfProcessAttributes implements ProcessAttributes {
@@ -34,7 +35,7 @@ public class CxfProcessAttributes implements ProcessAttributes {
 	}
 
 	@Override
-	public ListResponse<AttributeDetail> readAll(final String name, final boolean activeOnly, final Integer limit,
+	public ResponseMultiple<Attribute> readAll(final String name, final boolean activeOnly, final Integer limit,
 			final Integer offset) {
 		final CMClass target = userDataAccessLogic.findClass(name);
 		if (target == null) {
@@ -63,11 +64,11 @@ public class CxfProcessAttributes implements ProcessAttributes {
 				.withErrorHandler(errorHandler) //
 				.withMetadataStoreFactory(metadataStoreFactory) //
 				.build();
-		final Iterable<AttributeDetail> elements = from(filteredAttributes) //
+		final Iterable<Attribute> elements = from(filteredAttributes) //
 				.transform(toAttributeDetails);
-		return ListResponse.<AttributeDetail> newInstance() //
+		return newResponseMultiple(Attribute.class) //
 				.withElements(elements) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(filteredAttributes.totalSize())) //
 						.build()) //
 				.build();

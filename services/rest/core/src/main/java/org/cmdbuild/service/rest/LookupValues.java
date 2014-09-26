@@ -14,9 +14,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 @Path("lookup_values/")
 @Produces(APPLICATION_JSON)
@@ -24,14 +24,14 @@ public interface LookupValues {
 
 	@GET
 	@Path("{" + ID + "}/")
-	SimpleResponse<LookupDetail> read( //
+	ResponseSingle<LookupDetail> read( //
 			@QueryParam(TYPE) String type, //
 			@PathParam(ID) Long id //
 	);
 
 	@GET
 	@Path(EMPTY)
-	ListResponse<LookupDetail> readAll( //
+	ResponseMultiple<LookupDetail> readAll( //
 			@QueryParam(TYPE) String type, //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //

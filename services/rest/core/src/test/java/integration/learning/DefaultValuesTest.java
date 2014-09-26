@@ -19,8 +19,8 @@ import javax.ws.rs.QueryParam;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.cmdbuild.service.rest.dto.AttributeDetail;
-import org.cmdbuild.service.rest.dto.ListResponse;
+import org.cmdbuild.service.rest.dto.Attribute;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,7 +35,7 @@ public class DefaultValuesTest {
 
 		@GET
 		@Path("primitivesWithNoDefault")
-		ListResponse<AttributeDetail> primitivesWithNoDefaultValue( //
+		ResponseMultiple<Attribute> primitivesWithNoDefaultValue( //
 				@QueryParam("int") int i, //
 				@QueryParam("long") long l, //
 				@QueryParam("boolean") boolean b, //
@@ -48,14 +48,14 @@ public class DefaultValuesTest {
 
 		@GET
 		@Path("primitivesWithDefault")
-		ListResponse<AttributeDetail> primitivesWithDefaultValue( //
+		ResponseMultiple<Attribute> primitivesWithDefaultValue( //
 				@DefaultValue("42") @QueryParam("int") int i, //
 				@DefaultValue("true") @QueryParam("boolean") boolean b //
 		);
 
 		@GET
 		@Path("objectsWithNoDefault")
-		ListResponse<AttributeDetail> objectsWithNoDefaultValue( //
+		ResponseMultiple<Attribute> objectsWithNoDefaultValue( //
 				@QueryParam("s") String s, //
 				@QueryParam("i") Integer i, //
 				@QueryParam("l") Long l, //
@@ -69,7 +69,7 @@ public class DefaultValuesTest {
 
 		@GET
 		@Path("objectsWithDefault")
-		ListResponse<AttributeDetail> objectsWithDefaultValue( //
+		ResponseMultiple<Attribute> objectsWithDefaultValue( //
 				@DefaultValue("foo") @QueryParam("s") String s, //
 				@DefaultValue("42") @QueryParam("i") Integer i, //
 				@DefaultValue("true") @QueryParam("b") Boolean b //

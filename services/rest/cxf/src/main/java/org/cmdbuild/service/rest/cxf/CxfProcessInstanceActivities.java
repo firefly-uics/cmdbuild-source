@@ -4,6 +4,9 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -13,11 +16,10 @@ import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.ProcessInstanceActivities;
 import org.cmdbuild.service.rest.cxf.serialization.ToProcessActivity;
 import org.cmdbuild.service.rest.cxf.serialization.ToProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.ProcessActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
@@ -43,7 +45,7 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 	}
 
 	@Override
-	public ListResponse<ProcessActivity> read(final String type, final Long instance) {
+	public ResponseMultiple<ProcessActivityWithBasicDetails> read(final String type, final Long instance) {
 		final UserProcessClass found = workflowLogic.findProcessClass(type);
 		if (found == null) {
 			errorHandler.processNotFound(type);
@@ -58,11 +60,11 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 			errorHandler.processInstanceNotFound(instance);
 		}
 		final Iterable<UserActivityInstance> activities = getOnlyElement(elements).getActivities();
-		return ListResponse.newInstance(ProcessActivity.class) //
+		return newResponseMultiple(ProcessActivityWithBasicDetails.class) //
 				.withElements(from(activities) //
 						.transform(TO_OUTPUT) //
 				) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(size(activities))) //
 						.build() //
 				).build();
@@ -80,7 +82,8 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 	}
 
 	@Override
-	public SimpleResponse<ProcessActivityDefinition> read(final String type, final Long instance, final String activity) {
+	public ResponseSingle<ProcessActivityWithFullDetails> read(final String type, final Long instance,
+			final String activity) {
 		final UserProcessClass foundType = workflowLogic.findProcessClass(type);
 		if (foundType == null) {
 			errorHandler.processNotFound(type);
@@ -102,7 +105,7 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 		if (foundActivity == null) {
 			errorHandler.processActivityNotFound(activity);
 		}
-		return SimpleResponse.newInstance(ProcessActivityDefinition.class) //
+		return newResponseSingle(ProcessActivityWithFullDetails.class) //
 				.withElement(from(asList(foundActivity)) //
 						.filter(Predicates.notNull()) //
 						.transform(TO_PROCESS_ACTIVITY) //

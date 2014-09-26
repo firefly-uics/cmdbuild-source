@@ -2,10 +2,10 @@ package org.cmdbuild.service.rest.cxf;
 
 import org.cmdbuild.service.rest.Activities;
 import org.cmdbuild.service.rest.ProcessInstanceActivities;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.ProcessActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 public class CxfActivities implements Activities {
 
@@ -16,12 +16,13 @@ public class CxfActivities implements Activities {
 	}
 
 	@Override
-	public ListResponse<ProcessActivity> read(final String type, final Long instance) {
+	public ResponseMultiple<ProcessActivityWithBasicDetails> read(final String type, final Long instance) {
 		return delegate.read(type, instance);
 	}
 
 	@Override
-	public SimpleResponse<ProcessActivityDefinition> read(final String activity, final String type, final Long instance) {
+	public ResponseSingle<ProcessActivityWithFullDetails> read(final String activity, final String type,
+			final Long instance) {
 		return delegate.read(type, instance, activity);
 	}
 

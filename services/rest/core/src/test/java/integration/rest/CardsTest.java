@@ -5,6 +5,10 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.CharEncoding.UTF_8;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
+import static org.cmdbuild.service.rest.dto.Builders.newCard;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
@@ -31,10 +35,10 @@ import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.Cards;
+import org.cmdbuild.service.rest.dto.Builders;
 import org.cmdbuild.service.rest.dto.Card;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -76,25 +80,26 @@ public class CardsTest {
 				.chainablePut("bar", "baz");
 		final Map<String, String> secondValues = ChainablePutMap.of(new HashMap<String, String>()) //
 				.chainablePut("bar", "baz");
-		final ListResponse<Card> sentResponse = ListResponse.newInstance(Card.class) //
+		final ResponseMultiple<Card> sentResponse = newResponseMultiple(Card.class) //
 				.withElements(asList( //
-						Card.newInstance() //
+						newCard() //
 								.withType(type) //
 								.withId(firstId) //
 								.withValues(firstValues) //
 								.build(), //
-						Card.newInstance() //
+						newCard() //
 								.withType(type) //
 								.withId(secondId) //
 								.withValues(secondValues) //
 								.build() //
 						)) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
 		@SuppressWarnings("unchecked")
-		final ListResponse<Map<String, Object>> expectedResponse = ListResponse.<Map<String, Object>> newInstance() //
+		final ResponseMultiple<Map<String, Object>> expectedResponse = Builders
+				.<Map<String, Object>> newResponseMultiple() //
 				.withElements(Arrays.<Map<String, Object>> asList( //
 						ChainablePutMap.of(new HashMap<String, Object>()) //
 								.chainablePut(UNDERSCORED_TYPE, type) //
@@ -105,7 +110,7 @@ public class CardsTest {
 								.chainablePut(UNDERSCORED_ID, secondId) //
 								.chainablePutAll(secondValues) //
 						)) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
@@ -125,7 +130,7 @@ public class CardsTest {
 	@Test
 	public void cardCreated() throws Exception {
 		// given
-		final SimpleResponse<Long> expectedResponse = SimpleResponse.<Long> newInstance() //
+		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
 				.withElement(123L) //
 				.build();
 		doReturn(expectedResponse) //
@@ -162,15 +167,15 @@ public class CardsTest {
 				.chainablePut("foo", "bar") //
 				.chainablePut("bar", "baz") //
 				.chainablePut("bar", "baz");
-		final SimpleResponse<Card> sentResponse = SimpleResponse.newInstance(Card.class) //
-				.withElement(Card.newInstance() //
+		final ResponseSingle<Card> sentResponse = newResponseSingle(Card.class) //
+				.withElement(newCard() //
 						.withType(type) //
 						.withId(firstId) //
 						.withValues(firstValues) //
 						.build() //
 				) //
 				.build();
-		final SimpleResponse<Map<String, Object>> expectedResponse = SimpleResponse.<Map<String, Object>> newInstance() //
+		final ResponseSingle<Map<String, Object>> expectedResponse = Builders.<Map<String, Object>> newResponseSingle() //
 				.withElement(ChainablePutMap.of(new HashMap<String, Object>()) //
 						.chainablePut(UNDERSCORED_TYPE, type) //
 						.chainablePut(UNDERSCORED_ID, firstId) //

@@ -13,10 +13,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.FullProcessDetail;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.SimpleProcessDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ProcessWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 @Path("processes/")
 @Produces(APPLICATION_JSON)
@@ -24,7 +24,7 @@ public interface Processes {
 
 	@GET
 	@Path(EMPTY)
-	ListResponse<SimpleProcessDetail> readAll( //
+	ResponseMultiple<ProcessWithBasicDetails> readAll( //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
@@ -32,7 +32,7 @@ public interface Processes {
 
 	@GET
 	@Path("{" + NAME + "}/")
-	SimpleResponse<FullProcessDetail> read( //
+	ResponseSingle<ProcessWithFullDetails> read( //
 			@PathParam(NAME) String name //
 	);
 

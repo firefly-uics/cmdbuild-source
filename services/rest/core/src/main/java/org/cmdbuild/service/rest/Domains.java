@@ -12,10 +12,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.FullDomainDetail;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.SimpleDomainDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.DomainWithBasicDetails;
+import org.cmdbuild.service.rest.dto.DomainWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 @Path("domains/")
 @Produces(APPLICATION_JSON)
@@ -23,14 +23,14 @@ public interface Domains {
 
 	@GET
 	@Path(EMPTY)
-	ListResponse<SimpleDomainDetail> readAll( //
+	ResponseMultiple<DomainWithBasicDetails> readAll( //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);
 
 	@GET
 	@Path("{" + NAME + "}/")
-	SimpleResponse<FullDomainDetail> read( //
+	ResponseSingle<DomainWithFullDetails> read( //
 			@PathParam(NAME) String name //
 	);
 

@@ -26,7 +26,6 @@
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
 			<ref bean="cxfActivities" />
-			<ref bean="cxfAttributes" />
 			<ref bean="cxfCards" />
 			<ref bean="cxfClasses" />
 			<ref bean="cxfClassAttributes" />

@@ -1,11 +1,13 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.dto.Builders.newClassWithFullDetails;
+
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.service.rest.dto.FullClassDetail;
+import org.cmdbuild.service.rest.dto.ClassWithFullDetails;
 
 import com.google.common.base.Function;
 
-public class ToFullClassDetail implements Function<CMClass, FullClassDetail> {
+public class ToFullClassDetail implements Function<CMClass, ClassWithFullDetails> {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToFullClassDetail> {
 
@@ -29,9 +31,10 @@ public class ToFullClassDetail implements Function<CMClass, FullClassDetail> {
 	}
 
 	@Override
-	public FullClassDetail apply(final CMClass input) {
+	public ClassWithFullDetails apply(final CMClass input) {
 		final CMClass parent = input.getParent();
-		return FullClassDetail.newInstance() //
+		return newClassWithFullDetails() //
+				.withId(input.getId()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.thatIsPrototype(input.isSuperclass()) //

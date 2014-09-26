@@ -3,6 +3,7 @@ package org.cmdbuild.service.rest.dto.adapter;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
+import static org.cmdbuild.service.rest.dto.Builders.newCard;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,7 +32,7 @@ public class CardAdapter extends XmlAdapter<Map<String, Object>, Card> {
 
 	@Override
 	public Card unmarshal(final Map<String, Object> input) throws Exception {
-		return Card.newInstance() //
+		return newCard() //
 				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
 				.withValues(input) //

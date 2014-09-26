@@ -2,6 +2,9 @@ package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseSingle;
 
 import java.util.Comparator;
 
@@ -10,11 +13,10 @@ import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.Processes;
 import org.cmdbuild.service.rest.cxf.serialization.ToFullProcessDetail;
 import org.cmdbuild.service.rest.cxf.serialization.ToSimpleProcessDetail;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.FullProcessDetail;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.SimpleProcessDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ProcessWithFullDetails;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.cmdbuild.workflow.user.UserProcessClass;
 
 import com.google.common.collect.Ordering;
@@ -42,30 +44,31 @@ public class CxfProcesses implements Processes {
 	}
 
 	@Override
-	public ListResponse<SimpleProcessDetail> readAll(final boolean activeOnly, final Integer limit, final Integer offset) {
+	public ResponseMultiple<ProcessWithBasicDetails> readAll(final boolean activeOnly, final Integer limit,
+			final Integer offset) {
 		final Iterable<? extends UserProcessClass> all = workflowLogic.findProcessClasses(activeOnly);
 		final Iterable<? extends UserProcessClass> ordered = Ordering.from(NAME_ASC) //
 				.sortedCopy(all);
-		final Iterable<SimpleProcessDetail> elements = from(ordered) //
+		final Iterable<ProcessWithBasicDetails> elements = from(ordered) //
 				.skip((offset == null) ? 0 : offset) //
 				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
 				.transform(TO_SIMPLE_DETAIL);
-		return ListResponse.<SimpleProcessDetail> newInstance() //
+		return newResponseMultiple(ProcessWithBasicDetails.class) //
 				.withElements(elements) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(size(ordered))) //
 						.build()) //
 				.build();
 	}
 
 	@Override
-	public SimpleResponse<FullProcessDetail> read(final String name) {
+	public ResponseSingle<ProcessWithFullDetails> read(final String name) {
 		final CMClass found = workflowLogic.findProcessClass(name);
 		if (found == null) {
 			errorHandler.classNotFound(name);
 		}
-		final FullProcessDetail element = TO_FULL_DETAIL.apply(found);
-		return SimpleResponse.<FullProcessDetail> newInstance() //
+		final ProcessWithFullDetails element = TO_FULL_DETAIL.apply(found);
+		return newResponseSingle(ProcessWithFullDetails.class) //
 				.withElement(element) //
 				.build();
 	}

@@ -1,6 +1,9 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.dto.Builders.newAttribute;
+import static org.cmdbuild.service.rest.dto.Builders.newMetadata;
+import static org.cmdbuild.service.rest.dto.Builders.newResponseMultiple;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
@@ -13,9 +16,8 @@ import static support.ServerResource.randomPort;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.DomainAttributes;
-import org.cmdbuild.service.rest.dto.AttributeDetail;
-import org.cmdbuild.service.rest.dto.DetailResponseMetadata;
-import org.cmdbuild.service.rest.dto.ListResponse;
+import org.cmdbuild.service.rest.dto.Attribute;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -48,15 +50,15 @@ public class DomainAttributesTest {
 	@Test
 	public void getDomainAttributes() throws Exception {
 		// given
-		final ListResponse<AttributeDetail> expectedResponse = ListResponse.<AttributeDetail> newInstance() //
+		final ResponseMultiple<Attribute> expectedResponse = newResponseMultiple(Attribute.class) //
 				.withElements(asList( //
-						AttributeDetail.newInstance() //
+						newAttribute() //
 								.withName("bar") //
 								.build(), //
-						AttributeDetail.newInstance() //
+						newAttribute() //
 								.withName("baz") //
 								.build())) //
-				.withMetadata(DetailResponseMetadata.newInstance() //
+				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();

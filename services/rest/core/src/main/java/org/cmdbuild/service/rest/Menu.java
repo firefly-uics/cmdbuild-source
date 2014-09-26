@@ -8,7 +8,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.cmdbuild.service.rest.dto.MenuDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 @Path("menu/")
 @Produces(APPLICATION_JSON)
@@ -16,6 +16,6 @@ public interface Menu {
 
 	@GET
 	@Path(EMPTY)
-	SimpleResponse<MenuDetail> read();
+	ResponseSingle<MenuDetail> read();
 
 }

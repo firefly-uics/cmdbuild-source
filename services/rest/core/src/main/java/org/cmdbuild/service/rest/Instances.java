@@ -21,9 +21,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.ProcessInstance;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 @Path("process_instances/")
 @Produces(APPLICATION_JSON)
@@ -31,7 +31,7 @@ public interface Instances {
 
 	@POST
 	@Path(EMPTY)
-	SimpleResponse<Long> create( //
+	ResponseSingle<Long> create( //
 			MultivaluedMap<String, String> formParams, //
 			@FormParam(UNDERSCORED_TYPE) String type, //
 			@FormParam(UNDERSCORED_ADVANCE) boolean advance //
@@ -39,14 +39,14 @@ public interface Instances {
 
 	@GET
 	@Path("{" + ID + "}")
-	SimpleResponse<ProcessInstance> read( //
+	ResponseSingle<ProcessInstance> read( //
 			@PathParam(ID) Long id, //
 			@QueryParam(TYPE) String type //
 	);
 
 	@GET
 	@Path(EMPTY)
-	ListResponse<ProcessInstance> read( //
+	ResponseMultiple<ProcessInstance> read( //
 			@QueryParam(TYPE) String type, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //

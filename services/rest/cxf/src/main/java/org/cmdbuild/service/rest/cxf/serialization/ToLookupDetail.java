@@ -1,5 +1,7 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.dto.Builders.newLookupDetail;
+
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.service.rest.dto.LookupDetail;
 
@@ -30,7 +32,7 @@ public class ToLookupDetail implements Function<Lookup, LookupDetail> {
 
 	@Override
 	public LookupDetail apply(final Lookup lookup) {
-		return LookupDetail.newInstance() //
+		return newLookupDetail() //
 				.withId(lookup.getId()) //
 				.withCode(lookup.code) //
 				.withDescription(lookup.description) //

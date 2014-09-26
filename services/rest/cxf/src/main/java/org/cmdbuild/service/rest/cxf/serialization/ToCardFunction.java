@@ -1,5 +1,7 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.dto.Builders.newCard;
+
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -70,7 +72,7 @@ public abstract class ToCardFunction<T> implements Function<T, Card> {
 					.build() //
 					.convert(entry.getKey(), entry.getValue()));
 		}
-		return Card.newInstance() //
+		return newCard() //
 				.withType(className) //
 				.withId(idOf(input)) //
 				.withValues(values) //

@@ -3,6 +3,7 @@ package org.cmdbuild.service.rest.dto.adapter;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
+import static org.cmdbuild.service.rest.dto.Builders.newProcessInstance;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,7 +33,7 @@ public class ProcessInstanceAdapter extends XmlAdapter<Map<String, Object>, Proc
 
 	@Override
 	public ProcessInstance unmarshal(final Map<String, Object> input) throws Exception {
-		return ProcessInstance.newInstance() //
+		return newProcessInstance() //
 				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
 				.withName(getAndRemove(input, UNDERSCORED_NAME, String.class)) //

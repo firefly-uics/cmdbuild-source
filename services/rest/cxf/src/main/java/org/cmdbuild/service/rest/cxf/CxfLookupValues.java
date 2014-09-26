@@ -2,9 +2,9 @@ package org.cmdbuild.service.rest.cxf;
 
 import org.cmdbuild.service.rest.LookupTypeValues;
 import org.cmdbuild.service.rest.LookupValues;
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.LookupDetail;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 
 public class CxfLookupValues implements LookupValues {
 
@@ -15,12 +15,12 @@ public class CxfLookupValues implements LookupValues {
 	}
 
 	@Override
-	public SimpleResponse<LookupDetail> read(final String type, final Long id) {
+	public ResponseSingle<LookupDetail> read(final String type, final Long id) {
 		return delegate.read(type, id);
 	}
 
 	@Override
-	public ListResponse<LookupDetail> readAll(final String type, final boolean activeOnly, final Integer limit,
+	public ResponseMultiple<LookupDetail> readAll(final String type, final boolean activeOnly, final Integer limit,
 			final Integer offset) {
 		return delegate.readAll(type, activeOnly, limit, offset);
 	}

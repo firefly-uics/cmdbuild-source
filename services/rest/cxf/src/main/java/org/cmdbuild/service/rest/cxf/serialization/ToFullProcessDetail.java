@@ -1,11 +1,13 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.dto.Builders.newProcessWithFullDetails;
+
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.service.rest.dto.FullProcessDetail;
+import org.cmdbuild.service.rest.dto.ProcessWithFullDetails;
 
 import com.google.common.base.Function;
 
-public class ToFullProcessDetail implements Function<CMClass, FullProcessDetail> {
+public class ToFullProcessDetail implements Function<CMClass, ProcessWithFullDetails> {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToFullProcessDetail> {
 
@@ -29,9 +31,10 @@ public class ToFullProcessDetail implements Function<CMClass, FullProcessDetail>
 	}
 
 	@Override
-	public FullProcessDetail apply(final CMClass input) {
+	public ProcessWithFullDetails apply(final CMClass input) {
 		final CMClass parent = input.getParent();
-		return FullProcessDetail.newInstance() //
+		return newProcessWithFullDetails() //
+				.withId(input.getId()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.thatIsPrototype(input.isSuperclass()) //

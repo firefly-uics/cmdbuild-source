@@ -21,11 +21,11 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstanceActivities;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
-import org.cmdbuild.service.rest.dto.ListResponse;
-import org.cmdbuild.service.rest.dto.ProcessActivity;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition;
-import org.cmdbuild.service.rest.dto.ProcessActivityDefinition.Attribute;
-import org.cmdbuild.service.rest.dto.SimpleResponse;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithBasicDetails;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails;
+import org.cmdbuild.service.rest.dto.ProcessActivityWithFullDetails.AttributeStatus;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
+import org.cmdbuild.service.rest.dto.ResponseSingle;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
@@ -113,7 +113,8 @@ public class CxfProcessInstanceActivitiesTest {
 				.when(workflowLogic).query(anyString(), any(QueryOptions.class));
 
 		// when
-		final ListResponse<ProcessActivity> response = cxfProcessInstanceActivities.read("foo", 123L);
+		final ResponseMultiple<ProcessActivityWithBasicDetails> response = cxfProcessInstanceActivities.read("foo",
+				123L);
 
 		// then
 		final ArgumentCaptor<QueryOptions> queryOptionsCaptor = ArgumentCaptor.forClass(QueryOptions.class);
@@ -125,10 +126,10 @@ public class CxfProcessInstanceActivitiesTest {
 		assertThat(captured.getLimit(), equalTo(1));
 		assertThat(captured.getOffset(), equalTo(0));
 		assertThat(response.getMetadata().getTotal(), equalTo(1L));
-		final Iterable<ProcessActivity> elements = response.getElements();
+		final Iterable<ProcessActivityWithBasicDetails> elements = response.getElements();
 		assertThat(size(elements), equalTo(1));
-		final ProcessActivity firstElement = get(elements, 0);
-		assertThat(firstElement.getId(), equalTo("foo"));
+		final ProcessActivityWithBasicDetails firstElement = get(elements, 0);
+		assertThat(firstElement.getId(), equalTo(Long.valueOf("foo".hashCode())));
 		assertThat(firstElement.isWritable(), equalTo(true));
 	}
 
@@ -264,30 +265,30 @@ public class CxfProcessInstanceActivitiesTest {
 				.when(errorHandler).propagate(exception);
 
 		// when
-		final SimpleResponse<ProcessActivityDefinition> response = cxfProcessInstanceActivities
-				.read("foo", 123L, "bar");
+		final ResponseSingle<ProcessActivityWithFullDetails> response = cxfProcessInstanceActivities.read("foo", 123L,
+				"bar");
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
 		inOrder.verify(workflowLogic).findProcessClass("foo");
 		inOrder.verify(workflowLogic).getProcessInstance("foo", 123L);
 		inOrder.verifyNoMoreInteractions();
-		final ProcessActivityDefinition element = response.getElement();
-		assertThat(element.getId(), equalTo(activity.getId()));
+		final ProcessActivityWithFullDetails element = response.getElement();
+		assertThat(element.getId(), equalTo(Long.valueOf(activity.getId().hashCode())));
 		assertThat(element.getDescription(), equalTo(activity.getDescription()));
 		assertThat(element.getInstructions(), equalTo(activity.getInstructions()));
-		final Iterable<Attribute> attributes = element.getAttributes();
+		final Iterable<AttributeStatus> attributes = element.getAttributes();
 		assertThat(size(attributes), equalTo(3));
-		final Attribute fooReadOnly = get(attributes, 0);
-		assertThat(fooReadOnly.getId(), equalTo("foo"));
+		final AttributeStatus fooReadOnly = get(attributes, 0);
+		assertThat(fooReadOnly.getId(), equalTo(Long.valueOf("foo".hashCode())));
 		assertThat(fooReadOnly.isWritable(), equalTo(false));
 		assertThat(fooReadOnly.isMandatory(), equalTo(false));
-		final Attribute barWriteableAndNotMandatory = get(attributes, 1);
-		assertThat(barWriteableAndNotMandatory.getId(), equalTo("bar"));
+		final AttributeStatus barWriteableAndNotMandatory = get(attributes, 1);
+		assertThat(barWriteableAndNotMandatory.getId(), equalTo(Long.valueOf("bar".hashCode())));
 		assertThat(barWriteableAndNotMandatory.isWritable(), equalTo(true));
 		assertThat(barWriteableAndNotMandatory.isMandatory(), equalTo(false));
-		final Attribute bazWriteableAndMandatory = get(attributes, 2);
-		assertThat(bazWriteableAndMandatory.getId(), equalTo("baz"));
+		final AttributeStatus bazWriteableAndMandatory = get(attributes, 2);
+		assertThat(bazWriteableAndMandatory.getId(), equalTo(Long.valueOf("baz".hashCode())));
 		assertThat(bazWriteableAndMandatory.isWritable(), equalTo(true));
 		assertThat(bazWriteableAndMandatory.isMandatory(), equalTo(true));
 	}

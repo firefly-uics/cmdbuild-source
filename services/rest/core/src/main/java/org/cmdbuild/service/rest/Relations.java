@@ -15,8 +15,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import org.cmdbuild.service.rest.dto.ListResponse;
 import org.cmdbuild.service.rest.dto.Relation;
+import org.cmdbuild.service.rest.dto.ResponseMultiple;
 
 @Path("domains/{" + TYPE + "}/relations/")
 @Produces(APPLICATION_JSON)
@@ -24,7 +24,7 @@ public interface Relations {
 
 	@GET
 	@Path(EMPTY)
-	ListResponse<Relation> read( //
+	ResponseMultiple<Relation> read( //
 			@PathParam(TYPE) String type, //
 			@QueryParam(CLASS_ID) String classId, //
 			@QueryParam(CARD_ID) Long cardId, //
