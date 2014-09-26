@@ -52,6 +52,7 @@
 		 * @param (Function) cb
 		 */
 		setCard: function(card, cb) {
+_debug('CMCardModuleState setCard card', card);
 			if (card != null && typeof card.data == 'undefined') {
 				CMDBuild.ServiceProxy.card.get({
 					params: card,

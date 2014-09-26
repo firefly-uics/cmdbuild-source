@@ -13,7 +13,6 @@
 		hideMode: 'offsets',
 		border: false,
 		frame: false,
-		cls: 'x-panel-body-default-framed',
 
 		layout: {
 			type: 'border'

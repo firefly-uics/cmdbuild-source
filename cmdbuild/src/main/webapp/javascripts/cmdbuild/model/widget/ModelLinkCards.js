@@ -3,14 +3,16 @@
 	Ext.define('CMDBuild.model.widget.ModelLinkCards', {
 		extend: 'Ext.util.Observable',
 
+		_freezed: {},
+		selections: {},
+		singleSelect: undefined,
+
 		/**
 		 * @param {Object} configuration - { singleSelect: true/false }
 		 */
 		constructor: function(configuration) {
 			configuration = configuration || {};
 
-			this.selections = {};
-			this._freezed = {};
 			this.singleSelect = configuration[CMDBuild.core.proxy.CMProxyConstants.SINGLE_SELECT];
 
 			this.addEvents({
