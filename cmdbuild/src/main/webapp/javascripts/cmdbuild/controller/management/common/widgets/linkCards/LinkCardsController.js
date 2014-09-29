@@ -47,8 +47,9 @@
 
 			this.view.delegate = this;
 			this.grid = this.view.grid;
-			this.view.grid.delegate = this;
+			this.grid.delegate = this;
 			this.view.widget = this.widget;
+			this.selectionModel = this.view.selectionModel;
 
 			this.callBacks = {
 				'action-card-edit': this.onEditCardkClick,
@@ -113,6 +114,9 @@
 				case 'onItemDoubleclick':
 					return this.onItemDoubleclick(param);
 
+				case 'onToggleGridFilterButtonClick':
+					return this.onToggleGridFilterButtonClick();
+
 				case 'onToggleMapButtonClick' :
 					return this.onToggleMapButtonClick();
 
@@ -158,8 +162,7 @@
 		 * @override
 		 */
 		beforeActiveView: function() {
-			// When the linkCard is not busy load the grid
-			if (!Ext.isEmpty(this.targetEntryType)) {
+			if (!Ext.isEmpty(this.targetEntryType)) { // When the linkCard is not busy load the grid
 				var me = this;
 				var classId = this.targetEntryType.getId();
 				var cqlQuery = this.widget.filter;
@@ -347,7 +350,11 @@
 								{
 									scope: this,
 									cb: function() {
-										this.onSelect(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
+										this.selectionModel.select(
+											this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, lastSelection.get('Id')),
+											false,
+											true
+										);
 									}
 								}
 							);
@@ -407,27 +414,16 @@
 		},
 
 		/**
-		 * @param {Int or Object} record
+		 * @param {Object} record
 		 */
 		onSelect: function(record) {
-			var cardId = undefined;
-
-			if (typeof record == 'number') {
-				cardId = record;
-			} else {
-				cardId = record.get('Id');
-			}
-
-			if (!Ext.isEmpty(cardId)) {
+			if (!Ext.isEmpty(record.get('Id'))) {
 				if (typeof record != 'number')
 					_CMCardModuleState.setCard(record);
 
-				this.grid.getSelectionModel().select(
-					this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, cardId)
-				);
-				this.model.select(cardId);
+				this.model.select(record.get('Id'));
 			} else {
-				this.grid.getSelectionModel().reset();
+				this.selectionModel.deselectAll();
 				this.model.reset();
 			}
 		},
@@ -437,6 +433,19 @@
 		 */
 		onShowCardkClick: function(model) {
 			this.getCardWindow(model, false).show();
+		},
+
+		onToggleGridFilterButtonClick: function() {
+			var classId = this.targetEntryType.getId();
+			var cqlQuery = this.widget.filter;
+
+			if (this.view.toggleGridFilterButton.buttonState) {
+				this.resolveFilterTemplate(cqlQuery, classId);
+			} else {
+				this.resolveFilterTemplate('', classId);
+			}
+
+			this.view.toggleGridFilterButton.buttonState = !this.view.toggleGridFilterButton.buttonState;
 		},
 
 		onToggleMapButtonClick: function() {
@@ -528,9 +537,7 @@
 		},
 
 		viewReset: function() {
-			if (this.view.selectionModel && typeof this.view.selectionModel.reset == 'function')
-				this.view.selectionModel.reset();
-
+			this.selectionModel.deselectAll();
 			this.model.reset();
 		}
 	});
