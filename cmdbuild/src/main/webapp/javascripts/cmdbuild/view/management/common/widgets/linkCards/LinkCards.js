@@ -1,5 +1,7 @@
 (function() {
 
+	var tr = CMDBuild.Translation;
+
 	Ext.define('CMDBuild.view.management.common.widgets.linkCards.LinkCards', {
 		extend: 'Ext.panel.Panel',
 
@@ -32,14 +34,23 @@
 				}
 			}
 
+			this.toggleGridFilterButton = Ext.create('Ext.button.Button', {
+				text: tr.filter + ' ' + tr.disable.toLowerCase(),
+				iconCls: 'map',
+				scope: this,
+				buttonState: true, // ButtonState (true/false) used to apply or not filter on grid
+
+				handler: function() {
+					this.delegate.cmOn('onToggleGridFilterButtonClick');
+				}
+			});
+
 			this.grid = Ext.create('CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid', {
 				autoScroll: true,
-				selModel: this.selectionModelFromConfiguration(),
-				readOnly: this.widget.readOnly,
+				selModel: this.getSelectionModel(),
 				hideMode: 'offsets',
 				region: 'center',
 				border: false,
-				filterSubcategory : this.widget.id,
 				cmAllowEditCard: allowEditCard,
 				cmAllowShowCard: allowShowCard
 			});
@@ -47,6 +58,14 @@
 			this.selectionModel = this.grid.getSelectionModel();
 
 			Ext.apply(this, {
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						items: [this.toggleGridFilterButton]
+					}
+				],
 				items: [this.grid]
 			});
 
@@ -58,7 +77,7 @@
 
 		buildMap: function() {
 			this.mapButton = Ext.create('Ext.button.Button', {
-				text: CMDBuild.Translation.management.modcard.tabs.map,
+				text: tr.management.modcard.tabs.map,
 				iconCls: 'map',
 				scope: this,
 
@@ -82,7 +101,7 @@
 						xtype: 'toolbar',
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
-						items: ['->', this.mapButton]
+						items: [this.toggleGridFilterButton, '->', this.mapButton]
 					}
 				],
 				layout: {
@@ -114,33 +133,24 @@
 		},
 
 		/**
+		 * @return {Ext.selection.RowModel}
+		 * @return {CMDBuild.selection.CMMultiPageSelectionModel} single select or multi select
+		 */
+		getSelectionModel: function() {
+			if (this.widget.readOnly)
+				return Ext.create('Ext.selection.RowModel');
+
+			return Ext.create('Ext.selection.CheckboxModel', {
+				mode: this.widget.singleSelect ? 'SINGLE' : 'MULTI',
+				showHeaderCheckbox: false
+			});
+		},
+
+		/**
 		 * @return {Boolean}
 		 */
 		hasMap: function() {
 			return this.mapPanel != undefined;
-		},
-
-		/**
-		 * @return {Ext.selection.RowModel}
-		 * @return {CMDBuild.selection.CMMultiPageSelectionModel} single select or multi select
-		 */
-		selectionModelFromConfiguration: function() {
-			if (this.widget.readOnly) {
-				return Ext.create('Ext.selection.RowModel');
-			}
-
-			if (this.widget.singleSelect) {
-				return Ext.create('CMDBuild.selection.CMMultiPageSelectionModel', {
-					mode: 'SINGLE',
-					idProperty: 'Id' // Required to identify the records for the data and not the id of ext
-				});
-			}
-
-			return Ext.create('CMDBuild.selection.CMMultiPageSelectionModel', {
-				mode: 'MULTI',
-				avoidCheckerHeader: true,
-				idProperty: 'Id' // Required to identify the records for the data and not the id of ext
-			});
 		}
 	});
 
