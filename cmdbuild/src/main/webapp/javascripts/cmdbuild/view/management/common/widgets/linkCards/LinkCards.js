@@ -16,7 +16,7 @@
 		mapPanel: undefined,
 		selectionModel: undefined,
 		toggleGridFilterButton: undefined,
-		widget: undefined,
+		widgetConf: undefined,
 
 		hideMode: 'offsets',
 		border: false,
@@ -30,8 +30,8 @@
 			var allowEditCard = false;
 			var allowShowCard = false;
 
-			if (this.widget.allowCardEditing) {
-				var priv = _CMUtils.getClassPrivilegesByName(this.widget.className);
+			if (this.widgetConf.allowCardEditing) {
+				var priv = _CMUtils.getClassPrivilegesByName(this.widgetConf.className);
 
 				if (priv && priv.write) {
 					allowEditCard = true;
@@ -75,7 +75,7 @@
 				items: [this.grid]
 			});
 
-			if (this.widget.enableMap && CMDBuild.Config.gis.enabled)
+			if (this.widgetConf.enableMap && CMDBuild.Config.gis.enabled)
 				this.buildMap();
 
 			this.callParent(arguments);
@@ -96,9 +96,9 @@
 				frame: false,
 				border: false,
 
-				lon: this.widget.StartMapWithLongitude || this.widget.mapLongitude,
-				lat: this.widget.StartMapWithLatitude || this.widget.mapLatitude,
-				initialZoomLevel: this.widget.StartMapWithZoom || this.widget.mapZoom
+				lon: this.widgetConf.StartMapWithLongitude || this.widgetConf.mapLongitude,
+				lat: this.widgetConf.StartMapWithLatitude || this.widgetConf.mapLatitude,
+				initialZoomLevel: this.widgetConf.StartMapWithZoom || this.widgetConf.mapZoom
 			});
 
 			Ext.apply(this, {
@@ -143,11 +143,11 @@
 		 * @return {CMDBuild.selection.CMMultiPageSelectionModel} single select or multi select
 		 */
 		getSelectionModel: function() {
-			if (this.widget.readOnly)
+			if (this.widgetConf.readOnly)
 				return Ext.create('Ext.selection.RowModel');
 
 			return Ext.create('Ext.selection.CheckboxModel', {
-				mode: this.widget.singleSelect ? 'SINGLE' : 'MULTI',
+				mode: this.widgetConf.singleSelect ? 'SINGLE' : 'MULTI',
 				showHeaderCheckbox: false
 			});
 		},

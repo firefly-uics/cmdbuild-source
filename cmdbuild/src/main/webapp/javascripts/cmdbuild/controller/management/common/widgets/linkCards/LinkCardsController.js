@@ -10,10 +10,10 @@
 	Ext.require('CMDBuild.model.widget.ModelLinkCards');
 
 	Ext.define('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController', {
+		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
 		mixins: {
-			observable: 'Ext.util.Observable',
-			widgetcontroller: 'CMDBuild.controller.management.common.widgets.CMWidgetController'
+			observable: 'Ext.util.Observable'
 		},
 
 		statics: {
@@ -23,34 +23,33 @@
 		/**
 		 * @param {CMDBuild.view.management.common.widgets.CMOpenReport} view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
-		 * @param {Object} widgetDef
+		 * @param {Object} widgetConf
 		 * @param {Ext.form.Basic} clientForm
 		 * @param {CMDBuild.model.CMActivityInstance} card
 		 *
 		 * @override
 		 */
-		constructor: function(view, ownerController, widgetDef, clientForm, card) {
+		constructor: function(view, ownerController, widgetConf, clientForm, card) {
 			var me = this;
 
 			this.mixins.observable.constructor.call(this);
-			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
-			this.widget = widgetDef;
+			this.callParent(arguments);
 
 			if (!_CMCache.isEntryTypeByName(this.widgetConf.className))
 				throw 'LinkCardsController constructor: className not valid';
 
-			this.targetEntryType = _CMCache.getEntryTypeByName(this.widget.className);
+			this.targetEntryType = _CMCache.getEntryTypeByName(this.widgetConf.className);
 
 			this.templateResolverIsBusy = false; // Is busy when load the default selection
 			this.alertIfChangeDefaultSelection = false;
-			this.singleSelect = this.widget.singleSelect;
-			this.readOnly = this.widget.readOnly;
+			this.singleSelect = this.widgetConf.singleSelect;
+			this.readOnly = this.widgetConf.readOnly;
 
 			this.view.delegate = this;
 			this.grid = this.view.grid;
 			this.grid.delegate = this;
-			this.view.widget = this.widget;
+			this.view.widgetConf = this.widgetConf;
 			this.selectionModel = this.view.selectionModel;
 
 			this.callBacks = {
@@ -74,7 +73,7 @@
 						view: this.view.getMapPanel(),
 						model: this.model,
 						parentDelegate: this,
-						widgetConf: this.widget
+						widgetConf: this.widgetConf
 					});
 				} else {
 					this.mapController = {
@@ -136,10 +135,10 @@
 		 */
 		_extractVariablesForTemplateResolver: function() {
 			var variables = {};
-			variables[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_SELECTION] = this.widget.defaultSelection;
-			variables[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.widget.filter;
+			variables[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_SELECTION] = this.widgetConf.defaultSelection;
+			variables[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.widgetConf.filter;
 
-			Ext.apply(variables, this.widget.templates || {});
+			Ext.apply(variables, this.widgetConf.templates || {});
 
 			return variables;
 		},
@@ -150,7 +149,7 @@
 					null,
 					Ext.String.format(
 						tr.warnings.link_cards_changed_values,
-						this.widget.label || this.view.id
+						this.widgetConf.label || this.view.id
 					),
 					false
 				);
@@ -166,7 +165,7 @@
 			if (!Ext.isEmpty(this.targetEntryType)) { // When the linkCard is not busy load the grid
 				var me = this;
 				var classId = this.targetEntryType.getId();
-				var cqlQuery = this.widget.filter;
+				var cqlQuery = this.widgetConf.filter;
 
 				new _CMUtils.PollingFunction({
 					success: function() {
@@ -261,7 +260,7 @@
 		 * @return {String} label
 		 */
 		getLabel: function() {
-			return this.widget.label;
+			return this.widgetConf.label;
 		},
 
 		/**
@@ -286,7 +285,7 @@
 		 * @override
 		 */
 		isValid: function() {
-			if (!this.readOnly && this.widget.required) {
+			if (!this.readOnly && this.widgetConf.required) {
 				return this.model.hasSelection();
 			} else {
 				return true;
@@ -331,7 +330,7 @@
 			if (!Ext.isEmpty(lastSelection)) {
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = lastSelection.get('Id');
-				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.widget.className;
+				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.widgetConf.className;
 				params[CMDBuild.core.proxy.CMProxyConstants.RETRY_WITHOUT_FILTER] = true;
 				params[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.grid.getStore().getProxy().extraParams[CMDBuild.core.proxy.CMProxyConstants.FILTER];
 
@@ -399,7 +398,7 @@
 		 * 	}
 		 */
 		onItemDoubleclick: function(params) {
-			if (this.widget.allowCardEditing) {
+			if (this.widgetConf.allowCardEditing) {
 				var priv = _CMUtils.getClassPrivileges(params.record.get('IdClass'));
 
 				if (priv && priv.write) {
@@ -441,7 +440,7 @@
 		 */
 		onToggleGridFilterButtonClick: function() {
 			var classId = this.targetEntryType.getId();
-			var cqlQuery = this.widget.filter;
+			var cqlQuery = this.widgetConf.filter;
 
 			if (this.view.toggleGridFilterButton.filterEnabled) {
 				this.resolveFilterTemplate(null, classId);
