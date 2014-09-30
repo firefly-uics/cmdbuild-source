@@ -5,6 +5,8 @@
 	 * If there is a defaultSelection, when the activity form goes in edit mode resolve the template to calculate the selection and if needed add dependencies to the fields.
 	 */
 
+	var tr = CMDBuild.Translation;
+
 	Ext.require('CMDBuild.model.widget.ModelLinkCards');
 
 	Ext.define('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController', {
@@ -59,7 +61,6 @@
 			this.model = Ext.create('CMDBuild.model.widget.ModelLinkCards', {
 				singleSelect: this.singleSelect
 			});
-			this.setViewModel();
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
@@ -148,7 +149,7 @@
 				CMDBuild.Msg.warn(
 					null,
 					Ext.String.format(
-						CMDBuild.Translation.warnings.link_cards_changed_values,
+						tr.warnings.link_cards_changed_values,
 						this.widget.label || this.view.id
 					),
 					false
@@ -182,7 +183,7 @@
 						}
 					},
 					failure: function() {
-						CMDBuild.Msg.error(null, CMDBuild.Translation.errors.busy_wf_widgets, false);
+						CMDBuild.Msg.error(null, tr.errors.busy_wf_widgets, false);
 					},
 					checkFn: function() {
 						// I want exit if I'm not busy
@@ -435,17 +436,26 @@
 			this.getCardWindow(model, false).show();
 		},
 
+		/**
+		 * Disable grid store filter
+		 */
 		onToggleGridFilterButtonClick: function() {
 			var classId = this.targetEntryType.getId();
 			var cqlQuery = this.widget.filter;
 
-			if (this.view.toggleGridFilterButton.buttonState) {
-				this.resolveFilterTemplate(cqlQuery, classId);
+			if (this.view.toggleGridFilterButton.filterEnabled) {
+				this.resolveFilterTemplate(null, classId);
+
+				this.view.toggleGridFilterButton.setIconCls('find');
+				this.view.toggleGridFilterButton.setText(tr.enableFilter);
 			} else {
-				this.resolveFilterTemplate('', classId);
+				this.resolveFilterTemplate(cqlQuery, classId);
+
+				this.view.toggleGridFilterButton.setIconCls('clear_filter');
+				this.view.toggleGridFilterButton.setText(tr.disableFilter);
 			}
 
-			this.view.toggleGridFilterButton.buttonState = !this.view.toggleGridFilterButton.buttonState;
+			this.view.toggleGridFilterButton.filterEnabled = !this.view.toggleGridFilterButton.filterEnabled;
 		},
 
 		onToggleMapButtonClick: function() {
@@ -453,11 +463,15 @@
 				if (this.grid.isVisible()) {
 					this.view.showMap();
 					this.view.mapButton.setIconCls('table');
-					this.view.mapButton.setText(CMDBuild.Translation.management.modcard.add_relations_window.list_tab);
+					this.view.mapButton.setText(tr.management.modcard.add_relations_window.list_tab);
+
+					this.view.toggleGridFilterButton.setDisabled(true);
 				} else {
 					this.view.showGrid();
 					this.view.mapButton.setIconCls('map');
-					this.view.mapButton.setText(CMDBuild.Translation.management.modcard.tabs.map);
+					this.view.mapButton.setText(tr.management.modcard.tabs.map);
+
+					this.view.toggleGridFilterButton.setDisabled(false);
 				}
 			}
 		},
@@ -520,10 +534,6 @@
 					});
 				}
 			});
-		},
-
-		setViewModel: function() {
-			this.view.model = this.model;
 		},
 
 		/**

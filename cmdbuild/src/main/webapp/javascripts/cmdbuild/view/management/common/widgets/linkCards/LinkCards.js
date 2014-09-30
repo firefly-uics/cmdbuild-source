@@ -10,6 +10,12 @@
 		},
 
 		delegate: undefined,
+
+		grid: undefined,
+		mapButton: undefined,
+		mapPanel: undefined,
+		selectionModel: undefined,
+		toggleGridFilterButton: undefined,
 		widget: undefined,
 
 		hideMode: 'offsets',
@@ -35,10 +41,10 @@
 			}
 
 			this.toggleGridFilterButton = Ext.create('Ext.button.Button', {
-				text: tr.filter + ' ' + tr.disable.toLowerCase(),
-				iconCls: 'map',
+				text: tr.disableFilter,
+				iconCls: 'clear_filter',
 				scope: this,
-				buttonState: true, // ButtonState (true/false) used to apply or not filter on grid
+				filterEnabled: true, // FilterEnabled (true/false) used to mark state grid's filter
 
 				handler: function() {
 					this.delegate.cmOn('onToggleGridFilterButtonClick');
@@ -150,7 +156,7 @@
 		 * @return {Boolean}
 		 */
 		hasMap: function() {
-			return this.mapPanel != undefined;
+			return !Ext.isEmpty(this.mapPanel);
 		}
 	});
 
