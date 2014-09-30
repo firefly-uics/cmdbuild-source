@@ -142,7 +142,7 @@
 		// LinkCards
 		me.builders[CMDBuild.view.management.common.widgets.linkCards.LinkCards.WIDGET_NAME] = function(widget, card) {
 			var w = Ext.create('CMDBuild.view.management.common.widgets.linkCards.LinkCards', {
-				widget: widget
+				widgetConf: widget
 			});
 			me.widgetsContainer.addWidgt(w);
 
