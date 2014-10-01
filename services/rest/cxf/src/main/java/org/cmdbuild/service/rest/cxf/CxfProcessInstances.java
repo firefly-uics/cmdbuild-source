@@ -1,16 +1,13 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.collect.Maps.transformEntries;
+import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
 import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-
-import javax.ws.rs.core.MultivaluedMap;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -19,21 +16,21 @@ import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.cxf.serialization.ToProcessInstance;
-import org.cmdbuild.service.rest.cxf.util.Maps;
 import org.cmdbuild.service.rest.model.ProcessInstance;
+import org.cmdbuild.service.rest.model.ProcessInstanceAdvanceable;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Maps.EntryTransformer;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 
 public class CxfProcessInstances implements ProcessInstances {
-
-	private static final EntryTransformer<String, List<? extends String>, String> FIRST_ELEMENT = Maps.firstElement();
 
 	private static Map<String, Object> NO_WIDGET_SUBMISSION = Collections.emptyMap();
 
@@ -46,15 +43,17 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public ResponseSingle<Long> create(final String type, final MultivaluedMap<String, String> formParams,
-			final boolean advance) {
-		final UserProcessClass found = workflowLogic.findProcessClass(type);
+	public ResponseSingle<Long> create(final Long processId, final ProcessInstanceAdvanceable processInstance) {
+		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
-			errorHandler.processNotFound(type);
+			errorHandler.processNotFound(processId);
 		}
-		final Map<String, String> vars = transformEntries(formParams, FIRST_ELEMENT);
 		try {
-			final UserProcessInstance instance = workflowLogic.startProcess(type, vars, NO_WIDGET_SUBMISSION, advance);
+			final UserProcessInstance instance = workflowLogic.startProcess( //
+					processId, //
+					processInstance.getValues(), //
+					NO_WIDGET_SUBMISSION, //
+					processInstance.isAdvance());
 			return newResponseSingle(Long.class) //
 					.withElement(instance.getId()) //
 					.build();
@@ -65,19 +64,19 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public ResponseSingle<ProcessInstance> read(final String type, final Long id) {
-		final UserProcessClass found = workflowLogic.findProcessClass(type);
+	public ResponseSingle<ProcessInstance> read(final Long processId, final Long instanceId) {
+		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
-			errorHandler.processNotFound(type);
+			errorHandler.processNotFound(processId);
 		}
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(1) //
 				.offset(0) //
-				.filter(filterFor(id)) //
+				.filter(filterFor(instanceId)) //
 				.build();
-		final PagedElements<UserProcessInstance> elements = workflowLogic.query(type, queryOptions);
+		final PagedElements<UserProcessInstance> elements = workflowLogic.query(found.getName(), queryOptions);
 		if (elements.totalSize() == 0) {
-			errorHandler.processInstanceNotFound(id);
+			errorHandler.processInstanceNotFound(instanceId);
 		}
 		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
 				.withType(found) //
@@ -102,10 +101,10 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public ResponseMultiple<ProcessInstance> read(final String type, final Integer limit, final Integer offset) {
-		final UserProcessClass found = workflowLogic.findProcessClass(type);
+	public ResponseMultiple<ProcessInstance> read(final Long processId, final Integer limit, final Integer offset) {
+		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
-			errorHandler.processNotFound(type);
+			errorHandler.processNotFound(processId);
 		}
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(limit) //
@@ -113,7 +112,7 @@ public class CxfProcessInstances implements ProcessInstances {
 				// TODO filters
 				// TODO sorters
 				.build();
-		final PagedElements<UserProcessInstance> elements = workflowLogic.query(type, queryOptions);
+		final PagedElements<UserProcessInstance> elements = workflowLogic.query(found.getName(), queryOptions);
 		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
 				.withType(found) //
 				.build();
@@ -127,28 +126,46 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public void update(final String type, final Long id, final String activity, final boolean advance,
-			final MultivaluedMap<String, String> formParams) {
-		final UserProcessClass found = workflowLogic.findProcessClass(type);
+	public void update(final Long processId, final Long instanceId, final ProcessInstanceAdvanceable processInstance) {
+		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
-			errorHandler.processNotFound(type);
+			errorHandler.processNotFound(processId);
 		}
-		final Map<String, String> vars = transformEntries(formParams, FIRST_ELEMENT);
 		try {
-			workflowLogic.updateProcess(type, id, activity, vars, NO_WIDGET_SUBMISSION, advance);
+			final UserProcessInstance instance = workflowLogic.getProcessInstance(processId, instanceId);
+			final Optional<UserActivityInstance> activity = from(instance.getActivities()) //
+					.filter(new Predicate<UserActivityInstance>() {
+
+						@Override
+						public boolean apply(final UserActivityInstance input) {
+							return fakeId(input.getId()).equals(processInstance.getActivity());
+						};
+
+					}) //
+					.first();
+			if (!activity.isPresent()) {
+				errorHandler.processActivityNotFound(processInstance.getActivity());
+			}
+			workflowLogic.updateProcess( //
+					processId, //
+					instanceId, //
+					activity.get().getId(), //
+					processInstance.getValues(), //
+					NO_WIDGET_SUBMISSION, //
+					processInstance.isAdvance());
 		} catch (final Throwable e) {
 			errorHandler.propagate(e);
 		}
 	}
 
 	@Override
-	public void delete(final String type, final Long id) {
-		final UserProcessClass found = workflowLogic.findProcessClass(type);
+	public void delete(final Long processId, final Long instanceId) {
+		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
-			errorHandler.processNotFound(type);
+			errorHandler.processNotFound(processId);
 		}
 		try {
-			workflowLogic.abortProcess(type, id);
+			workflowLogic.abortProcess(processId, instanceId);
 		} catch (final Throwable e) {
 			errorHandler.propagate(e);
 		}

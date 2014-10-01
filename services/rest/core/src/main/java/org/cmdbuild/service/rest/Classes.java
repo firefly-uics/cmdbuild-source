@@ -3,7 +3,7 @@ package org.cmdbuild.service.rest;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.service.rest.constants.Serialization.ACTIVE;
-import static org.cmdbuild.service.rest.constants.Serialization.ID;
+import static org.cmdbuild.service.rest.constants.Serialization.CLASS_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 
@@ -31,9 +31,9 @@ public interface Classes {
 	);
 
 	@GET
-	@Path("{" + ID + "}/")
+	@Path("{" + CLASS_ID + "}/")
 	ResponseSingle<ClassWithFullDetails> read( //
-			@PathParam(ID) Long id //
+			@PathParam(CLASS_ID) Long classId //
 	);
 
 }

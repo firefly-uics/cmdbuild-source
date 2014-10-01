@@ -3,10 +3,10 @@ package org.cmdbuild.service.rest;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.service.rest.constants.Serialization.ACTIVE;
-import static org.cmdbuild.service.rest.constants.Serialization.ID;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_TYPE_ID;
+import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_VALUE_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
-import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -18,21 +18,21 @@ import org.cmdbuild.service.rest.model.LookupDetail;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
-@Path("lookup_types/{" + TYPE + "}/values/")
+@Path("lookup_types/{" + LOOKUP_TYPE_ID + "}/values/")
 @Produces(APPLICATION_JSON)
 public interface LookupTypeValues {
 
 	@GET
-	@Path("{" + ID + "}/")
+	@Path("{" + LOOKUP_VALUE_ID + "}/")
 	ResponseSingle<LookupDetail> read( //
-			@PathParam(TYPE) String type, //
-			@PathParam(ID) Long id //
+			@PathParam(LOOKUP_TYPE_ID) Long lookupTypeId, //
+			@PathParam(LOOKUP_VALUE_ID) Long lookupValueId //
 	);
 
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<LookupDetail> readAll( //
-			@PathParam(TYPE) String type, //
+			@PathParam(LOOKUP_TYPE_ID) Long lookupTypeId, //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //

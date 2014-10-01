@@ -5,25 +5,28 @@ public class Serialization {
 	public static final String NAMESPACE = "http://cmdbuild.org/services/rest/";
 
 	public static final String //
+			ID = "id", //
+			ID_CAPITALIZED = "Id";
+
+	public static final String //
 			ACTIVE = "active", //
-			ACTIVITY = "activity", //
 			ADVANCE = "advance", //
 			ATTRIBUTE = "attribute", //
-			ATTRIBUTE_DETAIL = "attributeDetail", //
+			ATTRIBUTE_DETAIL = ATTRIBUTE + "Detail", //
 			ATTRIBUTES = "attributes", //
 			CARD = "card", //
 			CARD_DETAIL = CARD + "Detail", //
-			CARD_ID = CARD + "Id", //
+			CARD_ID = CARD + ID_CAPITALIZED, //
 			CARDINALITY = "cardinality", //
 			CHILDREN = "children", //
 			CLASS = "class", //
 			CLASS_DESTINATION = CLASS + "Destination", //
-			CLASS_ID = CLASS + "Id", //
+			CLASS_ID = CLASS + ID_CAPITALIZED, //
 			CLASS_SOURCE = CLASS + "Source", //
 			CODE = "code", //
 			DATA = "data", //
 			DEFAULT = "default", //
-			DEFAULT_VALUE = "defaultValue", //
+			DEFAULT_VALUE = DEFAULT + "Value", //
 			DESCRIPTION = "description", //
 			DESCRIPTION_ATTRIBUTE_NAME = DESCRIPTION + "_attribute_name", //
 			DESCRIPTION_DIRECT = DESCRIPTION + "Direct", //
@@ -32,24 +35,19 @@ public class Serialization {
 			DESTINATION = "destination", //
 			DISPLAYABLE_IN_LIST = "displayableInList", //
 			DOMAIN = "domain", //
-			DOMAIN_ID = DOMAIN + "Id", //
+			DOMAIN_ID = DOMAIN + ID_CAPITALIZED, //
 			DOMAIN_SOURCE = DOMAIN + "Source", //
 			EDITOR_TYPE = "editorType", //
 			FILTER = "filter", //
 			FULL_CLASS_DETAIL = "fullClassDetail", //
 			FULL_DOMAIN_DETAIL = "fullDomainDetail", //
 			GROUP = "group", //
-			ID = "id", //
 			INDEX = "index", //
 			INHERITED = "inherited", //
-			INSTANCE = "instance", //
 			INSTRUCTIONS = "instructions", //
 			LENGTH = "length", //
 			LIMIT = "limit", //
 			LIST_RESPONSE = "listResponse", //
-			LOOKUP_DETAIL = "lookupDetail", //
-			LOOKUP_TYPE_DETAIL = "lookupTypeDetail", //
-			LOOKUP_TYPE_NAME = "lookupTypeName", //
 			MANDATORY = "mandatory", //
 			MENU = "menu", //
 			MENU_DETAIL = MENU + "Detail", //
@@ -57,11 +55,6 @@ public class Serialization {
 			NAME = "name", //
 			NUMBER = "number", //
 			PARAMS = "params", //
-			PROCESS = "process", //
-			PROCESS_ACTIVITY = PROCESS + "Activity", //
-			PROCESS_ACTIVITY_DEFINITION = PROCESS_ACTIVITY + "Definition", //
-			PROCESS_ID = PROCESS + "Id", //
-			PROCESS_INSTANCE = PROCESS + "Instance", //
 			PROTOTYPE = "prototype", //
 			OBJECT_DESCRIPTION = "objectDescription", //
 			OBJECT_ID = "objectId", //
@@ -82,6 +75,33 @@ public class Serialization {
 			TARGET_CLASS = "targetClass", //
 			TEXT = "text", //
 			TOTAL = "total", //
+			TYPE = "type", //
+			UNIQUE = "unique", //
+			VALUE = "value", //
+			VALUES = "values", //
+			WRITABLE = "writable";
+
+	public static final String //
+			LOOKUP = "lookup", //
+			LOOKUP_DETAIL = LOOKUP + "Detail", //
+			LOOKUP_TYPE = LOOKUP + "Type", //
+			LOOKUP_TYPE_ID = LOOKUP_TYPE + ID_CAPITALIZED, //
+			LOOKUP_TYPE_DETAIL = LOOKUP_TYPE + "Detail", //
+			LOOKUP_TYPE_NAME = LOOKUP_TYPE + "Name", //
+			LOOKUP_VALUE = LOOKUP + "Value", //
+			LOOKUP_VALUE_ID = LOOKUP_VALUE + ID_CAPITALIZED;
+
+	public static final String //
+			PROCESS = "process", //
+			PROCESS_ACTIVITY = PROCESS + "Activity", //
+			PROCESS_ACTIVITY_DEFINITION = PROCESS_ACTIVITY + "Definition", //
+			PROCESS_ACTIVITY_ID = PROCESS_ACTIVITY + ID_CAPITALIZED, //
+			PROCESS_ID = PROCESS + ID_CAPITALIZED, //
+			PROCESS_INSTANCE = PROCESS + "Instance", //
+			PROCESS_INSTANCE_ADVANCE = PROCESS_INSTANCE + "Advance", //
+			PROCESS_INSTANCE_ID = PROCESS_INSTANCE + ID_CAPITALIZED;
+
+	public static final String //
 			TYPE_BOOLEAN = "boolean", //
 			TYPE_CHAR = "char", //
 			TYPE_DATE = "date", //
@@ -97,19 +117,16 @@ public class Serialization {
 			TYPE_STRING_ARRAY = "stringArray", //
 			TYPE_STRING = "string", //
 			TYPE_TEXT = "text", //
-			TYPE_TIME = "time", //
-			TYPE = "type", //
-			UNDERSCORED_ACTIVITY = "_" + ACTIVITY, //
+			TYPE_TIME = "time";
+
+	public static final String //
+			UNDERSCORED_ACTIVITY = "_activity", //
 			UNDERSCORED_ADVANCE = "_" + ADVANCE, //
 			UNDERSCORED_DESTINATION = "_" + DESTINATION, //
 			UNDERSCORED_ID = "_" + ID, //
 			UNDERSCORED_NAME = "_" + NAME, //
 			UNDERSCORED_SOURCE = "_" + SOURCE, //
-			UNDERSCORED_TYPE = "_" + TYPE, //
-			UNIQUE = "unique", //
-			VALUE = "value", //
-			VALUES = "values", //
-			WRITABLE = "writable";
+			UNDERSCORED_TYPE = "_" + TYPE;
 
 	private Serialization() {
 		// prevents instantiation

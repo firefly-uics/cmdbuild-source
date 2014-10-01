@@ -45,10 +45,10 @@ public class CxfDomains implements Domains {
 	}
 
 	@Override
-	public ResponseSingle<DomainWithFullDetails> read(final Long id) {
-		final CMDomain found = userDataAccessLogic.findDomain(id);
+	public ResponseSingle<DomainWithFullDetails> read(final Long domainId) {
+		final CMDomain found = userDataAccessLogic.findDomain(domainId);
 		if (found == null) {
-			errorHandler.domainNotFound(id);
+			errorHandler.domainNotFound(domainId);
 		}
 		return newResponseSingle(DomainWithFullDetails.class) //
 				.withElement(TO_FULL_DOMAIN_DETAIL.apply(found)) //

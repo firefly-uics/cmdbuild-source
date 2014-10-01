@@ -28,7 +28,7 @@ public class CxfLookupTypes implements LookupTypes {
 	}
 
 	@Override
-	public ResponseSingle<LookupTypeDetail> read(final String type) {
+	public ResponseSingle<LookupTypeDetail> read(final String lookupTypeId) {
 		final PagedElements<LookupType> lookupTypes = lookupLogic.getAllTypes(new LookupTypeQuery() {
 
 			@Override
@@ -48,7 +48,7 @@ public class CxfLookupTypes implements LookupTypes {
 
 					@Override
 					public boolean apply(final LookupType input) {
-						return input.name.equals(type);
+						return input.name.equals(lookupTypeId);
 					}
 
 				}) //

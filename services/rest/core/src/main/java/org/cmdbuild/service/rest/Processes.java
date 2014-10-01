@@ -3,8 +3,8 @@ package org.cmdbuild.service.rest;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.service.rest.constants.Serialization.ACTIVE;
-import static org.cmdbuild.service.rest.constants.Serialization.ID;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 
 import javax.ws.rs.GET;
@@ -31,9 +31,9 @@ public interface Processes {
 	);
 
 	@GET
-	@Path("{" + ID + "}/")
+	@Path("{" + PROCESS_ID + "}/")
 	ResponseSingle<ProcessWithFullDetails> read( //
-			@PathParam(ID) Long id //
+			@PathParam(PROCESS_ID) Long processId //
 	);
 
 }

@@ -3,9 +3,9 @@ package org.cmdbuild.service.rest.model;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public abstract class AbstractModel {
+public abstract class Model {
 
-	protected AbstractModel() {
+	protected Model() {
 		// usable by subclasses only
 	}
 

@@ -52,40 +52,40 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	public Cards cxfCards() {
-		final CxfCards service = new CxfCards(utilities.defaultErrorHandler(), helper.userDataAccessLogic(),
+		final CxfCards service = new CxfCards(utilities.errorHandler(), helper.userDataAccessLogic(),
 				helper.systemDataView(), helper.userDataView());
 		return proxy(Cards.class, service);
 	}
 
 	@Bean
 	public ClassAttributes cxfClassAttributes() {
-		final CxfClassAttributes service = new CxfClassAttributes(utilities.defaultErrorHandler(),
+		final CxfClassAttributes service = new CxfClassAttributes(utilities.errorHandler(),
 				helper.userDataAccessLogic(), helper.systemDataView(), helper.metadataStoreFactory());
 		return proxy(ClassAttributes.class, service);
 	}
 
 	@Bean
 	public Classes cxfClasses() {
-		final CxfClasses service = new CxfClasses(utilities.defaultErrorHandler(), helper.userDataAccessLogic());
+		final CxfClasses service = new CxfClasses(utilities.errorHandler(), helper.userDataAccessLogic());
 		return proxy(Classes.class, service);
 	}
 
 	@Bean
 	public DomainAttributes cxfDomainAttributes() {
-		final CxfDomainAttributes service = new CxfDomainAttributes(utilities.defaultErrorHandler(),
+		final CxfDomainAttributes service = new CxfDomainAttributes(utilities.errorHandler(),
 				helper.userDataAccessLogic(), helper.systemDataView(), helper.metadataStoreFactory());
 		return proxy(DomainAttributes.class, service);
 	}
 
 	@Bean
 	public Relations cxfRelations() {
-		final CxfRelations service = new CxfRelations(utilities.defaultErrorHandler(), helper.userDataAccessLogic());
+		final CxfRelations service = new CxfRelations(utilities.errorHandler(), helper.userDataAccessLogic());
 		return proxy(Relations.class, service);
 	}
 
 	@Bean
 	public Domains cxfDomains() {
-		final CxfDomains service = new CxfDomains(utilities.defaultErrorHandler(), helper.userDataAccessLogic());
+		final CxfDomains service = new CxfDomains(utilities.errorHandler(), helper.userDataAccessLogic());
 		return proxy(Domains.class, service);
 	}
 
@@ -97,7 +97,7 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	public LookupTypeValues cxfLookupTypeValues() {
-		final CxfLookupTypeValues service = new CxfLookupTypeValues(helper.lookupLogic());
+		final CxfLookupTypeValues service = new CxfLookupTypeValues(utilities.errorHandler(), helper.lookupLogic());
 		return proxy(LookupTypeValues.class, service);
 	}
 
@@ -110,34 +110,34 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	public ProcessAttributes cxfProcessAttributes() {
-		final CxfProcessAttributes service = new CxfProcessAttributes(utilities.defaultErrorHandler(),
+		final CxfProcessAttributes service = new CxfProcessAttributes(utilities.errorHandler(),
 				helper.userDataAccessLogic(), helper.systemDataView(), helper.metadataStoreFactory());
 		return proxy(ProcessAttributes.class, service);
 	}
 
 	@Bean
 	public Processes cxfProcesses() {
-		final CxfProcesses service = new CxfProcesses(utilities.defaultErrorHandler(), helper.userWorkflowLogic());
+		final CxfProcesses service = new CxfProcesses(utilities.errorHandler(), helper.userWorkflowLogic());
 		return proxy(Processes.class, service);
 	}
 
 	@Bean
 	public ProcessInstanceActivities cxfProcessInstanceActivities() {
-		final CxfProcessInstanceActivities service = new CxfProcessInstanceActivities(utilities.defaultErrorHandler(),
+		final CxfProcessInstanceActivities service = new CxfProcessInstanceActivities(utilities.errorHandler(),
 				helper.userWorkflowLogic());
 		return proxy(ProcessInstanceActivities.class, service);
 	}
 
 	@Bean
 	public ProcessInstances cxfProcessInstances() {
-		final CxfProcessInstances service = new CxfProcessInstances(utilities.defaultErrorHandler(),
+		final CxfProcessInstances service = new CxfProcessInstances(utilities.errorHandler(),
 				helper.userWorkflowLogic());
 		return proxy(ProcessInstances.class, service);
 	}
 
 	@Bean
 	public ProcessStartActivity cxfProcessStartActivity() {
-		final CxfProcessStartActivity service = new CxfProcessStartActivity(utilities.defaultErrorHandler(),
+		final CxfProcessStartActivity service = new CxfProcessStartActivity(utilities.errorHandler(),
 				helper.userWorkflowLogic());
 		return proxy(ProcessStartActivity.class, service);
 	}

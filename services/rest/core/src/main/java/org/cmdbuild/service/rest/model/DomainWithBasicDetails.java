@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement(name = SIMPLE_DOMAIN_DETAIL)
-public class DomainWithBasicDetails extends AbstractModelWithId {
+public class DomainWithBasicDetails extends ModelWithId {
 
 	private String name;
 	private String description;

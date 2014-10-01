@@ -2,7 +2,6 @@ package org.cmdbuild.service.rest.model;
 
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_INSTANCE;
-import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.VALUES;
 
 import java.util.Map;
@@ -19,23 +18,13 @@ import org.cmdbuild.service.rest.model.adapter.StringObjectMapAdapter;
 
 @XmlRootElement(name = PROCESS_INSTANCE)
 @XmlJavaTypeAdapter(ProcessInstanceAdapter.class)
-public class ProcessInstance extends AbstractModelWithId {
+public class ProcessInstance extends ModelWithIdAndType {
 
-	private String type;
 	private String name;
 	private Map<String, Object> values;
 
 	ProcessInstance() {
 		// package visibility
-	}
-
-	@XmlAttribute(name = TYPE)
-	public String getType() {
-		return type;
-	}
-
-	void setType(final String type) {
-		this.type = type;
 	}
 
 	@XmlAttribute(name = NAME)
@@ -69,7 +58,7 @@ public class ProcessInstance extends AbstractModelWithId {
 
 		final ProcessInstance other = ProcessInstance.class.cast(obj);
 		return new EqualsBuilder() //
-				.append(this.type, other.type) //
+				.append(this.getType(), other.getType()) //
 				.append(this.getId(), other.getId()) //
 				.append(this.name, other.name) //
 				.append(this.values, other.values) //
@@ -79,7 +68,7 @@ public class ProcessInstance extends AbstractModelWithId {
 	@Override
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
-				.append(type) //
+				.append(getType()) //
 				.append(getId()) //
 				.append(name) //
 				.append(values) //

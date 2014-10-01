@@ -2,15 +2,13 @@ package org.cmdbuild.service.rest;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.cmdbuild.service.rest.constants.Serialization.ID;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_ID;
+import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_INSTANCE_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
-import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ACTIVITY;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ADVANCE;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -18,54 +16,52 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MultivaluedMap;
 
 import org.cmdbuild.service.rest.model.ProcessInstance;
+import org.cmdbuild.service.rest.model.ProcessInstanceAdvanceable;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
-@Path("processes/{" + TYPE + "}/instances/")
+@Path("processes/{" + PROCESS_ID + "}/instances/")
+@Consumes(APPLICATION_JSON)
 @Produces(APPLICATION_JSON)
 public interface ProcessInstances {
 
 	@POST
 	@Path(EMPTY)
 	ResponseSingle<Long> create( //
-			@PathParam(TYPE) String type, //
-			MultivaluedMap<String, String> formParams, //
-			@FormParam(UNDERSCORED_ADVANCE) boolean advance //
+			@PathParam(PROCESS_ID) Long processId, //
+			ProcessInstanceAdvanceable processInstance //
 	);
 
 	@GET
-	@Path("{" + ID + "}")
+	@Path("{" + PROCESS_INSTANCE_ID + "}")
 	ResponseSingle<ProcessInstance> read( //
-			@PathParam(TYPE) String type, //
-			@PathParam(ID) Long id //
+			@PathParam(PROCESS_ID) Long processId, //
+			@PathParam(PROCESS_INSTANCE_ID) Long instanceId //
 	);
 
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<ProcessInstance> read( //
-			@PathParam(TYPE) String type, //
+			@PathParam(PROCESS_ID) Long processId, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);
 
 	@PUT
-	@Path("{" + ID + "}")
+	@Path("{" + PROCESS_INSTANCE_ID + "}")
 	void update( //
-			@PathParam(TYPE) String type, //
-			@PathParam(ID) Long id, //
-			@FormParam(UNDERSCORED_ACTIVITY) String activity, //
-			@FormParam(UNDERSCORED_ADVANCE) boolean advance, //
-			MultivaluedMap<String, String> formParams //
+			@PathParam(PROCESS_ID) Long processId, //
+			@PathParam(PROCESS_INSTANCE_ID) Long instanceId, //
+			ProcessInstanceAdvanceable processInstance //
 	);
 
 	@DELETE
-	@Path("{" + ID + "}")
+	@Path("{" + PROCESS_INSTANCE_ID + "}")
 	void delete( //
-			@PathParam(TYPE) String type, //
-			@PathParam(ID) Long id //
+			@PathParam(PROCESS_ID) Long processId, //
+			@PathParam(PROCESS_INSTANCE_ID) Long instanceId //
 	);
 
 }

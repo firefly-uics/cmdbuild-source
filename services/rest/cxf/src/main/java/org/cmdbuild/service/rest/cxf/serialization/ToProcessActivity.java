@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newAttributeStatus;
 import static org.cmdbuild.service.rest.model.Builders.newProcessActivityWithBasicDetails;
 
@@ -40,8 +41,7 @@ public class ToProcessActivity implements Function<UserActivityInstance, Process
 		@Override
 		public AttributeStatus apply(final CMActivityVariableToProcess input) {
 			return newAttributeStatus() //
-					// TODO fake attribute
-					.withId(Long.valueOf(input.getName().hashCode())) //
+					.withId(fakeId(input.getName())) //
 					.withWritable(input.getType() != Type.READ_ONLY) //
 					.withMandatory(input.getType() == Type.READ_WRITE_REQUIRED) //
 					.build();
@@ -58,8 +58,7 @@ public class ToProcessActivity implements Function<UserActivityInstance, Process
 	@Override
 	public ProcessActivityWithBasicDetails apply(final UserActivityInstance input) {
 		return newProcessActivityWithBasicDetails() //
-				// TODO fake id
-				.withId(Long.valueOf(input.getId().hashCode())) //
+				.withId(fakeId(input.getId())) //
 				.withWritableStatus(input.isWritable()) //
 				.build();
 	}

@@ -18,6 +18,8 @@ public interface ErrorHandler {
 
 	void domainNotFound(Long id);
 
+	void lookupTypeNotFound(Long id);
+
 	/**
 	 * @deprecated Use {@link processNotFound(Long)} instead.
 	 */
@@ -28,7 +30,13 @@ public interface ErrorHandler {
 
 	void processInstanceNotFound(Long id);
 
+	/**
+	 * @deprecated Use {@link processNotFound(Long)} instead.
+	 */
+	@Deprecated
 	void processActivityNotFound(String id);
+
+	void processActivityNotFound(Long id);
 
 	void cardNotFound(Long id);
 

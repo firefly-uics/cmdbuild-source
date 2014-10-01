@@ -33,15 +33,15 @@ public class CxfRelations implements Relations {
 			final CMClass targetType = input.getTargetType();
 			return newRelation() //
 					.withId(input.getRelationId()) //
-					.withType(input.getQueryDomain().getDomain().getName()) //
+					.withType(input.getQueryDomain().getDomain().getId()) //
 					.withSource(newCard() //
-							.withType(sourceType.getName()) //
+							.withType(sourceType.getId()) //
 							.withId(input.getSourceId()) //
 							.withValue(sourceType.getCodeAttributeName(), input.getSourceCode()) //
 							.withValue(sourceType.getDescriptionAttributeName(), input.getSourceDescription()) //
 							.build()) //
 					.withDestination(newCard() //
-							.withType(targetType.getName()) //
+							.withType(targetType.getId()) //
 							.withId(input.getTargetId()) //
 							.withValue(targetType.getCodeAttributeName(), input.getTargetCode()) //
 							.withValue(targetType.getDescriptionAttributeName(), input.getTargetDescription()) //

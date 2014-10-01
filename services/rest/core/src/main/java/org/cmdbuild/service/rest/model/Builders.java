@@ -239,7 +239,7 @@ public class Builders {
 
 	public static class CardBuilder extends ModelBuilder<Card> {
 
-		private String type;
+		private Long type;
 		private Long id;
 		final Map<String, Object> values = newHashMap();
 
@@ -256,7 +256,7 @@ public class Builders {
 			return output;
 		}
 
-		public CardBuilder withType(final String type) {
+		public CardBuilder withType(final Long type) {
 			this.type = type;
 			return this;
 		}
@@ -554,7 +554,7 @@ public class Builders {
 		private Long id;
 		private String code;
 		private String description;
-		private String type;
+		private Long type;
 		private Long number;
 		private Boolean active;
 		private Boolean isDefault;
@@ -595,7 +595,7 @@ public class Builders {
 			return this;
 		}
 
-		public LookupDetailBuilder withType(final String type) {
+		public LookupDetailBuilder withType(final Long type) {
 			this.type = type;
 			return this;
 		}
@@ -631,7 +631,7 @@ public class Builders {
 
 		private Long id;
 		private String name;
-		private String parent;
+		private Long parent;
 
 		private LookupTypeDetailBuilder() {
 			// use factory method
@@ -656,7 +656,7 @@ public class Builders {
 			return this;
 		}
 
-		public LookupTypeDetailBuilder withParent(final String parent) {
+		public LookupTypeDetailBuilder withParent(final Long parent) {
 			this.parent = parent;
 			return this;
 		}
@@ -840,7 +840,7 @@ public class Builders {
 		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
 		private static final Function<Entry<? extends String, ? extends Object>, Object> VALUE = toValue();
 
-		private String type;
+		private Long type;
 		private Long id;
 		private String name;
 		final Map<String, Object> values = newHashMap();
@@ -859,7 +859,7 @@ public class Builders {
 			return output;
 		}
 
-		public ProcessInstanceBuilder withType(final String type) {
+		public ProcessInstanceBuilder withType(final Long type) {
 			this.type = type;
 			return this;
 		}
@@ -880,6 +880,75 @@ public class Builders {
 
 		public ProcessInstanceBuilder withValues(final Map<String, ? extends Object> values) {
 			this.values.putAll(values);
+			return this;
+		}
+
+	}
+
+	public static class ProcessInstanceAdvanceBuilder extends ModelBuilder<ProcessInstanceAdvanceable> {
+
+		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
+		private static final Function<Entry<? extends String, ? extends Object>, Object> VALUE = toValue();
+
+		private Long type;
+		private Long id;
+		private String name;
+		final Map<String, Object> values = newHashMap();
+		private Long activityId;
+		private Boolean advance;
+
+		private ProcessInstanceAdvanceBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected void doValidate() {
+			advance = defaultIfNull(advance, FALSE);
+		}
+
+		@Override
+		protected ProcessInstanceAdvanceable doBuild() {
+			final ProcessInstanceAdvanceable output = new ProcessInstanceAdvanceable();
+			output.setType(type);
+			output.setId(id);
+			output.setName(name);
+			output.setValues(values);
+			output.setActivity(activityId);
+			output.setAdvance(advance);
+			return output;
+		}
+
+		public ProcessInstanceAdvanceBuilder withType(final Long type) {
+			this.type = type;
+			return this;
+		}
+
+		public ProcessInstanceAdvanceBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public ProcessInstanceAdvanceBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public ProcessInstanceAdvanceBuilder withValues(final Iterable<? extends Entry<String, ? extends Object>> values) {
+			return withValues(transformValues(uniqueIndex(values, KEY), VALUE));
+		}
+
+		public ProcessInstanceAdvanceBuilder withValues(final Map<String, ? extends Object> values) {
+			this.values.putAll(values);
+			return this;
+		}
+
+		public ProcessInstanceAdvanceBuilder withActivity(final Long activityId) {
+			this.activityId = activityId;
+			return this;
+		}
+
+		public ProcessInstanceAdvanceBuilder withAdvance(final boolean advance) {
+			this.advance = advance;
 			return this;
 		}
 
@@ -1004,10 +1073,10 @@ public class Builders {
 
 	public static class RelationBuilder extends ModelBuilder<Relation> {
 
-		private String type;
+		private Long type;
 		private Long id;
-		private AbstractModel source;
-		private AbstractModel destination;
+		private Card source;
+		private Card destination;
 		private final Map<String, Object> values = newHashMap();
 
 		private RelationBuilder() {
@@ -1025,7 +1094,7 @@ public class Builders {
 			return output;
 		}
 
-		public RelationBuilder withType(final String type) {
+		public RelationBuilder withType(final Long type) {
 			this.type = type;
 			return this;
 		}
@@ -1035,12 +1104,12 @@ public class Builders {
 			return this;
 		}
 
-		public RelationBuilder withSource(final AbstractModel source) {
+		public RelationBuilder withSource(final Card source) {
 			this.source = source;
 			return this;
 		}
 
-		public RelationBuilder withDestination(final AbstractModel destination) {
+		public RelationBuilder withDestination(final Card destination) {
 			this.destination = destination;
 			return this;
 		}
@@ -1176,6 +1245,10 @@ public class Builders {
 
 	public static ProcessInstanceBuilder newProcessInstance() {
 		return new ProcessInstanceBuilder();
+	}
+
+	public static ProcessInstanceAdvanceBuilder newProcessInstanceAdvance() {
+		return new ProcessInstanceAdvanceBuilder();
 	}
 
 	public static ProcessWithBasicDetailsBuilder newProcessWithBasicDetails() {

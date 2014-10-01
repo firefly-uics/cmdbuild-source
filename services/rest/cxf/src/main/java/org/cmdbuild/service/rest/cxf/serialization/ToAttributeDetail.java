@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newAttribute;
 import static org.cmdbuild.service.rest.model.Builders.newFilter;
 
@@ -94,8 +95,7 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 	@Override
 	public Attribute apply(final CMAttribute input) {
 		final AttributeBuilder builder = newAttribute() //
-				// TODO fake id
-				.withId(Long.valueOf(input.getName().hashCode())) //
+				.withId(fakeId(input.getName())) //
 				.withType(attributeTypeResolver.resolve(input).asString()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //

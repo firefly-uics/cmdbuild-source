@@ -62,7 +62,7 @@ public class CxfCardsTest {
 
 		// when
 		cxfCards.create(123L, newCard() //
-				.withType("bar") //
+				.withType(456L) //
 				.build());
 
 		// then
@@ -85,7 +85,7 @@ public class CxfCardsTest {
 
 		// when
 		final ResponseSingle<Long> response = cxfCards.create(123L, newCard() //
-				.withType("bar") //
+				.withType(456L) //
 				.withValue("some name", "some value") //
 				.build());
 
@@ -112,8 +112,8 @@ public class CxfCardsTest {
 
 		// when
 		cxfCards.update(12L, 34L, newCard() //
-				.withType("bar") //
-				.withId(56L) //
+				.withType(56L) //
+				.withId(78L) //
 				.build());
 
 		// then
@@ -134,8 +134,8 @@ public class CxfCardsTest {
 
 		// when
 		cxfCards.update(12L, 34L, newCard() //
-				.withType("bar") //
-				.withId(56L) //
+				.withType(56L) //
+				.withId(78L) //
 				.withValue("some name", "some value") //
 				.build());
 

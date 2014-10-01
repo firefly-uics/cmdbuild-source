@@ -9,8 +9,11 @@ import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -70,13 +73,14 @@ public class ProcessInstanceActivitiesTest {
 				.build();
 		final ResponseMultiple<ProcessActivityWithBasicDetails> expectedResponse = sentResponse;
 		doReturn(sentResponse) //
-				.when(service).read("foo", 123L);
+				.when(service).read(anyLong(), anyLong());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("processes/foo/instances/123/activities"));
+		final GetMethod get = new GetMethod(server.resource("processes/123/instances/456/activities"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
+		verify(service).read(eq(123L), eq(456L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -105,13 +109,14 @@ public class ProcessInstanceActivitiesTest {
 				.build();
 		final ResponseSingle<ProcessActivityWithFullDetails> expectedResponse = sentResponse;
 		doReturn(sentResponse) //
-				.when(service).read("foo", 123L, "bar");
+				.when(service).read(anyLong(), anyLong(), anyLong());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("processes/foo/instances/123/activities/bar"));
+		final GetMethod get = new GetMethod(server.resource("processes/123/instances/456/activities/789/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
+		verify(service).read(eq(123L), eq(456L), eq(789L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
