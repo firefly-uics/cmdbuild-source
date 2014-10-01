@@ -1,6 +1,7 @@
 package org.cmdbuild.service.rest.cxf.configuration;
 
 import org.cmdbuild.service.rest.cxf.DefaultErrorHandler;
+import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 public class Utilities {
 
 	@Bean
-	public DefaultErrorHandler defaultErrorHandler() {
+	public ErrorHandler errorHandler() {
 		return new DefaultErrorHandler();
 	}
 

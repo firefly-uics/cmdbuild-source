@@ -33,10 +33,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement(name = ATTRIBUTE_DETAIL)
-public class Attribute extends AbstractModelWithId {
+public class Attribute extends ModelWithId {
 
 	@XmlRootElement(name = FILTER)
-	public static class Filter extends AbstractModel {
+	public static class Filter extends Model {
 
 		private String text;
 		private Map<String, String> params;

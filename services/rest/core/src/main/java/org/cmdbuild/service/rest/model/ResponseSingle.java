@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement(name = SIMPLE_RESPONSE)
-public class ResponseSingle<T> extends AbstractModel {
+public class ResponseSingle<T> extends Model {
 
 	private T element;
 

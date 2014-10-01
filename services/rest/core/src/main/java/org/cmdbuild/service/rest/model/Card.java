@@ -1,12 +1,10 @@
 package org.cmdbuild.service.rest.model;
 
 import static org.cmdbuild.service.rest.constants.Serialization.CARD;
-import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.VALUES;
 
 import java.util.Map;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -18,22 +16,12 @@ import org.cmdbuild.service.rest.model.adapter.StringObjectMapAdapter;
 
 @XmlRootElement(name = CARD)
 @XmlJavaTypeAdapter(CardAdapter.class)
-public class Card extends AbstractModelWithId {
+public class Card extends ModelWithIdAndType {
 
-	private String type;
 	private Map<String, Object> values;
 
 	Card() {
 		// package visibility
-	}
-
-	@XmlAttribute(name = TYPE)
-	public String getType() {
-		return type;
-	}
-
-	void setType(final String type) {
-		this.type = type;
 	}
 
 	@XmlElement(name = VALUES)
@@ -58,7 +46,7 @@ public class Card extends AbstractModelWithId {
 
 		final Card other = Card.class.cast(obj);
 		return new EqualsBuilder() //
-				.append(this.type, other.type) //
+				.append(this.getType(), other.getType()) //
 				.append(this.getId(), other.getId()) //
 				.append(this.values, other.values) //
 				.isEquals();
@@ -67,7 +55,7 @@ public class Card extends AbstractModelWithId {
 	@Override
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
-				.append(type) //
+				.append(getType()) //
 				.append(getId()) //
 				.append(values) //
 				.toHashCode();

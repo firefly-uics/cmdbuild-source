@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.model;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.cmdbuild.service.rest.constants.Serialization.DATA;
 import static org.cmdbuild.service.rest.constants.Serialization.LIST_RESPONSE;
 import static org.cmdbuild.service.rest.constants.Serialization.RESPONSE_METADATA;
@@ -13,10 +14,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import com.google.common.collect.Sets;
-
 @XmlRootElement(name = LIST_RESPONSE)
-public class ResponseMultiple<T> extends AbstractModel {
+public class ResponseMultiple<T> extends Model {
 
 	private Collection<T> elements;
 	private DetailResponseMetadata metadata;
@@ -32,7 +31,7 @@ public class ResponseMultiple<T> extends AbstractModel {
 	}
 
 	void setElements(final Iterable<T> elements) {
-		this.elements = Sets.newHashSet(elements);
+		this.elements = newArrayList(elements);
 	}
 
 	@XmlElement(name = RESPONSE_METADATA, type = DetailResponseMetadata.class)

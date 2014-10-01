@@ -2,9 +2,9 @@ package org.cmdbuild.service.rest;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.cmdbuild.service.rest.constants.Serialization.CARD_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.CLASS_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
-import static org.cmdbuild.service.rest.constants.Serialization.ID;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 
@@ -34,10 +34,10 @@ public interface Cards {
 			Card card);
 
 	@GET
-	@Path("{" + ID + "}/")
+	@Path("{" + CARD_ID + "}/")
 	ResponseSingle<Card> read( //
 			@PathParam(CLASS_ID) Long classId, //
-			@PathParam(ID) Long id //
+			@PathParam(CARD_ID) Long id //
 	);
 
 	@GET
@@ -50,18 +50,18 @@ public interface Cards {
 	);
 
 	@PUT
-	@Path("{" + ID + "}/")
+	@Path("{" + CARD_ID + "}/")
 	void update( //
 			@PathParam(CLASS_ID) Long classId, //
-			@PathParam(ID) Long id, //
+			@PathParam(CARD_ID) Long id, //
 			Card card //
 	);
 
 	@DELETE
-	@Path("{" + ID + "}/")
+	@Path("{" + CARD_ID + "}/")
 	void delete( //
 			@PathParam(CLASS_ID) Long classId, //
-			@PathParam(ID) Long id //
+			@PathParam(CARD_ID) Long id //
 	);
 
 }

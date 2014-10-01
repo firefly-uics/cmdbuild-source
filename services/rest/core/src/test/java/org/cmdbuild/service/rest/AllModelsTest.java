@@ -7,7 +7,7 @@ import static org.junit.Assert.assertThat;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
-import org.cmdbuild.service.rest.model.AbstractModel;
+import org.cmdbuild.service.rest.model.Model;
 import org.junit.Test;
 
 import com.google.common.reflect.ClassPath;
@@ -19,7 +19,7 @@ public class AllModelsTest {
 	@Test
 	public void allModelsMustHaveOneOnlyAndNotPublicContructor() throws Exception {
 		final ClassLoader classLoader = AllModelsTest.class.getClassLoader();
-		final String targetPackage = Reflection.getPackageName(AbstractModel.class);
+		final String targetPackage = Reflection.getPackageName(Model.class);
 		for (final ClassInfo classInfo : ClassPath.from(classLoader).getTopLevelClasses(targetPackage)) {
 			final String name = classInfo.getName();
 			if (name.endsWith("package-info")) {

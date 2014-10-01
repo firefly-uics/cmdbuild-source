@@ -76,7 +76,7 @@ public class CardsTest {
 	@Test
 	public void cardsRead() throws Exception {
 		// given
-		final String type = "foo";
+		final Long type = 123L;
 		final Long firstId = 456L;
 		final Long secondId = 789L;
 		final Map<String, String> firstValues = ChainablePutMap.of(new HashMap<String, String>()) //
@@ -146,9 +146,9 @@ public class CardsTest {
 				.when(service).create(anyLong(), any(Card.class));
 
 		// when
-		final PostMethod post = new PostMethod(server.resource("classes/123/cards/"));
+		final PostMethod post = new PostMethod(server.resource("classes/12/cards/"));
 		post.setRequestEntity(new StringRequestEntity( //
-				"{\"_id\" : 456, \"_type\" : \"foo\", \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
+				"{\"_id\" : 34, \"_type\" : 56, \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
 				APPLICATION_JSON, //
 				UTF_8) //
 		);
@@ -156,22 +156,25 @@ public class CardsTest {
 
 		// then
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
-		verify(service).create(eq(123L), cardCaptor.capture());
-		assertThat(result, equalTo(200));
-		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+		verify(service).create(eq(12L), cardCaptor.capture());
+
 		final Card captured = cardCaptor.getValue();
-		assertThat(captured.getType(), equalTo("foo"));
-		assertThat(captured.getId(), equalTo(456L));
+		assertThat(captured.getType(), equalTo(56L));
+		assertThat(captured.getId(), equalTo(34L));
+
 		final Map<String, Object> values = captured.getValues();
 		assertThat(values, hasEntry("bar", (Object) "BAR"));
 		assertThat(values, hasEntry("baz", (Object) "BAZ"));
+
+		assertThat(result, equalTo(200));
+		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
 	public void cardRead() throws Exception {
 		// given
-		final String type = "foo";
-		final Long firstId = 123L;
+		final Long type = 123L;
+		final Long firstId = 456L;
 		final Map<String, String> firstValues = ChainablePutMap.of(new HashMap<String, String>()) //
 				.chainablePut("foo", "bar") //
 				.chainablePut("bar", "baz") //
@@ -207,9 +210,9 @@ public class CardsTest {
 	@Test
 	public void cardUpdated() throws Exception {
 		// when
-		final PutMethod put = new PutMethod(server.resource("classes/123/cards/456/"));
+		final PutMethod put = new PutMethod(server.resource("classes/12/cards/34/"));
 		put.setRequestEntity(new StringRequestEntity( //
-				"{\"_id\" : 123, \"_type\" : \"foo\", \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
+				"{\"_id\" : 56, \"_type\" : 78, \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
 				APPLICATION_JSON, //
 				UTF_8) //
 		);
@@ -217,14 +220,17 @@ public class CardsTest {
 
 		// then
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
-		verify(service).update(eq(123L), eq(456L), cardCaptor.capture());
-		assertThat(result, equalTo(204));
+		verify(service).update(eq(12L), eq(34L), cardCaptor.capture());
+
 		final Card captured = cardCaptor.getValue();
-		assertThat(captured.getType(), equalTo("foo"));
-		assertThat(captured.getId(), equalTo(123L));
+		assertThat(captured.getType(), equalTo(78L));
+		assertThat(captured.getId(), equalTo(56L));
+
 		final Map<String, Object> values = captured.getValues();
 		assertThat(values, hasEntry("bar", (Object) "BAR"));
 		assertThat(values, hasEntry("baz", (Object) "BAZ"));
+
+		assertThat(result, equalTo(204));
 	}
 
 	@Test

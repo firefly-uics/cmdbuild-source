@@ -4,6 +4,7 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
 import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
@@ -45,19 +46,19 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 	}
 
 	@Override
-	public ResponseMultiple<ProcessActivityWithBasicDetails> read(final String type, final Long instance) {
-		final UserProcessClass found = workflowLogic.findProcessClass(type);
+	public ResponseMultiple<ProcessActivityWithBasicDetails> read(final Long processId, final Long processInstanceId) {
+		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
-			errorHandler.processNotFound(type);
+			errorHandler.processNotFound(processId);
 		}
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.limit(1) //
 				.offset(0) //
-				.filter(filterFor(instance)) //
+				.filter(filterFor(processInstanceId)) //
 				.build();
-		final PagedElements<UserProcessInstance> elements = workflowLogic.query(type, queryOptions);
+		final PagedElements<UserProcessInstance> elements = workflowLogic.query(found, queryOptions);
 		if (elements.totalSize() == 0) {
-			errorHandler.processInstanceNotFound(instance);
+			errorHandler.processInstanceNotFound(processInstanceId);
 		}
 		final Iterable<UserActivityInstance> activities = getOnlyElement(elements).getActivities();
 		return newResponseMultiple(ProcessActivityWithBasicDetails.class) //
@@ -82,19 +83,19 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 	}
 
 	@Override
-	public ResponseSingle<ProcessActivityWithFullDetails> read(final String type, final Long instance,
-			final String activity) {
-		final UserProcessClass foundType = workflowLogic.findProcessClass(type);
+	public ResponseSingle<ProcessActivityWithFullDetails> read(final Long processId, final Long processInstanceId,
+			final Long processActivityId) {
+		final UserProcessClass foundType = workflowLogic.findProcessClass(processId);
 		if (foundType == null) {
-			errorHandler.processNotFound(type);
+			errorHandler.processNotFound(processId);
 		}
-		final UserProcessInstance foundInstance = workflowLogic.getProcessInstance(type, instance);
+		final UserProcessInstance foundInstance = workflowLogic.getProcessInstance(processId, processInstanceId);
 		if (foundInstance == null) {
-			errorHandler.processInstanceNotFound(instance);
+			errorHandler.processInstanceNotFound(processInstanceId);
 		}
 		CMActivity foundActivity = null;
 		for (final UserActivityInstance element : foundInstance.getActivities()) {
-			if (element.getId().equals(activity)) {
+			if (fakeId(element.getId()).equals(processActivityId)) {
 				try {
 					foundActivity = element.getDefinition();
 				} catch (final Throwable e) {
@@ -103,7 +104,7 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 			}
 		}
 		if (foundActivity == null) {
-			errorHandler.processActivityNotFound(activity);
+			errorHandler.processActivityNotFound(processActivityId);
 		}
 		return newResponseSingle(ProcessActivityWithFullDetails.class) //
 				.withElement(from(asList(foundActivity)) //

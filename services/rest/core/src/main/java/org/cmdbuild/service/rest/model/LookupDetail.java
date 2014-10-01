@@ -8,7 +8,6 @@ import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_DETAIL;
 import static org.cmdbuild.service.rest.constants.Serialization.NUMBER;
 import static org.cmdbuild.service.rest.constants.Serialization.PARENT_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.PARENT_TYPE;
-import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,11 +17,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement(name = LOOKUP_DETAIL)
-public class LookupDetail extends AbstractModelWithId {
+public class LookupDetail extends ModelWithIdAndType {
 
 	private String code;
 	private String description;
-	private String type;
 	private Long number;
 	private Boolean active;
 	private Boolean isDefault;
@@ -49,15 +47,6 @@ public class LookupDetail extends AbstractModelWithId {
 
 	void setDescription(final String description) {
 		this.description = description;
-	}
-
-	@XmlAttribute(name = TYPE)
-	public String getType() {
-		return type;
-	}
-
-	void setType(final String type) {
-		this.type = type;
 	}
 
 	@XmlAttribute(name = NUMBER)
@@ -119,10 +108,10 @@ public class LookupDetail extends AbstractModelWithId {
 
 		final LookupDetail other = LookupDetail.class.cast(obj);
 		return new EqualsBuilder() //
+				.append(this.getType(), other.getType()) //
 				.append(this.getId(), other.getId()) //
 				.append(this.code, other.code) //
 				.append(this.description, other.description) //
-				.append(this.type, other.type) //
 				.append(this.number, other.number) //
 				.append(this.active, other.active) //
 				.append(this.isDefault, other.isDefault) //
@@ -134,10 +123,10 @@ public class LookupDetail extends AbstractModelWithId {
 	@Override
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
+				.append(getType()) //
 				.append(getId()) //
 				.append(code) //
 				.append(description) //
-				.append(type) //
 				.append(number) //
 				.append(active) //
 				.append(isDefault) //

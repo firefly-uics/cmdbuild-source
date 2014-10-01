@@ -73,7 +73,7 @@ public abstract class ToCardFunction<T> implements Function<T, Card> {
 					.convert(entry.getKey(), entry.getValue()));
 		}
 		return newCard() //
-				.withType(className) //
+				.withType(target.getId()) //
 				.withId(idOf(input)) //
 				.withValues(values) //
 				.build();

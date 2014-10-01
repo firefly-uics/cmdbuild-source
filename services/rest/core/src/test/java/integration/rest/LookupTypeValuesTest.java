@@ -10,7 +10,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -57,26 +57,26 @@ public class LookupTypeValuesTest {
 		final ResponseMultiple<LookupDetail> expectedResponse = newResponseMultiple(LookupDetail.class) //
 				.withElements(asList( //
 						newLookupDetail() //
-								.withId(123L) //
+								.withId(34L) //
 								.withCode("foo") //
 								.build(), //
 						newLookupDetail() //
-								.withId(456L) //
+								.withId(56L) //
 								.withCode("bar") //
 								.build())) //
 				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll(anyString(), anyBoolean(), anyInt(), anyInt())) //
+		when(service.readAll(anyLong(), anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("lookup_types/foo/values/"));
+		final GetMethod get = new GetMethod(server.resource("lookup_types/12/values/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).readAll("foo", false, null, null);
+		verify(service).readAll(eq(12L), eq(false), eq((Integer) null), eq((Integer) null));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -86,24 +86,24 @@ public class LookupTypeValuesTest {
 		// given
 		final ResponseSingle<LookupDetail> expectedResponse = newResponseSingle(LookupDetail.class) //
 				.withElement(newLookupDetail() //
-						.withType("type") //
-						.withId(123L) //
+						.withType(12L) //
+						.withId(34L) //
 						.withCode("code") //
 						.withDescription("description") //
-						.withNumber(42L) //
+						.withNumber(56L) //
 						.withParentType("parent_type") //
-						.withParentId(456L) //
+						.withParentId(78L) //
 						.build()) //
 				.build();
-		when(service.read(anyString(), anyLong())) //
+		when(service.read(anyLong(), anyLong())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("lookup_types/foo/values/123/"));
+		final GetMethod get = new GetMethod(server.resource("lookup_types/12/values/34/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read("foo", 123L);
+		verify(service).read(eq(12L), eq(34L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}

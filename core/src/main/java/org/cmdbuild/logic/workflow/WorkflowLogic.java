@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.activation.DataSource;
 
 import org.cmdbuild.common.utils.PagedElements;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -29,6 +30,8 @@ public interface WorkflowLogic extends Logic {
 	boolean isWorkflowEnabled();
 
 	PagedElements<UserProcessInstance> query(String className, QueryOptions queryOptions);
+
+	PagedElements<UserProcessInstance> query(CMClass processClass, QueryOptions queryOptions);
 
 	Iterable<UserProcessClass> findAllProcessClasses();
 

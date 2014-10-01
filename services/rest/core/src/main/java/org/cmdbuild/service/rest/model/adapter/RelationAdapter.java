@@ -7,19 +7,15 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE
 import static org.cmdbuild.service.rest.model.Builders.newRelation;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
-import org.apache.commons.lang3.ObjectUtils;
 import org.cmdbuild.service.rest.model.Relation;
 
 import com.google.common.collect.Maps;
 
-public class RelationAdapter extends XmlAdapter<Map<String, Object>, Relation> {
+public class RelationAdapter extends ModelToMapAdapter<Relation> {
 
 	@Override
-	public Map<String, Object> marshal(final Relation input) throws Exception {
+	protected Map<String, Object> modelToMap(final Relation input) {
 		final Map<String, Object> map = Maps.newHashMap();
 		map.putAll(input.getValues());
 		/*
@@ -34,23 +30,12 @@ public class RelationAdapter extends XmlAdapter<Map<String, Object>, Relation> {
 	}
 
 	@Override
-	public Relation unmarshal(final Map<String, Object> input) throws Exception {
+	protected Relation mapToModel(final Map<String, Object> input) {
 		return newRelation() //
-				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
+				.withType(getAndRemove(input, UNDERSCORED_TYPE, Long.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
 				.withValues(input) //
 				.build();
-	}
-
-	private <T> T getAndRemove(final Map<String, Object> mapType, final String key, final Class<T> type) {
-		for (final Entry<String, Object> element : mapType.entrySet()) {
-			if (ObjectUtils.equals(element.getKey(), key)) {
-				final Object value = element.getValue();
-				mapType.remove(key);
-				return type.cast(value);
-			}
-		}
-		return null;
 	}
 
 }

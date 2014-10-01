@@ -4,10 +4,6 @@ import static java.util.Arrays.asList;
 import static org.cmdbuild.service.rest.constants.Serialization.CARD_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.CLASS_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.DOMAIN_SOURCE;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_DESTINATION;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_SOURCE;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
 import static org.cmdbuild.service.rest.model.Builders.newRelation;
 import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
@@ -37,6 +33,7 @@ import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.model.Builders;
 import org.cmdbuild.service.rest.model.Relation;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.adapter.RelationAdapter;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -77,47 +74,33 @@ public class RelationsTest {
 	@Test
 	public void relationsRead() throws Exception {
 		// given
-		final String type = "foo";
-		final Long firstId = 123L;
-		final Long secondId = 456L;
-		final Map<String, String> firstValues = ChainablePutMap.of(new HashMap<String, String>()) //
-				.chainablePut("foo", "bar") //
-				.chainablePut("bar", "baz");
-		final Map<String, String> secondValues = ChainablePutMap.of(new HashMap<String, String>()) //
-				.chainablePut("bar", "baz");
+		final Long type = 12L;
+		final Relation firstRelation = newRelation() //
+				.withType(type) //
+				.withId(78L) //
+				.withValues(ChainablePutMap.of(new HashMap<String, String>()) //
+						.chainablePut("foo", "bar") //
+						.chainablePut("bar", "baz")) //
+				.build();
+		final Relation secondRelation = newRelation() //
+				.withType(type) //
+				.withId(90L) //
+				.withValues(ChainablePutMap.of(new HashMap<String, String>()) //
+						.chainablePut("bar", "baz")) //
+				.build();
 		final ResponseMultiple<Relation> sentResponse = newResponseMultiple(Relation.class) //
-				.withElements(asList( //
-						newRelation() //
-								.withType(type) //
-								.withId(firstId) //
-								.withValues(firstValues) //
-								.build(), //
-						newRelation() //
-								.withType(type) //
-								.withId(secondId) //
-								.withValues(secondValues) //
-								.build() //
-						)) //
+				.withElements(asList(firstRelation, secondRelation)) //
 				.withMetadata(newMetadata() //
 						.withTotal(2L) //
 						.build()) //
 				.build();
+		final RelationAdapter relationAdapter = new RelationAdapter();
 		@SuppressWarnings("unchecked")
 		final ResponseMultiple<Map<String, Object>> expectedResponse = Builders
 				.<Map<String, Object>> newResponseMultiple() //
 				.withElements(Arrays.<Map<String, Object>> asList( //
-						ChainablePutMap.of(new HashMap<String, Object>()) //
-								.chainablePut(UNDERSCORED_TYPE, type) //
-								.chainablePut(UNDERSCORED_ID, firstId) //
-								.chainablePut(UNDERSCORED_SOURCE, null) //
-								.chainablePut(UNDERSCORED_DESTINATION, null) //
-								.chainablePutAll(firstValues), //
-						ChainablePutMap.of(new HashMap<String, Object>()) //
-								.chainablePut(UNDERSCORED_TYPE, type) //
-								.chainablePut(UNDERSCORED_ID, secondId) //
-								.chainablePut(UNDERSCORED_SOURCE, null) //
-								.chainablePut(UNDERSCORED_DESTINATION, null) //
-								.chainablePutAll(secondValues) //
+						relationAdapter.marshal(firstRelation), //
+						relationAdapter.marshal(secondRelation) //
 						)) //
 				.withMetadata(newMetadata() //
 						.withTotal(2L) //

@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newLookupDetail;
 
 import org.cmdbuild.data.store.lookup.Lookup;
@@ -36,7 +37,7 @@ public class ToLookupDetail implements Function<Lookup, LookupDetail> {
 				.withId(lookup.getId()) //
 				.withCode(lookup.code) //
 				.withDescription(lookup.description) //
-				.withType(lookup.type.name) //
+				.withType(fakeId(lookup.type.name)) //
 				.withNumber(Long.valueOf(lookup.number)) //
 				.thatIsActive(lookup.active) //
 				.thatIsDefault(lookup.isDefault) //

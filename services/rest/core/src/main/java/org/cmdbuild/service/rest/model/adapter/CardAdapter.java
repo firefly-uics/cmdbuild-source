@@ -1,24 +1,19 @@
 package org.cmdbuild.service.rest.model.adapter;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.cmdbuild.service.rest.model.Builders.newCard;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-
-import org.apache.commons.lang3.ObjectUtils;
 import org.cmdbuild.service.rest.model.Card;
 
 import com.google.common.collect.Maps;
 
-public class CardAdapter extends XmlAdapter<Map<String, Object>, Card> {
+public class CardAdapter extends ModelToMapAdapter<Card> {
 
 	@Override
-	public Map<String, Object> marshal(final Card input) throws Exception {
+	protected Map<String, Object> modelToMap(final Card input) {
 		final Map<String, Object> map = Maps.newHashMap();
 		map.putAll(input.getValues());
 		/*
@@ -31,38 +26,12 @@ public class CardAdapter extends XmlAdapter<Map<String, Object>, Card> {
 	}
 
 	@Override
-	public Card unmarshal(final Map<String, Object> input) throws Exception {
+	protected Card mapToModel(final Map<String, Object> input) {
 		return newCard() //
-				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
+				.withType(getAndRemove(input, UNDERSCORED_TYPE, Long.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
 				.withValues(input) //
 				.build();
-	}
-
-	private <T> T getAndRemove(final Map<String, Object> mapType, final String key, final Class<T> type) {
-		for (final Entry<String, Object> element : mapType.entrySet()) {
-			if (ObjectUtils.equals(element.getKey(), key)) {
-				final Object value = element.getValue();
-				mapType.remove(key);
-				final Object _value;
-				if (Long.class.equals(type)) {
-					String s;
-					if (value instanceof Long) {
-						s = Long.class.cast(value).toString();
-					} else if (value instanceof Integer) {
-						s = Integer.class.cast(value).toString();
-					} else {
-						s = value.toString();
-					}
-					s = String.class.cast(s);
-					_value = isBlank(s) ? null : Long.parseLong(s);
-				} else {
-					_value = value;
-				}
-				return type.cast(_value);
-			}
-		}
-		return null;
 	}
 
 }

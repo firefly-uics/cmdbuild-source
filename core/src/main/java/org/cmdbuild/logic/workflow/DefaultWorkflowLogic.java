@@ -92,8 +92,13 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 
 	@Override
 	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
-		final PagedElements<UserProcessInstance> fetchedProcesses = workflowEngine.query(className, queryOptions);
-		final CMClass processClass = dataView.findClass(className);
+		return query(dataView.findClass(className), queryOptions);
+	}
+
+	@Override
+	public PagedElements<UserProcessInstance> query(CMClass processClass, QueryOptions queryOptions) {
+		final PagedElements<UserProcessInstance> fetchedProcesses = workflowEngine.query(processClass.getName(),
+				queryOptions);
 		final Iterable<UserProcessInstance> processes = ForeignReferenceResolver.<UserProcessInstance> newInstance() //
 				.withSystemDataView(systemDataView) //
 				.withEntryType(processClass) //
