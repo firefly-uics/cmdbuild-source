@@ -39,12 +39,6 @@ public class DefaultErrorHandler implements ErrorHandler, LoggingSupport {
 	}
 
 	@Override
-	public void processNotFound(final String id) {
-		logger.error("process not found '{}'", id);
-		notFound(id);
-	}
-
-	@Override
 	public void processNotFound(final Long id) {
 		logger.error("process not found '{}'", id);
 		notFound(id);
@@ -53,12 +47,6 @@ public class DefaultErrorHandler implements ErrorHandler, LoggingSupport {
 	@Override
 	public void processInstanceNotFound(final Long id) {
 		logger.error("process instance not found '{}'", id);
-		notFound(id);
-	}
-
-	@Override
-	public void processActivityNotFound(final String id) {
-		logger.error("process instance activity not found '{}'", id);
 		notFound(id);
 	}
 
