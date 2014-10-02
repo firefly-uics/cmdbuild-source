@@ -4,8 +4,14 @@ public class FakeId {
 
 	// TODO replace with a better solution
 	public static Long fakeId(final String s) {
-		final int hashCode = s.hashCode();
-		return (hashCode < 0) ? Long.MAX_VALUE + hashCode : Long.valueOf(hashCode);
+		final Long value;
+		if (s != null) {
+			final int hashCode = s.hashCode();
+			value = (hashCode < 0) ? Long.MAX_VALUE + hashCode : Long.valueOf(hashCode);
+		} else {
+			value = null;
+		}
+		return value;
 	}
 
 	private FakeId() {
