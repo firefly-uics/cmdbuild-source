@@ -429,7 +429,11 @@ public class ModCard extends JSONBaseWithSpringContext {
 			throws JSONException, CMDBException {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataLogic = userDataAccessLogic();
-		final String className = dataLogic.findClass(classId).getIdentifier().getLocalName();
+		final CMClass found = dataLogic.findClass(classId);
+		if (found == null) {
+			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+		}
+		final String className = found.getIdentifier().getLocalName();
 		dataLogic.deleteCard(className, cardId);
 
 		return out;

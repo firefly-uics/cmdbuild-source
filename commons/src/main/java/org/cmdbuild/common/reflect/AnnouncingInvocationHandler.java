@@ -1,6 +1,7 @@
 package org.cmdbuild.common.reflect;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class AnnouncingInvocationHandler<T> implements InvocationHandler {
@@ -11,8 +12,8 @@ public class AnnouncingInvocationHandler<T> implements InvocationHandler {
 
 	}
 
-	public static <T> AnnouncingInvocationHandler of(final T delegate, final Announceable announceable) {
-		return new AnnouncingInvocationHandler(delegate, announceable);
+	public static <T> AnnouncingInvocationHandler<T> of(final T delegate, final Announceable announceable) {
+		return new AnnouncingInvocationHandler<T>(delegate, announceable);
 	}
 
 	private final T delegate;
@@ -25,8 +26,12 @@ public class AnnouncingInvocationHandler<T> implements InvocationHandler {
 
 	@Override
 	public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-		announceable.announce(method, args);
-		return method.invoke(delegate, args);
+		try {
+			announceable.announce(method, args);
+			return method.invoke(delegate, args);
+		} catch (final InvocationTargetException e) {
+			throw e.getCause();
+		}
 	}
 
 }
