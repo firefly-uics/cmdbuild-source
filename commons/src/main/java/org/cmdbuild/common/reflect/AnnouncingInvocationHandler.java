@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class AnnouncingInvocationHandler<T> implements InvocationHandler {
+public class AnnouncingInvocationHandler implements InvocationHandler {
 
 	public static interface Announceable {
 
@@ -12,14 +12,14 @@ public class AnnouncingInvocationHandler<T> implements InvocationHandler {
 
 	}
 
-	public static <T> AnnouncingInvocationHandler<T> of(final T delegate, final Announceable announceable) {
-		return new AnnouncingInvocationHandler<T>(delegate, announceable);
+	public static  AnnouncingInvocationHandler of(final Object delegate, final Announceable announceable) {
+		return new AnnouncingInvocationHandler(delegate, announceable);
 	}
 
-	private final T delegate;
+	private final Object delegate;
 	private final Announceable announceable;
 
-	private AnnouncingInvocationHandler(final T delegate, final Announceable announceable) {
+	private AnnouncingInvocationHandler(final Object delegate, final Announceable announceable) {
 		this.delegate = delegate;
 		this.announceable = announceable;
 	}
