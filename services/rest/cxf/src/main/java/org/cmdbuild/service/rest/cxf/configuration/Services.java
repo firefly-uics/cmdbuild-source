@@ -34,7 +34,6 @@ import org.cmdbuild.service.rest.cxf.CxfProcessStartActivity;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.cxf.CxfRelations;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
-import org.cmdbuild.service.rest.reflect.MultivaluedMapFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -91,7 +90,7 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	public LookupTypes cxfLookupTypes() {
-		final CxfLookupTypes service = new CxfLookupTypes(helper.lookupLogic());
+		final CxfLookupTypes service = new CxfLookupTypes(utilities.errorHandler(), helper.lookupLogic());
 		return proxy(LookupTypes.class, service);
 	}
 
@@ -143,10 +142,8 @@ public class Services implements LoggingSupport {
 	}
 
 	private <T> T proxy(final Class<T> type, final T service) {
-		logger.info("creating proxy for '{}' with invoker '{}'", type, MultivaluedMapFilter.class);
-		final InvocationHandler filter = MultivaluedMapFilter.of(service);
-		final InvocationHandler filterPlusLogger = AnnouncingInvocationHandler.of(filter, announceable());
-		return Reflection.newProxy(type, filterPlusLogger);
+		final InvocationHandler serviceWithAnnounces = AnnouncingInvocationHandler.of(service, announceable());
+		return Reflection.newProxy(type, serviceWithAnnounces);
 	}
 
 	@Bean

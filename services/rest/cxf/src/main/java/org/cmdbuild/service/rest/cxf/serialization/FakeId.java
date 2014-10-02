@@ -7,7 +7,7 @@ public class FakeId {
 		final Long value;
 		if (s != null) {
 			final int hashCode = s.hashCode();
-			value = (hashCode < 0) ? Long.MAX_VALUE + hashCode : Long.valueOf(hashCode);
+			value = (hashCode >= 0) ? Long.valueOf(hashCode) : (long) Integer.MAX_VALUE - hashCode;
 		} else {
 			value = null;
 		}
