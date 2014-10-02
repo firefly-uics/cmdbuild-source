@@ -20,21 +20,9 @@ public interface ErrorHandler {
 
 	void lookupTypeNotFound(Long id);
 
-	/**
-	 * @deprecated Use {@link processNotFound(Long)} instead.
-	 */
-	@Deprecated
-	void processNotFound(String id);
-
 	void processNotFound(Long id);
 
 	void processInstanceNotFound(Long id);
-
-	/**
-	 * @deprecated Use {@link processNotFound(Long)} instead.
-	 */
-	@Deprecated
-	void processActivityNotFound(String id);
 
 	void processActivityNotFound(Long id);
 

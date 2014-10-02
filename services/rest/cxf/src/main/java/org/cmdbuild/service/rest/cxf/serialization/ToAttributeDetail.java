@@ -126,7 +126,13 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 
 			@Override
 			public void visit(final ForeignKeyAttributeType attributeType) {
-				builder.withTargetClass(attributeType.getForeignKeyDestinationClassName());
+				final String className = attributeType.getForeignKeyDestinationClassName();
+				final CMClass found = dataView.findClass(className);
+				if (found == null) {
+					errorHandler.classNotFound(className);
+				}
+
+				builder.withTargetClass(found.getId());
 			}
 
 			@Override
@@ -150,7 +156,7 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 					target = domain.getClass1();
 				}
 
-				builder.withTargetClass(target.getIdentifier().getLocalName()) //
+				builder.withTargetClass(target.getId()) //
 						.withFilter(newFilter() //
 								.withText(attribute.getFilter()) //
 								.withParams(toMap(metadataStoreFactory.storeForAttribute(attribute).readAll())) //

@@ -63,7 +63,7 @@ public class Builders {
 		private String group;
 		private Long precision;
 		private Long scale;
-		private String targetClass;
+		private Long targetClass;
 		private Long length;
 		private String editorType;
 		private String lookupTypeName;
@@ -168,7 +168,7 @@ public class Builders {
 			return this;
 		}
 
-		public AttributeBuilder withTargetClass(final String targetClass) {
+		public AttributeBuilder withTargetClass(final Long targetClass) {
 			this.targetClass = targetClass;
 			return this;
 		}

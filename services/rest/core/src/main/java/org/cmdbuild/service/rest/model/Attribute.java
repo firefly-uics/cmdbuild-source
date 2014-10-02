@@ -101,7 +101,7 @@ public class Attribute extends ModelWithId {
 	private String group;
 	private Long precision;
 	private Long scale;
-	private String targetClass;
+	private Long targetClass;
 	private Long length;
 	private String editorType;
 	private String lookupTypeName;
@@ -229,11 +229,11 @@ public class Attribute extends ModelWithId {
 	}
 
 	@XmlAttribute(name = TARGET_CLASS)
-	public String getTargetClass() {
+	public Long getTargetClass() {
 		return targetClass;
 	}
 
-	void setTargetClass(final String targetClass) {
+	void setTargetClass(final Long targetClass) {
 		this.targetClass = targetClass;
 	}
 
