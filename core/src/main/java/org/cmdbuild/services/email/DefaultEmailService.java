@@ -3,6 +3,7 @@ package org.cmdbuild.services.email;
 import static com.google.common.collect.Iterables.unmodifiableIterable;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.cmdbuild.system.SystemUtils.isMailDebugEnabled;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -48,8 +49,7 @@ public class DefaultEmailService implements EmailService {
 
 		@Override
 		public boolean isDebug() {
-			// TODO use a system property
-			return false;
+			return isMailDebugEnabled();
 		}
 
 		@Override
