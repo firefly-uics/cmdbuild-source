@@ -16,15 +16,18 @@ import org.cmdbuild.service.rest.model.LookupTypeDetail;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
 public class CxfLookupTypes implements LookupTypes {
 
 	private static final ToLookupTypeDetail TO_LOOKUP_TYPE_DETAIL = ToLookupTypeDetail.newInstance().build();
 
+	private final ErrorHandler errorHandler;
 	private final LookupLogic lookupLogic;
 
-	public CxfLookupTypes(final LookupLogic lookupLogic) {
+	public CxfLookupTypes(final ErrorHandler errorHandler, final LookupLogic lookupLogic) {
+		this.errorHandler = errorHandler;
 		this.lookupLogic = lookupLogic;
 	}
 
@@ -44,7 +47,7 @@ public class CxfLookupTypes implements LookupTypes {
 
 		});
 
-		final LookupTypeDetail elements = from(lookupTypes) //
+		final Optional<LookupType> element = from(lookupTypes) //
 				.filter(new Predicate<LookupType>() {
 
 					@Override
@@ -53,11 +56,12 @@ public class CxfLookupTypes implements LookupTypes {
 					}
 
 				}) //
-				.transform(TO_LOOKUP_TYPE_DETAIL) //
-				.first() //
-				.get();
+				.first();
+		if (!element.isPresent()) {
+			errorHandler.lookupTypeNotFound(lookupTypeId);
+		}
 		return newResponseSingle(LookupTypeDetail.class) //
-				.withElement(elements) //
+				.withElement(TO_LOOKUP_TYPE_DETAIL.apply(element.get())) //
 				.build();
 	}
 

@@ -3,7 +3,7 @@ package org.cmdbuild.common.reflect;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-public class AnnouncingInvocationHandler extends ForwardingInvocationHandler {
+public class AnnouncingInvocationHandler<T> implements InvocationHandler {
 
 	public static interface Announceable {
 
@@ -11,21 +11,22 @@ public class AnnouncingInvocationHandler extends ForwardingInvocationHandler {
 
 	}
 
-	public static AnnouncingInvocationHandler of(final InvocationHandler delegate, final Announceable announceable) {
+	public static <T> AnnouncingInvocationHandler of(final T delegate, final Announceable announceable) {
 		return new AnnouncingInvocationHandler(delegate, announceable);
 	}
 
+	private final T delegate;
 	private final Announceable announceable;
 
-	private AnnouncingInvocationHandler(final InvocationHandler delegate, final Announceable announceable) {
-		super(delegate);
+	private AnnouncingInvocationHandler(final T delegate, final Announceable announceable) {
+		this.delegate = delegate;
 		this.announceable = announceable;
 	}
 
 	@Override
 	public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
 		announceable.announce(method, args);
-		return super.invoke(proxy, method, args);
+		return method.invoke(delegate, args);
 	}
 
 }
