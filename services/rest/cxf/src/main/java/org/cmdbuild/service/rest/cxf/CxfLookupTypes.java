@@ -1,6 +1,7 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
 import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
@@ -28,7 +29,7 @@ public class CxfLookupTypes implements LookupTypes {
 	}
 
 	@Override
-	public ResponseSingle<LookupTypeDetail> read(final String lookupTypeId) {
+	public ResponseSingle<LookupTypeDetail> read(final Long lookupTypeId) {
 		final PagedElements<LookupType> lookupTypes = lookupLogic.getAllTypes(new LookupTypeQuery() {
 
 			@Override
@@ -48,7 +49,7 @@ public class CxfLookupTypes implements LookupTypes {
 
 					@Override
 					public boolean apply(final LookupType input) {
-						return input.name.equals(lookupTypeId);
+						return fakeId(input.name).equals(lookupTypeId);
 					}
 
 				}) //
