@@ -185,11 +185,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	public CMClass findClass(final Long classId) {
-		final CMClass fetchedClass = dataView.findClass(classId);
-		if (fetchedClass == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
-		}
-		return fetchedClass;
+		return dataView.findClass(classId);
 	}
 
 	@Override

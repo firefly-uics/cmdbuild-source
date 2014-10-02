@@ -1,8 +1,10 @@
 package org.cmdbuild.service.rest.cxf;
 
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.cmdbuild.service.rest.logging.LoggingSupport;
 
@@ -63,7 +65,7 @@ public class DefaultErrorHandler implements ErrorHandler, LoggingSupport {
 	}
 
 	private void notFound(final Object entity) {
-		throw new WebApplicationException(Response.status(Status.NOT_FOUND) //
+		throw new WebApplicationException(Response.status(NOT_FOUND) //
 				.entity(entity) //
 				.build());
 	}
@@ -77,7 +79,7 @@ public class DefaultErrorHandler implements ErrorHandler, LoggingSupport {
 	@Override
 	public void invalidType(final String id) {
 		logger.error("invalid param '{}'", id);
-		throw new WebApplicationException(Response.status(Status.BAD_REQUEST) //
+		throw new WebApplicationException(Response.status(BAD_REQUEST) //
 				.entity(id) //
 				.build());
 	}
@@ -85,7 +87,8 @@ public class DefaultErrorHandler implements ErrorHandler, LoggingSupport {
 	@Override
 	public void propagate(final Throwable e) {
 		logger.error("unhandled exception", e);
-		throw new WebApplicationException(e, Response.status(Status.INTERNAL_SERVER_ERROR) //
+		throw new WebApplicationException(e, Response.serverError() //
+				.entity(e) //
 				.build());
 	}
 
