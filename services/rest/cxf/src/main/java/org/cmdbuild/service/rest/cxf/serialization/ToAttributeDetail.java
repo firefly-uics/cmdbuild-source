@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.cmdbuild.logic.data.lookup.Util.typesWith;
 import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newAttribute;
 import static org.cmdbuild.service.rest.model.Builders.newFilter;
@@ -19,23 +20,27 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.data.store.metadata.Metadata;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.model.Attribute;
 import org.cmdbuild.service.rest.model.Builders.AttributeBuilder;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToAttributeDetail> {
 
+		private ErrorHandler errorHandler;
 		private AttributeTypeResolver attributeTypeResolver;
 		private CMDataView dataView;
-		private ErrorHandler errorHandler;
 		private MetadataStoreFactory metadataStoreFactory;
+		private LookupLogic lookupLogic;
 
 		private Builder() {
 			// use static method
@@ -48,10 +53,11 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 		}
 
 		private void validate() {
+			Validate.notNull(errorHandler, "missing '%s'", ErrorHandler.class);
 			Validate.notNull(attributeTypeResolver, "missing '%s'", AttributeTypeResolver.class);
 			Validate.notNull(dataView, "missing '%s'", CMDataView.class);
-			Validate.notNull(errorHandler, "missing '%s'", ErrorHandler.class);
 			Validate.notNull(metadataStoreFactory, "missing '%s'", MetadataStoreFactory.class);
+			Validate.notNull(lookupLogic, "missing '%s'", LookupLogic.class);
 		}
 
 		public Builder withAttributeTypeResolver(final AttributeTypeResolver attributeTypeResolver) {
@@ -74,22 +80,29 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 			return this;
 		}
 
+		public Builder withLookupLogic(final LookupLogic lookupLogic) {
+			this.lookupLogic = lookupLogic;
+			return this;
+		}
+
 	}
 
 	public static Builder newInstance() {
 		return new Builder();
 	}
 
+	private final ErrorHandler errorHandler;
 	private final AttributeTypeResolver attributeTypeResolver;
 	private final CMDataView dataView;
-	private final ErrorHandler errorHandler;
 	private final MetadataStoreFactory metadataStoreFactory;
+	private final LookupLogic lookupLogic;
 
 	private ToAttributeDetail(final Builder builder) {
 		this.attributeTypeResolver = builder.attributeTypeResolver;
 		this.dataView = builder.dataView;
 		this.errorHandler = builder.errorHandler;
 		this.metadataStoreFactory = builder.metadataStoreFactory;
+		this.lookupLogic = builder.lookupLogic;
 	}
 
 	@Override
@@ -137,7 +150,12 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
-				builder.withLookupType(attributeType.getLookupTypeName());
+				final String name = attributeType.getLookupTypeName();
+				final Optional<LookupType> found = lookupLogic.typeFor(typesWith(name));
+				if (!found.isPresent()) {
+					errorHandler.lookupTypeNotFound(name);
+				}
+				builder.withLookupType(fakeId(found.get().name));
 			};
 
 			@Override

@@ -18,6 +18,12 @@ public interface ErrorHandler {
 
 	void domainNotFound(Long id);
 
+	/**
+	 * @deprecated Use {@link lookupTypeNotFound(Long)} instead.
+	 */
+	@Deprecated
+	void lookupTypeNotFound(String id);
+
 	void lookupTypeNotFound(Long id);
 
 	void processNotFound(Long id);

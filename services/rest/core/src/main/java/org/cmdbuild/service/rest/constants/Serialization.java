@@ -87,7 +87,6 @@ public class Serialization {
 			LOOKUP_TYPE = LOOKUP + "Type", //
 			LOOKUP_TYPE_ID = LOOKUP_TYPE + ID_CAPITALIZED, //
 			LOOKUP_TYPE_DETAIL = LOOKUP_TYPE + "Detail", //
-			LOOKUP_TYPE_NAME = LOOKUP_TYPE + "Name", //
 			LOOKUP_VALUE = LOOKUP + "Value", //
 			LOOKUP_VALUE_ID = LOOKUP_VALUE + ID_CAPITALIZED;
 

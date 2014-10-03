@@ -10,6 +10,7 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic.AttributesQuery;
+import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.service.rest.ProcessAttributes;
 import org.cmdbuild.service.rest.cxf.serialization.AttributeTypeResolver;
 import org.cmdbuild.service.rest.cxf.serialization.ToAttributeDetail;
@@ -25,13 +26,16 @@ public class CxfProcessAttributes implements ProcessAttributes {
 	private final DataAccessLogic userDataAccessLogic;
 	private final CMDataView systemDataView;
 	private final MetadataStoreFactory metadataStoreFactory;
+	private final LookupLogic lookupLogic;
 
 	public CxfProcessAttributes(final ErrorHandler errorHandler, final DataAccessLogic userDataAccessLogic,
-			final CMDataView systemDataView, final MetadataStoreFactory metadataStoreFactory) {
+			final CMDataView systemDataView, final MetadataStoreFactory metadataStoreFactory,
+			final LookupLogic lookupLogic) {
 		this.errorHandler = errorHandler;
 		this.userDataAccessLogic = userDataAccessLogic;
 		this.systemDataView = systemDataView;
 		this.metadataStoreFactory = metadataStoreFactory;
+		this.lookupLogic = lookupLogic;
 	}
 
 	@Override
@@ -63,6 +67,7 @@ public class CxfProcessAttributes implements ProcessAttributes {
 				.withDataView(systemDataView) //
 				.withErrorHandler(errorHandler) //
 				.withMetadataStoreFactory(metadataStoreFactory) //
+				.withLookupLogic(lookupLogic) //
 				.build();
 		final Iterable<Attribute> elements = from(filteredAttributes) //
 				.transform(toAttributeDetails);
