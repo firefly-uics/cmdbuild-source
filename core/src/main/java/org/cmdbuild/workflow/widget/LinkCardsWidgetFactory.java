@@ -2,6 +2,8 @@ package org.cmdbuild.workflow.widget;
 
 import java.util.Map;
 
+import static org.cmdbuild.model.widget.LinkCards.*;
+
 import org.cmdbuild.model.widget.LinkCards;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
@@ -26,9 +28,6 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 	public static final String REQUIRED = "Required";
 	private static final String METADATA = "Metadata";
 	private static final String METADATA_OUTPUT = "MetadataOutput";
-
-	private static final String METADATA_SEPARATOR = ";";
-	private static final String NAME_TYPE_SEPARATOR = ":";
 
 	public LinkCardsWidgetFactory(final TemplateRepository templateRespository, final Notifier notifier) {
 		super(templateRespository, notifier);
