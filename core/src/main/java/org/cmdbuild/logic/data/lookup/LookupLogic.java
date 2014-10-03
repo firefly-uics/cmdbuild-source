@@ -43,6 +43,7 @@ import org.cmdbuild.logic.Logic;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Ordering;
@@ -323,7 +324,7 @@ public class LookupLogic implements Logic {
 
 		logger.debug(marker, "getting all lookups for type '{}'", type);
 
-		final LookupType realType = typeFor(typesWith(type.name));
+		final LookupType realType = typeFor(typesWith(type.name)).orNull();
 
 		logger.trace(marker, "getting all lookups for real type '{}'", realType);
 
@@ -350,12 +351,12 @@ public class LookupLogic implements Logic {
 
 	public Iterable<Lookup> getAllLookupOfParent(final LookupType type) {
 		logger.debug(marker, "getting all lookups for the parent of type '{}'", type);
-		final LookupType current = typeFor(typesWith(type.name));
+		final LookupType current = typeFor(typesWith(type.name)).orNull();
 		if (current.parent == null) {
 			return new LinkedList<Lookup>();
 		}
 
-		final LookupType parent = typeFor(typesWith(current.parent));
+		final LookupType parent = typeFor(typesWith(current.parent)).orNull();
 		return store.readAll(parent);
 	}
 
@@ -419,27 +420,27 @@ public class LookupLogic implements Logic {
 
 	private LookupType typeForNameAndParent(final String name, final String parent) {
 		logger.debug(marker, "getting lookup type with name '{}' and parent '{}'", name, parent);
-		return typeFor(typesWith(name, parent));
+		return typeFor(typesWith(name, parent)).orNull();
 	}
 
 	public LookupType typeFor(final String lookupTypeName) {
-		return typeFor(typesWith(lookupTypeName));
+		return typeFor(typesWith(lookupTypeName)).orNull();
 	}
 
-	private LookupType typeFor(final Predicate<LookupType> predicate) {
+	public Optional<LookupType> typeFor(final Predicate<LookupType> predicate) {
 		logger.trace(marker, "getting lookup type for predicate");
 		final Iterator<LookupType> shouldBeOneOnly = from(getAllTypes(UNUSED_LOOKUP_TYPE_QUERY)) //
 				.filter(predicate) //
 				.iterator();
-		final LookupType found;
+		final Optional<LookupType> found;
 		if (!shouldBeOneOnly.hasNext()) {
 			logger.warn(marker, "lookup type not found");
-			found = null;
+			found = Optional.absent();
 		} else {
 			logger.info(marker, "lookup type successfully found");
-			found = shouldBeOneOnly.next();
+			found = Optional.of(shouldBeOneOnly.next());
 		}
-		if ((found != null) && shouldBeOneOnly.hasNext()) {
+		if (found.isPresent() && shouldBeOneOnly.hasNext()) {
 			logger.error(marker, "more than one lookup type has been found");
 			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 		}
@@ -453,7 +454,7 @@ public class LookupLogic implements Logic {
 
 		final Lookup lookupWithRealType = Lookup.newInstance() //
 				.clone(lookup) //
-				.withType(typeFor(typesWith(lookup.type.name))) //
+				.withType(typeFor(typesWith(lookup.type.name)).orNull()) //
 				.build();
 
 		final Long id;
@@ -519,7 +520,7 @@ public class LookupLogic implements Logic {
 
 		assure(operationUser.hasAdministratorPrivileges());
 
-		final LookupType realType = typeFor(typesWith(type.name));
+		final LookupType realType = typeFor(typesWith(type.name)).orNull();
 		final Iterable<Lookup> lookups = store.readAll(realType);
 		for (final Lookup lookup : lookups) {
 			if (positions.containsKey(lookup.getId())) {

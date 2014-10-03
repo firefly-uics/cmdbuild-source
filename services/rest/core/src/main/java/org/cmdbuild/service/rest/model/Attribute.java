@@ -11,7 +11,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.GROUP;
 import static org.cmdbuild.service.rest.constants.Serialization.INDEX;
 import static org.cmdbuild.service.rest.constants.Serialization.INHERITED;
 import static org.cmdbuild.service.rest.constants.Serialization.LENGTH;
-import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_TYPE_NAME;
+import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.MANDATORY;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.PARAMS;
@@ -104,7 +104,7 @@ public class Attribute extends ModelWithId {
 	private Long targetClass;
 	private Long length;
 	private String editorType;
-	private String lookupTypeName;
+	private Long lookupTypeName;
 	private Filter filter;
 
 	Attribute() {
@@ -255,13 +255,13 @@ public class Attribute extends ModelWithId {
 		this.editorType = editorType;
 	}
 
-	@XmlAttribute(name = LOOKUP_TYPE_NAME)
-	public String getLookupTypeName() {
+	@XmlAttribute(name = LOOKUP_TYPE)
+	public Long getLookupType() {
 		return lookupTypeName;
 	}
 
-	void setLookupTypeName(final String lookupTypeName) {
-		this.lookupTypeName = lookupTypeName;
+	void setLookupType(final Long lookupType) {
+		this.lookupTypeName = lookupType;
 	}
 
 	@XmlElement(name = FILTER, nillable = true)

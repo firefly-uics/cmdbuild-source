@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import com.google.common.base.Supplier;
 
 @Configuration
-public class Helper {
+public class Core {
 
 	@Autowired
 	private ApplicationContext applicationContext;

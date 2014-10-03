@@ -35,6 +35,12 @@ public class DefaultErrorHandler implements ErrorHandler, LoggingSupport {
 	}
 
 	@Override
+	public void lookupTypeNotFound(final String id) {
+		logger.error("lookup type not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
 	public void lookupTypeNotFound(final Long id) {
 		logger.error("lookup type not found '{}'", id);
 		notFound(id);

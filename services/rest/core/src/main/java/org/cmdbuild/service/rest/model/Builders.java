@@ -66,7 +66,7 @@ public class Builders {
 		private Long targetClass;
 		private Long length;
 		private String editorType;
-		private String lookupTypeName;
+		private Long lookupType;
 		private Attribute.Filter filter;
 
 		private AttributeBuilder() {
@@ -93,7 +93,7 @@ public class Builders {
 			output.setTargetClass(targetClass);
 			output.setLength(length);
 			output.setEditorType(editorType);
-			output.setLookupTypeName(lookupTypeName);
+			output.setLookupType(lookupType);
 			output.setFilter(filter);
 			return output;
 		}
@@ -183,8 +183,8 @@ public class Builders {
 			return this;
 		}
 
-		public AttributeBuilder withLookupType(final String lookupTypeName) {
-			this.lookupTypeName = lookupTypeName;
+		public AttributeBuilder withLookupType(final Long lookupType) {
+			this.lookupType = lookupType;
 			return this;
 		}
 

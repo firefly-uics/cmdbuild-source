@@ -23,6 +23,21 @@ public class CxfLookupTypes implements LookupTypes {
 
 	private static final ToLookupTypeDetail TO_LOOKUP_TYPE_DETAIL = ToLookupTypeDetail.newInstance().build();
 
+	private static class FakeIdPredicate implements Predicate<LookupType> {
+
+		private final Long fakeId;
+
+		public FakeIdPredicate(final Long fakeId) {
+			this.fakeId = fakeId;
+		}
+
+		@Override
+		public boolean apply(final LookupType input) {
+			return fakeId(input.name).equals(fakeId);
+		}
+
+	}
+
 	private final ErrorHandler errorHandler;
 	private final LookupLogic lookupLogic;
 
@@ -33,30 +48,7 @@ public class CxfLookupTypes implements LookupTypes {
 
 	@Override
 	public ResponseSingle<LookupTypeDetail> read(final Long lookupTypeId) {
-		final PagedElements<LookupType> lookupTypes = lookupLogic.getAllTypes(new LookupTypeQuery() {
-
-			@Override
-			public Integer limit() {
-				return null;
-			}
-
-			@Override
-			public Integer offset() {
-				return null;
-			}
-
-		});
-
-		final Optional<LookupType> element = from(lookupTypes) //
-				.filter(new Predicate<LookupType>() {
-
-					@Override
-					public boolean apply(final LookupType input) {
-						return fakeId(input.name).equals(lookupTypeId);
-					}
-
-				}) //
-				.first();
+		final Optional<LookupType> element = lookupLogic.typeFor(new FakeIdPredicate(lookupTypeId));
 		if (!element.isPresent()) {
 			errorHandler.lookupTypeNotFound(lookupTypeId);
 		}
