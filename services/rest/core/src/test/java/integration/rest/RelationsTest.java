@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.cmdbuild.service.rest.constants.Serialization.CARD_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.CLASS_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.DOMAIN_SOURCE;
+import static org.cmdbuild.service.rest.model.Builders.newCard;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
 import static org.cmdbuild.service.rest.model.Builders.newRelation;
 import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
@@ -78,6 +79,12 @@ public class RelationsTest {
 		final Relation firstRelation = newRelation() //
 				.withType(type) //
 				.withId(78L) //
+				.withSource(newCard() //
+						.withId(1L) //
+						.build()) //
+				.withDestination(newCard() //
+						.withId(2L) //
+						.build()) //
 				.withValues(ChainablePutMap.of(new HashMap<String, String>()) //
 						.chainablePut("foo", "bar") //
 						.chainablePut("bar", "baz")) //
@@ -85,6 +92,12 @@ public class RelationsTest {
 		final Relation secondRelation = newRelation() //
 				.withType(type) //
 				.withId(90L) //
+				.withSource(newCard() //
+						.withId(3L) //
+						.build()) //
+				.withDestination(newCard() //
+						.withId(4L) //
+						.build()) //
 				.withValues(ChainablePutMap.of(new HashMap<String, String>()) //
 						.chainablePut("bar", "baz")) //
 				.build();
