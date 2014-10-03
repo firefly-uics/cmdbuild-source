@@ -1,5 +1,6 @@
 package org.cmdbuild.model.widget;
 
+import static com.google.common.collect.FluentIterable.*;
 import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 
 import java.util.ArrayList;
@@ -14,6 +15,8 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.WorkflowTypesConverter.Reference;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 public class LinkCards extends Widget {
@@ -42,6 +45,10 @@ public class LinkCards extends Widget {
 	}
 
 	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
+
+	public static final String METADATA_GROUP_SEPARATOR = "|";
+	public static final String METADATA_SEPARATOR = ";";
+	public static final String NAME_TYPE_SEPARATOR = ":";
 
 	private static final Map<String, String> NO_METADATA = Collections.emptyMap();
 
@@ -305,7 +312,18 @@ public class LinkCards extends Widget {
 	}
 
 	private Object metadataValue(final Submission submission) {
-		return submission.getMetadata();
-	}
+		return Joiner.on(METADATA_GROUP_SEPARATOR) //
+				.join(from(submission.getMetadata()) //
+						.transform(new Function<Map<Object, Object>, String>() {
 
+							@Override
+							public String apply(final Map<Object, Object> input) {
+								return Joiner.on(METADATA_SEPARATOR) //
+										.withKeyValueSeparator(NAME_TYPE_SEPARATOR) //
+										.join(input);
+							}
+
+						}) //
+				);
+	}
 }
