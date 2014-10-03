@@ -9,13 +9,34 @@
 			WIDGET_NAME: '.LinkCards'
 		},
 
+		/**
+		 * @property {Object}
+		 */
 		delegate: undefined,
 
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid}
+		 */
 		grid: undefined,
+
+		/**
+		 * @property {Ext.button.Button}
+		 */
 		mapButton: undefined,
+
+		/**
+		 * @property {CMDBuild.view.management.classes.map.CMMapPanel}
+		 */
 		mapPanel: undefined,
-		selectionModel: undefined,
+
+		/**
+		 * @property {Ext.button.Button}
+		 */
 		toggleGridFilterButton: undefined,
+
+		/**
+		 * @cfg {Object}
+		 */
 		widgetConf: undefined,
 
 		hideMode: 'offsets',
@@ -41,7 +62,7 @@
 			}
 
 			this.toggleGridFilterButton = Ext.create('Ext.button.Button', {
-				text: tr.disableFilter,
+				text: tr.disableGridFilter,
 				iconCls: 'clear_filter',
 				scope: this,
 				filterEnabled: true, // FilterEnabled (true/false) used to mark state grid's filter
@@ -60,8 +81,6 @@
 				cmAllowEditCard: allowEditCard,
 				cmAllowShowCard: allowShowCard
 			});
-
-			this.selectionModel = this.grid.getSelectionModel();
 
 			Ext.apply(this, {
 				dockedItems: [
@@ -146,9 +165,10 @@
 			if (this.widgetConf.readOnly)
 				return Ext.create('Ext.selection.RowModel');
 
-			return Ext.create('Ext.selection.CheckboxModel', {
+			return Ext.create('CMDBuild.selection.CMMultiPageSelectionModel', {
+				avoidCheckerHeader: true,
 				mode: this.widgetConf.singleSelect ? 'SINGLE' : 'MULTI',
-				showHeaderCheckbox: false
+				idProperty: 'Id' // Required to identify the records for the data and not the id of ext
 			});
 		},
 

@@ -3,9 +3,66 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsMapController', {
 		extend: 'CMDBuild.controller.management.classes.map.CMMapController',
 
+		/**
+		 * @property {Object}
+		 */
 		parentDelegate: undefined,
 
+		/**
+		 * @cfg {Boolean}
+		 */
+		cmIsInEditing: false,
+
+		/**
+		 * @property {Int}
+		 */
+		currentCardId: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.classes.map.CMMapEditingWindowDelegate}
+		 */
+		editingWindowDelegate: undefined,
+
+		/**
+		 * @property {CMDBuild.Management.CMMap}
+		 */
+		map: undefined,
+
+		/**
+		 * @property {CMDBuild.state.CMMapState}
+		 */
+		mapState: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.CMMiniCardGridWindowFeaturesController}
+		 */
+		miniCardGridWindowController: undefined,
+
+		/**
+		 * @property {CMDBuild.model.widget.ModelLinkCards}
+		 */
+		model: undefined,
+
+		/**
+		 * @property {CMDBuild.Management.CMSelectFeatureController}
+		 */
+		selectControl: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		targetEntryType: undefined,
+
+		/**
+		 * @property {CMDBuild.view.management.classes.map.CMMapPanel}
+		 */
+		view: undefined,
 		mapPanel: undefined,
+
+		/**
+		 * @cfg {Object}
+		 */
+		widgetConf: undefined,
 
 		/**
 		 * @param {Object} configuration
@@ -103,11 +160,16 @@
 		 * @override
 		 */
 		onFeatureSelect: function(e) {
-_debug('featurehighlighted', e);
-_debug('featurehighlighted getMouse', e.object.handlers.feature.evt.xy);
-_debug('featurehighlighted coords', this.map.getLonLatFromPixel(e.object.handlers.feature.evt.xy));
 			var attributes = e.feature.attributes;
 			var layer = e.feature.layer;
+			var selectedCoordinates = this.map.getLonLatFromPixel(e.object.handlers.feature.evt.xy);
+
+			var selectedCoordinatesObject = {}
+			selectedCoordinatesObject[CMDBuild.core.proxy.CMProxyConstants.LATITUDE] = selectedCoordinates[CMDBuild.core.proxy.CMProxyConstants.LATITUDE];
+			selectedCoordinatesObject[CMDBuild.core.proxy.CMProxyConstants.LONGITUDE] = selectedCoordinates[CMDBuild.core.proxy.CMProxyConstants.LONGITUDE];
+
+			this.model.reset();
+			this.model.select(attributes.master_card, selectedCoordinatesObject);
 
 			if (!Ext.isEmpty(layer.editLayer)) { // The feature selected is in a cmdbLayer with an associated editLayer
 				_CMCardModuleState.setCard({
