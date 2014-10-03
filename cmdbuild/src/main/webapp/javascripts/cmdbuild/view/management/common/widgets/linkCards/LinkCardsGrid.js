@@ -3,9 +3,19 @@
 	Ext.define('CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid', {
 		extend: 'CMDBuild.view.management.common.CMCardGrid',
 
+		/**
+		 * @property {Object}
+		 */
 		delegate: undefined,
 
+		/**
+		 * @cfg {Boolean}
+		 */
 		cmVisible: true,
+
+		/**
+		 * @property {Object}
+		 */
 		paramsToLoadWhenVisible: undefined,
 
 		listeners: {

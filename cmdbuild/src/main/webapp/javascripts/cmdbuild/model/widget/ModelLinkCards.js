@@ -3,12 +3,33 @@
 	Ext.define('CMDBuild.model.widget.ModelLinkCards', {
 		extend: 'Ext.util.Observable',
 
+		/**
+		 * @property {Boolean}
+		 */
 		_freezed: {},
+
+		/**
+		 * @property {Object}
+		 * 	{
+		 * 		cardId: {
+		 * 			metadata1: value1,
+		 * 			metadata2: value2,
+		 * 			...
+		 * 		},
+		 * 		...
+		 * 	}
+		 */
 		selections: {},
+
+		/**
+		 * @property {Boolean}
+		 */
 		singleSelect: undefined,
 
 		/**
 		 * @param {Object} configuration - { singleSelect: true/false }
+		 *
+		 * @override
 		 */
 		constructor: function(configuration) {
 			configuration = configuration || {};
@@ -27,12 +48,12 @@
 		 * @param {Int} selection - card id
 		 */
 		deselect: function(selection) {
-			if (!this._silent) {
+			if (!this._silent)
 				if (this.isSelected(selection)) {
 					delete this.selections[selection];
+
 					this.fireEvent('deselect', selection);
 				}
-			}
 		},
 
 		defreeze: function() {
@@ -44,15 +65,10 @@
 		},
 
 		/**
-		 * @return {Array} selections
+		 * @return {Array} selections - each element is a cardId
 		 */
 		getSelections: function() {
-			var selections = [];
-
-			for (var selection in this.selections)
-				selections.push(selection);
-
-			return selections;
+			return this.selections;
 		},
 
 		/**
@@ -66,7 +82,7 @@
 		 * @param {Int} selection - card id
 		 */
 		isSelected: function(selection) {
-			return this.selections[selection];
+			return this.selections.hasOwnProperty(selection);
 		},
 
 		reset: function() {
@@ -76,18 +92,18 @@
 
 		/**
 		 * @param {Int} selection - card id
+		 * @param {Object} metadata
 		 */
-		select: function(selection) {
-			if (!this._silent) {
-				if (this.isSelected(selection)) {
-					return;
-				} else {
-					if (this.singleSelect)
-						this.reset();
+		select: function(selection, metadata) {
+			metadata = metadata || {};
 
-					this.selections[selection] = true;
-					this.fireEvent('select', selection);
-				}
+			if (!this._silent && !this.isSelected(selection)) {
+				if (this.singleSelect)
+					this.reset();
+
+				this.selections[selection] = metadata;
+
+				this.fireEvent('select', selection);
 			}
 		}
 	});

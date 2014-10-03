@@ -2,18 +2,26 @@ package org.cmdbuild.model.widget;
 
 import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.commons.lang3.ObjectUtils.*;
 
 import org.cmdbuild.dao.entrytype.attributetype.AbstractReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.cmdbuild.workflow.WorkflowTypesConverter.Reference;
 
+import com.google.common.collect.Lists;
+
 public class LinkCards extends Widget {
 
 	public static class Submission {
+
 		private List<Object> output;
+		private List<Map<Object, Object>> metadata;
 
 		public List<Object> getOutput() {
 			return output;
@@ -22,9 +30,20 @@ public class LinkCards extends Widget {
 		public void setOutput(final List<Object> output) {
 			this.output = output;
 		}
+
+		public List<Map<Object, Object>> getMetadata() {
+			return metadata;
+		}
+
+		public void setMetadata(final List<Map<Object, Object>> metadata) {
+			this.metadata = metadata;
+		}
+
 	}
 
 	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
+
+	private static final Map<String, String> NO_METADATA = Collections.emptyMap();
 
 	/**
 	 * A CQL query to fill the linkCard grid Use it or the className
@@ -92,6 +111,9 @@ public class LinkCards extends Widget {
 	 * Templates to use for the CQL filters
 	 */
 	private Map<String, String> templates;
+
+	private Map<String, String> metadata;
+	private String metadataOutput;
 
 	@Override
 	public void accept(final WidgetVisitor visitor) {
@@ -202,12 +224,29 @@ public class LinkCards extends Widget {
 		this.templates = templates;
 	}
 
+	public Map<String, String> getMetadata() {
+		return defaultIfNull(metadata, NO_METADATA);
+	}
+
+	public void setMetadata(final Map<String, String> metadata) {
+		this.metadata = metadata;
+	}
+
+	public String getMetadataOutput() {
+		return metadataOutput;
+	}
+
+	public void setMetadataOutput(final String metadataOutput) {
+		this.metadataOutput = metadataOutput;
+	}
+
 	@Override
 	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output)
 			throws Exception {
 		if (outputName != null) {
 			final Submission submission = decodeInput(input);
 			output.put(outputName, outputValue(submission));
+			output.put(metadataOutput, metadataValue(submission));
 		}
 	}
 
@@ -216,10 +255,17 @@ public class LinkCards extends Widget {
 			return (Submission) input;
 		} else {
 			@SuppressWarnings("unchecked")
-			final Map<String, List<Object>> inputMap = (Map<String, List<Object>>) input;
-			final List<Object> selectedCardIds = inputMap.get(CREATED_CARD_ID_SUBMISSION_PARAM);
+			final Map<String, Map<Object, Object>> inputMap = (Map<String, Map<Object, Object>>) input;
+			final Map<Object, Object> selectedCards = inputMap.get(CREATED_CARD_ID_SUBMISSION_PARAM);
+			final List<Object> selectedIds = Lists.newArrayList(selectedCards.keySet());
+			final List<Map<Object, Object>> metadata = Lists.newArrayList();
+			for (final Object selectedId : selectedIds) {
+				final Map<Object, Object> _metadata = (Map<Object, Object>) selectedCards.get(selectedId);
+				metadata.add(_metadata);
+			}
 			final Submission submission = new Submission();
-			submission.setOutput(selectedCardIds);
+			submission.setOutput(selectedIds);
+			submission.setMetadata(metadata);
 			return submission;
 		}
 	}
@@ -256,6 +302,10 @@ public class LinkCards extends Widget {
 			}
 
 		}.convertValue(cardId).getId();
+	}
+
+	private Object metadataValue(final Submission submission) {
+		return submission.getMetadata();
 	}
 
 }

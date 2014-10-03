@@ -21,7 +21,89 @@
 		},
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMOpenReport} view
+		 * @cfg {Boolean}
+		 */
+		alertIfChangeDefaultSelection: false,
+
+		/**
+		 * @property {CMDBuild.model.CMActivityInstance}
+		 */
+		card: undefined,
+
+		/**
+		 * @property {{Ext.form.Basic}}
+		 */
+		clientForm: undefined,
+
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid}
+		 */
+		grid: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.common.widgets.linkCards.LinkCardsMapController}
+		 */
+		mapController: undefined,
+
+		/**
+		 * @property {CMDBuild.model.widget.ModelLinkCards}
+		 */
+		model: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		readOnly: undefined,
+
+		/**
+		 * @property {Ext.selection.RowModel} or {CMDBuild.selection.CMMultiPageSelectionModel}
+		 */
+		selectionModel: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		singleSelect: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		outputName: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.management.common.CMWidgetManagerController}
+		 */
+		ownerController: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		targetEntryType: undefined,
+
+		/**
+		 * @property {CMDBuild.Management.TemplateResolver}
+		 */
+		templateResolver: undefined,
+
+		/**
+		 * Is busy when load the default selection
+		 *
+		 * @property {Boolean}
+		 */
+		templateResolverIsBusy: false,
+
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.linkCards.LinkCards}
+		 */
+		view: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		widgetConf: undefined,
+
+		/**
+		 * @param {CMDBuild.view.management.common.widgets.linkCards.LinkCards} view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
 		 * @param {Object} widgetConf
 		 * @param {Ext.form.Basic} clientForm
@@ -40,17 +122,14 @@
 				throw 'LinkCardsController constructor: className not valid';
 
 			this.targetEntryType = _CMCache.getEntryTypeByName(this.widgetConf.className);
-
-			this.templateResolverIsBusy = false; // Is busy when load the default selection
-			this.alertIfChangeDefaultSelection = false;
-			this.singleSelect = this.widgetConf.singleSelect;
-			this.readOnly = this.widgetConf.readOnly;
+			this.singleSelect = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SINGLE_SELECT];
+			this.readOnly = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
 
 			this.view.delegate = this;
 			this.grid = this.view.grid;
 			this.grid.delegate = this;
 			this.view.widgetConf = this.widgetConf;
-			this.selectionModel = this.view.selectionModel;
+			this.selectionModel = this.grid.getSelectionModel();
 
 			this.callBacks = {
 				'action-card-edit': this.onEditCardkClick,
@@ -195,29 +274,6 @@
 		},
 
 		/**
-		 * Local solution for a global issue.
-		 * The card model is a CMDBuild.Dummymodel, it takes a map and set all the key as fields of the model, so there are no type specification.
-		 * Server side I want that the Ids are integer, so now cast it in this function, but the real solution is to find a way to say to the card that its id is a number.
-		 *
-		 * @param {Array} input
-		 *
-		 * @ŗeturn {Array} output
-		 */
-		convertElementsFromStringToInt: function(input) {
-			var output = [];
-
-			if (Ext.isArray(input))
-				for (var i = 0; i < input.length; ++i) {
-					var element = parseInt(input[i]);
-
-					if (element)
-						output.push(element);
-				}
-
-			return output;
-		},
-
-		/**
 		 * @param {Ext.data.Model} model
 		 * @param {Boolean] editable
 		 */
@@ -241,7 +297,19 @@
 		},
 
 		/**
+		 * Return selection data. Converts lat, lon metadata only if widget is in singleSelect mode, otherwise metadata will be passed to server without being edited.
+		 *
 		 * @return {Object} out
+		 * 	{
+		 * 		output: {
+		 * 			cardId: {
+		 * 				... metadata ...
+		 * 			},
+		 * 			cardId2: {},
+		 * 			...
+		 * 		},
+		 * 		metadataOutput: configuration value
+		 * 	}
 		 *
 		 * @override
 		 */
@@ -249,18 +317,37 @@
 			var out = null;
 
 			if (!this.readOnly) {
+				var modelSelections = this.model.getSelections();
+				var widgetConfMetadata = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.METADATA];
+
+				// Output metadata codification only for single select mode
+				if (this.singleSelect && !Ext.Object.isEmpty(widgetConfMetadata)) {
+					for (var confIndex in widgetConfMetadata) {
+						switch (widgetConfMetadata[confIndex]) {
+							case 'POINT': {
+								var selectionKey = Object.keys(modelSelections)[0];
+
+								if (!Ext.Object.isEmpty(modelSelections[selectionKey])) {
+									var lat = modelSelections[selectionKey][CMDBuild.core.proxy.CMProxyConstants.LATITUDE];
+									var lon = modelSelections[selectionKey][CMDBuild.core.proxy.CMProxyConstants.LONGITUDE];
+
+									modelSelections[selectionKey] = {};
+									modelSelections[selectionKey][confIndex] = new OpenLayers.Geometry.Point(lat, lon).toString();
+								}
+							} break;
+
+							default:
+								throw 'ERROR: LinkCardsController getData wrong widget metadata configuration (' + widgetConfMetadata[confIndex] + ')';
+						}
+					}
+				}
+
 				out = {};
-				out['output'] = this.convertElementsFromStringToInt(this.model.getSelections());
+				out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = modelSelections;
+				out[CMDBuild.core.proxy.CMProxyConstants.METADATA_OUTPUT] = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.METADATA_OUTPUT]; // Simple property echo
 			}
 
 			return out;
-		},
-
-		/**
-		 * @return {String} label
-		 */
-		getLabel: function() {
-			return this.widgetConf.label;
 		},
 
 		/**
@@ -322,6 +409,24 @@
 		},
 
 		/**
+		 * @param {Ext.data.Model} model
+		 */
+		onEditCardkClick: function(model) {
+			var cardWindow = this.getCardWindow(model, true);
+
+			cardWindow.on(
+				'destroy',
+				function() {
+					this.grid.reload();
+				},
+				this,
+				{ single: true }
+			);
+
+			cardWindow.show();
+		},
+
+		/**
 		 * Loads grid's page for last selection and select
 		 */
 		onGridShow: function() {
@@ -350,11 +455,16 @@
 								{
 									scope: this,
 									cb: function() {
+										this.selectionModel.reset(); // Fixes also the problem of no row check on select
 										this.selectionModel.select(
-											this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, lastSelection.get('Id')),
-											false,
-											true
+											this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, lastSelection.get('Id'))
 										);
+
+										// Retry without grid store filter
+										if (!this.selectionModel.hasSelection() && this.view.toggleGridFilterButton.filterEnabled) {
+											this.onToggleGridFilterButtonClick(false);
+											this.onGridShow();
+										}
 									}
 								}
 							);
@@ -362,33 +472,6 @@
 					}
 				});
 			}
-		},
-
-		/**
-		 * @param {Ext.data.Model} model
-		 */
-		onEditCardkClick: function(model) {
-			var cardWindow = this.getCardWindow(model, true);
-
-			cardWindow.on(
-				'destroy',
-				function() {
-					this.grid.reload();
-				},
-				this,
-				{ single: true }
-			);
-
-			cardWindow.show();
-		},
-
-		/**
-		 * For the auto-select
-		 *
-		 * @override
-		 */
-		onEditMode: function() {
-			this.resolveDefaultSelectionTemplate();
 		},
 
 		/**
@@ -437,21 +520,26 @@
 
 		/**
 		 * Disable grid store filter
+		 *
+		 * @param {Boolean} forceState
 		 */
-		onToggleGridFilterButtonClick: function() {
+		onToggleGridFilterButtonClick: function(forceState) {
 			var classId = this.targetEntryType.getId();
 			var cqlQuery = this.widgetConf.filter;
+
+			if (!Ext.isEmpty(forceState))
+				this.view.toggleGridFilterButton.filterEnabled = !forceState;
 
 			if (this.view.toggleGridFilterButton.filterEnabled) {
 				this.resolveFilterTemplate(null, classId);
 
 				this.view.toggleGridFilterButton.setIconCls('find');
-				this.view.toggleGridFilterButton.setText(tr.enableFilter);
+				this.view.toggleGridFilterButton.setText(tr.enableGridFilter);
 			} else {
 				this.resolveFilterTemplate(cqlQuery, classId);
 
 				this.view.toggleGridFilterButton.setIconCls('clear_filter');
-				this.view.toggleGridFilterButton.setText(tr.disableFilter);
+				this.view.toggleGridFilterButton.setText(tr.disableGridFilter);
 			}
 
 			this.view.toggleGridFilterButton.filterEnabled = !this.view.toggleGridFilterButton.filterEnabled;
