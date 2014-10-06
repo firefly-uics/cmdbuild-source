@@ -121,7 +121,10 @@
 			if (!_CMCache.isEntryTypeByName(this.widgetConf.className))
 				throw 'LinkCardsController constructor: className not valid';
 
+			// Set local tergetEntryType (CMDBuild class) and set it also in CMCardModuleState
 			this.targetEntryType = _CMCache.getEntryTypeByName(this.widgetConf.className);
+			_CMCardModuleState.setEntryType(this.targetEntryType);
+
 			this.singleSelect = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SINGLE_SELECT];
 			this.readOnly = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
 
@@ -325,7 +328,7 @@
 					for (var confIndex in widgetConfMetadata) {
 						switch (widgetConfMetadata[confIndex]) {
 							case 'POINT': {
-								var selectionKey = Object.keys(modelSelections)[0];
+								var selectionKey = Ext.Object.getKeys(modelSelections)[0];
 
 								if (!Ext.Object.isEmpty(modelSelections[selectionKey])) {
 									var lat = modelSelections[selectionKey][CMDBuild.core.proxy.CMProxyConstants.LATITUDE];
