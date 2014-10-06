@@ -75,7 +75,7 @@
 		 * @return {Boolean}
 		 */
 		hasSelection: function() {
-			return this.getSelections().length > 0;
+			return Ext.Object.getKeys(this.getSelections()).length > 0;
 		},
 
 		/**
