@@ -1,8 +1,11 @@
 package org.cmdbuild.workflow.widget;
 
-import java.util.Map;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.cmdbuild.model.widget.LinkCards.METADATA_SEPARATOR;
+import static org.cmdbuild.model.widget.LinkCards.NAME_TYPE_SEPARATOR;
 
-import static org.cmdbuild.model.widget.LinkCards.*;
+import java.util.Collections;
+import java.util.Map;
 
 import org.cmdbuild.model.widget.LinkCards;
 import org.cmdbuild.model.widget.Widget;
@@ -77,9 +80,15 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 	}
 
 	private Map<String, String> toMap(String value) {
-		return Splitter.on(METADATA_SEPARATOR) //
-				.withKeyValueSeparator(NAME_TYPE_SEPARATOR) //
-				.split(value);
+		Map<String, String> map;
+		if (isBlank(value)) {
+			map = Collections.emptyMap();
+		} else {
+			map = Splitter.on(METADATA_SEPARATOR) //
+					.withKeyValueSeparator(NAME_TYPE_SEPARATOR) //
+					.split(value);
+		}
+		return map;
 	}
 
 }
