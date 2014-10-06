@@ -332,7 +332,7 @@
 									var lon = modelSelections[selectionKey][CMDBuild.core.proxy.CMProxyConstants.LONGITUDE];
 
 									modelSelections[selectionKey] = {};
-									modelSelections[selectionKey][confIndex] = new OpenLayers.Geometry.Point(lat, lon).toString();
+									modelSelections[selectionKey][confIndex] = new OpenLayers.Geometry.Point(lon, lat).toString();
 								}
 							} break;
 
