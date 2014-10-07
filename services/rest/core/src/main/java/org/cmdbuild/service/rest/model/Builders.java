@@ -447,8 +447,8 @@ public class Builders {
 		private Long id;
 		private String name;
 		private String description;
-		private String classSource;
-		private String classDestination;
+		private Long classSource;
+		private Long classDestination;
 		private String cardinality;
 		private String descriptionDirect;
 		private String descriptionInverse;
@@ -488,12 +488,12 @@ public class Builders {
 			return this;
 		}
 
-		public DomainWithFullDetailsBuilder withClassSource(final String classSource) {
+		public DomainWithFullDetailsBuilder withClassSource(final Long classSource) {
 			this.classSource = classSource;
 			return this;
 		}
 
-		public DomainWithFullDetailsBuilder withClassDestination(final String classDestination) {
+		public DomainWithFullDetailsBuilder withClassDestination(final Long classDestination) {
 			this.classDestination = classDestination;
 			return this;
 		}

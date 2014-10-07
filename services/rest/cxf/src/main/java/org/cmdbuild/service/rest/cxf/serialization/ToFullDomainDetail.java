@@ -36,8 +36,8 @@ public class ToFullDomainDetail implements Function<CMDomain, DomainWithFullDeta
 				.withId(input.getId()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
-				.withClassSource(input.getClass1().getName()) //
-				.withClassDestination(input.getClass2().getName()) //
+				.withClassSource(input.getClass1().getId()) //
+				.withClassDestination(input.getClass2().getId()) //
 				.withCardinality(input.getCardinality()) //
 				.withDescriptionDirect(input.getDescription1()) //
 				.withDescriptionInverse(input.getDescription2()) //

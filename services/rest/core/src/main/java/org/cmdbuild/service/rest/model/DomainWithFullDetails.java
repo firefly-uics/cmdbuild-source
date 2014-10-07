@@ -17,8 +17,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @XmlRootElement(name = FULL_DOMAIN_DETAIL)
 public class DomainWithFullDetails extends DomainWithBasicDetails {
 
-	private String classSource;
-	private String classDestination;
+	private Long classSource;
+	private Long classDestination;
 	private String cardinality;
 	private String descriptionDirect;
 	private String descriptionInverse;
@@ -29,20 +29,20 @@ public class DomainWithFullDetails extends DomainWithBasicDetails {
 	}
 
 	@XmlAttribute(name = CLASS_SOURCE)
-	public String getClassSource() {
+	public Long getClassSource() {
 		return classSource;
 	}
 
-	void setClassSource(final String classnameSource) {
+	void setClassSource(final Long classnameSource) {
 		this.classSource = classnameSource;
 	}
 
 	@XmlAttribute(name = CLASS_DESTINATION)
-	public String getClassDestination() {
+	public Long getClassDestination() {
 		return classDestination;
 	}
 
-	void setClassDestination(final String classnameDestination) {
+	void setClassDestination(final Long classnameDestination) {
 		this.classDestination = classnameDestination;
 	}
 
