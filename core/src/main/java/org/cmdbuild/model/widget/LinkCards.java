@@ -1,14 +1,13 @@
 package org.cmdbuild.model.widget;
 
-import static com.google.common.collect.FluentIterable.*;
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Lists.newArrayListWithExpectedSize;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static org.apache.commons.lang3.ObjectUtils.*;
 
 import org.cmdbuild.dao.entrytype.attributetype.AbstractReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeTypeVisitor;
@@ -253,7 +252,9 @@ public class LinkCards extends Widget {
 		if (outputName != null) {
 			final Submission submission = decodeInput(input);
 			output.put(outputName, outputValue(submission));
-			output.put(metadataOutput, metadataValue(submission));
+			if (isNotBlank(metadataOutput)){
+				output.put(metadataOutput, metadataValue(submission));
+			}
 		}
 	}
 
