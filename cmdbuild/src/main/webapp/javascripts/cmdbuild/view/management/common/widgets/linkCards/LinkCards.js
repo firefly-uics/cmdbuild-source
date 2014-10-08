@@ -51,8 +51,8 @@
 			var allowEditCard = false;
 			var allowShowCard = false;
 
-			if (this.widgetConf.allowCardEditing) {
-				var priv = _CMUtils.getClassPrivilegesByName(this.widgetConf.className);
+			if (this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ALLOW_CARD_EDITING]) {
+				var priv = _CMUtils.getClassPrivilegesByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
 
 				if (priv && priv.write) {
 					allowEditCard = true;
@@ -99,7 +99,7 @@
 				items: [this.grid]
 			});
 
-			if (this.widgetConf.enableMap && CMDBuild.Config.gis.enabled)
+			if (this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ENABLE_MAP] && CMDBuild.Config.gis.enabled)
 				this.buildMap();
 
 			this.callParent(arguments);
@@ -120,9 +120,9 @@
 				frame: false,
 				border: false,
 
-				lon: this.widgetConf.StartMapWithLongitude || this.widgetConf.mapLongitude,
-				lat: this.widgetConf.StartMapWithLatitude || this.widgetConf.mapLatitude,
-				initialZoomLevel: this.widgetConf.StartMapWithZoom || this.widgetConf.mapZoom
+				lon: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.START_MAP_WITH_LONGITUDE] || this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.MAP_LONGITUDE],
+				lat: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.START_MAP_WITH_LATITUDE] || this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.MAP_LATITATUDE],
+				initialZoomLevel: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.START_MAP_WITH_ZOOM] || this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.MAP_ZOOM]
 			});
 
 			Ext.apply(this, {
@@ -167,12 +167,12 @@
 		 * @return {CMDBuild.selection.CMMultiPageSelectionModel} single select or multi select
 		 */
 		getSelectionModel: function() {
-			if (this.widgetConf.readOnly)
+			if (this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY])
 				return Ext.create('Ext.selection.RowModel');
 
 			return Ext.create('CMDBuild.selection.CMMultiPageSelectionModel', {
 				avoidCheckerHeader: true,
-				mode: this.widgetConf.singleSelect ? 'SINGLE' : 'MULTI',
+				mode: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SINGLE_SELECT] ? 'SINGLE' : 'MULTI',
 				idProperty: 'Id' // Required to identify the records for the data and not the id of ext
 			});
 		},
