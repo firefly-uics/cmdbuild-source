@@ -82,6 +82,11 @@
 				cmAllowShowCard: allowShowCard
 			});
 
+			// To listener to select right cards on pageChange
+			this.grid.pagingBar.on('change', function(pagingBar, options) {
+				this.delegate.cmOn('onGridPageChange');
+			}, this);
+
 			Ext.apply(this, {
 				dockedItems: [
 					{

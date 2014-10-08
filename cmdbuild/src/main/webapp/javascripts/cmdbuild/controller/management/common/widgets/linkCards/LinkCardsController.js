@@ -190,6 +190,9 @@
 				case 'onDeselect':
 					return this.onDeselect(param);
 
+				case 'onGridPageChange':
+					return this.onGridPageChange();
+
 				case 'onGridShow':
 					return this.onGridShow();
 
@@ -443,6 +446,18 @@
 		},
 
 		/**
+		 * Event to select right cards on grid page change
+		 */
+		onGridPageChange: function() {
+			var modelSelections = this.model.getSelections();
+
+			for (var index in modelSelections)
+				this.selectionModel.select(
+					this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, index)
+				);
+		},
+
+		/**
 		 * Loads grid's page for last selection and select
 		 */
 		onGridShow: function() {
@@ -471,7 +486,6 @@
 								{
 									scope: this,
 									cb: function() {
-										this.selectionModel.reset(); // Fixes also the problem of no row check on select
 										this.selectionModel.select(
 											this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, lastSelectionId)
 										);
