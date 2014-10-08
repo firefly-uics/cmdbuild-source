@@ -38,6 +38,9 @@
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				valueField: CMDBuild.model.CMReportAsComboItem._FIELDS.value,
 				displayField: CMDBuild.model.CMReportAsComboItem._FIELDS.description,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				anchor: '100%',
+
 				store: _CMCache.getReportComboStore()
 			});
 
@@ -128,8 +131,9 @@
 		 * @param {Array} readOnlyAttributes
 		 */
 		fillPresetWithData: function(data, readOnlyAttributes) {
-			this.presetGrid.store.removeAll();
+			readOnlyAttributes = readOnlyAttributes || [];
 
+			this.presetGrid.store.removeAll();
 			if (!Ext.isEmpty(data)) {
 				for (var key in data) {
 					var recordConf = {};
