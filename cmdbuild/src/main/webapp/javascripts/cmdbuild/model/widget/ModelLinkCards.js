@@ -8,6 +8,12 @@
 		 */
 		_freezed: {},
 
+
+		/**
+		 * @property {Int}
+		 */
+		lastSelection: undefined,
+
 		/**
 		 * @property {Object}
 		 * 	{
@@ -65,6 +71,13 @@
 		},
 
 		/**
+		 * @return {Int} cardId of last selection
+		 */
+		getLastSelection: function() {
+			return this.lastSelection || null;
+		},
+
+		/**
 		 * @return {Array} selections - each element is a cardId
 		 */
 		getSelections: function() {
@@ -88,6 +101,8 @@
 		reset: function() {
 			for (var selection in this.selections)
 				this.deselect(selection);
+
+			this.selections = {}; // TODO: find right way - Hack to fix problems with this.selections object
 		},
 
 		/**
@@ -102,6 +117,7 @@
 					this.reset();
 
 				this.selections[selection] = metadata;
+				this.lastSelection = selection;
 
 				this.fireEvent('select', selection);
 			}
