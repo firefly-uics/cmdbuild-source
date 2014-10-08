@@ -318,7 +318,9 @@ public class DefaultEmailService implements EmailService {
 					if (rule.applies(emailForCheckOnly)) {
 						email = rule.adapt(email);
 						final Long id = persistence.save(email);
+						final Iterable<Attachment> attachments = email.getAttachments();
 						email = persistence.getEmail(id);
+						email.setAttachments(attachments);
 						callback.notify(rule.action(email));
 					}
 				}
