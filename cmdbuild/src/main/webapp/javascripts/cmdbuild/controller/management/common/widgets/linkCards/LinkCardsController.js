@@ -118,11 +118,11 @@
 
 			this.callParent(arguments);
 
-			if (!_CMCache.isEntryTypeByName(this.widgetConf.className))
+			if (!_CMCache.isEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]))
 				throw 'LinkCardsController constructor: className not valid';
 
 			// Set local tergetEntryType (CMDBuild class) and set it also in CMCardModuleState
-			this.targetEntryType = _CMCache.getEntryTypeByName(this.widgetConf.className);
+			this.targetEntryType = _CMCache.getEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
 			_CMCardModuleState.setEntryType(this.targetEntryType);
 
 			this.singleSelect = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SINGLE_SELECT];
@@ -194,7 +194,7 @@
 					return this.onGridShow();
 
 				case 'onItemDoubleclick':
-					return this.onItemDoubleclick(param);
+					return this.onItemDoubleclick(param.record);
 
 				case 'onToggleGridFilterButtonClick':
 					return this.onToggleGridFilterButtonClick();
@@ -217,10 +217,10 @@
 		 */
 		_extractVariablesForTemplateResolver: function() {
 			var variables = {};
-			variables[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_SELECTION] = this.widgetConf.defaultSelection;
-			variables[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.widgetConf.filter;
+			variables[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_SELECTION] = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_SELECTION];
+			variables[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.FILTER];
 
-			Ext.apply(variables, this.widgetConf.templates || {});
+			Ext.apply(variables, this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES] || {});
 
 			return variables;
 		},
@@ -231,7 +231,7 @@
 					null,
 					Ext.String.format(
 						tr.warnings.link_cards_changed_values,
-						this.widgetConf.label || this.view.id
+						this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.LABEL] || this.view.id
 					),
 					false
 				);
@@ -241,13 +241,15 @@
 		},
 
 		/**
+		 * When the linkCard is not busy load the grid
+		 *
 		 * @override
 		 */
 		beforeActiveView: function() {
-			if (!Ext.isEmpty(this.targetEntryType)) { // When the linkCard is not busy load the grid
+			if (!Ext.isEmpty(this.targetEntryType)) {
 				var me = this;
 				var classId = this.targetEntryType.getId();
-				var cqlQuery = this.widgetConf.filter;
+				var cqlQuery = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.FILTER];
 
 				new _CMUtils.PollingFunction({
 					success: function() {
@@ -262,6 +264,8 @@
 							me.updateViewGrid(classId);
 							me.grid.enableFilterMenuButton();
 						}
+
+						me.onGridShow();
 					},
 					failure: function() {
 						CMDBuild.Msg.error(null, tr.errors.busy_wf_widgets, false);
@@ -375,7 +379,7 @@
 		 * @override
 		 */
 		isValid: function() {
-			if (!this.readOnly && this.widgetConf.required) {
+			if (!this.readOnly && this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED]) {
 				return this.model.hasSelection();
 			} else {
 				return true;
@@ -430,15 +434,24 @@
 		},
 
 		/**
+		 * For auto-select of defaultSelection
+		 *
+		 * @override
+		 */
+		onEditMode: function() {
+			this.resolveDefaultSelectionTemplate();
+		},
+
+		/**
 		 * Loads grid's page for last selection and select
 		 */
 		onGridShow: function() {
-			var lastSelection = _CMCardModuleState.card;
+			var lastSelectionId = this.model.getLastSelection();
 
-			if (!Ext.isEmpty(lastSelection)) {
+			if (!Ext.isEmpty(lastSelectionId)) {
 				var params = {};
-				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = lastSelection.get('Id');
-				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.widgetConf.className;
+				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = lastSelectionId;
+				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
 				params[CMDBuild.core.proxy.CMProxyConstants.RETRY_WITHOUT_FILTER] = true;
 				params[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.grid.getStore().getProxy().extraParams[CMDBuild.core.proxy.CMProxyConstants.FILTER];
 
@@ -460,7 +473,7 @@
 									cb: function() {
 										this.selectionModel.reset(); // Fixes also the problem of no row check on select
 										this.selectionModel.select(
-											this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, lastSelection.get('Id'))
+											this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, lastSelectionId)
 										);
 
 										// Retry without grid store filter
@@ -478,19 +491,16 @@
 		},
 
 		/**
-		 * @param {Object} params
-		 * 	{
-		 * 		{Ext.data.Model} record
-		 * 	}
+		 * @param {Ext.data.Model} params - record
 		 */
 		onItemDoubleclick: function(params) {
-			if (this.widgetConf.allowCardEditing) {
-				var priv = _CMUtils.getClassPrivileges(params.record.get('IdClass'));
+			if (this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ALLOW_CARD_EDITING]) {
+				var priv = _CMUtils.getClassPrivileges(params.get('IdClass'));
 
 				if (priv && priv.write) {
-					this.onEditCardkClick(params.record);
+					this.onEditCardkClick(params);
 				} else {
-					this.onShowCardkClick(params.record);
+					this.onShowCardkClick(params);
 				}
 			}
 		},
@@ -504,8 +514,7 @@
 		 */
 		onSelect: function(record) {
 			if (!Ext.isEmpty(record.get('Id'))) {
-				if (typeof record != 'number')
-					_CMCardModuleState.setCard(record);
+				_CMCardModuleState.setCard(record);
 
 				this.model.select(record.get('Id'));
 			} else {
@@ -528,7 +537,7 @@
 		 */
 		onToggleGridFilterButtonClick: function(forceState) {
 			var classId = this.targetEntryType.getId();
-			var cqlQuery = this.widgetConf.filter;
+			var cqlQuery = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.FILTER];
 
 			if (!Ext.isEmpty(forceState))
 				this.view.toggleGridFilterButton.filterEnabled = !forceState;
@@ -589,6 +598,11 @@
 									for (var i = 0; i < resp.rows.length; i++) {
 										var r = resp.rows[i];
 
+										_CMCardModuleState.setCard({
+											Id: r['Id'],
+											IdClass: r['IdClass']
+										});
+
 										me.model.select(r['Id']);
 									}
 
@@ -601,6 +615,8 @@
 						});
 					} else {
 						me.templateResolverIsBusy = false;
+
+						me.model.reset();
 					}
 				}
 			});
