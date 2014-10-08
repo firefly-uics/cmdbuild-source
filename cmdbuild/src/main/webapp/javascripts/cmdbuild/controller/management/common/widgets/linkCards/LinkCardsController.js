@@ -495,6 +495,8 @@
 											this.onToggleGridFilterButtonClick(false);
 											this.onGridShow();
 										}
+
+										this.model._silent = false;
 									}
 								}
 							);
