@@ -9,6 +9,9 @@
 		<relativePath>../..</relativePath>
 	</parent>
 	<artifactId>cmdbuild-services-rest-cxf</artifactId>
+	<properties>
+		<jasypt.version>1.9.2</jasypt.version>
+	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -54,6 +57,11 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-xc</artifactId>
 			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jasypt</groupId>
+			<artifactId>jasypt</artifactId>
+			<version>${jasypt.version}</version>
 		</dependency>
 	</dependencies>
 </project>

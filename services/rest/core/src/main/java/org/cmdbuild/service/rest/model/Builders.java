@@ -406,6 +406,57 @@ public class Builders {
 
 	}
 
+	public static class CredentialsBuilder extends ModelBuilder<Credentials> {
+
+		private String token;
+		private String username;
+		private String password;
+		private String group;
+
+		private CredentialsBuilder() {
+			// use factory method
+		}
+
+		private CredentialsBuilder(final Credentials existing) {
+			// use factory method
+			this.token = existing.getToken();
+			this.username = existing.getUsername();
+			this.password = existing.getPassword();
+			this.group = existing.getGroup();
+		}
+
+		@Override
+		protected Credentials doBuild() {
+			final Credentials output = new Credentials();
+			output.setToken(token);
+			output.setUsername(username);
+			output.setPassword(password);
+			output.setGroup(group);
+			return output;
+		}
+
+		public CredentialsBuilder withToken(final String token) {
+			this.token = token;
+			return this;
+		}
+
+		public CredentialsBuilder withUsername(final String username) {
+			this.username = username;
+			return this;
+		}
+
+		public CredentialsBuilder withPassword(final String password) {
+			this.password = password;
+			return this;
+		}
+
+		public CredentialsBuilder withGroup(final String group) {
+			this.group = group;
+			return this;
+		}
+
+	}
+
 	public static class DomainWithBasicDetailsBuilder extends ModelBuilder<DomainWithBasicDetails> {
 
 		private Long id;
@@ -1205,6 +1256,14 @@ public class Builders {
 
 	public static ClassWithFullDetailsBuilder newClassWithFullDetails() {
 		return new ClassWithFullDetailsBuilder();
+	}
+
+	public static CredentialsBuilder newCredentials() {
+		return new CredentialsBuilder();
+	}
+
+	public static CredentialsBuilder newCredentials(final Credentials existing) {
+		return new CredentialsBuilder(existing);
 	}
 
 	public static DomainWithBasicDetailsBuilder newDomainWithBasicDetails() {
