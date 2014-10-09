@@ -75,7 +75,7 @@
 				cardId: detailData.cardId,
 				className: detailData.className
 			}];
-	
+
 			return attributes;
 		},
 
@@ -129,7 +129,7 @@
 
 		// override
 		onCardLoaded: function(me, card) {
-			me.callParent(arguments);
+			this.callParent(arguments);
 
 			if (me.view.hasRelationAttributes) {
 				loadRelationToFillRelationAttributes(me);
@@ -196,7 +196,7 @@
 			var attribute = attributes[i];
 
 			if (attribute) {
-				if (isTheFKFieldToTarget(me.view, attribute) 
+				if (isTheFKFieldToTarget(me.view, attribute)
 						|| isTheReferenceOfTheDetail(me.view, attribute)) {
 					// does not create the relation if the
 					// detail has a reference to the master
