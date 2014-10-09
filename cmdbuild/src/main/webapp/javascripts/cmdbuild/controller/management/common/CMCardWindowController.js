@@ -39,7 +39,7 @@
 							params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.configuration.entryType);
 
 							me.loadCard(true, params, function(card) {
-								me.onCardLoaded(this, card);
+								me.onCardLoaded(me, card);
 							});
 						} else {
 							me.editModeIfPossible();
@@ -133,8 +133,6 @@
 		/**
 		 * @param {Object} me
 		 * @param {Object} card
-		 *
-		 * @protected
 		 */
 		onCardLoaded: function(me, card) {
 			me.card = card;
@@ -146,7 +144,9 @@
 			me.editModeIfPossible();
 		},
 
-		// Template to override in subclass
+		/**
+		 * Template to override in subclass
+		 */
 		beforeRequest: Ext.emptyFn,
 
 		editModeIfPossible: function() {
