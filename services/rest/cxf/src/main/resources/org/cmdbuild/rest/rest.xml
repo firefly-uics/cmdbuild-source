@@ -38,7 +38,8 @@
 			<ref bean="cxfProcesses" />
 			<ref bean="cxfProcessInstanceActivities" />
 			<ref bean="cxfProcessInstances" />
-			<ref bean="cxfProcessStartActivity" />
+			<ref bean="cxfProcessStartActivities" />
+			<ref bean="cxfTokens" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="xml" value="application/xml" />
