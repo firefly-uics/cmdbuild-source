@@ -20,7 +20,7 @@ public class Security implements LoggingSupport {
 
 	@Bean
 	public TokenHandler tokenHandler() {
-		return new TokenHandler(unauthorizedServices());
+		return new TokenHandler(unauthorizedServices(), services.tokenStore());
 	}
 
 	private Predicate<Class<?>> unauthorizedServices() {

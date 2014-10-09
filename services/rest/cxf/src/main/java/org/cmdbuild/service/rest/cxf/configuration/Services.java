@@ -160,7 +160,7 @@ public class Services implements LoggingSupport {
 	}
 
 	@Bean
-	protected TokenStore tokenStore() {
+	public TokenStore tokenStore() {
 		return new InMemoryTokenStore();
 	}
 
