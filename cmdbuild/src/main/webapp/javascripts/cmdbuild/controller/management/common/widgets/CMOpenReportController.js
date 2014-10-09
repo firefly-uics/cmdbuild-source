@@ -87,13 +87,21 @@
 		});
 	}
 
+	/**
+	 * Build server call to configure and create reports
+	 */
 	function onSaveCardClick() {
 		var form = this.view.formPanel.getForm();
-		var formatName = this.view.formatCombo.getName();
-		var formatValue = this.view.formatCombo.getValue();
+		var formFields = this.view.formPanel.items.items;
 		var params = {};
 
-		params[formatName] = formatValue;
+		// Build params with fields values form server call
+		for (var index in formFields) {
+			var field = formFields[index];
+
+			if (typeof field.getName == 'function' && typeof field.getValue == 'function')
+				params[field.getName()] = field.getValue();
+		}
 
 		if (form.isValid()) {
 			CMDBuild.LoadMask.get().show();
@@ -105,16 +113,17 @@
 				scope: this,
 				success: function(form, action) {
 					var popup = window.open(
-						"services/json/management/modreport/printreportfactory?donotdelete=true",
-						"Report",
-						"height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable"
+						'services/json/management/modreport/printreportfactory?donotdelete=true',
+						'Report',
+						'height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable'
 					);
-					if (!popup) {
+
+					if (!popup)
 						CMDBuild.Msg.warn(
 							CMDBuild.Translation.warnings.warning_message,
 							CMDBuild.Translation.warnings.popup_block
 						);
-					}
+
 					CMDBuild.LoadMask.get().hide();
 				},
 				failure: function() {
