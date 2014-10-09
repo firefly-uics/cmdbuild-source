@@ -23,6 +23,7 @@
 			<ref bean="jaxbProvider" />
 			<ref bean="jsonProvider" />
 			<ref bean="wadlProvider" />
+			<ref bean="tokenHandler" />
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
 			<ref bean="cxfCards" />
