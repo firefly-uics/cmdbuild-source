@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.ext.RequestHandler;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.message.Message;
+import org.cmdbuild.service.rest.cxf.service.TokenStore;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
 
 import com.google.common.base.Optional;
@@ -23,9 +24,11 @@ public class TokenHandler implements RequestHandler, LoggingSupport {
 	private static final Optional<String> ABSENT = Optional.absent();
 
 	private final Predicate<Class<?>> unauthorizedServices;
+	private final TokenStore tokenStore;
 
-	public TokenHandler(final Predicate<Class<?>> unauthorizedServices) {
+	public TokenHandler(final Predicate<Class<?>> unauthorizedServices, final TokenStore tokenStore) {
 		this.unauthorizedServices = unauthorizedServices;
+		this.tokenStore = tokenStore;
 	}
 
 	@Override
@@ -35,12 +38,15 @@ public class TokenHandler implements RequestHandler, LoggingSupport {
 		final Optional<String> token = (tokens == null || tokens.isEmpty()) ? ABSENT : Optional.of(tokens.get(0));
 		final boolean unauthorized = unauthorizedServices.apply(resourceClass.getServiceClass());
 		final Response response;
-		if (!unauthorized && !token.isPresent()) {
+		if (unauthorized) {
+			response = null;
+		} else if (!token.isPresent()) {
+			response = Response.status(UNAUTHORIZED).build();
+		} else if (!tokenStore.get(token.get()).isPresent()) {
 			response = Response.status(UNAUTHORIZED).build();
 		} else {
 			response = null;
 		}
 		return response;
 	}
-
 }

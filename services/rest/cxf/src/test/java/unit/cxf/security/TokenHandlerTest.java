@@ -5,6 +5,7 @@ import static com.google.common.base.Predicates.not;
 import static java.util.Arrays.asList;
 import static org.apache.cxf.message.Message.PROTOCOL_HEADERS;
 import static org.cmdbuild.service.rest.cxf.security.TokenHandler.TOKEN_HEADER;
+import static org.cmdbuild.service.rest.model.Builders.newCredentials;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -25,6 +26,9 @@ import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.message.Message;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.cxf.security.TokenHandler;
+import org.cmdbuild.service.rest.cxf.service.InMemoryTokenStore;
+import org.cmdbuild.service.rest.cxf.service.TokenStore;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Predicate;
@@ -38,10 +42,17 @@ public class TokenHandlerTest {
 	private static final Predicate<Class<?>> IS_UNAUTHORIZED = alwaysTrue();
 	private static final Predicate<Class<?>> IS_AUTHORIZED = not(IS_UNAUTHORIZED);
 
+	private TokenStore tokenStore;
+
+	@Before
+	public void setUp() throws Exception {
+		tokenStore = new InMemoryTokenStore();
+	}
+
 	@Test
-	public void NullResponseForUnauthorizedServiceAndNoToken() throws Exception {
+	public void NullResponseForUnauthorizedServiceAndNoTokenReceiced() throws Exception {
 		// given
-		final TokenHandler tokenHandler = new TokenHandler(IS_UNAUTHORIZED);
+		final TokenHandler tokenHandler = new TokenHandler(IS_UNAUTHORIZED, tokenStore);
 		final Message message = mock(Message.class);
 		doReturn(EMPTY_HEADERS) //
 				.when(message).get(anyString());
@@ -55,11 +66,11 @@ public class TokenHandlerTest {
 	}
 
 	@Test
-	public void NullResponseForUnauthorizedServiceAndToken() throws Exception {
+	public void NullResponseForUnauthorizedServiceAndTokenReceiced() throws Exception {
 		// given
-		final TokenHandler tokenHandler = new TokenHandler(IS_UNAUTHORIZED);
+		final TokenHandler tokenHandler = new TokenHandler(IS_UNAUTHORIZED, tokenStore);
 		final Message message = mock(Message.class);
-		doReturn(headersWithToken()) //
+		doReturn(headersWithToken("foo")) //
 				.when(message).get(anyString());
 
 		// when
@@ -71,9 +82,9 @@ public class TokenHandlerTest {
 	}
 
 	@Test
-	public void UnauthorizedResponseForAuthorizedServiceAndNoToken() throws Exception {
+	public void UnauthorizedResponseForAuthorizedServiceAndNoTokenReceiced() throws Exception {
 		// given
-		final TokenHandler tokenHandler = new TokenHandler(IS_AUTHORIZED);
+		final TokenHandler tokenHandler = new TokenHandler(IS_AUTHORIZED, tokenStore);
 		final Message message = mock(Message.class);
 		doReturn(EMPTY_HEADERS) //
 				.when(message).get(anyString());
@@ -87,11 +98,29 @@ public class TokenHandlerTest {
 	}
 
 	@Test
-	public void NullResponseForAuthorizedServiceAndToken() throws Exception {
+	public void UnauthorizedResponseResponseForAuthorizedServiceAndInvalidTokenReceiced() throws Exception {
 		// given
-		final TokenHandler tokenHandler = new TokenHandler(IS_AUTHORIZED);
+		tokenStore.put("bar", newCredentials().build());
+		final TokenHandler tokenHandler = new TokenHandler(IS_AUTHORIZED, tokenStore);
 		final Message message = mock(Message.class);
-		doReturn(headersWithToken()) //
+		doReturn(headersWithToken("foo")) //
+				.when(message).get(anyString());
+
+		// when
+		final Response response = tokenHandler.handleRequest(message, DUMMY_CLASS_RESOURCE_INFO);
+
+		// then
+		verify(message).get(eq(PROTOCOL_HEADERS));
+		assertThat(response.getStatus(), equalTo(Status.UNAUTHORIZED.getStatusCode()));
+	}
+
+	@Test
+	public void NullResponseForAuthorizedServiceAndExistingTokenReceiced() throws Exception {
+		// given
+		tokenStore.put("foo", newCredentials().build());
+		final TokenHandler tokenHandler = new TokenHandler(IS_AUTHORIZED, tokenStore);
+		final Message message = mock(Message.class);
+		doReturn(headersWithToken("foo")) //
 				.when(message).get(anyString());
 
 		// when
@@ -102,9 +131,9 @@ public class TokenHandlerTest {
 		assertThat(response, equalTo(null));
 	}
 
-	private Map<String, List<String>> headersWithToken() {
+	private Map<String, List<String>> headersWithToken(final String value) {
 		return ChainablePutMap.of(new HashMap<String, List<String>>()) //
-				.chainablePut(TOKEN_HEADER, asList("foo"));
+				.chainablePut(TOKEN_HEADER, asList(value));
 	}
 
 }
