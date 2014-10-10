@@ -289,7 +289,7 @@
 			{name: "group", type: "string"}
 		]
 	});
-	
+
 	Ext.define("CMDBuild.cache.CMReporModelForGrid", {
 		extend: 'Ext.data.Model',
 		fields: [
@@ -313,6 +313,7 @@
 
 	Ext.define("CMDBuild.model.CMFilterModel", {
 		extend: "Ext.data.Model",
+
 		fields: [{
 			name: "id",
 			type: "string"
@@ -357,7 +358,7 @@
 
 		/**
 		 * Return a full copy of this filter
-		 * 
+		 *
 		 * @override
 		 * @returns {CMDBuild.model.CMFilterModel}
 		 */
@@ -402,20 +403,22 @@
 		},
 
 		getConfiguration: function() {
-			var filter = this.get("configuration") || {};
-			return filter;
+			return this.get("configuration") || {};
 		},
 
-		getConfigurationMergedWithRuntimeAttributes: function(_runtimeParameterFields) {
-			var configuration = Ext.clone(this.get("configuration"));
-			var runtimeParameterFields = _runtimeParameterFields || [];
+		/**
+		 * @param {Array} runtimeParameterFields
+		 * 	{
+		 * 		{Ext.form.field} fieldObj,
+		 * 		...
+		 * 	}
+		 */
+		getConfigurationMergedWithRuntimeAttributes: function(runtimeParameterFields) {
+			runtimeParameterFields = runtimeParameterFields || [];
 
-			var indexOfLastRuntimeAttributeMerged = 0;
-			configuration.attribute = mergeRuntimeParametersToConf( //
-				configuration.attribute, //
-				runtimeParameterFields, //
-				indexOfLastRuntimeAttributeMerged //
-			);
+			var configuration = Ext.clone(this.getConfiguration());
+
+			configuration.attribute = mergeRuntimeParametersToConf(configuration.attribute, runtimeParameterFields);
 
 			return configuration;
 		},
@@ -531,7 +534,7 @@
 			if (conf.parameterType == "runtime") {
 				runtimeParameters.push(conf);
 			}
-		} else if (Ext.isArray(attributeConf.and) 
+		} else if (Ext.isArray(attributeConf.and)
 				|| Ext.isArray(attributeConf.or)) {
 
 			var attributes = attributeConf.and || attributeConf.or;
@@ -549,7 +552,7 @@
 			if (conf.parameterType == "calculated") {
 				calculatedParameters.push(conf);
 			}
-		} else if (Ext.isArray(attributeConf.and) 
+		} else if (Ext.isArray(attributeConf.and)
 				|| Ext.isArray(attributeConf.or)) {
 
 			var attributes = attributeConf.and || attributeConf.or;
@@ -570,41 +573,55 @@
 		return CMDBuild.Runtime.DefaultGroupId;
 	};
 
-	function mergeRuntimeParametersToConf(attributeConfiguration, runtimeParameterFields, indexOfLastRuntimeAttributeMerged) {
+	/**
+	 * @param {Onject} attributeConfiguration - filterObject
+	 * @param {Array} runtimeParameterFields
+	 * 	{
+	 * 		{Ext.form.field} fieldObj,
+	 * 		...
+	 * 	}
+	 */
+	function mergeRuntimeParametersToConf(attributeConfiguration, runtimeParameterFields) {
 		var attributeConf = Ext.clone(attributeConfiguration);
-		if (!attributeConf) {
-			return;
-		}
 
-		if (Ext.isObject(attributeConf.simple)) {
-			var conf = attributeConf.simple;
-			if (conf.parameterType == "runtime") {
-				var field = runtimeParameterFields[indexOfLastRuntimeAttributeMerged++];
-				delete conf.parameterType;
+		if (attributeConf) {
+			if (Ext.isObject(attributeConf.simple)) {
+				var conf = attributeConf.simple;
 
-				var value = [field.getValue()];
-				if (field._cmSecondField) {
-					value.push(field._cmSecondField.getValue());
+				if (conf.parameterType == "runtime") {
+
+					// Find field index
+					for(var i = 0; i < runtimeParameterFields.length; i++)
+						if (runtimeParameterFields[i].name == conf.attribute)
+							fieldIndex = i;
+
+					var field = runtimeParameterFields[fieldIndex];
+					var value = [field.getValue()];
+
+					if (field._cmSecondField)
+						value.push(field._cmSecondField.getValue());
+
+					conf.value = value;
+				} else if (conf.parameterType == "calculated") {
+					var value = conf.value[0];
+
+					if (typeof calculatedValuesMapping[value] == "function")
+						conf.value = [calculatedValuesMapping[value]()];
 				}
 
-				conf.value = value; 
-			} else if (conf.parameterType == "calculated") {
-				var value = conf.value[0];
-				if (typeof calculatedValuesMapping[value] == "function") {
-					conf.value = [calculatedValuesMapping[value]()];
+			} else if (Ext.isArray(attributeConf.and)
+					|| Ext.isArray(attributeConf.or)) {
+
+				var attributes = attributeConf.and || attributeConf.or;
+				for (var i=0, l=attributes.length; i<l; ++i) {
+					attributes[i] = mergeRuntimeParametersToConf(attributes[i], runtimeParameterFields);
 				}
 			}
 
-		} else if (Ext.isArray(attributeConf.and) 
-				|| Ext.isArray(attributeConf.or)) {
-
-			var attributes = attributeConf.and || attributeConf.or;
-			for (var i=0, l=attributes.length; i<l; ++i) {
-				attributes[i] = mergeRuntimeParametersToConf(attributes[i], runtimeParameterFields, indexOfLastRuntimeAttributeMerged);
-			}
+			return attributeConf;
 		}
 
-		return attributeConf;
+		return;
 	}
 
 })();
