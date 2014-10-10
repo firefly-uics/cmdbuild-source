@@ -43,8 +43,7 @@
 
 		// Getter and setter
 		getName: function() {
-			var name = this.get(CMDBuild.core.proxy.CMProxyConstants.NAME) || '';
-			return name;
+			return this.get(CMDBuild.core.proxy.CMProxyConstants.NAME) || '';
 		},
 
 		setName: function(name) {
@@ -52,8 +51,7 @@
 		},
 
 		getDescription: function() {
-			var description = this.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION) || '';
-			return description;
+			return this.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION) || '';
 		},
 
 		setDescription: function(description) {
@@ -94,7 +92,9 @@
 
 		setAttributeConfiguration: function(conf) {
 			var configuration = this.getConfiguration();
+
 			delete configuration.attribute;
+
 			if (Ext.isObject(conf) && Ext.Object.getKeys(conf).length > 0) {
 				configuration.attribute = conf;
 				this.set(CMDBuild.core.proxy.CMProxyConstants.CONFIGURATION, configuration);
@@ -124,6 +124,7 @@
 
 		setRelationConfiguration: function(conf) {
 			var configuration = this.getConfiguration();
+
 			delete configuration.relation;
 
 			if (Ext.isArray(conf) && conf.length > 0) {
@@ -135,23 +136,24 @@
 		getFunctionConfiguration: function() {
 			var c = this.getConfiguration();
 			var attributeConf = c.functions || [];
+
 			return attributeConf;
 		},
 
 		setFunctionConfiguration: function(functions) {
 			var configuration = this.getConfiguration();
+
 			if (functions.length > 0) {
 				configuration.functions = functions;
-			}
-			else {
+			} else {
 				delete configuration.functions;
 			}
+
 			this.set(CMDBuild.core.proxy.CMProxyConstants.CONFIGURATION, configuration);
 		},
 
 		getEntryType: function() {
-			var entryType = this.get(CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE) || '';
-			return entryType;
+			return this.get(CMDBuild.core.proxy.CMProxyConstants.ENTRY_TYPE) || '';
 		},
 
 		setEntryType: function(entryType) {
@@ -159,8 +161,7 @@
 		},
 
 		isTemplate: function() {
-			var applied = this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE) || false;
-			return applied;
+			return this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE) || false;
 		},
 
 		setTemplate: function(applied) {
@@ -168,8 +169,7 @@
 		},
 
 		isApplied: function() {
-			var applied = this.get(CMDBuild.core.proxy.CMProxyConstants.APPLIED) || false;
-			return applied;
+			return this.get(CMDBuild.core.proxy.CMProxyConstants.APPLIED) || false;
 		},
 
 		setApplied: function(applied) {
@@ -177,8 +177,7 @@
 		},
 
 		isLocal: function() {
-			var local = this.get(CMDBuild.core.proxy.CMProxyConstants.LOCAL) || false;
-			return local;
+			return this.get(CMDBuild.core.proxy.CMProxyConstants.LOCAL) || false;
 		},
 
 		setLocal: function(local) {
@@ -189,16 +188,16 @@
 	function addRuntimeParameterToList(attributeConf, runtimeParameters) {
 		if (Ext.isObject(attributeConf.simple)) {
 			var conf = attributeConf.simple;
-			if (conf.parameterType == "runtime") {
-				runtimeParameters.push(conf);
-			}
-		} else if (Ext.isArray(attributeConf.and)
-				|| Ext.isArray(attributeConf.or)) {
 
+			if (conf.parameterType == "runtime")
+				runtimeParameters.push(conf);
+
+		} else if (Ext.isArray(attributeConf.and) || Ext.isArray(attributeConf.or)) {
 			var attributes = attributeConf.and || attributeConf.or;
-			for (var i=0, l=attributes.length; i<l; ++i) {
+
+
+			for (var i = 0; i < attributes.length; ++i)
 				addRuntimeParameterToList(attributes[i], runtimeParameters);
-			}
 		}
 
 		return runtimeParameters;
@@ -207,16 +206,15 @@
 	function addCalculatedParameterToList(attributeConf, calculatedParameters) {
 		if (Ext.isObject(attributeConf.simple)) {
 			var conf = attributeConf.simple;
-			if (conf.parameterType == "calculated") {
-				calculatedParameters.push(conf);
-			}
-		} else if (Ext.isArray(attributeConf.and)
-				|| Ext.isArray(attributeConf.or)) {
 
+			if (conf.parameterType == "calculated")
+				calculatedParameters.push(conf);
+		} else if (Ext.isArray(attributeConf.and) || Ext.isArray(attributeConf.or)) {
 			var attributes = attributeConf.and || attributeConf.or;
-			for (var i=0, l=attributes.length; i<l; ++i) {
+
+
+			for (var i = 0; i < attributes.length; ++i)
 				addCalculatedParameterToList(attributes[i], calculatedParameters);
-			}
 		}
 
 		return calculatedParameters;
@@ -267,13 +265,12 @@
 						conf.value = [calculatedValuesMapping[value]()];
 				}
 
-			} else if (Ext.isArray(attributeConf.and)
-					|| Ext.isArray(attributeConf.or)) {
-
+			} else if (Ext.isArray(attributeConf.and) || Ext.isArray(attributeConf.or)) {
 				var attributes = attributeConf.and || attributeConf.or;
-				for (var i=0, l=attributes.length; i<l; ++i) {
+
+
+				for (var i = 0; i < attributes.length; ++i)
 					attributes[i] = mergeRuntimeParametersToConf(attributes[i], runtimeParameterFields);
-				}
 			}
 
 			return attributeConf;
