@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.model;
 
+import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_ACTIVITY;
 import static org.cmdbuild.service.rest.constants.Serialization.WRITABLE;
 
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class ProcessActivityWithBasicDetails extends ModelWithId {
 
 	private boolean writable;
+	private String description;
 
 	ProcessActivityWithBasicDetails() {
 		// package visibility
@@ -25,6 +27,15 @@ public class ProcessActivityWithBasicDetails extends ModelWithId {
 
 	void setWritable(final boolean writable) {
 		this.writable = writable;
+	}
+	
+	@XmlAttribute(name = DESCRIPTION)
+	public String getDescription() {
+		return description;
+	}
+
+	void setDescription(final String description) {
+		this.description = description;
 	}
 
 	@Override
@@ -41,6 +52,7 @@ public class ProcessActivityWithBasicDetails extends ModelWithId {
 		return new EqualsBuilder() //
 				.append(this.getId(), other.getId()) //
 				.append(this.writable, other.writable) //
+				.append(this.description, other.description) //
 				.isEquals();
 	}
 
@@ -49,6 +61,7 @@ public class ProcessActivityWithBasicDetails extends ModelWithId {
 		return new HashCodeBuilder() //
 				.append(getId()) //
 				.append(writable) //
+				.append(description) //
 				.toHashCode();
 	}
 

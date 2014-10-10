@@ -754,6 +754,7 @@ public class Builders {
 
 		private Long id;
 		private Boolean writable;
+		private String description;
 
 		private ProcessActivityWithBasicDetailsBuilder() {
 			// use factory method
@@ -769,6 +770,7 @@ public class Builders {
 			final ProcessActivityWithBasicDetails output = new ProcessActivityWithBasicDetails();
 			output.setId(id);
 			output.setWritable(writable);
+			output.setDescription(description);
 			return output;
 		}
 
@@ -779,6 +781,11 @@ public class Builders {
 
 		public ProcessActivityWithBasicDetailsBuilder withWritableStatus(final boolean writable) {
 			this.writable = writable;
+			return this;
+		}
+
+		public ProcessActivityWithBasicDetailsBuilder withDescription(final String description) {
+			this.description = description;
 			return this;
 		}
 
