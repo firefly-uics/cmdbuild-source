@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:component-scan base-package="org.cmdbuild.service.rest.cxf.configuration" />
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-*.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider" />
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider" />
+	<bean id="wadlProvider" class="org.apache.cxf.jaxrs.model.wadl.WadlGenerator">
+		<property name="linkJsonToXmlSchema" value="true" />
+	</bean>
+
+	<jaxrs:server id="restContainer" address="/rest">
+		<jaxrs:providers>
+			<ref bean="jaxbProvider" />
+			<ref bean="jsonProvider" />
+			<ref bean="wadlProvider" />
+		</jaxrs:providers>
+		<jaxrs:serviceBeans>
+			<ref bean="cxfCards" />
+			<ref bean="cxfClasses" />
+			<ref bean="cxfClassAttributes" />
+			<ref bean="cxfDomains" />
+			<ref bean="cxfDomainAttributes" />
+			<ref bean="cxfRelations" />
+			<ref bean="cxfLookupTypes" />
+			<ref bean="cxfLookupTypeValues" />
+			<ref bean="cxfMenu" />
+			<ref bean="cxfProcessAttributes" />
+			<ref bean="cxfProcesses" />
+			<ref bean="cxfProcessInstanceActivities" />
+			<ref bean="cxfProcessInstances" />
+			<ref bean="cxfProcessStartActivity" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="xml" value="application/xml" />
+			<entry key="json" value="application/json" />
+		</jaxrs:extensionMappings>
+	</jaxrs:server>
+
+</beans>
