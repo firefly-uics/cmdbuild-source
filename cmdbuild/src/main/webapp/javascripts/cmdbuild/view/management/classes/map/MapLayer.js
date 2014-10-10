@@ -12,7 +12,7 @@ CMDBuild.PatchedBBOX = OpenLayers.Class(OpenLayers.Strategy.BBOX, {
 	 * there are problems when remove the layer from the map...
 	 * it seems that the strategy does not realize that the
 	 * layer is now null
-	 * 
+	 *
 	 * (...and I deactivate the strategy before remove the layer...)
 	 */
 	merge: function(resp) {
@@ -34,6 +34,10 @@ CMDBuild.Management.CMMap.MapLayer = OpenLayers.Class(OpenLayers.Layer.Vector, {
 		this.cmdb_minZoom = options.geoAttribute.minZoom || DEFAULT_MIN_ZOOM;
 		this.cmdb_maxZoom = options.geoAttribute.maxZoom || DEFAULT_MAX_ZOOM;
 		this.cmdb_index = options.geoAttribute.index;
+
+		// Set feature selected style with higher strokeWidth to improve visibility
+		// TODO: maybe would be better to put this in GIS config
+		OpenLayers.Feature.Vector.style["default"].strokeWidth = 5;
 
 		this.hiddenFeature = {};
 		this._defaultStyleConfiguration = Ext.decode(options.geoAttribute.style);
