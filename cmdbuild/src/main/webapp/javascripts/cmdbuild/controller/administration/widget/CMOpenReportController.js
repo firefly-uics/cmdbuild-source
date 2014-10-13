@@ -15,13 +15,19 @@
 			this.mon(this.view, 'cm-selected-report', this.onReportSelected, this);
 
 			// To enable/disable the combo-box with the related check
-			this.view.forceFormatCheck.setValue = Ext.Function.createSequence(this.view.forceFormatCheck.setValue,
+			this.view.forceFormatCheck.setValue = Ext.Function.createSequence(
+				this.view.forceFormatCheck.setValue,
 				function(value) {
 					if (!this.forceFormatCheck.disabled) {
 						this.forceFormatOptions.setDisabled(!value);
 
-						if (value && typeof this.forceFormatOptions.getValue() != 'string')
-							this.forceFormatOptions.setValue(this.forceFormatOptions.store.first().get(this.forceFormatOptions.valueField));
+						if (value && typeof this.forceFormatOptions.getValue() != 'string') {
+							this.forceFormatOptions.setValue(
+								this.forceFormatOptions.store.first().get(this.forceFormatOptions.valueField)
+							);
+						} else {
+							this.forceFormatOptions.setValue();
+						}
 					}
 				},
 				this.view
