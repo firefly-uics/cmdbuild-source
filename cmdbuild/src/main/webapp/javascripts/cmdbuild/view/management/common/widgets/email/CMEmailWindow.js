@@ -219,12 +219,10 @@
 				flex: 1
 			});
 		} else {
-			body = Ext.create('Ext.form.field.HtmlEditor', {
+			body = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
 				name: fields.CONTENT,
 				fieldLabel: 'Content',
 				hideLabel: true,
-				enableLinks: false,
-				enableSourceEdit: false,
 				enableFont: false,
 				value: me.record.get(fields.CONTENT),
 				flex: 1
