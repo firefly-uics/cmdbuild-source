@@ -88,10 +88,12 @@
 		// END: Configuration
 
 		buttonAlign: 'center',
+
 		layout: {
 			type: 'vbox',
 			align: 'stretch'
 		},
+
 		title: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose,
 
 		initComponent : function() {
@@ -105,36 +107,38 @@
 			// To reach the basic form outside
 			this.form = this.formPanel.getForm();
 
-			var btnTemplates = {
+			this.fillFromTemplateButton = Ext.create('Ext.button.Split', {
 				iconCls: 'clone',
-				xtype: 'splitbutton',
 				text: CMDBuild.Translation.composeFromTemplate,
 				disabled: this.readOnly,
+
+				handler: function() {
+					this.showMenu();
+				},
+
 				menu: Ext.create('Ext.menu.Menu', {
-					items: [],
-
-					listeners: {
-						click: function(menu, item, e, eOpts) {
-							var record = me.selectedDataStore.getAt(item.index);
-
-							loadFormValues(me, me.form, record.raw);
-						}
-					}
+					items: []
 				})
-			};
+			});
 
-			this.selectedDataStore = CMDBuild.core.proxy.CMProxyEmailTemplates.getStore();
+			this.templatesStore = CMDBuild.core.proxy.CMProxyEmailTemplates.getStore();
+			this.templatesStore.load({
+				callback: function(records, operation, success) {
+					if (records.length > 0) {
+						for (var index in records) {
+							var record = records[index];
 
-			this.selectedDataStore.load({
-				params: {},
-				callback: function(templates) {
-					for (var i = 0; i < templates.length; i++) {
-						var tmp = templates[i];
+							me.fillFromTemplateButton.menu.add({
+								text: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME) + ' - ' + record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION),
+								templateId: record.get(CMDBuild.core.proxy.CMProxyConstants.ID),
 
-						btnTemplates.menu.add({
-							text: tmp.get(CMDBuild.core.proxy.CMProxyConstants.NAME) + ' - ' + tmp.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION),
-							index: i
-						});
+								handler: function(button, e) {
+									me.onFillFromTemplateButtonClick(button.templateId);
+								}
+							});
+						}
+					} else { // To disable button if the aren't templates
+						me.fillFromTemplateButton.setDisabled(true);
 					}
 				}
 			});
@@ -142,7 +146,7 @@
 			Ext.apply(this, {
 				buttons: buildButtons(me),
 				items: [this.formPanel, this.attachmentButtonsContainer, this.attachmentPanelsContainer],
-				tbar: [btnTemplates],
+				tbar: [this.fillFromTemplateButton],
 			});
 
 			this.delegate = this.delegate || Ext.create('CMDBuild.view.management.common.widgets.CMEmailWindowDelegate');
@@ -199,6 +203,38 @@
 			});
 
 			return data;
+		},
+
+
+		/**
+		 * @param {Object} record - CMDBuild.model.CMModelEmailTemplates.grid raw value
+		 */
+		loadFormValues: function(record) {
+			var me = this;
+
+			var xavars = Ext.apply({}, this.delegate.reader.templates(this.delegate.widgetConf), record);
+
+			for (var key in record.variables)
+				xavars[key] = record.variables[key];
+
+			var templateResolver = new CMDBuild.Management.TemplateResolver({
+				clientForm: clientForm,
+				xaVars: xavars,
+				serverVars: me.delegate.getTemplateResolverServerVars()
+			});
+
+			_createEmailFromTemplate(templateResolver, record, this.form);
+		},
+
+		/**
+		 * @param {Int} templateId
+		 */
+		onFillFromTemplateButtonClick: function(templateId) {
+			this.loadFormValues(
+				this.templatesStore.getAt(
+						this.templatesStore.find(CMDBuild.core.proxy.CMProxyConstants.ID, templateId)
+				).raw
+			);
 		}
 	});
 
@@ -452,26 +488,6 @@
 		}
 
 		return messages;
-	}
-
-	/**
-	 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} me - this
-	 * @param {Ext.form.FormPanel} form
-	 * @param {Object} record
-	 */
-	function loadFormValues(me, form, record) {
-		var xavars = Ext.apply({}, me.delegate.reader.templates(me.delegate.widgetConf), record);
-
-		for (var key in record.variables)
-			xavars[key] = record.variables[key];
-
-		var templateResolver = new CMDBuild.Management.TemplateResolver({
-			clientForm: clientForm,
-			xaVars: xavars,
-			serverVars: me.delegate.getTemplateResolverServerVars()
-		});
-
-		_createEmailFromTemplate(templateResolver, record, form);
 	}
 
 	/**
