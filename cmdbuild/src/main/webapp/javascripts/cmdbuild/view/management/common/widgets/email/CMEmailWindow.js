@@ -129,7 +129,7 @@
 							var record = records[index];
 
 							me.fillFromTemplateButton.menu.add({
-								text: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME) + ' - ' + record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION),
+								text: record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION),
 								templateId: record.get(CMDBuild.core.proxy.CMProxyConstants.ID),
 
 								handler: function(button, e) {
