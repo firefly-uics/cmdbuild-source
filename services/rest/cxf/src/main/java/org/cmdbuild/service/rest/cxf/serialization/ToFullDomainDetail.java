@@ -33,7 +33,7 @@ public class ToFullDomainDetail implements Function<CMDomain, DomainWithFullDeta
 	@Override
 	public DomainWithFullDetails apply(final CMDomain input) {
 		return newDomainWithFullDetails() //
-				.withId(input.getId()) //
+				.withId(input.getName()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.withClassSource(input.getClass1().getId()) //

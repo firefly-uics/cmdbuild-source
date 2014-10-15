@@ -1,9 +1,7 @@
 package org.cmdbuild.service.rest.cxf.configuration;
 
-import static com.google.common.base.Predicates.assignableFrom;
-import static com.google.common.base.Predicates.or;
+import static com.google.common.base.Predicates.alwaysTrue;
 
-import org.cmdbuild.service.rest.Tokens;
 import org.cmdbuild.service.rest.cxf.security.TokenHandler;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,8 @@ public class Security implements LoggingSupport {
 	}
 
 	private Predicate<Class<?>> unauthorizedServices() {
-		return or(assignableFrom(Tokens.class));
+		// return or(assignableFrom(Tokens.class));
+		return alwaysTrue();
 	}
 
 }

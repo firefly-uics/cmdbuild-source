@@ -10,6 +10,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -68,7 +69,7 @@ public class LookupTypeValuesTest {
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll(anyLong(), anyBoolean(), anyInt(), anyInt())) //
+		when(service.readAll(anyString(), anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
@@ -76,7 +77,7 @@ public class LookupTypeValuesTest {
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).readAll(eq(12L), eq(false), eq((Integer) null), eq((Integer) null));
+		verify(service).readAll(eq("12"), eq(false), eq((Integer) null), eq((Integer) null));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -86,7 +87,7 @@ public class LookupTypeValuesTest {
 		// given
 		final ResponseSingle<LookupDetail> expectedResponse = newResponseSingle(LookupDetail.class) //
 				.withElement(newLookupDetail() //
-						.withType(12L) //
+						.withType("12") //
 						.withId(34L) //
 						.withCode("code") //
 						.withDescription("description") //
@@ -95,7 +96,7 @@ public class LookupTypeValuesTest {
 						.withParentId(78L) //
 						.build()) //
 				.build();
-		when(service.read(anyLong(), anyLong())) //
+		when(service.read(anyString(), anyLong())) //
 				.thenReturn(expectedResponse);
 
 		// when
@@ -103,7 +104,7 @@ public class LookupTypeValuesTest {
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq(12L), eq(34L));
+		verify(service).read(eq("12"), eq(34L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}

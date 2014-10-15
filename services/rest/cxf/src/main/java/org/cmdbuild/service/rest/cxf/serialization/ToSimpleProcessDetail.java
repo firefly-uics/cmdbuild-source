@@ -36,7 +36,7 @@ public class ToSimpleProcessDetail implements Function<CMClass, ProcessWithBasic
 	public ProcessWithBasicDetails apply(final CMClass input) {
 		final CMClass parent = input.getParent();
 		return newProcessWithBasicDetails() //
-				.withId(input.getId()) //
+				.withId(input.getName()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.withParent((parent == null) ? MISSING_PARENT : parent.getName()) //

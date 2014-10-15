@@ -4,31 +4,13 @@ public interface ErrorHandler {
 
 	void cardNotFound(Long id);
 
-	/**
-	 * @deprecated Use {@link classNotFound(Long)} instead.
-	 */
-	@Deprecated
 	void classNotFound(String id);
 
-	void classNotFound(Long id);
-
-	/**
-	 * @deprecated Use {@link domainNotFound(Long)} instead.
-	 */
-	@Deprecated
 	void domainNotFound(String id);
-
-	void domainNotFound(Long id);
 
 	void invalidType(String id);
 
-	/**
-	 * @deprecated Use {@link lookupTypeNotFound(Long)} instead.
-	 */
-	@Deprecated
 	void lookupTypeNotFound(String id);
-
-	void lookupTypeNotFound(Long id);
 
 	void missingParam(String name);
 
@@ -36,11 +18,11 @@ public interface ErrorHandler {
 
 	void missingUsername();
 
-	void processNotFound(Long id);
+	void processNotFound(String id);
 
 	void processInstanceNotFound(Long id);
 
-	void processActivityNotFound(Long id);
+	void processActivityNotFound(String id);
 
 	void propagate(Throwable e);
 

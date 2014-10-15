@@ -1,7 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newAttributeStatus;
 import static org.cmdbuild.service.rest.model.Builders.newProcessActivityWithFullDetails;
 
@@ -42,7 +41,7 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 		@Override
 		public AttributeStatus apply(final CMActivityVariableToProcess input) {
 			return newAttributeStatus() //
-					.withId(fakeId(input.getName())) //
+					.withId(input.getName()) //
 					.withWritable(input.getType() != Type.READ_ONLY) //
 					.withMandatory(input.getType() == Type.READ_WRITE_REQUIRED) //
 					.build();
@@ -59,7 +58,7 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 	@Override
 	public ProcessActivityWithFullDetails apply(final CMActivity input) {
 		return newProcessActivityWithFullDetails() //
-				.withId(fakeId(input.getId())) //
+				.withId(input.getId()) //
 				.withDescription(input.getDescription()) //
 				.withInstructions(input.getInstructions()) //
 				.withAttributes(from(input.getVariables()) //

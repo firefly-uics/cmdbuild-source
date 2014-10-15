@@ -23,19 +23,7 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void classNotFound(final Long id) {
-		logger.error("class not found '{}'", id);
-		notFound(id);
-	}
-
-	@Override
 	public void domainNotFound(final String id) {
-		logger.error("domain not found '{}'", id);
-		notFound(id);
-	}
-
-	@Override
-	public void domainNotFound(final Long id) {
 		logger.error("domain not found '{}'", id);
 		notFound(id);
 	}
@@ -63,12 +51,6 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void lookupTypeNotFound(final Long id) {
-		logger.error("lookup type not found '{}'", id);
-		notFound(id);
-	}
-
-	@Override
 	public void missingParam(final String name) {
 		logger.error("missing param '{}'", name);
 		notFound(name);
@@ -83,7 +65,7 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void processNotFound(final Long id) {
+	public void processNotFound(final String id) {
 		logger.error("process not found '{}'", id);
 		notFound(id);
 	}
@@ -95,7 +77,7 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void processActivityNotFound(final Long id) {
+	public void processActivityNotFound(final String id) {
 		logger.error("process instance activity not found '{}'", id);
 		notFound(id);
 	}

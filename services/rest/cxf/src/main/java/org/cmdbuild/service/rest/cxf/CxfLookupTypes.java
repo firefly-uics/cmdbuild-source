@@ -1,7 +1,6 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
 import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
@@ -16,27 +15,9 @@ import org.cmdbuild.service.rest.model.LookupTypeDetail;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-
 public class CxfLookupTypes implements LookupTypes {
 
 	private static final ToLookupTypeDetail TO_LOOKUP_TYPE_DETAIL = ToLookupTypeDetail.newInstance().build();
-
-	private static class FakeIdPredicate implements Predicate<LookupType> {
-
-		private final Long fakeId;
-
-		public FakeIdPredicate(final Long fakeId) {
-			this.fakeId = fakeId;
-		}
-
-		@Override
-		public boolean apply(final LookupType input) {
-			return fakeId(input.name).equals(fakeId);
-		}
-
-	}
 
 	private final ErrorHandler errorHandler;
 	private final LookupLogic lookupLogic;
@@ -47,13 +28,13 @@ public class CxfLookupTypes implements LookupTypes {
 	}
 
 	@Override
-	public ResponseSingle<LookupTypeDetail> read(final Long lookupTypeId) {
-		final Optional<LookupType> element = lookupLogic.typeFor(new FakeIdPredicate(lookupTypeId));
-		if (!element.isPresent()) {
+	public ResponseSingle<LookupTypeDetail> read(final String lookupTypeId) {
+		final LookupType element = lookupLogic.typeFor(lookupTypeId);
+		if (element == null) {
 			errorHandler.lookupTypeNotFound(lookupTypeId);
 		}
 		return newResponseSingle(LookupTypeDetail.class) //
-				.withElement(TO_LOOKUP_TYPE_DETAIL.apply(element.get())) //
+				.withElement(TO_LOOKUP_TYPE_DETAIL.apply(element)) //
 				.build();
 	}
 

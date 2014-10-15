@@ -13,18 +13,18 @@ import org.cmdbuild.service.rest.model.adapter.ProcessInstanceAdvanceableAdapter
 @XmlJavaTypeAdapter(ProcessInstanceAdvanceableAdapter.class)
 public class ProcessInstanceAdvanceable extends ProcessInstance {
 
-	private Long activity;
+	private String activity;
 	private boolean advance;
 
 	ProcessInstanceAdvanceable() {
 		// package visibility
 	}
 
-	public Long getActivity() {
+	public String getActivity() {
 		return activity;
 	}
 
-	void setActivity(final Long activityId) {
+	void setActivity(final String activityId) {
 		this.activity = activityId;
 	}
 

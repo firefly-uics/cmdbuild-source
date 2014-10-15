@@ -39,7 +39,7 @@ public class CxfProcessAttributes implements ProcessAttributes {
 	}
 
 	@Override
-	public ResponseMultiple<Attribute> readAll(final Long processId, final boolean activeOnly, final Integer limit,
+	public ResponseMultiple<Attribute> readAll(final String processId, final boolean activeOnly, final Integer limit,
 			final Integer offset) {
 		final CMClass target = userDataAccessLogic.findClass(processId);
 		if (target == null) {

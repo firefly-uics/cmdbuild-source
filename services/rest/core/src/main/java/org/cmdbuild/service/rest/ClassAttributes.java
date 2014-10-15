@@ -23,7 +23,7 @@ public interface ClassAttributes {
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<Attribute> readAll( //
-			@PathParam(CLASS_ID) Long classId, //
+			@PathParam(CLASS_ID) String classId, //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //

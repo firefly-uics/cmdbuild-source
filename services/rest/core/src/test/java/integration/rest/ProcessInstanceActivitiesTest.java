@@ -10,6 +10,7 @@ import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -59,11 +60,11 @@ public class ProcessInstanceActivitiesTest {
 				ProcessActivityWithBasicDetails.class) //
 				.withElements(asList( //
 						newProcessActivityWithBasicDetails() //
-								.withId(123L) //
+								.withId("123") //
 								.withWritableStatus(true) //
 								.build(), //
 						newProcessActivityWithBasicDetails() //
-								.withId(456L) //
+								.withId("456") //
 								.withWritableStatus(false) //
 								.build() //
 						)) //
@@ -73,14 +74,14 @@ public class ProcessInstanceActivitiesTest {
 				.build();
 		final ResponseMultiple<ProcessActivityWithBasicDetails> expectedResponse = sentResponse;
 		doReturn(sentResponse) //
-				.when(service).read(anyLong(), anyLong());
+				.when(service).read(anyString(), anyLong());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("processes/123/instances/456/activities"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq(123L), eq(456L));
+		verify(service).read(eq("123"), eq(456L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -91,17 +92,17 @@ public class ProcessInstanceActivitiesTest {
 		final ResponseSingle<ProcessActivityWithFullDetails> sentResponse = newResponseSingle(
 				ProcessActivityWithFullDetails.class) //
 				.withElement(newProcessActivityWithFullDetails() //
-						.withId(123L) //
+						.withId("123") //
 						.withDescription("description") //
 						.withInstructions("instructions") //
 						.withAttributes(asList( //
 								newAttributeStatus() //
-										.withId(456L) //
+										.withId("456") //
 										.withWritable(true) //
 										.withMandatory(false) //
 										.build(), //
 								newAttributeStatus() //
-										.withId(789L) //
+										.withId("789") //
 										.withMandatory(true) //
 										.build() //
 								)) //
@@ -109,14 +110,14 @@ public class ProcessInstanceActivitiesTest {
 				.build();
 		final ResponseSingle<ProcessActivityWithFullDetails> expectedResponse = sentResponse;
 		doReturn(sentResponse) //
-				.when(service).read(anyLong(), anyLong(), anyLong());
+				.when(service).read(anyString(), anyLong(), anyString());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("processes/123/instances/456/activities/789/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq(123L), eq(456L), eq(789L));
+		verify(service).read(eq("123"), eq(456L), eq("789"));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}

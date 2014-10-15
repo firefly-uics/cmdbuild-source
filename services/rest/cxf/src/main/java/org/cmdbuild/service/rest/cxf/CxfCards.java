@@ -40,7 +40,7 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public ResponseSingle<Long> create(final Long classId, final Card card) {
+	public ResponseSingle<Long> create(final String classId, final Card card) {
 		final CMClass targetClass = userDataAccessLogic.findClass(classId);
 		if (targetClass == null) {
 			errorHandler.classNotFound(classId);
@@ -55,7 +55,7 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public ResponseSingle<Card> read(final Long classId, final Long id) {
+	public ResponseSingle<Card> read(final String classId, final Long id) {
 		// TODO inject error management within logic
 		final CMClass targetClass = userDataAccessLogic.findClass(classId);
 		if (targetClass == null) {
@@ -79,7 +79,7 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public ResponseMultiple<Card> read(final Long classId, final String filter, final Integer limit,
+	public ResponseMultiple<Card> read(final String classId, final String filter, final Integer limit,
 			final Integer offset) {
 		final CMClass targetClass = userDataAccessLogic.findClass(classId);
 		if (targetClass == null) {
@@ -115,7 +115,7 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public void update(final Long classId, final Long id, final Card card) {
+	public void update(final String classId, final Long id, final Card card) {
 		final CMClass targetClass = userDataAccessLogic.findClass(classId);
 		if (targetClass == null) {
 			errorHandler.classNotFound(classId);
@@ -128,7 +128,7 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public void delete(final Long classId, final Long id) {
+	public void delete(final String classId, final Long id) {
 		final CMClass targetClass = userDataAccessLogic.findClass(classId);
 		if (targetClass == null) {
 			errorHandler.classNotFound(classId);

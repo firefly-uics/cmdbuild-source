@@ -1,6 +1,5 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newLookupTypeDetail;
 
 import org.cmdbuild.data.store.lookup.LookupType;
@@ -34,9 +33,9 @@ public class ToLookupTypeDetail implements Function<LookupType, LookupTypeDetail
 	@Override
 	public LookupTypeDetail apply(final LookupType input) {
 		return newLookupTypeDetail() //
-				.withId(fakeId(input.name)) //
+				.withId(input.name) //
 				.withName(input.name) //
-				.withParent(fakeId(input.parent)) //
+				.withParent(input.parent) //
 				.build();
 	}
 

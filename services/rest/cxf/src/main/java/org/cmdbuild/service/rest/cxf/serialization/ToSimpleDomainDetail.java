@@ -33,7 +33,7 @@ public class ToSimpleDomainDetail implements Function<CMDomain, DomainWithBasicD
 	@Override
 	public DomainWithBasicDetails apply(final CMDomain input) {
 		return newDomainWithBasicDetails() //
-				.withId(input.getId()) //
+				.withId(input.getName()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.build();
