@@ -1,8 +1,8 @@
 (function() {
 
-	Ext.ns("CMDBuild");
+	Ext.ns('CMDBuild');
 
-	// global constants
+	// Global constants
 	CMDBuild.LABEL_WIDTH = 150;
 
 	CMDBuild.BIG_FIELD_ONLY_WIDTH = 475;
@@ -20,7 +20,7 @@
 	CMDBuild.CFG_BIG_FIELD_WIDTH = CMDBuild.CFG_LABEL_WIDTH + 450;
 	CMDBuild.CFG_MEDIUM_FIELD_WIDTH = CMDBuild.CFG_LABEL_WIDTH + 150;
 
-	// global object with runtime configuration
+	// Global object with runtime configuration
 	CMDBuild.Config = {};
 
 	// Logger configuration
@@ -28,7 +28,7 @@
 		CMDBuild.log.addAppender(new log4javascript.BrowserConsoleAppender());
 
 		// Disable all console messages if IE) or lower to avoid print window spam
-		if (Ext.isIE9m || true) {
+		if (Ext.isIE9m) {
 			var console = { log: function() {} };
 			log4javascript.setEnabled(false);
 			Ext.Error.ignore = true;
@@ -36,40 +36,40 @@
 
 		// Convenience methods to debug
 		_debug = function() {
-			var prefix = "DEBUG";
+			var prefix = 'DEBUG';
 
-			if (typeof arguments[0] == "string")
-				arguments[0] = prefix + ": " + arguments[0];
+			if (typeof arguments[0] == 'string')
+				arguments[0] = prefix + ': ' + arguments[0];
 
 			CMDBuild.log.debug.apply(CMDBuild.log, arguments);
 		};
 
 		_warning = function() {
-			var prefix = "WARNING";
+			var prefix = 'WARNING';
 
-			if (typeof arguments[0] == "string")
-				arguments[0] = prefix + ": " + arguments[0];
+			if (typeof arguments[0] == 'string')
+				arguments[0] = prefix + ': ' + arguments[0];
 
 			CMDBuild.log.warn.apply(CMDBuild.log, arguments);
 		};
 
 		_trace = function() {
-			_debug("TRACE", arguments);
+			_debug('TRACE', arguments);
 
-			if (console && typeof console.trace == "function")
+			if (console && typeof console.trace == 'function')
 				console.trace();
 		};
 
 		_deprecated = function() {
-			var name = "";
+			var name = '';
 
 			try {
 				name  = arguments.callee.caller.name;
 			} catch (e) {
-				_debug("DEPRECATED", _trace());
+				_debug('DEPRECATED', _trace());
 			}
 
-			_debug("DEPRECATED: " + name, _trace());
+			_debug('DEPRECATED: ' + name, _trace());
 		};
 	// END: Logger configuration
 
@@ -88,12 +88,10 @@
 		timeout: CMDBuild.Config.defaultTimeout
 	});
 
-	// Component masks are shown at 20000 z-index. This oddly fixes
-	// the problem of masks appearing on top of new windows.
+	// Component masks are shown at 20000 z-index. This oddly fixes the problem of masks appearing on top of new windows.
 	// Ext.WindowMgr.zseed = 30000;
 
-	Ext.WindowManager.getNextZSeed();	// to increase the default zseed. Is needed for the combo on windoows
-										// probably it fix also the prev problem
+	Ext.WindowManager.getNextZSeed();	// To increase the default zseed. Is needed for the combo on windoows probably it fix also the prev problem
 	Ext.enableFx = false;
 
 })();
