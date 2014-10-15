@@ -23,46 +23,55 @@
 	// global object with runtime configuration
 	CMDBuild.Config = {};
 
-	CMDBuild.log = log4javascript.getLogger();
-	CMDBuild.log.addAppender(new log4javascript.BrowserConsoleAppender());
+	// Logger configuration
+		CMDBuild.log = log4javascript.getLogger();
+		CMDBuild.log.addAppender(new log4javascript.BrowserConsoleAppender());
 
-	// convenience methods to debug
-	_debug = function() {
-		var prefix = "DEBUG";
-
-		if (typeof arguments[0] == "string")
-			arguments[0] = prefix + ": " + arguments[0];
-
-		CMDBuild.log.debug.apply(CMDBuild.log, arguments);
-	};
-
-	_warning = function() {
-		var prefix = "WARNING";
-
-		if (typeof arguments[0] == "string")
-			arguments[0] = prefix + ": " + arguments[0];
-
-		CMDBuild.log.warn.apply(CMDBuild.log, arguments);
-	};
-
-	_trace = function() {
-		_debug("TRACE", arguments);
-
-		if (console && typeof console.trace == "function")
-			console.trace();
-	};
-
-	_deprecated = function() {
-		var name = "";
-
-		try {
-			name  = arguments.callee.caller.name;
-		} catch (e) {
-			_debug("DEPRECATED", _trace());
+		// Disable all console messages if IE) or lower to avoid print window spam
+		if (Ext.isIE9m || true) {
+			var console = { log: function() {} };
+			log4javascript.setEnabled(false);
+			Ext.Error.ignore = true;
 		}
 
-		_debug("DEPRECATED: " + name, _trace());
-	};
+		// Convenience methods to debug
+		_debug = function() {
+			var prefix = "DEBUG";
+
+			if (typeof arguments[0] == "string")
+				arguments[0] = prefix + ": " + arguments[0];
+
+			CMDBuild.log.debug.apply(CMDBuild.log, arguments);
+		};
+
+		_warning = function() {
+			var prefix = "WARNING";
+
+			if (typeof arguments[0] == "string")
+				arguments[0] = prefix + ": " + arguments[0];
+
+			CMDBuild.log.warn.apply(CMDBuild.log, arguments);
+		};
+
+		_trace = function() {
+			_debug("TRACE", arguments);
+
+			if (console && typeof console.trace == "function")
+				console.trace();
+		};
+
+		_deprecated = function() {
+			var name = "";
+
+			try {
+				name  = arguments.callee.caller.name;
+			} catch (e) {
+				_debug("DEPRECATED", _trace());
+			}
+
+			_debug("DEPRECATED: " + name, _trace());
+		};
+	// END: Logger configuration
 
 	// TODO: Read from real configuration
 	CMDBuild.Config.defaultTimeout = 90;
