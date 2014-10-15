@@ -242,19 +242,19 @@
 				},
 
 				defaults: {
-					overflowY: 'auto',
-					flex: 1
+					overflowY: 'auto'
 				},
 
 				items: [
 					{
 						xtype: 'container',
-						margins: '0 3 0 0',
+						flex: 1,
 						items: [this.emailAccount, this.credentials]
 					},
+					{ xtype: 'splitter' },
 					{
 						xtype: 'container',
-						margins: '0 0 0 3',
+						flex: 1,
 						items: [this.outgoing, this.incoming]
 					}
 				]
