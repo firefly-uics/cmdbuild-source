@@ -75,7 +75,7 @@ public class RelationsTest {
 	@Test
 	public void relationsRead() throws Exception {
 		// given
-		final Long type = 12L;
+		final String type = "12";
 		final Relation firstRelation = newRelation() //
 				.withType(type) //
 				.withId(78L) //
@@ -120,7 +120,7 @@ public class RelationsTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyLong(), anyLong(), anyLong(), anyString(), anyInt(), anyInt());
+				.when(service).read(anyString(), anyString(), anyLong(), anyString(), anyInt(), anyInt());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("domains/12/relations/"));
@@ -133,7 +133,7 @@ public class RelationsTest {
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq(12L), eq(34L), eq(56L), eq("baz"), anyInt(), anyInt());
+		verify(service).read(eq("12"), eq("34"), eq(56L), eq("baz"), anyInt(), anyInt());
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}

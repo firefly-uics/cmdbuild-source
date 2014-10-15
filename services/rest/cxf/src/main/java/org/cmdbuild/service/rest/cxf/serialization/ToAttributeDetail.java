@@ -1,7 +1,5 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.logic.data.lookup.Util.typesWith;
-import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newAttribute;
 import static org.cmdbuild.service.rest.model.Builders.newFilter;
 
@@ -29,7 +27,6 @@ import org.cmdbuild.service.rest.model.Builders.AttributeBuilder;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 
 public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
@@ -108,7 +105,7 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 	@Override
 	public Attribute apply(final CMAttribute input) {
 		final AttributeBuilder builder = newAttribute() //
-				.withId(fakeId(input.getName())) //
+				.withId(input.getName()) //
 				.withType(attributeTypeResolver.resolve(input).asString()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
@@ -145,17 +142,17 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 					errorHandler.classNotFound(className);
 				}
 
-				builder.withTargetClass(found.getId());
+				builder.withTargetClass(found.getName());
 			}
 
 			@Override
 			public void visit(final LookupAttributeType attributeType) {
 				final String name = attributeType.getLookupTypeName();
-				final Optional<LookupType> found = lookupLogic.typeFor(typesWith(name));
-				if (!found.isPresent()) {
+				final LookupType found = lookupLogic.typeFor(name);
+				if (found == null) {
 					errorHandler.lookupTypeNotFound(name);
 				}
-				builder.withLookupType(fakeId(found.get().name));
+				builder.withLookupType(name);
 			};
 
 			@Override
@@ -174,7 +171,7 @@ public class ToAttributeDetail implements Function<CMAttribute, Attribute> {
 					target = domain.getClass1();
 				}
 
-				builder.withTargetClass(target.getId()) //
+				builder.withTargetClass(target.getName()) //
 						.withFilter(newFilter() //
 								.withText(attribute.getFilter()) //
 								.withParams(toMap(metadataStoreFactory.storeForAttribute(attribute).readAll())) //

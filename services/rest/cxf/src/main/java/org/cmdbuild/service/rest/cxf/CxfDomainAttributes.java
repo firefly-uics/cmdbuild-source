@@ -39,7 +39,7 @@ public class CxfDomainAttributes implements DomainAttributes {
 	}
 
 	@Override
-	public ResponseMultiple<Attribute> readAll(final Long domainId, final boolean activeOnly, final Integer limit,
+	public ResponseMultiple<Attribute> readAll(final String domainId, final boolean activeOnly, final Integer limit,
 			final Integer offset) {
 		final CMDomain target = userDataAccessLogic.findDomain(domainId);
 		if (target == null) {

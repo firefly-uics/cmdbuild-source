@@ -11,7 +11,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -69,7 +69,7 @@ public class ProcessAttributesTest {
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll(anyLong(), anyBoolean(), anyInt(), anyInt())) //
+		when(service.readAll(anyString(), anyBoolean(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
@@ -82,7 +82,7 @@ public class ProcessAttributesTest {
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).readAll(eq(123L), eq(true), eq(456), eq(789));
+		verify(service).readAll(eq("123"), eq(true), eq(456), eq(789));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}

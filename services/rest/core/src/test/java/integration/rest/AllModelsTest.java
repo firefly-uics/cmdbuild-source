@@ -1,4 +1,4 @@
-package org.cmdbuild.service.rest;
+package integration.rest;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;

@@ -23,7 +23,7 @@ public interface LookupTypes {
 	@GET
 	@Path("{" + LOOKUP_TYPE_ID + "}/")
 	ResponseSingle<LookupTypeDetail> read( //
-			@PathParam(LOOKUP_TYPE_ID) Long lookupTypeId //
+			@PathParam(LOOKUP_TYPE_ID) String lookupTypeId //
 	);
 
 	@GET

@@ -64,7 +64,7 @@ public class CxfClasses implements Classes {
 	}
 
 	@Override
-	public ResponseSingle<ClassWithFullDetails> read(final Long classId) {
+	public ResponseSingle<ClassWithFullDetails> read(final String classId) {
 		final CMClass found = userDataAccessLogic.findClass(classId);
 		if (found == null) {
 			errorHandler.classNotFound(classId);

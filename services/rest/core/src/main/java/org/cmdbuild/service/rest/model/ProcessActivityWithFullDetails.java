@@ -16,10 +16,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement(name = PROCESS_ACTIVITY_DEFINITION)
-public class ProcessActivityWithFullDetails extends ModelWithId {
+public class ProcessActivityWithFullDetails extends ModelWithId<String> {
 
 	@XmlRootElement(name = ATTRIBUTE)
-	public static class AttributeStatus extends ModelWithId {
+	public static class AttributeStatus extends ModelWithId<String> {
 
 		private boolean writable;
 		private boolean mandatory;

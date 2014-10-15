@@ -1,7 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newAttributeStatus;
 import static org.cmdbuild.service.rest.model.Builders.newProcessActivityWithBasicDetails;
 
@@ -43,7 +42,7 @@ public class ToProcessActivity implements Function<UserActivityInstance, Process
 		@Override
 		public AttributeStatus apply(final CMActivityVariableToProcess input) {
 			return newAttributeStatus() //
-					.withId(fakeId(input.getName())) //
+					.withId(input.getName()) //
 					.withWritable(input.getType() != Type.READ_ONLY) //
 					.withMandatory(input.getType() == Type.READ_WRITE_REQUIRED) //
 					.build();
@@ -60,7 +59,7 @@ public class ToProcessActivity implements Function<UserActivityInstance, Process
 	@Override
 	public ProcessActivityWithBasicDetails apply(final UserActivityInstance input) {
 		return newProcessActivityWithBasicDetails() //
-				.withId(fakeId(input.getId())) //
+				.withId(input.getId()) //
 				.withWritableStatus(input.isWritable()) //
 				.withDescription(safeDescriptionOf(input)) //
 				.build();
@@ -69,7 +68,7 @@ public class ToProcessActivity implements Function<UserActivityInstance, Process
 	private String safeDescriptionOf(final UserActivityInstance input) {
 		try {
 			return input.getDefinition().getDescription();
-		} catch (CMWorkflowException e) {
+		} catch (final Exception e) {
 			return EMPTY;
 		}
 	}

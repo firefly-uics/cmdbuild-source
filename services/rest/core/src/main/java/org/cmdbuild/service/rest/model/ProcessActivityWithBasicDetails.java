@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement(name = PROCESS_ACTIVITY)
-public class ProcessActivityWithBasicDetails extends ModelWithId {
+public class ProcessActivityWithBasicDetails extends ModelWithId<String> {
 
 	private boolean writable;
 	private String description;

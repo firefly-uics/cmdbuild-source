@@ -15,6 +15,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -79,12 +80,12 @@ public class ProcessInstancesTest {
 				.withElement(123L) //
 				.build();
 		doReturn(expectedResponse) //
-				.when(service).create(anyLong(), any(ProcessInstanceAdvanceable.class));
+				.when(service).create(anyString(), any(ProcessInstanceAdvanceable.class));
 
 		// when
 		final PostMethod post = new PostMethod(server.resource("processes/12/instances/"));
 		post.setRequestEntity(new StringRequestEntity( //
-				"{\"_id\" : 34, \"_type\" : 56, \"_advance\" : true, \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
+				"{\"_id\" : 34, \"_type\" : \"56\", \"_advance\" : true, \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
 				APPLICATION_JSON, //
 				UTF_8) //
 		);
@@ -93,12 +94,12 @@ public class ProcessInstancesTest {
 		// then
 		final ArgumentCaptor<ProcessInstanceAdvanceable> captor = ArgumentCaptor
 				.forClass(ProcessInstanceAdvanceable.class);
-		verify(service).create(eq(12L), captor.capture());
+		verify(service).create(eq("12"), captor.capture());
 		assertThat(result, equalTo(200));
 		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 		final ProcessInstanceAdvanceable captured = captor.getValue();
 		assertThat(captured.getId(), equalTo(34L));
-		assertThat(captured.getType(), equalTo(56L));
+		assertThat(captured.getType(), equalTo("56"));
 		assertThat(captured.isAdvance(), equalTo(true));
 		assertThat(captured.getValues(), hasEntry("bar", (Object) "BAR"));
 		assertThat(captured.getValues(), hasEntry("baz", (Object) "BAZ"));
@@ -108,7 +109,7 @@ public class ProcessInstancesTest {
 	public void instanceRead() throws Exception {
 		// given
 		final ProcessInstance processInstance = newProcessInstance() //
-				.withType(123L) //
+				.withType("123") //
 				.withId(456L) //
 				.withName("foo") //
 				.withValues(ChainablePutMap.of(new HashMap<String, Object>()) //
@@ -122,14 +123,14 @@ public class ProcessInstancesTest {
 				.withElement(adapter.marshal(processInstance)) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyLong(), anyLong());
+				.when(service).read(anyString(), anyLong());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("processes/123/instances/456/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq(123L), eq(456L));
+		verify(service).read(eq("123"), eq(456L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -138,7 +139,7 @@ public class ProcessInstancesTest {
 	public void instancesRead() throws Exception {
 		// given
 		final ProcessInstance first = newProcessInstance() //
-				.withType(12L) //
+				.withType("12") //
 				.withId(34L) //
 				.withName("foo") //
 				.withValues(ChainablePutMap.of(new HashMap<String, Object>()) //
@@ -146,7 +147,7 @@ public class ProcessInstancesTest {
 						.chainablePut("bar", "baz")) //
 				.build();
 		final ProcessInstance second = newProcessInstance() //
-				.withType(12L) //
+				.withType("12") //
 				.withId(56L) //
 				.withName("bar") //
 				.withValues(ChainablePutMap.of(new HashMap<String, Object>()) //
@@ -167,7 +168,7 @@ public class ProcessInstancesTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyLong(), anyInt(), anyInt());
+				.when(service).read(anyString(), anyInt(), anyInt());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("processes/12/instances/"));
@@ -178,7 +179,7 @@ public class ProcessInstancesTest {
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq(12L), eq(456), eq(789));
+		verify(service).read(eq("12"), eq(456), eq(789));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -188,7 +189,7 @@ public class ProcessInstancesTest {
 		// when
 		final PutMethod put = new PutMethod(server.resource("processes/12/instances/34/"));
 		put.setRequestEntity(new StringRequestEntity( //
-				"{\"_id\" : 56, \"_type\" : 78, \"_activity\" : 90, \"_advance\" : true, \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
+				"{\"_id\" : 56, \"_type\" : \"78\", \"_activity\" : \"90\", \"_advance\" : true, \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
 				APPLICATION_JSON, //
 				UTF_8) //
 		);
@@ -197,10 +198,10 @@ public class ProcessInstancesTest {
 		// then
 		final ArgumentCaptor<ProcessInstanceAdvanceable> captor = ArgumentCaptor
 				.forClass(ProcessInstanceAdvanceable.class);
-		verify(service).update(eq(12L), eq(34L), captor.capture());
+		verify(service).update(eq("12"), eq(34L), captor.capture());
 		assertThat(result, equalTo(204));
 		final ProcessInstanceAdvanceable captured = captor.getValue();
-		assertThat(captured.getActivity(), equalTo(90L));
+		assertThat(captured.getActivity(), equalTo("90"));
 		assertThat(captured.isAdvance(), equalTo(true));
 		assertThat(captured.getValues(), hasEntry("bar", (Object) "BAR"));
 		assertThat(captured.getValues(), hasEntry("baz", (Object) "BAZ"));
@@ -213,7 +214,7 @@ public class ProcessInstancesTest {
 		final int result = httpclient.executeMethod(delete);
 
 		// then
-		verify(service).delete(eq(123L), eq(456L));
+		verify(service).delete(eq("123"), eq(456L));
 		assertThat(result, equalTo(204));
 	}
 

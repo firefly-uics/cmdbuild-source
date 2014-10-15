@@ -6,9 +6,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public abstract class ModelWithIdAndType extends ModelWithId {
+public abstract class ModelWithIdAndType<I, T> extends ModelWithId<I> {
 
-	private Long type;
+	private T type;
 
 	protected ModelWithIdAndType() {
 		// usable by subclasses only
@@ -16,11 +16,11 @@ public abstract class ModelWithIdAndType extends ModelWithId {
 
 	@XmlAttribute(name = UNDERSCORED_TYPE)
 	@JsonProperty(UNDERSCORED_TYPE)
-	public Long getType() {
+	public T getType() {
 		return type;
 	}
 
-	protected void setType(final Long type) {
+	protected void setType(final T type) {
 		this.type = type;
 	}
 

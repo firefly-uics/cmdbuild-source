@@ -19,6 +19,7 @@ import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.ProcessStartActivity;
 import org.cmdbuild.service.rest.Processes;
 import org.cmdbuild.service.rest.Relations;
+import org.cmdbuild.service.rest.Tokens;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
@@ -33,8 +34,13 @@ import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.cxf.CxfProcessStartActivity;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.cxf.CxfRelations;
-import org.cmdbuild.service.rest.cxf.DefaultErrorHandler;
+import org.cmdbuild.service.rest.cxf.CxfTokens;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.cxf.WebApplicationExceptionErrorHandler;
+import org.cmdbuild.service.rest.cxf.service.InMemoryTokenStore;
+import org.cmdbuild.service.rest.cxf.service.RandomTokenGenerator;
+import org.cmdbuild.service.rest.cxf.service.TokenGenerator;
+import org.cmdbuild.service.rest.cxf.service.TokenStore;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -50,7 +56,7 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	protected ErrorHandler errorHandler() {
-		return new DefaultErrorHandler();
+		return new WebApplicationExceptionErrorHandler();
 	}
 
 	@Bean
@@ -137,9 +143,25 @@ public class Services implements LoggingSupport {
 	}
 
 	@Bean
-	public ProcessStartActivity cxfProcessStartActivity() {
+	public ProcessStartActivity cxfProcessStartActivities() {
 		final CxfProcessStartActivity service = new CxfProcessStartActivity(errorHandler(), core.userWorkflowLogic());
 		return proxy(ProcessStartActivity.class, service);
+	}
+
+	@Bean
+	public Tokens cxfTokens() {
+		final CxfTokens service = new CxfTokens(errorHandler(), tokenGenerator(), tokenStore());
+		return proxy(Tokens.class, service);
+	}
+
+	@Bean
+	protected TokenGenerator tokenGenerator() {
+		return new RandomTokenGenerator();
+	}
+
+	@Bean
+	public TokenStore tokenStore() {
+		return new InMemoryTokenStore();
 	}
 
 	private <T> T proxy(final Class<T> type, final T service) {

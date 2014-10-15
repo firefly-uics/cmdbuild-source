@@ -33,7 +33,7 @@ public interface Processes {
 	@GET
 	@Path("{" + PROCESS_ID + "}/")
 	ResponseSingle<ProcessWithFullDetails> read( //
-			@PathParam(PROCESS_ID) Long processId //
+			@PathParam(PROCESS_ID) String processId //
 	);
 
 }

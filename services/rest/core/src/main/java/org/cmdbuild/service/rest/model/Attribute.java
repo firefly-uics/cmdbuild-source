@@ -33,7 +33,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement(name = ATTRIBUTE_DETAIL)
-public class Attribute extends ModelWithId {
+public class Attribute extends ModelWithId<String> {
 
 	@XmlRootElement(name = FILTER)
 	public static class Filter extends Model {
@@ -101,10 +101,10 @@ public class Attribute extends ModelWithId {
 	private String group;
 	private Long precision;
 	private Long scale;
-	private Long targetClass;
+	private String targetClass;
 	private Long length;
 	private String editorType;
-	private Long lookupTypeName;
+	private String lookupTypeName;
 	private Filter filter;
 
 	Attribute() {
@@ -229,11 +229,11 @@ public class Attribute extends ModelWithId {
 	}
 
 	@XmlAttribute(name = TARGET_CLASS)
-	public Long getTargetClass() {
+	public String getTargetClass() {
 		return targetClass;
 	}
 
-	void setTargetClass(final Long targetClass) {
+	void setTargetClass(final String targetClass) {
 		this.targetClass = targetClass;
 	}
 
@@ -256,11 +256,11 @@ public class Attribute extends ModelWithId {
 	}
 
 	@XmlAttribute(name = LOOKUP_TYPE)
-	public Long getLookupType() {
+	public String getLookupType() {
 		return lookupTypeName;
 	}
 
-	void setLookupType(final Long lookupType) {
+	void setLookupType(final String lookupType) {
 		this.lookupTypeName = lookupType;
 	}
 

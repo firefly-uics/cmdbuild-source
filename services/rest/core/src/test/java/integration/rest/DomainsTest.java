@@ -11,7 +11,7 @@ import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -97,7 +97,7 @@ public class DomainsTest {
 						.withName("foo") //
 						.build()) //
 				.build();
-		when(service.read(anyLong())) //
+		when(service.read(anyString())) //
 				.thenReturn(expectedResponse);
 
 		// when
@@ -105,7 +105,7 @@ public class DomainsTest {
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq(123L));
+		verify(service).read(eq("123"));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}

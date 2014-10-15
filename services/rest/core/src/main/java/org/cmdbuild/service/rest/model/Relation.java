@@ -19,7 +19,7 @@ import org.cmdbuild.service.rest.model.adapter.StringObjectMapAdapter;
 
 @XmlRootElement(name = RELATION)
 @XmlJavaTypeAdapter(RelationAdapter.class)
-public class Relation extends ModelWithIdAndType {
+public class Relation extends ModelWithIdAndType<Long, String> {
 
 	private Card source;
 	private Card destination;

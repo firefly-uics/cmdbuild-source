@@ -23,7 +23,7 @@ public interface DomainAttributes {
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<Attribute> readAll( //
-			@PathParam(DOMAIN_ID) Long domainId, //
+			@PathParam(DOMAIN_ID) String domainId, //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //

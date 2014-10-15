@@ -49,7 +49,7 @@ public class Builders {
 
 	public static class AttributeBuilder extends ModelBuilder<Attribute> {
 
-		private Long id;
+		private String id;
 		private String type;
 		private String name;
 		private String description;
@@ -63,10 +63,10 @@ public class Builders {
 		private String group;
 		private Long precision;
 		private Long scale;
-		private Long targetClass;
+		private String targetClass;
 		private Long length;
 		private String editorType;
-		private Long lookupType;
+		private String lookupType;
 		private Attribute.Filter filter;
 
 		private AttributeBuilder() {
@@ -98,7 +98,7 @@ public class Builders {
 			return output;
 		}
 
-		public AttributeBuilder withId(final Long id) {
+		public AttributeBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -168,7 +168,7 @@ public class Builders {
 			return this;
 		}
 
-		public AttributeBuilder withTargetClass(final Long targetClass) {
+		public AttributeBuilder withTargetClass(final String targetClass) {
 			this.targetClass = targetClass;
 			return this;
 		}
@@ -183,7 +183,7 @@ public class Builders {
 			return this;
 		}
 
-		public AttributeBuilder withLookupType(final Long lookupType) {
+		public AttributeBuilder withLookupType(final String lookupType) {
 			this.lookupType = lookupType;
 			return this;
 		}
@@ -197,7 +197,7 @@ public class Builders {
 
 	public static class AttributeStatusBuilder extends ModelBuilder<AttributeStatus> {
 
-		private Long id;
+		private String id;
 		private Boolean writable;
 		private Boolean mandatory;
 
@@ -220,7 +220,7 @@ public class Builders {
 			return output;
 		}
 
-		public AttributeStatusBuilder withId(final Long id) {
+		public AttributeStatusBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -239,7 +239,7 @@ public class Builders {
 
 	public static class CardBuilder extends ModelBuilder<Card> {
 
-		private Long type;
+		private String type;
 		private Long id;
 		final Map<String, Object> values = newHashMap();
 
@@ -256,7 +256,7 @@ public class Builders {
 			return output;
 		}
 
-		public CardBuilder withType(final Long type) {
+		public CardBuilder withType(final String type) {
 			this.type = type;
 			return this;
 		}
@@ -290,7 +290,7 @@ public class Builders {
 
 	public static class ClassWithBasicDetailsBuilder extends ModelBuilder<ClassWithBasicDetails> {
 
-		private Long id;
+		private String id;
 		private String name;
 		private String description;
 		private String parent;
@@ -316,7 +316,7 @@ public class Builders {
 			return output;
 		}
 
-		public ClassWithBasicDetailsBuilder withId(final Long id) {
+		public ClassWithBasicDetailsBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -345,7 +345,7 @@ public class Builders {
 
 	public static class ClassWithFullDetailsBuilder extends ModelBuilder<ClassWithFullDetails> {
 
-		private Long id;
+		private String id;
 		private String name;
 		private String description;
 		private Boolean prototype;
@@ -374,7 +374,7 @@ public class Builders {
 
 		}
 
-		public ClassWithFullDetailsBuilder withId(final Long id) {
+		public ClassWithFullDetailsBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -406,9 +406,60 @@ public class Builders {
 
 	}
 
+	public static class CredentialsBuilder extends ModelBuilder<Credentials> {
+
+		private String token;
+		private String username;
+		private String password;
+		private String group;
+
+		private CredentialsBuilder() {
+			// use factory method
+		}
+
+		private CredentialsBuilder(final Credentials existing) {
+			// use factory method
+			this.token = existing.getToken();
+			this.username = existing.getUsername();
+			this.password = existing.getPassword();
+			this.group = existing.getGroup();
+		}
+
+		@Override
+		protected Credentials doBuild() {
+			final Credentials output = new Credentials();
+			output.setToken(token);
+			output.setUsername(username);
+			output.setPassword(password);
+			output.setGroup(group);
+			return output;
+		}
+
+		public CredentialsBuilder withToken(final String token) {
+			this.token = token;
+			return this;
+		}
+
+		public CredentialsBuilder withUsername(final String username) {
+			this.username = username;
+			return this;
+		}
+
+		public CredentialsBuilder withPassword(final String password) {
+			this.password = password;
+			return this;
+		}
+
+		public CredentialsBuilder withGroup(final String group) {
+			this.group = group;
+			return this;
+		}
+
+	}
+
 	public static class DomainWithBasicDetailsBuilder extends ModelBuilder<DomainWithBasicDetails> {
 
-		private Long id;
+		private String id;
 		private String name;
 		private String description;
 
@@ -425,7 +476,7 @@ public class Builders {
 			return output;
 		}
 
-		public DomainWithBasicDetailsBuilder withId(final Long id) {
+		public DomainWithBasicDetailsBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -444,7 +495,7 @@ public class Builders {
 
 	public static class DomainWithFullDetailsBuilder extends ModelBuilder<DomainWithFullDetails> {
 
-		private Long id;
+		private String id;
 		private String name;
 		private String description;
 		private Long classSource;
@@ -473,7 +524,7 @@ public class Builders {
 			return output;
 		}
 
-		public DomainWithFullDetailsBuilder withId(final Long id) {
+		public DomainWithFullDetailsBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -554,7 +605,7 @@ public class Builders {
 		private Long id;
 		private String code;
 		private String description;
-		private Long type;
+		private String type;
 		private Long number;
 		private Boolean active;
 		private Boolean isDefault;
@@ -595,7 +646,7 @@ public class Builders {
 			return this;
 		}
 
-		public LookupDetailBuilder withType(final Long type) {
+		public LookupDetailBuilder withType(final String type) {
 			this.type = type;
 			return this;
 		}
@@ -629,9 +680,9 @@ public class Builders {
 
 	public static class LookupTypeDetailBuilder extends ModelBuilder<LookupTypeDetail> {
 
-		private Long id;
+		private String id;
 		private String name;
-		private Long parent;
+		private String parent;
 
 		private LookupTypeDetailBuilder() {
 			// use factory method
@@ -646,7 +697,7 @@ public class Builders {
 			return output;
 		}
 
-		public LookupTypeDetailBuilder withId(final Long id) {
+		public LookupTypeDetailBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -656,7 +707,7 @@ public class Builders {
 			return this;
 		}
 
-		public LookupTypeDetailBuilder withParent(final Long parent) {
+		public LookupTypeDetailBuilder withParent(final String parent) {
 			this.parent = parent;
 			return this;
 		}
@@ -752,7 +803,7 @@ public class Builders {
 
 	public static class ProcessActivityWithBasicDetailsBuilder extends ModelBuilder<ProcessActivityWithBasicDetails> {
 
-		private Long id;
+		private String id;
 		private Boolean writable;
 		private String description;
 
@@ -774,7 +825,7 @@ public class Builders {
 			return output;
 		}
 
-		public ProcessActivityWithBasicDetailsBuilder withId(final Long id) {
+		public ProcessActivityWithBasicDetailsBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -795,7 +846,7 @@ public class Builders {
 
 		private static final Collection<? extends AttributeStatus> NO_ATTRIBUTES = Collections.emptyList();
 
-		private Long id;
+		private String id;
 		private String description;
 		private String instructions;
 		private final Collection<AttributeStatus> attributes = Lists.newArrayList();
@@ -814,7 +865,7 @@ public class Builders {
 			return output;
 		}
 
-		public ProcessActivityWithFullDetailsBuilder withId(final Long id) {
+		public ProcessActivityWithFullDetailsBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -847,7 +898,7 @@ public class Builders {
 		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
 		private static final Function<Entry<? extends String, ? extends Object>, Object> VALUE = toValue();
 
-		private Long type;
+		private String type;
 		private Long id;
 		private String name;
 		final Map<String, Object> values = newHashMap();
@@ -866,7 +917,7 @@ public class Builders {
 			return output;
 		}
 
-		public ProcessInstanceBuilder withType(final Long type) {
+		public ProcessInstanceBuilder withType(final String type) {
 			this.type = type;
 			return this;
 		}
@@ -897,11 +948,11 @@ public class Builders {
 		private static final Function<Entry<? extends String, ? extends Object>, String> KEY = toKey();
 		private static final Function<Entry<? extends String, ? extends Object>, Object> VALUE = toValue();
 
-		private Long type;
+		private String type;
 		private Long id;
 		private String name;
 		final Map<String, Object> values = newHashMap();
-		private Long activityId;
+		private String activityId;
 		private Boolean advance;
 
 		private ProcessInstanceAdvanceBuilder() {
@@ -925,7 +976,7 @@ public class Builders {
 			return output;
 		}
 
-		public ProcessInstanceAdvanceBuilder withType(final Long type) {
+		public ProcessInstanceAdvanceBuilder withType(final String type) {
 			this.type = type;
 			return this;
 		}
@@ -949,7 +1000,7 @@ public class Builders {
 			return this;
 		}
 
-		public ProcessInstanceAdvanceBuilder withActivity(final Long activityId) {
+		public ProcessInstanceAdvanceBuilder withActivity(final String activityId) {
 			this.activityId = activityId;
 			return this;
 		}
@@ -963,7 +1014,7 @@ public class Builders {
 
 	public static class ProcessWithBasicDetailsBuilder extends ModelBuilder<ProcessWithBasicDetails> {
 
-		private Long id;
+		private String id;
 		private String name;
 		private String description;
 		private String parent;
@@ -989,7 +1040,7 @@ public class Builders {
 			return output;
 		}
 
-		public ProcessWithBasicDetailsBuilder withId(final Long id) {
+		public ProcessWithBasicDetailsBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -1018,7 +1069,7 @@ public class Builders {
 
 	public static class ProcessWithFullDetailsBuilder extends ModelBuilder<ProcessWithFullDetails> {
 
-		private Long id;
+		private String id;
 		private String name;
 		private String description;
 		private Boolean prototype;
@@ -1046,7 +1097,7 @@ public class Builders {
 			return output;
 		}
 
-		public ProcessWithFullDetailsBuilder withId(final Long id) {
+		public ProcessWithFullDetailsBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
@@ -1080,7 +1131,7 @@ public class Builders {
 
 	public static class RelationBuilder extends ModelBuilder<Relation> {
 
-		private Long type;
+		private String type;
 		private Long id;
 		private Card source;
 		private Card destination;
@@ -1101,7 +1152,7 @@ public class Builders {
 			return output;
 		}
 
-		public RelationBuilder withType(final Long type) {
+		public RelationBuilder withType(final String type) {
 			this.type = type;
 			return this;
 		}
@@ -1212,6 +1263,14 @@ public class Builders {
 
 	public static ClassWithFullDetailsBuilder newClassWithFullDetails() {
 		return new ClassWithFullDetailsBuilder();
+	}
+
+	public static CredentialsBuilder newCredentials() {
+		return new CredentialsBuilder();
+	}
+
+	public static CredentialsBuilder newCredentials(final Credentials existing) {
+		return new CredentialsBuilder(existing);
 	}
 
 	public static DomainWithBasicDetailsBuilder newDomainWithBasicDetails() {
