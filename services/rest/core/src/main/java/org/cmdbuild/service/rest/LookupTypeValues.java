@@ -25,14 +25,14 @@ public interface LookupTypeValues {
 	@GET
 	@Path("{" + LOOKUP_VALUE_ID + "}/")
 	ResponseSingle<LookupDetail> read( //
-			@PathParam(LOOKUP_TYPE_ID) Long lookupTypeId, //
+			@PathParam(LOOKUP_TYPE_ID) String lookupTypeId, //
 			@PathParam(LOOKUP_VALUE_ID) Long lookupValueId //
 	);
 
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<LookupDetail> readAll( //
-			@PathParam(LOOKUP_TYPE_ID) Long lookupTypeId, //
+			@PathParam(LOOKUP_TYPE_ID) String lookupTypeId, //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //

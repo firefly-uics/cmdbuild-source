@@ -1,7 +1,6 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
 import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
@@ -27,8 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 
 public class CxfProcessInstances implements ProcessInstances {
 
@@ -43,7 +40,7 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public ResponseSingle<Long> create(final Long processId, final ProcessInstanceAdvanceable processInstance) {
+	public ResponseSingle<Long> create(final String processId, final ProcessInstanceAdvanceable processInstance) {
 		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
 			errorHandler.processNotFound(processId);
@@ -64,7 +61,7 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public ResponseSingle<ProcessInstance> read(final Long processId, final Long instanceId) {
+	public ResponseSingle<ProcessInstance> read(final String processId, final Long instanceId) {
 		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
 			errorHandler.processNotFound(processId);
@@ -101,7 +98,7 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public ResponseMultiple<ProcessInstance> read(final Long processId, final Integer limit, final Integer offset) {
+	public ResponseMultiple<ProcessInstance> read(final String processId, final Integer limit, final Integer offset) {
 		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
 			errorHandler.processNotFound(processId);
@@ -126,30 +123,21 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public void update(final Long processId, final Long instanceId, final ProcessInstanceAdvanceable processInstance) {
+	public void update(final String processId, final Long instanceId, final ProcessInstanceAdvanceable processInstance) {
 		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
 			errorHandler.processNotFound(processId);
 		}
 		try {
 			final UserProcessInstance instance = workflowLogic.getProcessInstance(processId, instanceId);
-			final Optional<UserActivityInstance> activity = from(instance.getActivities()) //
-					.filter(new Predicate<UserActivityInstance>() {
-
-						@Override
-						public boolean apply(final UserActivityInstance input) {
-							return fakeId(input.getId()).equals(processInstance.getActivity());
-						};
-
-					}) //
-					.first();
-			if (!activity.isPresent()) {
+			final UserActivityInstance activity = instance.getActivityInstance(processInstance.getActivity());
+			if (activity == null) {
 				errorHandler.processActivityNotFound(processInstance.getActivity());
 			}
 			workflowLogic.updateProcess( //
 					processId, //
 					instanceId, //
-					activity.get().getId(), //
+					activity.getId(), //
 					processInstance.getValues(), //
 					NO_WIDGET_SUBMISSION, //
 					processInstance.isAdvance());
@@ -159,7 +147,7 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public void delete(final Long processId, final Long instanceId) {
+	public void delete(final String processId, final Long instanceId) {
 		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
 			errorHandler.processNotFound(processId);

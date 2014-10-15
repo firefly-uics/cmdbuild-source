@@ -33,7 +33,7 @@ public interface Classes {
 	@GET
 	@Path("{" + CLASS_ID + "}/")
 	ResponseSingle<ClassWithFullDetails> read( //
-			@PathParam(CLASS_ID) Long classId //
+			@PathParam(CLASS_ID) String classId //
 	);
 
 }

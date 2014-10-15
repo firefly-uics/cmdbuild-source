@@ -3,11 +3,10 @@ package unit.cxf;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -48,17 +47,17 @@ public class CxfProcessStartActivityTest {
 	public void exceptionWhenProcessNotFound() throws Exception {
 		// given
 		doReturn(null) //
-				.when(workflowLogic).findProcessClass(anyLong());
+				.when(workflowLogic).findProcessClass(anyString());
 		doThrow(WebApplicationException.class) //
-				.when(errorHandler).processNotFound(anyLong());
+				.when(errorHandler).processNotFound(anyString());
 
 		// when
-		cxfProcessStartActivity.read(123L);
+		cxfProcessStartActivity.read("123");
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
-		inOrder.verify(workflowLogic).findProcessClass(eq(123L));
-		inOrder.verify(errorHandler).processNotFound(eq(123L));
+		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
+		inOrder.verify(errorHandler).processNotFound(eq("123"));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -67,17 +66,17 @@ public class CxfProcessStartActivityTest {
 		// given
 		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
 		doReturn(userProcessClass) //
-				.when(workflowLogic).findProcessClass(anyLong());
+				.when(workflowLogic).findProcessClass(anyString());
 		doThrow(WebApplicationException.class) //
-				.when(workflowLogic).getStartActivity(anyLong());
+				.when(workflowLogic).getStartActivity(anyString());
 
 		// when
-		cxfProcessStartActivity.read(123L);
+		cxfProcessStartActivity.read("123");
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
-		inOrder.verify(workflowLogic).findProcessClass(eq(123L));
-		inOrder.verify(workflowLogic).getStartActivity(eq(123L));
+		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
+		inOrder.verify(workflowLogic).getStartActivity(eq("123"));
 		inOrder.verify(errorHandler).propagate(any(Throwable.class));
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -87,7 +86,7 @@ public class CxfProcessStartActivityTest {
 		// given
 		final UserProcessClass userProcessClass = mock(UserProcessClass.class);
 		doReturn(userProcessClass) //
-				.when(workflowLogic).findProcessClass(anyLong());
+				.when(workflowLogic).findProcessClass(anyString());
 		final CMActivity activity = mock(CMActivity.class);
 		doReturn("id") //
 				.when(activity).getId();
@@ -102,19 +101,19 @@ public class CxfProcessStartActivityTest {
 				)) //
 				.when(activity).getVariables();
 		doReturn(activity) //
-				.when(workflowLogic).getStartActivity(anyLong());
+				.when(workflowLogic).getStartActivity(anyString());
 
 		// when
-		final ResponseSingle<ProcessActivityWithFullDetails> response = cxfProcessStartActivity.read(123L);
+		final ResponseSingle<ProcessActivityWithFullDetails> response = cxfProcessStartActivity.read("123");
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
-		inOrder.verify(workflowLogic).findProcessClass(eq(123L));
-		inOrder.verify(workflowLogic).getStartActivity(eq(123L));
+		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
+		inOrder.verify(workflowLogic).getStartActivity(eq("123"));
 		inOrder.verifyNoMoreInteractions();
 
 		final ProcessActivityWithFullDetails element = response.getElement();
-		assertThat(element.getId(), equalTo(fakeId(activity.getId())));
+		assertThat(element.getId(), equalTo(activity.getId()));
 		assertThat(element.getDescription(), equalTo(activity.getDescription()));
 		assertThat(element.getInstructions(), equalTo(activity.getInstructions()));
 
@@ -122,17 +121,17 @@ public class CxfProcessStartActivityTest {
 		assertThat(size(attributes), equalTo(3));
 
 		final AttributeStatus fooReadOnly = get(attributes, 0);
-		assertThat(fooReadOnly.getId(), equalTo(fakeId("foo")));
+		assertThat(fooReadOnly.getId(), equalTo("foo"));
 		assertThat(fooReadOnly.isWritable(), equalTo(false));
 		assertThat(fooReadOnly.isMandatory(), equalTo(false));
 
 		final AttributeStatus barWriteableAndNotMandatory = get(attributes, 1);
-		assertThat(barWriteableAndNotMandatory.getId(), equalTo(fakeId("bar")));
+		assertThat(barWriteableAndNotMandatory.getId(), equalTo("bar"));
 		assertThat(barWriteableAndNotMandatory.isWritable(), equalTo(true));
 		assertThat(barWriteableAndNotMandatory.isMandatory(), equalTo(false));
 
 		final AttributeStatus bazWriteableAndMandatory = get(attributes, 2);
-		assertThat(bazWriteableAndMandatory.getId(), equalTo(fakeId("baz")));
+		assertThat(bazWriteableAndMandatory.getId(), equalTo("baz"));
 		assertThat(bazWriteableAndMandatory.isWritable(), equalTo(true));
 		assertThat(bazWriteableAndMandatory.isMandatory(), equalTo(true));
 	}

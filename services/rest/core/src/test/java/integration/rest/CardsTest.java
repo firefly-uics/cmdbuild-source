@@ -76,7 +76,7 @@ public class CardsTest {
 	@Test
 	public void cardsRead() throws Exception {
 		// given
-		final Long type = 123L;
+		final String type = "123L";
 		final Long firstId = 456L;
 		final Long secondId = 789L;
 		final Map<String, String> firstValues = ChainablePutMap.of(new HashMap<String, String>()) //
@@ -119,7 +119,7 @@ public class CardsTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyLong(), anyString(), anyInt(), anyInt());
+				.when(service).read(anyString(), anyString(), anyInt(), anyInt());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("classes/123/cards"));
@@ -131,7 +131,7 @@ public class CardsTest {
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq(123L), eq("filter"), eq(456), eq(789));
+		verify(service).read(eq("123"), eq("filter"), eq(456), eq(789));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -143,12 +143,12 @@ public class CardsTest {
 				.withElement(123L) //
 				.build();
 		doReturn(expectedResponse) //
-				.when(service).create(anyLong(), any(Card.class));
+				.when(service).create(anyString(), any(Card.class));
 
 		// when
 		final PostMethod post = new PostMethod(server.resource("classes/12/cards/"));
 		post.setRequestEntity(new StringRequestEntity( //
-				"{\"_id\" : 34, \"_type\" : 56, \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
+				"{\"_id\" : 34, \"_type\" : \"56\", \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
 				APPLICATION_JSON, //
 				UTF_8) //
 		);
@@ -156,10 +156,10 @@ public class CardsTest {
 
 		// then
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
-		verify(service).create(eq(12L), cardCaptor.capture());
+		verify(service).create(eq("12"), cardCaptor.capture());
 
 		final Card captured = cardCaptor.getValue();
-		assertThat(captured.getType(), equalTo(56L));
+		assertThat(captured.getType(), equalTo("56"));
 		assertThat(captured.getId(), equalTo(34L));
 
 		final Map<String, Object> values = captured.getValues();
@@ -173,7 +173,7 @@ public class CardsTest {
 	@Test
 	public void cardRead() throws Exception {
 		// given
-		final Long type = 123L;
+		final String type = "123L";
 		final Long firstId = 456L;
 		final Map<String, String> firstValues = ChainablePutMap.of(new HashMap<String, String>()) //
 				.chainablePut("foo", "bar") //
@@ -195,14 +195,14 @@ public class CardsTest {
 				) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyLong(), anyLong());
+				.when(service).read(anyString(), anyLong());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("classes/123/cards/456/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq(123L), eq(456L));
+		verify(service).read(eq("123"), eq(456L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
@@ -212,7 +212,7 @@ public class CardsTest {
 		// when
 		final PutMethod put = new PutMethod(server.resource("classes/12/cards/34/"));
 		put.setRequestEntity(new StringRequestEntity( //
-				"{\"_id\" : 56, \"_type\" : 78, \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
+				"{\"_id\" : 56, \"_type\" : \"78\", \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
 				APPLICATION_JSON, //
 				UTF_8) //
 		);
@@ -220,10 +220,10 @@ public class CardsTest {
 
 		// then
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
-		verify(service).update(eq(12L), eq(34L), cardCaptor.capture());
+		verify(service).update(eq("12"), eq(34L), cardCaptor.capture());
 
 		final Card captured = cardCaptor.getValue();
-		assertThat(captured.getType(), equalTo(78L));
+		assertThat(captured.getType(), equalTo("78"));
 		assertThat(captured.getId(), equalTo(56L));
 
 		final Map<String, Object> values = captured.getValues();
@@ -240,7 +240,7 @@ public class CardsTest {
 		final int result = httpclient.executeMethod(delete);
 
 		// then
-		verify(service).delete(eq(123L), eq(456L));
+		verify(service).delete(eq("123"), eq(456L));
 		assertThat(result, equalTo(204));
 	}
 

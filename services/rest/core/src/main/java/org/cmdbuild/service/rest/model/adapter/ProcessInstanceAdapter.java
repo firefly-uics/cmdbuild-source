@@ -30,7 +30,7 @@ public class ProcessInstanceAdapter extends ModelToMapAdapter<ProcessInstance> {
 	@Override
 	protected ProcessInstance mapToModel(final Map<String, Object> input) {
 		return newProcessInstance() //
-				.withType(getAndRemove(input, UNDERSCORED_TYPE, Long.class)) //
+				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
 				.withName(getAndRemove(input, UNDERSCORED_NAME, String.class)) //
 				.withValues(input) //

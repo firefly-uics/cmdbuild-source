@@ -34,10 +34,10 @@ public class ProcessInstanceAdvanceableAdapter extends ModelToMapAdapter<Process
 	@Override
 	protected ProcessInstanceAdvanceable mapToModel(final Map<String, Object> input) {
 		return newProcessInstanceAdvance() //
-				.withType(getAndRemove(input, UNDERSCORED_TYPE, Long.class)) //
+				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
 				.withName(getAndRemove(input, UNDERSCORED_NAME, String.class)) //
-				.withActivity(getAndRemove(input, UNDERSCORED_ACTIVITY, Long.class)) //
+				.withActivity(getAndRemove(input, UNDERSCORED_ACTIVITY, String.class)) //
 				.withAdvance(getAndRemove(input, UNDERSCORED_ADVANCE, Boolean.class)) //
 				.withValues(input) //
 				.build();

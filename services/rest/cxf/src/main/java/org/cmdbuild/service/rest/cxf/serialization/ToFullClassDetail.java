@@ -34,7 +34,7 @@ public class ToFullClassDetail implements Function<CMClass, ClassWithFullDetails
 	public ClassWithFullDetails apply(final CMClass input) {
 		final CMClass parent = input.getParent();
 		return newClassWithFullDetails() //
-				.withId(input.getId()) //
+				.withId(input.getName()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.thatIsPrototype(input.isSuperclass()) //

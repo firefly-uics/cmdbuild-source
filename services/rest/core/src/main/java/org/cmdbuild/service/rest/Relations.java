@@ -25,8 +25,8 @@ public interface Relations {
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<Relation> read( //
-			@PathParam(DOMAIN_ID) Long domainId, //
-			@QueryParam(CLASS_ID) Long classId, //
+			@PathParam(DOMAIN_ID) String domainId, //
+			@QueryParam(CLASS_ID) String classId, //
 			@QueryParam(CARD_ID) Long cardId, //
 			@QueryParam(DOMAIN_SOURCE) String domainSource, //
 			@QueryParam(LIMIT) Integer limit, //

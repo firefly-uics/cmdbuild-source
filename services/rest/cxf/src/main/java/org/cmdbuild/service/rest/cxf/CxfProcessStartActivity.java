@@ -28,7 +28,7 @@ public class CxfProcessStartActivity implements ProcessStartActivity {
 	}
 
 	@Override
-	public ResponseSingle<ProcessActivityWithFullDetails> read(final Long processId) {
+	public ResponseSingle<ProcessActivityWithFullDetails> read(final String processId) {
 		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
 			errorHandler.processNotFound(processId);
@@ -40,7 +40,7 @@ public class CxfProcessStartActivity implements ProcessStartActivity {
 				.build();
 	}
 
-	private CMActivity startActivityFor(final Long processId) {
+	private CMActivity startActivityFor(final String processId) {
 		try {
 			return workflowLogic.getStartActivity(processId);
 		} catch (final CMWorkflowException e) {

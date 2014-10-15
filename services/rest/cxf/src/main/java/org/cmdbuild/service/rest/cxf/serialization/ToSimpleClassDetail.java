@@ -36,7 +36,7 @@ public class ToSimpleClassDetail implements Function<CMClass, ClassWithBasicDeta
 	public ClassWithBasicDetails apply(final CMClass input) {
 		final CMClass parent = input.getParent();
 		return newClassWithBasicDetails() //
-				.withId(input.getId()) //
+				.withId(input.getName()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.withParent((parent == null) ? MISSING_PARENT : parent.getName()) //

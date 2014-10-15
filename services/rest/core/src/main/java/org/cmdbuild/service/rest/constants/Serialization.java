@@ -25,6 +25,7 @@ public class Serialization {
 			CLASS_SOURCE = CLASS + "Source", //
 			CODE = "code", //
 			CODE_CAPITALIZED = "Code", //
+			CREDENTIALS = "credentials", //
 			DATA = "data", //
 			DEFAULT = "default", //
 			DEFAULT_VALUE = DEFAULT + "Value", //
@@ -64,6 +65,7 @@ public class Serialization {
 			PARENT_ID = "parent_id", //
 			PARENT = "parent", //
 			PARENT_TYPE = "parent_type", //
+			PASSWORD = "password", //
 			PRECISION = "precision", //
 			RELATION = "relation", //
 			RESPONSE_METADATA = "meta", //
@@ -76,10 +78,12 @@ public class Serialization {
 			START = "start", //
 			TARGET_CLASS = "targetClass", //
 			TEXT = "text", //
+			TOKEN = "token", //
 			TOTAL = "total", //
 			TYPE = "type", //
 			TYPE_CAPITALIZED = "Type", //
 			UNIQUE = "unique", //
+			USERNAME = "username", //
 			VALUE = "value", //
 			VALUES = "values", //
 			WRITABLE = "writable";

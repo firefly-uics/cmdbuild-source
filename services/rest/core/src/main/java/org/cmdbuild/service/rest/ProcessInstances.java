@@ -30,21 +30,21 @@ public interface ProcessInstances {
 	@POST
 	@Path(EMPTY)
 	ResponseSingle<Long> create( //
-			@PathParam(PROCESS_ID) Long processId, //
+			@PathParam(PROCESS_ID) String processId, //
 			ProcessInstanceAdvanceable processInstance //
 	);
 
 	@GET
 	@Path("{" + PROCESS_INSTANCE_ID + "}")
 	ResponseSingle<ProcessInstance> read( //
-			@PathParam(PROCESS_ID) Long processId, //
+			@PathParam(PROCESS_ID) String processId, //
 			@PathParam(PROCESS_INSTANCE_ID) Long instanceId //
 	);
 
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<ProcessInstance> read( //
-			@PathParam(PROCESS_ID) Long processId, //
+			@PathParam(PROCESS_ID) String processId, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);
@@ -52,7 +52,7 @@ public interface ProcessInstances {
 	@PUT
 	@Path("{" + PROCESS_INSTANCE_ID + "}")
 	void update( //
-			@PathParam(PROCESS_ID) Long processId, //
+			@PathParam(PROCESS_ID) String processId, //
 			@PathParam(PROCESS_INSTANCE_ID) Long instanceId, //
 			ProcessInstanceAdvanceable processInstance //
 	);
@@ -60,7 +60,7 @@ public interface ProcessInstances {
 	@DELETE
 	@Path("{" + PROCESS_INSTANCE_ID + "}")
 	void delete( //
-			@PathParam(PROCESS_ID) Long processId, //
+			@PathParam(PROCESS_ID) String processId, //
 			@PathParam(PROCESS_INSTANCE_ID) Long instanceId //
 	);
 

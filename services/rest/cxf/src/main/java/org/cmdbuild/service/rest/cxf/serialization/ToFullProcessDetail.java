@@ -34,7 +34,7 @@ public class ToFullProcessDetail implements Function<CMClass, ProcessWithFullDet
 	public ProcessWithFullDetails apply(final CMClass input) {
 		final CMClass parent = input.getParent();
 		return newProcessWithFullDetails() //
-				.withId(input.getId()) //
+				.withId(input.getName()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
 				.thatIsPrototype(input.isSuperclass()) //

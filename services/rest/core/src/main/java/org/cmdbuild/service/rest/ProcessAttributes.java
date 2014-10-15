@@ -23,7 +23,7 @@ public interface ProcessAttributes {
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<Attribute> readAll( //
-			@PathParam(PROCESS_ID) Long processId, //
+			@PathParam(PROCESS_ID) String processId, //
 			@QueryParam(ACTIVE) boolean activeOnly, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
