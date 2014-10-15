@@ -16,7 +16,7 @@ import org.cmdbuild.service.rest.model.adapter.StringObjectMapAdapter;
 
 @XmlRootElement(name = CARD)
 @XmlJavaTypeAdapter(CardAdapter.class)
-public class Card extends ModelWithIdAndType {
+public class Card extends ModelWithIdAndType<Long, String> {
 
 	private Map<String, Object> values;
 

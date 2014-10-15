@@ -31,7 +31,7 @@ public interface Domains {
 	@GET
 	@Path("{" + DOMAIN_ID + "}/")
 	ResponseSingle<DomainWithFullDetails> read( //
-			@PathParam(DOMAIN_ID) Long domainId //
+			@PathParam(DOMAIN_ID) String domainId //
 	);
 
 }

@@ -23,16 +23,16 @@ public interface ProcessInstanceActivities {
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<ProcessActivityWithBasicDetails> read( //
-			@PathParam(PROCESS_ID) Long processId, //
+			@PathParam(PROCESS_ID) String processId, //
 			@PathParam(PROCESS_INSTANCE_ID) Long processInstanceId //
 	);
 
 	@GET
 	@Path("{" + PROCESS_ACTIVITY_ID + "}/")
 	ResponseSingle<ProcessActivityWithFullDetails> read( //
-			@PathParam(PROCESS_ID) Long processId, //
+			@PathParam(PROCESS_ID) String processId, //
 			@PathParam(PROCESS_INSTANCE_ID) Long processInstanceId, //
-			@PathParam(PROCESS_ACTIVITY_ID) Long processActivityId //
+			@PathParam(PROCESS_ACTIVITY_ID) String processActivityId //
 	);
 
 }

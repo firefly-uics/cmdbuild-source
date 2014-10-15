@@ -19,7 +19,7 @@ public interface ProcessStartActivity {
 	@GET
 	@Path(EMPTY)
 	ResponseSingle<ProcessActivityWithFullDetails> read( //
-			@PathParam(PROCESS_ID) Long processId //
+			@PathParam(PROCESS_ID) String processId //
 	);
 
 }

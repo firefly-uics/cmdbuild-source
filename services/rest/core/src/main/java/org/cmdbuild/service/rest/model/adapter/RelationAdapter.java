@@ -50,7 +50,7 @@ public class RelationAdapter extends ModelToMapAdapter<Relation> {
 	@Override
 	protected Relation mapToModel(final Map<String, Object> input) {
 		return newRelation() //
-				.withType(getAndRemove(input, UNDERSCORED_TYPE, Long.class)) //
+				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
 				.withValues(input) //
 				.build();

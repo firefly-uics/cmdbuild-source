@@ -39,7 +39,7 @@ public class CxfClassAttributes implements ClassAttributes {
 	}
 
 	@Override
-	public ResponseMultiple<Attribute> readAll(final Long classId, final boolean activeOnly, final Integer limit,
+	public ResponseMultiple<Attribute> readAll(final String classId, final boolean activeOnly, final Integer limit,
 			final Integer offset) {
 		final CMClass target = userDataAccessLogic.findClass(classId);
 		if (target == null) {

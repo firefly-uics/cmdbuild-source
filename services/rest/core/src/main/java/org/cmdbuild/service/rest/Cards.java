@@ -30,20 +30,20 @@ public interface Cards {
 	@POST
 	@Path(EMPTY)
 	ResponseSingle<Long> create( //
-			@PathParam(CLASS_ID) Long classId, //
+			@PathParam(CLASS_ID) String classId, //
 			Card card);
 
 	@GET
 	@Path("{" + CARD_ID + "}/")
 	ResponseSingle<Card> read( //
-			@PathParam(CLASS_ID) Long classId, //
+			@PathParam(CLASS_ID) String classId, //
 			@PathParam(CARD_ID) Long id //
 	);
 
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<Card> read( //
-			@PathParam(CLASS_ID) Long classId, //
+			@PathParam(CLASS_ID) String classId, //
 			@QueryParam(FILTER) String filter, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
@@ -52,7 +52,7 @@ public interface Cards {
 	@PUT
 	@Path("{" + CARD_ID + "}/")
 	void update( //
-			@PathParam(CLASS_ID) Long classId, //
+			@PathParam(CLASS_ID) String classId, //
 			@PathParam(CARD_ID) Long id, //
 			Card card //
 	);
@@ -60,7 +60,7 @@ public interface Cards {
 	@DELETE
 	@Path("{" + CARD_ID + "}/")
 	void delete( //
-			@PathParam(CLASS_ID) Long classId, //
+			@PathParam(CLASS_ID) String classId, //
 			@PathParam(CARD_ID) Long id //
 	);
 

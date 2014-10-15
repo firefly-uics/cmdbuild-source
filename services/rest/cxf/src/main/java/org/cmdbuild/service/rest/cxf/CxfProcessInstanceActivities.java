@@ -4,7 +4,6 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.getOnlyElement;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
 import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
@@ -46,7 +45,7 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 	}
 
 	@Override
-	public ResponseMultiple<ProcessActivityWithBasicDetails> read(final Long processId, final Long processInstanceId) {
+	public ResponseMultiple<ProcessActivityWithBasicDetails> read(final String processId, final Long processInstanceId) {
 		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
 			errorHandler.processNotFound(processId);
@@ -83,8 +82,8 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 	}
 
 	@Override
-	public ResponseSingle<ProcessActivityWithFullDetails> read(final Long processId, final Long processInstanceId,
-			final Long processActivityId) {
+	public ResponseSingle<ProcessActivityWithFullDetails> read(final String processId, final Long processInstanceId,
+			final String processActivityId) {
 		final UserProcessClass foundType = workflowLogic.findProcessClass(processId);
 		if (foundType == null) {
 			errorHandler.processNotFound(processId);
@@ -95,7 +94,7 @@ public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 		}
 		CMActivity foundActivity = null;
 		for (final UserActivityInstance element : foundInstance.getActivities()) {
-			if (fakeId(element.getId()).equals(processActivityId)) {
+			if (element.getId().equals(processActivityId)) {
 				try {
 					foundActivity = element.getDefinition();
 				} catch (final Throwable e) {

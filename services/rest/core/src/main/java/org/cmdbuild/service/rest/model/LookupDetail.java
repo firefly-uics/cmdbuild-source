@@ -17,7 +17,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement(name = LOOKUP_DETAIL)
-public class LookupDetail extends ModelWithIdAndType {
+public class LookupDetail extends ModelWithIdAndType<Long, String> {
 
 	private String code;
 	private String description;

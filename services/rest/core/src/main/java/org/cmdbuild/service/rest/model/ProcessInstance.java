@@ -18,7 +18,7 @@ import org.cmdbuild.service.rest.model.adapter.StringObjectMapAdapter;
 
 @XmlRootElement(name = PROCESS_INSTANCE)
 @XmlJavaTypeAdapter(ProcessInstanceAdapter.class)
-public class ProcessInstance extends ModelWithIdAndType {
+public class ProcessInstance extends ModelWithIdAndType<Long, String> {
 
 	private String name;
 	private Map<String, Object> values;

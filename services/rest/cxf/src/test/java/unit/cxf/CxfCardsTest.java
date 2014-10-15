@@ -5,7 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
+//import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -56,19 +56,19 @@ public class CxfCardsTest {
 	public void createRaisesErrorWhenTypeIsNotFound() throws Exception {
 		// given
 		doReturn(null) //
-				.when(userDataAccessLogic).findClass(anyLong());
+				.when(userDataAccessLogic).findClass(anyString());
 		doThrow(new WebApplicationException()) //
-				.when(errorHandler).classNotFound(anyLong());
+				.when(errorHandler).classNotFound(anyString());
 
 		// when
-		cxfCards.create(123L, newCard() //
-				.withType(456L) //
+		cxfCards.create("123", newCard() //
+				.withType("456") //
 				.build());
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
-		inOrder.verify(userDataAccessLogic).findClass(eq(123L));
-		inOrder.verify(errorHandler).classNotFound(123L);
+		inOrder.verify(userDataAccessLogic).findClass(eq("123"));
+		inOrder.verify(errorHandler).classNotFound(eq("123"));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -79,13 +79,13 @@ public class CxfCardsTest {
 		doReturn("baz") //
 				.when(type).getName();
 		doReturn(type) //
-				.when(userDataAccessLogic).findClass(anyLong());
+				.when(userDataAccessLogic).findClass(anyString());
 		doReturn(123L) //
 				.when(userDataAccessLogic).createCard(any(org.cmdbuild.model.data.Card.class));
 
 		// when
-		final ResponseSingle<Long> response = cxfCards.create(123L, newCard() //
-				.withType(456L) //
+		final ResponseSingle<Long> response = cxfCards.create("123", newCard() //
+				.withType("456") //
 				.withValue("some name", "some value") //
 				.build());
 
@@ -93,7 +93,7 @@ public class CxfCardsTest {
 		final ArgumentCaptor<org.cmdbuild.model.data.Card> cardCaptor = ArgumentCaptor
 				.forClass(org.cmdbuild.model.data.Card.class);
 		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
-		inOrder.verify(userDataAccessLogic).findClass(eq(123L));
+		inOrder.verify(userDataAccessLogic).findClass(eq("123"));
 		inOrder.verify(userDataAccessLogic).createCard(cardCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 		final org.cmdbuild.model.data.Card captured = cardCaptor.getValue();
@@ -108,18 +108,18 @@ public class CxfCardsTest {
 		doReturn(null) //
 				.when(userDataAccessLogic).findClass(anyString());
 		doThrow(new WebApplicationException()) //
-				.when(errorHandler).classNotFound(anyLong());
+				.when(errorHandler).classNotFound(anyString());
 
 		// when
-		cxfCards.update(12L, 34L, newCard() //
-				.withType(56L) //
+		cxfCards.update("12", 34L, newCard() //
+				.withType("56") //
 				.withId(78L) //
 				.build());
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
-		inOrder.verify(userDataAccessLogic).findClass(eq(12L));
-		inOrder.verify(errorHandler).classNotFound(12L);
+		inOrder.verify(userDataAccessLogic).findClass(eq("12"));
+		inOrder.verify(errorHandler).classNotFound(eq("12"));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -130,11 +130,11 @@ public class CxfCardsTest {
 		doReturn("baz") //
 				.when(type).getName();
 		doReturn(type) //
-				.when(userDataAccessLogic).findClass(anyLong());
+				.when(userDataAccessLogic).findClass(anyString());
 
 		// when
-		cxfCards.update(12L, 34L, newCard() //
-				.withType(56L) //
+		cxfCards.update("12", 34L, newCard() //
+				.withType("56") //
 				.withId(78L) //
 				.withValue("some name", "some value") //
 				.build());
@@ -143,7 +143,7 @@ public class CxfCardsTest {
 		final ArgumentCaptor<org.cmdbuild.model.data.Card> cardCaptor = ArgumentCaptor
 				.forClass(org.cmdbuild.model.data.Card.class);
 		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
-		inOrder.verify(userDataAccessLogic).findClass(eq(12L));
+		inOrder.verify(userDataAccessLogic).findClass(eq("12"));
 		inOrder.verify(userDataAccessLogic).updateCard(cardCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 		final org.cmdbuild.model.data.Card captured = cardCaptor.getValue();
@@ -156,17 +156,17 @@ public class CxfCardsTest {
 	public void deleteRaisesErrorWhenTypeIsNotFound() throws Exception {
 		// given
 		doReturn(null) //
-				.when(userDataAccessLogic).findClass(anyLong());
+				.when(userDataAccessLogic).findClass(anyString());
 		doThrow(new WebApplicationException()) //
-				.when(errorHandler).classNotFound(anyLong());
+				.when(errorHandler).classNotFound(anyString());
 
 		// when
-		cxfCards.delete(123L, 456L);
+		cxfCards.delete("123", 456L);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
-		inOrder.verify(userDataAccessLogic).findClass(eq(123L));
-		inOrder.verify(errorHandler).classNotFound(123L);
+		inOrder.verify(userDataAccessLogic).findClass(eq("123"));
+		inOrder.verify(errorHandler).classNotFound(eq("123"));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -177,14 +177,14 @@ public class CxfCardsTest {
 		doReturn("baz") //
 				.when(type).getName();
 		doReturn(type) //
-				.when(userDataAccessLogic).findClass(anyLong());
+				.when(userDataAccessLogic).findClass(anyString());
 
 		// when
-		cxfCards.delete(123L, 456L);
+		cxfCards.delete("123", 456L);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
-		inOrder.verify(userDataAccessLogic).findClass(eq(123L));
+		inOrder.verify(userDataAccessLogic).findClass(eq("123"));
 		inOrder.verify(userDataAccessLogic).deleteCard(eq("baz"), eq(456L));
 		inOrder.verifyNoMoreInteractions();
 	}

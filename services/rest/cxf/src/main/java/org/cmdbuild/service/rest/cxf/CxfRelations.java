@@ -33,15 +33,15 @@ public class CxfRelations implements Relations {
 			final CMClass targetType = input.getTargetType();
 			return newRelation() //
 					.withId(input.getRelationId()) //
-					.withType(input.getQueryDomain().getDomain().getId()) //
+					.withType(input.getQueryDomain().getDomain().getName()) //
 					.withSource(newCard() //
-							.withType(sourceType.getId()) //
+							.withType(sourceType.getName()) //
 							.withId(input.getSourceId()) //
 							.withValue(sourceType.getCodeAttributeName(), input.getSourceCode()) //
 							.withValue(sourceType.getDescriptionAttributeName(), input.getSourceDescription()) //
 							.build()) //
 					.withDestination(newCard() //
-							.withType(targetType.getId()) //
+							.withType(targetType.getName()) //
 							.withId(input.getTargetId()) //
 							.withValue(targetType.getCodeAttributeName(), input.getTargetCode()) //
 							.withValue(targetType.getDescriptionAttributeName(), input.getTargetDescription()) //
@@ -63,7 +63,7 @@ public class CxfRelations implements Relations {
 	}
 
 	@Override
-	public ResponseMultiple<Relation> read(final Long domainId, final Long classId, final Long cardId,
+	public ResponseMultiple<Relation> read(final String domainId, final String classId, final Long cardId,
 			final String domainSource, final Integer limit, final Integer offset) {
 		final CMDomain targetDomain = dataAccessLogic.findDomain(domainId);
 		if (targetDomain == null) {

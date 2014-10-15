@@ -1,8 +1,6 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_TYPE_QUERY;
-import static org.cmdbuild.service.rest.cxf.serialization.FakeId.fakeId;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
 import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
@@ -18,9 +16,6 @@ import org.cmdbuild.service.rest.model.LookupDetail;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-
 public class CxfLookupTypeValues implements LookupTypeValues {
 
 	private static final ToLookupDetail TO_LOOKUP_DETAIL = ToLookupDetail.newInstance().build();
@@ -34,7 +29,7 @@ public class CxfLookupTypeValues implements LookupTypeValues {
 	}
 
 	@Override
-	public ResponseSingle<LookupDetail> read(final Long lookupTypeId, final Long lookupValueId) {
+	public ResponseSingle<LookupDetail> read(final String lookupTypeId, final Long lookupValueId) {
 		final Lookup lookup = lookupLogic.getLookup(lookupValueId);
 		final LookupDetail element = TO_LOOKUP_DETAIL.apply(lookup);
 		return newResponseSingle(LookupDetail.class) //
@@ -43,22 +38,13 @@ public class CxfLookupTypeValues implements LookupTypeValues {
 	}
 
 	@Override
-	public ResponseMultiple<LookupDetail> readAll(final Long lookupTypeId, final boolean activeOnly,
+	public ResponseMultiple<LookupDetail> readAll(final String lookupTypeId, final boolean activeOnly,
 			final Integer limit, final Integer offset) {
-		final Optional<LookupType> found = from(lookupLogic.getAllTypes(UNUSED_LOOKUP_TYPE_QUERY)) //
-				.filter(new Predicate<LookupType>() {
-
-					@Override
-					public boolean apply(final LookupType input) {
-						return lookupTypeId.equals(fakeId(input.name));
-					}
-
-				}) //
-				.first();
-		if (!found.isPresent()) {
+		final LookupType found = lookupLogic.typeFor(lookupTypeId);
+		if (found == null) {
 			errorHandler.lookupTypeNotFound(lookupTypeId);
 		}
-		final LookupType lookupType = LookupType.newInstance().withName(found.get().name).build();
+		final LookupType lookupType = LookupType.newInstance().withName(lookupTypeId).build();
 		final PagedElements<Lookup> lookups = lookupLogic.getAllLookup(lookupType, activeOnly, new LookupQuery() {
 
 			@Override

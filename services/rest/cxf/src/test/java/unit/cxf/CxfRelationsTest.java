@@ -4,7 +4,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -44,17 +44,17 @@ public class CxfRelationsTest {
 	public void exceptionWhenReadingRelationsButProcessNotFound() throws Exception {
 		// given
 		doReturn(null) //
-				.when(dataAccessLogic).findDomain(anyLong());
+				.when(dataAccessLogic).findDomain(anyString());
 		doThrow(WebApplicationException.class) //
-				.when(errorHandler).domainNotFound(anyLong());
+				.when(errorHandler).domainNotFound(anyString());
 
 		// when
-		cxfRelations.read(123L, null, null, null, null, null);
+		cxfRelations.read("123", null, null, null, null, null);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, dataAccessLogic);
-		inOrder.verify(dataAccessLogic).findDomain(eq(123L));
-		inOrder.verify(errorHandler).domainNotFound(eq(123L));
+		inOrder.verify(dataAccessLogic).findDomain(eq("123"));
+		inOrder.verify(errorHandler).domainNotFound(eq("123"));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -65,14 +65,14 @@ public class CxfRelationsTest {
 		doReturn(123L) //
 				.when(domain).getId();
 		doReturn(domain) //
-				.when(dataAccessLogic).findDomain(anyLong());
+				.when(dataAccessLogic).findDomain(anyString());
 		final CMClass clazz = mock(CMClass.class);
 		doReturn("foo") //
 				.when(clazz).getName();
 		doReturn(clazz) //
-				.when(dataAccessLogic).findClass(anyLong());
+				.when(dataAccessLogic).findClass(anyString());
 		doReturn(domain) //
-				.when(dataAccessLogic).findDomain(anyLong());
+				.when(dataAccessLogic).findDomain(anyString());
 		final RuntimeException exception = new RuntimeException();
 		doThrow(exception) //
 				.when(dataAccessLogic).getRelationListEmptyForWrongId(any(Card.class), any(DomainWithSource.class));
@@ -80,7 +80,7 @@ public class CxfRelationsTest {
 				.when(errorHandler).propagate(any(Exception.class));
 
 		// when
-		cxfRelations.read(12L, 34L, 56L, "baz", null, null);
+		cxfRelations.read("12", "34", 56L, "baz", null, null);
 
 		// then
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);

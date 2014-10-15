@@ -11,10 +11,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement(name = LOOKUP_TYPE_DETAIL)
-public class LookupTypeDetail extends ModelWithId {
+public class LookupTypeDetail extends ModelWithId<String> {
 
 	private String name;
-	private Long parent;
+	private String parent;
 
 	LookupTypeDetail() {
 		// package visibility
@@ -30,11 +30,11 @@ public class LookupTypeDetail extends ModelWithId {
 	}
 
 	@XmlAttribute(name = PARENT)
-	public Long getParent() {
+	public String getParent() {
 		return parent;
 	}
 
-	void setParent(final Long parent) {
+	void setParent(final String parent) {
 		this.parent = parent;
 	}
 
