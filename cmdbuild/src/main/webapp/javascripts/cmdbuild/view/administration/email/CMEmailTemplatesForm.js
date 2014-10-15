@@ -104,15 +104,14 @@
 				},
 
 				defaults: {
-					overflowY: 'auto',
-					flex: 1
+					overflowY: 'auto'
 				},
 
 				items: [
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.administration.modClass.attributeProperties.baseProperties,
-						margins: '0 3 0 0',
+						flex: 1,
 
 						defaults: {
 							labelWidth: CMDBuild.LABEL_WIDTH,
@@ -133,10 +132,11 @@
 							}
 						]
 					},
+					{ xtype: 'splitter' },
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.administration.email.templates.template,
-						margins: '0 0 0 3',
+						flex: 1,
 
 						defaults: {
 							xtype: 'textfield',
