@@ -16,7 +16,7 @@ import org.cmdbuild.service.rest.Menu;
 import org.cmdbuild.service.rest.ProcessAttributes;
 import org.cmdbuild.service.rest.ProcessInstanceActivities;
 import org.cmdbuild.service.rest.ProcessInstances;
-import org.cmdbuild.service.rest.ProcessStartActivity;
+import org.cmdbuild.service.rest.ProcessStartActivities;
 import org.cmdbuild.service.rest.Processes;
 import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.Tokens;
@@ -31,7 +31,7 @@ import org.cmdbuild.service.rest.cxf.CxfMenu;
 import org.cmdbuild.service.rest.cxf.CxfProcessAttributes;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstanceActivities;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
-import org.cmdbuild.service.rest.cxf.CxfProcessStartActivity;
+import org.cmdbuild.service.rest.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.cxf.CxfRelations;
 import org.cmdbuild.service.rest.cxf.CxfTokens;
@@ -143,9 +143,10 @@ public class Services implements LoggingSupport {
 	}
 
 	@Bean
-	public ProcessStartActivity cxfProcessStartActivities() {
-		final CxfProcessStartActivity service = new CxfProcessStartActivity(errorHandler(), core.userWorkflowLogic());
-		return proxy(ProcessStartActivity.class, service);
+	public ProcessStartActivities cxfProcessStartActivities() {
+		final CxfProcessStartActivities service = new CxfProcessStartActivities(errorHandler(),
+				core.userWorkflowLogic());
+		return proxy(ProcessStartActivities.class, service);
 	}
 
 	@Bean

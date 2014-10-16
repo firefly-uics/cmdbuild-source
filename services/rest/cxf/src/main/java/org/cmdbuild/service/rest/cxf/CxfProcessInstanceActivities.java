@@ -14,8 +14,8 @@ import org.cmdbuild.logic.mapping.json.FilterElementGetters;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.ProcessInstanceActivities;
-import org.cmdbuild.service.rest.cxf.serialization.ToProcessActivity;
 import org.cmdbuild.service.rest.cxf.serialization.ToProcessActivityDefinition;
+import org.cmdbuild.service.rest.cxf.serialization.ToProcessActivityWithBasicDetailsFromUserActivityInstance;
 import org.cmdbuild.service.rest.model.ProcessActivityWithBasicDetails;
 import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
@@ -31,7 +31,8 @@ import com.google.common.base.Predicates;
 
 public class CxfProcessInstanceActivities implements ProcessInstanceActivities {
 
-	private static final ToProcessActivity TO_OUTPUT = ToProcessActivity.newInstance() //
+	private static final ToProcessActivityWithBasicDetailsFromUserActivityInstance TO_OUTPUT = ToProcessActivityWithBasicDetailsFromUserActivityInstance
+			.newInstance() //
 			.build();
 	private static final ToProcessActivityDefinition TO_PROCESS_ACTIVITY = ToProcessActivityDefinition.newInstance() //
 			.build();

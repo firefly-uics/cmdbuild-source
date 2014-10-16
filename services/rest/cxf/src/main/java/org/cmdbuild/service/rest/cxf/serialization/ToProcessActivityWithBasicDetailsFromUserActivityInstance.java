@@ -6,25 +6,26 @@ import static org.cmdbuild.service.rest.model.Builders.newProcessActivityWithBas
 
 import org.cmdbuild.service.rest.model.ProcessActivityWithBasicDetails;
 import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails.AttributeStatus;
-import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess.Type;
 
 import com.google.common.base.Function;
 
-public class ToProcessActivity implements Function<UserActivityInstance, ProcessActivityWithBasicDetails> {
+public class ToProcessActivityWithBasicDetailsFromUserActivityInstance extends
+		ToProcessActivityWithBasicDetails<UserActivityInstance> {
 
-	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToProcessActivity> {
+	public static class Builder implements
+			org.apache.commons.lang3.builder.Builder<ToProcessActivityWithBasicDetailsFromUserActivityInstance> {
 
 		private Builder() {
 			// use static method
 		}
 
 		@Override
-		public ToProcessActivity build() {
+		public ToProcessActivityWithBasicDetailsFromUserActivityInstance build() {
 			validate();
-			return new ToProcessActivity(this);
+			return new ToProcessActivityWithBasicDetailsFromUserActivityInstance(this);
 		}
 
 		private void validate() {
@@ -52,7 +53,7 @@ public class ToProcessActivity implements Function<UserActivityInstance, Process
 
 	public static final ToAttribute TO_ATTRIBUTE = new ToAttribute();
 
-	private ToProcessActivity(final Builder builder) {
+	private ToProcessActivityWithBasicDetailsFromUserActivityInstance(final Builder builder) {
 		// TODO Auto-generated constructor stub
 	}
 
