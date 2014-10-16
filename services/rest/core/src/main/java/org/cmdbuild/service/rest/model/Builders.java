@@ -720,7 +720,7 @@ public class Builders {
 
 		private String menuType;
 		private Long index;
-		private Long objectType;
+		private String objectType;
 		private Long objectId;
 		private String objectDescription;
 		private Iterable<MenuDetail> children;
@@ -757,7 +757,7 @@ public class Builders {
 			return this;
 		}
 
-		public MenuBuilder withObjectType(final Long objectType) {
+		public MenuBuilder withObjectType(final String objectType) {
 			this.objectType = objectType;
 			return this;
 		}

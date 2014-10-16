@@ -22,7 +22,7 @@ public class MenuDetail extends Model {
 
 	private String menuType;
 	private Long index;
-	private Long objectType;
+	private String objectType;
 	private Long objectId;
 	private String objectDescription;
 	private List<MenuDetail> children;
@@ -50,11 +50,11 @@ public class MenuDetail extends Model {
 	}
 
 	@XmlAttribute(name = OBJECT_TYPE)
-	public Long getObjectType() {
+	public String getObjectType() {
 		return objectType;
 	}
 
-	void setObjectType(final Long objectType) {
+	void setObjectType(final String objectType) {
 		this.objectType = objectType;
 	}
 
