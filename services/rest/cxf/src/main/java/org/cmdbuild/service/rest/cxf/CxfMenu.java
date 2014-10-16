@@ -33,7 +33,7 @@ public class CxfMenu implements Menu {
 			return newMenu() //
 					.withMenuType(input.getType().getValue()) // TODO translate
 					.withIndex(Long.valueOf(input.getIndex())) //
-					.withObjectType((referencedClass == null) ? null : referencedClass.getId()) //
+					.withObjectType((referencedClass == null) ? null : referencedClass.getName()) //
 					.withObjectId(input.getReferencedElementId().longValue()) //
 					.withObjectDescription(input.getDescription()) //
 					.withChildren( //
