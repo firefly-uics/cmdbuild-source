@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.cmdbuild.common.template.LoggingSupport;
+import org.cmdbuild.common.logging.LoggingSupport;
 import org.cmdbuild.common.template.TemplateResolver;
 
 import com.google.common.base.Joiner;

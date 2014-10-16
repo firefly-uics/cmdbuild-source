@@ -5,7 +5,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.Map;
 
-import org.cmdbuild.common.template.LoggingSupport;
+import org.cmdbuild.common.logging.LoggingSupport;
 
 public class Engines implements LoggingSupport {
 

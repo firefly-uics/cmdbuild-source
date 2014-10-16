@@ -58,6 +58,9 @@ public class Commands {
 
 	private static class ComposeOnExeption extends ForwardingCommand {
 
+		private static final Logger logger = LoggingSupport.logger;
+		private static final Marker marker = MarkerFactory.getMarker(ComposeOnExeption.class.getName());
+
 		private final Command onException;
 
 		public ComposeOnExeption(final Command delegate, final Command onException) {
@@ -70,6 +73,7 @@ public class Commands {
 			try {
 				super.execute();
 			} catch (final Exception e) {
+				logger.warn(marker, "error executing command", e);
 				onException.execute();
 			}
 		}

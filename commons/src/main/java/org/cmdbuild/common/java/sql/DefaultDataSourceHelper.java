@@ -24,17 +24,18 @@ import org.cmdbuild.common.java.sql.DataSourceTypes.MySql;
 import org.cmdbuild.common.java.sql.DataSourceTypes.Oracle;
 import org.cmdbuild.common.java.sql.DataSourceTypes.PostgreSql;
 import org.cmdbuild.common.java.sql.DataSourceTypes.SqlServer;
+import org.cmdbuild.common.logging.LoggingSupport;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.postgresql.ds.PGSimpleDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.collect.Sets;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
-public class DefaultDataSourceHelper implements DataSourceHelper {
+public class DefaultDataSourceHelper implements DataSourceHelper, LoggingSupport {
 
-	private static final Logger logger = LoggerFactory.getLogger(DefaultDataSourceHelper.class);
+	private static final Marker marker = MarkerFactory.getMarker(DefaultDataSourceHelper.class.getName());
 
 	private static final DataSource UNSUPPORTED = UnsupportedProxyFactory.of(DataSource.class).create();
 
@@ -93,7 +94,7 @@ public class DefaultDataSourceHelper implements DataSourceHelper {
 			try {
 				method.invoke(visitor, ONE_NULL_ARGUMENT_ONLY);
 			} catch (final Exception e) {
-				logger.error("error invoking method '{}'", method);
+				logger.error(marker, "error invoking method '{}'", method);
 			}
 		}
 		return available;
@@ -101,13 +102,18 @@ public class DefaultDataSourceHelper implements DataSourceHelper {
 
 	@Override
 	public DataSource create(final Configuration configuration) {
+		logger.info(marker, "creating data source from '{}'", configuration);
 		return new DataSourceTypeVisitor() {
 
 			private DataSource dataSource;
 
 			public DataSource create() {
-				configuration.getType().accept(this);
-				Validate.notNull(dataSource, "creation error for type '%s'", configuration.getType());
+				try {
+					configuration.getType().accept(this);
+				} catch (final Exception e) {
+					logger.error(marker, "error creating data source", e);
+				}
+				Validate.notNull(dataSource, "creation error for '%s'", configuration);
 				return dataSource;
 			}
 
