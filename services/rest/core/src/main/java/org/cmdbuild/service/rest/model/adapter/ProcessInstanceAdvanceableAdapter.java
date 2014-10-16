@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.model.adapter;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ACTIVITY;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ADVANCE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
@@ -38,7 +39,7 @@ public class ProcessInstanceAdvanceableAdapter extends ModelToMapAdapter<Process
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
 				.withName(getAndRemove(input, UNDERSCORED_NAME, String.class)) //
 				.withActivity(getAndRemove(input, UNDERSCORED_ACTIVITY, String.class)) //
-				.withAdvance(getAndRemove(input, UNDERSCORED_ADVANCE, Boolean.class)) //
+				.withAdvance(defaultIfNull(getAndRemove(input, UNDERSCORED_ADVANCE, Boolean.class), false)) //
 				.withValues(input) //
 				.build();
 	}
