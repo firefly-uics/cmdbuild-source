@@ -28,7 +28,7 @@ public class ProcessActivityWithBasicDetails extends ModelWithId<String> {
 	void setWritable(final boolean writable) {
 		this.writable = writable;
 	}
-	
+
 	@XmlAttribute(name = DESCRIPTION)
 	public String getDescription() {
 		return description;
