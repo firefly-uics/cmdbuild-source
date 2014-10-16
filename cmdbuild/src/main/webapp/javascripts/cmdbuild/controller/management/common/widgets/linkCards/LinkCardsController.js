@@ -78,7 +78,7 @@
 		/**
 		 * @property {Object}
 		 */
-		targetEntryType: undefined,
+		targetClass: undefined,
 
 		/**
 		 * @property {CMDBuild.Management.TemplateResolver}
@@ -113,17 +113,36 @@
 		 */
 		constructor: function(view, ownerController, widgetConf, clientForm, card) {
 			var me = this;
+			var targetClassName = null;
 
 			this.mixins.observable.constructor.call(this);
 
 			this.callParent(arguments);
 
-			if (!_CMCache.isEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]))
-				throw 'LinkCardsController constructor: className not valid';
+			// Try to get targetClassName from a source (widgetConf.className or widgetConf.filter)
+			if (
+				!Ext.isEmpty(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME])
+				&& _CMCache.isEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME])
+			) {
+				targetClassName = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
+			} else if (
+				!Ext.isEmpty(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.FILTER])
+				&& _CMCache.isEntryTypeByName(
+					this.getClassNameFromFilterString(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.FILTER])
+				)
+			) {
+				targetClassName = this.getClassNameFromFilterString(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.FILTER]);
+			} else {
+				return CMDBuild.Msg.error(
+					CMDBuild.Translation.error,
+					CMDBuild.Translation.errors.widgetLinkCardsNoClassNameError,
+					false
+				);
+			}
 
-			// Set local tergetEntryType (CMDBuild class) and set it also in CMCardModuleState
-			this.targetEntryType = _CMCache.getEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
-			_CMCardModuleState.setEntryType(this.targetEntryType);
+			// Set local tergetClass and set it also in CMCardModuleState
+			this.targetClass = _CMCache.getEntryTypeByName(targetClassName);
+			_CMCardModuleState.setEntryType(this.targetClass);
 
 			this.singleSelect = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SINGLE_SELECT];
 			this.readOnly = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
@@ -249,9 +268,9 @@
 		 * @override
 		 */
 		beforeActiveView: function() {
-			if (!Ext.isEmpty(this.targetEntryType)) {
+			if (!Ext.isEmpty(this.targetClass)) {
 				var me = this;
-				var classId = this.targetEntryType.getId();
+				var classId = this.targetClass.getId();
 				var cqlQuery = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.FILTER];
 
 				new _CMUtils.PollingFunction({
@@ -304,6 +323,20 @@
 			);
 
 			return cardWindow;
+		},
+
+		/**
+		 * Takes in input a linkCards cql filter string (so is assumed that the filter is like "from className ..."), splits for "from" and the for " " so we get className
+		 *
+		 * @param {String} cqlFilter
+		 *
+		 * @return {String}
+		 */
+		getClassNameFromFilterString: function(cqlFilter) {
+			var splitFilter = cqlFilter.trim().split('from');
+			splitFilter = splitFilter[1].trim();
+
+			return splitFilter.split(' ')[0];
 		},
 
 		/**
@@ -361,10 +394,10 @@
 		},
 
 		/**
-		 * @return {Object} targetEntryType
+		 * @return {Object} targetClass
 		 */
-		getTargetEntryType: function() {
-			return this.targetEntryType;
+		getTargetClass: function() {
+			return this.targetClass;
 		},
 
 		/**
@@ -552,7 +585,7 @@
 		 * @param {Boolean} forceState
 		 */
 		onToggleGridFilterButtonClick: function(forceState) {
-			var classId = this.targetEntryType.getId();
+			var classId = this.targetClass.getId();
 			var cqlQuery = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.FILTER];
 
 			if (!Ext.isEmpty(forceState))

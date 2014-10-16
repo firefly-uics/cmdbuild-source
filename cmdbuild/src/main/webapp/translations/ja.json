@@ -1059,6 +1059,7 @@
 		"show_detail": "詳細表示",
 		"template_error": "テンプレートエラー",
 		"unknown_error": "未知のエラーが発生しました",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "以下のビジュアルコントロールを保存中にエラーが発生しました: "
 	},
 	"filterWindow": {
