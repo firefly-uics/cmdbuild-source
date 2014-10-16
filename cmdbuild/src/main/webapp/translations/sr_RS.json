@@ -1059,6 +1059,7 @@
 		"show_detail": "Прикажи детаље",
 		"template_error": "Грешка у шаблону (темплејту)",
 		"unknown_error": "Дошло је до грешке",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "Дошло је до грешке приликом снимања следеће визуелне котроле: "
 	},
 	"filterWindow": {

@@ -1059,6 +1059,7 @@
 		"show_detail": "Подробно",
 		"template_error": "Ошибка шаблона",
 		"unknown_error": "Неизвестная ошибка",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "При сохранении следующих виджетов произошла ошибка: "
 	},
 	"filterWindow": {

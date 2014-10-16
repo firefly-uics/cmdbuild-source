@@ -1059,6 +1059,7 @@
 		"show_detail": "نمایش جزئیات",
 		"template_error": "خطای قالب",
 		"unknown_error": "خطایی رخ داد",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "There was an error saving the following visual controls: "
 	},
 	"filterWindow": {

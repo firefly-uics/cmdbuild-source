@@ -1059,6 +1059,7 @@
 		"show_detail": "Hiện thị chi tiết",
 		"template_error": "Lỗi xác định",
 		"unknown_error": "Một lỗi đã xảy ra",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "Một lỗi xảy ra khi đang lưu các visual control sau đây: "
 	},
 	"filterWindow": {
