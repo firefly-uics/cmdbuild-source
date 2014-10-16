@@ -2,8 +2,8 @@ package integration.rest;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.CharEncoding.UTF_8;
-import static org.cmdbuild.service.rest.model.Builders.newCredentials;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Builders.newSession;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -20,9 +20,9 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.cmdbuild.service.rest.Tokens;
-import org.cmdbuild.service.rest.model.Credentials;
+import org.cmdbuild.service.rest.Sessions;
 import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.service.rest.model.Session;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -32,14 +32,14 @@ import org.mockito.ArgumentCaptor;
 import support.JsonSupport;
 import support.ServerResource;
 
-public class TokensTest {
+public class SessionsTest {
 
-	private Tokens service;
+	private Sessions service;
 
 	@Rule
 	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Tokens.class) //
-			.withService(service = mock(Tokens.class)) //
+			.withServiceClass(Sessions.class) //
+			.withService(service = mock(Sessions.class)) //
 			.withPort(randomPort()) //
 			.build();
 
@@ -54,16 +54,16 @@ public class TokensTest {
 	}
 
 	@Test
-	public void tokenCreated() throws Exception {
+	public void created() throws Exception {
 		// given
 		final ResponseSingle<String> sentResponse = newResponseSingle(String.class) //
 				.withElement("token") //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).create(any(Credentials.class));
+				.when(service).create(any(Session.class));
 
 		// when
-		final PostMethod post = new PostMethod(server.resource("tokens/"));
+		final PostMethod post = new PostMethod(server.resource("sessions/"));
 		post.setRequestEntity(new StringRequestEntity( //
 				"{\"username\" : \"foo\", \"password\" : \"bar\"}", //
 				APPLICATION_JSON, //
@@ -72,10 +72,10 @@ public class TokensTest {
 		final int result = httpclient.executeMethod(post);
 
 		// then
-		final ArgumentCaptor<Credentials> captor = ArgumentCaptor.forClass(Credentials.class);
+		final ArgumentCaptor<Session> captor = ArgumentCaptor.forClass(Session.class);
 		verify(service).create(captor.capture());
 
-		final Credentials captured = captor.getValue();
+		final Session captured = captor.getValue();
 		assertThat(captured.getUsername(), equalTo("foo"));
 		assertThat(captured.getPassword(), equalTo("bar"));
 
@@ -84,11 +84,11 @@ public class TokensTest {
 	}
 
 	@Test
-	public void cardReaded() throws Exception {
+	public void readed() throws Exception {
 		// given
-		final ResponseSingle<Credentials> sentResponse = newResponseSingle(Credentials.class) //
-				.withElement(newCredentials() //
-						.withToken("t") //
+		final ResponseSingle<Session> sentResponse = newResponseSingle(Session.class) //
+				.withElement(newSession() //
+						.withId("t") //
 						.withUsername("u") //
 						.withPassword("p") //
 						.withGroup("g") //
@@ -99,7 +99,7 @@ public class TokensTest {
 				.when(service).read(anyString());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("tokens/foo/"));
+		final GetMethod get = new GetMethod(server.resource("sessions/foo/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -109,21 +109,21 @@ public class TokensTest {
 	}
 
 	@Test
-	public void tokenUpdated() throws Exception {
+	public void updated() throws Exception {
 		// when
-		final PutMethod put = new PutMethod(server.resource("tokens/foo/"));
+		final PutMethod put = new PutMethod(server.resource("sessions/foo/"));
 		put.setRequestEntity(new StringRequestEntity( //
-				"{\"token\" : null, \"username\" : \"bar\", \"password\" : null, \"group\" : \"baz\"}", //
+				"{\"_id\" : null, \"username\" : \"bar\", \"password\" : null, \"group\" : \"baz\"}", //
 				APPLICATION_JSON, //
 				UTF_8) //
 		);
 		final int result = httpclient.executeMethod(put);
 
 		// then
-		final ArgumentCaptor<Credentials> captor = ArgumentCaptor.forClass(Credentials.class);
+		final ArgumentCaptor<Session> captor = ArgumentCaptor.forClass(Session.class);
 		verify(service).update(eq("foo"), captor.capture());
 
-		final Credentials captured = captor.getValue();
+		final Session captured = captor.getValue();
 		assertThat(captured.getUsername(), equalTo("bar"));
 		assertThat(captured.getGroup(), equalTo("baz"));
 
@@ -131,9 +131,9 @@ public class TokensTest {
 	}
 
 	@Test
-	public void tokenDeleted() throws Exception {
+	public void deleted() throws Exception {
 		// when
-		final DeleteMethod delete = new DeleteMethod(server.resource("tokens/foo/"));
+		final DeleteMethod delete = new DeleteMethod(server.resource("sessions/foo/"));
 		final int result = httpclient.executeMethod(delete);
 
 		// then

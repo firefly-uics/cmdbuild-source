@@ -1,9 +1,8 @@
 package org.cmdbuild.service.rest.model;
 
-import static org.cmdbuild.service.rest.constants.Serialization.CREDENTIALS;
 import static org.cmdbuild.service.rest.constants.Serialization.GROUP;
 import static org.cmdbuild.service.rest.constants.Serialization.PASSWORD;
-import static org.cmdbuild.service.rest.constants.Serialization.TOKEN;
+import static org.cmdbuild.service.rest.constants.Serialization.SESSION;
 import static org.cmdbuild.service.rest.constants.Serialization.USERNAME;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -12,25 +11,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@XmlRootElement(name = CREDENTIALS)
-public class Credentials extends Model {
+@XmlRootElement(name = SESSION)
+public class Session extends ModelWithId<String> {
 
-	private String token;
 	private String username;
 	private String password;
 	private String group;
 
-	Credentials() {
+	Session() {
 		// package visibility
-	}
-
-	@XmlElement(name = TOKEN)
-	public String getToken() {
-		return token;
-	}
-
-	void setToken(final String token) {
-		this.token = token;
 	}
 
 	@XmlElement(name = USERNAME)
@@ -65,12 +54,12 @@ public class Credentials extends Model {
 		if (obj == this) {
 			return true;
 		}
-		if (!(obj instanceof Credentials)) {
+		if (!(obj instanceof Session)) {
 			return false;
 		}
-		final Credentials other = Credentials.class.cast(obj);
+		final Session other = Session.class.cast(obj);
 		return new EqualsBuilder() //
-				.append(this.token, other.token) //
+				.append(this.getId(), other.getId()) //
 				.append(this.username, other.username) //
 				.append(this.password, other.password) //
 				.append(this.group, other.group) //
@@ -80,7 +69,7 @@ public class Credentials extends Model {
 	@Override
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
-				.append(this.token) //
+				.append(this.getId()) //
 				.append(this.username) //
 				.append(this.password) //
 				.append(this.group) //
