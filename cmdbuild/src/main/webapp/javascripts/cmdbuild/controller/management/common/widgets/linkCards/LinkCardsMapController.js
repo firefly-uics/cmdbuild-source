@@ -51,7 +51,7 @@
 		/**
 		 * @property {Object}
 		 */
-		targetEntryType: undefined,
+		targetClass: undefined,
 
 		/**
 		 * @property {CMDBuild.view.management.classes.map.CMMapPanel}
@@ -83,7 +83,7 @@
 			this.parentDelegate = configuration.parentDelegate;
 			this.widgetConf = configuration.widgetConf;
 
-			this.targetEntryType = this.parentDelegate.getTargetEntryType();
+			this.targetClass = this.parentDelegate.getTargetClass();
 
 			this.mon(
 				this.view,
@@ -143,7 +143,7 @@
 
 					// Add me to the CMCardModuleStateDelegates
 					_CMCardModuleState.addDelegate(this);
-					_CMCardModuleState.setEntryType(this.targetEntryType);
+					_CMCardModuleState.setEntryType(this.targetClass);
 
 					this.map.events.register('zoomend', this, this.onZoomEnd);
 				},
