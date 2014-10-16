@@ -5,7 +5,7 @@ import static com.google.common.base.Predicates.not;
 import static java.util.Arrays.asList;
 import static org.apache.cxf.message.Message.PROTOCOL_HEADERS;
 import static org.cmdbuild.service.rest.cxf.security.TokenHandler.TOKEN_HEADER;
-import static org.cmdbuild.service.rest.model.Builders.newCredentials;
+import static org.cmdbuild.service.rest.model.Builders.newSession;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -100,7 +100,7 @@ public class TokenHandlerTest {
 	@Test
 	public void UnauthorizedResponseResponseForAuthorizedServiceAndInvalidTokenReceiced() throws Exception {
 		// given
-		tokenStore.put("bar", newCredentials().build());
+		tokenStore.put("bar", newSession().build());
 		final TokenHandler tokenHandler = new TokenHandler(IS_AUTHORIZED, tokenStore);
 		final Message message = mock(Message.class);
 		doReturn(headersWithToken("foo")) //
@@ -117,7 +117,7 @@ public class TokenHandlerTest {
 	@Test
 	public void NullResponseForAuthorizedServiceAndExistingTokenReceiced() throws Exception {
 		// given
-		tokenStore.put("foo", newCredentials().build());
+		tokenStore.put("foo", newSession().build());
 		final TokenHandler tokenHandler = new TokenHandler(IS_AUTHORIZED, tokenStore);
 		final Message message = mock(Message.class);
 		doReturn(headersWithToken("foo")) //

@@ -9,31 +9,31 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.service.rest.model.Credentials;
+import org.cmdbuild.service.rest.model.Session;
 
 import com.google.common.base.Optional;
 
 public class InMemoryTokenStore implements TokenStore {
 
-	private static final Optional<Credentials> ABSENT = Optional.absent();
+	private static final Optional<Session> ABSENT = Optional.absent();
 
-	private final Map<String, Credentials> map;
+	private final Map<String, Session> map;
 
 	public InMemoryTokenStore() {
 		map = newHashMap();
 	}
 
 	@Override
-	public void put(final String token, final Credentials credentials) {
+	public void put(final String token, final Session credentials) {
 		Validate.notNull(token, "invalid token");
 		Validate.notNull(credentials, "invalid credentials");
 		map.put(token, credentials);
 	}
 
 	@Override
-	public Optional<Credentials> get(final String token) {
+	public Optional<Session> get(final String token) {
 		Validate.notNull(token, "invalid token");
-		final Credentials credentials = map.get(token);
+		final Session credentials = map.get(token);
 		return (credentials == null) ? ABSENT : Optional.of(credentials);
 	}
 

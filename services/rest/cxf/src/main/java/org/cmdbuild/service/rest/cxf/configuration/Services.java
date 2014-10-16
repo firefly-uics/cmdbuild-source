@@ -19,7 +19,7 @@ import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.ProcessStartActivities;
 import org.cmdbuild.service.rest.Processes;
 import org.cmdbuild.service.rest.Relations;
-import org.cmdbuild.service.rest.Tokens;
+import org.cmdbuild.service.rest.Sessions;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
@@ -34,7 +34,7 @@ import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.cxf.CxfRelations;
-import org.cmdbuild.service.rest.cxf.CxfTokens;
+import org.cmdbuild.service.rest.cxf.CxfSessions;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.cxf.WebApplicationExceptionErrorHandler;
 import org.cmdbuild.service.rest.cxf.service.InMemoryTokenStore;
@@ -150,9 +150,9 @@ public class Services implements LoggingSupport {
 	}
 
 	@Bean
-	public Tokens cxfTokens() {
-		final CxfTokens service = new CxfTokens(errorHandler(), tokenGenerator(), tokenStore());
-		return proxy(Tokens.class, service);
+	public Sessions cxfSessions() {
+		final CxfSessions service = new CxfSessions(errorHandler(), tokenGenerator(), tokenStore());
+		return proxy(Sessions.class, service);
 	}
 
 	@Bean

@@ -406,51 +406,51 @@ public class Builders {
 
 	}
 
-	public static class CredentialsBuilder extends ModelBuilder<Credentials> {
+	public static class SessionBuilder extends ModelBuilder<Session> {
 
-		private String token;
+		private String id;
 		private String username;
 		private String password;
 		private String group;
 
-		private CredentialsBuilder() {
+		private SessionBuilder() {
 			// use factory method
 		}
 
-		private CredentialsBuilder(final Credentials existing) {
+		private SessionBuilder(final Session existing) {
 			// use factory method
-			this.token = existing.getToken();
+			this.id = existing.getId();
 			this.username = existing.getUsername();
 			this.password = existing.getPassword();
 			this.group = existing.getGroup();
 		}
 
 		@Override
-		protected Credentials doBuild() {
-			final Credentials output = new Credentials();
-			output.setToken(token);
+		protected Session doBuild() {
+			final Session output = new Session();
+			output.setId(id);
 			output.setUsername(username);
 			output.setPassword(password);
 			output.setGroup(group);
 			return output;
 		}
 
-		public CredentialsBuilder withToken(final String token) {
-			this.token = token;
+		public SessionBuilder withId(final String id) {
+			this.id = id;
 			return this;
 		}
 
-		public CredentialsBuilder withUsername(final String username) {
+		public SessionBuilder withUsername(final String username) {
 			this.username = username;
 			return this;
 		}
 
-		public CredentialsBuilder withPassword(final String password) {
+		public SessionBuilder withPassword(final String password) {
 			this.password = password;
 			return this;
 		}
 
-		public CredentialsBuilder withGroup(final String group) {
+		public SessionBuilder withGroup(final String group) {
 			this.group = group;
 			return this;
 		}
@@ -1265,12 +1265,12 @@ public class Builders {
 		return new ClassWithFullDetailsBuilder();
 	}
 
-	public static CredentialsBuilder newCredentials() {
-		return new CredentialsBuilder();
+	public static SessionBuilder newSession() {
+		return new SessionBuilder();
 	}
 
-	public static CredentialsBuilder newCredentials(final Credentials existing) {
-		return new CredentialsBuilder(existing);
+	public static SessionBuilder newSession(final Session existing) {
+		return new SessionBuilder(existing);
 	}
 
 	public static DomainWithBasicDetailsBuilder newDomainWithBasicDetails() {

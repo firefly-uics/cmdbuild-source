@@ -1,11 +1,11 @@
 package unit.cxf.service;
 
-import static org.cmdbuild.service.rest.model.Builders.newCredentials;
+import static org.cmdbuild.service.rest.model.Builders.newSession;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import org.cmdbuild.service.rest.cxf.service.InMemoryTokenStore;
-import org.cmdbuild.service.rest.model.Credentials;
+import org.cmdbuild.service.rest.model.Session;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,8 +23,8 @@ public class InMemoryTokenStoreTest {
 	@Test(expected = NullPointerException.class)
 	public void puttingNullTokenThrowsException() throws Exception {
 		// given
-		final Credentials credentials = newCredentials() //
-				.withToken("token") //
+		final Session credentials = newSession() //
+				.withId("token") //
 				.withUsername("username") //
 				.withPassword("password") //
 				.withGroup("password") //
@@ -49,7 +49,7 @@ public class InMemoryTokenStoreTest {
 	@Test
 	public void missingDataReturnsAbsent() throws Exception {
 		// when
-		final Optional<Credentials> shouldBeAbsent = store.get("missing");
+		final Optional<Session> shouldBeAbsent = store.get("missing");
 
 		// then
 		assertThat(shouldBeAbsent.isPresent(), equalTo(false));
@@ -58,8 +58,8 @@ public class InMemoryTokenStoreTest {
 	@Test
 	public void putAndRead() throws Exception {
 		// given
-		final Credentials credentials = newCredentials() //
-				.withToken("token") //
+		final Session credentials = newSession() //
+				.withId("token") //
 				.withUsername("username") //
 				.withPassword("password") //
 				.withGroup("password") //
@@ -67,7 +67,7 @@ public class InMemoryTokenStoreTest {
 
 		// when
 		store.put("token", credentials);
-		final Optional<Credentials> stored = store.get("token");
+		final Optional<Session> stored = store.get("token");
 
 		// then
 		assertThat(stored.isPresent(), equalTo(true));
@@ -89,8 +89,8 @@ public class InMemoryTokenStoreTest {
 	@Test
 	public void putRemoveAndRead() throws Exception {
 		// given
-		final Credentials credentials = newCredentials() //
-				.withToken("token") //
+		final Session credentials = newSession() //
+				.withId("token") //
 				.withUsername("username") //
 				.withPassword("password") //
 				.withGroup("password") //
@@ -99,7 +99,7 @@ public class InMemoryTokenStoreTest {
 		// when
 		store.put("token", credentials);
 		store.remove("token");
-		final Optional<Credentials> stored = store.get("token");
+		final Optional<Session> stored = store.get("token");
 
 		// then
 		assertThat(stored.isPresent(), equalTo(false));
