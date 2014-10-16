@@ -1059,6 +1059,7 @@
 		"show_detail": "Details einblenden",
 		"template_error": "Fehler in einem Template",
 		"unknown_error": "Es handelte sich um einen Fehler",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "Fehler beim Speichern folgender Elemente: "
 	},
 	"filterWindow": {

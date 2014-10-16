@@ -1059,6 +1059,7 @@
 		"show_detail": "Voir details",
 		"template_error": "Erreur de modèle",
 		"unknown_error": "Une erreur est survenue",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "Il y a eu une erreur d'enregistrement des contrôles visuels suivants: "
 	},
 	"filterWindow": {

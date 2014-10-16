@@ -1059,6 +1059,7 @@
 		"show_detail": "Show details",
 		"template_error": "Template error",
 		"unknown_error": "An error has occurred",
+		"widgetLinkCardsNoClassNameError": "LinkCardsController constructor: className not valid",
 		"wrong_wf_widgets": "There was an error saving the following visual controls: "
 	},
 	"filterWindow": {

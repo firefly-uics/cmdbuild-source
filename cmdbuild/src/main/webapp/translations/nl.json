@@ -1059,6 +1059,7 @@
 		"show_detail": "Toon details",
 		"template_error": "Sjabloon fout",
 		"unknown_error": "Er is een fout opgetreden",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "Er was een fout tijdens de opslag van de volgende visual controls: "
 	},
 	"filterWindow": {
