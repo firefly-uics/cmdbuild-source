@@ -8,8 +8,6 @@ import org.cmdbuild.logic.translation.DefaultSetupFacade;
 import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.services.setup.PrivilegedModulesHandler;
 import org.cmdbuild.services.setup.PropertiesModulesHandler;
-import org.cmdbuild.servlets.json.serializers.DefaultTranslationFacade;
-import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -31,9 +29,10 @@ public class Setup {
 	public SetupLogic setupLogic() {
 		return new SetupLogic(privilegedModulesHandler());
 	}
-	
+
 	@Bean
-	@Scope(PROTOTYPE) //TODO: check!
+	@Scope(PROTOTYPE)
+	// TODO: check!
 	public SetupFacade setupFacade() {
 		return new DefaultSetupFacade(setupLogic());
 	}

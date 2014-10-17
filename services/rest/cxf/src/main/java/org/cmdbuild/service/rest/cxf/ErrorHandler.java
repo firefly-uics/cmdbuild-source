@@ -26,6 +26,8 @@ public interface ErrorHandler {
 
 	void propagate(Throwable e);
 
-	void tokenNotFound(String token);
+	void sessionNotFound(String id);
+
+	void userNotFound(String id);
 
 }

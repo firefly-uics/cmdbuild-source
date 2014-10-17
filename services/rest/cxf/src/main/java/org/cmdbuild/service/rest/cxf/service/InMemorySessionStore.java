@@ -1,6 +1,7 @@
 package org.cmdbuild.service.rest.cxf.service;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import java.util.Map;
 
@@ -8,39 +9,38 @@ import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.service.rest.model.Session;
 
 import com.google.common.base.Optional;
 
-public class InMemoryTokenStore implements TokenStore {
+public class InMemorySessionStore implements SessionStore {
 
 	private static final Optional<Session> ABSENT = Optional.absent();
 
 	private final Map<String, Session> map;
 
-	public InMemoryTokenStore() {
+	public InMemorySessionStore() {
 		map = newHashMap();
 	}
 
 	@Override
-	public void put(final String token, final Session credentials) {
-		Validate.notNull(token, "invalid token");
-		Validate.notNull(credentials, "invalid credentials");
-		map.put(token, credentials);
+	public void put(final Session value) {
+		Validate.notNull(value, "invalid value");
+		Validate.notBlank(value.getId(), "invalid id");
+		map.put(value.getId(), value);
 	}
 
 	@Override
-	public Optional<Session> get(final String token) {
-		Validate.notNull(token, "invalid token");
-		final Session credentials = map.get(token);
-		return (credentials == null) ? ABSENT : Optional.of(credentials);
+	public Optional<Session> get(final String id) {
+		Validate.notNull(id, "invalid id");
+		final Session value = map.get(id);
+		return (value == null) ? ABSENT : Optional.of(value);
 	}
 
 	@Override
-	public void remove(final String token) {
-		Validate.notNull(token, "invalid token");
-		map.remove(token);
+	public void remove(final String id) {
+		Validate.notNull(id, "invalid id");
+		map.remove(id);
 	}
 
 	@Override
@@ -48,10 +48,10 @@ public class InMemoryTokenStore implements TokenStore {
 		if (obj == this) {
 			return true;
 		}
-		if (!(obj instanceof InMemoryTokenStore)) {
+		if (!(obj instanceof InMemorySessionStore)) {
 			return false;
 		}
-		final InMemoryTokenStore other = InMemoryTokenStore.class.cast(obj);
+		final InMemorySessionStore other = InMemorySessionStore.class.cast(obj);
 		return new EqualsBuilder() //
 				.append(this.map, other.map).isEquals();
 	}
@@ -65,7 +65,7 @@ public class InMemoryTokenStore implements TokenStore {
 
 	@Override
 	public final String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
+		return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE).toString();
 	}
 
 }

@@ -2,7 +2,6 @@ package utils;
 
 import static org.mockito.Mockito.mock;
 
-import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.context.SystemPrivilegeContext;
@@ -65,30 +64,6 @@ public abstract class IntegrationTestBase {
 	public LookupStore lookupStore() {
 		final DataViewStore<Lookup> store = DataViewStore.newInstance(dbView, new LookupStorableConverter());
 		return new DataViewLookupStore(store);
-	}
-
-	public UserStore userStore() {
-		return new UserStore() {
-
-			private OperationUser operationUser;
-
-			@Override
-			public OperationUser getUser() {
-				return operationUser;
-			}
-
-			@Override
-			public void setUser(final OperationUser operationUser) {
-				this.operationUser = operationUser;
-			}
-
-		};
-	}
-
-	public UserStore userStore(final OperationUser operationUser) {
-		final UserStore userStore = userStore();
-		userStore.setUser(operationUser);
-		return userStore;
 	}
 
 	@BeforeClass

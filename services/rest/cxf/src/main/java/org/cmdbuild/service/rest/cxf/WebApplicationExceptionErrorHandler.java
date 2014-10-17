@@ -91,9 +91,15 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void tokenNotFound(final String token) {
-		logger.error("token not found '{}'", token);
-		notFound(token);
+	public void sessionNotFound(final String id) {
+		logger.error("session not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
+	public void userNotFound(final String id) {
+		logger.error("user not found '{}'", id);
+		notFound(id);
 	}
 
 	private void notFound(final Object entity) {

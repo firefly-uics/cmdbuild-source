@@ -229,7 +229,7 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 
 	private void tryLogin(final LoginAndGroup loginAndGroup) {
 		logger.debug(marker, "trying login with '{}'", loginAndGroup);
-		final Response response = authenticationLogic().login(loginFor(loginAndGroup));
+		final Response response = authenticationLogic().login(loginFor(loginAndGroup), userStore);
 		if (!response.isSuccess()) {
 			// backward compatibility
 			throw AuthExceptionType.AUTH_MULTIPLE_GROUPS.createException();
@@ -241,7 +241,6 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 				.withLoginString(loginAndGroup.getLogin().getValue()) //
 				.withGroupName(loginAndGroup.getGroup()) //
 				.withNoPasswordRequired() //
-				.withUserStore(userStore) //
 				.build();
 	}
 

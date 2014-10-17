@@ -26,8 +26,8 @@ import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.message.Message;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.cxf.security.TokenHandler;
-import org.cmdbuild.service.rest.cxf.service.InMemoryTokenStore;
-import org.cmdbuild.service.rest.cxf.service.TokenStore;
+import org.cmdbuild.service.rest.cxf.service.InMemorySessionStore;
+import org.cmdbuild.service.rest.cxf.service.SessionStore;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,11 +42,11 @@ public class TokenHandlerTest {
 	private static final Predicate<Class<?>> IS_UNAUTHORIZED = alwaysTrue();
 	private static final Predicate<Class<?>> IS_AUTHORIZED = not(IS_UNAUTHORIZED);
 
-	private TokenStore tokenStore;
+	private SessionStore tokenStore;
 
 	@Before
 	public void setUp() throws Exception {
-		tokenStore = new InMemoryTokenStore();
+		tokenStore = new InMemorySessionStore();
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class TokenHandlerTest {
 	@Test
 	public void UnauthorizedResponseResponseForAuthorizedServiceAndInvalidTokenReceiced() throws Exception {
 		// given
-		tokenStore.put("bar", newSession().build());
+		tokenStore.put(newSession().withId("bar").build());
 		final TokenHandler tokenHandler = new TokenHandler(IS_AUTHORIZED, tokenStore);
 		final Message message = mock(Message.class);
 		doReturn(headersWithToken("foo")) //
@@ -117,7 +117,7 @@ public class TokenHandlerTest {
 	@Test
 	public void NullResponseForAuthorizedServiceAndExistingTokenReceiced() throws Exception {
 		// given
-		tokenStore.put("foo", newSession().build());
+		tokenStore.put(newSession().withId("foo").build());
 		final TokenHandler tokenHandler = new TokenHandler(IS_AUTHORIZED, tokenStore);
 		final Message message = mock(Message.class);
 		doReturn(headersWithToken("foo")) //

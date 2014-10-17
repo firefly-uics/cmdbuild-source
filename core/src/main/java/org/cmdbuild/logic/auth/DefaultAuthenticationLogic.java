@@ -2,10 +2,7 @@ package org.cmdbuild.logic.auth;
 
 import static com.google.common.collect.Iterables.getFirst;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.join.Over.over;
-import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 
@@ -27,18 +24,11 @@ import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.dao.entry.CMCard;
-import org.cmdbuild.dao.entry.CMRelation;
-import org.cmdbuild.dao.entry.CMRelation.CMRelationDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.query.CMQueryRow;
-import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
-import org.cmdbuild.logic.auth.GroupDTO.GroupDTOCreationValidator;
-import org.cmdbuild.logic.auth.GroupDTO.GroupDTOUpdateValidator;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOCreationValidator;
 import org.cmdbuild.logic.auth.UserDTO.UserDTOUpdateValidator;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,27 +100,22 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 
 	}
 
-	private static final String USER_GROUP_DOMAIN_NAME = "UserRole";
-
 	private final AuthenticationService authService;
 	private final PrivilegeContextFactory privilegeContextFactory;
 	private final CMDataView view;
-	private final UserStore userStore;
 
 	public DefaultAuthenticationLogic( //
 			final AuthenticationService authenticationService, //
 			final PrivilegeContextFactory privilegeContextFactory, //
-			final CMDataView dataView, //
-			final UserStore userStore //
+			final CMDataView dataView //
 	) {
 		this.authService = authenticationService;
 		this.privilegeContextFactory = privilegeContextFactory;
 		this.view = dataView;
-		this.userStore = userStore;
 	}
 
 	@Override
-	public Response login(final LoginDTO loginDTO) {
+	public Response login(final LoginDTO loginDTO, final UserStore userStore) {
 		logger.info("trying to login user {} with group {}", loginDTO.getLoginString(), loginDTO.getLoginGroupName());
 		logger.trace("login information '{}'", loginDTO);
 		final AuthenticatedUser authUser;
@@ -140,7 +125,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 			 * header authentication in progress, only group selection is
 			 * missing
 			 */
-			authUser = userStore.getUser().getAuthenticatedUser();
+			authUser = actualOperationUser.getAuthenticatedUser();
 		} else if (loginDTO.isPasswordRequired()) {
 			final Login login = Login.newInstance(loginDTO.getLoginString());
 			authUser = authService.authenticate(login, loginDTO.getPassword());
@@ -172,7 +157,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 				}
 				final OperationUser operationUser = new OperationUser(authUser, new NullPrivilegeContext(),
 						new NullGroup());
-				loginDTO.getUserStore().setUser(operationUser);
+				userStore.setUser(operationUser);
 				return DefaultResponse.newInstance(false, AuthExceptionType.AUTH_MULTIPLE_GROUPS.toString(),
 						groupsForLogin);
 			} else if (authUser.getGroupNames().size() == 1) {
@@ -188,7 +173,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 				privilegeCtx = buildPrivilegeContext(groupsArray);
 			}
 			final OperationUser operationUser = new OperationUser(authUser, privilegeCtx, guessedGroup);
-			loginDTO.getUserStore().setUser(operationUser);
+			userStore.setUser(operationUser);
 			return buildSuccessfulResponse();
 		} else {
 			final String selectedGroupName;
@@ -202,7 +187,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 			final CMGroup selectedGroup = getGroupWithName(selectedGroupName);
 			privilegeCtx = buildPrivilegeContext(selectedGroup);
 			final OperationUser operationUser = new OperationUser(authUser, privilegeCtx, selectedGroup);
-			loginDTO.getUserStore().setUser(operationUser);
+			userStore.setUser(operationUser);
 			return buildSuccessfulResponse();
 		}
 	}
@@ -384,153 +369,6 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	@Override
 	public CMUser disableUserWithId(final Long userId) {
 		return authService.disableUserWithId(userId);
-	}
-
-	@Override
-	public CMGroup createGroup(final GroupDTO groupDTO) {
-		final ModelValidator<GroupDTO> validator = new GroupDTOCreationValidator();
-		if (!validator.validate(groupDTO)) {
-			throw ORMExceptionType.ORM_CANT_CREATE_GROUP.createException();
-		}
-
-		// the restricted administrator could not create
-		// a new group with administrator privileges
-		final CMGroup userGroup = getCurrentlyLoggedUserGroup();
-		if (userGroup.isRestrictedAdmin() && groupDTO.isAdministrator()) {
-
-			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
-		}
-
-		final String groupName = groupDTO.getName();
-		if (!existsGroupWithName(groupName)) {
-			return authService.createGroup(groupDTO);
-		} else {
-			throw ORMExceptionType.ORM_DUPLICATE_GROUP.createException();
-		}
-	}
-
-	private boolean existsGroupWithName(final String groupName) {
-		final CMGroup group = authService.fetchGroupWithName(groupName);
-		if (group instanceof NullGroup) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public CMGroup updateGroup(final GroupDTO groupDTO) {
-		final ModelValidator<GroupDTO> validator = new GroupDTOUpdateValidator();
-
-		if (!validator.validate(groupDTO)) {
-			throw ORMExceptionType.ORM_ERROR_CARD_UPDATE.createException();
-		}
-
-		final CMGroup userGroup = getCurrentlyLoggedUserGroup();
-		final CMGroup groupToUpdate = authService.fetchGroupWithId(groupDTO.getGroupId());
-
-		// the restricted administrator could update only non administrator
-		// groups or other restricted groups. In any case it could not set them
-		// as full administration.
-		if (userGroup.isRestrictedAdmin()) {
-			if (groupToUpdate.isAdmin() && !groupToUpdate.isRestrictedAdmin()) {
-				throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
-			} else if (groupDTO.isAdministrator()) {
-				throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
-			}
-		}
-
-		final CMGroup updatedGroup = authService.updateGroup(groupDTO);
-		return updatedGroup;
-	}
-
-	@Override
-	public CMGroup setGroupActive(final Long groupId, final boolean active) {
-		final CMGroup userGroup = getCurrentlyLoggedUserGroup();
-		final CMGroup groupToUpdate = authService.fetchGroupWithId(groupId);
-
-		// A group could not activate/deactivate itself
-		if (userGroup.getId().equals(groupToUpdate.getId())) {
-			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
-		}
-
-		// The restricted administrator could
-		// activate/deactivate only non administrator groups
-		checkRestrictedAdminOverFullAdmin(groupToUpdate.getId());
-
-		return authService.setGroupActive(groupId, active);
-	}
-
-	@Override
-	@Transactional
-	public void addUserToGroup(final Long userId, final Long groupId) {
-		/*
-		 * a restricted administrator could not add a user to a full
-		 * administrator group
-		 */
-		checkRestrictedAdminOverFullAdmin(groupId);
-
-		final CMDomain userRoleDomain = view.findDomain(USER_GROUP_DOMAIN_NAME);
-		final CMRelationDefinition relationDefinition = view.createRelationFor(userRoleDomain);
-		relationDefinition.setCard1(fetchUserCardWithId(userId));
-		relationDefinition.setCard2(fetchRoleCardWithId(groupId));
-		relationDefinition.save();
-	}
-
-	private void checkRestrictedAdminOverFullAdmin(final Long groupId) {
-		final CMGroup userGroup = getCurrentlyLoggedUserGroup();
-		final CMGroup groupToUpdate = authService.fetchGroupWithId(groupId);
-		if (userGroup.isRestrictedAdmin() && groupToUpdate.isAdmin() && !groupToUpdate.isRestrictedAdmin()) {
-
-			throw AuthExceptionType.AUTH_NOT_AUTHORIZED.createException();
-		}
-	}
-
-	private CMGroup getCurrentlyLoggedUserGroup() {
-		final OperationUser operationUser = userStore.getUser();
-		return operationUser.getPreferredGroup();
-	}
-
-	private CMCard fetchUserCardWithId(final Long userId) {
-		final CMClass userClass = view.findClass("User");
-		final CMQueryRow userRow = view.select(anyAttribute(userClass)) //
-				.from(userClass) //
-				.where(condition(QueryAliasAttribute.attribute(userClass, "Id"), eq(userId))) //
-				.run().getOnlyRow();
-		return userRow.getCard(userClass);
-	}
-
-	private CMCard fetchRoleCardWithId(final Long groupId) {
-		final CMClass roleClass = view.findClass("Role");
-		final CMQueryRow groupRow = view.select(anyAttribute(roleClass)) //
-				.from(roleClass) //
-				.where(condition(QueryAliasAttribute.attribute(roleClass, "Id"), eq(groupId))) //
-				.run().getOnlyRow();
-		return groupRow.getCard(roleClass);
-	}
-
-	@Override
-	@Transactional
-	public void removeUserFromGroup(final Long userId, final Long groupId) {
-		/*
-		 * a restricted administrator could not remove a user from a full
-		 * administrator group
-		 */
-		checkRestrictedAdminOverFullAdmin(groupId);
-
-		final CMDomain userRoleDomain = view.findDomain("UserRole");
-		final CMClass roleClass = view.findClass("Role");
-		final CMClass userClass = view.findClass("User");
-
-		final CMQueryRow row = view.select(attribute(userClass, "Username")) //
-				.from(userClass) //
-				.join(roleClass, over(userRoleDomain)) //
-				.where(and(condition(attribute(userClass, "Id"), eq(userId)), //
-						condition(attribute(roleClass, "Id"), eq(groupId)))) //
-				.run().getOnlyRow();
-
-		final CMRelation relationToBeRemoved = row.getRelation(userRoleDomain).getRelation();
-		final CMRelationDefinition relationDefinition = view.update(relationToBeRemoved);
-		relationDefinition.delete();
 	}
 
 }

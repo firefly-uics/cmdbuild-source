@@ -1,7 +1,8 @@
 package org.cmdbuild.service.rest.model;
 
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 public abstract class Model {
 
@@ -25,7 +26,7 @@ public abstract class Model {
 
 	@Override
 	public final String toString() {
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
+		return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE).toString();
 	}
 
 }
