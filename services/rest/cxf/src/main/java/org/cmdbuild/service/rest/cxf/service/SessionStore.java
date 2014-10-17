@@ -4,12 +4,12 @@ import org.cmdbuild.service.rest.model.Session;
 
 import com.google.common.base.Optional;
 
-public interface TokenStore {
+public interface SessionStore {
 
-	void put(String token, Session credentials);
+	void put(Session element);
 
-	Optional<Session> get(String token);
+	Optional<Session> get(String id);
 
-	void remove(String token);
+	void remove(String id);
 
 }

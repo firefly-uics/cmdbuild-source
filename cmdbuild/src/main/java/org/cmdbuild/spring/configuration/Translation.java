@@ -17,7 +17,7 @@ public class Translation {
 
 	@Autowired
 	private Data data;
-	
+
 	@Autowired
 	private SetupFacade setupFacade;
 

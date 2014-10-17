@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.ext.RequestHandler;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.message.Message;
-import org.cmdbuild.service.rest.cxf.service.TokenStore;
+import org.cmdbuild.service.rest.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
 
 import com.google.common.base.Optional;
@@ -24,9 +24,9 @@ public class TokenHandler implements RequestHandler, LoggingSupport {
 	private static final Optional<String> ABSENT = Optional.absent();
 
 	private final Predicate<Class<?>> unauthorizedServices;
-	private final TokenStore tokenStore;
+	private final SessionStore tokenStore;
 
-	public TokenHandler(final Predicate<Class<?>> unauthorizedServices, final TokenStore tokenStore) {
+	public TokenHandler(final Predicate<Class<?>> unauthorizedServices, final SessionStore tokenStore) {
 		this.unauthorizedServices = unauthorizedServices;
 		this.tokenStore = tokenStore;
 	}

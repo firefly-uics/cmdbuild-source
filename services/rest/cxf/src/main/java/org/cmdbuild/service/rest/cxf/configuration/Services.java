@@ -1,5 +1,7 @@
 package org.cmdbuild.service.rest.cxf.configuration;
 
+import static com.google.common.reflect.Reflection.newProxy;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
@@ -37,16 +39,16 @@ import org.cmdbuild.service.rest.cxf.CxfRelations;
 import org.cmdbuild.service.rest.cxf.CxfSessions;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.cxf.WebApplicationExceptionErrorHandler;
-import org.cmdbuild.service.rest.cxf.service.InMemoryTokenStore;
+import org.cmdbuild.service.rest.cxf.service.InMemoryOperationUserStore;
+import org.cmdbuild.service.rest.cxf.service.InMemorySessionStore;
+import org.cmdbuild.service.rest.cxf.service.OperationUserStore;
 import org.cmdbuild.service.rest.cxf.service.RandomTokenGenerator;
+import org.cmdbuild.service.rest.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.cxf.service.TokenGenerator;
-import org.cmdbuild.service.rest.cxf.service.TokenStore;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.google.common.reflect.Reflection;
 
 @Configuration
 public class Services implements LoggingSupport {
@@ -151,7 +153,8 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	public Sessions cxfSessions() {
-		final CxfSessions service = new CxfSessions(errorHandler(), tokenGenerator(), tokenStore());
+		final CxfSessions service = new CxfSessions(errorHandler(), tokenGenerator(), sessionStore(),
+				core.authenticationLogic(), operationUserStore());
 		return proxy(Sessions.class, service);
 	}
 
@@ -161,13 +164,18 @@ public class Services implements LoggingSupport {
 	}
 
 	@Bean
-	public TokenStore tokenStore() {
-		return new InMemoryTokenStore();
+	public SessionStore sessionStore() {
+		return new InMemorySessionStore();
+	}
+
+	@Bean
+	public OperationUserStore operationUserStore() {
+		return new InMemoryOperationUserStore();
 	}
 
 	private <T> T proxy(final Class<T> type, final T service) {
 		final InvocationHandler serviceWithAnnounces = AnnouncingInvocationHandler.of(service, announceable());
-		return Reflection.newProxy(type, serviceWithAnnounces);
+		return newProxy(type, serviceWithAnnounces);
 	}
 
 	@Bean

@@ -1,6 +1,7 @@
 package org.cmdbuild.auth;
 
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static org.cmdbuild.auth.UserStores.unsupported;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -82,19 +83,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		void foundUser(AuthenticatedUser authUser);
 	}
 
-	private static final UserStore DUMB_STORE = new UserStore() {
-
-		@Override
-		public OperationUser getUser() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void setUser(final OperationUser user) {
-			throw new UnsupportedOperationException();
-		}
-	};
-
 	private PasswordAuthenticator[] passwordAuthenticators;
 	private ClientRequestAuthenticator[] clientRequestAuthenticators;
 	private UserFetcher[] userFetchers;
@@ -132,7 +120,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		passwordAuthenticators = new PasswordAuthenticator[0];
 		clientRequestAuthenticators = new ClientRequestAuthenticator[0];
 		userFetchers = new UserFetcher[0];
-		userStore = DUMB_STORE;
+		userStore = unsupported();
 		view = dataView;
 	}
 

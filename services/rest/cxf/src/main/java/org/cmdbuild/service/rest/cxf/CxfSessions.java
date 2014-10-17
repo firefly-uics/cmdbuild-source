@@ -1,28 +1,49 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.cmdbuild.auth.UserStores.inMemory;
+import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
+import static org.cmdbuild.service.rest.constants.Serialization.GROUP;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.cmdbuild.service.rest.model.Builders.newSession;
 
+import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.NullGroup;
+import org.cmdbuild.auth.context.NullPrivilegeContext;
+import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.logic.auth.AuthenticationLogic;
+import org.cmdbuild.logic.auth.LoginDTO;
 import org.cmdbuild.service.rest.Sessions;
+import org.cmdbuild.service.rest.cxf.service.OperationUserStore;
+import org.cmdbuild.service.rest.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.cxf.service.TokenGenerator;
-import org.cmdbuild.service.rest.cxf.service.TokenStore;
+import org.cmdbuild.service.rest.logging.LoggingSupport;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.service.rest.model.Session;
 
 import com.google.common.base.Optional;
 
-public class CxfSessions implements Sessions {
+public class CxfSessions implements Sessions, LoggingSupport {
+
+	private static final OperationUser ANONYMOUS = new OperationUser(ANONYMOUS_USER, new NullPrivilegeContext(),
+			new NullGroup());
 
 	private final ErrorHandler errorHandler;
 	private final TokenGenerator tokenGenerator;
-	private final TokenStore tokenStore;
+	private final SessionStore sessionStore;
+	private final AuthenticationLogic authenticationLogic;
+	private final OperationUserStore operationUserStore;
 
-	public CxfSessions(final ErrorHandler errorHandler, final TokenGenerator tokenGenerator, final TokenStore tokenStore) {
+	public CxfSessions(final ErrorHandler errorHandler, final TokenGenerator tokenGenerator,
+			final SessionStore sessionStore, final AuthenticationLogic authenticationLogic,
+			final OperationUserStore operationUserStore) {
 		this.errorHandler = errorHandler;
 		this.tokenGenerator = tokenGenerator;
-		this.tokenStore = tokenStore;
+		this.sessionStore = sessionStore;
+		this.authenticationLogic = authenticationLogic;
+		this.operationUserStore = operationUserStore;
 	}
 
 	@Override
@@ -33,10 +54,25 @@ public class CxfSessions implements Sessions {
 		if (isBlank(session.getPassword())) {
 			errorHandler.missingPassword();
 		}
+
+		final UserStore temporary = inMemory(ANONYMOUS);
+		authenticationLogic.login( //
+				LoginDTO.newInstance() //
+						.withLoginString(session.getUsername()) //
+						.withPassword(session.getPassword()) //
+						.build(), //
+				temporary);
+		final OperationUser user = temporary.getUser();
+		final CMGroup group = user.getPreferredGroup();
+
 		final String token = tokenGenerator.generate(session.getUsername());
-		tokenStore.put(token, newSession(session) //
+		final Session updatedSession = newSession(session) //
 				.withId(token) //
-				.build());
+				.withGroup(group.isActive() ? group.getName() : null) //
+				.build();
+		sessionStore.put(updatedSession);
+		operationUserStore.put(updatedSession, user);
+
 		return newResponseSingle(String.class) //
 				.withElement(token) //
 				.build();
@@ -44,12 +80,12 @@ public class CxfSessions implements Sessions {
 
 	@Override
 	public ResponseSingle<Session> read(final String id) {
-		final Optional<Session> credentials = tokenStore.get(id);
-		if (!credentials.isPresent()) {
-			errorHandler.tokenNotFound(id);
+		final Optional<Session> session = sessionStore.get(id);
+		if (!session.isPresent()) {
+			errorHandler.sessionNotFound(id);
 		}
 		return newResponseSingle(Session.class) //
-				.withElement(newSession(credentials.get()) //
+				.withElement(newSession(session.get()) //
 						.withPassword(null) //
 						.build()) //
 				.build();
@@ -57,22 +93,52 @@ public class CxfSessions implements Sessions {
 
 	@Override
 	public void update(final String id, final Session session) {
-		final Optional<Session> oldCredentials = tokenStore.get(id);
-		if (!oldCredentials.isPresent()) {
-			errorHandler.tokenNotFound(id);
+		final Optional<Session> storedSession = sessionStore.get(id);
+		if (!storedSession.isPresent()) {
+			errorHandler.sessionNotFound(id);
 		}
-		tokenStore.put(id, newSession(oldCredentials.get()) //
+		final Optional<OperationUser> storedOperationUser = operationUserStore.get(storedSession.get());
+		if (!storedOperationUser.isPresent()) {
+			errorHandler.userNotFound(id);
+		}
+		if (isBlank(session.getGroup())) {
+			errorHandler.missingParam(GROUP);
+		}
+
+		final Session sessionWithGroup = newSession(storedSession.get()) //
 				.withGroup(session.getGroup()) //
-				.build());
+				.build();
+		final UserStore temporary = inMemory(storedOperationUser.get());
+		authenticationLogic.login( //
+				LoginDTO.newInstance() //
+						.withLoginString(sessionWithGroup.getUsername()) //
+						.withPassword(sessionWithGroup.getPassword()) //
+						.withGroupName(sessionWithGroup.getGroup()) //
+						.build(), //
+				temporary);
+		final OperationUser user = temporary.getUser();
+		final CMGroup group = user.getPreferredGroup();
+
+		final Session updatedSession = newSession(sessionWithGroup) //
+				.withGroup(group.isActive() ? group.getName() : null) //
+				.build();
+
+		sessionStore.put(updatedSession);
+		operationUserStore.put(updatedSession, user);
 	}
 
 	@Override
 	public void delete(final String id) {
-		final Optional<Session> credentials = tokenStore.get(id);
-		if (!credentials.isPresent()) {
-			errorHandler.tokenNotFound(id);
+		final Optional<Session> session = sessionStore.get(id);
+		if (!session.isPresent()) {
+			errorHandler.sessionNotFound(id);
 		}
-		tokenStore.remove(id);
+		final Optional<OperationUser> operationUser = operationUserStore.get(session.get());
+		if (!operationUser.isPresent()) {
+			errorHandler.userNotFound(id);
+		}
+		sessionStore.remove(id);
+		operationUserStore.remove(session.get());
 	}
 
 	@Override

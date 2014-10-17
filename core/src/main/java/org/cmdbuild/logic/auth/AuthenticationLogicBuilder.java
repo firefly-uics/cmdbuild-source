@@ -1,9 +1,8 @@
 package org.cmdbuild.logic.auth;
 
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.AuthenticationService;
-import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.view.CMDataView;
 
 public abstract class AuthenticationLogicBuilder implements Builder<AuthenticationLogic> {
@@ -11,23 +10,20 @@ public abstract class AuthenticationLogicBuilder implements Builder<Authenticati
 	private final AuthenticationService authenticationService;
 	private final PrivilegeContextFactory privilegeContextFactory;
 	private final CMDataView dataView;
-	private final UserStore userStore;
 
 	protected AuthenticationLogicBuilder( //
 			final AuthenticationService authenticationService, //
 			final PrivilegeContextFactory privilegeContextFactory, //
-			final CMDataView dataView, //
-			final UserStore userStore //
+			final CMDataView dataView //
 	) {
 		this.authenticationService = authenticationService;
 		this.privilegeContextFactory = privilegeContextFactory;
 		this.dataView = dataView;
-		this.userStore = userStore;
 	}
 
 	@Override
 	public AuthenticationLogic build() {
-		return new DefaultAuthenticationLogic(authenticationService, privilegeContextFactory, dataView, userStore);
+		return new DefaultAuthenticationLogic(authenticationService, privilegeContextFactory, dataView);
 	}
 
 }

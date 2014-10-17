@@ -5,6 +5,7 @@ import static org.cmdbuild.spring.util.Constants.SYSTEM;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.driver.DBDriver;
+import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.data.store.dao.DataViewStore;
@@ -94,9 +95,11 @@ public class Data {
 				systemLockCardManager);
 	}
 
-	@Bean
+	public static final String BEAN_SYSTEM_DATA_VIEW = "SystemDataView";
+
+	@Bean(name = BEAN_SYSTEM_DATA_VIEW)
 	@Qualifier(SYSTEM)
-	public DBDataView systemDataView() {
+	public CMDataView systemDataView() {
 		return new DBDataView(dbDriver);
 	}
 

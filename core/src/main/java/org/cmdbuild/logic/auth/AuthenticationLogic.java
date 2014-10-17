@@ -49,7 +49,7 @@ public interface AuthenticationLogic extends Logic {
 
 	}
 
-	Response login(LoginDTO loginDTO);
+	Response login(LoginDTO loginDTO, final UserStore userStore);
 
 	ClientAuthenticationResponse login(ClientAuthenticationRequest request);
 
@@ -82,15 +82,5 @@ public interface AuthenticationLogic extends Logic {
 	CMUser enableUserWithId(Long userId);
 
 	CMUser disableUserWithId(Long userId);
-
-	CMGroup createGroup(GroupDTO groupDTO);
-
-	CMGroup updateGroup(GroupDTO groupDTO);
-
-	CMGroup setGroupActive(Long groupId, boolean active);
-
-	void addUserToGroup(Long userId, Long groupId);
-
-	void removeUserFromGroup(Long userId, Long groupId);
 
 }

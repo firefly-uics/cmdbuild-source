@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+import static org.cmdbuild.spring.configuration.Data.BEAN_SYSTEM_DATA_VIEW;
 import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
 
 import javax.sql.DataSource;
@@ -21,6 +22,7 @@ import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.NavigationTreeLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.GroupsLogic;
 import org.cmdbuild.logic.bim.DefaultLayerLogic;
 import org.cmdbuild.logic.bim.DefaultSynchronizationLogic;
 import org.cmdbuild.logic.bim.DefaultViewerLogic;
@@ -57,7 +59,6 @@ import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.localization.Localization;
 import org.cmdbuild.services.startup.StartupLogic;
 import org.cmdbuild.services.store.FilterStore;
-import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
@@ -102,7 +103,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected CMDataView systemDataView() {
-		return applicationContext().getBean(DBDataView.class);
+		return applicationContext().getBean(BEAN_SYSTEM_DATA_VIEW, DBDataView.class);
 	}
 
 	protected CMDataView userDataView() {
@@ -195,6 +196,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected GISLogic gisLogic() {
 		return applicationContext().getBean(GISLogic.class);
+	}
+
+	protected GroupsLogic groupsLogic() {
+		return applicationContext().getBean(GroupsLogic.class);
 	}
 
 	protected LookupLogic lookupLogic() {
