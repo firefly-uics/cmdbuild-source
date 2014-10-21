@@ -20,7 +20,7 @@
 			this.mon(this.view.addCardButton, "cmClick", this.onAddCardButtonClick, this);
 			this.mon(this.view, "activityInstaceSelect", this.onActivityInfoSelect, this);
 
-			
+
 		},
 
 		// override
@@ -79,12 +79,16 @@
 
 			updateViewSelection(activityInfoId, me);
 
+			CMDBuild.LoadMask.get().show();
+
 			CMDBuild.ServiceProxy.workflow.getActivityInstance({
 				classId: _CMWFState.getProcessInstance().getClassId(),
 				cardId: _CMWFState.getProcessInstance().getId(),
 				activityInstanceId: activityInfoId
 			}, {
 				success: function success(response, request, decoded) {
+					CMDBuild.LoadMask.get().hide();
+
 					var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
 					me.lastActivityInfoId = activityInfoId;
 					_CMWFState.setActivityInstance(activity);
@@ -101,6 +105,9 @@
 					this.lastActivityInfoId = null;
 
 					var me = this;
+
+					CMDBuild.LoadMask.get().show();
+
 					_CMWFState.setProcessInstance(pi, function() {
 						if (activities.length > 0) {
 							toggleRow(pi, me);
