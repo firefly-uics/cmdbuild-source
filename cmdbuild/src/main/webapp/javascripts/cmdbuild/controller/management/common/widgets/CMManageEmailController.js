@@ -206,7 +206,7 @@
 					if (temporaryId)
 						params.temporaryId = temporaryId;
 
-					CMDBuild.ServiceProxy.email.addAttachmentFromNewEmail(form, {
+					CMDBuild.core.proxy.widgets.ManageEmail.addAttachmentFromNewEmail(form, {
 						params: params,
 						success: function(fp, o) {
 							emailRecord.set('temporaryId', o.result.temporaryId);
@@ -214,7 +214,7 @@
 						}
 					});
 				} else {
-					CMDBuild.ServiceProxy.email.addAttachmentFromExistingEmail(form, {
+					CMDBuild.core.proxy.widgets.ManageEmail.addAttachmentFromExistingEmail(form, {
 						params: {
 							emailId: emailRecord.getId()
 						},
@@ -237,10 +237,10 @@
 
 				if (emailRecord.isNew()) {
 					params.temporaryId = emailRecord.get('temporaryId');
-					proxyFn = CMDBuild.ServiceProxy.email.removeAttachmentFromNewEmail;
+					proxyFn = CMDBuild.core.proxy.widgets.ManageEmail.removeAttachmentFromNewEmail;
 				} else {
 					params.emailId = emailRecord.getId();
-					proxyFn = CMDBuild.ServiceProxy.email.removeAttachmentFromExistingEmail;
+					proxyFn = CMDBuild.core.proxy.widgets.ManageEmail.removeAttachmentFromExistingEmail;
 				}
 
 				proxyFn({
@@ -313,7 +313,7 @@
 					if (temporaryId)
 						params.temporaryId = temporaryId;
 
-					CMDBuild.ServiceProxy.email.copyAttachmentFromCardForNewEmail({
+					CMDBuild.core.proxy.widgets.ManageEmail.copyAttachmentFromCardForNewEmail({
 						params: params,
 						success: function(fp, request, response) {
 							emailRecord.set('temporaryId', response.temporaryId);
@@ -323,7 +323,7 @@
 					});
 				} else {
 					params.emailId = emailRecord.getId();
-					CMDBuild.ServiceProxy.email.copyAttachmentFromCardForExistingEmail({
+					CMDBuild.core.proxy.widgets.ManageEmail.copyAttachmentFromCardForExistingEmail({
 						params: params,
 						success: function(fp, request, response) {
 							updateAttachmentList(response.attachments, emailWindow, emailRecord);

@@ -212,6 +212,14 @@
 			},
 
 			widgets: {
+				manageEmail: {
+					addAttachmentFromNewEmail: 'services/json/management/email/uploadattachmentfromnewemail',
+					addAttachmentFromExistingEmail: 'services/json/management/email/uploadattachmentfromexistingemail',
+					copyAttachmentFromCardForNewEmail: 'services/json/management/email/copyattachmentsfromcardfornewemail',
+					copyAttachmentFromCardForExistingEmail: 'services/json/management/email/copyattachmentsfromcardforexistingemail',
+					removeAttachmentFromNewEmail: 'services/json/management/email/deleteattachmentfromnewemail',
+					removeAttachmentFromExistingEmail: 'services/json/management/email/deleteattachmentfromexistingemail'
+				},
 				grid: {
 					clearSession: 'services/json/management/importcsv/clearsession',
 					getSqlCardList: 'services/json/management/modcard/getsqlcardlist',

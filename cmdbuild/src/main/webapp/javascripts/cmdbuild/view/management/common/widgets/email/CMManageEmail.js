@@ -1,5 +1,7 @@
 (function () {
 
+	Ext.require('CMDBuild.core.proxy.widgets.ManageEmail');
+
 	Ext.define('CMDBuild.view.management.common.widgets.CMManageEmail', {
 		extend: 'Ext.panel.Panel',
 
