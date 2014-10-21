@@ -237,18 +237,23 @@
 
 				if (emailRecord.isNew()) {
 					params.temporaryId = emailRecord.get('temporaryId');
-					proxyFn = CMDBuild.core.proxy.widgets.ManageEmail.removeAttachmentFromNewEmail;
+
+					CMDBuild.core.proxy.widgets.ManageEmail.removeAttachmentFromNewEmail({
+						params: params,
+						success: function(response, options ,decodedResponse) {
+							attachmentPanel.removeFromEmailWindow();
+						}
+					});
 				} else {
 					params.emailId = emailRecord.getId();
-					proxyFn = CMDBuild.core.proxy.widgets.ManageEmail.removeAttachmentFromExistingEmail;
-				}
 
-				proxyFn({
-					params: params,
-					success: function() {
-						attachmentPanel.removeFromEmailWindow();
-					}
-				});
+					CMDBuild.core.proxy.widgets.ManageEmail.removeAttachmentFromExistingEmail({
+						params: params,
+						success: function(response, options ,decodedResponse) {
+							attachmentPanel.removeFromEmailWindow();
+						}
+					});
+				}
 			},
 
 			/**
