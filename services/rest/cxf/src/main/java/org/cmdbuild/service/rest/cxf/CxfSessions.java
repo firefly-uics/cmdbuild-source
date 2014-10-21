@@ -4,8 +4,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.auth.UserStores.inMemory;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.cmdbuild.service.rest.constants.Serialization.GROUP;
+import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.cmdbuild.service.rest.model.Builders.newSession;
+
+import java.util.Set;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
@@ -143,8 +146,18 @@ public class CxfSessions implements Sessions, LoggingSupport {
 
 	@Override
 	public ResponseMultiple<String> readGroups(final String id) {
-		// TODO Auto-generated method stub
-		return null;
+		final Optional<Session> session = sessionStore.get(id);
+		if (!session.isPresent()) {
+			errorHandler.sessionNotFound(id);
+		}
+		final Optional<OperationUser> operationUser = operationUserStore.get(session.get());
+		if (!operationUser.isPresent()) {
+			errorHandler.userNotFound(id);
+		}
+		final Set<String> elements = operationUser.get().getAuthenticatedUser().getGroupNames();
+		return newResponseMultiple(String.class) //
+				.withElements(elements) //
+				.build();
 	}
 
 }
