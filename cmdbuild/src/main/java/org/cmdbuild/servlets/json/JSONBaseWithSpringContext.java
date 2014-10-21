@@ -16,7 +16,6 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.DmsConfiguration;
-import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.NavigationTreeLogic;
@@ -53,6 +52,7 @@ import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
@@ -282,13 +282,13 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(DataSourceHelper.class);
 	}
 
+	protected Notifier notifier() {
+		return applicationContext().getBean(Notifier.class);
+	}
+
 	/*
 	 * Web
 	 */
-
-	protected RequestListener requestListener() {
-		return applicationContext().getBean(RequestListener.class);
-	}
 
 	@Deprecated
 	protected SessionVars sessionVars() {

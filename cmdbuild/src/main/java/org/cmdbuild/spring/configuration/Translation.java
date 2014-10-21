@@ -8,11 +8,11 @@ import org.cmdbuild.data.store.translation.TranslationConverter;
 import org.cmdbuild.logic.translation.DefaultTranslationLogic;
 import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.logic.translation.TranslationLogic;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationComponent
+@Configuration
 public class Translation {
 
 	@Autowired

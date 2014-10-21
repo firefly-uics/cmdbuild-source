@@ -20,13 +20,13 @@ import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.services.cache.wrappers.CachingStore;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class Data {
 
 	@Autowired
@@ -95,7 +95,7 @@ public class Data {
 				systemLockCardManager);
 	}
 
-	public static final String BEAN_SYSTEM_DATA_VIEW = "SystemDataView";
+	public static final String BEAN_SYSTEM_DATA_VIEW = "systemDataView";
 
 	@Bean(name = BEAN_SYSTEM_DATA_VIEW)
 	@Qualifier(SYSTEM)

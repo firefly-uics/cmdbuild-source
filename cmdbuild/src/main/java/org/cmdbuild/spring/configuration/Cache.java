@@ -17,13 +17,13 @@ import org.cmdbuild.services.cache.wrappers.DmsServiceWrapper;
 import org.cmdbuild.services.cache.wrappers.JSONDispatcherServiceWrapper;
 import org.cmdbuild.services.cache.wrappers.TranslationServiceWrapper;
 import org.cmdbuild.services.soap.security.SoapUserFetcher;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class Cache {
 
 	@Autowired

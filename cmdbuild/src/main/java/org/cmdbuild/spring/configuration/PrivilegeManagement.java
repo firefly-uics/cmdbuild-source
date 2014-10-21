@@ -12,13 +12,13 @@ import org.cmdbuild.auth.context.SystemPrivilegeContext;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.DataViewRowAndColumnPrivilegeFetcher;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class PrivilegeManagement {
 
 	@Autowired

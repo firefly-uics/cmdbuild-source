@@ -11,12 +11,12 @@ import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.services.gis.GeoFeatureStore;
 import org.cmdbuild.services.gis.GisDatabaseService;
 import org.cmdbuild.services.gis.geoserver.GeoServerService;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class Gis {
 
 	@Autowired

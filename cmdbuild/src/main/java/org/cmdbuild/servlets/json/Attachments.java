@@ -225,8 +225,7 @@ public class Attachments extends JSONBaseWithSpringContext {
 		try {
 			return dmsLogic().getCategoryDefinition(category);
 		} catch (final DmsException e) {
-			requestListener();
-			RequestListener.getCurrentRequest().pushWarning(e);
+			notifier().warn(e);
 			return definitionsFactory.newDocumentTypeDefinitionWithNoMetadata(category);
 		}
 	}

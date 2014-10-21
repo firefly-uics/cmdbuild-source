@@ -8,11 +8,11 @@ import org.cmdbuild.scheduler.SchedulerExeptionFactory;
 import org.cmdbuild.scheduler.SchedulerService;
 import org.cmdbuild.scheduler.quartz.QuartzSchedulerService;
 import org.cmdbuild.services.scheduler.DefaultSchedulerExeptionFactory;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationComponent
+@Configuration
 public class Scheduler {
 
 	@Autowired

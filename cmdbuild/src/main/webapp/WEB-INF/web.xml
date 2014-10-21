@@ -24,8 +24,10 @@
 	</listener>
 
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener
-		</listener-class>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
 
 	<listener id="cmdbuildInit">
@@ -66,8 +68,7 @@
 	</filter-mapping>
 
 	<listener>
-		<listener-class>org.cmdbuild.listeners.RequestListener
-		</listener-class>
+		<listener-class>org.cmdbuild.listeners.RequestListener</listener-class>
 	</listener>
 
 	<servlet>
@@ -81,8 +82,7 @@
 
 	<servlet>
 		<servlet-name>ws</servlet-name>
-		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet
-		</servlet-class>
+		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 

@@ -146,13 +146,13 @@ public class ModClass extends JSONBaseWithSpringContext {
 		final JSONArray serializedClasses = new JSONArray();
 		for (final CMClass cmClass : classesToBeReturned) {
 			final JSONObject classObject = classSerializer().toClient(cmClass);
-			Serializer.addAttachmentsData(classObject, cmClass, dmsLogic());
+			Serializer.addAttachmentsData(classObject, cmClass, dmsLogic(), notifier());
 			serializedClasses.put(classObject);
 		}
 
 		for (final UserProcessClass userProcessClass : processClasses) {
 			final JSONObject classObject = classSerializer().toClient(userProcessClass, activeOnly);
-			Serializer.addAttachmentsData(classObject, userProcessClass, dmsLogic());
+			Serializer.addAttachmentsData(classObject, userProcessClass, dmsLogic(), notifier());
 			serializedClasses.put(classObject);
 
 			// do this check only for the request
@@ -185,8 +185,8 @@ public class ModClass extends JSONBaseWithSpringContext {
 			// throw an exception to say to the user
 			// that the XPDL has no adminStart
 			if (WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.equals(ex.getExceptionType())
-					&& !element.isSuperclass() && sessionVars().getUser().hasAdministratorPrivileges()) {
-				requestListener().warn(ex);
+					&& !element.isSuperclass() && userStore().getUser().hasAdministratorPrivileges()) {
+				notifier().warn(ex);
 			} else {
 				throw ex;
 			}

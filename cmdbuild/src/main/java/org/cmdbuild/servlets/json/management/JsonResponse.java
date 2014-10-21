@@ -8,8 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.listeners.CMDBContext;
+import org.cmdbuild.listeners.ContextStore;
 import org.cmdbuild.listeners.RequestListener;
 import org.codehaus.jackson.map.ObjectMapper;
+
+import com.google.common.base.Optional;
 
 public class JsonResponse {
 
@@ -25,8 +29,9 @@ public class JsonResponse {
 	}
 
 	public Object getWarnings() {
-		final List<? extends Throwable> warnings = applicationContext().getBean(RequestListener.class) //
-				.getCurrentRequest().getWarnings();
+		final ContextStore contextStore = applicationContext().getBean(ContextStore.class);
+		final Optional<CMDBContext> optional = contextStore.get();
+		final List<? extends Throwable> warnings = optional.get().getWarnings();
 		if (warnings.size() > 0) {
 			final List<JsonException> jsonWarnings = new ArrayList<JsonException>();
 			for (Throwable t : warnings) {

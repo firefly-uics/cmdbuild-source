@@ -12,13 +12,13 @@ import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.access.lock.LockCardManager.LockCardConfiguration;
 import org.cmdbuild.logic.data.access.lock.LockCardManagerFactory;
 import org.cmdbuild.services.store.LockedCardStore;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class LockCard {
 
 	@Autowired

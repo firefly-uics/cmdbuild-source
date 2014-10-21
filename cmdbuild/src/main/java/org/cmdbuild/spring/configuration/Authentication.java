@@ -26,13 +26,13 @@ import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
 import org.cmdbuild.services.soap.security.SoapConfiguration;
 import org.cmdbuild.services.soap.security.SoapPasswordAuthenticator;
 import org.cmdbuild.services.soap.security.SoapUserFetcher;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class Authentication {
 
 	@Autowired
