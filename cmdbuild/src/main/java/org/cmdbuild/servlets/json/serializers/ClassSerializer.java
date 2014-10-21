@@ -25,6 +25,7 @@ import org.cmdbuild.logic.privileges.CardEditMode;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.json.JSONException;
@@ -40,6 +41,7 @@ public class ClassSerializer extends Serializer {
 	private final TranslationFacade translationFacade;
 	private final SecurityLogic securityLogic;
 	private final UserStore userStore;
+	private final Notifier notifier;
 
 	public ClassSerializer( //
 			final CMDataView dataView, //
@@ -47,7 +49,8 @@ public class ClassSerializer extends Serializer {
 			final PrivilegeContext privilegeContext, //
 			final TranslationFacade translationFacade, //
 			final SecurityLogic securityLogic, //
-			final UserStore userStore //
+			final UserStore userStore, //
+			final Notifier notifier //
 	) {
 		this.dataView = dataView;
 		this.workflowLogic = workflowLogicBuilder.build();
@@ -55,6 +58,7 @@ public class ClassSerializer extends Serializer {
 		this.translationFacade = translationFacade;
 		this.securityLogic = securityLogic;
 		this.userStore = userStore;
+		this.notifier = notifier;
 	}
 
 	private JSONObject toClient(final UserProcessClass element, final String wrapperLabel,
@@ -68,7 +72,7 @@ public class ClassSerializer extends Serializer {
 			Log.CMDBUILD.warn("Cannot fetch if the process '{}' is startable", element.getName());
 		} catch (final CMDBWorkflowException ex) {
 			if (WorkflowExceptionType.WF_START_ACTIVITY_NOT_FOUND.equals(ex.getExceptionType())) {
-				RequestListener.getCurrentRequest().pushWarning(ex);
+				notifier.warn(ex);
 			}
 		}
 

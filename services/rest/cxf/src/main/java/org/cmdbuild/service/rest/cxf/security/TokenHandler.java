@@ -11,8 +11,12 @@ import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.ext.RequestHandler;
 import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.message.Message;
+import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.service.rest.cxf.service.OperationUserStore;
 import org.cmdbuild.service.rest.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
+import org.cmdbuild.service.rest.model.Session;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -24,11 +28,16 @@ public class TokenHandler implements RequestHandler, LoggingSupport {
 	private static final Optional<String> ABSENT = Optional.absent();
 
 	private final Predicate<Class<?>> unauthorizedServices;
-	private final SessionStore tokenStore;
+	private final SessionStore sessionStore;
+	private final OperationUserStore operationUserStore;
+	private final UserStore userStore;
 
-	public TokenHandler(final Predicate<Class<?>> unauthorizedServices, final SessionStore tokenStore) {
+	public TokenHandler(final Predicate<Class<?>> unauthorizedServices, final SessionStore sessionStore,
+			final OperationUserStore operationUserStore, final UserStore userStore) {
 		this.unauthorizedServices = unauthorizedServices;
-		this.tokenStore = tokenStore;
+		this.sessionStore = sessionStore;
+		this.operationUserStore = operationUserStore;
+		this.userStore = userStore;
 	}
 
 	@Override
@@ -36,17 +45,35 @@ public class TokenHandler implements RequestHandler, LoggingSupport {
 		final Map<String, List<String>> headers = (Map<String, List<String>>) message.get(PROTOCOL_HEADERS);
 		final List<String> tokens = headers.get(TOKEN_HEADER);
 		final Optional<String> token = (tokens == null || tokens.isEmpty()) ? ABSENT : Optional.of(tokens.get(0));
-		final boolean unauthorized = unauthorizedServices.apply(resourceClass.getServiceClass());
-		final Response response;
-		if (unauthorized) {
-			response = null;
-		} else if (!token.isPresent()) {
-			response = Response.status(UNAUTHORIZED).build();
-		} else if (!tokenStore.get(token.get()).isPresent()) {
-			response = Response.status(UNAUTHORIZED).build();
-		} else {
-			response = null;
-		}
+		Response response = null;
+		do {
+			final boolean unauthorized = unauthorizedServices.apply(resourceClass.getServiceClass());
+			if (unauthorized) {
+				break;
+			}
+
+			final boolean missingToken = !token.isPresent();
+			if (missingToken) {
+				response = Response.status(UNAUTHORIZED).build();
+				break;
+			}
+
+			final Optional<Session> session = sessionStore.get(token.get());
+			final boolean missingSession = !session.isPresent();
+			if (missingSession) {
+				response = Response.status(UNAUTHORIZED).build();
+				break;
+			}
+
+			final boolean missingOperationUser = !operationUserStore.get(session.get()).isPresent();
+			if (missingOperationUser) {
+				response = Response.status(UNAUTHORIZED).build();
+				break;
+			}
+
+			final OperationUser operationUser = operationUserStore.get(session.get()).get();
+			userStore.setUser(operationUser);
+		} while (false);
 		return response;
 	}
 }

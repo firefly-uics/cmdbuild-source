@@ -51,12 +51,12 @@ import org.cmdbuild.services.bim.connector.export.DoNotForceUpdate;
 import org.cmdbuild.services.bim.connector.export.ExportConnectorFramework;
 import org.cmdbuild.services.bim.connector.export.ExportPolicy;
 import org.cmdbuild.services.bim.connector.export.MergeOnlyBeforeExport;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationComponent
+@Configuration
 public class Bim {
 
 	@Autowired

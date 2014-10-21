@@ -4,11 +4,11 @@ import static org.cmdbuild.spring.util.Constants.ROOT;
 
 import org.cmdbuild.services.CustomFilesStore;
 import org.cmdbuild.services.WebInfFilesStore;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationComponent
+@Configuration
 public class FileStore {
 
 	@Bean

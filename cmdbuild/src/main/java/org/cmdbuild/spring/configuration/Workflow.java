@@ -15,7 +15,6 @@ import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.template.engine.EngineNames;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
 import org.cmdbuild.workflow.DataViewWorkflowPersistence;
 import org.cmdbuild.workflow.DefaultGroupQueryAdapter;
@@ -41,9 +40,10 @@ import org.cmdbuild.workflow.xpdl.XpdlProcessDefinitionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class Workflow {
 
 	@Autowired

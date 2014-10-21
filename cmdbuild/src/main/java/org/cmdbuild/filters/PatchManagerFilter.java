@@ -11,12 +11,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.cmdbuild.services.startup.StartupLogic;
-import org.cmdbuild.spring.annotations.FilterComponent;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Configuration;
 
-@FilterComponent("PatchManagerFilter")
+@Configuration("PatchManagerFilter")
 public class PatchManagerFilter implements Filter, ApplicationContextAware {
 
 	private static final String JSP_PAGE = "patchmanager.jsp";

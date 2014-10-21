@@ -8,6 +8,7 @@
 <%@ page import="java.util.List"%>
 <%@ page import="com.google.common.base.Joiner"%>
 
+<%@ page import="org.cmdbuild.auth.UserStore" %>
 <%@ page import="org.cmdbuild.auth.acl.CMGroup" %>
 <%@ page import="org.cmdbuild.auth.user.OperationUser" %>
 <%@ page import="org.cmdbuild.services.SessionVars"%>
@@ -17,7 +18,8 @@
 <%
 	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
 	final String lang = sessionVars.getLanguage();
-	final OperationUser operationUser = sessionVars.getUser();
+	final UserStore userStore = SpringIntegrationUtils.applicationContext().getBean(UserStore.class);
+	final OperationUser operationUser = userStore.getUser();
 	final CMGroup group = operationUser.getPreferredGroup();
 	final String defaultGroupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
 	final List<String> groupDescriptionList = operationUser.getAuthenticatedUser().getGroupDescriptions();

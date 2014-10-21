@@ -339,7 +339,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			try {
 				dataLogic.updateCard(cardToBeCreatedOrUpdated);
 			} catch (final ConsistencyException e) {
-				requestListener().warn(e);
+				notifier().warn(e);
 				out.put("success", false);
 			}
 		}
@@ -620,7 +620,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		try {
 			dataLogic.lockCard(cardId);
 		} catch (final ConsistencyException e) {
-			requestListener().warn(e);
+			notifier().warn(e);
 			out.put("success", false);
 		}
 

@@ -5,11 +5,11 @@ import org.cmdbuild.data.store.dao.StorableConverter;
 import org.cmdbuild.services.template.engine.DatabaseEngine;
 import org.cmdbuild.services.template.store.StoreTemplateRepository;
 import org.cmdbuild.services.template.store.TemplateStorableConverter;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationComponent
+@Configuration
 public class Template {
 
 	@Autowired

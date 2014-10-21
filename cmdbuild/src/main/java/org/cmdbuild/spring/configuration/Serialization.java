@@ -11,12 +11,12 @@ import org.cmdbuild.servlets.json.serializers.DefaultTranslationFacade;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.TranslationFacade;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class Serialization {
 
 	@Autowired
@@ -36,6 +36,9 @@ public class Serialization {
 
 	@Autowired
 	private UserStore userStore;
+
+	@Autowired
+	private Web web;
 
 	@Autowired
 	private Workflow workflow;
@@ -60,7 +63,8 @@ public class Serialization {
 				privilegeManagement.userPrivilegeContext(), //
 				translationFacade(), //
 				data.securityLogic(), //
-				userStore //
+				userStore, //
+				web.notifier() //
 		);
 	}
 

@@ -22,12 +22,12 @@ import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.exception.DmsException;
-import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.ValueAndDescription;
 import org.joda.time.DateTime;
@@ -290,13 +290,13 @@ public class Serializer {
 
 	}
 
-	public static void addAttachmentsData(final JSONObject jsonTable, final CMClass cmClass, final DmsLogic dmsLogic)
-			throws JSONException {
+	public static void addAttachmentsData(final JSONObject jsonTable, final CMClass cmClass, final DmsLogic dmsLogic,
+			final Notifier notifier) throws JSONException {
 		final DmsConfiguration dmsConfiguration = applicationContext().getBean(DmsConfiguration.class);
 		if (!dmsConfiguration.isEnabled()) {
 			return;
 		}
-		final Map<String, Map<String, String>> rulesByGroup = rulesByGroup(cmClass, dmsLogic);
+		final Map<String, Map<String, String>> rulesByGroup = rulesByGroup(cmClass, dmsLogic, notifier);
 
 		final JSONObject jsonGroups = new JSONObject();
 		for (final String groupName : rulesByGroup.keySet()) {
@@ -313,13 +313,12 @@ public class Serializer {
 		}
 	}
 
-	private static Map<String, Map<String, String>> rulesByGroup(final CMClass cmClass, final DmsLogic dmsLogic) {
+	private static Map<String, Map<String, String>> rulesByGroup(final CMClass cmClass, final DmsLogic dmsLogic,
+			final Notifier notifier) {
 		try {
 			return dmsLogic.getAutoCompletionRulesByClass(cmClass.getIdentifier().getLocalName());
 		} catch (final DmsException e) {
-			applicationContext().getBean(RequestListener.class) //
-			;
-			RequestListener.getCurrentRequest().pushWarning(e);
+			notifier.warn(e);
 			return Collections.emptyMap();
 		}
 	}
