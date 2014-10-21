@@ -1,7 +1,5 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.modClass.classProperties;
-
 	Ext.define("CMDBuild.controller.administration.workflow.CMProcessFormController", {
 		extend: "CMDBuild.controller.administration.classes.CMClassFormController",
 
@@ -14,6 +12,7 @@
 
 		onProcessSelected: function(id) {
 			this.selection = _CMCache.getProcessById(id);
+
 			if (this.selection) {
 				this.view.onClassSelected(this.selection);
 
@@ -29,13 +28,14 @@
 					url: 'services/json/workflow/xpdlversions',
 					method: 'POST',
 					params: {idClass : id},
-					scope: this.view,
+					scope: this,
 					success: function(response, options, json) {
-						CMDBuild.LoadMask.get().hide();
 						var versions = json.response;
-						var store = this.versionCombo.store;
+						var store = this.view.versionCombo.getStore();
 
 						store.removeAll();
+						store.loadData([], false); // FIX: store.removeAll(); doesn't work in this case so we use also loadData of null array without fire events
+
 						for(var i=0; i<versions.length; i++) {
 							var v = versions[i];
 
@@ -50,11 +50,7 @@
 							}
 						]);
 
-						this.versionCombo.setValue(store.getAt(0).getId());
-					},
-
-					failure: function() {
-						CMDBuild.LoadMask.get().hide();
+						this.view.versionCombo.setValue(store.getAt(0).getId());
 					}
 				});
 			}
