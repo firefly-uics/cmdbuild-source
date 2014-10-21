@@ -230,10 +230,14 @@
 
 			workflow: {
 				abortProcess: 'services/json/workflow/abortprocess',
-				getStartActivity: 'services/json/workflow/getstartactivity',
 				getActivityInstance: 'services/json/workflow/getactivityinstance',
+				getStartActivity: 'services/json/workflow/getstartactivity',
 				isProcessUpdated: 'services/json/workflow/isprocessupdated',
-				saveActivity: 'services/json/workflow/saveactivity'
+				saveActivity: 'services/json/workflow/saveactivity',
+				xpdlDownload: 'services/json/workflow/downloadxpdl',
+				xpdlDownloadTemplate: 'services/json/workflow/downloadxpdltemplate',
+				xpdlUpload: 'services/json/workflow/uploadxpdl',
+				xpdlVersions: 'services/json/workflow/xpdlversions'
 			}
 		}
 	});
