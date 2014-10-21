@@ -62,16 +62,17 @@
 			});
 		},
 
-		/*
+		/**
 		 * The activityInfo has only the base info about the activity.
 		 * Do a request to have the activity data and set it in the _CMWFState
+		 *
+		 * @param {Int} activityInfoId
 		 */
 		onActivityInfoSelect: function(activityInfoId) {
 			var me = this;
-			if (!activityInfoId ||
-					// prevent the selection of the same activity
-					(me.lastActivityInfoId && me.lastActivityInfoId == activityInfoId)) {
 
+			// Prevent the selection of the same activity
+			if (!activityInfoId || (me.lastActivityInfoId && me.lastActivityInfoId == activityInfoId)) {
 				return;
 			} else {
 				me.lastActivityInfoId = null;
@@ -81,30 +82,39 @@
 
 			CMDBuild.LoadMask.get().show();
 
-			CMDBuild.ServiceProxy.workflow.getActivityInstance({
-				classId: _CMWFState.getProcessInstance().getClassId(),
-				cardId: _CMWFState.getProcessInstance().getId(),
-				activityInstanceId: activityInfoId
-			}, {
-				success: function success(response, request, decoded) {
-					CMDBuild.LoadMask.get().hide();
+			CMDBuild.ServiceProxy.workflow.getActivityInstance(
+				{
+					classId: _CMWFState.getProcessInstance().getClassId(),
+					cardId: _CMWFState.getProcessInstance().getId(),
+					activityInstanceId: activityInfoId
+				},
+				{
+					success: function(response, request, decoded) {
+						CMDBuild.LoadMask.get().hide();
 
-					var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
-					me.lastActivityInfoId = activityInfoId;
-					_CMWFState.setActivityInstance(activity);
+						var activity = new CMDBuild.model.CMActivityInstance(decoded.response || {});
+
+						me.lastActivityInfoId = activityInfoId;
+						_CMWFState.setActivityInstance(activity);
+					}
 				}
-			});
+			);
 		},
 
-		// override
+		/**
+		 * @param {Ext.selection.RowModel} sm
+		 * @param {CMDBuild.model.CMProcessInstance} selection
+		 *
+		 * @override
+		 */
 		onCardSelected: function(sm, selection) {
 			if (Ext.isArray(selection)) {
 				if (selection.length > 0) {
+					var me = this;
 					var pi = selection[0];
 					var activities = pi.getActivityInfoList();
-					this.lastActivityInfoId = null;
 
-					var me = this;
+					this.lastActivityInfoId = null;
 
 					CMDBuild.LoadMask.get().show();
 
@@ -113,12 +123,12 @@
 							toggleRow(pi, me);
 							if (activities.length == 1) {
 								var ai = activities[0];
-								if (ai && ai.id) {
+
+								if (ai && ai.id)
 									me.onActivityInfoSelect(ai.id);
-								}
 							}
 						} else {
-							_debug("A proces without activities", pi);
+							_debug('A proces without activities', pi);
 						}
 					});
 				}
