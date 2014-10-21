@@ -1,12 +1,12 @@
 package org.cmdbuild.service.rest.cxf.configuration;
 
-import static com.google.common.base.Predicates.alwaysTrue;
+import static com.google.common.base.Predicates.assignableFrom;
+import static com.google.common.base.Predicates.or;
 
-import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.service.rest.Sessions;
 import org.cmdbuild.service.rest.cxf.security.TokenHandler;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,7 +16,7 @@ import com.google.common.base.Predicate;
 public class Security implements LoggingSupport {
 
 	@Autowired
-	private ApplicationContext applicationContext;
+	private ApplicationContextHelper helper;
 
 	@Autowired
 	private Services services;
@@ -24,16 +24,11 @@ public class Security implements LoggingSupport {
 	@Bean
 	public TokenHandler tokenHandler() {
 		return new TokenHandler(unauthorizedServices(), services.sessionStore(), services.operationUserStore(),
-				userStore());
-	}
-
-	private UserStore userStore() {
-		return applicationContext.getBean(UserStore.class);
+				helper.userStore());
 	}
 
 	private Predicate<Class<?>> unauthorizedServices() {
-		// return or(assignableFrom(Sessions.class));
-		return alwaysTrue();
+		return or(assignableFrom(Sessions.class));
 	}
 
 }

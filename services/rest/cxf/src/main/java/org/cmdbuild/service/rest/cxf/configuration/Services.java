@@ -7,19 +7,8 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUES
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
-import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.logic.auth.AuthenticationLogic;
-import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
-import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
-import org.cmdbuild.logic.data.lookup.LookupLogic;
-import org.cmdbuild.logic.menu.MenuLogic;
-import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
-import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.ClassAttributes;
 import org.cmdbuild.service.rest.Classes;
@@ -59,9 +48,7 @@ import org.cmdbuild.service.rest.cxf.service.RandomTokenGenerator;
 import org.cmdbuild.service.rest.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.cxf.service.TokenGenerator;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
-import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -72,70 +59,71 @@ import com.google.common.base.Supplier;
 public class Services implements LoggingSupport {
 
 	@Autowired
-	private ApplicationContext applicationContext;
+	private ApplicationContextHelper helper;
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public Cards cxfCards() {
-		final CxfCards service = new CxfCards(errorHandler(), userDataAccessLogic(), systemDataView(), userDataView());
+		final CxfCards service = new CxfCards(errorHandler(), helper.userDataAccessLogic(), helper.systemDataView(),
+				helper.userDataView());
 		return proxy(Cards.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ClassAttributes cxfClassAttributes() {
-		final CxfClassAttributes service = new CxfClassAttributes(errorHandler(), userDataAccessLogic(),
-				systemDataView(), metadataStoreFactory(), lookupLogic());
+		final CxfClassAttributes service = new CxfClassAttributes(errorHandler(), helper.userDataAccessLogic(),
+				helper.systemDataView(), helper.metadataStoreFactory(), helper.lookupLogic());
 		return proxy(ClassAttributes.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public Classes cxfClasses() {
-		final CxfClasses service = new CxfClasses(errorHandler(), userDataAccessLogic());
+		final CxfClasses service = new CxfClasses(errorHandler(), helper.userDataAccessLogic());
 		return proxy(Classes.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public DomainAttributes cxfDomainAttributes() {
-		final CxfDomainAttributes service = new CxfDomainAttributes(errorHandler(), userDataAccessLogic(),
-				systemDataView(), metadataStoreFactory(), lookupLogic());
+		final CxfDomainAttributes service = new CxfDomainAttributes(errorHandler(), helper.userDataAccessLogic(),
+				helper.systemDataView(), helper.metadataStoreFactory(), helper.lookupLogic());
 		return proxy(DomainAttributes.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public Relations cxfRelations() {
-		final CxfRelations service = new CxfRelations(errorHandler(), userDataAccessLogic());
+		final CxfRelations service = new CxfRelations(errorHandler(), helper.userDataAccessLogic());
 		return proxy(Relations.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public Domains cxfDomains() {
-		final CxfDomains service = new CxfDomains(errorHandler(), userDataAccessLogic());
+		final CxfDomains service = new CxfDomains(errorHandler(), helper.userDataAccessLogic());
 		return proxy(Domains.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public LookupTypes cxfLookupTypes() {
-		final CxfLookupTypes service = new CxfLookupTypes(errorHandler(), lookupLogic());
+		final CxfLookupTypes service = new CxfLookupTypes(errorHandler(), helper.lookupLogic());
 		return proxy(LookupTypes.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public LookupTypeValues cxfLookupTypeValues() {
-		final CxfLookupTypeValues service = new CxfLookupTypeValues(errorHandler(), lookupLogic());
+		final CxfLookupTypeValues service = new CxfLookupTypeValues(errorHandler(), helper.lookupLogic());
 		return proxy(LookupTypeValues.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public Menu cxfMenu() {
-		final CxfMenu service = new CxfMenu(currentGroupNameSupplier(), menuLogic(), systemDataView());
+		final CxfMenu service = new CxfMenu(currentGroupNameSupplier(), helper.menuLogic(), helper.systemDataView());
 		return proxy(Menu.class, service);
 	}
 
@@ -144,7 +132,7 @@ public class Services implements LoggingSupport {
 
 			@Override
 			public String get() {
-				return applicationContext.getBean(UserStore.class).getUser().getPreferredGroup().getName();
+				return helper.userStore().getUser().getPreferredGroup().getName();
 			}
 
 		};
@@ -153,15 +141,15 @@ public class Services implements LoggingSupport {
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessAttributes cxfProcessAttributes() {
-		final CxfProcessAttributes service = new CxfProcessAttributes(errorHandler(), userDataAccessLogic(),
-				systemDataView(), metadataStoreFactory(), lookupLogic());
+		final CxfProcessAttributes service = new CxfProcessAttributes(errorHandler(), helper.userDataAccessLogic(),
+				helper.systemDataView(), helper.metadataStoreFactory(), helper.lookupLogic());
 		return proxy(ProcessAttributes.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public Processes cxfProcesses() {
-		final CxfProcesses service = new CxfProcesses(errorHandler(), userWorkflowLogic());
+		final CxfProcesses service = new CxfProcesses(errorHandler(), helper.userWorkflowLogic());
 		return proxy(Processes.class, service);
 	}
 
@@ -169,28 +157,29 @@ public class Services implements LoggingSupport {
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessInstanceActivities cxfProcessInstanceActivities() {
 		final CxfProcessInstanceActivities service = new CxfProcessInstanceActivities(errorHandler(),
-				userWorkflowLogic());
+				helper.userWorkflowLogic());
 		return proxy(ProcessInstanceActivities.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessInstances cxfProcessInstances() {
-		final CxfProcessInstances service = new CxfProcessInstances(errorHandler(), userWorkflowLogic());
+		final CxfProcessInstances service = new CxfProcessInstances(errorHandler(), helper.userWorkflowLogic());
 		return proxy(ProcessInstances.class, service);
 	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessStartActivities cxfProcessStartActivities() {
-		final CxfProcessStartActivities service = new CxfProcessStartActivities(errorHandler(), userWorkflowLogic());
+		final CxfProcessStartActivities service = new CxfProcessStartActivities(errorHandler(),
+				helper.userWorkflowLogic());
 		return proxy(ProcessStartActivities.class, service);
 	}
 
 	@Bean
 	public Sessions cxfSessions() {
 		final CxfSessions service = new CxfSessions(errorHandler(), tokenGenerator(), sessionStore(),
-				authenticationLogic(), operationUserStore());
+				helper.authenticationLogic(), operationUserStore());
 		return proxy(Sessions.class, service);
 	}
 
@@ -231,38 +220,6 @@ public class Services implements LoggingSupport {
 	@Bean
 	protected ErrorHandler errorHandler() {
 		return new WebApplicationExceptionErrorHandler();
-	}
-
-	private AuthenticationLogic authenticationLogic() {
-		return applicationContext.getBean(SoapAuthenticationLogicBuilder.class).build();
-	}
-
-	private LookupLogic lookupLogic() {
-		return applicationContext.getBean(LookupLogic.class);
-	}
-
-	private MenuLogic menuLogic() {
-		return applicationContext.getBean(MenuLogic.class);
-	}
-
-	private MetadataStoreFactory metadataStoreFactory() {
-		return applicationContext.getBean(MetadataStoreFactory.class);
-	}
-
-	private CMDataView systemDataView() {
-		return applicationContext.getBean(DBDataView.class);
-	}
-
-	private DataAccessLogic userDataAccessLogic() {
-		return applicationContext.getBean(UserDataAccessLogicBuilder.class).build();
-	}
-
-	private CMDataView userDataView() {
-		return applicationContext.getBean("UserDataView", CMDataView.class);
-	}
-
-	private WorkflowLogic userWorkflowLogic() {
-		return applicationContext.getBean(UserWorkflowLogicBuilder.class).build();
 	}
 
 }
