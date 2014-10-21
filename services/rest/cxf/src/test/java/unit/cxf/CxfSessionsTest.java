@@ -1,5 +1,6 @@
 package unit.cxf;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.cmdbuild.service.rest.constants.Serialization.GROUP;
 import static org.cmdbuild.service.rest.model.Builders.newSession;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,6 +14,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+
+import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -30,6 +33,7 @@ import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.cxf.service.OperationUserStore;
 import org.cmdbuild.service.rest.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.cxf.service.TokenGenerator;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.service.rest.model.Session;
 import org.junit.Before;
@@ -37,6 +41,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 
 public class CxfSessionsTest {
 
@@ -345,4 +350,66 @@ public class CxfSessionsTest {
 		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, authenticationLogic, operationUserStore);
 	}
 
+	@Test(expected = WebApplicationException.class)
+	public void readGroups_missingSessionThrowsExeption() throws Exception {
+		// given
+		doReturn(Optional.absent()) //
+				.when(sessionStore).get(anyString());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).sessionNotFound(anyString());
+
+		// when
+		cxfSessions.readGroups("token");
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void readGroups_missingOperationUserThrowsExeption() throws Exception {
+		// given
+		final Session session = newSession() //
+				.withId("token") //
+				.withUsername("username") //
+				.withPassword("password") //
+				.withGroup("group") //
+				.build();
+		doReturn(Optional.of(session)) //
+				.when(sessionStore).get(eq("token"));
+		doReturn(Optional.absent()) //
+				.when(operationUserStore).get(eq(session));
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).userNotFound(anyString());
+
+		// when
+		cxfSessions.readGroups("token");
+	}
+
+	@Test
+	public void readGroups_groupsReturned() throws Exception {
+		// given
+		final Session session = newSession() //
+				.withId("token") //
+				.withUsername("username") //
+				.withPassword("password") //
+				.withGroup("group") //
+				.build();
+		doReturn(Optional.of(session)) //
+				.when(sessionStore).get(anyString());
+		final Set<String> groupNames = Sets.newHashSet("foo", "bar", "baz");
+		final AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
+		doReturn(groupNames) //
+				.when(authenticatedUser).getGroupNames();
+		final OperationUser operationUser = new OperationUser(authenticatedUser, mock(PrivilegeContext.class),
+				mock(CMGroup.class));
+		doReturn(Optional.of(operationUser)) //
+				.when(operationUserStore).get(any(Session.class));
+
+		// when
+		final ResponseMultiple<String> response = cxfSessions.readGroups("token");
+
+		// then
+		verify(sessionStore).get(eq("token"));
+		verify(operationUserStore).get(eq(session));
+		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, authenticationLogic, operationUserStore);
+
+		assertThat(newArrayList(response.getElements()), equalTo(newArrayList(groupNames)));
+	}
 }
