@@ -71,7 +71,7 @@ public class CxfSessions implements Sessions, LoggingSupport {
 		final String token = tokenGenerator.generate(session.getUsername());
 		final Session updatedSession = newSession(session) //
 				.withId(token) //
-				.withGroup(group.isActive() ? group.getName() : null) //
+				.withRole(group.isActive() ? group.getName() : null) //
 				.build();
 		sessionStore.put(updatedSession);
 		operationUserStore.put(updatedSession, user);
@@ -104,26 +104,26 @@ public class CxfSessions implements Sessions, LoggingSupport {
 		if (!storedOperationUser.isPresent()) {
 			errorHandler.userNotFound(id);
 		}
-		if (isBlank(session.getGroup())) {
+		if (isBlank(session.getRole())) {
 			errorHandler.missingParam(GROUP);
 		}
 
 		final Session sessionWithGroup = newSession(storedSession.get()) //
-				.withGroup(session.getGroup()) //
+				.withRole(session.getRole()) //
 				.build();
 		final UserStore temporary = inMemory(storedOperationUser.get());
 		authenticationLogic.login( //
 				LoginDTO.newInstance() //
 						.withLoginString(sessionWithGroup.getUsername()) //
 						.withPassword(sessionWithGroup.getPassword()) //
-						.withGroupName(sessionWithGroup.getGroup()) //
+						.withGroupName(sessionWithGroup.getRole()) //
 						.build(), //
 				temporary);
 		final OperationUser user = temporary.getUser();
 		final CMGroup group = user.getPreferredGroup();
 
 		final Session updatedSession = newSession(sessionWithGroup) //
-				.withGroup(group.isActive() ? group.getName() : null) //
+				.withRole(group.isActive() ? group.getName() : null) //
 				.build();
 
 		sessionStore.put(updatedSession);
@@ -145,7 +145,7 @@ public class CxfSessions implements Sessions, LoggingSupport {
 	}
 
 	@Override
-	public ResponseMultiple<String> readGroups(final String id) {
+	public ResponseMultiple<String> readRoles(final String id) {
 		final Optional<Session> session = sessionStore.get(id);
 		if (!session.isPresent()) {
 			errorHandler.sessionNotFound(id);

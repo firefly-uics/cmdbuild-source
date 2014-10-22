@@ -28,7 +28,7 @@ public class InMemorySessionStoreTest {
 				.withId(null) //
 				.withUsername("username") //
 				.withPassword("password") //
-				.withGroup("password") //
+				.withRole("password") //
 				.build();
 
 		// when
@@ -42,7 +42,7 @@ public class InMemorySessionStoreTest {
 				.withId(EMPTY) //
 				.withUsername("username") //
 				.withPassword("password") //
-				.withGroup("password") //
+				.withRole("password") //
 				.build();
 
 		// when
@@ -56,7 +56,7 @@ public class InMemorySessionStoreTest {
 				.withId(" \t") //
 				.withUsername("username") //
 				.withPassword("password") //
-				.withGroup("password") //
+				.withRole("password") //
 				.build();
 
 		// when
@@ -91,7 +91,7 @@ public class InMemorySessionStoreTest {
 				.withId("id") //
 				.withUsername("username") //
 				.withPassword("password") //
-				.withGroup("password") //
+				.withRole("password") //
 				.build();
 
 		// when
@@ -122,7 +122,7 @@ public class InMemorySessionStoreTest {
 				.withId("id") //
 				.withUsername("username") //
 				.withPassword("password") //
-				.withGroup("password") //
+				.withRole("password") //
 				.build();
 
 		// when

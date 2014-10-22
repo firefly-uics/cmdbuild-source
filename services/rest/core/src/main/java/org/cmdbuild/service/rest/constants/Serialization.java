@@ -68,6 +68,7 @@ public class Serialization {
 			PRECISION = "precision", //
 			RELATION = "relation", //
 			RESPONSE_METADATA = "meta", //
+			ROLE = "role", //
 			SCALE = "scale", //
 			SESSION = "session", //
 			SIMPLE_CLASS_DETAIL = "simpleClassDetail", //

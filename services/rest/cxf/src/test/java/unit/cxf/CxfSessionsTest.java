@@ -192,7 +192,7 @@ public class CxfSessionsTest {
 				.withId("token") //
 				.withUsername("username") //
 				.withPassword("password") //
-				.withGroup("group") //
+				.withRole("group") //
 				.build();
 		doReturn(Optional.of(session)) //
 				.when(sessionStore).get(anyString());
@@ -215,7 +215,7 @@ public class CxfSessionsTest {
 				.withId("token") //
 				.withUsername("username") //
 				.withPassword("password") //
-				.withGroup("group") //
+				.withRole("group") //
 				.build();
 		doReturn(Optional.absent()) //
 				.when(sessionStore).get(anyString());
@@ -271,11 +271,11 @@ public class CxfSessionsTest {
 				.withId("old token") //
 				.withUsername("old username") //
 				.withPassword("old password") //
-				.withGroup("old group") //
+				.withRole("old group") //
 				.build();
 		final Session newSession = newSession() //
 				.withId("new token") //
-				.withGroup("new group") //
+				.withRole("new group") //
 				.build();
 		doReturn(Optional.of(oldSession)) //
 				.when(sessionStore).get(anyString());
@@ -297,15 +297,15 @@ public class CxfSessionsTest {
 				eq(LoginDTO.newInstance() //
 						.withLoginString(oldSession.getUsername()) //
 						.withPassword(oldSession.getPassword()) //
-						.withGroupName(newSession.getGroup()) //
+						.withGroupName(newSession.getRole()) //
 						.build()), //
 				any(UserStore.class));
 		verify(sessionStore).put(eq(newSession(oldSession) //
-				.withGroup("guessed group") //
+				.withRole("guessed group") //
 				.build()));
 		verify(operationUserStore).put( //
 				eq(newSession(oldSession) //
-						.withGroup("guessed group") //
+						.withRole("guessed group") //
 						.build()), //
 				eq(operationUser));
 		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, authenticationLogic, operationUserStore);
@@ -330,7 +330,7 @@ public class CxfSessionsTest {
 				.withId("token") //
 				.withUsername("username") //
 				.withPassword("password") //
-				.withGroup("group") //
+				.withRole("group") //
 				.build();
 		doReturn(Optional.of(session)) //
 				.when(sessionStore).get(anyString());
@@ -359,7 +359,7 @@ public class CxfSessionsTest {
 				.when(errorHandler).sessionNotFound(anyString());
 
 		// when
-		cxfSessions.readGroups("token");
+		cxfSessions.readRoles("token");
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -369,7 +369,7 @@ public class CxfSessionsTest {
 				.withId("token") //
 				.withUsername("username") //
 				.withPassword("password") //
-				.withGroup("group") //
+				.withRole("group") //
 				.build();
 		doReturn(Optional.of(session)) //
 				.when(sessionStore).get(eq("token"));
@@ -379,7 +379,7 @@ public class CxfSessionsTest {
 				.when(errorHandler).userNotFound(anyString());
 
 		// when
-		cxfSessions.readGroups("token");
+		cxfSessions.readRoles("token");
 	}
 
 	@Test
@@ -389,7 +389,7 @@ public class CxfSessionsTest {
 				.withId("token") //
 				.withUsername("username") //
 				.withPassword("password") //
-				.withGroup("group") //
+				.withRole("group") //
 				.build();
 		doReturn(Optional.of(session)) //
 				.when(sessionStore).get(anyString());
@@ -403,7 +403,7 @@ public class CxfSessionsTest {
 				.when(operationUserStore).get(any(Session.class));
 
 		// when
-		final ResponseMultiple<String> response = cxfSessions.readGroups("token");
+		final ResponseMultiple<String> response = cxfSessions.readRoles("token");
 
 		// then
 		verify(sessionStore).get(eq("token"));
