@@ -61,7 +61,7 @@ public class CxfMenu implements Menu {
 	@Override
 	public ResponseSingle<MenuDetail> read() {
 		final String group = currentGroupSupplier.get();
-		final MenuItem menuItem = menuLogic.read(group);
+		final MenuItem menuItem = menuLogic.readMenuWithPrivileges(group);
 		final MenuDetail element = new MenuItemToMenuDetail(dataView).apply(menuItem);
 		return newResponseSingle(MenuDetail.class) //
 				.withElement(element) //
