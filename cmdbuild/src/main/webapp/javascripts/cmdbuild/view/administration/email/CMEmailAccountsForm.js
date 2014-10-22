@@ -121,13 +121,11 @@
 					items: [
 						{
 							fieldLabel: tr.username,
-							allowBlank: false,
 							name: CMDBuild.core.proxy.CMProxyConstants.USERNAME
 						},
 						{
 							inputType: 'password',
 							fieldLabel: tr.password,
-							allowBlank: false,
 							name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD
 						}
 					]
