@@ -411,7 +411,7 @@ public class Builders {
 		private String id;
 		private String username;
 		private String password;
-		private String group;
+		private String role;
 
 		private SessionBuilder() {
 			// use factory method
@@ -422,7 +422,7 @@ public class Builders {
 			this.id = existing.getId();
 			this.username = existing.getUsername();
 			this.password = existing.getPassword();
-			this.group = existing.getGroup();
+			this.role = existing.getRole();
 		}
 
 		@Override
@@ -431,7 +431,7 @@ public class Builders {
 			output.setId(id);
 			output.setUsername(username);
 			output.setPassword(password);
-			output.setGroup(group);
+			output.setRole(role);
 			return output;
 		}
 
@@ -450,8 +450,8 @@ public class Builders {
 			return this;
 		}
 
-		public SessionBuilder withGroup(final String group) {
-			this.group = group;
+		public SessionBuilder withRole(final String role) {
+			this.role = role;
 			return this;
 		}
 

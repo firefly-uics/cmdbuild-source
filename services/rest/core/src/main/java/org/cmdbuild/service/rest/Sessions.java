@@ -47,8 +47,8 @@ public interface Sessions {
 	);
 
 	@GET
-	@Path("{" + ID + "}/groups/")
-	ResponseMultiple<String> readGroups( //
+	@Path("{" + ID + "}/roles/")
+	ResponseMultiple<String> readRoles( //
 			@PathParam(ID) String id //
 	);
 

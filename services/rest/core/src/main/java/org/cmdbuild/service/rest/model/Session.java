@@ -1,7 +1,7 @@
 package org.cmdbuild.service.rest.model;
 
-import static org.cmdbuild.service.rest.constants.Serialization.GROUP;
 import static org.cmdbuild.service.rest.constants.Serialization.PASSWORD;
+import static org.cmdbuild.service.rest.constants.Serialization.ROLE;
 import static org.cmdbuild.service.rest.constants.Serialization.SESSION;
 import static org.cmdbuild.service.rest.constants.Serialization.USERNAME;
 
@@ -16,7 +16,7 @@ public class Session extends ModelWithId<String> {
 
 	private String username;
 	private String password;
-	private String group;
+	private String role;
 
 	Session() {
 		// package visibility
@@ -40,13 +40,13 @@ public class Session extends ModelWithId<String> {
 		this.password = password;
 	}
 
-	@XmlElement(name = GROUP)
-	public String getGroup() {
-		return group;
+	@XmlElement(name = ROLE)
+	public String getRole() {
+		return role;
 	}
 
-	void setGroup(final String group) {
-		this.group = group;
+	void setRole(final String role) {
+		this.role = role;
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class Session extends ModelWithId<String> {
 				.append(this.getId(), other.getId()) //
 				.append(this.username, other.username) //
 				.append(this.password, other.password) //
-				.append(this.group, other.group) //
+				.append(this.role, other.role) //
 				.isEquals();
 	}
 
@@ -72,7 +72,7 @@ public class Session extends ModelWithId<String> {
 				.append(this.getId()) //
 				.append(this.username) //
 				.append(this.password) //
-				.append(this.group) //
+				.append(this.role) //
 				.toHashCode();
 	}
 
