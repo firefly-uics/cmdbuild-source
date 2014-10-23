@@ -1,6 +1,9 @@
 package org.cmdbuild.logic.taskmanager.task.email.mapper;
 
 import static java.lang.String.format;
+import static java.util.regex.Pattern.DOTALL;
+import static java.util.regex.Pattern.compile;
+import static java.util.regex.Pattern.quote;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -48,7 +51,7 @@ public class EngineBasedMapper implements Mapper, MapperEngineVisitor {
 		return new Builder();
 	}
 
-	private static final String KEY_VALUE_PATTERN_TEMPLATE = "^.*<%s>(.*)<\\/%s>.*<%s>(.*)<\\/%s>.*$";
+	private static final String PATTERN_TEMPLATE = "%s(.*?)%s";
 
 	private final String text;
 	private final MapperEngine engine;
@@ -68,18 +71,43 @@ public class EngineBasedMapper implements Mapper, MapperEngineVisitor {
 
 	@Override
 	public void visit(final KeyValueMapperEngine mapper) {
-		final Pattern pattern = Pattern.compile( //
-				format(KEY_VALUE_PATTERN_TEMPLATE, //
-						Pattern.quote(mapper.getKeyInit()), //
-						Pattern.quote(mapper.getKeyEnd()), //
-						Pattern.quote(mapper.getValueInit()), //
-						Pattern.quote(mapper.getValueEnd()) //
-				), //
-				Pattern.MULTILINE);
-		final Matcher matcher = pattern.matcher(text);
-		while (matcher.find()) {
-			final String key = matcher.group(1);
-			final String value = matcher.group(2);
+		String resolved = text;
+		final Pattern KEY_PATTERN = compile(
+				format(PATTERN_TEMPLATE, quote(mapper.getKeyInit()), quote(mapper.getKeyEnd())), DOTALL);
+		final Pattern VALUE_PATTERN = compile(
+				format(PATTERN_TEMPLATE, quote(mapper.getValueInit()), quote(mapper.getValueEnd())), DOTALL);
+		boolean found = true;
+		while (found) {
+			final Matcher keyMatcher = KEY_PATTERN.matcher(resolved);
+			found = keyMatcher.find();
+			if (!found) {
+				continue;
+			}
+			final String key = keyMatcher.group(1);
+			resolved = resolved.substring(keyMatcher.end());
+
+			/*
+			 * Checks for another key before the value. This can happen if the
+			 * value is wrongly missing between them.
+			 */
+			final Matcher secondKeyMatcher = KEY_PATTERN.matcher(resolved);
+			final boolean anotherKeyFound = secondKeyMatcher.find();
+
+			final Matcher valueMatcher = VALUE_PATTERN.matcher(resolved);
+			found = valueMatcher.find();
+			if (!found) {
+				continue;
+			}
+			if (anotherKeyFound && (secondKeyMatcher.start() < valueMatcher.start())) {
+				/*
+				 * we have two keys without a value between them, skips the
+				 * first one
+				 */
+				continue;
+			}
+			final String value = valueMatcher.group(1);
+			resolved = resolved.substring(valueMatcher.end());
+
 			map.put(key, value);
 		}
 	}
