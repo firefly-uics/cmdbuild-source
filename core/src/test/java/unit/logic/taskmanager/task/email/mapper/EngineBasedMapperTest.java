@@ -1,5 +1,7 @@
 package unit.logic.taskmanager.task.email.mapper;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -41,7 +43,7 @@ public class EngineBasedMapperTest {
 		// given
 		final MapperEngine engine = mock(MapperEngine.class);
 		final Builder builder = EngineBasedMapper.newInstance() //
-				.withText(" ") //
+				.withText(EMPTY) //
 				.withEngine(engine);
 
 		// when
@@ -61,18 +63,41 @@ public class EngineBasedMapperTest {
 	}
 
 	@Test
-	public void keyValueTextSuccessfullyProcessed() throws Exception {
+	public void lineFeedHandledCorrectly() throws Exception {
 		// given
-		final String text = "" //
-				+ "<key_init>foo</key_end> ... <value_init>FOO</value_end>   \n" //
-				+ "... <key_init>bar</key_end><value_init>BAR</value_end>\n" //
-				+ "<key_init>baz</key_end><value_init>BAZ</value_end>...\n" //
-				+ "";
+		final String text = EMPTY //
+				+ "<key_init>foo</key_end> ... <value_init>F\nO\nO</value_end>   \n" //
+				+ "<key_init>bar</key_end><value_init>B\r\nA\r\nR</value_end>...\n" //
+				+ EMPTY;
 		final Mapper processor = EngineBasedMapper.newInstance() //
 				.withText(text) //
 				.withEngine(KeyValueMapperEngine.newInstance() //
-						.withKey("key_init", "key_end") //
-						.withValue("value_init", "value_end") //
+						.withKey("<key_init>", "</key_end>") //
+						.withValue("<value_init>", "</value_end>") //
+						.build()) //
+				.build();
+
+		// when
+		final Map<String, String> processed = processor.map();
+
+		// then
+		assertThat(processed, hasEntry("foo", "F\nO\nO"));
+		assertThat(processed, hasEntry("bar", "B\r\nA\r\nR"));
+	}
+
+	@Test
+	public void keyValueTextSuccessfullyProcessed() throws Exception {
+		// given
+		final String text = EMPTY //
+				+ "<key_init>foo</key_end> ... <value_init>FOO</value_end>   \n" //
+				+ "... <key_init>bar</key_end><value_init>BAR</value_end>\n" //
+				+ "<key_init>baz</key_end><value_init>BAZ</value_end>...\n" //
+				+ EMPTY;
+		final Mapper processor = EngineBasedMapper.newInstance() //
+				.withText(text) //
+				.withEngine(KeyValueMapperEngine.newInstance() //
+						.withKey("<key_init>", "</key_end>") //
+						.withValue("<value_init>", "</value_end>") //
 						.build()) //
 				.build();
 
@@ -82,6 +107,58 @@ public class EngineBasedMapperTest {
 		// then
 		assertThat(processed, hasEntry("foo", "FOO"));
 		assertThat(processed, hasEntry("bar", "BAR"));
+		assertThat(processed, hasEntry("baz", "BAZ"));
+	}
+
+	@Test
+	public void missingKeySkipsToNextIfPossible() throws Exception {
+		// given
+		final String text = EMPTY //
+				+ "<key_init>foo</key_end><value_init>FOO</value_end>" //
+				+ "<value_init>BAR</value_end>" //
+				+ "<key_init>baz</key_end><value_init>BAZ</value_end>" //
+				+ "<value_init>LOL</value_end>" //
+				+ EMPTY;
+		final Mapper processor = EngineBasedMapper.newInstance() //
+				.withText(text) //
+				.withEngine(KeyValueMapperEngine.newInstance() //
+						.withKey("<key_init>", "</key_end>") //
+						.withValue("<value_init>", "</value_end>") //
+						.build()) //
+				.build();
+
+		// when
+		final Map<String, String> processed = processor.map();
+
+		// then
+		assertThat(processed.size(), equalTo(2));
+		assertThat(processed, hasEntry("foo", "FOO"));
+		assertThat(processed, hasEntry("baz", "BAZ"));
+	}
+
+	@Test
+	public void missingValueSkipsToNextIfPossible() throws Exception {
+		// given
+		final String text = EMPTY //
+				+ "<key_init>foo</key_end><value_init>FOO</value_end>" //
+				+ "<key_init>bar</key_end>" //
+				+ "<key_init>baz</key_end><value_init>BAZ</value_end>" //
+				+ "<key_init>lol</key_end>" //
+				+ EMPTY;
+		final Mapper processor = EngineBasedMapper.newInstance() //
+				.withText(text) //
+				.withEngine(KeyValueMapperEngine.newInstance() //
+						.withKey("<key_init>", "</key_end>") //
+						.withValue("<value_init>", "</value_end>") //
+						.build()) //
+				.build();
+
+		// when
+		final Map<String, String> processed = processor.map();
+
+		// then
+		assertThat(processed.size(), equalTo(2));
+		assertThat(processed, hasEntry("foo", "FOO"));
 		assertThat(processed, hasEntry("baz", "BAZ"));
 	}
 
