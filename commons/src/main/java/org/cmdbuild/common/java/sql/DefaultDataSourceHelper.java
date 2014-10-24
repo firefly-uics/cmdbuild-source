@@ -134,13 +134,13 @@ public class DefaultDataSourceHelper implements DataSourceHelper, LoggingSupport
 
 					@Override
 					public Connection getConnection() throws SQLException {
-						return DriverManager.getConnection(url());
+						return DriverManager.getConnection(url(), configuration.getUsername(),
+								configuration.getPassword());
 					}
 
 					@Override
 					public Connection getConnection(final String username, final String password) throws SQLException {
-						return DriverManager.getConnection(url(), configuration.getUsername(),
-								configuration.getPassword());
+						return DriverManager.getConnection(url(), username, password);
 					}
 
 					private String url() {
