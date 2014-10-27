@@ -9,7 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.cmdbuild.auth.acl.CMGroup;
-import org.cmdbuild.auth.acl.PrivilegeContextFactory;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
@@ -23,22 +23,23 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 
 public class MenuCardPredicateFactoryTest {
 
 	private static final String MOCK_GROUP_NAME = "mock_group";
 	private static final Long referencedClassId = 10L;
 	private CMDataView view;
-	private PrivilegeContextFactory privilegeContextFactory;
+	private Supplier<PrivilegeContext> privilegeContext;
 
 	@Before
 	public void setUp() {
 		this.view = getDataView();
-		this.privilegeContextFactory = mock(PrivilegeContextFactory.class);
+		this.privilegeContext = mock(Supplier.class);
 	}
 
 	private MenuCardPredicateFactory menuCardPredicateFactory(final CMGroup mockGroup) {
-		return new MenuCardPredicateFactory(view, mockGroup, privilegeContextFactory, new ViewConverter(view));
+		return new MenuCardPredicateFactory(view, mockGroup, privilegeContext, new ViewConverter(view));
 	}
 
 	@Test
