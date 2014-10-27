@@ -57,8 +57,14 @@ public class SessionsTest {
 	@Test
 	public void created() throws Exception {
 		// given
-		final ResponseSingle<String> sentResponse = newResponseSingle(String.class) //
-				.withElement("token") //
+		final ResponseSingle<Session> sentResponse = newResponseSingle(Session.class) //
+				.withElement(newSession() //
+						.withId("token") //
+						.withUsername("username") //
+						.withPassword("password") //
+						.withRole("role") //
+						.withAvailableRoles(asList("foo", "bar", "baz")) //
+						.build()) //
 				.build();
 		doReturn(sentResponse) //
 				.when(service).create(any(Session.class));
@@ -112,6 +118,19 @@ public class SessionsTest {
 
 	@Test
 	public void updated() throws Exception {
+		// given
+		final ResponseSingle<Session> sentResponse = newResponseSingle(Session.class) //
+				.withElement(newSession() //
+						.withId("token") //
+						.withUsername("username") //
+						.withPassword("password") //
+						.withRole("role") //
+						.withAvailableRoles(asList("foo", "bar", "baz")) //
+						.build()) //
+				.build();
+		doReturn(sentResponse) //
+				.when(service).update(anyString(), any(Session.class));
+
 		// when
 		final PutMethod put = new PutMethod(server.resource("sessions/foo/"));
 		put.setRequestEntity(new StringRequestEntity( //
@@ -129,7 +148,8 @@ public class SessionsTest {
 		assertThat(captured.getUsername(), equalTo("bar"));
 		assertThat(captured.getRole(), equalTo("baz"));
 
-		assertThat(result, equalTo(204));
+		assertThat(result, equalTo(200));
+		assertThat(json.from(put.getResponseBodyAsString()), equalTo(json.from(sentResponse)));
 	}
 
 	@Test

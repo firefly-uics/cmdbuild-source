@@ -145,7 +145,7 @@ public class CxfSessionsTest {
 				.when(tokenGenerator).generate(anyString());
 
 		// when
-		final ResponseSingle<String> response = cxfSessions.create(session);
+		final ResponseSingle<Session> response = cxfSessions.create(session);
 
 		// then
 		final LoginDTO expectedLogin = LoginDTO.newInstance() //
@@ -162,7 +162,9 @@ public class CxfSessionsTest {
 		verify(operationUserStore).put(eq(expectedSession), any(OperationUser.class));
 		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore);
 
-		assertThat(response.getElement(), equalTo("token"));
+		assertThat(response.getElement(), equalTo(newSession(expectedSession) //
+				.withPassword(null) //
+				.build()));
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -264,6 +266,7 @@ public class CxfSessionsTest {
 				.withUsername("old username") //
 				.withPassword("old password") //
 				.withRole("old group") //
+				.withAvailableRoles(asList("foo", "bar", "baz")) //
 				.build();
 		final Session newSession = newSession() //
 				.withId("new token") //
@@ -282,9 +285,12 @@ public class CxfSessionsTest {
 				.when(operationUserStore).get(eq(oldSession));
 
 		// when
-		cxfSessions.update("token", newSession);
+		final ResponseSingle<Session> response = cxfSessions.update("token", newSession);
 
 		// then
+		final Session expectedSession = newSession(oldSession) //
+				.withRole("guessed group") //
+				.build();
 		verify(sessionStore).get(eq("token"));
 		verify(operationUserStore).get(eq(oldSession));
 		verify(loginHandler).login( //
@@ -294,15 +300,17 @@ public class CxfSessionsTest {
 						.withGroupName(newSession.getRole()) //
 						.build()), //
 				eq(operationUser));
-		verify(sessionStore).put(eq(newSession(oldSession) //
-				.withRole("guessed group") //
-				.build()));
+		verify(sessionStore).put(eq(expectedSession));
 		verify(operationUserStore).put( //
 				eq(newSession(oldSession) //
 						.withRole("guessed group") //
 						.build()), //
 				eq(operationUser));
 		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore);
+
+		assertThat(response.getElement(), equalTo(newSession(expectedSession) //
+				.withPassword(null) //
+				.build()));
 	}
 
 	@Test(expected = WebApplicationException.class)
