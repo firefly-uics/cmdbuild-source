@@ -23,7 +23,7 @@ public interface Sessions {
 
 	@POST
 	@Path(EMPTY)
-	ResponseSingle<String> create( //
+	ResponseSingle<Session> create( //
 			Session session);
 
 	@GET
@@ -34,7 +34,7 @@ public interface Sessions {
 
 	@PUT
 	@Path("{" + ID + "}/")
-	void update( //
+	ResponseSingle<Session> update( //
 			@PathParam(ID) String id, //
 			Session session //
 	);

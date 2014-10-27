@@ -76,7 +76,7 @@ public class CxfSessions implements Sessions, LoggingSupport {
 	}
 
 	@Override
-	public ResponseSingle<String> create(final Session session) {
+	public ResponseSingle<Session> create(final Session session) {
 		if (isBlank(session.getUsername())) {
 			errorHandler.missingUsername();
 		}
@@ -99,8 +99,8 @@ public class CxfSessions implements Sessions, LoggingSupport {
 		sessionStore.put(updatedSession);
 		operationUserStore.put(updatedSession, user);
 
-		return newResponseSingle(String.class) //
-				.withElement(token) //
+		return newResponseSingle(Session.class) //
+				.withElement(noPassword(updatedSession)) //
 				.build();
 	}
 
@@ -111,14 +111,12 @@ public class CxfSessions implements Sessions, LoggingSupport {
 			errorHandler.sessionNotFound(id);
 		}
 		return newResponseSingle(Session.class) //
-				.withElement(newSession(session.get()) //
-						.withPassword(null) //
-						.build()) //
+				.withElement(noPassword(session.get())) //
 				.build();
 	}
 
 	@Override
-	public void update(final String id, final Session session) {
+	public ResponseSingle<Session> update(final String id, final Session session) {
 		final Optional<Session> storedSession = sessionStore.get(id);
 		if (!storedSession.isPresent()) {
 			errorHandler.sessionNotFound(id);
@@ -147,6 +145,10 @@ public class CxfSessions implements Sessions, LoggingSupport {
 
 		sessionStore.put(updatedSession);
 		operationUserStore.put(updatedSession, user);
+
+		return newResponseSingle(Session.class) //
+				.withElement(noPassword(updatedSession)) //
+				.build();
 	}
 
 	@Override
@@ -161,6 +163,12 @@ public class CxfSessions implements Sessions, LoggingSupport {
 		}
 		sessionStore.remove(id);
 		operationUserStore.remove(session.get());
+	}
+
+	private Session noPassword(final Session session) {
+		return newSession(session) //
+				.withPassword(null) //
+				.build();
 	}
 
 }
