@@ -52,6 +52,7 @@ import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
 import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
+import org.cmdbuild.services.soap.types.RelationExt;
 import org.cmdbuild.services.soap.types.ReportParams;
 import org.cmdbuild.services.soap.types.WSEvent;
 import org.cmdbuild.services.soap.types.WSProcessStartEvent;
@@ -177,6 +178,11 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@Override
 	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
 		return dataAccessLogicHelper().getRelations(className, domain, Long.valueOf(cardId));
+	}
+
+	@Override
+	public List<RelationExt> getRelationListExt(final String domain, final String className, final int cardId) {
+		return dataAccessLogicHelper().getRelationsExt(className, domain, Long.valueOf(cardId));
 	}
 
 	@Override
@@ -393,7 +399,8 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	}
 
 	private String nativeValueToWsString(final CMAttributeType<?> type, final Object value) {
-		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value, translationFacade,lookupStore()) {
+		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value, translationFacade,
+				lookupStore()) {
 
 			@Override
 			public void visit(final EntryTypeAttributeType attributeType) {

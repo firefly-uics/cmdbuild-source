@@ -18,6 +18,7 @@ import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
 import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
+import org.cmdbuild.services.soap.types.RelationExt;
 import org.cmdbuild.services.soap.types.Workflow;
 
 @WebService(targetNamespace = "http://soap.services.cmdbuild.org")
@@ -63,6 +64,9 @@ public interface Webservices {
 	public boolean deleteRelation(@WebParam(name = "relation") Relation relation);
 
 	public List<Relation> getRelationList(@WebParam(name = "domain") String domain,
+			@WebParam(name = "className") String className, @WebParam(name = "cardId") int cardId);
+
+	public List<RelationExt> getRelationListExt(@WebParam(name = "domain") String domain,
 			@WebParam(name = "className") String className, @WebParam(name = "cardId") int cardId);
 
 	public List<Attribute> getRelationAttributes(@WebParam(name = "relation") Relation relation);
