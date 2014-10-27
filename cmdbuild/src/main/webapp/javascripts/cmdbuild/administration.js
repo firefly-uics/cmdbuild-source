@@ -107,15 +107,15 @@
 											cmName: "modsetupserver"
 										}),
 										Ext.create('CMDBuild.view.administration.email.CMEmailAccounts', {
-											cmControllerType: CMDBuild.controller.administration.email.CMEmailAccountsController,
+											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailAccountsController',
 											cmName: 'emailAccounts'
 										}),
 										Ext.create('CMDBuild.view.administration.email.CMEmailTemplates', {
-											cmControllerType: CMDBuild.controller.administration.email.CMEmailTemplatesController,
+											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailTemplatesController',
 											cmName: 'emailTemplates'
 										}),
 										Ext.create('CMDBuild.view.administration.tasks.CMTasks', {
-											cmControllerType: CMDBuild.controller.administration.tasks.CMTasksController,
+											cmControllerType: 'CMDBuild.controller.administration.tasks.CMTasksController',
 											cmName: 'tasks'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
@@ -204,8 +204,8 @@
 							classesAccordion.updateStore();
 
 							processAccordion = new CMDBuild.view.administration.accordion.CMProcessAccordion({
-								cmControllerType: CMDBuild.controller.accordion.CMAccordionProcessController,
-								disabled: !CMDBuild.Config.workflow.enabled
+								cmControllerType: CMDBuild.controller.accordion.CMProcessAccordionController,
+								disabled: (CMDBuild.Config.workflow) ? !CMDBuild.Config.workflow.enabled : true // FIX: to avoid InternetExplorer error on startup
 							});
 							processAccordion.updateStore();
 
@@ -261,9 +261,13 @@
 								new CMDBuild.view.administration.gis.CMModGISNavigationConfiguration({
 									cmControllerType: controllerNS.administration.gis.CMModGISNavigationConfigurationController
 								}),
-								new CMDBuild.Administration.ModExternalServices(),
-								new CMDBuild.view.administration.gis.CMModGeoServer({
-									cmControllerType: controllerNS.administration.gis.CMModGeoServerController
+								Ext.create('CMDBuild.view.administration.gis.ExternalServices', {
+									cmControllerType: 'CMDBuild.controller.administration.gis.ExternalServicesController',
+									cmName: 'gis-external-services'
+								}),
+								Ext.create('CMDBuild.view.administration.gis.CMModGeoServer', {
+									cmControllerType: 'CMDBuild.controller.administration.gis.CMModGeoServerController',
+									cmName: 'gis-geoserver'
 								}),
 								new CMDBuild.Administration.ModLayerOrder({
 									cmControllerType: controllerNS.administration.gis.CMModLayerOrderController

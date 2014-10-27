@@ -212,8 +212,8 @@
 
 		delegate: undefined,
 
-		bodyCls: 'cmgraypanel',
 		border: false,
+		frame: true,
 		overflowY: 'auto',
 
 		initComponent: function() {
@@ -285,7 +285,7 @@
 					},
 					{
 						xtype: 'checkcolumn',
-						header: tr.cudActions.create,
+						header: tr.cudActions.createLabel,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CREATE,
 						width: 60,
 						align: 'center',
@@ -296,7 +296,7 @@
 					},
 					{
 						xtype: 'checkcolumn',
-						header: tr.cudActions.update,
+						header: tr.cudActions.updateLabel,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.UPDATE,
 						width: 60,
 						align: 'center',
@@ -307,7 +307,7 @@
 					},
 					{
 						xtype: 'checkcolumn',
-						header: tr.cudActions.delete,
+						header: tr.cudActions.deleteLabel,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DELETE,
 						width: 60,
 						align: 'center',

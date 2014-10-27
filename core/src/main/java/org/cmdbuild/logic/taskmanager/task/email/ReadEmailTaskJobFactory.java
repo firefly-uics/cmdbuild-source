@@ -17,6 +17,9 @@ import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
 import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
 import static org.cmdbuild.data.store.email.EmailConstants.EMAIL_CLASS_NAME;
 import static org.cmdbuild.services.email.Predicates.named;
+import static org.cmdbuild.services.template.engine.EngineNames.CARD_PREFIX;
+import static org.cmdbuild.services.template.engine.EngineNames.CQL_PREFIX;
+import static org.cmdbuild.services.template.engine.EngineNames.DB_TEMPLATE;
 import static org.cmdbuild.services.template.engine.EngineNames.EMAIL_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.GROUP_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.GROUP_USERS_PREFIX;
@@ -31,6 +34,7 @@ import javax.activation.DataHandler;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
+import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.StoreSupplier;
@@ -55,6 +59,9 @@ import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.SubjectHandler;
 import org.cmdbuild.services.email.SubjectHandler.ParsedSubject;
+import org.cmdbuild.services.template.engine.CardEngine;
+import org.cmdbuild.services.template.engine.CqlEngine;
+import org.cmdbuild.services.template.engine.DatabaseEngine;
 import org.cmdbuild.services.template.engine.EmailEngine;
 import org.cmdbuild.services.template.engine.GroupEmailEngine;
 import org.cmdbuild.services.template.engine.GroupUsersEmailEngine;
@@ -118,6 +125,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 	private final DmsLogic dmsLogic;
 	private final CMDataView dataView;
 	private final EmailTemplateLogic emailTemplateLogic;
+	private final DatabaseEngine databaseEngine;
 
 	public ReadEmailTaskJobFactory( //
 			final Store<EmailAccount> emailAccountStore, //
@@ -127,8 +135,8 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 			final WorkflowLogic workflowLogic, //
 			final DmsLogic dmsLogic, //
 			final CMDataView dataView, //
-			final EmailTemplateLogic emailTemplateLogic //
-	) {
+			final EmailTemplateLogic emailTemplateLogic, //
+			final DatabaseEngine databaseEngine) {
 		this.emailAccountStore = emailAccountStore;
 		this.emailServiceFactory = emailServiceFactory;
 		this.subjectHandler = subjectHandler;
@@ -137,6 +145,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 		this.dmsLogic = dmsLogic;
 		this.dataView = dataView;
 		this.emailTemplateLogic = emailTemplateLogic;
+		this.databaseEngine = databaseEngine;
 	}
 
 	private final Predicate<Email> SUBJECT_MATCHES = new Predicate<Email>() {
@@ -210,6 +219,10 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 							emailAccountStore, named(task.getEmailAccount()));
 					final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(
 							templateEmailAccountSupplier, taskEmailAccountSupplier));
+					final CMCard genericProcessCard = workflowLogic.getProcessInstance(dataView.getActivityClass()
+							.getName(), email.getActivityId());
+					final CMCard processCard = workflowLogic.getProcessInstance(genericProcessCard.getType().getName(),
+							email.getActivityId());
 					final EngineBasedTemplateResolver templateResolver = EngineBasedTemplateResolver.newInstance() //
 							.withEngine(emptyStringOnNull(nullOnError( //
 									UserEmailEngine.newInstance() //
@@ -241,6 +254,22 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 											.map() //
 									))), //
 									MAPPER_PREFIX) //
+							.withEngine(emptyStringOnNull(nullOnError( //
+									CardEngine.newInstance() //
+											.withCard(processCard) //
+											.build() //
+									)), //
+									CARD_PREFIX) //
+							.withEngine(emptyStringOnNull(nullOnError( //
+									CqlEngine.newInstance() //
+											.withDataView(dataView) //
+											.build() //
+									)), //
+									CQL_PREFIX) //
+							.withEngine(emptyStringOnNull(nullOnError( //
+									databaseEngine //
+									)), //
+									DB_TEMPLATE) //
 							.build();
 					SendTemplateEmail.newInstance() //
 							.withEmailAccountSupplier(emailAccountSupplier) //
@@ -292,6 +321,16 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 											.map() //
 									))), //
 									MAPPER_PREFIX) //
+							.withEngine(emptyStringOnNull(nullOnError( //
+									CqlEngine.newInstance() //
+											.withDataView(dataView) //
+											.build() //
+									)), //
+									CQL_PREFIX) //
+							.withEngine(emptyStringOnNull(nullOnError( //
+									databaseEngine //
+									)), //
+									DB_TEMPLATE) //
 							.build();
 					StartProcess.newInstance() //
 							.withWorkflowLogic(workflowLogic) //
@@ -374,10 +413,15 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 			@Override
 			public boolean apply(final Email email) {
 				logger.debug(marker, "checking from address");
+				if (isEmpty(task.getRegexFromFilter())) {
+					logger.debug(marker, "no from address filters");
+					return true;
+				}
 				for (final String regex : task.getRegexFromFilter()) {
 					final Pattern fromPattern = Pattern.compile(regex);
 					final Matcher fromMatcher = fromPattern.matcher(email.getFromAddress());
 					if (fromMatcher.matches()) {
+						logger.debug(marker, "from address matches regex '{}'", regex);
 						return true;
 					}
 				}
@@ -394,10 +438,15 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 			@Override
 			public boolean apply(final Email email) {
 				logger.debug(marker, "checking subject");
+				if (isEmpty(task.getRegexSubjectFilter())) {
+					logger.debug(marker, "no subject filters");
+					return true;
+				}
 				for (final String regex : task.getRegexSubjectFilter()) {
 					final Pattern subjectPattern = Pattern.compile(regex);
 					final Matcher subjectMatcher = subjectPattern.matcher(email.getSubject());
 					if (subjectMatcher.matches()) {
+						logger.debug(marker, "subject matches regex '{}'", regex);
 						return true;
 					}
 				}

@@ -123,10 +123,10 @@
 							this.delegateStep[2].setValueNotificationTemplate(record.get(CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE));
 							this.delegateStep[2].setValueParsingFieldsetCheckbox(record.get(CMDBuild.core.proxy.CMProxyConstants.PARSING_ACTIVE));
 							this.delegateStep[2].setValueParsingFields(
-								record.get(CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_END),
 								record.get(CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_INIT),
-								record.get(CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_END),
-								record.get(CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_INIT)
+								record.get(CMDBuild.core.proxy.CMProxyConstants.PARSING_KEY_END),
+								record.get(CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_INIT),
+								record.get(CMDBuild.core.proxy.CMProxyConstants.PARSING_VALUE_END)
 							);
 
 							// Set step4 [3] datas

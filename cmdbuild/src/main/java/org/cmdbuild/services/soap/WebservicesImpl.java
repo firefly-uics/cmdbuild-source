@@ -17,6 +17,7 @@ import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
 import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
+import org.cmdbuild.services.soap.types.RelationExt;
 import org.cmdbuild.services.soap.types.Workflow;
 
 @WebService(targetNamespace = "http://soap.services.cmdbuild.org", endpointInterface = "org.cmdbuild.services.soap.Webservices")
@@ -102,6 +103,11 @@ public class WebservicesImpl extends AbstractWebservice implements Webservices {
 	@Override
 	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
 		return dataAccessLogicHelper().getRelations(className, domain, Long.valueOf(cardId));
+	}
+
+	@Override
+	public List<RelationExt> getRelationListExt(final String domain, final String className, final int cardId) {
+		return dataAccessLogicHelper().getRelationsExt(className, domain, Long.valueOf(cardId));
 	}
 
 	@Override

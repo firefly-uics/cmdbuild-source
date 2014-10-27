@@ -702,9 +702,9 @@
 				"classLevelMapping": "Соответствие классов",
 				"className": "Класс CMDBuild",
 				"cudActions": {
-					"create": "Создание",
-					"delete": "Удаление",
-					"update": "Обновление"
+					"createLabel": "Создание",
+					"deleteLabel": "Удаление",
+					"updateLabel": "Обновление"
 				},
 				"dataSourceDbFieldset": "Источник данных: реляционная БД",
 				"dataSourceLdapFieldset": "Источник данных: LDAP каталог",
@@ -1059,6 +1059,7 @@
 		"show_detail": "Подробно",
 		"template_error": "Ошибка шаблона",
 		"unknown_error": "Неизвестная ошибка",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "При сохранении следующих виджетов произошла ошибка: "
 	},
 	"filterWindow": {
@@ -1452,12 +1453,14 @@
 	"defaultAccount": "<em>Default account</em>",
 	"description_": "Описание",
 	"disable": "Отключить",
+	"disableGridFilter": "<em>Disable grid filter</em>",
 	"display_less_attributes": "Показать меньше атрибутов",
 	"display_more_attributes": "Показать больше атрибутов",
 	"download_ifc_file": "Скачать Ifc-файл",
 	"emailBody": "Текст письма",
 	"emailTemplate": "Шаблон письма",
 	"enable": "Включить",
+	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": "Включено",
 	"error": "Ошибка",
 	"error_bimserver_connection": "Нет связи с сервером BIM",

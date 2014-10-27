@@ -13,15 +13,21 @@ import java.util.Collections;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.services.sync.logging.LoggingSupport;
 import org.cmdbuild.services.sync.store.CardEntry;
 import org.cmdbuild.services.sync.store.ClassType;
 import org.cmdbuild.services.sync.store.Entry;
 import org.cmdbuild.services.sync.store.Store;
 import org.cmdbuild.services.sync.store.Type;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
-public class SqlStore implements Store {
+public class SqlStore implements Store, LoggingSupport {
+
+	private static final Marker marker = MarkerFactory.getMarker(SqlStore.class.getName());
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<SqlStore> {
 
@@ -100,22 +106,30 @@ public class SqlStore implements Store {
 		@Override
 		public Iterable<Entry<?>> execute() {
 			for (final TableOrViewMapping tableOrViewMapping : tableOrViewMappings) {
+				logger.debug(marker, "creating select statement for '{}'", tableOrViewMapping);
 				final String sql = selectAllFrom(tableOrViewMapping);
-				jdbcTemplate.query(sql, new RowCallbackHandler() {
+				logger.debug(marker, "select statement '{}'", sql);
+				logger.debug(marker, "executing select statement");
+				try {
+					jdbcTemplate.query(sql, new RowCallbackHandler() {
 
-					@Override
-					public void processRow(final ResultSet rs) throws SQLException {
-						for (final TypeMapping typeMapping : tableOrViewMapping.getTypeMappings()) {
-							final ClassType type = typeMapping.getType();
-							final CardEntry.Builder builder = CardEntry.newInstance().withType(type);
-							for (final AttributeMapping attributeMapping : typeMapping.getAttributeMappings()) {
-								builder.withValue(attributeMapping.to(), rs.getObject(attributeMapping.from()));
+						@Override
+						public void processRow(final ResultSet rs) throws SQLException {
+							for (final TypeMapping typeMapping : tableOrViewMapping.getTypeMappings()) {
+								final ClassType type = typeMapping.getType();
+								final CardEntry.Builder builder = CardEntry.newInstance().withType(type);
+								for (final AttributeMapping attributeMapping : typeMapping.getAttributeMappings()) {
+									builder.withValue(attributeMapping.to(), rs.getObject(attributeMapping.from()));
+								}
+								entries.add(builder.build());
 							}
-							entries.add(builder.build());
 						}
-					}
 
-				});
+					});
+				} catch (final RuntimeException e) {
+					logger.error(marker, "error executing select statement", e);
+					throw e;
+				}
 			}
 			return entries;
 		}

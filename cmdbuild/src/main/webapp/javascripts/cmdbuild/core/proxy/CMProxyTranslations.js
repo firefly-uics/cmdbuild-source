@@ -6,7 +6,7 @@
 			getConfiguration: "services/json/schema/translation/getconfiguration",
 			setup : "services/json/schema/translation/",
 			saveConfiguration: "services/json/schema/translation/saveconfiguration",
-			
+
 			createForClass:  "services/json/schema/translation/createforclass",
 			createForClassAttribute:  "services/json/schema/translation/createforclassattribute",
 			createForDomain:  "services/json/schema/translation/createfordomain",
@@ -71,15 +71,15 @@
 
 	CMDBuild.ServiceProxy.translations = {
 		readAvailableTranslations: function(p) {
-			p.method = GET,
+			p.method = GET;
 			p.url = CMDBuild.ServiceProxy.url.translations.listAvailableTranslations;
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
-		},	
+		},
 		readActiveTranslations: function(p) {
 			p.method = GET;
 			p.url = CMDBuild.ServiceProxy.url.translations.getConfiguration;
-	
+
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		},
 		saveActiveTranslations: function(p) {
@@ -92,6 +92,6 @@
 			p.method = POST;
 			p.url = url;
 			CMDBuild.ServiceProxy.core.doRequest(p);
-		}	
+		}
 	};
 })();

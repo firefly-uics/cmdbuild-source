@@ -1,13 +1,14 @@
 package unit.template.engine;
 
-import static java.lang.String.format;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.cmdbuild.common.template.engine.Engine;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
@@ -15,10 +16,8 @@ import org.junit.Test;
 
 public class EngineBasedTemplateResolverTest {
 
-	private static final Object NULL_OBJECT = null;
-
 	@Test
-	public void nullResolvedAsNull() throws Exception {
+	public void nullStringResolvedAsNull() throws Exception {
 		// given
 		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance().build();
 
@@ -30,7 +29,64 @@ public class EngineBasedTemplateResolverTest {
 	}
 
 	@Test
-	public void aSimpleStringIsKeptAsItIs() throws Exception {
+	public void resolvedAsNullWhenEngineIsMissing() throws Exception {
+		// given
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
+				.withEngine(engineWithParam("param", 42), "e1") //
+				.build();
+
+		// when
+		final String value = tr.resolve("XXX {e0:param} {e1:param}");
+
+		// then
+		assertThat(value, equalTo("XXX null 42"));
+	}
+
+	@Test
+	public void resolvesAsNullWhenExpressionEvaluationWasUnsuccessful() throws Exception {
+		// given
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
+				.withEngine(engineWithParam("param", "value"), "e1") //
+				.build();
+
+		// when
+		final String value = tr.resolve("{e1:missing}");
+
+		// then
+		assertThat(value, equalTo("null"));
+	}
+
+	@Test
+	public void multipleEnginesCanBeUsedWithinSameExpression() throws Exception {
+		// given
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
+				.withEngine(engineWithParam("stringParam", "string param"), "e1") //
+				.withEngine(engineWithParam("integerParam", Integer.valueOf(42)), "e2") //
+				.build();
+
+		// when
+		final String value = tr.resolve("{e1:stringParam} -> {e2:integerParam}");
+
+		// then
+		assertThat(value, equalTo("string param -> 42"));
+	}
+
+	@Test
+	public void variableNamesCanContainSpacesAndSpecialCharactersButNotCurlyBraces() throws Exception {
+		// given
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
+				.withEngine(engineWithParam("this can BE a (variable]", "42"), "e1") //
+				.build();
+
+		// when
+		final String value = tr.resolve("{e1:this can BE a (variable]}");
+
+		// then
+		assertThat(value, equalTo("42"));
+	}
+
+	@Test
+	public void expressionWithNoTemplatesIsNotChanged() throws Exception {
 		// given
 		final String template = "A simple string";
 		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance().build();
@@ -43,84 +99,35 @@ public class EngineBasedTemplateResolverTest {
 	}
 
 	@Test
-	public void inexistentEngineIsExpandedWithNull() throws Exception {
-		// given
-		final Engine engine = mock(Engine.class);
-		when(engine.eval(anyString())).thenReturn(null);
-
-		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance().build();
-
-		// when
-		final String value = tr.resolve("{e1:param}");
-
-		// then
-		assertThat(value, equalTo(String.valueOf(NULL_OBJECT)));
-	}
-
-	@Test
-	public void inexistentVariablesAreExpandedWithNull() throws Exception {
-		// given
-		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
-				.withEngine(engineWithParam("param", "value"), "e1") //
-				.build();
-
-		// when
-		final String value = tr.resolve("{e1:inexsistent}");
-
-		// then
-		assertThat(value, equalTo(String.valueOf(NULL_OBJECT)));
-	}
-
-	@Test
-	public void simpleVariablesAreExpandedWithEnginesEvaluation() throws Exception {
-		// given
-		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
-				.withEngine(engineWithParam("stringParam", "string param"), "e1") //
-				.withEngine(engineWithParam("integerParam", Integer.valueOf(42)), "e2") //
-				.build();
-
-		// when
-		final String stringValue = tr.resolve("{e1:stringParam}");
-		final String integerValue = tr.resolve("{e2:integerParam}");
-
-		// then
-		assertThat(stringValue, equalTo("string param"));
-		assertThat(integerValue, equalTo(String.valueOf(Integer.valueOf(42))));
-	}
-
-	@Test
-	public void leadingPartsAreKeptIntact() throws Exception {
+	public void nonTemplateTextWithinExpressionIsNotChanged() throws Exception {
 		// given
 		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
 				.withEngine(engineWithParam("param", 42), "e1") //
 				.build();
 
 		// when
-		final String value = tr.resolve("XXX{e1:param}");
+		final String value = tr.resolve("foo {e1:param} bar");
 
 		// then
-		assertThat(value, equalTo(format("XXX%s", 42)));
+		assertThat(value, equalTo("foo 42 bar"));
 	}
 
 	@Test
-	public void moreThanOneParameterIsExpanded() throws Exception {
+	public void templateCanBeTheVariableOfAnotherTemplate() throws Exception {
 		// given
-		final Object value1 = 42, value2 = "st";
-
-		final Engine engine = mock(Engine.class);
-		when(engine.eval("param1")).thenReturn(value1);
-		when(engine.eval("param2")).thenReturn(value2);
-
 		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
-				.withEngine(engine, "e1") //
+				.withEngine(engineWithParam("value", 42), "e0") //
+				.withEngine(engineWithParam("param", "value"), "e1") //
 				.build();
 
 		// when
-		final String value = tr.resolve("XXX{e1:param1}YYY{e1:param2}ZZZ");
+		final String value = tr.resolve("foo {e0:{e1:param}} bar");
 
 		// then
-		assertThat(value, equalTo(format("XXX%sYYY%sZZZ", value1, value2)));
+		assertThat(value, equalTo("foo 42 bar"));
 	}
+	
+	
 
 	/*
 	 * Utilities

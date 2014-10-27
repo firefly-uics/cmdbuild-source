@@ -5,6 +5,10 @@ import static org.cmdbuild.common.Constants.ID_ATTRIBUTE;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.template.engine.Engine;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
+import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 
 public class CardEngine implements Engine {
 
@@ -23,7 +27,7 @@ public class CardEngine implements Engine {
 		}
 
 		private void validate() {
-			Validate.notNull(card, "missing card");
+			Validate.notNull(card, "missing '{}'", CMCard.class);
 		}
 
 		public Builder withCard(final CMCard card) {
@@ -48,7 +52,26 @@ public class CardEngine implements Engine {
 		if (ID_ATTRIBUTE.equalsIgnoreCase(expression)) {
 			return card.getId();
 		}
-		return card.get(expression);
+		return new NullAttributeTypeVisitor() {
+
+			private Object adapted;
+
+			public Object adapt(final Object value) {
+				adapted = value;
+				card.getType().getAttribute(expression).getType().accept(this);
+				return adapted;
+			}
+
+			public void visit(final LookupAttributeType attributeType) {
+				adapted = IdAndDescription.class.cast(adapted).getId();
+			};
+
+			@Override
+			public void visit(final ReferenceAttributeType attributeType) {
+				adapted = IdAndDescription.class.cast(adapted).getId();
+			}
+
+		}.adapt(card.get(expression));
 	}
 
 }

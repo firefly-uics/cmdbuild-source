@@ -212,6 +212,14 @@
 			},
 
 			widgets: {
+				manageEmail: {
+					addAttachmentFromNewEmail: 'services/json/management/email/uploadattachmentfromnewemail',
+					addAttachmentFromExistingEmail: 'services/json/management/email/uploadattachmentfromexistingemail',
+					copyAttachmentFromCardForNewEmail: 'services/json/management/email/copyattachmentsfromcardfornewemail',
+					copyAttachmentFromCardForExistingEmail: 'services/json/management/email/copyattachmentsfromcardforexistingemail',
+					removeAttachmentFromNewEmail: 'services/json/management/email/deleteattachmentfromnewemail',
+					removeAttachmentFromExistingEmail: 'services/json/management/email/deleteattachmentfromexistingemail'
+				},
 				grid: {
 					clearSession: 'services/json/management/importcsv/clearsession',
 					getSqlCardList: 'services/json/management/modcard/getsqlcardlist',
@@ -222,10 +230,14 @@
 
 			workflow: {
 				abortProcess: 'services/json/workflow/abortprocess',
-				getStartActivity: 'services/json/workflow/getstartactivity',
 				getActivityInstance: 'services/json/workflow/getactivityinstance',
+				getStartActivity: 'services/json/workflow/getstartactivity',
 				isProcessUpdated: 'services/json/workflow/isprocessupdated',
-				saveActivity: 'services/json/workflow/saveactivity'
+				saveActivity: 'services/json/workflow/saveactivity',
+				xpdlDownload: 'services/json/workflow/downloadxpdl',
+				xpdlDownloadTemplate: 'services/json/workflow/downloadxpdltemplate',
+				xpdlUpload: 'services/json/workflow/uploadxpdl',
+				xpdlVersions: 'services/json/workflow/xpdlversions'
 			}
 		}
 	});

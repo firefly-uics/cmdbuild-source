@@ -1,11 +1,16 @@
 package org.cmdbuild.logic.taskmanager.task.connector;
 
+import org.cmdbuild.services.sync.logging.LoggingSupport;
 import org.cmdbuild.services.sync.store.Entry;
 import org.cmdbuild.services.sync.store.ForwardingStore;
 import org.cmdbuild.services.sync.store.Store;
 import org.cmdbuild.services.sync.store.Type;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
-class PermissionBasedStore extends ForwardingStore {
+class PermissionBasedStore extends ForwardingStore implements LoggingSupport {
+
+	private static final Marker marker = MarkerFactory.getMarker(PermissionBasedStore.class.getName());
 
 	public static interface Permission {
 
@@ -28,6 +33,8 @@ class PermissionBasedStore extends ForwardingStore {
 	public void create(final Entry<? extends Type> entry) {
 		if (permission.allowsCreate(entry)) {
 			super.create(entry);
+		} else {
+			logger.debug(marker, "create not allowed");
 		}
 	}
 
@@ -35,6 +42,8 @@ class PermissionBasedStore extends ForwardingStore {
 	public void update(final Entry<? extends Type> entry) {
 		if (permission.allowsUpdate(entry)) {
 			super.update(entry);
+		} else {
+			logger.debug(marker, "update not allowed");
 		}
 	}
 
@@ -42,6 +51,8 @@ class PermissionBasedStore extends ForwardingStore {
 	public void delete(final Entry<? extends Type> entry) {
 		if (permission.allowsDelete(entry)) {
 			super.delete(entry);
+		} else {
+			logger.debug(marker, "delete not allowed");
 		}
 	}
 

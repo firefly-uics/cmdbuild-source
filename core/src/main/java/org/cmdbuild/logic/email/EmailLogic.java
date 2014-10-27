@@ -3,6 +3,9 @@ package org.cmdbuild.logic.email;
 import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.isEmpty;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -63,8 +66,6 @@ import org.cmdbuild.services.email.SubjectHandler;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class EmailLogic implements Logic {
 
@@ -239,7 +240,7 @@ public class EmailLogic implements Logic {
 
 			private Builder() {
 				// prevents direct instantiation
-				attachments = Lists.newArrayList();
+				attachments = newArrayList();
 			}
 
 			@Override
@@ -347,7 +348,7 @@ public class EmailLogic implements Logic {
 
 	}
 
-	private static final Function<Email, Long> EMAIL_ID_FUNCTION = new Function<Email, Long>() {
+	private static final Function<Email, Long> EMAIL_ID = new Function<Email, Long>() {
 
 		@Override
 		public Long apply(final Email input) {
@@ -360,7 +361,7 @@ public class EmailLogic implements Logic {
 
 		@Override
 		public EmailWithAttachmentNames apply(final Email input) {
-			final List<String> attachmentNames = Lists.newArrayList();
+			final List<String> attachmentNames = newArrayList();
 			try {
 				final DocumentSearch allDocuments = documentCreator(FINAL) //
 						.createDocumentSearch(EMAIL_CLASS_NAME, input.getIdentifier());
@@ -478,8 +479,9 @@ public class EmailLogic implements Logic {
 				if (isEmpty(email.getFromAddress())) {
 					email.setFromAddress(emailAccountSupplier.get().getAddress());
 				}
-				// FIXME really needed here?
-				email.setSubject(defaultIfBlank(subjectHandler.compile(email).getSubject(), EMPTY));
+				if (!subjectHandler.parse(email.getSubject()).hasExpectedFormat()) {
+					email.setSubject(defaultIfBlank(subjectHandler.compile(email).getSubject(), EMPTY));
+				}
 				emailService(processCardId, emailAccountSupplier).send(email, attachmentsOf(email));
 				email.setStatus(EmailStatus.SENT);
 			} catch (final CMDBException e) {
@@ -495,7 +497,7 @@ public class EmailLogic implements Logic {
 
 	private Map<URL, String> attachmentsOf(final Email email) {
 		logger.debug("getting attachments of email {}", email.getId());
-		final Map<URL, String> attachments = Maps.newHashMap();
+		final Map<URL, String> attachments = newHashMap();
 		try {
 			final String className = EMAIL_CLASS_NAME;
 			final DocumentCreator documentCreator = documentCreator(FINAL);
@@ -541,7 +543,8 @@ public class EmailLogic implements Logic {
 		if (isEmpty(emailIds)) {
 			return;
 		}
-		final Map<Long, Email> storedEmails = storedEmailsById(processCardId);
+		final Map<Long, Email> storedEmails = uniqueIndex(emailService(processCardId).getEmails(processCardId),
+				EMAIL_ID);
 		for (final Long emailId : emailIds) {
 			final Email found = storedEmails.get(emailId);
 			Validate.notNull(found, "email not found");
@@ -554,11 +557,12 @@ public class EmailLogic implements Logic {
 	 * Saves all specified {@link EmailSubmission}s for the specified process'
 	 * id. Only draft mails can be saved, others are skipped.
 	 */
-	public void saveEmails(final Long processCardId, final Iterable<EmailSubmission> emails) {
+	public void saveEmails(final Long processCardId, final Iterable<? extends EmailSubmission> emails) {
 		if (isEmpty(emails)) {
 			return;
 		}
-		final Map<Long, Email> storedEmails = storedEmailsById(processCardId);
+		final Map<Long, Email> storedEmails = uniqueIndex(emailService(processCardId).getEmails(processCardId),
+				EMAIL_ID);
 		for (final EmailSubmission emailSubmission : emails) {
 			final Email alreadyStoredEmailSubmission = storedEmails.get(emailSubmission.getId());
 			final boolean alreadyStored = (alreadyStoredEmailSubmission != null);
@@ -591,10 +595,6 @@ public class EmailLogic implements Logic {
 		} catch (final DmsError e) {
 			logger.error("error moving attachments");
 		}
-	}
-
-	private Map<Long, Email> storedEmailsById(final Long processCardId) {
-		return Maps.uniqueIndex(emailService(processCardId).getEmails(processCardId), EMAIL_ID_FUNCTION);
 	}
 
 	public String uploadAttachment( //
@@ -682,12 +682,13 @@ public class EmailLogic implements Logic {
 	}
 
 	private Map<String, List<CopiableAttachment>> mapByClass(final Iterable<CopiableAttachment> attachments) {
-		final Map<String, List<CopiableAttachment>> map = Maps.newHashMap();
+		final Map<String, List<CopiableAttachment>> map = newHashMap();
 		for (final CopiableAttachment attachment : attachments) {
 			final String className = attachment.className;
 			final List<CopiableAttachment> attachmentsWithSameClassName;
 			if (!map.containsKey(className)) {
-				map.put(className, Lists.<CopiableAttachment> newArrayList());
+				final List<CopiableAttachment> empty = newArrayList();
+				map.put(className, empty);
 			}
 			attachmentsWithSameClassName = map.get(className);
 			attachmentsWithSameClassName.add(attachment);

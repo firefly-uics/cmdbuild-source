@@ -121,6 +121,16 @@ public class LogicFluentApiExecutor implements FluentApiExecutor {
 	}
 
 	@Override
+	public void suspendProcessInstance(ExistingProcessInstance processCard) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	@Override
+	public void resumeProcessInstance(ExistingProcessInstance processCard) {
+		throw new UnsupportedOperationException("TODO");
+	}
+
+	@Override
 	public Iterable<Lookup> fetch(final QueryAllLookup queryLookup) {
 		final LookupType type = LookupType.newInstance().withName(queryLookup.getType()).build();
 		final boolean activeOnly = true;

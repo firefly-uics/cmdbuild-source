@@ -76,6 +76,9 @@ public class TaskManager {
 	private DBDataView systemDataView;
 
 	@Autowired
+	private Template template;
+
+	@Autowired
 	private User user;
 
 	@Autowired
@@ -194,7 +197,8 @@ public class TaskManager {
 						.build(), //
 				dms.defaultDmsLogic(), //
 				data.systemDataView(), //
-				email.emailTemplateLogic() //
+				email.emailTemplateLogic(), //
+				template.databaseTemplateEngine() //
 		);
 	}
 

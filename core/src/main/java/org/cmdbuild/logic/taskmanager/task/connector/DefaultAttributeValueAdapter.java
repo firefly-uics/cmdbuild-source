@@ -1,15 +1,27 @@
 package org.cmdbuild.logic.taskmanager.task.connector;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
+import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
+import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.data.store.lookup.Predicates.lookupTypeWithName;
 import static org.cmdbuild.data.store.lookup.Predicates.lookupWithDescription;
 
 import java.util.Map;
 
+import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
+import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.query.CMQueryResult;
+import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
@@ -48,6 +60,42 @@ public class DefaultAttributeValueAdapter implements AttributeValueAdapter {
 					adaptedValue = attributeValue;
 					targetType.getAttribute(attributeName).getType().accept(this);
 					adapted.put(attributeName, adaptedValue);
+				}
+
+				@Override
+				public void visit(final ReferenceAttributeType attributeType) {
+					if (attributeValue instanceof String) {
+						final String shouldBeCode = attributeValue.toString();
+						final String domainName = attributeType.getDomainName();
+						final CMDomain domain = dataView.findDomain(domainName);
+						if (domain != null) {
+							// retrieve the destination
+							final String cardinality = domain.getCardinality();
+							CMClass destination = null;
+							if (CARDINALITY_1N.value().equals(cardinality)) {
+								destination = domain.getClass1();
+							} else if (CARDINALITY_N1.value().equals(cardinality)) {
+								destination = domain.getClass2();
+							}
+							if (destination != null) {
+								final CMQueryResult queryResult = dataView.select(anyAttribute(destination)) //
+										.from(destination) //
+										.where(condition(attribute(destination, CODE_ATTRIBUTE), eq(shouldBeCode))) //
+										.run();
+								if (!queryResult.isEmpty()) {
+									final CMQueryRow row = queryResult.iterator().next();
+									final CMCard referredCard = row.getCard(destination);
+									adaptedValue = referredCard.getId();
+								} else {
+									throw new RuntimeException("Conversion error");
+								}
+							} else {
+								throw new RuntimeException("Conversion error");
+							}
+						}
+					} else {
+						adaptedValue = attributeValue;
+					}
 				}
 
 				@Override

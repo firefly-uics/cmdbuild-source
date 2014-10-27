@@ -3,30 +3,31 @@ package org.cmdbuild.services.store.menu;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMGroup;
-import org.cmdbuild.auth.acl.PrivilegeContextFactory;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.ViewConverter;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 
 public class MenuCardFilter {
 
 	private final CMDataView dataView;
 	private final CMGroup group;
-	private final PrivilegeContextFactory privilegeContextFactory;
+	private final Supplier<PrivilegeContext> privilegeContext;
 	private final ViewConverter viewConverter;
 
 	public MenuCardFilter( //
 			final CMDataView dataView, //
 			final CMGroup group, //
-			final PrivilegeContextFactory privilegeContextFactory, //
+			final Supplier<PrivilegeContext> privilegeContext, //
 			final ViewConverter viewConverter //
 	) {
 		this.dataView = dataView;
 		this.group = group;
-		this.privilegeContextFactory = privilegeContextFactory;
+		this.privilegeContext = privilegeContext;
 		this.viewConverter = viewConverter;
 	}
 
@@ -35,7 +36,7 @@ public class MenuCardFilter {
 		final MenuCardPredicateFactory predicateFactory = new MenuCardPredicateFactory( //
 				dataView, //
 				group, //
-				privilegeContextFactory, //
+				privilegeContext, //
 				viewConverter);
 
 		for (final CMCard menuCard : notFilteredMenuCards) {

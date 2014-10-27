@@ -19,22 +19,18 @@
 
 			var me = this;
 
-			this.modifyNoteButton = new Ext.button.Button( {
-				iconCls : 'modify',
-				text : this.translation.modify_note,
+			this.modifyNoteButton = new Ext.button.Button({
+				iconCls: 'modify',
+				text: this.translation.modify_note,
 
-				handler : function() {
+				handler: function() {
 					me.fireEvent(me.CMEVENTS.modifyNoteButtonClick);
 				}
 			});
 
-			var htmlField = new Ext.form.field.HtmlEditor({
-				name : 'Notes',
-				border: false,
-				frame: false,
+			var htmlField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
+				name: 'Notes',
 				hideLabel: true,
-				enableLinks: false,
-				enableSourceEdit: false,
 				enableFont: false
 			});
 

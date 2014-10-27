@@ -702,9 +702,9 @@
 				"classLevelMapping": "Klas verbinding",
 				"className": "CMDBuild klas",
 				"cudActions": {
-					"create": "Aanmaken",
-					"delete": "Verwijderen",
-					"update": "Bijwerken"
+					"createLabel": "Aanmaken",
+					"deleteLabel": "Verwijderen",
+					"updateLabel": "Bijwerken"
 				},
 				"dataSourceDbFieldset": "Databron: Relationele database",
 				"dataSourceLdapFieldset": "Databron: LDAP directorie",
@@ -1059,6 +1059,7 @@
 		"show_detail": "Toon details",
 		"template_error": "Sjabloon fout",
 		"unknown_error": "Er is een fout opgetreden",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "Er was een fout tijdens de opslag van de volgende visual controls: "
 	},
 	"filterWindow": {
@@ -1452,12 +1453,14 @@
 	"defaultAccount": "<em>Default account</em>",
 	"description_": "Omschrijving",
 	"disable": "Blokkeer",
+	"disableGridFilter": "<em>Disable grid filter</em>",
 	"display_less_attributes": "Toon minder attributen",
 	"display_more_attributes": "Toon meer attributen",
 	"download_ifc_file": "Ophalen Ifc bestand",
 	"emailBody": "Hoofddeel",
 	"emailTemplate": "Email sjabloon",
 	"enable": "Activeer",
+	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": "Geactiveerd",
 	"error": "Fout",
 	"error_bimserver_connection": "Het is niet mogelijk om verbinding met Bimserver te maken",

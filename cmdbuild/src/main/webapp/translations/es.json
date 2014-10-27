@@ -702,9 +702,9 @@
 				"classLevelMapping": "Mapping de las clases",
 				"className": "Clase CMDBuild",
 				"cudActions": {
-					"create": "Crea",
-					"delete": "Borra",
-					"update": "Actualiza"
+					"createLabel": "Crea",
+					"deleteLabel": "Borra",
+					"updateLabel": "Actualiza"
 				},
 				"dataSourceDbFieldset": "Datasource: Base de datos relacional",
 				"dataSourceLdapFieldset": "Datasource: Carpeta LDAP",
@@ -1059,6 +1059,7 @@
 		"show_detail": "Mostrar detalles",
 		"template_error": "Error en una plantilla",
 		"unknown_error": "Se verificó un error",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "Ha habido un error al guardar los siguientes controles visuales: "
 	},
 	"filterWindow": {
@@ -1452,12 +1453,14 @@
 	"defaultAccount": "<em>Default account</em>",
 	"description_": "Descripción",
 	"disable": "Inhabilitar",
+	"disableGridFilter": "<em>Disable grid filter</em>",
 	"display_less_attributes": "Visualiza menos atributos",
 	"display_more_attributes": "Visualiza más atributos",
 	"download_ifc_file": "Descarga archivo Ifc",
 	"emailBody": "Cuerpo",
 	"emailTemplate": "Plantilla correo",
 	"enable": "Habilita",
+	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": "Habilitado",
 	"error": "Error",
 	"error_bimserver_connection": "No puedo conectarme con el Bimserver",
