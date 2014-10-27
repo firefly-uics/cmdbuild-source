@@ -3,8 +3,6 @@ package integration.rest;
 import static java.util.Arrays.asList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.CharEncoding.UTF_8;
-import static org.cmdbuild.service.rest.model.Builders.newMetadata;
-import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
 import static org.cmdbuild.service.rest.model.Builders.newSession;
 import static org.hamcrest.Matchers.equalTo;
@@ -24,7 +22,6 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.cmdbuild.service.rest.Sessions;
-import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.service.rest.model.Session;
 import org.junit.Before;
@@ -92,10 +89,11 @@ public class SessionsTest {
 		// given
 		final ResponseSingle<Session> sentResponse = newResponseSingle(Session.class) //
 				.withElement(newSession() //
-						.withId("t") //
-						.withUsername("u") //
-						.withPassword("p") //
-						.withRole("g") //
+						.withId("the id") //
+						.withUsername("the username") //
+						.withPassword("the password") //
+						.withRole("the role") //
+						.withAvailableRoles(asList("foo", "bar", "baz")) //
 						.build() //
 				) //
 				.build();
@@ -117,7 +115,7 @@ public class SessionsTest {
 		// when
 		final PutMethod put = new PutMethod(server.resource("sessions/foo/"));
 		put.setRequestEntity(new StringRequestEntity( //
-				"{\"_id\" : null, \"username\" : \"bar\", \"password\" : null, \"role\" : \"baz\"}", //
+				"{\"_id\" : \"ignored\", \"username\" : \"bar\", \"password\" : null, \"role\" : \"baz\"}", //
 				APPLICATION_JSON, //
 				UTF_8) //
 		);
@@ -145,26 +143,4 @@ public class SessionsTest {
 		assertThat(result, equalTo(204));
 	}
 
-	@Test
-	public void rolesReaded() throws Exception {
-		// given
-		final ResponseMultiple<String> sentResponse = newResponseMultiple(String.class) //
-				.withElements(asList("bar", "baz")) //
-				.withMetadata(newMetadata() //
-						.withTotal(42L) //
-						.build() //
-				) //
-				.build();
-		doReturn(sentResponse) //
-				.when(service).readRoles(anyString());
-
-		// when
-		final GetMethod get = new GetMethod(server.resource("sessions/foo/roles/"));
-		final int result = httpclient.executeMethod(get);
-
-		// then
-		verify(service).readRoles(eq("foo"));
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(sentResponse)));
-	}
 }

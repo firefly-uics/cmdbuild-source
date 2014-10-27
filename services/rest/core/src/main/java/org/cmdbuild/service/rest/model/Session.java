@@ -1,9 +1,12 @@
 package org.cmdbuild.service.rest.model;
 
+import static org.cmdbuild.service.rest.constants.Serialization.AVAILABLE_ROLES;
 import static org.cmdbuild.service.rest.constants.Serialization.PASSWORD;
 import static org.cmdbuild.service.rest.constants.Serialization.ROLE;
 import static org.cmdbuild.service.rest.constants.Serialization.SESSION;
 import static org.cmdbuild.service.rest.constants.Serialization.USERNAME;
+
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -17,6 +20,7 @@ public class Session extends ModelWithId<String> {
 	private String username;
 	private String password;
 	private String role;
+	private Collection<String> availableRoles;
 
 	Session() {
 		// package visibility
@@ -49,6 +53,15 @@ public class Session extends ModelWithId<String> {
 		this.role = role;
 	}
 
+	@XmlElement(name = AVAILABLE_ROLES)
+	public Collection<String> getAvailableRoles() {
+		return availableRoles;
+	}
+
+	void setAvailableRoles(final Collection<String> availableRoles) {
+		this.availableRoles = availableRoles;
+	}
+
 	@Override
 	protected boolean doEquals(final Object obj) {
 		if (obj == this) {
@@ -63,6 +76,7 @@ public class Session extends ModelWithId<String> {
 				.append(this.username, other.username) //
 				.append(this.password, other.password) //
 				.append(this.role, other.role) //
+				.append(this.availableRoles, other.availableRoles) //
 				.isEquals();
 	}
 
@@ -73,6 +87,7 @@ public class Session extends ModelWithId<String> {
 				.append(this.username) //
 				.append(this.password) //
 				.append(this.role) //
+				.append(this.availableRoles) //
 				.toHashCode();
 	}
 

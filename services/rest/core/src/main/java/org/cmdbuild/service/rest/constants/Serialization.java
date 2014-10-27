@@ -14,6 +14,7 @@ public class Serialization {
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTE_DETAIL = ATTRIBUTE + "Detail", //
 			ATTRIBUTES = "attributes", //
+			AVAILABLE_ROLES = "availableRoles", //
 			CARD = "card", //
 			CARD_DETAIL = CARD + "Detail", //
 			CARD_ID = CARD + ID_CAPITALIZED, //

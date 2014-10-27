@@ -1,10 +1,12 @@
 package org.cmdbuild.service.rest.model;
 
 import static com.google.common.collect.Iterables.addAll;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.immutableEntry;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
+import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
@@ -22,7 +24,6 @@ import org.cmdbuild.service.rest.model.Attribute.Filter;
 import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails.AttributeStatus;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 public class Builders {
 
@@ -408,10 +409,13 @@ public class Builders {
 
 	public static class SessionBuilder extends ModelBuilder<Session> {
 
+		private static final Collection<String> NO_ROLES = Collections.emptyList();
+
 		private String id;
 		private String username;
 		private String password;
 		private String role;
+		private final Collection<String> availableRoles = newHashSet();
 
 		private SessionBuilder() {
 			// use factory method
@@ -423,6 +427,7 @@ public class Builders {
 			this.username = existing.getUsername();
 			this.password = existing.getPassword();
 			this.role = existing.getRole();
+			this.availableRoles.addAll(defaultIfNull(existing.getAvailableRoles(), NO_ROLES));
 		}
 
 		@Override
@@ -432,6 +437,7 @@ public class Builders {
 			output.setUsername(username);
 			output.setPassword(password);
 			output.setRole(role);
+			output.setAvailableRoles(availableRoles);
 			return output;
 		}
 
@@ -452,6 +458,11 @@ public class Builders {
 
 		public SessionBuilder withRole(final String role) {
 			this.role = role;
+			return this;
+		}
+
+		public SessionBuilder withAvailableRoles(final Iterable<String> availableRoles) {
+			addAll(this.availableRoles, defaultIfNull(availableRoles, NO_ROLES));
 			return this;
 		}
 
@@ -743,7 +754,7 @@ public class Builders {
 			output.setObjectType(objectType);
 			output.setObjectId(objectId);
 			output.setObjectDescription(objectDescription);
-			output.setChildren(Lists.newArrayList(children));
+			output.setChildren(newArrayList(children));
 			return output;
 		}
 
@@ -849,7 +860,7 @@ public class Builders {
 		private String id;
 		private String description;
 		private String instructions;
-		private final Collection<AttributeStatus> attributes = Lists.newArrayList();
+		private final Collection<AttributeStatus> attributes = newArrayList();
 
 		private ProcessActivityWithFullDetailsBuilder() {
 			// use factory method
@@ -1212,7 +1223,7 @@ public class Builders {
 
 		private final Iterable<T> NO_ELEMENTS = Collections.emptyList();
 
-		private final Collection<T> elements = Lists.newArrayList();
+		private final Collection<T> elements = newArrayList();
 		private DetailResponseMetadata metadata;
 
 		private ResponseMultipleBuilder() {
