@@ -1,5 +1,6 @@
 package org.cmdbuild.services.store.menu;
 
+import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
@@ -15,7 +16,7 @@ import java.util.Map;
 
 import org.cmdbuild.auth.GroupFetcher;
 import org.cmdbuild.auth.acl.CMGroup;
-import org.cmdbuild.auth.acl.PrivilegeContextFactory;
+import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
@@ -33,8 +34,8 @@ import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
-import org.cmdbuild.model.dashboard.DefaultDashboardDefinition;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 
 public class DataViewMenuStore implements MenuStore {
@@ -44,7 +45,6 @@ public class DataViewMenuStore implements MenuStore {
 	private final GroupFetcher groupFetcher;
 	private final DashboardLogic dashboardLogic;
 	private final DataAccessLogic dataAccessLogic;
-	private final PrivilegeContextFactory privilegeContextFactory;
 	private final ViewLogic viewLogic;
 	private final MenuItemConverter converter;
 	private final ViewConverter viewConverter;
@@ -55,7 +55,6 @@ public class DataViewMenuStore implements MenuStore {
 			final GroupFetcher groupFetcher, //
 			final DashboardLogic dashboardLogic, //
 			final UserDataAccessLogicBuilder dataAccessLogicBuilder, //
-			final PrivilegeContextFactory privilegeContextFactory, //
 			final ViewLogic viewLogic, //
 			final MenuItemConverter converter, //
 			final ViewConverter viewConverter, //
@@ -65,7 +64,6 @@ public class DataViewMenuStore implements MenuStore {
 		this.groupFetcher = groupFetcher;
 		this.dashboardLogic = dashboardLogic;
 		this.dataAccessLogic = dataAccessLogicBuilder.build();
-		this.privilegeContextFactory = privilegeContextFactory;
 		this.viewLogic = viewLogic;
 		this.converter = converter;
 		this.viewConverter = viewConverter;
@@ -133,18 +131,19 @@ public class DataViewMenuStore implements MenuStore {
 
 	@Override
 	public MenuItem getMenuToUseForGroup(final String groupName) {
-		Iterable<CMCard> menuCards = fetchMenuCardsForGroup(groupName);
-		final boolean isThereAMenuForCurrentGroup = menuCards.iterator().hasNext();
+		final Iterable<CMCard> menuCardsForGroup = fetchMenuCardsForGroup(groupName);
+		final Iterable<CMCard> menuCards = isEmpty(menuCardsForGroup) ? fetchMenuCardsForGroup(DEFAULT_MENU_GROUP_NAME)
+				: menuCardsForGroup;
 		final CMGroup group = groupFetcher.fetchGroupWithName(groupName);
-		final MenuCardFilter menuCardFilter = new MenuCardFilter(view, group, privilegeContextFactory, viewConverter);
-		Iterable<CMCard> readableMenuCards;
-		if (isThereAMenuForCurrentGroup) {
-			readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
-		} else {
-			menuCards = fetchMenuCardsForGroup(DEFAULT_MENU_GROUP_NAME);
-			readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
-		}
+		final MenuCardFilter menuCardFilter = new MenuCardFilter(view, group, new Supplier<PrivilegeContext>() {
 
+			@Override
+			public PrivilegeContext get() {
+				return operationUser.getPrivilegeContext();
+			}
+
+		}, viewConverter);
+		final Iterable<CMCard> readableMenuCards = menuCardFilter.filterReadableMenuCards(menuCards);
 		return converter.fromMenuCard(readableMenuCards);
 	}
 
