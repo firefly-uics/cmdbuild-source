@@ -16,7 +16,7 @@
 		buttonAlign: 'center',
 		cls: 'x-panel-body-default-framed cmbordertop',
 		frame: false,
-		layout: 'fit',
+		layout: 'border',
 		split: true,
 
 		initComponent: function() {
@@ -121,13 +121,11 @@
 					items: [
 						{
 							fieldLabel: tr.username,
-							allowBlank: false,
 							name: CMDBuild.core.proxy.CMProxyConstants.USERNAME
 						},
 						{
 							inputType: 'password',
 							fieldLabel: tr.password,
-							allowBlank: false,
 							name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD
 						}
 					]
@@ -231,8 +229,9 @@
 			// END: Page FieldSets configuration
 
 			// Splitted-view wrapper
-			this.wrapper = Ext.create('Ext.container.Container', {
-				frame: false,
+			this.wrapper = Ext.create('Ext.panel.Panel', {
+				region: 'center',
+				frame: true,
 				border: false,
 
 				layout: {
@@ -241,19 +240,19 @@
 				},
 
 				defaults: {
-					overflowY: 'auto',
-					flex: 1
+					overflowY: 'auto'
 				},
 
 				items: [
 					{
 						xtype: 'container',
-						margins: '0 3 0 0',
+						flex: 1,
 						items: [this.emailAccount, this.credentials]
 					},
+					{ xtype: 'splitter' },
 					{
 						xtype: 'container',
-						margins: '0 0 0 3',
+						flex: 1,
 						items: [this.outgoing, this.incoming]
 					}
 				]

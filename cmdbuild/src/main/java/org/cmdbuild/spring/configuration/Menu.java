@@ -4,7 +4,6 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
 import org.cmdbuild.auth.GroupFetcher;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
@@ -25,9 +24,6 @@ public class Menu {
 
 	@Autowired
 	private GroupFetcher groupFetcher;
-
-	@Autowired
-	private PrivilegeContextFactory privilegeContextFactory;
 
 	@Autowired
 	private SystemDataAccessLogicBuilder systemDataAccessLogicBuilder;
@@ -63,7 +59,6 @@ public class Menu {
 				groupFetcher, //
 				dashboardLogic, //
 				user.userDataAccessLogicBuilder(), //
-				privilegeContextFactory, //
 				view.viewLogic(), //
 				menuItemConverter(), //
 				view.viewConverter(), //

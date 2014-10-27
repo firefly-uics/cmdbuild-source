@@ -1,6 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.tasks; // Path to translation
+	var tr = CMDBuild.Translation.administration.tasks;
 
 	/**
 	 * Form for task configuration (a.k.a. "wizard")
@@ -28,7 +28,6 @@
 		},
 
 		defaults: {
-			bodyPadding: 10,
 			layout: 'fit'
 		},
 

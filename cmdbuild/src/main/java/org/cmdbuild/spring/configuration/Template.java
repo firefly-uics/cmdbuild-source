@@ -17,7 +17,9 @@ public class Template {
 
 	@Bean
 	public DatabaseEngine databaseTemplateEngine() {
-		return DatabaseEngine.of(storeTemplateRepository());
+		return DatabaseEngine.newInstance() //
+				.withTemplateRepository(storeTemplateRepository()) //
+				.build();
 	}
 
 	@Bean

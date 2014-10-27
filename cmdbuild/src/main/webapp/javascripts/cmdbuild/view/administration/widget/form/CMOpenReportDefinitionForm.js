@@ -32,12 +32,16 @@
 
 			this.callParent(arguments);
 
-			this.reportCode = Ext.create('CMDBuild.field.CMBaseCombo', {
+			this.reportCode = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.core.proxy.CMProxyConstants.CODE,
 				fieldLabel: tr[me.self.WIDGET_NAME].fields.report,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				valueField: CMDBuild.model.CMReportAsComboItem._FIELDS.value,
 				displayField: CMDBuild.model.CMReportAsComboItem._FIELDS.description,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				forceSelection: true,
+				editable: false,
+
 				store: _CMCache.getReportComboStore()
 			});
 
@@ -45,12 +49,13 @@
 				flex: 1
 			});
 
-			this.forceFormatOptions = Ext.create('CMDBuild.field.CMBaseCombo', {
+			this.forceFormatOptions = Ext.create('Ext.form.field.ComboBox', {
 				displayField: CMDBuild.core.proxy.CMProxyConstants.TEXT,
 				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				flex: 3,
+				flex: 4,
+				forceSelection: true,
+				editable: false,
 
-				queryMode: 'local',
 				store: Ext.create('Ext.data.ArrayStore', {
 					autoDestroy: true,
 					fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.TEXT],
@@ -58,14 +63,19 @@
 						['pdf', 'PDF'],
 						['csv', 'CSV']
 					]
-				})
+				}),
+				queryMode: 'local'
 			});
 
 			this.forceFormat = Ext.create('Ext.form.FieldContainer', {
-				width: 300,
+				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				fieldLabel: tr[me.self.WIDGET_NAME].fields.force,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				layout: 'hbox',
+
+				layout: {
+					type: 'hbox'
+				},
+
 				items: [this.forceFormatCheck, this.forceFormatOptions]
 			});
 
@@ -128,8 +138,9 @@
 		 * @param {Array} readOnlyAttributes
 		 */
 		fillPresetWithData: function(data, readOnlyAttributes) {
-			this.presetGrid.store.removeAll();
+			readOnlyAttributes = readOnlyAttributes || [];
 
+			this.presetGrid.store.removeAll();
 			if (!Ext.isEmpty(data)) {
 				for (var key in data) {
 					var recordConf = {};
@@ -212,6 +223,10 @@
 		 */
 		enableNonFieldElements: function() {
 			this.presetGrid.enable();
+
+			// Enable forceFormatOptions only if forceFormatCheck is checked
+			if (!this.forceFormatCheck.getValue())
+				this.forceFormatOptions.disable();
 		},
 
 		/**
@@ -220,20 +235,15 @@
 		 * @override
 		 */
 		getWidgetDefinition: function() {
-			var me = this;
 			var returnObject = {};
-			var presetData = me.getPresetData();
+			var presetData = this.getPresetData();
 
-			returnObject[CMDBuild.core.proxy.CMProxyConstants.REPORT_CODE] = me.reportCode.getValue();
-			returnObject[CMDBuild.core.proxy.CMProxyConstants.FORCE_FORMAT] = function() {
-				if (me.forceFormatCheck.getValue()) {
-					return me.forceFormatOptions.getValue();
-				}
-			};
+			returnObject[CMDBuild.core.proxy.CMProxyConstants.REPORT_CODE] = this.reportCode.getValue();
+			returnObject[CMDBuild.core.proxy.CMProxyConstants.FORCE_FORMAT] = this.forceFormatOptions.getValue();
 			returnObject[CMDBuild.core.proxy.CMProxyConstants.PRESET] = presetData.data;
 			returnObject[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY_ATTRIBUTES] = presetData.readOnly;
 
-			return Ext.apply(me.callParent(arguments), returnObject);
+			return Ext.apply(this.callParent(arguments), returnObject);
 		}
 	});
 

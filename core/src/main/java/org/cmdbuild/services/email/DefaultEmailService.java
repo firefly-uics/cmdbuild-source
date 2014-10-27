@@ -3,6 +3,7 @@ package org.cmdbuild.services.email;
 import static com.google.common.collect.Iterables.unmodifiableIterable;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.cmdbuild.system.SystemUtils.isMailDebugEnabled;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.slf4j.Logger;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
@@ -47,8 +49,7 @@ public class DefaultEmailService implements EmailService {
 
 		@Override
 		public boolean isDebug() {
-			// TODO use a system property
-			return false;
+			return isMailDebugEnabled();
 		}
 
 		@Override
@@ -139,6 +140,8 @@ public class DefaultEmailService implements EmailService {
 
 	}
 
+	private static final Predicate<Email> ALL_EMAILS = Predicates.alwaysTrue();
+
 	private static final String CONTENT_TYPE = "text/html; charset=UTF-8";
 
 	private static final Map<URL, String> NO_ATTACHMENTS = Collections.emptyMap();
@@ -200,7 +203,7 @@ public class DefaultEmailService implements EmailService {
 	public synchronized Iterable<Email> receive() throws EmailServiceException {
 		logger.info("receiving emails");
 		final CollectingEmailCallbackHandler callbackHandler = CollectingEmailCallbackHandler.newInstance() //
-				.withPredicate(Predicates.<Email> alwaysTrue()) //
+				.withPredicate(ALL_EMAILS) //
 				.build();
 		receive(callbackHandler);
 		return unmodifiableIterable(callbackHandler.getEmails());

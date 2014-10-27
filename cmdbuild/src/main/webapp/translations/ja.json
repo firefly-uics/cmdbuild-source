@@ -702,9 +702,9 @@
 				"classLevelMapping": "クラスマッピング",
 				"className": "CMDBuildクラス",
 				"cudActions": {
-					"create": "作成",
-					"delete": "削除",
-					"update": "更新"
+					"createLabel": "作成",
+					"deleteLabel": "削除",
+					"updateLabel": "更新"
 				},
 				"dataSourceDbFieldset": "データソース: リレーショナルデータベース",
 				"dataSourceLdapFieldset": "データソース: LDAP ディレクトリー",
@@ -1059,6 +1059,7 @@
 		"show_detail": "詳細表示",
 		"template_error": "テンプレートエラー",
 		"unknown_error": "未知のエラーが発生しました",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "以下のビジュアルコントロールを保存中にエラーが発生しました: "
 	},
 	"filterWindow": {
@@ -1452,12 +1453,14 @@
 	"defaultAccount": "<em>Default account</em>",
 	"description_": "説明",
 	"disable": "無効にする",
+	"disableGridFilter": "<em>Disable grid filter</em>",
 	"display_less_attributes": "より少ない属性を表示",
 	"display_more_attributes": "より多くの属性を表示",
 	"download_ifc_file": "Ifc ファイルをダウンロード",
 	"emailBody": "本文",
 	"emailTemplate": "電子メールテンプレート",
 	"enable": "有効にする",
+	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": "有効",
 	"error": "エラー",
 	"error_bimserver_connection": "BIMサーバーに接続できません",

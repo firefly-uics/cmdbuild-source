@@ -702,9 +702,9 @@
 				"classLevelMapping": "Class mapping",
 				"className": "CMDBuild class",
 				"cudActions": {
-					"create": "Create",
-					"delete": "Delete",
-					"update": "Update"
+					"createLabel": "Create",
+					"deleteLabel": "Delete",
+					"updateLabel": "Update"
 				},
 				"dataSourceDbFieldset": "Datasource: Relational database",
 				"dataSourceLdapFieldset": "Datasource: LDAP directory",
@@ -1059,6 +1059,7 @@
 		"show_detail": "نمایش جزئیات",
 		"template_error": "خطای قالب",
 		"unknown_error": "خطایی رخ داد",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "There was an error saving the following visual controls: "
 	},
 	"filterWindow": {
@@ -1452,12 +1453,14 @@
 	"defaultAccount": "<em>Default account</em>",
 	"description_": "توضیحات",
 	"disable": "غیر فعال",
+	"disableGridFilter": "<em>Disable grid filter</em>",
 	"display_less_attributes": "خواص کمتری نشان بده",
 	"display_more_attributes": "خواص بیشتری نشان بده",
 	"download_ifc_file": "Download Ifc file",
 	"emailBody": "بدنه",
 	"emailTemplate": "قالب ایمیل",
 	"enable": "فعال",
+	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": "فعال شده",
 	"error": "خطا",
 	"error_bimserver_connection": "I'm not able to connect to Bimserver",

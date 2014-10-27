@@ -702,9 +702,9 @@
 				"classLevelMapping": "Class mapping",
 				"className": "CMDBuild class",
 				"cudActions": {
-					"create": "Create",
-					"delete": "Delete",
-					"update": "Update"
+					"createLabel": "Create",
+					"deleteLabel": "Delete",
+					"updateLabel": "Update"
 				},
 				"dataSourceDbFieldset": "Datasource: Relational database",
 				"dataSourceLdapFieldset": "Datasource: LDAP directory",
@@ -1059,6 +1059,7 @@
 		"show_detail": "Show details",
 		"template_error": "Template error",
 		"unknown_error": "An error has occurred",
+		"widgetLinkCardsNoClassNameError": "LinkCardsController constructor: className not valid",
 		"wrong_wf_widgets": "There was an error saving the following visual controls: "
 	},
 	"filterWindow": {
@@ -1452,12 +1453,14 @@
 	"defaultAccount": "Default account",
 	"description_": "Description",
 	"disable": "Disable",
+	"disableGridFilter": "Disable grid filter",
 	"display_less_attributes": "Display less attributes",
 	"display_more_attributes": "Display more attributes",
 	"download_ifc_file": "Download Ifc file",
 	"emailBody": "Body",
 	"emailTemplate": "Email Template",
 	"enable": "Enable",
+	"enableGridFilter": "Enable grid filter",
 	"enabled": "Enabled",
 	"error": "Error",
 	"error_bimserver_connection": "I'm not able to connect to Bimserver",

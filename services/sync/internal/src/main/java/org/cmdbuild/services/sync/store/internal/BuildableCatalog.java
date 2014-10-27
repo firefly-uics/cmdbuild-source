@@ -5,10 +5,14 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import java.util.Collection;
 import java.util.Collections;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.services.sync.store.Type;
 
 import com.google.common.base.Predicate;
@@ -71,4 +75,33 @@ public class BuildableCatalog implements Catalog {
 				}) //
 				.orNull();
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof Catalog)) {
+			return false;
+		}
+		final Catalog other = Catalog.class.cast(obj);
+		return new EqualsBuilder() //
+				.append(getTypes(), other.getTypes()) //
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder() //
+				.append(types) //
+				.toHashCode();
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this, SHORT_PREFIX_STYLE) //
+				.append(types) //
+				.toString();
+	}
+
 }

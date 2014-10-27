@@ -702,9 +702,9 @@
 				"classLevelMapping": "<em>Class mapping</em>",
 				"className": "<em>CMDBuild class</em>",
 				"cudActions": {
-					"create": "<em>Create</em>",
-					"delete": "<em>Delete</em>",
-					"update": "<em>Update</em>"
+					"createLabel": "<em>Create</em>",
+					"deleteLabel": "<em>Delete</em>",
+					"updateLabel": "<em>Update</em>"
 				},
 				"dataSourceDbFieldset": "<em>Datasource: Relational database</em>",
 				"dataSourceLdapFieldset": "<em>Datasource: LDAP directory</em>",
@@ -1059,6 +1059,7 @@
 		"show_detail": "Hiện thị chi tiết",
 		"template_error": "Lỗi xác định",
 		"unknown_error": "Một lỗi đã xảy ra",
+		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
 		"wrong_wf_widgets": "Một lỗi xảy ra khi đang lưu các visual control sau đây: "
 	},
 	"filterWindow": {
@@ -1452,12 +1453,14 @@
 	"defaultAccount": "<em>Default account</em>",
 	"description_": "Mô tả",
 	"disable": "<em>Disable</em>",
+	"disableGridFilter": "<em>Disable grid filter</em>",
 	"display_less_attributes": "<em>Display less attributes</em>",
 	"display_more_attributes": "<em>Display more attributes</em>",
 	"download_ifc_file": "<em>Download Ifc file</em>",
 	"emailBody": "<em>Body</em>",
 	"emailTemplate": "<em>Email Template</em>",
 	"enable": "<em>Enable</em>",
+	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": " Kích hoạt",
 	"error": "Lỗi",
 	"error_bimserver_connection": "<em>I'm not able to connect to Bimserver</em>",

@@ -69,11 +69,7 @@
 
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/accordion/CMGISAccordion.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/GeoServerLayersGrid.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/GeoServerForm.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/CMModGeoServer.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModGISNavigationConfiguration.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModExternalServices.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModIcons.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/view/administration/gis/ModLayerOrder.js"></script>
 
@@ -163,7 +159,6 @@
 <!-- CONTROLLERS -->
 	<!-- GIS -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGISNavigationConfigurationController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModGeoServerController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/gis/CMModLayerOrderController.js"></script>
 
 	<!-- GROUP -->
@@ -210,10 +205,6 @@
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMDashboardPropertiesPanelController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/dashboard/CMModDashboardController.js"></script>
 
-	<!-- EMAIL -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/email/CMEmailAccountsController.js"></script>
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/email/CMEmailTemplatesController.js"></script>
-
 	<!-- MENU -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/accordion/CMMenuAccordionController.js"></script>
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/menu/CMModMenuController.js"></script>
@@ -254,9 +245,6 @@
 
 	<!-- FILTER -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/filter/CMGroupFilterPanelController.js"></script>
-
-	<!-- TASKS -->
-	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/tasks/CMTasksController.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/administration.js"></script>
 

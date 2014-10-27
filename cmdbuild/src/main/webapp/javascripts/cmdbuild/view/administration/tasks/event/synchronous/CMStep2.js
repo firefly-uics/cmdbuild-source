@@ -106,8 +106,8 @@
 
 		delegate: undefined,
 
-		bodyCls: 'cmgraypanel',
 		border: false,
+		frame: true,
 		layout: 'fit',
 		overflowY: 'auto',
 

@@ -16,7 +16,7 @@
 		buttonAlign: 'center',
 		cls: 'x-panel-body-default-framed cmbordertop',
 		frame: false,
-		layout: 'fit',
+		layout: 'border',
 		split: true,
 
 		initComponent: function() {
@@ -93,8 +93,9 @@
 			});
 
 			// Splitted-view wrapper
-			this.wrapper = Ext.create('Ext.container.Container', {
-				frame: false,
+			this.wrapper = Ext.create('Ext.panel.Panel', {
+				region: 'center',
+				frame: true,
 				border: false,
 
 				layout: {
@@ -103,15 +104,14 @@
 				},
 
 				defaults: {
-					overflowY: 'auto',
-					flex: 1
+					overflowY: 'auto'
 				},
 
 				items: [
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.administration.modClass.attributeProperties.baseProperties,
-						margins: '0 3 0 0',
+						flex: 1,
 
 						defaults: {
 							labelWidth: CMDBuild.LABEL_WIDTH,
@@ -132,10 +132,11 @@
 							}
 						]
 					},
+					{ xtype: 'splitter' },
 					{
 						xtype: 'fieldset',
 						title: CMDBuild.Translation.administration.email.templates.template,
-						margins: '0 0 0 3',
+						flex: 1,
 
 						defaults: {
 							xtype: 'textfield',
@@ -149,18 +150,15 @@
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.TO,
 								fieldLabel: CMDBuild.Translation.to,
-								vtype: 'multiemail',
 								allowBlank: false
 							},
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.CC,
-								fieldLabel: CMDBuild.Translation.cc,
-								vtype: 'multiemail'
+								fieldLabel: CMDBuild.Translation.cc
 							},
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.BCC,
-								fieldLabel: CMDBuild.Translation.bcc,
-								vtype: 'multiemail'
+								fieldLabel: CMDBuild.Translation.bcc
 							},
 							{
 								name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,

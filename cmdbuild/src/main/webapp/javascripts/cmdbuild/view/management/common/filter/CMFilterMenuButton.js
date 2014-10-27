@@ -151,7 +151,7 @@
 		extend: "Ext.form.FieldContainer",
 
 		// configuration
-		valueField: null, 
+		valueField: null,
 		// configuration
 
 		initComponent: function() {
@@ -198,6 +198,8 @@
 			delegable: "CMDBuild.core.CMDelegable"
 		},
 
+		border: false,
+
 		constructor: function() {
 			this.mixins.delegable.constructor.call(this,
 					"CMDBuild.delegate.common.filter.CMRuntimeParameterWindowDelegate");
@@ -226,12 +228,11 @@
 					pack: 'center'
 				},
 				autoScroll: true,
-				bodyCls: "x-panel-body-default-framed",
 				bodyStyle: {
 					padding: "5px"
 				},
 				items: getRuntimeParameterWindowItems(this.runtimeAttributes),
-				frame: false,
+				frame: true,
 				border: false
 			}];
 
@@ -410,8 +411,8 @@
 					hideable: false
 				}, {
 					width: 100,
-					fixed: true, 
-					sortable: false, 
+					fixed: true,
+					sortable: false,
 					renderer: function(value, metadata, record, rowIndex, colIndex, store, view) {
 						if (record.isTemplate()) {
 							return "";

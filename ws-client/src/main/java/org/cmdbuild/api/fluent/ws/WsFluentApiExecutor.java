@@ -409,6 +409,16 @@ public class WsFluentApiExecutor implements FluentApiExecutor {
 		proxy.updateWorkflow(soapCard, advanceProcess, emptyWidgetsSubmission);
 	}
 
+	public void suspendProcessInstance(final ExistingProcessInstance processCard) {
+		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(processCard);
+		proxy.suspendWorkflow(soapCard);
+	}
+
+	public void resumeProcessInstance(final ExistingProcessInstance processCard) {
+		final org.cmdbuild.services.soap.Card soapCard = soapCardFor(processCard);
+		proxy.resumeWorkflow(soapCard);
+	}
+
 	/*
 	 * Utils
 	 */

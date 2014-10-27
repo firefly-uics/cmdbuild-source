@@ -10,6 +10,7 @@ import org.cmdbuild.servlets.json.serializers.ClassSerializer;
 import org.cmdbuild.servlets.json.serializers.DefaultTranslationFacade;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
+import org.cmdbuild.servlets.json.serializers.SetupAwareTranslationFacade;
 import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +33,9 @@ public class Serialization {
 	private PrivilegeManagement privilegeManagement;
 
 	@Autowired
+	private Setup setup;
+
+	@Autowired
 	private Translation translation;
 
 	@Autowired
@@ -51,7 +55,11 @@ public class Serialization {
 
 	@Bean
 	public TranslationFacade translationFacade() {
-		return new DefaultTranslationFacade(languageStore, translation.translationLogic());
+		final DefaultTranslationFacade defaultTranslationFacade = new DefaultTranslationFacade(languageStore,
+				translation.translationLogic());
+		final SetupAwareTranslationFacade setupAwareTranslationFacade = new SetupAwareTranslationFacade(
+				defaultTranslationFacade, setup.setupFacade());
+		return setupAwareTranslationFacade;
 	}
 
 	@Bean

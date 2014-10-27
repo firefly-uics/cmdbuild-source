@@ -1,13 +1,17 @@
 (function() {
 
-	var CLASS_ID_AS_RETURNED_BY_GETCARDLIST = 'IdClass';
-
 	Ext.require('CMDBuild.core.proxy.CMProxyRelations');
 
 	Ext.define('CMDBuild.controller.management.classes.CMCardRelationsController', {
 		extend: 'CMDBuild.controller.management.classes.CMModCardSubController',
 
-		constructor: function(v, sc) {
+		/**
+		 * @param {CMDBuild.view.management.classes.CMCardRelationsPanel} view
+		 * @param {CMDBuild.controller.management.classes.CMModCardController} superController
+		 *
+		 * @override
+		 */
+		constructor: function(view, superController) {
 			this.mixins.observable.constructor.call(this, arguments);
 
 			this.callParent(arguments);
@@ -23,7 +27,7 @@
 			};
 
 			this.view.store.getRootNode().on('append', function(root, newNode) {
-				// the nodes with depth == 1 are the folders
+				// The nodes with depth == 1 are the folders
 				if (newNode.get('depth') == 1)
 					newNode.on('expand', onDomainNodeExpand, this, {single: true});
 			}, this);
@@ -39,6 +43,11 @@
 			this.addEvents(this.CMEVENTS.serverOperationSuccess);
 		},
 
+		/**
+		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
+		 *
+		 * @override
+		 */
 		onEntryTypeSelected: function(entryType) {
 			this.callParent(arguments);
 
@@ -51,8 +60,14 @@
 			this.view.clearStore();
 		},
 
+		/**
+		 * @param {Object} entryType - card model
+		 *
+		 * @override
+		 */
 		onCardSelected: function(card) {
 			this.callParent(arguments);
+
 			this.view.clearStore();
 			this.view.disable();
 
@@ -66,8 +81,11 @@
 			}
 		},
 
+		/**
+		 * @param {Object} entryType - card model
+		 */
 		updateCurrentClass: function(card) {
-			var classId = card.get(CLASS_ID_AS_RETURNED_BY_GETCARDLIST);
+			var classId = card.get('IdClass');
 			var currentClass = _CMCache.getEntryTypeById(classId);
 
 			if (this.currentClass != currentClass) {
@@ -152,14 +170,23 @@
 			}
 		},
 
+		/**
+		 * @return {Int} cardId
+		 */
 		getCardId: function() {
 			return this.card.get('Id');
 		},
 
+		/**
+		 * @return {Int} classId
+		 */
 		getClassId: function() {
 			return this.card.get('IdClass');
 		},
 
+		/**
+		 * @param {CMDBuild.model.classes.CMRelationPanelModel} model (CMRelationPanelModel)
+		 */
 		onFollowRelationClick: function(model) {
 			if (model.get('depth') > 1)
 				_CMMainViewportController.openCard({
@@ -171,7 +198,7 @@
 		/**
 		 * AddRelation click function to open CMEditRelationWindow filtered excluding already related cards based on relation type
 		 *
-		 * @param (object) model - relation model
+		 * @param {Object} model - relation grid model
 		 */
 		onAddRelationButtonClick: function(model) {
 			var me = this;
@@ -179,7 +206,7 @@
 			var domain = _CMCache.getDomainById(model.dom_id);
 			var classData = _CMCache.getClassById(model.dst_cid);
 			var isMany = false;
-			var destination = model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1' ? '_2' : '_1';
+			var destination = model[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_SOURCE] == '_1' ? '_2' : '_1'; // Probably tells in witch direction of relation you are looking at
 
 			if (domain)
 				isMany = domain.isMany(destination);
@@ -210,7 +237,7 @@
 
 			editRelationWindow.show();
 
-			// Card filter to avoid wrong selection on relation creation
+			// Card filter to avoid wrong selection on relation create
 				if ( // Checks when to apply filter on grids ...
 					!Ext.isEmpty(classData)
 					&& (
@@ -241,6 +268,7 @@
 								parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_NAME] = domain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
 								parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = classData.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
 								parameters[CMDBuild.core.proxy.CMProxyConstants.CARDS] = Ext.encode(cardsIdArray);
+								parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_DIRECTION] = destination;
 
 								CMDBuild.core.proxy.CMProxyRelations.getAlreadyRelatedCards({
 									params: parameters,
@@ -249,12 +277,12 @@
 										var alreadyRelatedCardsIds = [];
 
 										// Create ids array to use as filter
-										Ext.Array.forEach(decodedResult.response, function(item, index, allItems) {
-											if (item[CMDBuild.core.proxy.CMProxyConstants.ID]) {
+										Ext.Array.forEach(decodedResult.response, function(alreadyRelatedItem, index, allItems) {
+											if (alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.ID]) {
 												var parameters = {};
 
-												parameters[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = item[CMDBuild.core.proxy.CMProxyConstants.ID];
-												parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = item[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
+												parameters[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.ID];
+												parameters[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
 												parameters[CMDBuild.core.proxy.CMProxyConstants.DOMAIN_LIMIT] = CMDBuild.Config.cmdbuild.relationlimit;
 
 												// Get all domains of grid-card to check if it have relation with current-card
@@ -264,21 +292,21 @@
 													success: function(result, options, decodedResult) {
 														if (domain.get(CMDBuild.core.proxy.CMProxyConstants.CARDINALITY) == 'N:N') {
 
-															// Loop through dard's domain array
-															Ext.Array.forEach(decodedResult[CMDBuild.core.proxy.CMProxyConstants.DOMAINS], function(item, index, allItems) {
-																if (item[CMDBuild.core.proxy.CMProxyConstants.ID] == domain.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
+															// Loop through card's domains array
+															Ext.Array.forEach(decodedResult[CMDBuild.core.proxy.CMProxyConstants.DOMAINS], function(domainItem, index, allItems) {
+																if (domainItem[CMDBuild.core.proxy.CMProxyConstants.ID] == domain.get(CMDBuild.core.proxy.CMProxyConstants.ID)) {
 
 																	// Loop through domain's relations array
-																	Ext.Array.forEach(item[CMDBuild.core.proxy.CMProxyConstants.RELATIONS], function(item, index, allItems) {
+																	Ext.Array.forEach(domainItem[CMDBuild.core.proxy.CMProxyConstants.RELATIONS], function(domainRelationItem, index, allItems) {
 
 																		// If grid-card have a relation with current-card in this domain add grid-card id to filter array
-																		if (item['dst_id'] == me.card.get(CMDBuild.core.proxy.CMProxyConstants.ID))
+																		if (domainRelationItem['dst_id'] == me.card.get(CMDBuild.core.proxy.CMProxyConstants.ID))
 																			alreadyRelatedCardsIds.push(options.params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID]);
 																	});
 																}
 															});
 														} else {
-															alreadyRelatedCardsIds.push(item[CMDBuild.core.proxy.CMProxyConstants.ID]);
+															alreadyRelatedCardsIds.push(alreadyRelatedItem[CMDBuild.core.proxy.CMProxyConstants.ID]);
 														}
 
 														// Add class to disable rows as user feedback
@@ -309,7 +337,7 @@
 		},
 
 		/**
-		 * @param (object) model - relation model
+		 * @param {Object} model - relation grid model
 		 */
 		onEditRelationClick: function(model) {
 			var me = this;
@@ -367,6 +395,9 @@
 			this.defaultOperationSuccess();
 		},
 
+		/**
+		 * @param {Object} model - relation grid model
+		 */
 		onDeleteRelationClick: function(model) {
 			var me = this;
 			var parameterNames = CMDBuild.ServiceProxy.parameter;
@@ -417,12 +448,10 @@
 			}
 		},
 
-		// overridden in CMManageRelationController
 		onDeleteRelationSuccess: function() {
 			this.defaultOperationSuccess();
 		},
 
-		// overridden in CMManageRelationController
 		defaultOperationSuccess: function() {
 			if (true) { // TODO Check if the modified relation was associated to a reference
 				this.fireEvent(this.CMEVENTS.serverOperationSuccess);
@@ -431,18 +460,27 @@
 			}
 		},
 
+		/**
+		 * @param {CMDBuild.model.classes.CMRelationPanelModel} model (CMRelationPanelModel)
+		 */
 		onEditCardClick: function(model) {
 			openCardWindow.call(this, model, true);
 		},
 
+		/**
+		 * @param {CMDBuild.model.classes.CMRelationPanelModel} model (CMRelationPanelModel)
+		 */
 		onViewCardClick: function(model) {
 			openCardWindow.call(this, model, false);
 		},
 
+		/**
+		 * @param {CMDBuild.model.classes.CMRelationPanelModel} model (CMRelationPanelModel)
+		 */
 		onOpenAttachmentClick: function(model) {
 			var w = new CMDBuild.view.management.common.CMAttachmentsWindow();
 
-			new CMDBuild.controller.management.common.CMAttachmentsWindowController(w,modelToCardInfo(model));
+			new CMDBuild.controller.management.common.CMAttachmentsWindowController(w, modelToCardInfo(model));
 
 			w.show();
 		}
@@ -461,9 +499,12 @@
 			_CMWFState.addDelegate(this);
 		},
 
-		// override
+		/**
+		 * @param {Object} pi
+		 */
 		updateForProcessInstance: function(pi) {
 			this.card = pi;
+
 			var classId = pi.getClassId();
 
 			if (classId) {

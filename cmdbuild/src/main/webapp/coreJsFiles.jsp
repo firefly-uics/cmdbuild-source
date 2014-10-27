@@ -45,6 +45,7 @@
 
 <!-- MODELS -->
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMCacheModels.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/CMFilterModel.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDomainModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMGroupModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
@@ -90,7 +91,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/form/FormOverride.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/form/FormPlugin.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/form/HexColorField.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/form/RangeSlidersFieldSet.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/form/RangeSliders.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/form/SetValueOnLoadPlugin.js"></script>
 
 <!-- WIDGETS BUILDERS -->

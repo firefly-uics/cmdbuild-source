@@ -1,11 +1,18 @@
 package org.cmdbuild.workflow.widget;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.cmdbuild.model.widget.LinkCards.METADATA_SEPARATOR;
+import static org.cmdbuild.model.widget.LinkCards.NAME_TYPE_SEPARATOR;
+
+import java.util.Collections;
 import java.util.Map;
 
 import org.cmdbuild.model.widget.LinkCards;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.template.store.TemplateRepository;
+
+import com.google.common.base.Splitter;
 
 public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 
@@ -22,6 +29,8 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 	private static final String MAP_LONGITUDE = "StartMapWithLongitude";
 	private static final String MAP_ZOOM = "StartMapWithZoom";
 	public static final String REQUIRED = "Required";
+	private static final String METADATA = "Metadata";
+	private static final String METADATA_OUTPUT = "MetadataOutput";
 
 	public LinkCardsWidgetFactory(final TemplateRepository templateRespository, final Notifier notifier) {
 		super(templateRespository, notifier);
@@ -47,6 +56,8 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 		widget.setMapLongitude(readInteger(valueMap.get(MAP_LONGITUDE)));
 		widget.setMapZoom(readInteger(valueMap.get(MAP_ZOOM)));
 		widget.setRequired(readBooleanTrueIfPresent(valueMap.get(REQUIRED)));
+		widget.setMetadata(toMap(readString(valueMap.get(METADATA))));
+		widget.setMetadataOutput(readString(valueMap.get(METADATA_OUTPUT)));
 		widget.setTemplates(extractUnmanagedStringParameters(valueMap, FILTER, CLASS_NAME, DEFAULT_SELECTION,
 				READ_ONLY, SINGLE_SELECT, ALLOW_CARD_EDITING, WITH_MAP, MAP_LATITUDE, MAP_LONGITUDE, MAP_ZOOM,
 				REQUIRED, BUTTON_LABEL));
@@ -66,6 +77,18 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 		} else {
 			widget.setClassName(readString(valueMap.get(CLASS_NAME)));
 		}
+	}
+
+	private Map<String, String> toMap(String value) {
+		Map<String, String> map;
+		if (isBlank(value)) {
+			map = Collections.emptyMap();
+		} else {
+			map = Splitter.on(METADATA_SEPARATOR) //
+					.withKeyValueSeparator(NAME_TYPE_SEPARATOR) //
+					.split(value);
+		}
+		return map;
 	}
 
 }

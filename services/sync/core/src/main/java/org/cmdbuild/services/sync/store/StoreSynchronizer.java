@@ -7,12 +7,17 @@ import java.util.Map;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.services.sync.Synchronizer;
+import org.cmdbuild.services.sync.logging.LoggingSupport;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.MapDifference;
 import com.google.common.collect.MapDifference.ValueDifference;
 
-public class StoreSynchronizer implements Synchronizer {
+public class StoreSynchronizer implements Synchronizer, LoggingSupport {
+
+	private static final Marker marker = MarkerFactory.getMarker(StoreSynchronizer.class.getName());
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<StoreSynchronizer> {
 
@@ -78,13 +83,47 @@ public class StoreSynchronizer implements Synchronizer {
 
 	@Override
 	public void sync() {
+		try {
+			logger.info(marker, "synchronization started");
+			doSync();
+			logger.info(marker, "synchronization finished");
+		} catch (RuntimeException e) {
+			logger.error(marker, "error while synchronizing", e);
+		}
+	}
+
+	private void doSync() {
 		final Map<Key, Entry<?>> sourceData = uniqueIndex(left.readAll(), BY_KEY);
+		logger.trace(marker, "source data", sourceData);
+
 		final Map<Key, Entry<?>> targetData = uniqueIndex(right.readAll(), BY_KEY);
+		logger.trace(marker, "target data", targetData);
 
 		final MapDifference<Key, Entry<?>> mapDifference = difference(sourceData, targetData);
+
 		final Map<Key, Entry<?>> toCreate = mapDifference.entriesOnlyOnLeft();
+		logger.trace(marker, "entries to be created...");
+		if (logger.isTraceEnabled()) {
+			for (final Entry<?> element : toCreate.values()) {
+				logger.trace(marker, "\t{}", element);
+			}
+		}
+
 		final Map<Key, ValueDifference<Entry<?>>> toUpdate = mapDifference.entriesDiffering();
+		logger.trace(marker, "entries to be updated...");
+		if (logger.isTraceEnabled()) {
+			for (final ValueDifference<Entry<?>> element : toUpdate.values()) {
+				logger.trace(marker, "\t{} vs {}", element.leftValue(), element.rightValue());
+			}
+		}
+
 		final Map<Key, Entry<?>> toRemove = mapDifference.entriesOnlyOnRight();
+		logger.trace(marker, "entries to be deleted...");
+		if (logger.isTraceEnabled()) {
+			for (final Entry<?> element : toRemove.values()) {
+				logger.trace(marker, "\t{}", element);
+			}
+		}
 
 		for (final Map.Entry<Key, Entry<?>> element : toCreate.entrySet()) {
 			final Entry<?> entry = element.getValue();
