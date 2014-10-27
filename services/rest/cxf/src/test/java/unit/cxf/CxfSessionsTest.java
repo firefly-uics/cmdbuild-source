@@ -1,6 +1,7 @@
 package unit.cxf;
 
-import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Arrays.asList;
 import static org.cmdbuild.service.rest.constants.Serialization.GROUP;
 import static org.cmdbuild.service.rest.model.Builders.newSession;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,42 +14,37 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-
-import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
 
-import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
-import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.LoginDTO;
 import org.cmdbuild.service.rest.cxf.CxfSessions;
+import org.cmdbuild.service.rest.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.cxf.service.OperationUserStore;
 import org.cmdbuild.service.rest.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.cxf.service.TokenGenerator;
-import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.service.rest.model.Session;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
 
 public class CxfSessionsTest {
 
 	private ErrorHandler errorHandler;
 	private TokenGenerator tokenGenerator;
 	private SessionStore sessionStore;
-	private AuthenticationLogic authenticationLogic;
+	private LoginHandler loginHandler;
 	private OperationUserStore operationUserStore;
 
 	private CxfSessions cxfSessions;
@@ -58,10 +54,9 @@ public class CxfSessionsTest {
 		errorHandler = mock(ErrorHandler.class);
 		tokenGenerator = mock(TokenGenerator.class);
 		sessionStore = mock(SessionStore.class);
-		authenticationLogic = mock(AuthenticationLogic.class);
+		loginHandler = mock(LoginHandler.class);
 		operationUserStore = mock(OperationUserStore.class);
-		cxfSessions = new CxfSessions(errorHandler, tokenGenerator, sessionStore, authenticationLogic,
-				operationUserStore);
+		cxfSessions = new CxfSessions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -119,14 +114,14 @@ public class CxfSessionsTest {
 	}
 
 	@Test(expected = AuthException.class)
-	public void create_errorOnAuthenticationLogicPropagated() throws Exception {
+	public void create_errorOnLoginHandlerPropagated() throws Exception {
 		// given
 		final Session session = newSession() //
 				.withUsername("foo") //
 				.withPassword("bar") //
 				.build();
 		doThrow(AuthExceptionType.AUTH_LOGIN_WRONG.createException()) //
-				.when(authenticationLogic).login(any(LoginDTO.class), any(UserStore.class));
+				.when(loginHandler).login(any(LoginDTO.class));
 
 		// when
 		cxfSessions.create(session);
@@ -139,7 +134,13 @@ public class CxfSessionsTest {
 				.withUsername("username") //
 				.withPassword("password") //
 				.build();
-		when(authenticationLogic.login(any(LoginDTO.class), any(UserStore.class))).thenReturn(null);
+		final AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
+		doReturn(newHashSet("foo", "bar", "baz")) //
+				.when(authenticatedUser).getGroupNames();
+		final OperationUser operationUser = new OperationUser(authenticatedUser, new NullPrivilegeContext(),
+				new NullGroup());
+		doReturn(operationUser) //
+				.when(loginHandler).login(any(LoginDTO.class));
 		doReturn("token") //
 				.when(tokenGenerator).generate(anyString());
 
@@ -147,28 +148,19 @@ public class CxfSessionsTest {
 		final ResponseSingle<String> response = cxfSessions.create(session);
 
 		// then
-		final ArgumentCaptor<LoginDTO> loginCaptor = ArgumentCaptor.forClass(LoginDTO.class);
-		verify(authenticationLogic).login(loginCaptor.capture(), any(UserStore.class));
-		verify(tokenGenerator).generate(eq(session.getUsername()));
-		verify(sessionStore).put(eq(newSession(session) //
-				.withId("token") //
-				.build()));
-		final ArgumentCaptor<Session> sessionCaptor = ArgumentCaptor.forClass(Session.class);
-		verify(operationUserStore).put(sessionCaptor.capture(), any(OperationUser.class));
-		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, authenticationLogic, operationUserStore);
-
-		final LoginDTO capturedLogin = loginCaptor.getValue();
-		assertThat(capturedLogin, equalTo(LoginDTO.newInstance() //
+		final LoginDTO expectedLogin = LoginDTO.newInstance() //
 				.withLoginString(session.getUsername()) //
 				.withPassword(session.getPassword()) //
-				.build()));
-
-		final Session capturedSession = sessionCaptor.getValue();
-		assertThat(capturedSession, equalTo(newSession() //
+				.build();
+		final Session expectedSession = newSession(session) //
 				.withId("token") //
-				.withUsername("username") //
-				.withPassword("password") //
-				.build()));
+				.withAvailableRoles(asList("foo", "bar", "baz")) //
+				.build();
+		verify(loginHandler).login(eq(expectedLogin));
+		verify(tokenGenerator).generate(eq(session.getUsername()));
+		verify(sessionStore).put(eq(expectedSession));
+		verify(operationUserStore).put(eq(expectedSession), any(OperationUser.class));
+		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore);
 
 		assertThat(response.getElement(), equalTo("token"));
 	}
@@ -202,7 +194,7 @@ public class CxfSessionsTest {
 
 		// then
 		verify(sessionStore).get(eq("token"));
-		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, authenticationLogic, operationUserStore);
+		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore);
 		assertThat(response.getElement(), equalTo(newSession(session) //
 				.withPassword(null) //
 				.build()));
@@ -284,6 +276,8 @@ public class CxfSessionsTest {
 		doReturn(true).when(group).isActive();
 		final OperationUser operationUser = new OperationUser(mock(AuthenticatedUser.class),
 				mock(PrivilegeContext.class), group);
+		doReturn(operationUser) //
+				.when(loginHandler).login(any(LoginDTO.class), any(OperationUser.class));
 		doReturn(Optional.of(operationUser)) //
 				.when(operationUserStore).get(eq(oldSession));
 
@@ -293,13 +287,13 @@ public class CxfSessionsTest {
 		// then
 		verify(sessionStore).get(eq("token"));
 		verify(operationUserStore).get(eq(oldSession));
-		verify(authenticationLogic).login( //
+		verify(loginHandler).login( //
 				eq(LoginDTO.newInstance() //
 						.withLoginString(oldSession.getUsername()) //
 						.withPassword(oldSession.getPassword()) //
 						.withGroupName(newSession.getRole()) //
 						.build()), //
-				any(UserStore.class));
+				eq(operationUser));
 		verify(sessionStore).put(eq(newSession(oldSession) //
 				.withRole("guessed group") //
 				.build()));
@@ -308,7 +302,7 @@ public class CxfSessionsTest {
 						.withRole("guessed group") //
 						.build()), //
 				eq(operationUser));
-		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, authenticationLogic, operationUserStore);
+		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -347,69 +341,7 @@ public class CxfSessionsTest {
 		verify(operationUserStore).get(eq(session));
 		verify(sessionStore).remove(eq("token"));
 		verify(operationUserStore).remove(eq(session));
-		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, authenticationLogic, operationUserStore);
+		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore);
 	}
 
-	@Test(expected = WebApplicationException.class)
-	public void readGroups_missingSessionThrowsExeption() throws Exception {
-		// given
-		doReturn(Optional.absent()) //
-				.when(sessionStore).get(anyString());
-		doThrow(new WebApplicationException()) //
-				.when(errorHandler).sessionNotFound(anyString());
-
-		// when
-		cxfSessions.readRoles("token");
-	}
-
-	@Test(expected = WebApplicationException.class)
-	public void readGroups_missingOperationUserThrowsExeption() throws Exception {
-		// given
-		final Session session = newSession() //
-				.withId("token") //
-				.withUsername("username") //
-				.withPassword("password") //
-				.withRole("group") //
-				.build();
-		doReturn(Optional.of(session)) //
-				.when(sessionStore).get(eq("token"));
-		doReturn(Optional.absent()) //
-				.when(operationUserStore).get(eq(session));
-		doThrow(new WebApplicationException()) //
-				.when(errorHandler).userNotFound(anyString());
-
-		// when
-		cxfSessions.readRoles("token");
-	}
-
-	@Test
-	public void readGroups_groupsReturned() throws Exception {
-		// given
-		final Session session = newSession() //
-				.withId("token") //
-				.withUsername("username") //
-				.withPassword("password") //
-				.withRole("group") //
-				.build();
-		doReturn(Optional.of(session)) //
-				.when(sessionStore).get(anyString());
-		final Set<String> groupNames = Sets.newHashSet("foo", "bar", "baz");
-		final AuthenticatedUser authenticatedUser = mock(AuthenticatedUser.class);
-		doReturn(groupNames) //
-				.when(authenticatedUser).getGroupNames();
-		final OperationUser operationUser = new OperationUser(authenticatedUser, mock(PrivilegeContext.class),
-				mock(CMGroup.class));
-		doReturn(Optional.of(operationUser)) //
-				.when(operationUserStore).get(any(Session.class));
-
-		// when
-		final ResponseMultiple<String> response = cxfSessions.readRoles("token");
-
-		// then
-		verify(sessionStore).get(eq("token"));
-		verify(operationUserStore).get(eq(session));
-		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, authenticationLogic, operationUserStore);
-
-		assertThat(newArrayList(response.getElements()), equalTo(newArrayList(groupNames)));
-	}
 }

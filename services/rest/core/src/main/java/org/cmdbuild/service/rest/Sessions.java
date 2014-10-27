@@ -13,7 +13,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.service.rest.model.Session;
 
@@ -43,12 +42,6 @@ public interface Sessions {
 	@DELETE
 	@Path("{" + ID + "}/")
 	void delete( //
-			@PathParam(ID) String id //
-	);
-
-	@GET
-	@Path("{" + ID + "}/roles/")
-	ResponseMultiple<String> readRoles( //
 			@PathParam(ID) String id //
 	);
 

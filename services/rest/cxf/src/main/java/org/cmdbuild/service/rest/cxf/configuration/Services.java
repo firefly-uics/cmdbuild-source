@@ -39,6 +39,8 @@ import org.cmdbuild.service.rest.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.cxf.CxfRelations;
 import org.cmdbuild.service.rest.cxf.CxfSessions;
+import org.cmdbuild.service.rest.cxf.CxfSessions.AuthenticationLogicAdapter;
+import org.cmdbuild.service.rest.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.cxf.WebApplicationExceptionErrorHandler;
 import org.cmdbuild.service.rest.cxf.service.InMemoryOperationUserStore;
@@ -178,9 +180,14 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	public Sessions cxfSessions() {
-		final CxfSessions service = new CxfSessions(errorHandler(), tokenGenerator(), sessionStore(),
-				helper.authenticationLogic(), operationUserStore());
+		final CxfSessions service = new CxfSessions(errorHandler(), tokenGenerator(), sessionStore(), loginHandler(),
+				operationUserStore());
 		return proxy(Sessions.class, service);
+	}
+
+	@Bean
+	protected LoginHandler loginHandler() {
+		return new AuthenticationLogicAdapter(helper.authenticationLogic());
 	}
 
 	@Bean
