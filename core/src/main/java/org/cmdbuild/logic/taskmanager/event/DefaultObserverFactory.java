@@ -268,56 +268,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 			}
 
 			private TemplateResolver templateResolverOf(final Context context) {
-				final EngineBasedTemplateResolver.Builder builder = EngineBasedTemplateResolver.newInstance();
-				context.accept(new ContextVisitor() {
-					@Override
-					public void visit(final AfterCreate context) {
-						builder.withEngine(//
-								CardEngine.newInstance() //
-										.withCard(context.card) //
-										.build(), //
-								CURRENT_CARD_PREFIX);
-					}
-
-					@Override
-					public void visit(final BeforeUpdate context) {
-						builder.withEngine(//
-								CardEngine.newInstance() //
-										.withCard(context.actual) //
-										.build(), //
-								CURRENT_CARD_PREFIX);
-						builder.withEngine(//
-								CardEngine.newInstance() //
-										.withCard(context.next) //
-										.build(), //
-								NEXT_CARD_PREFIX);
-					}
-
-					@Override
-					public void visit(final AfterUpdate context) {
-						builder.withEngine(//
-								CardEngine.newInstance() //
-										.withCard(context.previous) //
-										.build(), //
-								PREVIOUS_CARD_PREFIX);
-						builder.withEngine(//
-								CardEngine.newInstance() //
-										.withCard(context.actual) //
-										.build(), //
-								CURRENT_CARD_PREFIX);
-					}
-
-					@Override
-					public void visit(final BeforeDelete context) {
-						builder.withEngine(//
-								CardEngine.newInstance() //
-										.withCard(context.card) //
-										.build(), //
-								CURRENT_CARD_PREFIX);
-					}
-
-				});
-				return builder.build();
+				return basicTemplateResolver(context).build();
 			}
 
 		});
@@ -343,7 +294,17 @@ public class DefaultObserverFactory implements ObserverFactory {
 						EmailAccount.class, emailAccountStore, named(task.getEmailAccount())));
 				final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(templateEmailAccountSupplier,
 						taskEmailAccountSupplier));
-				final EngineBasedTemplateResolver templateResolver = EngineBasedTemplateResolver.newInstance() //
+				SendTemplateEmail.newInstance() //
+						.withEmailAccountSupplier(emailAccountSupplier) //
+						.withEmailServiceFactory(emailServiceFactory) //
+						.withEmailTemplateSupplier(emailTemplateSupplier) //
+						.withTemplateResolver(templateResolverOf(context)) //
+						.build() //
+						.execute();
+			}
+
+			private EngineBasedTemplateResolver templateResolverOf(final Context context) {
+				return basicTemplateResolver(context) //
 						.withEngine(emptyStringOnNull(nullOnError( //
 								UserEmailEngine.newInstance() //
 										.withDataView(dataView) //
@@ -362,13 +323,6 @@ public class DefaultObserverFactory implements ObserverFactory {
 								)), //
 								GROUP_USERS_PREFIX) //
 						.build();
-				SendTemplateEmail.newInstance() //
-						.withEmailAccountSupplier(emailAccountSupplier) //
-						.withEmailServiceFactory(emailServiceFactory) //
-						.withEmailTemplateSupplier(emailTemplateSupplier) //
-						.withTemplateResolver(templateResolver) //
-						.build() //
-						.execute();
 			}
 
 		});
@@ -389,6 +343,60 @@ public class DefaultObserverFactory implements ObserverFactory {
 				.withUserStore(userStore) //
 				.withDataView(privilegedDataView) //
 				.build();
+	}
+
+	private EngineBasedTemplateResolver.Builder basicTemplateResolver(final Context context) {
+		final EngineBasedTemplateResolver.Builder builder = EngineBasedTemplateResolver.newInstance();
+		context.accept(new ContextVisitor() {
+	
+			@Override
+			public void visit(final AfterCreate context) {
+				builder.withEngine(//
+						CardEngine.newInstance() //
+								.withCard(context.card) //
+								.build(), //
+						CURRENT_CARD_PREFIX);
+			}
+	
+			@Override
+			public void visit(final BeforeUpdate context) {
+				builder.withEngine(//
+						CardEngine.newInstance() //
+								.withCard(context.actual) //
+								.build(), //
+						CURRENT_CARD_PREFIX);
+				builder.withEngine(//
+						CardEngine.newInstance() //
+								.withCard(context.next) //
+								.build(), //
+						NEXT_CARD_PREFIX);
+			}
+	
+			@Override
+			public void visit(final AfterUpdate context) {
+				builder.withEngine(//
+						CardEngine.newInstance() //
+								.withCard(context.previous) //
+								.build(), //
+						PREVIOUS_CARD_PREFIX);
+				builder.withEngine(//
+						CardEngine.newInstance() //
+								.withCard(context.actual) //
+								.build(), //
+						CURRENT_CARD_PREFIX);
+			}
+	
+			@Override
+			public void visit(final BeforeDelete context) {
+				builder.withEngine(//
+						CardEngine.newInstance() //
+								.withCard(context.card) //
+								.build(), //
+						CURRENT_CARD_PREFIX);
+			}
+	
+		});
+		return builder;
 	}
 
 }
