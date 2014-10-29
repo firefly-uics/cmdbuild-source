@@ -130,6 +130,8 @@
 						} else {
 							_debug('A proces without activities', pi);
 						}
+
+						CMDBuild.LoadMask.get().hide();
 					});
 				}
 			}
