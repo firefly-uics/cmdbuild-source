@@ -110,8 +110,14 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 			// Quoted values are interpreted as strings
 			return value.substring(1, value.length() - 1);
 		} else if (FILTER_KEY.equals(key)) {
-			// Filter (!) interpreted as a string even if not quoted
-			return value;
+			final String _value;
+			if (value.startsWith(DB_TEMPLATE_PREFIX)) {
+				final String templateName = value.substring(DB_TEMPLATE_PREFIX.length());
+				_value = templateRespository.getTemplate(templateName);
+			} else {
+				_value = value;
+			}
+			return _value;
 		} else if (Character.isDigit(value.charAt(0))) {
 			return readInteger(value);
 		} else if (value.startsWith(CLIENT_PREFIX)) {
