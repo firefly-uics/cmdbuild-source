@@ -20,9 +20,10 @@ public class NameAlias implements Alias {
 		return name;
 	}
 
-	/*
-	 * Syntactic sugar
+	/**
+	 * @deprecated use {@link Aliases} instead.
 	 */
+	@Deprecated
 	public static NameAlias as(final String name) {
 		return new NameAlias(name);
 	}

@@ -14,7 +14,7 @@ import com.google.common.collect.Lists;
 
 public class QuerySpecsImpl implements QuerySpecs {
 
-	public static class Builder implements org.cmdbuild.common.Builder<QuerySpecsImpl> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<QuerySpecsImpl> {
 
 		private FromClause fromClause;
 		private boolean distinct;
