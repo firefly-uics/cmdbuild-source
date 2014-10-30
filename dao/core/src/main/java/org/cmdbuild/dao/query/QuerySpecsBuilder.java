@@ -1,6 +1,6 @@
 package org.cmdbuild.dao.query;
 
-import org.cmdbuild.common.Builder;
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
