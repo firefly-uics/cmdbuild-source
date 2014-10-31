@@ -21,46 +21,71 @@
 	});
 
 	Ext.define("CMDBuild.app.Management", {
+		extend: 'Ext.app.Application',
+
+		requires: [
+			'Ext.ux.Router',
+			'CMDBuild.routes.management.RoutesManagerCards',
+			'CMDBuild.routes.management.RoutesManagerClasses'
+		],
+
+		name: 'CMDBuild',
+
+		routes: {
+			// Classes
+			'classes/:classIdentifier/cards': 'CMDBuild.routes.management.RoutesManagerClasses#saveRoute',
+			'classes/:classIdentifier/print': 'CMDBuild.routes.management.RoutesManagerClasses#saveRoute',
+
+			'exec/classes/:classIdentifier/cards': 'CMDBuild.routes.management.RoutesManagerClasses#detail',
+			'exec/classes/:classIdentifier/print': 'CMDBuild.routes.management.RoutesManagerClasses#print',
+
+			// Cards
+			'classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.RoutesManagerCards#saveRoute',
+			'classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.RoutesManagerCards#saveRoute',
+
+			'exec/classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.RoutesManagerCards#detail',
+			'exec/classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.RoutesManagerCards#print'
+		},
+
 		statics: {
 			init: function() {
-
 				Ext.tip.QuickTipManager.init();
-				// fix a problem of Ext 4.2 tooltips width
-				// see http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
+				// Fix a problem of Ext 4.2 tooltips width
+				// See http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
 				delete Ext.tip.Tip.prototype.minWidth;
 
-				var me = this,
-					cb = function() {
-						me.buildComponents();
-					};
+				var me = this;
+				var cb = function() {
+					me.buildComponents();
+				}
 
 				CMDBuild.view.CMMainViewport.showSplash();
 
-				// maybe a single request with all the configuration could be better
+				// Maybe a single request with all the configuration could be better
 				CMDBuild.ServiceProxy.group.getUIConfiguration({
 					success: function(response, options,decoded) {
 						_CMUIConfiguration = new CMDBuild.model.CMUIConfigurationModel(decoded.response);
 
 						CMDBuild.ServiceProxy.configuration.readAll({
 							success: function(response, options, decoded) {
-								// cmdbuild
+								// Cmdbuild
 								CMDBuild.Config.cmdbuild = decoded.cmdbuild;
 
-								// bim
+								// Bim
 								CMDBuild.Config.bim = decoded.bim;
 								CMDBuild.Config.bim.enabled = ('true' == CMDBuild.Config.bim.enabled);
 
-								// graph
+								// Graph
 								CMDBuild.Config.graph = decoded.graph;
 
-								// workflow
+								// Workflow
 								CMDBuild.Config.workflow = decoded.workflow;
 
-								// gis
+								// Gis
 								CMDBuild.Config.gis = decoded.gis;
 								CMDBuild.Config.gis.enabled = ('true' == CMDBuild.Config.gis.enabled);
 
-								// gis and bim extra configuration
+								// Gis and bim extra configuration
 								CMDBuild.Config.cmdbuild.cardBrowserByDomainConfiguration = {};
 								CMDBuild.ServiceProxy.gis.getGisTreeNavigation({
 									success: function(operation, config, response) {
@@ -77,8 +102,7 @@
 										} else {
 											cb();
 										}
-
-									} 
+									}
 								});
 
 							}
@@ -165,7 +189,7 @@
 					if (!_CMUIConfiguration.isModuleDisabled(cmName))
 						addUtilitySubpanel(cmName, this.cmPanels);
 				}
-				
+
 				this.loadResources();
 
 				if (_CMUIConfiguration.isFullScreenMode())
@@ -202,6 +226,9 @@
 							_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
 							_CMMainViewportController.selectStartingClass();
 						});
+
+						// Execute routes
+						CMDBuild.routes.Routes.exec();
 					});
 
 				CMDBuild.ServiceProxy.classes.read({
@@ -214,20 +241,17 @@
 						classesAccordion.updateStore();
 						processAccordion.updateStore();
 
-						// Do a separate request for the widgets because, at this time
-						// it is not possible serialize them with the classes
+						// Do a separate request for the widgets because, at this time it is not possible serialize them with the classes
 						CMDBuild.ServiceProxy.CMWidgetConfiguration.read({
 							scope: this,
 							success: function(response, options, decoded) {
-								// a day I'll can do a request to have only the active, now the cache
-								// discards the inactive if the flag onlyActive is true
+								// A day I'll can do a request to have only the active, now the cache discards the inactive if the flag onlyActive is true
 								_CMCache.addWidgetToEntryTypes(decoded.response, onlyActive = true);
 							},
 							callback: reqBarrier.getCallback()
 						});
 
-						// to fill the menu is needed that the classes are already
-						// loaded
+						// To fill the menu is needed that the classes are already loaded
 						var readMenuParams = {};
 						readMenuParams[_CMProxy.parameter.GROUP_NAME] = CMDBuild.Runtime.DefaultGroupName;
 
@@ -300,6 +324,8 @@
 			}
 		}
 	});
+
+	Ext.application('CMDBuild.app.Management');
 
 	function hideIfEmpty(a) {
 		if (a.isEmpty()) {
