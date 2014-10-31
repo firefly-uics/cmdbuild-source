@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.taskmanager.event;
 
 import static com.google.common.base.Suppliers.memoize;
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
@@ -11,6 +12,8 @@ import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
 import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
 import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
+import static org.cmdbuild.dao.entrytype.Functions.allParents;
+import static org.cmdbuild.dao.entrytype.Functions.names;
 import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.event.Commands.safe;
 import static org.cmdbuild.services.template.engine.EngineNames.CQL_PREFIX;
@@ -27,6 +30,7 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.logging.LoggingSupport;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
@@ -142,7 +146,15 @@ public class DefaultObserverFactory implements ObserverFactory {
 		}
 
 		private boolean matchesClass(final CMCard input) {
-			return isBlank(task.getTargetClassname()) || input.getType().getName().equals(task.getTargetClassname());
+			final CMClass type = input.getType();
+			final String targetClassname = task.getTargetClassname();
+			return isBlank(targetClassname) || type.getName().equals(targetClassname) || contains( //
+					from(asList(type)) //
+							.transform(allParents()) //
+							.transform(names()) //
+							.first() //
+							.get(), //
+					targetClassname);
 		}
 
 		private boolean matchesCards(final CMCard input) {
