@@ -4,8 +4,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class TransactionalTaskManagerLogic extends ForwardingTaskManagerLogic {
 
+	private final TaskManagerLogic delegate;
+
 	public TransactionalTaskManagerLogic(final TaskManagerLogic delegate) {
-		super(delegate);
+		this.delegate = delegate;
+	}
+
+	@Override
+	protected TaskManagerLogic delegate() {
+		return delegate;
 	}
 
 	@Override

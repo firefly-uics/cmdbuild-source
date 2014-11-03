@@ -12,8 +12,12 @@ public class CMClassHistory extends ForwardingClass {
 	private final CMClass delegate;
 
 	public CMClassHistory(final CMClass delegate) {
-		super(delegate);
 		this.delegate = delegate;
+	}
+
+	@Override
+	protected CMClass delegate() {
+		return delegate;
 	}
 
 	public CMClass getBaseType() {

@@ -63,11 +63,17 @@ public class ObservableDataView extends ForwardingDataView {
 		}
 	}
 
+	private final CMDataView delegate;
 	private final Observer observer;
 
 	public ObservableDataView(final CMDataView delegate, final Observer observer) {
-		super(delegate);
+		this.delegate = delegate;
 		this.observer = observer;
+	}
+
+	@Override
+	protected CMDataView delegate() {
+		return delegate;
 	}
 
 	@Override

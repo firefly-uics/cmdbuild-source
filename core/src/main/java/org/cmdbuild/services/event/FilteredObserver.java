@@ -98,8 +98,15 @@ public class FilteredObserver extends ForwardingObserver {
 		return new Builder();
 	}
 
+	private final Observer delegate;
+
 	private FilteredObserver(final Builder builder) {
-		super(builder.proxy);
+		this.delegate = builder.proxy;
+	}
+
+	@Override
+	protected Observer delegate() {
+		return delegate;
 	}
 
 }

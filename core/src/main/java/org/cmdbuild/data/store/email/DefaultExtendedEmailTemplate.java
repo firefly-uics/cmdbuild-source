@@ -52,9 +52,16 @@ public class DefaultExtendedEmailTemplate extends ForwardingEmailTemplate implem
 
 	private final Map<String, String> variables;
 
+	private final EmailTemplate delegate;
+
 	private DefaultExtendedEmailTemplate(final Builder builder) {
-		super(builder.delegate);
+		this.delegate = builder.delegate;
 		this.variables = builder.variables;
+	}
+
+	@Override
+	protected EmailTemplate delegate() {
+		return delegate;
 	}
 
 	@Override

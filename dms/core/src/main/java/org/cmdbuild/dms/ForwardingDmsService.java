@@ -7,82 +7,87 @@ import javax.activation.DataHandler;
 import org.cmdbuild.dms.MetadataAutocompletion.AutocompletionRules;
 import org.cmdbuild.dms.exception.DmsError;
 
-public abstract class ForwardingDmsService implements DmsService {
+import com.google.common.collect.ForwardingObject;
 
-	private final DmsService delegate;
+public abstract class ForwardingDmsService extends ForwardingObject implements DmsService {
 
-	protected ForwardingDmsService(final DmsService delegate) {
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingDmsService() {
 	}
 
 	@Override
+	protected abstract DmsService delegate();
+
+	@Override
 	public DmsConfiguration getConfiguration() {
-		return delegate.getConfiguration();
+		return delegate().getConfiguration();
 	}
 
 	@Override
 	public void setConfiguration(final DmsConfiguration configuration) {
-		delegate.setConfiguration(configuration);
+		delegate().setConfiguration(configuration);
 	}
 
 	@Override
 	public Iterable<DocumentTypeDefinition> getTypeDefinitions() throws DmsError {
-		return delegate.getTypeDefinitions();
+		return delegate().getTypeDefinitions();
 	}
 
 	@Override
 	public List<StoredDocument> search(final DocumentSearch document) throws DmsError {
-		return delegate.search(document);
+		return delegate().search(document);
 	}
 
 	@Override
 	public void upload(final StorableDocument document) throws DmsError {
-		delegate.upload(document);
+		delegate().upload(document);
 	}
 
 	@Override
 	public DataHandler download(final DocumentDownload document) throws DmsError {
-		return delegate.download(document);
+		return delegate().download(document);
 	}
 
 	@Override
 	public void delete(final DocumentDelete document) throws DmsError {
-		delegate.delete(document);
+		delegate().delete(document);
 	}
 
 	@Override
 	public void updateDescriptionAndMetadata(final DocumentUpdate document) throws DmsError {
-		delegate.updateDescriptionAndMetadata(document);
+		delegate().updateDescriptionAndMetadata(document);
 	}
 
 	@Override
 	public AutocompletionRules getAutoCompletionRules() throws DmsError {
-		return delegate.getAutoCompletionRules();
+		return delegate().getAutoCompletionRules();
 	}
 
 	@Override
 	public void clearCache() {
-		delegate.clearCache();
+		delegate().clearCache();
 	}
 
 	@Override
 	public void move(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
-		delegate.move(document, from, to);
+		delegate().move(document, from, to);
 	}
 
 	@Override
 	public void copy(final StoredDocument document, final DocumentSearch from, final DocumentSearch to) throws DmsError {
-		delegate.copy(document, from, to);
+		delegate().copy(document, from, to);
 	}
 
 	@Override
 	public void create(final DocumentSearch position) throws DmsError {
-		delegate.create(position);
+		delegate().create(position);
 	}
 
 	@Override
 	public void delete(final DocumentSearch position) throws DmsError {
-		delegate.delete(position);
+		delegate().delete(position);
 	}
 
 }

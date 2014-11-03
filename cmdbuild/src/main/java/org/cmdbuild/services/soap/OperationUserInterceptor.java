@@ -51,11 +51,17 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 		private static final String SYSTEM = "system";
 		private static final String FORMAT = "%s / %s";
 
+		private final AuthenticatedUser authenticatedUser;
 		private final String username;
 
 		private AuthenticatedUserWithExtendedUsername(final AuthenticatedUser authenticatedUser, final String username) {
-			super(authenticatedUser);
+			this.authenticatedUser = authenticatedUser;
 			this.username = username;
+		}
+
+		@Override
+		protected AuthenticatedUser delegate() {
+			return authenticatedUser;
 		}
 
 		@Override
@@ -72,12 +78,18 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 			return new AuthenticatedUserWithOtherGroups(authenticatedUser, userForGroups);
 		}
 
+		private final AuthenticatedUser authenticatedUser;
 		private final AuthenticatedUser userForGroups;
 
 		private AuthenticatedUserWithOtherGroups(final AuthenticatedUser authenticatedUser,
 				final AuthenticatedUser userForGroups) {
-			super(authenticatedUser);
+			this.authenticatedUser = authenticatedUser;
 			this.userForGroups = userForGroups;
+		}
+
+		@Override
+		protected AuthenticatedUser delegate() {
+			return authenticatedUser;
 		}
 
 		@Override

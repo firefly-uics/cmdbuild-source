@@ -30,6 +30,7 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.LazyCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.logging.LoggingSupport;
 import org.cmdbuild.dao.query.CMQueryResult;
@@ -373,7 +374,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 			public void visit(final AfterCreate context) {
 				builder.withEngine(//
 						CardEngine.newInstance() //
-								.withCard(context.card) //
+								.withCard(lazy(context.card)) //
 								.build(), //
 						CURRENT_CARD_PREFIX);
 			}
@@ -396,12 +397,12 @@ public class DefaultObserverFactory implements ObserverFactory {
 			public void visit(final AfterUpdate context) {
 				builder.withEngine(//
 						CardEngine.newInstance() //
-								.withCard(context.previous) //
+								.withCard(lazy(context.previous)) //
 								.build(), //
 						PREVIOUS_CARD_PREFIX);
 				builder.withEngine(//
 						CardEngine.newInstance() //
-								.withCard(context.actual) //
+								.withCard(lazy(context.actual)) //
 								.build(), //
 						CURRENT_CARD_PREFIX);
 			}
@@ -410,9 +411,13 @@ public class DefaultObserverFactory implements ObserverFactory {
 			public void visit(final BeforeDelete context) {
 				builder.withEngine(//
 						CardEngine.newInstance() //
-								.withCard(context.card) //
+								.withCard(lazy(context.card)) //
 								.build(), //
 						CURRENT_CARD_PREFIX);
+			}
+
+			private CMCard lazy(final CMCard card) {
+				return new LazyCard(card, dataView);
 			}
 
 		});

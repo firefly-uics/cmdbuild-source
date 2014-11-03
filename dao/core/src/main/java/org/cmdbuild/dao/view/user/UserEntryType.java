@@ -12,10 +12,12 @@ public abstract class UserEntryType extends ForwardingEntryType {
 	/*
 	 * Should be used by the subclasses only
 	 */
-	protected UserEntryType(final CMEntryType inner, final UserDataView view) {
-		super(inner);
+	protected UserEntryType(final UserDataView view) {
 		this.view = view;
 	}
+
+	@Override
+	protected abstract CMEntryType delegate();
 
 	@Override
 	public Iterable<CMAttribute> getActiveAttributes() {

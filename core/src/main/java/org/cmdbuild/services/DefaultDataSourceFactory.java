@@ -27,9 +27,13 @@ public class DefaultDataSourceFactory implements DataSourceFactory {
 		private final Boolean configured = new Boolean(false);
 
 		public DefaultDataSource(final DatabaseConfiguration configuration, final BasicDataSource dataSource) {
-			super(dataSource);
 			this.configuration = configuration;
 			this.dataSource = dataSource;
+		}
+
+		@Override
+		protected DataSource delegate() {
+			return dataSource;
 		}
 
 		private DataSource configureDatasource() {

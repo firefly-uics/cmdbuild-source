@@ -36,7 +36,7 @@ public class ReportParameterConverter {
 
 		private static final CMEntryType UNSUPPORTED_ENTRY_TYPE = UnsupportedProxyFactory.of(CMEntryType.class)
 				.create();
-		private static final CMEntryType OWNER = new ForwardingEntryType(UNSUPPORTED_ENTRY_TYPE) {
+		private static final CMEntryType OWNER = new ForwardingEntryType() {
 
 			private final long FAKE_ID = 0L;
 
@@ -61,6 +61,11 @@ public class ReportParameterConverter {
 				}
 
 			};
+
+			@Override
+			protected CMEntryType delegate() {
+				return UNSUPPORTED_ENTRY_TYPE;
+			}
 
 			/*
 			 * Should be the only methods called.

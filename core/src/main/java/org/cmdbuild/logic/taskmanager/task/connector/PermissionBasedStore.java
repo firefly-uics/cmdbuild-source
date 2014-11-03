@@ -22,11 +22,17 @@ class PermissionBasedStore extends ForwardingStore implements LoggingSupport {
 
 	}
 
-	private final PermissionBasedStore.Permission permission;
+	private final Store delegate;
+	private final Permission permission;
 
 	public PermissionBasedStore(final Store delegate, final PermissionBasedStore.Permission permission) {
-		super(delegate);
+		this.delegate = delegate;
 		this.permission = permission;
+	}
+
+	@Override
+	protected Store delegate() {
+		return delegate;
 	}
 
 	@Override

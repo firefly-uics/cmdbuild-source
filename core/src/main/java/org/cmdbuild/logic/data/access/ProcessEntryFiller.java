@@ -17,9 +17,14 @@ public class ProcessEntryFiller extends EntryFiller<UserProcessInstance> {
 
 	@Override
 	public UserProcessInstance getOutput() {
-		return new ForwardingUserProcessInstance(input) {
+		return new ForwardingUserProcessInstance() {
 
 			private Map<String, Object> _values = Maps.newHashMap(values);
+
+			@Override
+			protected UserProcessInstance delegate() {
+				return input;
+			}
 
 			@Override
 			public Object get(final String key) {

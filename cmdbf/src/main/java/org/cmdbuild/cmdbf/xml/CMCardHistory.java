@@ -6,11 +6,17 @@ import org.cmdbuild.dao.entrytype.CMClass;
 
 public class CMCardHistory extends ForwardingCard {
 
+	private final CMCard delegate;
 	private final CMClassHistory type;
 
 	public CMCardHistory(final CMCard delegate) {
-		super(delegate);
+		this.delegate = delegate;
 		this.type = new CMClassHistory(delegate.getType());
+	}
+
+	@Override
+	protected CMCard delegate() {
+		return delegate;
 	}
 
 	@Override

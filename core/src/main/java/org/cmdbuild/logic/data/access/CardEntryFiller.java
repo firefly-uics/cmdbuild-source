@@ -17,7 +17,12 @@ public class CardEntryFiller extends EntryFiller<CMCard> {
 
 	@Override
 	public CMCard getOutput() {
-		return new ForwardingCard(input) {
+		return new ForwardingCard() {
+			
+			@Override
+			protected CMCard delegate() {
+				return input;
+			}
 
 			private Map<String, Object> _values = Maps.newHashMap(values);
 

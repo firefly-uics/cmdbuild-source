@@ -14,14 +14,20 @@ import org.cmdbuild.exception.DmsException;
 
 public class PrivilegedDmsLogic extends ForwardingDmsLogic {
 
+	private final DmsLogic delegate;
 	private final CMDataView dataView;
 	private final PrivilegeContext privilegeContext;
 
 	public PrivilegedDmsLogic(final DmsLogic delegate, final CMDataView dataView,
 			final PrivilegeContext privilegeContext) {
-		super(delegate);
+		this.delegate = delegate;
 		this.dataView = dataView;
 		this.privilegeContext = privilegeContext;
+	}
+
+	@Override
+	protected DmsLogic delegate() {
+		return delegate;
 	}
 
 	private void assureWritePrivilege(final String className) {

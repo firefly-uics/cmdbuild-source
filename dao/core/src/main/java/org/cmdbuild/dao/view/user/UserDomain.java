@@ -2,6 +2,7 @@ package org.cmdbuild.dao.view.user;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMEntryType;
 
 public class UserDomain extends UserEntryType implements CMDomain {
 
@@ -31,8 +32,13 @@ public class UserDomain extends UserEntryType implements CMDomain {
 	private final CMDomain inner;
 
 	private UserDomain(final UserDataView view, final CMDomain inner) {
-		super(inner, view);
+		super(view);
 		this.inner = inner;
+	}
+
+	@Override
+	protected CMEntryType delegate() {
+		return inner;
 	}
 
 	@Override

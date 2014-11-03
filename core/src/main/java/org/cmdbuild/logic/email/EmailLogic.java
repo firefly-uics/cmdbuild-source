@@ -334,11 +334,17 @@ public class EmailLogic implements Logic {
 
 		private static final List<StoredDocument> EMPTY = Collections.emptyList();
 
+		private final DmsService delegate;
 		private final DmsConfiguration dmsConfiguration;
 
-		public ConfigurationAwareDmsService(final DmsService dmsService, final DmsConfiguration dmsConfiguration) {
-			super(dmsService);
+		public ConfigurationAwareDmsService(final DmsService delegate, final DmsConfiguration dmsConfiguration) {
+			this.delegate = delegate;
 			this.dmsConfiguration = dmsConfiguration;
+		}
+
+		@Override
+		protected DmsService delegate() {
+			return delegate;
 		}
 
 		@Override
@@ -381,8 +387,13 @@ public class EmailLogic implements Logic {
 	private static final Iterable<ExtendedEmailTemplate> NO_EMAIL_TEMPLATES = Collections.emptyList();
 
 	private static final EmailService UNSUPPORTED = UnsupportedProxyFactory.of(EmailService.class).create();
-	private static final EmailService EMAIL_SERVICE_FOR_INVALID_PROCESS_ID = new ForwardingEmailService(UNSUPPORTED) {
+	private static final EmailService EMAIL_SERVICE_FOR_INVALID_PROCESS_ID = new ForwardingEmailService() {
 
+		@Override
+		protected EmailService delegate() {
+			return UNSUPPORTED;
+		}
+		
 		@Override
 		public Iterable<Email> getEmails(final Long processId) {
 			return NO_EMAILS;

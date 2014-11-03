@@ -11,8 +11,15 @@ public class Engines implements LoggingSupport {
 
 	private static class EmptyStringOnNullEngine extends ForwardingEngine {
 
+		private final Engine delegate;
+
 		public EmptyStringOnNullEngine(final Engine delegate) {
-			super(delegate);
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Engine delegate() {
+			return delegate;
 		}
 
 		@Override
@@ -39,8 +46,15 @@ public class Engines implements LoggingSupport {
 
 	private static class NullOnErrorEngine extends ForwardingEngine {
 
+		private final Engine delegate;
+
 		public NullOnErrorEngine(final Engine delegate) {
-			super(delegate);
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Engine delegate() {
+			return delegate;
 		}
 
 		@Override

@@ -25,11 +25,17 @@ public class PartiallyCachingRowAndColumnPrivilegeFetcher extends ForwardingRowA
 
 	}
 
+	private final RowAndColumnPrivilegeFetcher delegate;
 	private final LoadingCache<CMEntryType, Map<String, String>> cache;
 
 	public PartiallyCachingRowAndColumnPrivilegeFetcher(final RowAndColumnPrivilegeFetcher delegate) {
-		super(delegate);
-		cache = CacheBuilder.newBuilder().build(new DelegateCacheLoader(delegate));
+		this.delegate = delegate;
+		this.cache = CacheBuilder.newBuilder().build(new DelegateCacheLoader(delegate));
+	}
+
+	@Override
+	protected RowAndColumnPrivilegeFetcher delegate() {
+		return delegate;
 	}
 
 	@Override

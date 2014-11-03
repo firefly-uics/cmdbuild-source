@@ -20,11 +20,17 @@ public class DefaultSchedulerFacade implements SchedulerFacade {
 
 	private static class JobWithCallback extends ForwardingJob {
 
+		private final Job delegate;
 		private final Callback callback;
 
 		public JobWithCallback(final Job delegate, final Callback callback) {
-			super(delegate);
+			this.delegate = delegate;
 			this.callback = callback;
+		}
+
+		@Override
+		protected Job delegate() {
+			return delegate;
 		}
 
 		@Override

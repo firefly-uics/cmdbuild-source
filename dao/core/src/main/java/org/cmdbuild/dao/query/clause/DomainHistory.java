@@ -16,11 +16,17 @@ public class DomainHistory extends ForwardingDomain implements HistoricEntryType
 		return new DomainHistory(current);
 	}
 
+	private static final CMDomain UNSUPPORTED = UnsupportedProxyFactory.of(CMDomain.class).create();
+
 	private final CMDomain current;
 
 	private DomainHistory(final CMDomain current) {
-		super(UnsupportedProxyFactory.of(CMDomain.class).create());
 		this.current = current;
+	}
+
+	@Override
+	protected CMDomain delegate() {
+		return UNSUPPORTED;
 	}
 
 	@Override

@@ -26,8 +26,15 @@ class SafeAction extends ForwardingAction {
 		return new SafeAction(proxiedAction);
 	}
 
+	private final Action delegate;
+
 	private SafeAction(final Action delegate) {
-		super(delegate);
+		this.delegate = delegate;
+	}
+
+	@Override
+	protected Action delegate() {
+		return delegate;
 	}
 
 }

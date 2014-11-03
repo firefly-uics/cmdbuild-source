@@ -3,14 +3,19 @@ package org.cmdbuild.dao.entry;
 import java.util.Map.Entry;
 
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
+import org.cmdbuild.dao.entry.CMEntry.CMEntryDefinition;
 
 public abstract class ForwardingCardDefinition extends ForwardingEntryDefinition implements CMCardDefinition {
 
 	private final CMCardDefinition delegate;
 
 	protected ForwardingCardDefinition(final CMCardDefinition delegate) {
-		super(delegate);
 		this.delegate = delegate;
+	}
+
+	@Override
+	protected CMEntryDefinition delegate() {
+		return delegate;
 	}
 
 	@Override

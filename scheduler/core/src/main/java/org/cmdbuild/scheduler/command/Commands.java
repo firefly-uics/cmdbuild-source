@@ -50,8 +50,15 @@ public class Commands {
 			return new SafeCommand(proxiedAction);
 		}
 
+		private final Command delegate;
+
 		private SafeCommand(final Command delegate) {
-			super(delegate);
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Command delegate() {
+			return delegate;
 		}
 
 	}
@@ -61,11 +68,17 @@ public class Commands {
 		private static final Logger logger = LoggingSupport.logger;
 		private static final Marker marker = MarkerFactory.getMarker(ComposeOnExeption.class.getName());
 
+		private final Command delegate;
 		private final Command onException;
 
 		public ComposeOnExeption(final Command delegate, final Command onException) {
-			super(delegate);
+			this.delegate = delegate;
 			this.onException = onException;
+		}
+
+		@Override
+		protected Command delegate() {
+			return delegate;
 		}
 
 		@Override
@@ -82,11 +95,17 @@ public class Commands {
 
 	private static class Conditional extends ForwardingCommand {
 
+		private final Command delegate;
 		private final Predicate<Void> predicate;
 
 		public Conditional(final Command delegate, final Predicate<Void> predicate) {
-			super(delegate);
+			this.delegate = delegate;
 			this.predicate = predicate;
+		}
+
+		@Override
+		protected Command delegate() {
+			return delegate;
 		}
 
 		@Override

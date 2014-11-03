@@ -9,10 +9,16 @@ public class UndefinedClass extends ForwardingClass {
 
 	public static final UndefinedClass UNDEFINED_CLASS = new UndefinedClass();
 
+	private static final CMClass UNSUPPORTED = UnsupportedProxyFactory.of(CMClass.class).create();
+
 	private static final String UNDEFINED_STRING = "?";
 
 	private UndefinedClass() {
-		super(UnsupportedProxyFactory.of(CMClass.class).create());
+	}
+
+	@Override
+	protected CMClass delegate() {
+		return UNSUPPORTED;
 	}
 
 	@Override

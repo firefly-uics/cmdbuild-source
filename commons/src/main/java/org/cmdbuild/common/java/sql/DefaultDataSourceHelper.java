@@ -130,7 +130,12 @@ public class DefaultDataSourceHelper implements DataSourceHelper, LoggingSupport
 
 			@Override
 			public void visit(final Oracle type) {
-				dataSource = new ForwardingDataSource(UNSUPPORTED) {
+				dataSource = new ForwardingDataSource() {
+
+					@Override
+					protected DataSource delegate() {
+						return UNSUPPORTED;
+					}
 
 					@Override
 					public Connection getConnection() throws SQLException {
