@@ -1,0 +1,172 @@
+(function() {
+
+	Ext.define('CMDBuild.controller.administration.workflow.CMProcessFormController', {
+		extend: 'CMDBuild.controller.administration.classes.CMClassFormController',
+
+		/**
+		 * @param {CMDBuild.view.administration.workflow.CMProcessForm} view
+		 *
+		 * @override
+		 */
+		constructor: function(view) {
+			this.callParent(arguments);
+
+			this.view.downloadXPDLSubitButton.on('click', onDownloadSubmitClick, this);
+			this.view.uploadXPDLSubitButton.on('click', this.onUploadSubmitClick, this);
+		},
+
+		/**
+		 * @return {Object} params
+		 *
+		 * @override
+		 */
+		buildSaveParams: function() {
+			var params = this.callParent(arguments);
+
+			params.isprocess = true;
+			return params;
+		},
+
+		/**
+		 * @param {Object} r - result
+		 *
+		 * @override
+		 */
+		deleteSuccessCB: function(r) {
+			var removedClassId = this.selection.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+
+			_CMCache.onProcessDeleted(removedClassId);
+
+			this.selection = null;
+		},
+
+		onAddClassButtonClick: function() {
+			this.selection = null;
+
+			this.view.onAddClassButtonClick();
+			this.view.xpdlForm.hide();
+		},
+
+		/**
+		 * @param {Int} id - processId
+		 */
+		onProcessSelected: function(id) {
+			this.selection = _CMCache.getProcessById(id);
+
+			if (this.selection) {
+				this.view.onClassSelected(this.selection);
+
+				// Disable the XPDL fields if the process is a superclass
+				if (this.selection.get('superclass')) {
+					this.view.xpdlForm.hide();
+				} else {
+					this.view.xpdlForm.show();
+				}
+
+				// Fill the version combo
+				CMDBuild.core.proxy.CMProxyWorkflow.getXpdlVersions({
+					params: { idClass: id },
+					scope: this,
+					success: function(response, options, decodedResponse) {
+						var versions = decodedResponse.response;
+						var store = this.view.versionCombo.getStore();
+
+						// FIX: store.removeAll(); doesn't work in this case so we use also loadData of null array without fire events
+						store.removeAll();
+						store.loadData([], false);
+
+						for(var index in versions) {
+							var value = versions[index];
+
+							store.add({
+								id: value,
+								index: value
+							});
+						}
+
+						store.add({
+							id: CMDBuild.core.proxy.CMProxyConstants.TEMPLATE,
+							index: 0
+						});
+						store.sort([
+							{
+								property : CMDBuild.core.proxy.CMProxyConstants.INDEX,
+								direction: 'DESC'
+							}
+						]);
+
+						this.view.versionCombo.setValue(store.getAt(0).getId());
+					}
+				});
+			}
+		},
+
+		onUploadSubmitClick: function() {
+			var basicForm = this.view.xpdlForm.getForm();
+			basicForm.standardSubmit = false;
+
+			CMDBuild.LoadMask.get().show();
+
+			CMDBuild.core.proxy.CMProxyWorkflow.xpdlUpload({
+				form: basicForm,
+				params: {
+					idClass: this.selection.getId()
+				},
+				scope: this,
+				success: function(form, action) {
+					CMDBuild.LoadMask.get().hide();
+
+					var messages = (Ext.decode(action.response.responseText) || {}).response;
+					if (messages && messages.length > 0) {
+						var msg = '';
+
+						for (var i = 0; i < messages.length; ++i)
+							msg += '<p>' + CMDBuild.Translation.administration.modWorkflow.xpdlUpload[messages[i]] + '<p>';
+
+						CMDBuild.Msg.info(CMDBuild.Translation.common.success, msg);
+					}
+				},
+				failure: function() {
+					CMDBuild.LoadMask.get().hide();
+
+					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.administration.modWorkflow.xpdlUpload.error, true);
+				}
+			});
+		},
+
+		/**
+		 * @param {Object} r - recult
+		 *
+		 * @override
+		 */
+		saveSuccessCB: function(r) {
+			var result = Ext.JSON.decode(r.responseText);
+			this.selection = _CMCache.onProcessSaved(result.table);
+		}
+	});
+
+	// TODO: to move in proxy
+	function onDownloadSubmitClick() {
+		var version = this.view.versionCombo.getValue();
+		var url = '';
+
+		var basicForm = this.view.xpdlForm.getForm();
+		basicForm.standardSubmit = true;
+
+		if (version == CMDBuild.core.proxy.CMProxyConstants.TEMPLATE || !version) {
+			url = CMDBuild.core.proxy.CMProxyUrlIndex.workflow.xpdlDownloadTemplate;
+		} else {
+			url = CMDBuild.core.proxy.CMProxyUrlIndex.workflow.xpdlDownload;
+		}
+
+		basicForm.submit({
+			url: url,
+			method: 'GET',
+			target: '_self',
+			params: {
+				idClass: this.selection.getId()
+			}
+		});
+	}
+
+})();
