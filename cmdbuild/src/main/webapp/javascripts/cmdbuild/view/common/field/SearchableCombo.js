@@ -19,7 +19,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	gridExtraConfig: {},
 
 	/*
-	 * if read only, there isn't the 
+	 * if read only, there isn't the
 	 * add card button on the window
 	 */
 	searchWindowReadOnly: false,
@@ -79,7 +79,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	},
 
 	createSearchWindow: function(value) {
-		if (!this.disabled 
+		if (!this.disabled
 			&& !this.searchWindow) {
 
 			var callback = Ext.Function.bind(this.buildSearchWindow, this, [this.store.baseParams, value], true);
@@ -139,16 +139,26 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 		this.searchWindow.show();
 	},
 
+	/**
+	 * @param {Object} record - CMDBuild.Management.ReferenceSearchWindow row model
+	 */
 	addToStoreIfNotInIt: function(record) {
-		var _store = this.store;
-		var id = record.get("Id");
+		var id = record.get('Id');
 
-		if (_store 
-				&& _store.find('Id', id) == -1 ) {
+		if (this.store && (this.store.find('Id', id) == -1)) {
+			var params = Ext.apply({ cardId: id }, this.store.baseParams);
 
-			_store.add({
-				Id : id,
-				Description: this.recordDescriptionFixedForCarriageReturnBugOnComboBoxes(record)
+			CMDBuild.Ajax.request({
+				url: 'services/json/management/modcard/getcard',
+				params: params,
+				method: 'GET',
+				scope: this,
+				success: function(result, options, decodedResult) {
+					this.store.add({
+						Id: id,
+						Description: decodedResult.card['Description']
+					});
+				}
 			});
 		}
 	},
@@ -156,7 +166,9 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	recordDescriptionFixedForCarriageReturnBugOnComboBoxes: function(record) {
 		try {
 			return record.get("Description").replace(/\n/g," ");
-		} catch (e) { }
+		} catch (e) {
+			_debug('CMDBuild.Management.SearchableCombo recordDescriptionFixedForCarriageReturnBugOnComboBoxes error', e);
+		}
 	},
 
 	/*
