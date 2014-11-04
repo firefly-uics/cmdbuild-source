@@ -201,6 +201,7 @@ public class Builders {
 		private String id;
 		private Boolean writable;
 		private Boolean mandatory;
+		private Long index;
 
 		private AttributeStatusBuilder() {
 			// use factory method
@@ -218,6 +219,7 @@ public class Builders {
 			output.setId(id);
 			output.setWritable(writable);
 			output.setMandatory(mandatory);
+			output.setIndex(index);
 			return output;
 		}
 
@@ -233,6 +235,11 @@ public class Builders {
 
 		public AttributeStatusBuilder withMandatory(final Boolean mandatory) {
 			this.mandatory = mandatory;
+			return this;
+		}
+
+		public AttributeStatusBuilder withIndex(final Long index) {
+			this.index = index;
 			return this;
 		}
 
@@ -897,8 +904,8 @@ public class Builders {
 		}
 
 		public ProcessActivityWithFullDetailsBuilder withAttributes(
-				final Collection<? extends ProcessActivityWithFullDetails.AttributeStatus> attributes) {
-			this.attributes.addAll(defaultIfNull(attributes, NO_ATTRIBUTES));
+				final Iterable<? extends ProcessActivityWithFullDetails.AttributeStatus> attributes) {
+			addAll(this.attributes, defaultIfNull(attributes, NO_ATTRIBUTES));
 			return this;
 		}
 

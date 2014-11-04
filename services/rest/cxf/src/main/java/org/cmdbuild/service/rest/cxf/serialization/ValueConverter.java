@@ -38,7 +38,7 @@ class ValueConverter {
 	public static Builder newInstance() {
 		return new Builder();
 	}
-	
+
 	private static final IdAndDescription NULL = new IdAndDescription(null, null);
 
 	private final CMClass type;
@@ -75,7 +75,7 @@ class ValueConverter {
 			}
 
 			private Object idFromIdAndDescription(final Object value) {
-				return ((value == null)? NULL : IdAndDescription.class.cast(value)).getId();
+				return ((value == null) ? NULL : IdAndDescription.class.cast(value)).getId();
 			}
 
 		}.value();
