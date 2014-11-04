@@ -23,6 +23,7 @@ public class ProcessActivityWithFullDetails extends ModelWithId<String> {
 
 		private boolean writable;
 		private boolean mandatory;
+		private Long index;
 
 		AttributeStatus() {
 			// package visibility
@@ -44,6 +45,14 @@ public class ProcessActivityWithFullDetails extends ModelWithId<String> {
 			this.mandatory = mandatory;
 		}
 
+		public Long getIndex() {
+			return index;
+		}
+
+		void setIndex(final Long index) {
+			this.index = index;
+		}
+
 		@Override
 		protected boolean doEquals(final Object obj) {
 			if (obj == this) {
@@ -57,6 +66,7 @@ public class ProcessActivityWithFullDetails extends ModelWithId<String> {
 					.append(this.getId(), other.getId()) //
 					.append(this.writable, other.writable) //
 					.append(this.mandatory, other.mandatory) //
+					.append(this.index, other.index) //
 					.isEquals();
 		}
 
@@ -65,7 +75,8 @@ public class ProcessActivityWithFullDetails extends ModelWithId<String> {
 			return new HashCodeBuilder() //
 					.append(this.getId()) //
 					.append(this.writable) //
-					.append(this.mandatory) // //
+					.append(this.mandatory) //
+					.append(this.index) //
 					.toHashCode();
 		}
 

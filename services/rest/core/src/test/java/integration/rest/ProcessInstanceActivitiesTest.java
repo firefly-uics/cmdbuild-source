@@ -100,10 +100,12 @@ public class ProcessInstanceActivitiesTest {
 										.withId("456") //
 										.withWritable(true) //
 										.withMandatory(false) //
+										.withIndex(0L) //
 										.build(), //
 								newAttributeStatus() //
 										.withId("789") //
 										.withMandatory(true) //
+										.withIndex(1L) //
 										.build() //
 								)) //
 						.build()) //
