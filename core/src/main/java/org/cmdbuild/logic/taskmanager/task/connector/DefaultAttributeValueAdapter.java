@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.taskmanager.task.connector;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.common.Constants.CODE_ATTRIBUTE;
+import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -14,6 +14,7 @@ import static org.cmdbuild.data.store.lookup.Predicates.lookupWithDescription;
 import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -80,7 +81,7 @@ public class DefaultAttributeValueAdapter implements AttributeValueAdapter {
 							if (destination != null) {
 								final CMQueryResult queryResult = dataView.select(anyAttribute(destination)) //
 										.from(destination) //
-										.where(condition(attribute(destination, CODE_ATTRIBUTE), eq(shouldBeCode))) //
+										.where(condition(attribute(destination, DESCRIPTION_ATTRIBUTE), eq(shouldBeCode))) //
 										.run();
 								if (!queryResult.isEmpty()) {
 									final CMQueryRow row = queryResult.iterator().next();
@@ -141,6 +142,12 @@ public class DefaultAttributeValueAdapter implements AttributeValueAdapter {
 				public void visit(final LookupAttributeType attributeType) {
 					final LookupValue lookupValue = LookupValue.class.cast(attributeValue);
 					adaptedValue = lookupValue.getDescription();
+				}
+
+				@Override
+				public void visit(final ReferenceAttributeType attributeType) {
+					final IdAndDescription referenceValue = IdAndDescription.class.cast(attributeValue);
+					adaptedValue = referenceValue.getDescription();
 				}
 
 			}.adapt();
