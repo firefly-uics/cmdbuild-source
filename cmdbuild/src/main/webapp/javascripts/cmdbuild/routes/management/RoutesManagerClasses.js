@@ -22,17 +22,8 @@
 			) {
 				this.entryType = _CMCache.getEntryTypeByName(params[CMDBuild.core.proxy.CMProxyConstants.CLASS_IDENTIFIER]);
 
-				Ext.Function.createDelayed(function() {
-					_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].setEntryType(
-						this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-						null,
-						(!Ext.isEmpty(params[CMDBuild.core.proxy.CMProxyConstants.CLIENT_FILTER])) ? params[CMDBuild.core.proxy.CMProxyConstants.CLIENT_FILTER] : null
-					);
-					_CMMainViewportController.findAccordionByCMName(CMDBuild.core.proxy.CMProxyConstants.CLASS).expand();
-					_CMMainViewportController.findAccordionByCMName(CMDBuild.core.proxy.CMProxyConstants.CLASS).selectNodeById(
-						this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID)
-					);
-				}, 700, this)();
+				// Use runtime configuration to select class
+				CMDBuild.Runtime.StartingClassId = this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 			} else {
 				CMDBuild.Msg.error(
 					CMDBuild.Translation.common.failure,
@@ -60,7 +51,7 @@
 					_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].gridController.onPrintGridMenuClick(
 						params[CMDBuild.core.proxy.CMProxyConstants.FORMAT]
 					);
-				}, 800, this)();
+				}, 500, this)();
 			} else {
 				CMDBuild.Msg.error(
 					CMDBuild.Translation.common.failure,
