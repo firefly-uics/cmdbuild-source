@@ -23,7 +23,6 @@ import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.FilterMapper;
 import org.cmdbuild.logic.mapping.SorterMapper;
@@ -49,7 +48,7 @@ public class GetRelationList extends AbstractGetRelation {
 		final CMClass sourceType = view.findClass(sourceTypeName);
 		final CMQueryResult relations = getRelationQuery(sourceType, domain).run();
 
-		return fillMap(relations, sourceType);
+		return fillMap(relations);
 	}
 
 	public GetRelationList emptyForWrongId() {
@@ -57,10 +56,10 @@ public class GetRelationList extends AbstractGetRelation {
 		return this;
 	}
 
-	private Map<Object, List<RelationInfo>> fillMap(final CMQueryResult relationList, final CMClass sourceType) {
+	private Map<Object, List<RelationInfo>> fillMap(final CMQueryResult relationList) {
 		final Map<Object, List<RelationInfo>> result = new HashMap<Object, List<RelationInfo>>();
 		for (final CMQueryRow row : relationList) {
-			final CMCard src = row.getCard(sourceType);
+			final CMCard src = row.getCard(SRC_ALIAS);
 			final CMCard dst = row.getCard(DST_ALIAS);
 			final QueryRelation rel = row.getRelation(DOM_ALIAS);
 			final RelationInfo relInfo = new RelationInfo(rel, src, dst);
@@ -108,7 +107,31 @@ public class GetRelationList extends AbstractGetRelation {
 
 		final CMQueryResult relationList = querySpecsBuilder.run();
 		final String domainSource = (domainWithSource != null) ? domainWithSource.querySource : null;
-		return createRelationListResponse(sourceType, relationList, domainSource);
+		return createRelationListResponse(relationList, domainSource);
+	}
+
+	public GetRelationListResponse exec(final CMDomain domain, final QueryOptions queryOptions) {
+		final CMClass sourceType = domain.getClass1();
+		final SorterMapper sorterMapper = new JsonSorterMapper(sourceType, queryOptions.getSorters());
+		final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
+		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
+				.withDataView(view) //
+				.withEntryType(sourceType) //
+				.withFilterObject(queryOptions.getFilter()) //
+				.build();
+		final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();
+		final WhereClause filtersOnRelations = isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses);
+		final QuerySpecsBuilder querySpecsBuilder = getRelationQuerySpecsBuilder( //
+				Card.newInstance(sourceType) //
+						.build(), //
+				domain, //
+				filtersOnRelations);
+		querySpecsBuilder.limit(queryOptions.getLimit()) //
+				.offset(queryOptions.getOffset());
+		addOrderByClauses(querySpecsBuilder, orderByClauses);
+
+		final CMQueryResult relationList = querySpecsBuilder.run();
+		return createRelationListResponse(relationList, null);
 	}
 
 	private CMDomain getQueryDomain(final DomainWithSource domainWithSource) {
@@ -130,12 +153,12 @@ public class GetRelationList extends AbstractGetRelation {
 
 	// FIXME Implement domain direction in queries and remove the domainSource
 	// hack!
-	private GetRelationListResponse createRelationListResponse(final CMClass sourceType,
-			final CMQueryResult relationList, final String domainSource) {
+	private GetRelationListResponse createRelationListResponse(final CMQueryResult relationList,
+			final String domainSource) {
 		int totalNumberOfRelations = 0;
 		final GetRelationListResponse out = new GetRelationListResponse();
 		for (final CMQueryRow row : relationList) {
-			final CMCard src = row.getCard(sourceType);
+			final CMCard src = row.getCard(SRC_ALIAS);
 			final CMCard dst = row.getCard(DST_ALIAS);
 			if (dst != null) {
 				final QueryRelation rel = row.getRelation(DOM_ALIAS);
@@ -244,6 +267,37 @@ public class GetRelationList extends AbstractGetRelation {
 				return false;
 			}
 			return true;
+		}
+
+	}
+
+	public static class DomainWithSource {
+
+		public static DomainWithSource create(final CMDomain domain) {
+			return new DomainWithSource(domain.getId(), null);
+		}
+
+		public static DomainWithSource create(final Long domainId, final String querySource) {
+			final DomainWithSource dom;
+			if (domainId != null && querySource != null) {
+				dom = new DomainWithSource(domainId, querySource);
+			} else {
+				dom = null;
+			}
+			return dom;
+		}
+
+		public final Long domainId;
+		public final String querySource;
+
+		private DomainWithSource(final Long domainId, final String querySource) {
+			this.domainId = domainId;
+			this.querySource = querySource;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("%s.%s", domainId, querySource);
 		}
 
 	}

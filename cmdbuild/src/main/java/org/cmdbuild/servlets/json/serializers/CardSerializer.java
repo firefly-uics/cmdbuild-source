@@ -3,11 +3,12 @@ package org.cmdbuild.servlets.json.serializers;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_ID_CAPITAL;
+import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID_CAPITAL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.RESULTS;
-import static org.cmdbuild.servlets.json.CommunicationConstants.*;
+import static org.cmdbuild.servlets.json.CommunicationConstants.ROWS;
 
 import java.util.Map;
 
@@ -19,9 +20,9 @@ import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.data.store.lookup.LookupStore;
-import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
+import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;

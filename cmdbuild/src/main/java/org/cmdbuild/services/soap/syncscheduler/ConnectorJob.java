@@ -31,7 +31,7 @@ import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.LogicDTO.DomainWithSource;
+import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
