@@ -4,6 +4,17 @@ Ext.define("CMDBuild.field.LookupCombo", {
 	plugins: new CMDBuild.SetValueOnLoadPlugin(),
 	parentId: '',
 
+	initComponent: function() {
+		this.callParent(arguments);
+
+		this.mon(this, 'focus', function() {
+			if (this._growSizeFixFail)
+				this._growSizeFix();
+
+			this.filterStoreByParentId();
+		}, this);
+	},
+
 	onTrigger2Click: function() {
 		if (!this.disabled) {
 			this.focus(); // to fire the change event in the single lookup fields
@@ -176,7 +187,7 @@ Ext.define("CMDBuild.Management.LookupHiddenField", {
 	},
 
 	setValue: function(value, dontUpdateParents) {
-		if (value != null 
+		if (value != null
 				&& typeof value == "object") {
 
 			value = value.id;
@@ -245,7 +256,7 @@ var buildFieldSetItems = function(attribute, hiddenField) {
 var bindHiddenFieldToLastCombo = function(hiddenField, lastCombo) {
 	hiddenField.lastCombo = lastCombo;
 	lastCombo.childField = hiddenField;
-	
+
 	hiddenField.getReadableValue = function() {
 		return lastCombo.getRawValue();
 	};
@@ -299,18 +310,18 @@ var buildSingleLookupField = function(attribute, hideLabel) {
 		} else {
 			this.clearValue();
 		}
-		
+
 		if (this.childField) {
 			this.childField.filterByParentId(autoselectedId);
 		}
 	};
-	
+
 	field.on('select', function(combo, record, index) {
 		if (this.childField) {
 			this.childField.filterByParentId(record[0].get("Id"));
 		}
 	}, field);
-	
+
 	return field;
 };
 
@@ -323,7 +334,7 @@ var forgeAttributeForMultilevelLookup = function(attribute, lookupName) {
 		description: attribute.description,
 		name: attribute.name + "_" + lookupName
 	};
-	
+
 	return forgedAttribute;
 };
 
