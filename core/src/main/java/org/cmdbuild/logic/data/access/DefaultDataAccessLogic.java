@@ -56,13 +56,13 @@ import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
+import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
@@ -166,6 +166,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	public GetRelationListResponse getRelationListEmptyForWrongId(final Card srcCard, final DomainWithSource dom) {
 		return new GetRelationList(strictDataView).emptyForWrongId().exec(srcCard, dom,
 				QueryOptions.newQueryOption().build());
+	}
+
+	@Override
+	public GetRelationListResponse getRelationList(final CMDomain domain) {
+		return new GetRelationList(strictDataView).exec(domain, QueryOptions.newQueryOption().build());
 	}
 
 	@Override

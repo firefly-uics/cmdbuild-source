@@ -15,10 +15,10 @@ import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
+import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.model.data.Card;
@@ -47,6 +47,8 @@ public interface DataAccessLogic extends Logic {
 	GetRelationListResponse getRelationList(Card srcCard, DomainWithSource dom);
 
 	GetRelationListResponse getRelationListEmptyForWrongId(Card srcCard, DomainWithSource dom);
+
+	GetRelationListResponse getRelationList(CMDomain domain);
 
 	GetRelationHistoryResponse getRelationHistory(Card srcCard);
 

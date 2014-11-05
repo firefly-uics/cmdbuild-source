@@ -15,7 +15,7 @@ import javax.ws.rs.WebApplicationException;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.logic.LogicDTO.DomainWithSource;
+import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.service.rest.cxf.CxfRelations;
@@ -49,7 +49,7 @@ public class CxfRelationsTest {
 				.when(errorHandler).domainNotFound(anyString());
 
 		// when
-		cxfRelations.read("123", null, null, null, null, null);
+		cxfRelations.read("123", null, null);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, dataAccessLogic);
@@ -80,7 +80,7 @@ public class CxfRelationsTest {
 				.when(errorHandler).propagate(any(Exception.class));
 
 		// when
-		cxfRelations.read("12", "34", 56L, "baz", null, null);
+		cxfRelations.read("12", null, null);
 
 		// then
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);

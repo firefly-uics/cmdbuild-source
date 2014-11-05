@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
-import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
@@ -63,22 +62,13 @@ public class CxfRelations implements Relations {
 	}
 
 	@Override
-	public ResponseMultiple<Relation> read(final String domainId, final String classId, final Long cardId,
-			final String domainSource, final Integer limit, final Integer offset) {
+	public ResponseMultiple<Relation> read(final String domainId, final Integer limit, final Integer offset) {
 		final CMDomain targetDomain = dataAccessLogic.findDomain(domainId);
 		if (targetDomain == null) {
 			errorHandler.domainNotFound(domainId);
 		}
-		final CMClass targetClass = dataAccessLogic.findClass(classId);
-		if (targetClass == null) {
-			errorHandler.classNotFound(classId);
-		}
-		final org.cmdbuild.model.data.Card src = org.cmdbuild.model.data.Card.newInstance(targetClass) //
-				.withId(cardId) //
-				.build();
-		final DomainWithSource dom = DomainWithSource.create(targetDomain.getId(), domainSource);
 		try {
-			final GetRelationListResponse response = dataAccessLogic.getRelationListEmptyForWrongId(src, dom);
+			final GetRelationListResponse response = dataAccessLogic.getRelationList(targetDomain);
 			final List<Relation> elements = newArrayList();
 			for (final DomainInfo domainInfo : response) {
 				addAll(elements, from(domainInfo) //

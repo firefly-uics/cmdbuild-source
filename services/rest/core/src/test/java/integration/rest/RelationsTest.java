@@ -11,7 +11,6 @@ import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -120,7 +119,7 @@ public class RelationsTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyString(), anyString(), anyLong(), anyString(), anyInt(), anyInt());
+				.when(service).read(anyString(), anyInt(), anyInt());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("domains/12/relations/"));
@@ -133,7 +132,7 @@ public class RelationsTest {
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq("12"), eq("34"), eq(56L), eq("baz"), anyInt(), anyInt());
+		verify(service).read(eq("12"), anyInt(), anyInt());
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
