@@ -1,7 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.routes.management.RoutesManagerCards', {
-		extend: 'CMDBuild.routes.management.RoutesManagerClasses',
+		extend: 'CMDBuild.routes.RoutesManagerBase',
+
+		/**
+		 * @cfg {Object}
+		 */
+		entryType: undefined,
 
 		/**
 		 * @param {Object} params - url parameters
@@ -9,19 +14,22 @@
 		 * @param {Int} params.cardIdentifier - cardId
 		 * @param {String} path
 		 * @param {Object} router
-		 *
-		 * @override
 		 */
 		detail: function(params, path, router) {
-			this.callParent(arguments);
+			if (
+				!Ext.isEmpty(params[CMDBuild.core.proxy.CMProxyConstants.CLASS_IDENTIFIER])
+				&& !Ext.isEmpty(params[CMDBuild.core.proxy.CMProxyConstants.CARD_IDENTIFIER])
+				&& _CMCache.isEntryTypeByName(params[CMDBuild.core.proxy.CMProxyConstants.CLASS_IDENTIFIER])
+			) {
+				this.entryType = _CMCache.getEntryTypeByName(params[CMDBuild.core.proxy.CMProxyConstants.CLASS_IDENTIFIER]);
 
-			if (!Ext.isEmpty(params[CMDBuild.core.proxy.CMProxyConstants.CARD_IDENTIFIER])) {
 				Ext.Function.createDelayed(function() {
-					_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].gridController.openCard({
+					_CMMainViewportController.openCard({
+						Id: params[CMDBuild.core.proxy.CMProxyConstants.CARD_IDENTIFIER],
 						IdClass: this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-						Id: params[CMDBuild.core.proxy.CMProxyConstants.CARD_IDENTIFIER]
+						activateFirstTab: true
 					});
-				}, 1000, this)();
+				}, 500, this)();
 			} else {
 				CMDBuild.Msg.error(
 					CMDBuild.Translation.common.failure,
@@ -51,7 +59,7 @@
 					_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].cardPanelController.onPrintCardMenuClick(
 						params[CMDBuild.core.proxy.CMProxyConstants.FORMAT]
 					);
-				}, 1700, this)();
+				}, 1000, this)();
 			} else {
 				CMDBuild.Msg.error(
 					CMDBuild.Translation.common.failure,

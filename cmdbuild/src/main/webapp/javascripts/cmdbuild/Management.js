@@ -224,11 +224,12 @@
 
 						CMDBuild.view.CMMainViewport.hideSplash(function() {
 							_CMMainViewportController.setInstanceName(CMDBuild.Config.cmdbuild.instance_name);
+
+							// Execute routes
+							CMDBuild.routes.Routes.exec();
+
 							_CMMainViewportController.selectStartingClass();
 						});
-
-						// Execute routes
-						CMDBuild.routes.Routes.exec();
 					});
 
 				CMDBuild.ServiceProxy.classes.read({
