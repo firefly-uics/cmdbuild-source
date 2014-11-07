@@ -1,8 +1,5 @@
 package org.cmdbuild.dao.entry;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class IdAndDescription {
 
 	private final Long id;
@@ -27,14 +24,6 @@ public class IdAndDescription {
 	 */
 	public String getDescription() {
 		return description;
-	}
-
-	public Map<String, Object> asMap() {
-		final Map<String, Object> map = new HashMap<String, Object>();
-		map.put("id", getId());
-		map.put("description", getDescription());
-
-		return map;
 	}
 
 	@Override
