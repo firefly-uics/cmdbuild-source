@@ -68,7 +68,9 @@ class EntryQueryCommand implements LoggingSupport {
 		final ResultFiller rch = new ResultFiller(qc.getColumnMapper(), querySpecs, driver);
 		sqlLogger.debug("query: {}", query);
 		sqlLogger.debug("params: {}", Arrays.asList(params));
+		sqlLogger.trace("starting execution of query {}", query);
 		jdbcTemplate.query(query, params, rch);
+		sqlLogger.trace("execution of query {} finished", query);
 		return rch.getResult();
 	}
 
