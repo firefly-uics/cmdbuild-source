@@ -201,7 +201,8 @@
 			WORKFLOW: 'workflow',
 			WORKFLOW_ACTIVE: 'workflowActive',
 			WORKFLOW_ATTRIBUTES: 'workflowAttributes',
-			WORKFLOW_CLASS_NAME: 'workflowClassName'
+			WORKFLOW_CLASS_NAME: 'workflowClassName',
+			WORKFLOW_NAME: 'workflowName'
 		}
 	});
 
