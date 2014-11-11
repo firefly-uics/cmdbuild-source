@@ -1,4 +1,5 @@
 (function() {
+
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerController", {
 
 		constructor: function(view) {
@@ -219,8 +220,8 @@
 		// manageRelation
 		addControllerClass(commonControllers.CMManageRelationController);
 
-		// manageRelation
-		addControllerClass(commonControllers.CMManageEmailController);
+		// ManageEmail
+		addControllerClass(CMDBuild.controller.management.common.widgets.CMManageEmailController);
 
 		// ping
 		addControllerClass(commonControllers.CMPingController);
@@ -231,17 +232,18 @@
 		// presetFromCard
 		addControllerClass(commonControllers.CMPresetFromCardController);
 	}
+
 	Ext.define("CMDBuild.controller.management.common.CMWidgetManagerControllerPopup", {
 		extend: "CMDBuild.controller.management.common.CMWidgetManagerController",
-		buildControllers: function(widgets) {
+		buildControllers: function(widgets, card) {
 			var me = this;
 			me.removeAll();
 
 			for (var w in widgets) {
-				ui = me.view.buildWidget(widgets[w], undefined);
+				ui = me.view.buildWidget(widgets[w], card);
 
 				if (ui) {
-					var wc = me.buildWidgetController(ui, widgets[w], undefined);
+					var wc = me.buildWidgetController(ui, widgets[w], card);
 					if (wc) {
 						me.controllers[me.getWidgetId(widgets[w])] = wc;
 					}
@@ -249,4 +251,5 @@
 			}
 		}
 	});
+
 })();

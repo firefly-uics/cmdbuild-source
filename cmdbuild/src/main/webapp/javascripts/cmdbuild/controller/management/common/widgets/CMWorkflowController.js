@@ -1,4 +1,5 @@
 (function() {
+
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
 	var FILTER_FIELD = "_SystemFieldFilter";
 
@@ -34,6 +35,9 @@
 
 			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
 			this.mon(this.view, this.view.CMEVENTS.advanceButtonClick, onAdvanceCardClick, this);
+
+			_CMWFState.setProcessClassRef(_CMCache.getEntryTypeByName(widgetDef[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_NAME]));
+
 			var me = this;
 			var name = this.widgetReader.getCode(this.widgetConf);
 			if (name) {
@@ -44,7 +48,7 @@
 				if (card && card.data) {
 					_CMCache.getAttributeList(card.data.id, function(attributes) {
 						me.cardAttributes = attributes;
-					});		
+					});
 				}
 				this.presets = this.widgetReader.getPreset(this.typedWidgetConf);
 			}
@@ -128,12 +132,13 @@
 			if (card && card.data) {
 				_CMCache.getAttributeList(card.data.id, function(attributes) {
 					me.cardAttributes = attributes;
-				});		
+				});
 			}
 			this.presets = this.widgetReader.getPreset(this.typedWidgetConf);
 			configureActivityForm(this);
 		}
 	});
+
 	function configureActivityForm(me) {
 		if (!me.widgetReader) {
 			return;
@@ -159,7 +164,7 @@
 				});
 
 				resolveTemplate(me);
-				me.widgetControllerManager.buildControllers(ret.response.widgets);
+				me.widgetControllerManager.buildControllers(ret.response.widgets, card);
 				me.view.getWidgetButtonsPanel().editMode();
 				me.view.setLoading(false);
 				me.configured = true;
@@ -167,6 +172,7 @@
 			scope: me
 		});
 	}
+
 	function resolveTemplate(me) {
 		me.templateResolver.resolveTemplates({
 			attributes: Ext.Object.getKeys(me.presets),
@@ -179,9 +185,11 @@
 	function onAdvanceCardClick() {
 		saveWorkflow(this, true);
 	}
+
 	function onSaveCardClick() {
 		saveWorkflow(this, false);
 	}
+
 	function saveWorkflow(me, advance) {
 		var form = me.view.formPanel.getForm();
 		var valid = advance ? validate(me) : true;
@@ -214,6 +222,7 @@
 			_debug("There are no processInstance to save");
 		}
 	}
+
 	function validateForm(me) {
 		var form = me.view.formPanel.getForm();
 		var invalidAttributes = CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form);

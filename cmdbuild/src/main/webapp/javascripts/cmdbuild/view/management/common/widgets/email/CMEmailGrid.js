@@ -50,7 +50,7 @@
 	});
 
 	Ext.define('CMDBuild.view.management.common.widgets.CMEmailGrid', {
-		extend: 'Ext.grid.GridPanel',
+		extend: 'Ext.grid.Panel',
 
 		processId: undefined,
 
@@ -82,7 +82,6 @@
 
 			if (this.readWrite) {
 				var me = this;
-
 
 				this.tbar = [
 					{

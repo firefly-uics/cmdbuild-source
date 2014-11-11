@@ -29,7 +29,9 @@
 		},
 
 		// TODO manage dangling card
-		setEntryType: function(entryType, danglingCard, filter) {
+		setEntryType: function(entryType, danglingCard, filter, enableDelegatesCall) {
+			enableDelegatesCall = (!Ext.isEmpty(enableDelegatesCall)) ? enableDelegatesCall : true;
+
 			if (
 				(entryType === this.entryType && this.filter)
 				|| danglingCard
@@ -41,7 +43,8 @@
 
 				this.setCard(null); // reset the stored card because it could not be of the new entry type
 
-				this.callDelegates('onEntryTypeDidChange', [this, entryType, danglingCard, filter]);
+				if (enableDelegatesCall)
+					this.callDelegates('onEntryTypeDidChange', [this, entryType, danglingCard, filter]);
 			}
 		},
 
