@@ -131,7 +131,7 @@
 				_CMMainViewportController.panelControllers[CMDBuild.core.proxy.CMProxyConstants.CLASS].cardPanelController.onPrintCardMenuClick(
 					this.printFormat
 				);
-			}, 1000, this)();
+			}, 1500, this)();
 		},
 
 		/**
