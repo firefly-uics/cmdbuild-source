@@ -19,6 +19,8 @@ public class Serialization {
 			CARD_DETAIL = CARD + "Detail", //
 			CARD_ID = CARD + ID_CAPITALIZED, //
 			CARDINALITY = "cardinality", //
+			CATEGORY = "category", //
+			CATEGORY_ID = CATEGORY + ID_CAPITALIZED, //
 			CHILDREN = "children", //
 			CLASS = "class", //
 			CLASS_DESTINATION = CLASS + "Destination", //
@@ -119,6 +121,7 @@ public class Serialization {
 			TYPE_FOREIGN_KEY = "foreignKey", //
 			TYPE_INTEGER = "integer", //
 			TYPE_IP_ADDRESS = "ipAddress", //
+			TYPE_LIST = "list", //
 			TYPE_LOOKUP = "lookup", //
 			TYPE_REFERENCE = "reference", //
 			TYPE_STRING_ARRAY = "stringArray", //

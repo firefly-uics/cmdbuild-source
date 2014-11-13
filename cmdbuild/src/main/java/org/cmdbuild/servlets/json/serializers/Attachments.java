@@ -3,7 +3,6 @@ package org.cmdbuild.servlets.json.serializers;
 import java.util.Collection;
 import java.util.List;
 
-import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.MetadataDefinition;
 import org.cmdbuild.dms.MetadataGroupDefinition;
@@ -18,33 +17,30 @@ public class Attachments {
 
 	public static final class JsonCategoryDefinition {
 
-		private final Lookup lookup;
-		private final DocumentTypeDefinition documentTypeDefinition;
+		private final DocumentTypeDefinition delegate;
 
-		private JsonCategoryDefinition(final Lookup lookup, final DocumentTypeDefinition documentTypeDefinition) {
-			this.lookup = lookup;
-			this.documentTypeDefinition = documentTypeDefinition;
+		private JsonCategoryDefinition(final DocumentTypeDefinition delegate) {
+			this.delegate = delegate;
 		}
 
 		public String getName() {
-			return lookup.description; // TODO a day, use the code
+			return delegate.getName();
 		}
 
 		public String getDescription() {
-			return lookup.description;
+			return delegate.getName();
 		}
 
 		public Iterable<JsonMetadataGroupDefinition> getMetadataGroups() {
 			final List<JsonMetadataGroupDefinition> jsonDefinitions = Lists.newArrayList();
-			for (final MetadataGroupDefinition definition : documentTypeDefinition.getMetadataGroupDefinitions()) {
+			for (final MetadataGroupDefinition definition : delegate.getMetadataGroupDefinitions()) {
 				jsonDefinitions.add(JsonMetadataGroupDefinition.from(definition));
 			}
 			return jsonDefinitions;
 		}
 
-		public static JsonCategoryDefinition from(final Lookup lookup,
-				final DocumentTypeDefinition documentTypeDefinition) {
-			return new JsonCategoryDefinition(lookup, documentTypeDefinition);
+		public static JsonCategoryDefinition from(final DocumentTypeDefinition documentTypeDefinition) {
+			return new JsonCategoryDefinition(documentTypeDefinition);
 		}
 
 	}

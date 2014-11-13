@@ -21,7 +21,9 @@ import static org.cmdbuild.service.rest.constants.Serialization.TARGET_CLASS;
 import static org.cmdbuild.service.rest.constants.Serialization.TEXT;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNIQUE;
+import static org.cmdbuild.service.rest.constants.Serialization.VALUES;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -106,6 +108,7 @@ public class Attribute extends ModelWithId<String> {
 	private String editorType;
 	private String lookupTypeName;
 	private Filter filter;
+	private Collection<String> values;
 
 	Attribute() {
 		// package visibility
@@ -271,6 +274,15 @@ public class Attribute extends ModelWithId<String> {
 
 	void setFilter(final Filter filter) {
 		this.filter = filter;
+	}
+
+	@XmlElement(name = VALUES, nillable = true)
+	public Collection<String> getValues() {
+		return values;
+	}
+
+	public void setValues(final Collection<String> values) {
+		this.values = values;
 	}
 
 	@Override

@@ -31,6 +31,11 @@ public abstract class ForwardingDmsLogic implements DmsLogic {
 	public DocumentTypeDefinition getCategoryDefinition(final String category) {
 		return delegate.getCategoryDefinition(category);
 	}
+	
+	@Override
+	public Iterable<DocumentTypeDefinition> getConfiguredCategoryDefinitions() {
+		return delegate.getConfiguredCategoryDefinitions();
+	}
 
 	@Override
 	public Iterable<DocumentTypeDefinition> getCategoryDefinitions() throws DmsError {

@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
+import org.cmdbuild.service.rest.AttachmentsConfiguration;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.ClassAttributes;
 import org.cmdbuild.service.rest.Classes;
@@ -24,6 +25,7 @@ import org.cmdbuild.service.rest.ProcessStartActivities;
 import org.cmdbuild.service.rest.Processes;
 import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.Sessions;
+import org.cmdbuild.service.rest.cxf.CxfAttachmentsConfiguration;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
@@ -62,6 +64,12 @@ public class Services implements LoggingSupport {
 
 	@Autowired
 	private ApplicationContextHelper helper;
+
+	@Bean
+	public AttachmentsConfiguration cxfAttachmentsConfiguration() {
+		final CxfAttachmentsConfiguration service = new CxfAttachmentsConfiguration(helper.dmsLogic());
+		return proxy(AttachmentsConfiguration.class, service);
+	}
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)

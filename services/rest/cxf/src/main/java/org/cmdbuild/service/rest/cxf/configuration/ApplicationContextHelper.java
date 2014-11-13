@@ -8,6 +8,8 @@ import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.dms.DmsLogic;
+import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
@@ -24,6 +26,10 @@ public class ApplicationContextHelper {
 
 	public AuthenticationLogic authenticationLogic() {
 		return applicationContext.getBean(SoapAuthenticationLogicBuilder.class).build();
+	}
+
+	public DmsLogic dmsLogic() {
+		return applicationContext.getBean(PrivilegedDmsLogic.class);
 	}
 
 	public LookupLogic lookupLogic() {
