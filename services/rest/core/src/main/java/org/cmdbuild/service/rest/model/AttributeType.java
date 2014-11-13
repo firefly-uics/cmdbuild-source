@@ -10,6 +10,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.TYPE_ENTRY_TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE_FOREIGN_KEY;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE_INTEGER;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE_IP_ADDRESS;
+import static org.cmdbuild.service.rest.constants.Serialization.TYPE_LIST;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE_LOOKUP;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE_REFERENCE;
 import static org.cmdbuild.service.rest.constants.Serialization.TYPE_STRING;
@@ -29,6 +30,7 @@ public enum AttributeType {
 	FOREIGN_KEY(TYPE_FOREIGN_KEY), //
 	INTEGER(TYPE_INTEGER), //
 	IP_ADDRESS(TYPE_IP_ADDRESS), //
+	LIST(TYPE_LIST), //
 	LOOKUP(TYPE_LOOKUP), //
 	REFERENCE(TYPE_REFERENCE), //
 	STRING(TYPE_STRING), //

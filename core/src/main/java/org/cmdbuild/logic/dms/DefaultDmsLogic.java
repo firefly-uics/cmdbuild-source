@@ -1,5 +1,9 @@
 package org.cmdbuild.logic.dms;
 
+import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.data.store.lookup.Predicates.lookupActive;
+import static org.cmdbuild.logic.dms.Utils.valueForCategory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -11,6 +15,8 @@ import javax.activation.DataHandler;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.store.lookup.Lookup;
+import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
 import org.cmdbuild.dms.DmsConfiguration;
@@ -30,21 +36,24 @@ import org.cmdbuild.dms.exception.DmsError;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 
-public class DefaultDmsLogic implements org.cmdbuild.logic.dms.DmsLogic {
+public class DefaultDmsLogic implements DmsLogic {
 
 	private final DmsService service;
 	private final DefinitionsFactory definitionsFactory;
 	private final CMDataView dataView;
 	private final DmsConfiguration configuration;
 	private final DocumentCreatorFactory documentCreatorFactory;
+	private final LookupStore lookupStore;
 
 	public DefaultDmsLogic( //
 			final DmsService service, //
 			final CMDataView dataView, //
 			final DmsConfiguration configuration, //
-			final DocumentCreatorFactory documentCreatorFactory //
+			final DocumentCreatorFactory documentCreatorFactory, //
+			final LookupStore lookupStore //
 	) {
 		logger.trace("creating new dms logic...");
 		this.service = service;
@@ -53,6 +62,7 @@ public class DefaultDmsLogic implements org.cmdbuild.logic.dms.DmsLogic {
 		this.dataView = dataView;
 		this.configuration = configuration;
 		this.documentCreatorFactory = documentCreatorFactory;
+		this.lookupStore = lookupStore;
 	}
 
 	/**
@@ -71,7 +81,7 @@ public class DefaultDmsLogic implements org.cmdbuild.logic.dms.DmsLogic {
 	 * category.
 	 * 
 	 * @param category
-	 *            is the {@code Code} of the {@link Lookup}.
+	 *            is the {@code Description} of the {@link Lookup}.
 	 * 
 	 * @return the {@link DocumentTypeDefinition} for the specified category.
 	 * 
@@ -91,6 +101,24 @@ public class DefaultDmsLogic implements org.cmdbuild.logic.dms.DmsLogic {
 		} catch (final DmsError e) {
 			throw DmsException.Type.DMS_DOCUMENT_TYPE_DEFINITION_ERROR.createException(category);
 		}
+	}
+
+	@Override
+	public Iterable<DocumentTypeDefinition> getConfiguredCategoryDefinitions() {
+		final LookupType lookupType = LookupType.newInstance() //
+				.withName(getCategoryLookupType()) //
+				.build();
+		final Iterable<Lookup> lookupValues = lookupStore.readAll(lookupType);
+		return from(lookupValues) //
+				.filter(lookupActive()) //
+				.transform(new Function<Lookup, DocumentTypeDefinition>() {
+
+					@Override
+					public DocumentTypeDefinition apply(final Lookup input) {
+						return getCategoryDefinition(valueForCategory(input));
+					}
+
+				});
 	}
 
 	/**

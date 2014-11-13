@@ -3,7 +3,6 @@ package org.cmdbuild.spring.configuration;
 import static org.cmdbuild.spring.util.Constants.DEFAULT;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dms.CachedDmsService;
 import org.cmdbuild.dms.DefaultDocumentCreatorFactory;
 import org.cmdbuild.dms.DmsConfiguration;
@@ -23,10 +22,10 @@ import org.springframework.context.annotation.Scope;
 public class Dms {
 
 	@Autowired
-	private DmsConfiguration dmsConfiguration;
+	private Data data;
 
 	@Autowired
-	private DBDataView systemDataView;
+	private DmsConfiguration dmsConfiguration;
 
 	@Autowired
 	private PrivilegeManagement privilegeManagement;
@@ -58,7 +57,7 @@ public class Dms {
 	public PrivilegedDmsLogic privilegedDmsLogic() {
 		return new PrivilegedDmsLogic( //
 				defaultDmsLogic(), //
-				systemDataView, //
+				data.systemDataView(), //
 				privilegeManagement.userPrivilegeContext() //
 		);
 	}
@@ -67,9 +66,11 @@ public class Dms {
 	public DefaultDmsLogic defaultDmsLogic() {
 		return new DefaultDmsLogic( //
 				dmsService(), //
-				systemDataView, //
+				data.systemDataView(), //
 				dmsConfiguration, //
-				documentCreatorFactory());
+				documentCreatorFactory(), //
+				data.lookupStore() //
+		);
 	}
 
 }

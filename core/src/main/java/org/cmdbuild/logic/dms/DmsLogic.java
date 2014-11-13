@@ -40,6 +40,16 @@ public interface DmsLogic extends Logic {
 	DocumentTypeDefinition getCategoryDefinition(String category);
 
 	/**
+	 * Gets all {@link DocumentTypeDefinition}s usable according with current
+	 * configuration.
+	 * 
+	 * @return the all {@link DocumentTypeDefinition}s.
+	 * 
+	 * @throws {@link DmsException} if cannot read definitions.
+	 */
+	Iterable<DocumentTypeDefinition> getConfiguredCategoryDefinitions();
+
+	/**
 	 * Gets all {@link DocumentTypeDefinition}s.
 	 * 
 	 * @return the all {@link DocumentTypeDefinition}s.

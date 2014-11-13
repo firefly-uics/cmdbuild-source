@@ -9,12 +9,12 @@ import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -48,7 +48,38 @@ public class Builders {
 
 	}
 
+	public static class AttachmentCategoryBuilder extends ModelBuilder<AttachmentCategory> {
+
+		private String id;
+		private String description;
+
+		private AttachmentCategoryBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected AttachmentCategory doBuild() {
+			final AttachmentCategory output = new AttachmentCategory();
+			output.setId(id);
+			output.setDescription(description);
+			return output;
+		}
+
+		public AttachmentCategoryBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public AttachmentCategoryBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+	}
+
 	public static class AttributeBuilder extends ModelBuilder<Attribute> {
+
+		private static final Iterable<String> NO_VALUES = emptyList();
 
 		private String id;
 		private String type;
@@ -69,6 +100,7 @@ public class Builders {
 		private String editorType;
 		private String lookupType;
 		private Attribute.Filter filter;
+		private Iterable<String> values;
 
 		private AttributeBuilder() {
 			// use factory method
@@ -96,6 +128,7 @@ public class Builders {
 			output.setEditorType(editorType);
 			output.setLookupType(lookupType);
 			output.setFilter(filter);
+			output.setValues(newArrayList(defaultIfNull(values, NO_VALUES)));
 			return output;
 		}
 
@@ -191,6 +224,11 @@ public class Builders {
 
 		public AttributeBuilder withFilter(final Attribute.Filter filter) {
 			this.filter = filter;
+			return this;
+		}
+
+		public AttributeBuilder withValues(final Iterable<String> values) {
+			this.values = values;
 			return this;
 		}
 
@@ -416,7 +454,7 @@ public class Builders {
 
 	public static class SessionBuilder extends ModelBuilder<Session> {
 
-		private static final Collection<String> NO_ROLES = Collections.emptyList();
+		private static final Collection<String> NO_ROLES = emptyList();
 
 		private String id;
 		private String username;
@@ -734,7 +772,7 @@ public class Builders {
 
 	public static class MenuBuilder extends ModelBuilder<MenuDetail> {
 
-		private static final Iterable<MenuDetail> NO_CHILDREN = Collections.emptyList();
+		private static final Iterable<MenuDetail> NO_CHILDREN = emptyList();
 
 		private String menuType;
 		private Long index;
@@ -862,7 +900,7 @@ public class Builders {
 
 	public static class ProcessActivityWithFullDetailsBuilder extends ModelBuilder<ProcessActivityWithFullDetails> {
 
-		private static final Collection<? extends AttributeStatus> NO_ATTRIBUTES = Collections.emptyList();
+		private static final Collection<? extends AttributeStatus> NO_ATTRIBUTES = emptyList();
 
 		private String id;
 		private String description;
@@ -1228,7 +1266,7 @@ public class Builders {
 
 	public static class ResponseMultipleBuilder<T> extends ModelBuilder<ResponseMultiple<T>> {
 
-		private final Iterable<T> NO_ELEMENTS = Collections.emptyList();
+		private final Iterable<T> NO_ELEMENTS = emptyList();
 
 		private final Collection<T> elements = newArrayList();
 		private DetailResponseMetadata metadata;
@@ -1261,6 +1299,10 @@ public class Builders {
 			return this;
 		}
 
+	}
+
+	public static AttachmentCategoryBuilder newAttachmentCategory() {
+		return new AttachmentCategoryBuilder();
 	}
 
 	public static AttributeBuilder newAttribute() {

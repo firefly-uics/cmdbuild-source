@@ -4,6 +4,19 @@ import com.google.common.base.Predicate;
 
 public class Predicates {
 
+	private static final Predicate<Lookup> ACTIVE = new Predicate<Lookup>() {
+
+		@Override
+		public boolean apply(final Lookup input) {
+			return input.active;
+		}
+
+	};
+
+	public static Predicate<Lookup> lookupActive() {
+		return ACTIVE;
+	}
+
 	public static Predicate<Lookup> lookupWithType(final LookupType type) {
 		return new Predicate<Lookup>() {
 

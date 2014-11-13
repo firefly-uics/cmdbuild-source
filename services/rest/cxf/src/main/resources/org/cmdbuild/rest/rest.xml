@@ -26,6 +26,7 @@
 			<ref bean="tokenHandler" />
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
+			<ref bean="cxfAttachmentsConfiguration" />
 			<ref bean="cxfCards" />
 			<ref bean="cxfClasses" />
 			<ref bean="cxfClassAttributes" />
