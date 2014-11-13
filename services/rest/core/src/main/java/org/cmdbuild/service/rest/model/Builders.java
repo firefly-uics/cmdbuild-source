@@ -15,6 +15,7 @@ import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -44,6 +45,77 @@ public class Builders {
 		@Override
 		public final String toString() {
 			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
+		}
+
+	}
+
+	public static class AttachmentBuilder extends ModelBuilder<Attachment> {
+
+		private String id;
+		private String category;
+		private String description;
+		private String version;
+		private String author;
+		private Date created;
+		private Date modified;
+		private Map<String, Object> metadata;
+
+		private AttachmentBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Attachment doBuild() {
+			final Attachment output = new Attachment();
+			output.setId(id);
+			output.setCategory(category);
+			output.setDescription(description);
+			output.setVersion(version);
+			output.setAuthor(author);
+			output.setCreated(created);
+			output.setModified(modified);
+			output.setMetadata(metadata);
+			return output;
+		}
+
+		public AttachmentBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public AttachmentBuilder withCategory(final String category) {
+			this.category = category;
+			return this;
+		}
+
+		public AttachmentBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public AttachmentBuilder withVersion(final String version) {
+			this.version = version;
+			return this;
+		}
+
+		public AttachmentBuilder withAuthor(final String author) {
+			this.author = author;
+			return this;
+		}
+
+		public AttachmentBuilder withCreated(final Date created) {
+			this.created = created;
+			return this;
+		}
+
+		public AttachmentBuilder withModified(final Date modified) {
+			this.modified = modified;
+			return this;
+		}
+
+		public AttachmentBuilder withMetadata(final Map<String, Object> metadata) {
+			this.metadata = metadata;
+			return this;
 		}
 
 	}
@@ -1299,6 +1371,10 @@ public class Builders {
 			return this;
 		}
 
+	}
+
+	public static AttachmentBuilder newAttachment() {
+		return new AttachmentBuilder();
 	}
 
 	public static AttachmentCategoryBuilder newAttachmentCategory() {
