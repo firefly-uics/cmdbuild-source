@@ -25,26 +25,26 @@
 
 		requires: [
 			'Ext.ux.Router',
-			'CMDBuild.routes.management.RoutesManagerCards',
-			'CMDBuild.routes.management.RoutesManagerClasses'
+			'CMDBuild.routes.management.Cards',
+			'CMDBuild.routes.management.Classes'
 		],
 
 		name: 'CMDBuild',
 
 		routes: {
 			// Classes
-			'classes/:classIdentifier/cards': 'CMDBuild.routes.management.RoutesManagerClasses#saveRoute',
-			'classes/:classIdentifier/print': 'CMDBuild.routes.management.RoutesManagerClasses#saveRoute',
+			'classes/:classIdentifier/cards': 'CMDBuild.routes.management.Classes#saveRoute',
+			'classes/:classIdentifier/print': 'CMDBuild.routes.management.Classes#saveRoute',
 
-			'exec/classes/:classIdentifier/cards': 'CMDBuild.routes.management.RoutesManagerClasses#detail',
-			'exec/classes/:classIdentifier/print': 'CMDBuild.routes.management.RoutesManagerClasses#print',
+			'exec/classes/:classIdentifier/cards': 'CMDBuild.routes.management.Classes#detail',
+			'exec/classes/:classIdentifier/print': 'CMDBuild.routes.management.Classes#print',
 
 			// Cards
-			'classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.RoutesManagerCards#saveRoute',
-			'classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.RoutesManagerCards#saveRoute',
+			'classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.Cards#saveRoute',
+			'classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.Cards#saveRoute',
 
-			'exec/classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.RoutesManagerCards#detail',
-			'exec/classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.RoutesManagerCards#print'
+			'exec/classes/:classIdentifier/cards/:cardIdentifier': 'CMDBuild.routes.management.Cards#detail',
+			'exec/classes/:classIdentifier/cards/:cardIdentifier/print': 'CMDBuild.routes.management.Cards#print'
 		},
 
 		statics: {

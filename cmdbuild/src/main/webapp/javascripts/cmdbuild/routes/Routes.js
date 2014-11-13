@@ -13,7 +13,7 @@
 				var route = this.route;
 				delete this.route;
 
-				Ext.Router.redirect('exec/' + route);
+				Ext.Router.parse('exec/' + route);
 			}
 		},
 
