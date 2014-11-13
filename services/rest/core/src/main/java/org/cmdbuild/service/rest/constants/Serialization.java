@@ -14,6 +14,9 @@ public class Serialization {
 			ATTRIBUTE = "attribute", //
 			ATTRIBUTE_DETAIL = ATTRIBUTE + "Detail", //
 			ATTRIBUTES = "attributes", //
+			ATTACHMENT = "attachment", //
+			ATTACHMENT_CATEGORY = "attachmentCategory", //
+			AUTHOR = "author", //
 			AVAILABLE_ROLES = "availableRoles", //
 			CARD = "card", //
 			CARD_DETAIL = CARD + "Detail", //
@@ -28,6 +31,7 @@ public class Serialization {
 			CLASS_SOURCE = CLASS + "Source", //
 			CODE = "code", //
 			CODE_CAPITALIZED = "Code", //
+			CREATED = "created", //
 			DATA = "data", //
 			DEFAULT = "default", //
 			DEFAULT_VALUE = DEFAULT + "Value", //
@@ -57,6 +61,8 @@ public class Serialization {
 			MENU = "menu", //
 			MENU_DETAIL = MENU + "Detail", //
 			MENU_TYPE = MENU + "Type", //
+			METADATA = "metadata", //
+			MODIFIED = "modified", //
 			NAME = "name", //
 			NUMBER = "number", //
 			PARAMS = "params", //
@@ -89,6 +95,7 @@ public class Serialization {
 			USERNAME = "username", //
 			VALUE = "value", //
 			VALUES = "values", //
+			VERSION = "version", //
 			WRITABLE = "writable";
 
 	public static final String //
@@ -132,19 +139,25 @@ public class Serialization {
 	public static final String //
 			UNDERSCORED_ACTIVITY = "_activity", //
 			UNDERSCORED_ADVANCE = "_" + ADVANCE, //
+			UNDERSCORED_AUTHOR = "_" + AUTHOR, //
+			UNDERSCORED_CATEGORY = "_" + CATEGORY, //
+			UNDERSCORED_CREATED = "_" + CREATED, //
+			UNDERSCORED_DESCRIPTION = "_" + DESCRIPTION, //
 			UNDERSCORED_DESTINATION = "_" + DESTINATION, //
 			UNDERSCORED_DESTINATION_CODE = UNDERSCORED_DESTINATION + CODE_CAPITALIZED, //
 			UNDERSCORED_DESTINATION_DESCRIPTION = UNDERSCORED_DESTINATION + DESCRIPTION_CAPITALIZED, //
 			UNDERSCORED_DESTINATION_ID = UNDERSCORED_DESTINATION + ID_CAPITALIZED, //
 			UNDERSCORED_DESTINATION_TYPE = UNDERSCORED_DESTINATION + TYPE_CAPITALIZED, //
 			UNDERSCORED_ID = "_" + ID, //
+			UNDERSCORED_MODIFIED = "_" + MODIFIED, //
 			UNDERSCORED_NAME = "_" + NAME, //
 			UNDERSCORED_SOURCE = "_" + SOURCE, //
 			UNDERSCORED_SOURCE_CODE = UNDERSCORED_SOURCE + CODE_CAPITALIZED, //
 			UNDERSCORED_SOURCE_DESCRIPTION = UNDERSCORED_SOURCE + DESCRIPTION_CAPITALIZED, //
 			UNDERSCORED_SOURCE_ID = UNDERSCORED_SOURCE + ID_CAPITALIZED, //
 			UNDERSCORED_SOURCE_TYPE = UNDERSCORED_SOURCE + TYPE_CAPITALIZED, //
-			UNDERSCORED_TYPE = "_" + TYPE;
+			UNDERSCORED_TYPE = "_" + TYPE, //
+			UNDERSCORED_VERSION = "_" + VERSION;
 
 	private Serialization() {
 		// prevents instantiation

@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
 import org.cmdbuild.service.rest.AttachmentsConfiguration;
+import org.cmdbuild.service.rest.CardAttachments;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.ClassAttributes;
 import org.cmdbuild.service.rest.Classes;
@@ -26,6 +27,7 @@ import org.cmdbuild.service.rest.Processes;
 import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.Sessions;
 import org.cmdbuild.service.rest.cxf.CxfAttachmentsConfiguration;
+import org.cmdbuild.service.rest.cxf.CxfCardAttachments;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
@@ -69,6 +71,12 @@ public class Services implements LoggingSupport {
 	public AttachmentsConfiguration cxfAttachmentsConfiguration() {
 		final CxfAttachmentsConfiguration service = new CxfAttachmentsConfiguration(helper.dmsLogic());
 		return proxy(AttachmentsConfiguration.class, service);
+	}
+
+	@Bean
+	public CardAttachments cxfCardAttachments() {
+		final CxfCardAttachments service = new CxfCardAttachments(helper.dmsLogic());
+		return proxy(CardAttachments.class, service);
 	}
 
 	@Bean

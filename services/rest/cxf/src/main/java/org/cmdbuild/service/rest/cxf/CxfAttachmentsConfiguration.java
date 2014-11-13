@@ -2,17 +2,16 @@ package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
-import static com.google.common.collect.Sets.newLinkedHashSet;
+import static com.google.common.collect.Maps.newLinkedHashMap;
 import static org.cmdbuild.service.rest.model.Builders.newAttribute;
 import static org.cmdbuild.service.rest.model.Builders.newMetadata;
 import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 
-import java.util.Collection;
+import java.util.Map;
 
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.MetadataDefinition;
 import org.cmdbuild.dms.MetadataGroupDefinition;
-import org.cmdbuild.dms.MetadataType;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.service.rest.AttachmentsConfiguration;
 import org.cmdbuild.service.rest.cxf.serialization.ToAttachmentCategory;
@@ -45,13 +44,7 @@ public class CxfAttachmentsConfiguration implements AttachmentsConfiguration {
 
 	@Override
 	public ResponseMultiple<Attribute> readCategoryAttributes(final String categoryId) {
-		final Collection<Attribute> elements = newLinkedHashSet();
-		elements.add(newAttribute() //
-				.withId("Description") //
-				.withDescription("Description") //
-				.withType(AttributeType.TEXT.asString()) //
-				.withIndex(Long.valueOf(elements.size())) //
-				.build());
+		final Map<String, Attribute> elements = newLinkedHashMap();
 		final DocumentTypeDefinition definition = dmsLogic.getCategoryDefinition(categoryId);
 		for (final MetadataGroupDefinition groupDefinition : definition.getMetadataGroupDefinitions()) {
 			for (final MetadataDefinition metadataDefinition : groupDefinition.getMetadataDefinitions()) {
@@ -61,7 +54,10 @@ public class CxfAttachmentsConfiguration implements AttachmentsConfiguration {
 						.withDescription(metadataDefinition.getDescription()) //
 						.thatIsMandatory(metadataDefinition.isMandatory()) //
 						.thatIsActive(true) //
-						.withIndex(Long.valueOf(elements.size()));
+						/*
+						 * custom attributes are never first
+						 */
+						.withIndex(Long.valueOf(elements.size() + 1));
 				switch (metadataDefinition.getType()) {
 				case TEXT:
 					attribute.withType(AttributeType.TEXT.asString());
@@ -89,45 +85,27 @@ public class CxfAttachmentsConfiguration implements AttachmentsConfiguration {
 					attribute.withType(AttributeType.TEXT.asString());
 					break;
 				}
-				elements.add(attribute.build());
+				elements.put(metadataDefinition.getName(), attribute.build());
 			}
 		}
+		/*
+		 * added at last because it should override any custom attribute with
+		 * the same (reserved) name
+		 */
+		elements.put("Description", newAttribute() //
+				.withId("Description") //
+				.withDescription("Description") //
+				.withType(AttributeType.TEXT.asString()) //
+				/*
+				 * always first
+				 */
+				.withIndex(Long.valueOf(0L)) //
+				.build());
 		return newResponseMultiple(Attribute.class) //
-				.withElements(elements) //
+				.withElements(elements.values()) //
 				.withMetadata(newMetadata() //
-						.withTotal(Long.valueOf(size(elements))).build()) //
+						.withTotal(Long.valueOf(elements.size())) //
+						.build()) //
 				.build();
 	}
-
-	private AttributeType typeOf(final MetadataType type) {
-		final AttributeType attributeType;
-		switch (type) {
-		case TEXT:
-			attributeType = AttributeType.TEXT;
-			break;
-		case INTEGER:
-			attributeType = AttributeType.INTEGER;
-			break;
-		case FLOAT:
-			attributeType = AttributeType.DOUBLE;
-			break;
-		case DATE:
-			attributeType = AttributeType.DATE;
-			break;
-		case DATETIME:
-			attributeType = AttributeType.DATE_TIME;
-			break;
-		case BOOLEAN:
-			attributeType = AttributeType.BOOLEAN;
-			break;
-		case LIST:
-			attributeType = AttributeType.LIST;
-			break;
-		default:
-			attributeType = AttributeType.TEXT;
-			break;
-		}
-		return attributeType;
-	}
-
 }

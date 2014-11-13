@@ -1,5 +1,7 @@
 package org.cmdbuild.service.rest.model.adapter;
 
+import static com.google.common.base.Predicates.notNull;
+import static com.google.common.collect.Maps.filterValues;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.util.Map;
@@ -40,7 +42,7 @@ public abstract class ModelToMapAdapter<T extends Model> extends XmlAdapter<Map<
 
 	@Override
 	public final Map<String, Object> marshal(final T v) throws Exception {
-		return modelToMap(v);
+		return filterValues(modelToMap(v), notNull());
 	}
 
 	protected abstract Map<String, Object> modelToMap(T input);

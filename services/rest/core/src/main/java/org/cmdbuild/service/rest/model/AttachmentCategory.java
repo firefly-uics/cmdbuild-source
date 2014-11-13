@@ -1,12 +1,15 @@
 package org.cmdbuild.service.rest.model;
 
+import static org.cmdbuild.service.rest.constants.Serialization.ATTACHMENT_CATEGORY;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+@XmlRootElement(name = ATTACHMENT_CATEGORY)
 public class AttachmentCategory extends ModelWithId<String> {
 
 	private String description;
