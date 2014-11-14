@@ -30,6 +30,7 @@
 		],
 
 		name: 'CMDBuild',
+		appFolder: './javascripts/cmdbuild',
 
 		routes: {
 			// Classes

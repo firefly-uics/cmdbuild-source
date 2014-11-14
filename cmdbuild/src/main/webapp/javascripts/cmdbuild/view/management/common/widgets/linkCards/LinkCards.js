@@ -2,8 +2,6 @@
 
 	var tr = CMDBuild.Translation;
 
-	Ext.require('CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid');
-
 	Ext.define('CMDBuild.view.management.common.widgets.linkCards.LinkCards', {
 		extend: 'Ext.panel.Panel',
 
