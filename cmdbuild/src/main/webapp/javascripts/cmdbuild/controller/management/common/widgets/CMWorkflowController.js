@@ -36,8 +36,6 @@
 			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
 			this.mon(this.view, this.view.CMEVENTS.advanceButtonClick, onAdvanceCardClick, this);
 
-			_CMWFState.setProcessClassRef(_CMCache.getEntryTypeByName(widgetDef[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_NAME]));
-
 			var me = this;
 			var name = this.widgetReader.getCode(this.widgetConf);
 			if (name) {
