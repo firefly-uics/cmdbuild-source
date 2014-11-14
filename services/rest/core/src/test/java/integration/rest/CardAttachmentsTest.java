@@ -1,6 +1,7 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CATEGORY;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
@@ -17,9 +18,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static support.ServerResource.randomPort;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.activation.DataHandler;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.DeleteMethod;
@@ -33,6 +37,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import support.JsonSupport;
 import support.ServerResource;
@@ -51,6 +56,9 @@ public class CardAttachmentsTest {
 	@ClassRule
 	public static JsonSupport json = new JsonSupport();
 
+	@Rule
+	public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
 	private HttpClient httpclient;
 
 	@Before
@@ -59,7 +67,7 @@ public class CardAttachmentsTest {
 	}
 
 	@Test
-	public void read() throws Exception {
+	public void readAll() throws Exception {
 		// given
 		final ResponseMultiple<Attachment> sentResponse = newResponseMultiple(Attachment.class) //
 				.withElements(asList( //
@@ -111,6 +119,24 @@ public class CardAttachmentsTest {
 		verify(service).read(eq("dummy"), eq(123L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+	}
+
+	@Test
+	public void read() throws Exception {
+		// given
+		final File file = temporaryFolder.newFile();
+		final DataHandler expectedResponse = new DataHandler(file.toURI().toURL());
+		when(service.read(anyString(), anyLong(), anyString())) //
+				.thenReturn(expectedResponse);
+
+		// when
+		final GetMethod get = new GetMethod(server.resource("classes/dummy/cards/123/attachments/foo"));
+		final int result = httpclient.executeMethod(get);
+
+		// then
+		verify(service).read(eq("dummy"), eq(123L), eq("foo"));
+		assertThat(result, equalTo(200));
+		assertThat(toByteArray(get.getResponseBodyAsStream()), equalTo(toByteArray(expectedResponse.getInputStream())));
 	}
 
 	@Test

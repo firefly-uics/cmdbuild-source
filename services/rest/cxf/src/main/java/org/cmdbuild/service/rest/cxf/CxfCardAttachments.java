@@ -10,6 +10,8 @@ import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import javax.activation.DataHandler;
+
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
@@ -73,6 +75,12 @@ public class CxfCardAttachments implements CardAttachments {
 						.withTotal(Long.valueOf(size(elements))) //
 						.build()) //
 				.build();
+	}
+
+	@Override
+	public DataHandler read(final String classId, final Long cardId, final String attachmentId) {
+		assureClassAndCard(classId, cardId);
+		return dmsLogic.download(classId, cardId, attachmentId);
 	}
 
 	@Override

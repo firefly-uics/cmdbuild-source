@@ -1,10 +1,12 @@
 package org.cmdbuild.service.rest;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.APPLICATION_OCTET_STREAM;
 import static org.cmdbuild.service.rest.constants.Serialization.ATTACHMENT_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.CARD_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.CLASS_ID;
 
+import javax.activation.DataHandler;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -24,6 +26,15 @@ public interface CardAttachments {
 	ResponseMultiple<Attachment> read( //
 			@PathParam(CLASS_ID) String classId, //
 			@PathParam(CARD_ID) Long cardId //
+	);
+
+	@GET
+	@Path("{" + ATTACHMENT_ID + "}/")
+	@Produces(APPLICATION_OCTET_STREAM)
+	DataHandler read( //
+			@PathParam(CLASS_ID) String classId, //
+			@PathParam(CARD_ID) Long cardId, //
+			@PathParam(ATTACHMENT_ID) String attachmentId //
 	);
 
 	@DELETE
