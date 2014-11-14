@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.CardAttachments;
@@ -36,7 +37,7 @@ import org.junit.Test;
 import support.JsonSupport;
 import support.ServerResource;
 
-public class CardsAttachmentsTest {
+public class CardAttachmentsTest {
 
 	private CardAttachments service;
 
@@ -110,6 +111,17 @@ public class CardsAttachmentsTest {
 		verify(service).read(eq("dummy"), eq(123L));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+	}
+
+	@Test
+	public void delete() throws Exception {
+		// when
+		final DeleteMethod delete = new DeleteMethod(server.resource("classes/dummy/cards/123/attachments/foo/"));
+		final int result = httpclient.executeMethod(delete);
+
+		// then
+		verify(service).delete(eq("dummy"), eq(123L), eq("foo"));
+		assertThat(result, equalTo(204));
 	}
 
 }
