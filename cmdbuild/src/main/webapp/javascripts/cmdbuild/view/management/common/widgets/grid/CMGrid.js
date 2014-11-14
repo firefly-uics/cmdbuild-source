@@ -1,7 +1,5 @@
 (function() {
 
-	Ext.require('CMDBuild.view.management.common.widgets.grid.CMGridPanel');
-
 	Ext.define('CMDBuild.view.management.common.widgets.grid.CMGrid', {
 		extend: 'Ext.panel.Panel',
 
