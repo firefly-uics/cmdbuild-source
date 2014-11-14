@@ -6,6 +6,7 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
@@ -42,6 +43,10 @@ public class ApplicationContextHelper {
 
 	public MetadataStoreFactory metadataStoreFactory() {
 		return applicationContext.getBean(MetadataStoreFactory.class);
+	}
+
+	public DataAccessLogic systemDataAccessLogic() {
+		return applicationContext.getBean(SystemDataAccessLogicBuilder.class).build();
 	}
 
 	public CMDataView systemDataView() {

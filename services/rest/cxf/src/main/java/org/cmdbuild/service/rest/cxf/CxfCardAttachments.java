@@ -8,10 +8,13 @@ import static org.cmdbuild.service.rest.model.Builders.newMetadata;
 import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.service.rest.CardAttachments;
 import org.cmdbuild.service.rest.model.Attachment;
@@ -22,13 +25,19 @@ import com.google.common.base.Function;
 public class CxfCardAttachments implements CardAttachments {
 
 	private final DmsLogic dmsLogic;
+	private final DataAccessLogic dataAccessLogic;
+	private final ErrorHandler errorHandler;
 
-	public CxfCardAttachments(final DmsLogic dmsLogic) {
+	public CxfCardAttachments(final ErrorHandler errorHandler, final DmsLogic dmsLogic,
+			final DataAccessLogic dataAccessLogic) {
+		this.errorHandler = errorHandler;
 		this.dmsLogic = dmsLogic;
+		this.dataAccessLogic = dataAccessLogic;
 	}
 
 	@Override
 	public ResponseMultiple<Attachment> read(final String classId, final Long cardId) {
+		assureClassAndCard(classId, cardId);
 		final Iterable<StoredDocument> documents = dmsLogic.search(classId, cardId);
 		final Iterable<Attachment> elements = from(documents) //
 				.transform(new Function<StoredDocument, Attachment>() {
@@ -64,6 +73,24 @@ public class CxfCardAttachments implements CardAttachments {
 						.withTotal(Long.valueOf(size(elements))) //
 						.build()) //
 				.build();
+	}
+
+	@Override
+	public void delete(final String classId, final Long cardId, final String attachmentId) {
+		assureClassAndCard(classId, cardId);
+		dmsLogic.delete(classId, cardId, attachmentId);
+	}
+
+	private void assureClassAndCard(final String classId, final Long cardId) {
+		final CMClass targetClass = dataAccessLogic.findClass(classId);
+		if (targetClass == null) {
+			errorHandler.classNotFound(classId);
+		}
+		try {
+			dataAccessLogic.fetchCard(classId, cardId);
+		} catch (final NoSuchElementException e) {
+			errorHandler.cardNotFound(cardId);
+		}
 	}
 
 }

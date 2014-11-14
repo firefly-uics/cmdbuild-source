@@ -15,6 +15,7 @@ public class Serialization {
 			ATTRIBUTE_DETAIL = ATTRIBUTE + "Detail", //
 			ATTRIBUTES = "attributes", //
 			ATTACHMENT = "attachment", //
+			ATTACHMENT_ID = ATTACHMENT + ID_CAPITALIZED, //
 			ATTACHMENT_CATEGORY = "attachmentCategory", //
 			AUTHOR = "author", //
 			AVAILABLE_ROLES = "availableRoles", //
