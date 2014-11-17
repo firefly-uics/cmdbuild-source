@@ -12,6 +12,12 @@ public interface ErrorHandler {
 
 	void lookupTypeNotFound(String id);
 
+	void missingAttachment();
+
+	void missingAttachmentName();
+
+	void missingFile();
+
 	void missingParam(String name);
 
 	void missingPassword();

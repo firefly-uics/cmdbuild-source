@@ -48,6 +48,7 @@ public class Serialization {
 			DOMAIN_ID = DOMAIN + ID_CAPITALIZED, //
 			DOMAIN_SOURCE = DOMAIN + "Source", //
 			EDITOR_TYPE = "editorType", //
+			FILE = "file", //
 			FILTER = "filter", //
 			FULL_CLASS_DETAIL = "fullClassDetail", //
 			FULL_DOMAIN_DETAIL = "fullDomainDetail", //
@@ -140,6 +141,7 @@ public class Serialization {
 	public static final String //
 			UNDERSCORED_ACTIVITY = "_activity", //
 			UNDERSCORED_ADVANCE = "_" + ADVANCE, //
+			UNDERSCORED_ATTACHMENT = "_" + ATTACHMENT, //
 			UNDERSCORED_AUTHOR = "_" + AUTHOR, //
 			UNDERSCORED_CATEGORY = "_" + CATEGORY, //
 			UNDERSCORED_CREATED = "_" + CREATED, //
@@ -149,6 +151,7 @@ public class Serialization {
 			UNDERSCORED_DESTINATION_DESCRIPTION = UNDERSCORED_DESTINATION + DESCRIPTION_CAPITALIZED, //
 			UNDERSCORED_DESTINATION_ID = UNDERSCORED_DESTINATION + ID_CAPITALIZED, //
 			UNDERSCORED_DESTINATION_TYPE = UNDERSCORED_DESTINATION + TYPE_CAPITALIZED, //
+			UNDERSCORED_FILE = "_" + FILE, //
 			UNDERSCORED_ID = "_" + ID, //
 			UNDERSCORED_MODIFIED = "_" + MODIFIED, //
 			UNDERSCORED_NAME = "_" + NAME, //
