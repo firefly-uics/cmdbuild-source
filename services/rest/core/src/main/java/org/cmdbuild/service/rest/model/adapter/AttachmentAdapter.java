@@ -6,6 +6,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CREA
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_MODIFIED;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_VERSION;
 import static org.cmdbuild.service.rest.model.Builders.newAttachment;
 
@@ -27,6 +28,7 @@ public class AttachmentAdapter extends ModelToMapAdapter<Attachment> {
 		 * overwritten
 		 */
 		map.put(UNDERSCORED_ID, input.getId());
+		map.put(UNDERSCORED_NAME, input.getName());
 		map.put(UNDERSCORED_CATEGORY, input.getCategory());
 		map.put(UNDERSCORED_DESCRIPTION, input.getDescription());
 		map.put(UNDERSCORED_VERSION, input.getVersion());
@@ -40,6 +42,7 @@ public class AttachmentAdapter extends ModelToMapAdapter<Attachment> {
 	protected Attachment mapToModel(final Map<String, Object> input) {
 		return newAttachment() //
 				.withId(getAndRemove(input, UNDERSCORED_ID, String.class)) //
+				.withName(getAndRemove(input, UNDERSCORED_NAME, String.class)) //
 				.withCategory(getAndRemove(input, UNDERSCORED_CATEGORY, String.class)) //
 				.withDescription(getAndRemove(input, UNDERSCORED_DESCRIPTION, String.class)) //
 				.withVersion(getAndRemove(input, UNDERSCORED_VERSION, String.class)) //

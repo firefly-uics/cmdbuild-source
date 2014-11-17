@@ -52,6 +52,7 @@ public class Builders {
 	public static class AttachmentBuilder extends ModelBuilder<Attachment> {
 
 		private String id;
+		private String name;
 		private String category;
 		private String description;
 		private String version;
@@ -68,6 +69,7 @@ public class Builders {
 		protected Attachment doBuild() {
 			final Attachment output = new Attachment();
 			output.setId(id);
+			output.setName(name);
 			output.setCategory(category);
 			output.setDescription(description);
 			output.setVersion(version);
@@ -80,6 +82,11 @@ public class Builders {
 
 		public AttachmentBuilder withId(final String id) {
 			this.id = id;
+			return this;
+		}
+
+		public AttachmentBuilder withName(final String name) {
+			this.name = name;
 			return this;
 		}
 

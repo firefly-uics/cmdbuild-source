@@ -9,6 +9,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.CREATED;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.METADATA;
 import static org.cmdbuild.service.rest.constants.Serialization.MODIFIED;
+import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.VERSION;
 
 import java.util.Date;
@@ -28,6 +29,7 @@ public class Attachment extends ModelWithId<String> {
 
 	private static final Map<String, Object> NO_METADATA = emptyMap();
 
+	private String name;
 	private String category;
 	private String description;
 	private String version;
@@ -38,6 +40,15 @@ public class Attachment extends ModelWithId<String> {
 
 	Attachment() {
 		// package visibility
+	}
+
+	@XmlAttribute(name = NAME)
+	public String getName() {
+		return name;
+	}
+
+	void setName(final String name) {
+		this.name = name;
 	}
 
 	@XmlAttribute(name = CATEGORY)
@@ -117,6 +128,7 @@ public class Attachment extends ModelWithId<String> {
 
 		return new EqualsBuilder() //
 				.append(this.getId(), other.getId()) //
+				.append(this.name, other.name) //
 				.append(this.category, other.category) //
 				.append(this.category, other.category) //
 				.append(this.description, other.description) //
@@ -132,6 +144,7 @@ public class Attachment extends ModelWithId<String> {
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
 				.append(this.getId()) //
+				.append(this.name) //
 				.append(this.category) //
 				.append(this.description) //
 				.append(this.version) //

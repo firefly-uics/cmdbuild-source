@@ -51,6 +51,24 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
+	public void missingAttachment() {
+		logger.error("missing attachment");
+		notFound("attachment");
+	}
+
+	@Override
+	public void missingAttachmentName() {
+		logger.error("missing attachment's name");
+		notFound("attachment's name");
+	}
+
+	@Override
+	public void missingFile() {
+		logger.error("missing file");
+		notFound("attachment's file");
+	}
+
+	@Override
 	public void missingParam(final String name) {
 		logger.error("missing param '{}'", name);
 		notFound(name);
