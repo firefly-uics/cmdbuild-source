@@ -57,6 +57,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
+	public void missingAttachmentId() {
+		logger.error("missing attachment's id");
+		notFound("attachment's id");
+	}
+
+	@Override
 	public void missingAttachmentName() {
 		logger.error("missing attachment's name");
 		notFound("attachment's name");

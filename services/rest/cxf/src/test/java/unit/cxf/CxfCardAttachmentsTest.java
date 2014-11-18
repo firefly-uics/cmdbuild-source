@@ -299,6 +299,141 @@ public class CxfCardAttachmentsTest {
 	}
 
 	@Test(expected = WebApplicationException.class)
+	public void missingClassOnUpdate() throws Exception {
+		// given
+		doReturn(null) //
+				.when(dataAccessLogic).findClass(anyString());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).classNotFound(eq("foo"));
+		final Attachment attachment = newAttachment() //
+				.build();
+		final DataSource dataSource = mock(DataSource.class);
+		final DataHandler dataHandler = new DataHandler(dataSource);
+
+		// when
+		cxfCardAttachments.update("foo", 123L, "bar", attachment, dataHandler);
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void missingCardOnUpdate() throws Exception {
+		// given
+		final CMClass targetClass = mock(CMClass.class);
+		doReturn(targetClass) //
+				.when(dataAccessLogic).findClass(anyString());
+		doThrow(new NoSuchElementException()) //
+				.when(dataAccessLogic).fetchCard(eq("foo"), eq(123L));
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).cardNotFound(eq(123L));
+		final Attachment attachment = newAttachment() //
+				.build();
+		final DataSource dataSource = mock(DataSource.class);
+		final DataHandler dataHandler = new DataHandler(dataSource);
+
+		// when
+		cxfCardAttachments.update("foo", 123L, "bar", attachment, dataHandler);
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void missingAttachmentIdOnUpdate() throws Exception {
+		// given
+		final CMClass targetClass = mock(CMClass.class);
+		doReturn("bar") //
+				.when(targetClass).getName();
+		doReturn(targetClass) //
+				.when(dataAccessLogic).findClass(anyString());
+		doReturn(Card.newInstance(targetClass).build()) //
+				.when(dataAccessLogic).fetchCard(anyString(), anyLong());
+		final Attachment attachment = newAttachment() //
+				.build();
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).missingAttachmentId();
+		final DataSource dataSource = mock(DataSource.class);
+		final DataHandler dataHandler = new DataHandler(dataSource);
+
+		// when
+		cxfCardAttachments.update("foo", 123L, null, attachment, dataHandler);
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void missingAttachmentOnUpdate() throws Exception {
+		// given
+		final CMClass targetClass = mock(CMClass.class);
+		doReturn("bar") //
+				.when(targetClass).getName();
+		doReturn(targetClass) //
+				.when(dataAccessLogic).findClass(anyString());
+		doReturn(Card.newInstance(targetClass).build()) //
+				.when(dataAccessLogic).fetchCard(anyString(), anyLong());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).missingAttachment();
+		final DataSource dataSource = mock(DataSource.class);
+		final DataHandler dataHandler = new DataHandler(dataSource);
+
+		// when
+		cxfCardAttachments.update("foo", 123L, "bar", null, dataHandler);
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void missingFileOnUpdate() throws Exception {
+		// given
+		final CMClass targetClass = mock(CMClass.class);
+		doReturn("bar") //
+				.when(targetClass).getName();
+		doReturn(targetClass) //
+				.when(dataAccessLogic).findClass(anyString());
+		doReturn(Card.newInstance(targetClass).build()) //
+				.when(dataAccessLogic).fetchCard(anyString(), anyLong());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).missingFile();
+		final Attachment attachment = newAttachment().build();
+
+		// when
+		cxfCardAttachments.update("foo", 123L, "bar", attachment, null);
+	}
+
+	@Test
+	public void logicCalledOnUpdate() throws Exception {
+		// given
+		final CMClass targetClass = mock(CMClass.class);
+		doReturn("bar") //
+				.when(targetClass).getName();
+		doReturn(targetClass) //
+				.when(dataAccessLogic).findClass(anyString());
+		doReturn(Card.newInstance(targetClass).build()) //
+				.when(dataAccessLogic).fetchCard(anyString(), anyLong());
+		doReturn(NO_METADATA) //
+				.when(dmsLogic).getCategoryDefinition(anyString());
+		final Attachment attachment = newAttachment() //
+				.withId("the id") //
+				.withName("the name") //
+				.withCategory("the category") //
+				.withDescription("the description") //
+				.withAuthor("the author") //
+				.withMetadata(ChainablePutMap.of(new HashMap<String, Object>()) //
+						.chainablePut("foo", "bar") //
+						.chainablePut("bar", "baz") //
+						.chainablePut("baz", "foo")) //
+				.build();
+		final InputStream inputStream = new NullInputStream(1024);
+		final DataSource dataSource = mock(DataSource.class);
+		doReturn(inputStream) //
+				.when(dataSource).getInputStream();
+		final DataHandler dataHandler = new DataHandler(dataSource);
+
+		// when
+		cxfCardAttachments.update("foo", 123L, "bar", attachment, dataHandler);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, dmsLogic, dataAccessLogic);
+		inOrder.verify(dataAccessLogic).findClass(eq("foo"));
+		inOrder.verify(dataAccessLogic).fetchCard(eq("foo"), eq(123L));
+		inOrder.verify(dmsLogic).getCategoryDefinition(eq("the category"));
+		inOrder.verify(dmsLogic).upload(eq("the author"), eq("foo"), eq(123L), same(inputStream), eq("bar"),
+				eq("the category"), eq("the description"), any(Iterable.class));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test(expected = WebApplicationException.class)
 	public void missingClassOnDelete() throws Exception {
 		// given
 		doReturn(null) //
