@@ -77,7 +77,7 @@ public class Services implements LoggingSupport {
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public CardAttachments cxfCardAttachments() {
 		final CxfCardAttachments service = new CxfCardAttachments(errorHandler(), helper.dmsLogic(),
-				helper.systemDataAccessLogic());
+				helper.systemDataAccessLogic(), helper.userStore());
 		return proxy(CardAttachments.class, service);
 	}
 

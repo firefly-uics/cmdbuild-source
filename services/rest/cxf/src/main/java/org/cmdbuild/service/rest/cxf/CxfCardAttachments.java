@@ -17,6 +17,7 @@ import java.util.NoSuchElementException;
 import javax.activation.DataHandler;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataDefinition;
@@ -66,12 +67,14 @@ public class CxfCardAttachments implements CardAttachments {
 	private final DmsLogic dmsLogic;
 	private final DataAccessLogic dataAccessLogic;
 	private final ErrorHandler errorHandler;
+	private final UserStore userStore;
 
 	public CxfCardAttachments(final ErrorHandler errorHandler, final DmsLogic dmsLogic,
-			final DataAccessLogic dataAccessLogic) {
+			final DataAccessLogic dataAccessLogic, final UserStore userStore) {
 		this.errorHandler = errorHandler;
 		this.dmsLogic = dmsLogic;
 		this.dataAccessLogic = dataAccessLogic;
+		this.userStore = userStore;
 	}
 
 	@Override
@@ -86,7 +89,7 @@ public class CxfCardAttachments implements CardAttachments {
 		if (dataHandler == null) {
 			errorHandler.missingFile();
 		}
-		upload(classId, cardId, attachment.getName(), attachment, dataHandler, metadataGroupsOf(attachment));
+		upload(classId, cardId, attachment.getName(), withAuthor(attachment), dataHandler, metadataGroupsOf(attachment));
 		return newResponseSingle(String.class) //
 				.withElement(attachment.getName()) //
 				.build();
@@ -127,7 +130,7 @@ public class CxfCardAttachments implements CardAttachments {
 		if (dataHandler == null) {
 			errorHandler.missingFile();
 		}
-		upload(classId, cardId, attachmentId, attachment, dataHandler, metadataGroupsOf(attachment));
+		upload(classId, cardId, attachmentId, withAuthor(attachment), dataHandler, metadataGroupsOf(attachment));
 	}
 
 	@Override
@@ -146,6 +149,12 @@ public class CxfCardAttachments implements CardAttachments {
 		} catch (final NoSuchElementException e) {
 			errorHandler.cardNotFound(cardId);
 		}
+	}
+
+	private Attachment withAuthor(final Attachment attachment) {
+		return newAttachment(attachment) //
+				.withAuthor(userStore.getUser().getAuthenticatedUser().getUsername()) //
+				.build();
 	}
 
 	private Collection<MetadataGroup> metadataGroupsOf(final Attachment attachment) {

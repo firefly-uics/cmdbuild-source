@@ -10,6 +10,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.Boolean.FALSE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
@@ -51,6 +52,8 @@ public class Models {
 
 	public static class AttachmentBuilder extends ModelBuilder<Attachment> {
 
+		private static final Map<String, Object> NO_METADATA = emptyMap();
+
 		private String id;
 		private String name;
 		private String category;
@@ -63,6 +66,19 @@ public class Models {
 
 		private AttachmentBuilder() {
 			// use factory method
+		}
+
+		private AttachmentBuilder(final Attachment existing) {
+			// use factory method
+			this.id = existing.getId();
+			this.name = existing.getName();
+			this.category = existing.getCategory();
+			this.description = existing.getDescription();
+			this.version = existing.getVersion();
+			this.author = existing.getAuthor();
+			this.created = existing.getCreated();
+			this.modified = existing.getModified();
+			this.metadata = newHashMap(defaultIfNull(existing.getMetadata(), NO_METADATA));
 		}
 
 		@Override
@@ -526,67 +542,6 @@ public class Models {
 
 		public ClassWithFullDetailsBuilder withParent(final String parent) {
 			this.parent = parent;
-			return this;
-		}
-
-	}
-
-	public static class SessionBuilder extends ModelBuilder<Session> {
-
-		private static final Collection<String> NO_ROLES = emptyList();
-
-		private String id;
-		private String username;
-		private String password;
-		private String role;
-		private final Collection<String> availableRoles = newHashSet();
-
-		private SessionBuilder() {
-			// use factory method
-		}
-
-		private SessionBuilder(final Session existing) {
-			// use factory method
-			this.id = existing.getId();
-			this.username = existing.getUsername();
-			this.password = existing.getPassword();
-			this.role = existing.getRole();
-			this.availableRoles.addAll(defaultIfNull(existing.getAvailableRoles(), NO_ROLES));
-		}
-
-		@Override
-		protected Session doBuild() {
-			final Session output = new Session();
-			output.setId(id);
-			output.setUsername(username);
-			output.setPassword(password);
-			output.setRole(role);
-			output.setAvailableRoles(availableRoles);
-			return output;
-		}
-
-		public SessionBuilder withId(final String id) {
-			this.id = id;
-			return this;
-		}
-
-		public SessionBuilder withUsername(final String username) {
-			this.username = username;
-			return this;
-		}
-
-		public SessionBuilder withPassword(final String password) {
-			this.password = password;
-			return this;
-		}
-
-		public SessionBuilder withRole(final String role) {
-			this.role = role;
-			return this;
-		}
-
-		public SessionBuilder withAvailableRoles(final Iterable<String> availableRoles) {
-			addAll(this.availableRoles, defaultIfNull(availableRoles, NO_ROLES));
 			return this;
 		}
 
@@ -1380,8 +1335,73 @@ public class Models {
 
 	}
 
+	public static class SessionBuilder extends ModelBuilder<Session> {
+
+		private static final Collection<String> NO_ROLES = emptyList();
+
+		private String id;
+		private String username;
+		private String password;
+		private String role;
+		private final Collection<String> availableRoles = newHashSet();
+
+		private SessionBuilder() {
+			// use factory method
+		}
+
+		private SessionBuilder(final Session existing) {
+			// use factory method
+			this.id = existing.getId();
+			this.username = existing.getUsername();
+			this.password = existing.getPassword();
+			this.role = existing.getRole();
+			this.availableRoles.addAll(defaultIfNull(existing.getAvailableRoles(), NO_ROLES));
+		}
+
+		@Override
+		protected Session doBuild() {
+			final Session output = new Session();
+			output.setId(id);
+			output.setUsername(username);
+			output.setPassword(password);
+			output.setRole(role);
+			output.setAvailableRoles(availableRoles);
+			return output;
+		}
+
+		public SessionBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public SessionBuilder withUsername(final String username) {
+			this.username = username;
+			return this;
+		}
+
+		public SessionBuilder withPassword(final String password) {
+			this.password = password;
+			return this;
+		}
+
+		public SessionBuilder withRole(final String role) {
+			this.role = role;
+			return this;
+		}
+
+		public SessionBuilder withAvailableRoles(final Iterable<String> availableRoles) {
+			addAll(this.availableRoles, defaultIfNull(availableRoles, NO_ROLES));
+			return this;
+		}
+
+	}
+
 	public static AttachmentBuilder newAttachment() {
 		return new AttachmentBuilder();
+	}
+
+	public static AttachmentBuilder newAttachment(final Attachment existing) {
+		return new AttachmentBuilder(existing);
 	}
 
 	public static AttachmentCategoryBuilder newAttachmentCategory() {
@@ -1406,14 +1426,6 @@ public class Models {
 
 	public static ClassWithFullDetailsBuilder newClassWithFullDetails() {
 		return new ClassWithFullDetailsBuilder();
-	}
-
-	public static SessionBuilder newSession() {
-		return new SessionBuilder();
-	}
-
-	public static SessionBuilder newSession(final Session existing) {
-		return new SessionBuilder(existing);
 	}
 
 	public static DomainWithBasicDetailsBuilder newDomainWithBasicDetails() {
@@ -1488,6 +1500,14 @@ public class Models {
 
 	public static <T> ResponseMultipleBuilder<T> newResponseMultiple(final Class<T> type) {
 		return newResponseMultiple();
+	}
+
+	public static SessionBuilder newSession() {
+		return new SessionBuilder();
+	}
+
+	public static SessionBuilder newSession(final Session existing) {
+		return new SessionBuilder(existing);
 	}
 
 	private Models() {
