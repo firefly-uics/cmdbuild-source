@@ -14,6 +14,8 @@ public interface ErrorHandler {
 
 	void missingAttachment();
 
+	void missingAttachmentId();
+
 	void missingAttachmentName();
 
 	void missingFile();

@@ -39,6 +39,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
@@ -209,7 +210,7 @@ public class CardAttachmentsTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("classes/dummy/cards/123/attachments/foo"));
+		final GetMethod get = new GetMethod(server.resource("classes/dummy/cards/123/attachments/foo/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
@@ -218,6 +219,56 @@ public class CardAttachmentsTest {
 
 		assertThat(result, equalTo(200));
 		assertThat(toByteArray(get.getResponseBodyAsStream()), equalTo(toByteArray(expectedResponse.getInputStream())));
+	}
+
+	@Test
+	public void update() throws Exception {
+		// given
+		final File file = temporaryFolder.newFile();
+		write(file, "blah blah blah");
+
+		// when
+		final PutMethod put = new PutMethod(server.resource("classes/dummy/cards/123/attachments/somefile/"));
+		final Part[] parts = { new StringPart(UNDERSCORED_ATTACHMENT, "{" //
+				+ "    \"_name\" : \"the name\"," //
+				+ "    \"_category\" : \"the category\"," //
+				+ "    \"_description\" : \"the description\"," //
+				+ "    \"foo\" : \"bar\"," //
+				+ "    \"bar\" : \"baz\"," //
+				+ "    \"baz\" : \"foo\"" //
+				+ "}") {
+
+			@Override
+			public String getContentType() {
+				return APPLICATION_JSON;
+			}
+
+		}, new FilePart(UNDERSCORED_FILE, file) };
+		put.setRequestEntity(new MultipartRequestEntity(parts, put.getParams()));
+		final int result = httpclient.executeMethod(put);
+
+		// then
+		final ArgumentCaptor<Attachment> attachmentCaptor = ArgumentCaptor.forClass(Attachment.class);
+		final ArgumentCaptor<DataHandler> dataHandlerCaptor = ArgumentCaptor.forClass(DataHandler.class);
+		verify(service).update(eq("dummy"), eq(123L), eq("somefile"), attachmentCaptor.capture(), //
+				dataHandlerCaptor.capture() //
+				);
+		verifyNoMoreInteractions(service);
+
+		final Attachment attachment = attachmentCaptor.getValue();
+		assertThat(attachment, equalTo(newAttachment() //
+				.withName("the name") //
+				.withCategory("the category") //
+				.withDescription("the description") //
+				.withMetadata(ChainablePutMap.of(new HashMap<String, Object>()) //
+						.chainablePut("foo", "bar") //
+						.chainablePut("bar", "baz") //
+						.chainablePut("baz", "foo")) //
+				.build()));
+		final DataHandler dataHandler = dataHandlerCaptor.getValue();
+		assertThat(toByteArray(new FileInputStream(file)), equalTo(toByteArray(dataHandler.getInputStream())));
+
+		assertThat(result, equalTo(204));
 	}
 
 	@Test
