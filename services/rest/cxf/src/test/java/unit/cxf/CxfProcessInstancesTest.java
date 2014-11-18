@@ -3,7 +3,7 @@ package unit.cxf;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.model.Builders.newProcessInstanceAdvance;
+import static org.cmdbuild.service.rest.model.Models.newProcessInstanceAdvance;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;

@@ -1,10 +1,10 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.model.Builders.newLookupTypeDetail;
-import static org.cmdbuild.service.rest.model.Builders.newMetadata;
-import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
-import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Models.newLookupTypeDetail;
+import static org.cmdbuild.service.rest.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;

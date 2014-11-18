@@ -1,7 +1,7 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.cmdbuild.service.rest.model.Builders.newProcessActivityWithBasicDetails;
+import static org.cmdbuild.service.rest.model.Models.newProcessActivityWithBasicDetails;
 
 import org.cmdbuild.service.rest.model.ProcessActivityWithBasicDetails;
 import org.cmdbuild.workflow.user.UserActivityInstance;

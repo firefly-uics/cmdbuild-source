@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.model.Builders.newProcessWithFullDetails;
+import static org.cmdbuild.service.rest.model.Models.newProcessWithFullDetails;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.service.rest.model.ProcessWithFullDetails;

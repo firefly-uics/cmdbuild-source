@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.model.Builders.newClassWithFullDetails;
+import static org.cmdbuild.service.rest.model.Models.newClassWithFullDetails;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.service.rest.model.ClassWithFullDetails;

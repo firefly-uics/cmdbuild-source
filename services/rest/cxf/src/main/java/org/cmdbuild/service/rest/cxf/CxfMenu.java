@@ -1,8 +1,8 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.service.rest.model.Builders.newMenu;
-import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Models.newMenu;
+import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 import static org.cmdbuild.services.store.menu.Comparators.byIndex;
 
 import org.cmdbuild.dao.entrytype.CMClass;

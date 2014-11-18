@@ -8,7 +8,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_MODIFIED;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_VERSION;
-import static org.cmdbuild.service.rest.model.Builders.newAttachment;
+import static org.cmdbuild.service.rest.model.Models.newAttachment;
 
 import java.util.Date;
 import java.util.Map;

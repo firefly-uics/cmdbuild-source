@@ -1,7 +1,7 @@
 package unit.cxf;
 
 import static java.util.Collections.emptyList;
-import static org.cmdbuild.service.rest.model.Builders.newAttachment;
+import static org.cmdbuild.service.rest.model.Models.newAttachment;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;

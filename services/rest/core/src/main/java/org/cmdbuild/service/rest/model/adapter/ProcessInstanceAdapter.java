@@ -3,7 +3,7 @@ package org.cmdbuild.service.rest.model.adapter;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
-import static org.cmdbuild.service.rest.model.Builders.newProcessInstance;
+import static org.cmdbuild.service.rest.model.Models.newProcessInstance;
 
 import java.util.Map;
 

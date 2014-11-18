@@ -8,10 +8,10 @@ import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
-import static org.cmdbuild.service.rest.model.Builders.newCard;
-import static org.cmdbuild.service.rest.model.Builders.newMetadata;
-import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
-import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Models.newCard;
+import static org.cmdbuild.service.rest.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
@@ -39,8 +39,8 @@ import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.Cards;
-import org.cmdbuild.service.rest.model.Builders;
 import org.cmdbuild.service.rest.model.Card;
+import org.cmdbuild.service.rest.model.Models;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.junit.Before;
@@ -102,7 +102,7 @@ public class CardsTest {
 						.build()) //
 				.build();
 		@SuppressWarnings("unchecked")
-		final ResponseMultiple<Map<String, Object>> expectedResponse = Builders
+		final ResponseMultiple<Map<String, Object>> expectedResponse = Models
 				.<Map<String, Object>> newResponseMultiple() //
 				.withElements(Arrays.<Map<String, Object>> asList( //
 						ChainablePutMap.of(new HashMap<String, Object>()) //
@@ -187,7 +187,7 @@ public class CardsTest {
 						.build() //
 				) //
 				.build();
-		final ResponseSingle<Map<String, Object>> expectedResponse = Builders.<Map<String, Object>> newResponseSingle() //
+		final ResponseSingle<Map<String, Object>> expectedResponse = Models.<Map<String, Object>> newResponseSingle() //
 				.withElement(ChainablePutMap.of(new HashMap<String, Object>()) //
 						.chainablePut(UNDERSCORED_TYPE, type) //
 						.chainablePut(UNDERSCORED_ID, firstId) //

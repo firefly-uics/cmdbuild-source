@@ -5,10 +5,10 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.CharEncoding.UTF_8;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
-import static org.cmdbuild.service.rest.model.Builders.newMetadata;
-import static org.cmdbuild.service.rest.model.Builders.newProcessInstance;
-import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
-import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.model.Models.newProcessInstance;
+import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
@@ -35,7 +35,7 @@ import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.ProcessInstances;
-import org.cmdbuild.service.rest.model.Builders;
+import org.cmdbuild.service.rest.model.Models;
 import org.cmdbuild.service.rest.model.ProcessInstance;
 import org.cmdbuild.service.rest.model.ProcessInstanceAdvanceable;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
@@ -119,7 +119,7 @@ public class ProcessInstancesTest {
 		final ResponseSingle<ProcessInstance> sentResponse = newResponseSingle(ProcessInstance.class) //
 				.withElement(processInstance) //
 				.build();
-		final ResponseSingle<Map<String, Object>> expectedResponse = Builders.<Map<String, Object>> newResponseSingle() //
+		final ResponseSingle<Map<String, Object>> expectedResponse = Models.<Map<String, Object>> newResponseSingle() //
 				.withElement(adapter.marshal(processInstance)) //
 				.build();
 		doReturn(sentResponse) //
@@ -159,7 +159,7 @@ public class ProcessInstancesTest {
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		final ResponseMultiple<Map<String, Object>> expectedResponse = Builders
+		final ResponseMultiple<Map<String, Object>> expectedResponse = Models
 				.<Map<String, Object>> newResponseMultiple() //
 				.withElement(adapter.marshal(first)) //
 				.withElement(adapter.marshal(second)) //

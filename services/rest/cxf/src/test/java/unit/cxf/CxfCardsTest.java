@@ -1,6 +1,6 @@
 package unit.cxf;
 
-import static org.cmdbuild.service.rest.model.Builders.newCard;
+import static org.cmdbuild.service.rest.model.Models.newCard;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;

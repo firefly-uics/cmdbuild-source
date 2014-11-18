@@ -26,7 +26,7 @@ import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails.AttributeS
 
 import com.google.common.base.Function;
 
-public class Builders {
+public class Models {
 
 	private static abstract class ModelBuilder<T> implements org.apache.commons.lang3.builder.Builder<T> {
 
@@ -1490,7 +1490,7 @@ public class Builders {
 		return newResponseMultiple();
 	}
 
-	private Builders() {
+	private Models() {
 		// prevents instantation
 	}
 

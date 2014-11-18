@@ -11,7 +11,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_SOUR
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_SOURCE_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_SOURCE_TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
-import static org.cmdbuild.service.rest.model.Builders.newRelation;
+import static org.cmdbuild.service.rest.model.Models.newRelation;
 
 import java.util.Map;
 

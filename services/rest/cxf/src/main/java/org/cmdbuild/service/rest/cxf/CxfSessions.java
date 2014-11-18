@@ -4,8 +4,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.auth.UserStores.inMemory;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.cmdbuild.service.rest.constants.Serialization.GROUP;
-import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
-import static org.cmdbuild.service.rest.model.Builders.newSession;
+import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Models.newSession;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.CMGroup;

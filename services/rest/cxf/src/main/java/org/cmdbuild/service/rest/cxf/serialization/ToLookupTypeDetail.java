@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.model.Builders.newLookupTypeDetail;
+import static org.cmdbuild.service.rest.model.Models.newLookupTypeDetail;
 
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.service.rest.model.LookupTypeDetail;

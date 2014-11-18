@@ -10,10 +10,10 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_DESC
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_FILE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
-import static org.cmdbuild.service.rest.model.Builders.newAttachment;
-import static org.cmdbuild.service.rest.model.Builders.newMetadata;
-import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
-import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Models.newAttachment;
+import static org.cmdbuild.service.rest.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -47,7 +47,7 @@ import org.apache.commons.httpclient.methods.multipart.StringPart;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.CardAttachments;
 import org.cmdbuild.service.rest.model.Attachment;
-import org.cmdbuild.service.rest.model.Builders;
+import org.cmdbuild.service.rest.model.Models;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.junit.Before;
@@ -166,7 +166,7 @@ public class CardAttachmentsTest {
 						.build()) //
 				.build();
 		@SuppressWarnings("unchecked")
-		final ResponseMultiple<Map<String, Object>> expectedResponse = Builders
+		final ResponseMultiple<Map<String, Object>> expectedResponse = Models
 				.<Map<String, Object>> newResponseMultiple() //
 				.withElements(Arrays.<Map<String, Object>> asList( //
 						ChainablePutMap.of(new HashMap<String, Object>()) //
