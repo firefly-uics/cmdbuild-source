@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.model.Builders.newCard;
+import static org.cmdbuild.service.rest.model.Models.newCard;
 
 import java.util.Map;
 import java.util.Map.Entry;

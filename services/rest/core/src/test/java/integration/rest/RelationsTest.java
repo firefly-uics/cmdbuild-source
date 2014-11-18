@@ -4,10 +4,10 @@ import static java.util.Arrays.asList;
 import static org.cmdbuild.service.rest.constants.Serialization.CARD_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.CLASS_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.DOMAIN_SOURCE;
-import static org.cmdbuild.service.rest.model.Builders.newCard;
-import static org.cmdbuild.service.rest.model.Builders.newMetadata;
-import static org.cmdbuild.service.rest.model.Builders.newRelation;
-import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Models.newCard;
+import static org.cmdbuild.service.rest.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.model.Models.newRelation;
+import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -30,7 +30,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.Relations;
-import org.cmdbuild.service.rest.model.Builders;
+import org.cmdbuild.service.rest.model.Models;
 import org.cmdbuild.service.rest.model.Relation;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.adapter.RelationAdapter;
@@ -108,7 +108,7 @@ public class RelationsTest {
 				.build();
 		final RelationAdapter relationAdapter = new RelationAdapter();
 		@SuppressWarnings("unchecked")
-		final ResponseMultiple<Map<String, Object>> expectedResponse = Builders
+		final ResponseMultiple<Map<String, Object>> expectedResponse = Models
 				.<Map<String, Object>> newResponseMultiple() //
 				.withElements(Arrays.<Map<String, Object>> asList( //
 						relationAdapter.marshal(firstRelation), //

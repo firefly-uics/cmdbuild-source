@@ -2,7 +2,7 @@ package org.cmdbuild.service.rest.cxf.serialization;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.cmdbuild.service.rest.cxf.serialization.ToAttribute.toAttribute;
-import static org.cmdbuild.service.rest.model.Builders.newProcessActivityWithFullDetails;
+import static org.cmdbuild.service.rest.model.Models.newProcessActivityWithFullDetails;
 
 import java.util.List;
 

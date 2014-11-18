@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.model.Builders.newAttachmentCategory;
+import static org.cmdbuild.service.rest.model.Models.newAttachmentCategory;
 
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.service.rest.model.AttachmentCategory;

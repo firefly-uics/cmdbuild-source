@@ -7,7 +7,7 @@ import static org.apache.cxf.message.Message.PROTOCOL_HEADERS;
 import static org.cmdbuild.auth.UserStores.inMemory;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.cmdbuild.service.rest.cxf.security.TokenHandler.TOKEN_HEADER;
-import static org.cmdbuild.service.rest.model.Builders.newSession;
+import static org.cmdbuild.service.rest.model.Models.newSession;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;

@@ -5,7 +5,7 @@ import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
-import static org.cmdbuild.service.rest.model.Builders.newProcessInstance;
+import static org.cmdbuild.service.rest.model.Models.newProcessInstance;
 
 import java.util.Map;
 import java.util.Map.Entry;

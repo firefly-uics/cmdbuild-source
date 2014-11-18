@@ -6,7 +6,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ADVA
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
-import static org.cmdbuild.service.rest.model.Builders.newProcessInstanceAdvance;
+import static org.cmdbuild.service.rest.model.Models.newProcessInstanceAdvance;
 
 import java.util.Map;
 

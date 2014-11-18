@@ -3,10 +3,10 @@ package org.cmdbuild.service.rest.cxf;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Lists.newArrayList;
-import static org.cmdbuild.service.rest.model.Builders.newCard;
-import static org.cmdbuild.service.rest.model.Builders.newMetadata;
-import static org.cmdbuild.service.rest.model.Builders.newRelation;
-import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Models.newCard;
+import static org.cmdbuild.service.rest.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.model.Models.newRelation;
+import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 
 import java.util.List;
 

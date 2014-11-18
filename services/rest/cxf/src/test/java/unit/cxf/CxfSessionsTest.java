@@ -3,7 +3,7 @@ package unit.cxf;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Arrays.asList;
 import static org.cmdbuild.service.rest.constants.Serialization.GROUP;
-import static org.cmdbuild.service.rest.model.Builders.newSession;
+import static org.cmdbuild.service.rest.model.Models.newSession;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;

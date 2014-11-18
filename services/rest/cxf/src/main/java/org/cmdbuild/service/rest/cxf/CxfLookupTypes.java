@@ -1,9 +1,9 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.service.rest.model.Builders.newMetadata;
-import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
-import static org.cmdbuild.service.rest.model.Builders.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.data.store.lookup.LookupType;

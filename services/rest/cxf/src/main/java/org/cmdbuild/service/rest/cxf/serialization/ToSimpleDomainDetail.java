@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.model.Builders.newDomainWithBasicDetails;
+import static org.cmdbuild.service.rest.model.Models.newDomainWithBasicDetails;
 
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.service.rest.model.DomainWithBasicDetails;

@@ -2,7 +2,7 @@ package org.cmdbuild.service.rest.model.adapter;
 
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
-import static org.cmdbuild.service.rest.model.Builders.newCard;
+import static org.cmdbuild.service.rest.model.Models.newCard;
 
 import java.util.Map;
 

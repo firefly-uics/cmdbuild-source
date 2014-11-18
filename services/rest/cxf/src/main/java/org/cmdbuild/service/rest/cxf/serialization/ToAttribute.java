@@ -1,6 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
-import static org.cmdbuild.service.rest.model.Builders.newAttributeStatus;
+import static org.cmdbuild.service.rest.model.Models.newAttributeStatus;
 
 import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails.AttributeStatus;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;

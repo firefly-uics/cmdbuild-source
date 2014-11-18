@@ -3,9 +3,9 @@ package org.cmdbuild.service.rest.cxf;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Maps.newLinkedHashMap;
-import static org.cmdbuild.service.rest.model.Builders.newAttribute;
-import static org.cmdbuild.service.rest.model.Builders.newMetadata;
-import static org.cmdbuild.service.rest.model.Builders.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Models.newAttribute;
+import static org.cmdbuild.service.rest.model.Models.newMetadata;
+import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 
 import java.util.Map;
 
@@ -18,7 +18,7 @@ import org.cmdbuild.service.rest.cxf.serialization.ToAttachmentCategory;
 import org.cmdbuild.service.rest.model.AttachmentCategory;
 import org.cmdbuild.service.rest.model.Attribute;
 import org.cmdbuild.service.rest.model.AttributeType;
-import org.cmdbuild.service.rest.model.Builders.AttributeBuilder;
+import org.cmdbuild.service.rest.model.Models.AttributeBuilder;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 
 public class CxfAttachmentsConfiguration implements AttachmentsConfiguration {
