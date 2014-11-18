@@ -21,6 +21,11 @@ import javax.activation.DataSource;
 import javax.ws.rs.WebApplicationException;
 
 import org.apache.commons.io.input.NullInputStream;
+import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.acl.NullGroup;
+import org.cmdbuild.auth.context.NullPrivilegeContext;
+import org.cmdbuild.auth.user.AuthenticatedUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dms.DocumentTypeDefinition;
@@ -56,6 +61,7 @@ public class CxfCardAttachmentsTest {
 	private ErrorHandler errorHandler;
 	private DmsLogic dmsLogic;
 	private DataAccessLogic dataAccessLogic;
+	private UserStore userStore;
 
 	private CxfCardAttachments cxfCardAttachments;
 
@@ -64,7 +70,15 @@ public class CxfCardAttachmentsTest {
 		errorHandler = mock(ErrorHandler.class);
 		dmsLogic = mock(DmsLogic.class);
 		dataAccessLogic = mock(DataAccessLogic.class);
-		cxfCardAttachments = new CxfCardAttachments(errorHandler, dmsLogic, dataAccessLogic);
+		userStore = mock(UserStore.class);
+		cxfCardAttachments = new CxfCardAttachments(errorHandler, dmsLogic, dataAccessLogic, userStore);
+
+		final AuthenticatedUser authUser = mock(AuthenticatedUser.class);
+		doReturn("dummy user") //
+				.when(authUser).getUsername();
+		final OperationUser operationUser = new OperationUser(authUser, new NullPrivilegeContext(), new NullGroup());
+		doReturn(operationUser) //
+				.when(userStore).getUser();
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -191,11 +205,12 @@ public class CxfCardAttachmentsTest {
 		cxfCardAttachments.create("foo", 123L, attachment, dataHandler);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, dataAccessLogic);
+		final InOrder inOrder = inOrder(errorHandler, dmsLogic, dataAccessLogic, userStore);
 		inOrder.verify(dataAccessLogic).findClass(eq("foo"));
 		inOrder.verify(dataAccessLogic).fetchCard(eq("foo"), eq(123L));
+		inOrder.verify(userStore).getUser();
 		inOrder.verify(dmsLogic).getCategoryDefinition(eq("the category"));
-		inOrder.verify(dmsLogic).upload(eq("the author"), eq("foo"), eq(123L), same(inputStream), eq("the name"),
+		inOrder.verify(dmsLogic).upload(eq("dummy user"), eq("foo"), eq(123L), same(inputStream), eq("the name"),
 				eq("the category"), eq("the description"), any(Iterable.class));
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -242,7 +257,7 @@ public class CxfCardAttachmentsTest {
 		cxfCardAttachments.read("foo", 123L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, dataAccessLogic);
+		final InOrder inOrder = inOrder(errorHandler, dmsLogic, dataAccessLogic, userStore);
 		inOrder.verify(dataAccessLogic).findClass(eq("foo"));
 		inOrder.verify(dataAccessLogic).fetchCard(eq("foo"), eq(123L));
 		inOrder.verify(dmsLogic).search(eq("foo"), eq(123L));
@@ -291,7 +306,7 @@ public class CxfCardAttachmentsTest {
 		cxfCardAttachments.read("foo", 123L, "bar");
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, dataAccessLogic);
+		final InOrder inOrder = inOrder(errorHandler, dmsLogic, dataAccessLogic, userStore);
 		inOrder.verify(dataAccessLogic).findClass(eq("foo"));
 		inOrder.verify(dataAccessLogic).fetchCard(eq("foo"), eq(123L));
 		inOrder.verify(dmsLogic).download(eq("foo"), eq(123L), eq("bar"));
@@ -424,11 +439,12 @@ public class CxfCardAttachmentsTest {
 		cxfCardAttachments.update("foo", 123L, "bar", attachment, dataHandler);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, dataAccessLogic);
+		final InOrder inOrder = inOrder(errorHandler, dmsLogic, dataAccessLogic, userStore);
 		inOrder.verify(dataAccessLogic).findClass(eq("foo"));
 		inOrder.verify(dataAccessLogic).fetchCard(eq("foo"), eq(123L));
+		inOrder.verify(userStore).getUser();
 		inOrder.verify(dmsLogic).getCategoryDefinition(eq("the category"));
-		inOrder.verify(dmsLogic).upload(eq("the author"), eq("foo"), eq(123L), same(inputStream), eq("bar"),
+		inOrder.verify(dmsLogic).upload(eq("dummy user"), eq("foo"), eq(123L), same(inputStream), eq("bar"),
 				eq("the category"), eq("the description"), any(Iterable.class));
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -475,7 +491,7 @@ public class CxfCardAttachmentsTest {
 		cxfCardAttachments.delete("foo", 123L, "bar");
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, dataAccessLogic);
+		final InOrder inOrder = inOrder(errorHandler, dmsLogic, dataAccessLogic, userStore);
 		inOrder.verify(dataAccessLogic).findClass(eq("foo"));
 		inOrder.verify(dataAccessLogic).fetchCard(eq("foo"), eq(123L));
 		inOrder.verify(dmsLogic).delete(eq("foo"), eq(123L), eq("bar"));
