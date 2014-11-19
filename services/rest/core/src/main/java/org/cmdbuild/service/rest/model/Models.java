@@ -50,9 +50,9 @@ public class Models {
 
 	}
 
-	public static class AttachmentBuilder extends ModelBuilder<Attachment> {
+	public static class AttachmentMetadataBuilder extends ModelBuilder<AttachmentMetadata> {
 
-		private static final Map<String, Object> NO_METADATA = emptyMap();
+		private static final Map<String, Object> NO_EXTRA = emptyMap();
 
 		private String id;
 		private String name;
@@ -62,13 +62,13 @@ public class Models {
 		private String author;
 		private Date created;
 		private Date modified;
-		private Map<String, Object> metadata;
+		private Map<String, Object> extra;
 
-		private AttachmentBuilder() {
+		private AttachmentMetadataBuilder() {
 			// use factory method
 		}
 
-		private AttachmentBuilder(final Attachment existing) {
+		private AttachmentMetadataBuilder(final AttachmentMetadata existing) {
 			// use factory method
 			this.id = existing.getId();
 			this.name = existing.getName();
@@ -78,12 +78,12 @@ public class Models {
 			this.author = existing.getAuthor();
 			this.created = existing.getCreated();
 			this.modified = existing.getModified();
-			this.metadata = newHashMap(defaultIfNull(existing.getMetadata(), NO_METADATA));
+			this.extra = newHashMap(defaultIfNull(existing.getExtra(), NO_EXTRA));
 		}
 
 		@Override
-		protected Attachment doBuild() {
-			final Attachment output = new Attachment();
+		protected AttachmentMetadata doBuild() {
+			final AttachmentMetadata output = new AttachmentMetadata();
 			output.setId(id);
 			output.setName(name);
 			output.setCategory(category);
@@ -92,52 +92,52 @@ public class Models {
 			output.setAuthor(author);
 			output.setCreated(created);
 			output.setModified(modified);
-			output.setMetadata(metadata);
+			output.setExtra(extra);
 			return output;
 		}
 
-		public AttachmentBuilder withId(final String id) {
+		public AttachmentMetadataBuilder withId(final String id) {
 			this.id = id;
 			return this;
 		}
 
-		public AttachmentBuilder withName(final String name) {
+		public AttachmentMetadataBuilder withName(final String name) {
 			this.name = name;
 			return this;
 		}
 
-		public AttachmentBuilder withCategory(final String category) {
+		public AttachmentMetadataBuilder withCategory(final String category) {
 			this.category = category;
 			return this;
 		}
 
-		public AttachmentBuilder withDescription(final String description) {
+		public AttachmentMetadataBuilder withDescription(final String description) {
 			this.description = description;
 			return this;
 		}
 
-		public AttachmentBuilder withVersion(final String version) {
+		public AttachmentMetadataBuilder withVersion(final String version) {
 			this.version = version;
 			return this;
 		}
 
-		public AttachmentBuilder withAuthor(final String author) {
+		public AttachmentMetadataBuilder withAuthor(final String author) {
 			this.author = author;
 			return this;
 		}
 
-		public AttachmentBuilder withCreated(final Date created) {
+		public AttachmentMetadataBuilder withCreated(final Date created) {
 			this.created = created;
 			return this;
 		}
 
-		public AttachmentBuilder withModified(final Date modified) {
+		public AttachmentMetadataBuilder withModified(final Date modified) {
 			this.modified = modified;
 			return this;
 		}
 
-		public AttachmentBuilder withMetadata(final Map<String, Object> metadata) {
-			this.metadata = metadata;
+		public AttachmentMetadataBuilder withExtra(final Map<String, Object> extra) {
+			this.extra = extra;
 			return this;
 		}
 
@@ -1396,12 +1396,12 @@ public class Models {
 
 	}
 
-	public static AttachmentBuilder newAttachment() {
-		return new AttachmentBuilder();
+	public static AttachmentMetadataBuilder newAttachmentMetadata() {
+		return new AttachmentMetadataBuilder();
 	}
 
-	public static AttachmentBuilder newAttachment(final Attachment existing) {
-		return new AttachmentBuilder(existing);
+	public static AttachmentMetadataBuilder newAttachmentMetadata(final AttachmentMetadata existing) {
+		return new AttachmentMetadataBuilder(existing);
 	}
 
 	public static AttachmentCategoryBuilder newAttachmentCategory() {

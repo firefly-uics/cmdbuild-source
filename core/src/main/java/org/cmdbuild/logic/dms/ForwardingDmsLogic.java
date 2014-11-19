@@ -14,6 +14,8 @@ import org.cmdbuild.dms.exception.DmsError;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 
+import com.google.common.base.Optional;
+
 public abstract class ForwardingDmsLogic implements DmsLogic {
 
 	private final DmsLogic delegate;
@@ -50,6 +52,11 @@ public abstract class ForwardingDmsLogic implements DmsLogic {
 	@Override
 	public List<StoredDocument> search(final String className, final Long cardId) {
 		return delegate.search(className, cardId);
+	}
+	
+	@Override
+	public Optional<StoredDocument> search(String className, Long cardId, String fileName) {
+		return delegate.search(className, cardId, fileName);
 	}
 
 	@Override

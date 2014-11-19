@@ -11,6 +11,12 @@ import org.cmdbuild.service.rest.logging.LoggingSupport;
 public class WebApplicationExceptionErrorHandler implements ErrorHandler, LoggingSupport {
 
 	@Override
+	public void attachmentNotFound(final String id) {
+		logger.error("attachment not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
 	public void cardNotFound(final Long id) {
 		logger.error("card not found '{}'", id);
 		notFound(id);
@@ -51,21 +57,15 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
-	public void missingAttachment() {
-		logger.error("missing attachment");
-		notFound("attachment");
-	}
-
-	@Override
 	public void missingAttachmentId() {
 		logger.error("missing attachment's id");
 		notFound("attachment's id");
 	}
 
 	@Override
-	public void missingAttachmentName() {
-		logger.error("missing attachment's name");
-		notFound("attachment's name");
+	public void missingAttachmentMetadata() {
+		logger.error("missing attachment's metadata");
+		notFound("attachment's metadata");
 	}
 
 	@Override

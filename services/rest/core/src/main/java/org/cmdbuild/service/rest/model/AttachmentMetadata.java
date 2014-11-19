@@ -7,7 +7,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.AUTHOR;
 import static org.cmdbuild.service.rest.constants.Serialization.CATEGORY;
 import static org.cmdbuild.service.rest.constants.Serialization.CREATED;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
-import static org.cmdbuild.service.rest.constants.Serialization.METADATA;
+import static org.cmdbuild.service.rest.constants.Serialization.EXTRA;
 import static org.cmdbuild.service.rest.constants.Serialization.MODIFIED;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.VERSION;
@@ -21,13 +21,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.cmdbuild.service.rest.model.adapter.AttachmentAdapter;
+import org.cmdbuild.service.rest.model.adapter.AttachmentMetadataAdapter;
 
 @XmlRootElement(name = ATTACHMENT)
-@XmlJavaTypeAdapter(AttachmentAdapter.class)
-public class Attachment extends ModelWithId<String> {
+@XmlJavaTypeAdapter(AttachmentMetadataAdapter.class)
+public class AttachmentMetadata extends ModelWithId<String> {
 
-	private static final Map<String, Object> NO_METADATA = emptyMap();
+	private static final Map<String, Object> NO_EXTRA = emptyMap();
 
 	private String name;
 	private String category;
@@ -36,9 +36,9 @@ public class Attachment extends ModelWithId<String> {
 	private String author;
 	private Date created;
 	private Date modified;
-	private Map<String, Object> metadata;
+	private Map<String, Object> extra;
 
-	Attachment() {
+	AttachmentMetadata() {
 		// package visibility
 	}
 
@@ -105,13 +105,13 @@ public class Attachment extends ModelWithId<String> {
 		this.modified = modified;
 	}
 
-	@XmlAttribute(name = METADATA)
-	public Map<String, Object> getMetadata() {
-		return defaultIfNull(metadata, NO_METADATA);
+	@XmlAttribute(name = EXTRA)
+	public Map<String, Object> getExtra() {
+		return defaultIfNull(extra, NO_EXTRA);
 	}
 
-	void setMetadata(final Map<String, Object> metadata) {
-		this.metadata = metadata;
+	void setExtra(final Map<String, Object> extra) {
+		this.extra = extra;
 	}
 
 	@Override
@@ -120,23 +120,22 @@ public class Attachment extends ModelWithId<String> {
 			return true;
 		}
 
-		if (!(obj instanceof Attachment)) {
+		if (!(obj instanceof AttachmentMetadata)) {
 			return false;
 		}
 
-		final Attachment other = Attachment.class.cast(obj);
+		final AttachmentMetadata other = AttachmentMetadata.class.cast(obj);
 
 		return new EqualsBuilder() //
 				.append(this.getId(), other.getId()) //
 				.append(this.name, other.name) //
-				.append(this.category, other.category) //
 				.append(this.category, other.category) //
 				.append(this.description, other.description) //
 				.append(this.version, other.version) //
 				.append(this.author, other.author) //
 				.append(this.created, other.created) //
 				.append(this.modified, other.modified) //
-				.append(this.metadata, other.metadata) //
+				.append(this.extra, other.extra) //
 				.isEquals();
 	}
 
@@ -151,7 +150,7 @@ public class Attachment extends ModelWithId<String> {
 				.append(this.author) //
 				.append(this.created) //
 				.append(this.modified) //
-				.append(this.metadata) //
+				.append(this.extra) //
 				.toHashCode();
 	}
 

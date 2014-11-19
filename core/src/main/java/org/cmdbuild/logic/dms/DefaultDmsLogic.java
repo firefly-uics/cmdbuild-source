@@ -37,6 +37,8 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
 
 public class DefaultDmsLogic implements DmsLogic {
@@ -179,6 +181,19 @@ public class DefaultDmsLogic implements DmsLogic {
 			// TODO
 			return Collections.emptyList();
 		}
+	}
+
+	@Override
+	public Optional<StoredDocument> search(final String className, final Long cardId, final String fileName) {
+		return from(search(className, cardId)) //
+				.filter(new Predicate<StoredDocument>() {
+
+					@Override
+					public boolean apply(final StoredDocument input) {
+						return input.getName().equals(fileName);
+					}
+
+				}).first();
 	}
 
 	@Override

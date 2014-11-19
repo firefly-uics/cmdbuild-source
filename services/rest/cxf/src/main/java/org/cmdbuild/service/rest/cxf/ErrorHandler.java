@@ -2,6 +2,8 @@ package org.cmdbuild.service.rest.cxf;
 
 public interface ErrorHandler {
 
+	void attachmentNotFound(String attachmentId);
+
 	void cardNotFound(Long id);
 
 	void classNotFound(String id);
@@ -12,11 +14,9 @@ public interface ErrorHandler {
 
 	void lookupTypeNotFound(String id);
 
-	void missingAttachment();
-
 	void missingAttachmentId();
 
-	void missingAttachmentName();
+	void missingAttachmentMetadata();
 
 	void missingFile();
 

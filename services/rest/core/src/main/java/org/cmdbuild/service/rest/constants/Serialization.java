@@ -48,6 +48,7 @@ public class Serialization {
 			DOMAIN_ID = DOMAIN + ID_CAPITALIZED, //
 			DOMAIN_SOURCE = DOMAIN + "Source", //
 			EDITOR_TYPE = "editorType", //
+			EXTRA = "extra", //
 			FILE = "file", //
 			FILTER = "filter", //
 			FULL_CLASS_DETAIL = "fullClassDetail", //
