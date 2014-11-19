@@ -276,9 +276,11 @@
 		var attributesNamesArray = [];
 
 		// Build attributesNamesArray to test if display attribute
-		for (var i in classAttributes)
-			attributesNamesArray.push(classAttributes[i][CMDBuild.core.proxy.CMProxyConstants.NAME]);
-
+		for (var i in classAttributes) {
+_debug('classAttributes[i]', classAttributes[i]);
+			attributesNamesArray.push(classAttributes[i][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]);
+		}
+_debug('attributesNamesArray', attributesNamesArray);
 		if (record.raw['_RelHist']) {
 			body += historyAttribute(tr.domain, record.raw['DomainDesc'])
 				+ historyAttribute(tr.destclass, record.raw['Class'])
@@ -288,11 +290,11 @@
 
 		for (var i = 0; i < record.raw['Attr'].length; i++) {
 			var attribute = record.raw['Attr'][i];
-
+_debug('attribute', attribute);
 			if (Ext.Array.contains(attributesNamesArray, attribute.d)) {
 				var label = attribute.d;
 				var changed = attribute.c;
-				var value = attribute.v || '';
+				var value = Ext.isEmpty(attribute.v) ? '' : attribute.v;
 
 				body += historyAttribute(label, value, changed);
 			}
