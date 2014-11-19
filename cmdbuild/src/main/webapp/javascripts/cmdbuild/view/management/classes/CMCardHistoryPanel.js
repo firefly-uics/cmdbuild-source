@@ -111,7 +111,7 @@
 					|| !this.currentCardId) {
 				return;
 			}
-	
+
 			var params = {};
 			params[_CMProxy.parameter.CARD_ID] = this.currentCardId;
 			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(this.currentClassId);
@@ -119,7 +119,7 @@
 			this.getStore().load({
 				params: params
 			});
-	
+
 			this.loaded = true;
 		},
 
@@ -132,9 +132,9 @@
 				this.currentClassId = classId;
 				this.disable();
 			}
-	
+
 		},
-	
+
 		onCardSelected: function(card) { _deprecated();
 			var et = _CMCache.getEntryTypeById(card.get("IdClass"));
 			if (et && et.get("tableType") == CMDBuild.Constants.cachedTableType.simpletable) {
@@ -142,16 +142,16 @@
 			} else {
 				this.currentCardId = card.raw.Id;
 				this.currentClassId = card.raw.IdClass;
-	
+
 				this.currentCardPrivileges = {
 					create: card.raw.priv_create,
 					write: card.raw.priv_write
 				};
-	
+
 				// FIXME The workflow does not call onAddCardButtonClick()
 				var existingCard = (this.currentCardId > 0);
 				this.setDisabled(!existingCard);
-	
+
 				if (tabIsActive(this)) {
 					this.reloadCard();
 				} else {
@@ -161,8 +161,20 @@
 		}
 	});
 
+	/**
+	 * @param {Object} record
+	 *
+	 * @return {String} body - HTML format string
+	 */
 	function genHistoryBody(record) {
 		var body = '';
+		var classAttributes = _CMCache.mapOfAttributes[_CMCardModuleState.card.get('IdClass')];
+		var attributesNamesArray = [];
+
+		// Build attributesNamesArray to test if display attribute
+		for (var i in classAttributes)
+			attributesNamesArray.push(classAttributes[i][CMDBuild.core.proxy.CMProxyConstants.NAME]);
+
 		if (record.raw['_RelHist']) {
 			body += historyAttribute(col_tr.domain, record.raw['DomainDesc'])
 				+ historyAttribute(col_tr.destclass, record.raw['Class'])
@@ -170,25 +182,32 @@
 				+ historyAttribute(col_tr.description, record.raw['CardDescription']);
 		}
 
-		for (var a = record.raw['Attr'], i=0, l=a.length; i<l ;++i) {
-			var ai = a[i];
-			var label = ai.d;
-			var changed = ai.c;
-			var value = ai.v;
+		for (var i = 0; i < record.raw['Attr'].length; i++) {
+			var attribute = record.raw['Attr'][i];
 
-			if (typeof value == "undefined" || value == null) {
-				value = "";
+			if (Ext.Array.contains(attributesNamesArray, attribute.d)) {
+				var label = attribute.d;
+				var changed = attribute.c;
+				var value = attribute.v || '';
+
+				body += historyAttribute(label, value, changed);
 			}
-
-			body += historyAttribute(label, value, changed);
 		}
 
 		return body;
 	}
 
+	/**
+	 * @param {String} label
+	 * @param {Mixed} value
+	 * @param {Boolean} changed
+	 *
+	 * @return {String} HTML format string
+	 */
 	function historyAttribute(label, value, changed) {
-		var cls = changed ? " class=\"changed\"" : "";
-		return "<p"+cls+"><b>"+label+"</b>: "+((value || {}).dsc || value)+"</p>";
+		return '<p' + (changed ? ' class="changed"' : '') + '>'
+				+ '<b>' + label + '</b>: ' + ((value || {}).dsc || value)
+			+ '</p>';
 	};
 
 	function tabIsActive(t) {
@@ -202,4 +221,5 @@
 			return '&nbsp;';
 		}
 	}
+
 })();
