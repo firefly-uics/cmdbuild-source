@@ -16,6 +16,8 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logic.Logic;
 
+import com.google.common.base.Optional;
+
 public interface DmsLogic extends Logic {
 
 	/**
@@ -71,6 +73,8 @@ public interface DmsLogic extends Logic {
 	Map<String, Map<String, String>> getAutoCompletionRulesByClass(String classname) throws DmsException;
 
 	List<StoredDocument> search(String className, Long cardId);
+
+	Optional<StoredDocument> search(String className, Long cardId, String fileName);
 
 	void upload(String author, String className, Long cardId, InputStream inputStream, String fileName,
 			String category, String description, Iterable<MetadataGroup> metadataGroups) throws IOException,

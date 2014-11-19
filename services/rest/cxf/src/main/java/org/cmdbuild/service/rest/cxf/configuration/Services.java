@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
 import org.cmdbuild.service.rest.AttachmentsConfiguration;
-import org.cmdbuild.service.rest.CardAttachments;
+import org.cmdbuild.service.rest.CardAttachmentMetadata;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.ClassAttributes;
 import org.cmdbuild.service.rest.Classes;
@@ -27,7 +27,7 @@ import org.cmdbuild.service.rest.Processes;
 import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.Sessions;
 import org.cmdbuild.service.rest.cxf.CxfAttachmentsConfiguration;
-import org.cmdbuild.service.rest.cxf.CxfCardAttachments;
+import org.cmdbuild.service.rest.cxf.CxfCardAttachmentMetadata;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
@@ -75,10 +75,10 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
-	public CardAttachments cxfCardAttachments() {
-		final CxfCardAttachments service = new CxfCardAttachments(errorHandler(), helper.dmsLogic(),
-				helper.systemDataAccessLogic(), helper.userStore());
-		return proxy(CardAttachments.class, service);
+	public CardAttachmentMetadata cxfCardAttachments() {
+		final CxfCardAttachmentMetadata service = new CxfCardAttachmentMetadata(errorHandler(), helper.dmsLogic(),
+				helper.systemDataAccessLogic());
+		return proxy(CardAttachmentMetadata.class, service);
 	}
 
 	@Bean
