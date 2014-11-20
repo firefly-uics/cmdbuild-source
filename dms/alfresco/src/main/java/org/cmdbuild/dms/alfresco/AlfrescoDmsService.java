@@ -81,6 +81,7 @@ public class AlfrescoDmsService extends BaseDmsService implements LoggingSupport
 
 	@Override
 	public void updateDescriptionAndMetadata(final DocumentUpdate document) throws DmsError {
+		wsService.updateCategory(document);
 		wsService.updateDescription(document);
 	}
 

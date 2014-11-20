@@ -2,16 +2,10 @@ package org.cmdbuild.dms;
 
 import java.io.InputStream;
 
-public interface StorableDocument extends Document, DocumentWithMetadata {
+public interface StorableDocument extends DocumentUpdate {
 
 	String getAuthor();
 
 	InputStream getInputStream();
-
-	String getFileName();
-
-	String getCategory();
-
-	String getDescription();
 
 }

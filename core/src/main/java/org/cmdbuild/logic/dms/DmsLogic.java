@@ -84,7 +84,7 @@ public interface DmsLogic extends Logic {
 
 	void delete(String className, Long cardId, String fileName) throws DmsException;
 
-	void updateDescriptionAndMetadata(String className, Long cardId, String filename, String description,
-			Iterable<MetadataGroup> metadataGroups);
+	void updateDescriptionAndMetadata(String className, Long cardId, String filename, String category,
+			String description, Iterable<MetadataGroup> metadataGroups);
 
 }

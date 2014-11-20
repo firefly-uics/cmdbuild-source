@@ -12,6 +12,9 @@ import static org.cmdbuild.service.rest.model.Models.newCard;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.all;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.param;
+import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
@@ -23,9 +26,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static support.HttpClientUtils.all;
-import static support.HttpClientUtils.param;
-import static support.ServerResource.randomPort;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,14 +43,13 @@ import org.cmdbuild.service.rest.model.Card;
 import org.cmdbuild.service.rest.model.Models;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.service.rest.test.JsonSupport;
+import org.cmdbuild.service.rest.test.ServerResource;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-
-import support.JsonSupport;
-import support.ServerResource;
 
 public class CardsTest {
 

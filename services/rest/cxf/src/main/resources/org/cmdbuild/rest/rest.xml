@@ -27,6 +27,7 @@
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
 			<ref bean="cxfAttachmentsConfiguration" />
+			<ref bean="cxfCardAttachmentMetadata" />
 			<ref bean="cxfCardAttachments" />
 			<ref bean="cxfCards" />
 			<ref bean="cxfClasses" />

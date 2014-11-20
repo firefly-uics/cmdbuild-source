@@ -8,6 +8,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
 import static org.cmdbuild.service.rest.model.Models.newAttachmentMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
+import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyLong;
@@ -17,7 +18,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
-import static support.ServerResource.randomPort;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,14 +31,13 @@ import org.cmdbuild.service.rest.CardAttachmentMetadata;
 import org.cmdbuild.service.rest.model.AttachmentMetadata;
 import org.cmdbuild.service.rest.model.Models;
 import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.service.rest.test.JsonSupport;
+import org.cmdbuild.service.rest.test.ServerResource;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-
-import support.JsonSupport;
-import support.ServerResource;
 
 public class CardAttachmentsMetadataTest {
 

@@ -92,9 +92,8 @@ public class CxfCardAttachmentMetadata implements CardAttachmentMetadata {
 		if (attachmentMetadata == null) {
 			errorHandler.missingAttachmentMetadata();
 		}
-		// TODO category
-		dmsLogic.updateDescriptionAndMetadata(classId, cardId, attachmentId, attachmentMetadata.getDescription(),
-				metadataGroupsOf(attachmentMetadata));
+		dmsLogic.updateDescriptionAndMetadata(classId, cardId, attachmentId, attachmentMetadata.getCategory(),
+				attachmentMetadata.getDescription(), metadataGroupsOf(attachmentMetadata));
 	}
 
 	private void assureClassAndCard(final String classId, final Long cardId, final String attachmentId) {

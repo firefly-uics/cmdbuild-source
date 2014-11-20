@@ -81,6 +81,7 @@ public class DmsLogicHelper implements SoapLogicHelper {
 					className, //
 					cardId, //
 					filename, //
+					null, //
 					description, //
 					METADATA_NOT_SUPPORTED);
 			return true;

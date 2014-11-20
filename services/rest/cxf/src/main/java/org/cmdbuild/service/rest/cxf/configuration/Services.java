@@ -26,8 +26,10 @@ import org.cmdbuild.service.rest.ProcessStartActivities;
 import org.cmdbuild.service.rest.Processes;
 import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.Sessions;
+import org.cmdbuild.service.rest.cxf.AllInOneCardAttachments;
 import org.cmdbuild.service.rest.cxf.CxfAttachmentsConfiguration;
 import org.cmdbuild.service.rest.cxf.CxfCardAttachmentMetadata;
+import org.cmdbuild.service.rest.cxf.CxfCardAttachments;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
@@ -75,10 +77,18 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
-	public CardAttachmentMetadata cxfCardAttachments() {
+	public CardAttachmentMetadata cxfCardAttachmentMetadata() {
 		final CxfCardAttachmentMetadata service = new CxfCardAttachmentMetadata(errorHandler(), helper.dmsLogic(),
 				helper.systemDataAccessLogic());
 		return proxy(CardAttachmentMetadata.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public AllInOneCardAttachments cxfCardAttachments() {
+		final CxfCardAttachments service = new CxfCardAttachments(errorHandler(), helper.dmsLogic(),
+				helper.systemDataAccessLogic(), helper.userStore());
+		return proxy(AllInOneCardAttachments.class, service);
 	}
 
 	@Bean

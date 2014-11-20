@@ -11,6 +11,7 @@
 	<artifactId>cmdbuild-services-rest-cxf</artifactId>
 	<properties>
 		<jasypt.version>1.9.2</jasypt.version>
+		<httpclient.version>3.1</httpclient.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -71,6 +72,13 @@
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt</artifactId>
 			<version>${jasypt.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.cmdbuild</groupId>
+			<artifactId>cmdbuild-services-rest-test</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

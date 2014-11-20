@@ -2,25 +2,24 @@ package integration.rest;
 
 import static org.cmdbuild.service.rest.model.Models.newMenu;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
+import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.Menu;
 import org.cmdbuild.service.rest.model.MenuDetail;
 import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.service.rest.test.JsonSupport;
+import org.cmdbuild.service.rest.test.ServerResource;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-
-import support.JsonSupport;
-import support.ServerResource;
 
 public class MenuTest {
 

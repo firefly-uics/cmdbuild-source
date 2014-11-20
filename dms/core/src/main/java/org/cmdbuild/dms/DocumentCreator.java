@@ -41,12 +41,14 @@ public interface DocumentCreator {
 			String className, //
 			String cardId, //
 			String filename, //
+			String category, //
 			String description);
 
 	DocumentUpdate createDocumentUpdate( //
 			String className, //
 			String cardId, //
 			String filename, //
+			String category, //
 			String description, //
 			Iterable<MetadataGroup> metadataGroups);
 

@@ -129,6 +129,7 @@ public class Attachments extends JSONBaseWithSpringContext {
 		dmsLogic().updateDescriptionAndMetadata( //
 				className, cardId, //
 				filename, //
+				null, //
 				description, //
 				metadataGroupsFrom(categoryDefinition(category), metadataValues));
 	}

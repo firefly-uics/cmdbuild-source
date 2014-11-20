@@ -2,6 +2,7 @@ package integration.learning;
 
 import static com.google.common.base.Defaults.defaultValue;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
@@ -9,7 +10,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static support.ServerResource.randomPort;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -21,11 +21,10 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.model.Attribute;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.test.ServerResource;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import support.ServerResource;
 
 public class DefaultValuesTest {
 

@@ -59,6 +59,7 @@
 		<module>scheduler/quartz</module>
 		<module>services/rest/core</module>
 		<module>services/rest/cxf</module>
+		<module>services/rest/test</module>
 		<module>shark/client</module>
 		<module>services/sync/core</module>
 		<module>services/sync/internal</module>

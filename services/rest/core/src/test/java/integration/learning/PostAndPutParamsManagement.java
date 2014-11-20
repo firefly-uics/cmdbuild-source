@@ -3,14 +3,14 @@ package integration.learning;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED;
 import static javax.ws.rs.core.Response.Status.NO_CONTENT;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.all;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.param;
+import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static support.HttpClientUtils.all;
-import static support.HttpClientUtils.param;
-import static support.ServerResource.randomPort;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -21,6 +21,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
+import org.cmdbuild.service.rest.test.ServerResource;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,8 +29,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import support.ServerResource;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PostAndPutParamsManagement {
