@@ -1,4 +1,4 @@
-package support;
+package org.cmdbuild.service.rest.test;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;

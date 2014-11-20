@@ -690,7 +690,7 @@ public class CmdbMDR implements ManagementDataRepository {
 									newDocument.getMetadataGroups());
 						} else {
 							dmsLogic.updateDescriptionAndMetadata(card.getClassName(), card.getId(),
-									newDocument.getName(), newDocument.getDescription(),
+									newDocument.getName(), null, newDocument.getDescription(),
 									newDocument.getMetadataGroups());
 						}
 					} else {

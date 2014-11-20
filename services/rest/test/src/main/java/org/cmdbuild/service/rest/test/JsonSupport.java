@@ -1,4 +1,4 @@
-package support;
+package org.cmdbuild.service.rest.test;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;

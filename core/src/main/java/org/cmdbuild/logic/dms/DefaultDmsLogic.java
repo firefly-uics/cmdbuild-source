@@ -245,9 +245,9 @@ public class DefaultDmsLogic implements DmsLogic {
 
 	@Override
 	public void updateDescriptionAndMetadata(final String className, final Long cardId, final String filename,
-			final String description, final Iterable<MetadataGroup> metadataGroups) {
+			final String category, final String description, final Iterable<MetadataGroup> metadataGroups) {
 		final DocumentUpdate document = createDocumentFactory(className) //
-				.createDocumentUpdate(className, cardId.toString(), filename, description, metadataGroups);
+				.createDocumentUpdate(className, cardId.toString(), filename, category, description, metadataGroups);
 		try {
 			service.updateDescriptionAndMetadata(document);
 		} catch (final Exception e) {

@@ -300,8 +300,8 @@ public class CxfCardAttachmentMetadataTest {
 		inOrder.verify(dataAccessLogic).findClass(eq("foo"));
 		inOrder.verify(dataAccessLogic).fetchCard(eq("foo"), eq(123L));
 		inOrder.verify(dmsLogic).getCategoryDefinition(eq("the category"));
-		inOrder.verify(dmsLogic).updateDescriptionAndMetadata(eq("foo"), eq(123L), eq("bar"), eq("the description"),
-				any(Iterable.class));
+		inOrder.verify(dmsLogic).updateDescriptionAndMetadata(eq("foo"), eq(123L), eq("bar"), eq("the category"),
+				eq("the description"), any(Iterable.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 

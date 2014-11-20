@@ -33,7 +33,7 @@ public abstract class ForwardingDmsLogic implements DmsLogic {
 	public DocumentTypeDefinition getCategoryDefinition(final String category) {
 		return delegate.getCategoryDefinition(category);
 	}
-	
+
 	@Override
 	public Iterable<DocumentTypeDefinition> getConfiguredCategoryDefinitions() {
 		return delegate.getConfiguredCategoryDefinitions();
@@ -53,9 +53,9 @@ public abstract class ForwardingDmsLogic implements DmsLogic {
 	public List<StoredDocument> search(final String className, final Long cardId) {
 		return delegate.search(className, cardId);
 	}
-	
+
 	@Override
-	public Optional<StoredDocument> search(String className, Long cardId, String fileName) {
+	public Optional<StoredDocument> search(final String className, final Long cardId, final String fileName) {
 		return delegate.search(className, cardId, fileName);
 	}
 
@@ -78,8 +78,8 @@ public abstract class ForwardingDmsLogic implements DmsLogic {
 
 	@Override
 	public void updateDescriptionAndMetadata(final String className, final Long cardId, final String filename,
-			final String description, final Iterable<MetadataGroup> metadataGroups) {
-		delegate.updateDescriptionAndMetadata(className, cardId, filename, description, metadataGroups);
+			final String category, final String description, final Iterable<MetadataGroup> metadataGroups) {
+		delegate.updateDescriptionAndMetadata(className, cardId, filename, category, description, metadataGroups);
 	}
 
 }

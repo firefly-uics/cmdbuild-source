@@ -1,4 +1,4 @@
-package support;
+package org.cmdbuild.service.rest.test;
 
 import org.apache.commons.httpclient.NameValuePair;
 

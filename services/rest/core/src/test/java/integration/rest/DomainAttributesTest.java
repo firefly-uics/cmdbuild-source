@@ -7,6 +7,9 @@ import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.model.Models.newAttribute;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.all;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.param;
+import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyBoolean;
@@ -16,22 +19,18 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static support.HttpClientUtils.all;
-import static support.HttpClientUtils.param;
-import static support.ServerResource.randomPort;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.DomainAttributes;
 import org.cmdbuild.service.rest.model.Attribute;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.test.JsonSupport;
+import org.cmdbuild.service.rest.test.ServerResource;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-
-import support.JsonSupport;
-import support.ServerResource;
 
 public class DomainAttributesTest {
 

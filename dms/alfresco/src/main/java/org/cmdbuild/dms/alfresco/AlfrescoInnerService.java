@@ -49,7 +49,7 @@ public abstract class AlfrescoInnerService implements LoggingSupport {
 		throw new UnsupportedOperationException();
 	}
 
-	public void updateCategory(final StorableDocument document) throws DmsError {
+	public void updateCategory(final DocumentUpdate document) throws DmsError {
 		throw new UnsupportedOperationException();
 	}
 

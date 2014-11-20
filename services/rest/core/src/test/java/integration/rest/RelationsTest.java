@@ -8,6 +8,9 @@ import static org.cmdbuild.service.rest.model.Models.newCard;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newRelation;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.all;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.param;
+import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyInt;
@@ -16,9 +19,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static support.HttpClientUtils.all;
-import static support.HttpClientUtils.param;
-import static support.ServerResource.randomPort;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,6 +34,8 @@ import org.cmdbuild.service.rest.model.Models;
 import org.cmdbuild.service.rest.model.Relation;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.adapter.RelationAdapter;
+import org.cmdbuild.service.rest.test.JsonSupport;
+import org.cmdbuild.service.rest.test.ServerResource;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -42,9 +44,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import support.JsonSupport;
-import support.ServerResource;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RelationsTest {
