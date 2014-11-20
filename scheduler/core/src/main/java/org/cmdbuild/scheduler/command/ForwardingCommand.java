@@ -1,16 +1,21 @@
 package org.cmdbuild.scheduler.command;
 
-public abstract class ForwardingCommand implements Command {
+import com.google.common.collect.ForwardingObject;
 
-	private final Command delegate;
+public abstract class ForwardingCommand extends ForwardingObject implements Command {
 
-	protected ForwardingCommand(final Command delegate) {
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingCommand() {
 	}
 
 	@Override
+	protected abstract Command delegate();
+
+	@Override
 	public void execute() {
-		delegate.execute();
+		delegate().execute();
 	}
 
 }

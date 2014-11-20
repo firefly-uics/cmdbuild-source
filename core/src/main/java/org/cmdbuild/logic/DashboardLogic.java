@@ -27,7 +27,6 @@ import org.cmdbuild.logic.translation.TranslationLogic;
 import org.cmdbuild.model.dashboard.ChartDefinition;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DefaultDashboardDefinition.DashboardColumn;
-import org.cmdbuild.model.dashboard.ForwardingDashboardDefinition;
 import org.cmdbuild.services.store.DashboardStore;
 
 import com.google.common.base.Function;
@@ -124,10 +123,9 @@ public class DashboardLogic implements Logic {
 	private final Function<DashboardDefinition, DashboardDefinition> ADD_TRANSLATION = new Function<DashboardDefinition, DashboardDefinition>() {
 		@Override
 		public DashboardDefinition apply(final DashboardDefinition input) {
-			final DashboardDefinition translatedDashboard = ForwardingDashboardDefinition.of(input);
 			final String translatedDescription = readTranslation(input);
-			translatedDashboard.setDescription(defaultIfNull(translatedDescription, input.getDescription()));
-			return translatedDashboard;
+			input.setDescription(defaultIfNull(translatedDescription, input.getDescription()));
+			return input;
 		}
 	};
 

@@ -1,5 +1,6 @@
 package org.cmdbuild.logic.taskmanager.task.connector;
 
+import static org.cmdbuild.scheduler.command.Commands.*;
 import static com.google.common.base.Suppliers.memoize;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
@@ -62,25 +63,31 @@ public class ConnectorTaskJobFactory extends AbstractJobFactory<ConnectorTask> {
 	}
 
 	private Command sendEmail(final ConnectorTask task) {
-		final Supplier<Template> emailTemplateSupplier = memoize(new Supplier<Template>() {
+		final Command command;
+		// TODO do it in a better way
+		if (task.isNotificationActive()) {
+			final Supplier<Template> emailTemplateSupplier = memoize(new Supplier<Template>() {
 
-			@Override
-			public Template get() {
-				final String name = defaultString(task.getNotificationErrorTemplate());
-				return emailTemplateLogic.read(name);
-			}
+				@Override
+				public Template get() {
+					final String name = defaultString(task.getNotificationErrorTemplate());
+					return emailTemplateLogic.read(name);
+				}
 
-		});
-		final Supplier<EmailAccount> templateEmailAccountSupplier = nullOnException(StoreSupplier.of(
-				EmailAccount.class, emailAccountStore, named(emailTemplateSupplier.get().getAccount())));
-		final Supplier<EmailAccount> taskEmailAccountSupplier = nullOnException(StoreSupplier.of(EmailAccount.class,
-				emailAccountStore, named(task.getNotificationAccount())));
-		final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(templateEmailAccountSupplier,
-				taskEmailAccountSupplier));
-		final Command command = SchedulerCommandWrapper.of(a(SendTemplateEmail.newInstance() //
-				.withEmailAccountSupplier(emailAccountSupplier) //
-				.withEmailServiceFactory(emailServiceFactory) //
-				.withEmailTemplateSupplier(emailTemplateSupplier)));
+			});
+			final Supplier<EmailAccount> templateEmailAccountSupplier = nullOnException(StoreSupplier.of(
+					EmailAccount.class, emailAccountStore, named(emailTemplateSupplier.get().getAccount())));
+			final Supplier<EmailAccount> taskEmailAccountSupplier = nullOnException(StoreSupplier.of(
+					EmailAccount.class, emailAccountStore, named(task.getNotificationAccount())));
+			final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(templateEmailAccountSupplier,
+					taskEmailAccountSupplier));
+			command = SchedulerCommandWrapper.of(a(SendTemplateEmail.newInstance() //
+					.withEmailAccountSupplier(emailAccountSupplier) //
+					.withEmailServiceFactory(emailServiceFactory) //
+					.withEmailTemplateSupplier(emailTemplateSupplier)));
+		} else {
+			command = nullCommand();
+		}
 		return conditional(command, new NotificationEnabled(task));
 	}
 

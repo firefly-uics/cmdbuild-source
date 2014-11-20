@@ -69,6 +69,7 @@
 		CMDBuild.Ajax.request({
 			url: CMDBuild.ServiceProxy.url.cardList,
 			method: 'GET',
+			scope: p.scope,
 			params: p.params,
 			success: p.success,
 			failure: p.failure,

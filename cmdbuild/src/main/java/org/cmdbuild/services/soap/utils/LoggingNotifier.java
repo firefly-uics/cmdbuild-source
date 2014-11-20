@@ -29,11 +29,16 @@ public class LoggingNotifier implements Notifier {
 	}
 
 	@Override
-	public void invoke(final String method, final Iterable<Object> arguments) {
-		logger.trace("invoking '{}' with arguments:", method);
+	public void before(final String method, final Iterable<Object> arguments) {
+		logger.trace("before '{}' with arguments:", method);
 		for (final Object argument : arguments) {
 			logger.trace("- {}", new Stringify(argument));
 		}
+	}
+
+	@Override
+	public void after(final String method) {
+		logger.trace("after '{}'", method);
 	}
 
 }

@@ -32,8 +32,15 @@ public class MetadataGroupable extends ForwardingGroupable {
 		return new MetadataGroupable(nameAndValue(name, value));
 	}
 
+	private final Groupable delegate;
+
 	private MetadataGroupable(final Groupable delegate) {
-		super(delegate);
+		this.delegate = delegate;
+	}
+
+	@Override
+	protected Groupable delegate() {
+		return delegate;
 	}
 
 }

@@ -140,9 +140,9 @@
 				);
 			}
 
-			// Set local tergetClass and set it also in CMCardModuleState
+			// Set local tergetClass and set it also in CMCardModuleState avoiding delegates call
 			this.targetClass = _CMCache.getEntryTypeByName(targetClassName);
-			_CMCardModuleState.setEntryType(this.targetClass);
+			_CMCardModuleState.setEntryType(this.targetClass, null, null, false);
 
 			this.singleSelect = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SINGLE_SELECT];
 			this.readOnly = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
@@ -563,7 +563,7 @@
 		 */
 		onSelect: function(record) {
 			if (!Ext.isEmpty(record.get('Id'))) {
-				_CMCardModuleState.setCard(record);
+				_CMCardModuleState.setCard(record, null, false);
 
 				this.model.select(record.get('Id'));
 			} else {
@@ -647,10 +647,14 @@
 									for (var i = 0; i < resp.rows.length; i++) {
 										var r = resp.rows[i];
 
-										_CMCardModuleState.setCard({
-											Id: r['Id'],
-											IdClass: r['IdClass']
-										});
+										_CMCardModuleState.setCard(
+											{
+												Id: r['Id'],
+												IdClass: r['IdClass']
+											},
+											null,
+											false
+										);
 
 										me.model.select(r['Id']);
 									}

@@ -4,8 +4,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class TransactionalEmailTemplateLogic extends ForwardingEmailTemplateLogic {
 
+	private final EmailTemplateLogic delegate;
+
 	public TransactionalEmailTemplateLogic(final EmailTemplateLogic delegate) {
-		super(delegate);
+		this.delegate = delegate;
+	}
+
+	@Override
+	protected EmailTemplateLogic delegate() {
+		return delegate;
 	}
 
 	@Transactional

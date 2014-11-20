@@ -6,52 +6,57 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-public abstract class ForwardingDataSource implements DataSource {
+import com.google.common.collect.ForwardingObject;
 
-	private final DataSource delegate;
+public abstract class ForwardingDataSource extends ForwardingObject implements DataSource {
 
-	protected ForwardingDataSource(final DataSource delegate) {
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingDataSource() {
 	}
 
 	@Override
+	protected abstract DataSource delegate();
+
+	@Override
 	public PrintWriter getLogWriter() throws SQLException {
-		return delegate.getLogWriter();
+		return delegate().getLogWriter();
 	}
 
 	@Override
 	public void setLogWriter(final PrintWriter out) throws SQLException {
-		delegate.setLogWriter(out);
+		delegate().setLogWriter(out);
 	}
 
 	@Override
 	public void setLoginTimeout(final int seconds) throws SQLException {
-		delegate.setLoginTimeout(seconds);
+		delegate().setLoginTimeout(seconds);
 	}
 
 	@Override
 	public int getLoginTimeout() throws SQLException {
-		return delegate.getLoginTimeout();
+		return delegate().getLoginTimeout();
 	}
 
 	@Override
 	public <T> T unwrap(final Class<T> iface) throws SQLException {
-		return delegate.unwrap(iface);
+		return delegate().unwrap(iface);
 	}
 
 	@Override
 	public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-		return delegate.isWrapperFor(iface);
+		return delegate().isWrapperFor(iface);
 	}
 
 	@Override
 	public Connection getConnection() throws SQLException {
-		return delegate.getConnection();
+		return delegate().getConnection();
 	}
 
 	@Override
 	public Connection getConnection(final String username, final String password) throws SQLException {
-		return delegate.getConnection(username, password);
+		return delegate().getConnection(username, password);
 	}
 
 }

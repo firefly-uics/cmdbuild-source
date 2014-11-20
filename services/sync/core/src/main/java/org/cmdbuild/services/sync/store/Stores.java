@@ -6,12 +6,19 @@ public class Stores {
 
 	private static class LoggingStore extends ForwardingStore implements LoggingSupport {
 
+		private final Store delegate;
+
 		public LoggingStore(final Store delegate) {
-			super(delegate);
+			this.delegate = delegate;
 		}
 
 		@Override
-		public void create(Entry<? extends Type> entry) {
+		protected Store delegate() {
+			return delegate;
+		}
+
+		@Override
+		public void create(final Entry<? extends Type> entry) {
 			try {
 				logger.debug("creating entry '{}'", entry);
 				super.create(entry);
@@ -33,7 +40,7 @@ public class Stores {
 		}
 
 		@Override
-		public void update(Entry<? extends Type> entry) {
+		public void update(final Entry<? extends Type> entry) {
 			try {
 				logger.debug("updating entry '{}'", entry);
 				super.update(entry);
@@ -44,7 +51,7 @@ public class Stores {
 		}
 
 		@Override
-		public void delete(Entry<? extends Type> entry) {
+		public void delete(final Entry<? extends Type> entry) {
 			try {
 				logger.debug("deleting entry '{}'", entry);
 				super.delete(entry);

@@ -14,10 +14,16 @@ public class DefaultSynchronousEventFacade implements SynchronousEventFacade {
 	private static class DefaultIdentifiableObserver extends ForwardingObserver implements IdentifiableObserver {
 
 		private final SynchronousEventTask task;
+		private final Observer delegate;
 
 		public DefaultIdentifiableObserver(final SynchronousEventTask task, final Observer delegate) {
-			super(delegate);
 			this.task = task;
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Observer delegate() {
+			return delegate;
 		}
 
 		@Override

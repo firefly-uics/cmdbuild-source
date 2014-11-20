@@ -1,21 +1,26 @@
 package org.cmdbuild.data.store;
 
-public abstract class ForwardingGroupable implements Groupable {
+import com.google.common.collect.ForwardingObject;
 
-	private final Groupable delegate;
+public abstract class ForwardingGroupable extends ForwardingObject implements Groupable {
 
-	protected ForwardingGroupable(final Groupable delegate) {
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingGroupable() {
 	}
 
 	@Override
+	protected abstract Groupable delegate();
+
+	@Override
 	public String getGroupAttributeName() {
-		return delegate.getGroupAttributeName();
+		return delegate().getGroupAttributeName();
 	}
 
 	@Override
 	public Object getGroupAttributeValue() {
-		return delegate.getGroupAttributeValue();
+		return delegate().getGroupAttributeValue();
 	}
 
 }

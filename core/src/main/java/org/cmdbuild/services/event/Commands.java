@@ -39,8 +39,15 @@ public class Commands {
 			return new SafeCommand(proxiedCommand);
 		}
 
+		private final Command delegate;
+
 		public SafeCommand(final Command delegate) {
-			super(delegate);
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Command delegate() {
+			return delegate;
 		}
 
 	}

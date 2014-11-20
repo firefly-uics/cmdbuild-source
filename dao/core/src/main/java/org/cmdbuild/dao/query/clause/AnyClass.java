@@ -13,10 +13,15 @@ public class AnyClass extends ForwardingClass {
 		return ANY_CLASS;
 	}
 
+	private static final CMClass UNSUPPORTED = UnsupportedProxyFactory.of(CMClass.class).create();
 	private static final String ANY_STRING = "*";
 
 	private AnyClass() {
-		super(UnsupportedProxyFactory.of(CMClass.class).create());
+	}
+
+	@Override
+	protected CMClass delegate() {
+		return UNSUPPORTED;
 	}
 
 	@Override

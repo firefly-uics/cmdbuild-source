@@ -15,71 +15,75 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ForwardingObject;
 
-public abstract class ForwardingDmsLogic implements DmsLogic {
+public abstract class ForwardingDmsLogic extends ForwardingObject implements DmsLogic {
 
-	private final DmsLogic delegate;
-
-	protected ForwardingDmsLogic(final DmsLogic delegate) {
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingDmsLogic() {
 	}
 
 	@Override
+	protected abstract DmsLogic delegate();
+
+	@Override
 	public String getCategoryLookupType() {
-		return delegate.getCategoryLookupType();
+		return delegate().getCategoryLookupType();
 	}
 
 	@Override
 	public DocumentTypeDefinition getCategoryDefinition(final String category) {
-		return delegate.getCategoryDefinition(category);
+		return delegate().getCategoryDefinition(category);
 	}
 
 	@Override
 	public Iterable<DocumentTypeDefinition> getConfiguredCategoryDefinitions() {
-		return delegate.getConfiguredCategoryDefinitions();
+		return delegate().getConfiguredCategoryDefinitions();
 	}
 
 	@Override
 	public Iterable<DocumentTypeDefinition> getCategoryDefinitions() throws DmsError {
-		return delegate.getCategoryDefinitions();
+		return delegate().getCategoryDefinitions();
 	}
 
 	@Override
 	public Map<String, Map<String, String>> getAutoCompletionRulesByClass(final String classname) throws DmsException {
-		return delegate.getAutoCompletionRulesByClass(classname);
+		return delegate().getAutoCompletionRulesByClass(classname);
 	}
 
 	@Override
 	public List<StoredDocument> search(final String className, final Long cardId) {
-		return delegate.search(className, cardId);
+		return delegate().search(className, cardId);
 	}
 
 	@Override
 	public Optional<StoredDocument> search(final String className, final Long cardId, final String fileName) {
-		return delegate.search(className, cardId, fileName);
+		return delegate().search(className, cardId, fileName);
 	}
 
 	@Override
 	public void upload(final String author, final String className, final Long cardId, final InputStream inputStream,
 			final String fileName, final String category, final String description,
 			final Iterable<MetadataGroup> metadataGroups) throws IOException, CMDBException {
-		delegate.upload(author, className, cardId, inputStream, fileName, category, description, metadataGroups);
+		delegate().upload(author, className, cardId, inputStream, fileName, category, description, metadataGroups);
 	}
 
 	@Override
 	public DataHandler download(final String className, final Long cardId, final String fileName) {
-		return delegate.download(className, cardId, fileName);
+		return delegate().download(className, cardId, fileName);
 	}
 
 	@Override
 	public void delete(final String className, final Long cardId, final String fileName) throws DmsException {
-		delegate.delete(className, cardId, fileName);
+		delegate().delete(className, cardId, fileName);
 	}
 
 	@Override
 	public void updateDescriptionAndMetadata(final String className, final Long cardId, final String filename,
 			final String category, final String description, final Iterable<MetadataGroup> metadataGroups) {
-		delegate.updateDescriptionAndMetadata(className, cardId, filename, category, description, metadataGroups);
+		delegate().updateDescriptionAndMetadata(className, cardId, filename, category, description, metadataGroups);
 	}
 
 }

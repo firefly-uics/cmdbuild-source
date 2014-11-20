@@ -1,106 +1,106 @@
 package org.cmdbuild.dao.entrytype;
 
-public abstract class ForwardingEntryType implements CMEntryType {
+import com.google.common.collect.ForwardingObject;
 
-	private final CMEntryType delegate;
+public abstract class ForwardingEntryType extends ForwardingObject implements CMEntryType {
 
-	protected ForwardingEntryType(final CMEntryType delegate) {
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingEntryType() {
 	}
 
 	@Override
+	protected abstract CMEntryType delegate();
+
+	@Override
 	public boolean isActive() {
-		return delegate.isActive();
+		return delegate().isActive();
 	}
 
 	@Override
 	public String getPrivilegeId() {
-		return delegate.getPrivilegeId();
+		return delegate().getPrivilegeId();
 	}
 
 	@Override
 	public void accept(final CMEntryTypeVisitor visitor) {
-		delegate.accept(visitor);
+		delegate().accept(visitor);
 	}
 
 	@Override
 	public Long getId() {
-		return delegate.getId();
+		return delegate().getId();
 	}
 
 	@Override
 	public String getName() {
-		return delegate.getName();
+		return delegate().getName();
 	}
 
 	@Override
 	public CMIdentifier getIdentifier() {
-		return delegate.getIdentifier();
+		return delegate().getIdentifier();
 	}
 
 	@Override
 	public String getDescription() {
-		return delegate.getDescription();
+		return delegate().getDescription();
 	}
 
 	@Override
 	public boolean isSystem() {
-		return delegate.isSystem();
+		return delegate().isSystem();
 	}
 
 	@Override
 	public boolean isSystemButUsable() {
-		return delegate.isSystemButUsable();
+		return delegate().isSystemButUsable();
 	}
 
 	@Override
 	public boolean isBaseClass() {
-		return delegate.isBaseClass();
+		return delegate().isBaseClass();
 	}
 
 	@Override
 	public boolean holdsHistory() {
-		return delegate.holdsHistory();
+		return delegate().holdsHistory();
 	}
 
 	@Override
 	public Iterable<? extends CMAttribute> getActiveAttributes() {
-		return delegate.getActiveAttributes();
+		return delegate().getActiveAttributes();
 	}
 
 	@Override
 	public Iterable<? extends CMAttribute> getAttributes() {
-		return delegate.getAttributes();
+		return delegate().getAttributes();
 	}
 
 	@Override
 	public Iterable<? extends CMAttribute> getAllAttributes() {
-		return delegate.getAllAttributes();
+		return delegate().getAllAttributes();
 	}
 
 	@Override
 	public CMAttribute getAttribute(final String name) {
-		return delegate.getAttribute(name);
+		return delegate().getAttribute(name);
 	}
 
 	@Override
 	public String getKeyAttributeName() {
-		return delegate.getKeyAttributeName();
+		return delegate().getKeyAttributeName();
 	}
 
 	@Override
 	public int hashCode() {
-		return delegate.hashCode();
+		return delegate().hashCode();
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
-		return delegate.equals(obj);
-	}
-
-	@Override
-	public String toString() {
-		return delegate.toString();
+		return delegate().equals(obj);
 	}
 
 }

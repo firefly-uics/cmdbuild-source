@@ -1,21 +1,26 @@
 package org.cmdbuild.scheduler;
 
-public abstract class ForwardingJob implements Job {
+import com.google.common.collect.ForwardingObject;
 
-	private final Job delegate;
+public abstract class ForwardingJob extends ForwardingObject implements Job {
 
-	protected ForwardingJob(final Job delegate) {
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingJob() {
 	}
 
 	@Override
+	protected abstract Job delegate();
+
+	@Override
 	public String getName() {
-		return delegate.getName();
+		return delegate().getName();
 	}
 
 	@Override
 	public void execute() {
-		delegate.execute();
+		delegate().execute();
 	}
 
 }

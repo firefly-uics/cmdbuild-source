@@ -17,9 +17,13 @@ public class UserFromClause extends ForwardingFromClause {
 	private final FromClause delegate;
 
 	private UserFromClause(final UserDataView userDataView, final FromClause delegate) {
-		super(delegate);
 		this.userDataView = userDataView;
 		this.delegate = delegate;
+	}
+
+	@Override
+	protected FromClause delegate() {
+		return delegate;
 	}
 
 	@Override

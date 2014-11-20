@@ -1,16 +1,21 @@
 package org.cmdbuild.services.event;
 
-public abstract class ForwardingCommand implements Command {
+import com.google.common.collect.ForwardingObject;
 
-	private final Command delegate;
+public abstract class ForwardingCommand extends ForwardingObject implements Command {
 
-	protected ForwardingCommand(final Command delegate) {
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingCommand() {
 	}
 
 	@Override
-	public void execute(final Context context) {
-		delegate.execute(context);
+	protected abstract Command delegate();
+
+	@Override
+	public void execute(Context context) {
+		delegate().execute(context);
 	}
 
 }

@@ -13,8 +13,15 @@ public class TaskParameterGroupable extends ForwardingGroupable {
 		return new TaskParameterGroupable(nameAndValue(TaskParameterConverter.OWNER, owner.getId()));
 	}
 
+	private final Groupable delegate;
+
 	private TaskParameterGroupable(final Groupable delegate) {
-		super(delegate);
+		this.delegate = delegate;
+	}
+
+	@Override
+	protected Groupable delegate() {
+		return delegate;
 	}
 
 }

@@ -2,82 +2,88 @@ package org.cmdbuild.data.store.email;
 
 import java.util.List;
 
-public abstract class ForwardingEmailTemplate implements EmailTemplate {
+import com.google.common.collect.ForwardingObject;
 
-	private final EmailTemplate delegate;
+public abstract class ForwardingEmailTemplate extends ForwardingObject implements EmailTemplate {
 
-	protected ForwardingEmailTemplate(final EmailTemplate delegate) {
-		this.delegate = delegate;
+
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingEmailTemplate() {
 	}
+	
+	@Override
+	protected abstract EmailTemplate delegate() ;
 
 	@Override
 	public String getIdentifier() {
-		return delegate.getIdentifier();
+		return delegate().getIdentifier();
 	}
 
 	@Override
 	public Long getId() {
-		return delegate.getId();
+		return delegate().getId();
 	}
 
 	@Override
 	public String getName() {
-		return delegate.getName();
+		return delegate().getName();
 	}
 
 	@Override
 	public String getDescription() {
-		return delegate.getDescription();
+		return delegate().getDescription();
 	}
 
 	@Override
 	public String getFrom() {
-		return delegate.getFrom();
+		return delegate().getFrom();
 	}
 
 	@Override
 	public String getTo() {
-		return delegate.getTo();
+		return delegate().getTo();
 	}
 
 	@Override
 	public List<String> getToAddresses() {
-		return delegate.getToAddresses();
+		return delegate().getToAddresses();
 	}
 
 	@Override
 	public String getCc() {
-		return delegate.getCc();
+		return delegate().getCc();
 	}
 
 	@Override
 	public List<String> getCCAddresses() {
-		return delegate.getCCAddresses();
+		return delegate().getCCAddresses();
 	}
 
 	@Override
 	public String getBcc() {
-		return delegate.getBcc();
+		return delegate().getBcc();
 	}
 
 	@Override
 	public List<String> getBCCAddresses() {
-		return delegate.getBCCAddresses();
+		return delegate().getBCCAddresses();
 	}
 
 	@Override
 	public String getSubject() {
-		return delegate.getSubject();
+		return delegate().getSubject();
 	}
 
 	@Override
 	public String getBody() {
-		return delegate.getBody();
+		return delegate().getBody();
 	}
 
 	@Override
 	public Long getAccount() {
-		return delegate.getAccount();
+		return delegate().getAccount();
 	}
 
 }

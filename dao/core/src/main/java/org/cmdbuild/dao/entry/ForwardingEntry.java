@@ -7,41 +7,43 @@ import org.joda.time.DateTime;
 
 public abstract class ForwardingEntry extends ForwardingValueSet implements CMEntry {
 
-	private final CMEntry delegate;
-
-	protected ForwardingEntry(final CMEntry delegate) {
-		super(delegate);
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingEntry() {
 	}
 
 	@Override
+	protected abstract CMEntry delegate();
+
+	@Override
 	public CMEntryType getType() {
-		return delegate.getType();
+		return delegate().getType();
 	}
 
 	@Override
 	public Long getId() {
-		return delegate.getId();
+		return delegate().getId();
 	}
 
 	@Override
 	public String getUser() {
-		return delegate.getUser();
+		return delegate().getUser();
 	}
 
 	@Override
 	public DateTime getBeginDate() {
-		return delegate.getBeginDate();
+		return delegate().getBeginDate();
 	}
 
 	@Override
 	public DateTime getEndDate() {
-		return delegate.getEndDate();
+		return delegate().getEndDate();
 	}
 
 	@Override
 	public Iterable<Entry<String, Object>> getAllValues() {
-		return delegate.getAllValues();
+		return delegate().getAllValues();
 	}
 
 }

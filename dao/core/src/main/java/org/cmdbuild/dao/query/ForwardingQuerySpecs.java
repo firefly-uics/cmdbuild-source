@@ -9,72 +9,77 @@ import org.cmdbuild.dao.query.clause.join.DirectJoinClause;
 import org.cmdbuild.dao.query.clause.join.JoinClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
-public abstract class ForwardingQuerySpecs implements QuerySpecs {
+import com.google.common.collect.ForwardingObject;
 
-	private final QuerySpecs delegate;
+public abstract class ForwardingQuerySpecs extends ForwardingObject implements QuerySpecs {
 
-	protected ForwardingQuerySpecs(final QuerySpecs delegate) {
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingQuerySpecs() {
 	}
 
 	@Override
+	protected abstract QuerySpecs delegate();
+
+	@Override
 	public FromClause getFromClause() {
-		return delegate.getFromClause();
+		return delegate().getFromClause();
 	}
 
 	@Override
 	public List<JoinClause> getJoins() {
-		return delegate.getJoins();
+		return delegate().getJoins();
 	}
 
 	@Override
 	public List<DirectJoinClause> getDirectJoins() {
-		return delegate.getDirectJoins();
+		return delegate().getDirectJoins();
 	}
 
 	@Override
 	public List<OrderByClause> getOrderByClauses() {
-		return delegate.getOrderByClauses();
+		return delegate().getOrderByClauses();
 	}
 
 	@Override
 	public Iterable<QueryAliasAttribute> getAttributes() {
-		return delegate.getAttributes();
+		return delegate().getAttributes();
 	}
 
 	@Override
 	public WhereClause getWhereClause() {
-		return delegate.getWhereClause();
+		return delegate().getWhereClause();
 	}
 
 	@Override
 	public Long getOffset() {
-		return delegate.getOffset();
+		return delegate().getOffset();
 	}
 
 	@Override
 	public Long getLimit() {
-		return delegate.getLimit();
+		return delegate().getLimit();
 	}
 
 	@Override
 	public boolean distinct() {
-		return delegate.distinct();
+		return delegate().distinct();
 	}
 
 	@Override
 	public boolean numbered() {
-		return delegate.numbered();
+		return delegate().numbered();
 	}
 
 	@Override
 	public WhereClause getConditionOnNumberedQuery() {
-		return delegate.getConditionOnNumberedQuery();
+		return delegate().getConditionOnNumberedQuery();
 	}
 
 	@Override
 	public boolean count() {
-		return delegate.count();
+		return delegate().count();
 	}
 
 }

@@ -68,7 +68,6 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 
 	private UserQuerySpecs(final UserDataView dataView, final QuerySpecs delegate, final OperationUser operationUser,
 			final RowAndColumnPrivilegeFetcher rowAndColumnPrivilegeFetcher) {
-		super(delegate);
 		this.dataView = dataView;
 		this.delegate = delegate;
 		this.operationUser = operationUser;
@@ -76,6 +75,11 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 
 		userWhereClause = whereClauseForUser();
 		directJoins = directJoinClausesForUser(userWhereClause);
+	}
+
+	@Override
+	protected QuerySpecs delegate() {
+		return delegate;
 	}
 
 	@Override

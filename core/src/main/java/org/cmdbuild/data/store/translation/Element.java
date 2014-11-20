@@ -12,8 +12,15 @@ public class Element extends ForwardingGroupable {
 		return new Element(nameAndValue(ELEMENT, value));
 	}
 
+	private final Groupable delegate;
+
 	private Element(final Groupable delegate) {
-		super(delegate);
+		this.delegate = delegate;
+	}
+
+	@Override
+	protected Groupable delegate() {
+		return delegate;
 	}
 
 }

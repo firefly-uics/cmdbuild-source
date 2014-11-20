@@ -29,7 +29,9 @@
 		},
 
 		// TODO manage dangling card
-		setEntryType: function(entryType, danglingCard, filter) {
+		setEntryType: function(entryType, danglingCard, filter, enableDelegatesCall) {
+			enableDelegatesCall = (!Ext.isEmpty(enableDelegatesCall)) ? enableDelegatesCall : true;
+
 			if (
 				(entryType === this.entryType && this.filter)
 				|| danglingCard
@@ -41,7 +43,8 @@
 
 				this.setCard(null); // reset the stored card because it could not be of the new entry type
 
-				this.callDelegates('onEntryTypeDidChange', [this, entryType, danglingCard, filter]);
+				if (enableDelegatesCall)
+					this.callDelegates('onEntryTypeDidChange', [this, entryType, danglingCard, filter]);
 			}
 		},
 
@@ -51,7 +54,9 @@
 		 * @param (Object) card
 		 * @param (Function) cb
 		 */
-		setCard: function(card, cb) {
+		setCard: function(card, cb, enableDelegatesCall) {
+			enableDelegatesCall = (!Ext.isEmpty(enableDelegatesCall)) ? enableDelegatesCall : true;
+
 			if (card != null && typeof card.data == 'undefined') {
 				CMDBuild.ServiceProxy.card.get({
 					params: card,
@@ -70,7 +75,8 @@
 			} else {
 				this.card = card;
 
-				this.callDelegates('onCardDidChange', [this, card]);
+				if (enableDelegatesCall)
+					this.callDelegates('onCardDidChange', [this, card]);
 
 				if (typeof cb == 'function')
 					cb(card);

@@ -21,11 +21,13 @@ public class NotifierProxy<T> {
 
 	public static interface Notifier {
 
-		void invoke(String method, Iterable<Object> arguments);
+		void before(String method, Iterable<Object> arguments);
+
+		void after(String method);
 
 	}
 
-	public static class Builder<T> implements org.cmdbuild.common.Builder<NotifierProxy<T>> {
+	public static class Builder<T> implements org.apache.commons.lang3.builder.Builder<NotifierProxy<T>> {
 
 		private Class<T> type;
 		private T delegate;
@@ -96,8 +98,10 @@ public class NotifierProxy<T> {
 
 					@Override
 					public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-						notifier.invoke(method.getName(), (args == null) ? NO_ARGUMENTS : asList(args));
-						return method.invoke(delegate, args);
+						notifier.before(method.getName(), (args == null) ? NO_ARGUMENTS : asList(args));
+						final Object output = method.invoke(delegate, args);
+						notifier.after(method.getName());
+						return output;
 					}
 
 				});
