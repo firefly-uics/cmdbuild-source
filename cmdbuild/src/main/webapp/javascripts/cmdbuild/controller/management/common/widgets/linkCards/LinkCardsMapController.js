@@ -143,7 +143,7 @@
 
 					// Add me to the CMCardModuleStateDelegates
 					_CMCardModuleState.addDelegate(this);
-					_CMCardModuleState.setEntryType(this.targetClass);
+					_CMCardModuleState.setEntryType(this.targetClass, null, null, false);
 
 					this.map.events.register('zoomend', this, this.onZoomEnd);
 				},
@@ -172,10 +172,14 @@
 			this.model.select(attributes.master_card, selectedCoordinatesObject);
 
 			if (!Ext.isEmpty(layer.editLayer)) { // The feature selected is in a cmdbLayer with an associated editLayer
-				_CMCardModuleState.setCard({
-					Id: attributes.master_card,
-					IdClass: attributes.master_class
-				});
+				_CMCardModuleState.setCard(
+					{
+						Id: attributes.master_card,
+						IdClass: attributes.master_class
+					},
+					null,
+					false
+				);
 			}
 		},
 

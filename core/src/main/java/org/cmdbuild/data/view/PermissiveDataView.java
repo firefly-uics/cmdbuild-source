@@ -36,8 +36,15 @@ public class PermissiveDataView extends ForwardingDataView {
 
 		};
 
-		public PermissiveClass(final CMClass inner) {
-			super(inner);
+		private final CMClass delegate;
+
+		public PermissiveClass(final CMClass delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected CMClass delegate() {
+			return delegate;
 		}
 
 		@Override
@@ -51,8 +58,15 @@ public class PermissiveDataView extends ForwardingDataView {
 
 	private static class PermissiveDomain extends ForwardingDomain {
 
-		public PermissiveDomain(final CMDomain inner) {
-			super(inner);
+		private final CMDomain delegate;
+		
+		public PermissiveDomain(final CMDomain delegate) {
+			this.delegate = delegate;
+		}
+		
+		@Override
+		protected CMDomain delegate() {
+			return delegate;
 		}
 
 		@Override
@@ -64,8 +78,15 @@ public class PermissiveDataView extends ForwardingDataView {
 
 	private static class PermissiveAttribute extends ForwardingAttribute {
 
-		public PermissiveAttribute(final CMAttribute inner) {
-			super(inner);
+		private final CMAttribute delegate;
+
+		public PermissiveAttribute(final CMAttribute delegate) {
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected CMAttribute delegate() {
+			return delegate;
 		}
 
 		@Override
@@ -84,11 +105,17 @@ public class PermissiveDataView extends ForwardingDataView {
 
 	};
 
+	private final CMDataView defaultDataView;
 	private final CMDataView fallbackDataView;
 
 	public PermissiveDataView(final CMDataView defaultDataView, final CMDataView fallbackDataView) {
-		super(defaultDataView);
+		this.defaultDataView = defaultDataView;
 		this.fallbackDataView = fallbackDataView;
+	}
+
+	@Override
+	protected CMDataView delegate() {
+		return defaultDataView;
 	}
 
 	@Override

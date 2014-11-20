@@ -102,7 +102,8 @@ public class NotifierProxyTest {
 
 		// then
 		verify(delegate).foo();
-		verify(notifier).invoke(eq("foo"), eq(Collections.emptyList()));
+		verify(notifier).before(eq("foo"), eq(Collections.emptyList()));
+		verify(notifier).after(eq("foo"));
 	}
 
 	@Test
@@ -112,7 +113,8 @@ public class NotifierProxyTest {
 
 		// then
 		verify(delegate).bar(eq("test"));
-		verify(notifier).invoke(eq("bar"), eq(asList((Object) "test")));
+		verify(notifier).before(eq("bar"), eq(asList((Object) "test")));
+		verify(notifier).after(eq("bar"));
 	}
 
 	@Test
@@ -122,7 +124,8 @@ public class NotifierProxyTest {
 
 		// then
 		verify(delegate).baz(eq("test"), eq(42));
-		verify(notifier).invoke(eq("baz"), eq(asList((Object) "test", (Object) 42)));
+		verify(notifier).before(eq("baz"), eq(asList((Object) "test", (Object) 42)));
+		verify(notifier).after(eq("baz"));
 	}
 
 }

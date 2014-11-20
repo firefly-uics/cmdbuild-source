@@ -10,6 +10,7 @@ import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
 import org.cmdbuild.auth.context.SystemPrivilegeContext;
 import org.cmdbuild.dao.view.DBDataView;
+import org.cmdbuild.dao.view.user.privileges.PartiallyCachingRowAndColumnPrivilegeFetcher;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
 import org.cmdbuild.privileges.fetchers.DataViewRowAndColumnPrivilegeFetcher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,8 @@ public class PrivilegeManagement {
 	@Bean
 	@Scope(PROTOTYPE)
 	public RowAndColumnPrivilegeFetcher rowAndColumnPrivilegeFetcher() {
-		return new DataViewRowAndColumnPrivilegeFetcher(systemDataView, userPrivilegeContext(), userStore);
+		return new PartiallyCachingRowAndColumnPrivilegeFetcher(new DataViewRowAndColumnPrivilegeFetcher(systemDataView,
+				userPrivilegeContext(), userStore));
 	}
 
 }

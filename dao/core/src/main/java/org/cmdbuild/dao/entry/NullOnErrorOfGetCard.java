@@ -17,8 +17,15 @@ public class NullOnErrorOfGetCard extends ForwardingCard {
 		return new NullOnErrorOfGetCard(card);
 	}
 
-	private NullOnErrorOfGetCard(final CMCard inner) {
-		super(inner);
+	private final CMCard delegate;
+
+	private NullOnErrorOfGetCard(final CMCard delegate) {
+		this.delegate = delegate;
+	}
+
+	@Override
+	protected CMCard delegate() {
+		return delegate;
 	}
 
 	/**

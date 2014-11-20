@@ -2,17 +2,22 @@ package org.cmdbuild.logic.taskmanager.task.email;
 
 import org.cmdbuild.data.store.email.Email;
 
-abstract class ForwardingAction implements Action {
+import com.google.common.collect.ForwardingObject;
 
-	private final Action delegate;
+abstract class ForwardingAction extends ForwardingObject implements Action {
 
-	protected ForwardingAction(final Action delegate) {
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingAction() {
 	}
 
 	@Override
+	protected abstract Action delegate();
+
+	@Override
 	public void execute(final Email email) {
-		delegate.execute(email);
+		delegate().execute(email);
 	}
 
 }

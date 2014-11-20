@@ -33,16 +33,22 @@ public class ClassHistory extends ForwardingClass implements HistoricEntryType<C
 
 	};
 
+	private static final CMClass UNSUPPORTED = UnsupportedProxyFactory.of(CMClass.class).create();
+
 	private final CMClass current;
 	private final transient String toString;
 
 	private ClassHistory(final CMClass current) {
-		super(UnsupportedProxyFactory.of(CMClass.class).create());
 		this.current = current;
 		this.toString = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
 				.append("name", current.getIdentifier().getLocalName()) //
 				.append("namespace", current.getIdentifier().getNameSpace()) //
 				.toString();
+	}
+
+	@Override
+	protected CMClass delegate() {
+		return UNSUPPORTED;
 	}
 
 	@Override

@@ -32,16 +32,22 @@ public class UserAttribute extends ForwardingAttribute {
 	}
 
 	private final UserDataView view;
+	private CMAttribute delegate;
 	private final String mode;
 
 	private UserAttribute( //
 			final UserDataView view, //
-			final CMAttribute inner, //
+			final CMAttribute delegate, //
 			final String mode //
 	) {
-		super(inner);
 		this.view = view;
+		this.delegate = delegate;
 		this.mode = mode;
+	}
+
+	@Override
+	protected CMAttribute delegate() {
+		return delegate;
 	}
 
 	@Override

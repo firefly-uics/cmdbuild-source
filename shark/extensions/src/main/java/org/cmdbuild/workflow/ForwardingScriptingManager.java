@@ -5,22 +5,27 @@ import org.enhydra.shark.api.internal.scripting.Evaluator;
 import org.enhydra.shark.api.internal.scripting.ScriptingManager;
 import org.enhydra.shark.api.internal.working.CallbackUtilities;
 
-public abstract class ForwardingScriptingManager implements ScriptingManager {
+import com.google.common.collect.ForwardingObject;
 
-	private final ScriptingManager delegate;
+public abstract class ForwardingScriptingManager extends ForwardingObject implements ScriptingManager {
 
-	protected ForwardingScriptingManager(final ScriptingManager delegate) {
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingScriptingManager() {
 	}
 
 	@Override
+	protected abstract ScriptingManager delegate();
+
+	@Override
 	public void configure(final CallbackUtilities cus) throws Exception {
-		delegate.configure(cus);
+		delegate().configure(cus);
 	}
 
 	@Override
 	public Evaluator getEvaluator(final WMSessionHandle sessionHandle, final String name) throws Exception {
-		return delegate.getEvaluator(sessionHandle, name);
+		return delegate().getEvaluator(sessionHandle, name);
 	}
 
 }

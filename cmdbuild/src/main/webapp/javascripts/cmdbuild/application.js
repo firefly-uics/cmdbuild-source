@@ -73,20 +73,29 @@
 		};
 	// END: Logger configuration
 
-	// TODO: Read from real configuration
-	CMDBuild.Config.defaultTimeout = 90;
+	// Setup Ext timeouts
+		// TODO: Read from real configuration
+		CMDBuild.Config.defaultTimeout = 90;
+		Ext.Ajax.timeout = CMDBuild.Config.defaultTimeout * 1000;
 
-	Ext.override('Ext.data.Connection', {
-		timeout: CMDBuild.Config.defaultTimeout * 1000
-	});
+		Ext.define('CMDBuild.data.Connection', {
+			override: 'Ext.data.Connection',
 
-	Ext.override('Ext.data.proxy.Ajax', {
-		timeout: CMDBuild.Config.defaultTimeout * 1000
-	});
+			timeout: CMDBuild.Config.defaultTimeout * 1000
+		});
 
-	Ext.override('Ext.form.BasicForm', {
-		timeout: CMDBuild.Config.defaultTimeout
-	});
+		Ext.define('CMDBuild.data.proxy.Ajax', {
+			override: 'Ext.data.proxy.Ajax',
+
+			timeout: CMDBuild.Config.defaultTimeout * 1000
+		});
+
+		Ext.define('CMDBuild.form.Basic', {
+			override: 'Ext.form.Basic',
+
+			timeout: CMDBuild.Config.defaultTimeout
+		});
+	// END: Setup Ext timeouts
 
 	// Component masks are shown at 20000 z-index. This oddly fixes the problem of masks appearing on top of new windows.
 	// Ext.WindowMgr.zseed = 30000;

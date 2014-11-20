@@ -18,97 +18,101 @@ import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ForwardingObject;
 
 public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	private static final Marker marker = MarkerFactory.getMarker(DefaultEmailAccountLogic.class.getName());
 
-	private static abstract class ForwardingAccount implements Account {
+	private static abstract class ForwardingAccount extends ForwardingObject implements Account {
 
-		private final Account delegate;
-
-		protected ForwardingAccount(final Account delegate) {
-			this.delegate = delegate;
+		/**
+		 * Usable by subclasses only.
+		 */
+		protected ForwardingAccount() {
 		}
 
 		@Override
+		protected abstract Account delegate();
+
+		@Override
 		public Long getId() {
-			return delegate.getId();
+			return delegate().getId();
 		}
 
 		@Override
 		public String getName() {
-			return delegate.getName();
+			return delegate().getName();
 		}
 
 		@Override
 		public boolean isDefault() {
-			return delegate.isDefault();
+			return delegate().isDefault();
 		}
 
 		@Override
 		public String getUsername() {
-			return delegate.getUsername();
+			return delegate().getUsername();
 		}
 
 		@Override
 		public String getPassword() {
-			return delegate.getPassword();
+			return delegate().getPassword();
 		}
 
 		@Override
 		public String getAddress() {
-			return delegate.getAddress();
+			return delegate().getAddress();
 		}
 
 		@Override
 		public String getSmtpServer() {
-			return delegate.getSmtpServer();
+			return delegate().getSmtpServer();
 		}
 
 		@Override
 		public Integer getSmtpPort() {
-			return delegate.getSmtpPort();
+			return delegate().getSmtpPort();
 		}
 
 		@Override
 		public boolean isSmtpSsl() {
-			return delegate.isSmtpSsl();
+			return delegate().isSmtpSsl();
 		}
 
 		@Override
 		public String getImapServer() {
-			return delegate.getImapServer();
+			return delegate().getImapServer();
 		}
 
 		@Override
 		public Integer getImapPort() {
-			return delegate.getImapPort();
+			return delegate().getImapPort();
 		}
 
 		@Override
 		public boolean isImapSsl() {
-			return delegate.isImapSsl();
+			return delegate().isImapSsl();
 		}
 
 		@Override
 		public String getInputFolder() {
-			return delegate.getInputFolder();
+			return delegate().getInputFolder();
 		}
 
 		@Override
 		public String getProcessedFolder() {
-			return delegate.getProcessedFolder();
+			return delegate().getProcessedFolder();
 		}
 
 		@Override
 		public String getRejectedFolder() {
-			return delegate.getRejectedFolder();
+			return delegate().getRejectedFolder();
 		}
 
 		@Override
 		public boolean isRejectNotMatching() {
-			return delegate.isRejectNotMatching();
+			return delegate().isRejectNotMatching();
 		}
 
 		@Override
@@ -120,12 +124,19 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	private static class AlwaysDefault extends ForwardingAccount {
 
-		public static AlwaysDefault of(final Account account) {
-			return new AlwaysDefault(account);
+		public static AlwaysDefault of(final Account delegate) {
+			return new AlwaysDefault(delegate);
 		}
 
+		private final Account delegate;
+
 		private AlwaysDefault(final Account delegate) {
-			super(delegate);
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Account delegate() {
+			return delegate;
 		}
 
 		@Override
@@ -142,12 +153,19 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 
 	private static class NeverDefault extends ForwardingAccount {
 
-		public static NeverDefault of(final Account account) {
-			return new NeverDefault(account);
+		public static NeverDefault of(final Account delegate) {
+			return new NeverDefault(delegate);
 		}
 
+		private final Account delegate;
+
 		private NeverDefault(final Account delegate) {
-			super(delegate);
+			this.delegate = delegate;
+		}
+
+		@Override
+		protected Account delegate() {
+			return delegate;
 		}
 
 		@Override
@@ -168,11 +186,17 @@ public class DefaultEmailAccountLogic implements EmailAccountLogic {
 			return new MaybeDefault(account, isDefault);
 		}
 
+		private final Account delegate;
 		private final boolean isDefault;
 
 		private MaybeDefault(final Account delegate, final boolean isDefault) {
-			super(delegate);
+			this.delegate = delegate;
 			this.isDefault = isDefault;
+		}
+
+		@Override
+		protected Account delegate() {
+			return delegate;
 		}
 
 		@Override

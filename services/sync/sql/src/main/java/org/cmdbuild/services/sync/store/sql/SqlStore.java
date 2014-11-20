@@ -21,7 +21,6 @@ import org.cmdbuild.services.sync.store.Store;
 import org.cmdbuild.services.sync.store.Type;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 

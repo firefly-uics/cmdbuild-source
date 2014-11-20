@@ -15,6 +15,16 @@
 		loaded: false,
 
 		/**
+		 * @cfg {Object}
+		 */
+		activity: undefined,
+
+		/**
+		 * @cfg {Object}
+		 */
+		widgetConf: undefined,
+
+		/**
 		 * @param {Object} configuration
 		 */
 		constructor: function(configuration) {
@@ -27,8 +37,8 @@
 		initComponent: function() {
 			this.emailGrid = Ext.create('CMDBuild.view.management.common.widgets.CMEmailGrid', {
 				autoScroll: true,
-				processId: this.activity.Id,
-				readWrite: !this.widgetConf.readOnly,
+				processId: this.activity['Id'],
+				readWrite: !this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY],
 				frame: false,
 				border: false
 			});
@@ -44,7 +54,9 @@
 				'setDelegate'
 			]);
 
-			this.items = [this.emailGrid];
+			Ext.apply(this, {
+				items: [this.emailGrid]
+			});
 
 			this.callParent(arguments);
 		},

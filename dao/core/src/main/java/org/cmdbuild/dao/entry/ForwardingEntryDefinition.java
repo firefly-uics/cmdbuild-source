@@ -2,29 +2,34 @@ package org.cmdbuild.dao.entry;
 
 import org.cmdbuild.dao.entry.CMEntry.CMEntryDefinition;
 
-public abstract class ForwardingEntryDefinition implements CMEntryDefinition {
+import com.google.common.collect.ForwardingObject;
 
-	private final CMEntryDefinition delegate;
+public abstract class ForwardingEntryDefinition extends ForwardingObject implements CMEntryDefinition {
 
-	protected ForwardingEntryDefinition(final CMEntryDefinition delegate) {
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingEntryDefinition() {
 	}
 
 	@Override
+	protected abstract CMEntryDefinition delegate();
+
+	@Override
 	public CMEntryDefinition set(final String key, final Object value) {
-		delegate.set(key, value);
+		delegate().set(key, value);
 		return this;
 	}
 
 	@Override
 	public CMEntryDefinition setUser(final String user) {
-		delegate.setUser(user);
+		delegate().setUser(user);
 		return this;
 	}
 
 	@Override
 	public CMEntry save() {
-		return delegate.save();
+		return delegate().save();
 	}
 
 }

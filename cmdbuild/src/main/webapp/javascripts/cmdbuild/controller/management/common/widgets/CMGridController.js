@@ -267,7 +267,7 @@
 							})
 						);
 					} else {
-						throw 'CMGridController decodeFunctionPresets: SQL function not found.';
+						_debug('CMGridController decodeFunctionPresets: SQL function not found');
 					}
 				}
 			});

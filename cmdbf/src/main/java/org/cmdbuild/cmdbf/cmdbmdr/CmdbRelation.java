@@ -1,5 +1,6 @@
 package org.cmdbuild.cmdbf.cmdbmdr;
 
+import org.cmdbuild.dao.entry.CMEntry;
 import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entry.ForwardingEntry;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -11,10 +12,14 @@ public class CmdbRelation extends ForwardingEntry implements CMRelation {
 	private final String card2ClassName;
 
 	public CmdbRelation(final CMRelation delegate, final String card1ClassName, final String card2ClassName) {
-		super(delegate);
 		this.delegate = delegate;
 		this.card1ClassName = card1ClassName;
 		this.card2ClassName = card2ClassName;
+	}
+	
+	@Override
+	protected CMEntry delegate() {
+		return delegate;
 	}
 
 	@Override

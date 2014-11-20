@@ -7,10 +7,22 @@ import java.lang.reflect.Proxy;
 public class SmartBimserverClient extends ForwardingBimServerClient {
 
 	private final BimserverClient delegate;
+	private final BimserverClient proxiedDelegate;
 
 	public SmartBimserverClient(final BimserverClient delegate) {
-		super(proxy(delegate)); // the superclass forwards to the Proxy
-		this.delegate = delegate; // this class forwards to the DefaultClient
+		/*
+		 * this class forwards to the DefaultClient
+		 */
+		this.delegate = delegate;
+		/*
+		 * the superclass forwards to the Proxy
+		 */
+		this.proxiedDelegate = proxy(delegate);
+	}
+
+	@Override
+	protected BimserverClient delegate() {
+		return proxiedDelegate;
 	}
 
 	private static BimserverClient proxy(final BimserverClient delegate) {

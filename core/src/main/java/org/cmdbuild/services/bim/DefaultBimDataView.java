@@ -65,7 +65,7 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 	public static final String Z_COORD = "z";
 
 	private static final String CARDDATA_FROM_GUID_FUNCTION = "_bim_carddata_from_globalid";
-	private static final String CREATE_FUNCTION_CARDDATA_FOR_EXPORT_FUNCTION = "_bim_create_function_for_export";	
+	private static final String CREATE_FUNCTION_CARDDATA_FOR_EXPORT_FUNCTION = "_bim_create_function_for_export";
 	private static final String CARDDATA_FOR_EXPORT_FUNCTION = "_bim_data_for_export";
 	private static final String _BIM_UPDATE_COORDINATES = "_bim_update_coordinates";
 	private static final String GENERATE_COORDINATES_FUNCTION = "_bim_generate_coordinates";
@@ -76,8 +76,12 @@ public class DefaultBimDataView extends ForwardingDataView implements BimDataVie
 	private final CMDataView dataView;
 
 	public DefaultBimDataView(final CMDataView dataView) {
-		super(dataView);
 		this.dataView = dataView;
+	}
+
+	@Override
+	protected CMDataView delegate() {
+		return dataView;
 	}
 
 	@Override

@@ -4,31 +4,33 @@ import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
 
 public abstract class ForwardingAuthenticatedUser extends ForwardingUser implements AuthenticatedUser {
 
-	private final AuthenticatedUser delegate;
-
-	protected ForwardingAuthenticatedUser(final AuthenticatedUser delegate) {
-		super(delegate);
-		this.delegate = delegate;
+	/**
+	 * Usable by subclasses only.
+	 */
+	protected ForwardingAuthenticatedUser() {
 	}
 
 	@Override
+	protected abstract AuthenticatedUser delegate();
+
+	@Override
 	public boolean isAnonymous() {
-		return delegate.isAnonymous();
+		return delegate().isAnonymous();
 	}
 
 	@Override
 	public void setPasswordChanger(final PasswordChanger passwordChanger) {
-		delegate.setPasswordChanger(passwordChanger);
+		delegate().setPasswordChanger(passwordChanger);
 	}
 
 	@Override
 	public boolean changePassword(final String oldPassword, final String newPassword) {
-		return delegate.changePassword(oldPassword, newPassword);
+		return delegate().changePassword(oldPassword, newPassword);
 	}
 
 	@Override
 	public boolean canChangePassword() {
-		return delegate.canChangePassword();
+		return delegate().canChangePassword();
 	}
 
 }

@@ -15,8 +15,15 @@ public class EmailOwnerGroupable extends ForwardingGroupable {
 		return new EmailOwnerGroupable(nameAndValue(PROCESS_ID_ATTRIBUTE, owner));
 	}
 
+	private final Groupable delegate;
+
 	private EmailOwnerGroupable(final Groupable delegate) {
-		super(delegate);
+		this.delegate = delegate;
+	}
+
+	@Override
+	protected Groupable delegate() {
+		return delegate;
 	}
 
 }

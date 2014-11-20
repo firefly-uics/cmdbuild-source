@@ -8,8 +8,12 @@ public class CMDomainHistory extends ForwardingDomain {
 	private final CMDomain delegate;
 
 	public CMDomainHistory(final CMDomain delegate) {
-		super(delegate);
 		this.delegate = delegate;
+	}
+
+	@Override
+	protected CMDomain delegate() {
+		return delegate;
 	}
 
 	public CMDomain getBaseType() {

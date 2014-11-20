@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.taskmanager.event;
 
 import static com.google.common.base.Suppliers.memoize;
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
@@ -11,8 +12,11 @@ import static org.cmdbuild.common.template.engine.Engines.emptyStringOnNull;
 import static org.cmdbuild.common.template.engine.Engines.nullOnError;
 import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
 import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
+import static org.cmdbuild.dao.entrytype.Functions.allParents;
+import static org.cmdbuild.dao.entrytype.Functions.names;
 import static org.cmdbuild.services.email.Predicates.named;
 import static org.cmdbuild.services.event.Commands.safe;
+import static org.cmdbuild.services.template.engine.EngineNames.CQL_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.CURRENT_CARD_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.GROUP_PREFIX;
 import static org.cmdbuild.services.template.engine.EngineNames.GROUP_USERS_PREFIX;
@@ -26,6 +30,8 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entry.LazyCard;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.logging.LoggingSupport;
 import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.view.CMDataView;
@@ -57,6 +63,7 @@ import org.cmdbuild.services.event.FilteredObserver;
 import org.cmdbuild.services.event.Observer;
 import org.cmdbuild.services.event.ScriptCommand;
 import org.cmdbuild.services.template.engine.CardEngine;
+import org.cmdbuild.services.template.engine.CqlEngine;
 import org.cmdbuild.services.template.engine.GroupEmailEngine;
 import org.cmdbuild.services.template.engine.GroupUsersEmailEngine;
 import org.cmdbuild.services.template.engine.UserEmailEngine;
@@ -140,7 +147,15 @@ public class DefaultObserverFactory implements ObserverFactory {
 		}
 
 		private boolean matchesClass(final CMCard input) {
-			return isBlank(task.getTargetClassname()) || input.getType().getName().equals(task.getTargetClassname());
+			final CMClass type = input.getType();
+			final String targetClassname = task.getTargetClassname();
+			return isBlank(targetClassname) || type.getName().equals(targetClassname) || contains( //
+					from(asList(type)) //
+							.transform(allParents()) //
+							.transform(names()) //
+							.first() //
+							.get(), //
+					targetClassname);
 		}
 
 		private boolean matchesCards(final CMCard input) {
@@ -268,56 +283,7 @@ public class DefaultObserverFactory implements ObserverFactory {
 			}
 
 			private TemplateResolver templateResolverOf(final Context context) {
-				final EngineBasedTemplateResolver.Builder builder = EngineBasedTemplateResolver.newInstance();
-				context.accept(new ContextVisitor() {
-					@Override
-					public void visit(final AfterCreate context) {
-						builder.withEngine(//
-								CardEngine.newInstance() //
-										.withCard(context.card) //
-										.build(), //
-								CURRENT_CARD_PREFIX);
-					}
-
-					@Override
-					public void visit(final BeforeUpdate context) {
-						builder.withEngine(//
-								CardEngine.newInstance() //
-										.withCard(context.actual) //
-										.build(), //
-								CURRENT_CARD_PREFIX);
-						builder.withEngine(//
-								CardEngine.newInstance() //
-										.withCard(context.next) //
-										.build(), //
-								NEXT_CARD_PREFIX);
-					}
-
-					@Override
-					public void visit(final AfterUpdate context) {
-						builder.withEngine(//
-								CardEngine.newInstance() //
-										.withCard(context.previous) //
-										.build(), //
-								PREVIOUS_CARD_PREFIX);
-						builder.withEngine(//
-								CardEngine.newInstance() //
-										.withCard(context.actual) //
-										.build(), //
-								CURRENT_CARD_PREFIX);
-					}
-
-					@Override
-					public void visit(final BeforeDelete context) {
-						builder.withEngine(//
-								CardEngine.newInstance() //
-										.withCard(context.card) //
-										.build(), //
-								CURRENT_CARD_PREFIX);
-					}
-
-				});
-				return builder.build();
+				return contextBasedTemplateResolver(context).build();
 			}
 
 		});
@@ -343,7 +309,17 @@ public class DefaultObserverFactory implements ObserverFactory {
 						EmailAccount.class, emailAccountStore, named(task.getEmailAccount())));
 				final Supplier<EmailAccount> emailAccountSupplier = firstNotNull(asList(templateEmailAccountSupplier,
 						taskEmailAccountSupplier));
-				final EngineBasedTemplateResolver templateResolver = EngineBasedTemplateResolver.newInstance() //
+				SendTemplateEmail.newInstance() //
+						.withEmailAccountSupplier(emailAccountSupplier) //
+						.withEmailServiceFactory(emailServiceFactory) //
+						.withEmailTemplateSupplier(emailTemplateSupplier) //
+						.withTemplateResolver(templateResolverOf(context)) //
+						.build() //
+						.execute();
+			}
+
+			private EngineBasedTemplateResolver templateResolverOf(final Context context) {
+				return contextBasedTemplateResolver(context) //
 						.withEngine(emptyStringOnNull(nullOnError( //
 								UserEmailEngine.newInstance() //
 										.withDataView(dataView) //
@@ -361,14 +337,13 @@ public class DefaultObserverFactory implements ObserverFactory {
 										.build() //
 								)), //
 								GROUP_USERS_PREFIX) //
+						.withEngine(emptyStringOnNull(nullOnError( //
+								CqlEngine.newInstance() //
+										.withDataView(dataView) //
+										.build() //
+								)), //
+								CQL_PREFIX) //
 						.build();
-				SendTemplateEmail.newInstance() //
-						.withEmailAccountSupplier(emailAccountSupplier) //
-						.withEmailServiceFactory(emailServiceFactory) //
-						.withEmailTemplateSupplier(emailTemplateSupplier) //
-						.withTemplateResolver(templateResolver) //
-						.build() //
-						.execute();
 			}
 
 		});
@@ -389,6 +364,64 @@ public class DefaultObserverFactory implements ObserverFactory {
 				.withUserStore(userStore) //
 				.withDataView(privilegedDataView) //
 				.build();
+	}
+
+	private EngineBasedTemplateResolver.Builder contextBasedTemplateResolver(final Context context) {
+		final EngineBasedTemplateResolver.Builder builder = EngineBasedTemplateResolver.newInstance();
+		context.accept(new ContextVisitor() {
+
+			@Override
+			public void visit(final AfterCreate context) {
+				builder.withEngine(//
+						CardEngine.newInstance() //
+								.withCard(lazy(context.card)) //
+								.build(), //
+						CURRENT_CARD_PREFIX);
+			}
+
+			@Override
+			public void visit(final BeforeUpdate context) {
+				builder.withEngine(//
+						CardEngine.newInstance() //
+								.withCard(context.actual) //
+								.build(), //
+						CURRENT_CARD_PREFIX);
+				builder.withEngine(//
+						CardEngine.newInstance() //
+								.withCard(context.next) //
+								.build(), //
+						NEXT_CARD_PREFIX);
+			}
+
+			@Override
+			public void visit(final AfterUpdate context) {
+				builder.withEngine(//
+						CardEngine.newInstance() //
+								.withCard(lazy(context.previous)) //
+								.build(), //
+						PREVIOUS_CARD_PREFIX);
+				builder.withEngine(//
+						CardEngine.newInstance() //
+								.withCard(lazy(context.actual)) //
+								.build(), //
+						CURRENT_CARD_PREFIX);
+			}
+
+			@Override
+			public void visit(final BeforeDelete context) {
+				builder.withEngine(//
+						CardEngine.newInstance() //
+								.withCard(lazy(context.card)) //
+								.build(), //
+						CURRENT_CARD_PREFIX);
+			}
+
+			private CMCard lazy(final CMCard card) {
+				return new LazyCard(card, dataView);
+			}
+
+		});
+		return builder;
 	}
 
 }

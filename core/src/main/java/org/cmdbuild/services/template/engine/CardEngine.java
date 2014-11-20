@@ -6,6 +6,7 @@ import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.template.engine.Engine;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
+import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.LookupAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.NullAttributeTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
@@ -62,6 +63,12 @@ public class CardEngine implements Engine {
 				return adapted;
 			}
 
+			@Override
+			public void visit(final ForeignKeyAttributeType attributeType) {
+				adapted = IdAndDescription.class.cast(adapted).getId();
+			}
+
+			@Override
 			public void visit(final LookupAttributeType attributeType) {
 				adapted = IdAndDescription.class.cast(adapted).getId();
 			};
