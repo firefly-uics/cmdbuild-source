@@ -273,14 +273,12 @@
 	function genHistoryBody(record) {
 		var body = '';
 		var classAttributes = _CMCache.mapOfAttributes[_CMCardModuleState.card.get('IdClass')];
-		var attributesNamesArray = [];
+		var attributesDescriptionArray = [];
 
-		// Build attributesNamesArray to test if display attribute
-		for (var i in classAttributes) {
-_debug('classAttributes[i]', classAttributes[i]);
-			attributesNamesArray.push(classAttributes[i][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]);
-		}
-_debug('attributesNamesArray', attributesNamesArray);
+		// Build attributesDescriptionArray to test if display attribute
+		for (var i in classAttributes)
+			attributesDescriptionArray.push(classAttributes[i][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]);
+
 		if (record.raw['_RelHist']) {
 			body += historyAttribute(tr.domain, record.raw['DomainDesc'])
 				+ historyAttribute(tr.destclass, record.raw['Class'])
@@ -290,8 +288,8 @@ _debug('attributesNamesArray', attributesNamesArray);
 
 		for (var i = 0; i < record.raw['Attr'].length; i++) {
 			var attribute = record.raw['Attr'][i];
-_debug('attribute', attribute);
-			if (Ext.Array.contains(attributesNamesArray, attribute.d)) {
+
+			if (Ext.Array.contains(attributesDescriptionArray, attribute.d)) {
 				var label = attribute.d;
 				var changed = attribute.c;
 				var value = Ext.isEmpty(attribute.v) ? '' : attribute.v;
