@@ -3,12 +3,9 @@ package unit.template.engine;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.cmdbuild.common.template.engine.Engine;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;

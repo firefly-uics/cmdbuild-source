@@ -87,6 +87,7 @@ public class Serialization {
 			SIMPLE_DOMAIN_DETAIL = "simpleDomainDetail", //
 			SIMPLE_PROCESS_DETAIL = "simpleProcessDetail", //
 			SIMPLE_RESPONSE = "simpleResponse", //
+			SORT = "sort", //
 			SOURCE = "source", //
 			START = "start", //
 			TARGET_CLASS = "targetClass", //

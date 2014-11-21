@@ -1,10 +1,12 @@
 package org.cmdbuild.service.rest.logging;
 
+import static com.google.common.reflect.Reflection.getPackageName;
+import static org.slf4j.LoggerFactory.getLogger;
+
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public interface LoggingSupport {
 
-	Logger logger = LoggerFactory.getLogger("rest");
+	Logger logger = getLogger(getPackageName(LoggingSupport.class));
 
 }
