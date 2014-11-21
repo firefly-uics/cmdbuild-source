@@ -2,9 +2,11 @@ package org.cmdbuild.service.rest;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_INSTANCE_ID;
+import static org.cmdbuild.service.rest.constants.Serialization.SORT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 
 import javax.ws.rs.Consumes;
@@ -45,6 +47,8 @@ public interface ProcessInstances {
 	@Path(EMPTY)
 	ResponseMultiple<ProcessInstance> read( //
 			@PathParam(PROCESS_ID) String processId, //
+			@QueryParam(FILTER) String filter, //
+			@QueryParam(SORT) String sort, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);

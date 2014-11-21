@@ -1,6 +1,8 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonArray;
+import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
@@ -98,16 +100,17 @@ public class CxfProcessInstances implements ProcessInstances {
 	}
 
 	@Override
-	public ResponseMultiple<ProcessInstance> read(final String processId, final Integer limit, final Integer offset) {
+	public ResponseMultiple<ProcessInstance> read(final String processId, final String filter, final String sort,
+			final Integer limit, final Integer offset) {
 		final UserProcessClass found = workflowLogic.findProcessClass(processId);
 		if (found == null) {
 			errorHandler.processNotFound(processId);
 		}
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+				.filter(safeJsonObject(filter)) //
+				.orderBy(safeJsonArray(sort)) //
 				.limit(limit) //
 				.offset(offset) //
-				// TODO filters
-				// TODO sorters
 				.build();
 		final PagedElements<UserProcessInstance> elements = workflowLogic.query(found.getName(), queryOptions);
 		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
