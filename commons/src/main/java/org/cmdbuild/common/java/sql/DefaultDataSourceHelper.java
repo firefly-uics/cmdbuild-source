@@ -130,32 +130,39 @@ public class DefaultDataSourceHelper implements DataSourceHelper, LoggingSupport
 
 			@Override
 			public void visit(final Oracle type) {
-				dataSource = new ForwardingDataSource() {
+				try {
+					Class.forName(ORACLE_JDBC_DRIVER_CLASS_NAME);
+					dataSource = new ForwardingDataSource() {
 
-					@Override
-					protected DataSource delegate() {
-						return UNSUPPORTED;
-					}
+						@Override
+						protected DataSource delegate() {
+							return UNSUPPORTED;
+						}
 
-					@Override
-					public Connection getConnection() throws SQLException {
-						return DriverManager.getConnection(url(), configuration.getUsername(),
-								configuration.getPassword());
-					}
+						@Override
+						public Connection getConnection() throws SQLException {
+							return DriverManager.getConnection(url(), configuration.getUsername(),
+									configuration.getPassword());
+						}
 
-					@Override
-					public Connection getConnection(final String username, final String password) throws SQLException {
-						return DriverManager.getConnection(url(), username, password);
-					}
+						@Override
+						public Connection getConnection(final String username, final String password)
+								throws SQLException {
+							return DriverManager.getConnection(url(), username, password);
+						}
 
-					private String url() {
-						return format("jdbc:oracle:thin:@%s:%d:%s", //
-								configuration.getHost(), //
-								configuration.getPort(), //
-								configuration.getDatabase());
-					}
+						private String url() {
+							return format("jdbc:oracle:thin:@%s:%d:%s", //
+									configuration.getHost(), //
+									configuration.getPort(), //
+									configuration.getDatabase());
+						}
 
-				};
+					};
+				} catch (final ClassNotFoundException e) {
+					logger.error(marker, "oracle driver '{}' not found", ORACLE_JDBC_DRIVER_CLASS_NAME);
+					throw new RuntimeException(e);
+				}
 			}
 
 			@Override
