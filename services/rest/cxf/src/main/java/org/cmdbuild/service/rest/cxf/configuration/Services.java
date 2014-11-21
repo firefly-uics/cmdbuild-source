@@ -21,12 +21,14 @@ import org.cmdbuild.service.rest.LookupTypes;
 import org.cmdbuild.service.rest.Menu;
 import org.cmdbuild.service.rest.ProcessAttributes;
 import org.cmdbuild.service.rest.ProcessInstanceActivities;
+import org.cmdbuild.service.rest.ProcessInstanceAttachmentMetadata;
 import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.ProcessStartActivities;
 import org.cmdbuild.service.rest.Processes;
 import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.Sessions;
 import org.cmdbuild.service.rest.cxf.AllInOneCardAttachments;
+import org.cmdbuild.service.rest.cxf.AllInOneProcessInstanceAttachments;
 import org.cmdbuild.service.rest.cxf.CxfAttachmentsConfiguration;
 import org.cmdbuild.service.rest.cxf.CxfCardAttachmentMetadata;
 import org.cmdbuild.service.rest.cxf.CxfCardAttachments;
@@ -40,6 +42,8 @@ import org.cmdbuild.service.rest.cxf.CxfLookupTypes;
 import org.cmdbuild.service.rest.cxf.CxfMenu;
 import org.cmdbuild.service.rest.cxf.CxfProcessAttributes;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstanceActivities;
+import org.cmdbuild.service.rest.cxf.CxfProcessInstanceAttachmentMetadata;
+import org.cmdbuild.service.rest.cxf.CxfProcessInstanceAttachments;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
@@ -189,6 +193,22 @@ public class Services implements LoggingSupport {
 		final CxfProcessInstanceActivities service = new CxfProcessInstanceActivities(errorHandler(),
 				helper.userWorkflowLogic());
 		return proxy(ProcessInstanceActivities.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public ProcessInstanceAttachmentMetadata cxfProcessInstanceAttachmentMetadata() {
+		final CxfProcessInstanceAttachmentMetadata service = new CxfProcessInstanceAttachmentMetadata(errorHandler(),
+				helper.dmsLogic(), helper.userWorkflowLogic());
+		return proxy(ProcessInstanceAttachmentMetadata.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public AllInOneProcessInstanceAttachments cxfProcessInstanceAttachments() {
+		final CxfProcessInstanceAttachments service = new CxfProcessInstanceAttachments(errorHandler(),
+				helper.dmsLogic(), helper.userWorkflowLogic(), helper.userStore());
+		return proxy(AllInOneProcessInstanceAttachments.class, service);
 	}
 
 	@Bean
