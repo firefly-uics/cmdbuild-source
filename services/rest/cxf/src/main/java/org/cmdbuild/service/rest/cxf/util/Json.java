@@ -1,0 +1,32 @@
+package org.cmdbuild.service.rest.cxf.util;
+
+import org.cmdbuild.service.rest.logging.LoggingSupport;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class Json implements LoggingSupport {
+
+	public static JSONObject safeJsonObject(final String json) {
+		try {
+			return (json == null) ? new JSONObject() : new JSONObject(json);
+		} catch (final JSONException e) {
+			logger.error("error parsing json", e);
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	public static JSONArray safeJsonArray(final String json) {
+		try {
+			return (json == null) ? new JSONArray() : new JSONArray(json);
+		} catch (final JSONException e) {
+			logger.error("error parsing json", e);
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	private Json() {
+		// prevents instantiation
+	}
+
+}

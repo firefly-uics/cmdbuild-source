@@ -6,6 +6,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.CARD_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.CLASS_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.constants.Serialization.SORT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 
 import javax.ws.rs.Consumes;
@@ -45,6 +46,7 @@ public interface Cards {
 	ResponseMultiple<Card> read( //
 			@PathParam(CLASS_ID) String classId, //
 			@QueryParam(FILTER) String filter, //
+			@QueryParam(SORT) String sort, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);

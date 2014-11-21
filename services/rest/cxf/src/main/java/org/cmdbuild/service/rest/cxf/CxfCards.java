@@ -1,6 +1,8 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonArray;
+import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
@@ -16,15 +18,14 @@ import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.cxf.serialization.FromCMCardToCard;
 import org.cmdbuild.service.rest.cxf.serialization.FromCardToCard;
 import org.cmdbuild.service.rest.cxf.serialization.ToCardFunction;
+import org.cmdbuild.service.rest.logging.LoggingSupport;
 import org.cmdbuild.service.rest.model.Card;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.mchange.util.AssertException;
 
-public class CxfCards implements Cards {
+public class CxfCards implements Cards, LoggingSupport {
 
 	private final ErrorHandler errorHandler;
 	private final DataAccessLogic userDataAccessLogic;
@@ -79,14 +80,15 @@ public class CxfCards implements Cards {
 	}
 
 	@Override
-	public ResponseMultiple<Card> read(final String classId, final String filter, final Integer limit,
-			final Integer offset) {
+	public ResponseMultiple<Card> read(final String classId, final String filter, final String sort,
+			final Integer limit, final Integer offset) {
 		final CMClass targetClass = userDataAccessLogic.findClass(classId);
 		if (targetClass == null) {
 			errorHandler.classNotFound(classId);
 		}
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.filter(safeJsonObject(filter)) //
+				.orderBy(safeJsonArray(sort)) //
 				.limit(limit) //
 				.offset(offset) //
 				.build();
@@ -103,15 +105,6 @@ public class CxfCards implements Cards {
 						.withTotal(Long.valueOf(response.totalSize())) //
 						.build()) //
 				.build();
-	}
-
-	private JSONObject safeJsonObject(final String filter) {
-		try {
-			return (filter == null) ? new JSONObject() : new JSONObject(filter);
-		} catch (final JSONException e) {
-			// TODO log
-			return null;
-		}
 	}
 
 	@Override
