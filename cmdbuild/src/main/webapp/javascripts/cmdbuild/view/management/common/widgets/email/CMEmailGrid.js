@@ -75,7 +75,10 @@
 						type: 'json'
 					}
 				},
-				sorters: { property: fields.STATUS, direction: 'ASC' },
+				sorters: {
+					property: fields.STATUS,
+					direction: 'ASC'
+				},
 				groupField: fields.STATUS,
 				autoLoad: false
 			});
@@ -226,14 +229,13 @@
 		},
 
 		removeTemplatesFromStore: function() {
-			var me = this;
-			var data = me.store.data.clone();
+			var data = this.store.data.clone();
 
 			for (var i = 0; i < data.length; ++i) {
-				var r = data.getAt(i);
+				var storeItem = data.getAt(i);
 
-				if (r && r._cmTemplate)
-					me.store.remove(r);
+				if (storeItem && storeItem._cmTemplate)
+					this.store.remove(storeItem);
 			}
 		},
 
@@ -309,7 +311,7 @@
 				) == -1
 			) {
 				// Use loadRecords because store.add does not update the grouping so the grid goes broken
-				store.loadRecords([record], {addRecords: true});
+				store.loadRecords([record], { addRecords: true });
 			}
 		},
 
