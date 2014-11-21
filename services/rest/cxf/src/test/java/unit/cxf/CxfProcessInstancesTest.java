@@ -3,6 +3,8 @@ package unit.cxf;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonArray;
+import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.model.Models.newProcessInstanceAdvance;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -146,7 +148,7 @@ public class CxfProcessInstancesTest {
 				.when(errorHandler).processNotFound(anyString());
 
 		// when
-		cxfProcessInstances.read("123", null, null);
+		cxfProcessInstances.read("123", null, null, null, null);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
@@ -182,7 +184,8 @@ public class CxfProcessInstancesTest {
 				.when(workflowLogic).query(anyString(), any(QueryOptions.class));
 
 		// when
-		final ResponseMultiple<ProcessInstance> response = cxfProcessInstances.read("123", null, null);
+		final ResponseMultiple<ProcessInstance> response = cxfProcessInstances.read("123", "{\"the\": \"filter\"}",
+				"[\"foo\", \"bar\", \"baz\"]", null, null);
 
 		// then
 		final ArgumentCaptor<QueryOptions> queryOptionsCaptor = ArgumentCaptor.forClass(QueryOptions.class);
@@ -191,6 +194,8 @@ public class CxfProcessInstancesTest {
 		inOrder.verify(workflowLogic).query(eq("foo"), queryOptionsCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
 		final QueryOptions captured = queryOptionsCaptor.getValue();
+		assertThat(captured.getFilter().toString(), equalTo(safeJsonObject("{\"the\": \"filter\"}").toString()));
+		assertThat(captured.getSorters().toString(), equalTo(safeJsonArray("[\"foo\", \"bar\", \"baz\"]").toString()));
 		assertThat(captured.getLimit(), equalTo(Integer.MAX_VALUE));
 		assertThat(captured.getOffset(), equalTo(0));
 		assertThat(response.getMetadata().getTotal(), equalTo(4L));

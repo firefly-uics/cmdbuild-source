@@ -3,7 +3,9 @@ package integration.rest;
 import static java.util.Arrays.asList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.CharEncoding.UTF_8;
+import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.constants.Serialization.SORT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newProcessInstance;
@@ -167,18 +169,20 @@ public class ProcessInstancesTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyString(), anyInt(), anyInt());
+				.when(service).read(anyString(), anyString(), anyString(), anyInt(), anyInt());
 
 		// when
 		final GetMethod get = new GetMethod(server.resource("processes/12/instances/"));
 		get.setQueryString(all( //
+				param(FILTER, "filter"), //
+				param(SORT, "sort"), //
 				param(LIMIT, "456"), //
 				param(START, "789") //
 		));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq("12"), eq(456), eq(789));
+		verify(service).read(eq("12"), eq("filter"), eq("sort"), eq(456), eq(789));
 		assertThat(result, equalTo(200));
 		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
