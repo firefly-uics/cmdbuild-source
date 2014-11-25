@@ -3,6 +3,7 @@ package org.cmdbuild.dao.view.user.privileges;
 import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 
 public interface RowAndColumnPrivilegeFetcher {
@@ -31,6 +32,9 @@ public interface RowAndColumnPrivilegeFetcher {
 	 *         {@link CMEntryType}.
 	 */
 	Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType, CMEntryType entryTypeForClauses);
+
+	Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(CMEntryType entryType, CMEntryType entryTypeForClauses,
+			Alias entryTypeForClausesAlias);
 
 	/**
 	 * This method fetches column privileges for the currently logged user.
