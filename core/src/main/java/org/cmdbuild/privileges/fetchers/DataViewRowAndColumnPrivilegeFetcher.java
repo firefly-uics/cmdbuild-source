@@ -1,6 +1,7 @@
 package org.cmdbuild.privileges.fetchers;
 
 import static com.google.common.collect.Iterables.isEmpty;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 
 import java.util.Collections;
@@ -13,6 +14,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.acl.PrivilegeContext.PrivilegedObjectMetadata;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.user.privileges.RowAndColumnPrivilegeFetcher;
@@ -37,8 +39,7 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 	public DataViewRowAndColumnPrivilegeFetcher( //
 			final CMDataView dataView, //
 			final PrivilegeContext privilegeContext, //
-			final UserStore userStore
-	) {
+			final UserStore userStore) {
 		this.dataView = dataView;
 		this.privilegeContext = privilegeContext;
 		this.userStore = userStore;
@@ -50,12 +51,18 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 	 */
 	@Override
 	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType) {
-		return fetchPrivilegeFiltersFor(entryType, entryType);
+		return fetchPrivilegeFiltersFor(entryType, entryType, canonical(entryType));
 	}
 
 	@Override
 	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType,
 			final CMEntryType entryTypeForClauses) {
+		return fetchPrivilegeFiltersFor(entryType, entryTypeForClauses, canonical(entryTypeForClauses));
+	}
+
+	@Override
+	public Iterable<? extends WhereClause> fetchPrivilegeFiltersFor(final CMEntryType entryType,
+			final CMEntryType entryTypeForClauses, final Alias entryTypeForClausesAlias) {
 		if (privilegeContext.hasAdministratorPrivileges() && entryType.isActive()) {
 			return EMPTY_WHERE_CLAUSES;
 		}
@@ -67,7 +74,8 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 		final List<WhereClause> whereClauseFilters = Lists.newArrayList();
 		for (final String privilegeFilter : privilegeFilters) {
 			try {
-				final Iterable<WhereClause> whereClauses = createWhereClausesFrom(privilegeFilter, entryTypeForClauses);
+				final Iterable<WhereClause> whereClauses = createWhereClausesFrom(privilegeFilter, entryTypeForClauses,
+						entryTypeForClausesAlias);
 				if (!isEmpty(whereClauses)) {
 					whereClauseFilters.add(and(whereClauses));
 				}
@@ -78,12 +86,13 @@ public class DataViewRowAndColumnPrivilegeFetcher implements RowAndColumnPrivile
 		return whereClauseFilters;
 	}
 
-	private Iterable<WhereClause> createWhereClausesFrom(final String privilegeFilter, final CMEntryType entryType)
-			throws JSONException {
+	private Iterable<WhereClause> createWhereClausesFrom(final String privilegeFilter, final CMEntryType entryType,
+			final Alias entryTypeAlias) throws JSONException {
 		final JSONObject jsonPrivilegeFilter = new JSONObject(privilegeFilter);
 		return JsonFilterMapper.newInstance() //
 				.withDataView(dataView) //
 				.withEntryType(entryType) //
+				.withEntryTypeAlias(entryTypeAlias) //
 				.withFilterObject(jsonPrivilegeFilter) //
 				.withOperationUser(userStore.getUser()) //
 				.build() //
