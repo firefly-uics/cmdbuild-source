@@ -21,6 +21,7 @@ import java.util.Collections;
 
 import javax.ws.rs.WebApplicationException;
 
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
@@ -28,6 +29,7 @@ import org.cmdbuild.service.rest.model.ProcessWithBasicDetails;
 import org.cmdbuild.service.rest.model.ProcessWithFullDetails;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.workflow.LookupHelper;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +41,7 @@ public class CxfProcessesTest {
 
 	private ErrorHandler errorHandler;
 	private WorkflowLogic workflowLogic;
+	private LookupHelper lookupHelper;
 
 	private CxfProcesses cxfProcesses;
 
@@ -46,7 +49,8 @@ public class CxfProcessesTest {
 	public void setUp() throws Exception {
 		errorHandler = mock(ErrorHandler.class);
 		workflowLogic = mock(WorkflowLogic.class);
-		cxfProcesses = new CxfProcesses(errorHandler, workflowLogic);
+		lookupHelper = mock(LookupHelper.class);
+		cxfProcesses = new CxfProcesses(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	@Test
@@ -60,7 +64,7 @@ public class CxfProcessesTest {
 
 		// then
 		verify(workflowLogic).findProcessClasses(true);
-		verifyNoMoreInteractions(errorHandler, workflowLogic);
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 		assertThat(response.getElements(), hasSize(0));
 		assertThat(response.getMetadata().getTotal(), equalTo(0L));
 	}
@@ -90,7 +94,7 @@ public class CxfProcessesTest {
 
 		// then
 		verify(workflowLogic).findProcessClasses(true);
-		verifyNoMoreInteractions(errorHandler, workflowLogic);
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 		assertThat(response.getElements(), hasSize(2));
 		assertThat(response.getMetadata().getTotal(), equalTo(2L));
 		final ProcessWithBasicDetails first = get(response.getElements(), 0);
@@ -117,7 +121,7 @@ public class CxfProcessesTest {
 		cxfProcesses.read("123");
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(errorHandler).processNotFound(eq("123"));
 		inOrder.verifyNoMoreInteractions();
@@ -135,13 +139,16 @@ public class CxfProcessesTest {
 		}
 		doReturn(foo) //
 				.when(workflowLogic).findProcessClass(anyString());
+		doReturn(asList(Lookup.newInstance().build())) //
+				.when(lookupHelper).allLookups();
 
 		// when
 		final ResponseSingle<ProcessWithFullDetails> response = cxfProcesses.read("123");
 
 		// then
 		verify(workflowLogic).findProcessClass(eq("123"));
-		verifyNoMoreInteractions(errorHandler, workflowLogic);
+		verify(lookupHelper).allLookups();
+		verifyNoMoreInteractions(errorHandler, workflowLogic, lookupHelper);
 		final ProcessWithFullDetails element = response.getElement();
 		assertThat(element.getName(), equalTo("foo"));
 		assertThat(element.getDescription(), equalTo("Foo"));

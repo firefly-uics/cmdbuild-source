@@ -1,7 +1,9 @@
 package org.cmdbuild.service.rest.model;
 
-import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION_ATTRIBUTE_NAME;
+import static org.cmdbuild.service.rest.constants.Serialization.*;
 import static org.cmdbuild.service.rest.constants.Serialization.FULL_CLASS_DETAIL;
+
+import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,6 +16,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class ProcessWithFullDetails extends ProcessWithBasicDetails {
 
 	private String descriptionAttributeName;
+	private Collection<Long> statuses;
 
 	ProcessWithFullDetails() {
 		// package visibility
@@ -27,6 +30,15 @@ public class ProcessWithFullDetails extends ProcessWithBasicDetails {
 
 	void setDescriptionAttributeName(final String descriptionAttributeName) {
 		this.descriptionAttributeName = descriptionAttributeName;
+	}
+
+	@XmlAttribute(name = STATUSES)
+	public Collection<Long> getStatuses() {
+		return statuses;
+	}
+
+	void setStatuses(final Collection<Long> statuses) {
+		this.statuses = statuses;
 	}
 
 	@Override

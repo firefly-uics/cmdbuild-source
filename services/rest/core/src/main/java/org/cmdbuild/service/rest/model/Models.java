@@ -1188,11 +1188,14 @@ public class Models {
 
 	public static class ProcessWithFullDetailsBuilder extends ModelBuilder<ProcessWithFullDetails> {
 
+		private static final Collection<Long> NO_STATUSES = emptyList();
+
 		private String id;
 		private String name;
 		private String description;
 		private Boolean prototype;
 		private String descriptionAttributeName;
+		private Collection<Long> statuses;
 		private String parent;
 
 		private ProcessWithFullDetailsBuilder() {
@@ -1202,6 +1205,7 @@ public class Models {
 		@Override
 		protected void doValidate() {
 			prototype = defaultIfNull(prototype, FALSE);
+			statuses = defaultIfNull(statuses, NO_STATUSES);
 		}
 
 		@Override
@@ -1212,6 +1216,7 @@ public class Models {
 			output.setDescription(description);
 			output.setPrototype(prototype);
 			output.setDescriptionAttributeName(descriptionAttributeName);
+			output.setStatuses(statuses);
 			output.setParent(parent);
 			return output;
 		}
@@ -1238,6 +1243,11 @@ public class Models {
 
 		public ProcessWithFullDetailsBuilder withDescriptionAttributeName(final String descriptionAttributeName) {
 			this.descriptionAttributeName = descriptionAttributeName;
+			return this;
+		}
+
+		public ProcessWithFullDetailsBuilder withStatuses(final Iterable<? extends Long> statuses) {
+			this.statuses = newArrayList(defaultIfNull(statuses, NO_STATUSES));
 			return this;
 		}
 
