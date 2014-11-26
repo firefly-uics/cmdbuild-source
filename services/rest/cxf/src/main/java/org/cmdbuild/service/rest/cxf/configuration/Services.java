@@ -25,6 +25,7 @@ import org.cmdbuild.service.rest.ProcessInstanceAttachmentMetadata;
 import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.ProcessStartActivities;
 import org.cmdbuild.service.rest.Processes;
+import org.cmdbuild.service.rest.ProcessesConfiguration;
 import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.Sessions;
 import org.cmdbuild.service.rest.cxf.AllInOneCardAttachments;
@@ -47,6 +48,7 @@ import org.cmdbuild.service.rest.cxf.CxfProcessInstanceAttachments;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.cxf.CxfProcesses;
+import org.cmdbuild.service.rest.cxf.CxfProcessesConfiguration;
 import org.cmdbuild.service.rest.cxf.CxfRelations;
 import org.cmdbuild.service.rest.cxf.CxfSessions;
 import org.cmdbuild.service.rest.cxf.CxfSessions.AuthenticationLogicAdapter;
@@ -185,6 +187,12 @@ public class Services implements LoggingSupport {
 	public Processes cxfProcesses() {
 		final CxfProcesses service = new CxfProcesses(errorHandler(), helper.userWorkflowLogic());
 		return proxy(Processes.class, service);
+	}
+
+	@Bean
+	public ProcessesConfiguration cxfProcessesConfiguration() {
+		final CxfProcessesConfiguration service = new CxfProcessesConfiguration(helper.lookupHelper());
+		return proxy(ProcessesConfiguration.class, service);
 	}
 
 	@Bean

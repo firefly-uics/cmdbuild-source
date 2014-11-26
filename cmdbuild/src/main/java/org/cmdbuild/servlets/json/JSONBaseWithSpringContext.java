@@ -66,6 +66,7 @@ import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
+import org.cmdbuild.workflow.LookupHelper;
 
 public class JSONBaseWithSpringContext extends JSONBase {
 
@@ -279,6 +280,10 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected DataSourceHelper dataSourceHelper() {
 		return applicationContext().getBean(DataSourceHelper.class);
+	}
+
+	protected LookupHelper lookupHelper() {
+		return applicationContext().getBean(LookupHelper.class);
 	}
 
 	protected Notifier notifier() {

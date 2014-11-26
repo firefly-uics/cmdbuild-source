@@ -1102,6 +1102,35 @@ public class Models {
 
 	}
 
+	public static class ProcessStatusBuilder extends ModelBuilder<ProcessStatus> {
+
+		private Long id;
+		private String description;
+
+		private ProcessStatusBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected ProcessStatus doBuild() {
+			final ProcessStatus output = new ProcessStatus();
+			output.setId(id);
+			output.setDescription(description);
+			return output;
+		}
+
+		public ProcessStatusBuilder withId(final Long id) {
+			this.id = id;
+			return this;
+		}
+
+		public ProcessStatusBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+	}
+
 	public static class ProcessWithBasicDetailsBuilder extends ModelBuilder<ProcessWithBasicDetails> {
 
 		private String id;
@@ -1470,6 +1499,10 @@ public class Models {
 
 	public static ProcessInstanceAdvanceBuilder newProcessInstanceAdvance() {
 		return new ProcessInstanceAdvanceBuilder();
+	}
+
+	public static ProcessStatusBuilder newProcessStatus() {
+		return new ProcessStatusBuilder();
 	}
 
 	public static ProcessWithBasicDetailsBuilder newProcessWithBasicDetails() {

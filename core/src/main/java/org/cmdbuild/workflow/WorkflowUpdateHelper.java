@@ -27,8 +27,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
