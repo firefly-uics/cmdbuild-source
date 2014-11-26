@@ -15,6 +15,7 @@ import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
+import org.cmdbuild.workflow.LookupHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,10 @@ public class ApplicationContextHelper {
 
 	public DmsLogic dmsLogic() {
 		return applicationContext.getBean(PrivilegedDmsLogic.class);
+	}
+
+	public LookupHelper lookupHelper() {
+		return applicationContext.getBean(LookupHelper.class);
 	}
 
 	public LookupLogic lookupLogic() {

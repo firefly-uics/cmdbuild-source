@@ -126,7 +126,7 @@ public class User {
 				.withOperationUser(operationUser) //
 				.withDataView(userDataView()) //
 				.withProcessDefinitionManager(workflow.processDefinitionManager()) //
-				.withLookupStore(data.lookupStore()) //
+				.withLookupHelper(workflow.lookupHelper()) //
 				.withWorkflowService(workflow.workflowService()) //
 				.withActivityPerformerTemplateResolverFactory(workflow.activityPerformerTemplateResolverFactory()) //
 				.build();

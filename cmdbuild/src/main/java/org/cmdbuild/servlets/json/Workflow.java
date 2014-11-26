@@ -81,13 +81,13 @@ public class Workflow extends JSONBaseWithSpringContext {
 				.offset(offset) //
 				.orderBy(sorters) //
 				.filter(new JsonFilterHelper(filter) //
-						.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus))) //
+						.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatus))) //
 				.build();
 
 		final List<JsonProcessCard> processInstances = Lists.newArrayList();
 		final PagedElements<UserProcessInstance> response = workflowLogic().query(className, queryOptions);
 		for (final UserProcessInstance pi : response) {
-			processInstances.add(new JsonProcessCard(pi, translationFacade(),lookupStore()));
+			processInstances.add(new JsonProcessCard(pi, translationFacade(), lookupStore()));
 		}
 
 		return JsonResponse.success(new HashMap<String, Object>() {

@@ -119,7 +119,8 @@ public class Serialization {
 			PROCESS_ID = PROCESS + ID_CAPITALIZED, //
 			PROCESS_INSTANCE = PROCESS + "Instance", //
 			PROCESS_INSTANCE_ADVANCE = PROCESS_INSTANCE + "Advance", //
-			PROCESS_INSTANCE_ID = PROCESS_INSTANCE + ID_CAPITALIZED;
+			PROCESS_INSTANCE_ID = PROCESS_INSTANCE + ID_CAPITALIZED, //
+			PROCESS_STATUS = "processStatus";
 
 	public static final String //
 			TYPE_BOOLEAN = "boolean", //

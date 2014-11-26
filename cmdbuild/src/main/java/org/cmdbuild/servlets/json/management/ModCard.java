@@ -37,6 +37,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
+import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -292,7 +293,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption();
 		addFilterToQueryOption(new JsonFilterHelper(filter) //
-				.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus)), queryOptionsBuilder);
+				.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatus)), queryOptionsBuilder);
 		addSortersToQueryOptions(sorters, queryOptionsBuilder);
 
 		CMCardWithPosition card = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
@@ -304,7 +305,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final String flowStatusForExpectedCard = flowStatus(expectedCard);
 			if (flowStatusForExpectedCard != null) {
 				addFilterToQueryOption(new JsonFilterHelper(new JSONObject()) //
-						.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatusForExpectedCard)),
+						.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatusForExpectedCard)),
 						queryOptionsBuilder);
 			}
 			addSortersToQueryOptions(sorters, queryOptionsBuilder);
@@ -317,7 +318,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		 * position. Do it in a better way!
 		 */
 		if (card.card != null) {
-			final Object retrievedFlowStatus = card.card.get("FlowStatus");
+			final Object retrievedFlowStatus = card.card.get(FlowStatus.dbColumnName());
 			if (retrievedFlowStatus != null) {
 				final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
 				out.put("FlowStatus", lookupFlowStatus.code);
@@ -328,7 +329,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	private String flowStatus(final CMCard card) {
-		final Object retrievedFlowStatus = card.get("FlowStatus");
+		final Object retrievedFlowStatus = card.get(FlowStatus.dbColumnName());
 		if (retrievedFlowStatus != null) {
 			final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
 			return lookupFlowStatus.code;
