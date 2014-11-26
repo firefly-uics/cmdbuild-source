@@ -17,6 +17,7 @@ import org.cmdbuild.service.rest.model.ProcessWithBasicDetails;
 import org.cmdbuild.service.rest.model.ProcessWithFullDetails;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.workflow.LookupHelper;
 import org.cmdbuild.workflow.user.UserProcessClass;
 
 import com.google.common.collect.Ordering;
@@ -24,7 +25,6 @@ import com.google.common.collect.Ordering;
 public class CxfProcesses implements Processes {
 
 	private static final ToSimpleProcessDetail TO_SIMPLE_DETAIL = ToSimpleProcessDetail.newInstance().build();
-	private static final ToFullProcessDetail TO_FULL_DETAIL = ToFullProcessDetail.newInstance().build();
 
 	private static final Comparator<CMClass> NAME_ASC = new Comparator<CMClass>() {
 
@@ -37,10 +37,15 @@ public class CxfProcesses implements Processes {
 
 	private final ErrorHandler errorHandler;
 	private final WorkflowLogic workflowLogic;
+	private final ToFullProcessDetail toFullDetail;
 
-	public CxfProcesses(final ErrorHandler errorHandler, final WorkflowLogic workflowLogic) {
+	public CxfProcesses(final ErrorHandler errorHandler, final WorkflowLogic workflowLogic,
+			final LookupHelper lookupHelper) {
 		this.errorHandler = errorHandler;
 		this.workflowLogic = workflowLogic;
+		this.toFullDetail = ToFullProcessDetail.newInstance() //
+				.withLookupHelper(lookupHelper) //
+				.build();
 	}
 
 	@Override
@@ -67,7 +72,7 @@ public class CxfProcesses implements Processes {
 		if (found == null) {
 			errorHandler.processNotFound(processId);
 		}
-		final ProcessWithFullDetails element = TO_FULL_DETAIL.apply(found);
+		final ProcessWithFullDetails element = toFullDetail.apply(found);
 		return newResponseSingle(ProcessWithFullDetails.class) //
 				.withElement(element) //
 				.build();

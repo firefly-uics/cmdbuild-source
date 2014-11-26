@@ -90,6 +90,7 @@ public class Serialization {
 			SORT = "sort", //
 			SOURCE = "source", //
 			START = "start", //
+			STATUSES = "statuses", //
 			TARGET_CLASS = "targetClass", //
 			TEXT = "text", //
 			TOTAL = "total", //
