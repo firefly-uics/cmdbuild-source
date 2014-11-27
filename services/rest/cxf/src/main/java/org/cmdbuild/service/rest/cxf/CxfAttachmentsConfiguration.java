@@ -49,9 +49,10 @@ public class CxfAttachmentsConfiguration implements AttachmentsConfiguration {
 		for (final MetadataGroupDefinition groupDefinition : definition.getMetadataGroupDefinitions()) {
 			for (final MetadataDefinition metadataDefinition : groupDefinition.getMetadataDefinitions()) {
 				final AttributeBuilder attribute = newAttribute() //
-						.withGroup(groupDefinition.getName()) //
 						.withId(metadataDefinition.getName()) //
+						.withName(metadataDefinition.getName()) //
 						.withDescription(metadataDefinition.getDescription()) //
+						.withGroup(groupDefinition.getName()) //
 						.thatIsMandatory(metadataDefinition.isMandatory()) //
 						.thatIsActive(true) //
 						/*
@@ -94,8 +95,11 @@ public class CxfAttachmentsConfiguration implements AttachmentsConfiguration {
 		 */
 		elements.put("Description", newAttribute() //
 				.withId("Description") //
+				.withName("Description") //
 				.withDescription("Description") //
 				.withType(AttributeType.TEXT.asString()) //
+				.thatIsMandatory(true) //
+				.thatIsActive(true) //
 				/*
 				 * always first
 				 */
