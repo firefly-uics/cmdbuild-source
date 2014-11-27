@@ -2,10 +2,6 @@ package integration.rest;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.CharEncoding.UTF_8;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_CATEGORY;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_DESCRIPTION;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
-import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
 import static org.cmdbuild.service.rest.model.Models.newAttachmentMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
@@ -31,6 +27,7 @@ import org.cmdbuild.service.rest.ProcessInstanceAttachmentMetadata;
 import org.cmdbuild.service.rest.model.AttachmentMetadata;
 import org.cmdbuild.service.rest.model.Models;
 import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.service.rest.model.adapter.AttachmentMetadataAdapter;
 import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
 import org.junit.Before;
@@ -63,21 +60,17 @@ public class ProcessInstanceAttachmentsMetadataTest {
 	@Test
 	public void readAll() throws Exception {
 		// given
-		final ResponseSingle<AttachmentMetadata> sentResponse = newResponseSingle(AttachmentMetadata.class) //
-				.withElement(newAttachmentMetadata() //
-						.withId("baz") //
-						.withName("my name is Baz") //
-						.withCategory("something") //
-						.withDescription("nice to meet you") //
-						.build()) //
+		final AttachmentMetadata attachmentMetadata = newAttachmentMetadata() //
+				.withId("baz") //
+				.withName("my name is Baz") //
+				.withCategory("something") //
+				.withDescription("nice to meet you") //
 				.build();
-		@SuppressWarnings("unchecked")
+		final ResponseSingle<AttachmentMetadata> sentResponse = newResponseSingle(AttachmentMetadata.class) //
+				.withElement(attachmentMetadata) //
+				.build();
 		final ResponseSingle<Map<String, Object>> expectedResponse = Models.<Map<String, Object>> newResponseSingle() //
-				.withElement(ChainablePutMap.of(new HashMap<String, Object>()) //
-						.chainablePut(UNDERSCORED_ID, "baz") //
-						.chainablePut(UNDERSCORED_NAME, "my name is Baz") //
-						.chainablePut(UNDERSCORED_CATEGORY, "something") //
-						.chainablePut(UNDERSCORED_DESCRIPTION, "nice to meet you")) //
+				.withElement(new AttachmentMetadataAdapter().marshal(attachmentMetadata)) //
 				.build();
 		when(service.read(anyString(), anyLong(), anyString())) //
 				.thenReturn(sentResponse);
