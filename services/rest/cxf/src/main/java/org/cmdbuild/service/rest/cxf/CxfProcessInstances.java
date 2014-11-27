@@ -1,11 +1,17 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.concat;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.cmdbuild.dao.entrytype.Functions.attributeName;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_STATUS;
 import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonArray;
 import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
+import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.util.Collections;
 import java.util.Map;
@@ -21,6 +27,7 @@ import org.cmdbuild.service.rest.model.ProcessInstance;
 import org.cmdbuild.service.rest.model.ProcessInstanceAdvanceable;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.workflow.LookupHelper;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -35,10 +42,13 @@ public class CxfProcessInstances implements ProcessInstances {
 
 	private final ErrorHandler errorHandler;
 	private final WorkflowLogic workflowLogic;
+	private final LookupHelper lookupHelper;
 
-	public CxfProcessInstances(final ErrorHandler errorHandler, final WorkflowLogic workflowLogic) {
+	public CxfProcessInstances(final ErrorHandler errorHandler, final WorkflowLogic workflowLogic,
+			final LookupHelper lookupHelper) {
 		this.errorHandler = errorHandler;
 		this.workflowLogic = workflowLogic;
+		this.lookupHelper = lookupHelper;
 	}
 
 	@Override
@@ -79,6 +89,7 @@ public class CxfProcessInstances implements ProcessInstances {
 		}
 		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
 				.withType(found) //
+				.withLookupHelper(lookupHelper) //
 				.build();
 		return newResponseSingle(ProcessInstance.class) //
 				.withElement(from(elements) //
@@ -106,8 +117,17 @@ public class CxfProcessInstances implements ProcessInstances {
 		if (found == null) {
 			errorHandler.processNotFound(processId);
 		}
+		// TODO do it better
+		// <<<<<
+		final String regex = "\"attribute\"[\\w]*:[\\w]*\"" + UNDERSCORED_STATUS + "\"";
+		final String replacement = "\"attribute\":\"" + FlowStatus.dbColumnName() + "\"";
+		final String _filter = defaultString(filter).replaceAll(regex, replacement);
+		// <<<<<
+		final Iterable<String> attributes = activeAttributes(found);
+		final Iterable<String> _attributes = concat(attributes, asList(FlowStatus.dbColumnName()));
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
-				.filter(safeJsonObject(filter)) //
+				.onlyAttributes(_attributes) //
+				.filter(safeJsonObject(_filter)) //
 				.orderBy(safeJsonArray(sort)) //
 				.limit(limit) //
 				.offset(offset) //
@@ -115,6 +135,8 @@ public class CxfProcessInstances implements ProcessInstances {
 		final PagedElements<UserProcessInstance> elements = workflowLogic.query(found.getName(), queryOptions);
 		final Function<UserProcessInstance, ProcessInstance> toProcessInstance = ToProcessInstance.newInstance() //
 				.withType(found) //
+				.withLookupHelper(lookupHelper) //
+				.withAttributes(attributes) //
 				.build();
 		return newResponseMultiple(ProcessInstance.class) //
 				.withElements(from(elements) //
@@ -123,6 +145,11 @@ public class CxfProcessInstances implements ProcessInstances {
 						.withTotal(Long.valueOf(elements.totalSize())) //
 						.build()) //
 				.build();
+	}
+
+	private Iterable<String> activeAttributes(final UserProcessClass target) {
+		return from(target.getActiveAttributes()) //
+				.transform(attributeName());
 	}
 
 	@Override

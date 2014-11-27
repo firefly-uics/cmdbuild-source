@@ -222,7 +222,8 @@ public class Services implements LoggingSupport {
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public ProcessInstances cxfProcessInstances() {
-		final CxfProcessInstances service = new CxfProcessInstances(errorHandler(), helper.userWorkflowLogic());
+		final CxfProcessInstances service = new CxfProcessInstances(errorHandler(), helper.userWorkflowLogic(),
+				helper.lookupHelper());
 		return proxy(ProcessInstances.class, service);
 	}
 

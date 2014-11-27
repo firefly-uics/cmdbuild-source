@@ -1,8 +1,8 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static com.google.common.collect.FluentIterable.from;
+import static org.cmdbuild.data.store.lookup.Functions.toLookupId;
 import static org.cmdbuild.service.rest.model.Models.newProcessWithFullDetails;
-import static com.google.common.collect.FluentIterable.*;
-import static org.cmdbuild.data.store.lookup.Functions.*;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.service.rest.model.ProcessWithFullDetails;

@@ -6,6 +6,7 @@ import static java.util.Arrays.asList;
 import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonArray;
 import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.model.Models.newProcessInstanceAdvance;
+import static org.cmdbuild.workflow.service.WSProcessInstanceState.OPEN;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +31,7 @@ import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
@@ -37,6 +40,8 @@ import org.cmdbuild.service.rest.model.ProcessInstance;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.workflow.CMWorkflowException;
+import org.cmdbuild.workflow.LookupHelper;
+import org.cmdbuild.workflow.service.WSProcessInstanceState;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
@@ -44,6 +49,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
+
+import com.google.common.base.Optional;
 
 public class CxfProcessInstancesTest {
 
@@ -56,6 +63,7 @@ public class CxfProcessInstancesTest {
 
 	private ErrorHandler errorHandler;
 	private WorkflowLogic workflowLogic;
+	private LookupHelper lookupHelper;
 
 	private CxfProcessInstances cxfProcessInstances;
 
@@ -63,7 +71,8 @@ public class CxfProcessInstancesTest {
 	public void setUp() throws Exception {
 		errorHandler = mock(ErrorHandler.class);
 		workflowLogic = mock(WorkflowLogic.class);
-		cxfProcessInstances = new CxfProcessInstances(errorHandler, workflowLogic);
+		lookupHelper = mock(LookupHelper.class);
+		cxfProcessInstances = new CxfProcessInstances(errorHandler, workflowLogic, lookupHelper);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -79,7 +88,7 @@ public class CxfProcessInstancesTest {
 				.build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(errorHandler).processNotFound(eq("123"));
 		inOrder.verifyNoMoreInteractions();
@@ -105,7 +114,7 @@ public class CxfProcessInstancesTest {
 				.build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq(123L));
 		inOrder.verify(workflowLogic).startProcess(eq(123L), eq(VALUES), eq(NO_WIDGETS), eq(true));
 		inOrder.verify(errorHandler).propagate(workflowException);
@@ -132,7 +141,7 @@ public class CxfProcessInstancesTest {
 				.build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(workflowLogic).startProcess(eq("123"), eq(VALUES), eq(NO_WIDGETS), eq(true));
 		inOrder.verifyNoMoreInteractions();
@@ -151,7 +160,7 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.read("123", null, null, null, null);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(errorHandler).processNotFound(eq("123"));
 		inOrder.verifyNoMoreInteractions();
@@ -166,22 +175,30 @@ public class CxfProcessInstancesTest {
 		final UserProcessClass userProcessClass = mockProcessClass(null, "foo");
 		doReturn(userProcessClass) //
 				.when(workflowLogic).findProcessClass(anyString());
+		doReturn(asList(attribute)) //
+				.when(userProcessClass).getActiveAttributes();
 		doReturn(attribute) //
 				.when(userProcessClass).getAttribute(anyString());
 		final UserProcessInstance foo = mockProcessInstance(123L, userProcessClass);
 		doReturn("foo") //
 				.when(foo).getProcessInstanceId();
+		doReturn(OPEN) //
+				.when(foo).getState();
 		doReturn(VALUES.entrySet()) //
 				.when(foo).getAllValues();
 		final UserProcessInstance bar = mockProcessInstance(456L, userProcessClass);
 		doReturn("bar") //
 				.when(bar).getProcessInstanceId();
+		doReturn(OPEN) //
+				.when(bar).getState();
 		doReturn(VALUES.entrySet()) //
 				.when(bar).getAllValues();
 		final PagedElements<UserProcessInstance> pagedElements = new PagedElements<UserProcessInstance>(
 				asList(foo, bar), 4);
 		doReturn(pagedElements) //
 				.when(workflowLogic).query(anyString(), any(QueryOptions.class));
+		doReturn(Optional.of(Lookup.newInstance().build())) //
+				.when(lookupHelper).lookupForState(any(WSProcessInstanceState.class));
 
 		// when
 		final ResponseMultiple<ProcessInstance> response = cxfProcessInstances.read("123", "{\"the\": \"filter\"}",
@@ -189,9 +206,10 @@ public class CxfProcessInstancesTest {
 
 		// then
 		final ArgumentCaptor<QueryOptions> queryOptionsCaptor = ArgumentCaptor.forClass(QueryOptions.class);
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(workflowLogic).query(eq("foo"), queryOptionsCaptor.capture());
+		inOrder.verify(lookupHelper, times(2)).lookupForState(eq(OPEN));
 		inOrder.verifyNoMoreInteractions();
 		final QueryOptions captured = queryOptionsCaptor.getValue();
 		assertThat(captured.getFilter().toString(), equalTo(safeJsonObject("{\"the\": \"filter\"}").toString()));
@@ -217,7 +235,7 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.read("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(errorHandler).processNotFound(eq("123"));
 		inOrder.verifyNoMoreInteractions();
@@ -239,7 +257,7 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.read("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq(123L));
 		inOrder.verify(workflowLogic).query(eq("foo"), any(QueryOptions.class));
 		inOrder.verify(errorHandler).processInstanceNotFound(456L);
@@ -264,20 +282,25 @@ public class CxfProcessInstancesTest {
 				.when(instance).getId();
 		doReturn("foo") //
 				.when(instance).getProcessInstanceId();
+		doReturn(OPEN) //
+				.when(instance).getState();
 		doReturn(VALUES.entrySet()) //
 				.when(instance).getAllValues();
 		final PagedElements<UserProcessInstance> pagedElements = new PagedElements<UserProcessInstance>(
 				asList(instance), 1);
 		doReturn(pagedElements) //
 				.when(workflowLogic).query(anyString(), any(QueryOptions.class));
+		doReturn(Optional.of(Lookup.newInstance().build())) //
+				.when(lookupHelper).lookupForState(any(WSProcessInstanceState.class));
 
 		// when
 		final ResponseSingle<ProcessInstance> response = cxfProcessInstances.read("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(workflowLogic).query(eq("foo"), any(QueryOptions.class));
+		inOrder.verify(lookupHelper).lookupForState(eq(OPEN));
 		inOrder.verifyNoMoreInteractions();
 		final ProcessInstance element = response.getElement();
 		assertThat(element.getType(), equalTo("foo"));
@@ -298,7 +321,7 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.update("123", 456L, newProcessInstanceAdvance().build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(errorHandler).processNotFound(eq("123"));
 		inOrder.verifyNoMoreInteractions();
@@ -333,7 +356,7 @@ public class CxfProcessInstancesTest {
 				.build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("123"), eq(456L));
 		inOrder.verify(workflowLogic).updateProcess(eq("123"), eq(456L), eq("activity"), eq(VALUES), eq(NO_WIDGETS),
@@ -371,7 +394,7 @@ public class CxfProcessInstancesTest {
 				.build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("123"), eq(456L));
 		inOrder.verify(workflowLogic).updateProcess(eq("123"), eq(456L), eq(activityId), eq(VALUES), eq(NO_WIDGETS),
@@ -391,7 +414,7 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.delete("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(errorHandler).processNotFound(eq("456"));
 		inOrder.verifyNoMoreInteractions();
@@ -413,7 +436,7 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.delete("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(123L);
 		inOrder.verify(workflowLogic).abortProcess(123L, 456L);
 		inOrder.verify(errorHandler).propagate(workflowException);
@@ -431,7 +454,7 @@ public class CxfProcessInstancesTest {
 		cxfProcessInstances.delete("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, workflowLogic);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, lookupHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("123"));
 		inOrder.verify(workflowLogic).abortProcess(eq("123"), eq(456L));
 		inOrder.verifyNoMoreInteractions();

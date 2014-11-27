@@ -4,6 +4,7 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.cmdbuild.dao.entrytype.Deactivable.IsActivePredicate.activeOnes;
+import static org.cmdbuild.dao.entrytype.Functions.attributeName;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,6 @@ import java.util.Map;
 import org.cmdbuild.dao.DBTypeObject;
 import org.cmdbuild.dao.Metadata;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
 public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
@@ -65,20 +65,11 @@ public abstract class DBEntryType extends DBTypeObject implements CMEntryType {
 
 	private static final NonSystemAttributes NON_SYSTEM_ATTRIBUTES = new NonSystemAttributes();
 
-	private static final Function<DBAttribute, String> GET_ATTRIBUTE_NAME = new Function<DBAttribute, String>() {
-
-		@Override
-		public String apply(final DBAttribute input) {
-			return input.getName();
-		}
-
-	};
-
 	private final Map<String, DBAttribute> attributes;
 
 	protected DBEntryType(final CMIdentifier identifier, final Long id, final List<DBAttribute> attributes) {
 		super(identifier, id);
-		this.attributes = newLinkedHashMap(uniqueIndex(attributes, GET_ATTRIBUTE_NAME));
+		this.attributes = newLinkedHashMap(uniqueIndex(attributes, attributeName()));
 		addAllAttributes(attributes);
 	}
 

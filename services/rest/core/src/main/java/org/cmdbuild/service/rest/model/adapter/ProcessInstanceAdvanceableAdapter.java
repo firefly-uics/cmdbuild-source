@@ -5,6 +5,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ACTI
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ADVANCE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_STATUS;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.cmdbuild.service.rest.model.Models.newProcessInstanceAdvance;
 
@@ -27,6 +28,7 @@ public class ProcessInstanceAdvanceableAdapter extends ModelToMapAdapter<Process
 		map.put(UNDERSCORED_TYPE, input.getType());
 		map.put(UNDERSCORED_ID, input.getId());
 		map.put(UNDERSCORED_NAME, input.getName());
+		map.put(UNDERSCORED_STATUS, input.getStatus());
 		map.put(UNDERSCORED_ACTIVITY, input.getActivity());
 		map.put(UNDERSCORED_ADVANCE, input.isAdvance());
 		return map;
@@ -38,6 +40,7 @@ public class ProcessInstanceAdvanceableAdapter extends ModelToMapAdapter<Process
 				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
 				.withName(getAndRemove(input, UNDERSCORED_NAME, String.class)) //
+				.withStatus(getAndRemove(input, UNDERSCORED_STATUS, Long.class)) //
 				.withActivity(getAndRemove(input, UNDERSCORED_ACTIVITY, String.class)) //
 				.withAdvance(defaultIfNull(getAndRemove(input, UNDERSCORED_ADVANCE, Boolean.class), false)) //
 				.withValues(input) //

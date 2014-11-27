@@ -1,5 +1,7 @@
 package org.cmdbuild.service.rest.cxf.util;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import org.cmdbuild.service.rest.logging.LoggingSupport;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,7 +11,7 @@ public class Json implements LoggingSupport {
 
 	public static JSONObject safeJsonObject(final String json) {
 		try {
-			return (json == null) ? new JSONObject() : new JSONObject(json);
+			return isBlank(json) ? new JSONObject() : new JSONObject(json);
 		} catch (final JSONException e) {
 			logger.error("error parsing json", e);
 			throw new IllegalArgumentException(e);
@@ -18,7 +20,7 @@ public class Json implements LoggingSupport {
 
 	public static JSONArray safeJsonArray(final String json) {
 		try {
-			return (json == null) ? new JSONArray() : new JSONArray(json);
+			return isBlank(json) ? new JSONArray() : new JSONArray(json);
 		} catch (final JSONException e) {
 			logger.error("error parsing json", e);
 			throw new IllegalArgumentException(e);

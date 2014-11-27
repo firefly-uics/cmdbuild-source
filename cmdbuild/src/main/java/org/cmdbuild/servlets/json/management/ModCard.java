@@ -37,6 +37,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
+import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.util.Collection;
@@ -67,7 +68,6 @@ import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
-import org.cmdbuild.servlets.json.schema.Utils;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -229,12 +229,9 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.limit(limit) //
 				.offset(offset) //
 				.orderBy(sorters) //
+				.onlyAttributes(toIterable(attributes)) //
 				.parameters(otherAttributes) //
-				.filter(filter); //
-
-		if (attributes != null && attributes.length() > 0) {
-			queryOptionsBuilder.onlyAttributes(attributes);
-		}
+				.filter(filter);
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
@@ -261,7 +258,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.offset(offset) //
 				.orderBy(sorters) //
 				.filter(filter) //
-				.parameters(Utils.toMap(jsonParameters)) //
+				.parameters(toMap(jsonParameters)) //
 				.build();
 
 		final FetchCardListResponse response = systemDataAccessLogic().fetchSQLCards(functionName, queryOptions);

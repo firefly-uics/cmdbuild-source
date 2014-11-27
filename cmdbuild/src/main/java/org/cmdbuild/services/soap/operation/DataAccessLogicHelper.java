@@ -2,6 +2,7 @@ package org.cmdbuild.services.soap.operation;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -95,7 +95,6 @@ import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.user.UserActivityInstance;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.joda.time.DateTime;
-import org.json.JSONArray;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
@@ -127,6 +126,15 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		@Override
 		public org.cmdbuild.services.soap.types.Card apply(final Card input) {
 			return new org.cmdbuild.services.soap.types.Card(input);
+		}
+
+	};
+
+	private static final Function<Attribute, String> ATTRIBUTE_NAME = new Function<Attribute, String>() {
+
+		@Override
+		public String apply(final Attribute input) {
+			return input.getName();
 		}
 
 	};
@@ -472,19 +480,16 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			fetchedCard = dataAccessLogic.fetchCard(className, cardId);
 		} else {
 			final QueryOptions queryOptions = QueryOptions.newQueryOption() //
-					.onlyAttributes(displayableAttributes(attributeList)) //
+					.onlyAttributes(namesOf(attributeList)) //
 					.build();
 			fetchedCard = dataAccessLogic.fetchCardShort(className, cardId, queryOptions);
 		}
 		return transformToCardExt(fetchedCard, attributeList, enableLongDateFormat);
 	}
 
-	private JSONArray displayableAttributes(final Attribute[] attributeList) {
-		final JSONArray array = new JSONArray();
-		for (final Attribute attribute : attributeList) {
-			array.put(attribute.getName());
-		}
-		return array;
+	private Iterable<String> namesOf(final Attribute[] attributeList) {
+		return from(asList(attributeList)) //
+				.transform(ATTRIBUTE_NAME);
 	}
 
 	private CardExt transformToCardExt(final Card card, final Attribute[] attributeList,
@@ -551,7 +556,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	private void addPrivilege(final PrivilegeType privilege, final CardExt cardExt) {
-		cardExt.setMetadata(Arrays.asList(newPrivilegeMetadata(privilege)));
+		cardExt.setMetadata(asList(newPrivilegeMetadata(privilege)));
 	}
 
 	private Metadata newPrivilegeMetadata(final PrivilegeType privilege) {
@@ -605,7 +610,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 						.offset(offset != null ? offset : 0) //
 						.filter(createJsonFilterFrom(queryType, fullTextQuery, cqlQuery, targetClass, lookupStore)) //
 						.orderBy(toJsonArray(orderType, attributeList)) //
-						.onlyAttributes(toJsonArray(attributeList)) //
+						.onlyAttributes(namesOf(attributeList)) //
 						.parameters(parametersOf(cqlQuery)) //
 						.build());
 		return dataAccessLogic.fetchCards(className, queryOptions);

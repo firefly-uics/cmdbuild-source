@@ -48,10 +48,9 @@ public class DefaultLookupHelper implements LookupHelper {
 	}
 
 	@Override
-	public Lookup lookupForState(final WSProcessInstanceState state) {
+	public Optional<Lookup> lookupForState(final WSProcessInstanceState state) {
 		final String code = stateByFlowStatusCode.inverse().get(state);
-		final Optional<Lookup> lookup = flowStatusWithCode(code);
-		return lookup.isPresent() ? lookup.get() : null;
+		return flowStatusWithCode(code);
 	}
 
 	@Override
