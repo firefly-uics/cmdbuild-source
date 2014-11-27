@@ -9,7 +9,7 @@ public interface LookupHelper {
 
 	WSProcessInstanceState stateForLookupCode(String code);
 
-	Lookup lookupForState(WSProcessInstanceState state);
+	Optional<Lookup> lookupForState(WSProcessInstanceState state);
 
 	Optional<Lookup> flowStatusWithCode(String code);
 

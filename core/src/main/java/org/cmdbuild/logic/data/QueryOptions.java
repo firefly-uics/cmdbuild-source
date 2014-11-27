@@ -1,6 +1,10 @@
 package org.cmdbuild.logic.data;
 
 import static com.google.common.base.Functions.identity;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.transformValues;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CQL_KEY;
 
 import java.util.Map;
@@ -12,8 +16,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 
-import com.google.common.collect.Maps;
-
 /**
  * Simple DTO that represents the options for a query in CMDBuild
  */
@@ -23,11 +25,13 @@ public class QueryOptions {
 
 	public static class QueryOptionsBuilder implements Builder<QueryOptions> {
 
+		private static final Iterable<String> NO_ATTRIBUTES = emptyList();
+
 		private Integer limit;
 		private Integer offset;
 		private JSONObject filter;
 		private JSONArray sorters;
-		private JSONArray attributeSubset;
+		private Iterable<String> attributeSubset;
 		private Map<String, ? extends Object> parameters;
 
 		private QueryOptionsBuilder() {
@@ -35,8 +39,7 @@ public class QueryOptions {
 			offset = 0;
 			filter = new JSONObject();
 			sorters = new JSONArray();
-			attributeSubset = new JSONArray();
-			parameters = Maps.newHashMap();
+			parameters = newHashMap();
 		}
 
 		@Override
@@ -47,8 +50,9 @@ public class QueryOptions {
 
 		private void validate() {
 			preReleaseHackToFixCqlFilters();
-			offset = (offset == null) ? 0 : offset;
-			limit = (limit == null) ? Integer.MAX_VALUE : limit;
+			offset = defaultIfNull(offset, 0);
+			limit = defaultIfNull(limit, Integer.MAX_VALUE);
+			attributeSubset = defaultIfNull(attributeSubset, NO_ATTRIBUTES);
 		}
 
 		/*
@@ -56,7 +60,7 @@ public class QueryOptions {
 		 */
 		private void preReleaseHackToFixCqlFilters() {
 			try {
-				final Map<String, Object> cqlParameters = Maps.newHashMap();
+				final Map<String, Object> cqlParameters = newHashMap();
 				boolean addParameters = false;
 				for (final Entry<String, ? extends Object> entry : parameters.entrySet()) {
 					final String key = entry.getKey();
@@ -105,12 +109,8 @@ public class QueryOptions {
 			return this;
 		}
 
-		public QueryOptionsBuilder onlyAttributes(final JSONArray attributes) {
-			if (attributes == null) {
-				this.attributeSubset = new JSONArray();
-			} else {
-				this.attributeSubset = attributes;
-			}
+		public QueryOptionsBuilder onlyAttributes(final Iterable<String> attributes) {
+			this.attributeSubset = attributes;
 			return this;
 		}
 
@@ -139,7 +139,7 @@ public class QueryOptions {
 	private final int offset;
 	private final JSONObject filter;
 	private final JSONArray sorters;
-	private final JSONArray attributes;
+	private final Iterable<String> attributes;
 	private final Map<String, Object> parameters;
 
 	private QueryOptions(final QueryOptionsBuilder builder) {
@@ -148,7 +148,7 @@ public class QueryOptions {
 		this.filter = builder.filter;
 		this.sorters = builder.sorters;
 		this.attributes = builder.attributeSubset;
-		this.parameters = Maps.transformValues(builder.parameters, identity());
+		this.parameters = transformValues(builder.parameters, identity());
 	}
 
 	public int getLimit() {
@@ -167,7 +167,7 @@ public class QueryOptions {
 		return sorters;
 	}
 
-	public JSONArray getAttributes() {
+	public Iterable<String> getAttributes() {
 		return attributes;
 	}
 

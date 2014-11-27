@@ -387,14 +387,9 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final CMClass entryType = dataView.findClass(className);
 		final List<QueryAliasAttribute> attributesToDisplay = Lists.newArrayList();
 
-		for (int i = 0; i < queryOptions.getAttributes().length(); i++) {
-			try {
-				final QueryAliasAttribute queryAttribute = attribute(entryType,
-						queryOptions.getAttributes().getString(i));
-				attributesToDisplay.add(queryAttribute);
-			} catch (final JSONException e) {
-				// do nothing for now
-			}
+		for (final String attribute : queryOptions.getAttributes()) {
+			final QueryAliasAttribute queryAttribute = attribute(entryType, attribute);
+			attributesToDisplay.add(queryAttribute);
 		}
 
 		try {

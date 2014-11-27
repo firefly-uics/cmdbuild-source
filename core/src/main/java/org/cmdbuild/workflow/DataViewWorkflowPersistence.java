@@ -23,6 +23,7 @@ import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher;
@@ -36,6 +37,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
 public class DataViewWorkflowPersistence implements WorkflowPersistence {
@@ -319,8 +321,10 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 	@Override
 	public Iterable<? extends UserProcessInstance> queryOpenAndSuspended(final UserProcessClass processClass) {
 		logger.info(marker, "getting all opened and suspended process instances for class '{}'", processClass);
-		final Object[] ids = new Long[] { lookupHelper.lookupForState(OPEN).getId(),
-				lookupHelper.lookupForState(SUSPENDED).getId() };
+		final Optional<Lookup> open = lookupHelper.lookupForState(OPEN);
+		final Optional<Lookup> suspended = lookupHelper.lookupForState(SUSPENDED);
+		final Object[] ids = new Long[] { open.isPresent() ? open.get().getId() : null,
+				suspended.isPresent() ? suspended.get().getId() : null };
 		logger.debug(marker, "lookup ids are '{}'", ids);
 		return from(dataView.select(anyAttribute(processClass)) //
 				.from(processClass) //

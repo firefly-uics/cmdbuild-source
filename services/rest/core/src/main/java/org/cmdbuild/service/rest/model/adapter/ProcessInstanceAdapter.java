@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest.model.adapter;
 
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_STATUS;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.cmdbuild.service.rest.model.Models.newProcessInstance;
 
@@ -24,6 +25,7 @@ public class ProcessInstanceAdapter extends ModelToMapAdapter<ProcessInstance> {
 		map.put(UNDERSCORED_TYPE, input.getType());
 		map.put(UNDERSCORED_ID, input.getId());
 		map.put(UNDERSCORED_NAME, input.getName());
+		map.put(UNDERSCORED_STATUS, input.getStatus());
 		return map;
 	}
 

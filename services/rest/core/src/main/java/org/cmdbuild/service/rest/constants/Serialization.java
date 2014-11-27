@@ -90,6 +90,7 @@ public class Serialization {
 			SORT = "sort", //
 			SOURCE = "source", //
 			START = "start", //
+			STATUS = "status", //
 			STATUSES = "statuses", //
 			TARGET_CLASS = "targetClass", //
 			TEXT = "text", //
@@ -163,6 +164,7 @@ public class Serialization {
 			UNDERSCORED_SOURCE_DESCRIPTION = UNDERSCORED_SOURCE + DESCRIPTION_CAPITALIZED, //
 			UNDERSCORED_SOURCE_ID = UNDERSCORED_SOURCE + ID_CAPITALIZED, //
 			UNDERSCORED_SOURCE_TYPE = UNDERSCORED_SOURCE + TYPE_CAPITALIZED, //
+			UNDERSCORED_STATUS = "_" + STATUS, //
 			UNDERSCORED_TYPE = "_" + TYPE, //
 			UNDERSCORED_VERSION = "_" + VERSION;
 

@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest.model;
 
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_INSTANCE;
+import static org.cmdbuild.service.rest.constants.Serialization.STATUS;
 import static org.cmdbuild.service.rest.constants.Serialization.VALUES;
 
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.cmdbuild.service.rest.model.adapter.StringObjectMapAdapter;
 public class ProcessInstance extends ModelWithIdAndType<Long, String> {
 
 	private String name;
+	private Long status;
 	private Map<String, Object> values;
 
 	ProcessInstance() {
@@ -34,6 +36,15 @@ public class ProcessInstance extends ModelWithIdAndType<Long, String> {
 
 	void setName(final String name) {
 		this.name = name;
+	}
+
+	@XmlAttribute(name = STATUS)
+	public Long getStatus() {
+		return status;
+	}
+
+	void setStatus(final Long status) {
+		this.status = status;
 	}
 
 	@XmlElement(name = VALUES)
@@ -61,6 +72,7 @@ public class ProcessInstance extends ModelWithIdAndType<Long, String> {
 				.append(this.getType(), other.getType()) //
 				.append(this.getId(), other.getId()) //
 				.append(this.name, other.name) //
+				.append(this.status, other.status) //
 				.append(this.values, other.values) //
 				.isEquals();
 	}
@@ -71,6 +83,7 @@ public class ProcessInstance extends ModelWithIdAndType<Long, String> {
 				.append(getType()) //
 				.append(getId()) //
 				.append(name) //
+				.append(status) //
 				.append(values) //
 				.toHashCode();
 	}

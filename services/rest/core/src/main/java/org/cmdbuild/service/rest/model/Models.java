@@ -991,6 +991,7 @@ public class Models {
 		private String type;
 		private Long id;
 		private String name;
+		private Long status;
 		final Map<String, Object> values = newHashMap();
 
 		private ProcessInstanceBuilder() {
@@ -1003,6 +1004,7 @@ public class Models {
 			output.setType(type);
 			output.setId(id);
 			output.setName(name);
+			output.setStatus(status);
 			output.setValues(values);
 			return output;
 		}
@@ -1019,6 +1021,11 @@ public class Models {
 
 		public ProcessInstanceBuilder withName(final String name) {
 			this.name = name;
+			return this;
+		}
+
+		public ProcessInstanceBuilder withStatus(final Long status) {
+			this.status = status;
 			return this;
 		}
 
@@ -1041,6 +1048,7 @@ public class Models {
 		private String type;
 		private Long id;
 		private String name;
+		private Long status;
 		final Map<String, Object> values = newHashMap();
 		private String activityId;
 		private Boolean advance;
@@ -1060,6 +1068,7 @@ public class Models {
 			output.setType(type);
 			output.setId(id);
 			output.setName(name);
+			output.setStatus(status);
 			output.setValues(values);
 			output.setActivity(activityId);
 			output.setAdvance(advance);
@@ -1078,6 +1087,11 @@ public class Models {
 
 		public ProcessInstanceAdvanceBuilder withName(final String name) {
 			this.name = name;
+			return this;
+		}
+
+		public ProcessInstanceAdvanceBuilder withStatus(final Long status) {
+			this.status = status;
 			return this;
 		}
 

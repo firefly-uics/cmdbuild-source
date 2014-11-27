@@ -57,6 +57,19 @@ public class Functions {
 		return NAMES;
 	}
 
+	private static final Function<CMAttribute, String> ATTRIBUTE_NAME = new Function<CMAttribute, String>() {
+
+		@Override
+		public String apply(final CMAttribute input) {
+			return input.getName();
+		}
+
+	};
+
+	public static Function<CMAttribute, String> attributeName() {
+		return ATTRIBUTE_NAME;
+	}
+
 	private Functions() {
 		// prevents instantiation
 	}
