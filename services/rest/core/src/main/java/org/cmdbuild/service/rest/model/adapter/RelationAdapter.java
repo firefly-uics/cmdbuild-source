@@ -11,6 +11,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_SOUR
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_SOURCE_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_SOURCE_TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
+import static org.cmdbuild.service.rest.model.Models.newCard;
 import static org.cmdbuild.service.rest.model.Models.newRelation;
 
 import java.util.Map;
@@ -52,6 +53,14 @@ public class RelationAdapter extends ModelToMapAdapter<Relation> {
 		return newRelation() //
 				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //
+				.withSource(newCard() //
+						.withType(getAndRemove(input, UNDERSCORED_SOURCE_TYPE, String.class)) //
+						.withId(getAndRemove(input, UNDERSCORED_SOURCE_ID, Long.class)) //
+						.build()) //
+				.withDestination(newCard() //
+						.withType(getAndRemove(input, UNDERSCORED_DESTINATION_TYPE, String.class)) //
+						.withId(getAndRemove(input, UNDERSCORED_DESTINATION_ID, Long.class)) //
+						.build()) //
 				.withValues(input) //
 				.build();
 	}

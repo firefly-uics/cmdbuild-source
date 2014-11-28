@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest.test;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.node.ObjectNode;
 import org.junit.rules.ExternalResource;
 
 public class JsonSupport extends ExternalResource {
@@ -19,6 +20,10 @@ public class JsonSupport extends ExternalResource {
 
 	public JsonNode from(final String s) throws Exception {
 		return objectMapper.readTree(s);
+	}
+
+	public ObjectNode newObject() {
+		return objectMapper.createObjectNode();
 	}
 
 }

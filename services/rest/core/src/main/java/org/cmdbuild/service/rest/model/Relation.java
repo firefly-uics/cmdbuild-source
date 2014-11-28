@@ -71,6 +71,8 @@ public class Relation extends ModelWithIdAndType<Long, String> {
 		return new EqualsBuilder() //
 				.append(this.getType(), other.getType()) //
 				.append(this.getId(), other.getId()) //
+				.append(this.source, other.source) //
+				.append(this.destination, other.destination) //
 				.append(this.values, other.values) //
 				.isEquals();
 	}
@@ -80,6 +82,8 @@ public class Relation extends ModelWithIdAndType<Long, String> {
 		return new HashCodeBuilder() //
 				.append(getType()) //
 				.append(getId()) //
+				.append(this.source) //
+				.append(this.destination) //
 				.append(values) //
 				.toHashCode();
 	}
