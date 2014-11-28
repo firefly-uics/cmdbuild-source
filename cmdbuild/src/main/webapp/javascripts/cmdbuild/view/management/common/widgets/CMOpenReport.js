@@ -13,8 +13,14 @@
 		border: false,
 		frame: false,
 
+		/**
+		 * @property {Ext.form.field.ComboBox} report format selection ComboBox
+		 */
 		formatCombo: {},
-		attributeList: [],
+
+		/**
+		 * @property {Array} fields to display in form
+		 */
 		formFields: [],
 
 		initComponent: function() {
@@ -108,6 +114,8 @@
 		 * @param {Object} widgetConfiguration
 		 */
 		configureForm: function(attributes, widgetConfiguration) {
+			this.formFields = []; // Reset fields array before add new ones
+
 			if (!this.formPanelCreated) {
 				this.formPanelCreated = true;
 
