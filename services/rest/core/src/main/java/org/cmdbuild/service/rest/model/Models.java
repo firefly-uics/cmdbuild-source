@@ -935,11 +935,13 @@ public class Models {
 	public static class ProcessActivityWithFullDetailsBuilder extends ModelBuilder<ProcessActivityWithFullDetails> {
 
 		private static final Collection<? extends AttributeStatus> NO_ATTRIBUTES = emptyList();
+		private static final Collection<? extends Object> NO_WIDGETS = emptyList();
 
 		private String id;
 		private String description;
 		private String instructions;
 		private final Collection<AttributeStatus> attributes = newArrayList();
+		private final Collection<Object> widgets = newArrayList();
 
 		private ProcessActivityWithFullDetailsBuilder() {
 			// use factory method
@@ -952,6 +954,7 @@ public class Models {
 			output.setDescription(description);
 			output.setInstructions(instructions);
 			output.setAttributes(attributes);
+			output.setWidgets(widgets);
 			return output;
 		}
 
@@ -978,6 +981,11 @@ public class Models {
 		public ProcessActivityWithFullDetailsBuilder withAttributes(
 				final Iterable<? extends ProcessActivityWithFullDetails.AttributeStatus> attributes) {
 			addAll(this.attributes, defaultIfNull(attributes, NO_ATTRIBUTES));
+			return this;
+		}
+
+		public ProcessActivityWithFullDetailsBuilder withWidgets(final Iterable<? extends Object> widgets) {
+			addAll(this.widgets, defaultIfNull(widgets, NO_WIDGETS));
 			return this;
 		}
 

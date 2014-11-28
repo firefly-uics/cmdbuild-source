@@ -5,6 +5,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.ATTRIBUTES;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.INSTRUCTIONS;
 import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_ACTIVITY_DEFINITION;
+import static org.cmdbuild.service.rest.constants.Serialization.WIDGETS;
 
 import java.util.Collection;
 
@@ -85,6 +86,7 @@ public class ProcessActivityWithFullDetails extends ModelWithId<String> {
 	private String description;
 	private String instructions;
 	private Collection<AttributeStatus> attributes;
+	private Collection<Object> widgets;
 
 	ProcessActivityWithFullDetails() {
 		// package visibility
@@ -115,6 +117,16 @@ public class ProcessActivityWithFullDetails extends ModelWithId<String> {
 
 	void setAttributes(final Collection<AttributeStatus> attributes) {
 		this.attributes = attributes;
+	}
+
+	@XmlElement(name = WIDGETS)
+	public Collection<Object> getWidgets() {
+		return widgets;
+	}
+
+	void setWidgets(final Collection<Object> widgets) {
+		this.widgets = widgets;
+
 	}
 
 	@Override

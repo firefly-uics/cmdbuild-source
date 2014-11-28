@@ -9,6 +9,8 @@ import java.util.List;
 import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails;
 import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails.AttributeStatus;
 import org.cmdbuild.workflow.CMActivity;
+import org.cmdbuild.workflow.CMActivityWidget;
+import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
 
 import com.google.common.base.Function;
@@ -53,6 +55,16 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 				.withDescription(input.getDescription()) //
 				.withInstructions(input.getInstructions()) //
 				.withAttributes(attributes) //
+				.withWidgets(safeWidgetsOf(input)) //
 				.build();
 	}
+
+	private Iterable<CMActivityWidget> safeWidgetsOf(final CMActivity input) {
+		try {
+			return input.getWidgets();
+		} catch (final CMWorkflowException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }

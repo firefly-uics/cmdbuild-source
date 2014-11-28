@@ -102,6 +102,7 @@ public class Serialization {
 			VALUE = "value", //
 			VALUES = "values", //
 			VERSION = "version", //
+			WIDGETS = "widgets", //
 			WRITABLE = "writable";
 
 	public static final String //
