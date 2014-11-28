@@ -15,6 +15,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import org.cmdbuild.service.rest.model.Attachment;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 
 @Path("processes/{" + PROCESS_ID + "}/instances/{" + PROCESS_INSTANCE_ID + "}/attachments/")
@@ -28,7 +29,7 @@ public interface ProcessInstanceAttachments {
 
 	@GET
 	@Path(EMPTY)
-	ResponseMultiple<String> read( //
+	ResponseMultiple<Attachment> read( //
 			@PathParam(PROCESS_ID) String processId, //
 			@PathParam(PROCESS_INSTANCE_ID) Long processInstanceId //
 	);

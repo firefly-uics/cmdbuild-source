@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_ACTIVE;
@@ -47,6 +49,8 @@ public class Serializer {
 	public static final String AVAILABLE_REPORT = "availablereport";
 	public static final String AVAILABLE_DASHBOARDS = "availabledashboards";
 
+	private static final Iterable<MetadataGroup> NO_METADATA_GROUPS = emptyList();
+
 	public static JSONObject serializeAttachment(final StoredDocument attachment) {
 		final JSONObject serializer = new JSONObject();
 		try {
@@ -66,7 +70,7 @@ public class Serializer {
 
 	private static JSONObject serialize(final Iterable<MetadataGroup> metadataGroups) throws JSONException {
 		final JSONObject jsonMetadata = new JSONObject();
-		for (final MetadataGroup metadataGroup : metadataGroups) {
+		for (final MetadataGroup metadataGroup : defaultIfNull(metadataGroups, NO_METADATA_GROUPS)) {
 			final JSONObject jsonAllMetadata = new JSONObject();
 			for (final Metadata metadata : metadataGroup.getMetadata()) {
 				jsonAllMetadata.put(metadata.getName(), metadata.getValue());

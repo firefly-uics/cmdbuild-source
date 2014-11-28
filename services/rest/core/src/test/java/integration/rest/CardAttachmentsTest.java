@@ -2,6 +2,7 @@ package integration.rest;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.io.IOUtils.toByteArray;
+import static org.cmdbuild.service.rest.model.Models.newAttachment;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
@@ -23,6 +24,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.cmdbuild.service.rest.CardAttachments;
+import org.cmdbuild.service.rest.model.Attachment;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
@@ -59,8 +61,20 @@ public class CardAttachmentsTest {
 	@Test
 	public void readAll() throws Exception {
 		// given
-		final ResponseMultiple<String> expectedResponse = newResponseMultiple(String.class) //
-				.withElements(asList("foo", "bar", "baz")) //
+		final ResponseMultiple<Attachment> expectedResponse = newResponseMultiple(Attachment.class) //
+				.withElements(asList( //
+						newAttachment() //
+								.withId("foo") //
+								.withDescription("this is foo") //
+								.build(), //
+						newAttachment() //
+								.withId("bar") //
+								.withDescription("this is bar") //
+								.build(), //
+						newAttachment() //
+								.withId("baz") //
+								.withDescription("this is baz") //
+								.build())) //
 				.withMetadata(newMetadata() //
 						.withTotal(42L) //
 						.build()) //

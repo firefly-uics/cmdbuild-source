@@ -50,6 +50,77 @@ public class Models {
 
 	}
 
+	public static class AttachmentBuilder extends ModelBuilder<Attachment> {
+
+		private String id;
+		private String name;
+		private String category;
+		private String description;
+		private String version;
+		private String author;
+		private Date created;
+		private Date modified;
+
+		private AttachmentBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Attachment doBuild() {
+			final Attachment output = new Attachment();
+			output.setId(id);
+			output.setName(name);
+			output.setCategory(category);
+			output.setDescription(description);
+			output.setVersion(version);
+			output.setAuthor(author);
+			output.setCreated(created);
+			output.setModified(modified);
+			return output;
+		}
+
+		public AttachmentBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public AttachmentBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public AttachmentBuilder withCategory(final String category) {
+			this.category = category;
+			return this;
+		}
+
+		public AttachmentBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public AttachmentBuilder withVersion(final String version) {
+			this.version = version;
+			return this;
+		}
+
+		public AttachmentBuilder withAuthor(final String author) {
+			this.author = author;
+			return this;
+		}
+
+		public AttachmentBuilder withCreated(final Date created) {
+			this.created = created;
+			return this;
+		}
+
+		public AttachmentBuilder withModified(final Date modified) {
+			this.modified = modified;
+			return this;
+		}
+
+	}
+
 	public static class AttachmentMetadataBuilder extends ModelBuilder<AttachmentMetadata> {
 
 		private static final Map<String, Object> NO_EXTRA = emptyMap();
@@ -1463,6 +1534,10 @@ public class Models {
 			return this;
 		}
 
+	}
+
+	public static AttachmentBuilder newAttachment() {
+		return new AttachmentBuilder();
 	}
 
 	public static AttachmentMetadataBuilder newAttachmentMetadata() {

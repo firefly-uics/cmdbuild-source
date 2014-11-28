@@ -18,6 +18,8 @@ import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
+import org.cmdbuild.service.rest.cxf.serialization.ToAttachment;
+import org.cmdbuild.service.rest.model.Attachment;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
@@ -25,14 +27,7 @@ import com.google.common.base.Function;
 
 public class CxfCardAttachments implements AllInOneCardAttachments {
 
-	private static final Function<StoredDocument, String> TO_ATTACHMENT = new Function<StoredDocument, String>() {
-
-		@Override
-		public String apply(final StoredDocument input) {
-			return input.getName();
-		}
-
-	};
+	private static final Function<StoredDocument, Attachment> TO_ATTACHMENT = new ToAttachment();
 
 	private static final String NO_DESCRIPTION = null;
 	private static final String NO_CATEGORY = null;
@@ -68,12 +63,12 @@ public class CxfCardAttachments implements AllInOneCardAttachments {
 	}
 
 	@Override
-	public ResponseMultiple<String> read(final String classId, final Long cardId) {
+	public ResponseMultiple<Attachment> read(final String classId, final Long cardId) {
 		assureClassAndCard(classId, cardId);
 		final Iterable<StoredDocument> documents = dmsLogic.search(classId, cardId);
-		final Iterable<String> elements = from(documents) //
+		final Iterable<Attachment> elements = from(documents) //
 				.transform(TO_ATTACHMENT);
-		return newResponseMultiple(String.class) //
+		return newResponseMultiple(Attachment.class) //
 				.withElements(elements) //
 				.withMetadata(newMetadata() //
 						.withTotal(Long.valueOf(size(elements))) //
