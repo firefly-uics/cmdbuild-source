@@ -41,6 +41,8 @@
 		store: undefined,
 
 		constructor: function() {
+			var me = this;
+
 			Ext.apply(this, {
 				plugins: [{
 					ptype: 'rowexpander',
@@ -48,7 +50,7 @@
 					getRowBodyFeatureData: function(record, idx, rowValues) {
 						Ext.grid.plugin.RowExpander.prototype.getRowBodyFeatureData.apply(this, arguments);
 
-						rowValues.rowBody  = genHistoryBody(record);
+						rowValues.rowBody  = me.genHistoryBody(record);
 					},
 					expanderWidth: 18
 				}],
@@ -84,6 +86,42 @@
 			this.view.on('expandbody', function() {
 				this.doLayout(); // To refresh the scrollbar status
 			}, this);
+		},
+
+		/**
+		 * @param {Object} record
+		 *
+		 * @return {String} body - HTML format string
+		 */
+		genHistoryBody: function(record) {
+			var body = '';
+			var classAttributes = _CMCache.mapOfAttributes[_CMCardModuleState.card.get('IdClass')];
+			var attributesDescriptionArray = [];
+
+			// Build attributesDescriptionArray to test if display attribute
+			for (var i in classAttributes)
+				attributesDescriptionArray.push(classAttributes[i][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]);
+
+			if (record.raw['_RelHist']) {
+				body += this.historyAttribute(tr.domain, record.raw['DomainDesc'])
+					+ this.historyAttribute(tr.destclass, record.raw['Class'])
+					+ this.historyAttribute(tr.code, record.raw['CardCode'])
+					+ this.historyAttribute(tr.description, record.raw['CardDescription']);
+			}
+
+			for (var i = 0; i < record.raw['Attr'].length; i++) {
+				var attribute = record.raw['Attr'][i];
+
+				if (Ext.Array.contains(attributesDescriptionArray, attribute.d)) {
+					var label = attribute.d;
+					var changed = attribute.c;
+					var value = Ext.isEmpty(attribute.v) ? '' : attribute.v;
+
+					body += this.historyAttribute(label, value, changed);
+				}
+			}
+
+			return body;
 		},
 
 		/**
@@ -160,6 +198,19 @@
 			};
 
 			return columns;
+		},
+
+		/**
+		 * @param {String} label
+		 * @param {Mixed} value
+		 * @param {Boolean} changed
+		 *
+		 * @return {String} HTML format string
+		 */
+		historyAttribute: function(label, value, changed) {
+			return '<p' + (changed ? ' class="changed"' : '') + '>'
+					+ '<b>' + label + '</b>: ' + ((value || {}).dsc || value)
+				+ '</p>';
 		},
 
 		/**
@@ -264,55 +315,6 @@
 				}
 			}
 	});
-
-	/**
-	 * @param {Object} record
-	 *
-	 * @return {String} body - HTML format string
-	 */
-	function genHistoryBody(record) {
-		var body = '';
-		var classAttributes = _CMCache.mapOfAttributes[_CMCardModuleState.card.get('IdClass')];
-		var attributesDescriptionArray = [];
-
-		// Build attributesDescriptionArray to test if display attribute
-		for (var i in classAttributes)
-			attributesDescriptionArray.push(classAttributes[i][CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]);
-
-		if (record.raw['_RelHist']) {
-			body += historyAttribute(tr.domain, record.raw['DomainDesc'])
-				+ historyAttribute(tr.destclass, record.raw['Class'])
-				+ historyAttribute(tr.code, record.raw['CardCode'])
-				+ historyAttribute(tr.description, record.raw['CardDescription']);
-		}
-
-		for (var i = 0; i < record.raw['Attr'].length; i++) {
-			var attribute = record.raw['Attr'][i];
-
-			if (Ext.Array.contains(attributesDescriptionArray, attribute.d)) {
-				var label = attribute.d;
-				var changed = attribute.c;
-				var value = Ext.isEmpty(attribute.v) ? '' : attribute.v;
-
-				body += historyAttribute(label, value, changed);
-			}
-		}
-
-		return body;
-	}
-
-	/**
-	 * @param {String} label
-	 * @param {Mixed} value
-	 * @param {Boolean} changed
-	 *
-	 * @return {String} HTML format string
-	 */
-	function historyAttribute(label, value, changed) {
-		return '<p' + (changed ? ' class="changed"' : '') + '>'
-				+ '<b>' + label + '</b>: ' + ((value || {}).dsc || value)
-			+ '</p>';
-	};
 
 	function tabIsActive(t) {
 		return t.ownerCt.layout.getActiveItem().id == t.id;
