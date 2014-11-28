@@ -1,18 +1,25 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.apache.commons.lang3.CharEncoding.UTF_8;
 import static org.cmdbuild.service.rest.constants.Serialization.CARD_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.CLASS_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.DOMAIN_SOURCE;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.cmdbuild.service.rest.model.Models.newCard;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newRelation;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.all;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.param;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -28,14 +35,18 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.model.Models;
 import org.cmdbuild.service.rest.model.Relation;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.service.rest.model.adapter.RelationAdapter;
 import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
+import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -68,6 +79,43 @@ public class RelationsTest {
 	@Before
 	public void createHttpClient() throws Exception {
 		httpclient = new HttpClient();
+	}
+
+	@Test
+	public void relationCreated() throws Exception {
+		// given
+		final ResponseSingle<Long> expectedResponse = newResponseSingle(Long.class) //
+				.withElement(123L) //
+				.build();
+		doReturn(expectedResponse) //
+				.when(service).create(anyString(), any(Relation.class));
+
+		// when
+		final PostMethod post = new PostMethod(server.resource("domains/12/relations/"));
+		final ObjectNode node = json.newObject();
+		node.put(UNDERSCORED_ID, 34L);
+		node.put(UNDERSCORED_TYPE, "foo");
+		node.put("foo", "FOO");
+		node.put("bar", "BAR");
+		node.put("baz", "BAZ");
+		post.setRequestEntity(new StringRequestEntity(node.toString(), APPLICATION_JSON, UTF_8));
+		final int result = httpclient.executeMethod(post);
+
+		// then
+		final ArgumentCaptor<Relation> relationCaptor = ArgumentCaptor.forClass(Relation.class);
+		verify(service).create(eq("12"), relationCaptor.capture());
+
+		final Relation captured = relationCaptor.getValue();
+		assertThat(captured.getType(), equalTo("foo"));
+		assertThat(captured.getId(), equalTo(34L));
+
+		final Map<String, Object> values = captured.getValues();
+		assertThat(values, hasEntry("foo", (Object) "FOO"));
+		assertThat(values, hasEntry("bar", (Object) "BAR"));
+		assertThat(values, hasEntry("baz", (Object) "BAZ"));
+
+		assertThat(result, equalTo(200));
+		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test

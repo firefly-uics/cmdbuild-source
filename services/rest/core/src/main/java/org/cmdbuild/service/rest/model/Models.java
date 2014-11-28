@@ -1315,6 +1315,14 @@ public class Models {
 			return this;
 		}
 
+		public RelationBuilder withValue(final String name, final Object value) {
+			return withValue(immutableEntry(name, value));
+		}
+
+		public RelationBuilder withValue(final Entry<String, ? extends Object> value) {
+			return withValues(asList(value));
+		}
+
 		public RelationBuilder withValues(final Iterable<? extends Entry<String, ? extends Object>> values) {
 			final Function<Entry<? extends String, ? extends Object>, String> key = toKey();
 			final Function<Entry<? extends String, ? extends Object>, Object> value = toValue();

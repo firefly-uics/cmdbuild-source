@@ -7,6 +7,7 @@ import static org.cmdbuild.service.rest.model.Models.newCard;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newRelation;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 
 import java.util.List;
 
@@ -16,9 +17,11 @@ import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
+import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.model.Relation;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 import com.google.common.base.Function;
 
@@ -59,6 +62,29 @@ public class CxfRelations implements Relations {
 	public CxfRelations(final ErrorHandler errorHandler, final DataAccessLogic dataAccessLogic) {
 		this.errorHandler = errorHandler;
 		this.dataAccessLogic = dataAccessLogic;
+	}
+
+	@Override
+	public ResponseSingle<Long> create(final String domainId, final Relation relation) {
+		final CMDomain targetDomain = dataAccessLogic.findDomain(domainId);
+		if (targetDomain == null) {
+			errorHandler.domainNotFound(domainId);
+		}
+		try {
+			final RelationDTO relationDTO = new RelationDTO();
+			relationDTO.domainName = targetDomain.getName();
+			relationDTO.master = "_1";
+			relationDTO.addSourceCard(relation.getSource().getId(), relation.getSource().getType());
+			relationDTO.addDestinationCard(relation.getDestination().getId(), relation.getDestination().getType());
+			relationDTO.relationAttributeToValue = relation.getValues();
+			final Long created = from(dataAccessLogic.createRelations(relationDTO)).first().get();
+			return newResponseSingle(Long.class) //
+					.withElement(created) //
+					.build();
+		} catch (final Exception e) {
+			errorHandler.propagate(e);
+		}
+		return null;
 	}
 
 	@Override
