@@ -220,6 +220,9 @@
 			return !_CMUIConfiguration.isSimpleHistoryModeForCard();
 		},
 
+		/**
+		 * @return {Array}
+		 */
 		getStoreFields: function() {
 			return [
 				{

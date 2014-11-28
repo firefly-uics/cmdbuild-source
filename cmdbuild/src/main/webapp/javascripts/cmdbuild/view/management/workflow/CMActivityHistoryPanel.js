@@ -1,14 +1,16 @@
 (function() {
 
-	var col_tr = CMDBuild.Translation.management.modcard.history_columns;
+	var tr = CMDBuild.Translation.management.modcard.history_columns;
 
-	Ext.define("CMDBuild.view.management.workflow.CMActivityHistoryTab", {
-		extend: "CMDBuild.view.management.classes.CMCardHistoryTab",
+	Ext.define('CMDBuild.view.management.workflow.CMActivityHistoryTab', {
+		extend: 'CMDBuild.view.management.classes.CMCardHistoryTab',
 
 		/**
 		 * @param {Object} record
 		 *
 		 * @return {String} body - HTML format string
+		 *
+		 * @override
 		 */
 		genHistoryBody: function(record) {
 			var body = '';
@@ -41,20 +43,44 @@
 			return body;
 		},
 
+		/**
+		 * @return {Array} columns
+		 *
+		 * @override
+		 */
 		getGridColumns: function() {
 			return this.callParent(arguments).concat([
-				{header: col_tr.activity_name, width: 40, sortable: false, dataIndex: "Code", flex:1},
-				{header: col_tr.performer, sortable: false, dataIndex: "Executor", flex:1}
+				{
+					header: tr.activity_name,
+					width: 40,
+					sortable: false,
+					dataIndex: 'Code',
+					flex: 1
+				},
+				{
+					header: tr.performer,
+					sortable: false,
+					dataIndex: 'Executor',
+					flex: 1
+				}
 			]);
 		},
 
+		/**
+		 * @return {Array}
+		 *
+		 * @override
+		 */
 		getStoreFields: function() {
 			return this.callParent(arguments).concat([
-				"Code",
-				"Executor"
+				'Code',
+				'Executor'
 			]);
 		},
 
+		/**
+		 * @override
+		 */
 		isFullVersion: function() {
 			return !_CMUIConfiguration.isSimpleHistoryModeForProcess();
 		}
