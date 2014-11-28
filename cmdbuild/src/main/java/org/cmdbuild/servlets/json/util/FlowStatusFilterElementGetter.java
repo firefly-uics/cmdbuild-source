@@ -10,6 +10,8 @@ import static org.cmdbuild.logic.mapping.json.Constants.Filters.OPERATOR_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.VALUE_KEY;
 import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
+import java.util.Collection;
+
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper.FilterElementGetter;
 import org.cmdbuild.workflow.LookupHelper;
@@ -46,7 +48,9 @@ public class FlowStatusFilterElementGetter implements FilterElementGetter {
 			ids = from(allLookups).transform(toLookupId());
 		}
 		final JSONArray values = new JSONArray();
-		values.put(ids);
+		for (final Long id : ids) {
+			values.put(id);
+		}
 		final JSONObject simple;
 		simple = new JSONObject();
 		simple.put(ATTRIBUTE_KEY, FlowStatus.dbColumnName());
@@ -57,5 +61,4 @@ public class FlowStatusFilterElementGetter implements FilterElementGetter {
 
 		return simple;
 	}
-
 }
