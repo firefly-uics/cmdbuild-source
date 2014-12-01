@@ -13,11 +13,14 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.cmdbuild.service.rest.model.adapter.AttachmentAdapter;
 
 @XmlRootElement(name = ATTACHMENT)
+@XmlJavaTypeAdapter(AttachmentAdapter.class)
 public class Attachment extends ModelWithId<String> {
 
 	private String name;
