@@ -1006,13 +1006,13 @@ public class Models {
 	public static class ProcessActivityWithFullDetailsBuilder extends ModelBuilder<ProcessActivityWithFullDetails> {
 
 		private static final Collection<? extends AttributeStatus> NO_ATTRIBUTES = emptyList();
-		private static final Collection<? extends Object> NO_WIDGETS = emptyList();
+		private static final Collection<? extends Widget> NO_WIDGETS = emptyList();
 
 		private String id;
 		private String description;
 		private String instructions;
 		private final Collection<AttributeStatus> attributes = newArrayList();
-		private final Collection<Object> widgets = newArrayList();
+		private final Collection<Widget> widgets = newArrayList();
 
 		private ProcessActivityWithFullDetailsBuilder() {
 			// use factory method
@@ -1055,7 +1055,7 @@ public class Models {
 			return this;
 		}
 
-		public ProcessActivityWithFullDetailsBuilder withWidgets(final Iterable<? extends Object> widgets) {
+		public ProcessActivityWithFullDetailsBuilder withWidgets(final Iterable<? extends Widget> widgets) {
 			addAll(this.widgets, defaultIfNull(widgets, NO_WIDGETS));
 			return this;
 		}
@@ -1536,6 +1536,63 @@ public class Models {
 
 	}
 
+	public static class WidgetBuilder extends ModelBuilder<Widget> {
+
+		private String id;
+		private String type;
+		private boolean active;
+		private boolean required;
+		private String label;
+		private Map<String, ? extends Object> data;
+
+		private WidgetBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Widget doBuild() {
+			final Widget output = new Widget();
+			output.setId(id);
+			output.setType(type);
+			output.setActive(active);
+			output.setRequired(required);
+			output.setLabel(label);
+			output.setData(data);
+			return output;
+		}
+
+		public WidgetBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public WidgetBuilder withType(final String type) {
+			this.type = type;
+			return this;
+		}
+
+		public WidgetBuilder withActive(final boolean active) {
+			this.active = active;
+			return this;
+		}
+
+		public WidgetBuilder withRequired(final boolean required) {
+			this.required = required;
+			return this;
+		}
+
+		public WidgetBuilder withLabel(final String label) {
+			this.label = label;
+			return this;
+		}
+
+		public WidgetBuilder withData(final Map<String, ? extends Object> data) {
+			this.data = data;
+			return this;
+		}
+
+	}
+
 	public static AttachmentBuilder newAttachment() {
 		return new AttachmentBuilder();
 	}
@@ -1656,6 +1713,10 @@ public class Models {
 
 	public static SessionBuilder newSession(final Session existing) {
 		return new SessionBuilder(existing);
+	}
+
+	public static WidgetBuilder newWidget() {
+		return new WidgetBuilder();
 	}
 
 	private Models() {

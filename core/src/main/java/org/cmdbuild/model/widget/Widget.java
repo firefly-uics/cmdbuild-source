@@ -96,11 +96,11 @@ public abstract class Widget implements CMActivityWidget, WidgetVisitable, Stora
 	public final String getLabel() {
 		return label;
 	}
-	
+
 	public String getLabel_default() {
 		return label_default;
 	}
-	
+
 	public void setLabel_default(String label_default) {
 		this.label_default = label_default;
 	}

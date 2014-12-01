@@ -86,7 +86,7 @@ public class ProcessActivityWithFullDetails extends ModelWithId<String> {
 	private String description;
 	private String instructions;
 	private Collection<AttributeStatus> attributes;
-	private Collection<Object> widgets;
+	private Collection<Widget> widgets;
 
 	ProcessActivityWithFullDetails() {
 		// package visibility
@@ -120,11 +120,11 @@ public class ProcessActivityWithFullDetails extends ModelWithId<String> {
 	}
 
 	@XmlElement(name = WIDGETS)
-	public Collection<Object> getWidgets() {
+	public Collection<Widget> getWidgets() {
 		return widgets;
 	}
 
-	void setWidgets(final Collection<Object> widgets) {
+	void setWidgets(final Collection<Widget> widgets) {
 		this.widgets = widgets;
 
 	}

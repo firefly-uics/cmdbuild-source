@@ -1,17 +1,21 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.cmdbuild.service.rest.cxf.serialization.ToAttribute.toAttribute;
 import static org.cmdbuild.service.rest.model.Models.newProcessActivityWithFullDetails;
+import static org.cmdbuild.service.rest.model.Models.newWidget;
 
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails;
 import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails.AttributeStatus;
+import org.cmdbuild.service.rest.model.Widget;
 import org.cmdbuild.workflow.CMActivity;
-import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMWorkflowException;
 import org.cmdbuild.workflow.xpdl.CMActivityVariableToProcess;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import com.google.common.base.Function;
 
@@ -59,12 +63,33 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 				.build();
 	}
 
-	private Iterable<CMActivityWidget> safeWidgetsOf(final CMActivity input) {
+	private Iterable<Widget> safeWidgetsOf(final CMActivity input) {
 		try {
-			return input.getWidgets();
+			return from(input.getWidgets()) //
+					.filter(org.cmdbuild.model.widget.Widget.class) //
+					.transform(new Function<org.cmdbuild.model.widget.Widget, Widget>() {
+
+						@Override
+						public Widget apply(final org.cmdbuild.model.widget.Widget input) {
+							/*
+							 * TODO do in a better way
+							 */
+							final ObjectMapper objectMapper = new ObjectMapper();
+							@SuppressWarnings("unchecked")
+							final Map<String, Object> objectAsMap = objectMapper.convertValue(input, Map.class);
+							return newWidget() //
+									.withId(input.getIdentifier()) //
+									.withType(input.getType()) //
+									.withActive(input.isActive()) //
+									// .withRequired(...) //
+									.withLabel(input.getLabel()) //
+									.withData(objectAsMap) //
+									.build();
+						}
+
+					});
 		} catch (final CMWorkflowException e) {
 			throw new RuntimeException(e);
 		}
 	}
-
 }
