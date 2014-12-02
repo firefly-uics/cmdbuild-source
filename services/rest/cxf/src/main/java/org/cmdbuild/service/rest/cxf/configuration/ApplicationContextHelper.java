@@ -4,7 +4,7 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
-import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
@@ -27,7 +27,7 @@ public class ApplicationContextHelper {
 	private ApplicationContext applicationContext;
 
 	public AuthenticationLogic authenticationLogic() {
-		return applicationContext.getBean(SoapAuthenticationLogicBuilder.class).build();
+		return applicationContext.getBean(DefaultAuthenticationLogicBuilder.class).build();
 	}
 
 	public DmsLogic dmsLogic() {
