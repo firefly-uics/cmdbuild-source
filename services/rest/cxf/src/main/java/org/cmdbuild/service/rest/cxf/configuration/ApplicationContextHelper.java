@@ -1,10 +1,18 @@
 package org.cmdbuild.service.rest.cxf.configuration;
 
+import static java.util.Arrays.asList;
+
+import java.util.Collection;
+
+import org.cmdbuild.auth.DefaultAuthenticationService;
+import org.cmdbuild.auth.DefaultAuthenticationService.Configuration;
+import org.cmdbuild.auth.LegacyDBAuthenticator;
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
-import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.DefaultAuthenticationLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
@@ -14,6 +22,7 @@ import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.workflow.LookupHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +36,32 @@ public class ApplicationContextHelper {
 	private ApplicationContext applicationContext;
 
 	public AuthenticationLogic authenticationLogic() {
-		return applicationContext.getBean(DefaultAuthenticationLogicBuilder.class).build();
+		/*
+		 * TODO
+		 * 
+		 * it could be DefaultAuthenticationLogic but at the moment we don't
+		 * want other authenticators than database one
+		 */
+		final LegacyDBAuthenticator databaseAuthenticator = applicationContext.getBean(LegacyDBAuthenticator.class);
+		final DBGroupFetcher dbGroupFetcher = applicationContext.getBean(DBGroupFetcher.class);
+		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(
+				new Configuration() {
+
+					@Override
+					public Collection<String> getActiveAuthenticators() {
+						return asList(databaseAuthenticator.getName());
+					}
+
+				}, systemDataView());
+		authenticationService.setPasswordAuthenticators(databaseAuthenticator);
+		authenticationService.setUserFetchers(databaseAuthenticator);
+		authenticationService.setGroupFetcher(dbGroupFetcher);
+		authenticationService.setUserStore(userStore());
+
+		final PrivilegeContextFactory privilegeContextFactory = applicationContext
+				.getBean(PrivilegeContextFactory.class);
+
+		return new DefaultAuthenticationLogic(authenticationService, privilegeContextFactory, systemDataView());
 	}
 
 	public DmsLogic dmsLogic() {
