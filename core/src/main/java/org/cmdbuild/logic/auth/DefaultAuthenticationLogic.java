@@ -9,7 +9,6 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.cmdbuild.auth.AuthenticationService;
 import org.cmdbuild.auth.AuthenticationService.ClientAuthenticatorResponse;
@@ -163,7 +162,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 			} else if (authUser.getGroupNames().size() == 1) {
 				privilegeCtx = buildPrivilegeContext(guessedGroup);
 			} else { // the user has a default group
-				final Set<String> groupNames = authUser.getGroupNames();
+				final Collection<String> groupNames = authUser.getGroupNames();
 				final CMGroup[] groupsArray = new CMGroup[groupNames.size()];
 				int i = 0;
 				for (final String name : groupNames) {
@@ -359,6 +358,11 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	@Override
 	public List<CMUser> getAllUsers() {
 		return authService.fetchAllUsers();
+	}
+	
+	@Override
+	public Iterable<CMUser> getServiceOrPrivilegedUsers() {
+		return authService.fetchServiceOrPrivilegedUsers();
 	}
 
 	@Override

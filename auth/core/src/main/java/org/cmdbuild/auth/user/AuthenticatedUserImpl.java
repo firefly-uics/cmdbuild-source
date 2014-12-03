@@ -1,28 +1,27 @@
 package org.cmdbuild.auth.user;
 
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
 
-public class AuthenticatedUserImpl implements AuthenticatedUser {
+public class AuthenticatedUserImpl extends ForwardingUser implements AuthenticatedUser {
 
 	public static final AuthenticatedUser ANONYMOUS_USER = new AnonymousUser();
-	private final CMUser inner;
+
+	public static AuthenticatedUser newInstance(final CMUser user) {
+		return (user == null) ? ANONYMOUS_USER : new AuthenticatedUserImpl(user);
+	}
+
+	private final CMUser user;
 	private PasswordChanger passwordChanger;
 
 	protected AuthenticatedUserImpl(final CMUser user) {
 		Validate.notNull(user);
-		this.inner = user;
+		this.user = user;
 	}
 
-	public static AuthenticatedUser newInstance(final CMUser user) {
-		if (user == null) {
-			return ANONYMOUS_USER;
-		} else {
-			return new AuthenticatedUserImpl(user);
-		}
+	@Override
+	protected CMUser delegate() {
+		return user;
 	}
 
 	@Override
@@ -47,50 +46,6 @@ public class AuthenticatedUserImpl implements AuthenticatedUser {
 	@Override
 	public final boolean canChangePassword() {
 		return passwordChanger != null;
-	}
-
-	/*
-	 * CMUser
-	 */
-
-	@Override
-	public Long getId() {
-		return inner.getId();
-	}
-
-	@Override
-	public String getUsername() {
-		return inner.getUsername();
-	}
-
-	@Override
-	public String getDescription() {
-		return inner.getDescription();
-	}
-
-	@Override
-	public Set<String> getGroupNames() {
-		return inner.getGroupNames();
-	}
-
-	@Override
-	public List<String> getGroupDescriptions() {
-		return inner.getGroupDescriptions();
-	}
-
-	@Override
-	public String getDefaultGroupName() {
-		return inner.getDefaultGroupName();
-	}
-
-	@Override
-	public String getEmail() {
-		return inner.getEmail();
-	}
-
-	@Override
-	public boolean isActive() {
-		return inner.isActive();
 	}
 
 }

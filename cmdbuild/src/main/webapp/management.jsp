@@ -5,7 +5,7 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
-<%@ page import="java.util.List"%>
+<%@ page import="java.util.Collection"%>
 <%@ page import="com.google.common.base.Joiner"%>
 
 <%@ page import="org.cmdbuild.auth.UserStore" %>
@@ -22,7 +22,7 @@
 	final OperationUser operationUser = userStore.getUser();
 	final CMGroup group = operationUser.getPreferredGroup();
 	final String defaultGroupName = operationUser.getAuthenticatedUser().getDefaultGroupName();
-	final List<String> groupDescriptionList = operationUser.getAuthenticatedUser().getGroupDescriptions();
+	final Collection<String> groupDescriptionList = operationUser.getAuthenticatedUser().getGroupDescriptions();
 	final String groupDecriptions = Joiner.on(", ").join(groupDescriptionList);
 	final String extVersion = "4.2.0";
 %>

@@ -95,6 +95,7 @@ public class GetRelationList extends AbstractGetRelation {
 		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
 				.withDataView(view) //
 				.withEntryType(sourceType) //
+				.withEntryTypeAlias(SRC_ALIAS) //
 				.withFilterObject(queryOptions.getFilter()) //
 				.build();
 		final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();

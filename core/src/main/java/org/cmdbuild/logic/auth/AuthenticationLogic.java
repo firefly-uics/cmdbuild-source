@@ -79,6 +79,8 @@ public interface AuthenticationLogic extends Logic {
 
 	List<CMUser> getAllUsers();
 
+	Iterable<CMUser> getServiceOrPrivilegedUsers();
+
 	CMUser enableUserWithId(Long userId);
 
 	CMUser disableUserWithId(Long userId);

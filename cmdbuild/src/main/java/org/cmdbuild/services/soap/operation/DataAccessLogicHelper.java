@@ -3,6 +3,7 @@ package org.cmdbuild.services.soap.operation;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNumeric;
@@ -138,6 +139,8 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 		}
 
 	};
+
+	private static final Attribute[] NO_ATTRIBUTES = new Attribute[] {};
 
 	private final CMDataView dataView;
 	private final DataAccessLogic dataAccessLogic;
@@ -488,7 +491,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	private Iterable<String> namesOf(final Attribute[] attributeList) {
-		return from(asList(attributeList)) //
+		return from(asList(defaultIfNull(attributeList, NO_ATTRIBUTES))) //
 				.transform(ATTRIBUTE_NAME);
 	}
 
