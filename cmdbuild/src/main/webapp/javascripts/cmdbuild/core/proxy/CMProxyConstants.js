@@ -188,6 +188,7 @@
 			TEMPLATE: 'template',
 			TEMPLATES: 'templates',
 			TEXT: 'text',
+			TITLE: 'title',
 			TO: 'to',
 			TOOLBAR_TOP: 'topToolbar',
 			TYPE: 'type',
