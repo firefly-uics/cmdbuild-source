@@ -15,12 +15,12 @@ import org.cmdbuild.logic.auth.UserDTO;
 
 public interface AuthenticationService {
 
-	public static interface PasswordCallback {
+	interface PasswordCallback {
 
 		void setPassword(String password);
 	}
 
-	public static class ClientAuthenticatorResponse {
+	class ClientAuthenticatorResponse {
 
 		private final AuthenticatedUser user;
 		private final String redirectUrl;
@@ -43,15 +43,15 @@ public interface AuthenticationService {
 		}
 	}
 
-	public void setPasswordAuthenticators(final PasswordAuthenticator... passwordAuthenticators);
+	void setPasswordAuthenticators(final PasswordAuthenticator... passwordAuthenticators);
 
-	public void setClientRequestAuthenticators(final ClientRequestAuthenticator... clientRequestAuthenticators);
+	void setClientRequestAuthenticators(final ClientRequestAuthenticator... clientRequestAuthenticators);
 
-	public void setUserFetchers(final UserFetcher... userFetchers);
+	void setUserFetchers(final UserFetcher... userFetchers);
 
-	public void setGroupFetcher(final GroupFetcher groupFetcher);
+	void setGroupFetcher(final GroupFetcher groupFetcher);
 
-	public void setUserStore(final UserStore userStore);
+	void setUserStore(final UserStore userStore);
 
 	/**
 	 * Actively checks the user credentials and returns the authenticated user
@@ -62,7 +62,7 @@ public interface AuthenticationService {
 	 *            unencrypted password
 	 * @return the user that was authenticated
 	 */
-	public AuthenticatedUser authenticate(final Login login, final String password);
+	AuthenticatedUser authenticate(final Login login, final String password);
 
 	/**
 	 * Extracts the unencrypted password for the user and sets it in the
@@ -75,7 +75,7 @@ public interface AuthenticationService {
 	 *            object where to set the unencrypted password
 	 * @return the user to be authenticated as if the authentication succeeded
 	 */
-	public AuthenticatedUser authenticate(final Login login, final PasswordCallback passwordCallback);
+	AuthenticatedUser authenticate(final Login login, final PasswordCallback passwordCallback);
 
 	/**
 	 * Tries to authenticate the user with a ClientRequestAuthenticator
@@ -84,7 +84,7 @@ public interface AuthenticationService {
 	 *            object representing a client request
 	 * @return response object with the authenticated user or a redirect URL
 	 */
-	public ClientAuthenticatorResponse authenticate(final ClientRequest request);
+	ClientAuthenticatorResponse authenticate(final ClientRequest request);
 
 	/**
 	 * Impersonate another user if the currently authenticated user has the
@@ -93,7 +93,7 @@ public interface AuthenticationService {
 	 * @param login
 	 * @return the authenticated user
 	 */
-	public OperationUser impersonate(final Login login);
+	OperationUser impersonate(final Login login);
 
 	/**
 	 * Get the currently authenticated user. It can be anonymous but it will
@@ -101,11 +101,11 @@ public interface AuthenticationService {
 	 * 
 	 * @return the authenticated user
 	 */
-	public OperationUser getOperationUser();
+	OperationUser getOperationUser();
 
-	public List<CMUser> fetchUsersByGroupId(Long groupId);
+	List<CMUser> fetchUsersByGroupId(Long groupId);
 
-	public List<Long> fetchUserIdsByGroupId(Long groupId);
+	List<Long> fetchUserIdsByGroupId(Long groupId);
 
 	/**
 	 * Given a user identifier, it returns the user with that id
@@ -113,7 +113,7 @@ public interface AuthenticationService {
 	 * @param userId
 	 * @return the user with id = userId, null if there is no user with that id
 	 */
-	public CMUser fetchUserById(Long userId);
+	CMUser fetchUserById(Long userId);
 
 	/**
 	 * Given a username, it returns the user with that username
@@ -122,7 +122,7 @@ public interface AuthenticationService {
 	 * @return the user with the provided username, null if there is no user
 	 *         with that username
 	 */
-	public CMUser fetchUserByUsername(String username);
+	CMUser fetchUserByUsername(String username);
 
 	/**
 	 * Creates a new user in the database
@@ -132,7 +132,7 @@ public interface AuthenticationService {
 	 *            password, active flag, email ...)
 	 * @return
 	 */
-	public CMUser createUser(UserDTO userDTO);
+	CMUser createUser(UserDTO userDTO);
 
 	/**
 	 * Updates an existent user in the database
@@ -142,7 +142,7 @@ public interface AuthenticationService {
 	 *            updated (username, password, active flag, email ...)
 	 * @return
 	 */
-	public CMUser updateUser(UserDTO userDTO);
+	CMUser updateUser(UserDTO userDTO);
 
 	/**
 	 * Creates a new group in the database
@@ -152,7 +152,7 @@ public interface AuthenticationService {
 	 *            flag, email ...)
 	 * @return
 	 */
-	public CMGroup createGroup(GroupDTO groupDTO);
+	CMGroup createGroup(GroupDTO groupDTO);
 
 	/**
 	 * Updates an existent group in the database
@@ -162,7 +162,7 @@ public interface AuthenticationService {
 	 *            updated (name, active flag, email, groupId ...)
 	 * @return
 	 */
-	public CMGroup updateGroup(GroupDTO groupDTO);
+	CMGroup updateGroup(GroupDTO groupDTO);
 
 	/**
 	 * Use it to activate/deactivate an existing group
@@ -170,19 +170,21 @@ public interface AuthenticationService {
 	 * @param active
 	 * @return
 	 */
-	public CMGroup setGroupActive(Long groupId, boolean active);
+	CMGroup setGroupActive(Long groupId, boolean active);
 
 	/**
 	 * 
 	 * @return a collection of all groups stored in the database
 	 */
-	public Iterable<CMGroup> fetchAllGroups();
+	Iterable<CMGroup> fetchAllGroups();
 
 	/**
 	 * 
 	 * @return a collection of all users stored in the database
 	 */
-	public List<CMUser> fetchAllUsers();
+	List<CMUser> fetchAllUsers();
+
+	Iterable<CMUser> fetchServiceOrPrivilegedUsers();
 
 	/**
 	 * Retrieves a group with the specified id
@@ -191,7 +193,7 @@ public interface AuthenticationService {
 	 *            the id of the group that will be retrieved
 	 * @return
 	 */
-	public CMGroup fetchGroupWithId(Long groupId);
+	CMGroup fetchGroupWithId(Long groupId);
 
 	/**
 	 * Retrieves a group with the specified name
@@ -200,7 +202,7 @@ public interface AuthenticationService {
 	 *            the name of the group that will be retrieved
 	 * @return
 	 */
-	public CMGroup fetchGroupWithName(String groupName);
+	CMGroup fetchGroupWithName(String groupName);
 
 	/**
 	 * Enable the user with the current user id. If already enabled it does
@@ -209,7 +211,7 @@ public interface AuthenticationService {
 	 * @param userId
 	 * @return
 	 */
-	public CMUser enableUserWithId(Long userId);
+	CMUser enableUserWithId(Long userId);
 
 	/**
 	 * Disable the user with the current user id. If already disabled it does
@@ -218,7 +220,7 @@ public interface AuthenticationService {
 	 * @param userId
 	 * @return
 	 */
-	public CMUser disableUserWithId(Long userId);
+	CMUser disableUserWithId(Long userId);
 
 	/**
 	 * It changes the status of the role with id = groupId
@@ -228,6 +230,6 @@ public interface AuthenticationService {
 	 * @param isActive
 	 * @return
 	 */
-	public CMGroup changeGroupStatusTo(Long groupId, boolean isActive);
+	CMGroup changeGroupStatusTo(Long groupId, boolean isActive);
 
 }

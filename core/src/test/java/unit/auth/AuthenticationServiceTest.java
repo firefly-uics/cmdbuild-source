@@ -383,24 +383,6 @@ public class AuthenticationServiceTest {
 		verify(namedAuthenticatorMock, times(1)).authenticate(any(ClientRequest.class));
 	}
 
-	@Test
-	public void serviceUsersCannotUseLoginPasswordAuthentication() {
-		// given
-		final Configuration conf = mock(Configuration.class);
-		when(conf.getActiveAuthenticators()).thenReturn(null);
-		when(conf.getServiceUsers()).thenReturn(Sets.newHashSet(LOGIN.getValue()));
-		final AuthenticationService as = authenticationService(conf);
-		as.setPasswordAuthenticators(passwordAuthenticatorMock);
-
-		// when
-		as.authenticate(LOGIN, PASSWORD);
-		as.authenticate(LOGIN, mock(PasswordCallback.class));
-
-		// then
-		verify(passwordAuthenticatorMock, never()).checkPassword(LOGIN, PASSWORD);
-		verify(passwordAuthenticatorMock, times(1)).fetchUnencryptedPassword(LOGIN);
-	}
-
 	/*
 	 * Impersonate
 	 */
@@ -409,7 +391,6 @@ public class AuthenticationServiceTest {
 	@Test
 	public void impersonateIsAllowedOnlyToAdministratorsAndServiceUsers() {
 		final Configuration conf = mock(Configuration.class);
-		when(conf.getServiceUsers()).thenReturn(Sets.newHashSet("service"));
 		final AuthenticationService as = mockedAuthenticatorService(conf);
 
 		final OperationUser operationUserMock = mock(OperationUser.class);

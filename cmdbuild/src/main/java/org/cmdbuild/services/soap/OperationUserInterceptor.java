@@ -1,18 +1,21 @@
 package org.cmdbuild.services.soap;
 
+import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.cmdbuild.auth.Login.LoginType.EMAIL;
+import static org.cmdbuild.auth.user.Predicates.privileged;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.cmdbuild.auth.AuthenticationStore;
 import org.cmdbuild.auth.DefaultAuthenticationService;
+import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.AuthenticatedUser;
+import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.ForwardingAuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
@@ -34,7 +37,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import com.google.common.collect.Iterables;
+import com.google.common.base.Predicate;
 
 public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> implements ApplicationContextAware {
 
@@ -93,18 +96,16 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 		}
 
 		@Override
-		public Set<String> getGroupNames() {
+		public Collection<String> getGroupNames() {
 			return userForGroups.getGroupNames();
 		}
 
 		@Override
-		public List<String> getGroupDescriptions() {
+		public Collection<String> getGroupDescriptions() {
 			return userForGroups.getGroupDescriptions();
 		}
 
 	}
-
-	private static Iterable<String> EMPTY_PRIVILEGED_SERVICE_USERS = Collections.emptyList();
 
 	@Autowired
 	private UserStore userStore;
@@ -229,15 +230,23 @@ public class OperationUserInterceptor extends AbstractPhaseInterceptor<Message> 
 
 	private boolean isPrivilegedServiceUser(final LoginAndGroup loginAndGroup) {
 		final String username = loginAndGroup.getLogin().getValue();
-		final boolean privileged = Iterables.contains(privilegedServiceUsers(), username);
-		logger.debug(marker, "'{}' is {}a privileged service user", username, privileged ? EMPTY : "not");
+		final boolean privileged = from(authenticationLogic().getServiceOrPrivilegedUsers()) //
+				.filter(privileged()) //
+				.filter(new Predicate<CMUser>() {
+
+					@Override
+					public boolean apply(final CMUser input) {
+						final Login login = Login.newInstance(username);
+						return (login.getType() == EMAIL) ? input.getEmail().equals(username) : input.getUsername()
+								.equals(username);
+					}
+
+				}) //
+				.first() //
+				.isPresent();
+		logger.debug(marker, "'{}' is {} a privileged service user", username, privileged ? EMPTY : "not");
 		return privileged;
 	}
-
-	private Iterable<String> privilegedServiceUsers() {
-		return (configuration.getPrivilegedServiceUsers() == null) ? EMPTY_PRIVILEGED_SERVICE_USERS : configuration
-				.getPrivilegedServiceUsers();
-	};
 
 	private void tryLogin(final LoginAndGroup loginAndGroup) {
 		logger.debug(marker, "trying login with '{}'", loginAndGroup);
