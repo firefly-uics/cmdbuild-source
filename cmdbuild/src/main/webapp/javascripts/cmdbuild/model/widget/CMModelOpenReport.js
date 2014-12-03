@@ -13,4 +13,17 @@
 		]
 	});
 
+	/**
+	 * Used for admin report comboBox
+	 */
+	Ext.define('CMDBuild.model.widget.CMModelOpenReport.reportCombo', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TITLE, type: 'string' }
+		]
+	});
+
 })();
