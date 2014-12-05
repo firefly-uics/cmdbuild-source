@@ -13,6 +13,31 @@
 			type: 'hbox'
 		},
 
+		/**
+		 * @cfg {CMDBuild.controller.administration.widget.CMOpenReportController}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		forceFormatCheck: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		forceFormatOptions: undefined,
+
+		/**
+		 * @property {Ext.grid.Panel}
+		 */
+		presetGrid: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		reportCode: undefined,
+
 		initComponent: function() {
 			this.callParent(arguments);
 
@@ -36,13 +61,13 @@
 				name: CMDBuild.core.proxy.CMProxyConstants.CODE,
 				fieldLabel: tr[me.self.WIDGET_NAME].fields.report,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				valueField: CMDBuild.model.CMReportAsComboItem._FIELDS.value,
-				displayField: CMDBuild.model.CMReportAsComboItem._FIELDS.description,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.TITLE,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				forceSelection: true,
 				editable: false,
 
-				store: _CMCache.getReportComboStore()
+				store: CMDBuild.core.proxy.widgets.OpenReport.getReportsStore()
 			});
 
 			this.forceFormatCheck = Ext.create('Ext.form.field.Checkbox', {
@@ -134,36 +159,47 @@
 		},
 
 		/**
-		 * @param {Object} data - Ex. {name: value}
+		 * Fills presetGrid with data and merges if presetGrid is already filled
+		 *
+		 * @param {Object} data - Ex. { name: value }
 		 * @param {Array} readOnlyAttributes
 		 */
 		fillPresetWithData: function(data, readOnlyAttributes) {
 			readOnlyAttributes = readOnlyAttributes || [];
 
-			this.presetGrid.store.removeAll();
-			if (!Ext.isEmpty(data)) {
+			if (!Ext.Object.isEmpty(data)) {
 				for (var key in data) {
-					var recordConf = {};
+					var storeReportIndex = this.presetGrid.getStore().find(
+						CMDBuild.core.proxy.CMProxyConstants.NAME,
+						key
+					);
 
-					recordConf[CMDBuild.core.proxy.CMProxyConstants.NAME] = key;
-					recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = data[key] || '';
+					// If present in presetGrid and is empty, remove and set as not present so will be added as data value or empty
+					if (
+						storeReportIndex >= 0
+						&& Ext.isEmpty(this.presetGrid.getStore().getAt(storeReportIndex).get(CMDBuild.core.proxy.CMProxyConstants.VALUE))
+					) {
+						this.presetGrid.getStore().removeAt(storeReportIndex);
 
-					if (Ext.Array.contains(readOnlyAttributes, key)) {
-						recordConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] = true;
-					} else {
-						recordConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] = false;
+						storeReportIndex = -1;
 					}
 
-					this.presetGrid.store.add(recordConf);
+					// If not present in presetGrid store, add
+					if (storeReportIndex < 0) {
+						var recordConf = {};
+
+						recordConf[CMDBuild.core.proxy.CMProxyConstants.NAME] = key;
+						recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = data[key] || '';
+
+						if (Ext.Array.contains(readOnlyAttributes, key)) {
+							recordConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] = true;
+						} else {
+							recordConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] = false;
+						}
+
+						this.presetGrid.getStore().add(recordConf);
+					}
 				}
-			} else {
-				var recordConf = {};
-
-				recordConf[CMDBuild.core.proxy.CMProxyConstants.NAME] = '';
-				recordConf[CMDBuild.core.proxy.CMProxyConstants.VALUE] = '';
-				recordConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY] = false;
-
-				this.presetGrid.store.add(recordConf);
 			}
 		},
 
@@ -171,7 +207,7 @@
 		 * @return {Object}
 		 */
 		getPresetData: function() {
-			var records = this.presetGrid.store.getRange();
+			var records = this.presetGrid.getStore().getRange();
 			var data = {};
 			var readOnly = [];
 
@@ -193,6 +229,8 @@
 		},
 
 		/**
+		 * Fills form with widget data
+		 *
 		 * @param {CMDBuild.model.CMWidgetDefinitionModel} model
 		 *
 		 * @override
@@ -208,7 +246,22 @@
 				this.forceFormatOptions.setValue(forceFormat);
 			}
 
-			this.fillPresetWithData(model.get(CMDBuild.core.proxy.CMProxyConstants.PRESET), model.get(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY_ATTRIBUTES));
+			// Find selected report ID and manually calls onReportSelected to fill presetGrid
+			this.reportCode.getStore().on('load', function() {
+				var storeReportIndex = this.reportCode.getStore().find(
+					CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					model.get(CMDBuild.core.proxy.CMProxyConstants.REPORT_CODE)
+				);
+
+				if(storeReportIndex >= 0)
+					this.delegate.onReportSelected(
+						this.reportCode.getStore().getAt(storeReportIndex).get(CMDBuild.core.proxy.CMProxyConstants.ID),
+						model.get(CMDBuild.core.proxy.CMProxyConstants.PRESET),
+						model.get(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY_ATTRIBUTES)
+					);
+			}, this);
+
+//			this.fillPresetWithData(model.get(CMDBuild.core.proxy.CMProxyConstants.PRESET), model.get(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY_ATTRIBUTES));
 		},
 
 		/**
@@ -235,8 +288,8 @@
 		 * @override
 		 */
 		getWidgetDefinition: function() {
-			var returnObject = {};
 			var presetData = this.getPresetData();
+			var returnObject = {};
 
 			returnObject[CMDBuild.core.proxy.CMProxyConstants.REPORT_CODE] = this.reportCode.getValue();
 			returnObject[CMDBuild.core.proxy.CMProxyConstants.FORCE_FORMAT] = this.forceFormatOptions.getValue();

@@ -1,5 +1,34 @@
 (function() {
 
+	/**
+	 * New class to replace CMDBuild.Utils
+	 */
+	Ext.define('CMDBuild.core.Utils', {
+		singleton: true,
+
+		/**
+		 * Clones a ExtJs store
+		 *
+		 * @param {Ext.data.Store} sourceStore
+		 *
+		 * @return {Ext.data.Store} clonedStore
+		 */
+		deepCloneStore: function(sourceStore) {
+			var clonedStore = Ext.create('Ext.data.Store', {
+				model: sourceStore.model
+			});
+
+			sourceStore.each(function(record) {
+				var newRecordData = Ext.clone(record.copy().data);
+				var model = new sourceStore.model(newRecordData, newRecordData.id);
+
+				clonedStore.add(model);
+			}, this);
+
+			return clonedStore;
+		}
+	});
+
 	CMDBuild.Utils = (function() {
 		var idCounter = 0;
 

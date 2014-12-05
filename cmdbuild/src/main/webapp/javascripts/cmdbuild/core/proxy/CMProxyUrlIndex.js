@@ -212,6 +212,12 @@
 			},
 
 			widgets: {
+				grid: {
+					clearSession: 'services/json/management/importcsv/clearsession',
+					getSqlCardList: 'services/json/management/modcard/getsqlcardlist',
+					getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
+					uploadCsv: 'services/json/management/importcsv/uploadcsv'
+				},
 				manageEmail: {
 					addAttachmentFromNewEmail: 'services/json/management/email/uploadattachmentfromnewemail',
 					addAttachmentFromExistingEmail: 'services/json/management/email/uploadattachmentfromexistingemail',
@@ -220,11 +226,9 @@
 					removeAttachmentFromNewEmail: 'services/json/management/email/deleteattachmentfromnewemail',
 					removeAttachmentFromExistingEmail: 'services/json/management/email/deleteattachmentfromexistingemail'
 				},
-				grid: {
-					clearSession: 'services/json/management/importcsv/clearsession',
-					getSqlCardList: 'services/json/management/modcard/getsqlcardlist',
-					getCsvRecords: 'services/json/management/importcsv/getcsvrecords',
-					uploadCsv: 'services/json/management/importcsv/uploadcsv'
+				openReport: {
+					createReportFactory: 'services/json/management/modreport/createreportfactory',
+					getReportsByType: 'services/json/management/modreport/getreportsbytype'
 				}
 			},
 

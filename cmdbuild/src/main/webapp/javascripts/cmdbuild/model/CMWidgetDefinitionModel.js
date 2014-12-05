@@ -40,6 +40,7 @@
 		id: "id"
 	};
 
+	// TODO: probably to delete because it's also in OpenReportModel
 	Ext.define('CMDBuild.model.CMReportAsComboItem', {
 		statics: {
 			_FIELDS: _REPORT_FIELDS
