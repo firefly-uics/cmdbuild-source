@@ -7,6 +7,7 @@ import java.util.Collection;
 import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.DefaultAuthenticationService.Configuration;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
+import org.cmdbuild.auth.NotSystemUserFetcher;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.acl.PrivilegeContextFactory;
 import org.cmdbuild.dao.view.CMDataView;
@@ -43,6 +44,7 @@ public class ApplicationContextHelper {
 		 * want other authenticators than database one
 		 */
 		final LegacyDBAuthenticator databaseAuthenticator = applicationContext.getBean(LegacyDBAuthenticator.class);
+		final NotSystemUserFetcher notSystemUserFetcher = applicationContext.getBean(NotSystemUserFetcher.class);
 		final DBGroupFetcher dbGroupFetcher = applicationContext.getBean(DBGroupFetcher.class);
 		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(
 				new Configuration() {
@@ -54,7 +56,7 @@ public class ApplicationContextHelper {
 
 				}, systemDataView());
 		authenticationService.setPasswordAuthenticators(databaseAuthenticator);
-		authenticationService.setUserFetchers(databaseAuthenticator);
+		authenticationService.setUserFetchers(databaseAuthenticator, notSystemUserFetcher);
 		authenticationService.setGroupFetcher(dbGroupFetcher);
 		authenticationService.setUserStore(userStore());
 

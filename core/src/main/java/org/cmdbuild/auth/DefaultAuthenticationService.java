@@ -158,17 +158,15 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				continue;
 			}
 			final String pass = pa.fetchUnencryptedPassword(login);
-			if (pass != null) {
-				return fetchAuthenticatedUser(login, new FetchCallback() {
+			return fetchAuthenticatedUser(login, new FetchCallback() {
 
-					@Override
-					public void foundUser(final AuthenticatedUser authUser) {
-						final PasswordChanger passwordChanger = pa.getPasswordChanger(login);
-						authUser.setPasswordChanger(passwordChanger);
-						passwordCallback.setPassword(pass);
-					}
-				});
-			}
+				@Override
+				public void foundUser(final AuthenticatedUser authUser) {
+					final PasswordChanger passwordChanger = pa.getPasswordChanger(login);
+					authUser.setPasswordChanger(passwordChanger);
+					passwordCallback.setPassword(pass);
+				}
+			});
 		}
 		return ANONYMOUS_USER;
 	}

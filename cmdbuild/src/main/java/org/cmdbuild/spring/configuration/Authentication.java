@@ -13,6 +13,7 @@ import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.HeaderAuthenticator;
 import org.cmdbuild.auth.LdapAuthenticator;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
+import org.cmdbuild.auth.NotSystemUserFetcher;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
 import org.cmdbuild.logic.auth.DefaultGroupsLogic;
@@ -25,7 +26,6 @@ import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
 import org.cmdbuild.services.soap.security.SoapConfiguration;
 import org.cmdbuild.services.soap.security.SoapPasswordAuthenticator;
-import org.cmdbuild.services.soap.security.SoapUserFetcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -67,8 +67,8 @@ public class Authentication {
 
 	@Bean
 	@Qualifier(SOAP)
-	protected SoapUserFetcher soapUserFetcher() {
-		return new SoapUserFetcher(data.systemDataView(), authenticationStore);
+	protected NotSystemUserFetcher notSystemUserFetcher() {
+		return new NotSystemUserFetcher(data.systemDataView(), authenticationStore);
 	}
 
 	@Bean
@@ -119,7 +119,7 @@ public class Authentication {
 		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(soapConfiguration,
 				data.systemDataView());
 		authenticationService.setPasswordAuthenticators(soapPasswordAuthenticator());
-		authenticationService.setUserFetchers(dbAuthenticator(), soapUserFetcher());
+		authenticationService.setUserFetchers(dbAuthenticator(), notSystemUserFetcher());
 		authenticationService.setGroupFetcher(dbGroupFetcher());
 		authenticationService.setUserStore(userStore);
 		return authenticationService;

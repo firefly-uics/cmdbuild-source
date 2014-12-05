@@ -1,4 +1,4 @@
-package org.cmdbuild.services.soap.security;
+package org.cmdbuild.auth;
 
 import static org.cmdbuild.common.Constants.DESCRIPTION_ATTRIBUTE;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
@@ -8,9 +8,6 @@ import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
-import org.cmdbuild.auth.AuthenticationStore;
-import org.cmdbuild.auth.DBUserFetcher;
-import org.cmdbuild.auth.Login;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.dao.driver.postgres.Const;
 import org.cmdbuild.dao.entry.CMCard;
@@ -24,7 +21,7 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.services.auth.UserType;
 import org.cmdbuild.services.cache.CachingService.Cacheable;
 
-public class SoapUserFetcher extends DBUserFetcher implements Cacheable {
+public class NotSystemUserFetcher extends DBUserFetcher implements Cacheable {
 
 	private static final String ORG_CMDBUILD_PORTLET_GROUP_DOMAIN = "org.cmdbuild.portlet.group.domain";
 	private static final String ORG_CMDBUILD_PORTLET_USER_EMAIL = "org.cmdbuild.portlet.user.email";
@@ -39,7 +36,7 @@ public class SoapUserFetcher extends DBUserFetcher implements Cacheable {
 	private String email;
 	private String domain;
 
-	public SoapUserFetcher(final CMDataView view, final AuthenticationStore userTypeStore) {
+	public NotSystemUserFetcher(final CMDataView view, final AuthenticationStore userTypeStore) {
 		super(view);
 		this.userTypeStore = userTypeStore;
 	}
