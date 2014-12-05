@@ -65,13 +65,13 @@ public class TokenHandler implements RequestHandler, LoggingSupport {
 				break;
 			}
 
-			final boolean missingOperationUser = !operationUserStore.get(session.get()).isPresent();
+			final boolean missingOperationUser = !operationUserStore.of(session.get()).get().isPresent();
 			if (missingOperationUser) {
 				response = Response.status(UNAUTHORIZED).build();
 				break;
 			}
 
-			final OperationUser operationUser = operationUserStore.get(session.get()).get();
+			final OperationUser operationUser = operationUserStore.of(session.get()).get().get();
 			userStore.setUser(operationUser);
 		} while (false);
 		return response;

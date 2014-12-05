@@ -152,7 +152,7 @@ public class TokenHandlerTest {
 		final OperationUser operationUser = new OperationUser(ANONYMOUS_USER, new NullPrivilegeContext(),
 				new NullGroup());
 		sessionStore.put(session);
-		operationUserStore.put(session, operationUser);
+		operationUserStore.of(session).main(operationUser);
 		final TokenHandler tokenHandler = new TokenHandler(IS_AUTHORIZED, sessionStore, operationUserStore, userStore);
 		final Message message = mock(Message.class);
 		doReturn(headersWithToken("foo")) //

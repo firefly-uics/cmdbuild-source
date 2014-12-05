@@ -7,9 +7,17 @@ import com.google.common.base.Optional;
 
 public interface OperationUserStore {
 
-	void put(Session key, OperationUser value);
+	interface BySession {
 
-	Optional<OperationUser> get(Session key);
+		void main(OperationUser value);
+
+		void impersonate(OperationUser operationUser);
+
+		Optional<OperationUser> get();
+
+	}
+
+	BySession of(Session value);
 
 	void remove(Session key);
 

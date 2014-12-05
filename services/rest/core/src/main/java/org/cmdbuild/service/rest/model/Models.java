@@ -1530,6 +1530,7 @@ public class Models {
 		}
 
 		public SessionBuilder withAvailableRoles(final Iterable<String> availableRoles) {
+			this.availableRoles.clear();
 			addAll(this.availableRoles, defaultIfNull(availableRoles, NO_ROLES));
 			return this;
 		}

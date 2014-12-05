@@ -7,6 +7,8 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_REQUES
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
+import org.cmdbuild.auth.user.AuthenticatedUser;
+import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
 import org.cmdbuild.service.rest.AttachmentsConfiguration;
@@ -16,6 +18,7 @@ import org.cmdbuild.service.rest.ClassAttributes;
 import org.cmdbuild.service.rest.Classes;
 import org.cmdbuild.service.rest.DomainAttributes;
 import org.cmdbuild.service.rest.Domains;
+import org.cmdbuild.service.rest.Impersonate;
 import org.cmdbuild.service.rest.LookupTypeValues;
 import org.cmdbuild.service.rest.LookupTypes;
 import org.cmdbuild.service.rest.Menu;
@@ -38,6 +41,7 @@ import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
 import org.cmdbuild.service.rest.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.cxf.CxfDomains;
+import org.cmdbuild.service.rest.cxf.CxfImpersonate;
 import org.cmdbuild.service.rest.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.cxf.CxfLookupTypes;
 import org.cmdbuild.service.rest.cxf.CxfMenu;
@@ -67,6 +71,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
 @Configuration
@@ -140,6 +145,27 @@ public class Services implements LoggingSupport {
 	public Domains cxfDomains() {
 		final CxfDomains service = new CxfDomains(errorHandler(), helper.userDataAccessLogic());
 		return proxy(Domains.class, service);
+	}
+
+	@Bean
+	public Impersonate cxfImpersonate() {
+		final CxfImpersonate service = new CxfImpersonate(errorHandler(), loginHandler(), sessionStore(),
+				impersonateSessionStore(), operationUserStore(), operationUserAllowed());
+		return proxy(Impersonate.class, service);
+	}
+
+	@Bean
+	protected Predicate<OperationUser> operationUserAllowed() {
+		return new Predicate<OperationUser>() {
+
+			@Override
+			public boolean apply(final OperationUser input) {
+				final AuthenticatedUser authenticatedUser = input.getAuthenticatedUser();
+				return input.hasAdministratorPrivileges() || authenticatedUser.isService()
+						|| authenticatedUser.isPrivileged();
+			}
+
+		};
 	}
 
 	@Bean
@@ -254,6 +280,11 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	public SessionStore sessionStore() {
+		return new InMemorySessionStore();
+	}
+
+	@Bean
+	protected SessionStore impersonateSessionStore() {
 		return new InMemorySessionStore();
 	}
 

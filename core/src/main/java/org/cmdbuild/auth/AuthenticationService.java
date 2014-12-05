@@ -87,15 +87,6 @@ public interface AuthenticationService {
 	ClientAuthenticatorResponse authenticate(final ClientRequest request);
 
 	/**
-	 * Impersonate another user if the currently authenticated user has the
-	 * right privileges.
-	 * 
-	 * @param login
-	 * @return the authenticated user
-	 */
-	OperationUser impersonate(final Login login);
-
-	/**
 	 * Get the currently authenticated user. It can be anonymous but it will
 	 * never be null.
 	 * 

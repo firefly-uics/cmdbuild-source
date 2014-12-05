@@ -30,6 +30,7 @@ import org.cmdbuild.service.rest.cxf.CxfSessions;
 import org.cmdbuild.service.rest.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.cxf.service.OperationUserStore;
+import org.cmdbuild.service.rest.cxf.service.OperationUserStore.BySession;
 import org.cmdbuild.service.rest.cxf.service.SessionStore;
 import org.cmdbuild.service.rest.cxf.service.TokenGenerator;
 import org.cmdbuild.service.rest.model.ResponseSingle;
@@ -46,6 +47,7 @@ public class CxfSessionsTest {
 	private SessionStore sessionStore;
 	private LoginHandler loginHandler;
 	private OperationUserStore operationUserStore;
+	private BySession bySession;
 
 	private CxfSessions cxfSessions;
 
@@ -56,6 +58,9 @@ public class CxfSessionsTest {
 		sessionStore = mock(SessionStore.class);
 		loginHandler = mock(LoginHandler.class);
 		operationUserStore = mock(OperationUserStore.class);
+		bySession = mock(BySession.class);
+		doReturn(bySession) //
+				.when(operationUserStore).of(any(Session.class));
 		cxfSessions = new CxfSessions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore);
 	}
 
@@ -151,6 +156,7 @@ public class CxfSessionsTest {
 		final LoginDTO expectedLogin = LoginDTO.newInstance() //
 				.withLoginString(session.getUsername()) //
 				.withPassword(session.getPassword()) //
+				.withServiceUsersAllowed(true) //
 				.build();
 		final Session expectedSession = newSession(session) //
 				.withId("token") //
@@ -159,7 +165,8 @@ public class CxfSessionsTest {
 		verify(loginHandler).login(eq(expectedLogin));
 		verify(tokenGenerator).generate(eq(session.getUsername()));
 		verify(sessionStore).put(eq(expectedSession));
-		verify(operationUserStore).put(eq(expectedSession), any(OperationUser.class));
+		verify(operationUserStore).of(eq(expectedSession));
+		verify(bySession).main(any(OperationUser.class));
 		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore);
 
 		assertThat(response.getElement(), equalTo(newSession(expectedSession) //
@@ -230,7 +237,7 @@ public class CxfSessionsTest {
 		doReturn(Optional.of(session)) //
 				.when(sessionStore).get(eq("token"));
 		doReturn(Optional.absent()) //
-				.when(operationUserStore).get(eq(session));
+				.when(bySession).get();
 		doThrow(new WebApplicationException()) //
 				.when(errorHandler).userNotFound(eq("token"));
 
@@ -250,7 +257,7 @@ public class CxfSessionsTest {
 		final OperationUser operationUser = new OperationUser(mock(AuthenticatedUser.class),
 				mock(PrivilegeContext.class), mock(CMGroup.class));
 		doReturn(Optional.of(operationUser)) //
-				.when(operationUserStore).get(eq(session));
+				.when(bySession).get();
 		doThrow(new WebApplicationException()) //
 				.when(errorHandler).missingParam(eq(GROUP));
 
@@ -282,7 +289,7 @@ public class CxfSessionsTest {
 		doReturn(operationUser) //
 				.when(loginHandler).login(any(LoginDTO.class), any(OperationUser.class));
 		doReturn(Optional.of(operationUser)) //
-				.when(operationUserStore).get(eq(oldSession));
+				.when(bySession).get();
 
 		// when
 		final ResponseSingle<Session> response = cxfSessions.update("token", newSession);
@@ -292,20 +299,21 @@ public class CxfSessionsTest {
 				.withRole("guessed group") //
 				.build();
 		verify(sessionStore).get(eq("token"));
-		verify(operationUserStore).get(eq(oldSession));
+		verify(operationUserStore).of(eq(oldSession));
+		verify(bySession).get();
 		verify(loginHandler).login( //
 				eq(LoginDTO.newInstance() //
 						.withLoginString(oldSession.getUsername()) //
 						.withPassword(oldSession.getPassword()) //
 						.withGroupName(newSession.getRole()) //
+						.withServiceUsersAllowed(true) //
 						.build()), //
 				eq(operationUser));
 		verify(sessionStore).put(eq(expectedSession));
-		verify(operationUserStore).put( //
-				eq(newSession(oldSession) //
-						.withRole("guessed group") //
-						.build()), //
-				eq(operationUser));
+		verify(operationUserStore).of(eq(newSession(oldSession) //
+				.withRole("guessed group") //
+				.build()));
+		verify(bySession).main(eq(operationUser));
 		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore);
 
 		assertThat(response.getElement(), equalTo(newSession(expectedSession) //
@@ -339,14 +347,14 @@ public class CxfSessionsTest {
 		final OperationUser operationUser = new OperationUser(mock(AuthenticatedUser.class),
 				mock(PrivilegeContext.class), mock(CMGroup.class));
 		doReturn(Optional.of(operationUser)) //
-				.when(operationUserStore).get(any(Session.class));
+				.when(bySession).get();
 
 		// when
 		cxfSessions.delete("token");
 
 		// then
 		verify(sessionStore).get(eq("token"));
-		verify(operationUserStore).get(eq(session));
+		verify(operationUserStore).of(eq(session));
 		verify(sessionStore).remove(eq("token"));
 		verify(operationUserStore).remove(eq(session));
 		verifyNoMoreInteractions(errorHandler, tokenGenerator, sessionStore, loginHandler, operationUserStore);
