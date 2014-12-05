@@ -281,12 +281,11 @@
 						// The filter button should be enabled only if no other filter is present.
 						if (cqlQuery) {
 							me.resolveFilterTemplate(cqlQuery, classId);
-							me.grid.disableFilterMenuButton();
 						} else {
 							me.updateViewGrid(classId);
-							me.grid.enableFilterMenuButton();
 						}
 
+						me.grid.disableFilterMenuButton();
 						me.onGridShow();
 					},
 					failure: function() {
