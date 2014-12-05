@@ -14,6 +14,11 @@
 		frame: false,
 
 		/**
+		 * @cfg {CMDBuild.controller.management.common.widgets.CMOpenReportController}
+		 */
+		delegate: undefined,
+
+		/**
 		 * @property {Ext.form.field.ComboBox} report format selection ComboBox
 		 */
 		formatCombo: {},
@@ -63,6 +68,7 @@
 				region: 'center',
 				bodyCls: 'x-panel-body-default-framed',
 				padding: '5',
+
 				items: [this.formatCombo]
 			});
 
@@ -81,15 +87,14 @@
 		 * @return {Ext.button.Button} as array
 		 */
 		getExtraButtons: function() {
-			var me = this;
-
 			return [
 				Ext.create('Ext.button.Button', {
 					text: CMDBuild.Translation.common.buttons.confirm,
 					name: 'saveButton',
+					scope: this,
 
 					handler: function() {
-						me.fireEvent(me.CMEVENTS.saveButtonClick);
+						this.delegate.cmOn('onSaveButtonClick');
 					}
 				})
 			];
