@@ -36,6 +36,7 @@ public class Serialization {
 			CREATED = "created", //
 			DATA = "data", //
 			DEFAULT = "default", //
+			DEFAULT_STATUS = DEFAULT + "Status", //
 			DEFAULT_VALUE = DEFAULT + "Value", //
 			DESCRIPTION = "description", //
 			DESCRIPTION_CAPITALIZED = "Description", //

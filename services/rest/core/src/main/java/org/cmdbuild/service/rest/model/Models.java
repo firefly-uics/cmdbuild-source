@@ -1289,6 +1289,7 @@ public class Models {
 		private Boolean prototype;
 		private String descriptionAttributeName;
 		private Collection<Long> statuses;
+		private Long defaultStatus;
 		private String parent;
 
 		private ProcessWithFullDetailsBuilder() {
@@ -1310,6 +1311,7 @@ public class Models {
 			output.setPrototype(prototype);
 			output.setDescriptionAttributeName(descriptionAttributeName);
 			output.setStatuses(statuses);
+			output.setDefaultStatus(defaultStatus);
 			output.setParent(parent);
 			return output;
 		}
@@ -1341,6 +1343,11 @@ public class Models {
 
 		public ProcessWithFullDetailsBuilder withStatuses(final Iterable<? extends Long> statuses) {
 			this.statuses = newArrayList(defaultIfNull(statuses, NO_STATUSES));
+			return this;
+		}
+
+		public ProcessWithFullDetailsBuilder withDefaultStatus(final Long defaultStatus) {
+			this.defaultStatus = defaultStatus;
 			return this;
 		}
 

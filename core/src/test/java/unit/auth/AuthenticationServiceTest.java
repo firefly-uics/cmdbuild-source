@@ -200,7 +200,7 @@ public class AuthenticationServiceTest {
 		// then
 		verify(pwc, never()).setPassword(anyString());
 		verify(passwordAuthenticatorMock, only()).fetchUnencryptedPassword(WRONG_LOGIN);
-		verify(userFectcherMock, never()).fetchUser(any(Login.class));
+		verify(userFectcherMock).fetchUser(any(Login.class));
 	}
 
 	@Test

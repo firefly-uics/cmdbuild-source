@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.model;
 
+import static org.cmdbuild.service.rest.constants.Serialization.DEFAULT_STATUS;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION_ATTRIBUTE_NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.FULL_CLASS_DETAIL;
 import static org.cmdbuild.service.rest.constants.Serialization.STATUSES;
@@ -18,6 +19,7 @@ public class ProcessWithFullDetails extends ProcessWithBasicDetails {
 
 	private String descriptionAttributeName;
 	private Collection<Long> statuses;
+	private Long defaultStatus;
 
 	ProcessWithFullDetails() {
 		// package visibility
@@ -40,6 +42,15 @@ public class ProcessWithFullDetails extends ProcessWithBasicDetails {
 
 	void setStatuses(final Collection<Long> statuses) {
 		this.statuses = statuses;
+	}
+
+	@XmlAttribute(name = DEFAULT_STATUS)
+	public Long getDefaultStatus() {
+		return defaultStatus;
+	}
+
+	void setDefaultStatus(final Long defaultStatus) {
+		this.defaultStatus = defaultStatus;
 	}
 
 	@Override
