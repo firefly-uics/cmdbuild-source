@@ -15,12 +15,17 @@
 		loaded: false,
 
 		/**
-		 * @cfg {Object}
+		 * @property {Object}
 		 */
 		activity: undefined,
 
 		/**
-		 * @cfg {Object}
+		 * @property {CMDBuild.view.management.common.widgets.CMEmailGrid}
+		 */
+		emailGrid: undefined,
+
+		/**
+		 * @property {Object}
 		 */
 		widgetConf: undefined,
 

@@ -4,10 +4,10 @@
 	var fields = reader.FIELDS;
 
 	Ext.define('CMDBuild.controller.management.common.widgets.CMManageEmailController', {
+		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
 		mixins: {
 			observable: 'Ext.util.Observable',
-			widgetcontroller: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			emailgriddelegate: 'CMDBuild.view.management.common.widgets.CMEmailGridDelegate',
 			attachmentPickerDelegate: 'CMDBuild.view.management.common.widgets.CMDMSAttachmentPickerDelegate'
 		},
@@ -16,6 +16,9 @@
 			WIDGET_NAME: '.ManageEmail'
 		},
 
+		/**
+		 * @cfg {Array}
+		 */
 		TEMPLATE_FIELDS: [
 			CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
 			'toAddresses',
@@ -26,28 +29,77 @@
 			'notifyWith',
 			'fromAddress'
 		],
+
+		/**
+		 * @cfg {String}
+		 */
 		TEMPLATE_CONDITION: 'condition',
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMOpenReport} view
+		 * @property {CMDBuild.model.CMActivityInstance}
+		 */
+		card: undefined,
+
+		/**
+		 * @property {Ext.form.Basic}
+		 */
+		clientForm: undefined,
+
+		/**
+		 * @property {Object} variables
+		 */
+		emailTemplatesData: undefined,
+
+		/**
+		 * @property {Boolean}
+		 */
+		emailsWereGenerated: false,
+
+		/**
+		 * @property {CMDBuild.controller.management.common.CMWidgetManagerController}
+		 */
+		ownerController: undefined,
+
+		/**
+		 * @property {CMDBuild.Management.TemplateResolver}
+		 */
+		templateResolver: undefined,
+
+		/**
+		 * @property {Array}
+		 */
+		templatesToRegenerate: [],
+
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.linkCards.LinkCards}
+		 */
+		view: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		widgetConf: undefined,
+
+		/**
+		 * @param {CMDBuild.view.management.common.widgets.CMManageEmail} view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
-		 * @param {Object} widgetDef
+		 * @param {Object} widgetConf
 		 * @param {Ext.form.Basic} clientForm
 		 * @param {CMDBuild.model.CMActivityInstance} card
 		 *
 		 * @override
 		 */
-		constructor: function(view, supercontroller, widget, clientForm, card) {
+		constructor: function(view, ownerController, widgetConf, clientForm, card) {
 			this.mixins.observable.constructor.call(this);
-			this.mixins.widgetcontroller.constructor.apply(this, arguments);
+
+			this.callParent(arguments);
 
 			this.reader = CMDBuild.management.model.widget.ManageEmailConfigurationReader;
 
-			this.emailsWereGenerated = false;
 			this.gridStoreWasLoaded = false;
 
 			this.emailTemplatesData = _extractVariablesForTemplateResolver(this);
-			this.readWrite = !this.reader.readOnly(widget);
+			this.readWrite = !this.reader.readOnly(this.widgetConf);
 
 			var xavars = Ext.apply({}, this.reader.templates(this.widgetConf), this.emailTemplatesData);
 
@@ -68,6 +120,7 @@
 		 */
 		beforeActiveView: function() {
 			var pi = _CMWFState.getProcessInstance();
+
 			if (!this.gridStoreWasLoaded) {
 				this.view.getEl().mask(CMDBuild.Translation.common.wait_title);
 				this.view.emailGrid.store.load({
@@ -91,13 +144,54 @@
 		 * the user has already modified the template for this step.
 		 */
 		addEmailFromTemplateIfNeeded: function() {
-			if (!this.emailsWereGenerated) {
-				if (/*this.readWrite && */
-					this.thereAreTemplates()
-					&& !this.view.hasDraftEmails()
+			this.checkTemplatesToRegenerate();
+
+			if (
+				this.thereAreTemplates()
+				&& !this.view.hasDraftEmails()
+				&& !this.emailsWereGenerated
+			) {
+				_createEmailFromTemplate(this);
+			}
+		},
+
+		/**
+		 * Builds templatesToRegenerate array with indexes of templates
+		 */
+		checkTemplatesToRegenerate: function() {
+			var dirtyVariables = Ext.Object.getKeys(this.ownerController.view.mainView.getValues(false, true));
+
+			// Complete dirtyVariables array also with multylevel variables (ex. var1 = '... {client:var2} ...')
+			for (var i in this.templateResolver.xaVars) {
+				var variable = this.templateResolver.xaVars[i];
+
+				if (
+					!Ext.isEmpty(variable)
+					&& !Ext.isObject(variable)
 				) {
-					_createEmailFromTemplate(this);
+					for (var j in dirtyVariables)
+						if (variable.indexOf('{client:' + dirtyVariables[j]) > -1)
+							dirtyVariables.push(i);
 				}
+			}
+
+			// Check templates attributes looking for dirtyVariables as client variables (ex. {client:varName})
+			for (var i in this.widgetConf.emailTemplates) {
+				var template = this.widgetConf.emailTemplates[i];
+
+				if (!Ext.Object.isEmpty(template))
+					for (var j in template) {
+						var templateAttribute = template[j];
+
+						if (
+							!Ext.isEmpty(templateAttribute)
+							&& !Ext.isObject(templateAttribute)
+						) {
+							for (var y in dirtyVariables)
+								if (templateAttribute.indexOf('{client:' + dirtyVariables[y]) > -1)
+									this.templatesToRegenerate.push(parseInt(i) + 1);
+						}
+					}
 			}
 		},
 
@@ -112,9 +206,9 @@
 		 * @return {Int}
 		 */
 		countTemplates: function() {
-			var t = this.reader.emailTemplates(this.widgetConf) || [];
+			var emailTemplates = this.reader.emailTemplates(this.widgetConf) || [];
 
-			return t.length;
+			return emailTemplates.length;
 		},
 
 		removeUnsentEmails: function() {
@@ -424,24 +518,35 @@
 	 */
 	function _createEmailFromTemplate(me) {
 		if (!me.busy) {
+			var oldStore = CMDBuild.core.Utils.deepCloneStore(me.view.emailGrid.getStore()); // Backup old store to copy not regenerated data
+
 			me.busy = true;
 			me.view.removeTemplatesFromStore();
 			me.emailsWereGenerated = true;
 
 			me.templateResolver.resolveTemplates({
 				attributes: Ext.Object.getKeys(me.emailTemplatesData),
-				callback: function onTemlatesWereSolved(values) {
+				callback: function(values, ctx) {
 					for (var i = 1; i <= me.countTemplates(); ++i) {
-						var v = {};
-						var conditionExpr = values[me.TEMPLATE_CONDITION+i];
 
-						if (!conditionExpr || me.templateResolver.safeJSEval(conditionExpr)) {
-							for (var j = 0; j < me.TEMPLATE_FIELDS.length; ++j) {
-								var field = me.TEMPLATE_FIELDS[j];
-								v[field] = values[field + i];
+						// If regenerations is forced by field edit or if it's first load
+						if (
+							Ext.Array.contains(me.templatesToRegenerate, i)
+							|| oldStore.count() == 0
+						) {
+							var v = {};
+							var conditionExpr = values[me.TEMPLATE_CONDITION + i];
+
+							if (!conditionExpr || me.templateResolver.safeJSEval(conditionExpr)) {
+								for (var j = 0; j < me.TEMPLATE_FIELDS.length; ++j) {
+									var field = me.TEMPLATE_FIELDS[j];
+									v[field] = values[field + i];
+								}
+
+								me.view.addTemplateToStore(v);
 							}
-
-							me.view.addTemplateToStore(v);
+						} else { // Copy from old store
+							me.view.emailGrid.addTemplateToStore(oldStore.getAt(i - 1).data);
 						}
 					}
 
@@ -460,10 +565,11 @@
 
 	/**
 	 * Extract the variables of each EmailTemplate, add a suffix to them with the index, and put them all in the templates map.
-	 *
 	 * This is needed to be passed as a unique map to the template resolver.
 	 *
 	 * @param {Object} me - this
+	 *
+	 * @return {Object} variables
 	 */
 	function _extractVariablesForTemplateResolver(me) {
 		var emailTemplates = me.reader.emailTemplates(me.widgetConf) || [];

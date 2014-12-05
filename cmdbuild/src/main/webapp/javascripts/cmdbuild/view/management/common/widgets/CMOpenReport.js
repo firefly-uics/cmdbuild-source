@@ -13,8 +13,19 @@
 		border: false,
 		frame: false,
 
+		/**
+		 * @cfg {CMDBuild.controller.management.common.widgets.CMOpenReportController}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox} report format selection ComboBox
+		 */
 		formatCombo: {},
-		attributeList: [],
+
+		/**
+		 * @property {Array} fields to display in form
+		 */
 		formFields: [],
 
 		initComponent: function() {
@@ -57,6 +68,7 @@
 				region: 'center',
 				bodyCls: 'x-panel-body-default-framed',
 				padding: '5',
+
 				items: [this.formatCombo]
 			});
 
@@ -75,15 +87,14 @@
 		 * @return {Ext.button.Button} as array
 		 */
 		getExtraButtons: function() {
-			var me = this;
-
 			return [
 				Ext.create('Ext.button.Button', {
 					text: CMDBuild.Translation.common.buttons.confirm,
 					name: 'saveButton',
+					scope: this,
 
 					handler: function() {
-						me.fireEvent(me.CMEVENTS.saveButtonClick);
+						this.delegate.cmOn('onSaveButtonClick');
 					}
 				})
 			];
@@ -108,6 +119,8 @@
 		 * @param {Object} widgetConfiguration
 		 */
 		configureForm: function(attributes, widgetConfiguration) {
+			this.formFields = []; // Reset fields array before add new ones
+
 			if (!this.formPanelCreated) {
 				this.formPanelCreated = true;
 

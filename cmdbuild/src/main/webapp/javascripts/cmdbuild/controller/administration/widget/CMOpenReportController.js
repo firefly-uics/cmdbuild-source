@@ -1,16 +1,31 @@
 (function() {
 
-	Ext.require('CMDBuild.model.widget.CMModelOpenReport');
+//	Ext.require('CMDBuild.model.widget.CMModelOpenReport');
 
 	Ext.define('CMDBuild.controller.administration.widget.CMOpenReportController', {
 		extend: 'CMDBuild.controller.administration.widget.CMBaseWidgetDefinitionFormController',
+
+		requires: ['CMDBuild.model.widget.CMModelOpenReport', 'CMDBuild.core.proxy.widgets.OpenReport'],
 
 		statics: {
 			WIDGET_NAME: CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm.WIDGET_NAME
 		},
 
-		constructor: function() {
+		/**
+		 * @property {CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm}
+		 */
+		view: undefined,
+
+		/**
+		 * @param {Object} configuration
+		 * @param {Int} configuration.classId
+		 * @param {CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm} configuration.view
+		 */
+		constructor: function(configuration) {
 			this.callParent(arguments);
+
+			// Handlers exchange
+			this.view.delegate = this;
 
 			this.mon(this.view, 'cm-selected-report', this.onReportSelected, this);
 
@@ -43,28 +58,35 @@
 		},
 
 		/**
+		 * Calls fillPresetWithData to fill presetGrid store with empty fields and then recall for fill with real data
+		 *
 		 * @param {Object} selectedReport
+		 * @param {Object} presets
+		 * @param {Object} readOnlyAttributes
 		 */
-		onReportSelected: function(selectedReport) {
+		onReportSelected: function(selectedReport, presets, readOnlyAttributes) {
 			var reportCode = this.getReportCode(selectedReport);
 
-			Ext.Ajax.request({
+			// Reset presetGrid store
+			this.view.presetGrid.getStore().removeAll();
+
+			CMDBuild.core.proxy.widgets.OpenReport.getReportAttributes({
 				scope: this,
-				url: 'services/json/management/modreport/createreportfactory',
 				params: {
 					id: reportCode,
 					type: 'CUSTOM',
 					extension: 'pdf'
 				},
 				success: function(result, options, decodedResult) {
-					var ret = Ext.JSON.decode(result.responseText);
-					var hasAttributeToSet = !ret.filled;
 					var data = [];
 
-					if (hasAttributeToSet)
-						data = this.cleanServerAttributes(ret.attribute);
+					if (!decodedResult.filled)
+						data = this.cleanServerAttributes(decodedResult.attribute);
 
 					this.view.fillPresetWithData(data);
+
+					if (!Ext.Object.isEmpty(presets))
+						this.view.fillPresetWithData(presets, readOnlyAttributes);
 				}
 			});
 		},
@@ -78,8 +100,8 @@
 			if (Ext.isArray(selectedReport))
 				reportCode = selectedReport[0];
 
-			if (reportCode.self && reportCode.self.$className == 'CMDBuild.model.CMReportAsComboItem')
-				reportCode = reportCode.get(CMDBuild.model.CMReportAsComboItem._FIELDS.id);
+			if (reportCode.self && reportCode.self.$className == 'CMDBuild.model.widget.CMModelOpenReport.reportCombo')
+				reportCode = reportCode.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 
 			return reportCode;
 		},
