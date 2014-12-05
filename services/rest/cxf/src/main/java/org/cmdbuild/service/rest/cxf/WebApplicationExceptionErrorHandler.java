@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest.cxf;
 
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -91,6 +92,13 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 		logger.error("missing password");
 		throw new WebApplicationException(Response.status(BAD_REQUEST) //
 				.entity("missing password") //
+				.build());
+	}
+
+	@Override
+	public void notAuthorized() {
+		logger.error("not authorized");
+		throw new WebApplicationException(Response.status(UNAUTHORIZED) //
 				.build());
 	}
 

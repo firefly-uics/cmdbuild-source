@@ -35,6 +35,7 @@
 			<ref bean="cxfDomains" />
 			<ref bean="cxfDomainAttributes" />
 			<ref bean="cxfRelations" />
+			<ref bean="cxfImpersonate" />
 			<ref bean="cxfLookupTypes" />
 			<ref bean="cxfLookupTypeValues" />
 			<ref bean="cxfMenu" />

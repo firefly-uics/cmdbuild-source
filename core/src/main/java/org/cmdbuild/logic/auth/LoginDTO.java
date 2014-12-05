@@ -14,6 +14,12 @@ public class LoginDTO {
 		private String unencryptedPassword;
 		private String loginGroupName;
 		public boolean passwordRequired = true;
+		public boolean serviceUsersAllowed;
+
+		@Override
+		public LoginDTO build() {
+			return new LoginDTO(this);
+		}
 
 		/**
 		 * 
@@ -42,9 +48,9 @@ public class LoginDTO {
 			return this;
 		}
 
-		@Override
-		public LoginDTO build() {
-			return new LoginDTO(this);
+		public Builder withServiceUsersAllowed(final boolean serviceUsersAllowed) {
+			this.serviceUsersAllowed = serviceUsersAllowed;
+			return this;
 		}
 
 	}
@@ -53,12 +59,14 @@ public class LoginDTO {
 	private final String unencryptedPassword;
 	private final String loginGroupName;
 	private final boolean passwordRequired;
+	private final boolean serviceUsersAllowed;
 
 	private LoginDTO(final Builder builder) {
 		this.loginString = builder.loginString;
 		this.unencryptedPassword = builder.unencryptedPassword;
 		this.loginGroupName = builder.loginGroupName;
 		this.passwordRequired = builder.passwordRequired;
+		this.serviceUsersAllowed = builder.serviceUsersAllowed;
 	}
 
 	public static Builder newInstance() {
@@ -81,6 +89,10 @@ public class LoginDTO {
 		return passwordRequired;
 	}
 
+	public boolean isServiceUsersAllowed() {
+		return serviceUsersAllowed;
+	}
+
 	@Override
 	public boolean equals(final Object obj) {
 		if (obj == this) {
@@ -95,6 +107,7 @@ public class LoginDTO {
 				.append(this.unencryptedPassword, other.unencryptedPassword) //
 				.append(this.loginGroupName, other.loginGroupName) //
 				.append(this.passwordRequired, other.passwordRequired) //
+				.append(this.serviceUsersAllowed, other.serviceUsersAllowed) //
 				.isEquals();
 	}
 
@@ -105,6 +118,7 @@ public class LoginDTO {
 				.append(unencryptedPassword) //
 				.append(loginGroupName) //
 				.append(passwordRequired) //
+				.append(serviceUsersAllowed) //
 				.toHashCode();
 	}
 

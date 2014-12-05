@@ -2,6 +2,7 @@ package org.cmdbuild.logic.auth;
 
 import static com.google.common.collect.Iterables.getFirst;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
@@ -127,7 +128,9 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 			authUser = actualOperationUser.getAuthenticatedUser();
 		} else if (loginDTO.isPasswordRequired()) {
 			final Login login = Login.newInstance(loginDTO.getLoginString());
-			authUser = authService.authenticate(login, loginDTO.getPassword());
+			final AuthenticatedUser authenticated = authService.authenticate(login, loginDTO.getPassword());
+			authUser = (!loginDTO.isServiceUsersAllowed() && (authenticated.isService() || authenticated.isPrivileged())) ? ANONYMOUS_USER
+					: authenticated;
 		} else {
 			final Login login = Login.newInstance(loginDTO.getLoginString());
 			authUser = authService.authenticate(login, new PasswordCallback() {
@@ -359,7 +362,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 	public List<CMUser> getAllUsers() {
 		return authService.fetchAllUsers();
 	}
-	
+
 	@Override
 	public Iterable<CMUser> getServiceOrPrivilegedUsers() {
 		return authService.fetchServiceOrPrivilegedUsers();

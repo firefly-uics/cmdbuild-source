@@ -145,7 +145,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 						authUser.setPasswordChanger(passwordChanger);
 					}
 				});
-				return (fetched.isService() || fetched.isPrivileged()) ? ANONYMOUS_USER : fetched;
+				return fetched;
 			}
 		}
 		return ANONYMOUS_USER;
@@ -194,19 +194,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			}
 		}
 		return ClientAuthenticatorResponse.EMTPY_RESPONSE;
-	}
-
-	@Override
-	public OperationUser impersonate(final Login login) {
-		final OperationUser operationUser = userStore.getUser();
-		final AuthenticatedUser authenticatedUser = operationUser.getAuthenticatedUser();
-		if (operationUser.hasAdministratorPrivileges() || authenticatedUser.isService()
-				|| authenticatedUser.isPrivileged()) {
-			final CMUser user = fetchUser(login);
-			operationUser.impersonate(user);
-			return operationUser;
-		}
-		return operationUser;
 	}
 
 	@Override

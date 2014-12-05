@@ -87,6 +87,7 @@ public class CxfSessions implements Sessions, LoggingSupport {
 		final OperationUser user = loginHandler.login(LoginDTO.newInstance() //
 				.withLoginString(session.getUsername()) //
 				.withPassword(session.getPassword()) //
+				.withServiceUsersAllowed(true) //
 				.build());
 		final CMGroup group = user.getPreferredGroup();
 
@@ -97,7 +98,7 @@ public class CxfSessions implements Sessions, LoggingSupport {
 				.withAvailableRoles(user.getAuthenticatedUser().getGroupNames()) //
 				.build();
 		sessionStore.put(updatedSession);
-		operationUserStore.put(updatedSession, user);
+		operationUserStore.of(updatedSession).main(user);
 
 		return newResponseSingle(Session.class) //
 				.withElement(noPassword(updatedSession)) //
@@ -121,7 +122,7 @@ public class CxfSessions implements Sessions, LoggingSupport {
 		if (!storedSession.isPresent()) {
 			errorHandler.sessionNotFound(id);
 		}
-		final Optional<OperationUser> storedOperationUser = operationUserStore.get(storedSession.get());
+		final Optional<OperationUser> storedOperationUser = operationUserStore.of(storedSession.get()).get();
 		if (!storedOperationUser.isPresent()) {
 			errorHandler.userNotFound(id);
 		}
@@ -136,6 +137,7 @@ public class CxfSessions implements Sessions, LoggingSupport {
 				.withLoginString(sessionWithGroup.getUsername()) //
 				.withPassword(sessionWithGroup.getPassword()) //
 				.withGroupName(sessionWithGroup.getRole()) //
+				.withServiceUsersAllowed(true) //
 				.build(), storedOperationUser.get());
 		final CMGroup group = user.getPreferredGroup();
 
@@ -144,7 +146,7 @@ public class CxfSessions implements Sessions, LoggingSupport {
 				.build();
 
 		sessionStore.put(updatedSession);
-		operationUserStore.put(updatedSession, user);
+		operationUserStore.of(updatedSession).main(user);
 
 		return newResponseSingle(Session.class) //
 				.withElement(noPassword(updatedSession)) //
@@ -157,7 +159,7 @@ public class CxfSessions implements Sessions, LoggingSupport {
 		if (!session.isPresent()) {
 			errorHandler.sessionNotFound(id);
 		}
-		final Optional<OperationUser> operationUser = operationUserStore.get(session.get());
+		final Optional<OperationUser> operationUser = operationUserStore.of(session.get()).get();
 		if (!operationUser.isPresent()) {
 			errorHandler.userNotFound(id);
 		}

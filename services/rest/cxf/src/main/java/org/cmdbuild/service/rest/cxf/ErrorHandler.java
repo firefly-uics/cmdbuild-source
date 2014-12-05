@@ -28,6 +28,8 @@ public interface ErrorHandler {
 
 	void missingUsername();
 
+	void notAuthorized();
+
 	void processNotFound(String id);
 
 	void processInstanceNotFound(Long id);

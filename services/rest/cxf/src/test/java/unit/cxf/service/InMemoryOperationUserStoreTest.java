@@ -10,6 +10,7 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.service.rest.cxf.service.InMemoryOperationUserStore;
+import org.cmdbuild.service.rest.cxf.service.OperationUserStore.BySession;
 import org.cmdbuild.service.rest.model.Session;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,54 +27,93 @@ public class InMemoryOperationUserStoreTest {
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void puttingValueWithNullKeyThrowsException() throws Exception {
+	public void nullSessionThrowsException() throws Exception {
+		// when
+		store.of(null);
+	}
+
+	public void calledMultipleTimesReturnsSameValue() throws Exception {
 		// given
-		final OperationUser value = operationUser();
+		final Session session = session("id");
 
 		// when
-		store.put(null, value);
+		final BySession first = store.of(session);
+		final BySession second = store.of(session);
+
+		// then
+		assertThat(first, equalTo(second));
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void puttingNullValueThrowsException() throws Exception {
+	public void nullMainValueThrowsException() throws Exception {
 		// given
-		final Session key = session("id");
+		final Session session = session("id");
 
 		// when
-		store.put(key, null);
-	}
-
-	@Test(expected = NullPointerException.class)
-	public void gettingNullKeyThrowsException() throws Exception {
-		// when
-		store.get(null);
+		store.of(session).main(null);
 	}
 
 	@Test
-	public void missingDataReturnsAbsent() throws Exception {
+	public void newlyCreatedDataReturnsAbsent() throws Exception {
 		// given
 		final Session missing = session("missing");
 
 		// when
-		final Optional<OperationUser> shouldBeAbsent = store.get(missing);
+		final Optional<OperationUser> shouldBeAbsent = store.of(missing).get();
 
 		// then
 		assertThat(shouldBeAbsent.isPresent(), equalTo(false));
 	}
 
-	@Test
-	public void putAndRead() throws Exception {
+	@Test(expected = NullPointerException.class)
+	public void nullImpersonateValueThrowsExceptionWhenMainIsMissing() throws Exception {
 		// given
-		final Session key = session("id");
+		final Session session = session("id");
+
+		// when
+		store.of(session).impersonate(null);
+	}
+
+	@Test
+	public void impersonateValueCanBeNull() throws Exception {
+		// given
+		final Session session = session("id");
+
+		// when
+		store.of(session).main(operationUser());
+		store.of(session).impersonate(null);
+	}
+
+	@Test
+	public void mainValueStoredAndRead() throws Exception {
+		// given
+		final Session session = session("id");
 		final OperationUser value = operationUser();
 
 		// when
-		store.put(key, value);
-		final Optional<OperationUser> stored = store.get(key);
+		store.of(session).main(value);
+		final Optional<OperationUser> stored = store.of(session).get();
 
 		// then
 		assertThat(stored.isPresent(), equalTo(true));
 		assertThat(stored.get(), equalTo(value));
+	}
+
+	@Test
+	public void impersonateValueStoredAndRead() throws Exception {
+		// given
+		final Session session = session("id");
+		final OperationUser main = operationUser();
+		final OperationUser impersonate = operationUser();
+
+		// when
+		store.of(session).main(main);
+		store.of(session).impersonate(impersonate);
+		final Optional<OperationUser> stored = store.of(session).get();
+
+		// then
+		assertThat(stored.isPresent(), equalTo(true));
+		assertThat(stored.get(), equalTo(impersonate));
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -94,13 +134,13 @@ public class InMemoryOperationUserStoreTest {
 	@Test
 	public void putRemoveAndRead() throws Exception {
 		// given
-		final Session key = session("id");
+		final Session session = session("id");
 		final OperationUser value = operationUser();
 
 		// when
-		store.put(key, value);
-		store.remove(key);
-		final Optional<OperationUser> stored = store.get(key);
+		store.of(session).main(value);
+		store.remove(session);
+		final Optional<OperationUser> stored = store.of(session).get();
 
 		// then
 		assertThat(stored.isPresent(), equalTo(false));

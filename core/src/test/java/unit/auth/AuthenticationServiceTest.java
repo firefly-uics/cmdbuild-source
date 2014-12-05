@@ -4,13 +4,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.only;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,9 +29,7 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.auth.user.AnonymousUser;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.CMUser;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.view.CMDataView;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -384,64 +380,12 @@ public class AuthenticationServiceTest {
 	}
 
 	/*
-	 * Impersonate
-	 */
-
-	@Ignore("Impersonate not implemented correctly yet")
-	@Test
-	public void impersonateIsAllowedOnlyToAdministratorsAndServiceUsers() {
-		final Configuration conf = mock(Configuration.class);
-		final AuthenticationService as = mockedAuthenticatorService(conf);
-
-		final OperationUser operationUserMock = mock(OperationUser.class);
-		when(userStoreMock.getUser()).thenReturn(operationUserMock);
-		when(userFectcherMock.fetchUser(LOGIN)).thenReturn(user);
-
-		when(operationUserMock.hasAdministratorPrivileges()).thenReturn(true);
-		as.impersonate(LOGIN);
-
-		reset(operationUserMock);
-		when(operationUserMock.getAuthenticatedUser().getUsername()).thenReturn("service");
-		as.impersonate(LOGIN);
-
-		reset(operationUserMock);
-		try {
-			as.impersonate(LOGIN);
-			fail("Should have thrown");
-		} catch (final UnsupportedOperationException e) {
-			// Should throw
-		}
-	}
-
-	@Test
-	public void anExistingUserCanBeImpersonated() {
-		// given
-		final AuthenticationService as = mockedAuthenticatorService();
-		final OperationUser operationUserMock = mock(OperationUser.class);
-		when(operationUserMock.hasAdministratorPrivileges()).thenReturn(true);
-		when(userStoreMock.getUser()).thenReturn(operationUserMock);
-		when(userFectcherMock.fetchUser(LOGIN)).thenReturn(user);
-
-		// when
-		assertThat(as.impersonate(LOGIN), is(operationUserMock));
-
-		// then
-		verify(operationUserMock, times(1)).impersonate(user);
-	}
-
-	/*
 	 * Utility methods
 	 */
 
 	private AuthenticationService emptyAuthenticatorService() {
 		final AuthenticationService as = authenticationService();
 		as.setUserStore(userStoreMock);
-		return as;
-	}
-
-	private AuthenticationService mockedAuthenticatorService(final Configuration conf) {
-		final AuthenticationService as = authenticationService(conf);
-		setupMockedAuthenticationService(as);
 		return as;
 	}
 
