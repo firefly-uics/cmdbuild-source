@@ -139,7 +139,7 @@ public class CxfProcessesTest {
 		}
 		doReturn(foo) //
 				.when(workflowLogic).findProcessClass(anyString());
-		doReturn(asList(Lookup.newInstance().build())) //
+		doReturn(asList(Lookup.newInstance().withId(456L).build())) //
 				.when(lookupHelper).allLookups();
 
 		// when

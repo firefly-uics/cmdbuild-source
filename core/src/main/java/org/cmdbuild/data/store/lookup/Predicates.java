@@ -13,6 +13,15 @@ public class Predicates {
 
 	};
 
+	private static final Predicate<Lookup> DEFAULT = new Predicate<Lookup>() {
+
+		@Override
+		public boolean apply(final Lookup input) {
+			return input.isDefault;
+		}
+
+	};
+
 	public static Predicate<Lookup> lookupActive() {
 		return ACTIVE;
 	}
@@ -48,6 +57,10 @@ public class Predicates {
 			}
 
 		};
+	}
+
+	public static Predicate<Lookup> defaultLookup() {
+		return DEFAULT;
 	}
 
 	private Predicates() {
