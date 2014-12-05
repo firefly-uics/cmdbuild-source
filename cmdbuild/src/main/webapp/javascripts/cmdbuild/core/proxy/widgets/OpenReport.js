@@ -8,9 +8,35 @@
 		/**
 		 * @param {Object} parameters
 		 */
+		generateReport: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.updateReportFactoryParams,
+				params: parameters.params,
+				scope: parameters.scope,
+				success: parameters.success,
+				failure: parameters.failure
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
 		getReportAttributes: function(parameters) {
 			CMDBuild.Ajax.request({
 				url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.openReport.createReportFactory,
+				params: parameters.params,
+				scope: parameters.scope,
+				success: parameters.success
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		getReportParameters: function(parameters) {
+			CMDBuild.Ajax.request({
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.reports.createReportFactoryByTypeCode,
 				params: parameters.params,
 				scope: parameters.scope,
 				success: parameters.success
