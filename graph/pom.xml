@@ -12,77 +12,48 @@
 	<version>1.0</version>
 
 	<properties>
-		<flash.core.version>1.0</flash.core.version>
 		<perfuse.version>20090124</perfuse.version>
 		<flex.version>3.2.0.3958</flex.version>
-		<flex.plugin.version>2.3.2</flex.plugin.version>
+		<flexmojos.version>7.0.0</flexmojos.version>
+		<flash.version>11.1</flash.version>
 	</properties>
 
 	<dependencies>
-		 <dependency> 
-		     <groupId>org.perfuse</groupId> 
-		     <artifactId>flare-alpha</artifactId> 
+		 <dependency>
+		     <groupId>org.perfuse</groupId>
+		     <artifactId>flare-alpha</artifactId>
 		     <version>${perfuse.version}</version>
-		     <type>swc</type> 
-		 </dependency>
-		 <!-- Version 1.0 corresponds to Flash Player 9.x, 2.0 to Flash Player 10.x -->
-		 <dependency> 
-		     <groupId>com.adobe.flash.core</groupId> 
-		     <artifactId>playerglobal</artifactId> 
-		     <version>${flash.core.version}</version> 
-		     <scope>provided</scope>
-		     <type>swc</type> 
-		 </dependency> 
-		 <dependency> 
-		     <groupId>com.adobe.flex.sdkcore</groupId> 
-		     <artifactId>framework</artifactId> 
-		     <version>${flex.version}</version> 
-		     <type>swc</type>
-		 </dependency> 
-		 <dependency> 
-		     <groupId>com.adobe.flex.sdkcore</groupId> 
-		     <artifactId>flex</artifactId> 
-		     <version>${flex.version}</version> 
-		     <type>swc</type>
-		 </dependency>  
-		 <dependency> 
-		     <groupId>com.adobe.flex.sdkcore</groupId> 
-		     <artifactId>rpc</artifactId> 
-		     <version>${flex.version}</version> 
-		     <type>swc</type>
-		 </dependency> 
-		 <dependency> 
-		     <groupId>com.adobe.flex.sdkcore</groupId> 
-		     <artifactId>utilities</artifactId> 
-		     <version>${flex.version}</version> 
 		     <type>swc</type>
 		 </dependency>
-		 <!-- LOCALE -->
-		 <dependency>
-		     <groupId>com.adobe.flex.locales.en_US</groupId> 
-		     <artifactId>framework_rb</artifactId> 
-		     <version>${flex.version}</version> 
-		     <type>swc</type>
-		 </dependency> 
-		 <dependency>
-		     <groupId>com.adobe.flex.locales.en_US</groupId> 
-		     <artifactId>rpc_rb</artifactId> 
-		     <version>${flex.version}</version> 
-		     <type>swc</type>
-		 </dependency>
+		<dependency>
+			<groupId>com.adobe.flex.framework</groupId>
+			<artifactId>flex-framework</artifactId>
+			<version>${flex.version}</version>
+			<type>pom</type>
+		</dependency>
 	</dependencies>
 	<build>
+		<sourceDirectory>src/main/flex</sourceDirectory>
 		<plugins>
 			<plugin>
-				<groupId>org.servebox.flex</groupId>
-				<artifactId>flex-plugin</artifactId>
-				<version>${flex.plugin.version}</version>
+				<groupId>org.sonatype.flexmojos</groupId>
+				<artifactId>flexmojos-maven-plugin</artifactId>
+				<version>3.8</version>
 				<extensions>true</extensions>
-				<configuration>
-					<mxmlFile>src/main/flex/graph.mxml</mxmlFile>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>flex-mojos-repository</id>
+			<url>http://repository.sonatype.org/content/groups/flexgroup</url>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>flex-mojos-repository</id>
+			<url>http://repository.sonatype.org/content/groups/flexgroup</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
 
