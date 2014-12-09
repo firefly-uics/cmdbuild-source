@@ -6,7 +6,7 @@
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
 		<version>2.3-SNAPSHOT</version>
-		<relativePath>../..</relativePath>
+		<relativePath>../../..</relativePath>
 	</parent>
 	<artifactId>cmdbuild-services-rest-cxf</artifactId>
 	<properties>
