@@ -92,14 +92,15 @@
 			/**
 			 * Get cron form formatted values
 			 *
-			 * @param {Boolean} cronInputType
-			 *
 			 * @return {String} cronExpression
 			 */
-			getValue: function(cronInputType) {
-				var cronExpression;
+			getValue: function() {
+				var cronExpression = null;
 
-				if (cronInputType) {
+				if (!this.isEmptyBase())
+					cronExpression = this.baseField.baseCombo.getValue();
+
+				if (!this.isEmptyAdvanced())
 					cronExpression = this.buildCronExpression([
 						this.advancedField.advancedFields[0].getValue(),
 						this.advancedField.advancedFields[1].getValue(),
@@ -107,9 +108,6 @@
 						this.advancedField.advancedFields[3].getValue(),
 						this.advancedField.advancedFields[4].getValue()
 					]);
-				} else {
-					cronExpression = this.baseField.baseCombo.getValue();
-				}
 
 				return cronExpression;
 			},

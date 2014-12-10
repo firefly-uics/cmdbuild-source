@@ -154,9 +154,7 @@
 			if (this.validate(formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE])) {
 				CMDBuild.LoadMask.get().show();
 
-				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
-					formData[CMDBuild.core.proxy.CMProxyConstants.CRON_INPUT_TYPE]
-				);
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue();
 
 				// Form submit values formatting
 					if (!Ext.isEmpty(formData.filterFromAddress))
