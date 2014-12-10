@@ -139,13 +139,14 @@
 					name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_TYPE,
 					fieldLabel: CMDBuild.Translation.administration.tasks.type,
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					store: CMDBuild.core.proxy.CMProxyTasks.getDbTypes(),
 					displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
 					valueField: CMDBuild.core.proxy.CMProxyConstants.KEY,
 					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
 					forceSelection: true,
 					editable: false,
 					anchor: '100%',
+
+					store: CMDBuild.core.proxy.CMProxyTasks.getDbTypes(),
 
 					listeners: {
 						select: function(combo, records, options) {
