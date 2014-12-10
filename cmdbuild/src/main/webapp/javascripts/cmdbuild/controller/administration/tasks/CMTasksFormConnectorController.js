@@ -178,9 +178,7 @@
 						submitDatas[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE_ERROR] = formData[CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE_ERROR];
 					}
 
-				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
-					formData[CMDBuild.core.proxy.CMProxyConstants.CRON_INPUT_TYPE]
-				);
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue();
 
 				// Form submit values formatting
 					var dataSourceType = this.delegateStep[2].getTypeDataSource();

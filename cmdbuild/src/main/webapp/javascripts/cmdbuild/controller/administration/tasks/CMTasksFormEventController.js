@@ -1,14 +1,33 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyEmailTemplates');
-
 	Ext.define("CMDBuild.controller.administration.tasks.CMTasksFormEventController", {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
+		requires: ['CMDBuild.core.proxy.CMProxyEmailTemplates'],
+
+		/**
+		 * @cfg {Array} array of all step delegates
+		 */
 		delegateStep: undefined,
+
+		/**
+		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksController}
+		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @property {Int}
+		 */
 		selectedId: undefined,
+
+		/**
+		 * @property {Ext.selection.Model}
+		 */
 		selectionModel: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.CMTasksForm}
+		 */
 		view: undefined,
 
 		/**
@@ -18,7 +37,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -58,7 +77,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
@@ -71,7 +90,7 @@
 					return this.delegateStep[2].eraseWorkflowForm();
 
 				default:
-					throw 'CMTasksFormEventController error: onAddButtonClick task type not recognized';
+					_debug('CMTasksFormEventController error: onAddButtonClick task type not recognized');
 			}
 		},
 
@@ -84,7 +103,7 @@
 		},
 
 		/**
-		 * @overwrite
+		 * @override
 		 */
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
@@ -157,7 +176,7 @@
 								} break;
 
 								default:
-									throw 'CMTasksFormEventController error: onRowSelected task type not recognized';
+									_debug('CMTasksFormEventController error: onRowSelected task type not recognized');
 							}
 
 							this.view.disableModify(true);
@@ -170,7 +189,7 @@
 		},
 
 		/**
-		 * @overwrite
+		 * @override
 		 */
 		onSaveButtonClick: function() {
 			var filterData = this.delegateStep[1].getDataFilters();
@@ -185,9 +204,7 @@
 				// Form actions by type
 					switch (taskType) {
 						case 'event_asynchronous': {
-							submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[2].getCronDelegate().getValue(
-								formData[CMDBuild.core.proxy.CMProxyConstants.CRON_INPUT_TYPE]
-							);
+							submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[2].getCronDelegate().getValue();
 
 							// Fieldset submitting filter to avoid to send datas if fieldset are collapsed
 								var notificationFieldsetCheckboxValue = this.delegateStep[3].getValueNotificationFieldsetCheckbox();
@@ -234,7 +251,7 @@
 						} break;
 
 						default:
-							throw 'CMTasksFormEventController error: onSaveButtonClick task type not recognized';
+							_debug('CMTasksFormEventController error: onSaveButtonClick task type not recognized');
 					}
 
 				// Form submit values formatting
@@ -268,7 +285,7 @@
 		},
 
 		/**
-		 * @overwrite
+		 * @override
 		 */
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedId)) {
@@ -294,7 +311,7 @@
 		 *
 		 * @return {Boolean}
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		validate: function(enable, type) {
 			switch (type) {
@@ -334,7 +351,7 @@
 				} break;
 
 				default:
-					throw 'CMTasksFormEventController error: validate task type not recognized';
+					_debug('CMTasksFormEventController error: validate task type not recognized');
 			}
 
 			return this.callParent(arguments);

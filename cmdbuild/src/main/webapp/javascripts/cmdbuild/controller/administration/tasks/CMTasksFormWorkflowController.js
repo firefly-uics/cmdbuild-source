@@ -102,8 +102,8 @@
 							this.delegateStep[0].setValueWorkflowCombo(record.get(CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_CLASS_NAME));
 
 							// Set step2 [1] datas
-							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
 							this.delegateStep[1].setValueBase(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
+							this.delegateStep[1].setValueAdvancedFields(record.get(CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION));
 
 							this.view.disableModify(true);
 						}
@@ -126,9 +126,7 @@
 			if (this.validate(formData[CMDBuild.core.proxy.CMProxyConstants.ACTIVE])) {
 				CMDBuild.LoadMask.get().show();
 
-				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue(
-					formData[CMDBuild.core.proxy.CMProxyConstants.CRON_INPUT_TYPE]
-				);
+				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue();
 
 				// Form submit values formatting
 				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
@@ -170,11 +168,11 @@
 		 * @overwrite
 		 */
 		validate: function(enable) {
-			// Cron field validation
-			this.delegateStep[1].getCronDelegate().validate(enable);
-
 			// Workflow form validation
 			this.delegateStep[0].getWorkflowDelegate().validate(enable);
+
+			// Cron field validation
+			this.delegateStep[1].getCronDelegate().validate(enable);
 
 			return this.callParent(arguments);
 		}
