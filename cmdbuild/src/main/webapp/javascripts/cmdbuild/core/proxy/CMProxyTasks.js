@@ -158,7 +158,7 @@
 				 */
 				getDbTypes: function() {
 					return Ext.create('Ext.data.Store', {
-						autoLoad: false,
+						autoLoad: true,
 						model: 'CMDBuild.model.CMModelTasks.connector.availableSqlSources',
 						proxy: {
 							type: 'ajax',
