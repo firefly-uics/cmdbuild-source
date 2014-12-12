@@ -8,17 +8,41 @@
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormBaseController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
+		/**
+		 * @property {Array} array of all step delegates
+		 */
+		delegateStep: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksController}
+		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @property {Int}
+		 */
 		selectedId: undefined,
+
+		/**
+		 * @property {Ext.selection.Model}
+		 */
 		selectionModel: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
 		taskType: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.CMTasksForm}
+		 */
 		view: undefined,
 
 		/**
 		 * @abstract
 		 */
 		cmOn: function() {
-			throw 'CMTasksFormBaseController: cmOn() unimplemented method';
+			_debug('CMTasksFormBaseController: cmOn() unimplemented method');
 		},
 
 		disableTypeField: function() {
@@ -86,14 +110,14 @@
 		 * @abstract
 		 */
 		onRowSelected: function() {
-			throw 'CMTasksFormBaseController: onRowSelected() unimplemented method';
+			_debug('CMTasksFormBaseController: onRowSelected() unimplemented method');
 		},
 
 		/**
 		 * @abstract
 		 */
 		onSaveButtonClick: function() {
-			throw 'CMTasksFormBaseController: onSaveButtonClick() unimplemented method';
+			_debug('CMTasksFormBaseController: onSaveButtonClick() unimplemented method');
 		},
 
 		removeItem: function() {
@@ -163,7 +187,7 @@
 		 *
 		 * @return {Boolean}
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		validate: function(enable, type) {
 			return this.callParent([this.view]);

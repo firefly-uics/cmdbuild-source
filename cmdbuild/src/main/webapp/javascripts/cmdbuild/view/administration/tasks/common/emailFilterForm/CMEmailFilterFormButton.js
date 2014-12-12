@@ -3,9 +3,16 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterFormButton', {
 		extend: 'Ext.button.Button',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController}
+		 */
 		delegate: undefined,
 
-		// Required
+		/**
+		 * @property {String}
+		 *
+		 * @required
+		 */
 		titleWindow: undefined,
 
 		icon: 'images/icons/table.png',

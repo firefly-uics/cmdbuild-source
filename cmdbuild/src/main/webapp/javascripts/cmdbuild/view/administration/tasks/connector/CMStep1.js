@@ -5,9 +5,19 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep1Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormConnectorController}
+		 */
 		parentDelegate: undefined,
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.connector.CMStep1}
+		 */
 		view: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
 		taskType: 'connector',
 
 		/**
@@ -17,7 +27,7 @@
 		 * @param {Object} param
 		 * @param (Function) callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -108,7 +118,40 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.connector.CMStep1Delegate}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		activeField: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		descriptionField: undefined,
+
+		/**
+		 * @property {Ext.form.field.Hidden}
+		 */
+		idField: undefined,
+
+		/**
+		 * @property {Ext.form.FieldSet}
+		 */
+		notificationFieldset: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm}
+		 */
+		notificationForm: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		typeField: undefined,
 
 		border: false,
 		frame: true,

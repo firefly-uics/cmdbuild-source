@@ -5,7 +5,14 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep4Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormConnectorController}
+		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.connector.CMStep4}
+		 */
 		view: undefined,
 
 		/**
@@ -15,7 +22,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -210,7 +217,20 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep4', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.connector.CMStep4Delegate}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Ext.grid.Panel}
+		 */
+		classLevelMappingGrid: undefined,
+
+		/**
+		 * @property {Ext.grid.plugin.CellEditing}
+		 */
+		gridEditorPlugin: undefined,
 
 		border: false,
 		frame: true,
@@ -387,7 +407,12 @@
 		},
 
 		listeners: {
-			// Disable next button only if grid haven't selected class
+			/**
+			 * Disable next button only if grid haven't selected class
+			 *
+			 * @param {Object} view
+			 * @param {Object} eOpts
+			 */
 			activate: function(view, eOpts) {
 				Ext.Function.createDelayed(function() { // HACK: to fix problem which fires show event before changeTab() function
 					if (this.delegate.isEmptyMappingGrid())

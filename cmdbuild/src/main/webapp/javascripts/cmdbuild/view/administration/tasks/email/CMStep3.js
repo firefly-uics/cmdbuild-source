@@ -5,7 +5,14 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep3Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormEmailController}
+		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.email.CMStep3}
+		 */
 		view: undefined,
 
 		/**
@@ -170,7 +177,55 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep3', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.email.CMStep3Delegate}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		attachmentsCombo: undefined,
+
+		/**
+		 * @property {Ext.form.FieldSet}
+		 */
+		attachmentsFieldset: undefined,
+
+		/**
+		 * @property {Ext.form.FieldSet}
+		 */
+		notificationFieldset: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm}
+		 */
+		notificationForm: undefined,
+
+		/**
+		 * @property {Ext.form.FieldSet}
+		 */
+		parsingFieldset: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		parsingKeyEnd: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		parsingKeyStart: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		parsingValueEnd: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		parsingValueStart: undefined,
 
 		border: false,
 		frame: true,

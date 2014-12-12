@@ -5,11 +5,29 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterFormWindow', {
 		extend: 'Ext.window.Window',
 
-		// Required
-		content: undefined,
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormWindowController}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		content: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
 		title: undefined,
+
+		/**
+		 * @cfg {Object}
+		 */
 		type: undefined,
+
+		/**
+		 * @property {Object}
+		 */
 		textareaConcatParameter: undefined,
 
 		overflowY: 'auto',

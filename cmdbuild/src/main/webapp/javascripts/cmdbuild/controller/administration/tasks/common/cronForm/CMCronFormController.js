@@ -2,7 +2,14 @@
 
 	Ext.define('CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController', {
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.cronForm.CMCronFormAdvanced}
+		 */
 		advancedField: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.cronForm.CMCronFormBase}
+		 */
 		baseField: undefined,
 
 		/**

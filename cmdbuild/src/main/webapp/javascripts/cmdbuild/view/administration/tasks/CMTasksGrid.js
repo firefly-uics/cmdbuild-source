@@ -5,6 +5,9 @@
 	Ext.define('CMDBuild.view.administration.tasks.CMTasksGrid', {
 		extend: 'Ext.grid.Panel',
 
+		/**
+		 * @property {Mixed} Task specific controller
+		 */
 		delegate: undefined,
 
 		border: false,

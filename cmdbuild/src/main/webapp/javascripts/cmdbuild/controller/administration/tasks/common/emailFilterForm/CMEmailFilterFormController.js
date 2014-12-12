@@ -1,13 +1,32 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
-
 	Ext.define('CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController', {
 
+		requires: ['CMDBuild.core.proxy.CMProxyTasks'],
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterFormButton}
+		 */
 		buttonField: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterFormWindow}
+		 */
 		filterWindow: undefined,
+
+		/**
+		 * @property {String}
+		 */
 		textAreaFieldValueBuffer: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
 		textareaConcatParameter: ' OR ',
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterFormTextarea}
+		 */
 		textareaField: undefined,
 
 		/**

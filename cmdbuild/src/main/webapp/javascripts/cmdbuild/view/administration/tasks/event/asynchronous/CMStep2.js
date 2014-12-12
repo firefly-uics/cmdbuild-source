@@ -3,10 +3,24 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep2Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormEventController}
+		 */
 		parentDelegate: undefined,
 
+		/**
+		 * @property {String}
+		 */
 		className: undefined,
+
+		/**
+		 * @property {Object}
+		 */
 		filterValues: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.event.asynchronous.CMStep2}
+		 */
 		view: undefined,
 
 		/**
@@ -16,7 +30,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -104,6 +118,9 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep2', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.event.asynchronous.CMStep2Delegate}
+		 */
 		delegate: undefined,
 
 		border: false,

@@ -5,9 +5,19 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
-		filterWindow: undefined,
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormEmailController}
+		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
 		taskType: 'email',
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.email.CMStep1}
+		 */
 		view: undefined,
 
 		/**
@@ -111,7 +121,45 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.email.CMStep1Delegate}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		activeField: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		descriptionField: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		emailAccountCombo: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm}
+		 */
+		fromAddresFilter: undefined,
+
+		/**
+		 * @property {Ext.form.field.Hidden}
+		 */
+		idField: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm}
+		 */
+		subjectFilter: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		typeField: undefined,
 
 		border: false,
 		frame: true,

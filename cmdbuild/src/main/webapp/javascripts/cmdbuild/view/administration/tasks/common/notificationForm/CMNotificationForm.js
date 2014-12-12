@@ -3,14 +3,28 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationForm', {
 		extend: 'Ext.container.Container',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController}
+		 */
 		delegate: undefined,
 
+		/**
+		 * @property {Array}
+		 */
 		inputFields: [],
+
+		/**
+		 * @proeprty {Object}
+		 */
 		inputFieldsConfiguration: undefined,
-		notificationFieldType: [ // Used to validate notification field types
-			'sender',
-			'template'
-		],
+
+		/**
+		 * Used to validate notification field types
+		 *
+		 * @cfg {Array}
+		 */
+		notificationFieldType: ['sender', 'template'],
+
 		border: false,
 
 		layout: {
@@ -22,21 +36,20 @@
 		 * To check and acquire input fields configurations
 		 *
 		 * @param {Object} configuration
-		 * Example:
-		 * 	{
-		 * 		notificationInputIdentifier1: {
-		 * 			type: 'sender',
-		 * 			delegate: (Object),
-		 * 			fieldLabel: (String),
-		 * 			...
-		 * 		},
-		 * 		notificationInputIdentifier2: {
-		 * 			type: 'template',
-		 * 			delegate: (Object),
-		 * 			fieldLabel: (String),
-		 * 			...
-		 * 		},
-		 * 	}
+		 * 		ex: {
+		 * 			notificationInputIdentifier1: {
+		 * 				type: 'sender',
+		 * 				delegate: (Object),
+		 * 				fieldLabel: (String),
+		 * 				...
+		 * 			},
+		 * 			notificationInputIdentifier2: {
+		 * 				type: 'template',
+		 * 				delegate: (Object),
+		 * 				fieldLabel: (String),
+		 * 				...
+		 * 			},
+		 * 		}
 		 */
 		constructor: function(configuration) {
 			this.delegate = Ext.create('CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController', this);

@@ -3,10 +3,23 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterFormTextarea', {
 		extend: 'Ext.form.field.TextArea',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController}
+		 */
 		delegate: undefined,
 
-		// Required
+		/**
+		 * @property {String}
+		 *
+		 * @required
+		 */
 		name: undefined,
+
+		/**
+		 * @property {Int}
+		 *
+		 * @required
+		 */
 		id: undefined,
 
 		readOnly: true,

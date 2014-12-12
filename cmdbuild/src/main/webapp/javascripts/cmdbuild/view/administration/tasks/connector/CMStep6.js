@@ -5,7 +5,14 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep6Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormConnectorController}
+		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.connector.CMStep6}
+		 */
 		view: undefined,
 
 		/**
@@ -15,7 +22,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -167,7 +174,20 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep6', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.connector.CMStep6Delegate}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Ext.grid.plugin.CellEditing}
+		 */
+		gridEditorPlugin: undefined,
+
+		/**
+		 * @property {Ext.grid.Panel}
+		 */
+		referenceMappingGrid: undefined,
 
 		border: false,
 		frame: true,
@@ -270,7 +290,12 @@
 		},
 
 		listeners: {
-			// To populate grid with selected classes
+			/**
+			 * To populate grid with selected classes
+			 *
+			 * @param {Object} view
+			 * @param {Object} eOpts
+			 */
 			activate: function(view, eOpts) {
 				this.delegate.buildClassCombo();
 
