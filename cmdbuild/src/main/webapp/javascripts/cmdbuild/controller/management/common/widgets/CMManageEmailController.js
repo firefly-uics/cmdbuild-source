@@ -236,7 +236,7 @@
 		 * @override
 		 */
 		isValid: function() {
-			return !(this.reader.required(this.widgetConf) && this.getOutgoing().length == 0);
+			return !(this.reader.required(this.widgetConf) && this.view.getOutgoing().length == 0);
 		},
 
 		/**

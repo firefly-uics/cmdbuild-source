@@ -3,9 +3,6 @@
 	// TODO bind X button on top of window, to save update after click
 	Ext.require('CMDBuild.core.proxy.CMProxyEmailTemplates');
 
-	var reader = CMDBuild.management.model.widget.ManageEmailConfigurationReader;
-	var fields = reader.FIELDS;
-
 	Ext.define('CMDBuild.view.management.common.widgets.CMEmailWindowDelegate', {
 		/**
 		 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
@@ -212,7 +209,7 @@
 		loadFormValues: function(record) {
 			var me = this;
 
-			var xavars = Ext.apply({}, this.delegate.reader.templates(this.delegate.widgetConf), record);
+			var xavars = Ext.apply({}, this.delegate.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], record);
 
 			for (var key in record.variables)
 				xavars[key] = record.variables[key];
@@ -250,17 +247,16 @@
 			body = Ext.create('Ext.panel.Panel', {
 				frame: true,
 				border: true,
-				html: me.record.get(fields.CONTENT),
+				html: me.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT),
 				autoScroll: true,
 				flex: 1
 			});
 		} else {
 			body = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
-				name: fields.CONTENT,
-				fieldLabel: 'Content',
+				name: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
 				hideLabel: true,
 				enableFont: false,
-				value: me.record.get(fields.CONTENT),
+				value: me.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT),
 				flex: 1
 			});
 		}
@@ -299,36 +295,36 @@
 				},
 				{
 					xtype: 'displayfield',
-					name: fields.FROM_ADDRESS,
+					name: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
 					fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.fromfld,
 					disabled: me.readOnly,
 					vtype: me.readOnly ? null : 'multiemail',
-					value: me.record.get(fields.FROM_ADDRESS)
+					value: me.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS)
 				},
 				{
 					xtype: me.readOnly ? 'displayfield' : 'textfield',
-					name: fields.TO_ADDRESS,
+					name: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESS,
 					allowBlank: false,
 					fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld,
 					disabled: me.readOnly,
 					vtype: me.readOnly ? null : 'multiemail',
-					value: me.record.get(fields.TO_ADDRESS)
+					value: me.record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESS)
 				},
 				{
 					xtype: me.readOnly ? 'displayfield' : 'textfield',
-					name: fields.CC_ADDRESS,
+					name: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESS,
 					fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld,
 					disabled: me.readOnly,
 					vtype: me.readOnly ? null : 'multiemail',
-					value: me.record.get(fields.CC_ADDRESS)
+					value: me.record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESS)
 				},
 				{
 					xtype: me.readOnly ? 'displayfield' : 'textfield',
-					name: fields.SUBJECT,
+					name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 					allowBlank: false,
 					fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.subjectfld,
 					disabled: me.readOnly,
-					value: me.record.get(fields.SUBJECT)
+					value: me.record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT)
 				},
 				body
 			]
@@ -357,8 +353,8 @@
 					scope: me,
 
 					handler: function() {
-						var valueTo = me.form.getValues()[fields.TO_ADDRESS];
-						var valueCC = me.form.getValues()[fields.CC_ADDRESS];
+						var valueTo = me.form.getValues()[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESS];
+						var valueCC = me.form.getValues()[CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESS];
 
 						if (me.getNonValidFormFields().length > 0) {
 							CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
@@ -498,26 +494,30 @@
 	function _createEmailFromTemplate(templateResolver, emailTemplatesData, form) {
 		templateResolver.resolveTemplates({
 			attributes: Ext.Object.getKeys(emailTemplatesData),
-			callback: function onTemlatesWereSolved(values) {
+			callback: function(values) {
 				form.setValues([
 					{
-						id: fields.TO_ADDRESS,
+						id: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
+						value: values[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT]
+					},
+					{
+						id: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESS,
 						value: values.to
 					},
 					{
-						id: fields.FROM_ADDRESS,
+						id: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
 						value: values.from
 					},
 					{
-						id: fields.CC_ADDRESS,
+						id: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESS,
 						value: values.cc
 					},
 					{
-						id: fields.SUBJECT,
+						id: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 						value: values.subject
 					},
 					{
-						id: fields.CONTENT,
+						id: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
 						value: values.body
 					}
 				]);
