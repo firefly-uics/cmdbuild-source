@@ -22,7 +22,7 @@
 		// END: Configurations
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMOpenReport} view
+		 * @param {CMDBuild.view.management.common.widgets.grid.CMGrid} view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
 		 * @param {Object} widgetDef
 		 * @param {Ext.form.Basic} clientForm
@@ -43,14 +43,18 @@
 			this.grid = view.grid;
 			this.view.delegate = this;
 
-			CMDBuild.Management.FieldManager.loadAttributes(
-				this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
-				function(attributes) {
-					me.cardAttributes = attributes;
-					me.setColumnsForClass();
-					me.loadPresets();
-				}
-			);
+			if (!Ext.isEmpty(this.classType)) {
+				CMDBuild.Management.FieldManager.loadAttributes(
+					this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+					function(attributes) {
+						me.cardAttributes = attributes;
+						me.setColumnsForClass();
+						me.loadPresets();
+					}
+				);
+			} else {
+				_debug('CMGridController error: classType error with className ' + this.widgetDefinition.className);
+			}
 		},
 
 		/**
@@ -153,23 +157,19 @@
 			header.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
 				value = value || record.get(header.dataIndex);
 
-				if (typeof value != "undefined" && value != null) {
-					if (header.field.store) {
-						var comboRecord = header.field.store.findRecord('Id', value);
+				if (header.field.store) {
+					var comboRecord = header.field.store.findRecord('Id', value);
 
-						value = (comboRecord) ?	comboRecord.get('Description') : '';
-					} else if (value && typeof value == 'object') {
-						if (value instanceof Date)
-							value = me.formatDate(value);
-					}
-
-					if (Ext.String.trim(value) == '' && required)
-						value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
-
-					return value;
+					value = (comboRecord) ?	comboRecord.get('Description') : '';
+				} else if (value && typeof value == 'object') {
+					if (value instanceof Date)
+						value = me.formatDate(value);
 				}
 
-				return null;
+				if (Ext.String.trim(value) == '' && required)
+					value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
+
+				return value;
 			};
 		},
 
@@ -245,7 +245,7 @@
 						var params = {};
 						var widgetUnmanagedVariables = this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.VARIABLES];
 
-						// Builds functionParams with all params names
+						// Builds functionParams with all param names
 						for (var index in _CMCache.getDataSourceInput(presetsString)) {
 							var functionParamDefinitionObject = _CMCache.getDataSourceInput(presetsString)[index];
 
@@ -343,9 +343,24 @@
 
 				for (var i = 0; i < store.getCount(); i++) {
 					var item = store.getAt(i);
+					var xaVars = item.getData();
 
-					item = Ext.encode(item.data);
-					data.push(item);
+					var templateResolver = new CMDBuild.Management.TemplateResolver({
+						clientForm: clientForm,
+						xaVars: xaVars,
+						serverVars: this.getTemplateResolverServerVars()
+					});
+
+					templateResolver.resolveTemplates({
+						attributes: Ext.Object.getKeys(xaVars),
+						callback: function(out, ctx) {
+							data.push(
+								Ext.encode(
+									Ext.Object.merge(item.getData(), out)
+								)
+							);
+						}
+					});
 				}
 
 				if (!this.readOnly)
