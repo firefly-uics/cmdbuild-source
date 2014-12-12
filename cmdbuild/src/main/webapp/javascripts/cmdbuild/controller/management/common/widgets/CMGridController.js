@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.widgets.CMProxyWidgetGrid');
-
 	Ext.define('CMDBuild.controller.management.common.widgets.CMGridController', {
+		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
+
+		requires: ['CMDBuild.core.proxy.widgets.CMProxyWidgetGrid'],
 
 		mixins: {
-			observable: 'Ext.util.Observable',
-			widgetcontroller: 'CMDBuild.controller.management.common.widgets.CMWidgetController'
+			observable: 'Ext.util.Observable'
 		},
 
 		statics: {
@@ -16,31 +16,47 @@
 		// Configurations
 			cardAttributes: undefined,
 			columns: undefined, // Grid column configuration variable
-			grid: undefined,
-			view: undefined,
-			widgetDefinition: undefined,
+
 		// END: Configurations
+
+		/**
+		 * @property {CMDBuild.cache.CMEntryTypeModel}
+		 */
+		classType: undefined,
+
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.grid.CMGridPanel}
+		 */
+		grid: undefined,
+
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.grid.CMGrid}
+		 */
+		view: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		widgetConf: undefined,
 
 		/**
 		 * @param {CMDBuild.view.management.common.widgets.grid.CMGrid} view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
-		 * @param {Object} widgetDef
+		 * @param {Object} widgetConf
 		 * @param {Ext.form.Basic} clientForm
 		 * @param {CMDBuild.model.CMActivityInstance} card
 		 *
 		 * @override
 		 */
-		constructor: function(view, ownerController, widgetDef, clientForm, card) {
+		constructor: function(view, ownerController, widgetConf, clientForm, card) {
 			var me = this;
 
 			this.mixins.observable.constructor.call(this);
-			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
-			this.classType = _CMCache.getEntryTypeByName(widgetDef.className);
-			this.widgetDefinition = widgetDef;
+			this.callParent(arguments);
 
-			this.view = view;
-			this.grid = view.grid;
+			this.classType = _CMCache.getEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
+			this.grid = this.view.grid;
 			this.view.delegate = this;
 
 			if (!Ext.isEmpty(this.classType)) {
@@ -53,7 +69,7 @@
 					}
 				);
 			} else {
-				_debug('CMGridController error: classType error with className ' + this.widgetDefinition.className);
+				_debug('CMGridController error: classType error with className ' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
 			}
 		},
 
@@ -243,7 +259,7 @@
 					if (isPresetsStringValid) {
 						var functionParamsNames = [];
 						var params = {};
-						var widgetUnmanagedVariables = this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.VARIABLES];
+						var widgetUnmanagedVariables = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.VARIABLES];
 
 						// Builds functionParams with all param names
 						for (var index in _CMCache.getDataSourceInput(presetsString)) {
@@ -281,7 +297,7 @@
 		 * @return {Array} decodedArray
 		 */
 		decodeTextPresets: function(presetsString) {
-			var cardsArray = presetsString.split(this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.CARD_SEPARATOR]);
+			var cardsArray = presetsString.split(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CARD_SEPARATOR]);
 			var decodedArray = [];
 
 			for (var item in cardsArray) { // Decode cards
@@ -289,11 +305,11 @@
 
 				if (!Ext.isEmpty(card)) {
 					var buffer = {};
-					var cardAttributes = card.split(this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_SEPARATOR]);
+					var cardAttributes = card.split(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTE_SEPARATOR]);
 
 					for (var index in cardAttributes) { // Decode card's attributes
 						var attribute = cardAttributes[index];
-						var keyValueArray = attribute.split(this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.KEY_VALUE_SEPARATOR]);
+						var keyValueArray = attribute.split(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.KEY_VALUE_SEPARATOR]);
 
 						buffer[keyValueArray[0]] = keyValueArray[1];
 					}
@@ -388,23 +404,23 @@
 		 * Read presets and loads data to grid store
 		 */
 		loadPresets: function() {
-			if (!Ext.isEmpty(this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.PRESETS])) {
-				switch (this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.PRESETS_TYPE]) {
+			if (!Ext.isEmpty(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.PRESETS])) {
+				switch (this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.PRESETS_TYPE]) {
 					case 'text':
 						return this.setGridDataFromTextPresets(
 							this.decodeTextPresets(
-								this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.PRESETS]
+								this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.PRESETS]
 							)
 						);
 
 					case 'function':
 						return this.decodeFunctionPresets(
-							this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.PRESETS]
+							this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.PRESETS]
 						);
 
 					default:
 						throw 'CMGridController: wrong serializationType ('
-							+ this.widgetDefinition[CMDBuild.core.proxy.CMProxyConstants.SERIALIZATION_TYPE]
+							+ this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SERIALIZATION_TYPE]
 							+ ') format or value';
 				}
 			}

@@ -3,16 +3,57 @@
 	Ext.define('CMDBuild.view.management.common.widgets.grid.CMImportCSVWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
+		buttonAlign: 'center',
+		border: false,
 		defaultSizeW: 0.90,
 		defaultSizeH: 0.25,
 
-		// Configurations
-			delegate: undefined,
-			classId: undefined, // Target classId to use in form submit (importCSV)
-		// END: Configurations
+		/**
+		 * @property {CMDBuild.controller.management.common.widgets.CMGridController}
+		 */
+		delegate: undefined,
 
-		buttonAlign: 'center',
-		border: false,
+		/**
+		 * @property {CMDBuild.buttons.AbortButton}
+		 */
+		cancelButton: undefined,
+
+		/**
+		 * Target classId to use in form submit (importCSV)
+		 *
+		 * @property {Int}
+		 */
+		classId: undefined,
+
+		/**
+		 * @property {Ext.form.field.Hidden}
+		 */
+		classIdField: undefined,
+
+		/**
+		 * @property {Ext.form.field.File}
+		 */
+		csvFileField: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		csvImportModeCombo: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		csvSeparatorCombo: undefined,
+
+		/**
+		 * @property {Ext.button.Button}
+		 */
+		csvUploadButton: undefined,
+
+		/**
+		 * @property {Ext.form.Panel}
+		 */
+		csvUploadForm: undefined,
 
 		initComponent: function() {
 			// Buttons configuration
