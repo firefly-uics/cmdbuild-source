@@ -4,6 +4,10 @@
 		extend: 'Ext.grid.Panel',
 
 		border: false,
+
+		/**
+		 * @cfg {Array}
+		 */
 		columns: [],
 
 		initComponent: function() {

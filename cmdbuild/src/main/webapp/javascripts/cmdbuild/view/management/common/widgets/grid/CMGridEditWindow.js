@@ -3,17 +3,35 @@
 	Ext.define('CMDBuild.view.management.common.widgets.grid.CMGridEditWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
+		buttonAlign: 'center',
+		border: false,
 		defaultSizeW: 0.90,
 		defaultSizeH: 0.80,
 
-		// Configurations
-			delegate: undefined,
-			cardAttributes: undefined,
-			record: undefined,
-		// END: Configurations
+		/**
+		 * @property {CMDBuild.controller.management.common.widgets.CMGridController}
+		 */
+		delegate: undefined,
 
-		buttonAlign: 'center',
-		border: false,
+		/**
+		 * @property {CMDBuild.buttons.AbortButton}
+		 */
+		abortButton: undefined,
+
+		/**
+		 * @property {Ext.form.Panel}
+		 */
+		form: undefined,
+
+		/**
+		 * @property {Ext.data.Store.ImplicitModel} CMGridPanel record
+		 */
+		record: undefined,
+
+		/**
+		 * @property {CMDBuild.buttons.SaveButton}
+		 */
+		saveButton: undefined,
 
 		initComponent: function() {
 			var me = this;

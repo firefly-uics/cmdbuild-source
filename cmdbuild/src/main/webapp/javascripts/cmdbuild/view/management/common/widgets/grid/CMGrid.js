@@ -7,8 +7,6 @@
 			WIDGET_NAME: '.Grid'
 		},
 
-		delegate: undefined,
-
 		autoScroll: true,
 		border: false,
 		frame: false,
@@ -16,6 +14,26 @@
 		layout: {
 			type: 'border'
 		},
+
+		/**
+		 * @property {CMDBuild.controller.management.common.widgets.CMGridController}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @property {Ext.button.Button}
+		 */
+		addButton: undefined,
+
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.grid.CMGridPanel}
+		 */
+		grid: undefined,
+
+		/**
+		 * @property {Ext.button.Button}
+		 */
+		importFromCSVButton: undefined,
 
 		initComponent: function() {
 			this.WIDGET_NAME = this.self.WIDGET_NAME;
