@@ -2,14 +2,37 @@
 
 	var tr = CMDBuild.Translation.administration.tasks.errorMessages;
 
-	Ext.define("CMDBuild.controller.administration.tasks.CMTasksFormConnectorController", {
+	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormConnectorController', {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
+		/**
+		 * @property {Array} array of all step delegates
+		 */
 		delegateStep: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksController}
+		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @property {Int}
+		 */
 		selectedId: undefined,
+
+		/**
+		 * @property {Ext.selection.Model}
+		 */
 		selectionModel: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
 		taskType: 'connector',
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.CMTasksForm}
+		 */
 		view: undefined,
 
 		/**
@@ -19,7 +42,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -103,7 +126,7 @@
 		},
 
 		/**
-		 * @overwrite
+		 * @override
 		 */
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
@@ -160,7 +183,7 @@
 		},
 
 		/**
-		 * @overwrite
+		 * @override
 		 */
 		onSaveButtonClick: function() {
 			var formData = this.view.getData(true);
@@ -200,7 +223,7 @@
 							} break;
 
 							default:
-								throw 'CMTasksFormConnectorController: onSaveButtonClick() datasource type not recognized';
+								_debug('CMTasksFormConnectorController: onSaveButtonClick() datasource type not recognized');
 						}
 
 						submitDatas[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TYPE] = dataSourceType;
@@ -247,7 +270,7 @@
 		 *
 		 * @return {Boolean}
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		validate: function(enable) {
 			// Notification validation

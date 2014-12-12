@@ -5,6 +5,11 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm', {
 		extend: 'Ext.form.FieldContainer',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController}
+		 */
+		delegate: undefined,
+
 		border: false,
 		considerAsFieldToDisable: true,
 		fieldLabel: tr.workflow,

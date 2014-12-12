@@ -5,7 +5,14 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep5Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormConnectorController}
+		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.connector.CMStep5}
+		 */
 		view: undefined,
 
 		/**
@@ -15,7 +22,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -287,7 +294,20 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep5', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.connector.CMStep5Delegate}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Ext.grid.Panel}
+		 */
+		attributeLevelMappingGrid: undefined,
+
+		/**
+		 * @property {Ext.grid.plugin.CellEditing}
+		 */
+		gridEditorPlugin: undefined,
 
 		border: false,
 		frame: true,
@@ -420,7 +440,12 @@
 		},
 
 		listeners: {
-			// Disable next button only if grid haven't selected class and setup class and source combo editors
+			/**
+			 * Disable next button only if grid haven't selected class and setup class and source combo editors
+			 *
+			 * @param {Object} view
+			 * @param {Object} eOpts
+			 */
 			activate: function(view, eOpts) {
 				this.delegate.buildSourceCombo();
 				this.delegate.buildClassCombo();

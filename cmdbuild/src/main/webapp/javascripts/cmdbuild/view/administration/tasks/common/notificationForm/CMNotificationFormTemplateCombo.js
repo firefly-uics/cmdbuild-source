@@ -3,8 +3,11 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.notificationForm.CMNotificationFormTemplateCombo', {
 		extend: 'Ext.form.field.ComboBox',
 
-		// Required
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController}
+		 */
 		delegate: undefined,
+
 		fieldLabel: CMDBuild.Translation.administration.tasks.notificationForm.template,
 		name: CMDBuild.core.proxy.CMProxyConstants.NOTIFICATION_EMAIL_TEMPLATE,
 

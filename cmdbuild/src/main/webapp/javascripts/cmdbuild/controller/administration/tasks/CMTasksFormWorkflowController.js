@@ -3,11 +3,34 @@
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormWorkflowController', {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
+		/**
+		 * @property {Array} array of all step delegates
+		 */
 		delegateStep: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksController}
+		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @property {Int}
+		 */
 		selectedId: undefined,
+
+		/**
+		 * @property {Ext.selection.Model}
+		 */
 		selectionModel: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
 		taskType: 'workflow',
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.CMTasksForm}
+		 */
 		view: undefined,
 
 		/**
@@ -17,7 +40,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -54,7 +77,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		onAddButtonClick: function(name, param, callBack) {
 			this.callParent(arguments);
@@ -63,7 +86,7 @@
 		},
 
 		/**
-		 * @overwrite
+		 * @override
 		 */
 		onModifyButtonClick: function() {
 			this.callParent(arguments);
@@ -73,7 +96,7 @@
 		},
 
 		/**
-		 * @overwrite
+		 * @override
 		 */
 		onRowSelected: function() {
 			if (this.selectionModel.hasSelection()) {
@@ -115,7 +138,7 @@
 		},
 
 		/**
-		 * @overwrite
+		 * @override
 		 */
 		onSaveButtonClick: function() {
 			var attributesGridValues = this.delegateStep[0].getValueWorkflowAttributeGrid();
@@ -165,7 +188,7 @@
 		 *
 		 * @return {Boolean}
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		validate: function(enable) {
 			// Workflow form validation

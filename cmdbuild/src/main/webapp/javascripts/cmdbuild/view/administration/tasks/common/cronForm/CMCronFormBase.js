@@ -5,7 +5,20 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.cronForm.CMCronFormBase', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		baseCombo: undefined,
+
+		/**
+		 * @property {Ext.form.field.Radio}
+		 */
+		baseRadio: undefined,
 
 		frame: true,
 		layout: 'hbox',

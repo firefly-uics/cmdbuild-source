@@ -3,6 +3,31 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.cronForm.CMCronForm', {
 		extend: 'Ext.container.Container',
 
+		/**
+		 * @proeprty {CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.cronForm.CMCronFormAdvanced}
+		 */
+		advanced: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		advancedConfig: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.cronForm.CMCronFormBase}
+		 */
+		base: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		baseConfig: undefined,
+
 		border: false,
 		considerAsFieldToDisable: true,
 

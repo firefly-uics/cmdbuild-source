@@ -5,7 +5,14 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep4Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormEmailController}
+		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.email.CMStep4}
+		 */
 		view: undefined,
 
 		/**
@@ -99,7 +106,20 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep4', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.email.CMStep4Delegate}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Ext.form.FieldSet}
+		 */
+		workflowFieldset: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm}
+		 */
+		workflowForm: undefined,
 
 		border: false,
 		frame: true,

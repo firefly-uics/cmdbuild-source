@@ -3,9 +3,19 @@
 	Ext.define('CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormWindowController', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		/**
+		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormEmailController}
+		 */
 		parentDelegate: undefined,
 
+		/**
+		 * @cfg {String}
+		 */
 		type: undefined,
+
+		/**
+		 * @cfg {CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterFormWindow}
+		 */
 		view: undefined,
 
 		/**
@@ -15,7 +25,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {

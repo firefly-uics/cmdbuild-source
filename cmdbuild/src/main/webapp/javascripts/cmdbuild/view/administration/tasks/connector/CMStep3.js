@@ -5,8 +5,14 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep3Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormConnectorController}
+		 */
 		parentDelegate: undefined,
-		filterWindow: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.connector.CMStep3}
+		 */
 		view: undefined,
 
 		/**
@@ -16,7 +22,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -89,11 +95,11 @@
 							this.view.dbInstanceNameField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_INSATANCE_NAME]);
 							this.view.dbUsernameField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_USERNAME]);
 							this.view.dbPasswordField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_DB_PASSWORD]);
-							this.view.sourceFilterField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TABLE_VIEW_PREFIX]);
+							this.view.dbSourceFilterField.setValue(configurationObject[CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TABLE_VIEW_PREFIX]);
 						} break;
 
 						default:
-							throw 'CMTasksFormConnectorController: onSaveButtonClick() datasource type not recognized';
+							_debug('CMTasksFormConnectorController: onSaveButtonClick() datasource type not recognized');
 					}
 			},
 
@@ -118,7 +124,55 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep3', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.connector.CMStep3Delegate}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		dbAddressField: undefined,
+
+		/**
+		 * @property {Ext.form.FieldSet}
+		 */
+		dbFieldset: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		dbInstanceNameField: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		dbNameField: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		dbPasswordField: undefined,
+
+		/**
+		 * @property {Ext.form.field.Number}
+		 */
+		dbPortField: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		dbSourceFilterField: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		dbTypeCombo: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		dbUsernameField: undefined,
 
 		border: false,
 		frame: true,
@@ -207,7 +261,7 @@
 					anchor: '100%'
 				});
 
-				this.sourceFilterField = Ext.create('Ext.form.field.Text', {
+				this.dbSourceFilterField = Ext.create('Ext.form.field.Text', {
 					name: CMDBuild.core.proxy.CMProxyConstants.DATASOURCE_TABLE_VIEW_PREFIX,
 					fieldLabel: tr.sourceFilter,
 					labelWidth: CMDBuild.LABEL_WIDTH,
@@ -230,7 +284,7 @@
 						this.dbInstanceNameField,
 						this.dbUsernameField,
 						this.dbPasswordField,
-						this.sourceFilterField
+						this.dbSourceFilterField
 					],
 
 					listeners: {
@@ -305,7 +359,12 @@
 		},
 
 		listeners: {
-			// Disable instanceNameField
+			/**
+			 * Disable instanceNameField
+			 *
+			 * @param {Object} view
+			 * @param {Object} eOpts
+			 */
 			activate: function(view, eOpts) {
 				this.dbInstanceNameField.setDisabled(true);
 			}

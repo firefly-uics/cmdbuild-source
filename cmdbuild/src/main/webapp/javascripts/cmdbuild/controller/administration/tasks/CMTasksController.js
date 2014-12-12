@@ -3,11 +3,32 @@
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
+		/**
+		 * @cfg {CMDBuild.view.administration.tasks.CMTasksForm}
+		 */
 		form: undefined,
+
+		/**
+		 * @cfg {CMDBuild.view.administration.tasks.CMTasksGrid}
+		 */
 		grid: undefined,
+
+		/**
+		 * @cfg {Object}
+		 */
 		parentDelegate: undefined,
+
+		/**
+		 * @property {Ext.selection.Model}
+		 */
 		selectionModel: undefined,
-		tasksDatas: [ // Used to validate tasks
+
+		/**
+		 * Used to validate tasks
+		 *
+		 * @cfg {Array}
+		 */
+		tasksDatas: [
 			'all',
 			'connector',
 			'email',
@@ -16,12 +37,16 @@
 			'event_synchronous',
 			'workflow'
 		],
+
+		/**
+		 * @cfg {CMDBuild.core.proxy.CMProxyTasks}
+		 */
 		view: undefined,
 
 		/**
 		 * @param {Object} view
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		constructor: function(view) {
 			this.callParent(arguments);
@@ -39,7 +64,7 @@
 		/**
 		 * @param {Object} parameters - AccordionStoreModel
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		onViewOnFront: function(parameters) {
 			if (!Ext.isEmpty(parameters)) {
@@ -132,7 +157,7 @@
 		},
 
 		/**
-		 * @overwrite
+		 * @override
 		 */
 		callback: function() {
 			this.grid.store.load();

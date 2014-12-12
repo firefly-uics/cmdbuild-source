@@ -5,9 +5,20 @@
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormWorkflowController}
+		 */
 		parentDelegate: undefined,
-		view: undefined,
+
+		/**
+		 * @property {String}
+		 */
 		taskType: 'workflow',
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.workflow.CMStep1}
+		 */
+		view: undefined,
 
 		/**
 		 * Gatherer function to catch events
@@ -117,6 +128,9 @@
 	Ext.define('CMDBuild.view.administration.tasks.workflow.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.workflow.CMStep1Delegate}
+		 */
 		delegate: undefined,
 
 		border: false,

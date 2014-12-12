@@ -2,12 +2,25 @@
 
 	var tr = CMDBuild.Translation.administration.tasks;
 
-	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
-
 	Ext.define('CMDBuild.view.administration.tasks.CMTasks', {
 		extend: 'Ext.panel.Panel',
 
+		requires: ['CMDBuild.core.proxy.CMProxyTasks'],
+
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.CMTasksForm}
+		 */
+		form: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.CMTasksGrid}
+		 */
+		grid: undefined,
 
 		title: tr.title,
 		frame: false,
@@ -15,14 +28,14 @@
 		layout: 'border',
 
 		initComponent: function() {
+			this.form = Ext.create('CMDBuild.view.administration.tasks.CMTasksForm', {
+				region: 'center'
+			});
+
 			this.grid = Ext.create('CMDBuild.view.administration.tasks.CMTasksGrid', {
 				region: 'north',
 				split: true,
 				height: '30%'
-			});
-
-			this.form = Ext.create('CMDBuild.view.administration.tasks.CMTasksForm', {
-				region: 'center'
 			});
 
 			Ext.apply(this, {

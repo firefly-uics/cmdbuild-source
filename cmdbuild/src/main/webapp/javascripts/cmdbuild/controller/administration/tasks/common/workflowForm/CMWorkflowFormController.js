@@ -1,14 +1,37 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyTasks');
-
 	Ext.define('CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController', {
 
+		requires: ['CMDBuild.core.proxy.CMProxyTasks'],
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormCombo}
+		 */
 		comboField: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid}
+		 */
 		gridField: undefined,
+
+		/**
+		 * @property {Ext.grid.plugin.CellEditing}
+		 */
 		gridEditorPlugin: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm}
+		 */
+		view: undefined,
+
+		/**
+		 * @property {Ext.data.store}
+		 */
 		workflowAttributesStore: undefined,
 
+		/**
+		 * @param {CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowForm}
+		 */
 		constructor: function(view) {
 			this.view = view;
 		},

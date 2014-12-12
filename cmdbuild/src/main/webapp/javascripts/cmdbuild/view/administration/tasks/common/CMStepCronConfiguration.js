@@ -3,9 +3,19 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.CMStepCronConfigurationDelegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.CMTasksController}
+		 */
 		parentDelegate: undefined,
 
+		/**
+		 * @property {Object}
+		 */
 		filterWindow: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.CMStepCronConfiguration}
+		 */
 		view: undefined,
 
 		/**
@@ -53,7 +63,15 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.CMStepCronConfiguration', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.CMStepCronConfigurationDelegate}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.cronForm.CMCronForm}
+		 */
+		cronForm: undefined,
 
 		border: false,
 		frame: true,

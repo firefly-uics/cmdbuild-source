@@ -3,6 +3,31 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterForm', {
 		extend: 'Ext.form.FieldContainer',
 
+		/**
+		 * @property {CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterFormButton}
+		 */
+		button: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		buttonConfig: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.tasks.common.emailFilterForm.CMEmailFilterFormTextarea}
+		 */
+		textarea: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		textareaConfig: undefined,
+
 		border: false,
 		considerAsFieldToDisable: true,
 		labelWidth: CMDBuild.LABEL_WIDTH,

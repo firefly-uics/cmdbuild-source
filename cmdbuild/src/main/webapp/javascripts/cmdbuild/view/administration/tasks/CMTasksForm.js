@@ -12,6 +12,9 @@
 			cmFormFunctions: 'CMDBUild.view.common.CMFormFunctions'
 		},
 
+		/**
+		 * @property {Mixed} Task specific controller
+		 */
 		delegate: undefined,
 
 		activeItem: 0,

@@ -1,15 +1,15 @@
 (function() {
 
-	Ext.require('CMDBuild.core.proxy.CMProxyEmailAccounts');
-	Ext.require('CMDBuild.core.proxy.CMProxyEmailTemplates');
-
 	Ext.define('CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController', {
 
+		requires: ['CMDBuild.core.proxy.CMProxyEmailAccounts', 'CMDBuild.core.proxy.CMProxyEmailTemplates'],
+
 		/**
-		 * Array = [
-		 * 		'internalId': { Input object },
-		 * 		...
-		 * ]
+		 * @property {Array}
+		 * 		ex. [
+		 * 			'internalId': { Input object },
+		 * 			...
+		 * 		]
 		 */
 		inputFields: [],
 

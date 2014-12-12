@@ -5,7 +5,15 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid', {
 		extend: 'Ext.grid.Panel',
 
+		/**
+		 * @proeprty {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Ext.grid.plugin.CellEditing}
+		 */
+		gridEditorPlugin: undefined,
 
 		title: tr.attributes,
 		considerAsFieldToDisable: true,

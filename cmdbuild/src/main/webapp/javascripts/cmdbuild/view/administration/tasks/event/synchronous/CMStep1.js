@@ -5,9 +5,19 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		/**
+		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormEventController}
+		 */
 		parentDelegate: undefined,
 
+		/**
+		 * @cfg {String}
+		 */
 		taskType: 'event_synchronous',
+
+		/**
+		 * @cfg {CMDBuild.view.administration.tasks.event.synchronous.CMStep1}
+		 */
 		view: undefined,
 
 		/**
@@ -17,7 +27,7 @@
 		 * @param {Object} param
 		 * @param {Function} callback
 		 *
-		 * @overwrite
+		 * @override
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
@@ -128,6 +138,9 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
+		/**
+		 * @cfg {CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate}
+		 */
 		delegate: undefined,
 
 		border: false,
