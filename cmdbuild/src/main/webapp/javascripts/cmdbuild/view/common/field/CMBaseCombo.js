@@ -121,17 +121,26 @@ Ext.define("CMDBuild.field.CMBaseCombo", {
 		this.callParent([this.extractIdIfValueIsObject(v)]);
 	},
 
-	// private
-	extractIdIfValueIsObject: function(v) {
-		if (v != null
-				&& typeof v == "object" // the new serialization of reference and lookup
-				&& !Ext.isArray(v) // is an array when select a value from the UI
-				) {
-
-			v = v.id;
+	/**
+	 * @param {Mixed} value
+	 *
+	 * @private
+	 */
+	extractIdIfValueIsObject: function(value) {
+_debug('extractIdIfValueIsObject', value);
+		if (
+			value != null
+			&& typeof value == 'object' // The new serialization of reference and lookup
+			&& !Ext.isArray(value) // Is an array when select a value from the UI
+		) {
+			value = value[CMDBuild.core.proxy.CMProxyConstants.ID];
 		}
 
-		return v;
+		// Fixes a bug where number was recognized as string and ComboBox where display valueField in place of displayField attributes (In JS language "92" != 92)
+		if (typeof value == 'string' && !isNaN(parseInt(value)))
+			value = parseInt(value);
+
+		return value;
 	},
 
 	// override
