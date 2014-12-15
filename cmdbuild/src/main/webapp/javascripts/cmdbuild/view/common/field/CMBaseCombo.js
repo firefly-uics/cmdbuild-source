@@ -5,9 +5,9 @@
 
 	Ext.define('CMDBuild.field.CMBaseCombo', {
 		extend: 'Ext.form.field.ComboBox',
-		alias: 'cmbasecombo",
+		alias: 'cmbasecombo',
 
-		cmGreatestItem: "",
+		cmGreatestItem: '',
 
 		initComponent : function() {
 			this.callParent(arguments);
