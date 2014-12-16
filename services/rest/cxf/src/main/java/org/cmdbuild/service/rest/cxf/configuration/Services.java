@@ -12,7 +12,6 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
 import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
 import org.cmdbuild.service.rest.AttachmentsConfiguration;
-import org.cmdbuild.service.rest.CardAttachmentMetadata;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.ClassAttributes;
 import org.cmdbuild.service.rest.Classes;
@@ -24,7 +23,6 @@ import org.cmdbuild.service.rest.LookupTypes;
 import org.cmdbuild.service.rest.Menu;
 import org.cmdbuild.service.rest.ProcessAttributes;
 import org.cmdbuild.service.rest.ProcessInstanceActivities;
-import org.cmdbuild.service.rest.ProcessInstanceAttachmentMetadata;
 import org.cmdbuild.service.rest.ProcessInstances;
 import org.cmdbuild.service.rest.ProcessStartActivities;
 import org.cmdbuild.service.rest.Processes;
@@ -34,7 +32,6 @@ import org.cmdbuild.service.rest.Sessions;
 import org.cmdbuild.service.rest.cxf.AllInOneCardAttachments;
 import org.cmdbuild.service.rest.cxf.AllInOneProcessInstanceAttachments;
 import org.cmdbuild.service.rest.cxf.CxfAttachmentsConfiguration;
-import org.cmdbuild.service.rest.cxf.CxfCardAttachmentMetadata;
 import org.cmdbuild.service.rest.cxf.CxfCardAttachments;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
@@ -47,7 +44,6 @@ import org.cmdbuild.service.rest.cxf.CxfLookupTypes;
 import org.cmdbuild.service.rest.cxf.CxfMenu;
 import org.cmdbuild.service.rest.cxf.CxfProcessAttributes;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstanceActivities;
-import org.cmdbuild.service.rest.cxf.CxfProcessInstanceAttachmentMetadata;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstanceAttachments;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.cxf.CxfProcessStartActivities;
@@ -84,14 +80,6 @@ public class Services implements LoggingSupport {
 	public AttachmentsConfiguration cxfAttachmentsConfiguration() {
 		final CxfAttachmentsConfiguration service = new CxfAttachmentsConfiguration(helper.dmsLogic());
 		return proxy(AttachmentsConfiguration.class, service);
-	}
-
-	@Bean
-	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
-	public CardAttachmentMetadata cxfCardAttachmentMetadata() {
-		final CxfCardAttachmentMetadata service = new CxfCardAttachmentMetadata(errorHandler(), helper.dmsLogic(),
-				helper.systemDataAccessLogic());
-		return proxy(CardAttachmentMetadata.class, service);
 	}
 
 	@Bean
@@ -227,14 +215,6 @@ public class Services implements LoggingSupport {
 		final CxfProcessInstanceActivities service = new CxfProcessInstanceActivities(errorHandler(),
 				helper.userWorkflowLogic());
 		return proxy(ProcessInstanceActivities.class, service);
-	}
-
-	@Bean
-	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
-	public ProcessInstanceAttachmentMetadata cxfProcessInstanceAttachmentMetadata() {
-		final CxfProcessInstanceAttachmentMetadata service = new CxfProcessInstanceAttachmentMetadata(errorHandler(),
-				helper.dmsLogic(), helper.userWorkflowLogic());
-		return proxy(ProcessInstanceAttachmentMetadata.class, service);
 	}
 
 	@Bean

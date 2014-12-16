@@ -52,6 +52,8 @@ public class Models {
 
 	public static class AttachmentBuilder extends ModelBuilder<Attachment> {
 
+		private static final Map<String, Object> NO_METADATA = emptyMap();
+
 		private String id;
 		private String name;
 		private String category;
@@ -60,9 +62,23 @@ public class Models {
 		private String author;
 		private Date created;
 		private Date modified;
+		private Map<String, Object> metadata;
 
 		private AttachmentBuilder() {
 			// use factory method
+		}
+
+		private AttachmentBuilder(final Attachment existing) {
+			// use factory method
+			this.id = existing.getId();
+			this.name = existing.getName();
+			this.category = existing.getCategory();
+			this.description = existing.getDescription();
+			this.version = existing.getVersion();
+			this.author = existing.getAuthor();
+			this.created = existing.getCreated();
+			this.modified = existing.getModified();
+			this.metadata = newHashMap(defaultIfNull(existing.getMetadata(), NO_METADATA));
 		}
 
 		@Override
@@ -76,6 +92,7 @@ public class Models {
 			output.setAuthor(author);
 			output.setCreated(created);
 			output.setModified(modified);
+			output.setMetadata(metadata);
 			return output;
 		}
 
@@ -119,96 +136,8 @@ public class Models {
 			return this;
 		}
 
-	}
-
-	public static class AttachmentMetadataBuilder extends ModelBuilder<AttachmentMetadata> {
-
-		private static final Map<String, Object> NO_EXTRA = emptyMap();
-
-		private String id;
-		private String name;
-		private String category;
-		private String description;
-		private String version;
-		private String author;
-		private Date created;
-		private Date modified;
-		private Map<String, Object> extra;
-
-		private AttachmentMetadataBuilder() {
-			// use factory method
-		}
-
-		private AttachmentMetadataBuilder(final AttachmentMetadata existing) {
-			// use factory method
-			this.id = existing.getId();
-			this.name = existing.getName();
-			this.category = existing.getCategory();
-			this.description = existing.getDescription();
-			this.version = existing.getVersion();
-			this.author = existing.getAuthor();
-			this.created = existing.getCreated();
-			this.modified = existing.getModified();
-			this.extra = newHashMap(defaultIfNull(existing.getExtra(), NO_EXTRA));
-		}
-
-		@Override
-		protected AttachmentMetadata doBuild() {
-			final AttachmentMetadata output = new AttachmentMetadata();
-			output.setId(id);
-			output.setName(name);
-			output.setCategory(category);
-			output.setDescription(description);
-			output.setVersion(version);
-			output.setAuthor(author);
-			output.setCreated(created);
-			output.setModified(modified);
-			output.setExtra(extra);
-			return output;
-		}
-
-		public AttachmentMetadataBuilder withId(final String id) {
-			this.id = id;
-			return this;
-		}
-
-		public AttachmentMetadataBuilder withName(final String name) {
-			this.name = name;
-			return this;
-		}
-
-		public AttachmentMetadataBuilder withCategory(final String category) {
-			this.category = category;
-			return this;
-		}
-
-		public AttachmentMetadataBuilder withDescription(final String description) {
-			this.description = description;
-			return this;
-		}
-
-		public AttachmentMetadataBuilder withVersion(final String version) {
-			this.version = version;
-			return this;
-		}
-
-		public AttachmentMetadataBuilder withAuthor(final String author) {
-			this.author = author;
-			return this;
-		}
-
-		public AttachmentMetadataBuilder withCreated(final Date created) {
-			this.created = created;
-			return this;
-		}
-
-		public AttachmentMetadataBuilder withModified(final Date modified) {
-			this.modified = modified;
-			return this;
-		}
-
-		public AttachmentMetadataBuilder withExtra(final Map<String, Object> extra) {
-			this.extra = extra;
+		public AttachmentBuilder withMetadata(final Map<String, Object> metadata) {
+			this.metadata = metadata;
 			return this;
 		}
 
@@ -1603,14 +1532,6 @@ public class Models {
 
 	public static AttachmentBuilder newAttachment() {
 		return new AttachmentBuilder();
-	}
-
-	public static AttachmentMetadataBuilder newAttachmentMetadata() {
-		return new AttachmentMetadataBuilder();
-	}
-
-	public static AttachmentMetadataBuilder newAttachmentMetadata(final AttachmentMetadata existing) {
-		return new AttachmentMetadataBuilder(existing);
 	}
 
 	public static AttachmentCategoryBuilder newAttachmentCategory() {

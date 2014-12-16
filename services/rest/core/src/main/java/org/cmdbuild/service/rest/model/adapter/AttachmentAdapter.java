@@ -22,6 +22,11 @@ public class AttachmentAdapter extends ModelToMapAdapter<Attachment> {
 	@Override
 	protected Map<String, Object> modelToMap(final Attachment input) {
 		final Map<String, Object> map = Maps.newHashMap();
+		map.putAll(input.getMetadata());
+		/*
+		 * predefined attributes must always be added at last so they are not
+		 * overwritten
+		 */
 		map.put(UNDERSCORED_ID, input.getId());
 		map.put(UNDERSCORED_NAME, input.getName());
 		map.put(UNDERSCORED_CATEGORY, input.getCategory());
@@ -44,6 +49,7 @@ public class AttachmentAdapter extends ModelToMapAdapter<Attachment> {
 				.withAuthor(getAndRemove(input, UNDERSCORED_AUTHOR, String.class)) //
 				.withCreated(getAndRemove(input, UNDERSCORED_CREATED, Date.class)) //
 				.withModified(getAndRemove(input, UNDERSCORED_MODIFIED, Date.class)) //
+				.withMetadata(input) //
 				.build();
 	}
 
