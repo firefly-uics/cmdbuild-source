@@ -1,5 +1,7 @@
 package org.cmdbuild.logic.email.rules;
 
+import static com.google.common.collect.Iterables.isEmpty;
+
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
@@ -51,8 +53,9 @@ public class DefaultAttachmentStore implements AttachmentStore {
 	public void store(final Iterable<Attachment> attachments) {
 		logger.info("storing attachments '{}'");
 
-		if (!dmsConfiguration.isEnabled()) {
-			logger.warn(marker, "dms service not enabled");
+		
+		if (!isEmpty(attachments) && !dmsConfiguration.isEnabled()) {
+			logger.warn(marker, "dms service not enabled, cannot store attachments");
 			return;
 		}
 

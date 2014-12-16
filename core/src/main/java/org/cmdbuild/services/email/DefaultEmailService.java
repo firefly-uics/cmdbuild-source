@@ -2,6 +2,7 @@ package org.cmdbuild.services.email;
 
 import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.cmdbuild.system.SystemUtils.isMailDebugEnabled;
 
 import java.net.URL;
 import java.util.Arrays;
@@ -82,8 +83,7 @@ public class DefaultEmailService implements EmailService {
 
 				@Override
 				public boolean isDebug() {
-					// TODO use a system property
-					return false;
+					return isMailDebugEnabled();
 				}
 
 				@Override

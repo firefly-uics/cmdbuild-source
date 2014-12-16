@@ -13,6 +13,7 @@ import static org.cmdbuild.common.mail.JavaxMailConstants.NO_AUTENTICATION;
 import static org.cmdbuild.common.mail.JavaxMailConstants.SSL_FACTORY;
 import static org.cmdbuild.common.mail.Utils.propertiesPlusSystemOnes;
 
+import java.io.PrintStream;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
@@ -20,6 +21,7 @@ import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
 
+import org.apache.commons.io.output.WriterOutputStream;
 import org.cmdbuild.common.mail.MailApi.InputConfiguration;
 import org.slf4j.Logger;
 
@@ -33,10 +35,12 @@ class InputTemplate {
 
 	private final InputConfiguration configuration;
 	private final Logger logger;
+	private final PrintStream debugOutput;
 
 	public InputTemplate(final InputConfiguration configuration) {
 		this.configuration = configuration;
 		this.logger = configuration.getLogger();
+		this.debugOutput = new PrintStream(new WriterOutputStream(new LoggerWriter(logger)), true);
 	}
 
 	public void execute(final Hooks hooks) {
@@ -64,7 +68,9 @@ class InputTemplate {
 	private Session createSession() {
 		final Properties imapProps = createConfigurationProperties();
 		final Authenticator auth = getAutenticator();
-		return Session.getInstance(imapProps, auth);
+		Session session = Session.getInstance(imapProps, auth);
+		session.setDebugOut(debugOutput);
+		return session;
 	}
 
 	private Properties createConfigurationProperties() {
