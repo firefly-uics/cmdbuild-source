@@ -173,19 +173,23 @@
 			header.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
 				value = value || record.get(header.dataIndex);
 
-				if (header.field.store) {
-					var comboRecord = header.field.store.findRecord('Id', value);
+				if (!Ext.isEmpty(value)) {
+					if (header.field.store) {
+						var comboRecord = header.field.store.findRecord('Id', value);
 
-					value = (comboRecord) ?	comboRecord.get('Description') : '';
-				} else if (value && typeof value == 'object') {
-					if (value instanceof Date)
-						value = me.formatDate(value);
+						value = (comboRecord) ?	comboRecord.get('Description') : '';
+					} else if (value && typeof value == 'object') {
+						if (value instanceof Date)
+							value = me.formatDate(value);
+					}
+
+					if (Ext.String.trim(value) == '' && required)
+						value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
+
+					return value;
 				}
 
-				if (Ext.String.trim(value) == '' && required)
-					value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
-
-				return value;
+				return null;
 			};
 		},
 
