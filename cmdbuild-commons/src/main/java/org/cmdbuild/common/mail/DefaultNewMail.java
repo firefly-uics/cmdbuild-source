@@ -23,6 +23,7 @@ import static org.cmdbuild.common.mail.JavaxMailConstants.SSL_FACTORY;
 import static org.cmdbuild.common.mail.JavaxMailConstants.TRUE;
 import static org.cmdbuild.common.mail.Utils.propertiesPlusSystemOnes;
 
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -54,6 +55,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.apache.commons.io.output.WriterOutputStream;
 import org.cmdbuild.common.mail.MailApi.OutputConfiguration;
 import org.slf4j.Logger;
 
@@ -63,6 +65,7 @@ class DefaultNewMail implements NewMail {
 
 	private final OutputConfiguration configuration;
 	private final Logger logger;
+	private final PrintStream debugOutput;
 
 	private final List<String> froms;
 	private final Map<RecipientType, Set<String>> recipients;
@@ -77,6 +80,7 @@ class DefaultNewMail implements NewMail {
 	public DefaultNewMail(final OutputConfiguration configuration) {
 		this.configuration = configuration;
 		this.logger = configuration.getLogger();
+		this.debugOutput = new PrintStream(new WriterOutputStream(new LoggerWriter(logger)), true);
 
 		this.froms = new ArrayList<String>();
 
@@ -229,10 +233,15 @@ class DefaultNewMail implements NewMail {
 
 			@Override
 			public void run() {
-				final Session session = createSession();
-				message = messageFrom(session);
-				fillMessage();
-				send(session);
+				try {
+					final Session session = createSession();
+					message = messageFrom(session);
+					fillMessage();
+					send(session);
+				} catch (final RuntimeException e) {
+					logger.error("error sending e-mail", e);
+					throw e;
+				}
 			}
 
 		};
@@ -245,7 +254,9 @@ class DefaultNewMail implements NewMail {
 	private Session createSession() {
 		final Properties properties = createConfigurationProperties();
 		final Authenticator authenticator = getAutenticator();
-		return Session.getInstance(properties, authenticator);
+		final Session session = Session.getInstance(properties, authenticator);
+		session.setDebugOut(debugOutput);
+		return session;
 	}
 
 	private MimeMessage messageFrom(final Session session) {
@@ -259,7 +270,7 @@ class DefaultNewMail implements NewMail {
 			setSubject();
 			setSentDate();
 			setBody();
-		} catch (MessagingException e) {
+		} catch (final MessagingException e) {
 			throw MailException.creation(e);
 		}
 	}
@@ -355,7 +366,7 @@ class DefaultNewMail implements NewMail {
 				final BodyPart bodyPart = getBodyPartFor(attachment.getKey(), attachment.getValue());
 				multipart.addBodyPart(bodyPart);
 			}
-		} catch (MessagingException e) {
+		} catch (final MessagingException e) {
 			throw MailException.creation(e);
 		}
 	}

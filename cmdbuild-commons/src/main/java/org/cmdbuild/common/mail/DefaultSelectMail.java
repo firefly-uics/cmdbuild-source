@@ -42,8 +42,6 @@ import com.google.common.collect.Lists;
 
 class DefaultSelectMail implements SelectMail {
 
-
-
 	private class DefaultAttachment implements Attachment {
 
 		private final String filename;
@@ -118,7 +116,7 @@ class DefaultSelectMail implements SelectMail {
 				logger.warn("should never happen, disposition is '{}'", disposition);
 			}
 		}
-		
+
 		private String parseContent(final Object messageContent) throws IOException, MessagingException {
 			if (messageContent == null) {
 				throw new IllegalArgumentException();
@@ -132,27 +130,27 @@ class DefaultSelectMail implements SelectMail {
 					final String ctype = part.getContentType();
 					final String disposition = part.getDisposition();
 					if (disposition == null) {
-						if(ctype.toLowerCase().contains("text/plain")) {
-							plainAlternative = (String)part.getContent();
+						if (ctype.toLowerCase().contains("text/plain")) {
+							plainAlternative = (String) part.getContent();
 						} else {
-							if(part.getContent() instanceof String)
-								parsedMessage += part.getContent(); 
-							else if(part.getContent() instanceof Multipart)
-								parsedMessage += parseContent(part.getContent()); 
-						}	
+							if (part.getContent() instanceof String)
+								parsedMessage += part.getContent();
+							else if (part.getContent() instanceof Multipart)
+								parsedMessage += parseContent(part.getContent());
+						}
 					}
 				}
-				
-				if(parsedMessage.equals("")) {
+
+				if (parsedMessage.equals("")) {
 					parsedMessage += plainAlternative;
 				}
-				if(parsedMessage.equals("")) {
+				if (parsedMessage.equals("")) {
 					parsedMessage += "Mail content not recognized";
 				}
-			} else { 
+			} else {
 				parsedMessage = messageContent.toString();
 			}
-			
+
 			return parsedMessage;
 		}
 
@@ -186,10 +184,9 @@ class DefaultSelectMail implements SelectMail {
 		}
 
 	}
-	
+
 	private static final String ADDRESS_PATTERN_REGEX = ".*<(.*)>.*";
 	private static final Pattern ADDRESS_PATTERN = Pattern.compile(ADDRESS_PATTERN_REGEX);
-
 
 	private final InputConfiguration configuration;
 	private final Logger logger;
@@ -307,7 +304,7 @@ class DefaultSelectMail implements SelectMail {
 						}
 					}
 				} catch (final MessagingException e) {
-					logger.error("error getting mail", e);
+					logger.error("error moving mail", e);
 					throw MailException.move(e);
 				}
 			}
