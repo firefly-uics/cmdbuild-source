@@ -13,16 +13,27 @@
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.grid.CMGrid.WIDGET_NAME
 		},
 
-		// Configurations
-			cardAttributes: undefined,
-			columns: undefined, // Grid column configuration variable
-
-		// END: Configurations
+		/**
+		 * @property {Object}
+		 */
+		cardAttributes: undefined,
 
 		/**
 		 * @property {CMDBuild.cache.CMEntryTypeModel}
 		 */
 		classType: undefined,
+
+		/**
+		 * @property {Ext.form.Basic}
+		 */
+		clientForm: undefined,
+
+		/**
+		 * Grid column configuration variable
+		 *
+		 * @proeprty {Array}
+		 */
+		columns: undefined,
 
 		/**
 		 * @property {CMDBuild.view.management.common.widgets.grid.CMGridPanel}
@@ -253,6 +264,7 @@
 			CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.getFunctions({
 				scope: this,
 				success: function(result, options, decodedResult) {
+					var me = this;
 					var isPresetsStringValid = false;
 
 					Ext.Array.each(decodedResult.response, function(record) {
@@ -264,6 +276,20 @@
 						var functionParamsNames = [];
 						var params = {};
 						var widgetUnmanagedVariables = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.VARIABLES];
+
+						// Resolve templates for widget configuration "function" type
+						var templateResolver = new CMDBuild.Management.TemplateResolver({
+							clientForm: me.clientForm,
+							xaVars: widgetUnmanagedVariables,
+							serverVars: this.getTemplateResolverServerVars()
+						});
+
+						templateResolver.resolveTemplates({
+							attributes: Ext.Object.getKeys(xaVars),
+							callback: function(out, ctx) {
+								widgetUnmanagedVariables = out;
+							}
+						});
 
 						// Builds functionParams with all param names
 						for (var index in _CMCache.getDataSourceInput(presetsString)) {
@@ -357,6 +383,7 @@
 			 * @override
 			 */
 			getData: function() {
+				var me = this;
 				var out = {};
 				var data = [];
 				var store = this.grid.getStore();
@@ -365,8 +392,9 @@
 					var item = store.getAt(i);
 					var xaVars = item.getData();
 
+					// Resolve templates for widget configuration "text" type
 					var templateResolver = new CMDBuild.Management.TemplateResolver({
-						clientForm: clientForm,
+						clientForm: me.clientForm,
 						xaVars: xaVars,
 						serverVars: this.getTemplateResolverServerVars()
 					});
