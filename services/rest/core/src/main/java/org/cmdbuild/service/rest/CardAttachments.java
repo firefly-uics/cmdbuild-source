@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 
 import org.cmdbuild.service.rest.model.Attachment;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 @Path("classes/{" + CLASS_ID + "}/cards/{" + CARD_ID + "}/attachments/")
 @Consumes(APPLICATION_JSON)
@@ -36,8 +37,16 @@ public interface CardAttachments {
 
 	@GET
 	@Path("{" + ATTACHMENT_ID + "}/")
+	ResponseSingle<Attachment> read( //
+			@PathParam(CLASS_ID) String classId, //
+			@PathParam(CARD_ID) Long cardId, //
+			@PathParam(ATTACHMENT_ID) String attachmentId //
+	);
+
+	@GET
+	@Path("{" + ATTACHMENT_ID + "}/file/")
 	@Produces(APPLICATION_OCTET_STREAM)
-	DataHandler read( //
+	DataHandler download( //
 			@PathParam(CLASS_ID) String classId, //
 			@PathParam(CARD_ID) Long cardId, //
 			@PathParam(ATTACHMENT_ID) String attachmentId //

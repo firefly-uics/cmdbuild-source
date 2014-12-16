@@ -5,6 +5,7 @@ import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.cmdbuild.service.rest.model.Models.newAttachment;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
+import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.activation.DataHandler;
@@ -24,10 +26,12 @@ import javax.activation.DataHandler;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.CardAttachments;
 import org.cmdbuild.service.rest.model.Attachment;
 import org.cmdbuild.service.rest.model.Models;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.service.rest.model.adapter.AttachmentAdapter;
 import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
@@ -108,17 +112,50 @@ public class CardAttachmentsTest {
 	@Test
 	public void read() throws Exception {
 		// given
-		final File file = temporaryFolder.newFile();
-		final DataHandler expectedResponse = new DataHandler(file.toURI().toURL());
+		final Attachment attachmentMetadata = newAttachment() //
+				.withId("baz") //
+				.withName("my name is Baz") //
+				.withCategory("something") //
+				.withDescription("nice to meet you") //
+				.withMetadata(ChainablePutMap.of(new HashMap<String, Object>()) //
+						.chainablePut("first", 1) //
+						.chainablePut("second", "2")) //
+				.build();
+		final ResponseSingle<Attachment> sentResponse = newResponseSingle(Attachment.class) //
+				.withElement(attachmentMetadata) //
+				.build();
+		final ResponseSingle<Map<String, Object>> expectedResponse = Models.<Map<String, Object>> newResponseSingle() //
+				.withElement(new AttachmentAdapter().marshal(attachmentMetadata)) //
+				.build();
 		when(service.read(anyString(), anyLong(), anyString())) //
-				.thenReturn(expectedResponse);
+				.thenReturn(sentResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("classes/dummy/cards/123/attachments/foo/"));
+		final GetMethod get = new GetMethod(server.resource("classes/foo/cards/123/attachments/bar/"));
 		final int result = httpclient.executeMethod(get);
 
 		// then
-		verify(service).read(eq("dummy"), eq(123L), eq("foo"));
+		verify(service).read(eq("foo"), eq(123L), eq("bar"));
+		verifyNoMoreInteractions(service);
+
+		assertThat(result, equalTo(200));
+		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+	}
+
+	@Test
+	public void download() throws Exception {
+		// given
+		final File file = temporaryFolder.newFile();
+		final DataHandler expectedResponse = new DataHandler(file.toURI().toURL());
+		when(service.download(anyString(), anyLong(), anyString())) //
+				.thenReturn(expectedResponse);
+
+		// when
+		final GetMethod get = new GetMethod(server.resource("classes/dummy/cards/123/attachments/foo/file/"));
+		final int result = httpclient.executeMethod(get);
+
+		// then
+		verify(service).download(eq("dummy"), eq(123L), eq("foo"));
 		verifyNoMoreInteractions(service);
 
 		assertThat(result, equalTo(200));

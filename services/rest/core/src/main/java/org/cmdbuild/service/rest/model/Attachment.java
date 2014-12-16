@@ -1,15 +1,19 @@
 package org.cmdbuild.service.rest.model;
 
+import static java.util.Collections.emptyMap;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.constants.Serialization.ATTACHMENT;
 import static org.cmdbuild.service.rest.constants.Serialization.AUTHOR;
 import static org.cmdbuild.service.rest.constants.Serialization.CATEGORY;
 import static org.cmdbuild.service.rest.constants.Serialization.CREATED;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
+import static org.cmdbuild.service.rest.constants.Serialization.METADATA;
 import static org.cmdbuild.service.rest.constants.Serialization.MODIFIED;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.VERSION;
 
 import java.util.Date;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,6 +27,8 @@ import org.cmdbuild.service.rest.model.adapter.AttachmentAdapter;
 @XmlJavaTypeAdapter(AttachmentAdapter.class)
 public class Attachment extends ModelWithId<String> {
 
+	private static final Map<String, Object> NO_METADATA = emptyMap();
+
 	private String name;
 	private String category;
 	private String description;
@@ -30,6 +36,7 @@ public class Attachment extends ModelWithId<String> {
 	private String author;
 	private Date created;
 	private Date modified;
+	private Map<String, Object> metadata;
 
 	Attachment() {
 		// package visibility
@@ -98,6 +105,15 @@ public class Attachment extends ModelWithId<String> {
 		this.modified = modified;
 	}
 
+	@XmlAttribute(name = METADATA)
+	public Map<String, Object> getMetadata() {
+		return defaultIfNull(metadata, NO_METADATA);
+	}
+
+	void setMetadata(final Map<String, Object> metadata) {
+		this.metadata = metadata;
+	}
+
 	@Override
 	protected boolean doEquals(final Object obj) {
 		if (this == obj) {
@@ -119,6 +135,7 @@ public class Attachment extends ModelWithId<String> {
 				.append(this.author, other.author) //
 				.append(this.created, other.created) //
 				.append(this.modified, other.modified) //
+				.append(this.metadata, other.metadata) //
 				.isEquals();
 	}
 
@@ -133,6 +150,7 @@ public class Attachment extends ModelWithId<String> {
 				.append(this.author) //
 				.append(this.created) //
 				.append(this.modified) //
+				.append(this.metadata) //
 				.toHashCode();
 	}
 

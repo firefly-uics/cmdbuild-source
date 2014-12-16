@@ -3,11 +3,11 @@ package org.cmdbuild.service.rest.cxf;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.cmdbuild.service.rest.constants.Serialization.ATTACHMENT;
 import static org.cmdbuild.service.rest.constants.Serialization.ATTACHMENT_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.CARD_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.CLASS_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.FILE;
-import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 
 import javax.activation.DataHandler;
 import javax.ws.rs.Consumes;
@@ -18,6 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.cmdbuild.service.rest.model.Attachment;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
 @Path("classes/{" + CLASS_ID + "}/cards/{" + CARD_ID + "}/attachments/")
@@ -30,7 +31,7 @@ public interface CardAttachments {
 	ResponseSingle<String> create( //
 			@PathParam(CLASS_ID) String classId, //
 			@PathParam(CARD_ID) Long cardId, //
-			@Multipart(NAME) String attachmentName, //
+			@Multipart(ATTACHMENT) Attachment attachment, //
 			@Multipart(FILE) DataHandler dataHandler //
 	);
 
@@ -42,6 +43,7 @@ public interface CardAttachments {
 			@PathParam(CLASS_ID) String classId, //
 			@PathParam(CARD_ID) Long cardId, //
 			@PathParam(ATTACHMENT_ID) String attachmentId, //
+			@Multipart(ATTACHMENT) Attachment attachment, //
 			@Multipart(FILE) DataHandler dataHandler //
 	);
 

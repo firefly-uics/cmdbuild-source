@@ -17,6 +17,7 @@ import javax.ws.rs.Produces;
 
 import org.cmdbuild.service.rest.model.Attachment;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 
 @Path("processes/{" + PROCESS_ID + "}/instances/{" + PROCESS_INSTANCE_ID + "}/attachments/")
 @Consumes(APPLICATION_JSON)
@@ -36,8 +37,16 @@ public interface ProcessInstanceAttachments {
 
 	@GET
 	@Path("{" + ATTACHMENT_ID + "}/")
+	ResponseSingle<Attachment> read( //
+			@PathParam(PROCESS_ID) String processId, //
+			@PathParam(PROCESS_INSTANCE_ID) Long processInstanceId, //
+			@PathParam(ATTACHMENT_ID) String attachmentId //
+	);
+
+	@GET
+	@Path("{" + ATTACHMENT_ID + "}/file/")
 	@Produces(APPLICATION_OCTET_STREAM)
-	DataHandler read( //
+	DataHandler download( //
 			@PathParam(PROCESS_ID) String processId, //
 			@PathParam(PROCESS_INSTANCE_ID) Long processInstanceId, //
 			@PathParam(ATTACHMENT_ID) String attachmentId //
