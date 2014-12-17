@@ -285,7 +285,7 @@
 						});
 
 						templateResolver.resolveTemplates({
-							attributes: Ext.Object.getKeys(xaVars),
+							attributes: Ext.Object.getKeys(widgetUnmanagedVariables),
 							callback: function(out, ctx) {
 								widgetUnmanagedVariables = out;
 							}
