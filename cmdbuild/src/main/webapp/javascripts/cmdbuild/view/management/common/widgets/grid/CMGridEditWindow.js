@@ -83,11 +83,10 @@
 
 			for (var i = 0; i < attributes.length; i++) {
 				var attribute = attributes[i];
-				var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
-				var item = attributesMap[attribute.type].buildField(attribute, false, false);
-				var value = this.record.get(attribute.name);
+				var item = CMDBuild.Management.FieldManager.getFieldForAttr(attribute, false, false);
+				var value = this.record.get(attribute[CMDBuild.core.proxy.CMProxyConstants.NAME]);
 
-				if (attribute.fieldmode == 'read')
+				if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
 					item.disabled = true;
 
 				itemsArray.push(item);

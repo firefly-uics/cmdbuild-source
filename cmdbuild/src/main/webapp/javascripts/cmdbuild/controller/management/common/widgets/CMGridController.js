@@ -14,7 +14,7 @@
 		},
 
 		/**
-		 * @property {Object}
+		 * @property {Array}
 		 */
 		cardAttributes: undefined,
 
@@ -205,6 +205,9 @@
 		},
 
 		/**
+		 * Builds columns for grid with cell editors.
+		 * Builds attributesToTranslate array where stores all attributes with needs translations from Id to Description.
+		 *
 		 * @return {Object}
 		 */
 		buildColumnsForAttributes: function() {
@@ -217,24 +220,28 @@
 
 			for (var i = 0; i < this.getCardAttributes().length; i++) {
 				var attribute = this.getCardAttributes()[i];
+				var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
 				var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
-				var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);
+
+				// TODO: hack to bypass CMDBuild.Management.FieldManager.getFieldForAttr() control to check if return DisplayField
+				// (correct way var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);)
+				var editor = attributesMap[attribute.type].buildField(attribute, false, false);
 
 				editor.hideLabel = true;
 
 				if (header) {
-					if (attribute.fieldmode == 'read')
+					if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
 						editor.disabled = true;
 
-					if (attribute.isnotnull) {
-						header.header = '*  ' + header.header;
+					if (attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL]) {
+						header.header = '* ' + header.header;
 						editor.required = true;
 					}
 
 					// Do not overwrite renderer, add editor on checkbox columns and make it editable
-					if (attribute.type != 'BOOLEAN') {
+					if (attribute[CMDBuild.core.proxy.CMProxyConstants.TYPE] != 'BOOLEAN') {
 						header.field = editor;
-						this.addRendererToHeader(header, attribute.isnotnull);
+						this.addRendererToHeader(header, attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL]);
 					} else {
 						header.cmReadOnly = false;
 					}
@@ -242,7 +249,7 @@
 					headers.push(header);
 
 					fields.push(header.dataIndex);
-				} else if (attribute.name == 'Description') {
+				} else if (attribute[CMDBuild.core.proxy.CMProxyConstants.NAME] == 'Description') {
 					// FIXME Always add Description, even if hidden, for the reference popup
 					fields.push('Description');
 				}
@@ -570,7 +577,7 @@
 			},
 
 			/**
-			 * @param {Object} data
+			 * @param {Array} data
 			 */
 			setGridDataFromTextPresets: function(data) {
 				this.grid.getStore().loadData(data);
