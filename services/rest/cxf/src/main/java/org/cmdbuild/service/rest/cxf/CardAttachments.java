@@ -31,7 +31,7 @@ public interface CardAttachments {
 	ResponseSingle<String> create( //
 			@PathParam(CLASS_ID) String classId, //
 			@PathParam(CARD_ID) Long cardId, //
-			@Multipart(ATTACHMENT) Attachment attachment, //
+			@Multipart(value = ATTACHMENT, required = false) Attachment attachment, //
 			@Multipart(FILE) DataHandler dataHandler //
 	);
 
@@ -43,8 +43,8 @@ public interface CardAttachments {
 			@PathParam(CLASS_ID) String classId, //
 			@PathParam(CARD_ID) Long cardId, //
 			@PathParam(ATTACHMENT_ID) String attachmentId, //
-			@Multipart(ATTACHMENT) Attachment attachment, //
-			@Multipart(FILE) DataHandler dataHandler //
+			@Multipart(value = ATTACHMENT, required = false) Attachment attachment, //
+			@Multipart(value = FILE, required = false) DataHandler dataHandler //
 	);
 
 }

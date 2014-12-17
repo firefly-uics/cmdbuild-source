@@ -10,6 +10,7 @@
 	</parent>
 	<artifactId>cmdbuild-services-rest-test</artifactId>
 	<properties>
+		<!-- upgrade to last version asap -->
 		<httpclient.version>3.1</httpclient.version>
 	</properties>
 	<dependencies>
