@@ -6,6 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
 import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -113,28 +114,6 @@ public class CxfProcessInstanceAttachmentsTest {
 		cxfProcessInstanceAttachments.create("foo", 123L, attachment, dataHandler);
 	}
 
-	@Test
-	public void missingAttachmentIsNotAProblemOnCreate() throws Exception {
-		// given
-		final UserProcessClass targetClass = mock(UserProcessClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
-		doReturn(targetClass) //
-				.when(workflowLogic).findProcessClass(anyString());
-		final UserProcessInstance processInstance = mock(UserProcessInstance.class);
-		doReturn(processInstance) //
-				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
-		doThrow(new WebApplicationException()) //
-				.when(errorHandler).missingAttachmentName();
-		final DataSource dataSource = mock(DataSource.class);
-		doReturn("file name") //
-				.when(dataSource).getName();
-		final DataHandler dataHandler = new DataHandler(dataSource);
-
-		// when
-		cxfProcessInstanceAttachments.create("foo", 123L, null, dataHandler);
-	}
-
 	@Test(expected = WebApplicationException.class)
 	public void missingFileOnCreate() throws Exception {
 		// given
@@ -155,7 +134,7 @@ public class CxfProcessInstanceAttachmentsTest {
 	}
 
 	@Test
-	public void logicCalledOnCreate() throws Exception {
+	public void logicCalledOnCreateWithBothAttachmentAndFile() throws Exception {
 		// given
 		final UserProcessClass targetClass = mock(UserProcessClass.class);
 		doReturn("bar") //
@@ -189,6 +168,40 @@ public class CxfProcessInstanceAttachmentsTest {
 		inOrder.verify(userStore).getUser();
 		inOrder.verify(dmsLogic).upload(eq("dummy user"), eq("foo"), eq(123L), same(inputStream), eq("file name"),
 				eq("the category"), eq("the description"), any(Iterable.class));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void logicCalledOnCreateWithFileOnly() throws Exception {
+		// given
+		final UserProcessClass targetClass = mock(UserProcessClass.class);
+		doReturn("bar") //
+				.when(targetClass).getName();
+		doReturn(targetClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+		final UserProcessInstance processInstance = mock(UserProcessInstance.class);
+		doReturn(processInstance) //
+				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
+		final InputStream inputStream = new NullInputStream(1024);
+		final DataSource dataSource = mock(DataSource.class);
+		doReturn("file name") //
+				.when(dataSource).getName();
+		doReturn(inputStream) //
+				.when(dataSource).getInputStream();
+		final DataHandler dataHandler = new DataHandler(dataSource);
+		doReturn(NO_METADATA) //
+				.when(dmsLogic).getCategoryDefinition(anyString());
+
+		// when
+		cxfProcessInstanceAttachments.create("foo", 123L, null, dataHandler);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
+		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
+		inOrder.verify(userStore).getUser();
+		inOrder.verify(dmsLogic).upload(eq("dummy user"), eq("foo"), eq(123L), same(inputStream), eq("file name"),
+				isNull(String.class), isNull(String.class), any(Iterable.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -347,46 +360,7 @@ public class CxfProcessInstanceAttachmentsTest {
 	}
 
 	@Test
-	public void missingAttachmentIsNotAProblemOnUpdate() throws Exception {
-		// given
-		final UserProcessClass targetClass = mock(UserProcessClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
-		doReturn(targetClass) //
-				.when(workflowLogic).findProcessClass(anyString());
-		final UserProcessInstance processInstance = mock(UserProcessInstance.class);
-		doReturn(processInstance) //
-				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
-		doThrow(new WebApplicationException()) //
-				.when(errorHandler).missingAttachmentId();
-		final DataSource dataSource = mock(DataSource.class);
-		final DataHandler dataHandler = new DataHandler(dataSource);
-
-		// when
-		cxfProcessInstanceAttachments.update("foo", 123L, "bar", null, dataHandler);
-	}
-
-	@Test(expected = WebApplicationException.class)
-	public void missingFileOnUpdate() throws Exception {
-		// given
-		final UserProcessClass targetClass = mock(UserProcessClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
-		doReturn(targetClass) //
-				.when(workflowLogic).findProcessClass(anyString());
-		final UserProcessInstance processInstance = mock(UserProcessInstance.class);
-		doReturn(processInstance) //
-				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
-		doThrow(new WebApplicationException()) //
-				.when(errorHandler).missingFile();
-		final Attachment attachment = newAttachment().build();
-
-		// when
-		cxfProcessInstanceAttachments.update("foo", 123L, "bar", attachment, null);
-	}
-
-	@Test
-	public void logicCalledOnUpdate() throws Exception {
+	public void logicCalledOnUpdateWithBothAttachmentAndFile() throws Exception {
 		// given
 		final UserProcessClass targetClass = mock(UserProcessClass.class);
 		doReturn("bar") //
@@ -418,6 +392,92 @@ public class CxfProcessInstanceAttachmentsTest {
 		inOrder.verify(userStore).getUser();
 		inOrder.verify(dmsLogic).upload(eq("dummy user"), eq("foo"), eq(123L), same(inputStream), eq("bar"),
 				eq("the new category"), eq("the new description"), any(Iterable.class));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void logicCalledOnUpdateWithFileOnly() throws Exception {
+		// given
+		final UserProcessClass targetClass = mock(UserProcessClass.class);
+		doReturn("bar") //
+				.when(targetClass).getName();
+		doReturn(targetClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+		final UserProcessInstance processInstance = mock(UserProcessInstance.class);
+		doReturn(processInstance) //
+				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
+		final InputStream inputStream = new NullInputStream(1024);
+		final DataSource dataSource = mock(DataSource.class);
+		doReturn(inputStream) //
+				.when(dataSource).getInputStream();
+		final DataHandler dataHandler = new DataHandler(dataSource);
+		doReturn(NO_METADATA) //
+				.when(dmsLogic).getCategoryDefinition(anyString());
+
+		// when
+		cxfProcessInstanceAttachments.update("foo", 123L, "bar", null, dataHandler);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
+		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
+		inOrder.verify(userStore).getUser();
+		inOrder.verify(dmsLogic).upload(eq("dummy user"), eq("foo"), eq(123L), same(inputStream), eq("bar"),
+				isNull(String.class), isNull(String.class), any(Iterable.class));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void logicCalledOnUpdateWithAttachmentOnly() throws Exception {
+		// given
+		final UserProcessClass targetClass = mock(UserProcessClass.class);
+		doReturn("bar") //
+				.when(targetClass).getName();
+		doReturn(targetClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+		final UserProcessInstance processInstance = mock(UserProcessInstance.class);
+		doReturn(processInstance) //
+				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
+		final Attachment attachment = newAttachment() //
+				.withCategory("the new category") //
+				.withDescription("the new description") //
+				.build();
+		doReturn(NO_METADATA) //
+				.when(dmsLogic).getCategoryDefinition(anyString());
+
+		// when
+		cxfProcessInstanceAttachments.update("foo", 123L, "bar", attachment, null);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
+		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
+		inOrder.verify(dmsLogic).updateDescriptionAndMetadata(eq("foo"), eq(123L), eq("bar"), eq("the new category"),
+				eq("the new description"), any(Iterable.class));
+		inOrder.verifyNoMoreInteractions();
+	}
+
+	@Test
+	public void logicNotCalledOnUpdateWhenBothAttachmentAndFileAreMissing() throws Exception {
+		// given
+		final UserProcessClass targetClass = mock(UserProcessClass.class);
+		doReturn("bar") //
+				.when(targetClass).getName();
+		doReturn(targetClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+		final UserProcessInstance processInstance = mock(UserProcessInstance.class);
+		doReturn(processInstance) //
+				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
+		doReturn(NO_METADATA) //
+				.when(dmsLogic).getCategoryDefinition(anyString());
+
+		// when
+		cxfProcessInstanceAttachments.update("foo", 123L, "bar", null, null);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
+		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
 		inOrder.verifyNoMoreInteractions();
 	}
 

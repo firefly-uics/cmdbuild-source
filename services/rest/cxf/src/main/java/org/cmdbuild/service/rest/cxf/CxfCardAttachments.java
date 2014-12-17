@@ -1,61 +1,35 @@
 package org.cmdbuild.service.rest.cxf;
 
-import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
-import static com.google.common.collect.Lists.newArrayList;
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.cmdbuild.service.rest.model.Models.newAttachment;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.activation.DataHandler;
 
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dms.Metadata;
-import org.cmdbuild.dms.MetadataDefinition;
-import org.cmdbuild.dms.MetadataGroup;
-import org.cmdbuild.dms.MetadataGroupDefinition;
-import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
-import org.cmdbuild.service.rest.cxf.serialization.ToAttachment;
 import org.cmdbuild.service.rest.model.Attachment;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
-public class CxfCardAttachments implements AllInOneCardAttachments {
+public class CxfCardAttachments extends AttachmentsManagement implements AllInOneCardAttachments {
 
-	private static final Function<StoredDocument, Attachment> TO_ATTACHMENT_WITH_NO_METADATA = ToAttachment
-			.newInstance() //
-			.build();
-	private static final Function<StoredDocument, Attachment> TO_ATTACHMENT_WITH_METADATA = ToAttachment.newInstance() //
-			.withMetadata(true) //
-			.build();
-
-	private static final Attachment NULL_ATTACHMENT = newAttachment().build();
-
-	private final DmsLogic dmsLogic;
 	private final DataAccessLogic dataAccessLogic;
 	private final ErrorHandler errorHandler;
-	private final UserStore userStore;
 
 	public CxfCardAttachments(final ErrorHandler errorHandler, final DmsLogic dmsLogic,
 			final DataAccessLogic dataAccessLogic, final UserStore userStore) {
+		super(dmsLogic, userStore);
 		this.errorHandler = errorHandler;
-		this.dmsLogic = dmsLogic;
 		this.dataAccessLogic = dataAccessLogic;
-		this.userStore = userStore;
 	}
 
 	@Override
@@ -68,7 +42,11 @@ public class CxfCardAttachments implements AllInOneCardAttachments {
 		if (isBlank(dataHandler.getName())) {
 			errorHandler.missingAttachmentName();
 		}
-		upload(classId, cardId, dataHandler.getName(), defaultIfNull(attachment, NULL_ATTACHMENT), dataHandler);
+		try {
+			store(classId, cardId, dataHandler.getName(), attachment, dataHandler);
+		} catch (final Exception e) {
+			errorHandler.propagate(e);
+		}
 		return newResponseSingle(String.class) //
 				.withElement(dataHandler.getName()) //
 				.build();
@@ -77,9 +55,7 @@ public class CxfCardAttachments implements AllInOneCardAttachments {
 	@Override
 	public ResponseMultiple<Attachment> read(final String classId, final Long cardId) {
 		assureClassAndCard(classId, cardId);
-		final Iterable<StoredDocument> documents = dmsLogic.search(classId, cardId);
-		final Iterable<Attachment> elements = from(documents) //
-				.transform(TO_ATTACHMENT_WITH_NO_METADATA);
+		final Iterable<Attachment> elements = search(classId, cardId);
 		return newResponseMultiple(Attachment.class) //
 				.withElements(elements) //
 				.withMetadata(newMetadata() //
@@ -91,20 +67,19 @@ public class CxfCardAttachments implements AllInOneCardAttachments {
 	@Override
 	public ResponseSingle<Attachment> read(final String classId, final Long cardId, final String attachmentId) {
 		assureClassAndCard(classId, cardId, attachmentId);
-		final Optional<StoredDocument> document = dmsLogic.search(classId, cardId, attachmentId);
-		if (!document.isPresent()) {
+		final Optional<Attachment> element = search(classId, cardId, attachmentId);
+		if (!element.isPresent()) {
 			errorHandler.attachmentNotFound(attachmentId);
 		}
-		final Attachment element = TO_ATTACHMENT_WITH_METADATA.apply(document.get());
 		return newResponseSingle(Attachment.class) //
-				.withElement(element) //
+				.withElement(element.get()) //
 				.build();
 	}
 
 	@Override
 	public DataHandler download(final String classId, final Long cardId, final String attachmentId) {
 		assureClassAndCard(classId, cardId);
-		return dmsLogic.download(classId, cardId, attachmentId);
+		return super.download(classId, cardId, attachmentId);
 	}
 
 	@Override
@@ -114,16 +89,17 @@ public class CxfCardAttachments implements AllInOneCardAttachments {
 		if (isBlank(attachmentId)) {
 			errorHandler.missingAttachmentId();
 		}
-		if (dataHandler == null) {
-			errorHandler.missingFile();
+		try {
+			store(classId, cardId, attachmentId, attachment, dataHandler);
+		} catch (final Exception e) {
+			errorHandler.propagate(e);
 		}
-		upload(classId, cardId, attachmentId, attachment, dataHandler);
 	}
 
 	@Override
 	public void delete(final String classId, final Long cardId, final String attachmentId) {
 		assureClassAndCard(classId, cardId);
-		dmsLogic.delete(classId, cardId, attachmentId);
+		super.delete(classId, cardId, attachmentId);
 	}
 
 	private void assureClassAndCard(final String classId, final Long cardId) {
@@ -151,76 +127,6 @@ public class CxfCardAttachments implements AllInOneCardAttachments {
 		if (isBlank(attachmentId)) {
 			errorHandler.missingAttachmentId();
 		}
-	}
-
-	private void upload(final String classId, final Long cardId, final String attachmentId,
-			final Attachment attachment, final DataHandler dataHandler) {
-		try {
-			final String author = userStore.getUser().getAuthenticatedUser().getUsername();
-			dmsLogic.upload( //
-					author, //
-					classId, //
-					cardId, //
-					dataHandler.getInputStream(), //
-					attachmentId, //
-					attachment.getCategory(), //
-					attachment.getDescription(), //
-					metadataGroupsOf(attachment) //
-			);
-		} catch (final Exception e) {
-			errorHandler.propagate(e);
-		}
-	}
-
-	private Collection<MetadataGroup> metadataGroupsOf(final Attachment attachment) {
-		final Collection<MetadataGroup> metadataGroups = newArrayList();
-		for (final MetadataGroupDefinition groupDefinition : dmsLogic.getCategoryDefinition(attachment.getCategory())
-				.getMetadataGroupDefinitions()) {
-			final Map<String, Object> attachmentMetadata = attachment.getMetadata();
-			metadataGroups.add(metadataGroupOf(groupDefinition, attachmentMetadata));
-		}
-		return metadataGroups;
-	}
-
-	private MetadataGroup metadataGroupOf(final MetadataGroupDefinition groupDefinition,
-			final Map<String, Object> attachmentMetadata) {
-		return new MetadataGroup() {
-
-			@Override
-			public String getName() {
-				return groupDefinition.getName();
-			}
-
-			@Override
-			public Iterable<Metadata> getMetadata() {
-				final Collection<Metadata> metadata = newArrayList();
-				for (final MetadataDefinition metadataDefinition : groupDefinition.getMetadataDefinitions()) {
-					final String name = metadataDefinition.getName();
-					final Object rawValue = attachmentMetadata.get(name);
-					if (attachmentMetadata.containsKey(name)) {
-						metadata.add(metadataOf(name, rawValue));
-					}
-				}
-				return metadata;
-			}
-
-		};
-	}
-
-	private Metadata metadataOf(final String name, final Object rawValue) {
-		return new Metadata() {
-
-			@Override
-			public String getName() {
-				return name;
-			}
-
-			@Override
-			public String getValue() {
-				return (rawValue == null) ? EMPTY : rawValue.toString();
-			}
-
-		};
 	}
 
 }
