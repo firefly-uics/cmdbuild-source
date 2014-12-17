@@ -55,7 +55,7 @@ public class ToAttachment implements Function<StoredDocument, Attachment> {
 	@Override
 	public Attachment apply(final StoredDocument input) {
 		return newAttachment() //
-				.withId(input.getName()) //
+				.withId(input.getName()) // TODO to base64
 				.withName(input.getName()) //
 				.withCategory(input.getCategory()) //
 				.withDescription(input.getDescription()) //

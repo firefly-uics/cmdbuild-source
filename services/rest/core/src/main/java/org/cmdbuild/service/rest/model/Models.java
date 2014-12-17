@@ -1534,6 +1534,10 @@ public class Models {
 		return new AttachmentBuilder();
 	}
 
+	public static AttachmentBuilder newAttachment(final Attachment attachment) {
+		return new AttachmentBuilder(attachment);
+	}
+
 	public static AttachmentCategoryBuilder newAttachmentCategory() {
 		return new AttachmentCategoryBuilder();
 	}
