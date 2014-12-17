@@ -33,9 +33,9 @@ public class CxfProcessInstanceAttachments extends AttachmentsManagement impleme
 	}
 
 	@Override
-	public ResponseSingle<String> create(final String classId, final Long cardId, final Attachment attachment,
+	public ResponseSingle<String> create(final String processId, final Long instanceId, final Attachment attachment,
 			final DataHandler dataHandler) {
-		assureProcessAndInstance(classId, cardId);
+		assureProcessAndInstance(processId, instanceId);
 		if (dataHandler == null) {
 			errorHandler.missingFile();
 		}
@@ -43,7 +43,7 @@ public class CxfProcessInstanceAttachments extends AttachmentsManagement impleme
 			errorHandler.missingAttachmentName();
 		}
 		try {
-			store(classId, cardId, dataHandler.getName(), attachment, dataHandler);
+			store(processId, instanceId, dataHandler.getName(), attachment, dataHandler);
 		} catch (final Exception e) {
 			errorHandler.propagate(e);
 		}
@@ -83,14 +83,14 @@ public class CxfProcessInstanceAttachments extends AttachmentsManagement impleme
 	}
 
 	@Override
-	public void update(final String classId, final Long cardId, final String attachmentId, final Attachment attachment,
-			final DataHandler dataHandler) {
-		assureProcessAndInstance(classId, cardId);
+	public void update(final String processId, final Long instanceId, final String attachmentId,
+			final Attachment attachment, final DataHandler dataHandler) {
+		assureProcessAndInstance(processId, instanceId);
 		if (isBlank(attachmentId)) {
 			errorHandler.missingAttachmentId();
 		}
 		try {
-			store(classId, cardId, attachmentId, attachment, dataHandler);
+			store(processId, instanceId, attachmentId, attachment, dataHandler);
 		} catch (final Exception e) {
 			errorHandler.propagate(e);
 		}

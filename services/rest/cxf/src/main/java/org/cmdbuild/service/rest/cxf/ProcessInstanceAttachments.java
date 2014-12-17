@@ -29,8 +29,8 @@ public interface ProcessInstanceAttachments {
 	@Consumes(MULTIPART_FORM_DATA)
 	@Produces(APPLICATION_JSON)
 	ResponseSingle<String> create( //
-			@PathParam(PROCESS_ID) String classId, //
-			@PathParam(PROCESS_INSTANCE_ID) Long cardId, //
+			@PathParam(PROCESS_ID) String processId, //
+			@PathParam(PROCESS_INSTANCE_ID) Long instanceId, //
 			@Multipart(value = ATTACHMENT, required = false) Attachment attachment, //
 			@Multipart(FILE) DataHandler dataHandler //
 	);
@@ -40,8 +40,8 @@ public interface ProcessInstanceAttachments {
 	@Consumes(MULTIPART_FORM_DATA)
 	@Produces(APPLICATION_JSON)
 	void update( //
-			@PathParam(PROCESS_ID) String classId, //
-			@PathParam(PROCESS_INSTANCE_ID) Long cardId, //
+			@PathParam(PROCESS_ID) String processId, //
+			@PathParam(PROCESS_INSTANCE_ID) Long instanceId, //
 			@PathParam(ATTACHMENT_ID) String attachmentId, //
 			@Multipart(value = ATTACHMENT, required = false) Attachment attachment, //
 			@Multipart(value = FILE, required = false) DataHandler dataHandler //

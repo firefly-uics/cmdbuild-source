@@ -54,6 +54,8 @@ import org.cmdbuild.service.rest.cxf.CxfSessions;
 import org.cmdbuild.service.rest.cxf.CxfSessions.AuthenticationLogicAdapter;
 import org.cmdbuild.service.rest.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.cxf.TranslatingAllInOneCardAttachments;
+import org.cmdbuild.service.rest.cxf.TranslatingAllInOneProcessInstanceAttachments;
 import org.cmdbuild.service.rest.cxf.WebApplicationExceptionErrorHandler;
 import org.cmdbuild.service.rest.cxf.service.InMemoryOperationUserStore;
 import org.cmdbuild.service.rest.cxf.service.InMemorySessionStore;
@@ -87,7 +89,7 @@ public class Services implements LoggingSupport {
 	public AllInOneCardAttachments cxfCardAttachments() {
 		final CxfCardAttachments service = new CxfCardAttachments(errorHandler(), helper.dmsLogic(),
 				helper.systemDataAccessLogic(), helper.userStore());
-		return proxy(AllInOneCardAttachments.class, service);
+		return proxy(AllInOneCardAttachments.class, new TranslatingAllInOneCardAttachments(service));
 	}
 
 	@Bean
@@ -222,7 +224,8 @@ public class Services implements LoggingSupport {
 	public AllInOneProcessInstanceAttachments cxfProcessInstanceAttachments() {
 		final CxfProcessInstanceAttachments service = new CxfProcessInstanceAttachments(errorHandler(),
 				helper.dmsLogic(), helper.userWorkflowLogic(), helper.userStore());
-		return proxy(AllInOneProcessInstanceAttachments.class, service);
+		return proxy(AllInOneProcessInstanceAttachments.class, new TranslatingAllInOneProcessInstanceAttachments(
+				service));
 	}
 
 	@Bean
