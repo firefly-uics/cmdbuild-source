@@ -1,10 +1,6 @@
 package org.cmdbuild.service.rest.cxf.security;
 
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
-import static org.apache.cxf.message.Message.PROTOCOL_HEADERS;
-
-import java.util.List;
-import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
@@ -23,28 +19,29 @@ import com.google.common.base.Predicate;
 
 public class TokenHandler implements RequestHandler, LoggingSupport {
 
-	public static final String TOKEN_HEADER = "CMDBuild-Authorization";
+	public static interface TokenExtractor {
 
-	private static final Optional<String> ABSENT = Optional.absent();
+		Optional<String> extract(Message message);
 
+	}
+
+	private final TokenExtractor tokenExtractor;
 	private final Predicate<Class<?>> unauthorizedServices;
 	private final SessionStore sessionStore;
 	private final OperationUserStore operationUserStore;
 	private final UserStore userStore;
 
-	public TokenHandler(final Predicate<Class<?>> unauthorizedServices, final SessionStore sessionStore,
-			final OperationUserStore operationUserStore, final UserStore userStore) {
+	public TokenHandler(final TokenExtractor tokenExtractor, final Predicate<Class<?>> unauthorizedServices,
+			final SessionStore sessionStore, final OperationUserStore operationUserStore, final UserStore userStore) {
 		this.unauthorizedServices = unauthorizedServices;
 		this.sessionStore = sessionStore;
 		this.operationUserStore = operationUserStore;
 		this.userStore = userStore;
+		this.tokenExtractor = tokenExtractor;
 	}
 
 	@Override
 	public Response handleRequest(final Message message, final ClassResourceInfo resourceClass) {
-		final Map<String, List<String>> headers = (Map<String, List<String>>) message.get(PROTOCOL_HEADERS);
-		final List<String> tokens = headers.get(TOKEN_HEADER);
-		final Optional<String> token = (tokens == null || tokens.isEmpty()) ? ABSENT : Optional.of(tokens.get(0));
 		Response response = null;
 		do {
 			final boolean unauthorized = unauthorizedServices.apply(resourceClass.getServiceClass());
@@ -52,6 +49,7 @@ public class TokenHandler implements RequestHandler, LoggingSupport {
 				break;
 			}
 
+			final Optional<String> token = tokenExtractor.extract(message);
 			final boolean missingToken = !token.isPresent();
 			if (missingToken) {
 				response = Response.status(UNAUTHORIZED).build();
@@ -76,4 +74,5 @@ public class TokenHandler implements RequestHandler, LoggingSupport {
 		} while (false);
 		return response;
 	}
+
 }
