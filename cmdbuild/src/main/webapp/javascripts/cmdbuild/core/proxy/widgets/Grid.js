@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.widgets.CMProxyWidgetGrid', {
+	Ext.define('CMDBuild.core.proxy.widgets.Grid', {
 		requires: ['CMDBuild.model.CMModelFunctions'],
 
 		singleton: true,
@@ -79,8 +79,8 @@
 			 */
 			getStoreFromFunction: function(parameters) {
 				return Ext.create('Ext.data.Store', {
-					fields: parameters.fields,
 					autoLoad: true,
+					fields: parameters.fields,
 					proxy: {
 						type: 'ajax',
 						url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.grid.getSqlCardList,
