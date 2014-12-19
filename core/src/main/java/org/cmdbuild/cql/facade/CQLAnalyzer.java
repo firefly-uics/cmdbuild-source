@@ -4,7 +4,8 @@ import static com.google.common.collect.Iterables.isEmpty;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
-import static org.cmdbuild.dao.query.clause.alias.EntryTypeAlias.canonicalAlias;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.canonical;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue.beginsWith;
@@ -22,15 +23,11 @@ import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClaus
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
 
 import java.lang.reflect.Field;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import javax.sql.DataSource;
 
 import org.cmdbuild.cql.CQLBuilderListener.FieldInputValue;
 import org.cmdbuild.cql.CQLBuilderListener.FieldValueType;
@@ -66,9 +63,9 @@ import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.join.Over;
 import org.cmdbuild.dao.query.clause.where.FalseWhereClause;
+import org.cmdbuild.dao.query.clause.where.Native;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
@@ -79,8 +76,6 @@ import org.cmdbuild.logger.Log;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 
 import com.google.common.collect.Lists;
 
@@ -205,7 +200,6 @@ public class CQLAnalyzer {
 		new CQLAnalyzer(q, vars, callback).analyze();
 	}
 
-	private final DataSource dataSource = applicationContext().getBean(DataSource.class);
 	private final CMDataView dataView = applicationContext().getBean(DBDataView.class);
 	private final LookupStore lookupStore = applicationContext().getBean(LookupStore.class);
 
@@ -218,7 +212,7 @@ public class CQLAnalyzer {
 	private final Collection<WhereClause> whereClauses;
 	private final Collection<JoinElement> joinElements;
 
-	public CQLAnalyzer(final QueryImpl query, final Map<String, Object> vars, final Callback callback) {
+	private CQLAnalyzer(final QueryImpl query, final Map<String, Object> vars, final Callback callback) {
 		this.query = query;
 		this.vars = vars;
 		this.callback = callback;
@@ -241,10 +235,9 @@ public class CQLAnalyzer {
 		}
 		for (final JoinElement joinElement : joinElements) {
 			final CMDomain domain = dataView.findDomain(joinElement.domain);
-			final Alias domainAlias = (joinElement.domainAlias == null) ? canonicalAlias(domain)
-					: joinElement.domainAlias;
+			final Alias domainAlias = (joinElement.domainAlias == null) ? canonical(domain) : joinElement.domainAlias;
 			final CMClass clazz = dataView.findClass(joinElement.destination);
-			final Alias targetAlias = (joinElement.alias == null) ? canonicalAlias(clazz) : joinElement.alias;
+			final Alias targetAlias = (joinElement.alias == null) ? canonical(clazz) : joinElement.alias;
 			if (joinElement.left) {
 				callback.leftJoin(clazz, targetAlias, over(domain, domainAlias));
 			} else {
@@ -289,7 +282,7 @@ public class CQLAnalyzer {
 			final CMClass target = domain.getClass1().isAncestorOf(fromClass) ? domain.getClass2() : domain.getClass1();
 			joinElements.add(JoinElement.newInstance() //
 					.domainName(domain.getName()) //
-					.domainAlias(NameAlias.as(domain.getName() + randomNumeric(10))) //
+					.domainAlias(name(domain.getName() + randomNumeric(10))) //
 					.destinationName(target.getName()) //
 					.isLeft(false) //
 					.build());
@@ -455,6 +448,7 @@ public class CQLAnalyzer {
 
 			if (firstStringValue != null) {
 				attribute.getType().accept(new NullAttributeTypeVisitor() {
+
 					@Override
 					public void visit(final LookupAttributeType attributeType) {
 						if (field.getValues().iterator().next().getType() != FieldValueType.NATIVE) {
@@ -494,14 +488,14 @@ public class CQLAnalyzer {
 									target = domain.getClass1();
 								}
 
-								final Alias destinationAlias = NameAlias.as(String.format("DST-%s-%s",
-										target.getName(), randomNumeric(10)));
+								final Alias destinationAlias = name(String.format("DST-%s-%s", target.getName(),
+										randomNumeric(10)));
 
 								whereClauses.add( //
 										condition(attribute(destinationAlias, "Description"), eq(firstStringValue)));
 								joinElements.add(JoinElement.newInstance() //
 										.domainName(domainName) //
-										.domainAlias(NameAlias.as(domain.getName() + randomNumeric(10))) //
+										.domainAlias(name(domain.getName() + randomNumeric(10))) //
 										.destinationName(target.getName()) //
 										.destinationAlias(destinationAlias) //
 										.isLeft(true) //
@@ -509,12 +503,19 @@ public class CQLAnalyzer {
 							}
 						}
 					}
+
 				});
 			}
 		}
 		final List<Object> convertedValues = Lists.newArrayList();
 		for (final Object value : values) {
-			convertedValues.add(attribute.getType().convertValue(value));
+			final Object converted;
+			if (field.getValues().iterator().next().getType() == FieldValueType.NATIVE) {
+				converted = value;
+			} else {
+				converted = attribute.getType().convertValue(value);
+			}
+			convertedValues.add(converted);
 		}
 
 		return convertedValues;
@@ -538,7 +539,8 @@ public class CQLAnalyzer {
 			callback.addValue(fieldValue.getValue().toString());
 			break;
 		case NATIVE:
-			sqlQuery(fieldValue.getValue().toString(), callback);
+			callback.addValue(Native.of(fieldValue.getValue().toString()));
+			// sqlQuery(fieldValue.getValue().toString(), callback);
 			break;
 		case INPUT:
 			final FieldInputValue fieldInputValue = FieldInputValue.class.cast(fieldValue.getValue());
@@ -556,16 +558,6 @@ public class CQLAnalyzer {
 			throw new RuntimeException("cannot convert value " + fieldValue.getType().name() + ": "
 					+ fieldValue.getValue() + " to string!");
 		}
-	}
-
-	private void sqlQuery(final String sql, final ConvertedCallback callback) {
-		Log.SQL.debug(marker, "Execute nested SQL in CQL filter: {}", sql);
-		new JdbcTemplate(dataSource).query(sql, new RowCallbackHandler() {
-			@Override
-			public void processRow(final ResultSet rs) throws SQLException {
-				callback.addValue(rs.getObject(1));
-			}
-		});
 	}
 
 }
