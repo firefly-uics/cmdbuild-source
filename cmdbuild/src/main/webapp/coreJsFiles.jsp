@@ -19,6 +19,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/fixes/CMFixFieldset.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/fixes/CMFixLayoutContainerEditor.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/fixes/CMFixMultipleEmailVType.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/Server.js"></script>
 
 <!--  PROXYES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>

@@ -319,7 +319,9 @@
 								fields: _CMCache.getDataSourceOutput(presetsString),
 								extraParams: {
 									'function': presetsString,
-									params: Ext.encode(params)
+									params: Ext.encode(params),
+//									limit: 1000,
+//									start: 0
 								}
 							})
 						);
