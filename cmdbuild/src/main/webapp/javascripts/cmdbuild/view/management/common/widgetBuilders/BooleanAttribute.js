@@ -14,6 +14,7 @@ CMDBuild.WidgetBuilders.BooleanAttribute.prototype.buildGridHeader = function(at
 
 	var h = new Ext.ux.CheckColumn({
 		header : attribute.description,
+		disabled: (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read') ? true : false, // Read only attributes setup
 		sortable : true,
 		dataIndex : attribute.name,
 		hidden : !attribute.isbasedsp,

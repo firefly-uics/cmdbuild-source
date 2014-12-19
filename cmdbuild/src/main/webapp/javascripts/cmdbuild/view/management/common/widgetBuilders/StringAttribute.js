@@ -2,7 +2,7 @@
  * @class CMDBuild.WidgetBuilders.StringAttribute
  * @extends CMDBuild.WidgetBuilders.TextualQueryAttribute
  */
-Ext.ns("CMDBuild.WidgetBuilders"); 
+Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.StringAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.StringAttribute, CMDBuild.WidgetBuilders.TextualQueryAttribute);
 
@@ -21,6 +21,7 @@ CMDBuild.WidgetBuilders.StringAttribute.prototype.buildGridHeader = function(att
 
 	return {
 		header : attribute.description,
+		disabled: (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read') ? true : false, // Read only attributes setup
 		sortable : true,
 		dataIndex : attribute.name,
 		hidden: !attribute.isbasedsp,
