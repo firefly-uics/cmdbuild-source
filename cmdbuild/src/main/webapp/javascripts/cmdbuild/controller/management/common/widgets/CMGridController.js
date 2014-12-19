@@ -549,8 +549,7 @@
 				this.columns = this.buildColumnsForAttributes();
 
 				this.addActionColumns();
-_debug('this.getStoreForFields(this.columns.fields)', this.getStoreForFields(this.columns.fields));
-_debug('this.columns.headers', this.columns.headers);
+
 				this.grid.reconfigure(
 					this.getStoreForFields(this.columns.fields),
 					this.columns.headers
