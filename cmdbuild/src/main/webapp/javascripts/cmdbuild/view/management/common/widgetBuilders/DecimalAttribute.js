@@ -18,7 +18,6 @@ CMDBuild.WidgetBuilders.DecimalAttribute.prototype.gridRenderer = function(v) {
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.buildGridHeader = function(attribute) {
 	return {
 		header: attribute.description,
-		disabled: (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read') ? true : false, // Read only attributes setup
 		sortable : true,
 		dataIndex : attribute.name,
 		hidden: !attribute.isbasedsp,

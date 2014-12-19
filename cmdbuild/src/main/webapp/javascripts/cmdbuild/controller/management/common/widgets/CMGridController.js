@@ -184,6 +184,7 @@
 			if (Ext.isEmpty(header.renderer))
 				header.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
 					value = value || record.get(header.dataIndex);
+
 					if (!Ext.isEmpty(value)) {
 						if (header.field.store) {
 							var comboRecord = header.field.store.findRecord('Id', value);
@@ -228,7 +229,7 @@
 				var editor = attributesMap[attribute.type].buildField(attribute, false, false);
 
 				editor.hideLabel = true;
-_debug('attribute', attribute);
+
 				if (header) {
 					if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
 						editor.disabled = true;
@@ -245,6 +246,9 @@ _debug('attribute', attribute);
 					} else {
 						header.cmReadOnly = false;
 					}
+
+					// Read only attributes header setup
+					header.disabled = (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read') ? true : false,
 
 					headers.push(header);
 
