@@ -9,6 +9,7 @@ import org.cmdbuild.dao.driver.postgres.quote.ParamAdder;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.ClassHistory;
+import org.cmdbuild.dao.query.clause.where.Native;
 
 public class PartCreator {
 
@@ -30,27 +31,34 @@ public class PartCreator {
 
 	// TODO Handle CMDBuild and Geographic types conversion
 	protected final String param(final Object o, final String cast) {
+		final String output;
 		if (o instanceof List) {
 			final List<Object> l = (List<Object>) o;
-			final StringBuilder sb = new StringBuilder("(");
-			int i = 1;
-			for (final Object value : l) {
-				sb.append("?");
-				if (i < l.size()) {
-					sb.append(",");
-					i++;
+			if (l.size() == 1 && l.get(0) instanceof Native) {
+				output = Native.class.cast(l.get(0)).expression;
+			} else {
+				final StringBuilder sb = new StringBuilder("(");
+				int i = 1;
+				for (final Object value : l) {
+					sb.append("?");
+					if (i < l.size()) {
+						sb.append(",");
+						i++;
+					}
+					Object effectiveValue = value;
+					if (value instanceof IdAndDescription) {
+						effectiveValue = IdAndDescription.class.cast(value).getId();
+					}
+					params.add(effectiveValue);
 				}
-				Object effectiveValue = value;
-				if (value instanceof IdAndDescription) {
-					effectiveValue = IdAndDescription.class.cast(value).getId();
-				}
-				params.add(effectiveValue);
+				sb.append(")");
+				output = sb.toString();
 			}
-			sb.append(")");
-			return sb.toString();
+		} else {
+			params.add(o);
+			output = "?" + (cast != null ? "::" + cast : "");
 		}
-		params.add(o);
-		return "?" + (cast != null ? "::" + cast : "");
+		return output;
 	}
 
 	public final List<Object> getParams() {
