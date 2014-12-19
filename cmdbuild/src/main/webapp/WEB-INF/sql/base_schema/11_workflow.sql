@@ -87,5 +87,5 @@ SELECT cm_create_class_attribute('Email', 'ToAddresses', 'text', '', false, fals
 SELECT cm_create_class_attribute('Email', 'CcAddresses', 'text', '', false, false, 'MODE: read|FIELDMODE: write|DESCR: CC|INDEX: 8|BASEDSP: false|STATUS: active');
 SELECT cm_create_class_attribute('Email', 'Subject', 'text', '', false, false, 'MODE: read|FIELDMODE: write|DESCR: Subject|INDEX: 9|BASEDSP: true|STATUS: active');
 SELECT cm_create_class_attribute('Email', 'Content', 'text', '', false, false, 'MODE: read|FIELDMODE: write|DESCR: Body|INDEX: 10|BASEDSP: false|STATUS: active');
-SELECT cm_create_class_attribute('Email', 'NotifyWith', 'text', null, false, false, 'MODE: write|DESCR: NotifyWith|INDEX: 10|BASEDSP: false|STATUS: active');
-
+SELECT cm_create_class_attribute('Email', 'NotifyWith', 'text', null, false, false, 'MODE: write|DESCR: NotifyWith|INDEX: 11|BASEDSP: false|STATUS: active');
+SELECT cm_create_class_attribute('Email', 'NoSubjectPrefix', 'boolean', 'false', false, false, 'MODE: write|DESCR: No subject prefix|INDEX: 12|BASEDSP: false|STATUS: active');

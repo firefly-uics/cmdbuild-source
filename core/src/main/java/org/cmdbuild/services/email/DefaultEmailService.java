@@ -58,6 +58,7 @@ public class DefaultEmailService implements EmailService {
 		protected EmailConfiguration doGet() {
 			return (emailConfigurationFactory == null) ? emailConfiguration : emailConfigurationFactory.create();
 		}
+
 	}
 
 	private static class MailApiHolder extends SingletonHolder<MailApi> {
