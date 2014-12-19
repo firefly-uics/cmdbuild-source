@@ -1,6 +1,5 @@
 package org.cmdbuild.model.widget;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Map;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailLogic.EmailSubmission;
 import org.cmdbuild.model.AbstractEmail;
-import org.cmdbuild.model.email.Email;
 import org.cmdbuild.workflow.CMActivityInstance;
 
 import com.google.common.collect.Lists;
@@ -28,6 +26,7 @@ public class ManageEmail extends Widget {
 	private static final String CONTENT_ATTRIBUTE = "content";
 	private static final String NOTIFY_WITH_ATTRIBUTE = "notifyWith";
 	private static final String TEMPORARY_ID = "temporaryId";
+	private final static String NO_SUBJECT_PREFIX = "noSubjectPrefix";
 
 	private static class Submission {
 
@@ -45,7 +44,9 @@ public class ManageEmail extends Widget {
 	}
 
 	public static class EmailTemplate extends AbstractEmail {
+
 		private String condition;
+		private boolean noSubjectPrefix;
 
 		public String getCondition() {
 			return condition;
@@ -53,6 +54,14 @@ public class ManageEmail extends Widget {
 
 		public void setCondition(final String condition) {
 			this.condition = condition;
+		}
+
+		public boolean isNoSubjectPrefix() {
+			return noSubjectPrefix;
+		}
+
+		public void setNoSubjectPrefix(final boolean noSubjectPrefix) {
+			this.noSubjectPrefix = noSubjectPrefix;
 		}
 	}
 
@@ -62,6 +71,7 @@ public class ManageEmail extends Widget {
 
 	private Collection<EmailTemplate> emailTemplates;
 	private Map<String, String> templates;
+	private boolean noSubjectPrefix;
 
 	public ManageEmail(final EmailLogic emailLogic) {
 		super();
@@ -101,6 +111,14 @@ public class ManageEmail extends Widget {
 
 	public void setTemplates(final Map<String, String> templates) {
 		this.templates = templates;
+	}
+
+	public boolean isNoSubjectPrefix() {
+		return noSubjectPrefix;
+	}
+
+	public void setNoSubjectPrefix(final boolean noSubjectPrefix) {
+		this.noSubjectPrefix = noSubjectPrefix;
 	}
 
 	@Override
@@ -148,6 +166,7 @@ public class ManageEmail extends Widget {
 		email.setContent((String) emailMap.get(CONTENT_ATTRIBUTE));
 		email.setNotifyWith((String) emailMap.get(NOTIFY_WITH_ATTRIBUTE));
 		email.setTemporaryId((String) emailMap.get(TEMPORARY_ID));
+		email.setNoSubjectPrefix((Boolean) emailMap.get(NO_SUBJECT_PREFIX));
 		return email;
 	}
 
