@@ -3,7 +3,7 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.CMGridController', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
-		requires: ['CMDBuild.core.proxy.widgets.CMProxyWidgetGrid'],
+		requires: ['CMDBuild.core.proxy.widgets.Grid'],
 
 		mixins: {
 			observable: 'Ext.util.Observable'
@@ -181,27 +181,27 @@
 		addRendererToHeader: function(header, required) {
 			var me = this;
 
-			header.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
-				value = value || record.get(header.dataIndex);
+			if (Ext.isEmpty(header.renderer))
+				header.renderer = function(value, metadata, record, rowIndex, colIndex, store, view) {
+					value = value || record.get(header.dataIndex);
+					if (!Ext.isEmpty(value)) {
+						if (header.field.store) {
+							var comboRecord = header.field.store.findRecord('Id', value);
 
-				if (!Ext.isEmpty(value)) {
-					if (header.field.store) {
-						var comboRecord = header.field.store.findRecord('Id', value);
+							value = (comboRecord) ?	comboRecord.get('Description') : '';
+						} else if (value && typeof value == 'object') {
+							if (value instanceof Date)
+								value = me.formatDate(value);
+						}
 
-						value = (comboRecord) ?	comboRecord.get('Description') : '';
-					} else if (value && typeof value == 'object') {
-						if (value instanceof Date)
-							value = me.formatDate(value);
+						if (Ext.String.trim(value) == '' && required)
+							value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
+
+						return value;
 					}
 
-					if (Ext.String.trim(value) == '' && required)
-						value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
-
-					return value;
-				}
-
-				return null;
-			};
+					return null;
+				};
 		},
 
 		/**
@@ -238,7 +238,7 @@
 						editor.required = true;
 					}
 
-					// Do not overwrite renderer, add editor on checkbox columns and make it editable
+					// Do not override renderer, add editor on checkbox columns and make it editable
 					if (attribute[CMDBuild.core.proxy.CMProxyConstants.TYPE] != 'BOOLEAN') {
 						header.field = editor;
 						this.addRendererToHeader(header, attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL]);
@@ -268,7 +268,7 @@
 		 */
 		decodeFunctionPresets: function(presetsString) {
 			// Validate presetsString
-			CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.getFunctions({
+			CMDBuild.core.proxy.widgets.Grid.getFunctions({
 				scope: this,
 				success: function(result, options, decodedResult) {
 					var me = this;
@@ -311,7 +311,7 @@
 							params[functionParams[index]] = widgetUnmanagedVariables[functionParams[index]];
 
 						this.grid.reconfigure(
-							CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.getStoreFromFunction({
+							CMDBuild.core.proxy.widgets.Grid.getStoreFromFunction({
 								fields: _CMCache.getDataSourceOutput(presetsString),
 								extraParams: {
 									'function': presetsString,
@@ -458,9 +458,11 @@
 						);
 
 					default:
-						throw 'CMGridController: wrong serializationType ('
+						_debug(
+							'CMGridController: wrong serializationType ('
 							+ this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SERIALIZATION_TYPE]
-							+ ') format or value';
+							+ ') format or value'
+						);
 				}
 			}
 		},
@@ -485,11 +487,11 @@
 		 */
 		onCSVUploadButtonClick: function() {
 			CMDBuild.LoadMask.get().show();
-			CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.uploadCsv({
+			CMDBuild.core.proxy.widgets.Grid.uploadCsv({
 				form: this.importCSVWindow.csvUploadForm.getForm(),
 				scope: this,
 				success: function(response, options) {
-					CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.getCsvRecords({
+					CMDBuild.core.proxy.widgets.Grid.getCsvRecords({
 						scope: this,
 						success: function(result, options, decodedResult) {
 							this.setGridDataFromCsv(decodedResult.rows);
@@ -547,7 +549,8 @@
 				this.columns = this.buildColumnsForAttributes();
 
 				this.addActionColumns();
-
+_debug('this.getStoreForFields(this.columns.fields)', this.getStoreForFields(this.columns.fields));
+_debug('this.columns.headers', this.columns.headers);
 				this.grid.reconfigure(
 					this.getStoreForFields(this.columns.fields),
 					this.columns.headers
