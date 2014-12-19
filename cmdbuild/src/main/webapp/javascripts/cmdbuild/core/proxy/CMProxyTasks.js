@@ -247,7 +247,7 @@
 						[tr.afterCreate, CMDBuild.core.proxy.CMProxyConstants.PHASE_AFTER_CREATE],
 						[tr.afterUpdate, CMDBuild.core.proxy.CMProxyConstants.PHASE_AFTER_UPDATE],
 						[tr.beforeUpdate, CMDBuild.core.proxy.CMProxyConstants.PHASE_BEFORE_UPDATE],
-						[tr.beforeDelete, CMDBuild.core.proxy.CMProxyConstants.PHASE_BEFORE_UPDATE]
+						[tr.beforeDelete, CMDBuild.core.proxy.CMProxyConstants.PHASE_BEFORE_DELETE]
 					]
 				});
 			},
