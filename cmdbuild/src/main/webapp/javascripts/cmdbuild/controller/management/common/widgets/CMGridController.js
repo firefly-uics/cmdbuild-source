@@ -228,7 +228,7 @@
 				var editor = attributesMap[attribute.type].buildField(attribute, false, false);
 
 				editor.hideLabel = true;
-
+_debug('attribute', attribute);
 				if (header) {
 					if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
 						editor.disabled = true;
