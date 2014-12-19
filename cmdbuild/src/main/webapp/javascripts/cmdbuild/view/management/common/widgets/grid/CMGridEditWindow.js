@@ -72,6 +72,8 @@
 			// Resize window, smaller than default size
 			this.height = this.height * this.defaultSizeH;
 			this.width = this.width * this.defaultSizeW;
+
+			this.callFieldTemplateResolver();
 		},
 
 		/**
@@ -89,12 +91,29 @@
 				if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
 					item.disabled = true;
 
+				// Setup right clientForm for templateResolver if exists
+				if (!Ext.Object.isEmpty(item.templateResolver)) {
+					delete item.templateResolver.getBasicForm;
+					item.templateResolver.clientForm = this.delegate.clientForm;
+				}
+
 				itemsArray.push(item);
 				item.setValue(value);
 			}
 
 			return itemsArray;
-		}
+		},
+
+		callFieldTemplateResolver: function() {
+			var fields = this.form.getForm().getFields().items;
+
+			for (var i in fields) {
+				var field = fields[i];
+
+				if (field && field.resolveTemplate)
+					field.resolveTemplate();
+			}
+		},
 	});
 
 })();
