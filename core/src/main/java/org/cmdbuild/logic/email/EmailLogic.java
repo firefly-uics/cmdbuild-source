@@ -393,7 +393,7 @@ public class EmailLogic implements Logic {
 		protected EmailService delegate() {
 			return UNSUPPORTED;
 		}
-		
+
 		@Override
 		public Iterable<Email> getEmails(final Long processId) {
 			return NO_EMAILS;
