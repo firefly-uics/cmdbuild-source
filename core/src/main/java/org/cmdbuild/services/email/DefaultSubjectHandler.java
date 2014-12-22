@@ -62,7 +62,9 @@ public class DefaultSubjectHandler implements SubjectHandler {
 			@Override
 			public String getSubject() {
 				final String subject;
-				if (email.getId() == null) {
+				if (email.isNoSubjectPrefix()) {
+					subject = email.getSubject();
+				} else if (email.getId() == null) {
 					subject = String.format(FORMAT_PATTERN_WITHOUT_ID, email.getSubject());
 				} else {
 					subject = String.format(FORMAT_PATTERN_WITH_ID, email.getId(), email.getSubject());

@@ -29,6 +29,7 @@ public class ManageEmail extends Widget {
 	private static final String SUBJECT_ATTRIBUTE = "subject";
 	private static final String CONTENT_ATTRIBUTE = "content";
 	private static final String NOTIFY_WITH_ATTRIBUTE = "notifyWith";
+	private final static String NO_SUBJECT_PREFIX = "noSubjectPrefix";
 	private static final String ACCOUNT_ATTRIBUTE = "account";
 	private static final String TEMPORARY_ID = "temporaryId";
 
@@ -53,6 +54,7 @@ public class ManageEmail extends Widget {
 
 		private String condition;
 		private Map<String, String> variables;
+		private boolean noSubjectPrefix;
 		private String account;
 
 		public String getCondition() {
@@ -69,6 +71,14 @@ public class ManageEmail extends Widget {
 
 		public void setVariables(final Map<String, String> variables) {
 			this.variables = variables;
+		}
+
+		public boolean isNoSubjectPrefix() {
+			return noSubjectPrefix;
+		}
+
+		public void setNoSubjectPrefix(final boolean noSubjectPrefix) {
+			this.noSubjectPrefix = noSubjectPrefix;
 		}
 
 		public String getAccount() {
@@ -92,6 +102,7 @@ public class ManageEmail extends Widget {
 
 	private Collection<EmailTemplate> emailTemplates;
 	private Map<String, String> templates;
+	private boolean noSubjectPrefix;
 
 	public ManageEmail(final EmailLogic emailLogic) {
 		super();
@@ -131,6 +142,14 @@ public class ManageEmail extends Widget {
 
 	public void setTemplates(final Map<String, String> templates) {
 		this.templates = templates;
+	}
+
+	public boolean isNoSubjectPrefix() {
+		return noSubjectPrefix;
+	}
+
+	public void setNoSubjectPrefix(final boolean noSubjectPrefix) {
+		this.noSubjectPrefix = noSubjectPrefix;
 	}
 
 	@Override
@@ -174,6 +193,7 @@ public class ManageEmail extends Widget {
 		email.setSubject((String) emailMap.get(SUBJECT_ATTRIBUTE));
 		email.setContent((String) emailMap.get(CONTENT_ATTRIBUTE));
 		email.setNotifyWith((String) emailMap.get(NOTIFY_WITH_ATTRIBUTE));
+		email.setNoSubjectPrefix((Boolean) emailMap.get(NO_SUBJECT_PREFIX));
 		email.setAccount((String) emailMap.get(ACCOUNT_ATTRIBUTE));
 		email.setTemporaryId((String) emailMap.get(TEMPORARY_ID));
 		return email;

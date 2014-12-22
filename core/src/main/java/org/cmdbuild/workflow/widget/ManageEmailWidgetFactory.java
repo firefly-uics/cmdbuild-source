@@ -38,6 +38,8 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	private final static String READ_ONLY = "ReadOnly";
 	private final static String NOTIFY_TEMPLATE_NAME = "NotifyWith";
 	private final static String TEMPLATE = "Template";
+	private final static String NO_SUBJECT_PREFIX = "NoSubjectPrefix";
+	private final static String GLOBAL_NO_SUBJECT_PREFIX = "GlobalNoSubjectPrefix";
 
 	private final static String WIDGET_NAME = "manageEmail";
 
@@ -66,6 +68,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		final Set<String> managedParameters = Sets.newHashSet();
 		managedParameters.add(READ_ONLY);
 		managedParameters.add(BUTTON_LABEL);
+		managedParameters.add(GLOBAL_NO_SUBJECT_PREFIX);
 
 		final Map<String, String> templates = getAttributesStartingWith(valueMap, TEMPLATE);
 		for (final String key : templates.keySet()) {
@@ -137,10 +140,19 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		}
 		managedParameters.addAll(conditions.keySet());
 
+		final Map<String, String> noSubjectPrexifes = getAttributesStartingWith(valueMap, NO_SUBJECT_PREFIX);
+		for (final String key : noSubjectPrexifes.keySet()) {
+			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, NO_SUBJECT_PREFIX);
+			template.setNoSubjectPrefix(readBooleanTrueIfTrue(valueMap.get(key)));
+		}
+		managedParameters.addAll(noSubjectPrexifes.keySet());
+
 		final ManageEmail widget = new ManageEmail(emailLogic);
 		widget.setEmailTemplates(emailTemplatesByName.values());
 		widget.setTemplates(extractUnmanagedStringParameters(valueMap, managedParameters));
 		widget.setReadOnly(readBooleanTrueIfPresent(valueMap.get(READ_ONLY)));
+		widget.setNoSubjectPrefix(readBooleanTrueIfTrue(valueMap.get(GLOBAL_NO_SUBJECT_PREFIX)));
+
 		return widget;
 	}
 
