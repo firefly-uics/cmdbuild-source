@@ -1,5 +1,6 @@
 package integration.rest;
 
+import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -7,9 +8,11 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.DeleteMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.service.rest.Impersonate;
 import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
@@ -17,6 +20,8 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+
+;
 
 public class ImpersonateTest {
 
@@ -36,29 +41,31 @@ public class ImpersonateTest {
 
 	@Before
 	public void createHttpClient() throws Exception {
-		httpclient = new HttpClient();
+		httpclient = HttpClientBuilder.create().build();
 	}
 
 	@Test
 	public void start() throws Exception {
 		// when
-		final PutMethod put = new PutMethod(server.resource("sessions/foo/impersonate/bar/"));
-		final int result = httpclient.executeMethod(put);
+		final HttpPut put = new HttpPut(server.resource("sessions/foo/impersonate/bar/"));
+		final HttpResponse response = httpclient.execute(put);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(204));
+
 		verify(service).start(eq("foo"), eq("bar"));
-		assertThat(result, equalTo(204));
 	}
 
 	@Test
 	public void stop() throws Exception {
 		// when
-		final DeleteMethod delete = new DeleteMethod(server.resource("sessions/foo/impersonate/"));
-		final int result = httpclient.executeMethod(delete);
+		final HttpDelete delete = new HttpDelete(server.resource("sessions/foo/impersonate/"));
+		final HttpResponse response = httpclient.execute(delete);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(204));
+
 		verify(service).stop(eq("foo"));
-		assertThat(result, equalTo(204));
 	}
 
 }

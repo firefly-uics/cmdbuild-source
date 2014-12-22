@@ -1,10 +1,11 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.apache.commons.lang3.CharEncoding.UTF_8;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 import static org.cmdbuild.service.rest.model.Models.newSession;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -15,12 +16,14 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.DeleteMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.service.rest.Sessions;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.service.rest.model.Session;
@@ -50,7 +53,7 @@ public class SessionsTest {
 
 	@Before
 	public void createHttpClient() throws Exception {
-		httpclient = new HttpClient();
+		httpclient = HttpClientBuilder.create().build();
 	}
 
 	@Test
@@ -69,24 +72,23 @@ public class SessionsTest {
 				.when(service).create(any(Session.class));
 
 		// when
-		final PostMethod post = new PostMethod(server.resource("sessions/"));
-		post.setRequestEntity(new StringRequestEntity( //
+		final HttpPost post = new HttpPost(server.resource("sessions/"));
+		post.setEntity(new StringEntity( //
 				"{\"username\" : \"foo\", \"password\" : \"bar\"}", //
-				APPLICATION_JSON, //
-				UTF_8) //
+				APPLICATION_JSON) //
 		);
-		final int result = httpclient.executeMethod(post);
+		final HttpResponse response = httpclient.execute(post);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(sentResponse)));
+
 		final ArgumentCaptor<Session> captor = ArgumentCaptor.forClass(Session.class);
 		verify(service).create(captor.capture());
 
 		final Session captured = captor.getValue();
 		assertThat(captured.getUsername(), equalTo("foo"));
 		assertThat(captured.getPassword(), equalTo("bar"));
-
-		assertThat(result, equalTo(200));
-		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(sentResponse)));
 	}
 
 	@Test
@@ -106,13 +108,14 @@ public class SessionsTest {
 				.when(service).read(anyString());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("sessions/foo/"));
-		final int result = httpclient.executeMethod(get);
+		final HttpGet get = new HttpGet(server.resource("sessions/foo/"));
+		final HttpResponse response = httpclient.execute(get);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(sentResponse)));
+
 		verify(service).read(eq("foo"));
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(sentResponse)));
 	}
 
 	@Test
@@ -131,35 +134,35 @@ public class SessionsTest {
 				.when(service).update(anyString(), any(Session.class));
 
 		// when
-		final PutMethod put = new PutMethod(server.resource("sessions/foo/"));
-		put.setRequestEntity(new StringRequestEntity( //
+		final HttpPut put = new HttpPut(server.resource("sessions/foo/"));
+		put.setEntity(new StringEntity( //
 				"{\"_id\" : \"ignored\", \"username\" : \"bar\", \"password\" : null, \"role\" : \"baz\"}", //
-				APPLICATION_JSON, //
-				UTF_8) //
+				APPLICATION_JSON) //
 		);
-		final int result = httpclient.executeMethod(put);
+		final HttpResponse response = httpclient.execute(put);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(sentResponse)));
+
 		final ArgumentCaptor<Session> captor = ArgumentCaptor.forClass(Session.class);
 		verify(service).update(eq("foo"), captor.capture());
 
 		final Session captured = captor.getValue();
 		assertThat(captured.getUsername(), equalTo("bar"));
 		assertThat(captured.getRole(), equalTo("baz"));
-
-		assertThat(result, equalTo(200));
-		assertThat(json.from(put.getResponseBodyAsString()), equalTo(json.from(sentResponse)));
 	}
 
 	@Test
 	public void deleted() throws Exception {
 		// when
-		final DeleteMethod delete = new DeleteMethod(server.resource("sessions/foo/"));
-		final int result = httpclient.executeMethod(delete);
+		final HttpDelete delete = new HttpDelete(server.resource("sessions/foo/"));
+		final HttpResponse response = httpclient.execute(delete);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(204));
+
 		verify(service).delete(eq("foo"));
-		assertThat(result, equalTo(204));
 	}
 
 }

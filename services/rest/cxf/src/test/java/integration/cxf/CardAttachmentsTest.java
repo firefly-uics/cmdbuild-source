@@ -2,10 +2,12 @@ package integration.cxf;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.io.FileUtils.write;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.http.Consts.UTF_8;
 import static org.cmdbuild.service.rest.constants.Serialization.ATTACHMENT;
 import static org.cmdbuild.service.rest.constants.Serialization.FILE;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -26,14 +28,15 @@ import java.io.InputStream;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.multipart.FilePart;
-import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
-import org.apache.commons.httpclient.methods.multipart.Part;
-import org.apache.commons.httpclient.methods.multipart.StringPart;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.service.rest.cxf.CardAttachments;
 import org.cmdbuild.service.rest.model.Attachment;
 import org.cmdbuild.service.rest.model.ResponseSingle;
@@ -68,7 +71,7 @@ public class CardAttachmentsTest {
 
 	@Before
 	public void createHttpClient() throws Exception {
-		httpclient = new HttpClient();
+		httpclient = HttpClientBuilder.create().build();
 	}
 
 	@Test
@@ -83,24 +86,18 @@ public class CardAttachmentsTest {
 				.when(service).create(anyString(), anyLong(), any(Attachment.class), any(DataHandler.class));
 
 		// when
-		final PostMethod post = new PostMethod(server.resource("classes/foo/cards/123/attachments/"));
-		final Part[] parts = { new StringPart(ATTACHMENT, EMPTY //
-				+ "{" //
+		final HttpPost post = new HttpPost(server.resource("classes/foo/cards/123/attachments/"));
+		final MultipartEntity multipartEntity = new MultipartEntity();
+		multipartEntity.addPart(ATTACHMENT, new StringBody("{" //
 				+ "\"_description\": \"the description\"" //
-				+ "}") {
-
-			@Override
-			public String getContentType() {
-				return APPLICATION_JSON;
-			}
-
-		}, new FilePart(FILE, file) };
-		post.setRequestEntity(new MultipartRequestEntity(parts, post.getParams()));
-		final int result = httpclient.executeMethod(post);
+				+ "}", APPLICATION_JSON, UTF_8));
+		multipartEntity.addPart(FILE, new FileBody(file));
+		post.setEntity(multipartEntity);
+		final HttpResponse response = httpclient.execute(post);
 
 		// then
-		assertThat(result, equalTo(200));
-		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
 		final ArgumentCaptor<Attachment> attachmentCaptor = ArgumentCaptor.forClass(Attachment.class);
 		final ArgumentCaptor<DataHandler> dataHandlerCaptor = ArgumentCaptor.forClass(DataHandler.class);
@@ -127,14 +124,15 @@ public class CardAttachmentsTest {
 				.when(service).create(anyString(), anyLong(), any(Attachment.class), any(DataHandler.class));
 
 		// when
-		final PostMethod post = new PostMethod(server.resource("classes/foo/cards/123/attachments/"));
-		final Part[] parts = { new FilePart(FILE, file) };
-		post.setRequestEntity(new MultipartRequestEntity(parts, post.getParams()));
-		final int result = httpclient.executeMethod(post);
+		final HttpPost post = new HttpPost(server.resource("classes/foo/cards/123/attachments/"));
+		final MultipartEntity multipartEntity = new MultipartEntity();
+		multipartEntity.addPart(FILE, new FileBody(file));
+		post.setEntity(multipartEntity);
+		final HttpResponse response = httpclient.execute(post);
 
 		// then
-		assertThat(result, equalTo(200));
-		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
 		final ArgumentCaptor<DataHandler> dataHandlerCaptor = ArgumentCaptor.forClass(DataHandler.class);
 		verify(service).create(eq("foo"), eq(123L), isNull(Attachment.class), dataHandlerCaptor.capture());
@@ -151,23 +149,17 @@ public class CardAttachmentsTest {
 		write(file, "blah blah blah");
 
 		// when
-		final PutMethod put = new PutMethod(server.resource("classes/foo/cards/123/attachments/bar/"));
-		final Part[] parts = { new StringPart(ATTACHMENT, EMPTY //
-				+ "{" //
+		final HttpPut put = new HttpPut(server.resource("classes/foo/cards/123/attachments/bar/"));
+		final MultipartEntity multipartEntity = new MultipartEntity();
+		multipartEntity.addPart(ATTACHMENT, new StringBody("{" //
 				+ "\"_description\": \"the new description\"" //
-				+ "}") {
-
-			@Override
-			public String getContentType() {
-				return APPLICATION_JSON;
-			}
-
-		}, new FilePart(FILE, file) };
-		put.setRequestEntity(new MultipartRequestEntity(parts, put.getParams()));
-		final int result = httpclient.executeMethod(put);
+				+ "}", APPLICATION_JSON, UTF_8));
+		multipartEntity.addPart(FILE, new FileBody(file));
+		put.setEntity(multipartEntity);
+		final HttpResponse response = httpclient.execute(put);
 
 		// then
-		assertThat(result, equalTo(204));
+		assertThat(statusCodeOf(response), equalTo(204));
 
 		final ArgumentCaptor<Attachment> attachmentCaptor = ArgumentCaptor.forClass(Attachment.class);
 		final ArgumentCaptor<DataHandler> dataHandlerCaptor = ArgumentCaptor.forClass(DataHandler.class);
@@ -189,13 +181,14 @@ public class CardAttachmentsTest {
 		write(file, "blah blah blah");
 
 		// when
-		final PutMethod put = new PutMethod(server.resource("classes/foo/cards/123/attachments/bar/"));
-		final Part[] parts = { new FilePart(FILE, file) };
-		put.setRequestEntity(new MultipartRequestEntity(parts, put.getParams()));
-		final int result = httpclient.executeMethod(put);
+		final HttpPut put = new HttpPut(server.resource("classes/foo/cards/123/attachments/bar/"));
+		final MultipartEntity multipartEntity = new MultipartEntity();
+		multipartEntity.addPart(FILE, new FileBody(file));
+		put.setEntity(multipartEntity);
+		final HttpResponse response = httpclient.execute(put);
 
 		// then
-		assertThat(result, equalTo(204));
+		assertThat(statusCodeOf(response), equalTo(204));
 
 		final ArgumentCaptor<DataHandler> dataHandlerCaptor = ArgumentCaptor.forClass(DataHandler.class);
 		verify(service).update(eq("foo"), eq(123L), eq("bar"), isNull(Attachment.class), dataHandlerCaptor.capture());
@@ -212,23 +205,16 @@ public class CardAttachmentsTest {
 		write(file, "blah blah blah");
 
 		// when
-		final PutMethod put = new PutMethod(server.resource("classes/foo/cards/123/attachments/bar/"));
-		final Part[] parts = { new StringPart(ATTACHMENT, EMPTY //
-				+ "{" //
+		final HttpPut put = new HttpPut(server.resource("classes/foo/cards/123/attachments/bar/"));
+		final MultipartEntity multipartEntity = new MultipartEntity();
+		multipartEntity.addPart(ATTACHMENT, new StringBody("{" //
 				+ "\"_description\": \"the new description\"" //
-				+ "}") {
-
-			@Override
-			public String getContentType() {
-				return APPLICATION_JSON;
-			}
-
-		} };
-		put.setRequestEntity(new MultipartRequestEntity(parts, put.getParams()));
-		final int result = httpclient.executeMethod(put);
+				+ "}", APPLICATION_JSON, UTF_8));
+		put.setEntity(multipartEntity);
+		final HttpResponse response = httpclient.execute(put);
 
 		// then
-		assertThat(result, equalTo(204));
+		assertThat(statusCodeOf(response), equalTo(204));
 
 		final ArgumentCaptor<Attachment> attachmentCaptor = ArgumentCaptor.forClass(Attachment.class);
 		verify(service).update(eq("foo"), eq(123L), eq("bar"), attachmentCaptor.capture(), isNull(DataHandler.class));

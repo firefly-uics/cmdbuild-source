@@ -6,6 +6,8 @@ import static org.cmdbuild.service.rest.model.Models.newAttachment;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -23,9 +25,11 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.DeleteMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.ProcessInstanceAttachments;
 import org.cmdbuild.service.rest.model.Attachment;
@@ -62,7 +66,7 @@ public class ProcessInstanceAttachmentsTest {
 
 	@Before
 	public void createHttpClient() throws Exception {
-		httpclient = new HttpClient();
+		httpclient = HttpClientBuilder.create().build();
 	}
 
 	@Test
@@ -98,15 +102,15 @@ public class ProcessInstanceAttachmentsTest {
 				.thenReturn(sentResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("processes/dummy/instances/123/attachments/"));
-		final int result = httpclient.executeMethod(get);
+		final HttpGet get = new HttpGet(server.resource("processes/dummy/instances/123/attachments/"));
+		final HttpResponse response = httpclient.execute(get);
 
 		// then
 		verify(service).read(eq("dummy"), eq(123L));
 		verifyNoMoreInteractions(service);
 
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
@@ -131,15 +135,15 @@ public class ProcessInstanceAttachmentsTest {
 				.thenReturn(sentResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("processes/foo/instances/123/attachments/bar/"));
-		final int result = httpclient.executeMethod(get);
+		final HttpGet get = new HttpGet(server.resource("processes/foo/instances/123/attachments/bar/"));
+		final HttpResponse response = httpclient.execute(get);
 
 		// then
 		verify(service).read(eq("foo"), eq(123L), eq("bar"));
 		verifyNoMoreInteractions(service);
 
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
@@ -151,28 +155,28 @@ public class ProcessInstanceAttachmentsTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("processes/dummy/instances/123/attachments/foo/file/"));
-		final int result = httpclient.executeMethod(get);
+		final HttpGet get = new HttpGet(server.resource("processes/dummy/instances/123/attachments/foo/file/"));
+		final HttpResponse response = httpclient.execute(get);
 
 		// then
 		verify(service).download(eq("dummy"), eq(123L), eq("foo"));
 		verifyNoMoreInteractions(service);
 
-		assertThat(result, equalTo(200));
-		assertThat(toByteArray(get.getResponseBodyAsStream()), equalTo(toByteArray(expectedResponse.getInputStream())));
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(toByteArray(contentOf(response)), equalTo(toByteArray(expectedResponse.getInputStream())));
 	}
 
 	@Test
 	public void delete() throws Exception {
 		// when
-		final DeleteMethod delete = new DeleteMethod(server.resource("processes/dummy/instances/123/attachments/foo/"));
-		final int result = httpclient.executeMethod(delete);
+		final HttpDelete delete = new HttpDelete(server.resource("processes/dummy/instances/123/attachments/foo/"));
+		final HttpResponse response = httpclient.execute(delete);
 
 		// then
 		verify(service).delete(eq("dummy"), eq(123L), eq("foo"));
 		verifyNoMoreInteractions(service);
 
-		assertThat(result, equalTo(204));
+		assertThat(statusCodeOf(response), equalTo(204));
 	}
 
 }

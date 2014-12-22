@@ -1,8 +1,7 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.apache.commons.lang3.CharEncoding.UTF_8;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.SORT;
@@ -13,8 +12,8 @@ import static org.cmdbuild.service.rest.model.Models.newCard;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
-import static org.cmdbuild.service.rest.test.HttpClientUtils.all;
-import static org.cmdbuild.service.rest.test.HttpClientUtils.param;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
@@ -32,12 +31,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.DeleteMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.model.Card;
@@ -70,7 +72,7 @@ public class CardsTest {
 
 	@Before
 	public void createHttpClient() throws Exception {
-		httpclient = new HttpClient();
+		httpclient = HttpClientBuilder.create().build();
 	}
 
 	@Test
@@ -122,19 +124,19 @@ public class CardsTest {
 				.when(service).read(anyString(), anyString(), anyString(), anyInt(), anyInt());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("classes/123/cards"));
-		get.setQueryString(all( //
-				param(FILTER, "filter"), //
-				param(SORT, "sort"), //
-				param(LIMIT, "456"), //
-				param(START, "789") //
-		));
-		final int result = httpclient.executeMethod(get);
+		final HttpGet get = new HttpGet(new URIBuilder(server.resource("classes/123/cards")) //
+				.setParameter(FILTER, "filter") //
+				.setParameter(SORT, "sort") //
+				.setParameter(LIMIT, "456") //
+				.setParameter(START, "789") //
+				.build());
+		final HttpResponse response = httpclient.execute(get);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
 		verify(service).read(eq("123"), eq("filter"), eq("sort"), eq(456), eq(789));
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
@@ -147,15 +149,17 @@ public class CardsTest {
 				.when(service).create(anyString(), any(Card.class));
 
 		// when
-		final PostMethod post = new PostMethod(server.resource("classes/12/cards/"));
-		post.setRequestEntity(new StringRequestEntity( //
+		final HttpPost post = new HttpPost(server.resource("classes/12/cards/"));
+		post.setEntity(new StringEntity( //
 				"{\"_id\" : 34, \"_type\" : \"56\", \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
-				APPLICATION_JSON, //
-				UTF_8) //
+				APPLICATION_JSON) //
 		);
-		final int result = httpclient.executeMethod(post);
+		final HttpResponse response = httpclient.execute(post);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
 		verify(service).create(eq("12"), cardCaptor.capture());
 
@@ -166,9 +170,6 @@ public class CardsTest {
 		final Map<String, Object> values = captured.getValues();
 		assertThat(values, hasEntry("bar", (Object) "BAR"));
 		assertThat(values, hasEntry("baz", (Object) "BAZ"));
-
-		assertThat(result, equalTo(200));
-		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
@@ -199,27 +200,29 @@ public class CardsTest {
 				.when(service).read(anyString(), anyLong());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("classes/123/cards/456/"));
-		final int result = httpclient.executeMethod(get);
+		final HttpGet get = new HttpGet(server.resource("classes/123/cards/456/"));
+		final HttpResponse response = httpclient.execute(get);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
 		verify(service).read(eq("123"), eq(456L));
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
 	public void cardUpdated() throws Exception {
 		// when
-		final PutMethod put = new PutMethod(server.resource("classes/12/cards/34/"));
-		put.setRequestEntity(new StringRequestEntity( //
+		final HttpPut put = new HttpPut(server.resource("classes/12/cards/34/"));
+		put.setEntity(new StringEntity( //
 				"{\"_id\" : 56, \"_type\" : \"78\", \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
-				APPLICATION_JSON, //
-				UTF_8) //
+				APPLICATION_JSON) //
 		);
-		final int result = httpclient.executeMethod(put);
+		final HttpResponse response = httpclient.execute(put);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(204));
+
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
 		verify(service).update(eq("12"), eq(34L), cardCaptor.capture());
 
@@ -230,19 +233,18 @@ public class CardsTest {
 		final Map<String, Object> values = captured.getValues();
 		assertThat(values, hasEntry("bar", (Object) "BAR"));
 		assertThat(values, hasEntry("baz", (Object) "BAZ"));
-
-		assertThat(result, equalTo(204));
 	}
 
 	@Test
 	public void cardDeleted() throws Exception {
 		// when
-		final DeleteMethod delete = new DeleteMethod(server.resource("classes/123/cards/456/"));
-		final int result = httpclient.executeMethod(delete);
+		final HttpDelete delete = new HttpDelete(server.resource("classes/123/cards/456/"));
+		final HttpResponse response = httpclient.execute(delete);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(204));
+
 		verify(service).delete(eq("123"), eq(456L));
-		assertThat(result, equalTo(204));
 	}
 
 }

@@ -7,8 +7,8 @@ import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.model.Models.newAttribute;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
-import static org.cmdbuild.service.rest.test.HttpClientUtils.all;
-import static org.cmdbuild.service.rest.test.HttpClientUtils.param;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -20,8 +20,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.service.rest.ProcessAttributes;
 import org.cmdbuild.service.rest.model.Attribute;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
@@ -50,7 +53,7 @@ public class ProcessAttributesTest {
 
 	@Before
 	public void createHttpClient() throws Exception {
-		httpclient = new HttpClient();
+		httpclient = HttpClientBuilder.create().build();
 	}
 
 	@Test
@@ -72,18 +75,18 @@ public class ProcessAttributesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("processes/123/attributes/"));
-		get.setQueryString(all( //
-				param(ACTIVE, "true"), //
-				param(LIMIT, "456"), //
-				param(START, "789") //
-		));
-		final int result = httpclient.executeMethod(get);
+		final HttpGet get = new HttpGet(new URIBuilder(server.resource("processes/123/attributes/")) //
+				.setParameter(ACTIVE, "true") //
+				.setParameter(LIMIT, "456") //
+				.setParameter(START, "789") //
+				.build());
+		final HttpResponse response = httpclient.execute(get);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
 		verify(service).readAll(eq("123"), eq(true), eq(456), eq(789));
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 }
