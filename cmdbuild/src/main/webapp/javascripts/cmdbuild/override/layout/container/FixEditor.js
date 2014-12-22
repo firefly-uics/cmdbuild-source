@@ -3,7 +3,7 @@
 	/**
 	 * To fix an error (Uncaught TypeError: Cannot read property 'setSize' of undefined) occured when editing a workflow grid u change task clicking on grid
 	 */
-	Ext.define('CMDBuild.core.fixes.CMFixLayoutContainerEditor', {
+	Ext.define('CMDBuild.override.layout.container.FixEditor', {
 		override: 'Ext.layout.container.Editor',
 
 			calculate: function(ownerContext) {

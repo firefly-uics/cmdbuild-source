@@ -34,10 +34,12 @@
 
 		routes: {
 			// Classes
-			'classes/:classIdentifier/cards': 'CMDBuild.routes.management.Classes#saveRoute',
+			'classes/:classIdentifier/cards': 'CMDBuild.routes.management.Classes#saveRoute', // Alias (wrong implementation, will be delete in future)
+			'classes/:classIdentifier/cards/': 'CMDBuild.routes.management.Classes#saveRoute',
 			'classes/:classIdentifier/print': 'CMDBuild.routes.management.Classes#saveRoute',
 
-			'exec/classes/:classIdentifier/cards': 'CMDBuild.routes.management.Classes#detail',
+			'exec/classes/:classIdentifier/cards': 'CMDBuild.routes.management.Classes#detail', // Alias (wrong implementation, will be delete in future)
+			'exec/classes/:classIdentifier/cards/': 'CMDBuild.routes.management.Classes#detail',
 			'exec/classes/:classIdentifier/print': 'CMDBuild.routes.management.Classes#print',
 
 			// Cards

@@ -2,7 +2,7 @@
  * @class CMDBuild.WidgetBuilders.DecimalAttribute
  * @extends CMDBuild.WidgetBuilders.RangeQueryAttribute
  */
-Ext.ns("CMDBuild.WidgetBuilders"); 
+Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.DecimalAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.DecimalAttribute, CMDBuild.WidgetBuilders.RangeQueryAttribute);
 CMDBuild.WidgetBuilders.DecimalAttribute.prototype.MAXWIDTH = CMDBuild.SMALL_FIELD_ONLY_WIDTH;

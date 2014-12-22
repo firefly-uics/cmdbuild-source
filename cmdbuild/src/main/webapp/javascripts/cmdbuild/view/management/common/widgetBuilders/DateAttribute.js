@@ -2,7 +2,7 @@
  * @class CMDBuild.WidgetBuilders.DateAttribute
  * @extends CMDBuild.WidgetBuilders.RangeQueryAttribute
  */
-Ext.ns("CMDBuild.WidgetBuilders"); 
+Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.DateAttribute = function() {
 	this.format = 'd/m/Y';
 	this.fieldWidth = CMDBuild.SMALL_FIELD_ONLY_WIDTH;
@@ -13,7 +13,7 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.DateAttribute, CMDBuild.WidgetBuilders.R
  * @override
  * @return object
  */
-CMDBuild.WidgetBuilders.DateAttribute.prototype.buildGridHeader = function(attribute) {	
+CMDBuild.WidgetBuilders.DateAttribute.prototype.buildGridHeader = function(attribute) {
 	return {
 		header: attribute.description,
 		sortable : true,

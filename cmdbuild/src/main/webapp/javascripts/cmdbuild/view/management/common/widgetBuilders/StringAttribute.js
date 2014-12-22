@@ -2,7 +2,7 @@
  * @class CMDBuild.WidgetBuilders.StringAttribute
  * @extends CMDBuild.WidgetBuilders.TextualQueryAttribute
  */
-Ext.ns("CMDBuild.WidgetBuilders"); 
+Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.StringAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.StringAttribute, CMDBuild.WidgetBuilders.TextualQueryAttribute);
 

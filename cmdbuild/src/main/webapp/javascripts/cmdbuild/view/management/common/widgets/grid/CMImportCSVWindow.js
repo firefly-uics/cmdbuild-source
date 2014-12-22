@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.view.management.common.widgets.grid.CMImportCSVWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
+		requires: ['CMDBuild.core.proxy.widgets.Grid'],
+
 		buttonAlign: 'center',
 		border: false,
 		defaultSizeW: 0.90,
@@ -101,7 +103,7 @@
 				editable: false,
 				allowBlank: false,
 
-				store: CMDBuild.core.proxy.widgets.CMProxyWidgetGrid.getCsvSeparatorStore(),
+				store: CMDBuild.core.proxy.widgets.Grid.getCsvSeparatorStore(),
 				queryMode: 'local'
 			});
 
