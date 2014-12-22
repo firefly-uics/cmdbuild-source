@@ -8,12 +8,12 @@ import org.cmdbuild.logic.translation.DefaultSetupFacade;
 import org.cmdbuild.logic.translation.SetupFacade;
 import org.cmdbuild.services.setup.PrivilegedModulesHandler;
 import org.cmdbuild.services.setup.PropertiesModulesHandler;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class Setup {
 
 	private static final String BIM_MODULE_NAME = "bim";

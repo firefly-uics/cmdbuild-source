@@ -1,6 +1,7 @@
 package org.cmdbuild.servlets.json;
 
 import static org.cmdbuild.spring.SpringIntegrationUtils.applicationContext;
+import static org.cmdbuild.spring.configuration.Data.BEAN_SYSTEM_DATA_VIEW;
 import static org.cmdbuild.spring.configuration.User.BEAN_USER_DATA_VIEW;
 
 import javax.sql.DataSource;
@@ -15,12 +16,12 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.dms.DmsConfiguration;
-import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.GISLogic;
 import org.cmdbuild.logic.NavigationTreeLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.GroupsLogic;
 import org.cmdbuild.logic.bim.DefaultLayerLogic;
 import org.cmdbuild.logic.bim.DefaultSynchronizationLogic;
 import org.cmdbuild.logic.bim.DefaultViewerLogic;
@@ -40,6 +41,7 @@ import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
+import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.setup.SetupLogic;
@@ -50,13 +52,13 @@ import org.cmdbuild.logic.view.ViewLogic;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.PatchManager;
 import org.cmdbuild.services.SessionVars;
 import org.cmdbuild.services.TranslationService;
 import org.cmdbuild.services.localization.Localization;
 import org.cmdbuild.services.startup.StartupLogic;
 import org.cmdbuild.services.store.FilterStore;
-import org.cmdbuild.services.store.menu.MenuStore;
 import org.cmdbuild.services.store.report.ReportStore;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
@@ -64,6 +66,7 @@ import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
 import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
+import org.cmdbuild.workflow.LookupHelper;
 
 public class JSONBaseWithSpringContext extends JSONBase {
 
@@ -100,7 +103,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected CMDataView systemDataView() {
-		return applicationContext().getBean(DBDataView.class);
+		return applicationContext().getBean(BEAN_SYSTEM_DATA_VIEW, DBDataView.class);
 	}
 
 	protected CMDataView userDataView() {
@@ -121,10 +124,6 @@ public class JSONBaseWithSpringContext extends JSONBase {
 
 	protected LookupStore lookupStore() {
 		return applicationContext().getBean(LookupStore.class);
-	}
-
-	protected MenuStore menuStore() {
-		return applicationContext().getBean(MenuStore.class);
 	}
 
 	protected ReportStore reportStore() {
@@ -199,8 +198,16 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(GISLogic.class);
 	}
 
+	protected GroupsLogic groupsLogic() {
+		return applicationContext().getBean(GroupsLogic.class);
+	}
+
 	protected LookupLogic lookupLogic() {
 		return applicationContext().getBean(LookupLogic.class);
+	}
+
+	protected MenuLogic menuLogic() {
+		return applicationContext().getBean(MenuLogic.class);
 	}
 
 	protected NavigationTreeLogic navigationTreeLogic() {
@@ -275,13 +282,17 @@ public class JSONBaseWithSpringContext extends JSONBase {
 		return applicationContext().getBean(DataSourceHelper.class);
 	}
 
+	protected LookupHelper lookupHelper() {
+		return applicationContext().getBean(LookupHelper.class);
+	}
+
+	protected Notifier notifier() {
+		return applicationContext().getBean(Notifier.class);
+	}
+
 	/*
 	 * Web
 	 */
-
-	protected RequestListener requestListener() {
-		return applicationContext().getBean(RequestListener.class);
-	}
 
 	@Deprecated
 	protected SessionVars sessionVars() {

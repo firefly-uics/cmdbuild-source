@@ -3,10 +3,12 @@
 ---------------------------------------------
 
 SELECT cm_create_class('User', 'Class', 'MODE: reserved|TYPE: class|DESCR: Users|SUPERCLASS: false|STATUS: active');
-SELECT cm_create_class_attribute('User', 'Username', 'varchar(40)', null, true, true, 'MODE: read|DESCR: Username|INDEX: 5|BASEDSP: true|STATUS: active');
-SELECT cm_create_class_attribute('User', 'Password', 'varchar(40)', null, false, false, 'MODE: read|DESCR: Password|INDEX: 6|BASEDSP: false|STATUS: active');
-SELECT cm_create_class_attribute('User', 'Email', 'varchar(320)', null, false, false, 'MODE: read|DESCR: Email|INDEX: 7');
-SELECT cm_create_class_attribute('User', 'Active', 'boolean', 'true', true, false, 'MODE: read|DESCR: Active|INDEX: 8');
+SELECT cm_create_class_attribute('User', 'Username', 'varchar(40)', null, true, true, 'MODE: user|DESCR: Username|INDEX: 5|BASEDSP: true|STATUS: active');
+SELECT cm_create_class_attribute('User', 'Password', 'varchar(40)', null, false, false, 'MODE: user|DESCR: Password|INDEX: 6|BASEDSP: false|STATUS: active');
+SELECT cm_create_class_attribute('User', 'Email', 'varchar(320)', null, false, false, 'MODE: user|DESCR: Email|INDEX: 7');
+SELECT cm_create_class_attribute('User', 'Active', 'boolean', 'true', true, false, 'MODE: user|DESCR: Active|INDEX: 8');
+SELECT cm_create_class_attribute('User', 'Service', 'boolean', null, false, false, 'MODE: user|DESCR: Service|INDEX: 9');
+SELECT cm_create_class_attribute('User', 'Privileged', 'boolean', null, false, false, 'MODE: user|DESCR: Privileged|INDEX: 10');
 
 ---------------------------------------------
 -- Role

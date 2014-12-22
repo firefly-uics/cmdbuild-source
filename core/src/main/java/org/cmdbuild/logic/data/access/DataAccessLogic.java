@@ -7,16 +7,18 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.Logic;
-import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
+import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.model.data.Card;
@@ -28,6 +30,14 @@ import org.json.JSONException;
  */
 public interface DataAccessLogic extends Logic {
 
+	interface AttributesQuery {
+
+		Integer limit();
+
+		Integer offset();
+
+	}
+
 	CMDataView getView();
 
 	Map<Object, List<RelationInfo>> relationsBySource(String sourceTypeName, DomainWithSource dom);
@@ -37,6 +47,8 @@ public interface DataAccessLogic extends Logic {
 	GetRelationListResponse getRelationList(Card srcCard, DomainWithSource dom);
 
 	GetRelationListResponse getRelationListEmptyForWrongId(Card srcCard, DomainWithSource dom);
+
+	GetRelationListResponse getRelationList(CMDomain domain);
 
 	GetRelationHistoryResponse getRelationHistory(Card srcCard);
 
@@ -81,6 +93,16 @@ public interface DataAccessLogic extends Logic {
 	 * @return active and non active classes
 	 */
 	Iterable<? extends CMClass> findAllClasses();
+
+	/**
+	 * 
+	 * @return all {@link CMClass} according with specified status.
+	 */
+	Iterable<? extends CMClass> findClasses(boolean activeOnly);
+
+	PagedElements<CMAttribute> getAttributes(String className, boolean onlyActive, AttributesQuery attributesQuery);
+
+	PagedElements<CMAttribute> getDomainAttributes(String className, boolean onlyActive, AttributesQuery attributesQuery);
 
 	/**
 	 * Fetches the card with the specified Id from the class with the specified

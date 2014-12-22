@@ -3,7 +3,6 @@ package org.cmdbuild.spring.configuration;
 import static org.cmdbuild.spring.util.Constants.DEFAULT;
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
-import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.dms.CachedDmsService;
 import org.cmdbuild.dms.DefaultDocumentCreatorFactory;
 import org.cmdbuild.dms.DmsConfiguration;
@@ -13,20 +12,20 @@ import org.cmdbuild.dms.LoggedDmsService;
 import org.cmdbuild.dms.alfresco.AlfrescoDmsService;
 import org.cmdbuild.logic.dms.DefaultDmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class Dms {
 
 	@Autowired
-	private DmsConfiguration dmsConfiguration;
+	private Data data;
 
 	@Autowired
-	private DBDataView systemDataView;
+	private DmsConfiguration dmsConfiguration;
 
 	@Autowired
 	private PrivilegeManagement privilegeManagement;
@@ -58,7 +57,7 @@ public class Dms {
 	public PrivilegedDmsLogic privilegedDmsLogic() {
 		return new PrivilegedDmsLogic( //
 				defaultDmsLogic(), //
-				systemDataView, //
+				data.systemDataView(), //
 				privilegeManagement.userPrivilegeContext() //
 		);
 	}
@@ -67,9 +66,11 @@ public class Dms {
 	public DefaultDmsLogic defaultDmsLogic() {
 		return new DefaultDmsLogic( //
 				dmsService(), //
-				systemDataView, //
+				data.systemDataView(), //
 				dmsConfiguration, //
-				documentCreatorFactory());
+				documentCreatorFactory(), //
+				data.lookupStore() //
+		);
 	}
 
 }

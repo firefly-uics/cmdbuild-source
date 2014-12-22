@@ -1,5 +1,6 @@
 package integration.logic.auth;
 
+import static org.cmdbuild.auth.UserStores.inMemory;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -20,7 +21,6 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.NullGroup;
 import org.cmdbuild.auth.context.DefaultPrivilegeContextFactory;
 import org.cmdbuild.auth.user.CMUser;
-import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
@@ -71,26 +71,12 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 		service.setPasswordAuthenticators(dbAuthenticator);
 		service.setUserFetchers(dbAuthenticator);
 		service.setGroupFetcher(new DBGroupFetcher(dbDataView(), Lists.<PrivilegeFetcherFactory> newArrayList()));
+		IN_MEMORY_STORE = inMemory(operationUser());
 		authLogic = new DefaultAuthenticationLogicBuilder( //
 				service, //
 				new DefaultPrivilegeContextFactory(), //
-				dbDataView(), //
-				userStore(operationUser())) //
+				dbDataView()) //
 				.build();
-		IN_MEMORY_STORE = new UserStore() {
-
-			OperationUser operationUser = null;
-
-			@Override
-			public OperationUser getUser() {
-				return operationUser;
-			}
-
-			@Override
-			public void setUser(final OperationUser user) {
-				this.operationUser = user;
-			}
-		};
 
 		populateDatabaseWithUsersGroupsAndPrivileges();
 	}
@@ -132,10 +118,10 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 				.withLoginString(ADMIN_USERNAME) //
 				.withPassword(ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
-				.withUserStore(IN_MEMORY_STORE).build();
+				.build();
 
 		// when
-		final Response response = authLogic.login(loginDTO);
+		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
 
 		// then
 		assertUserIsSuccessfullyAuthenticated(response);
@@ -159,9 +145,9 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 				.withLoginString(ADMIN_EMAIL) //
 				.withPassword(ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
-				.withUserStore(IN_MEMORY_STORE).build();
+				.build();
 		// when
-		final Response response = authLogic.login(loginDTO);
+		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
 
 		// then
 		assertFalse(response.isSuccess());
@@ -174,11 +160,10 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 		final LoginDTO loginDTO = LoginDTO.newInstance() //
 				.withLoginString(ADMIN_USERNAME) //
 				.withPassword(ADMIN_PASSWORD) //
-				.withUserStore(IN_MEMORY_STORE) //
 				.build();
 
 		// when
-		final Response response = authLogic.login(loginDTO);
+		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
 
 		// then
 		assertFalse(response.isSuccess());
@@ -196,11 +181,10 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 		final LoginDTO loginDTO = LoginDTO.newInstance() //
 				.withLoginString(USER_DEFAULT_GROUP) //
 				.withPassword(PASSWORD_DEFAULT_GROUP) //
-				.withUserStore(IN_MEMORY_STORE) //
 				.build();
 
 		// when
-		final Response response = authLogic.login(loginDTO);
+		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
 
 		// then
 		assertTrue(response.isSuccess());
@@ -213,11 +197,10 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 		final LoginDTO loginDTO = LoginDTO.newInstance() //
 				.withLoginString(SIMPLE_USERNAME) //
 				.withPassword(SIMPLE_PASSWORD) //
-				.withUserStore(IN_MEMORY_STORE) //
 				.build();
 
 		// when
-		final Response response = authLogic.login(loginDTO);
+		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
 
 		// then
 		assertTrue(response.isSuccess());
@@ -231,10 +214,10 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 				.withLoginString(ADMIN_USERNAME) //
 				.withPassword(WRONG_ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
-				.withUserStore(IN_MEMORY_STORE).build();
+				.build();
 
 		// when
-		final Response response = authLogic.login(loginDTO);
+		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
 
 		// then
 		assertFalse(response.isSuccess());
@@ -250,9 +233,9 @@ public class DefaultAuthenticationLogicTest extends IntegrationTestBase {
 				.withLoginString("wrong_admin_username") //
 				.withPassword(ADMIN_PASSWORD) //
 				.withGroupName((String) groupA.getCode()) //
-				.withUserStore(IN_MEMORY_STORE).build();
+				.build();
 		// when
-		final Response response = authLogic.login(loginDTO);
+		final Response response = authLogic.login(loginDTO, IN_MEMORY_STORE);
 
 		// then
 		assertFalse(response.isSuccess());

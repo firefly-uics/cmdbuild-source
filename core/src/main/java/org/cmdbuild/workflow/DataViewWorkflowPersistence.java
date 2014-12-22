@@ -14,16 +14,16 @@ import static org.cmdbuild.workflow.service.WSProcessInstanceState.OPEN;
 import static org.cmdbuild.workflow.service.WSProcessInstanceState.SUSPENDED;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.lookup.LookupStore;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataViewCardFetcher;
@@ -37,6 +37,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
 public class DataViewWorkflowPersistence implements WorkflowPersistence {
@@ -50,7 +51,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		private OperationUser operationUser;
 		private CMDataView dataView;
 		private ProcessDefinitionManager processDefinitionManager;
-		private LookupStore lookupStore;
+		public LookupHelper lookupHelper;
 		private CMWorkflowService workflowService;
 		private ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory;
 
@@ -69,7 +70,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			Validate.notNull(operationUser, "invalid operation user");
 			Validate.notNull(dataView, "invalid data view");
 			Validate.notNull(processDefinitionManager, "invalid process definition manager");
-			Validate.notNull(lookupStore, "invalid lookup store");
+			Validate.notNull(lookupHelper, "invalid lookup helper");
 			Validate.notNull(workflowService, "invalid workflow service");
 		}
 
@@ -110,13 +111,13 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 			this.processDefinitionManager = processDefinitionManager;
 		}
 
-		public DataViewWorkflowPersistenceBuilder withLookupStore(final LookupStore lookupStore) {
-			setLookupStore(lookupStore);
+		public DataViewWorkflowPersistenceBuilder withLookupHelper(final LookupHelper lookupHelper) {
+			setLookupHelper(lookupHelper);
 			return this;
 		}
 
-		public void setLookupStore(final LookupStore lookupStore) {
-			this.lookupStore = lookupStore;
+		public void setLookupHelper(final LookupHelper lookupHelper) {
+			this.lookupHelper = lookupHelper;
 		}
 
 		public DataViewWorkflowPersistenceBuilder withWorkflowService(final CMWorkflowService workflowService) {
@@ -129,13 +130,13 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		}
 
 		public DataViewWorkflowPersistenceBuilder withActivityPerformerTemplateResolverFactory(
-				ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory) {
+				final ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory) {
 			setActivityPerformerTemplateResolverFactory(activityPerformerTemplateResolverFactory);
 			return this;
 		}
 
 		public void setActivityPerformerTemplateResolverFactory(
-				ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory) {
+				final ActivityPerformerTemplateResolverFactory activityPerformerTemplateResolverFactory) {
 			this.activityPerformerTemplateResolverFactory = activityPerformerTemplateResolverFactory;
 		}
 
@@ -158,7 +159,7 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 		this.operationUser = builder.operationUser;
 		this.dataView = builder.dataView;
 		this.processDefinitionManager = builder.processDefinitionManager;
-		this.lookupHelper = new LookupHelper(builder.lookupStore);
+		this.lookupHelper = builder.lookupHelper;
 		this.workflowService = builder.workflowService;
 		this.activityPerformerTemplateResolverFactory = builder.activityPerformerTemplateResolverFactory;
 	}
@@ -320,8 +321,10 @@ public class DataViewWorkflowPersistence implements WorkflowPersistence {
 	@Override
 	public Iterable<? extends UserProcessInstance> queryOpenAndSuspended(final UserProcessClass processClass) {
 		logger.info(marker, "getting all opened and suspended process instances for class '{}'", processClass);
-		final Object[] ids = new Long[] { lookupHelper.lookupForState(OPEN).getId(),
-				lookupHelper.lookupForState(SUSPENDED).getId() };
+		final Optional<Lookup> open = lookupHelper.lookupForState(OPEN);
+		final Optional<Lookup> suspended = lookupHelper.lookupForState(SUSPENDED);
+		final Object[] ids = new Long[] { open.isPresent() ? open.get().getId() : null,
+				suspended.isPresent() ? suspended.get().getId() : null };
 		logger.debug(marker, "lookup ids are '{}'", ids);
 		return from(dataView.select(anyAttribute(processClass)) //
 				.from(processClass) //

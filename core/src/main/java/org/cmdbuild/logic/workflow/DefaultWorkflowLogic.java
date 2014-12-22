@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.workflow;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.filter;
 import static java.lang.String.format;
 import static org.cmdbuild.logic.PrivilegeUtils.assure;
 
@@ -15,6 +16,7 @@ import java.util.Map.Entry;
 import javax.activation.DataSource;
 
 import org.cmdbuild.auth.acl.PrivilegeContext;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.config.WorkflowConfiguration;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -90,8 +92,13 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 
 	@Override
 	public PagedElements<UserProcessInstance> query(final String className, final QueryOptions queryOptions) {
-		final PagedElements<UserProcessInstance> fetchedProcesses = workflowEngine.query(className, queryOptions);
-		final CMClass processClass = dataView.findClass(className);
+		return query(dataView.findClass(className), queryOptions);
+	}
+
+	@Override
+	public PagedElements<UserProcessInstance> query(CMClass processClass, QueryOptions queryOptions) {
+		final PagedElements<UserProcessInstance> fetchedProcesses = workflowEngine.query(processClass.getName(),
+				queryOptions);
 		final Iterable<UserProcessInstance> processes = ForeignReferenceResolver.<UserProcessInstance> newInstance() //
 				.withSystemDataView(systemDataView) //
 				.withEntryType(processClass) //
@@ -110,7 +117,7 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	}
 
 	@Override
-	public Iterable<? extends UserProcessClass> findActiveProcessClasses() {
+	public Iterable<UserProcessClass> findActiveProcessClasses() {
 		final Iterable<UserProcessClass> allClasses;
 		if (configuration.isEnabled()) {
 			allClasses = workflowEngine.findProcessClasses();
@@ -118,6 +125,46 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 			allClasses = Collections.emptyList();
 		}
 		return allClasses;
+	}
+
+	@Override
+	public Iterable<UserProcessClass> findProcessClasses(final boolean activeOnly) {
+		final Iterable<UserProcessClass> processClasses;
+		if (activeOnly) {
+			processClasses = filter(findActiveProcessClasses(), processesWithXpdlAssociated());
+		} else {
+			processClasses = findAllProcessClasses();
+		}
+		return processClasses;
+	}
+
+	private Predicate<UserProcessClass> processesWithXpdlAssociated() {
+		final Predicate<UserProcessClass> processesWithXpdlAssociated = new Predicate<UserProcessClass>() {
+			@Override
+			public boolean apply(final UserProcessClass input) {
+				boolean apply = false;
+				try {
+					apply = input.getName().equals(Constants.BASE_PROCESS_CLASS_NAME) //
+							|| input.isSuperclass() //
+							|| input.getDefinitionVersions().length > 0;
+				} catch (final CMWorkflowException e) {
+				}
+				return apply;
+			}
+		};
+		return processesWithXpdlAssociated;
+	}
+
+	@Override
+	public UserProcessClass findProcessClass(final Long classId) {
+		final Optional<UserProcessClass> optional = from(findAllProcessClasses()) //
+				.filter(new Predicate<UserProcessClass>() {
+					@Override
+					public boolean apply(final UserProcessClass input) {
+						return input.getId().equals(classId);
+					}
+				}).first();
+		return optional.isPresent() ? optional.get() : null;
 	}
 
 	@Override
@@ -489,15 +536,23 @@ class DefaultWorkflowLogic implements WorkflowLogic {
 	}
 
 	@Override
-	public void abortProcess(final Long processClassId, final long processCardId) throws CMWorkflowException {
-		logger.info("aborting process with id '{}' for class '{}'", processCardId, processClassId);
+	public void abortProcess(final String processClassName, final long processCardId) throws CMWorkflowException {
+		logger.info("aborting process with id '{}' for class '{}'", processCardId, processClassName);
 		if (processCardId < 0) {
 			logger.error("invalid card id '{}'", processCardId);
 			throw WorkflowExceptionType.WF_CANNOT_ABORT_PROCESS.createException();
 		}
-		final CMProcessClass process = workflowEngine.findProcessClassById(processClassId);
+		final CMProcessClass process = workflowEngine.findProcessClassByName(processClassName);
 		final UserProcessInstance pi = workflowEngine.findProcessInstance(process, processCardId);
 		workflowEngine.abortProcessInstance(pi);
+
+	}
+
+	@Override
+	public void abortProcess(final Long processClassId, final long processCardId) throws CMWorkflowException {
+		logger.info("aborting process with id '{}' for class '{}'", processCardId, processClassId);
+		final CMProcessClass processClass = workflowEngine.findProcessClassById(processClassId);
+		abortProcess(processClass.getName(), processCardId);
 	}
 
 }

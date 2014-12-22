@@ -39,13 +39,13 @@ import org.cmdbuild.logic.taskmanager.task.event.asynchronous.AsynchronousEventT
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTask;
 import org.cmdbuild.logic.taskmanager.task.process.StartWorkflowTaskJobFactory;
 import org.cmdbuild.services.event.DefaultObserverCollector;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import com.google.common.base.Supplier;
 
-@ConfigurationComponent
+@Configuration
 public class TaskManager {
 
 	@Autowired

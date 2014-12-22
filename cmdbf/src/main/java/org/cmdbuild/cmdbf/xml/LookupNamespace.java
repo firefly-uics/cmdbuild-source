@@ -1,5 +1,8 @@
 package org.cmdbuild.cmdbf.xml;
 
+import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_QUERY;
+import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_TYPE_QUERY;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,8 +13,7 @@ import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.sf.jasperreports.engine.util.ObjectUtils;
-
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.ws.commons.schema.XmlSchema;
 import org.apache.ws.commons.schema.XmlSchemaCollection;
 import org.apache.ws.commons.schema.XmlSchemaComplexType;
@@ -127,7 +129,7 @@ public class LookupNamespace extends AbstractNamespace {
 	@Override
 	public Iterable<LookupType> getTypes(final Class<?> cls) {
 		if (LookupType.class.isAssignableFrom(cls)) {
-			return lookupLogic.getAllTypes();
+			return lookupLogic.getAllTypes(UNUSED_LOOKUP_TYPE_QUERY);
 		} else {
 			return Collections.emptyList();
 		}
@@ -170,7 +172,8 @@ public class LookupNamespace extends AbstractNamespace {
 				if (lookupId <= 0 && lookupTypeName != null && !lookupTypeName.isEmpty()) {
 					final LookupType lookupType = getType(new QName(getNamespaceURI(), lookupTypeName));
 					if (lookupType != null) {
-						for (final Lookup lookup : lookupLogic.getAllLookup(lookupType, true)) {
+						for (final Lookup lookup : lookupLogic.getAllLookup(lookupType, true,
+								UNUSED_LOOKUP_QUERY)) {
 							if (lookup.description != null && ObjectUtils.equals(lookup.description, lookupValue)) {
 								lookupId = lookup.getId();
 							}
@@ -196,7 +199,7 @@ public class LookupNamespace extends AbstractNamespace {
 		final QName baseLookupQName = getRegistry().getTypeQName(LookupValue.class);
 		imports.add(baseLookupQName.getNamespaceURI());
 		restriction.setBaseTypeName(baseLookupQName);
-		for (final Lookup lookup : lookupLogic.getAllLookup(lookupType, true)) {
+		for (final Lookup lookup : lookupLogic.getAllLookup(lookupType, true, UNUSED_LOOKUP_QUERY)) {
 			if (lookup.description != null && lookup.description.length() > 0) {
 				final XmlSchemaFacet facet = new XmlSchemaEnumerationFacet();
 				facet.setValue(lookup.description);
@@ -298,12 +301,13 @@ public class LookupNamespace extends AbstractNamespace {
 	}
 
 	private LookupType getLookupType(final String name) {
-		return Iterables.find(lookupLogic.getAllTypes(), new Predicate<LookupType>() {
-			@Override
-			public boolean apply(final LookupType input) {
-				return input.name.equals(name);
-			}
-		}, null);
+		return Iterables.find(lookupLogic.getAllTypes(UNUSED_LOOKUP_TYPE_QUERY),
+				new Predicate<LookupType>() {
+					@Override
+					public boolean apply(final LookupType input) {
+						return input.name.equals(name);
+					}
+				}, null);
 	}
 
 	private Lookup getLookup(final LookupType type, final String id, final String name, final Lookup parent,
@@ -320,13 +324,14 @@ public class LookupNamespace extends AbstractNamespace {
 			}
 		}
 		if (lookup == null && type != null && name != null) {
-			lookup = Iterables.find(lookupLogic.getAllLookup(type, false), new Predicate<Lookup>() {
-				@Override
-				public boolean apply(final Lookup input) {
-					return input.description != null && input.description.equals(name)
-							&& (parent == null || input.parent.equals(parent));
-				}
-			}, null);
+			lookup = Iterables.find(lookupLogic.getAllLookup(type, false, UNUSED_LOOKUP_QUERY),
+					new Predicate<Lookup>() {
+						@Override
+						public boolean apply(final Lookup input) {
+							return input.description != null && input.description.equals(name)
+									&& (parent == null || input.parent.equals(parent));
+						}
+					}, null);
 		}
 		return lookup;
 	}

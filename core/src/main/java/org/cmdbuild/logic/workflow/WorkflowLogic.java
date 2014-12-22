@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.activation.DataSource;
 
 import org.cmdbuild.common.utils.PagedElements;
+import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -30,9 +31,15 @@ public interface WorkflowLogic extends Logic {
 
 	PagedElements<UserProcessInstance> query(String className, QueryOptions queryOptions);
 
+	PagedElements<UserProcessInstance> query(CMClass processClass, QueryOptions queryOptions);
+
 	Iterable<UserProcessClass> findAllProcessClasses();
 
-	Iterable<? extends UserProcessClass> findActiveProcessClasses();
+	Iterable<UserProcessClass> findActiveProcessClasses();
+
+	Iterable<UserProcessClass> findProcessClasses(boolean activeOnly);
+
+	UserProcessClass findProcessClass(Long classId);
 
 	UserProcessClass findProcessClass(String className);
 
@@ -155,6 +162,8 @@ public interface WorkflowLogic extends Logic {
 	void removeSketch(Long processClassId);
 
 	void addSketch(Long processClassId, DataSource ds) throws IOException;
+
+	void abortProcess(String processClassName, long processCardId) throws CMWorkflowException;
 
 	void abortProcess(Long processClassId, long processCardId) throws CMWorkflowException;
 

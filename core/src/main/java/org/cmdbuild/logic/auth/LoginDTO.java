@@ -1,19 +1,25 @@
 package org.cmdbuild.logic.auth;
 
-import org.apache.commons.lang3.Validate;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.auth.UserStore;
 
 public class LoginDTO {
 
-	public static class Builder implements org.cmdbuild.common.Builder<LoginDTO> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<LoginDTO> {
 
 		private String loginString;
 		private String unencryptedPassword;
 		private String loginGroupName;
-		private UserStore userStore;
 		public boolean passwordRequired = true;
+		public boolean serviceUsersAllowed;
+
+		@Override
+		public LoginDTO build() {
+			return new LoginDTO(this);
+		}
 
 		/**
 		 * 
@@ -37,20 +43,14 @@ public class LoginDTO {
 			return this;
 		}
 
-		public Builder withUserStore(final UserStore userStore) {
-			this.userStore = userStore;
-			return this;
-		}
-
 		public Builder withNoPasswordRequired() {
 			this.passwordRequired = false;
 			return this;
 		}
 
-		@Override
-		public LoginDTO build() {
-			Validate.notNull(userStore);
-			return new LoginDTO(this);
+		public Builder withServiceUsersAllowed(final boolean serviceUsersAllowed) {
+			this.serviceUsersAllowed = serviceUsersAllowed;
+			return this;
 		}
 
 	}
@@ -58,17 +58,15 @@ public class LoginDTO {
 	private final String loginString;
 	private final String unencryptedPassword;
 	private final String loginGroupName;
-	private final UserStore userStore;
 	private final boolean passwordRequired;
-	private final transient String toString;
+	private final boolean serviceUsersAllowed;
 
 	private LoginDTO(final Builder builder) {
 		this.loginString = builder.loginString;
 		this.unencryptedPassword = builder.unencryptedPassword;
 		this.loginGroupName = builder.loginGroupName;
-		this.userStore = builder.userStore;
 		this.passwordRequired = builder.passwordRequired;
-		this.toString = ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		this.serviceUsersAllowed = builder.serviceUsersAllowed;
 	}
 
 	public static Builder newInstance() {
@@ -87,17 +85,46 @@ public class LoginDTO {
 		return loginGroupName;
 	}
 
-	public UserStore getUserStore() {
-		return userStore;
-	}
-
 	public boolean isPasswordRequired() {
 		return passwordRequired;
 	}
 
+	public boolean isServiceUsersAllowed() {
+		return serviceUsersAllowed;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (!(obj instanceof LoginDTO)) {
+			return false;
+		}
+		final LoginDTO other = LoginDTO.class.cast(obj);
+		return new EqualsBuilder() //
+				.append(this.loginString, other.loginString) //
+				.append(this.unencryptedPassword, other.unencryptedPassword) //
+				.append(this.loginGroupName, other.loginGroupName) //
+				.append(this.passwordRequired, other.passwordRequired) //
+				.append(this.serviceUsersAllowed, other.serviceUsersAllowed) //
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder() //
+				.append(loginString) //
+				.append(unencryptedPassword) //
+				.append(loginGroupName) //
+				.append(passwordRequired) //
+				.append(serviceUsersAllowed) //
+				.toHashCode();
+	}
+
 	@Override
 	public String toString() {
-		return toString;
+		return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE).toString();
 	}
 
 }

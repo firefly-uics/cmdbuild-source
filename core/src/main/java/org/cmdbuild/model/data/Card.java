@@ -7,7 +7,6 @@ import java.util.Map;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.data.store.Storable;
 import org.joda.time.DateTime;
@@ -16,7 +15,7 @@ import com.google.common.collect.Maps;
 
 public class Card implements Storable {
 
-	public static class CardBuilder implements Builder<Card> {
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<Card> {
 
 		private Long id;
 		private CMClass type;
@@ -28,7 +27,7 @@ public class Card implements Storable {
 		private String user;
 		private Map<String, Object> attributes = Maps.newHashMap();
 
-		public CardBuilder clone(final Card card) {
+		public Builder clone(final Card card) {
 			this.id = card.id;
 			this.className = card.className;
 			this.classDescription = card.classDescription;
@@ -41,61 +40,61 @@ public class Card implements Storable {
 			return this;
 		}
 
-		public CardBuilder() {
+		public Builder() {
 		}
 
-		public CardBuilder(final CMClass type) {
+		public Builder(final CMClass type) {
 			this.type = type;
 			this.className = type.getName();
 		}
 
-		public CardBuilder withId(final Long value) {
+		public Builder withId(final Long value) {
 			this.id = value;
 			return this;
 		}
 
-		public CardBuilder withClassName(final String value) {
+		public Builder withClassName(final String value) {
 			this.className = value;
 			return this;
 		}
 
-		public CardBuilder withClassId(final Long value) {
+		public Builder withClassId(final Long value) {
 			this.classId = value;
 			return this;
 		}
 
-		public CardBuilder withClassDescription(final String classDescription) {
+		public Builder withClassDescription(final String classDescription) {
 			this.classDescription = classDescription;
 			return this;
 		}
 
-		public CardBuilder withBeginDate(final DateTime value) {
+		public Builder withBeginDate(final DateTime value) {
 			this.begin = value;
 			return this;
 		}
 
-		public CardBuilder withEndDate(final DateTime value) {
+		public Builder withEndDate(final DateTime value) {
 			this.end = value;
 			return this;
 		}
 
-		public CardBuilder withUser(final String value) {
+		public Builder withUser(final String value) {
 			this.user = value;
 			return this;
 		}
 
-		public CardBuilder withAttribute(final String key, final Object value) {
+		public Builder withAttribute(final String key, final Object value) {
 			this.attributes.put(key, value);
 			return this;
 		}
 
-		public CardBuilder withAllAttributes(final Map<String, Object> values) {
+		public Builder withAllAttributes(final Map<String, ? extends Object> values) {
 			this.attributes.putAll(values);
 			return this;
 		}
 
-		public CardBuilder withAllAttributes(final Iterable<Map.Entry<String, Object>> values) {
-			for (final Map.Entry<String, Object> entry : values) {
+		public Builder withAllAttributes(final Iterable<? extends Map.Entry<String, ? extends Object>> values) {
+			for (final Map.Entry<String, ? extends Object> entry : values) {
 				this.attributes.put(entry.getKey(), entry.getValue());
 			}
 			return this;
@@ -109,12 +108,12 @@ public class Card implements Storable {
 
 	}
 
-	public static CardBuilder newInstance() {
-		return new CardBuilder();
+	public static Builder newInstance() {
+		return new Builder();
 	}
 
-	public static CardBuilder newInstance(final CMClass entryType) {
-		return new CardBuilder(entryType);
+	public static Builder newInstance(final CMClass entryType) {
+		return new Builder(entryType);
 	}
 
 	private final Long id;
@@ -129,7 +128,7 @@ public class Card implements Storable {
 
 	private final transient String toString;
 
-	public Card(final CardBuilder builder) {
+	public Card(final Builder builder) {
 		this.id = builder.id;
 		this.type = builder.type;
 		this.className = builder.className;

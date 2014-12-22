@@ -49,6 +49,7 @@ public class AbstractGetRelation {
 	protected static final String CODE = org.cmdbuild.dao.driver.postgres.Const.CODE_ATTRIBUTE;
 	protected static final String DESCRIPTION = org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
 
+	protected static final Alias SRC_ALIAS = NameAlias.as("SRC");
 	protected static final Alias DOM_ALIAS = NameAlias.as("DOM");
 	protected static final Alias DST_ALIAS = NameAlias.as("DST");
 
@@ -68,9 +69,9 @@ public class AbstractGetRelation {
 		WhereClause clause = trueWhereClause();
 		if ((src.getId() != null) && (src.getId() > 0L)) {
 			if (whereClause == null || whereClause instanceof EmptyWhereClause) {
-				clause = condition(attribute(srcCardType, ID), eq(src.getId()));
+				clause = condition(attribute(SRC_ALIAS, ID), eq(src.getId()));
 			} else {
-				clause = and(condition(attribute(srcCardType, ID), eq(src.getId())), whereClause);
+				clause = and(condition(attribute(SRC_ALIAS, ID), eq(src.getId())), whereClause);
 			}
 		}
 		return getRelationQuery(srcCardType, domain) //
@@ -79,9 +80,9 @@ public class AbstractGetRelation {
 
 	protected QuerySpecsBuilder getRelationQuery(final CMClass sourceType, final CMDomain domain) {
 		return view
-				.select(attribute(sourceType, CODE), attribute(sourceType, DESCRIPTION), anyAttribute(DOM_ALIAS),
+				.select(attribute(SRC_ALIAS, CODE), attribute(SRC_ALIAS, DESCRIPTION), anyAttribute(DOM_ALIAS),
 						attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION)) //
-				.from(sourceType) //
+				.from(sourceType, as(SRC_ALIAS)) //
 				.join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS))) //
 				.orderBy(attribute(DST_ALIAS, DESCRIPTION), Direction.ASC);
 	}

@@ -1,6 +1,7 @@
 package org.cmdbuild.services.soap.security;
 
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -115,7 +116,8 @@ public class PasswordHandler implements CallbackHandler {
 			if (AuthProperties.getInstance().getForceWSPasswordDigest()) {
 				throw new UnsupportedCallbackException(pwcb, "Unsupported authentication method");
 			}
-			user = authenticationService.authenticate(login, pwcb.getPassword());
+			final AuthenticatedUser authenticated = authenticationService.authenticate(login, pwcb.getPassword());
+			user = (authenticated.isService() || authenticated.isPrivileged()) ? ANONYMOUS_USER : authenticated;
 		}
 		return user;
 	}

@@ -5,7 +5,7 @@
 	<groupId>org.cmdbuild</groupId>
 	<artifactId>cmdbuild-main</artifactId>
 	<packaging>pom</packaging>
-	<version>2.2.3-SNAPSHOT</version>
+	<version>2.3-SNAPSHOT</version>
 	<name>CMDBuild</name>
 	<url>http://www.cmdbuild.org</url>
 	<properties>
@@ -57,6 +57,9 @@
 		<module>graph</module>
 		<module>scheduler/core</module>
 		<module>scheduler/quartz</module>
+		<module>services/rest/core</module>
+		<module>services/rest/cxf</module>
+		<module>services/rest/test</module>
 		<module>shark/client</module>
 		<module>services/sync/core</module>
 		<module>services/sync/internal</module>
@@ -184,6 +187,12 @@
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>dbcp</artifactId>
 				<version>${tomcat.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -392,7 +401,7 @@
 												</goals>
 											</pluginExecutionFilter>
 											<action>
-												<ignore />
+												<ignore></ignore>
 											</action>
 										</pluginExecution>
 									</pluginExecutions>

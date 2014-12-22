@@ -23,7 +23,8 @@ import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.AuthException.AuthExceptionType;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.NotFoundException;
-import org.cmdbuild.listeners.RequestListener;
+import org.cmdbuild.listeners.CMDBContext;
+import org.cmdbuild.listeners.ContextStore;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.services.JSONDispatcherService;
 import org.cmdbuild.services.JSONDispatcherService.MethodInfo;
@@ -44,6 +45,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
+
+import com.google.common.base.Optional;
 
 public class JSONDispatcher extends HttpServlet {
 
@@ -330,8 +333,9 @@ public class JSONDispatcher extends HttpServlet {
 	}
 
 	private void addRequestWarnings(final JSONObject jsonOutput) throws JSONException {
-		final List<? extends Throwable> warnings = applicationContext().getBean(RequestListener.class) //
-				.getCurrentRequest().getWarnings();
+		final ContextStore contextStore = applicationContext().getBean(ContextStore.class);
+		final Optional<CMDBContext> context = contextStore.get();
+		final List<? extends Throwable> warnings = context.get().getWarnings();
 		if (!warnings.isEmpty()) {
 			jsonOutput.put("warnings", serializeExceptionArray(warnings));
 		}

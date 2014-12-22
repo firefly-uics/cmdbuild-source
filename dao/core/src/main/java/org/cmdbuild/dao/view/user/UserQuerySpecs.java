@@ -90,11 +90,12 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	private WhereClause whereClauseForUser() {
 		final WhereClause userWhereClause;
 		final CMEntryType fromType = delegate.getFromClause().getType();
+		final Alias alias = delegate.getFromClause().getAlias();
 		if (fromType instanceof CMClass) {
 			final CMClass type = CMClass.class.cast(fromType);
-			final WhereClause superClassesWhereClause = safeFilterForSuperclassesOf(type);
-			final WhereClause currentClassAndChildrenWhereClause = safeFilterFor(type, type);
-			final WhereClause prevExecutorsWhereClause = prevExecutorsFilter(type);
+			final WhereClause superClassesWhereClause = safeFilterForSuperclassesOf(alias, type);
+			final WhereClause currentClassAndChildrenWhereClause = safeFilterFor(alias, type, type);
+			final WhereClause prevExecutorsWhereClause = prevExecutorsFilter(alias, type);
 			userWhereClause = and( //
 					delegate.getWhereClause(), //
 					prevExecutorsWhereClause, //
@@ -111,9 +112,9 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 * As {@link UserQuerySpecs.filterForSuperclassesOf} but returns a
 	 * {@link TrueWhereClause} if an error occurs.
 	 */
-	private WhereClause safeFilterForSuperclassesOf(final CMClass type) {
+	private WhereClause safeFilterForSuperclassesOf(final Alias alias, final CMClass type) {
 		try {
-			return filterForSuperclassesOf(type);
+			return filterForSuperclassesOf(alias, type);
 		} catch (final Exception e) {
 			return trueWhereClause();
 		}
@@ -128,11 +129,11 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 * @return the global {@link WhereClause} for the specified {@link CMClass}
 	 *         or {@link TrueWhereClause} if there is no filter available.
 	 */
-	private WhereClause filterForSuperclassesOf(final CMClass type) {
+	private WhereClause filterForSuperclassesOf(final Alias alias, final CMClass type) {
 		final List<WhereClause> superClassesWhereClauses = Lists.newArrayList();
 		for (CMClass parentType = type.getParent(); parentType != null; parentType = parentType.getParent()) {
 			final Iterable<? extends WhereClause> privilegeWhereClause = rowAndColumnPrivilegeFetcher
-					.fetchPrivilegeFiltersFor(parentType, type);
+					.fetchPrivilegeFiltersFor(parentType, type, alias);
 			if (!isEmpty(privilegeWhereClause)) {
 				superClassesWhereClauses.add(or(privilegeWhereClause));
 			}
@@ -144,9 +145,9 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 * As {@link UserQuerySpecs.filterFor} but returns a {@code TrueWhereClause}
 	 * if an error occurs.
 	 */
-	private WhereClause safeFilterFor(final CMClass root, final CMClass type) {
+	private WhereClause safeFilterFor(final Alias alias, final CMClass root, final CMClass type) {
 		try {
-			final WhereClause filter = filterFor(root, type);
+			final WhereClause filter = filterFor(alias, root, type);
 			return (filter == null) ? trueWhereClause() : filter;
 		} catch (final Exception e) {
 			return trueWhereClause();
@@ -163,13 +164,13 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 * @return the global {@link WhereClause} for the specified {@link CMClass}
 	 *         or {@code null} if the filter is not available.
 	 */
-	private WhereClause filterFor(final CMClass root, final CMClass type) {
+	private WhereClause filterFor(final Alias alias, final CMClass root, final CMClass type) {
 		final Iterable<? extends WhereClause> currentWhereClauses = rowAndColumnPrivilegeFetcher
 				.fetchPrivilegeFiltersFor(type);
 		final List<WhereClause> childrenWhereClauses = Lists.newArrayList();
 		final List<Long> childrenWithNoFilter = Lists.newArrayList();
 		for (final CMClass child : type.getChildren()) {
-			final WhereClause childWhereClause = filterFor(root, child);
+			final WhereClause childWhereClause = filterFor(alias, root, child);
 			if (childWhereClause != null) {
 				childrenWhereClauses.add(childWhereClause);
 			} else {
@@ -177,7 +178,7 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 			}
 		}
 		if (!childrenWithNoFilter.isEmpty()) {
-			childrenWhereClauses.add(condition(attribute(root, ID_CLASS), in(childrenWithNoFilter.toArray())));
+			childrenWhereClauses.add(condition(attribute(alias, ID_CLASS), in(childrenWithNoFilter.toArray())));
 		}
 		final WhereClause whereClause;
 		if (isEmpty(currentWhereClauses) && isEmpty(childrenWhereClauses)) {
@@ -199,7 +200,7 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 	 * @param type
 	 * @return
 	 */
-	private WhereClause prevExecutorsFilter(final CMClass type) {
+	private WhereClause prevExecutorsFilter(final Alias alias, final CMClass type) {
 		final WhereClause whereClause;
 		final CMAttribute prevExecutors = type.getAttribute(PREV_EXECUTORS);
 		if (operationUser.hasAdministratorPrivileges()) {
@@ -216,13 +217,13 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 			}
 
 			whereClause = or( //
-					condition(attribute(type, prevExecutors), stringArrayOverlap(userGroupsJoined)), //
+					condition(attribute(alias, prevExecutors), stringArrayOverlap(userGroupsJoined)), //
 					/*
 					 * the or with empty array is necessary because after the
 					 * creation of the the process card (before to say to shark
 					 * to advance it) the PrevExecutors is empty
 					 */
-					condition(attribute(type, prevExecutors), emptyArray()) //
+					condition(attribute(alias, prevExecutors), emptyArray()) //
 			);
 		} else {
 			whereClause = trueWhereClause();

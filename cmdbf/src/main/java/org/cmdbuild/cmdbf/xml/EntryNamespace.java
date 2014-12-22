@@ -44,6 +44,7 @@ import org.cmdbuild.dao.entrytype.attributetype.StringAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TextAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.data.store.lookup.LookupType;
+import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
@@ -485,6 +486,9 @@ abstract public class EntryNamespace extends AbstractNamespace {
 		public void visit(final EntryTypeAttributeType attributeType) {
 			if (value != null) {
 				final CMEntryType type = userDataAccessLogic.findClass((Long) value);
+				if (type == null) {
+					throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+				}
 				xml.setTextContent(type.getIdentifier().getLocalName());
 			}
 		}

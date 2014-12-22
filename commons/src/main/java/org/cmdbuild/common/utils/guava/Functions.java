@@ -29,7 +29,7 @@ public final class Functions {
 
 	}
 
-	private static class ToKeyFunction<K, V> implements Function<Entry<K, V>, K> {
+	private static class ToKeyFunction<K, V> implements Function<Entry<? extends K, ? extends V>, K> {
 
 		public static <K, V> ToKeyFunction<K, V> newInstance() {
 			return new ToKeyFunction<K, V>();
@@ -40,13 +40,13 @@ public final class Functions {
 		}
 
 		@Override
-		public K apply(final Entry<K, V> input) {
+		public K apply(final Entry<? extends K, ? extends V> input) {
 			return input.getKey();
 		}
 
 	}
 
-	private static class ToValueFunction<K, V> implements Function<Entry<K, V>, V> {
+	private static class ToValueFunction<K, V> implements Function<Entry<? extends K, ? extends V>, V> {
 
 		public static <K, V> ToValueFunction<K, V> newInstance() {
 			return new ToValueFunction<K, V>();
@@ -57,7 +57,7 @@ public final class Functions {
 		}
 
 		@Override
-		public V apply(final Entry<K, V> input) {
+		public V apply(final Entry<? extends K, ? extends V> input) {
 			return input.getValue();
 		}
 
@@ -84,11 +84,11 @@ public final class Functions {
 		return StringFunctions.TRIM;
 	}
 
-	public static <K, V> Function<Entry<K, V>, K> toKey() {
+	public static <K, V> Function<Entry<? extends K, ? extends V>, K> toKey() {
 		return ToKeyFunction.newInstance();
 	}
 
-	public static <K, V> Function<Entry<K, V>, V> toValue() {
+	public static <K, V> Function<Entry<? extends K, ? extends V>, V> toValue() {
 		return ToValueFunction.newInstance();
 	}
 

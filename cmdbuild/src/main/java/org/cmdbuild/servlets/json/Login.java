@@ -38,8 +38,8 @@ public class Login extends JSONBaseWithSpringContext {
 				.withLoginString(loginString)//
 				.withPassword(password)//
 				.withGroupName(groupName)//
-				.withUserStore(userStore()) //
-				.build());
+				.build(), //
+				userStore());
 		return serializeResponse(response, serializer);
 	}
 

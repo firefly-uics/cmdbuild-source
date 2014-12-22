@@ -16,4 +16,6 @@ public interface UserFetcher {
 
 	List<CMUser> fetchAllUsers();
 
+	Iterable<CMUser> fetchServiceOrPrivilegedUsers();
+
 }

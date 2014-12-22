@@ -24,9 +24,6 @@ import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.model.View;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
-import org.cmdbuild.services.store.menu.MenuStore.ReportExtension;
 
 public class MenuItemConverter {
 

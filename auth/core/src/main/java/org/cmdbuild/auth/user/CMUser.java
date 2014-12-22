@@ -1,7 +1,6 @@
 package org.cmdbuild.auth.user;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 
 public interface CMUser {
 
@@ -27,14 +26,14 @@ public interface CMUser {
 	 * 
 	 * @return
 	 */
-	Set<String> getGroupNames();
+	Collection<String> getGroupNames();
 
 	/**
 	 * Returns a sorted list with the description of the user groups
 	 * 
 	 * @return
 	 */
-	List<String> getGroupDescriptions();
+	Collection<String> getGroupDescriptions();
 
 	/**
 	 * Returns the name of the default group for this user, used to try and
@@ -58,6 +57,19 @@ public interface CMUser {
 	boolean isActive();
 
 	/**
+	 * 
+	 * @return true if the user is a service one, false otherwise
+	 */
+	boolean isService();
+
+	/**
+	 * 
+	 * @return true if the user is privileged (implies that is service), false
+	 *         otherwise
+	 */
+	boolean isPrivileged();
+
+	/**
 	 * Two CMUsers are equal if their name is equal
 	 * 
 	 * @param obj
@@ -65,4 +77,5 @@ public interface CMUser {
 	 */
 	@Override
 	boolean equals(final Object obj);
+
 }
