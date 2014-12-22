@@ -1,8 +1,7 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.apache.commons.lang3.CharEncoding.UTF_8;
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 import static org.cmdbuild.service.rest.constants.Serialization.CARD_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.CLASS_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.DOMAIN_SOURCE;
@@ -13,8 +12,8 @@ import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newRelation;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
-import static org.cmdbuild.service.rest.test.HttpClientUtils.all;
-import static org.cmdbuild.service.rest.test.HttpClientUtils.param;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
@@ -33,10 +32,13 @@ import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.common.collect.ChainablePutMap;
 import org.cmdbuild.service.rest.Relations;
 import org.cmdbuild.service.rest.model.Models;
@@ -78,7 +80,7 @@ public class RelationsTest {
 
 	@Before
 	public void createHttpClient() throws Exception {
-		httpclient = new HttpClient();
+		httpclient = HttpClientBuilder.create().build();
 	}
 
 	@Test
@@ -91,17 +93,20 @@ public class RelationsTest {
 				.when(service).create(anyString(), any(Relation.class));
 
 		// when
-		final PostMethod post = new PostMethod(server.resource("domains/12/relations/"));
+		final HttpPost post = new HttpPost(server.resource("domains/12/relations/"));
 		final ObjectNode node = json.newObject();
 		node.put(UNDERSCORED_ID, 34L);
 		node.put(UNDERSCORED_TYPE, "foo");
 		node.put("foo", "FOO");
 		node.put("bar", "BAR");
 		node.put("baz", "BAZ");
-		post.setRequestEntity(new StringRequestEntity(node.toString(), APPLICATION_JSON, UTF_8));
-		final int result = httpclient.executeMethod(post);
+		post.setEntity(new StringEntity(node.toString(), APPLICATION_JSON));
+		final HttpResponse response = httpclient.execute(post);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
 		final ArgumentCaptor<Relation> relationCaptor = ArgumentCaptor.forClass(Relation.class);
 		verify(service).create(eq("12"), relationCaptor.capture());
 
@@ -113,9 +118,6 @@ public class RelationsTest {
 		assertThat(values, hasEntry("foo", (Object) "FOO"));
 		assertThat(values, hasEntry("bar", (Object) "BAR"));
 		assertThat(values, hasEntry("baz", (Object) "BAZ"));
-
-		assertThat(result, equalTo(200));
-		assertThat(json.from(post.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
@@ -169,19 +171,18 @@ public class RelationsTest {
 				.when(service).read(anyString(), anyInt(), anyInt());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("domains/12/relations/"));
-		get.setQueryString(all( //
-				param(CLASS_ID, "34"), //
-				param(CARD_ID, "56"), //
-				param(DOMAIN_SOURCE, "baz") //
-		));
-
-		final int result = httpclient.executeMethod(get);
+		final HttpGet get = new HttpGet(new URIBuilder(server.resource("domains/12/relations/")) //
+				.setParameter(CLASS_ID, "34") //
+				.setParameter(CARD_ID, "56") //
+				.setParameter(DOMAIN_SOURCE, "baz") //
+				.build());
+		final HttpResponse response = httpclient.execute(get);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
 		verify(service).read(eq("12"), anyInt(), anyInt());
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 }

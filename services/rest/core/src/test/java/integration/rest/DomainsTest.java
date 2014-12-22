@@ -1,6 +1,7 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
+import static org.cmdbuild.service.rest.constants.Serialization.ACTIVE;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.model.Models.newDomainWithBasicDetails;
@@ -8,8 +9,8 @@ import static org.cmdbuild.service.rest.model.Models.newDomainWithFullDetails;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
-import static org.cmdbuild.service.rest.test.HttpClientUtils.all;
-import static org.cmdbuild.service.rest.test.HttpClientUtils.param;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -20,8 +21,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.service.rest.Domains;
 import org.cmdbuild.service.rest.model.DomainWithBasicDetails;
 import org.cmdbuild.service.rest.model.DomainWithFullDetails;
@@ -52,7 +56,7 @@ public class DomainsTest {
 
 	@Before
 	public void createHttpClient() throws Exception {
-		httpclient = new HttpClient();
+		httpclient = HttpClientBuilder.create().build();
 	}
 
 	@Test
@@ -75,17 +79,18 @@ public class DomainsTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("domains/"));
-		get.setQueryString(all( //
-				param(LIMIT, "123"), //
-				param(START, "456") //
-		));
-		final int result = httpclient.executeMethod(get);
+		final HttpGet get = new HttpGet(new URIBuilder(server.resource("domains/")) //
+				.setParameter(ACTIVE, "true") //
+				.setParameter(LIMIT, "123") //
+				.setParameter(START, "456") //
+				.build());
+		final HttpResponse response = httpclient.execute(get);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
 		verify(service).readAll(eq(123), eq(456));
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
@@ -100,13 +105,14 @@ public class DomainsTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("domains/123/"));
-		final int result = httpclient.executeMethod(get);
+		final HttpGet get = new HttpGet(server.resource("domains/123/"));
+		final HttpResponse response = httpclient.execute(get);
 
 		// then
-		verify(service).read(eq("123"));
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
+		verify(service).read("123");
 	}
 
 }

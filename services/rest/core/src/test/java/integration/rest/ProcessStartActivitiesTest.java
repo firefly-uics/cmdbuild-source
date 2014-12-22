@@ -6,6 +6,8 @@ import static org.cmdbuild.service.rest.model.Models.newProcessActivityWithBasic
 import static org.cmdbuild.service.rest.model.Models.newProcessActivityWithFullDetails;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
+import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -15,8 +17,10 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.service.rest.ProcessStartActivities;
 import org.cmdbuild.service.rest.model.ProcessActivityWithBasicDetails;
 import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails;
@@ -47,7 +51,7 @@ public class ProcessStartActivitiesTest {
 
 	@Before
 	public void createHttpClient() throws Exception {
-		httpclient = new HttpClient();
+		httpclient = HttpClientBuilder.create().build();
 	}
 
 	@Test
@@ -73,13 +77,14 @@ public class ProcessStartActivitiesTest {
 				.when(service).read(anyString());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("processes/baz/start_activities/"));
-		final int result = httpclient.executeMethod(get);
+		final HttpGet get = new HttpGet(server.resource("processes/baz/start_activities/"));
+		final HttpResponse response = httpclient.execute(get);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
 		verify(service).read(eq("baz"));
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 	@Test
@@ -99,13 +104,14 @@ public class ProcessStartActivitiesTest {
 				.when(service).read(anyString(), anyString());
 
 		// when
-		final GetMethod get = new GetMethod(server.resource("processes/bar/start_activities/baz/"));
-		final int result = httpclient.executeMethod(get);
+		final HttpGet get = new HttpGet(server.resource("processes/bar/start_activities/baz/"));
+		final HttpResponse response = httpclient.execute(get);
 
 		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
 		verify(service).read(eq("bar"), eq("baz"));
-		assertThat(result, equalTo(200));
-		assertThat(json.from(get.getResponseBodyAsString()), equalTo(json.from(expectedResponse)));
 	}
 
 }

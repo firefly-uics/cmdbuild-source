@@ -1,15 +1,18 @@
 package org.cmdbuild.service.rest.test;
 
-import org.apache.commons.httpclient.NameValuePair;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.http.HttpResponse;
 
 public class HttpClientUtils {
 
-	public static NameValuePair param(final String name, final String value) {
-		return new NameValuePair(name, value);
+	public static int statusCodeOf(final HttpResponse response) {
+		return response.getStatusLine().getStatusCode();
 	}
 
-	public static NameValuePair[] all(final NameValuePair... params) {
-		return params;
+	public static InputStream contentOf(final HttpResponse response) throws IllegalStateException, IOException {
+		return response.getEntity().getContent();
 	}
 
 	private HttpClientUtils() {
