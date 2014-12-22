@@ -29,14 +29,14 @@ import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.SubjectHandler;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
 import com.google.common.base.Supplier;
 
-@ConfigurationComponent
+@Configuration
 public class Email {
 
 	@Autowired

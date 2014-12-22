@@ -40,7 +40,7 @@ public abstract class AbstractGeoCommand {
 	protected final void put(final InputStream data, final String url, final MediaType mime) {
 		final ClientResource cr = createClient(url);
 		final Representation input = new InputRepresentation(data, mime);
-		Log.REST.debug("PUT REQUEST " + url);
+		Log.CMDBUILD.debug("PUT REQUEST " + url);
 		cr.put(input);
 	}
 
@@ -49,7 +49,7 @@ public abstract class AbstractGeoCommand {
 		try {
 			final ClientResource cr = createClient(url);
 			final StringWriter sw = new StringWriter();
-			Log.REST.debug("GET REQUEST " + url);
+			Log.CMDBUILD.debug("GET REQUEST " + url);
 			cr.get(MediaType.TEXT_XML).write(sw);
 			response = DocumentHelper.parseText(sw.toString());
 		} catch (final Exception e) {
@@ -60,7 +60,7 @@ public abstract class AbstractGeoCommand {
 
 	protected final void delete(final String url) {
 		final ClientResource cr = createClient(url);
-		Log.REST.debug("DELETE REQUEST " + url);
+		Log.CMDBUILD.debug("DELETE REQUEST " + url);
 		cr.delete();
 	}
 

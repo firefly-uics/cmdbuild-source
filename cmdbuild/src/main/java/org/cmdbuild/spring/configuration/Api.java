@@ -4,11 +4,11 @@ import org.cmdbuild.api.fluent.FluentApi;
 import org.cmdbuild.api.fluent.FluentApiExecutor;
 import org.cmdbuild.core.api.fluent.LogicFluentApiExecutor;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationComponent
+@Configuration
 public class Api {
 
 	@Autowired

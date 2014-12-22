@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMAttribute.Mode;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -42,11 +43,58 @@ import org.cmdbuild.logic.Logic;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Ordering;
 
 public class LookupLogic implements Logic {
 
 	private static final Marker marker = MarkerFactory.getMarker(LookupLogic.class.getName());
+
+	public static interface LookupTypeQuery {
+
+		Integer limit();
+
+		Integer offset();
+
+	}
+
+	public static final LookupTypeQuery UNUSED_LOOKUP_TYPE_QUERY = new LookupTypeQuery() {
+
+		@Override
+		public Integer limit() {
+			return null;
+		}
+
+		@Override
+		public Integer offset() {
+			return null;
+		}
+
+	};
+
+	public static interface LookupQuery {
+
+		Integer limit();
+
+		Integer offset();
+
+	}
+
+	public static final LookupQuery UNUSED_LOOKUP_QUERY = new LookupQuery() {
+
+		@Override
+		public Integer limit() {
+			return null;
+		}
+
+		@Override
+		public Integer offset() {
+			return null;
+		}
+
+	};
 
 	private static class Exceptions {
 
@@ -67,6 +115,17 @@ public class LookupLogic implements Logic {
 		}
 
 	}
+
+	private static final Comparator<LookupType> NAME_ASC = new Comparator<LookupType>() {
+
+		@Override
+		public int compare(final LookupType o1, final LookupType o2) {
+			final String v1 = o1.name;
+			final String v2 = o2.name;
+			return v1.compareTo(v2);
+		}
+
+	};
 
 	private static final Comparator<Lookup> NUMBER_COMPARATOR = new Comparator<Lookup>() {
 		@Override
@@ -93,11 +152,18 @@ public class LookupLogic implements Logic {
 		this.dataView = dataView;
 	}
 
-	public Iterable<LookupType> getAllTypes() {
+	public PagedElements<LookupType> getAllTypes(final LookupTypeQuery query) {
 		logger.trace(marker, "getting all lookup types");
-		return from(store.readAll()) //
-				.transform(toLookupType()) // O
+		final Iterable<LookupType> allElements = from(store.readAll()) //
+				.transform(toLookupType()) //
 				.filter(uniques());
+		final Iterable<LookupType> ordered = Ordering.from(NAME_ASC).sortedCopy(allElements);
+		final Integer offset = query.offset();
+		final Integer limit = query.limit();
+		final Iterable<LookupType> filtered = from(ordered) //
+				.skip((offset == null) ? 0 : offset) //
+				.limit((limit == null) ? Integer.MAX_VALUE : limit);
+		return new PagedElements<LookupType>(filtered, size(ordered));
 	}
 
 	public String fetchTranslationUuid(final int id) {
@@ -250,14 +316,15 @@ public class LookupLogic implements Logic {
 		}
 	}
 
-	public Iterable<Lookup> getAllLookup( //
+	public PagedElements<Lookup> getAllLookup( //
 			final LookupType type, //
-			final boolean activeOnly //
+			final boolean activeOnly, //
+			final LookupQuery query //
 	) {
 
 		logger.debug(marker, "getting all lookups for type '{}'", type);
 
-		final LookupType realType = typeFor(typesWith(type.name));
+		final LookupType realType = typeFor(typesWith(type.name)).orNull();
 
 		logger.trace(marker, "getting all lookups for real type '{}'", realType);
 
@@ -273,18 +340,23 @@ public class LookupLogic implements Logic {
 		logger.trace(marker, "ordering elements");
 		sort(list, NUMBER_COMPARATOR);
 
-		return from(list) //
-				.filter(actives(activeOnly));
+		final Integer offset = query.offset();
+		final Integer limit = query.limit();
+		final FluentIterable<Lookup> all = from(list) //
+				.filter(actives(activeOnly)) //
+				.skip((offset == null) ? 0 : offset) //
+				.limit((limit == null) ? Integer.MAX_VALUE : limit);
+		return new PagedElements<Lookup>(all, size(list));
 	}
 
 	public Iterable<Lookup> getAllLookupOfParent(final LookupType type) {
 		logger.debug(marker, "getting all lookups for the parent of type '{}'", type);
-		final LookupType current = typeFor(typesWith(type.name));
+		final LookupType current = typeFor(typesWith(type.name)).orNull();
 		if (current.parent == null) {
 			return new LinkedList<Lookup>();
 		}
 
-		final LookupType parent = typeFor(typesWith(current.parent));
+		final LookupType parent = typeFor(typesWith(current.parent)).orNull();
 		return store.readAll(parent);
 	}
 
@@ -348,27 +420,27 @@ public class LookupLogic implements Logic {
 
 	private LookupType typeForNameAndParent(final String name, final String parent) {
 		logger.debug(marker, "getting lookup type with name '{}' and parent '{}'", name, parent);
-		return typeFor(typesWith(name, parent));
+		return typeFor(typesWith(name, parent)).orNull();
 	}
 
 	public LookupType typeFor(final String lookupTypeName) {
-		return typeFor(typesWith(lookupTypeName));
+		return typeFor(typesWith(lookupTypeName)).orNull();
 	}
 
-	private LookupType typeFor(final Predicate<LookupType> predicate) {
+	public Optional<LookupType> typeFor(final Predicate<LookupType> predicate) {
 		logger.trace(marker, "getting lookup type for predicate");
-		final Iterator<LookupType> shouldBeOneOnly = from(getAllTypes()) //
+		final Iterator<LookupType> shouldBeOneOnly = from(getAllTypes(UNUSED_LOOKUP_TYPE_QUERY)) //
 				.filter(predicate) //
 				.iterator();
-		final LookupType found;
+		final Optional<LookupType> found;
 		if (!shouldBeOneOnly.hasNext()) {
 			logger.warn(marker, "lookup type not found");
-			found = null;
+			found = Optional.absent();
 		} else {
 			logger.info(marker, "lookup type successfully found");
-			found = shouldBeOneOnly.next();
+			found = Optional.of(shouldBeOneOnly.next());
 		}
-		if ((found != null) && shouldBeOneOnly.hasNext()) {
+		if (found.isPresent() && shouldBeOneOnly.hasNext()) {
 			logger.error(marker, "more than one lookup type has been found");
 			throw ORMExceptionType.ORM_GENERIC_ERROR.createException();
 		}
@@ -382,7 +454,7 @@ public class LookupLogic implements Logic {
 
 		final Lookup lookupWithRealType = Lookup.newInstance() //
 				.clone(lookup) //
-				.withType(typeFor(typesWith(lookup.type.name))) //
+				.withType(typeFor(typesWith(lookup.type.name)).orNull()) //
 				.build();
 
 		final Long id;
@@ -448,7 +520,7 @@ public class LookupLogic implements Logic {
 
 		assure(operationUser.hasAdministratorPrivileges());
 
-		final LookupType realType = typeFor(typesWith(type.name));
+		final LookupType realType = typeFor(typesWith(type.name)).orNull();
 		final Iterable<Lookup> lookups = store.readAll(realType);
 		for (final Lookup lookup : lookups) {
 			if (positions.containsKey(lookup.getId())) {

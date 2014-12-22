@@ -10,10 +10,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import org.cmdbuild.auth.LanguageStore;
-import org.cmdbuild.spring.annotations.FilterComponent;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 
@@ -22,7 +22,7 @@ import org.springframework.context.ApplicationContextAware;
  * 
  */
 
-@FilterComponent("TranslationFilter")
+@Configuration("TranslationFilter")
 public class TranslationFilter implements Filter, ApplicationContextAware {
 
 	private static final String LANGUAGE_ARG = "language";

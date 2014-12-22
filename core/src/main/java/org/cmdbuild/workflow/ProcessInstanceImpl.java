@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.workflow.ActivityInstanceImpl.ActivityAdvanceChecker;
@@ -166,7 +166,7 @@ public class ProcessInstanceImpl implements UserProcessInstance {
 	public DateTime getEndDate() {
 		return card.getEndDate();
 	}
-	
+
 	@Override
 	public Long getCurrentId() {
 		return card.getCurrentId();

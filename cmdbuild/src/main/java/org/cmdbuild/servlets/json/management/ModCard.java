@@ -37,6 +37,8 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.SORT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.START;
 import static org.cmdbuild.servlets.json.CommunicationConstants.STATE;
 import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
+import static org.cmdbuild.servlets.json.schema.Utils.toMap;
+import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -52,9 +54,9 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.ConsistencyException;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.GISLogic;
-import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
+import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.QueryOptions.QueryOptionsBuilder;
@@ -66,7 +68,6 @@ import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
-import org.cmdbuild.servlets.json.schema.Utils;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationHistoryResponse;
 import org.cmdbuild.servlets.json.serializers.JsonGetRelationListResponse;
 import org.cmdbuild.servlets.json.serializers.Serializer;
@@ -228,12 +229,9 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.limit(limit) //
 				.offset(offset) //
 				.orderBy(sorters) //
+				.onlyAttributes(toIterable(attributes)) //
 				.parameters(otherAttributes) //
-				.filter(filter); //
-
-		if (attributes != null && attributes.length() > 0) {
-			queryOptionsBuilder.onlyAttributes(attributes);
-		}
+				.filter(filter);
 
 		final QueryOptions queryOptions = queryOptionsBuilder.build();
 		final FetchCardListResponse response = dataLogic.fetchCards(className, queryOptions);
@@ -260,7 +258,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 				.offset(offset) //
 				.orderBy(sorters) //
 				.filter(filter) //
-				.parameters(Utils.toMap(jsonParameters)) //
+				.parameters(toMap(jsonParameters)) //
 				.build();
 
 		final FetchCardListResponse response = systemDataAccessLogic().fetchSQLCards(functionName, queryOptions);
@@ -292,7 +290,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 
 		QueryOptionsBuilder queryOptionsBuilder = QueryOptions.newQueryOption();
 		addFilterToQueryOption(new JsonFilterHelper(filter) //
-				.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatus)), queryOptionsBuilder);
+				.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatus)), queryOptionsBuilder);
 		addSortersToQueryOptions(sorters, queryOptionsBuilder);
 
 		CMCardWithPosition card = dataAccessLogic.getCardPosition(className, cardId, queryOptionsBuilder.build());
@@ -304,7 +302,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			final String flowStatusForExpectedCard = flowStatus(expectedCard);
 			if (flowStatusForExpectedCard != null) {
 				addFilterToQueryOption(new JsonFilterHelper(new JSONObject()) //
-						.merge(new FlowStatusFilterElementGetter(lookupStore(), flowStatusForExpectedCard)),
+						.merge(new FlowStatusFilterElementGetter(lookupHelper(), flowStatusForExpectedCard)),
 						queryOptionsBuilder);
 			}
 			addSortersToQueryOptions(sorters, queryOptionsBuilder);
@@ -317,7 +315,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		 * position. Do it in a better way!
 		 */
 		if (card.card != null) {
-			final Object retrievedFlowStatus = card.card.get("FlowStatus");
+			final Object retrievedFlowStatus = card.card.get(FlowStatus.dbColumnName());
 			if (retrievedFlowStatus != null) {
 				final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
 				out.put("FlowStatus", lookupFlowStatus.code);
@@ -328,7 +326,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 	}
 
 	private String flowStatus(final CMCard card) {
-		final Object retrievedFlowStatus = card.get("FlowStatus");
+		final Object retrievedFlowStatus = card.get(FlowStatus.dbColumnName());
 		if (retrievedFlowStatus != null) {
 			final Lookup lookupFlowStatus = lookupLogic().getLookup(((LookupValue) retrievedFlowStatus).getId());
 			return lookupFlowStatus.code;
@@ -373,7 +371,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 			try {
 				dataLogic.updateCard(cardToBeCreatedOrUpdated);
 			} catch (final ConsistencyException e) {
-				requestListener().warn(e);
+				notifier().warn(e);
 				out.put("success", false);
 			}
 		}
@@ -463,7 +461,11 @@ public class ModCard extends JSONBaseWithSpringContext {
 			throws JSONException, CMDBException {
 		final JSONObject out = new JSONObject();
 		final DataAccessLogic dataLogic = userDataAccessLogic();
-		final String className = dataLogic.findClass(classId).getIdentifier().getLocalName();
+		final CMClass found = dataLogic.findClass(classId);
+		if (found == null) {
+			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
+		}
+		final String className = found.getIdentifier().getLocalName();
 		dataLogic.deleteCard(className, cardId);
 
 		return out;
@@ -650,7 +652,7 @@ public class ModCard extends JSONBaseWithSpringContext {
 		try {
 			dataLogic.lockCard(cardId);
 		} catch (final ConsistencyException e) {
-			requestListener().warn(e);
+			notifier().warn(e);
 			out.put("success", false);
 		}
 

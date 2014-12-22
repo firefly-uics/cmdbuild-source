@@ -7,14 +7,16 @@ import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.logic.DashboardLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
+import org.cmdbuild.logic.menu.DefaultMenuLogic;
+import org.cmdbuild.logic.menu.MenuLogic;
 import org.cmdbuild.services.store.menu.DataViewMenuStore;
 import org.cmdbuild.services.store.menu.MenuItemConverter;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class Menu {
 
 	@Autowired
@@ -37,6 +39,12 @@ public class Menu {
 
 	@Autowired
 	private View view;
+
+	@Bean
+	@Scope(PROTOTYPE)
+	public MenuLogic menuLogic() {
+		return new DefaultMenuLogic(dataViewMenuStore());
+	}
 
 	@Bean
 	public MenuItemConverter menuItemConverter() {

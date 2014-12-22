@@ -1,6 +1,7 @@
 package org.cmdbuild.auth;
 
 import static org.apache.commons.lang3.BooleanUtils.isTrue;
+import static org.cmdbuild.auth.UserStores.unsupported;
 import static org.cmdbuild.auth.user.AuthenticatedUserImpl.ANONYMOUS_USER;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
@@ -15,7 +16,6 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.ClientRequestAuthenticator.ClientRequest;
-import org.cmdbuild.auth.Login.LoginType;
 import org.cmdbuild.auth.PasswordAuthenticator.PasswordChanger;
 import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.user.AnonymousUser;
@@ -49,6 +49,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	private static final String ID = "Id";
 
 	public interface Configuration {
+
 		/**
 		 * Returns the names of the authenticators that should be activated, or
 		 * null if all authenticators should be activated.
@@ -57,43 +58,12 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		 */
 		Collection<String> getActiveAuthenticators();
 
-		/**
-		 * Return the names of the service users. They can only log in with
-		 * password callback and can impersonate other users. Null means that
-		 * there is no service user defined.
-		 * 
-		 * @return a list of service users or null
-		 */
-		Collection<String> getServiceUsers();
-
-		/**
-		 * Return the names of the privileged service users. Every operation
-		 * performed will be stored with a special label with this format "
-		 * {@code system/$USER}", where "{@code $USER}" is the name of the
-		 * impersonated user.
-		 * 
-		 * @return a list of privileged service users or null.
-		 */
-		Collection<String> getPrivilegedServiceUsers();
 	}
 
 	private interface FetchCallback {
 
 		void foundUser(AuthenticatedUser authUser);
 	}
-
-	private static final UserStore DUMB_STORE = new UserStore() {
-
-		@Override
-		public OperationUser getUser() {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public void setUser(final OperationUser user) {
-			throw new UnsupportedOperationException();
-		}
-	};
 
 	private PasswordAuthenticator[] passwordAuthenticators;
 	private ClientRequestAuthenticator[] clientRequestAuthenticators;
@@ -102,7 +72,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	private UserStore userStore;
 	private final CMDataView view;
 
-	private final Collection<String> serviceUsers;
 	private final Collection<String> authenticatorNames;
 
 	public DefaultAuthenticationService(final CMDataView dataView) {
@@ -113,26 +82,16 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				return null;
 			}
 
-			@Override
-			public Collection<String> getServiceUsers() {
-				return null;
-			}
-
-			@Override
-			public Collection<String> getPrivilegedServiceUsers() {
-				return null;
-			}
 		}, dataView);
 	}
 
 	public DefaultAuthenticationService(final Configuration conf, final CMDataView dataView) {
 		Validate.notNull(conf);
-		this.serviceUsers = conf.getServiceUsers();
 		this.authenticatorNames = conf.getActiveAuthenticators();
 		passwordAuthenticators = new PasswordAuthenticator[0];
 		clientRequestAuthenticators = new ClientRequestAuthenticator[0];
 		userFetchers = new UserFetcher[0];
-		userStore = DUMB_STORE;
+		userStore = unsupported();
 		view = dataView;
 	}
 
@@ -170,30 +129,15 @@ public class DefaultAuthenticationService implements AuthenticationService {
 		return authenticatorNames != null && !authenticatorNames.contains(authenticator.getName());
 	}
 
-	private boolean isServiceUser(final CMUser user) {
-		return isServiceUser(user.getUsername());
-	}
-
-	private boolean isServiceUser(final Login login) {
-		return (login.getType() == LoginType.USERNAME) && isServiceUser(login.getValue());
-	}
-
-	private boolean isServiceUser(final String username) {
-		return serviceUsers != null && serviceUsers.contains(username);
-	}
-
 	@Override
 	public AuthenticatedUser authenticate(final Login login, final String password) {
-		if (isServiceUser(login)) {
-			return ANONYMOUS_USER;
-		}
 		for (final PasswordAuthenticator passwordAuthenticator : passwordAuthenticators) {
 			if (isInactive(passwordAuthenticator)) {
 				continue;
 			}
 			final boolean isUserAuthenticated = passwordAuthenticator.checkPassword(login, password);
 			if (isUserAuthenticated) {
-				return fetchAuthenticatedUser(login, new FetchCallback() {
+				final AuthenticatedUser fetched = fetchAuthenticatedUser(login, new FetchCallback() {
 
 					@Override
 					public void foundUser(final AuthenticatedUser authUser) {
@@ -201,6 +145,7 @@ public class DefaultAuthenticationService implements AuthenticationService {
 						authUser.setPasswordChanger(passwordChanger);
 					}
 				});
+				return fetched;
 			}
 		}
 		return ANONYMOUS_USER;
@@ -213,17 +158,15 @@ public class DefaultAuthenticationService implements AuthenticationService {
 				continue;
 			}
 			final String pass = pa.fetchUnencryptedPassword(login);
-			if (pass != null) {
-				return fetchAuthenticatedUser(login, new FetchCallback() {
+			return fetchAuthenticatedUser(login, new FetchCallback() {
 
-					@Override
-					public void foundUser(final AuthenticatedUser authUser) {
-						final PasswordChanger passwordChanger = pa.getPasswordChanger(login);
-						authUser.setPasswordChanger(passwordChanger);
-						passwordCallback.setPassword(pass);
-					}
-				});
-			}
+				@Override
+				public void foundUser(final AuthenticatedUser authUser) {
+					final PasswordChanger passwordChanger = pa.getPasswordChanger(login);
+					authUser.setPasswordChanger(passwordChanger);
+					passwordCallback.setPassword(pass);
+				}
+			});
 		}
 		return ANONYMOUS_USER;
 	}
@@ -249,17 +192,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
 			}
 		}
 		return ClientAuthenticatorResponse.EMTPY_RESPONSE;
-	}
-
-	@Override
-	public OperationUser impersonate(final Login login) {
-		final OperationUser operationUser = userStore.getUser();
-		if (operationUser.hasAdministratorPrivileges() || isServiceUser(operationUser.getAuthenticatedUser())) {
-			final CMUser user = fetchUser(login);
-			operationUser.impersonate(user);
-			return operationUser;
-		}
-		return operationUser;
 	}
 
 	@Override
@@ -444,6 +376,14 @@ public class DefaultAuthenticationService implements AuthenticationService {
 	public List<CMUser> fetchAllUsers() {
 		for (final UserFetcher uf : userFetchers) {
 			return uf.fetchAllUsers();
+		}
+		return Lists.newArrayList();
+	}
+
+	@Override
+	public Iterable<CMUser> fetchServiceOrPrivilegedUsers() {
+		for (final UserFetcher uf : userFetchers) {
+			return uf.fetchServiceOrPrivilegedUsers();
 		}
 		return Lists.newArrayList();
 	}

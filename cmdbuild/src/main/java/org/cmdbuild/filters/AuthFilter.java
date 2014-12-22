@@ -21,14 +21,14 @@ import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationRequest;
 import org.cmdbuild.logic.auth.AuthenticationLogic.ClientAuthenticationResponse;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
-import org.cmdbuild.spring.annotations.FilterComponent;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@FilterComponent("AuthFilter")
+@Configuration("AuthFilter")
 @Scope(PROTOTYPE)
 public class AuthFilter implements Filter {
 

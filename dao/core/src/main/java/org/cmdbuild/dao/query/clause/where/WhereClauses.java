@@ -48,6 +48,14 @@ public class WhereClauses {
 		return NotWhereClause.not(whereClause);
 	}
 
+	public static WhereClause or(final WhereClause first, final WhereClause second, final WhereClause... others) {
+		final List<WhereClause> clauses = Lists.newArrayList();
+		clauses.add(first);
+		clauses.add(second);
+		clauses.addAll(asList(others));
+		return or(clauses);
+	}
+
 	public static WhereClause or(final Iterable<? extends WhereClause> whereClauses) {
 		return OrWhereClause.or(whereClauses);
 	}

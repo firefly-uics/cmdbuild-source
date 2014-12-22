@@ -3,11 +3,11 @@ package org.cmdbuild.spring.configuration;
 import org.cmdbuild.logic.DefaultNavigationTreeLogic;
 import org.cmdbuild.logic.NavigationTreeLogic;
 import org.cmdbuild.services.store.DBDomainTreeStore;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationComponent
+@Configuration
 public class NavigationTree {
 
 	@Autowired

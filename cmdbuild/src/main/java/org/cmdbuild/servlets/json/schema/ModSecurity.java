@@ -124,13 +124,12 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			builder.withRestrictedAdminFlag(true);
 		}
 
-		final AuthenticationLogic authLogic = authLogic();
 		if (newGroup) {
 			final GroupDTO groupDTO = builder.build();
-			createdOrUpdatedGroup = authLogic.createGroup(groupDTO);
+			createdOrUpdatedGroup = groupsLogic().createGroup(groupDTO);
 		} else {
 			final GroupDTO groupDTO = builder.withGroupId(groupId).build();
-			createdOrUpdatedGroup = authLogic.updateGroup(groupDTO);
+			createdOrUpdatedGroup = groupsLogic().updateGroup(groupDTO);
 		}
 
 		final JSONObject out = new JSONObject();
@@ -144,7 +143,7 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 			@Parameter(IS_ACTIVE) final boolean active, //
 			@Parameter(GROUP_ID) final Long groupId) throws JSONException, AuthException {
 
-		final CMGroup group = authLogic().setGroupActive(groupId, active);
+		final CMGroup group = groupsLogic().setGroupActive(groupId, active);
 
 		final JSONObject out = new JSONObject();
 		out.put(GROUP, Serializer.serialize(group));
@@ -198,16 +197,15 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 				newUserIds.add(Long.valueOf(userId));
 			}
 		}
-		final AuthenticationLogic authLogic = authLogic();
-		final List<Long> oldUserIds = authLogic.getUserIdsForGroupWithId(groupId);
+		final List<Long> oldUserIds = authLogic().getUserIdsForGroupWithId(groupId);
 		for (final Long userId : newUserIds) {
 			if (!oldUserIds.contains(userId)) {
-				authLogic.addUserToGroup(userId, groupId);
+				groupsLogic().addUserToGroup(userId, groupId);
 			}
 		}
 		for (final Long userId : oldUserIds) {
 			if (!newUserIds.contains(userId)) {
-				authLogic.removeUserFromGroup(userId, groupId);
+				groupsLogic().removeUserFromGroup(userId, groupId);
 			}
 		}
 	}

@@ -1,7 +1,6 @@
 package org.cmdbuild.auth.user;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 
 import com.google.common.collect.ForwardingObject;
 
@@ -32,12 +31,12 @@ public abstract class ForwardingUser extends ForwardingObject implements CMUser 
 	}
 
 	@Override
-	public Set<String> getGroupNames() {
+	public Collection<String> getGroupNames() {
 		return delegate().getGroupNames();
 	}
 
 	@Override
-	public List<String> getGroupDescriptions() {
+	public Collection<String> getGroupDescriptions() {
 		return delegate().getGroupDescriptions();
 	}
 
@@ -54,6 +53,16 @@ public abstract class ForwardingUser extends ForwardingObject implements CMUser 
 	@Override
 	public boolean isActive() {
 		return delegate().isActive();
+	}
+
+	@Override
+	public boolean isService() {
+		return delegate().isService();
+	}
+
+	@Override
+	public boolean isPrivileged() {
+		return delegate().isPrivileged();
 	}
 
 }

@@ -3,6 +3,7 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
+<%@ page import="org.cmdbuild.auth.UserStore" %>
 <%@ page import="org.cmdbuild.auth.user.OperationUser"%>
 <%@ page import="org.cmdbuild.services.SessionVars"%>
 <%@ page import="org.cmdbuild.services.auth.User"%>
@@ -13,7 +14,8 @@
 <%
 	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
 	final String lang = sessionVars.getLanguage();
-	final OperationUser operationUser = sessionVars.getUser();
+	final UserStore userStore = SpringIntegrationUtils.applicationContext().getBean(UserStore.class);
+	final OperationUser operationUser = userStore.getUser();
 	final String extVersion = "4.2.0";
 %>
 <html>
