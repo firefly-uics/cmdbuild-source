@@ -12,7 +12,6 @@ CMDBuild.extend(CMDBuild.WidgetBuilders.ComboAttribute, CMDBuild.WidgetBuilders.
 CMDBuild.WidgetBuilders.ComboAttribute.prototype.buildGridHeader = function(attribute) {
 	return {
 		header : attribute.description,
-		disabled: (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read') ? true : false, // Read only attributes setup
 		sortable : true,
 		dataIndex : attribute.name,
 		hidden: !attribute.isbasedsp,

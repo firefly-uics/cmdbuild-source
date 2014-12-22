@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.fixes.CMFixCombobox', {
+	Ext.define('CMDBuild.override.form.field.FixComboBox', {
 		override: 'Ext.form.field.ComboBox',
 
 		/**

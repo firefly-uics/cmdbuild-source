@@ -1,10 +1,10 @@
 (function() {
 
-	Ext.define('CMDBuild.core.fixes.CMFixFieldset', {
+	Ext.define('CMDBuild.override.form.FixFieldSet', {
 		override: 'Ext.form.FieldSet',
 
 		/**
-		 * An ExtJs fix for CellEditing plugin within Fieldset 21/03/2014
+		 * An ExtJs fix for CellEditing plugin within FieldSet 21/03/2014
 		 */
 		setExpanded: function(expanded) {
 			var me = this;
