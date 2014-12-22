@@ -16,6 +16,7 @@ public class Email extends AbstractEmail implements Storable {
 	private EmailStatus status;
 	private Long activityId;
 	private Iterable<Attachment> attachments;
+	private boolean noSubjectPrefix;
 	private String account;
 
 	public Email() {
@@ -75,6 +76,14 @@ public class Email extends AbstractEmail implements Storable {
 
 	public void setAttachments(final Iterable<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	public boolean isNoSubjectPrefix() {
+		return noSubjectPrefix;
+	}
+
+	public void setNoSubjectPrefix(final boolean noSubjectPrefix) {
+		this.noSubjectPrefix = noSubjectPrefix;
 	}
 
 	public String getAccount() {

@@ -7,6 +7,7 @@
 	var RECEIVED = 'Received';
 	var NEW	 = 'New';
 	var DRAFT = 'Draft';
+	var NO_SUBJECT_PREFIX = 'noSubjectPrefix';
 
 	Ext.define('CMDBuild.management.mail.Model', {
 		extend: 'Ext.data.Model',
@@ -23,6 +24,10 @@
 			'temporaryId',
 			'notifyWith',
 			'attachments',
+			{
+				name: NO_SUBJECT_PREFIX,
+				type: 'boolean'
+			},
 			'Fake' // for the icons
 		],
 
@@ -143,6 +148,11 @@
 				},
 				{
 					header: '&nbsp',
+					dataIndex: NO_SUBJECT_PREFIX,
+					hidden: true
+				},
+				{
+					header: '&nbsp',
 					sortable: true,
 					dataIndex: fields.STATUS,
 					hidden: true
@@ -246,6 +256,7 @@
 		 */
 		createRecord: function(recordValues) {
 			recordValues[fields.STATUS] = recordValues[fields.STATUS] || NEW;
+			recordValues[NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(NO_SUBJECT_PREFIX)) ? recordValues[NO_SUBJECT_PREFIX] : this.delegate.widget[NO_SUBJECT_PREFIX];
 
 			return new CMDBuild.management.mail.Model(recordValues);
 		},

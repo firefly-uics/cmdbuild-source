@@ -310,7 +310,7 @@ class SelectMailImpl implements SelectMail {
 						}
 					}
 				} catch (final MessagingException e) {
-					logger.error("error getting mail", e);
+					logger.error("error moving mail", e);
 					throw MailException.move(e);
 				}
 			}

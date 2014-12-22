@@ -1,6 +1,7 @@
 package org.cmdbuild.services.email;
 
 import static com.google.common.collect.FluentIterable.from;
+import static java.util.Collections.emptyList;
 import static org.cmdbuild.data.store.Storables.storableOf;
 
 import org.apache.commons.lang3.Validate;
@@ -19,6 +20,8 @@ import com.google.common.base.Predicate;
 public class DefaultEmailPersistence implements EmailPersistence {
 
 	private static final Logger logger = Log.PERSISTENCE;
+
+	private static final Iterable<Email> NO_EMAILS = emptyList();
 
 	private static class EmailIdPredicate implements Predicate<Email> {
 
@@ -131,7 +134,8 @@ public class DefaultEmailPersistence implements EmailPersistence {
 	@Override
 	public Iterable<Email> getEmails(final Long processId) {
 		logger.info("getting all emails for process' id '{}'", processId);
-		return from(emailStore.readAll(EmailOwnerGroupable.of(processId)));
+		return (processId == null || (processId == 0L)) ? NO_EMAILS : from(emailStore.readAll(EmailOwnerGroupable
+				.of(processId)));
 	}
 
 }
