@@ -1,4 +1,3 @@
-
 <script type="text/javascript" src="javascripts/OpenLayers-2.12/OpenLayers.debug.js"></script>
 
 <script type="text/javascript" src="javascripts/cmdbuild/state/CMMapState.js"></script>

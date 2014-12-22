@@ -2,8 +2,8 @@ package org.cmdbuild.dao.view.user;
 
 import static com.google.common.base.Joiner.on;
 import static com.google.common.collect.Iterables.isEmpty;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.EmptyArrayOperatorAndValue.emptyArray;
@@ -68,7 +68,6 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 
 	private UserQuerySpecs(final UserDataView dataView, final QuerySpecs delegate, final OperationUser operationUser,
 			final RowAndColumnPrivilegeFetcher rowAndColumnPrivilegeFetcher) {
-		super(delegate);
 		this.dataView = dataView;
 		this.delegate = delegate;
 		this.operationUser = operationUser;
@@ -76,6 +75,11 @@ public class UserQuerySpecs extends ForwardingQuerySpecs {
 
 		userWhereClause = whereClauseForUser();
 		directJoins = directJoinClausesForUser(userWhereClause);
+	}
+
+	@Override
+	protected QuerySpecs delegate() {
+		return delegate;
 	}
 
 	@Override

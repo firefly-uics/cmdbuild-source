@@ -3,10 +3,13 @@ package org.cmdbuild.dao.query;
 import static org.cmdbuild.common.Constants.LOOKUP_CLASS_NAME;
 import static org.cmdbuild.dao.entrytype.EntryTypeAnalyzer.inspect;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
+import static org.cmdbuild.dao.query.clause.Functions.name;
+import static org.cmdbuild.dao.query.clause.Predicates.withAlias;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.NameAlias.as;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -15,8 +18,8 @@ import java.util.Set;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.dao.constants.Cardinality;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -28,6 +31,7 @@ import org.cmdbuild.dao.entrytype.EntryTypeAnalyzer;
 import org.cmdbuild.dao.entrytype.NullEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.attributetype.ForeignKeyAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.ReferenceAttributeType;
+import org.cmdbuild.dao.query.clause.AnyAttribute;
 import org.cmdbuild.dao.query.clause.ClassHistory;
 import org.cmdbuild.dao.query.clause.DomainHistory;
 import org.cmdbuild.dao.query.clause.NamedAttribute;
@@ -54,6 +58,8 @@ import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -429,7 +435,24 @@ public class QuerySpecsBuilderImpl implements QuerySpecsBuilder {
 
 		final CMEntryType fromEntryType = fromClause.getType();
 		final Alias fromAlias = fromClause.getAlias();
-		final EntryTypeAnalyzer entryTypeAnalyzer = inspect(fromEntryType, viewForBuild);
+		final EntryTypeAnalyzer entryTypeAnalyzer = inspect(fromEntryType, new Predicate<CMAttribute>() {
+
+			private final Iterable<QueryAliasAttribute> queryAliasAttributes = FluentIterable.from(attributes) //
+					.filter(QueryAliasAttribute.class) //
+					.filter(withAlias(fromAlias));
+			private final boolean anyAttribute = !FluentIterable.from(queryAliasAttributes) //
+					.filter(AnyAttribute.class) //
+					.isEmpty();
+			private final Collection<String> names = FluentIterable.from(queryAliasAttributes) //
+					.transform(name()) //
+					.toList();
+
+			@Override
+			public boolean apply(final CMAttribute input) {
+				return anyAttribute || names.contains(input.getName());
+			}
+
+		}, viewForBuild);
 		if (entryTypeAnalyzer.hasExternalReferences()) {
 			addDirectJoinClausesForLookup(entryTypeAnalyzer.getLookupAttributes(), fromEntryType, fromAlias);
 			addDirectJoinClausesForReference(entryTypeAnalyzer.getReferenceAttributes(), fromEntryType, fromAlias);

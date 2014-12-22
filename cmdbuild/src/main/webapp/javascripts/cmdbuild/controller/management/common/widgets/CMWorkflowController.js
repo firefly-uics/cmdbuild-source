@@ -1,4 +1,5 @@
 (function() {
+
 	var ERROR_TEMPLATE = "<p class=\"{0}\">{1}</p>";
 	var FILTER_FIELD = "_SystemFieldFilter";
 
@@ -18,6 +19,8 @@
 		statics: {
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMWorkflow.WIDGET_NAME
 		},
+		processId: null,
+		processClassName: null,
 
 		constructor: function(view, ownerController, widgetDef, clientForm, card) {
 			this.ownerController = ownerController;
@@ -32,6 +35,7 @@
 
 			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
 			this.mon(this.view, this.view.CMEVENTS.advanceButtonClick, onAdvanceCardClick, this);
+
 			var me = this;
 			var name = this.widgetReader.getCode(this.widgetConf);
 			if (name) {
@@ -42,7 +46,7 @@
 				if (card && card.data) {
 					_CMCache.getAttributeList(card.data.id, function(attributes) {
 						me.cardAttributes = attributes;
-					});		
+					});
 				}
 				this.presets = this.widgetReader.getPreset(this.typedWidgetConf);
 			}
@@ -63,8 +67,8 @@
 			filterTemplateResolver.xaVars[FILTER_FIELD] = this.filter;
 			filterTemplateResolver.resolveTemplates({
 				attributes: [FILTER_FIELD],
-				callback: function(o) {
-					var callParams = filterTemplateResolver.buildCQLQueryParameters(o[FILTER_FIELD]);
+				callback: function(response) {
+					var callParams = filterTemplateResolver.buildCQLQueryParameters(response[FILTER_FIELD]);
 					var filter = Ext.encode({
 						CQL: callParams.CQL
 					});
@@ -72,7 +76,7 @@
 						url: 'services/json/management/modcard/getcardlistshort',
 					    params: {
 					    	className: "Activity",
-					        limit: 100,
+					        limit: 1000,
 					        start: 0,
 					        filter: filter
 					    },
@@ -86,6 +90,20 @@
 				}
 			});
 		},
+
+		getData: function() {
+			var out = null;
+			if (!this.readOnly) {
+				out = {};
+				out["output"] = {
+					id : this.processId,
+					className: this.processClassName
+				};
+			}
+
+			return out;
+		},
+
 		ensureEditPanel: function() {
 		},
 		onWidgetButtonClick: function(widget) {
@@ -112,12 +130,13 @@
 			if (card && card.data) {
 				_CMCache.getAttributeList(card.data.id, function(attributes) {
 					me.cardAttributes = attributes;
-				});		
+				});
 			}
 			this.presets = this.widgetReader.getPreset(this.typedWidgetConf);
 			configureActivityForm(this);
 		}
 	});
+
 	function configureActivityForm(me) {
 		if (!me.widgetReader) {
 			return;
@@ -143,7 +162,7 @@
 				});
 
 				resolveTemplate(me);
-				me.widgetControllerManager.buildControllers(ret.response.widgets);
+				me.widgetControllerManager.buildControllers(ret.response.widgets, card);
 				me.view.getWidgetButtonsPanel().editMode();
 				me.view.setLoading(false);
 				me.configured = true;
@@ -151,6 +170,7 @@
 			scope: me
 		});
 	}
+
 	function resolveTemplate(me) {
 		me.templateResolver.resolveTemplates({
 			attributes: Ext.Object.getKeys(me.presets),
@@ -163,9 +183,11 @@
 	function onAdvanceCardClick() {
 		saveWorkflow(this, true);
 	}
+
 	function onSaveCardClick() {
 		saveWorkflow(this, false);
 	}
+
 	function saveWorkflow(me, advance) {
 		var form = me.view.formPanel.getForm();
 		var valid = advance ? validate(me) : true;
@@ -187,6 +209,10 @@
 					CMDBuild.LoadMask.get().hide();
 				},
 				success: function(operation, requestConfiguration, decodedResponse) {
+					me.processId = decodedResponse.response.Id;
+					var processClassId = decodedResponse.response.IdClass;
+					var entity =_CMCache.getEntryTypeById(processClassId);
+					me.processClassName = entity.get("name");
 				}
 			});
 			me.ownerController.hideWidgetsContainer();
@@ -194,6 +220,7 @@
 			_debug("There are no processInstance to save");
 		}
 	}
+
 	function validateForm(me) {
 		var form = me.view.formPanel.getForm();
 		var invalidAttributes = CMDBuild.controller.common.CardStaticsController.getInvalidAttributeAsHTML(form);

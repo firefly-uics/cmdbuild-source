@@ -1,10 +1,14 @@
 package org.cmdbuild.model.widget;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailLogic.EmailSubmission;
 import org.cmdbuild.model.AbstractEmail;
@@ -25,8 +29,9 @@ public class ManageEmail extends Widget {
 	private static final String SUBJECT_ATTRIBUTE = "subject";
 	private static final String CONTENT_ATTRIBUTE = "content";
 	private static final String NOTIFY_WITH_ATTRIBUTE = "notifyWith";
-	private static final String TEMPORARY_ID = "temporaryId";
 	private final static String NO_SUBJECT_PREFIX = "noSubjectPrefix";
+	private static final String ACCOUNT_ATTRIBUTE = "account";
+	private static final String TEMPORARY_ID = "temporaryId";
 
 	private static class Submission {
 
@@ -45,8 +50,12 @@ public class ManageEmail extends Widget {
 
 	public static class EmailTemplate extends AbstractEmail {
 
+		private static final Map<String, String> NO_VARIABLES = Collections.emptyMap();
+
 		private String condition;
+		private Map<String, String> variables;
 		private boolean noSubjectPrefix;
+		private String account;
 
 		public String getCondition() {
 			return condition;
@@ -56,6 +65,14 @@ public class ManageEmail extends Widget {
 			this.condition = condition;
 		}
 
+		public Map<String, String> getVariables() {
+			return defaultIfNull(variables, NO_VARIABLES);
+		}
+
+		public void setVariables(final Map<String, String> variables) {
+			this.variables = variables;
+		}
+
 		public boolean isNoSubjectPrefix() {
 			return noSubjectPrefix;
 		}
@@ -63,6 +80,20 @@ public class ManageEmail extends Widget {
 		public void setNoSubjectPrefix(final boolean noSubjectPrefix) {
 			this.noSubjectPrefix = noSubjectPrefix;
 		}
+
+		public String getAccount() {
+			return account;
+		}
+
+		public void setAccount(final String account) {
+			this.account = account;
+		}
+
+		@Override
+		public String toString() {
+			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+		}
+
 	}
 
 	private boolean readOnly;
@@ -124,9 +155,6 @@ public class ManageEmail extends Widget {
 	@Override
 	public void save(final CMActivityInstance activityInstance, final Object input, final Map<String, Object> output)
 			throws Exception {
-		if (readOnly) {
-			return;
-		}
 		final Submission submission = decodeInput(input);
 		deleteEmails(activityInstance, submission.deleted);
 		updateEmails(activityInstance, submission.updated);
@@ -165,8 +193,9 @@ public class ManageEmail extends Widget {
 		email.setSubject((String) emailMap.get(SUBJECT_ATTRIBUTE));
 		email.setContent((String) emailMap.get(CONTENT_ATTRIBUTE));
 		email.setNotifyWith((String) emailMap.get(NOTIFY_WITH_ATTRIBUTE));
-		email.setTemporaryId((String) emailMap.get(TEMPORARY_ID));
 		email.setNoSubjectPrefix((Boolean) emailMap.get(NO_SUBJECT_PREFIX));
+		email.setAccount((String) emailMap.get(ACCOUNT_ATTRIBUTE));
+		email.setTemporaryId((String) emailMap.get(TEMPORARY_ID));
 		return email;
 	}
 

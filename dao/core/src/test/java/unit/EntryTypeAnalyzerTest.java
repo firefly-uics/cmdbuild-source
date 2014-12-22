@@ -1,5 +1,7 @@
 package unit;
 
+import static com.google.common.base.Predicates.alwaysTrue;
+import static java.util.Arrays.asList;
 import static org.cmdbuild.dao.entrytype.EntryTypeAnalyzer.inspect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -20,10 +22,13 @@ import org.cmdbuild.dao.view.CMDataView;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 public class EntryTypeAnalyzerTest {
+
+	private static final Predicate<CMAttribute> DUMMY = alwaysTrue();
 
 	private CMDataView view;
 
@@ -32,9 +37,30 @@ public class EntryTypeAnalyzerTest {
 		view = mock(CMDataView.class);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void shouldNotCreateAEntryTypeAnalyzerWithNullEntryType() throws Exception {
-		inspect(null, null);
+		// when
+		inspect(null, DUMMY, view);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void shouldNotCreateAEntryTypeAnalyzerWithNullPredicate() throws Exception {
+		// given
+		final CMAttribute attribute = mockAttribute(new IntegerAttributeType(), false, true);
+		final CMClass entryType = mockClass("foo", asList(attribute));
+
+		// when
+		inspect(entryType, null, view);
+	}
+
+	@Test(expected = NullPointerException.class)
+	public void shouldNotCreateAEntryTypeAnalyzerWithNullDataView() throws Exception {
+		// given
+		final CMAttribute attribute = mockAttribute(new IntegerAttributeType(), false, true);
+		final CMClass entryType = mockClass("foo", asList(attribute));
+
+		// when
+		inspect(entryType, DUMMY, null);
 	}
 
 	@Test
@@ -49,7 +75,7 @@ public class EntryTypeAnalyzerTest {
 		final CMClass clazz = mockClass("foo", entryTypeAttributes);
 
 		// when
-		final boolean hasExternalReference = inspect(clazz, view).hasExternalReferences();
+		final boolean hasExternalReference = inspect(clazz, DUMMY, view).hasExternalReferences();
 
 		// then
 		assertFalse(hasExternalReference);
@@ -73,7 +99,7 @@ public class EntryTypeAnalyzerTest {
 		when((Iterable<CMAttribute>) clazz.getAttributes()).thenReturn(activeAndInactiveAttributes);
 
 		// when
-		final boolean hasExternalReference = inspect(clazz, view).hasExternalReferences();
+		final boolean hasExternalReference = inspect(clazz, DUMMY, view).hasExternalReferences();
 
 		// then
 		assertFalse(hasExternalReference);
@@ -93,9 +119,9 @@ public class EntryTypeAnalyzerTest {
 		final CMClass clazz = mockClass("foo", entryTypeAttributes);
 
 		// when
-		final Iterable<CMAttribute> foreignKeyAttributes = inspect(clazz, view).getForeignKeyAttributes();
-		final Iterable<CMAttribute> referenceAttributes = inspect(clazz, view).getReferenceAttributes();
-		final Iterable<CMAttribute> lookupAttributes = inspect(clazz, view).getLookupAttributes();
+		final Iterable<CMAttribute> foreignKeyAttributes = inspect(clazz, DUMMY, view).getForeignKeyAttributes();
+		final Iterable<CMAttribute> referenceAttributes = inspect(clazz, DUMMY, view).getReferenceAttributes();
+		final Iterable<CMAttribute> lookupAttributes = inspect(clazz, DUMMY, view).getLookupAttributes();
 
 		// then
 		assertEquals(0, Iterables.size(foreignKeyAttributes));

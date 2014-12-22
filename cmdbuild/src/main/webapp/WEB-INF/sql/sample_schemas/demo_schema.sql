@@ -4,6 +4,237 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 
+CREATE FUNCTION _bim_carddata_from_globalid(globalid character varying, OUT "Id" integer, OUT "IdClass" integer, OUT "Description" character varying, OUT "ClassName" character varying) RETURNS record
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	query varchar;
+	table_name varchar;
+	tables CURSOR FOR SELECT tablename FROM pg_tables WHERE schemaname = 'bim' ORDER BY tablename;
+	
+BEGIN
+	query='';
+	FOR table_record IN tables LOOP
+		query= query || '
+		SELECT	b."Master" as "Id" , 
+			p."Description" AS "Description", 
+			p."IdClass"::integer as "IdClass" ,
+			p."IdClass" as "ClassName"
+		FROM bim."' || table_record.tablename || '" AS b 
+			JOIN public."' ||  table_record.tablename || '" AS p 
+			ON b."Master"=p."Id" 
+		WHERE p."Status"=''A'' AND b."GlobalId" = ''' || globalid || ''' UNION ALL';
+	END LOOP;
+
+	SELECT substring(query from 0 for LENGTH(query)-9) INTO query;
+	RAISE NOTICE 'execute query : %', query;
+	EXECUTE(query) INTO "Id","Description","IdClass","ClassName";
+END;
+$$;
+
+
+
+COMMENT ON FUNCTION _bim_carddata_from_globalid(globalid character varying, OUT "Id" integer, OUT "IdClass" integer, OUT "Description" character varying, OUT "ClassName" character varying) IS 'TYPE: function';
+
+
+
+CREATE FUNCTION _bim_create_function_for_export(OUT success boolean) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $_$
+DECLARE
+	query text;
+BEGIN
+	query = 'CREATE OR REPLACE FUNCTION _bim_data_for_export(IN id integer, IN "className" character varying, IN "containerAttributeName" character varying, 
+		IN "containerClassName" character varying, OUT "Code" character varying, OUT "Description" character varying, OUT "GlobalId" character varying, 
+		OUT container_id integer, OUT container_globalid character varying, OUT x character varying, OUT y character varying, OUT z character varying)
+		RETURNS record AS
+		\$BODY\$
+		DECLARE
+			query varchar;
+			myrecord record;
+			objectposition geometry;
+			roomperimeter geometry;
+			isinside boolean;
+		BEGIN	
+			query = 
+				''SELECT bimclass."Position" '' || -- 
+				''FROM bim."'' || "className" || ''" AS bimclass '' || --
+				''WHERE "Master"= '' || id || '';'' ;
+			
+		RAISE NOTICE ''%'',query;
+		EXECUTE(query) INTO objectposition;
+
+
+		query = 
+			''SELECT "'' || "containerAttributeName" || ''" '' || --
+			''FROM "'' || "className" || ''" ''--
+			''WHERE "Id"='' || id || '';'';
+
+		RAISE NOTICE ''%'',query;
+		EXECUTE(query) INTO container_id;
+
+		query = 
+			''SELECT "GlobalId"'' || '' '' || --
+			''FROM bim."'' || "containerClassName" || ''" ''--
+			''WHERE "Master"='' || coalesce(container_id,-1) || '';'';
+
+		RAISE NOTICE ''%'',query;
+		EXECUTE(query) INTO container_globalid;
+		
+		
+		query = ''SELECT bimclass."Perimeter" '' || -- 
+			''FROM bim."'' || "containerClassName" || ''" AS bimclass '' || --
+			''WHERE "Master"= '' || coalesce(container_id,-1) || '';'' ;
+
+		RAISE NOTICE ''%'',query;
+		EXECUTE(query) INTO roomperimeter;
+
+		isinside = ST_Within(objectposition,roomperimeter);
+		RAISE NOTICE ''ok? %'',isinside;
+		IF(NOT isinside) THEN
+			query = 
+				''UPDATE bim."'' || "className" || ''" ''--
+				''SET "Position" = null '' || --
+				''WHERE "Master"= '' || id || '';'' ;
+
+			RAISE NOTICE ''%'',query;
+
+			EXECUTE(query);
+		END IF;
+
+		query = 
+			''SELECT master."Code", master."Description", bimclass."GlobalId", st_x(bimclass."Position"),st_y(bimclass."Position"),st_z(bimclass."Position") '' || --
+			''FROM "'' || "className" || ''" AS master LEFT JOIN bim."'' || "className" || ''" AS bimclass ON '' || '' bimclass."Master"=master."Id" '' || --
+			''WHERE master."Id" = '' || id || '' AND master."Status"=''''A'''''';
+
+		RAISE NOTICE ''%'',query;
+
+		EXECUTE(query) INTO "Code", "Description", "GlobalId", x, y, z;
+		END;
+		\$BODY\$
+		  LANGUAGE plpgsql VOLATILE
+	  	COST 100;
+
+	  	COMMENT ON FUNCTION _bim_data_for_export(integer, character varying, character varying, character varying) IS ''TYPE: function|CATEGORIES: system'';
+		';
+
+	EXECUTE query;
+	success = true;
+
+	END;
+$_$;
+
+
+
+COMMENT ON FUNCTION _bim_create_function_for_export(OUT success boolean) IS 'TYPE: function|CATEGORIES: system';
+
+
+
+CREATE FUNCTION _bim_set_coordinates(globalid character varying, classname character varying, coords character varying, OUT success boolean) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	query varchar;
+BEGIN	
+
+	query = 
+	' UPDATE bim."' || classname || '"' ||--
+	' SET "Position"= ST_GeomFromText(''' || coords || ''')' || --
+	' WHERE "GlobalId"= ''' || globalid || '''';
+			
+	RAISE NOTICE '%',query;
+
+	EXECUTE(query);
+
+	success = true;
+END;
+$$;
+
+
+
+COMMENT ON FUNCTION _bim_set_coordinates(globalid character varying, classname character varying, coords character varying, OUT success boolean) IS 'TYPE: function|CATEGORIES: system';
+
+
+
+CREATE FUNCTION _bim_set_room_geometry(globalid character varying, classname character varying, perimeter character varying, height character varying, OUT success boolean) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	query varchar;
+BEGIN	
+
+	query = 
+	' UPDATE bim."' || classname || '"' ||--
+	' SET "Perimeter"= ST_GeomFromText(''' || perimeter || '''), "Height"=' || height ||--
+	' WHERE "GlobalId"= ''' || globalid || '''';
+			
+	RAISE NOTICE '%',query;
+
+	EXECUTE(query);
+
+	success = true;
+END;
+$$;
+
+
+
+COMMENT ON FUNCTION _bim_set_room_geometry(globalid character varying, classname character varying, perimeter character varying, height character varying, OUT success boolean) IS 'TYPE: function|CATEGORIES: system';
+
+
+
+CREATE FUNCTION _bim_store_data(cardid integer, classname character varying, globalid character varying, x character varying, y character varying, z character varying, OUT success boolean) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	query varchar;
+	query1 varchar;
+	myrecord record;
+BEGIN	
+	query1 = 'DELETE FROM bim."' || classname || '" where "GlobalId"=''' || globalid || ''';';
+	RAISE NOTICE '%',query1;
+	EXECUTE(query1);
+	
+	query = '
+		INSERT INTO bim."' || classname || '" ("GlobalId", "Position", "Master")
+		VALUES (''' || globalid || ''',' || 'ST_GeomFromText(''POINT(' || x || ' ' || y || ' ' || z || ')''),' || cardid || ');';	
+	RAISE NOTICE '%',query;
+	EXECUTE(query);
+	
+	success = true;
+END;
+$$;
+
+
+
+COMMENT ON FUNCTION _bim_store_data(cardid integer, classname character varying, globalid character varying, x character varying, y character varying, z character varying, OUT success boolean) IS 'TYPE: function|CATEGORIES: system';
+
+
+
+CREATE FUNCTION _bim_update_coordinates(classname character varying, globalid character varying, x character varying, y character varying, z character varying, OUT success boolean) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	query varchar;
+	query1 varchar;
+	myrecord record;
+BEGIN	
+	query = 
+		'UPDATE bim."' || classname || '" ' || --
+		'SET "Position" = ST_GeomFromText(''POINT(' || x || ' ' || y || ' ' || z || ')'') ' || --
+		'WHERE "GlobalId"=''' || globalid || ''';';	
+	RAISE NOTICE '%',query;
+	EXECUTE(query);
+	
+	success = true;
+END;
+$$;
+
+
+
+COMMENT ON FUNCTION _bim_update_coordinates(classname character varying, globalid character varying, x character varying, y character varying, z character varying, OUT success boolean) IS 'TYPE: function|CATEGORIES: system';
+
+
+
 CREATE FUNCTION _cm_add_class_cascade_delete_on_relations_trigger(tableid oid) RETURNS void
     LANGUAGE plpgsql
     AS $$
@@ -832,6 +1063,50 @@ $_$;
 
 
 
+CREATE FUNCTION _cm_create_class_default_order_indexes(cmclass character varying, OUT always_true boolean) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	PERFORM _cm_create_class_default_order_indexes(_cm_table_id(cmclass));
+	always_true = TRUE;
+END;
+$$;
+
+
+
+COMMENT ON FUNCTION _cm_create_class_default_order_indexes(cmclass character varying, OUT always_true boolean) IS 'TYPE: function|CATEGORIES: system';
+
+
+
+CREATE FUNCTION _cm_create_class_default_order_indexes(tableid oid) RETURNS void
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	classindex text;
+	sqlcommand text;
+BEGIN
+	SELECT INTO classindex coalesce(_cm_string_agg(attname || ' ' || ordermode), '"Description" asc')
+	FROM (
+		SELECT quote_ident(attname) AS attname, abs(_cm_read_comment(_cm_comment_for_attribute(tableid, attname), 'CLASSORDER')::integer), CASE WHEN (_cm_get_safe_classorder(tableid, attname) > 0) THEN 'asc' ELSE 'desc' END AS ordermode
+		FROM (
+			SELECT _cm_attribute_list(tableid) AS attname) AS a
+				WHERE _cm_get_safe_classorder(tableid, attname) <> 0
+				ORDER by 2
+	) AS b;
+	RAISE NOTICE '% %', tableid::regclass, classindex;
+
+	sqlcommand = 'DROP INDEX IF EXISTS idx_' || REPLACE(_cm_cmtable_lc(tableid), '_', '') || '_defaultorder;';
+	RAISE NOTICE '... %', sqlcommand;
+	EXECUTE sqlcommand;
+
+	sqlcommand = 'CREATE INDEX idx_' || REPLACE(_cm_cmtable_lc(tableid), '_', '') || '_defaultorder' || ' ON ' || tableid::regclass || ' USING btree (' || classindex || ', "Id" asc);';
+	RAISE NOTICE '... %', sqlcommand;
+	EXECUTE sqlcommand;
+END;
+$$;
+
+
+
 CREATE FUNCTION _cm_create_class_history(cmclassname text) RETURNS void
     LANGUAGE plpgsql
     AS $$
@@ -1157,7 +1432,7 @@ $_$;
 
 
 
-CREATE FUNCTION _cm_function_list(OUT function_name text, OUT function_id oid, OUT arg_io character[], OUT arg_names text[], OUT arg_types text[], OUT returns_set boolean) RETURNS SETOF record
+CREATE FUNCTION _cm_function_list(OUT function_name text, OUT function_id oid, OUT arg_io character[], OUT arg_names text[], OUT arg_types text[], OUT returns_set boolean, OUT comment text) RETURNS SETOF record
     LANGUAGE plpgsql STABLE
     AS $_$
 DECLARE
@@ -1172,6 +1447,7 @@ BEGIN
 		function_name := R.proname::text;
 		function_id := R.oid;
 		returns_set := R.proretset;
+		comment := _cm_comment_for_cmobject(R.oid);
 		IF R.proargmodes IS NULL
 		THEN
 			arg_io := '{}'::char[];
@@ -1351,6 +1627,19 @@ CREATE FUNCTION _cm_get_reference_domain_id(tableid oid, attributename text) RET
     AS $_$
 	SELECT _cm_read_reference_domain_id_comment(_cm_comment_for_attribute($1, $2));
 $_$;
+
+
+
+CREATE FUNCTION _cm_get_safe_classorder(tableid regclass, attname character varying, OUT classorder integer) RETURNS integer
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+	SELECT 
+		INTO classorder 
+		CASE WHEN (coalesce(_cm_read_comment(_cm_comment_for_attribute(tableid, attname), 'CLASSORDER'), '')<>'') THEN _cm_read_comment(_cm_comment_for_attribute(tableid, attname), 'CLASSORDER')::integer
+		ELSE 0 END;
+END;
+$$;
 
 
 
@@ -1895,6 +2184,14 @@ $_$;
 
 
 
+CREATE FUNCTION _cm_string_agg(anyarray) RETURNS text
+    LANGUAGE sql
+    AS $_$
+	SELECT case when trim(array_to_string($1, ', ')) = '' THEN null else array_to_string($1, ', ') END
+$_$;
+
+
+
 CREATE FUNCTION _cm_subclassid(superclassid oid, cardid integer) RETURNS oid
     LANGUAGE plpgsql STABLE STRICT
     AS $$
@@ -2336,6 +2633,31 @@ CREATE FUNCTION _cmf_is_displayable(cid oid) RETURNS boolean
     SELECT _cm_read_comment(_cm_comment_for_table_id($1), 'MODE') IN
 ('write','read','baseclass');
 $_$;
+
+
+
+CREATE FUNCTION cm_attribute_exists(schemaname text, tablename text, attributename text, OUT attribute_exists boolean) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+	attribute_name varchar;
+BEGIN
+	SELECT attname into attribute_name
+	FROM pg_attribute 
+	WHERE 	attrelid = (SELECT oid FROM pg_class WHERE relname = tablename AND relnamespace = (SELECT oid FROM pg_namespace WHERE nspname=schemaname)) AND
+		attname = attributename;
+
+	IF(attribute_name is not null) THEN
+		attribute_exists = true;
+	ELSE
+		attribute_exists = false;
+	END IF;
+END;
+$$;
+
+
+
+COMMENT ON FUNCTION cm_attribute_exists(schemaname text, tablename text, attributename text, OUT attribute_exists boolean) IS 'TYPE: function';
 
 
 
@@ -2991,6 +3313,15 @@ END;
 $$;
 
 
+
+CREATE AGGREGATE _cm_string_agg(anyelement) (
+    SFUNC = array_append,
+    STYPE = anyarray,
+    INITCOND = '{}',
+    FINALFUNC = public._cm_string_agg
+);
+
+
 SET default_tablespace = '';
 
 SET default_with_oids = false;
@@ -3002,7 +3333,7 @@ CREATE TABLE "Class" (
     "Code" character varying(100),
     "Description" character varying(250),
     "Status" character(1),
-    "User" character varying(40),
+    "User" character varying(100),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "Notes" text
 );
@@ -3416,13 +3747,14 @@ CREATE TABLE "Email" (
     "ToAddresses" text,
     "CcAddresses" text,
     "Subject" text,
-    "Content" text
+    "Content" text,
+    "NotifyWith" text
 )
 INHERITS ("Class");
 
 
 
-COMMENT ON TABLE "Email" IS 'MODE: sysread|TYPE: class|DESCR: Email|SUPERCLASS: false|MANAGER: class|STATUS: active';
+COMMENT ON TABLE "Email" IS 'MODE: user|TYPE: class|DESCR: Email|SUPERCLASS: false|MANAGER: class|STATUS: active';
 
 
 
@@ -3483,6 +3815,10 @@ COMMENT ON COLUMN "Email"."Subject" IS 'MODE: read|FIELDMODE: write|DESCR: Subje
 
 
 COMMENT ON COLUMN "Email"."Content" IS 'MODE: read|FIELDMODE: write|DESCR: Body|INDEX: 10|BASEDSP: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Email"."NotifyWith" IS 'MODE: write|DESCR: NotifyWith|INDEX: 10|BASEDSP: false|STATUS: active';
 
 
 
@@ -3657,7 +3993,7 @@ INHERITS ("Floor");
 CREATE TABLE "Grant" (
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
     "IdClass" regclass NOT NULL,
-    "User" character varying(40),
+    "User" character varying(100),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "Code" character varying(100),
     "Description" character varying(250),
@@ -3669,7 +4005,8 @@ CREATE TABLE "Grant" (
     "Type" character varying(70) NOT NULL,
     "IdPrivilegedObject" integer,
     "PrivilegeFilter" text,
-    "DisabledAttributes" character varying[]
+    "AttributesPrivileges" character varying[],
+    "UI_EnabledCardEditMode" text
 );
 
 
@@ -3734,7 +4071,11 @@ COMMENT ON COLUMN "Grant"."PrivilegeFilter" IS 'MODE: read|DESCR: filter for row
 
 
 
-COMMENT ON COLUMN "Grant"."DisabledAttributes" IS 'MODE: read|DESCR: disabled attributes for column privileges|INDEX: 11|STATUS: active';
+COMMENT ON COLUMN "Grant"."AttributesPrivileges" IS 'MODE: read|DESCR: disabled attributes for column privileges|INDEX: 11|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Grant"."UI_EnabledCardEditMode" IS 'MODE: write|DESCR: UI_EnabledCardEditMode|INDEX: 12|BASEDSP: false|STATUS: active';
 
 
 
@@ -3914,7 +4255,7 @@ INHERITS ("License");
 CREATE TABLE "LookUp" (
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
     "IdClass" regclass NOT NULL,
-    "User" character varying(40),
+    "User" character varying(100),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "Code" character varying(100),
     "Description" character varying(250),
@@ -3924,7 +4265,8 @@ CREATE TABLE "LookUp" (
     "ParentType" character varying(64),
     "ParentId" integer,
     "Number" integer NOT NULL,
-    "IsDefault" boolean
+    "IsDefault" boolean,
+    "TranslationUuid" text
 );
 
 
@@ -3985,6 +4327,10 @@ COMMENT ON COLUMN "LookUp"."IsDefault" IS 'MODE: read';
 
 
 
+COMMENT ON COLUMN "LookUp"."TranslationUuid" IS 'MODE: write|DESCR: Translations Uuid|STATUS: active';
+
+
+
 CREATE TABLE "Map" (
     "IdDomain" regclass NOT NULL,
     "IdClass1" regclass NOT NULL,
@@ -3992,7 +4338,7 @@ CREATE TABLE "Map" (
     "IdClass2" regclass NOT NULL,
     "IdObj2" integer NOT NULL,
     "Status" character(1),
-    "User" character varying(40),
+    "User" character varying(100),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "EndDate" timestamp without time zone,
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL
@@ -4050,7 +4396,7 @@ INHERITS ("Map");
 
 
 
-COMMENT ON TABLE "Map_ActivityEmail" IS 'MODE: reserved|TYPE: domain|CLASS1: Activity|CLASS2: Email|DESCRDIR: |DESCRINV: |CARDIN: 1:N|STATUS: active';
+COMMENT ON TABLE "Map_ActivityEmail" IS 'MODE: user|TYPE: domain|CLASS1: Activity|CLASS2: Email|DESCRDIR: |DESCRINV: |CARDIN: 1:N|STATUS: active';
 
 
 
@@ -6202,7 +6548,7 @@ CREATE TABLE "Report" (
     "Code" character varying(40),
     "Description" character varying(100),
     "Status" character varying(1),
-    "User" character varying(40),
+    "User" character varying(100),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "Type" character varying(20),
     "Query" text,
@@ -6656,66 +7002,6 @@ CREATE TABLE "Room_history" (
     "EndDate" timestamp without time zone DEFAULT now() NOT NULL
 )
 INHERITS ("Room");
-
-
-
-CREATE TABLE "Scheduler" (
-    "CronExpression" text NOT NULL,
-    "Detail" text NOT NULL
-)
-INHERITS ("Class");
-
-
-
-COMMENT ON TABLE "Scheduler" IS 'MODE: reserved|TYPE: class|DESCR: Scheduler|SUPERCLASS: false|STATUS: active';
-
-
-
-COMMENT ON COLUMN "Scheduler"."Id" IS 'MODE: reserved';
-
-
-
-COMMENT ON COLUMN "Scheduler"."IdClass" IS 'MODE: reserved';
-
-
-
-COMMENT ON COLUMN "Scheduler"."Code" IS 'MODE: read|DESCR: Job Type|INDEX: 1';
-
-
-
-COMMENT ON COLUMN "Scheduler"."Description" IS 'MODE: read|DESCR: Job Description|INDEX: 2';
-
-
-
-COMMENT ON COLUMN "Scheduler"."Status" IS 'MODE: reserved';
-
-
-
-COMMENT ON COLUMN "Scheduler"."User" IS 'MODE: reserved';
-
-
-
-COMMENT ON COLUMN "Scheduler"."BeginDate" IS 'MODE: reserved';
-
-
-
-COMMENT ON COLUMN "Scheduler"."Notes" IS 'MODE: read|DESCR: Job Parameters|INDEX: 3';
-
-
-
-COMMENT ON COLUMN "Scheduler"."CronExpression" IS 'MODE: read|DESCR: Cron Expression|STATUS: active';
-
-
-
-COMMENT ON COLUMN "Scheduler"."Detail" IS 'MODE: read|DESCR: Job Detail|STATUS: active';
-
-
-
-CREATE TABLE "Scheduler_history" (
-    "CurrentId" integer NOT NULL,
-    "EndDate" timestamp without time zone DEFAULT now() NOT NULL
-)
-INHERITS ("Scheduler");
 
 
 
@@ -7245,9 +7531,147 @@ INHERITS ("Workplace");
 
 
 
+CREATE TABLE "_BimLayer" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "ClassName" character varying NOT NULL,
+    "Root" boolean DEFAULT false NOT NULL,
+    "Active" boolean DEFAULT false NOT NULL,
+    "Export" boolean DEFAULT false NOT NULL,
+    "Container" boolean DEFAULT false NOT NULL,
+    "RootReference" character varying
+);
+
+
+
+COMMENT ON TABLE "_BimLayer" IS 'MODE: reserved|TYPE: simpleclass|DESCR: BIM Project|SUPERCLASS: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimLayer"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_BimLayer"."IdClass" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_BimLayer"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_BimLayer"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_BimLayer"."ClassName" IS 'MODE: write|DESCR: ClassName|INDEX: 1|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimLayer"."Root" IS 'MODE: write|DESCR: Root|INDEX: 2|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimLayer"."Active" IS 'MODE: write|DESCR: Active|INDEX: 3|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimLayer"."Export" IS 'MODE: write|DESCR: Export|INDEX: 4|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimLayer"."Container" IS 'MODE: write|DESCR: Container|INDEX: 5|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimLayer"."RootReference" IS 'MODE: write|DESCR: RootReference|INDEX: 6|STATUS: active';
+
+
+
+CREATE TABLE "_BimProject" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Code" character varying NOT NULL,
+    "Description" character varying,
+    "ProjectId" character varying NOT NULL,
+    "Active" boolean DEFAULT true NOT NULL,
+    "LastCheckin" timestamp without time zone,
+    "Synchronized" boolean DEFAULT false NOT NULL,
+    "ImportMapping" text,
+    "ExportMapping" text,
+    "ExportProjectId" character varying,
+    "ShapesProjectId" character varying
+);
+
+
+
+COMMENT ON TABLE "_BimProject" IS 'MODE: reserved|TYPE: simpleclass|DESCR: BIM Project|SUPERCLASS: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimProject"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_BimProject"."IdClass" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_BimProject"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_BimProject"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_BimProject"."Code" IS 'MODE: write|DESCR: Name|INDEX: 1|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimProject"."Description" IS 'MODE: write|DESCR: Description|INDEX: 2|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimProject"."ProjectId" IS 'MODE: write|DESCR: Project ID|INDEX: 3|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimProject"."Active" IS 'MODE: write|DESCR: Active|INDEX: 4|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimProject"."LastCheckin" IS 'MODE: write|DESCR: Last Checkin|INDEX: 5|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimProject"."Synchronized" IS 'MODE: write|DESCR: Synchronized|INDEX: 6|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimProject"."ImportMapping" IS 'MODE: write|DESCR: ImportMapping|INDEX: 7|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimProject"."ExportMapping" IS 'MODE: write|DESCR: ImportMapping|INDEX: 8|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimProject"."ExportProjectId" IS 'MODE: write|DESCR: ExportProjectId|INDEX: 9|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_BimProject"."ShapesProjectId" IS 'MODE: write|DESCR: ShapesProjectId|INDEX: 10|STATUS: active';
+
+
+
 CREATE TABLE "_Dashboards" (
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
-    "User" character varying(40),
+    "User" character varying(100),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "Definition" text NOT NULL,
     "IdClass" regclass NOT NULL
@@ -7281,7 +7705,7 @@ COMMENT ON COLUMN "_Dashboards"."IdClass" IS 'MODE: reserved';
 
 CREATE TABLE "_DomainTreeNavigation" (
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
-    "User" character varying(40),
+    "User" character varying(100),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "IdParent" integer,
     "IdGroup" integer,
@@ -7291,7 +7715,9 @@ CREATE TABLE "_DomainTreeNavigation" (
     "BaseNode" boolean,
     "TargetClassName" character varying,
     "TargetClassDescription" character varying,
-    "IdClass" regclass NOT NULL
+    "IdClass" regclass NOT NULL,
+    "Description" character varying,
+    "TargetFilter" character varying
 );
 
 
@@ -7348,10 +7774,232 @@ COMMENT ON COLUMN "_DomainTreeNavigation"."IdClass" IS 'MODE: reserved';
 
 
 
+COMMENT ON COLUMN "_DomainTreeNavigation"."Description" IS 'MODE: write|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_DomainTreeNavigation"."TargetFilter" IS 'MODE: write|STATUS: active';
+
+
+
+CREATE TABLE "_EmailAccount" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "Code" character varying(100),
+    "Description" character varying(250),
+    "Status" character(1),
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Notes" text,
+    "IsDefault" boolean,
+    "Address" character varying(100),
+    "Username" character varying(100),
+    "Password" character varying(100),
+    "SmtpServer" character varying(100),
+    "SmtpPort" integer,
+    "SmtpSsl" boolean,
+    "ImapServer" character varying(100),
+    "ImapPort" integer,
+    "ImapSsl" boolean,
+    "InputFolder" character varying(50),
+    "ProcessedFolder" character varying(50),
+    "RejectedFolder" character varying(50),
+    "RejectNotMatching" boolean
+);
+
+
+
+COMMENT ON TABLE "_EmailAccount" IS 'MODE: reserved|TYPE: class|DESCR: Email Accounts|SUPERCLASS: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."IdClass" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."Code" IS 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."Description" IS 'MODE: read|DESCR: Description|INDEX: 2|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."Status" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."BeginDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."Notes" IS 'MODE: read|DESCR: Notes|INDEX: 3';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."IsDefault" IS 'MODE: write|DESCR: Is default|INDEX: 1|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."Address" IS 'MODE: write|DESCR: Address|INDEX: 2|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."Username" IS 'MODE: write|DESCR: Username|INDEX: 3|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."Password" IS 'MODE: write|DESCR: Password|INDEX: 4|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."SmtpServer" IS 'MODE: write|DESCR: SMTP server|INDEX: 5|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."SmtpPort" IS 'MODE: write|DESCR: SMTP port|INDEX: 6|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."SmtpSsl" IS 'MODE: write|DESCR: SMTP SSL|INDEX: 7|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."ImapServer" IS 'MODE: write|DESCR: IMAP server|INDEX: 8|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."ImapPort" IS 'MODE: write|DESCR: IMAP port|INDEX: 9|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."ImapSsl" IS 'MODE: write|DESCR: IMAP SSL|INDEX: 10|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."InputFolder" IS 'MODE: write|DESCR: Input folder|INDEX: 11|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."ProcessedFolder" IS 'MODE: write|DESCR: Processed folder|INDEX: 12|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."RejectedFolder" IS 'MODE: write|DESCR: Rejected folder|INDEX: 13|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailAccount"."RejectNotMatching" IS 'MODE: write|DESCR: Reject not matching|INDEX: 14|STATUS: active';
+
+
+
+CREATE TABLE "_EmailAccount_history" (
+    "CurrentId" integer NOT NULL,
+    "EndDate" timestamp without time zone DEFAULT now() NOT NULL
+)
+INHERITS ("_EmailAccount");
+
+
+
+CREATE TABLE "_EmailTemplate" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "Code" character varying(100),
+    "Description" character varying(250),
+    "Status" character(1),
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Notes" text,
+    "From" text,
+    "To" text,
+    "CC" text,
+    "BCC" text,
+    "Subject" text,
+    "Body" text
+);
+
+
+
+COMMENT ON TABLE "_EmailTemplate" IS 'MODE: reserved|TYPE: class|DESCR: Email Templates|SUPERCLASS: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."IdClass" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."Code" IS 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."Description" IS 'MODE: read|DESCR: Description|INDEX: 2|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."Status" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."BeginDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."Notes" IS 'MODE: read|DESCR: Notes|INDEX: 3';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."From" IS 'MODE: write|DESCR: From|INDEX: 2|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."To" IS 'MODE: write|DESCR: To|INDEX: 3|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."CC" IS 'MODE: write|DESCR: CC|INDEX: 4|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."BCC" IS 'MODE: write|DESCR: BCC|INDEX: 5|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."Subject" IS 'MODE: write|DESCR: Subject|INDEX: 6|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."Body" IS 'MODE: write|DESCR: Body|INDEX: 7|STATUS: active';
+
+
+
+CREATE TABLE "_EmailTemplate_history" (
+    "CurrentId" integer NOT NULL,
+    "EndDate" timestamp without time zone DEFAULT now() NOT NULL
+)
+INHERITS ("_EmailTemplate");
+
+
+
 CREATE TABLE "_Filter" (
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
     "IdClass" regclass NOT NULL,
-    "User" character varying(40),
+    "User" character varying(100),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "Code" character varying NOT NULL,
     "Description" character varying,
@@ -7409,7 +8057,7 @@ COMMENT ON COLUMN "_Filter"."Template" IS 'MODE: write|DESCR: User or group filt
 
 CREATE TABLE "_Layer" (
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
-    "User" character varying(40),
+    "User" character varying(100),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "Description" character varying,
     "FullName" character varying,
@@ -7494,7 +8142,7 @@ COMMENT ON COLUMN "_Layer"."IdClass" IS 'MODE: reserved';
 CREATE TABLE "_MdrScopedId" (
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
     "IdClass" regclass NOT NULL,
-    "User" character varying(40),
+    "User" character varying(100),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "MdrScopedId" text NOT NULL,
     "IdItem" integer NOT NULL
@@ -7530,9 +8178,151 @@ COMMENT ON COLUMN "_MdrScopedId"."IdItem" IS 'MODE: write|STATUS: active';
 
 
 
+CREATE TABLE "_Task" (
+    "CronExpression" text,
+    "Type" text,
+    "Running" boolean,
+    "LastExecution" timestamp without time zone
+)
+INHERITS ("Class");
+
+
+
+COMMENT ON TABLE "_Task" IS 'MODE: reserved|TYPE: class|DESCR: Scheduler|SUPERCLASS: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Task"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Task"."IdClass" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Task"."Code" IS 'MODE: read|DESCR: Job Type|INDEX: 1';
+
+
+
+COMMENT ON COLUMN "_Task"."Description" IS 'MODE: read|DESCR: Job Description|INDEX: 2';
+
+
+
+COMMENT ON COLUMN "_Task"."Status" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Task"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Task"."BeginDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Task"."Notes" IS 'MODE: read|DESCR: Job Parameters|INDEX: 3';
+
+
+
+COMMENT ON COLUMN "_Task"."CronExpression" IS 'MODE: write|DESCR: Cron Expression|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Task"."Type" IS 'MODE: write|DESCR: JobType|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Task"."Running" IS 'MODE: write|DESCR: Running|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Task"."LastExecution" IS 'MODE: write|DESCR: Last Execution|STATUS: active';
+
+
+
+CREATE TABLE "_TaskParameter" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "Code" character varying(100),
+    "Description" character varying(250),
+    "Status" character(1),
+    "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Notes" text,
+    "Owner" integer,
+    "Key" text NOT NULL,
+    "Value" text
+);
+
+
+
+COMMENT ON TABLE "_TaskParameter" IS 'MODE: reserved|TYPE: class|DESCR: Email Accounts|SUPERCLASS: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_TaskParameter"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_TaskParameter"."IdClass" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_TaskParameter"."Code" IS 'MODE: read|DESCR: Code|INDEX: 1|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_TaskParameter"."Description" IS 'MODE: read|DESCR: Description|INDEX: 2|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_TaskParameter"."Status" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_TaskParameter"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_TaskParameter"."BeginDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_TaskParameter"."Notes" IS 'MODE: read|DESCR: Notes|INDEX: 3';
+
+
+
+COMMENT ON COLUMN "_TaskParameter"."Owner" IS 'MODE: write|DESCR: Scheduler Id|INDEX: 1|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_TaskParameter"."Key" IS 'MODE: write|DESCR: Key|INDEX: 2|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_TaskParameter"."Value" IS 'MODE: write|DESCR: Value|INDEX: 3|STATUS: active';
+
+
+
+CREATE TABLE "_TaskParameter_history" (
+    "CurrentId" integer NOT NULL,
+    "EndDate" timestamp without time zone DEFAULT now() NOT NULL
+)
+INHERITS ("_TaskParameter");
+
+
+
+CREATE TABLE "_Task_history" (
+    "CurrentId" integer NOT NULL,
+    "EndDate" timestamp without time zone DEFAULT now() NOT NULL
+)
+INHERITS ("_Task");
+
+
+
 CREATE TABLE "_Templates" (
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
-    "User" character varying(40),
+    "User" character varying(100),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "Name" text NOT NULL,
     "Template" text NOT NULL,
@@ -7569,10 +8359,54 @@ COMMENT ON COLUMN "_Templates"."IdClass" IS 'MODE: reserved';
 
 
 
-CREATE TABLE "_View" (
+CREATE TABLE "_Translation" (
     "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
     "IdClass" regclass NOT NULL,
     "User" character varying(40),
+    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "Element" text NOT NULL,
+    "Lang" text NOT NULL,
+    "Value" text NOT NULL
+);
+
+
+
+COMMENT ON TABLE "_Translation" IS 'MODE: reserved|TYPE: simpleclass|DESCR: Translations|SUPERCLASS: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Translation"."Id" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Translation"."IdClass" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Translation"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "_Translation"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
+
+
+
+COMMENT ON COLUMN "_Translation"."Element" IS 'MODE: write|DESCR: Element|INDEX: 1|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Translation"."Lang" IS 'MODE: write|DESCR: Lang|INDEX: 2|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_Translation"."Value" IS 'MODE: write|DESCR: Value|INDEX: 3|STATUS: active';
+
+
+
+CREATE TABLE "_View" (
+    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
+    "IdClass" regclass NOT NULL,
+    "User" character varying(100),
     "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
     "Name" character varying NOT NULL,
     "Description" character varying,
@@ -7717,7 +8551,7 @@ CREATE VIEW system_inheritcatalog AS
 
 
 CREATE VIEW system_privilegescatalog AS
-    SELECT DISTINCT ON (permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass") permission."Id", permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."BeginDate", permission."Notes", permission."IdRole", permission."IdGrantedClass", permission."Mode" FROM ((SELECT "Grant"."Id", "Grant"."IdClass", "Grant"."Code", "Grant"."Description", "Grant"."Status", "Grant"."User", "Grant"."BeginDate", "Grant"."Notes", "Grant"."IdRole", "Grant"."IdGrantedClass", "Grant"."Mode" FROM "Grant" UNION SELECT (-1), '"Grant"'::regclass AS regclass, ''::character varying AS "varchar", ''::character varying AS "varchar", 'A'::bpchar AS bpchar, 'admin'::character varying AS "varchar", now() AS now, NULL::text AS unknown, "Role"."Id", (system_classcatalog.classid)::regclass AS classid, '-'::character varying AS "varchar" FROM system_classcatalog, "Role" WHERE ((((system_classcatalog.classid)::regclass)::oid <> ('"Class"'::regclass)::oid) AND (NOT ((("Role"."Id")::text || ((system_classcatalog.classid)::integer)::text) IN (SELECT (("Grant"."IdRole")::text || ((("Grant"."IdGrantedClass")::oid)::integer)::text) FROM "Grant"))))) permission JOIN system_classcatalog ON ((((permission."IdGrantedClass")::oid = system_classcatalog.classid) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text = ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))))) ORDER BY permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass";
+    SELECT DISTINCT ON (permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass") permission."Id", permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."BeginDate", permission."Notes", permission."IdRole", permission."IdGrantedClass", permission."Mode" FROM ((SELECT "Grant"."Id", "Grant"."IdClass", "Grant"."Code", "Grant"."Description", "Grant"."Status", "Grant"."User", "Grant"."BeginDate", "Grant"."Notes", "Grant"."IdRole", "Grant"."IdGrantedClass", "Grant"."Mode" FROM "Grant" UNION SELECT (-1), '"Grant"'::regclass AS regclass, ''::character varying AS "varchar", ''::character varying AS "varchar", 'A'::bpchar AS bpchar, 'admin'::character varying AS "varchar", now() AS now, NULL::text AS unknown, "Role"."Id", (system_classcatalog.classid)::regclass AS classid, '-'::character varying AS "varchar" FROM system_classcatalog, "Role" WHERE ((((system_classcatalog.classid)::regclass)::oid <> ('"Class"'::regclass)::oid) AND (NOT ((("Role"."Id")::text || ((system_classcatalog.classid)::integer)::text) IN (SELECT (("Grant"."IdRole")::text || ((("Grant"."IdGrantedClass")::oid)::integer)::text) FROM "Grant"))))) permission JOIN system_classcatalog ON ((((permission."IdGrantedClass")::oid = system_classcatalog.classid) AND ((_cm_legacy_read_comment(((system_classcatalog.classcomment)::character varying)::text, ('MODE'::character varying)::text))::text =  ANY (ARRAY[('write'::character varying)::text, ('read'::character varying)::text]))))) ORDER BY permission."IdClass", permission."Code", permission."Description", permission."Status", permission."User", permission."Notes", permission."IdRole", permission."IdGrantedClass";
 
 
 
@@ -8440,22 +9274,6 @@ ALTER TABLE ONLY "Room_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
 
 
 
-ALTER TABLE ONLY "Scheduler" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
-
-
-
-ALTER TABLE ONLY "Scheduler" ALTER COLUMN "BeginDate" SET DEFAULT now();
-
-
-
-ALTER TABLE ONLY "Scheduler_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
-
-
-
-ALTER TABLE ONLY "Scheduler_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
-
-
-
 ALTER TABLE ONLY "Server" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
 
 
@@ -8556,6 +9374,46 @@ ALTER TABLE ONLY "Workplace_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
 
 
 
+ALTER TABLE ONLY "_EmailAccount_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "_EmailAccount_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "_EmailTemplate_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "_EmailTemplate_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "_Task" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "_Task" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "_TaskParameter_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "_TaskParameter_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "_Task_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "_Task_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
 ALTER TABLE ONLY "_Widget" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
 
 
@@ -8602,16 +9460,16 @@ INSERT INTO "Building_history" VALUES (77, '"Building"', 'B1', 'Office Building 
 
 
 
-INSERT INTO "Employee" VALUES (134, '"Employee"', '10', 'Taylor William', 'A', 'admin', '2011-07-24 23:35:18.412', NULL, 'Taylor', 'William', 21, 22, 146, 'william.taylor@gmail.com', 108, '23456', '763477', '', 24);
-INSERT INTO "Employee" VALUES (118, '"Employee"', '02', 'Johnson Mary', 'A', 'admin', '2011-07-24 23:36:23.281', NULL, 'Johnson', 'Mary', 21, 147, 23, 'mary.johnson@gmail.com', 108, '76543', '9876554', '', 24);
-INSERT INTO "Employee" VALUES (124, '"Employee"', '05', 'Brown Robert', 'A', 'admin', '2011-07-24 23:43:44.824', NULL, 'Brown', 'Robert', 149, 22, 146, 'robert.brown@gmail.com', 110, '65432', '24555556', '', 152);
-INSERT INTO "Employee" VALUES (122, '"Employee"', '04', 'Jones Patricia', 'A', 'admin', '2011-07-24 23:45:11.466', NULL, 'Jones', 'Patricia', 21, 148, 145, 'patricia.jones@gmail.com', 112, '76543', '45678889', '', 24);
-INSERT INTO "Employee" VALUES (132, '"Employee"', '09', 'Moore Elizabeth', 'A', 'admin', '2011-07-24 23:45:30.27', NULL, 'Moore', 'Elizabeth', 149, 22, 146, 'elizabeth.moore@gmail.com', 110, '76545', '2345666', '', 151);
-INSERT INTO "Employee" VALUES (126, '"Employee"', '06', 'Davis Michael', 'A', 'admin', '2011-07-24 23:46:29.744', NULL, 'Davis', 'Michael', 21, 147, 23, 'michael.davis@gmail.com', 110, '45556', '3567789', '', 24);
-INSERT INTO "Employee" VALUES (130, '"Employee"', '08', 'Wilson Barbara', 'A', 'admin', '2011-07-24 23:47:15.594', NULL, 'Wilson', 'Barbara', 21, 147, 146, 'barbara.wilson@gmail.com', 112, '644353', '7789999', '', 151);
-INSERT INTO "Employee" VALUES (128, '"Employee"', '07', 'Miller Linda', 'A', 'admin', '2011-07-24 23:48:03.801', NULL, 'Miller', 'Linda', 21, 147, 23, 'linda.miller@gmail.com', 108, '5757578', '686868686', '', 24);
-INSERT INTO "Employee" VALUES (120, '"Employee"', '03', 'Williams John', 'A', 'admin', '2011-07-24 23:48:45.557', NULL, 'Williams', 'John', 150, 22, 146, 'john.williams@gmail.com', 108, '64646', '56868768', '', 24);
-INSERT INTO "Employee" VALUES (116, '"Employee"', '01', 'Smith James', 'A', 'admin', '2011-07-24 23:49:33.373', NULL, 'Smith', 'James', 149, 22, 146, 'james.smith@gmail.com', 112, '565675', '27575678', '', 24);
+INSERT INTO "Employee" VALUES (134, '"Employee"', '10', 'Taylor William', 'A', 'admin', '2011-07-24 23:35:18.412', NULL, 'Taylor', 'William', 21, 22, 146, 'william.taylor@example.com', 108, '23456', '763477', '', 24);
+INSERT INTO "Employee" VALUES (118, '"Employee"', '02', 'Johnson Mary', 'A', 'admin', '2011-07-24 23:36:23.281', NULL, 'Johnson', 'Mary', 21, 147, 23, 'mary.johnson@example.com', 108, '76543', '9876554', '', 24);
+INSERT INTO "Employee" VALUES (124, '"Employee"', '05', 'Brown Robert', 'A', 'admin', '2011-07-24 23:43:44.824', NULL, 'Brown', 'Robert', 149, 22, 146, 'robert.brown@example.com', 110, '65432', '24555556', '', 152);
+INSERT INTO "Employee" VALUES (122, '"Employee"', '04', 'Jones Patricia', 'A', 'admin', '2011-07-24 23:45:11.466', NULL, 'Jones', 'Patricia', 21, 148, 145, 'patricia.jones@example.com', 112, '76543', '45678889', '', 24);
+INSERT INTO "Employee" VALUES (132, '"Employee"', '09', 'Moore Elizabeth', 'A', 'admin', '2011-07-24 23:45:30.27', NULL, 'Moore', 'Elizabeth', 149, 22, 146, 'elizabeth.moore@example.com', 110, '76545', '2345666', '', 151);
+INSERT INTO "Employee" VALUES (126, '"Employee"', '06', 'Davis Michael', 'A', 'admin', '2011-07-24 23:46:29.744', NULL, 'Davis', 'Michael', 21, 147, 23, 'michael.davis@example.com', 110, '45556', '3567789', '', 24);
+INSERT INTO "Employee" VALUES (130, '"Employee"', '08', 'Wilson Barbara', 'A', 'admin', '2011-07-24 23:47:15.594', NULL, 'Wilson', 'Barbara', 21, 147, 146, 'barbara.wilson@example.com', 112, '644353', '7789999', '', 151);
+INSERT INTO "Employee" VALUES (128, '"Employee"', '07', 'Miller Linda', 'A', 'admin', '2011-07-24 23:48:03.801', NULL, 'Miller', 'Linda', 21, 147, 23, 'linda.miller@example.com', 108, '5757578', '686868686', '', 24);
+INSERT INTO "Employee" VALUES (120, '"Employee"', '03', 'Williams John', 'A', 'admin', '2011-07-24 23:48:45.557', NULL, 'Williams', 'John', 150, 22, 146, 'john.williams@example.com', 108, '64646', '56868768', '', 24);
+INSERT INTO "Employee" VALUES (116, '"Employee"', '01', 'Smith James', 'A', 'admin', '2011-07-24 23:49:33.373', NULL, 'Smith', 'James', 149, 22, 146, 'james.smith@example.com', 112, '565675', '27575678', '', 24);
 
 
 
@@ -8620,7 +9478,7 @@ INSERT INTO "Employee_history" VALUES (167, '"Employee"', '02', 'Johnson Mary', 
 INSERT INTO "Employee_history" VALUES (171, '"Employee"', '09', 'Moore Elizabeth', 'U', 'admin', '2011-07-24 19:03:30.275', NULL, 'Moore', 'Elizabeth', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 132, '2011-07-24 23:40:39.563');
 INSERT INTO "Employee_history" VALUES (174, '"Employee"', '05', 'Brown Robert', 'U', 'admin', '2011-07-24 18:56:57.522', NULL, 'Brown', 'Robert', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 124, '2011-07-24 23:43:44.824');
 INSERT INTO "Employee_history" VALUES (177, '"Employee"', '04', 'Jones Patricia', 'U', 'admin', '2011-07-24 18:56:41.314', NULL, 'Jones', 'Patricia', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 122, '2011-07-24 23:45:11.466');
-INSERT INTO "Employee_history" VALUES (180, '"Employee"', '09', 'Moore Elizabeth', 'U', 'admin', '2011-07-24 23:40:39.563', NULL, 'Moore', 'Elizabeth', 149, 22, 146, 'elizabeth.moore@gmail.com', 110, '76545', '2345666', '', NULL, 132, '2011-07-24 23:45:30.27');
+INSERT INTO "Employee_history" VALUES (180, '"Employee"', '09', 'Moore Elizabeth', 'U', 'admin', '2011-07-24 23:40:39.563', NULL, 'Moore', 'Elizabeth', 149, 22, 146, 'elizabeth.moore@example.com', 110, '76545', '2345666', '', NULL, 132, '2011-07-24 23:45:30.27');
 INSERT INTO "Employee_history" VALUES (181, '"Employee"', '06', 'Davis Michael', 'U', 'admin', '2011-07-24 19:01:57.725', NULL, 'Davis', 'Michael', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 126, '2011-07-24 23:46:29.744');
 INSERT INTO "Employee_history" VALUES (184, '"Employee"', '08', 'Wilson Barbara', 'U', 'admin', '2011-07-24 19:03:05.826', NULL, 'Wilson', 'Barbara', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 130, '2011-07-24 23:47:15.594');
 INSERT INTO "Employee_history" VALUES (187, '"Employee"', '07', 'Miller Linda', 'U', 'admin', '2011-07-24 19:02:43.379', NULL, 'Miller', 'Linda', NULL, NULL, NULL, '', NULL, '', '', '', NULL, 128, '2011-07-24 23:48:03.801');
@@ -8642,48 +9500,48 @@ INSERT INTO "Floor_history" VALUES (90, '"Floor"', 'B101', 'Office Building - Fl
 
 
 
-INSERT INTO "Grant" VALUES (684, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Asset"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (685, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Building"', 'r', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (686, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Computer"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (687, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Employee"', 'r', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (688, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Floor"', 'r', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (690, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"License"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (691, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Monitor"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (692, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"NetworkDevice"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (693, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"NetworkPoint"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (694, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Notebook"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (695, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Office"', 'r', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (689, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Invoice"', '-', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (696, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"PC"', 'r', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (697, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Printer"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (698, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Rack"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (699, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Room"', 'r', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (700, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Server"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (701, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"UPS"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (702, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Workplace"', 'r', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1136, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Asset"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1137, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Building"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1138, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Computer"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1139, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Employee"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1140, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Floor"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1141, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Invoice"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1142, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"License"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1143, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Monitor"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1144, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"NetworkDevice"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1145, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"NetworkPoint"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1146, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Notebook"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1147, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Office"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1148, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"PC"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1149, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Printer"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1150, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Rack"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1151, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"RequestForChange"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1152, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Room"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1153, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Server"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1154, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Supplier"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1155, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"SupplierContact"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1156, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"UPS"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1157, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"User"', 'w', 'Class', NULL, NULL, NULL);
-INSERT INTO "Grant" VALUES (1158, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Workplace"', 'w', 'Class', NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (684, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Asset"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (685, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Building"', 'r', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (686, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Computer"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (687, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Employee"', 'r', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (688, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Floor"', 'r', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (690, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"License"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (691, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Monitor"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (692, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"NetworkDevice"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (693, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"NetworkPoint"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (694, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Notebook"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (695, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Office"', 'r', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (689, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Invoice"', '-', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (696, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"PC"', 'r', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (697, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Printer"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (698, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Rack"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (699, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Room"', 'r', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (700, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Server"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (701, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"UPS"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (702, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 677, '"Workplace"', 'r', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1136, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Asset"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1137, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Building"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1138, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Computer"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1139, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Employee"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1140, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Floor"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1141, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Invoice"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1142, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"License"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1143, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Monitor"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1144, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"NetworkDevice"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1145, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"NetworkPoint"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1146, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Notebook"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1147, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Office"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1148, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"PC"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1149, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Printer"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1150, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Rack"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1151, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"RequestForChange"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1152, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Room"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1153, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Server"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1154, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Supplier"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1155, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"SupplierContact"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1156, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"UPS"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1157, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"User"', 'w', 'Class', NULL, NULL, NULL, NULL);
+INSERT INTO "Grant" VALUES (1158, '"Grant"', 'system', '2013-05-09 12:57:49.186365', NULL, NULL, 'A', NULL, 942, '"Workplace"', 'w', 'Class', NULL, NULL, NULL, NULL);
 
 
 
@@ -8699,130 +9557,130 @@ INSERT INTO "Grant" VALUES (1158, '"Grant"', 'system', '2013-05-09 12:57:49.1863
 
 
 
-INSERT INTO "LookUp" VALUES (1, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'New', 'A', NULL, 'EmailStatus', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (2, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Received', 'A', NULL, 'EmailStatus', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (3, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Draft', 'A', NULL, 'EmailStatus', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (4, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Outgoing', 'A', NULL, 'EmailStatus', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (5, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Sent', 'A', NULL, 'EmailStatus', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (6, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'open.running', 'Avviato', 'A', NULL, 'FlowStatus', NULL, NULL, 1, true);
-INSERT INTO "LookUp" VALUES (7, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'open.not_running.suspended', 'Sospeso', 'A', NULL, 'FlowStatus', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (8, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'closed.completed', 'Completato', 'A', NULL, 'FlowStatus', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (9, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'closed.terminated', 'Terminato', 'A', NULL, 'FlowStatus', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (10, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'closed.aborted', 'Interrotto', 'A', NULL, 'FlowStatus', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (330, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '15 inches', 'A', NULL, 'Screen size', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (25, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'EN', 'England', 'A', '', 'Country', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (65, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'IT', 'Italy', 'A', '', 'Country', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (66, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'DE', 'Germany', 'A', '', 'Country', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (67, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'FR', 'France', 'A', '', 'Country', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (68, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'ES', 'Spain', 'A', '', 'Country', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (69, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'US', 'United States', 'A', '', 'Country', NULL, NULL, 6, false);
-INSERT INTO "LookUp" VALUES (70, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'AT', 'Austria', 'A', '', 'Country', NULL, NULL, 7, false);
-INSERT INTO "LookUp" VALUES (31, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'IBM', 'A', '', 'Brand', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (135, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'HP', 'A', '', 'Brand', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (136, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Sony', 'A', '', 'Brand', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (137, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Cisco', 'A', '', 'Brand', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (138, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Acer', 'A', '', 'Brand', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (139, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Canon', 'A', '', 'Brand', NULL, NULL, 6, false);
-INSERT INTO "LookUp" VALUES (140, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Epson', 'A', '', 'Brand', NULL, NULL, 7, false);
-INSERT INTO "LookUp" VALUES (141, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Microsoft', 'A', '', 'Brand', NULL, NULL, 8, false);
-INSERT INTO "LookUp" VALUES (30, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'In use', 'A', '', 'Asset state', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (142, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'To repair', 'A', '', 'Asset state', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (143, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Scrapped', 'A', '', 'Asset state', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (144, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Available', 'A', '', 'Asset state', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (23, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Gold', 'A', '', 'Employee level', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (145, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Platinum', 'A', '', 'Employee level', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (146, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Silver', 'A', '', 'Employee level', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (22, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Clerk', 'A', '', 'Employee qualification', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (147, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Head office', 'A', '', 'Employee qualification', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (148, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Manager', 'A', '', 'Employee qualification', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (21, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Employee', 'A', '', 'Employee type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (149, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'External consultant', 'A', '', 'Employee type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (150, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Stage', 'A', '', 'Employee type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (24, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Active', 'A', '', 'Employee state', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (151, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Inactive', 'A', '', 'Employee state', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (152, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Suspended', 'A', '', 'Employee state', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (331, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '17 inches', 'A', NULL, 'Screen size', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (26, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Sales', 'A', '', 'Invoice type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (153, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Credit memo', 'A', '', 'Invoice type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (27, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Office', 'A', '', 'Room usage type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (154, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Warehouse', 'A', '', 'Room usage type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (155, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Meeting room', 'A', '', 'Room usage type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (156, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Training room', 'A', '', 'Room usage type', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (157, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Laboratory', 'A', '', 'Room usage type', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (28, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Manufacturer', 'A', '', 'Supplier type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (158, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Distributor', 'A', '', 'Supplier type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (32, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Hardware', 'A', '', 'Technical reference role', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (159, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Systemistic', 'A', '', 'Technical reference role', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (160, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Applicative', 'A', '', 'Technical reference role', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (161, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Security', 'A', '', 'Technical reference role', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (29, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Single user', 'A', '', 'Workplace type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (162, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Multiuser', 'A', '', 'Workplace type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (163, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Public', 'A', '', 'Workplace type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (279, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'CA', 'Canada', 'A', NULL, 'Country', NULL, NULL, 8, false);
-INSERT INTO "LookUp" VALUES (327, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'RAID 1', 'A', NULL, 'RAID', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (328, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'RAID 2', 'A', NULL, 'RAID', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (329, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'RAID 5', 'A', NULL, 'RAID', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (332, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '19 inches', 'A', NULL, 'Screen size', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (333, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '16 inches', 'A', NULL, 'Screen size', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (334, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '13 inches', 'A', NULL, 'Screen size', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (335, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '21 inches', 'A', NULL, 'Screen size', NULL, NULL, 6, false);
-INSERT INTO "LookUp" VALUES (393, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '2', 'CRT', 'A', NULL, 'Monitor type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (395, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'A4', 'A', NULL, 'Paper size', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (396, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'A3', 'A', NULL, 'Paper size', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (397, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'A0', 'A', NULL, 'Paper size', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (398, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Laser', 'A', NULL, 'Printer type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (399, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Inkjet', 'A', NULL, 'Printer type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (400, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Thermal', 'A', NULL, 'Printer type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (401, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Impact', 'A', NULL, 'Printer type', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (402, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Plotter', 'A', NULL, 'Printer type', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (403, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Local', 'A', NULL, 'Printer usage', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (404, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Network', 'A', NULL, 'Printer usage', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (405, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Personal productivity software', 'A', NULL, 'License category', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (406, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Enterprise software', 'A', NULL, 'License category', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (407, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Technical software', 'A', NULL, 'License category', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (408, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Router', 'A', NULL, 'Network device type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (409, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Switch', 'A', NULL, 'Network device type', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (410, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Access point', 'A', NULL, 'Network device type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (394, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '3', 'Plasma', 'A', NULL, 'Monitor type', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (411, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Patch panel', 'A', NULL, 'Network device type', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (482, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Red', 'A', NULL, 'Cable color', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (483, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Black', 'A', NULL, 'Cable color', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (484, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'White', 'A', NULL, 'Cable color', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (485, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Yellow', 'A', NULL, 'Cable color', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (486, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Blue', 'A', NULL, 'Cable color', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (487, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Green', 'A', NULL, 'Cable color', NULL, NULL, 6, false);
-INSERT INTO "LookUp" VALUES (488, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Cyan', 'A', NULL, 'Cable color', NULL, NULL, 7, false);
-INSERT INTO "LookUp" VALUES (489, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Brown', 'A', NULL, 'Cable color', NULL, NULL, 8, false);
-INSERT INTO "LookUp" VALUES (490, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Gray', 'A', NULL, 'Cable color', NULL, NULL, 9, false);
-INSERT INTO "LookUp" VALUES (491, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Orange', 'A', NULL, 'Cable color', NULL, NULL, 10, false);
-INSERT INTO "LookUp" VALUES (492, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Pink', 'A', NULL, 'Cable color', NULL, NULL, 11, false);
-INSERT INTO "LookUp" VALUES (493, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Magenta', 'A', NULL, 'Cable color', NULL, NULL, 12, false);
-INSERT INTO "LookUp" VALUES (392, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '1', 'LCD', 'A', NULL, 'Monitor type', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (703, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Document', 'A', NULL, 'AlfrescoCategory', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (704, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Image', 'A', NULL, 'AlfrescoCategory', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (917, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'REC_RFC', 'Registered', 'A', NULL, 'RFC status', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (920, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'REQ_EXE', 'Execution requested', 'A', NULL, 'RFC status', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (921, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'IN_EXE', 'Implementation', 'A', NULL, 'RFC status', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (922, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'OUT_EXE', 'Performed', 'A', NULL, 'RFC status', NULL, NULL, 6, false);
-INSERT INTO "LookUp" VALUES (923, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'CLOSED', 'Closed', 'A', NULL, 'RFC status', NULL, NULL, 7, false);
-INSERT INTO "LookUp" VALUES (924, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'FPC', 'Formatting PC', 'A', NULL, 'RFC Category', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (925, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'ISE', 'External software installation', 'A', NULL, 'RFC Category', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (926, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'ARI', 'Internet access', 'A', NULL, 'RFC Category', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (927, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'MIR', 'Modify IP address', 'A', NULL, 'RFC Category', NULL, NULL, 4, false);
-INSERT INTO "LookUp" VALUES (928, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NU_ERP', 'Create new ERP user', 'A', NULL, 'RFC Category', NULL, NULL, 5, false);
-INSERT INTO "LookUp" VALUES (929, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NU_CRM', 'Create new CRM user', 'A', NULL, 'RFC Category', NULL, NULL, 6, false);
-INSERT INTO "LookUp" VALUES (930, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NA', 'Not applicable', 'A', NULL, 'RFC Category', NULL, NULL, 7, false);
-INSERT INTO "LookUp" VALUES (931, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'HI', 'High', 'A', NULL, 'RFC priority', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (932, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'MID', 'Medium', 'A', NULL, 'RFC priority', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (933, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'LOW', 'Low', 'A', NULL, 'RFC priority', NULL, NULL, 3, false);
-INSERT INTO "LookUp" VALUES (934, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'ACCEPTED', 'Accepted', 'A', NULL, 'RFC formal evaluation', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (935, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'REJECTED', 'Rejected', 'A', NULL, 'RFC formal evaluation', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (936, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'APPROVED', 'Approved', 'A', NULL, 'RFC decision', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (937, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NOT_APPROVED', 'Not approved', 'A', NULL, 'RFC decision', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (938, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'POSITIVE', 'Positive', 'A', NULL, 'RFC final result', NULL, NULL, 1, false);
-INSERT INTO "LookUp" VALUES (939, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NEGATIVE', 'Negative', 'A', NULL, 'RFC final result', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (918, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'REQ_DOC', 'Analysis requested', 'A', NULL, 'RFC status', NULL, NULL, 2, false);
-INSERT INTO "LookUp" VALUES (919, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'PRE_DOC', 'Analysis in progress', 'A', NULL, 'RFC status', NULL, NULL, 3, false);
+INSERT INTO "LookUp" VALUES (6, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'open.running', 'Avviato', 'A', NULL, 'FlowStatus', NULL, NULL, 1, true, '1459e55b-10f1-3d5f-8920-6c3b992bb693');
+INSERT INTO "LookUp" VALUES (7, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'open.not_running.suspended', 'Sospeso', 'A', NULL, 'FlowStatus', NULL, NULL, 2, false, '972b3242-5316-3bcb-9d9a-f419b9b03be1');
+INSERT INTO "LookUp" VALUES (65, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'IT', 'Italy', 'A', '', 'Country', NULL, NULL, 2, false, '0dbbb901-cf14-c5ec-e506-62c7fe65af79');
+INSERT INTO "LookUp" VALUES (8, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'closed.completed', 'Completato', 'A', NULL, 'FlowStatus', NULL, NULL, 3, false, 'bc91b479-a6dc-d364-aa61-666e9040d51a');
+INSERT INTO "LookUp" VALUES (9, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'closed.terminated', 'Terminato', 'A', NULL, 'FlowStatus', NULL, NULL, 4, false, 'd483f206-647e-5c1b-18b9-996b1c99ddaf');
+INSERT INTO "LookUp" VALUES (10, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'closed.aborted', 'Interrotto', 'A', NULL, 'FlowStatus', NULL, NULL, 5, false, '34b19dd6-7b4e-626c-3935-838cbd634619');
+INSERT INTO "LookUp" VALUES (330, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '15 inches', 'A', NULL, 'Screen size', NULL, NULL, 1, false, '139c126d-0a1a-d013-473e-a85f4c06d3a9');
+INSERT INTO "LookUp" VALUES (25, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'UK', 'United Kingdom', 'A', '', 'Country', NULL, NULL, 1, false, '052d2615-718d-58cd-0f18-5f7afbdc984f');
+INSERT INTO "LookUp" VALUES (66, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'DE', 'Germany', 'A', '', 'Country', NULL, NULL, 3, false, 'e3ba430c-d1c9-a0af-6300-521da662f8a9');
+INSERT INTO "LookUp" VALUES (67, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'FR', 'France', 'A', '', 'Country', NULL, NULL, 4, false, 'c97ce058-be65-efb7-b155-18e6aeca72a9');
+INSERT INTO "LookUp" VALUES (68, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'ES', 'Spain', 'A', '', 'Country', NULL, NULL, 5, false, '5dce6b38-e498-cee1-b35a-33a1a57fa48c');
+INSERT INTO "LookUp" VALUES (69, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'US', 'United States', 'A', '', 'Country', NULL, NULL, 6, false, 'cc1a8cc6-da14-0b9f-c6fe-9a7aa67730b2');
+INSERT INTO "LookUp" VALUES (70, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'AT', 'Austria', 'A', '', 'Country', NULL, NULL, 7, false, 'b76fad2e-21de-3567-4e98-416fdc5f807c');
+INSERT INTO "LookUp" VALUES (31, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'IBM', 'A', '', 'Brand', NULL, NULL, 1, false, '629b3b01-7c98-2f3e-622d-cca557a4479f');
+INSERT INTO "LookUp" VALUES (135, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'HP', 'A', '', 'Brand', NULL, NULL, 2, false, 'd3a264d0-d27d-42d0-b528-09be8dfac8e6');
+INSERT INTO "LookUp" VALUES (136, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Sony', 'A', '', 'Brand', NULL, NULL, 3, false, 'ad79e19b-cee3-0d71-3b36-0f02869a9af6');
+INSERT INTO "LookUp" VALUES (137, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Cisco', 'A', '', 'Brand', NULL, NULL, 4, false, 'b926e68c-5242-22fc-5db5-02c1ae89031b');
+INSERT INTO "LookUp" VALUES (138, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Acer', 'A', '', 'Brand', NULL, NULL, 5, false, 'b0947bf8-3813-f6ac-a778-7de91008f535');
+INSERT INTO "LookUp" VALUES (139, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Canon', 'A', '', 'Brand', NULL, NULL, 6, false, 'c669b687-4f93-8b1e-a2e6-ddf50da417a9');
+INSERT INTO "LookUp" VALUES (140, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Epson', 'A', '', 'Brand', NULL, NULL, 7, false, '9afb6d99-3b20-ade3-5017-b99223a4e065');
+INSERT INTO "LookUp" VALUES (141, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Microsoft', 'A', '', 'Brand', NULL, NULL, 8, false, '7e1efc5c-4a37-413b-3648-495b47c8f804');
+INSERT INTO "LookUp" VALUES (30, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'In use', 'A', '', 'Asset state', NULL, NULL, 1, false, '0d7ff6d6-ffb8-fbb1-2bd5-84473099bc92');
+INSERT INTO "LookUp" VALUES (142, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'To repair', 'A', '', 'Asset state', NULL, NULL, 2, false, '8f8e88ad-7b4e-0ad7-f1ae-4b39d46f16d1');
+INSERT INTO "LookUp" VALUES (143, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Scrapped', 'A', '', 'Asset state', NULL, NULL, 3, false, '5e83d019-9644-3157-8d3f-5e572ee45f83');
+INSERT INTO "LookUp" VALUES (144, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Available', 'A', '', 'Asset state', NULL, NULL, 4, false, 'bf91cc9d-542b-8971-11f1-397941b68c79');
+INSERT INTO "LookUp" VALUES (23, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Gold', 'A', '', 'Employee level', NULL, NULL, 1, false, 'b39a946a-007e-b325-ffb4-5d0f52aacef7');
+INSERT INTO "LookUp" VALUES (145, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Platinum', 'A', '', 'Employee level', NULL, NULL, 2, false, '640d557f-eb24-fbf1-e6e9-17fb60e9d1b4');
+INSERT INTO "LookUp" VALUES (146, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Silver', 'A', '', 'Employee level', NULL, NULL, 3, false, 'e07246c3-41a5-2bfa-1cdd-1353e577c7d0');
+INSERT INTO "LookUp" VALUES (22, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Clerk', 'A', '', 'Employee qualification', NULL, NULL, 1, false, '7929df84-c3b4-fbab-f94b-760f1b36ed0f');
+INSERT INTO "LookUp" VALUES (147, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Head office', 'A', '', 'Employee qualification', NULL, NULL, 2, false, 'b061db92-b25a-ad8e-aecd-4ac9028a8ceb');
+INSERT INTO "LookUp" VALUES (148, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Manager', 'A', '', 'Employee qualification', NULL, NULL, 3, false, '51a26f29-ff12-3d9a-9e44-55ea6525071c');
+INSERT INTO "LookUp" VALUES (21, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Employee', 'A', '', 'Employee type', NULL, NULL, 1, false, 'c2d423ee-db39-5eac-83e3-476955b700fa');
+INSERT INTO "LookUp" VALUES (149, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'External consultant', 'A', '', 'Employee type', NULL, NULL, 2, false, '959dc753-587d-50cc-5814-a5d8aff27380');
+INSERT INTO "LookUp" VALUES (150, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Stage', 'A', '', 'Employee type', NULL, NULL, 3, false, '714a717b-cc27-f796-47ca-63b8cd2292f6');
+INSERT INTO "LookUp" VALUES (24, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Active', 'A', '', 'Employee state', NULL, NULL, 1, false, '3c7a7490-7952-220b-4c87-8a6c3968c6fb');
+INSERT INTO "LookUp" VALUES (151, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Inactive', 'A', '', 'Employee state', NULL, NULL, 2, false, '0b2e83da-9905-2ce0-0ee2-068094a15b4c');
+INSERT INTO "LookUp" VALUES (152, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Suspended', 'A', '', 'Employee state', NULL, NULL, 3, false, '960d490f-efbe-b38b-501e-cf189ea44a23');
+INSERT INTO "LookUp" VALUES (331, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '17 inches', 'A', NULL, 'Screen size', NULL, NULL, 2, false, '401435b6-456a-d391-f21c-bd0a11657668');
+INSERT INTO "LookUp" VALUES (26, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Sales', 'A', '', 'Invoice type', NULL, NULL, 1, false, '72edca53-6c9b-f913-5814-b5b6af12ab6b');
+INSERT INTO "LookUp" VALUES (153, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Credit memo', 'A', '', 'Invoice type', NULL, NULL, 2, false, 'c15e77fa-f5e3-f428-4b7e-7b3d96b01131');
+INSERT INTO "LookUp" VALUES (27, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Office', 'A', '', 'Room usage type', NULL, NULL, 1, false, '8d1d7b55-7eec-5e0f-85c2-ec391351b27e');
+INSERT INTO "LookUp" VALUES (154, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Warehouse', 'A', '', 'Room usage type', NULL, NULL, 2, false, '948e43e1-0d1c-a222-cbcd-e0ddf5640ec6');
+INSERT INTO "LookUp" VALUES (155, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Meeting room', 'A', '', 'Room usage type', NULL, NULL, 3, false, '97b5d71d-f85b-ae80-cd0f-7cbdf97221de');
+INSERT INTO "LookUp" VALUES (156, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Training room', 'A', '', 'Room usage type', NULL, NULL, 4, false, 'adacdaaa-953b-f49e-ad35-b21d76b68e0e');
+INSERT INTO "LookUp" VALUES (157, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Laboratory', 'A', '', 'Room usage type', NULL, NULL, 5, false, '968ffa48-726a-76a1-b3ed-33109c242b22');
+INSERT INTO "LookUp" VALUES (28, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Manufacturer', 'A', '', 'Supplier type', NULL, NULL, 1, false, '0d70890f-3630-3f46-efa7-f3981b9893e9');
+INSERT INTO "LookUp" VALUES (158, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Distributor', 'A', '', 'Supplier type', NULL, NULL, 2, false, '9ac7246d-3798-b231-d1ec-a5379d2a84a0');
+INSERT INTO "LookUp" VALUES (32, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Hardware', 'A', '', 'Technical reference role', NULL, NULL, 1, false, 'd0147df2-262e-752f-b92a-348ad8567f1f');
+INSERT INTO "LookUp" VALUES (159, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Systemistic', 'A', '', 'Technical reference role', NULL, NULL, 2, false, '460f12ae-0480-5b4c-bbe3-cf7d39fbe3da');
+INSERT INTO "LookUp" VALUES (160, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Applicative', 'A', '', 'Technical reference role', NULL, NULL, 3, false, '860497ec-f48f-5d35-53d4-d4af723e44c7');
+INSERT INTO "LookUp" VALUES (161, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Security', 'A', '', 'Technical reference role', NULL, NULL, 4, false, '9e3f28c1-53c2-cb2e-bb66-cc8adf45e487');
+INSERT INTO "LookUp" VALUES (29, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Single user', 'A', '', 'Workplace type', NULL, NULL, 1, false, '1fcda2a8-db7c-4900-e874-67c04a9e9796');
+INSERT INTO "LookUp" VALUES (162, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Multiuser', 'A', '', 'Workplace type', NULL, NULL, 2, false, 'c364705e-22aa-922f-3df7-e5b099be14d2');
+INSERT INTO "LookUp" VALUES (163, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '', 'Public', 'A', '', 'Workplace type', NULL, NULL, 3, false, 'd53211c5-bc5f-bd3b-f271-6e4e1a6b69b3');
+INSERT INTO "LookUp" VALUES (279, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'CA', 'Canada', 'A', NULL, 'Country', NULL, NULL, 8, false, 'b0a5bbbb-8d48-f861-e66b-7b3c777fe4a2');
+INSERT INTO "LookUp" VALUES (327, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'RAID 1', 'A', NULL, 'RAID', NULL, NULL, 1, false, '3a6a867e-2269-ae9a-3d14-db6c145d0305');
+INSERT INTO "LookUp" VALUES (328, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'RAID 2', 'A', NULL, 'RAID', NULL, NULL, 2, false, 'd699ce49-8fe9-c036-0146-a633ed522c9e');
+INSERT INTO "LookUp" VALUES (329, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'RAID 5', 'A', NULL, 'RAID', NULL, NULL, 3, false, 'b47e3356-c3f3-521b-5a03-7c99c4af9d7c');
+INSERT INTO "LookUp" VALUES (332, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '19 inches', 'A', NULL, 'Screen size', NULL, NULL, 3, false, '8eba54f0-e1a1-64d3-18b2-524ef60bf4a9');
+INSERT INTO "LookUp" VALUES (333, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '16 inches', 'A', NULL, 'Screen size', NULL, NULL, 4, false, 'e48f08cf-2be2-cd0b-bb31-b4d48874afbb');
+INSERT INTO "LookUp" VALUES (334, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '13 inches', 'A', NULL, 'Screen size', NULL, NULL, 5, false, 'd37dbaa9-c3bb-8d24-53bd-1b734c9b936a');
+INSERT INTO "LookUp" VALUES (335, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, '21 inches', 'A', NULL, 'Screen size', NULL, NULL, 6, false, 'df122985-ec9c-e62d-7748-ff1d83384373');
+INSERT INTO "LookUp" VALUES (393, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '2', 'CRT', 'A', NULL, 'Monitor type', NULL, NULL, 2, false, '7a655fb0-d0e6-7e3b-9a21-9458b723ee9f');
+INSERT INTO "LookUp" VALUES (395, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'A4', 'A', NULL, 'Paper size', NULL, NULL, 1, false, 'a67f8e47-fbc9-215e-96ab-0cf20ddcb3ed');
+INSERT INTO "LookUp" VALUES (396, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'A3', 'A', NULL, 'Paper size', NULL, NULL, 2, false, '1eb34d55-6fe4-8cdd-1fc5-e91b612629e5');
+INSERT INTO "LookUp" VALUES (397, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'A0', 'A', NULL, 'Paper size', NULL, NULL, 3, false, 'c2cdf7d7-84c5-80ec-4602-b7f2c2669328');
+INSERT INTO "LookUp" VALUES (398, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Laser', 'A', NULL, 'Printer type', NULL, NULL, 1, false, 'fb7e58a8-b355-51fa-ca04-68951df68aa1');
+INSERT INTO "LookUp" VALUES (399, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Inkjet', 'A', NULL, 'Printer type', NULL, NULL, 2, false, '0949a662-c06c-eb10-cb82-04250c6676d9');
+INSERT INTO "LookUp" VALUES (400, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Thermal', 'A', NULL, 'Printer type', NULL, NULL, 3, false, '25866c2b-105f-f36b-77a5-2b67af474253');
+INSERT INTO "LookUp" VALUES (401, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Impact', 'A', NULL, 'Printer type', NULL, NULL, 4, false, '0d2df1eb-2d8d-4bc7-3e21-06e857a0e658');
+INSERT INTO "LookUp" VALUES (402, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Plotter', 'A', NULL, 'Printer type', NULL, NULL, 5, false, 'c16a46ae-e652-b372-e8e1-6895210b7be8');
+INSERT INTO "LookUp" VALUES (403, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Local', 'A', NULL, 'Printer usage', NULL, NULL, 1, false, 'dd72ce56-0944-e32b-7c55-8206da45dbd9');
+INSERT INTO "LookUp" VALUES (404, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Network', 'A', NULL, 'Printer usage', NULL, NULL, 2, false, 'c44b3089-6819-fa15-21b8-95bedba7081e');
+INSERT INTO "LookUp" VALUES (405, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Personal productivity software', 'A', NULL, 'License category', NULL, NULL, 1, false, '829276da-537a-a987-9ac0-c756dd731fb7');
+INSERT INTO "LookUp" VALUES (406, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Enterprise software', 'A', NULL, 'License category', NULL, NULL, 2, false, '7f510d2a-b229-9562-67bc-976f299b8040');
+INSERT INTO "LookUp" VALUES (407, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Technical software', 'A', NULL, 'License category', NULL, NULL, 3, false, 'a49af884-cdcb-3e9c-4c99-4758125136cc');
+INSERT INTO "LookUp" VALUES (408, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Router', 'A', NULL, 'Network device type', NULL, NULL, 1, false, '914450cc-2a16-4f42-a607-fa3fefd21c0d');
+INSERT INTO "LookUp" VALUES (409, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Switch', 'A', NULL, 'Network device type', NULL, NULL, 2, false, '2ffb2547-d25e-5f0c-0679-6e608207b6be');
+INSERT INTO "LookUp" VALUES (410, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Access point', 'A', NULL, 'Network device type', NULL, NULL, 3, false, 'a17ab276-bfd9-aa19-a373-547c06901e8c');
+INSERT INTO "LookUp" VALUES (394, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '3', 'Plasma', 'A', NULL, 'Monitor type', NULL, NULL, 3, false, 'cb046e50-8403-7012-9a09-a78c9792a96c');
+INSERT INTO "LookUp" VALUES (411, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Patch panel', 'A', NULL, 'Network device type', NULL, NULL, 4, false, '88f1604c-601e-5caa-724f-6176589f1cd1');
+INSERT INTO "LookUp" VALUES (482, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Red', 'A', NULL, 'Cable color', NULL, NULL, 1, false, '2ff8c977-0cd6-40f4-50ae-869a928711cc');
+INSERT INTO "LookUp" VALUES (483, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Black', 'A', NULL, 'Cable color', NULL, NULL, 2, false, '0bd1883f-735b-034a-d3c1-9b88e7121a0b');
+INSERT INTO "LookUp" VALUES (484, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'White', 'A', NULL, 'Cable color', NULL, NULL, 3, false, '1232e2c4-17b8-00d9-f7c5-f6c957253a72');
+INSERT INTO "LookUp" VALUES (485, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Yellow', 'A', NULL, 'Cable color', NULL, NULL, 4, false, 'ea5b4aea-b88e-f768-64ce-dad7b01d93ca');
+INSERT INTO "LookUp" VALUES (486, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Blue', 'A', NULL, 'Cable color', NULL, NULL, 5, false, '38dc2f2a-206b-28df-7644-a35d9e4d7a44');
+INSERT INTO "LookUp" VALUES (487, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Green', 'A', NULL, 'Cable color', NULL, NULL, 6, false, '76f92a48-b8df-5061-e230-58a7d5f52ae6');
+INSERT INTO "LookUp" VALUES (488, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Cyan', 'A', NULL, 'Cable color', NULL, NULL, 7, false, 'e4f1e208-a8a5-140a-90c7-3690035a466b');
+INSERT INTO "LookUp" VALUES (489, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Brown', 'A', NULL, 'Cable color', NULL, NULL, 8, false, '00dee871-9120-7827-045b-1322e86c7eb4');
+INSERT INTO "LookUp" VALUES (490, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Gray', 'A', NULL, 'Cable color', NULL, NULL, 9, false, 'b0f39b7c-b7a3-580a-9471-c2f8c85f6290');
+INSERT INTO "LookUp" VALUES (491, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Orange', 'A', NULL, 'Cable color', NULL, NULL, 10, false, 'f496a7ad-48dc-cc9c-7475-d7d9b94248ad');
+INSERT INTO "LookUp" VALUES (492, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Pink', 'A', NULL, 'Cable color', NULL, NULL, 11, false, '795a55dd-e604-c74a-5c7b-37c6e072001d');
+INSERT INTO "LookUp" VALUES (493, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Magenta', 'A', NULL, 'Cable color', NULL, NULL, 12, false, 'bfc70dbc-5b99-9c04-6f4f-c4c0a687a08f');
+INSERT INTO "LookUp" VALUES (392, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', '1', 'LCD', 'A', NULL, 'Monitor type', NULL, NULL, 1, false, 'd0ad9eaf-e0d1-9280-6106-ec0bb6a6110d');
+INSERT INTO "LookUp" VALUES (703, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Document', 'A', NULL, 'AlfrescoCategory', NULL, NULL, 1, false, 'd29b9b79-6da0-acfd-b256-6cdcfb967d89');
+INSERT INTO "LookUp" VALUES (704, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', NULL, 'Image', 'A', NULL, 'AlfrescoCategory', NULL, NULL, 2, false, '607bd263-02f1-95a6-1e91-695f4007710b');
+INSERT INTO "LookUp" VALUES (917, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'REC_RFC', 'Registered', 'A', NULL, 'RFC status', NULL, NULL, 1, false, '1d49b68a-2340-ab6b-f622-9d1b3632e403');
+INSERT INTO "LookUp" VALUES (920, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'REQ_EXE', 'Execution requested', 'A', NULL, 'RFC status', NULL, NULL, 4, false, 'ee169dcf-b70c-c87c-dc79-99355b3dfef4');
+INSERT INTO "LookUp" VALUES (921, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'IN_EXE', 'Implementation', 'A', NULL, 'RFC status', NULL, NULL, 5, false, '26f27ee8-eb2e-630c-f03c-6126f6645726');
+INSERT INTO "LookUp" VALUES (922, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'OUT_EXE', 'Performed', 'A', NULL, 'RFC status', NULL, NULL, 6, false, 'fac32802-7cd4-dc94-f2dc-534a782d22ae');
+INSERT INTO "LookUp" VALUES (923, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'CLOSED', 'Closed', 'A', NULL, 'RFC status', NULL, NULL, 7, false, 'cb4e6ac9-548d-7356-8844-fa33fe8783d9');
+INSERT INTO "LookUp" VALUES (924, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'FPC', 'Formatting PC', 'A', NULL, 'RFC Category', NULL, NULL, 1, false, 'a1fe27e3-3a65-b105-34f4-fbc516e080b4');
+INSERT INTO "LookUp" VALUES (925, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'ISE', 'External software installation', 'A', NULL, 'RFC Category', NULL, NULL, 2, false, '0e19830c-3802-fdfc-5782-11fa969e525d');
+INSERT INTO "LookUp" VALUES (926, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'ARI', 'Internet access', 'A', NULL, 'RFC Category', NULL, NULL, 3, false, '6ea53ee6-fde6-ff9a-dd00-7a5c4a555bc8');
+INSERT INTO "LookUp" VALUES (927, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'MIR', 'Modify IP address', 'A', NULL, 'RFC Category', NULL, NULL, 4, false, 'e56c24cb-9a4c-d2b4-8764-83f0b535e63e');
+INSERT INTO "LookUp" VALUES (928, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NU_ERP', 'Create new ERP user', 'A', NULL, 'RFC Category', NULL, NULL, 5, false, '7b760cde-b504-2144-a5b5-889e0e997d47');
+INSERT INTO "LookUp" VALUES (929, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NU_CRM', 'Create new CRM user', 'A', NULL, 'RFC Category', NULL, NULL, 6, false, 'a42aa48f-bdec-f2ca-fb51-39ff8a03b1d5');
+INSERT INTO "LookUp" VALUES (930, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NA', 'Not applicable', 'A', NULL, 'RFC Category', NULL, NULL, 7, false, '16bc6c6e-8964-687c-8095-d6a8deabe2e4');
+INSERT INTO "LookUp" VALUES (931, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'HI', 'High', 'A', NULL, 'RFC priority', NULL, NULL, 1, false, '2b3b83b6-8f3a-2680-6565-f5b3b1aa0a77');
+INSERT INTO "LookUp" VALUES (932, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'MID', 'Medium', 'A', NULL, 'RFC priority', NULL, NULL, 2, false, 'f656e2b4-cb6a-526b-8cc7-c94a3e03f83c');
+INSERT INTO "LookUp" VALUES (933, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'LOW', 'Low', 'A', NULL, 'RFC priority', NULL, NULL, 3, false, 'b5498de0-38f9-5b52-68a6-8c109f2f5dce');
+INSERT INTO "LookUp" VALUES (934, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'ACCEPTED', 'Accepted', 'A', NULL, 'RFC formal evaluation', NULL, NULL, 1, false, '84358751-9d93-4425-1feb-78437c11dd99');
+INSERT INTO "LookUp" VALUES (935, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'REJECTED', 'Rejected', 'A', NULL, 'RFC formal evaluation', NULL, NULL, 2, false, '7d60b944-dcbc-0167-44eb-bfb0e6d29341');
+INSERT INTO "LookUp" VALUES (936, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'APPROVED', 'Approved', 'A', NULL, 'RFC decision', NULL, NULL, 1, false, '8a02b082-a2ce-51b8-e7a4-80d0c037d68f');
+INSERT INTO "LookUp" VALUES (937, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NOT_APPROVED', 'Not approved', 'A', NULL, 'RFC decision', NULL, NULL, 2, false, '81d3aa16-1eea-7b5a-0e0e-0031b4641076');
+INSERT INTO "LookUp" VALUES (938, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'POSITIVE', 'Positive', 'A', NULL, 'RFC final result', NULL, NULL, 1, false, 'c8dacdf9-723c-34a7-b595-74d766755ac9');
+INSERT INTO "LookUp" VALUES (939, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'NEGATIVE', 'Negative', 'A', NULL, 'RFC final result', NULL, NULL, 2, false, 'e72ba740-f2dc-59e5-65fc-5d10b832716f');
+INSERT INTO "LookUp" VALUES (918, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'REQ_DOC', 'Analysis requested', 'A', NULL, 'RFC status', NULL, NULL, 2, false, 'e9713270-4e94-7ce5-fafe-8c97e6045ba0');
+INSERT INTO "LookUp" VALUES (919, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'PRE_DOC', 'Analysis in progress', 'A', NULL, 'RFC status', NULL, NULL, 3, false, '7abfa6ce-a247-d024-eb1e-675b648e74d0');
+INSERT INTO "LookUp" VALUES (1, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'New', 'New', 'A', NULL, 'EmailStatus', NULL, NULL, 1, false, '46505694-ded3-2378-542d-1517d41aedff');
+INSERT INTO "LookUp" VALUES (2, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'Received', 'Received', 'A', NULL, 'EmailStatus', NULL, NULL, 2, false, 'ce59a792-5f3d-6a8e-7c42-229503ee6cca');
+INSERT INTO "LookUp" VALUES (3, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'Draft', 'Draft', 'A', NULL, 'EmailStatus', NULL, NULL, 3, false, '69eca148-ae9f-e1e6-1ebe-d669e0a8a4b3');
+INSERT INTO "LookUp" VALUES (4, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'Outgoing', 'Outgoing', 'A', NULL, 'EmailStatus', NULL, NULL, 4, false, '736a05ff-4f54-86ba-9e0d-7b8ab0b97dfa');
+INSERT INTO "LookUp" VALUES (5, '"LookUp"', NULL, '2013-05-09 12:57:48.985726', 'Sent', 'Sent', 'A', NULL, 'EmailStatus', NULL, NULL, 5, false, '2bc4ddb8-99c0-beb2-31f6-86e02c0ea8d1');
 
 
 
@@ -9054,41 +9912,73 @@ INSERT INTO "Map_UserRole" VALUES ('"Map_UserRole"', '"User"', 943, '"Role"', 94
 
 
 
-INSERT INTO "Menu" VALUES (1067, '"Menu"', 'folder', 'Dashboard', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 30, 'folder', '*');
-INSERT INTO "Menu" VALUES (1073, '"Menu"', 'folder', 'Basic archives', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 33, 'folder', '*');
-INSERT INTO "Menu" VALUES (1075, '"Menu"', 'class', 'Employee', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1073, '"Employee"', 0, 34, 'class', '*');
-INSERT INTO "Menu" VALUES (1077, '"Menu"', 'class', 'Office', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1073, '"Office"', 0, 35, 'class', '*');
-INSERT INTO "Menu" VALUES (1079, '"Menu"', 'class', 'Workplace', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1073, '"Workplace"', 0, 36, 'class', '*');
-INSERT INTO "Menu" VALUES (1081, '"Menu"', 'folder', 'Purchases', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 37, 'folder', '*');
-INSERT INTO "Menu" VALUES (1083, '"Menu"', 'class', 'Supplier', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1081, '"Supplier"', 0, 38, 'class', '*');
-INSERT INTO "Menu" VALUES (1085, '"Menu"', 'class', 'SupplierContact', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1081, '"SupplierContact"', 0, 39, 'class', '*');
-INSERT INTO "Menu" VALUES (1087, '"Menu"', 'class', 'Invoice', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1081, '"Invoice"', 0, 40, 'class', '*');
-INSERT INTO "Menu" VALUES (1089, '"Menu"', 'folder', 'Locations', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 41, 'folder', '*');
-INSERT INTO "Menu" VALUES (1091, '"Menu"', 'class', 'Building', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1089, '"Building"', 0, 42, 'class', '*');
-INSERT INTO "Menu" VALUES (1093, '"Menu"', 'class', 'Room', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1089, '"Room"', 0, 43, 'class', '*');
-INSERT INTO "Menu" VALUES (1095, '"Menu"', 'class', 'Floor', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1089, '"Floor"', 0, 44, 'class', '*');
-INSERT INTO "Menu" VALUES (1097, '"Menu"', 'class', 'Network point', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1089, '"NetworkPoint"', 0, 45, 'class', '*');
-INSERT INTO "Menu" VALUES (1099, '"Menu"', 'folder', 'Assets', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 46, 'folder', '*');
-INSERT INTO "Menu" VALUES (1101, '"Menu"', 'class', 'Asset', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Asset"', 0, 47, 'class', '*');
-INSERT INTO "Menu" VALUES (1103, '"Menu"', 'class', 'Computer', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Computer"', 0, 48, 'class', '*');
-INSERT INTO "Menu" VALUES (1105, '"Menu"', 'class', 'PC', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"PC"', 0, 49, 'class', '*');
-INSERT INTO "Menu" VALUES (1107, '"Menu"', 'class', 'Notebook', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Notebook"', 0, 50, 'class', '*');
-INSERT INTO "Menu" VALUES (1109, '"Menu"', 'class', 'Server', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Server"', 0, 51, 'class', '*');
-INSERT INTO "Menu" VALUES (1111, '"Menu"', 'class', 'Monitor', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Monitor"', 0, 52, 'class', '*');
-INSERT INTO "Menu" VALUES (1113, '"Menu"', 'class', 'Printer', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Printer"', 0, 53, 'class', '*');
-INSERT INTO "Menu" VALUES (1115, '"Menu"', 'class', 'NetworkDevice', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"NetworkDevice"', 0, 54, 'class', '*');
-INSERT INTO "Menu" VALUES (1117, '"Menu"', 'class', 'Rack', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Rack"', 0, 55, 'class', '*');
-INSERT INTO "Menu" VALUES (1119, '"Menu"', 'class', 'UPS', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"UPS"', 0, 56, 'class', '*');
-INSERT INTO "Menu" VALUES (1121, '"Menu"', 'class', 'License', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"License"', 0, 57, 'class', '*');
-INSERT INTO "Menu" VALUES (1123, '"Menu"', 'folder', 'Report', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 58, 'folder', '*');
-INSERT INTO "Menu" VALUES (1125, '"Menu"', 'reportpdf', 'Location list with assets', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1123, '"Report"', 597, 59, 'reportpdf', '*');
-INSERT INTO "Menu" VALUES (1127, '"Menu"', 'folder', 'Workflow', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 60, 'folder', '*');
-INSERT INTO "Menu" VALUES (1129, '"Menu"', 'processclass', 'Request for change', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1127, '"RequestForChange"', 0, 61, 'processclass', '*');
-INSERT INTO "Menu" VALUES (1069, '"Menu"', 'dashboard', 'Item situation', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1067, '"_Dashboards"', 831, 31, 'dashboard', '*');
-INSERT INTO "Menu" VALUES (1071, '"Menu"', 'dashboard', 'RfC situation', 'A', 'admin', '2013-05-09 12:57:48.985726', NULL, 1067, '"_Dashboards"', 946, 32, 'dashboard', '*');
+INSERT INTO "Menu" VALUES (1067, '"Menu"', '348fdc1c-991f-3d5c-152b-d8450732c5b6', 'Dashboard', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 0, NULL, 0, 30, 'folder', '*');
+INSERT INTO "Menu" VALUES (1073, '"Menu"', '362f548e-6d49-65d3-3e84-e1b472e5bf25', 'Basic archives', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 0, NULL, 0, 33, 'folder', '*');
+INSERT INTO "Menu" VALUES (1075, '"Menu"', '42c16c5e-46e6-e9a0-0a15-e591d759d997', 'Employee', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1073, '"Employee"', 0, 34, 'class', '*');
+INSERT INTO "Menu" VALUES (1077, '"Menu"', 'bd71fed8-971b-3be1-0436-60eaa52a6c77', 'Office', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1073, '"Office"', 0, 35, 'class', '*');
+INSERT INTO "Menu" VALUES (1079, '"Menu"', '96848206-7632-f5f5-df04-f4bda50cdb13', 'Workplace', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1073, '"Workplace"', 0, 36, 'class', '*');
+INSERT INTO "Menu" VALUES (1081, '"Menu"', '5ca60188-6184-ad5b-c45a-35ef42a9e556', 'Purchases', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 0, NULL, 0, 37, 'folder', '*');
+INSERT INTO "Menu" VALUES (1083, '"Menu"', '26484886-f179-f0e7-b30b-3d4dee5b53b0', 'Supplier', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1081, '"Supplier"', 0, 38, 'class', '*');
+INSERT INTO "Menu" VALUES (1085, '"Menu"', 'ae8aa7b3-a312-3d5a-a8d8-d310816a939e', 'SupplierContact', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1081, '"SupplierContact"', 0, 39, 'class', '*');
+INSERT INTO "Menu" VALUES (1087, '"Menu"', '3a377830-fdb3-d0b6-766e-49944cab3514', 'Invoice', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1081, '"Invoice"', 0, 40, 'class', '*');
+INSERT INTO "Menu" VALUES (1089, '"Menu"', '476fd463-bece-0caa-91e2-8db21b485e81', 'Locations', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 0, NULL, 0, 41, 'folder', '*');
+INSERT INTO "Menu" VALUES (1091, '"Menu"', 'a4ac5ff9-b8d8-e805-11fd-14217d1519a5', 'Building', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1089, '"Building"', 0, 42, 'class', '*');
+INSERT INTO "Menu" VALUES (1093, '"Menu"', 'b31ee5ec-2187-5553-5e79-0958e1a33a69', 'Room', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1089, '"Room"', 0, 43, 'class', '*');
+INSERT INTO "Menu" VALUES (1095, '"Menu"', 'c8f77c1c-1c12-0761-6ba2-90d3622a4a42', 'Floor', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1089, '"Floor"', 0, 44, 'class', '*');
+INSERT INTO "Menu" VALUES (1097, '"Menu"', '4aea351e-142a-d1fd-8416-279f46826005', 'Network point', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1089, '"NetworkPoint"', 0, 45, 'class', '*');
+INSERT INTO "Menu" VALUES (1099, '"Menu"', 'ff1143a7-e29e-1ca9-7bf7-4e6db37d25cc', 'Assets', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 0, NULL, 0, 46, 'folder', '*');
+INSERT INTO "Menu" VALUES (1101, '"Menu"', 'ad0e8d0b-99f3-8b22-3b88-0d645f1fcc9b', 'Asset', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1099, '"Asset"', 0, 47, 'class', '*');
+INSERT INTO "Menu" VALUES (1103, '"Menu"', 'a0e29c06-187b-0c0c-a4ee-90198bdc2ae7', 'Computer', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1099, '"Computer"', 0, 48, 'class', '*');
+INSERT INTO "Menu" VALUES (1105, '"Menu"', '3eb83eac-fd68-91f3-2144-0f421959851e', 'PC', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1099, '"PC"', 0, 49, 'class', '*');
+INSERT INTO "Menu" VALUES (1107, '"Menu"', 'd8db87b3-c979-cd35-4d37-007ee0d3aaf1', 'Notebook', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1099, '"Notebook"', 0, 50, 'class', '*');
+INSERT INTO "Menu" VALUES (1109, '"Menu"', '576d5997-cc36-b400-3ee1-87adf4dadb10', 'Server', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1099, '"Server"', 0, 51, 'class', '*');
+INSERT INTO "Menu" VALUES (1111, '"Menu"', '1d72017f-e3d3-e951-a01d-55465008925b', 'Monitor', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1099, '"Monitor"', 0, 52, 'class', '*');
+INSERT INTO "Menu" VALUES (1113, '"Menu"', '7147560b-7d6c-7881-1967-7fd34f795c64', 'Printer', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1099, '"Printer"', 0, 53, 'class', '*');
+INSERT INTO "Menu" VALUES (1115, '"Menu"', '605bf059-ea40-dfee-d9bb-c205b62b0c54', 'NetworkDevice', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1099, '"NetworkDevice"', 0, 54, 'class', '*');
+INSERT INTO "Menu" VALUES (1117, '"Menu"', 'c34f9b58-506f-5322-5f67-c6eeaa04b401', 'Rack', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1099, '"Rack"', 0, 55, 'class', '*');
+INSERT INTO "Menu" VALUES (1119, '"Menu"', '2f801567-38f5-4842-dab3-4c5c39a576da', 'UPS', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1099, '"UPS"', 0, 56, 'class', '*');
+INSERT INTO "Menu" VALUES (1121, '"Menu"', 'd2abd49a-7131-410b-eb8b-39eb219a83e1', 'License', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1099, '"License"', 0, 57, 'class', '*');
+INSERT INTO "Menu" VALUES (1123, '"Menu"', '6a123754-a810-f503-e33f-f6cc6326bdbf', 'Report', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 0, NULL, 0, 58, 'folder', '*');
+INSERT INTO "Menu" VALUES (1125, '"Menu"', 'b19e215b-44f2-8f7c-2a47-abea8c570e03', 'Location list with assets', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1123, '"Report"', 597, 59, 'reportpdf', '*');
+INSERT INTO "Menu" VALUES (1127, '"Menu"', 'b7c12ef3-876d-e5d2-c463-cf7ef6597c1e', 'Workflow', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 0, NULL, 0, 60, 'folder', '*');
+INSERT INTO "Menu" VALUES (1129, '"Menu"', 'c7146cce-685b-8e8f-d1e8-955de390a9de', 'Request for change', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1127, '"RequestForChange"', 0, 61, 'processclass', '*');
+INSERT INTO "Menu" VALUES (1069, '"Menu"', 'dfbc9d35-5e44-ccc3-e072-ede2adfbd111', 'Item situation', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1067, '"_Dashboards"', 831, 31, 'dashboard', '*');
+INSERT INTO "Menu" VALUES (1071, '"Menu"', '6f2f1bb1-8227-c405-7281-1a54e500bdab', 'RfC situation', 'A', 'admin', '2014-06-12 16:52:05.948397', NULL, 1067, '"_Dashboards"', 946, 32, 'dashboard', '*');
 
 
 
+INSERT INTO "Menu_history" VALUES (1403, '"Menu"', NULL, 'Dashboard', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 30, 'folder', '*', 1067, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1404, '"Menu"', NULL, 'Basic archives', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 33, 'folder', '*', 1073, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1405, '"Menu"', NULL, 'Employee', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1073, '"Employee"', 0, 34, 'class', '*', 1075, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1406, '"Menu"', NULL, 'Office', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1073, '"Office"', 0, 35, 'class', '*', 1077, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1407, '"Menu"', NULL, 'Workplace', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1073, '"Workplace"', 0, 36, 'class', '*', 1079, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1408, '"Menu"', NULL, 'Purchases', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 37, 'folder', '*', 1081, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1409, '"Menu"', NULL, 'Supplier', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1081, '"Supplier"', 0, 38, 'class', '*', 1083, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1410, '"Menu"', NULL, 'SupplierContact', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1081, '"SupplierContact"', 0, 39, 'class', '*', 1085, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1411, '"Menu"', NULL, 'Invoice', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1081, '"Invoice"', 0, 40, 'class', '*', 1087, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1412, '"Menu"', NULL, 'Locations', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 41, 'folder', '*', 1089, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1413, '"Menu"', NULL, 'Building', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1089, '"Building"', 0, 42, 'class', '*', 1091, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1414, '"Menu"', NULL, 'Room', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1089, '"Room"', 0, 43, 'class', '*', 1093, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1415, '"Menu"', NULL, 'Floor', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1089, '"Floor"', 0, 44, 'class', '*', 1095, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1416, '"Menu"', NULL, 'Network point', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1089, '"NetworkPoint"', 0, 45, 'class', '*', 1097, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1417, '"Menu"', NULL, 'Assets', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 46, 'folder', '*', 1099, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1418, '"Menu"', NULL, 'Asset', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Asset"', 0, 47, 'class', '*', 1101, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1419, '"Menu"', NULL, 'Computer', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Computer"', 0, 48, 'class', '*', 1103, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1420, '"Menu"', NULL, 'PC', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"PC"', 0, 49, 'class', '*', 1105, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1421, '"Menu"', NULL, 'Notebook', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Notebook"', 0, 50, 'class', '*', 1107, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1422, '"Menu"', NULL, 'Server', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Server"', 0, 51, 'class', '*', 1109, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1423, '"Menu"', NULL, 'Monitor', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Monitor"', 0, 52, 'class', '*', 1111, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1424, '"Menu"', NULL, 'Printer', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Printer"', 0, 53, 'class', '*', 1113, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1425, '"Menu"', NULL, 'NetworkDevice', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"NetworkDevice"', 0, 54, 'class', '*', 1115, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1426, '"Menu"', NULL, 'Rack', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"Rack"', 0, 55, 'class', '*', 1117, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1427, '"Menu"', NULL, 'UPS', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"UPS"', 0, 56, 'class', '*', 1119, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1428, '"Menu"', NULL, 'License', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1099, '"License"', 0, 57, 'class', '*', 1121, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1429, '"Menu"', NULL, 'Report', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 58, 'folder', '*', 1123, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1430, '"Menu"', NULL, 'Location list with assets', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1123, '"Report"', 597, 59, 'reportpdf', '*', 1125, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1431, '"Menu"', NULL, 'Workflow', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 0, NULL, 0, 60, 'folder', '*', 1127, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1432, '"Menu"', NULL, 'Request for change', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1127, '"RequestForChange"', 0, 61, 'processclass', '*', 1129, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1433, '"Menu"', NULL, 'Item situation', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1067, '"_Dashboards"', 831, 31, 'dashboard', '*', 1069, '2014-06-12 16:52:05.948397');
+INSERT INTO "Menu_history" VALUES (1434, '"Menu"', NULL, 'RfC situation', 'U', 'admin', '2013-05-09 12:57:48.985726', NULL, 1067, '"_Dashboards"', 946, 32, 'dashboard', '*', 1071, '2014-06-12 16:52:05.948397');
 
 
 
@@ -9209,6 +10099,32 @@ INSERT INTO "Patch" VALUES (1353, '"Patch"', '2.1.0-04', 'Create Filter, Widget,
 INSERT INTO "Patch" VALUES (1355, '"Patch"', '2.1.2-01', 'Add table to store CMDBf MdrScopedId', 'A', 'system', '2013-06-12 14:53:30.385034', NULL);
 INSERT INTO "Patch" VALUES (1357, '"Patch"', '2.1.2-02', 'Changing User and Role tables to standard classes', 'A', 'system', '2013-06-12 14:53:31.107808', NULL);
 INSERT INTO "Patch" VALUES (1359, '"Patch"', '2.1.2-03', 'Increasing Widgets'' definition attribute size', 'A', 'system', '2013-06-12 14:53:31.132702', NULL);
+INSERT INTO "Patch" VALUES (1361, '"Patch"', '2.1.4-01', 'Create the table to manage Email templates', 'A', 'system', '2014-06-12 16:51:42.951658', NULL);
+INSERT INTO "Patch" VALUES (1363, '"Patch"', '2.1.4-02', 'Update Scheduler table to manage Email service', 'A', 'system', '2014-06-12 16:51:42.982276', NULL);
+INSERT INTO "Patch" VALUES (1365, '"Patch"', '2.1.4-03', 'Update Email table to handle notify templates', 'A', 'system', '2014-06-12 16:51:43.007502', NULL);
+INSERT INTO "Patch" VALUES (1367, '"Patch"', '2.1.5-01', 'Update Grant table to define attribute privileges at group level', 'A', 'system', '2014-06-12 16:51:43.023847', NULL);
+INSERT INTO "Patch" VALUES (1369, '"Patch"', '2.1.5-02', 'Update column privileges to handle none value', 'A', 'system', '2014-06-12 16:51:43.040496', NULL);
+INSERT INTO "Patch" VALUES (1371, '"Patch"', '2.1.5-03', 'Update User column size', 'A', 'system', '2014-06-12 16:52:02.060142', NULL);
+INSERT INTO "Patch" VALUES (1374, '"Patch"', '2.1.6-01', 'Fix widget Calendar attribute name', 'A', 'system', '2014-06-12 16:52:02.082157', NULL);
+INSERT INTO "Patch" VALUES (1376, '"Patch"', '2.1.6-02', 'Add indexes for all classes/tables', 'A', 'system', '2014-06-12 16:52:03.856352', NULL);
+INSERT INTO "Patch" VALUES (1378, '"Patch"', '2.1.7-01', 'Fix domain tables', 'A', 'system', '2014-06-12 16:52:03.923616', NULL);
+INSERT INTO "Patch" VALUES (1380, '"Patch"', '2.1.7-02', 'Add indexes for all classes/tables', 'A', 'system', '2014-06-12 16:52:03.939957', NULL);
+INSERT INTO "Patch" VALUES (1382, '"Patch"', '2.1.8-01', 'Fixed issues related to backup schemas', 'A', 'system', '2014-06-12 16:52:03.95654', NULL);
+INSERT INTO "Patch" VALUES (1384, '"Patch"', '2.1.9-01', 'Update Grant table to define UI card edit mode privileges', 'A', 'system', '2014-06-12 16:52:03.981675', NULL);
+INSERT INTO "Patch" VALUES (1386, '"Patch"', '2.1.9-02', 'Visibility of Email class and EmailActivity domain', 'A', 'system', '2014-06-12 16:52:04.006773', NULL);
+INSERT INTO "Patch" VALUES (1388, '"Patch"', '2.2.0-01', 'Create tables to manage Bim Module', 'A', 'system', '2014-06-12 16:52:04.423124', NULL);
+INSERT INTO "Patch" VALUES (1390, '"Patch"', '2.2.0-02', 'Create tables for using e-mails as source event for starting workflows', 'A', 'system', '2014-06-12 16:52:05.590019', NULL);
+INSERT INTO "Patch" VALUES (1392, '"Patch"', '2.2.0-03', 'Add columns to bim tables', 'A', 'system', '2014-06-12 16:52:05.614976', NULL);
+INSERT INTO "Patch" VALUES (1394, '"Patch"', '2.2.0-04', 'Migrate legacy scheduler job parameters', 'A', 'system', '2014-06-12 16:52:05.639862', NULL);
+INSERT INTO "Patch" VALUES (1396, '"Patch"', '2.2.0-05', 'Changing scheduler tables in task tables', 'A', 'system', '2014-06-12 16:52:05.673289', NULL);
+INSERT INTO "Patch" VALUES (1398, '"Patch"', '2.2.0-06', 'Fix e-mail template table', 'A', 'system', '2014-06-12 16:52:05.740161', NULL);
+INSERT INTO "Patch" VALUES (1400, '"Patch"', '2.2.0-07', 'Add columns to _DomainTreeNavigation table', 'A', 'system', '2014-06-12 16:52:05.764989', NULL);
+INSERT INTO "Patch" VALUES (1402, '"Patch"', '2.2.0-08', 'Create translations table', 'A', 'system', '2014-06-12 16:52:05.940101', NULL);
+INSERT INTO "Patch" VALUES (1436, '"Patch"', '2.2.0-09', 'Generate UUIDs for Menu entries', 'A', 'system', '2014-06-12 16:52:05.965405', NULL);
+INSERT INTO "Patch" VALUES (1438, '"Patch"', '2.2.0-10', 'Create LastExecution column in _Task table', 'A', 'system', '2014-06-12 16:52:05.990328', NULL);
+INSERT INTO "Patch" VALUES (1440, '"Patch"', '2.2.0-11', 'Update EmailStatus lookups', 'A', 'system', '2014-06-12 16:52:06.007226', NULL);
+INSERT INTO "Patch" VALUES (1442, '"Patch"', '2.2.0-12', 'Create TranslationUuis column in LookUp table', 'A', 'system', '2014-06-12 16:52:06.032447', NULL);
+INSERT INTO "Patch" VALUES (1444, '"Patch"', '2.2.0-13', 'Stored-procedure called by the BIM features', 'A', 'system', '2014-06-12 16:52:06.049045', NULL);
 
 
 
@@ -9413,14 +10329,6 @@ oeufg orehg oureòghore goireò gierhg ierò girehg iregh iregh ireg iregie
 
 
 
-INSERT INTO "Scheduler" VALUES (515, '"Scheduler"', 'StartProcess', 'Test workflow', 'N', 'system', '2011-08-23 16:42:08.164', NULL, '0 0 0 * * ?', 'Test');
-
-
-
-INSERT INTO "Scheduler_history" VALUES (516, '"Scheduler"', 'StartProcess', 'Test workflow', 'U', 'system', '2011-08-23 16:40:29.549', NULL, '0 0 0 * * ?', 'Test', 515, '2011-08-23 16:42:08.164');
-
-
-
 
 
 
@@ -9455,8 +10363,14 @@ INSERT INTO "Supplier_history" VALUES (715, '"Supplier"', 'SUP02', 'Dell ', 'U',
 
 INSERT INTO "User" VALUES (13, '"User"', NULL, 'Administrator', 'A', 'system', '2013-05-09 12:57:49.186365', NULL, 'admin', 'DQdKW32Mlms=', NULL, true);
 INSERT INTO "User" VALUES (943, '"User"', NULL, 'workflow', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'workflow', 'sLPdlW/0y4msBompb4oRVw==', NULL, true);
-INSERT INTO "User" VALUES (678, '"User"', NULL, 'Jones Patricia', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'pjones', 'Tms67HRN+qusMUAsM6xIPA==', 'patricia.jones@gmail.com', true);
-INSERT INTO "User" VALUES (679, '"User"', NULL, 'Davis Michael', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'mdavis', 'Nlg70IVc7/U=', 'michael.davis@gmail.com', true);
+INSERT INTO "User" VALUES (678, '"User"', NULL, 'Jones Patricia', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'pjones', 'Tms67HRN+qusMUAsM6xIPA==', 'patricia.jones@example.com', true);
+INSERT INTO "User" VALUES (679, '"User"', NULL, 'Davis Michael', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'mdavis', 'Nlg70IVc7/U=', 'michael.davis@example.com', true);
+
+
+
+
+
+
 
 
 
@@ -9493,14 +10407,15 @@ INSERT INTO "_Dashboards" VALUES (946, 'system', '2012-08-24 10:25:56.862', '{"n
 
 
 INSERT INTO "_Widget" VALUES (1348, '"_Widget"', 'PC', '.Ping', 'A', NULL, '2013-05-09 12:57:49.745726', NULL, '{"id":"4ea70051-9bab-436a-a5ef-5cb002a10912","label":"Ping","active":true,"alwaysenabled":true,"address":"{client:IPAddress}","count":3,"templates":{},"type":".Ping"}');
-INSERT INTO "_Widget" VALUES (1350, '"_Widget"', 'PC', '.Calendar', 'A', NULL, '2013-05-09 12:57:49.745726', NULL, '{"id":"06dc6599-2ad5-4d03-9262-d2dafd4277b6","label":"Warranty calendar","active":true,"alwaysenabled":true,"targetClass":"PC","startDate":"AcceptanceDate","endDate":null,"eventTitle":"SerialNumber","filter":"","defaultDate":null,"type":".Calendar"}');
+INSERT INTO "_Widget" VALUES (1350, '"_Widget"', 'PC', '.Calendar', 'A', NULL, '2014-06-12 16:52:02.065634', NULL, '{"id":"06dc6599-2ad5-4d03-9262-d2dafd4277b6","label":"Warranty calendar","active":true,"alwaysenabled":true,"eventClass":"PC","startDate":"AcceptanceDate","endDate":null,"eventTitle":"SerialNumber","filter":"","defaultDate":null,"type":".Calendar"}');
 
 
 
+INSERT INTO "_Widget_history" VALUES (1372, '"_Widget"', 'PC', '.Calendar', 'U', NULL, '2013-05-09 12:57:49.745726', NULL, '{"id":"06dc6599-2ad5-4d03-9262-d2dafd4277b6","label":"Warranty calendar","active":true,"alwaysenabled":true,"targetClass":"PC","startDate":"AcceptanceDate","endDate":null,"eventTitle":"SerialNumber","filter":"","defaultDate":null,"type":".Calendar"}', 1350, '2014-06-12 16:52:02.065634');
 
 
 
-SELECT pg_catalog.setval('class_seq', 1359, true);
+SELECT pg_catalog.setval('class_seq', 1444, true);
 
 
 
@@ -9944,12 +10859,12 @@ ALTER TABLE ONLY "Room"
 
 
 
-ALTER TABLE ONLY "Scheduler_history"
+ALTER TABLE ONLY "_Task_history"
     ADD CONSTRAINT "Scheduler_history_pkey" PRIMARY KEY ("Id");
 
 
 
-ALTER TABLE ONLY "Scheduler"
+ALTER TABLE ONLY "_Task"
     ADD CONSTRAINT "Scheduler_pkey" PRIMARY KEY ("Id");
 
 
@@ -10014,6 +10929,26 @@ ALTER TABLE ONLY "Workplace"
 
 
 
+ALTER TABLE ONLY "_BimLayer"
+    ADD CONSTRAINT "_BimLayer_ClassName_key" UNIQUE ("ClassName");
+
+
+
+ALTER TABLE ONLY "_BimLayer"
+    ADD CONSTRAINT "_BimLayer_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_BimProject"
+    ADD CONSTRAINT "_BimProject_ProjectId_key" UNIQUE ("ProjectId");
+
+
+
+ALTER TABLE ONLY "_BimProject"
+    ADD CONSTRAINT "_BimProject_pkey" PRIMARY KEY ("Id");
+
+
+
 ALTER TABLE ONLY "_Dashboards"
     ADD CONSTRAINT "_Dashboards_pkey" PRIMARY KEY ("Id");
 
@@ -10021,6 +10956,26 @@ ALTER TABLE ONLY "_Dashboards"
 
 ALTER TABLE ONLY "_DomainTreeNavigation"
     ADD CONSTRAINT "_DomainTreeNavigation_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_EmailAccount_history"
+    ADD CONSTRAINT "_EmailAccount_history_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_EmailAccount"
+    ADD CONSTRAINT "_EmailAccount_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_EmailTemplate_history"
+    ADD CONSTRAINT "_EmailTemplate_history_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_EmailTemplate"
+    ADD CONSTRAINT "_EmailTemplate_pkey" PRIMARY KEY ("Id");
 
 
 
@@ -10049,6 +11004,16 @@ ALTER TABLE ONLY "_MdrScopedId"
 
 
 
+ALTER TABLE ONLY "_TaskParameter_history"
+    ADD CONSTRAINT "_SchedulerJobParameter_history_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_TaskParameter"
+    ADD CONSTRAINT "_SchedulerJobParameter_pkey" PRIMARY KEY ("Id");
+
+
+
 ALTER TABLE ONLY "_Templates"
     ADD CONSTRAINT "_Templates_Name_key" UNIQUE ("Name");
 
@@ -10056,6 +11021,11 @@ ALTER TABLE ONLY "_Templates"
 
 ALTER TABLE ONLY "_Templates"
     ADD CONSTRAINT "_Templates_pkey" PRIMARY KEY ("Id");
+
+
+
+ALTER TABLE ONLY "_Translation"
+    ADD CONSTRAINT "_Translation_pkey" PRIMARY KEY ("Id");
 
 
 
@@ -10092,7 +11062,19 @@ CREATE UNIQUE INDEX "_Unique_User_Username" ON "User" USING btree ((CASE WHEN ((
 
 
 
+CREATE UNIQUE INDEX "_Unique__EmailAccount_Code" ON "_EmailAccount" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::character varying ELSE "Code" END));
+
+
+
+CREATE UNIQUE INDEX "_Unique__EmailTemplate_Code" ON "_EmailTemplate" USING btree ((CASE WHEN (("Status")::text = 'N'::text) THEN NULL::character varying ELSE "Code" END));
+
+
+
 CREATE INDEX idx_activity_code ON "Activity" USING btree ("Code");
+
+
+
+CREATE INDEX idx_activity_defaultorder ON "Activity" USING btree ("Description", "Id");
 
 
 
@@ -10108,6 +11090,10 @@ CREATE INDEX idx_asset_code ON "Asset" USING btree ("Code");
 
 
 
+CREATE INDEX idx_asset_defaultorder ON "Asset" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_asset_description ON "Asset" USING btree ("Description");
 
 
@@ -10116,7 +11102,19 @@ CREATE INDEX idx_asset_idclass ON "Asset" USING btree ("IdClass");
 
 
 
+CREATE INDEX idx_bimlayer_begindate ON "_BimLayer" USING btree ("BeginDate");
+
+
+
+CREATE INDEX idx_bimproject_begindate ON "_BimProject" USING btree ("BeginDate");
+
+
+
 CREATE INDEX idx_building_code ON "Building" USING btree ("Code");
+
+
+
+CREATE INDEX idx_building_defaultorder ON "Building" USING btree ("Description", "Id");
 
 
 
@@ -10136,11 +11134,19 @@ CREATE INDEX idx_class_code ON "Class" USING btree ("Code");
 
 
 
+CREATE INDEX idx_class_defaultorder ON "Class" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_class_description ON "Class" USING btree ("Description");
 
 
 
 CREATE INDEX idx_computer_code ON "Computer" USING btree ("Code");
+
+
+
+CREATE INDEX idx_computer_defaultorder ON "Computer" USING btree ("Description", "Id");
 
 
 
@@ -10164,6 +11170,10 @@ CREATE INDEX idx_email_code ON "Email" USING btree ("Code");
 
 
 
+CREATE INDEX idx_email_defaultorder ON "Email" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_email_description ON "Email" USING btree ("Description");
 
 
@@ -10172,11 +11182,51 @@ CREATE INDEX idx_email_idclass ON "Email" USING btree ("IdClass");
 
 
 
+CREATE INDEX idx_emailaccount_code ON "_EmailAccount" USING btree ("Code");
+
+
+
+CREATE INDEX idx_emailaccount_description ON "_EmailAccount" USING btree ("Description");
+
+
+
+CREATE INDEX idx_emailaccount_idclass ON "_EmailAccount" USING btree ("IdClass");
+
+
+
+CREATE INDEX idx_emailaccounthistory_currentid ON "_EmailAccount_history" USING btree ("CurrentId");
+
+
+
 CREATE INDEX idx_emailhistory_currentid ON "Email_history" USING btree ("CurrentId");
 
 
 
+CREATE INDEX idx_emailtemplate_code ON "_EmailTemplate" USING btree ("Code");
+
+
+
+CREATE INDEX idx_emailtemplate_defaultorder ON "_EmailTemplate" USING btree ("Description", "Id");
+
+
+
+CREATE INDEX idx_emailtemplate_description ON "_EmailTemplate" USING btree ("Description");
+
+
+
+CREATE INDEX idx_emailtemplate_idclass ON "_EmailTemplate" USING btree ("IdClass");
+
+
+
+CREATE INDEX idx_emailtemplatehistory_currentid ON "_EmailTemplate_history" USING btree ("CurrentId");
+
+
+
 CREATE INDEX idx_employee_code ON "Employee" USING btree ("Code");
+
+
+
+CREATE INDEX idx_employee_defaultorder ON "Employee" USING btree ("Code", "Description" DESC, "Notes" DESC, "Surname" DESC, "Name" DESC, "Type" DESC, "Qualification" DESC, "Level" DESC, "Email" DESC, "Office" DESC, "Phone" DESC, "Mobile" DESC, "Fax" DESC, "State" DESC, "Id");
 
 
 
@@ -10197,6 +11247,10 @@ CREATE INDEX idx_filter_begindate ON "_Filter" USING btree ("BeginDate");
 
 
 CREATE INDEX idx_floor_code ON "Floor" USING btree ("Code");
+
+
+
+CREATE INDEX idx_floor_defaultorder ON "Floor" USING btree ("Description", "Id");
 
 
 
@@ -10224,6 +11278,10 @@ CREATE INDEX idx_invoice_code ON "Invoice" USING btree ("Code");
 
 
 
+CREATE INDEX idx_invoice_defaultorder ON "Invoice" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_invoice_description ON "Invoice" USING btree ("Description");
 
 
@@ -10241,6 +11299,10 @@ CREATE INDEX idx_layer_begindate ON "_Layer" USING btree ("BeginDate");
 
 
 CREATE INDEX idx_license_code ON "License" USING btree ("Code");
+
+
+
+CREATE INDEX idx_license_defaultorder ON "License" USING btree ("Description", "Id");
 
 
 
@@ -10676,6 +11738,10 @@ CREATE INDEX idx_menu_code ON "Menu" USING btree ("Code");
 
 
 
+CREATE INDEX idx_menu_defaultorder ON "Menu" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_menu_description ON "Menu" USING btree ("Description");
 
 
@@ -10689,6 +11755,10 @@ CREATE INDEX idx_menuhistory_currentid ON "Menu_history" USING btree ("CurrentId
 
 
 CREATE INDEX idx_metadata_code ON "Metadata" USING btree ("Code");
+
+
+
+CREATE INDEX idx_metadata_defaultorder ON "Metadata" USING btree ("Description", "Id");
 
 
 
@@ -10708,6 +11778,10 @@ CREATE INDEX idx_monitor_code ON "Monitor" USING btree ("Code");
 
 
 
+CREATE INDEX idx_monitor_defaultorder ON "Monitor" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_monitor_description ON "Monitor" USING btree ("Description");
 
 
@@ -10721,6 +11795,10 @@ CREATE INDEX idx_monitorhistory_currentid ON "Monitor_history" USING btree ("Cur
 
 
 CREATE INDEX idx_networkdevice_code ON "NetworkDevice" USING btree ("Code");
+
+
+
+CREATE INDEX idx_networkdevice_defaultorder ON "NetworkDevice" USING btree ("Description", "Id");
 
 
 
@@ -10740,6 +11818,10 @@ CREATE INDEX idx_networkpoint_code ON "NetworkPoint" USING btree ("Code");
 
 
 
+CREATE INDEX idx_networkpoint_defaultorder ON "NetworkPoint" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_networkpoint_description ON "NetworkPoint" USING btree ("Description");
 
 
@@ -10753,6 +11835,10 @@ CREATE INDEX idx_networkpointhistory_currentid ON "NetworkPoint_history" USING b
 
 
 CREATE INDEX idx_notebook_code ON "Notebook" USING btree ("Code");
+
+
+
+CREATE INDEX idx_notebook_defaultorder ON "Notebook" USING btree ("Description", "Id");
 
 
 
@@ -10772,6 +11858,10 @@ CREATE INDEX idx_office_code ON "Office" USING btree ("Code");
 
 
 
+CREATE INDEX idx_office_defaultorder ON "Office" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_office_description ON "Office" USING btree ("Description");
 
 
@@ -10785,6 +11875,10 @@ CREATE INDEX idx_officehistory_currentid ON "Office_history" USING btree ("Curre
 
 
 CREATE INDEX idx_patch_code ON "Patch" USING btree ("Code");
+
+
+
+CREATE INDEX idx_patch_defaultorder ON "Patch" USING btree ("Description", "Id");
 
 
 
@@ -10804,6 +11898,10 @@ CREATE INDEX idx_pc_code ON "PC" USING btree ("Code");
 
 
 
+CREATE INDEX idx_pc_defaultorder ON "PC" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_pc_description ON "PC" USING btree ("Description");
 
 
@@ -10817,6 +11915,10 @@ CREATE INDEX idx_pchistory_currentid ON "PC_history" USING btree ("CurrentId");
 
 
 CREATE INDEX idx_printer_code ON "Printer" USING btree ("Code");
+
+
+
+CREATE INDEX idx_printer_defaultorder ON "Printer" USING btree ("Description", "Id");
 
 
 
@@ -10836,6 +11938,10 @@ CREATE INDEX idx_rack_code ON "Rack" USING btree ("Code");
 
 
 
+CREATE INDEX idx_rack_defaultorder ON "Rack" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_rack_description ON "Rack" USING btree ("Description");
 
 
@@ -10848,7 +11954,15 @@ CREATE INDEX idx_rackhistory_currentid ON "Rack_history" USING btree ("CurrentId
 
 
 
+CREATE INDEX idx_report_defaultorder ON "Report" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_requestforchange_code ON "RequestForChange" USING btree ("Code");
+
+
+
+CREATE INDEX idx_requestforchange_defaultorder ON "RequestForChange" USING btree ("Description", "Id");
 
 
 
@@ -10868,6 +11982,10 @@ CREATE INDEX idx_role_code ON "Role" USING btree ("Code");
 
 
 
+CREATE INDEX idx_role_defaultorder ON "Role" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_role_description ON "Role" USING btree ("Description");
 
 
@@ -10884,6 +12002,10 @@ CREATE INDEX idx_room_code ON "Room" USING btree ("Code");
 
 
 
+CREATE INDEX idx_room_defaultorder ON "Room" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_room_description ON "Room" USING btree ("Description");
 
 
@@ -10896,23 +12018,47 @@ CREATE INDEX idx_roomhistory_currentid ON "Room_history" USING btree ("CurrentId
 
 
 
-CREATE INDEX idx_scheduler_code ON "Scheduler" USING btree ("Code");
+CREATE INDEX idx_scheduler_code ON "_Task" USING btree ("Code");
 
 
 
-CREATE INDEX idx_scheduler_description ON "Scheduler" USING btree ("Description");
+CREATE INDEX idx_scheduler_defaultorder ON "_Task" USING btree ("Description", "Id");
 
 
 
-CREATE INDEX idx_scheduler_idclass ON "Scheduler" USING btree ("IdClass");
+CREATE INDEX idx_scheduler_description ON "_Task" USING btree ("Description");
 
 
 
-CREATE INDEX idx_schedulerhistory_currentid ON "Scheduler_history" USING btree ("CurrentId");
+CREATE INDEX idx_scheduler_idclass ON "_Task" USING btree ("IdClass");
+
+
+
+CREATE INDEX idx_schedulerhistory_currentid ON "_Task_history" USING btree ("CurrentId");
+
+
+
+CREATE INDEX idx_schedulerjobparameter_code ON "_TaskParameter" USING btree ("Code");
+
+
+
+CREATE INDEX idx_schedulerjobparameter_description ON "_TaskParameter" USING btree ("Description");
+
+
+
+CREATE INDEX idx_schedulerjobparameter_idclass ON "_TaskParameter" USING btree ("IdClass");
+
+
+
+CREATE INDEX idx_schedulerjobparameterhistory_currentid ON "_TaskParameter_history" USING btree ("CurrentId");
 
 
 
 CREATE INDEX idx_server_code ON "Server" USING btree ("Code");
+
+
+
+CREATE INDEX idx_server_defaultorder ON "Server" USING btree ("Description", "Id");
 
 
 
@@ -10932,6 +12078,10 @@ CREATE INDEX idx_supplier_code ON "Supplier" USING btree ("Code");
 
 
 
+CREATE INDEX idx_supplier_defaultorder ON "Supplier" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_supplier_description ON "Supplier" USING btree ("Description");
 
 
@@ -10941,6 +12091,10 @@ CREATE INDEX idx_supplier_idclass ON "Supplier" USING btree ("IdClass");
 
 
 CREATE INDEX idx_suppliercontact_code ON "SupplierContact" USING btree ("Code");
+
+
+
+CREATE INDEX idx_suppliercontact_defaultorder ON "SupplierContact" USING btree ("Description", "Id");
 
 
 
@@ -10964,7 +12118,15 @@ CREATE INDEX idx_templates_begindate ON "_Templates" USING btree ("BeginDate");
 
 
 
+CREATE INDEX idx_translation_begindate ON "_Translation" USING btree ("BeginDate");
+
+
+
 CREATE INDEX idx_ups_code ON "UPS" USING btree ("Code");
+
+
+
+CREATE INDEX idx_ups_defaultorder ON "UPS" USING btree ("Description", "Id");
 
 
 
@@ -10981,6 +12143,10 @@ CREATE INDEX idx_upshistory_currentid ON "UPS_history" USING btree ("CurrentId")
 
 
 CREATE INDEX idx_user_code ON "User" USING btree ("Code");
+
+
+
+CREATE INDEX idx_user_defaultorder ON "User" USING btree ("Description", "Id");
 
 
 
@@ -11004,6 +12170,10 @@ CREATE INDEX idx_widget_code ON "_Widget" USING btree ("Code");
 
 
 
+CREATE INDEX idx_widget_defaultorder ON "_Widget" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_widget_description ON "_Widget" USING btree ("Description");
 
 
@@ -11020,6 +12190,10 @@ CREATE INDEX idx_workplace_code ON "Workplace" USING btree ("Code");
 
 
 
+CREATE INDEX idx_workplace_defaultorder ON "Workplace" USING btree ("Description", "Id");
+
+
+
 CREATE INDEX idx_workplace_description ON "Workplace" USING btree ("Description");
 
 
@@ -11032,1203 +12206,2187 @@ CREATE INDEX idx_workplacehistory_currentid ON "Workplace_history" USING btree (
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"', '');
+CREATE TRIGGER "Asset_Assignee_fkey"
+    BEFORE INSERT OR UPDATE ON "Asset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"', '');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey"
+    BEFORE INSERT OR UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey"
+    BEFORE INSERT OR UPDATE ON "Computer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey"
+    BEFORE INSERT OR UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey"
+    BEFORE INSERT OR UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey"
+    BEFORE INSERT OR UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey"
+    BEFORE INSERT OR UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey"
+    BEFORE INSERT OR UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey"
+    BEFORE INSERT OR UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey"
+    BEFORE INSERT OR UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Assignee_fkey" BEFORE INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
+CREATE TRIGGER "Asset_Assignee_fkey"
+    BEFORE INSERT OR UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Assignee', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"', '');
+CREATE TRIGGER "Asset_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "Asset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"', '');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "Computer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Room_fkey" BEFORE INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
+CREATE TRIGGER "Asset_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"', '');
+CREATE TRIGGER "Asset_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "Asset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"', '');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "Computer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_Supplier_fkey" BEFORE INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
+CREATE TRIGGER "Asset_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"', '');
+CREATE TRIGGER "Asset_TechnicalReference_fkey"
+    BEFORE INSERT OR UPDATE ON "Asset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"', '');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey"
+    BEFORE INSERT OR UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey"
+    BEFORE INSERT OR UPDATE ON "Computer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey"
+    BEFORE INSERT OR UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey"
+    BEFORE INSERT OR UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey"
+    BEFORE INSERT OR UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey"
+    BEFORE INSERT OR UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey"
+    BEFORE INSERT OR UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey"
+    BEFORE INSERT OR UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey"
+    BEFORE INSERT OR UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_TechnicalReference_fkey" BEFORE INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
+CREATE TRIGGER "Asset_TechnicalReference_fkey"
+    BEFORE INSERT OR UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('TechnicalReference', '"Employee"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"', '');
+CREATE TRIGGER "Asset_Workplace_fkey"
+    BEFORE INSERT OR UPDATE ON "Asset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"', '');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey"
+    BEFORE INSERT OR UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey"
+    BEFORE INSERT OR UPDATE ON "Computer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey"
+    BEFORE INSERT OR UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey"
+    BEFORE INSERT OR UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey"
+    BEFORE INSERT OR UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey"
+    BEFORE INSERT OR UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey"
+    BEFORE INSERT OR UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey"
+    BEFORE INSERT OR UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey"
+    BEFORE INSERT OR UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Asset_Workplace_fkey" BEFORE INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
+CREATE TRIGGER "Asset_Workplace_fkey"
+    BEFORE INSERT OR UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Workplace', '"Workplace"');
 
 
 
-CREATE TRIGGER "Email_Activity_fkey" BEFORE INSERT OR UPDATE ON "Email" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Activity', '"Activity"', '');
+CREATE TRIGGER "Email_Activity_fkey"
+    BEFORE INSERT OR UPDATE ON "Email"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Activity', '"Activity"', '');
 
 
 
-CREATE TRIGGER "Employee_Office_fkey" BEFORE INSERT OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Office', '"Office"', '');
+CREATE TRIGGER "Employee_Office_fkey"
+    BEFORE INSERT OR UPDATE ON "Employee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Office', '"Office"', '');
 
 
 
-CREATE TRIGGER "Floor_Building_fkey" BEFORE INSERT OR UPDATE ON "Floor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Building', '"Building"', '');
+CREATE TRIGGER "Floor_Building_fkey"
+    BEFORE INSERT OR UPDATE ON "Floor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Building', '"Building"', '');
 
 
 
-CREATE TRIGGER "Invoice_Supplier_fkey" BEFORE INSERT OR UPDATE ON "Invoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"', '');
+CREATE TRIGGER "Invoice_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "Invoice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"', '');
 
 
 
-CREATE TRIGGER "NetworkPoint_Room_fkey" BEFORE INSERT OR UPDATE ON "NetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"', '');
+CREATE TRIGGER "NetworkPoint_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "NetworkPoint"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"', '');
 
 
 
-CREATE TRIGGER "Office_Supervisor_fkey" BEFORE INSERT OR UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supervisor', '"Employee"', '');
+CREATE TRIGGER "Office_Supervisor_fkey"
+    BEFORE INSERT OR UPDATE ON "Office"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supervisor', '"Employee"', '');
 
 
 
-CREATE TRIGGER "RequestForChange_Requester_fkey" BEFORE INSERT OR UPDATE ON "RequestForChange" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Requester', '"Employee"', '');
+CREATE TRIGGER "RequestForChange_Requester_fkey"
+    BEFORE INSERT OR UPDATE ON "RequestForChange"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Requester', '"Employee"', '');
 
 
 
-CREATE TRIGGER "Room_Floor_fkey" BEFORE INSERT OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Floor', '"Floor"', '');
+CREATE TRIGGER "Room_Floor_fkey"
+    BEFORE INSERT OR UPDATE ON "Room"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Floor', '"Floor"', '');
 
 
 
-CREATE TRIGGER "Room_Office_fkey" BEFORE INSERT OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Office', '"Office"', '');
+CREATE TRIGGER "Room_Office_fkey"
+    BEFORE INSERT OR UPDATE ON "Room"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Office', '"Office"', '');
 
 
 
-CREATE TRIGGER "SupplierContact_Supplier_fkey" BEFORE INSERT OR UPDATE ON "SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"', '');
+CREATE TRIGGER "SupplierContact_Supplier_fkey"
+    BEFORE INSERT OR UPDATE ON "SupplierContact"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Supplier', '"Supplier"', '');
 
 
 
-CREATE TRIGGER "Workplace_Room_fkey" BEFORE INSERT OR UPDATE ON "Workplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"', '');
+CREATE TRIGGER "Workplace_Room_fkey"
+    BEFORE INSERT OR UPDATE ON "Workplace"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Room', '"Room"', '');
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Menu" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Menu"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Email" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Email"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Metadata" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Metadata"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Scheduler" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "_Task"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Patch" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Patch"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Employee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Office"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Building" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Building"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Floor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Floor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Room"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Invoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Invoice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Supplier" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Supplier"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Workplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Workplace"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "SupplierContact"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "NetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "NetworkPoint"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "RequestForChange" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "RequestForChange"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "_Widget" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "_Widget"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "User" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "User"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_CascadeDeleteOnRelations" AFTER UPDATE ON "Role" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "Role"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_Constr_Asset_Assignee" BEFORE DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Assignee');
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "_EmailTemplate"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_Constr_Asset_Room" BEFORE DELETE OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Room');
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "_EmailAccount"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_Constr_Asset_Supplier" BEFORE DELETE OR UPDATE ON "Supplier" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Supplier');
+CREATE TRIGGER "_CascadeDeleteOnRelations"
+    AFTER UPDATE ON "_TaskParameter"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_cascade_delete_on_relations();
 
 
 
-CREATE TRIGGER "_Constr_Asset_TechnicalReference" BEFORE DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'TechnicalReference');
+CREATE TRIGGER "_Constr_Asset_Assignee"
+    BEFORE DELETE OR UPDATE ON "Employee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Assignee');
 
 
 
-CREATE TRIGGER "_Constr_Asset_Workplace" BEFORE DELETE OR UPDATE ON "Workplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Workplace');
+CREATE TRIGGER "_Constr_Asset_Room"
+    BEFORE DELETE OR UPDATE ON "Room"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Room');
 
 
 
-CREATE TRIGGER "_Constr_Email_Activity" BEFORE DELETE OR UPDATE ON "Activity" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Email"', 'Activity');
+CREATE TRIGGER "_Constr_Asset_Supplier"
+    BEFORE DELETE OR UPDATE ON "Supplier"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Supplier');
 
 
 
-CREATE TRIGGER "_Constr_Email_Activity" BEFORE DELETE OR UPDATE ON "RequestForChange" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Email"', 'Activity');
+CREATE TRIGGER "_Constr_Asset_TechnicalReference"
+    BEFORE DELETE OR UPDATE ON "Employee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'TechnicalReference');
 
 
 
-CREATE TRIGGER "_Constr_Employee_Office" BEFORE DELETE OR UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Employee"', 'Office');
+CREATE TRIGGER "_Constr_Asset_Workplace"
+    BEFORE DELETE OR UPDATE ON "Workplace"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Asset"', 'Workplace');
 
 
 
-CREATE TRIGGER "_Constr_Floor_Building" BEFORE DELETE OR UPDATE ON "Building" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Floor"', 'Building');
+CREATE TRIGGER "_Constr_Email_Activity"
+    BEFORE DELETE OR UPDATE ON "Activity"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Email"', 'Activity');
 
 
 
-CREATE TRIGGER "_Constr_Invoice_Supplier" BEFORE DELETE OR UPDATE ON "Supplier" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Invoice"', 'Supplier');
+CREATE TRIGGER "_Constr_Email_Activity"
+    BEFORE DELETE OR UPDATE ON "RequestForChange"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Email"', 'Activity');
 
 
 
-CREATE TRIGGER "_Constr_NetworkPoint_Room" BEFORE DELETE OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"NetworkPoint"', 'Room');
+CREATE TRIGGER "_Constr_Employee_Office"
+    BEFORE DELETE OR UPDATE ON "Office"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Employee"', 'Office');
 
 
 
-CREATE TRIGGER "_Constr_Office_Supervisor" BEFORE DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Office"', 'Supervisor');
+CREATE TRIGGER "_Constr_Floor_Building"
+    BEFORE DELETE OR UPDATE ON "Building"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Floor"', 'Building');
 
 
 
-CREATE TRIGGER "_Constr_RequestForChange_Requester" BEFORE DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"RequestForChange"', 'Requester');
+CREATE TRIGGER "_Constr_Invoice_Supplier"
+    BEFORE DELETE OR UPDATE ON "Supplier"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Invoice"', 'Supplier');
 
 
 
-CREATE TRIGGER "_Constr_Room_Floor" BEFORE DELETE OR UPDATE ON "Floor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Room"', 'Floor');
+CREATE TRIGGER "_Constr_NetworkPoint_Room"
+    BEFORE DELETE OR UPDATE ON "Room"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"NetworkPoint"', 'Room');
 
 
 
-CREATE TRIGGER "_Constr_Room_Office" BEFORE DELETE OR UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Room"', 'Office');
+CREATE TRIGGER "_Constr_Office_Supervisor"
+    BEFORE DELETE OR UPDATE ON "Employee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Office"', 'Supervisor');
 
 
 
-CREATE TRIGGER "_Constr_SupplierContact_Supplier" BEFORE DELETE OR UPDATE ON "Supplier" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"SupplierContact"', 'Supplier');
+CREATE TRIGGER "_Constr_RequestForChange_Requester"
+    BEFORE DELETE OR UPDATE ON "Employee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"RequestForChange"', 'Requester');
 
 
 
-CREATE TRIGGER "_Constr_Workplace_Room" BEFORE DELETE OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_restrict('"Workplace"', 'Room');
+CREATE TRIGGER "_Constr_Room_Floor"
+    BEFORE DELETE OR UPDATE ON "Floor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Room"', 'Floor');
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Menu" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_Constr_Room_Office"
+    BEFORE DELETE OR UPDATE ON "Office"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Room"', 'Office');
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Email" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_Constr_SupplierContact_Supplier"
+    BEFORE DELETE OR UPDATE ON "Supplier"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"SupplierContact"', 'Supplier');
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_ActivityEmail" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_Constr_Workplace_Room"
+    BEFORE DELETE OR UPDATE ON "Room"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"Workplace"', 'Room');
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Metadata" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Menu"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Scheduler" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Email"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_UserRole" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_ActivityEmail"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Patch" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Metadata"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "_Task"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_UserRole"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_Members" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Patch"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Building" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Employee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Floor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Office"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_Members"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Invoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Building"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Supplier" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Floor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Workplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Room"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Invoice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_BuildingFloor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Supplier"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_SupplierInvoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Workplace"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_FloorRoom" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "SupplierContact"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_OfficeRoom" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_BuildingFloor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_SupplierInvoice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_RoomWorkplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_FloorRoom"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_WorkplaceComposition" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_OfficeRoom"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_SupplierAsset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_SupplierContact"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_AssetAssignee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_RoomWorkplace"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_AssetReference" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_WorkplaceComposition"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_RoomAsset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_SupplierAsset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_AssetAssignee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "NetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_AssetReference"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_RoomNetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_RoomAsset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "NetworkPoint"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_RoomNetworkPoint"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_NetworkDeviceConnection" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "RequestForChange" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_RFCChangeManager" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_RFCExecutor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_NetworkDeviceConnection"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_RFCRequester" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "RequestForChange"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Map_Supervisor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_RFCChangeManager"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "_Widget" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_RFCExecutor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "User" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_RFCRequester"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_CreateHistoryRow" AFTER DELETE OR UPDATE ON "Role" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_Supervisor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Menu" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "_Widget"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Email" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "User"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_ActivityEmail" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Role"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Metadata" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "_EmailTemplate"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Scheduler" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "_EmailAccount"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_UserRole" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "_TaskParameter"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Patch" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Menu"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Email"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_ActivityEmail"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_Members" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Metadata"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Building" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_Task"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Floor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_UserRole"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Patch"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Invoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Employee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Supplier" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Office"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Workplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_Members"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Building"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_BuildingFloor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Floor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_SupplierInvoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Room"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_FloorRoom" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Invoice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_OfficeRoom" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Supplier"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Workplace"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_RoomWorkplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "SupplierContact"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_WorkplaceComposition" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_BuildingFloor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_SupplierAsset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_SupplierInvoice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_AssetAssignee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_FloorRoom"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_AssetReference" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_OfficeRoom"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_RoomAsset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_SupplierContact"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RoomWorkplace"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "NetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_WorkplaceComposition"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_RoomNetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_SupplierAsset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_AssetAssignee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_AssetReference"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RoomAsset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "NetworkPoint"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RoomNetworkPoint"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_NetworkDeviceConnection" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_Templates" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_Dashboards" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "RequestForChange" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCChangeManager" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCExecutor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCRequester" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_NetworkDeviceConnection"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Map_Supervisor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_Templates"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_DomainTreeNavigation" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_Dashboards"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_Layer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "RequestForChange"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "LookUp" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCChangeManager"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Grant" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCExecutor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_Filter" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_RFCRequester"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_Widget" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_Supervisor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_View" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_DomainTreeNavigation"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "_MdrScopedId" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_Layer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "User" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "LookUp"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_SanityCheck" BEFORE INSERT OR DELETE OR UPDATE ON "Role" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_sanity_check();
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Grant"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_Asset_Assignee" AFTER INSERT OR UPDATE ON "Map_AssetAssignee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Assignee', '"Asset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_Filter"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_Asset_Room" AFTER INSERT OR UPDATE ON "Map_RoomAsset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"Asset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_Widget"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_UpdRef_Asset_Supplier" AFTER INSERT OR UPDATE ON "Map_SupplierAsset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Supplier', '"Asset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_View"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Map_AssetReference" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('TechnicalReference', '"Asset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_MdrScopedId"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_Asset_Workplace" AFTER INSERT OR UPDATE ON "Map_WorkplaceComposition" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Workplace', '"Asset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "User"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_UpdRef_Email_Activity" AFTER INSERT OR UPDATE ON "Map_ActivityEmail" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Activity', '"Email"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Role"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_UpdRef_Employee_Office" AFTER INSERT OR UPDATE ON "Map_Members" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Office', '"Employee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_EmailTemplate"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_UpdRef_Floor_Building" AFTER INSERT OR UPDATE ON "Map_BuildingFloor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Building', '"Floor"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_BimProject"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_Invoice_Supplier" AFTER INSERT OR UPDATE ON "Map_SupplierInvoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Supplier', '"Invoice"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_BimLayer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_NetworkPoint_Room" AFTER INSERT OR UPDATE ON "Map_RoomNetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"NetworkPoint"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_EmailAccount"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_UpdRef_Office_Supervisor" AFTER INSERT OR UPDATE ON "Map_Supervisor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Supervisor', '"Office"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_TaskParameter"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
-CREATE TRIGGER "_UpdRef_RequestForChange_Requester" AFTER INSERT OR UPDATE ON "Map_RFCRequester" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Requester', '"RequestForChange"', 'IdObj1', 'IdObj2');
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "_Translation"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
 
 
 
-CREATE TRIGGER "_UpdRef_Room_Floor" AFTER INSERT OR UPDATE ON "Map_FloorRoom" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Floor', '"Room"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Asset_Assignee"
+    AFTER INSERT OR UPDATE ON "Map_AssetAssignee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Assignee', '"Asset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRef_Room_Office" AFTER INSERT OR UPDATE ON "Map_OfficeRoom" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Office', '"Room"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Asset_Room"
+    AFTER INSERT OR UPDATE ON "Map_RoomAsset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"Asset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRef_SupplierContact_Supplier" AFTER INSERT OR UPDATE ON "Map_SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Supplier', '"SupplierContact"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Asset_Supplier"
+    AFTER INSERT OR UPDATE ON "Map_SupplierAsset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Supplier', '"Asset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRef_Workplace_Room" AFTER INSERT OR UPDATE ON "Map_RoomWorkplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"Workplace"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Asset_TechnicalReference"
+    AFTER INSERT OR UPDATE ON "Map_AssetReference"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('TechnicalReference', '"Asset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Asset_Workplace"
+    AFTER INSERT OR UPDATE ON "Map_WorkplaceComposition"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Workplace', '"Asset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Email_Activity"
+    AFTER INSERT OR UPDATE ON "Map_ActivityEmail"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Activity', '"Email"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Employee_Office"
+    AFTER INSERT OR UPDATE ON "Map_Members"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Office', '"Employee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Floor_Building"
+    AFTER INSERT OR UPDATE ON "Map_BuildingFloor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Building', '"Floor"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Invoice_Supplier"
+    AFTER INSERT OR UPDATE ON "Map_SupplierInvoice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Supplier', '"Invoice"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_NetworkPoint_Room"
+    AFTER INSERT OR UPDATE ON "Map_RoomNetworkPoint"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"NetworkPoint"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Office_Supervisor"
+    AFTER INSERT OR UPDATE ON "Map_Supervisor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Supervisor', '"Office"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_RequestForChange_Requester"
+    AFTER INSERT OR UPDATE ON "Map_RFCRequester"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Requester', '"RequestForChange"', 'IdObj1', 'IdObj2');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Room_Floor"
+    AFTER INSERT OR UPDATE ON "Map_FloorRoom"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Floor', '"Room"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Room_Office"
+    AFTER INSERT OR UPDATE ON "Map_OfficeRoom"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Office', '"Room"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Assignee" AFTER INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_SupplierContact_Supplier"
+    AFTER INSERT OR UPDATE ON "Map_SupplierContact"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Supplier', '"SupplierContact"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRef_Workplace_Room"
+    AFTER INSERT OR UPDATE ON "Map_RoomWorkplace"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"Workplace"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee"
+    AFTER INSERT OR UPDATE ON "Asset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee"
+    AFTER INSERT OR UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee"
+    AFTER INSERT OR UPDATE ON "Computer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee"
+    AFTER INSERT OR UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee"
+    AFTER INSERT OR UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee"
+    AFTER INSERT OR UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee"
+    AFTER INSERT OR UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee"
+    AFTER INSERT OR UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee"
+    AFTER INSERT OR UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Room" AFTER INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee"
+    AFTER INSERT OR UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Assignee"
+    AFTER INSERT OR UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Assignee', '"Map_AssetAssignee"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room"
+    AFTER INSERT OR UPDATE ON "Asset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room"
+    AFTER INSERT OR UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room"
+    AFTER INSERT OR UPDATE ON "Computer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room"
+    AFTER INSERT OR UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room"
+    AFTER INSERT OR UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room"
+    AFTER INSERT OR UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room"
+    AFTER INSERT OR UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room"
+    AFTER INSERT OR UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room"
+    AFTER INSERT OR UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Supplier" AFTER INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room"
+    AFTER INSERT OR UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Room"
+    AFTER INSERT OR UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier"
+    AFTER INSERT OR UPDATE ON "Asset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier"
+    AFTER INSERT OR UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier"
+    AFTER INSERT OR UPDATE ON "Computer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier"
+    AFTER INSERT OR UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier"
+    AFTER INSERT OR UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier"
+    AFTER INSERT OR UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier"
+    AFTER INSERT OR UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier"
+    AFTER INSERT OR UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier"
+    AFTER INSERT OR UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_TechnicalReference" AFTER INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier"
+    AFTER INSERT OR UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Asset" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Supplier"
+    AFTER INSERT OR UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierAsset"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Rack" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
+    AFTER INSERT OR UPDATE ON "Asset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Computer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
+    AFTER INSERT OR UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "PC" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
+    AFTER INSERT OR UPDATE ON "Computer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Server" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
+    AFTER INSERT OR UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Notebook" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
+    AFTER INSERT OR UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Monitor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
+    AFTER INSERT OR UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "Printer" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
+    AFTER INSERT OR UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "UPS" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
+    AFTER INSERT OR UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "License" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
+    AFTER INSERT OR UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Asset_Workplace" AFTER INSERT OR UPDATE ON "NetworkDevice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
+    AFTER INSERT OR UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Email_Activity" AFTER INSERT OR UPDATE ON "Email" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Activity', '"Map_ActivityEmail"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_TechnicalReference"
+    AFTER INSERT OR UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('TechnicalReference', '"Map_AssetReference"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Employee_Office" AFTER INSERT OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Office', '"Map_Members"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace"
+    AFTER INSERT OR UPDATE ON "Asset"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Floor_Building" AFTER INSERT OR UPDATE ON "Floor" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Building', '"Map_BuildingFloor"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace"
+    AFTER INSERT OR UPDATE ON "Rack"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Invoice_Supplier" AFTER INSERT OR UPDATE ON "Invoice" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierInvoice"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace"
+    AFTER INSERT OR UPDATE ON "Computer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_NetworkPoint_Room" AFTER INSERT OR UPDATE ON "NetworkPoint" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomNetworkPoint"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace"
+    AFTER INSERT OR UPDATE ON "PC"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Office_Supervisor" AFTER INSERT OR UPDATE ON "Office" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supervisor', '"Map_Supervisor"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace"
+    AFTER INSERT OR UPDATE ON "Server"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_RequestForChange_Requester" AFTER INSERT OR UPDATE ON "RequestForChange" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Requester', '"Map_RFCRequester"', 'IdObj1', 'IdObj2');
+CREATE TRIGGER "_UpdRel_Asset_Workplace"
+    AFTER INSERT OR UPDATE ON "Notebook"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Room_Floor" AFTER INSERT OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Floor', '"Map_FloorRoom"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace"
+    AFTER INSERT OR UPDATE ON "Monitor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Room_Office" AFTER INSERT OR UPDATE ON "Room" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Office', '"Map_OfficeRoom"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace"
+    AFTER INSERT OR UPDATE ON "Printer"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_SupplierContact_Supplier" AFTER INSERT OR UPDATE ON "SupplierContact" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierContact"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace"
+    AFTER INSERT OR UPDATE ON "UPS"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER "_UpdRel_Workplace_Room" AFTER INSERT OR UPDATE ON "Workplace" FOR EACH ROW EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomWorkplace"', 'IdObj2', 'IdObj1');
+CREATE TRIGGER "_UpdRel_Asset_Workplace"
+    AFTER INSERT OR UPDATE ON "License"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER set_data_employee BEFORE INSERT OR UPDATE ON "Employee" FOR EACH ROW EXECUTE PROCEDURE set_data_employee();
+CREATE TRIGGER "_UpdRel_Asset_Workplace"
+    AFTER INSERT OR UPDATE ON "NetworkDevice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Workplace', '"Map_WorkplaceComposition"', 'IdObj2', 'IdObj1');
 
 
 
-CREATE TRIGGER set_data_suppliercontact BEFORE INSERT OR UPDATE ON "SupplierContact" FOR EACH ROW EXECUTE PROCEDURE set_data_suppliercontact();
+CREATE TRIGGER "_UpdRel_Email_Activity"
+    AFTER INSERT OR UPDATE ON "Email"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Activity', '"Map_ActivityEmail"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_Employee_Office"
+    AFTER INSERT OR UPDATE ON "Employee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Office', '"Map_Members"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_Floor_Building"
+    AFTER INSERT OR UPDATE ON "Floor"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Building', '"Map_BuildingFloor"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_Invoice_Supplier"
+    AFTER INSERT OR UPDATE ON "Invoice"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierInvoice"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_NetworkPoint_Room"
+    AFTER INSERT OR UPDATE ON "NetworkPoint"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomNetworkPoint"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_Office_Supervisor"
+    AFTER INSERT OR UPDATE ON "Office"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supervisor', '"Map_Supervisor"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_RequestForChange_Requester"
+    AFTER INSERT OR UPDATE ON "RequestForChange"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Requester', '"Map_RFCRequester"', 'IdObj1', 'IdObj2');
+
+
+
+CREATE TRIGGER "_UpdRel_Room_Floor"
+    AFTER INSERT OR UPDATE ON "Room"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Floor', '"Map_FloorRoom"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_Room_Office"
+    AFTER INSERT OR UPDATE ON "Room"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Office', '"Map_OfficeRoom"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_SupplierContact_Supplier"
+    AFTER INSERT OR UPDATE ON "SupplierContact"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Supplier', '"Map_SupplierContact"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel_Workplace_Room"
+    AFTER INSERT OR UPDATE ON "Workplace"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomWorkplace"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER set_data_employee
+    BEFORE INSERT OR UPDATE ON "Employee"
+    FOR EACH ROW
+    EXECUTE PROCEDURE set_data_employee();
+
+
+
+CREATE TRIGGER set_data_suppliercontact
+    BEFORE INSERT OR UPDATE ON "SupplierContact"
+    FOR EACH ROW
+    EXECUTE PROCEDURE set_data_suppliercontact();
 
 
 
@@ -12332,8 +14490,8 @@ ALTER TABLE ONLY "Room_history"
 
 
 
-ALTER TABLE ONLY "Scheduler_history"
-    ADD CONSTRAINT "Scheduler_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "Scheduler"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
+ALTER TABLE ONLY "_Task_history"
+    ADD CONSTRAINT "Scheduler_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "_Task"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
 
 
 
@@ -12364,6 +14522,21 @@ ALTER TABLE ONLY "User_history"
 
 ALTER TABLE ONLY "Workplace_history"
     ADD CONSTRAINT "Workplace_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "Workplace"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "_EmailAccount_history"
+    ADD CONSTRAINT "_EmailAccount_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "_EmailAccount"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "_EmailTemplate_history"
+    ADD CONSTRAINT "_EmailTemplate_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "_EmailTemplate"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
+
+
+
+ALTER TABLE ONLY "_TaskParameter_history"
+    ADD CONSTRAINT "_SchedulerJobParameter_history_CurrentId_fkey" FOREIGN KEY ("CurrentId") REFERENCES "_TaskParameter"("Id") ON UPDATE RESTRICT ON DELETE SET NULL;
 
 
 

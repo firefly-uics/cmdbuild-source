@@ -151,7 +151,7 @@
 		extend: "Ext.form.FieldContainer",
 
 		// configuration
-		valueField: null, 
+		valueField: null,
 		// configuration
 
 		initComponent: function() {
@@ -198,6 +198,8 @@
 			delegable: "CMDBuild.core.CMDelegable"
 		},
 
+		border: false,
+
 		constructor: function() {
 			this.mixins.delegable.constructor.call(this,
 					"CMDBuild.delegate.common.filter.CMRuntimeParameterWindowDelegate");
@@ -226,12 +228,11 @@
 					pack: 'center'
 				},
 				autoScroll: true,
-				bodyCls: "x-panel-body-default-framed",
 				bodyStyle: {
 					padding: "5px"
 				},
 				items: getRuntimeParameterWindowItems(this.runtimeAttributes),
-				frame: false,
+				frame: true,
 				border: false
 			}];
 
@@ -375,7 +376,7 @@
 			this.resizable = false;
 			this.frame = true;
 			this.border = false;
-			this.rowTemplate = '<p class="filterMenuButtonGrid-name" title="{1}">{0}</p>';
+			this.rowTemplate = '<p class="filterMenuButtonGrid-name" title="{0} - {1}">{1}</p>';
 
 			this.cls = "filterMenuButtonGrid";
 
@@ -402,16 +403,16 @@
 						if (record.dirty) {
 							name += "*";
 						}
-
-						return Ext.String.format(me.rowTemplate, name, description);
+						var s = (Ext.String.trim(description) == "") ? name : description;
+						return Ext.String.format(me.rowTemplate, name, s);
 					},
 					flex: 1,
 					menuDisabled: true,
 					hideable: false
 				}, {
 					width: 100,
-					fixed: true, 
-					sortable: false, 
+					fixed: true,
+					sortable: false,
 					renderer: function(value, metadata, record, rowIndex, colIndex, store, view) {
 						if (record.isTemplate()) {
 							return "";

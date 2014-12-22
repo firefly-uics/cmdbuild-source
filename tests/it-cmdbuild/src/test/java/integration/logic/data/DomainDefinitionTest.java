@@ -1,6 +1,6 @@
 package integration.logic.data;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_11;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
@@ -169,7 +169,7 @@ public class DomainDefinitionTest extends DataDefinitionLogicTest {
 	public void domainCreatedAndDeleted() {
 		// given
 		dataDefinitionLogic().createOrUpdate(a(newDomain()));
-		dataDefinitionLogic().deleteDomainByName(DOMAIN_NAME);
+		dataDefinitionLogic().deleteDomainIfExists(DOMAIN_NAME);
 
 		// when
 		final CMDomain domain = dataView().findDomain(DOMAIN_NAME);

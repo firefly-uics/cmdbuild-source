@@ -58,6 +58,25 @@ public interface MenuStore {
 
 			return null;
 		}
+
+		public static boolean isReport(final MenuItemType type) {
+			return type.equals(REPORT_CSV) || //
+					type.equals(REPORT_ODT) || //
+					type.equals(REPORT_PDF) || //
+					type.equals(REPORT_XML);
+		}
+
+		public static boolean isClassOrProcess(final MenuItemType type) {
+			return type.equals(CLASS) || type.equals(PROCESS);
+		}
+
+		public static boolean isDashboard(final MenuItemType type) {
+			return type.equals(DASHBOARD);
+		}
+
+		public static boolean isView(final MenuItemType type) {
+			return type.equals(VIEW);
+		}
 	}
 
 	interface MenuItem {
@@ -148,6 +167,10 @@ public interface MenuStore {
 		void sortChildByIndex();
 
 		void sortChildByDescription();
+
+		String getUniqueIdentifier();
+
+		void setUniqueIdentifier(String uuid);
 	}
 
 	public class MenuItemIndexComparator implements Comparator<MenuItem> {
@@ -174,12 +197,10 @@ public interface MenuStore {
 		}
 
 		/*
-		 * Description can be null on DB,
-		 * to avoid nullPointerException
-		 * compare an empty string if
-		 * has null value
+		 * Description can be null on DB, to avoid nullPointerException compare
+		 * an empty string if has null value
 		 */
-		private String description(MenuItem item) {
+		private String description(final MenuItem item) {
 			String description = item.getDescription();
 
 			if (description == null) {

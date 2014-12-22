@@ -1,11 +1,13 @@
 package org.cmdbuild.logic.widget;
 
-import java.util.List;
+import static org.cmdbuild.data.store.Storables.storableOf;
+
+import java.util.Collection;
 
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.data.converter.WidgetConverter;
-import org.cmdbuild.data.store.DataViewStore;
 import org.cmdbuild.data.store.Storable;
+import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.logic.Logic;
 import org.cmdbuild.model.widget.Widget;
 
@@ -18,18 +20,12 @@ public class WidgetLogic implements Logic {
 		widgetStore = DataViewStore.newInstance(dataView, converter);
 	}
 
-	public List<Widget> getAllWidgets() {
-		final List<Widget> fetchedWidgets = widgetStore.list();
-		return fetchedWidgets;
+	public Collection<Widget> getAllWidgets() {
+		return widgetStore.readAll();
 	}
 
 	public Widget getWidget(final Long widgetId) {
-		return widgetStore.read(new Storable() {
-			@Override
-			public String getIdentifier() {
-				return widgetId.toString();
-			}
-		});
+		return widgetStore.read(storableOf(widgetId));
 	}
 
 	public Widget createWidget(final Widget widgetToCreate) {
@@ -41,12 +37,7 @@ public class WidgetLogic implements Logic {
 	}
 
 	public void deleteWidget(final Long widgetId) {
-		final Storable storableToDelete = new Storable() {
-			@Override
-			public String getIdentifier() {
-				return Long.toString(widgetId);
-			}
-		};
+		final Storable storableToDelete = storableOf((widgetId));
 		widgetStore.delete(storableToDelete);
 	}
 

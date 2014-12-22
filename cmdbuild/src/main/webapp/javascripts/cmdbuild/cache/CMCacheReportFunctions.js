@@ -69,7 +69,8 @@
 							totalProperty: 'results'
 						},
 						extraParams: {
-							type: "custom"
+							type: "custom", 
+							limit: 1000
 						}
 					},
 					autoLoad: true

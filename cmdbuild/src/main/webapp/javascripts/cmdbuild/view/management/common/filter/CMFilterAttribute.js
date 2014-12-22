@@ -1,45 +1,46 @@
 (function() {
+
 	var tr = CMDBuild.Translation.management.findfilter;
 
-	Ext.define("CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldsetDelegate", {
+	Ext.define('CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldsetDelegate', {
 		/**
-		 * @param {CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset} fieldset
-		 * the fieldset that is empty
+		 * @param {CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset} fieldset the fieldset that is empty
 		 */
 		onAttributeFieldsetIsEmpty: Ext.emptyFn
 	});
 
-	Ext.define("CMDBuild.view.management.common.filter.CMFilterAttributes", {
-		extend: "Ext.form.Panel",
+	Ext.define('CMDBuild.view.management.common.filter.CMFilterAttributes', {
+		extend: 'Ext.form.Panel',
 
 		mixins: {
-			attributeFieldsetDelegate: "CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldsetDelegate"
+			attributeFieldsetDelegate: 'CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldsetDelegate'
 		},
 
 		title: tr.attributes,
 		autoScroll: true,
+		bodyCls: 'x-panel-default-framed',
+		defaults: {
+			padding: '5 5 0 5'
+		},
+		layout: {
+			type: 'vbox',
+			align: 'stretch'
+		},
+		items: [],
 
-		// configuration
-		/**
-		 * the attributes to use in the menu
-		 * to set filtering over attribute values
-		 */
-		attributes: {},
-
-		/**
-		 * set true to have no menu with attributes
-		 * and use the panel to only display the current
-		 * filter
-		 */
-		readOnly: false,
-		// configuration
+		// Configuration
+			attributes: {}, // The attributes to use in the menu to set filtering over attribute values
+			readOnly: false, // Set true to have no menu with attributes and use the panel to only display the current filter
+		// END: Configuration
 
 		initComponent:function() {
 			this.fieldsetCategory = {};
+
 			var tbar = [];
 
 			if (!this.readOnly) {
-				this.menu = new Ext.menu.Menu();
+				this.menu = Ext.create('Ext.menu.Menu');
+
 				fillMenu(this);
 				tbar.push({
 					text: tr.title,
@@ -51,44 +52,27 @@
 			if (this.filterButton) {
 				tbar.push('->');
 				tbar.push(this.filterButton);
-				this.resetFilterButton = new Ext.button.Button({
+				this.resetFilterButton = Ext.create('Ext.button.Button', {
 					text: CMDBuild.Translation.management.findfilter.clear_filter,
-					iconCls: "delete"
+					iconCls: 'delete'
 				});
 				tbar.push(this.resetFilterButton);
 			}
 
-			this.bodyCls = "x-panel-default-framed";
-
-			this.layout = {
-				type: 'vbox',
-				align: 'stretch'
-			};
-
-			this.defaults = {
-				padding: "5px 5px 0 5px"
-			};
-
 			this.tbar = tbar;
-			this.items = [];
 
-			this.mon(this, "added", function(me) {
-					// needed because the zIndexParent is not set
-					// for the menu, because when created is not owned
-					// in a floating element
-					if (me.menu) {
-						me.menu.registerWithOwnerCt();
-					}
-				}
-			);
+			this.mon(this, 'added', function(me) {
+				// Needed because the zIndexParent is not set for the menu, because when created is not owned in a floating element
+				if (me.menu)
+					me.menu.registerWithOwnerCt();
+			});
 
 			this.callParent(arguments);
 		},
 
 		updateMenuForClassId: function(classId) {
-			if (this.readOnly) {
+			if (this.readOnly)
 				return;
-			}
 
 			this.currentClassId = classId;
 			_CMCache.getAttributeList(classId, Ext.bind(function(attributes) {
@@ -102,7 +86,7 @@
 			this.fieldsetCategory = {};
 		},
 
-		cleanFildsetCategory : function() {
+		cleanFildsetCategory: function() {
 			this.fieldsetCategory = {};
 		},
 
@@ -111,17 +95,14 @@
 			var out = {};
 
 			this.items.each(function(i) {
-				if (typeof i.getData == "function") {
+				if (typeof i.getData == 'function')
 					data.push(i.getData());
-				} 
 			});
 
 			if (data.length == 1) {
 				out =  data[0];
 			} else if (data.length > 1) {
-				out = {
-					and: data
-				};
+				out = { and: data };
 			}
 
 			return out;
@@ -132,40 +113,40 @@
 		 * simple is the object that actually contains the configuration of
 		 * a filter chunk, and and or are array of other object with the
 		 * same configuration
-		 * 
+		 *
 		 * example
 		 * 	{
-				and: [{
-					or: [{
-						simple: {
-							attribute: "Code",
-							operator: "contain",
-							value: ["01"]
-						}
-					},{
-						simple: {
-							attribute: "Code",
-							operator: "contain",
-							value: ["02"]
-						}
-					}]
-				}, {
-					simple: {
-						attribute: "Description",
-						operator: "contain",
-						value: ["The"]
-					}
-				}] 
-			}
+		 *		and: [{
+		 *			or: [{
+		 *				simple: {
+		 *					attribute: 'Code',
+		 *					operator: 'contain',
+		 *					value: ['01']
+		 *				}
+		 *			},{
+		 *				simple: {
+		 *					attribute: 'Code',
+		 *					operator: 'contain',
+		 *					value: ['02']
+		 *				}
+		 *			}]
+		 *		}, {
+		 *			simple: {
+		 *				attribute: 'Description',
+		 *				operator: 'contain',
+		 *				value: ['The']
+		 *			}
+		 *		}]
+		 *	}
 		 */
 		setData: function(data) {
 			addData(this, data);
 		},
 
 		// as attributeFieldsetDelegate
-
 		onAttributeFieldsetIsEmpty: function(fieldset) {
 			this.remove(fieldset);
+
 			delete this.fieldsetCategory[fieldset.attributeName];
 		}
 	});
@@ -179,25 +160,23 @@
 	}
 
 	function addSimpleData(me, data) {
-		if (!data || !data.simple) {
+		if (!data || !data.simple)
 			return;
-		}
 
-		var attributeName = data.simple.attribute || "";
+		var attributeName = data.simple.attribute || '';
 		var attribute = _CMUtils.arraySearchByFunction(me.attributes, function(currentAttribute) {
 			return currentAttribute.name == attributeName;
 		});
 
-		if (attribute) {
+		if (attribute)
 			addFilterCondition(me, attribute, data.simple);
-		}
 	}
 
 	function addCompositeData(me, compositeData) {
 		var data = compositeData.or || compositeData.and || [];
-		for (var i=0, l=data.length; i<l; ++i) {
+
+		for (var i = 0, l = data.length; i < l; ++i)
 			addData(me, data[i]);
-		}
 	}
 
 	function fillMenu(me) {
@@ -220,8 +199,8 @@
 			var items = [];
 			var attrs = groupedAttr[group];
 
-			for (var i=0, l=attrs.length; i<l; ++i) {
-				items.push({ 
+			for (var i = 0, l = attrs.length; i < l; ++i) {
+				items.push({
 					text: attrs[i].description,
 					attribute: attrs[i],
 					handler: function() {
@@ -230,19 +209,29 @@
 				});
 			}
 
-			submenues.push({text: group, menu: items});
+			submenues.push({
+				text: group,
+				menu: items
+			});
 		}
 
 		return submenues;
 	}
 
+	/**
+	 * @param {CMDBuild.view.management.common.filter.CMFilterAttributes} me
+	 * @param {Object} attribute
+	 * @param {Object} data
+	 */
 	function addFilterCondition(me, attribute, data) {
 		var category = attribute.name;
 
+		attribute.selectAtRuntimeCheckDisabled = false;
+
 		Ext.suspendLayouts();
 
-		if (typeof me.fieldsetCategory[category] == "undefined" ) {
-			var fieldset = new CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset({
+		if (Ext.isEmpty(me.fieldsetCategory[category])) {
+			var fieldset = Ext.create('CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset', {
 				title: attribute.description,
 				attributeName: category
 			});
@@ -252,48 +241,43 @@
 			me.add(fieldset);
 		}
 
-		var filterCondition = CMDBuild.Management.FieldManager.getFieldSetForFilter(attribute);
+		var filterCondition = Ext.create('CMDBuild.Management.FieldManager.getFieldSetForFilter', attribute);
 		me.fieldsetCategory[category].addCondition(filterCondition);
 		filterCondition.setData(data);
 
 		Ext.resumeLayouts();
+
 		me.doLayout();
 	}
 
-	Ext.define("CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset", {
-		extend: "Ext.form.FieldSet",
-
-		// configuration
-		attributeName: "",
-		// configuration
+	Ext.define('CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldset', {
+		extend: 'Ext.form.FieldSet',
 
 		mixins: {
-			delegable: "CMDBuild.core.CMDelegable",
-			conditionDelegate: "CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanelDelegate"
+			delegable: 'CMDBuild.core.CMDelegable',
+			conditionDelegate: 'CMDBuild.view.management.common.filter.CMFilterAttributeConditionPanelDelegate'
 		},
 
+		// Configuration
+			attributeName: '',
+		// END: Configuration
+
 		constructor: function() {
-			this.mixins.delegable.constructor.call(this,
-				"CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldsetDelegate");
+			this.mixins.delegable.constructor.call(this, 'CMDBuild.view.management.common.filter.CMFilterAttributes.AttributeFieldsetDelegate');
 
 			this.callParent(arguments);
 		},
 
 		initComponent: function() {
-
-			this.defaults = {
-				padding: "0 0 5px 0"
-			};
-
+			this.defaults = { padding: '0 0 5 0' };
 			this.callParent(arguments);
 		},
 
 		addCondition: function(condition) {
 			condition.addDelegate(this);
 
-			if (this.items.length >= 1) {
+			if (this.items.length >= 1)
 				this.items.last().showOr();
-			}
 
 			Ext.suspendLayouts();
 			this.add(condition);
@@ -305,9 +289,8 @@
 			var out = {};
 
 			this.items.each(function(i) {
-				if (typeof i.getData == "function") {
+				if (typeof i.getData == 'function')
 					data.push(i.getData());
-				} 
 			});
 
 			if (data.length == 1) {
@@ -322,7 +305,6 @@
 		},
 
 		// as conditionDelegate
-
 		onFilterAttributeConditionPanelRemoveButtonClick: function(condition) {
 			Ext.suspendLayouts();
 			this.remove(condition);
@@ -333,8 +315,9 @@
 			if (count > 0) {
 				this.items.last().hideOr();
 			} else {
-				this.callDelegates("onAttributeFieldsetIsEmpty", this);
+				this.callDelegates('onAttributeFieldsetIsEmpty', this);
 			}
 		}
 	});
-})(); 
+
+})();

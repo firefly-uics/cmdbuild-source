@@ -4,13 +4,17 @@ import org.cmdbuild.dao.entrytype.CMEntryType;
 
 public class EntryTypeAlias implements Alias {
 
+	/**
+	 * @deprecated use {@link Aliases} instead.
+	 */
+	@Deprecated
 	public static EntryTypeAlias canonicalAlias(final CMEntryType entryType) {
 		return new EntryTypeAlias(entryType);
 	}
 
 	private final CMEntryType entryType;
 
-	public EntryTypeAlias(final CMEntryType entryType) {
+	private EntryTypeAlias(final CMEntryType entryType) {
 		this.entryType = entryType;
 	}
 

@@ -28,6 +28,7 @@ import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
 import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
+import org.cmdbuild.services.soap.types.RelationExt;
 import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
 import org.cmdbuild.services.soap.types.WSEvent;
@@ -78,6 +79,9 @@ public interface Private {
 	public boolean deleteRelation(@WebParam(name = "relation") Relation relation);
 
 	public List<Relation> getRelationList(@WebParam(name = "domain") String domain,
+			@WebParam(name = "className") String className, @WebParam(name = "cardId") int cardId);
+
+	public List<RelationExt> getRelationListExt(@WebParam(name = "domain") String domain,
 			@WebParam(name = "className") String className, @WebParam(name = "cardId") int cardId);
 
 	public List<Attribute> getRelationAttributes(@WebParam(name = "relation") Relation relation);

@@ -2,7 +2,7 @@ package org.cmdbuild.logic.mapping.json;
 
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CQL_KEY;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMEntryType;
@@ -30,7 +30,6 @@ public class JsonFilterMapper implements FilterMapper {
 		private Alias entryTypeAlias;
 		private JSONObject filterObject;
 		private OperationUser operationUser;
-		private CMDataView systemDataView;
 
 		private FilterMapper inner;
 
@@ -49,11 +48,6 @@ public class JsonFilterMapper implements FilterMapper {
 
 		public JsonFilterMapperBuilder withDataView(final CMDataView dataView) {
 			this.dataView = dataView;
-			return this;
-		}
-
-		public JsonFilterMapperBuilder withSystemDataView(final CMDataView dataView) {
-			this.systemDataView = dataView;
 			return this;
 		}
 

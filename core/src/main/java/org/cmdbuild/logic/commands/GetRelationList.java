@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -33,13 +33,10 @@ import org.cmdbuild.model.data.Card;
 
 public class GetRelationList extends AbstractGetRelation {
 
-	private final CMDataView systemDataView;
-
 	private boolean emptyCardForWrongId;
 
-	public GetRelationList(final CMDataView view, final CMDataView systemDataView) {
+	public GetRelationList(final CMDataView view) {
 		super(view);
-		this.systemDataView = systemDataView;
 	}
 
 	/**
@@ -66,7 +63,7 @@ public class GetRelationList extends AbstractGetRelation {
 			final CMCard src = row.getCard(sourceType);
 			final CMCard dst = row.getCard(DST_ALIAS);
 			final QueryRelation rel = row.getRelation(DOM_ALIAS);
-			final RelationInfo relInfo = new RelationInfo(rel, dst);
+			final RelationInfo relInfo = new RelationInfo(rel, src, dst);
 
 			List<RelationInfo> relations;
 			if (!result.containsKey(src.getId())) {
@@ -93,13 +90,12 @@ public class GetRelationList extends AbstractGetRelation {
 			}
 		}
 
-		final SorterMapper sorterMapper = new JsonSorterMapper(view.findClass(src.getClassName()),
-				queryOptions.getSorters());
+		final CMClass sourceType = view.findClass(src.getClassName());
+		final SorterMapper sorterMapper = new JsonSorterMapper(sourceType, queryOptions.getSorters());
 		final List<OrderByClause> orderByClauses = sorterMapper.deserialize();
 		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
 				.withDataView(view) //
-				.withSystemDataView(systemDataView) //
-				.withEntryType(view.findClass(src.getClassName())) //
+				.withEntryType(sourceType) //
 				.withFilterObject(queryOptions.getFilter()) //
 				.build();
 		final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();
@@ -112,7 +108,7 @@ public class GetRelationList extends AbstractGetRelation {
 
 		final CMQueryResult relationList = querySpecsBuilder.run();
 		final String domainSource = (domainWithSource != null) ? domainWithSource.querySource : null;
-		return createRelationListResponse(relationList, domainSource);
+		return createRelationListResponse(sourceType, relationList, domainSource);
 	}
 
 	private CMDomain getQueryDomain(final DomainWithSource domainWithSource) {
@@ -134,11 +130,12 @@ public class GetRelationList extends AbstractGetRelation {
 
 	// FIXME Implement domain direction in queries and remove the domainSource
 	// hack!
-	private GetRelationListResponse createRelationListResponse(final CMQueryResult relationList,
-			final String domainSource) {
+	private GetRelationListResponse createRelationListResponse(final CMClass sourceType,
+			final CMQueryResult relationList, final String domainSource) {
 		int totalNumberOfRelations = 0;
 		final GetRelationListResponse out = new GetRelationListResponse();
 		for (final CMQueryRow row : relationList) {
+			final CMCard src = row.getCard(sourceType);
 			final CMCard dst = row.getCard(DST_ALIAS);
 			if (dst != null) {
 				final QueryRelation rel = row.getRelation(DOM_ALIAS);
@@ -146,7 +143,7 @@ public class GetRelationList extends AbstractGetRelation {
 					continue;
 				}
 				// TODO: check here if the dst match the filter....
-				out.addRelation(rel, dst);
+				out.addRelation(rel, src, dst);
 				totalNumberOfRelations++;
 			}
 		}

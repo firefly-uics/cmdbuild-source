@@ -1,8 +1,8 @@
 package org.cmdbuild.report;
 
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang.RandomStringUtils.randomNumeric;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.services.store.report.JDBCReportStore.REPORT_CLASS_NAME;
 
 import java.math.BigDecimal;
@@ -15,6 +15,7 @@ import net.sf.jasperreports.engine.JRParameter;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.CMEntryTypeVisitor;
 import org.cmdbuild.dao.entrytype.CMIdentifier;
 import org.cmdbuild.dao.entrytype.ForwardingEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.BooleanAttributeType;
@@ -35,7 +36,7 @@ public class ReportParameterConverter {
 
 		private static final CMEntryType UNSUPPORTED_ENTRY_TYPE = UnsupportedProxyFactory.of(CMEntryType.class)
 				.create();
-		private static final CMEntryType OWNER = new ForwardingEntryType(UNSUPPORTED_ENTRY_TYPE) {
+		private static final CMEntryType OWNER = new ForwardingEntryType() {
 
 			private final long FAKE_ID = 0L;
 
@@ -61,6 +62,11 @@ public class ReportParameterConverter {
 
 			};
 
+			@Override
+			protected CMEntryType delegate() {
+				return UNSUPPORTED_ENTRY_TYPE;
+			}
+
 			/*
 			 * Should be the only methods called.
 			 */
@@ -74,6 +80,11 @@ public class ReportParameterConverter {
 			public CMIdentifier getIdentifier() {
 				return FAKE_IDENTIFIER;
 			};
+
+			@Override
+			public void accept(final CMEntryTypeVisitor visitor) {
+				// nothing to do
+			}
 
 		};
 

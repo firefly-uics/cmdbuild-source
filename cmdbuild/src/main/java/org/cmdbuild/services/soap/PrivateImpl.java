@@ -1,7 +1,7 @@
 package org.cmdbuild.services.soap;
 
 import static java.lang.String.format;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.FunctionCall.call;
 
@@ -14,8 +14,8 @@ import java.util.Map;
 import javax.activation.DataHandler;
 import javax.jws.WebService;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.digest.Digester;
 import org.cmdbuild.common.digest.DigesterFactory;
 import org.cmdbuild.dao.entry.CMValueSet;
@@ -52,6 +52,7 @@ import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
 import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
+import org.cmdbuild.services.soap.types.RelationExt;
 import org.cmdbuild.services.soap.types.ReportParams;
 import org.cmdbuild.services.soap.types.WSEvent;
 import org.cmdbuild.services.soap.types.WSProcessStartEvent;
@@ -177,6 +178,11 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	@Override
 	public List<Relation> getRelationList(final String domain, final String className, final int cardId) {
 		return dataAccessLogicHelper().getRelations(className, domain, Long.valueOf(cardId));
+	}
+
+	@Override
+	public List<RelationExt> getRelationListExt(final String domain, final String className, final int cardId) {
+		return dataAccessLogicHelper().getRelationsExt(className, domain, Long.valueOf(cardId));
 	}
 
 	@Override
@@ -393,7 +399,8 @@ public class PrivateImpl extends AbstractWebservice implements Private {
 	}
 
 	private String nativeValueToWsString(final CMAttributeType<?> type, final Object value) {
-		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value) {
+		return (value == null) ? EMPTY : new AbstractAttributeValueVisitor(type, value, translationFacade,
+				lookupStore()) {
 
 			@Override
 			public void visit(final EntryTypeAttributeType attributeType) {

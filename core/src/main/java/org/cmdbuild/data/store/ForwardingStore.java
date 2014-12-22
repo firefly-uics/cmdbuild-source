@@ -1,6 +1,6 @@
 package org.cmdbuild.data.store;
 
-import java.util.List;
+import java.util.Collection;
 
 public abstract class ForwardingStore<T extends Storable> implements Store<T> {
 
@@ -21,6 +21,16 @@ public abstract class ForwardingStore<T extends Storable> implements Store<T> {
 	}
 
 	@Override
+	public Collection<T> readAll() {
+		return delegate.readAll();
+	}
+
+	@Override
+	public Collection<T> readAll(final Groupable groupable) {
+		return delegate.readAll(groupable);
+	}
+
+	@Override
 	public void update(final T storable) {
 		delegate.update(storable);
 	}
@@ -29,16 +39,6 @@ public abstract class ForwardingStore<T extends Storable> implements Store<T> {
 	public void delete(final Storable storable) {
 		delegate.delete(storable);
 
-	}
-
-	@Override
-	public List<T> list() {
-		return delegate.list();
-	}
-
-	@Override
-	public List<T> list(final Groupable groupable) {
-		return delegate.list(groupable);
 	}
 
 }

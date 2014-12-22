@@ -10,8 +10,15 @@ import org.cmdbuild.dms.exception.DmsError;
 
 public class LoggedDmsService extends ForwardingDmsService implements LoggingSupport {
 
-	public LoggedDmsService(final DmsService dmsService) {
-		super(dmsService);
+	private final DmsService delegate;
+
+	public LoggedDmsService(final DmsService delegate) {
+		this.delegate = delegate;
+	}
+
+	@Override
+	protected DmsService delegate() {
+		return delegate;
 	}
 
 	@Override

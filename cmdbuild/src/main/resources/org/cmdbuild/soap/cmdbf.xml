@@ -19,7 +19,7 @@
 			<bean factory-bean="userDataAccessLogicBuilder" factory-method="build"
 				scope="prototype" />
 		</constructor-arg>
-		<constructor-arg ref="dmsLogic" />
+		<constructor-arg ref="privilegedDmsLogic" />
 		<constructor-arg ref="gisLogic" />
 		<constructor-arg ref="geoFeatureStore" />
 		<constructor-arg ref="operationUser" />
@@ -27,6 +27,7 @@
 		<constructor-arg ref="cmdbfProperties" />
 		<constructor-arg ref="dmsProperties" />
 		<constructor-arg ref="databaseProperties" />
+		<constructor-arg ref="patchManager" />
 	</bean>
 
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

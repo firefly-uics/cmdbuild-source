@@ -2,11 +2,16 @@ package org.cmdbuild.spring.configuration;
 
 import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 
+import org.cmdbuild.auth.LanguageStore;
 import org.cmdbuild.auth.UserStore;
+import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.servlets.json.serializers.CardSerializer;
 import org.cmdbuild.servlets.json.serializers.ClassSerializer;
+import org.cmdbuild.servlets.json.serializers.DefaultTranslationFacade;
 import org.cmdbuild.servlets.json.serializers.DomainSerializer;
 import org.cmdbuild.servlets.json.serializers.RelationAttributeSerializer;
+import org.cmdbuild.servlets.json.serializers.SetupAwareTranslationFacade;
+import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +24,19 @@ public class Serialization {
 	private Data data;
 
 	@Autowired
+	private LanguageStore languageStore;
+
+	@Autowired
+	private LookupStore lookupStore;
+
+	@Autowired
 	private PrivilegeManagement privilegeManagement;
+
+	@Autowired
+	private Setup setup;
+
+	@Autowired
+	private Translation translation;
 
 	@Autowired
 	private UserStore userStore;
@@ -29,7 +46,17 @@ public class Serialization {
 
 	@Bean
 	public CardSerializer cardSerializer() {
-		return new CardSerializer(data.systemDataAccessLogicBuilder(), relationAttributeSerializer());
+		return new CardSerializer(data.systemDataAccessLogicBuilder(), relationAttributeSerializer(),
+				translationFacade(), lookupStore);
+	}
+
+	@Bean
+	public TranslationFacade translationFacade() {
+		final DefaultTranslationFacade defaultTranslationFacade = new DefaultTranslationFacade(languageStore,
+				translation.translationLogic());
+		final SetupAwareTranslationFacade setupAwareTranslationFacade = new SetupAwareTranslationFacade(
+				defaultTranslationFacade, setup.setupFacade());
+		return setupAwareTranslationFacade;
 	}
 
 	@Bean
@@ -39,6 +66,7 @@ public class Serialization {
 				data.systemDataView(), //
 				workflow.systemWorkflowLogicBuilder(), //
 				privilegeManagement.userPrivilegeContext(), //
+				translationFacade(), //
 				data.securityLogic(), //
 				userStore //
 		);
@@ -49,7 +77,7 @@ public class Serialization {
 	public DomainSerializer domainSerializer() {
 		return new DomainSerializer( //
 				data.systemDataView(), //
-				privilegeManagement.userPrivilegeContext());
+				privilegeManagement.userPrivilegeContext(), translationFacade());
 	}
 
 	@Bean

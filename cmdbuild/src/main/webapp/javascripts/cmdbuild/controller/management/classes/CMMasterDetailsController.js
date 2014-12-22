@@ -23,7 +23,7 @@
 			this.mon(this.view.tabs,"click", onTabClick, this);
 			this.mon(this.view.detailGrid, 'beforeitemclick', cellclickHandler, this);
 			this.mon(this.view.detailGrid, "itemdblclick", onDetailDoubleClick, this);
-			this.mon(this.view.addDetailButton, "cmClick", onAddDetailButtonClick, this);
+			this.mon(this.view.addDetailButton, "cmClick", this.onAddDetailButtonClick, this);
 
 			this.addEvents(["empty"]);
 
@@ -37,8 +37,48 @@
 				'action-masterdetail-delete': this.onDeleteDetailClick,
 				'action-masterdetail-graph': this.onOpenGraphClick,
 				'action-masterdetail-note': this.onOpenNoteClick,
-				'action-masterdetail-attach': this.onOpenAttachmentClick 
+				'action-masterdetail-attach': this.onOpenAttachmentClick
 			};
+		},
+
+		/**
+		 * @param {Object} configObj
+		 * 	{
+		 * 		{Boolean} editable
+		 * 	}
+		 *
+		 * @return {CMDBuild.view.management.common.CMCardWindow}
+		 */
+		buildWindow: function(configObj) {
+			return Ext.create('CMDBuild.view.management.common.CMCardWindow', {
+				referencedIdClass: this.card.get('IdClass'),
+				fkAttribute: this.currentForeignKey,
+				masterData: this.card,
+				detail: this.currentDetail,
+				cmEditMode: configObj.editable,
+				withButtons: configObj.editable
+			});
+		},
+
+		/**
+		 * @params {Object} params
+		 */
+		onAddDetailButtonClick: function(params) {
+			var window = this.buildWindow({
+				entryType: params.classId,
+				editable: true
+			});
+
+			new CMDBuild.controller.management.common.CMAddDetailWindowController(window, {
+				entryType: params.classId,
+				cmEditMode: true
+			});
+
+			window.show();
+
+			window.mon(window, 'destroy', function() {
+				this.view.reload();
+			}, this, { single: true });
 		},
 
 		onEntryTypeSelected: function(entryType) {
@@ -71,28 +111,31 @@
 			this.view.disable();
 		},
 
+		/**
+		 * @param {Object} model - card grid model
+		 */
 		onEditDetailClick: function(model) {
-			var w = buildWindow.call(this, {
+			var window = this.buildWindow({
 				editable: true
 			});
 
-			var c = new CMDBuild.controller.management.common.CMDetailWindowController(w, {
-				entryType: model.get("IdClass"),
-				card: model.get("Id"),
+			var windowController = new CMDBuild.controller.management.common.CMDetailWindowController(window, {
+				entryType: model.get('IdClass'),
+				card: model.get('Id'),
 				cmEditMode: true
 			});
 
-			w.mon(w, "destroy", function() {
+			window.mon(window, 'destroy', function() {
 				this.view.reload();
-				delete c;
-				delete w;
-			}, this, {single: true});
+				delete windowController;
+				delete window;
+			}, this, { single: true });
 
-			w.show();
+			window.show();
 		},
 
 		onShowDetailClick: function(model) {
-			var w = buildWindow.call(this, {
+			var w = this.buildWindow({
 				editable: false
 			});
 
@@ -152,16 +195,24 @@
 
 		onOpenNoteClick: function(model) {
 			var editable = (model && model.raw && model.raw.priv_write);
-			var w = new CMDBuild.view.management.common.CMNoteWindow({
-				withButtons: editable
+
+			var noteWindow = new CMDBuild.view.management.common.CMNoteWindow({
+				withButtons: editable,
+				withTbar: false
 			}).show();
 
-			var wc = new CMDBuild.view.management.common.CMNoteWindowController(w);
-			wc.onCardSelected(model);
+			var noteWindowController = new CMDBuild.view.management.common.CMNoteWindowController(noteWindow);
+			noteWindowController.onCardSelected(model);
 
-			w.mon(w, "destroy", function() {
-				this.view.reload();
-			}, this, {single: true});
+			noteWindow.mon(
+				noteWindow,
+				'destroy',
+				function() {
+					this.view.reload();
+				},
+				this,
+				{ single: true }
+			);
 		},
 
 		onOpenAttachmentClick: function(model) {
@@ -213,7 +264,7 @@
 			}
 		});
 	}
-	
+
 	function updateDetailGrid() {
 		if (this.card != null) {
 			var p = {
@@ -245,7 +296,6 @@
 		var targetPanel = tab.targetPanel,
 			type = targetPanel.detailType,
 			detail = this.view.details[type][targetPanel.detailId];
-
 		this.view.addDetailButton.enable();
 		this.currentTab = tab;
 
@@ -273,7 +323,7 @@
 	function tabIsActive(t) {
 		return t.ownerCt.layout.getActiveItem().id == t.id;
 	}
-	
+
 	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
 		var className = event.target.className;
 
@@ -282,41 +332,4 @@
 		}
 	}
 
-	function onAddDetailButtonClick(o) {
-		var me = this,
-			w = buildWindow.call(this, {
-				entryType: o.classId,
-				editable: true
-			});
-
-		new CMDBuild.controller.management.common.CMAddDetailWindowController(w, {
-			entryType: o.classId,
-			cmEditMode: true
-		});
-
-		w.show();
-
-		w.mon(w, "destroy", function() {
-			this.view.reload();
-		}, this, {single: true});
-	}
-
-	/*
-	 * o = {
-	 *  editable: bool
-	 * }
-	 */
-	function buildWindow(o) {
-		var me = this,
-			c = {
-				referencedIdClass: me.card.get("IdClass"),
-				fkAttribute: me.currentForeignKey,
-				masterData: me.card,
-				detail: me.currentDetail,
-				cmEditMode: o.editable,
-				withButtons: o.editable
-			};
-
-		return new CMDBuild.view.management.common.CMCardWindow(c);
-	}
 })();

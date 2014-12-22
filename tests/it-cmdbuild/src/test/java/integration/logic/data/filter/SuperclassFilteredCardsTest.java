@@ -70,7 +70,7 @@ public class SuperclassFilteredCardsTest extends FilteredCardsFixture {
 		final QueryOptions queryOptions = createQueryOptions(10, 0, null, filterObject);
 
 		// when
-		final Iterable<Card> cards = dataAccessLogic.fetchCards(root.getName(), queryOptions).getPaginatedCards();
+		final Iterable<Card> cards = dataAccessLogic.fetchCards(root.getName(), queryOptions).elements();
 
 		// then
 		assertThat(size(cards), equalTo(1));

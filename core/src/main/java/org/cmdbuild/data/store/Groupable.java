@@ -1,6 +1,6 @@
 package org.cmdbuild.data.store;
 
-import org.cmdbuild.data.store.DataViewStore.StorableConverter;
+import org.cmdbuild.data.store.dao.StorableConverter;
 
 public interface Groupable {
 
@@ -9,7 +9,7 @@ public interface Groupable {
 	 * {@link Storable} objects, {@code null} if there is no grouping. Within a
 	 * group the identifier must be unique. Implies a restriction over the
 	 * {@link Store#read(Storable)}, {@link Store#update(Storable)} and
-	 * {@link Store#list()} methods.
+	 * {@link Store#readAll()} methods.
 	 * 
 	 * @return the name of the attribute or {@code null} if grouping is not
 	 *         available.

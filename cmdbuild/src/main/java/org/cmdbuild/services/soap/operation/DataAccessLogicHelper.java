@@ -2,9 +2,10 @@ package org.cmdbuild.services.soap.operation;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.isNumeric;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNumeric;
+import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.services.soap.utils.SoapToJsonUtils.createJsonFilterFrom;
 import static org.cmdbuild.services.soap.utils.SoapToJsonUtils.toJsonArray;
 
@@ -44,7 +45,6 @@ import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryDomain.Source;
 import org.cmdbuild.dao.view.CMDataView;
-import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
@@ -85,6 +85,7 @@ import org.cmdbuild.services.soap.types.Order;
 import org.cmdbuild.services.soap.types.Query;
 import org.cmdbuild.services.soap.types.Reference;
 import org.cmdbuild.services.soap.types.Relation;
+import org.cmdbuild.services.soap.types.RelationExt;
 import org.cmdbuild.services.soap.types.Report;
 import org.cmdbuild.services.soap.types.ReportParams;
 import org.cmdbuild.services.soap.utils.DateTimeSerializer;
@@ -298,7 +299,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 						lookupId = Long.parseLong((String) value);
 					}
 				} else {
-					final Iterable<Lookup> lookupList = lookupStore.list();
+					final Iterable<Lookup> lookupList = lookupStore.readAll();
 					for (final Lookup lookup : lookupList) {
 						if (lookup.active && //
 								lookup.type.name.equals(lookupTypeName) && //
@@ -324,7 +325,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	}
 
 	private boolean existsLookup(final String lookupTypeName, final Long lookupId) {
-		final Iterable<Lookup> lookupList = lookupStore.list();
+		final Iterable<Lookup> lookupList = lookupStore.readAll();
 		for (final Lookup lookup : lookupList) {
 			if (lookup.type.name.equals(lookupTypeName) && lookup.getId().equals(lookupId)) {
 				return true;
@@ -345,52 +346,85 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private Relation transform(final RelationInfo relationInfo, final long source) {
 		final QueryDomain queryDomain = relationInfo.getQueryDomain();
 		final CMDomain domain = queryDomain.getDomain();
-		final Relation relation = new Relation();
-		relation.setBeginDate(relationInfo.getRelationBeginDate().toGregorianCalendar());
+		final Relation output = new Relation();
+		output.setBeginDate(relationInfo.getRelationBeginDate().toGregorianCalendar());
 		final DateTime endDate = relationInfo.getRelationEndDate();
-		relation.setEndDate(endDate != null ? endDate.toGregorianCalendar() : null);
-		relation.setStatus(CardStatus.ACTIVE.value());
-		relation.setDomainName(domain.getIdentifier().getLocalName());
-
+		output.setEndDate(endDate != null ? endDate.toGregorianCalendar() : null);
+		output.setStatus(CardStatus.ACTIVE.value());
+		output.setDomainName(domain.getIdentifier().getLocalName());
 		final String targetName = relationInfo.getTargetCard().getType().getName();
 		if (queryDomain.getQuerySource().equals(Source._1.toString())) {
-			relation.setClass1Name(domain.getClass1().getName());
-			relation.setClass2Name(targetName);
+			output.setClass1Name(domain.getClass1().getName());
+			output.setClass2Name(targetName);
 		} else {
-			relation.setClass1Name(targetName);
-			relation.setClass2Name(domain.getClass2().getName());
+			output.setClass1Name(targetName);
+			output.setClass2Name(domain.getClass2().getName());
 		}
-
-		final CMRelation _relation = relationInfo.getRelation();
 		if (queryDomain.getQuerySource().equals(Source._1.toString())) {
-			relation.setCard1Id(_relation.getCard1Id().intValue());
-			relation.setCard2Id(_relation.getCard2Id().intValue());
+			output.setCard1Id(relationInfo.getSourceId().intValue());
+			output.setCard2Id(relationInfo.getTargetId().intValue());
 		} else {
-			relation.setCard1Id(_relation.getCard2Id().intValue());
-			relation.setCard2Id(_relation.getCard1Id().intValue());
+			output.setCard1Id(relationInfo.getTargetId().intValue());
+			output.setCard2Id(relationInfo.getSourceId().intValue());
 		}
-		return relation;
+		return output;
+	}
+
+	private RelationExt transform(final RelationInfo relationInfo, final Relation input) {
+		final QueryDomain queryDomain = relationInfo.getQueryDomain();
+		final RelationExt output = new RelationExt();
+		output.setBeginDate(input.getBeginDate());
+		output.setEndDate(input.getEndDate());
+		output.setStatus(input.getStatus());
+		output.setDomainName(input.getDomainName());
+		output.setClass1Name(input.getClass1Name());
+		output.setClass2Name(input.getClass2Name());
+		output.setCard1Id(input.getCard1Id());
+		output.setCard2Id(input.getCard2Id());
+		if (queryDomain.getQuerySource().equals(Source._1.toString())) {
+			output.setCard1Code(relationInfo.getSourceCode());
+			output.setCard1Description(relationInfo.getSourceDescription());
+			output.setCard2Code(relationInfo.getTargetCode());
+			output.setCard2Description(relationInfo.getTargetDescription());
+		} else {
+			output.setCard1Code(relationInfo.getTargetCode());
+			output.setCard1Description(relationInfo.getTargetDescription());
+			output.setCard2Code(relationInfo.getSourceCode());
+			output.setCard2Description(relationInfo.getSourceDescription());
+		}
+		return output;
 	}
 
 	private String fetchLookupDecription(final Long lookupId) {
 		if (lookupId == null) {
 			return null;
 		} else {
-			final Lookup fetchedLookup = lookupStore.read(fakeLookupWithId(lookupId));
+			final Lookup fetchedLookup = lookupStore.read(storableOf(lookupId));
 			return fetchedLookup.description;
 		}
 	}
 
-	private Storable fakeLookupWithId(final Long lookupId) {
-		return new Storable() {
-			@Override
-			public String getIdentifier() {
-				return String.valueOf(lookupId);
+	public List<Relation> getRelations(final String className, final String domainName, final Long cardId) {
+		final List<Relation> relations = Lists.newArrayList();
+		for (final DomainInfo domainInfo : relations(className, domainName, cardId)) {
+			for (final RelationInfo relationInfo : domainInfo) {
+				relations.add(transform(relationInfo, cardId));
 			}
-		};
+		}
+		return relations;
 	}
 
-	public List<Relation> getRelations(final String className, final String domainName, final Long cardId) {
+	public List<RelationExt> getRelationsExt(final String className, final String domainName, final Long cardId) {
+		final List<RelationExt> relations = Lists.newArrayList();
+		for (final DomainInfo domainInfo : relations(className, domainName, cardId)) {
+			for (final RelationInfo relationInfo : domainInfo) {
+				relations.add(transform(relationInfo, transform(relationInfo, cardId)));
+			}
+		}
+		return relations;
+	}
+
+	private GetRelationListResponse relations(final String className, final String domainName, final Long cardId) {
 		final CMDomain domain = dataView.findDomain(domainName);
 		final CMClass cmClass = dataView.findClass(className);
 		final DomainWithSource dom;
@@ -406,14 +440,7 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 			dom = null;
 		}
 		final Card srcCard = buildCard(cardId, (className == null) ? domain.getClass1().getName() : className);
-		final GetRelationListResponse response = dataAccessLogic.getRelationList(srcCard, dom);
-		final List<Relation> relations = Lists.newArrayList();
-		for (final DomainInfo domainInfo : response) {
-			for (final RelationInfo relationInfo : domainInfo) {
-				relations.add(transform(relationInfo, cardId));
-			}
-		}
-		return relations;
+		return dataAccessLogic.getRelationList(srcCard, dom);
 	}
 
 	private Card buildCard(final Long cardId, final String className) {
@@ -592,9 +619,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 	private CardList toCardList(final FetchCardListResponse response, final Attribute[] subsetAttributesForSelect,
 			final boolean enableLongDateFormat) {
 		final CardList cardList = new CardList();
-		final int totalNumberOfCards = response.getTotalNumberOfCards();
+		final int totalNumberOfCards = response.totalSize();
 		cardList.setTotalRows(totalNumberOfCards);
-		for (final Card card : response.getPaginatedCards()) {
+		for (final Card card : response.elements()) {
 			final ValueSerializer valueSerializer = enableLongDateFormat ? org.cmdbuild.services.soap.types.Card.HACK_VALUE_SERIALIZER
 					: org.cmdbuild.services.soap.types.Card.LEGACY_VALUE_SERIALIZER;
 			final org.cmdbuild.services.soap.types.Card soapCard = new org.cmdbuild.services.soap.types.Card(card,
@@ -630,9 +657,9 @@ public class DataAccessLogicHelper implements SoapLogicHelper {
 
 	private CardListExt toCardListExt(final FetchCardListResponse response) {
 		final CardListExt cardListExt = new CardListExt();
-		final int totalNumberOfCards = response.getTotalNumberOfCards();
+		final int totalNumberOfCards = response.totalSize();
 		cardListExt.setTotalRows(totalNumberOfCards);
-		for (final Card card : response.getPaginatedCards()) {
+		for (final Card card : response.elements()) {
 			final CardExt cardExt = new CardExt(card);
 			addExtras(card, cardExt);
 			cardListExt.addCard(cardExt);

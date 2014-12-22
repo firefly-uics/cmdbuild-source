@@ -1,10 +1,10 @@
 package org.cmdbuild.dao.entrytype.attributetype;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.dao.entry.IdAndDescription;
 import org.cmdbuild.dao.entry.LookupValue;
 
@@ -33,17 +33,17 @@ public class LookupAttributeType extends AbstractReferenceAttributeType {
 			return new LookupValue( //
 					((IdAndDescription) value).getId(), //
 					((IdAndDescription) value).getDescription(), //
-					lookupTypeName);
+					lookupTypeName, null);
 		}
 
 		if (value instanceof Number) {
 			return new LookupValue( //
-					Number.class.cast(value).longValue(), StringUtils.EMPTY, lookupTypeName);
+					Number.class.cast(value).longValue(), StringUtils.EMPTY, lookupTypeName, null);
 		} else if (value instanceof String) {
 			final String s = String.class.cast(value);
 			if (isNotBlank(s)) {
 				return new LookupValue( //
-						Long.parseLong(s), StringUtils.EMPTY, lookupTypeName);
+						Long.parseLong(s), StringUtils.EMPTY, lookupTypeName, null);
 			} else {
 				return null;
 			}

@@ -2,10 +2,6 @@ package org.cmdbuild.data.store.email;
 
 public class EmailConstants {
 
-	private EmailConstants() {
-		// prevents instantiation
-	}
-
 	public static final String EMAIL_CLASS_NAME = "Email";
 
 	public static final String PROCESS_ID_ATTRIBUTE = "Activity";
@@ -17,5 +13,12 @@ public class EmailConstants {
 	public static final String CONTENT_ATTRIBUTE = "Content";
 	public static final String NOTIFY_WITH_ATTRIBUTE = "NotifyWith";
 	public static final String NO_SUBJECT_PREFIX_ATTRIBUTE = "NoSubjectPrefix";
+	public static final String ACCOUNT_ATTRIBUTE = "Account";
+
+	public static final String ADDRESSES_SEPARATOR = ",";
+
+	private EmailConstants() {
+		// prevents instantiation
+	}
 
 }

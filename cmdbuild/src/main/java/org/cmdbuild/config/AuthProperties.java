@@ -1,8 +1,9 @@
 package org.cmdbuild.config;
 
-import java.util.Arrays;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 import org.cmdbuild.auth.CasAuthenticator;
 import org.cmdbuild.auth.DefaultAuthenticationService;
@@ -10,6 +11,7 @@ import org.cmdbuild.auth.HeaderAuthenticator;
 import org.cmdbuild.auth.LdapAuthenticator;
 import org.cmdbuild.services.Settings;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 
 public class AuthProperties extends DefaultProperties implements HeaderAuthenticator.Configuration,
@@ -36,6 +38,8 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 	private static final String LDAP_AUTHENTICATION_PASSWORD = "ldap.search.auth.password";
 	private static final String AUTH_METHODS = "auth.methods";
 	private static final String AUTO_LOGIN = "autologin";
+
+	private static final Collection<String> NO_USERS = Collections.emptyList();
 
 	public AuthProperties() {
 		super();
@@ -74,27 +78,23 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 	}
 
 	@Override
-	public Set<String> getServiceUsers() {
-		final String commaSeparatedUsers = getProperty(SERVICE_USERS);
-		if (commaSeparatedUsers.isEmpty()) {
-			return Collections.emptySet();
-		} else {
-			final Set<String> serviceUsers = Sets.newHashSet();
-			final String[] simpleServiceUsers = commaSeparatedUsers.split(",");
-			serviceUsers.addAll(Arrays.asList(simpleServiceUsers));
-			serviceUsers.addAll(getPrivilegedServiceUsers());
-			return serviceUsers;
-		}
+	public Collection<String> getServiceUsers() {
+		final Collection<String> elements = Sets.newHashSet();
+		final String commaSeparatedUsers = defaultString(getProperty(SERVICE_USERS));
+		final Collection<String> simpleServiceUsers = commaSeparatedUsers.isEmpty() ? NO_USERS : Splitter.on(",")
+				.splitToList(commaSeparatedUsers);
+		elements.addAll(simpleServiceUsers);
+		elements.addAll(getPrivilegedServiceUsers());
+		return elements;
 	}
 
-	public Set<String> getPrivilegedServiceUsers() {
-		final String commaSeparatedUsers = getProperty(PRIVILEGED_SERVICE_USERS);
-		if (commaSeparatedUsers.isEmpty()) {
-			return Collections.emptySet();
-		} else {
-			final String[] privilegedServiceUsers = commaSeparatedUsers.split(",");
-			return Sets.newHashSet(Arrays.asList(privilegedServiceUsers));
-		}
+	public Collection<String> getPrivilegedServiceUsers() {
+		final Collection<String> elements = Sets.newHashSet();
+		final String commaSeparatedUsers = defaultString(getProperty(PRIVILEGED_SERVICE_USERS));
+		final Collection<String> privilegedServiceUsers = commaSeparatedUsers.isEmpty() ? NO_USERS : Splitter.on(",")
+				.splitToList(commaSeparatedUsers);
+		elements.addAll(privilegedServiceUsers);
+		return elements;
 	}
 
 	public boolean getForceWSPasswordDigest() {
@@ -178,7 +178,7 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 	}
 
 	@Override
-	public Set<String> getActiveAuthenticators() {
+	public Collection<String> getActiveAuthenticators() {
 		final String csMethods = getProperty(AUTH_METHODS);
 		if (csMethods.isEmpty()) {
 			return Collections.emptySet();

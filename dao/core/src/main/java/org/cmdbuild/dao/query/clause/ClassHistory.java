@@ -2,8 +2,8 @@ package org.cmdbuild.dao.query.clause;
 
 import static com.google.common.collect.Iterables.transform;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
@@ -14,7 +14,7 @@ import org.cmdbuild.dao.entrytype.ForwardingClass;
 
 import com.google.common.base.Function;
 
-public class ClassHistory extends ForwardingClass {
+public class ClassHistory extends ForwardingClass implements HistoricEntryType<CMClass> {
 
 	public static CMClass history(final CMClass current) {
 		return of(current);
@@ -33,11 +33,12 @@ public class ClassHistory extends ForwardingClass {
 
 	};
 
+	private static final CMClass UNSUPPORTED = UnsupportedProxyFactory.of(CMClass.class).create();
+
 	private final CMClass current;
 	private final transient String toString;
 
 	private ClassHistory(final CMClass current) {
-		super(UnsupportedProxyFactory.of(CMClass.class).create());
 		this.current = current;
 		this.toString = new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE) //
 				.append("name", current.getIdentifier().getLocalName()) //
@@ -46,10 +47,16 @@ public class ClassHistory extends ForwardingClass {
 	}
 
 	@Override
+	protected CMClass delegate() {
+		return UNSUPPORTED;
+	}
+
+	@Override
 	public void accept(final CMEntryTypeVisitor visitor) {
 		visitor.visit(this);
 	}
 
+	@Override
 	public CMClass getType() {
 		return current;
 	}
@@ -96,7 +103,8 @@ public class ClassHistory extends ForwardingClass {
 
 	@Override
 	public boolean isAncestorOf(final CMClass cmClass) {
-		return current.isAncestorOf(cmClass);
+		final CMClass target = cmClass instanceof ClassHistory ? ClassHistory.class.cast(cmClass).current : cmClass;
+		return current.isAncestorOf(target);
 	}
 
 	@Override

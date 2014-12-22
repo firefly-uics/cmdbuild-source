@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -38,15 +38,16 @@ public class GetRelationHistory extends AbstractGetRelation {
 		} else {
 			relationList = getRelationQuery(source, history(domain)).run();
 		}
-		return createResponse(relationList);
+		return createResponse(sourceClass, relationList);
 	}
 
-	private GetRelationHistoryResponse createResponse(final CMQueryResult relationList) {
+	private GetRelationHistoryResponse createResponse(final CMClass sourceClass, final CMQueryResult relationList) {
 		final GetRelationHistoryResponse out = new GetRelationHistoryResponse();
 		for (final CMQueryRow row : relationList) {
+			final CMCard src = row.getCard(sourceClass);
 			final QueryRelation rel = row.getRelation(DOM_ALIAS);
 			final CMCard dst = row.getCard(DST_ALIAS);
-			out.addRelation(rel, dst);
+			out.addRelation(rel, src, dst);
 		}
 		return out;
 	}

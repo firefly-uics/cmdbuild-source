@@ -1,3 +1,255 @@
+CMDBuild 2.2.2 (released 2014/11/17)
+
+
+NEW FEATURES
+
+ * Read-only attributes in report widget
+
+ * Variables support in email templates
+
+ * Default account for e-mail templates
+
+ * Fill widget grid from CSV file
+
+ * Extended relations information from SOAP web service
+
+ * Grid widget presets from parameter
+
+ * Task Manager - Identifying attribute for references within Wizard Connector
+
+ * Update distribution informations
+
+ * Whole delimiters specifications for e-mail task
+
+ * JavaMail debug information
+
+ * Low visibility of selected features
+
+ * Add splitter bar in Email account and Email template forms
+
+ * Upgrade log4javascript module
+
+ * Task Manager - Logging added for Wizard Connector
+
+ * DB Template prefix in widget filter
+
+ * Task Manager's Synchronous Events - CQL templates
+
+ * Improved performances for card/process history
+
+ * Reach internal resources with URLs
+
+ * Start a process as a result of receiving an e-mail - Resolve referenced card attributes within template
+
+
+FIXES
+
+ * Error on fast activity selection from management grid
+
+ * Google maps does not work
+
+ * Cannot attach files on ManageEmail widget
+
+ * Outgoing and sent e-mails have wrong subject
+
+ * Multilevel lookup no field filter when changing focus
+
+ * Cannot fill parameters when defining a createReport widget on a class
+
+ * Read-only report parameters are not serialized
+
+ * No filter from lookup value on reference field in create card sub windows
+
+ * Cannot reopen CMDBuild's menu
+
+ * Problems using commas to separate instrunctions
+
+ * linkCards doesn't work with maps
+
+ * Search filters with SQL function do not work
+
+ * Classes relation UI fix
+
+ * Cannot upload Geotiff files on Geoserver
+
+ * linkCards doesn't work with maps
+
+ * Attributes metadata are not loaded
+
+ * Filtered references takes far too long to render
+
+ * No filter from lookup value on reference field in create card sub windows
+
+ *  Dashboard chart's description empty
+
+ * Print popup spam on empty class open in IE9
+
+ * Interface blocked when selecting item from widget LinkCard
+
+ * Default Selection in linkCards widget gives wrong output and does not show the preselection
+
+ * Wrong values in the list of the XPDL versions
+
+ * Cannot edit a card from Details and Relations tab
+
+ * Default menu privileges doesn't work correctly when logging with the default group
+
+ * Grid search filters send wrong values of filter configuration to server
+
+ * Create report widget force format with wrong values
+
+ * HTML editors have no link and source edit buttons
+
+ * WidgetEmail: wrong email form fill on compose from template button selection
+
+ * TaskManager, task email - body parsing key/value init/end are switched on task edit
+
+ * LinkCards widget throws error if no className is configured
+
+ * Wrong format for file-not-found dms error
+
+ * Error on fast activity selection from management grid
+
+ * Cannot attach files on ManageEmail widget
+
+ * Email accounts require credentials
+
+ * Task Manager's Connector - Connection to Oracle database fails because no username is sent even if it's correctly set within task pararameters
+
+ * Task Manager's Synchronous Events - Missing card's template resolver within notification e-mails
+
+ * Task Manager's Synchronous Events - Template resolver cannot find card's attributes not sent by client
+
+ * Task Manager's Synchronous Events - Not working when filter is specified on superclass
+
+ * Reference values depending on "Reference combo box limit"
+
+ * Error starting connector tasks without notification email
+
+ * Slow card update from fluent API
+
+ * Popup open and stuck in loading screen on widget button click (widget Workflow)
+
+ * Errors on LinkCards selections
+
+ * Wrong timeout setup in CMDBuild proxy calls
+
+ * Better template resolver errors
+
+ * Email and Task manager bug that leaves enabled modify/delete buttons before deletion of all grid's items
+
+ * Ext.loader improvement for controllers
+
+
+
+
+
+CMDBuild 2.2.1 (released 2014/08/06)
+
+
+NEW FEATURES
+
+ * Task Manager - Template engine for notifications sent from asynchronous events
+
+ * Improved support for hosts and networks type
+
+ * Prevent domain-cardinality violation while editing relations
+
+ * Variables support in email templates
+
+
+FIXES
+
+ * After aborting new card creation click for selection of first grid's row don't takes effect
+
+ * Editing card in relations tab, won't put form fields in editing mode
+
+ * Widget "Create or modify card" no displays data in popup window
+
+ * Search filters with SQL function do not work
+
+ * Update workflow does not work
+
+ * Classes relation UI fix
+
+ * IE8 problems
+
+ * Combo Box init with 0
+
+ * Error applying patches using a non administrator postgres user
+
+ * LookupType add problem on Description
+
+ * Read only multilevel lookup
+
+ * Update workflow does not work
+
+ * Service users should not be able to login using GUI
+
+
+
+
+
+CMDBuild 2.2.0 (released 2014/06/13)
+
+
+NEW FEATURES
+
+ * Starting a selection of workflows from a workflow or a card
+
+ * Enable or disable the modify, add, clone, remove buttons
+
+ * CMDBf relation's history management
+
+ * CMDBf lookups can be setted using description as a value
+
+ * CMDBf optimizations for create, update and delete operations
+
+ * Task Manager
+
+ * Translation of the attributes of the entities defined in administration
+
+ * Definition of navigation trees on domain relations
+
+ * Widget for the selection of cards thorough a navigation tree
+
+ * BIM feature
+
+
+FIXES
+
+ * Cannot advance processes from an external service when, within CMDBuild, the operation is allowed
+
+ * Newly created received e-mails have wrong status
+
+ * Cannot start workflow from SOAP web service specifying lookup's description as argument
+
+ * Card's details report shows relations with disabled classes
+
+ * SQL error when printing card's detail
+
+ * When using a Role with row's privileges, opening a related card leads to an empty page
+
+ * CMDBf initialization throws an Exception at startup when loading lookups
+
+ * Problems handling empty or blank values
+
+ * manageEmail DMS attchment label
+
+ * Visibility of Email class and ActivityEmail domain
+
+ * Bug with date 22/05/1966
+
+ * In the widget ManageMail CC and To can be no correct
+
+ * Errors occurred when sending e-mails using widget are not notified
+
+ * Minor fixes
+
+
+
+
+
 CMDBuild 2.1.8 (released 2014/03/17)
 
 

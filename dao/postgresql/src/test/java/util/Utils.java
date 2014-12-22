@@ -1,6 +1,6 @@
 package util;
 
-import org.apache.commons.lang.SystemUtils;
+import static org.apache.commons.lang3.SystemUtils.LINE_SEPARATOR;
 
 public class Utils {
 
@@ -10,7 +10,7 @@ public class Utils {
 
 	public static String clean(final String sql) {
 		return sql //
-				.replace(SystemUtils.LINE_SEPARATOR, " ") //
+				.replace(LINE_SEPARATOR, " ") //
 				.replaceAll("[ ]+", " ") //
 		;
 	}

@@ -1,7 +1,7 @@
 package org.cmdbuild.system;
 
 import static java.lang.System.getProperty;
-import static org.apache.commons.lang.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class SystemUtils {
 
@@ -38,4 +38,3 @@ public class SystemUtils {
 	}
 
 }
-

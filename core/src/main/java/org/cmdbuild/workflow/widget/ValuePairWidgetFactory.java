@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.cql.compiler.impl.QueryImpl;
 import org.cmdbuild.cql.facade.CQLFacade;
 import org.cmdbuild.dao.entry.CMValueSet;
@@ -14,7 +14,7 @@ import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.exception.CMDBWorkflowException.WorkflowExceptionType;
 import org.cmdbuild.model.widget.Widget;
 import org.cmdbuild.notification.Notifier;
-import org.cmdbuild.services.template.TemplateResolverEngineNames;
+import org.cmdbuild.services.template.engine.EngineNames;
 import org.cmdbuild.services.template.store.TemplateRepository;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.xpdl.SingleActivityWidgetFactory;
@@ -38,8 +38,8 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 	private static final String FILTER_KEY = "Filter";
 	private static final String SINGLE_QUOTES = "'";
 	private static final String DOUBLE_QUOTES = "\"";
-	private static final String CLIENT_PREFIX = TemplateResolverEngineNames.CLIENT + ":";
-	private static final String DB_TEMPLATE_PREFIX = TemplateResolverEngineNames.DB_TEMPLATE + ":";
+	private static final String CLIENT_PREFIX = EngineNames.CLIENT + ":";
+	private static final String DB_TEMPLATE_PREFIX = EngineNames.DB_TEMPLATE + ":";
 
 	private final TemplateRepository templateRespository;
 	private final Notifier notifier;
@@ -110,8 +110,14 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 			// Quoted values are interpreted as strings
 			return value.substring(1, value.length() - 1);
 		} else if (FILTER_KEY.equals(key)) {
-			// Filter (!) interpreted as a string even if not quoted
-			return value;
+			final String _value;
+			if (value.startsWith(DB_TEMPLATE_PREFIX)) {
+				final String templateName = value.substring(DB_TEMPLATE_PREFIX.length());
+				_value = templateRespository.getTemplate(templateName);
+			} else {
+				_value = value;
+			}
+			return _value;
 		} else if (Character.isDigit(value.charAt(0))) {
 			return readInteger(value);
 		} else if (value.startsWith(CLIENT_PREFIX)) {

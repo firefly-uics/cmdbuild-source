@@ -71,7 +71,7 @@
 					padding: '0 0 5 0',
 					items: mainPropertiesItems(me),
 					cls: 'cmborderbottom'
-				}, 
+				},
 					this.dataSourcePanel
 				, {
 					items: outputConfiguretionItems(me)
@@ -92,7 +92,7 @@
 		enableFields: function(onlyMutable) {
 			this._disabled = false;
 			iterateOverFields(this, function(field) {
-				if ((onlyMutable && field.cmImmutable) 
+				if ((onlyMutable && field.cmImmutable)
 						|| !field.isVisible()) {
 					return;
 				}
@@ -211,9 +211,9 @@
 				disabled: true
 			}),
 
-			me.descriptionArea = new Ext.form.field.TextArea({
+			me.descriptionArea = Ext.create('Ext.form.field.TextArea', {
 				fieldLabel: tr.fields.description,
-				name: "description",
+				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				disabled: true
@@ -289,7 +289,7 @@
 				disabled: true,
 				hidden: true
 			}),
-	
+
 			me.stepsField = new Ext.form.field.Number({
 				name: "steps",
 				fieldLabel: tr.fields.steps,
@@ -299,7 +299,7 @@
 				disabled: true,
 				hidden: true
 			}),
-	
+
 			me.fgColorField = new CMDBuild.form.HexColorField( {
 				name: "fgcolor",
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -308,7 +308,7 @@
 				disabled: true,
 				hidden: true
 			}),
-	
+
 			me.bgColorField = new CMDBuild.form.HexColorField( {
 				name: "bgcolor",
 				labelWidth: CMDBuild.LABEL_WIDTH,
@@ -464,7 +464,7 @@
 		}
 
 		me.cascade(function(item) {
-			if (item 
+			if (item
 				&& isAField(item)) {
 
 				fn(item);
@@ -473,7 +473,7 @@
 	}
 
 	function isAField(item) {
-		return ((item instanceof Ext.form.Field) || (item instanceof Ext.ux.form.MultiSelect));
+		return ((item instanceof Ext.form.Field) || (item instanceof Ext.ux.form.MultiSelect) || (item instanceof Ext.form.CMTranslatableText));
 	}
 
 	function addSequenceToTypeSetValue(me) {
@@ -498,7 +498,7 @@
 		}
 
 		me.cascade(function(item) {
-			if (item 
+			if (item
 				&& isAField(item)
 				&& Ext.Array.contains(names, item.name)) {
 

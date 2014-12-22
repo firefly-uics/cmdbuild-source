@@ -1,11 +1,15 @@
-Ext.define("CMDBuild.view.administration.filter.CMGroupFilterPanel", {
-	extend: "CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel",
+(function() {
 
-	cmName:'filterdataview',
+	Ext.define('CMDBuild.view.administration.filter.CMGroupFilterPanel', {
+		extend: 'CMDBuild.view.administration.common.basepanel.CMGridAndFormPanel',
 
-	title: CMDBuild.Translation.management.findfilter.set_filter,
+		cmName:'filterdataview',
 
-	addButtonText: CMDBuild.Translation.addFilter,
-	modifyButtonText: CMDBuild.Translation.modifyFilter,
-	removeButtonText: CMDBuild.Translation.removeFilter
-});
+		title: CMDBuild.Translation.management.findfilter.set_filter,
+
+		addButtonText: CMDBuild.Translation.addFilter,
+		modifyButtonText: CMDBuild.Translation.modifyFilter,
+		removeButtonText: CMDBuild.Translation.removeFilter
+	});
+
+})();

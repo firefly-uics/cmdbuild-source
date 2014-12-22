@@ -1,6 +1,6 @@
 package unit.workflow;
 
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -53,7 +53,7 @@ public class ManageEmailWidgetFactoryTest {
 				mock(CMValueSet.class));
 
 		assertThat(w.getEmailTemplates().size(), equalTo(1));
-		final EmailTemplate t = w.getEmailTemplates().get(0);
+		final ManageEmail.EmailTemplate t = w.getEmailTemplates().get(0);
 		assertThat(t.getToAddresses(), equalTo("to@a.a"));
 		assertThat(t.getCcAddresses(), equalTo("cc@a.a"));
 		assertThat(t.getSubject(), equalTo("the subject"));
@@ -80,7 +80,7 @@ public class ManageEmailWidgetFactoryTest {
 
 		assertThat(w.getEmailTemplates().size(), equalTo(4));
 
-		EmailTemplate t = w.getEmailTemplates().get(0);
+		ManageEmail.EmailTemplate t = w.getEmailTemplates().get(0);
 		assertThat(t.getToAddresses(), equalTo("to@a.a"));
 		assertThat(t.getCcAddresses(), equalTo("cc@a.a"));
 		assertThat(t.getSubject(), equalTo("the subject"));
@@ -121,15 +121,13 @@ public class ManageEmailWidgetFactoryTest {
 
 	@Test
 	public void emailTemplateApplied() {
-		when(emailTemplateLogic.read("foo")).thenReturn(new org.cmdbuild.model.email.EmailTemplate() {
-			{
-				setName("foo");
-				setTo("to@example.com");
-				setCC("cc@example.com");
-				setSubject("the subject");
-				setBody("the content");
-			}
-		});
+		final EmailTemplateLogic.Template template = mock(EmailTemplateLogic.Template.class);
+		when(template.getTo()).thenReturn("to@example.com");
+		when(template.getCc()).thenReturn("cc@example.com");
+		when(template.getSubject()).thenReturn("the subject");
+		when(template.getBody()).thenReturn("the body");
+		when(emailTemplateLogic.read("foo")) //
+				.thenReturn(template);
 
 		final ManageEmail w = (ManageEmail) factory.createWidget(EMPTY + //
 				"Template='foo'\n", //
@@ -138,35 +136,29 @@ public class ManageEmailWidgetFactoryTest {
 		verify(emailTemplateLogic).read("foo");
 
 		assertThat(w.getEmailTemplates().size(), equalTo(1));
-		final EmailTemplate t = w.getEmailTemplates().get(0);
+		final ManageEmail.EmailTemplate t = w.getEmailTemplates().get(0);
 		assertThat(t.getToAddresses(), equalTo("to@example.com"));
 		assertThat(t.getCcAddresses(), equalTo("cc@example.com"));
 		assertThat(t.getSubject(), equalTo("the subject"));
-		assertThat(t.getContent(), equalTo("the content"));
+		assertThat(t.getContent(), equalTo("the body"));
 	}
 
 	@Test
 	public void multipleEmailTemplatesApplied() {
+		final EmailTemplateLogic.Template foo = mock(EmailTemplateLogic.Template.class, "foo");
+		when(foo.getTo()).thenReturn("foo_to@example.com");
+		when(foo.getCc()).thenReturn("foo_cc@example.com");
+		when(foo.getSubject()).thenReturn("subject of foo");
+		when(foo.getBody()).thenReturn("content of foo");
+		final EmailTemplateLogic.Template bar = mock(EmailTemplateLogic.Template.class, "bar");
+		when(bar.getTo()).thenReturn("bar_to@example.com");
+		when(bar.getCc()).thenReturn("bar_cc@example.com");
+		when(bar.getSubject()).thenReturn("subject of bar");
+		when(bar.getBody()).thenReturn("content of bar");
 		when(emailTemplateLogic.read("foo")) //
-				.thenReturn(new org.cmdbuild.model.email.EmailTemplate() {
-					{
-						setName("foo");
-						setTo("foo_to@example.com");
-						setCC("foo_cc@example.com");
-						setSubject("subject of foo");
-						setBody("content of foo");
-					}
-				});
+				.thenReturn(foo);
 		when(emailTemplateLogic.read("bar")) //
-				.thenReturn(new org.cmdbuild.model.email.EmailTemplate() {
-					{
-						setName("bar");
-						setTo("bar_to@example.com");
-						setCC("bar_cc@example.com");
-						setSubject("subject of bar");
-						setBody("content of bar");
-					}
-				});
+				.thenReturn(bar);
 
 		final ManageEmail w = (ManageEmail) factory.createWidget(EMPTY + //
 				"Template1='foo'\n" + //
@@ -178,21 +170,21 @@ public class ManageEmailWidgetFactoryTest {
 		assertThat(w.getEmailTemplates().size(), equalTo(2));
 
 		// needs to be sorted since we don't know how they are internally sorted
-		final List<EmailTemplate> emailTemplates = w.getEmailTemplates();
-		Collections.sort(emailTemplates, new Comparator<EmailTemplate>() {
+		final List<ManageEmail.EmailTemplate> emailTemplates = w.getEmailTemplates();
+		Collections.sort(emailTemplates, new Comparator<ManageEmail.EmailTemplate>() {
 			@Override
-			public int compare(final EmailTemplate o1, final EmailTemplate o2) {
+			public int compare(final ManageEmail.EmailTemplate o1, final ManageEmail.EmailTemplate o2) {
 				return o1.getToAddresses().compareTo(o2.getToAddresses());
 			};
 		});
 
-		final EmailTemplate t0 = w.getEmailTemplates().get(0);
+		final ManageEmail.EmailTemplate t0 = w.getEmailTemplates().get(0);
 		assertThat(t0.getToAddresses(), equalTo("bar_to@example.com"));
 		assertThat(t0.getCcAddresses(), equalTo("bar_cc@example.com"));
 		assertThat(t0.getSubject(), equalTo("subject of bar"));
 		assertThat(t0.getContent(), equalTo("content of bar"));
 
-		final EmailTemplate t1 = w.getEmailTemplates().get(1);
+		final ManageEmail.EmailTemplate t1 = w.getEmailTemplates().get(1);
 		assertThat(t1.getToAddresses(), equalTo("foo_to@example.com"));
 		assertThat(t1.getCcAddresses(), equalTo("foo_cc@example.com"));
 		assertThat(t1.getSubject(), equalTo("subject of foo"));
@@ -201,15 +193,13 @@ public class ManageEmailWidgetFactoryTest {
 
 	@Test
 	public void emailTemplateCanBeOverrideInSomeParts() {
-		when(emailTemplateLogic.read("foo")).thenReturn(new org.cmdbuild.model.email.EmailTemplate() {
-			{
-				setName("foo");
-				setTo("to@example.com");
-				setCC("cc@example.com");
-				setSubject("the subject");
-				setBody("the content");
-			}
-		});
+		final EmailTemplateLogic.Template template = mock(EmailTemplateLogic.Template.class);
+		when(template.getTo()).thenReturn("to@example.com");
+		when(template.getCc()).thenReturn("cc@example.com");
+		when(template.getSubject()).thenReturn("the subject");
+		when(template.getBody()).thenReturn("the content");
+		when(emailTemplateLogic.read("foo")) //
+				.thenReturn(template);
 
 		final ManageEmail w = (ManageEmail) factory.createWidget(EMPTY + //
 				"Template='foo'\n" + //
@@ -220,7 +210,7 @@ public class ManageEmailWidgetFactoryTest {
 		verify(emailTemplateLogic).read("foo");
 
 		assertThat(w.getEmailTemplates().size(), equalTo(1));
-		final EmailTemplate t = w.getEmailTemplates().get(0);
+		final ManageEmail.EmailTemplate t = w.getEmailTemplates().get(0);
 		assertThat(t.getToAddresses(), equalTo("lol@example.com"));
 		assertThat(t.getCcAddresses(), equalTo("cc@example.com"));
 		assertThat(t.getSubject(), equalTo("rotfl"));

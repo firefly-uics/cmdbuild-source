@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.auth;
 
 import static com.google.common.collect.Iterables.getFirst;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
@@ -161,7 +162,7 @@ public class DefaultAuthenticationLogic implements AuthenticationLogic {
 
 		final String groupName = loginDTO.getLoginGroupName();
 		PrivilegeContext privilegeCtx = null;
-		if (groupName == null) {
+		if (isBlank(groupName)) {
 			final CMGroup guessedGroup = guessPreferredGroup(authUser);
 			if (guessedGroup == null) {
 				logger.error("The user does not have a default group and belongs to multiple groups");

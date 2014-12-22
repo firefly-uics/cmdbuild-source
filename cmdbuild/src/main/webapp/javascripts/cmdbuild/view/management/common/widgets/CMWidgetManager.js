@@ -95,7 +95,7 @@
 				var widgetUI = null;
 				if (me.tabbedWidgetDelegate) {
 					widgetUI = me.tabbedWidgetDelegate.getAttachmentsPanel() || null;
-					
+
 					if (widgetUI != null) {
 						widgetUI.configure({
 							widget: widget,
@@ -139,13 +139,13 @@
 			return w;
 		};
 
-		// linkCards
-		me.builders[pkg.CMLinkCards.WIDGET_NAME] = function(widget, card) {
-			var w = new pkg.CMLinkCards({
-				widget: widget
+		// LinkCards
+		me.builders[CMDBuild.view.management.common.widgets.linkCards.LinkCards.WIDGET_NAME] = function(widget, card) {
+			var w = Ext.create('CMDBuild.view.management.common.widgets.linkCards.LinkCards', {
+				widgetConf: widget
 			});
-
 			me.widgetsContainer.addWidgt(w);
+
 			return w;
 		};
 
@@ -177,6 +177,21 @@
 			return w;
 		};
 
+		// navigationTree
+		me.builders[pkg.CMNavigationTree.WIDGET_NAME] = function(widget, card) {
+			var w = new pkg.CMNavigationTree();
+			me.widgetsContainer.addWidgt(w);
+			return w;
+		};
+
+		// Grid
+		me.builders[CMDBuild.view.management.common.widgets.grid.CMGrid.WIDGET_NAME] = function(widget, card) {
+			var w = Ext.create('CMDBuild.view.management.common.widgets.grid.CMGrid');
+			me.widgetsContainer.addWidgt(w);
+
+			return w;
+		};
+
 		// ping
 		me.builders[pkg.CMPing.WIDGET_NAME] = function(widget, card) {
 			var w = new pkg.CMPing();
@@ -198,10 +213,12 @@
 			return w;
 		};
 	}
+
 	Ext.define("CMDBuild.view.management.common.widgets.CMWidgetManagerPopup", {
 		extend: "CMDBuild.view.management.common.widgets.CMWidgetManager",
 			buildWidgetsContainer: function() {
 				return new CMDBuild.view.management.common.widgets.CMWidgetsWindowPopup();
 			}
 	});
+
 })();

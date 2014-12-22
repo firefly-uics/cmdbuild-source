@@ -12,8 +12,12 @@ public class CachedDmsService extends ForwardingDmsService implements LoggingSup
 	private AutocompletionRules cachedAutocompletionRules;
 
 	public CachedDmsService(final DmsService dmsService) {
-		super(dmsService);
 		this.dmsService = dmsService;
+	}
+
+	@Override
+	protected DmsService delegate() {
+		return dmsService;
 	}
 
 	@Override

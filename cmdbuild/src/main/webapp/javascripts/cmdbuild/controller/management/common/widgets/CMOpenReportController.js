@@ -1,116 +1,170 @@
 (function() {
-	Ext.define("CMDBuild.controller.management.common.widgets.CMOpenReportControllerWidgetReader",{
-		getType: function(w) {return "custom";},
-		getCode: function(w) {return w.reportCode;},
-		getPreset: function(w) {return w.preset;},
-		getForceFormat: function(w) {return w.forceFormat;}
-	});
 
-	Ext.define("CMDBuild.controller.management.common.widgets.CMOpenReportController", {
+	Ext.define('CMDBuild.controller.management.common.widgets.CMOpenReportController', {
+		extend:'CMDBuild.controller.management.common.widgets.CMWidgetController',
+
+		requires: ['CMDBuild.core.proxy.widgets.OpenReport'],
+
 		mixins: {
-			observable: "Ext.util.Observable",
-			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
+			observable: 'Ext.util.Observable'
 		},
 
 		statics: {
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.CMOpenReport.WIDGET_NAME
 		},
 
-		constructor: function(view, ownerController, widgetDef, clientForm, card) {
+		/**
+		 * @property {CMDBuild.Management.TemplateResolver}
+		 */
+		templateResolver: undefined,
 
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.CMOpenReport}
+		 */
+		view: undefined,
+
+		/**
+		 * @property {Object}
+		 */
+		widgetConf: undefined,
+
+		/**
+		 * @param {CMDBuild.view.management.common.widgets.CMOpenReport} view
+		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
+		 * @param {Object} widgetConf
+		 * @param {Ext.form.Basic} clientForm
+		 * @param {CMDBuild.model.CMActivityInstance} card
+		 */
+		constructor: function(view, ownerController, widgetConf, clientForm, card) {
 			this.mixins.observable.constructor.call(this);
-			this.mixins.widgetcontroller.constructor.apply(this, arguments);
 
-			this.widgetReader = new CMDBuild.controller.management.common.widgets.CMOpenReportControllerWidgetReader();
-			this.presets = this.widgetReader.getPreset(this.widgetConf);
+			this.callParent(arguments);
 
-			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
+			this.widgetPreset = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.PRESET];
+
+			// Handlers exchange
+			this.view.delegate = this;
 		},
 
-		beforeActiveView: function() {
-			var me = this,
-				wr = this.widgetReader;
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 */
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				case 'onSaveButtonClick':
+					return this.onSaveButtonClick();
 
-			if (!me.widgetReader) {
-				return;
+				default: {
+					if (!Ext.isEmpty(this.parentDelegate))
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
+			}
+		},
+
+		/**
+		 * @override
+		 */
+		beforeActiveView: function() {
+			var me = this;
+
+			if (!Ext.isEmpty(this.widgetConf)) {
+				if (me.configured && me.templateResolver) {
+					this.resolveTemplate();
+				} else {
+					me.view.setLoading(true);
+
+					CMDBuild.core.proxy.widgets.OpenReport.getReportParameters({
+						scope: this,
+						params: {
+							type: 'custom',
+							code: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REPORT_CODE]
+						},
+						success: function(result, options, decodedResult) {
+							this.attributes = decodedResult.filled ? [] : decodedResult.attribute; // filled == with no parameters
+							this.view.configureForm(this.attributes, this.widgetConf);
+
+							this.templateResolver = new CMDBuild.Management.TemplateResolver({
+								clientForm: me.clientForm,
+								xaVars: me.widgetPreset,
+								serverVars: this.getTemplateResolverServerVars()
+							});
+
+							this.resolveTemplate();
+
+							this.view.setLoading(false);
+							this.configured = true;
+						}
+					});
+				}
+			}
+		},
+
+		/**
+		 * Build server call to configure and create reports
+		 */
+		onSaveButtonClick: function() {
+			var form = this.view.formPanel.getForm();
+			var formFields = form.getFields().items;
+			var params = {};
+
+			// Build params with fields values form server call
+			for (var i in formFields) {
+				var field = formFields[i];
+
+				if (typeof field.getName == 'function' && typeof field.getValue == 'function') {
+					var fieldValue = field.getValue();
+
+					// Date format check
+					if (fieldValue instanceof Date)
+						fieldValue = Ext.Date.format(fieldValue, 'd/m/Y');
+
+					params[field.getName()] = fieldValue;
+				}
 			}
 
-			if (me.configured && me.templateResolver) {
-				resolveTemplate(me);
-			} else {
-				me.view.setLoading(true);
+			if (form.isValid()) {
+				this.view.setLoading(true);
 
-				Ext.Ajax.request({
-					url : 'services/json/management/modreport/createreportfactorybytypecode',
-					params : {
-						type: wr.getType(me.widgetConf),
-						code: wr.getCode(me.widgetConf)
+				CMDBuild.core.proxy.widgets.OpenReport.generateReport({
+					params: params,
+					scope: this,
+					success: function(form, action) {
+						var popup = window.open(
+							'services/json/management/modreport/printreportfactory?donotdelete=true',
+							'Report',
+							'height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable'
+						);
+
+						if (!popup)
+							CMDBuild.Msg.warn(
+								CMDBuild.Translation.warnings.warning_message,
+								CMDBuild.Translation.warnings.popup_block
+							);
+
+						this.view.setLoading(false);
 					},
-					success : function(response) {
-						var ret = Ext.JSON.decode(response.responseText);
-	
-						me.attributes = ret.filled ? [] : ret.attribute; // filled == with no parameters
-						me.view.configureForm(me.attributes);
-						me.templateResolver = new CMDBuild.Management.TemplateResolver({
-							clientForm: me.clientForm,
-							xaVars: me.presets,
-							serverVars: this.getTemplateResolverServerVars()
-						});
-	
-						resolveTemplate(me);
-						me.view.setLoading(false);
-						me.configured = true;
-					},
-					scope: me
+					failure: function() {
+						this.view.setLoading(false);
+					}
 				});
 			}
 		},
 
-		destroy: function() {
-			this.mon(this.view, this.view.CMEVENTS.saveButtonClick, onSaveCardClick, this);
-		}
-	});
+		resolveTemplate: function() {
+			var me = this;
 
-	function resolveTemplate(me) {
-		var wr = me.widgetReader;
-
-		me.templateResolver.resolveTemplates({
-			attributes: Ext.Object.getKeys(me.presets),
-			callback: function(o) {
-				me.view.fillFormValues(o);
-				me.view.forceExtension(wr.getForceFormat(me.widgetConf));
-			}
-		});
-	}
-
-	function onSaveCardClick() {
-		var form = this.view.formPanel.getForm();
-		
-		var formatName = this.view.formatCombo.getName(),
-			formatValue = this.view.formatCombo.getValue(),
-			params = {};
-
-		params[formatName] = formatValue;
-
-		if (form.isValid()) {
-			CMDBuild.LoadMask.get().show();
-
-			form.submit({
-				method : 'POST',
-				url : 'services/json/management/modreport/updatereportfactoryparams',
-				params : params,
-				scope: this,
-				success : function(form, action) {
-					var popup = window.open("services/json/management/modreport/printreportfactory?donotdelete=true", "Report", "height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable");
-					if (!popup) {
-						CMDBuild.Msg.warn(CMDBuild.Translation.warnings.warning_message,CMDBuild.Translation.warnings.popup_block);
-					}
-					CMDBuild.LoadMask.get().hide();
-				},
-				failure: function() {
-					CMDBuild.LoadMask.get().hide();
+			this.templateResolver.resolveTemplates({
+				attributes: Ext.Object.getKeys(me.widgetPreset),
+				callback: function(out, ctx) {
+					me.view.fillFormValues(out);
+					me.view.forceExtension(me.widgetConf[CMDBuild.core.proxy.CMProxyConstants.FORCE_FORMAT]);
 				}
 			});
 		}
-	}
+	});
+
 })();

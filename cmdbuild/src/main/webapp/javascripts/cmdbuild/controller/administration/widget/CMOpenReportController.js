@@ -1,25 +1,47 @@
 (function() {
-	Ext.define("CMDBuild.controller.administration.widget.CMOpenReportController", {
 
-		extend: "CMDBuild.controller.administration.widget.CMBaseWidgetDefinitionFormController",
+//	Ext.require('CMDBuild.model.widget.CMModelOpenReport');
+
+	Ext.define('CMDBuild.controller.administration.widget.CMOpenReportController', {
+		extend: 'CMDBuild.controller.administration.widget.CMBaseWidgetDefinitionFormController',
+
+		requires: ['CMDBuild.model.widget.CMModelOpenReport', 'CMDBuild.core.proxy.widgets.OpenReport'],
 
 		statics: {
 			WIDGET_NAME: CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm.WIDGET_NAME
 		},
 
-		constructor: function() {
+		/**
+		 * @property {CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm}
+		 */
+		view: undefined,
+
+		/**
+		 * @param {Object} configuration
+		 * @param {Int} configuration.classId
+		 * @param {CMDBuild.view.administration.widget.form.CMOpenReportDefinitionForm} configuration.view
+		 */
+		constructor: function(configuration) {
 			this.callParent(arguments);
 
-			this.mon(this.view, "cm-selected-report", onReportSelected, this);
+			// Handlers exchange
+			this.view.delegate = this;
 
-			// to enable/disable the combo-box with the related check 
-			this.view.forceFormatCheck.setValue = Ext.Function.createSequence(this.view.forceFormatCheck.setValue,
-				function(v) {
+			this.mon(this.view, 'cm-selected-report', this.onReportSelected, this);
+
+			// To enable/disable the combo-box with the related check
+			this.view.forceFormatCheck.setValue = Ext.Function.createSequence(
+				this.view.forceFormatCheck.setValue,
+				function(value) {
 					if (!this.forceFormatCheck.disabled) {
-						this.forceFormatOptions.setDisabled(!v);
-						if (v && typeof this.forceFormatOptions.getValue() != "string") {
-							var f = this.forceFormatOptions;
-							f.setValue(f.store.first().get(f.valueField));
+						this.forceFormatOptions.setDisabled(!value);
+
+						if (value && typeof this.forceFormatOptions.getValue() != 'string') {
+							this.forceFormatOptions.setValue(
+								this.forceFormatOptions.store.first().get(this.forceFormatOptions.valueField)
+							);
+						} else {
+							this.forceFormatOptions.setValue();
 						}
 					}
 				},
@@ -27,62 +49,77 @@
 			);
 		},
 
-		// override
+		/**
+		 * @override
+		 */
 		setDefaultValues: function() {
 			this.callParent(arguments);
 			this.view.forceFormatCheck.setValue(true);
-		}
+		},
 
-	});
+		/**
+		 * Calls fillPresetWithData to fill presetGrid store with empty fields and then recall for fill with real data
+		 *
+		 * @param {Object} selectedReport
+		 * @param {Object} presets
+		 * @param {Object} readOnlyAttributes
+		 */
+		onReportSelected: function(selectedReport, presets, readOnlyAttributes) {
+			var reportCode = this.getReportCode(selectedReport);
 
-	function onReportSelected(selectedReport) {
-		var reportCode = getReportCode(selectedReport);
+			// Reset presetGrid store
+			this.view.presetGrid.getStore().removeAll();
 
-		Ext.Ajax.request({
-			url: 'services/json/management/modreport/createreportfactory',
-			params: {
-				id: reportCode,
-				type: "CUSTOM",
-				extension: "pdf"
-			},
-			success: function(response) {
-				var ret = Ext.JSON.decode(response.responseText),
-					hasAttributeToSet = !ret.filled,
-					data = [];
+			CMDBuild.core.proxy.widgets.OpenReport.getReportAttributes({
+				scope: this,
+				params: {
+					id: reportCode,
+					type: 'CUSTOM',
+					extension: 'pdf'
+				},
+				success: function(result, options, decodedResult) {
+					var data = [];
 
-				if (hasAttributeToSet) {
-					data = cleanServerAttributes(ret.attribute);
+					if (!decodedResult.filled)
+						data = this.cleanServerAttributes(decodedResult.attribute);
+
+					this.view.fillPresetWithData(data);
+
+					if (!Ext.Object.isEmpty(presets))
+						this.view.fillPresetWithData(presets, readOnlyAttributes);
 				}
+			});
+		},
 
-				this.view.fillPresetWithData(data);
-			},
-			scope: this
-		});
-	}
+		/**
+		 * @param {Object} selectedReport
+		 */
+		getReportCode: function(selectedReport) {
+			var reportCode = selectedReport;
 
-	function getReportCode(selectedReport) {
-		var reportCode = selectedReport;
-		if (Ext.isArray(selectedReport)) {
-			reportCode = selectedReport[0];
+			if (Ext.isArray(selectedReport))
+				reportCode = selectedReport[0];
+
+			if (reportCode.self && reportCode.self.$className == 'CMDBuild.model.widget.CMModelOpenReport.reportCombo')
+				reportCode = reportCode.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+
+			return reportCode;
+		},
+
+		/**
+		 * @param {Array} attributes
+		 */
+		cleanServerAttributes: function(attributes) {
+			var out = {};
+
+			for (var i = 0; i < attributes.length; ++i) {
+				var attr = attributes[i];
+
+				out[attr.name] = '';
+			}
+
+			return out;
 		}
-
-		if (reportCode.self && reportCode.self.$className == "CMDBuild.model.CMReportAsComboItem") {
-			reportCode = reportCode.get(CMDBuild.model.CMReportAsComboItem._FIELDS.id);
-		}
-
-		return reportCode;
-	}
-
-	function cleanServerAttributes(attributes) {
-		var out = {};
-
-		for (var i=0, l=attributes.length; i<l; ++i) {
-			var attr = attributes[i];
-
-			out[attr.name] = "";
-		}
-
-		return out;
-	}
+	});
 
 })();

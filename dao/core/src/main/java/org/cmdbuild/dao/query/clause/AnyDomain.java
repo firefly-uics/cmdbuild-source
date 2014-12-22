@@ -18,8 +18,14 @@ public class AnyDomain extends ForwardingDomain {
 		return ANY_DOMAIN;
 	}
 
+	private static final CMDomain UNSUPPORTED = UnsupportedProxyFactory.of(CMDomain.class).create();
+
 	private AnyDomain() {
-		super(UnsupportedProxyFactory.of(CMDomain.class).create());
+	}
+
+	@Override
+	protected CMDomain delegate() {
+		return UNSUPPORTED;
 	}
 
 	@Override

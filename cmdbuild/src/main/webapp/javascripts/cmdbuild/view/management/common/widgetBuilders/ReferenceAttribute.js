@@ -12,7 +12,7 @@
  * @class CMDBuild.WidgetBuilders.ReferenceAttribute
  * @extends CMDBuild.WidgetBuilders.ComboAttribute
  */
-Ext.ns("CMDBuild.WidgetBuilders"); 
+Ext.ns("CMDBuild.WidgetBuilders");
 CMDBuild.WidgetBuilders.ReferenceAttribute = function() {};
 CMDBuild.extend(CMDBuild.WidgetBuilders.ReferenceAttribute, CMDBuild.WidgetBuilders.ComboAttribute);
 
@@ -31,7 +31,7 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.getFieldSetForFilter = func
 
 	var field = this.buildField(attributeCopy, hideLabel = true, skipSubAttributes = true);
 	manageCalculatedValues(field, attribute);
-	var conditionCombo = this.getQueryCombo(attributeCopy); 
+	var conditionCombo = this.getQueryCombo(attributeCopy);
 
 	return this.buildFieldsetForFilter(field, conditionCombo, attributeCopy);
 };
@@ -74,7 +74,7 @@ function manageCalculatedValues(field, attribute) {
 		// throws a not found exception
 		var originalEnsureToHaveTheValueInStore = field.ensureToHaveTheValueInStore;
 		field.ensureToHaveTheValueInStore = function(value) {
-			if (value == MY_USER_ID 
+			if (value == MY_USER_ID
 				|| value == MY_USER_ID) {
 
 				return;
@@ -112,7 +112,7 @@ function manageCalculatedValues(field, attribute) {
 		}, store, {single: true});
 
 
-		
+
 	}
 }
 
@@ -149,6 +149,8 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildAttributeField = funct
 };
 
 CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = function(attribute) {
+	var notReadOnlyField = this.buildField(attribute, false, false); // Real attribute field used to translate attribute's value
+
 	var field = new Ext.form.DisplayField ({
 		labelAlign: "right",
 		labelWidth: CMDBuild.LABEL_WIDTH,
@@ -159,7 +161,16 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 		disabled: false
 	});
 
+	field.notReadOnlyField = notReadOnlyField; // Reference to real field
+
 	var subFields = getSubFields(attribute, display = true);
+
+	// Overrides setValue function to translate attribute value to description
+	var originalSetValue = field.setValue;
+	field.setValue = function(value) {
+		notReadOnlyField.setValue(value);
+		originalSetValue.call(field, notReadOnlyField.getRawValue());
+	};
 
 	if (subFields.length > 0) {
 		var fieldContainer = {

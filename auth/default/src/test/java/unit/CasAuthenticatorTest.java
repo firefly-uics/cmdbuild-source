@@ -9,7 +9,7 @@ import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.auth.CasAuthenticator;
 import org.cmdbuild.auth.CasAuthenticator.CasService;
 import org.cmdbuild.auth.CasAuthenticator.Configuration;
@@ -25,7 +25,7 @@ public class CasAuthenticatorTest {
 	private final ClientRequest request = mock(ClientRequest.class);
 	private final CasService casService = mock(CasService.class);
 
-	@Test(expected = java.lang.IllegalArgumentException.class)
+	@Test(expected = NullPointerException.class)
 	public void casConfigurationCannotBeNull() {
 		@SuppressWarnings("unused")
 		final CasAuthenticator authenticator = new CasAuthenticator((Configuration) null);
