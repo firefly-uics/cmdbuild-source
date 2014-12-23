@@ -44,7 +44,7 @@ public interface ProcessInstanceAttachments {
 	);
 
 	@GET
-	@Path("{" + ATTACHMENT_ID + "}/file/")
+	@Path("{" + ATTACHMENT_ID + "}/{file: [^/]+}")
 	@Produces(APPLICATION_OCTET_STREAM)
 	DataHandler download( //
 			@PathParam(PROCESS_ID) String processId, //
