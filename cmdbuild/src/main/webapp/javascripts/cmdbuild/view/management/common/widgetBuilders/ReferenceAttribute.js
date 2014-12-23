@@ -149,8 +149,6 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildAttributeField = funct
 };
 
 CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = function(attribute) {
-	var notReadOnlyField = this.buildField(attribute, false, false); // Real attribute field used to translate attribute's value
-
 	var field = new Ext.form.DisplayField ({
 		labelAlign: "right",
 		labelWidth: CMDBuild.LABEL_WIDTH,
@@ -161,15 +159,45 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 		disabled: false
 	});
 
-	field.notReadOnlyField = notReadOnlyField; // Reference to real field
-
 	var subFields = getSubFields(attribute, display = true);
 
 	// Overrides setValue function to translate attribute value to description
 	var originalSetValue = field.setValue;
 	field.setValue = function(value) {
-		notReadOnlyField.setValue(value);
-		originalSetValue.call(field, notReadOnlyField.getRawValue());
+		if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION))
+			value = value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+
+		if (value.hasOwnProperty('Description'))
+			value = value['Description'];
+
+		if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.ID))
+			value = value[CMDBuild.core.proxy.CMProxyConstants.ID];
+
+		if (value.hasOwnProperty('Id'))
+			value = value['Id'];
+
+		if (typeof value == 'string' && !isNaN(parseInt(value)))
+			value = parseInt(value);
+
+		if (!Ext.isEmpty(value)) {
+			if (typeof value == 'number') {
+				var params = {};
+				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = value;
+				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(attribute['idClass']);
+
+				CMDBuild.ServiceProxy.card.get({
+					scope: this,
+					params: params,
+					success: function(response, options, decodedResponse) {
+						decodedResponse = decodedResponse[CMDBuild.core.proxy.CMProxyConstants.CARD];
+
+						originalSetValue.call(field, decodedResponse['Description']);
+					}
+				});
+			} else {
+				originalSetValue.call(field, value);
+			}
+		}
 	};
 
 	if (subFields.length > 0) {
