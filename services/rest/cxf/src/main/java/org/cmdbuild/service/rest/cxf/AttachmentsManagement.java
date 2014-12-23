@@ -24,7 +24,7 @@ import org.cmdbuild.service.rest.model.Attachment;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 
-abstract class AttachmentsManagement {
+public class AttachmentsManagement implements AttachmentsHelper {
 
 	private static final Function<StoredDocument, Attachment> TO_ATTACHMENT_WITH_NO_METADATA = ToAttachment
 			.newInstance() //
@@ -44,8 +44,16 @@ abstract class AttachmentsManagement {
 		this.userStore = userStore;
 	}
 
-	protected void store(final String classId, final Long cardId, final String attachmentId,
+	@Override
+	public String create(final String classId, final Long cardId, final String attachmentName,
 			final Attachment attachment, final DataHandler dataHandler) throws Exception {
+		update(classId, cardId, attachmentName, attachment, dataHandler);
+		return dataHandler.getName();
+	}
+
+	@Override
+	public void update(final String classId, final Long cardId, final String attachmentId, final Attachment attachment,
+			final DataHandler dataHandler) throws Exception {
 		if (dataHandler != null) {
 			final Attachment _attachment = defaultIfNull(attachment, NULL_ATTACHMENT);
 			final String author = userStore.getUser().getAuthenticatedUser().getUsername();
@@ -121,14 +129,16 @@ abstract class AttachmentsManagement {
 		};
 	}
 
-	protected Iterable<Attachment> search(final String classId, final Long cardId) {
+	@Override
+	public Iterable<Attachment> search(final String classId, final Long cardId) {
 		final Iterable<StoredDocument> documents = dmsLogic.search(classId, cardId);
 		final Iterable<Attachment> elements = from(documents) //
 				.transform(TO_ATTACHMENT_WITH_NO_METADATA);
 		return elements;
 	}
 
-	protected Optional<Attachment> search(final String classId, final Long cardId, final String attachmentId) {
+	@Override
+	public Optional<Attachment> search(final String classId, final Long cardId, final String attachmentId) {
 		final Optional<StoredDocument> document = dmsLogic.search(classId, cardId, attachmentId);
 		if (!document.isPresent()) {
 			return Optional.absent();
@@ -137,11 +147,13 @@ abstract class AttachmentsManagement {
 		return Optional.of(element);
 	}
 
-	protected DataHandler download(final String classId, final Long cardId, final String attachmentId) {
+	@Override
+	public DataHandler download(final String classId, final Long cardId, final String attachmentId) {
 		return dmsLogic.download(classId, cardId, attachmentId);
 	}
 
-	protected void delete(final String classId, final Long cardId, final String attachmentId) {
+	@Override
+	public void delete(final String classId, final Long cardId, final String attachmentId) {
 		dmsLogic.delete(classId, cardId, attachmentId);
 	}
 

@@ -3,20 +3,17 @@ package org.cmdbuild.service.rest.cxf;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.io.BaseEncoding.base64Url;
 import static org.cmdbuild.service.rest.model.Models.newAttachment;
-import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
-import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 
 import javax.activation.DataHandler;
 
 import org.cmdbuild.service.rest.model.Attachment;
-import org.cmdbuild.service.rest.model.ResponseMultiple;
-import org.cmdbuild.service.rest.model.ResponseSingle;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.ForwardingObject;
 import com.google.common.io.BaseEncoding;
 
-public class TranslatingAllInOneCardAttachments extends ForwardingObject implements AllInOneCardAttachments {
+public class TranslatingAttachmentsHelper extends ForwardingObject implements AttachmentsHelper {
 
 	private final Function<Attachment, Attachment> attachmentWithEncodedId = new Function<Attachment, Attachment>() {
 
@@ -29,16 +26,16 @@ public class TranslatingAllInOneCardAttachments extends ForwardingObject impleme
 
 	};
 
-	private final AllInOneCardAttachments delegate;
+	private final AttachmentsHelper delegate;
 	private final BaseEncoding encoding;
 
-	public TranslatingAllInOneCardAttachments(final AllInOneCardAttachments delegate) {
+	public TranslatingAttachmentsHelper(final AttachmentsHelper delegate) {
 		this.delegate = delegate;
 		this.encoding = base64Url().omitPadding();
 	}
 
 	@Override
-	protected AllInOneCardAttachments delegate() {
+	protected AttachmentsHelper delegate() {
 		return delegate;
 	}
 
@@ -51,36 +48,27 @@ public class TranslatingAllInOneCardAttachments extends ForwardingObject impleme
 	}
 
 	@Override
-	public ResponseSingle<String> create(final String classId, final Long cardId, final Attachment attachment,
-			final DataHandler dataHandler) {
-		final ResponseSingle<String> response = delegate().create(classId, cardId, attachment, dataHandler);
-		return newResponseSingle(String.class) //
-				.withElement(encode(response.getElement())) //
-				.build();
+	public String create(final String classId, final Long cardId, final String attachmentName,
+			final Attachment attachment, final DataHandler dataHandler) throws Exception {
+		return encode(delegate.create(classId, cardId, attachmentName, attachment, dataHandler));
 	}
 
 	@Override
 	public void update(final String classId, final Long cardId, final String attachmentId, final Attachment attachment,
-			final DataHandler dataHandler) {
+			final DataHandler dataHandler) throws Exception {
 		delegate().update(classId, cardId, decode(attachmentId), attachment, dataHandler);
 	}
 
 	@Override
-	public ResponseMultiple<Attachment> read(final String classId, final Long cardId) {
-		final ResponseMultiple<Attachment> response = delegate().read(classId, cardId);
-		return newResponseMultiple(Attachment.class) //
-				.withElements(from(response.getElements()) //
-						.transform(attachmentWithEncodedId)) //
-				.withMetadata(response.getMetadata()) //
-				.build();
+	public Iterable<Attachment> search(final String classId, final Long cardId) {
+		return from(delegate().search(classId, cardId)) //
+				.transform(attachmentWithEncodedId);
 	}
 
 	@Override
-	public ResponseSingle<Attachment> read(final String classId, final Long cardId, final String attachmentId) {
-		final ResponseSingle<Attachment> response = delegate().read(classId, cardId, decode(attachmentId));
-		return newResponseSingle(Attachment.class) //
-				.withElement(attachmentWithEncodedId.apply((response.getElement()))) //
-				.build();
+	public Optional<Attachment> search(final String classId, final Long cardId, final String attachmentId) {
+		final Optional<Attachment> response = delegate().search(classId, cardId, decode(attachmentId));
+		return response.isPresent() ? Optional.of(attachmentWithEncodedId.apply(response.get())) : response;
 	}
 
 	@Override
