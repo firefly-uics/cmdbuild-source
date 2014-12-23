@@ -256,7 +256,7 @@
 		 */
 		createRecord: function(recordValues) {
 			recordValues[fields.STATUS] = recordValues[fields.STATUS] || NEW;
-			recordValues[NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(NO_SUBJECT_PREFIX)) ? recordValues[NO_SUBJECT_PREFIX] : this.delegate.widget[NO_SUBJECT_PREFIX];
+			recordValues[NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(NO_SUBJECT_PREFIX)) ? recordValues[NO_SUBJECT_PREFIX] : this.delegate.widgetConf[NO_SUBJECT_PREFIX];
 
 			return new CMDBuild.management.mail.Model(recordValues);
 		},
