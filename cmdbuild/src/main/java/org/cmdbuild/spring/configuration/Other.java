@@ -17,12 +17,12 @@ import org.cmdbuild.services.meta.MetadataStoreFactory;
 import org.cmdbuild.services.template.store.StoreTemplateRepository;
 import org.cmdbuild.services.template.store.Template;
 import org.cmdbuild.services.template.store.TemplateStorableConverter;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationComponent
+@Configuration
 public class Other {
 
 	@Autowired

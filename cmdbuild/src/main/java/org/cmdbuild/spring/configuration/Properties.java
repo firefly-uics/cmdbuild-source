@@ -17,11 +17,11 @@ import org.cmdbuild.dms.DmsConfiguration;
 import org.cmdbuild.logic.data.access.lock.DefaultLockCardConfiguration;
 import org.cmdbuild.logic.data.access.lock.LockCardManager.LockCardConfiguration;
 import org.cmdbuild.services.soap.security.SoapConfiguration;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationComponent
+@Configuration
 public class Properties {
 
 	@Bean

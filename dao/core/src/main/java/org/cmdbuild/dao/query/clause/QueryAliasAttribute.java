@@ -81,6 +81,10 @@ public class QueryAliasAttribute implements QueryAttribute {
 	public static QueryAliasAttribute attribute(final CMEntryType type, final String name) {
 		return attribute(EntryTypeAlias.canonicalAlias(type), name);
 	}
+	
+	public static QueryAliasAttribute attribute(final Alias entryTypeAlias, final CMAttribute attribute) {
+		return attribute(entryTypeAlias, attribute.getName());
+	}
 
 	public static QueryAliasAttribute attribute(final Alias entryTypeAlias, final String name) {
 		return new QueryAliasAttribute(entryTypeAlias, name);

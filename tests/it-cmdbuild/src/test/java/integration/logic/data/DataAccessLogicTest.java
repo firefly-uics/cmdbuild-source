@@ -20,7 +20,7 @@ import org.cmdbuild.dao.view.DBDataView;
 import org.cmdbuild.data.store.dao.DataViewStore;
 import org.cmdbuild.data.store.lookup.DataViewLookupStore;
 import org.cmdbuild.data.store.lookup.LookupStorableConverter;
-import org.cmdbuild.logic.LogicDTO.DomainWithSource;
+import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.DataDefinitionLogic;
 import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;

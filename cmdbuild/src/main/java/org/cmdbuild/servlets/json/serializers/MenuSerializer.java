@@ -11,10 +11,10 @@ import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.data.converter.ViewConverter.VIEW_CLASS_NAME;
 import static org.cmdbuild.logic.translation.DefaultTranslationLogic.DESCRIPTION_FOR_CLIENT;
 import static org.cmdbuild.model.Report.REPORT_CLASS_NAME;
-import static org.cmdbuild.services.store.menu.MenuStore.MenuItemType.isClassOrProcess;
-import static org.cmdbuild.services.store.menu.MenuStore.MenuItemType.isDashboard;
-import static org.cmdbuild.services.store.menu.MenuStore.MenuItemType.isReport;
-import static org.cmdbuild.services.store.menu.MenuStore.MenuItemType.isView;
+import static org.cmdbuild.services.store.menu.MenuItemType.isClassOrProcess;
+import static org.cmdbuild.services.store.menu.MenuItemType.isDashboard;
+import static org.cmdbuild.services.store.menu.MenuItemType.isReport;
+import static org.cmdbuild.services.store.menu.MenuItemType.isView;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 
@@ -26,10 +26,9 @@ import org.cmdbuild.logic.translation.ClassTranslation;
 import org.cmdbuild.logic.translation.MenuItemTranslation;
 import org.cmdbuild.logic.translation.ReportTranslation;
 import org.cmdbuild.logic.translation.ViewTranslation;
+import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.services.store.menu.MenuItemDTO;
-import org.cmdbuild.services.store.menu.MenuStore;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
+import org.cmdbuild.services.store.menu.MenuItemType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -273,7 +272,7 @@ public class MenuSerializer {
 
 	private static MenuItem singleToServer(final JSONObject jsonMenu) throws JSONException {
 		final MenuItem item = new MenuItemDTO();
-		final MenuItemType type = MenuStore.MenuItemType.getType(jsonMenu.getString(TYPE));
+		final MenuItemType type = MenuItemType.getType(jsonMenu.getString(TYPE));
 		item.setType(type);
 
 		if (!MenuItemType.ROOT.equals(type)) {
@@ -281,7 +280,7 @@ public class MenuSerializer {
 			item.setIndex(jsonMenu.getInt(INDEX));
 			item.setReferedClassName(jsonMenu.getString(CLASS_NAME));
 			item.setReferencedElementId(getElementId(jsonMenu));
-			item.setUniqueIdentifier(defaultIfBlank(jsonMenu.getString(UUID),java.util.UUID.randomUUID().toString()));
+			item.setUniqueIdentifier(defaultIfBlank(jsonMenu.getString(UUID), java.util.UUID.randomUUID().toString()));
 		}
 
 		return item;

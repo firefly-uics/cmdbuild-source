@@ -18,10 +18,10 @@ import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.model.dashboard.DashboardDefinition;
 import org.cmdbuild.model.dashboard.DefaultDashboardDefinition;
+import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.services.store.menu.MenuItemConverter;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
-import org.cmdbuild.services.store.menu.MenuStore.ReportExtension;
+import org.cmdbuild.services.store.menu.MenuItemType;
+import org.cmdbuild.services.store.menu.ReportExtension;
 import org.junit.Before;
 import org.junit.Test;
 

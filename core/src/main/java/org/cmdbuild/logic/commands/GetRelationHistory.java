@@ -38,13 +38,13 @@ public class GetRelationHistory extends AbstractGetRelation {
 		} else {
 			relationList = getRelationQuery(source, history(domain)).run();
 		}
-		return createResponse(sourceClass, relationList);
+		return createResponse(relationList);
 	}
 
-	private GetRelationHistoryResponse createResponse(final CMClass sourceClass, final CMQueryResult relationList) {
+	private GetRelationHistoryResponse createResponse(final CMQueryResult relationList) {
 		final GetRelationHistoryResponse out = new GetRelationHistoryResponse();
 		for (final CMQueryRow row : relationList) {
-			final CMCard src = row.getCard(sourceClass);
+			final CMCard src = row.getCard(SRC_ALIAS);
 			final QueryRelation rel = row.getRelation(DOM_ALIAS);
 			final CMCard dst = row.getCard(DST_ALIAS);
 			out.addRelation(rel, src, dst);

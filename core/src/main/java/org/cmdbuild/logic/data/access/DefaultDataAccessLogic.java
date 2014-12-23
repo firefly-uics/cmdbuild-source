@@ -1,6 +1,8 @@
 package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.size;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAscii;
@@ -21,6 +23,7 @@ import static org.cmdbuild.data.store.Storables.storableOf;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,6 +31,7 @@ import java.util.NoSuchElementException;
 
 import org.apache.commons.fileupload.FileItem;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.Constants;
 import org.cmdbuild.common.utils.PagedElements;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -54,13 +58,13 @@ import org.cmdbuild.exception.ConsistencyException.ConsistencyExceptionType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.LogicDTO.DomainWithSource;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetCardHistory;
 import org.cmdbuild.logic.commands.GetCardHistory.GetCardHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationHistory;
 import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse;
 import org.cmdbuild.logic.commands.GetRelationList;
+import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
@@ -80,8 +84,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Ordering;
 
 public class DefaultDataAccessLogic implements DataAccessLogic {
 
@@ -95,6 +103,17 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		public Card apply(final CMCard input) {
 			return CardStorableConverter.of(input).convert(input);
 		}
+	};
+
+	private static final Comparator<CMAttribute> NAME_ASC = new Comparator<CMAttribute>() {
+
+		@Override
+		public int compare(final CMAttribute o1, final CMAttribute o2) {
+			final int v1 = o1.getClassOrder();
+			final int v2 = o2.getClassOrder();
+			return (v1 < v2 ? -1 : (v1 == v2 ? 0 : 1));
+		}
+
 	};
 
 	private final CMDataView systemDataView;
@@ -152,6 +171,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
+	public GetRelationListResponse getRelationList(final CMDomain domain) {
+		return new GetRelationList(strictDataView).exec(domain, QueryOptions.newQueryOption().build());
+	}
+
+	@Override
 	public GetRelationHistoryResponse getRelationHistory(final Card srcCard) {
 		return new GetRelationHistory(dataView).exec(srcCard);
 	}
@@ -168,11 +192,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 
 	@Override
 	public CMClass findClass(final Long classId) {
-		final CMClass fetchedClass = dataView.findClass(classId);
-		if (fetchedClass == null) {
-			throw NotFoundException.NotFoundExceptionType.CLASS_NOTFOUND.createException();
-		}
-		return fetchedClass;
+		return dataView.findClass(classId);
 	}
 
 	@Override
@@ -241,13 +261,76 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		return false;
 	}
 
-	/**
-	 * 
-	 * @return active and non active classes
-	 */
 	@Override
 	public Iterable<? extends CMClass> findAllClasses() {
 		return dataView.findClasses();
+	}
+
+	@Override
+	public Iterable<? extends CMClass> findClasses(final boolean activeOnly) {
+		final Iterable<? extends CMClass> fetchedClasses = activeOnly ? findActiveClasses() : findAllClasses();
+		final Iterable<? extends CMClass> nonProcessClasses = filter(fetchedClasses, nonProcessClasses());
+		final Iterable<? extends CMClass> classesToBeReturned = activeOnly ? filter(nonProcessClasses,
+				nonSystemButUsable()) : nonProcessClasses;
+		return classesToBeReturned;
+	}
+
+	private Predicate<CMClass> nonProcessClasses() {
+		final CMClass processBaseClass = findClass(Constants.BASE_PROCESS_CLASS_NAME);
+		final Predicate<CMClass> nonProcessClasses = new Predicate<CMClass>() {
+			@Override
+			public boolean apply(final CMClass input) {
+				return !processBaseClass.isAncestorOf(input);
+			}
+		};
+		return nonProcessClasses;
+	}
+
+	/**
+	 * 
+	 * @return a predicate that will filter classes whose mode does not start
+	 *         with sys... (e.g. sysread or syswrite)
+	 */
+	private Predicate<CMClass> nonSystemButUsable() {
+		final Predicate<CMClass> predicate = new Predicate<CMClass>() {
+			@Override
+			public boolean apply(final CMClass input) {
+				return !input.isSystemButUsable();
+			}
+		};
+		return predicate;
+	}
+
+	@Override
+	public PagedElements<CMAttribute> getAttributes(final String className, final boolean onlyActive,
+			final AttributesQuery attributesQuery) {
+		final CMClass target = findClass(className);
+		final Iterable<? extends CMAttribute> elements = onlyActive ? target.getActiveAttributes() : target
+				.getAttributes();
+		final Iterable<? extends CMAttribute> ordered = Ordering.from(NAME_ASC).sortedCopy(elements);
+		final Integer offset = attributesQuery.offset();
+		final Integer limit = attributesQuery.limit();
+		final FluentIterable<CMAttribute> limited = from(ordered) //
+				.skip((offset == null) ? 0 : offset) //
+				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
+				.transform(Functions.<CMAttribute> identity());
+		return new PagedElements<CMAttribute>(limited, size(elements));
+	}
+
+	@Override
+	public PagedElements<CMAttribute> getDomainAttributes(final String className, final boolean onlyActive,
+			final AttributesQuery attributesQuery) {
+		final CMDomain target = findDomain(className);
+		final Iterable<? extends CMAttribute> elements = onlyActive ? target.getActiveAttributes() : target
+				.getAttributes();
+		final Iterable<? extends CMAttribute> ordered = Ordering.from(NAME_ASC).sortedCopy(elements);
+		final Integer offset = attributesQuery.offset();
+		final Integer limit = attributesQuery.limit();
+		final FluentIterable<CMAttribute> limited = from(ordered) //
+				.skip((offset == null) ? 0 : offset) //
+				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
+				.transform(Functions.<CMAttribute> identity());
+		return new PagedElements<CMAttribute>(limited, size(elements));
 	}
 
 	/**
@@ -304,14 +387,9 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 		final CMClass entryType = dataView.findClass(className);
 		final List<QueryAliasAttribute> attributesToDisplay = Lists.newArrayList();
 
-		for (int i = 0; i < queryOptions.getAttributes().length(); i++) {
-			try {
-				final QueryAliasAttribute queryAttribute = attribute(entryType,
-						queryOptions.getAttributes().getString(i));
-				attributesToDisplay.add(queryAttribute);
-			} catch (final JSONException e) {
-				// do nothing for now
-			}
+		for (final String attribute : queryOptions.getAttributes()) {
+			final QueryAliasAttribute queryAttribute = attribute(entryType, attribute);
+			attributesToDisplay.add(queryAttribute);
 		}
 
 		try {

@@ -17,12 +17,12 @@ import org.cmdbuild.services.startup.StartupLogic;
 import org.cmdbuild.services.startup.StartupManager;
 import org.cmdbuild.services.startup.StartupManager.Condition;
 import org.cmdbuild.services.startup.StartupManager.Startable;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@ConfigurationComponent
+@Configuration
 public class Startup {
 
 	@Autowired

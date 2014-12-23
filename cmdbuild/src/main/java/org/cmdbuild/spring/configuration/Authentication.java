@@ -13,63 +13,62 @@ import org.cmdbuild.auth.DefaultAuthenticationService;
 import org.cmdbuild.auth.HeaderAuthenticator;
 import org.cmdbuild.auth.LdapAuthenticator;
 import org.cmdbuild.auth.LegacyDBAuthenticator;
+import org.cmdbuild.auth.NotSystemUserFetcher;
 import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.acl.PrivilegeContextFactory;
-import org.cmdbuild.config.AuthProperties;
-import org.cmdbuild.dao.view.DBDataView;
-import org.cmdbuild.data.converter.ViewConverter;
 import org.cmdbuild.logic.auth.DefaultAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.DefaultGroupsLogic;
+import org.cmdbuild.logic.auth.GroupsLogic;
 import org.cmdbuild.logic.auth.SoapAuthenticationLogicBuilder;
+import org.cmdbuild.logic.auth.TransactionalGroupsLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
 import org.cmdbuild.privileges.fetchers.factories.CMClassPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.FilterPrivilegeFetcherFactory;
 import org.cmdbuild.privileges.fetchers.factories.ViewPrivilegeFetcherFactory;
 import org.cmdbuild.services.soap.security.SoapConfiguration;
 import org.cmdbuild.services.soap.security.SoapPasswordAuthenticator;
-import org.cmdbuild.services.soap.security.SoapUserFetcher;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class Authentication {
 
 	@Autowired
 	private AuthenticationStore authenticationStore;
 
 	@Autowired
-	private AuthProperties authProperties;
+	private Data data;
 
 	@Autowired
 	private Filter filter;
 
 	@Autowired
-	private SoapConfiguration soapConfiguration;
+	private PrivilegeManagement privilegeManagement;
 
 	@Autowired
-	private DBDataView systemDataView;
+	private Properties properties;
+
+	@Autowired
+	private SoapConfiguration soapConfiguration;
 
 	@Autowired
 	private UserStore userStore;
 
 	@Autowired
-	private ViewConverter viewConverter;
-
-	@Autowired
-	private PrivilegeContextFactory privilegeContextFactory;
+	private View view;
 
 	@Bean
 	@Qualifier(DEFAULT)
 	protected LegacyDBAuthenticator dbAuthenticator() {
-		return new LegacyDBAuthenticator(systemDataView);
+		return new LegacyDBAuthenticator(data.systemDataView());
 	}
 
 	@Bean
 	@Qualifier(SOAP)
-	protected SoapUserFetcher soapUserFetcher() {
-		return new SoapUserFetcher(systemDataView, authenticationStore);
+	protected NotSystemUserFetcher notSystemUserFetcher() {
+		return new NotSystemUserFetcher(data.systemDataView(), authenticationStore);
 	}
 
 	@Bean
@@ -79,33 +78,33 @@ public class Authentication {
 
 	@Bean
 	protected CasAuthenticator casAuthenticator() {
-		return new CasAuthenticator(authProperties);
+		return new CasAuthenticator(properties.authConf());
 	}
 
 	@Bean
 	protected HeaderAuthenticator headerAuthenticator() {
-		return new HeaderAuthenticator(authProperties);
+		return new HeaderAuthenticator(properties.authConf());
 	}
 
 	@Bean
 	protected LdapAuthenticator ldapAuthenticator() {
-		return new LdapAuthenticator(authProperties);
+		return new LdapAuthenticator(properties.authConf());
 	}
 
 	@Bean
 	@Scope(PROTOTYPE)
 	public DBGroupFetcher dbGroupFetcher() {
-		return new DBGroupFetcher(systemDataView, Arrays.asList( //
-				new CMClassPrivilegeFetcherFactory(systemDataView), //
-				new ViewPrivilegeFetcherFactory(systemDataView, viewConverter), //
-				new FilterPrivilegeFetcherFactory(systemDataView, filter.dataViewFilterStore())));
+		return new DBGroupFetcher(data.systemDataView(), Arrays.asList( //
+				new CMClassPrivilegeFetcherFactory(data.systemDataView()), //
+				new ViewPrivilegeFetcherFactory(data.systemDataView(), view.viewConverter()), //
+				new FilterPrivilegeFetcherFactory(data.systemDataView(), filter.dataViewFilterStore())));
 	}
 
 	@Bean
 	@Qualifier(DEFAULT)
 	public AuthenticationService defaultAuthenticationService() {
-		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(authProperties,
-				systemDataView);
+		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(
+				properties.authConf(), data.systemDataView());
 		authenticationService.setPasswordAuthenticators(dbAuthenticator(), ldapAuthenticator());
 		authenticationService.setClientRequestAuthenticators(headerAuthenticator(), casAuthenticator());
 		authenticationService.setUserFetchers(dbAuthenticator());
@@ -118,9 +117,9 @@ public class Authentication {
 	@Qualifier(SOAP)
 	public AuthenticationService soapAuthenticationService() {
 		final DefaultAuthenticationService authenticationService = new DefaultAuthenticationService(soapConfiguration,
-				systemDataView);
+				data.systemDataView());
 		authenticationService.setPasswordAuthenticators(soapPasswordAuthenticator());
-		authenticationService.setUserFetchers(dbAuthenticator(), soapUserFetcher());
+		authenticationService.setUserFetchers(dbAuthenticator(), notSystemUserFetcher());
 		authenticationService.setGroupFetcher(dbGroupFetcher());
 		authenticationService.setUserStore(userStore);
 		return authenticationService;
@@ -131,9 +130,8 @@ public class Authentication {
 	public DefaultAuthenticationLogicBuilder defaultAuthenticationLogicBuilder() {
 		return new DefaultAuthenticationLogicBuilder( //
 				defaultAuthenticationService(), //
-				privilegeContextFactory, //
-				systemDataView, //
-				userStore);
+				privilegeManagement.privilegeContextFactory(), //
+				data.systemDataView());
 	}
 
 	@Bean
@@ -142,9 +140,14 @@ public class Authentication {
 	public SoapAuthenticationLogicBuilder soapAuthenticationLogicBuilder() {
 		return new SoapAuthenticationLogicBuilder( //
 				soapAuthenticationService(), //
-				privilegeContextFactory, //
-				systemDataView, //
-				userStore);
+				privilegeManagement.privilegeContextFactory(), //
+				data.systemDataView());
+	}
+
+	@Bean
+	public GroupsLogic groupsLogic() {
+		return new TransactionalGroupsLogic(new DefaultGroupsLogic(defaultAuthenticationService(),
+				data.systemDataView(), userStore));
 	}
 
 }

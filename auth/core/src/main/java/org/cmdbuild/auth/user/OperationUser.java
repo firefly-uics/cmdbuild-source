@@ -77,18 +77,6 @@ public class OperationUser {
 	}
 
 	/**
-	 * Impersonates another user, if possible. This method should be called by
-	 * the AuthenticationService.
-	 * 
-	 * @param user
-	 *            user to impersonate
-	 */
-	public void impersonate(final CMUser user) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("The impersonate method is not implemented yet");
-	}
-
-	/**
 	 * @deprecated access to {@link PrivilegeContext} directly.
 	 */
 	@Deprecated

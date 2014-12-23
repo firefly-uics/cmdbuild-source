@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
-		<version>2.2.3-SNAPSHOT</version>
+		<version>2.3-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild</artifactId>
@@ -38,6 +38,17 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>cmdbuild-cmdbf</artifactId>
+			<version>${project.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.ws.commons.schema</groupId>
+					<artifactId>XmlSchema</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-services-rest-cxf</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
@@ -150,14 +161,6 @@
 					<artifactId>xercesImpl</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
-
-		<dependency>
-			<!-- We should use version 4 but before that the workflow service must 
-				be rewritten -->
-			<groupId>commons-httpclient</groupId>
-			<artifactId>commons-httpclient</artifactId>
-			<version>3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>

@@ -5,6 +5,7 @@ import static org.alfresco.webservice.util.Constants.PROP_DESCRIPTION;
 import static org.alfresco.webservice.util.Constants.PROP_TITLE;
 import static org.alfresco.webservice.util.Constants.createQNameString;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.replace;
 import static org.apache.commons.lang3.StringUtils.startsWith;
@@ -257,7 +258,7 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 	private static Properties updatableProperties(final StorableDocument document) {
 		final Properties properties = new Properties();
 		properties.setProperty(PROP_TITLE, document.getFileName());
-		properties.setProperty(PROP_DESCRIPTION, document.getDescription());
+		properties.setProperty(PROP_DESCRIPTION, defaultString(document.getDescription()));
 		properties.setProperty(AlfrescoConstant.AUTHOR.getName(), document.getAuthor());
 		return properties;
 	}
@@ -362,33 +363,36 @@ public class AlfrescoWsService extends AlfrescoInnerService {
 	}
 
 	@Override
-	public void updateCategory(final StorableDocument document) throws DmsError {
+	public void updateCategory(final DocumentUpdate document) throws DmsError {
+		final String category = document.getCategory();
 		final AlfrescoWebserviceClient wsClient = wsClient();
-		Reference categoryReference = wsClient.getCategoryReference(document.getCategory());
-		if (categoryReference == null) {
-			final boolean categoryCreated = wsClient.createCategory(document.getCategory());
-			if (!categoryCreated) {
-				final String message = String.format("error creating category '%s'", document.getCategory());
-				throw DmsError.wsOperationError(message);
-			}
-			categoryReference = wsClient.getCategoryReference(document.getCategory());
+		if (isNotBlank(category)) {
+			Reference categoryReference = wsClient.getCategoryReference(category);
 			if (categoryReference == null) {
-				final String message = String.format("error getting new category '%s'", document.getCategory());
-				throw DmsError.wsOperationError(message);
+				final boolean categoryCreated = wsClient.createCategory(category);
+				if (!categoryCreated) {
+					final String message = String.format("error creating category '%s'", category);
+					throw DmsError.wsOperationError(message);
+				}
+				categoryReference = wsClient.getCategoryReference(category);
+				if (categoryReference == null) {
+					final String message = String.format("error getting new category '%s'", category);
+					throw DmsError.wsOperationError(message);
+				}
 			}
+			final String uuid = getUuid(document);
+			wsClient.applyCategory(categoryReference, uuid);
 		}
-		final String uuid = getUuid(document);
-		wsClient.applyCategory(categoryReference, uuid);
 	}
 
-	private String getUuid(final StorableDocument document) throws DmsError {
+	private String getUuid(final DocumentUpdate document) throws DmsError {
 		final AlfrescoWebserviceClient wsClient = wsClient();
 		final ResultSetRow resultSetRow = wsClient.search(singleDocumentSearchFrom(document));
 		final String uuid = resultSetRow.getNode().getId();
 		return uuid;
 	}
 
-	private static SingleDocumentSearch singleDocumentSearchFrom(final StorableDocument document) {
+	private static SingleDocumentSearch singleDocumentSearchFrom(final DocumentUpdate document) {
 		return new SingleDocumentSearch() {
 
 			@Override

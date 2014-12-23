@@ -9,19 +9,19 @@ import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.common.Builder;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.config.WorkflowConfiguration;
-import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.WorkflowLogger;
 import org.cmdbuild.logic.workflow.SystemWorkflowLogicBuilder;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.template.engine.EngineNames;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.cmdbuild.workflow.ActivityPerformerTemplateResolverFactory;
 import org.cmdbuild.workflow.DataViewWorkflowPersistence;
 import org.cmdbuild.workflow.DefaultGroupQueryAdapter;
+import org.cmdbuild.workflow.DefaultLookupHelper;
 import org.cmdbuild.workflow.DefaultWorkflowEngine;
 import org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder;
 import org.cmdbuild.workflow.DefaultXpdlExtendedAttributeWidgetFactory;
+import org.cmdbuild.workflow.LookupHelper;
 import org.cmdbuild.workflow.ProcessDefinitionManager;
 import org.cmdbuild.workflow.SharkTypesConverter.SharkTypesConverterBuilder;
 import org.cmdbuild.workflow.UpdateOperationListenerImpl;
@@ -41,9 +41,10 @@ import org.cmdbuild.workflow.xpdl.XpdlProcessDefinitionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class Workflow {
 
 	@Autowired
@@ -58,9 +59,6 @@ public class Workflow {
 
 	@Autowired
 	private FilesStore filesStore;
-
-	@Autowired
-	private LookupStore lookupStore;
 
 	@Autowired
 	private Notifier notifier;
@@ -138,7 +136,7 @@ public class Workflow {
 	public WorkflowTypesConverter workflowTypesConverter() {
 		return new SharkTypesConverterBuilder() //
 				.withDataView(data.systemDataView()) //
-				.withLookupStore(lookupStore) //
+				.withLookupStore(data.lookupStore()) //
 				.build();
 	}
 
@@ -150,10 +148,15 @@ public class Workflow {
 				.withOperationUser(systemUser.operationUserWithSystemPrivileges()) //
 				.withDataView(data.systemDataView()) //
 				.withProcessDefinitionManager(processDefinitionManager()) //
-				.withLookupStore(lookupStore) //
+				.withLookupHelper(lookupHelper()) //
 				.withWorkflowService(workflowService()) //
 				.withActivityPerformerTemplateResolverFactory(activityPerformerTemplateResolverFactory()) //
 				.build();
+	}
+
+	@Bean
+	public LookupHelper lookupHelper() {
+		return new DefaultLookupHelper(data.lookupStore());
 	}
 
 	@Bean
@@ -182,7 +185,7 @@ public class Workflow {
 				systemWorkflowEngineBuilder(), //
 				data.systemDataView(), //
 				data.systemDataView(), //
-				lookupStore, //
+				data.lookupStore(), //
 				workflowConfiguration, //
 				filesStore);
 	}

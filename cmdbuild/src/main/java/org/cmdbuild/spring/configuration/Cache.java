@@ -5,6 +5,7 @@ import static org.cmdbuild.spring.util.Constants.SOAP;
 
 import java.util.Arrays;
 
+import org.cmdbuild.auth.NotSystemUserFetcher;
 import org.cmdbuild.dao.driver.AbstractDBDriver;
 import org.cmdbuild.dms.DmsService;
 import org.cmdbuild.logic.cache.CachingLogic;
@@ -16,14 +17,13 @@ import org.cmdbuild.services.cache.wrappers.DatabaseDriverWrapper;
 import org.cmdbuild.services.cache.wrappers.DmsServiceWrapper;
 import org.cmdbuild.services.cache.wrappers.JSONDispatcherServiceWrapper;
 import org.cmdbuild.services.cache.wrappers.TranslationServiceWrapper;
-import org.cmdbuild.services.soap.security.SoapUserFetcher;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class Cache {
 
 	@Autowired
@@ -37,7 +37,7 @@ public class Cache {
 
 	@Autowired
 	@Qualifier(SOAP)
-	private SoapUserFetcher soapUserFetcher;
+	private NotSystemUserFetcher notSystemUserFetcher;
 
 	@Bean
 	public CachingService cachingService() {
@@ -47,7 +47,7 @@ public class Cache {
 				data.cachedLookupStore(), //
 				translationServiceWrapper(), //
 				jsonDispatcherServiceWrapper(), //
-				soapUserFetcher));
+				notSystemUserFetcher));
 	}
 
 	@Bean

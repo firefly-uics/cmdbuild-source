@@ -1,5 +1,7 @@
 package org.cmdbuild.servlets.json.serializers;
 
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL;
 import static org.cmdbuild.servlets.json.CommunicationConstants.IS_ACTIVE;
@@ -22,12 +24,12 @@ import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.exception.DmsException;
-import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.auth.AuthenticationLogic.GroupInfo;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.model.Report;
 import org.cmdbuild.model.data.Card;
+import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.HistoryItem;
 import org.cmdbuild.servlets.json.serializers.JsonHistory.ValueAndDescription;
 import org.joda.time.DateTime;
@@ -46,6 +48,8 @@ public class Serializer {
 	public static final String AVAILABLE_PROCESS_CLASS = "availableprocessclass";
 	public static final String AVAILABLE_REPORT = "availablereport";
 	public static final String AVAILABLE_DASHBOARDS = "availabledashboards";
+
+	private static final Iterable<MetadataGroup> NO_METADATA_GROUPS = emptyList();
 
 	public static JSONObject serializeAttachment(final StoredDocument attachment) {
 		final JSONObject serializer = new JSONObject();
@@ -66,7 +70,7 @@ public class Serializer {
 
 	private static JSONObject serialize(final Iterable<MetadataGroup> metadataGroups) throws JSONException {
 		final JSONObject jsonMetadata = new JSONObject();
-		for (final MetadataGroup metadataGroup : metadataGroups) {
+		for (final MetadataGroup metadataGroup : defaultIfNull(metadataGroups, NO_METADATA_GROUPS)) {
 			final JSONObject jsonAllMetadata = new JSONObject();
 			for (final Metadata metadata : metadataGroup.getMetadata()) {
 				jsonAllMetadata.put(metadata.getName(), metadata.getValue());
@@ -290,13 +294,13 @@ public class Serializer {
 
 	}
 
-	public static void addAttachmentsData(final JSONObject jsonTable, final CMClass cmClass, final DmsLogic dmsLogic)
-			throws JSONException {
+	public static void addAttachmentsData(final JSONObject jsonTable, final CMClass cmClass, final DmsLogic dmsLogic,
+			final Notifier notifier) throws JSONException {
 		final DmsConfiguration dmsConfiguration = applicationContext().getBean(DmsConfiguration.class);
 		if (!dmsConfiguration.isEnabled()) {
 			return;
 		}
-		final Map<String, Map<String, String>> rulesByGroup = rulesByGroup(cmClass, dmsLogic);
+		final Map<String, Map<String, String>> rulesByGroup = rulesByGroup(cmClass, dmsLogic, notifier);
 
 		final JSONObject jsonGroups = new JSONObject();
 		for (final String groupName : rulesByGroup.keySet()) {
@@ -313,13 +317,12 @@ public class Serializer {
 		}
 	}
 
-	private static Map<String, Map<String, String>> rulesByGroup(final CMClass cmClass, final DmsLogic dmsLogic) {
+	private static Map<String, Map<String, String>> rulesByGroup(final CMClass cmClass, final DmsLogic dmsLogic,
+			final Notifier notifier) {
 		try {
 			return dmsLogic.getAutoCompletionRulesByClass(cmClass.getIdentifier().getLocalName());
 		} catch (final DmsException e) {
-			applicationContext().getBean(RequestListener.class) //
-			;
-			RequestListener.getCurrentRequest().pushWarning(e);
+			notifier.warn(e);
 			return Collections.emptyMap();
 		}
 	}

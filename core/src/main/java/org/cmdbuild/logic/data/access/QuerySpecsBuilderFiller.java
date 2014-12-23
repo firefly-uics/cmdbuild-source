@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.data.access;
 
 import static com.google.common.collect.Iterables.isEmpty;
+import static com.google.common.collect.Iterables.toArray;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_1N;
 import static org.cmdbuild.dao.constants.Cardinality.CARDINALITY_N1;
@@ -90,9 +91,9 @@ public class QuerySpecsBuilderFiller {
 	}
 
 	public QuerySpecsBuilder create() {
-		final Mapper<JSONArray, List<QueryAliasAttribute>> attributeSubsetMapper = new JsonAttributeSubsetMapper(
+		final Mapper<Iterable<? extends String>, Iterable<QueryAliasAttribute>> attributeSubsetMapper = new AttributeSubsetMapper(
 				sourceClass);
-		final List<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.map(queryOptions
+		final Iterable<QueryAliasAttribute> attributeSubsetForSelect = attributeSubsetMapper.map(queryOptions
 				.getAttributes());
 		final QuerySpecsBuilder querySpecsBuilder = newQuerySpecsBuilder(attributeSubsetForSelect, sourceClass) //
 				.from(sourceClass);
@@ -108,13 +109,14 @@ public class QuerySpecsBuilderFiller {
 		return querySpecsBuilder;
 	}
 
-	private QuerySpecsBuilder newQuerySpecsBuilder(final List<QueryAliasAttribute> attributeSubsetForSelect,
+	private QuerySpecsBuilder newQuerySpecsBuilder(final Iterable<QueryAliasAttribute> attributeSubsetForSelect,
 			final CMEntryType entryType) {
-		if (attributeSubsetForSelect.isEmpty()) {
-			return dataView.select(anyAttribute(entryType));
+		final Object[] attributesArray;
+		if (isEmpty(attributeSubsetForSelect)) {
+			attributesArray = new Object[] { anyAttribute(entryType) };
+		} else {
+			attributesArray = toArray(attributeSubsetForSelect, Object.class);
 		}
-		final Object[] attributesArray = new QueryAliasAttribute[attributeSubsetForSelect.size()];
-		attributeSubsetForSelect.toArray(attributesArray);
 		return dataView.select(attributesArray);
 	}
 

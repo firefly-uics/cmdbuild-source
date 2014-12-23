@@ -122,7 +122,7 @@ public class ForeignReferenceResolver<T extends CMEntry> {
 							final Object rawValue;
 							try {
 								rawValue = input.get(attributeName);
-							} catch (IllegalArgumentException e) {
+							} catch (Throwable e) {
 								// This could happen for ImportCSV because
 								// the fake card has no the whole attributes
 								// of the relative CMClass

@@ -11,7 +11,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 
-class Util {
+public class Util {
 
 	private static final Logger logger = LookupLogic.logger;
 
