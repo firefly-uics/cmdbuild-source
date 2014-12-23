@@ -3,34 +3,28 @@ package org.cmdbuild.services.soap.security;
 import java.util.Collection;
 
 import org.cmdbuild.auth.DefaultAuthenticationService.Configuration;
+import org.cmdbuild.auth.ForwardingConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Sets;
 
-public class SoapConfiguration implements Configuration {
+public class SoapConfiguration extends ForwardingConfiguration {
 
-	private final Configuration configuration;
+	private final Configuration delegate;
 
 	@Autowired
-	public SoapConfiguration( //
-			final Configuration configuration //
-	) {
-		this.configuration = configuration;
+	public SoapConfiguration(final Configuration delegate) {
+		this.delegate = delegate;
+	}
+
+	@Override
+	protected Configuration delegate() {
+		return delegate;
 	}
 
 	@Override
 	public Collection<String> getActiveAuthenticators() {
 		return Sets.newHashSet(SoapPasswordAuthenticator.class.getSimpleName());
-	}
-
-	@Override
-	public Collection<String> getServiceUsers() {
-		return configuration.getServiceUsers();
-	}
-
-	@Override
-	public Collection<String> getPrivilegedServiceUsers() {
-		return configuration.getPrivilegedServiceUsers();
 	}
 
 }

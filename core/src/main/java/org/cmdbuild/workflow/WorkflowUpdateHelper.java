@@ -27,13 +27,14 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.lang3.builder.Builder;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.common.template.TemplateResolver;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMCard.CMCardDefinition;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessCreation;
 import org.cmdbuild.workflow.WorkflowPersistence.ProcessUpdate;
@@ -43,6 +44,8 @@ import org.cmdbuild.workflow.service.WSProcessInstInfo;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
+
+import com.google.common.base.Optional;
 
 class WorkflowUpdateHelper {
 
@@ -216,7 +219,8 @@ class WorkflowUpdateHelper {
 	private void updateCreationData(final ProcessCreation processCreation) {
 		if (processCreation.state() != ProcessCreation.NO_STATE) {
 			logger.debug(marker, "updating state");
-			final Object id = lookupHelper.lookupForState(processCreation.state()).getId();
+			final Optional<Lookup> lookup = lookupHelper.lookupForState(processCreation.state());
+			final Object id = lookup.isPresent() ? lookup.get().getId() : null;
 			cardDefinition.set(FlowStatus.dbColumnName(), id);
 		}
 

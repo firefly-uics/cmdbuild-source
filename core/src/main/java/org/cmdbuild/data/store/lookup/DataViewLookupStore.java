@@ -2,7 +2,7 @@ package org.cmdbuild.data.store.lookup;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Maps.newHashMap;
-import static org.cmdbuild.data.store.lookup.Functions.toLookUpType;
+import static org.cmdbuild.data.store.lookup.Functions.toLookupType;
 import static org.cmdbuild.data.store.lookup.Predicates.lookupWithType;
 
 import java.util.Collection;
@@ -98,7 +98,7 @@ public class DataViewLookupStore implements LookupStore {
 	@Override
 	public Iterable<LookupType> readAllTypes() {
 		return from(readAll()) //
-				.transform(toLookUpType()) //
+				.transform(toLookupType()) //
 				.toSet();
 	}
 

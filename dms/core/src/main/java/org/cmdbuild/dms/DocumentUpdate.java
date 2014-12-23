@@ -4,6 +4,8 @@ public interface DocumentUpdate extends Document, DocumentWithMetadata {
 
 	String getFileName();
 
+	String getCategory();
+
 	String getDescription();
 
 }

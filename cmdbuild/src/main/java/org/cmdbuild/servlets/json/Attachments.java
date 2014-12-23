@@ -1,7 +1,5 @@
 package org.cmdbuild.servlets.json;
 
-import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.logic.dms.Utils.valueForCategory;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CARD_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CLASS_NAME;
 
@@ -13,8 +11,6 @@ import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
-import org.cmdbuild.data.store.lookup.Lookup;
-import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.dms.DefaultDefinitionsFactory;
 import org.cmdbuild.dms.DefinitionsFactory;
 import org.cmdbuild.dms.DocumentTypeDefinition;
@@ -25,7 +21,6 @@ import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
-import org.cmdbuild.listeners.RequestListener;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonAttachmentsContext;
 import org.cmdbuild.servlets.json.serializers.Attachments.JsonCategoryDefinition;
@@ -38,17 +33,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 public class Attachments extends JSONBaseWithSpringContext {
-
-	private static final Predicate<? super Lookup> ACTIVE_ONLY = new Predicate<Lookup>() {
-		@Override
-		public boolean apply(final Lookup input) {
-			return input.active;
-		}
-	};
 
 	private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -60,14 +47,9 @@ public class Attachments extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse getAttachmentsContext() {
-		final LookupType lookupType = LookupType.newInstance() //
-				.withName(dmsLogic().getCategoryLookupType()) //
-				.build();
-		final Iterable<Lookup> lookups = lookupStore().readAll(lookupType);
 		final List<JsonCategoryDefinition> jsonCategories = Lists.newArrayList();
-		for (final Lookup lookup : from(lookups).filter(ACTIVE_ONLY)) {
-			final DocumentTypeDefinition categoryDefinition = categoryDefinition(valueForCategory(lookup));
-			jsonCategories.add(JsonCategoryDefinition.from(lookup, categoryDefinition));
+		for (final DocumentTypeDefinition element : dmsLogic().getConfiguredCategoryDefinitions()) {
+			jsonCategories.add(JsonCategoryDefinition.from(element));
 		}
 		return JsonResponse.success(JsonAttachmentsContext.from(jsonCategories));
 	}
@@ -147,6 +129,7 @@ public class Attachments extends JSONBaseWithSpringContext {
 		dmsLogic().updateDescriptionAndMetadata( //
 				className, cardId, //
 				filename, //
+				null, //
 				description, //
 				metadataGroupsFrom(categoryDefinition(category), metadataValues));
 	}
@@ -225,8 +208,7 @@ public class Attachments extends JSONBaseWithSpringContext {
 		try {
 			return dmsLogic().getCategoryDefinition(category);
 		} catch (final DmsException e) {
-			requestListener();
-			RequestListener.getCurrentRequest().pushWarning(e);
+			notifier().warn(e);
 			return definitionsFactory.newDocumentTypeDefinitionWithNoMetadata(category);
 		}
 	}

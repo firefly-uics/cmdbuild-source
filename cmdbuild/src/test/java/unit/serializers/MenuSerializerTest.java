@@ -9,10 +9,9 @@ import static org.mockito.Mockito.when;
 
 import org.cmdbuild.logic.translation.TranslationObject;
 import org.cmdbuild.services.store.DBDashboardStore;
+import org.cmdbuild.services.store.menu.MenuItem;
 import org.cmdbuild.services.store.menu.MenuItemDTO;
-import org.cmdbuild.services.store.menu.MenuStore;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItem;
-import org.cmdbuild.services.store.menu.MenuStore.MenuItemType;
+import org.cmdbuild.services.store.menu.MenuItemType;
 import org.cmdbuild.servlets.json.serializers.MenuSerializer;
 import org.cmdbuild.servlets.json.serializers.TranslationFacade;
 import org.json.JSONArray;
@@ -36,7 +35,7 @@ public class MenuSerializerTest {
 	@Test
 	public void testRootOnlyToSarver() throws JSONException {
 		final MenuItem menuItem = MenuSerializer.toServer(rootJsonMenuItem());
-		assertEquals(MenuStore.MenuItemType.ROOT, menuItem.getType());
+		assertEquals(MenuItemType.ROOT, menuItem.getType());
 		assertEquals(0, menuItem.getChildren().size());
 	}
 
@@ -52,7 +51,7 @@ public class MenuSerializerTest {
 
 		final MenuItem root = MenuSerializer.toServer(jsonRoot);
 		final MenuItem classMenuItem = root.getChildren().get(0);
-		assertEquals(MenuStore.MenuItemType.CLASS, classMenuItem.getType());
+		assertEquals(MenuItemType.CLASS, classMenuItem.getType());
 		assertEquals(0, classMenuItem.getChildren().size());
 		assertEquals(1, classMenuItem.getIndex());
 		assertEquals("The class description", classMenuItem.getDescription());

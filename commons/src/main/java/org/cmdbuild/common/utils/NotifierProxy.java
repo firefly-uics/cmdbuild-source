@@ -8,7 +8,15 @@ import java.lang.reflect.Proxy;
 import java.util.Collections;
 
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.common.reflect.AnnouncingInvocationHandler;
 
+import com.google.common.reflect.Reflection;
+
+/**
+ * @deprecated use {@link AnnouncingInvocationHandler} with {@link Reflection}
+ *             instead.
+ */
+@Deprecated
 public class NotifierProxy<T> {
 
 	public static interface Notifier {

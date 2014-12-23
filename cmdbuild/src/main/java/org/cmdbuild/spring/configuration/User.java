@@ -15,7 +15,6 @@ import org.cmdbuild.logic.data.access.UserDataAccessLogicBuilder;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.services.FilesStore;
 import org.cmdbuild.services.event.ObservableDataView;
-import org.cmdbuild.spring.annotations.ConfigurationComponent;
 import org.cmdbuild.workflow.DataViewWorkflowPersistence;
 import org.cmdbuild.workflow.DefaultWorkflowEngine;
 import org.cmdbuild.workflow.DefaultWorkflowEngine.DefaultWorkflowEngineBuilder;
@@ -23,9 +22,10 @@ import org.cmdbuild.workflow.WorkflowPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 
-@ConfigurationComponent
+@Configuration
 public class User {
 
 	@Autowired
@@ -126,7 +126,7 @@ public class User {
 				.withOperationUser(operationUser) //
 				.withDataView(userDataView()) //
 				.withProcessDefinitionManager(workflow.processDefinitionManager()) //
-				.withLookupStore(data.lookupStore()) //
+				.withLookupHelper(workflow.lookupHelper()) //
 				.withWorkflowService(workflow.workflowService()) //
 				.withActivityPerformerTemplateResolverFactory(workflow.activityPerformerTemplateResolverFactory()) //
 				.build();

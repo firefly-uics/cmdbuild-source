@@ -30,7 +30,6 @@ import org.cmdbuild.config.DatabaseConfiguration;
 import org.cmdbuild.config.DatabaseProperties;
 import org.cmdbuild.exception.ORMException.ORMExceptionType;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.GroupDTO;
 import org.cmdbuild.logic.auth.UserDTO;
 import org.cmdbuild.services.PatchManager.Patch;
@@ -164,20 +163,19 @@ public class Configure extends JSONBaseWithSpringContext {
 		configurator.configureAndSaveSettings();
 
 		if (DatabaseConfigurator.EMPTY_DBTYPE.equals(dbType)) {
-			final AuthenticationLogic authLogic = authLogic();
 			final GroupDTO groupDto = GroupDTO.newInstance() //
 					.withName(SUPER_USER) //
 					.withAdminFlag(true) //
 					.withDescription(SUPER_USER) //
 					.build();
-			final CMGroup superUserGroup = authLogic.createGroup(groupDto);
+			final CMGroup superUserGroup = groupsLogic().createGroup(groupDto);
 			final UserDTO userDto = UserDTO.newInstance() //
 					.withUsername(adminUser) //
 					.withDescription(adminUser) //
 					.withPassword(adminPassword) //
 					.build();
-			final CMUser administrator = authLogic.createUser(userDto);
-			authLogic.addUserToGroup(administrator.getId(), superUserGroup.getId());
+			final CMUser administrator = authLogic().createUser(userDto);
+			groupsLogic().addUserToGroup(administrator.getId(), superUserGroup.getId());
 		}
 		patchManager().reset();
 	}

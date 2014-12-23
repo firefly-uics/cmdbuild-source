@@ -68,4 +68,14 @@ public class AnonymousUser implements AuthenticatedUser {
 		return false;
 	}
 
+	@Override
+	public boolean isService() {
+		return false;
+	}
+
+	@Override
+	public boolean isPrivileged() {
+		return false;
+	}
+
 }

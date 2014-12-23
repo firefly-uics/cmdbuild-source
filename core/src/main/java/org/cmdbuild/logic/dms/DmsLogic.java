@@ -16,6 +16,8 @@ import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 import org.cmdbuild.logic.Logic;
 
+import com.google.common.base.Optional;
+
 public interface DmsLogic extends Logic {
 
 	/**
@@ -40,6 +42,16 @@ public interface DmsLogic extends Logic {
 	DocumentTypeDefinition getCategoryDefinition(String category);
 
 	/**
+	 * Gets all {@link DocumentTypeDefinition}s usable according with current
+	 * configuration.
+	 * 
+	 * @return the all {@link DocumentTypeDefinition}s.
+	 * 
+	 * @throws {@link DmsException} if cannot read definitions.
+	 */
+	Iterable<DocumentTypeDefinition> getConfiguredCategoryDefinitions();
+
+	/**
 	 * Gets all {@link DocumentTypeDefinition}s.
 	 * 
 	 * @return the all {@link DocumentTypeDefinition}s.
@@ -62,6 +74,8 @@ public interface DmsLogic extends Logic {
 
 	List<StoredDocument> search(String className, Long cardId);
 
+	Optional<StoredDocument> search(String className, Long cardId, String fileName);
+
 	void upload(String author, String className, Long cardId, InputStream inputStream, String fileName,
 			String category, String description, Iterable<MetadataGroup> metadataGroups) throws IOException,
 			CMDBException;
@@ -70,7 +84,7 @@ public interface DmsLogic extends Logic {
 
 	void delete(String className, Long cardId, String fileName) throws DmsException;
 
-	void updateDescriptionAndMetadata(String className, Long cardId, String filename, String description,
-			Iterable<MetadataGroup> metadataGroups);
+	void updateDescriptionAndMetadata(String className, Long cardId, String filename, String category,
+			String description, Iterable<MetadataGroup> metadataGroups);
 
 }

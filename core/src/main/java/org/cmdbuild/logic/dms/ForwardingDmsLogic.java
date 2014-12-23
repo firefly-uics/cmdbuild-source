@@ -14,6 +14,7 @@ import org.cmdbuild.dms.exception.DmsError;
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.exception.DmsException;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ForwardingObject;
 
 public abstract class ForwardingDmsLogic extends ForwardingObject implements DmsLogic {
@@ -38,6 +39,11 @@ public abstract class ForwardingDmsLogic extends ForwardingObject implements Dms
 	}
 
 	@Override
+	public Iterable<DocumentTypeDefinition> getConfiguredCategoryDefinitions() {
+		return delegate().getConfiguredCategoryDefinitions();
+	}
+
+	@Override
 	public Iterable<DocumentTypeDefinition> getCategoryDefinitions() throws DmsError {
 		return delegate().getCategoryDefinitions();
 	}
@@ -50,6 +56,11 @@ public abstract class ForwardingDmsLogic extends ForwardingObject implements Dms
 	@Override
 	public List<StoredDocument> search(final String className, final Long cardId) {
 		return delegate().search(className, cardId);
+	}
+
+	@Override
+	public Optional<StoredDocument> search(final String className, final Long cardId, final String fileName) {
+		return delegate().search(className, cardId, fileName);
 	}
 
 	@Override
@@ -71,8 +82,8 @@ public abstract class ForwardingDmsLogic extends ForwardingObject implements Dms
 
 	@Override
 	public void updateDescriptionAndMetadata(final String className, final Long cardId, final String filename,
-			final String description, final Iterable<MetadataGroup> metadataGroups) {
-		delegate().updateDescriptionAndMetadata(className, cardId, filename, description, metadataGroups);
+			final String category, final String description, final Iterable<MetadataGroup> metadataGroups) {
+		delegate().updateDescriptionAndMetadata(className, cardId, filename, category, description, metadataGroups);
 	}
 
 }

@@ -1,29 +1,32 @@
 package org.cmdbuild.auth.user;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newHashSet;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+
+import java.util.Collection;
 
 import org.apache.commons.lang3.Validate;
-import org.cmdbuild.common.Builder;
+
+import com.google.common.collect.Ordering;
 
 public class UserImpl implements CMUser {
 
-	public static class UserImplBuilder implements Builder<UserImpl> {
+	public static class UserImplBuilder implements org.apache.commons.lang3.builder.Builder<UserImpl> {
 
 		private Long id;
 		private String username;
 		private String description;
 		private String email;
-		private boolean active = true;
-		private final Set<String> groupNames;
-		private final List<String> groupDescriptions;
+		private Boolean active;
+		private Boolean service;
+		private Boolean privileged;
+		private final Collection<String> groupNames = newHashSet();
+		private final Collection<String> groupDescriptions = newArrayList();
 		private String defaultGroupName;
 
 		private UserImplBuilder() {
-			this.groupNames = new HashSet<String>();
-			this.groupDescriptions = new LinkedList<String>();
+			// use factory method
 		}
 
 		public UserImplBuilder withId(final Long id) {
@@ -51,7 +54,7 @@ public class UserImpl implements CMUser {
 			return this;
 		}
 
-		public UserImplBuilder withGroupNames(final Set<String> groupNames) {
+		public UserImplBuilder withGroupNames(final Collection<String> groupNames) {
 			this.groupNames.addAll(groupNames);
 			return this;
 		}
@@ -61,8 +64,18 @@ public class UserImpl implements CMUser {
 			return this;
 		}
 
-		public UserImplBuilder withActiveStatus(final boolean active) {
+		public UserImplBuilder withActiveStatus(final Boolean active) {
 			this.active = active;
+			return this;
+		}
+
+		public UserImplBuilder withServiceStatus(final Boolean service) {
+			this.service = service;
+			return this;
+		}
+
+		public UserImplBuilder withPrivilegedStatus(final Boolean privileged) {
+			this.privileged = privileged;
 			return this;
 		}
 
@@ -73,14 +86,24 @@ public class UserImpl implements CMUser {
 
 		@Override
 		public UserImpl build() {
+			validate();
+			return new UserImpl(this);
+		}
+
+		private void validate() {
 			Validate.notNull(username);
 			Validate.notNull(description);
 			Validate.noNullElements(groupNames);
 
-			java.util.Collections.sort(groupDescriptions);
+			active = defaultIfNull(active, true);
+			service = defaultIfNull(service, false);
+			privileged = defaultIfNull(privileged, false);
 
-			return new UserImpl(this);
+			final Collection<String> ordered = Ordering.natural().immutableSortedCopy(groupDescriptions);
+			groupDescriptions.clear();
+			groupDescriptions.addAll(ordered);
 		}
+
 	}
 
 	private final Long id;
@@ -88,8 +111,10 @@ public class UserImpl implements CMUser {
 	private final String description;
 	private final String email;
 	private final boolean active;
-	private final Set<String> groupNames;
-	private final List<String> groupDescriptions;
+	private final boolean service;
+	private final boolean privileged;
+	private final Collection<String> groupNames;
+	private final Collection<String> groupDescriptions;
 	private final String defaultGroupName;
 
 	private UserImpl(final UserImplBuilder builder) {
@@ -98,6 +123,8 @@ public class UserImpl implements CMUser {
 		this.description = builder.description;
 		this.email = builder.email;
 		this.active = builder.active;
+		this.service = builder.service;
+		this.privileged = builder.privileged;
 		this.groupNames = builder.groupNames;
 		this.defaultGroupName = builder.defaultGroupName;
 		this.groupDescriptions = builder.groupDescriptions;
@@ -119,12 +146,12 @@ public class UserImpl implements CMUser {
 	}
 
 	@Override
-	public Set<String> getGroupNames() {
+	public Collection<String> getGroupNames() {
 		return this.groupNames;
 	}
 
 	@Override
-	public List<String> getGroupDescriptions() {
+	public Collection<String> getGroupDescriptions() {
 		return this.groupDescriptions;
 	}
 
@@ -141,6 +168,16 @@ public class UserImpl implements CMUser {
 	@Override
 	public boolean isActive() {
 		return active;
+	}
+
+	@Override
+	public boolean isService() {
+		return service;
+	}
+
+	@Override
+	public boolean isPrivileged() {
+		return privileged;
 	}
 
 	public static UserImplBuilder newInstanceBuilder() {

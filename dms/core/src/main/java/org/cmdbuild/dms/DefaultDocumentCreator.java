@@ -157,13 +157,14 @@ public class DefaultDocumentCreator implements DocumentCreator {
 
 	@Override
 	public DocumentUpdate createDocumentUpdate(final String className, final String cardId, final String filename,
-			final String description) {
-		return createDocumentUpdate(className, cardId, filename, description, Collections.<MetadataGroup> emptyList());
+			final String category, final String description) {
+		return createDocumentUpdate(className, cardId, filename, category, description,
+				Collections.<MetadataGroup> emptyList());
 	}
 
 	@Override
 	public DocumentUpdate createDocumentUpdate(final String className, final String cardId, final String filename,
-			final String description, final Iterable<MetadataGroup> metadataGroups) {
+			final String category, final String description, final Iterable<MetadataGroup> metadataGroups) {
 		return new DocumentUpdate() {
 
 			@Override
@@ -184,6 +185,11 @@ public class DefaultDocumentCreator implements DocumentCreator {
 			@Override
 			public String getFileName() {
 				return filename;
+			}
+
+			@Override
+			public String getCategory() {
+				return category;
 			}
 
 			@Override

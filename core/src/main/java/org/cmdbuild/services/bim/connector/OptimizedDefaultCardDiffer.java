@@ -1,8 +1,12 @@
 package org.cmdbuild.services.bim.connector;
 
+import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_QUERY;
+import static org.cmdbuild.logic.data.lookup.LookupLogic.UNUSED_LOOKUP_TYPE_QUERY;
+
 import java.util.Iterator;
 import java.util.Map;
 
+import org.cmdbuild.bim.logging.LoggingSupport;
 import org.cmdbuild.bim.model.Attribute;
 import org.cmdbuild.bim.model.Entity;
 import org.cmdbuild.dao.entry.CMCard;
@@ -19,10 +23,13 @@ import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.services.bim.BimDataView;
+import org.slf4j.Logger;
 
 import com.google.common.collect.Maps;
 
 public class OptimizedDefaultCardDiffer implements CardDiffer {
+
+	private static final Logger logger = LoggingSupport.logger;
 
 	private final CMDataView dataView;
 	private final BimDataView bimDataView;
@@ -177,7 +184,7 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 
 	private Long findLookupIdFromDescription(final String lookupValue, final String lookupType) {
 		Long lookupId = null;
-		final Iterable<LookupType> allLookupTypes = lookupLogic.getAllTypes();
+		final Iterable<LookupType> allLookupTypes = lookupLogic.getAllTypes(UNUSED_LOOKUP_TYPE_QUERY);
 		LookupType theType = null;
 		for (final Iterator<LookupType> it = allLookupTypes.iterator(); it.hasNext();) {
 			final LookupType lt = it.next();
@@ -186,7 +193,7 @@ public class OptimizedDefaultCardDiffer implements CardDiffer {
 				break;
 			}
 		}
-		final Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType, true);
+		final Iterable<Lookup> allLookusOfType = lookupLogic.getAllLookup(theType, true, UNUSED_LOOKUP_QUERY);
 
 		for (final Iterator<Lookup> it = allLookusOfType.iterator(); it.hasNext();) {
 			final Lookup l = it.next();

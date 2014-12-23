@@ -27,6 +27,8 @@ import java.util.UUID;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.data.store.lookup.LookupType;
 import org.cmdbuild.exception.AuthException;
+import org.cmdbuild.logic.data.lookup.LookupLogic.LookupQuery;
+import org.cmdbuild.logic.data.lookup.LookupLogic.LookupTypeQuery;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.serializers.LookupSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
@@ -38,9 +40,37 @@ import com.google.common.collect.Maps;
 
 public class ModLookup extends JSONBaseWithSpringContext {
 
+	private static final LookupTypeQuery UNUSED_LOOKUP_TYPE_QUERY = new LookupTypeQuery() {
+
+		@Override
+		public Integer limit() {
+			return null;
+		}
+
+		@Override
+		public Integer offset() {
+			return null;
+		}
+
+	};
+
+	private static final LookupQuery UNUSED_LOOKUP_QUERY = new LookupQuery() {
+
+		@Override
+		public Integer limit() {
+			return null;
+		}
+
+		@Override
+		public Integer offset() {
+			return null;
+		}
+
+	};
+
 	@JSONExported
 	public JSONArray tree() throws JSONException {
-		final Iterable<LookupType> elements = lookupLogic().getAllTypes();
+		final Iterable<LookupType> elements = lookupLogic().getAllTypes(UNUSED_LOOKUP_TYPE_QUERY);
 
 		final JSONArray jsonLookupTypes = new JSONArray();
 		for (final LookupType element : elements) {
@@ -88,7 +118,7 @@ public class ModLookup extends JSONBaseWithSpringContext {
 			throws JSONException {
 
 		final LookupType lookupType = LookupType.newInstance().withName(type).build();
-		final Iterable<Lookup> elements = lookupLogic().getAllLookup(lookupType, active);
+		final Iterable<Lookup> elements = lookupLogic().getAllLookup(lookupType, active, UNUSED_LOOKUP_QUERY);
 
 		final LookupSerializer lookupSerializer = lookupSerializer();
 

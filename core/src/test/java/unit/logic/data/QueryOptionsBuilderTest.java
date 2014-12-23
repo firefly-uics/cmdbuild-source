@@ -1,10 +1,12 @@
 package unit.logic.data;
 
-import static org.junit.Assert.assertEquals;
+import static com.google.common.collect.Iterables.size;
+import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import org.cmdbuild.logic.data.QueryOptions;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.Test;
 
 public class QueryOptionsBuilderTest {
@@ -19,11 +21,11 @@ public class QueryOptionsBuilderTest {
 				.build();
 
 		// then
-		assertEquals(Integer.MAX_VALUE, options.getLimit());
-		assertEquals(0, options.getOffset());
-		assertEquals(EMPTY_OBJECT, options.getFilter().toString());
-		assertEquals(EMPTY_ARRAY, options.getSorters().toString());
-		assertEquals(EMPTY_ARRAY, options.getAttributes().toString());
+		assertThat(options.getLimit(), equalTo(Integer.MAX_VALUE));
+		assertThat(options.getOffset(), equalTo(0));
+		assertThat(options.getFilter().toString(), equalTo(EMPTY_OBJECT));
+		assertThat(options.getSorters().toString(), equalTo(EMPTY_ARRAY));
+		assertThat(options.getAttributes().toString(), equalTo(EMPTY_ARRAY));
 	}
 
 	@Test
@@ -35,11 +37,11 @@ public class QueryOptionsBuilderTest {
 				.build();
 
 		// then
-		assertEquals(10, options.getLimit());
-		assertEquals(3, options.getOffset());
-		assertEquals(EMPTY_OBJECT, options.getFilter().toString());
-		assertEquals(EMPTY_ARRAY, options.getSorters().toString());
-		assertEquals(EMPTY_ARRAY, options.getAttributes().toString());
+		assertThat(options.getLimit(), equalTo(10));
+		assertThat(options.getOffset(), equalTo(3));
+		assertThat(options.getFilter().toString(), equalTo(EMPTY_OBJECT));
+		assertThat(options.getSorters().toString(), equalTo(EMPTY_ARRAY));
+		assertThat(options.getAttributes().toString(), equalTo(EMPTY_ARRAY));
 	}
 
 	@Test
@@ -50,7 +52,7 @@ public class QueryOptionsBuilderTest {
 				.build();
 
 		// then
-		assertEquals(3, options.getSorters().length());
+		assertThat(options.getSorters().length(), equalTo(3));
 	}
 
 	@Test
@@ -64,16 +66,13 @@ public class QueryOptionsBuilderTest {
 				.build();
 
 		// then
-		assertEquals(EMPTY_ARRAY, options.getSorters().toString());
+		assertThat(options.getSorters().toString(), equalTo(EMPTY_ARRAY));
 	}
 
 	@Test
 	public void shouldReturnAttributesWhenSet() throws Exception {
 		// given
-		final JSONArray attributes = new JSONArray();
-		attributes.put(new JSONObject("{key1: val1}"));
-		attributes.put(new JSONObject("{key2: val2}"));
-		attributes.put(new JSONObject("{key3: val3}"));
+		final Iterable<String> attributes = asList("foo", "bar", "baz");
 
 		// when
 		final QueryOptions options = QueryOptions.newQueryOption() //
@@ -81,13 +80,13 @@ public class QueryOptionsBuilderTest {
 				.build();
 
 		// then
-		assertEquals(3, options.getAttributes().length());
+		assertThat(size(options.getAttributes()), equalTo(3));
 	}
 
 	@Test
 	public void shouldReturnEmptyArrayIfAttributesIsNull() throws Exception {
 		// given
-		final JSONArray attributes = null;
+		final Iterable<String> attributes = null;
 
 		// when
 		final QueryOptions options = QueryOptions.newQueryOption() //
@@ -95,7 +94,7 @@ public class QueryOptionsBuilderTest {
 				.build();
 
 		// then
-		assertEquals(EMPTY_ARRAY, options.getAttributes().toString());
+		assertThat(size(options.getAttributes()), equalTo(0));
 	}
 
 }

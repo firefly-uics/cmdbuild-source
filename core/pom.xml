@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.cmdbuild</groupId>
 		<artifactId>cmdbuild-main</artifactId>
-		<version>2.2.3-SNAPSHOT</version>
+		<version>2.3-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>cmdbuild-core</artifactId>
@@ -218,7 +218,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
 		</dependency>
 	</dependencies>
 

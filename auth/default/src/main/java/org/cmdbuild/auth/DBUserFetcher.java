@@ -5,9 +5,10 @@ import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
-import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
-import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
-import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.eq;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.and;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.condition;
+import static org.cmdbuild.dao.query.clause.where.WhereClauses.or;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final CMQueryRow row = view.select(anyAttribute(userClass())) //
 				.from(userClass()) //
 				.where(condition(attribute(userClass(), userClass().getKeyAttributeName()), eq(userId))) //
+				.limit(1) //
 				.run() //
 				.getOnlyRow();
 		return buildUserFromCard(row.getCard(userClass()));
@@ -114,14 +116,16 @@ public abstract class DBUserFetcher implements UserFetcher {
 				.withUsername(defaultString(username)) //
 				.withEmail(defaultString(email)) //
 				.withDescription(defaultString(userDescription)) //
-				.withDefaultGroupName(defaultGroupName); //
+				.withDefaultGroupName(defaultGroupName) //
+				.withActiveStatus(userCard.get(User.ACTIVE, Boolean.class)) //
+				.withServiceStatus(userCard.get(User.SERVICE, Boolean.class)) //
+				.withPrivilegedStatus(userCard.get(User.PRIVILEGED, Boolean.class));
 
 		final List<String> userGroups = fetchGroupNamesForUser(userId);
 		for (final String groupName : userGroups) {
 			userBuilder.withGroupName(groupName);
 			addGroupDescription(userBuilder, groupName);
 		}
-		userBuilder.withActiveStatus(isActive(userCard));
 		return userBuilder.build();
 	}
 
@@ -137,6 +141,7 @@ public abstract class DBUserFetcher implements UserFetcher {
 			final CMCard roleCard = view.select(anyAttribute(roleClass())) //
 					.from(roleClass()) //
 					.where(condition(attribute(roleClass(), ROLE_NAME_COLUMN), eq(groupName))) //
+					.limit(1) //
 					.run() //
 					.getOnlyRow() //
 					.getCard(roleClass());
@@ -148,10 +153,6 @@ public abstract class DBUserFetcher implements UserFetcher {
 		} catch (final Exception e) {
 			logger.debug("Error reading description of group " + groupName);
 		}
-	}
-
-	protected boolean isActive(final CMCard userCard) {
-		return userCard.get(User.ACTIVE, Boolean.class);
 	}
 
 	private String fetchDefaultGroupNameForUser(final String username) {
@@ -236,6 +237,25 @@ public abstract class DBUserFetcher implements UserFetcher {
 		final List<CMUser> allUsers = Lists.newArrayList();
 		for (final CMQueryRow row : result) {
 			final CMCard userCard = row.getCard(userClass());
+			final CMUser user = buildUserFromCard(userCard);
+			allUsers.add(user);
+		}
+		return allUsers;
+	}
+
+	@Override
+	public Iterable<CMUser> fetchServiceOrPrivilegedUsers() {
+		final CMClass target = userClass();
+		final CMQueryResult result = view.select(anyAttribute(target)) //
+				.from(target) //
+				.where(or( //
+						condition(attribute(target, User.SERVICE), eq(true)), //
+						condition(attribute(target, User.PRIVILEGED), eq(true))) //
+				) //
+				.run();
+		final List<CMUser> allUsers = Lists.newArrayList();
+		for (final CMQueryRow row : result) {
+			final CMCard userCard = row.getCard(target);
 			final CMUser user = buildUserFromCard(userCard);
 			allUsers.add(user);
 		}
