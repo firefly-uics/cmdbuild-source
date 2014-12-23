@@ -163,7 +163,7 @@
 
 			// Complete dirtyVariables array also with multylevel variables (ex. var1 = '... {client:var2} ...')
 			for (var i in this.templateResolver.xaVars) {
-				var variable = this.templateResolver.xaVars[i];
+				var variable = this.templateResolver.xaVars[i] || [];
 
 				if (
 					!Ext.isEmpty(variable)
@@ -181,7 +181,7 @@
 
 				if (!Ext.Object.isEmpty(template))
 					for (var j in template) {
-						var templateAttribute = template[j];
+						var templateAttribute = template[j] || [];
 
 						if (
 							!Ext.isEmpty(templateAttribute)
