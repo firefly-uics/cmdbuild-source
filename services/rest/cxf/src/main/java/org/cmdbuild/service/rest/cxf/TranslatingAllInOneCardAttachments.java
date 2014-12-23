@@ -1,7 +1,7 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.io.BaseEncoding.base64;
+import static com.google.common.io.BaseEncoding.base64Url;
 import static org.cmdbuild.service.rest.model.Models.newAttachment;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
@@ -18,23 +18,23 @@ import com.google.common.io.BaseEncoding;
 
 public class TranslatingAllInOneCardAttachments extends ForwardingObject implements AllInOneCardAttachments {
 
-	private final Function<Attachment, Attachment> attachmentWithBase64Id = new Function<Attachment, Attachment>() {
+	private final Function<Attachment, Attachment> attachmentWithEncodedId = new Function<Attachment, Attachment>() {
 
 		@Override
 		public Attachment apply(final Attachment input) {
 			return newAttachment(input) //
-					.withId(plainToBase64(input.getId())) //
+					.withId(encode(input.getId())) //
 					.build();
 		}
 
 	};
 
 	private final AllInOneCardAttachments delegate;
-	private final BaseEncoding base64;
+	private final BaseEncoding encoding;
 
 	public TranslatingAllInOneCardAttachments(final AllInOneCardAttachments delegate) {
 		this.delegate = delegate;
-		this.base64 = base64();
+		this.encoding = base64Url().omitPadding();
 	}
 
 	@Override
@@ -42,12 +42,12 @@ public class TranslatingAllInOneCardAttachments extends ForwardingObject impleme
 		return delegate;
 	}
 
-	private String plainToBase64(final String string) {
-		return base64.encode(string.getBytes());
+	private String encode(final String string) {
+		return encoding.encode(string.getBytes());
 	}
 
-	private String base64ToPlain(final String string) {
-		return new String(base64.decode(string));
+	private String decode(final String string) {
+		return new String(encoding.decode(string));
 	}
 
 	@Override
@@ -55,14 +55,14 @@ public class TranslatingAllInOneCardAttachments extends ForwardingObject impleme
 			final DataHandler dataHandler) {
 		final ResponseSingle<String> response = delegate().create(classId, cardId, attachment, dataHandler);
 		return newResponseSingle(String.class) //
-				.withElement(plainToBase64(response.getElement())) //
+				.withElement(encode(response.getElement())) //
 				.build();
 	}
 
 	@Override
 	public void update(final String classId, final Long cardId, final String attachmentId, final Attachment attachment,
 			final DataHandler dataHandler) {
-		delegate().update(classId, cardId, base64ToPlain(attachmentId), attachment, dataHandler);
+		delegate().update(classId, cardId, decode(attachmentId), attachment, dataHandler);
 	}
 
 	@Override
@@ -70,27 +70,27 @@ public class TranslatingAllInOneCardAttachments extends ForwardingObject impleme
 		final ResponseMultiple<Attachment> response = delegate().read(classId, cardId);
 		return newResponseMultiple(Attachment.class) //
 				.withElements(from(response.getElements()) //
-						.transform(attachmentWithBase64Id)) //
+						.transform(attachmentWithEncodedId)) //
 				.withMetadata(response.getMetadata()) //
 				.build();
 	}
 
 	@Override
 	public ResponseSingle<Attachment> read(final String classId, final Long cardId, final String attachmentId) {
-		final ResponseSingle<Attachment> response = delegate().read(classId, cardId, base64ToPlain(attachmentId));
+		final ResponseSingle<Attachment> response = delegate().read(classId, cardId, decode(attachmentId));
 		return newResponseSingle(Attachment.class) //
-				.withElement(attachmentWithBase64Id.apply((response.getElement()))) //
+				.withElement(attachmentWithEncodedId.apply((response.getElement()))) //
 				.build();
 	}
 
 	@Override
 	public DataHandler download(final String classId, final Long cardId, final String attachmentId) {
-		return delegate().download(classId, cardId, base64ToPlain(attachmentId));
+		return delegate().download(classId, cardId, decode(attachmentId));
 	}
 
 	@Override
 	public void delete(final String classId, final Long cardId, final String attachmentId) {
-		delegate().delete(classId, cardId, base64ToPlain(attachmentId));
+		delegate().delete(classId, cardId, decode(attachmentId));
 	}
 
 }

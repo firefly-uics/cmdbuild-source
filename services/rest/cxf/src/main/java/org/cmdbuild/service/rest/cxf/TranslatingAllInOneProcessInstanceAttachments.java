@@ -1,7 +1,7 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.io.BaseEncoding.base64;
+import static com.google.common.io.BaseEncoding.base64Url;
 import static org.cmdbuild.service.rest.model.Models.newAttachment;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
@@ -19,23 +19,23 @@ import com.google.common.io.BaseEncoding;
 public class TranslatingAllInOneProcessInstanceAttachments extends ForwardingObject implements
 		AllInOneProcessInstanceAttachments {
 
-	private final Function<Attachment, Attachment> attachmentWithBase64Id = new Function<Attachment, Attachment>() {
+	private final Function<Attachment, Attachment> attachmentWithbase64UrlId = new Function<Attachment, Attachment>() {
 
 		@Override
 		public Attachment apply(final Attachment input) {
 			return newAttachment(input) //
-					.withId(plainToBase64(input.getId())) //
+					.withId(plainTobase64Url(input.getId())) //
 					.build();
 		}
 
 	};
 
 	private final AllInOneProcessInstanceAttachments delegate;
-	private final BaseEncoding base64;
+	private final BaseEncoding base64Url;
 
 	public TranslatingAllInOneProcessInstanceAttachments(final AllInOneProcessInstanceAttachments delegate) {
 		this.delegate = delegate;
-		this.base64 = base64();
+		this.base64Url = base64Url().omitPadding();
 	}
 
 	@Override
@@ -43,12 +43,12 @@ public class TranslatingAllInOneProcessInstanceAttachments extends ForwardingObj
 		return delegate;
 	}
 
-	private String plainToBase64(final String string) {
-		return base64.encode(string.getBytes());
+	private String plainTobase64Url(final String string) {
+		return base64Url.encode(string.getBytes());
 	}
 
-	private String base64ToPlain(final String string) {
-		return new String(base64.decode(string));
+	private String base64UrlToPlain(final String string) {
+		return new String(base64Url.decode(string));
 	}
 
 	@Override
@@ -56,14 +56,14 @@ public class TranslatingAllInOneProcessInstanceAttachments extends ForwardingObj
 			final DataHandler dataHandler) {
 		final ResponseSingle<String> response = delegate().create(processId, instanceId, attachment, dataHandler);
 		return newResponseSingle(String.class) //
-				.withElement(plainToBase64(response.getElement())) //
+				.withElement(plainTobase64Url(response.getElement())) //
 				.build();
 	}
 
 	@Override
 	public void update(final String processId, final Long instanceId, final String attachmentId,
 			final Attachment attachment, final DataHandler dataHandler) {
-		delegate().update(processId, instanceId, base64ToPlain(attachmentId), attachment, dataHandler);
+		delegate().update(processId, instanceId, base64UrlToPlain(attachmentId), attachment, dataHandler);
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class TranslatingAllInOneProcessInstanceAttachments extends ForwardingObj
 		final ResponseMultiple<Attachment> response = delegate().read(processId, processInstanceId);
 		return newResponseMultiple(Attachment.class) //
 				.withElements(from(response.getElements()) //
-						.transform(attachmentWithBase64Id)) //
+						.transform(attachmentWithbase64UrlId)) //
 				.withMetadata(response.getMetadata()) //
 				.build();
 	}
@@ -80,20 +80,20 @@ public class TranslatingAllInOneProcessInstanceAttachments extends ForwardingObj
 	public ResponseSingle<Attachment> read(final String processId, final Long processInstanceId,
 			final String attachmentId) {
 		final ResponseSingle<Attachment> response = delegate().read(processId, processInstanceId,
-				base64ToPlain(attachmentId));
+				base64UrlToPlain(attachmentId));
 		return newResponseSingle(Attachment.class) //
-				.withElement(attachmentWithBase64Id.apply((response.getElement()))) //
+				.withElement(attachmentWithbase64UrlId.apply((response.getElement()))) //
 				.build();
 	}
 
 	@Override
 	public DataHandler download(final String processId, final Long processInstanceId, final String attachmentId) {
-		return delegate().download(processId, processInstanceId, base64ToPlain(attachmentId));
+		return delegate().download(processId, processInstanceId, base64UrlToPlain(attachmentId));
 	}
 
 	@Override
 	public void delete(final String processId, final Long processInstanceId, final String attachmentId) {
-		delegate().delete(processId, processInstanceId, base64ToPlain(attachmentId));
+		delegate().delete(processId, processInstanceId, base64UrlToPlain(attachmentId));
 	}
 
 }
