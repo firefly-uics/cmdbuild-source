@@ -44,7 +44,7 @@ public interface CardAttachments {
 	);
 
 	@GET
-	@Path("{" + ATTACHMENT_ID + "}/file/")
+	@Path("{" + ATTACHMENT_ID + "}/{file: [^/]+}")
 	@Produces(APPLICATION_OCTET_STREAM)
 	DataHandler download( //
 			@PathParam(CLASS_ID) String classId, //
