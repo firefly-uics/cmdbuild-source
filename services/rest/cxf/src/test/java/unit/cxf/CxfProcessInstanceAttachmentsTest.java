@@ -1,84 +1,62 @@
 package unit.cxf;
 
-import static java.util.Collections.emptyList;
+import static java.util.Arrays.asList;
 import static org.cmdbuild.service.rest.model.Models.newAttachment;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
-import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.NoSuchElementException;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.ws.rs.WebApplicationException;
 
 import org.apache.commons.io.input.NullInputStream;
-import org.cmdbuild.auth.UserStore;
-import org.cmdbuild.auth.acl.NullGroup;
-import org.cmdbuild.auth.context.NullPrivilegeContext;
-import org.cmdbuild.auth.user.AuthenticatedUser;
-import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.dms.DocumentTypeDefinition;
-import org.cmdbuild.dms.MetadataGroupDefinition;
-import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.service.rest.cxf.AttachmentsHelper;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstanceAttachments;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.model.Attachment;
+import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.workflow.user.UserProcessClass;
 import org.cmdbuild.workflow.user.UserProcessInstance;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.InOrder;
 
 public class CxfProcessInstanceAttachmentsTest {
 
-	protected static final Iterable<MetadataGroupDefinition> NO_METADATA_GROUP_DEFINITION = emptyList();
-
-	private static final DocumentTypeDefinition NO_METADATA = new DocumentTypeDefinition() {
-
-		@Override
-		public String getName() {
-			return "dummy " + DocumentTypeDefinition.class;
-		};
-
-		@Override
-		public Iterable<MetadataGroupDefinition> getMetadataGroupDefinitions() {
-			return NO_METADATA_GROUP_DEFINITION;
-		};
-
-	};
+	@Rule
+	public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
 	private ErrorHandler errorHandler;
-	private DmsLogic dmsLogic;
 	private WorkflowLogic workflowLogic;
-	private UserStore userStore;
+	private AttachmentsHelper attachmentsHelper;
 
 	private CxfProcessInstanceAttachments cxfProcessInstanceAttachments;
 
 	@Before
 	public void setUp() throws Exception {
 		errorHandler = mock(ErrorHandler.class);
-		dmsLogic = mock(DmsLogic.class);
 		workflowLogic = mock(WorkflowLogic.class);
-		userStore = mock(UserStore.class);
-		cxfProcessInstanceAttachments = new CxfProcessInstanceAttachments(errorHandler, dmsLogic, workflowLogic,
-				userStore);
-
-		final AuthenticatedUser authUser = mock(AuthenticatedUser.class);
-		doReturn("dummy user") //
-				.when(authUser).getUsername();
-		final OperationUser operationUser = new OperationUser(authUser, new NullPrivilegeContext(), new NullGroup());
-		doReturn(operationUser) //
-				.when(userStore).getUser();
+		attachmentsHelper = mock(AttachmentsHelper.class);
+		cxfProcessInstanceAttachments = new CxfProcessInstanceAttachments(errorHandler, workflowLogic,
+				attachmentsHelper);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -155,19 +133,20 @@ public class CxfProcessInstanceAttachmentsTest {
 		doReturn(inputStream) //
 				.when(dataSource).getInputStream();
 		final DataHandler dataHandler = new DataHandler(dataSource);
-		doReturn(NO_METADATA) //
-				.when(dmsLogic).getCategoryDefinition(anyString());
+		doReturn("bar") //
+				.when(attachmentsHelper).create(anyString(), anyLong(), anyString(), any(Attachment.class),
+						any(DataHandler.class));
 
 		// when
-		cxfProcessInstanceAttachments.create("foo", 123L, attachment, dataHandler);
+		final ResponseSingle<String> response = cxfProcessInstanceAttachments.create("foo", 123L, attachment,
+				dataHandler);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		assertThat(response.getElement(), equalTo("bar"));
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
-		inOrder.verify(userStore).getUser();
-		inOrder.verify(dmsLogic).upload(eq("dummy user"), eq("foo"), eq(123L), same(inputStream), eq("file name"),
-				eq("the category"), eq("the description"), any(Iterable.class));
+		inOrder.verify(attachmentsHelper).create(eq("foo"), eq(123L), eq("file name"), eq(attachment), eq(dataHandler));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -189,19 +168,20 @@ public class CxfProcessInstanceAttachmentsTest {
 		doReturn(inputStream) //
 				.when(dataSource).getInputStream();
 		final DataHandler dataHandler = new DataHandler(dataSource);
-		doReturn(NO_METADATA) //
-				.when(dmsLogic).getCategoryDefinition(anyString());
+		doReturn("bar") //
+				.when(attachmentsHelper).create(anyString(), anyLong(), anyString(), any(Attachment.class),
+						any(DataHandler.class));
 
 		// when
-		cxfProcessInstanceAttachments.create("foo", 123L, null, dataHandler);
+		final ResponseSingle<String> response = cxfProcessInstanceAttachments.create("foo", 123L, null, dataHandler);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		assertThat(response.getElement(), equalTo("bar"));
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
-		inOrder.verify(userStore).getUser();
-		inOrder.verify(dmsLogic).upload(eq("dummy user"), eq("foo"), eq(123L), same(inputStream), eq("file name"),
-				isNull(String.class), isNull(String.class), any(Iterable.class));
+		inOrder.verify(attachmentsHelper).create(eq("foo"), eq(123L), eq("file name"), isNull(Attachment.class),
+				eq(dataHandler));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -243,15 +223,23 @@ public class CxfProcessInstanceAttachmentsTest {
 		final UserProcessInstance processInstance = mock(UserProcessInstance.class);
 		doReturn(processInstance) //
 				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
+		final Collection<Attachment> attachments = asList( //
+				newAttachment() //
+						.withId("foo").build(), //
+				newAttachment() //
+						.withId("bar").build());
+		doReturn(attachments) //
+				.when(attachmentsHelper).search(anyString(), anyLong());
 
 		// when
-		cxfProcessInstanceAttachments.read("foo", 123L);
+		final ResponseMultiple<Attachment> response = cxfProcessInstanceAttachments.read("foo", 123L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		assertThat(response.getElements(), equalTo(attachments));
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
-		inOrder.verify(dmsLogic).search(eq("foo"), eq(123L));
+		inOrder.verify(attachmentsHelper).search(eq("foo"), eq(123L));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -293,15 +281,18 @@ public class CxfProcessInstanceAttachmentsTest {
 		final UserProcessInstance processInstance = mock(UserProcessInstance.class);
 		doReturn(processInstance) //
 				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
+		final DataHandler dataHandler = new DataHandler(new FileDataSource(temporaryFolder.newFile()));
+		doReturn(dataHandler) //
+				.when(attachmentsHelper).download(anyString(), anyLong(), anyString());
 
 		// when
-		cxfProcessInstanceAttachments.download("foo", 123L, "bar");
+		final DataHandler response = cxfProcessInstanceAttachments.download("foo", 123L, "bar");
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
-		inOrder.verify(dmsLogic).download(eq("foo"), eq(123L), eq("bar"));
+		inOrder.verify(attachmentsHelper).download(eq("foo"), eq(123L), eq("bar"));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -379,19 +370,15 @@ public class CxfProcessInstanceAttachmentsTest {
 		doReturn(inputStream) //
 				.when(dataSource).getInputStream();
 		final DataHandler dataHandler = new DataHandler(dataSource);
-		doReturn(NO_METADATA) //
-				.when(dmsLogic).getCategoryDefinition(anyString());
 
 		// when
 		cxfProcessInstanceAttachments.update("foo", 123L, "bar", attachment, dataHandler);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
-		inOrder.verify(userStore).getUser();
-		inOrder.verify(dmsLogic).upload(eq("dummy user"), eq("foo"), eq(123L), same(inputStream), eq("bar"),
-				eq("the new category"), eq("the new description"), any(Iterable.class));
+		inOrder.verify(attachmentsHelper).update(eq("foo"), eq(123L), eq("bar"), eq(attachment), eq(dataHandler));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -411,19 +398,16 @@ public class CxfProcessInstanceAttachmentsTest {
 		doReturn(inputStream) //
 				.when(dataSource).getInputStream();
 		final DataHandler dataHandler = new DataHandler(dataSource);
-		doReturn(NO_METADATA) //
-				.when(dmsLogic).getCategoryDefinition(anyString());
 
 		// when
 		cxfProcessInstanceAttachments.update("foo", 123L, "bar", null, dataHandler);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
-		inOrder.verify(userStore).getUser();
-		inOrder.verify(dmsLogic).upload(eq("dummy user"), eq("foo"), eq(123L), same(inputStream), eq("bar"),
-				isNull(String.class), isNull(String.class), any(Iterable.class));
+		inOrder.verify(attachmentsHelper).update(eq("foo"), eq(123L), eq("bar"), isNull(Attachment.class),
+				eq(dataHandler));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -442,18 +426,16 @@ public class CxfProcessInstanceAttachmentsTest {
 				.withCategory("the new category") //
 				.withDescription("the new description") //
 				.build();
-		doReturn(NO_METADATA) //
-				.when(dmsLogic).getCategoryDefinition(anyString());
 
 		// when
 		cxfProcessInstanceAttachments.update("foo", 123L, "bar", attachment, null);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
-		inOrder.verify(dmsLogic).updateDescriptionAndMetadata(eq("foo"), eq(123L), eq("bar"), eq("the new category"),
-				eq("the new description"), any(Iterable.class));
+		inOrder.verify(attachmentsHelper).update(eq("foo"), eq(123L), eq("bar"), eq(attachment),
+				isNull(DataHandler.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -468,16 +450,16 @@ public class CxfProcessInstanceAttachmentsTest {
 		final UserProcessInstance processInstance = mock(UserProcessInstance.class);
 		doReturn(processInstance) //
 				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
-		doReturn(NO_METADATA) //
-				.when(dmsLogic).getCategoryDefinition(anyString());
 
 		// when
 		cxfProcessInstanceAttachments.update("foo", 123L, "bar", null, null);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
+		inOrder.verify(attachmentsHelper).update(eq("foo"), eq(123L), eq("bar"), isNull(Attachment.class),
+				isNull(DataHandler.class));
 		inOrder.verifyNoMoreInteractions();
 	}
 
@@ -524,10 +506,10 @@ public class CxfProcessInstanceAttachmentsTest {
 		cxfProcessInstanceAttachments.delete("foo", 123L, "bar");
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, dmsLogic, workflowLogic, userStore);
+		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
-		inOrder.verify(dmsLogic).delete(eq("foo"), eq(123L), eq("bar"));
+		inOrder.verify(attachmentsHelper).delete(eq("foo"), eq(123L), eq("bar"));
 		inOrder.verifyNoMoreInteractions();
 	}
 

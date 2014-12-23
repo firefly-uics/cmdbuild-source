@@ -10,32 +10,31 @@ import java.util.NoSuchElementException;
 
 import javax.activation.DataHandler;
 
-import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.service.rest.model.Attachment;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
 import com.google.common.base.Optional;
 
-public class CxfCardAttachments extends AttachmentsManagement implements AllInOneCardAttachments {
+public class CxfCardAttachments implements AllInOneCardAttachments {
 
 	private final DataAccessLogic dataAccessLogic;
 	private final ErrorHandler errorHandler;
+	private final AttachmentsHelper attachmentsHelper;
 
-	public CxfCardAttachments(final ErrorHandler errorHandler, final DmsLogic dmsLogic,
-			final DataAccessLogic dataAccessLogic, final UserStore userStore) {
-		super(dmsLogic, userStore);
+	public CxfCardAttachments(final ErrorHandler errorHandler, final DataAccessLogic dataAccessLogic,
+			final AttachmentsHelper attachmentsHelper) {
 		this.errorHandler = errorHandler;
 		this.dataAccessLogic = dataAccessLogic;
+		this.attachmentsHelper = attachmentsHelper;
 	}
 
 	@Override
 	public ResponseSingle<String> create(final String classId, final Long cardId, final Attachment attachment,
 			final DataHandler dataHandler) {
-		assureClassAndCard(classId, cardId);
+		checkPreconditions(classId, cardId);
 		if (dataHandler == null) {
 			errorHandler.missingFile();
 		}
@@ -43,19 +42,21 @@ public class CxfCardAttachments extends AttachmentsManagement implements AllInOn
 			errorHandler.missingAttachmentName();
 		}
 		try {
-			store(classId, cardId, dataHandler.getName(), attachment, dataHandler);
+			final String id = attachmentsHelper.create(classId, cardId, dataHandler.getName(), attachment, dataHandler);
+			return newResponseSingle(String.class) //
+					.withElement(id) //
+					.build();
 		} catch (final Exception e) {
 			errorHandler.propagate(e);
+			assert false : "should not come here";
+			return null;
 		}
-		return newResponseSingle(String.class) //
-				.withElement(dataHandler.getName()) //
-				.build();
 	}
 
 	@Override
 	public ResponseMultiple<Attachment> read(final String classId, final Long cardId) {
-		assureClassAndCard(classId, cardId);
-		final Iterable<Attachment> elements = search(classId, cardId);
+		checkPreconditions(classId, cardId);
+		final Iterable<Attachment> elements = attachmentsHelper.search(classId, cardId);
 		return newResponseMultiple(Attachment.class) //
 				.withElements(elements) //
 				.withMetadata(newMetadata() //
@@ -66,8 +67,8 @@ public class CxfCardAttachments extends AttachmentsManagement implements AllInOn
 
 	@Override
 	public ResponseSingle<Attachment> read(final String classId, final Long cardId, final String attachmentId) {
-		assureClassAndCard(classId, cardId, attachmentId);
-		final Optional<Attachment> element = search(classId, cardId, attachmentId);
+		checkPreconditions(classId, cardId, attachmentId);
+		final Optional<Attachment> element = attachmentsHelper.search(classId, cardId, attachmentId);
 		if (!element.isPresent()) {
 			errorHandler.attachmentNotFound(attachmentId);
 		}
@@ -78,19 +79,19 @@ public class CxfCardAttachments extends AttachmentsManagement implements AllInOn
 
 	@Override
 	public DataHandler download(final String classId, final Long cardId, final String attachmentId) {
-		assureClassAndCard(classId, cardId);
-		return super.download(classId, cardId, attachmentId);
+		checkPreconditions(classId, cardId);
+		return attachmentsHelper.download(classId, cardId, attachmentId);
 	}
 
 	@Override
 	public void update(final String classId, final Long cardId, final String attachmentId, final Attachment attachment,
 			final DataHandler dataHandler) {
-		assureClassAndCard(classId, cardId);
+		checkPreconditions(classId, cardId);
 		if (isBlank(attachmentId)) {
 			errorHandler.missingAttachmentId();
 		}
 		try {
-			store(classId, cardId, attachmentId, attachment, dataHandler);
+			attachmentsHelper.update(classId, cardId, attachmentId, attachment, dataHandler);
 		} catch (final Exception e) {
 			errorHandler.propagate(e);
 		}
@@ -98,11 +99,11 @@ public class CxfCardAttachments extends AttachmentsManagement implements AllInOn
 
 	@Override
 	public void delete(final String classId, final Long cardId, final String attachmentId) {
-		assureClassAndCard(classId, cardId);
-		super.delete(classId, cardId, attachmentId);
+		checkPreconditions(classId, cardId);
+		attachmentsHelper.delete(classId, cardId, attachmentId);
 	}
 
-	private void assureClassAndCard(final String classId, final Long cardId) {
+	private void checkPreconditions(final String classId, final Long cardId) {
 		final CMClass targetClass = dataAccessLogic.findClass(classId);
 		if (targetClass == null) {
 			errorHandler.classNotFound(classId);
@@ -114,7 +115,7 @@ public class CxfCardAttachments extends AttachmentsManagement implements AllInOn
 		}
 	}
 
-	private void assureClassAndCard(final String classId, final Long cardId, final String attachmentId) {
+	private void checkPreconditions(final String classId, final Long cardId, final String attachmentId) {
 		final CMClass targetClass = dataAccessLogic.findClass(classId);
 		if (targetClass == null) {
 			errorHandler.classNotFound(classId);
