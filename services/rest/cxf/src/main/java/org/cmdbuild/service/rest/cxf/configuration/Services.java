@@ -55,8 +55,10 @@ import org.cmdbuild.service.rest.cxf.CxfRelations;
 import org.cmdbuild.service.rest.cxf.CxfSessions;
 import org.cmdbuild.service.rest.cxf.CxfSessions.AuthenticationLogicAdapter;
 import org.cmdbuild.service.rest.cxf.CxfSessions.LoginHandler;
+import org.cmdbuild.service.rest.cxf.DefaultEncoding;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.cxf.TranslatingAttachmentsHelper;
+import org.cmdbuild.service.rest.cxf.TranslatingAttachmentsHelper.Encoding;
 import org.cmdbuild.service.rest.cxf.WebApplicationExceptionErrorHandler;
 import org.cmdbuild.service.rest.cxf.service.InMemoryOperationUserStore;
 import org.cmdbuild.service.rest.cxf.service.InMemorySessionStore;
@@ -279,7 +281,13 @@ public class Services implements LoggingSupport {
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	protected AttachmentsHelper attachmentsHelper() {
-		return new TranslatingAttachmentsHelper(new AttachmentsManagement(helper.dmsLogic(), helper.userStore()));
+		return new TranslatingAttachmentsHelper(new AttachmentsManagement(helper.dmsLogic(), helper.userStore()),
+				encoding());
+	}
+
+	@Bean
+	protected Encoding encoding() {
+		return new DefaultEncoding();
 	}
 
 	private <T> T proxy(final Class<T> type, final T service) {

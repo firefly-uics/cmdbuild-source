@@ -1,7 +1,6 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
-import static com.google.common.io.BaseEncoding.base64Url;
 import static org.cmdbuild.service.rest.model.Models.newAttachment;
 
 import javax.activation.DataHandler;
@@ -11,27 +10,34 @@ import org.cmdbuild.service.rest.model.Attachment;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.ForwardingObject;
-import com.google.common.io.BaseEncoding;
 
 public class TranslatingAttachmentsHelper extends ForwardingObject implements AttachmentsHelper {
+
+	public static interface Encoding {
+
+		String encode(String value);
+
+		String decode(String value);
+
+	}
 
 	private final Function<Attachment, Attachment> attachmentWithEncodedId = new Function<Attachment, Attachment>() {
 
 		@Override
 		public Attachment apply(final Attachment input) {
 			return newAttachment(input) //
-					.withId(encode(input.getId())) //
+					.withId(encoding.encode(input.getId())) //
 					.build();
 		}
 
 	};
 
 	private final AttachmentsHelper delegate;
-	private final BaseEncoding encoding;
+	private final Encoding encoding;
 
-	public TranslatingAttachmentsHelper(final AttachmentsHelper delegate) {
+	public TranslatingAttachmentsHelper(final AttachmentsHelper delegate, final Encoding encoding) {
 		this.delegate = delegate;
-		this.encoding = base64Url().omitPadding();
+		this.encoding = encoding;
 	}
 
 	@Override
@@ -39,24 +45,16 @@ public class TranslatingAttachmentsHelper extends ForwardingObject implements At
 		return delegate;
 	}
 
-	private String encode(final String string) {
-		return encoding.encode(string.getBytes());
-	}
-
-	private String decode(final String string) {
-		return new String(encoding.decode(string));
-	}
-
 	@Override
 	public String create(final String classId, final Long cardId, final String attachmentName,
 			final Attachment attachment, final DataHandler dataHandler) throws Exception {
-		return encode(delegate.create(classId, cardId, attachmentName, attachment, dataHandler));
+		return encoding.encode(delegate.create(classId, cardId, attachmentName, attachment, dataHandler));
 	}
 
 	@Override
 	public void update(final String classId, final Long cardId, final String attachmentId, final Attachment attachment,
 			final DataHandler dataHandler) throws Exception {
-		delegate().update(classId, cardId, decode(attachmentId), attachment, dataHandler);
+		delegate().update(classId, cardId, encoding.decode(attachmentId), attachment, dataHandler);
 	}
 
 	@Override
@@ -67,18 +65,18 @@ public class TranslatingAttachmentsHelper extends ForwardingObject implements At
 
 	@Override
 	public Optional<Attachment> search(final String classId, final Long cardId, final String attachmentId) {
-		final Optional<Attachment> response = delegate().search(classId, cardId, decode(attachmentId));
+		final Optional<Attachment> response = delegate().search(classId, cardId, encoding.decode(attachmentId));
 		return response.isPresent() ? Optional.of(attachmentWithEncodedId.apply(response.get())) : response;
 	}
 
 	@Override
 	public DataHandler download(final String classId, final Long cardId, final String attachmentId) {
-		return delegate().download(classId, cardId, decode(attachmentId));
+		return delegate().download(classId, cardId, encoding.decode(attachmentId));
 	}
 
 	@Override
 	public void delete(final String classId, final Long cardId, final String attachmentId) {
-		delegate().delete(classId, cardId, decode(attachmentId));
+		delegate().delete(classId, cardId, encoding.decode(attachmentId));
 	}
 
 }
