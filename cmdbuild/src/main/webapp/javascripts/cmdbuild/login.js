@@ -182,7 +182,7 @@
 		//private
 		doLogin: function(field, event) {
 			var form = this.form.getForm();
-			
+
 			var values = form.getValues();
 			if (values.role != undefined && values.role == "")
 				return;
@@ -196,9 +196,9 @@
 				scope: this,
 				success: function() {
 					if (/administration.jsp$/.test(window.location)) {
-						window.location = 'administration.jsp';
+						window.location = 'administration.jsp' + window.location.hash;
 					} else {
-						window.location = 'management.jsp';
+						window.location = 'management.jsp' + window.location.hash;
 					}
 				},
 				failure: function(response, options, decoded) {
