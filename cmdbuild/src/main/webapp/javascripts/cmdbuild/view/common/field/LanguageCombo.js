@@ -1,41 +1,42 @@
 (function() {
 
-function getCurrentLanguage() {
-	var languageParam = Ext.urlDecode(window.location.search.substring(1))['language'];
-	return languageParam || CMDBuild.Config.cmdbuild.language;
-}
+	Ext.define('CMDBuild.view.common.field.LanguageCombo', {
+		alternateClassName: 'CMDBuild.field.LanguageCombo', // Legacy class name
+		extend: 'CMDBuild.field.CMIconCombo',
 
-function changeLanguage(lang) {
-	window.location = Ext.String.format('?language={0}', lang);
-}
+		valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+		displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
 
-Ext.define("CMDBuild.field.LanguageCombo", {
-	extend: "CMDBuild.field.CMIconCombo",
+		initComponent: function() {
+			Ext.apply(this, {
+				store: CMDBuild.ServiceProxy.setup.getLanguageStore(),
+				queryMode: 'local'
+			});
 
-	initComponent: function() {
-		Ext.apply(this, {
-			valueField: "name",
-			displayField: "value",
-			queryMode: "local",
-			store: CMDBuild.ServiceProxy.setup.getLanguageStore()
-		});
+			this.callParent(arguments);
 
-		this.callParent(arguments);
+			this.on('select', function(eventName, args) {
+				this.changeLanguage(args[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME));
+			}, this);
 
-		this.on({
-			select:{scope:this, fn:function(combo, record) {
-				var lang = record[0].get("name");
-				changeLanguage(lang);
-			}}
-		});
+			this.store.on('load', function() {
+				this.setValue(this.getCurrentLanguage());
+			}, this);
+		},
 
-		this.store.on({
-			load:{scope:this, fn:function() {
-				var lang = getCurrentLanguage();
-				this.setValue(lang);
-			}}
-		});
-	}
-});
+		/**
+		 * @param {String} lang
+		 */
+		changeLanguage: function(lang) {
+			window.location = Ext.String.format('?language={0}', lang);
+		},
+
+		/**
+		 * @return {String}
+		 */
+		getCurrentLanguage: function() {
+			return Ext.urlDecode(window.location.search.substring(1))[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] || CMDBuild.Config.cmdbuild.language;
+		}
+	});
 
 })();
