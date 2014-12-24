@@ -10,6 +10,8 @@ public interface ErrorHandler {
 
 	void classNotFound(String id);
 
+	void differentAttachmentName(String name);
+
 	void domainNotFound(String id);
 
 	void invalidType(String id);

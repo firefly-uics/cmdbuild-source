@@ -37,6 +37,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
+	public void differentAttachmentName(final String name) {
+		logger.error("different file name '{}'", name);
+		badRequest(format("different file name '%s'", name));
+	}
+
+	@Override
 	public void domainNotFound(final String id) {
 		logger.error("domain not found '{}'", id);
 		notFound(id);
