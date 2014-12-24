@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.cxf;
 
+import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
@@ -17,6 +18,7 @@ import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 
 public class CxfCardAttachments implements AllInOneCardAttachments {
 
@@ -40,6 +42,19 @@ public class CxfCardAttachments implements AllInOneCardAttachments {
 		}
 		if (isBlank(dataHandler.getName())) {
 			errorHandler.missingAttachmentName();
+		}
+		if (from(attachmentsHelper.search(classId, cardId)) //
+				.filter(new Predicate<Attachment>() {
+
+					@Override
+					public boolean apply(final Attachment input) {
+						return input.getName().equals(dataHandler.getName());
+					}
+
+				}) //
+				.first() //
+				.isPresent()) {
+			errorHandler.alreadyExistingAttachmentName(dataHandler.getName());
 		}
 		try {
 			final String id = attachmentsHelper.create(classId, cardId, dataHandler.getName(), attachment, dataHandler);
