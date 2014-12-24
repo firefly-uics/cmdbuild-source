@@ -60,6 +60,7 @@
 		DATASOURCE_DB_USERNAME: 'dataSourceDbUsername',
 		DATASOURCE_TABLE_VIEW_PREFIX: 'dataSourceTableViewPrefix',
 		DATASOURCE_TYPE: 'dataSourceType',
+		DATA_INDEX: 'dataIndex',
 		DAY_OF_MOUNTH: 'dayOfMounth',
 		DAY_OF_WEEK: 'dayOfWeek',
 		DB: 'db',
