@@ -2,6 +2,8 @@ package org.cmdbuild.service.rest.cxf;
 
 public interface ErrorHandler {
 
+	void alreadyExistingAttachmentName(String name);
+
 	void attachmentNotFound(String attachmentId);
 
 	void cardNotFound(Long id);

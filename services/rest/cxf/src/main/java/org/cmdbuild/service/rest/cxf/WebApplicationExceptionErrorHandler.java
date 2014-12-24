@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.cxf;
 
+import static java.lang.String.format;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
@@ -10,6 +11,12 @@ import javax.ws.rs.core.Response;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
 
 public class WebApplicationExceptionErrorHandler implements ErrorHandler, LoggingSupport {
+
+	@Override
+	public void alreadyExistingAttachmentName(final String name) {
+		logger.error("already existing attachment '{}'", name);
+		badRequest(format("already existing attachment '%s'", name));
+	}
 
 	@Override
 	public void attachmentNotFound(final String id) {
@@ -138,6 +145,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	public void userNotFound(final String id) {
 		logger.error("user not found '{}'", id);
 		notFound(id);
+	}
+
+	private void badRequest(final Object entity) {
+		throw new WebApplicationException(Response.status(BAD_REQUEST) //
+				.entity(entity) //
+				.build());
 	}
 
 	private void notFound(final Object entity) {

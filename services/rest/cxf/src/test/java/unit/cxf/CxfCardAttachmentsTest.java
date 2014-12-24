@@ -14,6 +14,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.NoSuchElementException;
@@ -66,8 +68,7 @@ public class CxfCardAttachmentsTest {
 		doThrow(new WebApplicationException()) //
 				.when(errorHandler).classNotFound(eq("foo"));
 		final Attachment attachment = newAttachment().build();
-		final DataSource dataSource = mock(DataSource.class);
-		final DataHandler dataHandler = new DataHandler(dataSource);
+		final DataHandler dataHandler = dataHandler();
 
 		// when
 		cxfCardAttachments.create("foo", 123L, attachment, dataHandler);
@@ -76,7 +77,7 @@ public class CxfCardAttachmentsTest {
 	@Test(expected = WebApplicationException.class)
 	public void missingCardOnCreate() throws Exception {
 		// given
-		final CMClass targetClass = mock(CMClass.class);
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doThrow(new NoSuchElementException()) //
@@ -84,8 +85,7 @@ public class CxfCardAttachmentsTest {
 		doThrow(new WebApplicationException()) //
 				.when(errorHandler).cardNotFound(eq(123L));
 		final Attachment attachment = newAttachment().build();
-		final DataSource dataSource = mock(DataSource.class);
-		final DataHandler dataHandler = new DataHandler(dataSource);
+		final DataHandler dataHandler = dataHandler();
 
 		// when
 		cxfCardAttachments.create("foo", 123L, attachment, dataHandler);
@@ -93,10 +93,7 @@ public class CxfCardAttachmentsTest {
 
 	@Test(expected = WebApplicationException.class)
 	public void missingFileOnCreate() throws Exception {
-		// given
-		final CMClass targetClass = mock(CMClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doReturn(Card.newInstance(targetClass).build()) //
@@ -109,12 +106,34 @@ public class CxfCardAttachmentsTest {
 		cxfCardAttachments.create("foo", 123L, attachment, null);
 	}
 
+	@Test(expected = WebApplicationException.class)
+	public void alreadyExistingFileNameOnCreate() throws Exception {
+		// given
+		final CMClass targetClass = mockClass("bar");
+		doReturn(targetClass) //
+				.when(dataAccessLogic).findClass(anyString());
+		doReturn(Card.newInstance(targetClass).build()) //
+				.when(dataAccessLogic).fetchCard(anyString(), anyLong());
+		final DataHandler dataHandler = dataHandler("already existing");
+		doReturn(asList( //
+				newAttachment() //
+						.withName("already existing") //
+						.build(), //
+				newAttachment() //
+						.withName("yet another already existing") //
+						.build())) //
+				.when(attachmentsHelper).search(anyString(), anyLong());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).alreadyExistingAttachmentName(eq("already existing"));
+
+		// when
+		cxfCardAttachments.create("foo", 123L, null, dataHandler);
+	}
+
 	@Test
 	public void logicCalledOnCreateWithBothAttachmentAndFile() throws Exception {
 		// given
-		final CMClass targetClass = mock(CMClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doReturn(Card.newInstance(targetClass).build()) //
@@ -123,13 +142,12 @@ public class CxfCardAttachmentsTest {
 				.withCategory("the category") //
 				.withDescription("the description") //
 				.build();
-		final InputStream inputStream = new NullInputStream(1024);
-		final DataSource dataSource = mock(DataSource.class);
-		doReturn("file name") //
-				.when(dataSource).getName();
-		doReturn(inputStream) //
-				.when(dataSource).getInputStream();
-		final DataHandler dataHandler = new DataHandler(dataSource);
+		final DataHandler dataHandler = dataHandler("file name");
+		doReturn(asList( //
+				newAttachment() //
+						.withName("file name") //
+						.build())) //
+				.when(attachmentsHelper).search(anyString(), anyLong());
 		doReturn("bar") //
 				.when(attachmentsHelper).create(anyString(), anyLong(), anyString(), any(Attachment.class),
 						any(DataHandler.class));
@@ -142,6 +160,7 @@ public class CxfCardAttachmentsTest {
 		final InOrder inOrder = inOrder(errorHandler, dataAccessLogic, attachmentsHelper);
 		inOrder.verify(dataAccessLogic).findClass(eq("foo"));
 		inOrder.verify(dataAccessLogic).fetchCard(eq("foo"), eq(123L));
+		inOrder.verify(attachmentsHelper).search(eq("foo"), eq(123L));
 		inOrder.verify(attachmentsHelper).create(eq("foo"), eq(123L), eq("file name"), eq(attachment), eq(dataHandler));
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -149,20 +168,17 @@ public class CxfCardAttachmentsTest {
 	@Test
 	public void logicCalledOnCreateWithFileOnly() throws Exception {
 		// given
-		final CMClass targetClass = mock(CMClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doReturn(Card.newInstance(targetClass).build()) //
 				.when(dataAccessLogic).fetchCard(anyString(), anyLong());
-		final InputStream inputStream = new NullInputStream(1024);
-		final DataSource dataSource = mock(DataSource.class);
-		doReturn("file name") //
-				.when(dataSource).getName();
-		doReturn(inputStream) //
-				.when(dataSource).getInputStream();
-		final DataHandler dataHandler = new DataHandler(dataSource);
+		final DataHandler dataHandler = dataHandler("file name");
+		doReturn(asList( //
+				newAttachment() //
+						.withName("file name") //
+						.build())) //
+				.when(attachmentsHelper).search(anyString(), anyLong());
 		doReturn("bar") //
 				.when(attachmentsHelper).create(anyString(), anyLong(), anyString(), any(Attachment.class),
 						any(DataHandler.class));
@@ -175,6 +191,7 @@ public class CxfCardAttachmentsTest {
 		final InOrder inOrder = inOrder(errorHandler, dataAccessLogic, attachmentsHelper);
 		inOrder.verify(dataAccessLogic).findClass(eq("foo"));
 		inOrder.verify(dataAccessLogic).fetchCard(eq("foo"), eq(123L));
+		inOrder.verify(attachmentsHelper).search(eq("foo"), eq(123L));
 		inOrder.verify(attachmentsHelper).create(eq("foo"), eq(123L), eq("file name"), isNull(Attachment.class),
 				eq(dataHandler));
 		inOrder.verifyNoMoreInteractions();
@@ -209,10 +226,7 @@ public class CxfCardAttachmentsTest {
 
 	@Test
 	public void logicCalledOnReadAll() throws Exception {
-		// given
-		final CMClass targetClass = mock(CMClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doReturn(Card.newInstance(targetClass).build()) //
@@ -252,7 +266,7 @@ public class CxfCardAttachmentsTest {
 	@Test(expected = WebApplicationException.class)
 	public void missingCardOnRead() throws Exception {
 		// given
-		final CMClass targetClass = mock(CMClass.class);
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doThrow(new NoSuchElementException()) //
@@ -266,15 +280,12 @@ public class CxfCardAttachmentsTest {
 
 	@Test
 	public void logicCalledOnRead() throws Exception {
-		// given
-		final CMClass targetClass = mock(CMClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doReturn(Card.newInstance(targetClass).build()) //
 				.when(dataAccessLogic).fetchCard(anyString(), anyLong());
-		final DataHandler dataHandler = new DataHandler(new FileDataSource(temporaryFolder.newFile()));
+		final DataHandler dataHandler = dataHandler();
 		doReturn(dataHandler) //
 				.when(attachmentsHelper).download(anyString(), anyLong(), anyString());
 
@@ -298,8 +309,7 @@ public class CxfCardAttachmentsTest {
 		doThrow(new WebApplicationException()) //
 				.when(errorHandler).classNotFound(eq("foo"));
 		final Attachment attachment = newAttachment().build();
-		final DataSource dataSource = mock(DataSource.class);
-		final DataHandler dataHandler = new DataHandler(dataSource);
+		final DataHandler dataHandler = dataHandler();
 
 		// when
 		cxfCardAttachments.update("foo", 123L, "bar", attachment, dataHandler);
@@ -308,7 +318,7 @@ public class CxfCardAttachmentsTest {
 	@Test(expected = WebApplicationException.class)
 	public void missingCardOnUpdate() throws Exception {
 		// given
-		final CMClass targetClass = mock(CMClass.class);
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doThrow(new NoSuchElementException()) //
@@ -316,8 +326,7 @@ public class CxfCardAttachmentsTest {
 		doThrow(new WebApplicationException()) //
 				.when(errorHandler).cardNotFound(eq(123L));
 		final Attachment attachment = newAttachment().build();
-		final DataSource dataSource = mock(DataSource.class);
-		final DataHandler dataHandler = new DataHandler(dataSource);
+		final DataHandler dataHandler = dataHandler();
 
 		// when
 		cxfCardAttachments.update("foo", 123L, "bar", attachment, dataHandler);
@@ -326,9 +335,7 @@ public class CxfCardAttachmentsTest {
 	@Test(expected = WebApplicationException.class)
 	public void missingAttachmentIdOnUpdate() throws Exception {
 		// given
-		final CMClass targetClass = mock(CMClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doReturn(Card.newInstance(targetClass).build()) //
@@ -336,8 +343,7 @@ public class CxfCardAttachmentsTest {
 		doThrow(new WebApplicationException()) //
 				.when(errorHandler).missingAttachmentId();
 		final Attachment attachment = newAttachment().build();
-		final DataSource dataSource = mock(DataSource.class);
-		final DataHandler dataHandler = new DataHandler(dataSource);
+		final DataHandler dataHandler = dataHandler();
 
 		// when
 		cxfCardAttachments.update("foo", 123L, null, attachment, dataHandler);
@@ -345,10 +351,7 @@ public class CxfCardAttachmentsTest {
 
 	@Test
 	public void logicCalledOnUpdateWithBothAttachmentAndFile() throws Exception {
-		// given
-		final CMClass targetClass = mock(CMClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doReturn(Card.newInstance(targetClass).build()) //
@@ -361,7 +364,7 @@ public class CxfCardAttachmentsTest {
 		final DataSource dataSource = mock(DataSource.class);
 		doReturn(inputStream) //
 				.when(dataSource).getInputStream();
-		final DataHandler dataHandler = new DataHandler(dataSource);
+		final DataHandler dataHandler = dataHandler();
 
 		// when
 		cxfCardAttachments.update("foo", 123L, "bar", attachment, dataHandler);
@@ -377,9 +380,7 @@ public class CxfCardAttachmentsTest {
 	@Test
 	public void logicCalledOnUpdateWithFileOnly() throws Exception {
 		// given
-		final CMClass targetClass = mock(CMClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doReturn(Card.newInstance(targetClass).build()) //
@@ -388,7 +389,7 @@ public class CxfCardAttachmentsTest {
 		final DataSource dataSource = mock(DataSource.class);
 		doReturn(inputStream) //
 				.when(dataSource).getInputStream();
-		final DataHandler dataHandler = new DataHandler(dataSource);
+		final DataHandler dataHandler = dataHandler();
 
 		// when
 		cxfCardAttachments.update("foo", 123L, "bar", null, dataHandler);
@@ -405,9 +406,7 @@ public class CxfCardAttachmentsTest {
 	@Test
 	public void logicCalledOnUpdateWithAttachmentOnly() throws Exception {
 		// given
-		final CMClass targetClass = mock(CMClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doReturn(Card.newInstance(targetClass).build()) //
@@ -432,9 +431,7 @@ public class CxfCardAttachmentsTest {
 	@Test
 	public void logicNotCalledOnUpdateWhenBothAttachmentAndFileAreMissing() throws Exception {
 		// given
-		final CMClass targetClass = mock(CMClass.class);
-		doReturn("bar") //
-				.when(targetClass).getName();
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doReturn(Card.newInstance(targetClass).build()) //
@@ -467,7 +464,7 @@ public class CxfCardAttachmentsTest {
 	@Test(expected = WebApplicationException.class)
 	public void missingCardOnDelete() throws Exception {
 		// given
-		final CMClass targetClass = mock(CMClass.class);
+		final CMClass targetClass = mockClass("bar");
 		doReturn(targetClass) //
 				.when(dataAccessLogic).findClass(anyString());
 		doThrow(new NoSuchElementException()) //
@@ -499,6 +496,26 @@ public class CxfCardAttachmentsTest {
 		inOrder.verify(dataAccessLogic).fetchCard(eq("foo"), eq(123L));
 		inOrder.verify(attachmentsHelper).delete(eq("foo"), eq(123L), eq("bar"));
 		inOrder.verifyNoMoreInteractions();
+	}
+
+	private CMClass mockClass(final String name) {
+		final CMClass targetClass = mock(CMClass.class);
+		doReturn(name) //
+				.when(targetClass).getName();
+		return targetClass;
+	}
+
+	private DataHandler dataHandler(final String fileName) throws IOException {
+		return dataHandler(temporaryFolder.newFile(fileName));
+	}
+
+	private DataHandler dataHandler() throws IOException {
+		return dataHandler(temporaryFolder.newFile());
+	}
+
+	private DataHandler dataHandler(final File file) throws IOException {
+		final DataHandler dataHandler = new DataHandler(new FileDataSource(file));
+		return dataHandler;
 	}
 
 }
