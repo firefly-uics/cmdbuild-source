@@ -44,14 +44,7 @@ public class CxfCardAttachments implements AllInOneCardAttachments {
 			errorHandler.missingAttachmentName();
 		}
 		if (from(attachmentsHelper.search(classId, cardId)) //
-				.filter(new Predicate<Attachment>() {
-
-					@Override
-					public boolean apply(final Attachment input) {
-						return input.getName().equals(dataHandler.getName());
-					}
-
-				}) //
+				.filter(nameEquals(dataHandler.getName())) //
 				.first() //
 				.isPresent()) {
 			errorHandler.alreadyExistingAttachmentName(dataHandler.getName());
@@ -105,6 +98,12 @@ public class CxfCardAttachments implements AllInOneCardAttachments {
 		if (isBlank(attachmentId)) {
 			errorHandler.missingAttachmentId();
 		}
+		if ((dataHandler != null) && !from(attachmentsHelper.search(classId, cardId)) //
+				.filter(nameEquals(dataHandler.getName())) //
+				.first() //
+				.isPresent()) {
+			errorHandler.differentAttachmentName(dataHandler.getName());
+		}
 		try {
 			attachmentsHelper.update(classId, cardId, attachmentId, attachment, dataHandler);
 		} catch (final Exception e) {
@@ -143,6 +142,17 @@ public class CxfCardAttachments implements AllInOneCardAttachments {
 		if (isBlank(attachmentId)) {
 			errorHandler.missingAttachmentId();
 		}
+	}
+
+	private Predicate<Attachment> nameEquals(final String fileName) {
+		return new Predicate<Attachment>() {
+
+			@Override
+			public boolean apply(final Attachment input) {
+				return input.getName().equals(fileName);
+			}
+
+		};
 	}
 
 }

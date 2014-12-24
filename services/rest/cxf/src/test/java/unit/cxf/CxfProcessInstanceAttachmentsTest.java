@@ -16,16 +16,13 @@ import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.ws.rs.WebApplicationException;
 
-import org.apache.commons.io.input.NullInputStream;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.cxf.AttachmentsHelper;
 import org.cmdbuild.service.rest.cxf.CxfProcessInstanceAttachments;
@@ -50,15 +47,14 @@ public class CxfProcessInstanceAttachmentsTest {
 	private WorkflowLogic workflowLogic;
 	private AttachmentsHelper attachmentsHelper;
 
-	private CxfProcessInstanceAttachments cxfProcessInstanceAttachments;
+	private CxfProcessInstanceAttachments attachmentsService;
 
 	@Before
 	public void setUp() throws Exception {
 		errorHandler = mock(ErrorHandler.class);
 		workflowLogic = mock(WorkflowLogic.class);
 		attachmentsHelper = mock(AttachmentsHelper.class);
-		cxfProcessInstanceAttachments = new CxfProcessInstanceAttachments(errorHandler, workflowLogic,
-				attachmentsHelper);
+		attachmentsService = new CxfProcessInstanceAttachments(errorHandler, workflowLogic, attachmentsHelper);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -69,11 +65,10 @@ public class CxfProcessInstanceAttachmentsTest {
 		doThrow(new WebApplicationException()) //
 				.when(errorHandler).classNotFound(eq("foo"));
 		final Attachment attachment = newAttachment().build();
-		final DataSource dataSource = mock(DataSource.class);
-		final DataHandler dataHandler = new DataHandler(dataSource);
+		final DataHandler dataHandler = dataHandler();
 
 		// when
-		cxfProcessInstanceAttachments.create("foo", 123L, attachment, dataHandler);
+		attachmentsService.create("foo", 123L, attachment, dataHandler);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -90,7 +85,7 @@ public class CxfProcessInstanceAttachmentsTest {
 		final DataHandler dataHandler = dataHandler();
 
 		// when
-		cxfProcessInstanceAttachments.create("foo", 123L, attachment, dataHandler);
+		attachmentsService.create("foo", 123L, attachment, dataHandler);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -107,7 +102,7 @@ public class CxfProcessInstanceAttachmentsTest {
 		final Attachment attachment = newAttachment().build();
 
 		// when
-		cxfProcessInstanceAttachments.create("foo", 123L, attachment, null);
+		attachmentsService.create("foo", 123L, attachment, null);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -132,7 +127,7 @@ public class CxfProcessInstanceAttachmentsTest {
 				.when(errorHandler).alreadyExistingAttachmentName(eq("already existing"));
 
 		// when
-		cxfProcessInstanceAttachments.create("foo", 123L, null, dataHandler);
+		attachmentsService.create("foo", 123L, null, dataHandler);
 	}
 
 	@Test
@@ -159,8 +154,7 @@ public class CxfProcessInstanceAttachmentsTest {
 						any(DataHandler.class));
 
 		// when
-		final ResponseSingle<String> response = cxfProcessInstanceAttachments.create("foo", 123L, attachment,
-				dataHandler);
+		final ResponseSingle<String> response = attachmentsService.create("foo", 123L, attachment, dataHandler);
 
 		// then
 		assertThat(response.getElement(), equalTo("bar"));
@@ -192,7 +186,7 @@ public class CxfProcessInstanceAttachmentsTest {
 						any(DataHandler.class));
 
 		// when
-		final ResponseSingle<String> response = cxfProcessInstanceAttachments.create("foo", 123L, null, dataHandler);
+		final ResponseSingle<String> response = attachmentsService.create("foo", 123L, null, dataHandler);
 
 		// then
 		assertThat(response.getElement(), equalTo("bar"));
@@ -214,7 +208,7 @@ public class CxfProcessInstanceAttachmentsTest {
 				.when(errorHandler).classNotFound(eq("foo"));
 
 		// when
-		cxfProcessInstanceAttachments.read("foo", 123L);
+		attachmentsService.read("foo", 123L);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -229,7 +223,7 @@ public class CxfProcessInstanceAttachmentsTest {
 				.when(errorHandler).cardNotFound(eq(123L));
 
 		// when
-		cxfProcessInstanceAttachments.read("foo", 123L);
+		attachmentsService.read("foo", 123L);
 	}
 
 	@Test
@@ -250,7 +244,7 @@ public class CxfProcessInstanceAttachmentsTest {
 				.when(attachmentsHelper).search(anyString(), anyLong());
 
 		// when
-		final ResponseMultiple<Attachment> response = cxfProcessInstanceAttachments.read("foo", 123L);
+		final ResponseMultiple<Attachment> response = attachmentsService.read("foo", 123L);
 
 		// then
 		assertThat(response.getElements(), equalTo(attachments));
@@ -270,7 +264,7 @@ public class CxfProcessInstanceAttachmentsTest {
 				.when(errorHandler).classNotFound(eq("foo"));
 
 		// when
-		cxfProcessInstanceAttachments.download("foo", 123L, "bar");
+		attachmentsService.download("foo", 123L, "bar");
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -285,7 +279,7 @@ public class CxfProcessInstanceAttachmentsTest {
 				.when(errorHandler).cardNotFound(eq(123L));
 
 		// when
-		cxfProcessInstanceAttachments.download("foo", 123L, "bar");
+		attachmentsService.download("foo", 123L, "bar");
 	}
 
 	@Test
@@ -302,7 +296,7 @@ public class CxfProcessInstanceAttachmentsTest {
 				.when(attachmentsHelper).download(anyString(), anyLong(), anyString());
 
 		// when
-		final DataHandler response = cxfProcessInstanceAttachments.download("foo", 123L, "bar");
+		attachmentsService.download("foo", 123L, "bar");
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
@@ -323,7 +317,7 @@ public class CxfProcessInstanceAttachmentsTest {
 		final DataHandler dataHandler = dataHandler();
 
 		// when
-		cxfProcessInstanceAttachments.update("foo", 123L, "bar", attachment, dataHandler);
+		attachmentsService.update("foo", 123L, "bar", attachment, dataHandler);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -340,7 +334,7 @@ public class CxfProcessInstanceAttachmentsTest {
 		final DataHandler dataHandler = dataHandler();
 
 		// when
-		cxfProcessInstanceAttachments.update("foo", 123L, "bar", attachment, dataHandler);
+		attachmentsService.update("foo", 123L, "bar", attachment, dataHandler);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -358,7 +352,32 @@ public class CxfProcessInstanceAttachmentsTest {
 		final DataHandler dataHandler = dataHandler();
 
 		// when
-		cxfProcessInstanceAttachments.update("foo", 123L, null, attachment, dataHandler);
+		attachmentsService.update("foo", 123L, null, attachment, dataHandler);
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void differentFileNameOnUpdate() throws Exception {
+		// given
+		final UserProcessClass targetClass = mockClass("baz");
+		doReturn(targetClass) //
+				.when(workflowLogic).findProcessClass(anyString());
+		final UserProcessInstance processInstance = mock(UserProcessInstance.class);
+		doReturn(processInstance) //
+				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
+		final DataHandler dataHandler = dataHandler("different name");
+		doReturn(asList( //
+				newAttachment() //
+						.withName("already existing") //
+						.build(), //
+				newAttachment() //
+						.withName("yet another already existing") //
+						.build())) //
+				.when(attachmentsHelper).search(anyString(), anyLong());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).differentAttachmentName(eq("different name"));
+
+		// when
+		attachmentsService.update("foo", 123L, "bar", null, dataHandler);
 	}
 
 	@Test
@@ -374,19 +393,21 @@ public class CxfProcessInstanceAttachmentsTest {
 				.withCategory("the new category") //
 				.withDescription("the new description") //
 				.build();
-		final InputStream inputStream = new NullInputStream(1024);
-		final DataSource dataSource = mock(DataSource.class);
-		doReturn(inputStream) //
-				.when(dataSource).getInputStream();
-		final DataHandler dataHandler = dataHandler();
+		final DataHandler dataHandler = dataHandler("existing");
+		doReturn(asList( //
+				newAttachment() //
+						.withName("existing") //
+						.build())) //
+				.when(attachmentsHelper).search(anyString(), anyLong());
 
 		// when
-		cxfProcessInstanceAttachments.update("foo", 123L, "bar", attachment, dataHandler);
+		attachmentsService.update("foo", 123L, "bar", attachment, dataHandler);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
+		inOrder.verify(attachmentsHelper).search(eq("foo"), eq(123L));
 		inOrder.verify(attachmentsHelper).update(eq("foo"), eq(123L), eq("bar"), eq(attachment), eq(dataHandler));
 		inOrder.verifyNoMoreInteractions();
 	}
@@ -400,19 +421,21 @@ public class CxfProcessInstanceAttachmentsTest {
 		final UserProcessInstance processInstance = mock(UserProcessInstance.class);
 		doReturn(processInstance) //
 				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
-		final InputStream inputStream = new NullInputStream(1024);
-		final DataSource dataSource = mock(DataSource.class);
-		doReturn(inputStream) //
-				.when(dataSource).getInputStream();
-		final DataHandler dataHandler = dataHandler();
+		final DataHandler dataHandler = dataHandler("existing");
+		doReturn(asList( //
+				newAttachment() //
+						.withName("existing") //
+						.build())) //
+				.when(attachmentsHelper).search(anyString(), anyLong());
 
 		// when
-		cxfProcessInstanceAttachments.update("foo", 123L, "bar", null, dataHandler);
+		attachmentsService.update("foo", 123L, "bar", null, dataHandler);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
 		inOrder.verify(workflowLogic).findProcessClass(eq("foo"));
 		inOrder.verify(workflowLogic).getProcessInstance(eq("foo"), eq(123L));
+		inOrder.verify(attachmentsHelper).search(eq("foo"), eq(123L));
 		inOrder.verify(attachmentsHelper).update(eq("foo"), eq(123L), eq("bar"), isNull(Attachment.class),
 				eq(dataHandler));
 		inOrder.verifyNoMoreInteractions();
@@ -433,7 +456,7 @@ public class CxfProcessInstanceAttachmentsTest {
 				.build();
 
 		// when
-		cxfProcessInstanceAttachments.update("foo", 123L, "bar", attachment, null);
+		attachmentsService.update("foo", 123L, "bar", attachment, null);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
@@ -455,7 +478,7 @@ public class CxfProcessInstanceAttachmentsTest {
 				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
 
 		// when
-		cxfProcessInstanceAttachments.update("foo", 123L, "bar", null, null);
+		attachmentsService.update("foo", 123L, "bar", null, null);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
@@ -475,7 +498,7 @@ public class CxfProcessInstanceAttachmentsTest {
 				.when(errorHandler).classNotFound(eq("foo"));
 
 		// when
-		cxfProcessInstanceAttachments.delete("foo", 123L, "bar");
+		attachmentsService.delete("foo", 123L, "bar");
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -490,7 +513,7 @@ public class CxfProcessInstanceAttachmentsTest {
 				.when(errorHandler).cardNotFound(eq(123L));
 
 		// when
-		cxfProcessInstanceAttachments.delete("foo", 123L, "bar");
+		attachmentsService.delete("foo", 123L, "bar");
 	}
 
 	@Test
@@ -504,7 +527,7 @@ public class CxfProcessInstanceAttachmentsTest {
 				.when(workflowLogic).getProcessInstance(anyString(), anyLong());
 
 		// when
-		cxfProcessInstanceAttachments.delete("foo", 123L, "bar");
+		attachmentsService.delete("foo", 123L, "bar");
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, workflowLogic, attachmentsHelper);
