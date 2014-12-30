@@ -207,6 +207,7 @@
 		USERNAME: 'username',
 		VALUE: 'value',
 		VARIABLES: 'variables',
+		VIEW_TYPE: 'viewType',
 		WIDGET: 'widget',
 		WIDGET_ID: 'widgetId',
 		WORKFLOW: 'workflow',
