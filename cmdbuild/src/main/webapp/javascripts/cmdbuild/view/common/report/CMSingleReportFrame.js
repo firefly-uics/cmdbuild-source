@@ -14,17 +14,21 @@
 		initComponent : function() {
 			var me = this;
 			this.requestReport = function(reportParams) {
-				Ext.Ajax.request({
+				CMDBuild.LoadMask.get().show();
+
+				CMDBuild.Ajax.request({
 					url: 'services/json/management/modreport/createreportfactory',
 					params: reportParams,
 					success: function(response) {
+						CMDBuild.LoadMask.get().hide();
+
 						var ret = Ext.JSON.decode(response.responseText);
 						if(ret.filled) { // report with no parameters
 							me.showReport();
 						}
 						else { // show form with launch parameters
 							var paramWin = new CMDBuild.Management.ReportParamWin({
-								attributeList: ret.attribute, 
+								attributeList: ret.attribute,
 								windowFrame: me
 							});
 							paramWin.show();
@@ -54,7 +58,7 @@ function createTBar(me) {
 				id: me.reportId,
 				type: "CUSTOM",
 				extension: "pdf"
-			});        
+			});
         }
 	});
 	var odtButton = new Ext.button.Button( {
@@ -68,7 +72,7 @@ function createTBar(me) {
 				id: me.reportId,
 				type: "CUSTOM",
 				extension: "odt"
-			});        
+			});
         }
 	});
 	var rtfButton = new Ext.button.Button( {
@@ -82,7 +86,7 @@ function createTBar(me) {
 				id: me.reportId,
 				type: "CUSTOM",
 				extension: "rtf"
-			});        
+			});
         }
 	});
 	var csvButton = new Ext.button.Button( {
@@ -96,7 +100,7 @@ function createTBar(me) {
 				id: me.reportId,
 				type: "CUSTOM",
 				extension: "csv"
-			});        
+			});
         }
 	});
 	return [pdfButton, odtButton, rtfButton, csvButton];

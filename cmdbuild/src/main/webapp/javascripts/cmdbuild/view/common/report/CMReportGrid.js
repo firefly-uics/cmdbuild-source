@@ -75,10 +75,14 @@ Ext.define("CMDBuild.view.common.report.CMReportGrid", {
 	},
 
 	requestReport: function(reportParams) {
-		Ext.Ajax.request({
+		CMDBuild.LoadMask.get().show();
+
+		CMDBuild.Ajax.request({
 			url: 'services/json/management/modreport/createreportfactory',
 			params: reportParams,
 			success: function(response) {
+				CMDBuild.LoadMask.get().hide();
+
 				var ret = Ext.JSON.decode(response.responseText);
 				if(ret.filled) { // report with no parameters
 					var popup = window.open("services/json/management/modreport/printreportfactory", "Report", "height=400,width=550,status=no,toolbar=no,scrollbars=yes,menubar=no,location=no,resizable");
