@@ -19,7 +19,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/FixFieldSet.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/layout/container/FixEditor.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/override/form/field/VTypes.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/override/data/proxy/Server.js"></script>
 
 <!--  PROXYES -->
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
