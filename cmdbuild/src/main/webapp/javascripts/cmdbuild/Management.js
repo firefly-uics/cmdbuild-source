@@ -25,6 +25,7 @@
 
 		requires: [
 			'Ext.ux.Router',
+			'CMDBuild.core.proxy.Report',
 			'CMDBuild.routes.management.Cards',
 			'CMDBuild.routes.management.Classes'
 		],
@@ -143,6 +144,7 @@
 						cmName: "report",
 						cmControllerType: CMDBuild.controller.management.report.CMModReportController
 					}),
+
 					this.singleReportPanel = new CMDBuild.view.common.report.CMMainSingleReportPage({
 						cmName: "singlereport",
 						cmControllerType: CMDBuild.controller.management.report.CMSingleReportPageController
@@ -291,7 +293,7 @@
 					callback: reqBarrier.getCallback
 				},"dms");
 
-				CMDBuild.ServiceProxy.report.getTypesTree({
+				CMDBuild.core.proxy.Report.getTypesTree({
 					scope: this,
 					success: function(response, options, reports) {
 						_CMCache.addReports(reports);

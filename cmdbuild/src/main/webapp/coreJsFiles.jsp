@@ -39,7 +39,6 @@
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyLookup.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyMenu.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyNavigationTrees.js"></script>
-<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyReport.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyTranslations.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyWidgetConfiguration.js"></script>
 
@@ -51,6 +50,7 @@
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDashboardModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMAttachmentModels.js"></script>
 <script type="text/javascript" src="javascripts/cmdbuild/model/CMDataViewModel.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/model/Report.js"></script>
 
 <!-- SELECTION -->
 <script type="text/javascript" src="javascripts/cmdbuild/selection/CMMultiPageSelectionModel.js"></script>

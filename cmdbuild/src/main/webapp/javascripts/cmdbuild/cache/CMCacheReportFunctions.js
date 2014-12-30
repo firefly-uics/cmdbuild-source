@@ -12,7 +12,7 @@
 		},
 
 		addReport: function(r) {
-			var report = Ext.create("CMDBuild.cache.CMReportModel", r);
+			var report = Ext.create("CMDBuild.model.Report", r);
 			reports[r.id] = report;
 
 			return report;
@@ -32,10 +32,13 @@
 			return reports[id] || null;
 		},
 
+		/**
+		 * @deprecated
+		 */
 		getReportGridStore: function() {
 			if (gridStore == null) {
 				gridStore = new Ext.data.Store({
-					model: "CMDBuild.cache.CMReporModelForGrid",
+					model: "CMDBuild.model.Report.grid",
 					pageSize: getPageSize(),
 					proxy: {
 						type: "ajax",
@@ -69,7 +72,7 @@
 							totalProperty: 'results'
 						},
 						extraParams: {
-							type: "custom", 
+							type: "custom",
 							limit: 1000
 						}
 					},
@@ -81,6 +84,9 @@
 		}
 	});
 
+	/**
+	 * @deprecated
+	 */
 	function getPageSize() {
 		var pageSize;
 		try {

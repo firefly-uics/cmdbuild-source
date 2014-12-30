@@ -279,31 +279,7 @@
 		}
 	});
 
-	Ext.define("CMDBuild.cache.CMReportModel", {
-		extend: 'Ext.data.Model',
-		fields: [
-			{name: "id",type: 'string'},
-			{name: "active", type: "boolean"},
-			{name: "text", type: "string"},
-			{name: "type", type: "string"},
-			{name: "group", type: "string"}
-		]
-	});
-
-	Ext.define("CMDBuild.cache.CMReporModelForGrid", {
-		extend: 'Ext.data.Model',
-		fields: [
-			{name: "id",type: 'string'},
-			{name: "type", type: "string"},
-			{name: "groups", type: "string"},
-			{name: "query", type: "string"},
-			{name: "description", type: "string"},
-			{name: "description_default", type: "string"},
-			{name: "title", type: "string"}
-		]
-	});
-
-		 Ext.define("CMDBuild.cache.CMReferenceStoreModel", {
+	Ext.define("CMDBuild.cache.CMReferenceStoreModel", {
 		extend: 'Ext.data.Model',
 		fields: [
 			{name: "Id", type: 'int'},
