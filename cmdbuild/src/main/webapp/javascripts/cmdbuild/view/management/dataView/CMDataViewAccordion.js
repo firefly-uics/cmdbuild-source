@@ -36,8 +36,7 @@
 		var node = {
 			text: viewConfiguration.description,
 			tableType: "standard",
-			leaf: true,
-			iconCls: "cmdbuild-tree-class-icon"
+			leaf: true
 		};
 
 		if (viewConfiguration.type == FILTER) {
