@@ -7,10 +7,11 @@
 		alternateClassName: 'CMDBuild.PopupWindow', // Legacy class name
 		extend: 'Ext.window.Window',
 
-		modal: true,
-		layout: 'fit',
-		resizable: false,
+		buttonAlign: 'center',
 		defaultSize: 0.80,
+		layout: 'fit',
+		modal: true,
+		resizable: false,
 
 		initComponent: function() {
 			if (!this.autoHeight) {

@@ -155,8 +155,12 @@
 		},
 
 		reports: {
+			createReportFactory: 'services/json/management/modreport/createreportfactory',
 			createReportFactoryByTypeCode: 'services/json/management/modreport/createreportfactorybytypecode',
-			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams'
+			getReportTypesTree: 'services/json/management/modreport/getreporttypestree',
+			getReportsByType: 'services/json/management/modreport/getreportsbytype',
+			menuTree: 'services/json/schema/modreport/menutree',
+			updateReportFactoryParams: 'services/json/management/modreport/updatereportfactoryparams',
 		},
 
 		tasks: {
@@ -226,10 +230,6 @@
 				copyAttachmentFromCardForExistingEmail: 'services/json/management/email/copyattachmentsfromcardforexistingemail',
 				removeAttachmentFromNewEmail: 'services/json/management/email/deleteattachmentfromnewemail',
 				removeAttachmentFromExistingEmail: 'services/json/management/email/deleteattachmentfromexistingemail'
-			},
-			openReport: {
-				createReportFactory: 'services/json/management/modreport/createreportfactory',
-				getReportsByType: 'services/json/management/modreport/getreportsbytype'
 			}
 		},
 
