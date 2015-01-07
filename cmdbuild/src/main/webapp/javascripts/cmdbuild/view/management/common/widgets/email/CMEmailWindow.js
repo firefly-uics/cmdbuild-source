@@ -31,6 +31,7 @@
 		record: undefined,
 
 		buttonAlign: 'center',
+		title: CMDBuild.Translation.composeEmail,
 
 		layout: {
 			type: 'vbox',
@@ -85,8 +86,7 @@
 			Ext.apply(this, {
 				buttons: this.buildButtons(),
 				items: [this.formPanel, this.attachmentButtonsContainer, this.attachmentPanelsContainer],
-				tbar: [this.fillFromTemplateButton],
-				title: this.readOnly ? CMDBuild.Translation.viewEmail : CMDBuild.Translation.composeEmail // Title configuration
+				tbar: [this.fillFromTemplateButton]
 			});
 
 			this.callParent(arguments);

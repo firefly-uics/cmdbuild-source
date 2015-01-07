@@ -108,7 +108,6 @@
 						sortable: false,
 						scope: this,
 						renderer: this.renderAddress,
-						dataIndex: 'Fake',
 						flex: 1
 					},
 					{
@@ -141,7 +140,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onDeleteEmail', record);
+									this.delegate.cmOn('onEmailDelete', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
@@ -165,7 +164,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEditEmail', record);
+									this.delegate.cmOn('onEmailEdit', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
@@ -189,7 +188,27 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onViewEmail', record);
+									this.delegate.cmOn('onEmailView', record);
+								}
+							}
+						]
+					},
+					{
+						xtype: 'actioncolumn',
+						align: 'center',
+						width: 25,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true,
+						items: [
+							{
+								icon: 'images/icons/reply.png',
+								tooltip: 'CMDBuild.Translation.reply',
+								scope: this,
+
+								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+									this.delegate.cmOn('onEmailReply', record);
 								}
 							}
 						]
