@@ -1,229 +1,166 @@
 (function() {
 
 	var tr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail;
-	var reader = CMDBuild.management.model.widget.ManageEmailConfigurationReader;
-	var fields = reader.FIELDS;
-
-	var RECEIVED = 'Received';
-	var NEW	 = 'New';
-	var DRAFT = 'Draft';
-	var NO_SUBJECT_PREFIX = 'noSubjectPrefix';
-
-	Ext.define('CMDBuild.management.mail.Model', {
-		extend: 'Ext.data.Model',
-		fields: [
-			CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-			fields.ID,
-			fields.STATUS,
-			fields.BEGIN_DATE,
-			fields.FROM_ADDRESS,
-			fields.TO_ADDRESS,
-			fields.CC_ADDRESS,
-			fields.SUBJECT,
-			fields.CONTENT,
-			'temporaryId',
-			'notifyWith',
-			'attachments',
-			{
-				name: NO_SUBJECT_PREFIX,
-				type: 'boolean'
-			},
-			'Fake' // for the icons
-		],
-
-		/**
-		 * @return {Boolean}
-		 */
-		isNew: function() {
-			return this.get(fields.STATUS) == 'New';
-		},
-
-		getAttachmentNames: function() {
-			return this.get('attachments') || [];
-		}
-	});
-
-	Ext.define('CMDBuild.view.management.common.widgets.CMEmailGridDelegate', {
-		onUpdateTemplatesButtonClick: Ext.emptyFn,
-
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMEmailGrid} emailGrid
-		 * @param {CMDBuild.management.mail.Model} emailRecord
-		 */
-		onAddEmailButtonClick: function(emailGrid, emailRecord) {},
-		onModifyEmailIconClick: function() {}
-	});
 
 	Ext.define('CMDBuild.view.management.common.widgets.CMEmailGrid', {
 		extend: 'Ext.grid.Panel',
 
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.widgets.ManageEmail',
+			'CMDBuild.model.widget.ManageEmail'
+		],
+
+		/**
+		 * @cfg {CMDBuild.controller.management.common.widgets.CMManageEmailController}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @cfg {Array}
+		 */
+		deletedEmails: [],
+
+		/**
+		 * @cfg {Object}
+		 */
+		emailTypes: {
+			draft: 'Draft',
+			'new': 'New',
+			received: 'Received'
+		},
+
+		/**
+		 * @cfg {Int}
+		 */
 		processId: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		readOnly: undefined,
 
 		collapsible: false,
 		isLoaded: false,
 		loadMask: false,
 
 		initComponent: function() {
-			var readWrite = this.readWrite;
-
-			this.deletedEmails = [];
-			this.delegate = Ext.create('CMDBuild.view.management.common.widgets.CMEmailGridDelegate');
-
-			this.store = Ext.create('Ext.data.Store', {
-				model: 'CMDBuild.management.mail.Model',
-				remoteSort: false,
-				proxy: {
-					type: 'ajax',
-					url: 'services/json/management/email/getemaillist',
-					reader: {
-						root: 'response',
-						type: 'json'
-					}
-				},
-				sorters: {
-					property: fields.STATUS,
-					direction: 'ASC'
-				},
-				groupField: fields.STATUS,
-				autoLoad: false
-			});
-
-			if (this.readWrite) {
+			if (this.readOnly) {
 				var me = this;
 
-				this.tbar = [
-					{
-						iconCls: 'add',
-						text: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose,
-
-						handler: function(values) {
-							me.delegate.onAddEmailButtonClick(me, me.createRecord({}));
-						}
-					},
-					{
-						iconCls: 'x-tbar-loading',
-						text: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.regenerates,
-
-						handler: function() {
-							// Ask to the user if is sure to delete all the unsent e-mails before
-							Ext.Msg.show({
-								title: CMDBuild.Translation.common.confirmpopup.title,
-								msg: tr.updateTemplateConfirm,
-								buttons: Ext.Msg.OKCANCEL,
-								icon: Ext.Msg.WARNING,
-								fn: function(btn) {
-									if (btn != 'ok')
-										return;
-									me.delegate.onUpdateTemplatesButtonClick();
-								}
-							});
-						}
-					}
-				];
-			}
-
-			/**
-			 * @param {Mixed} value
-			 * @param {Object} metaData
-			 * @param {Object} record
-			 *
-			 * @return {String}
-			 */
-			function renderEmailActions(value, metadata, record) {
-				if (recordIsEditable(record) && readWrite) {
-					return '<img style="cursor:pointer" title="'+CMDBuild.Translation.management.modworkflow.extattrs.manageemail.deleteicon+'" class="action-email-delete" src="images/icons/delete.png"/>&nbsp;'
-						+ '<img style="cursor:pointer" title="'+CMDBuild.Translation.management.modworkflow.extattrs.manageemail.editicon+'" class="action-email-edit" src="images/icons/modify.png"/>&nbsp;';
-				} else {
-					return '<span style="cursor:pointer; width: 16px; height: 16px" />&nbsp;'
-						+ '<img style="cursor:pointer" title="'+CMDBuild.Translation.management.modworkflow.extattrs.manageemail.viewicon+'" class="action-email-view" src="images/icons/zoom.png"/>';
-				}
-			}
-
-			this.columns = [
-				{
-					header: '&nbsp',
-					sortable: true,
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-					hidden: true
-				},
-				{
-					header: '&nbsp',
-					dataIndex: NO_SUBJECT_PREFIX,
-					hidden: true
-				},
-				{
-					header: '&nbsp',
-					sortable: true,
-					dataIndex: fields.STATUS,
-					hidden: true
-				},
-				{
-					header: tr.datehdr,
-					sortable: true,
-					dataIndex: fields.BEGIN_DATE,
-					flex: 1
-				},
-				{
-					header: tr.addresshdr,
-					sortable: false,
-					renderer: renderAddress,
-					dataIndex: 'Fake',
-					flex: 1
-				},
-				{
-					header: tr.subjecthdr,
-					sortable: false,
-					dataIndex: fields.SUBJECT,
-					flex: 1
-				},
-				{
-					header: '&nbsp',
-					sortable: false,
-					renderer: renderEmailContent,
-					dataIndex: fields.CONTENT,
-					menuDisabled: true,
-					hideable: false,
-					flex: 2
-				},
-				{
-					header: '&nbsp',
-					width: 90,
-					fixed: true,
-					sortable: false,
-					renderer: renderEmailActions,
-					align: 'center',
-					tdCls: 'grid-button',
-					dataIndex: 'Fake',
-					menuDisabled: true,
-					hideable: false
-				}
-			];
-
-			this.features = [
-				{
-					ftype: 'groupingsummary',
-					groupHeaderTpl: [
-						'{name:this.formatName}',
+				Ext.apply(this, {
+					tbar: [
 						{
-							formatName: function(name) {
-								return tr.lookup[name] || name;
+							iconCls: 'add',
+							text: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose,
+
+							handler: function(values) {
+								me.delegate.onAddEmailButtonClick(me, me.createRecord({}));
+							}
+						},
+						{
+							iconCls: 'x-tbar-loading',
+							text: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.regenerates,
+
+							handler: function() {
+								// Ask to the user if is sure to delete all the unsent e-mails before
+								Ext.Msg.show({
+									title: CMDBuild.Translation.common.confirmpopup.title,
+									msg: tr.updateTemplateConfirm,
+									buttons: Ext.Msg.OKCANCEL,
+									icon: Ext.Msg.WARNING,
+									fn: function(btn) {
+										if (btn != 'ok')
+											return;
+										me.delegate.onUpdateTemplatesButtonClick();
+									}
+								});
 							}
 						}
-					],
-					hideGroupedHeader: true,
-					enableGroupingMenu: false
-				}
-			];
+					]
+				});
+			}
+
+			Ext.apply(this, {
+				columns: [
+					{
+						sortable: true,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
+						hidden: true
+					},
+					{
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX,
+						hidden: true
+					},
+					{
+						sortable: true,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.STATUS,
+						hidden: true
+					},
+					{
+						header: tr.datehdr,
+						sortable: true,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DATE,
+						flex: 1
+					},
+					{
+						header: tr.addresshdr,
+						sortable: false,
+						scope: this,
+						renderer: this.renderAddress,
+						dataIndex: 'Fake',
+						flex: 1
+					},
+					{
+						header: tr.subjecthdr,
+						sortable: false,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
+						flex: 1
+					},
+					{
+						sortable: false,
+						scope: this,
+						renderer: this.renderEmailContent,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
+						menuDisabled: true,
+						hideable: false,
+						flex: 2
+					},
+					{
+						width: 90,
+						fixed: true,
+						sortable: false,
+						renderer: this.renderEmailActions,
+						align: 'center',
+						tdCls: 'grid-button',
+						dataIndex: 'Fake',
+						menuDisabled: true,
+						hideable: false
+					}
+				],
+				features: [
+					{
+						ftype: 'groupingsummary',
+						groupHeaderTpl: [
+							'{name:this.formatName}',
+							{
+								formatName: function(name) {
+									return tr.lookup[name] || name;
+								}
+							}
+						],
+						hideGroupedHeader: true,
+						enableGroupingMenu: false
+					}
+				],
+				store: CMDBuild.core.proxy.widgets.ManageEmail.getStore()
+			});
 
 			this.callParent(arguments);
 
 			this.mon(this.store, 'load', this.onStoreLoad, this);
-			this.on('beforeitemclick', cellclickHandler, this);
-			this.on('itemdblclick', doubleclickHandler, this);
-		},
-
-		onStoreLoad: function() {
-			this.isLoaded = true;
+			this.on('beforeitemclick', this.cellclickHandler, this);
+			this.on('itemdblclick', this.doubleclickHandler, this);
 		},
 
 		/**
@@ -238,49 +175,106 @@
 			this.addToStoreIfNotInIt(record);
 		},
 
-		removeTemplatesFromStore: function() {
-			var data = this.store.data.clone();
+		/**
+		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+		 */
+		addToStoreIfNotInIt: function(record) {
+			var store = this.getStore();
 
-			for (var i = 0; i < data.length; ++i) {
-				var storeItem = data.getAt(i);
-
-				if (storeItem && storeItem._cmTemplate)
-					this.store.remove(storeItem);
+			if (store.findBy(
+					function(item) {
+						return item[CMDBuild.core.proxy.CMProxyConstants.ID] == record[CMDBuild.core.proxy.CMProxyConstants.ID];
+					}
+				) == -1
+			) {
+				// Use loadRecords because store.add does not update the grouping so the grid goes broken
+				store.loadRecords([record], { addRecords: true });
 			}
+		},
+
+		/**
+		 * @param {Ext.grid.View} grid
+		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+		 * @param {String} item
+		 * @param {Int} index
+		 * @param {Ext.EventObject} e
+		 * @param {Object} eOpts
+		 */
+		cellclickHandler: function(grid, record, item, index, e, eOpts) {
+			var className = e.target.className;
+			var functionArray = {
+				'action-email-delete': this.onDeleteEmail,
+				'action-email-edit': this.onEditEmail,
+				'action-email-view': this.onViewEmail
+			};
+
+			if (functionArray[className])
+				functionArray[className].call(this, record);
 		},
 
 		/**
 		 * @param {Object} recordValues
 		 *
-		 * @return {CMDBuild.management.mail.Model}
+		 * @return {CMDBuild.model.widget.ManageEmail.grid}
 		 */
 		createRecord: function(recordValues) {
-			recordValues[fields.STATUS] = recordValues[fields.STATUS] || NEW;
-			recordValues[NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(NO_SUBJECT_PREFIX)) ? recordValues[NO_SUBJECT_PREFIX] : this.delegate.widgetConf[NO_SUBJECT_PREFIX];
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] = recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] || this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX)) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.delegate.widgetConf[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
 
-			return new CMDBuild.management.mail.Model(recordValues);
+			return new CMDBuild.model.widget.ManageEmail.grid(recordValues);
 		},
 
 		/**
-		 * @param {CMDBuild.management.mail.Model} record
+		 * @param {Ext.grid.View} grid
+		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+		 * @param {String} item
+		 * @param {Int} index
+		 * @param {Ext.EventObject} e
+		 * @param {Object} eOpts
 		 */
-		onViewEmail: function(record) {
-			var viewEmailWin = Ext.create('CMDBuild.view.management.common.widgets.CMEmailWindow', {
-				emailGrid: this,
-				readOnly: true,
-				record: record
-			}).show();
+		doubleclickHandler: function(grid, record, item, index, e, eOpts) {
+			var fn = this.recordIsEditable(record) ? this.onEditEmail : this.onViewEmail;
+
+			fn.call(this, record);
 		},
 
 		/**
-		 * @param {CMDBuild.management.mail.Model} record
+		 * @return {Array}
 		 */
-		onEditEmail: function(record) {
-			this.delegate.onModifyEmailIconClick(this, record);
+		getDraftEmails: function() {
+			return this.getEmailsByGroup(this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT]);
 		},
 
 		/**
-		 * @param {CMDBuild.management.mail.Model} record
+		 * @param {String} g
+		 *
+		 * @return {Array}
+		 */
+		getEmailsByGroup: function(group) {
+			var out = this.store.getGroups(group);
+
+			if (out)
+				out = out.children; // ExtJS mystic output { name: group, children: [...] }
+
+			return out || [];
+		},
+
+		/**
+		 * @return {Array}
+		 */
+		getNewEmails: function() {
+			return this.getEmailsByGroup(this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW]);
+		},
+
+		/**
+		 * @return {Boolean}
+		 */
+		hasDraftEmails: function() {
+			return this.getDraftEmails().length > 0;
+		},
+
+		/**
+		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
 		 */
 		onDeleteEmail: function(record) {
 			Ext.Msg.confirm(
@@ -297,7 +291,50 @@
 		},
 
 		/**
-		 * @param {CMDBuild.management.mail.Model} record
+		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+		 */
+		onEditEmail: function(record) {
+			this.delegate.onModifyEmailIconClick(this, record);
+		},
+
+		onStoreLoad: function() {
+			this.isLoaded = true;
+		},
+
+		/**
+		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+		 */
+		onViewEmail: function(record) {
+			Ext.create('CMDBuild.view.management.common.widgets.CMEmailWindow', {
+				delegate: this.delegate,
+				emailGrid: this,
+				readOnly: true,
+				record: record
+			}).show();
+		},
+
+		/**
+		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+		 *
+		 * @return {Boolean}
+		 */
+		recordIsEditable: function(record) {
+			var status = record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS);
+
+			return status == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT] || status == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
+		},
+
+		/**
+		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+		 *
+		 * @return {Boolean}
+		 */
+		recordIsReceived: function(record) {
+			return (record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.RECEIVED]);
+		},
+
+		/**
+		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
 		 */
 		removeRecord: function(record) {
 			// The email has an id only if it was returned by the server. So add it to the deletedEmails only if the server know it
@@ -309,122 +346,67 @@
 			this.getStore().remove(record);
 		},
 
-		/**
-		 * @param {CMDBuild.management.mail.Model} record
-		 */
-		addToStoreIfNotInIt: function(record) {
-			var store = this.getStore();
+		removeTemplatesFromStore: function() {
+			var data = this.store.data.clone();
 
-			if (store.findBy(
-					function(item) {
-						return item.id == record.id;
-					}
-				) == -1
-			) {
-				// Use loadRecords because store.add does not update the grouping so the grid goes broken
-				store.loadRecords([record], { addRecords: true });
+			for (var i = 0; i < data.length; ++i) {
+				var storeItem = data.getAt(i);
+
+				if (storeItem && storeItem._cmTemplate)
+					this.store.remove(storeItem);
 			}
 		},
 
-		getEmailsByGroup: function(g) {
-			var out = this.store.getGroups(g);
+		// Column renderers
+			/**
+			 * @param {Mixed} value
+			 * @param {Object} metaData
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 *
+			 * @return {String}
+			 */
+			renderAddress: function(value, metadata, record) {
+				if (this.recordIsReceived(record)) {
+					return record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS);
+				} else {
+					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
+				}
+			},
 
-			if (out)
-				out = out.children; // ExtJS mystic output {name: g, children:[...]}
+			/**
+			 * @param {Mixed} value
+			 * @param {Object} metaData
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 *
+			 * @return {String}
+			 */
+			renderEmailActions: function(value, metadata, record) {
+				if (this.recordIsEditable(record) && this.readOnly) {
+					return '<img style="cursor:pointer" title="'+CMDBuild.Translation.management.modworkflow.extattrs.manageemail.deleteicon+'" class="action-email-delete" src="images/icons/delete.png"/>&nbsp;'
+						+ '<img style="cursor:pointer" title="'+CMDBuild.Translation.management.modworkflow.extattrs.manageemail.editicon+'" class="action-email-edit" src="images/icons/modify.png"/>&nbsp;';
+				} else {
+					return '<span style="cursor:pointer; width: 16px; height: 16px" />'
+						+ '<img style="cursor:pointer" title="'+CMDBuild.Translation.management.modworkflow.extattrs.manageemail.viewicon+'" class="action-email-view" src="images/icons/zoom.png"/>&nbsp;'
+						+ '</span>';
+				}
+			},
 
-			return out || [];
-		},
+			/**
+			 * @param {Mixed} value
+			 * @param {Object} metaData
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 *
+			 * @return {String}
+			 */
+			renderEmailContent: function(value, metadata, record) {
+				var htmlContent = record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT);
 
-		getDraftEmails: function() {
-			return this.getEmailsByGroup(DRAFT);
-		},
-
-		hasDraftEmails: function() {
-			return this.getDraftEmails().length > 0;
-		},
-
-		getNewEmails: function() {
-			return this.getEmailsByGroup(NEW);
-		},
-
-		setDelegate: function(d) {
-			this.delegate = d || Ext.create('CMDBuild.view.management.common.widgets.CMEmailGridDelegate');
-		},
-
-		recordIsEditable: recordIsEditable
+				if (htmlContent) {
+					return htmlContent.replace(/\<[Bb][Rr][\/]?\>/g," ").replace(/\<[^\>]*\>/g,"");
+				} else {
+					return undefined;
+				}
+			}
 	});
-
-	/**
-	 * @param {CMDBuild.management.mail.Model} record
-	 *
-	 * @return {Boolean}
-	 */
-	function recordIsEditable(record) {
-		var status = record.get(fields.STATUS);
-
-		return status == DRAFT || status == NEW;
-	}
-
-	/**
-	 * @param {CMDBuild.management.mail.Model} record
-	 *
-	 * @return {Boolean}
-	 */
-	function recordIsReceived(record) {
-		var status = record.get(fields.STATUS);
-
-		return (status == RECEIVED);
-	}
-
-	/**
-	 * @param {Mixed} value
-	 * @param {Object} metaData
-	 * @param {Object} record
-	 *
-	 * @return {String}
-	 */
-	function renderAddress(value, metadata, record) {
-		if (recordIsReceived(record)) {
-			return record.data[fields.FROM_ADDRESS];
-		} else {
-			return record.data[fields.TO_ADDRESS];
-		}
-	}
-
-	/**
-	 * @param {Mixed} value
-	 * @param {Object} metaData
-	 * @param {Object} record
-	 *
-	 * @return {String}
-	 */
-	function renderEmailContent(value, metadata, record) {
-		var htmlContent = record.data[fields.CONTENT];
-
-		if (htmlContent) {
-			return htmlContent.replace(/\<[Bb][Rr][\/]?\>/g," ").replace(/\<[^\>]*\>/g,"");
-		} else {
-			return undefined;
-		}
-	}
-
-	function cellclickHandler(grid, model, htmlelement, rowIndex, event, opt) {
-		var className = event.target.className;
-		var functionArray = {
-			'action-email-delete': this.onDeleteEmail,
-			'action-email-edit': this.onEditEmail,
-			'action-email-view': this.onViewEmail
-		};
-		var me = this;
-
-		if (functionArray[className])
-			functionArray[className].call(me, model);
-	}
-
-	function doubleclickHandler(grid, model, html, index, e, options) {
-		var fn = recordIsEditable(model) ? this.onEditEmail : this.onViewEmail;
-
-		fn.call(this, model);
-	}
 
 })();

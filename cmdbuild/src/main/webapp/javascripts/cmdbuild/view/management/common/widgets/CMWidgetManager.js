@@ -159,14 +159,14 @@
 			return w;
 		};
 
-		// manageEmail
-		me.builders[pkg.CMManageEmail.WIDGET_NAME] = function(widget, card) {
-			var w = new pkg.CMManageEmail({
+		// ManageEmail
+		me.builders[CMDBuild.view.management.common.widgets.CMManageEmail.WIDGET_NAME] = function(widget, card) {
+			var w = Ext.create('CMDBuild.view.management.common.widgets.CMManageEmail', {
 				widget: widget,
 				activity: card
 			});
-
 			me.widgetsContainer.addWidgt(w);
+
 			return w;
 		};
 

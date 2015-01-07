@@ -224,12 +224,13 @@
 				uploadCsv: 'services/json/management/importcsv/uploadcsv'
 			},
 			manageEmail: {
-				addAttachmentFromNewEmail: 'services/json/management/email/uploadattachmentfromnewemail',
 				addAttachmentFromExistingEmail: 'services/json/management/email/uploadattachmentfromexistingemail',
-				copyAttachmentFromCardForNewEmail: 'services/json/management/email/copyattachmentsfromcardfornewemail',
+				addAttachmentFromNewEmail: 'services/json/management/email/uploadattachmentfromnewemail',
 				copyAttachmentFromCardForExistingEmail: 'services/json/management/email/copyattachmentsfromcardforexistingemail',
+				copyAttachmentFromCardForNewEmail: 'services/json/management/email/copyattachmentsfromcardfornewemail',
+				getEmailList: 'services/json/management/email/getemaillist',
+				removeAttachmentFromExistingEmail: 'services/json/management/email/deleteattachmentfromexistingemail',
 				removeAttachmentFromNewEmail: 'services/json/management/email/deleteattachmentfromnewemail',
-				removeAttachmentFromExistingEmail: 'services/json/management/email/deleteattachmentfromexistingemail'
 			}
 		},
 
