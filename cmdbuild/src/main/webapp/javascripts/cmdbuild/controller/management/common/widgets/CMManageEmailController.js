@@ -137,17 +137,20 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onDeleteEmail':
-					return this.onDeleteEmail(param);
+				case 'onEmailDelete':
+					return this.onEmailDelete(param);
 
-				case 'onEditEmail':
-					return this.onEditEmail(param);
+				case 'onEmailEdit':
+					return this.onEmailEdit(param);
 
 				case 'onItemDoubleClick':
 					return this.onItemDoubleClick(param);
 
-				case 'onViewEmail':
-					return this.onViewEmail(param);
+				case 'onEmailReply':
+					return this.onEmailReply(param);
+
+				case 'onEmailView':
+					return this.onEmailView(param);
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -413,7 +416,7 @@
 			/**
 			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
 			 */
-			onDeleteEmail: function(record) {
+			onEmailDelete: function(record) {
 				Ext.Msg.confirm(
 					CMDBuild.Translation.common.confirmpopup.title,
 					CMDBuild.Translation.common.confirmpopup.areyousure,
@@ -430,12 +433,59 @@
 			/**
 			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
 			 */
-			onEditEmail: function(record) {
+			onEmailEdit: function(record) {
 				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
 					delegate: this,
 					emailGrid: this.emailGrid,
 					readOnly: !this.readOnly,
-					record: record
+					record: record,
+					title: CMDBuild.Translation.editEmail
+				}).show();
+			},
+
+			/**
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 */
+			onEmailReply: function(record) {
+				var content = '<p>'
+						+ CMDBuild.Translation.onDay + ' ' + record.get(CMDBuild.core.proxy.CMProxyConstants.DATE)
+						+ ', <' + record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) + '> ' + CMDBuild.Translation.hasWrote
+					+ ':</p>'
+					+ '<blockquote>' + record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT) + '</blockquote>';
+_debug('onEmailReply', record);
+				var repltRecordData = {};
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS] = record.get(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS);
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES);
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.CONTENT] = content;
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.DATE] = null;
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS] = null;
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.ID] = null;
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = null;
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.STATUS] = this.emailGrid.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
+
+				var replyRecord = Ext.create('CMDBuild.model.widget.ManageEmail.grid', repltRecordData);
+_debug('replyRecord', replyRecord);
+
+				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+					delegate: this,
+					emailGrid: this.emailGrid,
+					record: replyRecord,
+					title: CMDBuild.Translation.replyEmail
+				}).show();
+			},
+
+			/**
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 */
+			onEmailView: function(record) {
+				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+					delegate: this,
+					emailGrid: this.emailGrid,
+					readOnly: true,
+					record: record,
+					title: CMDBuild.Translation.viewEmail
 				}).show();
 			},
 
@@ -444,9 +494,9 @@
 			 */
 			onItemDoubleClick: function(record) {
 				if (this.emailGrid.recordIsEditable(record)) {
-					this.onEditEmail(record);
+					this.onEmailEdit(record);
 				} else {
-					this.onViewEmail(record);
+					this.onEmailView(record);
 				}
 			},
 
@@ -454,18 +504,6 @@
 				this.removeUnsentEmails(); // New and Draft
 				this.emailsWereGenerated = false;
 				this.addEmailFromTemplateIfNeeded();
-			},
-
-			/**
-			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
-			 */
-			onViewEmail: function(record) {
-				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
-					delegate: this,
-					emailGrid: this.emailGrid,
-					readOnly: true,
-					record: record
-				}).show();
 			},
 
 			/**
