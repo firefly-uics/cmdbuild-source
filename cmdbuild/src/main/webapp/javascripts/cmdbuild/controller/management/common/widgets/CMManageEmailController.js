@@ -452,7 +452,7 @@
 						+ ', <' + record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) + '> ' + CMDBuild.Translation.hasWrote
 					+ ':</p>'
 					+ '<blockquote>' + record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT) + '</blockquote>';
-_debug('onEmailReply', record);
+
 				var repltRecordData = {};
 				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS] = record.get(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS);
 				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES);
@@ -466,7 +466,6 @@ _debug('onEmailReply', record);
 				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
 
 				var replyRecord = Ext.create('CMDBuild.model.widget.ManageEmail.grid', repltRecordData);
-_debug('replyRecord', replyRecord);
 
 				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
 					delegate: this,
