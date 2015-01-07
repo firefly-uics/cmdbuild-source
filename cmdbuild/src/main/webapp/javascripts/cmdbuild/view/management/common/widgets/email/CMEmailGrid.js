@@ -45,7 +45,7 @@
 		loadMask: false,
 
 		initComponent: function() {
-			if (this.readOnly) {
+			if (!this.readOnly) {
 				var me = this;
 
 				Ext.apply(this, {
@@ -127,15 +127,72 @@
 						flex: 2
 					},
 					{
-						width: 90,
-						fixed: true,
-						sortable: false,
-						renderer: this.renderEmailActions,
+						xtype: 'actioncolumn',
 						align: 'center',
-						tdCls: 'grid-button',
-						dataIndex: 'Fake',
+						width: 25,
+						sortable: false,
+						hideable: false,
 						menuDisabled: true,
-						hideable: false
+						fixed: true,
+						items: [
+							{
+								icon: 'images/icons/delete.png',
+								tooltip: CMDBuild.Translation.deleteEmail,
+								scope: this,
+
+								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+									this.delegate.cmOn('onDeleteEmail', record);
+								},
+
+								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+									return !this.recordIsEditable(record) || this.readOnly;
+								}
+							}
+						]
+					},
+					{
+						xtype: 'actioncolumn',
+						align: 'center',
+						width: 25,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true,
+						items: [
+							{
+								icon: 'images/icons/modify.png',
+								tooltip: CMDBuild.Translation.editEmail,
+								scope: this,
+
+								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+									this.delegate.cmOn('onEditEmail', record);
+								},
+
+								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+									return !this.recordIsEditable(record) || this.readOnly;
+								}
+							}
+						]
+					},
+					{
+						xtype: 'actioncolumn',
+						align: 'center',
+						width: 25,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true,
+						items: [
+							{
+								icon: 'images/icons/zoom.png',
+								tooltip: CMDBuild.Translation.viewEmail,
+								scope: this,
+
+								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+									this.delegate.cmOn('onViewEmail', record);
+								}
+							}
+						]
 					}
 				],
 				features: [
@@ -159,8 +216,12 @@
 			this.callParent(arguments);
 
 			this.mon(this.store, 'load', this.onStoreLoad, this);
-			this.on('beforeitemclick', this.cellclickHandler, this);
-			this.on('itemdblclick', this.doubleclickHandler, this);
+		},
+
+		listeners: {
+			itemdblclick: function(grid, record, item, index, e, eOpts) {
+				this.delegate.cmOn('onItemDoubleClick', record);
+			}
 		},
 
 		/**
@@ -193,26 +254,6 @@
 		},
 
 		/**
-		 * @param {Ext.grid.View} grid
-		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
-		 * @param {String} item
-		 * @param {Int} index
-		 * @param {Ext.EventObject} e
-		 * @param {Object} eOpts
-		 */
-		cellclickHandler: function(grid, record, item, index, e, eOpts) {
-			var className = e.target.className;
-			var functionArray = {
-				'action-email-delete': this.onDeleteEmail,
-				'action-email-edit': this.onEditEmail,
-				'action-email-view': this.onViewEmail
-			};
-
-			if (functionArray[className])
-				functionArray[className].call(this, record);
-		},
-
-		/**
 		 * @param {Object} recordValues
 		 *
 		 * @return {CMDBuild.model.widget.ManageEmail.grid}
@@ -222,20 +263,6 @@
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX)) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.delegate.widgetConf[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
 
 			return new CMDBuild.model.widget.ManageEmail.grid(recordValues);
-		},
-
-		/**
-		 * @param {Ext.grid.View} grid
-		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
-		 * @param {String} item
-		 * @param {Int} index
-		 * @param {Ext.EventObject} e
-		 * @param {Object} eOpts
-		 */
-		doubleclickHandler: function(grid, record, item, index, e, eOpts) {
-			var fn = this.recordIsEditable(record) ? this.onEditEmail : this.onViewEmail;
-
-			fn.call(this, record);
 		},
 
 		/**
@@ -273,44 +300,8 @@
 			return this.getDraftEmails().length > 0;
 		},
 
-		/**
-		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
-		 */
-		onDeleteEmail: function(record) {
-			Ext.Msg.confirm(
-				CMDBuild.Translation.common.confirmpopup.title,
-				CMDBuild.Translation.common.confirmpopup.areyousure,
-				function(btn) {
-					if (btn != 'yes')
-						return;
-
-					this.removeRecord(record);
-				},
-				this
-			);
-		},
-
-		/**
-		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
-		 */
-		onEditEmail: function(record) {
-			this.delegate.onModifyEmailIconClick(this, record);
-		},
-
 		onStoreLoad: function() {
 			this.isLoaded = true;
-		},
-
-		/**
-		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
-		 */
-		onViewEmail: function(record) {
-			Ext.create('CMDBuild.view.management.common.widgets.CMEmailWindow', {
-				delegate: this.delegate,
-				emailGrid: this,
-				readOnly: true,
-				record: record
-			}).show();
 		},
 
 		/**
@@ -331,19 +322,6 @@
 		 */
 		recordIsReceived: function(record) {
 			return (record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.RECEIVED]);
-		},
-
-		/**
-		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
-		 */
-		removeRecord: function(record) {
-			// The email has an id only if it was returned by the server. So add it to the deletedEmails only if the server know it
-			var id = record.getId();
-
-			if (id)
-				this.deletedEmails.push(id);
-
-			this.getStore().remove(record);
 		},
 
 		removeTemplatesFromStore: function() {
@@ -370,24 +348,6 @@
 					return record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS);
 				} else {
 					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
-				}
-			},
-
-			/**
-			 * @param {Mixed} value
-			 * @param {Object} metaData
-			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
-			 *
-			 * @return {String}
-			 */
-			renderEmailActions: function(value, metadata, record) {
-				if (this.recordIsEditable(record) && this.readOnly) {
-					return '<img style="cursor:pointer" title="'+CMDBuild.Translation.management.modworkflow.extattrs.manageemail.deleteicon+'" class="action-email-delete" src="images/icons/delete.png"/>&nbsp;'
-						+ '<img style="cursor:pointer" title="'+CMDBuild.Translation.management.modworkflow.extattrs.manageemail.editicon+'" class="action-email-edit" src="images/icons/modify.png"/>&nbsp;';
-				} else {
-					return '<span style="cursor:pointer; width: 16px; height: 16px" />'
-						+ '<img style="cursor:pointer" title="'+CMDBuild.Translation.management.modworkflow.extattrs.manageemail.viewicon+'" class="action-email-view" src="images/icons/zoom.png"/>&nbsp;'
-						+ '</span>';
 				}
 			},
 

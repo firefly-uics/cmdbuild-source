@@ -1,6 +1,7 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.CMEmailWindow', {
+	Ext.define('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+		alternateClassName: 'CMDBuild.view.management.common.widgets.CMEmailWindow', // Legacy class name
 		extend: 'CMDBuild.PopupWindow',
 
 		requires: [
@@ -35,8 +36,6 @@
 			type: 'vbox',
 			align: 'stretch'
 		},
-
-		title: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose,
 
 		initComponent: function() {
 			var me = this;
@@ -87,6 +86,7 @@
 				buttons: this.buildButtons(),
 				items: [this.formPanel, this.attachmentButtonsContainer, this.attachmentPanelsContainer],
 				tbar: [this.fillFromTemplateButton],
+				title: this.readOnly ? CMDBuild.Translation.viewEmail : CMDBuild.Translation.composeEmail // Title configuration
 			});
 
 			this.callParent(arguments);
