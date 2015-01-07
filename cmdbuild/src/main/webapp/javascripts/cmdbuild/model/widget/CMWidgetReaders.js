@@ -48,41 +48,6 @@ Ext.define("CMDBuild.management.model.widget.ManageRelationConfigurationReader",
 	}
 });
 
-Ext.define("CMDBuild.management.model.widget.ManageEmailConfigurationReader", {
-	statics: {
-		FIELDS: {
-			ID: 'id',
-			STATUS: 'status',
-			BEGIN_DATE: 'date',
-			FROM_ADDRESS: 'fromAddress',
-			TO_ADDRESS: 'toAddresses',
-			CC_ADDRESS: 'ccAddresses',
-			SUBJECT: 'subject',
-			CONTENT: 'content',
-			CONDITION: 'condition'
-		},
-
-		id: function(w) {
-			return w.id;
-		},
-		required: function(w) {
-			return w.required;
-		},
-		readOnly: function(w) {
-			return w.readOnly;
-		},
-		label: function(w) {
-			return w.label;
-		},
-		templates: function(w) {
-			return w.templates || {};
-		},
-		emailTemplates: function(w) {
-			return w.emailTemplates || {};
-		}
-	}
-});
-
 Ext.define("CMDBuild.controller.management.common.widgets.CMCalendarControllerWidgetReader", {
 	getStartDate : function(w) {
 		return w.startDate;

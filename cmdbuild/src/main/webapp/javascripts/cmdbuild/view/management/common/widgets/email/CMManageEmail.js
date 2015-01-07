@@ -1,18 +1,21 @@
 (function () {
 
-	Ext.require('CMDBuild.core.proxy.widgets.ManageEmail');
-
 	Ext.define('CMDBuild.view.management.common.widgets.CMManageEmail', {
 		extend: 'Ext.panel.Panel',
+
+		requires: [
+			'CMDBuild.core.proxy.widgets.ManageEmail',
+			'CMDBuild.core.proxy.CMProxyConstants'
+		],
 
 		statics: {
 			WIDGET_NAME: '.ManageEmail'
 		},
 
-		border: false,
-		cls: 'x-panel-body-default-framed',
-		frame: false,
-		loaded: false,
+		/**
+		 * @cfg {CMDBuild.controller.management.common.widgets.CMManageEmailController}
+		 */
+		delegate: undefined,
 
 		/**
 		 * @property {Object}
@@ -29,6 +32,11 @@
 		 */
 		widgetConf: undefined,
 
+		border: false,
+		cls: 'x-panel-body-default-framed',
+		frame: false,
+		loaded: false,
+
 		/**
 		 * @param {Object} configuration
 		 */
@@ -41,9 +49,9 @@
 
 		initComponent: function() {
 			this.emailGrid = Ext.create('CMDBuild.view.management.common.widgets.CMEmailGrid', {
+				readOnly: !this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY],
 				autoScroll: true,
 				processId: this.activity['Id'],
-				readWrite: !this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY],
 				frame: false,
 				border: false
 			});
