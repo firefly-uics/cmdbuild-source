@@ -47,6 +47,11 @@
 		clientForm: undefined,
 
 		/**
+		 * @property {CMDBuild.view.management.common.widgets.CMEmailGrid}
+		 */
+		emailGrid: undefined,
+
+		/**
 		 * @property {Object} variables
 		 */
 		emailTemplatesData: undefined,
@@ -118,6 +123,37 @@
 
 			this.view.delegate = this;
 			this.view.emailGrid.delegate = this;
+
+			// ShortHands
+			this.emailGrid = this.view.emailGrid;
+		},
+
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 */
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				case 'onDeleteEmail':
+					return this.onDeleteEmail(param);
+
+				case 'onEditEmail':
+					return this.onEditEmail(param);
+
+				case 'onItemDoubleClick':
+					return this.onItemDoubleClick(param);
+
+				case 'onViewEmail':
+					return this.onViewEmail(param);
+
+				default: {
+					if (!Ext.isEmpty(this.parentDelegate))
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
+			}
 		},
 
 		/*
@@ -352,7 +388,7 @@
 
 		/**
 		 * @param {Array} attachmentNames
-		 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
+		 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow
 		 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord
 		 */
 		updateAttachmentList: function(attachmentNames, emailWindow, emailRecord) {
@@ -362,6 +398,58 @@
 		},
 
 		// As EmailGrid Delegate
+			/**
+			 * @param {CMDBuild.view.management.common.widgets.CMEmailGrid} emailGrid
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord
+			 */
+			onAddEmailButtonClick: function(emailGrid, emailRecord) {
+				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+					emailGrid: emailGrid,
+					delegate: this,
+					record: emailRecord
+				}).show();
+			},
+
+			/**
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 */
+			onDeleteEmail: function(record) {
+				Ext.Msg.confirm(
+					CMDBuild.Translation.common.confirmpopup.title,
+					CMDBuild.Translation.common.confirmpopup.areyousure,
+					function(btn) {
+						if (btn != 'yes')
+							return;
+
+						this.removeRecord(record);
+					},
+					this
+				);
+			},
+
+			/**
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 */
+			onEditEmail: function(record) {
+				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+					delegate: this,
+					emailGrid: this.emailGrid,
+					readOnly: !this.readOnly,
+					record: record
+				}).show();
+			},
+
+			/**
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 */
+			onItemDoubleClick: function(record) {
+				if (this.emailGrid.recordIsEditable(record)) {
+					this.onEditEmail(record);
+				} else {
+					this.onViewEmail(record);
+				}
+			},
+
 			onUpdateTemplatesButtonClick: function() {
 				this.removeUnsentEmails(); // New and Draft
 				this.emailsWereGenerated = false;
@@ -369,33 +457,33 @@
 			},
 
 			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMEmailGrid} emailGrid
-			 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
 			 */
-			onAddEmailButtonClick: function(emailGrid, emailRecord) {
-				Ext.create('CMDBuild.view.management.common.widgets.CMEmailWindow', {
-					emailGrid: emailGrid,
+			onViewEmail: function(record) {
+				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
 					delegate: this,
-					record: emailRecord
+					emailGrid: this.emailGrid,
+					readOnly: true,
+					record: record
 				}).show();
 			},
 
 			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMEmailGrid} emailGrid
-			 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
 			 */
-			onModifyEmailIconClick: function(emailGrid, emailRecord) {
-				Ext.create('CMDBuild.view.management.common.widgets.CMEmailWindow', {
-					emailGrid: emailGrid,
-					delegate: this,
-					readOnly: !this.readOnly,
-					record: emailRecord
-				}).show();
+			removeRecord: function(record) {
+				// The email has an id only if it was returned by the server. So add it to the deletedEmails only if the server know it
+				var id = record.getId();
+
+				if (id)
+					this.emailGrid.deletedEmails.push(id);
+
+				this.emailGrid.getStore().remove(record);
 			},
 
 		// As CMEmailWindow Delegate
 			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
+			 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow
 			 * @param {Object} form
 			 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord
 			 */
@@ -457,7 +545,7 @@
 			},
 
 			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
+			 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow
 			 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord
 			 */
 			onAddAttachmentFromDmsButtonClick: function(emailWindow, emailRecord) {
@@ -470,7 +558,7 @@
 			},
 
 			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
+			 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow
 			 */
 			beforeCMEmailWindowDestroy: function(emailWindow) {
 				this.updateRecord(
@@ -497,7 +585,7 @@
 			/**
 			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker,
 			 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord,
-			 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow,
+			 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow,
 			 */
 			onCMDMSAttachmentPickerOKButtonClick: function(dmsAttachmentPicker, emailRecord, emailWindow) {
 				var me = this;

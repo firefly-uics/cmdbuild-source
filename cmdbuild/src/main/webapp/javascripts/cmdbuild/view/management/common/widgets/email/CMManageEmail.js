@@ -49,7 +49,7 @@
 
 		initComponent: function() {
 			this.emailGrid = Ext.create('CMDBuild.view.management.common.widgets.CMEmailGrid', {
-				readOnly: !this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY],
+				readOnly: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY],
 				autoScroll: true,
 				processId: this.activity['Id'],
 				frame: false,
@@ -62,9 +62,7 @@
 				'hasDraftEmails',
 				'removeTemplatesFromStore',
 				'getDraftEmails',
-				'getNewEmails',
-				'removeRecord',
-				'setDelegate'
+				'getNewEmails'
 			]);
 
 			Ext.apply(this, {
