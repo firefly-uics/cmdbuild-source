@@ -32,7 +32,6 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 	private static final String LDAP_AUTHENTICATION_PRINCIPAL = "ldap.search.auth.principal";
 	private static final String LDAP_AUTHENTICATION_PASSWORD = "ldap.search.auth.password";
 	private static final String AUTH_METHODS = "auth.methods";
-	private static final String AUTO_LOGIN = "autologin";
 
 	public AuthProperties() {
 		super();
@@ -158,7 +157,4 @@ public class AuthProperties extends DefaultProperties implements HeaderAuthentic
 		}
 	}
 
-	public String getAutologin() {
-		return getProperty(AUTO_LOGIN, "");
-	}
 }
