@@ -454,19 +454,20 @@
 					+ ':</p>'
 					+ '<blockquote>' + record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT) + '</blockquote>';
 
-				var repltRecordData = {};
-				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS] = record.get(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS);
-				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES);
-				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.CONTENT] = content;
-				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.DATE] = null;
-				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS] = null;
-				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.ID] = null;
-				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = null;
-				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.STATUS] = this.emailGrid.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
-				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
-				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
+				var replyRecordData = {};
+				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS] = record.get(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS);
+				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES);
+				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.CONTENT] = content;
+				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.DATE] = null;
+				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS] = null;
+//				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.ID] = null;
+				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = null;
+				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = true;
+				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.STATUS] = this.emailGrid.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
+				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
+				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
 
-				var replyRecord = Ext.create('CMDBuild.model.widget.ManageEmail.grid', repltRecordData);
+				var replyRecord = Ext.create('CMDBuild.model.widget.ManageEmail.grid', replyRecordData);
 
 				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
 					delegate: this,
