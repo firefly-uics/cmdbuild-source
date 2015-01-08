@@ -26,6 +26,23 @@
 			}, this);
 
 			return clonedStore;
+		},
+
+		/**
+		 * Default pageSize value is set as 20
+		 *
+		 * @return {Int} pageSize
+		 */
+		getPageSize: function() {
+			var pageSize;
+
+			try {
+				pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
+			} catch (e) {
+				pageSize = 20;
+			}
+
+			return pageSize;
 		}
 	});
 

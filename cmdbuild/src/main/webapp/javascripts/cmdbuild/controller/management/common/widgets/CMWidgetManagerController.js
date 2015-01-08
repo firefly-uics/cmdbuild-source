@@ -209,7 +209,7 @@
 		addControllerClass(commonControllers.CMNavigationTreeController);
 
 		// Grid
-		addControllerClass(commonControllers.CMGridController);
+		addControllerClass(CMDBuild.controller.management.common.widgets.CMGridController);
 
 		// openReport
 		addControllerClass(commonControllers.CMOpenReportController);

@@ -171,6 +171,7 @@
 				split: true,
 				collapsible: true,
 				collapsed: this.hideAccordions,
+				header: false, // Hide panel header as CMDBuild UI look
 
 				items: this.cmAccordions
 			});

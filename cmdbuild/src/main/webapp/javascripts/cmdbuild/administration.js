@@ -14,6 +14,8 @@
 		reportAccordion = null,
 		navigationTreesAccordion = null;
 
+	Ext.require('CMDBuild.core.proxy.Report');
+
 	Ext.define("CMDBuild.app.Administration", {
 		statics: {
 			init: function() {
@@ -334,7 +336,7 @@
 				/*
 				 * Report
 				 */
-				CMDBuild.ServiceProxy.report.getMenuTree({
+				CMDBuild.core.proxy.Report.getMenuTree({
 					success: function(response, options, reports) {
 						_CMCache.addReports(reports);
 

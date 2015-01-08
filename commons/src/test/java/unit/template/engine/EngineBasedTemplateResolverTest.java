@@ -123,8 +123,21 @@ public class EngineBasedTemplateResolverTest {
 		// then
 		assertThat(value, equalTo("foo 42 bar"));
 	}
-	
-	
+
+	@Test
+	public void backslashesAndDollarSignsCanBeUsed() throws Exception {
+		// given
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
+				.withEngine(engineWithParam("contains_backslash", "foo \\ bar"), "e0") //
+				.withEngine(engineWithParam("contains_dollar_sign", "baz$"), "e1") //
+				.build();
+
+		// when
+		final String value = tr.resolve("{e0:contains_backslash} {e1:contains_dollar_sign}");
+
+		// then
+		assertThat(value, equalTo("foo \\ bar baz$"));
+	}
 
 	/*
 	 * Utilities

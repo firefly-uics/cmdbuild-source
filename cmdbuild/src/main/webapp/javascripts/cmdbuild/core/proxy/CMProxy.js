@@ -6,43 +6,65 @@
 	Ext.define('CMDBuild.core.proxy.CMProxy', {
 		alternateClassName: 'CMDBuild.ServiceProxy.core', // Legacy class name
 
-		statics: {
-			submitForm: function(p) {
-				if (p.form) {
-					p.form.submit({
-						url: p.url,
-						method: p.mothod,
-						scope: p.scope || this,
-						success: p.success || Ext.emptyFn,
-						failure: p.failure || Ext.emptyFn,
-						callback: p.callback || Ext.emptyFn
-					});
-				} else {
-					throw CMDBuild.core.error.serviceProxy.NO_FORM;
+		singleton: true,
+
+		/**
+		 * @param {Object} parameters
+		 */
+		doLogin: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				scope: parameters.scope || this,
+				important: true,
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.login,
+				params: parameters.params,
+				success: parameters.success || Ext.emptyFn,
+				failure: parameters.failure || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		},
+
+		/**
+		 * @param {Object} parameters
+		 */
+		doRequest: function(parameters) {
+			var successWithAdapter = Ext.Function.createInterceptor(parameters.success || Ext.emptyFn, function(response) {
+				if (parameters.adapter) {
+					var json =  Ext.JSON.decode(response.responseText);
+					var adaptedJson = parameters.adapter(json);
+					_debug("Adapted JSON result", json, adaptedJson);
+					response.responseText = Ext.JSON.encode(adaptedJson);
 				}
-			},
+			});
 
-			doRequest: function(p) {
-				var successWithAdapter = Ext.Function.createInterceptor(p.success || Ext.emptyFn, function(response) {
-					if (p.adapter) {
-						var json =  Ext.JSON.decode(response.responseText);
-						var adaptedJson = p.adapter(json);
-						_debug("Adapted JSON result", json, adaptedJson);
-						response.responseText = Ext.JSON.encode(adaptedJson);
-					}
-				});
+			CMDBuild.Ajax.request({
+				timeout: parameters.timeout,
+				url: parameters.url,
+				method: parameters.method,
+				params: parameters.params || {},
+				scope: parameters.scope || this,
+				success: successWithAdapter,
+				failure: parameters.failure || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn,
+				important: parameters.important
+			});
+		},
 
-				CMDBuild.Ajax.request({
-					timeout: p.timeout,
-					url: p.url,
-					method: p.method,
-					params: p.params || {},
-					scope: p.scope || this,
-					success: successWithAdapter,
-					failure: p.failure || Ext.emptyFn,
-					callback: p.callback || Ext.emptyFn,
-					important: p.important
+		/**
+		 * @param {Object} parameters
+		 */
+		submitForm: function(parameters) {
+			if (parameters.form) {
+				parameters.form.submit({
+					url: parameters.url,
+					method: parameters.mothod,
+					scope: parameters.scope || this,
+					success: parameters.success || Ext.emptyFn,
+					failure: parameters.failure || Ext.emptyFn,
+					callback: parameters.callback || Ext.emptyFn
 				});
+			} else {
+				throw CMDBuild.core.error.serviceProxy.NO_FORM;
 			}
 		}
 	});
@@ -50,20 +72,6 @@
 	/* ===========================================
 	 * Orphans
 	 =========================================== */
-
-	CMDBuild.ServiceProxy.doLogin = function(p) {
-		CMDBuild.Ajax.request({
-			important: true,
-			url: CMDBuild.ServiceProxy.url.login,
-			method: 'POST',
-			params: p.params,
-			success: p.success || Ext.emptyFn,
-			failure: p.failure || Ext.emptyFn,
-			callback: p.callback || Ext.emptyFn,
-			scope: p.scope || this
-		});
-	};
-
 	// TODO duplicate in card section, remove this
 	CMDBuild.ServiceProxy.getCardList = function(p) {
 		CMDBuild.Ajax.request({

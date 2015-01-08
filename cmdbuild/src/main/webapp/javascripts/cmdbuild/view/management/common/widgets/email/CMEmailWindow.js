@@ -1,109 +1,83 @@
 (function() {
 
-	// TODO bind X button on top of window, to save update after click
-	Ext.require('CMDBuild.core.proxy.CMProxyEmailTemplates');
-
-	Ext.define('CMDBuild.view.management.common.widgets.CMEmailWindowDelegate', {
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
-		 * @param {Ext.form.Basic} form
-		 * @param {CMDBuild.management.mail.Model} emailRecord
-		 */
-		onCMEmailWindowAttachFileChanged: function(emailWindow, form, emailRecord) {},
-
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
-		 * @param {CMDBuild.management.mail.Model} emailRecord
-		 */
-		onAddAttachmentFromDmsButtonClick: function(emailWindow, emailRecord) {},
-
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
-		 */
-		onCMEmailWindowRemoveAttachmentButtonClick: function(emailWindow) {},
-
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
-		 */
-		beforeCMEmailWindowDestroy: function(emailWindow) {}
-	});
-
-	Ext.define('CMDBuild.view.management.common.widgets.CMEmailWindowFileAttacchedPanel', {
-		extend: 'Ext.panel.Panel',
-
-		// Configuration
-			fileName: undefined,
-			referredEmail: null,
-			delegate: undefined,
-		// END: Configuration
-
-		frame: true,
-		layout: {
-			type: 'hbox',
-			align: 'middle'
-		},
-		margin: 5,
-
-		initComponent: function() {
-			var me = this;
-
-			Ext.apply(this, {
-				items: [
-					{
-						bodyCls: 'x-panel-body-default-framed',
-						border: false,
-						html: this.fileName,
-						frame: false,
-						flex: 1,
-					},
-					{
-						xtype: 'button',
-						iconCls: 'delete',
-						handler: function() {
-							me.delegate.onCMEmailWindowRemoveAttachmentButtonClick(me);
-						}
-					}
-				]
-			});
-
-			this.callParent(arguments);
-		},
-
-		removeFromEmailWindow: function() {
-			this.ownerCt.remove(this);
-		}
-	});
-
-	Ext.define('CMDBuild.view.management.common.widgets.CMEmailWindow', {
+	Ext.define('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+		alternateClassName: 'CMDBuild.view.management.common.widgets.CMEmailWindow', // Legacy class name
 		extend: 'CMDBuild.PopupWindow',
 
-		// Configuration
-			emailGrid: undefined,
-			readOnly: false,
-			record: undefined,
-			delegate: undefined,
-		// END: Configuration
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.CMProxyEmailTemplates'
+		],
+
+		/**
+		 * @cfg {CMDBuild.controller.management.common.widgets.CMManageEmailController}
+		 */
+		delegate: undefined,
+
+		/**
+		 * @property {Ext.container.Container}
+		 */
+		attachmentPanelsContainer: undefined,
+
+		/**
+		 * @property {Ext.container.Container}
+		 */
+		attachmentButtonsContainer: undefined,
+
+		/**
+		 * @cfg {CMDBuild.view.management.common.widgets.CMEmailGrid}
+		 */
+		emailGrid: undefined,
+
+		/**
+		 * @cfg {Ext.button.Split}
+		 */
+		fillFromTemplateButton: undefined,
+
+		/**
+		 * @property {Ext.form.Basic}
+		 */
+		form: undefined,
+
+		/**
+		 * @property {CMDBuild.view.management.common.widgets.email.EmailWindowForm}
+		 */
+		formPanel: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		readOnly: false,
+
+		/**
+		 * @property {CMDBuild.model.widget.ManageEmail.grid}
+		 */
+		record: undefined,
+
+		/**
+		 * @property {Ext.data.Store}
+		 */
+		templatesStore: undefined,
+
+		/**
+		 * Possible values: create, edit, reply
+		 *
+		 * @cfg {String}
+		 */
+		windowMode: 'create',
 
 		buttonAlign: 'center',
+		title: CMDBuild.Translation.composeEmail,
 
 		layout: {
 			type: 'vbox',
 			align: 'stretch'
 		},
 
-		title: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose,
-
-		initComponent : function() {
+		initComponent: function() {
 			var me = this;
 
-			var body = bodyBuild(me);
-			this.attachmentPanelsContainer = buildAttachmentPanelsContainer(me);
-			this.attachmentButtonsContainer = buildAttachmentButtonsContainer(me);
-			this.formPanel = buildFormPanel(me, body);
-
-			// To reach the basic form outside
-			this.form = this.formPanel.getForm();
-
+			// Buttons configuration
 			this.fillFromTemplateButton = Ext.create('Ext.button.Split', {
 				iconCls: 'clone',
 				text: CMDBuild.Translation.composeFromTemplate,
@@ -139,21 +113,26 @@
 					}
 				}
 			});
+			// END: Buttons configuration
+
+			this.attachmentPanelsContainer = this.buildAttachmentPanelsContainer();
+			this.attachmentButtonsContainer = this.buildAttachmentButtonsContainer();
+
+			this.formPanel = Ext.create('CMDBuild.view.management.common.widgets.email.EmailWindowForm', {
+				readOnly: this.readOnly,
+				record: this.record
+			});
+			this.form = this.formPanel.getForm(); // To reach the basic form outside
 
 			Ext.apply(this, {
-				buttons: buildButtons(me),
+				buttons: this.buildButtons(),
 				items: [this.formPanel, this.attachmentButtonsContainer, this.attachmentPanelsContainer],
-				tbar: [this.fillFromTemplateButton],
+				tbar: [this.fillFromTemplateButton]
 			});
-
-			this.delegate = this.delegate || Ext.create('CMDBuild.view.management.common.widgets.CMEmailWindowDelegate');
 
 			this.callParent(arguments);
 
-			fixIEFocusIssue(this, body);
-
 			var attachments = this.record.getAttachmentNames();
-
 
 			for (var i = 0; i < attachments.length; ++i) {
 				var attachmentName = attachments[i];
@@ -170,7 +149,7 @@
 
 		addAttachmentPanel: function(fileName, emailRecord) {
 			this.attachmentPanelsContainer.add(
-				Ext.create('CMDBuild.view.management.common.widgets.CMEmailWindowFileAttacchedPanel', {
+				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindowFileAttacchedPanel', {
 					fileName: fileName,
 					referredEmail: emailRecord,
 					delegate: this.delegate
@@ -181,27 +160,152 @@
 		},
 
 		/**
-		 * TODO: would be better to build formPanel extending CMDBUild.view.common.CMFormFunctions as all other CMSDBuild forms so this function will be useless
-		 *
-		 * @return {Array} data
+		 * @return {Ext.container.Container}
 		 */
-		getNonValidFormFields: function() {
-			var data = [];
+		buildAttachmentButtonsContainer: function() {
+			var me = this;
 
-			this.formPanel.cascade(function(item) {
-				if (item
-					&& (item instanceof Ext.form.Field)
-					&& !item.disabled
-				) {
-					if (!item.isValid()) {
-						data.push(item);
+			return Ext.create('Ext.container.Container', {
+				layout: {
+					type: 'hbox',
+					padding: '0 5'
+				},
+
+				disabled: me.readOnly,
+
+				items: [
+					buildUploadForm(me),
+					{
+						xtype: 'button',
+						margin: '0 0 0 5',
+						text: CMDBuild.Translation.add_attachment_from_dms,
+
+						handler: function() {
+							me.delegate.onAddAttachmentFromDmsButtonClick(me, me.record);
+						}
 					}
-				}
+				]
 			});
-
-			return data;
 		},
 
+		/**
+		 * @return {Ext.container.Container}
+		 */
+		buildAttachmentPanelsContainer: function() {
+			var me = this;
+
+			return Ext.create('Ext.container.Container', {
+				autoScroll: true,
+				flex: 1,
+				disabled: me.readOnly,
+				getFileNames: function() {
+					var names = [];
+
+					this.items.each(function(i) {
+						names.push(i.fileName);
+					});
+
+					return names;
+				}
+			});
+		},
+
+		/**
+		 * @return {Array} buttons
+		 */
+		buildButtons: function() {
+			var me = this;
+			var buttons = [];
+
+			if (this.readOnly) {
+				buttons = [
+					Ext.create('CMDBuild.buttons.CloseButton', {
+						handler: function() {
+							me.destroy();
+						}
+					})
+				];
+			} else {
+				buttons = [
+					Ext.create('CMDBuild.buttons.ConfirmButton', {
+						scope: me,
+
+						handler: function() {
+							if (me.formPanel.getNonValidFormFields().length > 0) {
+								CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+							} else {
+								me.save = true;
+								// Destroy call an event after(!) the destruction of the window the event saves the values of the form. For save the values
+								// only if are correct we have to put this boolean that is valid only on the confirm button
+								me.destroy();
+								me.save = false;
+							}
+						}
+					}),
+					Ext.create('CMDBuild.buttons.AbortButton', {
+						handler: function() {
+							me.destroy();
+						}
+					})
+				];
+			}
+
+			return buttons;
+		},
+
+		/**
+		 * Fills form with template data, but if window was in "reply" mode fills only email content with prepend function
+		 *
+		 * @param {CMDBuild.Management.TemplateResolver} templateResolver
+		 * @param {Object} emailTemplatesData
+		 */
+		createEmailFromTemplate: function(templateResolver, emailTemplatesData) {
+			var me = this;
+
+			templateResolver.resolveTemplates({
+				attributes: Ext.Object.getKeys(emailTemplatesData),
+				callback: function(values) {
+					var setValueArray = [];
+					var content = values[CMDBuild.core.proxy.CMProxyConstants.BODY];
+
+					if (me.windowMode == 'reply') {
+						setValueArray.push({
+							id: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
+							value: content + '<br /><br />' + me.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT)
+						});
+					} else {
+						setValueArray.push(
+							{
+								id: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
+								value: values[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT]
+							},
+							{
+								id: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES,
+								value: values[CMDBuild.core.proxy.CMProxyConstants.TO]
+							},
+							{
+								id: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
+								value: values[CMDBuild.core.proxy.CMProxyConstants.FROM]
+							},
+							{
+								id: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES,
+								value: values[CMDBuild.core.proxy.CMProxyConstants.CC]
+							},
+							{
+								id: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
+								value: values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT]
+							},
+							{
+								id: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
+								value: content
+							}
+						);
+					}
+
+					me.form.setValues(setValueArray);
+				}
+			});
+		},
 
 		/**
 		 * @param {Object} record - CMDBuild.model.CMModelEmailTemplates.grid raw value
@@ -220,7 +324,7 @@
 				serverVars: me.delegate.getTemplateResolverServerVars()
 			});
 
-			_createEmailFromTemplate(templateResolver, record, this.form);
+			this.createEmailFromTemplate(templateResolver, record);
 		},
 
 		/**
@@ -234,198 +338,6 @@
 			);
 		}
 	});
-
-	/**
-	 * @param {Object} me - this
-	 *
-	 * @return {Object} body
-	 */
-	function bodyBuild(me) {
-		var body;
-
-		if (me.readOnly) {
-			body = Ext.create('Ext.panel.Panel', {
-				frame: true,
-				border: true,
-				html: me.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT),
-				autoScroll: true,
-				flex: 1
-			});
-		} else {
-			body = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
-				name: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
-				hideLabel: true,
-				enableFont: false,
-				value: me.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT),
-				flex: 1
-			});
-		}
-
-		return body;
-	}
-
-	/**
-	 * @param {Object} me - this
-	 * @param {Object} body
-	 *
-	 * @return {Ext.form.FormPanel}
-	 */
-	function buildFormPanel(me, body) {
-		return Ext.create('Ext.form.FormPanel', {
-			frame: false,
-			border: false,
-			padding: '5',
-			flex: 3,
-			bodyCls: 'x-panel-body-default-framed',
-
-			layout: {
-				type: 'vbox',
-				align: 'stretch' // Child items are stretched to full width
-			},
-
-			defaults: {
-				labelAlign: 'right'
-			},
-
-			items: [
-				{
-					xtype: 'hidden',
-					name: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-					value: me.record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT)
-				},
-				{
-					xtype: 'displayfield',
-					name: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
-					fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.fromfld,
-					disabled: me.readOnly,
-					vtype: me.readOnly ? null : 'multiemail',
-					value: me.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS)
-				},
-				{
-					xtype: me.readOnly ? 'displayfield' : 'textfield',
-					name: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESS,
-					allowBlank: false,
-					fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld,
-					disabled: me.readOnly,
-					vtype: me.readOnly ? null : 'multiemail',
-					value: me.record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESS)
-				},
-				{
-					xtype: me.readOnly ? 'displayfield' : 'textfield',
-					name: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESS,
-					fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld,
-					disabled: me.readOnly,
-					vtype: me.readOnly ? null : 'multiemail',
-					value: me.record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESS)
-				},
-				{
-					xtype: me.readOnly ? 'displayfield' : 'textfield',
-					name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
-					allowBlank: false,
-					fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.subjectfld,
-					disabled: me.readOnly,
-					value: me.record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT)
-				},
-				body
-			]
-		});
-	}
-
-	/**
-	 * @param {Object} me - this
-	 *
-	 * @return {Array} buttons
-	 */
-	function buildButtons(me) {
-		var buttons;
-
-		if (me.readOnly) {
-			buttons = [
-				Ext.create('CMDBuild.buttons.CloseButton', {
-					handler: function() {
-						me.destroy();
-					}
-				})
-			];
-		} else {
-			buttons = [
-				Ext.create('CMDBuild.buttons.ConfirmButton', {
-					scope: me,
-
-					handler: function() {
-						var valueTo = me.form.getValues()[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESS];
-						var valueCC = me.form.getValues()[CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESS];
-
-						if (me.getNonValidFormFields().length > 0) {
-							CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-						} else {
-							me.save = true;
-							// Destroy call an event after(!) the destruction of the window the event saves the values of the form. For save the values
-							// only if are correct we have to put this boolean that is valid only on the confirm button
-							me.destroy();
-							me.save = false;
-						}
-					}
-				}),
-				Ext.create('CMDBuild.buttons.AbortButton', {
-					handler: function() {
-						me.destroy();
-					}
-				})
-			];
-		}
-
-		return buttons;
-	}
-
-	/**
-	 * @param {Object} me - this
-	 *
-	 * @return {Ext.container.Container}
-	 */
-	function buildAttachmentButtonsContainer(me) {
-		return Ext.create('Ext.container.Container', {
-			layout: {
-				type: 'hbox',
-				padding: '0 5'
-			},
-
-			disabled: me.readOnly,
-			items: [
-				buildUploadForm(me)
-				,
-				{
-					xtype: 'button',
-					margin: '0 0 0 5',
-					text: CMDBuild.Translation.add_attachment_from_dms,
-
-					handler: function() {
-						me.delegate.onAddAttachmentFromDmsButtonClick(me, me.record);
-					}
-				}
-			]
-		});
-	}
-
-	/**
-	 * @param {Object} me - this
-	 */
-	function buildAttachmentPanelsContainer(me) {
-		return Ext.create('Ext.container.Container', {
-			autoScroll: true,
-			flex: 1,
-			disabled: me.readOnly,
-			getFileNames: function() {
-				var names = [];
-
-				this.items.each(function(i) {
-					names.push(i.fileName);
-				});
-
-				return names;
-			}
-		});
-	}
 
 	/**
 	 * @param {Object} me - this
@@ -451,77 +363,6 @@
 					}
 				}
 			}]
-		});
-	}
-
-	/**
-	 * @param {Object} me - this
-	 * @param {Object} body
-	 */
-	function fixIEFocusIssue(me, body) {
-		// Sometimes on IE the HtmlEditor is not able to take the focus after the mouse click. With this call it works. The reason is currently unknown.
-		if (Ext.isIE) {
-			me.mon(body, 'render', function() {
-				try {
-					body.focus();
-				} catch (e) {}
-			}, me);
-		}
-	}
-
-	/**
-	 * @param {Array} errors
-	 *
-	 * @return {String} messages
-	 */
-	function htmlComposeMessage(errors) {
-		var messages = '';
-
-		for (var i = 0; i < errors.length; i++) {
-			var msg = Ext.String.format('<p class="{0}">{1}</p>', CMDBuild.Constants.css.error_msg, errors[i]);
-
-			messages += msg;
-		}
-
-		return messages;
-	}
-
-	/**
-	 * @param {CMDBuild.Management.TemplateResolver} templateResolver
-	 * @param {Object} emailTemplatesData
-	 * @param {Ext.form.FormPanel} form
-	 */
-	function _createEmailFromTemplate(templateResolver, emailTemplatesData, form) {
-		templateResolver.resolveTemplates({
-			attributes: Ext.Object.getKeys(emailTemplatesData),
-			callback: function(values) {
-				form.setValues([
-					{
-						id: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-						value: values[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT]
-					},
-					{
-						id: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESS,
-						value: values.to
-					},
-					{
-						id: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
-						value: values.from
-					},
-					{
-						id: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESS,
-						value: values.cc
-					},
-					{
-						id: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
-						value: values.subject
-					},
-					{
-						id: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
-						value: values.body
-					}
-				]);
-			}
 		});
 	}
 
