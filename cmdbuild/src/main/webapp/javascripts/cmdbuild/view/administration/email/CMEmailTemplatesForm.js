@@ -104,6 +104,7 @@
 				},
 
 				defaults: {
+					overflowX: 'auto',
 					overflowY: 'auto'
 				},
 
@@ -170,8 +171,7 @@
 								fieldLabel: CMDBuild.Translation.administration.email.templates.body,
 								labelWidth: CMDBuild.LABEL_WIDTH,
 								maxWidth: CMDBuild.CFG_BIG_FIELD_WIDTH,
-								considerAsFieldToDisable: true,
-								enableFont: false
+								considerAsFieldToDisable: true
 							}),
 							this.addVariablesButton
 						]
