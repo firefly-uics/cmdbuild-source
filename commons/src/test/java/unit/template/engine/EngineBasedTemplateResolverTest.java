@@ -3,12 +3,9 @@ package unit.template.engine;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.cmdbuild.common.template.engine.Engine;
 import org.cmdbuild.common.template.engine.EngineBasedTemplateResolver;
@@ -126,8 +123,21 @@ public class EngineBasedTemplateResolverTest {
 		// then
 		assertThat(value, equalTo("foo 42 bar"));
 	}
-	
-	
+
+	@Test
+	public void backslashesAndDollarSignsCanBeUsed() throws Exception {
+		// given
+		final EngineBasedTemplateResolver tr = EngineBasedTemplateResolver.newInstance() //
+				.withEngine(engineWithParam("contains_backslash", "foo \\ bar"), "e0") //
+				.withEngine(engineWithParam("contains_dollar_sign", "baz$"), "e1") //
+				.build();
+
+		// when
+		final String value = tr.resolve("{e0:contains_backslash} {e1:contains_dollar_sign}");
+
+		// then
+		assertThat(value, equalTo("foo \\ bar baz$"));
+	}
 
 	/*
 	 * Utilities
