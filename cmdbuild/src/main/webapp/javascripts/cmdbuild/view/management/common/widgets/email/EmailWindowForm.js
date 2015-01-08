@@ -53,7 +53,6 @@
 				this.emailContentField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
 					name: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
 					hideLabel: true,
-					enableFont: false,
 					value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT),
 					flex: 1
 				});

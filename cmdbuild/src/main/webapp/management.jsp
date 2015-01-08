@@ -35,7 +35,6 @@
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/MultiSelect.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/portal.css" />
-		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/form/htmlEditor/resources/css/htmleditorplugins.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/extensible-1.5.1/resources/css/extensible-all.css" />
 
 		<link rel="icon" href="images/favicon.ico" />

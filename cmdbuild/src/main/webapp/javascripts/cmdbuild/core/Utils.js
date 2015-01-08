@@ -29,6 +29,46 @@
 		},
 
 		/**
+		 * Returns string with custom formatted ExtJs version
+		 *
+		 * @param {Object} format
+		 * 		Ex. {
+		 * 			{String} separator,
+		 * 			{Boolean} major,
+		 * 			{Boolean} minor,
+		 * 			{Boolean} patch,
+		 * 			{Boolean} release
+		 * 		}
+		 *
+		 * @return {String}
+		 */
+		getExtJsVersion: function(format) {
+			format = format || {};
+			format.separator = format.separator || '.';
+			format.major = format.major || true;
+			format.minor = format.minor || true;
+			format.patch = format.patch || true;
+			format.release = format.release || false;
+
+			var extjsVersion = Ext.getVersion('extjs');
+			var outputArray = [];
+
+			if (format.major)
+				outputArray.push(extjsVersion.getMajor());
+
+			if (format.minor)
+				outputArray.push(extjsVersion.getMinor());
+
+			if (format.patch)
+				outputArray.push(extjsVersion.getPatch());
+
+			if (format.release)
+				outputArray.push(extjsVersion.getRelease());
+
+			return outputArray.join(format.separator);
+		},
+
+		/**
 		 * Default pageSize value is set as 20
 		 *
 		 * @return {Int} pageSize

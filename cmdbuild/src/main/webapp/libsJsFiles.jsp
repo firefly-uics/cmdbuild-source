@@ -32,7 +32,6 @@
 
 <script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/PatchOverride.js"></script>
 
-<!-- https://github.com/rbartholomay/ExtJS.ux.HtmlEditor.Plugins -->
-<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/htmlEditor/src/Ext.ux.form.HtmlEditor.MidasCommand.js"></script>
-<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/htmlEditor/src/Ext.ux.form.HtmlEditor.RemoveFormat.js"></script>
-<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/htmlEditor/src/Ext.ux.form.HtmlEditor.Word.js"></script>
+<!-- TinyMCE ux -->
+<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/TinyMCE/src/tiny_mce.js"></script>
+<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/TinyMCE/TinyMCETextArea.js"></script>

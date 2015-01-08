@@ -1,148 +1,131 @@
 (function() {
-	Ext.define("CMDBuild.view.common.field.CMHtmlEditorField", {
-		extend: "Ext.form.field.HtmlEditor",
-		enableExpand: true, // to have a button that increase the height
+
+	Ext.define('CMDBuild.view.common.field.CMHtmlEditorField', {
+		extend: 'Ext.ux.form.TinyMCETextArea',
+
+		/**
+		 * @cfg {Mixed} object or string
+		 */
+		tinyMCEConfig: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		disableCssClass: 'disable',
+
+		/**
+		 * Custom CMDBuild buttons configurations to use
+		 *
+		 * @cfg {Object} CMDBuilds custom configurations
+		 *
+		 * @private
+		 */
+		customConfigurations: {
+			common: {
+				skin: 'extjs',
+				skin_variant: 'blue',
+				schema: 'html5',
+				language: 'en',
+
+				// Original value is 23, hard coded. With 23 the editor calculates the height wrong.
+				// With these settings, you can do the fine tuning of the height by the initialization.
+				theme_advanced_row_height: 27,
+				delta_height: 1
+			},
+
+			full: {
+				theme: 'advanced',
+				plugins: 'autolink,lists,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist',
+
+				// Theme options
+				theme_advanced_buttons1: 'save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect',
+				theme_advanced_buttons2: 'cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor',
+				theme_advanced_buttons3: 'tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr,|,print,|,ltr,rtl,|,fullscreen',
+				theme_advanced_buttons4: 'insertlayer,moveforward,movebackward,absolute,|,styleprops,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,pagebreak,restoredraft',
+				theme_advanced_toolbar_location: 'top',
+				theme_advanced_toolbar_align: 'left',
+				theme_advanced_statusbar_location: 'none'
+
+			},
+			standard: {
+				theme: 'advanced',
+				plugins: 'autolink,paste,fullscreen',
+
+				// Theme options
+				theme_advanced_buttons1: 'bold,italic,underline,|,fontsizeselect,|,forecolor,backcolor,|,justifyleft,justifycenter,justifyright,justifyfull,|,link,unlink,|,bullist,numlist,|,pastetext,pasteword,|,cleanup,removeformat,|,fullscreen,|,code',
+				theme_advanced_toolbar_location: 'top',
+				theme_advanced_toolbar_align: 'left',
+				theme_advanced_statusbar_location: 'none'
+			}
+		},
 
 		initComponent: function() {
-			// set the defaultValue to empty string,
-			// because the Ext default value has encoding problems
-			// when used in some query
-			this.defaultValue = "";
+			// Setup TinyMCE configuration from string identifier
+			if (
+				Ext.isEmpty(this.tinyMCEConfig)
+				|| typeof this.tinyMCEConfig == 'string'
+			) {
+				var validIdentifiers = ['full', 'standard'];
 
-			this.plugins = Ext.Array.from(this.plugins);
-			this.plugins.push(new Ext.ux.form.HtmlEditor.Word({
-				langToolTip: CMDBuild.Translation.clean_word_pasted_text
-			}));
-			this.plugins.push(new Ext.ux.form.HtmlEditor.RemoveFormat({
-				langToolTip: CMDBuild.Translation.remove_formatting,
-				langTitle: CMDBuild.Translation.remove_formatting
-			}));
+				if(!Ext.Array.contains(validIdentifiers, this.tinyMCEConfig))
+					this.tinyMCEConfig = 'standard';
+
+				this.tinyMCEConfig = Ext.Object.merge(this.customConfigurations['common'], this.customConfigurations[this.tinyMCEConfig]);
+			}
+
+			// Language setup
+			this.tinyMCEConfig.language = CMDBuild.Config.cmdbuild.language;
+
+			// Editor color setup for Administration
+			if (Ext.isEmpty(CMDBuild.app.Management)) {
+				var extVersion = CMDBuild.core.Utils.getExtJsVersion();
+
+				this.tinyMCEConfig.skin_variant = 'silver';
+				this.tinyMCEConfig.popup_css = 'javascripts/ext-' + extVersion + '-ux/form/TinyMCE/src/themes/advanced/skins/extjs/dialog_silver.css';
+			}
 
 			this.callParent(arguments);
-
-			/*
-			 * Some problems setting the
-			 * value since the field is hidden
-			 * see the setValue override
-			 */
-			this.mon(this, "activate", function() {
-				if (typeof this.danglingValue != "undefined") {
-					this.setValue(this.danglingValue);
-				}
-			}, this);
 		},
 
-		getToolbarCfg: function() {
-			var toolbarConfig = this.callParent(arguments);
-
-			if (this.enableExpand) {
-				toolbarConfig.items.push("->");
-				toolbarConfig.items.push({
-					iconCls: "expand",
-					scope: this,
-					handler: expandButtonHandler
-				});
-			}
-
-			return toolbarConfig;
-		},
-
-		/*
-		 * Do not disable also the label
+		/**
+		 * Custom function to disable all editor items
+		 *
+		 * @override
 		 */
-		// override
 		disable: function() {
-			var childElements = this.items.items;
-			for (var i=0, l=childElements.length, el=null; i<l; ++i) {
-				el = childElements[i];
-				el.disable();
-			}
-		},
+			// Disable iframe editor body
+			if (tinymce.get(this.getInputId())) {
+				var edIframe = Ext.get(this.getInputId() + '_ifr');
+				var domElClasses = edIframe.dom.contentDocument.body.className.split(' ');
 
-		// override
-		enable: function() {
-			var childElements = this.items.items;
-			for (var i=0, l=childElements.length, el=null; i<l; ++i) {
-				el = childElements[i];
-				el.enable();
-			}
-		},
-
-		/*
-		 * There is problem to set value
-		 * if the field is not visible
-		 */
-		// override
-		setValue: function(value) {
-			if (this.isVisible()) {
-				this.callParent(arguments);
-				this.danglingValue = undefined;
-			} else {
-				this.danglingValue = value;
-			}
-		},
-
-		/*
-		 * is not considered the
-		 * allowBlank configuration
-		 */
-		// override
-		isValid: function() {
-			if (typeof this.allowBlank == "undefined"
-				|| this.allowBlank === true) {
-					return this.callParent(arguments);
-			} else {
-				var value = this.getValue();
-				if (! value) {
-					return false;
+				if (!Ext.Array.contains(domElClasses, this.disableCssClass)) {
+					domElClasses.push(this.disableCssClass);
+					edIframe.dom.contentDocument.body.className = domElClasses.join(' ');
 				}
-				var controlValue = value;
-				controlValue = controlValue.split("<div>").join("");
-				controlValue = controlValue.split("</div>").join("");
-				controlValue = controlValue.split("<br>").join("");
-				var thereAreData = Ext.String.trim(controlValue);
-				return thereAreData != "";
 			}
+
+			this.callParent(arguments);
+		},
+
+		/**
+		 * Custom function to enable all editor items
+		 *
+		 * @override
+		 */
+		enable: function() {
+			// Enable iframe editor body
+			if (tinymce.get(this.getInputId())) {
+				var edIframe = Ext.get(this.getInputId() + '_ifr');
+				var domElClasses = edIframe.dom.contentDocument.body.className.split(' ');
+
+				if (Ext.Array.contains(domElClasses, this.disableCssClass)) {
+					Ext.Array.remove(domElClasses, this.disableCssClass);
+					edIframe.dom.contentDocument.body.className = domElClasses.join(' ');
+				}
+			}
+
+			this.callParent(arguments);
 		}
 	});
 
-	function expandButtonHandler() {
-		var me = this;
-		var conf = me.initialConfig;
-		var htmlField = new CMDBuild.view.common.field.CMHtmlEditorField( //
-				Ext.apply(conf, {
-					hideLabel: true,
-					resizable: false,
-					enableExpand: false,
-					region: "center"
-				}) //
-			);
-
-		var popup = new CMDBuild.PopupWindow({
-			title: conf.fieldLabel,
-			items: [{
-				xtype: "panel",
-				layout: "border",
-				border: false,
-				frame: false,
-				items: htmlField
-			}],
-			buttonAlign: "center",
-			buttons: [{
-				text: CMDBuild.Translation.common.buttons.confirm,
-				handler: function() {
-					me.setValue(htmlField.getValue());
-					popup.destroy();
-				}
-			}, {
-				text: CMDBuild.Translation.common.buttons.abort,
-				handler: function() {
-					popup.destroy();
-				}
-			}]
-		});
-
-		popup.show();
-		htmlField.setValue(me.getValue());
-	}
 })();

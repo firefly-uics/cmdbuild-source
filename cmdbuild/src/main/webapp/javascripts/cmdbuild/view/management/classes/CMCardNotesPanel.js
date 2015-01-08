@@ -30,8 +30,7 @@
 
 			var htmlField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
 				name: 'Notes',
-				hideLabel: true,
-				enableFont: false
+				hideLabel: true
 			});
 
 			this.actualForm = new Ext.form.Panel({
