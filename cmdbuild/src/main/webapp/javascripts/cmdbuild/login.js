@@ -1,20 +1,53 @@
 (function() {
 
-	Ext.define("CMDBuild.LoginPanel", {
-		extend: "Ext.panel.Panel",
+	var tr = CMDBuild.Translation.login;
 
-		tr: CMDBuild.Translation.login,
+	Ext.define('CMDBuild.LoginPanel', {
+		extend: 'Ext.panel.Panel',
+
+		requires: ['CMDBuild.core.proxy.CMProxy'],
+
+		frame: false,
+		border: false,
+		hideMode: 'offsets',
+		renderTo: 'login_box',
+
+
+		/**
+		 * @property {Ext.form.Panel}
+		 */
+		form: undefined,
+
+		/**
+		 * @property {CMDBuild.field.LanguageCombo}
+		 */
+		language: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		password: undefined,
+
+		/**
+		 * @property {Ext.form.field.ComboBox}
+		 */
+		role: undefined,
+
+		/**
+		 * @property {Ext.form.field.Text}
+		 */
+		user: undefined,
 
 		statics: {
 			buildAfterRequest: function() {
 				CMDBuild.ServiceProxy.configuration.readMainConfiguration({
 					scope: this,
-					success: function(response, options, decoded) {
-						CMDBuild.Config.cmdbuild = decoded.data;
+					success: function(result, options, decodedResult) {
+						CMDBuild.Config.cmdbuild = decodedResult.data;
 					},
 					callback: function() {
-						new CMDBuild.LoginPanel({
-							id: "login"
+						Ext.create('CMDBuild.LoginPanel', {
+							id: 'login'
 						});
 					}
 				});
@@ -27,93 +60,95 @@
 			// see http://www.sencha.com/forum/showthread.php?260106-Tooltips-on-forms-and-grid-are-not-resizing-to-the-size-of-the-text/page3#24
 			delete Ext.tip.Tip.prototype.minWidth;
 
+			var me = this;
+
 			this.buildLanguagesCombo();
-			var scope = this;
 
 			var enterKeyListener = {
 				'specialkey': function(field, event) {
-					if (event.getKey() == event.ENTER) {
-						scope.doLogin(field, event);
-					}
+					if (event.getKey() == event.ENTER)
+						me.doLogin(field, event);
 				}
 			};
 
-			this.user = new Ext.form.TextField({
-				fieldLabel: this.tr.username,
-				name: 'username',
+			this.user = Ext.create('Ext.form.field.Text', {
+				scope: this,
+				fieldLabel: tr.username,
+				name: CMDBuild.core.proxy.CMProxyConstants.USERNAME,
 				allowBlank: false,
-				listeners: enterKeyListener,
-				scope: this
+
+				listeners: enterKeyListener
 			});
 
-			this.password = new Ext.form.TextField({
-				fieldLabel: this.tr.password,
-				name: 'password',
+			this.password = Ext.create('Ext.form.field.Text', {
+				scope: this,
+				fieldLabel: tr.password,
+				name: CMDBuild.core.proxy.CMProxyConstants.PASSWORD,
 				inputType: 'password',
 				allowBlank: false,
-				listeners: enterKeyListener,
-				scope: this
+
+				listeners: enterKeyListener
 			});
 
-			this.role = new Ext.form.ComboBox({
-				id: 'rolefield',
-				fieldLabel: this.tr.multi_group,
-				hideMode: "offsets",
-				name: 'role',
-				hiddenName: 'role',
-				valueField: 'name',
-				editable: false,
-				displayField : 'description',
-				queryMode: 'local',
-				store: new Ext.data.Store({
-					fields: ['name', 'description']
-				}),
+			this.role = Ext.create('Ext.form.field.ComboBox', {
 				scope: this,
+				id: 'rolefield',
+				fieldLabel: tr.multi_group,
+				hideMode: 'offsets',
+				name: CMDBuild.core.proxy.CMProxyConstants.ROLE,
+				hiddenName: CMDBuild.core.proxy.CMProxyConstants.ROLE,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				editable: false,
+
+				store: Ext.create('Ext.data.Store', {
+					fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]
+				}),
+				queryMode: 'local',
+
 				listeners: {
 					'specialkey': function(field, event) {
 						if (event.getKey() == event.ENTER) {
 							try {
 								this.listKeyNav.selectHighlighted(event);
-								scope.doLogin();
+
+								me.doLogin();
 							} catch (e) {
-								_debug("Error setting the group");
+								_debug('Error setting the group');
 							}
 						}
 					}
 				}
 			});
 
-			var fields = this.buildFieldsArray();
-
-			this.form = new Ext.form.FormPanel({
-				xtype: 'form',
-				labelWidth : 100,
-				title: this.tr.title,
+			this.form = Ext.create('Ext.form.Panel', {
+				labelWidth: 100,
+				title: tr.title,
 				frame: true,
 				defaultType: 'textfield',
 				padding: 10,
+
+				buttonAlign: 'center',
+				buttons: [
+					Ext.create('Ext.button.Button', {
+						scope: this,
+						text: tr.login,
+						handler: this.doLogin
+					})
+				],
+
 				layout: {
 					type: 'vbox',
 					align: 'stretch'
 				},
-				items: fields,
-				buttonAlign: 'center',
-				buttons: [
-					this.loginButton = new Ext.Button({
-						text: this.tr.login,
-						handler: this.doLogin,
-						scope: this
-					})
-				]
+
+				items: this.buildFieldsArray()
 			});
 
 			Ext.apply(this, {
-				renderTo: 'login_box',
-				frame: false,
-				border: false,
-				hideMode: "offsets",
 				items: [
-					this.form, {
+					this.form,
+					{
 						xtype: 'panel',
 						border: false,
 						contentEl: 'release_box'
@@ -126,10 +161,96 @@
 			this.callParent(arguments);
 
 			this.on('afterrender', this.setupFields, this);
-			this.role.on('render', this.setupFields, this); //backward compatibility wit Ext2.2
+			this.role.on('render', this.setupFields, this); // Backward compatibility wit Ext2.2
 		},
 
-		//private
+
+		/**
+		 * @return {Array}
+		 *
+		 * @private
+		 */
+		buildFieldsArray: function() {
+			if (this.language) {
+				return [this.language, this.user, this.password, this.role];
+			} else {
+				return [this.user, this.password, this.role];
+			}
+		},
+
+		/**
+		 * @private
+		 */
+		buildLanguagesCombo: function() {
+			if (CMDBuild.Config.cmdbuild.languageprompt == 'true') {
+				this.language = Ext.create('CMDBuild.view.common.field.LanguageCombo', {
+					fieldLabel: tr.language
+				});
+			}
+		},
+
+		/**
+		 * @private
+		 */
+		disableRoles: function() {
+			this.role.disable();
+			this.role.hide();
+		},
+
+		/**
+		 * @param {Mixed} field
+		 * @param {Ext.EventObjectImpl} event
+		 *
+		 * @private
+		 */
+		doLogin: function(field, event) {
+			var form = this.form.getForm();
+			var values = form.getValues();
+
+			if (!Ext.isEmpty(values.role) || form.isValid()) {
+				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.proxy.CMProxy.doLogin({
+					params: form.getValues(),
+					scope: this,
+					success: function() {
+						if (/administration.jsp$/.test(window.location)) {
+							window.location = 'administration.jsp' + window.location.hash;
+						} else {
+							window.location = 'management.jsp' + window.location.hash;
+						}
+					},
+					failure: function(result, options, decodedResult) {
+						CMDBuild.LoadMask.get().hide();
+
+						if (decodedResult && decodedResult.reason == 'AUTH_MULTIPLE_GROUPS') {
+							// Multiple groups for this user
+							// TODO Disable user/pass on multiple groups
+							this.enableRoles(decodedResult.groups);
+
+							return false;
+						} else {
+							decodedResult.stacktrace = undefined; // To not show the detail link in the error pop-up
+						}
+					}
+				});
+			}
+		},
+
+		/**
+		 * @param {Object} roles
+		 *
+		 * @private
+		 */
+		enableRoles: function(roles) {
+			this.role.getStore().loadData(roles);
+			this.role.enable();
+			this.role.show();
+			this.role.focus();
+		},
+
+		/**
+		 * @private
+		 */
 		setupFields: function() {
 			if (CMDBuild.Runtime && CMDBuild.Runtime.Username) {
 				this.user.setValue(CMDBuild.Runtime.Username);
@@ -145,74 +266,6 @@
 			} else {
 				this.disableRoles();
 			}
-		},
-
-		//private
-		buildFieldsArray: function() {
-			if (this.language) {
-				return [this.language, this.user, this.password, this.role];
-			} else {
-				return [this.user, this.password, this.role];
-			}
-		},
-
-		//private
-		buildLanguagesCombo: function() {
-			if (CMDBuild.Config.cmdbuild.languageprompt == "true") {
-				this.language = new CMDBuild.field.LanguageCombo({
-					fieldLabel: this.tr.language
-				});
-			}
-		},
-
-		//private
-		enableRoles: function(roles) {
-			this.role.store.loadData(roles);
-			this.role.enable();
-			this.role.show();
-			this.role.focus();
-		},
-
-		//private
-		disableRoles: function() {
-			this.role.disable();
-			this.role.hide();
-		},
-
-		//private
-		doLogin: function(field, event) {
-			var form = this.form.getForm();
-			
-			var values = form.getValues();
-			if (values.role != undefined && values.role == "")
-				return;
-
-			if (!form.isValid())
-				return;
-
-			CMDBuild.LoadMask.get().show();
-			CMDBuild.ServiceProxy.doLogin({
-				params: form.getValues(),
-				scope: this,
-				success: function() {
-					if (/administration.jsp$/.test(window.location)) {
-						window.location = 'administration.jsp';
-					} else {
-						window.location = 'management.jsp';
-					}
-				},
-				failure: function(response, options, decoded) {
-					CMDBuild.LoadMask.get().hide();
-					if (decoded && decoded.reason == 'AUTH_MULTIPLE_GROUPS') {
-						// multiple groups for this user
-						// TODO Disable user/pass on multiple groups
-						this.enableRoles(decoded.groups);
-						return false;
-					} else {
-						decoded.stacktrace = undefined; //to not show the detail link in the error pop-up
-					}
-				}
-			});
 		}
 	});
 

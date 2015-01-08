@@ -236,7 +236,12 @@
 
 					if (attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL]) {
 						header.header = '* ' + header.header;
-						editor.required = true;
+
+						header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
+						editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = true;
+					} else {
+						header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
+						editor[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] = false;
 					}
 
 					// Do not override renderer, add editor on checkbox columns and make it editable
@@ -319,7 +324,10 @@
 								fields: _CMCache.getDataSourceOutput(presetsString),
 								extraParams: {
 									'function': presetsString,
-									params: Ext.encode(params)
+									params: Ext.encode(params),
+									limitParam: undefined, // Avoid to send limit in server calls
+									pageParam: undefined, // Avoid to send page in server calls
+									startParam: undefined // Avoid to send start in server calls
 								}
 							})
 						);
@@ -442,6 +450,40 @@
 					data: []
 				});
 			},
+
+		/**
+		 * Check required field value of grid store records
+		 *
+		 * @return {Boolean}
+		 *
+		 * @override
+		 */
+		isValid: function() {
+			var returnValue = true;
+			var requiredAttributes = [];
+
+			// Build columns required array
+			for (var i in this.columns.headers) {
+				var header = this.columns.headers[i];
+
+				if (header[CMDBuild.core.proxy.CMProxyConstants.REQUIRED])
+					requiredAttributes.push(header[CMDBuild.core.proxy.CMProxyConstants.DATA_INDEX]);
+			}
+
+			// Check grid store records empty required fields
+			this.grid.getStore().each(function(record) {
+				for (var y in requiredAttributes)
+					if (Ext.isEmpty(record.get(requiredAttributes[y]))) {
+						returnValue = false;
+
+						return false;
+					}
+
+				return true;
+			}, this);
+
+			return returnValue;
+		},
 
 		/**
 		 * Read presets and loads data to grid store

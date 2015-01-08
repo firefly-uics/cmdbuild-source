@@ -1,14 +1,15 @@
 (function () {
 
-	var reader = CMDBuild.management.model.widget.ManageEmailConfigurationReader;
-	var fields = reader.FIELDS;
-
 	Ext.define('CMDBuild.controller.management.common.widgets.CMManageEmailController', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.widgets.ManageEmail'
+		],
+
 		mixins: {
 			observable: 'Ext.util.Observable',
-			emailgriddelegate: 'CMDBuild.view.management.common.widgets.CMEmailGridDelegate',
 			attachmentPickerDelegate: 'CMDBuild.view.management.common.widgets.CMDMSAttachmentPickerDelegate'
 		},
 
@@ -21,13 +22,13 @@
 		 */
 		TEMPLATE_FIELDS: [
 			CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-			'toAddresses',
-			'ccAddresses',
+			CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES,
+			CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES,
 			CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
-			'content',
-			'condition',
-			'notifyWith',
-			'fromAddress'
+			CMDBuild.core.proxy.CMProxyConstants.CONTENT,
+			CMDBuild.core.proxy.CMProxyConstants.CONDITION,
+			CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH,
+			CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS
 		],
 
 		/**
@@ -46,6 +47,11 @@
 		clientForm: undefined,
 
 		/**
+		 * @property {CMDBuild.view.management.common.widgets.CMEmailGrid}
+		 */
+		emailGrid: undefined,
+
+		/**
 		 * @property {Object} variables
 		 */
 		emailTemplatesData: undefined,
@@ -56,9 +62,19 @@
 		emailsWereGenerated: false,
 
 		/**
-		 * @property {CMDBuild.controller.management.common.CMWidgetManagerController}
+		 * @cfg {Boolean}
+		 */
+		gridStoreWasLoaded: false,
+
+		/**
+		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
 		 */
 		ownerController: undefined,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		readOnly: undefined,
 
 		/**
 		 * @property {CMDBuild.Management.TemplateResolver}
@@ -76,7 +92,7 @@
 		view: undefined,
 
 		/**
-		 * @property {Object}
+		 * @cfg {Object}
 		 */
 		widgetConf: undefined,
 
@@ -94,14 +110,10 @@
 
 			this.callParent(arguments);
 
-			this.reader = CMDBuild.management.model.widget.ManageEmailConfigurationReader;
+			this.emailTemplatesData = this.extractVariablesForTemplateResolver();
+			this.readOnly = !this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
 
-			this.gridStoreWasLoaded = false;
-
-			this.emailTemplatesData = _extractVariablesForTemplateResolver(this);
-			this.readWrite = !this.reader.readOnly(this.widgetConf);
-
-			var xavars = Ext.apply({}, this.reader.templates(this.widgetConf), this.emailTemplatesData);
+			var xavars = Ext.apply({}, this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES] || {}, this.emailTemplatesData);
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
@@ -109,7 +121,58 @@
 				serverVars: this.getTemplateResolverServerVars()
 			});
 
-			this.view.setDelegate(this);
+			this.view.delegate = this;
+			this.view.emailGrid.delegate = this;
+
+			// ShortHands
+			this.emailGrid = this.view.emailGrid;
+		},
+
+		/**
+		 * Gatherer function to catch events
+		 *
+		 * @param {String} name
+		 * @param {Object} param
+		 * @param {Function} callback
+		 */
+		cmOn: function(name, param, callBack) {
+			switch (name) {
+				case 'onEmailDelete':
+					return this.onEmailDelete(param);
+
+				case 'onEmailEdit':
+					return this.onEmailEdit(param);
+
+				case 'onItemDoubleClick':
+					return this.onItemDoubleClick(param);
+
+				case 'onEmailReply':
+					return this.onEmailReply(param);
+
+				case 'onEmailView':
+					return this.onEmailView(param);
+
+				default: {
+					if (!Ext.isEmpty(this.parentDelegate))
+						return this.parentDelegate.cmOn(name, param, callBack);
+				}
+			}
+		},
+
+		/*
+		 * Resolve the template only if there are no draft mails, because the draft mails are saved from this step, and assume that
+		 * the user has already modified the template for this step.
+		 */
+		addEmailFromTemplateIfNeeded: function() {
+			this.checkTemplatesToRegenerate();
+
+			if (
+				this.thereAreTemplates()
+				&& !this.view.hasDraftEmails()
+				&& !this.emailsWereGenerated
+			) {
+				this.createEmailFromTemplate();
+			}
 		},
 
 		/**
@@ -139,22 +202,6 @@
 			}
 		},
 
-		/*
-		 * Resolve the template only if there are no draft mails, because the draft mails are saved from this step, and assume that
-		 * the user has already modified the template for this step.
-		 */
-		addEmailFromTemplateIfNeeded: function() {
-			this.checkTemplatesToRegenerate();
-
-			if (
-				this.thereAreTemplates()
-				&& !this.view.hasDraftEmails()
-				&& !this.emailsWereGenerated
-			) {
-				_createEmailFromTemplate(this);
-			}
-		},
-
 		/**
 		 * Builds templatesToRegenerate array with indexes of templates
 		 */
@@ -176,8 +223,8 @@
 			}
 
 			// Check templates attributes looking for dirtyVariables as client variables (ex. {client:varName})
-			for (var i in this.widgetConf.emailTemplates) {
-				var template = this.widgetConf.emailTemplates[i];
+			for (var i in this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES]) {
+				var template = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES][i];
 
 				if (!Ext.Object.isEmpty(template))
 					for (var j in template) {
@@ -196,26 +243,85 @@
 		},
 
 		/**
-		 * @return {Boolean}
-		 */
-		thereAreTemplates: function() {
-			return this.countTemplates() > 0;
-		},
-
-		/**
 		 * @return {Int}
 		 */
 		countTemplates: function() {
-			var emailTemplates = this.reader.emailTemplates(this.widgetConf) || [];
+			var emailTemplates = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES] || [];
 
 			return emailTemplates.length;
 		},
 
-		removeUnsentEmails: function() {
-			var emailToRemove = [].concat(this.view.getNewEmails()).concat(this.view.getDraftEmails());
+		createEmailFromTemplate: function() {
+			if (!this.busy) {
+				var me = this;
+				var oldStore = CMDBuild.core.Utils.deepCloneStore(this.view.emailGrid.getStore()); // Backup old store to copy not regenerated data
 
-			for (var i = 0; i < emailToRemove.length; ++i)
-				this.view.removeRecord(emailToRemove[i]);
+				this.busy = true;
+				this.view.removeTemplatesFromStore();
+				this.emailsWereGenerated = true;
+
+				this.templateResolver.resolveTemplates({
+					attributes: Ext.Object.getKeys(me.emailTemplatesData),
+					callback: function(values, ctx) {
+						for (var i = 1; i <= me.countTemplates(); ++i) {
+
+							// If regenerations is forced by field edit or if it's first load
+							if (
+								Ext.Array.contains(me.templatesToRegenerate, i)
+								|| oldStore.count() == 0
+							) {
+								var v = {};
+								var conditionExpr = values[me.TEMPLATE_CONDITION + i];
+
+								if (!conditionExpr || me.templateResolver.safeJSEval(conditionExpr)) {
+									for (var j = 0; j < me.TEMPLATE_FIELDS.length; ++j) {
+										var field = me.TEMPLATE_FIELDS[j];
+										v[field] = values[field + i];
+									}
+
+									me.view.addTemplateToStore(v);
+								}
+							} else { // Copy from old store
+								me.view.emailGrid.addTemplateToStore(oldStore.getAt(i - 1).data);
+							}
+						}
+
+						me.templateResolver.bindLocalDepsChange(function() {
+							if (me.emailsWereGenerated) {
+								me.emailsWereGenerated = false;
+								CMDBuild.Msg.warn(null, CMDBuild.Translation.management.modworkflow.extattrs.manageemail.mailsAreChanged);
+							}
+						});
+
+						me.busy = false;
+					}
+				});
+			}
+		},
+
+		/**
+		 * Extract the variables of each EmailTemplate, add a suffix to them with the index, and put them all in the templates map.
+		 * This is needed to be passed as a unique map to the template resolver.
+		 *
+		 * @return {Object} variables
+		 */
+		extractVariablesForTemplateResolver: function() {
+			var emailTemplates = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES] || [];
+			var variables = {};
+
+			for (var i = 0; i < emailTemplates.length; ++i) {
+				var t = emailTemplates[i].variables;
+
+				for (var key in t)
+					variables[key] = t[key];
+
+				t = emailTemplates[i];
+
+				for (var key in t)
+					variables[key + (i + 1)] = t[key];
+			}
+
+			return variables;
 		},
 
 		/**
@@ -231,15 +337,6 @@
 		},
 
 		/**
-		 * @return {Boolean}
-		 *
-		 * @override
-		 */
-		isValid: function() {
-			return !(this.reader.required(this.widgetConf) && this.view.getOutgoing().length == 0);
-		},
-
-		/**
 		 * @return {Boolean} busy
 		 *
 		 * @override
@@ -251,8 +348,160 @@
 		},
 
 		/**
-		 * as emailgriddelegate
+		 * @return {Boolean}
+		 *
+		 * @override
 		 */
+		isValid: function() {
+			return !(
+				this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED]
+				&& this.view.getOutgoing().length == 0
+			);
+		},
+
+		removeUnsentEmails: function() {
+			var emailToRemove = [].concat(this.view.getNewEmails()).concat(this.view.getDraftEmails());
+
+			for (var i = 0; i < emailToRemove.length; ++i)
+				this.view.removeRecord(emailToRemove[i]);
+		},
+
+		/**
+		 * @return {Boolean}
+		 */
+		thereAreTemplates: function() {
+			return this.countTemplates() > 0;
+		},
+
+		/**
+		 * @param {Ext.form.Basic} form
+		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+		 * @param {Array} attachments
+		 */
+		updateRecord: function(form, record, attachments) {
+			var formValues = form.getValues();
+
+			for (var key in formValues)
+				record.set(key, formValues[key]);
+
+			record.set('Description', formValues[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES]);
+			record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, attachments);
+			record.commit();
+		},
+
+		/**
+		 * @param {Array} attachmentNames
+		 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow
+		 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord
+		 */
+		updateAttachmentList: function(attachmentNames, emailWindow, emailRecord) {
+			if (Ext.isArray(attachmentNames))
+				for (var i = 0; i < attachmentNames.length; ++i)
+					emailWindow.addAttachmentPanel(attachmentNames[i], emailRecord);
+		},
+
+		// As EmailGrid Delegate
+			/**
+			 * @param {CMDBuild.view.management.common.widgets.CMEmailGrid} emailGrid
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord
+			 */
+			onAddEmailButtonClick: function(emailGrid, emailRecord) {
+				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+					emailGrid: emailGrid,
+					delegate: this,
+					record: emailRecord
+				}).show();
+			},
+
+			/**
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 */
+			onEmailDelete: function(record) {
+				Ext.Msg.confirm(
+					CMDBuild.Translation.common.confirmpopup.title,
+					CMDBuild.Translation.common.confirmpopup.areyousure,
+					function(btn) {
+						if (btn != 'yes')
+							return;
+
+						this.removeRecord(record);
+					},
+					this
+				);
+			},
+
+			/**
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 */
+			onEmailEdit: function(record) {
+				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+					delegate: this,
+					emailGrid: this.emailGrid,
+					readOnly: !this.readOnly,
+					record: record,
+					title: CMDBuild.Translation.editEmail,
+					windowMode: 'edit'
+				}).show();
+			},
+
+			/**
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 */
+			onEmailReply: function(record) {
+				var content = '<p>'
+						+ CMDBuild.Translation.onDay + ' ' + record.get(CMDBuild.core.proxy.CMProxyConstants.DATE)
+						+ ', <' + record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) + '> ' + CMDBuild.Translation.hasWrote
+					+ ':</p>'
+					+ '<blockquote>' + record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT) + '</blockquote>';
+
+				var repltRecordData = {};
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS] = record.get(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS);
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES);
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.CONTENT] = content;
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.DATE] = null;
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS] = null;
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.ID] = null;
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = null;
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.STATUS] = this.emailGrid.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
+				repltRecordData[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
+
+				var replyRecord = Ext.create('CMDBuild.model.widget.ManageEmail.grid', repltRecordData);
+
+				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+					delegate: this,
+					emailGrid: this.emailGrid,
+					record: replyRecord,
+					title: CMDBuild.Translation.replyEmail,
+					windowMode: 'reply'
+				}).show();
+			},
+
+			/**
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 */
+			onEmailView: function(record) {
+				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+					delegate: this,
+					emailGrid: this.emailGrid,
+					readOnly: true,
+					record: record,
+					title: CMDBuild.Translation.viewEmail,
+					windowMode: 'edit'
+				}).show();
+			},
+
+			/**
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 */
+			onItemDoubleClick: function(record) {
+				if (this.emailGrid.recordIsEditable(record)) {
+					this.onEmailEdit(record);
+				} else {
+					this.onEmailView(record);
+				}
+			},
+
 			onUpdateTemplatesButtonClick: function() {
 				this.removeUnsentEmails(); // New and Draft
 				this.emailsWereGenerated = false;
@@ -260,50 +509,36 @@
 			},
 
 			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMEmailGrid} emailGrid
-			 * @param {CMDBuild.management.mail.Model} emailRecord
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
 			 */
-			onAddEmailButtonClick: function(emailGrid, emailRecord) {
-				Ext.create('CMDBuild.view.management.common.widgets.CMEmailWindow', {
-					emailGrid: emailGrid,
-					delegate: this,
-					record: emailRecord
-				}).show();
+			removeRecord: function(record) {
+				// The email has an id only if it was returned by the server. So add it to the deletedEmails only if the server know it
+				var id = record.getId();
+
+				if (id)
+					this.emailGrid.deletedEmails.push(id);
+
+				this.emailGrid.getStore().remove(record);
 			},
 
+		// As CMEmailWindow Delegate
 			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMEmailGrid} emailGrid
-			 * @param {CMDBuild.management.mail.Model} emailRecord
-			 */
-			onModifyEmailIconClick: function(emailGrid, emailRecord) {
-				Ext.create('CMDBuild.view.management.common.widgets.CMEmailWindow', {
-					emailGrid: emailGrid,
-					delegate: this,
-					readOnly: !this.readWrite,
-					record: emailRecord
-				}).show();
-			},
-
-		/**
-		 * as CMEmailWindow Delegate
-		 */
-			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
+			 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow
 			 * @param {Object} form
-			 * @param {CMDBuild.management.mail.Model} emailRecord
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord
 			 */
 			onCMEmailWindowAttachFileChanged: function(emailWindow, form, emailRecord) {
 				if (emailRecord.isNew()) {
-					var temporaryId = emailRecord.get('temporaryId');
 					var params = {};
+					var temporaryId = emailRecord.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID);
 
-					if (temporaryId)
-						params.temporaryId = temporaryId;
+					if (!Ext.isEmpty(temporaryId))
+						params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID] = temporaryId;
 
 					CMDBuild.core.proxy.widgets.ManageEmail.addAttachmentFromNewEmail(form, {
 						params: params,
 						success: function(fp, o) {
-							emailRecord.set('temporaryId', o.result.temporaryId);
+							emailRecord.set(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID, o.result[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID]);
 							emailWindow.addAttachmentPanel(o.result.fileName, emailRecord);
 						}
 					});
@@ -323,14 +558,13 @@
 			 * @param {Object} attachmentPanel
 			 */
 			onCMEmailWindowRemoveAttachmentButtonClick: function(attachmentPanel) {
-				var proxyFn = null;
 				var emailRecord = attachmentPanel.referredEmail;
 				var params = {
 					fileName: attachmentPanel.fileName
 				};
 
 				if (emailRecord.isNew()) {
-					params.temporaryId = emailRecord.get('temporaryId');
+					params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID] = emailRecord.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID);
 
 					CMDBuild.core.proxy.widgets.ManageEmail.removeAttachmentFromNewEmail({
 						params: params,
@@ -351,8 +585,8 @@
 			},
 
 			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
-			 * @param {CMDBuild.management.mail.Model} emailRecord
+			 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord
 			 */
 			onAddAttachmentFromDmsButtonClick: function(emailWindow, emailRecord) {
 				Ext.create('CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker', {
@@ -364,10 +598,10 @@
 			},
 
 			/**
-			 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
+			 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow
 			 */
 			beforeCMEmailWindowDestroy: function(emailWindow) {
-				updateRecord(
+				this.updateRecord(
 					emailWindow.form,
 					emailWindow.record,
 					emailWindow.attachmentPanelsContainer.getFileNames()
@@ -376,9 +610,7 @@
 				this.view.addToStoreIfNotInIt(emailWindow.record);
 			},
 
-		/**
-		 * as CMDMSAttachmentPickerDelegate
-		 */
+		// As CMDMSAttachmentPicker Delegate
 			/**
 			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
 			 * @param {String} classId
@@ -392,10 +624,11 @@
 
 			/**
 			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker,
-			 * @param {CMDBuild.management.mail.Model} emailRecord,
-			 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow,
+			 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord,
+			 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow,
 			 */
 			onCMDMSAttachmentPickerOKButtonClick: function(dmsAttachmentPicker, emailRecord, emailWindow) {
+				var me = this;
 				var data = dmsAttachmentPicker.cmState.getData();
 
 				if (data && data.length == 0)
@@ -407,16 +640,16 @@
 				};
 
 				if (emailRecord.isNew()) {
-					var temporaryId = emailRecord.get('temporaryId');
+					var temporaryId = emailRecord.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID);
 
-					if (temporaryId)
-						params.temporaryId = temporaryId;
+					if (!Ext.isEmpty(temporaryId))
+						params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID] = temporaryId;
 
 					CMDBuild.core.proxy.widgets.ManageEmail.copyAttachmentFromCardForNewEmail({
 						params: params,
 						success: function(fp, request, response) {
-							emailRecord.set('temporaryId', response.temporaryId);
-							updateAttachmentList(response.attachments, emailWindow, emailRecord);
+							emailRecord.set(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID, response[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID]);
+							me.updateAttachmentList(response.attachments, emailWindow, emailRecord);
 							dmsAttachmentPicker.destroy();
 						}
 					});
@@ -425,7 +658,7 @@
 					CMDBuild.core.proxy.widgets.ManageEmail.copyAttachmentFromCardForExistingEmail({
 						params: params,
 						success: function(fp, request, response) {
-							updateAttachmentList(response.attachments, emailWindow, emailRecord);
+							me.updateAttachmentList(response.attachments, emailWindow, emailRecord);
 							dmsAttachmentPicker.destroy();
 						}
 					});
@@ -439,9 +672,7 @@
 				dmsAttachmentPicker.destroy();
 			},
 
-		/**
-		 * as CMCardGridDelegate
-		 */
+		// As CMCardGrid Delegate
 			/**
 			 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
 			 * @param {CMDBuild.view.management.common.CMCardGrid} attachmentGrid
@@ -485,109 +716,5 @@
 				dmsAttachmentPicker.cleanAttachmentGrid();
 			}
 	});
-
-	/**
-	 * @param {Array} attachmentNames
-	 * @param {CMDBuild.view.management.common.widgets.CMEmailWindow} emailWindow
-	 * @param {CMDBuild.management.mail.Model} emailRecord
-	 */
-	function updateAttachmentList(attachmentNames, emailWindow, emailRecord) {
-		if (Ext.isArray(attachmentNames))
-			for (var i = 0; i < attachmentNames.length; ++i)
-				emailWindow.addAttachmentPanel(attachmentNames[i], emailRecord);
-	}
-
-	/**
-	 * @param {Object} form
-	 * @param {Object} record
-	 * @param {Object} attachments
-	 */
-	function updateRecord(form, record, attachments) {
-		var formValues = form.getValues();
-
-		for (var key in formValues)
-			record.set(key, formValues[key]);
-
-		record.set('Description', formValues[fields.TO_ADDRESS]);
-		record.set('attachments', attachments);
-		record.commit();
-	}
-
-	/**
-	 * @param {Object} me - this
-	 */
-	function _createEmailFromTemplate(me) {
-		if (!me.busy) {
-			var oldStore = CMDBuild.core.Utils.deepCloneStore(me.view.emailGrid.getStore()); // Backup old store to copy not regenerated data
-
-			me.busy = true;
-			me.view.removeTemplatesFromStore();
-			me.emailsWereGenerated = true;
-
-			me.templateResolver.resolveTemplates({
-				attributes: Ext.Object.getKeys(me.emailTemplatesData),
-				callback: function(values, ctx) {
-					for (var i = 1; i <= me.countTemplates(); ++i) {
-
-						// If regenerations is forced by field edit or if it's first load
-						if (
-							Ext.Array.contains(me.templatesToRegenerate, i)
-							|| oldStore.count() == 0
-						) {
-							var v = {};
-							var conditionExpr = values[me.TEMPLATE_CONDITION + i];
-
-							if (!conditionExpr || me.templateResolver.safeJSEval(conditionExpr)) {
-								for (var j = 0; j < me.TEMPLATE_FIELDS.length; ++j) {
-									var field = me.TEMPLATE_FIELDS[j];
-									v[field] = values[field + i];
-								}
-
-								me.view.addTemplateToStore(v);
-							}
-						} else { // Copy from old store
-							me.view.emailGrid.addTemplateToStore(oldStore.getAt(i - 1).data);
-						}
-					}
-
-					me.templateResolver.bindLocalDepsChange(function() {
-						if (me.emailsWereGenerated) {
-							me.emailsWereGenerated = false;
-							CMDBuild.Msg.warn(null, CMDBuild.Translation.management.modworkflow.extattrs.manageemail.mailsAreChanged);
-						}
-					});
-
-					me.busy = false;
-				}
-			});
-		}
-	}
-
-	/**
-	 * Extract the variables of each EmailTemplate, add a suffix to them with the index, and put them all in the templates map.
-	 * This is needed to be passed as a unique map to the template resolver.
-	 *
-	 * @param {Object} me - this
-	 *
-	 * @return {Object} variables
-	 */
-	function _extractVariablesForTemplateResolver(me) {
-		var emailTemplates = me.reader.emailTemplates(me.widgetConf) || [];
-		var variables = {};
-
-		for (var i = 0; i < emailTemplates.length; ++i) {
-			var t = emailTemplates[i].variables;
-
-			for (var key in t)
-				variables[key] = t[key];
-
-			t = emailTemplates[i];
-
-			for (var key in t)
-				variables[key + (i + 1)] = t[key];
-		}
-
-		return variables;
-	}
 
 })();
