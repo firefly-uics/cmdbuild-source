@@ -1,6 +1,7 @@
 package org.cmdbuild.common.template.engine;
 
 import static java.util.Arrays.asList;
+import static java.util.regex.Matcher.quoteReplacement;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.common.template.engine.RegexUtils.capture;
 import static org.cmdbuild.common.template.engine.RegexUtils.exclude;
@@ -85,7 +86,7 @@ public class EngineBasedTemplateResolver implements TemplateResolver, LoggingSup
 			final String expressionForEngine = matcher.group(2);
 			final Object value = eval(engine, expressionForEngine);
 			logger.debug("replacing match with '{}'", value);
-			resolved = matcher.replaceFirst(String.valueOf(value));
+			resolved = matcher.replaceFirst(quoteReplacement(String.valueOf(value)));
 			matcher = VAR_PATTERN.matcher(resolved);
 		}
 		return resolved;
