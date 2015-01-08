@@ -60,7 +60,7 @@
 		templatesStore: undefined,
 
 		/**
-		 * Possible values: create, edit, reply
+		 * Possible values: create, edit, reply, view
 		 *
 		 * @cfg {String}
 		 */
@@ -231,7 +231,7 @@
 						scope: me,
 
 						handler: function() {
-							if (me.formPanel.getNonValidFormFields().length > 0) {
+							if (me.formPanel.getNonValidFields().length > 0) {
 								CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 							} else {
 								me.save = true;
