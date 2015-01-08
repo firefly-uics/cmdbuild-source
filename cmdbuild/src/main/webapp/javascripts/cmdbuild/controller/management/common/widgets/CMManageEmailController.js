@@ -439,7 +439,8 @@
 					emailGrid: this.emailGrid,
 					readOnly: !this.readOnly,
 					record: record,
-					title: CMDBuild.Translation.editEmail
+					title: CMDBuild.Translation.editEmail,
+					windowMode: 'edit'
 				}).show();
 			},
 
@@ -471,7 +472,8 @@
 					delegate: this,
 					emailGrid: this.emailGrid,
 					record: replyRecord,
-					title: CMDBuild.Translation.replyEmail
+					title: CMDBuild.Translation.replyEmail,
+					windowMode: 'reply'
 				}).show();
 			},
 
@@ -484,7 +486,8 @@
 					emailGrid: this.emailGrid,
 					readOnly: true,
 					record: record,
-					title: CMDBuild.Translation.viewEmail
+					title: CMDBuild.Translation.viewEmail,
+					windowMode: 'edit'
 				}).show();
 			},
 
