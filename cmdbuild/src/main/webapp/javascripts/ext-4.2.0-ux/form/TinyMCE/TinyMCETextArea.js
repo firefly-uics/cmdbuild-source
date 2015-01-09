@@ -1,41 +1,42 @@
 (function() {
 
-	/*jshint bitwise:true, curly:true, eqeqeq:true, forin:true, noarg:true, noempty:true, nonew:true, undef:true, browser:true */
-	/*global Ext, tinymce, tinyMCE */
-
-	/*-------------------------------------------------------------------
-	Ext.ux.form.TinyMCE.TinyMCETextArea
-
-	ExtJS form field - a text area with integrated TinyMCE WYSIWYG Editor
-
-	Version: 2.7
-	Release date: 12.12.2013
-	ExtJS Version: 4.2.1
-	TinyMCE Version: 3.5.10
-	License: LGPL v2.1 or later, Sencha License
-
-	Author: Oleg Schildt
-	E-Mail: Oleg.Schildt@gmail.com
-
-	Copyright (c) 2013 Oleg Schildt
-
-	Following issues are covered:
-
-	- Initialization in an initially visible and in an initially invisible tab.
-	- Correct place occupation by the initialization in any ExtJS layout.
-	- Correct resizing by the resizing of the underlying text area.
-	- Activation and deactivation of the WYSIWYG editor.
-	- Enabling and disabling of the WYSIWYG editor control.
-	- ReadOnly state support.
-	- Changing of WYSIWYG settings and CSS file for the editable contents on the fly.
-	- Pre-formatting of the HTML text in visible and invisible modus.
-	- Focusing of the WYSIWYG editor control.
-	- Marking invalid.
-	- Marking invalid.
-	- Tracking dirty state.
-	- Skin "extjs" and the native ExtJS windows for the editor inline popups.
-	- Storing and restoring cursor position by inserting of a place holder over a popup window.
-	-------------------------------------------------------------------*/
+	/**
+	 * jshint bitwise:true, curly:true, eqeqeq:true, forin:true, noarg:true, noempty:true, nonew:true, undef:true, browser:true
+	 * global Ext, tinymce, tinyMCE
+	 *
+	 * -------------------------------------------------------------------
+	 * Ext.ux.form.TinyMCE.TinyMCETextArea
+	 *
+	 * 	ExtJS form field - a text area with integrated TinyMCE WYSIWYG Editor
+	 *
+	 * Version: 2.7
+	 * Release date: 12.12.2013
+	 * ExtJS Version: 4.2.1
+	 * TinyMCE Version: 3.5.10
+	 * License: LGPL v2.1 or later, Sencha License
+	 *
+	 * Author: Oleg Schildt
+	 * E-Mail: Oleg.Schildt@gmail.com
+	 *
+	 * Copyright (c) 2013 Oleg Schildt
+	 *
+	 * Following issues are covered:
+	 *
+	 * - Initialization in an initially visible and in an initially invisible tab.
+	 * - Correct place occupation by the initialization in any ExtJS layout.
+	 * - Correct resizing by the resizing of the underlying text area.
+	 * - Activation and deactivation of the WYSIWYG editor.
+	 * - Enabling and disabling of the WYSIWYG editor control.
+	 * - ReadOnly state support.
+	 * - Changing of WYSIWYG settings and CSS file for the editable contents on the fly.
+	 * - Pre-formatting of the HTML text in visible and invisible modus.
+	 * - Focusing of the WYSIWYG editor control.
+	 * - Marking invalid.
+	 * - Marking invalid.
+	 * - Tracking dirty state.
+	 * - Skin "extjs" and the native ExtJS windows for the editor inline popups.
+	 * - Storing and restoring cursor position by inserting of a place holder over a popup window.
+	 */
 
 	Ext.define('Ext.ux.form.TinyMCE.TinyMCETextAreaWindowManager', {
 		extend: 'tinymce.WindowManager',
@@ -338,14 +339,6 @@
 			}, me);
 
 			me.on('resize', function (elm, width, height, oldWidth, oldHeight, eOpts) {
-				/*
-				alert('width:' + width + '\n' +
-				'height:' + height + '\n' +
-				'oldWidth:' + oldWidth + '\n' +
-				'oldHeight:' + oldHeight
-				);
-				 */
-
 				if (elm.hasVisibleLabel() && (elm.labelAlign === 'left' || elm.labelAlign === 'right')) {
 					width = width - (elm.labelWidth + elm.labelPad);
 				}
@@ -355,8 +348,7 @@
 
 				if (!me.noWysiwyg && !me.wysiwygIntialized) {
 					me.initEditor();
-				}
-				else {
+				} else {
 					me.syncEditorSize(me.lastWidth, me.lastHeight);
 				}
 			}, me);

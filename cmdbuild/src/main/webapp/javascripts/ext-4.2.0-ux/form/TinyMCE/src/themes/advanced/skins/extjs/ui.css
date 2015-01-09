@@ -6,7 +6,6 @@
 /* Containers */
 .extjsSkin table {background:transparent}
 .extjsSkin iframe {display:block;}
-.extjsSkin .mceToolbar {height:26px}
 
 /* External */
 .extjsSkin .mceExternalToolbar {position:absolute; border:1px solid #ABC6DD; border-bottom:0; display:none}
@@ -222,36 +221,24 @@
 .extjsSkin span.mce_visualblocks {background-position: -40px -40px}
 
 /*
-Undo the settings from the ExtJS in ext-all.css 
+Undo the settings from the ExtJS in ext-all.css
 
-.x-border-box * 
+.x-border-box *
 {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -ms-box-sizing: border-box;
-  -webkit-box-sizing: border-box; 
+  -webkit-box-sizing: border-box;
 }
 
-otherwise the dropdowns in the WYSIWYG toolbar are 
-rendered wrong.
+otherwise the dropdowns in the WYSIWYG toolbar are rendered wrong.
 */
 
-.x-border-box .mceEditor * 
-{
-  box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  -ms-box-sizing: content-box;
-  -webkit-box-sizing: content-box;  
-}
+.x-border-box .mceEditor * {box-sizing: content-box; -moz-box-sizing: content-box; -ms-box-sizing: content-box; -webkit-box-sizing: content-box; }
 
-/*
-Override the blue background
-*/
+/* Override the blue background */
+.x-border-box .mceEditor .mceText { background-color: white; }
 
-.x-border-box .mceEditor .mceText
-{
-  background-color: white;
-}
 /*
 We define the invalid class for the editor
 to mark the content area invalid, if the ExtJS
@@ -261,8 +248,9 @@ It should be defined with a stronger rule
 than just .tinymce-error-field {}, otherwise,
 the skin rules override this.
 */
+.extjsSkin td.tinymce-error-field { border: 1px dashed red; }
 
-.extjsSkin td.tinymce-error-field 
-{
-  border: 1px dashed red;
-}
+/* Fluid toolbar layout */
+.extjsSkin .mceToolbar { padding: 2px 0px; }
+.extjsSkin .mceToolbar * { white-space: normal !important; }
+.extjsSkin .mceToolbar tr, .extjsSkin .mceToolbar td { float: left !important; }
