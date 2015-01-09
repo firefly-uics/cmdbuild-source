@@ -14,9 +14,17 @@
 		reportAccordion = null,
 		navigationTreesAccordion = null;
 
-	Ext.require('CMDBuild.core.proxy.Report');
-
 	Ext.define("CMDBuild.app.Administration", {
+		extend: 'Ext.app.Application',
+
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConfiguration',
+			'CMDBuild.core.proxy.Report'
+		],
+
+		name: 'CMDBuild',
+		appFolder: './javascripts/cmdbuild',
+
 		statics: {
 			init: function() {
 				var me = this;
@@ -29,6 +37,13 @@
 				delete Ext.tip.Tip.prototype.minWidth;
 
 				CMDBuild.view.CMMainViewport.showSplash(forCredits, administration);
+
+				// Get server language
+				CMDBuild.core.proxy.CMProxyConfiguration.getLanguage({
+					success: function(result, options, decodedResult) {
+						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] = decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
+					}
+				});
 
 				// maybe a single request with all the configuration could be better
 				CMDBuild.ServiceProxy.group.getUIConfiguration({

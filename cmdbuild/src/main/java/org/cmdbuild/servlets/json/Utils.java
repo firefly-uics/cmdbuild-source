@@ -20,6 +20,15 @@ public class Utils extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
+	public JSONObject getLanguage() throws JSONException {
+		final JSONObject j = new JSONObject();
+
+		j.put("language", languageStore().getLanguage());
+
+		return j;
+	}
+
+	@JSONExported
 	@Unauthorized
 	public JSONObject listAvailableTranslations(final JSONObject serializer) throws JSONException {
 
