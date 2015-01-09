@@ -17,7 +17,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.Validate;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.data.store.lookup.Lookup;
 import org.cmdbuild.service.rest.model.ProcessInstance;
 import org.cmdbuild.workflow.LookupHelper;
@@ -107,10 +109,18 @@ public class ToProcessInstance implements Function<UserProcessInstance, ProcessI
 
 			@Override
 			public Object transformEntry(final String key, final Object value) {
-				return ValueConverter.newInstance() //
-						.withType(type) //
-						.build() //
-						.convert(key, value);
+				final CMAttribute attribute = type.getAttribute(key);
+				Object output;
+				if (attribute == null) {
+					output = value;
+				} else {
+					final CMAttributeType<?> attributeType = attribute.getType();
+					output = DefaultConverter.newInstance() //
+							.build() //
+							.toClient() //
+							.convert(attributeType, value);
+				}
+				return output;
 			}
 
 		};

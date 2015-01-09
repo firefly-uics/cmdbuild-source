@@ -16,7 +16,6 @@ import static org.cmdbuild.common.utils.guava.Functions.toKey;
 import static org.cmdbuild.common.utils.guava.Functions.toValue;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -60,8 +59,8 @@ public class Models {
 		private String description;
 		private String version;
 		private String author;
-		private Date created;
-		private Date modified;
+		private String created;
+		private String modified;
 		private Map<String, Object> metadata;
 
 		private AttachmentBuilder() {
@@ -126,12 +125,12 @@ public class Models {
 			return this;
 		}
 
-		public AttachmentBuilder withCreated(final Date created) {
+		public AttachmentBuilder withCreated(final String created) {
 			this.created = created;
 			return this;
 		}
 
-		public AttachmentBuilder withModified(final Date modified) {
+		public AttachmentBuilder withModified(final String modified) {
 			this.modified = modified;
 			return this;
 		}
@@ -1536,6 +1535,12 @@ public class Models {
 
 	public static AttachmentBuilder newAttachment(final Attachment attachment) {
 		return new AttachmentBuilder(attachment);
+	}
+
+	private static final Attachment NULL_ATTACHMENT = newAttachment().build();
+
+	public static Attachment nullAttachment() {
+		return NULL_ATTACHMENT;
 	}
 
 	public static AttachmentCategoryBuilder newAttachmentCategory() {

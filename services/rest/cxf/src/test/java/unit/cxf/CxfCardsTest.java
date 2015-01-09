@@ -17,7 +17,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
@@ -38,8 +37,6 @@ public class CxfCardsTest {
 
 	private ErrorHandler errorHandler;
 	private DataAccessLogic userDataAccessLogic;
-	private CMDataView systemDataView;
-	private CMDataView userDataView;
 
 	private CxfCards cxfCards;
 
@@ -47,9 +44,7 @@ public class CxfCardsTest {
 	public void setUp() throws Exception {
 		errorHandler = mock(ErrorHandler.class);
 		userDataAccessLogic = mock(DataAccessLogic.class);
-		systemDataView = mock(CMDataView.class);
-		userDataView = mock(CMDataView.class);
-		cxfCards = new CxfCards(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		cxfCards = new CxfCards(errorHandler, userDataAccessLogic);
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -66,7 +61,7 @@ public class CxfCardsTest {
 				.build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic);
 		inOrder.verify(userDataAccessLogic).findClass(eq("123"));
 		inOrder.verify(errorHandler).classNotFound(eq("123"));
 		inOrder.verifyNoMoreInteractions();
@@ -92,7 +87,7 @@ public class CxfCardsTest {
 		// then
 		final ArgumentCaptor<org.cmdbuild.model.data.Card> cardCaptor = ArgumentCaptor
 				.forClass(org.cmdbuild.model.data.Card.class);
-		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic);
 		inOrder.verify(userDataAccessLogic).findClass(eq("123"));
 		inOrder.verify(userDataAccessLogic).createCard(cardCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
@@ -117,7 +112,7 @@ public class CxfCardsTest {
 				.build());
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic);
 		inOrder.verify(userDataAccessLogic).findClass(eq("12"));
 		inOrder.verify(errorHandler).classNotFound(eq("12"));
 		inOrder.verifyNoMoreInteractions();
@@ -142,7 +137,7 @@ public class CxfCardsTest {
 		// then
 		final ArgumentCaptor<org.cmdbuild.model.data.Card> cardCaptor = ArgumentCaptor
 				.forClass(org.cmdbuild.model.data.Card.class);
-		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic);
 		inOrder.verify(userDataAccessLogic).findClass(eq("12"));
 		inOrder.verify(userDataAccessLogic).updateCard(cardCaptor.capture());
 		inOrder.verifyNoMoreInteractions();
@@ -164,7 +159,7 @@ public class CxfCardsTest {
 		cxfCards.delete("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic);
 		inOrder.verify(userDataAccessLogic).findClass(eq("123"));
 		inOrder.verify(errorHandler).classNotFound(eq("123"));
 		inOrder.verifyNoMoreInteractions();
@@ -183,7 +178,7 @@ public class CxfCardsTest {
 		cxfCards.delete("123", 456L);
 
 		// then
-		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic, systemDataView, userDataView);
+		final InOrder inOrder = inOrder(errorHandler, userDataAccessLogic);
 		inOrder.verify(userDataAccessLogic).findClass(eq("123"));
 		inOrder.verify(userDataAccessLogic).deleteCard(eq("baz"), eq(456L));
 		inOrder.verifyNoMoreInteractions();

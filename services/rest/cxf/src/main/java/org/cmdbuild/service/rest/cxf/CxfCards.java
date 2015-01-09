@@ -1,43 +1,45 @@
 package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.transformEntries;
 import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonArray;
 import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonObject;
+import static org.cmdbuild.service.rest.model.Models.newCard;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.cmdbuild.dao.entry.CMCard;
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
-import org.cmdbuild.dao.view.CMDataView;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.exception.NotFoundException;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.FetchCardListResponse;
 import org.cmdbuild.service.rest.Cards;
-import org.cmdbuild.service.rest.cxf.serialization.FromCMCardToCard;
-import org.cmdbuild.service.rest.cxf.serialization.FromCardToCard;
-import org.cmdbuild.service.rest.cxf.serialization.ToCardFunction;
+import org.cmdbuild.service.rest.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
 import org.cmdbuild.service.rest.model.Card;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Maps.EntryTransformer;
 import com.mchange.util.AssertException;
 
 public class CxfCards implements Cards, LoggingSupport {
 
 	private final ErrorHandler errorHandler;
 	private final DataAccessLogic userDataAccessLogic;
-	private final CMDataView systemDataView;
-	private final CMDataView userDataView;
 
-	public CxfCards(final ErrorHandler errorHandler, final DataAccessLogic userDataAccessLogic,
-			final CMDataView systemDataView, final CMDataView userDataView) {
+	public CxfCards(final ErrorHandler errorHandler, final DataAccessLogic userDataAccessLogic) {
 		this.errorHandler = errorHandler;
 		this.userDataAccessLogic = userDataAccessLogic;
-		this.systemDataView = systemDataView;
-		this.userDataView = userDataView;
 	}
 
 	@Override
@@ -47,7 +49,7 @@ public class CxfCards implements Cards, LoggingSupport {
 			errorHandler.classNotFound(classId);
 		}
 		final org.cmdbuild.model.data.Card _card = org.cmdbuild.model.data.Card.newInstance(targetClass) //
-				.withAllAttributes(card.getValues()) //
+				.withAllAttributes(adaptInputValues(targetClass, card)) //
 				.build();
 		final Long id = userDataAccessLogic.createCard(_card);
 		return newResponseSingle(Long.class) //
@@ -64,11 +66,11 @@ public class CxfCards implements Cards, LoggingSupport {
 		}
 		try {
 			final CMCard fetched = userDataAccessLogic.fetchCMCard(targetClass.getName(), id);
-			final Card element = FromCMCardToCard.newInstance() //
-					.withDataView(userDataView) //
-					.withErrorHandler(errorHandler) //
-					.build() //
-					.apply(fetched);
+			final Card element = newCard() //
+					.withType(targetClass.getName()) //
+					.withId(fetched.getId()) //
+					.withValues(adaptOutputValues(targetClass, fetched)) //
+					.build();
 			return newResponseSingle(Card.class) //
 					.withElement(element) //
 					.build();
@@ -93,12 +95,19 @@ public class CxfCards implements Cards, LoggingSupport {
 				.offset(offset) //
 				.build();
 		final FetchCardListResponse response = userDataAccessLogic.fetchCards(targetClass.getName(), queryOptions);
-		final ToCardFunction<org.cmdbuild.model.data.Card> toCardDetail = FromCardToCard.newInstance() //
-				.withDataView(systemDataView) //
-				.withErrorHandler(errorHandler) //
-				.build();
 		final Iterable<Card> elements = from(response.elements()) //
-				.transform(toCardDetail);
+				.transform(new Function<org.cmdbuild.model.data.Card, Card>() {
+
+					@Override
+					public Card apply(final org.cmdbuild.model.data.Card input) {
+						return newCard() //
+								.withType(targetClass.getName()) //
+								.withId(input.getId()) //
+								.withValues(adaptOutputValues(targetClass, input)) //
+								.build();
+					}
+
+				});
 		return newResponseMultiple(Card.class) //
 				.withElements(elements) //
 				.withMetadata(newMetadata() //
@@ -115,7 +124,7 @@ public class CxfCards implements Cards, LoggingSupport {
 		}
 		final org.cmdbuild.model.data.Card _card = org.cmdbuild.model.data.Card.newInstance(targetClass) //
 				.withId(id) //
-				.withAllAttributes(card.getValues()) //
+				.withAllAttributes(adaptInputValues(targetClass, card)) //
 				.build();
 		userDataAccessLogic.updateCard(_card);
 	}
@@ -130,4 +139,61 @@ public class CxfCards implements Cards, LoggingSupport {
 		userDataAccessLogic.deleteCard(targetClass.getName(), id);
 	}
 
+	private Map<String, Object> adaptInputValues(final CMClass targetClass, final Card card) {
+		return transformEntries(card.getValues(), new EntryTransformer<String, Object, Object>() {
+
+			@Override
+			public Object transformEntry(final String key, final Object value) {
+				final CMAttribute attribute = targetClass.getAttribute(key);
+				final Object _value;
+				if (attribute == null) {
+					_value = value;
+				} else {
+					final CMAttributeType<?> attributeType = attribute.getType();
+					_value = DefaultConverter.newInstance() //
+							.build() //
+							.fromClient() //
+							.convert(attributeType, value);
+				}
+				return _value;
+			}
+
+		});
+	}
+
+	private Iterable<? extends Entry<String, Object>> adaptOutputValues(final CMClass targetClass, final CMCard card) {
+		final Map<String, Object> values = newHashMap();
+		for (final Entry<String, Object> entry : card.getValues()) {
+			values.put(entry.getKey(), entry.getValue());
+		}
+		return adaptOutputValues(targetClass, values);
+	}
+
+	private Iterable<? extends Entry<String, Object>> adaptOutputValues(final CMClass targetClass,
+			final org.cmdbuild.model.data.Card card) {
+		return adaptOutputValues(targetClass, card.getAttributes());
+	}
+
+	private Iterable<? extends Entry<String, Object>> adaptOutputValues(final CMClass targetClass,
+			final Map<String, Object> values) {
+		return transformEntries(values, new EntryTransformer<String, Object, Object>() {
+
+			@Override
+			public Object transformEntry(final String key, final Object value) {
+				final CMAttribute attribute = targetClass.getAttribute(key);
+				final Object _value;
+				if (attribute == null) {
+					_value = value;
+				} else {
+					final CMAttributeType<?> attributeType = attribute.getType();
+					_value = DefaultConverter.newInstance() //
+							.build() //
+							.toClient() //
+							.convert(attributeType, value);
+				}
+				return _value;
+			}
+
+		}).entrySet();
+	}
 }
