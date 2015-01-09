@@ -51,4 +51,23 @@
 		CMDBuild.ServiceProxy.core.doRequest(p);
 	}
 
+	Ext.define('CMDBuild.core.proxy.CMProxyConfiguration', {
+
+		singleton: true,
+
+		/**
+		 * @param {Object} parameters
+		 */
+		getLanguage: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.getLanguage,
+				scope: parameters.scope || this,
+				success: parameters.success || Ext.emptyFn,
+				failure: parameters.failure || Ext.emptyFn,
+				callback: parameters.callback || Ext.emptyFn
+			});
+		}
+	});
+
 })();

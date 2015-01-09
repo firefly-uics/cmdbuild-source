@@ -74,7 +74,7 @@
 			}
 
 			// Language setup
-			this.tinyMCEConfig.language = CMDBuild.Config.cmdbuild.language;
+			this.tinyMCEConfig.language = CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
 
 			// Editor color setup for Administration
 			if (Ext.isEmpty(CMDBuild.app.Management)) {

@@ -104,6 +104,8 @@
 			getFunctions: 'services/json/schema/modclass/getfunctions'
 		},
 
+		getLanguage: 'services/json/utils/getlanguage',
+
 		login: 'services/json/login/login',
 
 		menu: {
