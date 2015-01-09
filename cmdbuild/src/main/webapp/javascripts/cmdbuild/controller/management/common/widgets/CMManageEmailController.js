@@ -215,6 +215,7 @@
 				if (
 					!Ext.isEmpty(variable)
 					&& !Ext.isObject(variable)
+					&& typeof variable == 'string'
 				) {
 					for (var j in dirtyVariables)
 						if (variable.indexOf('{client:' + dirtyVariables[j]) > -1)
@@ -233,6 +234,7 @@
 						if (
 							!Ext.isEmpty(templateAttribute)
 							&& !Ext.isObject(templateAttribute)
+							&& typeof templateAttribute == 'string'
 						) {
 							for (var y in dirtyVariables)
 								if (templateAttribute.indexOf('{client:' + dirtyVariables[y]) > -1)
