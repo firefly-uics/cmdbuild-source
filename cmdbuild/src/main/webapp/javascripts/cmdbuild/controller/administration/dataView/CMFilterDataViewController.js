@@ -11,7 +11,7 @@
 		constructor: function(view) {
 			this.callParent(arguments);
 			this.mixins.gridFormPanelDelegate.constructor.call(this, view);
-	
+
 			this.fieldManager = null;
 			this.gridConfigurator = null;
 			this.className = null;
@@ -25,7 +25,7 @@
 				this.view.buildFields(this.fieldManager);
 				this.view.disableModify();
 			}
-	
+
 			if (this.gridConfigurator == null) {
 				this.gridConfigurator = new CMDBuild.delegate.administration.common.dataview.CMFilterDataViewGridConfigurator();
 				this.view.configureGrid(this.gridConfigurator);
@@ -50,7 +50,7 @@
 					CMDBuild.Translation.you_have_not_set_a_filter,
 					false//
 				);
-				this.view.disableModify(true);
+				this.view.enableModify(true); // WORKAROUND:to fix a wrong disableModify executed on parent class
 				return;
 			} else {
 				// BUSINNESS RULE: The user could not save a view if the filter
@@ -64,7 +64,7 @@
 						CMDBuild.Translation.itIsNotAllowedFilterWithRuntimeParams, //
 						false//
 					);
-					this.view.disableModify(true);
+					this.view.enableModify(true); // WORKAROUND:to fix a wrong disableModify executed on parent class
 					return;
 				}
 			}
@@ -73,7 +73,18 @@
 				params: values,
 				success: function() {
 					_CMCache.flushTranslationsToSave(values["name"]);
-					me.gridConfigurator.getStore().load();
+
+					me.gridConfigurator.getStore().load({
+						callback: function() {
+							var rowIndex = this.find(
+								CMDBuild.core.proxy.CMProxyConstants.NAME,
+								me.view.form.getForm().findField(CMDBuild.core.proxy.CMProxyConstants.NAME).getValue()
+							);
+
+							me.view.grid.getSelectionModel().select(rowIndex, true);
+							me.view.disableModify(true);
+						}
+					});
 				}
 			};
 
@@ -83,8 +94,6 @@
 				request.params.id = me.record.getId();
 				_CMProxy.dataView.filter.update(request);
 			}
-			this.view.disableModify(true);
-
 		},
 
 		/**
@@ -109,7 +118,7 @@
 		// as specificFilterFormDelegate
 
 		/**
-		 * 
+		 *
 		 * @param {CMDBuild.view.administration.common.CMFilterDataViewFormFiledsBuilder} builder
 		 * the builder that call this method
 		 * @param {string} className
