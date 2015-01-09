@@ -12,7 +12,6 @@ import static org.cmdbuild.service.rest.constants.Serialization.MODIFIED;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.VERSION;
 
-import java.util.Date;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,8 +33,8 @@ public class Attachment extends ModelWithId<String> {
 	private String description;
 	private String version;
 	private String author;
-	private Date created;
-	private Date modified;
+	private String created;
+	private String modified;
 	private Map<String, Object> metadata;
 
 	Attachment() {
@@ -88,20 +87,20 @@ public class Attachment extends ModelWithId<String> {
 	}
 
 	@XmlAttribute(name = CREATED)
-	public Date getCreated() {
+	public String getCreated() {
 		return created;
 	}
 
-	void setCreated(final Date created) {
+	void setCreated(final String created) {
 		this.created = created;
 	}
 
 	@XmlAttribute(name = MODIFIED)
-	public Date getModified() {
+	public String getModified() {
 		return modified;
 	}
 
-	void setModified(final Date modified) {
+	void setModified(final String modified) {
 		this.modified = modified;
 	}
 

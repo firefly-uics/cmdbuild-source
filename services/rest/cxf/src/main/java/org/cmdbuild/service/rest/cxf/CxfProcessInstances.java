@@ -2,6 +2,7 @@ package org.cmdbuild.service.rest.cxf;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Maps.transformEntries;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.dao.entrytype.Functions.attributeName;
@@ -17,11 +18,14 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.cmdbuild.common.utils.PagedElements;
+import org.cmdbuild.dao.entrytype.CMAttribute;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.mapping.json.FilterElementGetters;
 import org.cmdbuild.logic.mapping.json.JsonFilterHelper;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.service.rest.ProcessInstances;
+import org.cmdbuild.service.rest.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.cxf.serialization.ToProcessInstance;
 import org.cmdbuild.service.rest.model.ProcessInstance;
 import org.cmdbuild.service.rest.model.ProcessInstanceAdvanceable;
@@ -35,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Maps.EntryTransformer;
 
 public class CxfProcessInstances implements ProcessInstances {
 
@@ -60,7 +65,7 @@ public class CxfProcessInstances implements ProcessInstances {
 		try {
 			final UserProcessInstance instance = workflowLogic.startProcess( //
 					processId, //
-					processInstance.getValues(), //
+					adaptInputValues(found, processInstance), //
 					NO_WIDGET_SUBMISSION, //
 					processInstance.isAdvance());
 			return newResponseSingle(Long.class) //
@@ -168,7 +173,7 @@ public class CxfProcessInstances implements ProcessInstances {
 					processId, //
 					instanceId, //
 					activity.getId(), //
-					processInstance.getValues(), //
+					adaptInputValues(found, processInstance), //
 					NO_WIDGET_SUBMISSION, //
 					processInstance.isAdvance());
 		} catch (final Throwable e) {
@@ -187,6 +192,29 @@ public class CxfProcessInstances implements ProcessInstances {
 		} catch (final Throwable e) {
 			errorHandler.propagate(e);
 		}
+	}
+
+	private Map<String, Object> adaptInputValues(final UserProcessClass userProcessClass,
+			final ProcessInstanceAdvanceable processInstanceAdvanceable) {
+		return transformEntries(processInstanceAdvanceable.getValues(), new EntryTransformer<String, Object, Object>() {
+
+			@Override
+			public Object transformEntry(final String key, final Object value) {
+				final CMAttribute attribute = userProcessClass.getAttribute(key);
+				final Object _value;
+				if (attribute == null) {
+					_value = value;
+				} else {
+					final CMAttributeType<?> attributeType = attribute.getType();
+					_value = DefaultConverter.newInstance() //
+							.build() //
+							.fromClient() //
+							.convert(attributeType, value);
+				}
+				return _value;
+			}
+
+		});
 	}
 
 }

@@ -10,7 +10,6 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_VERSION;
 import static org.cmdbuild.service.rest.model.Models.newAttachment;
 
-import java.util.Date;
 import java.util.Map;
 
 import org.cmdbuild.service.rest.model.Attachment;
@@ -47,8 +46,8 @@ public class AttachmentAdapter extends ModelToMapAdapter<Attachment> {
 				.withDescription(getAndRemove(input, UNDERSCORED_DESCRIPTION, String.class)) //
 				.withVersion(getAndRemove(input, UNDERSCORED_VERSION, String.class)) //
 				.withAuthor(getAndRemove(input, UNDERSCORED_AUTHOR, String.class)) //
-				.withCreated(getAndRemove(input, UNDERSCORED_CREATED, Date.class)) //
-				.withModified(getAndRemove(input, UNDERSCORED_MODIFIED, Date.class)) //
+				.withCreated(getAndRemove(input, UNDERSCORED_CREATED, String.class)) //
+				.withModified(getAndRemove(input, UNDERSCORED_MODIFIED, String.class)) //
 				.withMetadata(input) //
 				.build();
 	}

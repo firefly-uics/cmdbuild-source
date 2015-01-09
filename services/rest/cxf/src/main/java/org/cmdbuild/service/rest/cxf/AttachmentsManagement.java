@@ -4,7 +4,7 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.cmdbuild.service.rest.model.Models.newAttachment;
+import static org.cmdbuild.service.rest.model.Models.nullAttachment;
 
 import java.util.Collection;
 import java.util.Map;
@@ -34,8 +34,6 @@ public class AttachmentsManagement implements AttachmentsHelper {
 			.withMetadata(true) //
 			.build();
 
-	private static final Attachment NULL_ATTACHMENT = newAttachment().build();
-
 	private final DmsLogic dmsLogic;
 	private final UserStore userStore;
 
@@ -55,7 +53,7 @@ public class AttachmentsManagement implements AttachmentsHelper {
 	public void update(final String classId, final Long cardId, final String attachmentId, final Attachment attachment,
 			final DataHandler dataHandler) throws Exception {
 		if (dataHandler != null) {
-			final Attachment _attachment = defaultIfNull(attachment, NULL_ATTACHMENT);
+			final Attachment _attachment = defaultIfNull(attachment, nullAttachment());
 			final String author = userStore.getUser().getAuthenticatedUser().getUsername();
 			dmsLogic.upload( //
 					author, //

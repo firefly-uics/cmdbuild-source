@@ -36,6 +36,8 @@ public interface Constants {
 	final String SOAP_ALL_DATES_PRINTING_PATTERN = SOAP_ALL_DATES_FORMAT;
 	final String SOAP_ALL_DATES_PARSING_PATTERN = SOAP_ALL_DATES_FORMAT;
 
+	final String REST_ALL_DATES_PATTERN = SOAP_ALL_DATES_FORMAT;
+
 	interface Webservices {
 
 		final String BOOLEAN_TYPE_NAME = "BOOLEAN";

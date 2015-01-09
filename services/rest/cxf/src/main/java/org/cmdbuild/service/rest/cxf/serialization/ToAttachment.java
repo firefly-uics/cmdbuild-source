@@ -5,8 +5,10 @@ import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.model.Models.newAttachment;
 
+import java.util.Date;
 import java.util.Map;
 
+import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
 import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
@@ -44,6 +46,8 @@ public class ToAttachment implements Function<StoredDocument, Attachment> {
 		return new Builder();
 	}
 
+	private static final DateAttributeType DATE_ATTRIBUTE_TYPE = new DateAttributeType();
+
 	private static final Iterable<MetadataGroup> NO_METADATA_GROUPS = emptyList();
 
 	private final boolean metadata;
@@ -55,16 +59,25 @@ public class ToAttachment implements Function<StoredDocument, Attachment> {
 	@Override
 	public Attachment apply(final StoredDocument input) {
 		return newAttachment() //
-				.withId(input.getName()) // TODO to base64
+				.withId(input.getName()) //
 				.withName(input.getName()) //
 				.withCategory(input.getCategory()) //
 				.withDescription(input.getDescription()) //
 				.withVersion(input.getVersion()) //
 				.withAuthor(input.getAuthor()) //
-				.withCreated(input.getCreated()) //
-				.withModified(input.getModified()) //
+				.withCreated(dateAsString(input.getCreated())) //
+				.withModified(dateAsString(input.getModified())) //
 				.withMetadata(metadata(input.getMetadataGroups())) //
 				.build();
+	}
+
+	private String dateAsString(final Date input) {
+		return DefaultConverter.newInstance() //
+				.build() //
+				.toClient() //
+				.convert(DATE_ATTRIBUTE_TYPE, input) //
+				.toString();
+
 	}
 
 	private Map<String, Object> metadata(final Iterable<MetadataGroup> metadataGroups) {
