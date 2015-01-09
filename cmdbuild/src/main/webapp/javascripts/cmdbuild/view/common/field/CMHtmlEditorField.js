@@ -1,7 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.view.common.field.CMHtmlEditorField', {
-		extend: 'Ext.ux.form.TinyMCETextArea',
+		extend: 'Ext.ux.form.TinyMCE.TinyMCETextArea',
 
 		/**
 		 * @cfg {Mixed} object or string
