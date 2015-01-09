@@ -44,22 +44,6 @@
 			CMDBuild.log.debug.apply(CMDBuild.log, arguments);
 		};
 
-		_warning = function() {
-			var prefix = 'WARNING';
-
-			if (typeof arguments[0] == 'string')
-				arguments[0] = prefix + ': ' + arguments[0];
-
-			CMDBuild.log.warn.apply(CMDBuild.log, arguments);
-		};
-
-		_trace = function() {
-			_debug('TRACE', arguments);
-
-			if (console && typeof console.trace == 'function')
-				console.trace();
-		};
-
 		_deprecated = function() {
 			var name = '';
 
@@ -70,6 +54,26 @@
 			}
 
 			_debug('DEPRECATED: ' + name, _trace());
+		};
+
+		_msg = function() {
+			CMDBuild.log.debug.apply(CMDBuild.log, arguments);
+		};
+
+		_trace = function() {
+			_debug('TRACE', arguments);
+
+			if (console && typeof console.trace == 'function')
+				console.trace();
+		};
+
+		_warning = function() {
+			var prefix = 'WARNING';
+
+			if (typeof arguments[0] == 'string')
+				arguments[0] = prefix + ': ' + arguments[0];
+
+			CMDBuild.log.warn.apply(CMDBuild.log, arguments);
 		};
 	// END: Logger configuration
 

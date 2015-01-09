@@ -265,7 +265,7 @@
 					callback: function(values, ctx) {
 						for (var i = 1; i <= me.countTemplates(); ++i) {
 
-							// If regenerations is forced by field edit or if it's first load
+							// If regeneration is forced by field edit or if it's first load
 							if (
 								Ext.Array.contains(me.templatesToRegenerate, i)
 								|| oldStore.count() == 0
@@ -278,6 +278,8 @@
 										var field = me.TEMPLATE_FIELDS[j];
 										v[field] = values[field + i];
 									}
+
+									_msg('Email with subject "' + v[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
 
 									me.view.addTemplateToStore(v);
 								}
