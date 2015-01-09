@@ -4,7 +4,7 @@
 	/*global Ext, tinymce, tinyMCE */
 
 	/*-------------------------------------------------------------------
-	Ext.ux.form.TinyMCETextArea
+	Ext.ux.form.TinyMCE.TinyMCETextArea
 
 	ExtJS form field - a text area with integrated TinyMCE WYSIWYG Editor
 
@@ -37,13 +37,13 @@
 	- Storing and restoring cursor position by inserting of a place holder over a popup window.
 	-------------------------------------------------------------------*/
 
-	Ext.define('Ext.ux.form.TinyMCETextAreaWindowManager', {
+	Ext.define('Ext.ux.form.TinyMCE.TinyMCETextAreaWindowManager', {
 		extend: 'tinymce.WindowManager',
 
 		control: null,
 
 		constructor: function (cfg) {
-			Ext.ux.form.TinyMCETextAreaWindowManager.superclass.constructor.call(this, cfg.editor);
+			Ext.ux.form.TinyMCE.TinyMCETextAreaWindowManager.superclass.constructor.call(this, cfg.editor);
 			this.control = cfg.control;
 		},
 
@@ -253,7 +253,7 @@
 
 	});
 
-	Ext.define('Ext.ux.form.TinyMCETextArea', {
+	Ext.define('Ext.ux.form.TinyMCE.TinyMCETextArea', {
 		extend: 'Ext.form.field.TextArea',
 
 		alias: ['widget.tinymce_textarea', 'widget.tinymce_field'],
@@ -268,8 +268,8 @@
 		storedCursorPosition: null,
 
 		/*
-		 This properties enables starting without WYSIWYG editor.
-		 The user can activate it later if he wants.
+		This properties enables starting without WYSIWYG editor.
+		The user can activate it later if he wants.
 		 */
 		noWysiwyg: false,
 
@@ -339,11 +339,11 @@
 
 			me.on('resize', function (elm, width, height, oldWidth, oldHeight, eOpts) {
 				/*
-				 alert('width:' + width + '\n' +
-				 'height:' + height + '\n' +
-				 'oldWidth:' + oldWidth + '\n' +
-				 'oldHeight:' + oldHeight
-				 );
+				alert('width:' + width + '\n' +
+				'height:' + height + '\n' +
+				'oldWidth:' + oldWidth + '\n' +
+				'oldHeight:' + oldHeight
+				);
 				 */
 
 				if (elm.hasVisibleLabel() && (elm.labelAlign === 'left' || elm.labelAlign === 'right')) {
@@ -486,7 +486,7 @@
 
 					var fullscreen_ed = tinyMCE.get(ed.getParam('fullscreen_editor_id'));
 					if (fullscreen_ed) {
-						fullscreen_ed.windowManager = Ext.create('Ext.ux.form.TinyMCETextAreaWindowManager', {
+						fullscreen_ed.windowManager = Ext.create('Ext.ux.form.TinyMCE.TinyMCETextAreaWindowManager', {
 							control: me,
 							editor: fullscreen_ed
 						});
@@ -521,7 +521,7 @@
 				});
 
 				ed.onPostRender.add(function (ed, controlManager) {
-					ed.windowManager = Ext.create('Ext.ux.form.TinyMCETextAreaWindowManager', {
+					ed.windowManager = Ext.create('Ext.ux.form.TinyMCE.TinyMCETextAreaWindowManager', {
 						control: me,
 						editor: ed
 					});
@@ -859,8 +859,7 @@
 
 			if (wwg_mode) {
 				me.storedCursorPosition = ed.selection.getBookmark('simple');
-			}
-			else if (ctrl) {
+			} else if (ctrl) {
 				me.storedCursorPosition = me.positionBeforeBlur;
 			}
 		},
@@ -909,8 +908,7 @@
 			if (wwg_mode) {
 				ed.focus();
 				ed.execCommand('mceInsertContent', 0, txt);
-			}
-			else if (ctrl) {
+			} else if (ctrl) {
 				ctrl.focus();
 
 				var start = ctrl.selectionStart + txt.length;
@@ -936,8 +934,8 @@
 			if (!edTable) { return me.callParent(arguments); }
 
 			/*
-			 Adding the red border to the mceIframeContainer is the most sure
-			 way to do it without harming sizing and positioning.
+			Adding the red border to the mceIframeContainer is the most sure
+			way to do it without harming sizing and positioning.
 			 */
 			var edFrameContainer = edTable.down(".mceIframeContainer");
 
@@ -961,8 +959,7 @@
 						// change of the contents (ExtJS standard behaviour)
 						ed.onKeyDown.add(evHandler);
 					}
-				}
-				else {
+				} else {
 					edFrameContainer.removeCls('tinymce-error-field');
 
 					// this dirty hack is required for WebKit browsers - Safari and Chrome
