@@ -20,7 +20,7 @@
 		cmControllerType: CMDBuild.controller.management.common.CMFakeIdAccordionController
 	});
 
-	Ext.define("CMDBuild.app.Management", {
+	Ext.define('CMDBuild.app.Management', {
 		extend: 'Ext.app.Application',
 
 		requires: [
@@ -149,12 +149,12 @@
 					}),
 
 					this.reportPanel = new CMDBuild.view.common.report.CMReportGrid({
-						cmName: "report",
+						cmName: 'report',
 						cmControllerType: CMDBuild.controller.management.report.CMModReportController
 					}),
 
 					this.singleReportPanel = new CMDBuild.view.common.report.CMMainSingleReportPage({
-						cmName: "singlereport",
+						cmName: 'singlereport',
 						cmControllerType: CMDBuild.controller.management.report.CMSingleReportPageController
 					}),
 
@@ -172,7 +172,7 @@
 					this.cmAccordions.push(this.classesAccordion);
 				}
 
-				if (!_CMUIConfiguration.isModuleDisabled(processAccordion.cmName) && CMDBuild.Config.workflow.enabled == "true") {
+				if (!_CMUIConfiguration.isModuleDisabled(processAccordion.cmName) && CMDBuild.Config.workflow.enabled == 'true') {
 					this.processAccordion = processAccordion;
 					this.cmAccordions.push(this.processAccordion);
 				}
@@ -299,7 +299,7 @@
 						CMDBuild.Config.dms = decoded.data;
 					},
 					callback: reqBarrier.getCallback
-				},"dms");
+				},'dms');
 
 				CMDBuild.core.proxy.Report.getTypesTree({
 					scope: this,
@@ -310,7 +310,7 @@
 					callback: reqBarrier.getCallback()
 				});
 
-				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change "administration"
+				CMDBuild.ServiceProxy.administration.domain.list({ //TODO change 'administration'
 					params: {
 						active: true
 					},
@@ -370,7 +370,7 @@
 			}
 		};
 
-		if (typeof builders[cmName] == "function")
+		if (typeof builders[cmName] == 'function')
 			panels.push(builders[cmName]());
 	}
 

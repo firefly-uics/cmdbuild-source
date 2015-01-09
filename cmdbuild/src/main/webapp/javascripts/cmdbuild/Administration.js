@@ -1,20 +1,20 @@
 (function() {
 
-	var controllerNS = CMDBuild.controller,
-		bimAccordion = null,
-		classesAccordion = null,
-		dashboardsAccordion = null,
-		dataViewAccordion = null,
-		domainAccordion = null,
-		gisAccordion = null,
-		groupsAccordion = null,
-		lookupAccordion = null,
-		menuAccordion = null,
-		processAccordion = null,
-		reportAccordion = null,
-		navigationTreesAccordion = null;
+	var bimAccordion = null;
+	var classesAccordion = null;
+	var controllerNS = CMDBuild.controller;
+	var dashboardsAccordion = null;
+	var dataViewAccordion = null;
+	var domainAccordion = null;
+	var gisAccordion = null;
+	var groupsAccordion = null;
+	var lookupAccordion = null;
+	var menuAccordion = null;
+	var navigationTreesAccordion = null;
+	var processAccordion = null;
+	var reportAccordion = null;
 
-	Ext.define("CMDBuild.app.Administration", {
+	Ext.define('CMDBuild.app.Administration', {
 		extend: 'Ext.app.Application',
 
 		requires: [
@@ -67,7 +67,7 @@
 									}),
 									new CMDBuild.view.administration.filter.CMGroupFilterPanel({
 										cmControllerType: controllerNS.administration.filter.CMGroupFilterPanelController,
-										cmName: "groupfilter"
+										cmName: 'groupfilter'
 									}),
 									new CMDBuild.view.administration.bim.CMBIMPanel({
 										cmControllerType: CMDBuild.controller.administration.filter.CMBIMPanelController,
@@ -79,11 +79,11 @@
 									}),
 									new CMDBuild.view.administration.configuration.CMModConfigurationGenericOption({
 										cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-										cmName: "modsetupcmdbuild"
+										cmName: 'modsetupcmdbuild'
 									}),
 									new CMDBuild.view.common.CMUnconfiguredModPanel({
 										cmControllerType: controllerNS.common.CMUnconfiguredModPanelController,
-										cmName: "notconfiguredpanel"
+										cmName: 'notconfiguredpanel'
 									})
 								];
 
@@ -93,35 +93,35 @@
 									panels = panels.concat([
 										new CMDBuild.view.administration.configuration.CMModConfigurationBIM({
 											cmControllerType : controllerNS.administration.configuration.CMModConfigurationController,
-											cmName : "modsetupbim"
+											cmName : 'modsetupbim'
 										}),
 										new CMDBuild.view.administration.dataview.CMSqlDataView({
 											cmControllerType: controllerNS.administration.dataview.CMSqlDataViewController,
-											cmName: "sqldataview"
+											cmName: 'sqldataview'
 										}),
 										new CMDBuild.view.administration.dataview.CMFilterDataView({
 											cmControllerType: controllerNS.administration.dataview.CMFilerDataViewController,
-											cmName: "filterdataview"
+											cmName: 'filterdataview'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationGis({
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-											cmName: "modsetupgis"
+											cmName: 'modsetupgis'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationGraph({
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-											cmName: "modsetupgraph"
+											cmName: 'modsetupgraph'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationAlfresco({
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-											cmName: "modsetupalfresco"
+											cmName: 'modsetupalfresco'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationWorkflow({
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationController,
-											cmName: "modsetupworkflow"
+											cmName: 'modsetupworkflow'
 										}),
 										new CMDBuild.view.administration.configuration.CMModConfigurationServer({
 											cmControllerType: controllerNS.administration.configuration.CMModConfigurationServerController,
-											cmName: "modsetupserver"
+											cmName: 'modsetupserver'
 										}),
 										Ext.create('CMDBuild.view.administration.email.CMEmailAccounts', {
 											cmControllerType: 'CMDBuild.controller.administration.email.CMEmailAccountsController',
@@ -197,7 +197,7 @@
 				 * */
 				CMDBuild.ServiceProxy.configuration.readBimConfiguration({
 					success: function(response, option, decoded) {
-						var disabled = decoded.data.enabled == "false";
+						var disabled = decoded.data.enabled == 'false';
 						bimAccordion = new CMDBuild.view.administration.accordion.CMBIMAccordion({
 							disabled: disabled
 						});
@@ -440,5 +440,7 @@
 			}
 		}
 	});
+
+	Ext.application('CMDBuild.app.Administration');
 
 })();

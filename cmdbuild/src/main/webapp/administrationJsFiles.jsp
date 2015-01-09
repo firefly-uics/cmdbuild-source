@@ -246,7 +246,7 @@
 	<!-- FILTER -->
 	<script type="text/javascript" src="javascripts/cmdbuild/controller/administration/filter/CMGroupFilterPanelController.js"></script>
 
-<script type="text/javascript" src="javascripts/cmdbuild/administration.js"></script>
+<script type="text/javascript" src="javascripts/cmdbuild/Administration.js"></script>
 
 <!-- BIM - ADMINISTRATION -->
 <script type="text/javascript" src="javascripts/cmdbuild/bim/administration/view/CMModConfigurationBIM.js"></script>
