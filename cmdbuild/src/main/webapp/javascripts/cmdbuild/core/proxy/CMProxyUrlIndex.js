@@ -43,6 +43,12 @@
 			remove: 'services/json/schema/modclass/deletetable'
 		},
 
+		configuration: {
+			getConfiguration: 'services/json/schema/setup/getconfiguration',
+			getConfigurations: 'services/json/schema/setup/getconfigurations',
+			saveConfiguration: 'services/json/schema/setup/saveconfiguration'
+		},
+
 		domain: {
 			create: 'services/json/schema/modclass/savedomain',
 			read: 'services/json/schema/modclass/getalldomains',
