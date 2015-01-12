@@ -1061,6 +1061,7 @@
 		"server_error": "Imposible conectarse al servidor",
 		"server_error_code": "Se verificó un error en el envío de los datos al servidor:",
 		"show_detail": "Mostrar detalles",
+		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "Error en una plantilla",
 		"unknown_error": "Se verificó un error",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",

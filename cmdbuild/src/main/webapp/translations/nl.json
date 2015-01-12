@@ -1061,6 +1061,7 @@
 		"server_error": "Server onbereikbaar",
 		"server_error_code": "Fout onstaan tijdens verzenden van gegevens naar de server: ",
 		"show_detail": "Toon details",
+		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "Sjabloon fout",
 		"unknown_error": "Er is een fout opgetreden",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",

@@ -1061,6 +1061,7 @@
 		"server_error": "Server je trenutno nedostupan",
 		"server_error_code": "Došlo je do greške prilikom obrade podataka na serveru: ",
 		"show_detail": "Prikaži detalje",
+		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "Greška u šablonu (templejtu)",
 		"unknown_error": "Došlo je do greške",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",

@@ -1061,6 +1061,7 @@
 		"server_error": "Serveur injoignable",
 		"server_error_code": "Une erreur a été rencontrée durant la transmission des données au serveur:",
 		"show_detail": "Voir les détails",
+		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "Erreur de modèle",
 		"unknown_error": "Une erreur est survenue",
 		"widgetLinkCardsNoClassNameError": "Constructeur LinkCardsController: nom de classe non valide",

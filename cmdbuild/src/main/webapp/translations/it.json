@@ -1061,6 +1061,7 @@
 		"server_error": "Impossibile contattare il server",
 		"server_error_code": "Si è verificato un errore nella spedizione dei dati al server: ",
 		"show_detail": "Mostra dettagli",
+		"targetClassOrCqlFilterRequired": "Classe di riferimento o Selettore CQLsono obbligatori",
 		"template_error": "Errore in un template",
 		"unknown_error": "Si è verificato un errore",
 		"widgetLinkCardsNoClassNameError": "LinkCardsController constructor: className non valido",

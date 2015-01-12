@@ -1061,6 +1061,7 @@
 		"server_error": "Servidor não alcançavel",
 		"server_error_code": "Um error ocorreu enquanto enviando dados para o servidor: ",
 		"show_detail": "Mostrar detalhes",
+		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "Erro de Template",
 		"unknown_error": "Um erro ocorreu",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",

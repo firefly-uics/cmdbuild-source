@@ -1061,6 +1061,7 @@
 		"server_error": "سرور خارج از دسترس است",
 		"server_error_code": "هنگام ارسال اطلاعات به سرور خطایی رخ داد ",
 		"show_detail": "نمایش جزئیات",
+		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "خطای قالب",
 		"unknown_error": "خطایی رخ داد",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",

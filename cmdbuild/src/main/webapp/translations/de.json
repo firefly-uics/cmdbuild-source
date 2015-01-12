@@ -1061,6 +1061,7 @@
 		"server_error": "Server nicht erreichbar",
 		"server_error_code": "Fehler beim Server Dateien Versenden:",
 		"show_detail": "Details einblenden",
+		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "Fehler in einem Template",
 		"unknown_error": "Es handelte sich um einen Fehler",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",

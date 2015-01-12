@@ -1061,6 +1061,7 @@
 		"server_error": "Máy chủ không thể kết nối",
 		"server_error_code": "Một lỗi đã xảy ra trong khi đang gửi dữ liệu đến máy chủ: ",
 		"show_detail": "Hiện thị chi tiết",
+		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "Lỗi xác định",
 		"unknown_error": "Một lỗi đã xảy ra",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
