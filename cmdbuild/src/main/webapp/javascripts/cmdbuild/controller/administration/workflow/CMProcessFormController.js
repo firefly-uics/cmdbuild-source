@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.controller.administration.workflow.CMProcessFormController', {
 		extend: 'CMDBuild.controller.administration.classes.CMClassFormController',
 
+		requires: ['CMDBuild.core.proxy.CMProxyWorkflow'],
+
 		/**
 		 * @param {CMDBuild.view.administration.workflow.CMProcessForm} view
 		 *
@@ -11,7 +13,7 @@
 		constructor: function(view) {
 			this.callParent(arguments);
 
-			this.view.downloadXPDLSubitButton.on('click', onDownloadSubmitClick, this);
+			this.view.downloadXPDLSubitButton.on('click', this.onDownloadSubmitClick, this);
 			this.view.uploadXPDLSubitButton.on('click', this.onUploadSubmitClick, this);
 		},
 
@@ -24,6 +26,7 @@
 			var params = this.callParent(arguments);
 
 			params.isprocess = true;
+
 			return params;
 		},
 
@@ -48,9 +51,21 @@
 
 		onAddClassButtonClick: function() {
 			this.selection = null;
-
 			this.view.onAddClassButtonClick();
 			this.view.xpdlForm.hide();
+		},
+
+		onDownloadSubmitClick: function() {
+			var version = this.view.versionCombo.getValue();
+			var basicForm = this.view.xpdlForm.getForm();
+
+			basicForm.standardSubmit = true;
+
+			CMDBuild.core.proxy.CMProxyWorkflow.downloadSubmit(basicForm, version, {
+				params: {
+					idClass: this.selection.getId()
+				}
+			});
 		},
 
 		/**
@@ -157,29 +172,5 @@
 			_CMMainViewportController.findAccordionByCMName('process').selectNodeById(savedProcessData[CMDBuild.core.proxy.CMProxyConstants.ID]);
 		}
 	});
-
-	// TODO: to move in proxy
-	function onDownloadSubmitClick() {
-		var version = this.view.versionCombo.getValue();
-		var url = '';
-
-		var basicForm = this.view.xpdlForm.getForm();
-		basicForm.standardSubmit = true;
-
-		if (version == CMDBuild.core.proxy.CMProxyConstants.TEMPLATE || !version) {
-			url = CMDBuild.core.proxy.CMProxyUrlIndex.workflow.xpdlDownloadTemplate;
-		} else {
-			url = CMDBuild.core.proxy.CMProxyUrlIndex.workflow.xpdlDownload;
-		}
-
-		basicForm.submit({
-			url: url,
-			method: 'GET',
-			target: '_self',
-			params: {
-				idClass: this.selection.getId()
-			}
-		});
-	}
 
 })();
