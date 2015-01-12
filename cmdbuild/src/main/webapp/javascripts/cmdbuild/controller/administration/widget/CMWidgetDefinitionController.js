@@ -75,34 +75,34 @@
 	}
 
 	function onSaveClick() {
-		if (!this.subController) {
-			return;
-		}
-
 		var me = this;
 		var widgetDef = me.view.getWidgetDefinition();
+		var invalidFieldsArray = me.view.form.getNonValidFields();
 
-		if (this.model) {
-			widgetDef.id = this.model.get(_fields.id);
-		}
-
-		var params = {};
-		params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.classId);
-		params[_CMProxy.parameter.WIDGET] = Ext.encode(widgetDef);
-
-		CMDBuild.ServiceProxy.CMWidgetConfiguration.save({
-			params: params,
-			success: function success(response, operation, responseData) {
-				var widgetModel = new CMDBuild.model.CMWidgetDefinitionModel(Ext.apply(responseData.response, {
-					type: widgetDef.type
-				}));
-
-				_CMCache.onWidgetSaved(me.classId, widgetDef);
-				me.view.addRecordToGrid(widgetModel, selectAfter = true);
-				me.view.disableModify(enableToolBar = true);
-				_CMCache.flushTranslationsToSave(widgetModel.get("id"));
+		// Check for invalid fields and subController
+		if (this.subController && invalidFieldsArray.length == 0) {
+			if (this.model) {
+				widgetDef.id = this.model.get(_fields.id);
 			}
-		});
+
+			var params = {};
+			params[_CMProxy.parameter.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.classId);
+			params[_CMProxy.parameter.WIDGET] = Ext.encode(widgetDef);
+
+			CMDBuild.ServiceProxy.CMWidgetConfiguration.save({
+				params: params,
+				success: function success(response, operation, responseData) {
+					var widgetModel = new CMDBuild.model.CMWidgetDefinitionModel(Ext.apply(responseData.response, {
+						type: widgetDef.type
+					}));
+
+					_CMCache.onWidgetSaved(me.classId, widgetDef);
+					me.view.addRecordToGrid(widgetModel, selectAfter = true);
+					me.view.disableModify(enableToolBar = true);
+					_CMCache.flushTranslationsToSave(widgetModel.get("id"));
+				}
+			});
+		}
 	}
 
 	function onAbortClick() {
@@ -134,9 +134,9 @@
 							success: function() {
 								me.view.removeRecordFromGrid(id);
 								me.view.reset();
-			
+
 								_CMCache.onWidgetDeleted(me.classId, id);
-			
+
 								delete me.model;
 								delete me.subController;
 							}
