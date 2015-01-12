@@ -68,23 +68,23 @@
 					classId: classId
 				});
 
-				if (record) {
+				if (!Ext.Object.isEmpty(record))
 					this.subController.fillFormWithModel(record);
-				}
 
-				this.view.disableModify(enableToolbar = true);
+				this.view.disableModify(true);
 			} else {
 				this.view.reset();
 			}
 
 			function findController(widgetName) {
 				var controller = null;
-				for (var key in CMDBuild.controller.administration.widget) {
+
+				for (var key in CMDBuild.controller.administration.widget)
 					if (CMDBuild.controller.administration.widget[key].WIDGET_NAME == widgetName) {
 						controller = CMDBuild.controller.administration.widget[key];
+
 						break;
 					}
-				}
 
 				return controller;
 			}
