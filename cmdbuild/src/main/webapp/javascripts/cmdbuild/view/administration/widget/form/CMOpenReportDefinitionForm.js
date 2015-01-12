@@ -231,7 +231,7 @@
 		/**
 		 * Fills form with widget data
 		 *
-		 * @param {CMDBuild.model.CMWidgetDefinitionModel} model
+		 * @param {CMDBuild.model.widget.WidgetDefinition} model
 		 *
 		 * @override
 		 */

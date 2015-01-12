@@ -1,63 +1,86 @@
 (function() {
-	var fields = CMDBuild.model.CMWidgetDefinitionModel._FIELDS;
-	Ext.define("CMDBuild.view.administration.widget.CMWidgetDefinitionGrid", {
-		extend: "Ext.grid.Panel",
+
+	var tr = CMDBuild.Translation.administration.modClass.widgets;
+
+	Ext.define('CMDBuild.view.administration.widget.CMWidgetDefinitionGrid', {
+		extend: 'Ext.grid.Panel',
+
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.model.widget.WidgetDefinition'
+		],
 
 		initComponent: function() {
-			var tr = CMDBuild.Translation.administration.modClass.widgets;
+			Ext.apply(this, {
+				columns: [
+					{
+						header: tr.commonFields.type,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+						flex: 1,
 
-			this.store = new Ext.data.Store({
-				model: "CMDBuild.model.CMWidgetDefinitionModel",
-				data: []
+						renderer: function(value) {
+							return tr[value].title;
+						}
+					},
+					{
+						header: tr.commonFields.buttonLabel,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.LABEL,
+						flex: 2
+					},
+					{
+						xtype: 'checkcolumn',
+						header: tr.commonFields.active,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
+						width: 60,
+						cmReadOnly: true
+					}
+				],
+				store: Ext.create('Ext.data.Store', {
+					model: 'CMDBuild.model.widget.WidgetDefinition',
+					data: []
+				})
 			});
-
-			this.columns = [{
-				header : tr.commonFields.type,
-				dataIndex : fields.type,
-				flex: 1,
-				renderer: function(value) {
-					return tr[value].title;
-				}
-			},{
-				header: tr.commonFields.buttonLabel,
-				dataIndex: fields.label,
-				flex: 2
-			},
-			new Ext.ux.CheckColumn({
-				header : tr.commonFields.active,
-				dataIndex : fields.active,
-				width: 90,
-				cmReadOnly: true
-			})];
 
 			this.callParent(arguments);
 		},
 
-		count: function() {
-			return this.store.count();
-		},
-
+		/**
+		 * @param {CMDBuild.model.widget.WidgetDefinition} record
+		 * @param {Boolean} selectAfter
+		 */
 		addRecord: function(record, selectAfter) {
-			this.removeRecordWithId(record.get("id"));
-			var addedRec = this.store.add(record);
-			if (selectAfter) {
+			this.removeRecordWithId(record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+
+			var addedRec = this.getStore().add(record);
+
+			if (selectAfter)
 				this.getSelectionModel().select(addedRec);
-			}
-		},
-
-		removeRecordWithId: function(recordId) {
-			var record = this.store.getById(recordId);
-			if (record != null) {
-				this.store.remove(record);
-			}
-		},
-
-		removeAllRecords: function() {
-			this.store.removeAll();
 		},
 
 		clearSelection: function() {
 			this.getSelectionModel().deselectAll();
+		},
+
+		/**
+		 * @return {Int}
+		 */
+		count: function() {
+			return this.getStore().count();
+		},
+
+		/**
+		 * @param {Int} recordId
+		 */
+		removeRecordWithId: function(recordId) {
+			var record = this.getStore().getById(recordId);
+
+			if (!Ext.Object.isEmpty(record))
+				this.getStore().remove(record);
+		},
+
+		removeAllRecords: function() {
+			this.getStore().removeAll();
 		}
 	});
+
 })();
