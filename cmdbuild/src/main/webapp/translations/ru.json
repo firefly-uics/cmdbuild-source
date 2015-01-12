@@ -1061,6 +1061,7 @@
 		"server_error": "Сервер недоступен",
 		"server_error_code": "При отправке данных на сервер произошла ошибка: ",
 		"show_detail": "Подробно",
+		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
 		"template_error": "Ошибка шаблона",
 		"unknown_error": "Неизвестная ошибка",
 		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
