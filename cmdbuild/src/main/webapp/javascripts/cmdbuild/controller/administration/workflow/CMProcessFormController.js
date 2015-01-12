@@ -28,16 +28,22 @@
 		},
 
 		/**
-		 * @param {Object} r - result
+		 * @param {Object} result
+		 * @param {Object} options
+		 * @param {Object} decodedResult
 		 *
 		 * @override
 		 */
-		deleteSuccessCB: function(r) {
+		deleteSuccessCB: function(result, options, decodedResult) {
 			var removedClassId = this.selection.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 
 			_CMCache.onProcessDeleted(removedClassId);
 
 			this.selection = null;
+
+			// Accordion synchronization
+			_CMMainViewportController.findAccordionByCMName('process').updateStore();
+			_CMMainViewportController.findAccordionByCMName('process').selectFirstSelectableNode();
 		},
 
 		onAddClassButtonClick: function() {
@@ -88,6 +94,7 @@
 							id: CMDBuild.core.proxy.CMProxyConstants.TEMPLATE,
 							index: 0
 						});
+
 						store.sort([
 							{
 								property : CMDBuild.core.proxy.CMProxyConstants.INDEX,
@@ -135,13 +142,19 @@
 		},
 
 		/**
-		 * @param {Object} r - recult
+		 * @param {Object} result
+		 * @param {Object} options
+		 * @param {Object} decodedResult
 		 *
 		 * @override
 		 */
-		saveSuccessCB: function(r) {
-			var result = Ext.JSON.decode(r.responseText);
-			this.selection = _CMCache.onProcessSaved(result.table);
+		saveSuccessCB: function(result, options, decodedResult) {
+			var savedProcessData = decodedResult[CMDBuild.core.proxy.CMProxyConstants.TABLE];
+			this.selection = _CMCache.onProcessSaved(savedProcessData);
+
+			// Accordion synchronization
+			_CMMainViewportController.findAccordionByCMName('process').updateStore();
+			_CMMainViewportController.findAccordionByCMName('process').selectNodeById(savedProcessData[CMDBuild.core.proxy.CMProxyConstants.ID]);
 		}
 	});
 

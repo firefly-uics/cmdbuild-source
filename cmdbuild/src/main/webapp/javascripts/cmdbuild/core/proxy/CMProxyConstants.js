@@ -203,6 +203,7 @@
 		START_MAP_WITH_ZOOM: 'StartMapWithZoom',
 		STATUS: 'status',
 		SUBJECT: 'subject',
+		TABLE: 'table',
 		TABLE_TYPE: 'tableType',
 		TEMPLATE: 'template',
 		TEMPLATES: 'templates',
