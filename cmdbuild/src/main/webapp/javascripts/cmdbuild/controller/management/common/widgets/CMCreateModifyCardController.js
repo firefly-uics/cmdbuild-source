@@ -3,7 +3,7 @@
 	Ext.define("CMDBuild.controller.management.common.widgets.CMCreateModifyCardController", {
 		extend: "CMDBuild.controller.management.classes.CMBaseCardPanelController",
 
-		mixins : {
+		mixins: {
 			observable: "Ext.util.Observable",
 			widgetcontroller: "CMDBuild.controller.management.common.widgets.CMWidgetController"
 		},
@@ -63,8 +63,7 @@
 		},
 
 		isWidgetEditable: function(controller) {
-			return !this.widgetConf.readonly
-				&& this.clientForm.owner._isInEditMode; // Ugly, but in the world there are also ugly stuff
+			return !this.widgetConf.readonly;
 		},
 
 		/**
@@ -125,7 +124,7 @@
 
 	function loadAndFillFields(me, classId) {
 		classId = classId || me.entryType.getId();
-		var isANewCard = me.cardId == null;
+		var isANewCard = me.cardId == null || me.cardId == 0;
 
 		if (isANewCard) {
 			/*
@@ -161,7 +160,8 @@
 			me.card = new CMDBuild.DummyModel(values);
 			me.loadCard();
 		} else {
-			me.loadCard(loadRemoteData = true, {
+_debug('loadAndFillFields');
+			me.loadCard(true, {
 				Id: me.cardId,
 				IdClass: classId
 			});
