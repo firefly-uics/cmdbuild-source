@@ -35,7 +35,7 @@
 		 * @param {CMDBuild.model.widget.WidgetDefinition} model
 		 */
 		fillFormWithModel: function(model) {
-			if (Ext.isEmpty(model) && model.$className == 'CMDBuild.model.widget.WidgetDefinition')
+			if (!Ext.isEmpty(model) && model.$className == 'CMDBuild.model.widget.WidgetDefinition')
 				this.view.fillWithModel(model);
 		},
 

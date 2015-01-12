@@ -205,6 +205,7 @@
 		SUBJECT: 'subject',
 		TABLE: 'table',
 		TABLE_TYPE: 'tableType',
+		TARGET_CLASS: 'targetClass',
 		TEMPLATE: 'template',
 		TEMPLATES: 'templates',
 		TEMPORARY_ID: 'temporaryId',
