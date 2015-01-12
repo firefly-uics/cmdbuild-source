@@ -1,12 +1,40 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm", {
-		extend: "Ext.panel.Panel",
-		isWidgetDefinition: true,
+	var tr = CMDBuild.Translation.administration.modClass.widgets;
+
+	Ext.define('CMDBuild.view.administration.widget.form.CMBaseWidgetDefinitionForm', {
+		extend: 'Ext.panel.Panel',
+
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		statics: {
 			WIDGET_NAME: undefined
 		},
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		isWidgetDefinition: true,
+
+		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		alwaysenabled: undefined,
+
+		/**
+		 * @property {Ext.form.field.Checkbox}
+		 */
+		active: undefined,
+
+		/**
+		 * @property {Ext.form.CMTranslatableText}
+		 */
+		buttonLabel: undefined,
+
+		/**
+		 * @property {Ext.panel.Panel}
+		 */
+		defaultFields: undefined,
 
 		initComponent: function() {
 			this.buildForm();
@@ -16,42 +44,49 @@
 			if (this.self.WIDGET_NAME) {
 				this.WIDGET_NAME = this.self.WIDGET_NAME;
 			} else {
-				throw "You must define a WIDGET_NAME in the CMBaseWidgetDefinitionForm subclass";
+				throw 'You must define a WIDGET_NAME in the CMBaseWidgetDefinitionForm subclass';
 			}
 		},
 
-		// template method, must be implemented in subclasses
+		/**
+		 * Template method, must be implemented in subclasses
+		 *
+		 * @abstract
+		 */
 		buildForm: function() {
-			var tr = CMDBuild.Translation.administration.modClass.widgets;
-
-			this.buttonLabel = new Ext.form.CMTranslatableText({
-				name: "label",
+			this.buttonLabel = Ext.create('Ext.form.CMTranslatableText', {
+				name: CMDBuild.core.proxy.CMProxyConstants.LABEL,
 				allowBlank: false,
 				fieldLabel: tr.commonFields.buttonLabel,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				translationsKeyType: "Widget",
-				translationsKeyField: "ButtonLabel",
-				itemId: "ButtonLabel"
+				translationsKeyType: 'Widget',
+				translationsKeyField: 'ButtonLabel',
+				itemId: 'ButtonLabel'
 			});
 
-			this.active = new Ext.form.field.Checkbox({
-				name: "active",
+			this.active = Ext.create('Ext.form.field.Checkbox', {
+				name: CMDBuild.core.proxy.CMProxyConstants.ACTIVE,
 				fieldLabel: tr.commonFields.active,
 				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
-			this.alwaysenabled = new Ext.form.field.Checkbox({
-				name: "alwaysenabled",
+			this.alwaysenabled = Ext.create('Ext.form.field.Checkbox', {
+				name: 'alwaysenabled',
 				fieldLabel: tr.commonFields.alwaysenabled,
 				labelWidth: CMDBuild.LABEL_WIDTH
 			});
 
-			this.defaultFields = new Ext.panel.Panel({
+			this.defaultFields = Ext.create('Ext.panel.Panel', {
 				frame: true,
 				border: true,
-				items: [this.buttonLabel, this.active, this.alwaysenabled],
-				flex: 1
+				flex: 1,
+
+				items: [
+					this.buttonLabel,
+					this.active,
+					this.alwaysenabled
+				]
 			});
 
 			Ext.apply(this, {
@@ -59,28 +94,30 @@
 			});
 		},
 
-		getWidgetDefinition: function() {
-			throw "you must implement getWidgetDefinition";
-		},
+		disableNonFieldElements: Ext.emptyFn,
 
-		fillWithModel: function(model) {
-			this.buttonLabel.setValue(model.get("label"));
-			this.active.setValue(model.get("active"));
-			this.alwaysenabled.setValue(model.get("alwaysenabled"));
-		},
+		enableNonFieldElements: Ext.emptyFn,
 
+		/**
+		 * @return {Object}
+		 */
 		getWidgetDefinition: function() {
-			var me = this;
 			return {
-				type: me.self.WIDGET_NAME,
-				label: me.buttonLabel.getValue(),
-				active: me.active.getValue(),
-				alwaysenabled: me.alwaysenabled.getValue()
+				type: this.self.WIDGET_NAME,
+				label: this.buttonLabel.getValue(),
+				active: this.active.getValue(),
+				alwaysenabled: this.alwaysenabled.getValue()
 			};
 		},
 
-		disableNonFieldElements: Ext.emptyFn,
-		enableNonFieldElements: Ext.emptyFn
+		/**
+		 * @param {CMDBuild.model.widget.WidgetDefinition} model
+		 */
+		fillWithModel: function(model) {
+			this.buttonLabel.setValue(model.get(CMDBuild.core.proxy.CMProxyConstants.LABEL));
+			this.active.setValue(model.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVE));
+			this.alwaysenabled.setValue(model.get('alwaysenabled'));
+		}
 	});
 
 })();

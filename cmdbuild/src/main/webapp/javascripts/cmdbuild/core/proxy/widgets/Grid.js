@@ -1,6 +1,7 @@
 (function() {
 
 	Ext.define('CMDBuild.core.proxy.widgets.Grid', {
+
 		requires: ['CMDBuild.model.CMModelFunctions'],
 
 		singleton: true,

@@ -4,7 +4,7 @@
 		extend: "Ext.panel.Panel",
 		EXCEPTIONS: {
 			notAWidget: function(widgetName) { return widgetName + " is not a widget configuration module"; },
-			notAWidgetModel: function(o) { return o + " is not a CMDBuild.model.CMWidgetDefinitionModel"; }
+			notAWidgetModel: function(o) { return o + " is not a CMDBuild.model.widget.WidgetDefinition"; }
 		},
 		initComponent: function() {
 			this.callParent(arguments);
@@ -94,7 +94,7 @@
 		},
 
 		addRecordToGrid: function(record, selectAfter) {
-			if (record.$className == "CMDBuild.model.CMWidgetDefinitionModel") {
+			if (record.$className == "CMDBuild.model.widget.WidgetDefinition") {
 				this.grid.addRecord(record, selectAfter);
 			} else {
 				throw this.EXCEPTIONS.notAWidgetModel(record);
