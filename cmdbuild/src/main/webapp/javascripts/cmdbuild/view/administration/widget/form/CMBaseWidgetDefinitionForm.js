@@ -26,10 +26,11 @@
 
 			this.buttonLabel = new Ext.form.CMTranslatableText({
 				name: "label",
+				allowBlank: false,
 				fieldLabel: tr.commonFields.buttonLabel,
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				translationsKeyType: "Widget", 
+				translationsKeyType: "Widget",
 				translationsKeyField: "ButtonLabel",
 				itemId: "ButtonLabel"
 			});
