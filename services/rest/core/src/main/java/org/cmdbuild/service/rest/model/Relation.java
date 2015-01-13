@@ -1,7 +1,6 @@
 package org.cmdbuild.service.rest.model;
 
 import static org.cmdbuild.service.rest.constants.Serialization.DESTINATION;
-import static org.cmdbuild.service.rest.constants.Serialization.RELATION;
 import static org.cmdbuild.service.rest.constants.Serialization.SOURCE;
 import static org.cmdbuild.service.rest.constants.Serialization.VALUES;
 
@@ -17,7 +16,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.service.rest.model.adapter.RelationAdapter;
 import org.cmdbuild.service.rest.model.adapter.StringObjectMapAdapter;
 
-@XmlRootElement(name = RELATION)
+@XmlRootElement
 @XmlJavaTypeAdapter(RelationAdapter.class)
 public class Relation extends ModelWithIdAndType<Long, String> {
 

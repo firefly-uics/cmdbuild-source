@@ -1,6 +1,5 @@
 package org.cmdbuild.service.rest.model;
 
-import static org.cmdbuild.service.rest.constants.Serialization.RESPONSE_METADATA;
 import static org.cmdbuild.service.rest.constants.Serialization.TOTAL;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -9,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@XmlRootElement(name = RESPONSE_METADATA)
+@XmlRootElement
 public class DetailResponseMetadata extends Model {
 
 	private Long total;

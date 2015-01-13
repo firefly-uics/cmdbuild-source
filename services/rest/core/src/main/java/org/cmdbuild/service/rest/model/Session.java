@@ -3,7 +3,6 @@ package org.cmdbuild.service.rest.model;
 import static org.cmdbuild.service.rest.constants.Serialization.AVAILABLE_ROLES;
 import static org.cmdbuild.service.rest.constants.Serialization.PASSWORD;
 import static org.cmdbuild.service.rest.constants.Serialization.ROLE;
-import static org.cmdbuild.service.rest.constants.Serialization.SESSION;
 import static org.cmdbuild.service.rest.constants.Serialization.USERNAME;
 
 import java.util.Collection;
@@ -14,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@XmlRootElement(name = SESSION)
+@XmlRootElement
 public class Session extends ModelWithId<String> {
 
 	private String username;

@@ -1,7 +1,6 @@
 package org.cmdbuild.service.rest.model;
 
 import static org.cmdbuild.service.rest.constants.Serialization.ACTIVE;
-import static org.cmdbuild.service.rest.constants.Serialization.ATTRIBUTE_DETAIL;
 import static org.cmdbuild.service.rest.constants.Serialization.DEFAULT_VALUE;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.DISPLAYABLE_IN_LIST;
@@ -34,10 +33,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@XmlRootElement(name = ATTRIBUTE_DETAIL)
+@XmlRootElement
 public class Attribute extends ModelWithId<String> {
 
-	@XmlRootElement(name = FILTER)
+	@XmlRootElement
 	public static class Filter extends Model {
 
 		private String text;

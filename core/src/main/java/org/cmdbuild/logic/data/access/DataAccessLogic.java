@@ -67,6 +67,8 @@ public interface DataAccessLogic extends Logic {
 
 	CMDomain findDomain(String domainName);
 
+	boolean hasClass(Long classId);
+
 	/**
 	 * 
 	 * @return only active classes (all classes, included superclasses, simple

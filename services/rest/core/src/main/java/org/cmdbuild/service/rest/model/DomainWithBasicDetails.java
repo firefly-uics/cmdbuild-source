@@ -2,7 +2,6 @@ package org.cmdbuild.service.rest.model;
 
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
-import static org.cmdbuild.service.rest.constants.Serialization.SIMPLE_DOMAIN_DETAIL;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@XmlRootElement(name = SIMPLE_DOMAIN_DETAIL)
+@XmlRootElement
 public class DomainWithBasicDetails extends ModelWithId<String> {
 
 	private String name;

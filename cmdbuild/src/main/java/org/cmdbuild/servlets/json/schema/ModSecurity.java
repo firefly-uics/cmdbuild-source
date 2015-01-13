@@ -35,10 +35,12 @@ import java.io.IOException;
 import java.util.List;
 
 import org.cmdbuild.auth.acl.CMGroup;
+import org.cmdbuild.auth.acl.ForwardingSerializablePrivilege;
 import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
 import org.cmdbuild.auth.user.CMUser;
 import org.cmdbuild.auth.user.OperationUser;
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.exception.AuthException;
 import org.cmdbuild.exception.ORMException;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
@@ -284,27 +286,19 @@ public class ModSecurity extends JSONBaseWithSpringContext {
 	}
 
 	private SerializablePrivilege serializablePrivilege(final Long privilegedObjectId) {
-		return new SerializablePrivilege() {
+		final SerializablePrivilege unsupported = UnsupportedProxyFactory.of(SerializablePrivilege.class).create();
+		return new ForwardingSerializablePrivilege() {
+
+			@Override
+			protected SerializablePrivilege delegate() {
+				return unsupported;
+			}
 
 			@Override
 			public Long getId() {
 				return privilegedObjectId;
 			}
 
-			@Override
-			public String getPrivilegeId() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public String getName() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public String getDescription() {
-				throw new UnsupportedOperationException();
-			}
 		};
 	}
 

@@ -1,6 +1,5 @@
 package org.cmdbuild.service.rest.model;
 
-import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_TYPE_DETAIL;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.PARENT;
 
@@ -10,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@XmlRootElement(name = LOOKUP_TYPE_DETAIL)
+@XmlRootElement
 public class LookupTypeDetail extends ModelWithId<String> {
 
 	private String name;

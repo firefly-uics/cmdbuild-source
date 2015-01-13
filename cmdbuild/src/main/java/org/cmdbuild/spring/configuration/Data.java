@@ -18,6 +18,7 @@ import org.cmdbuild.logic.data.DefaultDataDefinitionLogic;
 import org.cmdbuild.logic.data.access.SystemDataAccessLogicBuilder;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.lookup.LookupLogic;
+import org.cmdbuild.logic.privileges.DefaultSecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.services.cache.wrappers.CachingStore;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +81,7 @@ public class Data {
 	@Bean
 	@Scope(PROTOTYPE)
 	public SecurityLogic securityLogic() {
-		return new SecurityLogic(systemDataView(), viewConverter, filter.dataViewFilterStore());
+		return new DefaultSecurityLogic(systemDataView(), viewConverter, filter.dataViewFilterStore());
 	}
 
 	@Bean

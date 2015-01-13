@@ -4,7 +4,6 @@ import static org.cmdbuild.service.rest.constants.Serialization.ACTIVE;
 import static org.cmdbuild.service.rest.constants.Serialization.CODE;
 import static org.cmdbuild.service.rest.constants.Serialization.DEFAULT;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
-import static org.cmdbuild.service.rest.constants.Serialization.LOOKUP_DETAIL;
 import static org.cmdbuild.service.rest.constants.Serialization.NUMBER;
 import static org.cmdbuild.service.rest.constants.Serialization.PARENT_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.PARENT_TYPE;
@@ -16,7 +15,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-@XmlRootElement(name = LOOKUP_DETAIL)
+@XmlRootElement
 public class LookupDetail extends ModelWithIdAndType<Long, String> {
 
 	private String code;

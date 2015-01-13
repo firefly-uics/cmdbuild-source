@@ -42,6 +42,7 @@ import org.cmdbuild.logic.email.EmailAccountLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
+import org.cmdbuild.logic.privileges.DefaultSecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.scheduler.SchedulerLogic;
 import org.cmdbuild.logic.setup.SetupLogic;
@@ -219,7 +220,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected SecurityLogic securityLogic() {
-		return applicationContext().getBean(SecurityLogic.class);
+		return applicationContext().getBean(DefaultSecurityLogic.class);
 	}
 
 	protected SetupLogic setUpLogic() {

@@ -55,6 +55,10 @@ public class PrivilegeInfo {
 	public void setCardEditMode(final CardEditMode cardEditMode) {
 		this.cardEditMode = cardEditMode;
 	}
+	
+	public SerializablePrivilege getPrivilegedObject() {
+		return privilegedObject;
+	}
 
 	public PrivilegeMode getMode() {
 		return classMode;

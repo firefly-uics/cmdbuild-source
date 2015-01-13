@@ -201,6 +201,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
+	public boolean hasClass(final Long classId) {
+		return findClass(classId) != null;
+	}
+
+	@Override
 	public CMDomain findDomain(final Long domainId) {
 		return dataView.findDomain(domainId);
 	}

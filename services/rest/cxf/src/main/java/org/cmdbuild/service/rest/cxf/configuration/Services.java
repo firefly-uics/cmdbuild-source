@@ -14,6 +14,7 @@ import org.cmdbuild.common.reflect.AnnouncingInvocationHandler.Announceable;
 import org.cmdbuild.service.rest.AttachmentsConfiguration;
 import org.cmdbuild.service.rest.Cards;
 import org.cmdbuild.service.rest.ClassAttributes;
+import org.cmdbuild.service.rest.ClassPrivileges;
 import org.cmdbuild.service.rest.Classes;
 import org.cmdbuild.service.rest.DomainAttributes;
 import org.cmdbuild.service.rest.Domains;
@@ -37,6 +38,7 @@ import org.cmdbuild.service.rest.cxf.CxfAttachmentsConfiguration;
 import org.cmdbuild.service.rest.cxf.CxfCardAttachments;
 import org.cmdbuild.service.rest.cxf.CxfCards;
 import org.cmdbuild.service.rest.cxf.CxfClassAttributes;
+import org.cmdbuild.service.rest.cxf.CxfClassPrivileges;
 import org.cmdbuild.service.rest.cxf.CxfClasses;
 import org.cmdbuild.service.rest.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.cxf.CxfDomains;
@@ -108,6 +110,14 @@ public class Services implements LoggingSupport {
 		final CxfClassAttributes service = new CxfClassAttributes(errorHandler(), helper.userDataAccessLogic(),
 				helper.systemDataView(), helper.metadataStoreFactory(), helper.lookupLogic());
 		return proxy(ClassAttributes.class, service);
+	}
+
+	@Bean
+	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
+	public ClassPrivileges cxfClassPrivileges() {
+		final CxfClassPrivileges service = new CxfClassPrivileges(errorHandler(), helper.authenticationLogic(),
+				helper.securityLogic(), helper.userDataAccessLogic());
+		return proxy(ClassPrivileges.class, service);
 	}
 
 	@Bean
