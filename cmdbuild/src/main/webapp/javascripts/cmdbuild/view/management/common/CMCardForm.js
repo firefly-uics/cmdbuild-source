@@ -233,14 +233,21 @@
 
 	function _fillFields(me, data, referenceAttributes, fieldSelector) {
 		var fields = me.getForm().getFields();
+
+		if (Ext.getClassName(fields) == "Ext.util.MixedCollection")
+			fields = fields.items;
+
+		// Suspend all events on fields to prevent values modifications by internal fields events listeners
+		// This fixes ReferenceFields empty values going on editMode
+		for (var idx in fields)
+			if (fields[idx].isObservable) {
+				fields[idx].suspendEvents(false);
+
+			}
+
 		addReferenceAttrsToData(data, referenceAttributes);
 
 		if (fields) {
-
-			if (Ext.getClassName(fields) == "Ext.util.MixedCollection") {
-				fields = fields.items;
-			}
-
 			for (var i=0, l=fields.length; i<l; ++i) {
 				var f = fields[i];
 
@@ -250,8 +257,6 @@
 					continue;
 				}
 
-				if (f.xtype == "displayfield")
-					a = 1;
 				try {
 					f.setValue(data[f.name]);
 					if (typeof f.isFiltered == "function"
@@ -260,10 +265,15 @@
 						f.setServerVarsForTemplate(data);
 					}
 				} catch (e) {
-					_debug("I can not set the value for " + f.name);
+					_msg('[Field name: ' + f.name + '] ' + e.message);
 				}
 			}
 		}
+
+		// Resume events on fields
+		for (var idx in fields)
+			if (fields[idx].isObservable)
+				fields[idx].resumeEvents();
 
 		me.fireEvent(me.CMEVENTS.formFilled);
 	}
