@@ -3,7 +3,10 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.CMGridController', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
-		requires: ['CMDBuild.core.proxy.widgets.Grid'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.widgets.Grid'
+		],
 
 		mixins: {
 			observable: 'Ext.util.Observable'
@@ -69,6 +72,7 @@
 			this.classType = _CMCache.getEntryTypeByName(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
 			this.grid = this.view.grid;
 			this.view.delegate = this;
+			this.view.grid.delegate = this;
 
 			if (!Ext.isEmpty(this.classType)) {
 				CMDBuild.Management.FieldManager.loadAttributes(
@@ -80,7 +84,11 @@
 					}
 				);
 			} else {
-				_debug('CMGridController error: classType error with className ' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME]);
+				CMDBuild.Msg.error(
+					CMDBuild.Translation.error,
+					'CMGridController error: classType error with className ' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME],
+					true
+				);
 			}
 		},
 
@@ -123,6 +131,10 @@
 
 		addActionColumns: function() {
 			var me = this;
+			var readOnly = this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
+			var disableDeleteRow = this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_DELETE_ROW)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_DELETE_ROW];
 
 			this.columns.headers.push(
 				{
@@ -144,6 +156,10 @@
 								me.cmOn('onEditRowButtonClick', {
 									record: record
 								});
+							},
+
+							isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								return readOnly;
 							}
 						}
 					]
@@ -165,6 +181,10 @@
 								me.cmOn('onDeleteRowButtonClick', {
 									rowIndex: rowIndex
 								});
+							},
+
+							isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								return readOnly || disableDeleteRow;
 							}
 						}
 					]
@@ -195,14 +215,48 @@
 								value = me.formatDate(value);
 						}
 
-						if (Ext.String.trim(value) == '' && required)
+						if (Ext.isEmpty(Ext.String.trim(value)) && required)
 							value = '<div style="width: 100%; height: 100%; border: 1px dotted red;">';
 
 						return value;
 					}
 
 					return null;
-				};
+				}
+		},
+
+		/**
+		 * @override
+		 */
+		beforeActiveView: function() {
+			// Disable add button
+			if (
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_ADD_ROW]
+			) {
+				this.view.addButton.setDisabled(true);
+			}
+
+			// Disable import from CSV button
+			if (
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_IMPORT_FROM_CSV]
+			) {
+				this.view.importFromCSVButton.setDisabled(true);
+			}
+
+			// Disable buttons for readOnly mode
+			if (
+				this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.READ_ONLY)
+				&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]
+			) {
+				this.view.addButton.setDisabled(true);
+				this.view.importFromCSVButton.setDisabled(true);
+
+				this.grid.on('beforeedit', function(plugin, edit) {
+					return false;
+				});
+			}
 		},
 
 		/**
@@ -225,13 +279,13 @@
 				var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 
 				// TODO: hack to bypass CMDBuild.Management.FieldManager.getFieldForAttr() control to check if return DisplayField
-				// (correct way var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);)
+				// (correct way "var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);")
 				var editor = attributesMap[attribute.type].buildField(attribute, false, false);
 
 				editor.hideLabel = true;
 
 				if (header) {
-					if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read')
+					if (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ)
 						editor.disabled = true;
 
 					if (attribute[CMDBuild.core.proxy.CMProxyConstants.NOT_NULL]) {
@@ -253,7 +307,7 @@
 					}
 
 					// Read only attributes header setup
-					header.disabled = (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == 'read') ? true : false,
+					header.disabled = (attribute[CMDBuild.core.proxy.CMProxyConstants.FIELD_MODE] == CMDBuild.core.proxy.CMProxyConstants.READ) ? true : false,
 
 					headers.push(header);
 
@@ -332,7 +386,11 @@
 							})
 						);
 					} else {
-						_debug('CMGridController decodeFunctionPresets: SQL function not found');
+						CMDBuild.Msg.error(
+							CMDBuild.Translation.error,
+							'CMGridController decodeFunctionPresets: SQL function not found',
+							true
+						);
 					}
 				}
 			});
@@ -431,7 +489,7 @@
 				}
 
 				if (!this.readOnly)
-					out['output'] = data;
+					out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = data;
 
 				return out;
 			},
@@ -461,6 +519,10 @@
 		isValid: function() {
 			var returnValue = true;
 			var requiredAttributes = [];
+
+			// If widget is flagged as required must return at least 1 row
+			if (this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.REQUIRED) && this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED] && this.grid.getStore().getCount() == 0)
+				returnValue = false;
 
 			// Build columns required array
 			for (var i in this.columns.headers) {
@@ -504,10 +566,10 @@
 						);
 
 					default:
-						_debug(
-							'CMGridController: wrong serializationType ('
-							+ this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SERIALIZATION_TYPE]
-							+ ') format or value'
+						CMDBuild.Msg.error(
+							CMDBuild.Translation.error,
+							'CMGridController: wrong serializationType (' + this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.SERIALIZATION_TYPE] + ') format or value',
+							true
 						);
 				}
 			}

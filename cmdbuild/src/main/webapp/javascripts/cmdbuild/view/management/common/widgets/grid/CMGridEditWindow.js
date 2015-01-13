@@ -3,13 +3,10 @@
 	Ext.define('CMDBuild.view.management.common.widgets.grid.CMGridEditWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
-		buttonAlign: 'center',
-		border: false,
-		defaultSizeW: 0.90,
-		defaultSizeH: 0.80,
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @property {CMDBuild.controller.management.common.widgets.CMGridController}
+		 * @cfg {CMDBuild.controller.management.common.widgets.CMGridController}
 		 */
 		delegate: undefined,
 
@@ -29,9 +26,14 @@
 		record: undefined,
 
 		/**
-		 * @property {CMDBuild.buttons.SaveButton}
+		 * @cfg {CMDBuild.buttons.SaveButton}
 		 */
 		saveButton: undefined,
+
+		buttonAlign: 'center',
+		border: false,
+		defaultSizeW: 0.90,
+		defaultSizeH: 0.80,
 
 		initComponent: function() {
 			var me = this;

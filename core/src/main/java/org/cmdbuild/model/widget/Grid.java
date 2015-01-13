@@ -1,13 +1,13 @@
 package org.cmdbuild.model.widget;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.StringUtils;
 import org.cmdbuild.workflow.CMActivityInstance;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -22,6 +22,11 @@ public class Grid extends Widget {
 	public static final String DEFAULT_SERIALIZATION = TEXT_SERIALIZATION;
 	public static final boolean DEFAULT_WRITE_ON_ADVANCE = false;
 	public static final String DEFAULT_PRESETS_TYPE = "text";
+	public static final boolean DEFAULT_DISABLE_ADD_ROW = false;
+	public static final boolean DEFAULT_DISABLE_IMPORT_FROM_CSV = false;
+	public static final boolean DEFAULT_DISABLE_DELETE_ROW = false;
+	public static final boolean DEFAULT_READONLY = false;
+	public static final boolean DEFAULT_REQUIRED = false;
 
 	private String className;
 	private String outputName;
@@ -33,6 +38,11 @@ public class Grid extends Widget {
 	private boolean writeOnAdvance;
 	private String presets;
 	private String presetsType;
+	private boolean disableAddRow;
+	private boolean disableImportFromCsv;
+	private boolean disableDeleteRow;
+	private boolean readOnly;
+	private boolean required;
 
 	public String getClassName() {
 		return className;
@@ -54,7 +64,7 @@ public class Grid extends Widget {
 		return serializationType;
 	}
 
-	public void setSerializationType(String serializationType) {
+	public void setSerializationType(final String serializationType) {
 		this.serializationType = serializationType;
 	}
 
@@ -62,12 +72,12 @@ public class Grid extends Widget {
 		return writeOnAdvance;
 	}
 
-	public void setWriteOnAdvance(boolean writeOnAdvance) {
+	public void setWriteOnAdvance(final boolean writeOnAdvance) {
 		this.writeOnAdvance = writeOnAdvance;
 	}
 
 	public void setCardSeparator(final String cardSeparator) {
-		this.cardSeparator = StringUtils.defaultIfBlank(cardSeparator, DEFAULT_MAP_SEPARATOR);
+		this.cardSeparator = defaultIfBlank(cardSeparator, DEFAULT_MAP_SEPARATOR);
 	}
 
 	public String getCardSeparator() {
@@ -75,7 +85,7 @@ public class Grid extends Widget {
 	}
 
 	public void setAttributeSeparator(final String attributeSeparator) {
-		this.attributeSeparator = StringUtils.defaultIfBlank(attributeSeparator, DEFAULT_ENTRY_SEPARATOR);
+		this.attributeSeparator = defaultIfBlank(attributeSeparator, DEFAULT_ENTRY_SEPARATOR);
 	}
 
 	public String getAttributeSeparator() {
@@ -83,7 +93,7 @@ public class Grid extends Widget {
 	}
 
 	public void setKeyValueSeparator(final String keyValueSeparator) {
-		this.keyValueSeparator = StringUtils.defaultIfBlank(keyValueSeparator, DEFAULT_KEYVALUE_SEPARATOR);
+		this.keyValueSeparator = defaultIfBlank(keyValueSeparator, DEFAULT_KEYVALUE_SEPARATOR);
 	}
 
 	public String getKeyValueSeparator() {
@@ -104,6 +114,46 @@ public class Grid extends Widget {
 
 	public void setPresetsType(final String presetsType) {
 		this.presetsType = presetsType;
+	}
+
+	public boolean isDisableAddRow() {
+		return disableAddRow;
+	}
+
+	public void setDisableAddRow(final boolean disableAddRow) {
+		this.disableAddRow = disableAddRow;
+	}
+
+	public boolean isDisableImportFromCsv() {
+		return disableImportFromCsv;
+	}
+
+	public void setDisableImportFromCsv(final boolean disableImportFromCsv) {
+		this.disableImportFromCsv = disableImportFromCsv;
+	}
+
+	public boolean isDisableDeleteRow() {
+		return disableDeleteRow;
+	}
+
+	public void setDisableDeleteRow(final boolean disableDeleteRow) {
+		this.disableDeleteRow = disableDeleteRow;
+	}
+
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(final boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
+	public boolean isRequired() {
+		return required;
+	}
+
+	public void setRequired(final boolean required) {
+		this.required = required;
 	}
 
 	public Map<String, Object> getVariables() {
