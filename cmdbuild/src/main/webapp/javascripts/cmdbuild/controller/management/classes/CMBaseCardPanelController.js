@@ -71,9 +71,8 @@
 
 			if (!this.entryType || !this.card) { return; }
 
-			// If the current entryType is a superclass the record has only the value defined
-			// in the super class. So, load the card remotly and pass it to the form.
-			var loadRemoteData = this.entryType.get("superclass") && this.card.get("Id") != -1;
+			// The right way it should work is to execute the getCard query to the server every time i select a new card in grid
+			var loadRemoteData = true;
 
 			// If the entryType id and the id of the card are different
 			// the fields are not right, refill the form before the loadCard
@@ -130,7 +129,6 @@
 				else {
 					var ob = {id: key, value: values[key][1]};
 					arValues.push(ob);
-					
 				}
 			}
 			form.setValues(arValues);*/
@@ -206,7 +204,7 @@
 				cardId = me.card.get("Id");
 			}
 
-			if (cardId && cardId != "-1" 
+			if (cardId && cardId != "-1"
 				&& (loadRemoteData || me.view.hasDomainAttributes())) {
 
 				if (!params) {
@@ -302,7 +300,7 @@
 			if (_CMUtils.lockCard.isEnabled()) {
 				if (this.card
 						&& this.view.isInEditing()) {
-					
+
 					var id = this.card.get("Id");
 					_CMProxy.card.unlockCard({
 						params: {
