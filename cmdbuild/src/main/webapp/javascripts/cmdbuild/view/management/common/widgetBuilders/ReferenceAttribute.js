@@ -177,7 +177,7 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 				value = parseInt(value);
 			}
 
-			if (typeof value == 'number') {
+			if (!Ext.isEmpty(value) && typeof value == 'number') {
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = value;
 				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(attribute['idClass']);
