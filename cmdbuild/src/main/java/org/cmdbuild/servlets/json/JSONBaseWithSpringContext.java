@@ -220,7 +220,7 @@ public class JSONBaseWithSpringContext extends JSONBase {
 	}
 
 	protected SecurityLogic securityLogic() {
-		return applicationContext().getBean(DefaultSecurityLogic.class);
+		return applicationContext().getBean(SecurityLogic.class);
 	}
 
 	protected SetupLogic setUpLogic() {
