@@ -1,11 +1,11 @@
 package org.cmdbuild.data.store.lookup;
 
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 public final class LookupType {
 
@@ -58,10 +58,7 @@ public final class LookupType {
 				.append(this.name) //
 				.append(this.parent) //
 				.toHashCode();
-		this.toString = new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE) //
-				.append("name", name) //
-				.append("parent", parent) //
-				.toString();
+		this.toString = ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE);
 	}
 
 	@Override

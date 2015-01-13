@@ -3,6 +3,7 @@ package org.cmdbuild.logic.data.lookup;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Lists.newArrayList;
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.sort;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -321,18 +322,20 @@ public class LookupLogic implements Logic {
 			final boolean activeOnly, //
 			final LookupQuery query //
 	) {
-
 		logger.debug(marker, "getting all lookups for type '{}'", type);
 
-		final LookupType realType = typeFor(typesWith(type.name)).orNull();
+		final Optional<LookupType> realType = typeFor(typesWith(type.name));
+		if (!realType.isPresent()) {
+			logger.error(marker, format("lookup type not found '%s'", type));
+			throw Exceptions.lookupTypeNotFound(type);
+		}
 
 		logger.trace(marker, "getting all lookups for real type '{}'", realType);
-
-		final Iterable<Lookup> elements = store.readAll(realType);
+		final Iterable<Lookup> elements = store.readAll(realType.get());
 
 		if (!elements.iterator().hasNext()) {
 			logger.error(marker, "no lookup was found for type '{}'", realType);
-			throw Exceptions.lookupTypeNotFound(realType);
+			throw Exceptions.lookupTypeNotFound(realType.get());
 		}
 
 		final List<Lookup> list = newArrayList(elements);
@@ -434,10 +437,8 @@ public class LookupLogic implements Logic {
 				.iterator();
 		final Optional<LookupType> found;
 		if (!shouldBeOneOnly.hasNext()) {
-			logger.warn(marker, "lookup type not found");
 			found = Optional.absent();
 		} else {
-			logger.info(marker, "lookup type successfully found");
 			found = Optional.of(shouldBeOneOnly.next());
 		}
 		if (found.isPresent() && shouldBeOneOnly.hasNext()) {
