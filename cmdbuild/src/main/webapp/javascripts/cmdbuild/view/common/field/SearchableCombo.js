@@ -145,8 +145,8 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	addToStoreIfNotInIt: function(record) {
 		var id = record.get('Id');
 
-		if (this.store && (this.store.find('Id', id) == -1)) {
-			var params = Ext.apply({ cardId: id }, this.store.baseParams);
+		if (this.getStore() && (this.getStore().find('Id', id) == -1)) {
+			var params = Ext.apply({ cardId: id }, this.getStore().baseParams);
 
 			CMDBuild.Ajax.request({
 				url: 'services/json/management/modcard/getcard',
@@ -154,10 +154,13 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 				method: 'GET',
 				scope: this,
 				success: function(result, options, decodedResult) {
-					this.store.add({
-						Id: id,
-						Description: decodedResult.card['Description']
-					});
+					if (this.getStore().find('Id', id) == -1)
+						this.getStore().add({
+							Id: id,
+							Description: decodedResult.card['Description']
+						});
+
+					this.validate();
 				}
 			});
 		}
