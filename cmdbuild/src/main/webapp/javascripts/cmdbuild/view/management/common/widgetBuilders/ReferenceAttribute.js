@@ -164,22 +164,19 @@ CMDBuild.WidgetBuilders.ReferenceAttribute.prototype.buildReadOnlyField = functi
 	// Overrides setValue function to translate attribute value to description
 	var originalSetValue = field.setValue;
 	field.setValue = function(value) {
-		if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION))
-			value = value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
-
-		if (value.hasOwnProperty('Description'))
-			value = value['Description'];
-
-		if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.ID))
-			value = value[CMDBuild.core.proxy.CMProxyConstants.ID];
-
-		if (value.hasOwnProperty('Id'))
-			value = value['Id'];
-
-		if (typeof value == 'string' && !isNaN(parseInt(value)))
-			value = parseInt(value);
-
 		if (!Ext.isEmpty(value)) {
+			if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION)) {
+				value = value[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION];
+			} else if (value.hasOwnProperty('Description')) {
+				value = value['Description'];
+			} else if (value.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.ID)) {
+				value = value[CMDBuild.core.proxy.CMProxyConstants.ID];
+			} else if (value.hasOwnProperty('Id')) {
+				value = value['Id'];
+			} else if (typeof value == 'string' && !isNaN(parseInt(value))) {
+				value = parseInt(value);
+			}
+
 			if (typeof value == 'number') {
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = value;
