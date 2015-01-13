@@ -140,7 +140,7 @@ Ext.define("CMDBuild.Management.SearchableCombo", {
 	},
 
 	/**
-	 * @param {Object} record - CMDBuild.Management.ReferenceSearchWindow row model
+	 * @param {CMDBuild.Management.ReferenceSearchWindow row model} record
 	 */
 	addToStoreIfNotInIt: function(record) {
 		var id = record.get('Id');
