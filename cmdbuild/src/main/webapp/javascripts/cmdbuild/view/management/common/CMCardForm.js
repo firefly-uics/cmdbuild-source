@@ -231,19 +231,23 @@
 		});
 	}
 
+	/**
+	 * @param {CMDBuild.view.management.classes.CMCardForm} me
+	 * @param {Object} data
+	 * @param {Object} referenceAttributes
+	 * @param {Function} fieldSelector
+	 */
 	function _fillFields(me, data, referenceAttributes, fieldSelector) {
 		var fields = me.getForm().getFields();
 
-		if (Ext.getClassName(fields) == "Ext.util.MixedCollection")
+		if (Ext.getClassName(fields) == 'Ext.util.MixedCollection')
 			fields = fields.items;
 
 		// Suspend all events on fields to prevent values modifications by internal fields events listeners
 		// This fixes ReferenceFields empty values going on editMode
 		for (var idx in fields)
-			if (fields[idx].isObservable) {
+			if (fields[idx].isObservable)
 				fields[idx].suspendEvents(false);
-
-			}
 
 		addReferenceAttrsToData(data, referenceAttributes);
 
@@ -251,21 +255,15 @@
 			for (var i=0, l=fields.length; i<l; ++i) {
 				var f = fields[i];
 
-				if (typeof fieldSelector == "function"
-						&& !fieldSelector(f)) {
-
-					continue;
-				}
-
-				try {
-					f.setValue(data[f.name]);
-					if (typeof f.isFiltered == "function"
-						&& f.isFiltered()) {
-
-						f.setServerVarsForTemplate(data);
+				if (!(typeof fieldSelector == 'function' && !fieldSelector(f))) {
+					try {
+						f.setValue(data[f.name]);
+						if (typeof f.isFiltered == 'function' && f.isFiltered()) {
+							f.setServerVarsForTemplate(data);
+						}
+					} catch (e) {
+						_msg('[Field name: ' + f.name + '] ' + e.message);
 					}
-				} catch (e) {
-					_msg('[Field name: ' + f.name + '] ' + e.message);
 				}
 			}
 		}
