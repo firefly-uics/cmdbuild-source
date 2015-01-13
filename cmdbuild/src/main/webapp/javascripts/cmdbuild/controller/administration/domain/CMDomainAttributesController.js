@@ -1,7 +1,7 @@
 (function() {
-	
+
 	var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
-	
+
 	Ext.define("CMDBuild.controller.administration.domain.CMDomainAttributesController", {
 		extend: "CMDBuild.controller.administration.CMBaseAttributesController",
 		constructor: function(view) {
@@ -18,7 +18,7 @@
 			this.view.form.deleteButton.on("click", onDeleteButtonClick, this);
 			this.view.grid.addAttributeButton.on("click", onAddAttributeClick, this);
 		},
-		
+
 		onAttributeMoved: function() {
 			var parameterNames = CMDBuild.ServiceProxy.parameter;
 			var attributes = [];
@@ -94,7 +94,7 @@
 		this.view.onAddAttributeClick();
 		_CMCache.initAddingTranslations();
 	}
-	
+
 	function onAbortButtonClick() {
 		if (this.currentAttribute == null) {
 			this.view.form.disableModify();
@@ -103,7 +103,7 @@
 			this.view.form.onAttributeSelected(this.currentAttribute);
 		}
 	}
-	
+
 	function onSaveButtonClick() {
 		var nonValid = this.view.form.getNonValidFields();
 		if (nonValid.length > 0) {
@@ -130,7 +130,7 @@
 			}
 		});
 	}
-	
+
 	function onDeleteButtonClick() {
 		Ext.Msg.show({
 			title: translation.delete_attribute,
@@ -144,7 +144,7 @@
 			}
 		});
 	}
-	
+
 	function deleteAttribute() {
 		if (!this.currentDomain || !this.currentAttribute) {
 			return;
@@ -158,7 +158,10 @@
 			},
 			scope : this,
 			success : function(form, action) {
+				this.view.form.reset();
+
 				_CMCache.onDomainAttributeDelete(this.currentDomain.get("id"), this.currentAttribute.data);
+
 				this.currentAttribute = null;
 			},
 			callback : function() {
