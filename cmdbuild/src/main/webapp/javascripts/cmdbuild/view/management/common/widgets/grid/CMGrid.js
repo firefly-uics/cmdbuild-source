@@ -3,20 +3,15 @@
 	Ext.define('CMDBuild.view.management.common.widgets.grid.CMGrid', {
 		extend: 'Ext.panel.Panel',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		statics: {
 			WIDGET_NAME: '.Grid'
 		},
 
-		autoScroll: true,
-		border: false,
-		frame: false,
-
-		layout: {
-			type: 'border'
-		},
 
 		/**
-		 * @property {CMDBuild.controller.management.common.widgets.CMGridController}
+		 * @cfg {CMDBuild.controller.management.common.widgets.CMGridController}
 		 */
 		delegate: undefined,
 
@@ -34,6 +29,14 @@
 		 * @property {Ext.button.Button}
 		 */
 		importFromCSVButton: undefined,
+
+		autoScroll: true,
+		border: false,
+		frame: false,
+
+		layout: {
+			type: 'border'
+		},
 
 		initComponent: function() {
 			this.WIDGET_NAME = this.self.WIDGET_NAME;

@@ -3,15 +3,13 @@
 	Ext.define('CMDBuild.view.management.common.widgets.grid.CMImportCSVWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
-		requires: ['CMDBuild.core.proxy.widgets.Grid'],
-
-		buttonAlign: 'center',
-		border: false,
-		defaultSizeW: 0.90,
-		defaultSizeH: 0.25,
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.widgets.Grid'
+		],
 
 		/**
-		 * @property {CMDBuild.controller.management.common.widgets.CMGridController}
+		 * @cfg {CMDBuild.controller.management.common.widgets.CMGridController}
 		 */
 		delegate: undefined,
 
@@ -56,6 +54,11 @@
 		 * @property {Ext.form.Panel}
 		 */
 		csvUploadForm: undefined,
+
+		buttonAlign: 'center',
+		border: false,
+		defaultSizeW: 0.90,
+		defaultSizeH: 0.25,
 
 		initComponent: function() {
 			// Buttons configuration

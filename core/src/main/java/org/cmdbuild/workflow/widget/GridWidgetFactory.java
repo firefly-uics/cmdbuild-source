@@ -28,9 +28,15 @@ public class GridWidgetFactory extends ValuePairWidgetFactory {
 	public static final String WRITE_ON_ADVANCE = "WriteOnAdvance";
 	public static final String PRESETS = "Presets";
 	public static final String PRESETS_TYPE = "PresetsType";
+	public static final String DISABLE_ADD_ROW = "DisableAddRow";
+	public static final String DISABLE_IMPORT_FROM_CSV = "DisableImportFromCsv";
+	public static final String DISABLE_DELETE_ROW = "DisableDeleteRow";
+	public static final String READ_ONLY = "ReadOnly";
+	public static final String REQUIRED = "Required";
 
 	private static final String[] KNOWN_PARAMETERS = { BUTTON_LABEL, CLASS_NAME, CARD_SEPARATOR, ATTRIBUTE_SEPARATOR,
-			KEY_VALUE_SEPARATOR, SERIALIZATION_TYPE, WRITE_ON_ADVANCE, PRESETS, PRESETS_TYPE };
+			KEY_VALUE_SEPARATOR, SERIALIZATION_TYPE, WRITE_ON_ADVANCE, PRESETS, PRESETS_TYPE, DISABLE_ADD_ROW,
+			DISABLE_IMPORT_FROM_CSV, DISABLE_DELETE_ROW, READ_ONLY, REQUIRED };
 
 	public GridWidgetFactory(final TemplateRepository templateRespository, final Notifier notifier) {
 		super(templateRespository, notifier);
@@ -49,7 +55,8 @@ public class GridWidgetFactory extends ValuePairWidgetFactory {
 		widget.setClassName(className);
 		widget.setOutputName(readString(valueMap.get(OUTPUT_KEY)));
 		widget.setCardSeparator(defaultIfBlank(readString(valueMap.get(CARD_SEPARATOR)), DEFAULT_MAP_SEPARATOR));
-		widget.setAttributeSeparator(defaultIfBlank(readString(valueMap.get(ATTRIBUTE_SEPARATOR)), DEFAULT_ENTRY_SEPARATOR));
+		widget.setAttributeSeparator(defaultIfBlank(readString(valueMap.get(ATTRIBUTE_SEPARATOR)),
+				DEFAULT_ENTRY_SEPARATOR));
 		widget.setKeyValueSeparator(defaultIfBlank(readString(valueMap.get(KEY_VALUE_SEPARATOR)),
 				DEFAULT_KEYVALUE_SEPARATOR));
 		widget.setSerializationType(defaultIfBlank(readString(valueMap.get(SERIALIZATION_TYPE)), DEFAULT_SERIALIZATION));
@@ -57,6 +64,14 @@ public class GridWidgetFactory extends ValuePairWidgetFactory {
 				DEFAULT_WRITE_ON_ADVANCE));
 		widget.setPresets(readString(valueMap.get(PRESETS)));
 		widget.setPresetsType(defaultIfBlank(readString(valueMap.get(PRESETS_TYPE)), DEFAULT_PRESETS_TYPE));
+		widget.setDisableAddRow(defaultIfNull(readBooleanTrueIfTrue(valueMap.get(DISABLE_ADD_ROW)),
+				DEFAULT_DISABLE_ADD_ROW));
+		widget.setDisableImportFromCsv(defaultIfNull(readBooleanTrueIfTrue(valueMap.get(DISABLE_IMPORT_FROM_CSV)),
+				DEFAULT_DISABLE_IMPORT_FROM_CSV));
+		widget.setDisableDeleteRow(defaultIfNull(readBooleanTrueIfTrue(valueMap.get(DISABLE_DELETE_ROW)),
+				DEFAULT_DISABLE_DELETE_ROW));
+		widget.setReadOnly(defaultIfNull(readBooleanTrueIfTrue(valueMap.get(READ_ONLY)), DEFAULT_READONLY));
+		widget.setRequired(defaultIfNull(readBooleanTrueIfTrue(valueMap.get(REQUIRED)), DEFAULT_REQUIRED));
 		widget.setVariables(extractUnmanagedParameters(valueMap, KNOWN_PARAMETERS));
 		return widget;
 	}
