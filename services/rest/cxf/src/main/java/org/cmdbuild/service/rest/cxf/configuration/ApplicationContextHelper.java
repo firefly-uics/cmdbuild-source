@@ -21,6 +21,7 @@ import org.cmdbuild.logic.data.lookup.LookupLogic;
 import org.cmdbuild.logic.dms.DmsLogic;
 import org.cmdbuild.logic.dms.PrivilegedDmsLogic;
 import org.cmdbuild.logic.menu.MenuLogic;
+import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.cmdbuild.logic.workflow.UserWorkflowLogicBuilder;
 import org.cmdbuild.logic.workflow.WorkflowLogic;
 import org.cmdbuild.privileges.DBGroupFetcher;
@@ -84,6 +85,10 @@ public class ApplicationContextHelper {
 
 	public MetadataStoreFactory metadataStoreFactory() {
 		return applicationContext.getBean(MetadataStoreFactory.class);
+	}
+
+	public SecurityLogic securityLogic() {
+		return applicationContext.getBean(SecurityLogic.class);
 	}
 
 	public DataAccessLogic systemDataAccessLogic() {

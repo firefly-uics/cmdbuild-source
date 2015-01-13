@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@XmlRootElement(name = "widget")
+@XmlRootElement
 public class Widget extends ModelWithId<String> {
 
 	private String type;

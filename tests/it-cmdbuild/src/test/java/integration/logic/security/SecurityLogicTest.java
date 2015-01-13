@@ -8,11 +8,14 @@ import static utils.IntegrationTestUtils.newClass;
 
 import java.util.List;
 
+import org.cmdbuild.auth.acl.ForwardingSerializablePrivilege;
 import org.cmdbuild.auth.acl.SerializablePrivilege;
 import org.cmdbuild.auth.privileges.constants.PrivilegeMode;
+import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entry.DBCard;
 import org.cmdbuild.dao.entrytype.DBClass;
 import org.cmdbuild.logic.privileges.PrivilegeInfo;
+import org.cmdbuild.logic.privileges.DefaultSecurityLogic;
 import org.cmdbuild.logic.privileges.SecurityLogic;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -43,7 +46,7 @@ public class SecurityLogicTest extends IntegrationTestBase {
 	public void setUp() {
 		fixture = new UserRolePrivilegeFixture(dbDriver());
 
-		securityLogic = new SecurityLogic(dbDataView(), null, null);
+		securityLogic = new DefaultSecurityLogic(dbDataView(), null, null);
 		populateDatabaseWithUsersGroupsAndPrivileges();
 	}
 
@@ -127,27 +130,19 @@ public class SecurityLogicTest extends IntegrationTestBase {
 	}
 
 	private SerializablePrivilege serializablePrivilege(final Long privilegedObjectId) {
-		return new SerializablePrivilege() {
+		final SerializablePrivilege unsupported = UnsupportedProxyFactory.of(SerializablePrivilege.class).create();
+		return new ForwardingSerializablePrivilege() {
+
+			@Override
+			protected SerializablePrivilege delegate() {
+				return unsupported;
+			}
 
 			@Override
 			public Long getId() {
 				return privilegedObjectId;
 			}
 
-			@Override
-			public String getPrivilegeId() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public String getName() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public String getDescription() {
-				throw new UnsupportedOperationException();
-			}
 		};
 	}
 

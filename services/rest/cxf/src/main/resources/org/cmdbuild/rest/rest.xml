@@ -31,6 +31,7 @@
 			<ref bean="cxfCards" />
 			<ref bean="cxfClasses" />
 			<ref bean="cxfClassAttributes" />
+			<ref bean="cxfClassPrivileges" />
 			<ref bean="cxfDomains" />
 			<ref bean="cxfDomainAttributes" />
 			<ref bean="cxfRelations" />

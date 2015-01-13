@@ -2,7 +2,6 @@ package org.cmdbuild.service.rest.model;
 
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.service.rest.constants.Serialization.ATTACHMENT;
 import static org.cmdbuild.service.rest.constants.Serialization.AUTHOR;
 import static org.cmdbuild.service.rest.constants.Serialization.CATEGORY;
 import static org.cmdbuild.service.rest.constants.Serialization.CREATED;
@@ -22,7 +21,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.service.rest.model.adapter.AttachmentAdapter;
 
-@XmlRootElement(name = ATTACHMENT)
+@XmlRootElement
 @XmlJavaTypeAdapter(AttachmentAdapter.class)
 public class Attachment extends ModelWithId<String> {
 

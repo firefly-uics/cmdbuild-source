@@ -1,6 +1,5 @@
 package org.cmdbuild.service.rest.model;
 
-import static org.cmdbuild.service.rest.constants.Serialization.CARD;
 import static org.cmdbuild.service.rest.constants.Serialization.VALUES;
 
 import java.util.Map;
@@ -14,7 +13,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.service.rest.model.adapter.CardAdapter;
 import org.cmdbuild.service.rest.model.adapter.StringObjectMapAdapter;
 
-@XmlRootElement(name = CARD)
+@XmlRootElement
 @XmlJavaTypeAdapter(CardAdapter.class)
 public class Card extends ModelWithIdAndType<Long, String> {
 

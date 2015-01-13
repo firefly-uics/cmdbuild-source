@@ -1,10 +1,8 @@
 package org.cmdbuild.service.rest.model;
 
-import static org.cmdbuild.service.rest.constants.Serialization.ATTRIBUTE;
 import static org.cmdbuild.service.rest.constants.Serialization.ATTRIBUTES;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.INSTRUCTIONS;
-import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_ACTIVITY_DEFINITION;
 import static org.cmdbuild.service.rest.constants.Serialization.WIDGETS;
 
 import java.util.Collection;
@@ -16,10 +14,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@XmlRootElement(name = PROCESS_ACTIVITY_DEFINITION)
+@XmlRootElement
 public class ProcessActivityWithFullDetails extends ModelWithId<String> {
 
-	@XmlRootElement(name = ATTRIBUTE)
+	@XmlRootElement
 	public static class AttributeStatus extends ModelWithId<String> {
 
 		private boolean writable;

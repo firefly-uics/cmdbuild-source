@@ -1,7 +1,6 @@
 package org.cmdbuild.service.rest.model;
 
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
-import static org.cmdbuild.service.rest.constants.Serialization.PROCESS_INSTANCE;
 import static org.cmdbuild.service.rest.constants.Serialization.STATUS;
 import static org.cmdbuild.service.rest.constants.Serialization.VALUES;
 
@@ -17,7 +16,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.service.rest.model.adapter.ProcessInstanceAdapter;
 import org.cmdbuild.service.rest.model.adapter.StringObjectMapAdapter;
 
-@XmlRootElement(name = PROCESS_INSTANCE)
+@XmlRootElement
 @XmlJavaTypeAdapter(ProcessInstanceAdapter.class)
 public class ProcessInstance extends ModelWithIdAndType<Long, String> {
 

@@ -1,7 +1,6 @@
 package org.cmdbuild.service.rest.model;
 
 import static org.cmdbuild.service.rest.constants.Serialization.DATA;
-import static org.cmdbuild.service.rest.constants.Serialization.SIMPLE_RESPONSE;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -10,7 +9,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-@XmlRootElement(name = SIMPLE_RESPONSE)
+@XmlRootElement
 public class ResponseSingle<T> extends Model {
 
 	private T element;

@@ -428,6 +428,49 @@ public class Models {
 
 	}
 
+	public static class ClassPrivilegeBuilder extends ModelBuilder<ClassPrivilege> {
+
+		private String id;
+		private String name;
+		private String description;
+		private String mode;
+
+		private ClassPrivilegeBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected ClassPrivilege doBuild() {
+			final ClassPrivilege output = new ClassPrivilege();
+			output.setId(id);
+			output.setName(name);
+			output.setDescription(description);
+			output.setMode(mode);
+			return output;
+		}
+
+		public ClassPrivilegeBuilder withId(final String id) {
+			this.id = id;
+			return this;
+		}
+
+		public ClassPrivilegeBuilder withName(final String name) {
+			this.name = name;
+			return this;
+		}
+
+		public ClassPrivilegeBuilder withDescription(final String description) {
+			this.description = description;
+			return this;
+		}
+
+		public ClassPrivilegeBuilder withMode(final String mode) {
+			this.mode = mode;
+			return this;
+		}
+
+	}
+
 	public static class ClassWithBasicDetailsBuilder extends ModelBuilder<ClassWithBasicDetails> {
 
 		private String id;
@@ -1557,6 +1600,10 @@ public class Models {
 
 	public static CardBuilder newCard() {
 		return new CardBuilder();
+	}
+
+	public static ClassPrivilegeBuilder newClassPrivilege() {
+		return new ClassPrivilegeBuilder();
 	}
 
 	public static ClassWithBasicDetailsBuilder newClassWithBasicDetails() {

@@ -2,7 +2,6 @@ package org.cmdbuild.service.rest.model;
 
 import static org.cmdbuild.service.rest.constants.Serialization.DEFAULT_STATUS;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION_ATTRIBUTE_NAME;
-import static org.cmdbuild.service.rest.constants.Serialization.FULL_CLASS_DETAIL;
 import static org.cmdbuild.service.rest.constants.Serialization.STATUSES;
 
 import java.util.Collection;
@@ -14,7 +13,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-@XmlRootElement(name = FULL_CLASS_DETAIL)
+@XmlRootElement
 public class ProcessWithFullDetails extends ProcessWithBasicDetails {
 
 	private String descriptionAttributeName;

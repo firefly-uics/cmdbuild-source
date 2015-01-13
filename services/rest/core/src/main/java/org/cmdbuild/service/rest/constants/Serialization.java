@@ -12,16 +12,13 @@ public class Serialization {
 			ACTIVE = "active", //
 			ADVANCE = "advance", //
 			ATTRIBUTE = "attribute", //
-			ATTRIBUTE_DETAIL = ATTRIBUTE + "Detail", //
 			ATTRIBUTES = "attributes", //
 			ATTACHMENT = "attachment", //
 			ATTACHMENT_ID = ATTACHMENT + ID_CAPITALIZED, //
-			ATTACHMENT_CATEGORY = ATTACHMENT + "Category", //
 			ATTACHMENT_METADATA = ATTACHMENT + "Metadata", //
 			AUTHOR = "author", //
 			AVAILABLE_ROLES = "availableRoles", //
 			CARD = "card", //
-			CARD_DETAIL = CARD + "Detail", //
 			CARD_ID = CARD + ID_CAPITALIZED, //
 			CARDINALITY = "cardinality", //
 			CATEGORY = "category", //
@@ -53,20 +50,17 @@ public class Serialization {
 			EXTRA = "extra", //
 			FILE = "file", //
 			FILTER = "filter", //
-			FULL_CLASS_DETAIL = "fullClassDetail", //
-			FULL_DOMAIN_DETAIL = "fullDomainDetail", //
 			GROUP = "group", //
 			INDEX = "index", //
 			INHERITED = "inherited", //
 			INSTRUCTIONS = "instructions", //
 			LENGTH = "length", //
 			LIMIT = "limit", //
-			LIST_RESPONSE = "listResponse", //
 			MANDATORY = "mandatory", //
 			MENU = "menu", //
-			MENU_DETAIL = MENU + "Detail", //
 			MENU_TYPE = MENU + "Type", //
 			METADATA = "metadata", //
+			MODE = "mode", //
 			MODIFIED = "modified", //
 			NAME = "name", //
 			NUMBER = "number", //
@@ -80,15 +74,11 @@ public class Serialization {
 			PARENT_TYPE = "parent_type", //
 			PASSWORD = "password", //
 			PRECISION = "precision", //
-			RELATION = "relation", //
 			RESPONSE_METADATA = "meta", //
 			ROLE = "role", //
+			ROLE_ID = "role" + ID_CAPITALIZED, //
 			SCALE = "scale", //
 			SESSION = "session", //
-			SIMPLE_CLASS_DETAIL = "simpleClassDetail", //
-			SIMPLE_DOMAIN_DETAIL = "simpleDomainDetail", //
-			SIMPLE_PROCESS_DETAIL = "simpleProcessDetail", //
-			SIMPLE_RESPONSE = "simpleResponse", //
 			SORT = "sort", //
 			SOURCE = "source", //
 			START = "start", //
@@ -109,23 +99,18 @@ public class Serialization {
 
 	public static final String //
 			LOOKUP = "lookup", //
-			LOOKUP_DETAIL = LOOKUP + "Detail", //
 			LOOKUP_TYPE = LOOKUP + "Type", //
 			LOOKUP_TYPE_ID = LOOKUP_TYPE + ID_CAPITALIZED, //
-			LOOKUP_TYPE_DETAIL = LOOKUP_TYPE + "Detail", //
 			LOOKUP_VALUE = LOOKUP + "Value", //
 			LOOKUP_VALUE_ID = LOOKUP_VALUE + ID_CAPITALIZED;
 
 	public static final String //
 			PROCESS = "process", //
 			PROCESS_ACTIVITY = PROCESS + "Activity", //
-			PROCESS_ACTIVITY_DEFINITION = PROCESS_ACTIVITY + "Definition", //
 			PROCESS_ACTIVITY_ID = PROCESS_ACTIVITY + ID_CAPITALIZED, //
 			PROCESS_ID = PROCESS + ID_CAPITALIZED, //
 			PROCESS_INSTANCE = PROCESS + "Instance", //
-			PROCESS_INSTANCE_ADVANCE = PROCESS_INSTANCE + "Advance", //
-			PROCESS_INSTANCE_ID = PROCESS_INSTANCE + ID_CAPITALIZED, //
-			PROCESS_STATUS = "processStatus";
+			PROCESS_INSTANCE_ID = PROCESS_INSTANCE + ID_CAPITALIZED;
 
 	public static final String //
 			TYPE_BOOLEAN = "boolean", //

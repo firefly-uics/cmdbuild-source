@@ -2,7 +2,6 @@ package org.cmdbuild.service.rest.model;
 
 import static org.cmdbuild.service.rest.constants.Serialization.CHILDREN;
 import static org.cmdbuild.service.rest.constants.Serialization.INDEX;
-import static org.cmdbuild.service.rest.constants.Serialization.MENU_DETAIL;
 import static org.cmdbuild.service.rest.constants.Serialization.MENU_TYPE;
 import static org.cmdbuild.service.rest.constants.Serialization.OBJECT_DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.OBJECT_ID;
@@ -17,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@XmlRootElement(name = MENU_DETAIL)
+@XmlRootElement
 public class MenuDetail extends Model {
 
 	private String menuType;

@@ -6,7 +6,6 @@ import static org.cmdbuild.service.rest.constants.Serialization.CLASS_SOURCE;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION_DIRECT;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION_INVERSE;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION_MASTER_DETAIL;
-import static org.cmdbuild.service.rest.constants.Serialization.FULL_DOMAIN_DETAIL;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-@XmlRootElement(name = FULL_DOMAIN_DETAIL)
+@XmlRootElement
 public class DomainWithFullDetails extends DomainWithBasicDetails {
 
 	private Long classSource;
