@@ -75,6 +75,11 @@
 
     Ext.define("CMDBuild.Management.ReferenceField.Field", {
         extend: "CMDBuild.Management.SearchableCombo",
+
+		mixins: {
+			observable: 'Ext.util.Observable'
+		},
+
         attribute: undefined,
 
         initComponent: function() {
@@ -166,8 +171,6 @@
 						}
 					}
 				});
-
-				return false;
 			}
 
 			return true;
