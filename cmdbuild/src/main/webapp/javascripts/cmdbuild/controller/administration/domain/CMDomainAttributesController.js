@@ -1,41 +1,169 @@
 (function() {
 
-	var translation = CMDBuild.Translation.administration.modClass.attributeProperties;
+	Ext.define('CMDBuild.controller.administration.domain.CMDomainAttributesController', {
+		extend: 'CMDBuild.controller.administration.CMBaseAttributesController',
 
-	Ext.define("CMDBuild.controller.administration.domain.CMDomainAttributesController", {
-		extend: "CMDBuild.controller.administration.CMBaseAttributesController",
+		requires: [
+			'CMDBuild.core.proxy.CMProxyAdministration',
+			'CMDBuild.core.proxy.CMProxyConstants'
+		],
+
+		/**
+		 * @property {Object}
+		 */
+		currentAttribute: undefined,
+
+		/**
+		 * @property {CMDBuild.cache.CMDomainModel}
+		 */
+		currentDomain: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.domain.CMDomainAttributeFormPanel}
+		 */
+		form: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.domain.CMDomainAttributeGrid}
+		 */
+		grid: undefined,
+
+		/**
+		 * @property {Ext.selection.RowModel}
+		 */
+		gridSM: undefined,
+
+		/**
+		 * @property {CMDBuild.administration.domain.CMDomainAttribute}
+		 */
+		view: undefined,
+
+		/**
+		 * @param {CMDBuild.administration.domain.CMDomainAttribute} view
+		 *
+		 * @override
+		 */
 		constructor: function(view) {
 			this.callParent(arguments);
 
-			this.currentDomain = null;
-			this.currentAttribute = null;
+			this.form = this.view.form;
+			this.grid = this.view.grid;
 
-			this.gridSM = this.view.grid.getSelectionModel();
-			this.gridSM.on('selectionchange', onSelectionChanged , this);
+			this.gridSM = this.grid.getSelectionModel();
+			this.gridSM.on('selectionchange', this.onSelectionChanged , this);
 
-			this.view.form.abortButton.on("click", onAbortButtonClick, this);
-			this.view.form.saveButton.on("click", onSaveButtonClick, this);
-			this.view.form.deleteButton.on("click", onDeleteButtonClick, this);
-			this.view.grid.addAttributeButton.on("click", onAddAttributeClick, this);
+			this.form.abortButton.on('click', this.onAbortButtonClick, this);
+			this.form.saveButton.on('click', this.onSaveButtonClick, this);
+			this.form.deleteButton.on('click', this.onDeleteButtonClick, this);
+			this.grid.addAttributeButton.on('click', this.onAddAttributeClick, this);
 		},
 
-		onAttributeMoved: function() {
-			var parameterNames = CMDBuild.ServiceProxy.parameter;
-			var attributes = [];
-			var store = this.getGrid().getStore();
+		/**
+		 * Cache synch
+		 *
+		 * @param {Array} savedAttributes
+		 */
+		anAttributeWasMoved: function(savedAttributes) {
+			if (!Ext.Object.isEmpty(this.currentDomain) && !Ext.isEmpty(savedAttributes)) {
+				var oldAttributes = this.currentDomain.get(CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES);
 
-			for (var i=0, l=store.getCount(); i<l; i++) {
+				for (var i = 0; i < savedAttributes.length; ++i) {
+					var newAttr = savedAttributes[i];
+
+					for (var j = 0; j < oldAttributes.length; ++j) {
+						var oldAttr = oldAttributes[j];
+
+						if (oldAttr[CMDBuild.core.proxy.CMProxyConstants.NAME] == newAttr[CMDBuild.core.proxy.CMProxyConstants.NAME]) {
+							oldAttr[CMDBuild.core.proxy.CMProxyConstants.INDEX] = newAttr[CMDBuild.core.proxy.CMProxyConstants.INDEX];
+
+							break;
+						}
+					}
+				}
+			}
+		},
+
+		deleteAttribute: function() {
+			if (!Ext.isEmpty(this.currentDomain) && !Ext.isEmpty(this.currentAttribute)) {
+				CMDBuild.LoadMask.get().show();
+				CMDBuild.ServiceProxy.administration.domain.attribute.remove({
+					params: {
+						className: this.currentDomain.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
+						name: this.currentAttribute.get(CMDBuild.core.proxy.CMProxyConstants.NAME)
+					},
+					scope: this,
+					success: function(result, options, decodedResult) {
+						this.form.reset();
+
+						_CMCache.onDomainAttributeDelete(
+							this.currentDomain.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+							this.currentAttribute[CMDBuild.core.proxy.CMProxyConstants.DATA]
+						);
+
+						this.currentAttribute = null;
+					},
+					callback: function() {
+						CMDBuild.LoadMask.get().hide();
+					}
+				});
+			}
+		},
+
+		/**
+		 * @override
+		 */
+		getGrid: function() {
+			return this.view.grid;
+		},
+
+		/**
+		 * @override
+		 */
+		getCurrentEntryTypeId: function() {
+			return this.currentDomain.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+		},
+
+		onAbortButtonClick: function() {
+			if (Ext.isEmpty(this.currentAttribute)) {
+				this.form.disableModify();
+				this.form.reset();
+			} else {
+				this.form.onAttributeSelected(this.currentAttribute);
+			}
+		},
+
+		onAddAttributeClick: function() {
+			this.currentAttribute = null;
+			this.view.onAddAttributeClick();
+
+			_CMCache.initAddingTranslations();
+		},
+
+		onAddButtonClick: function() {
+			this.view.disable();
+		},
+
+		/**
+		 * @override
+		 */
+		onAttributeMoved: function() {
+			var me = this;
+			var attributes = [];
+			var store = this.grid.getStore();
+
+			for (var i = 0; i < store.getCount(); i++) {
 				var rec = store.getAt(i);
+
 				var attribute = {};
-				attribute[parameterNames.NAME] = rec.get("name");
-				attribute[parameterNames.INDEX] = i+1;
+				attribute[CMDBuild.core.proxy.CMProxyConstants.NAME] = rec.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+				attribute[CMDBuild.core.proxy.CMProxyConstants.INDEX] = i + 1;
+
 				attributes.push(attribute);
 			}
 
-			var me = this;
 			var params = {};
-			params[parameterNames.ATTRIBUTES] = Ext.JSON.encode(attributes);
-			params[parameterNames.CLASS_NAME] = _CMCache.getDomainNameById(this.getCurrentEntryTypeId());
+			params[CMDBuild.core.proxy.CMProxyConstants.ATTRIBUTES] = Ext.JSON.encode(attributes);
+			params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getDomainNameById(this.getCurrentEntryTypeId());
 
 			CMDBuild.ServiceProxy.attributes.reorder({
 				params: params,
@@ -45,128 +173,74 @@
 			});
 		},
 
-		getGrid: function() {
-			return this.view.grid;
+		onDeleteButtonClick: function() {
+			Ext.Msg.show({
+				title: CMDBuild.Translation.administration.modClass.attributeProperties.delete_attribute,
+				msg: CMDBuild.Translation.common.confirmpopup.areyousure,
+				scope: this,
+				buttons: Ext.Msg.YESNO,
+				fn: function(button) {
+					if (button == 'yes') {
+						this.deleteAttribute();
+					}
+				}
+			});
 		},
 
-		getCurrentEntryTypeId: function() {
-			return this.currentDomain.get("id");
-		},
-
+		/**
+		 * @params {CMDBuild.cache.CMDomainModel} domain
+		 */
 		onDomainSelected: function(domain) {
 			this.currentDomain = domain;
 			this.view.onDomainSelected(domain);
 		},
 
-		onAddButtonClick: function() {
-			this.view.disable();
+		onSaveButtonClick: function() {
+			var nonValid = this.form.getNonValidFields();
+			var data = this.form.getData(true);
+
+			data[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.currentDomain.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
+
+			if (nonValid.length > 0) {
+				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+
+				return;
+			}
+
+			CMDBuild.LoadMask.get().show();
+			CMDBuild.ServiceProxy.administration.domain.attribute.save({
+				params: data,
+				scope: this,
+				success: function(result, options, decodedResult) {
+					var attribute = decodedResult.attribute;
+
+					this.currentAttribute = null;
+					this.form.disableModify();
+
+					_CMCache.onDomainAttributeSaved(this.currentDomain.get(CMDBuild.core.proxy.CMProxyConstants.ID), attribute);
+
+					this.grid.selectAttributeByName(attribute[CMDBuild.core.proxy.CMProxyConstants.NAME]);
+
+					_CMCache.flushTranslationsToSave(
+						this.currentDomain.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
+						attribute[CMDBuild.core.proxy.CMProxyConstants.NAME]
+					);
+				},
+				callback: function() {
+					CMDBuild.LoadMask.get().hide();
+				}
+			});
 		},
 
-		// synch the chache
-		anAttributeWasMoved: function(savedAttributes) {
-			if (this.currentDomain, savedAttributes) {
-				var oldAttributes = this.currentDomain.get("attributes");
-				for (var i = 0; i<savedAttributes.length; ++i) {
-					var newAttr = savedAttributes[i];
-
-					for (var j=0; j<oldAttributes.length; ++j) {
-						oldAttr = oldAttributes[j];
-						if (oldAttr.name == newAttr.name) {
-							oldAttr.index = newAttr.index;
-							break;
-						}
-					}
-				}
+		/**
+		 * @param {Ext.selection.RowModel} selection
+		 */
+		onSelectionChanged: function(selection) {
+			if (selection.selected.length > 0) {
+				this.currentAttribute = selection.selected.items[0];
+				this.form.onAttributeSelected(this.currentAttribute);
 			}
-		}
+		},
 	});
 
-	function onSelectionChanged(selection) {
-		if (selection.selected.length > 0) {
-			_debug(selection.selected.items[0])
-			this.currentAttribute = selection.selected.items[0];
-			this.view.form.onAttributeSelected(this.currentAttribute);
-		}
-	}
-
-	function onAddAttributeClick() {
-		this.currentAttribute = null;
-		this.view.onAddAttributeClick();
-		_CMCache.initAddingTranslations();
-	}
-
-	function onAbortButtonClick() {
-		if (this.currentAttribute == null) {
-			this.view.form.disableModify();
-			this.view.form.reset();
-		} else {
-			this.view.form.onAttributeSelected(this.currentAttribute);
-		}
-	}
-
-	function onSaveButtonClick() {
-		var nonValid = this.view.form.getNonValidFields();
-		if (nonValid.length > 0) {
-			CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-			return;
-		}
-
-		var data = this.view.form.getData(withDisabled = true);
-		data.className = this.currentDomain.get("name");
-
-		CMDBuild.LoadMask.get().show();
-		CMDBuild.ServiceProxy.administration.domain.attribute.save({
-			params: data,
-			scope: this,
-			success: function(response, request, decoded) {
-				this.currentAttribute = null;
-				this.view.form.disableModify();
-				_CMCache.onDomainAttributeSaved(this.currentDomain.get("id"), decoded.attribute);
-				this.view.grid.selectAttributeByName(decoded.attribute.name);
-				_CMCache.flushTranslationsToSave(this.currentDomain.get("name"), decoded.attribute.name);
-			},
-			callback: function() {
-				CMDBuild.LoadMask.get().hide();
-			}
-		});
-	}
-
-	function onDeleteButtonClick() {
-		Ext.Msg.show({
-			title: translation.delete_attribute,
-			msg: CMDBuild.Translation.common.confirmpopup.areyousure,
-			scope: this,
-			buttons: Ext.Msg.YESNO,
-			fn: function(button) {
-				if (button == "yes") {
-					deleteAttribute.call(this);
-				}
-			}
-		});
-	}
-
-	function deleteAttribute() {
-		if (!this.currentDomain || !this.currentAttribute) {
-			return;
-		}
-
-		CMDBuild.LoadMask.get().show();
-		CMDBuild.ServiceProxy.administration.domain.attribute.remove({
-			params: {
-				className: this.currentDomain.get("name"),
-				name: this.currentAttribute.get("name")
-			},
-			scope : this,
-			success : function(form, action) {
-				this.view.form.reset();
-
-				_CMCache.onDomainAttributeDelete(this.currentDomain.get("id"), this.currentAttribute.data);
-
-				this.currentAttribute = null;
-			},
-			callback : function() {
-				CMDBuild.LoadMask.get().hide();
-			}
-		});
-	}
 })();

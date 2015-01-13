@@ -52,6 +52,7 @@
 		CRON_EXPRESSION: 'cronExpression',
 		CRON_INPUT_TYPE: 'cronInputType',
 		CUSTOM: 'custom',
+		DATA: 'data',
 		DATASOURCE: 'dataSourceName',
 		DATASOURCE_ADDRESS: 'dataSourceAddress',
 		DATASOURCE_CONFIGURATION: 'dataSourceConfiguration',
