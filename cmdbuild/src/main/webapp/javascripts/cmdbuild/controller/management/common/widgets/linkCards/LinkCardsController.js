@@ -7,8 +7,6 @@
 
 	var tr = CMDBuild.Translation;
 
-	Ext.require('CMDBuild.model.widget.ModelLinkCards');
-
 	Ext.define('CMDBuild.controller.management.common.widgets.linkCards.LinkCardsController', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
@@ -19,6 +17,11 @@
 		statics: {
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.linkCards.LinkCards.WIDGET_NAME
 		},
+
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.model.widget.ModelLinkCards'
+		],
 
 		/**
 		 * @cfg {Boolean}
@@ -492,26 +495,39 @@
 		/**
 		 * Loads grid's page for last selection and select
 		 */
-		onGridShow: function() {
-			var lastSelectionId = this.model.getLastSelection();
+		onGridShow: function(withoutFilter) {
+			withoutFilter = Ext.isEmpty(withoutFilter) ? false : true;
 
+			var lastSelectionId = this.model.getLastSelection();
+_debug('onGridShow', lastSelectionId);
+_debug('onGridShow withoutFilter', withoutFilter);
 			if (!Ext.isEmpty(lastSelectionId)) {
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = lastSelectionId;
 				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
-				params[CMDBuild.core.proxy.CMProxyConstants.RETRY_WITHOUT_FILTER] = true;
-				params[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.grid.getStore().getProxy().extraParams[CMDBuild.core.proxy.CMProxyConstants.FILTER];
+				params[CMDBuild.core.proxy.CMProxyConstants.RETRY_WITHOUT_FILTER] = false;
+
+_debug('sorters', this.grid.getStore().sorters);
+				params[CMDBuild.core.proxy.CMProxyConstants.SORT] = Ext.encode(this.grid.getStore().sorters.getRange());
+
+				if (!withoutFilter)
+					params[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.grid.getStore().getProxy().extraParams[CMDBuild.core.proxy.CMProxyConstants.FILTER];
 
 				this.model._silent = true;
-
+_debug('params', params);
 				CMDBuild.ServiceProxy.card.getPosition({
 					scope: this,
 					params: params,
 					success: function(result, options, decodedResult) {
 						var position = decodedResult.position;
-
+_debug('position', position);
 						if (position >= 0) {
 							var	pageNumber = _CMUtils.grid.getPageNumber(position);
+//							var outOfFilter = (decodedResult.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.OUT_OF_FILTER)) ? decodedResult[CMDBuild.core.proxy.CMProxyConstants.OUT_OF_FILTER] : false;
+//_debug('outOfFilter', outOfFilter);
+_debug('pageNumber', pageNumber);
+							if (!withoutFilter)
+								this.onToggleGridFilterButtonClick(false);
 
 							this.grid.loadPage(
 								pageNumber,
@@ -521,9 +537,11 @@
 										this.selectionModel.select(
 											this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, lastSelectionId)
 										);
-
-										// Retry without grid store filter
-										if (!this.selectionModel.hasSelection() && this.view.toggleGridFilterButton.filterEnabled) {
+_debug('this.selectionModel.hasSelection()', this.selectionModel.hasSelection());
+										// Retry without grid store filter or server answer out of filter
+										if (!this.selectionModel.hasSelection() && this.view.toggleGridFilterButton.filterEnabled
+										) {
+_debug('outOfFilter if');
 											this.onToggleGridFilterButtonClick(false);
 											this.onGridShow();
 										}
@@ -532,6 +550,9 @@
 									}
 								}
 							);
+						} else if (this.view.toggleGridFilterButton.filterEnabled) {
+								this.onToggleGridFilterButtonClick(false);
+								this.onGridShow(true);
 						}
 					}
 				});

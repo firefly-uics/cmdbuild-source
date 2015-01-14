@@ -9,8 +9,10 @@
 			WIDGET_NAME: '.LinkCards'
 		},
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
-		 * @property {Object}
+		 * @cfg {Object}
 		 */
 		delegate: undefined,
 

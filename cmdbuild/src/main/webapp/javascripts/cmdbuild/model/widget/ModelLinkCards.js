@@ -28,7 +28,7 @@
 		selections: {},
 
 		/**
-		 * @property {Boolean}
+		 * @cfg {Boolean}
 		 */
 		singleSelect: undefined,
 
