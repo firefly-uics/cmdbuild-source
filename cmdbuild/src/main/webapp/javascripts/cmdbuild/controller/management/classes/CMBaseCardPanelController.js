@@ -1,11 +1,12 @@
 (function() {
 	Ext.define("CMDBuild.controller.management.classes.CMBaseCardPanelController", {
+		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
 
 		mixins : {
 			observable : "Ext.util.Observable"
 		},
 
-		extend: "CMDBuild.controller.management.classes.CMModCardSubController",
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		cardDataProviders: [],
 
@@ -58,30 +59,33 @@
 			}
 		},
 
+		/**
+		 * @param {Object} card
+		 */
 		onCardSelected: function(card) {
+			var me = this;
+
 			this.unlockCard();
 
 			this.callParent(arguments);
 
-			if (this.view.isInEditing()) {
+			if (this.view.isInEditing())
 				this.view.displayMode();
-			}
 
 			this.view.reset();
 
-			if (!this.entryType || !this.card) { return; }
+			if (!this.entryType || !this.card)
+				return;
 
 			// The right way it should work is to execute the getCard query to the server every time i select a new card in grid
 			var loadRemoteData = true;
 
-			// If the entryType id and the id of the card are different
-			// the fields are not right, refill the form before the loadCard
-			var reloadFields = this.entryType.get("id") != this.card.get("IdClass");
+			// If the entryType id and the id of the card are different the fields are not right, refill the form before the loadCard
+			var reloadFields = this.entryType.get(CMDBuild.core.proxy.CMProxyConstants.ID) != this.card.get("IdClass");
 
-			// defer this call to release the UI event manage
+			// Defer this call to release the UI event manage
 			Ext.defer(buildWidgetControllers, 1, this, [card]);
 
-			var me = this;
 			if (reloadFields) {
 				this.loadFields(this.card.get("IdClass"), function() {
 					me.loadCard(loadRemoteData);
