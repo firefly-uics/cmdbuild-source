@@ -3,10 +3,7 @@
 	Ext.define('CMDBuild.controller.administration.domain.CMDomainAttributesController', {
 		extend: 'CMDBuild.controller.administration.CMBaseAttributesController',
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyAdministration',
-			'CMDBuild.core.proxy.CMProxyConstants'
-		],
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
 		 * @property {Object}
@@ -50,7 +47,7 @@
 			this.grid = this.view.grid;
 
 			this.gridSM = this.grid.getSelectionModel();
-			this.gridSM.on('selectionchange', this.onSelectionChanged , this);
+			this.gridSM.on('selectionchange', this.onSelectionChanged, this);
 
 			this.form.abortButton.on('click', this.onAbortButtonClick, this);
 			this.form.saveButton.on('click', this.onSaveButtonClick, this);
@@ -240,7 +237,7 @@
 				this.currentAttribute = selection.selected.items[0];
 				this.form.onAttributeSelected(this.currentAttribute);
 			}
-		},
+		}
 	});
 
 })();
