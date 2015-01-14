@@ -157,16 +157,17 @@
 
 			this.classNameCombo = Ext.create('Ext.form.field.ComboBox', {
 				name: CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME,
-				fieldLabel: CMDBuild.Translation.targetClass,
+				fieldLabel: CMDBuild.Translation.classLabel,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				store: _CMCache.getClassesStore(),
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				queryMode: 'local',
 				allowBlank: false,
 				forceSelection: true,
 				editable: false,
+
+				store: _CMCache.getClassesAndProcessesStore(),
+				queryMode: 'local',
 
 				listeners: {
 					select: function(combo, records, options) {
