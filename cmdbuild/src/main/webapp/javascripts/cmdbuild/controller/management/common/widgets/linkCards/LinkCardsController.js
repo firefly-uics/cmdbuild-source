@@ -276,6 +276,14 @@
 				var classId = this.targetClass.getId();
 				var cqlQuery = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.FILTER];
 
+				// Disable toggle grid filter button
+				if (
+					this.widgetConf.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.DISABLE_GRID_FILTER_TOGGLER)
+					&& this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.DISABLE_GRID_FILTER_TOGGLER]
+				) {
+					this.view.toggleGridFilterButton.setDisabled(true);
+				}
+
 				new _CMUtils.PollingFunction({
 					success: function() {
 						me.alertIfChangeDefaultSelection = true;

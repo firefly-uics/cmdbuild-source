@@ -80,6 +80,7 @@
 		DISABLE_ADD_ROW: 'disableAddRow',
 		DISABLE_IMPORT_FROM_CSV: 'disableImportFromCsv',
 		DISABLE_DELETE_ROW: 'disableDeleteRow',
+		DISABLE_GRID_FILTER_TOGGLER: 'disableGridFilterToggler',
 		DOMAINS: 'domains',
 		DOMAIN_DIRECTION: 'domainDirection',
 		DOMAIN_ID: 'domainId',
