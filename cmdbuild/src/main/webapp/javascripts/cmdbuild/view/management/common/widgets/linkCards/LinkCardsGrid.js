@@ -3,8 +3,10 @@
 	Ext.define('CMDBuild.view.management.common.widgets.linkCards.LinkCardsGrid', {
 		extend: 'CMDBuild.view.management.common.CMCardGrid',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
-		 * @property {Object}
+		 * @cfg {Object}
 		 */
 		delegate: undefined,
 
