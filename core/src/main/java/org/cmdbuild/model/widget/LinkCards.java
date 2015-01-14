@@ -108,6 +108,11 @@ public class LinkCards extends Widget {
 	private Integer mapZoom;
 
 	/**
+	 * Default status of grid filter toggler button
+	 */
+	private boolean disableGridFilterToggler;
+
+	/**
 	 * The name of the variable where to put the selections of the widget during
 	 * the save operation
 	 */
@@ -166,12 +171,12 @@ public class LinkCards extends Widget {
 		this.allowCardEditing = allowCardEditing;
 	}
 
-	public boolean isReadOnly() {
-		return readOnly;
+	public boolean isDisableGridFilterToggler() {
+		return disableGridFilterToggler;
 	}
 
-	public void setReadOnly(final boolean readOnly) {
-		this.readOnly = readOnly;
+	public void setDisableGridFilterToggler(final boolean disableGridFilterToggler) {
+		this.disableGridFilterToggler = disableGridFilterToggler;
 	}
 
 	public boolean isRequired() {
@@ -244,6 +249,14 @@ public class LinkCards extends Widget {
 
 	public void setMetadataOutput(final String metadataOutput) {
 		this.metadataOutput = metadataOutput;
+	}
+
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(final boolean readOnly) {
+		this.readOnly = readOnly;
 	}
 
 	@Override

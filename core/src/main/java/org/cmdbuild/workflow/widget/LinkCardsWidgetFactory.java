@@ -31,6 +31,7 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 	public static final String REQUIRED = "Required";
 	private static final String METADATA = "Metadata";
 	private static final String METADATA_OUTPUT = "MetadataOutput";
+	public static final String DISABLE_GRID_FILTER_TOGGLER = "DisableGridFilterToggler";
 
 	public LinkCardsWidgetFactory(final TemplateRepository templateRespository, final Notifier notifier) {
 		super(templateRespository, notifier);
@@ -58,9 +59,10 @@ public class LinkCardsWidgetFactory extends ValuePairWidgetFactory {
 		widget.setRequired(readBooleanTrueIfPresent(valueMap.get(REQUIRED)));
 		widget.setMetadata(toMap(readString(valueMap.get(METADATA))));
 		widget.setMetadataOutput(readString(valueMap.get(METADATA_OUTPUT)));
+		widget.setDisableGridFilterToggler(readBooleanTrueIfTrue(valueMap.get(DISABLE_GRID_FILTER_TOGGLER)));
 		widget.setTemplates(extractUnmanagedStringParameters(valueMap, FILTER, CLASS_NAME, DEFAULT_SELECTION,
 				READ_ONLY, SINGLE_SELECT, ALLOW_CARD_EDITING, WITH_MAP, MAP_LATITUDE, MAP_LONGITUDE, MAP_ZOOM,
-				REQUIRED, BUTTON_LABEL));
+				REQUIRED, BUTTON_LABEL, DISABLE_GRID_FILTER_TOGGLER));
 
 		return widget;
 	}
