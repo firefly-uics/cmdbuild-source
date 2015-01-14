@@ -494,39 +494,36 @@
 
 		/**
 		 * Loads grid's page for last selection and select
+		 *
+		 * @param {Boolean} disableFilter
 		 */
-		onGridShow: function(withoutFilter) {
-			withoutFilter = Ext.isEmpty(withoutFilter) ? false : true;
+		onGridShow: function(disableFilter) {
+			disableFilter = Ext.isEmpty(disableFilter) ? false : true;
 
 			var lastSelectionId = this.model.getLastSelection();
-_debug('onGridShow', lastSelectionId);
-_debug('onGridShow withoutFilter', withoutFilter);
+
 			if (!Ext.isEmpty(lastSelectionId)) {
 				var params = {};
 				params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = lastSelectionId;
 				params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
 				params[CMDBuild.core.proxy.CMProxyConstants.RETRY_WITHOUT_FILTER] = false;
-
-_debug('sorters', this.grid.getStore().sorters);
 				params[CMDBuild.core.proxy.CMProxyConstants.SORT] = Ext.encode(this.grid.getStore().sorters.getRange());
 
-				if (!withoutFilter)
+				if (!disableFilter)
 					params[CMDBuild.core.proxy.CMProxyConstants.FILTER] = this.grid.getStore().getProxy().extraParams[CMDBuild.core.proxy.CMProxyConstants.FILTER];
 
 				this.model._silent = true;
-_debug('params', params);
+
 				CMDBuild.ServiceProxy.card.getPosition({
 					scope: this,
 					params: params,
 					success: function(result, options, decodedResult) {
 						var position = decodedResult.position;
-_debug('position', position);
+
 						if (position >= 0) {
 							var	pageNumber = _CMUtils.grid.getPageNumber(position);
-//							var outOfFilter = (decodedResult.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.OUT_OF_FILTER)) ? decodedResult[CMDBuild.core.proxy.CMProxyConstants.OUT_OF_FILTER] : false;
-//_debug('outOfFilter', outOfFilter);
-_debug('pageNumber', pageNumber);
-							if (!withoutFilter)
+
+							if (!disableFilter)
 								this.onToggleGridFilterButtonClick(false);
 
 							this.grid.loadPage(
@@ -537,11 +534,9 @@ _debug('pageNumber', pageNumber);
 										this.selectionModel.select(
 											this.grid.getStore().find(CMDBuild.core.proxy.CMProxyConstants.ID, lastSelectionId)
 										);
-_debug('this.selectionModel.hasSelection()', this.selectionModel.hasSelection());
+
 										// Retry without grid store filter or server answer out of filter
-										if (!this.selectionModel.hasSelection() && this.view.toggleGridFilterButton.filterEnabled
-										) {
-_debug('outOfFilter if');
+										if (!this.selectionModel.hasSelection() && this.view.toggleGridFilterButton.filterEnabled) {
 											this.onToggleGridFilterButtonClick(false);
 											this.onGridShow();
 										}
@@ -551,8 +546,8 @@ _debug('outOfFilter if');
 								}
 							);
 						} else if (this.view.toggleGridFilterButton.filterEnabled) {
-								this.onToggleGridFilterButtonClick(false);
-								this.onGridShow(true);
+							this.onToggleGridFilterButtonClick(false);
+							this.onGridShow(true);
 						}
 					}
 				});
