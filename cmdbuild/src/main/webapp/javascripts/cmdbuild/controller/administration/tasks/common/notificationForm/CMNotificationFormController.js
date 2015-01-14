@@ -2,7 +2,12 @@
 
 	Ext.define('CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController', {
 
-		requires: ['CMDBuild.core.proxy.CMProxyEmailAccounts', 'CMDBuild.core.proxy.CMProxyEmailTemplates'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.CMProxyEmailAccounts',
+			'CMDBuild.core.proxy.CMProxyEmailTemplates',
+			'CMDBuild.core.proxy.CMProxyTasks'
+		],
 
 		/**
 		 * @property {Array}

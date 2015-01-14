@@ -4,7 +4,7 @@
 		extend: 'Ext.form.FieldContainer',
 
 		/**
-		 * @property {CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController}
+		 * @cfg {CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormController}
 		 */
 		delegate: undefined,
 

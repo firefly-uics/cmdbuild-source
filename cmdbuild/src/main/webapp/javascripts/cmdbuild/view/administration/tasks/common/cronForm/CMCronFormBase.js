@@ -5,8 +5,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.cronForm.CMCronFormBase', {
 		extend: 'Ext.panel.Panel',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
-		 * @property {CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController}
+		 * @cfg {CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController}
 		 */
 		delegate: undefined,
 

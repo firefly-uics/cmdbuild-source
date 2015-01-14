@@ -3,8 +3,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.asynchronous.CMStep2Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
-		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormEventController}
+		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormEventController}
 		 */
 		parentDelegate: undefined,
 
@@ -119,7 +121,7 @@
 		extend: 'Ext.panel.Panel',
 
 		/**
-		 * @property {CMDBuild.view.administration.tasks.event.asynchronous.CMStep2Delegate}
+		 * @cfg {CMDBuild.view.administration.tasks.event.asynchronous.CMStep2Delegate}
 		 */
 		delegate: undefined,
 

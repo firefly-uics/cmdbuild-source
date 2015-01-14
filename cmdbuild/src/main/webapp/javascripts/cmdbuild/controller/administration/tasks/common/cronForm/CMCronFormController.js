@@ -2,6 +2,8 @@
 
 	Ext.define('CMDBuild.controller.administration.tasks.common.cronForm.CMCronFormController', {
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
 		 * @property {CMDBuild.view.administration.tasks.common.cronForm.CMCronFormAdvanced}
 		 */

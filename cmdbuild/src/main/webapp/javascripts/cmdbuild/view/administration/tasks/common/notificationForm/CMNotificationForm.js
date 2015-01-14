@@ -4,7 +4,7 @@
 		extend: 'Ext.container.Container',
 
 		/**
-		 * @property {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController}
+		 * @cfg {CMDBuild.controller.administration.tasks.common.notificationForm.CMNotificationFormController}
 		 */
 		delegate: undefined,
 

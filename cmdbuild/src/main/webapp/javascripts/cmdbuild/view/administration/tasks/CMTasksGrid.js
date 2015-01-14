@@ -5,8 +5,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.CMTasksGrid', {
 		extend: 'Ext.grid.Panel',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
-		 * @property {Mixed} Task specific controller
+		 * @cfg {Mixed} Task specific controller
 		 */
 		delegate: undefined,
 

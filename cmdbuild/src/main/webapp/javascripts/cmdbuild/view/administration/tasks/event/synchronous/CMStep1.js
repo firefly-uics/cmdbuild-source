@@ -138,6 +138,8 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.event.synchronous.CMStep1Delegate}
 		 */
@@ -225,7 +227,7 @@
 				forceSelection: true,
 				editable: false,
 
-				store: _CMCache.getClassesStore(),
+				store: _CMCache.getClassesAndProcessesStore(),
 				queryMode: 'local',
 
 				listeners: {

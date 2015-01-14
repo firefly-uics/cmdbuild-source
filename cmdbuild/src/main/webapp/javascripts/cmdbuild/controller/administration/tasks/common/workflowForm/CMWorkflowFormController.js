@@ -2,7 +2,10 @@
 
 	Ext.define('CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController', {
 
-		requires: ['CMDBuild.core.proxy.CMProxyTasks'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.CMProxyTasks'
+		],
 
 		/**
 		 * @property {CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormCombo}

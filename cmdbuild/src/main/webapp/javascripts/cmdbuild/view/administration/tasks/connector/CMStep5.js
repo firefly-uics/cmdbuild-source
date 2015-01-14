@@ -5,8 +5,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep5Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
-		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormConnectorController}
+		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormConnectorController}
 		 */
 		parentDelegate: undefined,
 
@@ -294,8 +296,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep5', {
 		extend: 'Ext.panel.Panel',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
-		 * @property {CMDBuild.view.administration.tasks.connector.CMStep5Delegate}
+		 * @cfg {CMDBuild.view.administration.tasks.connector.CMStep5Delegate}
 		 */
 		delegate: undefined,
 

@@ -152,6 +152,8 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep3', {
 		extend: 'Ext.panel.Panel',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.event.synchronous.CMStep3Delegate}
 		 */

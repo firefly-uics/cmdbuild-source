@@ -4,7 +4,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		/**
-		 * @property {CMDBuild.controller.administration.tasks.CMTasksController}
+		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksController}
 		 */
 		parentDelegate: undefined,
 
@@ -64,7 +64,7 @@
 		extend: 'Ext.panel.Panel',
 
 		/**
-		 * @property {CMDBuild.view.administration.tasks.common.CMStepCronConfigurationDelegate}
+		 * @cfg {CMDBuild.view.administration.tasks.common.CMStepCronConfigurationDelegate}
 		 */
 		delegate: undefined,
 

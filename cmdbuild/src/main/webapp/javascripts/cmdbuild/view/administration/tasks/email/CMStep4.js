@@ -6,7 +6,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		/**
-		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormEmailController}
+		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormEmailController}
 		 */
 		parentDelegate: undefined,
 
@@ -106,8 +106,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.email.CMStep4', {
 		extend: 'Ext.panel.Panel',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
-		 * @property {CMDBuild.view.administration.tasks.email.CMStep4Delegate}
+		 * @cfg {CMDBuild.view.administration.tasks.email.CMStep4Delegate}
 		 */
 		delegate: undefined,
 

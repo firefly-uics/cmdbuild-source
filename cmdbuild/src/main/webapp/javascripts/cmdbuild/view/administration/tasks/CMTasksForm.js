@@ -12,8 +12,10 @@
 			cmFormFunctions: 'CMDBUild.view.common.CMFormFunctions'
 		},
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
-		 * @property {Mixed} Task specific controller
+		 * @cfg {Mixed} Task specific controller
 		 */
 		delegate: undefined,
 
