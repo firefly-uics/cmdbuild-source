@@ -5,8 +5,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormGrid', {
 		extend: 'Ext.grid.Panel',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
-		 * @proeprty {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController}
+		 * @cfg {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController}
 		 */
 		delegate: undefined,
 

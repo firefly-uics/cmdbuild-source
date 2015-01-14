@@ -3,6 +3,16 @@
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.CMProxyTasks'
+		],
+
+		/**
+		 * @cfg {Object}
+		 */
+		parentDelegate: undefined,
+
 		/**
 		 * @cfg {CMDBuild.view.administration.tasks.CMTasksForm}
 		 */
@@ -12,11 +22,6 @@
 		 * @cfg {CMDBuild.view.administration.tasks.CMTasksGrid}
 		 */
 		grid: undefined,
-
-		/**
-		 * @cfg {Object}
-		 */
-		parentDelegate: undefined,
 
 		/**
 		 * @property {Ext.selection.Model}

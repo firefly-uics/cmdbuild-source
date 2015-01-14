@@ -6,7 +6,7 @@
 		extend: 'Ext.form.FieldContainer',
 
 		/**
-		 * @property {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController}
+		 * @cfg {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController}
 		 */
 		delegate: undefined,
 

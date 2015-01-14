@@ -3,8 +3,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.common.workflowForm.CMWorkflowFormCombo', {
 		extend: 'Ext.form.field.ComboBox',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
-		 * @property {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController}
+		 * @cfg {CMDBuild.controller.administration.tasks.common.workflowForm.CMWorkflowFormController}
 		 */
 		delegate: undefined,
 

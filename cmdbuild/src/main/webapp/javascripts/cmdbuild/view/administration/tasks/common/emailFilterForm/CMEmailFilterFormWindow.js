@@ -6,7 +6,7 @@
 		extend: 'Ext.window.Window',
 
 		/**
-		 * @property {CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormWindowController}
+		 * @cfg {CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormWindowController}
 		 */
 		delegate: undefined,
 

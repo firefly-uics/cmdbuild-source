@@ -3,15 +3,19 @@
 	Ext.define('CMDBuild.controller.administration.tasks.CMTasksFormEventController', {
 		extend: 'CMDBuild.controller.administration.tasks.CMTasksFormBaseController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyEmailTemplates'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.CMProxyEmailTemplates',
+			'CMDBuild.core.proxy.CMProxyTasks'
+		],
 
 		/**
-		 * @property {Array} array of all step delegates
+		 * @cfg {Array} array of all step delegates
 		 */
 		delegateStep: undefined,
 
 		/**
-		 * @property {CMDBuild.controller.administration.tasks.CMTasksController}
+		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksController}
 		 */
 		parentDelegate: undefined,
 

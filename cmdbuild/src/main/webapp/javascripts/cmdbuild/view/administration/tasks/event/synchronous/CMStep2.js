@@ -3,6 +3,8 @@
 	Ext.define('CMDBuild.view.administration.tasks.event.synchronous.CMStep2Delegate', {
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
 		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormEventController}
 		 */

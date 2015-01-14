@@ -6,7 +6,7 @@
 		extend: 'CMDBuild.controller.CMBasePanelController',
 
 		/**
-		 * @property {CMDBuild.controller.administration.tasks.CMTasksFormConnectorController}
+		 * @cfg {CMDBuild.controller.administration.tasks.CMTasksFormConnectorController}
 		 */
 		parentDelegate: undefined,
 
@@ -118,8 +118,10 @@
 	Ext.define('CMDBuild.view.administration.tasks.connector.CMStep1', {
 		extend: 'Ext.panel.Panel',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
 		/**
-		 * @property {CMDBuild.view.administration.tasks.connector.CMStep1Delegate}
+		 * @cfg {CMDBuild.view.administration.tasks.connector.CMStep1Delegate}
 		 */
 		delegate: undefined,
 
