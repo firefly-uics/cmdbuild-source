@@ -41,7 +41,7 @@
 				this.entryType = entryType;
 				this.filter = filter || null;
 
-				this.setCard(null); // reset the stored card because it could not be of the new entry type
+				this.setCard(null, null, enableDelegatesCall); // reset the stored card because it could not be of the new entry type
 
 				if (enableDelegatesCall)
 					this.callDelegates('onEntryTypeDidChange', [this, entryType, danglingCard, filter]);
@@ -68,7 +68,7 @@
 							var c = new CMDBuild.DummyModel(response.card);
 
 							c.raw = raw;
-							this.setCard(c, cb);
+							this.setCard(c, cb, enableDelegatesCall);
 						}
 					}
 				});
