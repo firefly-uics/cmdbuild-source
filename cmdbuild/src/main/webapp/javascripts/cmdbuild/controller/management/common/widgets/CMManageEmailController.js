@@ -182,10 +182,11 @@
 		 * @override
 		 */
 		beforeActiveView: function() {
+_debug('beforeActiveView');
 			var pi = _CMWFState.getProcessInstance();
 
 			if (!this.gridStoreWasLoaded) {
-				this.view.getEl().mask(CMDBuild.Translation.common.wait_title);
+				this.view.setLoading(true);
 				this.view.emailGrid.store.load({
 					params: {
 						ProcessId: pi.getId()
@@ -193,11 +194,12 @@
 					scope: this,
 					callback: function(records, operation, success) {
 						this.gridStoreWasLoaded = true;
-						this.view.getEl().unmask();
+						this.view.setLoading(false);
 						this.addEmailFromTemplateIfNeeded();
 					}
 				});
 			} else {
+_debug('else');
 				this.addEmailFromTemplateIfNeeded();
 			}
 		},
@@ -367,7 +369,7 @@
 			var emailToRemove = [].concat(this.view.getNewEmails()).concat(this.view.getDraftEmails());
 
 			for (var i = 0; i < emailToRemove.length; ++i)
-				this.view.removeRecord(emailToRemove[i]);
+				this.removeRecord(emailToRemove[i]);
 		},
 
 		/**
