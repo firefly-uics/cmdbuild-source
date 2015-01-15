@@ -378,10 +378,7 @@
 								fields: _CMCache.getDataSourceOutput(presetsString),
 								extraParams: {
 									'function': presetsString,
-									params: Ext.encode(params),
-									limitParam: undefined, // Avoid to send limit in server calls
-									pageParam: undefined, // Avoid to send page in server calls
-									startParam: undefined // Avoid to send start in server calls
+									params: Ext.encode(params)
 								}
 							})
 						);

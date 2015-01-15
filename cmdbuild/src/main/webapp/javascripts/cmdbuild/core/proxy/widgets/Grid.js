@@ -79,6 +79,11 @@
 			 * @return {Ext.data.Store}
 			 */
 			getStoreFromFunction: function(parameters) {
+				// Avoid to send limit, page and start parameters in server calls
+				parameters.extraParams.limitParam = undefined;
+				parameters.extraParams.pageParam = undefined;
+				parameters.extraParams.startParam = undefined;
+
 				return Ext.create('Ext.data.Store', {
 					autoLoad: true,
 					fields: parameters.fields,
