@@ -28,7 +28,14 @@
 			this.card = null;
 		},
 
-		// TODO manage dangling card
+		/**
+		 * @param {CMDBuild.cache.CMEntryTypeModel} entryType
+		 * @param {Object} danglingCard
+		 * @param {Object} filter
+		 * @param {Boolean} enableDelegatesCall
+		 *
+		 * TODO manage dangling card
+		 */
 		setEntryType: function(entryType, danglingCard, filter, enableDelegatesCall) {
 			enableDelegatesCall = (!Ext.isEmpty(enableDelegatesCall)) ? enableDelegatesCall : true;
 
@@ -51,8 +58,9 @@
 		/**
 		 * To check/get card datas and set complete card object
 		 *
-		 * @param (Object) card
-		 * @param (Function) cb
+		 * @param {Object} card
+		 * @param {Function} cb
+		 * @param {Boolean} enableDelegatesCall
 		 */
 		setCard: function(card, cb, enableDelegatesCall) {
 			enableDelegatesCall = (!Ext.isEmpty(enableDelegatesCall)) ? enableDelegatesCall : true;
