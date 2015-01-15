@@ -245,9 +245,10 @@ public class QuerySpecsBuilderFiller {
 
 		// full text query on attributes of the source class
 		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
-			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder(
-					filterObject.getString(FULL_TEXT_QUERY_KEY), sourceClass);
-			whereClauses.add(jsonFullTextQueryBuilder.build());
+			whereClauses.add(JsonFullTextQueryBuilder.newInstance() //
+					.withFullTextQuery(filterObject.getString(FULL_TEXT_QUERY_KEY)) //
+					.withEntryType(sourceClass) //
+					.build());
 		}
 
 		if (filterObject.has(CQL_KEY)) {
@@ -257,9 +258,11 @@ public class QuerySpecsBuilderFiller {
 
 		// filter on attributes of the source class
 		if (filterObject.has(ATTRIBUTE_KEY)) {
-			final JsonAttributeFilterBuilder attributeFilterBuilder = new JsonAttributeFilterBuilder(
-					filterObject.getJSONObject(ATTRIBUTE_KEY), sourceClass, dataView);
-			whereClauses.add(attributeFilterBuilder.build());
+			whereClauses.add(JsonAttributeFilterBuilder.newInstance() //
+					.withFilterObject(filterObject.getJSONObject(ATTRIBUTE_KEY)) //
+					.withEntryType(sourceClass) //
+					.withDataView(dataView) //
+					.build());
 		}
 
 		// filter on relations

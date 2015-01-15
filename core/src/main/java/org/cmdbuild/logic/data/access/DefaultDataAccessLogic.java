@@ -171,8 +171,8 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	}
 
 	@Override
-	public GetRelationListResponse getRelationList(final CMDomain domain) {
-		return new GetRelationList(strictDataView).exec(domain, QueryOptions.newQueryOption().build());
+	public GetRelationListResponse getRelationList(final CMDomain domain, final QueryOptions queryOptions) {
+		return new GetRelationList(strictDataView).exec(domain, queryOptions);
 	}
 
 	@Override

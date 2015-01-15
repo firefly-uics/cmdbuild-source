@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.mapping.json;
 
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.dao.query.clause.where.ContainsOperatorAndValue.contains;
 import static org.cmdbuild.dao.query.clause.where.EqualsOperatorAndValue.eq;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
@@ -34,7 +35,6 @@ import org.cmdbuild.dao.entrytype.attributetype.TimeAttributeType;
 import org.cmdbuild.dao.query.ExternalReferenceAliasHandler;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.OperatorAndValue;
 import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
@@ -49,28 +49,45 @@ import com.google.common.collect.Lists;
  */
 public class JsonFullTextQueryBuilder implements Builder<WhereClause> {
 
-	private final String fullTextQuery;
-	private final CMEntryType entryType;
-	private final Alias entryTypeAlias;
-
-	public JsonFullTextQueryBuilder( //
-			final String fullTextQuery, //
-			final CMEntryType entryType, //
-			final Alias entryTypeAlias //
-	) {
-		Validate.notNull(fullTextQuery);
-		Validate.notNull(entryType);
-		this.fullTextQuery = fullTextQuery;
-		this.entryType = entryType;
-		this.entryTypeAlias = entryTypeAlias;
+	public static JsonFullTextQueryBuilder newInstance() {
+		return new JsonFullTextQueryBuilder();
 	}
 
-	public JsonFullTextQueryBuilder(final String fullTextQuery, final CMEntryType entryType) {
-		this(fullTextQuery, entryType, null);
+	private String fullTextQuery;
+	private CMEntryType entryType;
+	private Alias entryTypeAlias;
+
+	private JsonFullTextQueryBuilder() {
+		// use factory method
+	}
+
+	public JsonFullTextQueryBuilder withFullTextQuery(final String fullTextQuery) {
+		this.fullTextQuery = fullTextQuery;
+		return this;
+	}
+
+	public JsonFullTextQueryBuilder withEntryType(final CMEntryType entryType) {
+		this.entryType = entryType;
+		return this;
+	}
+
+	public JsonFullTextQueryBuilder withEntryTypeAlias(final Alias entryTypeAlias) {
+		this.entryTypeAlias = entryTypeAlias;
+		return this;
 	}
 
 	@Override
 	public WhereClause build() {
+		validate();
+		return doBuild();
+	}
+
+	private void validate() {
+		Validate.notNull(fullTextQuery, "missing full-text query");
+		Validate.notNull(entryType, "missing entry type");
+	}
+
+	private WhereClause doBuild() {
 		final List<WhereClause> whereClauses = Lists.newArrayList();
 		for (final CMAttribute attribute : entryType.getActiveAttributes()) {
 			final OperatorAndValue opAndVal = contains(fullTextQuery);
@@ -82,8 +99,7 @@ public class JsonFullTextQueryBuilder implements Builder<WhereClause> {
 					aliasAttribute = attribute(entryTypeAlias, attribute.getName());
 				}
 			} else {
-				final Alias lookupClassAlias = NameAlias.as(new ExternalReferenceAliasHandler(entryType, attribute)
-						.forQuery());
+				final Alias lookupClassAlias = name(new ExternalReferenceAliasHandler(entryType, attribute).forQuery());
 				aliasAttribute = attribute(lookupClassAlias, ExternalReferenceAliasHandler.EXTERNAL_ATTRIBUTE);
 			}
 			final SimpleWhereClause simpleWhereClause = (SimpleWhereClause) condition(aliasAttribute, opAndVal);

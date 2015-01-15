@@ -10,46 +10,64 @@ import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
-import org.cmdbuild.dao.view.CMDataView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class JsonFunctionFilterBuilder implements Builder<WhereClause> {
 
-	private final JSONObject filterObject;
-	private final CMEntryType entryType;
-	private final QueryAliasAttribute attribute;
-	private final OperationUser operationUser;
+	public static JsonFunctionFilterBuilder newInstance() {
+		return new JsonFunctionFilterBuilder();
+	}
 
-	public JsonFunctionFilterBuilder(final JSONObject filter, final CMEntryType entryType, final CMDataView dataView,
-			final OperationUser operationUser) {
-		Validate.notNull(filter, "invalid filter");
-		Validate.notNull(entryType, "invalid entry type");
-		Validate.notNull(dataView, "invalid data view");
+	private JSONObject filterObject;
+	private CMEntryType entryType;
+	private OperationUser operationUser;
+
+	private JsonFunctionFilterBuilder() {
+		// use factory method
+	}
+
+	public JsonFunctionFilterBuilder withFilterObject(final JSONObject filterObject) {
+		this.filterObject = filterObject;
+		return this;
+	}
+
+	public JsonFunctionFilterBuilder withEntryType(final CMEntryType entryType) {
 		this.entryType = entryType;
-		this.filterObject = filter;
-		this.attribute = QueryAliasAttribute.attribute(entryType, SystemAttributes.Id.getDBName());
+		return this;
+	}
+
+	public JsonFunctionFilterBuilder withOperationUser(final OperationUser operationUser) {
 		this.operationUser = operationUser;
+		return this;
 	}
 
 	@Override
 	public WhereClause build() {
+		validate();
+		return doBuild();
+	}
+
+	private void validate() {
+		Validate.notNull(filterObject, "invalid filter");
+		Validate.notNull(entryType, "invalid entry type");
+	}
+
+	private WhereClause doBuild() {
 		try {
-			return buildWhereClause(filterObject);
+			final CMEntryType entryType = this.entryType;
+			if (filterObject.has(FUNCTION_NAME_KEY)) {
+				final String name = filterObject.getString(FUNCTION_NAME_KEY);
+				final Long userId = (operationUser == null) ? null : operationUser.getAuthenticatedUser().getId();
+				final Long roleId = (operationUser == null) ? null : operationUser.getPreferredGroup().getId();
+				final QueryAliasAttribute attribute = QueryAliasAttribute.attribute(entryType,
+						SystemAttributes.Id.getDBName());
+				return function(attribute, name, userId, roleId, entryType);
+			}
+			throw new IllegalArgumentException("The filter is malformed");
 		} catch (final JSONException e) {
 			throw new IllegalArgumentException("malformed filter", e);
 		}
-	}
-
-	private WhereClause buildWhereClause(final JSONObject filterObject) throws JSONException {
-		CMEntryType entryType = this.entryType;
-		if (filterObject.has(FUNCTION_NAME_KEY)) {
-			final String name = filterObject.getString(FUNCTION_NAME_KEY);
-			final Long userId = (operationUser == null) ? null : operationUser.getAuthenticatedUser().getId();
-			final Long roleId = (operationUser == null) ? null : operationUser.getPreferredGroup().getId();
-			return function(attribute, name, userId, roleId, entryType);
-		}
-		throw new IllegalArgumentException("The filter is malformed");
 	}
 
 }

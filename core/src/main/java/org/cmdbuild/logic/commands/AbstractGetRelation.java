@@ -1,8 +1,16 @@
 package org.cmdbuild.logic.commands;
 
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.cmdbuild.dao.driver.postgres.Const.CODE_ATTRIBUTE;
+import static org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
+import static org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
 import static org.cmdbuild.dao.query.clause.AnyAttribute.anyAttribute;
 import static org.cmdbuild.dao.query.clause.AnyClass.anyClass;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
+import static org.cmdbuild.dao.query.clause.alias.Aliases.name;
 import static org.cmdbuild.dao.query.clause.alias.Utils.as;
 import static org.cmdbuild.dao.query.clause.join.Over.over;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
@@ -12,7 +20,6 @@ import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClaus
 
 import java.util.Map;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entry.CMCard;
 import org.cmdbuild.dao.entry.CMRelation;
@@ -23,7 +30,6 @@ import org.cmdbuild.dao.query.clause.OrderByClause.Direction;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryRelation;
 import org.cmdbuild.dao.query.clause.alias.Alias;
-import org.cmdbuild.dao.query.clause.alias.NameAlias;
 import org.cmdbuild.dao.query.clause.where.EmptyWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
@@ -45,13 +51,15 @@ public class AbstractGetRelation {
 	}
 
 	// TODO Change Code, Description, Id with something meaningful
-	protected static final String ID = org.cmdbuild.dao.driver.postgres.Const.ID_ATTRIBUTE;
-	protected static final String CODE = org.cmdbuild.dao.driver.postgres.Const.CODE_ATTRIBUTE;
-	protected static final String DESCRIPTION = org.cmdbuild.dao.driver.postgres.Const.DESCRIPTION_ATTRIBUTE;
+	protected static final String ID = ID_ATTRIBUTE;
+	public static final String IDOBJ1 = DomainId1.getDBName();
+	public static final String IDOBJ2 = DomainId2.getDBName();
+	protected static final String CODE = CODE_ATTRIBUTE;
+	protected static final String DESCRIPTION = DESCRIPTION_ATTRIBUTE;
 
-	protected static final Alias SRC_ALIAS = NameAlias.as("SRC");
-	protected static final Alias DOM_ALIAS = NameAlias.as("DOM");
-	protected static final Alias DST_ALIAS = NameAlias.as("DST");
+	protected static final Alias SRC_ALIAS = name("SRC");
+	protected static final Alias DOM_ALIAS = name("DOM");
+	protected static final Alias DST_ALIAS = name("DST");
 
 	protected CMDataView view;
 
@@ -66,13 +74,12 @@ public class AbstractGetRelation {
 	protected QuerySpecsBuilder getRelationQuerySpecsBuilder(final Card src, final CMDomain domain,
 			final WhereClause whereClause) {
 		final CMClass srcCardType = getCardType(src);
-		WhereClause clause = trueWhereClause();
-		if ((src.getId() != null) && (src.getId() > 0L)) {
-			if (whereClause == null || whereClause instanceof EmptyWhereClause) {
-				clause = condition(attribute(SRC_ALIAS, ID), eq(src.getId()));
-			} else {
-				clause = and(condition(attribute(SRC_ALIAS, ID), eq(src.getId())), whereClause);
-			}
+		final WhereClause _whereClause = (whereClause instanceof EmptyWhereClause) ? trueWhereClause() : whereClause;
+		final WhereClause clause;
+		if (defaultIfNull(src.getId(), 0L) > 0L) {
+			clause = and(condition(attribute(SRC_ALIAS, ID), eq(src.getId())), _whereClause);
+		} else {
+			clause = _whereClause;
 		}
 		return getRelationQuery(srcCardType, domain) //
 				.where(clause);
@@ -84,7 +91,8 @@ public class AbstractGetRelation {
 						attribute(DST_ALIAS, CODE), attribute(DST_ALIAS, DESCRIPTION)) //
 				.from(sourceType, as(SRC_ALIAS)) //
 				.join(anyClass(), as(DST_ALIAS), over(domain, as(DOM_ALIAS))) //
-				.orderBy(attribute(DST_ALIAS, DESCRIPTION), Direction.ASC);
+				.orderBy(attribute(DST_ALIAS, DESCRIPTION), Direction.ASC) //
+				.count();
 	}
 
 	protected CMClass getCardType(final Card src) {
@@ -106,11 +114,11 @@ public class AbstractGetRelation {
 		}
 
 		public String getSourceDescription() {
-			return ObjectUtils.toString(src.get(DESCRIPTION));
+			return defaultIfNull(src.get(DESCRIPTION), EMPTY).toString();
 		}
 
 		public String getSourceCode() {
-			return ObjectUtils.toString(src.get(CODE));
+			return defaultIfNull(src.get(CODE), EMPTY).toString();
 		}
 
 		public CMCard getSourceCard() {
@@ -126,11 +134,11 @@ public class AbstractGetRelation {
 		}
 
 		public String getTargetDescription() {
-			return ObjectUtils.toString(dst.get(DESCRIPTION));
+			return defaultIfNull(dst.get(DESCRIPTION), EMPTY).toString();
 		}
 
 		public String getTargetCode() {
-			return ObjectUtils.toString(dst.get(CODE));
+			return defaultIfNull(dst.get(CODE), EMPTY).toString();
 		}
 
 		public CMCard getTargetCard() {

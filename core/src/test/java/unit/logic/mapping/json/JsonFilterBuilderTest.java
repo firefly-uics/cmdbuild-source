@@ -156,7 +156,11 @@ public class JsonFilterBuilderTest {
 	}
 
 	private WhereClause whereClauseFrom(final String filter) throws Exception {
-		return new JsonAttributeFilterBuilder(new JSONObject(filter), entryType, dataView).build();
+		return JsonAttributeFilterBuilder.newInstance() //
+				.withFilterObject(new JSONObject(filter)) //
+				.withEntryType(entryType) //
+				.withDataView(dataView) //
+				.build();
 	}
 
 }
