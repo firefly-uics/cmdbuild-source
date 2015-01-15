@@ -531,9 +531,6 @@
 						if (position >= 0) {
 							var	pageNumber = _CMUtils.grid.getPageNumber(position);
 
-							if (!disableFilter)
-								this.onToggleGridFilterButtonClick(false);
-
 							this.grid.loadPage(
 								pageNumber,
 								{
