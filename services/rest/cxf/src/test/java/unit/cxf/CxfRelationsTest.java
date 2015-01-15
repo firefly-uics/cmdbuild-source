@@ -123,7 +123,7 @@ public class CxfRelationsTest {
 				.when(errorHandler).domainNotFound(anyString());
 
 		// when
-		cxfRelations.read("123", null, null);
+		cxfRelations.read("123", null, null, null);
 
 		// then
 		final InOrder inOrder = inOrder(errorHandler, dataAccessLogic);
@@ -154,7 +154,7 @@ public class CxfRelationsTest {
 				.when(errorHandler).propagate(any(Exception.class));
 
 		// when
-		cxfRelations.read("12", null, null);
+		cxfRelations.read("12", null, null, null);
 
 		// then
 		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);

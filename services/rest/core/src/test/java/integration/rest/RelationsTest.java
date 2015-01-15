@@ -2,9 +2,10 @@ package integration.rest;
 
 import static java.util.Arrays.asList;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.cmdbuild.service.rest.constants.Serialization.CARD_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.CLASS_ID;
-import static org.cmdbuild.service.rest.constants.Serialization.DOMAIN_SOURCE;
+import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
+import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.cmdbuild.service.rest.model.Models.newCard;
@@ -168,13 +169,14 @@ public class RelationsTest {
 						.build()) //
 				.build();
 		doReturn(sentResponse) //
-				.when(service).read(anyString(), anyInt(), anyInt());
+				.when(service).read(anyString(), anyString(), anyInt(), anyInt());
 
 		// when
 		final HttpGet get = new HttpGet(new URIBuilder(server.resource("domains/12/relations/")) //
 				.setParameter(CLASS_ID, "34") //
-				.setParameter(CARD_ID, "56") //
-				.setParameter(DOMAIN_SOURCE, "baz") //
+				.setParameter(FILTER, "filter") //
+				.setParameter(LIMIT, "56") //
+				.setParameter(START, "78") //
 				.build());
 		final HttpResponse response = httpclient.execute(get);
 
@@ -182,7 +184,7 @@ public class RelationsTest {
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		verify(service).read(eq("12"), anyInt(), anyInt());
+		verify(service).read(eq("12"), eq("filter"), eq(56), eq(78));
 	}
 
 }

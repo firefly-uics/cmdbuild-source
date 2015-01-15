@@ -3,11 +3,15 @@ package org.cmdbuild.service.rest.cxf;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Lists.newArrayList;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.cmdbuild.service.rest.constants.Serialization.*;
+import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.model.Models.newCard;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newRelation;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
+import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.util.List;
 
@@ -16,6 +20,7 @@ import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
+import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.service.rest.Relations;
@@ -88,13 +93,30 @@ public class CxfRelations implements Relations {
 	}
 
 	@Override
-	public ResponseMultiple<Relation> read(final String domainId, final Integer limit, final Integer offset) {
+	public ResponseMultiple<Relation> read(final String domainId, final String filter, final Integer limit,
+			final Integer offset) {
 		final CMDomain targetDomain = dataAccessLogic.findDomain(domainId);
 		if (targetDomain == null) {
 			errorHandler.domainNotFound(domainId);
 		}
 		try {
-			final GetRelationListResponse response = dataAccessLogic.getRelationList(targetDomain);
+			String _filter = defaultString(filter);
+			// TODO do it better
+			// <<<<<
+			final String regex_1 = "\"attribute\"[\\w]*:[\\w]*\"" + UNDERSCORED_SOURCE_ID + "\"";
+			final String replacement_1 = "\"attribute\":\"IdObj1\"";
+			_filter = _filter.replaceAll(regex_1, replacement_1);
+
+			final String regex_2 = "\"attribute\"[\\w]*:[\\w]*\"" + UNDERSCORED_DESTINATION_ID + "\"";
+			final String replacement_2 = "\"attribute\":\"IdObj2\"";
+			_filter = _filter.replaceAll(regex_2, replacement_2);
+			// <<<<<
+			final QueryOptions queryOptions = QueryOptions.newQueryOption() //
+					.filter(safeJsonObject(_filter)) //
+					.limit(limit) //
+					.offset(offset) //
+					.build();
+			final GetRelationListResponse response = dataAccessLogic.getRelationList(targetDomain, queryOptions);
 			final List<Relation> elements = newArrayList();
 			for (final DomainInfo domainInfo : response) {
 				addAll(elements, from(domainInfo) //

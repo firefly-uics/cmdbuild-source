@@ -1,5 +1,9 @@
 package org.cmdbuild.logic.mapping.json;
 
+import static com.google.common.base.Functions.identity;
+import static com.google.common.collect.FluentIterable.from;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.common.utils.guava.Functions.build;
 import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.IN;
 import static org.cmdbuild.logic.mapping.json.Constants.FilterOperator.NULL;
@@ -24,7 +28,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.common.Builder;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
@@ -37,14 +40,83 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 public class JsonAdvancedFilterMapper implements FilterMapper {
 
 	private static final Logger logger = Log.CMDBUILD;
+	private static final Marker marker = MarkerFactory.getMarker(JsonAdvancedFilterMapper.class.getName());
 
 	private static final JSONArray EMPTY_VALUES = new JSONArray();
+
+	public static class Builder implements org.apache.commons.lang3.builder.Builder<JsonAdvancedFilterMapper> {
+
+		private static final Function<WhereClause, WhereClause> IDENTITY = identity();
+
+		private CMEntryType entryType;
+		private JSONObject filterObject;
+		private CMDataView dataView;
+		private Alias entryTypeAlias;
+		private OperationUser operationUser;
+		private Function<WhereClause, WhereClause> function;
+
+		private Builder() {
+			// use factory method
+		}
+
+		@Override
+		public JsonAdvancedFilterMapper build() {
+			validate();
+			return new JsonAdvancedFilterMapper(this);
+		}
+
+		private void validate() {
+			Validate.notNull(entryType);
+			Validate.notNull(filterObject);
+			function = defaultIfNull(function, IDENTITY);
+		}
+
+		public Builder withEntryType(final CMEntryType entryType) {
+			this.entryType = entryType;
+			return this;
+		}
+
+		public Builder withFilterObject(final JSONObject filterObject) {
+			this.filterObject = filterObject;
+			return this;
+		}
+
+		public Builder withDataView(final CMDataView dataView) {
+			this.dataView = dataView;
+			return this;
+		}
+
+		public Builder withEntryTypeAlias(final Alias entryTypeAlias) {
+			this.entryTypeAlias = entryTypeAlias;
+			return this;
+		}
+
+		public Builder withOperationUser(final OperationUser operationUser) {
+			this.operationUser = operationUser;
+			return this;
+		}
+
+		public Builder withFunction(final Function<WhereClause, WhereClause> function) {
+			this.function = function;
+			return this;
+		}
+
+	}
+
+	public static Builder newInstance() {
+		return new Builder();
+	}
+
+	private static final Function<org.apache.commons.lang3.builder.Builder<? extends WhereClause>, WhereClause> BUILD_WHERE_CLAUSES = build();
 
 	private final CMEntryType entryType;
 	private final JSONObject filterObject;
@@ -52,68 +124,51 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 	private final CMDataView dataView;
 	private final Alias entryTypeAlias;
 	private final OperationUser operationUser;
+	private final Function<WhereClause, WhereClause> function;
 
-	public JsonAdvancedFilterMapper(//
-			final CMEntryType entryType, //
-			final JSONObject filterObject, //
-			final CMDataView dataView, //
-			final Alias entryTypeAlias, //
-			final OperationUser operationUser //
-	) {
-		Validate.notNull(entryType);
-		Validate.notNull(filterObject);
-		this.entryType = entryType;
-		this.filterObject = filterObject;
-		this.filterValidator = new JsonFilterValidator(filterObject);
-		this.dataView = dataView;
-		this.entryTypeAlias = entryTypeAlias;
-		this.operationUser = operationUser;
-	}
-
-	public JsonAdvancedFilterMapper( //
-			final CMEntryType entryType, //
-			final JSONObject filterObject, //
-			final CMDataView dataView, //
-			final OperationUser operationUser //
-	) {
-		this(entryType, filterObject, dataView, null, operationUser);
+	private JsonAdvancedFilterMapper(final Builder builder) {
+		this.entryType = builder.entryType;
+		this.filterObject = builder.filterObject;
+		this.filterValidator = new JsonFilterValidator(builder.filterObject);
+		this.dataView = builder.dataView;
+		this.entryTypeAlias = builder.entryTypeAlias;
+		this.operationUser = builder.operationUser;
+		this.function = builder.function;
 	}
 
 	@Override
 	public CMEntryType entryType() {
+		logger.info(marker, "getting entry type");
 		return entryType;
 	}
 
 	@Override
 	public Iterable<WhereClause> whereClauses() {
+		logger.info(marker, "getting where clause");
 		filterValidator.validate();
-
-		Iterable<Builder<WhereClause>> whereClauseBuilders;
 		try {
-			whereClauseBuilders = getWhereClauseBuildersForFilter();
+			return from(getWhereClauseBuildersForFilter()) //
+					.transform(BUILD_WHERE_CLAUSES);
 		} catch (final JSONException ex) {
 			throw new IllegalArgumentException("malformed filter", ex);
 		}
-
-		final List<WhereClause> whereClauses = Lists.newArrayList();
-		for (final Builder<WhereClause> builder : whereClauseBuilders) {
-			whereClauses.add(builder.build());
-		}
-		return whereClauses;
 	}
 
-	private Iterable<Builder<WhereClause>> getWhereClauseBuildersForFilter() throws JSONException {
-		final List<Builder<WhereClause>> whereClauseBuilders = Lists.newArrayList();
+	private Iterable<org.cmdbuild.common.Builder<WhereClause>> getWhereClauseBuildersForFilter() throws JSONException {
+		final List<org.cmdbuild.common.Builder<WhereClause>> whereClauseBuilders = Lists.newArrayList();
 		if (filterObject.has(ATTRIBUTE_KEY)) {
-			whereClauseBuilders.add(new JsonAttributeFilterBuilder(filterObject.getJSONObject(ATTRIBUTE_KEY),
-					entryType, dataView));
+			whereClauseBuilders.add(JsonAttributeFilterBuilder.newInstance() //
+					.withFilterObject(filterObject.getJSONObject(ATTRIBUTE_KEY)) //
+					.withEntryType(entryType) //
+					.withEntryTypeAlias(entryTypeAlias) //
+					.withDataView(dataView) //
+					.withFunction(function));
 		}
 		if (filterObject.has(FULL_TEXT_QUERY_KEY)) {
-			final JsonFullTextQueryBuilder jsonFullTextQueryBuilder = new JsonFullTextQueryBuilder( //
-					filterObject.getString(FULL_TEXT_QUERY_KEY), //
-					entryType, //
-					entryTypeAlias);
-			whereClauseBuilders.add(jsonFullTextQueryBuilder);
+			whereClauseBuilders.add(JsonFullTextQueryBuilder.newInstance() //
+					.withFullTextQuery(filterObject.getString(FULL_TEXT_QUERY_KEY)) //
+					.withEntryType(entryType) //
+					.withEntryTypeAlias(entryTypeAlias));
 		}
 		if (filterObject.has(RELATION_KEY)) {
 			final JSONArray conditions = filterObject.getJSONArray(RELATION_KEY);
@@ -136,7 +191,11 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 						simple.append(VALUE_KEY, id);
 					}
 
-					whereClauseBuilders.add(new JsonAttributeFilterBuilder(filter, entryType, dataView));
+					whereClauseBuilders.add(JsonAttributeFilterBuilder.newInstance() //
+							.withFilterObject(filter) //
+							.withEntryType(entryType) //
+							.withEntryTypeAlias(entryTypeAlias) //
+							.withDataView(dataView));
 				} else if (condition.getString(RELATION_TYPE_KEY).equals(RELATION_TYPE_NOONE)) {
 					final JSONObject simple = new JSONObject();
 					simple.put(ATTRIBUTE_KEY, Id.getDBName());
@@ -147,7 +206,11 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 					final JSONObject filter = new JSONObject();
 					filter.put(SIMPLE_KEY, simple);
 
-					whereClauseBuilders.add(new JsonAttributeFilterBuilder(filter, entryType, dataView));
+					whereClauseBuilders.add(JsonAttributeFilterBuilder.newInstance() //
+							.withFilterObject(filter) //
+							.withEntryType(entryType) //
+							.withEntryTypeAlias(entryTypeAlias) //
+							.withDataView(dataView));
 
 				}
 			}
@@ -156,7 +219,10 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 			final JSONArray array = filterObject.getJSONArray(FUNCTION_KEY);
 			for (int i = 0; i < array.length(); i++) {
 				final JSONObject definition = array.getJSONObject(i);
-				whereClauseBuilders.add(new JsonFunctionFilterBuilder(definition, entryType, dataView, operationUser));
+				whereClauseBuilders.add(JsonFunctionFilterBuilder.newInstance() //
+						.withFilterObject(definition) //
+						.withEntryType(entryType) //
+						.withOperationUser(operationUser));
 			}
 		}
 		return whereClauseBuilders;
@@ -164,7 +230,7 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 
 	@Override
 	public Iterable<JoinElement> joinElements() {
-		logger.info("getting join elements for filter");
+		logger.info(marker, "getting join elements");
 		final List<JoinElement> joinElements = Lists.newArrayList();
 		if (filterObject.has(RELATION_KEY)) {
 			try {
@@ -178,7 +244,7 @@ public class JsonAdvancedFilterMapper implements FilterMapper {
 					joinElements.add(JoinElement.newInstance(domain, source, destination, left));
 				}
 			} catch (final Exception e) {
-				logger.error("error getting json element", e);
+				logger.error(marker, "error getting json element", e);
 			}
 		}
 		return joinElements;

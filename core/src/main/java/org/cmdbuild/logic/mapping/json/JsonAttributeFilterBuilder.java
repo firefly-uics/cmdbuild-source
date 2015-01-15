@@ -1,7 +1,13 @@
 package org.cmdbuild.logic.mapping.json;
 
+import static com.google.common.base.Functions.identity;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
+import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId1;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.DomainId2;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Id;
 import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
 import static org.cmdbuild.dao.query.clause.where.BeginsWithOperatorAndValue.beginsWith;
@@ -13,9 +19,13 @@ import static org.cmdbuild.dao.query.clause.where.InOperatorAndValue.in;
 import static org.cmdbuild.dao.query.clause.where.LessThanOperatorAndValue.lt;
 import static org.cmdbuild.dao.query.clause.where.NotWhereClause.not;
 import static org.cmdbuild.dao.query.clause.where.NullOperatorAndValue.isNull;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContained;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContainedOrEqual;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContains;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkContainsOrEqual;
+import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.networkRelationed;
 import static org.cmdbuild.dao.query.clause.where.OrWhereClause.or;
 import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
-import static org.cmdbuild.dao.query.clause.where.OperatorAndValues.*;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.AND_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.ATTRIBUTE_KEY;
 import static org.cmdbuild.logic.mapping.json.Constants.Filters.CLASSNAME_KEY;
@@ -28,7 +38,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.Validate;
 import org.cmdbuild.common.Builder;
-import org.cmdbuild.dao.driver.postgres.Const.SystemAttributes;
 import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMEntryType;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
@@ -36,6 +45,7 @@ import org.cmdbuild.dao.entrytype.attributetype.IntegerAttributeType;
 import org.cmdbuild.dao.entrytype.attributetype.UndefinedAttributeType;
 import org.cmdbuild.dao.query.clause.HistoricEntryType;
 import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
+import org.cmdbuild.dao.query.clause.alias.Alias;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.mapping.json.Constants.FilterOperator;
@@ -43,6 +53,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 /**
@@ -52,28 +63,61 @@ import com.google.common.collect.Lists;
  */
 public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 
-	private final JSONObject filterObject;
-	private final CMEntryType entryType;
-	private final CMDataView dataViewForBuild;
+	public static JsonAttributeFilterBuilder newInstance() {
+		return new JsonAttributeFilterBuilder();
+	}
 
-	/**
-	 * @param filter
-	 *            the JSON object representing the filter.
-	 * @param entryType
-	 *            the entry type specified in the <code>from</code> clause.
-	 * @param dataView
-	 */
-	public JsonAttributeFilterBuilder(final JSONObject filter, final CMEntryType entryType, final CMDataView dataView) {
-		Validate.notNull(filter, "missing filter");
-		Validate.notNull(entryType, "missing entry type");
-		Validate.notNull(dataView, "missing data view");
+	private static final Function<WhereClause, WhereClause> IDENTITY = identity();
+
+	private JSONObject filterObject;
+	private CMEntryType entryType;
+	private Alias entryTypeAlias;
+	private CMDataView dataView;
+	private Function<WhereClause, WhereClause> function;
+
+	private JsonAttributeFilterBuilder() {
+		// use factory method
+	}
+
+	public JsonAttributeFilterBuilder withFilterObject(final JSONObject filterObject) {
+		this.filterObject = filterObject;
+		return this;
+	}
+
+	public JsonAttributeFilterBuilder withEntryType(final CMEntryType entryType) {
 		this.entryType = entryType;
-		this.filterObject = filter;
-		this.dataViewForBuild = dataView;
+		return this;
+	}
+
+	public JsonAttributeFilterBuilder withEntryTypeAlias(final Alias entryTypeAlias) {
+		this.entryTypeAlias = entryTypeAlias;
+		return this;
+	}
+
+	public JsonAttributeFilterBuilder withDataView(final CMDataView dataView) {
+		this.dataView = dataView;
+		return this;
+	}
+
+	public JsonAttributeFilterBuilder withFunction(final Function<WhereClause, WhereClause> function) {
+		this.function = function;
+		return this;
 	}
 
 	@Override
 	public WhereClause build() {
+		validate();
+		return doBuild();
+	}
+
+	private void validate() {
+		Validate.notNull(filterObject, "missing filter");
+		Validate.notNull(entryType, "missing entry type");
+		Validate.notNull(dataView, "missing data view");
+		function = defaultIfNull(function, IDENTITY);
+	}
+
+	private WhereClause doBuild() {
 		try {
 			return buildWhereClause(filterObject);
 		} catch (final JSONException e) {
@@ -88,14 +132,16 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 			final String attributeName = condition.getString(ATTRIBUTE_KEY);
 			final String operator = condition.getString(OPERATOR_KEY);
 			if (condition.has(CLASSNAME_KEY)) {
-				entryType = dataViewForBuild.findClass(condition.getString(CLASSNAME_KEY));
+				entryType = dataView.findClass(condition.getString(CLASSNAME_KEY));
 			}
 			final JSONArray jsonArray = condition.getJSONArray(VALUE_KEY);
 			final List<Object> values = Lists.newArrayList();
 			for (int i = 0; i < jsonArray.length(); i++) {
 				values.add(jsonArray.getString(i));
 			}
-			return buildSimpleWhereClause(attribute(entryType, attributeName), operator, values);
+			final QueryAliasAttribute attribute = (entryTypeAlias == null) ? attribute(entryType, attributeName)
+					: attribute(entryTypeAlias, attributeName);
+			return function.apply(buildSimpleWhereClause(attribute, operator, values));
 		} else if (filterObject.has(AND_KEY)) {
 			final JSONArray conditions = filterObject.getJSONArray(AND_KEY);
 			Validate.isTrue(conditions.length() >= 2);
@@ -132,7 +178,7 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 		} else {
 			_entryType = entryType;
 		}
-		final CMEntryType dbEntryType = dataViewForBuild.findClass(_entryType.getName());
+		final CMEntryType dbEntryType = dataView.findClass(_entryType.getName());
 		final CMAttribute a = dbEntryType.getAttribute(attribute.getName());
 		final CMAttributeType<?> type = (a == null) ? UndefinedAttributeType.undefined() : a.getType();
 		return buildSimpleWhereClause(attribute, operator, values, type);
@@ -140,7 +186,7 @@ public class JsonAttributeFilterBuilder implements Builder<WhereClause> {
 
 	private WhereClause buildSimpleWhereClause(final QueryAliasAttribute attribute, final String operator,
 			final Iterable<Object> values, CMAttributeType<?> type) throws JSONException {
-		if (attribute.getName().equals(SystemAttributes.Id.getDBName())) {
+		if (asList(Id.getDBName(), DomainId1.getDBName(), DomainId2.getDBName()).contains(attribute.getName())) {
 			type = new IntegerAttributeType();
 		}
 

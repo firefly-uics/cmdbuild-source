@@ -2,7 +2,9 @@ package org.cmdbuild.logic.commands;
 
 import static com.google.common.collect.Iterables.isEmpty;
 import static org.cmdbuild.dao.query.clause.AnyDomain.anyDomain;
+import static org.cmdbuild.dao.query.clause.QueryAliasAttribute.attribute;
 import static org.cmdbuild.dao.query.clause.where.AndWhereClause.and;
+import static org.cmdbuild.dao.query.clause.where.SimpleWhereClause.condition;
 import static org.cmdbuild.dao.query.clause.where.TrueWhereClause.trueWhereClause;
 
 import java.util.ArrayList;
@@ -19,8 +21,11 @@ import org.cmdbuild.dao.query.CMQueryResult;
 import org.cmdbuild.dao.query.CMQueryRow;
 import org.cmdbuild.dao.query.QuerySpecsBuilder;
 import org.cmdbuild.dao.query.clause.OrderByClause;
+import org.cmdbuild.dao.query.clause.QueryAliasAttribute;
 import org.cmdbuild.dao.query.clause.QueryDomain;
 import org.cmdbuild.dao.query.clause.QueryRelation;
+import org.cmdbuild.dao.query.clause.where.NullWhereClauseVisitor;
+import org.cmdbuild.dao.query.clause.where.SimpleWhereClause;
 import org.cmdbuild.dao.query.clause.where.WhereClause;
 import org.cmdbuild.dao.view.CMDataView;
 import org.cmdbuild.logic.data.QueryOptions;
@@ -29,6 +34,8 @@ import org.cmdbuild.logic.mapping.SorterMapper;
 import org.cmdbuild.logic.mapping.json.JsonFilterMapper;
 import org.cmdbuild.logic.mapping.json.JsonSorterMapper;
 import org.cmdbuild.model.data.Card;
+
+import com.google.common.base.Function;
 
 public class GetRelationList extends AbstractGetRelation {
 
@@ -47,7 +54,6 @@ public class GetRelationList extends AbstractGetRelation {
 		final CMDomain domain = getQueryDomain(domainWithSource);
 		final CMClass sourceType = view.findClass(sourceTypeName);
 		final CMQueryResult relations = getRelationQuery(sourceType, domain).run();
-
 		return fillMap(relations);
 	}
 
@@ -101,8 +107,8 @@ public class GetRelationList extends AbstractGetRelation {
 		final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();
 		final WhereClause filtersOnRelations = isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses);
 		final CMDomain domain = getQueryDomain(domainWithSource);
-		final QuerySpecsBuilder querySpecsBuilder = getRelationQuerySpecsBuilder(src, domain, filtersOnRelations);
-		querySpecsBuilder.limit(queryOptions.getLimit()) //
+		final QuerySpecsBuilder querySpecsBuilder = getRelationQuerySpecsBuilder(src, domain, filtersOnRelations) //
+				.limit(queryOptions.getLimit()) //
 				.offset(queryOptions.getOffset());
 		addOrderByClauses(querySpecsBuilder, orderByClauses);
 
@@ -118,8 +124,51 @@ public class GetRelationList extends AbstractGetRelation {
 		final FilterMapper filterMapper = JsonFilterMapper.newInstance() //
 				.withDataView(view) //
 				.withEntryType(sourceType) //
+				.withEntryTypeAlias(SRC_ALIAS) //
 				.withFilterObject(queryOptions.getFilter()) //
-				.build();
+				/*
+				 * FIXME temporary hack
+				 * 
+				 * we must be able to refer to source/destination id within
+				 * filter. basically, the filter is referred to the subject of
+				 * the query. despite that when referring to relations the
+				 * subject of the query is the domain, the from clause is always
+				 * the source class.
+				 */
+				.withFunction(new Function<WhereClause, WhereClause>() {
+
+					@Override
+					public WhereClause apply(final WhereClause input) {
+						return new NullWhereClauseVisitor() {
+
+							private WhereClause output;
+
+							public WhereClause apply() {
+								input.accept(this);
+								return output;
+							}
+
+							@Override
+							public void visit(final SimpleWhereClause whereClause) {
+								final QueryAliasAttribute attribute = whereClause.getAttribute();
+								final String name = attribute.getName();
+								final QueryAliasAttribute _attribute;
+								if (ID.equals(name)) {
+									_attribute = attribute(DOM_ALIAS, name);
+								} else if (IDOBJ1.equals(name)) {
+									_attribute = attribute(DOM_ALIAS, name);
+								} else if (IDOBJ2.equals(name)) {
+									_attribute = attribute(DOM_ALIAS, name);
+								} else {
+									_attribute = attribute;
+								}
+								output = condition(_attribute, whereClause.getOperator());
+							}
+
+						}.apply();
+					}
+
+				}).build();
 		final Iterable<WhereClause> whereClauses = filterMapper.whereClauses();
 		final WhereClause filtersOnRelations = isEmpty(whereClauses) ? trueWhereClause() : and(whereClauses);
 		final QuerySpecsBuilder querySpecsBuilder = getRelationQuerySpecsBuilder( //
@@ -154,11 +203,9 @@ public class GetRelationList extends AbstractGetRelation {
 
 	// FIXME Implement domain direction in queries and remove the domainSource
 	// hack!
-	private GetRelationListResponse createRelationListResponse(final CMQueryResult relationList,
-			final String domainSource) {
-		int totalNumberOfRelations = 0;
+	private GetRelationListResponse createRelationListResponse(final CMQueryResult result, final String domainSource) {
 		final GetRelationListResponse out = new GetRelationListResponse();
-		for (final CMQueryRow row : relationList) {
+		for (final CMQueryRow row : result) {
 			final CMCard src = row.getCard(SRC_ALIAS);
 			final CMCard dst = row.getCard(DST_ALIAS);
 			if (dst != null) {
@@ -168,10 +215,9 @@ public class GetRelationList extends AbstractGetRelation {
 				}
 				// TODO: check here if the dst match the filter....
 				out.addRelation(rel, src, dst);
-				totalNumberOfRelations++;
 			}
 		}
-		out.setTotalNumberOfRelations(totalNumberOfRelations);
+		out.setTotalNumberOfRelations(result.totalSize());
 		return out;
 	}
 
