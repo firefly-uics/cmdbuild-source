@@ -48,7 +48,7 @@ public class HttpSessionBasedValuesStore implements ValuesStore {
 		final Optional<HttpServletRequest> optional = supplier.get();
 		if (optional.isPresent()) {
 			final HttpServletRequest element = optional.get();
-			HttpSession _session = element.getSession();
+			HttpSession _session = element.getSession(false);
 			if (_session == null) {
 				_session = element.getSession(true);
 				initialize(_session);
