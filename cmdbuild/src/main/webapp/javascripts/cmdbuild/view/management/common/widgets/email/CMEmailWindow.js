@@ -91,7 +91,9 @@
 					items: []
 				})
 			});
+			// END: Buttons configuration
 
+			// Fill from template button store configuration
 			this.templatesStore = CMDBuild.core.proxy.CMProxyEmailTemplates.getStore();
 			this.templatesStore.load({
 				callback: function(records, operation, success) {
@@ -113,7 +115,6 @@
 					}
 				}
 			});
-			// END: Buttons configuration
 
 			this.attachmentPanelsContainer = this.buildAttachmentPanelsContainer();
 			this.attachmentButtonsContainer = this.buildAttachmentButtonsContainer();
@@ -125,9 +126,17 @@
 			this.form = this.formPanel.getForm(); // To reach the basic form outside
 
 			Ext.apply(this, {
-				buttons: this.buildButtons(),
+//				tbar: [this.fillFromTemplateButton],
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						items: this.fillFromTemplateButton
+					}
+				],
 				items: [this.formPanel, this.attachmentButtonsContainer, this.attachmentPanelsContainer],
-				tbar: [this.fillFromTemplateButton]
+				buttons: this.buildButtons()
 			});
 
 			this.callParent(arguments);

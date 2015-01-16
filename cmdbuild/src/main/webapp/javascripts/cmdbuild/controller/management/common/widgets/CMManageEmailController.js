@@ -166,6 +166,7 @@
 		addEmailFromTemplateIfNeeded: function() {
 			this.checkTemplatesToRegenerate();
 
+_debug(this.thereAreTemplates() + ' ' + !this.view.hasDraftEmails() + ' ' +!this.emailsWereGenerated);
 			if (
 				this.thereAreTemplates()
 				&& !this.view.hasDraftEmails()
@@ -185,6 +186,8 @@
 _debug('beforeActiveView');
 			var pi = _CMWFState.getProcessInstance();
 
+			this.templatesToRegenerate = []; // Reset buffer variable
+
 			if (!this.gridStoreWasLoaded) {
 				this.view.setLoading(true);
 				this.view.emailGrid.store.load({
@@ -202,6 +205,7 @@ _debug('beforeActiveView');
 _debug('else');
 				this.addEmailFromTemplateIfNeeded();
 			}
+_debug('resolveTemplates', this.templatesToRegenerate);
 		},
 
 		/**
@@ -209,7 +213,8 @@ _debug('else');
 		 */
 		checkTemplatesToRegenerate: function() {
 			var dirtyVariables = Ext.Object.getKeys(this.ownerController.view.mainView.getValues(false, true));
-
+_debug('dirtyVariables', dirtyVariables);
+_debug('this.templateResolver.xaVars', this.templateResolver.xaVars);
 			// Complete dirtyVariables array also with multylevel variables (ex. var1 = '... {client:var2} ...')
 			for (var i in this.templateResolver.xaVars) {
 				var variable = this.templateResolver.xaVars[i] || [];
@@ -224,7 +229,7 @@ _debug('else');
 							dirtyVariables.push(i);
 				}
 			}
-
+_debug('#####', this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES]);
 			// Check templates attributes looking for dirtyVariables as client variables (ex. {client:varName})
 			for (var i in this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES]) {
 				var template = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES][i];
@@ -256,9 +261,11 @@ _debug('else');
 		},
 
 		createEmailFromTemplate: function() {
+_debug('############ REGENERATE EMAIL', this.busy);
 			if (!this.busy) {
 				var me = this;
-				var oldStore = CMDBuild.core.Utils.deepCloneStore(this.view.emailGrid.getStore()); // Backup old store to copy not regenerated data
+//				var oldStore = CMDBuild.core.Utils.deepCloneStore(this.view.emailGrid.getStore());
+				var oldStore = [].concat(this.view.getNewEmails()).concat(this.view.getDraftEmails()); // Backup old store to copy not regenerated data
 
 				this.busy = true;
 				this.view.removeTemplatesFromStore();
@@ -267,16 +274,22 @@ _debug('else');
 				this.templateResolver.resolveTemplates({
 					attributes: Ext.Object.getKeys(me.emailTemplatesData),
 					callback: function(values, ctx) {
+_debug('resolveTemplates', me.templatesToRegenerate);
 						for (var i = 1; i <= me.countTemplates(); ++i) {
+
+_debug('oldStore', oldStore);
+_debug('oldStore.count()', oldStore.length);
+_debug('i', i);
+_debug('oldStore.getAt(i - 1)', oldStore[i - 1]);
 
 							// If regeneration is forced by field edit or if it's first load
 							if (
 								Ext.Array.contains(me.templatesToRegenerate, i)
-								|| oldStore.count() == 0
+								|| oldStore.length == 0
 							) {
 								var v = {};
 								var conditionExpr = values[me.TEMPLATE_CONDITION + i];
-
+_debug('conditionExpr', conditionExpr);
 								if (!conditionExpr || me.templateResolver.safeJSEval(conditionExpr)) {
 									for (var j = 0; j < me.TEMPLATE_FIELDS.length; ++j) {
 										var field = me.TEMPLATE_FIELDS[j];
@@ -287,14 +300,15 @@ _debug('else');
 
 									me.view.addTemplateToStore(v);
 								}
-							} else { // Copy from old store
-								me.view.emailGrid.addTemplateToStore(oldStore.getAt(i - 1).data);
+							} else if (i < oldStore.length) { // Copy from old store
+								me.view.emailGrid.addTemplateToStore(oldStore[i - 1].data);
 							}
 						}
 
 						me.templateResolver.bindLocalDepsChange(function() {
 							if (me.emailsWereGenerated) {
 								me.emailsWereGenerated = false;
+
 								CMDBuild.Msg.warn(null, CMDBuild.Translation.management.modworkflow.extattrs.manageemail.mailsAreChanged);
 							}
 						});
@@ -365,6 +379,9 @@ _debug('else');
 			);
 		},
 
+		/**
+		 * Removes New and Draft emails from grid store
+		 */
 		removeUnsentEmails: function() {
 			var emailToRemove = [].concat(this.view.getNewEmails()).concat(this.view.getDraftEmails());
 
@@ -466,7 +483,6 @@ _debug('else');
 				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.CONTENT] = content;
 				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.DATE] = null;
 				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS] = null;
-//				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.ID] = null;
 				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = null;
 				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = true;
 				replyRecordData[CMDBuild.core.proxy.CMProxyConstants.STATUS] = this.emailGrid.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
@@ -510,7 +526,7 @@ _debug('else');
 			},
 
 			onUpdateTemplatesButtonClick: function() {
-				this.removeUnsentEmails(); // New and Draft
+				this.removeUnsentEmails();
 				this.emailsWereGenerated = false;
 				this.addEmailFromTemplateIfNeeded();
 			},
