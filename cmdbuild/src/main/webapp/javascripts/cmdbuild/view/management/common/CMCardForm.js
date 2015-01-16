@@ -150,6 +150,7 @@
 					_fillDisplayFields(this, data);
 				}
 
+				this.initValues(); // Clear form fields dirty state
 			} else {
 				throw "Card must be an object";
 			}
