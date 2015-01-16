@@ -1,7 +1,7 @@
 package integration.rest;
 
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.constants.Serialization.ACTIVE;
+import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 import static org.cmdbuild.service.rest.model.Models.newDomainWithBasicDetails;
@@ -75,12 +75,12 @@ public class DomainsTest {
 						.withTotal(2L) //
 						.build()) //
 				.build();
-		when(service.readAll(anyInt(), anyInt())) //
+		when(service.readAll(anyString(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
 		final HttpGet get = new HttpGet(new URIBuilder(server.resource("domains/")) //
-				.setParameter(ACTIVE, "true") //
+				.setParameter(FILTER, "filter") //
 				.setParameter(LIMIT, "123") //
 				.setParameter(START, "456") //
 				.build());
@@ -90,7 +90,7 @@ public class DomainsTest {
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		verify(service).readAll(eq(123), eq(456));
+		verify(service).readAll(eq("filter"), eq(123), eq(456));
 	}
 
 	@Test
