@@ -884,3 +884,6 @@ em { font-style: oblique !important; }
 
 /* FIX: Fieldset label CheckBox */
 	.x-form-cb-wrap { height: auto !important; }
+
+/* Grid icons */
+.x-grid-cell-inner .x-item-disabled { cursor: default !important; }
