@@ -166,7 +166,6 @@
 		addEmailFromTemplateIfNeeded: function() {
 			this.checkTemplatesToRegenerate();
 
-_debug(this.thereAreTemplates() + ' ' + !this.view.hasDraftEmails() + ' ' +!this.emailsWereGenerated);
 			if (
 				this.thereAreTemplates()
 				&& !this.view.hasDraftEmails()
@@ -183,7 +182,6 @@ _debug(this.thereAreTemplates() + ' ' + !this.view.hasDraftEmails() + ' ' +!this
 		 * @override
 		 */
 		beforeActiveView: function() {
-_debug('beforeActiveView');
 			var pi = _CMWFState.getProcessInstance();
 
 			this.templatesToRegenerate = []; // Reset buffer variable
@@ -202,10 +200,8 @@ _debug('beforeActiveView');
 					}
 				});
 			} else {
-_debug('else');
 				this.addEmailFromTemplateIfNeeded();
 			}
-_debug('resolveTemplates', this.templatesToRegenerate);
 		},
 
 		/**
@@ -213,8 +209,7 @@ _debug('resolveTemplates', this.templatesToRegenerate);
 		 */
 		checkTemplatesToRegenerate: function() {
 			var dirtyVariables = Ext.Object.getKeys(this.ownerController.view.mainView.getValues(false, true));
-_debug('dirtyVariables', dirtyVariables);
-_debug('this.templateResolver.xaVars', this.templateResolver.xaVars);
+
 			// Complete dirtyVariables array also with multylevel variables (ex. var1 = '... {client:var2} ...')
 			for (var i in this.templateResolver.xaVars) {
 				var variable = this.templateResolver.xaVars[i] || [];
@@ -229,7 +224,7 @@ _debug('this.templateResolver.xaVars', this.templateResolver.xaVars);
 							dirtyVariables.push(i);
 				}
 			}
-_debug('#####', this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES]);
+
 			// Check templates attributes looking for dirtyVariables as client variables (ex. {client:varName})
 			for (var i in this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES]) {
 				var template = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES][i];
@@ -261,10 +256,8 @@ _debug('#####', this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPL
 		},
 
 		createEmailFromTemplate: function() {
-_debug('############ REGENERATE EMAIL', this.busy);
 			if (!this.busy) {
 				var me = this;
-//				var oldStore = CMDBuild.core.Utils.deepCloneStore(this.view.emailGrid.getStore());
 				var oldStore = [].concat(this.view.getNewEmails()).concat(this.view.getDraftEmails()); // Backup old store to copy not regenerated data
 
 				this.busy = true;
@@ -274,14 +267,7 @@ _debug('############ REGENERATE EMAIL', this.busy);
 				this.templateResolver.resolveTemplates({
 					attributes: Ext.Object.getKeys(me.emailTemplatesData),
 					callback: function(values, ctx) {
-_debug('resolveTemplates', me.templatesToRegenerate);
 						for (var i = 1; i <= me.countTemplates(); ++i) {
-
-_debug('oldStore', oldStore);
-_debug('oldStore.count()', oldStore.length);
-_debug('i', i);
-_debug('oldStore.getAt(i - 1)', oldStore[i - 1]);
-
 							// If regeneration is forced by field edit or if it's first load
 							if (
 								Ext.Array.contains(me.templatesToRegenerate, i)
@@ -289,7 +275,7 @@ _debug('oldStore.getAt(i - 1)', oldStore[i - 1]);
 							) {
 								var v = {};
 								var conditionExpr = values[me.TEMPLATE_CONDITION + i];
-_debug('conditionExpr', conditionExpr);
+
 								if (!conditionExpr || me.templateResolver.safeJSEval(conditionExpr)) {
 									for (var j = 0; j < me.TEMPLATE_FIELDS.length; ++j) {
 										var field = me.TEMPLATE_FIELDS[j];
