@@ -4,14 +4,14 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.cmdbuild.service.rest.constants.Serialization.*;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_DESTINATION_ID;
+import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_SOURCE_ID;
 import static org.cmdbuild.service.rest.cxf.util.Json.safeJsonObject;
 import static org.cmdbuild.service.rest.model.Models.newCard;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newRelation;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
-import static org.cmdbuild.workflow.ProcessAttributes.FlowStatus;
 
 import java.util.List;
 

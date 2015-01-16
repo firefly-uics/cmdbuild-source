@@ -3,6 +3,7 @@ package org.cmdbuild.service.rest;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.service.rest.constants.Serialization.DOMAIN_ID;
+import static org.cmdbuild.service.rest.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 
@@ -24,6 +25,7 @@ public interface Domains {
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<DomainWithBasicDetails> readAll( //
+			@QueryParam(FILTER) String filter, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);
