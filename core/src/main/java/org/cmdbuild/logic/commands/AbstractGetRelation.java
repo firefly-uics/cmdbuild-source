@@ -74,7 +74,8 @@ public class AbstractGetRelation {
 	protected QuerySpecsBuilder getRelationQuerySpecsBuilder(final Card src, final CMDomain domain,
 			final WhereClause whereClause) {
 		final CMClass srcCardType = getCardType(src);
-		final WhereClause _whereClause = (whereClause instanceof EmptyWhereClause) ? trueWhereClause() : whereClause;
+		final WhereClause _whereClause = ((whereClause == null) || (whereClause instanceof EmptyWhereClause)) ? trueWhereClause()
+				: whereClause;
 		final WhereClause clause;
 		if (defaultIfNull(src.getId(), 0L) > 0L) {
 			clause = and(condition(attribute(SRC_ALIAS, ID), eq(src.getId())), _whereClause);
