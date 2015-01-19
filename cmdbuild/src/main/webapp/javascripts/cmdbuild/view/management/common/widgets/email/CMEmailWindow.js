@@ -126,7 +126,6 @@
 			this.form = this.formPanel.getForm(); // To reach the basic form outside
 
 			Ext.apply(this, {
-//				tbar: [this.fillFromTemplateButton],
 				dockedItems: [
 					{
 						xtype: 'toolbar',
