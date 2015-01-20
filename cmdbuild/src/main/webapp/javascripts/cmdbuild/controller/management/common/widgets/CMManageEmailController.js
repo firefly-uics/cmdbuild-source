@@ -32,11 +32,6 @@
 		],
 
 		/**
-		 * @cfg {String}
-		 */
-		TEMPLATE_CONDITION: 'condition',
-
-		/**
 		 * @property {CMDBuild.model.CMActivityInstance}
 		 */
 		card: undefined,
@@ -274,11 +269,12 @@
 								|| oldStore.length == 0
 							) {
 								var v = {};
-								var conditionExpr = values[me.TEMPLATE_CONDITION + i];
+								var conditionExpr = values[CMDBuild.core.proxy.CMProxyConstants.CONDITION + i];
 
 								if (!conditionExpr || me.templateResolver.safeJSEval(conditionExpr)) {
 									for (var j = 0; j < me.TEMPLATE_FIELDS.length; ++j) {
 										var field = me.TEMPLATE_FIELDS[j];
+
 										v[field] = values[field + i];
 									}
 
