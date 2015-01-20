@@ -77,7 +77,7 @@ public class ClassPrivilegesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet get = new HttpGet(server.resource("roles/foo/class_privileges/"));
+		final HttpGet get = new HttpGet(server.resource("roles/foo/classes_privileges/"));
 		final HttpResponse response = httpclient.execute(get);
 
 		// then
@@ -102,7 +102,7 @@ public class ClassPrivilegesTest {
 				.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet get = new HttpGet(server.resource("roles/foo/class_privileges/bar/"));
+		final HttpGet get = new HttpGet(server.resource("roles/foo/classes_privileges/bar/"));
 		final HttpResponse response = httpclient.execute(get);
 
 		// then
