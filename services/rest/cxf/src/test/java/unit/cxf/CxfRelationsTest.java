@@ -72,7 +72,7 @@ public class CxfRelationsTest {
 	}
 
 	@Test
-	public void logicCalledOnCreation() throws Exception {
+	public void logicCalledWhenCreatingRelation() throws Exception {
 		// given
 		doReturn(domain("found domain")) //
 				.when(dataAccessLogic).findDomain(anyString());
@@ -143,7 +143,7 @@ public class CxfRelationsTest {
 
 	@Ignore
 	@Test
-	public void logicCalledSuccessfullyWhenReadingRelations() throws Exception {
+	public void logicCalledWhenReadingRelations() throws Exception {
 		fail("cannot mock business logic return value");
 	}
 
@@ -192,8 +192,85 @@ public class CxfRelationsTest {
 
 	@Ignore
 	@Test
-	public void logicCalledSuccessfullyWhenReadingRelation() throws Exception {
+	public void logicCalledWhenReadingRelation() throws Exception {
 		fail("cannot mock business logic return value");
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenUpdatingRelationButProcessNotFound() throws Exception {
+		// given
+		doReturn(null) //
+				.when(dataAccessLogic).findDomain(eq("dummy"));
+		doThrow(WebApplicationException.class) //
+				.when(errorHandler).domainNotFound(eq("dummy"));
+
+		// when
+		cxfRelations.update("dummy", 123L, newRelation() //
+				.withType("should be ignored") //
+				.withValue("foo", "FOO") //
+				.withValue("bar", "BAR") //
+				.withValue("baz", "BAZ") //
+				.build());
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenUpdatingRelationButBusinessLogicThrowsException() throws Exception {
+		// given
+		final CMDomain domain = domain("dummy");
+		doReturn(domain) //
+				.when(dataAccessLogic).findDomain(eq("dummy"));
+		final RuntimeException exception = new RuntimeException();
+		doThrow(exception) //
+				.when(dataAccessLogic).updateRelation(any(RelationDTO.class));
+		doThrow(new WebApplicationException(exception)) //
+				.when(errorHandler).propagate(any(Exception.class));
+
+		// when
+		cxfRelations.update("dummy", 123L, newRelation() //
+				.withType("should be ignored") //
+				.withValue("foo", "FOO") //
+				.withValue("bar", "BAR") //
+				.withValue("baz", "BAZ") //
+				.build());
+	}
+
+	@Test
+	public void logicCalledWhenUpdatingRelation() throws Exception {
+		// given
+		doReturn(domain("the domain")) //
+				.when(dataAccessLogic).findDomain(anyString());
+
+		// when
+		cxfRelations.update("some domain", 123L, newRelation() //
+				.withSource(newCard() //
+						.withId(123L) //
+						.withType("source class") //
+						.build()) //
+				.withDestination(newCard() //
+						.withId(456L) //
+						.withType("destination class") //
+						.build()) //
+				.withType("should be ignored") //
+				.withValue("foo", "FOO") //
+				.withValue("bar", "BAR") //
+				.withValue("baz", "BAZ") //
+				.build());
+
+		// then
+		final ArgumentCaptor<RelationDTO> captor = ArgumentCaptor.forClass(RelationDTO.class);
+		final InOrder inOrder = inOrder(errorHandler, dataAccessLogic);
+		inOrder.verify(dataAccessLogic).findDomain(eq("some domain"));
+		inOrder.verify(dataAccessLogic).updateRelation(captor.capture());
+		inOrder.verifyNoMoreInteractions();
+		final RelationDTO captured = captor.getValue();
+		assertThat(captured.domainName, equalTo("the domain"));
+		assertThat(captured.srcCardIdToClassName, hasEntry(123L, "source class"));
+		assertThat(captured.srcCardIdToClassName.size(), equalTo(1));
+		assertThat(captured.dstCardIdToClassName, hasEntry(456L, "destination class"));
+		assertThat(captured.dstCardIdToClassName.size(), equalTo(1));
+		assertThat(captured.relationAttributeToValue, hasEntry("foo", (Object) "FOO"));
+		assertThat(captured.relationAttributeToValue, hasEntry("bar", (Object) "BAR"));
+		assertThat(captured.relationAttributeToValue, hasEntry("baz", (Object) "BAZ"));
 	}
 
 	@Test(expected = WebApplicationException.class)
@@ -225,7 +302,7 @@ public class CxfRelationsTest {
 	}
 
 	@Test
-	public void logicCalledSuccessfullyWhenDeletingRelation() throws Exception {
+	public void logicCalledWhenDeletingRelation() throws Exception {
 		// given
 		doReturn(domain("dummy")) //
 				.when(dataAccessLogic).findDomain(anyString());

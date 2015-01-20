@@ -115,12 +115,7 @@ public class CxfRelations implements Relations {
 			errorHandler.domainNotFound(domainId);
 		}
 		try {
-			final RelationDTO relationDTO = new RelationDTO();
-			relationDTO.domainName = targetDomain.getName();
-			relationDTO.master = "_1";
-			relationDTO.addSourceCard(relation.getSource().getId(), relation.getSource().getType());
-			relationDTO.addDestinationCard(relation.getDestination().getId(), relation.getDestination().getType());
-			relationDTO.relationAttributeToValue = relation.getValues();
+			final RelationDTO relationDTO = relationDto(targetDomain, relation);
 			final Long created = from(dataAccessLogic.createRelations(relationDTO)).first().get();
 			return newResponseSingle(Long.class) //
 					.withElement(created) //
@@ -199,6 +194,20 @@ public class CxfRelations implements Relations {
 	}
 
 	@Override
+	public void update(final String domainId, final Long relationId, final Relation relation) {
+		final CMDomain targetDomain = dataAccessLogic.findDomain(domainId);
+		if (targetDomain == null) {
+			errorHandler.domainNotFound(domainId);
+		}
+		try {
+			final RelationDTO relationDTO = relationDto(targetDomain, relation);
+			dataAccessLogic.updateRelation(relationDTO);
+		} catch (final Exception e) {
+			errorHandler.propagate(e);
+		}
+	}
+
+	@Override
 	public void delete(final String domainId, final Long relationId) {
 		final CMDomain targetDomain = dataAccessLogic.findDomain(domainId);
 		if (targetDomain == null) {
@@ -209,6 +218,16 @@ public class CxfRelations implements Relations {
 		} catch (final Exception e) {
 			errorHandler.propagate(e);
 		}
+	}
+
+	private RelationDTO relationDto(final CMDomain domain, final Relation relation) {
+		final RelationDTO relationDTO = new RelationDTO();
+		relationDTO.domainName = domain.getName();
+		relationDTO.master = "_1";
+		relationDTO.addSourceCard(relation.getSource().getId(), relation.getSource().getType());
+		relationDTO.addDestinationCard(relation.getDestination().getId(), relation.getDestination().getType());
+		relationDTO.relationAttributeToValue = relation.getValues();
+		return relationDTO;
 	}
 
 }

@@ -39,6 +39,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -223,6 +224,28 @@ public class RelationsTest {
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
 		verify(service).read(eq("dummy"), eq(12L));
+	}
+
+	@Test
+	public void relationUpdated() throws Exception {
+		// when
+		final HttpPut put = new HttpPut(server.resource("domains/dummy/relations/123/"));
+		put.setEntity(new StringEntity( //
+				"{\"_id\" : 456, \"_type\" : \"not important\", \"bar\" : \"BAR\", \"baz\" : \"BAZ\"}", //
+				APPLICATION_JSON) //
+		);
+		final HttpResponse response = httpclient.execute(put);
+
+		// then
+		assertThat(statusCodeOf(response), equalTo(204));
+
+		final ArgumentCaptor<Relation> captor = ArgumentCaptor.forClass(Relation.class);
+		verify(service).update(eq("dummy"), eq(123L), captor.capture());
+
+		final Relation captured = captor.getValue();
+		final Map<String, Object> values = captured.getValues();
+		assertThat(values, hasEntry("bar", (Object) "BAR"));
+		assertThat(values, hasEntry("baz", (Object) "BAZ"));
 	}
 
 	@Test

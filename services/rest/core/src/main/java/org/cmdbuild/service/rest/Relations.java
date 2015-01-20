@@ -11,6 +11,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.START;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -45,6 +46,13 @@ public interface Relations {
 			@PathParam(DOMAIN_ID) String domainId, //
 			@PathParam(RELATION_ID) Long relationId //
 	);
+
+	@PUT
+	@Path("{" + RELATION_ID + "}/")
+	void update( //
+			@PathParam(DOMAIN_ID) String domainId, //
+			@PathParam(RELATION_ID) Long relationId, //
+			Relation relation);
 
 	@DELETE
 	@Path("{" + RELATION_ID + "}/")
