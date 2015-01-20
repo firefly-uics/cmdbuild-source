@@ -66,6 +66,7 @@ import org.cmdbuild.logic.commands.GetRelationHistory.GetRelationHistoryResponse
 import org.cmdbuild.logic.commands.GetRelationList;
 import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
+import org.cmdbuild.logic.commands.GetRelationSingle;
 import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.lock.LockCardManager;
 import org.cmdbuild.logic.data.access.resolver.CardSerializer;
@@ -85,6 +86,7 @@ import org.supercsv.prefs.CsvPreference;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Lists;
@@ -173,6 +175,11 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	@Override
 	public GetRelationListResponse getRelationList(final CMDomain domain, final QueryOptions queryOptions) {
 		return new GetRelationList(strictDataView).exec(domain, queryOptions);
+	}
+
+	@Override
+	public Optional<RelationInfo> getRelation(final CMDomain domain, final Long id) {
+		return new GetRelationSingle(strictDataView).exec(domain, id);
 	}
 
 	@Override

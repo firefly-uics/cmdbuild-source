@@ -142,6 +142,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
+	public void relationNotFound(final Long id) {
+		logger.error("relation not found '{}'", id);
+		notFound(id);
+	}
+
+	@Override
 	public void roleNotFound(final String id) {
 		logger.error("role not found '{}'", id);
 		notFound(id);

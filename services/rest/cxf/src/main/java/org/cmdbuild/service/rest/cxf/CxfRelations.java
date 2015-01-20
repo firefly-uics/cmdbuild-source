@@ -3,6 +3,7 @@ package org.cmdbuild.service.rest.cxf;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_DESTINATION_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_SOURCE_ID;
@@ -14,6 +15,7 @@ import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
@@ -29,10 +31,43 @@ import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 
 public class CxfRelations implements Relations {
 
-	private static final Function<RelationInfo, Relation> RELATION_INFO_TO_RELATION = new Function<RelationInfo, Relation>() {
+	private static class RelationInfoToRelation implements Function<RelationInfo, Relation> {
+
+		public static class Builder implements org.apache.commons.lang3.builder.Builder<RelationInfoToRelation> {
+
+			private boolean includeValues;
+
+			private Builder() {
+				// use factory method
+			}
+
+			@Override
+			public RelationInfoToRelation build() {
+				return new RelationInfoToRelation(this);
+			}
+
+			public Builder includeValues(final boolean includeValues) {
+				this.includeValues = includeValues;
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private static final Map<String, Object> NO_VALUES = emptyMap();
+
+		private final boolean includeValues;
+
+		private RelationInfoToRelation(final Builder builder) {
+			this.includeValues = builder.includeValues;
+		}
 
 		@Override
 		public Relation apply(final RelationInfo input) {
@@ -44,22 +79,26 @@ public class CxfRelations implements Relations {
 					.withSource(newCard() //
 							.withType(sourceType.getName()) //
 							.withId(input.getSourceId()) //
-							.withValue(sourceType.getCodeAttributeName(), input.getSourceCode()) //
 							.withValue(sourceType.getDescriptionAttributeName(), input.getSourceDescription()) //
 							.build()) //
 					.withDestination(newCard() //
 							.withType(targetType.getName()) //
 							.withId(input.getTargetId()) //
-							.withValue(targetType.getCodeAttributeName(), input.getTargetCode()) //
 							.withValue(targetType.getDescriptionAttributeName(), input.getTargetDescription()) //
 							.build()) //
-					// TODO date -> input.getRelationBeginDate()
-					// TODO attributes date ->
-					// relationAttributeSerializer.toClient(input)
+					.withValues(includeValues ? input.getRelationAttributes() : NO_VALUES.entrySet()) //
 					.build();
 		}
 
 	};
+
+	private static final RelationInfoToRelation BASIC_DETAILS = RelationInfoToRelation.newInstance() //
+			.includeValues(false) //
+			.build();
+
+	private static final RelationInfoToRelation FULL_DETAILS = RelationInfoToRelation.newInstance() //
+			.includeValues(true) //
+			.build();
 
 	private final ErrorHandler errorHandler;
 	private final DataAccessLogic dataAccessLogic;
@@ -120,7 +159,7 @@ public class CxfRelations implements Relations {
 			final List<Relation> elements = newArrayList();
 			for (final DomainInfo domainInfo : response) {
 				addAll(elements, from(domainInfo) //
-						.transform(RELATION_INFO_TO_RELATION));
+						.transform(BASIC_DETAILS));
 			}
 			return newResponseMultiple(Relation.class) //
 					.withElements(elements) //
@@ -132,6 +171,31 @@ public class CxfRelations implements Relations {
 			errorHandler.propagate(e);
 		}
 		return null;
+	}
+
+	@Override
+	public ResponseSingle<Relation> read(final String domainId, final Long relationId) {
+		final CMDomain targetDomain = dataAccessLogic.findDomain(domainId);
+		if (targetDomain == null) {
+			errorHandler.domainNotFound(domainId);
+		}
+		final Optional<RelationInfo> relation = getRelation(relationId, targetDomain);
+		if (!relation.isPresent()) {
+			errorHandler.relationNotFound(relationId);
+		}
+		final Relation element = FULL_DETAILS.apply(relation.get());
+		return newResponseSingle(Relation.class) //
+				.withElement(element) //
+				.build();
+	}
+
+	private Optional<RelationInfo> getRelation(final Long relationId, final CMDomain targetDomain) {
+		try {
+			return dataAccessLogic.getRelation(targetDomain, relationId);
+		} catch (final Exception e) {
+			errorHandler.propagate(e);
+		}
+		return Optional.absent();
 	}
 
 }

@@ -21,6 +21,7 @@ import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -94,7 +95,7 @@ public class RelationsTest {
 				.when(service).create(anyString(), any(Relation.class));
 
 		// when
-		final HttpPost post = new HttpPost(server.resource("domains/12/relations/"));
+		final HttpPost post = new HttpPost(server.resource("domains/dummy/relations/"));
 		final ObjectNode node = json.newObject();
 		node.put(UNDERSCORED_ID, 34L);
 		node.put(UNDERSCORED_TYPE, "foo");
@@ -109,7 +110,7 @@ public class RelationsTest {
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
 		final ArgumentCaptor<Relation> relationCaptor = ArgumentCaptor.forClass(Relation.class);
-		verify(service).create(eq("12"), relationCaptor.capture());
+		verify(service).create(eq("dummy"), relationCaptor.capture());
 
 		final Relation captured = relationCaptor.getValue();
 		assertThat(captured.getType(), equalTo("foo"));
@@ -124,7 +125,7 @@ public class RelationsTest {
 	@Test
 	public void relationsRead() throws Exception {
 		// given
-		final String type = "12";
+		final String type = "dummy";
 		final Relation firstRelation = newRelation() //
 				.withType(type) //
 				.withId(78L) //
@@ -153,7 +154,7 @@ public class RelationsTest {
 		final ResponseMultiple<Relation> sentResponse = newResponseMultiple(Relation.class) //
 				.withElements(asList(firstRelation, secondRelation)) //
 				.withMetadata(newMetadata() //
-						.withTotal(2L) //
+						.withTotal(2L) // (Relation.class)
 						.build()) //
 				.build();
 		final RelationAdapter relationAdapter = new RelationAdapter();
@@ -172,7 +173,7 @@ public class RelationsTest {
 				.when(service).read(anyString(), anyString(), anyInt(), anyInt());
 
 		// when
-		final HttpGet get = new HttpGet(new URIBuilder(server.resource("domains/12/relations/")) //
+		final HttpGet get = new HttpGet(new URIBuilder(server.resource("domains/dummy/relations/")) //
 				.setParameter(CLASS_ID, "34") //
 				.setParameter(FILTER, "filter") //
 				.setParameter(LIMIT, "56") //
@@ -184,7 +185,43 @@ public class RelationsTest {
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		verify(service).read(eq("12"), eq("filter"), eq(56), eq(78));
+		verify(service).read(eq("dummy"), eq("filter"), eq(56), eq(78));
+	}
+
+	@Test
+	public void relationRead() throws Exception {
+		// given
+		final Relation relation = newRelation() //
+				.withType("type") //
+				.withId(34L) //
+				.withSource(newCard() //
+						.withId(1L) //
+						.build()) //
+				.withDestination(newCard() //
+						.withId(2L) //
+						.build()) //
+				.withValues(ChainablePutMap.of(new HashMap<String, String>()) //
+						.chainablePut("foo", "bar") //
+						.chainablePut("bar", "baz")) //
+				.build();
+		final ResponseSingle<Relation> sentResponse = newResponseSingle(Relation.class) //
+				.withElement(relation) //
+				.build();
+		doReturn(sentResponse) //
+				.when(service).read(anyString(), anyLong());
+		final ResponseSingle<Map<String, Object>> expectedResponse = Models.<Map<String, Object>> newResponseSingle() //
+				.withElement(new RelationAdapter().marshal(relation)) //
+				.build();
+
+		// when
+		final HttpGet get = new HttpGet(server.resource("domains/dummy/relations/12/"));
+		final HttpResponse response = httpclient.execute(get);
+
+		// then
+		assertThat(statusCodeOf(response), equalTo(200));
+		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
+
+		verify(service).read(eq("dummy"), eq(12L));
 	}
 
 }
