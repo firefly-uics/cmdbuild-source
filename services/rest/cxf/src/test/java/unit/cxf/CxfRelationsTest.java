@@ -8,7 +8,6 @@ import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -16,14 +15,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import javax.ws.rs.WebApplicationException;
 
-import org.cmdbuild.common.collect.ChainablePutMap;
-import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
@@ -32,7 +25,6 @@ import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.service.rest.cxf.CxfRelations;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
-import org.cmdbuild.service.rest.model.Relation;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -202,6 +194,50 @@ public class CxfRelationsTest {
 	@Test
 	public void logicCalledSuccessfullyWhenReadingRelation() throws Exception {
 		fail("cannot mock business logic return value");
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenDeletingRelationButProcessNotFound() throws Exception {
+		// given
+		doReturn(null) //
+				.when(dataAccessLogic).findDomain(eq("dummy"));
+		doThrow(WebApplicationException.class) //
+				.when(errorHandler).domainNotFound(eq("dummy"));
+
+		// when
+		cxfRelations.delete("dummy", 123L);
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenDeletingRelationButBusinessLogicThrowsException() throws Exception {
+		// given
+		final CMDomain domain = domain("dummy");
+		doReturn(domain) //
+				.when(dataAccessLogic).findDomain(eq("dummy"));
+		final RuntimeException exception = new RuntimeException();
+		doThrow(exception) //
+				.when(dataAccessLogic).deleteRelation(eq("dummy"), eq(123L));
+		doThrow(new WebApplicationException(exception)) //
+				.when(errorHandler).propagate(any(Exception.class));
+
+		// when
+		cxfRelations.delete("dummy", 123L);
+	}
+
+	@Test
+	public void logicCalledSuccessfullyWhenDeletingRelation() throws Exception {
+		// given
+		doReturn(domain("dummy")) //
+				.when(dataAccessLogic).findDomain(anyString());
+
+		// when
+		cxfRelations.delete("dummy", 123L);
+
+		// then
+		final InOrder inOrder = inOrder(errorHandler, dataAccessLogic);
+		inOrder.verify(dataAccessLogic).findDomain(eq("dummy"));
+		inOrder.verify(dataAccessLogic).deleteRelation(eq("dummy"), eq(123L));
+		inOrder.verifyNoMoreInteractions();
 	}
 
 	private CMDomain domain(final String name) {

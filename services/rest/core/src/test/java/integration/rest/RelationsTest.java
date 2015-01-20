@@ -36,6 +36,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
@@ -222,6 +223,18 @@ public class RelationsTest {
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
 		verify(service).read(eq("dummy"), eq(12L));
+	}
+
+	@Test
+	public void relationDeleted() throws Exception {
+		// when
+		final HttpDelete delete = new HttpDelete(server.resource("domains/dummy/relations/123/"));
+		final HttpResponse response = httpclient.execute(delete);
+
+		// then
+		assertThat(statusCodeOf(response), equalTo(204));
+
+		verify(service).delete(eq("dummy"), eq(123L));
 	}
 
 }
