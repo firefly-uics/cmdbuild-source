@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.cxf.serialization;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.cmdbuild.common.Constants.REST_ALL_DATES_PATTERN;
 
 import java.text.DateFormat;
@@ -118,7 +119,7 @@ public class DefaultConverter implements Converter {
 		private static Object convertDate(final Object input) {
 			try {
 				final String s = String.class.cast(input);
-				return (s == null) ? null : dateFormat.parse(s);
+				return isBlank(s) ? null : dateFormat.parse(s);
 			} catch (final ParseException e) {
 				throw new RuntimeException(e);
 			}
