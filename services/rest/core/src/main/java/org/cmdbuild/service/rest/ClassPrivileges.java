@@ -14,7 +14,7 @@ import org.cmdbuild.service.rest.model.ClassPrivilege;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
-@Path("roles/{" + ROLE_ID + "}/class_privileges/")
+@Path("roles/{" + ROLE_ID + "}/classes_privileges/")
 @Produces(APPLICATION_JSON)
 public interface ClassPrivileges {
 
