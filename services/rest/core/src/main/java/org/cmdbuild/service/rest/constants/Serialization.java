@@ -74,6 +74,8 @@ public class Serialization {
 			PARENT_TYPE = "parent_type", //
 			PASSWORD = "password", //
 			PRECISION = "precision", //
+			RELATION = "relation", //
+			RELATION_ID = RELATION + ID_CAPITALIZED, //
 			RESPONSE_METADATA = "meta", //
 			ROLE = "role", //
 			ROLE_ID = "role" + ID_CAPITALIZED, //

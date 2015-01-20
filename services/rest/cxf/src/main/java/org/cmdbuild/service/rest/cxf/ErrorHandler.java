@@ -42,6 +42,8 @@ public interface ErrorHandler {
 
 	void propagate(Throwable e);
 
+	void relationNotFound(Long id);
+
 	void roleNotFound(String id);
 
 	void sessionNotFound(String id);

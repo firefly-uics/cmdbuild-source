@@ -25,6 +25,8 @@ import org.cmdbuild.model.data.Card;
 import org.cmdbuild.servlets.json.management.dataimport.csv.CSVData;
 import org.json.JSONException;
 
+import com.google.common.base.Optional;
+
 /**
  * Business Logic Layer for Data Access
  */
@@ -49,6 +51,8 @@ public interface DataAccessLogic extends Logic {
 	GetRelationListResponse getRelationListEmptyForWrongId(Card srcCard, DomainWithSource dom);
 
 	GetRelationListResponse getRelationList(CMDomain domain, QueryOptions queryOptions);
+
+	Optional<RelationInfo> getRelation(CMDomain domain, Long id);
 
 	GetRelationHistoryResponse getRelationHistory(Card srcCard);
 

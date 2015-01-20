@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -15,8 +16,14 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import javax.ws.rs.WebApplicationException;
 
+import org.cmdbuild.common.collect.ChainablePutMap;
+import org.cmdbuild.dao.entry.CMRelation;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
 import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
@@ -25,12 +32,15 @@ import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.model.data.Card;
 import org.cmdbuild.service.rest.cxf.CxfRelations;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.model.Relation;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
+
+import com.google.common.base.Optional;
 
 public class CxfRelationsTest {
 
@@ -72,10 +82,7 @@ public class CxfRelationsTest {
 	@Test
 	public void logicCalledOnCreation() throws Exception {
 		// given
-		final CMDomain type = mock(CMDomain.class);
-		doReturn("found domain") //
-				.when(type).getName();
-		doReturn(type) //
+		doReturn(domain("found domain")) //
 				.when(dataAccessLogic).findDomain(anyString());
 		doReturn(asList(789L)) //
 				.when(dataAccessLogic).createRelations(any(RelationDTO.class));
@@ -118,35 +125,20 @@ public class CxfRelationsTest {
 	public void exceptionWhenReadingRelationsButProcessNotFound() throws Exception {
 		// given
 		doReturn(null) //
-				.when(dataAccessLogic).findDomain(anyString());
+				.when(dataAccessLogic).findDomain(eq("dummy"));
 		doThrow(WebApplicationException.class) //
-				.when(errorHandler).domainNotFound(anyString());
+				.when(errorHandler).domainNotFound(eq("dummy"));
 
 		// when
-		cxfRelations.read("123", null, null, null);
-
-		// then
-		final InOrder inOrder = inOrder(errorHandler, dataAccessLogic);
-		inOrder.verify(dataAccessLogic).findDomain(eq("123"));
-		inOrder.verify(errorHandler).domainNotFound(eq("123"));
-		inOrder.verifyNoMoreInteractions();
+		cxfRelations.read("dummy", null, null, null);
 	}
 
 	@Test(expected = WebApplicationException.class)
 	public void exceptionWhenReadingRelationsButBusinessLogicThrowsException() throws Exception {
-		// given
-		final CMDomain domain = mock(CMDomain.class);
-		doReturn(123L) //
-				.when(domain).getId();
-		doReturn(domain) //
-				.when(dataAccessLogic).findDomain(anyString());
-		final CMClass clazz = mock(CMClass.class);
-		doReturn("foo") //
-				.when(clazz).getName();
-		doReturn(clazz) //
+		doReturn(domain("dummy")) //
+				.when(dataAccessLogic).findDomain(eq("dummy"));
+		doReturn(clazz("foo")) //
 				.when(dataAccessLogic).findClass(anyString());
-		doReturn(domain) //
-				.when(dataAccessLogic).findDomain(anyString());
 		final RuntimeException exception = new RuntimeException();
 		doThrow(exception) //
 				.when(dataAccessLogic).getRelationListEmptyForWrongId(any(Card.class), any(DomainWithSource.class));
@@ -155,32 +147,75 @@ public class CxfRelationsTest {
 
 		// when
 		cxfRelations.read("12", null, null, null);
-
-		// then
-		final ArgumentCaptor<Card> cardCaptor = ArgumentCaptor.forClass(Card.class);
-		final ArgumentCaptor<DomainWithSource> domainWithSourceCaptor = ArgumentCaptor.forClass(DomainWithSource.class);
-		final InOrder inOrder = inOrder(errorHandler, dataAccessLogic);
-		inOrder.verify(dataAccessLogic).findDomain(eq(12L));
-		inOrder.verify(dataAccessLogic).findClass(eq(34L));
-		// TODO capture and verify
-		inOrder.verify(dataAccessLogic).getRelationListEmptyForWrongId(cardCaptor.capture(),
-				domainWithSourceCaptor.capture());
-		inOrder.verify(errorHandler).propagate(eq(exception));
-		inOrder.verifyNoMoreInteractions();
-
-		final Card card = cardCaptor.getValue();
-		assertThat(card.getClassName(), equalTo("bar"));
-		assertThat(card.getId(), equalTo(42L));
-
-		final DomainWithSource domainWithSource = domainWithSourceCaptor.getValue();
-		assertThat(domainWithSource.domainId, equalTo(123L));
-		assertThat(domainWithSource.querySource, equalTo("baz"));
 	}
 
 	@Ignore
 	@Test
-	public void businessLogicCalledSuccessfullyWhenReadingRelations() throws Exception {
+	public void logicCalledSuccessfullyWhenReadingRelations() throws Exception {
 		fail("cannot mock business logic return value");
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenReadingRelationButProcessNotFound() throws Exception {
+		// given
+		doReturn(null) //
+				.when(dataAccessLogic).findDomain(eq("dummy"));
+		doThrow(WebApplicationException.class) //
+				.when(errorHandler).domainNotFound(eq("dummy"));
+
+		// when
+		cxfRelations.read("dummy", 123L);
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenReadingRelationButBusinessLogicThrowsException() throws Exception {
+		// given
+		final CMDomain domain = domain("dummy");
+		doReturn(domain) //
+				.when(dataAccessLogic).findDomain(eq("dummy"));
+		final RuntimeException exception = new RuntimeException();
+		doThrow(exception) //
+				.when(dataAccessLogic).getRelation(eq(domain), eq(123L));
+		doThrow(new WebApplicationException(exception)) //
+				.when(errorHandler).propagate(any(Exception.class));
+
+		// when
+		cxfRelations.read("dummy", 123L);
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void exceptionWhenReadingRelationButRelationNotFound() throws Exception {
+		// given
+		final CMDomain domain = domain("dummy");
+		doReturn(domain) //
+				.when(dataAccessLogic).findDomain(eq("dummy"));
+		doReturn(Optional.absent()) //
+				.when(dataAccessLogic).getRelation(eq(domain), eq(123L));
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).relationNotFound(eq(123L));
+
+		// when
+		cxfRelations.read("dummy", 123L);
+	}
+
+	@Ignore
+	@Test
+	public void logicCalledSuccessfullyWhenReadingRelation() throws Exception {
+		fail("cannot mock business logic return value");
+	}
+
+	private CMDomain domain(final String name) {
+		final CMDomain domain = mock(CMDomain.class);
+		doReturn(name) //
+				.when(domain).getName();
+		return domain;
+	}
+
+	private CMClass clazz(final String name) {
+		final CMClass clazz = mock(CMClass.class);
+		doReturn(name) //
+				.when(clazz).getName();
+		return clazz;
 	}
 
 }
