@@ -198,4 +198,17 @@ public class CxfRelations implements Relations {
 		return Optional.absent();
 	}
 
+	@Override
+	public void delete(final String domainId, final Long relationId) {
+		final CMDomain targetDomain = dataAccessLogic.findDomain(domainId);
+		if (targetDomain == null) {
+			errorHandler.domainNotFound(domainId);
+		}
+		try {
+			dataAccessLogic.deleteRelation(domainId, relationId);
+		} catch (final Exception e) {
+			errorHandler.propagate(e);
+		}
+	}
+
 }

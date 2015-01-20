@@ -8,6 +8,7 @@ import static org.cmdbuild.service.rest.constants.Serialization.LIMIT;
 import static org.cmdbuild.service.rest.constants.Serialization.RELATION_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.START;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -41,6 +42,13 @@ public interface Relations {
 	@GET
 	@Path("{" + RELATION_ID + "}/")
 	ResponseSingle<Relation> read( //
+			@PathParam(DOMAIN_ID) String domainId, //
+			@PathParam(RELATION_ID) Long relationId //
+	);
+
+	@DELETE
+	@Path("{" + RELATION_ID + "}/")
+	void delete( //
 			@PathParam(DOMAIN_ID) String domainId, //
 			@PathParam(RELATION_ID) Long relationId //
 	);
