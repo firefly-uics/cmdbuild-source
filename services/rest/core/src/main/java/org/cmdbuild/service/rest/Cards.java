@@ -32,7 +32,8 @@ public interface Cards {
 	@Path(EMPTY)
 	ResponseSingle<Long> create( //
 			@PathParam(CLASS_ID) String classId, //
-			Card card);
+			Card card //
+	);
 
 	@GET
 	@Path("{" + CARD_ID + "}/")

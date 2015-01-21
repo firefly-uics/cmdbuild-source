@@ -24,7 +24,8 @@ public interface Sessions {
 	@POST
 	@Path(EMPTY)
 	ResponseSingle<Session> create( //
-			Session session);
+			Session session //
+	);
 
 	@GET
 	@Path("{" + ID + "}/")
