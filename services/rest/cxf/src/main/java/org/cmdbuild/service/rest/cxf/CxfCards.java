@@ -35,23 +35,20 @@ import com.mchange.util.AssertException;
 public class CxfCards implements Cards, LoggingSupport {
 
 	private final ErrorHandler errorHandler;
-	private final DataAccessLogic userDataAccessLogic;
+	private final DataAccessLogic dataAccessLogic;
 
-	public CxfCards(final ErrorHandler errorHandler, final DataAccessLogic userDataAccessLogic) {
+	public CxfCards(final ErrorHandler errorHandler, final DataAccessLogic dataAccessLogic) {
 		this.errorHandler = errorHandler;
-		this.userDataAccessLogic = userDataAccessLogic;
+		this.dataAccessLogic = dataAccessLogic;
 	}
 
 	@Override
 	public ResponseSingle<Long> create(final String classId, final Card card) {
-		final CMClass targetClass = userDataAccessLogic.findClass(classId);
-		if (targetClass == null) {
-			errorHandler.classNotFound(classId);
-		}
+		final CMClass targetClass = assureClass(classId);
 		final org.cmdbuild.model.data.Card _card = org.cmdbuild.model.data.Card.newInstance(targetClass) //
 				.withAllAttributes(adaptInputValues(targetClass, card)) //
 				.build();
-		final Long id = userDataAccessLogic.createCard(_card);
+		final Long id = dataAccessLogic.createCard(_card);
 		return newResponseSingle(Long.class) //
 				.withElement(id) //
 				.build();
@@ -59,13 +56,9 @@ public class CxfCards implements Cards, LoggingSupport {
 
 	@Override
 	public ResponseSingle<Card> read(final String classId, final Long id) {
-		// TODO inject error management within logic
-		final CMClass targetClass = userDataAccessLogic.findClass(classId);
-		if (targetClass == null) {
-			errorHandler.classNotFound(classId);
-		}
+		final CMClass targetClass = assureClass(classId);
 		try {
-			final CMCard fetched = userDataAccessLogic.fetchCMCard(targetClass.getName(), id);
+			final CMCard fetched = dataAccessLogic.fetchCMCard(targetClass.getName(), id);
 			final Card element = newCard() //
 					.withType(targetClass.getName()) //
 					.withId(fetched.getId()) //
@@ -84,17 +77,14 @@ public class CxfCards implements Cards, LoggingSupport {
 	@Override
 	public ResponseMultiple<Card> read(final String classId, final String filter, final String sort,
 			final Integer limit, final Integer offset) {
-		final CMClass targetClass = userDataAccessLogic.findClass(classId);
-		if (targetClass == null) {
-			errorHandler.classNotFound(classId);
-		}
+		final CMClass targetClass = assureClass(classId);
 		final QueryOptions queryOptions = QueryOptions.newQueryOption() //
 				.filter(safeJsonObject(filter)) //
 				.orderBy(safeJsonArray(sort)) //
 				.limit(limit) //
 				.offset(offset) //
 				.build();
-		final FetchCardListResponse response = userDataAccessLogic.fetchCards(targetClass.getName(), queryOptions);
+		final FetchCardListResponse response = dataAccessLogic.fetchCards(targetClass.getName(), queryOptions);
 		final Iterable<Card> elements = from(response.elements()) //
 				.transform(new Function<org.cmdbuild.model.data.Card, Card>() {
 
@@ -118,25 +108,30 @@ public class CxfCards implements Cards, LoggingSupport {
 
 	@Override
 	public void update(final String classId, final Long id, final Card card) {
-		final CMClass targetClass = userDataAccessLogic.findClass(classId);
-		if (targetClass == null) {
-			errorHandler.classNotFound(classId);
-		}
+		final CMClass targetClass = assureClass(classId);
 		final org.cmdbuild.model.data.Card _card = org.cmdbuild.model.data.Card.newInstance(targetClass) //
 				.withId(id) //
 				.withAllAttributes(adaptInputValues(targetClass, card)) //
 				.build();
-		userDataAccessLogic.updateCard(_card);
+		dataAccessLogic.updateCard(_card);
 	}
 
 	@Override
 	public void delete(final String classId, final Long id) {
-		final CMClass targetClass = userDataAccessLogic.findClass(classId);
+		final CMClass targetClass = assureClass(classId);
+		// TODO check for missing id (inside logic, please)
+		dataAccessLogic.deleteCard(targetClass.getName(), id);
+	}
+
+	private CMClass assureClass(final String classId) {
+		final CMClass targetClass = dataAccessLogic.findClass(classId);
 		if (targetClass == null) {
 			errorHandler.classNotFound(classId);
 		}
-		// TODO check for missing id (inside logic, please)
-		userDataAccessLogic.deleteCard(targetClass.getName(), id);
+		if (dataAccessLogic.isProcess(targetClass)) {
+			errorHandler.classNotFoundClassIsProcess(classId);
+		}
+		return targetClass;
 	}
 
 	private Map<String, Object> adaptInputValues(final CMClass targetClass, final Card card) {

@@ -35,11 +35,11 @@ public class CxfClasses implements Classes {
 	};
 
 	private final ErrorHandler errorHandler;
-	private final DataAccessLogic userDataAccessLogic;
+	private final DataAccessLogic dataAccessLogic;
 
-	public CxfClasses(final ErrorHandler errorHandler, final DataAccessLogic userDataAccessLogic) {
+	public CxfClasses(final ErrorHandler errorHandler, final DataAccessLogic dataAccessLogic) {
 		this.errorHandler = errorHandler;
-		this.userDataAccessLogic = userDataAccessLogic;
+		this.dataAccessLogic = dataAccessLogic;
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class CxfClasses implements Classes {
 			final Integer offset) {
 		// FIXME do all the following it within the same logic
 		// <<<<<
-		final Iterable<? extends CMClass> allClasses = userDataAccessLogic.findClasses(activeOnly);
+		final Iterable<? extends CMClass> allClasses = dataAccessLogic.findClasses(activeOnly);
 		final Iterable<? extends CMClass> ordered = Ordering.from(NAME_ASC) //
 				.sortedCopy(allClasses);
 		final Iterable<ClassWithBasicDetails> elements = from(ordered) //
@@ -65,9 +65,12 @@ public class CxfClasses implements Classes {
 
 	@Override
 	public ResponseSingle<ClassWithFullDetails> read(final String classId) {
-		final CMClass found = userDataAccessLogic.findClass(classId);
+		final CMClass found = dataAccessLogic.findClass(classId);
 		if (found == null) {
 			errorHandler.classNotFound(classId);
+		}
+		if (dataAccessLogic.isProcess(found)) {
+			errorHandler.classNotFoundClassIsProcess(classId);
 		}
 		final ClassWithFullDetails element = TO_FULL_CLASS_DETAIL.apply(found);
 		return newResponseSingle(ClassWithFullDetails.class) //
