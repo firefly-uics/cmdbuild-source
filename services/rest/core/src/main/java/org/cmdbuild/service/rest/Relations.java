@@ -29,7 +29,8 @@ public interface Relations {
 	@Path(EMPTY)
 	ResponseSingle<Long> create( //
 			@PathParam(DOMAIN_ID) String classId, //
-			Relation relation);
+			Relation relation //
+	);
 
 	@GET
 	@Path(EMPTY)
@@ -52,7 +53,8 @@ public interface Relations {
 	void update( //
 			@PathParam(DOMAIN_ID) String domainId, //
 			@PathParam(RELATION_ID) Long relationId, //
-			Relation relation);
+			Relation relation //
+	);
 
 	@DELETE
 	@Path("{" + RELATION_ID + "}/")
