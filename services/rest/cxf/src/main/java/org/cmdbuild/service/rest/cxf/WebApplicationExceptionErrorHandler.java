@@ -37,6 +37,12 @@ public class WebApplicationExceptionErrorHandler implements ErrorHandler, Loggin
 	}
 
 	@Override
+	public void classNotFoundClassIsProcess(final String id) {
+		logger.error("class '{}' is a process", id);
+		notFound(id);
+	}
+
+	@Override
 	public void differentAttachmentName(final String name) {
 		logger.error("different file name '{}'", name);
 		badRequest(format("different file name '%s'", name));
