@@ -62,6 +62,16 @@
 				items: [
 					{
 						xtype: 'hidden',
+						name: CMDBuild.core.proxy.CMProxyConstants.ID,
+						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+					},
+					{
+						xtype: 'hidden',
+						name: CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY,
+						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY)
+					},
+					{
+						xtype: 'hidden',
 						name: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
 						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT)
 					},

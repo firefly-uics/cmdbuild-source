@@ -22,13 +22,14 @@
 		 */
 		TEMPLATE_FIELDS: [
 			CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-			CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES,
 			CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES,
-			CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
-			CMDBuild.core.proxy.CMProxyConstants.CONTENT,
 			CMDBuild.core.proxy.CMProxyConstants.CONDITION,
+			CMDBuild.core.proxy.CMProxyConstants.CONTENT,
+			CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
 			CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH,
-			CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS
+			CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
+			CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID,
+			CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES
 		],
 
 		/**
@@ -42,6 +43,8 @@
 		clientForm: undefined,
 
 		/**
+		 * Shorthand to view grid
+		 *
 		 * @property {CMDBuild.view.management.common.widgets.CMEmailGrid}
 		 */
 		emailGrid: undefined,
@@ -57,9 +60,28 @@
 		emailsWereGenerated: false,
 
 		/**
+		 * @property {CMDBuild.view.management.common.widgets.email.CMEmailWindow}
+		 */
+		emailWindow: undefined,
+
+		/**
+		 * Used from button to force regeneration
+		 *
+		 * @cfg {Boolean}
+		 */
+		forceRegeneration: false,
+
+		/**
 		 * @cfg {Boolean}
 		 */
 		gridStoreWasLoaded: false,
+
+		/**
+		 * Flag used to check first widget load time
+		 *
+		 * @cfg {Boolean}
+		 */
+		isAlreadyRegenerated: false,
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
@@ -105,14 +127,22 @@
 
 			this.callParent(arguments);
 
+			// Generate templates id
+			var emailtemplates = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES];
+			for (var index in emailtemplates) {
+				var template = emailtemplates[index];
+
+				template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID] = new Date().valueOf() + index;
+			}
+
 			this.emailTemplatesData = this.extractVariablesForTemplateResolver();
 			this.readOnly = !this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
 
-			var xavars = Ext.apply({}, this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES] || {}, this.emailTemplatesData);
+			var xaVars = Ext.apply({}, this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES] || {}, this.emailTemplatesData);
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: clientForm,
-				xaVars: xavars,
+				xaVars: xaVars,
 				serverVars: this.getTemplateResolverServerVars()
 			});
 
@@ -138,14 +168,20 @@
 				case 'onEmailEdit':
 					return this.onEmailEdit(param);
 
-				case 'onItemDoubleClick':
-					return this.onItemDoubleClick(param);
-
 				case 'onEmailReply':
 					return this.onEmailReply(param);
 
 				case 'onEmailView':
 					return this.onEmailView(param);
+
+				case 'onEmailWindowAbortButtonClick':
+					return this.onEmailWindowAbortButtonClick();
+
+				case 'onEmailWindowConfirmButtonClick':
+					return this.onEmailWindowConfirmButtonClick();
+
+				case 'onItemDoubleClick':
+					return this.onItemDoubleClick(param);
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
@@ -162,9 +198,12 @@
 			this.checkTemplatesToRegenerate();
 
 			if (
-				this.thereAreTemplates()
-				&& !this.view.hasDraftEmails()
-				&& !this.emailsWereGenerated
+				(
+					this.thereAreTemplates()
+					&& !this.emailGrid.hasDraftEmails()
+					&& !this.emailsWereGenerated
+				)
+				|| this.forceRegeneration
 			) {
 				this.createEmailFromTemplate();
 			}
@@ -183,7 +222,7 @@
 
 			if (!this.gridStoreWasLoaded) {
 				this.view.setLoading(true);
-				this.view.emailGrid.store.load({
+				this.emailGrid.getStore().load({
 					params: {
 						ProcessId: pi.getId()
 					},
@@ -205,7 +244,7 @@
 		checkTemplatesToRegenerate: function() {
 			var dirtyVariables = Ext.Object.getKeys(this.ownerController.view.mainView.getValues(false, true));
 
-			// Complete dirtyVariables array also with multylevel variables (ex. var1 = '... {client:var2} ...')
+			// Complete dirtyVariables array also with multilevel variables (ex. var1 = '... {client:var2} ...')
 			for (var i in this.templateResolver.xaVars) {
 				var variable = this.templateResolver.xaVars[i] || [];
 
@@ -235,7 +274,7 @@
 						) {
 							for (var y in dirtyVariables)
 								if (templateAttribute.indexOf('{client:' + dirtyVariables[y]) > -1)
-									this.templatesToRegenerate.push(parseInt(i) + 1);
+									this.templatesToRegenerate.push(template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID]);
 						}
 					}
 			}
@@ -253,20 +292,26 @@
 		createEmailFromTemplate: function() {
 			if (!this.busy) {
 				var me = this;
-				var oldStore = [].concat(this.view.getNewEmails()).concat(this.view.getDraftEmails()); // Backup old store to copy not regenerated data
+				var oldStore = CMDBuild.core.Utils.deepCloneStore(this.emailGrid.getStore()); // Old store backup
 
 				this.busy = true;
-				this.view.removeTemplatesFromStore();
+				this.emailGrid.removeTemplatesFromStore();
 				this.emailsWereGenerated = true;
 
 				this.templateResolver.resolveTemplates({
 					attributes: Ext.Object.getKeys(me.emailTemplatesData),
 					callback: function(values, ctx) {
 						for (var i = 1; i <= me.countTemplates(); ++i) {
+
+							var oldEmailVersionIndex = oldStore.findBy(function(item) {
+								return item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID) == values[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID + i];
+							});
+
 							// If regeneration is forced by field edit or if it's first load
 							if (
-								Ext.Array.contains(me.templatesToRegenerate, i)
-								|| oldStore.length == 0
+								Ext.Array.contains(me.templatesToRegenerate, values[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID + i])
+								|| !me.isAlreadyRegenerated // Regenerate on first time widget is loaded
+								|| me.forceRegeneration
 							) {
 								var v = {};
 								var conditionExpr = values[CMDBuild.core.proxy.CMProxyConstants.CONDITION + i];
@@ -280,10 +325,13 @@
 
 									_msg('Email with subject "' + v[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
 
-									me.view.addTemplateToStore(v);
+									me.emailGrid.addTemplateToStore(v);
 								}
-							} else if (i < oldStore.length) { // Copy from old store
-								me.view.emailGrid.addTemplateToStore(oldStore[i - 1].data);
+							} else if (oldEmailVersionIndex >= 0) { // Copy from old store
+								var record = oldStore.getAt(oldEmailVersionIndex);
+								record.dirty = true; // Force record in dirty state
+
+								me.emailGrid.addToStoreIfNotInIt(record);
 							}
 						}
 
@@ -296,6 +344,10 @@
 						});
 
 						me.busy = false;
+						me.isAlreadyRegenerated = true;
+						me.forceRegeneration = false;
+
+						me.ownerController.view.mainView.form.initValues(); // Clear form fields dirty state to reset state after regeneration
 					}
 				});
 			}
@@ -327,14 +379,29 @@
 		},
 
 		/**
+		 * Generates temporary id from time in milliseconds
+		 *
+		 * @param {CMDBuild.model.widget.ManageEmail.grid} targetObject
+		 */
+		generateTemporaryId: function(targetObject) {
+			if (
+				Ext.isEmpty(targetObject.get(CMDBuild.core.proxy.CMProxyConstants.ID))
+				|| targetObject.get(CMDBuild.core.proxy.CMProxyConstants.ID) == 0
+			) {
+				targetObject.set(CMDBuild.core.proxy.CMProxyConstants.ID, new Date().valueOf());
+				targetObject.set(CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY, true);
+			}
+		},
+
+		/**
 		 * @return {Object}
 		 *
 		 * @override
 		 */
 		getData: function(isAdvance) {
 			return {
-				Updated: this.view.getOutgoing(true),
-				Deleted: this.view.getDeletedEmails()
+				Updated: this.getOutgoingEmails(true),
+				Deleted: this.emailGrid.deletedEmails
 			};
 		},
 
@@ -357,7 +424,7 @@
 		isValid: function() {
 			return !(
 				this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED]
-				&& this.view.getOutgoing().length == 0
+				&& this.getOutgoingEmails().length == 0
 			);
 		},
 
@@ -365,7 +432,7 @@
 		 * Removes New and Draft emails from grid store
 		 */
 		removeUnsentEmails: function() {
-			var emailToRemove = [].concat(this.view.getNewEmails()).concat(this.view.getDraftEmails());
+			var emailToRemove = [].concat(this.emailGrid.getNewEmails()).concat(this.emailGrid.getDraftEmails());
 
 			for (var i = 0; i < emailToRemove.length; ++i)
 				this.removeRecord(emailToRemove[i]);
@@ -376,22 +443,6 @@
 		 */
 		thereAreTemplates: function() {
 			return this.countTemplates() > 0;
-		},
-
-		/**
-		 * @param {Ext.form.Basic} form
-		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
-		 * @param {Array} attachments
-		 */
-		updateRecord: function(form, record, attachments) {
-			var formValues = form.getValues();
-
-			for (var key in formValues)
-				record.set(key, formValues[key]);
-
-			record.set('Description', formValues[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES]);
-			record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, attachments);
-			record.commit();
 		},
 
 		/**
@@ -407,11 +458,35 @@
 
 		// As EmailGrid Delegate
 			/**
+			 * @param {Boolean} modifiedOnly
+			 *
+			 * @return {Array} outgoingEmails
+			 */
+			getOutgoingEmails: function(modifiedOnly) {
+				var allOutgoing = modifiedOnly ? false : true;
+				var outgoingEmails = [];
+				var emails = this.emailGrid.getStore().getRange();
+
+				for (var i = 0; i < emails.length; ++i) {
+					var currentEmail = emails[i];
+
+					// Avoid to send temporary Ids to server
+					if (currentEmail.get(CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY))
+						delete currentEmail.data[CMDBuild.core.proxy.CMProxyConstants.ID];
+
+					if (allOutgoing || currentEmail.dirty)
+						outgoingEmails.push(currentEmail.data);
+				}
+
+				return outgoingEmails;
+			},
+
+			/**
 			 * @param {CMDBuild.view.management.common.widgets.CMEmailGrid} emailGrid
 			 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord
 			 */
 			onAddEmailButtonClick: function(emailGrid, emailRecord) {
-				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+				this.emailWindow = Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
 					emailGrid: emailGrid,
 					delegate: this,
 					record: emailRecord
@@ -426,10 +501,8 @@
 					CMDBuild.Translation.common.confirmpopup.title,
 					CMDBuild.Translation.common.confirmpopup.areyousure,
 					function(btn) {
-						if (btn != 'yes')
-							return;
-
-						this.removeRecord(record);
+						if (btn == 'yes')
+							this.removeRecord(record);
 					},
 					this
 				);
@@ -439,7 +512,7 @@
 			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
 			 */
 			onEmailEdit: function(record) {
-				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+				this.emailWindow = Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
 					delegate: this,
 					emailGrid: this.emailGrid,
 					readOnly: !this.readOnly,
@@ -473,7 +546,7 @@
 
 				var replyRecord = Ext.create('CMDBuild.model.widget.ManageEmail.grid', replyRecordData);
 
-				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+				this.emailWindow = Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
 					delegate: this,
 					emailGrid: this.emailGrid,
 					record: replyRecord,
@@ -486,7 +559,7 @@
 			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
 			 */
 			onEmailView: function(record) {
-				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
+				this.emailWindow = Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
 					delegate: this,
 					emailGrid: this.emailGrid,
 					readOnly: true,
@@ -510,6 +583,7 @@
 			onUpdateTemplatesButtonClick: function() {
 				this.removeUnsentEmails();
 				this.emailsWereGenerated = false;
+				this.forceRegeneration = true;
 				this.addEmailFromTemplateIfNeeded();
 			},
 
@@ -602,17 +676,31 @@
 				}).show();
 			},
 
-			/**
-			 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow
-			 */
-			beforeCMEmailWindowDestroy: function(emailWindow) {
-				this.updateRecord(
-					emailWindow.form,
-					emailWindow.record,
-					emailWindow.attachmentPanelsContainer.getFileNames()
-				);
+			onEmailWindowAbortButtonClick: function() {
+				this.emailWindow.destroy();
+			},
 
-				this.view.addToStoreIfNotInIt(emailWindow.record);
+			/**
+			 * Updates record object adding id (time in milliseconds), Description and attachments array and adds email record to grid store
+			 */
+			onEmailWindowConfirmButtonClick: function() {
+				if (this.emailWindow.formPanel.getNonValidFields().length > 0) {
+					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
+				} else {
+					var formValues = this.emailWindow.formPanel.getForm().getValues();
+					var record = this.emailWindow.record;
+					var attachments = this.emailWindow.attachmentPanelsContainer.getFileNames();
+
+					for (var key in formValues)
+						record.set(key, formValues[key]);
+
+					this.generateTemporaryId(record);
+
+					record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, attachments);
+
+					this.emailGrid.addToStoreIfNotInIt(record);
+					this.onEmailWindowAbortButtonClick();
+				}
 			},
 
 		// As CMDMSAttachmentPicker Delegate

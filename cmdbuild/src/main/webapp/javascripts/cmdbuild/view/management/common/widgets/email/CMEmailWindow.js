@@ -106,7 +106,7 @@
 								templateId: record.get(CMDBuild.core.proxy.CMProxyConstants.ID),
 
 								handler: function(button, e) {
-									me.onFillFromTemplateButtonClick(button.templateId);
+									me.onFillFromTemplateButtonClick(button[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID]);
 								}
 							});
 						}
@@ -147,12 +147,6 @@
 
 				this.addAttachmentPanel(attachmentName, this.record);
 			}
-
-			this.on('beforedestroy', function () {
-				if (this.save)
-					this.delegate.beforeCMEmailWindowDestroy(this);
-			}, this);
-
 		},
 
 		addAttachmentPanel: function(fileName, emailRecord) {
@@ -222,37 +216,32 @@
 		 * @return {Array} buttons
 		 */
 		buildButtons: function() {
-			var me = this;
 			var buttons = [];
 
 			if (this.readOnly) {
 				buttons = [
 					Ext.create('CMDBuild.buttons.CloseButton', {
+						scope: this,
+
 						handler: function() {
-							me.destroy();
+							this.delegate.cmOn('onEmailWindowAbortButtonClick');
 						}
 					})
 				];
 			} else {
 				buttons = [
 					Ext.create('CMDBuild.buttons.ConfirmButton', {
-						scope: me,
+						scope: this,
 
 						handler: function() {
-							if (me.formPanel.getNonValidFields().length > 0) {
-								CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-							} else {
-								me.save = true;
-								// Destroy call an event after(!) the destruction of the window the event saves the values of the form. For save the values
-								// only if are correct we have to put this boolean that is valid only on the confirm button
-								me.destroy();
-								me.save = false;
-							}
+							this.delegate.cmOn('onEmailWindowConfirmButtonClick');
 						}
 					}),
 					Ext.create('CMDBuild.buttons.AbortButton', {
+						scope: this,
+
 						handler: function() {
-							me.destroy();
+							this.delegate.cmOn('onEmailWindowAbortButtonClick');
 						}
 					})
 				];
@@ -321,14 +310,14 @@
 		loadFormValues: function(record) {
 			var me = this;
 
-			var xavars = Ext.apply({}, this.delegate.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], record);
+			var xaVars = Ext.apply({}, this.delegate.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], record);
 
 			for (var key in record.variables)
-				xavars[key] = record.variables[key];
+				xaVars[key] = record.variables[key];
 
 			var templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: clientForm,
-				xaVars: xavars,
+				clientForm: me.formPanel.getForm(),
+				xaVars: xaVars,
 				serverVars: me.delegate.getTemplateResolverServerVars()
 			});
 

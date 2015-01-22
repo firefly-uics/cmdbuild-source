@@ -162,8 +162,7 @@
 		// ManageEmail
 		me.builders[CMDBuild.view.management.common.widgets.CMManageEmail.WIDGET_NAME] = function(widget, card) {
 			var w = Ext.create('CMDBuild.view.management.common.widgets.CMManageEmail', {
-				widget: widget,
-				activity: card
+				widgetConf: widget
 			});
 			me.widgetsContainer.addWidgt(w);
 

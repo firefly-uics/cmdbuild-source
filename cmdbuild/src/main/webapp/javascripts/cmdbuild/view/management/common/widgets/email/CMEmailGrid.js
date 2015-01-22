@@ -31,17 +31,14 @@
 		},
 
 		/**
-		 * @cfg {Int}
-		 */
-		processId: undefined,
-
-		/**
 		 * @cfg {Boolean}
 		 */
 		readOnly: undefined,
 
+		autoScroll: true,
+		border: false,
 		collapsible: false,
-		isLoaded: false,
+		frame: false,
 		loadMask: false,
 
 		initComponent: function() {
@@ -70,9 +67,8 @@
 									buttons: Ext.Msg.OKCANCEL,
 									icon: Ext.Msg.WARNING,
 									fn: function(btn) {
-										if (btn != 'ok')
-											return;
-										me.delegate.onUpdateTemplatesButtonClick();
+										if (btn == 'ok')
+											me.delegate.onUpdateTemplatesButtonClick();
 									}
 								});
 							}
@@ -84,7 +80,10 @@
 			Ext.apply(this, {
 				columns: [
 					{
-						sortable: true,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ID,
+						hidden: true
+					},
+					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
 						hidden: true
 					},
@@ -93,9 +92,9 @@
 						hidden: true
 					},
 					{
-						sortable: true,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.STATUS,
-						hidden: true
+						hidden: true,
+						sortable: true
 					},
 					{
 						header: tr.datehdr,
@@ -233,8 +232,6 @@
 			});
 
 			this.callParent(arguments);
-
-			this.mon(this.store, 'load', this.onStoreLoad, this);
 		},
 
 		listeners: {
@@ -249,9 +246,6 @@
 		addTemplateToStore: function(values) {
 			var record = this.createRecord(values);
 
-			// Mark the record added by template to be able to delete it in removeTemplatesToStore
-			record._cmTemplate = true;
-
 			this.addToStoreIfNotInIt(record);
 		},
 
@@ -261,12 +255,12 @@
 		addToStoreIfNotInIt: function(record) {
 			var store = this.getStore();
 
-			if (store.findBy(
-					function(item) {
-						return item[CMDBuild.core.proxy.CMProxyConstants.ID] == record[CMDBuild.core.proxy.CMProxyConstants.ID];
-					}
-				) == -1
+			if (store.findBy(function(item) {
+					return item.get(CMDBuild.core.proxy.CMProxyConstants.ID) == record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+				}) == -1
 			) {
+				this.delegate.generateTemporaryId(record);
+
 				// Use loadRecords because store.add does not update the grouping so the grid goes broken
 				store.loadRecords([record], { addRecords: true });
 			}
@@ -319,10 +313,6 @@
 			return this.getDraftEmails().length > 0;
 		},
 
-		onStoreLoad: function() {
-			this.isLoaded = true;
-		},
-
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
 		 *
@@ -344,14 +334,14 @@
 		},
 
 		removeTemplatesFromStore: function() {
-			var data = this.store.data.clone();
+			var indexesToDelete = [];
 
-			for (var i = 0; i < data.length; ++i) {
-				var storeItem = data.getAt(i);
+			this.getStore().each(function(record, index, storeLength) {
+				if (!Ext.Object.isEmpty(record) && record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID) > 0)
+					indexesToDelete.push(index);
+			}, this);
 
-				if (storeItem && storeItem._cmTemplate)
-					this.store.remove(storeItem);
-			}
+			this.getStore().remove(indexesToDelete);
 		},
 
 		// Column renderers
