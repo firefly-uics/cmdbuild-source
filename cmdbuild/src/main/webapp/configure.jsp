@@ -3,10 +3,11 @@
 
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="org.cmdbuild.services.SessionVars"%>
-<%@ page import="org.cmdbuild.services.gis.GisDatabaseService"%>
-<%@ page import="org.cmdbuild.spring.SpringIntegrationUtils"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="org.cmdbuild.services.SessionVars" %>
+<%@ page import="org.cmdbuild.services.gis.GisDatabaseService" %>
+<%@ page import="org.cmdbuild.spring.SpringIntegrationUtils" %>
+<%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
 
 <%
 	final SessionVars sessionVars = SpringIntegrationUtils.applicationContext().getBean(SessionVars.class);
@@ -48,8 +49,8 @@
 
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.Config.cmdbuild');
-			CMDBuild.Config.cmdbuild.language = '<%= lang %>';
-			CMDBuild.Config.cmdbuild.jdbcDriverVersion = '<%= jdbcDriverVersion %>';
+			CMDBuild.Config.cmdbuild.language = '<%= StringEscapeUtils.escapeEcmaScript(lang) %>';
+			CMDBuild.Config.cmdbuild.jdbcDriverVersion = '<%= StringEscapeUtils.escapeEcmaScript(jdbcDriverVersion) %>';
 
 			Ext.onReady(function() {
 				CMDBuild.app.Setup.init();

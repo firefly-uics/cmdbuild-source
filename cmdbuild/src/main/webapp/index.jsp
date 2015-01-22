@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <%@ page import="org.cmdbuild.auth.UserStore" %>
-<%@ page import="org.cmdbuild.auth.user.OperationUser"%>
-<%@ page import="org.cmdbuild.services.SessionVars"%>
-<%@ page import="org.cmdbuild.services.auth.User"%>
-<%@ page import="org.cmdbuild.servlets.json.Login"%>
-<%@ page import="org.cmdbuild.spring.SpringIntegrationUtils"%>
+<%@ page import="org.cmdbuild.auth.user.OperationUser" %>
+<%@ page import="org.cmdbuild.services.SessionVars" %>
+<%@ page import="org.cmdbuild.services.auth.User" %>
+<%@ page import="org.cmdbuild.servlets.json.Login" %>
+<%@ page import="org.cmdbuild.spring.SpringIntegrationUtils" %>
+<%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
 <%@ taglib uri="/WEB-INF/tags/translations.tld" prefix="tr" %>
 
 <%
@@ -53,8 +54,8 @@
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.Runtime'); // runtime configurations
 			<%if (!operationUser.isValid() && !operationUser.getAuthenticatedUser().isAnonymous()) {%>
-				CMDBuild.Runtime.Username = '<%=operationUser.getAuthenticatedUser().getUsername()%>';
-				CMDBuild.Runtime.Groups =<%=Login.serializeGroupForLogin(operationUser.getAuthenticatedUser().getGroupNames())%>;
+				CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
+				CMDBuild.Runtime.Groups = <%= Login.serializeGroupForLogin(operationUser.getAuthenticatedUser().getGroupNames()) %>;
 			<%}%>
 			Ext.onReady(function() {
 				CMDBuild.LoginPanel.buildAfterRequest();

@@ -5,9 +5,9 @@
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
-<%@ page import="java.util.Collection"%>
-<%@ page import="com.google.common.base.Joiner"%>
-
+<%@ page import="java.util.Collection" %>
+<%@ page import="com.google.common.base.Joiner" %>
+<%@ page import="org.apache.commons.lang3.StringEscapeUtils" %>
 <%@ page import="org.cmdbuild.auth.acl.CMGroup" %>
 <%@ page import="org.cmdbuild.auth.UserStore" %>
 <%@ page import="org.cmdbuild.auth.user.OperationUser" %>
@@ -44,11 +44,11 @@
 		<script type="text/javascript">
 			Ext.ns('CMDBuild.Runtime'); // runtime configurations
 			CMDBuild.Runtime.UserId = <%= operationUser.getAuthenticatedUser().getId() %>;
-			CMDBuild.Runtime.Username = "<%= operationUser.getAuthenticatedUser().getUsername() %>";
+			CMDBuild.Runtime.Username = '<%= StringEscapeUtils.escapeEcmaScript(operationUser.getAuthenticatedUser().getUsername()) %>';
 
 			CMDBuild.Runtime.DefaultGroupId = <%= group.getId() %>;
-			CMDBuild.Runtime.DefaultGroupName = '<%= group.getName() %>';
-			CMDBuild.Runtime.DefaultGroupDescription = '<%= group.getDescription() %>';
+			CMDBuild.Runtime.DefaultGroupName = '<%= StringEscapeUtils.escapeEcmaScript(group.getName()) %>';
+			CMDBuild.Runtime.DefaultGroupDescription = '<%= StringEscapeUtils.escapeEcmaScript(group.getDescription()) %>';
 			<% if (operationUser.getAuthenticatedUser().getGroupNames().size() == 1) { %>
 				CMDBuild.Runtime.LoginGroupId = <%= group.getId() %>;
 			<% } %>
@@ -87,7 +87,7 @@
 						<% } else { %>
 							<p id="msg-inner-hidden"><tr:translation key="common.group"/>: <strong><tr:translation key="multiGroup"/></strong>
 							<script type="text/javascript">
-								CMDBuild.Runtime.GroupDescriptions = '<%= groupDecriptions %>';
+								CMDBuild.Runtime.GroupDescriptions = '<%= StringEscapeUtils.escapeEcmaScript(groupDecriptions) %>';
 							</script>
 						<% } %>
 							| <a href="management.jsp"><tr:translation key="management.description"/></a>
