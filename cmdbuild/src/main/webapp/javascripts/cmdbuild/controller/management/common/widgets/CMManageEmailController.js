@@ -14,7 +14,7 @@
 		},
 
 		statics: {
-			WIDGET_NAME: '.ManageEmail'
+			WIDGET_NAME: CMDBuild.view.management.common.widgets.email.CMManageEmail.WIDGET_NAME
 		},
 
 		/**
