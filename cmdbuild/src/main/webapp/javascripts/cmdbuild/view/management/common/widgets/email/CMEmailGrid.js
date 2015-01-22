@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail;
 
-	Ext.define('CMDBuild.view.management.common.widgets.CMEmailGrid', {
+	Ext.define('CMDBuild.view.management.common.widgets.email.CMEmailGrid', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
