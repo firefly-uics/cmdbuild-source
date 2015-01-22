@@ -1,7 +1,6 @@
 (function() {
 
 	Ext.define('CMDBuild.view.management.common.widgets.email.CMEmailWindow', {
-		alternateClassName: 'CMDBuild.view.management.common.widgets.CMEmailWindow', // Legacy class name
 		extend: 'CMDBuild.PopupWindow',
 
 		requires: [

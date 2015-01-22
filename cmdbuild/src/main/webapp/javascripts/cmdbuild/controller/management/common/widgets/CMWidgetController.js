@@ -43,7 +43,7 @@
 		widgetConf: undefined,
 
 		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMManageEmail} view
+		 * @param {CMDBuild.view.management.common.widgets.CMWidgetManager} view
 		 * @param {CMDBuild.controller.management.common.CMWidgetManagerController} ownerController
 		 * @param {Object} widgetConf
 		 * @param {Ext.form.Basic} clientForm
