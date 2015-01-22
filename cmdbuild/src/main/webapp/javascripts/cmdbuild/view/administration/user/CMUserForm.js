@@ -57,7 +57,8 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				allowBlank: false,
 				name: CMDBuild.core.proxy.CMProxyConstants.USERNAME,
-				cmImmutable: true
+				cmImmutable: true,
+				vtype: 'alphanumextended'
 			});
 
 			var userDescription = Ext.create('Ext.form.field.Text', {

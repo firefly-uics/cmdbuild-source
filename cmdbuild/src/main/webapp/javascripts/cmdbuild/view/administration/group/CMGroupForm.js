@@ -30,7 +30,7 @@
 				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
 				name : 'name',
 				allowBlank : false,
-				vtype: 'alphanum',
+				vtype: 'alphanumextended',
 				cmImmutable: true
 			});
 
