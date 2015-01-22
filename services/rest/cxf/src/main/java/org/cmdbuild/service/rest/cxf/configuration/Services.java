@@ -65,8 +65,8 @@ import org.cmdbuild.service.rest.cxf.WebApplicationExceptionErrorHandler;
 import org.cmdbuild.service.rest.cxf.service.InMemoryOperationUserStore;
 import org.cmdbuild.service.rest.cxf.service.InMemorySessionStore;
 import org.cmdbuild.service.rest.cxf.service.OperationUserStore;
-import org.cmdbuild.service.rest.cxf.service.RandomTokenGenerator;
 import org.cmdbuild.service.rest.cxf.service.SessionStore;
+import org.cmdbuild.service.rest.cxf.service.SimpleTokenGenerator;
 import org.cmdbuild.service.rest.cxf.service.TokenGenerator;
 import org.cmdbuild.service.rest.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -269,7 +269,7 @@ public class Services implements LoggingSupport {
 
 	@Bean
 	protected TokenGenerator tokenGenerator() {
-		return new RandomTokenGenerator();
+		return new SimpleTokenGenerator();
 	}
 
 	@Bean
