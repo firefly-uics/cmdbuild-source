@@ -272,12 +272,6 @@
 
 				// Use loadRecords because store.add does not update the grouping so the grid goes broken
 				store.loadRecords([record], { addRecords: true });
-
-				for (var i = 0; i<100; i++) {
-					store.loadRecords([Ext.create('CMDBuild.model.widget.ManageEmail.grid', {
-						fromAddress: i
-					})], { addRecords: true });
-				}
 			}
 		},
 
