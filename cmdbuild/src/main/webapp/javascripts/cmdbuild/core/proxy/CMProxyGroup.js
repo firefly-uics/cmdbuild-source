@@ -126,8 +126,30 @@
 			p.method = 'GET';
 			p.url = _CMProxy.url.privileges.classes.loadClassUiConfiguration;
 			CMDBuild.ServiceProxy.core.doRequest(p);
-		},	
-		
+		},
+
+		/**
+		 * @return {Ext.data.JsonStore}
+		 */
+		getDefaultGroupStore: function() {
+			return Ext.create('Ext.data.JsonStore', {
+				autoLoad: false,
+				model: 'CMDBuild.cache.CMGroupModelForCombo',
+				remoteSort: false,
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.users.getusergrouplist,
+					reader: {
+						root: 'result',
+						type: 'json'
+					}
+				},
+				sorters: [{
+					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					direction: 'ASC'
+				}]
+			});
+		}
 	};
 
 	function getGridPrivilegeStore(url) {

@@ -2,42 +2,64 @@
 
 	var tr = CMDBuild.Translation.administration.modsecurity;
 
-	Ext.define("CMDBuild.view.administration.user.CMModUser", {
-		extend: "Ext.panel.Panel",
-		cmName: "users",
+	Ext.define('CMDBuild.view.administration.user.CMModUser', {
+		extend: 'Ext.panel.Panel',
+
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
+		/**
+		 * @params {Ext.button.Button}
+		 */
+		addUserButton: undefined,
+
+		/**
+		 * @param {CMDBuild.view.administration.user.CMUserGrid}
+		 */
+		userForm: undefined,
+
+		/**
+		 * @param {CMDBuild.view.administration.user.CMUserForm}
+		 */
+		userGrid: undefined,
+
+		cmName: 'users',
+
+		title: tr.user.title,
+		layout: 'border',
+		frame: false,
+		border: false,
 
 		initComponent: function() {
-			this.addUserButton = new Ext.button.Button({
+			this.addUserButton = Ext.create('Ext.button.Button', {
 				iconCls: 'add',
 				text: tr.user.add_user
 			});
 
-			this.userGrid = new CMDBuild.view.administration.user.CMUserGrid({
-				region: "center",
-				border: false
+			this.userGrid = Ext.create('CMDBuild.view.administration.user.CMUserGrid', {
+				region: 'north',
+				border: false,
+				split: true,
+				height: '30%'
 			});
 
-			this.userForm = new CMDBuild.view.administration.user.CMUserForm({
-				region: "south",
-				height: "65%",
-				split: true
+			this.userForm = Ext.create('CMDBuild.view.administration.user.CMUserForm', {
+				region: 'center'
 			});
 
 			Ext.apply(this, {
-				tbar: [this.addUserButton],
-				title: tr.user.title,
-				modtype: 'user',
-				basetitle: tr.user.title + ' - ',
-				layout: 'border',
-				frame: false,
-				border: false,
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						items: [this.addUserButton]
+					}
+				],
 				items: [this.userGrid, this.userForm]
 			});
 
 			this.callParent(arguments);
-		},
-
-		selectUser: function(eventParams) {}
+		}
 	});
 
 })();
