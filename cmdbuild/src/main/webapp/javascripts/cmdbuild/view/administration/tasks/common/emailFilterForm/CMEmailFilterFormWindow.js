@@ -11,6 +11,21 @@
 		delegate: undefined,
 
 		/**
+		 * @property {CMDBuild.buttons.AbortButton}
+		 */
+		abortButton: undefined,
+
+		/**
+		 * @property {Ext.button.Button}
+		 */
+		addRowButton: undefined,
+
+		/**
+		 * @property {CMDBuild.buttons.ConfirmButton}
+		 */
+		confirmButton: undefined,
+
+		/**
 		 * @property {Object}
 		 */
 		content: undefined,
@@ -30,26 +45,49 @@
 		 */
 		textareaConcatParameter: undefined,
 
-		overflowY: 'auto',
+		buttonAlign: 'center',
+		constrain: true,
 		height: 300,
 		modal: true,
+		overflowY: 'auto',
+		resizable: false,
 		width: 400,
 
 		initComponent: function() {
-			var me = this;
 			var contentItems = null;
 
 			this.delegate = Ext.create('CMDBuild.controller.administration.tasks.common.emailFilterForm.CMEmailFilterFormWindowController', this);
 			this.delegate.type = this.type;
 
-			this.tbar = [{
-				iconCls: 'add',
-				type: 'button',
-				text: tr.add,
-				handler: function() {
-					me.delegate.cmOn('onFilterWindowAdd');
-				}
-			}];
+			// Buttons configuration
+				this.addRowButton = Ext.create('Ext.button.Button', {
+					iconCls: 'add',
+					text: tr.add,
+					scope: this,
+
+					handler: function() {
+						this.delegate.cmOn('onFilterWindowAdd');
+					}
+				});
+
+				this.confirmButton = Ext.create('CMDBuild.buttons.ConfirmButton', {
+					text: CMDBuild.Translation.common.buttons.confirm,
+					scope: this,
+
+					handler: function() {
+						this.delegate.cmOn('onFilterWindowConfirm');
+					}
+				});
+
+				this.abortButton = Ext.create('CMDBuild.buttons.AbortButton', {
+					text: CMDBuild.Translation.common.buttons.abort,
+					scope: this,
+
+					handler: function() {
+						this.delegate.cmOn('onFilterWindowAbort');
+					}
+				});
+			// END: Buttons configuration
 
 			if (!Ext.isEmpty(this.content))
 				contentItems = this.content.split(this.textareaConcatParameter);
@@ -58,36 +96,22 @@
 				layout: {
 					anchor: '100%'
 				},
+
 				items: this.delegate.buildWindowItem(contentItems)
 			});
 
-			this.fbar = [
-				{
-					xtype: 'tbspacer',
-					flex: 1
-				},
-				{
-					type: 'button',
-					text: CMDBuild.Translation.common.buttons.confirm,
-					handler: function() {
-						me.delegate.cmOn('onFilterWindowConfirm');
-					}
-				},
-				{
-					type: 'button',
-					text: CMDBuild.Translation.common.buttons.abort,
-					handler: function() {
-						me.delegate.cmOn('onFilterWindowAbort');
-					}
-				},
-				{
-					xtype: 'tbspacer',
-					flex: 1
-				}
-			];
 
 			Ext.apply(this, {
-				items: [this.contentComponent]
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						items: this.addRowButton
+					}
+				],
+				items: [this.contentComponent],
+				fbar: [this.confirmButton, this.abortButton]
 			});
 
 			this.callParent(arguments);

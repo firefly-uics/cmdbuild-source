@@ -7,8 +7,23 @@
 		alternateClassName: 'CMDBuild.PopupWindow', // Legacy class name
 		extend: 'Ext.window.Window',
 
-		buttonAlign: 'center',
+		/**
+		 * @cfg {Boolean}
+		 */
+		autoHeight: false,
+
+		/**
+		 * @cfg {Boolean}
+		 */
+		autoWidth: false,
+
+		/**
+		 * @cfg {Number}
+		 */
 		defaultSize: 0.80,
+
+		buttonAlign: 'center',
+		constrain: true,
 		layout: 'fit',
 		modal: true,
 		resizable: false,
