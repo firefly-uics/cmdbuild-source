@@ -224,6 +224,10 @@
 			}
 		},
 
+		users: {
+			getusergrouplist: 'services/json/schema/modsecurity/getusergrouplist'
+		},
+
 		widgets: {
 			grid: {
 				clearSession: 'services/json/management/importcsv/clearsession',
