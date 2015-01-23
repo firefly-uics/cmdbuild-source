@@ -12,7 +12,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class ProcessWithBasicDetails extends ModelWithId<String> {
+public class ProcessWithBasicDetails extends ModelWithStringId {
 
 	private String name;
 	private String description;

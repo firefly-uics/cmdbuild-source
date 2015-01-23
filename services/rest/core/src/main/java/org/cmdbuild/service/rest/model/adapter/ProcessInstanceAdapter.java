@@ -5,17 +5,19 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_STATUS;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.cmdbuild.service.rest.model.Models.newProcessInstance;
+import static org.cmdbuild.service.rest.model.Models.newValues;
 
 import java.util.Map;
 
 import org.cmdbuild.service.rest.model.ProcessInstance;
+import org.cmdbuild.service.rest.model.Values;
 
 import com.google.common.collect.Maps;
 
-public class ProcessInstanceAdapter extends ModelToMapAdapter<ProcessInstance> {
+public class ProcessInstanceAdapter extends ModelToValuesAdapter<ProcessInstance> {
 
 	@Override
-	protected Map<String, Object> modelToMap(final ProcessInstance input) {
+	protected Values modelToValues(final ProcessInstance input) {
 		final Map<String, Object> map = Maps.newHashMap();
 		map.putAll(input.getValues());
 		/*
@@ -26,11 +28,13 @@ public class ProcessInstanceAdapter extends ModelToMapAdapter<ProcessInstance> {
 		map.put(UNDERSCORED_ID, input.getId());
 		map.put(UNDERSCORED_NAME, input.getName());
 		map.put(UNDERSCORED_STATUS, input.getStatus());
-		return map;
+		return newValues() //
+				.withValues(map) //
+				.build();
 	}
 
 	@Override
-	protected ProcessInstance mapToModel(final Map<String, Object> input) {
+	protected ProcessInstance valuesToModel(final Values input) {
 		return newProcessInstance() //
 				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //

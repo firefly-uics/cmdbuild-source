@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement
-public class ResponseSingle<T> extends Model {
+public class ResponseSingle<T> extends AbstractModel {
 
 	private T element;
 

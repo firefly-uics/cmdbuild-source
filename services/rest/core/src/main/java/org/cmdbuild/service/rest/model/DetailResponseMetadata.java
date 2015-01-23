@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class DetailResponseMetadata extends Model {
+public class DetailResponseMetadata extends AbstractModel {
 
 	private Long total;
 

@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class AttachmentCategory extends ModelWithId<String> {
+public class AttachmentCategory extends ModelWithStringId {
 
 	private String description;
 

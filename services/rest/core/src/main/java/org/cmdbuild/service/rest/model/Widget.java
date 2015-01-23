@@ -1,7 +1,5 @@
 package org.cmdbuild.service.rest.model;
 
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -9,13 +7,13 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class Widget extends ModelWithId<String> {
+public class Widget extends ModelWithStringId {
 
 	private String type;
 	private boolean active;
 	private boolean required;
 	private String label;
-	private Map<String, ? extends Object> data;
+	private Values data;
 
 	Widget() {
 		// package visibility
@@ -58,11 +56,11 @@ public class Widget extends ModelWithId<String> {
 	}
 
 	@XmlElement(name = "data")
-	public Map<String, ? extends Object> getData() {
+	public Values getData() {
 		return data;
 	}
 
-	void setData(final Map<String, ? extends Object> data) {
+	void setData(final Values data) {
 		this.data = data;
 	}
 

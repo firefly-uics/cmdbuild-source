@@ -14,7 +14,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement
-public class ResponseMultiple<T> extends Model {
+public class ResponseMultiple<T> extends AbstractModel {
 
 	private Collection<T> elements;
 	private DetailResponseMetadata metadata;

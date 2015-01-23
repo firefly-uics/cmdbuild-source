@@ -1,6 +1,7 @@
 package org.cmdbuild.service.rest.model.adapter;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.cmdbuild.service.rest.model.Models.newValues;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,8 +10,9 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.cmdbuild.service.rest.model.Model;
+import org.cmdbuild.service.rest.model.Values;
 
-public abstract class ModelToMapAdapter<T extends Model> extends XmlAdapter<Map<String, Object>, T> {
+public abstract class ModelToValuesAdapter<T extends Model> extends XmlAdapter<Values, T> {
 
 	protected static <T> T getAndRemove(final Map<String, Object> mapType, final String key, final Class<T> type) {
 		for (final Entry<String, Object> element : mapType.entrySet()) {
@@ -39,17 +41,19 @@ public abstract class ModelToMapAdapter<T extends Model> extends XmlAdapter<Map<
 	}
 
 	@Override
-	public final Map<String, Object> marshal(final T v) throws Exception {
-		return modelToMap(v);
+	public final Values marshal(final T v) throws Exception {
+		return newValues() //
+				.withValues(modelToValues(v)) //
+				.build();
 	}
 
-	protected abstract Map<String, Object> modelToMap(T input);
+	protected abstract Values modelToValues(T input);
 
 	@Override
-	public final T unmarshal(final Map<String, Object> v) throws Exception {
-		return mapToModel(v);
+	public final T unmarshal(final Values v) throws Exception {
+		return valuesToModel(v);
 	}
 
-	protected abstract T mapToModel(Map<String, Object> input);
+	protected abstract T valuesToModel(Values input);
 
 }

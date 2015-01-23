@@ -1,7 +1,7 @@
 package unit.rest.model;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
 import java.lang.reflect.Constructor;
@@ -27,11 +27,15 @@ public class AllModelsTest {
 			}
 
 			final Class<?> clazz = Class.forName(name);
+			if (clazz.isInterface()) {
+				continue;
+			}
 			final Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-			assertThat(constructors.length, lessThanOrEqualTo(1));
-			final Constructor<?> onlyConstructor = constructors[0];
-			assertThat("invalid modifier at class" + name, Modifier.isPublic(onlyConstructor.getModifiers()),
-					equalTo(false));
+			assertThat("missing constructors for class" + name, constructors.length, greaterThan(0));
+			for (final Constructor<?> constructor : constructors) {
+				assertThat("invalid modifier for constructor " + constructor + " for class " + clazz,
+						Modifier.isPublic(constructor.getModifiers()), equalTo(false));
+			}
 		}
 	}
 

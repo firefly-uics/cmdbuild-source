@@ -16,7 +16,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 @XmlRootElement
-public class LookupDetail extends ModelWithIdAndType<Long, String> {
+public class LookupDetail extends AbstractCardModel {
 
 	private String code;
 	private String description;

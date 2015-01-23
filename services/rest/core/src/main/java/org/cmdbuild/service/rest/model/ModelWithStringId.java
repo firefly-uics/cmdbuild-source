@@ -6,21 +6,21 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public abstract class ModelWithId<I> extends Model {
+public abstract class ModelWithStringId extends AbstractModel {
 
-	private I id;
+	private String id;
 
-	protected ModelWithId() {
+	protected ModelWithStringId() {
 		// usable by subclasses only
 	}
 
 	@XmlAttribute(name = UNDERSCORED_ID)
 	@JsonProperty(UNDERSCORED_ID)
-	public I getId() {
+	public String getId() {
 		return id;
 	}
 
-	protected void setId(final I id) {
+	void setId(final String id) {
 		this.id = id;
 	}
 

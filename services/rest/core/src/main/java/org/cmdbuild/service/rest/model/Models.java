@@ -3,7 +3,6 @@ package org.cmdbuild.service.rest.model;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Maps.immutableEntry;
-import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.newHashSet;
@@ -28,7 +27,7 @@ import com.google.common.base.Function;
 
 public class Models {
 
-	private static abstract class ModelBuilder<T> implements org.apache.commons.lang3.builder.Builder<T> {
+	private static abstract class ModelBuilder<T extends Model> implements org.apache.commons.lang3.builder.Builder<T> {
 
 		@Override
 		public final T build() {
@@ -51,7 +50,7 @@ public class Models {
 
 	public static class AttachmentBuilder extends ModelBuilder<Attachment> {
 
-		private static final Map<String, Object> NO_METADATA = emptyMap();
+		private static final Values NO_METADATA = newValues().build();
 
 		private String id;
 		private String name;
@@ -61,7 +60,7 @@ public class Models {
 		private String author;
 		private String created;
 		private String modified;
-		private Map<String, Object> metadata;
+		private Values metadata;
 
 		private AttachmentBuilder() {
 			// use factory method
@@ -77,7 +76,7 @@ public class Models {
 			this.author = existing.getAuthor();
 			this.created = existing.getCreated();
 			this.modified = existing.getModified();
-			this.metadata = newHashMap(defaultIfNull(existing.getMetadata(), NO_METADATA));
+			this.metadata = defaultIfNull(existing.getMetadata(), NO_METADATA);
 		}
 
 		@Override
@@ -135,7 +134,7 @@ public class Models {
 			return this;
 		}
 
-		public AttachmentBuilder withMetadata(final Map<String, Object> metadata) {
+		public AttachmentBuilder withMetadata(final Values metadata) {
 			this.metadata = metadata;
 			return this;
 		}
@@ -379,9 +378,11 @@ public class Models {
 
 	public static class CardBuilder extends ModelBuilder<Card> {
 
+		private static final Values NO_VALUES = newValues().build();
+
 		private String type;
 		private Long id;
-		final Map<String, Object> values = newHashMap();
+		private final Values values = newValues().build();
 
 		private CardBuilder() {
 			// use factory method
@@ -392,7 +393,7 @@ public class Models {
 			final Card output = new Card();
 			output.setType(type);
 			output.setId(id);
-			output.setValues(values);
+			output.setValues(defaultIfNull(values, NO_VALUES));
 			return output;
 		}
 
@@ -1042,7 +1043,7 @@ public class Models {
 		private Long id;
 		private String name;
 		private Long status;
-		final Map<String, Object> values = newHashMap();
+		private final Values values = newValues().build();
 
 		private ProcessInstanceBuilder() {
 			// use factory method
@@ -1099,7 +1100,7 @@ public class Models {
 		private Long id;
 		private String name;
 		private Long status;
-		final Map<String, Object> values = newHashMap();
+		final Values values = newValues().build();
 		private String activityId;
 		private Boolean advance;
 
@@ -1335,7 +1336,7 @@ public class Models {
 		private Long id;
 		private Card source;
 		private Card destination;
-		private final Map<String, Object> values = newHashMap();
+		private final Values values = newValues().build();
 
 		private RelationBuilder() {
 			// use factory method
@@ -1515,6 +1516,30 @@ public class Models {
 
 	}
 
+	public static class ValuesBuilder extends ModelBuilder<Values> {
+
+		private static final Map<String, ? extends Object> NO_VALUES = emptyMap();
+
+		private Map<String, ? extends Object> values;
+
+		private ValuesBuilder() {
+			// use factory method
+		}
+
+		@Override
+		protected Values doBuild() {
+			final Values output = new Values();
+			output.putAll(defaultIfNull(values, NO_VALUES));
+			return output;
+		}
+
+		public ValuesBuilder withValues(final Map<String, ? extends Object> values) {
+			this.values = values;
+			return this;
+		}
+
+	}
+
 	public static class WidgetBuilder extends ModelBuilder<Widget> {
 
 		private String id;
@@ -1522,7 +1547,7 @@ public class Models {
 		private boolean active;
 		private boolean required;
 		private String label;
-		private Map<String, ? extends Object> data;
+		private Values data;
 
 		private WidgetBuilder() {
 			// use factory method
@@ -1565,7 +1590,7 @@ public class Models {
 			return this;
 		}
 
-		public WidgetBuilder withData(final Map<String, ? extends Object> data) {
+		public WidgetBuilder withData(final Values data) {
 			this.data = data;
 			return this;
 		}
@@ -1698,6 +1723,10 @@ public class Models {
 
 	public static SessionBuilder newSession(final Session existing) {
 		return new SessionBuilder(existing);
+	}
+
+	public static ValuesBuilder newValues() {
+		return new ValuesBuilder();
 	}
 
 	public static WidgetBuilder newWidget() {

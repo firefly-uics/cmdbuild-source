@@ -4,6 +4,7 @@ import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.cmdbuild.service.rest.cxf.serialization.ToAttribute.toAttribute;
 import static org.cmdbuild.service.rest.model.Models.newProcessActivityWithFullDetails;
+import static org.cmdbuild.service.rest.model.Models.newValues;
 import static org.cmdbuild.service.rest.model.Models.newWidget;
 
 import java.util.List;
@@ -83,7 +84,9 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 									.withActive(input.isActive()) //
 									// .withRequired(...) //
 									.withLabel(input.getLabel()) //
-									.withData(objectAsMap) //
+									.withData(newValues() //
+											.withValues(objectAsMap) //
+											.build()) //
 									.build();
 						}
 

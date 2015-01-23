@@ -1,6 +1,5 @@
 package org.cmdbuild.service.rest.model;
 
-import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.constants.Serialization.AUTHOR;
 import static org.cmdbuild.service.rest.constants.Serialization.CATEGORY;
@@ -10,10 +9,10 @@ import static org.cmdbuild.service.rest.constants.Serialization.METADATA;
 import static org.cmdbuild.service.rest.constants.Serialization.MODIFIED;
 import static org.cmdbuild.service.rest.constants.Serialization.NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.VERSION;
-
-import java.util.Map;
+import static org.cmdbuild.service.rest.model.Models.newValues;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -23,9 +22,9 @@ import org.cmdbuild.service.rest.model.adapter.AttachmentAdapter;
 
 @XmlRootElement
 @XmlJavaTypeAdapter(AttachmentAdapter.class)
-public class Attachment extends ModelWithId<String> {
+public class Attachment extends ModelWithStringId {
 
-	private static final Map<String, Object> NO_METADATA = emptyMap();
+	private static final Values NO_METADATA = newValues().build();
 
 	private String name;
 	private String category;
@@ -34,7 +33,7 @@ public class Attachment extends ModelWithId<String> {
 	private String author;
 	private String created;
 	private String modified;
-	private Map<String, Object> metadata;
+	private Values metadata;
 
 	Attachment() {
 		// package visibility
@@ -103,12 +102,12 @@ public class Attachment extends ModelWithId<String> {
 		this.modified = modified;
 	}
 
-	@XmlAttribute(name = METADATA)
-	public Map<String, Object> getMetadata() {
+	@XmlElement(name = METADATA)
+	public Values getMetadata() {
 		return defaultIfNull(metadata, NO_METADATA);
 	}
 
-	void setMetadata(final Map<String, Object> metadata) {
+	void setMetadata(final Values metadata) {
 		this.metadata = metadata;
 	}
 
