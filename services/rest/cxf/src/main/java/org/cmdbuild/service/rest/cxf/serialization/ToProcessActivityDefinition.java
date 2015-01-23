@@ -2,14 +2,18 @@ package org.cmdbuild.service.rest.cxf.serialization;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Lists.newArrayList;
+import static org.cmdbuild.dao.driver.postgres.Const.SystemAttributes.Notes;
 import static org.cmdbuild.service.rest.cxf.serialization.ToAttribute.toAttribute;
+import static org.cmdbuild.service.rest.model.Models.newAttributeStatus;
 import static org.cmdbuild.service.rest.model.Models.newProcessActivityWithFullDetails;
 import static org.cmdbuild.service.rest.model.Models.newValues;
 import static org.cmdbuild.service.rest.model.Models.newWidget;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
+import org.cmdbuild.model.widget.NullWidgetVisitor;
+import org.cmdbuild.model.widget.OpenNote;
 import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails;
 import org.cmdbuild.service.rest.model.ProcessActivityWithFullDetails.AttributeStatus;
 import org.cmdbuild.service.rest.model.Widget;
@@ -50,18 +54,41 @@ public class ToProcessActivityDefinition implements Function<CMActivity, Process
 
 	@Override
 	public ProcessActivityWithFullDetails apply(final CMActivity input) {
-		long index = 0;
-		final List<AttributeStatus> attributes = newArrayList();
-		for (final CMActivityVariableToProcess element : input.getVariables()) {
-			attributes.add(toAttribute(index++).apply(element));
-		}
 		return newProcessActivityWithFullDetails() //
 				.withId(input.getId()) //
 				.withDescription(input.getDescription()) //
 				.withInstructions(input.getInstructions()) //
-				.withAttributes(attributes) //
+				.withAttributes(safeAttributesOf(input)) //
 				.withWidgets(safeWidgetsOf(input)) //
 				.build();
+	}
+
+	private Collection<AttributeStatus> safeAttributesOf(final CMActivity input) {
+		try {
+			final Collection<AttributeStatus> attributes = newArrayList();
+			for (final CMActivityVariableToProcess element : input.getVariables()) {
+				attributes.add(toAttribute(Long.valueOf(attributes.size())).apply(element));
+			}
+			for (final org.cmdbuild.model.widget.Widget widget : from(input.getWidgets()) //
+					.filter(org.cmdbuild.model.widget.Widget.class)) {
+				widget.accept(new NullWidgetVisitor() {
+
+					@Override
+					public void visit(final OpenNote widget) {
+						attributes.add(newAttributeStatus() //
+								.withId(Notes.getDBName()) //
+								.withWritable(true) //
+								.withMandatory(false) //
+								.withIndex(Long.valueOf(attributes.size())) //
+								.build());
+					}
+
+				});
+			}
+			return attributes;
+		} catch (final CMWorkflowException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private Iterable<Widget> safeWidgetsOf(final CMActivity input) {
