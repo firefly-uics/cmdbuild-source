@@ -35,6 +35,11 @@
 		 */
 		readOnly: undefined,
 
+		/**
+		 * @cfg {Boolean}
+		 */
+		storeLoaded: false,
+
 		autoScroll: true,
 		border: false,
 		collapsible: false,
@@ -232,6 +237,10 @@
 			});
 
 			this.callParent(arguments);
+
+			this.getStore().on('load', function() {
+				this.storeLoaded = true;
+			}, this);
 		},
 
 		listeners: {
@@ -311,6 +320,13 @@
 		 */
 		hasDraftEmails: function() {
 			return this.getDraftEmails().length > 0;
+		},
+
+		/**
+		 * @return {Boolean}
+		 */
+		isStoreLoaded: function() {
+			return this.storeLoaded;
 		},
 
 		/**

@@ -72,11 +72,6 @@
 		forceRegeneration: false,
 
 		/**
-		 * @cfg {Boolean}
-		 */
-		gridStoreWasLoaded: false,
-
-		/**
 		 * Flag used to check first widget load time
 		 *
 		 * @cfg {Boolean}
@@ -210,31 +205,17 @@
 		},
 
 		/**
-		 * If the grid is already loaded add the emails generated from the templates (if there are templates, and if the email are not already generated).
-		 * Otherwise, load the grid before.
+		 * If grid store is already loaded regenerate all email if needed, otherwise load grid and do it
 		 *
 		 * @override
 		 */
 		beforeActiveView: function() {
-			var pi = _CMWFState.getProcessInstance();
-
 			this.templatesToRegenerate = []; // Reset buffer variable
 
-			if (!this.gridStoreWasLoaded) {
-				this.view.setLoading(true);
-				this.emailGrid.getStore().load({
-					params: {
-						ProcessId: pi.getId()
-					},
-					scope: this,
-					callback: function(records, operation, success) {
-						this.gridStoreWasLoaded = true;
-						this.view.setLoading(false);
-						this.addEmailFromTemplateIfNeeded();
-					}
-				});
-			} else {
+			if (this.emailGrid.isStoreLoaded()) {
 				this.addEmailFromTemplateIfNeeded();
+			} else {
+				this.onEditMode();
 			}
 		},
 
@@ -272,9 +253,35 @@
 							&& !Ext.isObject(templateAttribute)
 							&& typeof templateAttribute == 'string'
 						) {
+							// Check all types of cql variables that can contains client variables
 							for (var y in dirtyVariables)
-								if (templateAttribute.indexOf('{client:' + dirtyVariables[y]) > -1)
+								if (
+									templateAttribute.indexOf('{client:' + dirtyVariables[y]) > -1
+									&& !Ext.Array.contains(this.templatesToRegenerate, template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID])
+								) {
 									this.templatesToRegenerate.push(template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID]);
+								}
+
+								if (
+									templateAttribute.indexOf('{cql:' + dirtyVariables[y]) > -1
+									&& !Ext.Array.contains(this.templatesToRegenerate, template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID])
+								) {
+									this.templatesToRegenerate.push(template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID]);
+								}
+
+								if (
+									templateAttribute.indexOf('{xa:' + dirtyVariables[y]) > -1
+									&& !Ext.Array.contains(this.templatesToRegenerate, template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID])
+								) {
+									this.templatesToRegenerate.push(template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID]);
+								}
+
+								if (
+									templateAttribute.indexOf('{js:' + dirtyVariables[y]) > -1
+									&& !Ext.Array.contains(this.templatesToRegenerate, template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID])
+								) {
+									this.templatesToRegenerate.push(template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID]);
+								}
 						}
 					}
 			}
@@ -426,6 +433,27 @@
 				this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED]
 				&& this.getOutgoingEmails().length == 0
 			);
+		},
+
+		/**
+		 * Initialize widget on widget configuration to apply all events on form fields
+		 *
+		 * @override
+		 */
+		onEditMode: function() {
+			var pi = _CMWFState.getProcessInstance();
+
+			this.view.setLoading(true);
+			this.emailGrid.getStore().load({
+				params: {
+					ProcessId: pi.getId()
+				},
+				scope: this,
+				callback: function(records, operation, success) {
+					this.view.setLoading(false);
+					this.addEmailFromTemplateIfNeeded();
+				}
+			});
 		},
 
 		/**
@@ -588,13 +616,14 @@
 			},
 
 			/**
+			 * Check if temporaryId is false, email is known from server so put id in deletedEmails array
+			 *
 			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
 			 */
 			removeRecord: function(record) {
-				// The email has an id only if it was returned by the server. So add it to the deletedEmails only if the server know it
 				var id = record.getId();
 
-				if (id)
+				if (id > 0 && !record.get(CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY))
 					this.emailGrid.deletedEmails.push(id);
 
 				this.emailGrid.getStore().remove(record);
