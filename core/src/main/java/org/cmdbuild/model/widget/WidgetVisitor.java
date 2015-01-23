@@ -18,32 +18,32 @@ public interface WidgetVisitor {
 
 	}
 
-	void visit(Calendar calendar);
+	void visit(Calendar widget);
 
-	void visit(CreateModifyCard createModifyCard);
+	void visit(CreateModifyCard widget);
 
-	void visit(LinkCards linkCards);
+	void visit(LinkCards widget);
 
-	void visit(ManageEmail manageEmail);
+	void visit(ManageEmail widget);
 
-	void visit(ManageRelation manageRelation);
+	void visit(ManageRelation widget);
 
-	void visit(OpenAttachment openAttachment);
+	void visit(OpenAttachment widget);
 
-	void visit(OpenNote openNote);
+	void visit(OpenNote widget);
 
-	void visit(OpenReport openReport);
+	void visit(OpenReport widget);
 
-	void visit(Ping ping);
+	void visit(Ping widget);
 
-	void visit(WebService webService);
+	void visit(WebService widget);
 
-	void visit(PresetFromCard presetFromCard);
+	void visit(PresetFromCard widget);
 
-	void visit(Workflow workflow);
+	void visit(Workflow widget);
 
-	void visit(NavigationTree navigationTree);
+	void visit(NavigationTree widget);
 
-	void visit(Grid grid);
-	
+	void visit(Grid widget);
+
 }
