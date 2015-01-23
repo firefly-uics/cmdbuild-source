@@ -2,8 +2,6 @@ package org.cmdbuild.service.rest.model;
 
 import static org.cmdbuild.service.rest.constants.Serialization.VALUES;
 
-import java.util.Map;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -11,25 +9,23 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.service.rest.model.adapter.CardAdapter;
-import org.cmdbuild.service.rest.model.adapter.StringObjectMapAdapter;
 
 @XmlRootElement
 @XmlJavaTypeAdapter(CardAdapter.class)
-public class Card extends ModelWithIdAndType<Long, String> {
+public class Card extends AbstractCardModel {
 
-	private Map<String, Object> values;
+	private Values values;
 
 	Card() {
 		// package visibility
 	}
 
 	@XmlElement(name = VALUES)
-	@XmlJavaTypeAdapter(StringObjectMapAdapter.class)
-	public Map<String, Object> getValues() {
+	public Values getValues() {
 		return values;
 	}
 
-	void setValues(final Map<String, Object> values) {
+	void setValues(final Values values) {
 		this.values = values;
 	}
 

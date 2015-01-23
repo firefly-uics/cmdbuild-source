@@ -4,9 +4,6 @@ import static org.cmdbuild.service.rest.constants.Serialization.DESTINATION;
 import static org.cmdbuild.service.rest.constants.Serialization.SOURCE;
 import static org.cmdbuild.service.rest.constants.Serialization.VALUES;
 
-import java.util.Map;
-
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -14,21 +11,20 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.cmdbuild.service.rest.model.adapter.RelationAdapter;
-import org.cmdbuild.service.rest.model.adapter.StringObjectMapAdapter;
 
 @XmlRootElement
 @XmlJavaTypeAdapter(RelationAdapter.class)
-public class Relation extends ModelWithIdAndType<Long, String> {
+public class Relation extends AbstractCardModel {
 
 	private Card source;
 	private Card destination;
-	private Map<String, Object> values;
+	private Values values;
 
 	Relation() {
 		// package visibility
 	}
 
-	@XmlAttribute(name = SOURCE)
+	@XmlElement(name = SOURCE)
 	public Card getSource() {
 		return source;
 	}
@@ -37,7 +33,7 @@ public class Relation extends ModelWithIdAndType<Long, String> {
 		this.source = source;
 	}
 
-	@XmlAttribute(name = DESTINATION)
+	@XmlElement(name = DESTINATION)
 	public Card getDestination() {
 		return destination;
 	}
@@ -47,12 +43,11 @@ public class Relation extends ModelWithIdAndType<Long, String> {
 	}
 
 	@XmlElement(name = VALUES)
-	@XmlJavaTypeAdapter(StringObjectMapAdapter.class)
-	public Map<String, Object> getValues() {
+	public Values getValues() {
 		return values;
 	}
 
-	void setValues(final Map<String, Object> values) {
+	void setValues(final Values values) {
 		this.values = values;
 	}
 

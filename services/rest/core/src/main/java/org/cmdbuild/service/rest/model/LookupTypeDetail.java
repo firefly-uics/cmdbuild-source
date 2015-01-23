@@ -10,7 +10,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class LookupTypeDetail extends ModelWithId<String> {
+public class LookupTypeDetail extends ModelWithStringId {
 
 	private String name;
 	private String parent;

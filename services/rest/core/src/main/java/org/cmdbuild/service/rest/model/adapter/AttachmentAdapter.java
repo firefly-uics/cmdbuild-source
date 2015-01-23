@@ -9,17 +9,19 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_MODI
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_NAME;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_VERSION;
 import static org.cmdbuild.service.rest.model.Models.newAttachment;
+import static org.cmdbuild.service.rest.model.Models.newValues;
 
 import java.util.Map;
 
 import org.cmdbuild.service.rest.model.Attachment;
+import org.cmdbuild.service.rest.model.Values;
 
 import com.google.common.collect.Maps;
 
-public class AttachmentAdapter extends ModelToMapAdapter<Attachment> {
+public class AttachmentAdapter extends ModelToValuesAdapter<Attachment> {
 
 	@Override
-	protected Map<String, Object> modelToMap(final Attachment input) {
+	protected Values modelToValues(final Attachment input) {
 		final Map<String, Object> map = Maps.newHashMap();
 		map.putAll(input.getMetadata());
 		/*
@@ -34,11 +36,13 @@ public class AttachmentAdapter extends ModelToMapAdapter<Attachment> {
 		map.put(UNDERSCORED_AUTHOR, input.getAuthor());
 		map.put(UNDERSCORED_CREATED, input.getCreated());
 		map.put(UNDERSCORED_MODIFIED, input.getModified());
-		return map;
+		return newValues() //
+				.withValues(map) //
+				.build();
 	}
 
 	@Override
-	protected Attachment mapToModel(final Map<String, Object> input) {
+	protected Attachment valuesToModel(final Values input) {
 		return newAttachment() //
 				.withId(getAndRemove(input, UNDERSCORED_ID, String.class)) //
 				.withName(getAndRemove(input, UNDERSCORED_NAME, String.class)) //
@@ -48,7 +52,9 @@ public class AttachmentAdapter extends ModelToMapAdapter<Attachment> {
 				.withAuthor(getAndRemove(input, UNDERSCORED_AUTHOR, String.class)) //
 				.withCreated(getAndRemove(input, UNDERSCORED_CREATED, String.class)) //
 				.withModified(getAndRemove(input, UNDERSCORED_MODIFIED, String.class)) //
-				.withMetadata(input) //
+				.withMetadata(newValues() //
+						.withValues(input) //
+						.build()) //
 				.build();
 	}
 

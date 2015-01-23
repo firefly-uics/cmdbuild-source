@@ -34,10 +34,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class Attribute extends ModelWithId<String> {
+public class Attribute extends ModelWithStringId {
 
 	@XmlRootElement
-	public static class Filter extends Model {
+	public static class Filter extends AbstractModel {
 
 		private String text;
 		private Map<String, String> params;

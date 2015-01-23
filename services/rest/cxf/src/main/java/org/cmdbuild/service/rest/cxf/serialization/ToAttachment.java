@@ -4,6 +4,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.service.rest.model.Models.newAttachment;
+import static org.cmdbuild.service.rest.model.Models.newValues;
 
 import java.util.Date;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.cmdbuild.dms.Metadata;
 import org.cmdbuild.dms.MetadataGroup;
 import org.cmdbuild.dms.StoredDocument;
 import org.cmdbuild.service.rest.model.Attachment;
+import org.cmdbuild.service.rest.model.Values;
 
 import com.google.common.base.Function;
 
@@ -80,14 +82,16 @@ public class ToAttachment implements Function<StoredDocument, Attachment> {
 
 	}
 
-	private Map<String, Object> metadata(final Iterable<MetadataGroup> metadataGroups) {
+	private Values metadata(final Iterable<MetadataGroup> metadataGroups) {
 		final Map<String, Object> metadata = newHashMap();
 		for (final MetadataGroup element : defaultIfNull(this.metadata ? metadataGroups : null, NO_METADATA_GROUPS)) {
 			for (final Metadata subElement : element.getMetadata()) {
 				metadata.put(subElement.getName(), subElement.getValue());
 			}
 		}
-		return metadata;
+		return newValues() //
+				.withValues(metadata) //
+				.build();
 	}
 
 }

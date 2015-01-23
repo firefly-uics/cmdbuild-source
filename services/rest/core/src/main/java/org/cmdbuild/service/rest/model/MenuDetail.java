@@ -17,7 +17,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class MenuDetail extends Model {
+public class MenuDetail extends AbstractModel {
 
 	private String menuType;
 	private Long index;

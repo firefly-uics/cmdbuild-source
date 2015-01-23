@@ -11,18 +11,20 @@ import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_SOUR
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_TYPE;
 import static org.cmdbuild.service.rest.model.Models.newCard;
 import static org.cmdbuild.service.rest.model.Models.newRelation;
+import static org.cmdbuild.service.rest.model.Models.newValues;
 
 import java.util.Map;
 
 import org.cmdbuild.service.rest.model.Card;
 import org.cmdbuild.service.rest.model.Relation;
+import org.cmdbuild.service.rest.model.Values;
 
 import com.google.common.collect.Maps;
 
-public class RelationAdapter extends ModelToMapAdapter<Relation> {
+public class RelationAdapter extends ModelToValuesAdapter<Relation> {
 
 	@Override
-	protected Map<String, Object> modelToMap(final Relation input) {
+	protected Values modelToValues(final Relation input) {
 		final Map<String, Object> map = Maps.newHashMap();
 		map.putAll(input.getValues());
 		/*
@@ -41,11 +43,13 @@ public class RelationAdapter extends ModelToMapAdapter<Relation> {
 		map.put(UNDERSCORED_DESTINATION_TYPE, destination.getType());
 		final Map<String, Object> destinationValues = destination.getValues();
 		map.put(UNDERSCORED_DESTINATION_DESCRIPTION, destinationValues.get(DESCRIPTION_ATTRIBUTE));
-		return map;
+		return newValues() //
+				.withValues(map) //
+				.build();
 	}
 
 	@Override
-	protected Relation mapToModel(final Map<String, Object> input) {
+	protected Relation valuesToModel(final Values input) {
 		return newRelation() //
 				.withType(getAndRemove(input, UNDERSCORED_TYPE, String.class)) //
 				.withId(getAndRemove(input, UNDERSCORED_ID, Long.class)) //

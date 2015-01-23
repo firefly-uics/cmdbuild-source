@@ -14,7 +14,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class Session extends ModelWithId<String> {
+public class Session extends ModelWithStringId {
 
 	private String username;
 	private String password;

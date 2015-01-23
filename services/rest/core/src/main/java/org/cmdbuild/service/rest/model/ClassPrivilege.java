@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 @XmlRootElement
-public class ClassPrivilege extends ModelWithId<String> {
+public class ClassPrivilege extends ModelWithStringId {
 
 	private String name;
 	private String description;

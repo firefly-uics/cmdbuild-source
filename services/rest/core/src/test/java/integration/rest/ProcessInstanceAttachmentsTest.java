@@ -6,6 +6,7 @@ import static org.cmdbuild.service.rest.model.Models.newAttachment;
 import static org.cmdbuild.service.rest.model.Models.newMetadata;
 import static org.cmdbuild.service.rest.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
+import static org.cmdbuild.service.rest.model.Models.newValues;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
@@ -36,6 +37,7 @@ import org.cmdbuild.service.rest.model.Attachment;
 import org.cmdbuild.service.rest.model.Models;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.service.rest.model.Values;
 import org.cmdbuild.service.rest.model.adapter.AttachmentAdapter;
 import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
@@ -91,8 +93,7 @@ public class ProcessInstanceAttachmentsTest {
 						.build()) //
 				.build();
 		final AttachmentAdapter adapter = new AttachmentAdapter();
-		final ResponseMultiple<Map<String, Object>> expectedResponse = Models
-				.<Map<String, Object>> newResponseMultiple() //
+		final ResponseMultiple<Values> expectedResponse = newResponseMultiple(Values.class) //
 				.withElements(asList(adapter.marshal(foo), adapter.marshal(bar), adapter.marshal(baz))) //
 				.withMetadata(newMetadata() //
 						.withTotal(42L) //
@@ -121,9 +122,11 @@ public class ProcessInstanceAttachmentsTest {
 				.withName("my name is Baz") //
 				.withCategory("something") //
 				.withDescription("nice to meet you") //
-				.withMetadata(ChainablePutMap.of(new HashMap<String, Object>()) //
-						.chainablePut("first", 1) //
-						.chainablePut("second", "2")) //
+				.withMetadata(newValues() //
+						.withValues(ChainablePutMap.of(new HashMap<String, Object>()) //
+								.chainablePut("first", 1) //
+								.chainablePut("second", "2"))//
+						.build()) //
 				.build();
 		final ResponseSingle<Attachment> sentResponse = newResponseSingle(Attachment.class) //
 				.withElement(attachmentMetadata) //
