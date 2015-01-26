@@ -1,4 +1,19 @@
 (function() {
+
+	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
+
+	Ext.define('CMDBuild.model.CMGroupModels.comboBox', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
+			{ name: 'isdefault', type: 'boolean' }
+		]
+	});
+
+	// TODO: fix code style
+
 	Ext.define("CMDBuild.cache.CMGroupModel", {
 		statics: {
 			type: {
@@ -45,15 +60,6 @@
 
 			return type;
 		}
-	});
-
-	Ext.define("CMDBuild.cache.CMGroupModelForCombo", {
-		extend: 'Ext.data.Model',
-		fields: [
-			{name: "description", type: "string"},
-			{name: "id", type: "int"},
-			{name: "isdefault", type: "boolean"}
-		]
 	});
 
 	Ext.define("CMDBuild.cache.CMPrivilegeModel", {
