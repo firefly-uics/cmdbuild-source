@@ -12,6 +12,17 @@
 		]
 	});
 
+	Ext.define('CMDBuild.model.CMGroupModels.startingClass', {
+		extend: 'Ext.data.Model',
+
+		fields: [
+			{ name: CMDBuild.core.proxy.CMProxyConstants.ID,  type: 'int' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,  type: 'string', mapping: 'text' }, // FIX: "text" attribute alias (wrong property name)
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TEXT,  type: 'string' }
+		]
+	});
+
 	// TODO: fix code style
 
 	Ext.define("CMDBuild.cache.CMGroupModel", {

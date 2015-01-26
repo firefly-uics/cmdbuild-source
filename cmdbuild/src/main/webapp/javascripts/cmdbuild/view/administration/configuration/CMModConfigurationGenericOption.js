@@ -1,14 +1,19 @@
 (function() {
-	
+
 var tr = CMDBuild.Translation.administration.setup.cmdbuild;
 
 Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGenericOption", {
 	extend: "CMDBuild.view.administration.configuration.CMBaseModConfiguration",
-	
+
 	alias: "widget.configuregenericoptions",
 
 	configFileName: 'cmdbuild',
-	
+
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConfiguration',
+			'CMDBuild.core.proxy.CMProxyConstants'
+		],
+
 	constructor: function() {
 		this.title = tr.title;
 		this.instanceNameField = new Ext.form.CMTranslatableText({
@@ -23,18 +28,20 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 			// end of duplicate configuration
 			translationsKeyType: "InstanceName"
 		});
-		
-		var startingClass = new CMDBuild.field.ErasableCombo({
-			fieldLabel : tr.startingClass,
-			name : 'startingclass',
-			valueField : 'id',
-			displayField : 'description',
-			editable : false,
-			store : _CMCache.getClassesAndProcessesAndDahboardsStore(),
-			queryMode : 'local'
+
+		var startingClass = Ext.create('CMDBuild.field.ErasableCombo', {
+			fieldLabel: tr.startingClass,
+			name: 'startingclass',
+			valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
+			displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+			editable: false,
+
+			store: CMDBuild.core.proxy.CMProxyConfiguration.getStartingClassStore(),
+			queryMode: 'local'
 		});
+
 		this.enabledLanguages = Ext.create("CMDBuild.view.administration.configuration.CMModConfigurationTranslations", {
-			
+
 		});
 		this.items = [
 			{
@@ -88,16 +95,16 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 			title: tr.fieldsetpopupwindowtitle,
 			items: [{
 				fieldLabel: tr.popupheightlabel,
-			    xtype: 'numberfield',
-			    name: 'popuppercentageheight',
-			    maxValue: 100,
-			    allowBlank: false
+					xtype: 'numberfield',
+					name: 'popuppercentageheight',
+					maxValue: 100,
+					allowBlank: false
 			},{
-			  	fieldLabel: tr.popupwidthlabel,
-			    xtype: 'numberfield',
-			    name: 'popuppercentagewidth',
-			    maxValue:100,
-			    allowBlank: false
+					fieldLabel: tr.popupwidthlabel,
+					xtype: 'numberfield',
+					name: 'popuppercentagewidth',
+					maxValue:100,
+					allowBlank: false
 			}]
 		},{
 			xtype: 'fieldset',
@@ -153,7 +160,7 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 
 		this.callParent(arguments);
 	},
-	
+
 	//override
 	getValues: function() {
 		var values = this.callParent(arguments);
@@ -161,7 +168,7 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 		values.enabled_languages = languages;
 		return values;
 	},
-	
+
 	//override
 	populateForm: function(configurationOptions) {
 		this.callParent(arguments);
@@ -199,7 +206,7 @@ Ext.define("CMDBuild.view.administration.configuration.CMTranslatableCheck", {
 		this.translationsButton = new Ext.form.field.Display( {
 			iconCls: me.image,
 			renderer : function(){
-			    return '<div style="background-repeat:no-repeat;background-position:center;" class="' + me.image + '">&#160;</div>';
+					return '<div style="background-repeat:no-repeat;background-position:center;" class="' + me.image + '">&#160;</div>';
 			},
 			width: 22
 		});
@@ -253,7 +260,7 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationTransla
 							submitValue: false
 						});
 					me.languageItems.push(item);
-					
+
 					arColumns.push(item);
 					if (column == 3) {
 						me.add(getLanguagesRow(arColumns));

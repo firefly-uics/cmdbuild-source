@@ -176,6 +176,29 @@
 					}
 				]
 			});
+		},
+
+		/**
+		 * @return {Ext.data.Store} classes and processes store
+		 */
+		getStartingClassStore: function() {
+			return Ext.create('Ext.data.Store', {
+				autoLoad: true,
+				model: 'CMDBuild.model.CMGroupModels.startingClass',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.classes.read,
+					reader: {
+						type: 'json',
+						root: 'classes'
+					},
+					extraParams: {
+						limitParam: undefined,
+						pageParam: undefined,
+						startParam: undefined
+					}
+				}
+			});
 		}
 	};
 
