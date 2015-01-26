@@ -166,7 +166,7 @@
 				store: CMDBuild.ServiceProxy.group.getStartingClassStore(),
 				queryMode: 'local'
 			});
-_debug('this.startingClass.store', this.startingClass.store);
+
 			this.wrapper = Ext.create('Ext.form.Panel', {
 				region: 'center',
 				frame: true,
