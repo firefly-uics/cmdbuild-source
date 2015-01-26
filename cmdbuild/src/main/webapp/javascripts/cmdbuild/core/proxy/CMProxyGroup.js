@@ -1,5 +1,9 @@
 (function() {
 
+	var tr = CMDBuild.Translation.administration.modsecurity.group;
+
+	Ext.require('CMDBuild.model.CMGroupModels');
+
 	CMDBuild.ServiceProxy.group = {
 		read: function(p) {
 			p.method = 'GET';
@@ -134,7 +138,7 @@
 		getDefaultGroupStore: function() {
 			return Ext.create('Ext.data.JsonStore', {
 				autoLoad: false,
-				model: 'CMDBuild.cache.CMGroupModelForCombo',
+				model: 'CMDBuild.model.CMGroupModels.comboBox',
 				remoteSort: false,
 				proxy: {
 					type: 'ajax',
@@ -148,6 +152,29 @@
 					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 					direction: 'ASC'
 				}]
+			});
+		},
+
+		/**
+		 * @return {Ext.data.JsonStore}
+		 */
+		getGroupTypeStore: function() {
+			return Ext.create('Ext.data.JsonStore', {
+				fields: [CMDBuild.core.proxy.CMProxyConstants.VALUE, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+				data: [
+					{
+						value: CMDBuild.cache.CMGroupModel.type.NORMAL,
+						description: tr.normal
+					},
+					{
+						value: CMDBuild.cache.CMGroupModel.type.ADMIN,
+						description: tr.administrator
+					},
+					{
+						value: CMDBuild.cache.CMGroupModel.type.CLOUD_ADMIN,
+						description: tr.limited_admin
+					}
+				]
 			});
 		}
 	};

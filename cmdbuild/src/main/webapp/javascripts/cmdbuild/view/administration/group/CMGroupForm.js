@@ -2,127 +2,228 @@
 
 	var tr = CMDBuild.Translation.administration.modsecurity.group;
 
-	Ext.define("CMDBuild.view.administration.group.CMGroupForm", {
-		extend: "Ext.form.Panel",
-		alias: "groupform",
+	Ext.define('CMDBuild.view.administration.group.CMGroupForm', {
+		extend: 'Ext.form.Panel',
+
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			// TODO: Require CMDBuild.ServiceProxy.group class
+		],
+
+		alias: 'groupform',
 
 		mixins: {
-			cmFormFunctions: "CMDBUild.view.common.CMFormFunctions"
+			cmFormFunctions: 'CMDBUild.view.common.CMFormFunctions'
 		},
 
-		constructor: function() {
-			this.enableGroupButton = new Ext.button.Button({
-				iconCls: 'delete',
-				text: tr.delete_group
-			});
+		/**
+		 * @param {CMDBuild.buttons.AbortButton}
+		 */
+		abortButton: undefined,
 
-			this.modifyButton = new Ext.button.Button({
-				iconCls: 'modify',
-				text: tr.modify_group
-			});
+		/**
+		 * @param {Ext.ux.form.XCheckbox}
+		 */
+		activeCheck: undefined,
 
-			this.saveButton = new CMDBuild.buttons.SaveButton();
-			this.abortButton = new CMDBuild.buttons.AbortButton();
+		/**
+		 * @param {Array}
+		 */
+		cmButtons: undefined,
 
-			this.groupName = new Ext.form.field.Text({
-				fieldLabel : tr.group_name,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name : 'name',
-				allowBlank : false,
-				vtype: 'alphanumextended',
-				cmImmutable: true
-			});
+		/**
+		 * @param {Array}
+		 */
+		cmTBar: undefined,
 
-			this.groupDescription = new Ext.form.field.Text({
-				fieldLabel : tr.group_description,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name : 'description',
-				allowBlank : false
-			});
+		/**
+		 * @param {Ext.button.Button}
+		 */
+		enableGroupButton: undefined,
 
-			this.groupType = new Ext.form.field.ComboBox({
-				store: new Ext.data.Store({
-					fields: ["value", "description"],
-					data: [{
-						value: CMDBuild.cache.CMGroupModel.type.NORMAL,
-						description: tr.normal
-					}, {
-						value: CMDBuild.cache.CMGroupModel.type.ADMIN,
-						description: tr.administrator
-					}, {
-						value: CMDBuild.cache.CMGroupModel.type.CLOUD_ADMIN,
-						description: tr.limited_admin
-					}]
-				}),
-				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.type,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name: 'type',
-				valueField: 'value',
-				displayField: 'description',
-				editable: false,
-				queryMode: 'local'
-			});
+		/**
+		 * @param {Ext.form.field.Text}
+		 */
+		groupDescription: undefined,
 
-			this.groupEmail = new Ext.form.field.Text({
-				vtype : 'emailOrBlank',
-				fieldLabel : tr.email,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name : 'email',
-				allowBlank : true
-			});
+		/**
+		 * @param {Ext.form.field.Text}
+		 */
+		groupEmail: undefined,
 
-			this.activeCheck = new Ext.ux.form.XCheckbox({
-				fieldLabel : tr.is_active,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				name : 'isActive',
-				checked : true
-			});
+		/**
+		 * @param {Ext.form.field.Text}
+		 */
+		groupName: undefined,
 
-			this.startingClass = new CMDBuild.field.ErasableCombo({
-				fieldLabel : tr.starting_class,
-				labelWidth: CMDBuild.LABEL_WIDTH,
-				width: CMDBuild.ADM_BIG_FIELD_WIDTH,
-				name : 'startingClass',
-				valueField : 'id',
-				displayField : 'description',
-				editable: false,
-				store : _CMCache.getClassesAndProcessesAndDahboardsStore(),
-				queryMode: 'local'
-			});
+		/**
+		 * @param {Ext.form.field.ComboBox}
+		 */
+		groupType: undefined,
 
-			this.cmTBar = [this.modifyButton, this.enableGroupButton ];
-			this.cmButtons = [this.saveButton, this.abortButton];
+		/**
+		 * @param {Ext.button.Button}
+		 */
+		modifyButton: undefined,
 
-			this.callParent(arguments);
-		},
+		/**
+		 * @param {CMDBuild.buttons.SaveButton}
+		 */
+		saveButton: undefined,
+
+		/**
+		 * @param {CMDBuild.field.ErasableCombo}
+		 */
+		startingClass: undefined,
+
+		/**
+		 * @param {Ext.form.Panel}
+		 */
+		wrapper: undefined,
+
+		bodyCls: 'cmgraypanel',
+		border: false,
+		buttonAlign: 'center',
+		cls: 'x-panel-body-default-framed',
+		frame: false,
+		layout: 'border',
 
 		initComponent: function() {
-			this.tbar = this.cmTBar;
-			this.items = [
-				this.groupName,
-				this.groupDescription,
-				this.groupType,
-				this.groupEmail,
-				this.startingClass,
-				this.activeCheck
-			];
+			// Buttons configuration
+				this.modifyButton = Ext.create('Ext.button.Button', {
+					iconCls: 'modify',
+					text: tr.modify_group
+				});
 
-			this.buttonAlign = 'center';
-			this.buttons = this.cmButtons;
-			this.frame = false;
-			this.border = false;
-			this.cls = "x-panel-body-default-framed";
-			this.bodyCls = "cmgraypanel";
+				this.enableGroupButton = Ext.create('Ext.button.Button', {
+					iconCls: 'delete',
+					text: tr.delete_group
+				});
+
+				this.cmTBar = [this.modifyButton, this.enableGroupButton ];
+
+				this.saveButton = Ext.create('CMDBuild.buttons.SaveButton');
+				this.abortButton = Ext.create('CMDBuild.buttons.AbortButton');
+				this.cmButtons = [this.saveButton, this.abortButton];
+			// END: Buttons configuration
+
+			this.groupName = Ext.create('Ext.form.field.Text', {
+				name: CMDBuild.core.proxy.CMProxyConstants.NAME,
+				fieldLabel: tr.group_name,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				allowBlank: false,
+				cmImmutable: true,
+				vtype: 'alphanumextended'
+			});
+
+			this.groupDescription = Ext.create('Ext.form.field.Text', {
+				name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				fieldLabel: tr.group_description,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				allowBlank: false
+			});
+
+			this.groupType = Ext.create('Ext.form.field.ComboBox', {
+				name: CMDBuild.core.proxy.CMProxyConstants.TYPE,
+				fieldLabel: CMDBuild.Translation.administration.modClass.attributeProperties.type,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				editable: false,
+
+				store: CMDBuild.ServiceProxy.group.getGroupTypeStore(),
+				queryMode: 'local'
+			});
+
+			this.groupEmail = Ext.create('Ext.form.field.Text', {
+				name: CMDBuild.core.proxy.CMProxyConstants.EMAIL,
+				fieldLabel: tr.email,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				allowBlank: true,
+				vtype: 'emailOrBlank'
+			});
+
+			this.activeCheck = Ext.create('Ext.ux.form.XCheckbox', {
+				name: CMDBuild.core.proxy.CMProxyConstants.IS_ACTIVE,
+				fieldLabel: tr.is_active,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				checked: true
+			});
+
+			this.startingClass = Ext.create('CMDBuild.field.ErasableCombo', {
+				name: CMDBuild.core.proxy.CMProxyConstants.STARTING_CLASS,
+				fieldLabel: tr.starting_class,
+				labelWidth: CMDBuild.LABEL_WIDTH,
+				maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
+				valueField: CMDBuild.core.proxy.CMProxyConstants.ID,
+				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				editable: false,
+
+				store: _CMCache.getClassesAndProcessesAndDahboardsStore(),
+				queryMode: 'local'
+			});
+
+			this.wrapper = Ext.create('Ext.form.Panel', {
+				region: 'center',
+				frame: true,
+				border: false,
+
+				layout: {
+					type: 'vbox',
+					align:'stretch'
+				},
+
+				items: [
+					this.groupName,
+					this.groupDescription,
+					this.groupType,
+					this.groupEmail,
+					this.startingClass,
+					this.activeCheck
+				]
+			});
+
+			Ext.apply(this, {
+				dockedItems: [
+					{
+						xtype: 'toolbar',
+						dock: 'top',
+						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+						items: this.cmTBar
+					}
+				],
+				items: [this.wrapper],
+				buttons: this.cmButtons
+			});
 
 			this.callParent(arguments);
-			this.disableModify(enableTBar = false);
+			this.disableModify(false);
 		},
 
-		updateDisableEnableGroup : function() {
+		/**
+		 * @param {CMDBuild.cache.CMGroupModel} group
+		 */
+		loadGroup: function(group) {
+			this.reset();
+			this.getForm().loadRecord(group);
+
+			// FIX: to avoid default int value (0) to be displayed
+			if (this.startingClass.getValue() == 0)
+				this.startingClass.setValue();
+
+			this.groupType.setValue(group.getType());
+			this.updateDisableEnableGroup();
+		},
+
+		setDefaults: function() {
+			this.groupType.setValue(CMDBuild.cache.CMGroupModel.type.NORMAL);
+		},
+
+		updateDisableEnableGroup: function() {
 			if (this.activeCheck.getValue()) {
 				this.enableGroupButton.setText(tr.delete_group);
 				this.enableGroupButton.setIconCls('delete');
@@ -131,22 +232,6 @@
 				this.enableGroupButton.setIconCls('ok');
 			}
 		},
-
-		loadGroup: function(g) {
-			this.reset();
-			this.getForm().loadRecord(g);
-
-			// FIX: to avoid default int value (0) to be displayed
-			if (this.startingClass.getValue() == 0)
-				this.startingClass.setValue();
-
-			this.groupType.setValue(g.getType());
-			this.updateDisableEnableGroup();
-		},
-
-		setDefaults: function() {
-			this.groupType.setValue(CMDBuild.cache.CMGroupModel.type.NORMAL);
-		}
 	});
 
 })();

@@ -210,6 +210,7 @@
 		SOURCE_FUNCTION: 'sourceFunction',
 		SOURCE_NAME: 'sourceName',
 		SQLSERVER: 'sqlserver',
+		STARTING_CLASS: 'startingClass',
 		START_MAP_WITH_LATITUDE: 'StartMapWithLatitude',
 		START_MAP_WITH_LONGITUDE: 'StartMapWithLongitude',
 		START_MAP_WITH_ZOOM: 'StartMapWithZoom',
