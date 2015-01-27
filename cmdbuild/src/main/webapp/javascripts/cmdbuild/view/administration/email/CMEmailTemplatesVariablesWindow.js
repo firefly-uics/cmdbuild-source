@@ -5,8 +5,18 @@
 	Ext.define('CMDBuild.view.administration.email.CMEmailTemplatesVariablesWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
+		/**
+		 * @cfg {CMDBuild.controller.administration.email.CMEmailTemplatesController}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Ext.grid.Panel}
+		 */
+		grid: undefined,
+
 		title: tr.title,
+		buttonsAlign: 'center',
 
 		initComponent: function() {
 			var me = this;
@@ -43,8 +53,9 @@
 							{
 								icon: 'images/icons/cross.png',
 								tooltip: CMDBuild.Translation.common.buttons.remove,
+
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									grid.store.remove(record);
+									grid.getStore().remove(record);
 								}
 							}
 						]
@@ -71,8 +82,9 @@
 							{
 								text: CMDBuild.Translation.common.buttons.add,
 								iconCls: 'add',
+
 								handler: function() {
-									me.grid.store.insert(0, Ext.create('CMDBuild.model.CMModelEmailTemplates.variablesWindow'));
+									me.grid.getStore().insert(0, Ext.create('CMDBuild.model.CMModelEmailTemplates.variablesWindow'));
 								}
 							}
 						]
@@ -80,29 +92,20 @@
 				]
 			});
 
-			this.fbar = [
-				{
-					xtype: 'tbspacer',
-					flex: 1
-				},
-				Ext.create('CMDBuild.buttons.ConfirmButton', {
-					handler: function() {
-						me.delegate.cmOn('onVariablesWindowSave');
-					}
-				}),
-				Ext.create('CMDBuild.buttons.AbortButton', {
-					handler: function() {
-						me.delegate.cmOn('onVariablesWindowAbort');
-					}
-				}),
-				{
-					xtype: 'tbspacer',
-					flex: 1
-				}
-			];
-
 			Ext.apply(this, {
-				items: [this.grid]
+				items: [this.grid],
+				buttons: [
+					Ext.create('CMDBuild.buttons.ConfirmButton', {
+						handler: function() {
+							me.delegate.cmOn('onVariablesWindowSave');
+						}
+					}),
+					Ext.create('CMDBuild.buttons.AbortButton', {
+						handler: function() {
+							me.delegate.cmOn('onVariablesWindowAbort');
+						}
+					})
+				]
 			});
 
 			this.callParent(arguments);
