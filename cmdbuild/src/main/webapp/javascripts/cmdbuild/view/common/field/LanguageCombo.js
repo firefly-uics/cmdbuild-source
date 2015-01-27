@@ -4,14 +4,17 @@
 		alternateClassName: 'CMDBuild.field.LanguageCombo', // Legacy class name
 		extend: 'CMDBuild.field.CMIconCombo',
 
-		// TODO: to use in future
-//		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Localizations'
+		],
+
+		valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+		displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
 
 		initComponent: function() {
 			Ext.apply(this, {
-				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
-				displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
-				store: CMDBuild.ServiceProxy.setup.getLanguageStore(),
+				store: CMDBuild.core.proxy.Localizations.getLanguagesStore(),
 				queryMode: 'local'
 			});
 

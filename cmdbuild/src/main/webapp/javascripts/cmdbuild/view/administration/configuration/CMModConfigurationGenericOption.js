@@ -40,9 +40,9 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 			queryMode: 'local'
 		});
 
-		this.enabledLanguages = Ext.create("CMDBuild.view.administration.configuration.CMModConfigurationTranslations", {
-
-		});
+//		this.enabledLanguages = Ext.create("CMDBuild.view.administration.configuration.CMModConfigurationTranslations", {
+//
+//		});
 		this.items = [
 			{
 			xtype: 'fieldset',
@@ -106,41 +106,44 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 					maxValue:100,
 					allowBlank: false
 			}]
-		},{
-			xtype: 'fieldset',
-			title : tr.fieldsetlanguageltitle,
-			items : [ {
-				fieldLabel : tr.language,
-				xtype : 'xcombo',
-				name : 'language',
-				hiddenName : 'language',
-				valueField : 'name',
-				displayField : 'value',
-				grow : true,
-				triggerAction : 'all',
-				minChars : 0,
-				store : new Ext.data.Store( {
-					model : 'TranslationModel',
-					proxy : {
-						type : 'ajax',
-						url : 'services/json/utils/listavailabletranslations',
-						reader : {
-							type : 'json',
-							root : 'translations'
-						}
-					},
-					autoLoad : true
-				})
-			}, {
-				fieldLabel : tr.languagePrompt,
-				xtype : 'xcheckbox',
-				name : 'languageprompt'
-			}]
-		},{
-			xtype: 'fieldset',
-			title : CMDBuild.Translation.translations_enabled,
-			items : [this.enabledLanguages]
-		},{
+		},
+//		{
+//			xtype: 'fieldset',
+//			title : tr.fieldsetlanguageltitle,
+//			items : [ {
+//				fieldLabel : tr.language,
+//				xtype : 'xcombo',
+//				name : 'language',
+//				hiddenName : 'language',
+//				valueField : 'name',
+//				displayField : 'value',
+//				grow : true,
+//				triggerAction : 'all',
+//				minChars : 0,
+//				store : new Ext.data.Store( {
+//					model : 'TranslationModel',
+//					proxy : {
+//						type : 'ajax',
+//						url : 'services/json/utils/listavailabletranslations',
+//						reader : {
+//							type : 'json',
+//							root : 'translations'
+//						}
+//					},
+//					autoLoad : true
+//				})
+//			}, {
+//				fieldLabel : tr.languagePrompt,
+//				xtype : 'xcheckbox',
+//				name : 'languageprompt'
+//			}]
+//		},
+//		{
+//			xtype: 'fieldset',
+//			title : CMDBuild.Translation.translations_enabled,
+//			items : [this.enabledLanguages]
+//		},
+		{
 			xtype: 'fieldset',
 			title : CMDBuild.Translation.lock_cards_in_edit,
 			items: [{
@@ -180,139 +183,139 @@ Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationGeneric
 	}
 
 });
-Ext.define("CMDBuild.view.administration.configuration.CMTranslatableCheck", {
-	extend: "Ext.container.Container",
-	layout: "hbox",
-	padding: "0 0 0 5",
-	width: 200,
-	name : 'no name',
-	allowBlank : false,
-	vtype : '',
-	setValue: function(value) {
-		this.check.setValue(value);
-	},
-	getValue: function() {
-		return this.check.getValue();
-	},
-	initComponent : function() {
-		var me = this;
-		this.check = new Ext.form.field.Checkbox( {
-			fieldLabel : me.language,
-			labelWidth: CMDBuild.LABEL_WIDTH,
-			name : me.name,
-			submitValue: false
-		});
-		this.width += 22;
-		this.translationsButton = new Ext.form.field.Display( {
-			iconCls: me.image,
-			renderer : function(){
-					return '<div style="background-repeat:no-repeat;background-position:center;" class="' + me.image + '">&#160;</div>';
-			},
-			width: 22
-		});
-		this.items = [this.translationsButton, this.check];
-		this.callParent(arguments);
-	}
-});
-Ext.define("CMDBuild.view.administration.configuration.CMRowConfigurationTranslations", {
-	extend: "Ext.container.Container",
-	layout: "hbox",
-	padding: "0 0 0 5",
-	field1: undefined,
-	field2: undefined,
-	field3: undefined,
-	initComponent: function() {
-		this.items = [];
-		if (this.field1) {
-			this.items.push(this.field1);
-		}
-		if (this.field2) {
-			this.items.push(this.field2);
-		}
-		if (this.field3) {
-			this.items.push(this.field3);
-		}
-		this.callParent(arguments);
-	}
-});
-Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationTranslations", {
-	extend: "Ext.form.Panel",
-	configFileName: 'translations',
-//	cls: "x-panel-body-default-framed",
-	border: 0,
-	bodyCls: 'cmgraypanel',
-	languages: [],
-	constructor: function() {
-		var me = this;
-		me.callParent(arguments);
-		this.languageItems = [];
-		_CMCache.registerOnTranslations(this);
-		CMDBuild.ServiceProxy.translations.readAvailableTranslations({
-			success : function(response, options, decoded) {
-				var column = 0;
-				var arColumns = [];
-				for (key in decoded.translations) {
-					column++;
-					var item = Ext.create("CMDBuild.view.administration.configuration.CMTranslatableCheck", {
-							name: decoded.translations[key].name,
-							image: "ux-flag-" + decoded.translations[key].name,
-							language: decoded.translations[key].value,
-							submitValue: false
-						});
-					me.languageItems.push(item);
-
-					arColumns.push(item);
-					if (column == 3) {
-						me.add(getLanguagesRow(arColumns));
-						arColumns = [];
-						column = 0;
-					}
-				}
-				if (column > 0) {
-					me.add(getLanguagesRow(arColumns));
-				}
-			}
-		});
-	},
-	getValues: function() {
-		var languages = "";
-		var first = true;
-		for (key in this.languageItems) {
-			var l = this.languageItems[key];
-			if (l.getValue()) {
-				languages += ((first) ? "" : ", ") + l.name;
-				first = false;
-			}
-		}
-		return languages;
-	},
-
-	setValues: function(activeLanguages) {
-		for (key in this.languageItems) {
-			var l = this.languageItems[key];
-			l.setValue(inActiveLanguages(l, activeLanguages));
-		}
-	},
-
-	resetLanguages: function() {
-		var activeLanguages = _CMCache.getActiveTranslations();
-		this.setValues(activeLanguages);
-	}
-});
-function getLanguagesRow(arColumns) {
-	var row = Ext.create("CMDBuild.view.administration.configuration.CMRowConfigurationTranslations", {
-		field1: arColumns[0],
-		field2: arColumns[1],
-		field3: arColumns[2],
-	});
-	return row;
-}
-function inActiveLanguages(language, activeLanguages) {
-	for (var i = 0; i < activeLanguages.length; i++) {
-		if (language.name == activeLanguages[i].name) {
-			return true;
-		}
-	}
-	return false;
-}
+//Ext.define("CMDBuild.view.administration.configuration.CMTranslatableCheck", {
+//	extend: "Ext.container.Container",
+//	layout: "hbox",
+//	padding: "0 0 0 5",
+//	width: 200,
+//	name : 'no name',
+//	allowBlank : false,
+//	vtype : '',
+//	setValue: function(value) {
+//		this.check.setValue(value);
+//	},
+//	getValue: function() {
+//		return this.check.getValue();
+//	},
+//	initComponent : function() {
+//		var me = this;
+//		this.check = new Ext.form.field.Checkbox( {
+//			fieldLabel : me.language,
+//			labelWidth: CMDBuild.LABEL_WIDTH,
+//			name : me.name,
+//			submitValue: false
+//		});
+//		this.width += 22;
+//		this.translationsButton = new Ext.form.field.Display( {
+//			iconCls: me.image,
+//			renderer : function(){
+//					return '<div style="background-repeat:no-repeat;background-position:center;" class="' + me.image + '">&#160;</div>';
+//			},
+//			width: 22
+//		});
+//		this.items = [this.translationsButton, this.check];
+//		this.callParent(arguments);
+//	}
+//});
+//Ext.define("CMDBuild.view.administration.configuration.CMRowConfigurationTranslations", {
+//	extend: "Ext.container.Container",
+//	layout: "hbox",
+//	padding: "0 0 0 5",
+//	field1: undefined,
+//	field2: undefined,
+//	field3: undefined,
+//	initComponent: function() {
+//		this.items = [];
+//		if (this.field1) {
+//			this.items.push(this.field1);
+//		}
+//		if (this.field2) {
+//			this.items.push(this.field2);
+//		}
+//		if (this.field3) {
+//			this.items.push(this.field3);
+//		}
+//		this.callParent(arguments);
+//	}
+//});
+//Ext.define("CMDBuild.view.administration.configuration.CMModConfigurationTranslations", {
+//	extend: "Ext.form.Panel",
+//	configFileName: 'translations',
+////	cls: "x-panel-body-default-framed",
+//	border: 0,
+//	bodyCls: 'cmgraypanel',
+//	languages: [],
+//	constructor: function() {
+//		var me = this;
+//		me.callParent(arguments);
+//		this.languageItems = [];
+//		_CMCache.registerOnTranslations(this);
+//		CMDBuild.ServiceProxy.translations.readAvailableTranslations({
+//			success : function(response, options, decoded) {
+//				var column = 0;
+//				var arColumns = [];
+//				for (key in decoded.translations) {
+//					column++;
+//					var item = Ext.create("CMDBuild.view.administration.configuration.CMTranslatableCheck", {
+//							name: decoded.translations[key].name,
+//							image: "ux-flag-" + decoded.translations[key].name,
+//							language: decoded.translations[key].value,
+//							submitValue: false
+//						});
+//					me.languageItems.push(item);
+//
+//					arColumns.push(item);
+//					if (column == 3) {
+//						me.add(getLanguagesRow(arColumns));
+//						arColumns = [];
+//						column = 0;
+//					}
+//				}
+//				if (column > 0) {
+//					me.add(getLanguagesRow(arColumns));
+//				}
+//			}
+//		});
+//	},
+//	getValues: function() {
+//		var languages = "";
+//		var first = true;
+//		for (key in this.languageItems) {
+//			var l = this.languageItems[key];
+//			if (l.getValue()) {
+//				languages += ((first) ? "" : ", ") + l.name;
+//				first = false;
+//			}
+//		}
+//		return languages;
+//	},
+//
+//	setValues: function(activeLanguages) {
+//		for (key in this.languageItems) {
+//			var l = this.languageItems[key];
+//			l.setValue(inActiveLanguages(l, activeLanguages));
+//		}
+//	},
+//
+//	resetLanguages: function() {
+//		var activeLanguages = _CMCache.getActiveTranslations();
+//		this.setValues(activeLanguages);
+//	}
+//});
+//function getLanguagesRow(arColumns) {
+//	var row = Ext.create("CMDBuild.view.administration.configuration.CMRowConfigurationTranslations", {
+//		field1: arColumns[0],
+//		field2: arColumns[1],
+//		field3: arColumns[2],
+//	});
+//	return row;
+//}
+//function inActiveLanguages(language, activeLanguages) {
+//	for (var i = 0; i < activeLanguages.length; i++) {
+//		if (language.name == activeLanguages[i].name) {
+//			return true;
+//		}
+//	}
+//	return false;
+//}
 })();
