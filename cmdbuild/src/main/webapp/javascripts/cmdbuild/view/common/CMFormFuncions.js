@@ -165,14 +165,11 @@
 		 * Clears form fields dirty state
 		 */
 		initValues: function() {
-			if (this.getForm()) {
-				var items = this.getForm().getFields().getRange();
-
-				Ext.each(items, function(field) {
+			if (this.getForm())
+				Ext.each(this.getForm().getFields().getRange(), function(field) {
 					if (field.isDirty())
 						field.initValue();
 				});
-			}
 		},
 
 		iterateOverCMButtons: function(fn) {
@@ -192,6 +189,7 @@
 
 		reset: function() {
 			try {
+				this.getForm().setValues();
 				this.getForm().reset();
 			} catch (e) {}
 		}
