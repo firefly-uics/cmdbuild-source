@@ -1,19 +1,26 @@
 (function() {
 
 	Ext.define('CMDBuild.view.administration.localizations.EnabledLanguagesGrid', {
-		extend: 'Ext.form.Panel',
+		extend: 'Ext.container.Container',
 
-		border: 0,
-		bodyCls: 'cmgraypanel',
+		/**
+		 * @cfg {Array}
+		 */
 		languages: [],
 
+		languageItems: [],
+
+		border: false,
+		frame: false,
 		layout: 'column',
 
 		constructor: function() {
 			var me = this;
+
 			me.callParent(arguments);
-			this.languageItems = [];
+
 			_CMCache.registerOnTranslations(this);
+
 			CMDBuild.ServiceProxy.translations.readAvailableTranslations({
 				success : function(response, options, decoded) {
 					var column = 0;
