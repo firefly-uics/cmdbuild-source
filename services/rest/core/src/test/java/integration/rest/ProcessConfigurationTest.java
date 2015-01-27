@@ -55,11 +55,11 @@ public class ProcessConfigurationTest {
 				.withElements(asList( //
 						newProcessStatus() //
 								.withId(123L) //
-								.withDescription("bar") //
+								.withValue("bar") //
 								.build(), //
 						newProcessStatus() //
 								.withId(456L) //
-								.withDescription("baz") //
+								.withValue("baz") //
 								.build())) //
 				.withMetadata(newMetadata() //
 						.withTotal(2L) //

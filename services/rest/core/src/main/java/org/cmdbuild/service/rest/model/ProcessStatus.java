@@ -1,7 +1,7 @@
 package org.cmdbuild.service.rest.model;
 
-import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
+import static org.cmdbuild.service.rest.constants.Serialization.VALUE;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -13,8 +13,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @XmlRootElement
 public class ProcessStatus extends AbstractModel {
 
+	public static final String OPEN = "open";
+	public static final String SUSPENDED = "suspended";
+	public static final String COMPLETED = "completed";
+	public static final String ABORTED = "closed";
+
 	private Long id;
-	private String description;
+	private String value;
 
 	ProcessStatus() {
 		// package visibility
@@ -30,13 +35,13 @@ public class ProcessStatus extends AbstractModel {
 		this.id = id;
 	}
 
-	@XmlAttribute(name = DESCRIPTION)
-	public String getDescription() {
-		return description;
+	@XmlAttribute(name = VALUE)
+	public String getValue() {
+		return value;
 	}
 
-	void setDescription(final String description) {
-		this.description = description;
+	void setValue(final String value) {
+		this.value = value;
 	}
 
 	@Override
@@ -53,7 +58,7 @@ public class ProcessStatus extends AbstractModel {
 
 		return new EqualsBuilder() //
 				.append(this.getId(), other.getId()) //
-				.append(this.description, other.description) //
+				.append(this.value, other.value) //
 				.isEquals();
 	}
 
@@ -61,7 +66,7 @@ public class ProcessStatus extends AbstractModel {
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
 				.append(this.getId()) //
-				.append(this.description) //
+				.append(this.value) //
 				.toHashCode();
 	}
 
