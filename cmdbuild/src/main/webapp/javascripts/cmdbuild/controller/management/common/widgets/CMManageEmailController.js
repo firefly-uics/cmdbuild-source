@@ -191,7 +191,6 @@
 		 */
 		addEmailFromTemplateIfNeeded: function() {
 			this.checkTemplatesToRegenerate();
-_debug(this.thereAreTemplates() + ' && ' + !this.emailGrid.hasDraftEmails() + ' && ' + !this.emailsWereGenerated + ' || ' + this.forceRegeneration);
 			if (
 				(
 					this.thereAreTemplates()
@@ -202,7 +201,6 @@ _debug(this.thereAreTemplates() + ' && ' + !this.emailGrid.hasDraftEmails() + ' 
 			) {
 				this.createEmailFromTemplate();
 			}
-_debug('load store', this.emailGrid.getStore());
 		},
 
 		/**
@@ -212,7 +210,7 @@ _debug('load store', this.emailGrid.getStore());
 		 */
 		beforeActiveView: function() {
 			this.templatesToRegenerate = []; // Reset buffer variable
-_debug('this.emailGrid.isStoreLoaded()', this.emailGrid.isStoreLoaded());
+
 			if (this.emailGrid.isStoreLoaded()) {
 				this.addEmailFromTemplateIfNeeded();
 			} else {
@@ -301,7 +299,6 @@ _debug('this.emailGrid.isStoreLoaded()', this.emailGrid.isStoreLoaded());
 		 * Regenerates email resolving all internal CQL templates
 		 */
 		createEmailFromTemplate: function() {
-_debug('createEmailFromTemplate');
 			if (!this.busy) {
 				var me = this;
 				var oldStore = CMDBuild.core.Utils.deepCloneStore(this.emailGrid.getStore()); // Old store backup
