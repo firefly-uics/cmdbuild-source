@@ -10,11 +10,12 @@
 
 		constructor: function(){
 			this.callParent(arguments);
+
 			this.updateStore();
 		},
 
 		/**
-		 * @overwrite
+		 * @override
 		 */
 		updateStore: function() {
 			this.store.getRootNode().appendChild([
