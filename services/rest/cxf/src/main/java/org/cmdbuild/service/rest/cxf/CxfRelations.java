@@ -3,6 +3,8 @@ package org.cmdbuild.service.rest.cxf;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.addAll;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.transformEntries;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_DESTINATION_ID;
@@ -16,9 +18,13 @@ import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.dao.entrytype.CMEntryType;
+import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.logic.commands.AbstractGetRelation.RelationInfo;
 import org.cmdbuild.logic.commands.GetRelationList.DomainInfo;
 import org.cmdbuild.logic.commands.GetRelationList.GetRelationListResponse;
@@ -26,12 +32,14 @@ import org.cmdbuild.logic.data.QueryOptions;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.service.rest.Relations;
+import org.cmdbuild.service.rest.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.model.Relation;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps.EntryTransformer;
 
 public class CxfRelations implements Relations {
 
@@ -71,11 +79,12 @@ public class CxfRelations implements Relations {
 
 		@Override
 		public Relation apply(final RelationInfo input) {
+			final CMDomain domain = input.getQueryDomain().getDomain();
 			final CMClass sourceType = input.getSourceType();
 			final CMClass targetType = input.getTargetType();
 			return newRelation() //
 					.withId(input.getRelationId()) //
-					.withType(input.getQueryDomain().getDomain().getName()) //
+					.withType(domain.getName()) //
 					.withSource(newCard() //
 							.withType(sourceType.getName()) //
 							.withId(input.getSourceId()) //
@@ -86,8 +95,39 @@ public class CxfRelations implements Relations {
 							.withId(input.getTargetId()) //
 							.withValue(targetType.getDescriptionAttributeName(), input.getTargetDescription()) //
 							.build()) //
-					.withValues(includeValues ? input.getRelationAttributes() : NO_VALUES.entrySet()) //
+					.withValues(includeValues ? adaptOutputValues( //
+							domain, //
+							input.getRelationAttributes() //
+					)
+							: NO_VALUES.entrySet()) //
 					.build();
+		}
+
+		private Iterable<? extends Entry<String, Object>> adaptOutputValues(final CMEntryType target,
+				final Iterable<Entry<String, Object>> entries) {
+			final Map<String, Object> values = newHashMap();
+			for (final Entry<String, Object> entry : entries) {
+				values.put(entry.getKey(), entry.getValue());
+			}
+			return transformEntries(values, new EntryTransformer<String, Object, Object>() {
+
+				@Override
+				public Object transformEntry(final String key, final Object value) {
+					final CMAttribute attribute = target.getAttribute(key);
+					final Object _value;
+					if (attribute == null) {
+						_value = value;
+					} else {
+						final CMAttributeType<?> attributeType = attribute.getType();
+						_value = DefaultConverter.newInstance() //
+								.build() //
+								.toClient() //
+								.convert(attributeType, value);
+					}
+					return _value;
+				}
+
+			}).entrySet();
 		}
 
 	};
