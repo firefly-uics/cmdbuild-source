@@ -17,7 +17,6 @@ import org.cmdbuild.service.rest.model.ProcessWithBasicDetails;
 import org.cmdbuild.service.rest.model.ProcessWithFullDetails;
 import org.cmdbuild.service.rest.model.ResponseMultiple;
 import org.cmdbuild.service.rest.model.ResponseSingle;
-import org.cmdbuild.workflow.LookupHelper;
 import org.cmdbuild.workflow.user.UserProcessClass;
 
 import com.google.common.collect.Ordering;
@@ -40,11 +39,11 @@ public class CxfProcesses implements Processes {
 	private final ToFullProcessDetail toFullDetail;
 
 	public CxfProcesses(final ErrorHandler errorHandler, final WorkflowLogic workflowLogic,
-			final LookupHelper lookupHelper) {
+			final ProcessStatusHelper processStatusHelper) {
 		this.errorHandler = errorHandler;
 		this.workflowLogic = workflowLogic;
 		this.toFullDetail = ToFullProcessDetail.newInstance() //
-				.withLookupHelper(lookupHelper) //
+				.withLookupHelper(processStatusHelper) //
 				.build();
 	}
 

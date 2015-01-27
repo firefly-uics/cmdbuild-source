@@ -1170,7 +1170,7 @@ public class Models {
 	public static class ProcessStatusBuilder extends ModelBuilder<ProcessStatus> {
 
 		private Long id;
-		private String description;
+		private String value;
 
 		private ProcessStatusBuilder() {
 			// use factory method
@@ -1180,7 +1180,7 @@ public class Models {
 		protected ProcessStatus doBuild() {
 			final ProcessStatus output = new ProcessStatus();
 			output.setId(id);
-			output.setDescription(description);
+			output.setValue(value);
 			return output;
 		}
 
@@ -1189,8 +1189,8 @@ public class Models {
 			return this;
 		}
 
-		public ProcessStatusBuilder withDescription(final String description) {
-			this.description = description;
+		public ProcessStatusBuilder withValue(final String value) {
+			this.value = value;
 			return this;
 		}
 
