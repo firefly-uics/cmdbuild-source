@@ -238,7 +238,6 @@
 			this.callParent(arguments);
 
 			this.getStore().on('load', function() {
-_debug('store loaded');
 				this.storeLoaded = true;
 			}, this);
 		},
@@ -263,16 +262,15 @@ _debug('store loaded');
 		 */
 		addToStoreIfNotInIt: function(record) {
 			var store = this.getStore();
-_debug('addToStoreIfNotInIt', record);
+
 			if (store.findBy(function(item) {
 					return item.get(CMDBuild.core.proxy.CMProxyConstants.ID) == record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
 				}) == -1
 			) {
 				this.delegate.generateTemporaryId(record);
-_debug('### IF');
+
 				// Use loadRecords because store.add does not update the grouping so the grid goes broken
 				store.loadRecords([record], { addRecords: true });
-_debug('store', store);
 			}
 		},
 
