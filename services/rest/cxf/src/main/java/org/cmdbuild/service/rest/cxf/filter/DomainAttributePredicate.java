@@ -6,8 +6,8 @@ import static com.google.common.collect.Sets.newHashSet;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.dao.entrytype.Functions.name;
-import static org.cmdbuild.service.rest.constants.Serialization.CLASS_DESTINATION;
-import static org.cmdbuild.service.rest.constants.Serialization.CLASS_SOURCE;
+import static org.cmdbuild.service.rest.constants.Serialization.DESTINATION;
+import static org.cmdbuild.service.rest.constants.Serialization.SOURCE;
 
 import java.util.Collection;
 
@@ -64,9 +64,9 @@ public class DomainAttributePredicate implements Predicate<CMDomain>, PredicateV
 	public void visit(final Contains predicate) {
 		final boolean _output;
 		final Object expected = predicate.getValue();
-		if (CLASS_SOURCE.equals(attribute.getName())) {
+		if (SOURCE.equals(attribute.getName())) {
 			_output = contains(input.getClass1(), expected);
-		} else if (CLASS_DESTINATION.equals(attribute.getName())) {
+		} else if (DESTINATION.equals(attribute.getName())) {
 			_output = contains(input.getClass2(), expected);
 		} else {
 			logger.warn(marker, format("attribute '%s' not supported", attribute.getName()));
@@ -94,9 +94,9 @@ public class DomainAttributePredicate implements Predicate<CMDomain>, PredicateV
 	public void visit(final EqualTo predicate) {
 		final boolean _output;
 		final Object expected = predicate.getValue();
-		if (CLASS_SOURCE.equals(attribute.getName())) {
+		if (SOURCE.equals(attribute.getName())) {
 			_output = input.getClass1().getName().equals(expected);
-		} else if (CLASS_DESTINATION.equals(attribute.getName())) {
+		} else if (DESTINATION.equals(attribute.getName())) {
 			_output = input.getClass2().getName().equals(expected);
 		} else {
 			logger.warn(marker, format("attribute '%s' not supported", attribute.getName()));
@@ -115,9 +115,9 @@ public class DomainAttributePredicate implements Predicate<CMDomain>, PredicateV
 		final boolean _output;
 		final FluentIterable<String> expected = from(predicate.getValues()) //
 				.transform(toStringFunction());
-		if (CLASS_SOURCE.equals(attribute.getName())) {
+		if (SOURCE.equals(attribute.getName())) {
 			_output = expected.contains(input.getClass1().getName());
-		} else if (CLASS_DESTINATION.equals(attribute.getName())) {
+		} else if (DESTINATION.equals(attribute.getName())) {
 			_output = expected.contains(input.getClass2().getName());
 		} else {
 			logger.warn(marker, format("attribute '%s' not supported", attribute.getName()));

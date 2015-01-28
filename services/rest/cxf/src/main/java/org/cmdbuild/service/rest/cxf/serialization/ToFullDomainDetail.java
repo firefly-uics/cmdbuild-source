@@ -2,7 +2,9 @@ package org.cmdbuild.service.rest.cxf.serialization;
 
 import static org.cmdbuild.service.rest.model.Models.newDomainWithFullDetails;
 
+import org.apache.commons.lang3.Validate;
 import org.cmdbuild.dao.entrytype.CMDomain;
+import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.service.rest.model.DomainWithFullDetails;
 
 import com.google.common.base.Function;
@@ -11,13 +13,25 @@ public class ToFullDomainDetail implements Function<CMDomain, DomainWithFullDeta
 
 	public static class Builder implements org.apache.commons.lang3.builder.Builder<ToFullDomainDetail> {
 
+		private DataAccessLogic dataAccessLogic;
+
 		private Builder() {
 			// use static method
 		}
 
 		@Override
 		public ToFullDomainDetail build() {
+			validate();
 			return new ToFullDomainDetail(this);
+		}
+
+		private void validate() {
+			Validate.notNull(dataAccessLogic, "missing '%s'", DataAccessLogic.class);
+		}
+
+		public Builder withDataAccessLogic(final DataAccessLogic dataAccessLogic) {
+			this.dataAccessLogic = dataAccessLogic;
+			return this;
 		}
 
 	}
@@ -26,8 +40,10 @@ public class ToFullDomainDetail implements Function<CMDomain, DomainWithFullDeta
 		return new Builder();
 	}
 
+	private final DataAccessLogic dataAccessLogic;
+
 	private ToFullDomainDetail(final Builder builder) {
-		// nothing to do
+		this.dataAccessLogic = builder.dataAccessLogic;
 	}
 
 	@Override
@@ -36,8 +52,10 @@ public class ToFullDomainDetail implements Function<CMDomain, DomainWithFullDeta
 				.withId(input.getName()) //
 				.withName(input.getName()) //
 				.withDescription(input.getDescription()) //
-				.withClassSource(input.getClass1().getId()) //
-				.withClassDestination(input.getClass2().getId()) //
+				.withSource(input.getClass1().getName()) //
+				.withSourceProcess(dataAccessLogic.isProcess(input.getClass1())) //
+				.withDestination(input.getClass2().getName()) //
+				.withDestinationProcess(dataAccessLogic.isProcess(input.getClass2())) //
 				.withCardinality(input.getCardinality()) //
 				.withDescriptionDirect(input.getDescription1()) //
 				.withDescriptionInverse(input.getDescription2()) //
