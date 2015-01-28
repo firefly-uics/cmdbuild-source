@@ -1,11 +1,13 @@
 package org.cmdbuild.service.rest.model;
 
 import static org.cmdbuild.service.rest.constants.Serialization.CARDINALITY;
-import static org.cmdbuild.service.rest.constants.Serialization.CLASS_DESTINATION;
-import static org.cmdbuild.service.rest.constants.Serialization.CLASS_SOURCE;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION_DIRECT;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION_INVERSE;
 import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION_MASTER_DETAIL;
+import static org.cmdbuild.service.rest.constants.Serialization.DESTINATION;
+import static org.cmdbuild.service.rest.constants.Serialization.DESTINATION_PROCESS;
+import static org.cmdbuild.service.rest.constants.Serialization.SOURCE;
+import static org.cmdbuild.service.rest.constants.Serialization.SOURCE_PROCESS;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -16,8 +18,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 @XmlRootElement
 public class DomainWithFullDetails extends DomainWithBasicDetails {
 
-	private Long classSource;
-	private Long classDestination;
+	private String source;
+	private boolean sourceProcess;
+	private String destination;
+	private boolean destinationProcess;
 	private String cardinality;
 	private String descriptionDirect;
 	private String descriptionInverse;
@@ -27,22 +31,40 @@ public class DomainWithFullDetails extends DomainWithBasicDetails {
 		// package visibility
 	}
 
-	@XmlAttribute(name = CLASS_SOURCE)
-	public Long getClassSource() {
-		return classSource;
+	@XmlAttribute(name = SOURCE)
+	public String getSource() {
+		return source;
 	}
 
-	void setClassSource(final Long classnameSource) {
-		this.classSource = classnameSource;
+	void setSource(final String source) {
+		this.source = source;
 	}
 
-	@XmlAttribute(name = CLASS_DESTINATION)
-	public Long getClassDestination() {
-		return classDestination;
+	@XmlAttribute(name = SOURCE_PROCESS)
+	public boolean isSourceProcess() {
+		return sourceProcess;
 	}
 
-	void setClassDestination(final Long classnameDestination) {
-		this.classDestination = classnameDestination;
+	void setSourceProcess(final boolean sourceProcess) {
+		this.sourceProcess = sourceProcess;
+	}
+
+	@XmlAttribute(name = DESTINATION)
+	public String getDestination() {
+		return destination;
+	}
+
+	void setDestination(final String source) {
+		this.destination = source;
+	}
+
+	@XmlAttribute(name = DESTINATION_PROCESS)
+	public boolean isDestinationProcess() {
+		return destinationProcess;
+	}
+
+	void setDestinationProcess(final boolean destinationProcess) {
+		this.destinationProcess = destinationProcess;
 	}
 
 	@XmlAttribute(name = CARDINALITY)
@@ -93,8 +115,8 @@ public class DomainWithFullDetails extends DomainWithBasicDetails {
 
 		final DomainWithFullDetails other = DomainWithFullDetails.class.cast(obj);
 		return super.doEquals(obj) && new EqualsBuilder() //
-				.append(this.classSource, other.classSource) //
-				.append(this.classDestination, other.classDestination) //
+				.append(this.source, other.source) //
+				.append(this.destination, other.destination) //
 				.append(this.cardinality, other.cardinality) //
 				.append(this.descriptionDirect, other.descriptionDirect) //
 				.append(this.descriptionInverse, other.descriptionInverse) //
@@ -106,8 +128,8 @@ public class DomainWithFullDetails extends DomainWithBasicDetails {
 	protected int doHashCode() {
 		return new HashCodeBuilder() //
 				.append(super.doHashCode()) //
-				.append(classSource) //
-				.append(classDestination) //
+				.append(source) //
+				.append(destination) //
 				.append(cardinality) //
 				.append(descriptionDirect) //
 				.append(descriptionInverse) //

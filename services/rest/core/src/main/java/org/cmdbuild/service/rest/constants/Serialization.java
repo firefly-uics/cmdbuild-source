@@ -6,7 +6,8 @@ public class Serialization {
 
 	public static final String //
 			ID = "id", //
-			ID_CAPITALIZED = "Id";
+			ID_CAPITALIZED = "Id", //
+			PROCESS_CAPITAL = "Process";
 
 	public static final String //
 			ACTIVE = "active", //
@@ -25,9 +26,7 @@ public class Serialization {
 			CATEGORY_ID = CATEGORY + ID_CAPITALIZED, //
 			CHILDREN = "children", //
 			CLASS = "class", //
-			CLASS_DESTINATION = CLASS + "Destination", //
 			CLASS_ID = CLASS + ID_CAPITALIZED, //
-			CLASS_SOURCE = CLASS + "Source", //
 			CODE = "code", //
 			CODE_CAPITALIZED = "Code", //
 			CREATED = "created", //
@@ -42,6 +41,7 @@ public class Serialization {
 			DESCRIPTION_INVERSE = DESCRIPTION + "Inverse", //
 			DESCRIPTION_MASTER_DETAIL = DESCRIPTION + "MasterDetail", //
 			DESTINATION = "destination", //
+			DESTINATION_PROCESS = DESTINATION + PROCESS_CAPITAL, //
 			DISPLAYABLE_IN_LIST = "displayableInList", //
 			DOMAIN = "domain", //
 			DOMAIN_ID = DOMAIN + ID_CAPITALIZED, //
@@ -83,6 +83,7 @@ public class Serialization {
 			SESSION = "session", //
 			SORT = "sort", //
 			SOURCE = "source", //
+			SOURCE_PROCESS = SOURCE + PROCESS_CAPITAL, //
 			START = "start", //
 			STATUS = "status", //
 			STATUSES = "statuses", //

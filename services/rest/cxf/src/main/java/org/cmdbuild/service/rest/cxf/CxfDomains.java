@@ -29,14 +29,17 @@ import com.google.common.base.Predicate;
 public class CxfDomains implements Domains {
 
 	private static final ToSimpleDomainDetail TO_SIMPLE_DOMAIN_DETAIL = ToSimpleDomainDetail.newInstance().build();
-	private static final ToFullDomainDetail TO_FULL_DOMAIN_DETAIL = ToFullDomainDetail.newInstance().build();
 
 	private final ErrorHandler errorHandler;
-	private final DataAccessLogic userDataAccessLogic;
+	private final DataAccessLogic dataAccessLogic;
+	private final ToFullDomainDetail toFullDomainDetail;
 
-	public CxfDomains(final ErrorHandler errorHandler, final DataAccessLogic userDataAccessLogic) {
+	public CxfDomains(final ErrorHandler errorHandler, final DataAccessLogic dataAccessLogic) {
 		this.errorHandler = errorHandler;
-		this.userDataAccessLogic = userDataAccessLogic;
+		this.dataAccessLogic = dataAccessLogic;
+		this.toFullDomainDetail = ToFullDomainDetail.newInstance() //
+				.withDataAccessLogic(dataAccessLogic) //
+				.build();
 	}
 
 	@Override
@@ -55,7 +58,7 @@ public class CxfDomains implements Domains {
 		} else {
 			predicate = alwaysTrue();
 		}
-		final Iterable<? extends CMDomain> domains = userDataAccessLogic.findAllDomains();
+		final Iterable<? extends CMDomain> domains = dataAccessLogic.findAllDomains();
 		final Iterable<DomainWithBasicDetails> elements = from(domains) //
 				.filter(predicate) //
 				.skip((offset == null) ? 0 : offset) //
@@ -71,12 +74,12 @@ public class CxfDomains implements Domains {
 
 	@Override
 	public ResponseSingle<DomainWithFullDetails> read(final String domainId) {
-		final CMDomain found = userDataAccessLogic.findDomain(domainId);
+		final CMDomain found = dataAccessLogic.findDomain(domainId);
 		if (found == null) {
 			errorHandler.domainNotFound(domainId);
 		}
 		return newResponseSingle(DomainWithFullDetails.class) //
-				.withElement(TO_FULL_DOMAIN_DETAIL.apply(found)) //
+				.withElement(toFullDomainDetail.apply(found)) //
 				.build();
 	}
 }
