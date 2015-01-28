@@ -128,7 +128,7 @@
 				forceSelection: true,
 				editable: false,
 
-				store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
+				store: CMDBuild.core.proxy.CMProxyEmailTemplates.getEmailAccountsStore(),
 				queryMode: 'local'
 			});
 
@@ -171,6 +171,17 @@
 								xtype: 'hiddenfield',
 								name: CMDBuild.core.proxy.CMProxyConstants.ID
 							}
+//							,
+//							{
+//								xtype: 'checkbox',
+//								fieldLabel: '@@ Automatic synchronization',
+//								name: '@@ autoSync'
+//							},
+//							{
+//								xtype: 'checkbox',
+//								fieldLabel: '@@ Report desync',
+//								name: '@@ reportDesynch'
+//							}
 						]
 					},
 					{ xtype: 'splitter' },

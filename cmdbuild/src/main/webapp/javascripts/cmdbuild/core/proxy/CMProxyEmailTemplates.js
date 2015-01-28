@@ -45,6 +45,28 @@
 		/**
 		 * @return {Ext.data.Store} store
 		 */
+		getEmailAccountsStore: function() {
+			return Ext.create('Ext.data.Store', {
+				autoLoad: true,
+				model: 'CMDBuild.model.CMModelEmailAccounts.grid',
+				proxy: {
+					type: 'ajax',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.accounts.getStore,
+					reader: {
+						type: 'json',
+						root: 'response.elements'
+					}
+				},
+				sorters: [{
+					property: CMDBuild.core.proxy.CMProxyConstants.NAME,
+					direction: 'ASC'
+				}]
+			});
+		},
+
+		/**
+		 * @return {Ext.data.Store} store
+		 */
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
