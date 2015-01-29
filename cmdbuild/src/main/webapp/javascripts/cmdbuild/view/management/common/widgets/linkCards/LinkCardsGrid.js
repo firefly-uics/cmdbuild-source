@@ -21,22 +21,12 @@
 		paramsToLoadWhenVisible: undefined,
 
 		listeners: {
-			beforeitemclick: function(gridView, record, item, index, e, eOpts) {
-				this.delegate.cmOn(
-					'onCellClick',
-					{
-						record: record,
-						event: e
-					}
-				);
-			},
-
 			deselect: function(selectionModel, record, index, eOpts) {
 				this.delegate.cmOn('onDeselect', { record: record });
 			},
 
 			itemdblclick: function(gridView, record, item, index, e, eOpts) {
-				this.delegate.cmOn('onItemDoubleclick', { record: record });
+				this.delegate.cmOn('onItemDoubleclick', record);
 			},
 
 			select: function(selectionModel, record, index, eOpts) {
@@ -46,6 +36,60 @@
 			show: function(grid, eOpts) {
 				this.delegate.cmOn('onGridShow');
 			}
+		},
+
+		/**
+		 * @return {Array}
+		 *
+		 * @override
+		 */
+		buildExtraColumns: function() {
+			return [
+				{
+					xtype: 'actioncolumn',
+					align: 'center',
+					width: 25,
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true,
+					items: [
+						{
+							icon: 'images/icons/zoom.png',
+							tooltip: CMDBuild.Translation.viewDetails,
+							scope: this,
+
+							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								this.delegate.cmOn('onRowViewButtonClick', record);
+							}
+						}
+					]
+				},
+				{
+					xtype: 'actioncolumn',
+					width: 30,
+					align: 'center',
+					sortable: false,
+					hideable: false,
+					menuDisabled: true,
+					fixed: true,
+					items: [
+						{
+							iconCls: 'modify',
+							tooltip: CMDBuild.Translation.row_edit,
+							scope: this,
+
+							handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+								this.delegate.cmOn('onRowEditButtonClick', record);
+							},
+
+							isDisabled: function(grid, rowIndex, colIndex, item, record) {
+								return this.delegate.readOnly;
+							}
+						}
+					]
+				}
+			];
 		},
 
 		/**
