@@ -218,9 +218,12 @@
 					params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get("IdClass"));
 				}
 
+				CMDBuild.LoadMask.get().show();
 				CMDBuild.ServiceProxy.card.get({
 					params: params,
 					success: function(a,b, response) {
+						CMDBuild.LoadMask.get().hide();
+
 						var data = response.card;
 						if (me.card) {
 							// Merge the data of the selected card with
