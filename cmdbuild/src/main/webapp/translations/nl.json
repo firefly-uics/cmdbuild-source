@@ -1568,6 +1568,7 @@
 	"url": "URL",
 	"username": "Gebruikersbijlage",
 	"value": "Waarde",
+	"viewDetails": "<em>View details</em>",
 	"viewEmail": "<em>View email</em>",
 	"views": "Vensters",
 	"workflow": "Procesgang",

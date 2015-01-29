@@ -1568,6 +1568,7 @@
 	"url": "URL",
 	"username": "Nom d'utilisateur",
 	"value": "Valeur",
+	"viewDetails": "<em>View details</em>",
 	"viewEmail": "<em>View email</em>",
 	"views": "Vues",
 	"workflow": "Processus",

@@ -1568,6 +1568,7 @@
 	"url": "URL",
 	"username": "نام کاربری",
 	"value": "مقدار",
+	"viewDetails": "<em>View details</em>",
 	"viewEmail": "<em>View email</em>",
 	"views": "نمایش",
 	"workflow": "Workflow",
