@@ -1568,6 +1568,7 @@
 	"url": "URL",
 	"username": "Korisničko ime",
 	"value": "Vrednosti",
+	"viewDetails": "<em>View details</em>",
 	"viewEmail": "<em>View email</em>",
 	"views": "Prikazi",
 	"workflow": "Radni procesi",

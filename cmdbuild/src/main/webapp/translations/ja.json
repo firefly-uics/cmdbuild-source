@@ -1568,6 +1568,7 @@
 	"url": "URL",
 	"username": "ユーザ名",
 	"value": "値",
+	"viewDetails": "<em>View details</em>",
 	"viewEmail": "<em>View email</em>",
 	"views": "ビュー",
 	"workflow": "ワークフロー",
