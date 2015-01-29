@@ -174,13 +174,6 @@ SELECT cm_create_class_attribute('_Filter', 'Template', 'boolean', 'false', true
 
 ALTER TABLE "_Filter" ADD CONSTRAINT filter_name_table_unique UNIQUE ("Code", "IdOwner", "IdSourceClass");
 
----------------------------------------------
--- MdrScopedId
----------------------------------------------
-SELECT cm_create_class('_MdrScopedId', NULL, 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass');
-SELECT cm_create_class_attribute('_MdrScopedId', 'MdrScopedId', 'text', NULL, TRUE, TRUE, 'MODE: write|STATUS: active');
-SELECT cm_create_class_attribute('_MdrScopedId', 'IdItem', 'int4', NULL, TRUE, FALSE, 'MODE: write|STATUS: active');
-
 
 ---------------------------------------------
 -- Email Accounts
