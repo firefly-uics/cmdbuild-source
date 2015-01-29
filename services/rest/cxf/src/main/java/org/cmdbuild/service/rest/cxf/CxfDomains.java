@@ -58,8 +58,7 @@ public class CxfDomains implements Domains {
 		} else {
 			predicate = alwaysTrue();
 		}
-		final Iterable<? extends CMDomain> domains = dataAccessLogic.findAllDomains();
-		final Iterable<DomainWithBasicDetails> elements = from(domains) //
+		final Iterable<DomainWithBasicDetails> elements = from(dataAccessLogic.findAllDomains()) //
 				.filter(predicate) //
 				.skip((offset == null) ? 0 : offset) //
 				.limit((limit == null) ? Integer.MAX_VALUE : limit) //
@@ -67,7 +66,7 @@ public class CxfDomains implements Domains {
 		return newResponseMultiple(DomainWithBasicDetails.class) //
 				.withElements(elements) //
 				.withMetadata(newMetadata() //
-						.withTotal(Long.valueOf(size(domains))) //
+						.withTotal(Long.valueOf(size(elements))) //
 						.build()) //
 				.build();
 	}
