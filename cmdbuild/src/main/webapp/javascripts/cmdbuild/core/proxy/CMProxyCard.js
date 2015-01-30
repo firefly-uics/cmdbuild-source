@@ -1,6 +1,45 @@
 (function() {
 
-	CMDBuild.ServiceProxy.card = {
+	Ext.define('CMDBuild.core.proxy.CMProxyCard', {
+		alternateClassName: 'CMDBuild.ServiceProxy.card', // Legacy class name
+
+		requires: [
+			'CMDBuild.core.proxy.CMProxy',
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.CMProxyUrlIndex'
+		],
+
+		singleton: true,
+
+		/**
+		 * @property {Object} params
+		 */
+		getCardHistory: function(params) {
+			return Ext.create('Ext.data.Store', {
+				autoLoad: false,
+				proxy: {
+					type: 'ajax',
+					url: 'services/json/management/modcard/getcardhistory',
+					reader: {
+						type: 'json',
+						root: 'rows'
+					}
+				},
+				sorters: [
+					{
+						property: 'BeginDate',
+						direction: 'DESC'
+					},
+					{
+						property: '_EndDate',
+						direction: 'DESC'
+					}
+				],
+				fields: params.fields,
+				baseParams: params.baseParams
+			});
+		},
+
 		/**
 		 * retrieve the position on the db of the
 		 * requiered card, considering the sorting and
@@ -92,7 +131,7 @@
 
 			CMDBuild.ServiceProxy.core.doRequest(p);
 		}
-	};
+	});
 
 	function adaptGetCardCallParams(p) {
 		if (p.params.Id && p.params.IdClass) {

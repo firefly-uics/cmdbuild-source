@@ -5,6 +5,11 @@
 	Ext.define('CMDBuild.view.management.classes.CMCardHistoryTab', {
 		extend: 'Ext.grid.Panel',
 
+		requires: [
+			'CMDBuild.core.proxy.CMProxyCard',
+			'CMDBuild.core.proxy.CMProxyConstants'
+		],
+
 		/**
 		 * @cfg {Boolean}
 		 */
@@ -55,25 +60,7 @@
 					expanderWidth: 18
 				}],
 				columns: this.getGridColumns(),
-				store: Ext.create('Ext.data.JsonStore', {
-					proxy: {
-						type: 'ajax',
-						url: 'services/json/management/modcard/getcardhistory',
-						reader: {
-							type: 'json',
-							root: 'rows'
-						}
-					},
-					sorters: [
-						{
-							property: 'BeginDate',
-							direction: 'DESC'
-						},
-						{
-							property: '_EndDate',
-							direction: 'DESC'
-						}
-					],
+				store: CMDBuild.core.proxy.CMProxyCard.getCardHistory({
 					fields: this.getStoreFields(),
 					baseParams: {
 						IsProcess: (this.eventmastertype == 'processclass')
@@ -89,7 +76,7 @@
 		},
 
 		/**
-		 * @param {Object} record
+		 * @param {Ext.data.Model} record
 		 *
 		 * @return {String} body - HTML format string
 		 */

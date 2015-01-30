@@ -5,8 +5,29 @@
 	Ext.define('CMDBuild.view.management.workflow.CMActivityHistoryTab', {
 		extend: 'CMDBuild.view.management.classes.CMCardHistoryTab',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
+		constructor: function() {
+			this.callParent(arguments);
+
+			// Complete store records objects on load event to copy data from raw value
+			this.getStore().on('load', function() {
+				this.getStore().each(function(record, id) {
+					var rawAttributesData = record.raw['Attr'];
+
+					for(var i in rawAttributesData) {
+						var attribute = rawAttributesData[i];
+
+						record.set(attribute.d, attribute.v);
+					}
+
+					record.commit();
+				}, this);
+			}, this);
+		},
+
 		/**
-		 * @param {Object} record
+		 * @param {Ext.data.Model} record
 		 *
 		 * @return {String} body - HTML format string
 		 *
@@ -62,6 +83,12 @@
 					sortable: false,
 					dataIndex: 'Executor',
 					flex: 1
+				},
+				{
+					header: CMDBuild.Translation.status,
+					sortable: false,
+					dataIndex: 'Status',
+					flex: 1
 				}
 			]);
 		},
@@ -74,7 +101,11 @@
 		getStoreFields: function() {
 			return this.callParent(arguments).concat([
 				'Code',
-				'Executor'
+				'Executor',
+				{
+					name: 'Status',
+					type: 'string'
+				}
 			]);
 		},
 
