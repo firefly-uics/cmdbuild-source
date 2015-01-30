@@ -33,8 +33,8 @@ public class GetRelationSingle extends AbstractGetRelation {
 
 	private RelationInfo relationInfo(final CMQueryRow row) {
 		final QueryRelation rel = row.getRelation(DOM_ALIAS);
-		final CMCard dst = row.getCard(SRC_ALIAS);
-		final CMCard src = row.getCard(DST_ALIAS);
+		final CMCard src = row.getCard(SRC_ALIAS);
+		final CMCard dst = row.getCard(DST_ALIAS);
 		return new RelationInfo(rel, src, dst);
 	}
 
