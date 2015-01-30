@@ -9,6 +9,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
@@ -87,6 +89,9 @@ public class SqlStore implements Store, LoggingSupport {
 
 	}
 
+	private static final String QUOTING_REGEX = "((\\w+)\\.)*(\\w+)";
+	private static final Pattern QUOTING_PATTERN = Pattern.compile(QUOTING_REGEX);
+
 	private static class ReadAll implements Action<Iterable<Entry<?>>> {
 
 		private final JdbcTemplate jdbcTemplate;
@@ -135,20 +140,32 @@ public class SqlStore implements Store, LoggingSupport {
 
 		// TODO use a visitor
 		private String selectAllFrom(final TableOrViewMapping tableOrViewMapping) {
-			final String sql;
+			final String name = tableOrViewMapping.getName();
+			final String quotedName;
 			switch (type) {
 			case ORACLE:
 			case POSTGRESQL:
-				sql = format("SELECT * FROM \"%s\"", tableOrViewMapping.getName());
+				final Matcher matcher = QUOTING_PATTERN.matcher(name);
+				if (matcher.find()) {
+					final String schema = matcher.group(2);
+					final String table = matcher.group(3);
+					if (schema == null) {
+						quotedName = format("\"%s\"", table);
+					} else {
+						quotedName = format("\"%s\".\"%s\"", schema, table);
+					}
+				} else {
+					quotedName = name;
+				}
 				break;
 
 			case MYSQL:
 			case SQLSERVER:
 			default:
-				sql = format("SELECT * FROM %s", tableOrViewMapping.getName());
+				quotedName = name;
 				break;
 			}
-			return sql;
+			return format("SELECT * FROM %s", quotedName);
 		}
 	}
 
