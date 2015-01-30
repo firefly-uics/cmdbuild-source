@@ -1546,6 +1546,7 @@
 	"show_name_of_locker_user": "Показать имя пользователя, заблокировавшего карточку",
 	"side": "Сбоку",
 	"sqlView": "На основе SQL-запроса",
+	"status": "<em>Status</em>",
 	"subject": "Тема",
 	"targetClass": "Целевой класс",
 	"to": "До",

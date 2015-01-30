@@ -1546,6 +1546,7 @@
 	"show_name_of_locker_user": "Voir les utilisateurs verrouillés",
 	"side": "Côté",
 	"sqlView": "En SQL",
+	"status": "<em>Status</em>",
 	"subject": "Sujet",
 	"targetClass": "Classe destination",
 	"to": "À",

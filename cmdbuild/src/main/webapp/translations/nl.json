@@ -1546,6 +1546,7 @@
 	"show_name_of_locker_user": "Toon blokkeerder gebruikersnaam",
 	"side": "Zijde",
 	"sqlView": "Van SQL",
+	"status": "<em>Status</em>",
 	"subject": "Onderwerp",
 	"targetClass": "Doel Klas",
 	"to": "Aan",

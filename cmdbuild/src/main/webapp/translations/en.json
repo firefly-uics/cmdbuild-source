@@ -1547,6 +1547,7 @@
 	"show_name_of_locker_user": "Show locker username",
 	"side": "Side",
 	"sqlView": "From SQL",
+	"status": "Status",
 	"subject": "Subject",
 	"targetClass": "Target Class",
 	"to": "To",

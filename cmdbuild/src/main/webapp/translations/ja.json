@@ -1546,6 +1546,7 @@
 	"show_name_of_locker_user": "ロックしているユーザ名を表示",
 	"side": "サイド",
 	"sqlView": "SQL から",
+	"status": "<em>Status</em>",
 	"subject": "サブジェクト",
 	"targetClass": "ターゲットクラス",
 	"to": "To",
