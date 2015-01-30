@@ -96,6 +96,13 @@
 			this.templatesStore = CMDBuild.core.proxy.CMProxyEmailTemplates.getStore();
 			this.templatesStore.load({
 				callback: function(records, operation, success) {
+
+					// To sort templates with description alphabetical order
+					// TODO: use server ordered calls when will be implemented
+					records = Ext.Array.sort(records, function(item1, item2) {
+						return item1.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION) > item2.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION);
+					});
+
 					if (records.length > 0) {
 						for (var index in records) {
 							var record = records[index];

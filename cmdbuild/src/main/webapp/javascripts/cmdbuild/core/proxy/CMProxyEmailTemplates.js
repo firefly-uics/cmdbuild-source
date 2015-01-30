@@ -80,7 +80,7 @@
 					}
 				},
 				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.NAME,
+					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 					direction: 'ASC'
 				}]
 			});

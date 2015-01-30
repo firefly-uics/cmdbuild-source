@@ -5,13 +5,15 @@
 	Ext.define('CMDBuild.LoginPanel', {
 		extend: 'Ext.panel.Panel',
 
-		requires: ['CMDBuild.core.proxy.CMProxy'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxy',
+			'CMDBuild.core.proxy.CMProxyConstants'
+		],
 
 		frame: false,
 		border: false,
 		hideMode: 'offsets',
 		renderTo: 'login_box',
-
 
 		/**
 		 * @property {Ext.form.Panel}
@@ -91,18 +93,22 @@
 			});
 
 			this.role = Ext.create('Ext.form.field.ComboBox', {
-				scope: this,
+				name: CMDBuild.core.proxy.CMProxyConstants.ROLE,
+				hiddenName: CMDBuild.core.proxy.CMProxyConstants.ROLE,
 				id: 'rolefield',
 				fieldLabel: tr.multi_group,
 				hideMode: 'offsets',
-				name: CMDBuild.core.proxy.CMProxyConstants.ROLE,
-				hiddenName: CMDBuild.core.proxy.CMProxyConstants.ROLE,
 				valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
 				displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+				scope: this,
 				editable: false,
 
 				store: Ext.create('Ext.data.Store', {
-					fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION]
+					fields: [CMDBuild.core.proxy.CMProxyConstants.NAME, CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+					sorters: [{
+						property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						direction: 'ASC'
+					}]
 				}),
 				queryMode: 'local',
 
@@ -237,7 +243,7 @@
 		},
 
 		/**
-		 * @param {Object} roles
+		 * @param {Array} roles
 		 *
 		 * @private
 		 */
@@ -262,7 +268,7 @@
 			}
 
 			if (CMDBuild.Runtime && CMDBuild.Runtime.Groups) {
-				this.enableRoles(CMDBuild.Runtime.Groups)
+				this.enableRoles(CMDBuild.Runtime.Groups);
 			} else {
 				this.disableRoles();
 			}
