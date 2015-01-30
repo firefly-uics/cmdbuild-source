@@ -30,14 +30,14 @@
 							root: "translations"
 						}
 					},
-					sorters: {
+					sorters: [{
 						property: 'name',
 						direction: 'ASC'
-					}
+					}]
 	 			});
 			}
 
-			return	languageStore;
+			return languageStore;
 		}
 	};
 

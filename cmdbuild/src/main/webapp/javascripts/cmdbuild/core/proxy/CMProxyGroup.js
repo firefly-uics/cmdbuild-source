@@ -139,7 +139,6 @@
 			return Ext.create('Ext.data.JsonStore', {
 				autoLoad: false,
 				model: 'CMDBuild.model.CMGroupModels.comboBox',
-				remoteSort: false,
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.users.getusergrouplist,
