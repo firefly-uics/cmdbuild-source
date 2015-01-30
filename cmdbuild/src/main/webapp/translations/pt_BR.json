@@ -1546,6 +1546,7 @@
 	"show_name_of_locker_user": "Mostrar nome do usuário locker",
 	"side": "<em>Side</em>",
 	"sqlView": "SQL Origem",
+	"status": "<em>Status</em>",
 	"subject": "<em>Subject</em>",
 	"targetClass": "Classe Alvo",
 	"to": "<em>To</em>",

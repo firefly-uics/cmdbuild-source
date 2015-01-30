@@ -1546,6 +1546,7 @@
 	"show_name_of_locker_user": "Den Namen des Benutzers anzeigen, der die Karte gesperrt hat",
 	"side": "Seitlich",
 	"sqlView": "Aus SQL",
+	"status": "<em>Status</em>",
 	"subject": "Betreff",
 	"targetClass": "Ursprungsklasse",
 	"to": "An",

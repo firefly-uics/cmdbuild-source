@@ -1546,6 +1546,7 @@
 	"show_name_of_locker_user": "Mostrar el nombre del usuario que bloqueó la tarjeta",
 	"side": "Lateral",
 	"sqlView": "Desde SQL",
+	"status": "<em>Status</em>",
 	"subject": "Subjeto",
 	"targetClass": "Clase de origen",
 	"to": "A",

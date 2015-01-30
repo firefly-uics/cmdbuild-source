@@ -1546,6 +1546,7 @@
 	"show_name_of_locker_user": "Prikaži im ekorisnika koji je zaključao",
 	"side": "Strana",
 	"sqlView": "Iz SQL-a",
+	"status": "<em>Status</em>",
 	"subject": "Subjekat",
 	"targetClass": "Ciljna klasa",
 	"to": "Za",
