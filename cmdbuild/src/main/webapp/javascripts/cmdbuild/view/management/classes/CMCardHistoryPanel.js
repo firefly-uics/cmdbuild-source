@@ -6,7 +6,7 @@
 		extend: 'Ext.grid.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyCard',
+			'CMDBuild.core.proxy.Card',
 			'CMDBuild.core.proxy.CMProxyConstants'
 		],
 
@@ -60,7 +60,7 @@
 					expanderWidth: 18
 				}],
 				columns: this.getGridColumns(),
-				store: CMDBuild.core.proxy.CMProxyCard.getCardHistory({
+				store: CMDBuild.core.proxy.Card.getCardHistory({
 					fields: this.getStoreFields(),
 					baseParams: {
 						IsProcess: (this.eventmastertype == 'processclass')
