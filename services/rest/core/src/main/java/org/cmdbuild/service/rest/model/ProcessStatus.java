@@ -1,5 +1,6 @@
 package org.cmdbuild.service.rest.model;
 
+import static org.cmdbuild.service.rest.constants.Serialization.DESCRIPTION;
 import static org.cmdbuild.service.rest.constants.Serialization.UNDERSCORED_ID;
 import static org.cmdbuild.service.rest.constants.Serialization.VALUE;
 
@@ -20,6 +21,7 @@ public class ProcessStatus extends AbstractModel {
 
 	private Long id;
 	private String value;
+	private String desctipion;
 
 	ProcessStatus() {
 		// package visibility
@@ -42,6 +44,15 @@ public class ProcessStatus extends AbstractModel {
 
 	void setValue(final String value) {
 		this.value = value;
+	}
+
+	@XmlAttribute(name = DESCRIPTION)
+	public String getDescription() {
+		return desctipion;
+	}
+
+	void setDescription(final String desctipion) {
+		this.desctipion = desctipion;
 	}
 
 	@Override

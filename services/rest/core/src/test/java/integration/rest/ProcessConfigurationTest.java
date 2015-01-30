@@ -56,10 +56,12 @@ public class ProcessConfigurationTest {
 						newProcessStatus() //
 								.withId(123L) //
 								.withValue("bar") //
+								.withDescription("this is bar") //
 								.build(), //
 						newProcessStatus() //
 								.withId(456L) //
 								.withValue("baz") //
+								.withDescription("this is baz") //
 								.build())) //
 				.withMetadata(newMetadata() //
 						.withTotal(2L) //
