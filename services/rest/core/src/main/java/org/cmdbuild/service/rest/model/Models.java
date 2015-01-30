@@ -1185,6 +1185,7 @@ public class Models {
 
 		private Long id;
 		private String value;
+		private String description;
 
 		private ProcessStatusBuilder() {
 			// use factory method
@@ -1195,6 +1196,7 @@ public class Models {
 			final ProcessStatus output = new ProcessStatus();
 			output.setId(id);
 			output.setValue(value);
+			output.setDescription(description);
 			return output;
 		}
 
@@ -1205,6 +1207,11 @@ public class Models {
 
 		public ProcessStatusBuilder withValue(final String value) {
 			this.value = value;
+			return this;
+		}
+
+		public ProcessStatusBuilder withDescription(final String description) {
+			this.description = description;
 			return this;
 		}
 
