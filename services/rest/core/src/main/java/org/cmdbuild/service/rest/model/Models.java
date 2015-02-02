@@ -631,8 +631,10 @@ public class Models {
 		private String id;
 		private String name;
 		private String description;
-		private Long classSource;
-		private Long classDestination;
+		private String source;
+		private boolean sourceProcess;
+		private String destination;
+		private boolean destinationProcess;
 		private String cardinality;
 		private String descriptionDirect;
 		private String descriptionInverse;
@@ -648,8 +650,10 @@ public class Models {
 			output.setId(id);
 			output.setName(name);
 			output.setDescription(description);
-			output.setClassSource(classSource);
-			output.setClassDestination(classDestination);
+			output.setSource(source);
+			output.setSourceProcess(sourceProcess);
+			output.setDestination(destination);
+			output.setDestinationProcess(destinationProcess);
 			output.setCardinality(cardinality);
 			output.setDescriptionDirect(descriptionDirect);
 			output.setDescriptionInverse(descriptionInverse);
@@ -672,13 +676,23 @@ public class Models {
 			return this;
 		}
 
-		public DomainWithFullDetailsBuilder withClassSource(final Long classSource) {
-			this.classSource = classSource;
+		public DomainWithFullDetailsBuilder withSource(final String source) {
+			this.source = source;
 			return this;
 		}
 
-		public DomainWithFullDetailsBuilder withClassDestination(final Long classDestination) {
-			this.classDestination = classDestination;
+		public DomainWithFullDetailsBuilder withSourceProcess(final boolean sourceProcess) {
+			this.sourceProcess = sourceProcess;
+			return this;
+		}
+
+		public DomainWithFullDetailsBuilder withDestination(final String destination) {
+			this.destination = destination;
+			return this;
+		}
+
+		public DomainWithFullDetailsBuilder withDestinationProcess(final boolean destinationProcess) {
+			this.destinationProcess = destinationProcess;
 			return this;
 		}
 
@@ -1170,6 +1184,7 @@ public class Models {
 	public static class ProcessStatusBuilder extends ModelBuilder<ProcessStatus> {
 
 		private Long id;
+		private String value;
 		private String description;
 
 		private ProcessStatusBuilder() {
@@ -1180,12 +1195,18 @@ public class Models {
 		protected ProcessStatus doBuild() {
 			final ProcessStatus output = new ProcessStatus();
 			output.setId(id);
+			output.setValue(value);
 			output.setDescription(description);
 			return output;
 		}
 
 		public ProcessStatusBuilder withId(final Long id) {
 			this.id = id;
+			return this;
+		}
+
+		public ProcessStatusBuilder withValue(final String value) {
+			this.value = value;
 			return this;
 		}
 

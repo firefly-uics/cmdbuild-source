@@ -8,6 +8,10 @@ public class EndsWith extends AbstractPredicate {
 		this.value = value;
 	}
 
+	public Object getValue() {
+		return value;
+	}
+
 	@Override
 	public void accept(final PredicateVisitor visitor) {
 		visitor.visit(this);

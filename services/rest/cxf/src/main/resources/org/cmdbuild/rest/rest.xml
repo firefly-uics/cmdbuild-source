@@ -18,7 +18,7 @@
 		<property name="linkJsonToXmlSchema" value="true" />
 	</bean>
 
-	<jaxrs:server id="restContainer" address="/rest">
+	<jaxrs:server id="restContainer" address="/rest/v1">
 		<jaxrs:providers>
 			<ref bean="jaxbProvider" />
 			<ref bean="jsonProvider" />

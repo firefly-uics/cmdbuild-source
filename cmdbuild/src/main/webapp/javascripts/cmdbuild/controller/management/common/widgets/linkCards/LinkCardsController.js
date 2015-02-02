@@ -156,11 +156,6 @@
 			this.view.widgetConf = this.widgetConf;
 			this.selectionModel = this.grid.getSelectionModel();
 
-			this.callBacks = {
-				'action-card-edit': this.onEditCardkClick,
-				'action-card-show': this.onShowCardkClick
-			};
-
 			this.model = Ext.create('CMDBuild.model.widget.ModelLinkCards', {
 				singleSelect: this.singleSelect
 			});
@@ -206,9 +201,6 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onCellClick':
-					return this.onCellClick(param);
-
 				case 'onDeselect':
 					return this.onDeselect(param);
 
@@ -219,13 +211,19 @@
 					return this.onGridShow();
 
 				case 'onItemDoubleclick':
-					return this.onItemDoubleclick(param.record);
+					return this.onItemDoubleclick(param);
 
 				case 'onToggleGridFilterButtonClick':
 					return this.onToggleGridFilterButtonClick();
 
 				case 'onToggleMapButtonClick' :
 					return this.onToggleMapButtonClick();
+
+				case 'onRowEditButtonClick':
+					return this.onRowEditButtonClick(param);
+
+				case 'onRowViewButtonClick':
+					return this.onRowViewButtonClick(param);
 
 				case 'onSelect':
 					return this.onSelect(param.record);
@@ -440,43 +438,10 @@
 		 * @param {Object} params
 		 * 	{
 		 * 		{Ext.data.Model} record
-		 * 		{Ext.EventObject} event
-		 * 	}
-		 */
-		onCellClick: function(params) {
-			var className = params.event.target[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME];
-
-			if (this.callBacks[className]) {
-				this.callBacks[className].call(this, params.record);
-			}
-		},
-
-		/**
-		 * @param {Object} params
-		 * 	{
-		 * 		{Ext.data.Model} record
 		 * 	}
 		 */
 		onDeselect: function(params) {
 			this.model.deselect(params.record.get('Id'));
-		},
-
-		/**
-		 * @param {Ext.data.Model} model
-		 */
-		onEditCardkClick: function(model) {
-			var cardWindow = this.getCardWindow(model, true);
-
-			cardWindow.on(
-				'destroy',
-				function() {
-					this.grid.reload();
-				},
-				this,
-				{ single: true }
-			);
-
-			cardWindow.show();
 		},
 
 		/**
@@ -567,15 +532,40 @@
 				var priv = _CMUtils.getClassPrivileges(params.get('IdClass'));
 
 				if (priv && priv.write) {
-					this.onEditCardkClick(params);
+					this.onRowEditButtonClick(params);
 				} else {
-					this.onShowCardkClick(params);
+					this.onRowViewButtonClick(params);
 				}
 			}
 		},
 
 		onLoad: function() {
 			this.model.defreeze();
+		},
+
+		/**
+		 * @param {Ext.data.Model} model
+		 */
+		onRowEditButtonClick: function(model) {
+			var cardWindow = this.getCardWindow(model, true);
+
+			cardWindow.on(
+				'destroy',
+				function() {
+					this.grid.reload();
+				},
+				this,
+				{ single: true }
+			);
+
+			cardWindow.show();
+		},
+
+		/**
+		 * @param {Ext.data.Model} model
+		 */
+		onRowViewButtonClick: function(model) {
+			this.getCardWindow(model, false).show();
 		},
 
 		/**
@@ -590,13 +580,6 @@
 				this.selectionModel.deselectAll();
 				this.model.reset();
 			}
-		},
-
-		/**
-		 * @param {Ext.data.Model} model
-		 */
-		onShowCardkClick: function(model) {
-			this.getCardWindow(model, false).show();
 		},
 
 		/**

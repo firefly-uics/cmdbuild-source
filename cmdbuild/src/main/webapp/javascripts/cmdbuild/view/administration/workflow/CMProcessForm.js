@@ -107,6 +107,8 @@
 				border: false,
 				overflowY: 'auto',
 				fileUpload: true,
+				bodyCls: 'cmgraypanel',
+				padding: '0 15 0 0', // Fixes a problem with class fieldset now both has same width
 
 				defaults: {
 					xtype: 'fieldset'
@@ -139,6 +141,7 @@
 				region: 'center',
 				form: false,
 				border: false,
+				bodyCls: 'cmgraypanel',
 				items: [
 					this.form,
 					this.xpdlForm

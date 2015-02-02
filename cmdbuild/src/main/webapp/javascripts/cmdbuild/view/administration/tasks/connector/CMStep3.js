@@ -85,7 +85,7 @@
 			 * @param {Object} configurationObject
 			 */
 			setValueDataSourceConfiguration: function(dataSourceType, configurationObject) {
-				if (!CMDBuild.Utils.isEmpty(configurationObject))
+				if (!Ext.Object.isEmpty(configurationObject))
 					switch (dataSourceType) {
 						case CMDBuild.core.proxy.CMProxyConstants.DB: {
 							this.view.dbFieldset.expand();

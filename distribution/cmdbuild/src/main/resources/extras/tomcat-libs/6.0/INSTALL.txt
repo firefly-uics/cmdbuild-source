@@ -1,7 +1,7 @@
 [ITALIANO]
 Librerie aggiuntive per Tomcat 6.0
-* Copiare postgresql-8.4-703.jdbc4.jar nella cartella "lib" di Tomcat 6.0
+* Copiare il driver JDBC di PostgreSQL nella cartella "lib" di Tomcat 6.0
 
 [ENGLISH]
 Tomcat 6.0 additional libraries
-* Copy postgresql-8.4-703.jdbc4.jar in the Tomcat 6.0 "lib" directory
+* Copy PostgreSQL's JDBC driver within Tomcat 6.0 "lib" directory

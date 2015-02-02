@@ -8,6 +8,10 @@ public class Not extends AbstractPredicate {
 		this.predicate = predicate;
 	}
 
+	public Predicate getPredicate() {
+		return predicate;
+	}
+
 	@Override
 	public void accept(final PredicateVisitor visitor) {
 		visitor.visit(this);

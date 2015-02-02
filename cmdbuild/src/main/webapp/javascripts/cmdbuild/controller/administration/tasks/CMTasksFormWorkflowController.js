@@ -157,7 +157,7 @@
 				submitDatas[CMDBuild.core.proxy.CMProxyConstants.CRON_EXPRESSION] = this.delegateStep[1].getCronDelegate().getValue();
 
 				// Form submit values formatting
-				if (!CMDBuild.Utils.isEmpty(attributesGridValues))
+				if (!Ext.Object.isEmpty(attributesGridValues))
 					submitDatas[CMDBuild.core.proxy.CMProxyConstants.WORKFLOW_ATTRIBUTES] = Ext.encode(attributesGridValues);
 
 				// Data filtering to submit only right values

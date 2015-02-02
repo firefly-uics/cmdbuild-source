@@ -4,10 +4,14 @@ import static com.google.common.collect.Sets.newHashSet;
 
 public class In extends AbstractPredicate {
 
-	private final Iterable<? extends Object> values;
+	private final Iterable<Object> values;
 
 	In(final Iterable<? extends Object> values) {
 		this.values = newHashSet(values);
+	}
+
+	public Iterable<Object> getValues() {
+		return values;
 	}
 
 	@Override

@@ -2,13 +2,30 @@
 
 	var tr = CMDBuild.Translation.administration.email.templates;
 
-	Ext.require('CMDBuild.core.proxy.CMProxyEmailAccounts');
-	Ext.require('CMDBuild.core.proxy.CMProxyEmailTemplates');
-
 	Ext.define('CMDBuild.view.administration.email.CMEmailTemplates', {
 		extend: 'Ext.panel.Panel',
 
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+
+		/**
+		 * @cfg {CMDBuild.controller.administration.email.CMEmailTemplatesController}
+		 */
 		delegate: undefined,
+
+		/**
+		 * @property {Ext.button.Button}
+		 */
+		addButton: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.email.CMEmailTemplatesForm}
+		 */
+		form: undefined,
+
+		/**
+		 * @property {CMDBuild.view.administration.email.CMEmailTemplatesGrid}
+		 */
+		grid: undefined,
 
 		border: true,
 		frame: false,
@@ -16,7 +33,7 @@
 		title: tr.title,
 
 		initComponent: function() {
-			this.addButton = Ext.create('Ext.Button', {
+			this.addButton = Ext.create('Ext.button.Button', {
 				iconCls: 'add',
 				text: tr.add,
 				scope: this,

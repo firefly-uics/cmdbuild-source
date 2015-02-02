@@ -13,6 +13,29 @@
 			p.url = 'services/json/configure/apply';
 			p.timeout = 12000000;
 			CMDBuild.ServiceProxy.core.doRequest(p);
+		},
+
+		getLanguageStore: function() {
+			if (languageStore == null) {
+				languageStore = new Ext.data.JsonStore({
+	 				model: "TranslationModel",
+					autoLoad: true,
+	 				proxy: {
+						type: "ajax",
+						url: "services/json/utils/listavailabletranslations",
+						reader: {
+							type: "json",
+							root: "translations"
+						}
+					},
+					sorters: [{
+						property: 'name',
+						direction: 'ASC'
+					}]
+	 			});
+			}
+
+			return languageStore;
 		}
 	};
 
