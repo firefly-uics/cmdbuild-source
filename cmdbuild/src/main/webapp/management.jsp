@@ -36,7 +36,6 @@
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/MultiSelect.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>-ux/css/portal.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/extensible-1.5.1/resources/css/extensible-all.css" />
-
 		<link rel="icon" href="images/favicon.ico" />
 
 		<%@ include file="libsJsFiles.jsp"%>
