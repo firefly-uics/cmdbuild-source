@@ -905,7 +905,7 @@ public class DefaultDataAccessLogic implements DataAccessLogic {
 	 */
 	@Override
 	public boolean isProcess(final CMClass target) {
-		final CMClass activity = dataView.getActivityClass();
+		final CMClass activity = systemDataView.getActivityClass();
 		return activity.isAncestorOf(target);
 	}
 

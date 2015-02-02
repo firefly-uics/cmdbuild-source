@@ -66,7 +66,7 @@ public class DefaultLookupHelper implements LookupHelper {
 	@Override
 	public WSProcessInstanceState stateForLookupId(final Long id) {
 		for (final Lookup lookup : allLookups()) {
-			if (id.equals(lookup.getId())) {
+			if (lookup.getId().equals(id)) {
 				final WSProcessInstanceState state = stateForLookupCode(lookup.code);
 				return (state == null) ? WSProcessInstanceState.UNSUPPORTED : state;
 			}

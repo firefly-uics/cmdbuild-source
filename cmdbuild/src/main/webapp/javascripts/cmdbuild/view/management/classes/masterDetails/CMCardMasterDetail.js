@@ -1,5 +1,5 @@
 (function() {
-	
+
 	var MD = "detail";
 	var FK = "foreignkey";
 
@@ -87,9 +87,8 @@
 					this.details[FK][getId(attr)] = attr;
 				}
 				this.buildingTabsDetails = false;
-				if (CMDBuild.Utils.isEmpty(this.details[FK]) 
-						&& CMDBuild.Utils.isEmpty(this.details[MD])) {
 
+				if (Ext.Object.isEmpty(this.details[FK]) && Ext.Object.isEmpty(this.details[MD])) {
 					this.fireEvent("empty");
 				} else {
 					this.empty = false;
@@ -150,7 +149,7 @@
 			this.detailGrid.loadFKCardList(attributes, fkClass, fkAttribute, idCard);
 			this.isLoaded = true;
 		},
-		
+
 		reload: function() {
 			this.detailGrid.reload();
 		},
@@ -180,7 +179,7 @@
 	function setDirectedDomain(domain) {
 		var cardinality = domain.get("cardinality"),
 			idDomain = domain.get("id");
-		
+
 		if (cardinality == "1:N") {
 			return idDomain + "_D";
 		} else if (cardinality == "N:1") {

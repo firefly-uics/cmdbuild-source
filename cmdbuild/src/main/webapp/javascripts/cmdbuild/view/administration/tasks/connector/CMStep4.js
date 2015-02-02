@@ -134,7 +134,7 @@
 		 * @return {Boolean}
 		 */
 		isEmptyMappingGrid: function() {
-			return CMDBuild.Utils.isEmpty(this.getData());
+			return Ext.Object.isEmpty(this.getData());
 		},
 
 		/**

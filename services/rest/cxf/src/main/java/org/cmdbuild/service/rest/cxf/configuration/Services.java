@@ -58,7 +58,9 @@ import org.cmdbuild.service.rest.cxf.CxfSessions;
 import org.cmdbuild.service.rest.cxf.CxfSessions.AuthenticationLogicAdapter;
 import org.cmdbuild.service.rest.cxf.CxfSessions.LoginHandler;
 import org.cmdbuild.service.rest.cxf.DefaultEncoding;
+import org.cmdbuild.service.rest.cxf.DefaultProcessStatusHelper;
 import org.cmdbuild.service.rest.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.cxf.ProcessStatusHelper;
 import org.cmdbuild.service.rest.cxf.TranslatingAttachmentsHelper;
 import org.cmdbuild.service.rest.cxf.TranslatingAttachmentsHelper.Encoding;
 import org.cmdbuild.service.rest.cxf.WebApplicationExceptionErrorHandler;
@@ -213,14 +215,19 @@ public class Services implements LoggingSupport {
 	@Bean
 	@Scope(value = SCOPE_REQUEST, proxyMode = TARGET_CLASS)
 	public Processes cxfProcesses() {
-		final CxfProcesses service = new CxfProcesses(errorHandler(), helper.userWorkflowLogic(), helper.lookupHelper());
+		final CxfProcesses service = new CxfProcesses(errorHandler(), helper.userWorkflowLogic(), processStatusHelper());
 		return proxy(Processes.class, service);
 	}
 
 	@Bean
 	public ProcessesConfiguration cxfProcessesConfiguration() {
-		final CxfProcessesConfiguration service = new CxfProcessesConfiguration(helper.lookupHelper());
+		final CxfProcessesConfiguration service = new CxfProcessesConfiguration(processStatusHelper());
 		return proxy(ProcessesConfiguration.class, service);
+	}
+
+	@Bean
+	protected ProcessStatusHelper processStatusHelper() {
+		return new DefaultProcessStatusHelper(helper.lookupHelper());
 	}
 
 	@Bean

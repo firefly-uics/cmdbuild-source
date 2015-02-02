@@ -44,7 +44,6 @@
 		border: false,
 		collapsible: false,
 		frame: false,
-		loadMask: false,
 
 		initComponent: function() {
 			if (!this.readOnly) {

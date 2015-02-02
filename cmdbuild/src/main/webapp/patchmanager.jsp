@@ -19,8 +19,6 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>CMDBuild - Patch Manager</title>
-
 		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
 		<link rel="icon" href="images/favicon.ico" />
@@ -56,6 +54,8 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/buttons/Buttons.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/model/CMPatchModel.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/patchmanager.js"></script>
+
+		<title>CMDBuild - Patch Manager</title>
 	</head>
 	<body>
 		<div id="header">

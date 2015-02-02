@@ -44,7 +44,11 @@
 						pageParam: undefined,
 						startParam: undefined
 					}
-				}
+				},
+				sorters: [{
+					property: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+					direction: 'ASC'
+				}]
 			});
 		},
 

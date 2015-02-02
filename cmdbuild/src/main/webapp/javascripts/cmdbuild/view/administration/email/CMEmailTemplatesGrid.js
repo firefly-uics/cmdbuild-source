@@ -3,6 +3,14 @@
 	Ext.define('CMDBuild.view.administration.email.CMEmailTemplatesGrid', {
 		extend: 'Ext.grid.Panel',
 
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.CMProxyEmailTemplates'
+		],
+
+		/**
+		 * @cfg {CMDBuild.controller.administration.email.CMEmailTemplatesController}
+		 */
 		delegate: undefined,
 
 		border: false,
@@ -10,29 +18,25 @@
 		frame: false,
 
 		initComponent: function() {
-			this.gridColumns = [
-				{
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
-					text: CMDBuild.Translation.name,
-					flex: 1
-				},
-				{
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-					header: CMDBuild.Translation.description_,
-					flex: 3
-				},
-				{
-					dataIndex: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
-					header: CMDBuild.Translation.subject,
-					flex: 2
-				}
-			];
-
-			this.gridStore = CMDBuild.core.proxy.CMProxyEmailTemplates.getStore();
-
 			Ext.apply(this, {
-				columns: this.gridColumns,
-				store: this.gridStore
+				columns: [
+					{
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						text: CMDBuild.Translation.name,
+						flex: 1
+					},
+					{
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
+						header: CMDBuild.Translation.description_,
+						flex: 3
+					},
+					{
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
+						header: CMDBuild.Translation.subject,
+						flex: 2
+					}
+				],
+				store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore()
 			});
 
 			this.callParent(arguments);

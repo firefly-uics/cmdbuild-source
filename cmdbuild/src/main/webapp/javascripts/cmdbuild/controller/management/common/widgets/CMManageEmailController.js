@@ -191,7 +191,6 @@
 		 */
 		addEmailFromTemplateIfNeeded: function() {
 			this.checkTemplatesToRegenerate();
-
 			if (
 				(
 					this.thereAreTemplates()
@@ -296,6 +295,9 @@
 			return emailTemplates.length;
 		},
 
+		/**
+		 * Regenerates email resolving all internal CQL templates
+		 */
 		createEmailFromTemplate: function() {
 			if (!this.busy) {
 				var me = this;
@@ -441,19 +443,21 @@
 		 * @override
 		 */
 		onEditMode: function() {
-			var pi = _CMWFState.getProcessInstance();
+			if (!this.emailGrid.isStoreLoaded() && !this.emailGrid.getStore().isLoading()) {
+				var pi = _CMWFState.getProcessInstance();
 
-			this.view.setLoading(true);
-			this.emailGrid.getStore().load({
-				params: {
-					ProcessId: pi.getId()
-				},
-				scope: this,
-				callback: function(records, operation, success) {
-					this.view.setLoading(false);
-					this.addEmailFromTemplateIfNeeded();
-				}
-			});
+				this.view.setLoading(true);
+				this.emailGrid.getStore().load({
+					params: {
+						ProcessId: pi.getId()
+					},
+					scope: this,
+					callback: function(records, operation, success) {
+						this.view.setLoading(false);
+						this.addEmailFromTemplateIfNeeded();
+					}
+				});
+			}
 		},
 
 		/**
