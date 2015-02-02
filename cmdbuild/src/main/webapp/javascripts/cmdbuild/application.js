@@ -27,7 +27,7 @@
 		CMDBuild.log = log4javascript.getLogger();
 		CMDBuild.log.addAppender(new log4javascript.BrowserConsoleAppender());
 
-		// Disable all console messages if IE) or lower to avoid print window spam
+		// Disable all console messages if IE8 or lower to avoid print window spam
 		if (Ext.isIE9m) {
 			var console = { log: function() {} };
 			log4javascript.setEnabled(false);
