@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.localizations.AdvancedTranslationsPanel', {
+	Ext.define('CMDBuild.view.administration.localizations.panels.ExportFieldSet', {
 		extend: 'Ext.panel.Panel',
 
 		requires: [
@@ -8,9 +8,7 @@
 			'CMDBuild.core.proxy.Localizations'
 		],
 
-		border: false,
-		layout: 'vbox',
-		frame: true,
+		title: '@@ Export',
 		overflowY: 'auto',
 
 		layout: {
@@ -35,8 +33,7 @@
 				padding: '0 5',
 
 				items: [
-					Ext.create('CMDBuild.view.administration.localizations.panels.ImportFieldSet'),
-					Ext.create('CMDBuild.view.administration.localizations.panels.ExportFieldSet')
+					Ext.create('CMDBuild.view.administration.localizations.panels.LanguagesGrid')
 				]
 			});
 
