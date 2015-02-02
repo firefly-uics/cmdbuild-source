@@ -198,6 +198,11 @@
 			});
 		},
 
+		/**
+		 * @param {Boolean} loadRemoteData
+		 * @param {Object} params
+		 * @param {Function} cb
+		 */
 		loadCard: function(loadRemoteData, params, cb) {
 			var me = this;
 			var cardId;
@@ -205,42 +210,35 @@
 			if (params) {
 				cardId = params.Id || params.cardId;
 			} else {
-				cardId = me.card.get("Id");
+				cardId = me.card.get('Id');
 			}
 
-			if (cardId && cardId != "-1"
-				&& (loadRemoteData || me.view.hasDomainAttributes())) {
-
+			if (cardId && cardId != '-1' && (loadRemoteData || me.view.hasDomainAttributes())) {
 				if (!params) {
-					var parameterNames = CMDBuild.ServiceProxy.parameter;
 					var params = {};
-					params[parameterNames.CARD_ID] = me.card.get("Id");
-					params[parameterNames.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get("IdClass"));
+					params[CMDBuild.core.proxy.CMProxyConstants.CARD_ID] = me.card.get('Id');
+					params[CMDBuild.core.proxy.CMProxyConstants.CLASS_NAME] = _CMCache.getEntryTypeNameById(me.card.get('IdClass'));
 				}
 
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.ServiceProxy.card.get({
 					params: params,
-					success: function(a,b, response) {
+					success: function(result, options, decodedResult) {
 						CMDBuild.LoadMask.get().hide();
 
-						var data = response.card;
+						var data = decodedResult.card;
 
 						if (me.card) {
-							// Merge the data of the selected card with
-							// the remote data loaded from the server.
-							// the reason is that in the activity list
-							// the card have data that are not returned from the
-							// server, so use the data already in the record.
-							// For activities, the privileges returned from the
-							// server are of the class and not of the activity
+							// Merge the data of the selected card with the remote data loaded from the server. The reason is that in the activity list
+							// the card have data that are not returned from the server, so use the data already in the record. For activities, the privileges
+							// returned from the server are of the class and not of the activity
 							data = Ext.Object.merge((me.card.raw || me.card.data), data);
 						}
 
-						addRefenceAttributesToDataIfNeeded(response.referenceAttributes, data);
-						var card = new CMDBuild.DummyModel(data);
+						addRefenceAttributesToDataIfNeeded(decodedResult.referenceAttributes, data);
+						var card = Ext.create('CMDBuild.DummyModel', data);
 
-						(typeof cb == "function") ? cb(card) : me.loadCardStandardCallBack(card);
+						(typeof cb == 'function') ? cb(card) : me.loadCardStandardCallBack(card);
 					}
 				});
 			} else {
