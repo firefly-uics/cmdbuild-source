@@ -50,13 +50,14 @@
 				]
 			});
 
-			this.enabledLanguages = Ext.create('CMDBuild.view.administration.localizations.EnabledLanguagesGrid');
-
 			this.enabledLanguagesFieldset = Ext.create('Ext.form.FieldSet', {
 				title: '@@ Enabled languages',
 				overflowY: 'auto',
+				padding: '0 5',
 
-				items: [this.enabledLanguages]
+				items: [
+					Ext.create('CMDBuild.view.administration.localizations.panels.LanguagesGrid')
+				]
 			});
 
 			Ext.apply(this, {
