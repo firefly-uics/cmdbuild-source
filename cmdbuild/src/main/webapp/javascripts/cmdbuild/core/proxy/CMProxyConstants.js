@@ -228,6 +228,7 @@
 		TO: 'to',
 		TOOLBAR_TOP: 'topToolbar',
 		TO_ADDRESSES: 'toAddresses',
+		TRANSLATIONS: 'translations',
 		TYPE: 'type',
 		UNIQUE: 'isunique',
 		UPDATE: 'update',

@@ -3,57 +3,56 @@
 	Ext.define('CMDBuild.view.administration.localizations.EnabledLanguagesGrid', {
 		extend: 'Ext.container.Container',
 
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+//			'CMDBuild.ServiceProxy.translations' // TODO
+		],
+
 		/**
 		 * @cfg {Array}
 		 */
 		languages: [],
 
-		languageItems: [],
+		languageCheckboxes: [],
 
 		border: false,
 		frame: false,
 		layout: 'column',
 
 		constructor: function() {
-			var me = this;
-
-			me.callParent(arguments);
+			this.callParent(arguments);
 
 			_CMCache.registerOnTranslations(this);
 
+			CMDBuild.LoadMask.instance.show();
 			CMDBuild.ServiceProxy.translations.readAvailableTranslations({
-				success : function(response, options, decoded) {
-					var column = 0;
-					var arColumns = [];
-					for (key in decoded.translations) {
-						column++;
+				scope: this,
+				success: function(result, options, decodedResult) {
+					var translations = decodedResult[CMDBuild.core.proxy.CMProxyConstants.TRANSLATIONS];
+_debug('decodedResult', decodedResult);
+					for (var i in translations) {
 						var item = Ext.create('CMDBuild.view.administration.localizations.TranslationCheckbox', {
-								name: decoded.translations[key].name,
-								image: 'ux-flag-' + decoded.translations[key].name,
-								language: decoded.translations[key].value,
-								submitValue: false
-							});
-						me.languageItems.push(item);
+							name: translations[i][CMDBuild.core.proxy.CMProxyConstants.NAME],
+							image: 'ux-flag-' + translations[i][CMDBuild.core.proxy.CMProxyConstants.NAME],
+							language: translations[i][CMDBuild.core.proxy.CMProxyConstants.VALUE],
+							submitValue: false
+						});
 
-						arColumns.push(item);
-						if (column == 3) {
-//							me.add(getLanguagesRow(arColumns));
-							me.add(arColumns);
-							arColumns = [];
-							column = 0;
-						}
+						this.languageCheckboxes.push(item);
+						this.add(item);
 					}
-					if (column > 0) {
-						me.add(getLanguagesRow(arColumns));
-					}
+				},
+				callback: function() {
+					CMDBuild.LoadMask.instance.hide();
 				}
 			});
 		},
+
 		getValues: function() {
 			var languages = '';
 			var first = true;
-			for (key in this.languageItems) {
-				var l = this.languageItems[key];
+			for (key in this.languageCheckboxes) {
+				var l = this.languageCheckboxes[key];
 				if (l.getValue()) {
 					languages += ((first) ? '' : ', ') + l.name;
 					first = false;
@@ -63,8 +62,8 @@
 		},
 
 		setValues: function(activeLanguages) {
-			for (key in this.languageItems) {
-				var l = this.languageItems[key];
+			for (key in this.languageCheckboxes) {
+				var l = this.languageCheckboxes[key];
 				l.setValue(inActiveLanguages(l, activeLanguages));
 			}
 		},
@@ -82,15 +81,6 @@
 			}
 		}
 		return false;
-	}
-
-	function getLanguagesRow(arColumns) {
-		var row = Ext.create("CMDBuild.view.administration.localizations.Row", {
-			field1: arColumns[0],
-			field2: arColumns[1],
-			field3: arColumns[2],
-		});
-		return row;
 	}
 
 })();
