@@ -225,6 +225,7 @@
 						CMDBuild.LoadMask.get().hide();
 
 						var data = response.card;
+
 						if (me.card) {
 							// Merge the data of the selected card with
 							// the remote data loaded from the server.
@@ -233,12 +234,13 @@
 							// server, so use the data already in the record.
 							// For activities, the privileges returned from the
 							// server are of the class and not of the activity
-							data = CMDBuild.Utils.mergeCardsData((me.card.raw || me.card.data), data);
+							data = Ext.Object.merge((me.card.raw || me.card.data), data);
 						}
 
 						addRefenceAttributesToDataIfNeeded(response.referenceAttributes, data);
 						var card = new CMDBuild.DummyModel(data);
-						(typeof cb == "function") ? cb(card) : me.loadCardStandardCallBack(card)
+
+						(typeof cb == "function") ? cb(card) : me.loadCardStandardCallBack(card);
 					}
 				});
 			} else {
