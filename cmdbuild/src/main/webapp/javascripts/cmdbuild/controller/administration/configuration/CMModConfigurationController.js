@@ -11,12 +11,13 @@
 				CMDBuild.ServiceProxy.configuration.save({
 					scope: this,
 					params: this.view.getValues(),
-					callback: function() {
+					success: function() {
 						CMDBuild.LoadMask.get().hide();
 						//needed to mantein the consistenece beetween the information displayed and the
 						//information in the config file
 						this.readConfiguration();
-					}
+					},
+					callback: CMDBuild.Msg.success
 				}, name = this.view.configFileName);
 			}, this);
 
