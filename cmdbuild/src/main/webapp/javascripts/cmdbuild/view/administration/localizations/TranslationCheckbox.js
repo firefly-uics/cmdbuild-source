@@ -1,37 +1,51 @@
 (function() {
 
-	Ext.define("CMDBuild.view.administration.localizations.TranslationCheckbox", {
-		extend: "Ext.container.Container",
-		layout: "hbox",
-		padding: "0 0 0 5",
-		width: 200,
-		name : 'no name',
-		allowBlank : false,
-		vtype : '',
-		setValue: function(value) {
-			this.check.setValue(value);
-		},
-		getValue: function() {
-			return this.check.getValue();
-		},
-		initComponent : function() {
-			var me = this;
-			this.check = new Ext.form.field.Checkbox( {
-				fieldLabel : me.language,
+	Ext.define('CMDBuild.view.administration.localizations.TranslationCheckbox', {
+		extend: 'Ext.form.FieldContainer',
+
+		/**
+		 * @cfg {String}
+		 */
+		name: undefined,
+
+		/**
+		 * @cfg {String}
+		 */
+		image: undefined,
+
+		layout: 'hbox',
+		padding: '0 0 0 5',
+		width: 222,
+
+		initComponent: function() {
+			this.checkbox = Ext.create('Ext.form.field.Checkbox', {
+				fieldLabel: this.language,
 				labelWidth: CMDBuild.LABEL_WIDTH,
-				name : me.name,
+				name: this.name,
 				submitValue: false
 			});
-			this.width += 22;
-			this.translationsButton = new Ext.form.field.Display( {
-				iconCls: me.image,
-				renderer : function(){
-						return '<div style="background-repeat:no-repeat;background-position:center;" class="' + me.image + '">&#160;</div>';
-				},
-				width: 22
+
+			this.translationsFlags = Ext.create('Ext.form.field.Display', {
+				iconCls: this.image,
+				width: 22,
+				scope: this,
+
+				renderer: function() {
+						return '<div style="background-repeat:no-repeat;background-position:center;" class="' + this.image + '">&#160;</div>';
+				}
 			});
-			this.items = [this.translationsButton, this.check];
+
+			this.items = [this.translationsFlags, this.checkbox];
+
 			this.callParent(arguments);
+		},
+
+		setValue: function(value) {
+			this.checkbox.setValue(value);
+		},
+
+		getValue: function() {
+			return this.checkbox.getValue();
 		}
 	});
 

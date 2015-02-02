@@ -4,8 +4,7 @@
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-//			'CMDBuild.core.proxy.CMProxyTasks'
+			'CMDBuild.core.proxy.CMProxyConstants'
 		],
 
 		/**
