@@ -20,8 +20,6 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>CMDBuild - Configuration</title>
-
 		<link rel="stylesheet" type="text/css" href="stylesheets/cmdbuild.css" />
 		<link rel="stylesheet" type="text/css" href="javascripts/ext-<%= extVersion %>/resources/css/ext-all.css" />
 		<link rel="icon" href="images/favicon.ico" />
@@ -30,15 +28,21 @@
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>/ext-all.js"></script>
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/Notification.js"></script>
 		<script type="text/javascript" src="javascripts/ext-<%= extVersion %>-ux/form/XCheckbox.js"></script>
-
 		<script type="text/javascript" src="javascripts/cmdbuild/form/FormOverride.js"></script>
 
 		<!-- 1. Main script -->
 		<script type="text/javascript" src="javascripts/log/log4javascript.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Utils.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/LoaderConfig.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/application.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/Msg.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/Ajax.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/Msg.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/PopupWindow.js"></script>
+
+		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyUrlIndex.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxySetup.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMIconCombo.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/LanguageCombo.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/form/CallbackPlugin.js"></script>
@@ -58,12 +62,8 @@
 		</script>
 
 		<script type="text/javascript" src="javascripts/cmdbuild/form/CustomVTypes.js"></script>
-
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMTranslationsWindow.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/CMFormFuncions.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxySetup.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/model/CMSetupModels.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/setup/Step1.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/setup/Step2.js"></script>
@@ -71,6 +71,7 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/setup.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/setup/CMSetupController.js"></script>
 
+		<title>CMDBuild - Configuration</title>
 	</head>
 	<body>
 		<div id="header">
