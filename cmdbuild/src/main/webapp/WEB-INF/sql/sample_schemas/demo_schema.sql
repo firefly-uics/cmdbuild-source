@@ -3748,7 +3748,9 @@ CREATE TABLE "Email" (
     "CcAddresses" text,
     "Subject" text,
     "Content" text,
-    "NotifyWith" text
+    "NotifyWith" text,
+    "NoSubjectPrefix" boolean DEFAULT false,
+    "Account" text
 )
 INHERITS ("Class");
 
@@ -3819,6 +3821,14 @@ COMMENT ON COLUMN "Email"."Content" IS 'MODE: read|FIELDMODE: write|DESCR: Body|
 
 
 COMMENT ON COLUMN "Email"."NotifyWith" IS 'MODE: write|DESCR: NotifyWith|INDEX: 10|BASEDSP: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Email"."NoSubjectPrefix" IS 'MODE: write|DESCR: No subject prefix|INDEX: 12|BASEDSP: false|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Email"."Account" IS 'MODE: user|DESCR: Account|INDEX: 11|BASEDSP: false|STATUS: active';
 
 
 
@@ -4390,6 +4400,63 @@ COMMENT ON COLUMN "Map"."Id" IS 'MODE: reserved';
 
 
 
+CREATE TABLE "Map_AccountTemplate" (
+)
+INHERITS ("Map");
+
+
+
+COMMENT ON TABLE "Map_AccountTemplate" IS 'MODE: reserved|TYPE: domain|CLASS1: _EmailAccount|CLASS2: _EmailTemplate|DESCRDIR: is default|DESCRINV: has default|CARDIN: 1:N|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Map_AccountTemplate"."IdDomain" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_AccountTemplate"."IdClass1" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_AccountTemplate"."IdObj1" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_AccountTemplate"."IdClass2" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_AccountTemplate"."IdObj2" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_AccountTemplate"."Status" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_AccountTemplate"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_AccountTemplate"."BeginDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_AccountTemplate"."EndDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_AccountTemplate"."Id" IS 'MODE: reserved';
+
+
+
+CREATE TABLE "Map_AccountTemplate_history" (
+)
+INHERITS ("Map_AccountTemplate");
+ALTER TABLE ONLY "Map_AccountTemplate_history" ALTER COLUMN "EndDate" SET NOT NULL;
+
+
+
 CREATE TABLE "Map_ActivityEmail" (
 )
 INHERITS ("Map");
@@ -4620,6 +4687,63 @@ CREATE TABLE "Map_BuildingFloor_history" (
     "EndDate" timestamp without time zone DEFAULT now() NOT NULL
 )
 INHERITS ("Map_BuildingFloor");
+
+
+
+CREATE TABLE "Map_ClassMetadata" (
+)
+INHERITS ("Map");
+
+
+
+COMMENT ON TABLE "Map_ClassMetadata" IS 'MODE: reserved|TYPE: domain|CLASS1: Class|CLASS2: Metadata|DESCRDIR: |DESCRINV: |CARDIN: 1:N|STATUS: active';
+
+
+
+COMMENT ON COLUMN "Map_ClassMetadata"."IdDomain" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_ClassMetadata"."IdClass1" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_ClassMetadata"."IdObj1" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_ClassMetadata"."IdClass2" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_ClassMetadata"."IdObj2" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_ClassMetadata"."Status" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_ClassMetadata"."User" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_ClassMetadata"."BeginDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_ClassMetadata"."EndDate" IS 'MODE: reserved';
+
+
+
+COMMENT ON COLUMN "Map_ClassMetadata"."Id" IS 'MODE: reserved';
+
+
+
+CREATE TABLE "Map_ClassMetadata_history" (
+)
+INHERITS ("Map_ClassMetadata");
+ALTER TABLE ONLY "Map_ClassMetadata_history" ALTER COLUMN "EndDate" SET NOT NULL;
 
 
 
@@ -7410,7 +7534,9 @@ CREATE TABLE "User" (
     "Username" character varying(40) NOT NULL,
     "Password" character varying(40),
     "Email" character varying(320),
-    "Active" boolean DEFAULT true NOT NULL
+    "Active" boolean DEFAULT true NOT NULL,
+    "Service" boolean,
+    "Privileged" boolean
 )
 INHERITS ("Class");
 
@@ -7465,6 +7591,14 @@ COMMENT ON COLUMN "User"."Email" IS 'MODE: read|DESCR: Email|INDEX: 7';
 
 
 COMMENT ON COLUMN "User"."Active" IS 'MODE: read';
+
+
+
+COMMENT ON COLUMN "User"."Service" IS 'MODE: user|DESCR: Service|INDEX: 9';
+
+
+
+COMMENT ON COLUMN "User"."Privileged" IS 'MODE: user|DESCR: Privileged|INDEX: 10';
 
 
 
@@ -7783,14 +7917,6 @@ COMMENT ON COLUMN "_DomainTreeNavigation"."TargetFilter" IS 'MODE: write|STATUS:
 
 
 CREATE TABLE "_EmailAccount" (
-    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
-    "IdClass" regclass NOT NULL,
-    "Code" character varying(100),
-    "Description" character varying(250),
-    "Status" character(1),
-    "User" character varying(40),
-    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
-    "Notes" text,
     "IsDefault" boolean,
     "Address" character varying(100),
     "Username" character varying(100),
@@ -7805,7 +7931,8 @@ CREATE TABLE "_EmailAccount" (
     "ProcessedFolder" character varying(50),
     "RejectedFolder" character varying(50),
     "RejectNotMatching" boolean
-);
+)
+INHERITS ("Class");
 
 
 
@@ -7910,21 +8037,15 @@ INHERITS ("_EmailAccount");
 
 
 CREATE TABLE "_EmailTemplate" (
-    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
-    "IdClass" regclass NOT NULL,
-    "Code" character varying(100),
-    "Description" character varying(250),
-    "Status" character(1),
-    "User" character varying(40),
-    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
-    "Notes" text,
     "From" text,
     "To" text,
     "CC" text,
     "BCC" text,
     "Subject" text,
-    "Body" text
-);
+    "Body" text,
+    "Account" integer
+)
+INHERITS ("Class");
 
 
 
@@ -7985,6 +8106,10 @@ COMMENT ON COLUMN "_EmailTemplate"."Subject" IS 'MODE: write|DESCR: Subject|INDE
 
 
 COMMENT ON COLUMN "_EmailTemplate"."Body" IS 'MODE: write|DESCR: Body|INDEX: 7|STATUS: active';
+
+
+
+COMMENT ON COLUMN "_EmailTemplate"."Account" IS 'MODE: user|FIELDMODE: write|DESCR: Account|INDEX: 8|REFERENCEDOM: AccountTemplate|REFERENCEDIRECT: false|REFERENCETYPE: restrict|STATUS: active';
 
 
 
@@ -8139,45 +8264,6 @@ COMMENT ON COLUMN "_Layer"."IdClass" IS 'MODE: reserved';
 
 
 
-CREATE TABLE "_MdrScopedId" (
-    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
-    "IdClass" regclass NOT NULL,
-    "User" character varying(100),
-    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
-    "MdrScopedId" text NOT NULL,
-    "IdItem" integer NOT NULL
-);
-
-
-
-COMMENT ON TABLE "_MdrScopedId" IS 'MODE: reserved|STATUS: active|SUPERCLASS: false|TYPE: simpleclass';
-
-
-
-COMMENT ON COLUMN "_MdrScopedId"."Id" IS 'MODE: reserved';
-
-
-
-COMMENT ON COLUMN "_MdrScopedId"."IdClass" IS 'MODE: reserved';
-
-
-
-COMMENT ON COLUMN "_MdrScopedId"."User" IS 'MODE: reserved';
-
-
-
-COMMENT ON COLUMN "_MdrScopedId"."BeginDate" IS 'MODE: write|FIELDMODE: read|BASEDSP: true';
-
-
-
-COMMENT ON COLUMN "_MdrScopedId"."MdrScopedId" IS 'MODE: write|STATUS: active';
-
-
-
-COMMENT ON COLUMN "_MdrScopedId"."IdItem" IS 'MODE: write|STATUS: active';
-
-
-
 CREATE TABLE "_Task" (
     "CronExpression" text,
     "Type" text,
@@ -8241,18 +8327,11 @@ COMMENT ON COLUMN "_Task"."LastExecution" IS 'MODE: write|DESCR: Last Execution|
 
 
 CREATE TABLE "_TaskParameter" (
-    "Id" integer DEFAULT _cm_new_card_id() NOT NULL,
-    "IdClass" regclass NOT NULL,
-    "Code" character varying(100),
-    "Description" character varying(250),
-    "Status" character(1),
-    "User" character varying(40),
-    "BeginDate" timestamp without time zone DEFAULT now() NOT NULL,
-    "Notes" text,
     "Owner" integer,
     "Key" text NOT NULL,
     "Value" text
-);
+)
+INHERITS ("Class");
 
 
 
@@ -8626,6 +8705,10 @@ ALTER TABLE ONLY "Email_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
 
 
 
+ALTER TABLE ONLY "Email_history" ALTER COLUMN "NoSubjectPrefix" SET DEFAULT false;
+
+
+
 ALTER TABLE ONLY "Employee" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
 
 
@@ -8690,6 +8773,26 @@ ALTER TABLE ONLY "License_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
 
 
 
+ALTER TABLE ONLY "Map_AccountTemplate" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_AccountTemplate" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_AccountTemplate_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_AccountTemplate_history" ALTER COLUMN "EndDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_AccountTemplate_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
 ALTER TABLE ONLY "Map_ActivityEmail" ALTER COLUMN "BeginDate" SET DEFAULT now();
 
 
@@ -8751,6 +8854,26 @@ ALTER TABLE ONLY "Map_BuildingFloor_history" ALTER COLUMN "BeginDate" SET DEFAUL
 
 
 ALTER TABLE ONLY "Map_BuildingFloor_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_ClassMetadata" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_ClassMetadata" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
+
+
+
+ALTER TABLE ONLY "Map_ClassMetadata_history" ALTER COLUMN "BeginDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_ClassMetadata_history" ALTER COLUMN "EndDate" SET DEFAULT now();
+
+
+
+ALTER TABLE ONLY "Map_ClassMetadata_history" ALTER COLUMN "Id" SET DEFAULT _cm_new_card_id();
 
 
 
@@ -10125,6 +10248,13 @@ INSERT INTO "Patch" VALUES (1438, '"Patch"', '2.2.0-10', 'Create LastExecution c
 INSERT INTO "Patch" VALUES (1440, '"Patch"', '2.2.0-11', 'Update EmailStatus lookups', 'A', 'system', '2014-06-12 16:52:06.007226', NULL);
 INSERT INTO "Patch" VALUES (1442, '"Patch"', '2.2.0-12', 'Create TranslationUuis column in LookUp table', 'A', 'system', '2014-06-12 16:52:06.032447', NULL);
 INSERT INTO "Patch" VALUES (1444, '"Patch"', '2.2.0-13', 'Stored-procedure called by the BIM features', 'A', 'system', '2014-06-12 16:52:06.049045', NULL);
+INSERT INTO "Patch" VALUES (1446, '"Patch"', '2.1.9-03', 'Create column NoSubjectPrefix to Email table', 'A', 'system', '2015-02-03 12:13:40.714192', NULL);
+INSERT INTO "Patch" VALUES (1448, '"Patch"', '2.2.1-01', 'Fix _EmailAccount and _EmailTemplate inheritance and create domain between Class and Metadata', 'A', 'system', '2015-02-03 12:14:21.307906', NULL);
+INSERT INTO "Patch" VALUES (1450, '"Patch"', '2.2.2-01', 'Creates AccountTemplate domain, Account attribute for _EmailTemplate class and Account attribute for Email class', 'A', 'system', '2015-02-03 12:14:21.587142', NULL);
+INSERT INTO "Patch" VALUES (1452, '"Patch"', '2.2.2-02', 'Migrates task manager''s mapper keys and values', 'A', 'system', '2015-02-03 12:14:21.603609', NULL);
+INSERT INTO "Patch" VALUES (1454, '"Patch"', '2.3.0-01', 'Creates Service and Privileged columns for User class', 'A', 'system', '2015-02-03 12:14:21.628616', NULL);
+INSERT INTO "Patch" VALUES (1456, '"Patch"', '2.3.0-02', 'Fixes wrong inheritance for some system classes', 'A', 'system', '2015-02-03 12:14:22.137725', NULL);
+INSERT INTO "Patch" VALUES (1458, '"Patch"', '2.3.0-03', 'Removes unused class "_MdrScopedId"', 'A', 'system', '2015-02-03 12:14:22.153824', NULL);
 
 
 
@@ -10361,10 +10491,10 @@ INSERT INTO "Supplier_history" VALUES (715, '"Supplier"', 'SUP02', 'Dell ', 'U',
 
 
 
-INSERT INTO "User" VALUES (13, '"User"', NULL, 'Administrator', 'A', 'system', '2013-05-09 12:57:49.186365', NULL, 'admin', 'DQdKW32Mlms=', NULL, true);
-INSERT INTO "User" VALUES (943, '"User"', NULL, 'workflow', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'workflow', 'sLPdlW/0y4msBompb4oRVw==', NULL, true);
-INSERT INTO "User" VALUES (678, '"User"', NULL, 'Jones Patricia', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'pjones', 'Tms67HRN+qusMUAsM6xIPA==', 'patricia.jones@example.com', true);
-INSERT INTO "User" VALUES (679, '"User"', NULL, 'Davis Michael', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'mdavis', 'Nlg70IVc7/U=', 'michael.davis@example.com', true);
+INSERT INTO "User" VALUES (13, '"User"', NULL, 'Administrator', 'A', 'system', '2013-05-09 12:57:49.186365', NULL, 'admin', 'DQdKW32Mlms=', NULL, true, NULL, NULL);
+INSERT INTO "User" VALUES (943, '"User"', NULL, 'workflow', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'workflow', 'sLPdlW/0y4msBompb4oRVw==', NULL, true, NULL, NULL);
+INSERT INTO "User" VALUES (678, '"User"', NULL, 'Jones Patricia', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'pjones', 'Tms67HRN+qusMUAsM6xIPA==', 'patricia.jones@example.com', true, NULL, NULL);
+INSERT INTO "User" VALUES (679, '"User"', NULL, 'Davis Michael', 'A', 'admin', '2013-05-09 12:57:49.186365', NULL, 'mdavis', 'Nlg70IVc7/U=', 'michael.davis@example.com', true, NULL, NULL);
 
 
 
@@ -10415,7 +10545,7 @@ INSERT INTO "_Widget_history" VALUES (1372, '"_Widget"', 'PC', '.Calendar', 'U',
 
 
 
-SELECT pg_catalog.setval('class_seq', 1444, true);
+SELECT pg_catalog.setval('class_seq', 1458, true);
 
 
 
@@ -10509,6 +10639,16 @@ ALTER TABLE ONLY "LookUp"
 
 
 
+ALTER TABLE ONLY "Map_AccountTemplate_history"
+    ADD CONSTRAINT "Map_AccountTemplate_history_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "EndDate");
+
+
+
+ALTER TABLE ONLY "Map_AccountTemplate"
+    ADD CONSTRAINT "Map_AccountTemplate_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "BeginDate");
+
+
+
 ALTER TABLE ONLY "Map_ActivityEmail_history"
     ADD CONSTRAINT "Map_ActivityEmail_history_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "EndDate");
 
@@ -10546,6 +10686,16 @@ ALTER TABLE ONLY "Map_BuildingFloor_history"
 
 ALTER TABLE ONLY "Map_BuildingFloor"
     ADD CONSTRAINT "Map_BuildingFloor_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "BeginDate");
+
+
+
+ALTER TABLE ONLY "Map_ClassMetadata_history"
+    ADD CONSTRAINT "Map_ClassMetadata_history_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "EndDate");
+
+
+
+ALTER TABLE ONLY "Map_ClassMetadata"
+    ADD CONSTRAINT "Map_ClassMetadata_pkey" PRIMARY KEY ("IdDomain", "IdClass1", "IdObj1", "IdClass2", "IdObj2", "BeginDate");
 
 
 
@@ -10994,16 +11144,6 @@ ALTER TABLE ONLY "_Layer"
 
 
 
-ALTER TABLE ONLY "_MdrScopedId"
-    ADD CONSTRAINT "_MdrScopedId_MdrScopedId_key" UNIQUE ("MdrScopedId");
-
-
-
-ALTER TABLE ONLY "_MdrScopedId"
-    ADD CONSTRAINT "_MdrScopedId_pkey" PRIMARY KEY ("Id");
-
-
-
 ALTER TABLE ONLY "_TaskParameter_history"
     ADD CONSTRAINT "_SchedulerJobParameter_history_pkey" PRIMARY KEY ("Id");
 
@@ -11322,6 +11462,14 @@ CREATE INDEX idx_lookup_begindate ON "LookUp" USING btree ("BeginDate");
 
 
 
+CREATE UNIQUE INDEX idx_map_accounttemplate_activerows ON "Map_AccountTemplate" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
+
+
+
+CREATE UNIQUE INDEX idx_map_accounttemplate_uniqueright ON "Map_AccountTemplate" USING btree ((CASE WHEN (("Status")::text = 'A'::text) THEN "IdClass2" ELSE NULL::regclass END), (CASE WHEN (("Status")::text = 'A'::text) THEN "IdObj2" ELSE NULL::integer END));
+
+
+
 CREATE UNIQUE INDEX idx_map_activityemail_activerows ON "Map_ActivityEmail" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
 
 
@@ -11351,6 +11499,14 @@ CREATE UNIQUE INDEX idx_map_buildingfloor_activerows ON "Map_BuildingFloor" USIN
 
 
 CREATE UNIQUE INDEX idx_map_buildingfloor_uniqueright ON "Map_BuildingFloor" USING btree ((CASE WHEN (("Status")::text = 'A'::text) THEN "IdClass2" ELSE NULL::regclass END), (CASE WHEN (("Status")::text = 'A'::text) THEN "IdObj2" ELSE NULL::integer END));
+
+
+
+CREATE UNIQUE INDEX idx_map_classmetadata_activerows ON "Map_ClassMetadata" USING btree ((CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdDomain" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj1" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::regclass ELSE "IdClass2" END), (CASE WHEN ("Status" = 'N'::bpchar) THEN NULL::integer ELSE "IdObj2" END));
+
+
+
+CREATE UNIQUE INDEX idx_map_classmetadata_uniqueright ON "Map_ClassMetadata" USING btree ((CASE WHEN (("Status")::text = 'A'::text) THEN "IdClass2" ELSE NULL::regclass END), (CASE WHEN (("Status")::text = 'A'::text) THEN "IdObj2" ELSE NULL::integer END));
 
 
 
@@ -11490,6 +11646,18 @@ CREATE UNIQUE INDEX idx_map_workplacecomposition_uniqueright ON "Map_WorkplaceCo
 
 
 
+CREATE INDEX idx_mapaccounttemplate_iddomain ON "Map_AccountTemplate" USING btree ("IdDomain");
+
+
+
+CREATE INDEX idx_mapaccounttemplate_idobj1 ON "Map_AccountTemplate" USING btree ("IdObj1");
+
+
+
+CREATE INDEX idx_mapaccounttemplate_idobj2 ON "Map_AccountTemplate" USING btree ("IdObj2");
+
+
+
 CREATE INDEX idx_mapactivityemail_iddomain ON "Map_ActivityEmail" USING btree ("IdDomain");
 
 
@@ -11535,6 +11703,18 @@ CREATE INDEX idx_mapbuildingfloor_idobj1 ON "Map_BuildingFloor" USING btree ("Id
 
 
 CREATE INDEX idx_mapbuildingfloor_idobj2 ON "Map_BuildingFloor" USING btree ("IdObj2");
+
+
+
+CREATE INDEX idx_mapclassmetadata_iddomain ON "Map_ClassMetadata" USING btree ("IdDomain");
+
+
+
+CREATE INDEX idx_mapclassmetadata_idobj1 ON "Map_ClassMetadata" USING btree ("IdObj1");
+
+
+
+CREATE INDEX idx_mapclassmetadata_idobj2 ON "Map_ClassMetadata" USING btree ("IdObj2");
 
 
 
@@ -11727,10 +11907,6 @@ CREATE INDEX idx_mapworkplacecomposition_idobj1 ON "Map_WorkplaceComposition" US
 
 
 CREATE INDEX idx_mapworkplacecomposition_idobj2 ON "Map_WorkplaceComposition" USING btree ("IdObj2");
-
-
-
-CREATE INDEX idx_mdrscopedid_begindate ON "_MdrScopedId" USING btree ("BeginDate");
 
 
 
@@ -13004,6 +13180,13 @@ CREATE TRIGGER "_Constr_Workplace_Room"
 
 
 
+CREATE TRIGGER "_Constr__EmailTemplate_Account"
+    BEFORE DELETE OR UPDATE ON "_EmailAccount"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_restrict('"_EmailTemplate"', 'Account');
+
+
+
 CREATE TRIGGER "_CreateHistoryRow"
     AFTER DELETE OR UPDATE ON "Menu"
     FOR EACH ROW
@@ -13358,6 +13541,27 @@ CREATE TRIGGER "_CreateHistoryRow"
     AFTER DELETE OR UPDATE ON "_TaskParameter"
     FOR EACH ROW
     EXECUTE PROCEDURE _cm_trigger_create_card_history_row();
+
+
+
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_ClassMetadata"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+
+
+
+CREATE TRIGGER "_CreateHistoryRow"
+    AFTER DELETE OR UPDATE ON "Map_AccountTemplate"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_create_relation_history_row();
+
+
+
+CREATE TRIGGER "_EmailTemplate_Account_fkey"
+    BEFORE INSERT OR UPDATE ON "_EmailTemplate"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_fk('Account', '"_EmailAccount"', '');
 
 
 
@@ -13740,13 +13944,6 @@ CREATE TRIGGER "_SanityCheck"
 
 
 CREATE TRIGGER "_SanityCheck"
-    BEFORE INSERT OR DELETE OR UPDATE ON "_MdrScopedId"
-    FOR EACH ROW
-    EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
-
-
-
-CREATE TRIGGER "_SanityCheck"
     BEFORE INSERT OR DELETE OR UPDATE ON "User"
     FOR EACH ROW
     EXECUTE PROCEDURE _cm_trigger_sanity_check();
@@ -13799,6 +13996,20 @@ CREATE TRIGGER "_SanityCheck"
     BEFORE INSERT OR DELETE OR UPDATE ON "_Translation"
     FOR EACH ROW
     EXECUTE PROCEDURE _cm_trigger_sanity_check_simple();
+
+
+
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_ClassMetadata"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
+
+
+
+CREATE TRIGGER "_SanityCheck"
+    BEFORE INSERT OR DELETE OR UPDATE ON "Map_AccountTemplate"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_sanity_check();
 
 
 
@@ -13911,6 +14122,13 @@ CREATE TRIGGER "_UpdRef_Workplace_Room"
     AFTER INSERT OR UPDATE ON "Map_RoomWorkplace"
     FOR EACH ROW
     EXECUTE PROCEDURE _cm_trigger_update_reference('Room', '"Workplace"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRef__EmailTemplate_Account"
+    AFTER INSERT OR UPDATE ON "Map_AccountTemplate"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_reference('Account', '"_EmailTemplate"', 'IdObj2', 'IdObj1');
 
 
 
@@ -14373,6 +14591,13 @@ CREATE TRIGGER "_UpdRel_Workplace_Room"
     AFTER INSERT OR UPDATE ON "Workplace"
     FOR EACH ROW
     EXECUTE PROCEDURE _cm_trigger_update_relation('Room', '"Map_RoomWorkplace"', 'IdObj2', 'IdObj1');
+
+
+
+CREATE TRIGGER "_UpdRel__EmailTemplate_Account"
+    AFTER INSERT OR UPDATE ON "_EmailTemplate"
+    FOR EACH ROW
+    EXECUTE PROCEDURE _cm_trigger_update_relation('Account', '"Map_AccountTemplate"', 'IdObj2', 'IdObj1');
 
 
 
