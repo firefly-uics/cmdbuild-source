@@ -1,3 +1,99 @@
+CMDBuild 2.3.0 (released 2015/02/03)
+
+
+NEW FEATURES
+
+ *  RESTful API implementation
+
+ *  Removed unused table "_MdrScopedId"
+
+ *  Better visualization of process status within process instance's history
+
+ *  Enable/Disable toggleGridFilter button from widget configuration
+
+ *  Button to answer to received emails
+
+ *  New HtmlEditor implementation
+
+ *  In widget configuration the Description should be mandatory
+
+ *  WidgetGrid configuration improvements
+
+ *  Improvements to logging for lookup operations
+
+ *  Add Processes in TaskManager Event class ComboBox store
+
+ *  Email template UI implementation
+
+ *  Implementation of Alphabetical order in ComboBoxes
+
+ *  PostgreSQL 8.4 no more supported
+
+
+FIXES
+
+ * Demomode doesn't work anymore
+
+ * Filtered Reference Attribute Lost Data on Edit/Clone
+
+ * View create/modify problems
+
+ * Domains attributes form clear problem
+
+ * Tab "details" is always disabled using IE8
+
+ * Widget createModifyCard on classes
+
+ * Errors on LinkCards selections
+
+ * Task manager - Connector does a wrong quote for table's schema
+
+ * ManageEmail widget regenerates all emails on card field edit
+
+ * Grid widget is unable to load a large number of rows
+
+ * Wrong submit format of date readOnly report parameters
+
+ * Wrong values displayed in widgets windows in ComboBox fields and grid editor fields
+
+ * Not logged routes requests are not managed by CMDBuild
+
+ * _TaskParameter, _EmailAccount, _EmailTemplate are classes with no superclass
+
+ * Process not found when a super-process has no privileges
+
+ * ManageEmail undefined is not a function error
+
+ * No Processes accordion update on create/delete/modify actions
+
+ * In widget configuration the Description should be mandatory
+
+ * Duplicates values in ReferenceFields stores
+
+ * No get card query on subclasses selection
+
+ * WidgeLinkCard card selection problems on window open
+
+ * Session expired before expected
+
+ * On CMDBuild card form initialization all precompiled fields are marked as dirty
+
+ * Starting class combo displays class id
+
+ * Javascript problems on usernames/group descriptions/group name with quotes and double quotes
+
+ * Modal windows could go outside browser viewport
+
+ * Processes properties form has white background
+
+ * No LoadingMask visualization on card grid selection
+
+ * Widget LinkCards hasn't card edit column and card show column
+
+
+
+
+
 CMDBuild 2.2.2 (released 2014/11/17)
 
 
