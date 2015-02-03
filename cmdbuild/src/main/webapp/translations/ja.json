@@ -1,6 +1,6 @@
 {
 	"description": "日本語",
-	"release": "2.3.0 (03/02/2015)",
+	"release": "2.3-dev",
 	"administration": {
 		"description": "アドミニストレーションモジュール",
 		"email": {
