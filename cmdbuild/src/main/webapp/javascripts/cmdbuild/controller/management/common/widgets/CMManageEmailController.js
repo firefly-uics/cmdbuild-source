@@ -14,7 +14,35 @@
 		},
 
 		statics: {
-			WIDGET_NAME: CMDBuild.view.management.common.widgets.email.CMManageEmail.WIDGET_NAME
+			WIDGET_NAME: CMDBuild.view.management.common.widgets.email.CMManageEmail.WIDGET_NAME,
+
+			/**
+			 * Searches for CQL variables resolved by client
+			 *
+			 * @param {String} inspectingVariable - variable where to check presence of CQL variables
+			 * @param {Mixed} inspectingVariableKey - identifier of inspecting variable
+			 * @param {Array} searchedVariablesNames - searched variables names
+			 * @param {Array} foundedKeysArray - where to push keys of variables witch contains CQL
+			 *
+			 * @return {Boolean} found
+			 */
+			searchForCqlClientVariables: function(inspectingVariable, inspectingVariableKey, searchedVariablesNames, foundedKeysArray) {
+				var found = false;
+				var cqlTags = ['{client:', '{cql:', '{xa:', '{js:'];
+
+				for (var y in searchedVariablesNames) {
+					for (var i in cqlTags) {
+						if (
+							inspectingVariable.indexOf(cqlTags[i] + searchedVariablesNames[y]) > -1
+							&& !Ext.Array.contains(foundedKeysArray, inspectingVariableKey)
+						) {
+							foundedKeysArray.push(inspectingVariableKey);
+						}
+					}
+				}
+
+				return found;
+			}
 		},
 
 		/**
@@ -191,6 +219,7 @@
 		 */
 		addEmailFromTemplateIfNeeded: function() {
 			this.checkTemplatesToRegenerate();
+
 			if (
 				(
 					this.thereAreTemplates()
@@ -233,9 +262,12 @@
 					&& !Ext.isObject(variable)
 					&& typeof variable == 'string'
 				) {
-					for (var j in dirtyVariables)
-						if (variable.indexOf('{client:' + dirtyVariables[j]) > -1)
-							dirtyVariables.push(i);
+					this.self.searchForCqlClientVariables(
+						variable,
+						i,
+						dirtyVariables,
+						dirtyVariables
+					);
 				}
 			}
 
@@ -248,39 +280,16 @@
 						var templateAttribute = template[j] || [];
 
 						if (
-							!Ext.isEmpty(templateAttribute)
-							&& !Ext.isObject(templateAttribute)
+							!Ext.isObject(templateAttribute)
 							&& typeof templateAttribute == 'string'
 						) {
-							// Check all types of cql variables that can contains client variables
-							for (var y in dirtyVariables)
-								if (
-									templateAttribute.indexOf('{client:' + dirtyVariables[y]) > -1
-									&& !Ext.Array.contains(this.templatesToRegenerate, template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID])
-								) {
-									this.templatesToRegenerate.push(template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID]);
-								}
-
-								if (
-									templateAttribute.indexOf('{cql:' + dirtyVariables[y]) > -1
-									&& !Ext.Array.contains(this.templatesToRegenerate, template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID])
-								) {
-									this.templatesToRegenerate.push(template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID]);
-								}
-
-								if (
-									templateAttribute.indexOf('{xa:' + dirtyVariables[y]) > -1
-									&& !Ext.Array.contains(this.templatesToRegenerate, template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID])
-								) {
-									this.templatesToRegenerate.push(template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID]);
-								}
-
-								if (
-									templateAttribute.indexOf('{js:' + dirtyVariables[y]) > -1
-									&& !Ext.Array.contains(this.templatesToRegenerate, template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID])
-								) {
-									this.templatesToRegenerate.push(template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID]);
-								}
+							// Check all types of CQL variables that can contains client variables
+							this.self.searchForCqlClientVariables(
+								templateAttribute,
+								template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID],
+								dirtyVariables,
+								this.templatesToRegenerate
+							);
 						}
 					}
 			}
