@@ -43,7 +43,7 @@
 		subSections: [
 			'baseTranslations', // Default
 			'advancedTranslations',
-			'advancedTranslationsGrid'
+			'advancedTranslationsTable'
 		],
 
 		/**
@@ -95,10 +95,10 @@ _debug('parameters', parameters);
 						this.advancedTranslationsController.onViewOnFront();
 					} break;
 
-					case 'advancedTranslationsGrid': {
-						formViewItem = Ext.create('CMDBuild.view.administration.localizations.AdvancedTranslationsGridPanel');
+					case 'advancedTranslationsTable': {
+						formViewItem = Ext.create('CMDBuild.view.administration.localizations.AdvancedTranslationsTablePanel');
 
-						this.advancedTranslationsGridController = Ext.create('CMDBuild.controller.administration.localizations.AdvancedTranslationsGrid', formViewItem);
+						this.advancedTranslationsGridController = Ext.create('CMDBuild.controller.administration.localizations.AdvancedTranslationsTable', formViewItem);
 						this.advancedTranslationsGridController.parentDelegate = this;
 						this.advancedTranslationsGridController.onViewOnFront();
 					} break;

@@ -32,7 +32,7 @@
 					iconCls: 'cmdbuild-tree-localization-icon'
 				},
 				{
-					id: 'advancedTranslationsGrid',
+					id: 'advancedTranslationsTable',
 					cmName: 'localizations',
 					leaf: true,
 					text: '@@ Advanced translations table',
