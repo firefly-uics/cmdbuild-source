@@ -13,6 +13,21 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @property {CMDBuild.controller.administration.localizations.AdvancedTranslations}
+		 */
+		advancedTranslationsController: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.localizations.AdvancedTranslationsGrid}
+		 */
+		advancedTranslationsGridController: undefined,
+
+		/**
+		 * @property {CMDBuild.controller.administration.localizations.BaseTranslations}
+		 */
+		baseTranslationsController: undefined,
+
+		/**
 		 * @cfg {CMDBuild.view.administration.tasks.CMTasksForm}
 		 */
 		form: undefined,
@@ -52,10 +67,12 @@
 			// Handlers exchange and controller setup
 			this.view = view;
 			this.view.delegate = this;
-			_debug(this.view);
+_debug(this.view);
 		},
 
 		/**
+		 * Setup view items and controllers on accordion click
+		 *
 		 * @param {CMDBuild.view.common.CMAccordionStoreModel} parameters
 		 *
 		 * @override
@@ -63,40 +80,41 @@
 		onViewOnFront: function(parameters) {
 			if (!Ext.Object.isEmpty(parameters)) {
 _debug('parameters', parameters);
-				this.subSection = Ext.Array.contains(this.subSections, parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID))
+				var formViewItem = undefined;
+				var subSection = Ext.Array.contains(this.subSections, parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID))
 					? parameters.get(CMDBuild.core.proxy.CMProxyConstants.ID) : this.subSections[0];
 
 				this.view.wrapper.removeAll(true);
 
-				switch(this.subSection) {
+				switch(subSection) {
 					case 'advancedTranslations': {
-						this.setViewTitle('@@ Advanced translations');
-						this.view.wrapper.add(
-							Ext.create('CMDBuild.view.administration.localizations.AdvancedTranslationsPanel', {
-								delegate: this
-							})
-						);
+						formViewItem = Ext.create('CMDBuild.view.administration.localizations.AdvancedTranslationsPanel');
+
+						this.advancedTranslationsController = Ext.create('CMDBuild.controller.administration.localizations.AdvancedTranslations', formViewItem);
+						this.advancedTranslationsController.parentDelegate = this;
+						this.advancedTranslationsController.onViewOnFront();
 					} break;
 
 					case 'advancedTranslationsGrid': {
-						this.setViewTitle('@@ Base translations table');
-						this.view.wrapper.add(
-							Ext.create('CMDBuild.view.administration.localizations.AdvancedTranslationsGrid', {
-								delegate: this
-							})
-						);
+						formViewItem = Ext.create('CMDBuild.view.administration.localizations.AdvancedTranslationsGridPanel');
+
+						this.advancedTranslationsGridController = Ext.create('CMDBuild.controller.administration.localizations.AdvancedTranslationsGrid', formViewItem);
+						this.advancedTranslationsGridController.parentDelegate = this;
+						this.advancedTranslationsGridController.onViewOnFront();
 					} break;
 
 					case 'baseTranslations':
 					default: {
-						this.setViewTitle('@@ Base translations');
-						this.view.wrapper.add(
-							Ext.create('CMDBuild.view.administration.localizations.BaseTranslationsPanel', {
-								delegate: this
-							})
-						);
+						formViewItem = Ext.create('CMDBuild.view.administration.localizations.BaseTranslationsPanel');
+
+						this.baseTranslationsController = Ext.create('CMDBuild.controller.administration.localizations.BaseTranslations', formViewItem);
+						this.baseTranslationsController.parentDelegate = this;
+						this.baseTranslationsController.onViewOnFront();
 					}
 				}
+
+				this.view.wrapper.add(formViewItem);
+
 _debug('this.view.wrapper', this.view.wrapper);
 				this.callParent(arguments);
 			}

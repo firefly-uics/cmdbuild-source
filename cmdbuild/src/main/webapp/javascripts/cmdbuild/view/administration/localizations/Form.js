@@ -8,7 +8,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.localizations.Main}
+		 * @cfg {Mixed}
 		 */
 		delegate: undefined,
 

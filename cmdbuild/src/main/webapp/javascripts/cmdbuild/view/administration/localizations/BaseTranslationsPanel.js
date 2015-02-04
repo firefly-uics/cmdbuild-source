@@ -8,6 +8,11 @@
 			'CMDBuild.core.proxy.Localizations'
 		],
 
+		/**
+		 * @cfg {CMDBuild.controller.administration.localizations.BaseTranslations}
+		 */
+		delegate: undefined,
+
 		border: false,
 		layout: 'vbox',
 		frame: true,
@@ -23,19 +28,24 @@
 				title: '@@ Language configuration',
 				overflowY: 'auto',
 
+				layout: {
+					type: 'vbox',
+					align:'stretch'
+				},
+
 				defaults: {
 					labelWidth: CMDBuild.LABEL_WIDTH,
-					maxWidth: CMDBuild.ADM_BIG_FIELD_WIDTH,
-					anchor: '100%'
+					maxWidth: CMDBuild.MEDIUM_FIELD_WIDTH
 				},
 
 				items: [
 					{
-						fieldLabel: '@@ Default language',
 						xtype: 'combobox',
-						name: 'language',
-						valueField: 'name',
-						displayField: 'value',
+						fieldLabel: '@@ Default language',
+						name: '@@ language',
+						valueField: CMDBuild.core.proxy.CMProxyConstants.NAME,
+						displayField: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+
 						forceSelection: true,
 						editable: false,
 
@@ -43,9 +53,9 @@
 						queryMode: 'local',
 					},
 					{
-						fieldLabel: '@@ Show language choice',
 						xtype: 'checkbox',
-						name: 'languageprompt'
+						fieldLabel: '@@ Show language choice',
+						name: '@@ languageprompt'
 					}
 				]
 			});
@@ -53,7 +63,6 @@
 			this.enabledLanguagesFieldset = Ext.create('Ext.form.FieldSet', {
 				title: '@@ Enabled languages',
 				overflowY: 'auto',
-				padding: '0 5',
 
 				items: [
 					Ext.create('CMDBuild.view.administration.localizations.panels.LanguagesGrid')
