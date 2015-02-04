@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.localizations.AdvancedTranslationsGridPanel', {
+	Ext.define('CMDBuild.view.administration.localizations.AdvancedTranslationsTablePanel', {
 		extend: 'Ext.tab.Panel',
 
 		requires: [
@@ -8,10 +8,11 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.localizations.AdvancedTranslationsGrid}
+		 * @cfg {CMDBuild.controller.administration.localizations.AdvancedTranslationsTable}
 		 */
 		delegate: undefined,
 
+		activeTab: 0,
 		border: false,
 		frame: true
 	});
