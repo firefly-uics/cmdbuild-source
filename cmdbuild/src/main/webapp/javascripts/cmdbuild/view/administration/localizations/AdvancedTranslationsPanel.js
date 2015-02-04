@@ -4,12 +4,15 @@
 		extend: 'Ext.panel.Panel',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.Localizations'
+//			'CMDBuild.core.proxy.CMProxyConstants' // TODO
 		],
 
+		/**
+		 * @cfg {CMDBuild.controller.administration.localizations.AdvancedTranslations}
+		 */
+		delegate: undefined,
+
 		border: false,
-		layout: 'vbox',
 		frame: true,
 		overflowY: 'auto',
 
@@ -25,18 +28,38 @@
 				padding: '0 5',
 
 				items: [
-					Ext.create('CMDBuild.view.administration.localizations.LanguagesGrid')
+					Ext.create('CMDBuild.view.administration.localizations.panels.LanguagesGrid')
 				]
 			});
 
+			this.importPanel = Ext.create('CMDBuild.view.administration.localizations.panels.ImportPanel');
+			this.exportPanel = Ext.create('CMDBuild.view.administration.localizations.panels.ExportPanel');
+
 			this.importExportFieldset = Ext.create('Ext.form.FieldSet', {
-				title: '@@ Languages to show in table',
+				title: '@@ Import/Export',
 				overflowY: 'auto',
 				padding: '0 5',
 
+				layout: 'hbox',
+
 				items: [
-					Ext.create('CMDBuild.view.administration.localizations.panels.ImportFieldSet'),
-					Ext.create('CMDBuild.view.administration.localizations.panels.ExportFieldSet')
+					{
+						xtype: 'fieldset',
+						title: '@@ Import',
+						flex: 1,
+						overflowY: 'auto',
+
+						items: [this.importPanel]
+					},
+					{ xtype: 'splitter' },
+					{
+						xtype: 'fieldset',
+						title: '@@ Export',
+						flex: 1,
+						overflowY: 'auto',
+
+						items: [this.exportPanel]
+					}
 				]
 			});
 
