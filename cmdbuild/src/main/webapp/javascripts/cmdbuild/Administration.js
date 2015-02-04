@@ -18,7 +18,7 @@
 		extend: 'Ext.app.Application',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConfiguration',
+			'CMDBuild.core.proxy.Configuration',
 			'CMDBuild.core.proxy.Report'
 		],
 
@@ -39,7 +39,7 @@
 				CMDBuild.view.CMMainViewport.showSplash(forCredits, administration);
 
 				// Get server language
-				CMDBuild.core.proxy.CMProxyConfiguration.getLanguage({
+				CMDBuild.core.proxy.Configuration.getLanguage({
 					success: function(result, options, decodedResult) {
 						CMDBuild.Config[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE] = decodedResult[CMDBuild.core.proxy.CMProxyConstants.LANGUAGE];
 					}
