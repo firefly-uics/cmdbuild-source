@@ -43,8 +43,8 @@
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConstants.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyUrlIndex.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxy.js"></script>
+		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Configuration.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxySetup.js"></script>
-		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/CMProxyConfiguration.js"></script>
 		<script type="text/javascript" src="javascripts/cmdbuild/core/proxy/Localizations.js"></script>
 
 		<script type="text/javascript" src="javascripts/cmdbuild/view/common/field/CMIconCombo.js"></script>

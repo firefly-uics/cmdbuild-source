@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.CMProxyConfiguration', {
+	Ext.define('CMDBuild.core.proxy.Configuration', {
 		alternateClassName: 'CMDBuild.ServiceProxy.configuration', // Legacy class name
 
 		requires: [

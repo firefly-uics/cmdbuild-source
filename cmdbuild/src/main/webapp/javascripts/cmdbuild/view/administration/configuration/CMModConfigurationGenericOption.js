@@ -10,8 +10,8 @@
 		configFileName: 'cmdbuild',
 
 		requires: [
-			'CMDBuild.core.proxy.CMProxyConfiguration',
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Configuration'
 		],
 
 		title: tr.title,
@@ -44,7 +44,7 @@
 								displayField: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
 								editable: false,
 
-								store: CMDBuild.core.proxy.CMProxyConfiguration.getStartingClassStore(),
+								store: CMDBuild.core.proxy.Configuration.getStartingClassStore(),
 								queryMode: 'local'
 							}),
 							{
