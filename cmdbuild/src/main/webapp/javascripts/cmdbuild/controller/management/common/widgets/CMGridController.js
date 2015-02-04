@@ -266,6 +266,7 @@
 		 * @return {Object}
 		 */
 		buildColumnsForAttributes: function() {
+			var me = this;
 			var headers = [];
 			var fields = [];
 			var classId = this.classType.get(CMDBuild.core.proxy.CMProxyConstants.ID);
@@ -276,12 +277,28 @@
 			for (var i = 0; i < this.getCardAttributes().length; i++) {
 				var attribute = this.getCardAttributes()[i];
 				var attributesMap = CMDBuild.Management.FieldManager.getAttributesMap();
+				var editor = {};
 				var header = CMDBuild.Management.FieldManager.getHeaderForAttr(attribute);
 
-				// TODO: hack to bypass CMDBuild.Management.FieldManager.getFieldForAttr() control to check if return DisplayField
-				// (correct way "var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);")
-				var editor = attributesMap[attribute.type].buildField(attribute, false, false);
+				if (attribute.type == 'REFERENCE') { // TODO: hack to force a templateResolver buid for editor that haven't a form associated like other fields types
+					var xaVars = CMDBuild.Utils.Metadata.extractMetaByNS(attribute.meta, "system.template.");
+					xaVars["_SystemFieldFilter"] = attribute.filter;
 
+					var templateResolver = new CMDBuild.Management.TemplateResolver({
+						clientForm: me.clientForm,
+						xaVars: xaVars,
+						serverVars: this.getTemplateResolverServerVars()
+					});
+
+					editor = CMDBuild.Management.ReferenceField.buildEditor(attribute, templateResolver);
+
+					if (!Ext.Object.isEmpty(editor) && typeof editor.resolveTemplate == 'function')
+						editor.resolveTemplate();
+				} else {
+					// TODO: hack to bypass CMDBuild.Management.FieldManager.getFieldForAttr() control to check if return DisplayField
+					// (correct way "var editor = CMDBuild.Management.FieldManager.getCellEditorForAttribute(attribute);")
+					editor = attributesMap[attribute.type].buildField(attribute, false, false);
+				}
 				editor.hideLabel = true;
 
 				if (header) {
