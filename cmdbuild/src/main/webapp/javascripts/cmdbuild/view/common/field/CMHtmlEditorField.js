@@ -1,17 +1,12 @@
 (function() {
 
 	Ext.define('CMDBuild.view.common.field.CMHtmlEditorField', {
-		extend: 'Ext.ux.form.TinyMCE.TinyMCETextArea',
+		extend: 'Ext.ux.form.field.TinyMCE',
 
 		/**
 		 * @cfg {Mixed} object or string
 		 */
 		tinyMCEConfig: undefined,
-
-		/**
-		 * @cfg {String}
-		 */
-		disableCssClass: 'disable',
 
 		/**
 		 * Custom CMDBuild buttons configurations to use
@@ -30,7 +25,10 @@
 				// Original value is 23, hard coded. With 23 the editor calculates the height wrong.
 				// With these settings, you can do the fine tuning of the height by the initialization.
 				theme_advanced_row_height: 27,
-				delta_height: 1
+				delta_height: 1,
+				width: '100%',
+				theme_advanced_resizing: false,
+				theme_advanced_resize_horizontal: false
 			},
 
 			full: {
@@ -81,47 +79,7 @@
 				var extVersion = CMDBuild.core.Utils.getExtJsVersion();
 
 				this.tinyMCEConfig.skin_variant = 'silver';
-				this.tinyMCEConfig.popup_css = 'javascripts/ext-' + extVersion + '-ux/form/TinyMCE/src/themes/advanced/skins/extjs/dialog_silver.css';
-			}
-
-			this.callParent(arguments);
-		},
-
-		/**
-		 * Custom function to disable all editor items
-		 *
-		 * @override
-		 */
-		disable: function() {
-			// Disable iframe editor body
-			if (tinymce.get(this.getInputId())) {
-				var edIframe = Ext.get(this.getInputId() + '_ifr');
-				var domElClasses = edIframe.dom.contentDocument.body.className.split(' ');
-
-				if (!Ext.Array.contains(domElClasses, this.disableCssClass)) {
-					domElClasses.push(this.disableCssClass);
-					edIframe.dom.contentDocument.body.className = domElClasses.join(' ');
-				}
-			}
-
-			this.callParent(arguments);
-		},
-
-		/**
-		 * Custom function to enable all editor items
-		 *
-		 * @override
-		 */
-		enable: function() {
-			// Enable iframe editor body
-			if (tinymce.get(this.getInputId())) {
-				var edIframe = Ext.get(this.getInputId() + '_ifr');
-				var domElClasses = edIframe.dom.contentDocument.body.className.split(' ');
-
-				if (Ext.Array.contains(domElClasses, this.disableCssClass)) {
-					Ext.Array.remove(domElClasses, this.disableCssClass);
-					edIframe.dom.contentDocument.body.className = domElClasses.join(' ');
-				}
+				this.tinyMCEConfig.popup_css = 'javascripts/ext-' + extVersion + '-ux/form/field/tinymce/themes/advanced/skins/extjs/dialog_silver.css';
 			}
 
 			this.callParent(arguments);
