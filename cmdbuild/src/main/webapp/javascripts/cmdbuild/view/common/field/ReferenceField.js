@@ -30,6 +30,28 @@
                 } else {
                     return field;
                 }
+            },
+
+            /**
+             * Custom function to force a manual instantiation of templateResolver to hack a problem of this fields structure type
+             *
+             * @param {Object} attribute
+             * @param {CMDBuild.Management.TemplateResolver} templateResolver
+             *
+             * @return {CMDBuild.Management.ReferenceField.Field} field
+             *
+             * TODO: refactor all field building implementations
+             */
+            buildEditor: function(attribute, templateResolver) {
+            	templateResolver = templateResolver || null;
+                var extraFieldConf = extraFieldConf || {};
+
+                var field = Ext.create("CMDBuild.Management.ReferenceField.Field", Ext.apply(extraFieldConf,{
+                    attribute: attribute,
+                    templateResolver: templateResolver
+                }));
+
+                return field;
             }
         }
     });
