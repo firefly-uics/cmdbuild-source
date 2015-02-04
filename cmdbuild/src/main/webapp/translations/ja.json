@@ -17,7 +17,7 @@
 				"incoming": "受信",
 				"incomingFolder": "受信フォルダー",
 				"isDefault": "既定",
-				"modify": "アカウントの修正",
+				"modify": "アカウントの変更",
 				"outgoing": "送信",
 				"password": "パスワード",
 				"processedFolder": "処理済みフォルダー",
@@ -32,12 +32,12 @@
 			"templates": {
 				"add": "テンプレートを追加",
 				"body": "本文",
-				"modify": "テンプレートを修正",
+				"modify": "テンプレートを変更",
 				"remove": "テンプレートを削除",
 				"template": "テンプレート",
 				"title": "テンプレート",
 				"valuesWindow": {
-					"title": "<em>Edit values</em>",
+					"title": "値を編集",
 				}
 			}
 		},
@@ -72,7 +72,7 @@
 				"isnotnull": "必須",
 				"isunique": "ユニーク",
 				"length": "長さ",
-				"lookup": "検索",
+				"lookup": "ルックアップ",
 				"meta": {
 					"add": "メタ追加",
 					"key": "キー",
@@ -80,7 +80,7 @@
 					"title": "メタデータ編集",
 					"value": "値"
 				},
-				"modify_attribute": "属性修正",
+				"modify_attribute": "属性変更",
 				"msg_warning_drop_row": "再並び替えは継承属性が表示されている場合のみ有効です",
 				"name": "名前",
 				"not_in_use": "未使用",
@@ -127,10 +127,10 @@
 				"m_d": "M/D",
 				"master_detail": "マスタ/ディテール",
 				"md_label": "マスタ/ディテールラベル",
-				"modify_domain": "ドメイン修正",
+				"modify_domain": "ドメイン変更",
 				"name": "名前",
 				"title_add": "ドメイン追加",
-				"title_modify": "ドメイン \"{0}\"の修正"
+				"title_modify": "ドメイン \"{0}\"の変更"
 			},
 			"domains_title": "ドメイン管理",
 			"errors": {
@@ -224,10 +224,10 @@
 				".CreateModifyCard": {
 					"fields": {
 						"target": "ターゲットクラス",
-						"cql": "カード CQL 選択",
+						"cql": "カードCQL選択",
 						"readOnly": "読み取り専用"
 					},
-					"title": "カードの作成または修正"
+					"title": "カードの作成または変更"
 				},
 				"commonFields": {
 					"active": "アクティブ",
@@ -251,7 +251,7 @@
 				},
 				"buttons": {
 					"add": "追加",
-					"modify": "修正",
+					"modify": "変更",
 					"remove": "削除",
 					"preview": "プレビュー"
 				},
@@ -307,7 +307,7 @@
 					"freeString": "任意の文字列",
 					"group": "現在のグループ",
 					"lookup": "ルックアップから選択",
-					"user": "現在のユーザ"
+					"user": "現在のユーザー"
 				}
 			},
 			"layout": {
@@ -317,7 +317,7 @@
 			},
 			"properties": {
 				"add": "ダッシュボード追加",
-				"modify": "タッシュボード修正",
+				"modify": "タッシュボード変更",
 				"remove": "ダッシュボード削除",
 				"fields": {
 					"name": "名前",
@@ -354,7 +354,7 @@
 				"active": "アクティブ",
 				"delete_lookuptype": "ルックアップタイプ削除",
 				"description": "説明",
-				"modify_lookuptype": "ルックアップタイプ更新",
+				"modify_lookuptype": "ルックアップタイプ変更",
 				"parent": "親",
 				"title": "ルックアップ管理"
 			},
@@ -391,7 +391,7 @@
 				"download_xpdl_tamplete": "XPDL テンプレートダウンロード",
 				"package_version": "バージョン",
 				"process_name": "プロセス名",
-				"user_stoppable": "ユーザによる中断可能"
+				"user_stoppable": "ユーザーによる中断可能"
 			},
 			"xpdlUpload": {
 				"deleted_image": "スケッチファイルは、削除されました。XPDLファイルとは同期されません。",
@@ -407,7 +407,7 @@
 		"modcartography": {
 			"external_services": {
 				"admin_password": "管理者パスワード",
-				"admin_user": "管理者ユーザ名",
+				"admin_user": "管理者ユーザー名",
 				"description": {
 					"geoserver": "Geoサーバ",
 					"google": "Googleマップ",
@@ -423,7 +423,7 @@
 				"add_layer": "レイヤ追加",
 				"delete_layer": "レイヤ削除",
 				"file": "ファイル",
-				"modify_layer": "レイヤ更新",
+				"modify_layer": "レイヤ変更",
 				"service_not_available": "Geoサーバは、利用できません。利用するにはこちらへ {0}",
 				"title": "Geoサーバレイヤ"
 			},
@@ -461,7 +461,7 @@
 			"custom_menus": "カスタムメニュー",
 			"delete_menu": "メニュー削除",
 			"menu_root": "メニュー",
-			"modify_menu": "メニュー更新",
+			"modify_menu": "メニュー変更",
 			"new_folder": "新しいフォルダ",
 			"title": "メニュー管理"
 		},
@@ -485,7 +485,7 @@
 				"success": {
 					"description": {
 						"add": "インポート完了",
-						"modify": "レポート更新完了"
+						"modify": "レポート変更完了"
 					},
 					"title": "成功"
 				}
@@ -493,7 +493,7 @@
 			"importOpenofficeTemplateForm": {
 				"menuTitle": "オープンオフィス　レポート"
 			},
-			"modify": "レポート更新",
+			"modify": "レポート変更",
 			"remove": "レポート削除",
 			"title": "レポート"
 		},
@@ -502,21 +502,21 @@
 			"group": {
 				"add_group": "グループ追加",
 				"administrator": "アドミニストレータ",
-				"availableusers": "利用可能なユーザ",
+				"availableusers": "利用可能なユーザー",
 				"delete_group": "グループ無効化",
 				"email": "電子メール",
 				"enable_group": "グループの有効化",
 				"group_description": "説明",
 				"group_name": "グループ名",
-				"groupchoice": "ルックアップユーザ",
+				"groupchoice": "ルックアップユーザー",
 				"is_active": "アクティブ",
 				"is_administrator": "はアドミニストレータ",
 				"limited_admin": "制限されたアドミニストレータ",
-				"modify_group": "グループ修正",
+				"modify_group": "グループ変更",
 				"normal": "通常",
 				"starting_class": "初期ページ",
 				"title": "グループ管理",
-				"usermanagement": "関連ユーザ管理"
+				"usermanagement": "関連ユーザー管理"
 			},
 			"groups": "グループ",
 			"privilege": {
@@ -533,7 +533,7 @@
 				"permissions": "許可",
 				"properties": "プロパティ"
 			},
-			"title": "ユーザとグループ",
+			"title": "ユーザーとグループ",
 			"uiconfiguration": {
 				"disabled_class_tabs": "クラスモジュールでは無効なタブ",
 				"disabled_modules": "無効なモジュール",
@@ -549,26 +549,26 @@
 				"title": "UIの構成"
 			},
 			"user": {
-				"add_user": "ユーザ追加",
+				"add_user": "ユーザー追加",
 				"availablegroups": "可能なグループ",
 				"change_password": "パスワード変更",
 				"confirmation": "確認",
 				"defaultgroup": "既定のグループ",
 				"defaultonlogin": "* ログイン *",
 				"description": "説明",
-				"disable_user": "無効なユーザ",
+				"disable_user": "無効なユーザー",
 				"email": "電子メール",
-				"enable_user": "可能なユーザ",
-				"groupmanagement": "ユーザグループ管理",
+				"enable_user": "可能なユーザー",
+				"groupmanagement": "ユーザーグループ管理",
 				"isactive": "アクティブ",
-				"modify_user": "ユーザ更新",
+				"modify_user": "ユーザー更新",
 				"password": "パスワード",
-				"title": "ユーザ管理",
-				"user_info": "ユーザ情報",
+				"title": "ユーザー管理",
+				"user_info": "ユーザー情報",
 				"usergroups": "グループ",
-				"username": "ユーザ名"
+				"username": "ユーザー名"
 			},
-			"users": "ユーザ"
+			"users": "ユーザー"
 		},
 		"setup": {
 			"cmdbuild": {
@@ -576,7 +576,7 @@
 				"fieldsetgeneraltitle": "一般",
 				"fieldsetlanguageltitle": "言語",
 				"fieldsetpopupwindowtitle": "ポップアップウインドウ",
-				"instancename": "インスタンプ名",
+				"instancename": "インスタンス名",
 				"language": "既定の言語",
 				"languagePrompt": "言語選択",
 				"menuTitle": "一般オプション",
@@ -598,7 +598,7 @@
 				"categoryLookup": "CMDBuild カテゴリ",
 				"credential": "資格",
 				"credentialPassword": "パスワード",
-				"credentialUser": "ユーザ名",
+				"credentialUser": "ユーザー名",
 				"delay": "オペレーション遅延",
 				"enabled": "有効",
 				"fileserver": "ファイルサーバ",
@@ -652,7 +652,7 @@
 				"password": "パスワード",
 				"scope": "スコープ",
 				"title": "ワークフローエンジン",
-				"user": "ユーザ名"
+				"user": "ユーザー名"
 			}
 		},
 		"tasks": {
@@ -679,7 +679,7 @@
 					"emptyReferenceLevelMapping": "リファレンスレベルマッピングテーブルは、正しく入力されている必要があります。"
 				}
 			},
-			"modify": "タスクを修正",
+			"modify": "タスクを変更",
 			"notificationForm": {
 				"account": "アカウント",
 				"template": "電子メールテンプレート",
@@ -769,7 +769,7 @@
 	"bimMod": {
 		"administration": {
 			"projects": {
-				"importIfc": "<em>Import IFC</em>"
+				"importIfc": "IFCをインポート"
 			}
 		}
 	},
@@ -814,7 +814,7 @@
 			"classes": "クラスをロード中",
 			"configuration": "ロードの設定",
 			"domain": "ドメインロード中",
-			"group": "ユーザとグループをロード中",
+			"group": "ユーザーとグループをロード中",
 			"lookup": "ルックアップタイプをロード中",
 			"menu": "メニューをロード中",
 			"report": "レポートをロード中",
@@ -843,8 +843,8 @@
 			"process": "アクティビティ",
 			"simpletable": "単純"
 		},
-		"unknown_error": "不明のエラー",
-		"user": "ユーザ",
+		"unknown_error": "不明なエラー",
+		"user": "ユーザー",
 		"wait_msg": "データ送信中...",
 		"wait_title": "お待ちください..."
 	},
@@ -873,19 +873,19 @@
 			"db_host": "ホスト",
 			"db_password": "パスワード",
 			"db_port": "ポート",
-			"db_superUser": "スーパーユーザ",
+			"db_superUser": "スーパーユーザー",
 			"db_test_connection": "テスト接続",
 			"db_type": "データベースタイプ",
-			"db_user": "ユーザ",
-			"db_user_create": "データベースユーザの作成",
-			"limited_user": "制限付きユーザ",
+			"db_user": "ユーザー",
+			"db_user_create": "データベースユーザーの作成",
+			"limited_user": "制限付きユーザー",
 			"msg": {
 				"msg": "接続成功",
 				"pswnomatch": "パスワードが一致しません",
 				"title": "テスト接続"
 			},
-			"new_limited_user": "制限付きユーザ作成",
-			"user_type": "ユーザタイプ"
+			"new_limited_user": "制限付きユーザー作成",
+			"user_type": "ユーザータイプ"
 		},
 		"step3": {
 			"admin": "管理者アカウント",
@@ -910,7 +910,7 @@
 	"errors": {
 		"busy_wf_widgets": "画面コントロールがビジーです、再実行する前にサーバのステータスをチェックください。",
 		"detail": "詳細",
-		"domainCardinalityViolation": "<em>Domain cardinality violation</em>",
+		"domainCardinalityViolation": "ドメインカーディナリティ違反",
 		"error_message": "エラー",
 		"error_moving_row": "行の移動時にエラーが発生しました",
 		"invalid_attributes": "これらのフィールドには正しくデータが格納されていません:",
@@ -923,12 +923,12 @@
 			"AUTH_CLASS_NOT_AUTHORIZED": "クラス{0}へアクセスする十分な権限がありません",
 			"AUTH_DEMO_MODE": "デモモードでは許可されていません",
 			"AUTH_DOMAIN_NOT_AUTHORIZED": "ドメイン{0}にアクセスする十分な権限がありません",
-			"AUTH_LOGIN_WRONG": "ユーザ名またはパスワードに誤りがあります",
-			"AUTH_MULTIPLE_GROUPS": "ユーザは複数のグループに参加しています",
+			"AUTH_LOGIN_WRONG": "ユーザー名またはパスワードに誤りがあります",
+			"AUTH_MULTIPLE_GROUPS": "ユーザーは複数のグループに参加しています",
 			"AUTH_NOT_AUTHORIZED": "権限がない操作",
 			"AUTH_NOT_CONFIGURED": "認証設定のエラー",
-			"AUTH_NOT_LOGGED_IN": "ユーザはログインしていません",
-			"AUTH_NO_GROUPS": "ユーザはどのグループにも参加していません",
+			"AUTH_NOT_LOGGED_IN": "ユーザーはログインしていません",
+			"AUTH_NO_GROUPS": "ユーザーはどのグループにも参加していません",
 			"AUTH_UNKNOWN_GROUP": "誤ったグループ",
 			"AUTH_WRONG_PASSWORD": "誤ったパスワード",
 			"CARD_NOTFOUND": "{0}中にはカードは見つかりません",
@@ -942,14 +942,14 @@
 			"DMS_UPDATE_ERROR": "添付のアップデートに失敗しました",
 			"DOMAIN_NOTFOUND": "ドメイン{0}は在りません",
 			"ILLEGAL_CRON_EXPRESSION": "不正なクローン表示",
-			"LOCKED_CARD": "ユーザ {0} は、{1} 秒カードを編集しています。",
+			"LOCKED_CARD": "ユーザー {0} は、{1} 秒カードを編集しています。",
 			"LOOKUP_NOTFOUND": "タイプ{0}でのルックアップは見つかりません",
 			"LOOKUP_TYPE_NOTFOUND": "ルックアップタイプ{0} は見つかりません",
 			"MENU_NOTFOUND": "メニューが見つかりません",
 			"NOTFOUND": "アイテムが見つかりません",
 			"ORM_AMBIGUOUS_DIRECTION": "リレーションの方向は自動的には決まりません",
 			"ORM_CANT_CREATE_DATABASE": "データベースを作成できません",
-			"ORM_CANT_CREATE_USER": "ユーザを作成できませんr",
+			"ORM_CANT_CREATE_USER": "ユーザーを作成できませんr",
 			"ORM_CANT_DELETE_CARD_WITH_RELATION": "リレーションを持つカードは削除できません",
 			"ORM_CHANGE_LOOKUPTYPE_ERROR": "ルックアップタイプは変更できません",
 			"ORM_CONTAINS_DATA": "レコードを含むクラス、テーブルの属性、ドメインは削除できません",
@@ -960,20 +960,20 @@
 			"ORM_DOMAIN_HAS_REFERENCE": "参照されているドメインが見つかりません",
 			"ORM_DUPLICATE_ATTRIBUTE": "この属性は既に存在しています",
 			"ORM_DUPLICATE_TABLE": "この名前をもつクラスは既に存在しています",
-			"ORM_DUPLICATE_USER": "このユーザ名はすでに存在しています",
+			"ORM_DUPLICATE_USER": "このユーザー名はすでに存在しています",
 			"ORM_ERROR_CARD_SELECT": "カードを探すことが出来ません",
 			"ORM_ERROR_CARD_UPDATE": "カードを更新出来ません",
 			"ORM_ERROR_DOMAIN_CREATE": "ドメインを作成できません",
 			"ORM_ERROR_DOMAIN_DELETE": "ドメインを削除できません",
-			"ORM_ERROR_DOMAIN_MODIFY": "ドメインを修正できません",
+			"ORM_ERROR_DOMAIN_MODIFY": "ドメインを変更できません",
 			"ORM_ERROR_GENERIC_SQL": "SQL エラー: {0}",
 			"ORM_ERROR_GETTING_PK": "主キーを取得できません",
 			"ORM_ERROR_INCOMPATIBLE_CLASS": "不整合クラス: {0}",
 			"ORM_ERROR_LOOKUP_CREATE": "ルックアップを作成できません",
 			"ORM_ERROR_LOOKUP_DELETE": "ルックアップを削除できません",
-			"ORM_ERROR_LOOKUP_MODIFY": "ルックアップを修正できません",
+			"ORM_ERROR_LOOKUP_MODIFY": "ルックアップを変更できません",
 			"ORM_ERROR_RELATION_CREATE": "リレーションを作成できません",
-			"ORM_ERROR_RELATION_MODIFY": "リレーションを修正できません",
+			"ORM_ERROR_RELATION_MODIFY": "リレーションを変更できません",
 			"ORM_FILTER_CONFLICT": "フィルタの定義が競合しています",
 			"ORM_FULLCARDS_MULTIPLEDOMAINS": "多ドメインのすべてのカードを取得できません",
 			"ORM_GENERIC_ERROR": "データのロード／保存時にエラーが発生しました",
@@ -992,7 +992,7 @@
 			"ORM_TABLE_HAS_DOMAIN": "ドメインを持つクラスは削除できません",
 			"ORM_TYPE_ERROR": "タイプが一致しません",
 			"ORM_UNIQUE_VIOLATION": "ユニーク制約違反",
-			"OUT_OF_DATE_PROCESS": "プロセスは一致しませんでした、リストを再ロード",
+			"OUT_OF_DATE_PROCESS": "プロセスは一致しませんでした。リストを再ロード",
 			"PARAMETER_CLASS_UNAVAILABLE": "Java クラス {0} のインスタンスを作成できません",
 			"PRIVILEGE_GROUP_NOTFOUND": "グループ {0} の権限が見つかりません",
 			"PRIVILEGE_NOTFOUND": "クラス {1} 上のグループ {0} の権限が見つかりません。",
@@ -1016,24 +1016,24 @@
 			"SCHEDULER_INTERNAL_ERROR": "スケジューラ内部エラー: {0}",
 			"SERVICE_UNAVAILABLE": "サービスが利用できません",
 			"WF_CANNOT_ABORT_PROCESS": "プロセスを中止出来ません",
-			"WF_CANNOT_ACCEPT_WORKITEM": "ユーザアクティビティを受け入れできません",
-			"WF_CANNOT_COMPLETE_WORKITEM": "ユーザアクティビティを完了出来ません",
+			"WF_CANNOT_ACCEPT_WORKITEM": "ユーザーアクティビティを受け入れできません",
+			"WF_CANNOT_COMPLETE_WORKITEM": "ユーザーアクティビティを完了出来ません",
 			"WF_CANNOT_CONFIGURE_CMDBEXTATTR": "拡張属性 {0} を設定出来ません",
 			"WF_CANNOT_FIND_XPDL": "XPDL 定義が見つかりません",
 			"WF_CANNOT_GETWAPI_CONNECTION": "ワークフローエンジンへの接続を取得出来ません",
 			"WF_CANNOT_GET_PROCESSCARDID": "プロセスカードid を取得出来ません",
 			"WF_CANNOT_GET_PROCESS_VARIABLES": "プロセス変数を取得出来ません",
-			"WF_CANNOT_GET_WORKITEM": "ユーザアクティビティを取得出来ません",
-			"WF_CANNOT_GET_WORKITEMS": "ユーザアクティビティリストを取得出来ません",
-			"WF_CANNOT_GET_WORKITEM_VARIABLES": "ユーザアクティビティ変数を取得出来ません",
+			"WF_CANNOT_GET_WORKITEM": "ユーザーアクティビティを取得出来ません",
+			"WF_CANNOT_GET_WORKITEMS": "ユーザーアクティビティリストを取得出来ません",
+			"WF_CANNOT_GET_WORKITEM_VARIABLES": "ユーザーアクティビティ変数を取得出来ません",
 			"WF_CANNOT_LOAD_ACTIVITIES": "プロセス {0} のアクティビティをロードできません",
 			"WF_CANNOT_REACT_CMDBEXTATTR": "拡張属性 {0} を完了できません",
-			"WF_CANNOT_REASSIGN_WORKITEM": "ユーザアクティビティを再割り当て出来ません",
+			"WF_CANNOT_REASSIGN_WORKITEM": "ユーザーアクティビティを再割り当て出来ません",
 			"WF_CANNOT_RESOLVE_PARTICIPANT": "参加者を解決できません",
-			"WF_CANNOT_RESUME_WORKITEM": "ユーザアクティビティを再開出来ません",
+			"WF_CANNOT_RESUME_WORKITEM": "ユーザーアクティビティを再開出来ません",
 			"WF_CANNOT_START": "プロセスを開始出来ません",
 			"WF_CANNOT_SUSPEND_PROCESS": "プロセスを中断出来ません",
-			"WF_CANNOT_UPDATE_WORKITEM_VARIABLES": "ユーザアクティビティ変数を更新出来ません",
+			"WF_CANNOT_UPDATE_WORKITEM_VARIABLES": "ユーザーアクティビティ変数を更新出来ません",
 			"WF_CANNOT_UPLOAD_PACKAGE": "パッケージをアップロードできません",
 			"WF_EMAIL_CANNOT_RETRIEVE_MAIL": "電子メールを取得出来ません",
 			"WF_EMAIL_NOT_CONFIGURED": "電子メールの管理が設定されていません",
@@ -1048,23 +1048,23 @@
 			"WF_WRONG_CREDENTIALS": "ワークフロー使用時の間違った資格情報",
 			"WF_WRONG_XPDL_CLASSNAME": "間違ったXPDLクラス名",
 			"WF_XPDL_CLASSNAME_MISSING": "XPDLでCMDBuildクラスが見つかりません",
-			"WF_XPDL_USERSTOP_MISSING": "XPDLファイルに ユーザが停止可能なフィールドが見つかりません",
+			"WF_XPDL_USERSTOP_MISSING": "XPDLファイルに ユーザーが停止可能なフィールドが見つかりません",
 			"WIDGET_SERVICE_CONNECTION_ERROR": "メッセージ送信に失敗しました。考えられる原因：1）サービスが展開されていない、2）URLおよび/またはエンドポイントのポート番号が正しくありません",
 			"WIDGET_SERVICE_MALFORMED_REQUEST": "名前空間、メソッド名とWebサービスのパラメータが正しいかどうかをチェックしてください>"
 		},
 		"reference_invalid": "値がフィルタと一致しません",
 		"requiredFieldMessage": "このフィールドは必須です",
-		"routesInvalidCardIdentifier": "<em>Routes error: invalid card identifier</em>",
-		"routesInvalidClassIdentifier": "<em>Routes error: invalid class identifier</em>",
-		"routesInvalidPrintFormat": "<em>Routes error: invalid print format</em>",
-		"routesInvalidSimpleFilter": "<em>Routes error: invalid card identifier (simple filter selection error)</em>",
+		"routesInvalidCardIdentifier": "ルートエラー: 不正なカード識別子",
+		"routesInvalidClassIdentifier": "ルートエラー: 不正なクラス識別子",
+		"routesInvalidPrintFormat": "ルートエラー: 不正な印刷フォーマット",
+		"routesInvalidSimpleFilter": "ルートエラー: 不正なカード識別子 (単純なフィルター選択エラー)",
 		"server_error": "サーバに接続出来ません",
 		"server_error_code": "サーバへデータ送信中にエラーが発生しました: ",
 		"show_detail": "詳細表示",
-		"targetClassOrCqlFilterRequired": "<em>Target class or Card CQL selector are required</em>",
+		"targetClassOrCqlFilterRequired": "ターゲットクラスまたはカードCQLセレクターが必要です",
 		"template_error": "テンプレートエラー",
 		"unknown_error": "未知のエラーが発生しました",
-		"widgetLinkCardsNoClassNameError": "<em>LinkCardsController constructor: className not valid</em>",
+		"widgetLinkCardsNoClassNameError": "リンクカードコントローラーコンストラクター：クラス名が有効ではありません",
 		"wrong_wf_widgets": "以下のビジュアルコントロールを保存中にエラーが発生しました: "
 	},
 	"filterWindow": {
@@ -1083,7 +1083,7 @@
 		"relogin_message": "認証されたセッションの有効期限が過ぎました。パスワードを再入力ください。",
 		"relogin_title": "セッション時間切れ",
 		"title": "ログインください",
-		"username": "ユーザネーム",
+		"username": "ユーザーネーム",
 		"waitMsg": "データ送信中...",
 		"waitTitle": "接続中"
 	},
@@ -1203,11 +1203,11 @@
 				"end_date": "終了日",
 				"performer": "アクティビティの実施者",
 				"relation": "リレーション",
-				"user": "ユーザ"
+				"user": "ユーザー"
 			},
 			"maptoolbar": {
 				"add": "追加",
-				"drag": "修正",
+				"drag": "ドラッグ",
 				"drag_map": "マップをドラッグ",
 				"zoom_in": "ズームイン",
 				"zoom_out": "ズームアウト"
@@ -1336,7 +1336,7 @@
 					"compose": "電子メール作成",
 					"datehdr": "アーカイブ日",
 					"deleteicon": "削除",
-					"editicon": "修正",
+					"editicon": "変更",
 					"fromfld": "From",
 					"lookup": {
 						"Draft": "下書き",
@@ -1357,7 +1357,7 @@
 					"required": "リレーションを選択ください - "
 				},
 				"notes": {
-					"must_save_to_modify": "アクティビティの保存前は、ノートを修正出来ません。"
+					"must_save_to_modify": "アクティビティの保存前は、ノートを変更出来ません。"
 				}
 			},
 			"history_columns": {
@@ -1367,7 +1367,7 @@
 				"domain": "ドメイン",
 				"end_date": "終了日",
 				"relation": "リレーション",
-				"user": "ユーザ"
+				"user": "ユーザー"
 			},
 			"interrupted": "中断",
 			"modify_card": "アクティビティ編集",
@@ -1417,7 +1417,7 @@
 		"link_cards_changed_values": "\"{0}\" の選択は更新されました",
 		"only_filtered": "現在のフィルターに一致しているカードにのみ変更は適用されます",
 		"popup_block": "ポップアップブロックが有効になっています。操作と行うためにはそれを無効にしてください。",
-		"saveMenuBeforeAccess": "<em>The menu has to been saved before access at the translations of this element.</em>",
+		"saveMenuBeforeAccess": "このエレメントの翻訳にアクセスする前にメニューは保存される必要があります。",
 		"warning_message": "警告"
 	},
 	"active": "アクティブ",
@@ -1439,36 +1439,36 @@
 	"camera": "カメラ",
 	"cc": "Cc",
 	"checkFrequency": "確認間隔(分）",
-	"choose_attachment_from_db": "データベースから添付を選ぶ</em>",
+	"choose_attachment_from_db": "データベースから添付を選ぶ",
 	"classAttribute": "クラス属性",
 	"classLabel": "クラス",
 	"className": "クラス名",
 	"clean_word_pasted_text": "Wordやその他のリッチテキストアプリケーションから貼り付けたテキストをきれいに",
 	"clearFilter": "フィルタークリアー",
 	"clear_row_and_colun_privilege": "行と列の特権をクリア",
-	"composeEmail": "<em>Compose email</em>",
-	"composeFromTemplate": "<em>Compose from template</em>",
-	"contained": "<em>Contained</em>",
-	"containedorequal": "<em>Contained or equal</em>",
+	"composeEmail": "email作成",
+	"composeFromTemplate": "テンプレートから作成",
+	"contained": "含まれる",
+	"containedorequal": "含まれるまたは同じ",
 	"container": "コンテナー",
-	"contains": "<em>Contains</em>",
-	"containsorequal": "<em>Contains or equal</em>",
+	"contains": "含む",
+	"containsorequal": "含むまたは同じ",
 	"controls": "コントロール",
 	"cql_filter": "CQL フィルター",
 	"csvFile": "CSV ファイル",
-	"defaultAccount": "<em>Default account</em>",
-	"deleteEmail": "<em>Delete email</em>",
+	"defaultAccount": "既定のアカウント",
+	"deleteEmail": "emailを削除",
 	"description_": "説明",
-	"disable": "無効にする",
-	"disableGridFilter": "<em>Disable grid filter</em>",
+	"disable": "無効",
+	"disableGridFilter": "グリッドフィルターを無効に",
 	"display_less_attributes": "より少ない属性を表示",
 	"display_more_attributes": "より多くの属性を表示",
-	"download_ifc_file": "Ifc ファイルをダウンロード",
-	"editEmail": "<em>Edit email</em>",
+	"download_ifc_file": "Ifcファイルをダウンロード",
+	"editEmail": "emailを編集",
 	"emailBody": "本文",
 	"emailTemplate": "電子メールテンプレート",
 	"enable": "有効にする",
-	"enableGridFilter": "<em>Enable grid filter</em>",
+	"enableGridFilter": "グリッドフィルターを有効に",
 	"enabled": "有効",
 	"error": "エラー",
 	"error_bimserver_connection": "BIMサーバーに接続できません",
@@ -1485,49 +1485,49 @@
 	"from": "From",
 	"front": "Front",
 	"global": "グローバル",
-	"hasWrote": "<em>has wrote</em>",
+	"hasWrote": "は、書かれた",
 	"ifc_file": "IFCファイル",
-	"importFromCSV": "<em>Import from CSV</em>",
-	"ipType": "<em>IP type</em>",
+	"importFromCSV": "CSVからインポート",
+	"ipType": "IPタイプ",
 	"ipv4": "ipv4",
 	"ipv6": "ipv6",
 	"itIsNotAllowedFilterWithCalculatedParams": "計算されたパラメータでフィルタを使用することを許可されていません",
-	"itIsNotAllowedFilterWithRuntimeParams": "ユーザが選択可能なパラメータでフィルタを使用することを許可されていません",
+	"itIsNotAllowedFilterWithRuntimeParams": "ユーザーが選択可能なパラメータでフィルタを使用することを許可されていません",
 	"key": "キー",
 	"last_checkin": "最後のチェックイン",
 	"layers": "レイヤー",
 	"lock_cards_in_edit": "編集中カードをロック",
 	"lock_timeout": "ロックタイムアウト",
 	"loggedGroup": "ロググループ",
-	"loggedUser": "ログユーザ",
+	"loggedUser": "ログユーザー",
 	"main": "メイン",
 	"mode": "モード",
-	"modifyFilter": "フィルターを修正",
-	"modifyProject": "プロジェクトを修正",
-	"modifyTemplate": "テンプレートを修正",
-	"modifyView": "ビューを修正",
+	"modifyFilter": "フィルターを変更",
+	"modifyProject": "プロジェクトを変更",
+	"modifyTemplate": "テンプレートを変更",
+	"modifyView": "ビューを変更",
 	"multiGroup": "マルチグループ",
 	"name": "名前",
 	"no_bim_project_for_card": "このカードにはBMIプロジェクトがありません",
 	"not_set": "設定されていません",
-	"onDay": "<em>On</em>",
+	"onDay": "On",
 	"open_3d_viewer": "3Dビューアを開く",
 	"pan": "パン",
 	"password": "パスワード",
 	"port": "ポート",
 	"privileges_on_columns": "列の権限",
 	"privileges_on_rows": "行の権限",
-	"projects": "Projects",
+	"projects": "プロジェクト",
 	"readOnly": "読み取り専用",
 	"reference_to_root": "ルートへの参照",
-	"relation": "<em>Relation</em>",
+	"relation": "リレーション",
 	"remove": "削除",
 	"removeFilter": "ビューを削除",
 	"removeProject": "プロジェクトを削除",
 	"removeTemplate": "テンプレートを削除",
 	"removeView": "ビューを削除",
 	"remove_formatting": "フォーマットを削除",
-	"replace": "<em>Replace</em>",
+	"replace": "リプレース",
 	"reset": "リセット",
 	"root": "ルート",
 	"rotate": "回転",
@@ -1542,8 +1542,8 @@
 	"set": "設定",
 	"setFilter": "フィルターを設定",
 	"setLater": "入力パラメータ",
-	"showHideThisFeatureOnly": "<em>Show/hide this feature only</em>",
-	"show_name_of_locker_user": "ロックしているユーザ名を表示",
+	"showHideThisFeatureOnly": "表示/非表示　この特徴のみ",
+	"show_name_of_locker_user": "ロックしているユーザー名を表示",
 	"side": "サイド",
 	"sqlView": "SQL から",
 	"status": "<em>Status</em>",
@@ -1555,7 +1555,7 @@
 	"translations_enabled" : "利用可能な言語",
 	"transparent": "透明",
 	"tree": "ツリー",
-	"tree_modify": "ツリーを修正",
+	"tree_modify": "ツリーを変更",
 	"tree_navigation": "ナビゲーションツリー",
 	"tree_navigation_add": "ナビゲーションツリーの追加",
 	"tree_navigation_attributes": "ナビゲーションツリーの属性",
@@ -1567,10 +1567,10 @@
 	"upload": "アップロード",
 	"uploading_attachment": "添付をアップロード中...",
 	"url": "URL",
-	"username": "ユーザ名",
+	"username": "ユーザー名",
 	"value": "値",
 	"viewDetails": "<em>View details</em>",
-	"viewEmail": "<em>View email</em>",
+	"viewEmail": "emailを見る",
 	"views": "ビュー",
 	"workflow": "ワークフロー",
 	"workflow_attributes": "ワークフロー属性",
