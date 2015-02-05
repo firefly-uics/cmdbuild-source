@@ -9,6 +9,7 @@ public class EmailConstants {
 	public static final String FROM_ADDRESS_ATTRIBUTE = "FromAddress";
 	public static final String TO_ADDRESSES_ATTRIBUTE = "ToAddresses";
 	public static final String CC_ADDRESSES_ATTRIBUTE = "CcAddresses";
+	public static final String BCC_ADDRESSES_ATTRIBUTE = "BccAddresses";
 	public static final String SUBJECT_ATTRIBUTE = "Subject";
 	public static final String CONTENT_ATTRIBUTE = "Content";
 	public static final String NOTIFY_WITH_ATTRIBUTE = "NotifyWith";

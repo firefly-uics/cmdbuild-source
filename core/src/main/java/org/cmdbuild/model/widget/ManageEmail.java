@@ -26,6 +26,7 @@ public class ManageEmail extends Widget {
 	private static final String FROM_ADDRESS_ATTRIBUTE = "fromAddress";
 	private static final String TO_ADDRESSES_ATTRIBUTE = "toAddresses";
 	private static final String CC_ADDRESSES_ATTRIBUTE = "ccAddresses";
+	private static final String BCC_ADDRESSES_ATTRIBUTE = "bccAddresses";
 	private static final String SUBJECT_ATTRIBUTE = "subject";
 	private static final String CONTENT_ATTRIBUTE = "content";
 	private static final String NOTIFY_WITH_ATTRIBUTE = "notifyWith";
@@ -190,6 +191,7 @@ public class ManageEmail extends Widget {
 		email.setFromAddress((String) emailMap.get(FROM_ADDRESS_ATTRIBUTE));
 		email.setToAddresses((String) emailMap.get(TO_ADDRESSES_ATTRIBUTE));
 		email.setCcAddresses((String) emailMap.get(CC_ADDRESSES_ATTRIBUTE));
+		email.setBccAddresses((String) emailMap.get(BCC_ADDRESSES_ATTRIBUTE));
 		email.setSubject((String) emailMap.get(SUBJECT_ATTRIBUTE));
 		email.setContent((String) emailMap.get(CONTENT_ATTRIBUTE));
 		email.setNotifyWith((String) emailMap.get(NOTIFY_WITH_ATTRIBUTE));
