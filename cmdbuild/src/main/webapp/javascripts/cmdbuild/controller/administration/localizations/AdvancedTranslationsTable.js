@@ -24,6 +24,8 @@
 		 * @override
 		 */
 		constructor: function(view) {
+			var me = this;
+
 			this.callParent(arguments);
 
 			// Handlers exchange and controller setup
@@ -44,85 +46,49 @@
 						items: [
 							Ext.create('CMDBuild.view.administration.localizations.panels.AdvancedTranslationsTableGrid', {
 								columns: [
-//									{
-//										xtype: 'treecolumn',
-//										dataIndex: '@@ key',
-//										text: '@@ key',
-//										flex: 1
-//									},
-//									{
-//										dataIndex: '@@ defaultTranslation',
-//										header: '@@ defaultTranslation',
-//										flex: 3
-//									},
-//									{
-//										dataIndex: '@@ langTag1',
-//										header: '@@ langTag1',
-//										flex: 2
-//									},
-//									{
-//										dataIndex: '@@ langTag2',
-//										header: '@@ langTag2',
-//										flex: 2
-//									},
-//									{
-//										dataIndex: '@@ langTag3',
-//										header: '@@ langTag3',
-//										flex: 2
-//									}
 									{
-											xtype: 'treecolumn', //this is so we know which column will show the tree
-											text: 'Task',
-											dataIndex: 'task',
-											sortable: false,
-											width: 300,
-											locked: true // TODO
-									},{
-											//we must use the templateheader component so we can use a custom tpl
-											xtype: 'templatecolumn',
-											text: 'Duration',
-											sortable: false,
-											dataIndex: 'duration',
-											align: 'center',
-											width: 300,
-											//add in the custom tpl for the rows
-											tpl: Ext.create('Ext.XTemplate', '{duration:this.formatHours}', {
-													formatHours: function(v) {
-															if (v < 1) {
-																	return Math.round(v * 60) + ' mins';
-															} else if (Math.floor(v) !== v) {
-																	var min = v - Math.floor(v);
-																	return Math.floor(v) + 'h ' + Math.round(min * 60) + 'm';
-															} else {
-																	return v + ' hour' + (v === 1 ? '' : 's');
-															}
-													}
-											})
-									},{
-											text: 'Assigned To',
-											dataIndex: 'user',
-											width: 300,
-											sortable: false
+										xtype: 'treecolumn',
+										text: '@@ Translation object',
+										dataIndex: 'task',
+										width: 300,
+										locked: true, // TODO
+										sortable: false
 									},
 									{
+										text: '@@ Default',
+										dataIndex: 'duration',
+										width: 300,
+										sortable: false
+									},
+									{
+										text: 'Assigned To',
+										dataIndex: 'user',
+										width: 300,
+										sortable: false
+									},
+									{
+										text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/en.png" alt="Language icon" /> @@ defaultTranslation',
 										dataIndex: '@@ defaultTranslation',
-										header: '@@ defaultTranslation',
 										width: 300,
+										sortable: false
 									},
 									{
+										text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/en.png" alt="Language icon" /> @@ langTag1',
 										dataIndex: '@@ langTag1',
-										header: '@@ langTag1',
 										width: 300,
+										sortable: false
 									},
 									{
+										text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/en.png" alt="Language icon" /> @@ langTag2',
 										dataIndex: '@@ langTag2',
-										header: '@@ langTag2',
 										width: 300,
+										sortable: false
 									},
 									{
+										text: '<img style="margin: 0px 5px 0px 0px;" src="images/icons/flags/en.png" alt="Language icon" /> @@ langTag3',
 										dataIndex: '@@ langTag3',
-										header: '@@ langTag3',
 										width: 300,
+										sortable: false
 									}
 								],
 								store: CMDBuild.core.proxy.Localizations.getSectionTranslationsStore()
@@ -156,12 +122,25 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onAbortButtonClick':
+					return this.onAbortButtonClick();
+
+				case 'onSaveButtonClick':
+					return this.onSaveButtonClick();
 
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
 				}
 			}
+		},
+
+		onAbortButtonClick: function() {
+_debug('CMDBuild.controller.administration.localizations.AdvancedTranslationsTable ABORT');
+		},
+
+		onSaveButtonClick: function() {
+_debug('CMDBuild.controller.administration.localizations.AdvancedTranslationsTable SAVE');
 		}
 	});
 
