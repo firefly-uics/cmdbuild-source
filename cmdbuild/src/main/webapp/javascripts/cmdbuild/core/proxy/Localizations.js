@@ -82,10 +82,10 @@
 				extend: 'Ext.data.Model',
 
 				fields: [
-					{name: 'task',     type: 'string'},
-					{name: 'user',     type: 'string'},
-					{name: 'duration', type: 'string'},
 					{ name: 'expanded', type: 'boolean', defaultValue: true, persist: false }, // To expand all tree
+					{ name: 'task', type: 'string'},
+					{ name: 'user', type: 'string'},
+					{ name: 'duration', type: 'string'},
 				]
 			});
 

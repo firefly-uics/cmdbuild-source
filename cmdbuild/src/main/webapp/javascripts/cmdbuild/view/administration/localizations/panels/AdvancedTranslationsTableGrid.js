@@ -12,15 +12,39 @@
 		 */
 		delegate: undefined,
 
-		header: false,
 		autoScroll: true,
 		border: false,
-		frame: false,
-		enableColumnHide: false,
-		hideCollapseTool: true,
 		collapsible: true,
-		rootVisible: false,
 		columnLines: true,
+		enableColumnHide: false,
+		frame: false,
+		header: false,
+		hideCollapseTool: true,
+		rootVisible: false,
+		sortableColumns: false, // BUGGED in ExtJs 4.2, workaround setting sortable: false to columns
+
+		initComponent: function() {
+			var me = this;
+
+			this.gridEditorPlugin = Ext.create('Ext.grid.plugin.CellEditing', {
+				clicksToEdit: 1,
+
+				listeners: {
+//					beforeedit: function(editor, e, eOpts) {
+//						me.delegate.cmOn('onBeforeEdit', {
+//							fieldName: e.field,
+//							rowData: e.record.data
+//						});
+//					}
+				}
+			});
+
+			Ext.apply(this, {
+				plugins: [this.gridEditorPlugin],
+			});
+
+			this.callParent(arguments);
+		}
 
 		// TODO
 	});
