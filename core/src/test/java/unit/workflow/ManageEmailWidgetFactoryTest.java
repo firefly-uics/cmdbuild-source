@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.logic.email.EmailLogic;
@@ -102,6 +103,26 @@ public class ManageEmailWidgetFactoryTest {
 
 		t = w.getEmailTemplates().get(3);
 		assertThat(t.getCondition(), equalTo("condition"));
+	}
+
+	@Test
+	public void readAlsoTheTemplates() {
+		final ManageEmail w = (ManageEmail) factory.createWidget(EMPTY + //
+				"ToAddresses='to@a.a'\n" + //
+
+				"ToAddresses1='to@a.a 1'\n" + //
+
+				"Ashibabalea='from Ashi when baba={client:lea}'\n" + //
+
+				"Foo='Bar'\n", //
+				mock(CMValueSet.class));
+
+		assertThat(w.getEmailTemplates().size(), equalTo(2));
+		for (final EmailTemplate element : w.getEmailTemplates()) {
+			final Map<String, String> templates = element.getVariables();
+			assertThat(templates.get("Ashibabalea"), equalTo("from Ashi when baba={client:lea}"));
+			assertThat(templates.get("Foo"), equalTo("Bar"));
+		}
 	}
 
 	@Test

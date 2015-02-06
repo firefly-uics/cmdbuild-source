@@ -1,5 +1,7 @@
 package org.cmdbuild.workflow.widget;
 
+import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Maps.newHashMap;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -19,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -157,8 +160,23 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		managedParameters.addAll(noSubjectPrexifes.keySet());
 
 		final ManageEmail widget = new ManageEmail(emailLogic);
-		widget.setEmailTemplates(emailTemplatesByName.values());
-		widget.setTemplates(extractUnmanagedStringParameters(valueMap, managedParameters));
+		widget.setEmailTemplates(from(emailTemplatesByName.values()) //
+				.transform(new Function<EmailTemplate, EmailTemplate>() {
+
+					final Map<String, String> unmanaged = extractUnmanagedStringParameters(valueMap, managedParameters);
+
+					@Override
+					public EmailTemplate apply(final EmailTemplate input) {
+						final Map<String, String> variables = input.getVariables();
+
+						final Map<String, String> newVariables = newHashMap(unmanaged);
+						newVariables.putAll(variables);
+						input.setVariables(newVariables);
+
+						return input;
+					}
+
+				}).toList());
 		widget.setReadOnly(readBooleanTrueIfPresent(valueMap.get(READ_ONLY)));
 		widget.setNoSubjectPrefix(readBooleanTrueIfTrue(valueMap.get(GLOBAL_NO_SUBJECT_PREFIX)));
 
