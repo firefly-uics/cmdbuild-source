@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import org.cmdbuild.dao.entry.CMValueSet;
 import org.cmdbuild.logic.email.EmailLogic;
@@ -46,16 +45,18 @@ public class ManageEmailWidgetFactoryTest {
 	@Test
 	public void singleEmailTemplateDefinition() {
 		final ManageEmail w = (ManageEmail) factory.createWidget(EMPTY + //
-				"ToAddresses='to@a.a'\n" + //
-				"CCAddresses='cc@a.a'\n" + //
+				"ToAddresses='to@example.com'\n" + //
+				"CCAddresses='cc@example.com'\n" + //
+				"BCCAddresses='bcc@example.com'\n" + //
 				"Subject='the subject'\n" + //
 				"Content='the content'\n", //
 				mock(CMValueSet.class));
 
 		assertThat(w.getEmailTemplates().size(), equalTo(1));
 		final ManageEmail.EmailTemplate t = w.getEmailTemplates().get(0);
-		assertThat(t.getToAddresses(), equalTo("to@a.a"));
-		assertThat(t.getCcAddresses(), equalTo("cc@a.a"));
+		assertThat(t.getToAddresses(), equalTo("to@example.com"));
+		assertThat(t.getCcAddresses(), equalTo("cc@example.com"));
+		assertThat(t.getBccAddresses(), equalTo("bcc@example.com"));
 		assertThat(t.getSubject(), equalTo("the subject"));
 		assertThat(t.getContent(), equalTo("the content"));
 	}
@@ -63,13 +64,15 @@ public class ManageEmailWidgetFactoryTest {
 	@Test
 	public void moreThanOneEmailTemplateDefinitions() {
 		final ManageEmail w = (ManageEmail) factory.createWidget(EMPTY + //
-				"ToAddresses='to@a.a'\n" + //
-				"CCAddresses='cc@a.a'\n" + //
+				"ToAddresses='to@example.com'\n" + //
+				"CCAddresses='cc@example.com'\n" + //
+				"BCCAddresses='bcc@example.com'\n" + //
 				"Subject='the subject'\n" + //
 				"Content='the content'\n" + //
 
-				"ToAddresses1='to@a.a 1'\n" + //
-				"CCAddresses1='cc@a.a 1'\n" + //
+				"ToAddresses1='to@example.com 1'\n" + //
+				"CCAddresses1='cc@example.com 1'\n" + //
+				"BCCAddresses1='bcc@example.com 1'\n" + //
 				"Subject1='the subject 1'\n" + //
 				"Content1='the content 1'\n" + //
 
@@ -81,14 +84,16 @@ public class ManageEmailWidgetFactoryTest {
 		assertThat(w.getEmailTemplates().size(), equalTo(4));
 
 		ManageEmail.EmailTemplate t = w.getEmailTemplates().get(0);
-		assertThat(t.getToAddresses(), equalTo("to@a.a"));
-		assertThat(t.getCcAddresses(), equalTo("cc@a.a"));
+		assertThat(t.getToAddresses(), equalTo("to@example.com"));
+		assertThat(t.getCcAddresses(), equalTo("cc@example.com"));
+		assertThat(t.getBccAddresses(), equalTo("bcc@example.com"));
 		assertThat(t.getSubject(), equalTo("the subject"));
 		assertThat(t.getContent(), equalTo("the content"));
 
 		t = w.getEmailTemplates().get(1);
-		assertThat(t.getToAddresses(), equalTo("to@a.a 1"));
-		assertThat(t.getCcAddresses(), equalTo("cc@a.a 1"));
+		assertThat(t.getToAddresses(), equalTo("to@example.com 1"));
+		assertThat(t.getCcAddresses(), equalTo("cc@example.com 1"));
+		assertThat(t.getBccAddresses(), equalTo("bcc@example.com 1"));
 		assertThat(t.getSubject(), equalTo("the subject 1"));
 		assertThat(t.getContent(), equalTo("the content 1"));
 
@@ -100,30 +105,11 @@ public class ManageEmailWidgetFactoryTest {
 	}
 
 	@Test
-	public void readAlsoTheTemplates() {
-		final ManageEmail w = (ManageEmail) factory.createWidget(EMPTY + //
-				"ToAddresses='to@a.a'\n" + //
-
-				"ToAddresses1='to@a.a 1'\n" + //
-
-				"Ashibabalea='from Ashi when baba={client:lea}'\n" + //
-
-				"Foo='Bar'\n", //
-				mock(CMValueSet.class));
-
-		assertThat(w.getEmailTemplates().size(), equalTo(2));
-
-		final Map<String, String> templates = w.getTemplates();
-		assertThat(templates.keySet().size(), equalTo(2));
-		assertThat(templates.get("Ashibabalea"), equalTo("from Ashi when baba={client:lea}"));
-		assertThat(templates.get("Foo"), equalTo("Bar"));
-	}
-
-	@Test
 	public void emailTemplateApplied() {
 		final EmailTemplateLogic.Template template = mock(EmailTemplateLogic.Template.class);
 		when(template.getTo()).thenReturn("to@example.com");
 		when(template.getCc()).thenReturn("cc@example.com");
+		when(template.getBcc()).thenReturn("bcc@example.com");
 		when(template.getSubject()).thenReturn("the subject");
 		when(template.getBody()).thenReturn("the body");
 		when(emailTemplateLogic.read("foo")) //
@@ -139,6 +125,7 @@ public class ManageEmailWidgetFactoryTest {
 		final ManageEmail.EmailTemplate t = w.getEmailTemplates().get(0);
 		assertThat(t.getToAddresses(), equalTo("to@example.com"));
 		assertThat(t.getCcAddresses(), equalTo("cc@example.com"));
+		assertThat(t.getBccAddresses(), equalTo("bcc@example.com"));
 		assertThat(t.getSubject(), equalTo("the subject"));
 		assertThat(t.getContent(), equalTo("the body"));
 	}
@@ -148,11 +135,13 @@ public class ManageEmailWidgetFactoryTest {
 		final EmailTemplateLogic.Template foo = mock(EmailTemplateLogic.Template.class, "foo");
 		when(foo.getTo()).thenReturn("foo_to@example.com");
 		when(foo.getCc()).thenReturn("foo_cc@example.com");
+		when(foo.getBcc()).thenReturn("foo_bcc@example.com");
 		when(foo.getSubject()).thenReturn("subject of foo");
 		when(foo.getBody()).thenReturn("content of foo");
 		final EmailTemplateLogic.Template bar = mock(EmailTemplateLogic.Template.class, "bar");
 		when(bar.getTo()).thenReturn("bar_to@example.com");
 		when(bar.getCc()).thenReturn("bar_cc@example.com");
+		when(bar.getBcc()).thenReturn("bar_bcc@example.com");
 		when(bar.getSubject()).thenReturn("subject of bar");
 		when(bar.getBody()).thenReturn("content of bar");
 		when(emailTemplateLogic.read("foo")) //
@@ -181,12 +170,14 @@ public class ManageEmailWidgetFactoryTest {
 		final ManageEmail.EmailTemplate t0 = w.getEmailTemplates().get(0);
 		assertThat(t0.getToAddresses(), equalTo("bar_to@example.com"));
 		assertThat(t0.getCcAddresses(), equalTo("bar_cc@example.com"));
+		assertThat(t0.getBccAddresses(), equalTo("bar_bcc@example.com"));
 		assertThat(t0.getSubject(), equalTo("subject of bar"));
 		assertThat(t0.getContent(), equalTo("content of bar"));
 
 		final ManageEmail.EmailTemplate t1 = w.getEmailTemplates().get(1);
 		assertThat(t1.getToAddresses(), equalTo("foo_to@example.com"));
 		assertThat(t1.getCcAddresses(), equalTo("foo_cc@example.com"));
+		assertThat(t1.getBccAddresses(), equalTo("foo_bcc@example.com"));
 		assertThat(t1.getSubject(), equalTo("subject of foo"));
 		assertThat(t1.getContent(), equalTo("content of foo"));
 	}
@@ -196,6 +187,7 @@ public class ManageEmailWidgetFactoryTest {
 		final EmailTemplateLogic.Template template = mock(EmailTemplateLogic.Template.class);
 		when(template.getTo()).thenReturn("to@example.com");
 		when(template.getCc()).thenReturn("cc@example.com");
+		when(template.getBcc()).thenReturn("bcc@example.com");
 		when(template.getSubject()).thenReturn("the subject");
 		when(template.getBody()).thenReturn("the content");
 		when(emailTemplateLogic.read("foo")) //
@@ -213,6 +205,7 @@ public class ManageEmailWidgetFactoryTest {
 		final ManageEmail.EmailTemplate t = w.getEmailTemplates().get(0);
 		assertThat(t.getToAddresses(), equalTo("lol@example.com"));
 		assertThat(t.getCcAddresses(), equalTo("cc@example.com"));
+		assertThat(t.getBccAddresses(), equalTo("bcc@example.com"));
 		assertThat(t.getSubject(), equalTo("rotfl"));
 		assertThat(t.getContent(), equalTo("the content"));
 	}
@@ -220,8 +213,9 @@ public class ManageEmailWidgetFactoryTest {
 	@Test
 	public void noSubjectPrefixFalseIfNotSpecified() {
 		final ManageEmail w = (ManageEmail) factory.createWidget(EMPTY + //
-				"ToAddresses='to@a.a'\n" + //
-				"CCAddresses='cc@a.a'\n" + //
+				"ToAddresses='to@example.com'\n" + //
+				"CCAddresses='cc@example.com'\n" + //
+				"BCCAddresses='bcc@example.com'\n" + //
 				"Subject='the subject'\n" + //
 				"Content='the content'\n", //
 				mock(CMValueSet.class));
@@ -234,8 +228,9 @@ public class ManageEmailWidgetFactoryTest {
 	@Test
 	public void noSubjectPrefixSpecifiedAsTrue() {
 		final ManageEmail w = (ManageEmail) factory.createWidget(EMPTY + //
-				"ToAddresses='to@a.a'\n" + //
-				"CCAddresses='cc@a.a'\n" + //
+				"ToAddresses='to@example.com'\n" + //
+				"CCAddresses='cc@example.com'\n" + //
+				"BCCAddresses='bcc@example.com'\n" + //
 				"Subject='the subject'\n" + //
 				"Content='the content'\n" + //
 				"NoSubjectPrefix='true'\n", //
