@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.email.EmailWindowEditForm', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowEditForm', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -10,14 +10,14 @@
 		},
 
 		/**
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow}
+		 */
+		delegate: undefined,
+
+		/**
 		 * @property {CMDBuild.view.common.field.CMHtmlEditorField}
 		 */
 		emailContentField: undefined,
-
-		/**
-		 * @property {CMDBuild.model.widget.ManageEmail.grid}
-		 */
-		record: undefined,
 
 		frame: false,
 		border: false,
@@ -38,7 +38,7 @@
 			this.emailContentField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
 				name: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
 				hideLabel: true,
-				value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT),
+				value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT),
 				flex: 1
 			});
 
@@ -47,46 +47,53 @@
 					{
 						xtype: 'hidden',
 						name: CMDBuild.core.proxy.CMProxyConstants.ID,
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
 					},
 					{
 						xtype: 'hidden',
 						name: CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY,
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY)
 					},
 					{
 						xtype: 'hidden',
 						name: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT)
 					},
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
-						fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.fromfld,
+						fieldLabel: CMDBuild.Translation.from,
 						vtype: 'multiemail',
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS)
 					},
 					{
 						xtype: 'textfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES,
 						allowBlank: false,
-						fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld,
+						fieldLabel: CMDBuild.Translation.to,
 						vtype: 'multiemail',
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES)
 					},
 					{
 						xtype: 'textfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES,
-						fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld,
+						fieldLabel: CMDBuild.Translation.cc,
 						vtype: 'multiemail',
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES)
+					},
+					{
+						xtype: 'textfield',
+						name: CMDBuild.core.proxy.CMProxyConstants.BCC,
+						fieldLabel: CMDBuild.Translation.bcc,
+						vtype: 'multiemail',
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES)
 					},
 					{
 						xtype: 'textfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 						allowBlank: false,
-						fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.subjectfld,
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT)
+						fieldLabel: CMDBuild.Translation.subject,
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT)
 					},
 					this.emailContentField
 				]

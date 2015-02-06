@@ -1,8 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail;
-
-	Ext.define('CMDBuild.view.management.common.widgets.email.Grid', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.Grid', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
@@ -12,27 +10,9 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.CMManageEmailController}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Grid}
 		 */
 		delegate: undefined,
-
-		/**
-		 * @cfg {Array}
-		 */
-		deletedEmails: [],
-
-		/**
-		 * All email types this widget manages
-		 *
-		 * @cfg {Object}
-		 */
-		emailTypes: {
-			draft: 'Draft',
-			'new': 'New',
-			outgoing: 'Outgoing',
-			received: 'Received',
-			sent: 'Sent'
-		},
 
 		/**
 		 * @cfg {Boolean}
@@ -40,7 +20,7 @@
 		readOnly: undefined,
 
 		/**
-		 * @cfg {Boolean}
+		 * @property {Boolean}
 		 */
 		storeLoaded: false,
 
@@ -57,7 +37,7 @@
 					tbar: [
 						{
 							iconCls: 'add',
-							text: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose,
+							text: '@@ Compose email',
 
 							handler: function(values) {
 								me.delegate.cmOn('onEmailAddButtonClick');
@@ -65,7 +45,7 @@
 						},
 						{
 							iconCls: 'x-tbar-loading',
-							text: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.regenerates,
+							text: '@@ Regenerate e-mails',
 
 							handler: function() {
 								// Ask to the user if is sure to delete all the unsent e-mails before
@@ -106,20 +86,20 @@
 						sortable: true
 					},
 					{
-						header: tr.datehdr,
+						header: '@@ Archiving date',
 						sortable: true,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DATE,
 						flex: 1
 					},
 					{
-						header: tr.addresshdr,
+						header: CMDBuild.Translation.address,
 						sortable: false,
 						scope: this,
 						renderer: this.renderAddress,
 						flex: 1
 					},
 					{
-						header: tr.subjecthdr,
+						header: CMDBuild.Translation.subject,
 						sortable: false,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 						flex: 1
@@ -163,7 +143,7 @@
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return !this.recordIsEditable(record) || this.readOnly || !this.isRegenerable(record);
+									return !this.delegate.recordIsEditable(record) || this.readOnly || !this.delegate.isRegenerable(record);
 								}
 							}
 						]
@@ -207,7 +187,7 @@
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return !this.recordIsEditable(record) || this.readOnly;
+									return !this.delegate.recordIsEditable(record) || this.readOnly;
 								}
 							}
 						]
@@ -251,7 +231,7 @@
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return !this.recordIsEditable(record) || this.readOnly;
+									return !this.delegate.recordIsEditable(record) || this.readOnly;
 								}
 							}
 						]
@@ -264,7 +244,7 @@
 							'{name:this.formatName}',
 							{
 								formatName: function(name) {
-									return tr.lookup[name] || name;
+									return CMDBuild.Translation.management.modworkflow.extattrs.manageemail.lookup[name] || name;
 								}
 							}
 						],
@@ -286,109 +266,6 @@
 			itemdblclick: function(grid, record, item, index, e, eOpts) {
 				this.delegate.cmOn('onItemDoubleClick', record);
 			}
-		},
-
-		/**
-		 * @param {Object} values
-		 */
-		addTemplateToStore: function(values) {
-			var record = this.createRecord(values);
-
-			this.addToStoreIfNotInIt(record);
-		},
-
-		/**
-		 * @param {CMDBuild.model.widget.ManageEmail.email} record
-		 */
-		addToStoreIfNotInIt: function(record) {
-			var store = this.getStore();
-
-			if (store.findBy(function(item) {
-					return item.get(CMDBuild.core.proxy.CMProxyConstants.ID) == record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-				}) == -1
-			) {
-				this.delegate.generateTemporaryId(record);
-
-				// Use loadRecords because store.add does not update the grouping so the grid goes broken
-				store.loadRecords([record], { addRecords: true });
-			}
-		},
-
-		/**
-		 * @param {Object} recordValues
-		 *
-		 * @return {CMDBuild.model.widget.ManageEmail.email}
-		 */
-		createRecord: function(recordValues) {
-			recordValues = recordValues || {};
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] = recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] || this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX)) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.delegate.widgetConf[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
-
-			return Ext.create('CMDBuild.model.widget.ManageEmail.email', recordValues);
-		},
-
-		/**
-		 * @return {Array}
-		 */
-		getDraftEmails: function() {
-			return this.getEmailsByGroup(this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT]);
-		},
-
-		/**
-		 * @param {String} group
-		 *
-		 * @return {Array}
-		 */
-		getEmailsByGroup: function(group) {
-			var out = this.store.getGroups(group);
-
-			if (out)
-				out = out.children; // ExtJS mystic output { name: group, children: [...] }
-
-			return out || [];
-		},
-
-		/**
-		 * @return {Array}
-		 */
-		getNewEmails: function() {
-			return this.getEmailsByGroup(this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW]);
-		},
-
-		/**
-		 * @return {Boolean}
-		 */
-		hasDraftEmails: function() {
-			return this.getDraftEmails().length > 0;
-		},
-
-		/**
-		 * @WIP TODO
-		 *
-		 * @param {CMDBuild.model.widget.ManageEmail.email} record
-		 *
-		 * @return {Boolean}
-		 */
-		isRegenerable: function(record) {
-			return true;
-		},
-
-		/**
-		 * @return {Boolean}
-		 */
-		isStoreLoaded: function() {
-			return this.storeLoaded;
-		},
-
-		/**
-		 * @param {CMDBuild.model.widget.ManageEmail.email} record
-		 *
-		 * @return {Boolean}
-		 */
-		recordIsEditable: function(record) {
-			var status = record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS);
-
-			return status == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT] || status == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
 		},
 
 		// Column renderers
