@@ -48,7 +48,7 @@
 				"baseProperties": "Propriétés de base",
 				"criterion": "Critère",
 				"delete_attribute": "Supprimer un attribut",
-				"description": "Description",
+				"description": "Nom",
 				"destination": "Destination",
 				"direction": {
 					"asc": "Ascendant",
