@@ -31,6 +31,7 @@
 			Ext.apply(this, {
 				items: [
 					{
+						xtype: 'panel',
 						bodyCls: 'x-panel-body-default-framed',
 						border: false,
 						html: this.fileName,
@@ -40,6 +41,7 @@
 					{
 						xtype: 'button',
 						iconCls: 'delete',
+
 						handler: function() {
 							me.delegate.onCMEmailWindowRemoveAttachmentButtonClick(me);
 						}

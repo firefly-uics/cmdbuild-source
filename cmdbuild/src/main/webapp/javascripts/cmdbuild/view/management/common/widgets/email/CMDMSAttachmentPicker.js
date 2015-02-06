@@ -8,7 +8,7 @@
 
 		/**
 		 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker,
-		 * @param {CMDBuild.model.widget.ManageEmail.grid} emailRecord,
+		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord,
 		 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow,
 		 */
 		onCMDMSAttachmentPickerOKButtonClick: function(dmsAttachmentPicker, emailRecord, emailWindow) {},

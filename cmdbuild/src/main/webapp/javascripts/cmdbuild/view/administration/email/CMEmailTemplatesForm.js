@@ -170,18 +170,17 @@
 							{
 								xtype: 'hiddenfield',
 								name: CMDBuild.core.proxy.CMProxyConstants.ID
+							},
+							{
+								xtype: 'checkbox',
+								fieldLabel: '@@ Automatic synchronization',
+								name: '@@ autoSync'
+							},
+							{
+								xtype: 'checkbox',
+								fieldLabel: '@@ Report desync',
+								name: '@@ reportDesynch'
 							}
-//							,
-//							{
-//								xtype: 'checkbox',
-//								fieldLabel: '@@ Automatic synchronization',
-//								name: '@@ autoSync'
-//							},
-//							{
-//								xtype: 'checkbox',
-//								fieldLabel: '@@ Report desync',
-//								name: '@@ reportDesynch'
-//							}
 						]
 					},
 					{ xtype: 'splitter' },

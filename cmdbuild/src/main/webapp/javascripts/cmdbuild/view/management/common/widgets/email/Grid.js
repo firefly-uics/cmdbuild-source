@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail;
 
-	Ext.define('CMDBuild.view.management.common.widgets.email.CMEmailGrid', {
+	Ext.define('CMDBuild.view.management.common.widgets.email.Grid', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
@@ -22,12 +22,16 @@
 		deletedEmails: [],
 
 		/**
+		 * All email types this widget manages
+		 *
 		 * @cfg {Object}
 		 */
 		emailTypes: {
 			draft: 'Draft',
 			'new': 'New',
-			received: 'Received'
+			outgoing: 'Outgoing',
+			received: 'Received',
+			sent: 'Sent'
 		},
 
 		/**
@@ -56,7 +60,7 @@
 							text: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.compose,
 
 							handler: function(values) {
-								me.delegate.onAddEmailButtonClick(me, me.createRecord({}));
+								me.delegate.cmOn('onEmailAddButtonClick');
 							}
 						},
 						{
@@ -70,9 +74,10 @@
 									msg: tr.updateTemplateConfirm,
 									buttons: Ext.Msg.OKCANCEL,
 									icon: Ext.Msg.WARNING,
+
 									fn: function(btn) {
 										if (btn == 'ok')
-											me.delegate.onUpdateTemplatesButtonClick();
+											me.delegate.cmOn('onGlobalRegenerationButtonClick');
 									}
 								});
 							}
@@ -129,6 +134,17 @@
 						flex: 2
 					},
 					{
+						xtype: 'checkcolumn',
+						header: '@@ Auto-sync.',
+						dataIndex: '@@ autoSync',
+						width: 90,
+						align: 'center',
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true
+					},
+					{
 						xtype: 'actioncolumn',
 						align: 'center',
 						width: 25,
@@ -138,16 +154,36 @@
 						fixed: true,
 						items: [
 							{
-								icon: 'images/icons/delete.png',
-								tooltip: CMDBuild.Translation.deleteEmail,
+								icon: 'images/icons/refresh.gif',
+								tooltip: '@@ Manually regenerate',
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEmailDelete', record);
+									this.delegate.cmOn('onEmailRegeneration', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return !this.recordIsEditable(record) || this.readOnly;
+									return !this.recordIsEditable(record) || this.readOnly || !this.isRegenerable(record);
+								}
+							}
+						]
+					},
+					{
+						xtype: 'actioncolumn',
+						align: 'center',
+						width: 25,
+						sortable: false,
+						hideable: false,
+						menuDisabled: true,
+						fixed: true,
+						items: [
+							{
+								icon: 'images/icons/reply.png',
+								tooltip: CMDBuild.Translation.reply,
+								scope: this,
+
+								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
+									this.delegate.cmOn('onEmailReply', record);
 								}
 							}
 						]
@@ -206,12 +242,16 @@
 						fixed: true,
 						items: [
 							{
-								icon: 'images/icons/reply.png',
-								tooltip: 'CMDBuild.Translation.reply',
+								icon: 'images/icons/cross.png',
+								tooltip: CMDBuild.Translation.deleteEmail,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEmailReply', record);
+									this.delegate.cmOn('onEmailDelete', record);
+								},
+
+								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+									return !this.recordIsEditable(record) || this.readOnly;
 								}
 							}
 						]
@@ -258,7 +298,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		addToStoreIfNotInIt: function(record) {
 			var store = this.getStore();
@@ -277,13 +317,14 @@
 		/**
 		 * @param {Object} recordValues
 		 *
-		 * @return {CMDBuild.model.widget.ManageEmail.grid}
+		 * @return {CMDBuild.model.widget.ManageEmail.email}
 		 */
 		createRecord: function(recordValues) {
+			recordValues = recordValues || {};
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] = recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] || this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX)) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.delegate.widgetConf[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
 
-			return Ext.create('CMDBuild.model.widget.ManageEmail.grid', recordValues);
+			return Ext.create('CMDBuild.model.widget.ManageEmail.email', recordValues);
 		},
 
 		/**
@@ -294,7 +335,7 @@
 		},
 
 		/**
-		 * @param {String} g
+		 * @param {String} group
 		 *
 		 * @return {Array}
 		 */
@@ -322,6 +363,17 @@
 		},
 
 		/**
+		 * @WIP TODO
+		 *
+		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 *
+		 * @return {Boolean}
+		 */
+		isRegenerable: function(record) {
+			return true;
+		},
+
+		/**
 		 * @return {Boolean}
 		 */
 		isStoreLoaded: function() {
@@ -329,7 +381,7 @@
 		},
 
 		/**
-		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 *
 		 * @return {Boolean}
 		 */
@@ -339,36 +391,16 @@
 			return status == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT] || status == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
 		},
 
-		/**
-		 * @param {CMDBuild.model.widget.ManageEmail.grid} record
-		 *
-		 * @return {Boolean}
-		 */
-		recordIsReceived: function(record) {
-			return (record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.RECEIVED]);
-		},
-
-		removeTemplatesFromStore: function() {
-			var indexesToDelete = [];
-
-			this.getStore().each(function(record, index, storeLength) {
-				if (!Ext.Object.isEmpty(record) && record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID) > 0)
-					indexesToDelete.push(index);
-			}, this);
-
-			this.getStore().remove(indexesToDelete);
-		},
-
 		// Column renderers
 			/**
 			 * @param {Mixed} value
 			 * @param {Object} metaData
-			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 * @param {CMDBuild.model.widget.ManageEmail.email} record
 			 *
 			 * @return {String}
 			 */
 			renderAddress: function(value, metadata, record) {
-				if (this.recordIsReceived(record)) {
+				if (this.delegate.recordIsReceived(record)) {
 					return record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS);
 				} else {
 					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
@@ -378,18 +410,12 @@
 			/**
 			 * @param {Mixed} value
 			 * @param {Object} metaData
-			 * @param {CMDBuild.model.widget.ManageEmail.grid} record
+			 * @param {CMDBuild.model.widget.ManageEmail.email} record
 			 *
 			 * @return {String}
 			 */
 			renderEmailContent: function(value, metadata, record) {
-				var htmlContent = record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT);
-
-				if (htmlContent) {
-					return htmlContent.replace(/\<[Bb][Rr][\/]?\>/g," ").replace(/\<[^\>]*\>/g,"");
-				} else {
-					return undefined;
-				}
+				return Ext.util.Format.stripTags(record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT));
 			}
 	});
 

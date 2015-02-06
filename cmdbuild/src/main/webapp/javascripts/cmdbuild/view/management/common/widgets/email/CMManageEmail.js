@@ -15,7 +15,7 @@
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.CMEmailGrid}
+		 * @property {CMDBuild.view.management.common.widgets.email.Grid}
 		 */
 		emailGrid: undefined,
 
@@ -30,7 +30,7 @@
 		layout: 'border',
 
 		initComponent: function() {
-			this.emailGrid = Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailGrid', {
+			this.emailGrid = Ext.create('CMDBuild.view.management.common.widgets.email.Grid', {
 				readOnly: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY],
 				region: 'center'
 			});

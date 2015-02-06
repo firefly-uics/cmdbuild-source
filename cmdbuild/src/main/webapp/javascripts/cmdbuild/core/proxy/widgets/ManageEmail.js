@@ -66,7 +66,8 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.widget.ManageEmail.grid',
+				model: 'CMDBuild.model.widget.ManageEmail.email',
+				remoteSort: false,
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.widgets.manageEmail.getEmailList,

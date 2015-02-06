@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.email.EmailWindowForm', {
+	Ext.define('CMDBuild.view.management.common.widgets.email.EmailWindowEditForm', {
 		extend: 'Ext.form.Panel',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -10,14 +10,9 @@
 		},
 
 		/**
-		 * @property {Mixed}
+		 * @property {CMDBuild.view.common.field.CMHtmlEditorField}
 		 */
 		emailContentField: undefined,
-
-		/**
-		 * @cfg {Boolean}
-		 */
-		readOnly: false,
 
 		/**
 		 * @property {CMDBuild.model.widget.ManageEmail.grid}
@@ -40,23 +35,12 @@
 		},
 
 		initComponent: function() {
-			// EmailContentField setup
-			if (this.readOnly) {
-				this.emailContentField = Ext.create('Ext.panel.Panel', {
-					frame: true,
-					border: true,
-					html: this.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT),
-					autoScroll: true,
-					flex: 1
-				});
-			} else {
-				this.emailContentField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
-					name: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
-					hideLabel: true,
-					value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT),
-					flex: 1
-				});
-			}
+			this.emailContentField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
+				name: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
+				hideLabel: true,
+				value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT),
+				flex: 1
+			});
 
 			Ext.apply(this, {
 				items: [
@@ -79,33 +63,29 @@
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
 						fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.fromfld,
-						disabled: this.readOnly,
-						vtype: this.readOnly ? null : 'multiemail',
+						vtype: 'multiemail',
 						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS)
 					},
 					{
-						xtype: this.readOnly ? 'displayfield' : 'textfield',
+						xtype: 'textfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES,
 						allowBlank: false,
 						fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld,
-						disabled: this.readOnly,
-						vtype: this.readOnly ? null : 'multiemail',
+						vtype: 'multiemail',
 						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES)
 					},
 					{
-						xtype: this.readOnly ? 'displayfield' : 'textfield',
+						xtype: 'textfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES,
 						fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld,
-						disabled: this.readOnly,
-						vtype: this.readOnly ? null : 'multiemail',
+						vtype: 'multiemail',
 						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES)
 					},
 					{
-						xtype: this.readOnly ? 'displayfield' : 'textfield',
+						xtype: 'textfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 						allowBlank: false,
 						fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.subjectfld,
-						disabled: this.readOnly,
 						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT)
 					},
 					this.emailContentField

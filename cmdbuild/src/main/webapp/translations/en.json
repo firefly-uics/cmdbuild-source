@@ -1350,7 +1350,6 @@
 					"tofld": "To",
 					"updateTemplateConfirm": "This will delete all the unsent emails.",
 					"viewicon": "View",
-					"mailsAreChanged": "The generated e-mails have changed",
 					"regenerates": "Regenerate e-mails"
 				},
 				"managerelation": {
@@ -1528,6 +1527,7 @@
 	"removeView": "Remove View",
 	"remove_formatting": "Remove formatting",
 	"replace": "Replace",
+	"reply": "Reply",
 	"replyEmail": "Reply email",
 	"reset": "Reset",
 	"root": "Root",
