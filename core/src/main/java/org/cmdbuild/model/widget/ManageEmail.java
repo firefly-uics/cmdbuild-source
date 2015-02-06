@@ -15,7 +15,6 @@ import org.cmdbuild.model.AbstractEmail;
 import org.cmdbuild.workflow.CMActivityInstance;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class ManageEmail extends Widget {
 
@@ -102,14 +101,12 @@ public class ManageEmail extends Widget {
 	private final EmailLogic emailLogic;
 
 	private Collection<EmailTemplate> emailTemplates;
-	private Map<String, String> templates;
 	private boolean noSubjectPrefix;
 
 	public ManageEmail(final EmailLogic emailLogic) {
 		super();
 		this.emailLogic = emailLogic;
 		this.emailTemplates = Lists.newArrayList();
-		this.templates = Maps.newHashMap();
 	}
 
 	@Override
@@ -135,14 +132,6 @@ public class ManageEmail extends Widget {
 		}
 
 		this.emailTemplates = emailTemplates;
-	}
-
-	public Map<String, String> getTemplates() {
-		return templates;
-	}
-
-	public void setTemplates(final Map<String, String> templates) {
-		this.templates = templates;
 	}
 
 	public boolean isNoSubjectPrefix() {
