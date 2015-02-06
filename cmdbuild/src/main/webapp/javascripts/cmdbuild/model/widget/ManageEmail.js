@@ -2,7 +2,7 @@
 
 	Ext.require('CMDBuild.core.proxy.CMProxyConstants');
 
-	Ext.define('CMDBuild.model.widget.ManageEmail.grid', {
+	Ext.define('CMDBuild.model.widget.ManageEmail.email', {
 		extend: 'Ext.data.Model',
 
 		fields: [
@@ -19,7 +19,8 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.STATUS, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID, type: 'int' }, // Temporary template ID to preserve a link from generated email and template of origin
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES, type: 'auto' }
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES, type: 'auto' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, type: 'auto' },
 		],
 
 		/**
