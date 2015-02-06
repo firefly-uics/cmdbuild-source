@@ -1,12 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.email.EmailWindowView', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowView', {
 		extend: 'CMDBuild.PopupWindow',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.CMManageEmailController}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow}
 		 */
 		delegate: undefined,
 
@@ -30,11 +30,6 @@
 		 */
 		formPanel: undefined,
 
-		/**
-		 * @property {CMDBuild.model.widget.ManageEmail.email}
-		 */
-		record: undefined,
-
 		buttonAlign: 'center',
 		title: CMDBuild.Translation.viewEmail,
 
@@ -49,10 +44,6 @@
 					iconCls: 'clone',
 					text: CMDBuild.Translation.composeFromTemplate,
 					disabled: true,
-
-					handler: function() {
-						this.showMenu();
-					},
 
 					menu: Ext.create('Ext.menu.Menu', {
 						items: []
@@ -117,41 +108,41 @@
 					{
 						xtype: 'hidden',
 						name: CMDBuild.core.proxy.CMProxyConstants.ID,
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
 					},
 					{
 						xtype: 'hidden',
 						name: CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY,
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY)
 					},
 					{
 						xtype: 'hidden',
 						name: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT)
 					},
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
-						fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.fromfld,
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS)
+						fieldLabel: CMDBuild.Translation.from,
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS)
 					},
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES,
-						fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.tofld,
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES)
+						fieldLabel: CMDBuild.Translation.to,
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES)
 					},
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES,
-						fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.ccfld,
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES)
+						fieldLabel: CMDBuild.Translation.cc,
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES)
 					},
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
-						fieldLabel: CMDBuild.Translation.management.modworkflow.extattrs.manageemail.subjectfld,
-						value: this.record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT)
+						fieldLabel: CMDBuild.Translation.subject,
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT)
 					},
 					{
 						xtype: 'panel',
@@ -159,7 +150,7 @@
 						frame: true,
 						border: true,
 						flex: 1,
-						html: this.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT)
+						html: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT)
 					}
 				]
 			});
@@ -170,7 +161,7 @@
 						xtype: 'toolbar',
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
-						items: this.fillFromTemplateButton
+						items: [this.fillFromTemplateButton]
 					}
 				],
 				items: [this.formPanel, this.attachmentButtonsContainer, this.attachmentPanelsContainer],
@@ -186,26 +177,6 @@
 			});
 
 			this.callParent(arguments);
-
-			var attachments = this.record.getAttachmentNames();
-
-			for (var i = 0; i < attachments.length; ++i) {
-				var attachmentName = attachments[i];
-
-				this.addAttachmentPanel(attachmentName, this.record);
-			}
-		},
-
-		addAttachmentPanel: function(fileName, emailRecord) {
-			this.attachmentPanelsContainer.add(
-				Ext.create('CMDBuild.view.management.common.widgets.email.CMEmailWindowFileAttacchedPanel', {
-					fileName: fileName,
-					referredEmail: emailRecord,
-					delegate: this.delegate
-				})
-			);
-
-			this.attachmentPanelsContainer.doLayout();
 		}
 	});
 

@@ -1,8 +1,6 @@
 (function() {
 
-	var tr = CMDBuild.Translation.management.modworkflow.extattrs.manageemail;
-
-	Ext.define('CMDBuild.view.management.common.widgets.email.EmailWindowConfirmRegeneration', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowConfirmRegeneration', {
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
@@ -11,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.CMManageEmailController}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow}
 		 */
 		delegate: undefined,
 
@@ -66,20 +64,20 @@
 						sortable: true
 					},
 					{
-						header: tr.datehdr,
+						text: '@@ Archiving date',
 						sortable: true,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DATE,
 						flex: 1
 					},
 					{
-						header: tr.addresshdr,
+						text: CMDBuild.Translation.address,
 						sortable: false,
 						scope: this,
 						renderer: this.renderAddress,
 						flex: 1
 					},
 					{
-						header: tr.subjecthdr,
+						text: CMDBuild.Translation.subject,
 						sortable: false,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 						flex: 1
@@ -95,7 +93,7 @@
 					},
 					{
 						xtype: 'checkcolumn',
-						header: '@@ Enable regeneration',
+						text: '@@ Enable regeneration',
 						dataIndex: '@@ enableRegeneration',
 						width: 120,
 						align: 'center',
@@ -113,7 +111,7 @@
 							'{name:this.formatName}',
 							{
 								formatName: function(name) {
-									return tr.lookup[name] || name;
+									return CMDBuild.Translation.management.modworkflow.extattrs.manageemail.lookup[name] || name;
 								}
 							}
 						],
@@ -181,7 +179,7 @@ _debug('this.grid.getStore()', this.grid.getStore());
 			 * @return {String}
 			 */
 			renderAddress: function(value, metadata, record) {
-				if (this.delegate.recordIsReceived(record)) {
+				if (this.delegate.recordIsReceived(record)) { // TODO: cambiare perchè andrà in un controller genitore
 					return record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS);
 				} else {
 					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);

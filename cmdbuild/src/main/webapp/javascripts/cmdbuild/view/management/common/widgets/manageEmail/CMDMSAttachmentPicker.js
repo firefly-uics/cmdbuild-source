@@ -1,48 +1,4 @@
 (function() {
-	Ext.define("CMDBuild.view.management.common.widgets.CMDMSAttachmentPickerDelegate", {
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker,
-		 * @param {Number} classId
-		 */
-		onCMDMSAttachmentPickerClassDidSelected: function(dmsAttachmentPicker, classId) {},
-
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker,
-		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord,
-		 * @param {CMDBuild.view.management.common.widgets.email.CMEmailWindow} emailWindow,
-		 */
-		onCMDMSAttachmentPickerOKButtonClick: function(dmsAttachmentPicker, emailRecord, emailWindow) {},
-
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker,
-		 */
-		onCMDMSAttachmentPickerCancelButtonClick: function(dmsAttachmentPicker) {},
-
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
-		 * @param {CMDBuild.view.management.common.CMCardGrid} attachmentGrid
-		 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentModel} record
-		 */
-		onCMDMSAttachmentPickerCardDidSelected: function(dmsAttachmentPicker, attachmentGrid, record) {},
-
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
-		 * @param {String} fileName
-		 * @param {Boolean} checked
-		 */
-		onCMDMSAttachmentPickerAttachmentCheckChange: function(dmsAttachmentPicker, fileName, checked) {},
-
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
-		 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentModel[]} records
-		 */
-		onCMDMSAttachmentPickerAttachmentsGridDidLoad: function(dmsAttachmentPicker, records) {},
-
-		/**
-		 * @param {CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker} dmsAttachmentPicker
-		 */
-		onCMDMSAttachmentPickerCardDidLoad: function(dmsAttachmentPicker) {}
-	});
 
 	Ext.define("CMDBuild.view.management.common.widgets.CMDMSAttachmentPickerState", {
 		constructor: function(picker) {
@@ -233,8 +189,8 @@
 		// configure
 
 		initComponent: function() {
+			this.delegate = this.delegate || {};
 
-			this.delegate = this.delegate || new CMDBuild.view.management.common.widgets.CMDMSAttachmentPickerDelegate();
 			buildTBar(this);
 			buildButtons(this);
 

@@ -1,6 +1,6 @@
 (function () {
 
-	Ext.define('CMDBuild.view.management.common.widgets.email.CMManageEmail', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.MainPanel', {
 		extend: 'Ext.panel.Panel',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -10,14 +10,14 @@
 		},
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.CMManageEmailController}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
 		 */
 		delegate: undefined,
 
 		/**
-		 * @property {CMDBuild.view.management.common.widgets.email.Grid}
+		 * @property {CMDBuild.controller.management.common.widgets.manageEmail.Grid}
 		 */
-		emailGrid: undefined,
+		grid: undefined,
 
 		/**
 		 * @property {Object}
@@ -30,13 +30,13 @@
 		layout: 'border',
 
 		initComponent: function() {
-			this.emailGrid = Ext.create('CMDBuild.view.management.common.widgets.email.Grid', {
+			this.grid = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.Grid', {
 				readOnly: this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY],
 				region: 'center'
 			});
 
 			Ext.apply(this, {
-				items: [this.emailGrid]
+				items: [this.grid]
 			});
 
 			this.callParent(arguments);
