@@ -140,6 +140,12 @@
 					},
 					{
 						xtype: 'displayfield',
+						name: CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES,
+						fieldLabel: CMDBuild.Translation.bcc,
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES)
+					},
+					{
+						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 						fieldLabel: CMDBuild.Translation.subject,
 						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT)

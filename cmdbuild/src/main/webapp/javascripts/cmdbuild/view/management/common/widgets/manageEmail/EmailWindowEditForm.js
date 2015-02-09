@@ -83,10 +83,10 @@
 					},
 					{
 						xtype: 'textfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.BCC,
+						name: CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES,
 						fieldLabel: CMDBuild.Translation.bcc,
 						vtype: 'multiemail',
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES)
 					},
 					{
 						xtype: 'textfield',

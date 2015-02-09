@@ -25,6 +25,7 @@
 		ATTRIBUTE_SEPARATOR: 'attributeSeparator',
 		BASE: 'base',
 		BCC: 'bcc',
+		BCC_ADDRESSES: 'bccAddresses',
 		BODY: 'body',
 		CARD: 'card',
 		CARDINALITY: 'cardinality',

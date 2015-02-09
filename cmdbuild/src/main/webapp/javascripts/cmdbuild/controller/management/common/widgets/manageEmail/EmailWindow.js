@@ -150,6 +150,10 @@
 								value: values[CMDBuild.core.proxy.CMProxyConstants.CC]
 							},
 							{
+								id: CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES,
+								value: values[CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES]
+							},
+							{
 								id: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 								value: values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT]
 							},
@@ -289,7 +293,7 @@
 				CMDBuild.controller.management.common.widgets.manageEmail.Main.generateTemporaryId(this.record);
 
 				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, attachments);
-
+_debug('onEmailWindowConfirmButtonClick this.record', this.record);
 				this.parentDelegate.addToStoreIfNotInIt(this.record);
 				this.onEmailWindowAbortButtonClick();
 			}
