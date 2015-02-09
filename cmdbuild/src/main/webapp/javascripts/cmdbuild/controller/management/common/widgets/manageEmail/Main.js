@@ -304,7 +304,7 @@ _debug('this.widgetConf', this.widgetConf);
 _debug('newEmails', newEmails);
 _debug('draftEmails', draftEmails);
 				for (var i in newEmails) {
-					var emailTemplateId = newEmails[i].get('template')['id'];
+					var emailTemplateId = newEmails[i].get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)[CMDBuild.core.proxy.CMProxyConstants.ID];
 
 					if (!Ext.isEmpty(emailTemplateId))
 						emailTemplatesRegenerated.push(emailTemplateId);
@@ -313,7 +313,7 @@ _debug('draftEmails', draftEmails);
 				}
 
 				for (var i in draftEmails) {
-					var emailTemplateId = draftEmails[i].get('template')['id'];
+					var emailTemplateId = draftEmails[i].get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)[CMDBuild.core.proxy.CMProxyConstants.ID];
 
 					if (!Ext.isEmpty(emailTemplateId))
 						emailTemplatesRegenerated.push(emailTemplateId);
@@ -322,7 +322,7 @@ _debug('draftEmails', draftEmails);
 				}
 
 				for (var i in this.emailTemplates) {
-					var emailTemplateId = this.emailTemplates[i]['id'];
+					var emailTemplateId = this.emailTemplates[i][CMDBuild.core.proxy.CMProxyConstants.ID];
 
 					if (!Ext.isEmpty(emailTemplateId) && !Ext.Array.contains(emailTemplatesRegenerated, emailTemplateId))
 						objectsToRegenerate.push(this.emailTemplates[i]);
@@ -330,10 +330,10 @@ _debug('draftEmails', draftEmails);
 
 				Ext.Array.each(objectsToRegenerate, function(item, index, allItems) {
 					if (item instanceof CMDBuild.model.widget.ManageEmail.email) {
-						if (Ext.Array.contains(templatesToRegenerate, item.get('template')['id']) || forceRegeneration)
+						if (Ext.Array.contains(templatesToRegenerate, item.get(CMDBuild.core.proxy.CMProxyConstants.ID)[CMDBuild.core.proxy.CMProxyConstants.ID]) || forceRegeneration)
 							regeneratedEmails.push(this.regenerateEmail(item, item.get('@@ emailObjectTemplate'))); // Regenerate a grid record
 					} else {
-						if (Ext.Array.contains(templatesToRegenerate, item['id']) || forceRegeneration)
+						if (Ext.Array.contains(templatesToRegenerate, item[CMDBuild.core.proxy.CMProxyConstants.ID]) || forceRegeneration)
 							regeneratedEmails.push(this.regenerateEmail(null, item)); // Regenerate a widget configuration template
 					}
 				}, this);
@@ -378,7 +378,7 @@ _debug('checkToRegenerateAllEmails regeneratedEmails', regeneratedEmails);
 		 *
 		 * @override
 		 */
-		getData: function(isAdvance) {
+		getData: function() {
 			return {
 				Updated: this.controllerGrid.getOutgoingEmails(true),
 				Deleted: this.controllerGrid.getDeletedEmails()

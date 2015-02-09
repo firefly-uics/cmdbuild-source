@@ -37,7 +37,7 @@
 					tbar: [
 						{
 							iconCls: 'add',
-							text: '@@ Compose email',
+							text: CMDBuild.Translation.composeEmail,
 
 							handler: function(values) {
 								me.delegate.cmOn('onEmailAddButtonClick');
@@ -45,7 +45,7 @@
 						},
 						{
 							iconCls: 'x-tbar-loading',
-							text: '@@ Regenerate e-mails',
+							text: CMDBuild.Translation.regenerateEmail,
 
 							handler: function() {
 								// Ask to the user if is sure to delete all the unsent e-mails before
@@ -86,20 +86,20 @@
 						sortable: true
 					},
 					{
-						header: '@@ Archiving date',
+						text: CMDBuild.Translation.archivingDate,
 						sortable: true,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DATE,
 						flex: 1
 					},
 					{
-						header: CMDBuild.Translation.address,
+						text: CMDBuild.Translation.address,
 						sortable: false,
 						scope: this,
 						renderer: this.renderAddress,
 						flex: 1
 					},
 					{
-						header: CMDBuild.Translation.subject,
+						text: CMDBuild.Translation.subject,
 						sortable: false,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
 						flex: 1
@@ -115,7 +115,7 @@
 					},
 					{
 						xtype: 'checkcolumn',
-						header: '@@ Auto-sync.',
+						text: '@@ Auto-sync.',
 						dataIndex: '@@ autoSync',
 						width: 90,
 						align: 'center',
@@ -135,7 +135,7 @@
 						items: [
 							{
 								icon: 'images/icons/refresh.gif',
-								tooltip: '@@ Manually regenerate',
+								tooltip: CMDBuild.Translation.manualRegeneration,
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
@@ -244,7 +244,7 @@
 							'{name:this.formatName}',
 							{
 								formatName: function(name) {
-									return CMDBuild.Translation.lookup[name] || name;
+									return CMDBuild.Translation.emailLookupNames[name] || name;
 								}
 							}
 						],
