@@ -54,7 +54,6 @@
 			this.widgetConf = this.parentDelegate.widgetConf;
 
 			if (Ext.Array.contains(this.windowModeAvailable, this.windowMode)) {
-
 				switch (this.windowMode) {
 					case 'confirm': {
 						windowClassName = 'CMDBuild.view.management.common.widgets.manageEmail.EmailWindowConfirmRegeneration';
@@ -166,7 +165,7 @@
 								id: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES,
 								value: values[CMDBuild.core.proxy.CMProxyConstants.CC]
 							},
-							{
+							{ // Translation of bcc attribute to bcc_addresses to be like ManageEmail standards
 								id: CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES,
 								value: values[CMDBuild.core.proxy.CMProxyConstants.BCC]
 							},
