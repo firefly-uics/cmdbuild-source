@@ -1330,29 +1330,6 @@
 				"linkcards": {
 					"required": "Selecteer alstublieft een aantal kaarten - "
 				},
-				"manageemail": {
-					"addresshdr": "Adres",
-					"ccfld": "CC",
-					"compose": "Email samenstellen",
-					"datehdr": "Archiverings datum",
-					"deleteicon": "Verwijder",
-					"editicon": "Aanpassen",
-					"fromfld": "Van",
-					"lookup": {
-						"Draft": "Klad",
-						"New": "Nieuw",
-						"Outgoing": "Uitgaand",
-						"Received": "Ontvangen",
-						"Sent": "verstuurd"
-					},
-					"subjectfld": "Onderwerp",
-					"subjecthdr": "Onderwerp",
-					"tofld": "Aan",
-					"updateTemplateConfirm": "Dit zal alle niet-verstuurde emails verwijderen.",
-					"viewicon": "Bekijken",
-					"mailsAreChanged": "De gegenereerde e-mails zijn varanderd",
-					"regenerates": "Regenereer e-mails"
-				},
 				"managerelation": {
 					"required": "Selecteer alstublieft een aantal relaties - "
 				},
@@ -1428,6 +1405,7 @@
 	"addView": "Venster toevoegen",
 	"add_attachment_from_dms": "Bijlage van DMS toevoegen",
 	"address": "Adres",
+	"archivingDate": "Archiverings datum",
 	"attachfile": "Bestand toevoegen",
 	"attachmentsLookup": "Email bijlage opzoeken",
 	"attention": "Attentie",
@@ -1466,6 +1444,13 @@
 	"download_ifc_file": "Ophalen Ifc bestand",
 	"editEmail": "Modificeer email",
 	"emailBody": "Hoofddeel",
+	"emailLookupNames": {
+		"Draft": "Klad",
+		"New": "Nieuw",
+		"Outgoing": "Uitgaand",
+		"Received": "Ontvangen",
+		"Sent": "verstuurd"
+	},
 	"emailTemplate": "Email sjabloon",
 	"enable": "Activeer",
 	"enableGridFilter": "Instellen raster filter",
@@ -1501,6 +1486,7 @@
 	"loggedGroup": "Gelogde Groep",
 	"loggedUser": "Gelogde gebruiker",
 	"main": "Hoofddeel",
+	"manualRegeneration": "<em>Manual Regeneration</em>",
 	"mode": "Mode",
 	"modifyFilter": "Bijwerken Filter",
 	"modifyProject": "Project aanpassen",
@@ -1520,6 +1506,7 @@
 	"projects": "Projects",
 	"readOnly": "Alleen lezen",
 	"reference_to_root": "Referentie naar Root",
+	"regenerateEmail": "Regenereer e-mails",
 	"relation": "Relatie",
 	"remove": "Verwijderen",
 	"removeFilter": "Verwijder Filter",
@@ -1528,6 +1515,8 @@
 	"removeView": "Verwijder Venster",
 	"remove_formatting": "Verwijder formateering",
 	"replace": "Vervang",
+	"reply": "<em>Reply</em>",
+	"replyEmail": "<em>Reply e-mail</em>",
 	"reset": "Herstart",
 	"root": "Begin",
 	"rotate": "Draaien",
