@@ -111,7 +111,7 @@
 							'{name:this.formatName}',
 							{
 								formatName: function(name) {
-									return CMDBuild.Translation.lookup[name] || name;
+									return CMDBuild.Translation.emailLookupNames[name] || name;
 								}
 							}
 						],
