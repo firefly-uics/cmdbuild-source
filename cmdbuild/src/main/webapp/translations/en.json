@@ -1330,28 +1330,6 @@
 				"linkcards": {
 					"required": "Please select some cards - "
 				},
-				"manageemail": {
-					"addresshdr": "Address",
-					"ccfld": "CC",
-					"compose": "Compose email",
-					"datehdr": "Archiving date",
-					"deleteicon": "Remove",
-					"editicon": "Modify",
-					"fromfld": "From",
-					"lookup": {
-						"Draft": "Drafts",
-						"New": "New",
-						"Outgoing": "Outgoing",
-						"Received": "Received",
-						"Sent": "Sent"
-					},
-					"subjectfld": "Subject",
-					"subjecthdr": "Subject",
-					"tofld": "To",
-					"updateTemplateConfirm": "This will delete all the unsent emails.",
-					"viewicon": "View",
-					"regenerates": "Regenerate e-mails"
-				},
 				"managerelation": {
 					"required": "Please select some relations - "
 				},
@@ -1499,6 +1477,13 @@
 	"lock_timeout": "Lock timeout (seconds)",
 	"loggedGroup": "Logged Group",
 	"loggedUser": "Logged User",
+	"lookup": {
+		"Draft": "Drafts",
+		"New": "New",
+		"Outgoing": "Outgoing",
+		"Received": "Received",
+		"Sent": "Sent"
+	},
 	"main": "Main",
 	"mode": "Mode",
 	"modifyFilter": "Modify Filter",
