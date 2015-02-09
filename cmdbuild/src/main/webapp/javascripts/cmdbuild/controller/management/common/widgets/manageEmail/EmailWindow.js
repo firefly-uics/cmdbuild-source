@@ -36,7 +36,7 @@
 		/**
 		 * @cfg {Array}
 		 */
-		windowModeAvailable: ['create', 'edit', 'reply', 'view'],
+		windowModeAvailable: ['confirm','create', 'edit', 'reply', 'view'],
 
 		/**
 		 * @param {Object} configObject
@@ -46,27 +46,44 @@
 		 * @param {String} configObject.windowMode
 		 */
 		constructor: function(configObject) {
-			var windowClassName = 'CMDBuild.view.management.common.widgets.manageEmail.EmailWindowEdit'; // Default window class to build
+			var enableAttachmentSetup = true;
+			var windowClassName = null;
 
 			Ext.apply(this, configObject); // Apply config
 
 			this.widgetConf = this.parentDelegate.widgetConf;
 
 			if (Ext.Array.contains(this.windowModeAvailable, this.windowMode)) {
-				if (this.windowMode == 'view')
-					windowClassName = 'CMDBuild.view.management.common.widgets.manageEmail.EmailWindowView';
+
+				switch (this.windowMode) {
+					case 'confirm': {
+						windowClassName = 'CMDBuild.view.management.common.widgets.manageEmail.EmailWindowConfirmRegeneration';
+						enableAttachmentSetup = false;
+					} break;
+
+					case 'view': {
+						windowClassName = 'CMDBuild.view.management.common.widgets.manageEmail.EmailWindowView';
+					} break;
+
+					default: { // Default window class to build
+						windowClassName = 'CMDBuild.view.management.common.widgets.manageEmail.EmailWindowEdit';
+					}
+				}
 
 				this.view = Ext.create(windowClassName, {
 					delegate: this
 				});
 			}
 
-			var attachments = this.record.getAttachmentNames();
+			// No attachment panel setup on confirm regeneration window
+			if (enableAttachmentSetup) {
+				var attachments = this.record.getAttachmentNames();
 
-			for (var i = 0; i < attachments.length; ++i) {
-				var attachmentName = attachments[i];
+				for (var i = 0; i < attachments.length; ++i) {
+					var attachmentName = attachments[i];
 
-				this.addAttachmentPanel(attachmentName, this.record);
+					this.addAttachmentPanel(attachmentName, this.record);
+				}
 			}
 		},
 
@@ -151,7 +168,7 @@
 							},
 							{
 								id: CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES,
-								value: values[CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES]
+								value: values[CMDBuild.core.proxy.CMProxyConstants.BCC]
 							},
 							{
 								id: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,

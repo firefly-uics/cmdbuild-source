@@ -271,13 +271,13 @@
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		onEmailRegeneration: function(record) {
-			this.emailWindowConfirmRegeneration = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowConfirmRegeneration').show();
-//
-//			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
-//				parentDelegate: this,
-//				records: this.view.getStore().getRange(),
-//				view: this.emailWindow
-//			});
+			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
+				parentDelegate: this,
+				windowMode: 'confirm'
+			});
+
+			this.emailWindow = this.controllerEmailWindow.getView();
+			this.emailWindow.show();
 		},
 
 		/**
