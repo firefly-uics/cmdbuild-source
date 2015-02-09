@@ -64,7 +64,7 @@
 						sortable: true
 					},
 					{
-						text: '@@ Archiving date',
+						text: CMDBuild.Translation.archivingDate,
 						sortable: true,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DATE,
 						flex: 1
