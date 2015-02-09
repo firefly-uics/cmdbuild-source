@@ -1330,29 +1330,6 @@
 				"linkcards": {
 					"required": "Morate izabrati karticu - "
 				},
-				"manageemail": {
-					"addresshdr": "Adresa",
-					"ccfld": "CC",
-					"compose": "Pripremi email",
-					"datehdr": "Datum arhiviranja",
-					"deleteicon": "Ukloni",
-					"editicon": "Izmeni",
-					"fromfld": "Pošiljalac",
-					"lookup": {
-						"Draft": "Započete",
-						"New": "Nove",
-						"Outgoing": "Za slanje",
-						"Received": "Primljene",
-						"Sent": "Poslane"
-					},
-					"subjectfld": "Naslov poruke",
-					"subjecthdr": "Naslov poruke",
-					"tofld": "Primalac",
-					"updateTemplateConfirm": "Ovo će obrisati sve neisporučene poruke e-pošte.",
-					"viewicon": "Prikaži",
-					"mailsAreChanged": "Generisana e-pošta je izmenjena",
-					"regenerates": "Iznova generiši e-poštu"
-				},
 				"managerelation": {
 					"required": "Morate izabrati relacije - "
 				},
@@ -1428,6 +1405,7 @@
 	"addView": "Dodaj pogled",
 	"add_attachment_from_dms": "Dodaj prilog iz DMS",
 	"address": "Adresa",
+	"archivingDate": "Datum arhiviranja",
 	"attachfile": "Priloži datoteku",
 	"attachmentsLookup": "Pregled priloga u e-pošti",
 	"attention": "Pažnja",
@@ -1466,6 +1444,13 @@
 	"download_ifc_file": "Preuzmi Ifc datoteku",
 	"editEmail": "Izmeni e-poštu",
 	"emailBody": "Telo poruke",
+	"lookup": {
+		"Draft": "Započete",
+		"New": "Nove",
+		"Outgoing": "Za slanje",
+		"Received": "Primljene",
+		"Sent": "Poslane"
+	},
 	"emailTemplate": "ŠAblon e-pošte",
 	"enable": "Omogući",
 	"enableGridFilter": "Uključi filtriranje tabele",
@@ -1501,6 +1486,7 @@
 	"loggedGroup": "Prijavljena grupa",
 	"loggedUser": "Prijavljeni korisnik",
 	"main": "Glavni",
+	"manualRegeneration": "<em>Manual Regeneration</em>",
 	"mode": "Režim",
 	"modifyFilter": "Modifikuj prikaz",
 	"modifyProject": "Izmeni projekat",
@@ -1520,6 +1506,7 @@
 	"projects": "Projekti",
 	"readOnly": "Samo pregled",
 	"reference_to_root": "Reference ka korenu",
+	"regenerateEmail": "Iznova generiši e-poštu",
 	"relation": "Veza",
 	"remove": "Ukloni",
 	"removeFilter": "Ukloni prikaz",
@@ -1528,6 +1515,8 @@
 	"removeView": "Ukloni prikaz",
 	"remove_formatting": "Ukloni formatiranje",
 	"replace": "Zameni",
+	"reply": "<em>Reply</em>",
+	"replyEmail": "<em>Reply e-mail</em>",
 	"reset": "Poništi",
 	"root": "Koren",
 	"rotate": "Rotiraj",

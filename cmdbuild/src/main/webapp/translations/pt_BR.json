@@ -1330,29 +1330,6 @@
 				"linkcards": {
 					"required": "Favor selecionar alguns cartões - "
 				},
-				"manageemail": {
-					"addresshdr": "Endereço",
-					"ccfld": "CC",
-					"compose": "Compor e-mail",
-					"datehdr": "<em>Archiving date</em>",
-					"deleteicon": "Remover",
-					"editicon": "Modificar",
-					"fromfld": "De",
-					"lookup": {
-						"Draft": "Rascunhos",
-						"New": "Novo",
-						"Outgoing": "A Enviar",
-						"Received": "Recebido",
-						"Sent": "Enviado"
-					},
-					"subjectfld": "Assunto",
-					"subjecthdr": "Assunto",
-					"tofld": "Para",
-					"updateTemplateConfirm": "Isto irá remover todos os e-mails não enviados.",
-					"viewicon": "Visualizar",
-					"mailsAreChanged": "Os e-mails gerados foram alterados",
-					"regenerates": "Regenerar os e-mails"
-				},
 				"managerelation": {
 					"required": "Favor selecionar alguns relacionamentos - "
 				},
@@ -1428,6 +1405,7 @@
 	"addView": "Adicionar Visualização",
 	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
 	"address": "<em>Address</em>",
+	"archivingDate": "<em>Archiving date</em>",
 	"attachfile": "<em>Attach File</em>",
 	"attachmentsLookup": "<em>Email attachments Lookup</em>",
 	"attention": "Atenção",
@@ -1446,7 +1424,7 @@
 	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
 	"clearFilter": "<em>Clear Filter</em>",
 	"clear_row_and_colun_privilege": "Remover privilégios de linhas e colunas",
-	"composeEmail": "<em>Compose email</em>",
+	"composeEmail": "Compor e-mail",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"contained": "<em>Contained</em>",
 	"containedorequal": "<em>Contained or equal</em>",
@@ -1466,6 +1444,13 @@
 	"download_ifc_file": "<em>Download Ifc file</em>",
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "<em>Body</em>",
+	"emailLookupNames": {
+		"Draft": "Rascunhos",
+		"New": "Novo",
+		"Outgoing": "A Enviar",
+		"Received": "Recebido",
+		"Sent": "Enviado"
+	},
 	"emailTemplate": "<em>Email Template</em>",
 	"enable": "<em>Enable</em>",
 	"enableGridFilter": "<em>Enable grid filter</em>",
@@ -1501,6 +1486,7 @@
 	"loggedGroup": "<em>Logged Group</em>",
 	"loggedUser": "<em>Logged User</em>",
 	"main": "<em>Main</em>",
+	"manualRegeneration": "<em>Manual Regeneration</em>",
 	"mode": "<em>Mode</em>",
 	"modifyFilter": "Modificar Filtro",
 	"modifyProject": "<em>Modify Project</em>",
@@ -1520,6 +1506,7 @@
 	"projects": "Projects",
 	"readOnly": "Somente Leitura",
 	"reference_to_root": "<em>Reference to Root</em>",
+	"regenerateEmail": "Regenerar os e-mails",
 	"relation": "<em>Relation</em>",
 	"remove": "<em>Remove</em>",
 	"removeFilter": "Remover Filtro",
@@ -1528,6 +1515,8 @@
 	"removeView": "Remover Visualização",
 	"remove_formatting": "<em>Remove formatting</em>",
 	"replace": "<em>Replace</em>",
+	"reply": "<em>Reply</em>",
+	"replyEmail": "<em>Reply e-mail</em>",
 	"reset": "<em>Reset</em>",
 	"root": "<em>Root</em>",
 	"rotate": "<em>Rotate</em>",

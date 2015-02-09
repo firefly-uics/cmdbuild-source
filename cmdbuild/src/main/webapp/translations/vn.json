@@ -1330,29 +1330,6 @@
 				"linkcards": {
 					"required": "Xin vui lòng chọn một vài thẻ- "
 				},
-				"manageemail": {
-					"addresshdr": "Địa chỉ",
-					"ccfld": "CC",
-					"compose": "Soạn email",
-					"datehdr": "Ngày lưu trữ",
-					"deleteicon": "Hủy bỏ",
-					"editicon": "Sửa đổi",
-					"fromfld": "Từ",
-					"lookup": {
-						"Draft": "Dự thảo",
-						"New": "Mới",
-						"Outgoing": "Hộp gửi đi",
-						"Received": "Nhận được",
-						"Sent": "Gửi"
-					},
-					"subjectfld": "Tiêu để",
-					"subjecthdr": "Tiêu để",
-					"tofld": "Đến",
-					"updateTemplateConfirm": "Xóa hết các email không gửi được.",
-					"viewicon": "Xem",
-					"mailsAreChanged": " e-mails duoc tạo ra đã thay đổi",
-					"regenerates": "Tái tạo e-mail"
-				},
 				"managerelation": {
 					"required": "Vui lòng chọn các mối quan hệ - "
 				},
@@ -1428,6 +1405,7 @@
 	"addView": "Thêm lượt xem",
 	"add_attachment_from_dms": "<em>Add attachments from DMS</em>",
 	"address": "<em>Address</em>",
+	"archivingDate": "Ngày lưu trữ",
 	"attachfile": "<em>Attach File</em>",
 	"attachmentsLookup": "<em>Email attachments Lookup</em>",
 	"attention": "Chú ý",
@@ -1446,7 +1424,7 @@
 	"clean_word_pasted_text": "<em>Clean the text pasted from Word or other Rich Text applications</em>",
 	"clearFilter": "Làm sạch bộ lọc",
 	"clear_row_and_colun_privilege": "Xoa các hàng và đặc quyền của các cột",
-	"composeEmail": "<em>Compose email</em>",
+	"composeEmail": "Soạn email",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"contained": "<em>Contained</em>",
 	"containedorequal": "<em>Contained or equal</em>",
@@ -1466,6 +1444,13 @@
 	"download_ifc_file": "<em>Download Ifc file</em>",
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "<em>Body</em>",
+	"emailLookupNames": {
+		"Draft": "Dự thảo",
+		"New": "Mới",
+		"Outgoing": "Hộp gửi đi",
+		"Received": "Nhận được",
+		"Sent": "Gửi"
+	},
 	"emailTemplate": "<em>Email Template</em>",
 	"enable": "<em>Enable</em>",
 	"enableGridFilter": "<em>Enable grid filter</em>",
@@ -1501,6 +1486,7 @@
 	"loggedGroup": "Đăng nhập nhóm",
 	"loggedUser": "Đăng nhập người dùng",
 	"main": "<em>Main</em>",
+	"manualRegeneration": "<em>Manual Regeneration</em>",
 	"mode": "<em>Mode</em>",
 	"modifyFilter": "Sửa đổi bộ lọc",
 	"modifyProject": "<em>Modify Project</em>",
@@ -1520,6 +1506,7 @@
 	"projects": "Projects",
 	"readOnly": "Chỉ đọc",
 	"reference_to_root": "<em>Reference to Root</em>",
+	"regenerateEmail": "Tái tạo e-mail",
 	"relation": "<em>Relation</em>",
 	"remove": "<em>Remove</em>",
 	"removeFilter": "Hủy bỏ bộ lọc",
@@ -1528,6 +1515,8 @@
 	"removeView": "Hủy bỏ lượt xem",
 	"remove_formatting": "<em>Remove formatting</em>",
 	"replace": "<em>Replace</em>",
+	"reply": "<em>Reply</em>",
+	"replyEmail": "<em>Reply e-mail</em>",
 	"reset": "<em>Reset</em>",
 	"root": "<em>Root</em>",
 	"rotate": "<em>Rotate</em>",
