@@ -15,7 +15,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPORARY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TO;
 
 import org.cmdbuild.data.store.email.EmailStatus;
-import org.cmdbuild.logic.email.DefaultEmailLogic;
+import org.cmdbuild.logic.email.DefaultEmailLogic.EmailImpl;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
@@ -50,7 +50,7 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(ACCOUNT) final String account, //
 			@Parameter(TEMPORARY) final boolean temporary //
 	) {
-		final Long id = emailLogic().create(DefaultEmailLogic.EmailImpl.newInstance() //
+		final Long id = emailLogic().create(EmailImpl.newInstance() //
 				.withFromAddress(from) //
 				.withToAddresses(to) //
 				.withCcAddresses(cc) //
@@ -80,7 +80,7 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(ID) final Long id, //
 			@Parameter(TEMPORARY) final boolean temporary //
 	) {
-		final EmailLogic.Email read = emailLogic().read(DefaultEmailLogic.EmailImpl.newInstance() //
+		final EmailLogic.Email read = emailLogic().read(EmailImpl.newInstance() //
 				.withId(id) //
 				.build());
 		return JsonResponse.success(TO_JSON_EMAIL.apply(read));
@@ -100,7 +100,7 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(ACCOUNT) final String account, //
 			@Parameter(TEMPORARY) final boolean temporary //
 	) {
-		emailLogic().update(DefaultEmailLogic.EmailImpl.newInstance() //
+		emailLogic().update(EmailImpl.newInstance() //
 				.withId(id) //
 				.withFromAddress(from) //
 				.withToAddresses(to) //
@@ -123,7 +123,7 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(ID) final Long id, //
 			@Parameter(TEMPORARY) final boolean temporary //
 	) {
-		emailLogic().delete(DefaultEmailLogic.EmailImpl.newInstance() //
+		emailLogic().delete(EmailImpl.newInstance() //
 				.withId(id) //
 				.build());
 		return JsonResponse.success(id);
