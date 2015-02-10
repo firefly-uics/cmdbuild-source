@@ -128,7 +128,7 @@
 				forceSelection: true,
 				editable: false,
 
-				store: CMDBuild.core.proxy.CMProxyEmailTemplates.getEmailAccountsStore(),
+				store: CMDBuild.core.proxy.EmailTemplates.getEmailAccountsStore(),
 				queryMode: 'local'
 			});
 
