@@ -63,7 +63,7 @@
 				],
 
 				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.CMModelEmailTemplates.variablesWindow',
+					model: 'CMDBuild.model.EmailTemplates.variablesWindow',
 					data: []
 				}),
 
@@ -84,7 +84,7 @@
 								iconCls: 'add',
 
 								handler: function() {
-									me.grid.getStore().insert(0, Ext.create('CMDBuild.model.CMModelEmailTemplates.variablesWindow'));
+									me.grid.getStore().insert(0, Ext.create('CMDBuild.model.EmailTemplates.variablesWindow'));
 								}
 							}
 						]
