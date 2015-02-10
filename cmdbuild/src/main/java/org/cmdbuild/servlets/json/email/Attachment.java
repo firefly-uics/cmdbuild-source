@@ -1,14 +1,13 @@
-package org.cmdbuild.servlets.json.management;
+package org.cmdbuild.servlets.json.email;
 
 import static com.google.common.collect.FluentIterable.from;
-import static org.cmdbuild.logic.email.EmailLogic.Copy.newCopy;
-import static org.cmdbuild.logic.email.EmailLogic.Delete.newDelete;
-import static org.cmdbuild.logic.email.EmailLogic.Upload.newUpload;
+import static org.cmdbuild.logic.email.EmailAttachmentsLogic.Copy.newCopy;
+import static org.cmdbuild.logic.email.EmailAttachmentsLogic.Delete.newDelete;
+import static org.cmdbuild.logic.email.EmailAttachmentsLogic.Upload.newUpload;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ATTACHMENTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.EMAIL_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FILE_NAME;
-import static org.cmdbuild.servlets.json.CommunicationConstants.PROCESS_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SUCCESS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPORARY_ID;
 
@@ -18,12 +17,11 @@ import java.util.Set;
 import javax.activation.DataHandler;
 
 import org.apache.commons.fileupload.FileItem;
-import org.cmdbuild.logic.email.EmailLogic;
-import org.cmdbuild.logic.email.EmailLogic.CopiableAttachment;
-import org.cmdbuild.logic.email.EmailLogic.Copy;
-import org.cmdbuild.logic.email.EmailLogic.EmailWithAttachmentNames;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic.CopiableAttachment;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic.Copy;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
-import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonEmail;
+import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.utils.FileItemDataSource;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONArray;
@@ -34,9 +32,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
-import com.google.common.collect.Iterators;
 
-public class Email extends JSONBaseWithSpringContext {
+public class Attachment extends JSONBaseWithSpringContext {
 
 	private static class JsonAttachment {
 
@@ -46,16 +43,7 @@ public class Email extends JSONBaseWithSpringContext {
 
 	}
 
-	private static final Function<EmailWithAttachmentNames, JsonEmail> TO_JSON_EMAIL = new Function<EmailWithAttachmentNames, JsonEmail>() {
-
-		@Override
-		public JsonEmail apply(final EmailWithAttachmentNames input) {
-			return new JsonEmail(input);
-		}
-
-	};
-
-	private static final Function<JsonAttachment, CopiableAttachment> TO_COPIABLE_ATTACHMENTS = new Function<JsonAttachment, EmailLogic.CopiableAttachment>() {
+	private static final Function<JsonAttachment, CopiableAttachment> TO_COPIABLE_ATTACHMENTS = new Function<JsonAttachment, EmailAttachmentsLogic.CopiableAttachment>() {
 
 		@Override
 		public CopiableAttachment apply(final JsonAttachment input) {
@@ -70,19 +58,11 @@ public class Email extends JSONBaseWithSpringContext {
 	};
 
 	@JSONExported
-	public JsonResponse getEmailList( //
-			@Parameter(PROCESS_ID) final Long processCardId //
-	) {
-		final Iterable<EmailWithAttachmentNames> emails = emailLogic().getEmails(processCardId);
-		return JsonResponse.success(Iterators.transform(emails.iterator(), TO_JSON_EMAIL));
-	}
-
-	@JSONExported
 	public JSONObject uploadAttachmentFromExistingEmail( //
 			@Parameter(EMAIL_ID) final Long emailId, //
 			@Parameter(FILE) final FileItem file //
 	) throws JSONException, IOException {
-		emailLogic().uploadAttachment(newUpload() //
+		emailAttachmentsLogic().uploadAttachment(newUpload() //
 				.withIdentifier(emailId.toString()) //
 				.withDataHandler(new DataHandler(FileItemDataSource.of(file))));
 
@@ -97,7 +77,7 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(value = TEMPORARY_ID, required = false) final String temporaryId, //
 			@Parameter(FILE) final FileItem file //
 	) throws JSONException, IOException {
-		final String returnedIdentifier = emailLogic().uploadAttachment(newUpload() //
+		final String returnedIdentifier = emailAttachmentsLogic().uploadAttachment(newUpload() //
 				.withIdentifier(temporaryId) //
 				.withDataHandler(new DataHandler(FileItemDataSource.of(file))) //
 				.withTemporaryStatus(true));
@@ -115,7 +95,7 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(ATTACHMENTS) final String jsonAttachments //
 	) throws JSONException, JsonParseException, JsonMappingException, IOException {
 		final Iterable<JsonAttachment> attachments = mapJsonAttachmentsFromJsonArray(jsonAttachments);
-		final Copy copied = emailLogic().copyAttachments(newCopy() //
+		final Copy copied = emailAttachmentsLogic().copyAttachments(newCopy() //
 				.withIdentifier(temporaryId) //
 				.withTemporaryStatus(true) //
 				.withAllAttachments(from(attachments) //
@@ -134,7 +114,7 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(ATTACHMENTS) final String jsonAttachments //
 	) throws JSONException, JsonParseException, JsonMappingException, IOException {
 		final Iterable<JsonAttachment> attachments = mapJsonAttachmentsFromJsonArray(jsonAttachments);
-		emailLogic().copyAttachments(newCopy() //
+		emailAttachmentsLogic().copyAttachments(newCopy() //
 				.withIdentifier(emailId.toString()) //
 				.withAllAttachments(from(attachments) //
 						.transform(TO_COPIABLE_ATTACHMENTS)));
@@ -159,7 +139,7 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(EMAIL_ID) final Long emailId, //
 			@Parameter(FILE_NAME) final String fileName //
 	) {
-		emailLogic().deleteAttachment(newDelete() //
+		emailAttachmentsLogic().deleteAttachment(newDelete() //
 				.withIdentifier(emailId.toString()) //
 				.withFileName(fileName));
 
@@ -171,7 +151,7 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(TEMPORARY_ID) final String temporaryId, //
 			@Parameter(FILE_NAME) final String fileName //
 	) {
-		emailLogic().deleteAttachment(newDelete() //
+		emailAttachmentsLogic().deleteAttachment(newDelete() //
 				.withIdentifier(temporaryId) //
 				.withFileName(fileName) //
 				.withTemporaryStatus(true));
