@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyEmailTemplates'
+			'CMDBuild.core.proxy.EmailTemplates'
 		],
 
 		/**
@@ -212,7 +212,7 @@
 				var me = this;
 				this.selectedName = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME);
 
-				CMDBuild.core.proxy.CMProxyEmailTemplates.get().load({
+				CMDBuild.core.proxy.EmailTemplates.get().load({
 					params: {
 						name: this.selectedName
 					},
@@ -235,14 +235,14 @@
 
 				CMDBuild.LoadMask.get().show();
 				if (Ext.isEmpty(formData.id)) {
-					CMDBuild.core.proxy.CMProxyEmailTemplates.create({
+					CMDBuild.core.proxy.EmailTemplates.create({
 						params: formData,
 						scope: this,
 						success: this.success,
 						callback: this.callback
 					});
 				} else {
-					CMDBuild.core.proxy.CMProxyEmailTemplates.update({
+					CMDBuild.core.proxy.EmailTemplates.update({
 						params: formData,
 						scope: this,
 						success: this.success,
@@ -255,7 +255,7 @@
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedName)) {
 				CMDBuild.LoadMask.get().show();
-				CMDBuild.core.proxy.CMProxyEmailTemplates.remove({
+				CMDBuild.core.proxy.EmailTemplates.remove({
 					params: {
 						name: this.selectedName
 					},

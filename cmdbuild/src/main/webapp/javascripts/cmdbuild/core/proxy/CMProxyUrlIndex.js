@@ -85,12 +85,12 @@
 				setDefault: 'services/json/schema/emailaccount/setdefault'
 			},
 			templates:{
-				remove: 'services/json/emailtemplate/deletetemplate',
-				get: 'services/json/emailtemplate/readtemplate',
-				post: 'services/json/emailtemplate/createtemplate',
-				put: 'services/json/emailtemplate/updatetemplate',
+				remove: 'services/json/email/template/delete',
+				get: 'services/json/email/template/read',
+				post: 'services/json/email/template/create',
+				put: 'services/json/email/template/update',
 
-				getStore: 'services/json/emailtemplate/readtemplates'
+				getStore: 'services/json/email/template/readall'
 			}
 		},
 
@@ -237,11 +237,19 @@
 				uploadCsv: 'services/json/management/importcsv/uploadcsv'
 			},
 			manageEmail: {
+				remove: 'services/json/email/email/delete',
+				get: 'services/json/email/email/read',
+				post: 'services/json/email/email/create',
+				put: 'services/json/email/email/update',
+
+				getEmailList: 'services/json/management/email/getemaillist',
+				getStore: 'services/json/email/email/readAll',
+
+				// TODO: future refactor
 				addAttachmentFromExistingEmail: 'services/json/management/email/uploadattachmentfromexistingemail',
 				addAttachmentFromNewEmail: 'services/json/management/email/uploadattachmentfromnewemail',
 				copyAttachmentFromCardForExistingEmail: 'services/json/management/email/copyattachmentsfromcardforexistingemail',
 				copyAttachmentFromCardForNewEmail: 'services/json/management/email/copyattachmentsfromcardfornewemail',
-				getEmailList: 'services/json/management/email/getemaillist',
 				removeAttachmentFromExistingEmail: 'services/json/management/email/deleteattachmentfromexistingemail',
 				removeAttachmentFromNewEmail: 'services/json/management/email/deleteattachmentfromnewemail',
 			}
