@@ -4,7 +4,8 @@
 
 		requires: [
 			'CMDBuild.controller.management.common.widgets.manageEmail.Main',
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.widgets.ManageEmail'
 		],
 
 		/**
@@ -29,7 +30,7 @@
 		 */
 		emailTypes: {
 			draft: 'Draft',
-			'new': 'New',
+			'new': 'New', // TODO: da cancellare
 			outgoing: 'Outgoing',
 			received: 'Received',
 			sent: 'Sent'
@@ -74,23 +75,20 @@
 				case 'onEmailAddButtonClick':
 					return this.onEmailAddButtonClick(param);
 
-				case 'onEmailDelete':
-					return this.onEmailDelete(param);
+				case 'onEmailDeleteButtonClick':
+					return this.onEmailDeleteButtonClick(param);
 
-				case 'onEmailEdit':
-					return this.onEmailEdit(param);
+				case 'onEmailEditButtonClick':
+					return this.onEmailEditButtonClick(param);
 
-				case 'onEmailRegeneration':
-					return this.onEmailRegeneration(param);
+				case 'onEmailRegenerationButtonClick':
+					return this.onEmailRegenerationButtonClick(param);
 
-				case 'onEmailReply':
-					return this.onEmailReply(param);
+				case 'onEmailReplyButtonClick':
+					return this.onEmailReplyButtonClick(param);
 
-				case 'onEmailView':
-					return this.onEmailView(param);
-
-				case 'onGlobalRegenerationButtonClick':
-					return this.onGlobalRegenerationButtonClick();
+				case 'onEmailViewButtonClick':
+					return this.onEmailViewButtonClick(param);
 
 				case 'onItemDoubleClick':
 					return this.onItemDoubleClick(param);
@@ -103,29 +101,35 @@
 		},
 
 		/**
-		 * @param {Object} values
+		 * @WIP TODO
+		 *
+		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		addTemplateToStore: function(values) {
-			var record = this.createRecord(values);
-
-			this.addToStoreIfNotInIt(record);
+		addRecord: function(record) {
+_debug('addToStore record', record);
+			this.parentDelegate.view.setLoading(true);
+			CMDBuild.core.proxy.widgets.ManageEmail.create({
+				params: record.toParams(this.parentDelegate.getActivityId()),
+				scope: this,
+				failure: function(response, options) {
+					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email create call failure', false);
+				},
+				success: function(response, options) {
+					this.view.getStore().load();
+				},
+				callback: function(options, success, response) {
+					this.parentDelegate.view.setLoading(false);
+				}
+			});
 		},
 
 		/**
-		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 * @param {Object} values
 		 */
-		addToStoreIfNotInIt: function(record) {
-			var store = this.view.getStore();
+		addTemplate: function(values) {
+			var record = this.createRecord(values);
 
-			if (store.findBy(function(item) {
-					return item.get(CMDBuild.core.proxy.CMProxyConstants.ID) == record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-				}) == -1
-			) {
-				CMDBuild.controller.management.common.widgets.manageEmail.Main.generateTemporaryId(record);
-
-				// Use loadRecords because store.add does not update the grouping so the grid goes broken
-				store.loadRecords([record], { addRecords: true });
-			}
+			this.addRecord(record);
 		},
 
 		/**
@@ -139,6 +143,29 @@
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX)) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
 
 			return Ext.create('CMDBuild.model.widget.ManageEmail.email', recordValues);
+		},
+
+		/**
+		 * @WIP TODO
+		 *
+		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 */
+		editRecord: function(record) {
+_debug('editRecord record', record);
+			this.parentDelegate.view.setLoading(true);
+			CMDBuild.core.proxy.widgets.ManageEmail.update({
+				params: record.toParams(this.parentDelegate.getActivityId()),
+				scope: this,
+				failure: function(response, options) {
+					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email update call failure', false);
+				},
+				success: function(response, options) {
+					this.view.getStore().load();
+				},
+				callback: function(options, success, response) {
+					this.parentDelegate.view.setLoading(false);
+				}
+			});
 		},
 
 		/**
@@ -189,10 +216,6 @@
 			for (var i = 0; i < emails.length; ++i) {
 				var currentEmail = emails[i];
 
-				// Avoid to send temporary Ids to server
-				if (currentEmail.get(CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY))
-					delete currentEmail.data[CMDBuild.core.proxy.CMProxyConstants.ID];
-
 				if (allOutgoing || currentEmail.dirty)
 					outgoingEmails.push(currentEmail.data);
 			}
@@ -238,7 +261,7 @@
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		onEmailDelete: function(record) {
+		onEmailDeleteButtonClick: function(record) {
 			Ext.Msg.confirm(
 				CMDBuild.Translation.common.confirmpopup.title,
 				CMDBuild.Translation.common.confirmpopup.areyousure,
@@ -254,7 +277,7 @@
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		onEmailEdit: function(record) {
+		onEmailEditButtonClick: function(record) {
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: record,
@@ -270,9 +293,10 @@
 		 *
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		onEmailRegeneration: function(record) {
+		onEmailRegenerationButtonClick: function(record) {
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
+				recordsToConfirm: null, // TODO
 				windowMode: 'confirm'
 			});
 
@@ -283,7 +307,7 @@
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		onEmailReply: function(record) {
+		onEmailReplyButtonClick: function(record) {
 			var content = '<p>'
 					+ CMDBuild.Translation.onDay + ' ' + record.get(CMDBuild.core.proxy.CMProxyConstants.DATE)
 					+ ', <' + record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) + '> ' + CMDBuild.Translation.hasWrote
@@ -315,7 +339,7 @@
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		onEmailView: function(record) {
+		onEmailViewButtonClick: function(record) {
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: record,
@@ -326,18 +350,14 @@
 			this.emailWindow.show();
 		},
 
-		onGlobalRegenerationButtonClick: function() {
-			this.parentDelegate.checkToRegenerateAllEmails(true);
-		},
-
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		onItemDoubleClick: function(record) {
 			if (this.recordIsEditable(record)) {
-				this.onEmailEdit(record);
+				this.onEmailEditButtonClick(record);
 			} else {
-				this.onEmailView(record);
+				this.onEmailViewButtonClick(record);
 			}
 		},
 
@@ -361,18 +381,56 @@
 			return (record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.RECEIVED]);
 		},
 
+//		/**
+//		 * @WIP TODO
+//		 *
+//		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+//		 *
+//		 * @return {Object} params
+//		 */
+//		recordToParams: function(record) {
+//			var params = {};
+//			params[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] = this.parentDelegate.getActivityId(); // TODO: fare meglio???
+//			params[CMDBuild.core.proxy.CMProxyConstants.BCC] = record.get(CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES);
+//			params[CMDBuild.core.proxy.CMProxyConstants.BODY] = record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT);
+//			params[CMDBuild.core.proxy.CMProxyConstants.CC] = record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES);
+//			params[CMDBuild.core.proxy.CMProxyConstants.FROM] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS);
+//			params[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
+//			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
+//			params[CMDBuild.core.proxy.CMProxyConstants.TO] = record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
+//
+//			params['from'] = 'asd@asd.asd'; // TODO: delete dopo aver chiesto a DAVIDE
+//			params['notifyWith'] = 'asd'; // TODO: delete dopo aver chiesto a DAVIDE
+//			params['account'] = 'asd'; // TODO: delete dopo aver chiesto a DAVIDE
+//
+//			return params;
+//		},
+
 		/**
-		 * Check if temporaryId is false, email is known from server so put id in deletedEmails array
+		 * @WIP TODO
 		 *
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		removeRecord: function(record) {
-			var id = record.getId();
+_debug('editRecord record', record);
+			var params = {};
+			params[CMDBuild.core.proxy.CMProxyConstants.ID] = record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
+			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
 
-			if (id > 0 && !record.get(CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY))
-				this.deletedEmails.push(id);
-
-			this.view.getStore().remove(record);
+			this.parentDelegate.view.setLoading(true);
+			CMDBuild.core.proxy.widgets.ManageEmail.remove({
+				params: params,
+				scope: this,
+				failure: function(response, options) {
+					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email remove call failure', false);
+				},
+				success: function(response, options) {
+					this.view.getStore().load();
+				},
+				callback: function(options, success, response) {
+					this.parentDelegate.view.setLoading(false);
+				}
+			});
 		}
 	});
 

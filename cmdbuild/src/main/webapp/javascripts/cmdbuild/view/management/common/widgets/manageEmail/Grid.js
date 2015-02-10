@@ -5,8 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.widgets.ManageEmail',
-			'CMDBuild.model.widget.ManageEmail'
+			'CMDBuild.core.proxy.widgets.ManageEmail'
 		],
 
 		/**
@@ -139,7 +138,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEmailRegeneration', record);
+									this.delegate.cmOn('onEmailRegenerationButtonClick', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
@@ -163,7 +162,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEmailReply', record);
+									this.delegate.cmOn('onEmailReplyButtonClick', record);
 								}
 							}
 						]
@@ -183,7 +182,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEmailEdit', record);
+									this.delegate.cmOn('onEmailEditButtonClick', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
@@ -207,7 +206,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEmailView', record);
+									this.delegate.cmOn('onEmailViewButtonClick', record);
 								}
 							}
 						]
@@ -227,7 +226,7 @@
 								scope: this,
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
-									this.delegate.cmOn('onEmailDelete', record);
+									this.delegate.cmOn('onEmailDeleteButtonClick', record);
 								},
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
@@ -256,10 +255,6 @@
 			});
 
 			this.callParent(arguments);
-
-			this.getStore().on('load', function() {
-				this.storeLoaded = true;
-			}, this);
 		},
 
 		listeners: {

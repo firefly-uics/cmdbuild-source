@@ -5,7 +5,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyEmailTemplates'
+			'CMDBuild.core.proxy.EmailTemplates'
 		],
 
 		/**
@@ -65,7 +65,7 @@
 			// END: Buttons configuration
 
 			// Fill from template button store configuration
-			this.templatesStore = CMDBuild.core.proxy.CMProxyEmailTemplates.getStore();
+			this.templatesStore = CMDBuild.core.proxy.EmailTemplates.getStore();
 			this.templatesStore.load({
 				callback: function(records, operation, success) {
 					if (records.length > 0) {
