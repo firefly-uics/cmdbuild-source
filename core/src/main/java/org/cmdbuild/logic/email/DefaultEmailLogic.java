@@ -1,6 +1,7 @@
 package org.cmdbuild.logic.email;
 
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
@@ -11,11 +12,14 @@ import static org.cmdbuild.services.email.Predicates.isDefault;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
+import org.cmdbuild.data.store.InMemoryStore;
+import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.StoreSupplier;
 import org.cmdbuild.data.store.email.EmailStatus;
@@ -29,6 +33,7 @@ import org.cmdbuild.services.email.SubjectHandler;
 import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
 public class DefaultEmailLogic implements EmailLogic {
@@ -389,6 +394,7 @@ public class DefaultEmailLogic implements EmailLogic {
 	private final Store<EmailAccount> emailAccountStore;
 	private final SubjectHandler subjectHandler;
 	private final Notifier notifier;
+	private final Store<org.cmdbuild.data.store.email.Email> store;
 
 	public DefaultEmailLogic( //
 			final EmailServiceFactory emailServiceFactory, //
@@ -400,33 +406,67 @@ public class DefaultEmailLogic implements EmailLogic {
 		this.emailAccountStore = emailAccountStore;
 		this.subjectHandler = subjectHandler;
 		this.notifier = notifier;
+		// TODO move outside
+		this.store = InMemoryStore.of(org.cmdbuild.data.store.email.Email.class);
 	}
 
 	@Override
 	public Long create(final Email email) {
-		return emailService().save(LOGIC_TO_STORE.apply(email));
+		final org.cmdbuild.data.store.email.Email storableEmail = LOGIC_TO_STORE.apply(email);
+		final Long id;
+		if (email.isTemporary()) {
+			final Storable stored = store.create(storableEmail);
+			id = Long.parseLong(stored.getIdentifier());
+		} else {
+			id = emailService().save(storableEmail);
+		}
+		return id;
 	}
 
 	@Override
 	public void update(final Email email) {
-		emailService().save(LOGIC_TO_STORE.apply(email));
+		final org.cmdbuild.data.store.email.Email storableEmail = LOGIC_TO_STORE.apply(email);
+		if (email.isTemporary()) {
+			store.update(storableEmail);
+		} else {
+			emailService().save(storableEmail);
+		}
 	}
 
 	@Override
 	public Email read(final Email email) {
-		final org.cmdbuild.data.store.email.Email read = emailService().getEmail(email.getId());
+		final org.cmdbuild.data.store.email.Email read;
+		if (email.isTemporary()) {
+			read = store.read(LOGIC_TO_STORE.apply(email));
+		} else {
+			read = emailService().getEmail(email.getId());
+		}
 		return STORE_TO_LOGIC.apply(read);
 	}
 
 	@Override
 	public void delete(final Email email) {
-		emailService().delete(LOGIC_TO_STORE.apply(email));
+		if (email.isTemporary()) {
+			store.delete(LOGIC_TO_STORE.apply(email));
+		} else {
+			emailService().delete(LOGIC_TO_STORE.apply(email));
+		}
 	}
 
 	@Override
 	public Iterable<Email> getEmails(final Long processCardId) {
-		return from(emailService(processCardId).getEmails(processCardId)) //
-				.transform(STORE_TO_LOGIC);
+		return from(concat( //
+				emailService(processCardId).getEmails(processCardId), //
+				from(store.readAll()).filter(new Predicate<org.cmdbuild.data.store.email.Email>() {
+
+					@Override
+					public boolean apply(final org.cmdbuild.data.store.email.Email input) {
+						return ObjectUtils.equals(processCardId, input.getActivityId());
+					}
+
+				})) //
+		) //
+		.transform(STORE_TO_LOGIC);
 	}
 
 	@Override
