@@ -1,5 +1,8 @@
 (function () {
 
+	/**
+	 * Main widget controller which manage email regeneration methods
+	 */
 	Ext.define('CMDBuild.controller.management.common.widgets.manageEmail.Main', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
@@ -56,6 +59,11 @@
 		ownerController: undefined,
 
 		/**
+		 * @cfg {Number}
+		 */
+		activityId: undefined,
+
+		/**
 		 * @cfg {Boolean}
 		 */
 		readOnly: undefined,
@@ -89,18 +97,10 @@
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.manageEmail.MainPanel.WIDGET_NAME,
 
 			/**
-			 * Generates temporary id from time in milliseconds
-			 *
-			 * @param {CMDBuild.model.widget.ManageEmail.email} targetObject
+			 * TODO: delete
 			 */
-			generateTemporaryId: function(targetObject) {
-				if (
-					Ext.isEmpty(targetObject.get(CMDBuild.core.proxy.CMProxyConstants.ID))
-					|| targetObject.get(CMDBuild.core.proxy.CMProxyConstants.ID) == 0
-				) {
-					targetObject.set(CMDBuild.core.proxy.CMProxyConstants.ID, new Date().valueOf());
-					targetObject.set(CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY, true);
-				}
+			getTemporaryId: function() {
+				return new Date().valueOf();
 			},
 
 			/**
@@ -149,6 +149,8 @@
 			this.grid = this.view.grid;
 			this.view.delegate = this;
 _debug('this.widgetConf', this.widgetConf);
+_debug('this.ownerController', this.ownerController);
+_debug('this.card', this.card);
 			// Generate templates id
 			// TODO: quando implementerò le chiamate al server i template avranno già tutti un ID
 			this.emailTemplates = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES] || [];
@@ -186,6 +188,9 @@ _debug('this.widgetConf', this.widgetConf);
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onGlobalRegenerationButtonClick':
+					return this.onGlobalRegenerationButtonClick();
+
 				default: {
 					if (!Ext.isEmpty(this.parentDelegate))
 						return this.parentDelegate.cmOn(name, param, callBack);
@@ -193,7 +198,7 @@ _debug('this.widgetConf', this.widgetConf);
 			}
 		},
 
-//		/*
+//		/**
 //		 * Resolve the template only if there are no draft mails, because the draft mails are saved from this step, and assume that
 //		 * the user has already modified the template for this step.
 //		 */
@@ -219,7 +224,7 @@ _debug('this.widgetConf', this.widgetConf);
 		 */
 		beforeActiveView: function() {
 			if (this.controllerGrid.isStoreLoaded()) {
-				this.checkToRegenerateAllEmails();
+				this.regenerateAllEmails();
 			} else {
 				this.onEditMode();
 			}
@@ -279,13 +284,107 @@ _debug('this.widgetConf', this.widgetConf);
 		},
 
 		/**
+		 * Extract the variables of each EmailTemplate, add a suffix to them with the index, and put them all in the templates map.
+		 * This is needed to be passed as a unique map to the template resolver.
+		 *
+		 * @return {Object} variables
+		 */
+		extractVariablesForTemplateResolver: function() {
+			var variables = {};
+
+			for (var i = 0; i < this.emailTemplates.length; ++i) {
+				var t = this.emailTemplates[i].variables;
+
+				for (var key in t)
+					variables[key] = t[key];
+
+				t = this.emailTemplates[i];
+
+				for (var key in t)
+					variables[key + (i + 1)] = t[key];
+			}
+
+			return variables;
+		},
+
+		/**
+		 * @return {Number}
+		 */
+		getActivityId: function() {
+			return this.activityId;
+		},
+
+		/**
+		 * @return {Object}
+		 *
+		 * @override
+		 */
+		getData: function() {
+			return {
+				Updated: this.controllerGrid.getOutgoingEmails(true),
+				Deleted: this.controllerGrid.getDeletedEmails()
+			};
+		},
+
+		/**
+		 * @return {Boolean} templateResolverIsBusy
+		 *
+		 * @override
+		 */
+		isBusy: function() {
+			this.regenerateAllEmails();
+
+			return this.templateResolverIsBusy;
+		},
+
+		/**
+		 * @return {Boolean}
+		 *
+		 * @override
+		 */
+		isValid: function() {
+			return !(
+				this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED]
+				&& this.controllerGrid.getOutgoingEmails().length == 0
+			);
+		},
+
+		/**
+		 * Initialize widget on widget configuration to apply all events on form fields
+		 *
+		 * @override
+		 */
+		onEditMode: function() {
+			this.setActivityId();
+_debug('onEditMode');
+			if (!this.controllerGrid.isStoreLoaded() && !this.grid.getStore().isLoading()) {
+				this.view.setLoading(true);
+				this.grid.getStore().load({
+					params: {
+						ProcessId: this.getActivityId() // TODO: probably to change
+					},
+					scope: this,
+					callback: function(records, operation, success) {
+						this.view.setLoading(false);
+						this.grid.storeLoaded = true; // Setup loaded flag in grid class
+						this.regenerateAllEmails();
+					}
+				});
+			}
+		},
+
+		onGlobalRegenerationButtonClick: function() {
+			this.regenerateAllEmails(true);
+		},
+
+		/**
 		 * @WIP TODO
 		 *
 		 * Regenerates email resolving all internal CQL templates
 		 *
 		 * @param {Boolean} forceRegeneration
 		 */
-		checkToRegenerateAllEmails: function(forceRegeneration) {
+		regenerateAllEmails: function(forceRegeneration) {
 			forceRegeneration = forceRegeneration || false;
 
 			if (
@@ -295,14 +394,13 @@ _debug('this.widgetConf', this.widgetConf);
 			) {
 				var regeneratedEmails = [];
 				var templatesToRegenerate = this.checkTemplatesToRegenerate();
-
-				// Array with all store New and Draft records and all emailTemplates from widget configuration
-				var objectsToRegenerate = [];
+				var objectsToRegenerate = []; // Array with all store New and Draft records and all emailTemplates from widget configuration
 				var emailTemplatesRegenerated = [];
 				var newEmails = this.controllerGrid.getNewEmails();
 				var draftEmails = this.controllerGrid.getDraftEmails();
 _debug('newEmails', newEmails);
 _debug('draftEmails', draftEmails);
+				// TODO: new status will be deleted ... new email will becomes draft
 				for (var i in newEmails) {
 					var emailTemplateId = newEmails[i].get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)[CMDBuild.core.proxy.CMProxyConstants.ID];
 
@@ -342,92 +440,10 @@ _debug('draftEmails', draftEmails);
 				this.isFirstRegenerationDone = true;
 
 				this.ownerController.view.mainView.form.initValues(); // Clear form fields dirty state to reset state after regeneration
-_debug('checkToRegenerateAllEmails regeneratedEmails', regeneratedEmails);
+_debug('regenerateAllEmails regeneratedEmails', regeneratedEmails);
 				// Add all templates to store
 				for (var i in regeneratedEmails)
-					this.controllerGrid.addTemplateToStore(regeneratedEmails[i]);
-			}
-		},
-
-		/**
-		 * Extract the variables of each EmailTemplate, add a suffix to them with the index, and put them all in the templates map.
-		 * This is needed to be passed as a unique map to the template resolver.
-		 *
-		 * @return {Object} variables
-		 */
-		extractVariablesForTemplateResolver: function() {
-			var variables = {};
-
-			for (var i = 0; i < this.emailTemplates.length; ++i) {
-				var t = this.emailTemplates[i].variables;
-
-				for (var key in t)
-					variables[key] = t[key];
-
-				t = this.emailTemplates[i];
-
-				for (var key in t)
-					variables[key + (i + 1)] = t[key];
-			}
-
-			return variables;
-		},
-
-		/**
-		 * @return {Object}
-		 *
-		 * @override
-		 */
-		getData: function() {
-			return {
-				Updated: this.controllerGrid.getOutgoingEmails(true),
-				Deleted: this.controllerGrid.getDeletedEmails()
-			};
-		},
-
-		/**
-		 * @return {Boolean} templateResolverIsBusy
-		 *
-		 * @override
-		 */
-		isBusy: function() {
-			this.checkToRegenerateAllEmails();
-
-			return this.templateResolverIsBusy;
-		},
-
-		/**
-		 * @return {Boolean}
-		 *
-		 * @override
-		 */
-		isValid: function() {
-			return !(
-				this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED]
-				&& this.controllerGrid.getOutgoingEmails().length == 0
-			);
-		},
-
-		/**
-		 * Initialize widget on widget configuration to apply all events on form fields
-		 *
-		 * @override
-		 */
-		onEditMode: function() {
-			if (!this.controllerGrid.isStoreLoaded() && !this.grid.getStore().isLoading()) {
-				var pi = _CMWFState.getProcessInstance();
-
-				this.view.setLoading(true);
-				this.grid.getStore().load({
-					params: {
-						ProcessId: pi.getId()
-					},
-					scope: this,
-					callback: function(records, operation, success) {
-						this.view.setLoading(false);
-						this.checkToRegenerateAllEmails();
-					}
-				});
+					this.controllerGrid.addTemplate(regeneratedEmails[i]);
 			}
 		},
 
@@ -435,7 +451,7 @@ _debug('checkToRegenerateAllEmails regeneratedEmails', regeneratedEmails);
 		 * @WIP TODO: toReport implementation (asking pop-up)
 		 *
 		 * @param {CMDBuild.model.widget.ManageEmail.email} emailObject
-		 * @param {CMDBuild.model.CMModelEmailTemplates.singleTemplate} sourceTemplate
+		 * @param {CMDBuild.model.EmailTemplates.singleTemplate} sourceTemplate
 		 * @param {Boolean} toReport
 		 *
 		 * @return {Array} regeneratedEmailObject
@@ -480,6 +496,13 @@ _debug('emailObject', emailObject);
 			}
 _debug('regeneratedEmailObject', regeneratedEmailObject);
 			return regeneratedEmailObject;
+		},
+
+		/**
+		 * Setup activityId from WorkFlowState module or requires it from server
+		 */
+		setActivityId: function() {
+			this.activityId = _CMWFState.getProcessInstance().getId() || this.self.getTemporaryId(); // TODO: implementare richiesta dal server
 		}
 	});
 

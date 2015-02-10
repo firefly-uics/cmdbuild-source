@@ -18,6 +18,11 @@
 		 */
 		record: undefined,
 
+//		/** TODO
+//		 * @property {Array}
+//		 */
+//		recordsToConfirm: undefined,
+
 		/**
 		 * @property {Mixed} emailWindows
 		 */
@@ -42,7 +47,7 @@
 		 * @param {Object} configObject
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Main} configObject.parentDelegate
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
-		 * @param {Object} configObject.records // TODO
+		 * @param {Object} configObject.recordsToConfirm // TODO
 		 * @param {String} configObject.windowMode
 		 */
 		constructor: function(configObject) {
@@ -193,7 +198,7 @@
 		},
 
 		/**
-		 * @param {Object} record - CMDBuild.model.CMModelEmailTemplates.grid raw value
+		 * @param {Object} record - CMDBuild.model.EmailTemplates.grid raw value
 		 */
 		loadFormValues: function(record) {
 			var me = this;
@@ -229,8 +234,6 @@
 		 * @param {CMDBuild.view.management.common.widgets.email.EmailWindow} emailWindow
 		 * @param {Object} form
 		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
-		 *
-		 * TODO: static
 		 */
 		onCMEmailWindowAttachFileChanged: function(emailWindow, form, emailRecord) {
 			if (emailRecord.isNew()) {
@@ -289,6 +292,9 @@
 			}
 		},
 
+		/**
+		 * Destroy email window object
+		 */
 		onEmailWindowAbortButtonClick: function() {
 			this.view.destroy();
 		},
@@ -297,20 +303,25 @@
 		 * Updates record object adding id (time in milliseconds), Description and attachments array and adds email record to grid store
 		 */
 		onEmailWindowConfirmButtonClick: function() {
+_debug('onEmailWindowConfirmButtonClick this.record', this.record);
 			if (this.view.formPanel.getNonValidFields().length > 0) {
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			} else {
 				var formValues = this.view.formPanel.getForm().getValues();
 				var attachments = this.view.attachmentPanelsContainer.getFileNames();
 
+				// Apply formValues to record object
 				for (var key in formValues)
 					this.record.set(key, formValues[key]);
 
-				CMDBuild.controller.management.common.widgets.manageEmail.Main.generateTemporaryId(this.record);
-
 				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, attachments);
-_debug('onEmailWindowConfirmButtonClick this.record', this.record);
-				this.parentDelegate.addToStoreIfNotInIt(this.record);
+
+				if (this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID) > 0) {
+					this.parentDelegate.editRecord(this.record);
+				} else {
+					this.parentDelegate.addRecord(this.record);
+				}
+
 				this.onEmailWindowAbortButtonClick();
 			}
 		},

@@ -242,8 +242,7 @@
 				post: 'services/json/email/email/create',
 				put: 'services/json/email/email/update',
 
-				getEmailList: 'services/json/management/email/getemaillist',
-				getStore: 'services/json/email/email/readAll',
+				getStore: 'services/json/email/email/readall',
 
 				// TODO: future refactor
 				addAttachmentFromExistingEmail: 'services/json/management/email/uploadattachmentfromexistingemail',

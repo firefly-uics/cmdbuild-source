@@ -112,11 +112,6 @@
 					},
 					{
 						xtype: 'hidden',
-						name: CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.IS_ID_TEMPORARY)
-					},
-					{
-						xtype: 'hidden',
 						name: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
 						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT)
 					},
