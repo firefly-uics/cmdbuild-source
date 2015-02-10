@@ -61,6 +61,8 @@ public interface EmailService {
 
 	Iterable<Email> getEmails(Long processId);
 
+	Email getEmail(Long id);
+
 	Iterable<Email> getOutgoingEmails(Long processId);
 
 }

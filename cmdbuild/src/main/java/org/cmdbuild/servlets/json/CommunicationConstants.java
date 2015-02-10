@@ -3,8 +3,15 @@ package org.cmdbuild.servlets.json;
 public class CommunicationConstants {
 
 	public static final String //
+			ID = "id", //
+			ID_CAPITAL = "Id";
+
+	public static final String //
+			ACCOUNT = "account", //
 			ACTIVE = "active", //
 			ACTIVE_CAPITAL = "Active", //
+			activity = "activity", //
+			ACTIVITY_ID = activity + ID_CAPITAL, //
 			ADDRESS = "address", //
 			ADMIN_PASSWORD = "admin_password", //
 			ADMIN_USER = "admin_user", //
@@ -128,8 +135,6 @@ public class CommunicationConstants {
 			GROUPS = "groups", //
 			HOST = "host", //
 			ICONNAME = "iconName", //
-			ID_CAPITAL = "Id", //
-			ID = "id", //
 			IMAP_PORT = "imapPort", //
 			IMAP_SERVER = "imapServer", //
 			IMAP_SSL = "imapSsl", //
@@ -175,10 +180,12 @@ public class CommunicationConstants {
 			NAMES = "names", //
 			NEW_PASSWORD = "newpassword", //
 			NOTES = "Notes", //
+			NO_SUBJECT_PREFIX = "noSubjectPrefix", //
 			NOTIFICATION_ACTIVE = "notificationActive", //
 			NOTIFICATION_EMAIL_ACCOUNT = "notificationEmailAccount", //
 			NOTIFICATION_EMAIL_TEMPLATE = "notificationEmailTemplate", //
 			NOTIFICATION_EMAIL_TEMPLATE_ERROR = "notificationEmailTemplateError", //
+			NOTIFY_WITH = "notifyWith", //
 			NOT_NULL = "isnotnull", //
 			NUMBER = "Number", //
 			OLD_PASSWORD = "oldpassword", //
@@ -256,8 +263,9 @@ public class CommunicationConstants {
 			TASK_SYNCHRONOUS_EVENT = "event_synchronous", //
 			TEMPLATE = "template", //
 			TEMPLATES = "templates", //
+			TEMPORARY = "temporary", //
+			TEMPORARY_ID = TEMPORARY + ID_CAPITAL, //
 			TITLE = "title", //
-			TEMPORARY_ID = "temporaryId", //
 			TO = "to", //
 			TRANSLATIONS = "translations", //
 			TRANSLATION_UUID = "translationUuid", //

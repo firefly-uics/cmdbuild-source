@@ -339,6 +339,12 @@ public class DefaultEmailService implements EmailService {
 	}
 
 	@Override
+	public Email getEmail(final Long id) {
+		logger.info("getting email with id '{}'", id);
+		return persistence.getEmail(id);
+	}
+
+	@Override
 	public Iterable<Email> getOutgoingEmails(final Long processId) {
 		logger.info("getting outgoing emails for process with id '{}'", processId);
 		return persistence.getOutgoingEmails(processId);

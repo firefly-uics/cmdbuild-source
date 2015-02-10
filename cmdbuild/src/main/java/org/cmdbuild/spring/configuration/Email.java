@@ -16,8 +16,11 @@ import org.cmdbuild.data.store.email.EmailTemplateStorableConverter;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
 import org.cmdbuild.data.store.email.ExtendedEmailTemplateStore;
 import org.cmdbuild.logic.email.DefaultEmailAccountLogic;
+import org.cmdbuild.logic.email.DefaultEmailAttachmentsLogic;
+import org.cmdbuild.logic.email.DefaultEmailLogic;
 import org.cmdbuild.logic.email.DefaultEmailTemplateLogic;
 import org.cmdbuild.logic.email.EmailAccountLogic;
+import org.cmdbuild.logic.email.EmailAttachmentsLogic;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.TransactionalEmailTemplateLogic;
@@ -126,8 +129,8 @@ public class Email {
 
 	@Bean
 	@Scope(PROTOTYPE)
-	public EmailLogic emailLogic() {
-		return new EmailLogic( //
+	public EmailAttachmentsLogic emailAttachmentsLogic() {
+		return new DefaultEmailAttachmentsLogic( //
 				data.systemDataView(), //
 				emailServiceFactory(), //
 				emailAccountStore(), //
@@ -137,6 +140,16 @@ public class Email {
 				dms.documentCreatorFactory(), //
 				notifier, //
 				userStore.getUser());
+	}
+
+	@Bean
+	@Scope(PROTOTYPE)
+	public EmailLogic emailLogic() {
+		return new DefaultEmailLogic( //
+				emailServiceFactory(), //
+				emailAccountStore(), //
+				subjectHandler(), //
+				notifier);
 	}
 
 	@Bean

@@ -1,11 +1,11 @@
-package org.cmdbuild.servlets.json;
+package org.cmdbuild.servlets.json.email;
 
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_ACCOUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BCC;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BODY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CC;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_ACCOUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
@@ -21,8 +21,9 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.logic.email.EmailTemplateLogic.Template;
+import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.services.json.dto.JsonResponse;
+import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.json.JSONObject;
@@ -30,9 +31,9 @@ import org.json.JSONObject;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
-public class EmailTemplate extends JSONBaseWithSpringContext {
+public class Template extends JSONBaseWithSpringContext {
 
-	private static class JsonTemplate implements Template {
+	private static class JsonTemplate implements EmailTemplateLogic.Template {
 
 		private static final Map<String, String> NO_VARIABLES = Collections.emptyMap();
 
@@ -184,10 +185,10 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 
 	}
 
-	private static Function<Template, JsonTemplate> TEMPLATE_TO_JSON_TEMPLATE = new Function<Template, JsonTemplate>() {
+	private static Function<EmailTemplateLogic.Template, JsonTemplate> TEMPLATE_TO_JSON_TEMPLATE = new Function<EmailTemplateLogic.Template, JsonTemplate>() {
 
 		@Override
-		public JsonTemplate apply(final Template input) {
+		public JsonTemplate apply(final EmailTemplateLogic.Template input) {
 			final JsonTemplate template = new JsonTemplate();
 			template.setId(input.getId());
 			template.setName(input.getName());
@@ -206,25 +207,8 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 	};
 
 	@JSONExported
-	public JsonResponse readTemplates() {
-		final Iterable<Template> elements = emailTemplateLogic().readAll();
-		final JsonTemplates templates = new JsonTemplates();
-		templates.setElements(from(elements) //
-				.transform(TEMPLATE_TO_JSON_TEMPLATE));
-		return JsonResponse.success(templates);
-	}
-
-	@JSONExported
-	public JsonResponse readTemplate( //
-			@Parameter(NAME) final String name //
-	) {
-		final Template element = emailTemplateLogic().read(name);
-		return JsonResponse.success(TEMPLATE_TO_JSON_TEMPLATE.apply(element));
-	}
-
-	@JSONExported
 	@Admin
-	public JsonResponse createTemplate( //
+	public JsonResponse create( //
 			@Parameter(NAME) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(TO) final String to, //
@@ -250,8 +234,25 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
+	public JsonResponse readAll() {
+		final Iterable<EmailTemplateLogic.Template> elements = emailTemplateLogic().readAll();
+		final JsonTemplates templates = new JsonTemplates();
+		templates.setElements(from(elements) //
+				.transform(TEMPLATE_TO_JSON_TEMPLATE));
+		return JsonResponse.success(templates);
+	}
+
+	@JSONExported
+	public JsonResponse read( //
+			@Parameter(NAME) final String name //
+	) {
+		final EmailTemplateLogic.Template element = emailTemplateLogic().read(name);
+		return JsonResponse.success(TEMPLATE_TO_JSON_TEMPLATE.apply(element));
+	}
+
+	@JSONExported
 	@Admin
-	public void updateTemplate( //
+	public void update( //
 			@Parameter(NAME) final String name, //
 			@Parameter(DESCRIPTION) final String description, //
 			@Parameter(TO) final String to, //
@@ -277,7 +278,7 @@ public class EmailTemplate extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	@Admin
-	public void deleteTemplate( //
+	public void delete( //
 			@Parameter(NAME) final String name //
 	) {
 		emailTemplateLogic().delete(name);

@@ -1,6 +1,7 @@
 package org.cmdbuild.data.store.email;
 
-import java.util.Collections;
+import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -10,8 +11,9 @@ import org.joda.time.DateTime;
 
 public class Email extends AbstractEmail implements Storable {
 
+	private static Iterable<Attachment> NO_ATTACHMENTS = emptyList();
+
 	private final Long id;
-	private String fromAddress;
 	private DateTime date;
 	private EmailStatus status;
 	private Long activityId;
@@ -34,16 +36,6 @@ public class Email extends AbstractEmail implements Storable {
 
 	public Long getId() {
 		return id;
-	}
-
-	@Override
-	public String getFromAddress() {
-		return fromAddress;
-	}
-
-	@Override
-	public void setFromAddress(final String fromAddress) {
-		this.fromAddress = fromAddress;
 	}
 
 	public DateTime getDate() {
@@ -71,7 +63,7 @@ public class Email extends AbstractEmail implements Storable {
 	}
 
 	public Iterable<Attachment> getAttachments() {
-		return (attachments == null) ? Collections.<Attachment> emptyList() : attachments;
+		return defaultIfNull(attachments, NO_ATTACHMENTS);
 	}
 
 	public void setAttachments(final Iterable<Attachment> attachments) {
