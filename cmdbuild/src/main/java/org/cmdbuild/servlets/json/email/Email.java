@@ -38,17 +38,17 @@ public class Email extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse create( //
-			@Parameter(FROM) final String from, //
+			@Parameter(value = FROM, required = false) final String from, //
 			@Parameter(TO) final String to, //
-			@Parameter(CC) final String cc, //
-			@Parameter(BCC) final String bcc, //
+			@Parameter(value = CC, required = false) final String cc, //
+			@Parameter(value = BCC, required = false) final String bcc, //
 			@Parameter(SUBJECT) final String subject, //
 			@Parameter(BODY) final String body, //
-			@Parameter(NOTIFY_WITH) final String notifyWith, //
-			@Parameter(ACTIVITY_ID) final Long activityId, //
-			@Parameter(NO_SUBJECT_PREFIX) final boolean noSubjectPrefix, //
-			@Parameter(ACCOUNT) final String account, //
-			@Parameter(TEMPORARY) final boolean temporary //
+			@Parameter(value = NOTIFY_WITH, required = false) final String notifyWith, //
+			@Parameter(value = ACTIVITY_ID, required = false) final Long activityId, //
+			@Parameter(value = NO_SUBJECT_PREFIX, required = false) final boolean noSubjectPrefix, //
+			@Parameter(value = ACCOUNT, required = false) final String account, //
+			@Parameter(value = TEMPORARY, required = false) final boolean temporary //
 	) {
 		final Long id = emailLogic().create(EmailImpl.newInstance() //
 				.withFromAddress(from) //
@@ -89,16 +89,17 @@ public class Email extends JSONBaseWithSpringContext {
 	@JSONExported
 	public JsonResponse update( //
 			@Parameter(ID) final Long id, //
-			@Parameter(FROM) final String from, //
+			@Parameter(value = FROM, required = false) final String from, //
 			@Parameter(TO) final String to, //
-			@Parameter(CC) final String cc, //
-			@Parameter(BCC) final String bcc, //
+			@Parameter(value = CC, required = false) final String cc, //
+			@Parameter(value = BCC, required = false) final String bcc, //
 			@Parameter(SUBJECT) final String subject, //
-			@Parameter(BODY) final String body, @Parameter(NOTIFY_WITH) final String notifyWith, //
-			@Parameter(ACTIVITY_ID) final Long activityId, //
-			@Parameter(NO_SUBJECT_PREFIX) final boolean noSubjectPrefix, //
-			@Parameter(ACCOUNT) final String account, //
-			@Parameter(TEMPORARY) final boolean temporary //
+			@Parameter(BODY) final String body, //
+			@Parameter(value = NOTIFY_WITH, required = false) final String notifyWith, //
+			@Parameter(value = ACTIVITY_ID, required = false) final Long activityId, //
+			@Parameter(value = NO_SUBJECT_PREFIX, required = false) final boolean noSubjectPrefix, //
+			@Parameter(value = ACCOUNT, required = false) final String account, //
+			@Parameter(value = TEMPORARY, required = false) final boolean temporary //
 	) {
 		emailLogic().update(EmailImpl.newInstance() //
 				.withId(id) //
