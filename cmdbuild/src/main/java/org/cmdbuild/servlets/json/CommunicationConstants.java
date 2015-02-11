@@ -174,6 +174,7 @@ public class CommunicationConstants {
 			MASTER = "master", //
 			MENU = "menu", //
 			META_DATA = "meta", //
+			MODE = "mode", //
 			MYSQL_LABEL = "MySQL", //
 			MYSQL = "mysql", //
 			NAME = "name", //
