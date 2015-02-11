@@ -213,6 +213,7 @@ public class Template extends JSONBaseWithSpringContext {
 			template.setBody(input.getBody());
 			template.setVariables(input.getVariables());
 			template.setAccount(input.getAccount());
+			template.setTemporary(input.isTemporary());
 			return template;
 		}
 
