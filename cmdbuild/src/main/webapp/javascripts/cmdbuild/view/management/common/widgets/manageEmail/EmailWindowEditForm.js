@@ -45,16 +45,6 @@
 			Ext.apply(this, {
 				items: [
 					{
-						xtype: 'hidden',
-						name: CMDBuild.core.proxy.CMProxyConstants.ID,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
-					},
-					{
-						xtype: 'hidden',
-						name: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT)
-					},
-					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
 						fieldLabel: CMDBuild.Translation.from,

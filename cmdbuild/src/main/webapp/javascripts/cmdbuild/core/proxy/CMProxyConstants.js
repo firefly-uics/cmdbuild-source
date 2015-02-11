@@ -223,6 +223,7 @@
 		TEMPLATE: 'template',
 		TEMPLATES: 'templates',
 		TEMPLATE_ID: 'templateId',
+		TEMPLATE_NAME: 'templateName',
 		TEMPORARY: 'temporary',
 		TEMPORARY_ID: 'temporaryId',
 		TEXT: 'text',

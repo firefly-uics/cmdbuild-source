@@ -25,21 +25,37 @@
 		},
 
 		/**
+		 * @param {Object} parameters
+		 *
 		 * @return {Ext.data.Store} store
+		 *
+		 * TODO: future FIX, to delete store method
 		 */
-		get: function() {
-			return Ext.create('Ext.data.Store', {
-				autoLoad: false,
-				model: 'CMDBuild.model.EmailTemplates.singleTemplate',
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.get,
-					reader: {
-						type: 'json',
-						root: 'response'
+		get: function(parameters) {
+			if (Ext.Object.isEmpty(parameters)) {
+				return Ext.create('Ext.data.Store', {
+					autoLoad: false,
+					model: 'CMDBuild.model.EmailTemplates.singleTemplate',
+					proxy: {
+						type: 'ajax',
+						url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.get,
+						reader: {
+							type: 'json',
+							root: 'response'
+						}
 					}
-				}
-			});
+				});
+			} else {
+				CMDBuild.Ajax.request({
+					method: 'POST',
+					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.get,
+					params: parameters.params,
+					scope: parameters.scope,
+					failure: parameters.failure || Ext.emptyFn(),
+					success: parameters.success || Ext.emptyFn(),
+					callback: parameters.callback || Ext.emptyFn()
+				});
+			}
 		},
 
 		/**

@@ -101,21 +101,46 @@
 		},
 
 		/**
-		 * @WIP TODO
+		 * If record's template attribute is an Object save it as temporary template, otherwise is a real template identifier so just save email object
+		 * with reference to template
 		 *
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		addRecord: function(record) {
-_debug('addToStore record', record);
 			this.parentDelegate.view.setLoading(true);
+			if (Ext.isObject(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))) {
+				CMDBuild.core.proxy.widgets.ManageEmail.createTemplate({
+					params: record.getTemplateAsParams(),
+					scope: this,
+					failure: function(response, options, decodedResponse) {
+						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: template create call failure', false);
+					},
+					success: function(response, options, decodedResponse) {
+						record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, decodedResponse); // Set new templateId to email object
+
+						this.addRecordServerCall(record);
+					},
+					callback: function(options, success, response) {
+						this.parentDelegate.view.setLoading(false);
+					}
+				});
+			} else {
+				this.addRecordServerCall(record);
+			}
+		},
+
+		/**
+		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 */
+		addRecordServerCall: function(record) {
 			CMDBuild.core.proxy.widgets.ManageEmail.create({
-				params: record.toParams(this.parentDelegate.getActivityId()),
+				params: record.getAsParams(),
 				scope: this,
-				failure: function(response, options) {
+				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email create call failure', false);
 				},
-				success: function(response, options) {
-					this.view.getStore().load();
+				success: function(response, options, decodedResponse) {
+					this.storeLoad();
 				},
 				callback: function(options, success, response) {
 					this.parentDelegate.view.setLoading(false);
@@ -133,14 +158,17 @@ _debug('addToStore record', record);
 		},
 
 		/**
+		 * Creates email model with default attributes setup
+		 *
 		 * @param {Object} recordValues
 		 *
 		 * @return {CMDBuild.model.widget.ManageEmail.email}
 		 */
 		createRecord: function(recordValues) {
 			recordValues = recordValues || {};
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] = recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] || this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] = recordValues[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] || this.parentDelegate.getActivityId();
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX)) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] = recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] || this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
 
 			return Ext.create('CMDBuild.model.widget.ManageEmail.email', recordValues);
 		},
@@ -154,13 +182,13 @@ _debug('addToStore record', record);
 _debug('editRecord record', record);
 			this.parentDelegate.view.setLoading(true);
 			CMDBuild.core.proxy.widgets.ManageEmail.update({
-				params: record.toParams(this.parentDelegate.getActivityId()),
+				params: record.getAsParams(),
 				scope: this,
-				failure: function(response, options) {
+				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email update call failure', false);
 				},
-				success: function(response, options) {
-					this.view.getStore().load();
+				success: function(response, options, decodedResponse) {
+					this.storeLoad();
 				},
 				callback: function(options, success, response) {
 					this.parentDelegate.view.setLoading(false);
@@ -241,17 +269,11 @@ _debug('editRecord record', record);
 			return true;
 		},
 
-		/**
-		 * @return {Boolean}
-		 */
-		isStoreLoaded: function() {
-			return this.view.storeLoaded;
-		},
-
 		onEmailAddButtonClick: function() {
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
-				record: this.createRecord()
+				record: this.createRecord(),
+				widgetController: this.parentDelegate
 			});
 
 			this.emailWindow = this.controllerEmailWindow.getView();
@@ -281,9 +303,10 @@ _debug('editRecord record', record);
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: record,
+				widgetController: this.parentDelegate,
 				windowMode: 'edit'
 			});
-
+_debug('onEmailEditButtonClick record', record);
 			this.emailWindow = this.controllerEmailWindow.getView();
 			this.emailWindow.show();
 		},
@@ -297,6 +320,7 @@ _debug('editRecord record', record);
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				recordsToConfirm: null, // TODO
+				widgetController: this.parentDelegate,
 				windowMode: 'confirm'
 			});
 
@@ -329,6 +353,7 @@ _debug('editRecord record', record);
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: Ext.create('CMDBuild.model.widget.ManageEmail.email', replyRecordData),
+				widgetController: this.parentDelegate,
 				windowMode: 'reply'
 			});
 
@@ -343,6 +368,7 @@ _debug('editRecord record', record);
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: record,
+				widgetController: this.parentDelegate,
 				windowMode: 'view'
 			});
 
@@ -381,31 +407,6 @@ _debug('editRecord record', record);
 			return (record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.RECEIVED]);
 		},
 
-//		/**
-//		 * @WIP TODO
-//		 *
-//		 * @param {CMDBuild.model.widget.ManageEmail.email} record
-//		 *
-//		 * @return {Object} params
-//		 */
-//		recordToParams: function(record) {
-//			var params = {};
-//			params[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] = this.parentDelegate.getActivityId(); // TODO: fare meglio???
-//			params[CMDBuild.core.proxy.CMProxyConstants.BCC] = record.get(CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES);
-//			params[CMDBuild.core.proxy.CMProxyConstants.BODY] = record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT);
-//			params[CMDBuild.core.proxy.CMProxyConstants.CC] = record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES);
-//			params[CMDBuild.core.proxy.CMProxyConstants.FROM] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS);
-//			params[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
-//			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
-//			params[CMDBuild.core.proxy.CMProxyConstants.TO] = record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
-//
-//			params['from'] = 'asd@asd.asd'; // TODO: delete dopo aver chiesto a DAVIDE
-//			params['notifyWith'] = 'asd'; // TODO: delete dopo aver chiesto a DAVIDE
-//			params['account'] = 'asd'; // TODO: delete dopo aver chiesto a DAVIDE
-//
-//			return params;
-//		},
-
 		/**
 		 * @WIP TODO
 		 *
@@ -421,14 +422,36 @@ _debug('editRecord record', record);
 			CMDBuild.core.proxy.widgets.ManageEmail.remove({
 				params: params,
 				scope: this,
-				failure: function(response, options) {
+				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email remove call failure', false);
 				},
-				success: function(response, options) {
-					this.view.getStore().load();
+				success: function(response, options, decodedResponse) {
+					this.storeLoad();
 				},
 				callback: function(options, success, response) {
 					this.parentDelegate.view.setLoading(false);
+				}
+			});
+		},
+
+		/**
+		 * Loads grid store with activityId parameter
+		 *
+		 * @param {Function} callbackFunction
+		 */
+		storeLoad: function(callbackFunction) {
+			callbackFunction = callbackFunction || Ext.emptyFn;
+
+			this.parentDelegate.view.setLoading(true);
+			this.view.getStore().load({
+				params: {
+					activityId: this.parentDelegate.getActivityId()
+				},
+				scope: this,
+				callback: function(records, operation, success) {
+					this.parentDelegate.view.setLoading(false);
+
+					callbackFunction();
 				}
 			});
 		}

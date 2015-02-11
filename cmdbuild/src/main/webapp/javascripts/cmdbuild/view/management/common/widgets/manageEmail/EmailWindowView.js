@@ -87,7 +87,7 @@
 				autoScroll: true,
 				flex: 1
 			});
-
+_debug('view panel', this.delegate.record);
 			this.formPanel = Ext.create('Ext.panel.Panel', {
 				frame: false,
 				border: false,
@@ -105,16 +105,6 @@
 				},
 
 				items: [
-					{
-						xtype: 'hidden',
-						name: CMDBuild.core.proxy.CMProxyConstants.ID,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.ID)
-					},
-					{
-						xtype: 'hidden',
-						name: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.ACCOUNT)
-					},
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,

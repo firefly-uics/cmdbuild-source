@@ -6,11 +6,20 @@
 	Ext.define('CMDBuild.controller.management.common.widgets.manageEmail.Main', {
 		extend: 'CMDBuild.controller.management.common.widgets.CMWidgetController',
 
-		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
+		requires: [
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.Utils'
+		],
 
 		mixins: {
 			observable: 'Ext.util.Observable'
 		},
+
+
+		/**
+		 * @cfg {Number}
+		 */
+		activityId: undefined,
 
 		/**
 		 * @property {CMDBuild.model.CMActivityInstance}
@@ -57,11 +66,6 @@
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
 		 */
 		ownerController: undefined,
-
-		/**
-		 * @cfg {Number}
-		 */
-		activityId: undefined,
 
 		/**
 		 * @cfg {Boolean}
@@ -218,16 +222,10 @@ _debug('this.card', this.card);
 //		},
 
 		/**
-		 * If grid store is already loaded regenerate all email if needed, otherwise load grid and do it
-		 *
 		 * @override
 		 */
 		beforeActiveView: function() {
-			if (this.controllerGrid.isStoreLoaded()) {
-				this.regenerateAllEmails();
-			} else {
-				this.onEditMode();
-			}
+			this.controllerGrid.storeLoad();
 		},
 
 		/**
@@ -357,20 +355,8 @@ _debug('this.card', this.card);
 		onEditMode: function() {
 			this.setActivityId();
 _debug('onEditMode');
-			if (!this.controllerGrid.isStoreLoaded() && !this.grid.getStore().isLoading()) {
-				this.view.setLoading(true);
-				this.grid.getStore().load({
-					params: {
-						ProcessId: this.getActivityId() // TODO: probably to change
-					},
-					scope: this,
-					callback: function(records, operation, success) {
-						this.view.setLoading(false);
-						this.grid.storeLoaded = true; // Setup loaded flag in grid class
-						this.regenerateAllEmails();
-					}
-				});
-			}
+			if (!this.grid.getStore().isLoading())
+				this.controllerGrid.storeLoad(this.regenerateAllEmails);
 		},
 
 		onGlobalRegenerationButtonClick: function() {
@@ -393,9 +379,9 @@ _debug('onEditMode');
 				|| this.relatedAttributeChanged
 			) {
 				var regeneratedEmails = [];
-				var templatesToRegenerate = this.checkTemplatesToRegenerate();
 				var objectsToRegenerate = []; // Array with all store New and Draft records and all emailTemplates from widget configuration
 				var emailTemplatesRegenerated = [];
+				var templatesToRegenerate = this.checkTemplatesToRegenerate();
 				var newEmails = this.controllerGrid.getNewEmails();
 				var draftEmails = this.controllerGrid.getDraftEmails();
 _debug('newEmails', newEmails);
@@ -431,8 +417,11 @@ _debug('draftEmails', draftEmails);
 						if (Ext.Array.contains(templatesToRegenerate, item.get(CMDBuild.core.proxy.CMProxyConstants.ID)[CMDBuild.core.proxy.CMProxyConstants.ID]) || forceRegeneration)
 							regeneratedEmails.push(this.regenerateEmail(item, item.get('@@ emailObjectTemplate'))); // Regenerate a grid record
 					} else {
-						if (Ext.Array.contains(templatesToRegenerate, item[CMDBuild.core.proxy.CMProxyConstants.ID]) || forceRegeneration)
+						if (Ext.Array.contains(templatesToRegenerate, item[CMDBuild.core.proxy.CMProxyConstants.ID]) || forceRegeneration) {
+							item[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = true; // Setup temporary flag
+
 							regeneratedEmails.push(this.regenerateEmail(null, item)); // Regenerate a widget configuration template
+						}
 					}
 				}, this);
 
@@ -479,6 +468,8 @@ _debug('emailObject', emailObject);
 						if (!conditionExpr || me.templateResolver.safeJSEval(conditionExpr)) {
 							_msg('Email with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
 
+							values[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE] = sourceTemplate;
+
 							regeneratedEmailObject.push(values);
 						}
 
@@ -500,9 +491,26 @@ _debug('regeneratedEmailObject', regeneratedEmailObject);
 
 		/**
 		 * Setup activityId from WorkFlowState module or requires it from server
+		 *
+		 * @param {Function} successFunction
 		 */
-		setActivityId: function() {
-			this.activityId = _CMWFState.getProcessInstance().getId() || this.self.getTemporaryId(); // TODO: implementare richiesta dal server
+		setActivityId: function(successFunction) {
+			successFunction = successFunction || Ext.emptyFn;
+
+			if (Ext.isEmpty(this.activityId)) {
+				if (_CMWFState.getProcessInstance().getId()) {
+					this.activityId = _CMWFState.getProcessInstance().getId();
+				} else {
+					CMDBuild.core.proxy.Utils.generateId({
+						scope: this,
+						success: function(response, options, decodedResponse) {
+							this.activityId = decodedResponse.response;
+
+							successFunction();
+						}
+					});
+				}
+			}
 		}
 	});
 

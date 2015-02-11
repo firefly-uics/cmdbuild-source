@@ -50,10 +50,10 @@
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ID,
 						hidden: true
 					},
-					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-						hidden: true
-					},
+//					{
+//						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
+//						hidden: true
+//					},
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX,
 						hidden: true

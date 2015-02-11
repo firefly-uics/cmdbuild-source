@@ -26,6 +26,23 @@
 		},
 
 		/**
+		 * TODO
+		 *
+		 * @param {Object} parameters
+		 */
+		createTemplate: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.post,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
+			});
+		},
+
+		/**
 		 * @return {Ext.data.Store}
 		 */
 		getStore: function() {
