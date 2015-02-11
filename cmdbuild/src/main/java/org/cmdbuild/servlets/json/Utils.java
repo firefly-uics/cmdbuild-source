@@ -1,10 +1,15 @@
 package org.cmdbuild.servlets.json;
 
+import static org.apache.commons.lang3.StringUtils.trim;
+import static org.cmdbuild.servlets.json.CommunicationConstants.MODE;
+
 import java.lang.reflect.Constructor;
 import java.util.Map;
+import java.util.UUID;
 
 import org.cmdbuild.exception.CMDBException;
 import org.cmdbuild.services.TranslationService;
+import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -88,6 +93,46 @@ public class Utils extends JSONBaseWithSpringContext {
 	@Admin
 	public void clearCache() {
 		cachingLogic().clearCache();
+	}
+
+	private static enum GenerateIdMode {
+
+		NUMERIC() {
+
+			@Override
+			public Object generate() {
+				return UUID.randomUUID().hashCode();
+			}
+
+		}, //
+		TEXT() {
+
+			@Override
+			public Object generate() {
+				return UUID.randomUUID().toString();
+			}
+
+		}, //
+		;
+
+		public abstract Object generate();
+
+		public static GenerateIdMode of(final String s) {
+			for (final GenerateIdMode value : values()) {
+				if (value.name().equalsIgnoreCase(trim(s))) {
+					return value;
+				}
+			}
+			return NUMERIC;
+		}
+
+	}
+
+	@JSONExported
+	public JsonResponse generateId( //
+			@Parameter(value = MODE, required = false) final String mode //
+	) {
+		return JsonResponse.success(GenerateIdMode.of(mode).generate());
 	}
 
 }
