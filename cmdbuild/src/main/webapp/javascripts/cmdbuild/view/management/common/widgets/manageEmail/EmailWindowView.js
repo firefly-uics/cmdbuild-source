@@ -87,7 +87,7 @@
 				autoScroll: true,
 				flex: 1
 			});
-_debug('view panel', this.delegate.record);
+
 			this.formPanel = Ext.create('Ext.panel.Panel', {
 				frame: false,
 				border: false,

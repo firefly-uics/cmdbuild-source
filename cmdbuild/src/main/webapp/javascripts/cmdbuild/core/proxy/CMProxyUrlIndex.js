@@ -248,12 +248,12 @@
 				getStore: 'services/json/email/email/readall',
 
 				// TODO: future refactor
-				addAttachmentFromExistingEmail: 'services/json/management/email/uploadattachmentfromexistingemail',
-				addAttachmentFromNewEmail: 'services/json/management/email/uploadattachmentfromnewemail',
-				copyAttachmentFromCardForExistingEmail: 'services/json/management/email/copyattachmentsfromcardforexistingemail',
-				copyAttachmentFromCardForNewEmail: 'services/json/management/email/copyattachmentsfromcardfornewemail',
-				removeAttachmentFromExistingEmail: 'services/json/management/email/deleteattachmentfromexistingemail',
-				removeAttachmentFromNewEmail: 'services/json/management/email/deleteattachmentfromnewemail',
+				addAttachmentFromExistingEmail: 'services/json/email/attachment/uploadattachmentfromexistingemail',
+				addAttachmentFromNewEmail: 'services/json/email/attachment/uploadattachmentfromnewemail',
+				copyAttachmentFromCardForExistingEmail: 'services/json/email/attachment/copyattachmentsfromcardforexistingemail',
+				copyAttachmentFromCardForNewEmail: 'services/json/email/attachment/copyattachmentsfromcardfornewemail',
+				removeAttachmentFromExistingEmail: 'services/json/email/attachment/deleteattachmentfromexistingemail',
+				removeAttachmentFromNewEmail: 'services/json/email/attachment/deleteattachmentfromnewemail',
 			}
 		},
 

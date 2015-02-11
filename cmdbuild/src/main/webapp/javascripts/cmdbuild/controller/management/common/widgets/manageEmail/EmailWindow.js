@@ -244,7 +244,9 @@
 		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
 		 */
 		onCMEmailWindowAttachFileChanged: function(emailWindow, form, emailRecord) {
+_debug('asd', emailRecord);
 			if (emailRecord.isNew()) {
+_debug('if');
 				var params = {};
 				var temporaryId = emailRecord.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID);
 
@@ -259,6 +261,7 @@
 					}
 				});
 			} else {
+_debug('else');
 				CMDBuild.core.proxy.widgets.ManageEmail.addAttachmentFromExistingEmail(form, {
 					params: {
 						emailId: emailRecord.getId()
