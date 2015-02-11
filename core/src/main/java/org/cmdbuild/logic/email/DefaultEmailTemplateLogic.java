@@ -250,9 +250,10 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	private final EmailTemplate_to_Template emailTemplate_to_Template;
 	private final Template_To_EmailTemplate template_To_EmailTemplate;
 
-	public DefaultEmailTemplateLogic(final Store<ExtendedEmailTemplate> store, final Store<EmailAccount> accountStore) {
+	public DefaultEmailTemplateLogic(final Store<ExtendedEmailTemplate> store,
+			final Store<ExtendedEmailTemplate> temporaryStore, final Store<EmailAccount> accountStore) {
 		this.store = store;
-		this.temporaryStore = InMemoryStore.of(ExtendedEmailTemplate.class);
+		this.temporaryStore = temporaryStore;
 		this.emailTemplate_to_Template = new EmailTemplate_to_Template(accountStore);
 		this.template_To_EmailTemplate = new Template_To_EmailTemplate(accountStore);
 	}

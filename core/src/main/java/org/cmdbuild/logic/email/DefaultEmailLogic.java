@@ -479,14 +479,14 @@ public class DefaultEmailLogic implements EmailLogic {
 			final EmailServiceFactory emailServiceFactory, //
 			final Store<EmailAccount> emailAccountStore, //
 			final SubjectHandler subjectHandler, //
-			final Notifier notifier //
+			final Notifier notifier, //
+			final Store<org.cmdbuild.data.store.email.Email> store //
 	) {
 		this.emailServiceFactory = emailServiceFactory;
 		this.emailAccountStore = emailAccountStore;
 		this.subjectHandler = subjectHandler;
 		this.notifier = notifier;
-		// TODO move outside
-		this.store = InMemoryStore.of(org.cmdbuild.data.store.email.Email.class);
+		this.store = store;
 	}
 
 	@Override

@@ -41,6 +41,9 @@ public class DefaultEmailTemplateLogicTest {
 	private Store<ExtendedEmailTemplate> store;
 
 	@Mock
+	private Store<ExtendedEmailTemplate> temporaryStore;
+
+	@Mock
 	private Store<EmailAccount> accountStore;
 
 	private DefaultEmailTemplateLogic logic;
@@ -49,7 +52,7 @@ public class DefaultEmailTemplateLogicTest {
 
 	@Before
 	public void setUp() throws Exception {
-		logic = new DefaultEmailTemplateLogic(store, accountStore);
+		logic = new DefaultEmailTemplateLogic(store, temporaryStore, accountStore);
 	}
 
 	@Test
