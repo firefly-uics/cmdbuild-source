@@ -2,10 +2,13 @@ package org.cmdbuild.logic.email;
 
 import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.collect.Iterables.concat;
+import static java.util.Arrays.asList;
 import static org.cmdbuild.data.store.Storables.storableOf;
 import static org.cmdbuild.data.store.Stores.nullOnNotFoundRead;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.apache.commons.lang3.Validate;
@@ -23,6 +26,7 @@ import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.collect.ForwardingObject;
 
 public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
@@ -254,26 +258,6 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 	}
 
 	@Override
-	public Iterable<Template> readAll() {
-		logger.info(marker, "reading all templates");
-		return from(store.readAll()) //
-				.transform(emailTemplate_to_Template);
-	}
-
-	@Override
-	public Template read(final String name) {
-		logger.info(marker, "reading template '{}'", name);
-		assureOneOnlyWithName(name);
-		final ExtendedEmailTemplate template = DefaultExtendedEmailTemplate.newInstance() //
-				.withDelegate(DefaultEmailTemplate.newInstance() //
-						.withName(name) //
-						.build()) //
-				.build();
-		final ExtendedEmailTemplate readed = store.read(template);
-		return emailTemplate_to_Template.apply(readed);
-	}
-
-	@Override
 	public Long create(final Template template) {
 		logger.info(marker, "creating template '{}'", template);
 		final ExtendedEmailTemplate emailTemplate = template_To_EmailTemplate.apply(new ForwardingTemplate() {
@@ -300,6 +284,36 @@ public class DefaultEmailTemplateLogic implements EmailTemplateLogic {
 		final Storable created = _store.create(emailTemplate);
 		final EmailTemplate read = _store.read(created);
 		return read.getId();
+	}
+
+	@Override
+	public Iterable<Template> readAll() {
+		logger.info(marker, "reading all templates");
+		return from(concat(//
+				store.readAll(), //
+				temporaryStore.readAll() //
+				)) //
+				.transform(emailTemplate_to_Template);
+	}
+
+	@Override
+	public Template read(final String name) {
+		logger.info(marker, "reading template '{}'", name);
+		final ExtendedEmailTemplate template = DefaultExtendedEmailTemplate.newInstance() //
+				.withDelegate(DefaultEmailTemplate.newInstance() //
+						.withName(name) //
+						.build()) //
+				.build();
+		final Optional<ExtendedEmailTemplate> found = from(asList( //
+				nullOnNotFoundRead(store).read(template), //
+				nullOnNotFoundRead(temporaryStore).read(template) //
+				)) //
+				.filter(ExtendedEmailTemplate.class) //
+				.first();
+		if (!found.isPresent()) {
+			throw new NoSuchElementException(name);
+		}
+		return emailTemplate_to_Template.apply(found.get());
 	}
 
 	@Override

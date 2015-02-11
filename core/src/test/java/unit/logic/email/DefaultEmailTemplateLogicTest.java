@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
@@ -253,36 +255,20 @@ public class DefaultEmailTemplateLogicTest {
 		assertThat(captured.getName(), equalTo("foo"));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test(expected = NoSuchElementException.class)
 	public void cannotGetNotExistingElement() throws Exception {
 		// given
-		when(store.readAll()) //
-				.thenReturn(NO_ELEMENTS);
+		doThrow(new NoSuchElementException()) //
+				.when(store).read(any(ExtendedEmailTemplate.class));
 
 		// when
 		try {
 			logic.read("foo");
 		} finally {
-			verify(store).readAll();
+			verify(store).read(captor.capture());
 			verifyNoMoreInteractions(store);
-		}
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void cannotGetElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
-		// given
-		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
-				.withName("foo") //
-				.build());
-		when(store.readAll()) //
-				.thenReturn(asList(stored, stored, stored));
-
-		// when
-		try {
-			logic.read("foo");
-		} finally {
-			verify(store).readAll();
-			verifyNoMoreInteractions(store);
+			final EmailTemplate captured = captor.getValue();
+			assertThat(captured.getName(), equalTo("foo"));
 		}
 	}
 
@@ -292,15 +278,14 @@ public class DefaultEmailTemplateLogicTest {
 		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
 				.build());
-		when(store.readAll()) //
-				.thenReturn(asList(stored));
+		when(store.read(any(ExtendedEmailTemplate.class))) //
+				.thenReturn(stored);
 
 		// when
 		logic.read("foo");
 
 		// then
 		final InOrder inOrder = inOrder(store);
-		inOrder.verify(store).readAll();
 		inOrder.verify(store).read(captor.capture());
 		verifyNoMoreInteractions(store);
 		assertThat(captor.getValue().getName(), equalTo("foo"));
