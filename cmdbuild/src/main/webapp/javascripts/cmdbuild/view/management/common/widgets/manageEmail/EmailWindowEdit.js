@@ -74,10 +74,10 @@
 
 							me.fillFromTemplateButton.menu.add({
 								text: record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION),
-								templateId: record.get(CMDBuild.core.proxy.CMProxyConstants.ID),
+								templateName: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
 
 								handler: function(button, e) {
-									me.delegate.cmOn('onFillFromTemplateButtonClick', button[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID]);
+									me.delegate.cmOn('onFillFromTemplateButtonClick', button[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_NAME]);
 								}
 							});
 						}

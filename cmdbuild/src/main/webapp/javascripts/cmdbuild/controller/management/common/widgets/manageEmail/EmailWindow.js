@@ -5,7 +5,9 @@
 		requires: [
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			'CMDBuild.controller.management.common.widgets.manageEmail.Main',
-			'CMDBuild.core.proxy.CMProxyConstants'
+			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.EmailTemplates',
+			'CMDBuild.model.EmailTemplates'
 		],
 
 		/**
@@ -32,6 +34,11 @@
 		 * @property {Object}
 		 */
 		widgetConf: undefined,
+
+		/**
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
+		 */
+		widgetController: undefined,
 
 		/**
 		 * @cfg {String}
@@ -142,7 +149,7 @@
 			var me = this;
 
 			templateResolver.resolveTemplates({
-				attributes: Ext.Object.getKeys(emailTemplatesData),
+				attributes: Ext.Object.getKeys(emailTemplatesData.data),
 				callback: function(values) {
 					var setValueArray = [];
 					var content = values[CMDBuild.core.proxy.CMProxyConstants.BODY];
@@ -203,13 +210,14 @@
 		loadFormValues: function(record) {
 			var me = this;
 
-			var xaVars = Ext.apply({}, this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], record);
+			var xaVars = Ext.apply({}, this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], record.data);
+			var variables = record.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
 
-			for (var key in record.variables)
-				xaVars[key] = record.variables[key];
+			for (var key in variables)
+				xaVars[key] = variables[key];
 
 			var templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: me.view.formPanel.getForm(),
+				clientForm: me.widgetController.ownerController.view.mainView.getForm(),
 				xaVars: xaVars,
 				serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars()
 			});
@@ -314,12 +322,13 @@ _debug('onEmailWindowConfirmButtonClick this.record', this.record);
 				for (var key in formValues)
 					this.record.set(key, formValues[key]);
 
+				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.widgetController.getActivityId());
 				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, attachments);
 
-				if (this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID) > 0) {
-					this.parentDelegate.editRecord(this.record);
-				} else {
+				if (this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID) == 0) {
 					this.parentDelegate.addRecord(this.record);
+				} else {
+					this.parentDelegate.editRecord(this.record);
 				}
 
 				this.onEmailWindowAbortButtonClick();
@@ -327,14 +336,29 @@ _debug('onEmailWindowConfirmButtonClick this.record', this.record);
 		},
 
 		/**
-		 * @param {Int} templateId
+		 * Using FillFromTemplateButton I put only tempalteName in emailObject and get template data to fill email form
+		 *
+		 * @param {String} templateName
 		 */
-		onFillFromTemplateButtonClick: function(templateId) {
-			this.loadFormValues(
-				this.view.templatesStore.getAt(
-					this.view.templatesStore.find(CMDBuild.core.proxy.CMProxyConstants.ID, templateId)
-				).raw
-			);
+		onFillFromTemplateButtonClick: function(templateName) {
+			this.view.setLoading(true);
+			CMDBuild.core.proxy.EmailTemplates.get({
+				scope: this,
+				params: {
+					name: templateName
+				},
+				scope: this,
+				failure: function(response, options, decodedResponse) {
+					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail EmailWindow controller error: get template call failure', false);
+				},
+				success: function(response, options, decodedResponse) {
+					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, templateName); // Bind templateName to email record
+					this.loadFormValues(Ext.create('CMDBuild.model.EmailTemplates.singleTemplate', decodedResponse.response));
+				},
+				callback: function(options, success, response) {
+					this.view.setLoading(false);
+				}
+			});
 		},
 
 		// As CMDMSAttachmentPicker Delegate

@@ -111,8 +111,6 @@
 			getFunctions: 'services/json/schema/modclass/getfunctions'
 		},
 
-		getLanguage: 'services/json/utils/getlanguage',
-
 		login: 'services/json/login/login',
 
 		menu: {
@@ -227,6 +225,11 @@
 
 		users: {
 			getusergrouplist: 'services/json/schema/modsecurity/getusergrouplist'
+		},
+
+		utils: {
+			generateId: 'services/json/utils/generateid',
+			getLanguage: 'services/json/utils/getlanguage'
 		},
 
 		widgets: {
