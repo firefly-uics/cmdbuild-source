@@ -30,7 +30,6 @@
 		 */
 		emailTypes: {
 			draft: 'Draft',
-			'new': 'New', // TODO: da cancellare
 			outgoing: 'Outgoing',
 			received: 'Received',
 			sent: 'Sent'
@@ -168,7 +167,7 @@
 			recordValues = recordValues || {};
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] = recordValues[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] || this.parentDelegate.getActivityId();
 			recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = (recordValues.hasOwnProperty(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX)) ? recordValues[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] : this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX];
-			recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] = recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] || this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
+			recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] = recordValues[CMDBuild.core.proxy.CMProxyConstants.STATUS] || this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT];
 
 			return Ext.create('CMDBuild.model.widget.ManageEmail.email', recordValues);
 		},
@@ -225,13 +224,6 @@ _debug('editRecord record', record);
 		},
 
 		/**
-		 * @return {Array}
-		 */
-		getNewEmails: function() {
-			return this.getEmailsByGroup(this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW]);
-		},
-
-		/**
 		 * @param {Boolean} modifiedOnly
 		 *
 		 * @return {Array} outgoingEmails
@@ -259,14 +251,12 @@ _debug('editRecord record', record);
 		},
 
 		/**
-		 * @WIP TODO
-		 *
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 *
 		 * @return {Boolean}
 		 */
 		isRegenerable: function(record) {
-			return true;
+			return !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE));
 		},
 
 		onEmailAddButtonClick: function() {
@@ -346,7 +336,7 @@ _debug('onEmailEditButtonClick record', record);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS] = null;
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NOTIFY_WITH] = null;
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = true;
-			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.STATUS] = this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
+			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.STATUS] = this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT];
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
 
@@ -393,9 +383,7 @@ _debug('onEmailEditButtonClick record', record);
 		 * @return {Boolean}
 		 */
 		recordIsEditable: function(record) {
-			var status = record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS);
-
-			return status == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT] || status == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.NEW];
+			return record.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) == this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT];
 		},
 
 		/**

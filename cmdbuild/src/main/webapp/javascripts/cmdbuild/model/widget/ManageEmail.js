@@ -25,10 +25,10 @@
 		/**
 		 * @return {Boolean}
 		 *
-		 * TODO: refactor
+		 * TODO: will be deleted in future when i won't need 2 services to save attachments
 		 */
 		isNew: function() {
-			return this.get(CMDBuild.core.proxy.CMProxyConstants.STATUS) == 'New';
+			return this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
 		},
 
 		/**
