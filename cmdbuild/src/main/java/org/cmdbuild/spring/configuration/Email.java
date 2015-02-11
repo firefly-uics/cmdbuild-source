@@ -6,6 +6,7 @@ import static org.cmdbuild.spring.util.Constants.PROTOTYPE;
 import org.cmdbuild.auth.UserStore;
 import org.cmdbuild.common.api.mail.MailApiFactory;
 import org.cmdbuild.common.api.mail.javax.mail.JavaxMailBasedMailApiFactory;
+import org.cmdbuild.data.store.InMemoryStore;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.StoreSupplier;
 import org.cmdbuild.data.store.dao.DataViewStore;
@@ -84,7 +85,7 @@ public class Email {
 	public EmailPersistence emailPersistence() {
 		return new DefaultEmailPersistence( //
 				emailStore(), //
-				emailTemplateStore());
+				templateStore());
 	}
 
 	@Bean
@@ -120,14 +121,6 @@ public class Email {
 	}
 
 	@Bean
-	protected Store<ExtendedEmailTemplate> emailTemplateStore() {
-		return ExtendedEmailTemplateStore.newInstance() //
-				.withDataView(data.systemDataView()) //
-				.withConverter(emailTemplateStorableConverter()) //
-				.build();
-	}
-
-	@Bean
 	@Scope(PROTOTYPE)
 	public EmailAttachmentsLogic emailAttachmentsLogic() {
 		return new DefaultEmailAttachmentsLogic( //
@@ -149,13 +142,32 @@ public class Email {
 				emailServiceFactory(), //
 				emailAccountStore(), //
 				subjectHandler(), //
-				notifier);
+				notifier, //
+				emailTemporaryStore());
+	}
+
+	@Bean
+	protected Store<org.cmdbuild.data.store.email.Email> emailTemporaryStore() {
+		return InMemoryStore.of(org.cmdbuild.data.store.email.Email.class);
 	}
 
 	@Bean
 	public EmailTemplateLogic emailTemplateLogic() {
-		return new TransactionalEmailTemplateLogic(new DefaultEmailTemplateLogic(emailTemplateStore(),
-				emailAccountStore()));
+		return new TransactionalEmailTemplateLogic(new DefaultEmailTemplateLogic(templateStore(),
+				templateTemporaryStore(), emailAccountStore()));
+	}
+
+	@Bean
+	protected Store<ExtendedEmailTemplate> templateStore() {
+		return ExtendedEmailTemplateStore.newInstance() //
+				.withDataView(data.systemDataView()) //
+				.withConverter(emailTemplateStorableConverter()) //
+				.build();
+	}
+
+	@Bean
+	protected Store<ExtendedEmailTemplate> templateTemporaryStore() {
+		return InMemoryStore.of(ExtendedEmailTemplate.class);
 	}
 
 	@Bean
