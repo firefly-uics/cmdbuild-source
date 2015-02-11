@@ -193,12 +193,15 @@ public class DefaultEmailTemplateLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotDeleteNonExistingAccount() throws Exception {
 		// given
+		final Template nonExisting = mock(Template.class);
+		when(nonExisting.getName()) //
+				.thenReturn("foo");
 		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 
 		// when
 		try {
-			logic.delete("foo");
+			logic.delete(nonExisting);
 		} finally {
 			verify(store).readAll();
 			verifyNoMoreInteractions(store);
@@ -208,6 +211,9 @@ public class DefaultEmailTemplateLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotDeleteElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
 		// given
+		final Template existing = mock(Template.class);
+		when(existing.getName()) //
+				.thenReturn("foo");
 		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
 				.build());
@@ -216,7 +222,7 @@ public class DefaultEmailTemplateLogicTest {
 
 		// when
 		try {
-			logic.delete("foo");
+			logic.delete(existing);
 		} finally {
 			verify(store).readAll();
 			verifyNoMoreInteractions(store);
@@ -226,6 +232,9 @@ public class DefaultEmailTemplateLogicTest {
 	@Test
 	public void elementDeletedWhenAnotherOneWithSameNameIsFound() throws Exception {
 		// given
+		final Template existing = mock(Template.class);
+		when(existing.getName()) //
+				.thenReturn("foo");
 		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
 				.build());
@@ -233,7 +242,7 @@ public class DefaultEmailTemplateLogicTest {
 				.thenReturn(asList(stored));
 
 		// when
-		logic.delete("foo");
+		logic.delete(existing);
 
 		// then
 		final InOrder inOrder = inOrder(store);

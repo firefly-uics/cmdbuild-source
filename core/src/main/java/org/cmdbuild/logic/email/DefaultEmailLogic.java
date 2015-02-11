@@ -11,6 +11,7 @@ import static org.cmdbuild.services.email.Predicates.isDefault;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
@@ -35,8 +36,86 @@ import org.joda.time.DateTime;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ForwardingObject;
 
 public class DefaultEmailLogic implements EmailLogic {
+
+	public static abstract class ForwardingEmail extends ForwardingObject implements Email {
+
+		@Override
+		protected abstract Email delegate();
+
+		@Override
+		public Long getId() {
+			return delegate().getId();
+		}
+
+		@Override
+		public String getFromAddress() {
+			return delegate().getFromAddress();
+		}
+
+		@Override
+		public String getToAddresses() {
+			return delegate().getToAddresses();
+		}
+
+		@Override
+		public String getCcAddresses() {
+			return delegate().getCcAddresses();
+		}
+
+		@Override
+		public String getBccAddresses() {
+			return delegate().getBccAddresses();
+		}
+
+		@Override
+		public String getSubject() {
+			return delegate().getSubject();
+		}
+
+		@Override
+		public String getContent() {
+			return delegate().getContent();
+		}
+
+		@Override
+		public DateTime getDate() {
+			return delegate().getDate();
+		}
+
+		@Override
+		public EmailStatus getStatus() {
+			return delegate().getStatus();
+		}
+
+		@Override
+		public Long getActivityId() {
+			return delegate().getActivityId();
+		}
+
+		@Override
+		public String getNotifyWith() {
+			return delegate().getNotifyWith();
+		}
+
+		@Override
+		public boolean isNoSubjectPrefix() {
+			return delegate().isNoSubjectPrefix();
+		}
+
+		@Override
+		public String getAccount() {
+			return delegate().getAccount();
+		}
+
+		@Override
+		public boolean isTemporary() {
+			return delegate().isTemporary();
+		}
+
+	}
 
 	public static class EmailImpl implements Email {
 
@@ -412,7 +491,23 @@ public class DefaultEmailLogic implements EmailLogic {
 
 	@Override
 	public Long create(final Email email) {
-		final org.cmdbuild.data.store.email.Email storableEmail = LOGIC_TO_STORE.apply(email);
+		final org.cmdbuild.data.store.email.Email storableEmail = LOGIC_TO_STORE.apply(new ForwardingEmail() {
+
+			@Override
+			protected Email delegate() {
+				return email;
+			}
+
+			@Override
+			public Long getId() {
+				return isTemporary() ? generateId() : super.getId();
+			}
+
+			private int generateId() {
+				return UUID.randomUUID().hashCode();
+			}
+
+		});
 		final Long id;
 		if (email.isTemporary()) {
 			final Storable stored = store.create(storableEmail);

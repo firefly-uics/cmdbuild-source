@@ -34,8 +34,8 @@ public abstract class ForwardingEmailTemplateLogic extends ForwardingObject impl
 	}
 
 	@Override
-	public void delete(final String name) {
-		delegate().delete(name);
+	public void delete(final Template template) {
+		delegate().delete(template);
 	}
 
 }
