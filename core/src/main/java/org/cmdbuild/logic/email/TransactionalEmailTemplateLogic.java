@@ -29,8 +29,8 @@ public class TransactionalEmailTemplateLogic extends ForwardingEmailTemplateLogi
 
 	@Transactional
 	@Override
-	public void delete(final String name) {
-		super.delete(name);
+	public void delete(final Template template) {
+		super.delete(template);
 	}
 
 }

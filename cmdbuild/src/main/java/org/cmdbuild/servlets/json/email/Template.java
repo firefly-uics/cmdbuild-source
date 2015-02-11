@@ -11,6 +11,7 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SUBJECT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPORARY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TO;
 import static org.cmdbuild.servlets.json.CommunicationConstants.VARIABLES;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
@@ -48,6 +49,7 @@ public class Template extends JSONBaseWithSpringContext {
 		private String body;
 		private Map<String, String> variables;
 		private String account;
+		private boolean temporary;
 
 		@Override
 		@JsonProperty(ID)
@@ -159,6 +161,16 @@ public class Template extends JSONBaseWithSpringContext {
 		}
 
 		@Override
+		@JsonProperty(TEMPORARY)
+		public boolean isTemporary() {
+			return temporary;
+		}
+
+		public void setTemporary(final boolean temporary) {
+			this.temporary = temporary;
+		}
+
+		@Override
 		public String toString() {
 			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
@@ -217,7 +229,8 @@ public class Template extends JSONBaseWithSpringContext {
 			@Parameter(SUBJECT) final String subject, //
 			@Parameter(BODY) final String body, //
 			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables, //
-			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName //
+			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName, //
+			@Parameter(value = TEMPORARY, required = false) final boolean temporary //
 	) {
 		final JsonTemplate template = new JsonTemplate();
 		template.setName(name);
@@ -229,6 +242,7 @@ public class Template extends JSONBaseWithSpringContext {
 		template.setBody(body);
 		template.setVariables(toMap(jsonVariables));
 		template.setAccount(accountName);
+		template.setTemporary(temporary);
 		final Long id = emailTemplateLogic().create(template);
 		return JsonResponse.success(id);
 	}
@@ -261,7 +275,8 @@ public class Template extends JSONBaseWithSpringContext {
 			@Parameter(SUBJECT) final String subject, //
 			@Parameter(BODY) final String body, //
 			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables, //
-			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName //
+			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName, //
+			@Parameter(value = TEMPORARY, required = false) final boolean temporary //
 	) {
 		final JsonTemplate template = new JsonTemplate();
 		template.setName(name);
@@ -273,6 +288,7 @@ public class Template extends JSONBaseWithSpringContext {
 		template.setBody(body);
 		template.setVariables(toMap(jsonVariables));
 		template.setAccount(accountName);
+		template.setTemporary(temporary);
 		emailTemplateLogic().update(template);
 	}
 
@@ -281,7 +297,9 @@ public class Template extends JSONBaseWithSpringContext {
 	public void delete( //
 			@Parameter(NAME) final String name //
 	) {
-		emailTemplateLogic().delete(name);
+		final JsonTemplate template = new JsonTemplate();
+		template.setName(name);
+		emailTemplateLogic().delete(template);
 	}
 
 }
