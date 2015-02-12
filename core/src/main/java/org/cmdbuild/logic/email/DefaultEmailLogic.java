@@ -415,7 +415,7 @@ public class DefaultEmailLogic implements EmailLogic {
 			output.setActivityId(input.getActivityId());
 			output.setNoSubjectPrefix(input.isNoSubjectPrefix());
 			output.setAccount(input.getAccount());
-			// TODO template
+			output.setTemplate(input.getTemplate());
 			return output;
 		}
 
@@ -439,7 +439,7 @@ public class DefaultEmailLogic implements EmailLogic {
 					.withActivityId(input.getActivityId()) //
 					.withNoSubjectPrefix(input.isNoSubjectPrefix()) //
 					.withAccount(input.getAccount()) //
-					// TODO template
+					.withTemplate(input.getTemplate()) //
 					.build();
 		}
 

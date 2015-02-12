@@ -9,9 +9,10 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.DEFAULT_ACCOUNT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.DESCRIPTION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ELEMENTS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
+import static org.cmdbuild.servlets.json.CommunicationConstants.KEEP_SYNCHRONIZATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
+import static org.cmdbuild.servlets.json.CommunicationConstants.PROMPT_SYNCHRONIZATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SUBJECT;
-import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPORARY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TO;
 import static org.cmdbuild.servlets.json.CommunicationConstants.VARIABLES;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
@@ -20,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.logic.email.EmailTemplateLogic;
@@ -38,26 +41,141 @@ public class Template extends JSONBaseWithSpringContext {
 
 		private static final Map<String, String> NO_VARIABLES = Collections.emptyMap();
 
-		private Long id;
-		private String name;
-		private String description;
-		private String from;
-		private String to;
-		private String cc;
-		private String bcc;
-		private String subject;
-		private String body;
-		private Map<String, String> variables;
-		private String account;
+		private static class Builder implements org.apache.commons.lang3.builder.Builder<JsonTemplate> {
+
+			private Long id;
+			private String name;
+			private String description;
+			private String from;
+			private String to;
+			private String cc;
+			private String bcc;
+			private String subject;
+			private String body;
+			private String account;
+			private boolean keepSynchronization;
+			private boolean promptSynchronization;
+			private Map<String, String> variables;
+
+			private Builder() {
+				// use factory method
+			}
+
+			@Override
+			public JsonTemplate build() {
+				return new JsonTemplate(this);
+			}
+
+			public Builder withId(final Long id) {
+				this.id = id;
+				return this;
+			}
+
+			public Builder withDescription(final String description) {
+				this.description = description;
+				return this;
+			}
+
+			public Builder withName(final String name) {
+				this.name = name;
+				return this;
+			}
+
+			public Builder withFrom(final String from) {
+				this.from = from;
+				return this;
+			}
+
+			public Builder withTo(final String to) {
+				this.to = to;
+				return this;
+			}
+
+			public Builder withCc(final String cc) {
+				this.cc = cc;
+				return this;
+			}
+
+			public Builder withBcc(final String bcc) {
+				this.bcc = bcc;
+				return this;
+			}
+
+			public Builder withSubject(final String subject) {
+				this.subject = subject;
+				return this;
+			}
+
+			public Builder withBody(final String body) {
+				this.body = body;
+				return this;
+			}
+
+			public Builder withAccount(final String account) {
+				this.account = account;
+				return this;
+			}
+
+			public Builder withKeepSynchronization(final boolean keepSynchronization) {
+				this.keepSynchronization = keepSynchronization;
+				return this;
+			}
+
+			public Builder withPromptSynchronization(final boolean promptSynchronization) {
+				this.promptSynchronization = promptSynchronization;
+				return null;
+			}
+
+			public Builder withVariables(final Map<String, String> variables) {
+				this.variables = variables;
+				return this;
+			}
+
+			@Override
+			public String toString() {
+				return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private final Long id;
+		private final String name;
+		private final String description;
+		private final String from;
+		private final String to;
+		private final String cc;
+		private final String bcc;
+		private final String subject;
+		private final String body;
+		private final String account;
+		private final boolean keepSynchronization;
+		private final boolean promptSynchronization;
+		private final Map<String, String> variables;
+
+		private JsonTemplate(final Builder builder) {
+			this.id = builder.id;
+			this.name = builder.name;
+			this.description = builder.description;
+			this.from = builder.from;
+			this.to = builder.to;
+			this.cc = builder.cc;
+			this.bcc = builder.bcc;
+			this.subject = builder.subject;
+			this.body = builder.body;
+			this.variables = builder.variables;
+			this.account = builder.account;
+			this.keepSynchronization = builder.keepSynchronization;
+			this.promptSynchronization = builder.promptSynchronization;
+		}
 
 		@Override
 		@JsonProperty(ID)
 		public Long getId() {
 			return id;
-		}
-
-		public void setId(final Long id) {
-			this.id = id;
 		}
 
 		@Override
@@ -66,27 +184,15 @@ public class Template extends JSONBaseWithSpringContext {
 			return name;
 		}
 
-		public void setName(final String name) {
-			this.name = name;
-		}
-
 		@Override
 		@JsonProperty(DESCRIPTION)
 		public String getDescription() {
 			return description;
 		}
 
-		public void setDescription(final String description) {
-			this.description = description;
-		}
-
 		@Override
 		public String getFrom() {
 			return from;
-		}
-
-		public void setFrom(final String from) {
-			this.from = from;
 		}
 
 		@Override
@@ -95,18 +201,10 @@ public class Template extends JSONBaseWithSpringContext {
 			return to;
 		}
 
-		public void setTo(final String to) {
-			this.to = to;
-		}
-
 		@Override
 		@JsonProperty(CC)
 		public String getCc() {
 			return cc;
-		}
-
-		public void setCc(final String cc) {
-			this.cc = cc;
 		}
 
 		@Override
@@ -115,18 +213,10 @@ public class Template extends JSONBaseWithSpringContext {
 			return bcc;
 		}
 
-		public void setBcc(final String bcc) {
-			this.bcc = bcc;
-		}
-
 		@Override
 		@JsonProperty(SUBJECT)
 		public String getSubject() {
 			return subject;
-		}
-
-		public void setSubject(final String subject) {
-			this.subject = subject;
 		}
 
 		@Override
@@ -135,8 +225,22 @@ public class Template extends JSONBaseWithSpringContext {
 			return body;
 		}
 
-		public void setBody(final String body) {
-			this.body = body;
+		@Override
+		@JsonProperty(DEFAULT_ACCOUNT)
+		public String getAccount() {
+			return account;
+		}
+
+		@Override
+		@JsonProperty(KEEP_SYNCHRONIZATION)
+		public boolean isKeepSynchronization() {
+			return keepSynchronization;
+		}
+
+		@Override
+		@JsonProperty(PROMPT_SYNCHRONIZATION)
+		public boolean isPromptSynchronization() {
+			return promptSynchronization;
 		}
 
 		@Override
@@ -145,18 +249,48 @@ public class Template extends JSONBaseWithSpringContext {
 			return defaultIfNull(variables, NO_VARIABLES);
 		}
 
-		public void setVariables(final Map<String, String> variables) {
-			this.variables = variables;
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof EmailTemplateLogic.Template)) {
+				return false;
+			}
+			final EmailTemplateLogic.Template other = EmailTemplateLogic.Template.class.cast(obj);
+			return new EqualsBuilder().append(this.getId(), other.getId()) //
+					.append(this.getName(), other.getName()) //
+					.append(this.getDescription(), other.getDescription()) //
+					.append(this.getFrom(), other.getFrom()) //
+					.append(this.getTo(), other.getTo()) //
+					.append(this.getCc(), other.getCc()) //
+					.append(this.getBcc(), other.getBcc()) //
+					.append(this.getSubject(), other.getSubject()) //
+					.append(this.getBody(), other.getBody()) //
+					.append(this.getAccount(), other.getAccount()) //
+					.append(this.isKeepSynchronization(), other.isKeepSynchronization()) //
+					.append(this.isPromptSynchronization(), other.isPromptSynchronization()) //
+					.append(this.getVariables(), other.getVariables()) //
+					.isEquals();
 		}
 
 		@Override
-		@JsonProperty(DEFAULT_ACCOUNT)
-		public String getAccount() {
-			return account;
-		}
-
-		public void setAccount(final String account) {
-			this.account = account;
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(id) //
+					.append(name) //
+					.append(description) //
+					.append(from) //
+					.append(to) //
+					.append(cc) //
+					.append(bcc) //
+					.append(subject) //
+					.append(body) //
+					.append(account) //
+					.append(keepSynchronization) //
+					.append(promptSynchronization) //
+					.append(variables) //
+					.toHashCode();
 		}
 
 		@Override
@@ -190,19 +324,21 @@ public class Template extends JSONBaseWithSpringContext {
 
 		@Override
 		public JsonTemplate apply(final EmailTemplateLogic.Template input) {
-			final JsonTemplate template = new JsonTemplate();
-			template.setId(input.getId());
-			template.setName(input.getName());
-			template.setDescription(input.getDescription());
-			template.setFrom(input.getFrom());
-			template.setTo(input.getTo());
-			template.setCc(input.getCc());
-			template.setBcc(input.getBcc());
-			template.setSubject(input.getSubject());
-			template.setBody(input.getBody());
-			template.setVariables(input.getVariables());
-			template.setAccount(input.getAccount());
-			return template;
+			return JsonTemplate.newInstance() //
+					.withId(input.getId()) //
+					.withName(input.getName()) //
+					.withDescription(input.getDescription()) //
+					.withFrom(input.getFrom()) //
+					.withTo(input.getTo()) //
+					.withCc(input.getCc()) //
+					.withBcc(input.getBcc()) //
+					.withSubject(input.getSubject()) //
+					.withBody(input.getBody()) //
+					.withVariables(input.getVariables()) //
+					.withAccount(input.getAccount()) //
+					.withKeepSynchronization(input.isKeepSynchronization()) //
+					.withPromptSynchronization(input.isPromptSynchronization()) //
+					.build();
 		}
 
 	};
@@ -219,19 +355,22 @@ public class Template extends JSONBaseWithSpringContext {
 			@Parameter(BODY) final String body, //
 			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables, //
 			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName, //
-			@Parameter(value = TEMPORARY, required = false) final boolean temporary //
+			@Parameter(value = KEEP_SYNCHRONIZATION, required = false) final boolean keepSynchronization, //
+			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptReSynchronization //
 	) {
-		final JsonTemplate template = new JsonTemplate();
-		template.setName(name);
-		template.setDescription(description);
-		template.setTo(to);
-		template.setCc(cc);
-		template.setBcc(bcc);
-		template.setSubject(subject);
-		template.setBody(body);
-		template.setVariables(toMap(jsonVariables));
-		template.setAccount(accountName);
-		final Long id = emailTemplateLogic().create(template);
+		final Long id = emailTemplateLogic().create(JsonTemplate.newInstance() //
+				.withName(name) //
+				.withDescription(description) //
+				.withTo(to) //
+				.withCc(cc) //
+				.withBcc(bcc) //
+				.withSubject(subject) //
+				.withBody(body) //
+				.withVariables(toMap(jsonVariables)) //
+				.withAccount(accountName) //
+				.withKeepSynchronization(keepSynchronization) //
+				.withPromptSynchronization(promptReSynchronization) //
+				.build());
 		return JsonResponse.success(id);
 	}
 
@@ -264,19 +403,22 @@ public class Template extends JSONBaseWithSpringContext {
 			@Parameter(BODY) final String body, //
 			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables, //
 			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName, //
-			@Parameter(value = TEMPORARY, required = false) final boolean temporary //
+			@Parameter(value = KEEP_SYNCHRONIZATION, required = false) final boolean keepSynchronization, //
+			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptReSynchronization //
 	) {
-		final JsonTemplate template = new JsonTemplate();
-		template.setName(name);
-		template.setDescription(description);
-		template.setTo(to);
-		template.setCc(cc);
-		template.setBcc(bcc);
-		template.setSubject(subject);
-		template.setBody(body);
-		template.setVariables(toMap(jsonVariables));
-		template.setAccount(accountName);
-		emailTemplateLogic().update(template);
+		emailTemplateLogic().update(JsonTemplate.newInstance() //
+				.withName(name) //
+				.withDescription(description) //
+				.withTo(to) //
+				.withCc(cc) //
+				.withBcc(bcc) //
+				.withSubject(subject) //
+				.withBody(body) //
+				.withVariables(toMap(jsonVariables)) //
+				.withAccount(accountName) //
+				.withKeepSynchronization(keepSynchronization) //
+				.withPromptSynchronization(promptReSynchronization) //
+				.build());
 	}
 
 	@JSONExported

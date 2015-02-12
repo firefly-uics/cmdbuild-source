@@ -152,6 +152,7 @@ public class CommunicationConstants {
 			IS_KEY = "isKey", //
 			IS_PROCESS = "isprocess", //
 			JRXML = "jrxml", //
+			KEEP_SYNCHRONIZATION = "keepSynchronization", //
 			KEY = "key", //
 			LANGUAGE = "language", //
 			LANGUAGE_PROMPT = "language_prompt", //
@@ -222,6 +223,7 @@ public class CommunicationConstants {
 			PRIVILEGE_WRITE = "write_privilege", //
 			PROCESSED_FOLDER = "processedFolder", //
 			PROCESS_ID = "ProcessId", //
+			PROMPT_SYNCHRONIZATION = "promptSynchronization", //
 			QUERY = "query", //
 			REJECTED_FOLDER = "rejectedFolder", //
 			REJECT_NOT_MATCHING = "rejectNotMatching", //

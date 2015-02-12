@@ -13,6 +13,7 @@ import static org.cmdbuild.data.store.email.EmailConstants.NOTIFY_WITH_ATTRIBUTE
 import static org.cmdbuild.data.store.email.EmailConstants.NO_SUBJECT_PREFIX_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.PROCESS_ID_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.SUBJECT_ATTRIBUTE;
+import static org.cmdbuild.data.store.email.EmailConstants.TEMPLATE_ATTRIBUTE;
 import static org.cmdbuild.data.store.email.EmailConstants.TO_ADDRESSES_ATTRIBUTE;
 
 import java.util.Map;
@@ -52,6 +53,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		email.setNotifyWith(defaultIfBlank(card.get(NOTIFY_WITH_ATTRIBUTE, String.class), null));
 		email.setNoSubjectPrefix(toBooleanDefaultIfNull(card.get(NO_SUBJECT_PREFIX_ATTRIBUTE, Boolean.class), false));
 		email.setAccount(defaultIfBlank(card.get(ACCOUNT_ATTRIBUTE, String.class), null));
+		email.setAccount(defaultIfBlank(card.get(TEMPLATE_ATTRIBUTE, String.class), null));
 		email.setDate((card.getBeginDate()));
 
 		final Long emailStatusLookupId = card.get(EMAIL_STATUS_ATTRIBUTE, IdAndDescription.class).getId();
@@ -77,6 +79,7 @@ public class EmailConverter extends BaseStorableConverter<Email> {
 		values.put(NOTIFY_WITH_ATTRIBUTE, email.getNotifyWith());
 		values.put(NO_SUBJECT_PREFIX_ATTRIBUTE, email.isNoSubjectPrefix());
 		values.put(ACCOUNT_ATTRIBUTE, email.getAccount());
+		values.put(TEMPLATE_ATTRIBUTE, email.getTemplate());
 		if (email.getStatus() != null) {
 			values.put(EMAIL_STATUS_ATTRIBUTE, getEmailLookupIdFrom(email.getStatus()));
 		}

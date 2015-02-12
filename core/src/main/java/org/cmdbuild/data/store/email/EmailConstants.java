@@ -15,6 +15,7 @@ public class EmailConstants {
 	public static final String NOTIFY_WITH_ATTRIBUTE = "NotifyWith";
 	public static final String NO_SUBJECT_PREFIX_ATTRIBUTE = "NoSubjectPrefix";
 	public static final String ACCOUNT_ATTRIBUTE = "Account";
+	public static final String TEMPLATE_ATTRIBUTE = "Template";
 
 	public static final String ADDRESSES_SEPARATOR = ",";
 
