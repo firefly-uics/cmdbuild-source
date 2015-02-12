@@ -4,7 +4,6 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -13,7 +12,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
@@ -41,9 +39,6 @@ public class DefaultEmailTemplateLogicTest {
 	private Store<ExtendedEmailTemplate> store;
 
 	@Mock
-	private Store<ExtendedEmailTemplate> temporaryStore;
-
-	@Mock
 	private Store<EmailAccount> accountStore;
 
 	private DefaultEmailTemplateLogic logic;
@@ -52,7 +47,7 @@ public class DefaultEmailTemplateLogicTest {
 
 	@Before
 	public void setUp() throws Exception {
-		logic = new DefaultEmailTemplateLogic(store, temporaryStore, accountStore);
+		logic = new DefaultEmailTemplateLogic(store, accountStore);
 	}
 
 	@Test
@@ -198,15 +193,12 @@ public class DefaultEmailTemplateLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotDeleteNonExistingAccount() throws Exception {
 		// given
-		final Template nonExisting = mock(Template.class);
-		when(nonExisting.getName()) //
-				.thenReturn("foo");
 		when(store.readAll()) //
 				.thenReturn(NO_ELEMENTS);
 
 		// when
 		try {
-			logic.delete(nonExisting);
+			logic.delete("foo");
 		} finally {
 			verify(store).readAll();
 			verifyNoMoreInteractions(store);
@@ -216,9 +208,6 @@ public class DefaultEmailTemplateLogicTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void cannotDeleteElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
 		// given
-		final Template existing = mock(Template.class);
-		when(existing.getName()) //
-				.thenReturn("foo");
 		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
 				.build());
@@ -227,7 +216,7 @@ public class DefaultEmailTemplateLogicTest {
 
 		// when
 		try {
-			logic.delete(existing);
+			logic.delete("foo");
 		} finally {
 			verify(store).readAll();
 			verifyNoMoreInteractions(store);
@@ -237,9 +226,6 @@ public class DefaultEmailTemplateLogicTest {
 	@Test
 	public void elementDeletedWhenAnotherOneWithSameNameIsFound() throws Exception {
 		// given
-		final Template existing = mock(Template.class);
-		when(existing.getName()) //
-				.thenReturn("foo");
 		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
 				.build());
@@ -247,7 +233,7 @@ public class DefaultEmailTemplateLogicTest {
 				.thenReturn(asList(stored));
 
 		// when
-		logic.delete(existing);
+		logic.delete("foo");
 
 		// then
 		final InOrder inOrder = inOrder(store);
@@ -258,20 +244,36 @@ public class DefaultEmailTemplateLogicTest {
 		assertThat(captured.getName(), equalTo("foo"));
 	}
 
-	@Test(expected = NoSuchElementException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void cannotGetNotExistingElement() throws Exception {
 		// given
-		doThrow(new NoSuchElementException()) //
-				.when(store).read(any(ExtendedEmailTemplate.class));
+		when(store.readAll()) //
+				.thenReturn(NO_ELEMENTS);
 
 		// when
 		try {
 			logic.read("foo");
 		} finally {
-			verify(store).read(captor.capture());
+			verify(store).readAll();
 			verifyNoMoreInteractions(store);
-			final EmailTemplate captured = captor.getValue();
-			assertThat(captured.getName(), equalTo("foo"));
+		}
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void cannotGetElementIfItIsStoredMoreThanOnce_thisShouldNeverHappenButWhoKnows() throws Exception {
+		// given
+		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
+				.withName("foo") //
+				.build());
+		when(store.readAll()) //
+				.thenReturn(asList(stored, stored, stored));
+
+		// when
+		try {
+			logic.read("foo");
+		} finally {
+			verify(store).readAll();
+			verifyNoMoreInteractions(store);
 		}
 	}
 
@@ -281,14 +283,15 @@ public class DefaultEmailTemplateLogicTest {
 		final ExtendedEmailTemplate stored = extended(DefaultEmailTemplate.newInstance() //
 				.withName("foo") //
 				.build());
-		when(store.read(any(ExtendedEmailTemplate.class))) //
-				.thenReturn(stored);
+		when(store.readAll()) //
+				.thenReturn(asList(stored));
 
 		// when
 		logic.read("foo");
 
 		// then
 		final InOrder inOrder = inOrder(store);
+		inOrder.verify(store).readAll();
 		inOrder.verify(store).read(captor.capture());
 		verifyNoMoreInteractions(store);
 		assertThat(captor.getValue().getName(), equalTo("foo"));

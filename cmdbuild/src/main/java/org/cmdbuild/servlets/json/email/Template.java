@@ -49,7 +49,6 @@ public class Template extends JSONBaseWithSpringContext {
 		private String body;
 		private Map<String, String> variables;
 		private String account;
-		private boolean temporary;
 
 		@Override
 		@JsonProperty(ID)
@@ -161,16 +160,6 @@ public class Template extends JSONBaseWithSpringContext {
 		}
 
 		@Override
-		@JsonProperty(TEMPORARY)
-		public boolean isTemporary() {
-			return temporary;
-		}
-
-		public void setTemporary(final boolean temporary) {
-			this.temporary = temporary;
-		}
-
-		@Override
 		public String toString() {
 			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 		}
@@ -213,7 +202,6 @@ public class Template extends JSONBaseWithSpringContext {
 			template.setBody(input.getBody());
 			template.setVariables(input.getVariables());
 			template.setAccount(input.getAccount());
-			template.setTemporary(input.isTemporary());
 			return template;
 		}
 
@@ -243,7 +231,6 @@ public class Template extends JSONBaseWithSpringContext {
 		template.setBody(body);
 		template.setVariables(toMap(jsonVariables));
 		template.setAccount(accountName);
-		template.setTemporary(temporary);
 		final Long id = emailTemplateLogic().create(template);
 		return JsonResponse.success(id);
 	}
@@ -289,7 +276,6 @@ public class Template extends JSONBaseWithSpringContext {
 		template.setBody(body);
 		template.setVariables(toMap(jsonVariables));
 		template.setAccount(accountName);
-		template.setTemporary(temporary);
 		emailTemplateLogic().update(template);
 	}
 
@@ -298,9 +284,7 @@ public class Template extends JSONBaseWithSpringContext {
 	public void delete( //
 			@Parameter(NAME) final String name //
 	) {
-		final JsonTemplate template = new JsonTemplate();
-		template.setName(name);
-		emailTemplateLogic().delete(template);
+		emailTemplateLogic().delete(name);
 	}
 
 }

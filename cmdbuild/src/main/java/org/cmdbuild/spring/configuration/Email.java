@@ -153,8 +153,7 @@ public class Email {
 
 	@Bean
 	public EmailTemplateLogic emailTemplateLogic() {
-		return new TransactionalEmailTemplateLogic(new DefaultEmailTemplateLogic(templateStore(),
-				templateTemporaryStore(), emailAccountStore()));
+		return new TransactionalEmailTemplateLogic(new DefaultEmailTemplateLogic(templateStore(), emailAccountStore()));
 	}
 
 	@Bean
@@ -163,11 +162,6 @@ public class Email {
 				.withDataView(data.systemDataView()) //
 				.withConverter(emailTemplateStorableConverter()) //
 				.build();
-	}
-
-	@Bean
-	protected Store<ExtendedEmailTemplate> templateTemporaryStore() {
-		return InMemoryStore.of(ExtendedEmailTemplate.class);
 	}
 
 	@Bean
