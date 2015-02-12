@@ -1,5 +1,6 @@
 package org.cmdbuild.workflow.widget;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -203,7 +204,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 	}
 
 	protected final Map<String, Object> extractUnmanagedParameters(final Map<String, Object> valueMap,
-			final Set<String> managedParameters) {
+			final Collection<String> managedParameters) {
 		final Map<String, Object> out = new HashMap<String, Object>();
 
 		for (final String key : valueMap.keySet()) {
@@ -226,7 +227,7 @@ public abstract class ValuePairWidgetFactory implements SingleActivityWidgetFact
 	}
 
 	protected final Map<String, String> extractUnmanagedStringParameters(final Map<String, Object> valueMap,
-			final Set<String> managedParameters) {
+			final Collection<String> managedParameters) {
 		final Map<String, Object> rawParameters = extractUnmanagedParameters(valueMap, managedParameters);
 		final Map<String, String> stringParameters = new HashMap<String, String>();
 		for (final Map.Entry<String, Object> rawEntry : rawParameters.entrySet()) {

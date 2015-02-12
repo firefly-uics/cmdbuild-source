@@ -52,10 +52,19 @@ public class ManageEmail extends Widget {
 
 		private static final Map<String, String> NO_VARIABLES = Collections.emptyMap();
 
+		private String key;
 		private String condition;
 		private Map<String, String> variables;
 		private boolean noSubjectPrefix;
 		private String account;
+
+		public String getKey() {
+			return key;
+		}
+
+		public void setKey(final String name) {
+			this.key = name;
+		}
 
 		public String getCondition() {
 			return condition;

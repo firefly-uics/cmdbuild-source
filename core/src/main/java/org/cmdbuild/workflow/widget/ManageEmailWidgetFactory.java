@@ -1,13 +1,19 @@
 package org.cmdbuild.workflow.widget;
 
-import static com.google.common.collect.FluentIterable.from;
+import static com.google.common.base.Functions.toStringFunction;
+import static com.google.common.collect.Maps.filterEntries;
 import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Maps.transformEntries;
+import static com.google.common.collect.Maps.transformValues;
+import static com.google.common.collect.Sets.newHashSet;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
 import org.cmdbuild.logger.Log;
 import org.cmdbuild.logic.email.EmailLogic;
@@ -21,9 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Maps.EntryTransformer;
 
 public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 
@@ -68,13 +73,13 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	@Override
 	protected Widget createWidget(final Map<String, Object> valueMap) {
 		// I want to preserve the order
-		final Map<String, EmailTemplate> emailTemplatesByName = Maps.newLinkedHashMap();
-		final Set<String> managedParameters = Sets.newHashSet();
+		final Map<String, EmailTemplate> emailTemplatesByName = newLinkedHashMap();
+		final Collection<String> managedParameters = newHashSet();
 		managedParameters.add(READ_ONLY);
 		managedParameters.add(BUTTON_LABEL);
 		managedParameters.add(GLOBAL_NO_SUBJECT_PREFIX);
 
-		final Map<String, String> templates = getAttributesStartingWith(valueMap, TEMPLATE);
+		final Map<String, String> templates = filterKeysStartingWith(valueMap, TEMPLATE);
 		for (final String key : templates.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, TEMPLATE);
 			final String name = readString(valueMap.get(key));
@@ -96,63 +101,63 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		}
 		managedParameters.addAll(templates.keySet());
 
-		final Map<String, String> fromAddresses = getAttributesStartingWith(valueMap, FROM_ADDRESS);
+		final Map<String, String> fromAddresses = filterKeysStartingWith(valueMap, FROM_ADDRESS);
 		for (final String key : fromAddresses.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, FROM_ADDRESS);
 			template.setFromAddress(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(fromAddresses.keySet());
 
-		final Map<String, String> toAddresses = getAttributesStartingWith(valueMap, TO_ADDRESSES);
+		final Map<String, String> toAddresses = filterKeysStartingWith(valueMap, TO_ADDRESSES);
 		for (final String key : toAddresses.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, TO_ADDRESSES);
 			template.setToAddresses(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(toAddresses.keySet());
 
-		final Map<String, String> ccAddresses = getAttributesStartingWith(valueMap, CC_ADDRESSES);
+		final Map<String, String> ccAddresses = filterKeysStartingWith(valueMap, CC_ADDRESSES);
 		for (final String key : ccAddresses.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, CC_ADDRESSES);
 			template.setCcAddresses(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(ccAddresses.keySet());
 
-		final Map<String, String> bccAddresses = getAttributesStartingWith(valueMap, BCC_ADDRESSES);
+		final Map<String, String> bccAddresses = filterKeysStartingWith(valueMap, BCC_ADDRESSES);
 		for (final String key : bccAddresses.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, BCC_ADDRESSES);
 			template.setBccAddresses(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(bccAddresses.keySet());
 
-		final Map<String, String> subjects = getAttributesStartingWith(valueMap, SUBJECT);
+		final Map<String, String> subjects = filterKeysStartingWith(valueMap, SUBJECT);
 		for (final String key : subjects.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, SUBJECT);
 			template.setSubject(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(subjects.keySet());
 
-		final Map<String, String> notifyWithThemplate = getAttributesStartingWith(valueMap, NOTIFY_TEMPLATE_NAME);
+		final Map<String, String> notifyWithThemplate = filterKeysStartingWith(valueMap, NOTIFY_TEMPLATE_NAME);
 		for (final String key : notifyWithThemplate.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, NOTIFY_TEMPLATE_NAME);
 			template.setNotifyWith(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(subjects.keySet());
 
-		final Map<String, String> contents = getAttributesStartingWith(valueMap, CONTENT);
+		final Map<String, String> contents = filterKeysStartingWith(valueMap, CONTENT);
 		for (final String key : contents.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, CONTENT);
 			template.setContent(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(contents.keySet());
 
-		final Map<String, String> conditions = getAttributesStartingWith(valueMap, CONDITION);
+		final Map<String, String> conditions = filterKeysStartingWith(valueMap, CONDITION);
 		for (final String key : conditions.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, CONDITION);
 			template.setCondition(readString(valueMap.get(key)));
 		}
 		managedParameters.addAll(conditions.keySet());
 
-		final Map<String, String> noSubjectPrexifes = getAttributesStartingWith(valueMap, NO_SUBJECT_PREFIX);
+		final Map<String, String> noSubjectPrexifes = filterKeysStartingWith(valueMap, NO_SUBJECT_PREFIX);
 		for (final String key : noSubjectPrexifes.keySet()) {
 			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, NO_SUBJECT_PREFIX);
 			template.setNoSubjectPrefix(readBooleanTrueIfTrue(valueMap.get(key)));
@@ -160,37 +165,39 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		managedParameters.addAll(noSubjectPrexifes.keySet());
 
 		final ManageEmail widget = new ManageEmail(emailLogic);
-		widget.setEmailTemplates(from(emailTemplatesByName.values()) //
-				.transform(new Function<EmailTemplate, EmailTemplate>() {
+		widget.setEmailTemplates(transformEntries(emailTemplatesByName,
+				new EntryTransformer<String, EmailTemplate, EmailTemplate>() {
 
 					final Map<String, String> unmanaged = extractUnmanagedStringParameters(valueMap, managedParameters);
 
 					@Override
-					public EmailTemplate apply(final EmailTemplate input) {
-						final Map<String, String> variables = input.getVariables();
+					public EmailTemplate transformEntry(final String key, final EmailTemplate value) {
+						value.setKey(key);
 
+						final Map<String, String> variables = value.getVariables();
 						final Map<String, String> newVariables = newHashMap(unmanaged);
 						newVariables.putAll(variables);
-						input.setVariables(newVariables);
+						value.setVariables(newVariables);
 
-						return input;
+						return value;
 					}
 
-				}).toList());
+				}).values());
 		widget.setReadOnly(readBooleanTrueIfPresent(valueMap.get(READ_ONLY)));
 		widget.setNoSubjectPrefix(readBooleanTrueIfTrue(valueMap.get(GLOBAL_NO_SUBJECT_PREFIX)));
 
 		return widget;
 	}
 
-	private Map<String, String> getAttributesStartingWith(final Map<String, Object> valueMap, final String prefix) {
-		final Map<String, String> out = Maps.newHashMap();
-		for (final String key : valueMap.keySet()) {
-			if (key.startsWith(prefix)) {
-				out.put(key, readString(valueMap.get(key)));
-			}
-		}
-		return out;
+	private Map<String, String> filterKeysStartingWith(final Map<String, Object> valueMap, final String prefix) {
+		return transformValues(filterEntries(valueMap, new Predicate<Entry<String, Object>>() {
+
+			@Override
+			public boolean apply(final Entry<String, Object> input) {
+				return input.getKey().startsWith(prefix);
+			};
+
+		}), toStringFunction());
 	}
 
 	private EmailTemplate getTemplateForKey(final Map<String, EmailTemplate> templates, final String key,

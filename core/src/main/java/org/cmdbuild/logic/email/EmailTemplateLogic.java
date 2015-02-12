@@ -30,8 +30,6 @@ public interface EmailTemplateLogic extends Logic {
 
 		String getAccount();
 
-		boolean isTemporary();
-
 	}
 
 	/**
@@ -59,6 +57,6 @@ public interface EmailTemplateLogic extends Logic {
 	/**
 	 * Remove the {@link Template} with the given name.
 	 */
-	void delete(Template template);
+	void delete(String name);
 
 }
