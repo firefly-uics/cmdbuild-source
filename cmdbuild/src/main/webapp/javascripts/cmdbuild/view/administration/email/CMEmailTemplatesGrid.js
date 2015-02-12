@@ -27,12 +27,12 @@
 					},
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						header: CMDBuild.Translation.description_,
+						text: CMDBuild.Translation.description_,
 						flex: 3
 					},
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
-						header: CMDBuild.Translation.subject,
+						text: CMDBuild.Translation.subject,
 						flex: 2
 					}
 				],

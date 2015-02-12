@@ -27,15 +27,15 @@
 
 				columns: [
 					{
-						header: CMDBuild.Translation.key,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.KEY,
+						text: CMDBuild.Translation.key,
 						flex: 1,
 
 						editor: { xtype: 'textfield' }
 					},
 					{
-						header: CMDBuild.Translation.value,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+						text: CMDBuild.Translation.value,
 						flex: 1,
 
 						editor: { xtype: 'textfield' }
