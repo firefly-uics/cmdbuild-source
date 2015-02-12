@@ -5,10 +5,12 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.ACTIVITY_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BCC;
 import static org.cmdbuild.servlets.json.CommunicationConstants.BODY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.CC;
+import static org.cmdbuild.servlets.json.CommunicationConstants.DATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.FROM;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFY_WITH;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NO_SUBJECT_PREFIX;
+import static org.cmdbuild.servlets.json.CommunicationConstants.STATUS;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SUBJECT;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPLATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPORARY;
@@ -21,6 +23,7 @@ import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
 import org.cmdbuild.servlets.json.serializers.AbstractJsonResponseSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
@@ -35,62 +38,77 @@ public class Email extends JSONBaseWithSpringContext {
 			this.delegate = delegate;
 		}
 
+		@JsonProperty(ID)
 		public Long getId() {
 			return delegate.getId();
 		}
 
+		@JsonProperty(FROM)
 		public String getFromAddress() {
 			return delegate.getFromAddress();
 		}
 
+		@JsonProperty(TO)
 		public String getToAddresses() {
 			return delegate.getToAddresses();
 		}
 
+		@JsonProperty(CC)
 		public String getCcAddresses() {
 			return delegate.getCcAddresses();
 		}
 
+		@JsonProperty(BCC)
 		public String getBccAddresses() {
 			return delegate.getBccAddresses();
 		}
 
+		@JsonProperty(SUBJECT)
 		public String getSubject() {
 			return delegate.getSubject();
 		}
 
+		@JsonProperty(BODY)
 		public String getContent() {
 			return delegate.getContent();
 		}
 
+		@JsonProperty(DATE)
 		public String getDate() {
 			return formatDateTime(delegate.getDate());
 		}
 
+		@JsonProperty(STATUS)
 		public String getStatus() {
 			return delegate.getStatus().getLookupName();
 		}
 
+		@JsonProperty(ACTIVITY_ID)
 		public Long getActivityId() {
 			return delegate.getActivityId();
 		}
 
+		@JsonProperty(NOTIFY_WITH)
 		public String getNotifyWith() {
 			return delegate.getNotifyWith();
 		}
 
+		@JsonProperty(NO_SUBJECT_PREFIX)
 		public boolean isNoSubjectPrefix() {
 			return delegate.isNoSubjectPrefix();
 		}
 
+		@JsonProperty(ACCOUNT)
 		public String getAccount() {
 			return delegate.getAccount();
 		}
 
+		@JsonProperty(TEMPORARY)
 		public boolean isTemporary() {
 			return delegate.isTemporary();
 		}
 
+		@JsonProperty(TEMPLATE)
 		public String getTemplate() {
 			return delegate.getTemplate();
 		}

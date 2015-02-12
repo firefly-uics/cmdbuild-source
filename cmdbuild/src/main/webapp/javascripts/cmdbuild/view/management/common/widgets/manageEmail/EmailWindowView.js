@@ -107,27 +107,27 @@
 				items: [
 					{
 						xtype: 'displayfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
+						name: CMDBuild.core.proxy.CMProxyConstants.FROM,
 						fieldLabel: CMDBuild.Translation.from,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM)
 					},
 					{
 						xtype: 'displayfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES,
+						name: CMDBuild.core.proxy.CMProxyConstants.TO,
 						fieldLabel: CMDBuild.Translation.to,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.TO)
 					},
 					{
 						xtype: 'displayfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES,
+						name: CMDBuild.core.proxy.CMProxyConstants.CC,
 						fieldLabel: CMDBuild.Translation.cc,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CC)
 					},
 					{
 						xtype: 'displayfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES,
+						name: CMDBuild.core.proxy.CMProxyConstants.BCC,
 						fieldLabel: CMDBuild.Translation.bcc,
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BCC)
 					},
 					{
 						xtype: 'displayfield',
@@ -141,7 +141,7 @@
 						frame: true,
 						border: true,
 						flex: 1,
-						html: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT)
+						html: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BODY)
 					}
 				]
 			});

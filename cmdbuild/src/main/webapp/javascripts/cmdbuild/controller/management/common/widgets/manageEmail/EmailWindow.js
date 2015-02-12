@@ -156,29 +156,29 @@
 
 					if (me.windowMode == 'reply') {
 						setValueArray.push({
-							id: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
-							value: content + '<br /><br />' + me.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT)
+							id: CMDBuild.core.proxy.CMProxyConstants.BODY,
+							value: content + '<br /><br />' + me.record.get(CMDBuild.core.proxy.CMProxyConstants.BODY)
 						});
 					} else {
 						setValueArray.push(
 							{
 								id: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-								value: values[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT]
+								value: values[CMDBuild.core.proxy.CMProxyConstants.ACCOUNT]
 							},
 							{
-								id: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES,
+								id: CMDBuild.core.proxy.CMProxyConstants.TO,
 								value: values[CMDBuild.core.proxy.CMProxyConstants.TO]
 							},
 							{
-								id: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
+								id: CMDBuild.core.proxy.CMProxyConstants.FROM,
 								value: values[CMDBuild.core.proxy.CMProxyConstants.FROM]
 							},
 							{
-								id: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES,
+								id: CMDBuild.core.proxy.CMProxyConstants.CC,
 								value: values[CMDBuild.core.proxy.CMProxyConstants.CC]
 							},
-							{ // Translation of bcc attribute to bcc_addresses to be like ManageEmail standards
-								id: CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES,
+							{
+								id: CMDBuild.core.proxy.CMProxyConstants.BCC,
 								value: values[CMDBuild.core.proxy.CMProxyConstants.BCC]
 							},
 							{
@@ -186,7 +186,7 @@
 								value: values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT]
 							},
 							{
-								id: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
+								id: CMDBuild.core.proxy.CMProxyConstants.BODY,
 								value: content
 							}
 						);

@@ -8,18 +8,19 @@
 		fields: [
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, type: 'int' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, type: 'auto' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES, type: 'auto' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES, type: 'auto' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CONTENT, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.BCC, type: 'auto' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CC, type: 'auto' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.BODY, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DATE, type: 'auto' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS, type: 'auto' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX, type: 'boolean', defaultValue: false },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.STATUS, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, type: 'auto' }, // CMDBuild.model.EmailTemplates.singleTemplate
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, type: 'string' },
+//			{ name: CMDBuild.core.proxy.CMProxyConstants.KEY, type: 'auto' }, // CMDBuild.model.EmailTemplates.singleTemplate
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TEMPORARY, type: 'boolean', defaultValue: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES, type: 'auto' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TO, type: 'auto' },
 		],
 
 		/**
@@ -39,48 +40,33 @@
 		},
 
 		/**
-		 * Converts model object to params to use in server calls
+		 * Converts model object to params object, used in server calls
+		 *
+		 * @param {Array} requiredAttributes
 		 *
 		 * @return {Object} params
 		 */
-		getAsParams: function() {
+		getAsParams: function(requiredAttributes) {
 			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.ACCOUNT] =
-				this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT] || null;
-			params[CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID] = this.get(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID);
-			params[CMDBuild.core.proxy.CMProxyConstants.BCC] = this.get(CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES);
-			params[CMDBuild.core.proxy.CMProxyConstants.BODY] = this.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT);
-			params[CMDBuild.core.proxy.CMProxyConstants.CC] = this.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES);
-			params[CMDBuild.core.proxy.CMProxyConstants.FROM] = this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)[CMDBuild.core.proxy.CMProxyConstants.FROM] || null;
-			params[CMDBuild.core.proxy.CMProxyConstants.ID] = this.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-			params[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX] = this.get(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX);
-			params[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = this.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
-			params[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE] =
-				this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)[CMDBuild.core.proxy.CMProxyConstants.NAME] || this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
-			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
-			params[CMDBuild.core.proxy.CMProxyConstants.TO] = this.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
 
-			return params;
-		},
+			// With no parameters returns all data
+			if (Ext.isEmpty(requiredAttributes)) {
+				params = this.getData();
+			} else {
+				// Or returns only required attributes
+				Ext.Array.forEach(requiredAttributes, function(item, index, allItems) {
+					if (item == CMDBuild.core.proxy.CMProxyConstants.TEMPLATE) { // Support for template objects
+						params[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE] =
+							this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)[CMDBuild.core.proxy.CMProxyConstants.NAME]
+						|| this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
+					} else {
+						params[item] = this.get(item) || null;
+					}
+				}, this);
+			}
 
-		/**
-		 * @return {Object} params
-		 */
-		getTemplateAsParams: function() {
-			var template = this.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
-
-			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.BCC] = template.get(CMDBuild.core.proxy.CMProxyConstants.BCC);
-			params[CMDBuild.core.proxy.CMProxyConstants.BODY] = template.get(CMDBuild.core.proxy.CMProxyConstants.BODY);
-			params[CMDBuild.core.proxy.CMProxyConstants.CC] = template.get(CMDBuild.core.proxy.CMProxyConstants.CC);
-			params[CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT] = template.get(CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT);
-			params[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] = template.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION);
-			params[CMDBuild.core.proxy.CMProxyConstants.FROM] = template.get(CMDBuild.core.proxy.CMProxyConstants.FROM);
-			params[CMDBuild.core.proxy.CMProxyConstants.NAME] = template.get(CMDBuild.core.proxy.CMProxyConstants.NAME);
-			params[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = template.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
-			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = template.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
-			params[CMDBuild.core.proxy.CMProxyConstants.TO] = template.get(CMDBuild.core.proxy.CMProxyConstants.TO);
-			params[CMDBuild.core.proxy.CMProxyConstants.VARIABLES] = template.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
+			// Eliminate attributes unused from server
+			delete params[CMDBuild.core.proxy.CMProxyConstants.STATUS];
 
 			return params;
 		}
