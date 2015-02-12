@@ -36,6 +36,8 @@ public interface EmailLogic extends Logic {
 
 		boolean isTemporary();
 
+		String getTemplate();
+
 	}
 
 	public static class EmailSubmission extends org.cmdbuild.data.store.email.Email {
