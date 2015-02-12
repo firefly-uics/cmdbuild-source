@@ -9,8 +9,8 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.FROM;
 import static org.cmdbuild.servlets.json.CommunicationConstants.ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NOTIFY_WITH;
 import static org.cmdbuild.servlets.json.CommunicationConstants.NO_SUBJECT_PREFIX;
-import static org.cmdbuild.servlets.json.CommunicationConstants.PROCESS_ID;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SUBJECT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPLATE;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPORARY;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TO;
 
@@ -19,13 +19,83 @@ import org.cmdbuild.logic.email.DefaultEmailLogic.EmailImpl;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.json.management.JsonResponse;
-import org.cmdbuild.servlets.json.serializers.JsonWorkflowDTOs.JsonEmail;
+import org.cmdbuild.servlets.json.serializers.AbstractJsonResponseSerializer;
 import org.cmdbuild.servlets.utils.Parameter;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
 
 public class Email extends JSONBaseWithSpringContext {
+
+	public static class JsonEmail extends AbstractJsonResponseSerializer {
+
+		private final EmailLogic.Email delegate;
+
+		public JsonEmail(final EmailLogic.Email delegate) {
+			this.delegate = delegate;
+		}
+
+		public Long getId() {
+			return delegate.getId();
+		}
+
+		public String getFromAddress() {
+			return delegate.getFromAddress();
+		}
+
+		public String getToAddresses() {
+			return delegate.getToAddresses();
+		}
+
+		public String getCcAddresses() {
+			return delegate.getCcAddresses();
+		}
+
+		public String getBccAddresses() {
+			return delegate.getBccAddresses();
+		}
+
+		public String getSubject() {
+			return delegate.getSubject();
+		}
+
+		public String getContent() {
+			return delegate.getContent();
+		}
+
+		public String getDate() {
+			return formatDateTime(delegate.getDate());
+		}
+
+		public String getStatus() {
+			return delegate.getStatus().getLookupName();
+		}
+
+		public Long getActivityId() {
+			return delegate.getActivityId();
+		}
+
+		public String getNotifyWith() {
+			return delegate.getNotifyWith();
+		}
+
+		public boolean isNoSubjectPrefix() {
+			return delegate.isNoSubjectPrefix();
+		}
+
+		public String getAccount() {
+			return delegate.getAccount();
+		}
+
+		public boolean isTemporary() {
+			return delegate.isTemporary();
+		}
+
+		public String getTemplate() {
+			return delegate.getTemplate();
+		}
+
+	}
 
 	private static final Function<EmailLogic.Email, JsonEmail> TO_JSON_EMAIL = new Function<EmailLogic.Email, JsonEmail>() {
 
@@ -48,7 +118,8 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(value = ACTIVITY_ID, required = false) final Long activityId, //
 			@Parameter(value = NO_SUBJECT_PREFIX, required = false) final boolean noSubjectPrefix, //
 			@Parameter(value = ACCOUNT, required = false) final String account, //
-			@Parameter(value = TEMPORARY, required = false) final boolean temporary //
+			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
+			@Parameter(value = TEMPLATE, required = false) final String template //
 	) {
 		final Long id = emailLogic().create(EmailImpl.newInstance() //
 				.withFromAddress(from) //
@@ -63,6 +134,7 @@ public class Email extends JSONBaseWithSpringContext {
 				.withNoSubjectPrefix(noSubjectPrefix) //
 				.withAccount(account) //
 				.withTemporary(temporary) //
+				.withTemplate(template) //
 				.build());
 		return JsonResponse.success(id);
 	}
@@ -82,6 +154,7 @@ public class Email extends JSONBaseWithSpringContext {
 	) {
 		final EmailLogic.Email read = emailLogic().read(EmailImpl.newInstance() //
 				.withId(id) //
+				.withTemporary(temporary) //
 				.build());
 		return JsonResponse.success(TO_JSON_EMAIL.apply(read));
 	}
@@ -99,7 +172,8 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(value = ACTIVITY_ID, required = false) final Long activityId, //
 			@Parameter(value = NO_SUBJECT_PREFIX, required = false) final boolean noSubjectPrefix, //
 			@Parameter(value = ACCOUNT, required = false) final String account, //
-			@Parameter(value = TEMPORARY, required = false) final boolean temporary //
+			@Parameter(value = TEMPORARY, required = false) final boolean temporary, //
+			@Parameter(value = TEMPLATE, required = false) final String template //
 	) {
 		emailLogic().update(EmailImpl.newInstance() //
 				.withId(id) //
@@ -115,6 +189,7 @@ public class Email extends JSONBaseWithSpringContext {
 				.withNoSubjectPrefix(noSubjectPrefix) //
 				.withAccount(account) //
 				.withTemporary(temporary) //
+				.withTemplate(template) //
 				.build());
 		return JsonResponse.success(id);
 	}
@@ -126,6 +201,7 @@ public class Email extends JSONBaseWithSpringContext {
 	) {
 		emailLogic().delete(EmailImpl.newInstance() //
 				.withId(id) //
+				.withTemporary(temporary) //
 				.build());
 		return JsonResponse.success(id);
 	}

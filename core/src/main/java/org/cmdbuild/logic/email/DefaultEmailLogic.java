@@ -19,7 +19,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
-import org.cmdbuild.data.store.InMemoryStore;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.StoreSupplier;
@@ -115,6 +114,11 @@ public class DefaultEmailLogic implements EmailLogic {
 			return delegate().isTemporary();
 		}
 
+		@Override
+		public String getTemplate() {
+			return delegate().getTemplate();
+		}
+
 	}
 
 	public static class EmailImpl implements Email {
@@ -135,6 +139,7 @@ public class DefaultEmailLogic implements EmailLogic {
 			private boolean noSubjectPrefix;
 			private String account;
 			private boolean temporary;
+			private String template;
 
 			private Builder() {
 				// use factory method
@@ -215,6 +220,11 @@ public class DefaultEmailLogic implements EmailLogic {
 				return this;
 			}
 
+			public Builder withTemplate(final String template) {
+				this.template = template;
+				return this;
+			}
+
 		}
 
 		public static Builder newInstance() {
@@ -235,6 +245,7 @@ public class DefaultEmailLogic implements EmailLogic {
 		private final boolean noSubjectPrefix;
 		private final String account;
 		private final boolean temporary;
+		private final String template;
 
 		private EmailImpl(final Builder builder) {
 			this.id = builder.id;
@@ -251,6 +262,7 @@ public class DefaultEmailLogic implements EmailLogic {
 			this.noSubjectPrefix = builder.noSubjectPrefix;
 			this.account = builder.account;
 			this.temporary = builder.temporary;
+			this.template = builder.template;
 		}
 
 		@Override
@@ -324,6 +336,11 @@ public class DefaultEmailLogic implements EmailLogic {
 		}
 
 		@Override
+		public String getTemplate() {
+			return template;
+		}
+
+		@Override
 		public boolean equals(final Object obj) {
 			if (this == obj) {
 				return true;
@@ -349,6 +366,7 @@ public class DefaultEmailLogic implements EmailLogic {
 					.append(this.isNoSubjectPrefix(), other.isNoSubjectPrefix()) //
 					.append(this.getAccount(), other.getAccount()) //
 					.append(this.isTemporary(), other.isTemporary()) //
+					.append(this.getTemplate(), other.getTemplate()) //
 					.isEquals();
 		}
 
@@ -369,6 +387,7 @@ public class DefaultEmailLogic implements EmailLogic {
 					.append(noSubjectPrefix) //
 					.append(account) //
 					.append(temporary) //
+					.append(template) //
 					.toHashCode();
 		}
 
@@ -396,6 +415,7 @@ public class DefaultEmailLogic implements EmailLogic {
 			output.setActivityId(input.getActivityId());
 			output.setNoSubjectPrefix(input.isNoSubjectPrefix());
 			output.setAccount(input.getAccount());
+			// TODO template
 			return output;
 		}
 
@@ -419,6 +439,7 @@ public class DefaultEmailLogic implements EmailLogic {
 					.withActivityId(input.getActivityId()) //
 					.withNoSubjectPrefix(input.isNoSubjectPrefix()) //
 					.withAccount(input.getAccount()) //
+					// TODO template
 					.build();
 		}
 
@@ -519,16 +540,6 @@ public class DefaultEmailLogic implements EmailLogic {
 	}
 
 	@Override
-	public void update(final Email email) {
-		final org.cmdbuild.data.store.email.Email storableEmail = LOGIC_TO_STORE.apply(email);
-		if (email.isTemporary()) {
-			store.update(storableEmail);
-		} else {
-			emailService().save(storableEmail);
-		}
-	}
-
-	@Override
 	public Email read(final Email email) {
 		final org.cmdbuild.data.store.email.Email read;
 		if (email.isTemporary()) {
@@ -536,7 +547,29 @@ public class DefaultEmailLogic implements EmailLogic {
 		} else {
 			read = emailService().getEmail(email.getId());
 		}
-		return STORE_TO_LOGIC.apply(read);
+		return new ForwardingEmail() {
+
+			@Override
+			protected Email delegate() {
+				return STORE_TO_LOGIC.apply(read);
+			}
+
+			@Override
+			public boolean isTemporary() {
+				return email.isTemporary();
+			}
+
+		};
+	}
+
+	@Override
+	public void update(final Email email) {
+		final org.cmdbuild.data.store.email.Email storableEmail = LOGIC_TO_STORE.apply(email);
+		if (email.isTemporary()) {
+			store.update(storableEmail);
+		} else {
+			emailService().save(storableEmail);
+		}
 	}
 
 	@Override
@@ -551,17 +584,39 @@ public class DefaultEmailLogic implements EmailLogic {
 	@Override
 	public Iterable<Email> getEmails(final Long processCardId) {
 		return from(concat( //
-				emailService(processCardId).getEmails(processCardId), //
-				from(store.readAll()).filter(new Predicate<org.cmdbuild.data.store.email.Email>() {
+				from(emailService(processCardId).getEmails(processCardId)) //
+						.transform(STORE_TO_LOGIC), //
+				from(store.readAll()) //
+						.filter(new Predicate<org.cmdbuild.data.store.email.Email>() {
 
-					@Override
-					public boolean apply(final org.cmdbuild.data.store.email.Email input) {
-						return ObjectUtils.equals(processCardId, input.getActivityId());
-					}
+							@Override
+							public boolean apply(final org.cmdbuild.data.store.email.Email input) {
+								return ObjectUtils.equals(processCardId, input.getActivityId());
+							}
 
-				})) //
-		) //
-		.transform(STORE_TO_LOGIC);
+						}) //
+						.transform(STORE_TO_LOGIC) //
+						.transform(new Function<Email, Email>() {
+
+							@Override
+							public Email apply(final Email input) {
+								return new ForwardingEmail() {
+
+									@Override
+									protected Email delegate() {
+										return input;
+									}
+
+									@Override
+									public boolean isTemporary() {
+										return true;
+									}
+
+								};
+							}
+
+						})) //
+		);
 	}
 
 	@Override

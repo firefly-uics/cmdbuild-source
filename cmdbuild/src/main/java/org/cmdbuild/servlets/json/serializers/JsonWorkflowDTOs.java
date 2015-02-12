@@ -10,7 +10,6 @@ import org.cmdbuild.dao.entrytype.CMAttribute;
 import org.cmdbuild.dao.entrytype.attributetype.CMAttributeType;
 import org.cmdbuild.data.store.lookup.LookupStore;
 import org.cmdbuild.logger.Log;
-import org.cmdbuild.logic.email.EmailLogic.Email;
 import org.cmdbuild.workflow.CMActivity;
 import org.cmdbuild.workflow.CMActivityWidget;
 import org.cmdbuild.workflow.CMWorkflowException;
@@ -210,49 +209,4 @@ public class JsonWorkflowDTOs {
 		}
 	}
 
-	public static class JsonEmail extends AbstractJsonResponseSerializer {
-
-		private final Email email;
-
-		public JsonEmail(final Email email) {
-			this.email = email;
-		}
-
-		public Long getId() {
-			return email.getId();
-		}
-
-		public String getFromAddress() {
-			return email.getFromAddress();
-		}
-
-		public String getToAddresses() {
-			return email.getToAddresses();
-		}
-
-		public String getCcAddresses() {
-			return email.getCcAddresses();
-		}
-
-		public String getSubject() {
-			return email.getSubject();
-		}
-
-		public String getContent() {
-			return email.getContent();
-		}
-
-		public String getDate() {
-			return formatDateTime(email.getDate());
-		}
-
-		public String getStatus() {
-			return email.getStatus().getLookupName();
-		}
-
-		public String getNotifyWith() {
-			return email.getNotifyWith();
-		}
-
-	}
 }
