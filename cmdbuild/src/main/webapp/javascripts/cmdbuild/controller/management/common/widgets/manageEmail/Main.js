@@ -44,7 +44,7 @@
 		/**
 		 * @property {Array}
 		 */
-		emailTemplatesIdentifiers: [],
+		emailTemplatesIdentifiers: [], // TODO
 
 		/**
 		 * Shorthand to view grid
@@ -146,25 +146,9 @@ _debug('this.card', this.card);
 				var template = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES][i];
 
 				this.emailTemplatesObjects.push(template);
-				this.emailTemplatesIdentifiers.push(template['id']); // TODO
+				this.emailTemplatesIdentifiers.push(template[CMDBuild.core.proxy.CMProxyConstants.KEY]);
 			}
 
-//			// Load grid's templates to local array
-//			var storeItems = this.grid.getStore().getRange();
-//			for (var i in storeItems) {
-//				var template = storeItems[i].get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
-//
-//				if (!Ext.Array.contains(this.emailTemplatesIdentifiers, template.get('id'))) // TODO
-//					this.emailTemplatesObjects.push(template);
-//			}
-//
-//			var xaVars = Ext.apply({}, this.emailTemplatesObjects, this.extractVariablesForTemplateResolver());
-//
-//			this.templateResolver = new CMDBuild.Management.TemplateResolver({
-//				clientForm: clientForm,
-//				xaVars: xaVars,
-//				serverVars: this.getTemplateResolverServerVars()
-//			});
 			this.templateResolverInit();
 
 			// Build controllers
@@ -254,16 +238,13 @@ _debug('this.emailTemplatesObjects', this.emailTemplatesObjects);
 
 				if (!Ext.Object.isEmpty(template))
 					for (var j in template) {
-						var templateAttribute = template[j] || [];
+						var attribute = template[j] || [];
 
-						if (
-							!Ext.isObject(templateAttribute)
-							&& typeof templateAttribute == 'string'
-						) {
+						if (typeof attribute == 'string') {
 							// Check all types of CQL variables that can contains client variables
 							this.self.searchForCqlClientVariables(
-								templateAttribute,
-								template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID], // TODO cambiate nome attributo
+								attribute,
+								template[CMDBuild.core.proxy.CMProxyConstants.KEY],
 								dirtyVariables,
 								templatesToRegenerate
 							);
@@ -279,8 +260,6 @@ _debug('this.emailTemplatesObjects', this.emailTemplatesObjects);
 		 * This is needed to be passed as a unique map to the template resolver.
 		 *
 		 * @return {Object} variables
-		 *
-		 * TODO: sistemare bene
 		 */
 		extractVariablesForTemplateResolver: function() {
 			var variables = {};
@@ -307,7 +286,7 @@ _debug('this.emailTemplatesObjects', this.emailTemplatesObjects);
 			return this.activityId;
 		},
 
-		/**
+		/** TODO: da implementare l'oggetto OUTPUT come tutti gli altri widget
 		 * @return {Object}
 		 *
 		 * @override
@@ -497,10 +476,27 @@ _debug('templateResolverInit', this);
 			// Load grid's templates to local array
 			var storeItems = this.grid.getStore().getRange();
 			for (var i in storeItems) {
-				var template = storeItems[i].get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
+				if (!Ext.Array.contains(this.emailTemplatesIdentifiers, template.get(CMDBuild.core.proxy.CMProxyConstants.NAME))) {
+					this.view.setLoading(true);
+					CMDBuild.model.EmailTemplates.get({ // TODO: fare la readAll parametrizzata come da richiesta
+						params: {
+							name: storeItems[i].get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)
+						},
+						scope: this,
+						failure: function(response, options, decodedResponse) {
+							CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail controller error: get template call failure', false);
+						},
+						success: function(response, options, decodedResponse) {
+	_debug('decodedResponse.response', decodedResponse.response);
 
-				if (!Ext.Array.contains(this.emailTemplatesIdentifiers, template.get('id'))) // TODO
-					this.emailTemplatesObjects.push(template);
+							this.emailTemplatesObjects.push(template.getData()); // TODO: questo non sarà l'oggetto del template ma è solo il nome
+							this.emailTemplatesIdentifiers.push(template.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
+						},
+						callback: function(options, success, response) {
+							this.view.setLoading(false);
+						}
+					});
+				}
 			}
 
 			var xaVars = Ext.apply({}, this.emailTemplatesObjects, this.extractVariablesForTemplateResolver());
