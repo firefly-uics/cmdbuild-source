@@ -20,6 +20,7 @@ public class Email extends AbstractEmail implements Storable {
 	private Iterable<Attachment> attachments;
 	private boolean noSubjectPrefix;
 	private String account;
+	private String template;
 
 	public Email() {
 		this.id = null;
@@ -84,6 +85,14 @@ public class Email extends AbstractEmail implements Storable {
 
 	public void setAccount(final String account) {
 		this.account = account;
+	}
+
+	public String getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(final String template) {
+		this.template = template;
 	}
 
 	@Override

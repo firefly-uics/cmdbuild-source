@@ -49,6 +49,8 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 	private final static String TEMPLATE = "Template";
 	private final static String NO_SUBJECT_PREFIX = "NoSubjectPrefix";
 	private final static String GLOBAL_NO_SUBJECT_PREFIX = "GlobalNoSubjectPrefix";
+	private final static String KEEP_SYNCHRONIZATION = "KeepSynchronization";
+	private final static String PROMPT_SYNCHRONIZATION = "PromptSynchronization";
 
 	private final static String WIDGET_NAME = "manageEmail";
 
@@ -94,6 +96,8 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 					template.setContent(_template.getBody());
 					template.setVariables(_template.getVariables());
 					template.setAccount(_template.getAccount());
+					template.setKeepSynchronization(_template.isKeepSynchronization());
+					template.setPromptSynchronization(_template.isPromptSynchronization());
 				} catch (final Exception e) {
 					logger.warn(marker, "error getting template, skipping", e);
 				}
@@ -163,6 +167,20 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 			template.setNoSubjectPrefix(readBooleanTrueIfTrue(valueMap.get(key)));
 		}
 		managedParameters.addAll(noSubjectPrexifes.keySet());
+
+		final Map<String, String> keepSynchronizations = filterKeysStartingWith(valueMap, KEEP_SYNCHRONIZATION);
+		for (final String key : keepSynchronizations.keySet()) {
+			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, KEEP_SYNCHRONIZATION);
+			template.setKeepSynchronization(readBooleanTrueIfTrue(valueMap.get(key), true));
+		}
+		managedParameters.addAll(keepSynchronizations.keySet());
+
+		final Map<String, String> promptSynchronizations = filterKeysStartingWith(valueMap, PROMPT_SYNCHRONIZATION);
+		for (final String key : promptSynchronizations.keySet()) {
+			final EmailTemplate template = getTemplateForKey(emailTemplatesByName, key, PROMPT_SYNCHRONIZATION);
+			template.setPromptSynchronization(readBooleanTrueIfTrue(valueMap.get(key)));
+		}
+		managedParameters.addAll(promptSynchronizations.keySet());
 
 		final ManageEmail widget = new ManageEmail(emailLogic);
 		widget.setEmailTemplates(transformEntries(emailTemplatesByName,

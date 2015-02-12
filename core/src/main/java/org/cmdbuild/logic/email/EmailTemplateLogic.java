@@ -30,6 +30,10 @@ public interface EmailTemplateLogic extends Logic {
 
 		String getAccount();
 
+		boolean isKeepSynchronization();
+
+		boolean isPromptSynchronization();
+
 	}
 
 	/**
