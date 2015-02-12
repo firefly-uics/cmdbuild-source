@@ -36,9 +36,9 @@
 
 		initComponent: function() {
 			this.emailContentField = Ext.create('CMDBuild.view.common.field.CMHtmlEditorField', {
-				name: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
+				name: CMDBuild.core.proxy.CMProxyConstants.BODY,
 				hideLabel: true,
-				value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT),
+				value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BODY),
 				flex: 1
 			});
 
@@ -46,32 +46,32 @@
 				items: [
 					{
 						xtype: 'displayfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS,
+						name: CMDBuild.core.proxy.CMProxyConstants.FROM,
 						fieldLabel: CMDBuild.Translation.from,
 						vtype: 'multiemail',
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.FROM)
 					},
 					{
 						xtype: 'textfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES,
+						name: CMDBuild.core.proxy.CMProxyConstants.TO,
 						allowBlank: false,
 						fieldLabel: CMDBuild.Translation.to,
 						vtype: 'multiemail',
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.TO)
 					},
 					{
 						xtype: 'textfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES,
+						name: CMDBuild.core.proxy.CMProxyConstants.CC,
 						fieldLabel: CMDBuild.Translation.cc,
 						vtype: 'multiemail',
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.CC)
 					},
 					{
 						xtype: 'textfield',
-						name: CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES,
+						name: CMDBuild.core.proxy.CMProxyConstants.BCC,
 						fieldLabel: CMDBuild.Translation.bcc,
 						vtype: 'multiemail',
-						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES)
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.BCC)
 					},
 					{
 						xtype: 'textfield',

@@ -100,38 +100,10 @@
 		},
 
 		/**
-		 * If record's template attribute is an Object save it as temporary template, otherwise is a real template identifier so just save email object
-		 * with reference to template
-		 *
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		addRecord: function(record) {
 			this.parentDelegate.view.setLoading(true);
-			if (Ext.isObject(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))) {
-				CMDBuild.core.proxy.widgets.ManageEmail.createTemplate({
-					params: record.getTemplateAsParams(),
-					scope: this,
-					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: template create call failure', false);
-					},
-					success: function(response, options, decodedResponse) {
-						record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, decodedResponse); // Set new templateId to email object
-
-						this.addRecordServerCall(record);
-					},
-					callback: function(options, success, response) {
-						this.parentDelegate.view.setLoading(false);
-					}
-				});
-			} else {
-				this.addRecordServerCall(record);
-			}
-		},
-
-		/**
-		 * @param {CMDBuild.model.widget.ManageEmail.email} record
-		 */
-		addRecordServerCall: function(record) {
 			CMDBuild.core.proxy.widgets.ManageEmail.create({
 				params: record.getAsParams(),
 				scope: this,
@@ -396,19 +368,13 @@ _debug('onEmailEditButtonClick record', record);
 		},
 
 		/**
-		 * @WIP TODO
-		 *
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		removeRecord: function(record) {
-_debug('editRecord record', record);
-			var params = {};
-			params[CMDBuild.core.proxy.CMProxyConstants.ID] = record.get(CMDBuild.core.proxy.CMProxyConstants.ID);
-			params[CMDBuild.core.proxy.CMProxyConstants.TEMPORARY] = record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY);
-
+_debug('removeRecord record', record);
 			this.parentDelegate.view.setLoading(true);
 			CMDBuild.core.proxy.widgets.ManageEmail.remove({
-				params: params,
+				params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
 				scope: this,
 				failure: function(response, options, decodedResponse) {
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email remove call failure', false);
@@ -426,9 +392,11 @@ _debug('editRecord record', record);
 		 * Loads grid store with activityId parameter
 		 *
 		 * @param {Function} callbackFunction
+		 * @param {Object} scope
 		 */
-		storeLoad: function(callbackFunction) {
+		storeLoad: function(callbackFunction, scope) {
 			callbackFunction = callbackFunction || Ext.emptyFn;
+			scope = scope || this;
 
 			this.parentDelegate.view.setLoading(true);
 			this.view.getStore().load({
@@ -439,7 +407,7 @@ _debug('editRecord record', record);
 				callback: function(records, operation, success) {
 					this.parentDelegate.view.setLoading(false);
 
-					callbackFunction();
+					Ext.callback(callbackFunction, scope);
 				}
 			});
 		}

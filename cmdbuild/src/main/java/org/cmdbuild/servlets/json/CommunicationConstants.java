@@ -63,6 +63,7 @@ public class CommunicationConstants {
 			DATA_SOURCE_INSTANCE = "dataSourceInstance", //
 			DATA_SOURCE_TYPE = "dataSourceType", //
 			DATA_SOURCE_TYPE_SQL = "db", //
+			DATE = "date", //
 			DB_NAME = "db_name", //
 			DB_TYPE = "db_type", //
 			DEFAULT = "Default", //
@@ -251,6 +252,7 @@ public class CommunicationConstants {
 			STARTING_CLASS = "startingClass", //
 			START = "start", //
 			STATE = "state", //
+			STATUS = "status", //
 			SUBJECT = "subject", //
 			SUCCESS = "success", //
 			SUPERCLASS = "superclass", //

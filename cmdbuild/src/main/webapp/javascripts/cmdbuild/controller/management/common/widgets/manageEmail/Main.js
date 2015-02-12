@@ -37,11 +37,14 @@
 		controllerGrid: undefined,
 
 		/**
-		 * WidgetConf convenience shorthand
-		 *
-		 * @property {Object} variables
+		 * @property {Array}
 		 */
-		emailTemplates: undefined,
+		emailTemplatesObjects: [], // TODO
+
+		/**
+		 * @property {Array}
+		 */
+		emailTemplatesIdentifiers: [],
 
 		/**
 		 * Shorthand to view grid
@@ -49,13 +52,6 @@
 		 * @property {CMDBuild.controller.management.common.widgets.manageEmail.Grid}
 		 */
 		grid: undefined,
-
-		/**
-		 * Flag used to check first widget load time
-		 *
-		 * @cfg {Boolean}
-		 */
-		isFirstRegenerationDone: false,
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.CMWidgetManagerController}
@@ -143,16 +139,33 @@
 _debug('this.widgetConf', this.widgetConf);
 _debug('this.ownerController', this.ownerController);
 _debug('this.card', this.card);
-			this.emailTemplates = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES] || {};
-			this.readOnly = !this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY];
+			this.readOnly = !this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]; // TODO: refactorizzare senza negazioni
 
-			var xaVars = Ext.apply({}, this.emailTemplates, this.extractVariablesForTemplateResolver());
+			// Loads configuration templates to local array and push ids in emailTemplatesIdentifiers array
+			for (var i in this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES]) {
+				var template = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES][i];
 
-			this.templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: clientForm,
-				xaVars: xaVars,
-				serverVars: this.getTemplateResolverServerVars()
-			});
+				this.emailTemplatesObjects.push(template);
+				this.emailTemplatesIdentifiers.push(template['id']); // TODO
+			}
+
+//			// Load grid's templates to local array
+//			var storeItems = this.grid.getStore().getRange();
+//			for (var i in storeItems) {
+//				var template = storeItems[i].get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
+//
+//				if (!Ext.Array.contains(this.emailTemplatesIdentifiers, template.get('id'))) // TODO
+//					this.emailTemplatesObjects.push(template);
+//			}
+//
+//			var xaVars = Ext.apply({}, this.emailTemplatesObjects, this.extractVariablesForTemplateResolver());
+//
+//			this.templateResolver = new CMDBuild.Management.TemplateResolver({
+//				clientForm: clientForm,
+//				xaVars: xaVars,
+//				serverVars: this.getTemplateResolverServerVars()
+//			});
+			this.templateResolverInit();
 
 			// Build controllers
 			this.controllerGrid = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.Grid', {
@@ -180,6 +193,7 @@ _debug('this.card', this.card);
 			}
 		},
 
+// TODO cancellare robe inutili
 //		/**
 //		 * Resolve the template only if there are no draft mails, because the draft mails are saved from this step, and assume that
 //		 * the user has already modified the template for this step.
@@ -203,7 +217,7 @@ _debug('this.card', this.card);
 		 * @override
 		 */
 		beforeActiveView: function() {
-			this.controllerGrid.storeLoad();
+			this.controllerGrid.storeLoad(this.templateResolverInit, this);
 		},
 
 		/**
@@ -212,7 +226,7 @@ _debug('this.card', this.card);
 		 * @return {Array} templatesToRegenerate
 		 */
 		checkTemplatesToRegenerate: function() {
-_debug('this.emailTemplates', this.emailTemplates);
+_debug('this.emailTemplatesObjects', this.emailTemplatesObjects);
 			var templatesToRegenerate = [];
 			var dirtyVariables = Ext.Object.getKeys(this.ownerController.view.mainView.getValues(false, true));
 
@@ -235,8 +249,8 @@ _debug('this.emailTemplates', this.emailTemplates);
 			}
 
 			// Check templates attributes looking for dirtyVariables as client variables (ex. {client:varName})
-			for (var i in this.emailTemplates) {
-				var template = this.emailTemplates[i];
+			for (var i in this.emailTemplatesObjects) {
+				var template = this.emailTemplatesObjects[i];
 
 				if (!Ext.Object.isEmpty(template))
 					for (var j in template) {
@@ -249,7 +263,7 @@ _debug('this.emailTemplates', this.emailTemplates);
 							// Check all types of CQL variables that can contains client variables
 							this.self.searchForCqlClientVariables(
 								templateAttribute,
-								template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID],
+								template[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_ID], // TODO cambiate nome attributo
 								dirtyVariables,
 								templatesToRegenerate
 							);
@@ -265,17 +279,19 @@ _debug('this.emailTemplates', this.emailTemplates);
 		 * This is needed to be passed as a unique map to the template resolver.
 		 *
 		 * @return {Object} variables
+		 *
+		 * TODO: sistemare bene
 		 */
 		extractVariablesForTemplateResolver: function() {
 			var variables = {};
 
-			for (var i = 0; i < this.emailTemplates.length; ++i) {
-				var t = this.emailTemplates[i].variables;
+			for (var i = 0; i < this.emailTemplatesObjects.length; ++i) {
+				var t = this.emailTemplatesObjects[i].variables;
 
 				for (var key in t)
 					variables[key] = t[key];
 
-				t = this.emailTemplates[i];
+				t = this.emailTemplatesObjects[i];
 
 				for (var key in t)
 					variables[key + (i + 1)] = t[key];
@@ -332,6 +348,7 @@ _debug('this.emailTemplates', this.emailTemplates);
 		 * @override
 		 */
 		onEditMode: function() {
+_debug('onEditMode');
 			this.setActivityId();
 
 			if (!this.grid.getStore().isLoading())
@@ -354,31 +371,27 @@ _debug('this.emailTemplates', this.emailTemplates);
 
 			if (
 				forceRegeneration
-				|| !this.isFirstRegenerationDone // Regenerate first time widget is loaded
 				|| this.relatedAttributeChanged
 			) {
 				var regeneratedEmails = [];
-				var objectsToRegenerate = []; // Array with all store New and Draft records and all emailTemplates from widget configuration
-				var emailTemplatesRegenerated = [];
-				var templatesToRegenerate = this.checkTemplatesToRegenerate();
+				var objectsToRegenerate = []; // Array with all store records and emailTemplates from widget configuration
+				var emailTemplatesToRegenerate = this.checkTemplatesToRegenerate();
 				var draftEmails = this.controllerGrid.getDraftEmails();
 _debug('draftEmails', draftEmails);
 				for (var i in draftEmails) {
 					var emailTemplateId = draftEmails[i].get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)[CMDBuild.core.proxy.CMProxyConstants.ID];
 
-					if (!Ext.isEmpty(emailTemplateId))
-						emailTemplatesRegenerated.push(emailTemplateId);
-
-					objectsToRegenerate.push(draftEmails[i]);
+					if (!Ext.isEmpty(emailTemplateId) && Ext.Array.contains(emailTemplatesToRegenerate, emailTemplateId))
+						objectsToRegenerate.push(draftEmails[i]);
 				}
 
-				for (var i in this.emailTemplates) {
-					var emailTemplateId = this.emailTemplates[i][CMDBuild.core.proxy.CMProxyConstants.ID];
+				for (var i in this.emailTemplatesObjects) {
+					var emailTemplateId = this.emailTemplatesObjects[i][CMDBuild.core.proxy.CMProxyConstants.ID];
 
-					if (!Ext.isEmpty(emailTemplateId) && !Ext.Array.contains(emailTemplatesRegenerated, emailTemplateId)) {
-						Ext.create('CMDBuild.model.EmailTemplates', );
+					if (!Ext.isEmpty(emailTemplateId) && Ext.Array.contains(emailTemplatesToRegenerate, emailTemplateId)) {
+//						Ext.create('CMDBuild.model.EmailTemplates', ); // TODO
 
-						objectsToRegenerate.push(this.emailTemplates[i]);
+						objectsToRegenerate.push(this.emailTemplatesObjects[i]);
 					}
 				}
 // TODO: rivedere questa parte inserendo l'IF nella funzione di rifenerazione
@@ -396,7 +409,6 @@ _debug('draftEmails', draftEmails);
 //				}, this);
 
 				this.relatedAttributeChanged = false;
-				this.isFirstRegenerationDone = true;
 
 				this.ownerController.view.mainView.form.initValues(); // Clear form fields dirty state to reset state after regeneration
 _debug('regenerateAllEmails regeneratedEmails', regeneratedEmails);
@@ -475,6 +487,29 @@ _debug('regeneratedEmailObject', regeneratedEmailObject);
 					});
 				}
 			}
+		},
+
+		/**
+		 * Initialize templateResolver joining all grid's template objects
+		 */
+		templateResolverInit: function() {
+_debug('templateResolverInit', this);
+			// Load grid's templates to local array
+			var storeItems = this.grid.getStore().getRange();
+			for (var i in storeItems) {
+				var template = storeItems[i].get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
+
+				if (!Ext.Array.contains(this.emailTemplatesIdentifiers, template.get('id'))) // TODO
+					this.emailTemplatesObjects.push(template);
+			}
+
+			var xaVars = Ext.apply({}, this.emailTemplatesObjects, this.extractVariablesForTemplateResolver());
+
+			this.templateResolver = new CMDBuild.Management.TemplateResolver({
+				clientForm: this.clientForm,
+				xaVars: xaVars,
+				serverVars: this.getTemplateResolverServerVars()
+			});
 		}
 	});
 

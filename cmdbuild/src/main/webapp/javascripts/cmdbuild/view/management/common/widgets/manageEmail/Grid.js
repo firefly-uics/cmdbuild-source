@@ -45,7 +45,7 @@
 								// Ask to the user if is sure to delete all the unsent e-mails before
 								Ext.Msg.show({
 									title: CMDBuild.Translation.common.confirmpopup.title,
-									msg: tr.updateTemplateConfirm,
+									msg: '@@ This will delete all the unsent emails',
 									buttons: Ext.Msg.OKCANCEL,
 									icon: Ext.Msg.WARNING,
 
@@ -90,7 +90,7 @@
 						sortable: false,
 						scope: this,
 						renderer: this.renderEmailContent,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.BODY,
 						menuDisabled: true,
 						hideable: false,
 						flex: 2
@@ -124,9 +124,9 @@
 									this.delegate.cmOn('onEmailRegenerationButtonClick', record);
 								},
 
-								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return !this.delegate.recordIsEditable(record) || this.readOnly || !this.delegate.isRegenerable(record);
-								}
+//								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+//									return !this.delegate.recordIsEditable(record) || this.readOnly || !this.delegate.isRegenerable(record);
+//								}
 							}
 						]
 					},
