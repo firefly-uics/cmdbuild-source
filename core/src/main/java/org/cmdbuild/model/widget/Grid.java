@@ -192,7 +192,7 @@ public class Grid extends Widget {
 		final StringBuilder outputBuilder = new StringBuilder();
 		@SuppressWarnings("unchecked")
 		final Map<String, Object> inputMap = (Map<String, Object>) input;
-		final Object inputArray = inputMap.get("output");
+		final Object inputArray = inputMap.get(DEFAULT_SUBMISSION_PARAM);
 		@SuppressWarnings("unchecked")
 		final Iterable<String> inputElements = (Iterable<String>) inputArray;
 		for (final String entry : inputElements) {

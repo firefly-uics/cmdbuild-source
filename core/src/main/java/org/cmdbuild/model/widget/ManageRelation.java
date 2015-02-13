@@ -24,7 +24,7 @@ public class ManageRelation extends Widget {
 		}
 	}
 
-	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
+	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = DEFAULT_SUBMISSION_PARAM;
 
 	/*
 	 * Domain to which show the relations
