@@ -9,17 +9,20 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, type: 'int', useNull: true },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, type: 'auto' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.BCC, type: 'auto' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.CC, type: 'auto' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.BODY, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CC, type: 'auto' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DATE, type: 'auto' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS, type: 'auto' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.ID, type: 'int', useNull: true },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: true },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.KEY, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX, type: 'boolean', defaultValue: false },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.STATUS, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TEMPORARY, type: 'boolean', defaultValue: true },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TO, type: 'auto' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.TO, type: 'auto' }
 		],
 
 		/**

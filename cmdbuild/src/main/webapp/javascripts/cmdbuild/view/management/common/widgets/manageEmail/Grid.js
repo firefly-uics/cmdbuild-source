@@ -256,9 +256,9 @@
 			 */
 			renderAddress: function(value, metadata, record) {
 				if (this.delegate.recordIsReceived(record)) {
-					return record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS);
+					return record.get(CMDBuild.core.proxy.CMProxyConstants.FROM);
 				} else {
-					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
+					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
 				}
 			},
 
@@ -270,7 +270,7 @@
 			 * @return {String}
 			 */
 			renderEmailContent: function(value, metadata, record) {
-				return Ext.util.Format.stripTags(record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT));
+				return Ext.util.Format.stripTags(record.get(CMDBuild.core.proxy.CMProxyConstants.BODY));
 			}
 	});
 
