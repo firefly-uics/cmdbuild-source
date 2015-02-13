@@ -327,8 +327,8 @@ _debug('onEmailWindowConfirmButtonClick this.record', this.record);
 
 				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.widgetController.getActivityId());
 				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, attachments);
-
-				if (this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID) == 0) {
+_debug('this.record', this.record);
+				if (Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
 					this.parentDelegate.addRecord(this.record);
 				} else {
 					this.parentDelegate.editRecord(this.record);
