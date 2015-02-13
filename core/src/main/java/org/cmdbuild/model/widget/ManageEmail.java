@@ -1,12 +1,12 @@
 package org.cmdbuild.model.widget;
 
+import static com.google.common.base.Predicates.or;
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 import static org.cmdbuild.data.store.email.EmailStatus.DRAFT;
 import static org.cmdbuild.data.store.email.EmailStatus.OUTGOING;
 import static org.cmdbuild.logic.email.Predicates.statusIs;
 
-import static com.google.common.base.Predicates.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +17,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailLogic.Email;
+import org.cmdbuild.logic.email.EmailLogic.ForwardingEmail;
 import org.cmdbuild.model.AbstractEmail;
 import org.cmdbuild.workflow.CMActivityInstance;
 
@@ -80,7 +81,7 @@ public class ManageEmail extends Widget {
 			return keepSynchronization;
 		}
 
-		public void setKeepSynchronization(boolean keepSynchronization) {
+		public void setKeepSynchronization(final boolean keepSynchronization) {
 			this.keepSynchronization = keepSynchronization;
 		}
 
@@ -88,7 +89,7 @@ public class ManageEmail extends Widget {
 			return promptSynchronization;
 		}
 
-		public void setPromptSynchronization(boolean promptSynchronization) {
+		public void setPromptSynchronization(final boolean promptSynchronization) {
 			this.promptSynchronization = promptSynchronization;
 		}
 
@@ -156,7 +157,7 @@ public class ManageEmail extends Widget {
 			if (email.isTemporary()) {
 				emailLogic.delete(email);
 
-				emailLogic.create(new EmailLogic.ForwardingEmail() {
+				emailLogic.create(new ForwardingEmail() {
 
 					@Override
 					protected Email delegate() {
@@ -189,7 +190,19 @@ public class ManageEmail extends Widget {
 				logger.warn("temporary e-mail should not be found on advancement");
 				emailLogic.delete(email);
 			} else {
-				emailLogic.send(email);
+				emailLogic.update(new ForwardingEmail() {
+
+					@Override
+					protected Email delegate() {
+						return email;
+					}
+
+					@Override
+					public EmailStatus getStatus() {
+						return OUTGOING;
+					}
+
+				});
 			}
 		}
 	}

@@ -581,55 +581,34 @@ public class DefaultEmailLogic implements EmailLogic {
 	public void update(final Email email) {
 		final Email read = read(email);
 		Validate.isTrue( //
-				contains(asList(DRAFT), read.getStatus()), //
+				contains(asList(DRAFT, OUTGOING), read.getStatus()), //
 				"cannot update e-mail '%s' due to an invalid status", read);
-		Validate.isTrue( //
-				contains(asList(DRAFT, OUTGOING), email.getStatus()), //
-				"cannot update e-mail due to an invalid new status", email.getStatus());
+		if (DRAFT.equals(email.getStatus())) {
+			Validate.isTrue( //
+					contains(asList(DRAFT, OUTGOING), email.getStatus()), //
+					"cannot update e-mail due to an invalid new status", email.getStatus());
+		} else if (OUTGOING.equals(email.getStatus())) {
+			Validate.isTrue( //
+					contains(asList(OUTGOING), email.getStatus()), //
+					"cannot update e-mail due to an invalid new status", email.getStatus());
+		}
 
-		update0(email);
-	}
-
-	/**
-	 * Updates without any validation.
-	 */
-	private void update0(final Email email) {
 		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
 		storeOf(email).update(storable);
+
+		if (OUTGOING.equals(email.getStatus())) {
+			send(read(email));
+		}
 	}
 
-	@Override
-	public void delete(final Email email) {
-		final Email read = read(email);
-		Validate.isTrue( //
-				contains(asList(DRAFT), read.getStatus()), //
-				"cannot delete e-mail '%s' due to an invalid status", read);
-
-		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
-		storeOf(email).delete(storable);
-	}
-
-	private Store<org.cmdbuild.data.store.email.Email> storeOf(final Email email) {
-		return email.isTemporary() ? temporaryEmailStore : emailStore;
-	}
-
-	@Override
-	public void send(final Email email) {
-		final Email read = read(email);
-		Validate.isTrue( //
-				contains(asList(DRAFT, OUTGOING), read.getStatus()), //
-				"cannot send e-mail '%s' due to an invalid status", read);
-		Validate.isTrue( //
-				!read.isTemporary(), //
-				"cannot send temporary e-mail '%s'", read);
-
+	private void send(final Email email) {
 		try {
-			final Supplier<EmailAccount> accountSupplier = accountSupplierOf(read);
+			final Supplier<EmailAccount> accountSupplier = accountSupplierOf(email);
 			final Email toBeUpdated = new ForwardingEmail() {
 
 				@Override
 				protected Email delegate() {
-					return read;
+					return email;
 				}
 
 				@Override
@@ -658,7 +637,7 @@ public class DefaultEmailLogic implements EmailLogic {
 
 			final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(toBeUpdated);
 			emailService(storable.getActivityId(), accountSupplier).send(storable, attachmentsOf(toBeUpdated));
-			update0(toBeUpdated);
+			storeOf(email).update(storable);
 		} catch (final CMDBException e) {
 			notifier.warn(e);
 		} catch (final Throwable e) {
@@ -696,6 +675,21 @@ public class DefaultEmailLogic implements EmailLogic {
 
 	private StoreSupplier<EmailAccount> defaultAccountSupplier() {
 		return StoreSupplier.of(EmailAccount.class, emailAccountStore, isDefault());
+	}
+
+	@Override
+	public void delete(final Email email) {
+		final Email read = read(email);
+		Validate.isTrue( //
+				contains(asList(DRAFT), read.getStatus()), //
+				"cannot delete e-mail '%s' due to an invalid status", read);
+
+		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
+		storeOf(email).delete(storable);
+	}
+
+	private Store<org.cmdbuild.data.store.email.Email> storeOf(final Email email) {
+		return email.isTemporary() ? temporaryEmailStore : emailStore;
 	}
 
 }
