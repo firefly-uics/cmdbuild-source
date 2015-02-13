@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.email.templates;
 
-	Ext.define('CMDBuild.view.administration.email.CMEmailTemplates', {
+	Ext.define('CMDBuild.view.administration.email.templates.MainPanel', {
 		extend: 'Ext.panel.Panel',
 
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
@@ -30,25 +30,26 @@
 		border: true,
 		frame: false,
 		layout: 'border',
-		title: tr.title,
+		title: CMDBuild.Translation.administration.email.title + ' - ' + tr.title,
 
 		initComponent: function() {
 			this.addButton = Ext.create('Ext.button.Button', {
 				iconCls: 'add',
 				text: tr.add,
 				scope: this,
+
 				handler: function() {
 					this.delegate.cmOn('onAddButtonClick');
 				}
 			});
 
-			this.grid = Ext.create('CMDBuild.view.administration.email.CMEmailTemplatesGrid', {
+			this.grid = Ext.create('CMDBuild.view.administration.email.templates.GridPanel', {
 				region: 'north',
 				split: true,
 				height: '30%'
 			});
 
-			this.form = Ext.create('CMDBuild.view.administration.email.CMEmailTemplatesForm', {
+			this.form = Ext.create('CMDBuild.view.administration.email.templates.FormPanel', {
 				region: 'center'
 			});
 

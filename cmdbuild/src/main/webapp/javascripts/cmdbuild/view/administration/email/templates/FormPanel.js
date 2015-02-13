@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.email.templates;
 
-	Ext.define('CMDBuild.view.administration.email.CMEmailTemplatesForm', {
+	Ext.define('CMDBuild.view.administration.email.templates.FormPanel', {
 		extend: 'Ext.form.Panel',
 
 		requires: [
@@ -128,7 +128,7 @@
 				forceSelection: true,
 				editable: false,
 
-				store: CMDBuild.core.proxy.EmailTemplates.getEmailAccountsStore(),
+				store: CMDBuild.core.proxy.CMProxyEmailAccounts.getStore(),
 				queryMode: 'local'
 			});
 
@@ -174,12 +174,12 @@
 							{
 								xtype: 'checkbox',
 								fieldLabel: '@@ Automatic synchronization',
-								name: '@@ autoSync'
+								name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION
 							},
 							{
 								xtype: 'checkbox',
 								fieldLabel: '@@ Report desync',
-								name: '@@ reportDesynch'
+								name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION
 							}
 						]
 					},
