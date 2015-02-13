@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.email.CMEmailTemplatesGrid', {
+	Ext.define('CMDBuild.view.administration.email.templates.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [

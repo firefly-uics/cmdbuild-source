@@ -128,7 +128,7 @@ public class Template extends JSONBaseWithSpringContext {
 
 			public Builder withPromptSynchronization(final boolean promptSynchronization) {
 				this.promptSynchronization = promptSynchronization;
-				return null;
+				return this;
 			}
 
 			public Builder withVariables(final Map<String, String> variables) {
