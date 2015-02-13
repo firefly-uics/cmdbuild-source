@@ -2,11 +2,14 @@ package org.cmdbuild.logic.email;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.contains;
 import static com.google.common.collect.Iterables.isEmpty;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import static org.cmdbuild.data.store.email.EmailStatus.DRAFT;
+import static org.cmdbuild.data.store.email.EmailStatus.OUTGOING;
 import static org.cmdbuild.services.email.Predicates.isDefault;
 
 import java.util.Collection;
@@ -490,6 +493,10 @@ public class DefaultEmailLogic implements EmailLogic {
 	private static final EmailStatus MISSING_STATUS = null;
 	private static final Collection<EmailStatus> SAVEABLE_STATUSES = asList(EmailStatus.DRAFT, MISSING_STATUS);
 
+	private static final Iterable<?> UPDATEABLE_STATUSES = asList(DRAFT);
+	private static final Iterable<?> STATUSES_FOR_UPDATE = asList(DRAFT, OUTGOING);
+	private static final Iterable<?> DELETEABLE_STATUSES = asList(DRAFT);
+
 	private final EmailServiceFactory emailServiceFactory;
 	private final Store<EmailAccount> emailAccountStore;
 	private final SubjectHandler subjectHandler;
@@ -528,6 +535,14 @@ public class DefaultEmailLogic implements EmailLogic {
 				return UUID.randomUUID().hashCode();
 			}
 
+			@Override
+			public EmailStatus getStatus() {
+				/*
+				 * newly created e-mails are always drafts
+				 */
+				return DRAFT;
+			}
+
 		});
 		final Long id;
 		if (email.isTemporary()) {
@@ -564,20 +579,34 @@ public class DefaultEmailLogic implements EmailLogic {
 
 	@Override
 	public void update(final Email email) {
-		final org.cmdbuild.data.store.email.Email storableEmail = LOGIC_TO_STORE.apply(email);
+		final Email read = read(email);
+		Validate.isTrue( //
+				contains(UPDATEABLE_STATUSES, read.getStatus()), //
+				"cannot update e-mail '%s', actual status is different from '%s'", read, UPDATEABLE_STATUSES);
+		Validate.isTrue( //
+				contains(STATUSES_FOR_UPDATE, email.getStatus()), //
+				"cannot update e-mail, new status '%s' is different from '%s'", email.getStatus(), STATUSES_FOR_UPDATE);
+
+		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
 		if (email.isTemporary()) {
-			store.update(storableEmail);
+			store.update(storable);
 		} else {
-			emailService().save(storableEmail);
+			emailService().save(storable);
 		}
 	}
 
 	@Override
 	public void delete(final Email email) {
+		final Email read = read(email);
+		Validate.isTrue( //
+				contains(DELETEABLE_STATUSES, read.getStatus()), //
+				"cannot delete e-mail '%s', actual status is different from '%s'", read, DELETEABLE_STATUSES);
+
+		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
 		if (email.isTemporary()) {
-			store.delete(LOGIC_TO_STORE.apply(email));
+			store.delete(storable);
 		} else {
-			emailService().delete(LOGIC_TO_STORE.apply(email));
+			emailService().delete(storable);
 		}
 	}
 
