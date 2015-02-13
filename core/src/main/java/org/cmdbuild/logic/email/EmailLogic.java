@@ -4,6 +4,8 @@ import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.logic.Logic;
 import org.joda.time.DateTime;
 
+import com.google.common.collect.ForwardingObject;
+
 public interface EmailLogic extends Logic {
 
 	static interface Email {
@@ -40,6 +42,88 @@ public interface EmailLogic extends Logic {
 
 	}
 
+	static abstract class ForwardingEmail extends ForwardingObject implements Email {
+
+		@Override
+		protected abstract Email delegate();
+
+		@Override
+		public Long getId() {
+			return delegate().getId();
+		}
+
+		@Override
+		public String getFromAddress() {
+			return delegate().getFromAddress();
+		}
+
+		@Override
+		public String getToAddresses() {
+			return delegate().getToAddresses();
+		}
+
+		@Override
+		public String getCcAddresses() {
+			return delegate().getCcAddresses();
+		}
+
+		@Override
+		public String getBccAddresses() {
+			return delegate().getBccAddresses();
+		}
+
+		@Override
+		public String getSubject() {
+			return delegate().getSubject();
+		}
+
+		@Override
+		public String getContent() {
+			return delegate().getContent();
+		}
+
+		@Override
+		public DateTime getDate() {
+			return delegate().getDate();
+		}
+
+		@Override
+		public EmailStatus getStatus() {
+			return delegate().getStatus();
+		}
+
+		@Override
+		public Long getActivityId() {
+			return delegate().getActivityId();
+		}
+
+		@Override
+		public String getNotifyWith() {
+			return delegate().getNotifyWith();
+		}
+
+		@Override
+		public boolean isNoSubjectPrefix() {
+			return delegate().isNoSubjectPrefix();
+		}
+
+		@Override
+		public String getAccount() {
+			return delegate().getAccount();
+		}
+
+		@Override
+		public boolean isTemporary() {
+			return delegate().isTemporary();
+		}
+
+		@Override
+		public String getTemplate() {
+			return delegate().getTemplate();
+		}
+
+	}
+
 	public static class EmailSubmission extends org.cmdbuild.data.store.email.Email {
 
 		private String temporaryId;
@@ -64,26 +148,14 @@ public interface EmailLogic extends Logic {
 
 	Long create(Email email);
 
-	void update(Email email);
+	Iterable<Email> readAll(Long processCardId);
 
 	Email read(Email email);
 
+	void update(Email email);
+
 	void delete(Email email);
 
-	Iterable<Email> getEmails(Long processCardId);
-
-	void sendOutgoingAndDraftEmails(Long processCardId);
-
-	/**
-	 * Deletes all {@link Email}s with the specified id and for the specified
-	 * process' id. Only draft mails can be deleted.
-	 */
-	void deleteEmails(Long processCardId, Iterable<Long> emailIds);
-
-	/**
-	 * Saves all specified {@link EmailSubmission}s for the specified process'
-	 * id. Only draft mails can be saved, others are skipped.
-	 */
-	void saveEmails(Long processCardId, Iterable<? extends EmailSubmission> emails);
+	void send(Email email);
 
 }

@@ -14,7 +14,7 @@ public class Workflow extends Widget {
 	private String filterType;
 	private String outputName;
 
-	public static final String SUBMISSION_PARAM = "output";
+	public static final String SUBMISSION_PARAM = DEFAULT_SUBMISSION_PARAM;
 	private static final String CARDID_FIELD = "id";
 	private static final String CLASSNAME_FIELD = "className";
 

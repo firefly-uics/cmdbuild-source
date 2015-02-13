@@ -161,7 +161,7 @@ public class Email extends JSONBaseWithSpringContext {
 	public JsonResponse readAll( //
 			@Parameter(ACTIVITY_ID) final Long activityId //
 	) {
-		final Iterable<EmailLogic.Email> emails = emailLogic().getEmails(activityId);
+		final Iterable<EmailLogic.Email> emails = emailLogic().readAll(activityId);
 		return JsonResponse.success(Iterators.transform(emails.iterator(), TO_JSON_EMAIL));
 	}
 

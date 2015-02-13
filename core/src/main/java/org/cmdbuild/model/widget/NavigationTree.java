@@ -17,7 +17,7 @@ public class NavigationTree extends Widget {
 	private Map<String, Object> preset;
 	private String outputName;
 
-	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
+	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = DEFAULT_SUBMISSION_PARAM;
 	private static final String CLASSNAME_FIELD = "className";
 	private static final String CARDID_FIELD = "cardId";
 

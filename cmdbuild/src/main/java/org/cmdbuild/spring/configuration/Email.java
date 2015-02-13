@@ -27,10 +27,8 @@ import org.cmdbuild.logic.email.EmailTemplateLogic;
 import org.cmdbuild.logic.email.TransactionalEmailTemplateLogic;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.ConfigurableEmailServiceFactory;
-import org.cmdbuild.services.email.DefaultEmailPersistence;
 import org.cmdbuild.services.email.DefaultSubjectHandler;
 import org.cmdbuild.services.email.EmailAccount;
-import org.cmdbuild.services.email.EmailPersistence;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.SubjectHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,13 +80,6 @@ public class Email {
 	}
 
 	@Bean
-	public EmailPersistence emailPersistence() {
-		return new DefaultEmailPersistence( //
-				emailStore(), //
-				templateStore());
-	}
-
-	@Bean
 	protected Store<org.cmdbuild.data.store.email.Email> emailStore() {
 		return DataViewStore.<org.cmdbuild.data.store.email.Email> newInstance() //
 				.withDataView(data.systemDataView()) //
@@ -105,7 +96,7 @@ public class Email {
 	public EmailServiceFactory emailServiceFactory() {
 		return ConfigurableEmailServiceFactory.newInstance() //
 				.withApiFactory(mailApiFactory()) //
-				.withPersistence(emailPersistence()) //
+				.withPersistence(emailStore()) //
 				.withDefaultAccountSupplier(defaultEmailAccountSupplier()) //
 				.build();
 	}
@@ -139,11 +130,12 @@ public class Email {
 	@Scope(PROTOTYPE)
 	public EmailLogic emailLogic() {
 		return new DefaultEmailLogic( //
+				emailStore(), //
+				emailTemporaryStore(), //
 				emailServiceFactory(), //
 				emailAccountStore(), //
 				subjectHandler(), //
-				notifier, //
-				emailTemporaryStore());
+				notifier);
 	}
 
 	@Bean

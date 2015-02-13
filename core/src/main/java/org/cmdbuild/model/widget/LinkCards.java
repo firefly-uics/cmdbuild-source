@@ -43,7 +43,7 @@ public class LinkCards extends Widget {
 
 	}
 
-	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
+	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = DEFAULT_SUBMISSION_PARAM;
 
 	public static final String METADATA_GROUP_SEPARATOR = "|";
 	public static final String METADATA_SEPARATOR = ";";

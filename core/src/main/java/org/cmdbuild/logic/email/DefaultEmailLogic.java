@@ -1,18 +1,23 @@
 package org.cmdbuild.logic.email;
 
+import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.contains;
-import static com.google.common.collect.Iterables.isEmpty;
-import static com.google.common.collect.Maps.uniqueIndex;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
+import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
+import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
 import static org.cmdbuild.data.store.email.EmailStatus.DRAFT;
 import static org.cmdbuild.data.store.email.EmailStatus.OUTGOING;
+import static org.cmdbuild.data.store.email.EmailStatus.SENT;
 import static org.cmdbuild.services.email.Predicates.isDefault;
+import static org.cmdbuild.services.email.Predicates.named;
 
-import java.util.Collection;
+import java.net.URL;
+import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,8 +30,10 @@ import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
 import org.cmdbuild.data.store.StoreSupplier;
+import org.cmdbuild.data.store.email.EmailOwnerGroupable;
 import org.cmdbuild.data.store.email.EmailStatus;
-import org.cmdbuild.data.store.email.ExtendedEmailTemplate;
+import org.cmdbuild.exception.CMDBException;
+import org.cmdbuild.exception.CMDBWorkflowException;
 import org.cmdbuild.notification.Notifier;
 import org.cmdbuild.services.email.EmailAccount;
 import org.cmdbuild.services.email.EmailService;
@@ -448,73 +455,38 @@ public class DefaultEmailLogic implements EmailLogic {
 
 	};
 
-	private static final Function<org.cmdbuild.data.store.email.Email, Long> EMAIL_ID = new Function<org.cmdbuild.data.store.email.Email, Long>() {
-
-		@Override
-		public Long apply(final org.cmdbuild.data.store.email.Email input) {
-			return input.getId();
-		}
-
-	};
-
 	private static final EmailService EMAIL_SERVICE_FOR_INVALID_PROCESS_ID = new ForwardingEmailService() {
 
 		private final EmailService UNSUPPORTED = UnsupportedProxyFactory.of(EmailService.class).create();
-		private final Iterable<org.cmdbuild.data.store.email.Email> NO_EMAILS = emptyList();
-		private final Iterable<ExtendedEmailTemplate> NO_EMAIL_TEMPLATES = emptyList();
 
 		@Override
 		protected EmailService delegate() {
 			return UNSUPPORTED;
 		}
 
-		@Override
-		public Iterable<org.cmdbuild.data.store.email.Email> getEmails(final Long processId) {
-			return NO_EMAILS;
-		};
-
-		@Override
-		public org.cmdbuild.data.store.email.Email getEmail(final Long id) {
-			return null;
-		}
-
-		@Override
-		public Iterable<org.cmdbuild.data.store.email.Email> getOutgoingEmails(final Long processId) {
-			return NO_EMAILS;
-		};
-
-		@Override
-		public Iterable<ExtendedEmailTemplate> getEmailTemplates(final org.cmdbuild.data.store.email.Email email) {
-			return NO_EMAIL_TEMPLATES;
-		}
-
 	};
 
-	private static final EmailStatus MISSING_STATUS = null;
-	private static final Collection<EmailStatus> SAVEABLE_STATUSES = asList(EmailStatus.DRAFT, MISSING_STATUS);
-
-	private static final Iterable<?> UPDATEABLE_STATUSES = asList(DRAFT);
-	private static final Iterable<?> STATUSES_FOR_UPDATE = asList(DRAFT, OUTGOING);
-	private static final Iterable<?> DELETEABLE_STATUSES = asList(DRAFT);
-
+	private final Store<org.cmdbuild.data.store.email.Email> emailStore;
+	private final Store<org.cmdbuild.data.store.email.Email> temporaryEmailStore;
 	private final EmailServiceFactory emailServiceFactory;
 	private final Store<EmailAccount> emailAccountStore;
 	private final SubjectHandler subjectHandler;
 	private final Notifier notifier;
-	private final Store<org.cmdbuild.data.store.email.Email> store;
 
 	public DefaultEmailLogic( //
+			final Store<org.cmdbuild.data.store.email.Email> emailStore, //
+			final Store<org.cmdbuild.data.store.email.Email> store, //
 			final EmailServiceFactory emailServiceFactory, //
 			final Store<EmailAccount> emailAccountStore, //
 			final SubjectHandler subjectHandler, //
-			final Notifier notifier, //
-			final Store<org.cmdbuild.data.store.email.Email> store //
+			final Notifier notifier //
 	) {
+		this.emailStore = emailStore;
 		this.emailServiceFactory = emailServiceFactory;
 		this.emailAccountStore = emailAccountStore;
 		this.subjectHandler = subjectHandler;
 		this.notifier = notifier;
-		this.store = store;
+		this.temporaryEmailStore = store;
 	}
 
 	@Override
@@ -544,78 +516,17 @@ public class DefaultEmailLogic implements EmailLogic {
 			}
 
 		});
-		final Long id;
-		if (email.isTemporary()) {
-			final Storable stored = store.create(storableEmail);
-			id = Long.parseLong(stored.getIdentifier());
-		} else {
-			id = emailService().save(storableEmail);
-		}
+		final Storable stored = storeOf(email).create(storableEmail);
+		final Long id = Long.parseLong(stored.getIdentifier());
 		return id;
 	}
 
 	@Override
-	public Email read(final Email email) {
-		final org.cmdbuild.data.store.email.Email read;
-		if (email.isTemporary()) {
-			read = store.read(LOGIC_TO_STORE.apply(email));
-		} else {
-			read = emailService().getEmail(email.getId());
-		}
-		return new ForwardingEmail() {
-
-			@Override
-			protected Email delegate() {
-				return STORE_TO_LOGIC.apply(read);
-			}
-
-			@Override
-			public boolean isTemporary() {
-				return email.isTemporary();
-			}
-
-		};
-	}
-
-	@Override
-	public void update(final Email email) {
-		final Email read = read(email);
-		Validate.isTrue( //
-				contains(UPDATEABLE_STATUSES, read.getStatus()), //
-				"cannot update e-mail '%s', actual status is different from '%s'", read, UPDATEABLE_STATUSES);
-		Validate.isTrue( //
-				contains(STATUSES_FOR_UPDATE, email.getStatus()), //
-				"cannot update e-mail, new status '%s' is different from '%s'", email.getStatus(), STATUSES_FOR_UPDATE);
-
-		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
-		if (email.isTemporary()) {
-			store.update(storable);
-		} else {
-			emailService().save(storable);
-		}
-	}
-
-	@Override
-	public void delete(final Email email) {
-		final Email read = read(email);
-		Validate.isTrue( //
-				contains(DELETEABLE_STATUSES, read.getStatus()), //
-				"cannot delete e-mail '%s', actual status is different from '%s'", read, DELETEABLE_STATUSES);
-
-		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
-		if (email.isTemporary()) {
-			store.delete(storable);
-		} else {
-			emailService().delete(storable);
-		}
-	}
-
-	@Override
-	public Iterable<Email> getEmails(final Long processCardId) {
+	public Iterable<Email> readAll(final Long processCardId) {
 		return from(concat( //
-				from(emailService(processCardId).getEmails(processCardId)) //
+				from(emailStore.readAll(EmailOwnerGroupable.of(processCardId))) //
 						.transform(STORE_TO_LOGIC), //
-				from(store.readAll()) //
+				from(temporaryEmailStore.readAll()) //
 						.filter(new Predicate<org.cmdbuild.data.store.email.Email>() {
 
 							@Override
@@ -649,96 +560,124 @@ public class DefaultEmailLogic implements EmailLogic {
 	}
 
 	@Override
-	public void sendOutgoingAndDraftEmails(final Long processCardId) {
-		// final Supplier<EmailAccount> defaultEmailAccountSupplier =
-		// memoize(nullOnException(defaultEmailAccountSupplier()));
-		// final EmailService defaultEmailService = emailService(processCardId);
-		// for (final Email email :
-		// defaultEmailService.getOutgoingEmails(processCardId)) {
-		// try {
-		// final Supplier<EmailAccount> specificEmailAccountSupplier =
-		// nullOnException(StoreSupplier.of(
-		// EmailAccount.class, emailAccountStore, named(email.getAccount())));
-		// final Supplier<EmailAccount> emailAccountSupplier =
-		// memoize(firstNotNull(asList(
-		// specificEmailAccountSupplier, defaultEmailAccountSupplier)));
-		// if (isEmpty(email.getFromAddress())) {
-		// email.withFromAddress(emailAccountSupplier.get().getAddress());
-		// }
-		// if (!subjectHandler.parse(email.getSubject()).hasExpectedFormat()) {
-		// email.withSubject(defaultIfBlank(subjectHandler.compile(email).getSubject(),
-		// EMPTY));
-		// }
-		// emailService(processCardId, emailAccountSupplier).send(email,
-		// attachmentsOf(email));
-		// email.withStatus(EmailStatus.SENT);
-		// } catch (final CMDBException e) {
-		// notifier.warn(e);
-		// email.withStatus(EmailStatus.OUTGOING);
-		// } catch (final Throwable e) {
-		// notifier.warn(CMDBWorkflowException.WorkflowExceptionType.WF_EMAIL_NOT_SENT.createException());
-		// email.withStatus(EmailStatus.OUTGOING);
-		// }
-		// defaultEmailService.save(email);
-		// }
+	public Email read(final Email email) {
+		final org.cmdbuild.data.store.email.Email read = storeOf(email).read(LOGIC_TO_STORE.apply(email));
+		return new ForwardingEmail() {
+
+			@Override
+			protected Email delegate() {
+				return STORE_TO_LOGIC.apply(read);
+			}
+
+			@Override
+			public boolean isTemporary() {
+				return email.isTemporary();
+			}
+
+		};
+	}
+
+	@Override
+	public void update(final Email email) {
+		final Email read = read(email);
+		Validate.isTrue( //
+				contains(asList(DRAFT), read.getStatus()), //
+				"cannot update e-mail '%s' due to an invalid status", read);
+		Validate.isTrue( //
+				contains(asList(DRAFT, OUTGOING), email.getStatus()), //
+				"cannot update e-mail due to an invalid new status", email.getStatus());
+
+		update0(email);
 	}
 
 	/**
-	 * Deletes all {@link Email}s with the specified id and for the specified
-	 * process' id. Only draft mails can be deleted.
+	 * Updates without any validation.
 	 */
+	private void update0(final Email email) {
+		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
+		storeOf(email).update(storable);
+	}
+
 	@Override
-	public void deleteEmails(final Long processCardId, final Iterable<Long> emailIds) {
-		if (isEmpty(emailIds)) {
-			return;
-		}
-		final Map<Long, org.cmdbuild.data.store.email.Email> storedEmails = uniqueIndex(emailService(processCardId)
-				.getEmails(processCardId), EMAIL_ID);
-		for (final Long emailId : emailIds) {
-			final org.cmdbuild.data.store.email.Email found = storedEmails.get(emailId);
-			Validate.notNull(found, "email not found");
-			Validate.isTrue(SAVEABLE_STATUSES.contains(found.getStatus()), "specified email have no compatible status");
-			emailService(processCardId).delete(found);
-		}
+	public void delete(final Email email) {
+		final Email read = read(email);
+		Validate.isTrue( //
+				contains(asList(DRAFT), read.getStatus()), //
+				"cannot delete e-mail '%s' due to an invalid status", read);
+
+		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
+		storeOf(email).delete(storable);
 	}
 
-	/**
-	 * Saves all specified {@link EmailSubmission}s for the specified process'
-	 * id. Only draft mails can be saved, others are skipped.
-	 */
+	private Store<org.cmdbuild.data.store.email.Email> storeOf(final Email email) {
+		return email.isTemporary() ? temporaryEmailStore : emailStore;
+	}
+
 	@Override
-	public void saveEmails(final Long processCardId, final Iterable<? extends EmailSubmission> emails) {
-		// if (isEmpty(emails)) {
-		// return;
-		// }
-		// final Map<Long, Email> storedEmails =
-		// uniqueIndex(emailService(processCardId).getEmails(processCardId),
-		// EMAIL_ID);
-		// for (final EmailSubmission emailSubmission : emails) {
-		// final Email alreadyStoredEmailSubmission =
-		// storedEmails.get(emailSubmission.getId());
-		// final boolean alreadyStored = (alreadyStoredEmailSubmission != null);
-		// final Email maybeUpdateable = alreadyStored ?
-		// alreadyStoredEmailSubmission : emailSubmission;
-		// if (SAVEABLE_STATUSES.contains(maybeUpdateable.getStatus())) {
-		// maybeUpdateable.withActivityId(processCardId);
-		// final Long savedId =
-		// emailService(processCardId).save(maybeUpdateable);
-		// if (!alreadyStored) {
-		// moveAttachmentsFromTemporaryToFinalPosition(emailSubmission.getTemporaryId(),
-		// savedId.toString());
-		// }
-		// }
-		//
-		// }
+	public void send(final Email email) {
+		final Email read = read(email);
+		Validate.isTrue( //
+				contains(asList(DRAFT, OUTGOING), read.getStatus()), //
+				"cannot send e-mail '%s' due to an invalid status", read);
+		Validate.isTrue( //
+				!read.isTemporary(), //
+				"cannot send temporary e-mail '%s'", read);
+
+		try {
+			final Supplier<EmailAccount> accountSupplier = accountSupplierOf(read);
+			final Email toBeUpdated = new ForwardingEmail() {
+
+				@Override
+				protected Email delegate() {
+					return read;
+				}
+
+				@Override
+				public String getFromAddress() {
+					return defaultIfBlank(super.getFromAddress(), accountSupplier.get().getAddress());
+				}
+
+				@Override
+				public String getSubject() {
+					final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(delegate());
+					final String subject;
+					if (subjectHandler.parse(storable.getSubject()).hasExpectedFormat()) {
+						subject = storable.getSubject();
+					} else {
+						subject = defaultIfBlank(subjectHandler.compile(storable).getSubject(), EMPTY);
+					}
+					return subject;
+				}
+
+				@Override
+				public EmailStatus getStatus() {
+					return SENT;
+				}
+
+			};
+
+			final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(toBeUpdated);
+			emailService(storable.getActivityId(), accountSupplier).send(storable, attachmentsOf(toBeUpdated));
+			update0(toBeUpdated);
+		} catch (final CMDBException e) {
+			notifier.warn(e);
+		} catch (final Throwable e) {
+			notifier.warn(CMDBWorkflowException.WorkflowExceptionType.WF_EMAIL_NOT_SENT.createException());
+		}
 	}
 
-	private EmailService emailService() {
-		return emailServiceFactory.create();
+	private Supplier<EmailAccount> accountSupplierOf(final Email email) {
+		final Supplier<EmailAccount> defaultAccountSupplier = memoize(nullOnException(defaultAccountSupplier()));
+		final Supplier<EmailAccount> emailAccountSupplier = nullOnException(StoreSupplier.of(EmailAccount.class,
+				emailAccountStore, named(email.getAccount())));
+		final Supplier<EmailAccount> accountSupplier = memoize(firstNotNull(asList(emailAccountSupplier,
+				defaultAccountSupplier)));
+		return accountSupplier;
 	}
 
-	private EmailService emailService(final Long processCardId) {
-		return emailService(processCardId, defaultEmailAccountSupplier());
+	private Map<URL, String> attachmentsOf(final Email read) {
+		// TODO Auto-generated method stub
+		return Collections.emptyMap();
 	}
 
 	private EmailService emailService(final Long processCardId, final Supplier<EmailAccount> emailAccountSupplier) {
@@ -755,7 +694,7 @@ public class DefaultEmailLogic implements EmailLogic {
 		return emailService;
 	}
 
-	private StoreSupplier<EmailAccount> defaultEmailAccountSupplier() {
+	private StoreSupplier<EmailAccount> defaultAccountSupplier() {
 		return StoreSupplier.of(EmailAccount.class, emailAccountStore, isDefault());
 	}
 
