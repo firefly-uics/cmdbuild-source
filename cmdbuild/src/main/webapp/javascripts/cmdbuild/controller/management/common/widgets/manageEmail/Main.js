@@ -8,6 +8,7 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
+			'CMDBuild.core.proxy.EmailTemplates',
 			'CMDBuild.core.proxy.Utils',
 			'CMDBuild.model.EmailTemplates'
 		],
@@ -139,23 +140,32 @@
 _debug('this.widgetConf', this.widgetConf);
 _debug('this.ownerController', this.ownerController);
 _debug('this.card', this.card);
+//			this.emailTemplatesObjects = [];
 			this.readOnly = !this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.READ_ONLY]; // TODO: refactorizzare senza negazioni
 
-			// Loads configuration templates to local array and push ids in emailTemplatesIdentifiers array
-			for (var i in this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES]) {
-				var template = this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES][i];
+//			// Loads configuration templates to local array and push key in emailTemplatesIdentifiers array
+//			for (var i in this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES]) {
+//				var template = this.widgetConfigToModel(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES][i]);
+//_debug('this.emailTemplatesIdentifiers', this.emailTemplatesIdentifiers);
+//_debug('template', template);
+//_debug(!Ext.isEmpty(template));
+//_debug(!Ext.Array.contains(this.emailTemplatesIdentifiers, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY)));
+//				if (!Ext.isEmpty(template) && !Ext.Array.contains(this.emailTemplatesIdentifiers, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY))) {
+//_debug('IF');
+//					this.emailTemplatesObjects.push(template);
+//					this.emailTemplatesIdentifiers.push(template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
+//				}
+//			}
 
-				this.emailTemplatesObjects.push(template);
-				this.emailTemplatesIdentifiers.push(template[CMDBuild.core.proxy.CMProxyConstants.KEY]);
-			}
-
-			this.templateResolverInit();
+//			this.templateResolverInit();
 
 			// Build controllers
 			this.controllerGrid = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.Grid', {
 				parentDelegate: this,
 				view: this.grid
 			});
+
+//_debug('this.emailTemplatesObjects', this.emailTemplatesObjects);
 		},
 
 		/**
@@ -201,6 +211,7 @@ _debug('this.card', this.card);
 		 * @override
 		 */
 		beforeActiveView: function() {
+_debug('BEFORE ACTIVE VIEW');
 			this.controllerGrid.storeLoad(this.templateResolverInit, this);
 		},
 
@@ -277,6 +288,22 @@ _debug('this.emailTemplatesObjects', this.emailTemplatesObjects);
 			}
 
 			return variables;
+
+//			var variables = {};
+//
+//			for (var i = 0; i < this.emailTemplatesObjects.length; ++i) {
+//				var t = this.emailTemplatesObjects[i].variables;
+//
+//				for (var key in t)
+//					variables[key] = t[key];
+//
+//				t = this.emailTemplatesObjects[i];
+//
+//				for (var key in t)
+//					variables[key + (i + 1)] = t[key];
+//			}
+//
+//			return variables;
 		},
 
 		/**
@@ -286,16 +313,16 @@ _debug('this.emailTemplatesObjects', this.emailTemplatesObjects);
 			return this.activityId;
 		},
 
-		/** TODO: da implementare l'oggetto OUTPUT come tutti gli altri widget
+		/**
 		 * @return {Object}
 		 *
 		 * @override
 		 */
 		getData: function() {
-			return {
-				Updated: this.controllerGrid.getOutgoingEmails(true),
-				Deleted: this.controllerGrid.getDeletedEmails()
-			};
+			var out = {};
+			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.getActivityId();
+
+			return out;
 		},
 
 		/**
@@ -331,7 +358,10 @@ _debug('onEditMode');
 			this.setActivityId();
 
 			if (!this.grid.getStore().isLoading())
-				this.controllerGrid.storeLoad(this.regenerateAllEmails);
+				this.controllerGrid.storeLoad(function() {
+					this.templateResolverInit();
+					this.regenerateAllEmails();
+				}, this);
 		},
 
 		onGlobalRegenerationButtonClick: function() {
@@ -473,40 +503,84 @@ _debug('regeneratedEmailObject', regeneratedEmailObject);
 		 */
 		templateResolverInit: function() {
 _debug('templateResolverInit', this);
-			// Load grid's templates to local array
-			var storeItems = this.grid.getStore().getRange();
-			for (var i in storeItems) {
-				if (!Ext.Array.contains(this.emailTemplatesIdentifiers, template.get(CMDBuild.core.proxy.CMProxyConstants.NAME))) {
-					this.view.setLoading(true);
-					CMDBuild.model.EmailTemplates.get({ // TODO: fare la readAll parametrizzata come da richiesta
-						params: {
-							name: storeItems[i].get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)
-						},
-						scope: this,
-						failure: function(response, options, decodedResponse) {
-							CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail controller error: get template call failure', false);
-						},
-						success: function(response, options, decodedResponse) {
-	_debug('decodedResponse.response', decodedResponse.response);
+			// Loads configuration templates to local array and push key in emailTemplatesIdentifiers array
+			for (var i in this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES]) {
+				var template = this.widgetConfigToModel(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.EMAIL_TEMPLATES][i]);
 
-							this.emailTemplatesObjects.push(template.getData()); // TODO: questo non sarà l'oggetto del template ma è solo il nome
-							this.emailTemplatesIdentifiers.push(template.get(CMDBuild.core.proxy.CMProxyConstants.NAME));
-						},
-						callback: function(options, success, response) {
-							this.view.setLoading(false);
-						}
-					});
+				if (!Ext.isEmpty(template) && !Ext.Array.contains(this.emailTemplatesIdentifiers, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY))) {
+					this.emailTemplatesObjects.push(template);
+					this.emailTemplatesIdentifiers.push(template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
 				}
 			}
 
-			var xaVars = Ext.apply({}, this.emailTemplatesObjects, this.extractVariablesForTemplateResolver());
+			// Load grid's templates names to local array
+			var storeItems = this.grid.getStore().getRange();
+			for (var i in storeItems) {
+				var templateName = storeItems[i].get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
 
-			this.templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: this.clientForm,
-				xaVars: xaVars,
-				serverVars: this.getTemplateResolverServerVars()
+				if (!Ext.Array.contains(this.emailTemplatesIdentifiers, templateName))
+					this.emailTemplatesIdentifiers.push(templateName);
+			}
+
+			this.view.setLoading(true);
+			CMDBuild.core.proxy.EmailTemplates.getAll({ // TODO: fare la readAll parametrizzata come da richiesta
+				params: {
+					templates: Ext.encode(this.emailTemplatesIdentifiers)
+				},
+				scope: this,
+				failure: function(response, options, decodedResponse) {
+					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail controller error: get template call failure', false);
+				},
+				success: function(response, options, decodedResponse) {
+					var template = decodedResponse.response.elements;
+_debug('decodedResponse.response', decodedResponse.response.elements);
+					//Load grid's templates to local array
+					Ext.Array.forEach(this.emailTemplatesObjects, function(item, index, allItems) {
+						this.emailTemplatesObjects.push(Ext.create('CMDBuild.model.EmailTemplates.singleTemplate', template));
+					}, this);
+
+					var xaVars = Ext.apply({}, this.emailTemplatesObjects, this.extractVariablesForTemplateResolver());
+
+					this.templateResolver = new CMDBuild.Management.TemplateResolver({
+						clientForm: this.clientForm,
+						xaVars: xaVars,
+						serverVars: this.getTemplateResolverServerVars()
+					});
+_debug('xaVars', xaVars);
+_debug('this.emailTemplatesObjects', this.emailTemplatesObjects);
+				},
+				callback: function(options, success, response) {
+					this.view.setLoading(false);
+				}
 			});
-		}
+		},
+
+		/**
+		 * @param {Object} template
+		 *
+		 * @return {CMDBuild.model.EmailTemplates.singleTemplate} or null
+		 */
+		widgetConfigToModel: function(template) {
+			if (Ext.isObject(template) && !Ext.Object.isEmpty(template)) {
+				var model = Ext.create('CMDBuild.model.EmailTemplates.singleTemplate');
+				model.set(CMDBuild.core.proxy.CMProxyConstants.BCC, template[CMDBuild.core.proxy.CMProxyConstants.BCC_ADDRESSES]);
+				model.set(CMDBuild.core.proxy.CMProxyConstants.BODY, template[CMDBuild.core.proxy.CMProxyConstants.CONTENT]);
+				model.set(CMDBuild.core.proxy.CMProxyConstants.CC, template[CMDBuild.core.proxy.CMProxyConstants.CC_ADDRESSES]);
+				model.set(CMDBuild.core.proxy.CMProxyConstants.CONDITION, template[CMDBuild.core.proxy.CMProxyConstants.CONDITION]);
+				model.set(CMDBuild.core.proxy.CMProxyConstants.FROM, template[CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS]);
+				model.set(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION, template[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION]);
+				model.set(CMDBuild.core.proxy.CMProxyConstants.KEY, template[CMDBuild.core.proxy.CMProxyConstants.KEY]);
+				model.set(CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX, template[CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX]);
+				model.set(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION, template[CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION]);
+				model.set(CMDBuild.core.proxy.CMProxyConstants.SUBJECT, template[CMDBuild.core.proxy.CMProxyConstants.SUBJECT]);
+				model.set(CMDBuild.core.proxy.CMProxyConstants.TO, template[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES]);
+				model.set(CMDBuild.core.proxy.CMProxyConstants.VARIABLES, template[CMDBuild.core.proxy.CMProxyConstants.VARIABLES]);
+
+				return model;
+			}
+
+			return null;
+		},
 	});
 
 })();
