@@ -210,14 +210,14 @@
 		loadFormValues: function(record) {
 			var me = this;
 
-			var xaVars = Ext.apply({}, this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], record.data);
+			var xaVars = Ext.apply({}, this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], record.data); // TODO: getData()
 			var variables = record.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
-
+_debug('loadFormValues', xaVars);
 			for (var key in variables)
 				xaVars[key] = variables[key];
 
 			var templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: me.widgetController.ownerController.view.mainView.getForm(),
+				clientForm: me.widgetController.ownerController.view.mainView.getForm(), // TODO me.clientForm, ????
 				xaVars: xaVars,
 				serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars()
 			});
