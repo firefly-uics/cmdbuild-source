@@ -13,10 +13,13 @@ import static org.cmdbuild.servlets.json.CommunicationConstants.KEEP_SYNCHRONIZA
 import static org.cmdbuild.servlets.json.CommunicationConstants.NAME;
 import static org.cmdbuild.servlets.json.CommunicationConstants.PROMPT_SYNCHRONIZATION;
 import static org.cmdbuild.servlets.json.CommunicationConstants.SUBJECT;
+import static org.cmdbuild.servlets.json.CommunicationConstants.TEMPLATES;
 import static org.cmdbuild.servlets.json.CommunicationConstants.TO;
 import static org.cmdbuild.servlets.json.CommunicationConstants.VARIABLES;
+import static org.cmdbuild.servlets.json.schema.Utils.toIterable;
 import static org.cmdbuild.servlets.json.schema.Utils.toMap;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +33,11 @@ import org.cmdbuild.services.json.dto.JsonResponse;
 import org.cmdbuild.servlets.json.JSONBaseWithSpringContext;
 import org.cmdbuild.servlets.utils.Parameter;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
 public class Template extends JSONBaseWithSpringContext {
@@ -258,7 +263,8 @@ public class Template extends JSONBaseWithSpringContext {
 				return false;
 			}
 			final EmailTemplateLogic.Template other = EmailTemplateLogic.Template.class.cast(obj);
-			return new EqualsBuilder().append(this.getId(), other.getId()) //
+			return new EqualsBuilder() //
+					.append(this.getId(), other.getId()) //
 					.append(this.getName(), other.getName()) //
 					.append(this.getDescription(), other.getDescription()) //
 					.append(this.getFrom(), other.getFrom()) //
@@ -302,15 +308,60 @@ public class Template extends JSONBaseWithSpringContext {
 
 	private static class JsonTemplates {
 
-		private List<? super JsonTemplate> elements;
+		private static class Builder implements org.apache.commons.lang3.builder.Builder<JsonTemplates> {
+
+			private List<? super JsonTemplate> elements;
+
+			private Builder() {
+				// use factory method
+			}
+
+			@Override
+			public JsonTemplates build() {
+				return new JsonTemplates(this);
+			}
+
+			public Builder withElements(final Iterable<? extends JsonTemplate> elements) {
+				this.elements = Lists.newArrayList(elements);
+				return this;
+			}
+
+		}
+
+		public static Builder newInstance() {
+			return new Builder();
+		}
+
+		private final List<? super JsonTemplate> elements;
+
+		private JsonTemplates(final Builder builder) {
+			this.elements = builder.elements;
+		}
 
 		@JsonProperty(ELEMENTS)
 		public List<? super JsonTemplate> getElements() {
 			return elements;
 		}
 
-		public void setElements(final Iterable<? extends JsonTemplate> elements) {
-			this.elements = Lists.newArrayList(elements);
+		@Override
+		public boolean equals(final Object obj) {
+			if (obj == this) {
+				return true;
+			}
+			if (!(obj instanceof JsonTemplates)) {
+				return false;
+			}
+			final JsonTemplates other = JsonTemplates.class.cast(obj);
+			return new EqualsBuilder() //
+					.append(this.elements, other.elements) //
+					.isEquals();
+		}
+
+		@Override
+		public int hashCode() {
+			return new HashCodeBuilder() //
+					.append(elements) //
+					.toHashCode();
 		}
 
 		@Override
@@ -375,12 +426,24 @@ public class Template extends JSONBaseWithSpringContext {
 	}
 
 	@JSONExported
-	public JsonResponse readAll() {
-		final Iterable<EmailTemplateLogic.Template> elements = emailTemplateLogic().readAll();
-		final JsonTemplates templates = new JsonTemplates();
-		templates.setElements(from(elements) //
-				.transform(TEMPLATE_TO_JSON_TEMPLATE));
-		return JsonResponse.success(templates);
+	public JsonResponse readAll( //
+			@Parameter(value = TEMPLATES, required = false) final JSONArray templates //
+	) {
+		final Iterable<EmailTemplateLogic.Template> elements = from(emailTemplateLogic().readAll()) //
+				.filter(new Predicate<EmailTemplateLogic.Template>() {
+
+					private final Collection<String> names = from(toIterable(templates)).toList();
+
+					@Override
+					public boolean apply(final EmailTemplateLogic.Template input) {
+						return names.isEmpty() || names.contains(input.getName());
+					}
+
+				});
+		return JsonResponse.success(JsonTemplates.newInstance() //
+				.withElements(from(elements) //
+						.transform(TEMPLATE_TO_JSON_TEMPLATE)) //
+				.build());
 	}
 
 	@JSONExported
