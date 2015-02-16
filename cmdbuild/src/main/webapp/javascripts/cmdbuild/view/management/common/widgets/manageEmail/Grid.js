@@ -123,7 +123,7 @@
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmOn('onEmailRegenerationButtonClick', record);
 								},
-
+// TODO
 //								isDisabled: function(grid, rowIndex, colIndex, item, record) {
 //									return !this.delegate.recordIsEditable(record) || this.readOnly || !this.delegate.isRegenerable(record);
 //								}
@@ -226,7 +226,10 @@
 							'{name:this.formatName}',
 							{
 								formatName: function(name) {
-									return CMDBuild.Translation.emailLookupNames[name] || name;
+									name = name.toLowerCase(); // TODO delete
+									name = name.charAt(0).toUpperCase() + name.slice(1); // TODO delete
+
+									return CMDBuild.Translation.emailLookupNames[name];
 								}
 							}
 						],
