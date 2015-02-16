@@ -129,9 +129,19 @@ public class DefaultEmailLogic implements EmailLogic {
 			return delegate().getTemplate();
 		}
 
+		@Override
+		public boolean isKeepSynchronization() {
+			return delegate().isKeepSynchronization();
+		}
+
+		@Override
+		public boolean isPromptSynchronization() {
+			return delegate().isPromptSynchronization();
+		}
+
 	}
 
-	public static class EmailImpl implements Email {
+	private static class EmailImpl implements Email {
 
 		public static class Builder implements org.apache.commons.lang3.builder.Builder<Email> {
 
@@ -150,6 +160,8 @@ public class DefaultEmailLogic implements EmailLogic {
 			private String account;
 			private boolean temporary;
 			private String template;
+			private boolean keepSynchronization;
+			private boolean promptSynchronization;
 
 			private Builder() {
 				// use factory method
@@ -225,13 +237,18 @@ public class DefaultEmailLogic implements EmailLogic {
 				return this;
 			}
 
-			public Builder withTemporary(final boolean temporary) {
-				this.temporary = temporary;
+			public Builder withTemplate(final String template) {
+				this.template = template;
 				return this;
 			}
 
-			public Builder withTemplate(final String template) {
-				this.template = template;
+			public Builder withKeepSynchronization(final boolean keepSynchronization) {
+				this.keepSynchronization = keepSynchronization;
+				return this;
+			}
+
+			public Builder withPromptSynchronization(final boolean promptSynchronization) {
+				this.promptSynchronization = promptSynchronization;
 				return this;
 			}
 
@@ -256,6 +273,8 @@ public class DefaultEmailLogic implements EmailLogic {
 		private final String account;
 		private final boolean temporary;
 		private final String template;
+		private final boolean keepSynchronization;
+		private final boolean promptSynchronization;
 
 		private EmailImpl(final Builder builder) {
 			this.id = builder.id;
@@ -273,6 +292,8 @@ public class DefaultEmailLogic implements EmailLogic {
 			this.account = builder.account;
 			this.temporary = builder.temporary;
 			this.template = builder.template;
+			this.keepSynchronization = builder.keepSynchronization;
+			this.promptSynchronization = builder.promptSynchronization;
 		}
 
 		@Override
@@ -351,6 +372,18 @@ public class DefaultEmailLogic implements EmailLogic {
 		}
 
 		@Override
+		public boolean isKeepSynchronization() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean isPromptSynchronization() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
 		public boolean equals(final Object obj) {
 			if (this == obj) {
 				return true;
@@ -377,6 +410,8 @@ public class DefaultEmailLogic implements EmailLogic {
 					.append(this.getAccount(), other.getAccount()) //
 					.append(this.isTemporary(), other.isTemporary()) //
 					.append(this.getTemplate(), other.getTemplate()) //
+					.append(this.isKeepSynchronization(), other.isKeepSynchronization()) //
+					.append(this.isPromptSynchronization(), other.isPromptSynchronization()) //
 					.isEquals();
 		}
 
@@ -398,6 +433,8 @@ public class DefaultEmailLogic implements EmailLogic {
 					.append(account) //
 					.append(temporary) //
 					.append(template) //
+					.append(keepSynchronization) //
+					.append(promptSynchronization) //
 					.toHashCode();
 		}
 
@@ -426,6 +463,8 @@ public class DefaultEmailLogic implements EmailLogic {
 			output.setNoSubjectPrefix(input.isNoSubjectPrefix());
 			output.setAccount(input.getAccount());
 			output.setTemplate(input.getTemplate());
+			output.setKeepSynchronization(input.isKeepSynchronization());
+			output.setPromptSynchronization(input.isPromptSynchronization());
 			return output;
 		}
 
@@ -450,6 +489,8 @@ public class DefaultEmailLogic implements EmailLogic {
 					.withNoSubjectPrefix(input.isNoSubjectPrefix()) //
 					.withAccount(input.getAccount()) //
 					.withTemplate(input.getTemplate()) //
+					.withKeepSynchronization(input.isKeepSynchronization()) //
+					.withPromptSynchronization(input.isPromptSynchronization()) //
 					.build();
 		}
 

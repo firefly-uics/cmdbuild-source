@@ -40,6 +40,10 @@ public interface EmailLogic extends Logic {
 
 		String getTemplate();
 
+		boolean isKeepSynchronization();
+
+		boolean isPromptSynchronization();
+
 	}
 
 	static abstract class ForwardingEmail extends ForwardingObject implements Email {
@@ -120,6 +124,16 @@ public interface EmailLogic extends Logic {
 		@Override
 		public String getTemplate() {
 			return delegate().getTemplate();
+		}
+
+		@Override
+		public boolean isKeepSynchronization() {
+			return delegate().isKeepSynchronization();
+		}
+
+		@Override
+		public boolean isPromptSynchronization() {
+			return delegate().isPromptSynchronization();
 		}
 
 	}
