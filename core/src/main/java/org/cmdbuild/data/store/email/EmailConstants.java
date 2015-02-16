@@ -16,6 +16,8 @@ public class EmailConstants {
 	public static final String NO_SUBJECT_PREFIX_ATTRIBUTE = "NoSubjectPrefix";
 	public static final String ACCOUNT_ATTRIBUTE = "Account";
 	public static final String TEMPLATE_ATTRIBUTE = "Template";
+	public static final String KEEP_SYNCHRONIZATION_ATTRIBUTE = "KeepSynchronization";
+	public static final String PROMPT_SYNCHRONIZATION_ATTRIBUTE = "PromptSynchronization";
 
 	public static final String ADDRESSES_SEPARATOR = ",";
 

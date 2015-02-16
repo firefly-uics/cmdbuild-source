@@ -212,8 +212,8 @@ SELECT cm_create_class_attribute('_EmailTemplate', 'Body', 'text', null, false, 
 SELECT cm_create_domain('AccountTemplate', 'MODE: reserved|TYPE: domain|CLASS1: _EmailAccount|CLASS2: _EmailTemplate|DESCRDIR: is default|DESCRINV: has default|CARDIN: 1:N|STATUS: active');
 SELECT cm_create_class_attribute('_EmailTemplate', 'Account', 'integer', null, false, false, 'MODE: user|FIELDMODE: write|DESCR: Account|INDEX: 8|REFERENCEDOM: AccountTemplate|REFERENCEDIRECT: false|REFERENCETYPE: restrict|STATUS: active');
 
-SELECT cm_create_class_attribute('_EmailTemplate', 'KeepSynchronization', 'boolean', '', false, false, 'MODE: write|FIELDMODE: write|DESCR: Keep synchronization|INDEX: 9|BASEDSP: false|STATUS: active');
-SELECT cm_create_class_attribute('_EmailTemplate', 'PromptSynchronization', 'boolean', '', false, false, 'MODE: write|FIELDMODE: write|DESCR: Prompt synchronization|INDEX: 10|BASEDSP: false|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'KeepSynchronization', 'boolean', null, false, false, 'MODE: write|FIELDMODE: write|DESCR: Keep synchronization|INDEX: 9|BASEDSP: false|STATUS: active');
+SELECT cm_create_class_attribute('_EmailTemplate', 'PromptSynchronization', 'boolean', null, false, false, 'MODE: write|FIELDMODE: write|DESCR: Prompt synchronization|INDEX: 10|BASEDSP: false|STATUS: active');
 
 ---------------------------------------------
 -- Bim Projects

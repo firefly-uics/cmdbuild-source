@@ -407,7 +407,7 @@ public class Template extends JSONBaseWithSpringContext {
 			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables, //
 			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName, //
 			@Parameter(value = KEEP_SYNCHRONIZATION, required = false) final boolean keepSynchronization, //
-			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptReSynchronization //
+			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptSynchronization //
 	) {
 		final Long id = emailTemplateLogic().create(JsonTemplate.newInstance() //
 				.withName(name) //
@@ -420,7 +420,7 @@ public class Template extends JSONBaseWithSpringContext {
 				.withVariables(toMap(jsonVariables)) //
 				.withAccount(accountName) //
 				.withKeepSynchronization(keepSynchronization) //
-				.withPromptSynchronization(promptReSynchronization) //
+				.withPromptSynchronization(promptSynchronization) //
 				.build());
 		return JsonResponse.success(id);
 	}
@@ -467,7 +467,7 @@ public class Template extends JSONBaseWithSpringContext {
 			@Parameter(value = VARIABLES, required = false) final JSONObject jsonVariables, //
 			@Parameter(value = DEFAULT_ACCOUNT, required = false) final String accountName, //
 			@Parameter(value = KEEP_SYNCHRONIZATION, required = false) final boolean keepSynchronization, //
-			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptReSynchronization //
+			@Parameter(value = PROMPT_SYNCHRONIZATION, required = false) final boolean promptSynchronization //
 	) {
 		emailTemplateLogic().update(JsonTemplate.newInstance() //
 				.withName(name) //
@@ -480,7 +480,7 @@ public class Template extends JSONBaseWithSpringContext {
 				.withVariables(toMap(jsonVariables)) //
 				.withAccount(accountName) //
 				.withKeepSynchronization(keepSynchronization) //
-				.withPromptSynchronization(promptReSynchronization) //
+				.withPromptSynchronization(promptSynchronization) //
 				.build());
 	}
 
