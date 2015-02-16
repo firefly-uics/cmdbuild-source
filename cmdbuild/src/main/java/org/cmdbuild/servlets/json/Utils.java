@@ -139,7 +139,7 @@ public class Utils extends JSONBaseWithSpringContext {
 			} else {
 				negative = toBoolean(nextInt(0, 2));
 			}
-			final long l = nextLong(1, MAX_VALUE + 1);
+			final long l = nextLong(0, MAX_VALUE) + 1;
 			generated = negative ? -l : l;
 			break;
 
