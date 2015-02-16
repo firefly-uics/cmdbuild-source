@@ -4,15 +4,16 @@ import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.contains;
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang3.builder.ToStringStyle.SHORT_PREFIX_STYLE;
 import static org.cmdbuild.common.utils.guava.Suppliers.firstNotNull;
 import static org.cmdbuild.common.utils.guava.Suppliers.nullOnException;
-import static org.cmdbuild.data.store.email.EmailStatus.DRAFT;
-import static org.cmdbuild.data.store.email.EmailStatus.OUTGOING;
-import static org.cmdbuild.data.store.email.EmailStatus.SENT;
+import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
+import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
+import static org.cmdbuild.logic.email.EmailLogic.Statuses.received;
+import static org.cmdbuild.logic.email.EmailLogic.Statuses.sent;
 import static org.cmdbuild.services.email.Predicates.isDefault;
 import static org.cmdbuild.services.email.Predicates.named;
 
@@ -23,9 +24,6 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.data.store.Storable;
 import org.cmdbuild.data.store.Store;
@@ -40,407 +38,101 @@ import org.cmdbuild.services.email.EmailService;
 import org.cmdbuild.services.email.EmailServiceFactory;
 import org.cmdbuild.services.email.ForwardingEmailService;
 import org.cmdbuild.services.email.SubjectHandler;
-import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ForwardingObject;
 
 public class DefaultEmailLogic implements EmailLogic {
 
-	public static abstract class ForwardingEmail extends ForwardingObject implements Email {
-
-		@Override
-		protected abstract Email delegate();
-
-		@Override
-		public Long getId() {
-			return delegate().getId();
-		}
-
-		@Override
-		public String getFromAddress() {
-			return delegate().getFromAddress();
-		}
-
-		@Override
-		public String getToAddresses() {
-			return delegate().getToAddresses();
-		}
-
-		@Override
-		public String getCcAddresses() {
-			return delegate().getCcAddresses();
-		}
-
-		@Override
-		public String getBccAddresses() {
-			return delegate().getBccAddresses();
-		}
-
-		@Override
-		public String getSubject() {
-			return delegate().getSubject();
-		}
-
-		@Override
-		public String getContent() {
-			return delegate().getContent();
-		}
-
-		@Override
-		public DateTime getDate() {
-			return delegate().getDate();
-		}
-
-		@Override
-		public EmailStatus getStatus() {
-			return delegate().getStatus();
-		}
-
-		@Override
-		public Long getActivityId() {
-			return delegate().getActivityId();
-		}
-
-		@Override
-		public String getNotifyWith() {
-			return delegate().getNotifyWith();
-		}
-
-		@Override
-		public boolean isNoSubjectPrefix() {
-			return delegate().isNoSubjectPrefix();
-		}
-
-		@Override
-		public String getAccount() {
-			return delegate().getAccount();
-		}
-
-		@Override
-		public boolean isTemporary() {
-			return delegate().isTemporary();
-		}
-
-		@Override
-		public String getTemplate() {
-			return delegate().getTemplate();
-		}
-
-		@Override
-		public boolean isKeepSynchronization() {
-			return delegate().isKeepSynchronization();
-		}
-
-		@Override
-		public boolean isPromptSynchronization() {
-			return delegate().isPromptSynchronization();
-		}
-
-	}
-
-	private static class EmailImpl implements Email {
-
-		public static class Builder implements org.apache.commons.lang3.builder.Builder<Email> {
-
-			private Long id;
-			private String fromAddress;
-			private String toAddresses;
-			private String ccAddresses;
-			private String bccAddresses;
-			private String subject;
-			private String content;
-			private String notifyWith;
-			private DateTime date;
-			private EmailStatus status;
-			private Long activityId;
-			private boolean noSubjectPrefix;
-			private String account;
-			private boolean temporary;
-			private String template;
-			private boolean keepSynchronization;
-			private boolean promptSynchronization;
-
-			private Builder() {
-				// use factory method
-			}
+	private static enum StatusConverter {
+		RECEIVED(EmailStatus.RECEIVED) {
 
 			@Override
-			public Email build() {
-				return new EmailImpl(this);
+			public Status status() {
+				return received();
 			}
 
-			public Builder withId(final Long id) {
-				this.id = id;
-				return this;
+		}, //
+		DRAFT(EmailStatus.DRAFT) {
+
+			@Override
+			public Status status() {
+				return draft();
 			}
 
-			public Builder withFromAddress(final String fromAddress) {
-				this.fromAddress = fromAddress;
-				return this;
+		}, //
+		OUTGOING(EmailStatus.OUTGOING) {
+
+			@Override
+			public Status status() {
+				return outgoing();
 			}
 
-			public Builder withToAddresses(final String toAddresses) {
-				this.toAddresses = toAddresses;
-				return this;
+		}, //
+		SENT(EmailStatus.SENT) {
+
+			@Override
+			public Status status() {
+				return sent();
 			}
 
-			public Builder withCcAddresses(final String ccAddresses) {
-				this.ccAddresses = ccAddresses;
-				return this;
+		}, //
+		;
+
+		private final EmailStatus value;
+
+		private StatusConverter(final EmailStatus value) {
+			this.value = value;
+		}
+
+		public abstract Status status();
+
+		public EmailStatus value() {
+			return value;
+		}
+
+		public static StatusConverter of(final EmailStatus value) {
+			for (final StatusConverter element : values()) {
+				if (element.value.equals(value)) {
+					return element;
+				}
 			}
-
-			public Builder withBccAddresses(final String bccAddresses) {
-				this.bccAddresses = bccAddresses;
-				return this;
-			}
-
-			public Builder withSubject(final String subject) {
-				this.subject = subject;
-				return this;
-			}
-
-			public Builder withContent(final String content) {
-				this.content = content;
-				return this;
-			}
-
-			public Builder withNotifyWith(final String notifyWith) {
-				this.notifyWith = notifyWith;
-				return this;
-			}
-
-			public Builder withDate(final DateTime date) {
-				this.date = date;
-				return this;
-			}
-
-			public Builder withStatus(final EmailStatus status) {
-				this.status = status;
-				return this;
-			}
-
-			public Builder withActivityId(final Long activityId) {
-				this.activityId = activityId;
-				return this;
-			}
-
-			public Builder withNoSubjectPrefix(final boolean noSubjectPrefix) {
-				this.noSubjectPrefix = noSubjectPrefix;
-				return this;
-			}
-
-			public Builder withAccount(final String account) {
-				this.account = account;
-				return this;
-			}
-
-			public Builder withTemplate(final String template) {
-				this.template = template;
-				return this;
-			}
-
-			public Builder withKeepSynchronization(final boolean keepSynchronization) {
-				this.keepSynchronization = keepSynchronization;
-				return this;
-			}
-
-			public Builder withPromptSynchronization(final boolean promptSynchronization) {
-				this.promptSynchronization = promptSynchronization;
-				return this;
-			}
-
+			throw new IllegalArgumentException(format("value '%s' not found", value));
 		}
 
-		public static Builder newInstance() {
-			return new Builder();
-		}
+		public static StatusConverter of(final Status status) {
+			return new StatusVisitor() {
 
-		private final Long id;
-		private final String fromAddress;
-		private final String toAddresses;
-		private final String ccAddresses;
-		private final String bccAddresses;
-		private final String subject;
-		private final String content;
-		private final String notifyWith;
-		private final DateTime date;
-		private final EmailStatus status;
-		private final Long activityId;
-		private final boolean noSubjectPrefix;
-		private final String account;
-		private final boolean temporary;
-		private final String template;
-		private final boolean keepSynchronization;
-		private final boolean promptSynchronization;
+				private StatusConverter output;
 
-		private EmailImpl(final Builder builder) {
-			this.id = builder.id;
-			this.fromAddress = builder.fromAddress;
-			this.toAddresses = builder.toAddresses;
-			this.ccAddresses = builder.ccAddresses;
-			this.bccAddresses = builder.bccAddresses;
-			this.subject = builder.subject;
-			this.content = builder.content;
-			this.notifyWith = builder.notifyWith;
-			this.date = builder.date;
-			this.status = builder.status;
-			this.activityId = builder.activityId;
-			this.noSubjectPrefix = builder.noSubjectPrefix;
-			this.account = builder.account;
-			this.temporary = builder.temporary;
-			this.template = builder.template;
-			this.keepSynchronization = builder.keepSynchronization;
-			this.promptSynchronization = builder.promptSynchronization;
-		}
+				public StatusConverter convert() {
+					status.accept(this);
+					Validate.notNull(output, "invalid status '%s'", status);
+					return output;
+				}
 
-		@Override
-		public Long getId() {
-			return id;
-		}
+				@Override
+				public void visit(final Received status) {
+					output = RECEIVED;
+				}
 
-		@Override
-		public String getFromAddress() {
-			return fromAddress;
-		}
+				@Override
+				public void visit(final Draft status) {
+					output = DRAFT;
+				}
 
-		@Override
-		public String getToAddresses() {
-			return toAddresses;
-		}
+				@Override
+				public void visit(final Sent status) {
+					output = SENT;
+				}
 
-		@Override
-		public String getCcAddresses() {
-			return ccAddresses;
-		}
+				@Override
+				public void visit(final Outgoing status) {
+					output = OUTGOING;
+				}
 
-		@Override
-		public String getBccAddresses() {
-			return bccAddresses;
-		}
-
-		@Override
-		public String getSubject() {
-			return subject;
-		}
-
-		@Override
-		public String getContent() {
-			return content;
-		}
-
-		@Override
-		public DateTime getDate() {
-			return date;
-		}
-
-		@Override
-		public EmailStatus getStatus() {
-			return status;
-		}
-
-		@Override
-		public Long getActivityId() {
-			return activityId;
-		}
-
-		@Override
-		public String getNotifyWith() {
-			return notifyWith;
-		}
-
-		@Override
-		public boolean isNoSubjectPrefix() {
-			return noSubjectPrefix;
-		}
-
-		@Override
-		public String getAccount() {
-			return account;
-		}
-
-		@Override
-		public boolean isTemporary() {
-			return temporary;
-		}
-
-		@Override
-		public String getTemplate() {
-			return template;
-		}
-
-		@Override
-		public boolean isKeepSynchronization() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public boolean isPromptSynchronization() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public boolean equals(final Object obj) {
-			if (this == obj) {
-				return true;
-			}
-
-			if (!(obj instanceof Email)) {
-				return false;
-			}
-
-			final Email other = Email.class.cast(obj);
-			return new EqualsBuilder() //
-					.append(this.getId(), other.getId()) //
-					.append(this.getFromAddress(), other.getFromAddress()) //
-					.append(this.getToAddresses(), other.getToAddresses()) //
-					.append(this.getCcAddresses(), other.getCcAddresses()) //
-					.append(this.getBccAddresses(), other.getBccAddresses()) //
-					.append(this.getSubject(), other.getSubject()) //
-					.append(this.getContent(), other.getContent()) //
-					.append(this.getDate(), other.getDate()) //
-					.append(this.getStatus(), other.getStatus()) //
-					.append(this.getActivityId(), other.getActivityId()) //
-					.append(this.getNotifyWith(), other.getNotifyWith()) //
-					.append(this.isNoSubjectPrefix(), other.isNoSubjectPrefix()) //
-					.append(this.getAccount(), other.getAccount()) //
-					.append(this.isTemporary(), other.isTemporary()) //
-					.append(this.getTemplate(), other.getTemplate()) //
-					.append(this.isKeepSynchronization(), other.isKeepSynchronization()) //
-					.append(this.isPromptSynchronization(), other.isPromptSynchronization()) //
-					.isEquals();
-		}
-
-		@Override
-		public int hashCode() {
-			return new HashCodeBuilder() //
-					.append(id) //
-					.append(fromAddress) //
-					.append(toAddresses) //
-					.append(ccAddresses) //
-					.append(bccAddresses) //
-					.append(subject) //
-					.append(content) //
-					.append(date) //
-					.append(status) //
-					.append(activityId) //
-					.append(notifyWith) //
-					.append(noSubjectPrefix) //
-					.append(account) //
-					.append(temporary) //
-					.append(template) //
-					.append(keepSynchronization) //
-					.append(promptSynchronization) //
-					.toHashCode();
-		}
-
-		@Override
-		public final String toString() {
-			return ToStringBuilder.reflectionToString(this, SHORT_PREFIX_STYLE).toString();
+			}.convert();
 		}
 
 	}
@@ -458,7 +150,7 @@ public class DefaultEmailLogic implements EmailLogic {
 			output.setContent(input.getContent());
 			output.setNotifyWith(input.getNotifyWith());
 			output.setDate(input.getDate());
-			output.setStatus(input.getStatus());
+			output.setStatus(StatusConverter.of(input.getStatus()).value());
 			output.setActivityId(input.getActivityId());
 			output.setNoSubjectPrefix(input.isNoSubjectPrefix());
 			output.setAccount(input.getAccount());
@@ -484,7 +176,7 @@ public class DefaultEmailLogic implements EmailLogic {
 					.withContent(input.getContent()) //
 					.withNotifyWith(input.getNotifyWith()) //
 					.withDate(input.getDate()) //
-					.withStatus(input.getStatus()) //
+					.withStatus(StatusConverter.of(input.getStatus()).status()) //
 					.withActivityId(input.getActivityId()) //
 					.withNoSubjectPrefix(input.isNoSubjectPrefix()) //
 					.withAccount(input.getAccount()) //
@@ -549,11 +241,11 @@ public class DefaultEmailLogic implements EmailLogic {
 			}
 
 			@Override
-			public EmailStatus getStatus() {
+			public Status getStatus() {
 				/*
 				 * newly created e-mails are always drafts
 				 */
-				return DRAFT;
+				return draft();
 			}
 
 		});
@@ -622,22 +314,22 @@ public class DefaultEmailLogic implements EmailLogic {
 	public void update(final Email email) {
 		final Email read = read(email);
 		Validate.isTrue( //
-				contains(asList(DRAFT, OUTGOING), read.getStatus()), //
+				contains(asList(draft(), outgoing()), read.getStatus()), //
 				"cannot update e-mail '%s' due to an invalid status", read);
-		if (DRAFT.equals(email.getStatus())) {
+		if (draft().equals(email.getStatus())) {
 			Validate.isTrue( //
-					contains(asList(DRAFT, OUTGOING), email.getStatus()), //
+					contains(asList(draft(), outgoing()), email.getStatus()), //
 					"cannot update e-mail due to an invalid new status", email.getStatus());
-		} else if (OUTGOING.equals(email.getStatus())) {
+		} else if (outgoing().equals(email.getStatus())) {
 			Validate.isTrue( //
-					contains(asList(OUTGOING), email.getStatus()), //
+					contains(asList(outgoing()), email.getStatus()), //
 					"cannot update e-mail due to an invalid new status", email.getStatus());
 		}
 
 		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
 		storeOf(email).update(storable);
 
-		if (OUTGOING.equals(email.getStatus())) {
+		if (outgoing().equals(email.getStatus())) {
 			send(read(email));
 		}
 	}
@@ -670,8 +362,8 @@ public class DefaultEmailLogic implements EmailLogic {
 				}
 
 				@Override
-				public EmailStatus getStatus() {
-					return SENT;
+				public Status getStatus() {
+					return sent();
 				}
 
 			};
@@ -722,7 +414,7 @@ public class DefaultEmailLogic implements EmailLogic {
 	public void delete(final Email email) {
 		final Email read = read(email);
 		Validate.isTrue( //
-				contains(asList(DRAFT), read.getStatus()), //
+				contains(asList(draft()), read.getStatus()), //
 				"cannot delete e-mail '%s' due to an invalid status", read);
 
 		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
