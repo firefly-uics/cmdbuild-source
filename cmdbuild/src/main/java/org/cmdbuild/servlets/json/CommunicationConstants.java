@@ -189,7 +189,9 @@ public class CommunicationConstants {
 			NOTIFICATION_EMAIL_TEMPLATE = "notificationEmailTemplate", //
 			NOTIFICATION_EMAIL_TEMPLATE_ERROR = "notificationEmailTemplateError", //
 			NOTIFY_WITH = "notifyWith", //
+			NOT_NEGATIVES = "notNegatives", //
 			NOT_NULL = "isnotnull", //
+			NOT_POSITIVES = "notPositives", //
 			NUMBER = "Number", //
 			OLD_PASSWORD = "oldpassword", //
 			ORACLE_LABEL = "Oracle", //

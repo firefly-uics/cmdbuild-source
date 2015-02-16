@@ -1,7 +1,13 @@
 package org.cmdbuild.servlets.json;
 
+import static java.lang.Long.MAX_VALUE;
+import static org.apache.commons.lang3.BooleanUtils.toBoolean;
+import static org.apache.commons.lang3.RandomUtils.nextInt;
+import static org.apache.commons.lang3.RandomUtils.nextLong;
 import static org.apache.commons.lang3.StringUtils.trim;
 import static org.cmdbuild.servlets.json.CommunicationConstants.MODE;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NOT_NEGATIVES;
+import static org.cmdbuild.servlets.json.CommunicationConstants.NOT_POSITIVES;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
@@ -97,25 +103,9 @@ public class Utils extends JSONBaseWithSpringContext {
 
 	private static enum GenerateIdMode {
 
-		NUMERIC() {
-
-			@Override
-			public Object generate() {
-				return UUID.randomUUID().hashCode();
-			}
-
-		}, //
-		TEXT() {
-
-			@Override
-			public Object generate() {
-				return UUID.randomUUID().toString();
-			}
-
-		}, //
+		NUMERIC, //
+		TEXT, //
 		;
-
-		public abstract Object generate();
 
 		public static GenerateIdMode of(final String s) {
 			for (final GenerateIdMode value : values()) {
@@ -130,9 +120,33 @@ public class Utils extends JSONBaseWithSpringContext {
 
 	@JSONExported
 	public JsonResponse generateId( //
-			@Parameter(value = MODE, required = false) final String mode //
+			@Parameter(value = MODE, required = false) final String mode, //
+			@Parameter(value = NOT_POSITIVES, required = false) final boolean notPositives, //
+			@Parameter(value = NOT_NEGATIVES, required = false) final boolean notNegatives //
 	) {
-		return JsonResponse.success(GenerateIdMode.of(mode).generate());
-	}
+		final Object generated;
+		final GenerateIdMode _mode = GenerateIdMode.of(mode);
+		switch (_mode) {
+		default:
+		case NUMERIC:
+			final boolean negative;
+			if (notPositives && notNegatives) {
+				throw new IllegalArgumentException("positives and negatives both not allowed");
+			} else if (notPositives && !notNegatives) {
+				negative = true;
+			} else if (!notPositives && notNegatives) {
+				negative = false;
+			} else {
+				negative = toBoolean(nextInt(0, 2));
+			}
+			final long l = nextLong(1, MAX_VALUE + 1);
+			generated = negative ? -l : l;
+			break;
 
+		case TEXT:
+			generated = UUID.randomUUID().toString();
+			break;
+		}
+		return JsonResponse.success(generated);
+	}
 }
