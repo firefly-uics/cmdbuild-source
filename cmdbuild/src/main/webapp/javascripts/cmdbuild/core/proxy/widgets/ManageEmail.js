@@ -26,8 +26,6 @@
 		},
 
 		/**
-		 * TODO
-		 *
 		 * @param {Object} parameters
 		 */
 		createTemplate: function(parameters) {

@@ -28,7 +28,6 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.NAME, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION, type: 'boolean', defaultValue: false },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.SUBJECT, type: 'string' },
-			{ name: CMDBuild.core.proxy.CMProxyConstants.TEMPORARY, type: 'boolean', defaultValue: false },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.TO, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.VARIABLES, type: 'auto' }
 		]

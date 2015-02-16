@@ -16,14 +16,19 @@
 		parentDelegate: undefined,
 
 		/**
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
+		 */
+		widgetController: undefined,
+
+		/**
 		 * @property {CMDBuild.model.widget.ManageEmail.email}
 		 */
 		record: undefined,
 
-//		/** TODO
-//		 * @property {Array}
-//		 */
-//		recordsToConfirm: undefined,
+		/**
+		 * @property {CMDBuild.Management.TemplateResolver}
+		 */
+		templateResolver: undefined,
 
 		/**
 		 * @property {Mixed} emailWindows
@@ -34,11 +39,6 @@
 		 * @property {Object}
 		 */
 		widgetConf: undefined,
-
-		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
-		 */
-		widgetController: undefined,
 
 		/**
 		 * @cfg {String}
@@ -54,7 +54,6 @@
 		 * @param {Object} configObject
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Main} configObject.parentDelegate
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
-		 * @param {Object} configObject.recordsToConfirm // TODO
 		 * @param {String} configObject.windowMode
 		 */
 		constructor: function(configObject) {
@@ -140,16 +139,27 @@
 		},
 
 		/**
-		 * Fills form with template data, but if window was in "reply" mode fills only email content with prepend function
-		 *
-		 * @param {CMDBuild.Management.TemplateResolver} templateResolver
-		 * @param {Object} emailTemplatesData
+		 * @return {Mixed}
 		 */
-		createEmailFromTemplate: function(templateResolver, emailTemplatesData) {
-			var me = this;
+		getView: function() {
+			return this.view;
+		},
 
-			templateResolver.resolveTemplates({
-				attributes: Ext.Object.getKeys(emailTemplatesData.data),
+		/**
+		 * @param {CMDBuild.model.widget.ManageEmail.template} record
+		 */
+		loadFormValues: function(record) {
+			var me = this;
+			var xaVars = Ext.apply({}, record.getData(), record.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
+
+			this.templateResolver = new CMDBuild.Management.TemplateResolver({
+				clientForm: me.widgetController.clientForm,
+				xaVars: xaVars,
+				serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars()
+			});
+
+			this.templateResolver.resolveTemplates({
+				attributes: Ext.Object.getKeys(record.getData()),
 				callback: function(values) {
 					var setValueArray = [];
 					var content = values[CMDBuild.core.proxy.CMProxyConstants.BODY];
@@ -193,36 +203,9 @@
 					}
 
 					me.view.formPanel.getForm().setValues(setValueArray);
+					me.record = Ext.create('CMDBuild.model.widget.ManageEmail.email', values); // Updates also record property
 				}
 			});
-		},
-
-		/**
-		 * @return {Mixed}
-		 */
-		getView: function() {
-			return this.view;
-		},
-
-		/**
-		 * @param {Object} record - CMDBuild.model.EmailTemplates.grid raw value
-		 */
-		loadFormValues: function(record) {
-			var me = this;
-
-			var xaVars = Ext.apply({}, this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.TEMPLATES], record.data); // TODO: getData()
-			var variables = record.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
-_debug('loadFormValues', xaVars);
-			for (var key in variables)
-				xaVars[key] = variables[key];
-
-			var templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: me.widgetController.ownerController.view.mainView.getForm(), // TODO me.clientForm, ????
-				xaVars: xaVars,
-				serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars()
-			});
-
-			this.createEmailFromTemplate(templateResolver, record);
 		},
 
 		/**
@@ -244,9 +227,7 @@ _debug('loadFormValues', xaVars);
 		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
 		 */
 		onCMEmailWindowAttachFileChanged: function(emailWindow, form, emailRecord) {
-_debug('asd', emailRecord);
 			if (emailRecord.isNew()) {
-_debug('if');
 				var params = {};
 				var temporaryId = emailRecord.get(CMDBuild.core.proxy.CMProxyConstants.TEMPORARY_ID);
 
@@ -261,7 +242,6 @@ _debug('if');
 					}
 				});
 			} else {
-_debug('else');
 				CMDBuild.core.proxy.widgets.ManageEmail.addAttachmentFromExistingEmail(form, {
 					params: {
 						emailId: emailRecord.getId()
@@ -314,7 +294,6 @@ _debug('else');
 		 * Updates record object adding id (time in milliseconds), Description and attachments array and adds email record to grid store
 		 */
 		onEmailWindowConfirmButtonClick: function() {
-_debug('onEmailWindowConfirmButtonClick this.record', this.record);
 			if (this.view.formPanel.getNonValidFields().length > 0) {
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			} else {
@@ -325,14 +304,15 @@ _debug('onEmailWindowConfirmButtonClick this.record', this.record);
 				for (var key in formValues)
 					this.record.set(key, formValues[key]);
 
-				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.widgetController.getActivityId());
 				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, attachments);
-_debug('this.record', this.record);
+
 				if (Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
 					this.parentDelegate.addRecord(this.record);
 				} else {
 					this.parentDelegate.editRecord(this.record);
 				}
+
+				CMDBuild.controller.management.common.widgets.manageEmail.Main.bindLocalDepsChangeEvent(this.templateResolver, this.widgetController);
 
 				this.onEmailWindowAbortButtonClick();
 			}
@@ -355,8 +335,9 @@ _debug('this.record', this.record);
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail EmailWindow controller error: get template call failure', false);
 				},
 				success: function(response, options, decodedResponse) {
+					this.loadFormValues(Ext.create('CMDBuild.model.widget.ManageEmail.template', decodedResponse.response));
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, templateName); // Bind templateName to email record
-					this.loadFormValues(Ext.create('CMDBuild.model.EmailTemplates.singleTemplate', decodedResponse.response));
+					this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.widgetController.getActivityId());
 				},
 				callback: function(options, success, response) {
 					this.view.setLoading(false);

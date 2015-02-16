@@ -29,10 +29,10 @@
 		 * @cfg {Object}
 		 */
 		emailTypes: {
-			draft: 'Draft',
-			outgoing: 'Outgoing',
-			received: 'Received',
-			sent: 'Sent'
+			draft: 'draft',
+			outgoing: 'outgoing',
+			received: 'received',
+			sent: 'sent'
 		},
 
 		/**
@@ -101,8 +101,11 @@
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 * @param {Boolean} enableStoreLoad
 		 */
-		addRecord: function(record) {
+		addRecord: function(record, disableStoreLoad) {
+			disableStoreLoad = disableStoreLoad || false;
+_debug('addRecord record', record);
 			this.parentDelegate.view.setLoading(true);
 			CMDBuild.core.proxy.widgets.ManageEmail.create({
 				params: record.getAsParams(),
@@ -111,7 +114,8 @@
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email create call failure', false);
 				},
 				success: function(response, options, decodedResponse) {
-					this.storeLoad();
+					if (!disableStoreLoad)
+						this.storeLoad();
 				},
 				callback: function(options, success, response) {
 					this.parentDelegate.view.setLoading(false);
@@ -145,11 +149,11 @@
 		},
 
 		/**
-		 * @WIP TODO
-		 *
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 * @param {Boolean} enableStoreLoad
 		 */
-		editRecord: function(record) {
+		editRecord: function(record, disableStoreLoad) {
+			disableStoreLoad = disableStoreLoad || false;
 _debug('editRecord record', record);
 			this.parentDelegate.view.setLoading(true);
 			CMDBuild.core.proxy.widgets.ManageEmail.update({
@@ -159,7 +163,8 @@ _debug('editRecord record', record);
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email update call failure', false);
 				},
 				success: function(response, options, decodedResponse) {
-					this.storeLoad();
+					if (!disableStoreLoad)
+						this.storeLoad();
 				},
 				callback: function(options, success, response) {
 					this.parentDelegate.view.setLoading(false);
@@ -268,20 +273,18 @@ _debug('editRecord record', record);
 				widgetController: this.parentDelegate,
 				windowMode: 'edit'
 			});
-_debug('onEmailEditButtonClick record', record);
+
 			this.emailWindow = this.controllerEmailWindow.getView();
 			this.emailWindow.show();
 		},
 
 		/**
-		 * @WIP TODO
-		 *
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		onEmailRegenerationButtonClick: function(record) {
+		onEmailRegenerationButtonClick: function(record) { // TODO
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
-				recordsToConfirm: null, // TODO
+				recordsToConfirm: null,
 				widgetController: this.parentDelegate,
 				windowMode: 'confirm'
 			});
@@ -369,8 +372,10 @@ _debug('onEmailEditButtonClick record', record);
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 * @param {Boolean} enableStoreLoad
 		 */
-		removeRecord: function(record) {
+		removeRecord: function(record, disableStoreLoad) {
+			disableStoreLoad = disableStoreLoad || false;
 _debug('removeRecord record', record);
 			this.parentDelegate.view.setLoading(true);
 			CMDBuild.core.proxy.widgets.ManageEmail.remove({
@@ -380,7 +385,8 @@ _debug('removeRecord record', record);
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email remove call failure', false);
 				},
 				success: function(response, options, decodedResponse) {
-					this.storeLoad();
+					if (!disableStoreLoad)
+						this.storeLoad();
 				},
 				callback: function(options, success, response) {
 					this.parentDelegate.view.setLoading(false);
@@ -391,12 +397,12 @@ _debug('removeRecord record', record);
 		/**
 		 * Loads grid store with activityId parameter
 		 *
-		 * @param {Function} callbackFunction
-		 * @param {Object} scope
+		 * @param {Boolean} regenerateAllEmails
+		 * @param {Boolean} forceRegeneration
 		 */
-		storeLoad: function(callbackFunction, scope) {
-			callbackFunction = callbackFunction || Ext.emptyFn;
-			scope = scope || this;
+		storeLoad: function(regenerateAllEmails, forceRegeneration) {
+			regenerateAllEmails = regenerateAllEmails || false;
+			forceRegeneration = forceRegeneration || false;
 
 			this.parentDelegate.view.setLoading(true);
 			this.view.getStore().load({
@@ -407,7 +413,7 @@ _debug('removeRecord record', record);
 				callback: function(records, operation, success) {
 					this.parentDelegate.view.setLoading(false);
 
-					Ext.callback(callbackFunction, scope);
+					this.parentDelegate.getAllTemplatesData(regenerateAllEmails, forceRegeneration);
 				}
 			});
 		}
