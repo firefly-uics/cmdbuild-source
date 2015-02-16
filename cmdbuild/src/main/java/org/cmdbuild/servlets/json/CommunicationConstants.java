@@ -257,6 +257,10 @@ public class CommunicationConstants {
 			START = "start", //
 			STATE = "state", //
 			STATUS = "status", //
+			STATUS_DRAFT = "draft", //
+			STATUS_OUTGOING = "outgoing", //
+			STATUS_RECEIVED = "received", //
+			STATUS_SENT = "sent", //
 			SUBJECT = "subject", //
 			SUCCESS = "success", //
 			SUPERCLASS = "superclass", //

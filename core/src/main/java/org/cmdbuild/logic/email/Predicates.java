@@ -1,7 +1,7 @@
 package org.cmdbuild.logic.email;
 
-import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.logic.email.EmailLogic.Email;
+import org.cmdbuild.logic.email.EmailLogic.Status;
 
 import com.google.common.base.Predicate;
 
@@ -9,9 +9,9 @@ public class Predicates {
 
 	private static class StatusIs implements Predicate<Email> {
 
-		private final EmailStatus value;
+		private final Status value;
 
-		public StatusIs(final EmailStatus value) {
+		public StatusIs(final Status value) {
 			this.value = value;
 		}
 
@@ -22,7 +22,7 @@ public class Predicates {
 
 	}
 
-	public static Predicate<Email> statusIs(final EmailStatus value) {
+	public static Predicate<Email> statusIs(final Status value) {
 		return new StatusIs(value);
 	}
 

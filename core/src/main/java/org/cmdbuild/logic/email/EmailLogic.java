@@ -1,6 +1,5 @@
 package org.cmdbuild.logic.email;
 
-import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.logic.Logic;
 import org.joda.time.DateTime;
 
@@ -8,7 +7,102 @@ import com.google.common.collect.ForwardingObject;
 
 public interface EmailLogic extends Logic {
 
-	static interface Email {
+	interface Status {
+
+		void accept(StatusVisitor visitor);
+
+	}
+
+	interface StatusVisitor {
+
+		void visit(Received status);
+
+		void visit(Sent status);
+
+		void visit(Outgoing status);
+
+		void visit(Draft status);
+
+	}
+
+	class Received implements Status {
+
+		private Received() {
+			// use flyweight object
+		}
+
+		@Override
+		public void accept(final StatusVisitor visitor) {
+			visitor.visit(this);
+		}
+
+	}
+
+	class Draft implements Status {
+
+		private Draft() {
+			// use flyweight object
+		}
+
+		@Override
+		public void accept(final StatusVisitor visitor) {
+			visitor.visit(this);
+		}
+
+	}
+
+	class Outgoing implements Status {
+
+		private Outgoing() {
+			// use flyweight object
+		}
+
+		@Override
+		public void accept(final StatusVisitor visitor) {
+			visitor.visit(this);
+		}
+
+	}
+
+	class Sent implements Status {
+
+		private Sent() {
+			// use flyweight object
+		}
+
+		@Override
+		public void accept(final StatusVisitor visitor) {
+			visitor.visit(this);
+		}
+
+	}
+
+	class Statuses {
+
+		private static Status received = new Received();
+		private static Status draft = new Draft();
+		private static Status outgoing = new Outgoing();
+		private static Status sent = new Sent();
+
+		public static Status received() {
+			return received;
+		}
+
+		public static Status draft() {
+			return draft;
+		}
+
+		public static Status outgoing() {
+			return outgoing;
+		}
+
+		public static Status sent() {
+			return sent;
+		}
+
+	}
+
+	interface Email {
 
 		Long getId();
 
@@ -26,7 +120,7 @@ public interface EmailLogic extends Logic {
 
 		DateTime getDate();
 
-		EmailStatus getStatus();
+		Status getStatus();
 
 		Long getActivityId();
 
@@ -46,7 +140,7 @@ public interface EmailLogic extends Logic {
 
 	}
 
-	static abstract class ForwardingEmail extends ForwardingObject implements Email {
+	abstract class ForwardingEmail extends ForwardingObject implements Email {
 
 		@Override
 		protected abstract Email delegate();
@@ -92,7 +186,7 @@ public interface EmailLogic extends Logic {
 		}
 
 		@Override
-		public EmailStatus getStatus() {
+		public Status getStatus() {
 			return delegate().getStatus();
 		}
 
@@ -138,7 +232,7 @@ public interface EmailLogic extends Logic {
 
 	}
 
-	public static class EmailSubmission extends org.cmdbuild.data.store.email.Email {
+	class EmailSubmission extends org.cmdbuild.data.store.email.Email {
 
 		private String temporaryId;
 

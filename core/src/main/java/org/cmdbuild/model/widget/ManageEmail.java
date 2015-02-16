@@ -3,8 +3,8 @@ package org.cmdbuild.model.widget;
 import static com.google.common.base.Predicates.or;
 import static com.google.common.collect.FluentIterable.from;
 import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-import static org.cmdbuild.data.store.email.EmailStatus.DRAFT;
-import static org.cmdbuild.data.store.email.EmailStatus.OUTGOING;
+import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
+import static org.cmdbuild.logic.email.EmailLogic.Statuses.outgoing;
 import static org.cmdbuild.logic.email.Predicates.statusIs;
 
 import java.util.Collection;
@@ -14,10 +14,10 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.cmdbuild.data.store.email.EmailStatus;
 import org.cmdbuild.logic.email.EmailLogic;
 import org.cmdbuild.logic.email.EmailLogic.Email;
 import org.cmdbuild.logic.email.EmailLogic.ForwardingEmail;
+import org.cmdbuild.logic.email.EmailLogic.Status;
 import org.cmdbuild.model.AbstractEmail;
 import org.cmdbuild.workflow.CMActivityInstance;
 
@@ -152,7 +152,7 @@ public class ManageEmail extends Widget {
 		final Map<String, Object> inputMap = (Map<String, Object>) input;
 		final Long instanceId = activityInstance.getProcessInstance().getCardId();
 		final Long submittedInstanceId = Integer.class.cast(inputMap.get(DEFAULT_SUBMISSION_PARAM)).longValue();
-		final Iterable<Email> emails = from(emailLogic.readAll(submittedInstanceId)).filter(statusIs(DRAFT));
+		final Iterable<Email> emails = from(emailLogic.readAll(submittedInstanceId)).filter(statusIs(draft()));
 		for (final Email email : emails) {
 			if (email.isTemporary()) {
 				emailLogic.delete(email);
@@ -184,7 +184,7 @@ public class ManageEmail extends Widget {
 	public void advance(final CMActivityInstance activityInstance) {
 		final Long instanceId = activityInstance.getProcessInstance().getCardId();
 		final Iterable<Email> emails = from(emailLogic.readAll(instanceId)) //
-				.filter(or(statusIs(DRAFT), statusIs(OUTGOING)));
+				.filter(or(statusIs(draft()), statusIs(outgoing())));
 		for (final Email email : emails) {
 			if (email.isTemporary()) {
 				logger.warn("temporary e-mail should not be found on advancement");
@@ -198,8 +198,8 @@ public class ManageEmail extends Widget {
 					}
 
 					@Override
-					public EmailStatus getStatus() {
-						return OUTGOING;
+					public Status getStatus() {
+						return outgoing();
 					}
 
 				});
