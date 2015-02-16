@@ -53,8 +53,8 @@ public class ManageEmailWidgetFactoryTest {
 				"Content='the content'\n", //
 				mock(CMValueSet.class));
 
-		assertThat(w.getEmailTemplates().size(), equalTo(1));
-		final ManageEmail.EmailTemplate t = w.getEmailTemplates().get(0);
+		assertThat(w.getTemplates().size(), equalTo(1));
+		final ManageEmail.EmailTemplate t = w.getTemplates().get(0);
 		assertThat(t.getToAddresses(), equalTo("to@example.com"));
 		assertThat(t.getCcAddresses(), equalTo("cc@example.com"));
 		assertThat(t.getBccAddresses(), equalTo("bcc@example.com"));
@@ -82,26 +82,26 @@ public class ManageEmailWidgetFactoryTest {
 				"Condition3='condition'\n", //
 				mock(CMValueSet.class));
 
-		assertThat(w.getEmailTemplates().size(), equalTo(4));
+		assertThat(w.getTemplates().size(), equalTo(4));
 
-		ManageEmail.EmailTemplate t = w.getEmailTemplates().get(0);
+		ManageEmail.EmailTemplate t = w.getTemplates().get(0);
 		assertThat(t.getToAddresses(), equalTo("to@example.com"));
 		assertThat(t.getCcAddresses(), equalTo("cc@example.com"));
 		assertThat(t.getBccAddresses(), equalTo("bcc@example.com"));
 		assertThat(t.getSubject(), equalTo("the subject"));
 		assertThat(t.getContent(), equalTo("the content"));
 
-		t = w.getEmailTemplates().get(1);
+		t = w.getTemplates().get(1);
 		assertThat(t.getToAddresses(), equalTo("to@example.com 1"));
 		assertThat(t.getCcAddresses(), equalTo("cc@example.com 1"));
 		assertThat(t.getBccAddresses(), equalTo("bcc@example.com 1"));
 		assertThat(t.getSubject(), equalTo("the subject 1"));
 		assertThat(t.getContent(), equalTo("the content 1"));
 
-		t = w.getEmailTemplates().get(2);
+		t = w.getTemplates().get(2);
 		assertThat(t.getContent(), equalTo("the content 2"));
 
-		t = w.getEmailTemplates().get(3);
+		t = w.getTemplates().get(3);
 		assertThat(t.getCondition(), equalTo("condition"));
 	}
 
@@ -117,8 +117,8 @@ public class ManageEmailWidgetFactoryTest {
 				"Foo='Bar'\n", //
 				mock(CMValueSet.class));
 
-		assertThat(w.getEmailTemplates().size(), equalTo(2));
-		for (final EmailTemplate element : w.getEmailTemplates()) {
+		assertThat(w.getTemplates().size(), equalTo(2));
+		for (final EmailTemplate element : w.getTemplates()) {
 			final Map<String, String> templates = element.getVariables();
 			assertThat(templates.get("Ashibabalea"), equalTo("from Ashi when baba={client:lea}"));
 			assertThat(templates.get("Foo"), equalTo("Bar"));
@@ -142,8 +142,8 @@ public class ManageEmailWidgetFactoryTest {
 
 		verify(emailTemplateLogic).read("foo");
 
-		assertThat(w.getEmailTemplates().size(), equalTo(1));
-		final ManageEmail.EmailTemplate t = w.getEmailTemplates().get(0);
+		assertThat(w.getTemplates().size(), equalTo(1));
+		final ManageEmail.EmailTemplate t = w.getTemplates().get(0);
 		assertThat(t.getToAddresses(), equalTo("to@example.com"));
 		assertThat(t.getCcAddresses(), equalTo("cc@example.com"));
 		assertThat(t.getBccAddresses(), equalTo("bcc@example.com"));
@@ -177,10 +177,10 @@ public class ManageEmailWidgetFactoryTest {
 
 		verify(emailTemplateLogic, times(2)).read(anyString());
 
-		assertThat(w.getEmailTemplates().size(), equalTo(2));
+		assertThat(w.getTemplates().size(), equalTo(2));
 
 		// needs to be sorted since we don't know how they are internally sorted
-		final List<ManageEmail.EmailTemplate> emailTemplates = w.getEmailTemplates();
+		final List<ManageEmail.EmailTemplate> emailTemplates = w.getTemplates();
 		Collections.sort(emailTemplates, new Comparator<ManageEmail.EmailTemplate>() {
 			@Override
 			public int compare(final ManageEmail.EmailTemplate o1, final ManageEmail.EmailTemplate o2) {
@@ -188,14 +188,14 @@ public class ManageEmailWidgetFactoryTest {
 			};
 		});
 
-		final ManageEmail.EmailTemplate t0 = w.getEmailTemplates().get(0);
+		final ManageEmail.EmailTemplate t0 = w.getTemplates().get(0);
 		assertThat(t0.getToAddresses(), equalTo("bar_to@example.com"));
 		assertThat(t0.getCcAddresses(), equalTo("bar_cc@example.com"));
 		assertThat(t0.getBccAddresses(), equalTo("bar_bcc@example.com"));
 		assertThat(t0.getSubject(), equalTo("subject of bar"));
 		assertThat(t0.getContent(), equalTo("content of bar"));
 
-		final ManageEmail.EmailTemplate t1 = w.getEmailTemplates().get(1);
+		final ManageEmail.EmailTemplate t1 = w.getTemplates().get(1);
 		assertThat(t1.getToAddresses(), equalTo("foo_to@example.com"));
 		assertThat(t1.getCcAddresses(), equalTo("foo_cc@example.com"));
 		assertThat(t1.getBccAddresses(), equalTo("foo_bcc@example.com"));
@@ -222,8 +222,8 @@ public class ManageEmailWidgetFactoryTest {
 
 		verify(emailTemplateLogic).read("foo");
 
-		assertThat(w.getEmailTemplates().size(), equalTo(1));
-		final ManageEmail.EmailTemplate t = w.getEmailTemplates().get(0);
+		assertThat(w.getTemplates().size(), equalTo(1));
+		final ManageEmail.EmailTemplate t = w.getTemplates().get(0);
 		assertThat(t.getToAddresses(), equalTo("lol@example.com"));
 		assertThat(t.getCcAddresses(), equalTo("cc@example.com"));
 		assertThat(t.getBccAddresses(), equalTo("bcc@example.com"));
@@ -241,8 +241,8 @@ public class ManageEmailWidgetFactoryTest {
 				"Content='the content'\n", //
 				mock(CMValueSet.class));
 
-		assertThat(w.getEmailTemplates().size(), equalTo(1));
-		final EmailTemplate t = w.getEmailTemplates().get(0);
+		assertThat(w.getTemplates().size(), equalTo(1));
+		final EmailTemplate t = w.getTemplates().get(0);
 		assertThat(t.isNoSubjectPrefix(), equalTo(false));
 	}
 
@@ -257,8 +257,8 @@ public class ManageEmailWidgetFactoryTest {
 				"NoSubjectPrefix='true'\n", //
 				mock(CMValueSet.class));
 
-		assertThat(w.getEmailTemplates().size(), equalTo(1));
-		final EmailTemplate t = w.getEmailTemplates().get(0);
+		assertThat(w.getTemplates().size(), equalTo(1));
+		final EmailTemplate t = w.getTemplates().get(0);
 		assertThat(t.isNoSubjectPrefix(), equalTo(true));
 	}
 
