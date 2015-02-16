@@ -104,13 +104,13 @@ public class ManageEmail extends Widget {
 
 	private final EmailLogic emailLogic;
 
-	private Collection<EmailTemplate> emailTemplates;
+	private Collection<EmailTemplate> templates;
 	private boolean noSubjectPrefix;
 
 	public ManageEmail(final EmailLogic emailLogic) {
 		super();
 		this.emailLogic = emailLogic;
-		this.emailTemplates = Lists.newArrayList();
+		this.templates = Lists.newArrayList();
 	}
 
 	@Override
@@ -126,16 +126,16 @@ public class ManageEmail extends Widget {
 		this.readOnly = readOnly;
 	}
 
-	public List<EmailTemplate> getEmailTemplates() {
-		return Lists.newArrayList(emailTemplates);
+	public List<EmailTemplate> getTemplates() {
+		return Lists.newArrayList(templates);
 	}
 
-	public void setEmailTemplates(Collection<EmailTemplate> emailTemplates) {
-		if (emailTemplates == null) {
-			emailTemplates = Collections.emptyList();
+	public void setTemplates(Collection<EmailTemplate> templates) {
+		if (templates == null) {
+			templates = Collections.emptyList();
 		}
 
-		this.emailTemplates = emailTemplates;
+		this.templates = templates;
 	}
 
 	public boolean isNoSubjectPrefix() {

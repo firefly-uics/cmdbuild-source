@@ -309,7 +309,7 @@ public class Email extends JSONBaseWithSpringContext {
 			@Parameter(value = BCC, required = false) final String bcc, //
 			@Parameter(SUBJECT) final String subject, //
 			@Parameter(BODY) final String body, //
-			@Parameter(value = STATUS, required = false) final String status, //
+			@Parameter(value = STATUS) final String status, //
 			@Parameter(value = NOTIFY_WITH, required = false) final String notifyWith, //
 			@Parameter(value = ACTIVITY_ID, required = false) final Long activityId, //
 			@Parameter(value = NO_SUBJECT_PREFIX, required = false) final boolean noSubjectPrefix, //

@@ -183,7 +183,7 @@ public class ManageEmailWidgetFactory extends ValuePairWidgetFactory {
 		managedParameters.addAll(promptSynchronizations.keySet());
 
 		final ManageEmail widget = new ManageEmail(emailLogic);
-		widget.setEmailTemplates(transformEntries(emailTemplatesByName,
+		widget.setTemplates(transformEntries(emailTemplatesByName,
 				new EntryTransformer<String, EmailTemplate, EmailTemplate>() {
 
 					final Map<String, String> unmanaged = extractUnmanagedStringParameters(valueMap, managedParameters);
