@@ -246,14 +246,12 @@ public class EmailImpl implements Email {
 
 	@Override
 	public boolean isKeepSynchronization() {
-		// TODO Auto-generated method stub
-		return false;
+		return keepSynchronization;
 	}
 
 	@Override
 	public boolean isPromptSynchronization() {
-		// TODO Auto-generated method stub
-		return false;
+		return promptSynchronization;
 	}
 
 	@Override
