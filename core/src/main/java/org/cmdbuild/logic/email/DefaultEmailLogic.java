@@ -4,7 +4,6 @@ import static com.google.common.base.Suppliers.memoize;
 import static com.google.common.collect.FluentIterable.from;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.contains;
-import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -78,6 +77,14 @@ public class DefaultEmailLogic implements EmailLogic {
 			}
 
 		}, //
+		UNDEFINED(null) {
+
+			@Override
+			public Status status() {
+				return null;
+			}
+
+		}, //
 		;
 
 		private final EmailStatus value;
@@ -98,7 +105,7 @@ public class DefaultEmailLogic implements EmailLogic {
 					return element;
 				}
 			}
-			throw new IllegalArgumentException(format("value '%s' not found", value));
+			return UNDEFINED;
 		}
 
 		public static StatusConverter of(final Status status) {
@@ -107,8 +114,11 @@ public class DefaultEmailLogic implements EmailLogic {
 				private StatusConverter output;
 
 				public StatusConverter convert() {
-					status.accept(this);
-					Validate.notNull(output, "invalid status '%s'", status);
+					if (status != null) {
+						status.accept(this);
+					} else{
+						output = UNDEFINED;
+					}
 					return output;
 				}
 
@@ -324,10 +334,16 @@ public class DefaultEmailLogic implements EmailLogic {
 			Validate.isTrue( //
 					contains(asList(outgoing()), email.getStatus()), //
 					"cannot update e-mail due to an invalid new status", email.getStatus());
+		} else {
+			Validate.isTrue( //
+					contains(asList(draft(), outgoing()), email.getStatus()), //
+					"invalid new status", email.getStatus());
 		}
 
-		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
-		storeOf(email).update(storable);
+		if (draft().equals(read.getStatus())) {
+			final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
+			storeOf(email).update(storable);
+		}
 
 		if (outgoing().equals(email.getStatus())) {
 			send(read(email));
@@ -417,8 +433,8 @@ public class DefaultEmailLogic implements EmailLogic {
 				contains(asList(draft()), read.getStatus()), //
 				"cannot delete e-mail '%s' due to an invalid status", read);
 
-		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(email);
-		storeOf(email).delete(storable);
+		final org.cmdbuild.data.store.email.Email storable = LOGIC_TO_STORE.apply(read);
+		storeOf(read).delete(storable);
 	}
 
 	private Store<org.cmdbuild.data.store.email.Email> storeOf(final Email email) {
