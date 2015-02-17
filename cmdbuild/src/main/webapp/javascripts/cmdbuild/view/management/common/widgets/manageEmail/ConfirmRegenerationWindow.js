@@ -1,6 +1,6 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowConfirmRegeneration', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.ConfirmRegenerationWindow', {
 		extend: 'CMDBuild.core.PopupWindow',
 
 		requires: [
@@ -9,7 +9,7 @@
 		],
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.ConfirmRegenerationWindow}
 		 */
 		delegate: undefined,
 
@@ -28,11 +28,6 @@
 		 */
 		grid: undefined,
 
-		/**
-		 * @property {Array}
-		 */
-		records: undefined,
-
 		buttonAlign: 'center',
 		title: '@@ Confirm regeneration',
 		layout: 'border',
@@ -46,18 +41,6 @@
 				frame: false,
 
 				columns: [
-					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ID,
-						hidden: true
-					},
-//					{
-//						dataIndex: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-//						hidden: true
-//					},
-					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.NO_SUBJECT_PREFIX,
-						hidden: true
-					},
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.STATUS,
 						hidden: true,
@@ -73,7 +56,7 @@
 						text: CMDBuild.Translation.address,
 						sortable: false,
 						scope: this,
-						renderer: this.renderAddress,
+						renderer: this.addressRenderer,
 						flex: 1
 					},
 					{
@@ -85,10 +68,10 @@
 					{
 						sortable: false,
 						scope: this,
-						renderer: this.renderEmailContent,
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.CONTENT,
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.BODY,
 						menuDisabled: true,
 						hideable: false,
+						renderer: 'stripTags',
 						flex: 2
 					},
 					{
@@ -104,26 +87,10 @@
 					}
 				],
 
-				features: [
-					{
-						ftype: 'groupingsummary',
-						groupHeaderTpl: [
-							'{name:this.formatName}',
-							{
-								formatName: function(name) {
-									return CMDBuild.Translation.emailLookupNames[name] || name;
-								}
-							}
-						],
-						hideGroupedHeader: true,
-						enableGroupingMenu: false
-					}
-				],
-
 				plugins: [
 					{
 						ptype: 'rowexpander',
-						rowBodyTpl: new Ext.XTemplate(
+						rowBodyTpl: new Ext.XTemplate( // TODO Ext.create????
 							'<p><b>Subject:</b> {subject}</p>',
 							'<p><b>Content:</b> {content}</p>'
 						)
@@ -132,7 +99,7 @@
 
 				store: Ext.create('Ext.data.Store', {
 					model: 'CMDBuild.model.widget.ManageEmail.email',
-					data: this.records || [],
+					data: this.delegate.records || [],
 					sorters: {
 						property: CMDBuild.core.proxy.CMProxyConstants.STATUS,
 						direction: 'ASC'
@@ -148,14 +115,14 @@
 						scope: this,
 
 						handler: function() {
-							this.delegate.cmOn('onEmailWindowConfirmRegenerationConfirmButtonClick');
+							this.delegate.cmOn('onConfirmRegenerationWindowConfirmButtonClick');
 						}
 					}),
 					Ext.create('CMDBuild.buttons.AbortButton', {
 						scope: this,
 
 						handler: function() {
-							this.delegate.cmOn('onEmailWindowConfirmRegenerationAbortButtonClick');
+							this.delegate.cmOn('onConfirmRegenerationWindowAbortButtonClick');
 						}
 					})
 				]
@@ -178,24 +145,13 @@ _debug('this.grid.getStore()', this.grid.getStore());
 			 *
 			 * @return {String}
 			 */
-			renderAddress: function(value, metadata, record) {
-				if (this.delegate.recordIsReceived(record)) { // TODO: cambiare perchè andrà in un controller genitore
-					return record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS);
+			addressRenderer: function(value, metadata, record) {
+				if (this.delegate.recordIsReceived(record)) {
+					return record.get(CMDBuild.core.proxy.CMProxyConstants.FROM);
 				} else {
-					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
+					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
 				}
 			},
-
-			/**
-			 * @param {Mixed} value
-			 * @param {Object} metaData
-			 * @param {CMDBuild.model.widget.ManageEmail.email} record
-			 *
-			 * @return {String}
-			 */
-			renderEmailContent: function(value, metadata, record) {
-				return Ext.util.Format.stripTags(record.get(CMDBuild.core.proxy.CMProxyConstants.CONTENT));
-			}
 	});
 
 })();

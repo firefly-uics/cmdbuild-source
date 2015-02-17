@@ -99,21 +99,6 @@
 			WIDGET_NAME: CMDBuild.view.management.common.widgets.manageEmail.MainPanel.WIDGET_NAME,
 
 			/**
-			 * @param {CMDBuild.Management.TemplateResolver} templateResolver
-			 * @param {Object} eventScope
-			 */
-			bindLocalDepsChangeEvent: function(templateResolver, eventScope) {
-_debug('bindLocalDepsChangeEvent');
-				templateResolver.bindLocalDepsChange(function() {
-					if (!eventScope.relatedAttributeChanged) {
-						eventScope.relatedAttributeChanged = true;
-
-						CMDBuild.Msg.warn(null, "@@ Attribute related with email templates changed, some mail could be regenerated.");
-					}
-				});
-			},
-
-			/**
 			 * Searches for CQL variables resolved by client
 			 *
 			 * @param {String} inspectingVariable - variable where to check presence of CQL variables
@@ -126,7 +111,7 @@ _debug('bindLocalDepsChangeEvent');
 			searchForCqlClientVariables: function(inspectingVariable, inspectingVariableKey, searchedVariablesNames, foundedKeysArray) {
 				var found = false;
 				var cqlTags = ['{client:', '{cql:', '{xa:', '{js:'];
-_debug('searchForCqlClientVariables', inspectingVariable + " " + inspectingVariableKey + " " + searchedVariablesNames + " " + foundedKeysArray);
+_debug('searchForCqlClientVariables', inspectingVariable + ' ' + inspectingVariableKey + ' ' + searchedVariablesNames + ' ' + foundedKeysArray);
 				for (var y in searchedVariablesNames) {
 					for (var i in cqlTags) {
 						if (
@@ -202,6 +187,33 @@ _debug('this.widgetConfTemplates', this.widgetConfTemplates);
 _debug('BEFORE ACTIVE VIEW');
 _debug('grid store', this.grid.getStore());
 			this.controllerGrid.storeLoad(true);
+		},
+
+		/**
+		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 * @param {CMDBuild.Management.TemplateResolver} templateResolver
+		 * @param {Object} eventScope
+		 */
+		bindLocalDepsChangeEvent: function(record, templateResolver, eventScope) { // TODO finire implementazione
+_debug('bindLocalDepsChangeEvent');
+			templateResolver.bindLocalDepsChange(function() {
+				if (!Ext.Object.isEmpty(record)) {
+					if (record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION)) { // TODO forse da testare il keep syncro???
+						// TODO add to top
+						this.controllerConfirmRegenerationWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.ConfirmRegenerationWindow', {
+							parentDelegate: this,
+							gridDelegate: this.controllerGrid
+						});
+						// TODO add to top
+						this.confirmRegenerationWindow = this.controllerConfirmRegenerationWindow.getView();
+						this.confirmRegenerationWindow.show();
+					} else if (!eventScope.relatedAttributeChanged) {
+						eventScope.relatedAttributeChanged = true;
+
+						CMDBuild.Msg.warn(null, '@@ Attribute related with email templates changed, some mail could be regenerated.');
+					}
+				}
+			});
 		},
 
 		/**
@@ -455,7 +467,7 @@ _debug('record', record);
 							emailRegenerationStatus = true;
 						}
 
-						me.self.bindLocalDepsChangeEvent(templateResolver, me);
+						me.bindLocalDepsChangeEvent(record, templateResolver, me);
 
 						me.templateResolverIsBusy = false;
 					}
@@ -463,6 +475,31 @@ _debug('record', record);
 			}
 
 			return emailRegenerationStatus;
+		},
+
+		/**
+		 * Launch regeneration only of selected grid records
+		 *
+		 * @param {Array} records
+		 */
+		regenerateSelectedEmails: function(records) {
+			if (!Ext.isEmpty(records)) {
+
+				Ext.Array.forEach(records, function(item, index, allItems) {
+					var recordTemplate = item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE);
+
+					if (
+						!Ext.isEmpty(recordTemplate)
+						&& item.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
+					) {
+						this.regenerateEmail(item);
+					}
+				}, this);
+
+				this.relatedAttributeChanged = false; // Reset attribute changed flag
+
+				this.controllerGrid.storeLoad(); // Load at end of all changes
+			}
 		},
 
 		/**
@@ -498,6 +535,7 @@ _debug('this.templateResolver', templateResolver);
 					callback: function(values, ctx) {
 _debug('regenerateTemplate values', values);
 						var conditionExpr = values[CMDBuild.core.proxy.CMProxyConstants.CONDITION];
+						var emailObject = null;
 
 						if (Ext.isEmpty(conditionExpr) || templateResolver.safeJSEval(conditionExpr)) {
 _debug('me.controllerGrid.getDraftEmails()', me.controllerGrid.getDraftEmails());
@@ -512,7 +550,7 @@ _debug('record', record);
 							if (!Ext.Object.isEmpty(record))
 								values = Ext.Object.merge(record.getData(), values);
 
-							var emailObject = Ext.create('CMDBuild.model.widget.ManageEmail.email', values);
+							emailObject = Ext.create('CMDBuild.model.widget.ManageEmail.email', values);
 							emailObject.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, me.getActivityId());
 							emailObject.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, template.get(CMDBuild.core.proxy.CMProxyConstants.KEY));
 
@@ -527,7 +565,7 @@ _debug('regenerateTemplate emailObject', emailObject);
 							templateRegenerationStatus = true;
 						}
 
-						me.self.bindLocalDepsChangeEvent(templateResolver, me);
+						me.bindLocalDepsChangeEvent(emailObject, templateResolver, me);
 
 						me.templateResolverIsBusy = false;
 					}

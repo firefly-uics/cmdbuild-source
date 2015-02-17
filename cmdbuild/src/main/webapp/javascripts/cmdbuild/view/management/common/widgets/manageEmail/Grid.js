@@ -24,43 +24,42 @@
 		frame: false,
 
 		initComponent: function() {
-			if (!this.readOnly) {
-				var me = this;
-
-				Ext.apply(this, {
-					tbar: [
-						{
-							iconCls: 'add',
-							text: CMDBuild.Translation.composeEmail,
-
-							handler: function(values) {
-								me.delegate.cmOn('onEmailAddButtonClick');
-							}
-						},
-						{
-							iconCls: 'x-tbar-loading',
-							text: CMDBuild.Translation.regenerateEmail,
-
-							handler: function() {
-								// Ask to the user if is sure to delete all the unsent e-mails before
-								Ext.Msg.show({
-									title: CMDBuild.Translation.common.confirmpopup.title,
-									msg: '@@ This will delete all the unsent emails',
-									buttons: Ext.Msg.OKCANCEL,
-									icon: Ext.Msg.WARNING,
-
-									fn: function(btn) {
-										if (btn == 'ok')
-											me.delegate.cmOn('onGlobalRegenerationButtonClick');
-									}
-								});
-							}
-						}
-					]
-				});
-			}
+			var me = this;
 
 			Ext.apply(this, {
+				tbar: [
+					{
+						iconCls: 'add',
+						text: CMDBuild.Translation.composeEmail,
+						disabled: this.readOnly,
+						scope: this,
+
+						handler: function(values) {
+							this.delegate.cmOn('onEmailAddButtonClick');
+						}
+					},
+					{
+						iconCls: 'x-tbar-loading',
+						text: CMDBuild.Translation.regenerateEmail,
+						disabled: this.readOnly,
+						scope: this,
+
+						handler: function() {
+							// Ask to the user if is sure to delete all the unsent e-mails before
+							Ext.Msg.show({
+								title: CMDBuild.Translation.common.confirmpopup.title,
+								msg: '@@ This will delete all the unsent emails',
+								buttons: Ext.Msg.OKCANCEL,
+								icon: Ext.Msg.WARNING,
+
+								fn: function(btn) {
+									if (btn == 'ok')
+										me.delegate.cmOn('onGlobalRegenerationButtonClick');
+								}
+							});
+						}
+					}
+				],
 				columns: [
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.STATUS,
@@ -140,6 +139,10 @@
 								icon: 'images/icons/reply.png',
 								tooltip: CMDBuild.Translation.reply,
 								scope: this,
+
+								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+									return this.readOnly;
+								},
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmOn('onEmailReplyButtonClick', record);
