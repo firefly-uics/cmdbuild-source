@@ -67,9 +67,6 @@
 				}, this);
 			}
 
-			// Eliminate attributes unused from server
-			delete params[CMDBuild.core.proxy.CMProxyConstants.STATUS];
-
 			return params;
 		}
 	});
@@ -96,6 +93,21 @@
 				delete data[CMDBuild.core.proxy.CMProxyConstants.ID];
 
 			this.callParent(arguments);
+		},
+
+		/**
+		 * Removes ID from data array. This model hasn't ID property but in getData is returned as undefined. Probably a bug.
+		 *
+		 * @param {Boolean} includeAssociated
+		 *
+		 * @return {Object}
+		 */
+		getData: function(includeAssociated) {
+			var data = this.callParent(arguments);
+
+			delete data[CMDBuild.core.proxy.CMProxyConstants.ID];
+
+			return data;
 		}
 	});
 

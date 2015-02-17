@@ -77,7 +77,7 @@
 						text: CMDBuild.Translation.address,
 						sortable: false,
 						scope: this,
-						renderer: this.renderAddress,
+						renderer: this.addressRenderer,
 						flex: 1
 					},
 					{
@@ -89,22 +89,19 @@
 					{
 						sortable: false,
 						scope: this,
-						renderer: this.renderEmailContent,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.BODY,
 						menuDisabled: true,
 						hideable: false,
+						renderer: 'stripTags',
 						flex: 2
 					},
 					{
-						xtype: 'checkcolumn',
-						text: '@@ Auto-sync.',
-						dataIndex: '@@ autoSync',
+						text: '@@ Keep-sync.',
+						dataIndex: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
 						width: 90,
 						align: 'center',
 						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true
+						renderer: this.keepSynchronizationRenderer
 					},
 					{
 						xtype: 'actioncolumn',
@@ -123,10 +120,10 @@
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {
 									this.delegate.cmOn('onEmailRegenerationButtonClick', record);
 								},
-// TODO
-//								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-//									return !this.delegate.recordIsEditable(record) || this.readOnly || !this.delegate.isRegenerable(record);
-//								}
+
+								isDisabled: function(grid, rowIndex, colIndex, item, record) {
+									return !this.delegate.recordIsEditable(record) || this.readOnly || !this.delegate.isRegenerable(record);
+								}
 							}
 						]
 					},
@@ -257,7 +254,7 @@
 			 *
 			 * @return {String}
 			 */
-			renderAddress: function(value, metadata, record) {
+			addressRenderer: function(value, metadata, record) {
 				if (this.delegate.recordIsReceived(record)) {
 					return record.get(CMDBuild.core.proxy.CMProxyConstants.FROM);
 				} else {
@@ -272,8 +269,8 @@
 			 *
 			 * @return {String}
 			 */
-			renderEmailContent: function(value, metadata, record) {
-				return Ext.util.Format.stripTags(record.get(CMDBuild.core.proxy.CMProxyConstants.BODY));
+			keepSynchronizationRenderer: function(value, metadata, record) {
+				return value ? '<img src="images/icons/tick.png" alt="@@ Keep-sync." />' : null;
 			}
 	});
 
