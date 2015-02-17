@@ -221,13 +221,6 @@ _debug('editRecord record', record);
 		},
 
 		/**
-		 * @return {Boolean}
-		 */
-		hasDraftEmails: function() {
-			return this.getDraftEmails().length > 0;
-		},
-
-		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 *
 		 * @return {Boolean}
@@ -240,6 +233,7 @@ _debug('editRecord record', record);
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: this.createRecord(),
+				widgetConf: this.widgetConf,
 				widgetController: this.parentDelegate
 			});
 
@@ -270,6 +264,7 @@ _debug('editRecord record', record);
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: record,
+				widgetConf: this.widgetConf,
 				widgetController: this.parentDelegate,
 				windowMode: 'edit'
 			});
@@ -281,16 +276,29 @@ _debug('editRecord record', record);
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
-		onEmailRegenerationButtonClick: function(record) { // TODO
-			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
-				parentDelegate: this,
-				recordsToConfirm: null,
-				widgetController: this.parentDelegate,
-				windowMode: 'confirm'
-			});
+		onEmailRegenerationButtonClick: function(record) {
+			if (!Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))) {
+				var emptyEmail = Ext.create('CMDBuild.model.widget.ManageEmail.email');
+				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.parentDelegate.getActivityId());
+				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.ID, record.get(CMDBuild.core.proxy.CMProxyConstants.ID));
+				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.STATUS, this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT]);
+				emptyEmail.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE));
 
-			this.emailWindow = this.controllerEmailWindow.getView();
-			this.emailWindow.show();
+				this.parentDelegate.regenerateEmail(emptyEmail);
+				this.storeLoad();
+			}
+
+// TODO: lo lascio quì tanto per aver sotto mano la configurazione ma sarà da fare un controller a parte "credo"
+//			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
+//				parentDelegate: this,
+//				recordsToConfirm: null,
+//				widgetConf: this.widgetConf,
+//				widgetController: this.parentDelegate,
+//				windowMode: 'confirm'
+//			});
+//
+//			this.emailWindow = this.controllerEmailWindow.getView();
+//			this.emailWindow.show();
 		},
 
 		/**
@@ -318,6 +326,7 @@ _debug('editRecord record', record);
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: Ext.create('CMDBuild.model.widget.ManageEmail.email', replyRecordData),
+				widgetConf: this.widgetConf,
 				widgetController: this.parentDelegate,
 				windowMode: 'reply'
 			});
@@ -333,6 +342,7 @@ _debug('editRecord record', record);
 			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: record,
+				widgetConf: this.widgetConf,
 				widgetController: this.parentDelegate,
 				windowMode: 'view'
 			});

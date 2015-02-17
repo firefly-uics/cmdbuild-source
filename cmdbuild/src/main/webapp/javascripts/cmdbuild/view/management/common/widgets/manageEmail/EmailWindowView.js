@@ -101,10 +101,25 @@
 				},
 
 				defaults: {
-					labelAlign: 'right'
+					labelAlign: 'right',
+					labelWidth: CMDBuild.LABEL_WIDTH
 				},
 
 				items: [
+					{
+						xtype: 'checkbox',
+						fieldLabel: '@@ Keep synchronization',
+						readOnly: true,
+						name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
+					},
+					{
+						xtype: 'checkbox',
+						fieldLabel: '@@ Prompt synchronization',
+						readOnly: true,
+						name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION,
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION)
+					},
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.FROM,

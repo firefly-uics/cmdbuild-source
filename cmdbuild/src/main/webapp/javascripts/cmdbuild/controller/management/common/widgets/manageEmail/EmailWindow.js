@@ -62,8 +62,6 @@
 
 			Ext.apply(this, configObject); // Apply config
 
-			this.widgetConf = this.parentDelegate.widgetConf;
-
 			if (Ext.Array.contains(this.windowModeAvailable, this.windowMode)) {
 				switch (this.windowMode) {
 					case 'confirm': {
@@ -149,6 +147,7 @@
 		 * @param {CMDBuild.model.widget.ManageEmail.template} record
 		 */
 		loadFormValues: function(record) {
+_debug('### loadFormValues');
 			var me = this;
 			var xaVars = Ext.apply({}, record.getData(), record.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
@@ -161,6 +160,7 @@
 			this.templateResolver.resolveTemplates({
 				attributes: Ext.Object.getKeys(record.getData()),
 				callback: function(values) {
+_debug('values', values);
 					var setValueArray = [];
 					var content = values[CMDBuild.core.proxy.CMProxyConstants.BODY];
 
@@ -213,6 +213,7 @@
 		 * @param {CMDBuild.model.widget.ManageEmail.email} emailRecord
 		 */
 		onAddAttachmentFromDmsButtonClick: function(emailWindow, emailRecord) {
+_debug('onAddAttachmentFromDmsButtonClick', this.record);
 			Ext.create('CMDBuild.view.management.common.widgets.CMDMSAttachmentPicker', {
 				title: CMDBuild.Translation.choose_attachment_from_db,
 				emailRecord: emailRecord,
@@ -294,25 +295,28 @@
 		 * Updates record object adding id (time in milliseconds), Description and attachments array and adds email record to grid store
 		 */
 		onEmailWindowConfirmButtonClick: function() {
+_debug('### onEmailWindowConfirmButtonClick');
 			if (this.view.formPanel.getNonValidFields().length > 0) {
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			} else {
 				var formValues = this.view.formPanel.getForm().getValues();
 				var attachments = this.view.attachmentPanelsContainer.getFileNames();
-
+_debug('formValues', formValues);
 				// Apply formValues to record object
 				for (var key in formValues)
 					this.record.set(key, formValues[key]);
 
 				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ATTACHMENTS, attachments);
-
+				this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.widgetController.getActivityId());
+_debug('this.record', this.record);
 				if (Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.ID))) {
 					this.parentDelegate.addRecord(this.record);
 				} else {
 					this.parentDelegate.editRecord(this.record);
 				}
 
-				CMDBuild.controller.management.common.widgets.manageEmail.Main.bindLocalDepsChangeEvent(this.templateResolver, this.widgetController);
+				if (!Ext.Object.isEmpty(this.templateResolver))
+					CMDBuild.controller.management.common.widgets.manageEmail.Main.bindLocalDepsChangeEvent(this.templateResolver, this.widgetController);
 
 				this.onEmailWindowAbortButtonClick();
 			}
@@ -324,6 +328,7 @@
 		 * @param {String} templateName
 		 */
 		onFillFromTemplateButtonClick: function(templateName) {
+_debug('onFillFromTemplateButtonClick', this.record);
 			this.view.setLoading(true);
 			CMDBuild.core.proxy.EmailTemplates.get({
 				scope: this,
@@ -337,7 +342,6 @@
 				success: function(response, options, decodedResponse) {
 					this.loadFormValues(Ext.create('CMDBuild.model.widget.ManageEmail.template', decodedResponse.response));
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, templateName); // Bind templateName to email record
-					this.record.set(CMDBuild.core.proxy.CMProxyConstants.ACTIVITY_ID, this.widgetController.getActivityId());
 				},
 				callback: function(options, success, response) {
 					this.view.setLoading(false);

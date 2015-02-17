@@ -31,7 +31,8 @@
 		},
 
 		defaults: {
-			labelAlign: 'right'
+			labelAlign: 'right',
+			labelWidth: CMDBuild.LABEL_WIDTH
 		},
 
 		initComponent: function() {
@@ -44,6 +45,22 @@
 
 			Ext.apply(this, {
 				items: [
+					{
+						xtype: 'checkbox',
+						fieldLabel: '@@ Keep synchronization',
+						name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
+						inputValue: true,
+						uncheckedValue: false,
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
+					},
+					{
+						xtype: 'checkbox',
+						fieldLabel: '@@ Prompt synchronization',
+						name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION,
+						inputValue: true,
+						uncheckedValue: false,
+						value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION)
+					},
 					{
 						xtype: 'displayfield',
 						name: CMDBuild.core.proxy.CMProxyConstants.FROM,
