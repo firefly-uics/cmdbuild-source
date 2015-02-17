@@ -4,7 +4,6 @@
 
 		requires: [
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
-			'CMDBuild.controller.management.common.widgets.manageEmail.Main',
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.EmailTemplates',
 			'CMDBuild.model.EmailTemplates'
@@ -19,6 +18,13 @@
 		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
 		 */
 		widgetController: undefined,
+
+		/**
+		 * Used as flag to avoid pop-up spam
+		 *
+		 * @cfg {Boolean}
+		 */
+		isAdvicePrompted: false,
 
 		/**
 		 * @property {CMDBuild.model.widget.ManageEmail.email}
@@ -104,6 +110,9 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
+				case 'onEmailChange':
+					return this.onEmailChange();
+
 				case 'onEmailWindowAbortButtonClick':
 					return this.onEmailWindowAbortButtonClick();
 
@@ -141,6 +150,20 @@
 		 */
 		getView: function() {
 			return this.view;
+		},
+
+		/**
+		 * @return {Boolean}
+		 */
+		isKeepSynchronizationChecked: function() {
+			return this.view.formPanel.keepSynchronizationCheckbox.getValue();
+		},
+
+		/**
+		 * @return {Boolean}
+		 */
+		isPromptSynchronizationChecked: function() {
+			return this.record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION);
 		},
 
 		/**
@@ -285,6 +308,18 @@ _debug('onAddAttachmentFromDmsButtonClick', this.record);
 		},
 
 		/**
+		 * Change event management to catch email content edit
+		 */
+		onEmailChange: function() {
+_debug('onEmailChange');
+			if (!this.isAdvicePrompted && this.isKeepSynchronizationChecked()) {
+				this.isAdvicePrompted = true;
+
+				CMDBuild.Msg.warn(null, '@@ E-mail changed and \"Auto synchronization\" active. <br />If \"Auto synchronization\" some change could be missed.');
+			}
+		},
+
+		/**
 		 * Destroy email window object
 		 */
 		onEmailWindowAbortButtonClick: function() {
@@ -316,7 +351,7 @@ _debug('this.record', this.record);
 				}
 
 				if (!Ext.Object.isEmpty(this.templateResolver))
-					CMDBuild.controller.management.common.widgets.manageEmail.Main.bindLocalDepsChangeEvent(this.templateResolver, this.widgetController);
+					this.widgetController.bindLocalDepsChangeEvent(this.record, this.templateResolver, this.widgetController);
 
 				this.onEmailWindowAbortButtonClick();
 			}
