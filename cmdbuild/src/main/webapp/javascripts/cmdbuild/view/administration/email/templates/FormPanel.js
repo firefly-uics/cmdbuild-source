@@ -173,12 +173,16 @@
 							},
 							{
 								xtype: 'checkbox',
-								fieldLabel: '@@ Automatic synchronization',
+								fieldLabel: '@@ Keep synchronization', // TODO
+								inputValue: true,
+								uncheckedValue: false,
 								name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION
 							},
 							{
 								xtype: 'checkbox',
-								fieldLabel: '@@ Report desync',
+								fieldLabel: '@@ Prompt synchronization', // TODO
+								inputValue: true,
+								uncheckedValue: false,
 								name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION
 							}
 						]
