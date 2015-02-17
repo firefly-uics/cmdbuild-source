@@ -34,7 +34,7 @@ public class ManageEmail extends Widget {
 		private Map<String, String> variables;
 		private boolean noSubjectPrefix;
 		private String account;
-		private boolean keepSynchronization;
+		private boolean keepSynchronization = true;
 		private boolean promptSynchronization;
 
 		public String getKey() {
