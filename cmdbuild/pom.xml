@@ -48,7 +48,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>cmdbuild-services-rest-cxf</artifactId>
+			<artifactId>cmdbuild-services-rest-v1</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

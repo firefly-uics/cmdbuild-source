@@ -8,7 +8,11 @@
 		<version>2.3.1-SNAPSHOT</version>
 		<relativePath>../../..</relativePath>
 	</parent>
-	<artifactId>cmdbuild-services-rest-cxf</artifactId>
+	<artifactId>cmdbuild-services-rest-v1</artifactId>
+	<properties>
+		<!-- <javax.ws.rs-api.version>2.0</javax.ws.rs-api.version> -->
+		<jsr311-api.version>1.1.1</jsr311-api.version>
+	</properties>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -24,15 +28,20 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
+		<!-- <dependency> -->
+		<!-- <groupId>javax.ws.rs</groupId> -->
+		<!-- <artifactId>javax.ws.rs-api</artifactId> -->
+		<!-- <version>${javax.ws.rs-api.version}</version> -->
+		<!-- </dependency> -->
 		<dependency>
-			<groupId>org.cmdbuild</groupId>
-			<artifactId>cmdbuild-services-rest-core</artifactId>
-			<version>${project.version}</version>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>jsr311-api</artifactId>
+			<version>${jsr311-api.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.cmdbuild</groupId>
-			<artifactId>cmdbuild-core</artifactId>
-			<version>${project.version}</version>
+			<artifactId>jackson-core-asl</artifactId>
+			<groupId>org.codehaus.jackson</groupId>
+			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -52,6 +61,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-jaxrs</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
@@ -64,6 +78,16 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.cmdbuild</groupId>
+			<artifactId>cmdbuild-commons</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cmdbuild</groupId>
+			<artifactId>cmdbuild-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.cmdbuild</groupId>
@@ -71,5 +95,23 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>
