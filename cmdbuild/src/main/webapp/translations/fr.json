@@ -1445,11 +1445,11 @@
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "Corps",
 	"emailLookupNames": {
-		"Draft": "Brouillon",
-		"New": "Nouveau",
-		"Outgoing": "Sortant",
-		"Received": "Reçu",
-		"Sent": "Envoyé"
+		"draft": "Brouillon",
+		"new": "Nouveau",
+		"outgoing": "Sortant",
+		"received": "Reçu",
+		"sent": "Envoyé"
 	},
 	"emailTemplate": "Modèle d'email",
 	"enable": "Activer",

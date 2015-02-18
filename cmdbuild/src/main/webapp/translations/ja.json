@@ -1445,11 +1445,11 @@
 	"editEmail": "emailを編集",
 	"emailBody": "本文",
 	"emailLookupNames": {
-		"Draft": "下書き",
-		"New": "新規",
-		"Outgoing": "送信中",
-		"Received": "受信",
-		"Sent": "送信"
+		"draft": "下書き",
+		"new": "新規",
+		"outgoing": "送信中",
+		"received": "受信",
+		"sent": "送信"
 	},
 	"emailTemplate": "電子メールテンプレート",
 	"enable": "有効にする",

@@ -1445,11 +1445,11 @@
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "Cuerpo",
 	"emailLookupNames": {
-		"Draft": "Borradores",
-		"New": "Nuevo",
-		"Outgoing": "Salida",
-		"Received": "Recibidos",
-		"Sent": "Enviados"
+		"draft": "Borradores",
+		"new": "Nuevo",
+		"outgoing": "Salida",
+		"received": "Recibidos",
+		"sent": "Enviados"
 	},
 	"emailTemplate": "Plantilla correo",
 	"enable": "Habilita",

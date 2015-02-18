@@ -1445,11 +1445,11 @@
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "<em>Body</em>",
 	"emailLookupNames": {
-		"Draft": "Dự thảo",
-		"New": "Mới",
-		"Outgoing": "Hộp gửi đi",
-		"Received": "Nhận được",
-		"Sent": "Gửi"
+		"draft": "Dự thảo",
+		"new": "Mới",
+		"outgoing": "Hộp gửi đi",
+		"received": "Nhận được",
+		"sent": "Gửi"
 	},
 	"emailTemplate": "<em>Email Template</em>",
 	"enable": "<em>Enable</em>",

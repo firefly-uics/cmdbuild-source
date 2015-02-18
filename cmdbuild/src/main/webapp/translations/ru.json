@@ -1445,11 +1445,11 @@
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "Текст письма",
 	"emailLookupNames": {
-		"Draft": "Черновики",
-		"New": "Создать",
-		"Outgoing": "Исходящие",
-		"Received": "Входящие",
-		"Sent": "Отправленные"
+		"draft": "Черновики",
+		"new": "Создать",
+		"outgoing": "Исходящие",
+		"received": "Входящие",
+		"sent": "Отправленные"
 	},
 	"emailTemplate": "Шаблон письма",
 	"enable": "Включить",

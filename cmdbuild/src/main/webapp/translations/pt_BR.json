@@ -1445,11 +1445,11 @@
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "<em>Body</em>",
 	"emailLookupNames": {
-		"Draft": "Rascunhos",
-		"New": "Novo",
-		"Outgoing": "A Enviar",
-		"Received": "Recebido",
-		"Sent": "Enviado"
+		"draft": "Rascunhos",
+		"new": "Novo",
+		"outgoing": "A Enviar",
+		"received": "Recebido",
+		"sent": "Enviado"
 	},
 	"emailTemplate": "<em>Email Template</em>",
 	"enable": "<em>Enable</em>",

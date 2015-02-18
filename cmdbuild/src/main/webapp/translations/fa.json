@@ -1445,11 +1445,11 @@
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "بدنه",
 	"emailLookupNames": {
-		"Draft": "پیش نویس",
-		"New": "جدید",
-		"Outgoing": "خروجی",
-		"Received": "دریافتی",
-		"Sent": "ارسالی"
+		"draft": "پیش نویس",
+		"new": "جدید",
+		"outgoing": "خروجی",
+		"received": "دریافتی",
+		"sent": "ارسالی"
 	},
 	"emailTemplate": "قالب ایمیل",
 	"enable": "فعال",

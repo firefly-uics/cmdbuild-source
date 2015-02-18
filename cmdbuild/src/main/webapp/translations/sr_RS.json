@@ -1445,11 +1445,11 @@
 	"editEmail": "Измени е-пошту",
 	"emailBody": "Тело поруке",
 	"emailLookupNames": {
-		"Draft": "Започете",
-		"New": "Нове",
-		"Outgoing": "За слање",
-		"Received": "Примљене",
-		"Sent": "Послане"
+		"draft": "Започете",
+		"new": "Нове",
+		"outgoing": "За слање",
+		"received": "Примљене",
+		"sent": "Послане"
 	},
 	"emailTemplate": "ШАблон е-поште",
 	"enable": "Омогући",

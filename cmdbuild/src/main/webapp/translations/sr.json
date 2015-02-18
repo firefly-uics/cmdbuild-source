@@ -1444,12 +1444,12 @@
 	"download_ifc_file": "Preuzmi Ifc datoteku",
 	"editEmail": "Izmeni e-poštu",
 	"emailBody": "Telo poruke",
-	"lookup": {
-		"Draft": "Započete",
-		"New": "Nove",
-		"Outgoing": "Za slanje",
-		"Received": "Primljene",
-		"Sent": "Poslane"
+	"emailLookupNames": {
+		"draft": "Započete",
+		"new": "Nove",
+		"outgoing": "Za slanje",
+		"received": "Primljene",
+		"sent": "Poslane"
 	},
 	"emailTemplate": "ŠAblon e-pošte",
 	"enable": "Omogući",

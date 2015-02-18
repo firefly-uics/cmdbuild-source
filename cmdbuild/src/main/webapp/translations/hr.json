@@ -1445,11 +1445,11 @@
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "Body",
 	"emailLookupNames": {
-		"Draft": "Započete",
-		"New": "Nove",
-		"Outgoing": "Za slanje",
-		"Received": "Primljene",
-		"Sent": "Poslane"
+		"draft": "Započete",
+		"new": "Nove",
+		"outgoing": "Za slanje",
+		"received": "Primljene",
+		"sent": "Poslane"
 	},
 	"emailTemplate": "Email Predložak",
 	"enable": "<em>Enable</em>",

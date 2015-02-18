@@ -1445,11 +1445,11 @@
 	"editEmail": "Modifica e-mail",
 	"emailBody": "Contenuto",
 	"emailLookupNames": {
-		"Draft": "Bozze",
-		"New": "Nuove",
-		"Outgoing": "In uscita",
-		"Received": "Ricevute",
-		"Sent": "Inviate"
+		"draft": "Bozze",
+		"new": "Nuove",
+		"outgoing": "In uscita",
+		"received": "Ricevute",
+		"sent": "Inviate"
 	},
 	"emailTemplate": "E-mail Template",
 	"enable": "Abilita",

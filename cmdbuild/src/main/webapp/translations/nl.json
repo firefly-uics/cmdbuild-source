@@ -1445,11 +1445,11 @@
 	"editEmail": "Modificeer email",
 	"emailBody": "Hoofddeel",
 	"emailLookupNames": {
-		"Draft": "Klad",
-		"New": "Nieuw",
-		"Outgoing": "Uitgaand",
-		"Received": "Ontvangen",
-		"Sent": "verstuurd"
+		"draft": "Klad",
+		"new": "Nieuw",
+		"outgoing": "Uitgaand",
+		"received": "Ontvangen",
+		"sent": "verstuurd"
 	},
 	"emailTemplate": "Email sjabloon",
 	"enable": "Activeer",
