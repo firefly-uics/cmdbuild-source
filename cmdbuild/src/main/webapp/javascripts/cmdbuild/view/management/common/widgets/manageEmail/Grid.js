@@ -226,9 +226,6 @@
 							'{name:this.formatName}',
 							{
 								formatName: function(name) {
-									name = name.toLowerCase(); // TODO delete
-									name = name.charAt(0).toUpperCase() + name.slice(1); // TODO delete
-
 									return CMDBuild.Translation.emailLookupNames[name];
 								}
 							}

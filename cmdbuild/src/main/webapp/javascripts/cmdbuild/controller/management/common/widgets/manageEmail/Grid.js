@@ -124,15 +124,6 @@ _debug('addRecord record', record);
 		},
 
 		/**
-		 * @param {Object} values
-		 */
-		addTemplate: function(values) {
-			var record = this.createRecord(values);
-
-			this.addRecord(record);
-		},
-
-		/**
 		 * Creates email model with default attributes setup
 		 *
 		 * @param {Object} recordValues
@@ -176,13 +167,6 @@ _debug('editRecord record', record);
 		/**
 		 * @return {Array}
 		 */
-		getDeletedEmails: function () {
-			return this.deletedEmails;
-		},
-
-		/**
-		 * @return {Array}
-		 */
 		getDraftEmails: function() {
 			return this.getEmailsByGroup(this.emailTypes[CMDBuild.core.proxy.CMProxyConstants.DRAFT]);
 		},
@@ -202,26 +186,6 @@ _debug('editRecord record', record);
 		},
 
 		/**
-		 * @param {Boolean} modifiedOnly
-		 *
-		 * @return {Array} outgoingEmails
-		 */
-		getOutgoingEmails: function(modifiedOnly) {
-			var allOutgoing = modifiedOnly ? false : true;
-			var outgoingEmails = [];
-			var emails = this.view.getStore().getRange();
-
-			for (var i = 0; i < emails.length; ++i) {
-				var currentEmail = emails[i];
-
-				if (allOutgoing || currentEmail.dirty)
-					outgoingEmails.push(currentEmail.data);
-			}
-
-			return outgoingEmails;
-		},
-
-		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 *
 		 * @return {Boolean}
@@ -231,15 +195,12 @@ _debug('editRecord record', record);
 		},
 
 		onEmailAddButtonClick: function() {
-			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
+			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: this.createRecord(),
 				widgetConf: this.widgetConf,
 				widgetController: this.parentDelegate
 			});
-
-			this.emailWindow = this.controllerEmailWindow.getView();
-			this.emailWindow.show();
 		},
 
 		/**
@@ -262,16 +223,13 @@ _debug('editRecord record', record);
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		onEmailEditButtonClick: function(record) {
-			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
+			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: record,
 				widgetConf: this.widgetConf,
 				widgetController: this.parentDelegate,
 				windowMode: 'edit'
 			});
-
-			this.emailWindow = this.controllerEmailWindow.getView();
-			this.emailWindow.show();
 		},
 
 		/**
@@ -312,32 +270,26 @@ _debug('editRecord record', record);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
 
-			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
+			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: Ext.create('CMDBuild.model.widget.ManageEmail.email', replyRecordData),
 				widgetConf: this.widgetConf,
 				widgetController: this.parentDelegate,
 				windowMode: 'reply'
 			});
-
-			this.emailWindow = this.controllerEmailWindow.getView();
-			this.emailWindow.show();
 		},
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		onEmailViewButtonClick: function(record) {
-			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
+			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: record,
 				widgetConf: this.widgetConf,
 				widgetController: this.parentDelegate,
 				windowMode: 'view'
 			});
-
-			this.emailWindow = this.controllerEmailWindow.getView();
-			this.emailWindow.show();
 		},
 
 		/**

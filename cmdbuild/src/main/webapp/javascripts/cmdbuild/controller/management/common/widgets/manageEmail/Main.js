@@ -380,7 +380,7 @@ _debug('loadTemplates item', item);
 		getData: function() {
 			var out = {};
 			out[CMDBuild.core.proxy.CMProxyConstants.OUTPUT] = this.getActivityId();
-
+_debug('getData', out);
 			return out;
 		},
 
@@ -401,10 +401,10 @@ _debug('loadTemplates item', item);
 		 * @override
 		 */
 		isValid: function() {
-			return !(
-				this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED]
-				&& this.controllerGrid.getOutgoingEmails().length == 0
-			);
+			if (!Ext.isEmpty(this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED]) && this.widgetConf[CMDBuild.core.proxy.CMProxyConstants.REQUIRED])
+				return this.controllerGrid.getDraftEmails().length > 0;
+
+			return this.callParent(arguments);
 		},
 
 		/**
@@ -482,14 +482,11 @@ _debug('regeneratedTemplatesIdentifiers', regeneratedTemplatesIdentifiers);
 		},
 
 		/**
-		 * @WIP TODO: toReport implementation (asking pop-up)
-		 *
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
-		 * @param {Boolean} toReport
 		 *
 		 * @return {Boolean} emailRegenerationStatus
 		 */
-		regenerateEmail: function(record, toReport) {
+		regenerateEmail: function(record) {
 _debug('regenerateEmail', record);
 			var emailRegenerationStatus = false;
 
@@ -577,14 +574,11 @@ _debug('record', record);
 		},
 
 		/**
-		 * @WIP TODO: toReport implementation (asking pop-up)
-		 *
 		 * @param {CMDBuild.model.widget.ManageEmail.template} template
-		 * @param {Boolean} toReport
 		 *
 		 * @return {Boolean} templateRegenerationStatus
 		 */
-		regenerateTemplate: function(template, toReport) {
+		regenerateTemplate: function(template) {
 _debug('regenerateTemplate', template);
 			var templateRegenerationStatus = false;
 
@@ -688,6 +682,7 @@ _debug('regenerateTemplate emailObject', emailObject);
 		 * Setup activityId from WorkFlowState module or requires it from server
 		 */
 		setActivityId: function() {
+_debug('setActivityId');
 			if (Ext.isEmpty(this.activityId)) {
 				if (_CMWFState.getProcessInstance().getId()) {
 					this.activityId = _CMWFState.getProcessInstance().getId();

@@ -98,6 +98,9 @@
 					this.addAttachmentPanel(attachmentName, this.record);
 				}
 			}
+
+			if (!Ext.isEmpty(this.view))
+				this.view.show();
 		},
 
 		/**
@@ -142,13 +145,6 @@
 			);
 
 			this.view.attachmentPanelsContainer.doLayout();
-		},
-
-		/**
-		 * @return {Mixed}
-		 */
-		getView: function() {
-			return this.view;
 		},
 
 		/**
