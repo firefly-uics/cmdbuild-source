@@ -688,10 +688,15 @@ _debug('setActivityId');
 				if (_CMWFState.getProcessInstance().getId()) {
 					this.activityId = _CMWFState.getProcessInstance().getId();
 				} else {
+					var params = {};
+					params[CMDBuild.core.proxy.CMProxyConstants.NOT_POSITIVES] = true;
+
 					CMDBuild.core.proxy.Utils.generateId({
+						params: params,
 						scope: this,
 						success: function(response, options, decodedResponse) {
 							this.activityId = decodedResponse.response;
+_debug('setActivityId this.activityId', this.activityId);
 						}
 					});
 				}
