@@ -78,6 +78,7 @@
 			{ name: CMDBuild.core.proxy.CMProxyConstants.BCC, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.BODY, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.CC, type: 'string' },
+			{ name: CMDBuild.core.proxy.CMProxyConstants.CONDITION, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DEFAULT_ACCOUNT, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION, type: 'string' },
 			{ name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION, type: 'boolean', defaultValue: true },
@@ -91,6 +92,9 @@
 		constructor: function(data) {
 			if (!Ext.isEmpty(data) && !Ext.isEmpty(data[CMDBuild.core.proxy.CMProxyConstants.ID]))
 				delete data[CMDBuild.core.proxy.CMProxyConstants.ID];
+			
+			if (!Ext.isEmpty(data) && !Ext.isEmpty(data[CMDBuild.core.proxy.CMProxyConstants.CONTENT]))
+				data[CMDBuild.core.proxy.CMProxyConstants.BODY] = data[CMDBuild.core.proxy.CMProxyConstants.CONTENT];
 
 			this.callParent(arguments);
 		},
