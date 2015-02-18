@@ -1,7 +1,7 @@
 package unit.cxf;
 
 import static java.util.Collections.emptyList;
-import static org.cmdbuild.service.rest.model.Models.newAttachment;
+import static org.cmdbuild.service.rest.v1.model.Models.newAttachment;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -26,8 +26,8 @@ import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.logic.dms.DmsLogic;
-import org.cmdbuild.service.rest.cxf.AttachmentsManagement;
-import org.cmdbuild.service.rest.model.Attachment;
+import org.cmdbuild.service.rest.v1.cxf.AttachmentsManagement;
+import org.cmdbuild.service.rest.v1.model.Attachment;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -6,7 +6,8 @@
 		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<context:component-scan base-package="org.cmdbuild.service.rest.cxf.configuration" />
+	<context:component-scan
+		base-package="org.cmdbuild.service.rest.v1.cxf.configuration" />
 
 	<import resource="classpath:META-INF/cxf/cxf.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-extension-*.xml" />
@@ -18,35 +19,35 @@
 		<property name="linkJsonToXmlSchema" value="true" />
 	</bean>
 
-	<jaxrs:server id="restContainer" address="/rest/v1">
+	<jaxrs:server id="rest_v1" address="/rest/v1">
 		<jaxrs:providers>
 			<ref bean="jaxbProvider" />
 			<ref bean="jsonProvider" />
 			<ref bean="wadlProvider" />
-			<ref bean="tokenHandler" />
+			<ref bean="v1_tokenHandler" />
 		</jaxrs:providers>
 		<jaxrs:serviceBeans>
-			<ref bean="cxfAttachmentsConfiguration" />
-			<ref bean="cxfCardAttachments" />
-			<ref bean="cxfCards" />
-			<ref bean="cxfClasses" />
-			<ref bean="cxfClassAttributes" />
-			<ref bean="cxfClassPrivileges" />
-			<ref bean="cxfDomains" />
-			<ref bean="cxfDomainAttributes" />
-			<ref bean="cxfRelations" />
-			<ref bean="cxfImpersonate" />
-			<ref bean="cxfLookupTypes" />
-			<ref bean="cxfLookupTypeValues" />
-			<ref bean="cxfMenu" />
-			<ref bean="cxfProcessAttributes" />
-			<ref bean="cxfProcesses" />
-			<ref bean="cxfProcessesConfiguration" />
-			<ref bean="cxfProcessInstanceActivities" />
-			<ref bean="cxfProcessInstanceAttachments" />
-			<ref bean="cxfProcessInstances" />
-			<ref bean="cxfProcessStartActivities" />
-			<ref bean="cxfSessions" />
+			<ref bean="v1_attachmentsConfiguration" />
+			<ref bean="v1_cardAttachments" />
+			<ref bean="v1_cards" />
+			<ref bean="v1_classes" />
+			<ref bean="v1_classAttributes" />
+			<ref bean="v1_classPrivileges" />
+			<ref bean="v1_domains" />
+			<ref bean="v1_domainAttributes" />
+			<ref bean="v1_relations" />
+			<ref bean="v1_impersonate" />
+			<ref bean="v1_lookupTypes" />
+			<ref bean="v1_lookupTypeValues" />
+			<ref bean="v1_menu" />
+			<ref bean="v1_processAttributes" />
+			<ref bean="v1_processes" />
+			<ref bean="v1_processesConfiguration" />
+			<ref bean="v1_processInstanceActivities" />
+			<ref bean="v1_processInstanceAttachments" />
+			<ref bean="v1_processInstances" />
+			<ref bean="v1_processStartActivities" />
+			<ref bean="v1_sessions" />
 		</jaxrs:serviceBeans>
 		<jaxrs:extensionMappings>
 			<entry key="xml" value="application/xml" />

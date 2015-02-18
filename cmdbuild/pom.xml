@@ -51,6 +51,11 @@
 			<artifactId>cmdbuild-services-rest-v1</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cmdbuild-services-rest-v2</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<!-- Remove this when everything is moved to cmdbuild-shark-client -->
 		<dependency>

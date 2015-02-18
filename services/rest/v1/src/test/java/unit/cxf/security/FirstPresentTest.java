@@ -1,13 +1,13 @@
 package unit.cxf.security;
 
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.cxf.security.FirstPresent.firstPresent;
+import static org.cmdbuild.service.rest.v1.cxf.security.FirstPresent.firstPresent;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 import org.apache.cxf.message.Message;
-import org.cmdbuild.service.rest.cxf.security.TokenHandler.TokenExtractor;
+import org.cmdbuild.service.rest.v1.cxf.security.TokenHandler.TokenExtractor;
 import org.junit.Test;
 
 import com.google.common.base.Optional;

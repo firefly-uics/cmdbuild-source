@@ -7,7 +7,7 @@ import static org.junit.Assert.assertThat;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
-import org.cmdbuild.service.rest.model.Model;
+import org.cmdbuild.service.rest.v1.model.Model;
 import org.junit.Test;
 
 import com.google.common.reflect.ClassPath;

@@ -1,6 +1,6 @@
 package unit.cxf.service;
 
-import static org.cmdbuild.service.rest.model.Models.newSession;
+import static org.cmdbuild.service.rest.v1.model.Models.newSession;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -9,9 +9,9 @@ import org.cmdbuild.auth.acl.CMGroup;
 import org.cmdbuild.auth.acl.PrivilegeContext;
 import org.cmdbuild.auth.user.AuthenticatedUser;
 import org.cmdbuild.auth.user.OperationUser;
-import org.cmdbuild.service.rest.cxf.service.InMemoryOperationUserStore;
-import org.cmdbuild.service.rest.cxf.service.OperationUserStore.BySession;
-import org.cmdbuild.service.rest.model.Session;
+import org.cmdbuild.service.rest.v1.cxf.service.InMemoryOperationUserStore;
+import org.cmdbuild.service.rest.v1.cxf.service.OperationUserStore.BySession;
+import org.cmdbuild.service.rest.v1.model.Session;
 import org.junit.Before;
 import org.junit.Test;
 

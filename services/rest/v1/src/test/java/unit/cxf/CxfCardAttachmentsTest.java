@@ -1,7 +1,7 @@
 package unit.cxf;
 
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.model.Models.newAttachment;
+import static org.cmdbuild.service.rest.v1.model.Models.newAttachment;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -26,12 +26,12 @@ import javax.ws.rs.WebApplicationException;
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.service.rest.cxf.AttachmentsHelper;
-import org.cmdbuild.service.rest.cxf.CxfCardAttachments;
-import org.cmdbuild.service.rest.cxf.ErrorHandler;
-import org.cmdbuild.service.rest.model.Attachment;
-import org.cmdbuild.service.rest.model.ResponseMultiple;
-import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.service.rest.v1.cxf.AttachmentsHelper;
+import org.cmdbuild.service.rest.v1.cxf.CxfCardAttachments;
+import org.cmdbuild.service.rest.v1.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v1.model.Attachment;
+import org.cmdbuild.service.rest.v1.model.ResponseMultiple;
+import org.cmdbuild.service.rest.v1.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

@@ -2,7 +2,7 @@ package unit.cxf.security;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.cxf.message.Message.QUERY_STRING;
-import static org.cmdbuild.service.rest.cxf.security.Token.TOKEN_KEY;
+import static org.cmdbuild.service.rest.v1.cxf.security.Token.TOKEN_KEY;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import org.apache.cxf.message.Message;
-import org.cmdbuild.service.rest.cxf.security.QueryStringTokenExtractor;
+import org.cmdbuild.service.rest.v1.cxf.security.QueryStringTokenExtractor;
 import org.junit.Test;
 
 import com.google.common.base.Optional;

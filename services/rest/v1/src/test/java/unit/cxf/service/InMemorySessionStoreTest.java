@@ -1,12 +1,12 @@
 package unit.cxf.service;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.cmdbuild.service.rest.model.Models.newSession;
+import static org.cmdbuild.service.rest.v1.model.Models.newSession;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import org.cmdbuild.service.rest.cxf.service.InMemorySessionStore;
-import org.cmdbuild.service.rest.model.Session;
+import org.cmdbuild.service.rest.v1.cxf.service.InMemorySessionStore;
+import org.cmdbuild.service.rest.v1.model.Session;
 import org.junit.Before;
 import org.junit.Test;
 

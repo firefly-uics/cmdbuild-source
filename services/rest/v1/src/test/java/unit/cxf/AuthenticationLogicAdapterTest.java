@@ -14,7 +14,7 @@ import org.cmdbuild.auth.context.NullPrivilegeContext;
 import org.cmdbuild.auth.user.OperationUser;
 import org.cmdbuild.logic.auth.AuthenticationLogic;
 import org.cmdbuild.logic.auth.LoginDTO;
-import org.cmdbuild.service.rest.cxf.CxfSessions.AuthenticationLogicAdapter;
+import org.cmdbuild.service.rest.v1.cxf.CxfSessions.AuthenticationLogicAdapter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
