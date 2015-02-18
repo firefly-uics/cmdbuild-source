@@ -227,7 +227,7 @@ _debug('editRecord record', record);
 		 * @return {Boolean}
 		 */
 		isRegenerable: function(record) {
-			return !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE));
+			return !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)) && record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION);
 		},
 
 		onEmailAddButtonClick: function() {
@@ -288,18 +288,6 @@ _debug('editRecord record', record);
 				this.parentDelegate.regenerateEmail(emptyEmail);
 				this.storeLoad();
 			}
-
-// TODO: lo lascio quì tanto per aver sotto mano la configurazione ma sarà da fare un controller a parte "credo"
-//			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
-//				parentDelegate: this,
-//				recordsToConfirm: null,
-//				widgetConf: this.widgetConf,
-//				widgetController: this.parentDelegate,
-//				windowMode: 'confirm'
-//			});
-//
-//			this.emailWindow = this.controllerEmailWindow.getView();
-//			this.emailWindow.show();
 		},
 
 		/**

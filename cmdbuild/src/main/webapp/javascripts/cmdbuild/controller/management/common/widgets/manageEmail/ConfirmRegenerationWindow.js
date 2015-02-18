@@ -2,9 +2,7 @@
 
 	Ext.define('CMDBuild.controller.management.common.widgets.manageEmail.ConfirmRegenerationWindow', {
 
-		requires: [
-			'CMDBuild.core.proxy.CMProxyConstants',
-		],
+		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
 		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.Main}
@@ -19,7 +17,7 @@
 		/**
 		 * @property {Array}
 		 */
-		recordsToRegenerate: undefined,
+		recordsCouldBeRegenerated: undefined,
 
 		/**
 		 * @property {Mixed} emailWindows
@@ -32,27 +30,30 @@
 		 * @param {CMDBuild.controller.management.common.widgets.manageEmail.Grid} configObject.gridDelegate
 		 */
 		constructor: function(configObject) {
+_debug('configObject', configObject);
 			Ext.apply(this, configObject); // Apply config
 
 			var emailTemplatesToRegenerate = this.parentDelegate.checkTemplatesToRegenerate();
 
-			this.recordsToRegenerate = [];
+			this.recordsCouldBeRegenerated = [];
 
-			// TODO no è sbagliato tenere presente che i record che cerco quì sono tutti i possibili rigenerabili e che dipendono dal parametro appena cambiato
-			// mentre i record che devo dare in pasto alla funzione di rigenerazione del main controller sono solo quelli selezionati
+			// Get all records witch will be regenerated
 			Ext.Array.forEach(this.gridDelegate.getDraftEmails(), function(item, index, allItems) {
 				if (
 					this.gridDelegate.isRegenerable(item)
 					&& this.gridDelegate.recordIsEditable(item)
 					&& Ext.Array.contains(emailTemplatesToRegenerate, item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
+					&& this.parentDelegate.resolveTemplateCondition(item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
 				) {
-					this.recordsToRegenerate.push(item);
+					this.recordsCouldBeRegenerated.push(item);
 				}
 			}, this);
-
+_debug('this.recordsCouldBeRegenerated', this.recordsCouldBeRegenerated);
 			this.view = Ext.create('CMDBuild.view.management.common.widgets.manageEmail.ConfirmRegenerationWindow', {
 				delegate: this
 			});
+
+			this.view.show();
 		},
 
 		/**
@@ -64,9 +65,6 @@
 		 */
 		cmOn: function(name, param, callBack) {
 			switch (name) {
-				case 'onConfirmRegenerationWindowAbortButtonClick':
-					return this.onConfirmRegenerationWindowAbortButtonClick();
-
 				case 'onConfirmRegenerationWindowConfirmButtonClick':
 					return this.onConfirmRegenerationWindowConfirmButtonClick();
 
@@ -78,16 +76,19 @@
 		},
 
 		/**
-		 * Destroy email window object
+		 * @return {CMDBuild.view.management.common.widgets.manageEmail.ConfirmRegenerationWindow}
 		 */
-		onConfirmRegenerationWindowAbortButtonClick: function() {
-			this.view.destroy();
+		getView: function() {
+			return this.view;
 		},
 
+		/**
+		 * Regenerates only selected records
+		 */
 		onConfirmRegenerationWindowConfirmButtonClick: function() {
-			this.parentDelegate.regenerateSelectedEmails(this.recordsToRegenerate);
+			this.parentDelegate.regenerateSelectedEmails(this.view.grid.getSelectionModel().getSelection());
 
-			this.onConfirmRegenerationWindowAbortButtonClick();
+			this.view.destroy();
 		}
 	});
 

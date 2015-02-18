@@ -5,8 +5,7 @@
 		requires: [
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.EmailTemplates',
-			'CMDBuild.model.EmailTemplates'
+			'CMDBuild.core.proxy.EmailTemplates'
 		],
 
 		/**
@@ -182,7 +181,7 @@ _debug('### loadFormValues');
 
 			this.templateResolver.resolveTemplates({
 				attributes: Ext.Object.getKeys(record.getData()),
-				callback: function(values) {
+				callback: function(values, ctx) {
 _debug('values', values);
 					var setValueArray = [];
 					var content = values[CMDBuild.core.proxy.CMProxyConstants.BODY];
