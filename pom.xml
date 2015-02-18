@@ -57,8 +57,9 @@
 		<module>graph</module>
 		<module>scheduler/core</module>
 		<module>scheduler/quartz</module>
-		<module>services/rest/v1</module>
 		<module>services/rest/test</module>
+		<module>services/rest/v1</module>
+		<module>services/rest/v2</module>
 		<module>shark/client</module>
 		<module>services/sync/core</module>
 		<module>services/sync/internal</module>

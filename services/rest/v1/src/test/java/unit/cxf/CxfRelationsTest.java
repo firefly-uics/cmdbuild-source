@@ -1,8 +1,8 @@
 package unit.cxf;
 
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.model.Models.newCard;
-import static org.cmdbuild.service.rest.model.Models.newRelation;
+import static org.cmdbuild.service.rest.v1.model.Models.newCard;
+import static org.cmdbuild.service.rest.v1.model.Models.newRelation;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
@@ -23,9 +23,9 @@ import org.cmdbuild.logic.commands.GetRelationList.DomainWithSource;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
 import org.cmdbuild.logic.data.access.RelationDTO;
 import org.cmdbuild.model.data.Card;
-import org.cmdbuild.service.rest.cxf.CxfRelations;
-import org.cmdbuild.service.rest.cxf.ErrorHandler;
-import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.service.rest.v1.cxf.CxfRelations;
+import org.cmdbuild.service.rest.v1.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v1.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;

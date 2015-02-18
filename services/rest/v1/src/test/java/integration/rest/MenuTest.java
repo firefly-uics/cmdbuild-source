@@ -1,10 +1,10 @@
 package integration.rest;
 
-import static org.cmdbuild.service.rest.model.Models.newMenu;
-import static org.cmdbuild.service.rest.model.Models.newResponseSingle;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.contentOf;
 import static org.cmdbuild.service.rest.test.HttpClientUtils.statusCodeOf;
 import static org.cmdbuild.service.rest.test.ServerResource.randomPort;
+import static org.cmdbuild.service.rest.v1.model.Models.newMenu;
+import static org.cmdbuild.service.rest.v1.model.Models.newResponseSingle;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -15,11 +15,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.cmdbuild.service.rest.Menu;
-import org.cmdbuild.service.rest.model.MenuDetail;
-import org.cmdbuild.service.rest.model.ResponseSingle;
 import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
+import org.cmdbuild.service.rest.v1.Menu;
+import org.cmdbuild.service.rest.v1.model.MenuDetail;
+import org.cmdbuild.service.rest.v1.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;

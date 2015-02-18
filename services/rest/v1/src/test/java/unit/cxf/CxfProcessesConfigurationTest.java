@@ -2,7 +2,7 @@ package unit.cxf;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.model.Models.newProcessStatus;
+import static org.cmdbuild.service.rest.v1.model.Models.newProcessStatus;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
@@ -11,10 +11,10 @@ import static org.mockito.Mockito.mock;
 
 import java.util.List;
 
-import org.cmdbuild.service.rest.cxf.CxfProcessesConfiguration;
-import org.cmdbuild.service.rest.cxf.ProcessStatusHelper;
-import org.cmdbuild.service.rest.model.ProcessStatus;
-import org.cmdbuild.service.rest.model.ResponseMultiple;
+import org.cmdbuild.service.rest.v1.cxf.CxfProcessesConfiguration;
+import org.cmdbuild.service.rest.v1.cxf.ProcessStatusHelper;
+import org.cmdbuild.service.rest.v1.model.ProcessStatus;
+import org.cmdbuild.service.rest.v1.model.ResponseMultiple;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;

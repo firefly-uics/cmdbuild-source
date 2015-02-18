@@ -1,6 +1,6 @@
 package unit.cxf;
 
-import static org.cmdbuild.service.rest.model.Models.newCard;
+import static org.cmdbuild.service.rest.v1.model.Models.newCard;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
@@ -18,9 +18,9 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.cmdbuild.dao.entrytype.CMClass;
 import org.cmdbuild.logic.data.access.DataAccessLogic;
-import org.cmdbuild.service.rest.cxf.CxfCards;
-import org.cmdbuild.service.rest.cxf.ErrorHandler;
-import org.cmdbuild.service.rest.model.ResponseSingle;
+import org.cmdbuild.service.rest.v1.cxf.CxfCards;
+import org.cmdbuild.service.rest.v1.cxf.ErrorHandler;
+import org.cmdbuild.service.rest.v1.model.ResponseSingle;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -2,7 +2,7 @@ package unit.cxf.security;
 
 import static java.util.Arrays.asList;
 import static org.apache.cxf.message.Message.PROTOCOL_HEADERS;
-import static org.cmdbuild.service.rest.cxf.security.Token.TOKEN_KEY;
+import static org.cmdbuild.service.rest.v1.cxf.security.Token.TOKEN_KEY;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.cxf.message.Message;
-import org.cmdbuild.service.rest.cxf.security.HeaderTokenExtractor;
+import org.cmdbuild.service.rest.v1.cxf.security.HeaderTokenExtractor;
 import org.junit.Test;
 
 import com.google.common.base.Optional;

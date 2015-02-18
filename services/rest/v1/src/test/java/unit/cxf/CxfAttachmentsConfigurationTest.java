@@ -10,7 +10,7 @@ import static org.mockito.Mockito.mock;
 import org.cmdbuild.dms.DocumentTypeDefinition;
 import org.cmdbuild.dms.MetadataGroupDefinition;
 import org.cmdbuild.logic.dms.DmsLogic;
-import org.cmdbuild.service.rest.cxf.CxfAttachmentsConfiguration;
+import org.cmdbuild.service.rest.v1.cxf.CxfAttachmentsConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;

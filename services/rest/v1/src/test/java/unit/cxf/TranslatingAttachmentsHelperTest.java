@@ -2,7 +2,7 @@ package unit.cxf;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
-import static org.cmdbuild.service.rest.model.Models.newAttachment;
+import static org.cmdbuild.service.rest.v1.model.Models.newAttachment;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -17,10 +17,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
-import org.cmdbuild.service.rest.cxf.AttachmentsHelper;
-import org.cmdbuild.service.rest.cxf.TranslatingAttachmentsHelper;
-import org.cmdbuild.service.rest.cxf.TranslatingAttachmentsHelper.Encoding;
-import org.cmdbuild.service.rest.model.Attachment;
+import org.cmdbuild.service.rest.v1.cxf.AttachmentsHelper;
+import org.cmdbuild.service.rest.v1.cxf.TranslatingAttachmentsHelper;
+import org.cmdbuild.service.rest.v1.cxf.TranslatingAttachmentsHelper.Encoding;
+import org.cmdbuild.service.rest.v1.model.Attachment;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
