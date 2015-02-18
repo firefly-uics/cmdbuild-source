@@ -1,10 +1,10 @@
 (function() {
 
-	Ext.define('CMDBuild.view.management.common.widgets.email.CMEmailWindowFileAttacchedPanel', {
+	Ext.define('CMDBuild.view.management.common.widgets.manageEmail.EmailWindowFileAttacchedPanel', {
 		extend: 'Ext.panel.Panel',
 
 		/**
-		 * @cfg {CMDBuild.controller.management.common.widgets.CMManageEmailController}
+		 * @cfg {CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow}
 		 */
 		delegate: undefined,
 
@@ -26,22 +26,23 @@
 		margin: 5,
 
 		initComponent: function() {
-			var me = this;
-
 			Ext.apply(this, {
 				items: [
 					{
+						xtype: 'panel',
 						bodyCls: 'x-panel-body-default-framed',
 						border: false,
 						html: this.fileName,
 						frame: false,
-						flex: 1,
+						flex: 1
 					},
 					{
 						xtype: 'button',
 						iconCls: 'delete',
+						scope: this,
+
 						handler: function() {
-							me.delegate.onCMEmailWindowRemoveAttachmentButtonClick(me);
+							this.delegate.onCMEmailWindowRemoveAttachmentButtonClick(me); // TODO: use cmOn and this
 						}
 					}
 				]

@@ -1,11 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.view.administration.email.CMEmailTemplatesGrid', {
+	Ext.define('CMDBuild.view.administration.email.templates.GridPanel', {
 		extend: 'Ext.grid.Panel',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyEmailTemplates'
+			'CMDBuild.core.proxy.EmailTemplates'
 		],
 
 		/**
@@ -27,16 +27,16 @@
 					},
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION,
-						header: CMDBuild.Translation.description_,
+						text: CMDBuild.Translation.description_,
 						flex: 3
 					},
 					{
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.SUBJECT,
-						header: CMDBuild.Translation.subject,
+						text: CMDBuild.Translation.subject,
 						flex: 2
 					}
 				],
-				store: CMDBuild.core.proxy.CMProxyEmailTemplates.getStore()
+				store: CMDBuild.core.proxy.EmailTemplates.getStore()
 			});
 
 			this.callParent(arguments);

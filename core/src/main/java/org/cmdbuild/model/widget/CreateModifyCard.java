@@ -21,7 +21,7 @@ public class CreateModifyCard extends Widget {
 		}
 	}
 
-	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = "output";
+	public static final String CREATED_CARD_ID_SUBMISSION_PARAM = DEFAULT_SUBMISSION_PARAM;
 
 	private String idcardcqlselector;
 	private String targetClass;

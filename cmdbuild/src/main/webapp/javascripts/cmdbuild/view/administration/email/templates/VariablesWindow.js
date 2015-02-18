@@ -2,7 +2,7 @@
 
 	var tr = CMDBuild.Translation.administration.email.templates.valuesWindow;
 
-	Ext.define('CMDBuild.view.administration.email.CMEmailTemplatesVariablesWindow', {
+	Ext.define('CMDBuild.view.administration.email.templates.VariablesWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
 		/**
@@ -19,23 +19,21 @@
 		buttonsAlign: 'center',
 
 		initComponent: function() {
-			var me = this;
-
 			this.grid = Ext.create('Ext.grid.Panel', {
 				border: false,
 				frame: false,
 
 				columns: [
 					{
-						header: CMDBuild.Translation.key,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.KEY,
+						text: CMDBuild.Translation.key,
 						flex: 1,
 
 						editor: { xtype: 'textfield' }
 					},
 					{
-						header: CMDBuild.Translation.value,
 						dataIndex: CMDBuild.core.proxy.CMProxyConstants.VALUE,
+						text: CMDBuild.Translation.value,
 						flex: 1,
 
 						editor: { xtype: 'textfield' }
@@ -63,7 +61,7 @@
 				],
 
 				store: Ext.create('Ext.data.Store', {
-					model: 'CMDBuild.model.CMModelEmailTemplates.variablesWindow',
+					model: 'CMDBuild.model.EmailTemplates.variablesWindow',
 					data: []
 				}),
 
@@ -78,13 +76,15 @@
 						xtype: 'toolbar',
 						dock: 'top',
 						itemId: CMDBuild.core.proxy.CMProxyConstants.TOOLBAR_TOP,
+
 						items: [
 							{
 								text: CMDBuild.Translation.common.buttons.add,
 								iconCls: 'add',
+								scope: this,
 
 								handler: function() {
-									me.grid.getStore().insert(0, Ext.create('CMDBuild.model.CMModelEmailTemplates.variablesWindow'));
+									this.grid.getStore().insert(0, Ext.create('CMDBuild.model.EmailTemplates.variablesWindow'));
 								}
 							}
 						]
@@ -96,13 +96,17 @@
 				items: [this.grid],
 				buttons: [
 					Ext.create('CMDBuild.buttons.ConfirmButton', {
+						scope: this,
+
 						handler: function() {
-							me.delegate.cmOn('onVariablesWindowSave');
+							this.delegate.cmOn('onVariablesWindowSave');
 						}
 					}),
 					Ext.create('CMDBuild.buttons.AbortButton', {
+						scope: this,
+
 						handler: function() {
-							me.delegate.cmOn('onVariablesWindowAbort');
+							this.delegate.cmOn('onVariablesWindowAbort');
 						}
 					})
 				]

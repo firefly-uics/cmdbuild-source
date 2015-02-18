@@ -1330,29 +1330,6 @@
 				"linkcards": {
 					"required": "カードを選択ください - "
 				},
-				"manageemail": {
-					"addresshdr": "アドレス",
-					"ccfld": "CC",
-					"compose": "電子メール作成",
-					"datehdr": "アーカイブ日",
-					"deleteicon": "削除",
-					"editicon": "変更",
-					"fromfld": "From",
-					"lookup": {
-						"Draft": "下書き",
-						"New": "新規",
-						"Outgoing": "送信中",
-						"Received": "受信",
-						"Sent": "送信"
-					},
-					"subjectfld": "件名",
-					"subjecthdr": "件名",
-					"tofld": "To",
-					"updateTemplateConfirm": "これは、全ての未送信メールを削除します。",
-					"viewicon": "ビュー",
-					"mailsAreChanged": "作成された電子メールは変更されました",
-					"regenerates": "電子メール再作成"
-				},
 				"managerelation": {
 					"required": "リレーションを選択ください - "
 				},
@@ -1428,6 +1405,7 @@
 	"addView": "ビューを追加",
 	"add_attachment_from_dms": "DMSから添付を追加",
 	"address": "アドレス",
+	"archivingDate": "アーカイブ日",
 	"attachfile": "ファイルを添付",
 	"attachmentsLookup": "電子メールの添付ルックアップ",
 	"attention": "注意",
@@ -1466,6 +1444,13 @@
 	"download_ifc_file": "Ifcファイルをダウンロード",
 	"editEmail": "emailを編集",
 	"emailBody": "本文",
+	"emailLookupNames": {
+		"Draft": "下書き",
+		"New": "新規",
+		"Outgoing": "送信中",
+		"Received": "受信",
+		"Sent": "送信"
+	},
 	"emailTemplate": "電子メールテンプレート",
 	"enable": "有効にする",
 	"enableGridFilter": "グリッドフィルターを有効に",
@@ -1501,6 +1486,7 @@
 	"loggedGroup": "ロググループ",
 	"loggedUser": "ログユーザー",
 	"main": "メイン",
+	"manualRegeneration": "<em>Manual Regeneration</em>",
 	"mode": "モード",
 	"modifyFilter": "フィルターを変更",
 	"modifyProject": "プロジェクトを変更",
@@ -1520,6 +1506,7 @@
 	"projects": "プロジェクト",
 	"readOnly": "読み取り専用",
 	"reference_to_root": "ルートへの参照",
+	"regenerateEmail": "電子メール再作成",
 	"relation": "リレーション",
 	"remove": "削除",
 	"removeFilter": "ビューを削除",
@@ -1528,6 +1515,8 @@
 	"removeView": "ビューを削除",
 	"remove_formatting": "フォーマットを削除",
 	"replace": "リプレース",
+	"reply": "<em>Reply</em>",
+	"replyEmail": "<em>Reply e-mail</em>",
 	"reset": "リセット",
 	"root": "ルート",
 	"rotate": "回転",

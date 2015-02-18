@@ -1330,29 +1330,6 @@
 				"linkcards": {
 					"required": "Dafür muss man einige Karten markieren - "
 				},
-				"manageemail": {
-					"addresshdr": "Adresse",
-					"ccfld": "CC",
-					"compose": "E-Mail schreiben",
-					"datehdr": "Archivierungsdatum",
-					"deleteicon": "Löschen",
-					"editicon": "Bearbeiten",
-					"fromfld": "Absender",
-					"lookup": {
-						"Draft": "Entwürfe",
-						"New": "Neue",
-						"Outgoing": "Ausgehende",
-						"Received": "Eingehende",
-						"Sent": "Gesendete"
-					},
-					"subjectfld": "Betreff",
-					"subjecthdr": "Betreff",
-					"tofld": "Empfänger",
-					"updateTemplateConfirm": "Das wird alle nicht gesendete E-Mails löschen",
-					"viewicon": "Ansicht",
-					"mailsAreChanged": "Generierte E-Mails haben sich geändert",
-					"regenerates": "E-Mail regenerieren"
-				},
 				"managerelation": {
 					"required": "Dafür muss man die Beziehungen markieren - "
 				},
@@ -1428,6 +1405,7 @@
 	"addView": "Sicht hinzufügen",
 	"add_attachment_from_dms": "Anhänge aus DMS hinzufügen",
 	"address": "Adresse",
+	"archivingDate": "Archivierungsdatum",
 	"attachfile": "File beilegen",
 	"attachmentsLookup": "E-mail Anhänge Lookup",
 	"attention": "Achtung",
@@ -1446,7 +1424,7 @@
 	"clean_word_pasted_text": "Den von Word oder anderen Rich Text Pogrammen eingefügten Text bereinigen",
 	"clearFilter": "Filter leeren",
 	"clear_row_and_colun_privilege": "Privilegien auf Zeilen und Spalten leeren",
-	"composeEmail": "<em>Compose email</em>",
+	"composeEmail": "E-Mail schreiben",
 	"composeFromTemplate": "<em>Compose from template</em>",
 	"contained": "<em>Contained</em>",
 	"containedorequal": "<em>Contained or equal</em>",
@@ -1466,6 +1444,13 @@
 	"download_ifc_file": "Ifc File herunterladen",
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "Inhalt",
+	"emailLookupNames": {
+		"Draft": "Entwürfe",
+		"New": "Neue",
+		"Outgoing": "Ausgehende",
+		"Received": "Eingehende",
+		"Sent": "Gesendete"
+	},
 	"emailTemplate": "E-mail Template",
 	"enable": "Aktivieren",
 	"enableGridFilter": "<em>Enable grid filter</em>",
@@ -1501,6 +1486,7 @@
 	"loggedGroup": "Angemeldete Gruppe",
 	"loggedUser": "Angemeldeter Benutzer",
 	"main": "Hauptsächlich",
+	"manualRegeneration": "<em>Manual Regeneration</em>",
 	"mode": "Modus",
 	"modifyFilter": "Filter bearbeiten",
 	"modifyProject": "Projekt verändern",
@@ -1520,6 +1506,7 @@
 	"projects": "Projekte",
 	"readOnly": "Nur Anzeige",
 	"reference_to_root": "Bezug mit Quelle",
+	"regenerateEmail": "E-Mail regenerieren",
 	"relation": "<em>Relation</em>",
 	"remove": "Entfernen",
 	"removeFilter": "Filter löschen",
@@ -1528,6 +1515,8 @@
 	"removeView": "Sicht löschen",
 	"remove_formatting": "Formatierung entfernen",
 	"replace": "<em>Replace</em>",
+	"reply": "<em>Reply</em>",
+	"replyEmail": "<em>Reply e-mail</em>",
 	"reset": "Auf null stellen",
 	"root": "Quelle",
 	"rotate": "Rotieren",

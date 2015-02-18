@@ -1,11 +1,11 @@
 (function() {
 
-	Ext.define('CMDBuild.core.proxy.CMProxyEmailTemplates', {
+	Ext.define('CMDBuild.core.proxy.EmailTemplates', {
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
 			'CMDBuild.core.proxy.CMProxyUrlIndex',
-			'CMDBuild.model.CMModelEmailTemplates'
+			'CMDBuild.model.EmailTemplates'
 		],
 
 		singleton: true,
@@ -25,42 +25,32 @@
 		},
 
 		/**
-		 * @return {Ext.data.Store} store
+		 * @param {Object} parameters
 		 */
-		get: function() {
-			return Ext.create('Ext.data.Store', {
-				autoLoad: false,
-				model: 'CMDBuild.model.CMModelEmailTemplates.singleTemplate',
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.get,
-					reader: {
-						type: 'json',
-						root: 'response'
-					}
-				}
+		get: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.get,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
 
 		/**
-		 * @return {Ext.data.Store} store
+		 * @param {Object} parameters
 		 */
-		getEmailAccountsStore: function() {
-			return Ext.create('Ext.data.Store', {
-				autoLoad: true,
-				model: 'CMDBuild.model.CMModelEmailAccounts.grid',
-				proxy: {
-					type: 'ajax',
-					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.accounts.getStore,
-					reader: {
-						type: 'json',
-						root: 'response.elements'
-					}
-				},
-				sorters: [{
-					property: CMDBuild.core.proxy.CMProxyConstants.NAME,
-					direction: 'ASC'
-				}]
+		getAll: function(parameters) {
+			CMDBuild.Ajax.request({
+				method: 'POST',
+				url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.getStore,
+				params: parameters.params,
+				scope: parameters.scope,
+				failure: parameters.failure || Ext.emptyFn(),
+				success: parameters.success || Ext.emptyFn(),
+				callback: parameters.callback || Ext.emptyFn()
 			});
 		},
 
@@ -70,7 +60,7 @@
 		getStore: function() {
 			return Ext.create('Ext.data.Store', {
 				autoLoad: false,
-				model: 'CMDBuild.model.CMModelEmailTemplates.grid',
+				model: 'CMDBuild.model.EmailTemplates.grid',
 				proxy: {
 					type: 'ajax',
 					url: CMDBuild.core.proxy.CMProxyUrlIndex.email.templates.getStore,

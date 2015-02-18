@@ -40,7 +40,7 @@
 			/**
 			 * @return {Ext.data.Store} store
 			 */
-			getStore: function() {
+			getStore: function(autoLoad) {
 				return Ext.create('Ext.data.Store', {
 					autoLoad: false,
 					model: 'CMDBuild.model.CMModelEmailAccounts.grid',

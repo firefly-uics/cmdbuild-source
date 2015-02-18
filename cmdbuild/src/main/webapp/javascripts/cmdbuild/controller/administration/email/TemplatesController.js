@@ -1,11 +1,12 @@
 (function() {
 
-	Ext.define('CMDBuild.controller.administration.email.CMEmailTemplatesController', {
+	Ext.define('CMDBuild.controller.administration.email.TemplatesController', {
 		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.CMProxyEmailTemplates'
+			'CMDBuild.core.proxy.EmailTemplates',
+			'CMDBuild.model.EmailTemplates'
 		],
 
 		/**
@@ -104,7 +105,7 @@
 		 *  As variables window delegate
 		 */
 			onVariablesButtonClick: function() {
-				this.variablesWindow = Ext.create('CMDBuild.view.administration.email.CMEmailTemplatesVariablesWindow', {
+				this.variablesWindow = Ext.create('CMDBuild.view.administration.email.templates.VariablesWindow', {
 					delegate: this
 				});
 				this.setVariableWindowGridDatas(this.valuesWindowDataBuffer);
@@ -170,6 +171,10 @@
 				},
 		// END: As variables window delegate
 
+		loadFieldsStore: function() {
+			this.form.defaultAccountCombo.getStore().load();
+		},
+
 		onAbortButtonClick: function() {
 			if (!Ext.isEmpty(this.selectedName)) {
 				this.onRowSelected();
@@ -185,6 +190,8 @@
 			this.valuesWindowDataBuffer = null;
 			this.form.reset();
 			this.form.enableModify(true);
+
+			this.loadFieldsStore();
 		},
 
 		onModifyButtonClick: function() {
@@ -192,6 +199,8 @@
 			this.form.enableCMButtons();
 			this.form.enableModify(true);
 			this.form.disableNameField();
+
+			this.loadFieldsStore();
 		},
 
 		onRemoveButtonClick: function() {
@@ -209,17 +218,26 @@
 
 		onRowSelected: function() {
 			if (this.grid.getSelectionModel().hasSelection()) {
-				var me = this;
 				this.selectedName = this.grid.getSelectionModel().getSelection()[0].get(CMDBuild.core.proxy.CMProxyConstants.NAME);
 
-				CMDBuild.core.proxy.CMProxyEmailTemplates.get().load({
+				CMDBuild.LoadMask.get().show();
+				CMDBuild.core.proxy.EmailTemplates.get({
 					params: {
 						name: this.selectedName
 					},
-					callback: function(records, operation, success) {
-						me.form.loadRecord(this.getAt(0));
-						me.valuesWindowDataBuffer = this.getAt(0).get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
-						me.form.disableModify(true);
+					scope: this,
+					failure: function(response, options, decodedResponse) {
+						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ EmailTemplates controller error: get template call failure', false);
+					},
+					success: function(response, options, decodedResponse) {
+						var templateModel = Ext.create('CMDBuild.model.EmailTemplates.singleTemplate', decodedResponse.response);
+
+						this.form.loadRecord(templateModel);
+						this.valuesWindowDataBuffer = templateModel.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
+						this.form.disableModify(true);
+					},
+					callback: function(options, success, response) {
+						CMDBuild.LoadMask.get().hide();
 					}
 				});
 			}
@@ -235,14 +253,14 @@
 
 				CMDBuild.LoadMask.get().show();
 				if (Ext.isEmpty(formData.id)) {
-					CMDBuild.core.proxy.CMProxyEmailTemplates.create({
+					CMDBuild.core.proxy.EmailTemplates.create({
 						params: formData,
 						scope: this,
 						success: this.success,
 						callback: this.callback
 					});
 				} else {
-					CMDBuild.core.proxy.CMProxyEmailTemplates.update({
+					CMDBuild.core.proxy.EmailTemplates.update({
 						params: formData,
 						scope: this,
 						success: this.success,
@@ -255,7 +273,7 @@
 		removeItem: function() {
 			if (!Ext.isEmpty(this.selectedName)) {
 				CMDBuild.LoadMask.get().show();
-				CMDBuild.core.proxy.CMProxyEmailTemplates.remove({
+				CMDBuild.core.proxy.EmailTemplates.remove({
 					params: {
 						name: this.selectedName
 					},

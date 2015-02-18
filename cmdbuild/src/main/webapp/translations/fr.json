@@ -1330,29 +1330,6 @@
 				"linkcards": {
 					"required": "Choisissez des fiches -"
 				},
-				"manageemail": {
-					"addresshdr": "Adresse",
-					"ccfld": "CC",
-					"compose": "Nouveau message",
-					"datehdr": "Date d'archivage",
-					"deleteicon": "Supprimer",
-					"editicon": "Modifier",
-					"fromfld": "De",
-					"lookup": {
-						"Draft": "Brouillon",
-						"New": "Nouveau",
-						"Outgoing": "Sortant",
-						"Received": "Reçu",
-						"Sent": "Envoyé"
-					},
-					"subjectfld": "Sujet",
-					"subjecthdr": "Sujet",
-					"tofld": "À",
-					"updateTemplateConfirm": "Cela effacera tous les emails non sélectionnés",
-					"viewicon": "Vue",
-					"mailsAreChanged": "Les emails ont été modifiés",
-					"regenerates": "Regénérer les e-mails"
-				},
 				"managerelation": {
 					"required": "Sélectionnez les relations -"
 				},
@@ -1428,6 +1405,7 @@
 	"addView": "Ajouter une vue",
 	"add_attachment_from_dms": "Ajouter des pièces jointes depuis le dépôt",
 	"address": "Adresse",
+	"archivingDate": "Date d'archivage",
 	"attachfile": "Joindre un fichier",
 	"attachmentsLookup": "Envoyer des références de pièces jointes",
 	"attention": "Attention",
@@ -1446,7 +1424,7 @@
 	"clean_word_pasted_text": "Nettoyer le texte collé à partir de Word ou d'autres applications de texte enrichi",
 	"clearFilter": "Supprimer les filtres",
 	"clear_row_and_colun_privilege": "Effacer les privilèges des lignes et des colonnes",
-	"composeEmail": "<em>Compose email</em>",
+	"composeEmail": "Nouveau message",
 	"composeFromTemplate": "Créer à partir d'un modèle",
 	"contained": "Contenu",
 	"containedorequal": "Contenu ou égal",
@@ -1466,6 +1444,13 @@
 	"download_ifc_file": "Télécharger un fichier Ifc",
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "Corps",
+	"emailLookupNames": {
+		"Draft": "Brouillon",
+		"New": "Nouveau",
+		"Outgoing": "Sortant",
+		"Received": "Reçu",
+		"Sent": "Envoyé"
+	},
 	"emailTemplate": "Modèle d'email",
 	"enable": "Activer",
 	"enableGridFilter": "Activer le filtre de table",
@@ -1501,6 +1486,7 @@
 	"loggedGroup": "Groupe connecté",
 	"loggedUser": "Utilisateur connecté",
 	"main": "Principal",
+	"manualRegeneration": "<em>Manual Regeneration</em>",
 	"mode": "Mode",
 	"modifyFilter": "Modifier le filtre",
 	"modifyProject": "Modifier le projet",
@@ -1520,6 +1506,7 @@
 	"projects": "Projets",
 	"readOnly": "Lecture seule",
 	"reference_to_root": "Références à la racine",
+	"regenerateEmail": "Regénérer les e-mails",
 	"relation": "Relation",
 	"remove": "Supprimer",
 	"removeFilter": "Supprimer le filtre",
@@ -1528,6 +1515,8 @@
 	"removeView": "Supprimer la vue",
 	"remove_formatting": "Supprimer la mise en forme",
 	"replace": "Remplacer",
+	"reply": "<em>Reply</em>",
+	"replyEmail": "<em>Reply e-mail</em>",
 	"reset": "Réinitialiser",
 	"root": "Racine",
 	"rotate": "Pivoter",

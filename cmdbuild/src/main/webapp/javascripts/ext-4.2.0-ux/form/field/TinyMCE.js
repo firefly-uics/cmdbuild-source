@@ -17,6 +17,10 @@
 
 		requires: ['Ext.ux.form.field.TinyMCEWindowManager'],
 
+		mixins: {
+			observable: 'Ext.util.Observable'
+		},
+
 		config: {
 			height: 170
 		},
@@ -54,6 +58,8 @@
 
 		constructor: function(config) {
 			var me = this;
+
+			this.mixins.observable.constructor.call(this, arguments);
 
 			config.height = (config.height && config.height >= me.config.height) ? config.height : me.config.height;
 
@@ -104,6 +110,11 @@
 				});
 
 				editor.onKeyPress.add(Ext.Function.createBuffered(me.validate, 250, me));
+
+				// ExtJs change implementation
+				editor.onKeyPress.add(function() {
+					me.fireEvent('change');
+				});
 
 				editor.onPostRender.add(function(editor) {
 					me.editor = editor;
