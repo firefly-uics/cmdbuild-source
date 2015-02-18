@@ -76,13 +76,6 @@ _debug('this.recordsCouldBeRegenerated', this.recordsCouldBeRegenerated);
 		},
 
 		/**
-		 * @return {CMDBuild.view.management.common.widgets.manageEmail.ConfirmRegenerationWindow}
-		 */
-		getView: function() {
-			return this.view;
-		},
-
-		/**
 		 * Regenerates only selected records
 		 */
 		onConfirmRegenerationWindowConfirmButtonClick: function() {
