@@ -93,8 +93,8 @@
 			if (!Ext.isEmpty(data) && !Ext.isEmpty(data[CMDBuild.core.proxy.CMProxyConstants.ID]))
 				delete data[CMDBuild.core.proxy.CMProxyConstants.ID];
 			
-			if (!Ext.isEmpty(data) && !Ext.isEmpty(data[CMDBuild.core.proxy.CMProxyConstants.CONTENT]))
-				data[CMDBuild.core.proxy.CMProxyConstants.BODY] = data[CMDBuild.core.proxy.CMProxyConstants.CONTENT];
+//			if (!Ext.isEmpty(data) && !Ext.isEmpty(data[CMDBuild.core.proxy.CMProxyConstants.CONTENT]))
+//				data[CMDBuild.core.proxy.CMProxyConstants.BODY] = data[CMDBuild.core.proxy.CMProxyConstants.CONTENT];
 
 			this.callParent(arguments);
 		},

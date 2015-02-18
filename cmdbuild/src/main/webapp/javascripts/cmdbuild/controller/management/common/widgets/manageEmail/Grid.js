@@ -352,6 +352,7 @@ _debug('removeRecord record', record);
 		 * @param {Boolean} forceRegeneration
 		 */
 		storeLoad: function(regenerateAllEmails, forceRegeneration) {
+_debug('storeLoad', regenerateAllEmails+ ' ' +forceRegeneration);
 			regenerateAllEmails = regenerateAllEmails || false;
 			forceRegeneration = forceRegeneration || false;
 
