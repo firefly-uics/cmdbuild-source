@@ -238,7 +238,6 @@ _debug('### checkTemplatesToRegenerate');
 
 			this.ownerController.view.mainView.form.initValues(); // Clear form fields dirty state to reset state after regeneration
 _debug('dirtyVariables', dirtyVariables);
-_debug('dirtyVariables real ', Ext.Object.getKeys(this.ownerController.view.mainView.getValues(false, true)));
 _debug('xaVars', xaVars);
 			// Complete dirtyVariables array also with multilevel variables (ex. var1 = '... {client:var2} ...')
 			for (var i in xaVars) {
@@ -265,7 +264,7 @@ _debug('dirtyVariables', dirtyVariables);
 						if (typeof value == 'string') { // Check all types of CQL variables that can contains client variables
 							this.self.searchForCqlClientVariables(
 								value,
-								template.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
+								template.get(CMDBuild.core.proxy.CMProxyConstants.KEY),
 								dirtyVariables,
 								templatesToRegenerate
 							);
@@ -284,9 +283,10 @@ _debug('templatesToRegenerate', templatesToRegenerate);
 		 */
 		extractVariablesForTemplateResolver: function() {
 			var variables = {};
-_debug('this.emailTemplatesObjects', this.emailTemplatesObjects);
+_debug('extractVariablesForTemplateResolver this.emailTemplatesObjects', this.emailTemplatesObjects);
 			Ext.Array.forEach(this.emailTemplatesObjects, function(item, index, allItems) {
 				var templateObject = item.getData();
+_debug('extractVariablesForTemplateResolver templateObject', templateObject);
 				var templateVariables = item.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES);
 
 				for (var key in templateVariables)
@@ -431,7 +431,8 @@ _debug('onEditMode');
 		 */
 		regenerateAllEmails: function(forceRegeneration) {
 			forceRegeneration = forceRegeneration || false;
-_debug('regenerateAllEmails', forceRegeneration);
+_debug('regenerateAllEmails forceRegeneration', forceRegeneration);
+_debug('regenerateAllEmails this.relatedAttributeChanged', this.relatedAttributeChanged);
 			if (forceRegeneration || this.relatedAttributeChanged) {
 //				var regeneratedEmails = [];
 //				var objectsToRegenerate = []; // Array with all store records and emailTemplates from widget configuration which needs to be regenerated
