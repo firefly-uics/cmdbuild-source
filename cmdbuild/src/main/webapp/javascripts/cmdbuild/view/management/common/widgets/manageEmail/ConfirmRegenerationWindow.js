@@ -33,6 +33,12 @@
 		layout: 'border',
 
 		initComponent: function() {
+			this.windowText = Ext.create('Ext.Component', {
+				region: 'north',
+				style: 'padding: 10px;',
+				html: '@@ Testo esplicativo per spiegare cosa fa la finestra'
+			});
+
 			this.grid = Ext.create('Ext.grid.Panel', {
 				region: 'center',
 				autoScroll: true,
@@ -40,12 +46,11 @@
 				collapsible: false,
 				frame: false,
 
+				selModel: Ext.create('Ext.selection.CheckboxModel', {
+					injectCheckbox: 'last'
+				}),
+
 				columns: [
-					{
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.STATUS,
-						hidden: true,
-						sortable: true
-					},
 					{
 						text: CMDBuild.Translation.archivingDate,
 						sortable: true,
@@ -73,56 +78,37 @@
 						hideable: false,
 						renderer: 'stripTags',
 						flex: 2
-					},
-					{
-						xtype: 'checkcolumn',
-						text: '@@ Enable regeneration',
-						dataIndex: '@@ enableRegeneration',
-						width: 120,
-						align: 'center',
-						sortable: false,
-						hideable: false,
-						menuDisabled: true,
-						fixed: true
 					}
 				],
 
 				plugins: [
 					{
 						ptype: 'rowexpander',
-						rowBodyTpl: new Ext.XTemplate( // TODO Ext.create????
+						rowBodyTpl: new Ext.XTemplate(
 							'<p><b>Subject:</b> {subject}</p>',
-							'<p><b>Content:</b> {content}</p>'
+							'<p><b>Content:</b> {body}</p>'
 						)
 					}
 				],
 
 				store: Ext.create('Ext.data.Store', {
 					model: 'CMDBuild.model.widget.ManageEmail.email',
-					data: this.delegate.records || [],
+					data: this.delegate.recordsCouldBeRegenerated || [],
 					sorters: {
 						property: CMDBuild.core.proxy.CMProxyConstants.STATUS,
 						direction: 'ASC'
-					},
-					groupField: CMDBuild.core.proxy.CMProxyConstants.STATUS
+					}
 				})
 			});
 
 			Ext.apply(this, {
-				items: [this.grid],
+				items: [this.windowText, this.grid],
 				buttons: [
 					Ext.create('CMDBuild.buttons.ConfirmButton', {
 						scope: this,
 
 						handler: function() {
 							this.delegate.cmOn('onConfirmRegenerationWindowConfirmButtonClick');
-						}
-					}),
-					Ext.create('CMDBuild.buttons.AbortButton', {
-						scope: this,
-
-						handler: function() {
-							this.delegate.cmOn('onConfirmRegenerationWindowAbortButtonClick');
 						}
 					})
 				]
@@ -133,8 +119,6 @@
 			// Resize window, smaller than default size
 			this.height = this.height * this.defaultSizeH;
 			this.width = this.width * this.defaultSizeW;
-
-_debug('this.grid.getStore()', this.grid.getStore());
 		},
 
 		// Column renderers
@@ -146,7 +130,7 @@ _debug('this.grid.getStore()', this.grid.getStore());
 			 * @return {String}
 			 */
 			addressRenderer: function(value, metadata, record) {
-				if (this.delegate.recordIsReceived(record)) {
+				if (this.delegate.gridDelegate.recordIsReceived(record)) {
 					return record.get(CMDBuild.core.proxy.CMProxyConstants.FROM);
 				} else {
 					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
