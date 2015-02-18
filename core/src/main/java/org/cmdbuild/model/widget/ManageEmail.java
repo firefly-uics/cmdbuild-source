@@ -151,7 +151,7 @@ public class ManageEmail extends Widget {
 			throws Exception {
 		final Map<String, Object> inputMap = (Map<String, Object>) input;
 		final Long instanceId = activityInstance.getProcessInstance().getCardId();
-		final Long submittedInstanceId = Integer.class.cast(inputMap.get(DEFAULT_SUBMISSION_PARAM)).longValue();
+		final Long submittedInstanceId = Number.class.cast(inputMap.get(DEFAULT_SUBMISSION_PARAM)).longValue();
 		final Iterable<Email> emails = from(emailLogic.readAll(submittedInstanceId)).filter(statusIs(draft()));
 		for (final Email email : emails) {
 			if (email.isTemporary()) {
