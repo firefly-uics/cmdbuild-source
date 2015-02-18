@@ -195,6 +195,7 @@ public class ReadEmailTaskJobFactory extends AbstractJobFactory<ReadEmailTask> {
 
 		final ReadEmailCommand.Builder readEmail = ReadEmailCommand.newInstance() //
 				.withEmailService(service) //
+				.withEmailStore(emailStore) //
 				.withPredicate(predicate(task));
 
 		if (TaskPredicate.SEND_NOTIFICATION.apply(task)) {
