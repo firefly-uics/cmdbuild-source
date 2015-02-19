@@ -18,6 +18,7 @@ import org.cmdbuild.service.rest.v2.ClassPrivileges;
 import org.cmdbuild.service.rest.v2.Classes;
 import org.cmdbuild.service.rest.v2.DomainAttributes;
 import org.cmdbuild.service.rest.v2.Domains;
+import org.cmdbuild.service.rest.v2.Emails;
 import org.cmdbuild.service.rest.v2.Impersonate;
 import org.cmdbuild.service.rest.v2.LookupTypeValues;
 import org.cmdbuild.service.rest.v2.LookupTypes;
@@ -42,6 +43,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfClassPrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfClasses;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
+import org.cmdbuild.service.rest.v2.cxf.CxfEmails;
 import org.cmdbuild.service.rest.v2.cxf.CxfImpersonate;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypes;
@@ -73,13 +75,13 @@ import org.cmdbuild.service.rest.v2.cxf.service.TokenGenerator;
 import org.cmdbuild.service.rest.v2.logging.LoggingSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 
-@Component
+@Configuration
 public class ServicesV2 implements LoggingSupport {
 
 	@Autowired
@@ -135,6 +137,12 @@ public class ServicesV2 implements LoggingSupport {
 		final CxfDomainAttributes service = new CxfDomainAttributes(v2_errorHandler(), helper.userDataAccessLogic(),
 				helper.systemDataView(), helper.metadataStoreFactory(), helper.lookupLogic());
 		return proxy(DomainAttributes.class, service);
+	}
+
+	@Bean
+	public Emails v2_emails() {
+		final CxfEmails service = new CxfEmails(helper.emailLogic());
+		return proxy(Emails.class, service);
 	}
 
 	@Bean

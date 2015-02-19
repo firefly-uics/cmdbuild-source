@@ -35,6 +35,7 @@
 			<ref bean="v2_classPrivileges" />
 			<ref bean="v2_domains" />
 			<ref bean="v2_domainAttributes" />
+			<ref bean="v2_emails" />
 			<ref bean="v2_relations" />
 			<ref bean="v2_impersonate" />
 			<ref bean="v2_lookupTypes" />
