@@ -19,7 +19,6 @@ import static org.cmdbuild.service.rest.v2.model.Models.newResponseMultiple;
 import static org.cmdbuild.service.rest.v2.model.Models.newResponseSingle;
 
 import java.util.Collection;
-import java.util.Date;
 
 import org.cmdbuild.common.utils.UnsupportedProxyFactory;
 import org.cmdbuild.dao.entrytype.attributetype.DateAttributeType;
@@ -41,6 +40,7 @@ import org.cmdbuild.service.rest.v2.cxf.serialization.DefaultConverter;
 import org.cmdbuild.service.rest.v2.model.Email;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
+import org.joda.time.DateTime;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -75,7 +75,7 @@ public class CxfEmails implements Emails {
 					.withBcc(splitAddresses(input.getBccAddresses())) //
 					.withSubject(input.getSubject()) //
 					.withBody(input.getContent()) //
-					.withDate(dateAsString(input.getDate().toDate())) //
+					.withDate(dateAsString(input.getDate())) //
 					.withStatus(statuses.inverse().get(input.getStatus())) //
 					.withReference(input.getActivityId()) //
 					.withNotifyWith(input.getNotifyWith()) //
@@ -94,11 +94,11 @@ public class CxfEmails implements Emails {
 					.splitToList(defaultString(addresses));
 		}
 
-		private String dateAsString(final Date input) {
-			return DefaultConverter.newInstance() //
+		private String dateAsString(final DateTime input) {
+			return (input == null) ? null : DefaultConverter.newInstance() //
 					.build() //
 					.toClient() //
-					.convert(DATE_ATTRIBUTE_TYPE, input) //
+					.convert(DATE_ATTRIBUTE_TYPE, input.toDate()) //
 					.toString();
 
 		}
