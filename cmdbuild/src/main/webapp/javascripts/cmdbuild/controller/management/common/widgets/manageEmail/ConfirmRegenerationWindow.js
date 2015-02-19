@@ -44,6 +44,7 @@ _debug('configObject', configObject);
 					&& this.gridDelegate.recordIsEditable(item)
 					&& Ext.Array.contains(emailTemplatesToRegenerate, item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
 					&& this.parentDelegate.resolveTemplateCondition(item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE))
+					&& item.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
 				) {
 					this.recordsCouldBeRegenerated.push(item);
 				}

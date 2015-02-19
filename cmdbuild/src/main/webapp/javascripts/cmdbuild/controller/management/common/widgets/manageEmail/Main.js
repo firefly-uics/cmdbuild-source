@@ -192,10 +192,7 @@ _debug('grid store', this.grid.getStore());
 _debug('bindLocalDepsChangeEvent', record);
 			templateResolver.bindLocalDepsChange(function() {
 				if (!Ext.Object.isEmpty(record)) {
-					if (
-						record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION)
-						&& record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
-					) {
+					if (record.get(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION)) {
 						Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.ConfirmRegenerationWindow', {
 							parentDelegate: scope,
 							gridDelegate: scope.controllerGrid
@@ -252,6 +249,7 @@ _debug('checkTemplatesToRegenerate xaVars', xaVars);
 					);
 				}
 			}
+_debug('checkTemplatesToRegenerate this.emailTemplatesObjects', this.emailTemplatesObjects);
 _debug('checkTemplatesToRegenerate dirtyVariables', dirtyVariables);
 			// Check templates attributes looking for dirtyVariables as client variables (ex. {client:varName})
 			Ext.Array.forEach(this.emailTemplatesObjects, function(template, templateIndex, allTemplatesItems) {
@@ -260,7 +258,7 @@ _debug('checkTemplatesToRegenerate dirtyVariables', dirtyVariables);
 						if (typeof value == 'string') { // Check all types of CQL variables that can contains client variables
 							this.self.searchForCqlClientVariables(
 								value,
-								template.get(CMDBuild.core.proxy.CMProxyConstants.KEY),
+								template.get(CMDBuild.core.proxy.CMProxyConstants.KEY) || template.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
 								dirtyVariables,
 								templatesToRegenerate
 							);
@@ -348,7 +346,11 @@ _debug('templateIdentifier', templateIdentifier);
 				},
 				scope: this,
 				failure: function(response, options, decodedResponse) {
-					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail controller error: get template call failure', false);
+					CMDBuild.Msg.error(
+						CMDBuild.Translation.common.failure,
+						Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure, this.selectedName),
+						false
+					);
 				},
 				success: function(response, options, decodedResponse) {
 					var template = decodedResponse.response.elements;
