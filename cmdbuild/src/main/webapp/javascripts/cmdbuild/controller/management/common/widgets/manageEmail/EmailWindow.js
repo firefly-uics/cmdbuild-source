@@ -190,6 +190,10 @@ _debug('values', values);
 					} else {
 						setValueArray.push(
 							{
+								id: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
+								value: values[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION]
+							},
+							{
 								id: CMDBuild.core.proxy.CMProxyConstants.FROM,
 								value: values[CMDBuild.core.proxy.CMProxyConstants.FROM]
 							},
@@ -217,7 +221,9 @@ _debug('values', values);
 					}
 
 					me.view.formPanel.getForm().setValues(setValueArray);
-//					me.record = Ext.create('CMDBuild.model.widget.ManageEmail.email', values); // Updates also record property
+
+					// Updates record's prompt synchronizations flag
+					me.record.set(CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION, values[CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION]);
 				}
 			});
 		},
@@ -306,7 +312,7 @@ _debug('onEmailChange');
 			if (!this.isAdvicePrompted && this.isKeepSynchronizationChecked()) {
 				this.isAdvicePrompted = true;
 
-				CMDBuild.Msg.warn(null, '@@ E-mail changed and \"Auto synchronization\" active. <br />If \"Auto synchronization\" some change could be missed.');
+				CMDBuild.Msg.warn(null, CMDBuild.Translation.errors.emailChangedWithAutoSynch);
 			}
 		},
 
@@ -363,11 +369,15 @@ _debug('onFillFromTemplateButtonClick', this.record);
 				},
 				scope: this,
 				failure: function(response, options, decodedResponse) {
-					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail EmailWindow controller error: get template call failure', false);
+					CMDBuild.Msg.error(
+						CMDBuild.Translation.common.failure,
+						Ext.String.format(CMDBuild.Translation.errors.getTemplateWithNameFailure, this.selectedName),
+						false
+					);
 				},
 				success: function(response, options, decodedResponse) {
-					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, templateName); // Bind templateName to email record
 					this.loadFormValues(Ext.create('CMDBuild.model.widget.ManageEmail.template', decodedResponse.response));
+					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, templateName); // Bind templateName to email record
 				},
 				callback: function(options, success, response) {
 					this.view.setLoading(false);
