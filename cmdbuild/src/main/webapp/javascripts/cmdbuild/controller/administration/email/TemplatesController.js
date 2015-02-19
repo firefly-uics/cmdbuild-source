@@ -223,13 +223,14 @@
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.EmailTemplates.get({
 					params: {
-						name: this.selectedName
+						name: 'this.selectedName'
 					},
 					scope: this,
 					failure: function(response, options, decodedResponse) {
 						CMDBuild.Msg.error(
 							CMDBuild.Translation.common.failure,
-							CMDBuild.Translation.errors.getTemplateWithNameFailure, //'@@ Get template failure with name "' + this.selectedName + '"',
+							CMDBuild.Translation.errors.getTemplateWithNameFailure + ' ' + this.selectedName,
+//							CMDBuild.core.Msg.stringParse(CMDBuild.Translation.errors.getTemplateWithNameFailure, [this.selectedName]),
 							false
 						);
 					},

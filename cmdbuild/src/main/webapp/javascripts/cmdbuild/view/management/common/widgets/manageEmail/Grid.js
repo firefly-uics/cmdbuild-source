@@ -133,7 +133,7 @@
 								scope: this,
 
 								isDisabled: function(grid, rowIndex, colIndex, item, record) {
-									return this.readOnly;
+									return this.readOnly || this.delegate.recordIsEditable(record);
 								},
 
 								handler: function(grid, rowIndex, colIndex, node, e, record, rowNode) {

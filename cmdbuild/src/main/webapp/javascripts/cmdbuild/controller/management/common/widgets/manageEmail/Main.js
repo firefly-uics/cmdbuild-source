@@ -180,7 +180,7 @@ _debug('this.widgetConfTemplates', this.widgetConfTemplates);
 		beforeActiveView: function() {
 _debug('BEFORE ACTIVE VIEW');
 _debug('grid store', this.grid.getStore());
-			this.controllerGrid.storeLoad(true, true);
+			this.controllerGrid.storeLoad(true);
 		},
 
 		/**
