@@ -21,7 +21,7 @@ import org.cmdbuild.logic.email.EmailLogic.Status;
 import org.cmdbuild.model.AbstractEmail;
 import org.cmdbuild.workflow.CMActivityInstance;
 
-import com.google.common.collect.Lists;
+import static com.google.common.collect.Lists.*;
 
 public class ManageEmail extends Widget {
 
@@ -110,7 +110,7 @@ public class ManageEmail extends Widget {
 	public ManageEmail(final EmailLogic emailLogic) {
 		super();
 		this.emailLogic = emailLogic;
-		this.templates = Lists.newArrayList();
+		this.templates = newArrayList();
 	}
 
 	@Override
@@ -127,7 +127,7 @@ public class ManageEmail extends Widget {
 	}
 
 	public List<EmailTemplate> getTemplates() {
-		return Lists.newArrayList(templates);
+		return newArrayList(templates);
 	}
 
 	public void setTemplates(Collection<EmailTemplate> templates) {
@@ -151,13 +151,14 @@ public class ManageEmail extends Widget {
 			throws Exception {
 		final Map<String, Object> inputMap = (Map<String, Object>) input;
 		final Long instanceId = activityInstance.getProcessInstance().getCardId();
-		final Long submittedInstanceId = Integer.class.cast(inputMap.get(DEFAULT_SUBMISSION_PARAM)).longValue();
+		final Long submittedInstanceId = Number.class.cast(inputMap.get(DEFAULT_SUBMISSION_PARAM)).longValue();
 		final Iterable<Email> emails = from(emailLogic.readAll(submittedInstanceId)).filter(statusIs(draft()));
+		final Collection<Email> toBeDeleted = newArrayList();
+		final Collection<Email> toBeCreated = newArrayList();
 		for (final Email email : emails) {
 			if (email.isTemporary()) {
-				emailLogic.delete(email);
-
-				emailLogic.create(new ForwardingEmail() {
+				toBeDeleted.add(email);
+				toBeCreated.add(new ForwardingEmail() {
 
 					@Override
 					protected Email delegate() {
@@ -176,8 +177,14 @@ public class ManageEmail extends Widget {
 
 				});
 			}
-			// TODO attachments
 		}
+		for (final Email email : toBeDeleted) {
+			emailLogic.delete(email);
+		}
+		for (final Email email : toBeCreated) {
+			emailLogic.create(email);
+		}
+		// TODO attachments
 	}
 
 	@Override

@@ -1445,13 +1445,14 @@
 	"editEmail": "Edit e-mail",
 	"emailBody": "Body",
 	"emailLookupNames": {
-		"Draft": "Drafts",
-		"New": "New",
-		"Outgoing": "Outgoing",
-		"Received": "Received",
-		"Sent": "Sent"
+		"draft": "Drafts",
+		"new": "New",
+		"outgoing": "Outgoing",
+		"received": "Received",
+		"sent": "Sent"
 	},
 	"emailTemplate": "E-mail Template",
+	"emailRegenerationConfirmPopupText": "This will delete all the unsent emails.",
 	"enable": "Enable",
 	"enableGridFilter": "Enable grid filter",
 	"enabled": "Enabled",

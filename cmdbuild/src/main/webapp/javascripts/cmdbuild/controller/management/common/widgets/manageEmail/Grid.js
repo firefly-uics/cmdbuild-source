@@ -101,10 +101,8 @@
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
-		 * @param {Boolean} enableStoreLoad
 		 */
-		addRecord: function(record, disableStoreLoad) {
-			disableStoreLoad = disableStoreLoad || false;
+		addRecord: function(record) {
 _debug('addRecord record', record);
 			this.parentDelegate.view.setLoading(true);
 			CMDBuild.core.proxy.widgets.ManageEmail.create({
@@ -114,22 +112,12 @@ _debug('addRecord record', record);
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email create call failure', false);
 				},
 				success: function(response, options, decodedResponse) {
-					if (!disableStoreLoad)
-						this.storeLoad();
+					this.storeLoad();
 				},
 				callback: function(options, success, response) {
 					this.parentDelegate.view.setLoading(false);
 				}
 			});
-		},
-
-		/**
-		 * @param {Object} values
-		 */
-		addTemplate: function(values) {
-			var record = this.createRecord(values);
-
-			this.addRecord(record);
 		},
 
 		/**
@@ -151,10 +139,8 @@ _debug('addRecord record', record);
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
-		 * @param {Boolean} enableStoreLoad
 		 */
-		editRecord: function(record, disableStoreLoad) {
-			disableStoreLoad = disableStoreLoad || false;
+		editRecord: function(record) {
 _debug('editRecord record', record);
 			this.parentDelegate.view.setLoading(true);
 			CMDBuild.core.proxy.widgets.ManageEmail.update({
@@ -164,20 +150,12 @@ _debug('editRecord record', record);
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email update call failure', false);
 				},
 				success: function(response, options, decodedResponse) {
-					if (!disableStoreLoad)
-						this.storeLoad();
+					this.storeLoad();
 				},
 				callback: function(options, success, response) {
 					this.parentDelegate.view.setLoading(false);
 				}
 			});
-		},
-
-		/**
-		 * @return {Array}
-		 */
-		getDeletedEmails: function () {
-			return this.deletedEmails;
 		},
 
 		/**
@@ -202,44 +180,21 @@ _debug('editRecord record', record);
 		},
 
 		/**
-		 * @param {Boolean} modifiedOnly
-		 *
-		 * @return {Array} outgoingEmails
-		 */
-		getOutgoingEmails: function(modifiedOnly) {
-			var allOutgoing = modifiedOnly ? false : true;
-			var outgoingEmails = [];
-			var emails = this.view.getStore().getRange();
-
-			for (var i = 0; i < emails.length; ++i) {
-				var currentEmail = emails[i];
-
-				if (allOutgoing || currentEmail.dirty)
-					outgoingEmails.push(currentEmail.data);
-			}
-
-			return outgoingEmails;
-		},
-
-		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 *
 		 * @return {Boolean}
 		 */
 		isRegenerable: function(record) {
-			return !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)) && record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION);
+			return !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE));
 		},
 
 		onEmailAddButtonClick: function() {
-			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
+			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: this.createRecord(),
 				widgetConf: this.widgetConf,
 				widgetController: this.parentDelegate
 			});
-
-			this.emailWindow = this.controllerEmailWindow.getView();
-			this.emailWindow.show();
 		},
 
 		/**
@@ -262,16 +217,13 @@ _debug('editRecord record', record);
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		onEmailEditButtonClick: function(record) {
-			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
+			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: record,
 				widgetConf: this.widgetConf,
 				widgetController: this.parentDelegate,
 				windowMode: 'edit'
 			});
-
-			this.emailWindow = this.controllerEmailWindow.getView();
-			this.emailWindow.show();
 		},
 
 		/**
@@ -312,32 +264,26 @@ _debug('editRecord record', record);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] = 'RE: ' + record.get(CMDBuild.core.proxy.CMProxyConstants.SUBJECT);
 			replyRecordData[CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES] = record.get(CMDBuild.core.proxy.CMProxyConstants.FROM_ADDRESS) || record.get(CMDBuild.core.proxy.CMProxyConstants.TO_ADDRESSES);
 
-			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
+			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: Ext.create('CMDBuild.model.widget.ManageEmail.email', replyRecordData),
 				widgetConf: this.widgetConf,
 				widgetController: this.parentDelegate,
 				windowMode: 'reply'
 			});
-
-			this.emailWindow = this.controllerEmailWindow.getView();
-			this.emailWindow.show();
 		},
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
 		 */
 		onEmailViewButtonClick: function(record) {
-			this.controllerEmailWindow = Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
+			Ext.create('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
 				parentDelegate: this,
 				record: record,
 				widgetConf: this.widgetConf,
 				widgetController: this.parentDelegate,
 				windowMode: 'view'
 			});
-
-			this.emailWindow = this.controllerEmailWindow.getView();
-			this.emailWindow.show();
 		},
 
 		/**
@@ -371,10 +317,8 @@ _debug('editRecord record', record);
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
-		 * @param {Boolean} enableStoreLoad
 		 */
-		removeRecord: function(record, disableStoreLoad) {
-			disableStoreLoad = disableStoreLoad || false;
+		removeRecord: function(record) {
 _debug('removeRecord record', record);
 			this.parentDelegate.view.setLoading(true);
 			CMDBuild.core.proxy.widgets.ManageEmail.remove({
@@ -384,8 +328,7 @@ _debug('removeRecord record', record);
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email remove call failure', false);
 				},
 				success: function(response, options, decodedResponse) {
-					if (!disableStoreLoad)
-						this.storeLoad();
+					this.storeLoad();
 				},
 				callback: function(options, success, response) {
 					this.parentDelegate.view.setLoading(false);
@@ -400,21 +343,24 @@ _debug('removeRecord record', record);
 		 * @param {Boolean} forceRegeneration
 		 */
 		storeLoad: function(regenerateAllEmails, forceRegeneration) {
-			regenerateAllEmails = regenerateAllEmails || false;
-			forceRegeneration = forceRegeneration || false;
+			if (!this.view.getStore().isLoading()) {
+_debug('storeLoad', regenerateAllEmails+ ' ' +forceRegeneration);
+				regenerateAllEmails = regenerateAllEmails || false;
+				forceRegeneration = forceRegeneration || false;
 
-			this.parentDelegate.view.setLoading(true);
-			this.view.getStore().load({
-				params: {
-					activityId: this.parentDelegate.getActivityId()
-				},
-				scope: this,
-				callback: function(records, operation, success) {
-					this.parentDelegate.view.setLoading(false);
+				this.parentDelegate.view.setLoading(true);
+				this.view.getStore().load({
+					params: {
+						activityId: this.parentDelegate.getActivityId()
+					},
+					scope: this,
+					callback: function(records, operation, success) {
+						this.parentDelegate.view.setLoading(false);
 
-					this.parentDelegate.getAllTemplatesData(regenerateAllEmails, forceRegeneration);
-				}
-			});
+						this.parentDelegate.getAllTemplatesData(regenerateAllEmails, forceRegeneration);
+					}
+				});
+			}
 		}
 	});
 

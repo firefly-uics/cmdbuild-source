@@ -1445,13 +1445,14 @@
 	"editEmail": "Modifica e-mail",
 	"emailBody": "Contenuto",
 	"emailLookupNames": {
-		"Draft": "Bozze",
-		"New": "Nuove",
-		"Outgoing": "In uscita",
-		"Received": "Ricevute",
-		"Sent": "Inviate"
+		"draft": "Bozze",
+		"new": "Nuove",
+		"outgoing": "In uscita",
+		"received": "Ricevute",
+		"sent": "Inviate"
 	},
 	"emailTemplate": "E-mail Template",
+	"emailRegenerationConfirmPopupText": "Le e-mail non inviate verranno perse.",
 	"enable": "Abilita",
 	"enableGridFilter": "Abilita filtro griglia",
 	"enabled": "Abilitato",
