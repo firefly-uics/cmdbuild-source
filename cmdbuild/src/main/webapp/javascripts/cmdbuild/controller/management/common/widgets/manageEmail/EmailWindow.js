@@ -53,7 +53,7 @@
 		/**
 		 * @cfg {Array}
 		 */
-		windowModeAvailable: ['confirm','create', 'edit', 'reply', 'view'],
+		windowModeAvailable: ['create', 'edit', 'reply', 'view'],
 
 		/**
 		 * @param {Object} configObject
@@ -170,13 +170,13 @@ _debug('### loadFormValues');
 			var xaVars = Ext.apply({}, record.getData(), record.get(CMDBuild.core.proxy.CMProxyConstants.VARIABLES));
 
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
-				clientForm: me.widgetController.clientForm,
+				clientForm: this.widgetController.clientForm,
 				xaVars: xaVars,
-				serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars()
+				serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(this.widgetController.card)
 			});
-
+_debug('this.templateResolver', this.templateResolver);
 			this.templateResolver.resolveTemplates({
-				attributes: Ext.Object.getKeys(record.getData()),
+				attributes: Ext.Object.getKeys(xaVars),
 				callback: function(values, ctx) {
 _debug('values', values);
 					var setValueArray = [];

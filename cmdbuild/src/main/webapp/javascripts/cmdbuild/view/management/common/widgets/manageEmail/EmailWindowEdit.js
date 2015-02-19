@@ -65,25 +65,40 @@
 			// END: Buttons configuration
 
 			// Fill from template button store configuration
-			this.templatesStore = CMDBuild.core.proxy.EmailTemplates.getStore();
-			this.templatesStore.load({
-				callback: function(records, operation, success) {
-					if (records.length > 0) {
-						for (var index in records) {
-							var record = records[index];
+			this.setLoading(true);
+			CMDBuild.core.proxy.EmailTemplates.getAll({
+				scope: this,
+				success: function(response, options, decodedResponse) {
+					var templatesArray = decodedResponse.response.elements;
 
-							me.fillFromTemplateButton.menu.add({
-								text: record.get(CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION),
-								templateName: record.get(CMDBuild.core.proxy.CMProxyConstants.NAME),
+					if (templatesArray.length > 0) {
+						// Sort templatesArray by description ascending
+						Ext.Array.sort(templatesArray, function(item1, item2) {
+							if (item1[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] < item2[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION])
+								return -1;
+
+							if (item1[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION] > item2[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION])
+								return 1;
+
+							return 0;
+						});
+
+						Ext.Array.forEach(templatesArray, function(template, index, allItems) {
+							this.fillFromTemplateButton.menu.add({
+								text: template[CMDBuild.core.proxy.CMProxyConstants.DESCRIPTION],
+								templateName: template[CMDBuild.core.proxy.CMProxyConstants.NAME],
 
 								handler: function(button, e) {
-									me.delegate.cmOn('onFillFromTemplateButtonClick', button[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_NAME]);
+									this.delegate.cmOn('onFillFromTemplateButtonClick', button[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_NAME]);
 								}
 							});
-						}
+						}, this);
 					} else { // To disable button if the aren't templates
-						me.fillFromTemplateButton.setDisabled(true);
+						this.fillFromTemplateButton.setDisabled(true);
 					}
+				},
+				callback: function(options, success, response) {
+					this.setLoading(false);
 				}
 			});
 
