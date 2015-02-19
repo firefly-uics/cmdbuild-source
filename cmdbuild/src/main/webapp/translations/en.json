@@ -913,6 +913,8 @@
 		"domainCardinalityViolation": "Domain cardinality violation",
 		"error_message": "Error",
 		"error_moving_row": "An error occourred while moving the row",
+		"getTemplateWithNameFailure": "Get template with name \"{0}\" failure",
+		"emailChangedWithAutoSynch": "E-mail changed and \"Auto synchronization\" is active. <br />Some changes could be missed.",
 		"invalid_attributes": "The following fields have not been filled correctly:",
 		"invalid_extended_attributes": "The following visual controls have not been filled correctly:",
 		"invalid_fields": "Some fields have not been filled correctly",
