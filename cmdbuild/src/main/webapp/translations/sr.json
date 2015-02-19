@@ -1452,6 +1452,7 @@
 		"sent": "Poslane"
 	},
 	"emailTemplate": "ŠAblon e-pošte",
+	"emailRegenerationConfirmPopupText": "Ovo će obrisati sve neisporučene poruke e-pošte.",
 	"enable": "Omogući",
 	"enableGridFilter": "Uključi filtriranje tabele",
 	"enabled": "Uključen",

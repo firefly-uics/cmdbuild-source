@@ -1452,6 +1452,7 @@
 		"sent": "ارسالی"
 	},
 	"emailTemplate": "قالب ایمیل",
+	"emailRegenerationConfirmPopupText": "این تمام ایمیل های ست نشده را حذف میکند.",
 	"enable": "فعال",
 	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": "فعال شده",

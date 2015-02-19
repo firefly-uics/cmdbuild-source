@@ -1452,6 +1452,7 @@
 		"sent": "Послане"
 	},
 	"emailTemplate": "ШАблон е-поште",
+	"emailRegenerationConfirmPopupText": "Ово ће обрисати све неиспоручене поруке е-поште.",
 	"enable": "Омогући",
 	"enableGridFilter": "Укључи филтрирање табеле",
 	"enabled": "Укључен",
