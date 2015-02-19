@@ -1445,13 +1445,14 @@
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "Текст письма",
 	"emailLookupNames": {
-		"Draft": "Черновики",
-		"New": "Создать",
-		"Outgoing": "Исходящие",
-		"Received": "Входящие",
-		"Sent": "Отправленные"
+		"draft": "Черновики",
+		"new": "Создать",
+		"outgoing": "Исходящие",
+		"received": "Входящие",
+		"sent": "Отправленные"
 	},
 	"emailTemplate": "Шаблон письма",
+	"emailRegenerationConfirmPopupText": "Это действие удалит все неотправленные сообщения",
 	"enable": "Включить",
 	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": "Включено",

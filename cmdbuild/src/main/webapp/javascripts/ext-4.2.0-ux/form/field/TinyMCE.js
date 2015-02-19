@@ -113,7 +113,7 @@
 
 				// ExtJs change implementation
 				editor.onKeyPress.add(function() {
-					me.fireEvent('change');
+					me.fireEvent('change', me);
 				});
 
 				editor.onPostRender.add(function(editor) {

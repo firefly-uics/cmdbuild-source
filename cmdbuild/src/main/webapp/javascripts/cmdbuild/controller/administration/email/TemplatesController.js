@@ -223,11 +223,16 @@
 				CMDBuild.LoadMask.get().show();
 				CMDBuild.core.proxy.EmailTemplates.get({
 					params: {
-						name: this.selectedName
+						name: 'this.selectedName'
 					},
 					scope: this,
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ EmailTemplates controller error: get template call failure', false);
+						CMDBuild.Msg.error(
+							CMDBuild.Translation.common.failure,
+							CMDBuild.Translation.errors.getTemplateWithNameFailure + ' ' + this.selectedName,
+//							CMDBuild.core.Msg.stringParse(CMDBuild.Translation.errors.getTemplateWithNameFailure, [this.selectedName]),
+							false
+						);
 					},
 					success: function(response, options, decodedResponse) {
 						var templateModel = Ext.create('CMDBuild.model.EmailTemplates.singleTemplate', decodedResponse.response);

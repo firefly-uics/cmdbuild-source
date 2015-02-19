@@ -1444,14 +1444,15 @@
 	"download_ifc_file": "Preuzmi Ifc datoteku",
 	"editEmail": "Izmeni e-poštu",
 	"emailBody": "Telo poruke",
-	"lookup": {
-		"Draft": "Započete",
-		"New": "Nove",
-		"Outgoing": "Za slanje",
-		"Received": "Primljene",
-		"Sent": "Poslane"
+	"emailLookupNames": {
+		"draft": "Započete",
+		"new": "Nove",
+		"outgoing": "Za slanje",
+		"received": "Primljene",
+		"sent": "Poslane"
 	},
 	"emailTemplate": "ŠAblon e-pošte",
+	"emailRegenerationConfirmPopupText": "Ovo će obrisati sve neisporučene poruke e-pošte.",
 	"enable": "Omogući",
 	"enableGridFilter": "Uključi filtriranje tabele",
 	"enabled": "Uključen",

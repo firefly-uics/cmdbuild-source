@@ -1445,13 +1445,14 @@
 	"editEmail": "Modificeer email",
 	"emailBody": "Hoofddeel",
 	"emailLookupNames": {
-		"Draft": "Klad",
-		"New": "Nieuw",
-		"Outgoing": "Uitgaand",
-		"Received": "Ontvangen",
-		"Sent": "verstuurd"
+		"draft": "Klad",
+		"new": "Nieuw",
+		"outgoing": "Uitgaand",
+		"received": "Ontvangen",
+		"sent": "verstuurd"
 	},
 	"emailTemplate": "Email sjabloon",
+	"emailRegenerationConfirmPopupText": "Dit zal alle niet-verstuurde emails verwijderen.",
 	"enable": "Activeer",
 	"enableGridFilter": "Instellen raster filter",
 	"enabled": "Geactiveerd",

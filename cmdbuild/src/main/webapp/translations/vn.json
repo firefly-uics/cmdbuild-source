@@ -1445,13 +1445,14 @@
 	"editEmail": "<em>Edit email</em>",
 	"emailBody": "<em>Body</em>",
 	"emailLookupNames": {
-		"Draft": "Dự thảo",
-		"New": "Mới",
-		"Outgoing": "Hộp gửi đi",
-		"Received": "Nhận được",
-		"Sent": "Gửi"
+		"draft": "Dự thảo",
+		"new": "Mới",
+		"outgoing": "Hộp gửi đi",
+		"received": "Nhận được",
+		"sent": "Gửi"
 	},
 	"emailTemplate": "<em>Email Template</em>",
+	"emailRegenerationConfirmPopupText": "Xóa hết các email không gửi được.",
 	"enable": "<em>Enable</em>",
 	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": " Kích hoạt",

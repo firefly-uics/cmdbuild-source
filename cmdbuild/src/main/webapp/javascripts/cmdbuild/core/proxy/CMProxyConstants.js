@@ -157,6 +157,7 @@
 		NOTIFICATION_EMAIL_TEMPLATE_ERROR: 'notificationEmailTemplateError',
 		NOTIFY_WITH: 'notifyWith',
 		NOT_NULL: 'isnotnull',
+		NOT_POSITIVES: 'notPositives',
 		NO_SUBJECT_PREFIX: 'noSubjectPrefix',
 		OPERATIONS: 'operations',
 		ORACLE: 'oracle',
