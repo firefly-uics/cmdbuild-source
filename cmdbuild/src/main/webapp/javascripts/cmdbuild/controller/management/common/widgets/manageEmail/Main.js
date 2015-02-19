@@ -185,7 +185,7 @@ _debug('this.widgetConfTemplates', this.widgetConfTemplates);
 		beforeActiveView: function() {
 _debug('BEFORE ACTIVE VIEW');
 _debug('grid store', this.grid.getStore());
-			this.controllerGrid.storeLoad(true);
+			this.controllerGrid.storeLoad(true, true);
 		},
 
 		/**
@@ -216,12 +216,13 @@ _debug('bindLocalDepsChangeEvent', record);
 
 		/**
 		 * @param {Array} data
+		 * @param {CMDBuild.Management.TemplateResolver} templateResolver
 		 *
 		 * @return {Boolean}
 		 */
-		checkCondition: function(data) {
+		checkCondition: function(data, templateResolver) {
 			var conditionExpr = data[CMDBuild.core.proxy.CMProxyConstants.CONDITION];
-
+_debug('checkCondition conditionExpr', conditionExpr);
 			return Ext.isEmpty(conditionExpr) || templateResolver.safeJSEval(conditionExpr);
 		},
 
@@ -434,6 +435,13 @@ _debug('onEditMode');
 _debug('regenerateAllEmails forceRegeneration', forceRegeneration);
 _debug('regenerateAllEmails this.relatedAttributeChanged', this.relatedAttributeChanged);
 			if (forceRegeneration || this.relatedAttributeChanged) {
+				if (forceRegeneration) {
+					// TODO fare funzione storeReset() in gridController
+					Ext.Array.forEach(this.controllerGrid.getDraftEmails(), function(item, index, allItems) {
+						this.controllerGrid.removeRecord(item);
+					}, this);
+				}
+				
 //				var regeneratedEmails = [];
 //				var objectsToRegenerate = []; // Array with all store records and emailTemplates from widget configuration which needs to be regenerated
 				var regeneratedTemplatesIdentifiers = [];
@@ -475,9 +483,9 @@ _debug('regeneratedTemplatesIdentifiers', regeneratedTemplatesIdentifiers);
 							regeneratedTemplatesIdentifiers.push(templateIdentifier);
 					}
 				}, this);
-
+				
 				this.relatedAttributeChanged = false; // Reset attribute changed flag
-
+				
 				this.controllerGrid.storeLoad(); // Load at end of all changes
 			}
 		},
@@ -516,30 +524,33 @@ _debug('regenerateEmail recordTemplate', recordTemplate);
 				var templateData = recordTemplate.getData();
 _debug('regenerateEmail templateData', templateData);
 				var xaVars = Ext.apply({}, templateData, record.getData());
-_debug('apply', [templateData, record.getData()]);
-_debug('tplResolver xaVars', xaVars);
+_debug('regenerateEmail apply', [templateData, record.getData()]);
+_debug('regenerateEmail xaVars', xaVars);
 				var templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: me.clientForm,
 					xaVars: xaVars,
 					serverVars: this.getTemplateResolverServerVars()
 				});
-_debug('this.templateResolver', templateResolver);
+_debug('regenerateEmail this.templateResolver', templateResolver);
 				templateResolver.resolveTemplates({
 					attributes: Ext.Object.getKeys(recordTemplate.getData()),
 					callback: function(values, ctx) {
-_debug('values', values);
-						if (me.checkCondition(values)) {
+_debug('regenerateEmail values', values);
+						if (me.checkCondition(values, templateResolver)) {
 							_msg('Email with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
 
 							for (var key in values)
 								record.set(key, values[key]);
-_debug('record', record);
+_debug('regenerateEmail record', record);
 							me.controllerGrid.editRecord(record, true);
 
 							emailRegenerationStatus = true;
+							
+							me.bindLocalDepsChangeEvent(record, templateResolver, me);
+						} else {
+_debug('regenerateEmail remove record', record);
+							me.controllerGrid.removeRecord(record, true);
 						}
-
-						me.bindLocalDepsChangeEvent(record, templateResolver, me);
 
 						me.templateResolverIsBusy = false;
 					}
@@ -591,29 +602,29 @@ _debug('regenerateTemplate', template);
 
 				this.templateResolverIsBusy = true;
 
-				var templateData = template.getData();
-_debug('apply', [templateData]);
+				var templateData = Ext.apply({}, template.getData(), template.getData()['variables']);
+_debug('regenerateTemplate apply', [templateData]);
 				var templateResolver = new CMDBuild.Management.TemplateResolver({
 					clientForm: me.clientForm,
 					xaVars: templateData,
 					serverVars: this.getTemplateResolverServerVars()
 				});
-_debug('this.templateResolver', templateResolver);
+_debug('regenerateTemplate this.templateResolver', templateResolver);
 				templateResolver.resolveTemplates({
 					attributes: Ext.Object.getKeys(templateData),
 					callback: function(values, ctx) {
 _debug('regenerateTemplate values', values);
 						var emailObject = null;
 
-						if (me.checkCondition(values)) {
-_debug('me.controllerGrid.getDraftEmails()', me.controllerGrid.getDraftEmails());
+						if (me.checkCondition(values, templateResolver)) {
+_debug('regenerateTemplate me.controllerGrid.getDraftEmails()', me.controllerGrid.getDraftEmails());
 							var record = Ext.Array.findBy(me.controllerGrid.getDraftEmails(), function(item, index) {
 								if (item.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE) == template.get(CMDBuild.core.proxy.CMProxyConstants.KEY))
 									return true;
 
 								return false;
 							});
-_debug('record', record);
+_debug('regenerateTemplate record', record);
 							// Update record data with values
 							if (!Ext.Object.isEmpty(record))
 								values = Ext.Object.merge(record.getData(), values);
@@ -631,9 +642,10 @@ _debug('regenerateTemplate emailObject', emailObject);
 							}
 
 							templateRegenerationStatus = true;
+							
+							me.bindLocalDepsChangeEvent(emailObject, templateResolver, me);
 						}
 
-						me.bindLocalDepsChangeEvent(emailObject, templateResolver, me);
 
 						me.templateResolverIsBusy = false;
 					}
@@ -670,7 +682,7 @@ _debug('regenerateTemplate emailObject', emailObject);
 				templateResolver.resolveTemplates({
 					attributes: Ext.Object.getKeys(templateData),
 					callback: function(values, ctx) {
-						if (me.checkCondition(values))
+						if (me.checkCondition(values, templateResolver))
 							response = true;
 					}
 				});

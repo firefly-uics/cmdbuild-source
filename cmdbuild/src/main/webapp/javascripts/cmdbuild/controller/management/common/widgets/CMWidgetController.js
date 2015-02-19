@@ -145,7 +145,7 @@
 
 	function getTemplateResolverServerVarsFromModel(model) {
 		var out = {};
-
+_debug('getTemplateResolverServerVarsFromModel', model);
 		if (model) {
 			var pi = null;
 
