@@ -4,6 +4,11 @@
 		extend: 'Ext.ux.form.field.TinyMCE',
 
 		/**
+		 * @cfg {Boolean}
+		 */
+		dirty: true,
+
+		/**
 		 * @cfg {Mixed} object or string
 		 */
 		tinyMCEConfig: undefined,
@@ -83,6 +88,24 @@
 			}
 
 			this.callParent(arguments);
+
+			this.on('change', function() {
+				this.setDirty(); // Set as dirty
+			}, this);
+		},
+
+		/**
+		 * Dirty functionality implementation
+		 */
+		isDirty: function() {
+			if (!Ext.isEmpty(this.getEditor()))
+				return this.getEditor().isDirty() || this.dirty;
+
+			return false;
+		},
+
+		setDirty: function() {
+			this.dirty = true;
 		}
 	});
 
