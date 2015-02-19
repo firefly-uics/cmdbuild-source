@@ -107,6 +107,18 @@
 			me.tinyMCEConfig.setup = function(editor) {
 				editor.onInit.add(function(editor) {
 					me.inProgress = false;
+
+					// Add focus event implementation
+					tinymce.dom.Event.add(editor.getBody(), 'focus', function(e) {
+						me.fireEvent('focus', me);
+					});
+
+					// Add blur event implementation
+					tinymce.dom.Event.add(editor.getBody(), 'blur', function(e) {
+						me.fireEvent('blur', me);
+
+						me.setValue(me.getValue()); // Fixes problems of lose content on blur
+					});
 				});
 
 				editor.onKeyPress.add(Ext.Function.createBuffered(me.validate, 250, me));
