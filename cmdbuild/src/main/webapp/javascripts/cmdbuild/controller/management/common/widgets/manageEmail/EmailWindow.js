@@ -172,7 +172,7 @@ _debug('### loadFormValues');
 			this.templateResolver = new CMDBuild.Management.TemplateResolver({
 				clientForm: this.widgetController.clientForm,
 				xaVars: xaVars,
-				serverVars: CMDBuild.controller.management.common.widgets.CMWidgetController.getTemplateResolverServerVars(this.widgetController.card)
+				serverVars: this.widgetController.getTemplateResolverServerVars(this.widgetController.card)
 			});
 _debug('this.templateResolver', this.templateResolver);
 			this.templateResolver.resolveTemplates({
@@ -190,16 +190,12 @@ _debug('values', values);
 					} else {
 						setValueArray.push(
 							{
-								id: CMDBuild.core.proxy.CMProxyConstants.ACCOUNT,
-								value: values[CMDBuild.core.proxy.CMProxyConstants.ACCOUNT]
+								id: CMDBuild.core.proxy.CMProxyConstants.FROM,
+								value: values[CMDBuild.core.proxy.CMProxyConstants.FROM]
 							},
 							{
 								id: CMDBuild.core.proxy.CMProxyConstants.TO,
 								value: values[CMDBuild.core.proxy.CMProxyConstants.TO]
-							},
-							{
-								id: CMDBuild.core.proxy.CMProxyConstants.FROM,
-								value: values[CMDBuild.core.proxy.CMProxyConstants.FROM]
 							},
 							{
 								id: CMDBuild.core.proxy.CMProxyConstants.CC,
@@ -221,7 +217,7 @@ _debug('values', values);
 					}
 
 					me.view.formPanel.getForm().setValues(setValueArray);
-					me.record = Ext.create('CMDBuild.model.widget.ManageEmail.email', values); // Updates also record property
+//					me.record = Ext.create('CMDBuild.model.widget.ManageEmail.email', values); // Updates also record property
 				}
 			});
 		},
@@ -325,7 +321,7 @@ _debug('onEmailChange');
 		 * Updates record object adding id (time in milliseconds), Description and attachments array and adds email record to grid store
 		 */
 		onEmailWindowConfirmButtonClick: function() {
-_debug('### onEmailWindowConfirmButtonClick');
+_debug('### onEmailWindowConfirmButtonClick', this.record);
 			if (this.view.formPanel.getNonValidFields().length > 0) {
 				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
 			} else {
@@ -370,8 +366,8 @@ _debug('onFillFromTemplateButtonClick', this.record);
 					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail EmailWindow controller error: get template call failure', false);
 				},
 				success: function(response, options, decodedResponse) {
-					this.loadFormValues(Ext.create('CMDBuild.model.widget.ManageEmail.template', decodedResponse.response));
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, templateName); // Bind templateName to email record
+					this.loadFormValues(Ext.create('CMDBuild.model.widget.ManageEmail.template', decodedResponse.response));
 				},
 				callback: function(options, success, response) {
 					this.view.setLoading(false);

@@ -227,7 +227,11 @@
 					},
 					scope: this,
 					failure: function(response, options, decodedResponse) {
-						CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ EmailTemplates controller error: get template call failure', false);
+						CMDBuild.Msg.error(
+							CMDBuild.Translation.common.failure,
+							CMDBuild.Translation.errors.getTemplateWithNameFailure, //'@@ Get template failure with name "' + this.selectedName + '"',
+							false
+						);
 					},
 					success: function(response, options, decodedResponse) {
 						var templateModel = Ext.create('CMDBuild.model.EmailTemplates.singleTemplate', decodedResponse.response);

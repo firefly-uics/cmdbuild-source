@@ -89,7 +89,7 @@
 								templateName: template[CMDBuild.core.proxy.CMProxyConstants.NAME],
 
 								handler: function(button, e) {
-									this.delegate.cmOn('onFillFromTemplateButtonClick', button[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_NAME]);
+									me.delegate.cmOn('onFillFromTemplateButtonClick', button[CMDBuild.core.proxy.CMProxyConstants.TEMPLATE_NAME]);
 								}
 							});
 						}, this);

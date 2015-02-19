@@ -185,7 +185,7 @@ _debug('editRecord record', record);
 		 * @return {Boolean}
 		 */
 		isRegenerable: function(record) {
-			return !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)) && record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION);
+			return !Ext.isEmpty(record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE));
 		},
 
 		onEmailAddButtonClick: function() {
