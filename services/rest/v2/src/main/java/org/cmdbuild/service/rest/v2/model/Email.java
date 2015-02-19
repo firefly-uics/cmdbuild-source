@@ -21,11 +21,13 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.UNDERSCORED_I
 import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+@XmlRootElement
 public class Email extends AbstractModel {
 
 	private Long id;
