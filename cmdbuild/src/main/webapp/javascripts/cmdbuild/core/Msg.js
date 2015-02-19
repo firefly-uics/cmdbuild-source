@@ -1,3 +1,34 @@
+(function() {
+
+	/**
+	 * New class to replace CMDBuild.Msg
+	 */
+	Ext.define('CMDBuild.core.Msg', {
+		singleton: true,
+
+		/**
+		 * Parse and replace variables in strings
+		 *
+		 * @param {String} string
+		 * @param {Array} variables
+		 *
+		 * @return {String}
+		 */
+		stringParse: function(string, variables) {
+			var pageSize;
+
+			try {
+				pageSize = parseInt(CMDBuild.Config.cmdbuild.rowlimit);
+			} catch (e) {
+				pageSize = 20;
+			}
+
+			return pageSize;
+		}
+	});
+
+})();
+
 Ext.ns('CMDBuild.Msg');
 
 CMDBuild.Msg.alert = function(title, text, popup, iconCls) {

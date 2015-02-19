@@ -48,7 +48,7 @@
 							// Ask to the user if is sure to delete all the unsent e-mails before
 							Ext.Msg.show({
 								title: CMDBuild.Translation.common.confirmpopup.title,
-								msg: '@@ This will delete all the unsent emails',
+								msg: CMDBuild.Translation.emailRegenerationConfirmPopupText,
 								buttons: Ext.Msg.OKCANCEL,
 								icon: Ext.Msg.WARNING,
 
@@ -93,14 +93,6 @@
 						hideable: false,
 						renderer: 'stripTags',
 						flex: 2
-					},
-					{
-						text: '@@ Keep-sync.',
-						dataIndex: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
-						width: 90,
-						align: 'center',
-						sortable: false,
-						renderer: this.keepSynchronizationRenderer
 					},
 					{
 						xtype: 'actioncolumn',
@@ -260,17 +252,6 @@
 				} else {
 					return record.get(CMDBuild.core.proxy.CMProxyConstants.TO);
 				}
-			},
-
-			/**
-			 * @param {Mixed} value
-			 * @param {Object} metaData
-			 * @param {CMDBuild.model.widget.ManageEmail.email} record
-			 *
-			 * @return {String}
-			 */
-			keepSynchronizationRenderer: function(value, metadata, record) {
-				return value ? '<img src="images/icons/tick.png" alt="@@ Keep-sync." />' : null;
 			}
 	});
 
