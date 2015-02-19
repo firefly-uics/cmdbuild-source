@@ -1452,6 +1452,7 @@
 		"sent": "Gesendete"
 	},
 	"emailTemplate": "E-mail Template",
+	"emailRegenerationConfirmPopupText": "Das wird alle nicht gesendete E-Mails löschen",
 	"enable": "Aktivieren",
 	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": "Freigegeben",

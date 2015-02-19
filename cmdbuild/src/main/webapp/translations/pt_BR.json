@@ -1452,6 +1452,7 @@
 		"sent": "Enviado"
 	},
 	"emailTemplate": "<em>Email Template</em>",
+	"emailRegenerationConfirmPopupText": "Isto irá remover todos os e-mails não enviados.",
 	"enable": "<em>Enable</em>",
 	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": "Habilitado",

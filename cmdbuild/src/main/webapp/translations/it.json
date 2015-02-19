@@ -1452,6 +1452,7 @@
 		"sent": "Inviate"
 	},
 	"emailTemplate": "E-mail Template",
+	"emailRegenerationConfirmPopupText": "Le e-mail non inviate verranno perse.",
 	"enable": "Abilita",
 	"enableGridFilter": "Abilita filtro griglia",
 	"enabled": "Abilitato",

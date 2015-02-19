@@ -1452,6 +1452,7 @@
 		"sent": "Enviados"
 	},
 	"emailTemplate": "Plantilla correo",
+	"emailRegenerationConfirmPopupText": "Esto borrará todos los emails no enviado.",
 	"enable": "Habilita",
 	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": "Habilitado",

@@ -1452,6 +1452,7 @@
 		"sent": "Отправленные"
 	},
 	"emailTemplate": "Шаблон письма",
+	"emailRegenerationConfirmPopupText": "Это действие удалит все неотправленные сообщения",
 	"enable": "Включить",
 	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": "Включено",

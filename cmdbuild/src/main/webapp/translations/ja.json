@@ -1452,6 +1452,7 @@
 		"sent": "送信"
 	},
 	"emailTemplate": "電子メールテンプレート",
+	"emailRegenerationConfirmPopupText": "これは、全ての未送信メールを削除します。",
 	"enable": "有効にする",
 	"enableGridFilter": "グリッドフィルターを有効に",
 	"enabled": "有効",

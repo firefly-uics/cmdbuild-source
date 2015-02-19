@@ -1452,6 +1452,7 @@
 		"sent": "Gửi"
 	},
 	"emailTemplate": "<em>Email Template</em>",
+	"emailRegenerationConfirmPopupText": "Xóa hết các email không gửi được.",
 	"enable": "<em>Enable</em>",
 	"enableGridFilter": "<em>Enable grid filter</em>",
 	"enabled": " Kích hoạt",

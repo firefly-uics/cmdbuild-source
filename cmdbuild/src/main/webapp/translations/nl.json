@@ -1452,6 +1452,7 @@
 		"sent": "verstuurd"
 	},
 	"emailTemplate": "Email sjabloon",
+	"emailRegenerationConfirmPopupText": "Dit zal alle niet-verstuurde emails verwijderen.",
 	"enable": "Activeer",
 	"enableGridFilter": "Instellen raster filter",
 	"enabled": "Geactiveerd",

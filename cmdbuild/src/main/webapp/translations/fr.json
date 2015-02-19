@@ -1452,6 +1452,7 @@
 		"sent": "Envoyé"
 	},
 	"emailTemplate": "Modèle d'email",
+	"emailRegenerationConfirmPopupText": "Cela effacera tous les emails non sélectionnés",
 	"enable": "Activer",
 	"enableGridFilter": "Activer le filtre de table",
 	"enabled": "Activé",
