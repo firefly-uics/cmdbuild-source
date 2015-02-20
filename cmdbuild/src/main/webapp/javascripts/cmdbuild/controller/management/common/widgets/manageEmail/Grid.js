@@ -104,7 +104,7 @@
 		 */
 		addRecord: function(record) {
 _debug('addRecord record', record);
-			this.parentDelegate.view.setLoading(true);
+			CMDBuild.LoadMask.instance.show();
 			CMDBuild.core.proxy.widgets.ManageEmail.create({
 				params: record.getAsParams(),
 				scope: this,
@@ -115,7 +115,7 @@ _debug('addRecord record', record);
 					this.storeLoad();
 				},
 				callback: function(options, success, response) {
-					this.parentDelegate.view.setLoading(false);
+					CMDBuild.LoadMask.instance.hide();
 				}
 			});
 		},
@@ -142,7 +142,7 @@ _debug('addRecord record', record);
 		 */
 		editRecord: function(record) {
 _debug('editRecord record', record);
-			this.parentDelegate.view.setLoading(true);
+			CMDBuild.LoadMask.instance.show();
 			CMDBuild.core.proxy.widgets.ManageEmail.update({
 				params: record.getAsParams(),
 				scope: this,
@@ -153,7 +153,7 @@ _debug('editRecord record', record);
 					this.storeLoad();
 				},
 				callback: function(options, success, response) {
-					this.parentDelegate.view.setLoading(false);
+					CMDBuild.LoadMask.instance.hide();
 				}
 			});
 		},
@@ -320,7 +320,7 @@ _debug('editRecord record', record);
 		 */
 		removeRecord: function(record) {
 _debug('removeRecord record', record);
-			this.parentDelegate.view.setLoading(true);
+			CMDBuild.LoadMask.instance.show();
 			CMDBuild.core.proxy.widgets.ManageEmail.remove({
 				params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
 				scope: this,
@@ -331,7 +331,7 @@ _debug('removeRecord record', record);
 					this.storeLoad();
 				},
 				callback: function(options, success, response) {
-					this.parentDelegate.view.setLoading(false);
+					CMDBuild.LoadMask.instance.hide();
 				}
 			});
 		},
@@ -348,19 +348,32 @@ _debug('storeLoad', regenerateAllEmails+ ' ' +forceRegeneration);
 				regenerateAllEmails = regenerateAllEmails || false;
 				forceRegeneration = forceRegeneration || false;
 
-				this.parentDelegate.view.setLoading(true);
+				CMDBuild.LoadMask.instance.show();
 				this.view.getStore().load({
 					params: {
 						activityId: this.parentDelegate.getActivityId()
 					},
 					scope: this,
 					callback: function(records, operation, success) {
-						this.parentDelegate.view.setLoading(false);
+						CMDBuild.LoadMask.instance.hide();
 
 						this.parentDelegate.getAllTemplatesData(regenerateAllEmails, forceRegeneration);
 					}
 				});
 			}
+		},
+
+		/**
+		 * Resets server and client store
+		 *
+		 * TODO: implement traficLight array
+		 */
+		storeReset: function() {
+			Ext.Array.forEach(this.getDraftEmails(), function(item, index, allItems) {
+				this.removeRecord(item);
+			}, this);
+
+			this.view.getStore().removeAll();
 		}
 	});
 

@@ -65,7 +65,7 @@
 			// END: Buttons configuration
 
 			// Fill from template button store configuration
-			this.setLoading(true);
+			CMDBuild.LoadMask.instance.show();
 			CMDBuild.core.proxy.EmailTemplates.getAll({
 				scope: this,
 				success: function(response, options, decodedResponse) {
@@ -98,7 +98,7 @@
 					}
 				},
 				callback: function(options, success, response) {
-					this.setLoading(false);
+					CMDBuild.LoadMask.instance.hide();
 				}
 			});
 

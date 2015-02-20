@@ -55,6 +55,7 @@
 				labelAlign: 'right',
 				labelWidth: CMDBuild.LABEL_WIDTH,
 				name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
+				disabled: true,
 				inputValue: true,
 				uncheckedValue: false,
 				value: this.delegate.record.get(CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION)
