@@ -66,13 +66,9 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 	private static final boolean FINAL = false;
 
 	private final CMDataView dataView;
-	private final EmailServiceFactory emailServiceFactory;
-	private final Store<EmailAccount> emailAccountStore;
-	private final SubjectHandler subjectHandler;
 	private final DmsConfiguration dmsConfiguration;
 	private final DmsService dmsService;
 	private final DocumentCreatorFactory documentCreatorFactory;
-	private final Notifier notifier;
 	private final OperationUser operationUser;
 
 	public DefaultEmailAttachmentsLogic( //
@@ -87,25 +83,14 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 			final OperationUser operationUser //
 	) {
 		this.dataView = dataView;
-		this.emailServiceFactory = emailServiceFactory;
-		this.emailAccountStore = emailAccountStore;
-		this.subjectHandler = subjectHandler;
 		this.dmsConfiguration = dmsConfiguration;
 		this.dmsService = new ConfigurationAwareDmsService(dmsService, dmsConfiguration);
 		this.documentCreatorFactory = documentCreatorFactory;
-		this.notifier = notifier;
 		this.operationUser = operationUser;
 	}
 
 	@Override
-	public String uploadAttachment( //
-			final Upload.Builder builder//
-	) throws IOException, CMDBException {
-		return uploadAttachment(builder.build());
-	}
-
-	@Override
-	public String uploadAttachment( //
+	public void uploadAttachment( //
 			final Upload upload //
 	) throws IOException, CMDBException {
 		InputStream inputStream = null;
@@ -122,20 +107,12 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 							dmsConfiguration.getLookupNameForAttachments(), //
 							EMPTY);
 			dmsService.upload(document);
-			return usableIdentifier;
 		} catch (final Exception e) {
 			logger.error("error uploading document");
 			throw DmsException.Type.DMS_ATTACHMENT_UPLOAD_ERROR.createException();
 		} finally {
 			IOUtils.closeQuietly(inputStream);
 		}
-	}
-
-	@Override
-	public void deleteAttachment( //
-			final Delete.Builder builder //
-	) throws CMDBException {
-		deleteAttachment(builder.build());
 	}
 
 	@Override
@@ -154,13 +131,6 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 			logger.error("error deleting document");
 			throw DmsException.Type.DMS_ATTACHMENT_DELETE_ERROR.createException();
 		}
-	}
-
-	@Override
-	public Copy copyAttachments( //
-			final Copy.Builder builder //
-	) throws CMDBException {
-		return copyAttachments(builder.build());
 	}
 
 	@Override
@@ -215,25 +185,6 @@ public class DefaultEmailAttachmentsLogic implements EmailAttachmentsLogic {
 
 	private String generateIdentifier() {
 		return UUID.randomUUID().toString();
-	}
-
-	private void moveAttachmentsFromTemporaryToFinalPosition(final String sourceIdentifier,
-			final String destinationIdentifier) {
-		logger.debug("moving attachments from temporary '{}' to final '{}' position");
-		try {
-			final String temporaryId = sourceIdentifier;
-			final DocumentSearch from = documentCreator(TEMPORARY) //
-					.createDocumentSearch(EMAIL_CLASS_NAME, temporaryId);
-			final DocumentSearch to = documentCreator(FINAL) //
-					.createDocumentSearch(EMAIL_CLASS_NAME, destinationIdentifier);
-			dmsService.create(to);
-			for (final StoredDocument storedDocument : dmsService.search(from)) {
-				dmsService.move(storedDocument, from, to);
-			}
-			dmsService.delete(from);
-		} catch (final DmsError e) {
-			logger.error("error moving attachments");
-		}
 	}
 
 	private DocumentCreator documentCreator(final boolean temporary) {
