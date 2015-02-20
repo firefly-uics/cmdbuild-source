@@ -18,13 +18,13 @@ import org.cmdbuild.service.rest.v2.ClassPrivileges;
 import org.cmdbuild.service.rest.v2.Classes;
 import org.cmdbuild.service.rest.v2.DomainAttributes;
 import org.cmdbuild.service.rest.v2.Domains;
-import org.cmdbuild.service.rest.v2.Emails;
 import org.cmdbuild.service.rest.v2.Impersonate;
 import org.cmdbuild.service.rest.v2.LookupTypeValues;
 import org.cmdbuild.service.rest.v2.LookupTypes;
 import org.cmdbuild.service.rest.v2.Menu;
 import org.cmdbuild.service.rest.v2.ProcessAttributes;
 import org.cmdbuild.service.rest.v2.ProcessInstanceActivities;
+import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.ProcessInstances;
 import org.cmdbuild.service.rest.v2.ProcessStartActivities;
 import org.cmdbuild.service.rest.v2.Processes;
@@ -43,7 +43,6 @@ import org.cmdbuild.service.rest.v2.cxf.CxfClassPrivileges;
 import org.cmdbuild.service.rest.v2.cxf.CxfClasses;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomainAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfDomains;
-import org.cmdbuild.service.rest.v2.cxf.CxfEmails;
 import org.cmdbuild.service.rest.v2.cxf.CxfImpersonate;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypeValues;
 import org.cmdbuild.service.rest.v2.cxf.CxfLookupTypes;
@@ -51,6 +50,7 @@ import org.cmdbuild.service.rest.v2.cxf.CxfMenu;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessAttributes;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceAttachments;
+import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstances;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcessStartActivities;
 import org.cmdbuild.service.rest.v2.cxf.CxfProcesses;
@@ -140,9 +140,10 @@ public class ServicesV2 implements LoggingSupport {
 	}
 
 	@Bean
-	public Emails v2_emails() {
-		final CxfEmails service = new CxfEmails(helper.emailLogic());
-		return proxy(Emails.class, service);
+	public ProcessInstanceEmails v2_emails() {
+		final CxfProcessInstanceEmails service = new CxfProcessInstanceEmails(v2_errorHandler(),
+				helper.userWorkflowLogic(), helper.emailLogic());
+		return proxy(ProcessInstanceEmails.class, service);
 	}
 
 	@Bean

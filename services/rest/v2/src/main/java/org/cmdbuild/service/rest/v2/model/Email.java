@@ -10,7 +10,6 @@ import static org.cmdbuild.service.rest.v2.constants.Serialization.KEEP_SYNCHRON
 import static org.cmdbuild.service.rest.v2.constants.Serialization.NOTIFY_WITH;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.NO_SUBJECT_PREFIX;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.PROMPT_SYNCHRONIZATION;
-import static org.cmdbuild.service.rest.v2.constants.Serialization.REFERENCE;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.STATUS;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.SUBJECT;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.TEMPLATE;
@@ -39,7 +38,6 @@ public class Email extends AbstractModel {
 	private String body;
 	private String date;
 	private String status;
-	private Long reference;
 	private String notifyWith;
 	private boolean noSubjectPrefix;
 	private String account;
@@ -134,15 +132,6 @@ public class Email extends AbstractModel {
 		this.status = status;
 	}
 
-	@XmlAttribute(name = REFERENCE)
-	public Long getReference() {
-		return reference;
-	}
-
-	public void setReference(final Long reference) {
-		this.reference = reference;
-	}
-
 	@XmlAttribute(name = NOTIFY_WITH)
 	public String getNotifyWith() {
 		return notifyWith;
@@ -226,7 +215,6 @@ public class Email extends AbstractModel {
 				.append(this.notifyWith, other.notifyWith) //
 				.append(this.date, other.date) //
 				.append(this.status, other.status) //
-				.append(this.reference, other.reference) //
 				.append(this.noSubjectPrefix, other.noSubjectPrefix) //
 				.append(this.account, other.account) //
 				.append(this.temporary, other.temporary) //
@@ -249,7 +237,6 @@ public class Email extends AbstractModel {
 				.append(notifyWith) //
 				.append(date) //
 				.append(status) //
-				.append(reference) //
 				.append(noSubjectPrefix) //
 				.append(account) //
 				.append(temporary) //

@@ -35,7 +35,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.cmdbuild.service.rest.test.JsonSupport;
 import org.cmdbuild.service.rest.test.ServerResource;
-import org.cmdbuild.service.rest.v2.Emails;
+import org.cmdbuild.service.rest.v2.ProcessInstanceEmails;
 import org.cmdbuild.service.rest.v2.model.Email;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
@@ -43,16 +43,15 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 
-public class EmailsTest {
+public class ProcessInstanceEmailsTest {
 
-	private Emails service;
+	private ProcessInstanceEmails service;
 
 	@Rule
 	public ServerResource server = ServerResource.newInstance() //
-			.withServiceClass(Emails.class) //
-			.withService(service = mock(Emails.class)) //
+			.withServiceClass(ProcessInstanceEmails.class) //
+			.withService(service = mock(ProcessInstanceEmails.class)) //
 			.withPort(randomPort()) //
 			.build();
 
@@ -73,10 +72,10 @@ public class EmailsTest {
 				.withElement(42L) //
 				.build();
 		doReturn(expectedResponse) //
-				.when(service).create(any(Email.class));
+				.when(service).create(anyString(), anyLong(), any(Email.class));
 
 		// when
-		final HttpPost post = new HttpPost(server.resource("emails/"));
+		final HttpPost post = new HttpPost(server.resource("processes/dummy/instances/12/emails/"));
 		post.setEntity(new StringEntity("" //
 				+ "{" //
 				+ "    \"from\" : \"from@example.com\"," //
@@ -86,7 +85,6 @@ public class EmailsTest {
 				+ "    \"subject\" : \"subject\"," //
 				+ "    \"body\" : \"body\"," //
 				+ "    \"status\" : \"draft\"," //
-				+ "    \"reference\" : 34," //
 				+ "    \"notifyWith\" : \"foo\"," //
 				+ "    \"noSubjectPrefix\" : false," //
 				+ "    \"account\" : \"bar\"," //
@@ -103,11 +101,7 @@ public class EmailsTest {
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		final ArgumentCaptor<Email> captor = ArgumentCaptor.forClass(Email.class);
-		verify(service).create(captor.capture());
-
-		final Email captured = captor.getValue();
-		assertThat(captured, equalTo(newEmail() //
+		verify(service).create(eq("dummy"), eq(12L), eq(newEmail() //
 				.withFrom("from@example.com") //
 				.withTo(asList("to@example.com")) //
 				.withCc(asList("cc@example.com", "another_cc@example.com")) //
@@ -115,7 +109,6 @@ public class EmailsTest {
 				.withSubject("subject") //
 				.withBody("body") //
 				.withStatus("draft") //
-				.withReference(34L) //
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(false) //
 				.withAccount("bar") //
@@ -135,14 +128,14 @@ public class EmailsTest {
 						.withTotal(4L) //
 						.build()) //
 				.build();
-		when(service.readAll(anyString(), anyInt(), anyInt())) //
+		when(service.readAll(anyString(), anyLong(), anyInt(), anyInt())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet get = new HttpGet(new URIBuilder(server.resource("emails/")) //
+		final HttpGet get = new HttpGet(new URIBuilder(server.resource("processes/dummy/instances/12/emails/")) //
 				.setParameter(FILTER, "filter") //
-				.setParameter(LIMIT, "123") //
-				.setParameter(START, "456") //
+				.setParameter(LIMIT, "34") //
+				.setParameter(START, "56") //
 				.build());
 		final HttpResponse response = httpclient.execute(get);
 
@@ -150,7 +143,7 @@ public class EmailsTest {
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		verify(service).readAll(eq("filter"), eq(123), eq(456));
+		verify(service).readAll(eq("dummy"), eq(12L), eq(34), eq(56));
 	}
 
 	@Test
@@ -161,24 +154,24 @@ public class EmailsTest {
 						.withId(42L) //
 						.build()) //
 				.build();
-		when(service.read(anyLong())) //
+		when(service.read(anyString(), anyLong(), anyLong())) //
 				.thenReturn(expectedResponse);
 
 		// when
-		final HttpGet get = new HttpGet(server.resource("emails/123/"));
+		final HttpGet get = new HttpGet(server.resource("processes/dummy/instances/12/emails/34/"));
 		final HttpResponse response = httpclient.execute(get);
 
 		// then
 		assertThat(statusCodeOf(response), equalTo(200));
 		assertThat(json.from(contentOf(response)), equalTo(json.from(expectedResponse)));
 
-		verify(service).read(123L);
+		verify(service).read(eq("dummy"), eq(12L), eq(34L));
 	}
 
 	@Test
 	public void emailUpdated() throws Exception {
 		// when
-		final HttpPut put = new HttpPut(server.resource("emails/42/"));
+		final HttpPut put = new HttpPut(server.resource("processes/dummy/instances/12/emails/34/"));
 		put.setEntity(new StringEntity("" //
 				+ "{" //
 				+ "    \"from\" : \"from@example.com\"," //
@@ -188,7 +181,6 @@ public class EmailsTest {
 				+ "    \"subject\" : \"subject\"," //
 				+ "    \"body\" : \"body\"," //
 				+ "    \"status\" : \"draft\"," //
-				+ "    \"reference\" : 34," //
 				+ "    \"notifyWith\" : \"foo\"," //
 				+ "    \"noSubjectPrefix\" : false," //
 				+ "    \"account\" : \"bar\"," //
@@ -204,11 +196,7 @@ public class EmailsTest {
 		// then
 		assertThat(statusCodeOf(response), equalTo(204));
 
-		final ArgumentCaptor<Email> captor = ArgumentCaptor.forClass(Email.class);
-		verify(service).update(eq(42L), captor.capture());
-
-		final Email captured = captor.getValue();
-		assertThat(captured, equalTo(newEmail() //
+		verify(service).update(eq("dummy"), eq(12L), eq(34L), eq(newEmail() //
 				.withFrom("from@example.com") //
 				.withTo(asList("to@example.com")) //
 				.withCc(asList("cc@example.com", "another_cc@example.com")) //
@@ -216,7 +204,6 @@ public class EmailsTest {
 				.withSubject("subject") //
 				.withBody("body") //
 				.withStatus("draft") //
-				.withReference(34L) //
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(false) //
 				.withAccount("bar") //
@@ -230,13 +217,13 @@ public class EmailsTest {
 	@Test
 	public void emailDeleted() throws Exception {
 		// when
-		final HttpDelete delete = new HttpDelete(server.resource("emails/42/"));
+		final HttpDelete delete = new HttpDelete(server.resource("processes/dummy/instances/12/emails/34/"));
 		final HttpResponse response = httpclient.execute(delete);
 
 		// then
 		assertThat(statusCodeOf(response), equalTo(204));
 
-		verify(service).delete(eq(42L));
+		verify(service).delete(eq("dummy"), eq(12L), eq(34L));
 	}
 
 }

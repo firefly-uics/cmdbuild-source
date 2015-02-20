@@ -86,7 +86,6 @@ public class Serialization {
 			PRECISION = "precision", //
 			PROMPT_SYNCHRONIZATION = "promptSynchronization", //
 			PROTOTYPE = "prototype", //
-			REFERENCE = "reference", //
 			RELATION = "relation", //
 			RELATION_ID = RELATION + ID_CAPITALIZED, //
 			RESPONSE_METADATA = "meta", //

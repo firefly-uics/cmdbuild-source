@@ -3,10 +3,12 @@ package org.cmdbuild.service.rest.v2;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.EMAIL_ID;
-import static org.cmdbuild.service.rest.v2.constants.Serialization.FILTER;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.LIMIT;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.PROCESS_ID;
+import static org.cmdbuild.service.rest.v2.constants.Serialization.PROCESS_INSTANCE_ID;
 import static org.cmdbuild.service.rest.v2.constants.Serialization.START;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -20,9 +22,10 @@ import org.cmdbuild.service.rest.v2.model.Email;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
 
-@Path("emails/")
+@Path("processes/{" + PROCESS_ID + "}/instances/{" + PROCESS_INSTANCE_ID + "}/emails/")
+@Consumes(APPLICATION_JSON)
 @Produces(APPLICATION_JSON)
-public interface Emails {
+public interface ProcessInstanceEmails {
 
 	@GET
 	@Path("statuses/")
@@ -31,13 +34,16 @@ public interface Emails {
 	@POST
 	@Path(EMPTY)
 	ResponseSingle<Long> create( //
+			@PathParam(PROCESS_ID) String processId, //
+			@PathParam(PROCESS_INSTANCE_ID) Long processInstanceId, //
 			Email email //
 	);
 
 	@GET
 	@Path(EMPTY)
 	ResponseMultiple<Long> readAll( //
-			@QueryParam(FILTER) String filter, //
+			@PathParam(PROCESS_ID) String processId, //
+			@PathParam(PROCESS_INSTANCE_ID) Long processInstanceId, //
 			@QueryParam(LIMIT) Integer limit, //
 			@QueryParam(START) Integer offset //
 	);
@@ -45,20 +51,26 @@ public interface Emails {
 	@GET
 	@Path("{" + EMAIL_ID + "}/")
 	ResponseSingle<Email> read( //
-			@PathParam(EMAIL_ID) Long id //
+			@PathParam(PROCESS_ID) String processId, //
+			@PathParam(PROCESS_INSTANCE_ID) Long processInstanceId, //
+			@PathParam(EMAIL_ID) Long emailId //
 	);
 
 	@PUT
 	@Path("{" + EMAIL_ID + "}/")
 	void update( //
-			@PathParam(EMAIL_ID) Long id, //
+			@PathParam(PROCESS_ID) String processId, //
+			@PathParam(PROCESS_INSTANCE_ID) Long processInstanceId, //
+			@PathParam(EMAIL_ID) Long emailId, //
 			Email email //
 	);
 
 	@DELETE
 	@Path("{" + EMAIL_ID + "}/")
 	void delete( //
-			@PathParam(EMAIL_ID) Long id //
+			@PathParam(PROCESS_ID) String processId, //
+			@PathParam(PROCESS_INSTANCE_ID) Long processInstanceId, //
+			@PathParam(EMAIL_ID) Long emailId //
 	);
 
 }

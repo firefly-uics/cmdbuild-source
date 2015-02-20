@@ -2,12 +2,12 @@ package unit.cxf;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Arrays.asList;
-import static java.util.Collections.EMPTY_LIST;
 import static org.cmdbuild.logic.email.EmailLogic.Statuses.draft;
 import static org.cmdbuild.service.rest.v2.model.Models.newEmail;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doReturn;
@@ -15,33 +15,82 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import java.util.NoSuchElementException;
+
+import javax.ws.rs.WebApplicationException;
+
 import org.cmdbuild.logic.email.EmailImpl;
 import org.cmdbuild.logic.email.EmailLogic;
-import org.cmdbuild.service.rest.v2.cxf.CxfEmails;
+import org.cmdbuild.logic.workflow.WorkflowLogic;
+import org.cmdbuild.service.rest.v2.cxf.CxfProcessInstanceEmails;
+import org.cmdbuild.service.rest.v2.cxf.ErrorHandler;
 import org.cmdbuild.service.rest.v2.model.Email;
 import org.cmdbuild.service.rest.v2.model.ResponseMultiple;
 import org.cmdbuild.service.rest.v2.model.ResponseSingle;
+import org.cmdbuild.workflow.user.UserProcessClass;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CxfEmailsTest {
+public class CxfProcessInstanceEmailsTest {
 
+	private ErrorHandler errorHandler;
+	private WorkflowLogic workflowLogic;
 	private EmailLogic emailLogic;
 
-	private CxfEmails underTest;
+	private CxfProcessInstanceEmails underTest;
 
 	@Before
 	public void setUp() throws Exception {
+		errorHandler = mock(ErrorHandler.class);
+		workflowLogic = mock(WorkflowLogic.class);
 		emailLogic = mock(EmailLogic.class);
-		underTest = new CxfEmails(emailLogic);
+		underTest = new CxfProcessInstanceEmails(errorHandler, workflowLogic, emailLogic);
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void createFailsWhenProcessIsNotFound() throws Exception {
+		// given
+		doReturn(null) //
+				.when(workflowLogic).findProcessClass(anyString());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).classNotFound(eq("dummy"));
+
+		// when
+		underTest.create("dummy", 12L, newEmail() //
+				.withFrom("from@example.com") //
+				.withTo(asList("to@example.com")) //
+				.withSubject("subject") //
+				.withBody("body") //
+				.build());
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void createFailsWhenInstanceIsNotFound() throws Exception {
+		// given
+		final UserProcessClass targetClass = mock(UserProcessClass.class);
+		doReturn(targetClass) //
+				.when(workflowLogic).findProcessClass(eq("dummy"));
+		doThrow(new NoSuchElementException()) //
+				.when(workflowLogic).getProcessInstance(eq("dummy"), eq(12L));
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).cardNotFound(eq(12L));
+
+		// when
+		underTest.create("dummy", 12L, newEmail() //
+				.withFrom("from@example.com") //
+				.withTo(asList("to@example.com")) //
+				.withSubject("subject") //
+				.withBody("body") //
+				.build());
 	}
 
 	@Test(expected = RuntimeException.class)
-	public void createFailsWithExceptionWhenLogicThrowsException() throws Exception {
+	public void createFailsWhenLogicThrowsException() throws Exception {
 		// given
 		final Throwable e = new RuntimeException();
 		doThrow(e) //
 				.when(emailLogic).create(eq(EmailImpl.newInstance() //
+						.withActivityId(12L) //
 						.withFromAddress("from@example.com") //
 						.withToAddresses("to@example.com") //
 						.withSubject("subject") //
@@ -49,7 +98,7 @@ public class CxfEmailsTest {
 						.build()));
 
 		// when
-		underTest.create(newEmail() //
+		underTest.create("dummy", 12L, newEmail() //
 				.withFrom("from@example.com") //
 				.withTo(asList("to@example.com")) //
 				.withSubject("subject") //
@@ -64,7 +113,7 @@ public class CxfEmailsTest {
 				.when(emailLogic).create(any(EmailLogic.Email.class));
 
 		// when
-		final ResponseSingle<Long> response = underTest.create(newEmail() //
+		final ResponseSingle<Long> response = underTest.create("dummy", 12L, newEmail() //
 				.withFrom("from@example.com") //
 				.withTo(asList("to@example.com")) //
 				.withCc(asList("cc@example.com", "another_cc@gmail.com")) //
@@ -72,7 +121,6 @@ public class CxfEmailsTest {
 				.withSubject("subject") //
 				.withBody("body") //
 				.withStatus("draft") //
-				.withReference(34L) //
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(true) //
 				.withAccount("bar") //
@@ -93,7 +141,7 @@ public class CxfEmailsTest {
 				.withSubject("subject") //
 				.withContent("body") //
 				.withStatus(draft()) //
-				.withActivityId(34L) //
+				.withActivityId(12L) //
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(true) //
 				.withAccount("bar") //
@@ -104,28 +152,43 @@ public class CxfEmailsTest {
 				.build()));
 	}
 
+	@Test(expected = WebApplicationException.class)
+	public void readAllFailsWhenProcessIsNotFound() throws Exception {
+		// given
+		// given
+		doReturn(null) //
+				.when(workflowLogic).findProcessClass(anyString());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).classNotFound(eq("dummy"));
+
+		// when
+		underTest.readAll("dummy", 12L, 34, 56);
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void readAllFailsWhenInstanceIsNotFound() throws Exception {
+		// given
+		final UserProcessClass targetClass = mock(UserProcessClass.class);
+		doReturn(targetClass) //
+				.when(workflowLogic).findProcessClass(eq("dummy"));
+		doThrow(new NoSuchElementException()) //
+				.when(workflowLogic).getProcessInstance(eq("dummy"), eq(12L));
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).cardNotFound(eq(12L));
+
+		// when
+		underTest.readAll("dummy", 12L, 34, 56);
+	}
+
 	@Test(expected = RuntimeException.class)
-	public void readAllFailsWithExceptionWhenLogicThrowsException() throws Exception {
+	public void readAllFailsWhenLogicThrowsException() throws Exception {
 		// given
 		final Throwable e = new RuntimeException();
 		doThrow(e) //
 				.when(emailLogic).readAll(isNull(Long.class));
 
 		// when
-		underTest.readAll(null, null, null);
-	}
-
-	@Test
-	public void readAllPassesNullValueToLogicWhenFilterIsMissing() throws Exception {
-		// given
-		doReturn(EMPTY_LIST) //
-				.when(emailLogic).readAll(any(Long.class));
-
-		// when
-		underTest.readAll(null, 10, 0);
-
-		// then
-		verify(emailLogic).readAll(null);
+		underTest.readAll("dummy", 12L, 34, 56);
 	}
 
 	@Test
@@ -147,89 +210,60 @@ public class CxfEmailsTest {
 				.when(emailLogic).readAll(any(Long.class));
 
 		// when
-		final ResponseMultiple<Long> response = underTest.readAll(null, 1, 2);
+		final ResponseMultiple<Long> response = underTest.readAll("dummy", 12L, 1, 2);
 
 		// then
 		assertThat(newArrayList(response.getElements()), equalTo(asList(email_3.getId())));
 		assertThat(response.getMetadata().getTotal(), equalTo(4L));
 
-		verify(emailLogic).readAll(null);
+		verify(emailLogic).readAll(eq(12L));
 	}
 
-	@Test(expected = UnsupportedOperationException.class)
-	public void readAllDoesNotSupportFilterWithLogicalOperator() throws Exception {
-		// when
-		underTest.readAll("{" + //
-				"\"attribute\": {" + //
-				"    \"and\": [{" + //
-				"        \"simple\": {" + //
-				"            \"attribute\": \"reference\"," + //
-				"            \"operator\": \"equal\"," + //
-				"            \"value\": [1]" + //
-				"        }" + //
-				"        }, {" + //
-				"        \"simple\": {" + //
-				"            \"attribute\": \"reference\"," + //
-				"            \"operator\": \"equal\"," + //
-				"            \"value\": [2]" + //
-				"        }" + //
-				"    }]" + //
-				"}" + //
-				"}", null, null);
-	}
-
-	@Test(expected = UnsupportedOperationException.class)
-	public void readAllDoesNotSupportFilterWithOperatorsDifferentFromEqual() throws Exception {
-		// when
-		underTest.readAll("{" + //
-				"\"attribute\": {" + //
-				"    \"simple\": {" + //
-				"        \"attribute\": \"reference\"," + //
-				"        \"operator\": \"notequal\"," + //
-				"        \"value\": [1]" + //
-				"    }" + //
-				"}" + //
-				"}", null, null);
-	}
-
-	@Test
-	public void readAllSupportsFilterWithEqualOperatorOnly() throws Exception {
+	@Test(expected = WebApplicationException.class)
+	public void readFailsWhenProcessIsNotFound() throws Exception {
 		// given
-		doReturn(EMPTY_LIST) //
-				.when(emailLogic).readAll(any(Long.class));
+		doReturn(null) //
+				.when(workflowLogic).findProcessClass(anyString());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).classNotFound(eq("dummy"));
 
 		// when
-		underTest.readAll("{" + //
-				"\"attribute\": {" + //
-				"    \"simple\": {" + //
-				"        \"attribute\": \"reference\"," + //
-				"        \"operator\": \"equal\"," + //
-				"        \"value\": [42]" + //
-				"    }" + //
-				"}" + //
-				"}", null, null);
+		underTest.read("dummy", 12L, 34L);
+	}
 
-		// then
-		verify(emailLogic).readAll(42L);
+	@Test(expected = WebApplicationException.class)
+	public void readFailsWhenInstanceIsNotFound() throws Exception {
+		// given
+		final UserProcessClass targetClass = mock(UserProcessClass.class);
+		doReturn(targetClass) //
+				.when(workflowLogic).findProcessClass(eq("dummy"));
+		doThrow(new NoSuchElementException()) //
+				.when(workflowLogic).getProcessInstance(eq("dummy"), eq(12L));
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).cardNotFound(eq(12L));
+
+		// when
+		underTest.read("dummy", 12L, 34L);
 	}
 
 	@Test(expected = RuntimeException.class)
-	public void readFailsWithExceptionWhenLogicThrowsException() throws Exception {
+	public void readFailsWhenLogicThrowsException() throws Exception {
 		// given
 		final Throwable e = new RuntimeException();
 		doThrow(e) //
 				.when(emailLogic).read(eq(EmailImpl.newInstance() //
-						.withId(42L).build()));
+						.withId(34L) //
+						.build()));
 
 		// when
-		underTest.read(42L);
+		underTest.read("dummy", 12L, 34L);
 	}
 
 	@Test
 	public void readReturnsIdReturnedFromLogic() throws Exception {
 		// given
 		final EmailLogic.Email read = EmailImpl.newInstance() //
-				.withId(12L) //
+				.withId(56L) //
 				.withFromAddress("from@example.com") //
 				.withToAddresses("to@example.com") //
 				.withCcAddresses("cc@example.com,another_cc@gmail.com") //
@@ -250,11 +284,11 @@ public class CxfEmailsTest {
 				.when(emailLogic).read(any(EmailLogic.Email.class));
 
 		// when
-		final ResponseSingle<Email> response = underTest.read(42L);
+		final ResponseSingle<Email> response = underTest.read("dummy", 12L, 34L);
 
 		// then
 		assertThat(response.getElement(), equalTo(newEmail() //
-				.withId(12L) //
+				.withId(56L) //
 				.withFrom("from@example.com") //
 				.withTo(asList("to@example.com")) //
 				.withCc(asList("cc@example.com", "another_cc@gmail.com")) //
@@ -262,7 +296,6 @@ public class CxfEmailsTest {
 				.withSubject("subject") //
 				.withBody("body") //
 				.withStatus("draft") //
-				.withReference(34L) //
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(true) //
 				.withAccount("bar") //
@@ -273,17 +306,54 @@ public class CxfEmailsTest {
 				.build()));
 
 		verify(emailLogic).read(eq(EmailImpl.newInstance() //
-				.withId(42L) //
+				.withId(34L) //
 				.build()));
 	}
 
+	@Test(expected = WebApplicationException.class)
+	public void updateFailsWhenProcessIsNotFound() throws Exception {
+		// given
+		doReturn(null) //
+				.when(workflowLogic).findProcessClass(anyString());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).classNotFound(eq("dummy"));
+
+		// when
+		underTest.update("dummy", 12L, 34L, newEmail() //
+				.withId(56L) //
+				.withFrom("from@example.com") //
+				.withTo(asList("to@example.com")) //
+				.withSubject("subject") //
+				.withBody("body") //
+				.build());
+	}
+
+	@Test(expected = WebApplicationException.class)
+	public void updateFailsWhenInstanceIsNotFound() throws Exception {
+		// given
+		doReturn(null) //
+				.when(workflowLogic).findProcessClass(anyString());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).classNotFound(eq("dummy"));
+
+		// when
+		underTest.update("dummy", 12L, 34L, newEmail() //
+				.withId(56L) //
+				.withFrom("from@example.com") //
+				.withTo(asList("to@example.com")) //
+				.withSubject("subject") //
+				.withBody("body") //
+				.build());
+	}
+
 	@Test(expected = RuntimeException.class)
-	public void updateFailsWithExceptionWhenLogicThrowsException() throws Exception {
+	public void updateFailsWhenLogicThrowsException() throws Exception {
 		// given
 		final Throwable e = new RuntimeException();
 		doThrow(e) //
 				.when(emailLogic).update(eq(EmailImpl.newInstance() //
-						.withId(42L) //
+						.withId(34L) //
+						.withActivityId(12L) //
 						.withFromAddress("from@example.com") //
 						.withToAddresses("to@example.com") //
 						.withSubject("subject") //
@@ -291,8 +361,8 @@ public class CxfEmailsTest {
 						.build()));
 
 		// when
-		underTest.update(42L, newEmail() //
-				.withId(12L) //
+		underTest.update("dummy", 12L, 34L, newEmail() //
+				.withId(56L) //
 				.withFrom("from@example.com") //
 				.withTo(asList("to@example.com")) //
 				.withSubject("subject") //
@@ -303,8 +373,8 @@ public class CxfEmailsTest {
 	@Test
 	public void updateReturnsIdReturnedFromLogic() throws Exception {
 		// when
-		underTest.update(42L, newEmail() //
-				.withId(12L) //
+		underTest.update("dummy", 12L, 34L, newEmail() //
+				.withId(56L) //
 				.withFrom("from@example.com") //
 				.withTo(asList("to@example.com")) //
 				.withCc(asList("cc@example.com", "another_cc@gmail.com")) //
@@ -312,7 +382,6 @@ public class CxfEmailsTest {
 				.withSubject("subject") //
 				.withBody("body") //
 				.withStatus("draft") //
-				.withReference(34L) //
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(true) //
 				.withAccount("bar") //
@@ -324,7 +393,8 @@ public class CxfEmailsTest {
 
 		// then
 		verify(emailLogic).update(eq(EmailImpl.newInstance() //
-				.withId(42L) //
+				.withId(34L) //
+				.withActivityId(12L) //
 				.withFromAddress("from@example.com") //
 				.withToAddresses("to@example.com") //
 				.withCcAddresses("cc@example.com,another_cc@gmail.com") //
@@ -332,7 +402,6 @@ public class CxfEmailsTest {
 				.withSubject("subject") //
 				.withContent("body") //
 				.withStatus(draft()) //
-				.withActivityId(34L) //
 				.withNotifyWith("foo") //
 				.withNoSubjectPrefix(true) //
 				.withAccount("bar") //
@@ -343,27 +412,41 @@ public class CxfEmailsTest {
 				.build()));
 	}
 
-	@Test(expected = RuntimeException.class)
-	public void deleteFailsWithExceptionWhenLogicThrowsException() throws Exception {
+	@Test(expected = WebApplicationException.class)
+	public void deleteFailsWhenProcessIsNotFound() throws Exception {
 		// given
-		final Throwable e = new RuntimeException();
-		doThrow(e) //
-				.when(emailLogic).delete(eq(EmailImpl.newInstance() //
-						.withId(42L) //
-						.build()));
+		doReturn(null) //
+				.when(workflowLogic).findProcessClass(anyString());
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).classNotFound(eq("dummy"));
 
 		// when
-		underTest.delete(42L);
+		underTest.delete("dummy", 12L, 34L);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void deleteFailsWhenInstanceIsNotFound() throws Exception {
+		// given
+		final UserProcessClass targetClass = mock(UserProcessClass.class);
+		doReturn(targetClass) //
+				.when(workflowLogic).findProcessClass(eq("dummy"));
+		doThrow(new NoSuchElementException()) //
+				.when(workflowLogic).getProcessInstance(eq("dummy"), eq(12L));
+		doThrow(new WebApplicationException()) //
+				.when(errorHandler).cardNotFound(eq(12L));
+
+		// when
+		underTest.delete("dummy", 12L, 34L);
 	}
 
 	@Test
 	public void deleteReturnsIdReturnedFromLogic() throws Exception {
 		// when
-		underTest.delete(42L);
+		underTest.delete("dummy", 12L, 34L);
 
 		// then
 		verify(emailLogic).delete(eq(EmailImpl.newInstance() //
-				.withId(42L) //
+				.withId(34L) //
 				.build()));
 	}
 
