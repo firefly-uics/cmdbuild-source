@@ -1,12 +1,10 @@
 (function() {
 
-	var tr = CMDBuild.Translation.administration.email.templates.valuesWindow;
-
 	Ext.define('CMDBuild.view.administration.email.templates.VariablesWindow', {
 		extend: 'CMDBuild.PopupWindow',
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.CMEmailTemplatesController}
+		 * @cfg {CMDBuild.controller.administration.email.TemplatesController}
 		 */
 		delegate: undefined,
 
@@ -15,7 +13,7 @@
 		 */
 		grid: undefined,
 
-		title: tr.title,
+		title: CMDBuild.Translation.administration.email.templates.valuesWindow.title,
 		buttonsAlign: 'center',
 
 		initComponent: function() {

@@ -8,7 +8,7 @@
 		requires: ['CMDBuild.core.proxy.CMProxyConstants'],
 
 		/**
-		 * @cfg {CMDBuild.controller.administration.email.CMEmailTemplatesController}
+		 * @cfg {CMDBuild.controller.administration.email.TemplatesController}
 		 */
 		delegate: undefined,
 
@@ -18,12 +18,12 @@
 		addButton: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.email.CMEmailTemplatesForm}
+		 * @property {CMDBuild.view.administration.email.templates.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.email.CMEmailTemplatesGrid}
+		 * @property {CMDBuild.view.administration.email.templates.GridPanel}
 		 */
 		grid: undefined,
 

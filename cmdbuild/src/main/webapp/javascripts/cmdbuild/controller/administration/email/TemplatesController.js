@@ -5,17 +5,16 @@
 
 		requires: [
 			'CMDBuild.core.proxy.CMProxyConstants',
-			'CMDBuild.core.proxy.EmailTemplates',
-			'CMDBuild.model.EmailTemplates'
+			'CMDBuild.core.proxy.EmailTemplates'
 		],
 
 		/**
-		 * @property {CMDBuild.view.administration.email.CMEmailTemplatesForm}
+		 * @property {CMDBuild.view.administration.email.templates.FormPanel}
 		 */
 		form: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.email.CMEmailTemplatesGrid}
+		 * @property {CMDBuild.view.administration.email.templates.GridPanel}
 		 */
 		grid: undefined,
 
@@ -32,17 +31,17 @@
 		valuesWindowDataBuffer: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.email.CMEmailTemplatesVariablesWindow}
+		 * @property {CMDBuild.view.administration.email.templates.VariablesWindow}
 		 */
 		variablesWindow: undefined,
 
 		/**
-		 * @property {CMDBuild.view.administration.email.CMEmailTemplates}
+		 * @property {CMDBuild.view.administration.email.templates.MainPanel}
 		 */
 		view: undefined,
 
 		/**
-		 * @param {CMDBuild.view.administration.email.CMEmailTemplates} view
+		 * @param {CMDBuild.view.administration.email.templates.MainPanel} view
 		 *
 		 * @override
 		 */

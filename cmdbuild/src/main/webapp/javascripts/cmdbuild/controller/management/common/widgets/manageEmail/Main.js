@@ -412,14 +412,17 @@ _debug('onEditMode');
 		},
 
 		/**
-		 * Launch regeneration of all grid records if needed
+		 * Launch regeneration of all grid records if needed.
+		 *
+		 * {regenerationTrafficLightArray} Implements a trafficLight functionality to manage multiple asynchronous calls and have a global callback
+		 * to reload grid only at real end of calls and avoid to have multiple and useless store load calls.
 		 *
 		 * @param {Boolean} forceRegeneration
-		 *
-		 * TODO: implement traficLight array
 		 */
 		regenerateAllEmails: function(forceRegeneration) {
 			forceRegeneration = forceRegeneration || false;
+
+			var regenerationTrafficLightArray = [];
 _debug('regenerateAllEmails forceRegeneration', forceRegeneration);
 _debug('regenerateAllEmails this.relatedAttributeChanged', this.relatedAttributeChanged);
 			if (forceRegeneration || this.relatedAttributeChanged) {
@@ -443,7 +446,7 @@ _debug(!Ext.isEmpty(recordTemplate) + ' ' + Ext.Array.contains(emailTemplatesToR
 						)
 						|| forceRegeneration
 					) {
-						if(this.regenerateEmail(item))
+						if(this.regenerateEmail(item, regenerationTrafficLightArray))
 							regeneratedTemplatesIdentifiers.push(recordTemplate);
 					}
 				}, this);
@@ -462,23 +465,22 @@ _debug('regeneratedTemplatesIdentifiers', regeneratedTemplatesIdentifiers);
 						)
 						|| forceRegeneration
 					) {
-						if (this.regenerateTemplate(item))
+						if(this.regenerateTemplate(item, regenerationTrafficLightArray))
 							regeneratedTemplatesIdentifiers.push(templateIdentifier);
 					}
 				}, this);
 
 				this.relatedAttributeChanged = false; // Reset attribute changed flag
-
-				this.controllerGrid.storeLoad(); // Load at end of all changes
 			}
 		},
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.email} record
+		 * @param {Array} regenerationTrafficLightArray
 		 *
 		 * @return {Boolean} emailRegenerationStatus
 		 */
-		regenerateEmail: function(record) {
+		regenerateEmail: function(record, regenerationTrafficLightArray) {
 _debug('regenerateEmail', record);
 			var emailRegenerationStatus = false;
 
@@ -522,7 +524,14 @@ _debug('regenerateEmail values', values);
 							for (var key in values)
 								record.set(key, values[key]);
 _debug('regenerateEmail record', record);
-							me.controllerGrid.editRecord(record);
+							// TrafficLight slot build
+							var trafficLight = [];
+							trafficLight[CMDBuild.core.proxy.CMProxyConstants.STATUS] = false;
+							trafficLight[CMDBuild.core.proxy.CMProxyConstants.RECORD] = record; // Reference to record
+
+							regenerationTrafficLightArray.push(trafficLight);
+
+							me.controllerGrid.editRecord(record, regenerationTrafficLightArray);
 
 							emailRegenerationStatus = true;
 
@@ -565,10 +574,11 @@ _debug('regenerateEmail remove record', record);
 
 		/**
 		 * @param {CMDBuild.model.widget.ManageEmail.template} template
+		 * @param {Array} regenerationTrafficLightArray
 		 *
 		 * @return {Boolean} templateRegenerationStatus
 		 */
-		regenerateTemplate: function(template) {
+		regenerateTemplate: function(template, regenerationTrafficLightArray) {
 _debug('regenerateTemplate', template);
 			var templateRegenerationStatus = false;
 
@@ -608,9 +618,9 @@ _debug('regenerateTemplate record', record);
 							_msg('Template with subject "' + values[CMDBuild.core.proxy.CMProxyConstants.SUBJECT] + '" regenerated');
 _debug('regenerateTemplate emailObject', emailObject);
 							if (Ext.isEmpty(record)) {
-								me.controllerGrid.addRecord(emailObject);
+								me.controllerGrid.addRecord(emailObject, regenerationTrafficLightArray);
 							} else {
-								me.controllerGrid.editRecord(emailObject);
+								me.controllerGrid.editRecord(emailObject, regenerationTrafficLightArray);
 							}
 
 							templateRegenerationStatus = true;
