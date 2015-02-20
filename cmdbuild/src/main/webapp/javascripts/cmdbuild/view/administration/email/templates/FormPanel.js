@@ -173,14 +173,14 @@
 							},
 							{
 								xtype: 'checkbox',
-								fieldLabel: '@@ Keep synchronization', // TODO
+								fieldLabel: CMDBuild.Translation.keepSync,
 								inputValue: true,
 								uncheckedValue: false,
 								name: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION
 							},
 							{
 								xtype: 'checkbox',
-								fieldLabel: '@@ Prompt synchronization', // TODO
+								fieldLabel: CMDBuild.Translation.promptSync,
 								inputValue: true,
 								uncheckedValue: false,
 								name: CMDBuild.core.proxy.CMProxyConstants.PROMPT_SYNCHRONIZATION

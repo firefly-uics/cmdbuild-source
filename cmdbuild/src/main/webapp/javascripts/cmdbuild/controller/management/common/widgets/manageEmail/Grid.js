@@ -109,7 +109,7 @@ _debug('addRecord record', record);
 				params: record.getAsParams(),
 				scope: this,
 				failure: function(response, options, decodedResponse) {
-					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email create call failure', false);
+					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailCreate, false);
 				},
 				success: function(response, options, decodedResponse) {
 					this.storeLoad();
@@ -147,7 +147,7 @@ _debug('editRecord record', record);
 				params: record.getAsParams(),
 				scope: this,
 				failure: function(response, options, decodedResponse) {
-					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email update call failure', false);
+					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailUpdate, false);
 				},
 				success: function(response, options, decodedResponse) {
 					this.storeLoad();
@@ -325,7 +325,7 @@ _debug('removeRecord record', record);
 				params: record.getAsParams([CMDBuild.core.proxy.CMProxyConstants.ID, CMDBuild.core.proxy.CMProxyConstants.TEMPORARY]),
 				scope: this,
 				failure: function(response, options, decodedResponse) {
-					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, '@@ ManageEmail grid controller error: email remove call failure', false);
+					CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.emailRemove, false);
 				},
 				success: function(response, options, decodedResponse) {
 					this.storeLoad();
