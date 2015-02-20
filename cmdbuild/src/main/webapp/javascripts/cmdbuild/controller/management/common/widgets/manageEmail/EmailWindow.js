@@ -1,6 +1,7 @@
 (function () {
 
 	Ext.define('CMDBuild.controller.management.common.widgets.manageEmail.EmailWindow', {
+		extend: 'CMDBuild.controller.common.CMBasePanelController',
 
 		requires: [
 			'CMDBuild.controller.management.common.widgets.CMWidgetController',
@@ -99,6 +100,9 @@
 				}
 			}
 
+			if (!Ext.isEmpty(this.record.get(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE)))
+				this.view.formPanel.keepSynchronizationCheckbox.setDisabled(false);
+
 			if (!Ext.isEmpty(this.view))
 				this.view.show();
 		},
@@ -190,10 +194,6 @@ _debug('values', values);
 					} else {
 						setValueArray.push(
 							{
-								id: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
-								value: values[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION]
-							},
-							{
 								id: CMDBuild.core.proxy.CMProxyConstants.FROM,
 								value: values[CMDBuild.core.proxy.CMProxyConstants.FROM]
 							},
@@ -216,6 +216,10 @@ _debug('values', values);
 							{
 								id: CMDBuild.core.proxy.CMProxyConstants.BODY,
 								value: content
+							},
+							{ // It's last one to avoid Notification pop-up display on setValues action
+								id: CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION,
+								value: values[CMDBuild.core.proxy.CMProxyConstants.KEEP_SYNCHRONIZATION]
 							}
 						);
 					}
@@ -328,9 +332,8 @@ _debug('onEmailChange');
 		 */
 		onEmailWindowConfirmButtonClick: function() {
 _debug('### onEmailWindowConfirmButtonClick', this.record);
-			if (this.view.formPanel.getNonValidFields().length > 0) {
-				CMDBuild.Msg.error(CMDBuild.Translation.common.failure, CMDBuild.Translation.errors.invalid_fields, false);
-			} else {
+			// Validate before save
+			if (this.validate(this.view.formPanel)) {
 				var formValues = this.view.formPanel.getForm().getValues();
 				var attachments = this.view.attachmentPanelsContainer.getFileNames();
 _debug('formValues', formValues);
@@ -361,7 +364,7 @@ _debug('this.record', this.record);
 		 */
 		onFillFromTemplateButtonClick: function(templateName) {
 _debug('onFillFromTemplateButtonClick', this.record);
-			this.view.setLoading(true);
+			CMDBuild.LoadMask.instance.show();
 			CMDBuild.core.proxy.EmailTemplates.get({
 				scope: this,
 				params: {
@@ -378,9 +381,10 @@ _debug('onFillFromTemplateButtonClick', this.record);
 				success: function(response, options, decodedResponse) {
 					this.loadFormValues(Ext.create('CMDBuild.model.widget.ManageEmail.template', decodedResponse.response));
 					this.record.set(CMDBuild.core.proxy.CMProxyConstants.TEMPLATE, templateName); // Bind templateName to email record
+					this.view.formPanel.keepSynchronizationCheckbox.setDisabled(false);
 				},
 				callback: function(options, success, response) {
-					this.view.setLoading(false);
+					CMDBuild.LoadMask.instance.hide();
 				}
 			});
 		},

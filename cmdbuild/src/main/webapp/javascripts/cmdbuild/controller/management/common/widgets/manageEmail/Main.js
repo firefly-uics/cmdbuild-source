@@ -339,7 +339,7 @@ _debug('templateIdentifier', templateIdentifier);
 					this.emailTemplatesIdentifiers.push(templateIdentifier);
 			}, this);
 
-			this.view.setLoading(true);
+			CMDBuild.LoadMask.instance.show();
 			CMDBuild.core.proxy.EmailTemplates.getAll({
 				params: {
 					templates: Ext.encode(this.emailTemplatesIdentifiers)
@@ -362,7 +362,7 @@ _debug('loadTemplates item', item);
 					}, this);
 				},
 				callback: function(options, success, response) {
-					this.view.setLoading(false);
+					CMDBuild.LoadMask.instance.hide();
 
 					if (regenerateAllEmails)
 						this.regenerateAllEmails(forceRegeneration);
@@ -415,20 +415,17 @@ _debug('onEditMode');
 		 * Launch regeneration of all grid records if needed
 		 *
 		 * @param {Boolean} forceRegeneration
+		 *
+		 * TODO: implement traficLight array
 		 */
 		regenerateAllEmails: function(forceRegeneration) {
 			forceRegeneration = forceRegeneration || false;
 _debug('regenerateAllEmails forceRegeneration', forceRegeneration);
 _debug('regenerateAllEmails this.relatedAttributeChanged', this.relatedAttributeChanged);
 			if (forceRegeneration || this.relatedAttributeChanged) {
-				if (forceRegeneration) {
-					// TODO fare funzione storeReset() in gridController
-					Ext.Array.forEach(this.controllerGrid.getDraftEmails(), function(item, index, allItems) {
-						this.controllerGrid.removeRecord(item);
-					}, this);
-
-					this.grid.getStore().removeAll();
-				}
+				// Reset all store before email regeneration
+				if (forceRegeneration)
+					this.controllerGrid.storeReset();
 
 				var regeneratedTemplatesIdentifiers = [];
 				var emailTemplatesToRegenerate = this.checkTemplatesToRegenerate();
